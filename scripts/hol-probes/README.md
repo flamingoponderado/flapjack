@@ -10452,8 +10452,13 @@ the lprefix_lub capture is evidence only: its audit found independent element
 type variables and curried conjunction premises that the Lean rows still share
 or curry, so those rows remain pending fixes.
 
+`infer_subst_probe.out` captures typed inference substitution definitions and
+the alternative de Bruijn substitution equation. Regenerate with
+`HOL_PROBE_ONLY=infer_subst_probeScript.sml`.
+
 `infer_props_tids_probe.out` captures typed identifier-set and conversion
-definitions and `inf_set_tids_unconvert`, prerequisites for the initial
+definitions, `inf_set_tids_unconvert`, and the empty and bounded de Bruijn
+substitution identities, prerequisites for the initial
 inference environment in `compilerProof$type_config_ok`. Regenerate with
 `HOL_PROBE_ONLY=infer_props_tids_probeScript.sml`. The capture supports source
 review; it is not a cross-language equivalence proof.

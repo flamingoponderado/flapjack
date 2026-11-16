@@ -17,3 +17,5 @@ val _ = show "inf_set_tids_unconvert_typed" inferPropsTheory.inf_set_tids_unconv
 val _ = show "check_t_def_typed" inferTheory.check_t_def;
 val _ = show "ienv_val_ok_def_typed" inferTheory.ienv_val_ok_def;
 val _ = show "ienv_ok_def_typed" inferPropsTheory.ienv_ok_def;
+val _ = show "infer_deBruijn_subst_id_typed" inferPropsTheory.infer_deBruijn_subst_id;
+val _ = show "infer_deBruijn_subst_id2_typed" inferPropsTheory.infer_deBruijn_subst_id2;

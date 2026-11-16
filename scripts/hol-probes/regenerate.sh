@@ -9781,12 +9781,12 @@ run_probe lexer_fun_source_probeScript.sml lexer_fun_source_probe.out \
   "$cake_dir/semantics"
 
 run_probe infer_subst_probeScript.sml infer_subst_probe.out \
-  infer_type_subst_def_typed infer_deBruijn_subst_def_typed inf_env_axiom_typed init_config_def_typed \
+  infer_type_subst_def_typed infer_deBruijn_subst_def_typed inf_env_axiom_typed init_config_def_typed infer_deBruijn_subst_alt_typed \
   "$cake_dir/compiler/inference/inferScript.sml" \
   "$cake_dir/compiler/inference"
 
 run_probe infer_props_tids_probeScript.sml infer_props_tids_probe.out \
-  set_tids_def_typed unconvert_t_def_typed inf_set_tids_def_typed inf_set_tids_subset_def_typed inf_set_tids_ienv_def_typed inf_set_tids_unconvert_typed check_t_def_typed ienv_val_ok_def_typed ienv_ok_def_typed \
+  set_tids_def_typed unconvert_t_def_typed inf_set_tids_def_typed inf_set_tids_subset_def_typed inf_set_tids_ienv_def_typed inf_set_tids_unconvert_typed check_t_def_typed ienv_val_ok_def_typed ienv_ok_def_typed infer_deBruijn_subst_id_typed infer_deBruijn_subst_id2_typed \
   "$cake_dir/compiler/inference/inferPropsScript.sml" \
   "$cake_dir/compiler/inference"
 
