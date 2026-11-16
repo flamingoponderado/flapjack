@@ -18,6 +18,10 @@ These declarations are Flapjack-only infrastructure: they are the field-level
 steps for the port of HOL `evaluate_cc_co_only_diff`
 (`dataPropsScript.sml:3114`), which is not ported yet, so they carry no `@[hol]`
 tag of their own.
+
+The per-case lemmas at the end are the induction's step lemmas, proved for every
+program form except the returning call, whose handler body is evaluated at a
+smaller clock. The assembled theorem is still open.
 -/
 namespace Flapjack.Compiler.Backend.DataProps
 open Flapjack Flapjack.SemanticPrimitivesHOL
@@ -57,6 +61,17 @@ theorem fixClock_castCompiler {C1 C2 F : Type} (s : State C1 F) (t : State C2 F)
     (outcome : Option (Result (List DataSem.Value) DataSem.Value)) (mid : State C1 F) :
     fixClock (castCompiler s t) (outcome, castCompiler mid t) =
       (outcome, castCompiler (fixClock s (outcome, mid)).2 t) := rfl
+
+/-- Clock clamping preserves agreement of the resulting states when the two
+clamping states agree on the clock as well. -/
+theorem fixClock_agree_clocks {C1 C2 F : Type} (s : State C1 F) (t : State C2 F)
+    (outcome : Option (Result (List DataSem.Value) DataSem.Value)) (mid : State C1 F)
+    (other : State C2 F) (clocks : ccCoOnlyDiff s t) (agree : ccCoOnlyDiff mid other) :
+    ccCoOnlyDiff (fixClock s (outcome, mid)).2 (fixClock t (outcome, other)).2 := by
+  obtain ⟨l1, s1, k1, m1, f1, g1, h1, r1, c1, d1, i1, p1, t1, li1, sf1, pk1⟩ := clocks
+  obtain ⟨l2, s2, k2, m2, f2, g2, h2, r2, c2, d2, i2, p2, t2, li2, sf2, pk2⟩ := agree
+  simp only [fixClock, ccCoOnlyDiff]
+  simp_all
 
 /-- Clock clamping preserves agreement of the resulting states. -/
 theorem fixClock_agree {C1 C2 F : Type} (s : State C1 F) (t : State C2 F)
@@ -143,5 +158,856 @@ theorem pushEnv_castCompiler {C1 C2 F : Type} (s : State C1 F) (t : State C2 F)
     (env : Spt DataSem.Value) (handler : Bool) :
     pushEnv env handler (castCompiler s t) = castCompiler (pushEnv env handler s) t := rfl
 
+/-- Exception unwinding keeps the two states in agreement. -/
+theorem jumpExc_agree {C1 C2 F : Type} (s : State C1 F) (t : State C2 F) (s1 : State C1 F)
+    (premises : ccCoOnlyDiff s t ∧ jumpExc s = some s1) :
+    ∃ t1, jumpExc t = some t1 ∧ ccCoOnlyDiff s1 t1 := by
+  obtain ⟨diff, run⟩ := premises
+  rw [← (ccCoOnlyDiff_iff_castCompiler s t).1 diff, jumpExc_castCompiler, run]
+  simp only [Option.map_some]
+  exact ⟨castCompiler s1 t, rfl, ccCoOnlyDiff_castCompiler s1 t⟩
+
+/-- The installation safety update only clears the flag for installation. -/
+theorem installSfs_safeForSpace_of_ne {C F : Type} (op : ClosLang.Op) (state : State C F)
+    (ne : op ≠ .install) : (installSfs op state).safeForSpace = state.safeForSpace := by
+  cases op <;> simp_all [installSfs]
+
+/-- Installing clears the safety flag. -/
+theorem installSfs_safeForSpace_install {C F : Type} (state : State C F) :
+    (installSfs .install state).safeForSpace = false := by
+  simp [installSfs]
+
+/-- Flushing the locals never changes the safety flag. -/
+theorem flushState_safeForSpace {C F : Type} (all : Bool) (state : State C F) :
+    (flushState all state).safeForSpace = state.safeForSpace := by
+  cases all <;> rfl
+
+/-- Writing a local variable never changes the safety flag. -/
+theorem setVar_safeForSpace {C F : Type} (name : Nat) (value : DataSem.Value)
+    (state : State C F) : (setVar name value state).safeForSpace = state.safeForSpace := rfl
+
+/-- Writing a local variable preserves agreement. -/
+theorem setVar_agree {C1 C2 F : Type} (s : State C1 F) (t : State C2 F) (name : Nat)
+    (value : DataSem.Value) (diff : ccCoOnlyDiff s t) :
+    ccCoOnlyDiff (setVar name value s) (setVar name value t) := by
+  have same := (ccCoOnlyDiff_iff_castCompiler s t).1 diff
+  rw [← same]
+  exact ccCoOnlyDiff_castCompiler (setVar name value s) t
+
+/-- Writing several local variables preserves agreement. -/
+theorem setVars_agree {C1 C2 F : Type} (s : State C1 F) (t : State C2 F) (names : List Nat)
+    (values : List DataSem.Value) (diff : ccCoOnlyDiff s t) :
+    ccCoOnlyDiff (setVars names values s) (setVars names values t) := by
+  have same := (ccCoOnlyDiff_iff_castCompiler s t).1 diff
+  rw [← same]
+  exact ccCoOnlyDiff_castCompiler (setVars names values s) t
+
+/-- Clock decrement preserves agreement. -/
+theorem decClock_agree {C1 C2 F : Type} (s : State C1 F) (t : State C2 F)
+    (diff : ccCoOnlyDiff s t) : ccCoOnlyDiff (decClock s) (decClock t) := by
+  have same := (ccCoOnlyDiff_iff_castCompiler s t).1 diff
+  rw [← same]
+  exact ccCoOnlyDiff_castCompiler (decClock s) t
+
+/-- Flushing the locals preserves agreement. -/
+theorem flushState_agree {C1 C2 F : Type} (s : State C1 F) (t : State C2 F) (all : Bool)
+    (diff : ccCoOnlyDiff s t) :
+    ccCoOnlyDiff (flushState all s) (flushState all t) := by
+  have same := (ccCoOnlyDiff_iff_castCompiler s t).1 diff
+  rw [← same]
+  cases all
+  · exact ccCoOnlyDiff_castCompiler (flushState false s) t
+  · exact ccCoOnlyDiff_castCompiler (flushState true s) t
+
+/-- The installation safety update preserves agreement. -/
+theorem installSfs_agree {C1 C2 F : Type} (s : State C1 F) (t : State C2 F)
+    (op : ClosLang.Op) (diff : ccCoOnlyDiff s t) :
+    ccCoOnlyDiff (installSfs op s) (installSfs op t) := by
+  have same := (ccCoOnlyDiff_iff_castCompiler s t).1 diff
+  rw [← same]
+  cases op <;> exact ccCoOnlyDiff_castCompiler (installSfs _ s) t
+
+/-- Space allocation preserves agreement. -/
+theorem addSpace_agree {C1 C2 F : Type} (s : State C1 F) (t : State C2 F) (amount : Nat)
+    (diff : ccCoOnlyDiff s t) :
+    ccCoOnlyDiff (addSpace s amount) (addSpace t amount) := by
+  have same := (ccCoOnlyDiff_iff_castCompiler s t).1 diff
+  rw [← same]
+  exact ccCoOnlyDiff_castCompiler (addSpace s amount) t
+
+/-- Replacing the locals preserves agreement. -/
+theorem localsUpdate_agree {C1 C2 F : Type} (s : State C1 F) (t : State C2 F)
+    (env : Spt DataSem.Value) (diff : ccCoOnlyDiff s t) :
+    ccCoOnlyDiff { s with locals := env } { t with locals := env } := by
+  have same := (ccCoOnlyDiff_iff_castCompiler s t).1 diff
+  rw [← same]
+  exact ccCoOnlyDiff_castCompiler { s with locals := env } t
+
+/-- Entering a call preserves agreement. -/
+theorem callEnv_agree {C1 C2 F : Type} (s : State C1 F) (t : State C2 F)
+    (args : List DataSem.Value) (size : Option Nat) (diff : ccCoOnlyDiff s t) :
+    ccCoOnlyDiff (callEnv args size (decClock s)) (callEnv args size (decClock t)) := by
+  have same := (ccCoOnlyDiff_iff_castCompiler s t).1 diff
+  rw [← same]
+  exact ccCoOnlyDiff_castCompiler (callEnv args size (decClock s)) t
+
+/-- Pushing an environment preserves agreement. -/
+theorem pushEnv_agree {C1 C2 F : Type} (s : State C1 F) (t : State C2 F)
+    (env : Spt DataSem.Value) (handler : Bool) (diff : ccCoOnlyDiff s t) :
+    ccCoOnlyDiff (pushEnv env handler (decClock s)) (pushEnv env handler (decClock t)) := by
+  have same := (ccCoOnlyDiff_iff_castCompiler s t).1 diff
+  rw [← same]
+  exact ccCoOnlyDiff_castCompiler (pushEnv env handler (decClock s)) t
+
+/-- The property the evaluator induction establishes: a run at a safe state has
+an agreeing run at any state agreeing on the sixteen compared fields. -/
+private def CcCoOnlyDiffAt {C F : Type} (program : DataLang.Prog) (state : State C F) : Prop :=
+  ∀ (C' : Type) (target : State C' F)
+    (result : Option (Result (List DataSem.Value) DataSem.Value)) (next : State C F),
+    evaluate program state = (result, next) →
+    next.safeForSpace = true →
+    ccCoOnlyDiff state target →
+    ∃ t1, evaluate program target = (result, t1) ∧ ccCoOnlyDiff next t1
+
+private theorem ccCoOnlyDiffAt_skip {C F : Type} (state : State C F) :
+    CcCoOnlyDiffAt .skip state := by
+  intro C' target result next run safe diff
+  simp only [evaluate, Prod.mk.injEq] at run
+  obtain ⟨rfl, rfl⟩ := run
+  exact ⟨target, by simp only [evaluate], diff⟩
+
+private theorem ccCoOnlyDiffAt_move {C F : Type} (dest src : Nat) (state : State C F) :
+    CcCoOnlyDiffAt (.move dest src) state := by
+  intro C' target result next run safe diff
+  obtain ⟨locals, localsSize, stack, stackMax, frameSizes, global, handlerEq, refs, clock, code,
+    ffi, space, tstamps, limits, safeFlag, peak⟩ := diff
+  cases read : getVar src state.locals with
+  | none =>
+    simp only [evaluate, read, typeError, Prod.mk.injEq] at run
+    obtain ⟨rfl, rfl⟩ := run
+    refine ⟨target, ?_, ?_⟩
+    · simp only [evaluate, ← locals, read, typeError]
+    · exact ⟨locals, localsSize, stack, stackMax, frameSizes, global, handlerEq, refs, clock, code,
+        ffi, space, tstamps, limits, safeFlag, peak⟩
+  | some value =>
+    simp only [evaluate, read, Prod.mk.injEq] at run
+    obtain ⟨rfl, rfl⟩ := run
+    refine ⟨setVar dest value target, ?_, ?_⟩
+    · simp only [evaluate, ← locals, read, setVar]
+    · exact setVar_agree state target dest value
+        ⟨locals, localsSize, stack, stackMax, frameSizes, global, handlerEq, refs, clock, code,
+          ffi, space, tstamps, limits, safeFlag, peak⟩
+
+private theorem ccCoOnlyDiffAt_assign {C F : Type} (dest : Nat) (op : ClosLang.Op)
+    (names : List Nat) (live : Option NumSet) (state : State C F) :
+    CcCoOnlyDiffAt (.assign dest op names live) state := by
+  intro C' target result next run safe diff
+  obtain ⟨locals, localsSize, stack, stackMax, frameSizes, global, handlerEq, refs, clock, code,
+    ffi, space, tstamps, limits, safeFlag, peak⟩ := diff
+  have same := (ccCoOnlyDiff_iff_castCompiler state target).1
+    ⟨locals, localsSize, stack, stackMax, frameSizes, global, handlerEq, refs, clock, code,
+      ffi, space, tstamps, limits, safeFlag, peak⟩
+  by_cases namesReq : DataLang.opRequiresNames op == live.isNone
+  · simp only [evaluate] at run ⊢
+    rw [if_pos namesReq] at run ⊢
+    simp only [typeError, Prod.mk.injEq] at run
+    obtain ⟨rfl, rfl⟩ := run
+    exact ⟨target, rfl, ⟨locals, localsSize, stack, stackMax, frameSizes, global, handlerEq, refs,
+      clock, code, ffi, space, tstamps, limits, safeFlag, peak⟩⟩
+  · simp only [evaluate] at run ⊢
+    rw [if_neg namesReq] at run ⊢
+    cases read : getVars names state.locals with
+    | none =>
+      simp only [read, typeError, Prod.mk.injEq] at run
+      obtain ⟨rfl, rfl⟩ := run
+      refine ⟨target, ?_, ?_⟩
+      · simp only [← locals, read, typeError]
+      · exact ⟨locals, localsSize, stack, stackMax, frameSizes, global, handlerEq, refs, clock,
+          code, ffi, space, tstamps, limits, safeFlag, peak⟩
+    | some values =>
+      cases cut : cutStateOpt live state with
+      | none =>
+        simp only [read, cut, typeError, Prod.mk.injEq] at run
+        obtain ⟨rfl, rfl⟩ := run
+        have tCut : cutStateOpt live target = none := by
+          rw [← same, cutStateOpt_castCompiler, cut]
+          rfl
+        refine ⟨target, ?_, ?_⟩
+        · simp only [← locals, read, tCut, typeError]
+        · exact ⟨locals, localsSize, stack, stackMax, frameSizes, global, handlerEq, refs, clock,
+            code, ffi, space, tstamps, limits, safeFlag, peak⟩
+      | some middle =>
+        obtain ⟨middleT, tCut, agreeMiddle⟩ := cutStateOpt_ccCoOnlyDiff state target live middle
+          ⟨⟨locals, localsSize, stack, stackMax, frameSizes, global, handlerEq, refs, clock, code,
+            ffi, space, tstamps, limits, safeFlag, peak⟩, cut⟩
+        cases appRun : doApp op values middle with
+        | err error =>
+          simp only [read, cut, appRun, Prod.mk.injEq] at run
+          obtain ⟨rfl, rfl⟩ := run
+          have ne : op ≠ .install := by
+            intro eq
+            rw [eq, flushState_safeForSpace, installSfs_safeForSpace_install] at safe
+            exact absurd safe (by simp)
+          have appT := doApp_ccCoOnlyDiff_rerr middle middleT op values error
+            ⟨appRun, ne, agreeMiddle⟩
+          refine ⟨flushState true (installSfs op middleT), ?_, ?_⟩
+          · simp only [← locals, read, tCut, appT, installSfs]
+          · exact flushState_agree (installSfs op middle) (installSfs op middleT) true
+              (installSfs_agree middle middleT op agreeMiddle)
+        | val pair =>
+          obtain ⟨value, last⟩ := pair
+          simp only [read, cut, appRun, Prod.mk.injEq] at run
+          obtain ⟨rfl, rfl⟩ := run
+          have ne : op ≠ .install := by
+            intro eq
+            rw [eq, setVar_safeForSpace, installSfs_safeForSpace_install] at safe
+            exact absurd safe (by simp)
+          have lastSafe : last.safeForSpace = true := by
+            rw [setVar_safeForSpace, installSfs_safeForSpace_of_ne op last ne] at safe
+            exact safe
+          obtain ⟨lastT, appT, agreeLast⟩ := doApp_ccCoOnlyDiff_rval middle middleT op values value
+            last ⟨appRun, lastSafe, agreeMiddle⟩
+          refine ⟨setVar dest value (installSfs op lastT), ?_, ?_⟩
+          · simp only [← locals, read, tCut, appT, setVar, installSfs]
+          · exact setVar_agree (installSfs op last) (installSfs op lastT) dest value
+              (installSfs_agree last lastT op agreeLast)
+
+private theorem ccCoOnlyDiffAt_tick {C F : Type} (state : State C F) :
+    CcCoOnlyDiffAt .tick state := by
+  intro C' target result next run safe diff
+  obtain ⟨locals, localsSize, stack, stackMax, frameSizes, global, handlerEq, refs, clock, code,
+    ffi, space, tstamps, limits, safeFlag, peak⟩ := diff
+  by_cases zero : state.clock = 0
+  · simp only [evaluate] at run ⊢
+    rw [if_pos zero] at run
+    rw [← clock] at ⊢
+    rw [if_pos zero] at ⊢
+    simp only [timeoutError, Prod.mk.injEq] at run
+    obtain ⟨rfl, rfl⟩ := run
+    refine ⟨flushState true target, ?_, ?_⟩
+    · simp only [timeoutError]
+    · exact flushState_agree state target true
+        ⟨locals, localsSize, stack, stackMax, frameSizes, global, handlerEq, refs, clock, code,
+          ffi, space, tstamps, limits, safeFlag, peak⟩
+  · simp only [evaluate] at run ⊢
+    rw [if_neg zero] at run
+    rw [← clock] at ⊢
+    rw [if_neg zero] at ⊢
+    simp only [Prod.mk.injEq] at run
+    obtain ⟨rfl, rfl⟩ := run
+    refine ⟨decClock target, ?_, ?_⟩
+    · rfl
+    · exact decClock_agree state target
+        ⟨locals, localsSize, stack, stackMax, frameSizes, global, handlerEq, refs, clock, code,
+          ffi, space, tstamps, limits, safeFlag, peak⟩
+
+private theorem ccCoOnlyDiffAt_makeSpace {C F : Type} (amount : Nat) (names : NumSet)
+    (state : State C F) : CcCoOnlyDiffAt (.makeSpace amount names) state := by
+  intro C' target result next run safe diff
+  obtain ⟨locals, localsSize, stack, stackMax, frameSizes, global, handlerEq, refs, clock, code,
+    ffi, space, tstamps, limits, safeFlag, peak⟩ := diff
+  cases cut : cutEnv names state.locals with
+  | none =>
+    simp only [evaluate, cut, typeError, Prod.mk.injEq] at run
+    obtain ⟨rfl, rfl⟩ := run
+    refine ⟨target, ?_, ?_⟩
+    · simp only [evaluate, ← locals, cut, typeError]
+    · exact ⟨locals, localsSize, stack, stackMax, frameSizes, global, handlerEq, refs, clock, code,
+        ffi, space, tstamps, limits, safeFlag, peak⟩
+  | some env =>
+    simp only [evaluate, cut, Prod.mk.injEq] at run
+    obtain ⟨rfl, rfl⟩ := run
+    have tCut : cutEnv names target.locals = some env := by
+      rw [← locals]
+      exact cut
+    refine ⟨addSpace { target with locals := env } amount, ?_, ?_⟩
+    · rw [evaluate, tCut]
+    · exact addSpace_agree { state with locals := env } { target with locals := env } amount
+        (localsUpdate_agree state target env
+          ⟨locals, localsSize, stack, stackMax, frameSizes, global, handlerEq, refs, clock, code,
+            ffi, space, tstamps, limits, safeFlag, peak⟩)
+
+private theorem ccCoOnlyDiffAt_raise {C F : Type} (name : Nat) (state : State C F) :
+    CcCoOnlyDiffAt (.raise name) state := by
+  intro C' target result next run safe diff
+  obtain ⟨locals, localsSize, stack, stackMax, frameSizes, global, handlerEq, refs, clock, code,
+    ffi, space, tstamps, limits, safeFlag, peak⟩ := diff
+  have same := (ccCoOnlyDiff_iff_castCompiler state target).1
+    ⟨locals, localsSize, stack, stackMax, frameSizes, global, handlerEq, refs, clock, code,
+      ffi, space, tstamps, limits, safeFlag, peak⟩
+  cases read : getVar name state.locals with
+  | none =>
+    simp only [evaluate, read, typeError, Prod.mk.injEq] at run
+    obtain ⟨rfl, rfl⟩ := run
+    refine ⟨target, ?_, ?_⟩
+    · simp only [evaluate, ← locals, read, typeError]
+    · exact ⟨locals, localsSize, stack, stackMax, frameSizes, global, handlerEq, refs, clock, code,
+        ffi, space, tstamps, limits, safeFlag, peak⟩
+  | some value =>
+    cases exc : jumpExc state with
+    | none =>
+      simp only [evaluate, read, exc, typeError, Prod.mk.injEq] at run
+      obtain ⟨rfl, rfl⟩ := run
+      have tExc : jumpExc target = none := by
+        rw [← same, jumpExc_castCompiler, exc]
+        rfl
+      refine ⟨target, ?_, ?_⟩
+      · simp only [evaluate, ← locals, read, tExc, typeError]
+      · exact ⟨locals, localsSize, stack, stackMax, frameSizes, global, handlerEq, refs, clock,
+          code, ffi, space, tstamps, limits, safeFlag, peak⟩
+    | some next0 =>
+      simp only [evaluate, read, exc, Prod.mk.injEq] at run
+      obtain ⟨rfl, rfl⟩ := run
+      obtain ⟨targetNext, tExc, agreeNext⟩ := jumpExc_agree state target next0
+        ⟨⟨locals, localsSize, stack, stackMax, frameSizes, global, handlerEq, refs, clock, code,
+          ffi, space, tstamps, limits, safeFlag, peak⟩, exc⟩
+      exact ⟨targetNext, by simp only [evaluate, ← locals, read, tExc], agreeNext⟩
+
+private theorem ccCoOnlyDiffAt_return {C F : Type} (names : List Nat) (state : State C F) :
+    CcCoOnlyDiffAt (.return names) state := by
+  intro C' target result next run safe diff
+  obtain ⟨locals, localsSize, stack, stackMax, frameSizes, global, handlerEq, refs, clock, code,
+    ffi, space, tstamps, limits, safeFlag, peak⟩ := diff
+  cases read : getVars names state.locals with
+  | none =>
+    simp only [evaluate, read, typeError, Prod.mk.injEq] at run
+    obtain ⟨rfl, rfl⟩ := run
+    refine ⟨target, ?_, ?_⟩
+    · simp only [evaluate, ← locals, read, typeError]
+    · exact ⟨locals, localsSize, stack, stackMax, frameSizes, global, handlerEq, refs, clock, code,
+        ffi, space, tstamps, limits, safeFlag, peak⟩
+  | some values =>
+    simp only [evaluate, read, Prod.mk.injEq] at run
+    obtain ⟨rfl, rfl⟩ := run
+    refine ⟨flushState false target, ?_, ?_⟩
+    · simp only [evaluate, ← locals, read, flushState]
+    · exact flushState_agree state target false
+        ⟨locals, localsSize, stack, stackMax, frameSizes, global, handlerEq, refs, clock, code,
+          ffi, space, tstamps, limits, safeFlag, peak⟩
+
+private theorem ccCoOnlyDiffAt_seq {C F : Type} (first second : DataLang.Prog)
+    (state : State C F) (firstIH : CcCoOnlyDiffAt first state)
+    (secondIH : ∀ mid : State C F, mid.clock ≤ state.clock → CcCoOnlyDiffAt second mid) :
+    CcCoOnlyDiffAt (.seq first second) state := by
+  intro C' target result next run safe diff
+  obtain ⟨locals, localsSize, stack, stackMax, frameSizes, global, handlerEq, refs, clock, code,
+    ffi, space, tstamps, limits, safeFlag, peak⟩ := diff
+  have same := (ccCoOnlyDiff_iff_castCompiler state target).1
+    ⟨locals, localsSize, stack, stackMax, frameSizes, global, handlerEq, refs, clock, code,
+      ffi, space, tstamps, limits, safeFlag, peak⟩
+  cases firstRun : evaluate first state with
+  | mk outcome mid =>
+    simp only [evaluate, firstRun, fixClock] at run
+    cases outcome with
+    | none =>
+      have secondRun : evaluate second { mid with clock := min state.clock mid.clock } =
+          (result, next) := by
+        simpa only [fixClock] using run
+      have midSafe : mid.safeForSpace = true := by
+        have clamped := evaluate_safety_of_result second
+          { mid with clock := min state.clock mid.clock } result next ⟨secondRun, safe⟩
+        simpa using clamped
+      obtain ⟨t1, tFirst, agreeMid⟩ := firstIH C' target none mid firstRun midSafe
+        ⟨locals, localsSize, stack, stackMax, frameSizes, global, handlerEq, refs, clock, code,
+          ffi, space, tstamps, limits, safeFlag, peak⟩
+      have agreeFix := fixClock_agree state target none mid t1 agreeMid
+      rw [same] at agreeFix
+      have bound : ({ mid with clock := min state.clock mid.clock } : State C F).clock ≤
+          state.clock := by
+        simp only
+        omega
+      obtain ⟨t2, tSecond, agreeNext⟩ := secondIH _ bound C'
+        (fixClock target (none, t1)).2 result next secondRun safe agreeFix
+      refine ⟨t2, ?_, agreeNext⟩
+      simp only [evaluate, tFirst, fixClock]
+      exact tSecond
+    | some stopped =>
+      simp only [Prod.mk.injEq] at run
+      obtain ⟨rfl, rfl⟩ := run
+      have midSafe : mid.safeForSpace = true := by
+        simpa using safe
+      obtain ⟨t1, tFirst, agreeMid⟩ := firstIH C' target (some stopped) mid firstRun midSafe
+        ⟨locals, localsSize, stack, stackMax, frameSizes, global, handlerEq, refs, clock, code,
+          ffi, space, tstamps, limits, safeFlag, peak⟩
+      have agreeFix := fixClock_agree state target (some stopped) mid t1 agreeMid
+      rw [same] at agreeFix
+      exact ⟨(fixClock target (some stopped, t1)).2,
+        by simp only [evaluate, tFirst, fixClock], agreeFix⟩
+
+private theorem ccCoOnlyDiffAt_if {C F : Type} (name : Nat) (yes no : DataLang.Prog)
+    (state : State C F) (yesIH : CcCoOnlyDiffAt yes state) (noIH : CcCoOnlyDiffAt no state) :
+    CcCoOnlyDiffAt (.ifThenElse name yes no) state := by
+  intro C' target result next run safe diff
+  obtain ⟨locals, localsSize, stack, stackMax, frameSizes, global, handlerEq, refs, clock, code,
+    ffi, space, tstamps, limits, safeFlag, peak⟩ := diff
+  cases read : getVar name state.locals with
+  | none =>
+    simp only [evaluate, read, typeError, Prod.mk.injEq] at run
+    obtain ⟨rfl, rfl⟩ := run
+    refine ⟨target, ?_, ?_⟩
+    · simp only [evaluate, ← locals, read, typeError]
+    · exact ⟨locals, localsSize, stack, stackMax, frameSizes, global, handlerEq, refs, clock, code,
+        ffi, space, tstamps, limits, safeFlag, peak⟩
+  | some value =>
+    by_cases yesValue : isBool true value
+    · simp only [evaluate, ← locals, read] at run ⊢
+      rw [if_pos yesValue] at run ⊢
+      exact yesIH C' target result next run safe
+        ⟨locals, localsSize, stack, stackMax, frameSizes, global, handlerEq, refs, clock, code,
+          ffi, space, tstamps, limits, safeFlag, peak⟩
+    · by_cases noValue : isBool false value
+      · simp only [evaluate, ← locals, read] at run ⊢
+        rw [if_neg yesValue, if_pos noValue] at run ⊢
+        exact noIH C' target result next run safe
+          ⟨locals, localsSize, stack, stackMax, frameSizes, global, handlerEq, refs, clock, code,
+            ffi, space, tstamps, limits, safeFlag, peak⟩
+      · simp only [evaluate, ← locals, read] at run ⊢
+        rw [if_neg yesValue, if_neg noValue] at run ⊢
+        simp only [typeError, Prod.mk.injEq] at run
+        obtain ⟨rfl, rfl⟩ := run
+        refine ⟨target, ?_, ?_⟩
+        · rfl
+        · exact ⟨locals, localsSize, stack, stackMax, frameSizes, global, handlerEq, refs, clock,
+            code, ffi, space, tstamps, limits, safeFlag, peak⟩
+
+/-- Clearing the stack and locals preserves agreement. -/
+theorem stackClear_agree {C1 C2 F : Type} (s : State C1 F) (t : State C2 F)
+    (diff : ccCoOnlyDiff s t) :
+    ccCoOnlyDiff { s with stack := [], locals := .ln } { t with stack := [], locals := .ln } := by
+  have same := (ccCoOnlyDiff_iff_castCompiler s t).1 diff
+  rw [← same]
+  exact ccCoOnlyDiff_castCompiler { s with stack := [], locals := .ln } t
+
+/-- Entering a call through a pushed environment preserves agreement. -/
+theorem callEnvPush_agree {C1 C2 F : Type} (s : State C1 F) (t : State C2 F)
+    (args : List DataSem.Value) (size : Option Nat) (env : Spt DataSem.Value)
+    (handler : Bool) (diff : ccCoOnlyDiff s t) :
+    ccCoOnlyDiff (callEnv args size (pushEnv env handler (decClock s)))
+      (callEnv args size (pushEnv env handler (decClock t))) := by
+  have same := (ccCoOnlyDiff_iff_castCompiler s t).1 diff
+  rw [← same]
+  exact ccCoOnlyDiff_castCompiler (callEnv args size (pushEnv env handler (decClock s))) t
+
+/-- Popping a frame never changes the safety flag. -/
+theorem popEnv_safeForSpace {C F : Type} (state next : State C F)
+    (run : popEnv state = some next) : next.safeForSpace = state.safeForSpace := by
+  cases frames : state.stack with
+  | nil => simp [popEnv, frames] at run
+  | cons frame rest =>
+    cases frame with
+    | env size env =>
+      simp only [popEnv, frames, Option.some.injEq] at run
+      rw [← run]
+    | exc size env handler =>
+      simp only [popEnv, frames, Option.some.injEq] at run
+      rw [← run]
+
+/-- A stackless source frame means the target is stackless too. -/
+theorem popEnv_none_of_agree {C1 C2 F : Type} (s : State C1 F) (t : State C2 F)
+    (diff : ccCoOnlyDiff s t) (run : popEnv s = none) : popEnv t = none := by
+  have same := (ccCoOnlyDiff_iff_castCompiler s t).1 diff
+  rw [← same]
+  cases frames : s.stack with
+  | nil => simp [popEnv, frames]
+  | cons frame rest =>
+    cases frame with
+    | env size env =>
+      simp only [popEnv, frames] at run
+      simp_all
+    | exc size env handler =>
+      simp only [popEnv, frames] at run
+      simp_all
+
+private theorem ccCoOnlyDiffAt_tailForce {C F : Type} (label src : Nat) (state : State C F)
+    (bodyIH : ∀ (body : DataLang.Prog) (called : State C F),
+      called.clock < state.clock → CcCoOnlyDiffAt body called) :
+    CcCoOnlyDiffAt (.force none label src) state := by
+  intro C' target result next run safe diff
+  obtain ⟨locals, localsSize, stack, stackMax, frameSizes, global, handlerEq, refs, clock, code,
+    ffi, space, tstamps, limits, safeFlag, peak⟩ := diff
+  cases read : getVar src state.locals with
+  | none =>
+    simp only [evaluate, read, typeError, Prod.mk.injEq] at run
+    obtain ⟨rfl, rfl⟩ := run
+    refine ⟨target, ?_, ?_⟩
+    · simp only [evaluate, ← locals, read, typeError]
+    · exact ⟨locals, localsSize, stack, stackMax, frameSizes, global, handlerEq, refs, clock, code,
+        ffi, space, tstamps, limits, safeFlag, peak⟩
+  | some thunk =>
+    cases th : destThunk thunk state.refs with
+    | badRef =>
+      simp only [evaluate, read, th, typeError, Prod.mk.injEq] at run
+      obtain ⟨rfl, rfl⟩ := run
+      refine ⟨target, ?_, ?_⟩
+      · simp only [evaluate, ← locals, ← refs, read, th, typeError]
+      · exact ⟨locals, localsSize, stack, stackMax, frameSizes, global, handlerEq, refs, clock,
+          code, ffi, space, tstamps, limits, safeFlag, peak⟩
+    | notThunk =>
+      simp only [evaluate, read, th, typeError, Prod.mk.injEq] at run
+      obtain ⟨rfl, rfl⟩ := run
+      refine ⟨target, ?_, ?_⟩
+      · simp only [evaluate, ← locals, ← refs, read, th, typeError]
+      · exact ⟨locals, localsSize, stack, stackMax, frameSizes, global, handlerEq, refs, clock,
+          code, ffi, space, tstamps, limits, safeFlag, peak⟩
+    | isThunk mode value =>
+      cases mode with
+      | evaluated =>
+        simp only [evaluate, read, th, Prod.mk.injEq] at run
+        obtain ⟨rfl, rfl⟩ := run
+        refine ⟨flushState false target, ?_, ?_⟩
+        · simp only [evaluate, ← locals, ← refs, read, th, flushState]
+        · exact flushState_agree state target false
+            ⟨locals, localsSize, stack, stackMax, frameSizes, global, handlerEq, refs, clock, code,
+              ffi, space, tstamps, limits, safeFlag, peak⟩
+      | notEvaluated =>
+        cases found : findCode (some label) [thunk, value] state.code state.stackFrameSizes with
+        | none =>
+          simp only [evaluate, read, th, found, typeError, Prod.mk.injEq] at run
+          obtain ⟨rfl, rfl⟩ := run
+          refine ⟨target, ?_, ?_⟩
+          · simp only [evaluate, ← locals, ← refs, ← code, ← frameSizes, read, th, found, typeError]
+          · exact ⟨locals, localsSize, stack, stackMax, frameSizes, global, handlerEq, refs, clock,
+              code, ffi, space, tstamps, limits, safeFlag, peak⟩
+        | some entry =>
+          obtain ⟨args, body, size⟩ := entry
+          by_cases zero : state.clock = 0
+          · simp only [evaluate, read, th, found] at run
+            rw [if_pos zero] at run
+            simp only [timeoutError, Prod.mk.injEq] at run
+            obtain ⟨rfl, rfl⟩ := run
+            refine ⟨{ target with stack := [], locals := .ln }, ?_, ?_⟩
+            · simp only [evaluate, ← locals, ← refs, ← code, ← frameSizes, read, th, found]
+              rw [← clock]
+              rw [if_pos zero]
+              simp only [timeoutError]
+            · exact stackClear_agree state target
+                ⟨locals, localsSize, stack, stackMax, frameSizes, global, handlerEq, refs, clock,
+                  code, ffi, space, tstamps, limits, safeFlag, peak⟩
+          · let called := callEnv args size (decClock state)
+            have clockLt : called.clock < state.clock := by
+              simp [called, callEnv, decClock]
+              omega
+            let targetCalled := callEnv args size (decClock target)
+            have agreeCalled : ccCoOnlyDiff called targetCalled := by
+              simp only [called, targetCalled]
+              exact callEnv_agree state target args size
+                ⟨locals, localsSize, stack, stackMax, frameSizes, global, handlerEq, refs, clock,
+                  code, ffi, space, tstamps, limits, safeFlag, peak⟩
+            generalize bodyRun : evaluate body called = res
+            obtain ⟨outcome, last⟩ := res
+            simp only [evaluate, read, th, found] at run
+            rw [if_neg zero] at run
+            rw [bodyRun] at run
+            cases outcome with
+            | none =>
+              simp only [typeError, Prod.mk.injEq] at run
+              obtain ⟨rfl, rfl⟩ := run
+              obtain ⟨t1, tRun, tAgree⟩ := bodyIH body called clockLt C' targetCalled none last
+                bodyRun safe agreeCalled
+              refine ⟨t1, ?_, tAgree⟩
+              simp only [evaluate, ← locals, ← refs, ← code, ← frameSizes, read, th, found]
+              rw [← clock]
+              rw [if_neg zero]
+              simp only [targetCalled, tRun, typeError]
+            | some value =>
+              simp only [Prod.mk.injEq] at run
+              obtain ⟨rfl, rfl⟩ := run
+              obtain ⟨t1, tRun, tAgree⟩ := bodyIH body called clockLt C' targetCalled
+                (some value) last bodyRun safe agreeCalled
+              refine ⟨t1, ?_, tAgree⟩
+              simp only [evaluate, ← locals, ← refs, ← code, ← frameSizes, read, th, found]
+              rw [← clock]
+              rw [if_neg zero]
+              simp only [targetCalled, tRun]
+private theorem ccCoOnlyDiffAt_returningForce {C F : Type} (dest : Nat) (live : NumSet)
+    (label src : Nat) (state : State C F)
+    (bodyIH : ∀ (body : DataLang.Prog) (called : State C F),
+      called.clock < state.clock → CcCoOnlyDiffAt body called) :
+    CcCoOnlyDiffAt (.force (some (dest, live)) label src) state := by
+  intro C' target result next run safe diff
+  obtain ⟨locals, localsSize, stack, stackMax, frameSizes, global, handlerEq, refs, clock, code,
+    ffi, space, tstamps, limits, safeFlag, peak⟩ := diff
+  cases read : getVar src state.locals with
+  | none =>
+    simp only [evaluate, read, typeError, Prod.mk.injEq] at run
+    obtain ⟨rfl, rfl⟩ := run
+    refine ⟨target, ?_, ?_⟩
+    · simp only [evaluate, ← locals, read, typeError]
+    · exact ⟨locals, localsSize, stack, stackMax, frameSizes, global, handlerEq, refs, clock, code,
+        ffi, space, tstamps, limits, safeFlag, peak⟩
+  | some thunk =>
+    cases th : destThunk thunk state.refs with
+    | badRef =>
+      simp only [evaluate, read, th, typeError, Prod.mk.injEq] at run
+      obtain ⟨rfl, rfl⟩ := run
+      refine ⟨target, ?_, ?_⟩
+      · simp only [evaluate, ← locals, ← refs, read, th, typeError]
+      · exact ⟨locals, localsSize, stack, stackMax, frameSizes, global, handlerEq, refs, clock,
+          code, ffi, space, tstamps, limits, safeFlag, peak⟩
+    | notThunk =>
+      simp only [evaluate, read, th, typeError, Prod.mk.injEq] at run
+      obtain ⟨rfl, rfl⟩ := run
+      refine ⟨target, ?_, ?_⟩
+      · simp only [evaluate, ← locals, ← refs, read, th, typeError]
+      · exact ⟨locals, localsSize, stack, stackMax, frameSizes, global, handlerEq, refs, clock,
+          code, ffi, space, tstamps, limits, safeFlag, peak⟩
+    | isThunk mode value =>
+      cases mode with
+      | evaluated =>
+        cases cut : cutEnv live state.locals with
+        | none =>
+          simp only [evaluate, read, th, cut, typeError, Prod.mk.injEq] at run
+          obtain ⟨rfl, rfl⟩ := run
+          refine ⟨target, ?_, ?_⟩
+          · simp only [evaluate, ← locals, ← refs, read, th, cut, typeError]
+          · exact ⟨locals, localsSize, stack, stackMax, frameSizes, global, handlerEq, refs, clock,
+              code, ffi, space, tstamps, limits, safeFlag, peak⟩
+        | some env =>
+          simp only [evaluate, read, th, cut, Prod.mk.injEq] at run
+          obtain ⟨rfl, rfl⟩ := run
+          have tCut : cutEnv live target.locals = some env := by
+            rw [← locals]
+            exact cut
+          refine ⟨setVar dest value { target with locals := env }, ?_, ?_⟩
+          · simp only [evaluate, ← locals, ← refs, read, th, cut, setVar]
+          · exact setVar_agree { state with locals := env } { target with locals := env } dest value
+              (localsUpdate_agree state target env
+                ⟨locals, localsSize, stack, stackMax, frameSizes, global, handlerEq, refs, clock,
+                  code, ffi, space, tstamps, limits, safeFlag, peak⟩)
+      | notEvaluated =>
+        cases found : findCode (some label) [thunk, value] state.code state.stackFrameSizes with
+        | none =>
+          simp only [evaluate, read, th, found, typeError, Prod.mk.injEq] at run
+          obtain ⟨rfl, rfl⟩ := run
+          refine ⟨target, ?_, ?_⟩
+          · simp only [evaluate, ← locals, ← refs, ← code, ← frameSizes, read, th, found, typeError]
+          · exact ⟨locals, localsSize, stack, stackMax, frameSizes, global, handlerEq, refs, clock,
+              code, ffi, space, tstamps, limits, safeFlag, peak⟩
+        | some entry =>
+          obtain ⟨args, body, size⟩ := entry
+          cases cut : cutEnv live state.locals with
+          | none =>
+            simp only [evaluate, read, th, found, cut, typeError, Prod.mk.injEq] at run
+            obtain ⟨rfl, rfl⟩ := run
+            refine ⟨target, ?_, ?_⟩
+            · simp only [evaluate, ← locals, ← refs, ← code, ← frameSizes, read, th, found, cut,
+                typeError]
+            · exact ⟨locals, localsSize, stack, stackMax, frameSizes, global, handlerEq, refs,
+                clock, code, ffi, space, tstamps, limits, safeFlag, peak⟩
+          | some env =>
+            let callState := callEnv args size (pushEnv env false (decClock state))
+            let targetCallState := callEnv args size (pushEnv env false (decClock target))
+            have agreeCall : ccCoOnlyDiff callState targetCallState := by
+              simp only [callState, targetCallState]
+              exact callEnvPush_agree state target args size env false
+                ⟨locals, localsSize, stack, stackMax, frameSizes, global, handlerEq, refs, clock,
+                  code, ffi, space, tstamps, limits, safeFlag, peak⟩
+            by_cases zero : state.clock = 0
+            · simp only [evaluate, read, th, found, cut] at run
+              rw [if_pos zero] at run
+              simp only [timeoutError, Prod.mk.injEq] at run
+              obtain ⟨rfl, rfl⟩ := run
+              refine ⟨{ targetCallState with stack := [], locals := .ln }, ?_, ?_⟩
+              · simp only [evaluate, targetCallState, ← locals]
+                rw [cut]
+                simp only [← refs, ← code, ← frameSizes, read, th, found]
+                rw [← clock]
+                rw [if_pos zero]
+                simp only [timeoutError]
+              · exact stackClear_agree callState targetCallState agreeCall
+            · have clockLt : callState.clock < state.clock := by
+                simp [callState, callEnv, pushEnv, decClock]
+                omega
+              cases called : fixClock callState (evaluate body callState) with
+              | mk outcome last =>
+                have bodyRun : evaluate body callState = (outcome, last) := by
+                  simpa [fixClock_evaluate] using called
+                simp only [callState] at called bodyRun
+                simp only [bodyRun] at called
+                simp only [evaluate, read, th, found, cut] at run
+                rw [if_neg zero] at run
+                simp only [bodyRun, called] at run
+                cases outcome with
+                | none =>
+                  simp only [typeError, Prod.mk.injEq] at run
+                  obtain ⟨rfl, rfl⟩ := run
+                  obtain ⟨t1, tRun, tAgree⟩ := bodyIH body callState clockLt C' targetCallState none
+                    last bodyRun safe agreeCall
+                  have clampedT : fixClock targetCallState (evaluate body targetCallState) =
+                      (none, t1) := by
+                    rw [fixClock_evaluate, tRun]
+                  refine ⟨t1, ?_, tAgree⟩
+                  simp only [evaluate, ← locals, cut, ← refs, ← code, ← frameSizes, read, th,
+                    found]
+                  rw [← clock]
+                  rw [if_neg zero]
+                  simp only [targetCallState, clampedT, typeError]
+                | some stopped =>
+                  cases stopped with
+                  | err error =>
+                    simp only [Prod.mk.injEq] at run
+                    obtain ⟨rfl, rfl⟩ := run
+                    obtain ⟨t1, tRun, tAgree⟩ := bodyIH body callState clockLt C' targetCallState
+                      (some (.err error)) last bodyRun safe agreeCall
+                    have clampedT : fixClock targetCallState (evaluate body targetCallState) =
+                        (some (.err error), t1) := by
+                      rw [fixClock_evaluate, tRun]
+                    refine ⟨t1, ?_, tAgree⟩
+                    simp only [evaluate, ← locals, cut, ← refs, ← code, ← frameSizes, read, th,
+                      found]
+                    rw [← clock]
+                    rw [if_neg zero]
+                    simp only [targetCallState, clampedT]
+                  | val values =>
+                    cases values with
+                    | nil =>
+                      simp only [typeError, Prod.mk.injEq] at run
+                      obtain ⟨rfl, rfl⟩ := run
+                      obtain ⟨t1, tRun, tAgree⟩ := bodyIH body callState clockLt C'
+                        targetCallState (some (.val [])) last bodyRun safe agreeCall
+                      have clampedT : fixClock targetCallState (evaluate body targetCallState) =
+                          (some (.val []), t1) := by
+                        rw [fixClock_evaluate, tRun]
+                      refine ⟨t1, ?_, tAgree⟩
+                      simp only [evaluate, ← locals, cut, ← refs, ← code, ← frameSizes, read, th,
+                        found]
+                      rw [← clock]
+                      rw [if_neg zero]
+                      simp only [targetCallState, clampedT, typeError]
+                    | cons head tail =>
+                      cases tail with
+                      | cons second rest =>
+                        simp only [typeError, Prod.mk.injEq] at run
+                        obtain ⟨rfl, rfl⟩ := run
+                        obtain ⟨t1, tRun, tAgree⟩ := bodyIH body callState clockLt C'
+                          targetCallState (some (.val (head :: second :: rest))) last bodyRun safe
+                          agreeCall
+                        have clampedT : fixClock targetCallState (evaluate body targetCallState) =
+                            (some (.val (head :: second :: rest)), t1) := by
+                          rw [fixClock_evaluate, tRun]
+                        refine ⟨t1, ?_, tAgree⟩
+                        simp only [evaluate, ← locals, cut, ← refs, ← code, ← frameSizes, read,
+                          th, found]
+                        rw [← clock]
+                        rw [if_neg zero]
+                        simp only [targetCallState, clampedT, typeError]
+                      | nil =>
+                        cases pop : popEnv last with
+                        | none =>
+                          simp only [pop, typeError, Prod.mk.injEq] at run
+                          obtain ⟨rfl, rfl⟩ := run
+                          obtain ⟨t1, tRun, tAgree⟩ := bodyIH body callState clockLt C'
+                            targetCallState (some (.val [head])) last bodyRun safe agreeCall
+                          have clampedT : fixClock targetCallState (evaluate body targetCallState) =
+                              (some (.val [head]), t1) := by
+                            rw [fixClock_evaluate, tRun]
+                          have tPop : popEnv t1 = none := popEnv_none_of_agree last t1 tAgree pop
+                          refine ⟨t1, ?_, tAgree⟩
+                          simp only [evaluate, ← locals, cut, ← refs, ← code, ← frameSizes, read,
+                            th, found]
+                          rw [← clock]
+                          rw [if_neg zero]
+                          simp only [targetCallState, clampedT, tPop, typeError]
+                        | some popped =>
+                          simp only [pop, Prod.mk.injEq] at run
+                          obtain ⟨rfl, rfl⟩ := run
+                          have nextSafe : popped.safeForSpace = true := by
+                            rw [setVar_safeForSpace] at safe
+                            exact safe
+                          have lastSafe : last.safeForSpace = true := by
+                            rw [popEnv_safeForSpace last popped pop] at nextSafe
+                            exact nextSafe
+                          obtain ⟨t1, tRun, tAgree⟩ := bodyIH body callState clockLt C'
+                            targetCallState (some (.val [head])) last bodyRun lastSafe agreeCall
+                          have clampedT : fixClock targetCallState (evaluate body targetCallState) =
+                              (some (.val [head]), t1) := by
+                            rw [fixClock_evaluate, tRun]
+                          obtain ⟨t2, tPop, agreePopped⟩ := popEnv_ccCoOnlyDiff last t1 popped
+                            ⟨tAgree, pop⟩
+                          refine ⟨setVar dest head t2, ?_, ?_⟩
+                          · simp only [evaluate, ← locals, cut, ← refs, ← code, ← frameSizes, read,
+                              th, found]
+                            rw [← clock]
+                            rw [if_neg zero]
+                            simp only [targetCallState, clampedT, tPop, setVar]
+                          · exact setVar_agree popped t2 dest head agreePopped
+
+private theorem ccCoOnlyDiffAt_tailCall {C F : Type} (dest : Option Nat) (names : List Nat)
+    (handler : Option (Nat × DataLang.Prog)) (state : State C F)
+    (bodyIH : ∀ (body : DataLang.Prog) (called : State C F),
+      called.clock < state.clock → CcCoOnlyDiffAt body called) :
+    CcCoOnlyDiffAt (.call none dest names handler) state := by
+  intro C' target result next run safe diff
+  obtain ⟨locals, localsSize, stack, stackMax, frameSizes, global, handlerEq, refs, clock, code,
+    ffi, space, tstamps, limits, safeFlag, peak⟩ := diff
+  cases read : getVars names state.locals with
+  | none =>
+    simp only [evaluate, read, typeError, Prod.mk.injEq] at run
+    obtain ⟨rfl, rfl⟩ := run
+    refine ⟨target, ?_, ?_⟩
+    · simp only [evaluate, ← locals, read, typeError]
+    · exact ⟨locals, localsSize, stack, stackMax, frameSizes, global, handlerEq, refs, clock, code,
+        ffi, space, tstamps, limits, safeFlag, peak⟩
+  | some values =>
+    cases found : findCode dest values state.code state.stackFrameSizes with
+    | none =>
+      simp only [evaluate, read, found, typeError, Prod.mk.injEq] at run
+      obtain ⟨rfl, rfl⟩ := run
+      refine ⟨target, ?_, ?_⟩
+      · simp only [evaluate, ← locals, ← code, ← frameSizes, read, found, typeError]
+      · exact ⟨locals, localsSize, stack, stackMax, frameSizes, global, handlerEq, refs, clock,
+          code, ffi, space, tstamps, limits, safeFlag, peak⟩
+    | some entry =>
+      obtain ⟨args, body, size⟩ := entry
+      cases handler with
+      | some h =>
+        obtain ⟨hname, hbody⟩ := h
+        simp [evaluate, read, found] at run
+        obtain ⟨rfl, rfl⟩ := run
+        refine ⟨target, ?_, ?_⟩
+        · simp [evaluate, ← locals, ← code, ← frameSizes, read, found]
+        · exact ⟨locals, localsSize, stack, stackMax, frameSizes, global, handlerEq, refs, clock,
+            code, ffi, space, tstamps, limits, safeFlag, peak⟩
+      | none =>
+        by_cases zero : state.clock = 0
+        · simp [evaluate, read, found, zero] at run
+          obtain ⟨rfl, rfl⟩ := run
+          refine ⟨flushState true target, ?_, ?_⟩
+          · simp [evaluate, ← locals, ← code, ← frameSizes, read, found, ← clock, zero]
+          · exact flushState_agree state target true
+              ⟨locals, localsSize, stack, stackMax, frameSizes, global, handlerEq, refs, clock,
+                code, ffi, space, tstamps, limits, safeFlag, peak⟩
+        · let called := callEnv args size (decClock state)
+          have clockLt : called.clock < state.clock := by
+            simp [called, callEnv, decClock]
+            omega
+          let targetCalled := callEnv args size (decClock target)
+          have agreeCalled : ccCoOnlyDiff called targetCalled := by
+            simp only [called, targetCalled]
+            exact callEnv_agree state target args size
+              ⟨locals, localsSize, stack, stackMax, frameSizes, global, handlerEq, refs, clock,
+                code, ffi, space, tstamps, limits, safeFlag, peak⟩
+          cases calledRun : evaluate body called with
+          | mk outcome last =>
+            simp only [called] at calledRun
+            simp [evaluate, read, found, zero] at run
+            simp only [calledRun] at run
+            cases outcome with
+            | none =>
+              simp only [Prod.mk.injEq] at run
+              obtain ⟨rfl, rfl⟩ := run
+              obtain ⟨t1, tRun, tAgree⟩ := bodyIH body called clockLt C' targetCalled none last
+                calledRun safe agreeCalled
+              refine ⟨t1, ?_, tAgree⟩
+              simp [evaluate, ← locals, ← code, ← frameSizes, read, found, ← clock, zero,
+                targetCalled, tRun, typeError]
+            | some value =>
+              simp only [Prod.mk.injEq] at run
+              obtain ⟨rfl, rfl⟩ := run
+              obtain ⟨t1, tRun, tAgree⟩ := bodyIH body called clockLt C' targetCalled
+                (some value) last calledRun safe agreeCalled
+              refine ⟨t1, ?_, tAgree⟩
+              simp [evaluate, ← locals, ← code, ← frameSizes, read, found, ← clock, zero,
+                targetCalled, tRun]
 
 end Flapjack.Compiler.Backend.DataProps
