@@ -138430,6 +138430,12 @@
   "reviewer": "Independent typed source review confirms all three ordered original premises and full well-formedness of the equality-updated map. The proof uses the original no-cycles, update-path and normalization dependency results, with no added invariant."
 },
 {
+  "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/unifDefScript.sml", "hol_name": "vwalk_FDOM",
+  "lean_path": "Flapjack/HOL/Unification/UnifDef.lean", "lean_name": "vwalkFdom",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["s"],
+  "reviewer": "Independent typed source review confirms the generic term carrier, both ordered premises, each disjunct and conjunction, equality directions, and the existential endpoint. The canonical substitution map has a premise-free codec witness; the walker's off-well-formedness choice is irrelevant under the original premise."
+},
+{
   "hol_path": "HOL/src/transfer/examples/fmspScript.sml", "hol_name": "sp2fm_thm",
   "lean_path": "Flapjack/HOL/Transfer/Fmsp/Operations.lean", "lean_name": "sp2fmThm",
   "statement_status": "reviewed_fmap_as_finite_support_result_observations", "fmap_as_finite_support_result_observations": ["Flapjack.HOL.Transfer.Fmsp.sp2fm", "Flapjack.HolFiniteMapExact.holEmpty"],

@@ -24,6 +24,7 @@ val _ = show "wfs_SUBMAP_typed" substTheory.wfs_SUBMAP;
 val _ = show "wfs_no_cycles_typed" substTheory.wfs_no_cycles;
 val _ = show "TC_vR_update_typed" unifDefTheory.TC_vR_update;
 val _ = show "wfs_extend_typed" unifDefTheory.wfs_extend;
+val _ = show "vwalk_FDOM_typed" unifDefTheory.vwalk_FDOM;
 val _ = show "TC_vR_vars_walkstar_typed" walkstarTheory.TC_vR_vars_walkstar;
 val _ = show "NOT_FDOM_walkstar_typed" walkstarTheory.NOT_FDOM_walkstar;
 val _ = show "oc_rules_typed" walkstarTheory.oc_rules;

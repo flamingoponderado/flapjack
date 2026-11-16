@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.HOL.Unification.Walk
+public import Flapjack.HOL.Unification.Walk.ToVar
 public import Flapjack.HOL.Unification.Subst.NoCycles
 public import Flapjack.HOL.Unification.Walkstar.Dependency
 public import Mathlib.Logic.Relation
@@ -74,5 +75,54 @@ theorem wfsExtend {α : Type} (s : HolFiniteMapExact Nat (Term α)) (v : Nat) (t
     · subst u
       exact notvars (notFdomWalkstar s v hw t absent htu)
     · exact notvars (tcVRVarsWalkstar s t u v ⟨hw, htu, path, absent⟩)
+
+/-- The substitution survives the canonical finite-map codec roundtrip. -/
+theorem holFmapAsFiniteSupportParamWitness_vwalkFdom_s {α : Type}
+    (s : HolFiniteMapExact Nat (Term α)) (key : Nat) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad s)).lookup key = s.lookup key ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad s)).finiteSupport = s.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad s) = s :=
+  holFmapAsFiniteSupportParamWitness_vR_subst s key
+
+@[hol "HOL/examples/algorithms/unification/triangular/first-order/unifDefScript.sml" "vwalk_FDOM"
+  (fmap_as_finite_support_parameters := [s])]
+theorem vwalkFdom {α : Type} (s : HolFiniteMapExact Nat (Term α)) (v : Nat) (t : Term α)
+    (hw : wfs s) (result : vwalk s v = t) :
+    (v ∉ s.domain ∧ t = .var v) ∨
+    (v ∈ s.domain ∧ t ≠ .var v ∧
+      ∃ u, vwalk s v = vwalk s u ∧ s.lookup u = some t) := by
+  have endpoint : ∀ v, v ∈ s.domain →
+      ∃ u, vwalk s v = vwalk s u ∧ s.lookup u = some (vwalk s v) := by
+    intro v
+    induction v using hw.induction with
+    | h v ih =>
+      intro present
+      cases found : s.lookup v with
+      | none => exact False.elim (present found)
+      | some term =>
+        cases term with
+        | var n =>
+          have step : vwalk s v = vwalk s n := by rw [vwalkEq s hw v, found]
+          by_cases np : n ∈ s.domain
+          · obtain ⟨u, heq, hu⟩ := ih n (by simp [vR, found, vars]) np
+            exact ⟨u, step.trans heq, by simpa [step] using hu⟩
+          · have last := notFdomVwalk s n ⟨hw, np⟩
+            refine ⟨v, rfl, ?_⟩
+            simpa [step, last] using found
+        | pair l r =>
+          refine ⟨v, rfl, ?_⟩
+          simp [vwalkEq s hw v, found]
+        | const c =>
+          refine ⟨v, rfl, ?_⟩
+          simp [vwalkEq s hw v, found]
+  by_cases present : v ∈ s.domain
+  · right
+    refine ⟨present, ?_, ?_⟩
+    · intro eq
+      have absent := vwalkToVar s hw v v (result.trans eq)
+      exact absent present
+    · obtain ⟨u, heq, hu⟩ := endpoint v present
+      exact ⟨u, heq, by simpa [result] using hu⟩
+  · exact Or.inl ⟨present, result.symm.trans (notFdomVwalk s v ⟨hw, present⟩)⟩
 
 end Flapjack.HOL.Unification

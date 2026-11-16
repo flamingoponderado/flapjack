@@ -14,6 +14,7 @@ wfs_SUBMAP_typed=wfs (sx :α subst) ∧ (s :α subst) ⊑ sx ⇒ wfs s
 wfs_no_cycles_typed=wfs (s :α subst) ⇔ ∀(v :num). ¬(vR s)⁺ v v
 TC_vR_update_typed=∀(y :num) (x :num). (vR (s :α subst)⟨(v :num) ↦ (t :α term)⟩)⁺ y x ⇒ v ∉ FDOM s ⇒ (vR s)⁺ y x ∨ ∃(u :num). (vR s)꙳ v x ∧ u ∈ vars t ∧ (vR s)꙳ y u
 wfs_extend_typed=wfs (s :α subst) ∧ (v :num) ∉ FDOM s ∧ v ∉ vars (s ◁ (t :α term)) ⇒ wfs s⟨v ↦ t⟩
+vwalk_FDOM_typed=wfs (s :α subst) ⇒ vwalk s (v :num) = (t :α term) ⇒ v ∉ FDOM s ∧ t = (Var v :α term) ∨ v ∈ FDOM s ∧ t ≠ (Var v :α term) ∧ ∃(u :num). vwalk s v = vwalk s u ∧ FLOOKUP s u = SOME t
 TC_vR_vars_walkstar_typed=wfs (s :α subst) ∧ (u :num) ∈ vars (t :α term) ∧ (vR s)⁺ (v :num) u ∧ v ∉ FDOM s ⇒ v ∈ vars (s ◁ t)
 NOT_FDOM_walkstar_typed=wfs (s :α subst) ⇒ ∀(t :α term). (v :num) ∉ FDOM s ⇒ v ∈ vars t ⇒ v ∈ vars (s ◁ t)
 oc_rules_typed=∀(s :α subst). (∀(t :α term) (v :num). v ∈ vars t ∧ v ∉ FDOM s ⇒ oc s t v) ∧ ∀(t :α term) (v :num) (u :num) (t' :α term). u ∈ vars t ∧ vwalk s u = t' ∧ oc s t' v ⇒ oc s t v
