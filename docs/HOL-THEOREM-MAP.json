@@ -138700,6 +138700,30 @@
   "reviewer": "Compared the typed HOL source, soc_def and sparse-tree encoding: the original cwfs premise and existential over exactly the input list are retained. The occurrence model is used only under well-formedness; the observed sp2fm result uses the reviewed canonical finite-map representation."
 },
 {
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "isvars_def",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/WorklistVars.lean", "lean_name": "isvars",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed HOL source: both the empty-list and cons clauses use the same encoded-term variables and full recursive union."
+},
+{
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "FINITE_isvars",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/WorklistVars.lean", "lean_name": "finiteIsvars",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed HOL source: finiteness holds for the entire variable set of any inference-type list, with no extra hypothesis."
+},
+{
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "cplist_vars_def",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/WorklistVars.lean", "lean_name": "cplistVars",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed HOL source: each work item contributes the union of variables from both complete lists and the remaining worklist."
+},
+{
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "FINITE_cplist_vars",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/WorklistVars.lean", "lean_name": "finiteCplistVars",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed HOL source: finiteness holds for any complete worklist without extra assumptions."
+},
+{
   "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "kclkont",
   "lean_path": "Flapjack/Compiler/Inference/Unify.lean", "lean_name": "KclKont",
   "statement_status": "reviewed_exact",

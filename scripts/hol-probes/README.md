@@ -10487,6 +10487,8 @@ local encoding and list lemmas, the empty-substitution and submap theorems,
 inference substitution compatibility, and computational walker well-formedness.
 It also parses the full local `encode_unify_lemma` statement with inferred types;
 that capture does not replay the theorem's proof.
+The worklist-variable, bag-flattening and termination-relation declarations are
+captured with their inferred types as prerequisites for the executable unifier.
 Regenerate with
 `HOL_PROBE_ONLY=unify_encoding_probeScript.sml`. The capture is source-review
 evidence; it does not establish unifier equivalence.

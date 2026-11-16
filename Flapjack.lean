@@ -3801,6 +3801,7 @@ import Flapjack.Compiler.Inference.Unify.Occurs.Correctness
 import Flapjack.Compiler.Inference.Unify.Walkstar.Computational
 import Flapjack.Compiler.Inference.Unify.ComputationalWf.Insert
 import Flapjack.Compiler.Inference.Unify.ComputationalWf.Worklist
+import Flapjack.Compiler.Inference.Unify.WorklistVars
 import Flapjack.HOL.Unification.UnifDef.WellFounded
 import Flapjack.HOL.Unification.UnifDef.Tunify
 import Flapjack.Compiler.Inference.Unify.Occurs.Encoding
