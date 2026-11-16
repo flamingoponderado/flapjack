@@ -502,11 +502,6 @@ def inferExprFuel (fuel unifFuel : Nat) (env : Env) (e : AstHOL.Exp) (s : State)
   (inferExprWorker fuel unifFuel env e) s
 
 
-private def extendEnv (new old : Env) : Env :=
-  ⟨nsAppend new.infV old.infV, nsAppend new.infC old.infC, nsAppend new.infT old.infT⟩
-
-private def liftEnv (name : MlString) (env : Env) : Env :=
-  ⟨nsLift name env.infV, nsLift name env.infC, nsLift name env.infT⟩
 
 private def applyFull (ts : List InferT) : M (List InferT) := do
   let s ← get
@@ -589,10 +584,10 @@ private def inferDeclWorker : Nat → Nat → Env → Dec → M Env
       return { emptyEnv with infC := alistToNs [(name, ([], ts, 3))] }
     | .dmod name ds =>
       let env' ← inferDeclsWorker fuel unifFuel env ds
-      return liftEnv name env'
+      return liftIenv name env'
     | .dlocal ds body =>
       let env' ← inferDeclsWorker fuel unifFuel env ds
-      inferDeclsWorker fuel unifFuel (extendEnv env' env) body
+      inferDeclsWorker fuel unifFuel (extendDecIenv env' env) body
     | .denv _ => fail .envDeclaration
 
 private def inferDeclsWorker : Nat → Nat → Env → List Dec → M Env
@@ -600,8 +595,8 @@ private def inferDeclsWorker : Nat → Nat → Env → List Dec → M Env
   | _ + 1, _, _, [] => pure emptyEnv
   | fuel + 1, unifFuel, env, d :: ds => do
     let first ← inferDeclWorker fuel unifFuel env d
-    let rest ← inferDeclsWorker fuel unifFuel (extendEnv first env) ds
-    return extendEnv rest first
+    let rest ← inferDeclsWorker fuel unifFuel (extendDecIenv first env) ds
+    return extendDecIenv rest first
 end
 
 /-- Infer declarations with explicit bounds. Diagnostic messages and failure
@@ -614,6 +609,6 @@ def inferDeclsFuel (fuel unifFuel : Nat) (env : Env) (decls : List Dec) (state :
 primitive type environment and the first non-primitive type identifier. -/
 def inferProgramFuel (fuel unifFuel : Nat) (decls : List Dec) : Except Error Env := do
   let (env, _) ← inferDeclsFuel fuel unifFuel initConfig decls ⟨0, .ln, 15⟩
-  return extendEnv env initConfig
+  return extendDecIenv env initConfig
 
 end Flapjack.Compiler.Inference.Infer.Core

@@ -1,6 +1,7 @@
 (* Replay environment-conversion declarations and initialization facts from
    envRelScript.sml and repl_typesScript.sml without building those theories. *)
 load "inferPropsTheory";
+load "namespacePropsTheory";
 load "primTypesTheory";
 load "preamble";
 open HolKernel Parse boolLib bossLib;
@@ -19,6 +20,23 @@ val probe_tenv_to_ienv_def = Define `
        inf_c := tenv.c;
        inf_t := tenv.t |>`;
 val _ = show "tenv_to_ienv_replay_typed" probe_tenv_to_ienv_def;
+
+val _ = show "lift_ienv_typed" inferTheory.lift_ienv_def;
+val _ = show "extend_dec_ienv_typed" inferTheory.extend_dec_ienv_def;
+
+val tenv_to_ienv_lift_replay = Q.prove(
+  `!mn tenv. probe_tenv_to_ienv (tenvLift mn tenv) =
+     lift_ienv mn (probe_tenv_to_ienv tenv)`,
+  rw [probe_tenv_to_ienv_def, lift_ienv_def, tenvLift_def,
+      namespacePropsTheory.nsLift_nsMap]);
+val _ = show "tenv_to_ienv_lift_replay_typed" tenv_to_ienv_lift_replay;
+
+val tenv_to_ienv_extend_replay = Q.prove(
+  `!tenv1 tenv2. probe_tenv_to_ienv (extend_dec_tenv tenv2 tenv1) =
+     extend_dec_ienv (probe_tenv_to_ienv tenv2) (probe_tenv_to_ienv tenv1)`,
+  rw [probe_tenv_to_ienv_def, extend_dec_tenv_def, extend_dec_ienv_def,
+      namespacePropsTheory.nsMap_nsAppend]);
+val _ = show "tenv_to_ienv_extend_replay_typed" tenv_to_ienv_extend_replay;
 
 val lookup_varE_empty_replay = Q.prove(
   `!x. lookup_varE x Empty = NONE`,

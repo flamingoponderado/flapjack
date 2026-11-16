@@ -137941,6 +137941,38 @@
     "reviewer": "Source comparison with ienv_ok_def_typed in infer_props_tids_probe.out: inference values, semantic constructors and semantic abbreviations are checked in the original order with the same input uvars."
   },
   {
+  "hol_path": "cakeml/compiler/inference/inferScript.sml",
+  "hol_name": "extend_dec_ienv_def",
+  "lean_path": "Flapjack/Compiler/Inference/Infer.lean",
+  "lean_name": "extendDecIenv",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared HOL source and extend_dec_ienv_typed: each new inference namespace is appended before the old namespace, with all three fields preserved."
+},
+{
+  "hol_path": "cakeml/compiler/inference/inferScript.sml",
+  "hol_name": "lift_ienv_def",
+  "lean_path": "Flapjack/Compiler/Inference/Infer.lean",
+  "lean_name": "liftIenv",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared HOL source and lift_ienv_typed: each of the three inference namespaces is lifted under the same mlstring module name."
+},
+{
+  "hol_path": "cakeml/compiler/inference/proofs/envRelScript.sml",
+  "hol_name": "tenv_to_ienv_lift",
+  "lean_path": "Flapjack/Compiler/Inference/EnvRel.lean",
+  "lean_name": "tenvToIenvLift",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared HOL source and tenv_to_ienv_lift_replay_typed: converting a lifted declarative environment equals lifting its converted inference environment, for arbitrary module and environment. The replay reconstructs the source conversion definition."
+},
+{
+  "hol_path": "cakeml/compiler/inference/proofs/envRelScript.sml",
+  "hol_name": "tenv_to_ienv_extend",
+  "lean_path": "Flapjack/Compiler/Inference/EnvRel.lean",
+  "lean_name": "tenvToIenvExtend",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared HOL source and tenv_to_ienv_extend_replay_typed: the original order of both environment inputs and namespace extension is preserved by conversion. The replay reconstructs the source conversion definition."
+},
+{
     "hol_path": "cakeml/compiler/inference/proofs/envRelScript.sml",
     "hol_name": "tenv_to_ienv_def",
     "lean_path": "Flapjack/Compiler/Inference/EnvRel.lean",

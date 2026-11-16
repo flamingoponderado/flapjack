@@ -81,6 +81,20 @@ def emptyEnv : Env := ⟨Flapjack.NamespaceHOL.nsEmpty, Flapjack.NamespaceHOL.ns
   Flapjack.NamespaceHOL.nsEmpty⟩
 
 
+/-- Extend an inference environment with newly inferred declarations. -/
+@[hol "cakeml/compiler/inference/inferScript.sml" "extend_dec_ienv_def"]
+def extendDecIenv (new old : Env) : Env :=
+  ⟨Flapjack.NamespaceHOL.nsAppend new.infV old.infV,
+    Flapjack.NamespaceHOL.nsAppend new.infC old.infC,
+    Flapjack.NamespaceHOL.nsAppend new.infT old.infT⟩
+
+/-- Lift an inference environment under a module name. -/
+@[hol "cakeml/compiler/inference/inferScript.sml" "lift_ienv_def"]
+def liftIenv (name : MlString) (env : Env) : Env :=
+  ⟨Flapjack.NamespaceHOL.nsLift name env.infV,
+    Flapjack.NamespaceHOL.nsLift name env.infC,
+    Flapjack.NamespaceHOL.nsLift name env.infT⟩
+
 /-- Initial CakeML inference namespaces: HOL's `init_config_def` over the
 reviewed primitive type environment. -/
 @[hol "cakeml/compiler/inference/inferScript.sml" "init_config_def"]
