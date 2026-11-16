@@ -1,5 +1,12 @@
 [
 {
+  "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml", "hol_name": "force_thunk_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean", "lean_name": "forceThunk",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Independent comparison with force_thunk_typed confirms all header, return and call branches and preserves independent HOL word and sparse-tree payload types. The executable traversal uses this definition; concrete original tail, returning and bad-header results are captured in cake_word_array_probe.out."
+ },
+{
   "hol_path": "cakeml/compiler/backend/backendScript.sml", "hol_name": "to_flat_def",
   "lean_path": "Flapjack/Compiler/Backend/Backend/SourcePipeline.lean", "lean_name": "toFlat",
   "statement_status": "reviewed_exact", "reviewer": "Independent comparison with to_flat_typed confirms pass order, source configuration update, input and result carriers."

@@ -10932,3 +10932,7 @@ assembler and program word types; the equation instantiates them to one type.
 `backend_source_pipeline_probe.out` captures the inferred source-to-flat,
 closure, BVL, BVI, and data pipeline definitions, including their intermediate
 configuration updates, code and name carriers.
+
+`data_word_force_typed_probe.out` captures the complete thunk-force compilation
+equation and its independent sparse-tree payload type. Concrete tail-call,
+returning-call, and bad-header cases are in `cake_word_array_probe.out`.

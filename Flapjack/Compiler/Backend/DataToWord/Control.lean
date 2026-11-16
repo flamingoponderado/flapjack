@@ -685,6 +685,33 @@ def assignWordToInt {width : Nat} [NeZero width] (conf : Config) (_secn l dest :
                   .ite .equal 1 (.imm 0) (.assign (adjustVar dest) (shiftN .lsl (.var 11) 2))
                     (writeWord32On32 conf header1 dest 11)])], l)
 
+/-- Compile a thunk force, including the source header failure and tail-call
+    cases. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "force_thunk_def"
+  (words_as_type_indexed_bitvec)]
+def forceThunk {width : Nat} [NeZero width] {α : Type} (conf : Config) (secn l : Nat)
+    (ret : Option (Nat × Spt α)) (loc v : Nat) : WordLangProgHOL (BitVec width) × Nat :=
+  match encodeHeader (width := width) conf 14 1 with
+  | none => (giveUp, l)
+  | some _ =>
+      let v := adjustVar v
+      let unchanged := match ret with
+        | none => WordLangProgHOL.return 0 [v]
+        | some (dest, _) => .assign (adjustVar dest) (.var v)
+      let loaded := WordLangExpHOL.load (.op .add [.var 1, .const ((wordSemBytesInWord : BitVec width))])
+      let evaluated := match ret with
+        | none => wordListSeq [.assign 1 loaded, .return 0 [1]]
+        | some (dest, _) => .assign (adjustVar dest) loaded
+      let call := match ret with
+        | none => WordLangProgHOL.call none (some loc) [0, v, 5] none
+        | some (dest, names) => .call (some ([adjustVar dest], adjustSets names, .skip, secn, l))
+            (some loc) [v, 5] none
+      (.ite .test v (.imm 1) unchanged (wordListSeq [
+        .assign 1 (realAddr conf v),
+        .assign 3 (.op .and [.load (.var 1), .const 60]),
+        .ite .equal 3 (.imm 56) evaluated
+          (.ite .notEqual 3 (.imm 24) unchanged (wordListSeq [.assign 5 loaded, call]))]), l + 1)
+
 /-- Flapjack's option-valued traversal. Its totality is proved separately;
 source-level correspondence with HOL's `comp` remains to be reviewed. -/
 def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
@@ -1251,27 +1278,7 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
   -- HOL's final assignment case returns Skip for operations that should
   -- have been lowered by earlier passes, including AllocGlobal and Constant.
   | l, .assign _ _ _ _ => some (.skip, l)
-  | l, .force ret loc v =>
-      match encodeHeader (width := width) conf 14 1 with
-      | none => some (giveUp, l)
-      | some _ =>
-          let v := adjustVar v
-          let unchanged := match ret with
-            | none => WordLangProgHOL.return 0 [v]
-            | some (dest, _) => .assign (adjustVar dest) (.var v)
-          let loaded := WordLangExpHOL.load (.op .add [.var 1, .const ((wordSemBytesInWord : BitVec width))])
-          let evaluated := match ret with
-            | none => wordListSeq [.assign 1 loaded, .return 0 [1]]
-            | some (dest, _) => .assign (adjustVar dest) loaded
-          let call := match ret with
-            | none => WordLangProgHOL.call none (some loc) [0, v, 5] none
-            | some (dest, names) => .call (some ([adjustVar dest], adjustSets names, .skip, secn, l))
-                (some loc) [v, 5] none
-          some (.ite .test v (.imm 1) unchanged (wordListSeq [
-            .assign 1 (realAddr conf v),
-            .assign 3 (.op .and [.load (.var 1), .const 60]),
-            .ite .equal 3 (.imm 56) evaluated
-              (.ite .notEqual 3 (.imm 24) unchanged (wordListSeq [.assign 5 loaded, call]))]), l + 1)
+  | l, .force ret loc v => some (forceThunk conf secn l ret loc v)
   | l, .call none target args _ => some (.call none target (0 :: args.map adjustVar) none, l)
   | l, .call (some (ns, names)) target args none =>
       some (.call (some (ns.map adjustVar, adjustSets names, .skip, secn, l))
