@@ -144,3 +144,4 @@ val _ = emit "locals_ok_get_var_typed" "locals_ok_get_var";
 val _ = show "locals_ok_insert_typed"
   (prove(``!a b k (v:'a). locals_ok a b ==> locals_ok (insert k v a) (insert k v b)``,
     rw[locals_ok_def, sptreeTheory.lookup_insert] \\ every_case_tac \\ gvs[]));
+val _ = emit "find_code_upto_size_typed" "find_code_upto_size";

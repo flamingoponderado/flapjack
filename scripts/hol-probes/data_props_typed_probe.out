@@ -86,3 +86,4 @@ size_of_stack_eq_typed=size_of_stack ((Env (n :num option) (l :v sptree$num_map)
 locals_ok_IMP_typed=locals_ok (l1 :α sptree$num_map) (l2 :α sptree$num_map) ⇒ (domain l1 :num -> bool) ⊆ (domain l2 :num -> bool)
 locals_ok_get_var_typed=locals_ok (s :α sptree$num_map) (l :α sptree$num_map) ∧ (get_var (x :num) s :α option) = SOME (w :α) ⇒ (get_var x l :α option) = SOME w
 locals_ok_insert_typed=∀(a :α sptree$num_map) (b :α sptree$num_map) (k :num) (v :α). locals_ok a b ⇒ locals_ok (insert k v a :α sptree$num_map) (insert k v b :α sptree$num_map)
+find_code_upto_size_typed=(find_code (dest :num option) (x :v list) (code :(num # α) sptree$num_map) (sizes :β sptree$num_map) :(v list # α # β option) option) = (foo :(v list # α # β option) option) ⇒ ∃(other_size :γ option). (find_code dest x code (other_sizes :γ sptree$num_map) :(v list # α # γ option) option) = OPTION_MAP (λ((args :v list),(exp :α),(size :β option)). (args,exp,other_size)) foo

@@ -93,9 +93,9 @@ theorem domain_of_localsOk {α : Type} (source target : Spt α)
 /-- A successful single-variable read transports along the relation. -/
 @[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "locals_ok_get_var"]
 theorem getVar_of_localsOk {α : Type} (source target : Spt α) (name : Nat)
-    (value : α) (included : localsOk source target)
-    (read : DataSem.getVar name source = some value) :
+    (value : α) (premise : localsOk source target ∧ DataSem.getVar name source = some value) :
     DataSem.getVar name target = some value := by
+  obtain ⟨included, read⟩ := premise
   exact included name value read
 
 /-- Inserting the same binding into both environments preserves the relation. -/
