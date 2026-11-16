@@ -7,6 +7,12 @@ FINITE_varb_typed=FINITE_BAG (varb (t :α term))
 mlt1_def_typed=∀(r :α -> α -> bool) (b1 :α -> num) (b2 :α -> num). mlt1 r b1 b2 ⇔ FINITE_BAG b1 ∧ FINITE_BAG b2 ∧ ∃(e :α) (rep :α -> num) (res :α -> num). b1 = rep ⊎ res ∧ b2 = res ⊎ {|e|} ∧ ∀(e' :α). e' ⋲ rep ⇒ r e' e
 walkstarR_def_typed=∀(s :β subst). (walkstarR s :α term -> α term -> bool) = inv_image (mlt (vR s)⁺ LEX measure (pair_count :α term -> num)) (λ(t :α term). (varb t,t))
 walkstarR_trans_typed=walkstarR (s :α subst) (t1 :β term) (t2 :β term) ∧ walkstarR s t2 (t3 :β term) ⇒ walkstarR s t1 t3
+subterm_def_typed=(subterm :α term -> α term -> bool) = (λ(a :α term) (b :α term). (∃(t :α term). b = Pair a t) ∨ ∃(t :α term). b = Pair t a)⁺
+subterm_thm_typed=(subterm (t :α term) (Pair (u :α term) (v :α term)) ⇔ t = u ∨ t = v ∨ subterm t u ∨ subterm t v) ∧ (subterm t (Var (vnm :num) :α term) ⇔ F) ∧ (subterm t (Const (c :α)) ⇔ F)
+subterm_pair_count_typed=∀(t :α term) (u :α term). subterm t u ⇒ pair_count t < pair_count u
+subterm_REFL_typed=¬subterm (t :α term) t
+subterm_TRANS_typed=subterm (t :α term) (u :α term) ∧ subterm u (v :α term) ⇒ subterm t v
+MEM_subterm_encode_typed=∀(i :infer_t) (is :infer_t list). MEM i is ⇒ subterm (encode_infer_t i) (encode_infer_ts is)
 rangevars_def_typed=∀(s :α |-> β term). rangevars s = BIGUNION (IMAGE (vars :β term -> num -> bool) (FRANGE s))
 FINITE_rangevars_typed=FINITE (rangevars (s :α |-> β term))
 substvars_def_typed=∀(s :α subst). substvars s = FDOM s ∪ rangevars s

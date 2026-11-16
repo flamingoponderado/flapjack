@@ -138724,6 +138724,42 @@
   "reviewer": "Compared the typed HOL source: the complete variable-multiplicity bag of every generic first-order term is finite, with no additional assumptions."
 },
 {
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "subterm_def",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/Subterm.lean", "lean_name": "subterm",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed HOL source: the nonempty transitive closure uses both immediate pair-child edges with the same orientation and generic term carrier."
+},
+{
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "subterm_thm",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/Subterm.lean", "lean_name": "subtermThm",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed HOL source: all three conjuncts, the four pair cases and the false variable and constant cases are retained."
+},
+{
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "subterm_pair_count",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/Subterm.lean", "lean_name": "subtermPairCount",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed HOL source: the strict pair-count inequality holds for arbitrary generic terms related by subterm."
+},
+{
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "subterm_REFL",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/Subterm.lean", "lean_name": "subtermRefl",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed HOL source: the subterm relation is irreflexive on arbitrary generic terms."
+},
+{
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "subterm_TRANS",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/Subterm.lean", "lean_name": "subtermTrans",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed HOL source: the conjunction of the two subterm premises implies their transitive conclusion."
+},
+{
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "MEM_subterm_encode",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/Subterm.lean", "lean_name": "memSubtermEncode",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed HOL source: membership in the full inference-type list implies the corresponding encoded subterm relation, without additional premises."
+},
+{
   "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "walkstarR_trans",
   "lean_path": "Flapjack/Compiler/Inference/Unify/WorklistRelation.lean", "lean_name": "walkstarRTrans",
   "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["s"],

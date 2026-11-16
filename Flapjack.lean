@@ -3806,6 +3806,7 @@ import Flapjack.Compiler.Inference.Unify.WorklistVars.Normalized
 import Flapjack.HOL.Unification.Term.VarBag
 import Flapjack.Compiler.Inference.Unify.WorklistBag
 import Flapjack.Compiler.Inference.Unify.WorklistRelation
+import Flapjack.Compiler.Inference.Unify.Subterm
 import Flapjack.HOL.Unification.UnifDef.WellFounded
 import Flapjack.HOL.Unification.UnifDef.Tunify
 import Flapjack.Compiler.Inference.Unify.Occurs.Encoding
