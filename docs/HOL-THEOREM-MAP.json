@@ -138061,6 +138061,36 @@
   "reviewer": "Compared HOL source and deBruijn_subst_convert_replay_typed: the shared bound and arbitrary inference substitution, empty-uvar guards, both type and list conjuncts, and equality directions agree. The source-defined conversion's unspecified uvar clause is excluded by the original checks on the input types."
 },
 {
+  "hol_path": "cakeml/compiler/inference/proofs/inferSoundScript.sml", "hol_name": "set_ids_def",
+  "lean_path": "Flapjack/Compiler/Inference/InferSound.lean", "lean_name": "setIds",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared HOL source and set_ids_replay_typed: the set contains exactly natural identifiers m with n1 ≤ m and m < n2."
+},
+{
+  "hol_path": "cakeml/compiler/inference/proofs/inferSoundScript.sml", "hol_name": "set_ids_eq",
+  "lean_path": "Flapjack/Compiler/Inference/InferSound.lean", "lean_name": "setIdsEq",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the local HOL theorem and set_ids_eq_replay_typed: the same half-open identifier set equals the set of a length n2-n1 generated list with each index offset by n1."
+},
+{
+  "hol_path": "cakeml/compiler/inference/proofs/inferSoundScript.sml", "hol_name": "set_ids_same",
+  "lean_path": "Flapjack/Compiler/Inference/InferSound.lean", "lean_name": "setIdsSame",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared HOL source and set_ids_same_replay_typed: the half-open set with equal endpoints is empty, without an added premise."
+},
+{
+  "hol_path": "cakeml/compiler/inference/proofs/inferSoundScript.sml", "hol_name": "set_ids_eq_union",
+  "lean_path": "Flapjack/Compiler/Inference/InferSound.lean", "lean_name": "setIdsEqUnion",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared HOL source and set_ids_eq_union_replay_typed: the original x ≤ y and y ≤ z conjunction implies the full union identity with source endpoint order."
+},
+{
+  "hol_path": "cakeml/compiler/inference/proofs/inferSoundScript.sml", "hol_name": "set_ids_eq_union_eq",
+  "lean_path": "Flapjack/Compiler/Inference/InferSound.lean", "lean_name": "setIdsEqUnionEq",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared HOL source and set_ids_eq_union_eq_replay_typed: arbitrary set s and all three original conjunction premises imply the exact union identity."
+},
+{
   "hol_path": "cakeml/compiler/inference/proofs/envRelScript.sml", "hol_name": "env_rel_empty",
   "lean_path": "Flapjack/Compiler/Inference/EnvRel/Relation.lean", "lean_name": "envRelEmpty",
   "statement_status": "reviewed_fmap_as_finite_support_result_observations",

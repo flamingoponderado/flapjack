@@ -292,6 +292,29 @@ val _ = print_term (Parse.Term `probe_env_rel_complete FEMPTY ienv tenv Empty �
   probe_env_rel_complete FEMPTY ienv tenv (bind_tvar tvs Empty)`);
 val _ = print "\n";
 
+val probe_set_ids_def = Define `probe_set_ids n1 (n2:num) = {m | n1 ≤ m ∧ m < n2}`;
+val _ = show "set_ids_replay_typed" probe_set_ids_def;
+
+val set_ids_eq_replay = Q.prove(
+  `probe_set_ids n1 n2 = set (GENLIST (λx. x + n1) (n2-n1))`,
+  fs [probe_set_ids_def, EXTENSION, MEM_MAP, MEM_GENLIST] >>
+  rw [EQ_IMP_THM] >> qexists_tac `x-n1` >> fs []);
+val _ = show "set_ids_eq_replay_typed" set_ids_eq_replay;
+
+val set_ids_same_replay = Q.prove(`probe_set_ids x x = {}`,
+  rw [set_ids_eq_replay]);
+val _ = show "set_ids_same_replay_typed" set_ids_same_replay;
+
+val set_ids_eq_union_replay = Q.prove(
+  `x ≤ y ∧ y ≤ z ⇒ probe_set_ids x z = probe_set_ids x y ∪ probe_set_ids y z`,
+  fs [probe_set_ids_def, EXTENSION]);
+val _ = show "set_ids_eq_union_replay_typed" set_ids_eq_union_replay;
+
+val set_ids_eq_union_eq_replay = Q.prove(
+  `x ≤ y ∧ y ≤ z ∧ s = probe_set_ids y z ⇒ probe_set_ids x z = probe_set_ids x y ∪ s`,
+  fs [set_ids_eq_union_replay]);
+val _ = show "set_ids_eq_union_eq_replay_typed" set_ids_eq_union_eq_replay;
+
 val _ = print "env_rel_lift_statement_typed=";
 val _ = print_term (Parse.Term `!tenv ienv mn. probe_env_rel tenv ienv ⇒
   probe_env_rel (tenvLift mn tenv) (lift_ienv mn ienv)`);
