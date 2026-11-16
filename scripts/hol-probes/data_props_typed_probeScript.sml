@@ -148,3 +148,10 @@ val _ = emit "find_code_upto_size_typed" "find_code_upto_size";
 val _ = emit "stack_frame_size_rel_def_typed" "stack_frame_size_rel_def";
 val _ = emit "do_app_stack_eq_typed" "do_app_stack_eq";
 val _ = emit "do_app_stack_frame_size_rel_typed" "do_app_stack_frame_size_rel";
+val _ = emit "do_app_change_clock_err_typed" "do_app_change_clock_err";
+val _ = show "cut_state_opt_with_lim_typed"
+  (prove(``!names_opt (s:('a,'b) dataSem$state) (lim:dataSem$limits).
+      cut_state_opt names_opt (s with limits := lim) =
+      OPTION_MAP (λt. t with limits := lim) (cut_state_opt names_opt s)``,
+    Cases_on `names_opt` \\ rw[dataSemTheory.cut_state_opt_def, dataSemTheory.cut_state_def, dataSemTheory.cut_env_def]
+    \\ rw[dataSemTheory.state_component_equality]));

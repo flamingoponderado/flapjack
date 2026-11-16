@@ -171,4 +171,14 @@ theorem doApp_change_clock {C F : Type} (op : ClosLang.Op) (args : List DataSem.
     doApp op args { state with clock := clock } = .val (res, { next with clock := clock }) := by
   rw [doApp_with_clock, run, mapResult]
 
+/-- A failing application keeps its error when only the clock is replaced. -/
+@[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "do_app_change_clock_err"]
+theorem doApp_change_clock_err {C F : Type} (op : ClosLang.Op) (args : List DataSem.Value)
+    (state : State C F) (error : ErrorResult DataSem.Value) (clock : Nat)
+    (run : doApp op args state = .err error) :
+    doApp op args { state with clock := clock } = .err error := by
+  rw [doApp_with_clock, run]
+  simp only [mapResult, mapErrorResult, id]
+  cases error <;> rfl
+
 end Flapjack.Compiler.Backend.DataProps

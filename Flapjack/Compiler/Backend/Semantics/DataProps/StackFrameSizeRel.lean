@@ -22,21 +22,21 @@ def stackFrameSizeRel : Stack → Stack → Prop
 /-- A successful primitive application leaves the stack untouched. -/
 @[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "do_app_stack_eq"]
 theorem doApp_stack_eq {C F : Type} (op : ClosLang.Op) (args : List Value)
-    (state next : State C F) (value : Value)
+    (state : State C F) (value : Value) (next : State C F)
     (run : doApp op args state = .val (value, next)) :
-    next.stack = state.stack := by
+    state.stack = next.stack := by
   have frame := (doApp_controlFrame op args state next value run).2.1
-  simpa using frame
+  simpa using frame.symm
 
 /-- Frame-size agreement with a fixed frame list survives a primitive application. -/
 @[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "do_app_stack_frame_size_rel"]
 theorem doApp_stackFrameSizeRel {C F : Type} (op : ClosLang.Op) (args : List Value)
-    (state next : State C F) (value : Value) (frames : List Stack)
+    (state : State C F) (value : Value) (next : State C F) (frames : List Stack)
     (premises : doApp op args state = .val (value, next) ∧
       List.Forall₂ stackFrameSizeRel state.stack frames) :
     List.Forall₂ stackFrameSizeRel next.stack frames := by
   obtain ⟨run, related⟩ := premises
-  rw [doApp_stack_eq op args state next value run]
+  rw [doApp_stack_eq op args state value next run] at related
   exact related
 
 end Flapjack.Compiler.Backend.DataSem

@@ -24,4 +24,16 @@ theorem cutStateOpt_withConst {C F : Type} (names : Option NumSet) (state : Stat
     simp only [cutStateOpt, cutState]
     cases found : cutEnv names state.locals <;> simp
 
+/-- The narrow cut commutes with replacing the space limits. -/
+@[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "cut_state_opt_with_lim"]
+theorem cutStateOpt_withLim {C F : Type} (names : Option NumSet) (state : State C F)
+    (limits : Limits) :
+    cutStateOpt names { state with limits := limits } =
+      (cutStateOpt names state).map (fun s => { s with limits := limits }) := by
+  cases names with
+  | none => simp [cutStateOpt]
+  | some names =>
+    simp only [cutStateOpt, cutState]
+    cases found : cutEnv names state.locals <;> simp
+
 end Flapjack.Compiler.Backend.DataProps
