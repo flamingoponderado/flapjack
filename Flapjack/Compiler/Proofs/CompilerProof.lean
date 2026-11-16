@@ -53,11 +53,15 @@ private theorem primitiveInferenceIds : infSetTidsIenv primTypeIds initConfig :=
     · intro id v h
       cases id <;> simp [nsLookup] at h
 
-/-- Full source-shaped initial configuration fact for the Lean environment
-    model. It remains untagged until the model relation is reviewed against
-    HOL, including its finite-map and normalizer representations. -/
-theorem typeConfigOkModel :
-    Flapjack.Compiler.Inference.EnvRel.envRelModel primTenv initConfig ∧
+/-- The initial configuration satisfies the environment relation, expanded
+    one level to expose its fixed empty substitutions, and the type-id bound. -/
+@[hol "cakeml/compiler/proofs/compilerProofScript.sml" "type_config_ok"
+  (fmap_as_finite_support_result_observations := [Flapjack.HolFiniteMapExact.holEmpty])]
+theorem typeConfigOk :
+    (ienvOk (fun _ => False) initConfig ∧ Flapjack.TypeSoundInvariants.tenvOk primTenv ∧
+      (∀ path, nsLookupMod initConfig.infV path = none ↔ nsLookupMod primTenv.v path = none) ∧
+      Flapjack.Compiler.Inference.EnvRel.envRelSoundModel HolFiniteMapExact.holEmpty initConfig primTenv .empty ∧
+      Flapjack.Compiler.Inference.EnvRel.envRelCompleteModel HolFiniteMapExact.holEmpty initConfig primTenv .empty) ∧
       infSetTidsIenv primTypeIds initConfig := by
   refine ⟨?_, primitiveInferenceIds⟩
   refine ⟨primitiveInferenceWellFormed, Flapjack.Compiler.Repl.ReplTypes.tenvOkPrimTenv, ?_, ?_, ?_⟩

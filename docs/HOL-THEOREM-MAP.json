@@ -138061,6 +138061,38 @@
   "reviewer": "Compared HOL source and deBruijn_subst_convert_replay_typed: the shared bound and arbitrary inference substitution, empty-uvar guards, both type and list conjuncts, and equality directions agree. The source-defined conversion's unspecified uvar clause is excluded by the original checks on the input types."
 },
 {
+  "hol_path": "cakeml/compiler/proofs/compilerProofScript.sml", "hol_name": "type_config_ok",
+  "lean_path": "Flapjack/Compiler/Proofs/CompilerProof.lean", "lean_name": "typeConfigOk",
+  "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+  "fmap_as_finite_support_result_observations": ["Flapjack.HolFiniteMapExact.holEmpty"],
+  "reviewer": "Compared HOL source and type_config_ok_replay_typed: the initial environment relation and type-identifier conjunct are retained without premises. Lean expands env_rel_def one level to expose its fixed empty maps; the soundness and completeness models agree at that map because HOL and Lean normalization are identity there."
+},
+{
+  "hol_path": "cakeml/compiler/inference/proofs/envRelScript.sml", "hol_name": "env_rel_tenv_to_ienv",
+  "lean_path": "Flapjack/Compiler/Inference/EnvRel/Relation.lean", "lean_name": "envRelTenvToIenv",
+  "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+  "fmap_as_finite_support_result_observations": ["Flapjack.HolFiniteMapExact.holEmpty"],
+  "reviewer": "Compared HOL source and env_rel_tenv_to_ienv_statement_typed, which captures the inferred type of the reconstructed statement, not a proof replay: the arbitrary declarative environment and its well-formedness premise imply the complete environment relation for its inference conversion. Lean expands env_rel_def one level; the soundness and completeness models agree at the fixed empty map because both normalizers are identity there."
+},
+{
+  "hol_path": "cakeml/semantics/proofs/namespacePropsScript.sml", "hol_name": "nsLookup_nsMap",
+  "lean_path": "Flapjack/NamespaceProps/MapLookup.lean", "lean_name": "nsLookup_nsMap",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared HOL source and nsLookup_nsMap_typed: independent module, name, source-value and result-value carriers, arbitrary namespace, identifier and mapping function, and the complete option-map equality agree. Association-list lookup preserves first-match behavior."
+},
+{
+  "hol_path": "cakeml/semantics/proofs/namespacePropsScript.sml", "hol_name": "nsLookupMod_nsMap",
+  "lean_path": "Flapjack/NamespaceProps/MapLookup.lean", "lean_name": "nsLookupMod_nsMap",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared HOL source and nsLookupMod_nsMap_typed: independent namespace carriers, arbitrary module path and mapping function, and option-mapped recursive namespace result agree."
+},
+{
+  "hol_path": "cakeml/semantics/proofs/namespacePropsScript.sml", "hol_name": "nsAll_nsMap",
+  "lean_path": "Flapjack/NamespaceProps/MapLookup.lean", "lean_name": "nsAll_nsMap",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared HOL source and nsAll_nsMap_typed: independent source and result value carriers and module and name carriers, arbitrary predicate, and both directions of the mapped namespace equivalence agree."
+},
+{
   "hol_path": "cakeml/compiler/inference/proofs/envRelScript.sml", "hol_name": "tscheme_inst_to_approx",
   "lean_path": "Flapjack/Compiler/Inference/EnvRel/Instantiation.lean", "lean_name": "tschemeInstToApprox",
   "statement_status": "reviewed_fmap_as_finite_support_result_observations",

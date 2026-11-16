@@ -23,6 +23,9 @@ val _ = show "tenv_to_ienv_replay_typed" probe_tenv_to_ienv_def;
 
 val _ = show "lift_ienv_typed" inferTheory.lift_ienv_def;
 val _ = show "extend_dec_ienv_typed" inferTheory.extend_dec_ienv_def;
+val _ = show "nsLookup_nsMap_typed" namespacePropsTheory.nsLookup_nsMap;
+val _ = show "nsLookupMod_nsMap_typed" namespacePropsTheory.nsLookupMod_nsMap;
+val _ = show "nsAll_nsMap_typed" namespacePropsTheory.nsAll_nsMap;
 
 val tenv_to_ienv_lift_replay = Q.prove(
   `!mn tenv. probe_tenv_to_ienv (tenvLift mn tenv) =
@@ -243,6 +246,11 @@ val tscheme_inst_to_approx_replay = Q.prove(
   drule (GEN_ALL (CONJUNCT1 infer_deBruijn_subst_twice)) >>
   rw [MAP_MAP_o, combinTheory.o_DEF]);
 val _ = show "tscheme_inst_to_approx_replay_typed" tscheme_inst_to_approx_replay;
+
+val _ = print "env_rel_tenv_to_ienv_statement_typed=";
+val _ = print_term (Parse.Term `!tenv. typeSoundInvariants$tenv_ok tenv ⇒
+  probe_env_rel tenv (probe_tenv_to_ienv tenv)`);
+val _ = print "\n";
 
 val type_config_ok_replay = Q.prove(
   `probe_env_rel prim_tenv init_config ∧ inf_set_tids_ienv prim_type_ids init_config`,

@@ -3793,6 +3793,7 @@ import Flapjack.Compiler.Inference.Unify.Walkstar
 import Flapjack.Compiler.Inference.EnvRel.Walkstar
 import Flapjack.Compiler.Inference.EnvRel.NamedSubst
 import Flapjack.Compiler.Inference.EnvRel.Instantiation
+import Flapjack.NamespaceProps.MapLookup
 import Flapjack.Compiler.Inference.InferProps.DeBruijn.Compose
 import Flapjack.Compiler.Inference.Unify.Walkstar.Empty
 import Flapjack.Compiler.Inference.Unify.Walkstar.Idempotent
