@@ -138730,6 +138730,12 @@
   "reviewer": "Compared typed HOL source: the nonempty transitive closure uses both immediate pair-child edges with the same orientation and generic term carrier."
 },
 {
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "subterm_walkstarR",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/Subterm/Walkstar.lean", "lean_name": "subtermWalkstarR",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["s"],
+  "reviewer": "Compared the typed HOL source: the term and substitution payload types are independent, and every structural subterm decreases in walkstarR without additional premises. The canonical substitution has its codec witness."
+},
+{
   "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "subterm_thm",
   "lean_path": "Flapjack/Compiler/Inference/Unify/Subterm.lean", "lean_name": "subtermThm",
   "statement_status": "reviewed_exact",
@@ -138764,6 +138770,24 @@
   "lean_path": "Flapjack/Compiler/Inference/Unify/WorklistRelation.lean", "lean_name": "walkstarRTrans",
   "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["s"],
   "reviewer": "Compared the typed HOL source: the substitution and term payload types remain independent, both original relation premises imply the full transitive conclusion, and the canonical map has its codec witness."
+},
+{
+  "hol_path": "HOL/src/bag/bagScript.sml", "hol_name": "TC_mlt1_FINITE_BAG",
+  "lean_path": "Flapjack/Misc/Bag/MultisetOrder.lean", "lean_name": "tcMlt1FiniteBag",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed HOL source: the nonempty transitive multiset relation implies finiteness of both endpoint bags for any relation and bag element type."
+},
+{
+  "hol_path": "HOL/src/bag/bagScript.sml", "hol_name": "TC_mlt1_UNION2_I",
+  "lean_path": "Flapjack/Misc/Bag/MultisetOrder.lean", "lean_name": "tcMlt1Union2I",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed HOL source: both bags are finite, the second union operand is nonempty, and the full transitive multiset order relates the first operand to their union."
+},
+{
+  "hol_path": "HOL/src/bag/bagScript.sml", "hol_name": "TC_mlt1_UNION1_I",
+  "lean_path": "Flapjack/Misc/Bag/MultisetOrder.lean", "lean_name": "tcMlt1Union1I",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed HOL source: both bags are finite, the first union operand is nonempty, and the full transitive multiset order relates the second operand to their union."
 },
 {
   "hol_path": "HOL/src/bag/bagScript.sml", "hol_name": "mlt1_def",
