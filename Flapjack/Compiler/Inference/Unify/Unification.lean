@@ -1,7 +1,7 @@
 module
 
 public import Flapjack.Compiler.Inference.Unify.Encoding
-public import Flapjack.HOL.Unification.UnifDef.Tunify
+public import Flapjack.HOL.Unification.UnifDef.Choice
 
 @[expose] public section
 
@@ -47,11 +47,11 @@ theorem encodeDecodeSubstIff (s : HolFiniteMapExact Nat (Term Atom)) :
       obtain ⟨it, rfl⟩ := image key t h
       simp [decodeLeftInverse.1]
 
-/-- Decoding the restricted first-order unifier gives an inference-side proof
-    model. It is not tagged as HOL's `t_unify_def`: correspondence with HOL's
-    specified unifier and the option-valued map representation remain open. -/
+/-- Decode the selected first-order unifier, as in the source definition.
+    This remains untagged pending source-choice review and a qualifier for the
+    option-valued finite-map result. -/
 noncomputable def tUnifyModel (s : HolFiniteMapExact Nat InferT) (t1 t2 : InferT) :
     Option (HolFiniteMapExact Nat InferT) :=
-  (tunifyAux (encodeSubst s) (encodeInferT t1) (encodeInferT t2)).map decodeSubst
+  (specifiedUnify (encodeSubst s) (encodeInferT t1) (encodeInferT t2)).map decodeSubst
 
 end Flapjack.Compiler.Inference.Unify

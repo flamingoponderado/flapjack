@@ -19,7 +19,7 @@ theorem cunifyUnifierModel (s : Spt InferT) (t1 t2 : InferT) (sx : Spt InferT)
     (h : cwfs s ∧ cunifyModel s t1 t2 = some sx) :
     cwfs sx ∧ sptSubspt s sx ∧ cwalkstarModel sx t1 = cwalkstarModel sx t2 := by
   have he : tUnifyModel (sp2fm s) t1 t2 = some (sp2fm sx) := by
-    rw [← cunifyModelMap s t1 t2 h.1, h.2]
+    rw [← cunifyModelMap s t1 t2, h.2]
     rfl
   have hws : tWfs (sp2fm s) := by
     change wfs (encodeSubst (sp2fm s))

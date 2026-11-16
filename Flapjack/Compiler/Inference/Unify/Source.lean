@@ -1,7 +1,6 @@
 module
 
 public import Flapjack.HOL.Unification.Rmfmap.Sunify
-public import Flapjack.Compiler.Inference.Unify.Unification.Choice
 public import Flapjack.Compiler.Inference.Unify.ComputationalWf
 public import Flapjack.Compiler.Inference.Unify.ListUnification
 
@@ -35,17 +34,12 @@ theorem sparseDecode (s : HolFiniteMapExact Nat (Term Atom)) :
   rw [sptLookup_sptMap]
   simp [lookupFm2sp, decodeSubst, HolFiniteMapExact.lookup_map2]
 
-/-- The source-shaped sparse result projects to the inference unifier on
-    well-formed input. This is Lean correspondence infrastructure, not the
-    full HOL transfer theorem. -/
-theorem cunifyModelMap (s : Spt InferT) (a b : InferT) (hw : cwfs s) :
+/-- The source-shaped sparse result projects to the Lean inference model
+    on all inputs. This is Lean correspondence infrastructure, not the full
+    HOL transfer theorem. -/
+theorem cunifyModelMap (s : Spt InferT) (a b : InferT) :
     (cunifyModel s a b).map sp2fm = tUnifyModel (sp2fm s) a b := by
-  have hws : tWfs (sp2fm s) := by
-    change wfs (encodeSubst (sp2fm s))
-    rw [← sparseEncode]
-    exact hw.1
-  rw [← tUnifyModelEqSpecified _ _ _ hws]
-  simp only [cunifyModel, sunifyModel, Option.map_map, sparseEncode]
+  simp only [cunifyModel, sunifyModel, tUnifyModel, Option.map_map, sparseEncode]
   cases h : specifiedUnify (encodeSubst (sp2fm s)) (encodeInferT a) (encodeInferT b) with
   | none => rfl
   | some result =>

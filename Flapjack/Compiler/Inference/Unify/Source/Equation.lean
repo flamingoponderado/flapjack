@@ -103,7 +103,7 @@ private theorem rhsMap (s : Spt InferT) (a b : InferT) (hw : cwfs s) :
 private theorem sourceEquation (s : Spt InferT) (a b : InferT) (hw : cwfs s) :
     cunifyModel s a b = rhs s a b := by
   apply optionTreesEq _ _ (fun out => cunifyModelTreeWf s out a b) (rhsWf s a b hw)
-  exact (cunifyModelMap s a b hw).trans (rhsMap s a b hw).symm
+  exact (cunifyModelMap s a b).trans (rhsMap s a b hw).symm
 
 @[hol "cakeml/compiler/inference/unifyScript.sml" "cunify_thm"]
 theorem cunifyThmModel (s : Spt InferT) (a b : InferT) (hw : cwfs s) :

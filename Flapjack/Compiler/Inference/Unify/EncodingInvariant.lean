@@ -27,6 +27,7 @@ private theorem appModel (s : HolFiniteMapExact Nat InferT) (hw : tWfs s)
       (tunifyAux (encodeSubst s) (encodeInferTs xs) (encodeInferTs ys)).map decodeSubst := by
   have hws : wfs (encodeSubst s) := hw
   unfold tUnifyModel
+  rw [specifiedUnifyEqAux _ _ _ hws]
   simp only [encodeInferT]
   rw [tunifyAuxEquation _ _ _ hws]
   simp only [walk, tunifyAuxSelf _ _ hws, Option.bind]
@@ -61,10 +62,10 @@ theorem encodeUnifyModelAll (tag : Nat) :
     rcases shapes with full | constant | tagged | lists
     · rcases full with ⟨rfl, rfl⟩
       cases hh : tunifyAux (encodeSubst s') (encodeInferT u1) (encodeInferT u2) with
-      | none => simp [tUnifyModel, hh]
+      | none => simp [tUnifyModel, specifiedUnifyEqAux _ _ _ hws, hh]
       | some mid =>
         suffices himage : encodeSubst (decodeSubst mid) = mid by
-          simp [tUnifyModel, hh, himage]
+          simp [tUnifyModel, specifiedUnifyEqAux _ _ _ hws, hh, himage]
         have equation := tunifyAuxEquation (encodeSubst s') (encodeInferT u1) (encodeInferT u2) hws
         rw [hh] at equation
         have ew1 : walk (encodeSubst s') (encodeInferT u1) = encodeInferT (tWalk s' u1) :=
@@ -159,7 +160,7 @@ theorem encodeUnifyModelAll (tag : Nat) :
     · rcases constant with ⟨c, rfl, rfl, rfl⟩
       have left := tunifyAuxSelf (encodeSubst s') (.const c) hws
       have right := tunifyAuxSelf (encodeSubst s') (encodeInferT u1) hws
-      simp [left, tUnifyModel, right, decodeEncodeSubst]
+      simp [left, tUnifyModel, specifiedUnifyEqAux _ _ _ hws, right, decodeEncodeSubst]
     · rcases tagged with ⟨c, xs, ys, rfl, rfl, rfl, rfl⟩
       have wh : walk (encodeSubst s') (.pair (.const c) (encodeInferTs xs)) =
           .pair (.const c) (encodeInferTs xs) := by simp [walk]

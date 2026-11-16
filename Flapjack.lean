@@ -3835,7 +3835,6 @@ import Flapjack.Compiler.Inference.Unify.Walkstar.WorklistDecrease
 import Flapjack.Compiler.Inference.Unify.Walkstar.WorklistTotal
 import Flapjack.Compiler.Inference.Unify.Extension
 import Flapjack.Compiler.Inference.Unify.Unification
-import Flapjack.Compiler.Inference.Unify.Unification.Choice
 import Flapjack.Compiler.Inference.Unify.Unification.MostGeneral
 import Flapjack.Compiler.Inference.Unify.Unification.Complete
 import Flapjack.Compiler.Inference.Unify.Source

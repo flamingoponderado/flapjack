@@ -56,7 +56,7 @@ theorem tsUnifyModelEncoding (xs ys : List InferT) (s : HolFiniteMapExact Nat In
         simp only [headEncoded, Option.bind]
         exact ih ys mid hmid
 
-/-- The complete type-unification equation for the restricted proof model.
+/-- The complete type-unification equation for the selected proof model.
     It remains untagged until its first-order unifier is related to HOL's
     specified unifier and its optional finite-map representation is reviewed. -/
 theorem tUnifyModelEquation (s : HolFiniteMapExact Nat InferT) (u1 u2 : InferT)
@@ -72,6 +72,7 @@ theorem tUnifyModelEquation (s : HolFiniteMapExact Nat InferT) (u1 u2 : InferT)
   classical
   have hws : wfs (encodeSubst s) := hw
   unfold tUnifyModel
+  rw [specifiedUnifyEqAux _ _ _ hws]
   rw [tunifyAuxEquation _ _ _ hws]
   have ew1 : walk (encodeSubst s) (encodeInferT u1) = encodeInferT (tWalk s u1) :=
     encodeWalk s hw u1
