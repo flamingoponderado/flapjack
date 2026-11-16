@@ -663,6 +663,20 @@ theorem pushEnv_stackMax_eq {width : Nat} [NeZero width] {C : Type} {F : Type}
     rfl
 
 
+/-- Exact HOL `set_store_stack_max_greater_bound` (`wordPropsScript.sml:3888`):
+    `set_store` touches only the store, so a frame-size bound that held before
+    the update still holds after it. -/
+@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml"
+  "set_store_stack_max_greater_bound"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem setStore_stackMax_greater_bound {width : Nat} [NeZero width] {C : Type} {F : Type}
+    (v : WordStoreHOL) (x : WordLocW width) (s t : WordSemStateFiniteExact width C F) :
+    WordSemStateFiniteExact.setStore v x s = t ∧
+      optionLe (wordSemOptionAdd (wordSemStackSize s.stack) s.localsSize) s.stackMax →
+      optionLe (wordSemOptionAdd (wordSemStackSize t.stack) t.localsSize) t.stackMax := by
+  rintro ⟨rfl, bound⟩
+  exact bound
+
 /-- `wordSemOptionAdd` is commutative. -/
 theorem wordSemOptionAdd_comm (a b : Option Nat) :
     wordSemOptionAdd a b = wordSemOptionAdd b a := by

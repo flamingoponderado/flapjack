@@ -10066,6 +10066,7 @@ run_probe word_props_typed_probeScript.sml word_props_typed_probe.out \
   LIST_REL_CONJ2_typed push_env_stack_max_eq_typed \
   flush_state_option_le_stack_max_preserved_typed \
   stack_size_some_at_least_one_typed \
+  set_store_stack_max_greater_bound_typed \
   "$cake_dir/compiler/backend/semantics/wordPropsScript.sml" \
   "$cake_dir/compiler/backend/semantics"
 

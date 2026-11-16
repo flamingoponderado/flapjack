@@ -196,3 +196,4 @@ val _ = emit "LIST_REL_CONJ2_typed" "LIST_REL_CONJ2";
 val _ = emit "push_env_stack_max_eq_typed" "push_env_stack_max_eq";
 val _ = emit "pop_env_option_le_stack_max_preserved_typed" "pop_env_option_le_stack_max_preserved";
 val _ = emit "stack_size_some_at_least_one_typed" "stack_size_some_at_least_one";
+val _ = emit "set_store_stack_max_greater_bound_typed" "set_store_stack_max_greater_bound";
