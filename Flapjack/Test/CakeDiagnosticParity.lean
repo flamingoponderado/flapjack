@@ -49,8 +49,22 @@ private def qname : NamespaceHOL.Ident MlString MlString := .long (ofString "A")
   some (ofString "### ERROR: type error\nType mismatch between 15 list and <bad function type> at line 1\n\n\n           ^^^^^\n\nProgram exited with nonzero exit code.\n").explode
 
 #guard renderTypeMismatch [] (.located loc
-    (.typeMismatchNames [(15, ofString "M.t")] (.app [] 5) (.app [] 15))) ==
+    (.typeMismatchEnv (.bind [] [(ofString "M", .bind [(ofString "t", ([], .app [] 15))] [])])
+      (.app [] 5) (.app [] 15))) ==
   some (ofString "### ERROR: type error\nType mismatch between int and M.t at line 1\n\n\n           ^^^^^\n\nProgram exited with nonzero exit code.\n").explode
+
+-- Original cake_type_display_probe.out captures both arbitrary bytes and
+-- searching a later entry with a duplicated type name.
+#guard renderTypeMismatch [] (.located loc
+    (.typeMismatchEnv (.bind [(.implode [255, 0], ([], .app [] 15))] []) (.app [] 5) (.app [] 15))) ==
+  some ((ofString "### ERROR: type error\nType mismatch between int and ").explode ++
+    [255, 0] ++ (ofString " at line 1\n\n\n           ^^^^^\n\nProgram exited with nonzero exit code.\n").explode)
+
+#guard renderTypeMismatch [] (.located loc
+    (.typeMismatchEnv (.bind [(ofString "first", ([], .app [] 15)),
+                               (ofString "first", ([], .app [] 16))] [])
+      (.app [] 5) (.app [] 16))) ==
+  some (ofString "### ERROR: type error\nType mismatch between int and first at line 1\n\n\n           ^^^^^\n\nProgram exited with nonzero exit code.\n").explode
 
 -- The nested function, tuple and variable formatting is captured in
 -- cake_type_diagnostic_probe.out from the original inferencer.

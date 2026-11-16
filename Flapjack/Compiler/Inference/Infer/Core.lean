@@ -18,13 +18,15 @@ namespace Flapjack.Compiler.Inference.Infer.Core
 open Flapjack.Basis.Pure.MlString Flapjack.NamespaceHOL Flapjack.AstHOL
 open Flapjack.Compiler.Inference.Unify
 
+deriving instance Repr for Flapjack.NamespaceHOL.Namespace
+
 inductive Error where
   | exhausted | unsupported | mismatch | undefinedName | valueRestriction | envDeclaration
   | floatPattern | emptyCase | emptyHandle
   | unsafeOperation | thunkOperation | primitiveTypeMismatch
   | primitiveArity : String → Nat → Nat → Error
   | typeMismatch : InferT → InferT → Error
-  | typeMismatchNames : List (Nat × MlString) → InferT → InferT → Error
+  | typeMismatchEnv : TypeSystemHOL.TenvAbbrev → InferT → InferT → Error
   | unboundTypeVariable : MlString → Error
   | annotationTypeVariable : MlString → Error
   | abbreviationTypeVariable : MlString → MlString → Error
@@ -55,16 +57,6 @@ private def firstRepeatedName : List MlString → Option MlString
 
 /-- Preserve the innermost source location for errors that carry enough
 information for original-style rendering. Other error classes remain unchanged. -/
-private def typeNamesFuel : Nat → MlString → Namespace MlString MlString
-    (List MlString × TypeSystemHOL.SemanticT) → List (Nat × MlString)
-  | 0, _, _ => []
-  | fuel + 1, path, .bind entries modules =>
-    entries.filterMap (fun (name, _, typ) => match typ with
-      | .app _ id => some (id, MlString.concat [path, name])
-      | _ => none) ++
-    modules.flatMap (fun (name, env) =>
-      typeNamesFuel fuel (MlString.concat [path, name, ofString "."]) env)
-
 private def withLoc (loc : Flapjack.Misc.Location.Locs) (env : Env) (action : M α) : M α := fun state =>
   match action state with
   | .error .valueRestriction => .error (.located loc .valueRestriction)
@@ -79,7 +71,7 @@ private def withLoc (loc : Flapjack.Misc.Location.Locs) (env : Env) (action : M 
   | .error (.undefinedConstructor name) => .error (.located loc (.undefinedConstructor name))
   | .error (.undefinedTypeConstructor name) => .error (.located loc (.undefinedTypeConstructor name))
   | .error (.typeMismatch left right) => .error (.located loc
-      (.typeMismatchNames (typeNamesFuel 10000 (ofString "") env.infT) left right))
+      (.typeMismatchEnv env.infT left right))
   | .error (.annotationTypeVariable name) => .error (.located loc (.annotationTypeVariable name))
   | .error (.abbreviationTypeVariable name typ) => .error (.located loc (.abbreviationTypeVariable name typ))
   | .error (.datatypeTypeVariable name ctor) => .error (.located loc (.datatypeTypeVariable name ctor))

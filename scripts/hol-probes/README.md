@@ -648,7 +648,7 @@ exported global-invariant equation and replay its original simplifier derivation
 
 `cake_parse_error_probe.out` captures the first unconsumed token's location after malformed declarations, including a multiline example. The CLI renders those locations as the original compiler's parse diagnostic; parser failures without an unconsumed-token location are not covered by this probe.
 
-`cake_type_diagnostic_probe.out` captures the original inferencer's formatting for function, nested list, tuple, variable, and user-defined types. The CLI retains names from the inference environment in lookup order; cases where the bounded traversal cannot recover a name remain unsupported.
+`cake_type_diagnostic_probe.out` captures the original inferencer's formatting for function, nested list, tuple, variable, and user-defined types. The CLI retains the inference type namespace and uses the source-shaped renderer. `cake_type_display_probe.out` also captures byte-valued names and duplicate entries.
 
 `cake_duplicate_datatype_probe.out` captures the duplicate-name selection order and an original duplicate-constructor error. The CLI uses that order for duplicate type constructors, datatype constructors, and datatype type variables.
 

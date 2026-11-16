@@ -17,3 +17,11 @@ val _ = (print "types_output="; print_thm inferTheory.inf_env_to_types_string_de
 val _ = (print "type_function="; print_thm (EVAL ``infer_t$inf_type_to_string (namespace$alist_to_ns []) (Infer_Tapp [Infer_Tvar_db 0; Infer_Tvar_db 0] 4)``); print "\n");
 val _ = (print "type_tuple="; print_thm (EVAL ``infer_t$inf_type_to_string (namespace$alist_to_ns []) (Infer_Tapp [Infer_Tapp [] 5; Infer_Tapp [] 1] 9)``); print "\n");
 val _ = (print "type_unknown="; print_thm (EVAL ``infer_t$inf_type_to_string (namespace$alist_to_ns []) (Infer_Tapp [] 123)``); print "\n");
+val _ = (print "type_byte_name="; print_thm (EVAL ``mlstring$explode
+  (infer_t$inf_type_to_string
+    (namespace$Bind [(mlstring$implode [CHR 255; CHR 0], ([],typeSystem$Tapp [] 15))] [])
+    (Infer_Tapp [] 15))``); print "\n");
+val _ = (print "type_shadowed_name="; print_thm (EVAL ``infer_t$inf_type_to_string
+  (namespace$Bind [(«first», ([],typeSystem$Tapp [] 15));
+                   («first», ([],typeSystem$Tapp [] 16))] [])
+  (Infer_Tapp [] 16)``); print "\n");

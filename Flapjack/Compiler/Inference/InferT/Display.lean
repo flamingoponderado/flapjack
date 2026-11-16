@@ -4,7 +4,8 @@ public import Flapjack.Compiler.Inference.Infer
 
 @[expose] public section
 
-/-! CakeML inference-type rendering. Source and carrier review remains pending. -/
+/-! Source-reviewed CakeML inference-type rendering. End-to-end executable
+diagnostic equivalence is not established by the renderer review alone. -/
 namespace Flapjack.Compiler.Inference.InferTDisplay
 open Flapjack.Basis.Pure.MlString Flapjack.NamespaceHOL Flapjack.TypeSystemHOL
 open Flapjack.Compiler.Inference.Infer
