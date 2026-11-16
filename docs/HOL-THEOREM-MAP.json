@@ -1,5 +1,13 @@
 [
 {
+  "hol_path": "cakeml/compiler/proofs/compilerProofScript.sml", "hol_name": "config_ok_def",
+  "lean_path": "Flapjack/Compiler/Proofs/CompilerProof.lean", "lean_name": "configOk",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Independent source comparison confirms all ten conjuncts and arguments. compiler_config_ok_shape captures the shared word and independent machine carriers using four typed predicate stubs; their actual equations were compared separately. The environment relation uses the fixed empty substitution, where the reviewed walkstar-empty theorem gives the source normalizer result. The dependency closure inherits reals_as_rational_cuts and SOUNDNESS item 8."
+ },
+{
   "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml", "hol_name": "assign_LenEq_def",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean", "lean_name": "assignLenEq",
   "statement_status": "reviewed_words_as_type_indexed_bitvec",

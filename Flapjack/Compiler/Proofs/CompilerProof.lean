@@ -5,6 +5,9 @@ public import Flapjack.Compiler.Inference.EnvRel.Relation
 public import Flapjack.Compiler.Repl.ReplTypes
 public import Flapjack.Compiler.Compiler
 public import Flapjack.Compiler.Backend.BackendProof.ReadLimits
+public import Flapjack.Compiler.Backend.BackendProof.ConfigOk
+public import Flapjack.Compiler.Backend.BackendProof.MachineInit
+public import Flapjack.Compiler.Backend.LabToTarget.InitializationContracts
 
 @[expose] public section
 
@@ -12,6 +15,26 @@ public import Flapjack.Compiler.Backend.BackendProof.ReadLimits
 namespace Flapjack.Compiler.Proofs.CompilerProof
 open Flapjack.NamespaceHOL Flapjack.Compiler.Inference.InferProps
   Flapjack.Compiler.Inference.Infer Flapjack.PrimTypesHOL Flapjack.TypeSystemHOL
+
+/-- The top-level compiler configuration requirements, including the initial
+inference environment and target machine contracts. The environment relation
+is the source-shaped model at its fixed empty substitution. Dependencies inherit
+the real-number model assumption recorded in SOUNDNESS item 8. -/
+@[hol "cakeml/compiler/proofs/compilerProofScript.sml" "config_ok_def"
+  (words_as_type_indexed_bitvec)]
+noncomputable def configOk {width : Nat} [NeZero width] {state projection : Type}
+    (cc : Flapjack.Compiler.CompilerConfig width)
+    (mc : Flapjack.MachineConfig width state projection) : Prop :=
+  Flapjack.Compiler.Inference.EnvRel.envRelModel primTenv cc.inferencerConfig ∧
+  infSetTidsIenv primTypeIds cc.inferencerConfig ∧
+  cc.inputIsSexp = false ∧
+  cc.excludePrelude = false ∧
+  cc.skipTypeInference = false ∧
+  cc.onlyPrintTypes = false ∧
+  cc.onlyPrintSexp = false ∧
+  Flapjack.Compiler.Backend.BackendProof.backendConfigOk cc.asmConfig cc.backendConfig ∧
+  Flapjack.Compiler.Backend.LabToTarget.mcConfOk mc ∧
+  Flapjack.Compiler.Backend.BackendProof.mcInitOk cc.asmConfig cc.backendConfig mc
 
 /-- Read the stack and heap bounds using the assembler and backend settings
     carried by the source compiler configuration. -/

@@ -918,7 +918,7 @@ run_probe cake_inference_probeScript.sml cake_inference_probe.out \
   subst generalise unify occurs "$cake_dir/compiler/inference/inferScript.sml" "$cake_dir/compiler/inference"
 
 run_probe compiler_config_probeScript.sml compiler_config_probe.out \
-  compiler_config_axiom compiler_read_limits_replay "$cake_dir/compiler/compilerScript.sml" "$cake_dir/compiler"
+  compiler_config_axiom compiler_read_limits_replay compiler_config_ok_shape "$cake_dir/compiler/compilerScript.sml" "$cake_dir/compiler"
 
 run_probe backend_stack_frames_probeScript.sml backend_stack_frames_probe.out \
   stack_frames_def_typed stack_frames_thm_typed "$cake_dir/compiler/backend/proofs/backendProofScript.sml" "$cake_dir/compiler/backend"
