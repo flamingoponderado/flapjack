@@ -5,10 +5,6 @@ public import Flapjack.Misc.Sptree
 
 @[expose] public section
 
--- Public declarations below use private helpers.
-set_option backward.privateInPublic true
-set_option backward.privateInPublic.warn false
-
 /-! Executable inference-type substitutions and bounded unification. -/
 namespace Flapjack.Compiler.Inference.Unify
 
@@ -49,22 +45,22 @@ def walkExecutable (s : Spt InferT) : InferT → Option InferT
   | .uvar n => cvwalkPartial s n
   | t => some t
 
-mutual
-private def occursFuel : Nat → Spt InferT → Nat → InferT → Option Bool
-  | 0, _, _, _ => none
-  | fuel + 1, s, n, t => do
+/-- Execute the occurs traversal with a list-of-lists worklist, as in the
+    source tail-recursive algorithm. `Option` models nontermination. -/
+def occursWorkPartial (s : Spt InferT) (n : Nat) (work : List (List InferT)) : Option Bool := do
+  match work with
+  | [] => some false
+  | [] :: rest => occursWorkPartial s n rest
+  | (t :: ts) :: rest =>
     match ← walkExecutable s t with
-    | .varDb _ => some false
-    | .uvar m => some (n == m)
-    | .app ts _ => occursListFuel fuel s n ts
+    | .varDb _ => occursWorkPartial s n (ts :: rest)
+    | .uvar v => if n == v then some true else occursWorkPartial s n (ts :: rest)
+    | .app xs _ => occursWorkPartial s n (xs :: ts :: rest)
+partial_fixpoint
 
-private def occursListFuel : Nat → Spt InferT → Nat → List InferT → Option Bool
-  | 0, _, _, _ => none
-  | _ + 1, _, _, [] => some false
-  | fuel + 1, s, n, t :: ts => do
-    if ← occursFuel fuel s n t then some true else occursListFuel fuel s n ts
-end
-
+/-- Check one type using the unbounded worklist traversal. -/
+def occursPartial (s : Spt InferT) (n : Nat) (t : InferT) : Option Bool :=
+  occursWorkPartial s n [[t]]
 
 mutual
 /-- Fully follow a substitution, reporting exhaustion when the structural
@@ -87,10 +83,11 @@ def walkStarListFuel : Nat → Spt InferT → List InferT → Option (List Infer
 end
 
 /-- A structurally bounded worklist implementation of the source unification
-equations. The outer option reports worklist or occurs-check fuel exhaustion;
-the inner option reports unification failure. Variable walking is unbounded
-and can diverge on cyclic substitutions. Preservation of the well-formedness
-required for walker termination has not yet been proved for this unifier. -/
+equations. The outer option reports worklist fuel exhaustion; the inner option
+reports unification failure. Variable walking and the occurs check are
+unbounded and can diverge on cyclic substitutions. Preservation of the
+well-formedness required for their termination has not yet been proved for
+this unifier. -/
 def unifyWorkFuel : Nat → Spt InferT → List (InferT × InferT) → Option (Option (Spt InferT))
   | 0, _, _ => none
   | _ + 1, s, [] => some (some s)
@@ -101,7 +98,7 @@ def unifyWorkFuel : Nat → Spt InferT → List (InferT × InferT) → Option (O
     | .uvar x, .uvar y =>
       unifyWorkFuel fuel (if x == y then s else sptInsert x (.uvar y) s) rest
     | .uvar x, t | t, .uvar x =>
-      if ← occursFuel fuel s x t then some none
+      if ← occursPartial s x t then some none
       else unifyWorkFuel fuel (sptInsert x t s) rest
     | .varDb x, .varDb y =>
       if x == y then unifyWorkFuel fuel s rest else some none
@@ -111,8 +108,8 @@ def unifyWorkFuel : Nat → Spt InferT → List (InferT × InferT) → Option (O
       else some none
     | _, _ => some none
 
-/-- Unify one pair with a worklist and occurs-check bound. Variable walking is
-unbounded, so this is not a total execution bound for arbitrary substitutions. -/
+/-- Unify one pair with a worklist bound. Variable walking and the occurs
+check are unbounded, so this is not a total execution bound. -/
 def unifyFuel (fuel : Nat) (s : Spt InferT) (a b : InferT) : Option (Option (Spt InferT)) :=
   unifyWorkFuel fuel s [(a, b)]
 

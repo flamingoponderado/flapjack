@@ -41,6 +41,24 @@ open Flapjack Flapjack.Compiler.Inference Flapjack.Compiler.Inference.Infer Flap
   | some (some _) => true
   | _ => false
 
+-- These occurrences are captured from `unify_exec_walk_probe.out`.
+#guard occursWorkPartial .ln 3 [[]] == some false
+#guard occursPartial .ln 3 (.uvar 3) == some true
+#guard occursPartial .ln 3 (.varDb 3) == some false
+#guard occursPartial .ln 3 (.app [.varDb 2, .app [.uvar 3] 5] 4) == some true
+#guard occursPartial (sptInsert 2 (.uvar 7) .ln) 7 (.uvar 2) == some true
+#guard
+  let deep := (List.range 256).foldl (fun t _ => InferT.app [t] 5) (InferT.uvar 3)
+  occursPartial .ln 3 deep == some true
+
+-- Occurs traversal no longer inherits the smaller worklist bound.
+#guard match unifyFuel 2 .ln (.uvar 0) (.app [.varDb 1] 5) with
+  | some (some _) => true
+  | _ => false
+#guard match unifyFuel 2 .ln (.uvar 0) (.app [.app [.uvar 0] 6] 5) with
+  | some none => true
+  | _ => false
+
 #guard match unifyFuel 100 .ln (.app [.uvar 0, .uvar 1] 4) (.app [.app [] 5, .uvar 0] 4) with
   | some (some s) => sptLookup 0 s == some (.app [] 5) && sptLookup 1 s == some (.app [] 5)
   | _ => false
