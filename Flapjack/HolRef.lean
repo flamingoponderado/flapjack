@@ -5,6 +5,7 @@ public meta import Flapjack.HolRef.PredicateCodec
 public meta import Flapjack.HolRef.SimulationBody
 public meta import Flapjack.HolRef.TmcUniversalBinder
 public meta import Flapjack.HolRef.TmcCallBlockDeclaration
+public meta import Flapjack.HolRef.UnificationTuple
 
 public meta section
 
@@ -185,9 +186,9 @@ structure HolRef where
       must still compare the surrounding HOL function domain/codomain and all
       other type components. -/
   fmapAsFiniteSupportFunction : Array String := #[]
-  /-- The two canonical finite maps nested in the reviewed value-invariant
-      context tuple. The checker restricts this qualifier to `v_inv_ck`, the
-      exact context carrier, and its checked local roundtrip witnesses. -/
+  /-- Canonical finite maps nested in narrowly reviewed tuple carriers. The
+      checker restricts this to the value-invariant context or the shared
+      unification relation domain and their checked roundtrip witnesses. -/
   fmapAsFiniteSupportTuple : Array String := #[]
   /-- A HOL function whose named argument and result product slots are both
       canonical `HolFiniteMapExact` carriers with possibly distinct map types.
@@ -434,19 +435,24 @@ private def checkedHolRef (path name : String) (line? : Option Nat := none)
         realsAsRationalCuts || !nestedListRelAsMutual.isEmpty then
       throwError "@[hol]: predicate-domain maps cannot combine with other representation qualifiers"
   if !fmapAsFiniteSupportTuple.isEmpty then
-    unless fmapAsFiniteSupportTuple == #["component_2", "component_3"] do
-      throwError "@[hol]: fmap_as_finite_support_tuple requires component_2 and component_3"
-    unless path == "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" &&
-        name == "v_inv_ck" && wordsAsTypeIndexedBitvec do
-      throwError "@[hol]: fmap_as_finite_support_tuple requires v_inv_ck and words_as_type_indexed_bitvec"
+    let valueContext := fmapAsFiniteSupportTuple == #["component_2", "component_3"] &&
+      path == "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" &&
+      name == "v_inv_ck" && wordsAsTypeIndexedBitvec
+    let unification := fmapAsFiniteSupportTuple == #["component_1"] &&
+      path == "HOL/examples/algorithms/unification/triangular/first-order/unifDefScript.sml" &&
+      name == "WF_uR" && !wordsAsTypeIndexedBitvec && line?.isNone
+    unless valueContext || unification do
+      throwError "@[hol]: fmap_as_finite_support_tuple requires the reviewed value context or unification relation"
     if !listAsArray.isEmpty || !namesAsString.isEmpty || !namesAsStringBoundary.isEmpty ||
         !fmapAsFiniteSupport.isEmpty || fmapAsFiniteSupportResult ||
         !fmapAsFiniteSupportFunction.isEmpty || !fmapAsFiniteSupportHeterogeneousFunction.isEmpty ||
         !fmapAsFiniteSupportParameters.isEmpty || !fmapAsFiniteSupportExistentials.isEmpty ||
         !fmapAsFiniteSupportRelation.isEmpty || fmapAsFiniteSupportEqualities ||
         fmapAsFiniteSupportEquality || !fmapAsFiniteSupportResultObservations.isEmpty ||
+        fmapAsFiniteSupportParameterObservations || !fmapAsFiniteSupportParameterPredicateDomain.isEmpty ||
+        !fmapAsFiniteSupportUniversals.isEmpty || !nestedListRelAsMutual.isEmpty ||
         wordDimensionAsWidth.isSome || !wordDimensionsAsWidths.isEmpty || realsAsRationalCuts then
-      throwError "@[hol]: fmap_as_finite_support_tuple may only combine with words_as_type_indexed_bitvec"
+      throwError "@[hol]: fmap_as_finite_support_tuple has incompatible representation qualifiers"
   if !wordDimensionsAsWidths.isEmpty then
     unless wordDimensionsAsWidths.size == 2 &&
         wordDimensionsAsWidths.toList.eraseDups.length == 2 do
@@ -1057,12 +1063,40 @@ def tmcHypothesisMetadataProblems (registered : Option (ParametricAttribute HolR
         (attr.getParam? env `Flapjack.Compiler.Backend.BviTmc.Induction.hypothesis) then #[]
     else #["imported TMC hypothesis reference changed or missing"]
 
+/-- The tuple well-foundedness audit depends on the separately reviewed full
+unification-relation equation and its two canonical map parameters. -/
+def unificationRelationReferenceValid (ref : Option HolRef) : Bool :=
+  let expected : HolRef := {
+    path := "HOL/examples/algorithms/unification/triangular/first-order/unifDefScript.sml",
+    name := "uR_def", fmapAsFiniteSupportParameters := #["sx", "s"] }
+  ref == some expected
+
+/-- Fail closed if the imported relation equation is missing or requalified. -/
+def unificationRelationMetadataProblems (registered : Option (ParametricAttribute HolRef))
+    (env : Environment) : Array String :=
+  match registered with
+  | none => #["HOL attribute unavailable for unification relation metadata check"]
+  | some attr =>
+    if unificationRelationReferenceValid
+        (attr.getParam? env `Flapjack.HOL.Unification.uREq) then #[]
+    else #["imported unification relation reference changed or missing"]
+
 initialize holRefAttribute : ParametricAttribute HolRef ← do
   let attr ← registerParametricAttribute {
     name := `hol
     descr := "original HOL4 declaration (file path and declaration name) ported by this Lean declaration"
     getParam := fun _ stx => parseHolRefAttribute stx
     afterSet := fun decl ref => do
+      if ref.path == "HOL/examples/algorithms/unification/triangular/first-order/unifDefScript.sml" &&
+          ref.name == "WF_uR" && ref.fmapAsFiniteSupportTuple != #["component_1"] then
+        logError m!"{decl}: WF_uR requires its unification tuple-map qualifier"
+      if ref.fmapAsFiniteSupportTuple == #["component_1"] then
+        unless decl == `Flapjack.HOL.Unification.uRWellFounded do
+          logError m!"{decl}: unification tuple qualifier has the wrong declaration"
+        let metadata := unificationRelationMetadataProblems (← holRefAttributeCell.get) (← getEnv)
+        for problem in metadata do logError m!"{decl}: {problem}"
+        let problems ← unificationTupleElaboratedProblems.run'
+        for problem in problems do logError m!"{decl}: (fmap_as_finite_support_tuple) {problem}"
       if ref.path == "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" &&
           (ref.name == "hypothesis_def" || ref.name == "evaluate_cb") &&
           ref.fmapAsFiniteSupportUniversals.isEmpty then
@@ -1450,6 +1484,33 @@ run_cmd do
       HolRef.qualifierSuffix tupleRef ==
         " (fmap_as_finite_support_tuple := [component_2, component_3]) (words_as_type_indexed_bitvec)" do
     throwError "@[hol] fmap_as_finite_support_tuple syntax regression"
+  let unificationTupleSyntax ← `(attr| hol
+    "HOL/examples/algorithms/unification/triangular/first-order/unifDefScript.sml" "WF_uR"
+    (fmap_as_finite_support_tuple := [component_1]))
+  let unificationTupleRef ← Lean.Elab.Command.liftCoreM (parseHolRefAttribute unificationTupleSyntax)
+  unless unificationTupleRef.fmapAsFiniteSupportTuple == #["component_1"] &&
+      !unificationTupleRef.wordsAsTypeIndexedBitvec do
+    throwError "@[hol] unification tuple syntax regression"
+  let wrongUnificationTuple ← `(attr| hol
+    "HOL/examples/algorithms/unification/triangular/first-order/unifDefScript.sml" "WF_uR"
+    (fmap_as_finite_support_tuple := [component_2, component_3]) (words_as_type_indexed_bitvec))
+  let wrongUnificationRejected ← Lean.Elab.Command.liftCoreM do
+    try
+      let _ ← parseHolRefAttribute wrongUnificationTuple
+      pure false
+    catch _ => pure true
+  unless wrongUnificationRejected do
+    throwError "@[hol] unification tuple must reject the value-context qualifier"
+  let unificationTupleWords ← `(attr| hol
+    "HOL/examples/algorithms/unification/triangular/first-order/unifDefScript.sml" "WF_uR"
+    (fmap_as_finite_support_tuple := [component_1]) (words_as_type_indexed_bitvec))
+  let unificationTupleWordsRejected ← Lean.Elab.Command.liftCoreM do
+    try
+      let _ ← parseHolRefAttribute unificationTupleWords
+      pure false
+    catch _ => pure true
+  unless unificationTupleWordsRejected do
+    throwError "@[hol] unification tuple must reject the word qualifier"
   let badTupleSyntax ← `(attr| hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "v_inv_ck"
     (fmap_as_finite_support_tuple := [component_2, component_2]) (words_as_type_indexed_bitvec))
   let badTupleRejected ← Lean.Elab.Command.liftCoreM do

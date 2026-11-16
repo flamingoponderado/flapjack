@@ -384,6 +384,20 @@ representation statement only: it does not authorize changed quantifiers,
 hypotheses, conclusions, `BEq` side conditions, or word-model differences, and
 every tagged declaration still needs its own statement/side-condition review.
 
+**Qualify the unification relation's tuple map.** The narrow
+`(fmap_as_finite_support_tuple := [component_1])` qualifier is restricted to
+`WF_uR` and the `uRWellFounded` theorem in the unification counterpart. It
+records the canonical finite map in the first component of the shared
+three-component relation domain, on both operands. It cannot combine with
+another representation qualifier. The source, elaborated attribute and export
+audits require the reviewed `uR`/`uREq` owner and metadata, exact relation and
+theorem types and bodies, and unconditional bidirectional tuple codec witnesses
+preserving the map and both term slots. Use status
+`reviewed_fmap_as_finite_support_tuple` only after independent source review.
+These checks do not establish cross-language equivalence or authorize changes
+to the relation or theorem. The existing value-context tuple case remains
+separately restricted and requires its word qualifier.
+
 **Qualify finite maps nested in a function type.** For a HOL type abbreviation
 whose function argument and optional result are products containing `|->` maps,
 use `(fmap_as_finite_support_function := [argument_N, result_M])` with one-based

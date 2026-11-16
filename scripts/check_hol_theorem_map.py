@@ -1049,6 +1049,7 @@ VALID_STATUSES = {
     "reviewed_fmap_as_finite_support",
     "reviewed_fmap_as_finite_support_function",
     "reviewed_fmap_as_finite_support_function_words_as_type_indexed_bitvec",
+    "reviewed_fmap_as_finite_support_tuple",
     "reviewed_fmap_as_finite_support_tuple_words_as_type_indexed_bitvec",
     "reviewed_fmap_as_finite_support_heterogeneous_function",
     "reviewed_fmap_as_finite_support_heterogeneous_function_words_as_type_indexed_bitvec",
@@ -1707,10 +1708,19 @@ def validate_inventory(
                                 "nested_list_rel_as_mutual" not in reviewer or "source" not in reviewer.lower()):
             errors.append(f"{key[0]}:{key[1]}: nested-list relation review must cite qualifier, source and functionsRel_iff")
         tuple_status = "reviewed_fmap_as_finite_support_tuple_words_as_type_indexed_bitvec"
+        unification_tuple_status = "reviewed_fmap_as_finite_support_tuple"
         if tuple(record.get("fmap_as_finite_support_tuple", ())) != fmap_tuple:
             errors.append(f"{key[0]}:{key[1]}: tuple-map positions do not match @[hol] tag")
-        if bool(fmap_tuple) != (status == tuple_status) or (fmap_tuple and not words_bitvec):
-            errors.append(f"{key[0]}:{key[1]}: tuple maps require their combined reviewed status and word qualifier")
+        if bool(fmap_tuple) != (status in {tuple_status, unification_tuple_status}):
+            errors.append(f"{key[0]}:{key[1]}: tuple maps require their matching reviewed status")
+        if status == tuple_status and (not words_bitvec or tuple(fmap_tuple) != ("component_2", "component_3")):
+            errors.append(f"{key[0]}:{key[1]}: value-context tuple maps require both positions and word qualifier")
+        if status == unification_tuple_status:
+            expected_site = ("HOL/examples/algorithms/unification/triangular/first-order/unifDefScript.sml",
+                             "WF_uR", "Flapjack/HOL/Unification/UnifDef/WellFounded.lean", "uRWellFounded")
+            if ((hol_path, hol_name, key[0], key[1]) != expected_site or
+                    tuple(fmap_tuple) != ("component_1",) or words_bitvec):
+                errors.append(f"{key[0]}:{key[1]}: unification tuple status requires the exact WF_uR site and component_1")
         if fmap_tuple and (not isinstance(reviewer, str) or
                            any(pos not in reviewer for pos in fmap_tuple) or
                            "source" not in reviewer.lower()):

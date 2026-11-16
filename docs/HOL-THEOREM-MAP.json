@@ -138616,6 +138616,12 @@
   "reviewer": "Independent typed source review confirms the original pair premises, the full disjunction over head and tail invariants, and the tail decrease conclusion."
 },
 {
+  "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/unifDefScript.sml", "hol_name": "WF_uR",
+  "lean_path": "Flapjack/HOL/Unification/UnifDef/WellFounded.lean", "lean_name": "uRWellFounded",
+  "statement_status": "reviewed_fmap_as_finite_support_tuple", "fmap_as_finite_support_tuple": ["component_1"],
+  "reviewer": "Independent typed source review confirms the full WF_uR source statement for the reviewed imported uR/uREq relation, with the canonical finite map at component_1 of both tuple operands. The checked codec preserves the map and both term slots in both directions, with no extra assumptions."
+},
+{
   "hol_path": "HOL/src/transfer/examples/fmspScript.sml", "hol_name": "sp2fm_thm",
   "lean_path": "Flapjack/HOL/Transfer/Fmsp/Operations.lean", "lean_name": "sp2fmThm",
   "statement_status": "reviewed_fmap_as_finite_support_result_observations", "fmap_as_finite_support_result_observations": ["Flapjack.HOL.Transfer.Fmsp.sp2fm", "Flapjack.HolFiniteMapExact.holEmpty"],

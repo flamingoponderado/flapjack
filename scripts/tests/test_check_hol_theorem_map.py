@@ -1959,6 +1959,28 @@ class TupleFmapStatusTest(unittest.TestCase):
             self.assertTrue(validate([{**self.record, **changed}], set(), {self.key: self.tag}, set()))
         self.assertTrue(validate([self.record], set(), {self.key: self.tag[:-1] + ((),)}, set()))
 
+    def test_unification_tuple_status_is_restricted_to_exact_site(self):
+        key = ("Flapjack/HOL/Unification/UnifDef/WellFounded.lean", "uRWellFounded")
+        record = {
+            "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/unifDefScript.sml",
+            "hol_name": "WF_uR", "lean_path": key[0], "lean_name": key[1],
+            "statement_status": "reviewed_fmap_as_finite_support_tuple",
+            "fmap_as_finite_support_tuple": ["component_1"],
+            "reviewer": "source comparison: component_1 is the canonical finite map",
+        }
+        tag = (record["hol_path"], record["hol_name"], (), (), (), (),
+               False, (), False, False, (), (), None, (), (), False, False, (), (),
+               ("component_1",))
+        validate = MAP["validate_inventory"]
+        self.assertEqual(validate([record], set(), {key: tag}, set()), [])
+        for changed in (
+            {"hol_name": "uR_def"}, {"lean_name": "other"},
+            {"fmap_as_finite_support_tuple": ["component_2"]},
+            {"statement_status": "reviewed_fmap_as_finite_support_tuple_words_as_type_indexed_bitvec"},
+            {"words_as_type_indexed_bitvec": True},
+        ):
+            self.assertTrue(validate([{**record, **changed}], set(), {key: tag}, set()))
+
 
 class ExistentialFmapStatusTest(unittest.TestCase):
     def _record(self, **overrides):

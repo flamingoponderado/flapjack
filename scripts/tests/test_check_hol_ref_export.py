@@ -128,6 +128,13 @@ class HolRefExportTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "tuple-map qualifier"):
             MODULE.check_records(self.manifest, [{**self.export[0], "qualifiers": fields}])
 
+    def test_unification_tuple_position_must_match_export(self):
+        fields = {"fmap_as_finite_support_tuple": ["component_1"]}
+        self.check_qualifier("reviewed_fmap_as_finite_support_tuple", fields, fields,
+                             {"fmap_as_finite_support_tuple": ["component_2"]})
+        with self.assertRaisesRegex(ValueError, "tuple-map qualifier"):
+            MODULE.check_records(self.manifest, [{**self.export[0], "qualifiers": fields}])
+
     def test_reviewed_row_matches_its_declaration(self):
         self.assertEqual(MODULE.check_records(self.manifest, self.export), 1)
 

@@ -282,6 +282,19 @@ elab "#emit_hol_ref_export" : command => do
     match env.find? name with
     | none => throwError "missing declaration {name}"
     | some info =>
+        if ref.path == "HOL/examples/algorithms/unification/triangular/first-order/unifDefScript.sml" &&
+            ref.name == "WF_uR" then
+          let expected : HolRef := {
+            path := "HOL/examples/algorithms/unification/triangular/first-order/unifDefScript.sml",
+            name := "WF_uR", fmapAsFiniteSupportTuple := #["component_1"] }
+          unless name == `Flapjack.HOL.Unification.uRWellFounded && ref == expected do
+            throwError "invalid unification tuple reference on {name}"
+          unless unificationRelationReferenceValid
+              (HolRef.get? env `Flapjack.HOL.Unification.uREq) do
+            throwError "changed imported unification relation reference for {name}"
+          let problems ← liftTermElabM unificationTupleElaboratedProblems
+          unless problems.isEmpty do
+            throwError "invalid unification tuple declaration {name}: {problems}"
         if ref.path == "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" &&
             (ref.name == "hypothesis_def" || ref.name == "evaluate_cb") &&
             ref.fmapAsFiniteSupportUniversals.isEmpty then

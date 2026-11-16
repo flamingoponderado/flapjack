@@ -2484,6 +2484,8 @@ def unification_tuple_relation_errors(
         errors.append("unification tuple audit rejects raw string literals")
     if not re.search(r"(?m)^public import Flapjack\.HOL\.Unification\.UnifDef\s*$", code):
         errors.append("unification tuple qualifier requires the exact relation owner import")
+    if not re.search(r"(?m)^import all Flapjack\.HOL\.Unification\.UnifDef\s*$", code):
+        errors.append("unification tuple qualifier requires proof-bearing relation owner import")
     for label, scoped_code in (("target", code), ("owner", owner_code)):
         if re.search(r"(?m)^[ \t]*(?:variable|variables|include|omit)\b", scoped_code):
             errors.append(f"unification tuple qualifier forbids ambient variables in {label}")
@@ -5772,18 +5774,31 @@ def main(argv: list[str]) -> int:
                 if not nested_list_combination_allowed(fmap_fields, producer, other):
                     errors.append(f"{where}: nested relation qualifier cannot combine with other qualifiers")
             if fmap_tuple:
-                if rel != "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/ValueInv.lean":
-                    errors.append(f"{where}: tuple maps require the reviewed value-invariant module")
-                if find_lean_decl(lines, number - 1) != "ClockValueInv":
-                    errors.append(f"{where}: tuple maps require the ClockValueInv declaration")
-                if (not words_bitvec or list_fields or names_fields or boundary_fields or
-                        fmap_fields or fmap_result or fmap_relation or fmap_equalities or
-                        fmap_parameters or fmap_existentials or dimension_width or dimension_widths or
-                        fmap_function_positions or fmap_heterogeneous_function_positions or reals_cuts or
-                        fmap_equality or result_observations):
-                    errors.append(f"{where}: tuple maps may only combine with words_as_type_indexed_bitvec")
-                errors.extend(f"{where}: {error}" for error in fmap_value_context_tuple_errors(
-                    lines, tagged_declaration_source(lines, number), fmap_tuple, (hol_path, hol_name)))
+                unification = (hol_path, hol_name) == (
+                    "HOL/examples/algorithms/unification/triangular/first-order/unifDefScript.sml", "WF_uR")
+                incompatible = (list_fields or names_fields or boundary_fields or fmap_fields or fmap_result or
+                                fmap_relation or fmap_equalities or fmap_parameters or fmap_existentials or
+                                dimension_width or dimension_widths or fmap_function_positions or
+                                fmap_heterogeneous_function_positions or reals_cuts or fmap_equality or
+                                result_observations or nested_list_rel or predicate_domain or fmap_universals)
+                if unification:
+                    if (rel != "Flapjack/HOL/Unification/UnifDef/WellFounded.lean" or
+                            find_lean_decl(lines, number - 1) != "uRWellFounded"):
+                        errors.append(f"{where}: unification tuple maps require the exact theorem and module")
+                    if words_bitvec or hol_line is not None or incompatible:
+                        errors.append(f"{where}: unification tuple maps cannot combine with other qualifiers")
+                    owner = (ROOT / "Flapjack/HOL/Unification/UnifDef.lean").read_text(encoding="utf-8")
+                    errors.extend(f"{where}: {error}" for error in unification_tuple_relation_errors(
+                        "\n".join(lines), owner, fmap_tuple, (hol_path, hol_name)))
+                else:
+                    if rel != "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/ValueInv.lean":
+                        errors.append(f"{where}: tuple maps require the reviewed value-invariant module")
+                    if find_lean_decl(lines, number - 1) != "ClockValueInv":
+                        errors.append(f"{where}: tuple maps require the ClockValueInv declaration")
+                    if not words_bitvec or incompatible:
+                        errors.append(f"{where}: tuple maps may only combine with words_as_type_indexed_bitvec")
+                    errors.extend(f"{where}: {error}" for error in fmap_value_context_tuple_errors(
+                        lines, tagged_declaration_source(lines, number), fmap_tuple, (hol_path, hol_name)))
             if result_observations:
                 declaration_source = tagged_declaration_source(lines, number)
                 composite_matches = list(FMAP_PARAMETER_OBSERVATIONS_RE.finditer(declaration_source))

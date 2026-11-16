@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.HOL.Unification.UnifDef
+import all Flapjack.HOL.Unification.UnifDef
 public import Flapjack.FiniteMap.MapKeys
 
 @[expose] public section
@@ -33,9 +34,8 @@ theorem holFmapAsFiniteSupportTupleWitness_uRWellFounded_reverse {α : Type}
   rcases p with ⟨⟨lookup, support⟩, left, right⟩
   rfl
 
-/-- The unification relation is well founded on its tuple model. This proof is
-    untagged while the representation of finite maps inside tuple-valued
-    relation arguments has no reviewed qualifier. -/
+@[hol "HOL/examples/algorithms/unification/triangular/first-order/unifDefScript.sml" "WF_uR"
+  (fmap_as_finite_support_tuple := [component_1])]
 theorem uRWellFounded {α : Type} : WellFounded (@uR α) := by
   classical
   let rank : (HolFiniteMapExact Nat (Term α) × Term α × Term α) → Nat × Nat :=
