@@ -10,7 +10,23 @@ public import Flapjack.NamespaceProps.LiftLookup
 namespace Flapjack.Compiler.Inference.TypeDCanon
 open Flapjack.NamespaceHOL Flapjack.TypeSystemHOL
   Flapjack.Compiler.Inference.InferProps
-  Flapjack.Basis.Pure.MlString
+  Flapjack.Basis.Pure.MlString Flapjack.AstHOL
+
+/-- Lookup consequence used by the canonical type-name and variable proofs. -/
+private theorem nsAll2EqLookup {M N V : Type} [DecidableEq M] [DecidableEq N]
+    {a b : Namespace M N V} (h : nsAll2 (fun _ x y => x = y) a b) (id : Ident M N) :
+    nsLookup a id = nsLookup b id := by
+  cases first : nsLookup a id with
+  | none =>
+    cases second : nsLookup b id with
+    | none => rfl
+    | some v =>
+      obtain ⟨w, found, _⟩ := h.2.1 id v second
+      simp [first] at found
+  | some v =>
+    obtain ⟨w, found, eq⟩ := h.1.1 id v first
+    cases eq
+    simp [found]
 
 /-- Declarative environments agree on all namespace lookups. -/
 @[hol "cakeml/compiler/inference/proofs/type_dCanonScript.sml" "tenv_equiv_def"]
@@ -57,19 +73,71 @@ theorem tenvEquivTenvLift (t1 t2 : TypeEnv) (m : MlString) :
 theorem lookupVarTenvEquiv (t1 t2 : TypeEnv) (n : Ident MlString MlString)
     (bvs : TenvValExp) : tenvEquiv t1 t2 → lookupVar n bvs t1 = lookupVar n bvs t2 := by
   intro ⟨_, _, hv⟩
-  have same : nsLookup t1.v n = nsLookup t2.v n := by
-    cases first : nsLookup t1.v n with
-    | none =>
-      cases second : nsLookup t2.v n with
-      | none => rfl
-      | some v =>
-        obtain ⟨w, found, _⟩ := hv.2.1 n v second
-        simp [first] at found
-    | some v =>
-      obtain ⟨w, found, eq⟩ := hv.1.1 n v first
-      cases eq
-      simp [found]
-  simp only [lookupVar, same]
+  simp only [lookupVar, nsAll2EqLookup hv n]
+
+mutual
+/-- Equivalent type namespaces give the same result when checking names. -/
+@[hol "cakeml/compiler/inference/proofs/type_dCanonScript.sml" "check_type_names_tenv_equiv"]
+theorem checkTypeNamesTenvEquiv (t1 : TenvAbbrev) (t : AstT) (t2 : TenvAbbrev) :
+    nsAll2 (fun _ a b => a = b) t1 t2 ∧ checkTypeNames t1 t = true →
+      checkTypeNames t2 t = true := by
+  rintro ⟨heq, checked⟩
+  cases t with
+  | atvar name => simp [checkTypeNames]
+  | attup ts =>
+    simp only [checkTypeNames] at checked ⊢
+    exact checkTypeNamesListTenvEquiv t1 ts t2 ⟨heq, checked⟩
+  | atfun left right =>
+    simp only [checkTypeNames, Bool.and_eq_true] at checked ⊢
+    exact ⟨checkTypeNamesTenvEquiv t1 left t2 ⟨heq, checked.1⟩,
+      checkTypeNamesTenvEquiv t1 right t2 ⟨heq, checked.2⟩⟩
+  | atapp ts name =>
+    simp only [checkTypeNames, Bool.and_eq_true] at checked ⊢
+    rw [← nsAll2EqLookup heq name]
+    exact ⟨checked.1, checkTypeNamesListTenvEquiv t1 ts t2 ⟨heq, checked.2⟩⟩
+termination_by sizeOf t
+
+private theorem checkTypeNamesListTenvEquiv (t1 : TenvAbbrev) (ts : List AstT)
+    (t2 : TenvAbbrev) :
+    nsAll2 (fun _ a b => a = b) t1 t2 ∧ checkTypeNamesList t1 ts = true →
+      checkTypeNamesList t2 ts = true := by
+  rintro ⟨heq, checked⟩
+  cases ts with
+  | nil => simp [checkTypeNamesList]
+  | cons t ts =>
+    simp only [checkTypeNamesList, Bool.and_eq_true] at checked ⊢
+    exact ⟨checkTypeNamesTenvEquiv t1 t t2 ⟨heq, checked.1⟩,
+      checkTypeNamesListTenvEquiv t1 ts t2 ⟨heq, checked.2⟩⟩
+termination_by sizeOf ts
+end
+
+mutual
+/-- Equivalent type namespaces resolve a source type identically. -/
+@[hol "cakeml/compiler/inference/proofs/type_dCanonScript.sml" "type_name_subst_tenv_equiv"]
+theorem typeNameSubstTenvEquiv (t1 : TenvAbbrev) (t : AstT) (t2 : TenvAbbrev) :
+    nsAll2 (fun _ a b => a = b) t1 t2 → typeNameSubst t1 t = typeNameSubst t2 t := by
+  intro heq
+  cases t with
+  | atvar name => simp [typeNameSubst]
+  | attup ts => simp [typeNameSubst, typeNameSubstListTenvEquiv t1 ts t2 heq]
+  | atfun left right =>
+    simp [typeNameSubst, typeNameSubstTenvEquiv t1 left t2 heq,
+      typeNameSubstTenvEquiv t1 right t2 heq]
+  | atapp ts name =>
+    simp [typeNameSubst, typeNameSubstListTenvEquiv t1 ts t2 heq, nsAll2EqLookup heq name]
+termination_by sizeOf t
+
+private theorem typeNameSubstListTenvEquiv (t1 : TenvAbbrev) (ts : List AstT)
+    (t2 : TenvAbbrev) : nsAll2 (fun _ a b => a = b) t1 t2 →
+      typeNameSubstList t1 ts = typeNameSubstList t2 ts := by
+  intro heq
+  cases ts with
+  | nil => simp [typeNameSubstList]
+  | cons t ts =>
+    simp [typeNameSubstList, typeNameSubstTenvEquiv t1 t t2 heq,
+      typeNameSubstListTenvEquiv t1 ts t2 heq]
+termination_by sizeOf ts
+end
 
 /-- Every type identifier in the declarative environment belongs to the set. -/
 @[hol "cakeml/compiler/inference/proofs/type_dCanonScript.sml" "set_tids_tenv_def"]

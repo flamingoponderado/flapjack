@@ -1,5 +1,17 @@
 [
 {
+  "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "check_type_names_tenv_equiv",
+  "lean_path": "Flapjack/Compiler/Inference/TypeDCanon.lean", "lean_name": "checkTypeNamesTenvEquiv",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with source and check_type_names_tenv_equiv_typed confirms the namespace carriers, premises and conclusion; the recursive list helper matches HOL EVERY."
+ },
+{
+  "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "type_name_subst_tenv_equiv",
+  "lean_path": "Flapjack/Compiler/Inference/TypeDCanon.lean", "lean_name": "typeNameSubstTenvEquiv",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with source and type_name_subst_tenv_equiv_typed confirms all carriers and the unconditional substitution equality under namespace equivalence; the recursive list helper matches HOL MAP."
+ },
+{
   "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "lookup_var_tenv_equiv",
   "lean_path": "Flapjack/Compiler/Inference/TypeDCanon.lean", "lean_name": "lookupVarTenvEquiv",
   "statement_status": "reviewed_exact",
