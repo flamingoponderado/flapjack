@@ -138175,6 +138175,12 @@
   "reviewer": "Compared the typed replay of the local HOL theorem and source proof: under the original well-formedness premise, walking the encoded type equals encoding the inference walk for every type. The map has a canonical codec witness."
 },
 {
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "t_oc_eqn",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/Occurs/Encoding.lean", "lean_name": "tOcEqn",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["s"],
+  "reviewer": "Compared the typed HOL source occurrence definition and equation: the same well-formedness premise and all three inference-type cases are retained, with list membership expressing EXISTS. The encoded occurrence model is used only under well-formedness, and the canonical substitution has a codec witness."
+},
+{
   "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "t_walkstar_eqn",
   "lean_path": "Flapjack/Compiler/Inference/Unify/Walkstar.lean", "lean_name": "walkstarEqn",
   "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["s"],

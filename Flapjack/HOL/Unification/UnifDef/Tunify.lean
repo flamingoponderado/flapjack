@@ -29,8 +29,8 @@ noncomputable def tunifyAuxBody {α : Type}
 /-- A proof-side approximation of HOL's restricted well-founded recursion.
     It chooses `none` outside well-formed states and for recursive calls not
     justified by `uR`; HOL leaves those values arbitrary. The required
-    invariant and the equality with HOL's total unifier remain to be proved,
-    so this model is not tagged as the original definition. -/
+    equality with HOL's total unifier remains to be established, so this
+    model is not tagged as the original definition. -/
 noncomputable def tunifyAux {α : Type} (s : HolFiniteMapExact Nat (Term α))
     (t1 t2 : Term α) : Option (HolFiniteMapExact Nat (Term α)) :=
   uRWellFounded.fix tunifyAuxBody (s, t1, t2)
@@ -157,5 +157,33 @@ theorem tunifyAuxEquation {α : Type} (s : HolFiniteMapExact Nat (Term α))
       have headUP := tunifyAuxUP s a b mid ⟨hw, first⟩
       have tailRel := uPImpSubtermUR mid s t1 t2 a d b e ⟨hw, l, r, Or.inl headUP⟩
       simp [Option.bind, tailRel]
+
+/-- Induction following both recursive calls of the proof-side unifier.
+    This establishes the induction structure used by `unify_ind`; its
+    correspondence to HOL's specified unifier is still pending. -/
+theorem tunifyAuxInd {α : Type}
+    (P : HolFiniteMapExact Nat (Term α) → Term α → Term α → Prop)
+    (step : ∀ s t1 t2,
+      (∀ a d b e sx, wfs s ∧ walk s t1 = .pair a d ∧ walk s t2 = .pair b e ∧
+        tunifyAux s a b = some sx → P sx d e) ∧
+      (∀ a d b e, wfs s ∧ walk s t1 = .pair a d ∧ walk s t2 = .pair b e →
+        P s a b) → P s t1 t2) :
+    ∀ s t1 t2, P s t1 t2 := by
+  have induction : ∀ p : HolFiniteMapExact Nat (Term α) × Term α × Term α,
+      P p.1 p.2.1 p.2.2 := by
+    intro p
+    induction p using uRWellFounded.induction with
+    | h p ih =>
+      rcases p with ⟨s, t1, t2⟩
+      apply step
+      constructor
+      · intro a d b e sx h
+        have up := tunifyAuxUP s a b sx ⟨h.1, h.2.2.2⟩
+        exact ih (sx, d, e) (uPImpSubtermUR sx s t1 t2 a d b e
+          ⟨h.1, h.2.1, h.2.2.1, Or.inl up⟩)
+      · intro a d b e h
+        exact ih (s, a, b) (uRSubterm s t1 t2 a d b e h).1
+  intro s t1 t2
+  exact induction (s, t1, t2)
 
 end Flapjack.HOL.Unification

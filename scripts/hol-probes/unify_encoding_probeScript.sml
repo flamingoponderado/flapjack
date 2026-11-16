@@ -93,6 +93,8 @@ val encode_vwalk_replay = Q.prove (
 val _ = show "encode_vwalk_replay_typed" encode_vwalk_replay;
 val _ = show "t_walk_def_typed" unifyTheory.t_walk_def;
 val _ = show "t_walk_eqn_typed" unifyTheory.t_walk_eqn;
+val _ = show "t_oc_def_typed" unifyTheory.t_oc_def;
+val _ = show "t_oc_eqn_typed" unifyTheory.t_oc_eqn;
 val _ = show "t_walkstar_eqn_typed" unifyTheory.t_walkstar_eqn;
 
 open walkstarTheory;
