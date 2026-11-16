@@ -81,7 +81,7 @@ theorem infSetTidsUnconvert (t : SemanticT) : infSetTids (unconvertT t) = setTid
 termination_by sizeOf t
 
 /-- List induction used to prove the original identifier-set equality. -/
-theorem infSetTidsUnconvertList (ts : List SemanticT) :
+private theorem infSetTidsUnconvertList (ts : List SemanticT) :
     infSetTidsList (unconvertTList ts) = setTidsList ts := by
   cases ts with
   | nil => simp [unconvertTList, infSetTidsList, setTidsList]

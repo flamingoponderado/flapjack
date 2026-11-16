@@ -139042,6 +139042,78 @@
   "reviewer": "Compared HOL source and oc_subterm_neq_typed: occurrence, non-variable condition, and well-formedness of both substitutions imply the original normalization inequality. The occurrence relation agrees with source under the original well-formedness guard. Both substitutions use canonical finite-map codecs."
 },
 {
+  "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/unifPropsScript.sml",
+  "hol_name": "COMPAT_def",
+  "lean_path": "Flapjack/HOL/Unification/UnifProps/Compat.lean",
+  "lean_name": "compatible",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": [
+    "s",
+    "s0"
+  ],
+  "reviewer": "Compared HOL source and COMPAT_def_typed: both well-formedness conjuncts and the universally quantified normalization equality are preserved. Canonical finite-map codec witnesses cover all named substitutions."
+},
+{
+  "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/unifPropsScript.sml",
+  "hol_name": "SUBMAP_COMPAT",
+  "lean_path": "Flapjack/HOL/Unification/UnifProps/Compat.lean",
+  "lean_name": "submapCompat",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": [
+    "sx",
+    "s"
+  ],
+  "reviewer": "Compared HOL source and SUBMAP_COMPAT_typed: the original larger-map well-formedness and smaller-submap premises, with compatibility in the source direction are preserved. Canonical finite-map codec witnesses cover all named substitutions."
+},
+{
+  "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/unifPropsScript.sml",
+  "hol_name": "COMPAT_REFL",
+  "lean_path": "Flapjack/HOL/Unification/UnifProps/Compat.lean",
+  "lean_name": "compatRefl",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": [
+    "s"
+  ],
+  "reviewer": "Compared HOL source and COMPAT_REFL_typed: well-formedness and self-compatibility are preserved. Canonical finite-map codec witnesses cover all named substitutions."
+},
+{
+  "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/unifPropsScript.sml",
+  "hol_name": "COMPAT_TRANS",
+  "lean_path": "Flapjack/HOL/Unification/UnifProps/Compat.lean",
+  "lean_name": "compatTrans",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": [
+    "s2",
+    "s1",
+    "s0"
+  ],
+  "reviewer": "Compared HOL source and COMPAT_TRANS_typed: both compatibility premises and the complete transitive conclusion are preserved. Canonical finite-map codec witnesses cover all named substitutions."
+},
+{
+  "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/unifPropsScript.sml",
+  "hol_name": "COMPAT_extend",
+  "lean_path": "Flapjack/HOL/Unification/UnifProps/Compat.lean",
+  "lean_name": "compatExtend",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": [
+    "sx",
+    "s"
+  ],
+  "reviewer": "Compared HOL source and COMPAT_extend_typed: compatibility, update well-formedness, fresh key, variable equality, and updated compatibility conclusion are preserved. Canonical finite-map codec witnesses cover all named substitutions."
+},
+{
+  "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/unifPropsScript.sml",
+  "hol_name": "COMPAT_more_specific",
+  "lean_path": "Flapjack/HOL/Unification/UnifProps/Compat.lean",
+  "lean_name": "compatMoreSpecific",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": [
+    "s",
+    "s0"
+  ],
+  "reviewer": "Compared HOL source and COMPAT_more_specific_typed: both well-formedness conjuncts and the complete equivalence with preservation of all normalization equalities are preserved. Canonical finite-map codec witnesses cover all named substitutions."
+},
+{
   "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/unifPropsScript.sml", "hol_name": "TC_vR_SUBMAP",
   "lean_path": "Flapjack/HOL/Unification/UnifProps.lean", "lean_name": "tcVRSubmap",
   "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["s", "sx"],

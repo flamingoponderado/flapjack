@@ -16,6 +16,12 @@ unify_def_typed=∀(s :α subst) (t1 :α term) (t2 :α term). wfs s ⇒ unify s 
 vars_measure_typed=(v :num) ∈ vars (t :α term) ∧ (∀(w :num). t ≠ (Var w :α term)) ∧ wfs (s :α subst) ⇒ measure ((pair_count :α term -> num) ∘ walk* s) (Var v :α term) t
 oc_subterm_neq_typed=oc (s :α subst) (t :α term) (v :num) ∧ (∀(w :num). t ≠ (Var w :α term)) ∧ wfs s ∧ wfs (s2 :α subst) ⇒ s2 ◁ (Var v :α term) ≠ s2 ◁ s ◁ t
 t_compat_eqs_t_unify_typed=∀(s :num |-> infer_t) (t1 :infer_t) (t2 :infer_t) (sx :num |-> infer_t). t_compat s sx ∧ t_walkstar sx t1 = t_walkstar sx t2 ⇒ ∃(si :num |-> infer_t). t_unify s t1 t2 = SOME si ∧ t_compat si sx
+COMPAT_def_typed=∀(s :α subst) (s0 :α subst). s COMPAT s0 ⇔ wfs s ∧ wfs s0 ∧ ∀(t :α term). s ◁ s0 ◁ t = s ◁ t
+SUBMAP_COMPAT_typed=wfs (sx :α subst) ∧ (s :α subst) ⊑ sx ⇒ sx COMPAT s
+COMPAT_REFL_typed=wfs (s :α subst) ⇒ s COMPAT s
+COMPAT_TRANS_typed=(s2 :α subst) COMPAT (s1 :α subst) ∧ s1 COMPAT (s0 :α subst) ⇒ s2 COMPAT s0
+COMPAT_extend_typed=(sx :α subst) COMPAT (s :α subst) ∧ wfs s⟨(vx :num) ↦ (tx :α term)⟩ ∧ vx ∉ FDOM s ∧ sx ◁ (Var vx :α term) = sx ◁ tx ⇒ sx COMPAT s⟨vx ↦ tx⟩
+COMPAT_more_specific_typed=(s :α subst) COMPAT (s0 :α subst) ⇔ wfs s ∧ wfs s0 ∧ ∀(t1 :α term) (t2 :α term). s0 ◁ t1 = s0 ◁ t2 ⇒ s ◁ t1 = s ◁ t2
 eqs_unify_typed=wfs (s :α subst) ∧ wfs (s2 :α subst) ∧ s2 ◁ s ◁ (t1 :α term) = s2 ◁ s ◁ (t2 :α term) ⇒ ∃(sx :α subst). unify s t1 t2 = SOME sx
 eqs_t_unify_typed=t_wfs (s :num |-> infer_t) ∧ t_wfs (s2 :num |-> infer_t) ∧ t_walkstar s2 (t_walkstar s (t1 :infer_t)) = t_walkstar s2 (t_walkstar s (t2 :infer_t)) ⇒ ∃(sx :num |-> infer_t). t_unify s t1 t2 = SOME sx
 unify_mgu_typed=∀(s :α subst) (t1 :α term) (t2 :α term) (sx :α subst) (s2 :α subst). wfs s ∧ unify s t1 t2 = SOME sx ∧ wfs s2 ∧ s2 ◁ s ◁ t1 = s2 ◁ s ◁ t2 ⇒ ∀(t :α term). s2 ◁ sx ◁ t = s2 ◁ s ◁ t
