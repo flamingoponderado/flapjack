@@ -128,3 +128,12 @@ val _ = show "do_app_lss_stk_stfrm_swap_aux_typed"
                            stack_frame_sizes := if op = closLang$Install then LN else stfrm;
                            stack_max := smx; safe_for_space := ss; peak_heap_length := pk|>)``,
     metis_tac [dataPropsTheory.do_app_lss_stk_stfrm_swap]));
+val _ = emit "do_app_lim_swap_typed" "do_app_lim_swap";
+val _ = emit "do_app_err_lim_swap_typed" "do_app_err_lim_swap";
+val _ = show "do_app_lim_swap_aux_typed"
+  (prove(``!op vs s q s' lim. dataSem$do_app op vs s = Rval (q,s') ==>
+      ?safe peak smx.
+        dataSem$do_app op vs (s with limits := lim) =
+        Rval (q, s' with <|limits := lim; stack_max := smx;
+                           safe_for_space := safe; peak_heap_length := peak |>)``,
+    metis_tac [dataPropsTheory.do_app_lim_swap]));

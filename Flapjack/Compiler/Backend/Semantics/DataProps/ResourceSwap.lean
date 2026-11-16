@@ -987,6 +987,153 @@ theorem applyNonFfi_limSwap {C F : Type} (op : ClosLang.Op) (values : List DataS
   all_goals cases safe <;> try simp_all
   all_goals omega
 
+/-- Auxiliary success under a limits update. This Flapjack helper supports the
+HOL limit swap. -/
+private theorem doAppAux_limSwap {C F : Type} (op : ClosLang.Op) (args : List DataSem.Value)
+    (state next : State C F) (value : DataSem.Value) (lim : Limits) (safe : Bool) (peak : Nat)
+    (mx : Option Nat) (run : doAppAux op args state = .val (value, next)) :
+    exists safe',
+      doAppAux op args { state with
+                         limits := lim
+                         safeForSpace := safe
+                         peakHeapLength := peak
+                         stackMax := mx } =
+        .val (value, { next with
+                       limits := lim
+                       safeForSpace := safe'
+                       peakHeapLength := peak
+                       stackMax := mx }) := by
+  cases op with
+  | ffi name =>
+    simp only [doAppAux] at run ⊢
+    rcases args with _ | ⟨first, _ | ⟨second, _ | ⟨third, rest⟩⟩⟩ <;> try simp_all
+    cases first <;> try simp_all
+    case refPtr configBit configPtr =>
+      cases second <;> try simp_all
+      case refPtr dataBit dataPtr =>
+        cases configLookup : sptLookup configPtr state.refs <;> try simp_all
+        case some configEntry =>
+          cases configEntry <;> try simp_all
+          case byteArray configFlag config =>
+            cases configFlag <;> try simp_all
+            case true =>
+              cases dataLookup : sptLookup dataPtr state.refs <;> try simp_all
+              case some dataEntry =>
+                cases dataEntry <;> try simp_all
+                case byteArray dataFlag bytes =>
+                  cases dataFlag <;> try simp_all
+                  case false =>
+                    cases call : callFFIHOL state.ffi (.extCall name) config bytes <;>
+                      try simp_all
+                    all_goals
+                      obtain ⟨-, hnext⟩ := run
+                      rw [← hnext]
+                      simp
+  | intOp intop =>
+    simp only [doAppAux] at run ⊢
+    cases original : applyNonFfi (.intOp intop) args state with
+    | none => simp_all
+    | some pair =>
+      obtain ⟨value', next'⟩ := pair
+      rw [original] at run
+      injection run with hv
+      injection hv with h1 h2
+      obtain ⟨safe', changed⟩ :=
+        applyNonFfi_limSwap (.intOp intop) args state next' value' lim safe peak mx original
+      rw [h1, h2] at changed
+      exact ⟨safe', by simp [changed]⟩
+  | wordOp wordop =>
+    simp only [doAppAux] at run ⊢
+    cases original : applyNonFfi (.wordOp wordop) args state with
+    | none => simp_all
+    | some pair =>
+      obtain ⟨value', next'⟩ := pair
+      rw [original] at run
+      injection run with hv
+      injection hv with h1 h2
+      obtain ⟨safe', changed⟩ :=
+        applyNonFfi_limSwap (.wordOp wordop) args state next' value' lim safe peak mx original
+      rw [h1, h2] at changed
+      exact ⟨safe', by simp [changed]⟩
+  | label label =>
+    simp only [doAppAux] at run ⊢
+    cases original : applyNonFfi (.label label) args state with
+    | none => simp_all
+    | some pair =>
+      obtain ⟨value', next'⟩ := pair
+      rw [original] at run
+      injection run with hv
+      injection hv with h1 h2
+      obtain ⟨safe', changed⟩ :=
+        applyNonFfi_limSwap (.label label) args state next' value' lim safe peak mx original
+      rw [h1, h2] at changed
+      exact ⟨safe', by simp [changed]⟩
+  | install =>
+    simp only [doAppAux] at run ⊢
+    cases original : applyNonFfi (.install) args state with
+    | none => simp_all
+    | some pair =>
+      obtain ⟨value', next'⟩ := pair
+      rw [original] at run
+      injection run with hv
+      injection hv with h1 h2
+      obtain ⟨safe', changed⟩ :=
+        applyNonFfi_limSwap (.install) args state next' value' lim safe peak mx original
+      rw [h1, h2] at changed
+      exact ⟨safe', by simp [changed]⟩
+  | thunkOp thunkop =>
+    simp only [doAppAux] at run ⊢
+    cases original : applyNonFfi (.thunkOp thunkop) args state with
+    | none => simp_all
+    | some pair =>
+      obtain ⟨value', next'⟩ := pair
+      rw [original] at run
+      injection run with hv
+      injection hv with h1 h2
+      obtain ⟨safe', changed⟩ :=
+        applyNonFfi_limSwap (.thunkOp thunkop) args state next' value' lim safe peak mx original
+      rw [h1, h2] at changed
+      exact ⟨safe', by simp [changed]⟩
+  | globOp globop =>
+    simp only [doAppAux] at run ⊢
+    cases original : applyNonFfi (.globOp globop) args state with
+    | none => simp_all
+    | some pair =>
+      obtain ⟨value', next'⟩ := pair
+      rw [original] at run
+      injection run with hv
+      injection hv with h1 h2
+      obtain ⟨safe', changed⟩ :=
+        applyNonFfi_limSwap (.globOp globop) args state next' value' lim safe peak mx original
+      rw [h1, h2] at changed
+      exact ⟨safe', by simp [changed]⟩
+  | blockOp blockop =>
+    simp only [doAppAux] at run ⊢
+    cases original : applyNonFfi (.blockOp blockop) args state with
+    | none => simp_all
+    | some pair =>
+      obtain ⟨value', next'⟩ := pair
+      rw [original] at run
+      injection run with hv
+      injection hv with h1 h2
+      obtain ⟨safe', changed⟩ :=
+        applyNonFfi_limSwap (.blockOp blockop) args state next' value' lim safe peak mx original
+      rw [h1, h2] at changed
+      exact ⟨safe', by simp [changed]⟩
+  | memOp memop =>
+    simp only [doAppAux] at run ⊢
+    cases original : applyNonFfi (.memOp memop) args state with
+    | none => simp_all
+    | some pair =>
+      obtain ⟨value', next'⟩ := pair
+      rw [original] at run
+      injection run with hv
+      injection hv with h1 h2
+      obtain ⟨safe', changed⟩ :=
+        applyNonFfi_limSwap (.memOp memop) args state next' value' lim safe peak mx original
+      rw [h1, h2] at changed
+      exact ⟨safe', by simp [changed]⟩
+
 /-- Installation under a limits update. This Flapjack helper supports the HOL
 limit swap. -/
 theorem doInstall_limSwap {C F R : Type} (values : List DataSem.Value) (state : State C F)
@@ -1059,5 +1206,286 @@ private theorem doStack_doLimSafe_limSwap {C F : Type} (op : ClosLang.Op)
           peakHeapLength := peak
           stackMax := mx' } := by
   simp [doStack, doLimSafe]
+
+/-- The normal success path preserves the value under a limits update. This is
+proof infrastructure for the limit swap. -/
+private theorem appSpace_limSuccess {C F : Type} (op : ClosLang.Op) (args : List DataSem.Value)
+    (state : State C F) (value : DataSem.Value) (next : State C F) (lim : Limits)
+    (run : (match doSpace op args state with
+      | none => Result.err (.abort .typeError)
+      | some accounted =>
+        doAppAux op args (doStack op args (doLimSafe accounted op args))) =
+        .val (value, next)) :
+    ∃ safe' peak' mx',
+      (match doSpace op args { state with limits := lim } with
+      | none => Result.err (.abort .typeError)
+      | some accounted =>
+        doAppAux op args (doStack op args (doLimSafe accounted op args))) =
+        .val (value, { next with
+                       limits := lim
+                       stackMax := mx'
+                       safeForSpace := safe'
+                       peakHeapLength := peak' }) := by
+  cases source : doSpace op args state with
+  | none => simp [source] at run
+  | some accounted =>
+    have appRun : doAppAux op args (doStack op args (doLimSafe accounted op args)) =
+        .val (value, next) := by
+      simpa [source] using run
+    obtain ⟨safe1, peak1, target⟩ := doSpace_some_limSwap op args state accounted lim source
+    obtain ⟨safe2, mx2, account⟩ :=
+      doStack_doLimSafe_limSwap op args accounted lim safe1 peak1 accounted.stackMax
+    obtain ⟨safe3, result⟩ := doAppAux_limSwap op args
+      (doStack op args (doLimSafe accounted op args)) next value lim safe2 peak1 mx2 appRun
+    exact ⟨safe3, peak1, mx2, by simp [target, account, result]⟩
+
+/-- Exact HOL `do_app_lim_swap_aux` (`dataPropsScript.sml:631`): primitive
+success survives a limits update, with the safety, peak and stack-maximum
+observations existential. -/
+@[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "do_app_lim_swap_aux"]
+theorem doApp_limSwap_aux {C F : Type} (op : ClosLang.Op) (args : List DataSem.Value)
+    (state : State C F) (value : DataSem.Value) (next : State C F) (lim : Limits)
+    (run : doApp op args state = .val (value, next)) :
+    ∃ safe' peak' mx',
+      doApp op args { state with limits := lim } =
+        .val (value, { next with
+                       limits := lim
+                       stackMax := mx'
+                       safeForSpace := safe'
+                       peakHeapLength := peak' }) := by
+  cases op with
+  | install =>
+    simp only [doApp] at run ⊢
+    have equation := doInstall_limSwap (R := DataSem.Value) args
+      { state with stackMax := none, stackFrameSizes := .ln } lim
+    rw [run] at equation
+    exact ⟨next.safeForSpace, next.peakHeapLength, next.stackMax, by simpa using equation⟩
+  | intOp intop =>
+    have normal := appSpace_limSuccess (.intOp intop) args state value next lim
+    cases intop <;> simp only [doApp] at run ⊢
+    all_goals first | exact normal run | contradiction
+  | label label =>
+    simp only [doApp] at run ⊢
+    exact appSpace_limSuccess (.label label) args state value next lim run
+  | ffi name =>
+    simp only [doApp] at run ⊢
+    exact appSpace_limSuccess (.ffi name) args state value next lim run
+  | wordOp wordop =>
+    simp only [doApp] at run ⊢
+    exact appSpace_limSuccess (.wordOp wordop) args state value next lim run
+  | blockOp blockop =>
+    simp only [doApp] at run ⊢
+    exact appSpace_limSuccess (.blockOp blockop) args state value next lim run
+  | globOp globop =>
+    simp only [doApp] at run ⊢
+    exact appSpace_limSuccess (.globOp globop) args state value next lim run
+  | memOp memop =>
+    simp only [doApp] at run ⊢
+    exact appSpace_limSuccess (.memOp memop) args state value next lim run
+  | thunkOp thunkop =>
+    simp only [doApp] at run ⊢
+    exact appSpace_limSuccess (.thunkOp thunkop) args state value next lim run
+
+/-- Exact HOL `do_app_lim_swap` (`dataPropsScript.sml:633`), which HOL derives
+from the auxiliary form by `SIMP_RULE std_ss [LET_DEF]`. -/
+@[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "do_app_lim_swap"]
+theorem doApp_limSwap {C F : Type} (op : ClosLang.Op) (args : List DataSem.Value)
+    (state : State C F) (value : DataSem.Value) (next : State C F) (lim : Limits)
+    (run : doApp op args state = .val (value, next)) :
+    ∃ safe' peak' mx',
+      doApp op args { state with limits := lim } =
+        .val (value, { next with
+                       limits := lim
+                       stackMax := mx'
+                       safeForSpace := safe'
+                       peakHeapLength := peak' }) :=
+  doApp_limSwap_aux op args state value next lim run
+
+set_option maxHeartbeats 1000000 in
+/-- Failed auxiliary applications are unchanged by a limits update, because the
+dispatcher reads the configured limits only through its length-safety test. This
+Flapjack helper supports the HOL limit swap; the heartbeat bump covers the
+unfolded dispatcher case analysis. -/
+theorem applyNonFfi_none_limSwap {C F : Type} (op : ClosLang.Op) (values : List DataSem.Value)
+    (state : State C F) (lim : Limits) (safe : Bool) (peak : Nat) (mx : Option Nat)
+    (run : applyNonFfi op values state = none) :
+    applyNonFfi op values { state with
+                            limits := lim
+                            safeForSpace := safe
+                            peakHeapLength := peak
+                            stackMax := mx } = none := by
+  simp only [applyNonFfi, Option.bind] at run ⊢
+  all_goals
+    repeat' (first | split at run | split)
+  all_goals
+    try simp_all [withFreshTimestamp, checkLim, Option.bind]
+  all_goals
+    aesop
+
+/-- Auxiliary errors are unchanged by a limits update. This Flapjack helper
+supports the HOL limit swap. -/
+private theorem doAppAux_err_limSwap {C F : Type} (op : ClosLang.Op) (args : List DataSem.Value)
+    (state : State C F) (lim : Limits) (safe : Bool) (peak : Nat) (mx : Option Nat)
+    (error : Flapjack.SemanticPrimitivesHOL.ErrorResult DataSem.Value)
+    (run : doAppAux op args state = .err error) :
+    doAppAux op args { state with
+                       limits := lim
+                       safeForSpace := safe
+                       peakHeapLength := peak
+                       stackMax := mx } = .err error := by
+  cases op with
+  | ffi name =>
+    simp only [doAppAux] at run ⊢
+    rcases args with _ | ⟨first, _ | ⟨second, _ | ⟨third, rest⟩⟩⟩ <;> try simp_all
+    cases first <;> try simp_all
+    case refPtr configBit configPtr =>
+      cases second <;> try simp_all
+      case refPtr dataBit dataPtr =>
+        cases configLookup : sptLookup configPtr state.refs <;> try simp_all
+        case some configEntry =>
+          cases configEntry <;> try simp_all
+          case byteArray configFlag config =>
+            cases configFlag <;> try simp_all
+            case true =>
+              cases dataLookup : sptLookup dataPtr state.refs <;> try simp_all
+              case some dataEntry =>
+                cases dataEntry <;> try simp_all
+                case byteArray dataFlag bytes =>
+                  cases dataFlag <;> try simp_all
+                  case false =>
+                    cases call : callFFIHOL state.ffi (.extCall name) config bytes <;>
+                      try simp_all
+  | intOp intop =>
+    simp only [doAppAux] at run ⊢
+    cases original : applyNonFfi (.intOp intop) args state with
+    | none =>
+      have changed :=
+        applyNonFfi_none_limSwap (.intOp intop) args state lim safe peak mx original
+      simp_all
+    | some pair => simp_all
+  | wordOp wordop =>
+    simp only [doAppAux] at run ⊢
+    cases original : applyNonFfi (.wordOp wordop) args state with
+    | none =>
+      have changed :=
+        applyNonFfi_none_limSwap (.wordOp wordop) args state lim safe peak mx original
+      simp_all
+    | some pair => simp_all
+  | label label =>
+    simp only [doAppAux] at run ⊢
+    cases original : applyNonFfi (.label label) args state with
+    | none =>
+      have changed :=
+        applyNonFfi_none_limSwap (.label label) args state lim safe peak mx original
+      simp_all
+    | some pair => simp_all
+  | install =>
+    simp only [doAppAux] at run ⊢
+    cases original : applyNonFfi (.install) args state with
+    | none =>
+      have changed :=
+        applyNonFfi_none_limSwap (.install) args state lim safe peak mx original
+      simp_all
+    | some pair => simp_all
+  | thunkOp thunkop =>
+    simp only [doAppAux] at run ⊢
+    cases original : applyNonFfi (.thunkOp thunkop) args state with
+    | none =>
+      have changed :=
+        applyNonFfi_none_limSwap (.thunkOp thunkop) args state lim safe peak mx original
+      simp_all
+    | some pair => simp_all
+  | globOp globop =>
+    simp only [doAppAux] at run ⊢
+    cases original : applyNonFfi (.globOp globop) args state with
+    | none =>
+      have changed :=
+        applyNonFfi_none_limSwap (.globOp globop) args state lim safe peak mx original
+      simp_all
+    | some pair => simp_all
+  | blockOp blockop =>
+    simp only [doAppAux] at run ⊢
+    cases original : applyNonFfi (.blockOp blockop) args state with
+    | none =>
+      have changed :=
+        applyNonFfi_none_limSwap (.blockOp blockop) args state lim safe peak mx original
+      simp_all
+    | some pair => simp_all
+  | memOp memop =>
+    simp only [doAppAux] at run ⊢
+    cases original : applyNonFfi (.memOp memop) args state with
+    | none =>
+      have changed :=
+        applyNonFfi_none_limSwap (.memOp memop) args state lim safe peak mx original
+      simp_all
+    | some pair => simp_all
+
+/-- The space-and-auxiliary path preserves errors under a limits update. This
+assembles the limit-swap error case. -/
+private theorem appSpace_err_limResource {C F : Type} (op : ClosLang.Op)
+    (args : List DataSem.Value) (state : State C F) (lim : Limits)
+    (error : Flapjack.SemanticPrimitivesHOL.ErrorResult DataSem.Value)
+    (run : (match doSpace op args state with
+      | none => Flapjack.SemanticPrimitivesHOL.Result.err (.abort .typeError)
+      | some accounted =>
+        doAppAux op args (doStack op args (doLimSafe accounted op args))) = .err error) :
+    (match doSpace op args { state with limits := lim } with
+      | none => Flapjack.SemanticPrimitivesHOL.Result.err (.abort .typeError)
+      | some accounted =>
+        doAppAux op args (doStack op args (doLimSafe accounted op args))) = .err error := by
+  cases source : doSpace op args state with
+  | none =>
+    have target := doSpace_none_limSwap op args state lim source
+    simp_all
+  | some accounted =>
+    have appRun : doAppAux op args (doStack op args (doLimSafe accounted op args)) =
+        .err error := by
+      simpa [source] using run
+    obtain ⟨safe1, peak1, target⟩ := doSpace_some_limSwap op args state accounted lim source
+    obtain ⟨safe2, mx2, account⟩ :=
+      doStack_doLimSafe_limSwap op args accounted lim safe1 peak1 accounted.stackMax
+    have changed := doAppAux_err_limSwap op args
+      (doStack op args (doLimSafe accounted op args)) lim safe2 peak1 mx2 error appRun
+    simp [target, account, changed]
+
+/-- Exact HOL `do_app_err_lim_swap` (`dataPropsScript.sml:637`): primitive
+errors are unchanged by a limits update. -/
+@[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "do_app_err_lim_swap"]
+theorem doApp_err_limSwap {C F : Type} (op : ClosLang.Op) (args : List DataSem.Value)
+    (state : State C F) (error : Flapjack.SemanticPrimitivesHOL.ErrorResult DataSem.Value)
+    (lim : Limits) (run : doApp op args state = .err error) :
+    doApp op args { state with limits := lim } = .err error := by
+  cases op with
+  | install =>
+    simp only [doApp] at run ⊢
+    have equation := doInstall_limSwap (R := DataSem.Value) args
+      { state with stackMax := none, stackFrameSizes := .ln } lim
+    rw [run] at equation
+    simpa using equation
+  | intOp intop =>
+    have normal := appSpace_err_limResource (.intOp intop) args state lim error
+    cases intop <;> simp only [doApp] at run ⊢
+    all_goals first | exact normal run | exact run
+  | label label =>
+    simp only [doApp] at run ⊢
+    exact appSpace_err_limResource (.label label) args state lim error run
+  | ffi name =>
+    simp only [doApp] at run ⊢
+    exact appSpace_err_limResource (.ffi name) args state lim error run
+  | wordOp wordop =>
+    simp only [doApp] at run ⊢
+    exact appSpace_err_limResource (.wordOp wordop) args state lim error run
+  | blockOp blockop =>
+    simp only [doApp] at run ⊢
+    exact appSpace_err_limResource (.blockOp blockop) args state lim error run
+  | globOp globop =>
+    simp only [doApp] at run ⊢
+    exact appSpace_err_limResource (.globOp globop) args state lim error run
+  | memOp memop =>
+    simp only [doApp] at run ⊢
+    exact appSpace_err_limResource (.memOp memop) args state lim error run
+  | thunkOp thunkop =>
+    simp only [doApp] at run ⊢
+    exact appSpace_err_limResource (.thunkOp thunkop) args state lim error run
 
 end Flapjack.Compiler.Backend.DataProps
