@@ -27,13 +27,13 @@ theorem sameStackSize_sizeOfStack (xs ys : List Stack) (related : List.Forall₂
 /-- Exact HOL `size_of_stack_eq` (`dataPropsScript.sml:654`): stack size
 accounting unfolds one frame at a time. -/
 @[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "size_of_stack_eq"]
-theorem sizeOfStack_eq (size : Option Nat) (env : Spt DataSem.Value) (handler : Nat)
-    (stack : List Stack) :
+theorem sizeOfStack_eq (size : Option Nat) (env : Spt DataSem.Value)
+    (exceptionEnv : Spt DataSem.Value) (handler : Nat) (stack : List Stack) :
     sizeOfStack (.env size env :: stack) =
       Option.map₂ (· + ·) size (sizeOfStack stack) ∧
-    sizeOfStack (.exc size env handler :: stack) =
-      Option.map₂ (· + ·) (Option.map (· + 3) size) (sizeOfStack stack) ∧
+    sizeOfStack (.exc size exceptionEnv handler :: stack) =
+      Option.map₂ (· + ·) (Option.map (3 + ·) size) (sizeOfStack stack) ∧
     sizeOfStack [] = some 1 := by
-  simp [sizeOfStack, sizeOfStackFrame, Nat.add_comm]
+  simp [sizeOfStack, sizeOfStackFrame]
 
 end Flapjack.Compiler.Backend.DataProps
