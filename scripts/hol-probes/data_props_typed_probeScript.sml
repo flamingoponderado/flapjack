@@ -103,3 +103,18 @@ val _ = emit "Boolv_11_typed" "Boolv_11";
 val _ = emit "do_app_with_clock_typed" "do_app_with_clock";
 val _ = emit "do_app_change_clock_typed" "do_app_change_clock";
 val _ = emit "space_consumed_with_clock_typed" "space_consumed_with_clock";
+val _ = emit "do_app_lss_sm_safe_peak_swap_typed" "do_app_lss_sm_safe_peak_swap";
+val _ = emit "do_app_aux_lss_sm_safe_peak_swap_typed" "do_app_aux_lss_sm_safe_peak_swap";
+val _ = emit "do_app_err_lss_sm_safe_peak_swap_typed" "do_app_err_lss_sm_safe_peak_swap";
+val _ = show "do_app_lss_sm_safe_peak_swap_aux_typed"
+  (prove(``!op vs s q s' lss smx safe peak. dataSem$do_app op vs s = Rval (q,s') ==>
+      ?safe' peak' lss' smx'.
+        dataSem$do_app op vs (s with <|locals_size := lss; stack_max := smx; safe_for_space := safe; peak_heap_length := peak |>) =
+        Rval (q, s' with <|locals_size := lss'; stack_max := smx'; safe_for_space := safe'; peak_heap_length := peak' |>)``,
+    metis_tac [dataPropsTheory.do_app_lss_sm_safe_peak_swap]));
+val _ = show "do_app_sm_safe_peak_swap_aux_typed"
+  (prove(``!op vs s q s' smx safe peak. dataSem$do_app op vs s = Rval (q,s') ==>
+      ?safe' peak' smx'.
+        dataSem$do_app op vs (s with <|stack_max := smx; safe_for_space := safe; peak_heap_length := peak |>) =
+        Rval (q, s' with <|stack_max := smx'; safe_for_space := safe'; peak_heap_length := peak' |>)``,
+    metis_tac [dataPropsTheory.do_app_sm_safe_peak_swap]));
