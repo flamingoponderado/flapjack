@@ -917,6 +917,9 @@ run_probe cake_parse_error_probeScript.sml cake_parse_error_probe.out \
 run_probe cake_inference_probeScript.sml cake_inference_probe.out \
   subst generalise unify occurs "$cake_dir/compiler/inference/inferScript.sml" "$cake_dir/compiler/inference"
 
+run_probe compiler_config_probeScript.sml compiler_config_probe.out \
+  compiler_config_axiom compiler_read_limits_replay "$cake_dir/compiler/compilerScript.sml" "$cake_dir/compiler"
+
 run_probe cake_infer_core_probeScript.sml cake_infer_core_probe.out \
   function pattern application recursive annotation "$cake_dir/compiler/inference/inferScript.sml" "$cake_dir/compiler/inference"
 

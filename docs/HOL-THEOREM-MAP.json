@@ -1,5 +1,19 @@
 [
 {
+  "hol_path": "cakeml/compiler/compilerScript.sml", "hol_name": "config",
+  "lean_path": "Flapjack/Compiler/Compiler.lean", "lean_name": "CompilerConfig",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Independent comparison with compiler_config_probe.out confirms all eight fields, their order and original carriers. The reviewed assembler carrier uses the positive-width BitVec translation of HOL words."
+ },
+{
+  "hol_path": "cakeml/compiler/proofs/compilerProofScript.sml", "hol_name": "read_limits_def",
+  "lean_path": "Flapjack/Compiler/Proofs/CompilerProof.lean", "lean_name": "readLimits",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Independent comparison with the source and compiler_read_limits_replay confirms the wrapper, shared positive word width and independent machine-state and projection carriers. The replay uses local names for the source backend definition and wrapper."
+ },
+{
   "hol_path": "cakeml/compiler/inference/inferScript.sml", "hol_name": "ns_nub_def",
   "lean_path": "Flapjack/Compiler/Inference/Infer/TypesOutput.lean", "lean_name": "nsNubHOL",
   "statement_status": "reviewed_exact",

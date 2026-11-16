@@ -3,6 +3,8 @@ module
 public import Flapjack.Compiler.Inference.InferProps
 public import Flapjack.Compiler.Inference.EnvRel.Relation
 public import Flapjack.Compiler.Repl.ReplTypes
+public import Flapjack.Compiler.Compiler
+public import Flapjack.Compiler.Backend.BackendProof.ReadLimits
 
 @[expose] public section
 
@@ -10,6 +12,15 @@ public import Flapjack.Compiler.Repl.ReplTypes
 namespace Flapjack.Compiler.Proofs.CompilerProof
 open Flapjack.NamespaceHOL Flapjack.Compiler.Inference.InferProps
   Flapjack.Compiler.Inference.Infer Flapjack.PrimTypesHOL Flapjack.TypeSystemHOL
+
+/-- Read the stack and heap bounds using the assembler and backend settings
+    carried by the source compiler configuration. -/
+@[hol "cakeml/compiler/proofs/compilerProofScript.sml" "read_limits_def"
+  (words_as_type_indexed_bitvec)]
+def readLimits {width : Nat} [NeZero width] {state projection : Type}
+    (cc : Flapjack.Compiler.CompilerConfig width)
+    (mc : Flapjack.MachineConfig width state projection) (ms : state) : Nat × Nat :=
+  Flapjack.Compiler.Backend.BackendProof.readLimits cc.asmConfig cc.backendConfig mc ms
 
 /-- Inference-side well-formedness needed to establish the initial environment
 relation. This supports `type_config_ok`; it is not a separate HOL theorem. -/

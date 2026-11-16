@@ -293,6 +293,7 @@
     {"bytes": 1183, "out": "compile_prog_probe.out", "rows": 11, "sha256": "01bf538de9e1e0f2cc18d896200f25e6f8a07a83351b57ae5c200caa5cdc256c"},
     {"bytes": 163, "out": "compile_shape_probe.out", "rows": 8, "sha256": "064993438a64c2946577d241eafcb49463d081915523ae78ba3f82978d74bc55"},
     {"bytes": 1983, "out": "compile_to_crep_probe.out", "rows": 16, "sha256": "eccf9d2788b9bfef726a19133ae0072ea17d35d5ab576140b7e3fd02f8d2828d"},
+    {"bytes": 527, "out": "compiler_config_probe.out", "rows": 2, "sha256": "92b89fd58e1696dd9de42d216d84d3723a8f97ecd8707db0d8fc6d0d1cb65ff3"},
     {"bytes": 89, "out": "consume_tok_probe.out", "rows": 2, "sha256": "3628b5bb6e2556bdd180085e91e22086ceaafbea5cc4491bcc8821cfcda4b837"},
     {"bytes": 4906, "out": "context_free_tree_probe.out", "rows": 19, "sha256": "5b5142d91aa71bd74e5ebdd767ea7ab4623ba653fe9a8381ddf0c24da4503542"},
     {"bytes": 175, "out": "copying_gc_local_typed_probe.out", "rows": 1, "sha256": "0d550127321646aa41ab458ec082e8a5c549ef5a42145de7c5d959aedbd083a8"},
