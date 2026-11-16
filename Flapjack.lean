@@ -1625,6 +1625,7 @@ import Flapjack.Compiler.Backend.Semantics.DataProps.JumpPush
 import Flapjack.Compiler.Backend.DataSpace.Proofs.State
 import Flapjack.Compiler.Backend.Semantics.DataProps.FrameSize
 import Flapjack.Compiler.Backend.Semantics.DataProps.FindCodeSize
+import Flapjack.Compiler.Backend.Semantics.DataProps.StackFrameSizeRel
 import Flapjack.Compiler.Backend.DataSpace.Proofs.CodeLabels
 import Flapjack.Compiler.Backend.DataSpace.Proofs.Simulation
 import Flapjack.Compiler.Backend.DataSpace.Proofs.Seq
