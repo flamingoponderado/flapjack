@@ -22,3 +22,6 @@ __pycache__/
 
 # Regenerable CakeML/HOL declaration and theory-dependency index
 .hol-index/
+
+# Regenerable port-progress dashboard (see scripts/build-dashboard.py)
+dashboard.html
