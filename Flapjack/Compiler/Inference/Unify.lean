@@ -35,19 +35,25 @@ def cvwalkCode (s : Spt InferT) (n : Nat) : Sum Nat InferT :=
   | some (.varDb k) => .inr (.varDb k)
   | some (.app ts tc) => .inr (.app ts tc)
 
-/-- Follow variable bindings. `none` means the supplied fuel was exhausted. -/
-def walkFuel : Nat → Spt InferT → InferT → Option InferT
-  | 0, _, _ => none
-  | fuel + 1, s, .uvar n => match cvwalkCode s n with
-    | .inl u => walkFuel fuel s (.uvar u)
-    | .inr t => some t
-  | _ + 1, _, t => some t
+/-- Execute the source walker step until it returns a type. This partial
+    operation has an `Option` result to model nontermination; the original
+    `tcvwalk` returns an `InferT`, so this definition is not tagged as its port. -/
+def cvwalkPartial (s : Spt InferT) (n : Nat) : Option InferT :=
+  match cvwalkCode s n with
+  | .inl u => cvwalkPartial s u
+  | .inr t => some t
+partial_fixpoint
+
+/-- Walk one type using the unbounded variable walker. -/
+def walkExecutable (s : Spt InferT) : InferT → Option InferT
+  | .uvar n => cvwalkPartial s n
+  | t => some t
 
 mutual
 private def occursFuel : Nat → Spt InferT → Nat → InferT → Option Bool
   | 0, _, _, _ => none
   | fuel + 1, s, n, t => do
-    match ← walkFuel (fuel + 1) s t with
+    match ← walkExecutable s t with
     | .varDb _ => some false
     | .uvar m => some (n == m)
     | .app ts _ => occursListFuel fuel s n ts
@@ -61,12 +67,12 @@ end
 
 
 mutual
-/-- Fully follow a substitution, reporting exhaustion on cyclic or overly deep
-inputs. The HOL operation is unbounded and requires well-formed substitution. -/
+/-- Fully follow a substitution, reporting exhaustion when the structural
+fuel runs out. Variable walking is unbounded and may diverge on cyclic inputs. -/
 def walkStarFuel : Nat → Spt InferT → InferT → Option InferT
   | 0, _, _ => none
   | fuel + 1, s, t => do
-    match ← walkFuel (fuel + 1) s t with
+    match ← walkExecutable s t with
     | .varDb n => some (.varDb n)
     | .uvar n => some (.uvar n)
     | .app ts name => (walkStarListFuel fuel s ts).map (InferT.app · name)
@@ -80,16 +86,17 @@ def walkStarListFuel : Nat → Spt InferT → List InferT → Option (List Infer
     some (t :: ts)
 end
 
-/-- A finite worklist implementation of the source unification equations.
-The outer option reports fuel exhaustion; the inner option reports unification
-failure. This is Flapjack infrastructure until its correspondence with HOL's
-unbounded, well-formed-substitution algorithm is established. -/
+/-- A structurally bounded worklist implementation of the source unification
+equations. The outer option reports worklist or occurs-check fuel exhaustion;
+the inner option reports unification failure. Variable walking is unbounded
+and can diverge on cyclic substitutions. Preservation of the well-formedness
+required for walker termination has not yet been proved for this unifier. -/
 def unifyWorkFuel : Nat → Spt InferT → List (InferT × InferT) → Option (Option (Spt InferT))
   | 0, _, _ => none
   | _ + 1, s, [] => some (some s)
   | fuel + 1, s, (a, b) :: rest => do
-    let a ← walkFuel (fuel + 1) s a
-    let b ← walkFuel (fuel + 1) s b
+    let a ← walkExecutable s a
+    let b ← walkExecutable s b
     match a, b with
     | .uvar x, .uvar y =>
       unifyWorkFuel fuel (if x == y then s else sptInsert x (.uvar y) s) rest
@@ -104,7 +111,8 @@ def unifyWorkFuel : Nat → Spt InferT → List (InferT × InferT) → Option (O
       else some none
     | _, _ => some none
 
-/-- Unify one pair with an explicit execution bound. -/
+/-- Unify one pair with a worklist and occurs-check bound. Variable walking is
+unbounded, so this is not a total execution bound for arbitrary substitutions. -/
 def unifyFuel (fuel : Nat) (s : Spt InferT) (a b : InferT) : Option (Option (Spt InferT)) :=
   unifyWorkFuel fuel s [(a, b)]
 

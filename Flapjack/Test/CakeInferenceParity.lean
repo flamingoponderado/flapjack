@@ -26,11 +26,20 @@ open Flapjack Flapjack.Compiler.Inference Flapjack.Compiler.Inference.Infer Flap
 #guard cvwalkCode (sptInsert 2 (.varDb 4) .ln) 2 == .inr (.varDb 4)
 #guard cvwalkCode (sptInsert 2 (.app [.uvar 3] 5) .ln) 2 == .inr (.app [.uvar 3] 5)
 #guard cvwalkCode (sptInsert 2 (.uvar 7) .ln) 2 == .inl 7
-#guard walkFuel 1 (sptInsert 2 (.varDb 4) .ln) (.uvar 2) == some (.varDb 4)
-#guard walkFuel 1 (sptInsert 2 (.app [.uvar 3] 5) .ln) (.uvar 2) == some (.app [.uvar 3] 5)
-#guard walkFuel 1 (sptInsert 2 (.uvar 7) (sptInsert 7 (.varDb 4) .ln)) (.uvar 2) == none
-#guard walkFuel 2 (sptInsert 2 (.uvar 7) (sptInsert 7 (.varDb 4) .ln)) (.uvar 2) == some (.varDb 4)
-#guard walkFuel 4 (sptInsert 2 (.uvar 2) .ln) (.uvar 2) == none
+#guard walkExecutable (sptInsert 2 (.varDb 4) .ln) (.uvar 2) == some (.varDb 4)
+#guard walkExecutable (sptInsert 2 (.app [.uvar 3] 5) .ln) (.uvar 2) == some (.app [.uvar 3] 5)
+#guard walkExecutable (sptInsert 2 (.uvar 7) (sptInsert 7 (.varDb 4) .ln)) (.uvar 2) == some (.varDb 4)
+#guard
+  let chain := (List.range 256).foldl
+    (fun s n => sptInsert n (.uvar (n + 1)) s) (sptInsert 256 (.varDb 4) .ln)
+  walkExecutable chain (.uvar 0) == some (.varDb 4)
+
+-- The unifier's worklist bound no longer truncates a longer variable chain.
+#guard match unifyFuel 2
+    (sptInsert 2 (.uvar 7) (sptInsert 7 (.uvar 9) (sptInsert 9 (.varDb 4) .ln)))
+    (.uvar 2) (.varDb 4) with
+  | some (some _) => true
+  | _ => false
 
 #guard match unifyFuel 100 .ln (.app [.uvar 0, .uvar 1] 4) (.app [.app [] 5, .uvar 0] 4) with
   | some (some s) => sptLookup 0 s == some (.app [] 5) && sptLookup 1 s == some (.app [] 5)

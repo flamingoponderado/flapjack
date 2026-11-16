@@ -56,4 +56,36 @@ theorem cwalkThm (s : Spt InferT) (it : InferT) (h : cwfs s) :
   | app ts tc => exact tWalkEqn.2.1 (sp2fm s) ts tc
   | uvar u => exact tWalkEqn.1 (sp2fm s) u
 
+/-- The executed partial walker terminates with the HOL-shaped result on
+    well-formed substitutions. This connects the executable to the source
+    equations and is infrastructure for the computational correctness proof. -/
+theorem cvwalkPartialCorrect (s : Spt InferT) (hw : cwfs s) (n : Nat) :
+    cvwalkPartial s n = some (cvwalkModel s n) := by
+  have htree : sptWf (sptMap encodeInferT s) = true := by
+    rw [sptWfMap]
+    exact hw.2
+  induction n using (wfCvwalkR s n hw).induction with
+  | h n ih =>
+    rw [cvwalkPartial.eq_1, cvwalkThm s n htree hw.1]
+    cases found : sptLookup n s with
+    | none => simp [cvwalkCode, found]
+    | some t =>
+      cases t with
+      | varDb k => simp [cvwalkCode, found]
+      | app ts tc => simp [cvwalkCode, found]
+      | uvar u =>
+        simp only [cvwalkCode, found]
+        apply ih u
+        exact cvwalkEnsuresDecrease s n u ⟨hw, by simp [cvwalkCode, found]⟩
+
+/-- The executable type walker agrees with the HOL-shaped type walker on
+    well-formed substitutions; this connects inference to its proof model. -/
+theorem walkExecutableCorrect (s : Spt InferT) (hw : cwfs s) (t : InferT) :
+    walkExecutable s t = some (cwalkModel s t) := by
+  rw [cwalkThm s t hw]
+  cases t with
+  | varDb n => rfl
+  | app ts tc => rfl
+  | uvar u => exact cvwalkPartialCorrect s hw u
+
 end Flapjack.Compiler.Inference.Unify
