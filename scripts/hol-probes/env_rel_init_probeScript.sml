@@ -275,6 +275,23 @@ val _ = print_term (Parse.Term `!tenv1 ienv1 tenv2 ienv2.
   probe_env_rel (extend_dec_tenv tenv1 tenv2) (extend_dec_ienv ienv1 ienv2)`);
 val _ = print "\n";
 
+val _ = print "env_rel_empty_statement_typed=";
+val _ = print_term (Parse.Term `probe_env_rel
+  <| v := nsEmpty; c := nsEmpty; t := nsEmpty |>
+  <| inf_v := nsEmpty; inf_c := nsEmpty; inf_t := nsEmpty |>`);
+val _ = print "\n";
+
+val lookup_var_empty_replay = Q.prove(
+  `lookup_var x (bind_tvar tvs Empty) tenv = lookup_var x Empty tenv`,
+  rw [bind_tvar_def, lookup_var_def, lookup_varE_def] >>
+  EVERY_CASE_TAC >> fs [tveLookup_def]);
+val _ = show "lookup_var_empty_replay_typed" lookup_var_empty_replay;
+
+val _ = print "env_rel_complete_bind_statement_typed=";
+val _ = print_term (Parse.Term `probe_env_rel_complete FEMPTY ienv tenv Empty ⇒
+  probe_env_rel_complete FEMPTY ienv tenv (bind_tvar tvs Empty)`);
+val _ = print "\n";
+
 val _ = print "env_rel_lift_statement_typed=";
 val _ = print_term (Parse.Term `!tenv ienv mn. probe_env_rel tenv ienv ⇒
   probe_env_rel (tenvLift mn tenv) (lift_ienv mn ienv)`);

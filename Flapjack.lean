@@ -3795,6 +3795,7 @@ import Flapjack.Compiler.Inference.EnvRel.NamedSubst
 import Flapjack.Compiler.Inference.EnvRel.Instantiation
 import Flapjack.Compiler.Inference.EnvRel.Lift
 import Flapjack.Compiler.Inference.EnvRel.Extend
+import Flapjack.Compiler.Inference.InferSound
 import Flapjack.NamespaceProps.MapLookup
 import Flapjack.Compiler.Inference.InferProps.DeBruijn.Compose
 import Flapjack.Compiler.Inference.Unify.Walkstar.Empty

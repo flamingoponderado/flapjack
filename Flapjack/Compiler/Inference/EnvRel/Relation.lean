@@ -164,4 +164,23 @@ theorem envRelTenvToIenv (tenv : TypeEnv) (h : tenvOk tenv) :
       rfl
     · exact tschemeApproxModelRefl 0 HolFiniteMapExact.holEmpty tvs (unconvertT t)
 
+/-- Empty inference and declarative environments satisfy the full relation,
+    expanded one level to expose its fixed empty substitutions. -/
+@[hol "cakeml/compiler/inference/proofs/envRelScript.sml" "env_rel_empty"
+  (fmap_as_finite_support_result_observations := [Flapjack.HolFiniteMapExact.holEmpty])]
+theorem envRelEmpty :
+    ienvOk (fun _ => False) emptyEnv ∧
+      tenvOk (⟨nsEmpty, nsEmpty, nsEmpty⟩ : TypeEnv) ∧
+      (∀ path, nsLookupMod emptyEnv.infV path = none ↔
+        nsLookupMod (⟨nsEmpty, nsEmpty, nsEmpty⟩ : TypeEnv).v path = none) ∧
+      envRelSoundModel HolFiniteMapExact.holEmpty emptyEnv ⟨nsEmpty, nsEmpty, nsEmpty⟩ .empty ∧
+      envRelCompleteModel HolFiniteMapExact.holEmpty emptyEnv ⟨nsEmpty, nsEmpty, nsEmpty⟩ .empty := by
+  have good : tenvOk (⟨nsEmpty, nsEmpty, nsEmpty⟩ : TypeEnv) := by
+    unfold tenvOk tenvValOk tenvCtorOk tenvAbbrevOk nsAll
+    repeat' constructor
+    all_goals intro id value found
+    all_goals cases id <;> simp [nsLookup, nsEmpty] at found
+  have result := envRelTenvToIenv ⟨nsEmpty, nsEmpty, nsEmpty⟩ good
+  simpa [tenvToIenv, nsMap, nsEmpty, emptyEnv] using result
+
 end Flapjack.Compiler.Inference.EnvRel

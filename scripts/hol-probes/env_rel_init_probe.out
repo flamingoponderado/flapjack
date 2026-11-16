@@ -46,6 +46,9 @@ tscheme_inst_to_approx_replay_typed=tscheme_inst ((tvs :num),(t :t)) ((tvs' :num
 env_rel_tenv_to_ienv_statement_typed=∀(tenv :type_env). tenv_ok tenv ⇒ probe_env_rel tenv (probe_tenv_to_ienv tenv)
 env_rel_ienv_to_tenv_statement_typed=∀(ienv :inf_env). ienv_ok (∅ :num -> bool) ienv ⇒ probe_env_rel (probe_ienv_to_tenv ienv) ienv
 env_rel_extend_statement_typed=∀(tenv1 :type_env) (ienv1 :inf_env) (tenv2 :type_env) (ienv2 :inf_env). probe_env_rel tenv1 ienv1 ∧ probe_env_rel tenv2 ienv2 ⇒ probe_env_rel (extend_dec_tenv tenv1 tenv2) (extend_dec_ienv ienv1 ienv2)
+env_rel_empty_statement_typed=probe_env_rel <|v := (nsEmpty :(mlstring, mlstring, num # t) namespace); c := (nsEmpty :(mlstring, mlstring, mlstring list # t list # num) namespace); t := (nsEmpty :(mlstring, mlstring, mlstring list # t) namespace)|> <|inf_v := (nsEmpty :(mlstring, mlstring, num # infer_t) namespace); inf_c := (nsEmpty :(mlstring, mlstring, mlstring list # t list # num) namespace); inf_t := (nsEmpty :(mlstring, mlstring, mlstring list # t) namespace)|>
+lookup_var_empty_replay_typed=lookup_var (x :(mlstring, mlstring) id) (bind_tvar (tvs :num) Empty) (tenv :type_env) = lookup_var x Empty tenv
+env_rel_complete_bind_statement_typed=probe_env_rel_complete (FEMPTY :num |-> infer_t) (ienv :inf_env) (tenv :type_env) Empty ⇒ probe_env_rel_complete (FEMPTY :num |-> infer_t) ienv tenv (bind_tvar (tvs :num) Empty)
 env_rel_lift_statement_typed=∀(tenv :type_env) (ienv :inf_env) (mn :mlstring). probe_env_rel tenv ienv ⇒ probe_env_rel (tenvLift mn tenv) (lift_ienv mn ienv)
 type_config_ok_replay_typed=probe_env_rel prim_tenv init_config ∧ inf_set_tids_ienv prim_type_ids init_config
 lookup_varE_empty_replay_typed=∀(x :(mlstring, mlstring) id). lookup_varE x Empty = (NONE :(num # t) option)
