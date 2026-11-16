@@ -807,8 +807,9 @@ renderings (`holEl`, `holHd`, `holLast`, `holThe`, `holLinv`, `holArb`,
 binders whose single instance exists only for it:
 
 ```lean
-@[hol "cakeml/compiler/backend/proofs/wordPropsScript.sml" "ALOOKUP_lemma"
-  (total_function_inhabitants := [α, β])]
+@[hol "hol4/src/coretypes/optionScript.sml" "THE_DEF"
+  (total_function_inhabitants := [α])]
+noncomputable def holThe {α : Type} [Nonempty α] : Option α → α
 ```
 
 Every listed name must be a type binder with exactly one

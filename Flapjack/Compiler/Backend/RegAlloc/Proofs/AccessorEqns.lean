@@ -62,7 +62,8 @@ theorem listCaseSt {α β γ : Type} (a : α → β) (b : γ → List γ → α 
 
 /-- Exact HOL `Msub_eqn` (`reg_allocProofScript.sml:125-136`).
 HOL's unused `v` binder is omitted. -/
-@[hol "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml" "Msub_eqn"]
+@[hol "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml" "Msub_eqn"
+  (total_function_inhabitants := [α])]
 theorem msubEqn {α ε : Type} [Nonempty α] :
     ∀ (e : ε) (n : Nat) (ls : List α),
       mSub e n ls = if n < ls.length then .success (holEl n ls) else .failure e := by

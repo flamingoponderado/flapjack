@@ -12,7 +12,8 @@ namespace Flapjack.Compiler.Backend.FlatToClos
 open Flapjack.AstHOL Flapjack.Basis.Pure.MlString Flapjack.SemanticPrimitivesHOL
 
 /-- Pointwise related indexed elements give related mapped and generated lists. -/
-@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "LIST_REL_MAP_GENLIST"]
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "LIST_REL_MAP_GENLIST"
+  (total_function_inhabitants := [α])]
 theorem listRel_map_genlist {α β γ : Type} [Nonempty α] (items : List α)
     (first : α → β) (second : Nat → γ) (rel : β → γ → Prop)
     (pointwise : ∀ i, i < items.length → rel (first (Flapjack.holEl i items)) (second i)) :

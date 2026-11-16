@@ -5855,8 +5855,9 @@
   "hol_name": "LIST_REL_EL",
   "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/ListRel.lean",
   "lean_name": "listRel_el",
-  "statement_status": "reviewed_exact",
-  "reviewer": "Compared the independent polymorphic list element types, relation, length equality, second-list bound and HOL EL lookups against list_rel_el_typed in flat_to_clos_relation_probe.out. Lean's Nonempty instances represent the inhabited HOL types needed by EL."
+  "statement_status": "reviewed_total_function_inhabitants",
+  "total_function_inhabitants": ["α", "β"],
+  "reviewer": "Source comparison of the typed capture; Compared the independent polymorphic list element types, relation, length equality, second-list bound and HOL EL lookups against list_rel_el_typed in flat_to_clos_relation_probe.out. Lean's Nonempty instances represent the inhabited HOL types needed by EL. total_function_inhabitants records the instance that renders HOL EL."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
@@ -6768,8 +6769,9 @@
   "hol_name": "MEM_enumerate_EL",
   "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/Enumerate.lean",
   "lean_name": "memEnumerateEl",
-  "statement_status": "reviewed_exact",
-  "reviewer": "Compared the typed mem_enumerate_el capture, including the bounded existential and (offset + index, EL index xs) pair. The reviewed holEl uses Nonempty to represent HOL type inhabitation; no bound or membership premise is changed."
+  "statement_status": "reviewed_total_function_inhabitants",
+  "total_function_inhabitants": ["A"],
+  "reviewer": "Source comparison of the typed capture; Compared the typed mem_enumerate_el capture, including the bounded existential and (offset + index, EL index xs) pair. The reviewed holEl uses Nonempty to represent HOL type inhabitation; no bound or membership premise is changed. total_function_inhabitants records the instance that renders HOL EL."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
@@ -16668,8 +16670,9 @@
     "hol_name": "LIST_REL_MAP_GENLIST",
     "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/Recursive.lean",
     "lean_name": "listRel_map_genlist",
-    "statement_status": "reviewed_exact",
-    "reviewer": "Compared list_rel_map_genlist_typed, replaying the original local HOL proof: the independent element and result types, total EL lookup premise, mapped input and GENLIST output coincide. Nonempty models HOL type inhabitation; range mapped through the generator gives GENLIST in ascending index order."
+    "statement_status": "reviewed_total_function_inhabitants",
+    "total_function_inhabitants": ["α"],
+    "reviewer": "Source comparison of the typed capture; Compared list_rel_map_genlist_typed, replaying the original local HOL proof: the independent element and result types, total EL lookup premise, mapped input and GENLIST output coincide. Nonempty models HOL type inhabitation; range mapped through the generator gives GENLIST in ascending index order. total_function_inhabitants records the instance that renders HOL EL."
   },
 {
     "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
@@ -26083,8 +26086,9 @@
     "lean_name": "el_getFfiIndex_mem",
     "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
     "hol_name": "EL_get_ffi_index_MEM",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.5): original lab_to_targetProofScript.sml:3101-3107: MEM s ls ==> EL (get_ffi_index ls s) ls = s, generic element type (Nonempty only for total holEl). Only the HOL word dimension translates to positive BitVec width (where the statement has words); native carriers are the reviewed MachineConfig/AsmState/LabSem.State/LabProgHOL; HOL sets as predicates, MEM as List membership, EL as total holEl. No hypothesis added or conclusion weakened; no target run/post-state assumed. Original statement and inferred types captured in lab_to_target_code_helpers_probe.out (re-elaborated statement text, not theorem replay)."
+    "statement_status": "reviewed_total_function_inhabitants",
+    "total_function_inhabitants": ["α"],
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.5): original lab_to_targetProofScript.sml:3101-3107: MEM s ls ==> EL (get_ffi_index ls s) ls = s, generic element type (Nonempty only for total holEl). Only the HOL word dimension translates to positive BitVec width (where the statement has words); native carriers are the reviewed MachineConfig/AsmState/LabSem.State/LabProgHOL; HOL sets as predicates, MEM as List membership, EL as total holEl. No hypothesis added or conclusion weakened; no target run/post-state assumed. Original statement and inferred types captured in lab_to_target_code_helpers_probe.out (re-elaborated statement text, not theorem replay). total_function_inhabitants records the instance that renders HOL EL."
   },
 {
     "lean_path": "Flapjack/Compiler/Backend/LabToTarget/CodeSafetyFacts.lean",
@@ -31898,8 +31902,9 @@
     "hol_name": "swap_perm_lemma",
     "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/SortCorrect.lean",
     "lean_name": "swapPermLemma",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.11.13): linear_scanProofScript.sml:3879-3912, polymorphic (TV=1); [Nonempty α] records that HOL types are inhabited (needed only by holEl's opaque out-of-range value). HOL EL is the exact holEl, PERM the exact holPerm, LEX holLex, LUPDATE v n l is l.set n v, TAKE List.take, EVERY/MEM list quantification/membership, HOL let as Lean let, record update sth with f := v as Lean structure update, swap_regs/partition_regs/sort_regs/swap_moves/partition_moves/sort_moves the exact tagged linear_scanScript ports. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+    "statement_status": "reviewed_total_function_inhabitants",
+    "total_function_inhabitants": ["α"],
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.11.13): linear_scanProofScript.sml:3879-3912, polymorphic (TV=1); [Nonempty α] records that HOL types are inhabited (needed only by holEl's opaque out-of-range value). HOL EL is the exact holEl, PERM the exact holPerm, LEX holLex, LUPDATE v n l is l.set n v, TAKE List.take, EVERY/MEM list quantification/membership, HOL let as Lean let, record update sth with f := v as Lean structure update, swap_regs/partition_regs/sort_regs/swap_moves/partition_moves/sort_moves the exact tagged linear_scanScript ports. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise. total_function_inhabitants records the instance that renders HOL EL."
   },
 {
     "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
@@ -32018,8 +32023,9 @@
     "hol_name": "update_color_active_colors_same",
     "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/SpillRegister.lean",
     "lean_name": "updateColorActiveColorsSame",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-8k3k): linear_scanProofScript.sml:2697-2706, polymorphic as in HOL (TV=3): unused e:α, active : (β # num) list, regcol : γ, colors : γ list; [Nonempty γ] records that HOL types are inhabited (needed only by holEl's opaque out-of-range value, as for msubEq). HOL EL is the exact holEl, LUPDATE v n l is l.set n v, FILTER (\\e,r. r <> reg) is filter (fun x => decide (x.2 ≠ reg)), ALL_DISTINCT List.Nodup, EVERY/MEM as list quantification/membership, good_linear_scan_state the exact goodLinearScanState. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+    "statement_status": "reviewed_total_function_inhabitants",
+    "total_function_inhabitants": ["γ"],
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-8k3k): linear_scanProofScript.sml:2697-2706, polymorphic as in HOL (TV=3): unused e:α, active : (β # num) list, regcol : γ, colors : γ list; [Nonempty γ] records that HOL types are inhabited (needed only by holEl's opaque out-of-range value, as for msubEq). HOL EL is the exact holEl, LUPDATE v n l is l.set n v, FILTER (\\e,r. r <> reg) is filter (fun x => decide (x.2 ≠ reg)), ALL_DISTINCT List.Nodup, EVERY/MEM as list quantification/membership, good_linear_scan_state the exact goodLinearScanState. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise. total_function_inhabitants records the instance that renders HOL EL."
   },
 {
     "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
@@ -32698,8 +32704,9 @@
     "hol_name": "NoRead_path",
     "lean_path": "Flapjack/Compiler/Backend/Parmove/PathLemmas.lean",
     "lean_name": "NoRead_path",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03, beads flapjack-w1a4.14/.16/.18/.19: original parmoveScript.sml:102-117 ([local]). ∀σ. path σ ∧ windmill σ ∧ LENGTH σ ≥ 2 ∧ FST (HD σ) ≠ SND (LAST σ) ⇒ NoRead (TL σ) (FST (HD σ)); the local overload NoRead μ dn = ¬MEM dn (MAP SND μ) unfolded; HD/TL/LAST as holHd/List.tail/holLast."
+    "statement_status": "reviewed_total_function_inhabitants",
+    "total_function_inhabitants": ["α"],
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03, beads flapjack-w1a4.14/.16/.18/.19: original parmoveScript.sml:102-117 ([local]). ∀σ. path σ ∧ windmill σ ∧ LENGTH σ ≥ 2 ∧ FST (HD σ) ≠ SND (LAST σ) ⇒ NoRead (TL σ) (FST (HD σ)); the local overload NoRead μ dn = ¬MEM dn (MAP SND μ) unfolded; HD/TL/LAST as holHd/List.tail/holLast. total_function_inhabitants records the instance that renders HOL HD/LAST."
   },
 {
     "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
@@ -32714,8 +32721,9 @@
     "hol_name": "path_imp_mem2",
     "lean_path": "Flapjack/Compiler/Backend/Parmove/PathLemmas.lean",
     "lean_name": "path_imp_mem2",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03, beads flapjack-w1a4.14/.16/.18/.19: original parmoveScript.sml:89-100 ([local]). path x ⇒ ∀y. MEM y (MAP SND x) ∧ y ≠ SND (LAST x) ⇒ MEM y (MAP FST x); LAST is the tagged holLast port of HOL LAST_DEF; x implicit."
+    "statement_status": "reviewed_total_function_inhabitants",
+    "total_function_inhabitants": ["α"],
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03, beads flapjack-w1a4.14/.16/.18/.19: original parmoveScript.sml:89-100 ([local]). path x ⇒ ∀y. MEM y (MAP SND x) ∧ y ≠ SND (LAST x) ⇒ MEM y (MAP FST x); LAST is the tagged holLast port of HOL LAST_DEF; x implicit. total_function_inhabitants records the instance that renders HOL LAST."
   },
 {
     "lean_path": "Flapjack/Compiler/Backend/Parmove/Permutation.lean",
@@ -34058,8 +34066,9 @@
     "hol_name": "Msub_eqn",
     "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/AccessorEqns.lean",
     "lean_name": "msubEqn",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.3.38.2) against reg_allocProofScript.sml:125-136: !e n ls v. Msub e n ls = if n < LENGTH ls then M_success (EL n ls) else M_failure e; HOL v does not occur and is omitted (documented); [Nonempty alpha] is the inhabitation HOL types always have, required by the total EL; HOL EL is the exact tagged Flapjack.holEl (listScript EL_def, pinned HOL submodule, provenance flapjack-pxn.18.5.15.3.38.1); no changed clause or hypothesis."
+    "statement_status": "reviewed_total_function_inhabitants",
+    "total_function_inhabitants": ["α"],
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.3.38.2) against reg_allocProofScript.sml:125-136: !e n ls v. Msub e n ls = if n < LENGTH ls then M_success (EL n ls) else M_failure e; HOL v does not occur and is omitted (documented); [Nonempty alpha] is the inhabitation HOL types always have, required by the total EL; HOL EL is the exact tagged Flapjack.holEl (listScript EL_def, pinned HOL submodule, provenance flapjack-pxn.18.5.15.3.38.1); no changed clause or hypothesis. total_function_inhabitants records the instance that renders HOL EL/HD."
   },
 {
     "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
@@ -71404,16 +71413,18 @@
     "lean_name": "findIndex_allDistinct_elEq",
     "hol_path": "cakeml/misc/miscScript.sml",
     "hol_name": "find_index_ALL_DISTINCT_EL_eq",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-sol3 full original source1166 and exported fulltype0hyp comparison: generic HOL alpha list, sole ALL_DISTINCT guard, arbitrary target/starting offset/result index and complete search-SOME iff existential j with result=offset+j, j<length and target=EL j preserved. DecidableEq is propositional equality as in accepted find_index_def; Nonempty exposes HOL intrinsic inhabited carrier for the existing EL. No word/model, finite-map, name-string or list-array representation change. Genuine structural kernel proof with unique-head exclusion; EL cons clauses and holEl_eq_getElem are used only when original j<length supplies each tail bound. Empty-list branch rules out the bounded existential without evaluating a past-end value. No extra outer bound, successful-search/result callback, opaque default evaluation, choice/provenance change or release of individual total-HD/EL hold. Fresh original fulltype0hyp and eight original/native observations allT cover first/last match, nonzero and 2^80 offsets, missing/empty search, duplicate-guard counterexample with in-range EL and actual extracted shared-memory PCs. Full generic and actual arbitrary query/offset/result consumer discharges Nodup via the full entry-PC law and its encoding/size guards. Kernel/oracle evidence supplements source review, not cross-language equivalence or full shared-memory/initializer/compiler/machine correctness."
+    "statement_status": "reviewed_total_function_inhabitants",
+    "total_function_inhabitants": ["α"],
+    "reviewer": "flapjack-sol3 full original source1166 and exported fulltype0hyp comparison: generic HOL alpha list, sole ALL_DISTINCT guard, arbitrary target/starting offset/result index and complete search-SOME iff existential j with result=offset+j, j<length and target=EL j preserved. DecidableEq is propositional equality as in accepted find_index_def; Nonempty exposes HOL intrinsic inhabited carrier for the existing EL. No word/model, finite-map, name-string or list-array representation change. Genuine structural kernel proof with unique-head exclusion; EL cons clauses and holEl_eq_getElem are used only when original j<length supplies each tail bound. Empty-list branch rules out the bounded existential without evaluating a past-end value. No extra outer bound, successful-search/result callback, opaque default evaluation, choice/provenance change or release of individual total-HD/EL hold. Fresh original fulltype0hyp and eight original/native observations allT cover first/last match, nonzero and 2^80 offsets, missing/empty search, duplicate-guard counterexample with in-range EL and actual extracted shared-memory PCs. Full generic and actual arbitrary query/offset/result consumer discharges Nodup via the full entry-PC law and its encoding/size guards. Kernel/oracle evidence supplements source review, not cross-language equivalence or full shared-memory/initializer/compiler/machine correctness. total_function_inhabitants records the instance that renders HOL EL."
   },
 {
     "lean_path": "Flapjack/Misc/FindIndex/Membership.lean",
     "lean_name": "findIndex_mem",
     "hol_path": "cakeml/misc/miscScript.sml",
     "hol_name": "find_index_MEM",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-sol3 full original source1088 and fresh fulltype0hyp comparison: generic alpha list/target/arbitrary Nat offset, sole membership premise and complete existential find_index success at offset+i, original i<length bound and EL i list=target. DecidableEq supplies same propositional equality; Nonempty exposes intrinsic HOL inhabited carrier for existing bounded EL. No Nodup, extra outer bound, assumed search/target/default or hold change; structural first-match recursion retains duplicates. Fresh original seven complete theorem instances with original membership guards kernel discharged and two missing/empty guard observations allT; generic native full consumer and actual arbitrary machineConfig FFI-entry-PC/word/offset consumer. Every EL remains under original existential bound. Evidence is source comparison/regression, not HOL-to-Lean equivalence or full FFI/initializer/compiler correctness."
+    "statement_status": "reviewed_total_function_inhabitants",
+    "total_function_inhabitants": ["α"],
+    "reviewer": "flapjack-sol3 full original source1088 and fresh fulltype0hyp comparison: generic alpha list/target/arbitrary Nat offset, sole membership premise and complete existential find_index success at offset+i, original i<length bound and EL i list=target. DecidableEq supplies same propositional equality; Nonempty exposes intrinsic HOL inhabited carrier for existing bounded EL. No Nodup, extra outer bound, assumed search/target/default or hold change; structural first-match recursion retains duplicates. Fresh original seven complete theorem instances with original membership guards kernel discharged and two missing/empty guard observations allT; generic native full consumer and actual arbitrary machineConfig FFI-entry-PC/word/offset consumer. Every EL remains under original existential bound. Evidence is source comparison/regression, not HOL-to-Lean equivalence or full FFI/initializer/compiler correctness. total_function_inhabitants records the instance that renders HOL EL."
   },
 {
     "lean_path": "Flapjack/Misc/FindIndex/Shift.lean",
@@ -71686,32 +71697,36 @@
     "hol_name": "EL_def",
     "lean_path": "Flapjack/Misc/ListEl.lean",
     "lean_name": "holEl",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.15.3.38.1), pinned HOL submodule a390cbabd3a4521bab4ee20281e3e42933a8a3ae: listScript.sml:225-228 EL 0 l = HD l /\\ EL (SUC n) l = EL n (TL l); type num -> 'a list -> 'a. Lean: same two clauses over holHd and List.tail (HOL TL_DEF 132-135: TL [] = [], TL (h::t) = t, i.e. List.tail). Original type confirmed by type_of; original in-range EVAL rows (scripts/hol-probes/hol_list_el_probe.out) kernel-replayed in Flapjack.Test.HolListElParity. No extra premise. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/hol_list_typed_probe.out `el_def_typed` re-confirms both conjuncts over a single `α`, the zero clause over `HD l` and the successor clause over `TL l`, matching holEl's equations."
+    "statement_status": "reviewed_total_function_inhabitants",
+    "total_function_inhabitants": ["α"],
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.15.3.38.1), pinned HOL submodule a390cbabd3a4521bab4ee20281e3e42933a8a3ae: listScript.sml:225-228 EL 0 l = HD l /\\ EL (SUC n) l = EL n (TL l); type num -> 'a list -> 'a. Lean: same two clauses over holHd and List.tail (HOL TL_DEF 132-135: TL [] = [], TL (h::t) = t, i.e. List.tail). Original type confirmed by type_of; original in-range EVAL rows (scripts/hol-probes/hol_list_el_probe.out) kernel-replayed in Flapjack.Test.HolListElParity. No extra premise. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/hol_list_typed_probe.out `el_def_typed` re-confirms both conjuncts over a single `α`, the zero clause over `HD l` and the successor clause over `TL l`, matching holEl's equations. total_function_inhabitants records the instance that renders HOL EL."
   },
 {
     "hol_path": "HOL/src/list/src/listScript.sml",
     "hol_name": "HD",
     "lean_path": "Flapjack/Misc/ListEl.lean",
     "lean_name": "holHd",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.15.3.38.1), pinned HOL submodule a390cbabd3a4521bab4ee20281e3e42933a8a3ae: listScript.sml:128-130 Definition HD: HD (h::t) = h, the only clause, so HD [] is unspecified; type 'a list -> 'a. Lean: the h::t clause and, for [], the opaque holHdNil (no Lean proof can learn anything about it, matching HOL). HOL types are inhabited; Lean requires [Nonempty α] for the opaque value. Original type confirmed by type_of; original in-range EVAL rows (scripts/hol-probes/hol_list_el_probe.out) kernel-replayed in Flapjack.Test.HolListElParity. No extra premise. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/hol_list_typed_probe.out `hd_typed` re-confirms the single `α`, the `h t` binder order and the cons equation; the Lean `[]` clause is the documented holHdNil rendering of HOL's unspecified application."
+    "statement_status": "reviewed_total_function_inhabitants",
+    "total_function_inhabitants": ["α"],
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.15.3.38.1), pinned HOL submodule a390cbabd3a4521bab4ee20281e3e42933a8a3ae: listScript.sml:128-130 Definition HD: HD (h::t) = h, the only clause, so HD [] is unspecified; type 'a list -> 'a. Lean: the h::t clause and, for [], the opaque holHdNil (no Lean proof can learn anything about it, matching HOL). HOL types are inhabited; Lean requires [Nonempty α] for the opaque value. Original type confirmed by type_of; original in-range EVAL rows (scripts/hol-probes/hol_list_el_probe.out) kernel-replayed in Flapjack.Test.HolListElParity. No extra premise. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/hol_list_typed_probe.out `hd_typed` re-confirms the single `α`, the `h t` binder order and the cons equation; the Lean `[]` clause is the documented holHdNil rendering of HOL's unspecified application. total_function_inhabitants records the instance that renders HOL HD."
   },
 {
     "hol_path": "HOL/src/list/src/listScript.sml",
     "hol_name": "LAST_DEF",
     "lean_path": "Flapjack/Misc/ListEl.lean",
     "lean_name": "holLast",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-sol source comparison2026-10-03 bead flapjack-hol-list-last, exact inherited source203515b2b9a17c5db8a653cd843b27f6615d0c8a repaired in its ONE existing Misc/ListEl counterpart: listScript2052-2054 LAST_DEF constrains cons lists by LAST(h::t)=if t=[] then h else LAST t. Native singleton/longer-cons pattern matching and structural recursion preserve that equation on generic inhabited HOL element types as List α with α:Type/[Nonempty α], with no decidable element equality assumption. Original Defn.non_wfrec_defn calls Prim_rec.new_recursive_definition, whose new_recursive_definition0259-268 proves existence then calls Rsyntax.new_specification on this cons equation alone; it does not establish LAST[]=HD[]=ARB. Dedicated opaque holLastNil preserves the independently unspecified original LAST[] value and per-type identity, removing the inherited shared holHdNil assignment without inventing a concrete default or nil equality. LAST_CONS2063-2068 retains both universally quantified singleton/longer-cons conjuncts without extra hypotheses. Original kernel definition/type/zero-hypothesis capture, complete unchanged REWRITE_TAC LAST_CONS proof, and total case equation retaining symbolic original LAST[] are captured in list_last_probe.out. No word/fmap/array/name translation, target evaluation, postrelation or desired-bound premise; no production-path change or guest/FP parity claim. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/hol_list_typed_probe.out `last_def_typed` re-confirms the cons equation with the equality guard `t = []` over a single `α`; the empty-list residual is the documented holLastNil."
+    "statement_status": "reviewed_total_function_inhabitants",
+    "total_function_inhabitants": ["α"],
+    "reviewer": "flapjack-sol source comparison2026-10-03 bead flapjack-hol-list-last, exact inherited source203515b2b9a17c5db8a653cd843b27f6615d0c8a repaired in its ONE existing Misc/ListEl counterpart: listScript2052-2054 LAST_DEF constrains cons lists by LAST(h::t)=if t=[] then h else LAST t. Native singleton/longer-cons pattern matching and structural recursion preserve that equation on generic inhabited HOL element types as List α with α:Type/[Nonempty α], with no decidable element equality assumption. Original Defn.non_wfrec_defn calls Prim_rec.new_recursive_definition, whose new_recursive_definition0259-268 proves existence then calls Rsyntax.new_specification on this cons equation alone; it does not establish LAST[]=HD[]=ARB. Dedicated opaque holLastNil preserves the independently unspecified original LAST[] value and per-type identity, removing the inherited shared holHdNil assignment without inventing a concrete default or nil equality. LAST_CONS2063-2068 retains both universally quantified singleton/longer-cons conjuncts without extra hypotheses. Original kernel definition/type/zero-hypothesis capture, complete unchanged REWRITE_TAC LAST_CONS proof, and total case equation retaining symbolic original LAST[] are captured in list_last_probe.out. No word/fmap/array/name translation, target evaluation, postrelation or desired-bound premise; no production-path change or guest/FP parity claim. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/hol_list_typed_probe.out `last_def_typed` re-confirms the cons equation with the equality guard `t = []` over a single `α`; the empty-list residual is the documented holLastNil. total_function_inhabitants records the instance that renders HOL LAST."
   },
 {
     "lean_path": "Flapjack/Misc/ListEl.lean",
     "lean_name": "holLastCons",
     "hol_path": "HOL/src/list/src/listScript.sml",
     "hol_name": "LAST_CONS",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-sol source comparison2026-10-03 bead flapjack-hol-list-last, exact inherited source203515b2b9a17c5db8a653cd843b27f6615d0c8a repaired in its ONE existing Misc/ListEl counterpart: listScript2052-2054 LAST_DEF constrains cons lists by LAST(h::t)=if t=[] then h else LAST t. Native singleton/longer-cons pattern matching and structural recursion preserve that equation on generic inhabited HOL element types as List α with α:Type/[Nonempty α], with no decidable element equality assumption. Original Defn.non_wfrec_defn calls Prim_rec.new_recursive_definition, whose new_recursive_definition0259-268 proves existence then calls Rsyntax.new_specification on this cons equation alone; it does not establish LAST[]=HD[]=ARB. Dedicated opaque holLastNil preserves the independently unspecified original LAST[] value and per-type identity, removing the inherited shared holHdNil assignment without inventing a concrete default or nil equality. LAST_CONS2063-2068 retains both universally quantified singleton/longer-cons conjuncts without extra hypotheses. Original kernel definition/type/zero-hypothesis capture, complete unchanged REWRITE_TAC LAST_CONS proof, and total case equation retaining symbolic original LAST[] are captured in list_last_probe.out. No word/fmap/array/name translation, target evaluation, postrelation or desired-bound premise; no production-path change or guest/FP parity claim. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/hol_list_typed_probe.out `last_cons_typed` re-confirms both conjuncts, the singleton over `x` and the longer cons over `x y z`, matching holLastCons."
+    "statement_status": "reviewed_total_function_inhabitants",
+    "total_function_inhabitants": ["α"],
+    "reviewer": "flapjack-sol source comparison2026-10-03 bead flapjack-hol-list-last, exact inherited source203515b2b9a17c5db8a653cd843b27f6615d0c8a repaired in its ONE existing Misc/ListEl counterpart: listScript2052-2054 LAST_DEF constrains cons lists by LAST(h::t)=if t=[] then h else LAST t. Native singleton/longer-cons pattern matching and structural recursion preserve that equation on generic inhabited HOL element types as List α with α:Type/[Nonempty α], with no decidable element equality assumption. Original Defn.non_wfrec_defn calls Prim_rec.new_recursive_definition, whose new_recursive_definition0259-268 proves existence then calls Rsyntax.new_specification on this cons equation alone; it does not establish LAST[]=HD[]=ARB. Dedicated opaque holLastNil preserves the independently unspecified original LAST[] value and per-type identity, removing the inherited shared holHdNil assignment without inventing a concrete default or nil equality. LAST_CONS2063-2068 retains both universally quantified singleton/longer-cons conjuncts without extra hypotheses. Original kernel definition/type/zero-hypothesis capture, complete unchanged REWRITE_TAC LAST_CONS proof, and total case equation retaining symbolic original LAST[] are captured in list_last_probe.out. No word/fmap/array/name translation, target evaluation, postrelation or desired-bound premise; no production-path change or guest/FP parity claim. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/hol_list_typed_probe.out `last_cons_typed` re-confirms both conjuncts, the singleton over `x` and the longer cons over `x y z`, matching holLastCons. total_function_inhabitants records the instance that renders HOL LAST."
   },
 {
     "lean_path": "Flapjack/Misc/ListLookup.lean",
@@ -72512,8 +72527,9 @@
     "hol_name": "THE_DEF",
     "lean_path": "Flapjack/Misc/Option.lean",
     "lean_name": "holThe",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.2), pinned optionScript.sml:176-180: THE_DEF is new_recursive_definition over option_Axiom with only THE (SOME x) = x, so HOL determines nothing about THE NONE. Lean holThe (some x) = x and holThe none = holTheNone α, an opaque constant that no Lean proof can unfold, so Lean likewise knows nothing about it. Generic Type0 carrier; the [Nonempty α] binder records inhabitedness that every HOL type has and adds no other information. Noncomputable. Coordinator integration acceptance complete; author source comparison recorded. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/hol_option_typed_probe.out `the_def_typed` re-confirms the single `α` and the cons equation; the Lean `none` clause is the documented holTheNone rendering of HOL's unspecified application."
+    "statement_status": "reviewed_total_function_inhabitants",
+    "total_function_inhabitants": ["α"],
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.2), pinned optionScript.sml:176-180: THE_DEF is new_recursive_definition over option_Axiom with only THE (SOME x) = x, so HOL determines nothing about THE NONE. Lean holThe (some x) = x and holThe none = holTheNone α, an opaque constant that no Lean proof can unfold, so Lean likewise knows nothing about it. Generic Type0 carrier; the [Nonempty α] binder records inhabitedness that every HOL type has and adds no other information. Noncomputable. Coordinator integration acceptance complete; author source comparison recorded. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/hol_option_typed_probe.out `the_def_typed` re-confirms the single `α` and the cons equation; the Lean `none` clause is the documented holTheNone rendering of HOL's unspecified application. total_function_inhabitants records the instance that renders HOL THE."
   },
 {
     "hol_path": "HOL/src/coretypes/pairScript.sml",
@@ -72544,8 +72560,9 @@
     "hol_name": "LINV_LO",
     "lean_path": "Flapjack/Misc/PredSet.lean",
     "lean_name": "holLinv",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus2 source comparison 2026-10-02: pred_setScript.sml:2776-2778: LINV f s y = THE (LINV_OPT f s y), with THE the reviewed holThe (THE NONE unspecified). The [Nonempty α] binder is HOL's type inhabitedness, as for holThe. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/hol_predset_typed_probe.out `linv_lo_typed` re-confirms `∀ f s y` and the `THE (LINV_OPT f s y)` equation, matching holLinv."
+    "statement_status": "reviewed_total_function_inhabitants",
+    "total_function_inhabitants": ["α"],
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02: pred_setScript.sml:2776-2778: LINV f s y = THE (LINV_OPT f s y), with THE the reviewed holThe (THE NONE unspecified). The [Nonempty α] binder is HOL's type inhabitedness, as for holThe. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/hol_predset_typed_probe.out `linv_lo_typed` re-confirms `∀ f s y` and the `THE (LINV_OPT f s y)` equation, matching holLinv. total_function_inhabitants records the instance that renders HOL LINV (through THE)."
   },
 {
     "hol_path": "HOL/src/pred_set/src/pred_setScript.sml",
@@ -112052,8 +112069,9 @@
     "lean_name": "joinEnv",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
     "hol_name": "join_env_def",
-    "statement_status": "reviewed_exact",
-    "reviewer": "Source comparison: lines 285–289 and typed data_to_word_gc_stack capture. The independent HOL environment and list-payload types remain independent Lean parameters; HOL inhabited types correspond to Nonempty α. Filter uses nonzero even names, index is (name−2)/2, list order is preserved, and holThe preserves the unspecified THE NONE branch."
+    "statement_status": "reviewed_total_function_inhabitants",
+    "total_function_inhabitants": ["α"],
+    "reviewer": "Source comparison: lines 285–289 and typed data_to_word_gc_stack capture. The independent HOL environment and list-payload types remain independent Lean parameters; HOL inhabited types correspond to Nonempty α. Filter uses nonzero even names, index is (name−2)/2, list order is preserved, and holThe preserves the unspecified THE NONE branch. total_function_inhabitants records the instance that renders HOL THE."
   },
 {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/StackRel.lean",
@@ -133731,8 +133749,9 @@
   "hol_name": "pmatch_rows_same_FST",
   "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/PatternRowsSame.lean",
   "lean_name": "pmatchRows_sameFst",
-  "statement_status": "reviewed_exact",
-  "reviewer": "Compared pmatch_rows_same_FST_typed in flat_pattern_rows_same_probe.out. The two row payload types are independent, as are the state parameters; HOL's inhabited types are represented by Nonempty where EL requires them. The pattern-projection premise and all three cases are unchanged, including the existential index, target-list bound, original EL equality and target result using EL."
+  "statement_status": "reviewed_total_function_inhabitants",
+  "total_function_inhabitants": ["E", "E'"],
+  "reviewer": "Source comparison of the typed capture; Compared pmatch_rows_same_FST_typed in flat_pattern_rows_same_probe.out. The two row payload types are independent, as are the state parameters; HOL's inhabited types are represented by Nonempty where EL requires them. The pattern-projection premise and all three cases are unchanged, including the existential index, target-list bound, original EL equality and target result using EL. total_function_inhabitants records the instance that renders HOL EL."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",

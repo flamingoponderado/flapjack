@@ -27,7 +27,8 @@ noncomputable abbrev holHdNil (α : Type) [Nonempty α] : α := holArb α
 
 /-- Exact HOL `HD` (`listScript.sml:128-130`); the missing `[]` clause is the
 unspecified `holHdNil`. -/
-@[hol "HOL/src/list/src/listScript.sml" "HD"]
+@[hol "HOL/src/list/src/listScript.sml" "HD"
+  (total_function_inhabitants := [α])]
 noncomputable def holHd {α : Type} [Nonempty α] : List α → α
   | [] => holHdNil α
   | h :: _ => h
@@ -42,7 +43,8 @@ noncomputable opaque holLastNil (α : Type) [Nonempty α] : α
 /-- Exact HOL `LAST_DEF` (`listScript.sml:2052-2054`). The cons equation is
 implemented by singleton/longer-cons matching; the unspecified empty-list
 value is retained independently, without a concrete or shared `ARB` default. -/
-@[hol "HOL/src/list/src/listScript.sml" "LAST_DEF"]
+@[hol "HOL/src/list/src/listScript.sml" "LAST_DEF"
+  (total_function_inhabitants := [α])]
 noncomputable def holLast {α : Type} [Nonempty α] : List α → α
   | [] => holLastNil α
   | [h] => h
@@ -57,14 +59,16 @@ theorem holLast_cons {α : Type} [Nonempty α] (h : α) (t : List α) :
   cases t <;> simp [holLast]
 
 /-- Complete original singleton and longer-cons conjunction. -/
-@[hol "HOL/src/list/src/listScript.sml" "LAST_CONS"]
+@[hol "HOL/src/list/src/listScript.sml" "LAST_CONS"
+  (total_function_inhabitants := [α])]
 theorem holLastCons {α : Type} [Nonempty α] :
     (∀ x : α, holLast [x] = x) ∧
     (∀ (x y : α) (z : List α), holLast (x :: y :: z) = holLast (y :: z)) := by
   constructor <;> intros <;> simp only [holLast]
 
 /-- Exact HOL `EL_def` (`listScript.sml:225-228`). -/
-@[hol "HOL/src/list/src/listScript.sml" "EL_def"]
+@[hol "HOL/src/list/src/listScript.sml" "EL_def"
+  (total_function_inhabitants := [α])]
 noncomputable def holEl {α : Type} [Nonempty α] : Nat → List α → α
   | 0, l => holHd l
   | n + 1, l => holEl n l.tail

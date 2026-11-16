@@ -33,7 +33,8 @@ theorem path_imp_mem {α : Type} {x : α × α} {y : List (α × α)} :
 
 /-- Exact HOL `path_imp_mem2` (`parmoveScript.sml:89-100`). HOL's free `x` is
 implicit; `LAST` is the `holLast` port. -/
-@[hol "cakeml/compiler/backend/reg_alloc/parmoveScript.sml" "path_imp_mem2"]
+@[hol "cakeml/compiler/backend/reg_alloc/parmoveScript.sml" "path_imp_mem2"
+  (total_function_inhabitants := [α])]
 theorem path_imp_mem2 {α : Type} [Nonempty α] {x : List (α × α)} :
     path x → ∀ y, y ∈ x.map Prod.snd ∧ y ≠ (holLast x).2 → y ∈ x.map Prod.fst := by
   induction x with
@@ -54,7 +55,8 @@ theorem path_imp_mem2 {α : Type} [Nonempty α] {x : List (α × α)} :
 
 /-- Exact HOL `NoRead_path` (`parmoveScript.sml:102-117`). `HD`, `TL`, `LAST`
 are `holHd`, `List.tail` and `holLast`; `windmill` is the tagged `windmill`. -/
-@[hol "cakeml/compiler/backend/reg_alloc/parmoveScript.sml" "NoRead_path"]
+@[hol "cakeml/compiler/backend/reg_alloc/parmoveScript.sml" "NoRead_path"
+  (total_function_inhabitants := [α])]
 theorem NoRead_path {α : Type} [Nonempty α] :
     ∀ σ : List (α × α), path σ ∧ windmill σ ∧ σ.length ≥ 2 ∧
       (holHd σ).1 ≠ (holLast σ).2 → (holHd σ).1 ∉ σ.tail.map Prod.snd := by

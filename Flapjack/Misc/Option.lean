@@ -61,7 +61,8 @@ noncomputable opaque holTheNone (α : Type) [Nonempty α] : α
 
 /-- HOL `THE`: `THE (SOME x) = x`, with `THE NONE` the unspecified
 `holTheNone`. -/
-@[hol "hol4/src/coretypes/optionScript.sml" "THE_DEF"]
+@[hol "hol4/src/coretypes/optionScript.sml" "THE_DEF"
+  (total_function_inhabitants := [α])]
 noncomputable def holThe {α : Type} [Nonempty α] : Option α → α
   | some x => x
   | none => holTheNone α
