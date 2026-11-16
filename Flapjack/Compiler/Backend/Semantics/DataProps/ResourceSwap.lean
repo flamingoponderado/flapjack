@@ -958,4 +958,106 @@ theorem doApp_err_lssStackFrameSwap {C F : Type} (op : ClosLang.Op) (values : Li
                       stackFrameSizes := stfrm } = .err error :=
   doApp_error_lssStackFrameResource op values state lss stk stfrm error run
 
+set_option maxHeartbeats 1000000 in
+/-- The auxiliary dispatcher reads the configured limits only through its
+length-safety test, so swapping them preserves the control flow and the returned
+value and changes no field except the safety flag. This Flapjack helper supports
+the HOL limit swap. -/
+theorem applyNonFfi_limSwap {C F : Type} (op : ClosLang.Op) (values : List DataSem.Value)
+    (state next : State C F) (value : DataSem.Value) (lim : Limits) (safe : Bool) (peak : Nat)
+    (mx : Option Nat)
+    (run : applyNonFfi op values state = some (value, next)) :
+    ∃ safe',
+      applyNonFfi op values { state with
+                              limits := lim
+                              safeForSpace := safe
+                              peakHeapLength := peak
+                              stackMax := mx } =
+        some (value, { next with
+                       limits := lim
+                       safeForSpace := safe'
+                       peakHeapLength := peak
+                       stackMax := mx }) := by
+  simp only [applyNonFfi, Option.bind] at run ⊢
+  all_goals
+    repeat' (first | split at run | split)
+  all_goals
+    try simp_all [withFreshTimestamp, checkLim, Option.bind]
+  all_goals try (aesop (config := {warnOnNonterminal := false}))
+  all_goals cases safe <;> try simp_all
+  all_goals omega
+
+/-- Installation under a limits update. This Flapjack helper supports the HOL
+limit swap. -/
+theorem doInstall_limSwap {C F R : Type} (values : List DataSem.Value) (state : State C F)
+    (lim : Limits) :
+    doInstall (R := R) values { state with limits := lim } =
+      match doInstall (R := R) values state with
+      | .val (value, next) => .val (value, { next with limits := lim })
+      | .err error => .err error := by
+  rcases values with _ | ⟨v1, _ | ⟨v2, _ | ⟨v3, _ | ⟨v4, _ | ⟨v5, rest⟩⟩⟩⟩⟩ <;> try rfl
+  cases bytes : valueToBytes v1 <;> cases words : valueToWords v2 <;>
+    simp [doInstall, bytes, words]
+  all_goals repeat' (split <;> simp_all)
+
+/-- Failed space accounting is unchanged by a limits update. This Flapjack
+helper supports the HOL limit swap. -/
+theorem doSpace_none_limSwap {C F : Type} (op : ClosLang.Op) (values : List DataSem.Value)
+    (state : State C F) (lim : Limits) (run : doSpace op values state = none) :
+    doSpace op values { state with limits := lim } = none := by
+  cases reset : DataLang.opSpaceReset op
+  · by_cases zero : DataSpace.opSpaceReq op values.length = 0
+    · simp [doSpace, reset, zero] at run
+    · by_cases low : state.space < DataSpace.opSpaceReq op values.length <;>
+        simp_all [doSpace, consumeSpace]
+  · simp [doSpace, reset] at run
+
+/-- Successful space accounting under a limits update differs only in the
+safety and peak observations. This Flapjack helper supports the HOL limit
+swap. -/
+theorem doSpace_some_limSwap {C F : Type} (op : ClosLang.Op) (values : List DataSem.Value)
+    (state next : State C F) (lim : Limits) (run : doSpace op values state = some next) :
+    ∃ safe' peak',
+      doSpace op values { state with limits := lim } =
+        some { next with limits := lim, safeForSpace := safe', peakHeapLength := peak' } := by
+  classical
+  let target := { state with limits := lim }
+  cases reset : DataLang.opSpaceReset op
+  · by_cases zero : DataSpace.opSpaceReq op values.length = 0
+    · simp [doSpace, reset, zero] at run
+      subst next
+      exact ⟨state.safeForSpace, state.peakHeapLength,
+        by simp [doSpace, reset, zero]⟩
+    · by_cases low : state.space < DataSpace.opSpaceReq op values.length
+      · simp [doSpace, reset, zero, consumeSpace, low] at run
+      · simp [doSpace, reset, zero, consumeSpace, low] at run
+        subst next
+        exact ⟨state.safeForSpace, state.peakHeapLength,
+          by simp [doSpace, reset, zero, consumeSpace, low]⟩
+  · simp [doSpace, reset] at run
+    subst next
+    refine ⟨target.safeForSpace && decide (noThunksInRefs target.refs ∧
+      sizeOfHeapArgs values target + spaceConsumed target op values ≤ target.limits.heapLimit),
+      max target.peakHeapLength (sizeOfHeapArgs values target + spaceConsumed target op values),
+      ?_⟩
+    simp [doSpace, reset, target]
+
+/-- Stack and limit accounting respect a limits update. This Flapjack helper
+supports the HOL limit swap. -/
+private theorem doStack_doLimSafe_limSwap {C F : Type} (op : ClosLang.Op)
+    (values : List DataSem.Value) (state : State C F) (lim : Limits) (safe : Bool)
+    (peak : Nat) (mx : Option Nat) :
+    ∃ safe' mx',
+      doStack op values (doLimSafe { state with
+                                     limits := lim
+                                     safeForSpace := safe
+                                     peakHeapLength := peak
+                                     stackMax := mx } op values) =
+        { doStack op values (doLimSafe state op values) with
+          limits := lim
+          safeForSpace := safe'
+          peakHeapLength := peak
+          stackMax := mx' } := by
+  simp [doStack, doLimSafe]
+
 end Flapjack.Compiler.Backend.DataProps
