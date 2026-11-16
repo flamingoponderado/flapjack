@@ -4,6 +4,7 @@ public import Flapjack.HOL.Unification.Walk
 public import Flapjack.HOL.Unification.Walk.ToVar
 public import Flapjack.HOL.Unification.Subst.NoCycles
 public import Flapjack.HOL.Unification.Subst.Vars
+public import Flapjack.HOL.Unification.UnifDef.FiniteSubset
 public import Flapjack.HOL.Unification.Walkstar.Dependency
 public import Mathlib.Logic.Relation
 
@@ -168,5 +169,66 @@ theorem allVarsSym {α β : Type} (s : HolFiniteMapExact Nat (Term α)) (t1 t2 :
   unfold allVars
   congr 1
   exact Set.union_comm (vars t1) (vars t2)
+
+/-- Canonical map codec roundtrip for the walked-pair containment theorem. -/
+theorem holFmapAsFiniteSupportParamWitness_vwalkPairSubsetRangeVars_s {α : Type}
+    (s : HolFiniteMapExact Nat (Term α)) (key : Nat) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad s)).lookup key = s.lookup key ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad s)).finiteSupport = s.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad s) = s :=
+  holFmapAsFiniteSupportParamWitness_vR_subst s key
+
+@[hol "HOL/examples/algorithms/unification/triangular/first-order/unifDefScript.sml" "vwalk_to_Pair_SUBSET_rangevars"
+  (fmap_as_finite_support_parameters := [s])]
+theorem vwalkPairSubsetRangeVars {α : Type} (s : HolFiniteMapExact Nat (Term α))
+    (v : Nat) (t1 t2 : Term α) (h : wfs s ∧ vwalk s v = .pair t1 t2) :
+    Set.Subset (vars t1) (rangeVars s) ∧ Set.Subset (vars t2) (rangeVars s) := by
+  have found := vwalkFdom s v (.pair t1 t2) h.1 h.2
+  rcases found with ⟨_, impossible⟩ | ⟨_, _, u, _, lookup⟩
+  · cases impossible
+  · have contained := inFrangeRangeVars s (.pair t1 t2) ⟨u, lookup⟩
+    exact ⟨fun _ hv => contained (Or.inl hv), fun _ hv => contained (Or.inr hv)⟩
+
+/-- Canonical map codec roundtrip for the recursive unification variable sets. -/
+theorem holFmapAsFiniteSupportParamWitness_allVarsSubset_s {α : Type}
+    (s : HolFiniteMapExact Nat (Term α)) (key : Nat) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad s)).lookup key = s.lookup key ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad s)).finiteSupport = s.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad s) = s :=
+  holFmapAsFiniteSupportParamWitness_vR_subst s key
+
+@[hol "HOL/examples/algorithms/unification/triangular/first-order/unifDefScript.sml" "allvars_SUBSET"
+  (fmap_as_finite_support_parameters := [s])]
+theorem allVarsSubset {α : Type} (s : HolFiniteMapExact Nat (Term α))
+    (t1 t2 t1a t1d t2a t2d : Term α)
+    (h : wfs s ∧ walk s t1 = .pair t1a t1d ∧ walk s t2 = .pair t2a t2d) :
+    Set.Subset (allVars s t1a t2a) (allVars s t1 t2) ∧
+    Set.Subset (allVars s t1d t2d) (allVars s t1 t2) := by
+  have part : ∀ (t a d : Term α), walk s t = .pair a d →
+      Set.Subset (vars a) (Set.union (vars t) (substVars s)) ∧
+      Set.Subset (vars d) (Set.union (vars t) (substVars s)) := by
+    intro t a d eq
+    cases t with
+    | var v =>
+      have hp := vwalkPairSubsetRangeVars s v a d ⟨h.1, eq⟩
+      exact ⟨fun _ hv => Or.inr (Or.inr (hp.1 hv)),
+        fun _ hv => Or.inr (Or.inr (hp.2 hv))⟩
+    | pair l r =>
+      simp only [walk, Term.pair.injEq] at eq
+      obtain ⟨rfl, rfl⟩ := eq
+      exact ⟨fun _ hv => Or.inl (Or.inl hv), fun _ hv => Or.inl (Or.inr hv)⟩
+    | const c => simp [walk] at eq
+  obtain ⟨ha, hd⟩ := part t1 t1a t1d h.2.1
+  obtain ⟨ha', hd'⟩ := part t2 t2a t2d h.2.2
+  constructor <;> intro v hv <;>
+    change (vars t1 v ∨ vars t2 v) ∨ substVars s v <;>
+    change (_ ∨ _) ∨ substVars s v at hv <;>
+    rcases hv with (hv | hv) | hv
+  · rcases ha hv with hv | hv <;> tauto
+  · rcases ha' hv with hv | hv <;> tauto
+  · tauto
+  · rcases hd hv with hv | hv <;> tauto
+  · rcases hd' hv with hv | hv <;> tauto
+  · tauto
 
 end Flapjack.HOL.Unification

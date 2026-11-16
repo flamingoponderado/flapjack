@@ -138484,6 +138484,30 @@
   "reviewer": "Independent typed source review confirms that only the two input terms are exchanged, with their shared atom type independent of the substitution atom type."
 },
 {
+  "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/unifDefScript.sml", "hol_name": "WF_FINITE_PSUBSET",
+  "lean_path": "Flapjack/HOL/Unification/UnifDef/FiniteSubset.lean", "lean_name": "wfFinitePsubset",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent typed source review confirms arbitrary set elements, the proper-subset orientation, and finiteness of the second set, without a finite-universe premise."
+},
+{
+  "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/substScript.sml", "hol_name": "IN_FRANGE_rangevars",
+  "lean_path": "Flapjack/HOL/Unification/Subst/Vars.lean", "lean_name": "inFrangeRangeVars",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["s"],
+  "reviewer": "Independent typed source review confirms arbitrary independent key and atom types, the original range-membership premise expressed by the equivalent existential lookup characterization, and the full subset conclusion."
+},
+{
+  "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/unifDefScript.sml", "hol_name": "vwalk_to_Pair_SUBSET_rangevars",
+  "lean_path": "Flapjack/HOL/Unification/UnifDef.lean", "lean_name": "vwalkPairSubsetRangeVars",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["s"],
+  "reviewer": "Independent typed source review confirms the original well-formedness and walked-pair premises and both ordered range-variable subset conclusions over the shared atom type."
+},
+{
+  "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/unifDefScript.sml", "hol_name": "allvars_SUBSET",
+  "lean_path": "Flapjack/HOL/Unification/UnifDef.lean", "lean_name": "allVarsSubset",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["s"],
+  "reviewer": "Independent typed source review confirms the original well-formedness and both walked-pair premises, the two ordered subset conclusions, and the shared term atom type."
+},
+{
   "hol_path": "HOL/src/transfer/examples/fmspScript.sml", "hol_name": "sp2fm_thm",
   "lean_path": "Flapjack/HOL/Transfer/Fmsp/Operations.lean", "lean_name": "sp2fmThm",
   "statement_status": "reviewed_fmap_as_finite_support_result_observations", "fmap_as_finite_support_result_observations": ["Flapjack.HOL.Transfer.Fmsp.sp2fm", "Flapjack.HolFiniteMapExact.holEmpty"],

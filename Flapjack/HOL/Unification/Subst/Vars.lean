@@ -47,6 +47,21 @@ theorem finiteRangeVars {α κ : Type} (s : HolFiniteMapExact κ (Term α)) :
   rintro _ ⟨t, _, rfl⟩
   exact finiteVars t
 
+/-- Canonical map codec roundtrip for the range-variable containment theorem. -/
+theorem holFmapAsFiniteSupportParamWitness_inFrangeRangeVars_s {α κ : Type}
+    (s : HolFiniteMapExact κ (Term α)) (key : κ) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad s)).lookup key = s.lookup key ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad s)).finiteSupport = s.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad s) = s :=
+  holFmapAsFiniteSupportParamWitness_vR_subst s key
+
+@[hol "HOL/examples/algorithms/unification/triangular/first-order/substScript.sml" "IN_FRANGE_rangevars"
+  (fmap_as_finite_support_parameters := [s])]
+theorem inFrangeRangeVars {α κ : Type} (s : HolFiniteMapExact κ (Term α)) (t : Term α)
+    (h : t ∈ {t | ∃ key, s.lookup key = some t}) : Set.Subset (vars t) (rangeVars s) := by
+  intro v hv
+  exact Set.mem_sUnion.mpr ⟨vars t, ⟨t, h, rfl⟩, hv⟩
+
 /-- Canonical map codec roundtrip for the substitution-variable operation. -/
 theorem holFmapAsFiniteSupportParamWitness_substVars_s {α : Type}
     (s : HolFiniteMapExact Nat (Term α)) (key : Nat) :
