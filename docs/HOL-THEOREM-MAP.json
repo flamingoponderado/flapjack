@@ -138085,6 +138085,12 @@
   "reviewer": "Compared HOL source and fresh_uvar_typed: return the current unification variable and increment next_uvar, leaving the remaining state fields unchanged for any exception carrier. The executable sparse-tree operation is related by a checked codec theorem."
 },
 {
+  "hol_path": "cakeml/compiler/inference/inferScript.sml", "hol_name": "n_fresh_uvar_def",
+  "lean_path": "Flapjack/Compiler/Inference/Infer/HOLState.lean", "lean_name": "freshUvars",
+  "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["subst"],
+  "reviewer": "Compared HOL source and n_fresh_uvar_typed: for arbitrary count and exception carrier, return the empty list at zero and otherwise bind one fresh variable followed by recursive allocation for n−1, preserving order. A checked correspondence relates the recursive source operation to the executable bulk allocator through the sparse-tree codec."
+},
+{
   "hol_path": "cakeml/compiler/inference/inferScript.sml", "hol_name": "n_fresh_id_def",
   "lean_path": "Flapjack/Compiler/Inference/Infer/HOLState.lean", "lean_name": "freshIds",
   "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["subst"],

@@ -4,6 +4,7 @@ infer_st_axiom_typed=∀(f :num -> (num |-> infer_t) -> num -> α). ∃(fn :infe
 init_infer_state_typed=∀(st :infer_st). init_infer_state st = st with <|next_uvar := (0 :num); subst := (FEMPTY :num |-> infer_t)|>
 init_state_typed=(init_state :infer_st -> (unit, α) exc # infer_st) = (λ(st :infer_st). ((M_success () :(unit, α) exc),init_infer_state st))
 fresh_uvar_typed=(fresh_uvar :infer_st -> (infer_t, α) exc # infer_st) = (λ(s :infer_st). ((M_success (Infer_Tuvar s.next_uvar) :(infer_t, α) exc),s with next_uvar := s.next_uvar + (1 :num)))
+n_fresh_uvar_typed=∀(n :num). (n_fresh_uvar n :infer_st -> (infer_t list, α) exc # infer_st) = if n = (0 :num) then (st_ex_return ([] :infer_t list) :infer_st -> (infer_t list, α) exc # infer_st) else st_ex_bind (fresh_uvar :infer_st -> (infer_t, α) exc # infer_st) (λ(v :infer_t). st_ex_bind (n_fresh_uvar (n − (1 :num)) :infer_st -> (infer_t list, α) exc # infer_st) (λ(vs :infer_t list). (st_ex_return (v::vs) :infer_st -> (infer_t list, α) exc # infer_st)))
 n_fresh_id_typed=∀(n :num). (n_fresh_id n :infer_st -> (num list, α) exc # infer_st) = (λ(s :infer_st). ((M_success (GENLIST (λ(x :num). s.next_id + x) n) :(num list, α) exc),s with next_id := s.next_id + n))
 extend_dec_ienv_typed=∀(ienv' :inf_env) (ienv :inf_env). extend_dec_ienv ienv' ienv = <|inf_v := nsAppend ienv'.inf_v ienv.inf_v; inf_c := nsAppend ienv'.inf_c ienv.inf_c; inf_t := nsAppend ienv'.inf_t ienv.inf_t|>
 nsLookup_nsMap_typed=∀(n :(α, β, γ) namespace) (x :(α, β) id) (f :γ -> δ). nsLookup (nsMap f n) x = OPTION_MAP f (nsLookup n x)

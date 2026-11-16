@@ -53,6 +53,14 @@ def initState {ε : Type} : M InferState Unit ε :=
 def freshUvar {ε : Type} : M InferState InferT ε :=
   fun s => (.success (.uvar s.nextUvar), { s with nextUvar := s.nextUvar + 1 })
 
+@[hol "cakeml/compiler/inference/inferScript.sml" "n_fresh_uvar_def"
+  (fmap_as_finite_support := [subst])]
+def freshUvars {ε : Type} (n : Nat) : M InferState (List InferT) ε :=
+  if n = 0 then ret []
+  else bind freshUvar (fun v => bind (freshUvars (n - 1)) (fun vs => ret (v :: vs)))
+termination_by n
+decreasing_by omega
+
 @[hol "cakeml/compiler/inference/inferScript.sml" "n_fresh_id_def"
   (fmap_as_finite_support := [subst])]
 def freshIds {ε : Type} (n : Nat) : M InferState (List Nat) ε :=
@@ -74,6 +82,32 @@ theorem freshUvarCorresponds (s : Infer.State) :
     (freshUvar (ε := Unit) (ofExecutable s)) =
       (.success (Infer.freshUvar s).1, ofExecutable (Infer.freshUvar s).2) := by
   rfl
+
+/-- The recursive source allocation returns consecutive unification variables. -/
+private theorem freshUvarsRun {ε : Type} (n : Nat) (s : InferState) :
+    freshUvars (ε := ε) n s =
+      (.success ((List.range n).map (fun i => InferT.uvar (s.nextUvar + i))),
+       { s with nextUvar := s.nextUvar + n }) := by
+  induction n generalizing s with
+  | zero => simp [freshUvars, ret]
+  | succ n ih =>
+    rw [freshUvars]
+    simp only [Nat.succ_ne_zero, ↓reduceIte, Nat.add_sub_cancel,
+      Flapjack.Translator.Monadic.MonadBase.bind, freshUvar, ih, ret]
+    rw [List.range_succ_eq_map]
+    simp [List.map_map, Nat.add_comm, Nat.add_left_comm]
+
+/-- Executable bulk allocation agrees with source recursion for every count. -/
+theorem freshUvarsCorresponds (n : Nat) (s : Infer.State) :
+    freshUvars (ε := Unit) n (ofExecutable s) =
+      (.success (Infer.freshUvars n s).1, ofExecutable (Infer.freshUvars n s).2) := by
+  have vars : (List.range n).map (fun i => InferT.uvar (s.nextUvar + i)) =
+      List.ofFn (n := n) (fun i => InferT.uvar (s.nextUvar + i.val)) := by
+    apply List.ext_getElem
+    · simp
+    · intro i hi1 hi2
+      simp
+  simp [freshUvarsRun, Infer.freshUvars, ofExecutable, vars]
 
 /-- Executable identifier allocation agrees with the source list and state. -/
 theorem freshIdsCorresponds (n : Nat) (s : Infer.State) :

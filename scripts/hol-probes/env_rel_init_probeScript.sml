@@ -27,6 +27,7 @@ val _ = show "infer_st_axiom_typed" (TypeBase.axiom_of ``:infer_st``);
 val _ = show "init_infer_state_typed" inferTheory.init_infer_state_def;
 val _ = show "init_state_typed" inferTheory.init_state_def;
 val _ = show "fresh_uvar_typed" inferTheory.fresh_uvar_def;
+val _ = show "n_fresh_uvar_typed" inferTheory.n_fresh_uvar_def;
 val _ = show "n_fresh_id_typed" inferTheory.n_fresh_id_def;
 val _ = show "extend_dec_ienv_typed" inferTheory.extend_dec_ienv_def;
 val _ = show "nsLookup_nsMap_typed" namespacePropsTheory.nsLookup_nsMap;
