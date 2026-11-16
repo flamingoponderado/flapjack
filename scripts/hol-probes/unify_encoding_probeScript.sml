@@ -18,3 +18,6 @@ val _ = show "encode_infer_t_11_typed" unifyTheory.encode_infer_t_11;
 val _ = show "decode_left_inverse_typed" unifyTheory.decode_left_inverse;
 val _ = show "decode_left_inverse_I_typed" unifyTheory.decode_left_inverse_I;
 val _ = show "encode_eq_var_typed" unifyTheory.encode_eq_var;
+val _ = show "vR_def_typed" substTheory.vR_def;
+val _ = show "wfs_def_typed" substTheory.wfs_def;
+val _ = show "wfs_SUBMAP_typed" substTheory.wfs_SUBMAP;

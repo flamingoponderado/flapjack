@@ -10472,7 +10472,8 @@ fetched by this probe; regenerate with
 
 `unify_encoding_probe.out` captures the polymorphic first-order term carrier,
 inference atom carrier, complete encoding and decoding equations, and the
-inverse and injectivity theorems. Regenerate with
+inverse and injectivity theorems, and the substitution dependency and
+well-formedness declarations. Regenerate with
 `HOL_PROBE_ONLY=unify_encoding_probeScript.sml`. The capture is source-review
 evidence; it does not establish unifier equivalence.
 

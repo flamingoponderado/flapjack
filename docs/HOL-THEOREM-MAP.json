@@ -138035,5 +138035,32 @@
   "lean_name": "encodeEqVar",
   "statement_status": "reviewed_exact",
   "reviewer": "Source comparison with unify_encoding_probe.out: The shared Nat and inference-type binders and both equality-orientation equivalences are preserved."
+},
+{
+  "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/substScript.sml",
+  "hol_name": "vR_def",
+  "lean_path": "Flapjack/HOL/Unification/Subst.lean",
+  "lean_name": "vR",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["subst"],
+  "reviewer": "Compared the typed HOL probe and source: map key and term payload types are independently polymorphic, lookup uses x, and y is a variable of the resulting term. The canonical finite-map parameter uses the same-module codec witness."
+},
+{
+  "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/substScript.sml",
+  "hol_name": "wfs_def",
+  "lean_path": "Flapjack/HOL/Unification/Subst.lean",
+  "lean_name": "wfs",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["subst"],
+  "reviewer": "Compared the typed HOL probe and source: the substitution has Nat keys and generic term payloads, and WellFounded uses the same predecessor orientation as HOL WF. The canonical finite-map parameter uses the same-module codec witness."
+},
+{
+  "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/substScript.sml",
+  "hol_name": "wfs_SUBMAP",
+  "lean_path": "Flapjack/HOL/Unification/Subst.lean",
+  "lean_name": "wfsSubmap",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["sx", "s"],
+  "reviewer": "Compared the typed HOL probe and source: well-formedness of sx and s SUBMAP sx imply well-formedness of s, without extra premises. The canonical finite-map parameters use same-module codec witnesses; submap preserves every binding of s in sx."
 }
 ]

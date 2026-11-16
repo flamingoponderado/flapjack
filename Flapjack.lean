@@ -3784,6 +3784,7 @@ import Flapjack.RiscV.CakeArtifactFormat
 import Flapjack.Compiler.Inference.Infer
 import Flapjack.Compiler.Inference.InferProps
 import Flapjack.Compiler.Inference.Unify.Encoding
+import Flapjack.HOL.Unification.Subst
 import Flapjack.Test.CakeUnifyEncodingParity
 import Flapjack.TypeSoundInvariants
 import Flapjack.Compiler.Repl.ReplTypes

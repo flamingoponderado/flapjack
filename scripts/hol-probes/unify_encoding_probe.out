@@ -8,3 +8,6 @@ encode_infer_t_11_typed=(∀(it1 :infer_t) (it2 :infer_t). encode_infer_t it1 = 
 decode_left_inverse_typed=(∀(t :infer_t). decode_infer_t (encode_infer_t t) = t) ∧ ∀(ts :infer_t list). decode_infer_ts (encode_infer_ts ts) = ts
 decode_left_inverse_I_typed=decode_infer_t ∘ encode_infer_t = (I :infer_t -> infer_t)
 encode_eq_var_typed=((Var (n :num) :atom term) = encode_infer_t (i :infer_t) ⇔ i = Infer_Tuvar n) ∧ (encode_infer_t i = (Var n :atom term) ⇔ i = Infer_Tuvar n)
+vR_def_typed=∀(s :α |-> β term) (y :num) (x :α). vR s y x ⇔ case FLOOKUP s x of (NONE :β term option) => F | SOME t => y ∈ vars t
+wfs_def_typed=∀(s :α subst). wfs s ⇔ WF (vR s)
+wfs_SUBMAP_typed=wfs (sx :α subst) ∧ (s :α subst) ⊑ sx ⇒ wfs s
