@@ -21,3 +21,6 @@ val _ = show "encode_eq_var_typed" unifyTheory.encode_eq_var;
 val _ = show "vR_def_typed" substTheory.vR_def;
 val _ = show "wfs_def_typed" substTheory.wfs_def;
 val _ = show "wfs_SUBMAP_typed" substTheory.wfs_SUBMAP;
+val _ = show "vwalk_def_typed" walkTheory.vwalk_def;
+val _ = show "NOT_FDOM_vwalk_typed" walkTheory.NOT_FDOM_vwalk;
+val _ = show "vwalk_to_var_typed" walkTheory.vwalk_to_var;

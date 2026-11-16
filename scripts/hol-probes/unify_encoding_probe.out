@@ -11,3 +11,6 @@ encode_eq_var_typed=((Var (n :num) :atom term) = encode_infer_t (i :infer_t) ⇔
 vR_def_typed=∀(s :α |-> β term) (y :num) (x :α). vR s y x ⇔ case FLOOKUP s x of (NONE :β term option) => F | SOME t => y ∈ vars t
 wfs_def_typed=∀(s :α subst). wfs s ⇔ WF (vR s)
 wfs_SUBMAP_typed=wfs (sx :α subst) ∧ (s :α subst) ⊑ sx ⇒ wfs s
+vwalk_def_typed=wfs (s :α subst) ⇒ ∀(v :num). vwalk s v = case FLOOKUP s v of (NONE :α term option) => (Var v :α term) | SOME (Var u :α term) => vwalk s u | SOME (Pair v7 v8) => Pair v7 v8 | SOME (Const v9) => Const v9
+NOT_FDOM_vwalk_typed=wfs (s :α subst) ∧ (v :num) ∉ FDOM s ⇒ vwalk s v = (Var v :α term)
+vwalk_to_var_typed=wfs (s :α subst) ⇒ ∀(v :num) (u :num). vwalk s v = (Var u :α term) ⇒ u ∉ FDOM s

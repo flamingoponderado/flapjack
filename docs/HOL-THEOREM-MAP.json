@@ -138062,5 +138062,32 @@
   "statement_status": "reviewed_fmap_as_finite_support_parameters",
   "fmap_as_finite_support_parameters": ["sx", "s"],
   "reviewer": "Compared the typed HOL probe and source: well-formedness of sx and s SUBMAP sx imply well-formedness of s, without extra premises. The canonical finite-map parameters use same-module codec witnesses; submap preserves every binding of s in sx."
+},
+{
+  "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/walkScript.sml",
+  "hol_name": "vwalk_def",
+  "lean_path": "Flapjack/HOL/Unification/Walk.lean",
+  "lean_name": "vwalkEq",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["subst"],
+  "reviewer": "Compared the typed HOL equation and source: well-formedness precedes the universally quantified variable, and all lookup branches agree. The unbounded walker satisfies the unique source equation under that premise; its off-wfs choice is not claimed to match HOL. The canonical map parameter has a codec witness."
+},
+{
+  "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/walkScript.sml",
+  "hol_name": "NOT_FDOM_vwalk",
+  "lean_path": "Flapjack/HOL/Unification/Walk.lean",
+  "lean_name": "notFdomVwalk",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["subst"],
+  "reviewer": "Compared the typed HOL theorem and source: the original conjunction of well-formedness and missing domain membership, and the variable result, are preserved. The canonical map parameter has a codec witness; the chosen walker is justified under well-formedness only."
+},
+{
+  "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/walkScript.sml",
+  "hol_name": "vwalk_to_var",
+  "lean_path": "Flapjack/HOL/Unification/Walk/ToVar.lean",
+  "lean_name": "vwalkToVar",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["subst"],
+  "reviewer": "Compared the typed HOL theorem and source: for a well-formed substitution, any variable returned by the walk is outside the substitution domain. The original quantifiers and equality premise are preserved; the canonical map parameter has a codec witness."
 }
 ]
