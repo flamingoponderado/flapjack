@@ -51,6 +51,19 @@ open Flapjack Flapjack.Compiler.Inference Flapjack.Compiler.Inference.Infer Flap
   let deep := (List.range 256).foldl (fun t _ => InferT.app [t] 5) (InferT.uvar 3)
   occursPartial .ln 3 deep == some true
 
+-- These normalization results are captured from `unify_exec_walk_probe.out`.
+#guard walkStarList .ln [] == some []
+#guard walkStarList .ln [.uvar 3] == some [.uvar 3]
+#guard walkStarList .ln [.app [.varDb 2, .app [.uvar 3] 5] 4] ==
+  some [.app [.varDb 2, .app [.uvar 3] 5] 4]
+#guard walkStarList (sptInsert 2 (.uvar 7) (sptInsert 7 (.varDb 4) .ln)) [.uvar 2] ==
+  some [.varDb 4]
+#guard walkStarList (sptInsert 2 (.varDb 4) .ln) [.uvar 2, .varDb 1, .uvar 7] ==
+  some [.varDb 4, .varDb 1, .uvar 7]
+#guard
+  let deep := (List.range 256).foldl (fun t _ => InferT.app [t] 5) (InferT.uvar 3)
+  walkStar .ln deep == some deep
+
 -- Occurs traversal no longer inherits the smaller worklist bound.
 #guard match unifyFuel 2 .ln (.uvar 0) (.app [.varDb 1] 5) with
   | some (some _) => true

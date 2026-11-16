@@ -111,7 +111,7 @@ private def constrain (fuel : Nat) (a b : InferT) : M Unit := do
   match unifyFuel fuel s.subst a b with
   | none => fail .exhausted
   | some none =>
-    match walkStarFuel fuel s.subst a, walkStarFuel fuel s.subst b with
+    match walkStar s.subst a, walkStar s.subst b with
     | some left, some right => fail (.typeMismatch left right)
     | _, _ => fail .mismatch
   | some (some subst) => set { s with subst }
@@ -508,9 +508,9 @@ private def extendEnv (new old : Env) : Env :=
 private def liftEnv (name : MlString) (env : Env) : Env :=
   ⟨nsLift name env.infV, nsLift name env.infC, nsLift name env.infT⟩
 
-private def applyFull (fuel : Nat) (ts : List InferT) : M (List InferT) := do
+private def applyFull (ts : List InferT) : M (List InferT) := do
   let s ← get
-  match walkStarListFuel fuel s.subst ts with
+  match walkStarList s.subst ts with
   | none => fail .exhausted
   | some ts => pure ts
 
@@ -562,7 +562,7 @@ private def inferDeclWorker : Nat → Nat → Env → Dec → M Env
       let (patType, bindings) ← inferPatWorker fuel unifFuel env pat
       if let some name := firstRepeatedName (bindings.map Prod.fst) then fail (.duplicateDefinitionVariable name) else
       constrain unifFuel exprType patType
-      let ts ← applyFull unifFuel (bindings.map Prod.snd)
+      let ts ← applyFull (bindings.map Prod.snd)
       let (count, _, ts) := generaliseList 0 0 .ln ts
       if count != 0 && !TypeSystemHOL.isValue expr then fail .valueRestriction else
       let vars := List.zip (bindings.map Prod.fst) (ts.map (fun t => (count, t)))
@@ -576,7 +576,7 @@ private def inferDeclWorker : Nat → Nat → Env → Dec → M Env
       let env' := bindVars env (List.zip names vars)
       let types ← inferFunsWorker fuel unifFuel env' funs
       constrainMany unifFuel vars types
-      let ts ← applyFull unifFuel vars
+      let ts ← applyFull vars
       let (count, _, ts) := generaliseList 0 0 .ln ts
       return { emptyEnv with infV := alistToNs (List.zip names (ts.map (fun t => (count, t)))) }
     | .dtype loc defs => withLoc loc env (datatypeEnv fuel env defs)

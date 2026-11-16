@@ -62,25 +62,44 @@ partial_fixpoint
 def occursPartial (s : Spt InferT) (n : Nat) (t : InferT) : Option Bool :=
   occursWorkPartial s n [[t]]
 
-mutual
-/-- Fully follow a substitution, reporting exhaustion when the structural
-fuel runs out. Variable walking is unbounded and may diverge on cyclic inputs. -/
-def walkStarFuel : Nat → Spt InferT → InferT → Option InferT
-  | 0, _, _ => none
-  | fuel + 1, s, t => do
-    match ← walkExecutable s t with
-    | .varDb n => some (.varDb n)
-    | .uvar n => some (.uvar n)
-    | .app ts name => (walkStarListFuel fuel s ts).map (InferT.app · name)
+@[hol "cakeml/compiler/inference/unifyScript.sml" "kclkont"]
+inductive KclKont where
+  | db : Nat → KclKont
+  | app : List InferT → Nat → KclKont
+  | uv : Nat → KclKont
+  | cons : List InferT → Nat → KclKont
 
-def walkStarListFuel : Nat → Spt InferT → List InferT → Option (List InferT)
-  | 0, _, _ => none
-  | _ + 1, _, [] => some []
-  | fuel + 1, s, t :: ts => do
-    let t ← walkStarFuel fuel s t
-    let ts ← walkStarListFuel fuel s ts
-    some (t :: ts)
-end
+/-- The source normalization worklist, with `Option` recording possible
+    nontermination. Its continuation frames are processed in tail position. -/
+def walkStarWork (s : Spt InferT) (ready : Bool)
+    (items : List InferT) (kont : List KclKont) : Option (List InferT) := do
+  if ready then
+    match kont with
+    | [] => some items
+    | .db n :: ks => walkStarWork s true (.varDb n :: items) ks
+    | .app args n :: ks => walkStarWork s true (.app args n :: items) ks
+    | .uv n :: ks => walkStarWork s true (.uvar n :: items) ks
+    | .cons rest n :: ks => walkStarWork s false rest (.app items n :: ks)
+  else
+    match items with
+    | [] => walkStarWork s true [] kont
+    | .varDb n :: rest => walkStarWork s false rest (.db n :: kont)
+    | .app args n :: rest => walkStarWork s false args (.cons rest n :: kont)
+    | .uvar v :: rest =>
+      match ← cvwalkPartial s v with
+      | .varDb n => walkStarWork s false rest (.db n :: kont)
+      | .app args n => walkStarWork s false args (.cons rest n :: kont)
+      | .uvar u => walkStarWork s false rest (.uv u :: kont)
+partial_fixpoint
+
+/-- Normalize a list with the unbounded source worklist. -/
+def walkStarList (s : Spt InferT) (ts : List InferT) : Option (List InferT) :=
+  walkStarWork s false ts []
+
+/-- Normalize one type with the unbounded source worklist. -/
+def walkStar (s : Spt InferT) (t : InferT) : Option InferT := do
+  let ts ← walkStarList s [t]
+  ts.head?
 
 /-- A structurally bounded worklist implementation of the source unification
 equations. The outer option reports worklist fuel exhaustion; the inner option
