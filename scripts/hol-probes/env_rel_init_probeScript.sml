@@ -23,6 +23,11 @@ val probe_tenv_to_ienv_def = Define `
 val _ = show "tenv_to_ienv_replay_typed" probe_tenv_to_ienv_def;
 
 val _ = show "lift_ienv_typed" inferTheory.lift_ienv_def;
+val _ = show "infer_st_axiom_typed" (TypeBase.axiom_of ``:infer_st``);
+val _ = show "init_infer_state_typed" inferTheory.init_infer_state_def;
+val _ = show "init_state_typed" inferTheory.init_state_def;
+val _ = show "fresh_uvar_typed" inferTheory.fresh_uvar_def;
+val _ = show "n_fresh_id_typed" inferTheory.n_fresh_id_def;
 val _ = show "extend_dec_ienv_typed" inferTheory.extend_dec_ienv_def;
 val _ = show "nsLookup_nsMap_typed" namespacePropsTheory.nsLookup_nsMap;
 val _ = show "nsLookupMod_nsMap_typed" namespacePropsTheory.nsLookupMod_nsMap;

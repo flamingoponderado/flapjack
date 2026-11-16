@@ -501,7 +501,7 @@
     {"bytes": 2996, "out": "empty_cake_bvi_probe.out", "rows": 1, "sha256": "4198b99e8942d88b585762b10d051f969efc110d9f671fe39c49265db7cd7ac2"},
     {"bytes": 4768, "out": "empty_cake_data_probe.out", "rows": 1, "sha256": "3f3b27d77ac877f239d1f43921f7d39f3b4670a0e00094dd6825d37bc824ab2e"},
     {"bytes": 11239, "out": "empty_cake_word_probe.out", "rows": 1, "sha256": "41ca606a72290f44f634dd115806c9ba881ad1a18926ab0d7cd9d2d18500e834"},
-    {"bytes": 12192, "out": "env_rel_init_probe.out", "rows": 53, "sha256": "8616cf906a47be9a976fe1b99d944dcf4451db765d6ae3d59be5435c4af5c38d"},
+    {"bytes": 13055, "out": "env_rel_init_probe.out", "rows": 58, "sha256": "40cfca5a529272c584c0ba503a8127f1a7f67ba8260ee290c42ec62ae27f4ab2"},
     {"bytes": 94, "out": "eval_nested_assign_distinct_eq_probe.out", "rows": 3, "sha256": "13e53c72478096199734fe0e784b90fa179dbc10be38c220380fd8902ab163c6"},
     {"bytes": 78, "out": "eval_nested_decs_load_globals_probe.out", "rows": 2, "sha256": "36a7401f16f797e3391445f10f5576ffe2fe08a40165c29e82f2bade4d94994f"},
     {"bytes": 224, "out": "eval_nested_decs_seq_res_var_eq_probe.out", "rows": 7, "sha256": "f40578ca33e43bf7246d23964358037da66c97aea8bf410d8b8e3c5730c96f43"},

@@ -1,5 +1,10 @@
 tenv_to_ienv_replay_typed=∀(tenv :type_env). probe_tenv_to_ienv tenv = <|inf_v := nsMap (λ((tvs :num),(t :t)). (tvs,unconvert_t t)) tenv.v; inf_c := tenv.c; inf_t := tenv.t|>
 lift_ienv_typed=∀(mn :mlstring) (ienv :inf_env). lift_ienv mn ienv = <|inf_v := nsLift mn ienv.inf_v; inf_c := nsLift mn ienv.inf_c; inf_t := nsLift mn ienv.inf_t|>
+infer_st_axiom_typed=∀(f :num -> (num |-> infer_t) -> num -> α). ∃(fn :infer_st -> α). ∀(a0 :num) (a1 :num |-> infer_t) (a2 :num). fn (infer_st a0 a1 a2) = f a0 a1 a2
+init_infer_state_typed=∀(st :infer_st). init_infer_state st = st with <|next_uvar := (0 :num); subst := (FEMPTY :num |-> infer_t)|>
+init_state_typed=(init_state :infer_st -> (unit, α) exc # infer_st) = (λ(st :infer_st). ((M_success () :(unit, α) exc),init_infer_state st))
+fresh_uvar_typed=(fresh_uvar :infer_st -> (infer_t, α) exc # infer_st) = (λ(s :infer_st). ((M_success (Infer_Tuvar s.next_uvar) :(infer_t, α) exc),s with next_uvar := s.next_uvar + (1 :num)))
+n_fresh_id_typed=∀(n :num). (n_fresh_id n :infer_st -> (num list, α) exc # infer_st) = (λ(s :infer_st). ((M_success (GENLIST (λ(x :num). s.next_id + x) n) :(num list, α) exc),s with next_id := s.next_id + n))
 extend_dec_ienv_typed=∀(ienv' :inf_env) (ienv :inf_env). extend_dec_ienv ienv' ienv = <|inf_v := nsAppend ienv'.inf_v ienv.inf_v; inf_c := nsAppend ienv'.inf_c ienv.inf_c; inf_t := nsAppend ienv'.inf_t ienv.inf_t|>
 nsLookup_nsMap_typed=∀(n :(α, β, γ) namespace) (x :(α, β) id) (f :γ -> δ). nsLookup (nsMap f n) x = OPTION_MAP f (nsLookup n x)
 nsLookupMod_nsMap_typed=∀(n :(α, β, γ) namespace) (x :α list) (f :γ -> δ). nsLookupMod (nsMap f n) x = OPTION_MAP (nsMap f :(α, β, γ) namespace -> (α, β, δ) namespace) (nsLookupMod n x)

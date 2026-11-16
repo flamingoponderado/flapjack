@@ -138061,6 +138061,36 @@
   "reviewer": "Compared HOL source and deBruijn_subst_convert_replay_typed: the shared bound and arbitrary inference substitution, empty-uvar guards, both type and list conjuncts, and equality directions agree. The source-defined conversion's unspecified uvar clause is excluded by the original checks on the input types."
 },
 {
+  "hol_path": "cakeml/compiler/inference/inferScript.sml", "hol_name": "infer_st",
+  "lean_path": "Flapjack/Compiler/Inference/Infer/HOLState.lean", "lean_name": "InferState",
+  "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["subst"],
+  "reviewer": "Compared HOL source and infer_st_axiom_typed: next_uvar and next_id are natural numbers and subst is a natural-key inference-type finite map; the canonical field has a broad-state roundtrip witness."
+},
+{
+  "hol_path": "cakeml/compiler/inference/inferScript.sml", "hol_name": "init_infer_state_def",
+  "lean_path": "Flapjack/Compiler/Inference/Infer/HOLState.lean", "lean_name": "initInferState",
+  "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["subst"],
+  "reviewer": "Compared HOL source and init_infer_state_typed: reset next_uvar and the finite-map substitution while retaining next_id. The codec theorem relates this operation to the executable sparse-tree reset."
+},
+{
+  "hol_path": "cakeml/compiler/inference/inferScript.sml", "hol_name": "init_state_def",
+  "lean_path": "Flapjack/Compiler/Inference/Infer/HOLState.lean", "lean_name": "initState",
+  "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["subst"],
+  "reviewer": "Compared HOL source and init_state_typed: for an arbitrary exception carrier the state-and-exception operation returns success unit and the reset state."
+},
+{
+  "hol_path": "cakeml/compiler/inference/inferScript.sml", "hol_name": "fresh_uvar_def",
+  "lean_path": "Flapjack/Compiler/Inference/Infer/HOLState.lean", "lean_name": "freshUvar",
+  "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["subst"],
+  "reviewer": "Compared HOL source and fresh_uvar_typed: return the current unification variable and increment next_uvar, leaving the remaining state fields unchanged for any exception carrier. The executable sparse-tree operation is related by a checked codec theorem."
+},
+{
+  "hol_path": "cakeml/compiler/inference/inferScript.sml", "hol_name": "n_fresh_id_def",
+  "lean_path": "Flapjack/Compiler/Inference/Infer/HOLState.lean", "lean_name": "freshIds",
+  "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["subst"],
+  "reviewer": "Compared HOL source and n_fresh_id_typed: generate n consecutive identifiers from next_id and increment that field by n, preserving the other state and arbitrary exception carrier. The executable List.ofFn implementation has a checked list-and-state correspondence."
+},
+{
   "hol_path": "cakeml/compiler/inference/proofs/inferSoundScript.sml", "hol_name": "set_ids_def",
   "lean_path": "Flapjack/Compiler/Inference/InferSound.lean", "lean_name": "setIds",
   "statement_status": "reviewed_exact",
