@@ -10810,11 +10810,11 @@ Lean twin omits as a documented vacuous binder. Regenerate with
 scripts/hol-probes/regenerate.sh`.
 
 `gram_defs_typed_probe.out`, `type_system_defs_typed_probe.out` and
-`semantics_props_defs_typed_probe.out` (5+6+4 rows) capture
+`semantics_props_defs_typed_probe.out` (5+7+4 rows) capture
 cakeml semantics rows that earlier probes did not cover (task 189):
 `validMultSym_def`, `validAddSym_def`, `validRelSym_def`, `validListSym_def`,
 `validPrefixSym_def` (gram); the `tenv_abbrev`, `tenv_ctor` and `tenv_val` Type
-abbreviations plus the `type_p` and `type_e` inductive rules and
+abbreviations plus the `type_p`, `type_e`, and `type_d` inductive rules and
 `type_pe_determ_def` (typeSystem); and `extend_with_resource_limit'_def`,
 `implements'_def`, `implements'_F` and the `[local]` `isPREFIX_IMP_LPREFIX`
 (semanticsProps). Regenerate each with `CAKEML=<cakeml tree>

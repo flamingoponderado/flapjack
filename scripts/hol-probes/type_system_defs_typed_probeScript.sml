@@ -437,3 +437,4 @@ val _ = type_label "tenv_val_typed" "typeSystem" "tenv_val";
 val _ = emit_exported "type_p_typed" "type_p_rules";
 val _ = emit_exported "type_e_typed" "type_e_rules";
 val _ = emit_exported "type_pe_determ_typed" "type_pe_determ_def";
+val _ = emit_exported "type_d_typed" "type_d_rules";

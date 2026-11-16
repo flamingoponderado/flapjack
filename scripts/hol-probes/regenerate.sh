@@ -12184,7 +12184,7 @@ run_probe gram_defs_typed_probeScript.sml gram_defs_typed_probe.out \
   "$cake_dir/semantics"
 
 run_probe type_system_defs_typed_probeScript.sml type_system_defs_typed_probe.out \
-  tenv_abbrev_typed tenv_ctor_typed tenv_val_typed type_p_typed type_e_typed type_pe_determ_typed \
+  tenv_abbrev_typed tenv_ctor_typed tenv_val_typed type_p_typed type_e_typed type_pe_determ_typed type_d_typed \
   "$cake_dir/semantics/typeSystemScript.sml" \
   "$cake_dir/semantics"
 

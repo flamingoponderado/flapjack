@@ -1,5 +1,23 @@
 [
 {
+  "hol_path": "cakeml/semantics/typeSystemScript.sml", "hol_name": "type_d",
+  "lean_path": "Flapjack/TypeSystemHOL/Declarations.lean", "lean_name": "TypeD",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with HOL source and type_d_typed confirms all eight declaration rules, their value restriction and principal checks, fresh and disjoint type-ID sets, namespace construction and conclusions."
+ },
+{
+  "hol_path": "cakeml/semantics/typeSystemScript.sml", "hol_name": "type_d",
+  "lean_path": "Flapjack/TypeSystemHOL/Declarations.lean", "lean_name": "TypeDs",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with HOL source and type_d_typed confirms the mutually defined declaration-list nil and cons rules, disjoint ID sets, and environment extension."
+ },
+{
+  "hol_path": "cakeml/semantics/semanticsScript.sml", "hol_name": "can_type_prog_def",
+  "lean_path": "Flapjack/SemanticsHOL/Typed.lean", "lean_name": "canTypeProg",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with HOL source and the typed can_type_prog capture confirms the polymorphic source state, program, existential fresh IDs and environment, disjointness and full TypeDs true judgment."
+ },
+{
   "hol_path": "cakeml/semantics/proofs/primSemEnvScript.sml", "hol_name": "prim_sem_env_eq",
   "lean_path": "Flapjack/PrimSemEnv.lean", "lean_name": "primSemEnvEq",
   "statement_status": "reviewed_exact",
