@@ -3800,6 +3800,7 @@ import Flapjack.Compiler.Inference.Unify.ComputationalWalk.Correctness
 import Flapjack.Compiler.Inference.Unify.Occurs.Correctness
 import Flapjack.Compiler.Inference.Unify.Walkstar.ComputationalCorrectness
 import Flapjack.Compiler.Inference.Unify.ComputationalWf.Insert
+import Flapjack.HOL.Unification.UnifDef.WellFounded
 import Flapjack.HOL.Transfer.Fmsp.Lookup
 import Flapjack.Compiler.Inference.InferProps.DeBruijn
 import Flapjack.Compiler.Inference.InferProps.DeBruijn.Bounded
