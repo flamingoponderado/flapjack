@@ -91,8 +91,10 @@ where
       (fun pat row _member => go row)
   | .lit lit => by
       intro genv start finish other source flat baseEnv sourceLocal flatEnv traces trace baseMap gen _ _ _ _ invariant generation _
-      refine ⟨genv, exprSim_literal genv _ trace _ flatEnv source flat invariant.2.2.1 lit, ?_⟩
-      simpa only [EvaluateHOL.evaluate, compileExp, FlatSem.evaluate] using
+      refine ⟨genv, ?_, ?_⟩
+      · simp only [ExprSim, EvaluateHOL.evaluate, compileExp, FlatSem.evaluate]
+        exact ⟨.value (.cons (.literal genv lit) .nil), invariant.2.2.1⟩
+      · simpa only [EvaluateHOL.evaluate, compileExp, FlatSem.evaluate] using
         And.intro (GlobalGrowth.refl genv) (And.intro invariant
           (And.intro generation (oracForwardRel_refl interp source.evalState)))
   | .con none args => localEnvBounded_tuple interp transform limit args (fun expr _member => go expr)

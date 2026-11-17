@@ -437,7 +437,7 @@ theorem simulationFor_letCall {C F : Type} (rets ticks dest : Nat)
                         have cutTimed : DataSem.cutEnv (namesOfList (live ++ corr)) timed.locals = some saved := by simpa [timed] using cut
                         have clamped : DataSem.fixClock entered ((some (.val resultValues) : Option (Result (List DataSem.Value) DataSem.Value)), targetNext) =
                             ((some (.val resultValues) : Option (Result (List DataSem.Value) DataSem.Value)), targetNext) := by
-                          rw [← targetRun, DataSem.fixClock_evaluate]
+                          rw [← targetRun, DataSem.fixClockEvaluate]
                         have callEval : DataSem.evaluate call timed = (none, moved) := by
                           simp [call, ret, DataSem.evaluate, readTimed, codeTimed, cutTimed, timedNonzero, nodup,
                             entered, targetRun, clamped, popRun, moved, lengthEq, returns]
@@ -566,7 +566,7 @@ theorem simulationFor_letCall {C F : Type} (rets ticks dest : Nat)
                       exact jumpExc_stripSaved tmid targetNext saved ls2 (jumpMid (exceptionJump raised)) jumpRun
                   have clamped : DataSem.fixClock entered ((some (.err dataError) : Option (Result (List DataSem.Value) DataSem.Value)), targetNext) =
                       ((some (.err dataError) : Option (Result (List DataSem.Value) DataSem.Value)), targetNext) := by
-                    rw [← targetRun, DataSem.fixClock_evaluate]
+                    rw [← targetRun, DataSem.fixClockEvaluate]
                   have callEval : DataSem.evaluate call timed = (some (.err dataError), targetNext) := by
                     cases dataError <;> simp [call, ret, DataSem.evaluate, readTimed, codeTimed, cutTimed,
                       timedNonzero, nodup, entered, targetRun, clamped]

@@ -318,8 +318,9 @@ theorem evaluateClock {C F : Type} (program : DataLang.Prog) (state : State C F)
   have bound := evaluate_clock_le program state
   simpa only [run] using bound
 
-/-- The evaluator's termination clamp is inert on a completed evaluation. -/
-theorem fixClock_evaluate {C F : Type} (program : DataLang.Prog) (state : State C F) :
+/-- The HOL clock clamp is inert on an evaluation result. -/
+@[hol "cakeml/compiler/backend/semantics/dataSemScript.sml" "fix_clock_evaluate"]
+theorem fixClockEvaluate {C F : Type} (state : State C F) (program : DataLang.Prog) :
     fixClock state (evaluate program state) = evaluate program state := by
   have bound := evaluate_clock_le program state
   cases run : evaluate program state with
@@ -327,27 +328,15 @@ theorem fixClock_evaluate {C F : Type} (program : DataLang.Prog) (state : State 
     simp only [run] at bound
     simp [fixClock, Nat.min_eq_right bound]
 
-/-- The HOL clock clamp is inert on an evaluation result. -/
-@[hol "cakeml/compiler/backend/semantics/dataSemScript.sml" "fix_clock_evaluate"]
-theorem fixClockEvaluate {C F : Type} (state : State C F) (program : DataLang.Prog) :
-    fixClock state (evaluate program state) = evaluate program state :=
-  fixClock_evaluate program state
-
-/-- A trailing skip does not change a result whose evaluator clock is already
-known to be bounded. -/
-theorem evaluate_seq_skip_of_clock {C F : Type} (program : DataLang.Prog) (state : State C F)
-    (clockBound : (evaluate program state).2.clock ≤ state.clock) :
-    evaluate (.seq program .skip) state = evaluate program state := by
-  cases run : evaluate program state with
-  | mk result next =>
-    simp only [run] at clockBound
-    cases result <;> simp [evaluate, run, fixClock, Nat.min_eq_right clockBound]
-
 /-- Exact HOL `Seq_Skip` (`dataPropsScript.sml:455`): a trailing `Skip` does not
 change a data-language evaluation. -/
 @[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "Seq_Skip"]
 theorem evaluate_seq_skip {C F : Type} (program : DataLang.Prog) (state : State C F) :
-    evaluate (.seq program .skip) state = evaluate program state :=
-  evaluate_seq_skip_of_clock program state (evaluate_clock_le program state)
+    evaluate (.seq program .skip) state = evaluate program state := by
+  have clockBound := evaluate_clock_le program state
+  cases run : evaluate program state with
+  | mk result next =>
+    simp only [run] at clockBound
+    cases result <;> simp [evaluate, run, fixClock, Nat.min_eq_right clockBound]
 
 end Flapjack.Compiler.Backend.DataSem

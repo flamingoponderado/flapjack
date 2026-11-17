@@ -67,9 +67,13 @@ ALLOWED_QUALIFIERS = {
     "fmap_as_finite_support_function",
     "fmap_as_finite_support_tuple",
     "fmap_as_finite_support_heterogeneous_function",
+    "fmap_as_finite_support_parameter_tuple_result",
+    "fmap_as_finite_support_parameter_tuple_observations",
+    "fmap_as_finite_support_conjunct_universals",
     "fmap_as_finite_support_result_observations",
     "fmap_as_finite_support_parameter_observations",
     "fmap_as_finite_support_parameter_predicate_domain",
+    "fmap_as_finite_support_universals",
     "fmap_as_finite_support_parameters",
     "fmap_as_finite_support_existentials",
     "fmap_as_finite_support_relation", "fmap_as_finite_support_equalities",
@@ -141,11 +145,13 @@ def export_batches(umbrella: str, exporter: str, count: int = EXPORT_BATCH_COUNT
         return result
 
     direct = imports(header)
-    if direct.count("Flapjack") != 1 or direct.count("Flapjack.Test.NestedRelationAudit") != 1:
-        raise ValueError("HOL exporter must import the umbrella and nested relation audit")
+    shared = ("Flapjack.Test.NestedRelationAudit", "Flapjack.HolRef.GeneraliseLengthAudit",
+              "Flapjack.HolRef.InferSubstSubmapAudit", "Flapjack.HolRef.TypeSubstWalkstarAudit")
+    if direct.count("Flapjack") != 1 or any(direct.count(name) != 1 for name in shared):
+        raise ValueError("HOL exporter must import the umbrella and shared audit modules")
     all_imports = list(dict.fromkeys(
         imports(umbrella) + [name for name in direct if name not in
-                             {"Flapjack", "Flapjack.Test.NestedRelationAudit"}]
+                             {"Flapjack", *shared}]
     ))
     if not all_imports or "Flapjack" in all_imports:
         raise ValueError("invalid umbrella imports for HOL export")
@@ -153,7 +159,7 @@ def export_batches(umbrella: str, exporter: str, count: int = EXPORT_BATCH_COUNT
     for index in range(count):
         selected = all_imports[len(all_imports) * index // count:len(all_imports) * (index + 1) // count]
         batch_header = "\n".join(f"import {name}" for name in
-                                 ["Flapjack.Test.NestedRelationAudit", *selected])
+                                 [*shared, *selected])
         batches.append(batch_header + marker + body)
     return batches
 
@@ -214,9 +220,13 @@ def manifest_qualifiers(record: dict[str, Any]) -> dict[str, Any]:
         "fmap_as_finite_support_function",
         "fmap_as_finite_support_tuple",
         "fmap_as_finite_support_heterogeneous_function",
+        "fmap_as_finite_support_parameter_tuple_result",
+        "fmap_as_finite_support_parameter_tuple_observations",
+        "fmap_as_finite_support_conjunct_universals",
         "fmap_as_finite_support_result_observations",
         "fmap_as_finite_support_parameters",
         "fmap_as_finite_support_parameter_predicate_domain",
+        "fmap_as_finite_support_universals",
         "fmap_as_finite_support_existentials",
         "word_dimensions_as_widths",
         "nested_list_rel_as_mutual",
@@ -264,6 +274,126 @@ def check_records(
         item = candidates[0]
         qualifiers = manifest_qualifiers(record)
         exported_qualifiers = item.get("qualifiers", {})
+        submap_key = "fmap_as_finite_support_conjunct_universals"
+        if exported_qualifiers.get(submap_key, []) != qualifiers.get(submap_key, []):
+            raise ValueError("inference submap qualifier differs from elaborated @[hol] exporter")
+        submap_ref = ("cakeml/compiler/inference/inferPropsScript.sml", "infer_subst_submap")
+        walkstar_ref = ("cakeml/compiler/inference/inferPropsScript.sml", "subst_infer_subst_swap")
+        for site, full_name, expected_ref in (
+            (("Flapjack/Compiler/Inference/InferProps/Substitution.lean", "inferSubstSubmap"),
+             "Flapjack.Compiler.Inference.InferProps.Substitution.inferSubstSubmap", submap_ref),
+            (("Flapjack/Compiler/Inference/InferProps/TypeSubstWalkstar.lean", "substInferSubstSwap"),
+             "Flapjack.Compiler.Inference.InferProps.TypeSubstWalkstar.substInferSubstSwap", walkstar_ref),
+        ):
+            if ((record.get("lean_path"), record.get("lean_name")) == site or item["lean_name"] == full_name):
+                if item["lean_name"] != full_name or (item["hol_path"], item["hol_name"]) != expected_ref:
+                    raise ValueError("theorem requires its exact reviewed HOL reference and declaration")
+        submap_status = "reviewed_" + submap_key
+        if ((submap_key in qualifiers or record.get("statement_status") == submap_status or
+                (item["hol_path"], item["hol_name"]) == submap_ref) and
+                (item["hol_path"], item["hol_name"]) != walkstar_ref):
+            producer_rows = [row for row in manifest if
+                             row.get("lean_path") == "Flapjack/Compiler/Inference/Infer/Substitution.lean" and
+                             row.get("lean_name") == "inferSubst"]
+            vars_rows = [row for row in manifest if row.get("lean_path") ==
+                         "Flapjack/Compiler/Inference/Unify/Substitution.lean" and row.get("lean_name") == "tVars"]
+            if (record.get("statement_status") != submap_status or
+                    record.get("lean_path") != "Flapjack/Compiler/Inference/InferProps/Substitution.lean" or
+                    item["lean_name"] != "Flapjack.Compiler.Inference.InferProps.Substitution.inferSubstSubmap" or
+                    (item["hol_path"], item["hol_name"]) != submap_ref or record.get("hol_line") is not None or
+                    qualifiers.get(submap_key) != ["type_s1", "type_s2", "list_s1", "list_s2"] or
+                    any(value for key, value in exported_qualifiers.items() if key != submap_key) or
+                    len(producer_rows) != 1 or
+                    producer_rows[0].get("hol_path") != "cakeml/compiler/inference/inferScript.sml" or
+                    producer_rows[0].get("hol_name") != "infer_subst_def" or
+                    producer_rows[0].get("hol_line") is not None or
+                    producer_rows[0].get("statement_status") != "reviewed_fmap_as_finite_support_parameters" or
+                    manifest_qualifiers(producer_rows[0]).get("fmap_as_finite_support_parameters") != ["subst"] or
+                    any(value for key, value in manifest_qualifiers(producer_rows[0]).items()
+                        if key != "fmap_as_finite_support_parameters") or
+                    len(vars_rows) != 1 or vars_rows[0].get("hol_path") != "cakeml/compiler/inference/unifyScript.sml" or
+                    vars_rows[0].get("hol_name") != "t_vars_def" or vars_rows[0].get("hol_line") is not None or
+                    vars_rows[0].get("statement_status") != "reviewed_exact" or
+                    any(manifest_qualifiers(vars_rows[0]).values())):
+                raise ValueError("invalid inference submap qualifier metadata or producer")
+        if (item["hol_path"], item["hol_name"]) == walkstar_ref:
+            if (record.get("statement_status") != submap_status or
+                    record.get("lean_path") != "Flapjack/Compiler/Inference/InferProps/TypeSubstWalkstar.lean" or
+                    item["lean_name"] != "Flapjack.Compiler.Inference.InferProps.TypeSubstWalkstar.substInferSubstSwap" or
+                    record.get("hol_line") is not None or qualifiers.get(submap_key) != ["type_s", "list_s"] or
+                    any(value for key, value in exported_qualifiers.items() if key != submap_key)):
+                raise ValueError("invalid type-substitution walkstar qualifier metadata")
+            dependencies = (
+                ("Flapjack/Compiler/Inference/Infer.lean", "inferTypeSubst", "cakeml/compiler/inference/inferScript.sml", "infer_type_subst_def", None),
+                ("Flapjack/Compiler/Inference/Infer.lean", "inferTypeSubstList", "cakeml/compiler/inference/inferScript.sml", "infer_type_subst_def", None),
+                ("Flapjack/Compiler/Inference/Unify/Substitution.lean", "tWfs", "cakeml/compiler/inference/unifyScript.sml", "t_wfs_def", ["subst"]),
+                ("Flapjack/Compiler/Inference/Unify/Walkstar.lean", "walkstarEqn", "cakeml/compiler/inference/unifyScript.sml", "t_walkstar_eqn", ["s"]),
+                ("Flapjack/Compiler/Inference/Unify/Walkstar.lean", "tWalkstarEqn1", "cakeml/compiler/inference/unifyScript.sml", "t_walkstar_eqn1", ["s"]),
+                ("Flapjack/Compiler/Inference/Unify/Walk/Term.lean", "tWalkEqn", "cakeml/compiler/inference/unifyScript.sml", "t_walk_eqn", ["s1", "s2", "s3"]),
+                ("Flapjack/Compiler/Inference/Unify/Walk.lean", "tVwalkEq", "cakeml/compiler/inference/unifyScript.sml", "t_vwalk_eqn", ["subst"]),
+                ("Flapjack/Compiler/Inference/InferT.lean", "InferT", "cakeml/compiler/inference/infer_tScript.sml", "infer_t", None),
+                ("Flapjack/TypeSystemHOL.lean", "SemanticT", "cakeml/semantics/typeSystemScript.sml", "t", None),
+                ("Flapjack/Basis/Pure/MlString.lean", "MlString", "cakeml/basis/pure/mlstringScript.sml", "mlstring", None),
+            )
+            for path, leaf_name, hol_path, hol_name, parameter in dependencies:
+                rows = [row for row in manifest if row.get("lean_path") == path and row.get("lean_name") == leaf_name]
+                status = "reviewed_exact" if parameter is None else "reviewed_fmap_as_finite_support_parameters"
+                if (len(rows) != 1 or rows[0].get("hol_path") != hol_path or rows[0].get("hol_name") != hol_name or
+                        rows[0].get("hol_line") is not None or rows[0].get("statement_status") != status or
+                        rows[0].get("fmap_as_finite_support_parameters") != parameter or
+                        any(value for key, value in manifest_qualifiers(rows[0]).items()
+                            if key != "fmap_as_finite_support_parameters")):
+                    raise ValueError(f"invalid type-substitution walkstar dependency: {leaf_name}")
+        length_key = "fmap_as_finite_support_parameter_tuple_observations"
+        if exported_qualifiers.get(length_key, []) != qualifiers.get(length_key, []):
+            raise ValueError("generalization length qualifier differs from elaborated @[hol] exporter")
+        length_ref = ("cakeml/compiler/inference/inferPropsScript.sml", "generalise_list_length")
+        length_status = "reviewed_fmap_as_finite_support_parameter_tuple_observations"
+        if (length_key in qualifiers or record.get("statement_status") == length_status or
+                (item["hol_path"], item["hol_name"]) == length_ref):
+            producer = "Flapjack.Compiler.Inference.Infer.Generalise.generaliseListMap"
+            producer_rows = [row for row in manifest if
+                             row.get("lean_path") == "Flapjack/Compiler/Inference/Infer/Generalise.lean" and
+                             row.get("lean_name") == "generaliseListMap"]
+            if (record.get("statement_status") != length_status or
+                    record.get("lean_path") != "Flapjack/Compiler/Inference/InferProps/Generalise.lean" or
+                    item["lean_name"] != "Flapjack.Compiler.Inference.InferProps.Generalise.generaliseListLength" or
+                    (item["hol_path"], item["hol_name"]) != length_ref or
+                    record.get("hol_line") is not None or
+                    qualifiers.get(length_key) != ["subst", "out", producer, "component_2"] or
+                    any(value for key, value in exported_qualifiers.items() if key != length_key) or
+                    len(producer_rows) != 1 or
+                    producer_rows[0].get("hol_path") != "cakeml/compiler/inference/inferScript.sml" or
+                    producer_rows[0].get("hol_name") != "generalise_def" or
+                    producer_rows[0].get("hol_line") is not None or
+                    producer_rows[0].get("statement_status") !=
+                    "reviewed_fmap_as_finite_support_parameter_tuple_result" or
+                    manifest_qualifiers(producer_rows[0]).get("fmap_as_finite_support_parameter_tuple_result") !=
+                    ["subst", "component_2"] or
+                    any(value for key, value in manifest_qualifiers(producer_rows[0]).items()
+                        if key != "fmap_as_finite_support_parameter_tuple_result")):
+                raise ValueError("invalid generalization length qualifier metadata or producer")
+        generalise_key = "fmap_as_finite_support_parameter_tuple_result"
+        if exported_qualifiers.get(generalise_key, []) != qualifiers.get(generalise_key, []):
+            raise ValueError(
+                f"{record['lean_path']}:{record['lean_name']}: generalization map qualifier "
+                "differs from elaborated @[hol] exporter"
+            )
+        generalise_ref = ("cakeml/compiler/inference/inferScript.sml", "generalise_def")
+        if (generalise_key in qualifiers or record.get("statement_status") ==
+                "reviewed_fmap_as_finite_support_parameter_tuple_result" or
+                (item["hol_path"], item["hol_name"]) == generalise_ref):
+            valid_targets = {
+                "Flapjack.Compiler.Inference.Infer.Generalise.generaliseMap",
+                "Flapjack.Compiler.Inference.Infer.Generalise.generaliseListMap",
+            }
+            if (record.get("statement_status") != "reviewed_fmap_as_finite_support_parameter_tuple_result"
+                    or item["lean_name"] not in valid_targets
+                    or record.get("lean_path") != "Flapjack/Compiler/Inference/Infer/Generalise.lean"
+                    or (item["hol_path"], item["hol_name"]) != generalise_ref
+                    or qualifiers.get(generalise_key) != ["subst", "component_2"]
+                    or any(value for key, value in exported_qualifiers.items() if key != generalise_key)):
+                raise ValueError("invalid generalization map qualifier metadata")
         if any(exported_qualifiers.get(name, []) != value
                for name, value in qualifiers.items()):
             raise ValueError(

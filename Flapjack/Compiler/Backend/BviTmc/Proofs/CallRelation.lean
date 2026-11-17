@@ -17,20 +17,20 @@ theorem holFmapAsFiniteSupportRelationWitness_BviState {C F : Type} :
 end CallWitness
 
 /-- A successful direct or indirect source call resolves to related target
-arguments and either the same body or its wrapper and worker.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "find_code_rel" (fmap_as_finite_support_relation := [BviState.refs, f])] -/
+arguments and either the same body or its wrapper and worker. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "find_code_rel"
+  (fmap_as_finite_support_relation := [BviState.refs, f])]
 theorem findCode_rel {C F : Type} (f : HolFiniteMapExact Nat Nat)
     (values relatedValues : List Value) (source : BviState (Nat × C) F) (target : BviState C F)
     (dest : Option Nat) (args : List Value) (body : Bvi.Exp)
-    (found : findCode dest values source.code = some (args, body))
-    (valuesRelated : List.Forall₂ (valueRel f) values relatedValues) (statesRelated : stateRel f source target) :
+    (h : findCode dest values source.code = some (args, body) ∧
+      List.Forall₂ (valueRel f) values relatedValues ∧ stateRel f source target) :
     noMutcons body ∧ ∃ args' body' loc,
       findCode dest relatedValues target.code = some (args', body') ∧ envRel false f args args' ∧
       args.length = args'.length ∧
       (body ≠ body' → ∃ workerLoc, optimisedCode loc workerLoc source.code target.code ∧
         rewriteWrapperSource loc workerLoc args.length body = some body') := by
+  obtain ⟨found, valuesRelated, statesRelated⟩ := h
   have codes := stateRel_codeRel f source target statesRelated
   have lengths := valuesRelated.length_eq
   cases dest with
@@ -43,7 +43,7 @@ theorem findCode_rel {C F : Type} (f : HolFiniteMapExact Nat Nat)
       · simp [findCode, lookup, arityEq] at found
         obtain ⟨rfl, rfl⟩ := found
         obtain ⟨safe, worker, targetBody, targetLookup, changed⟩ :=
-          codeRel_cases loc arity sourceBody source.code target.code lookup codes
+          codeRel_cases loc arity sourceBody source.code target.code ⟨lookup, codes⟩
         refine ⟨safe, relatedValues, targetBody, loc, ?_, listRel_envRel f values relatedValues valuesRelated,
           lengths, ?_⟩
         · simp [findCode, targetLookup, ← lengths, arityEq]
@@ -56,7 +56,7 @@ theorem findCode_rel {C F : Type} (f : HolFiniteMapExact Nat Nat)
     | nil => simp [findCode] at found
     | cons first rest =>
       have nonempty : first :: rest ≠ [] := by simp
-      have lastRel := listRel_last (valueRel f) (first :: rest) relatedValues valuesRelated nonempty
+      have lastRel := listRel_last (valueRel f) (first :: rest) relatedValues ⟨valuesRelated, nonempty⟩
       cases last : holLast (first :: rest) with
       | number n => simp [findCode, last] at found
       | word64 w => simp [findCode, last] at found
@@ -76,7 +76,7 @@ theorem findCode_rel {C F : Type} (f : HolFiniteMapExact Nat Nat)
               simp [findCode, last, lookup, arityRest] at found
               obtain ⟨rfl, rfl⟩ := found
               obtain ⟨safe, worker, targetBody, targetLookup, changed⟩ :=
-                codeRel_cases loc arity sourceBody source.code target.code lookup codes
+                codeRel_cases loc arity sourceBody source.code target.code ⟨lookup, codes⟩
               have targetNonempty : relatedValues ≠ [] := by
                 intro empty
                 simp [empty] at lengths

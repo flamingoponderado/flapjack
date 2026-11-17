@@ -4,12 +4,18 @@ public import Flapjack.Compiler.Inference.Infer
 
 @[expose] public section
 
-/-! CakeML inference-type rendering. Source and carrier review remains pending. -/
+/-! Source-reviewed CakeML inference-type rendering. End-to-end executable
+diagnostic equivalence is not established by the renderer review alone. -/
 namespace Flapjack.Compiler.Inference.InferTDisplay
 open Flapjack.Basis.Pure.MlString Flapjack.NamespaceHOL Flapjack.TypeSystemHOL
 open Flapjack.Compiler.Inference.Infer
 
 abbrev TypeNames (α : Type) := Namespace MlString MlString (α × SemanticT)
+
+@[hol "cakeml/compiler/inference/infer_tScript.sml" "id_to_string_def"]
+def idToString : Ident MlString MlString → MlString
+  | .short s => s
+  | .long name id => MlString.concat [name, ofString ".", idToString id]
 
 mutual
 @[hol "cakeml/compiler/inference/infer_tScript.sml" "get_tyname_def"]

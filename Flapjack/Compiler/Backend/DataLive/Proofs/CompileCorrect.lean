@@ -26,13 +26,10 @@ theorem compile_sameResult {C F : Type} (program : DataLang.Prog) (live : NumSet
   exact simulationFor_all program live source source result sourceNext run
     (stateRel_refl source _) notType (exceptionRel_refl source)
 
-/-- The data liveness correctness statement in the source theorem's
-evaluation-pair form. Its stopped/non-type-error premises, result, and four
-updated state fields match the source statement. The data state has the same
-fields as the source record, and the evaluator's force singleton pattern
-corresponds to the source's length-one test. This remains untagged: the
-transitive primitive semantics and the data-program and FFI carriers have not
-completed the required typed correspondence review. -/
+/-- Liveness compilation preserves the result and all state fields except the
+four source-designated resource observations for stopped, non-type-error runs.
+The evaluator inherits the real-model assumption recorded in SOUNDNESS item 8. -/
+@[hol "cakeml/compiler/backend/proofs/data_liveProofScript.sml" "compile_correct"]
 theorem compile_correct {C F : Type} (program : DataLang.Prog) (source : State C F)
     (notType : (DataSem.evaluate program source).1 ≠ some (.err (.abort .typeError)))
     (stopped : (DataSem.evaluate program source).1 ≠ none) :

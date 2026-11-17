@@ -38,7 +38,7 @@ theorem evaluatePost_allocThunk_success {C F : Type} (s sMiddle sLast : ClosSem.
   | val targetValues =>
     have argsRel : List.Forall₂ (vRel sMiddle.maxApp fMiddle tMiddle.refs tMiddle.code)
         [initial] targetValues.reverse := by
-      simpa [resultRel, maxApp, argsEq] using reverse_related related
+      simpa [resultRel, maxApp, argsEq] using List.rel_reverse related
     generalize reversed : targetValues.reverse = targetList at argsRel
     cases argsRel with
     | cons initialRel tail =>
@@ -146,7 +146,7 @@ theorem evaluatePost_updateThunk_success {C F : Type} (s sMiddle sLast : ClosSem
   | val targetValues =>
     have argsRel : List.Forall₂ (vRel sMiddle.maxApp fMiddle tMiddle.refs tMiddle.code)
         [.refPtr false ptr, initial] targetValues.reverse := by
-      simpa [resultRel, maxApp, argsEq] using reverse_related related
+      simpa [resultRel, maxApp, argsEq] using List.rel_reverse related
     generalize reversed : targetValues.reverse = targetList at argsRel
     cases argsRel with
     | cons ptrRel tail =>

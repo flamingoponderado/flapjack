@@ -89,6 +89,7 @@ val _ = emit "size_def_typed" "size_def";
 val _ = emit "delete_def_typed" "delete_def";
 val _ = emit "fromList_def_typed" "fromList_def";
 val _ = emit "lookup_mk_wf_typed" "lookup_mk_wf";
+val _ = emit "wf_mk_wf_typed" "wf_mk_wf";
 val _ = emit "domain_inter_typed" "domain_inter";
 val _ = emit "domain_union_typed" "domain_union";
 val _ = emit "lookup_inter_typed" "lookup_inter";

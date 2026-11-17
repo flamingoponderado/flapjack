@@ -8,8 +8,8 @@ public import Flapjack.Compiler.Backend.DataLive.Proofs.EvaluatorAll
 namespace Flapjack.Compiler.Backend.DataLive
 open Flapjack Flapjack.Compiler.Backend.DataSem Flapjack.SemanticPrimitivesHOL
 
-/-- The data liveness simulation for every program and live set. This is
-untagged pending source evaluator, carrier, and full HOL statement review. -/
+/-- Internal induction packaging for the data liveness simulation. The
+source-shaped HOL theorem is stated below as `evaluate_compile`. -/
 theorem simulationFor_all {C F : Type} (program : DataLang.Prog) (live : NumSet) :
     simulationFor (C := C) (F := F) program live := by
   have allSizes : ∀ weight : Nat, ∀ (program : DataLang.Prog) (live : NumSet),
@@ -58,5 +58,30 @@ theorem simulationFor_all {C F : Type} (program : DataLang.Prog) (live : NumSet)
           simp only [DataLang.Prog.call.sizeOf_spec, Option.some.sizeOf_spec, Prod.mk.sizeOf_spec] at measure
           omega
   exact allSizes (sizeOf program) program live rfl
+
+/-- The original local simulation theorem, with the compiler output and
+exception-jump correspondence stated explicitly. The evaluator inherits the
+real-model assumption recorded in SOUNDNESS item 8. -/
+@[hol "cakeml/compiler/backend/proofs/data_liveProofScript.sml" "evaluate_compile"]
+theorem evaluate_compile {C F : Type} (program : DataLang.Prog)
+    (source : State C F) (result : Option (Result (List DataSem.Value) DataSem.Value))
+    (sourceNext : State C F) (live : NumSet) (target : State C F)
+    (liveBefore : NumSet) (compiled : DataLang.Prog)
+    (premises : DataSem.evaluate program source = (result, sourceNext) ∧
+      stateRel source target liveBefore ∧ compile program live = (compiled, liveBefore) ∧
+      result ≠ some (.err (.abort .typeError)) ∧
+      (∀ sourceJump, jumpExc source = some sourceJump →
+        ∃ targetJump, jumpExc target = some targetJump ∧ stateRel sourceJump targetJump .ln ∧
+          targetJump.handler = sourceJump.handler ∧ targetJump.stack.length = sourceJump.stack.length)) :
+    ∃ targetNext, DataSem.evaluate compiled target = (result, targetNext) ∧
+      stateRel sourceNext targetNext
+        (match (motive := ∀ _ : Option (Result (List DataSem.Value) DataSem.Value), NumSet) result with
+         | none => live | some _ => .ln) := by
+  obtain ⟨run, related, compilation, notType, exception⟩ := premises
+  have sim := simulationFor_all (C := C) (F := F) program live
+  unfold simulationFor at sim
+  have output := sim source target result sourceNext run (by simpa [compilation] using related)
+    notType exception
+  cases result <;> simpa [compilation, postLive] using output
 
 end Flapjack.Compiler.Backend.DataLive

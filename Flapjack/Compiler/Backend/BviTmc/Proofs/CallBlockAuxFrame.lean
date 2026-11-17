@@ -57,10 +57,9 @@ theorem link_frame_invariants (f : HolFiniteMapExact Nat Nat)
     contradiction
   let first := refs.updateEq (ptr, .mutBlock oldTag false oldLeft (.refPtr false (leastUnusedRef refs)) oldRight)
   have firstHeaps : stateRefRel f sourceRefs first :=
-    stateRefRel_filled f sourceRefs refs ptr _ heaps (fun i mapped => outside ⟨i, mapped⟩)
+    stateRefRel_filled f sourceRefs refs ptr _ ⟨heaps, outside⟩
   have linkedHeaps := stateRefRel_filled f sourceRefs first (leastUnusedRef refs)
-    (.mutBlock tag false newLeft (.number 0) newRight) firstHeaps
-    (fun i mapped => freshOutside ⟨i, mapped⟩)
+    (.mutBlock tag false newLeft (.number 0) newRight) ⟨firstHeaps, freshOutside⟩
   refine ⟨oldTag, oldLeft, oldRight, found, different, linkedHeaps, ?_, ?_, ?_, ?_⟩
   · refine ⟨leastUnusedRef refs, tag, newLeft, newRight, by simp, ?_, rfl, small, freshOutside, ?_⟩
     · simp [holEl, holHd]
@@ -102,10 +101,10 @@ theorem linked_frame_return_invariants (f g : HolFiniteMapExact Nat Nat)
     simp [first, HolFiniteMapExact.domain, HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL,
       Ne.symm different, leastUnusedRef_unused]
   have reducedUnchanged : holesUnchangedExcept f first nextRefs ∅ := by
-    have h := holesUnchanged_delete_fresh f first nextRefs (leastUnusedRef refs)
+    have h := holesUnchanged_delete_fresh f first nextRefs () (leastUnusedRef refs)
       (.mutBlock newTag false newLeft (.number 0) newRight)
     rw [sameDec] at h
-    exact h unchanged newFresh
+    exact h ⟨unchanged, newFresh⟩
   have reducedStill : holesStillNotFinalised f first nextRefs := by
     have h := holesStill_delete f first nextRefs (leastUnusedRef refs) newTag newLeft (.number 0) newRight
     rw [sameDec] at h
@@ -114,7 +113,7 @@ theorem linked_frame_return_invariants (f g : HolFiniteMapExact Nat Nat)
     have h := holesUnchanged_changed f refs nextRefs () ptr oldTag false oldLeft
       (.refPtr false (leastUnusedRef refs)) oldRight false initial
     rw [sameDec] at h
-    exact h reducedUnchanged found
+    exact h ⟨reducedUnchanged, found⟩
   have oldStill : holesStillNotFinalised f refs nextRefs := by
     have h := holesStill_delete f refs nextRefs ptr oldTag oldLeft (.refPtr false (leastUnusedRef refs)) oldRight
     rw [sameDec] at h
@@ -158,14 +157,14 @@ theorem linked_frame_old_hole (f : HolFiniteMapExact Nat Nat)
       some (.mutBlock oldTag false oldLeft (.refPtr false (leastUnusedRef refs)) oldRight) := by
     simp [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, different]
   obtain ⟨fin, newChild, preserved, unchangedChild⟩ :=
-    unchanged ptr oldTag false oldLeft (.refPtr false (leastUnusedRef refs)) oldRight outside linkedFound
+    unchanged ptr oldTag false oldLeft (.refPtr false (leastUnusedRef refs)) oldRight ⟨outside, linkedFound⟩
   have sameChild := unchangedChild (by simpa using different)
   subst newChild
   have initialNotFinal : holeNotFinalised ((refs.updateEq (ptr,
       .mutBlock oldTag false oldLeft (.refPtr false (leastUnusedRef refs)) oldRight)).updateEq
         (leastUnusedRef refs, .mutBlock newTag false newLeft (.number 0) newRight)) ptr :=
     ⟨oldTag, oldLeft, .refPtr false (leastUnusedRef refs), oldRight, linkedFound⟩
-  obtain ⟨tag', left', child', right', finalFound⟩ := still ptr outside initialNotFinal
+  obtain ⟨tag', left', child', right', finalFound⟩ := still ptr ⟨outside, initialNotFinal⟩
   rw [preserved] at finalFound
   simp only [Option.some.injEq, Ref.mutBlock.injEq] at finalFound
   have notFinal : fin = false := finalFound.2.1
@@ -209,7 +208,7 @@ theorem linked_frame_block_relation (f g : HolFiniteMapExact Nat Nat)
     have missing : fresh ∉ refs.domain := by simp [fresh, HolFiniteMapExact.domain, leastUnusedRef_unused]
     exact missing inRefs
   have reduced := mutableBlockRel_delete g oldRefs (nextRefs.eraseEq fresh) sourceChild targetChild ptr oldTag
-    oldLeft fresh oldRight childBlocks oldLookupErased freshMissing freshOld outsideNext
+    oldLeft fresh oldRight ⟨childBlocks, oldLookupErased, freshMissing, freshOld, outsideNext⟩
   have eraseComm : (nextRefs.eraseEq fresh).eraseEq ptr = (nextRefs.eraseEq ptr).eraseEq fresh := by
     apply HolFiniteMapExact.ext_lookup
     intro key
@@ -220,8 +219,8 @@ theorem linked_frame_block_relation (f g : HolFiniteMapExact Nat Nat)
   have childLookupErased : (nextRefs.eraseEq ptr).lookup fresh =
       some (.mutBlock newTag false newLeft targetChild newRight) := by
     simpa [HolFiniteMapExact.lookup_eraseEq, FDOMSUB_HOL, Ne.symm different'] using childLookup
-  exact mutableBlockRel_cons g oldRefs (nextRefs.eraseEq ptr) fresh newTag sourceLeft newLeft
-    sourceChild targetChild sourceRight newRight inner leftRelated rightRelated childLookupErased outsideNext freshOld
+  exact mutableBlockRel_cons oldRefs (nextRefs.eraseEq ptr) fresh g newTag sourceLeft newLeft
+    sourceChild targetChild sourceRight newRight ⟨inner, leftRelated, rightRelated, childLookupErased, outsideNext, freshOld⟩
 
 /-- Flapjack infrastructure: the auxiliary frame's constant-index update
 stores the new frame pointer into an unfinalised old hole and returns unit. -/
@@ -283,8 +282,8 @@ theorem evaluate_shifted_mutCons {C F : Type} (tag : Nat) (left right : List Nat
       (shiftVars extras.length vars).map (fun n => holEl n (extras ++ env)) =
         vars.map (fun n => holEl n env) := by
     have shifted := evaluate_vars_target (shiftVars extras.length vars) (extras ++ env).length
-      (extras ++ env) state (shiftedWf vars wf) (Nat.le_refl _)
-    have original := evaluate_vars_target vars env.length env state wf (Nat.le_refl _)
+      (extras ++ env) state ⟨shiftedWf vars wf, Nat.le_refl _⟩
+    have original := evaluate_vars_target vars env.length env state ⟨wf, Nat.le_refl _⟩
     have equal := evaluate_shift_vars vars env state extras
     rw [shifted, original] at equal
     have results := congrArg Prod.fst equal
@@ -443,10 +442,10 @@ theorem evaluate_aux_frame_core {C F : Type} (loc dest tag : Nat) (left right : 
         (unitValue :: .refPtr false (leastUnusedRef target.refs) :: extras) [.refPtr false (leastUnusedRef target.refs)]
         1 0 right.length (leastUnusedRef target.refs) targetValue newHoleNext
         (by simp [holEl, holHd]) (by simp) (by simp [holEl, holHd])
-      have leftRelated := CallBlockEnvironment.wfVars_list_rel left opt f env1 env2 environments wf.1
-      have rightRelated := CallBlockEnvironment.wfVars_list_rel right opt f env1 env2 environments wf.2.2.1
-      have leftNext := listRel_submap f g _ _ leftRelated extension
-      have rightNext := listRel_submap f g _ _ rightRelated extension
+      have leftRelated := CallBlockEnvironment.wfVars_list_rel left opt f env1 env2 ⟨environments, wf.1⟩
+      have rightRelated := CallBlockEnvironment.wfVars_list_rel right opt f env1 env2 ⟨environments, wf.2.2.1⟩
+      have leftNext := listRel_submap f g _ _ ⟨leftRelated, extension⟩
+      have rightNext := listRel_submap f g _ _ ⟨rightRelated, extension⟩
       have freshOutside := fresh_not_in_range f source.refs target.refs states.1
       have blocks := linked_frame_block_relation f g oldRefs target.refs next.refs ptr oldTag tag oldLeft oldRight
         (right.map (fun n => holEl n env2)).reverse (left.map (fun n => holEl n env2)).reverse

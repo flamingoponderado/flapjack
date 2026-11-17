@@ -27,7 +27,7 @@ theorem evaluate_value_locals {C F : Type} (program : DataLang.Prog) (state next
     obtain ⟨_, rfl⟩ := run
     rfl
   | seq first second =>
-    rw [evaluate, fixClock_evaluate] at run
+    rw [evaluate, fixClockEvaluate] at run
     cases firstRun : evaluate first state with
     | mk outcome mid =>
       rw [firstRun] at run
@@ -139,7 +139,7 @@ theorem evaluate_value_locals {C F : Type} (program : DataLang.Prog) (state next
               · let entered := callEnv params size (pushEnv env handler.isSome (decClock state))
                 cases bodyRun : evaluate body entered with
                 | mk outcome last =>
-                  have clamped : fixClock entered (evaluate body entered) = (outcome, last) := by rw [fixClock_evaluate, bodyRun]
+                  have clamped : fixClock entered (evaluate body entered) = (outcome, last) := by rw [fixClockEvaluate, bodyRun]
                   have bound := evaluate_clock_le body entered
                   rw [bodyRun] at bound
                   change last.clock ≤ entered.clock at bound

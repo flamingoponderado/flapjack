@@ -3,8 +3,9 @@ module
 public import Flapjack.Compiler.Backend.BviTmc.Proofs.ResultRelation
 public import Flapjack.Compiler.Backend.BviTmc.Proofs.MutableBlockRelation
 public import Flapjack.Compiler.Backend.BviTmc.Proofs.StateRelation
-public import Flapjack.Compiler.Backend.BviTmc.Proofs.ListExtraction
+public import Flapjack.Compiler.Backend.Semantics.BviSem.EvaluateLength
 public import Flapjack.Compiler.Backend.BviTailrec.Proofs.PrimitiveRelation
+public import Flapjack.FiniteMap.BroadCodec
 
 @[expose] public section
 
@@ -59,33 +60,34 @@ theorem evaluate_fillHole_error {C F : Type} (e : Bvi.Exp) (ptrIndex idxIndex : 
   simp only [fillHoleSource, updateConsSource]
   rw [BviSem.evaluate, BviSem.fixClock_evaluate, operands]
 
-/-- Flapjack infrastructure: ordinary related values form a trivial mutable
-block relation, independently of the heap. -/
-theorem mutableBlockRel_of_valueRel (f : HolFiniteMapExact Nat Nat)
-    (old : HolFiniteMapExact Nat (Ref Value)) (refs : HolFiniteMapExact Nat (Ref Value))
-    (source target : Value) (related : valueRel f source target) :
-    mutableBlockRel f old refs source target := by
-  cases related <;> simp only [mutableBlockRel.eq_def] <;> constructor <;> assumption
+/-- The successful-case existential map roundtrips through the canonical codec. -/
+theorem holFmapAsFiniteSupportExistentialWitness_evaluate_fill_hole_val_fillMap
+    (fillMap : HolFiniteMapExact Nat Nat) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad fillMap)).lookup = fillMap.lookup ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad fillMap)).finiteSupport = fillMap.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad fillMap) = fillMap := by
+  cases fillMap
+  exact ⟨rfl, rfl, rfl⟩
 
 /-- Filling a hole after related successful singleton evaluations preserves
-the TMC state and heap relations.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_fill_hole_val" (fmap_as_finite_support_relation := [BviState.refs, f, fNext, fillMap])] -/
-theorem evaluate_fill_hole_val {C F : Type} (e : Bvi.Exp)
+the TMC state and heap relations. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_fill_hole_val"
+  (fmap_as_finite_support_relation := [BviState.refs, f, fNext])
+  (fmap_as_finite_support_existentials := [fillMap])]
+theorem evaluate_fill_hole_val {C F : Type} (holePtr : Nat) (e : Bvi.Exp)
     (f : HolFiniteMapExact Nat Nat) (fNext : HolFiniteMapExact Nat Nat)
     (env1 env2 : List Value) (source sourceNext : BviState (Nat × C) F)
-    (target targetNext : BviState C F) (value relatedValue c : Value) (holePtr : Nat)
-    (_sourceRun : evaluate [e] env1 source = (.val [value], sourceNext))
-    (targetRun : evaluate [e] env2 target = (.val [relatedValue], targetNext))
-    (_environments : envRel true f env1 env2) (_states : stateRel f source target)
-    (submap : f.submap fNext) (values : valueRel fNext value relatedValue)
-    (hole : holeHasVal f env1 env2 target.refs c) (unfinalised : holeNotFinalised target.refs holePtr)
-    (unchanged : holesUnchangedExcept f target.refs targetNext.refs ∅)
-    (still : holesStillNotFinalised f target.refs targetNext.refs)
-    (fresh : onlyFresh f fNext target.refs) (nextStates : stateRel fNext sourceNext targetNext)
-    (pointer : holEl env1.length env2 = .refPtr false holePtr) :
-    ∃ (fillResult : BviResult) (fillMap : HolFiniteMapExact Nat Nat) (fillState : BviState C F),
+    (target targetNext : BviState C F) (value relatedValue c : Value)
+    (h : evaluate [e] env1 source = (.val [value], sourceNext) ∧
+      evaluate [e] env2 target = (.val [relatedValue], targetNext) ∧
+      envRel true f env1 env2 ∧ stateRel f source target ∧ f.submap fNext ∧
+      valueRel fNext value relatedValue ∧
+      holeHasVal f env1 env2 target.refs c ∧ holeNotFinalised target.refs holePtr ∧
+      holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
+      holesStillNotFinalised f target.refs targetNext.refs ∧
+      onlyFresh f fNext target.refs ∧ stateRel fNext sourceNext targetNext ∧
+      holEl env1.length env2 = .refPtr false holePtr) :
+    ∃ (fillResult : BviResult), ∃ (fillMap : HolFiniteMapExact Nat Nat), ∃ (fillState : BviState C F),
       evaluate [fillHoleSource env1.length (env1.length + 1) e] env2 target = (fillResult, fillState) ∧
       optResRel fillMap (.val [value]) fillResult ∧ stateRel fillMap sourceNext fillState ∧
       f.submap fillMap ∧ onlyFresh f fillMap target.refs ∧
@@ -94,21 +96,23 @@ theorem evaluate_fill_hole_val {C F : Type} (e : Bvi.Exp)
       ∃ fillValue, mutableBlockRel fillMap target.refs (fillState.refs.eraseEq holePtr) value fillValue ∧
         holeHasVal f env1 env2 fillState.refs fillValue := by
   classical
+  obtain ⟨_sourceRun, targetRun, _environments, _states, submap, values, hole, unfinalised,
+    unchanged, still, fresh, nextStates, pointer⟩ := h
   obtain ⟨length, ptr, tag, finalised, left, right, ptrEq, idxEq, small, outside, found⟩ := hole
   rw [pointer] at ptrEq
   have ptrSame : ptr = holePtr := by simpa using ptrEq.symm
   subst ptr
   obtain ⟨nextFinalised, oldValue, nextFound, _⟩ :=
-    unchanged holePtr tag finalised left c right outside found
+    unchanged holePtr tag finalised left c right ⟨outside, found⟩
   obtain ⟨otherTag, otherLeft, otherChild, otherRight, stillFound⟩ :=
-    still holePtr outside unfinalised
+    still holePtr ⟨outside, unfinalised⟩
   rw [nextFound] at stillFound
   simp only [Option.some.injEq, Ref.mutBlock.injEq] at stillFound
   have notFinal : nextFinalised = false := stillFound.2.1
   subst nextFinalised
   have allocated : holePtr ∈ target.refs.domain := by
     simp [HolFiniteMapExact.domain, found]
-  have outsideNext : holePtr ∉ mapRange fNext := nonFresh_not_in_range f fNext target.refs holePtr allocated outside fresh
+  have outsideNext : holePtr ∉ mapRange fNext := nonFresh_not_in_range f fNext target.refs holePtr ⟨allocated, outside, fresh⟩
   have ptrBound : env1.length < env2.length := by omega
   have idxBound : env1.length + 1 < env2.length := by omega
   have ptrAt : env2[env1.length]? = some (.refPtr false holePtr) := by
@@ -129,37 +133,46 @@ theorem evaluate_fill_hole_val {C F : Type} (e : Bvi.Exp)
       env2 target targetNext relatedValue targetRun ptrAt idxAt nextFound
   · simp [optResRel, unitValue]
   · exact stateRel_filled fNext sourceNext targetNext holePtr (.mutBlock tag false left relatedValue right)
-      nextStates (fun i found => outsideNext ⟨i, found⟩)
+      ⟨nextStates, outsideNext⟩
   · have unchangedFilled := holesUnchanged_filled f target.refs targetNext.refs () holePtr tag false left relatedValue right
-      finalised c unchanged found
+      finalised c ⟨unchanged, found⟩
     rw [sameDec] at unchangedFilled
     exact unchangedFilled
   · have stillFilled := holesStill_insert f target.refs targetNext.refs holePtr tag left relatedValue right still
     rw [sameDec] at stillFilled
     exact stillFilled
-  · refine ⟨relatedValue, mutableBlockRel_of_valueRel fNext target.refs _ value relatedValue values, ?_⟩
-    refine ⟨length, holePtr, tag, false, left, right, pointer, idxEq, small, outside, ?_⟩
-    simp [filled, updated, HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL]
+  · refine ⟨relatedValue, ?_, ?_⟩
+    · cases values <;> simp only [mutableBlockRel.eq_def] <;> constructor <;> assumption
+    · refine ⟨length, holePtr, tag, false, left, right, pointer, idxEq, small, outside, ?_⟩
+      simp [filled, updated, HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL]
 
-/-- Filling a hole preserves related successful results and propagates related errors.
+/-- The general-case existential map roundtrips through the canonical codec. -/
+theorem holFmapAsFiniteSupportExistentialWitness_evaluate_fill_hole_fillMap
+    (fillMap : HolFiniteMapExact Nat Nat) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad fillMap)).lookup = fillMap.lookup ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad fillMap)).finiteSupport = fillMap.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad fillMap) = fillMap := by
+  cases fillMap
+  exact ⟨rfl, rfl, rfl⟩
 
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_fill_hole" (fmap_as_finite_support_relation := [BviState.refs, f, fNext, fillMap])] -/
-theorem evaluate_fill_hole {C F : Type} (e : Bvi.Exp)
+/-- Filling a hole preserves related successful results and propagates related errors. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_fill_hole"
+  (fmap_as_finite_support_relation := [BviState.refs, f, fNext])
+  (fmap_as_finite_support_existentials := [fillMap])]
+theorem evaluate_fill_hole {C F : Type} (holePtr : Nat) (e : Bvi.Exp)
     (f : HolFiniteMapExact Nat Nat) (fNext : HolFiniteMapExact Nat Nat)
     (env1 env2 : List Value) (source sourceNext : BviState (Nat × C) F)
-    (target targetNext : BviState C F) (result targetResult : BviResult) (c : Value) (holePtr : Nat)
-    (sourceRun : evaluate [e] env1 source = (result, sourceNext))
-    (targetRun : evaluate [e] env2 target = (targetResult, targetNext))
-    (environments : envRel true f env1 env2) (states : stateRel f source target)
-    (submap : f.submap fNext)
-    (results : resultRel (List.Forall₂ (valueRel fNext)) (eorRel fNext) result targetResult)
-    (hole : holeHasVal f env1 env2 target.refs c) (unfinalised : holeNotFinalised target.refs holePtr)
-    (unchanged : holesUnchangedExcept f target.refs targetNext.refs ∅)
-    (still : holesStillNotFinalised f target.refs targetNext.refs)
-    (fresh : onlyFresh f fNext target.refs) (nextStates : stateRel fNext sourceNext targetNext)
-    (pointer : holEl env1.length env2 = .refPtr false holePtr) :
-    ∃ (fillResult : BviResult) (fillMap : HolFiniteMapExact Nat Nat) (fillState : BviState C F),
+    (target targetNext : BviState C F) (result targetResult : BviResult) (c : Value)
+    (h : evaluate [e] env1 source = (result, sourceNext) ∧
+      evaluate [e] env2 target = (targetResult, targetNext) ∧
+      envRel true f env1 env2 ∧ stateRel f source target ∧ f.submap fNext ∧
+      resultRel (List.Forall₂ (valueRel fNext)) (eorRel fNext) result targetResult ∧
+      holeHasVal f env1 env2 target.refs c ∧ holeNotFinalised target.refs holePtr ∧
+      holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
+      holesStillNotFinalised f target.refs targetNext.refs ∧
+      onlyFresh f fNext target.refs ∧ stateRel fNext sourceNext targetNext ∧
+      holEl env1.length env2 = .refPtr false holePtr) :
+    ∃ (fillResult : BviResult), ∃ (fillMap : HolFiniteMapExact Nat Nat), ∃ (fillState : BviState C F),
       evaluate [fillHoleSource env1.length (env1.length + 1) e] env2 target = (fillResult, fillState) ∧
       optResRel fillMap result fillResult ∧ stateRel fillMap sourceNext fillState ∧
       f.submap fillMap ∧ onlyFresh f fillMap target.refs ∧
@@ -168,6 +181,8 @@ theorem evaluate_fill_hole {C F : Type} (e : Bvi.Exp)
       ∀ value, result = .val [value] →
         ∃ fillValue, mutableBlockRel fillMap target.refs (fillState.refs.eraseEq holePtr) value fillValue ∧
           holeHasVal f env1 env2 fillState.refs fillValue := by
+  obtain ⟨sourceRun, targetRun, environments, states, submap, results, hole, unfinalised,
+    unchanged, still, fresh, nextStates, pointer⟩ := h
   cases result with
   | val sourceValues =>
     obtain ⟨value, rfl⟩ := evaluate_singleton e env1 source sourceNext sourceValues sourceRun
@@ -181,8 +196,9 @@ theorem evaluate_fill_hole {C F : Type} (e : Bvi.Exp)
         | cons related _ => exact related
       obtain ⟨fillResult, fillMap, fillState, fillRun, optResult, finalStates, extension, only,
         holes, unfinalisedHoles, fillValue, mutable, filledHole⟩ :=
-        evaluate_fill_hole_val e f fNext env1 env2 source sourceNext target targetNext value relatedValue c holePtr
-          sourceRun targetRun environments states submap valueRelated hole unfinalised unchanged still fresh nextStates pointer
+        evaluate_fill_hole_val holePtr e f fNext env1 env2 source sourceNext target targetNext value relatedValue c
+          ⟨sourceRun, targetRun, environments, states, submap, valueRelated, hole, unfinalised, unchanged, still,
+            fresh, nextStates, pointer⟩
       refine ⟨fillResult, fillMap, fillState, fillRun, optResult, finalStates, extension, only,
         holes, unfinalisedHoles, ?_⟩
       intro returned eq
@@ -195,7 +211,7 @@ theorem evaluate_fill_hole {C F : Type} (e : Bvi.Exp)
       have fillRun := evaluate_fillHole_error e env1.length (env1.length + 1) env2 target targetNext targetError targetRun
       refine ⟨.err targetError, fNext, targetNext, fillRun, ?_, nextStates, submap, fresh, ?_, still, ?_⟩
       · simpa [resultRel, optResRel] using results
-      · exact holesUnchanged_subset f target.refs targetNext.refs ∅ {holePtr} unchanged (by simp)
+      · exact holesUnchanged_subset f target.refs targetNext.refs ∅ {holePtr} ⟨unchanged, by simp⟩
       · intro value impossible; cases impossible
 
 end Flapjack.Compiler.Backend.BviTmc.FillHole

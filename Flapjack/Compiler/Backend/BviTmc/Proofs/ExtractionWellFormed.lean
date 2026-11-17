@@ -90,12 +90,12 @@ theorem extractList_wf_inr (n loc tag : Nat) (args bs : List Bvi.Exp) (cb : Call
                   | nil =>
                     simp [h, first] at run
                     obtain ⟨rfl, rfl⟩ := run.symm
-                    refine ⟨?_, [], child, shiftVarsSource firstBs.length vs, rfl⟩
+                    refine ⟨?_, [], child, shiftVars firstBs.length vs, rfl⟩
                     simp only [wfBlock, List.length_append]
                     refine ⟨wfVars_empty _, ?_, ?_, ?_⟩
                     · exact wfBlock_expand _ _ child firstWf.1.2.1 (by omega)
-                    · simpa [shiftVarsSource, shiftVars] using wfVars_shift tailBs.length firstBs.length vs tailWf.2.1
-                    · simpa [shiftVarsSource] using tailWf.2.2
+                    · simpa [shiftVars] using wfVars_shift tailBs.length firstBs.length vs tailWf.2.1
+                    · simpa [shiftVars] using tailWf.2.2
         | inr tailCb =>
           have tailWf := extractList_wf_inr n loc tag (y :: ys) tailBs tailCb h
           obtain ⟨wf, left, child, right, rfl⟩ := tailWf

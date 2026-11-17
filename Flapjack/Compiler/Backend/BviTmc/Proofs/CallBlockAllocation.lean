@@ -25,7 +25,7 @@ theorem alloc_hole_advance (f g : HolFiniteMapExact Nat Nat)
   have same : ptr' = ptr := by simpa using pointer'.symm
   subst ptr'
   have allocated : ptr ∈ refs.domain := by simp [HolFiniteMapExact.domain, oldFound]
-  have outsideNext := nonFresh_not_in_range f g refs ptr allocated outside fresh
+  have outsideNext := nonFresh_not_in_range f g refs ptr ⟨allocated, outside, fresh⟩
   exact ⟨ptr, tag, left, right, bound, pointer, index, small, outsideNext, found⟩
 
 /-- Flapjack infrastructure: a mutable constructor frame allocates one fresh
@@ -40,8 +40,8 @@ theorem evaluate_mutCons {C F : Type} (tag : Nat) (left right : List Nat)
             (left.map (fun n => holEl n env)).reverse) }) := by
   let leftVals := left.map (fun n => holEl n env)
   let rightVals := right.map (fun n => holEl n env)
-  have leftRun := evaluate_vars_target left env.length env state leftWf (Nat.le_refl _)
-  have rightRun := evaluate_vars_target right env.length env state rightWf (Nat.le_refl _)
+  have leftRun := evaluate_vars_target left env.length env state ⟨leftWf, Nat.le_refl _⟩
+  have rightRun := evaluate_vars_target right env.length env state ⟨rightWf, Nat.le_refl _⟩
   have zeroRun : evaluate [.op (.intOp (.const 0)) []] env state = (.val [.number 0], state) := by
     rw [BviSem.evaluate, BviSem.fixClock_evaluate]
     simp [BviSem.evaluate, BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux,
@@ -83,7 +83,7 @@ theorem alloc_frame_invariants {C F : Type} (tag : Nat) (left right : List Nat)
   dsimp only
   have outside := fresh_not_in_range f source.refs target.refs states.1
   refine ⟨?_, ?_, ?_, ?_⟩
-  · exact stateRefRel_filled f source.refs target.refs _ _ states.1 (fun i h => outside ⟨i, h⟩)
+  · exact stateRefRel_filled f source.refs target.refs _ _ ⟨states.1, outside⟩
   · refine ⟨leastUnusedRef target.refs, tag, (right.map (fun n => holEl n env)).reverse,
       (left.map (fun n => holEl n env)).reverse, by simp, rfl, ?_, ?_, outside, ?_⟩
     · simp
@@ -115,10 +115,9 @@ theorem wrapper_frame_invariants (f g : HolFiniteMapExact Nat Nat)
     congr 1
     exact Subsingleton.elim _ _
   refine ⟨onlyFresh_delete_frame f g refs _ _ fresh, ?_, ?_⟩
-  · have relation := holesUnchanged_delete_fresh f refs nextRefs (leastUnusedRef refs)
+  · have relation := holesUnchanged_delete_fresh f refs nextRefs () (leastUnusedRef refs)
       (.mutBlock tag false left child right)
-    apply relation ?_ (by
-      simp [HolFiniteMapExact.domain, leastUnusedRef_unused])
+    apply relation ⟨?_, by simp [HolFiniteMapExact.domain, leastUnusedRef_unused]⟩
     simpa only [sameUpdate] using unchanged
   · apply holesStill_delete f refs nextRefs (leastUnusedRef refs) tag left child right
     simpa only [sameUpdate] using unfinalised
@@ -142,7 +141,7 @@ theorem wrapper_frame_contents (f g : HolFiniteMapExact Nat Nat)
       some (.mutBlock tag false left initial right) := by
     simp [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL]
   obtain ⟨finalised, nextChild, preserved, _⟩ :=
-    unchanged ptr tag false left initial right outside initialFound
+    unchanged ptr tag false left initial right ⟨outside, initialFound⟩
   rw [holeFound] at preserved
   cases preserved
   exact ⟨holeOutside, holeFound⟩
@@ -172,9 +171,9 @@ theorem wrapper_finalise_frame (f g : HolFiniteMapExact Nat Nat)
     (leastUnusedRef oldRefs) tag left right initial child outside unchanged hole
   have absent : leastUnusedRef oldRefs ∉ oldRefs.domain := by
     simp [HolFiniteMapExact.domain, leastUnusedRef_unused]
-  have block := mutableBlockRel_cons g oldRefs nextRefs (leastUnusedRef oldRefs) tag
-    sourceLeft left sourceChild child sourceRight right inner leftRelated rightRelated found outsideNext absent
-  exact FinaliseRelation.evaluate_finalise_cons _ nextRefs f g sourceRefs _ oldRefs heaps block still
+  have block := mutableBlockRel_cons oldRefs nextRefs (leastUnusedRef oldRefs) g tag
+    sourceLeft left sourceChild child sourceRight right ⟨inner, leftRelated, rightRelated, found, outsideNext, absent⟩
+  exact FinaliseRelation.evaluate_finalise_cons _ nextRefs f g sourceRefs _ oldRefs ⟨heaps, block, still⟩
 
 /-- Flapjack infrastructure: a wrapper propagates errors from its auxiliary
 worker after allocating the constructor frame. -/
@@ -338,10 +337,10 @@ theorem evaluate_wrapper_core {C F : Type} (loc dest tag : Nat) (left right : Li
       obtain ⟨targetValue, blocks, filledHole⟩ := success sourceValue rfl
       have nextHole := alloc_hole_advance f g _ next.refs _ 0 right.length (.number 0) targetValue
         alloc.2.1 filledHole fresh
-      have leftRelated := CallBlockEnvironment.wfVars_list_rel left opt f env1 env2 environments leftWf
-      have rightRelated := CallBlockEnvironment.wfVars_list_rel right opt f env1 env2 environments rightWf
-      have leftNext := listRel_submap f g _ _ leftRelated extension
-      have rightNext := listRel_submap f g _ _ rightRelated extension
+      have leftRelated := CallBlockEnvironment.wfVars_list_rel left opt f env1 env2 ⟨environments, leftWf⟩
+      have rightRelated := CallBlockEnvironment.wfVars_list_rel right opt f env1 env2 ⟨environments, rightWf⟩
+      have leftNext := listRel_submap f g _ _ ⟨leftRelated, extension⟩
+      have rightNext := listRel_submap f g _ _ ⟨rightRelated, extension⟩
       have outside := fresh_not_in_range f source.refs target.refs states.1
       obtain ⟨value, refs, targetRun, valueRelated, heaps, finalUnchanged, finalStill⟩ :=
         evaluate_wrapper_success_related tag left right child dest env2 target next f g mid.refs
@@ -353,6 +352,6 @@ theorem evaluate_wrapper_core {C F : Type} (loc dest tag : Nat) (left right : Li
       refine ⟨{ next with refs := refs }, g, .val [value], targetRun, ?_, ⟨heaps, nextStates.2⟩,
         extension, invariants.1, ?_, finalStill⟩
       · exact .cons (by simpa using valueRelated) .nil
-      · exact holesUnchanged_trans f g target.refs next.refs refs ∅ invariants.2.1 finalUnchanged invariants.1 extension
+      · exact holesUnchanged_trans f g target.refs next.refs refs ∅ ⟨invariants.2.1, finalUnchanged, invariants.1, extension⟩
 
 end Flapjack.Compiler.Backend.BviTmc.CallBlockAllocation

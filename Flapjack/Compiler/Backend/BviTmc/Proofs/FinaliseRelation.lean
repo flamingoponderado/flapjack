@@ -20,22 +20,32 @@ private theorem valueRel_finalise (f : HolFiniteMapExact Nat Nat)
   | block tag xs ys related => rw [finaliseCons.eq_def]
   | codePtr n => rw [finaliseCons.eq_def]
   | refPtr n m flag mapped =>
-    obtain ⟨_, _, _, targetFound, cells⟩ := stateRefRel_lookup f n m sourceHeap targetHeap mapped heaps
+    obtain ⟨_, _, _, targetFound, cells⟩ := stateRefRel_lookup f n m sourceHeap targetHeap ⟨mapped, heaps⟩
     cases cells <;> rw [finaliseCons.eq_def] <;> dsimp only <;> rw [targetFound]
 
-/-- Flapjack infrastructure: finalising a related mutable chain produces a
-related immutable value and preserves the heap invariants. It remains
-untagged pending source review of the recursive finalisation carrier. -/
+theorem holFmapAsFiniteSupportExistentialWitness_evaluate_finalise_cons_resultRefs
+    (resultRefs : HolFiniteMapExact Nat (Ref Value)) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad resultRefs)).lookup = resultRefs.lookup ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad resultRefs)).finiteSupport = resultRefs.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad resultRefs) = resultRefs := by
+  cases resultRefs
+  exact ⟨rfl, rfl, rfl⟩
+
+/-- Finalising a related mutable chain preserves the heap invariants. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_finalise_cons"
+  (fmap_as_finite_support_relation := [targetRefs, f, fNext, sourceRefs, oldRefs])
+  (fmap_as_finite_support_existentials := [resultRefs])]
 theorem evaluate_finalise_cons (v2 : Value) (targetRefs : HolFiniteMapExact Nat (Ref Value))
     (f : HolFiniteMapExact Nat Nat) (fNext : HolFiniteMapExact Nat Nat)
     (sourceRefs : HolFiniteMapExact Nat (Ref Value)) (v1 : Value) (oldRefs : HolFiniteMapExact Nat (Ref Value))
-    (heaps : stateRefRel fNext sourceRefs targetRefs) (blocks : mutableBlockRel fNext oldRefs targetRefs v1 v2)
-    (still : holesStillNotFinalised f oldRefs targetRefs) :
-    ∃ (v3 : Value) (resultRefs : HolFiniteMapExact Nat (Ref Value)),
+    (h : stateRefRel fNext sourceRefs targetRefs ∧ mutableBlockRel fNext oldRefs targetRefs v1 v2 ∧
+      holesStillNotFinalised f oldRefs targetRefs) :
+    ∃ (v3 : Value), ∃ (resultRefs : HolFiniteMapExact Nat (Ref Value)),
       finaliseCons v2 targetRefs = some (v3, resultRefs) ∧ valueRel fNext v1 v3 ∧
       stateRefRel fNext sourceRefs resultRefs ∧ holesUnchangedExcept fNext targetRefs resultRefs ∅ ∧
       holesStillNotFinalised f oldRefs resultRefs := by
   classical
+  obtain ⟨heaps, blocks, still⟩ := h
   have plain (v1 v2 : Value) (values : valueRel fNext v1 v2) :
       ∃ (v3 : Value) (resultRefs : HolFiniteMapExact Nat (Ref Value)),
         finaliseCons v2 targetRefs = some (v3, resultRefs) ∧ valueRel fNext v1 v3 ∧
@@ -70,20 +80,13 @@ theorem evaluate_finalise_cons (v2 : Value) (targetRefs : HolFiniteMapExact Nat 
               by_cases equal : k = ptr <;> simp [HolFiniteMapExact.lookup_eraseEq, FDOMSUB_HOL, equal]
             have stillErased : holesStillNotFinalised f oldRefs (targetRefs.eraseEq ptr) := by
               rw [← eraseEq]
-              exact holesStill_sub ptr oldRefs f targetRefs absent still
+              exact holesStill_sub ptr oldRefs f targetRefs ⟨absent, still⟩
             obtain ⟨childValue, childRefs, childRun, childRelated, childHeaps, childUnchanged, childStill⟩ :=
               evaluate_finalise_cons child (targetRefs.eraseEq ptr) f fNext sourceRefs sourceChild oldRefs
-                (stateRefRel_sub ptr fNext sourceRefs targetRefs outside heaps) inner
-                stillErased
+                ⟨stateRefRel_sub ptr fNext sourceRefs targetRefs ⟨outside, heaps⟩, inner, stillErased⟩
             have listRel : List.Forall₂ (valueRel fNext) (sourceLeft ++ [sourceChild] ++ sourceRight)
                 (left ++ [childValue] ++ right) := by
-              have appendRel : ∀ {a b c d : List Value}, List.Forall₂ (valueRel fNext) a b →
-                  List.Forall₂ (valueRel fNext) c d → List.Forall₂ (valueRel fNext) (a ++ c) (b ++ d) := by
-                intro a b c d first second
-                induction first with
-                | nil => exact second
-                | cons head tail ih => exact .cons head ih
-              simpa [List.append_assoc] using appendRel leftRel (.cons childRelated rightRel)
+              simpa [List.append_assoc] using List.rel_append leftRel (.cons childRelated rightRel)
             refine ⟨.block tag (left ++ [childValue] ++ right),
               childRefs.updateEq (ptr, .mutBlock tag true left child right), ?_, ?_, ?_, ?_, ?_⟩
             · subst flag
@@ -94,7 +97,7 @@ theorem evaluate_finalise_cons (v2 : Value) (targetRefs : HolFiniteMapExact Nat 
             · subst sourceTag
               rw [shape]
               exact .block _ _ _ listRel
-            · exact stateRefRel_filled fNext sourceRefs childRefs ptr _ childHeaps (fun i mapped => outside ⟨i, mapped⟩)
+            · exact stateRefRel_filled fNext sourceRefs childRefs ptr _ ⟨childHeaps, outside⟩
             · have childUnchanged' : holesUnchangedExcept fNext
                   (@HolFiniteMapExact.eraseEq Nat (Ref Value) (Classical.decEq Nat) targetRefs ptr) childRefs ∅ := by
                 rw [eraseEq]
@@ -106,14 +109,14 @@ theorem evaluate_finalise_cons (v2 : Value) (targetRefs : HolFiniteMapExact Nat 
                 by_cases equal : k = ptr <;> simp [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, equal]
               rw [← updateEq]
               exact holesUnchanged_finalised fNext () ptr targetRefs childRefs tag false left child right true
-                childUnchanged' found outside
+                ⟨childUnchanged', found, outside⟩
             · have updateEq : (@HolFiniteMapExact.updateEq Nat (Ref Value) (Classical.decEq Nat) childRefs
                   (ptr, .mutBlock tag true left child right)) = childRefs.updateEq (ptr, .mutBlock tag true left child right) := by
                 apply HolFiniteMapExact.ext_lookup
                 intro k
                 by_cases equal : k = ptr <;> simp [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, equal]
               rw [← updateEq]
-              exact holesStill_non_dom f oldRefs childRefs ptr tag left child right childStill absent
+              exact holesStill_non_dom f oldRefs childRefs ptr tag left child right ⟨childStill, absent⟩
           | _ => rw [found] at blocks; contradiction
     | _ => rw [mutableBlockRel.eq_def] at blocks; exact plain _ _ blocks
   | _ => cases v2 <;> rw [mutableBlockRel.eq_def] at blocks <;> exact plain _ _ blocks

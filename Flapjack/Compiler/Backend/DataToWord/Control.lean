@@ -99,11 +99,28 @@ def realAddr {width : Nat} [NeZero width] (conf : Config) (r : Nat) : WordLangEx
       (.shift .lsr (.var r) (.const (BitVec.ofNat width l))) (.const (BitVec.ofNat width k))
   .op .add [.lookup .currHeap, offset]
 
-/-- Internal helper for supported comparisons; the source `SetBool` uses an
-already adjusted destination and remains a separate unported declaration. -/
-private def boolResult {width : Nat} (dest : Nat) (cmp : Cmp) (r : Nat)
+/-- Set an already-adjusted destination to the source boolean encoding. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "SetBool_def"
+  (words_as_type_indexed_bitvec)]
+def setBool {width : Nat} [NeZero width] (dest : Nat) (cmp : Cmp) (r : Nat)
     (other : WordRegImm (BitVec width)) : WordLangProgHOL (BitVec width) :=
-  .ite cmp r other (.assign (adjustVar dest) (.const 18)) (.assign (adjustVar dest) (.const 2))
+  .ite cmp r other (.assign dest (.const 18)) (.assign dest (.const 2))
+
+/-- Lower the four source ordering comparisons to word comparisons. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "AssignCmp_def"
+  (words_as_type_indexed_bitvec)]
+def assignCmp {width : Nat} [NeZero width] (dest : Nat) (cmp : Opb) (v1 v2 : Nat) :
+    WordLangProgHOL (BitVec width) :=
+  match cmp with
+  | .lt => setBool dest .lower v1 (.reg v2)
+  | .gt => setBool dest .lower v2 (.reg v1)
+  | .leq => setBool dest .notLower v2 (.reg v1)
+  | .geq => setBool dest .notLower v1 (.reg v2)
+
+/-- Adapt a source destination to the word-register convention. -/
+private def boolResult {width : Nat} [NeZero width] (dest : Nat) (cmp : Cmp) (r : Nat)
+    (other : WordRegImm (BitVec width)) : WordLangProgHOL (BitVec width) :=
+  setBool (adjustVar dest) cmp r other
 
 /-- Internal constructor for HOL's `ShiftN` overload. -/
 def shiftN {width : Nat} (op : Shift) (e : WordLangExpHOL (BitVec width)) (n : Nat) :
@@ -376,6 +393,13 @@ def arg2 {α β : Type} (args : List α) (f : α → α → β) (fallback : β) 
 def arg3 {α β : Type} (args : List α) (f : α → α → α → β) (fallback : β) : β :=
   match args with
   | [first, second, third] => f first second third
+  | _ => fallback
+
+/-- Apply a quaternary assignment only to an argument list of length four. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "arg4_def"]
+def arg4 {α β : Type} (args : List α) (f : α → α → α → α → β) (fallback : β) : β :=
+  match args with
+  | [first, second, third, fourth] => f first second third fourth
   | _ => fallback
 
 /-- Construct the word offset of a block element. -/
@@ -685,6 +709,197 @@ def assignWordToInt {width : Nat} [NeZero width] (conf : Config) (_secn l dest :
                   .ite .equal 1 (.imm 0) (.assign (adjustVar dest) (shiftN .lsl (.var 11) 2))
                     (writeWord32On32 conf header1 dest 11)])], l)
 
+/-- Compile a thunk force, including the source header failure and tail-call
+    cases. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "force_thunk_def"
+  (words_as_type_indexed_bitvec)]
+def forceThunk {width : Nat} [NeZero width] {α : Type} (conf : Config) (secn l : Nat)
+    (ret : Option (Nat × Spt α)) (loc v : Nat) : WordLangProgHOL (BitVec width) × Nat :=
+  match encodeHeader (width := width) conf 14 1 with
+  | none => (giveUp, l)
+  | some _ =>
+      let v := adjustVar v
+      let unchanged := match ret with
+        | none => WordLangProgHOL.return 0 [v]
+        | some (dest, _) => .assign (adjustVar dest) (.var v)
+      let loaded := WordLangExpHOL.load (.op .add [.var 1, .const ((wordSemBytesInWord : BitVec width))])
+      let evaluated := match ret with
+        | none => wordListSeq [.assign 1 loaded, .return 0 [1]]
+        | some (dest, _) => .assign (adjustVar dest) loaded
+      let call := match ret with
+        | none => WordLangProgHOL.call none (some loc) [0, v, 5] none
+        | some (dest, names) => .call (some ([adjustVar dest], adjustSets names, .skip, secn, l))
+            (some loc) [v, 5] none
+      (.ite .test v (.imm 1) unchanged (wordListSeq [
+        .assign 1 (realAddr conf v),
+        .assign 3 (.op .and [.load (.var 1), .const 60]),
+        .ite .equal 3 (.imm 56) evaluated
+          (.ite .notEqual 3 (.imm 24) unchanged (wordListSeq [.assign 5 loaded, call]))]), l + 1)
+
+/-- Compile the original byte-string comparison operation. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "assign_StringCmp_def"
+  (words_as_type_indexed_bitvec)]
+def assignStringCmp {width : Nat} [NeZero width] (conf : Config) (secn l dest : Nat)
+    (names : Option NumSet) (fast : Bool) (cmp : Opb) (first second : Nat) :
+    WordLangProgHOL (BitVec width) × Nat :=
+  let bytes := (wordSemBytesInWord : BitVec width)
+  let offset := width - conf.lenSize - wordShiftAmount width
+  let names := adjustSets (names.getD .ln)
+  let call (args : List Nat) := WordLangProgHOL.mustTerminate
+    (.call (some ([5, 7], names, .skip, secn, l)) (some stringCmpLoopLocation) args none)
+  let compareBytes := if fast then
+      WordLangProgHOL.ite .equal 5 (.reg 7) (wordListSeq [
+        .assign 11 (.op .add [.var 1, .const bytes]),
+        .assign 13 (.op .add [.var 3, .const bytes]), call [11, 13, 7, 7, 7]]) .skip
+    else wordListSeq [
+      .assign 11 (.op .add [.var 1, .const bytes]),
+      .assign 13 (.op .add [.var 3, .const bytes]), .assign 9 (.var 5),
+      .ite .lower 7 (.reg 5) (.assign 9 (.var 7)) .skip, call [11, 13, 9, 5, 7]]
+  (wordListSeq [
+    .assign 1 (realAddr conf (adjustVar first)), .assign 3 (realAddr conf (adjustVar second)),
+    .assign 5 (shiftN .lsr (.load (.var 1)) offset),
+    .assign 7 (shiftN .lsr (.load (.var 3)) offset), compareBytes,
+    assignCmp (adjustVar dest) cmp 5 7], l + 1)
+
+/-- Compile a byte-array bounds check. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "assign_BoundsCheckByte_def"
+  (words_as_type_indexed_bitvec)]
+def assignBoundsCheckByte {width : Nat} [NeZero width] (conf : Config) (_secn l dest : Nat)
+    (_names : Option NumSet) (leq : Bool) (base index : Nat) :
+    WordLangProgHOL (BitVec width) × Nat :=
+  let header := WordLangExpHOL.load (realAddr conf (adjustVar base))
+  let shift := width - conf.lenSize - (if width = 32 then 2 else 3)
+  let result := if leq then boolResult dest .notLower 1 (.reg 3)
+    else boolResult dest .lower 3 (.reg 1)
+  (wordListSeq [
+    .assign 1 (.op .sub [shiftN .lsr header shift, .const (wordSemBytesInWord : BitVec width)]),
+    .assign 3 (shiftVar .ror (adjustVar index) 2), result], l)
+
+/-- Compile an array bounds check. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "assign_BoundsCheckArray_def"
+  (words_as_type_indexed_bitvec)]
+def assignBoundsCheckArray {width : Nat} [NeZero width] (conf : Config) (_secn l dest : Nat)
+    (_names : Option NumSet) (base index : Nat) : WordLangProgHOL (BitVec width) × Nat :=
+  let header := WordLangExpHOL.load (realAddr conf (adjustVar base))
+  (wordListSeq [
+    .assign 1 (shiftN .lsr header (width - conf.lenSize)),
+    .assign 3 (shiftVar .ror (adjustVar index) 2),
+    boolResult dest .lower 3 (.reg 1)], l)
+
+/-- Compile a block bounds check. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "assign_BoundsCheckBlock_def"
+  (words_as_type_indexed_bitvec)]
+def assignBoundsCheckBlock {width : Nat} [NeZero width] (conf : Config) (_secn l dest : Nat)
+    (_names : Option NumSet) (base index : Nat) : WordLangProgHOL (BitVec width) × Nat :=
+  let base := adjustVar base
+  let header := WordLangExpHOL.load (realAddr conf base)
+  (wordListSeq [
+    .ite .test base (.imm 1) (.assign 1 (.const 0))
+      (.assign 1 (shiftN .lsr header (width - conf.lenSize))),
+    .assign 3 (shiftVar .ror (adjustVar index) 2),
+    boolResult dest .lower 3 (.reg 1)], l)
+
+/-- Compile a general equality operation. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "assign_Equal_def"
+  (words_as_type_indexed_bitvec)]
+def assignEqual {width : Nat} [NeZero width] (_conf : Config) (secn l dest : Nat)
+    (names : Option NumSet) (x y : Nat) : WordLangProgHOL (BitVec width) × Nat :=
+  let cutsets := adjustSets (names.getD .ln)
+  (wordListSeq [
+    .assign 1 (.var (adjustVar x)), .assign 3 (.var (adjustVar y)),
+    .assign 5 (.op .and [.var 1, .var 3]),
+    .ite .test 5 (.imm 1) .skip
+      (.ite .equal 1 (.reg 3) .skip
+        (.seq (.mustTerminate (.call (some ([1], cutsets, .skip, secn, l))
+          (some equalLocation) [1, 3] none)) (.assign 3 (.const 1)))),
+    boolResult dest .equal 1 (.reg 3)], l + 1)
+
+/-- Compile integer less-than. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "assign_Less_def"
+  (words_as_type_indexed_bitvec)]
+def assignLess {width : Nat} [NeZero width] (_conf : Config) (secn l dest : Nat)
+    (names : Option NumSet) (x y : Nat) : WordLangProgHOL (BitVec width) × Nat :=
+  let cutsets := adjustSets (names.getD .ln)
+  (wordListSeq [
+    .assign 1 (.var (adjustVar x)), .assign 3 (.var (adjustVar y)),
+    .assign 5 (.op .or [.var 1, .var 3]),
+    .ite .test 5 (.imm 1) .skip
+      (.seq (.mustTerminate (.call (some ([1], cutsets, .skip, secn, l))
+        (some compareLocation) [1, 3] none)) (.assign 3 (.const 1))),
+    boolResult dest .less 1 (.reg 3)], l + 1)
+
+/-- Compile integer less-than-or-equal. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "assign_LessEq_def"
+  (words_as_type_indexed_bitvec)]
+def assignLessEq {width : Nat} [NeZero width] (_conf : Config) (secn l dest : Nat)
+    (names : Option NumSet) (x y : Nat) : WordLangProgHOL (BitVec width) × Nat :=
+  let cutsets := adjustSets (names.getD .ln)
+  (wordListSeq [
+    .assign 1 (.var (adjustVar x)), .assign 3 (.var (adjustVar y)),
+    .assign 5 (.op .or [.var 1, .var 3]),
+    .ite .test 5 (.imm 1) .skip
+      (.seq (.mustTerminate (.call (some ([1], cutsets, .skip, secn, l))
+        (some compareLocation) [1, 3] none)) (.assign 3 (.const 1))),
+    boolResult dest .notLess 3 (.reg 1)], l + 1)
+
+/-- Compile a block length equality test. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "assign_LenEq_def"
+  (words_as_type_indexed_bitvec)]
+def assignLenEq {width : Nat} [NeZero width] (conf : Config) (_secn l dest : Nat)
+    (_names : Option NumSet) (len src : Nat) : WordLangProgHOL (BitVec width) × Nat :=
+  let src := adjustVar src
+  if len = 0 then
+    (boolResult dest .test src (.imm 1), l)
+  else if len < 2 ^ conf.lenBits - 1 then
+    let mask := allOnes (width := width) (conf.lenBits + 1) 0
+    let bits := ptrBits conf 0 len ||| 1
+    (.seq (.assign 1 (.op .and [.var src, .const mask]))
+      (boolResult dest .equal 1 (.imm bits)), l)
+  else if len < 2 ^ width then
+    (wordListSeq [
+      .assign 1 (.const 0),
+      .ite .test src (.imm 1) .skip
+        (.assign 1 (shiftN .lsr (.load (realAddr conf src)) (width - conf.lenSize))),
+      boolResult dest .equal 1 (.imm (BitVec.ofNat width len))], l)
+  else (.assign (adjustVar dest) (.const 2), l)
+
+/-- Compile a combined block tag and length equality test. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "assign_TagLenEq_def"
+  (words_as_type_indexed_bitvec)]
+def assignTagLenEq {width : Nat} [NeZero width] (conf : Config) (_secn l dest : Nat)
+    (_names : Option NumSet) (tag len src : Nat) : WordLangProgHOL (BitVec width) × Nat :=
+  let src := adjustVar src
+  if len = 0 then
+    if tag < 2 ^ width / 16 then
+      (boolResult dest .equal src (.imm (BitVec.ofNat width (16 * tag + 2))), l)
+    else (.assign (adjustVar dest) (.const 2), l)
+  else if tag < 2 ^ conf.tagBits - 1 ∧ len < 2 ^ conf.lenBits - 1 then
+    let mask := allOnes (width := width) (conf.lenBits + conf.tagBits + 1) 0
+    let bits := ptrBits conf tag len ||| 1
+    (.seq (.assign 1 (.op .and [.var src, .const mask]))
+      (boolResult dest .equal 1 (.imm bits)), l)
+  else
+    match encodeHeader (width := width) conf (4 * tag) len with
+    | none => (.assign (adjustVar dest) (.const 2), l)
+    | some header => (wordListSeq [
+        .assign 1 (.const 0),
+        .ite .test src (.imm 1) .skip (.assign 1 (.load (realAddr conf src))),
+        boolResult dest .equal 1 (.imm header)], l)
+
+/-- Compile a block tag equality test. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "assign_TagEq_def"
+  (words_as_type_indexed_bitvec)]
+def assignTagEq {width : Nat} [NeZero width] (conf : Config) (_secn l dest : Nat)
+    (_names : Option NumSet) (tag src : Nat) : WordLangProgHOL (BitVec width) × Nat :=
+  let src := adjustVar src
+  if tag < 2 ^ width / 16 then
+    (wordListSeq [
+      .assign 1 (.var src),
+      .ite .test src (.imm 1) .skip
+        (.assign 1 (.op .and [.load (realAddr conf src), .const (tagMask conf ||| 2)])),
+      boolResult dest .equal 1 (.imm (BitVec.ofNat width (16 * tag + 2)))], l)
+  else (.assign (adjustVar dest) (.const 2), l)
+
 /-- Flapjack's option-valued traversal. Its totality is proved separately;
 source-level correspondence with HOL's `comp` remains to be reviewed. -/
 def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
@@ -751,74 +966,16 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
       some (arg1 args (assignBoolNot l dest) (.skip, l))
   | l, .assign dest (.blockOp .lengthBlock) args names =>
       some (arg1 args (assignLengthBlock conf secn l dest names) (.skip, l))
-  | l, .assign dest (.blockOp (.lenEq len)) args _ =>
-      match args with
-      | [src] =>
-          let src := adjustVar src
-          if len = 0 then
-            some (boolResult dest .test src (.imm 1), l)
-          else if len < 2 ^ conf.lenBits - 1 then
-            let mask := BitVec.ofNat width (2 ^ (conf.lenBits + 1) - 1)
-            let bits := ptrBits conf 0 len ||| 1
-            some (.seq (.assign 1 (.op .and [.var src, .const mask]))
-              (boolResult dest .equal 1 (.imm bits)), l)
-          else if len < 2 ^ width then
-            some (wordListSeq [
-              .assign 1 (.const 0),
-              .ite .test src (.imm 1) .skip
-                (.assign 1 (shiftN .lsr (.load (realAddr conf src)) (width - conf.lenSize))),
-              boolResult dest .equal 1 (.imm (BitVec.ofNat width len))], l)
-          else some (.assign (adjustVar dest) (.const 2), l)
-      | _ => some (.skip, l)
-  | l, .assign dest (.blockOp (.tagLenEq tag len)) args _ =>
-      match args with
-      | [src] =>
-          let src := adjustVar src
-          if len = 0 then
-            if tag < 2 ^ width / 16 then
-              some (boolResult dest .equal src (.imm (BitVec.ofNat width (16 * tag + 2))), l)
-            else some (.assign (adjustVar dest) (.const 2), l)
-          else if tag < 2 ^ conf.tagBits - 1 ∧ len < 2 ^ conf.lenBits - 1 then
-            let mask := BitVec.ofNat width (2 ^ (conf.lenBits + conf.tagBits + 1) - 1)
-            let bits := (BitVec.ofNat width tag <<< (1 + conf.lenBits)) |||
-              (BitVec.ofNat width len <<< 1) ||| 1
-            some (.seq (.assign 1 (.op .and [.var src, .const mask]))
-              (boolResult dest .equal 1 (.imm bits)), l)
-          else
-            match encodeHeader (width := width) conf (4 * tag) len with
-            | none => some (.assign (adjustVar dest) (.const 2), l)
-            | some header => some (wordListSeq [
-                .assign 1 (.const 0),
-                .ite .test src (.imm 1) .skip (.assign 1 (.load (realAddr conf src))),
-                boolResult dest .equal 1 (.imm header)], l)
-      | _ => some (.skip, l)
-  | l, .assign dest (.blockOp (.tagEq tag)) args _ =>
-      match args with
-      | [src] =>
-          let src := adjustVar src
-          if tag < 2 ^ width / 16 then
-            some (wordListSeq [
-              .assign 1 (.var src),
-              .ite .test src (.imm 1) .skip
-                (.assign 1 (.op .and [.load (realAddr conf src), .const (tagMask conf ||| 2)])),
-              boolResult dest .equal 1 (.imm (BitVec.ofNat width (16 * tag + 2)))], l)
-          else some (.assign (adjustVar dest) (.const 2), l)
-      | _ => some (.skip, l)
+  | l, .assign dest (.blockOp (.lenEq len)) args names =>
+      some (arg1 args (assignLenEq conf secn l dest names len) (.skip, l))
+  | l, .assign dest (.blockOp (.tagLenEq tag len)) args names =>
+      some (arg1 args (assignTagLenEq conf secn l dest names tag len) (.skip, l))
+  | l, .assign dest (.blockOp (.tagEq tag)) args names =>
+      some (arg1 args (assignTagEq conf secn l dest names tag) (.skip, l))
   | l, .assign dest (.blockOp (.boolTest test)) args _ =>
       some (arg2 args (assignBoolTest l dest test) (.skip, l))
   | l, .assign dest (.blockOp .equal) args names =>
-      match args with
-      | [x, y] =>
-          let cutsets := adjustSets (names.getD .ln)
-          some (wordListSeq [
-            .assign 1 (.var (adjustVar x)), .assign 3 (.var (adjustVar y)),
-            .assign 5 (.op .and [.var 1, .var 3]),
-            .ite .test 5 (.imm 1) .skip
-              (.ite .equal 1 (.reg 3) .skip
-                (.seq (.mustTerminate (.call (some ([1], cutsets, .skip, secn, l))
-                  (some equalLocation) [1, 3] none)) (.assign 3 (.const 1)))),
-            boolResult dest .equal 1 (.reg 3)], l + 1)
-      | _ => some (.skip, l)
+      some (arg2 args (assignEqual conf secn l dest names) (.skip, l))
   | l, .assign dest (.blockOp (.equalConst part)) args _ =>
       match args with
       | [src] =>
@@ -842,29 +999,9 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
   | l, .assign dest (.intOp (.lessConstSmall i)) args _ =>
       some (arg1 args (assignLessConstSmall l dest i) (.skip, l))
   | l, .assign dest (.intOp .less) args names =>
-      match args with
-      | [x, y] =>
-          let cutsets := adjustSets (names.getD .ln)
-          some (wordListSeq [
-            .assign 1 (.var (adjustVar x)), .assign 3 (.var (adjustVar y)),
-            .assign 5 (.op .or [.var 1, .var 3]),
-            .ite .test 5 (.imm 1) .skip
-              (.seq (.mustTerminate (.call (some ([1], cutsets, .skip, secn, l))
-                (some compareLocation) [1, 3] none)) (.assign 3 (.const 1))),
-            boolResult dest .less 1 (.reg 3)], l + 1)
-      | _ => some (.skip, l)
+      some (arg2 args (assignLess conf secn l dest names) (.skip, l))
   | l, .assign dest (.intOp .lessEq) args names =>
-      match args with
-      | [x, y] =>
-          let cutsets := adjustSets (names.getD .ln)
-          some (wordListSeq [
-            .assign 1 (.var (adjustVar x)), .assign 3 (.var (adjustVar y)),
-            .assign 5 (.op .or [.var 1, .var 3]),
-            .ite .test 5 (.imm 1) .skip
-              (.seq (.mustTerminate (.call (some ([1], cutsets, .skip, secn, l))
-                (some compareLocation) [1, 3] none)) (.assign 3 (.const 1))),
-            boolResult dest .notLess 3 (.reg 1)], l + 1)
-      | _ => some (.skip, l)
+      some (arg2 args (assignLessEq conf secn l dest names) (.skip, l))
   | l, .assign dest (.intOp op) args names =>
       match op, args with
       | .add, [x, y] | .sub, [x, y] =>
@@ -1014,17 +1151,8 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
       some (arg1 args (assignWordFromInt conf secn l dest names) (.skip, l))
   | l, .assign dest (.wordOp .wordToInt) args names =>
       some (arg1 args (assignWordToInt conf secn l dest names) (.skip, l))
-  | l, .assign dest (.blockOp .boundsCheckBlock) args _ =>
-      match args with
-      | [base, index] =>
-          let base := adjustVar base
-          let header := WordLangExpHOL.load (realAddr conf base)
-          some (wordListSeq [
-            .ite .test base (.imm 1) (.assign 1 (.const 0))
-              (.assign 1 (shiftN .lsr header (width - conf.lenSize))),
-            .assign 3 (shiftVar .ror (adjustVar index) 2),
-            boolResult dest .lower 3 (.reg 1)], l)
-      | _ => some (.skip, l)
+  | l, .assign dest (.blockOp .boundsCheckBlock) args names =>
+      some (arg2 args (assignBoundsCheckBlock conf secn l dest names) (.skip, l))
   | l, .assign dest (.blockOp (.cons tag)) args _ =>
       some (compileCons conf l dest tag args)
   | l, .assign dest (.blockOp (.consExtend tag)) args names =>
@@ -1074,52 +1202,12 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
               .ffi ffiName 1 3 5 7 (adjustSets (names.getD .ln)),
               .assign (adjustVar dest) (.const 2)], l)
       | _ => some (.skip, l)
-  | l, .assign dest (.memOp .boundsCheckArray) args _ =>
-      match args with
-      | [base, index] =>
-          let header := WordLangExpHOL.load (realAddr conf (adjustVar base))
-          some (wordListSeq [
-            .assign 1 (shiftN .lsr header (width - conf.lenSize)),
-            .assign 3 (shiftVar .ror (adjustVar index) 2),
-            boolResult dest .lower 3 (.reg 1)], l)
-      | _ => some (.skip, l)
+  | l, .assign dest (.memOp .boundsCheckArray) args names =>
+      some (arg2 args (assignBoundsCheckArray conf secn l dest names) (.skip, l))
   | l, .assign dest (.memOp (.stringCmp fast cmp)) args names =>
-      match args with
-      | [first, second] =>
-          let bytes := (wordSemBytesInWord : BitVec width)
-          let offset := width - conf.lenSize - wordShiftAmount width
-          let names := adjustSets (names.getD .ln)
-          let call (args : List Nat) := WordLangProgHOL.mustTerminate
-            (.call (some ([5, 7], names, .skip, secn, l)) (some stringCmpLoopLocation) args none)
-          let compareBytes := if fast then
-              WordLangProgHOL.ite .equal 5 (.reg 7) (wordListSeq [
-                .assign 11 (.op .add [.var 1, .const bytes]),
-                .assign 13 (.op .add [.var 3, .const bytes]), call [11, 13, 7, 7, 7]]) .skip
-            else wordListSeq [
-              .assign 11 (.op .add [.var 1, .const bytes]),
-              .assign 13 (.op .add [.var 3, .const bytes]), .assign 9 (.var 5),
-              .ite .lower 7 (.reg 5) (.assign 9 (.var 7)) .skip, call [11, 13, 9, 5, 7]]
-          let result := match cmp with
-            | .lt => boolResult dest .lower 5 (.reg 7)
-            | .gt => boolResult dest .lower 7 (.reg 5)
-            | .leq => boolResult dest .notLower 7 (.reg 5)
-            | .geq => boolResult dest .notLower 5 (.reg 7)
-          some (wordListSeq [
-            .assign 1 (realAddr conf (adjustVar first)), .assign 3 (realAddr conf (adjustVar second)),
-            .assign 5 (shiftN .lsr (.load (.var 1)) offset),
-            .assign 7 (shiftN .lsr (.load (.var 3)) offset), compareBytes, result], l + 1)
-      | _ => some (.skip, l)
-  | l, .assign dest (.memOp (.boundsCheckByte leq)) args _ =>
-      match args with
-      | [base, index] =>
-          let header := WordLangExpHOL.load (realAddr conf (adjustVar base))
-          let shift := width - conf.lenSize - (if width = 32 then 2 else 3)
-          let result := if leq then boolResult dest .notLower 1 (.reg 3)
-            else boolResult dest .lower 3 (.reg 1)
-          some (wordListSeq [
-            .assign 1 (.op .sub [shiftN .lsr header shift, .const ((wordSemBytesInWord : BitVec width))]),
-            .assign 3 (shiftVar .ror (adjustVar index) 2), result], l)
-      | _ => some (.skip, l)
+      some (arg2 args (assignStringCmp conf secn l dest names fast cmp) (.skip, l))
+  | l, .assign dest (.memOp (.boundsCheckByte leq)) args names =>
+      some (arg2 args (assignBoundsCheckByte conf secn l dest names leq) (.skip, l))
   | l, .assign dest (.memOp (.refByte immutable)) args names =>
       match args with
       | [x, y] => some (.seq (.assign 1 (.const (if immutable then 0 else 16)))
@@ -1226,14 +1314,13 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
   | l, .assign dest (.thunkOp (.updateThunk mode)) args _ =>
       some (arg2 args (assignUpdateThunk mode conf l dest) (.skip, l))
   | l, .assign dest .install args names =>
-      match args with
-      | [code, data, codeLen, dataLen] =>
+      some (arg4 args (fun code data codeLen dataLen =>
           let code := adjustVar code
           let data := adjustVar data
           let codeLen := adjustVar codeLen
           let dataLen := adjustVar dataLen
           let halt (r : Nat) := WordLangProgHOL.ite .test r (.imm 1) .skip giveUp
-          some (wordListSeq [
+          (wordListSeq [
             halt codeLen, halt dataLen,
             .assign 1 (.lookup .bitmapBuffer),
             .assign 3 (.op .sub [.lookup .bitmapBufferEnd, .var 1]),
@@ -1245,33 +1332,12 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
             .assign 5 (shiftVar .lsr codeLen 2),
             .ite .lower 3 (.reg 5) giveUp .skip,
             .mustTerminate (.call (some ([adjustVar dest], adjustSets (names.getD .ln), .skip, secn, l))
-              (some installCodeLocation) [code, data, 1] none)], l + 1)
-      | _ => some (.skip, l)
+              (some installCodeLocation) [code, data, 1] none)], l + 1)) (.skip, l))
   | l, .assign dest (.label n) _ _ => some (.locValue (adjustVar dest) n, l)
   -- HOL's final assignment case returns Skip for operations that should
   -- have been lowered by earlier passes, including AllocGlobal and Constant.
   | l, .assign _ _ _ _ => some (.skip, l)
-  | l, .force ret loc v =>
-      match encodeHeader (width := width) conf 14 1 with
-      | none => some (giveUp, l)
-      | some _ =>
-          let v := adjustVar v
-          let unchanged := match ret with
-            | none => WordLangProgHOL.return 0 [v]
-            | some (dest, _) => .assign (adjustVar dest) (.var v)
-          let loaded := WordLangExpHOL.load (.op .add [.var 1, .const ((wordSemBytesInWord : BitVec width))])
-          let evaluated := match ret with
-            | none => wordListSeq [.assign 1 loaded, .return 0 [1]]
-            | some (dest, _) => .assign (adjustVar dest) loaded
-          let call := match ret with
-            | none => WordLangProgHOL.call none (some loc) [0, v, 5] none
-            | some (dest, names) => .call (some ([adjustVar dest], adjustSets names, .skip, secn, l))
-                (some loc) [v, 5] none
-          some (.ite .test v (.imm 1) unchanged (wordListSeq [
-            .assign 1 (realAddr conf v),
-            .assign 3 (.op .and [.load (.var 1), .const 60]),
-            .ite .equal 3 (.imm 56) evaluated
-              (.ite .notEqual 3 (.imm 24) unchanged (wordListSeq [.assign 5 loaded, call]))]), l + 1)
+  | l, .force ret loc v => some (forceThunk conf secn l ret loc v)
   | l, .call none target args _ => some (.call none target (0 :: args.map adjustVar) none, l)
   | l, .call (some (ns, names)) target args none =>
       some (.call (some (ns.map adjustVar, adjustSets names, .skip, secn, l))

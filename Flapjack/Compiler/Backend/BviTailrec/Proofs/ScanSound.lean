@@ -4,8 +4,7 @@ public import Flapjack.Compiler.Backend.BviTailrec.Proofs.Semantics
 
 @[expose] public section
 
-/-! Cases of the tail-recursion scan type-soundness invariant. The BVI
-evaluator is not yet source-reviewed, so these supporting results are untagged. -/
+/-! Cases of the tail-recursion scan type-soundness invariant. -/
 namespace Flapjack.Compiler.Backend.BviTailrec
 open Bvi BvlSem
 
@@ -548,15 +547,6 @@ theorem scanSound_op {C F : Type} (ctx : List ValueType) (loc : Nat)
     | _ => apply scanSound_op_other <;> simp [fromOp, argType]
   | _ => apply scanSound_op_other <;> simp [fromOp, argType]
 
-/-- Expressions whose scan has the source default result satisfy the scan
-invariant whenever they evaluate successfully. -/
-theorem scanSound_default_cases {C F : Type} (ctx : List ValueType) (loc : Nat) :
-    (∀ e, scanSound (C := C) (F := F) ctx loc [.raise e]) ∧
-    (∀ xs, scanSound (C := C) (F := F) ctx loc [.return xs]) ∧
-    (∀ ticks dest args handler, scanSound (C := C) (F := F) ctx loc [.call ticks dest args handler]) ∧
-    (∀ rets ticks dest args body, scanSound (C := C) (F := F) ctx loc [.letCall rets ticks dest args body]) := by
-  refine ⟨?_, ?_, ?_, ?_⟩ <;> intros <;> apply scanSound_default <;> rw [scanSing.eq_def]
-
 /-- The tick case follows from soundness of the expression it evaluates. -/
 theorem scanSound_tick {C F : Type} (ctx : List ValueType) (loc : Nat) (body : Bvi.Exp)
     (bodyIH : ∀ ctx, scanSound (C := C) (F := F) ctx loc [body]) :
@@ -756,10 +746,18 @@ theorem scanSound_single {C F : Type} (ctx : List ValueType) (loc : Nat) (e : Bv
     exact scanSound_let ctx loc bindings body
       (fun ctx => scanSound_list ctx loc bindings)
       (fun ctx => scanSound_single ctx loc body)
-  | raise e => exact (scanSound_default_cases ctx loc).1 e
-  | «return» xs => exact (scanSound_default_cases ctx loc).2.1 xs
-  | call ticks dest args handler => exact (scanSound_default_cases ctx loc).2.2.1 ticks dest args handler
-  | letCall rets ticks dest args body => exact (scanSound_default_cases ctx loc).2.2.2 rets ticks dest args body
+  | raise e =>
+    apply scanSound_default
+    rw [scanSing.eq_def]
+  | «return» xs =>
+    apply scanSound_default
+    rw [scanSing.eq_def]
+  | call ticks dest args handler =>
+    apply scanSound_default
+    rw [scanSing.eq_def]
+  | letCall rets ticks dest args body =>
+    apply scanSound_default
+    rw [scanSing.eq_def]
 termination_by sizeOf e
 
 /-- Every source-shaped list scan satisfies the type-soundness invariant. -/
@@ -774,11 +772,21 @@ theorem scanSound_list {C F : Type} (ctx : List ValueType) (loc : Nat) (xs : Lis
 termination_by sizeOf xs
 end
 
-/-- The source-shaped scan type-soundness theorem. This remains untagged
-until the BVI evaluator and dispatcher are reviewed against the source. -/
+namespace ScanExprTyRelCarrier
+/-- The BVI reference-map carrier roundtrips through its finite-support view. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : BviSem.BviStateBroad C F, (BviSem.BviState.ofBroad s).toBroad = s) ∧
+      (∀ s : BviSem.BviState C F, BviSem.BviState.ofBroad s.toBroad = s) :=
+  BviSem.holFmapAsFiniteSupportWitness
+end ScanExprTyRelCarrier
+
+/-- The scan preserves environment types and describes the values produced by
+evaluation. Evaluation inherits the real-model assumption in SOUNDNESS item 8. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "scan_expr_ty_rel"
+  (fmap_as_finite_support := [refs])]
 theorem scanExpr_tyRel {C F : Type} (ts : List ValueType) (loc : Nat) (xs : List Bvi.Exp)
     (env : List Value) (ys : List (List ValueType × ValueType × Bool × Option AssocOp))
-    (state next : BviSem.BviState C F) (values : List Value)
+    (state : BviSem.BviState C F) (values : List Value) (next : BviSem.BviState C F)
     (hyp : tyRel env ts ∧ scanExpr ts loc xs = ys ∧
       BviSem.evaluate xs env state = (.val values, next)) :
     (∀ entry ∈ ys, tyRel env entry.1) ∧ tyRel values (ys.map fun (_, ty, _, _) => ty) := by

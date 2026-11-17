@@ -109,7 +109,7 @@ theorem simulationFor_assign_global {C F : Type} (dest : Nat) (op : ClosLang.Glo
   | true =>
     have parts : (sptLookup dest live).isNone = true ∧ isPure (.globOp op) = true := by simpa using retained
     have dead : sptLookup dest live = none := Option.isNone_iff_eq_none.mp parts.1
-    exact simulationFor_removed_global dest op args live parts.2 dead
+    exact simulationFor_removed_pure dest (.globOp op) args live parts.2 dead
 
 /-- Every global assignment satisfies the liveness simulation with or
 without a live-name annotation. -/

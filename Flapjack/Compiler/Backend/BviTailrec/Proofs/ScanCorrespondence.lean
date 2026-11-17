@@ -3,6 +3,7 @@ module
 public import Flapjack.Compiler.Backend.BviTailrec.Proofs.ScanTotal
 public import Flapjack.Compiler.Backend.BviTailrec.Proofs.TermCorrespondence
 public import Flapjack.Compiler.Backend.BviTailrec.Proofs.HasRecCorrespondence
+public import Flapjack.Misc.ListEl
 
 @[expose] public section
 
@@ -72,16 +73,19 @@ theorem scanExpr_eq :
   exact ⟨fun e ctx loc => scanExpr_single ctx loc e,
     fun es ctx loc => scanExpr_list ctx loc es⟩
 
-/-- Refining an operand never changes the context length. -/
-theorem update_length (ty : ValueType) (e : Exp) (ctx : List ValueType) :
-    (update ty e ctx).length = ctx.length := by
-  cases e <;> simp [update]
-  split <;> simp
+/-- Refining an optional index never changes the context length. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "try_update_LENGTH"]
+theorem tryUpdate_length (ty : ValueType) (idx : Option Nat) (ctx : List ValueType) :
+    (tryUpdate ty idx ctx).length = ctx.length := by
+  cases idx with
+  | none => rfl
+  | some n => simp only [tryUpdate]; split <;> simp
 
 /-- Refining both operands never changes the context length. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "update_context_LENGTH"]
 theorem updateContext_length (ty : ValueType) (ctx : List ValueType) (x y : Exp) :
     (updateContext ty ctx x y).length = ctx.length := by
-  simp [updateContext, update_length]
+  simp [updateContext, update, tryUpdate_length]
 
 /-- Scanning operands produces one result per input expression. -/
 theorem scanList_length (ctx : List ValueType) (loc : Nat) (xs : List Exp) :
@@ -197,13 +201,25 @@ theorem scanList_context_length (ctx : List ValueType) (loc : Nat) (xs : List Ex
 termination_by sizeOf xs
 end
 
-/-- Every context produced by the source-shaped list scan has the input
-context's length. -/
+/-- The last member of a list satisfies a predicate that holds throughout it. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "EVERY_LAST1"]
+theorem every_last1 {α : Type} {P : α → Prop} (xs : List α) (y : α)
+    (premises : (∀ x ∈ xs, P x) ∧ xs.getLast? = some y) : P y := by
+  exact premises.1 y (List.mem_of_getLast? premises.2)
+
+/-- Every context produced by the scan has the input context's length. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "scan_expr_LENGTH"]
 theorem scanExpr_context_length (ctx : List ValueType) (loc : Nat) (xs : List Exp)
-    (entry : List ValueType × ValueType × Bool × Option AssocOp)
-    (mem : entry ∈ scanExpr ctx loc xs) : entry.1.length = ctx.length := by
-  rw [scanExpr_list] at mem
+    (ys : List (List ValueType × ValueType × Bool × Option AssocOp))
+    (scan : scanExpr ctx loc xs = ys) : ∀ entry ∈ ys, entry.1.length = ctx.length := by
+  intro entry mem
+  rw [← scan, scanExpr_list] at mem
   exact scanList_context_length ctx loc xs entry mem
+
+/-- The optional last element is absent exactly for an empty list. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "LAST1_thm"]
+theorem last1_none_iff {α : Type} (xs : List α) : xs.getLast? = none ↔ xs = [] :=
+  List.getLast?_eq_none_iff
 
 /-- Every recognized accumulator operator round-trips to its source BVI
 operation. -/
@@ -395,5 +411,15 @@ theorem checkExpFuel_eq (fuel loc arity : Nat) (e : Exp) :
   simp [checkExpFuel, checkExpSingle, hasRecBounded_eq_hasRec1, scanBounded_eq]
   split <;> simp_all
   split <;> simp_all
+
+/-- A singleton scan satisfies a predicate exactly when its HOL head does. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "scan_expr_EVERY_SING"]
+theorem scanExpr_every_single
+    (P : (List ValueType × ValueType × Bool × Option AssocOp) → Bool)
+    (ts : List ValueType) (loc : Nat) (x : Exp) :
+    (scanExpr ts loc [x]).all P = true ↔
+      P (@Flapjack.holHd _ ⟨([], .any, false, none)⟩ (scanExpr ts loc [x])) = true := by
+  rw [scanExpr_single]
+  simp [Flapjack.holHd]
 
 end Flapjack.Compiler.Backend.BviTailrec

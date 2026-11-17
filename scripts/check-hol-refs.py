@@ -325,6 +325,20 @@ FMAP_AS_FINITE_SUPPORT_FUNCTION_RE = re.compile(
 FMAP_AS_FINITE_SUPPORT_TUPLE_RE = re.compile(
     r'\(\s*fmap_as_finite_support_tuple\s*:=\s*\[([^]]*)\]\s*\)'
 )
+GENERALISE_MAP_QUALIFIER_RE = re.compile(
+    r'\(\s*fmap_as_finite_support_parameter_tuple_result\s*:=\s*'
+    r'\(\s*map_parameter\s*:=\s*([A-Za-z_][A-Za-z0-9_\']*)\s*\)\s*'
+    r'\(\s*result_component\s*:=\s*([A-Za-z_][A-Za-z0-9_\']*)\s*\)\s*\)'
+)
+GENERALISE_LENGTH_QUALIFIER_RE = re.compile(
+    r'\(\s*fmap_as_finite_support_parameter_tuple_observations\s*:=\s*'
+    r'\(\s*map_parameters\s*:=\s*\[([^]]*)\]\s*\)\s*'
+    r'\(\s*map_producer\s*:=\s*([A-Za-z_][A-Za-z0-9_\'.]*)\s*\)\s*'
+    r'\(\s*result_component\s*:=\s*([A-Za-z_][A-Za-z0-9_\']*)\s*\)\s*\)'
+)
+INFER_SUBST_SUBMAP_QUALIFIER_RE = re.compile(
+    r'\(\s*fmap_as_finite_support_conjunct_universals\s*:=\s*\[([^]]*)\]\s*\)'
+)
 NESTED_LIST_REL_AS_MUTUAL_RE = re.compile(
     r'\(\s*nested_list_rel_as_mutual\s*:=\s*\[([^]]*)\]\s*\)'
 )
@@ -339,6 +353,9 @@ FMAP_AS_FINITE_SUPPORT_PARAMS_RE = re.compile(
 )
 FMAP_PARAMETER_PREDICATE_DOMAIN_RE = re.compile(
     r'\(\s*fmap_as_finite_support_parameter_predicate_domain\s*:=\s*\[([^]]*)\]\s*\)'
+)
+FMAP_UNIVERSALS_RE = re.compile(
+    r'\(\s*fmap_as_finite_support_universals\s*:=\s*\[([^]]*)\]\s*\)'
 )
 FMAP_AS_FINITE_SUPPORT_EXISTENTIALS_RE = re.compile(
     r'\(\s*fmap_as_finite_support_existentials\s*:=\s*\[([^]]*)\]\s*\)'
@@ -575,7 +592,11 @@ def hol_attribute_sites(lines: list[str], *, include_fmap_existentials: bool = F
                         include_word_dimensions_widths: bool = False,
                         include_fmap_tuple: bool = False,
                         include_nested_list_rel: bool = False,
-                        include_predicate_domain: bool = False):
+                        include_predicate_domain: bool = False,
+                        include_fmap_universals: bool = False,
+                        include_generalise_map: bool = False,
+                        include_generalise_length: bool = False,
+                        include_infer_subst_submap: bool = False):
     """Yield HOL attributes, including attributes split across Lean lines."""
     comment_depth = 0
     start: int | None = None
@@ -689,6 +710,43 @@ def hol_attribute_sites(lines: list[str], *, include_fmap_existentials: bool = F
                     if len(matches) > 1:
                         names += ("",)
                     site += (names,)
+                if include_fmap_universals:
+                    matches = list(FMAP_UNIVERSALS_RE.finditer(attribute))
+                    names = tuple(field.strip() for match in matches for field in match.group(1).split(","))
+                    if len(matches) > 1:
+                        names += ("",)
+                    site += (names,)
+                if include_generalise_map:
+                    matches = list(GENERALISE_MAP_QUALIFIER_RE.finditer(attribute))
+                    occurrences = attribute.count("fmap_as_finite_support_parameter_tuple_result")
+                    if occurrences == 0:
+                        positions = ()
+                    elif occurrences != 1 or len(matches) != 1:
+                        positions = ("", "")  # malformed or repeated; fail closed
+                    else:
+                        positions = (matches[0].group(1), matches[0].group(2))
+                    site += (positions,)
+                if include_generalise_length:
+                    matches = list(GENERALISE_LENGTH_QUALIFIER_RE.finditer(attribute))
+                    occurrences = attribute.count("fmap_as_finite_support_parameter_tuple_observations")
+                    if occurrences == 0:
+                        fields = ()
+                    elif occurrences != 1 or len(matches) != 1:
+                        fields = ("",)  # malformed or repeated; fail closed
+                    else:
+                        fields = tuple(field.strip() for field in matches[0].group(1).split(","))
+                        fields += (matches[0].group(2), matches[0].group(3))
+                    site += (fields,)
+                if include_infer_subst_submap:
+                    matches = list(INFER_SUBST_SUBMAP_QUALIFIER_RE.finditer(attribute))
+                    occurrences = attribute.count("fmap_as_finite_support_conjunct_universals")
+                    if occurrences == 0:
+                        fields = ()
+                    elif occurrences != 1 or len(matches) != 1:
+                        fields = ("",)
+                    else:
+                        fields = tuple(field.strip() for field in matches[0].group(1).split(","))
+                    site += (fields,)
                 yield site
         start = None
         chunks = []
@@ -2450,6 +2508,116 @@ def _is_top_level_hol_finite_map_type(type_text: str) -> bool:
     )) == 1
 
 
+def unification_tuple_relation_errors(
+    source: str, owner: str, positions: tuple[str, ...],
+    hol_reference: tuple[str, str],
+) -> list[str]:
+    """Audit the prospective WF_uR tuple codec and its exact relation owner.
+
+    This source-level check is not an elaborated-type or axiom audit and does
+    not authorize the qualifier by itself. It is intentionally restricted to
+    the existing unification relation and the first slot of its shared domain.
+    """
+    errors: list[str] = []
+    if hol_reference != (
+        "HOL/examples/algorithms/unification/triangular/first-order/unifDefScript.sml",
+        "WF_uR",
+    ) or positions != ("component_1",):
+        errors.append("unification tuple qualifier requires WF_uR and component_1")
+    clean = strip_lean_comments(source)
+    owner_clean = strip_lean_comments(owner)
+    code = lean_code_without_strings(source)
+    owner_code = lean_code_without_strings(owner)
+    if re.search(r'(?<![A-Za-z0-9_])r\#*"', clean) or re.search(r'(?<![A-Za-z0-9_])r\#*"', owner_clean):
+        errors.append("unification tuple audit rejects raw string literals")
+    if not re.search(r"(?m)^public import Flapjack\.HOL\.Unification\.UnifDef\s*$", code):
+        errors.append("unification tuple qualifier requires the exact relation owner import")
+    if not re.search(r"(?m)^import all Flapjack\.HOL\.Unification\.UnifDef\s*$", code):
+        errors.append("unification tuple qualifier requires proof-bearing relation owner import")
+    for label, scoped_code in (("target", code), ("owner", owner_code)):
+        if re.search(r"(?m)^[ \t]*(?:variable|variables|include|omit)\b", scoped_code):
+            errors.append(f"unification tuple qualifier forbids ambient variables in {label}")
+        if re.search(r"(?m)^[ \t]*(?:(?:local|scoped)\s+)*(?:syntax|notation|macro|macro_rules|elab|elab_rules|infix|infixl|infixr|prefix|postfix|open)\b", scoped_code):
+            errors.append(f"unification tuple qualifier forbids local syntax or name rebinding in {label}")
+        if (len(re.findall(r"(?m)^namespace\s+Flapjack\.HOL\.Unification\s*$", scoped_code)) != 1 or
+                len(re.findall(r"(?m)^namespace\b", scoped_code)) != 1):
+            errors.append(f"unification tuple qualifier requires the exact namespace in {label}")
+    if re.search(r"(?m)^[ \t]*(?:(?:private|protected|noncomputable|local|scoped)\s+)*(?:def|abbrev|theorem|axiom|constant|opaque|inductive|structure|class)\s+(?:[\w'.]+\.)?(?:uR|HolFiniteMapExact|FiniteMapBroad|Term)\b", code):
+        errors.append("unification tuple qualifier rejects shadowed relation or carriers")
+    if re.search(r"(?m)^[ \t]*(?:(?:private|protected|noncomputable|local|scoped)\s+)*(?:def|abbrev|theorem|axiom|constant|opaque|inductive|structure|class)\s+(?:[\w'.]+\.)?(?:HolFiniteMapExact|FiniteMapBroad|Term|wfs|walkstar|pairCount)\b", owner_code):
+        errors.append("unification tuple qualifier rejects shadowed owner carriers or primitives")
+    if re.search(r"(?m)^[ \t]*(?:(?:private|protected|noncomputable|local|scoped)\s+)*(?:def|abbrev|theorem|axiom|constant|opaque|inductive|structure|class)\s+[\w'.]+\.uR\b", owner_code):
+        errors.append("unification tuple qualifier rejects an alternative qualified uR")
+
+    def declaration_block(text: str, masked: str, kind: str, name: str) -> str:
+        matches = list(re.finditer(rf"(?m)^[ \t]*{kind}\s+{re.escape(name)}\b", masked))
+        if len(matches) != 1:
+            return ""
+        start = matches[0].start()
+        tail = masked[start:]
+        following = re.search(r"(?m)^[ \t]*(?:@\[|def\b|abbrev\b|theorem\b|lemma\b|axiom\b|end\b)", tail[1:])
+        end = start + following.start() + 1 if following else len(text)
+        return " ".join(text[start:end].split())
+
+    canonical = "HolFiniteMapExact Nat (Term α) × Term α × Term α"
+    broad = "FiniteMapBroad Nat (Term α) × Term α × Term α"
+    expected = {
+        ("def", "uRTupleToBroad"):
+            f"def uRTupleToBroad {{α : Type}} (p : {canonical}) : {broad} := "
+            "(FiniteMapBroad.toBroad p.1, p.2.1, p.2.2)",
+        ("def", "uRTupleOfBroad"):
+            f"def uRTupleOfBroad {{α : Type}} (p : {broad}) : {canonical} := "
+            "(FiniteMapBroad.ofBroad p.1, p.2.1, p.2.2)",
+        ("theorem", "holFmapAsFiniteSupportTupleWitness_uRWellFounded"):
+            f"theorem holFmapAsFiniteSupportTupleWitness_uRWellFounded {{α : Type}} (p : {canonical}) : "
+            "uRTupleOfBroad (uRTupleToBroad p) = p := by rcases p with ⟨⟨lookup, support⟩, left, right⟩ rfl",
+        ("theorem", "holFmapAsFiniteSupportTupleWitness_uRWellFounded_reverse"):
+            f"theorem holFmapAsFiniteSupportTupleWitness_uRWellFounded_reverse {{α : Type}} (p : {broad}) : "
+            "uRTupleToBroad (uRTupleOfBroad p) = p := by rcases p with ⟨⟨lookup, support⟩, left, right⟩ rfl",
+    }
+    for (kind, name), wanted in expected.items():
+        if declaration_block(clean, code, kind, name) != wanted:
+            errors.append(f"unification tuple qualifier requires exact {name} codec or witness")
+    statements = _statements_of_declaration(code, "uRWellFounded")
+    if len(statements) != 1 or " ".join(statements[0].split()) != "{α : Type} : WellFounded (@uR α)":
+        errors.append("unification tuple qualifier requires the complete WF_uR signature")
+    owner_def = (
+        f"def uR {{α : Type}} (left right : {canonical}) : Prop := "
+        "wfs left.1 ∧ right.1.submap left.1 ∧ "
+        "Set.Subset (allVars left.1 left.2.1 left.2.2) (allVars right.1 right.2.1 right.2.2) ∧ "
+        "pairCount (walkstar left.1 left.2.1) < pairCount (walkstar left.1 right.2.1)"
+    )
+    if declaration_block(owner_clean, owner_code, "def", "uR") != owner_def:
+        errors.append("unification tuple qualifier requires the reviewed relation body")
+    all_vars_def = (
+        "def allVars {α β : Type} (s : HolFiniteMapExact Nat (Term α)) (t1 t2 : Term β) : Set Nat := "
+        "Set.union (Set.union (vars t1) (vars t2)) (substVars s)"
+    )
+    if declaration_block(owner_clean, owner_code, "def", "allVars") != all_vars_def:
+        errors.append("unification tuple qualifier requires the reviewed allVars body")
+    owner_tag = re.compile(
+        r'@\[hol\s+"HOL/examples/algorithms/unification/triangular/first-order/'
+        r'unifDefScript\.sml"\s+"uR_def"\s+'
+        r'\(fmap_as_finite_support_parameters\s*:=\s*\[sx,\s*s\]\)\s*\]'
+    )
+    tags = [m for m in owner_tag.finditer(owner_clean)
+            if owner_code[m.start():m.start() + 1] == "@" and
+            re.match(r"\s*theorem\s+uREq\b", owner_code[m.end():])]
+    if len(tags) != 1:
+        errors.append("unification tuple qualifier requires the reviewed uREq attribute")
+    expected_equation = (
+        "{α : Type} (sx : HolFiniteMapExact Nat (Term α)) (c1 c2 : Term α) "
+        "(s : HolFiniteMapExact Nat (Term α)) (t1 t2 : Term α) : "
+        "uR (sx, c1, c2) (s, t1, t2) ↔ wfs sx ∧ s.submap sx ∧ "
+        "Set.Subset (allVars sx c1 c2) (allVars s t1 t2) ∧ "
+        "pairCount (walkstar sx c1) < pairCount (walkstar sx t1)"
+    )
+    owner_statements = _statements_of_declaration(owner_code, "uREq")
+    if len(owner_statements) != 1 or " ".join(owner_statements[0].split()) != expected_equation:
+        errors.append("unification tuple qualifier requires the complete uREq statement")
+    return errors
+
+
 def fmap_value_context_tuple_errors(
     lines: list[str], declaration: str, positions: tuple[str, ...],
     hol_reference: tuple[str, str],
@@ -3415,6 +3583,32 @@ def fmap_as_finite_support_heterogeneous_function_errors(
     return errors
 
 
+def tmc_hypothesis_map_witness_errors(lines: list[str]) -> list[str]:
+    """Check source witnesses; the elaborated audit checks complete proof types and bodies."""
+    source = strip_lean_comments("\n".join(lines))
+    errors: list[str] = []
+    names = [("Universal", "f"), ("Existential", "nextMap"),
+             ("Existential", "wrapMap"), ("Existential", "workMap")]
+    for kind, binder in names:
+        name = f"holFmapAsFiniteSupport{kind}Witness_hypothesis_{binder}"
+        pattern = re.compile(r"(?m)^\s*theorem\s+" + re.escape(name) +
+                             r"\s*\(\s*" + re.escape(binder) +
+                             r"\s*:\s*HolFiniteMapExact\s+Nat\s+Nat\s*\)\s*:\s*"
+                             r"(?P<statement>[\s\S]*?):=")
+        matches = list(pattern.finditer(source))
+        if len(matches) != 1:
+            errors.append(f"TMC map witness `{name}` must be unique and unconditionally bind its map")
+            continue
+        statement = matches[0].group("statement")
+        if (not re.search(r"∀\s*key\s*,", statement) or
+                not re.search(r"\.lookup\s+key\s*=\s*" + re.escape(binder) + r"\.lookup\s+key", statement) or
+                not re.search(r"\.finiteSupport\s*=\s*" + re.escape(binder) + r"\.finiteSupport", statement) or
+                not re.search(r"ofBroad[\s\S]*?toBroad\s+" + re.escape(binder) +
+                              r"\s*\)\s*=\s*" + re.escape(binder) + r"\b", statement)):
+            errors.append(f"TMC map witness `{name}` must state the pointwise canonical roundtrip")
+    return errors
+
+
 def fmap_as_finite_support_existentials_errors(
     lines: list[str], module: str, declaration_text: str, decl_name: str,
     binders: tuple[str, ...],
@@ -3559,6 +3753,124 @@ def _statements_of_declaration(source: str, name: str) -> list[str]:
         if end != -1:
             results.append(source[start:end])
     return results
+
+
+def generalise_parameter_tuple_result_errors(
+    source: str, lean_path: str, decl_name: str,
+    hol_ref: tuple[str, str], parameter: str, component: str,
+) -> list[str]:
+    """Prospective, deliberately narrow source gate for generalise_def.
+
+    This helper alone does not enable a qualifier. The eventual attribute and
+    exporter must also invoke the elaborated owner/type/witness audit and check
+    the HOL metadata. Exact statement matching intentionally fails closed on
+    unfamiliar syntax; source review remains necessary even when it passes.
+    """
+    if (lean_path != "Flapjack/Compiler/Inference/Infer/Generalise.lean" or
+            hol_ref != ("cakeml/compiler/inference/inferScript.sml", "generalise_def") or
+            decl_name not in {"generaliseMap", "generaliseListMap"} or
+            parameter != "subst" or component != "component_2"):
+        return ["generalization qualifier requires the exact source site and map positions"]
+    clean = strip_lean_comments(source)
+    if re.search(r"(?m)^\s*(?:variables?|include|omit|(?:(?:local|scoped)\s+)?(?:syntax|macro|notation|infix|infixl|infixr|prefix|postfix))\b", clean):
+        return ["generalization qualifier rejects ambient binders or syntax changes"]
+    opens = [" ".join(entry.split()) for entry in
+             re.findall(r"(?m)^\s*open\s+([^\n]+)", clean)]
+    if opens != ["Flapjack.HOL.Transfer.Fmsp"]:
+        return ["generalization qualifier requires the reviewed open declaration"]
+    namespaces = re.findall(r"(?m)^\s*namespace\s+([^\s]+)", clean)
+    if namespaces != ["Flapjack.Compiler.Inference.Infer.Generalise"]:
+        return ["generalization qualifier requires its exact owning namespace"]
+    value = "List InferT" if decl_name == "generaliseListMap" else "InferT"
+    arg = "ts" if decl_name == "generaliseListMap" else "t"
+    exec_name = "generaliseList" if decl_name == "generaliseListMap" else "generalise"
+    expected_bodies = {
+        "generaliseMap": """
+def generaliseMap (minimum next : Nat) (subst : HolFiniteMapExact Nat Nat) :
+    InferT → Nat × HolFiniteMapExact Nat Nat × InferT
+  | .app ts name =>
+    let (count, subst, ts) := generaliseListMap minimum next subst ts
+    (count, subst, .app ts name)
+  | .uvar n => match subst.lookup n with
+    | some v => (0, subst, .varDb v)
+    | none => if minimum ≤ n then (1, subst.updateEq (n, next), .varDb next)
+      else (0, subst, .uvar n)
+  | .varDb n => (0, subst, .varDb n)
+termination_by t => sizeOf t
+""",
+        "generaliseListMap": """
+def generaliseListMap (minimum next : Nat) (subst : HolFiniteMapExact Nat Nat) :
+    List InferT → Nat × HolFiniteMapExact Nat Nat × List InferT
+  | [] => (0, subst, [])
+  | t :: ts =>
+    let (count, subst, t) := generaliseMap minimum next subst t
+    let (count', subst, ts) := generaliseListMap minimum (count + next) subst ts
+    (count + count', subst, t :: ts)
+termination_by ts => sizeOf ts
+""",
+    }
+    for operation, expected_body in expected_bodies.items():
+        declarations = list(re.finditer(
+            rf"(?m)^\s*(?:private\s+|protected\s+)?(?:def|theorem|lemma|axiom|opaque|abbrev)\s+{re.escape(operation)}\b",
+            clean,
+        ))
+        if len(declarations) != 1:
+            return ["generalization operation must be uniquely declared"]
+        start = declarations[0].start()
+        tail = clean[declarations[0].end():]
+        termination = re.search(r"(?m)^\s*termination_by\b[^\n]*", tail)
+        next_declaration = re.search(
+            r"(?m)^\s*(?:private\s+|protected\s+)?(?:def|theorem|lemma|axiom|opaque|abbrev|end)\b",
+            tail,
+        )
+        if termination is None or (next_declaration is not None and
+                                   next_declaration.start() < termination.start()):
+            return ["generalization operation is missing its own termination clause"]
+        end = declarations[0].end() + termination.end()
+        if " ".join(clean[start:end].split()) != " ".join(expected_body.split()):
+            return [f"{operation} differs from the reviewed signature or complete body"]
+    witness = f"holFmapAsFiniteSupportParameterTupleResultWitness_{decl_name}"
+    witness_decls = re.findall(
+        rf"(?m)^\s*(?:private\s+|protected\s+)?(?:def|theorem|lemma|axiom|opaque|abbrev)\s+{re.escape(witness)}\b",
+        clean,
+    )
+    if len(witness_decls) != 1:
+        return ["generalization witness must be uniquely declared"]
+    statements = _statements_of_declaration(clean, witness)
+    expected = (
+        f"(minimum next : Nat) (subst : HolFiniteMapExact Nat Nat) ({arg} : {value}) (key : Nat) : "
+        f"(sp2fm (fm2sp subst)).lookup key = subst.lookup key ∧ "
+        f"({decl_name} minimum next subst {arg}).2.1.lookup key = "
+        f"sptLookup key (Infer.{exec_name} minimum next (fm2sp subst) {arg}).2.1"
+    )
+    if len(statements) != 1 or " ".join(statements[0].split()) != expected:
+        return ["generalization witness must state the exact unconditional lookup correspondence"]
+    return []
+
+
+def prospective_generalise_map_errors(
+    source: str, lean_path: str, decl_name: str,
+    hol_ref: tuple[str, str], positions: tuple[str, ...],
+) -> list[str]:
+    """Reject prospective syntax until every qualifier gate is integrated."""
+    errors = ["generalization map qualifier is not enabled"]
+    if len(positions) != 2:
+        return errors + ["malformed generalization map positions"]
+    return errors + generalise_parameter_tuple_result_errors(
+        source, lean_path, decl_name, hol_ref, positions[0], positions[1]
+    )
+
+
+def generalise_reference_errors(
+    source: str, lean_path: str, decl_name: str,
+    hol_ref: tuple[str, str], positions: tuple[str, ...],
+) -> list[str]:
+    """Reject both unqualified and not-yet-enabled generalization references."""
+    if hol_ref == ("cakeml/compiler/inference/inferScript.sml", "generalise_def") and not positions:
+        return ["generalise_def requires its combined map qualifier"]
+    if positions:
+        return prospective_generalise_map_errors(source, lean_path, decl_name, hol_ref, positions)
+    return []
 
 
 def _binder_types(binder_zone: str) -> list[str]:
@@ -5503,6 +5815,370 @@ def nested_list_combination_allowed(fmap_fields: tuple[str, ...], producer: bool
             and not (producer and fmap_fields))
 
 
+def unsupported_hol_attribute_commands(source: str) -> list[int]:
+    """Reject command-style HOL tags until the reference scanner handles them."""
+    if "attribute" not in source:
+        return []
+    clean = strip_lean_comments(source)
+    clean = re.sub(r'"(?:\\[\s\S]|[^"\\])*(?:"|$)',
+                   lambda match: _NOT_NEWLINE_RE.sub(" ", match.group()), clean)
+    lines = []
+    for match in re.finditer(r"\battribute\s*\[", clean):
+        start, cursor, depth = match.start(), match.end(), 1
+        while cursor < len(clean) and depth:
+            depth += (clean[cursor] == "[") - (clean[cursor] == "]")
+            cursor += 1
+        if re.search(r"(?<![\w'])hol(?![\w'])", clean[match.end():cursor]):
+            lines.append(clean.count("\n", 0, start) + 1)
+    return lines
+
+
+def prospective_generalise_command_errors(source: str, lean_path: str) -> list[str]:
+    """Audit the proposed post-mutual attachment without enabling it.
+
+    Both scanners still reject command-style tags. This narrowly checks the
+    single reviewed attachment shape needed before those guards can change.
+    """
+    clean = strip_lean_comments(source)
+    command = re.compile(
+        r'(?m)^termination_by ts => sizeOf ts[ \t]*\nend[ \t]*\n\s*attribute\s*\[\s*hol\s+'
+        r'"cakeml/compiler/inference/inferScript\.sml"\s+"generalise_def"\s+'
+        r'\(\s*fmap_as_finite_support_parameter_tuple_result\s*:=\s*'
+        r'\(\s*map_parameter\s*:=\s*subst\s*\)\s*'
+        r'\(\s*result_component\s*:=\s*component_2\s*\)\s*\)\s*\]'
+        r'\s+generaliseMap\s+generaliseListMap[ \t]*\n\s*mutual\b'
+    )
+    matches = list(command.finditer(clean))
+    commands = unsupported_hol_attribute_commands(source)
+    if len(matches) != 1 or len(commands) != 1:
+        return ["generalization requires exactly one post-mutual attribute command for both operations"]
+    declaration = re.search(r"(?m)^def generaliseListMap\b", clean)
+    if declaration is None:
+        return ["generalization list operation is missing"]
+    terminator = re.search(r"(?m)^termination_by ts => sizeOf ts[ \t]*$", clean[declaration.end():])
+    if terminator is None or declaration.end() + terminator.start() != matches[0].start():
+        return ["generalization attribute command must follow the actual mutual definitions"]
+    if any(hol_attribute_sites(source.splitlines())):
+        return ["generalization module must not also have declaration-site HOL attributes"]
+    command_line = clean.count("\n", 0, clean.index("attribute", matches[0].start())) + 1
+    if commands != [command_line]:
+        return ["generalization attribute command must be executable source"]
+    errors = []
+    for name in ("generaliseMap", "generaliseListMap"):
+        errors.extend(generalise_parameter_tuple_result_errors(
+            source, lean_path, name,
+            ("cakeml/compiler/inference/inferScript.sml", "generalise_def"),
+            "subst", "component_2"))
+    return errors
+
+
+def generalise_command_sites(source: str, lean_path: str) -> list[tuple[int, str]]:
+    """Recognize the single source-audited post-mutual attachment, or reject it."""
+    lines = unsupported_hol_attribute_commands(source)
+    if not lines:
+        return []
+    errors = prospective_generalise_command_errors(source, lean_path)
+    if errors:
+        raise ValueError("; ".join(errors))
+    return [(lines[0], "generaliseMap"), (lines[0], "generaliseListMap")]
+
+
+def generalise_length_observer_errors(
+    source: str, lean_path: str, hol_ref: tuple[str, str], parameters: tuple[str, ...],
+    producer: str, component: str, producer_source: str, records: list[dict],
+) -> list[str]:
+    """Check the exact observer source and its reviewed tuple-map producer."""
+    expected_path = "Flapjack/Compiler/Inference/InferProps/Generalise.lean"
+    producer_path = "Flapjack/Compiler/Inference/Infer/Generalise.lean"
+    producer_name = "Flapjack.Compiler.Inference.Infer.Generalise.generaliseListMap"
+    if (lean_path != expected_path or hol_ref !=
+            ("cakeml/compiler/inference/inferPropsScript.sml", "generalise_list_length") or
+            parameters != ("subst", "out") or producer != producer_name or component != "component_2"):
+        return ["generalization length qualifier requires its exact site, map binders and producer"]
+    clean = strip_lean_comments(source)
+    if re.search(r"(?m)^\s*(?:variables?|include|omit|(?:(?:local|scoped)\s+)?(?:syntax|macro|notation|infix|infixl|infixr|prefix|postfix))\b", clean):
+        return ["generalization length qualifier rejects ambient binders or syntax changes"]
+    namespaces = re.findall(r"(?m)^\s*namespace\s+([^\s]+)", clean)
+    opens = [" ".join(item.split()) for item in re.findall(r"(?m)^\s*open\s+([^\n]+)", clean)]
+    imports = re.findall(r"(?m)^\s*(?:(?:public|meta)\s+)*import\s+([^\s]+)", clean)
+    if namespaces != ["Flapjack.Compiler.Inference.InferProps.Generalise"] or opens != [
+            "Flapjack.Compiler.Inference.Infer.Generalise"] or imports != [
+            "Flapjack.Compiler.Inference.Infer.Generalise", "Flapjack.FiniteMap.BroadCodec"]:
+        return ["generalization length qualifier requires its exact namespace, imports and producer open"]
+    import_lines = list(re.finditer(r"(?m)^public[ \t]+import[ \t]+\S+[ \t]*$", clean))
+    if len(import_lines) != 2:
+        return ["generalization length qualifier requires single-line public imports"]
+    for import_line in import_lines:
+        remaining = clean[import_line.end():].splitlines()
+        next_line = next((line for line in remaining if line.strip()), "")
+        if next_line and next_line[0].isspace():
+            return ["generalization length qualifier rejects import continuations"]
+    open_line = re.search(r"(?m)^open[ \t]+Flapjack\.Compiler\.Inference\.Infer\.Generalise[ \t]*$", clean)
+    if open_line is None:
+        return ["generalization length qualifier requires a single-line producer open"]
+    remaining = clean[open_line.end():].splitlines()
+    next_line = next((line for line in remaining if line.strip()), "")
+    if next_line and next_line[0].isspace():
+        return ["generalization length qualifier rejects producer open continuations"]
+    if re.search(r"(?m)^\s*(?:private\s+|protected\s+)?(?:def|theorem|lemma|axiom|opaque|abbrev|structure|inductive|class)\s+(?:generaliseListMap|HolFiniteMapExact|FiniteMapBroad)\b", clean):
+        return ["generalization length qualifier rejects local producer or carrier shadows"]
+    expected = ("(minimum next : Nat) (subst : HolFiniteMapExact Nat Nat) "
+                "(input : List InferT) (count : Nat) (out : HolFiniteMapExact Nat Nat) "
+                "(result : List InferT) "
+                "(h : generaliseListMap minimum next subst input = (count, out, result)) : "
+                "result.length = input.length")
+    statements = _statements_of_declaration(clean, "generaliseListLength")
+    if len(statements) != 1 or " ".join(statements[0].split()) != expected:
+        return ["generalization length theorem must have its complete reviewed statement"]
+    for binder in parameters:
+        name = f"holFmapAsFiniteSupportParamWitness_generaliseListLength_{binder}"
+        witness = (f"({binder} : HolFiniteMapExact Nat Nat) (key : Nat) : "
+                   f"(FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad {binder})).lookup key = {binder}.lookup key ∧ "
+                   f"(FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad {binder})).finiteSupport = {binder}.finiteSupport ∧ "
+                   f"FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad {binder}) = {binder}")
+        statements = _statements_of_declaration(clean, name)
+        if len(statements) != 1 or " ".join(statements[0].split()) != witness:
+            return [f"generalization length requires the unconditional {binder} codec witness"]
+    try:
+        sites = generalise_command_sites(producer_source, producer_path)
+    except ValueError as error:
+        return [f"generalization length producer failed its source audit: {error}"]
+    if [name for _, name in sites] != ["generaliseMap", "generaliseListMap"]:
+        return ["generalization length requires the reviewed producer tags"]
+    matching = [row for row in records if row.get("lean_path") == producer_path and
+                row.get("lean_name") == "generaliseListMap"]
+    if (len(matching) != 1 or matching[0].get("hol_path") !=
+            "cakeml/compiler/inference/inferScript.sml" or matching[0].get("hol_name") != "generalise_def" or
+            matching[0].get("hol_line") is not None or
+            matching[0].get("statement_status") != "reviewed_fmap_as_finite_support_parameter_tuple_result" or
+            matching[0].get("fmap_as_finite_support_parameter_tuple_result") != ["subst", "component_2"] or
+            any(value for key, value in matching[0].items() if key !=
+                "fmap_as_finite_support_parameter_tuple_result" and
+                (key.startswith("fmap_as_") or key.startswith("names_as_") or
+                 key in {"list_as_array", "words_as_type_indexed_bitvec", "word_dimension_as_width",
+                         "word_dimensions_as_widths", "reals_as_rational_cuts", "nested_list_rel_as_mutual"}))):
+        return ["generalization length requires the unique reviewed producer manifest row"]
+    return []
+
+
+def infer_subst_submap_observer_errors(
+    source: str, lean_path: str, hol_ref: tuple[str, str], binders: tuple[str, ...],
+    producer_source: str, domain_source: str, submap_source: str, vars_source: str, records: list[dict],
+) -> list[str]:
+    """Audit source for the independently quantified submap theorem.
+
+    The elaborated binder, witness and exporter checks remain independently
+    necessary; this source audit alone cannot establish HOL correspondence.
+    """
+    expected_path = "Flapjack/Compiler/Inference/InferProps/Substitution.lean"
+    producer_path = "Flapjack/Compiler/Inference/Infer/Substitution.lean"
+    expected_ref = ("cakeml/compiler/inference/inferPropsScript.sml", "infer_subst_submap")
+    if (lean_path != expected_path or hol_ref != expected_ref or
+            binders != ("type_s1", "type_s2", "list_s1", "list_s2")):
+        return ["inference submap qualifier requires its exact site and four map occurrences"]
+    clean = strip_lean_comments(source)
+    if re.search(r"(?m)^\s*(?:variables?|include|omit|export|alias|attribute|set_option|universe|universes|run_cmd|run_elab|initialize|(?:(?:local|scoped)\s+)?(?:syntax|macro|macro_rules|elab|notation|infix|infixl|infixr|prefix|postfix|instance))\b", clean):
+        return ["inference submap qualifier rejects ambient binders or syntax changes"]
+    namespaces = re.findall(r"(?m)^\s*namespace\s+([^\s]+)", clean)
+    opens = [" ".join(item.split()) for item in re.findall(r"(?m)^\s*open\s+([^\n]+)", clean)]
+    imports = re.findall(r"(?m)^\s*(?:(?:public|meta)\s+)*import\s+([^\s]+)", clean)
+    if namespaces != ["Flapjack.Compiler.Inference.InferProps.Substitution"] or opens != [
+            "Flapjack.Compiler.Inference.Infer.Substitution", "Flapjack.Compiler.Inference.Unify"] or imports != [
+            "Flapjack.Compiler.Inference.Infer.Substitution", "Flapjack.Compiler.Inference.Unify.Vars",
+            "Flapjack.FiniteMap.DomainExact", "Flapjack.FiniteMap.SubmapExact"]:
+        return ["inference submap qualifier requires its exact namespace, imports and opens"]
+    directive_lines = list(re.finditer(r"(?m)^(?:public[ \t]+import|open)[ \t]+\S+[ \t]*$", clean))
+    if len(directive_lines) != 6:
+        return ["inference submap qualifier requires single-line imports and opens"]
+    for directive in directive_lines:
+        following = next((line for line in clean[directive.end():].splitlines() if line.strip()), "")
+        if following and following[0].isspace():
+            return ["inference submap qualifier rejects import or open continuations"]
+    if re.search(r"(?m)^\s*(?:(?:private|protected|local|scoped)\s+)*(?:def|theorem|lemma|axiom|opaque|abbrev|structure|inductive|class)\s+(?:inferSubst|tVars|InferT|Nat|List|Set|HolFiniteMapExact|domain|submap)\b", clean):
+        return ["inference submap qualifier rejects local producer or carrier shadows"]
+    expected = (r": (∀ (t : InferT) (s1 s2 : HolFiniteMapExact Nat Nat) (m : Nat), "
+                r"s1.submap s2 ∧ {v | tVars t v ∧ m ≤ v} ⊆ s1.domain ∧ "
+                r"(∀ v, v ∈ s2.domain \ s1.domain → m ≤ v) → inferSubst s1 t = inferSubst s2 t) ∧ "
+                r"(∀ (ts : List InferT) (s1 s2 : HolFiniteMapExact Nat Nat) (m : Nat), "
+                r"s1.submap s2 ∧ {v | ∃ s : Set Nat, s v ∧ s ∈ ts.map tVars ∧ m ≤ v} ⊆ s1.domain ∧ "
+                r"(∀ v, v ∈ s2.domain \ s1.domain → m ≤ v) → "
+                r"ts.map (inferSubst s1) = ts.map (inferSubst s2))")
+    statements = _statements_of_declaration(clean, "inferSubstSubmap")
+    if len(statements) != 1 or " ".join(statements[0].split()) != expected:
+        return ["inference submap theorem must have its complete reviewed conjunction"]
+    witness = ("(map : HolFiniteMapExact Nat Nat) (key : Nat) : "
+               "(FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad map)).lookup key = map.lookup key ∧ "
+               "(FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad map)).finiteSupport = map.finiteSupport ∧ "
+               "FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad map) = map")
+    statements = _statements_of_declaration(clean, "holFmapAsFiniteSupportNestedSubmapWitness")
+    if len(statements) != 1 or " ".join(statements[0].split()) != witness:
+        return ["inference submap requires its unconditional canonical-map witness"]
+    producer_clean = strip_lean_comments(producer_source)
+    producer_tag = ('@[hol "cakeml/compiler/inference/inferScript.sml" "infer_subst_def" '
+                    '(fmap_as_finite_support_parameters := [subst])]')
+    producer_expected = (
+        "module public import Flapjack.Compiler.Inference.InferT "
+        "public import Flapjack.FiniteMap.BroadCodec @[expose] public section "
+        "namespace Flapjack.Compiler.Inference.Infer.Substitution "
+        "theorem holFmapAsFiniteSupportParamWitness_inferSubst_subst "
+        "(subst : HolFiniteMapExact Nat Nat) (key : Nat) : "
+        "(FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad subst)).lookup key = subst.lookup key ∧ "
+        "(FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad subst)).finiteSupport = subst.finiteSupport ∧ "
+        "FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad subst) = subst := by cases subst exact ⟨rfl, rfl, rfl⟩ "
+        + producer_tag + " def inferSubst (subst : HolFiniteMapExact Nat Nat) : InferT → InferT "
+        "| .varDb n => .varDb n | .app ts name => .app (ts.map (inferSubst subst)) name "
+        "| .uvar n => match subst.lookup n with | none => .uvar n | some value => .varDb value "
+        "termination_by t => sizeOf t end Flapjack.Compiler.Inference.Infer.Substitution")
+    if " ".join(producer_clean.split()) != producer_expected:
+        return ["inference submap requires the reviewed substitution producer and codec witness"]
+    domain_expected = (
+        "module public import Flapjack.Pancake.Semantics.CrepSem.HOLState "
+        "public import Mathlib.Data.Set.Defs @[expose] public section "
+        "namespace Flapjack.HolFiniteMapExact "
+        "def domain (map : HolFiniteMapExact α β) : Set α := {key | map.lookup key ≠ none} "
+        "end Flapjack.HolFiniteMapExact")
+    submap_prefix = (
+        "module public import Flapjack.Pancake.Semantics.CrepSem.HOLState @[expose] public section "
+        "namespace Flapjack.HolFiniteMapExact "
+        "def submap {α β : Type} (f g : HolFiniteMapExact α β) : Prop := "
+        "∀ key value, f.lookup key = some value → g.lookup key = some value theorem submap_refl ")
+    if (" ".join(strip_lean_comments(domain_source).split()) != domain_expected or
+            not " ".join(strip_lean_comments(submap_source).split()).startswith(submap_prefix)):
+        return ["inference submap requires the reviewed finite-map domain and submap definitions"]
+    vars_prefix = (
+        "module public import Flapjack.Compiler.Inference.Unify.Encoding "
+        "public import Flapjack.HOL.Unification.Subst @[expose] public section "
+        "namespace Flapjack.Compiler.Inference.Unify open Flapjack.HOL.Unification "
+        '@[hol "cakeml/compiler/inference/unifyScript.sml" "t_vars_def"] '
+        "def tVars (t : InferT) : Nat → Prop := vars (encodeInferT t) "
+        "theorem holFmapAsFiniteSupportParamWitness_tVR_subst ")
+    if not " ".join(strip_lean_comments(vars_source).split()).startswith(vars_prefix):
+        return ["inference submap requires the reviewed inference variable-set definition"]
+    vars_rows = [row for row in records if row.get("lean_path") ==
+                 "Flapjack/Compiler/Inference/Unify/Substitution.lean" and row.get("lean_name") == "tVars"]
+    if (len(vars_rows) != 1 or vars_rows[0].get("hol_path") != "cakeml/compiler/inference/unifyScript.sml" or
+            vars_rows[0].get("hol_name") != "t_vars_def" or vars_rows[0].get("hol_line") is not None or
+            vars_rows[0].get("statement_status") != "reviewed_exact" or
+            any(value for key, value in vars_rows[0].items() if
+                key.startswith("fmap_as_") or key.startswith("names_as_") or key in {
+                    "list_as_array", "words_as_type_indexed_bitvec", "word_dimension_as_width",
+                    "word_dimensions_as_widths", "reals_as_rational_cuts", "nested_list_rel_as_mutual"})):
+        return ["inference submap requires the unique reviewed variable-set row"]
+    matching = [row for row in records if row.get("lean_path") == producer_path and
+                row.get("lean_name") == "inferSubst"]
+    if (len(matching) != 1 or matching[0].get("hol_path") != "cakeml/compiler/inference/inferScript.sml" or
+            matching[0].get("hol_name") != "infer_subst_def" or matching[0].get("hol_line") is not None or
+            matching[0].get("statement_status") != "reviewed_fmap_as_finite_support_parameters" or
+            matching[0].get("fmap_as_finite_support_parameters") != ["subst"] or
+            any(value for key, value in matching[0].items() if key != "fmap_as_finite_support_parameters" and
+                (key.startswith("fmap_as_") or key.startswith("names_as_") or key in {
+                    "list_as_array", "words_as_type_indexed_bitvec", "word_dimension_as_width",
+                    "word_dimensions_as_widths", "reals_as_rational_cuts", "nested_list_rel_as_mutual"}))):
+        return ["inference submap requires the unique reviewed substitution producer row"]
+    return []
+
+
+def type_subst_walkstar_observer_errors(
+    source: str, lean_path: str, hol_ref: tuple[str, str], binders: tuple[str, ...],
+    dependency_sources: tuple[str, ...], records: list[dict],
+) -> list[str]:
+    """Source check for the two independently quantified maps.
+
+    Elaborated premises, conclusions, dependency owners and qualifier/export
+    validation remain independently necessary for the tagged theorem.
+    """
+    if (lean_path != "Flapjack/Compiler/Inference/InferProps/TypeSubstWalkstar.lean" or
+            hol_ref != ("cakeml/compiler/inference/inferPropsScript.sml", "subst_infer_subst_swap") or
+            binders != ("type_s", "list_s")):
+        return ["type-substitution walkstar qualifier requires its exact site and two map occurrences"]
+    clean = strip_lean_comments(source)
+    if re.search(r"(?m)^\s*(?:variables?|include|omit|export|alias|attribute|set_option|universe|universes|run_cmd|run_elab|initialize|(?:(?:local|scoped)\s+)?(?:syntax|macro|macro_rules|elab|notation|infix|infixl|infixr|prefix|postfix|instance))\b", clean):
+        return ["type-substitution walkstar qualifier rejects ambient binders or syntax changes"]
+    namespaces = re.findall(r"(?m)^\s*namespace\s+([^\s]+)", clean)
+    opens = [" ".join(item.split()) for item in re.findall(r"(?m)^\s*open\s+([^\n]+)", clean)]
+    imports = re.findall(r"(?m)^\s*(?:(?:public|meta)\s+)*import\s+([^\s]+)", clean)
+    if (namespaces != ["Flapjack.Compiler.Inference.InferProps.TypeSubstWalkstar"] or
+            opens != ["Flapjack.Compiler.Inference.Infer", "Flapjack.Compiler.Inference.Unify",
+                      "Flapjack.TypeSystemHOL Flapjack.Basis.Pure.MlString"] or
+            imports != ["Flapjack.Compiler.Inference.Infer.TypeSubst", "Flapjack.Compiler.Inference.Unify.Walkstar"]):
+        return ["type-substitution walkstar qualifier requires its exact namespace, imports and opens"]
+    directives = list(re.finditer(r"(?m)^(?:public[ \t]+import|open)[ \t]+[^\n]+$", clean))
+    expected_directives = ["public import Flapjack.Compiler.Inference.Infer.TypeSubst",
+        "public import Flapjack.Compiler.Inference.Unify.Walkstar",
+        "open Flapjack.Compiler.Inference.Infer", "open Flapjack.Compiler.Inference.Unify",
+        "open Flapjack.TypeSystemHOL Flapjack.Basis.Pure.MlString"]
+    if [" ".join(item.group().split()) for item in directives] != expected_directives:
+        return ["type-substitution walkstar qualifier requires single-line imports and opens"]
+    for directive in directives:
+        following = next((line for line in clean[directive.end():].splitlines() if line.strip()), "")
+        if following and following[0].isspace():
+            return ["type-substitution walkstar qualifier rejects directive continuations"]
+    if re.search(r"(?m)^\s*(?:(?:private|protected|local|scoped)\s+)*(?:def|theorem|lemma|axiom|opaque|abbrev|structure|inductive|class)\s+(?:SemanticT|MlString|InferT|Nat|List|HolFiniteMapExact|inferTypeSubst|tWalkstar|tWfs)\b", clean):
+        return ["type-substitution walkstar qualifier rejects local carrier or operation shadows"]
+    expected = (": (∀ (t : SemanticT) (names : List MlString) (s : HolFiniteMapExact Nat InferT) (offset : Nat), "
+        "tWfs s → tWalkstar s (inferTypeSubst (names.zip ((List.range names.length).map (fun n => InferT.uvar (offset + n)))) t) = "
+        "inferTypeSubst (names.zip ((List.range names.length).map (fun n => tWalkstar s (InferT.uvar (offset + n))))) t) ∧ "
+        "(∀ (ts : List SemanticT) (names : List MlString) (s : HolFiniteMapExact Nat InferT) (offset : Nat), "
+        "tWfs s → (ts.map (inferTypeSubst (names.zip ((List.range names.length).map (fun n => InferT.uvar (offset + n)))))).map (tWalkstar s) = "
+        "ts.map (inferTypeSubst (names.zip ((List.range names.length).map (fun n => tWalkstar s (InferT.uvar (offset + n)))))))")
+    statements = _statements_of_declaration(clean, "substInferSubstSwap")
+    if len(statements) != 1 or " ".join(statements[0].split()) != expected:
+        return ["type-substitution walkstar theorem must retain both complete reviewed conjuncts"]
+    witness = ("(map : HolFiniteMapExact Nat InferT) (key : Nat) : "
+               "(FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad map)).lookup key = map.lookup key ∧ "
+               "(FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad map)).finiteSupport = map.finiteSupport ∧ "
+               "FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad map) = map")
+    statements = _statements_of_declaration(clean, "holFmapAsFiniteSupportNestedWalkstarWitness")
+    if len(statements) != 1 or " ".join(statements[0].split()) != witness:
+        return ["type-substitution walkstar requires its unconditional canonical-map witness"]
+    # Pin the reviewed executable substitution equations, the guarded
+    # walkstar model and its theorem, and the definition of tWfs. Restrict the
+    # two larger modules to their relevant prefixes so unrelated later
+    # declarations can evolve independently.
+    fingerprints = (
+        (' end mutual @[hol "cakeml/compiler/inference/inferScript.sml" "infer_deBruijn_inc_def"]',
+         "c5e7f711ebacac1424e2a7907d117633e92cbd9e499c8d349cdadd109a6762f2"),
+        (None, "70caac537f2715df9c9def7342874bb4484b31fd416ee82a7be361aa9aa3678a"),
+        (" theorem holFmapAsFiniteSupportParamWitness_tWfsEqn_subst",
+         "55445d872487eaa261a2ba56b07d52ccaab36983bff622779197beb7f5daf7a7"),
+        (None, "433b404d7a4e2f5b76d589cf1b0850905932fa437b96228246addb6bf427a739"),
+        (None, "170799cff273e408f8c72e16f69147dfc197f111832970c007248ea7dcfa5ab6"),
+    )
+    if len(dependency_sources) != len(fingerprints):
+        return ["type-substitution walkstar requires all reviewed source dependencies"]
+    for dependency, (boundary, expected_hash) in zip(dependency_sources, fingerprints):
+        normalized = " ".join(strip_lean_comments(dependency).split())
+        if boundary is not None:
+            if normalized.count(boundary) != 1:
+                return ["type-substitution walkstar source dependency boundary changed"]
+            normalized = normalized.split(boundary, 1)[0]
+        if hashlib.sha256(normalized.encode("utf-8")).hexdigest() != expected_hash:
+            return ["type-substitution walkstar source dependency changed and requires review"]
+    dependencies = (
+        ("Flapjack/Compiler/Inference/Infer.lean", "inferTypeSubst", "cakeml/compiler/inference/inferScript.sml", "infer_type_subst_def", "reviewed_exact", None),
+        ("Flapjack/Compiler/Inference/Infer.lean", "inferTypeSubstList", "cakeml/compiler/inference/inferScript.sml", "infer_type_subst_def", "reviewed_exact", None),
+        ("Flapjack/Compiler/Inference/Unify/Substitution.lean", "tWfs", "cakeml/compiler/inference/unifyScript.sml", "t_wfs_def", "reviewed_fmap_as_finite_support_parameters", ["subst"]),
+        ("Flapjack/Compiler/Inference/Unify/Walkstar.lean", "walkstarEqn", "cakeml/compiler/inference/unifyScript.sml", "t_walkstar_eqn", "reviewed_fmap_as_finite_support_parameters", ["s"]),
+        ("Flapjack/Compiler/Inference/Unify/Walkstar.lean", "tWalkstarEqn1", "cakeml/compiler/inference/unifyScript.sml", "t_walkstar_eqn1", "reviewed_fmap_as_finite_support_parameters", ["s"]),
+        ("Flapjack/Compiler/Inference/Unify/Walk/Term.lean", "tWalkEqn", "cakeml/compiler/inference/unifyScript.sml", "t_walk_eqn", "reviewed_fmap_as_finite_support_parameters", ["s1", "s2", "s3"]),
+        ("Flapjack/Compiler/Inference/Unify/Walk.lean", "tVwalkEq", "cakeml/compiler/inference/unifyScript.sml", "t_vwalk_eqn", "reviewed_fmap_as_finite_support_parameters", ["subst"]),
+        ("Flapjack/Compiler/Inference/InferT.lean", "InferT", "cakeml/compiler/inference/infer_tScript.sml", "infer_t", "reviewed_exact", None),
+        ("Flapjack/TypeSystemHOL.lean", "SemanticT", "cakeml/semantics/typeSystemScript.sml", "t", "reviewed_exact", None),
+        ("Flapjack/Basis/Pure/MlString.lean", "MlString", "cakeml/basis/pure/mlstringScript.sml", "mlstring", "reviewed_exact", None),
+    )
+    for path, name, hol_path, hol_name, status, parameter in dependencies:
+        rows = [row for row in records if row.get("lean_path") == path and row.get("lean_name") == name]
+        if (len(rows) != 1 or rows[0].get("hol_path") != hol_path or rows[0].get("hol_name") != hol_name or
+                rows[0].get("hol_line") is not None or rows[0].get("statement_status") != status or
+                rows[0].get("fmap_as_finite_support_parameters") != parameter or
+                any(value for key, value in rows[0].items() if key != "fmap_as_finite_support_parameters" and
+                    (key.startswith("fmap_as_") or key.startswith("names_as_") or key in {
+                        "list_as_array", "words_as_type_indexed_bitvec", "word_dimension_as_width",
+                        "word_dimensions_as_widths", "reals_as_rational_cuts", "nested_list_rel_as_mutual"}))):
+            return [f"type-substitution walkstar requires the unique reviewed {name} dependency"]
+    return []
+
+
 def nested_thunk_map_combination(hol_path: str, hol_name: str, lean_path: str, lean_name: str,
                                  nested: tuple[str, ...], fmap_fields: tuple[str, ...],
                                  relation: tuple[tuple[str, str], ...],
@@ -5540,13 +6216,33 @@ def main(argv: list[str]) -> int:
         lines = lean_path.read_text(encoding="utf-8").splitlines()
         module = module_name(lean_path)
         module_reported = False
+        try:
+            command_sites = generalise_command_sites("\n".join(lines), rel)
+        except ValueError as error:
+            errors.append(f"{rel}: invalid command-style HOL attribute: {error}")
+            command_sites = []
+        if command_sites:
+            hol_path = "cakeml/compiler/inference/inferScript.sml"
+            hol_name = "generalise_def"
+            if module not in reachable:
+                module_reported = True
+                errors.append(f"{rel}: module {module} carries HOL tags but is not imported from Flapjack.lean")
+            source_error = hol_source_error(ROOT, hol_path)
+            target = ROOT / hol_path
+            ref_error = (source_error or ("HOL file does not exist" if not target.is_file() else
+                                         hol_ref_error(target, hol_name, None, cache)))
+            if ref_error:
+                errors.append(f"{rel}: {hol_path} {ref_error}")
+            else:
+                for number, lean_name in command_sites:
+                    mapping.append((f"{rel}:{number}", lean_name, hol_path, hol_name))
         for (number, hol_path, hol_name, hol_line, list_fields,
              names_fields, boundary_fields, fmap_fields, fmap_result,
              fmap_relation, fmap_equalities, words_bitvec,
              fmap_parameters, fmap_existentials, dimension_width,
              fmap_function_positions, fmap_heterogeneous_function_positions, reals_cuts,
              fmap_equality, result_observations, dimension_widths, fmap_tuple, nested_list_rel,
-             predicate_domain) in hol_attribute_sites(
+             predicate_domain, fmap_universals, generalise_map, generalise_length, infer_subst_submap) in hol_attribute_sites(
                 lines, include_fmap_existentials=True,
                 include_word_dimension_width=True,
                 include_fmap_function=True,
@@ -5558,8 +6254,120 @@ def main(argv: list[str]) -> int:
                 include_fmap_tuple=True,
                 include_nested_list_rel=True,
                 include_predicate_domain=True,
+                include_fmap_universals=True,
+                include_generalise_map=True,
+                include_generalise_length=True,
+                include_infer_subst_submap=True,
              ):
             where = f"{rel}:{number}"
+            walkstar_ref = (hol_path, hol_name) == (
+                "cakeml/compiler/inference/inferPropsScript.sml", "subst_infer_subst_swap")
+            submap_ref = (hol_path, hol_name) == (
+                "cakeml/compiler/inference/inferPropsScript.sml", "infer_subst_submap")
+            target_paths = {
+                "Flapjack/Compiler/Inference/InferProps/TypeSubstWalkstar.lean",
+                "Flapjack/Compiler/Inference/InferProps/Substitution.lean",
+            }
+            decl_name = find_lean_decl(lines, number - 1) if rel in target_paths else None
+            walkstar_target = (rel, decl_name) == (
+                "Flapjack/Compiler/Inference/InferProps/TypeSubstWalkstar.lean", "substInferSubstSwap")
+            submap_target = (rel, decl_name) == (
+                "Flapjack/Compiler/Inference/InferProps/Substitution.lean", "inferSubstSubmap")
+            if infer_subst_submap or submap_ref or walkstar_ref or walkstar_target or submap_target:
+                is_walkstar = walkstar_ref or walkstar_target
+                expected_name = "substInferSubstSwap" if is_walkstar else "inferSubstSubmap"
+                expected_size = 2 if is_walkstar else 4
+                if (len(infer_subst_submap) != expected_size or hol_line is not None or
+                        find_lean_decl(lines, number - 1) != expected_name or
+                        any((list_fields, names_fields, boundary_fields, fmap_fields, fmap_result,
+                             fmap_relation, fmap_equalities, words_bitvec, fmap_parameters,
+                             fmap_existentials, dimension_width, fmap_function_positions,
+                             fmap_heterogeneous_function_positions, reals_cuts, fmap_equality,
+                             result_observations, dimension_widths, fmap_tuple, nested_list_rel,
+                             predicate_domain, fmap_universals, generalise_map, generalise_length))):
+                    errors.append(f"{where}: conjunct-universal qualifier requires its sole qualifier and exact declaration")
+                elif is_walkstar:
+                    dependencies = [ROOT / name for name in (
+                        "Flapjack/Compiler/Inference/Infer.lean",
+                        "Flapjack/Compiler/Inference/Unify/Walkstar.lean",
+                        "Flapjack/Compiler/Inference/Unify/Substitution.lean",
+                        "Flapjack/Compiler/Inference/Unify/Walk/Term.lean",
+                        "Flapjack/Compiler/Inference/Unify/Walk.lean")]
+                    source_texts = tuple(path.read_text(encoding="utf-8") if path.is_file() else ""
+                                         for path in dependencies)
+                    errors.extend(f"{where}: {error}" for error in type_subst_walkstar_observer_errors(
+                        "\n".join(lines), rel, (hol_path, hol_name), infer_subst_submap,
+                        source_texts, observation_records))
+                else:
+                    dependencies = [ROOT / name for name in (
+                        "Flapjack/Compiler/Inference/Infer/Substitution.lean",
+                        "Flapjack/FiniteMap/DomainExact.lean", "Flapjack/FiniteMap/SubmapExact.lean",
+                        "Flapjack/Compiler/Inference/Unify/Substitution.lean")]
+                    source_texts = [path.read_text(encoding="utf-8") if path.is_file() else ""
+                                    for path in dependencies]
+                    errors.extend(f"{where}: {error}" for error in infer_subst_submap_observer_errors(
+                        "\n".join(lines), rel, (hol_path, hol_name), infer_subst_submap,
+                        *source_texts, observation_records))
+            if generalise_length or (hol_path == "cakeml/compiler/inference/inferPropsScript.sml" and
+                                     hol_name == "generalise_list_length"):
+                if (len(generalise_length) != 4 or hol_line is not None or
+                        find_lean_decl(lines, number - 1) != "generaliseListLength" or
+                        any((list_fields, names_fields, boundary_fields, fmap_fields, fmap_result,
+                             fmap_relation, fmap_equalities, words_bitvec, fmap_parameters,
+                             fmap_existentials, dimension_width, fmap_function_positions,
+                             fmap_heterogeneous_function_positions, reals_cuts, fmap_equality,
+                             result_observations, dimension_widths, fmap_tuple, nested_list_rel,
+                             predicate_domain, fmap_universals, generalise_map))):
+                    errors.append(f"{where}: generalization length requires its sole qualifier and exact declaration")
+                else:
+                    producer_path = ROOT / "Flapjack/Compiler/Inference/Infer/Generalise.lean"
+                    producer_source = producer_path.read_text(encoding="utf-8") if producer_path.is_file() else ""
+                    errors.extend(f"{where}: {error}" for error in generalise_length_observer_errors(
+                        "\n".join(lines), rel, (hol_path, hol_name), generalise_length[:2],
+                        generalise_length[2], generalise_length[3], producer_source, observation_records))
+            if generalise_map or (hol_path == "cakeml/compiler/inference/inferScript.sml" and
+                                   hol_name == "generalise_def"):
+                # Both unqualified and prospective references fail closed until
+                # Lean, manifest, and elaborated-export integration all exist.
+                lean_name = find_lean_decl(lines, number - 1)
+                errors.extend(
+                    f"{where}: {error}" for error in generalise_reference_errors(
+                        "\n".join(lines), rel, lean_name, (hol_path, hol_name), generalise_map,
+                    )
+                )
+            tmc_ref = (hol_path == "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" and
+                       hol_name == "hypothesis_def")
+            tmc_call = (hol_path == "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" and
+                        hol_name == "evaluate_cb")
+            if (tmc_ref or tmc_call) and not fmap_universals:
+                errors.append(f"{where}: TMC declaration requires its universal map qualifier")
+            if fmap_universals:
+                lean_name = find_lean_decl(lines, number - 1)
+                hypothesis = (tmc_ref and rel == "Flapjack/Compiler/Backend/BviTmc/Proofs/Induction.lean" and
+                              lean_name == "hypothesis" and fmap_universals == ("f",) and
+                              fmap_relation == (("BviState", "refs"),) and
+                              fmap_existentials == ("nextMap", "wrapMap", "workMap"))
+                call_block = (tmc_call and rel == "Flapjack/Compiler/Backend/BviTmc/Proofs/CallBlockCorrectness.lean" and
+                              lean_name == "evaluate_cb" and fmap_universals == ("refs",) and
+                              fmap_relation == (("BviState", "refs"), ("f", "")) and
+                              fmap_existentials == ("ordinaryMap", "wrapMap", "auxMap", "workMap"))
+                if hol_line is not None or not (hypothesis or call_block):
+                    errors.append(f"{where}: universal maps require a reviewed TMC declaration and exact binders")
+                if (list_fields or names_fields or boundary_fields or fmap_fields or fmap_result or
+                        fmap_equalities or words_bitvec or fmap_parameters or dimension_width or
+                        fmap_function_positions or fmap_heterogeneous_function_positions or reals_cuts or
+                        fmap_equality or result_observations or dimension_widths or fmap_tuple or
+                        nested_list_rel or predicate_domain):
+                    errors.append(f"{where}: TMC universal maps cannot combine with other representation qualifiers")
+                source = tagged_declaration_source(lines, number)
+                if hypothesis and not re.search(r"∀[\s\S]*?\(f\s*:\s*HolFiniteMapExact\s+Nat\s+Nat\s*\)", source):
+                    errors.append(f"{where}: TMC hypothesis must bind f as a universal Nat map")
+                if call_block and not re.search(r"∀\s*\(refs\s*:\s*HolFiniteMapExact\s+Nat\s*\(Ref\s+Value\)\s*\)", source):
+                    errors.append(f"{where}: TMC call-block theorem must bind its universal reference map")
+                witness = ("holFmapAsFiniteSupportUniversalWitness_hypothesis_f" if hypothesis else
+                           "holFmapAsFiniteSupportUniversalWitness_evaluate_cb_refs")
+                if not re.search(r"(?m)^\s*theorem\s+" + witness + r"\b", strip_lean_comments("\n".join(lines))):
+                    errors.append(f"{where}: TMC universal map requires its same-module witness")
             if predicate_domain:
                 lean_name = find_lean_decl(lines, number - 1)
                 if predicate_domain != ("code1", "rel"):
@@ -5594,18 +6402,31 @@ def main(argv: list[str]) -> int:
                 if not nested_list_combination_allowed(fmap_fields, producer, other):
                     errors.append(f"{where}: nested relation qualifier cannot combine with other qualifiers")
             if fmap_tuple:
-                if rel != "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/ValueInv.lean":
-                    errors.append(f"{where}: tuple maps require the reviewed value-invariant module")
-                if find_lean_decl(lines, number - 1) != "ClockValueInv":
-                    errors.append(f"{where}: tuple maps require the ClockValueInv declaration")
-                if (not words_bitvec or list_fields or names_fields or boundary_fields or
-                        fmap_fields or fmap_result or fmap_relation or fmap_equalities or
-                        fmap_parameters or fmap_existentials or dimension_width or dimension_widths or
-                        fmap_function_positions or fmap_heterogeneous_function_positions or reals_cuts or
-                        fmap_equality or result_observations):
-                    errors.append(f"{where}: tuple maps may only combine with words_as_type_indexed_bitvec")
-                errors.extend(f"{where}: {error}" for error in fmap_value_context_tuple_errors(
-                    lines, tagged_declaration_source(lines, number), fmap_tuple, (hol_path, hol_name)))
+                unification = (hol_path, hol_name) == (
+                    "HOL/examples/algorithms/unification/triangular/first-order/unifDefScript.sml", "WF_uR")
+                incompatible = (list_fields or names_fields or boundary_fields or fmap_fields or fmap_result or
+                                fmap_relation or fmap_equalities or fmap_parameters or fmap_existentials or
+                                dimension_width or dimension_widths or fmap_function_positions or
+                                fmap_heterogeneous_function_positions or reals_cuts or fmap_equality or
+                                result_observations or nested_list_rel or predicate_domain or fmap_universals)
+                if unification:
+                    if (rel != "Flapjack/HOL/Unification/UnifDef/WellFounded.lean" or
+                            find_lean_decl(lines, number - 1) != "uRWellFounded"):
+                        errors.append(f"{where}: unification tuple maps require the exact theorem and module")
+                    if words_bitvec or hol_line is not None or incompatible:
+                        errors.append(f"{where}: unification tuple maps cannot combine with other qualifiers")
+                    owner = (ROOT / "Flapjack/HOL/Unification/UnifDef.lean").read_text(encoding="utf-8")
+                    errors.extend(f"{where}: {error}" for error in unification_tuple_relation_errors(
+                        "\n".join(lines), owner, fmap_tuple, (hol_path, hol_name)))
+                else:
+                    if rel != "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/ValueInv.lean":
+                        errors.append(f"{where}: tuple maps require the reviewed value-invariant module")
+                    if find_lean_decl(lines, number - 1) != "ClockValueInv":
+                        errors.append(f"{where}: tuple maps require the ClockValueInv declaration")
+                    if not words_bitvec or incompatible:
+                        errors.append(f"{where}: tuple maps may only combine with words_as_type_indexed_bitvec")
+                    errors.extend(f"{where}: {error}" for error in fmap_value_context_tuple_errors(
+                        lines, tagged_declaration_source(lines, number), fmap_tuple, (hol_path, hol_name)))
             if result_observations:
                 declaration_source = tagged_declaration_source(lines, number)
                 composite_matches = list(FMAP_PARAMETER_OBSERVATIONS_RE.finditer(declaration_source))
@@ -5670,13 +6491,21 @@ def main(argv: list[str]) -> int:
                     )
                 )
             if fmap_existentials:
-                errors.extend(
-                    f"{where}: {error}"
-                    for error in fmap_as_finite_support_existentials_errors(
-                        lines, module, tagged_declaration_source(lines, number),
-                        lean_decl, fmap_existentials,
+                if fmap_universals and tmc_ref:
+                    errors.extend(f"{where}: {error}" for error in tmc_hypothesis_map_witness_errors(lines))
+                    source = tagged_declaration_source(lines, number)
+                    for binder in fmap_existentials:
+                        if not re.search(r"∃\s*\(" + re.escape(binder) +
+                                         r"\s*:\s*HolFiniteMapExact\s+Nat\s+Nat\s*\)", source):
+                            errors.append(f"{where}: TMC map `{binder}` must be existentially bound")
+                else:
+                    errors.extend(
+                        f"{where}: {error}"
+                        for error in fmap_as_finite_support_existentials_errors(
+                            lines, module, tagged_declaration_source(lines, number),
+                            lean_decl, fmap_existentials,
+                        )
                     )
-                )
             if fmap_result:
                 errors.extend(
                     f"{where}: {error}"

@@ -77,12 +77,24 @@ def decideType : ValueType → ValueType → ValueType
   | .int, .int => .int
   | .list, .list => .list
   | _, _ => .any
+/-- The variable index of an expression, when it is a variable. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "index_of_def"]
+def indexOf : Exp → Option Nat
+  | .var n => some n
+  | _ => none
+
+/-- Refine the indexed context entry only when it is present and unknown. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "try_update_def"]
+def tryUpdate (ty : ValueType) (index : Option Nat) (ctx : List ValueType) : List ValueType :=
+  match index with
+  | none => ctx
+  | some n => if ctx[n]? == some .any then ctx.set n ty else ctx
+
 /-- Refine an unknown variable type in the current context. -/
 def update (ty : ValueType) (e : Exp) (ctx : List ValueType) : List ValueType :=
-  match e with
-  | .var n => if ctx[n]? == some .any then ctx.set n ty else ctx
-  | _ => ctx
+  tryUpdate ty (indexOf e) ctx
 /-- Refine the variables used by two operands in source order. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "update_context_def"]
 def updateContext (ty : ValueType) (ctx : List ValueType) (x y : Exp) : List ValueType :=
   update ty y (update ty x ctx)
 

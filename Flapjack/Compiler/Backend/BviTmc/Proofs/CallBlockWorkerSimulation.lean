@@ -36,13 +36,13 @@ theorem evaluate_worker_rcall_body {C F : Type} (loc dest ticks ptr : Nat) (indi
     (indices.map (fun n => holEl n env1)) (indices.map (fun n => holEl n env2))
     (.refPtr false ptr) (.number (Int.ofNat idx)) body found sourceLength code
   have envRelated := CallBlockEnvironment.wfVars_env_rel_opt indices true f env1 env2 ptr (Int.ofNat idx)
-    environments wf small
+    ⟨environments, wf, small⟩
   have workerHole := aux_hole_to_worker_general f (indices.map (fun n => holEl n env1))
     (indices.map (fun n => holEl n env2)) env2 env1.length ptr idx target.refs initial sourceLength allocHole pointer
   have clockBound : ticks + 1 ≤ source.clock := by rw [← states.2.1]; omega
   have workerRun := bodyIH ticks indices target ptr idx initial body worker result final wf clockBound states code found bodyRun
     notTypeError safe (by simpa using rewrite) envRelated workerHole.1 workerHole.2
-  have argsRun := evaluate_vars_target indices env1.length env2 target wf (envRel_length true f env1 env2 environments)
+  have argsRun := evaluate_vars_target indices env1.length env2 target ⟨wf, envRel_length true f env1 env2 environments⟩
   have ptrBound : env1.length < env2.length := by have h := hole.1; omega
   have idxBound : env1.length + 1 < env2.length := by have h := hole.1; omega
   have ptrAt : env2[env1.length]? = some (.refPtr false ptr) := by
@@ -89,8 +89,7 @@ theorem evaluate_worker_rcall {C F : Type} (loc dest ticks ptr : Nat) (indices :
   by_cases arityEq : (indices.map (fun n => holEl n env1)).length = arity
   · have found : findCode (some loc) (indices.map (fun n => holEl n env1)) source.code =
         some (indices.map (fun n => holEl n env1), body) := by simp [findCode, sourceLookup, arityEq]
-    have safe : noMutcons body := (findCode_rel f _ _ source target (some loc) _ body found
-      (CallBlockEnvironment.wfVars_list_rel indices true f env1 env2 environments wf) states).1
+    have safe : noMutcons body := (stateRel_codeRel f source target states loc arity body sourceLookup).1
     by_cases timeout : source.clock < ticks + 1
     · obtain ⟨idx, _, index⟩ := worker_hole_as_alloc f env1 env2 target.refs ptr initial hole notFinal pointer
       have ptrBound : env1.length < env2.length := by have h := hole.1; omega
@@ -105,7 +104,7 @@ theorem evaluate_worker_rcall {C F : Type} (loc dest ticks ptr : Nat) (indices :
         simp [BviSem.evaluate, ptrAt]
       have idxRun : evaluate [.var (env1.length + 1)] env2 target = (.val [.number (Int.ofNat idx)], target) := by
         simp [BviSem.evaluate, idxAt]
-      have argsRun := evaluate_vars_target indices env1.length env2 target wf (envRel_length true f env1 env2 environments)
+      have argsRun := evaluate_vars_target indices env1.length env2 target ⟨wf, envRel_length true f env1 env2 environments⟩
       have sameLength : (indices.map (fun n => holEl n env1)).length =
           (indices.map (fun n => holEl n env2)).length := by simp
       obtain ⟨workerBody, workerFound, _⟩ := find_worker_code loc dest source.code target.code

@@ -16,20 +16,6 @@ theorem sizeOfHeap_with_safe {C F : Type} (state : State C F) (safe : Bool) :
     sizeOfHeap { state with safeForSpace := safe } = sizeOfHeap state := by
   rfl
 
-/-- The operation-space estimate ignores the resource observation fields. -/
-theorem spaceConsumed_resource {C F : Type} (op : ClosLang.Op) (values : List DataSem.Value)
-    (state : State C F) (safe : Bool) (peak : Nat) (mx : Option Nat) :
-    spaceConsumed { state with safeForSpace := safe, peakHeapLength := peak, stackMax := mx } op values =
-      spaceConsumed state op values := by
-  rfl
-
-/-- Heap roots and limits ignore resource observation fields. -/
-theorem sizeOfHeapArgs_resource {C F : Type} (values : List DataSem.Value)
-    (state : State C F) (safe : Bool) (peak : Nat) (mx : Option Nat) :
-    sizeOfHeapArgs values { state with safeForSpace := safe, peakHeapLength := peak, stackMax := mx } =
-      sizeOfHeapArgs values state := by
-  rfl
-
 /-- Failed space reservation is independent of the listed state fields.
 This Flapjack helper supports the HOL primitive swap proofs. -/
 theorem doSpace_none_resource {C F : Type} (op : ClosLang.Op)

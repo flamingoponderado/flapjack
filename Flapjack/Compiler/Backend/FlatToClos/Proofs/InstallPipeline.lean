@@ -26,17 +26,4 @@ theorem incCompileDecs_intro {I O P C R Q : Type}
     rfl
   · rfl
 
-/-- A production callback relation supplies the intermediate callback
-required by the flat-to-closure simulation. -/
-theorem production_installConfigRel {C : Type} (source : FlatSem.InstallConfig C)
-    (compiler : ClosSem.Compiler C)
-    (safe : ∀ index, FlatProps.noMatDecs (source.compileOracle index).2 = true)
-    (production : source.compile = pureCc incCompileDecs compiler) :
-    installConfigRel source (pureCo (incCompileDecsProofSide (α := Nat × Nat × ClosLang.Exp)) ∘ source.compileOracle)
-      (pureCc ClosInterp.insertProgram compiler) := by
-  refine ⟨safe, rfl, ?_⟩
-  have factor := (incCompileDecs_intro (P := Unit) (fun (_ : Unit) => ((), [])) compiler).2
-  exact production.trans factor.symm
-
-
 end Flapjack.Compiler.Backend.FlatToClos

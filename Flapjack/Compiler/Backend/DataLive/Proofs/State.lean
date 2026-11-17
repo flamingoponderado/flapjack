@@ -12,9 +12,16 @@ namespace Flapjack.Compiler.Backend.DataLive
 open Flapjack Flapjack.Compiler.Backend.DataSem
 open Classical
 
+/-- Pair equality is equivalent to equality of both projections. -/
+@[hol "cakeml/compiler/backend/proofs/data_liveProofScript.sml" "SPLIT_PAIR"]
+theorem splitPair {α β : Type} (x : α × β) (y : α) (z : β) :
+    (x = (y, z)) ↔ (y = x.1) ∧ (z = x.2) := by
+  cases x
+  simp [eq_comm]
+
 /-- States agree on the fields observed by the liveness proof and on every
-live local. This follows the source relation but is untagged until its state
-carriers and complete statement have been reviewed against HOL. -/
+live local. -/
+@[hol "cakeml/compiler/backend/proofs/data_liveProofScript.sml" "state_rel_def"]
 def stateRel {C F : Type} (source target : State C F) (live : NumSet) : Prop :=
   source.code = target.code ∧ source.clock = target.clock ∧ source.space = target.space ∧
   source.ffi = target.ffi ∧ source.refs = target.refs ∧ source.global = target.global ∧
@@ -25,8 +32,39 @@ def stateRel {C F : Type} (source target : State C F) (live : NumSet) : Prop :=
   ∀ key, sptMem key live → sptLookup key source.locals = sptLookup key target.locals
 
 /-- A state is related to itself for every live set. -/
+@[hol "cakeml/compiler/backend/proofs/data_liveProofScript.sml" "state_rel_ID"]
 theorem stateRel_refl {C F : Type} (state : State C F) (live : NumSet) : stateRel state state live := by
   simp [stateRel]
+
+/-- Successful exception jumps retain the state relation when the original
+handlers are restored and the resulting stacks have equal lengths. -/
+@[hol "cakeml/compiler/backend/proofs/data_liveProofScript.sml" "jump_exc_IMP_state_rel"]
+theorem jumpExc_imp_stateRel {C F : Type} (s1 t1 s2 t2 : State C F)
+    (premises : jumpExc s1 = some s2 ∧ jumpExc t1 = some t2 ∧
+      stateRel s1 t1 .ln ∧ s2.stack.length = t2.stack.length) :
+    stateRel { s2 with handler := s1.handler } { t2 with handler := t1.handler } .ln := by
+  obtain ⟨sourceRun, targetRun, related, stack⟩ := premises
+  unfold jumpExc at sourceRun targetRun
+  split at sourceRun <;> try contradiction
+  split at sourceRun <;> try contradiction
+  split at targetRun <;> try contradiction
+  split at targetRun <;> try contradiction
+  simp only [Option.some.injEq] at sourceRun targetRun
+  subst s2
+  subst t2
+  rcases related with ⟨code, clock, space, ffi, refs, global, handler, _, compiler, oracle, stamps, limits, frames, _⟩
+  exact ⟨code, clock, space, ffi, refs, global, handler, stack, compiler, oracle, stamps, limits, frames,
+    by intro key member; simp [sptMem, sptDomain, sptLookup] at member⟩
+
+/-- Deleting a list of keys removes exactly those keys from the domain. -/
+@[hol "cakeml/compiler/backend/proofs/data_liveProofScript.sml" "domain_list_delete"]
+theorem domain_list_delete {α : Type} (keys : List Nat) (tree : Spt α) :
+    sptDomain (sptListDelete keys tree) =
+      (fun key => sptDomain tree key ∧ key ∉ keys) := by
+  funext key
+  apply propext
+  simp only [sptDomain, sptLookup_sptListDelete]
+  by_cases present : key ∈ keys <;> simp [present]
 
 /-- Restricting a live set preserves the state relation. -/
 theorem stateRel_mono {C F : Type} (source target : State C F) (larger smaller : NumSet)
@@ -121,6 +159,16 @@ theorem stateRel_getVars_listInsert {C F : Type} (source target : State C F) (na
   apply stateRel_getVars source target (sptListInsert names live) names related
   intro key member
   exact (mem_listInsert names live key).2 (Or.inl member)
+
+/-- Related states return the same successful read of the inserted live names. -/
+@[hol "cakeml/compiler/backend/proofs/data_liveProofScript.sml" "state_rel_IMP_get_vars"]
+theorem stateRel_imp_getVars {C F : Type} (names : List Nat) (source target : State C F)
+    (live : NumSet) (values : List Value)
+    (premises : stateRel source target (sptListInsert names live) ∧
+      DataSem.getVars names source.locals = some values) :
+    DataSem.getVars names target.locals = some values := by
+  rw [← stateRel_getVars_listInsert source target names live premises.1]
+  exact premises.2
 
 /-- Writing the same value to both states restores agreement on the written
 name and retains agreement on the other live names. -/

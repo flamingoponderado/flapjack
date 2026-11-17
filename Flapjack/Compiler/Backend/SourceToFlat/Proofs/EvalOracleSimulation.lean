@@ -498,7 +498,9 @@ theorem declareEnv_storeEnvId {C F : Type} [Nonempty C]
       let stored : FlatSem.Value := .conv none
         [.litv (.intLit (gen.generation : Int)), .litv (.intLit (gen.next : Int))]
       refine ⟨stored, ?_, ?_, ⟨globals, globalEq⟩, ?_, forward⟩
-      · simpa [stored, refsEq] using evaluateStoreEnvId flat gen.generation gen.next globals old refs globalEq refsEq
+      · simp [FlatSem.evaluateDecs, FlatSem.evaluate, storeEnvId, envIdTuple, FlatSem.fixClock,
+          FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppFlat, FlatSem.doAppNumeric,
+          FlatSem.doAppMemory, storeAssign, storeValueSameType, FlatSem.unitValue, globalEq, refsEq, stored]
       · exact factoredInvariant_declareEnv interp transform gen genv idxs source flat state env storedEnvs
           sourceState found valid map
       · dsimp [stored, natToValue]

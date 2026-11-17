@@ -119,7 +119,14 @@ theorem doEval_install {C F : Type} (source : FlatSem.State C F) (target : ClosS
       refine ⟨decs, compileDecs decs, nextConfig, advanced, ?_, ?_, ?_, safeDecs,
         ⟨bytesValue, wordsValue, rfl⟩, fun _ => rfl⟩
       · rw [configEq]
-        exact stateRel_shiftInstall states 1
+        rcases states with ⟨maxApp, ffi, clock, store, globals, values, install⟩
+        rcases install with ⟨safe, oracleEq, compileEq⟩
+        refine ⟨maxApp, ffi, clock, store, globals, values, ?_, ?_, compileEq⟩
+        · intro index
+          exact safe (index + 1)
+        · dsimp [advanced]
+          rw [oracleEq]
+          rfl
       · simp [valueEq]
       · have emptyUpdate : target.code.updateListEq [] = target.code := by
           cases target.code

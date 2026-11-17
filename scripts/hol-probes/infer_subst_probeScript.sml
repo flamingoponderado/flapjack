@@ -13,3 +13,4 @@ val _ = show "infer_type_subst_def_typed" inferTheory.infer_type_subst_def;
 val _ = show "infer_deBruijn_subst_def_typed" inferTheory.infer_deBruijn_subst_def;
 val _ = show "inf_env_axiom_typed" inferTheory.inf_env_Axiom;
 val _ = show "init_config_def_typed" inferTheory.init_config_def;
+val _ = show "infer_deBruijn_subst_alt_typed" inferTheory.infer_deBruijn_subst_alt;

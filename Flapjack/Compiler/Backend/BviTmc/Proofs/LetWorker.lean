@@ -58,7 +58,7 @@ theorem evaluate_let_worker {C F : Type} (bindings : List Bvi.Exp) (body : Bvi.E
         rw [BviSem.evaluate, BviSem.fixClock_evaluate, bindingsRun] at run
         obtain ⟨rfl, rfl⟩ := run.symm
         refine ⟨.err error', g, middleTarget, ?_, related, middleStates, extension, fresh,
-          holesUnchanged_subset f target.refs middleTarget.refs ∅ {holePtr} unchanged (by simp), still, ?_⟩
+          holesUnchanged_subset f target.refs middleTarget.refs ∅ {holePtr} ⟨unchanged, by simp⟩, still, ?_⟩
         · simp only [rewriteWorkerSource]
           rw [BviSem.evaluate, BviSem.fixClock_evaluate, targetRun]
         · intro _ impossible; cases impossible
@@ -70,13 +70,13 @@ theorem evaluate_let_worker {C F : Type} (bindings : List Bvi.Exp) (body : Bvi.E
         rw [BviSem.evaluate, BviSem.fixClock_evaluate, bindingsRun] at run
         have nextHole : holeHasVal g env1 env2 middleTarget.refs c := by
           obtain ⟨length, ptr, tag, finalised, left, right, ptrEq, idxEq, small, ptrOutside, found⟩ := hole
-          obtain ⟨nextFinal, nextChild, nextFound, sameChild⟩ := unchanged ptr tag finalised left c right ptrOutside found
+          obtain ⟨nextFinal, nextChild, nextFound, sameChild⟩ := unchanged ptr tag finalised left c right ⟨ptrOutside, found⟩
           have childEq : c = nextChild := sameChild (by simp)
           have allocated : ptr ∈ target.refs.domain := by simp [HolFiniteMapExact.domain, found]
-          have nextOutside := nonFresh_not_in_range f g target.refs ptr allocated ptrOutside fresh
+          have nextOutside := nonFresh_not_in_range f g target.refs ptr ⟨allocated, ptrOutside, fresh⟩
           exact ⟨length, ptr, tag, nextFinal, left, right, ptrEq, idxEq, small, nextOutside, by simpa [childEq] using nextFound⟩
-        have nextNotFinal : holeNotFinalised middleTarget.refs holePtr := still holePtr outside notFinal
-        have extendedHole := holeHasVal_append g env1 env2 middleTarget.refs c values values' nextHole valuesRelated
+        have nextNotFinal : holeNotFinalised middleTarget.refs holePtr := still holePtr ⟨outside, notFinal⟩
+        have extendedHole := holeHasVal_append g env1 env2 middleTarget.refs c values values' ⟨nextHole, valuesRelated⟩
         have valueLength := evaluate_length bindings env1 source middle values bindingsRun
         have lengthEq := valuesRelated.length_eq
         have bound : env1.length < env2.length := by have := envRel_length_opt f env1 env2 environments; omega
@@ -86,31 +86,31 @@ theorem evaluate_let_worker {C F : Type} (bindings : List Bvi.Exp) (body : Bvi.E
           rw [holEl_eq_getElem _ _ bound] at pointer
           rw [holEl_eq_getElem _ _ extendedBound]
           simpa [List.length_append, lengthEq, List.getElem_append_right] using pointer
-        have nextCode := WrapperCases.evaluate_pres_opt_code loc locOpt source middle target middleTarget
-          bindings env1 env2 (.val values) (.val values') code bindingsRun targetRun
+        have nextCode := WrapperCases.evaluate_pres_opt_code loc locOpt source target
+          bindings env1 env2 (.val values) middle (.val values') middleTarget ⟨code, bindingsRun, targetRun⟩
         obtain ⟨workResult, h, workState, workRun, workRel, states, bodyExtension,
           bodyFresh, bodyUnchanged, bodyStill, filled⟩ :=
           bodyIH values values' middle g middleTarget bindingsRun run
-            (envRel_append true g env1 env2 values values' (envRel_submap true f g env1 env2 environments extension) valuesRelated)
+            (envRel_append true g env1 env2 values values' ⟨envRel_submap true f g env1 env2 ⟨environments, extension⟩, valuesRelated⟩)
             middleStates extendedHole nextNotFinal extendedPointer nextCode
         have submap : f.submap h := by
           intro k v found; exact bodyExtension k v (extension k v found)
-        have domain := BviProps.evaluate_refs_subset bindings env2 target middleTarget (.val values') targetRun
-        have allFresh := onlyFresh_trans f g h target.refs middleTarget.refs fresh bodyFresh domain
-        have widened := holesUnchanged_subset f target.refs middleTarget.refs ∅ {holePtr} unchanged (by simp)
+        have domain := BviTmc.evaluate_refs_subset bindings env2 target (.val values') middleTarget targetRun
+        have allFresh := onlyFresh_trans f g h target.refs middleTarget.refs ⟨fresh, bodyFresh, domain⟩
+        have widened := holesUnchanged_subset f target.refs middleTarget.refs ∅ {holePtr} ⟨unchanged, by simp⟩
         have allUnchanged := holesUnchanged_trans f g target.refs middleTarget.refs workState.refs {holePtr}
-          widened bodyUnchanged fresh extension
+          ⟨widened, bodyUnchanged, fresh, extension⟩
         have allStill := holesStill_trans f g target.refs middleTarget.refs workState.refs ()
-          still bodyStill fresh extension
+          ⟨still, bodyStill, fresh, extension⟩
         refine ⟨workResult, h, workState, ?_, workRel, states, submap, allFresh, allUnchanged, allStill, ?_⟩
         · simp only [rewriteWorkerSource]
           rw [BviSem.evaluate, BviSem.fixClock_evaluate, targetRun]
           simpa [List.length_append, valueLength, Nat.add_comm, Nat.add_assoc] using workRun
         · intro resValue success
           obtain ⟨resValue', block, filledHole⟩ := filled resValue success
-          have baseHole := holeHasVal_unappend g values values' env1 env2 workState.refs resValue' filledHole valuesRelated
-          refine ⟨resValue', ?_, holeHasVal_submap f g env1 env2 workState.refs resValue' baseHole extension⟩
+          have baseHole := holeHasVal_unappend g values values' env1 env2 workState.refs resValue' ⟨filledHole, valuesRelated⟩
+          refine ⟨resValue', ?_, holeHasVal_submap f g env1 env2 workState.refs resValue' ⟨baseHole, extension⟩⟩
           exact mutableBlockRel_old_subset h middleTarget.refs (workState.refs.eraseEq holePtr)
-            resValue resValue' target.refs block domain
+            resValue resValue' target.refs ⟨block, domain⟩
 
 end Flapjack.Compiler.Backend.BviTmc.LetWorker

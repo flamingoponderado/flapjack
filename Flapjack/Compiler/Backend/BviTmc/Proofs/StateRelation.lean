@@ -2,6 +2,9 @@ module
 
 public import Flapjack.Compiler.Backend.BviTmc.Proofs.HeapRelation
 public import Flapjack.Compiler.Backend.Semantics.BviSem.State
+public import Flapjack.Compiler.Backend.Semantics.BviSem.Apply
+public import Flapjack.Compiler.Backend.Semantics.BviProps.ApplyRefs
+public import Flapjack.Compiler.Backend.Semantics.BviProps.EvaluateRefs
 public import Flapjack.Compiler.Backend.BackendProps.StateCompiler
 
 @[expose] public section
@@ -15,11 +18,66 @@ theorem holFmapAsFiniteSupportRelationWitness_BviState {C F : Type} :
       (∀ s : BviState C F, BviState.ofBroad s.toBroad = s) :=
   BviSem.holFmapAsFiniteSupportWitness
 
-/-- The source state relation tracks pointer renaming, code, namespaces,
-and future compilation obligations.
+/-- Copying a BVL reference update back to its originating BVI state updates
+the same references in that BVI state. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "bvl_to_bvi_refs"
+  (fmap_as_finite_support_relation := [BviState.refs, r])]
+theorem bvlToBvi_refs {C F : Type} (s : BviState C F)
+    (r : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)) :
+    BviSem.fromBvl { BviSem.toBvl s with refs := r } s = { s with refs := r } := by
+  cases s
+  rfl
 
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "state_rel_def" (fmap_as_finite_support_relation := [BviState.refs, f])] -/
+namespace BvlReferenceProjection
+theorem holFmapAsFiniteSupportRelationWitness_BvlSem.State {C F : Type} :
+    (∀ s : BvlSem.StateBroad C F, (BvlSem.State.ofBroad s).toBroad = s) ∧
+      (∀ s : BvlSem.State C F, BvlSem.State.ofBroad s.toBroad = s) :=
+  BvlSem.holFmapAsFiniteSupportWitness
+end BvlReferenceProjection
+
+/-- Copying BVL fields into a BVI state takes references from the BVL state. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "bvi_to_bvl_refs"
+  (fmap_as_finite_support_relation := [BvlSem.State.refs, BviState.refs])]
+theorem bviToBvl_refs {C F : Type} (s : BvlSem.State C F) (t : BviState C F) :
+    (BviSem.fromBvl s t).refs = s.refs := by
+  rfl
+
+/-- Successful finalisation retains every previously allocated reference. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "finalise_cons_refs_SUBSET"
+  (fmap_as_finite_support_relation := [refs, rest])]
+theorem finaliseCons_refs_subset (value : BvlSem.Value)
+    (refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)) (result : BvlSem.Value)
+    (rest : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value))
+    (run : BviSem.finaliseCons value refs = some (result, rest)) : refs.domain ⊆ rest.domain := by
+  intro key present
+  exact (BviSem.finaliseCons_domain value result refs rest run key).1 present
+
+/-- Successful primitive application preserves the reference domain. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_refs_SUBSET"
+  (fmap_as_finite_support_relation := [BviState.refs])]
+theorem doApp_refs_subset {C F : Type} (op : ClosLang.Op) (args : List BvlSem.Value)
+    (source : BviState C F) (value : BvlSem.Value) (target : BviState C F)
+    (run : BviSem.doApp op args source = .val (value, target)) :
+    source.refs.domain ⊆ target.refs.domain := by
+  intro key present
+  exact BviProps.doApp_refs_mono op args source target value run key present
+
+/-- Every BVI evaluation preserves the reference domain. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_refs_SUBSET"
+  (fmap_as_finite_support_relation := [BviState.refs])]
+theorem evaluate_refs_subset {C F : Type} (expressions : List Bvi.Exp) (env : List BvlSem.Value)
+    (source : BviState C F) (result : BviResult) (target : BviState C F)
+    (run : BviSem.evaluate expressions env source = (result, target)) :
+    source.refs.domain ⊆ target.refs.domain := by
+  have growth := BviProps.evaluate_refs_mono expressions env source
+  have preserved : BviProps.refsGrowth source target := by simpa [run] using growth
+  intro key present
+  exact preserved key present
+
+/-- The source state relation tracks pointer renaming, code, namespaces,
+and future compilation obligations. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "state_rel_def"
+  (fmap_as_finite_support_relation := [BviState.refs, f])]
 def stateRel {C F : Type} (f : HolFiniteMapExact Nat Nat)
     (source : BviState (Nat × C) F) (target : BviState C F) : Prop :=
   stateRefRel f source.refs target.refs ∧
@@ -37,45 +95,51 @@ def stateRel {C F : Type} (f : HolFiniteMapExact Nat Nat)
   (∀ n, sptMem n target.code ∧ inWorkerNamespace n → n < (source.compileOracle 0).1.1) ∧
   fmapInj f
 
-/-- Clock replacement preserves the state relation.
+/-- Related states have the same clock and FFI state. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "state_rel_const"
+  (fmap_as_finite_support_relation := [BviState.refs, f])]
+theorem stateRel_const {C F : Type} (f : HolFiniteMapExact Nat Nat)
+    (source : BviState (Nat × C) F) (target : BviState C F)
+    (related : stateRel f source target) :
+    target.clock = source.clock ∧ target.ffi = source.ffi :=
+  ⟨related.2.1, related.2.2.2.1⟩
 
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "state_rel_with_clock" (fmap_as_finite_support_relation := [BviState.refs, f])] -/
+/-- Clock replacement preserves the state relation. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "state_rel_with_clock"
+  (fmap_as_finite_support_relation := [BviState.refs, f])]
 theorem stateRel_with_clock {C F : Type} (n : Nat) (f : HolFiniteMapExact Nat Nat)
     (source : BviState (Nat × C) F) (target : BviState C F) (related : stateRel f source target) :
     stateRel f { source with clock := n } { target with clock := n } := by
   exact ⟨related.1, rfl, related.2.2⟩
 
 /-- Equal clock decrements preserve the state relation under the source
-clock side conditions.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "state_rel_dec" (fmap_as_finite_support_relation := [BviState.refs, f])] -/
+clock side conditions. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "state_rel_dec"
+  (fmap_as_finite_support_relation := [BviState.refs, f])]
 theorem stateRel_dec {C F : Type} (n t : Nat) (f : HolFiniteMapExact Nat Nat)
     (source : BviState (Nat × C) F) (target : BviState C F)
-    (related : stateRel f source target) (sourceClock : source.clock = n + 1)
-    (targetClock : target.clock = n + 1) (_bound : t ≤ n + 1) :
+    (h : stateRel f source target ∧ source.clock = n + 1 ∧
+      target.clock = n + 1 ∧ t ≤ n + 1) :
     stateRel f (BviSem.decClock t source) (BviSem.decClock t target) := by
+  obtain ⟨related, sourceClock, targetClock, _bound⟩ := h
   simpa [BviSem.decClock, sourceClock, targetClock] using stateRel_with_clock (n + 1 - t) f source target related
 
-/-- The state relation contains the original code relation.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "state_rel_code_rel" (fmap_as_finite_support_relation := [BviState.refs, f])] -/
+/-- The state relation contains the code relation. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "state_rel_code_rel"
+  (fmap_as_finite_support_relation := [BviState.refs, f])]
 theorem stateRel_codeRel {C F : Type} (f : HolFiniteMapExact Nat Nat)
     (source : BviState (Nat × C) F) (target : BviState C F) (related : stateRel f source target) :
     codeRel source.code target.code := related.2.2.2.2.2.2.1
 
 /-- Updating a target reference outside the pointer-map range preserves the
-state relation.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "state_rel_filled" (fmap_as_finite_support_relation := [BviState.refs, f])] -/
+state relation. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "state_rel_filled"
+  (fmap_as_finite_support_relation := [BviState.refs, f])]
 theorem stateRel_filled {C F : Type} (f : HolFiniteMapExact Nat Nat)
     (source : BviState (Nat × C) F) (target : BviState C F) (key : Nat) (value : BvlSem.Ref BvlSem.Value)
-    (related : stateRel f source target) (fresh : ∀ i, f.lookup i ≠ some key) :
+    (h : stateRel f source target ∧ ¬ ∃ i, f.lookup i = some key) :
     stateRel f source { target with refs := target.refs.updateEq (key, value) } := by
-  exact ⟨stateRefRel_filled f source.refs target.refs key value related.1 fresh, related.2⟩
+  exact ⟨stateRefRel_filled f source.refs target.refs key value ⟨h.1.1, h.2⟩, h.1.2⟩
 
 /-- Flapjack installation helper: disjoint source and transformed code can be
 installed together while both compiler oracles advance. -/

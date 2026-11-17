@@ -384,6 +384,20 @@ representation statement only: it does not authorize changed quantifiers,
 hypotheses, conclusions, `BEq` side conditions, or word-model differences, and
 every tagged declaration still needs its own statement/side-condition review.
 
+**Qualify the unification relation's tuple map.** The narrow
+`(fmap_as_finite_support_tuple := [component_1])` qualifier is restricted to
+`WF_uR` and the `uRWellFounded` theorem in the unification counterpart. It
+records the canonical finite map in the first component of the shared
+three-component relation domain, on both operands. It cannot combine with
+another representation qualifier. The source, elaborated attribute and export
+audits require the reviewed `uR`/`uREq` owner and metadata, exact relation and
+theorem types and bodies, and unconditional bidirectional tuple codec witnesses
+preserving the map and both term slots. Use status
+`reviewed_fmap_as_finite_support_tuple` only after independent source review.
+These checks do not establish cross-language equivalence or authorize changes
+to the relation or theorem. The existing value-context tuple case remains
+separately restricted and requires its word qualifier.
+
 **Qualify finite maps nested in a function type.** For a HOL type abbreviation
 whose function argument and optional result are products containing `|->` maps,
 use `(fmap_as_finite_support_function := [argument_N, result_M])` with one-based
@@ -396,6 +410,60 @@ the two positions and the source comparison in the manifest; use status
 with the other finite-map qualifiers. Its syntactic checker and Lean witness
 do not prove HOL-to-Lean equivalence; review the entire function domain,
 codomain, and surrounding word/set carriers against HOL before tagging.
+
+**Qualify generalization's map input and tuple result.** The narrow
+`(fmap_as_finite_support_parameter_tuple_result :=
+  (map_parameter := subst) (result_component := component_2))` qualifier is
+reserved for `generaliseMap` and `generaliseListMap` in the inference
+generalization counterpart of `infer$generalise_def`. Their post-mutual
+`attribute [hol ...]` command attaches the shared HOL reference to exactly
+those two definitions; declaration-site attributes also reach Lean's
+generated mutual helper and are rejected. The source checker pins the complete
+mutual bodies and witnesses, the elaborated export audits their types, owners
+and axiom closures, and the theorem map records the same positions under
+`reviewed_fmap_as_finite_support_parameter_tuple_result`. This qualifier
+permits only the canonical finite-support translation of the HOL finite-map
+input and returned map; it does not authorize other statement or behavior
+differences. Review the typed HOL source and both witnesses independently.
+
+**Qualify generalization length's map observations.** The narrow
+`(fmap_as_finite_support_parameter_tuple_observations :=
+  (map_parameters := [subst, out])
+  (map_producer := Flapjack.Compiler.Inference.Infer.Generalise.generaliseListMap)
+  (result_component := component_2))` qualifier is reserved for
+`generaliseListLength`, the counterpart of `generalise_list_length`. The
+theorem's two map binders use the canonical finite-support translation, and
+the observed tuple map is the separately reviewed producer's second component.
+The source checker validates the complete theorem and unconditional codec
+witnesses, the exporter audits their elaborated types, owners, axiom closures,
+and the producer bundle, and the manifest uses
+`reviewed_fmap_as_finite_support_parameter_tuple_observations`. These checks
+do not replace comparison with the typed HOL statement, and the qualifier
+permits no other change to its statement or semantics.
+
+**Qualify independently quantified maps in substitution submap.** The narrow
+`(fmap_as_finite_support_conjunct_universals :=
+  [type_s1, type_s2, list_s1, list_s2])` qualifier applies only to
+`inferSubstSubmap`, the counterpart of `infer_subst_submap`. It names the two
+canonical finite maps independently quantified in each HOL conjunct; it does
+not identify maps across conjuncts. The same-module unconditional codec witness
+applies to each map. The source gate checks the complete statement, fixed
+producer, variable-set and domain/submap definitions; the elaborated audit checks both
+quantifier groups, all premises and conclusions, carrier and operation owners,
+references, witness and axiom closure. Record the identical ordered list with
+status `reviewed_fmap_as_finite_support_conjunct_universals`. These checks do
+not establish HOL-to-Lean equivalence or permit other statement differences;
+compare the typed HOL statement independently.
+
+For `substInferSubstSwap` (`subst_infer_subst_swap`), the same qualifier uses
+the distinct ordered occurrences `[type_s, list_s]`, one finite map in each
+conjunct. Its same-module unconditional codec witness has `Nat` keys and
+`InferT` values. The source gate pins the complete statement and reviewed
+substitution and guarded-walk dependencies; the elaborated audit checks both
+groups, the original well-formedness premises, full conclusions, references,
+owners, witness and axiom closure. Record the exact list under the same
+reviewed status. The qualifier permits no other difference and does not replace
+independent comparison with the typed HOL theorem.
 
 **Qualify a heterogeneous finite-map function.** Use
 `(fmap_as_finite_support_heterogeneous_function := [argument_N, result_M])`
@@ -486,6 +554,20 @@ codec bodies, witness type, axiom closure and elaborated simulation shapes.
 These gates do not replace source review or authorize any other carrier,
 premise, result, evaluator, or semantic difference. Record the inherited
 real-model assumption separately when it applies.
+
+**Qualify the TMC hypothesis's body-bound map.** The narrow
+`(fmap_as_finite_support_universals := [f])` qualifier is restricted to
+`hypothesis_def` and its exact `Induction.hypothesis` counterpart. It requires
+`(fmap_as_finite_support_relation := [BviState.refs])` and
+`(fmap_as_finite_support_existentials := [nextMap, wrapMap, workMap])`, with
+no other representation qualifiers. Record these exact ordered lists and
+`reviewed_fmap_as_finite_support_relation_existentials_universals` after
+comparing the complete typed HOL definition. The source checker validates
+the map binders and local codec witnesses; the attribute and export additionally
+audit the checked definition, map-binder scopes, witness types, owners, codec
+bodies and axiom closure. These checks do not establish HOL correspondence or
+authorize other semantic differences. Record inherited real-model assumptions
+separately. The qualifier does not cover `evaluate_cb` or any other declaration.
 
 **Qualify observations of computed finite-map results.** Use
 `(fmap_as_finite_support_result_observations := [Producer, ...])` only

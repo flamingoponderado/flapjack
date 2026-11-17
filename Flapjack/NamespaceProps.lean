@@ -63,6 +63,24 @@ section
 
 noncomputable local instance (α : Type) : DecidableEq α := Classical.typeDecidableEq α
 
+/-- Adding a binding preserves `nsAll` when the new entry satisfies it. -/
+@[hol "cakeml/semantics/proofs/namespacePropsScript.sml" "nsAll_nsBind"]
+theorem nsAll_nsBind {M N V : Type} (P : Ident M N → V → Prop)
+    (x : N) (v : V) (e : Namespace M N V)
+    (h : P (.short x) v ∧ nsAll P e) : nsAll P (nsBind x v e) := by
+  intro id value found
+  by_cases same : id = .short x
+  · subst id
+    have valueEq : value = v := by
+      have first := nsLookup_nsBind.1 x v e
+      rw [first] at found
+      exact Option.some.inj found.symm
+    subst value
+    exact h.1
+  · apply h.2 id value
+    rw [nsLookup_nsBind.2 id x v e same] at found
+    exact found
+
 /-- Appending namespaces preserves a predicate that holds in each one. -/
 @[hol "cakeml/semantics/proofs/namespacePropsScript.sml" "nsAll_nsAppend"]
 theorem nsAll_nsAppend {M N V : Type} (f : Ident M N → V → Prop)

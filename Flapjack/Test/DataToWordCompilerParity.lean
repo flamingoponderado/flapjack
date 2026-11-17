@@ -455,6 +455,7 @@ example : compileControl? (width := 64) conf 5 2 (.assign 3 (.blockOp (.tagLenEq
 example : compileControl? (width := 64) conf 5 2 (.assign 3 (.blockOp (.tagLenEq 1152921504606846976 0)) [1] none) =
     some (.assign 8 (.const 2), 2) := by rfl
 
+set_option maxRecDepth 2048 in
 example : compileControl? (width := 64) conf 5 2 (.assign 3 (.blockOp (.tagLenEq 0 1)) [1] none) =
     some (.seq (.assign 1 (.op .and [.var 4, .const 15]))
       (.ite .equal 1 (.imm 3) (.assign 8 (.const 18)) (.assign 8 (.const 2))), 2) := by rfl

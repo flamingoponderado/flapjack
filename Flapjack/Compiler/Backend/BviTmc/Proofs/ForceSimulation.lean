@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.BviTmc.Proofs.ClockHypothesis
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.CallRelation
 public import Flapjack.Compiler.Backend.BviTmc.Proofs.ThunkRelation
 
 @[expose] public section
@@ -49,8 +50,8 @@ theorem evaluate_force_core {C F : Type} (location index : Nat)
   have targetAt : env2[index]? = some (holEl index env2) := by
     apply List.getElem?_eq_some_iff.mpr
     exact ⟨targetBound, (holEl_eq_getElem index env2 targetBound).symm⟩
-  have thunkValues := envRel_el opt f env1 env2 index environments bound
-  have thunkRelated := destThunk_rel opt f env1 env2 source target index environments states bound
+  have thunkValues := envRel_el opt f env1 env2 index ⟨environments, bound⟩
+  have thunkRelated := destThunk_rel opt f env1 env2 source target index ⟨environments, states, bound⟩
   simp only [destThunkRetRel] at thunkRelated
   rcases thunkRelated with ⟨sourceBad, targetBad⟩ | ⟨sourceBad, targetBad⟩ |
     ⟨mode, targetMode, value, value', sourceThunk, targetThunk, rfl, valuesRelated⟩
@@ -76,7 +77,7 @@ theorem evaluate_force_core {C F : Type} (location index : Nat)
         have values : List.Forall₂ (valueRel f) [holEl index env1, value] [holEl index env2, value'] :=
           .cons thunkValues (.cons valuesRelated .nil)
         obtain ⟨safe, args', body', loc', targetFound, argsRel, _, changed⟩ :=
-          findCode_rel f _ _ source target (some location) args body sourceFound values states
+          findCode_rel f _ _ source target (some location) args body ⟨sourceFound, values, states⟩
         by_cases zero : source.clock = 0
         · have targetZero : target.clock = 0 := by simpa [states.2.1] using zero
           simp [BviSem.evaluate, sourceAt, sourceThunk, sourceFound, zero] at run
@@ -153,8 +154,8 @@ theorem evaluate_force_from_clock {C F : Type} (loc location index : Nat)
     have optEnv : envRel true f env1 env2 := by simpa [optTrue] using environments
     obtain ⟨next, g, targetResult, targetRun, related, nextStates, extension, fresh, unchanged, still⟩ := core
     obtain ⟨fillResult, fillMap, fillState, fillRun, rel, state, ext, only, unch, rest, filled⟩ :=
-      FillHole.evaluate_fill_hole (.force location index) f g env1 env2 source final target next result targetResult c ptr
-        run targetRun optEnv states extension related hole notFinal unchanged still fresh nextStates pointer
+      FillHole.evaluate_fill_hole ptr (.force location index) f g env1 env2 source final target next result targetResult c
+        ⟨run, targetRun, optEnv, states, extension, related, hole, notFinal, unchanged, still, fresh, nextStates, pointer⟩
     simpa only [rewriteWorkerSource] using
       (show IfWorker.WorkerCore (fillHoleSource env1.length (env1.length + 1) (.force location index))
         env1 env2 f target ptr result final from ⟨fillResult, fillMap, fillState, fillRun, rel, state, ext, only, unch, rest, filled⟩)

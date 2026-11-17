@@ -16,20 +16,6 @@ public import Lean.Elab.Tactic.Omega
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs
 open Flapjack.SemanticPrimitivesHOL Flapjack.SemanticPrimitivesProps Flapjack.AstHOL
 
-/-- Flapjack proof infrastructure: adding a generation preserves existing environment lookups. -/
-private theorem generationForward (oracle : EvalOracleState) (recording : EvalOracleFun) :
-    envStoreForward oracle (addEnvGeneration { oracle with oracle := recording }) := by
-  constructor
-  · simp [addEnvGeneration]
-  · intro id env found
-    rcases id with ⟨g, i⟩
-    simp only [lookupEnv] at found ⊢
-    cases h : oracle.envs[g]? with
-    | none => simp [h] at found
-    | some entry =>
-      have bound : g < oracle.envs.length := List.getElem?_eq_some_iff.mp h |>.choose
-      simpa [addEnvGeneration, List.getElem?_append, bound, h] using found
-
 /-- Dynamic evaluation preserves related states and restores the caller generation. -/
 @[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "do_eval_sim"]
 theorem doEval_sim {Config F : Type} (xs : List Value) (s : State F) (env : SemEnv Value)
@@ -101,7 +87,17 @@ theorem doEval_sim {Config F : Type} (xs : List Value) (s : State F) (env : SemE
                         else if j = (oracle.oracle 0).1.1 + 1 then (id, second, decodedDecs)
                         else oracle.oracle j
                       let updated := addEnvGeneration { oracle with oracle := recording }
-                      have forward : envStoreForward oracle updated := generationForward oracle recording
+                      have forward : envStoreForward oracle updated := by
+                        constructor
+                        · simp [updated, addEnvGeneration]
+                        · intro id env found
+                          rcases id with ⟨g, i⟩
+                          simp only [lookupEnv] at found ⊢
+                          cases h : oracle.envs[g]? with
+                          | none => simp [h] at found
+                          | some entry =>
+                            have bound : g < oracle.envs.length := List.getElem?_eq_some_iff.mp h |>.choose
+                            simpa [updated, addEnvGeneration, List.getElem?_append, bound, h] using found
                       refine ⟨targetEnv, some (.evalOracle updated), forward, ?_, ?_, ?_, ?_⟩
                       · have dec' : vFunAbs ci.decsDom ci.decsV third = some decodedDecs := by
                           simpa [decoder] using decDecoded

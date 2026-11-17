@@ -36,7 +36,18 @@ private theorem evaluate_singleton_simulation {C F : Type}
     exprIH₀ expression' s' h1 h2 env' names' values' target' states' environments' safe' notError'
   intro env names values target states environments safe notError
   cases expression with
-  | lit trace literal => exact evaluate_lit env names values source target trace literal states
+  | lit trace literal =>
+    cases literal <;>
+      simp [EvalSim, compile, compileExps, compileExp, compileLit, FlatSem.evaluate,
+        ClosSem.evaluate, ClosSem.fixClock, ClosSem.doApp, ClosSem.applyNumeric,
+        ClosSem.doIntApp, ClosSem.applyBlock, ClosSem.makeConst, states]
+    all_goals first
+      | exact EvalResultRel.value (.cons (ValueRel.int _) .nil)
+      | exact EvalResultRel.value (.cons (ValueRel.char _) .nil)
+      | exact EvalResultRel.value (.cons (ValueRel.string _) .nil)
+      | exact EvalResultRel.value (.cons (ValueRel.word8 _) .nil)
+      | exact EvalResultRel.value (.cons (ValueRel.word64 _) .nil)
+      | exact EvalResultRel.value (.cons (ValueRel.float64 _) .nil)
   | varLocal trace name =>
     cases found : env.v.lookup name with
     | none => simp [FlatSem.evaluate, found] at notError

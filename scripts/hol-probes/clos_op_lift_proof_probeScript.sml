@@ -11,6 +11,11 @@ val evaluate_make_bool_replay = Q.prove (
   `∀b. evaluate ([MakeBool b],vs,s) = (Rval [Boolv b],s)`,
   Cases \\ EVAL_TAC);
 val _ = show "evaluate_make_bool_replay_typed" evaluate_make_bool_replay;
+val list_split3_replay = Q.prove (
+  `∀P. P [] ∧ (∀x y z zs. P (x::y::z::zs)) ∧ (∀x. P [x]) ∧ (∀x y. P [x;y]) ⇒
+       ∀xs. P xs`,
+  rw[] \\ Cases_on `xs` \\ fs [] \\ Cases_on `t` \\ fs [] \\ Cases_on `t'` \\ fs []);
+val _ = show "list_split3_replay_typed" list_split3_replay;
 val _ = show "dont_lift_thm_typed" clos_opProofTheory.dont_lift_thm;
 val _ = show "dont_lift_pure_typed" clos_opProofTheory.dont_lift_pure;
 val _ = show "lift_acc_typed" clos_opProofTheory.lift_exps_acc;

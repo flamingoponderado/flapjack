@@ -1,0 +1,87 @@
+module
+
+public import Flapjack.Compiler.Inference.EnvRel
+public import Flapjack.TypeSystemHOL.TypeNames
+public import Flapjack.FiniteMap.AlistExact
+public import Flapjack.TypeSysProps.Freevars
+
+@[expose] public section
+
+/-! Conversion of named type substitutions. -/
+namespace Flapjack.Compiler.Inference.EnvRel
+open Flapjack.TypeSystemHOL Flapjack.Basis.Pure.MlString Flapjack.TypeSysProps
+
+/-- Zipping names with mapped values maps the result of first-match lookup. -/
+private theorem lookupZipMap (names : List MlString) (values : List InferT)
+    (key : MlString) :
+    ((names.zip (values.map convertT)).lookup key) =
+      ((names.zip values).lookup key).map convertT := by
+  induction names generalizing values with
+  | nil => rfl
+  | cons name names ih =>
+    cases values with
+    | nil => rfl
+    | cons value values =>
+      by_cases h : key = name
+      · subst key; simp
+      · have hb : (key == name) = false := by simp [h]
+        simpa [List.lookup, hb] using ih values
+
+
+mutual
+/-- Structural induction for conversion after named substitution. -/
+private theorem convertTSubstType (t : SemanticT) (names : List MlString)
+    (values : List InferT) (hlen : names.length = values.length)
+    (h : checkFreevars 0 names t = true) :
+    convertT (Infer.inferTypeSubst (names.zip values) t) =
+      typeSubst (HolFiniteMapExact.alistToFmap (names.zip (values.map convertT))) t := by
+  cases t with
+  | var name =>
+    have hmem : name ∈ names := by simpa [checkFreevars] using h
+    obtain ⟨value, found⟩ := Flapjack.Misc.lookupZipExists names values hlen name hmem
+    simp [Infer.inferTypeSubst, typeSubst, alistToFmapEqTypeSubstMap,
+      lookupTypeSubstMap, lookupZipMap, found]
+  | varDb n => simp [checkFreevars] at h
+  | app ts tc =>
+    have hl : checkFreevarsList 0 names ts = true := by simpa [checkFreevars] using h
+    simp [Infer.inferTypeSubst, typeSubst, convertT, convertTSubstList ts names values hlen hl]
+termination_by sizeOf t
+
+/-- List recursion for conversion after named substitution. -/
+private theorem convertTSubstList (ts : List SemanticT) (names : List MlString)
+    (values : List InferT) (hlen : names.length = values.length)
+    (h : checkFreevarsList 0 names ts = true) :
+    convertTList (Infer.inferTypeSubstList (names.zip values) ts) =
+      typeSubstList (HolFiniteMapExact.alistToFmap (names.zip (values.map convertT))) ts := by
+  cases ts with
+  | nil => simp [convertTList, Infer.inferTypeSubstList, typeSubstList]
+  | cons t ts =>
+    simp only [checkFreevarsList, Bool.and_eq_true] at h
+    simp [convertTList, Infer.inferTypeSubstList, typeSubstList,
+      convertTSubstType t names values hlen h.1, convertTSubstList ts names values hlen h.2]
+termination_by sizeOf ts
+end
+
+/-- Named substitution commutes with conversion on types and type lists. -/
+@[hol "cakeml/compiler/inference/proofs/envRelScript.sml" "convert_t_subst"
+  (fmap_as_finite_support_result_observations := [Flapjack.HolFiniteMapExact.alistToFmap])]
+theorem convertTSubst :
+    (∀ (t : SemanticT) (names : List MlString) (values : List InferT),
+      names.length = values.length ∧ checkFreevars 0 names t = true →
+      convertT (Infer.inferTypeSubst (names.zip values) t) =
+        typeSubst (HolFiniteMapExact.alistToFmap (names.zip (values.map convertT))) t) ∧
+    (∀ (ts : List SemanticT) (names : List MlString) (values : List InferT),
+      names.length = values.length ∧ (∀ t ∈ ts, checkFreevars 0 names t = true) →
+      (ts.map (Infer.inferTypeSubst (names.zip values))).map convertT =
+        ts.map (typeSubst (HolFiniteMapExact.alistToFmap (names.zip (values.map convertT))))) := by
+  constructor
+  · intro t names values h
+    exact convertTSubstType t names values h.1 h.2
+  · intro ts names values h
+    induction ts with
+    | nil => rfl
+    | cons t ts ih =>
+      simp only [List.mem_cons, forall_eq_or_imp] at h
+      simp [convertTSubstType t names values h.1 h.2.1, ih ⟨h.1, h.2.2⟩]
+
+end Flapjack.Compiler.Inference.EnvRel

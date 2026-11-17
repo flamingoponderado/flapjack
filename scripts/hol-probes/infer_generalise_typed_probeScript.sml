@@ -1,0 +1,27 @@
+(* Typed HOL source for inference generalization and substitution. *)
+load "preamble";
+load "inferTheory";
+load "inferPropsTheory";
+open HolKernel Parse boolLib bossLib;
+open preamble inferTheory;
+val _ = Globals.linewidth := 1000000;
+val _ = Globals.show_types := true;
+
+val _ = (print "generalise_type=";
+  print (type_to_string (type_of ``infer$generalise``)); print "\n");
+val _ = (print "generalise_list_type=";
+  print (type_to_string (type_of ``infer$generalise_list``)); print "\n");
+val _ = (print "generalise_def_typed=";
+  print_term (concl (DB.fetch "infer" "generalise_def")); print "\n");
+val _ = (print "generalise_list_length_typed=";
+  print_term (concl (DB.fetch "inferProps" "generalise_list_length")); print "\n");
+val _ = (print "infer_subst_type=";
+  print (type_to_string (type_of ``infer$infer_subst``)); print "\n");
+val _ = (print "infer_subst_def_typed=";
+  print_term (concl (DB.fetch "infer" "infer_subst_def")); print "\n");
+val _ = (print "infer_subst_submap_typed=";
+  print_term (concl (DB.fetch "inferProps" "infer_subst_submap")); print "\n");
+val _ = (print "infer_subst_FEMPTY_typed=";
+  print_term (concl (DB.fetch "inferProps" "infer_subst_FEMPTY")); print "\n");
+val _ = (print "subst_infer_subst_swap_typed=";
+  print_term (concl (DB.fetch "inferProps" "subst_infer_subst_swap")); print "\n");

@@ -87,15 +87,15 @@ theorem evaluate_cons_cons {C F : Type} (first second : Bvi.Exp) (rest : List Bv
           obtain ⟨last, h, tailTargetResult, tailTargetRun, tailRel, lastStates,
             secondExtension, secondFresh, secondUnchanged, secondStill⟩ :=
             tailIH tailResult middle g middleTarget ⟨headValue, headRun⟩ tailRun
-              (envRel_submap false f g env1 env2 environments firstExtension) middleStates tailSafe
+              (envRel_submap false f g env1 env2 ⟨environments, firstExtension⟩) middleStates tailSafe
           have extension : f.submap h := by
             intro key value found; exact secondExtension key value (firstExtension key value found)
-          have domain := BviProps.evaluate_refs_subset [first] env2 target middleTarget (.val [headValue']) headTargetRun
-          have fresh := onlyFresh_trans f g h target.refs middleTarget.refs firstFresh secondFresh domain
+          have domain := BviTmc.evaluate_refs_subset [first] env2 target (.val [headValue']) middleTarget headTargetRun
+          have fresh := onlyFresh_trans f g h target.refs middleTarget.refs ⟨firstFresh, secondFresh, domain⟩
           have unchanged := holesUnchanged_trans f g target.refs middleTarget.refs last.refs ∅
-            firstUnchanged secondUnchanged firstFresh firstExtension
+            ⟨firstUnchanged, secondUnchanged, firstFresh, firstExtension⟩
           have still := holesStill_trans f g target.refs middleTarget.refs last.refs ()
-            firstStill secondStill firstFresh firstExtension
+            ⟨firstStill, secondStill, firstFresh, firstExtension⟩
           cases tailResult with
           | err error =>
             cases tailTargetResult with
@@ -118,6 +118,6 @@ theorem evaluate_cons_cons {C F : Type} (first second : Bvi.Exp) (rest : List Bv
               · change BviSem.evaluateTuple (first :: second :: rest, env2, target) = _
                 rw [evaluateConsCons]
                 simp [BviSem.evaluateTuple, headTargetRun, tailTargetRun, Flapjack.holHd]
-              · exact List.Forall₂.cons (valueRel_submap g h _ _ headValueRel secondExtension) tailRel
+              · exact List.Forall₂.cons (valueRel_submap g _ _ h ⟨headValueRel, secondExtension⟩) tailRel
 
 end Flapjack.Compiler.Backend.BviTmc.ListSimulation

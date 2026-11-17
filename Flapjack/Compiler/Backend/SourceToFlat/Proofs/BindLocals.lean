@@ -41,18 +41,6 @@ theorem bindLocals_fold_nsBind {ModuleName : Type} (nm : MlString) (t : Tra)
       bindLocals (t :: ts) (nm :: locals) vMap := by
   rfl
 
-private theorem zipLocals_append {α : Type} (funs : List (MlString × α)) (trace : Tra)
-    (traces : List Tra) (locals : List MlString) :
-    List.zipWith (fun t x => (x, VarName.localName t x))
-        (List.replicate funs.length trace ++ traces) (funs.map Prod.fst ++ locals) =
-      (funs.map Prod.fst).map (fun name => (name, VarName.localName trace name)) ++
-        List.zipWith (fun t x => (x, VarName.localName t x)) traces locals := by
-  induction funs with
-  | nil => rfl
-  | cons pair rest ih =>
-    cases pair
-    simp [List.replicate_succ, ih, List.map_map]
-
 /-- Appending a namespace of uniformly traced function names is equivalent to
 adding those names and traces to the front of the local bindings. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "nsAppend_bind_locals"]
@@ -62,7 +50,16 @@ theorem nsAppend_bindLocals {ModuleName α : Type} (funs : List (MlString × α)
     nsAppend (alistToNs ((funs.map Prod.fst).map (fun name => (name, VarName.localName trace name))))
         (bindLocals traces locals compMap) =
       bindLocals (List.replicate funs.length trace ++ traces) (funs.map Prod.fst ++ locals) compMap := by
-  simp only [bindLocals, ← nsAppend_to_nsBindList, zipLocals_append]
+  simp only [bindLocals, ← nsAppend_to_nsBindList]
+  rw [List.zipWith_append (by simp)]
+  have same : List.zipWith (fun t x => (x, VarName.localName t x))
+      (List.replicate funs.length trace) (funs.map Prod.fst) =
+      (funs.map Prod.fst).map (fun name => (name, VarName.localName trace name)) := by
+    have tracesEq : List.replicate funs.length trace = funs.map (fun _ => trace) :=
+      List.map_const'.symm
+    rw [tracesEq, List.zipWith_map, List.zipWith_self]
+    simp only [List.map_map, Function.comp_def]
+  rw [same]
   cases compMap
   simp [nsAppend, alistToNs, List.append_assoc]
 

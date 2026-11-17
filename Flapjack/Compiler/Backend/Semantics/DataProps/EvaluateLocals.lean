@@ -53,7 +53,7 @@ private theorem localSimulation_seq {C F : Type} (first second : DataLang.Prog)
     (secondIH : LocalSimulation (C := C) (F := F) second) :
     LocalSimulation (C := C) (F := F) (.seq first second) := by
   intro source sourceNext result locals notType run included
-  rw [DataSem.evaluate, fixClock_evaluate] at run
+  rw [DataSem.evaluate, fixClockEvaluate] at run
   cases firstRun : DataSem.evaluate first source with
   | mk firstResult sourceMid =>
     rw [firstRun] at run
@@ -70,7 +70,7 @@ private theorem localSimulation_seq {C F : Type} (first second : DataLang.Prog)
             else { sourceNext with safeForSpace := safe2, peakHeapLength := peak2, stackMax := stack2 })
           { sourceMid with locals := midLocals } result peak1 second targetSecond
       refine ⟨out, safe3, peak3, stack3, ?_, finalIncluded⟩
-      rw [DataSem.evaluate, fixClock_evaluate, targetFirst]
+      rw [DataSem.evaluate, fixClockEvaluate, targetFirst]
       cases result <;> simpa using transported
     | some outcome =>
       have eqs : result = some outcome ∧ sourceNext = sourceMid := Prod.mk.inj run.symm
@@ -78,7 +78,7 @@ private theorem localSimulation_seq {C F : Type} (first second : DataLang.Prog)
       obtain ⟨out, safe, peak, stackMax, targetFirst, finalIncluded⟩ :=
         firstIH source sourceNext (some outcome) locals notType firstRun included
       refine ⟨out, safe, peak, stackMax, ?_, finalIncluded⟩
-      rw [DataSem.evaluate, fixClock_evaluate, targetFirst]
+      rw [DataSem.evaluate, fixClockEvaluate, targetFirst]
 
 private theorem localSimulation_all {C F : Type} (program : DataLang.Prog) :
     LocalSimulation (C := C) (F := F) program := by
@@ -103,7 +103,7 @@ private theorem localSimulation_all {C F : Type} (program : DataLang.Prog) :
           (DataSpace.simulationFor_tick (C := C) (F := F))
       | makeSpace amount names =>
         simpa [LocalSimulation, DataSpace.simulationFor, DataSpace.compile, DataSpace.space,
-          DataSpace.pMakeSpace, DataSem.evaluate_seq_skip] using
+          DataSpace.pMakeSpace, DataSimp.evaluate_Seq_Skip] using
           (DataSpace.simulationFor_makeSpace (C := C) (F := F) amount names)
       | raise name =>
         simpa [LocalSimulation, DataSpace.simulationFor, DataSpace.compile, DataSpace.space, DataSpace.pMakeSpace] using

@@ -81,7 +81,7 @@ theorem evaluate_if_worker {C F : Type} (condition yes no : Bvi.Exp)
         rw [BviSem.evaluate, BviSem.fixClock_evaluate, conditionRun] at run
         obtain ⟨rfl, rfl⟩ := run.symm
         refine ⟨.err error', g, middleTarget, ?_, related, middleStates, extension, fresh,
-          holesUnchanged_subset f target.refs middleTarget.refs ∅ {holePtr} unchanged (by simp), still, ?_⟩
+          holesUnchanged_subset f target.refs middleTarget.refs ∅ {holePtr} ⟨unchanged, by simp⟩, still, ?_⟩
         · simp only [rewriteWorkerSource]
           rw [BviSem.evaluate, BviSem.fixClock_evaluate, targetRun]
         · intro _ impossible; cases impossible
@@ -108,12 +108,12 @@ theorem evaluate_if_worker {C F : Type} (condition yes no : Bvi.Exp)
           have decoded' : asBool value' = some boolean := by rw [← boolEq, decoded]
           have nextHole : holeHasVal g env1 env2 middleTarget.refs c := by
             obtain ⟨length, ptr, tag, finalised, left, right, ptrEq, idxEq, small, ptrOutside, found⟩ := hole
-            obtain ⟨nextFinal, nextChild, nextFound, sameChild⟩ := unchanged ptr tag finalised left c right ptrOutside found
+            obtain ⟨nextFinal, nextChild, nextFound, sameChild⟩ := unchanged ptr tag finalised left c right ⟨ptrOutside, found⟩
             have childEq : c = nextChild := sameChild (by simp)
             have allocated : ptr ∈ target.refs.domain := by simp [HolFiniteMapExact.domain, found]
-            have nextOutside := nonFresh_not_in_range f g target.refs ptr allocated ptrOutside fresh
+            have nextOutside := nonFresh_not_in_range f g target.refs ptr ⟨allocated, ptrOutside, fresh⟩
             exact ⟨length, ptr, tag, nextFinal, left, right, ptrEq, idxEq, small, nextOutside, by simpa [childEq] using nextFound⟩
-          have nextNotFinal : holeNotFinalised middleTarget.refs holePtr := still holePtr outside notFinal
+          have nextNotFinal : holeNotFinalised middleTarget.refs holePtr := still holePtr ⟨outside, notFinal⟩
           let selected := if boolean then yes else no
           have branchSource : evaluate [selected] env1 middle = (result, final) := by
             cases boolean <;> simpa [selected, decoded] using run
@@ -121,18 +121,18 @@ theorem evaluate_if_worker {C F : Type} (condition yes no : Bvi.Exp)
           obtain ⟨workResult, h, workState, workRun, workRel, states, branchExtension,
             branchFresh, branchUnchanged, branchStill, filled⟩ :=
             branchIH selected middle g middleTarget ⟨.val [value], conditionRun⟩ branchMember branchSource
-              (envRel_submap true f g env1 env2 environments extension) middleStates nextHole nextNotFinal
-              (WrapperCases.evaluate_pres_opt_code loc locOpt source middle target middleTarget
-                [condition] env1 env2 (.val [value]) (.val [value']) code conditionRun targetRun)
+              (envRel_submap true f g env1 env2 ⟨environments, extension⟩) middleStates nextHole nextNotFinal
+              (WrapperCases.evaluate_pres_opt_code loc locOpt source target
+                [condition] env1 env2 (.val [value]) middle (.val [value']) middleTarget ⟨code, conditionRun, targetRun⟩)
           have submap : f.submap h := by
             intro k v found; exact branchExtension k v (extension k v found)
-          have domain := BviProps.evaluate_refs_subset [condition] env2 target middleTarget (.val [value']) targetRun
-          have allFresh := onlyFresh_trans f g h target.refs middleTarget.refs fresh branchFresh domain
-          have widened := holesUnchanged_subset f target.refs middleTarget.refs ∅ {holePtr} unchanged (by simp)
+          have domain := BviTmc.evaluate_refs_subset [condition] env2 target (.val [value']) middleTarget targetRun
+          have allFresh := onlyFresh_trans f g h target.refs middleTarget.refs ⟨fresh, branchFresh, domain⟩
+          have widened := holesUnchanged_subset f target.refs middleTarget.refs ∅ {holePtr} ⟨unchanged, by simp⟩
           have allUnchanged := holesUnchanged_trans f g target.refs middleTarget.refs workState.refs {holePtr}
-            widened branchUnchanged fresh extension
+            ⟨widened, branchUnchanged, fresh, extension⟩
           have allStill := holesStill_trans f g target.refs middleTarget.refs workState.refs ()
-            still branchStill fresh extension
+            ⟨still, branchStill, fresh, extension⟩
           refine ⟨workResult, h, workState, ?_, workRel, states, submap, allFresh, allUnchanged, allStill, ?_⟩
           · simp only [rewriteWorkerSource]
             rw [BviSem.evaluate, BviSem.fixClock_evaluate, targetRun]
@@ -143,8 +143,8 @@ theorem evaluate_if_worker {C F : Type} (condition yes no : Bvi.Exp)
             cases boolean <;> simpa [decoded', selected] using workRun
           · intro resValue success
             obtain ⟨resValue', block, filledHole⟩ := filled resValue success
-            refine ⟨resValue', ?_, holeHasVal_submap f g env1 env2 workState.refs resValue' filledHole extension⟩
+            refine ⟨resValue', ?_, holeHasVal_submap f g env1 env2 workState.refs resValue' ⟨filledHole, extension⟩⟩
             exact mutableBlockRel_old_subset h middleTarget.refs (workState.refs.eraseEq holePtr)
-              resValue resValue' target.refs block domain
+              resValue resValue' target.refs ⟨block, domain⟩
 
 end Flapjack.Compiler.Backend.BviTmc.IfWorker

@@ -3,6 +3,7 @@ module
 public import Flapjack.Compiler.Backend.BviInline.Proofs.WholeProgramSimulation
 public import Flapjack.Compiler.Backend.Semantics.BviProps.EvaluateEventsClockFull
 public import Flapjack.Compiler.Backend.BviTailrec.Proofs.RewriteSimulation
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.SemanticsSimulation
 
 @[expose] public section
 
@@ -29,56 +30,6 @@ theorem evaluateAddClockIoEventsMono {C F : Type} (expressions : List Bvi.Exp)
       (evaluateTuple (expressions, env, { state with clock := clock + extra })).2.ffi.ioEvents := by
   simpa [evaluateTuple] using
     BviProps.evaluate_addClock_ioEvents_prefix expressions env { state with clock := clock } extra
-
-/-- Flapjack infrastructure: if each target trace is a source trace at an
-equal or later clock, and both families grow by prefix as clocks increase,
-their divergent least-upper-bound traces are equal. -/
-theorem cofinal_trace_lub {α : Type} (source target : Nat → List α)
-    (sourceMono : ∀ clock extra, source clock <+: source (clock + extra))
-    (targetMono : ∀ clock extra, target clock <+: target (clock + extra))
-    (cofinal : ∀ clock, ∃ extra, target clock = source (clock + extra)) :
-    HolLList.buildLprefixLub (fun trace => ∃ clock, trace = HolLList.fromList (source clock)) =
-      HolLList.buildLprefixLub (fun trace => ∃ clock, trace = HolLList.fromList (target clock)) := by
-  let sourceSet : HolLList α → Prop := fun trace => ∃ clock, trace = HolLList.fromList (source clock)
-  let targetSet : HolLList α → Prop := fun trace => ∃ clock, trace = HolLList.fromList (target clock)
-  have sourceChain : HolLList.lprefixChain sourceSet := by
-    rintro first second ⟨⟨i, hi⟩, ⟨j, hj⟩⟩
-    subst first
-    subst second
-    rcases Nat.le_total i j with earlier | later
-    · left
-      apply (HolLList.lprefix_fromList _ _).2
-      simpa [Nat.add_sub_of_le earlier] using sourceMono i (j - i)
-    · right
-      apply (HolLList.lprefix_fromList _ _).2
-      simpa [Nat.add_sub_of_le later] using sourceMono j (i - j)
-  have targetChain : HolLList.lprefixChain targetSet := by
-    rintro first second ⟨⟨i, hi⟩, ⟨j, hj⟩⟩
-    subst first
-    subst second
-    rcases Nat.le_total i j with earlier | later
-    · left
-      apply (HolLList.lprefix_fromList _ _).2
-      simpa [Nat.add_sub_of_le earlier] using targetMono i (j - i)
-    · right
-      apply (HolLList.lprefix_fromList _ _).2
-      simpa [Nat.add_sub_of_le later] using targetMono j (i - j)
-  have forward : HolLList.lprefixRel sourceSet targetSet := by
-    rintro trace ⟨clock, equalTrace⟩
-    subst trace
-    obtain ⟨extra, equal⟩ := cofinal clock
-    refine ⟨HolLList.fromList (target clock), ⟨clock, rfl⟩, ?_⟩
-    apply (HolLList.lprefix_fromList _ _).2
-    rw [equal]
-    exact sourceMono clock extra
-  have backward : HolLList.lprefixRel targetSet sourceSet := by
-    rintro trace ⟨clock, equalTrace⟩
-    subst trace
-    obtain ⟨extra, equal⟩ := cofinal clock
-    refine ⟨HolLList.fromList (source (clock + extra)), ⟨clock + extra, rfl⟩, ?_⟩
-    rw [equal]
-    exact HolLList.lprefix_refl _
-  exact HolLList.IMP_build_lprefix_lub_EQ sourceChain targetChain forward backward
 
 /-- Flapjack infrastructure: cofinal initial executions determine the same
 observable BVI behavior when the source does not fail. -/
@@ -173,13 +124,15 @@ theorem semantics_eq_of_cofinal {C D F : Type} (ffi : HolFfiState F)
         exact behaviorEq
   have traces : HolLList.buildLprefixLub (fun trace => ∃ clock, trace = HolLList.fromList (src clock).2.ffi.ioEvents) =
       HolLList.buildLprefixLub (fun trace => ∃ clock, trace = HolLList.fromList (tgt clock).2.ffi.ioEvents) := by
-    apply cofinal_trace_lub (fun clock => (src clock).2.ffi.ioEvents) (fun clock => (tgt clock).2.ffi.ioEvents)
-    · intro clock extra
-      simpa [src, initialState, evaluateTuple] using evaluateAddClockIoEventsMono
-        [.call 0 (some start) [] none] [] (initialState ffi sourceCode sourceOracle sourceCompiler clock) clock extra
-    · intro clock extra
-      simpa [tgt, initialState, evaluateTuple] using evaluateAddClockIoEventsMono
-        [.call 0 (some start) [] none] [] (initialState ffi targetCode targetOracle targetCompiler clock) clock extra
+    symm
+    apply ClosSem.clocked_traces_lub_eq
+      (fun clock => (tgt clock).2.ffi.ioEvents) (fun clock => (src clock).2.ffi.ioEvents)
+    · intro clock later bound
+      simpa [tgt, initialState, evaluateTuple, Nat.add_sub_of_le bound] using evaluateAddClockIoEventsMono
+        [.call 0 (some start) [] none] [] (initialState ffi targetCode targetOracle targetCompiler clock) clock (later - clock)
+    · intro clock later bound
+      simpa [src, initialState, evaluateTuple, Nat.add_sub_of_le bound] using evaluateAddClockIoEventsMono
+        [.call 0 (some start) [] none] [] (initialState ffi sourceCode sourceOracle sourceCompiler clock) clock (later - clock)
     · intro clock
       obtain ⟨extra, _, ffiEq⟩ := cofinal clock
       exact ⟨extra, congrArg HolFfiState.ioEvents ffiEq.symm⟩

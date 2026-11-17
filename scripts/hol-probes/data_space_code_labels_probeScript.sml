@@ -26,3 +26,20 @@ val _ = (print "evaluate_compile_statement_typed="; print_term
             else s2 with <| safe_for_space := safe; peak_heap_length := peak; stack_max := smx |>)) /\
         dataProps$locals_ok s2.locals w``; print "\n");
 val _ = (print "compile_correct_typed="; print_term (concl data_spaceProofTheory.compile_correct); print "\n");
+
+(* Replay the local sparse-tree prerequisites with the source overloads. *)
+load "preamble";
+open preamble sptreeTheory;
+val _ = temp_bring_to_front_overload "lookup" {Name="lookup",Thy="sptree"};
+val _ = temp_bring_to_front_overload "wf" {Name="wf",Thy="sptree"};
+fun show_local label th = if null (hyp th) then
+  (print (label ^ "="); print_term (concl th); print "\n")
+  else raise Fail (label ^ " has hypotheses");
+val IMP_sptree_eq_replay = prove (
+  ``wf x /\ wf y /\ (!a. lookup a x = lookup a y) ==> (x = y)``,
+  METIS_TAC [spt_eq_thm]);
+val _ = show_local "IMP_sptree_eq_replay_typed" IMP_sptree_eq_replay;
+val mk_wf_inter_replay = prove (
+  ``!t1 t2. inter t1 t2 = mk_wf (inter t1 t2)``,
+  full_simp_tac(srw_ss())[]);
+val _ = show_local "mk_wf_inter_replay_typed" mk_wf_inter_replay;

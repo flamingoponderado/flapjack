@@ -24,6 +24,15 @@ val _ = capture "shift64_asr_large" ``
 val _ = capture "boundsblock" ``
  let c = (ARB:data_to_word$config) with <|tag_bits := 1; len_bits := 2; pad_bits := 3; len_size := 16|> in
  data_to_word$comp c 5 2 (dataLang$Assign 3 (closLang$BlockOp closLang$BoundsCheckBlock) [1;2] NONE) : 64 wordLang$prog # num``;
+val _ = capture "equal_general" ``
+ let c = (ARB:data_to_word$config) with <|tag_bits := 1; len_bits := 2; pad_bits := 3; len_size := 16|> in
+ data_to_word$comp c 5 2 (dataLang$Assign 3 (closLang$BlockOp closLang$Equal) [1;2] NONE) : 64 wordLang$prog # num``;
+val _ = capture "less_general" ``
+ let c = (ARB:data_to_word$config) with <|tag_bits := 1; len_bits := 2; pad_bits := 3; len_size := 16|> in
+ data_to_word$comp c 5 2 (dataLang$Assign 3 (closLang$IntOp closLang$Less) [1;2] NONE) : 64 wordLang$prog # num``;
+val _ = capture "lesseq_general" ``
+ let c = (ARB:data_to_word$config) with <|tag_bits := 1; len_bits := 2; pad_bits := 3; len_size := 16|> in
+ data_to_word$comp c 5 2 (dataLang$Assign 3 (closLang$IntOp closLang$LessEq) [1;2] NONE) : 64 wordLang$prog # num``;
 val _ = capture "wordfrom" ``
  let c = (ARB:data_to_word$config) with <|tag_bits := 1; len_bits := 2; pad_bits := 3; len_size := 16|> in
  data_to_word$comp c 5 2 (dataLang$Assign 3 (closLang$WordOp closLang$WordFromInt) [1] NONE) : 64 wordLang$prog # num``;

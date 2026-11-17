@@ -17,21 +17,20 @@ theorem holFmapAsFiniteSupportRelationWitness_BviState {C F : Type} :
 end AllocationWitness
 
 /-- Allocating related cells at fresh pointers preserves the state relation,
-extends the pointer map, and preserves existing mutable holes.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "state_rel_alloc" (fmap_as_finite_support_relation := [BviState.refs, f])] -/
+extends the pointer map, and preserves existing mutable holes. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "state_rel_alloc"
+  (fmap_as_finite_support_relation := [BviState.refs, f])]
 theorem stateRel_alloc {C F : Type} (f : HolFiniteMapExact Nat Nat)
     (source : BviState (Nat × C) F) (target : BviState C F) (src tgt : Nat) (v w : Ref Value)
-    (related : stateRel f source target) (srcFresh : src ∉ source.refs.domain)
-    (tgtFresh : tgt ∉ target.refs.domain) (rangeFresh : tgt ∉ mapRange f)
-    (cells : refRel (f.updateEq (src, tgt)) v w) :
+    (h : stateRel f source target ∧ src ∉ source.refs.domain ∧ tgt ∉ target.refs.domain ∧
+      tgt ∉ mapRange f ∧ refRel (f.updateEq (src, tgt)) v w) :
     (f.updateEq (src, tgt)).lookup src = some tgt ∧
     stateRel (f.updateEq (src, tgt)) { source with refs := source.refs.updateEq (src, v) }
       { target with refs := target.refs.updateEq (tgt, w) } ∧
     f.submap (f.updateEq (src, tgt)) ∧ onlyFresh f (f.updateEq (src, tgt)) target.refs ∧
     holesUnchangedExcept f target.refs (target.refs.updateEq (tgt, w)) ∅ ∧
     holesStillNotFinalised f target.refs (target.refs.updateEq (tgt, w)) := by
+  obtain ⟨related, srcFresh, tgtFresh, rangeFresh, cells⟩ := h
   have mapMissing : f.lookup src = none := by
     have absent : src ∉ f.domain := by rw [related.1.1]; exact srcFresh
     simpa [HolFiniteMapExact.domain] using absent
@@ -43,15 +42,13 @@ theorem stateRel_alloc {C F : Type} (f : HolFiniteMapExact Nat Nat)
       rw [mapMissing] at found
       contradiction
     simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, ne] using found
-  have notRange : ∀ i, f.lookup i ≠ some tgt := by
-    intro i found
-    exact rangeFresh ⟨i, found⟩
   have tgtMissing : target.refs.lookup tgt = none := by
     simpa [HolFiniteMapExact.domain] using tgtFresh
   refine ⟨by simp [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL], ?_, extension, ?_, ?_, ?_⟩
   · rcases related with ⟨heap, clock, global, ffi, oracle, compiler, code, names, inputs, workers, inj⟩
-    refine ⟨stateRefRel_alloc f source.refs target.refs src tgt v w heap srcFresh tgtFresh notRange cells,
-      clock, ?_, ffi, oracle, compiler, code, names, inputs, workers, fmapInj_update f src tgt inj notRange⟩
+    refine ⟨stateRefRel_alloc f source.refs target.refs src tgt v w
+      ⟨heap, srcFresh, tgtFresh, rangeFresh, cells⟩,
+      clock, ?_, ffi, oracle, compiler, code, names, inputs, workers, fmapInj_update f src tgt ⟨inj, rangeFresh⟩⟩
     cases hs : source.global <;> cases ht : target.global <;> simp_all
     exact extension _ _ global
   · intro ptr ⟨⟨key, lookup⟩, outside⟩
@@ -63,7 +60,7 @@ theorem stateRel_alloc {C F : Type} (f : HolFiniteMapExact Nat Nat)
     · have oldLookup : f.lookup key = some ptr := by
         simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, eq] using lookup
       exact (outside ⟨key, oldLookup⟩).elim
-  · intro ptr tag finalised left child right _ found
+  · intro ptr tag finalised left child right ⟨_, found⟩
     have ne : ptr ≠ tgt := by
       intro eq
       subst ptr
@@ -71,7 +68,7 @@ theorem stateRel_alloc {C F : Type} (f : HolFiniteMapExact Nat Nat)
       contradiction
     exact ⟨finalised, child, by simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, ne] using found,
       fun _ => rfl⟩
-  · intro ptr _ ⟨tag, left, child, right, found⟩
+  · intro ptr ⟨_, tag, left, child, right, found⟩
     have ne : ptr ≠ tgt := by
       intro eq
       subst ptr

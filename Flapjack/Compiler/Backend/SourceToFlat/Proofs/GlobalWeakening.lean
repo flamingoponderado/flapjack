@@ -232,15 +232,6 @@ theorem GlobalGrowth.append (env : GlobalEnv) (extra : List (Option FlatSem.Valu
     simp [List.getElem?_eq_none (Nat.le_of_not_gt notBound)] at slot
   simpa [List.getElem?_append_left bound] using slot
 
-/-- Global variable lookup relations survive growth. -/
-theorem globalLookupRel_growth (old new : GlobalEnv) (growth : GlobalGrowth old new)
-    (map : Environment) (id : Flapjack.NamespaceHOL.Ident ModN VarN) (source : Value)
-    (related : GlobalLookupRel old map id source) : GlobalLookupRel new map id source := by
-  cases related with
-  | intro _ _ _ n flat t lookup bound slot valueRel =>
-    exact .intro new map id source n flat t lookup (Nat.lt_of_lt_of_le bound growth.length)
-      (growth.values n flat slot) (valueRel_growth old new growth source flat valueRel)
-
 /-- The global environment invariant survives growth. -/
 theorem globalEnvInv_growth (old new : GlobalEnv) (growth : GlobalGrowth old new)
     (map : Environment) (shadowers : VarN → Prop) (env : SemEnv Value)
@@ -249,7 +240,10 @@ theorem globalEnvInv_growth (old new : GlobalEnv) (growth : GlobalGrowth old new
   | intro _ _ _ values constructors =>
     apply GlobalEnvInv.intro new map shadowers env
     · intro id value notShadowed lookup
-      exact globalLookupRel_growth old new growth map id value (values id value notShadowed lookup)
+      cases values id value notShadowed lookup with
+      | intro _ _ _ n flat t compiled bound slot valueRel =>
+        exact .intro new map id value n flat t compiled (Nat.lt_of_lt_of_le bound growth.length)
+          (growth.values n flat slot) (valueRel_growth old new growth value flat valueRel)
     · intro id arity stamp lookup
       obtain ⟨cn, group, compiled, stampLookup, typesLookup⟩ := constructors id arity stamp lookup
       exact ⟨cn, group, compiled, growth.constructors _ _ stampLookup,

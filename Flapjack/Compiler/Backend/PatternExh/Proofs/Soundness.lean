@@ -221,8 +221,9 @@ theorem pmatchList_length_source (refs : HolFiniteMapExact Nat Term) (patterns :
 /-- Matching appended pattern/value segments composes their three-valued results. -/
 @[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "pmatch_list_append"
   (fmap_as_finite_support_parameters := [refs])]
-theorem pmatchList_append (refs : HolFiniteMapExact Nat Term)
-    (patterns rest : List Pat) (values more : List Term) (lengths : patterns.length = values.length) :
+theorem pmatchList_append (patterns : List Pat) (values : List Term)
+    (rest : List Pat) (more : List Term) (refs : HolFiniteMapExact Nat Term)
+    (lengths : patterns.length = values.length) :
     pmatchList refs (patterns ++ rest) (values ++ more) =
       pand (pmatchList refs patterns values) (pmatchList refs rest more) := by
   induction patterns generalizing values with
@@ -425,7 +426,7 @@ theorem specRow_match (constructor : Ctor) (original row : List Pat)
     | any =>
       simp only [specRow, List.mem_singleton] at member
       subst row
-      rw [pmatchList_append refs (anys (ctorArity constructor)) rest fields values (by simp [lenEq])]
+      rw [pmatchList_append (anys (ctorArity constructor)) fields rest values refs (by simp [lenEq])]
       simp [pmatchList_anys, pmatch, pand, lenEq]
     | cons info qs =>
       cases info with
@@ -438,7 +439,7 @@ theorem specRow_match (constructor : Ctor) (original row : List Pat)
           split at found
           all_goals try split at found
           all_goals simp_all [pmatch, pand, Ctor.tupC.injEq]
-          all_goals rw [pmatchList_append refs qs rest fields values (by simp_all [ctorArity])]
+          all_goals rw [pmatchList_append qs fields rest values refs (by simp_all [ctorArity])]
           all_goals simp [pand]
         · simp [specRow, ctorEq] at member
       | some ts =>
@@ -451,7 +452,7 @@ theorem specRow_match (constructor : Ctor) (original row : List Pat)
           split at found
           all_goals try split at found
           all_goals simp_all [pmatch, pand, Ctor.tagC.injEq]
-          all_goals rw [pmatchList_append refs qs rest fields values (by simp_all [ctorArity])]
+          all_goals rw [pmatchList_append qs fields rest values refs (by simp_all [ctorArity])]
           all_goals simp [pand, ctorArity]
         · simp [specRow, ctorEq] at member
     | ref q =>

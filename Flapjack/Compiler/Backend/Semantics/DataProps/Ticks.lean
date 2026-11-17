@@ -22,7 +22,7 @@ theorem evaluate_mkTicks {C F : Type} (program : DataLang.Prog) (state : State C
   induction ticks generalizing state with
   | zero => simp [DataLang.mkTicks]
   | succ ticks ih =>
-    rw [DataLang.mkTicks, evaluate, fixClock_evaluate]
+    rw [DataLang.mkTicks, evaluate, fixClockEvaluate]
     by_cases zero : state.clock = 0
     · simp [evaluate, zero, flushState]
     · simp only [evaluate, zero, ↓reduceIte]

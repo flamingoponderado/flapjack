@@ -38,7 +38,7 @@ theorem evaluate_assign_sameLocals {C F : Type} (dest : Nat) (op : ClosLang.Op)
         exact ⟨target, by simp [DataSem.evaluate, invalid, targetRead, failed.2], related, by simp⟩
       · cases sourceApp : doApp op values sourceCut with
         | err error =>
-          have targetApp := stateRel_doApp_error sourceCut targetCut .ln op values error cutRel sourceApp
+          have targetApp := stateRel_doApp_error op values sourceCut error targetCut .ln ⟨sourceApp, cutRel⟩
           simp [DataSem.evaluate, invalid, read, sourceCutRun, sourceApp] at run
           obtain ⟨rfl, rfl⟩ := run
           refine ⟨flushState true (installSfs op targetCut), ?_, stateRel_flushInstall sourceCut targetCut .ln op cutRel, ?_⟩

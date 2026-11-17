@@ -51,17 +51,4 @@ theorem pure_global_aux_same {C F : Type} (op : ClosLang.GlobOp) (args : List Da
               simp [doAppAux, applyNonFfi, global, found, slot] at run
               exact run.2.symm
 
-/-- Every dead pure global assignment satisfies the liveness simulation. -/
-theorem simulationFor_removed_global {C F : Type} (dest : Nat) (op : ClosLang.GlobOp)
-    (names : List Nat) (live : NumSet) (pure : isPure (.globOp op) = true)
-    (dead : sptLookup dest live = none) :
-    simulationFor (C := C) (F := F) (.assign dest (.globOp op) names none) live := by
-  apply simulationFor_removed_of_frame dest (.globOp op) names live pure dead
-  intro args state next value run
-  have space := pure_global_doSpace op args state pure
-  simp only [doApp, space] at run
-  have equal := pure_global_aux_same op args _ next value pure run
-  subst next
-  simp [stateRel, doStack, doLimSafe]
-
 end Flapjack.Compiler.Backend.DataLive

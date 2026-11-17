@@ -5,7 +5,8 @@ public import Flapjack.Compiler.Backend.BviTailrec.Proofs.CodeRelation
 @[expose] public section
 
 /-! State-independent accumulator primitive behavior for the tail-recursion
-simulation. The evaluator and dispatcher remain subject to source review. -/
+simulation. Dispatcher-dependent results inherit the real-model assumption
+documented in SOUNDNESS item 8. -/
 namespace Flapjack.Compiler.Backend.BviTailrec
 open Bvi BvlSem
 
@@ -128,7 +129,18 @@ theorem doApp_toOp_pure {C F : Type} (op : AssocOp) (args : List Value)
         | nil =>
           cases hx : valueToList x <;> cases hy : valueToList y <;> simp [hx, hy, BviSem.fromBvl_toBvl]
 
-/-- Successful accumulator dispatch preserves the input state. -/
+namespace DoAppToOpCarrier
+/-- The BVI reference-map carrier roundtrips through its finite-support view. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : BviSem.BviStateBroad C F, (BviSem.BviState.ofBroad s).toBroad = s) ∧
+      (∀ s : BviSem.BviState C F, BviSem.BviState.ofBroad s.toBroad = s) :=
+  BviSem.holFmapAsFiniteSupportWitness
+end DoAppToOpCarrier
+
+/-- Successful accumulator dispatch preserves the input state. The dispatcher
+inherits the real-model assumption in SOUNDNESS item 8. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "do_app_to_op_state"
+  (fmap_as_finite_support := [refs])]
 theorem doApp_toOp_state {C F : Type} (op : AssocOp) (args : List Value)
     (state next : BviSem.BviState C F) (result : Value)
     (run : BviSem.doApp (toOp op) args state = .val (result, next)) : next = state := by
@@ -138,49 +150,6 @@ theorem doApp_toOp_state {C F : Type} (op : AssocOp) (args : List Value)
   | some value =>
     simp [found] at run
     exact run.2.symm
-
-/-- Accumulator dispatch produces the same value in related source and target
-states and preserves their relation. -/
-theorem stateRel_doApp_toOp {C F : Type} (op : AssocOp) (args : List Value)
-    (source sourceNext : BviSem.BviState (Nat × C) F) (target : BviSem.BviState C F)
-    (result : Value) (related : stateRel source target)
-    (run : BviSem.doApp (toOp op) args source = .val (result, sourceNext)) :
-    ∃ targetNext, BviSem.doApp (toOp op) args target = .val (result, targetNext) ∧
-      stateRel sourceNext targetNext := by
-  rw [doApp_toOp_pure] at run
-  cases found : accumulatorApply op args with
-  | none => simp [found] at run
-  | some value =>
-    simp [found] at run
-    obtain ⟨rfl, rfl⟩ := run
-    exact ⟨target, by simp [doApp_toOp_pure, found], related⟩
-
-/-- Updating related states with the same reference map preserves the state
-relation. -/
-theorem stateRel_withRefs {C F : Type} (source : BviSem.BviState (Nat × C) F)
-    (target : BviSem.BviState C F) (refs : HolFiniteMapExact Nat (Ref Value))
-    (related : stateRel source target) :
-    stateRel { source with refs := refs } { target with refs := refs } := by
-  rcases related with ⟨_, clock, global, ffi, oracle, compiler, code, ns, input, bound⟩
-  exact ⟨rfl, clock, global, ffi, oracle, compiler, code, ns, input, bound⟩
-
-/-- Updating related states with the same global pointer preserves the state
-relation. -/
-theorem stateRel_withGlobal {C F : Type} (source : BviSem.BviState (Nat × C) F)
-    (target : BviSem.BviState C F) (global : Option Nat)
-    (related : stateRel source target) :
-    stateRel { source with global := global } { target with global := global } := by
-  rcases related with ⟨refs, clock, _, ffi, oracle, compiler, code, ns, input, bound⟩
-  exact ⟨refs, clock, rfl, ffi, oracle, compiler, code, ns, input, bound⟩
-
-/-- Updating related states with the same FFI state preserves the state
-relation. -/
-theorem stateRel_withFfi {C F : Type} (source : BviSem.BviState (Nat × C) F)
-    (target : BviSem.BviState C F) (ffi : HolFfiState F)
-    (related : stateRel source target) :
-    stateRel { source with ffi := ffi } { target with ffi := ffi } := by
-  rcases related with ⟨refs, clock, global, _, oracle, compiler, code, ns, input, bound⟩
-  exact ⟨refs, clock, global, rfl, oracle, compiler, code, ns, input, bound⟩
 
 /-- Pure integer-primitive result, including BVI's bounded constant rule. -/
 def intPrimitiveResult (op : ClosLang.IntOp) (args : List Value) : Option Value :=
@@ -218,34 +187,6 @@ theorem doApp_intOp_pure {C F : Type} (op : ClosLang.IntOp) (args : List Value)
       BviSem.doAppAux, BvlSem.doApp, BvlSem.applyNumeric]
     all_goals exact convert _
 
-/-- Integer primitive application preserves state relations, including the
-source type-error outcome. -/
-theorem stateRel_doApp_intOp {C F : Type} (op : ClosLang.IntOp) (args : List Value)
-    (source : BviSem.BviState (Nat × C) F) (target : BviSem.BviState C F)
-    (related : stateRel source target) :
-    (BviSem.doApp (.intOp op) args source = .err (.abort .typeError) ∧
-      BviSem.doApp (.intOp op) args target = .err (.abort .typeError)) ∨
-    ∃ value, BviSem.doApp (.intOp op) args source = .val (value, source) ∧
-      BviSem.doApp (.intOp op) args target = .val (value, target) ∧ stateRel source target := by
-  rw [doApp_intOp_pure, doApp_intOp_pure]
-  cases h : intPrimitiveResult op args with
-  | none => exact Or.inl ⟨rfl, rfl⟩
-  | some value => exact Or.inr ⟨value, rfl, rfl, related⟩
-
-/-- Successful integer primitives preserve related states. -/
-theorem stateRel_doApp_intOp_success {C F : Type} (op : ClosLang.IntOp) (args : List Value)
-    (source sourceNext : BviSem.BviState (Nat × C) F) (target : BviSem.BviState C F)
-    (value : Value) (related : stateRel source target)
-    (run : BviSem.doApp (.intOp op) args source = .val (value, sourceNext)) :
-    ∃ targetNext, BviSem.doApp (.intOp op) args target = .val (value, targetNext) ∧
-      stateRel sourceNext targetNext := by
-  rcases stateRel_doApp_intOp op args source target related with failed | ⟨v, sourceRun, targetRun, rel⟩
-  · rw [failed.1] at run
-    contradiction
-  · rw [sourceRun] at run
-    cases run
-    exact ⟨target, targetRun, rel⟩
-
 /-- Every integer primitive error is the source type error. -/
 theorem doApp_intOp_error {C F : Type} (op : ClosLang.IntOp) (args : List Value)
     (state : BviSem.BviState C F) (error : SemanticPrimitivesHOL.ErrorResult BviSem.ExnOrRet)
@@ -265,21 +206,6 @@ theorem doApp_wordOp_pure {C F : Type} (op : ClosLang.WordOp) (args : List Value
   simp only [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux,
     BvlSem.doApp, BvlSem.applyNumeric]
   cases found : BvlSem.doWordApp op args <;> simp [BviSem.fromBvl_toBvl]
-
-/-- Successful word operations preserve related states. -/
-theorem stateRel_doApp_wordOp_success {C F : Type} (op : ClosLang.WordOp) (args : List Value)
-    (source sourceNext : BviSem.BviState (Nat × C) F) (target : BviSem.BviState C F)
-    (value : Value) (related : stateRel source target)
-    (run : BviSem.doApp (.wordOp op) args source = .val (value, sourceNext)) :
-    ∃ targetNext, BviSem.doApp (.wordOp op) args target = .val (value, targetNext) ∧
-      stateRel sourceNext targetNext := by
-  rw [doApp_wordOp_pure] at run ⊢
-  cases found : BvlSem.doWordApp op args with
-  | none => simp [found] at run
-  | some result =>
-    simp [found] at run
-    obtain ⟨rfl, rfl⟩ := run
-    exact ⟨target, by simp, related⟩
 
 /-- Every word primitive error is the source type error. -/
 theorem doApp_wordOp_error {C F : Type} (op : ClosLang.WordOp) (args : List Value)
@@ -307,7 +233,7 @@ theorem stateRel_doApp_label {C F : Type} (label : Nat) (args : List Value)
     | some entry =>
       obtain ⟨arity, body⟩ := entry
       obtain ⟨compiled, targetLookup⟩ :=
-        codeRel_lookup_exists source.code target.code (stateRel_codeRel source target related)
+        codeRel_lookup_arity source.code target.code (stateRel_codeRel source target related)
           label arity body sourceLookup
       simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, sourceLookup] at run
       obtain ⟨rfl, rfl⟩ := run
@@ -323,82 +249,6 @@ theorem doApp_label_error {C F : Type} (label : Nat) (args : List Value)
     cases lookup : sptLookup label state.code with
     | none => simpa [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, lookup] using run.symm
     | some entry => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, lookup] at run
-
-/-- Successful global-pointer reads agree in related states. -/
-theorem stateRel_doApp_globalsPtr {C F : Type} (args : List Value)
-    (source sourceNext : BviSem.BviState (Nat × C) F) (target : BviSem.BviState C F)
-    (result : Value) (related : stateRel source target)
-    (run : BviSem.doApp (.globOp .globalsPtr) args source = .val (result, sourceNext)) :
-    ∃ targetNext, BviSem.doApp (.globOp .globalsPtr) args target = .val (result, targetNext) ∧
-      stateRel sourceNext targetNext := by
-  cases args with
-  | cons value rest => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux] at run
-  | nil =>
-    cases pointer : source.global with
-    | none => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, pointer] at run
-    | some ptr =>
-      have targetPointer : target.global = some ptr := by simpa [pointer] using (stateRel_const source target related).2.2.1
-      simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, pointer] at run
-      obtain ⟨rfl, rfl⟩ := run
-      exact ⟨target, by simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, targetPointer], related⟩
-
-/-- Successful global-pointer writes update both related states identically. -/
-theorem stateRel_doApp_setGlobalsPtr {C F : Type} (args : List Value)
-    (source sourceNext : BviSem.BviState (Nat × C) F) (target : BviSem.BviState C F)
-    (result : Value) (related : stateRel source target)
-    (run : BviSem.doApp (.globOp .setGlobalsPtr) args source = .val (result, sourceNext)) :
-    ∃ targetNext, BviSem.doApp (.globOp .setGlobalsPtr) args target = .val (result, targetNext) ∧
-      stateRel sourceNext targetNext := by
-  cases args with
-  | nil => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux] at run
-  | cons value rest =>
-    cases rest with
-    | cons v vs => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux] at run
-    | nil =>
-      cases value with
-      | refPtr flag ptr =>
-        cases flag with
-        | false => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux] at run
-        | true =>
-          simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux] at run
-          obtain ⟨rfl, rfl⟩ := run
-          exact ⟨{ target with global := some ptr },
-            by simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux],
-            stateRel_withGlobal source target (some ptr) related⟩
-      | _ => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux] at run
-
-/-- Byte-array allocation preserves the related reference stores, including
-the fresh reference, initial contents, and mutability flag. -/
-theorem stateRel_doApp_refByte {C F : Type} (flag : Bool) (args : List Value)
-    (source sourceNext : BviSem.BviState (Nat × C) F) (target : BviSem.BviState C F)
-    (value : Value) (related : stateRel source target)
-    (run : BviSem.doApp (.memOp (.refByte flag)) args source = .val (value, sourceNext)) :
-    ∃ targetNext, BviSem.doApp (.memOp (.refByte flag)) args target = .val (value, targetNext) ∧
-      stateRel sourceNext targetNext := by
-  have refs := (stateRel_const source target related).1
-  cases args with
-  | nil => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux] at run
-  | cons a rest =>
-    cases rest with
-    | nil => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux] at run
-    | cons b rest =>
-      cases rest with
-      | cons extra xs => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux] at run
-      | nil =>
-        cases a <;> cases b <;> simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux] at run
-        rename_i count byte
-        by_cases neg : count < 0
-        · simp [neg] at run
-        · cases converted : ClosSem.intToByte byte with
-          | none => simp [neg, converted] at run
-          | some byteValue =>
-            simp [neg, converted] at run
-            obtain ⟨rfl, rfl⟩ := run
-            let ptr := leastUnusedRef source.refs
-            let entry : Ref Value := Ref.byteArray flag (List.replicate count.toNat byteValue)
-            refine ⟨{ target with refs := source.refs.updateEq (ptr, entry) }, ?_,
-              stateRel_withRefs source target _ related⟩
-            simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, refs, neg, converted, ptr, entry]
 
 /-- Byte-array allocation can fail only with a type error. -/
 theorem doApp_refByte_error {C F : Type} (flag : Bool) (args : List Value)
@@ -449,24 +299,6 @@ theorem doApp_finaliseCons_effect {C F : Type} (args : List Value) (state : BviS
       cases result : BviSem.finaliseCons value state.refs with
       | none => simp
       | some pair => cases pair; simp
-
-/-- Finalisation preserves related states. -/
-theorem stateRel_doApp_finaliseCons {C F : Type} (args : List Value)
-    (source sourceNext : BviSem.BviState (Nat × C) F) (target : BviSem.BviState C F)
-    (value : Value) (related : stateRel source target)
-    (run : BviSem.doApp (.memOp .finaliseCons) args source = .val (value, sourceNext)) :
-    ∃ targetNext, BviSem.doApp (.memOp .finaliseCons) args target = .val (value, targetNext) ∧
-      stateRel sourceNext targetNext := by
-  have refs := (stateRel_const source target related).1
-  rw [doApp_finaliseCons_effect] at run ⊢
-  rw [refs]
-  cases effect : finaliseConsEffect args source.refs with
-  | none => simp [effect] at run
-  | some pair =>
-    obtain ⟨result, newRefs⟩ := pair
-    simp [effect] at run
-    obtain ⟨rfl, rfl⟩ := run
-    exact ⟨{ target with refs := newRefs }, by simp, stateRel_withRefs source target newRefs related⟩
 
 /-- Finalisation reports only type errors. -/
 theorem doApp_finaliseCons_error {C F : Type} (args : List Value) (state : BviSem.BviState C F)
@@ -522,23 +354,6 @@ theorem doApp_updateCons_effect {C F : Type} (args : List Value) (state : BviSem
             rename_i tag finalised left old right
             by_cases same : index = Int.ofNat left.length <;> cases finalised <;> simp_all
 
-/-- Mutable-block updates preserve related stores. -/
-theorem stateRel_doApp_updateCons {C F : Type} (args : List Value)
-    (source sourceNext : BviSem.BviState (Nat × C) F) (target : BviSem.BviState C F)
-    (value : Value) (related : stateRel source target)
-    (run : BviSem.doApp (.memOp .updateCons) args source = .val (value, sourceNext)) :
-    ∃ targetNext, BviSem.doApp (.memOp .updateCons) args target = .val (value, targetNext) ∧
-      stateRel sourceNext targetNext := by
-  have refs := (stateRel_const source target related).1
-  rw [doApp_updateCons_effect] at run ⊢
-  rw [refs]
-  cases effect : updateConsEffect args source.refs with
-  | none => simp [effect] at run
-  | some newRefs =>
-    simp [effect] at run
-    obtain ⟨rfl, rfl⟩ := run
-    exact ⟨{ target with refs := newRefs }, by simp, stateRel_withRefs source target newRefs related⟩
-
 /-- Mutable-block updates report only type errors. -/
 theorem doApp_updateCons_error {C F : Type} (args : List Value) (state : BviSem.BviState C F)
     (error : SemanticPrimitivesHOL.ErrorResult BviSem.ExnOrRet)
@@ -547,26 +362,6 @@ theorem doApp_updateCons_error {C F : Type} (args : List Value) (state : BviSem.
   cases effect : updateConsEffect args state.refs with
   | none => simpa [effect] using run.symm
   | some refs => simp [effect] at run
-
-/-- Mutable-block allocation chooses the same fresh reference and installs
-the same entry in related reference stores. -/
-theorem stateRel_doApp_mutCons {C F : Type} (tag index : Nat) (args : List Value)
-    (source sourceNext : BviSem.BviState (Nat × C) F) (target : BviSem.BviState C F)
-    (value : Value) (related : stateRel source target)
-    (run : BviSem.doApp (.memOp (.mutCons tag index)) args source = .val (value, sourceNext)) :
-    ∃ targetNext, BviSem.doApp (.memOp (.mutCons tag index)) args target = .val (value, targetNext) ∧
-      stateRel sourceNext targetNext := by
-  have refs := (stateRel_const source target related).1
-  cases selected : args[index]? with
-  | none => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, selected] at run
-  | some child =>
-    simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, selected] at run
-    obtain ⟨rfl, rfl⟩ := run
-    let ptr := leastUnusedRef source.refs
-    let entry := Ref.mutBlock tag false (args.take index) child (args.drop (index + 1))
-    refine ⟨{ target with refs := source.refs.updateEq (ptr, entry) }, ?_,
-      stateRel_withRefs source target _ related⟩
-    simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, selected, refs, ptr, entry]
 
 /-- Mutable-block allocation can fail only with a type error. -/
 theorem doApp_mutCons_error {C F : Type} (tag index : Nat) (args : List Value)
@@ -582,16 +377,6 @@ theorem doApp_allocGlobal {C F : Type} (args : List Value) (state : BviSem.BviSt
     BviSem.doApp (.globOp .allocGlobal) args state = .err (.abort .typeError) := by
   simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux]
 
-/-- BVL block operations depend only on the reference store and update only that store. -/
-theorem applyBlock_sharedRefs {C D F G : Type} (op : ClosLang.BlockOp) (args : List Value)
-    (s : BvlSem.State C F) (t : BvlSem.State D G) (refs : t.refs = s.refs) :
-    BvlSem.applyBlock op args t = (BvlSem.applyBlock op args s).map
-      (fun (value, next) => (value, { t with refs := next.refs })) := by
-  unfold BvlSem.applyBlock
-  rw [refs]
-  repeat' split
-  all_goals simp_all [Option.map_bind]
-  all_goals cases t; simp_all
 /-- BVI delegates block operations other than fromList to BVL. -/
 theorem doApp_block_viaBvl {C F : Type} (op : ClosLang.BlockOp) (args : List Value) (s : BviSem.BviState C F)
     (notFromList : ∀ tag, op ≠ .fromList tag) :
@@ -602,35 +387,6 @@ theorem doApp_block_viaBvl {C F : Type} (op : ClosLang.BlockOp) (args : List Val
   cases op <;> simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp] at *
   all_goals split <;> simp_all
   all_goals split <;> simp_all
-/-- Delegated block operations preserve related BVI states. -/
-theorem stateRel_doApp_block_viaBvl {C F : Type} (op : ClosLang.BlockOp) (args : List Value)
-    (source sourceNext : BviSem.BviState (Nat × C) F) (target : BviSem.BviState C F)
-    (value : Value) (related : stateRel source target)
-    (notFromList : ∀ tag, op ≠ .fromList tag)
-    (run : BviSem.doApp (.blockOp op) args source = .val (value, sourceNext)) :
-    ∃ targetNext, BviSem.doApp (.blockOp op) args target = .val (value, targetNext) ∧
-      stateRel sourceNext targetNext := by
-  have refs := (stateRel_const source target related).1
-  have eqRefs : (BviSem.toBvl target).refs = (BviSem.toBvl source).refs := by simpa [BviSem.toBvl] using refs
-  have transfer := applyBlock_sharedRefs op args (BviSem.toBvl source) (BviSem.toBvl target) eqRefs
-  have self := applyBlock_sharedRefs op args (BviSem.toBvl source) (BviSem.toBvl source) rfl
-  rw [doApp_block_viaBvl op args source notFromList] at run
-  rw [doApp_block_viaBvl op args target notFromList]
-  cases found : BvlSem.applyBlock op args (BviSem.toBvl source) with
-  | none => simp [found] at run
-  | some pair =>
-    obtain ⟨v, next⟩ := pair
-    simp only [found, Option.map_some] at self transfer
-    have nextEq : next = { BviSem.toBvl source with refs := next.refs } := by
-      exact (Prod.mk.inj (Option.some.inj self)).2
-    rw [found] at run
-    dsimp only at run
-    rw [nextEq] at run
-    simp [BviSem.toBvl, BviSem.fromBvl] at run
-    obtain ⟨rfl, rfl⟩ := run
-    refine ⟨{ target with refs := next.refs }, ?_, stateRel_withRefs source target next.refs related⟩
-    rw [transfer]
-    simp [BviSem.toBvl, BviSem.fromBvl]
 /-- Delegated block operations report only type errors. -/
 theorem doApp_block_viaBvl_error {C F : Type} (op : ClosLang.BlockOp) (args : List Value)
     (state : BviSem.BviState C F) (notFromList : ∀ tag, op ≠ .fromList tag)
@@ -641,17 +397,6 @@ theorem doApp_block_viaBvl_error {C F : Type} (op : ClosLang.BlockOp) (args : Li
   | none => simpa [found] using run.symm
   | some pair => cases pair; simp [found] at run
 
-/-- BVL memory operations depend only on the reference store and update only that store. -/
-theorem applyMemory_sharedRefs {C D F G : Type} (op : ClosLang.MemOp) (args : List Value)
-    (s : BvlSem.State C F) (t : BvlSem.State D G) (refs : t.refs = s.refs) :
-    BvlSem.applyMemory op args t = (BvlSem.applyMemory op args s).map
-      (fun (value, next) => (value, { t with refs := next.refs })) := by
-  unfold BvlSem.applyMemory
-  rw [refs]
-  repeat' split
-  all_goals simp_all [Option.map_bind]
-  all_goals try (cases t; simp_all)
-  all_goals try (repeat' (congr 1; funext value; cases value <;> simp [Option.map_bind]))
 /-- Memory operators rejected directly by the BVI dispatcher. -/
 def memoryRejected : ClosLang.MemOp → Bool
   | .fromListByte | .toListByte | .concatByteVec | .copyByte true => true
@@ -686,35 +431,6 @@ theorem doApp_memory_viaBvl {C F : Type} (op : ClosLang.MemOp) (args : List Valu
     all_goals simp [memoryDelegated, BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp] at *
     all_goals split <;> simp_all
     all_goals split <;> simp_all
-/-- Delegated memory operations preserve related BVI states. -/
-theorem stateRel_doApp_memory_viaBvl {C F : Type} (op : ClosLang.MemOp) (args : List Value)
-    (source sourceNext : BviSem.BviState (Nat × C) F) (target : BviSem.BviState C F)
-    (value : Value) (related : stateRel source target)
-    (delegated : memoryDelegated op = true)
-    (run : BviSem.doApp (.memOp op) args source = .val (value, sourceNext)) :
-    ∃ targetNext, BviSem.doApp (.memOp op) args target = .val (value, targetNext) ∧
-      stateRel sourceNext targetNext := by
-  have refs := (stateRel_const source target related).1
-  have eqRefs : (BviSem.toBvl target).refs = (BviSem.toBvl source).refs := by simpa [BviSem.toBvl] using refs
-  have transfer := applyMemory_sharedRefs op args (BviSem.toBvl source) (BviSem.toBvl target) eqRefs
-  have self := applyMemory_sharedRefs op args (BviSem.toBvl source) (BviSem.toBvl source) rfl
-  rw [doApp_memory_viaBvl op args source delegated] at run
-  rw [doApp_memory_viaBvl op args target delegated]
-  cases found : BvlSem.applyMemory op args (BviSem.toBvl source) with
-  | none => simp [found] at run
-  | some pair =>
-    obtain ⟨v, next⟩ := pair
-    simp only [found, Option.map_some] at self transfer
-    have nextEq : next = { BviSem.toBvl source with refs := next.refs } := by
-      exact (Prod.mk.inj (Option.some.inj self)).2
-    rw [found] at run
-    dsimp only at run
-    rw [nextEq] at run
-    simp [BviSem.toBvl, BviSem.fromBvl] at run
-    obtain ⟨rfl, rfl⟩ := run
-    refine ⟨{ target with refs := next.refs }, ?_, stateRel_withRefs source target next.refs related⟩
-    rw [transfer]
-    simp [BviSem.toBvl, BviSem.fromBvl]
 /-- Delegated memory operations report only type errors. -/
 theorem doApp_memory_viaBvl_error {C F : Type} (op : ClosLang.MemOp) (args : List Value)
     (state : BviSem.BviState C F) (delegated : memoryDelegated op = true)
@@ -725,70 +441,6 @@ theorem doApp_memory_viaBvl_error {C F : Type} (op : ClosLang.MemOp) (args : Lis
   | none => simpa [found] using run.symm
   | some pair => cases pair; simp [found] at run
 
-/-- Thunk application depends only on the reference store and updates only that store. -/
-theorem doApp_thunk_sharedRefs {C D F G : Type} (op : AstHOL.ThunkOp) (args : List Value)
-    (s : BvlSem.State C F) (t : BvlSem.State D G) (refs : t.refs = s.refs) :
-    BvlSem.doApp (.thunkOp op) args t =
-      match BvlSem.doApp (.thunkOp op) args s with
-      | .err error => .err error
-      | .val (value, next) => .val (value, { t with refs := next.refs }) := by
-  simp only [BvlSem.doApp]
-  rw [refs]
-  repeat' split
-  all_goals simp_all
-  all_goals try (cases t; simp_all)
-  all_goals grind
-/-- BVI thunk application delegates to BVL. -/
-theorem doApp_thunk_viaBvl {C F : Type} (op : AstHOL.ThunkOp) (args : List Value) (s : BviSem.BviState C F) :
-    BviSem.doApp (.thunkOp op) args s =
-      match BvlSem.doApp (.thunkOp op) args (BviSem.toBvl s) with
-      | .val (value, next) => .val (value, BviSem.fromBvl next s)
-      | .err (.abort error) => .err (.abort error)
-      | .err (.raise value) => .err (.raise (.exn value)) := by
-  rfl
-/-- Successful thunk operations preserve related BVI states. -/
-theorem stateRel_doApp_thunk {C F : Type} (op : AstHOL.ThunkOp) (args : List Value)
-    (source sourceNext : BviSem.BviState (Nat × C) F) (target : BviSem.BviState C F)
-    (value : Value) (related : stateRel source target)
-    (run : BviSem.doApp (.thunkOp op) args source = .val (value, sourceNext)) :
-    ∃ targetNext, BviSem.doApp (.thunkOp op) args target = .val (value, targetNext) ∧
-      stateRel sourceNext targetNext := by
-  have refs := (stateRel_const source target related).1
-  have eqRefs : (BviSem.toBvl target).refs = (BviSem.toBvl source).refs := by simpa [BviSem.toBvl] using refs
-  have transfer := doApp_thunk_sharedRefs op args (BviSem.toBvl source) (BviSem.toBvl target) eqRefs
-  have self := doApp_thunk_sharedRefs op args (BviSem.toBvl source) (BviSem.toBvl source) rfl
-  rw [doApp_thunk_viaBvl op args source] at run
-  rw [doApp_thunk_viaBvl op args target]
-  cases found : BvlSem.doApp (.thunkOp op) args (BviSem.toBvl source) with
-  | err error => cases error <;> simp [found] at run
-  | val pair =>
-    obtain ⟨v, next⟩ := pair
-    rw [found] at self transfer run
-    have nextEq : next = { BviSem.toBvl source with refs := next.refs } := by
-      exact (Prod.mk.inj (SemanticPrimitivesHOL.Result.val.inj self)).2
-    rw [nextEq] at run
-    simp [BviSem.toBvl, BviSem.fromBvl] at run
-    obtain ⟨rfl, rfl⟩ := run
-    refine ⟨{ target with refs := next.refs }, ?_, stateRel_withRefs source target next.refs related⟩
-    rw [transfer]
-    simp [BviSem.toBvl, BviSem.fromBvl]
-/-- Thunk-operation errors agree in related BVI states. -/
-theorem stateRel_doApp_thunk_error {C F : Type} (op : AstHOL.ThunkOp) (args : List Value)
-    (source : BviSem.BviState (Nat × C) F) (target : BviSem.BviState C F)
-    (error : SemanticPrimitivesHOL.ErrorResult BviSem.ExnOrRet) (related : stateRel source target)
-    (run : BviSem.doApp (.thunkOp op) args source = .err error) :
-    BviSem.doApp (.thunkOp op) args target = .err error := by
-  have refs := (stateRel_const source target related).1
-  have eqRefs : (BviSem.toBvl target).refs = (BviSem.toBvl source).refs := by simpa [BviSem.toBvl] using refs
-  have transfer := doApp_thunk_sharedRefs op args (BviSem.toBvl source) (BviSem.toBvl target) eqRefs
-  rw [doApp_thunk_viaBvl op args source] at run
-  rw [doApp_thunk_viaBvl op args target]
-  cases found : BvlSem.doApp (.thunkOp op) args (BviSem.toBvl source) with
-  | err e =>
-    rw [found] at transfer run
-    rw [transfer]
-    cases e <;> simpa using run
-  | val pair => cases pair; simp [found] at run
 /-- A successful installation exposes the exact decoded arguments, compiler
 result, disjointness checks, and shifted oracle. -/
 theorem doInstall_success_inv {C F R : Type} (args : List Value) (s next : BviSem.BviState C F) (v : Value)
@@ -943,21 +595,6 @@ theorem doApp_blockFromList_pure {C F : Type} (tag : Nat) (args : List Value)
         | some values =>
           split <;> simp_all
 
-/-- Successful block-from-list operations preserve related states. -/
-theorem stateRel_doApp_blockFromList {C F : Type} (tag : Nat) (args : List Value)
-    (source sourceNext : BviSem.BviState (Nat × C) F) (target : BviSem.BviState C F)
-    (value : Value) (related : stateRel source target)
-    (run : BviSem.doApp (.blockOp (.fromList tag)) args source = .val (value, sourceNext)) :
-    ∃ targetNext, BviSem.doApp (.blockOp (.fromList tag)) args target = .val (value, targetNext) ∧
-      stateRel sourceNext targetNext := by
-  rw [doApp_blockFromList_pure] at run ⊢
-  cases found : blockFromListValue tag args with
-  | none => simp [found] at run
-  | some result =>
-    simp [found] at run
-    obtain ⟨rfl, rfl⟩ := run
-    exact ⟨target, by simp, related⟩
-
 /-- Block-from-list failures are type errors. -/
 theorem doApp_blockFromList_error {C F : Type} (tag : Nat) (args : List Value)
     (state : BviSem.BviState C F) (error : SemanticPrimitivesHOL.ErrorResult BviSem.ExnOrRet)
@@ -1014,105 +651,6 @@ theorem doApp_ffi_effect {C F : Type} (name : Flapjack.Basis.Pure.MlString.MlStr
             all_goals cases xflag <;> cases yflag <;> try simp
             all_goals cases outcome : callFFIHOL state.ffi (.extCall name) config bytes <;>
               simp
-
-/-- Successful external calls preserve related states, including the updated
-reference bytes and FFI state. -/
-theorem stateRel_doApp_ffi {C F : Type} (name : Flapjack.Basis.Pure.MlString.MlString)
-    (args : List Value) (source sourceNext : BviSem.BviState (Nat × C) F)
-    (target : BviSem.BviState C F) (value : Value) (related : stateRel source target)
-    (run : BviSem.doApp (.ffi name) args source = .val (value, sourceNext)) :
-    ∃ targetNext, BviSem.doApp (.ffi name) args target = .val (value, targetNext) ∧
-      stateRel sourceNext targetNext := by
-  have refs := (stateRel_const source target related).1
-  have ffi := (stateRel_const source target related).2.2.2
-  rw [doApp_ffi_effect] at run ⊢
-  rw [refs, ffi]
-  cases effect : ffiEffect name args source.refs source.ffi with
-  | err error => simp [effect] at run
-  | val pair =>
-    obtain ⟨newRefs, newFfi⟩ := pair
-    simp [effect] at run
-    obtain ⟨rfl, rfl⟩ := run
-    refine ⟨{ target with refs := newRefs, ffi := newFfi }, by simp, ?_⟩
-    exact stateRel_withFfi _ _ newFfi (stateRel_withRefs source target newRefs related)
-
-/-- External-call errors, including final FFI outcomes, agree in related states. -/
-theorem stateRel_doApp_ffi_error {C F : Type} (name : Flapjack.Basis.Pure.MlString.MlString)
-    (args : List Value) (source : BviSem.BviState (Nat × C) F) (target : BviSem.BviState C F)
-    (error : SemanticPrimitivesHOL.ErrorResult BviSem.ExnOrRet) (related : stateRel source target)
-    (run : BviSem.doApp (.ffi name) args source = .err error) :
-    BviSem.doApp (.ffi name) args target = .err error := by
-  have refs := (stateRel_const source target related).1
-  have ffi := (stateRel_const source target related).2.2.2
-  rw [doApp_ffi_effect] at run ⊢
-  rw [refs, ffi]
-  cases effect : ffiEffect name args source.refs source.ffi with
-  | err e => simpa [effect] using run
-  | val pair => cases pair; simp [effect] at run
-
-/-- Reading a global slot depends only on the shared global pointer and
-reference store. -/
-theorem stateRel_doApp_global {C F : Type} (index : Nat) (args : List Value)
-    (source sourceNext : BviSem.BviState (Nat × C) F) (target : BviSem.BviState C F)
-    (result : Value) (related : stateRel source target)
-    (run : BviSem.doApp (.globOp (.global index)) args source = .val (result, sourceNext)) :
-    ∃ targetNext, BviSem.doApp (.globOp (.global index)) args target = .val (result, targetNext) ∧
-      stateRel sourceNext targetNext := by
-  cases args with
-  | cons value rest => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux] at run
-  | nil =>
-    have refs := (stateRel_const source target related).1
-    have global := (stateRel_const source target related).2.2.1
-    cases pointer : source.global with
-    | none => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, pointer] at run
-    | some ptr =>
-      cases found : source.refs.lookup ptr with
-      | none => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, pointer, found] at run
-      | some entry =>
-        cases entry with
-        | valueArray values =>
-          cases item : values[index]? with
-          | none => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, pointer, found, item] at run
-          | some value =>
-            simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, pointer, found, item] at run
-            obtain ⟨rfl, rfl⟩ := run
-            exact ⟨target, by simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux,
-              global, refs, pointer, found, item], related⟩
-        | _ => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, pointer, found] at run
-
-/-- Writing a global slot applies the same reference-store update on both
-sides of the state relation. -/
-theorem stateRel_doApp_setGlobal {C F : Type} (index : Nat) (args : List Value)
-    (source sourceNext : BviSem.BviState (Nat × C) F) (target : BviSem.BviState C F)
-    (result : Value) (related : stateRel source target)
-    (run : BviSem.doApp (.globOp (.setGlobal index)) args source = .val (result, sourceNext)) :
-    ∃ targetNext, BviSem.doApp (.globOp (.setGlobal index)) args target = .val (result, targetNext) ∧
-      stateRel sourceNext targetNext := by
-  cases args with
-  | nil => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux] at run
-  | cons value rest =>
-    cases rest with
-    | cons x xs => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux] at run
-    | nil =>
-      have refs := (stateRel_const source target related).1
-      have global := (stateRel_const source target related).2.2.1
-      cases pointer : source.global with
-      | none => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, pointer] at run
-      | some ptr =>
-        cases found : source.refs.lookup ptr with
-        | none => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, pointer, found] at run
-        | some entry =>
-          cases entry with
-          | valueArray values =>
-            by_cases bound : index < values.length
-            · simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, pointer, found, bound] at run
-              obtain ⟨rfl, rfl⟩ := run
-              refine ⟨{ target with refs := source.refs.updateEq (ptr, .valueArray (values.set index value)) }, ?_,
-                by simpa [pointer] using (stateRel_withRefs source target
-                  (source.refs.updateEq (ptr, .valueArray (values.set index value))) related)⟩
-              simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, global, refs, pointer, found, bound]
-            · simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, pointer, found, bound] at run
-          | _ => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, pointer, found] at run
 
 /-- A global-slot write reports only a type error. -/
 theorem doApp_setGlobal_error {C F : Type} (index : Nat) (args : List Value)
@@ -1259,9 +797,12 @@ theorem envRel_worker (op : AssocOp) (args : List Value) (value : Value)
   | noop => contradiction
 
 /-- The wrapper evaluates its worker under the original arguments, followed
-by the accumulator identity and the original environment. -/
-theorem evaluate_letWrap {C F : Type} (body : Bvi.Exp) (op : AssocOp)
-    (env : List Value) (state : BviSem.BviState C F) (notNoop : op ≠ .noop) :
+by the accumulator identity and the original environment. Evaluation inherits
+the real-model assumption in SOUNDNESS item 8. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "evaluate_let_wrap"
+  (fmap_as_finite_support := [refs])]
+theorem evaluate_letWrap {C F R T : Type} (body : Bvi.Exp) (op : AssocOp)
+    (env : List Value) (state : BviSem.BviState C F) (_r : R) (_t : T) (notNoop : op ≠ .noop) :
     BviSem.evaluate [letWrap env.length (identity op) body] env state =
       BviSem.evaluate [body] (env ++ [opIdValue op] ++ env) state := by
   have bindings : BviSem.evaluate (((List.range env.length).map Bvi.Exp.var) ++ [identity op]) env state =

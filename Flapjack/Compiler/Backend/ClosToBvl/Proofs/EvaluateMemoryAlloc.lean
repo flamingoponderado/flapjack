@@ -38,7 +38,7 @@ theorem evaluatePost_ref_success {C F : Type} (s sMiddle : ClosSem.State C F)
   | val targetValues =>
     have argsRel : List.Forall₂ (vRel sMiddle.maxApp fMiddle tMiddle.refs tMiddle.code)
         values.reverse targetValues.reverse := by
-      simpa [resultRel, maxApp] using reverse_related related
+      simpa [resultRel, maxApp] using List.rel_reverse related
     have allocated := doApp_ref_related sMiddle tMiddle fMiddle values.reverse targetValues.reverse state argsRel
     let sourcePtr := ClosSem.leastUnusedRef sMiddle.refs
     let targetPtr := BvlSem.leastUnusedRef tMiddle.refs
@@ -130,7 +130,7 @@ theorem evaluatePost_refArray_success {C F : Type} (s sMiddle sLast : ClosSem.St
   | val targetValues =>
     have argsRel : List.Forall₂ (vRel sMiddle.maxApp fMiddle tMiddle.refs tMiddle.code)
         [.number count, initial] targetValues.reverse := by
-      simpa [resultRel, maxApp, argsEq] using reverse_related related
+      simpa [resultRel, maxApp, argsEq] using List.rel_reverse related
     cases reversed : targetValues.reverse with
     | nil => rw [reversed] at argsRel; cases argsRel
     | cons targetCount tail =>
@@ -249,7 +249,7 @@ theorem evaluatePost_refByte_success {C F : Type} (s sMiddle sLast : ClosSem.Sta
   | val targetValues =>
     have argsRel : List.Forall₂ (vRel sMiddle.maxApp fMiddle tMiddle.refs tMiddle.code)
         [.number count, .number number] targetValues.reverse := by
-      simpa [resultRel, maxApp, argsEq] using reverse_related related
+      simpa [resultRel, maxApp, argsEq] using List.rel_reverse related
     cases reversed : targetValues.reverse with
     | nil => rw [reversed] at argsRel; cases argsRel
     | cons targetCount tail =>

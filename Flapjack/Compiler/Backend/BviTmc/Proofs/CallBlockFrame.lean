@@ -10,6 +10,22 @@ public import Flapjack.Compiler.Backend.BviTmc.Proofs.ListSimulation
 namespace Flapjack.Compiler.Backend.BviTmc.CallBlockFrame
 open BviTmc BviSem BvlSem SemanticPrimitivesProps ResultRelation ListSimulation CallBlockEnvironment
 
+/-- A cons is a singleton append. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "cons_append"]
+theorem cons_append {α : Type} (v : α) (l : List α) : v :: l = [v] ++ l := rfl
+
+/-- Reversing constructor arguments swaps the mapped left and right fields. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "rw_block_args"]
+theorem rw_block_args {α β : Type} (left : List α) (child : β) (right : List α) (f : α → β) :
+    (left.map f ++ [child] ++ right.map f).reverse =
+      (right.reverse.map f) ++ [child] ++ (left.reverse.map f) := by
+  simp [List.reverse_append, List.map_reverse, List.append_assoc]
+
+/-- Shifting by two successors is shifting by the sum with two. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "shift_cb_suc"]
+theorem shift_cb_suc (n : Nat) (cb : CallBlock) :
+    shiftBlock (Nat.succ (Nat.succ n)) cb = shiftBlock (n + 2) cb := rfl
+
 /-- Flapjack infrastructure: well-formed constructor-frame variables are
 read without changing the state, so only the child can fail or change it. -/
 theorem evaluate_frame {C F : Type} (loc tag : Nat) (left right : List Nat)
@@ -21,7 +37,7 @@ theorem evaluate_frame {C F : Type} (loc tag : Nat) (left right : List Nat)
       | (.val values, next) =>
         (.val [.block tag ((right.map (fun n => holEl n env)).reverse ++
           [holHd values] ++ (left.map (fun n => holEl n env)).reverse)], next) := by
-  have leftRun := evaluate_vars_target left env.length env state leftWf (Nat.le_refl _)
+  have leftRun := evaluate_vars_target left env.length env state ⟨leftWf, Nat.le_refl _⟩
   have argsRun : evaluate (left.map Bvi.Exp.var ++ [callBlockToBvi loc child] ++ right.map Bvi.Exp.var) env state =
       match evaluate [callBlockToBvi loc child] env state with
       | (.err error, next) => (.err error, next)
@@ -31,7 +47,7 @@ theorem evaluate_frame {C F : Type} (loc tag : Nat) (left right : List Nat)
     change BviSem.evaluateTuple (_, env, state) = _
     rw [evaluateAppend]
     simp only [BviSem.evaluateTuple, leftRun]
-    have rightRun (next : BviState C F) := evaluate_vars_target right env.length env next rightWf (Nat.le_refl _)
+    have rightRun (next : BviState C F) := evaluate_vars_target right env.length env next ⟨rightWf, Nat.le_refl _⟩
     have tailRun : evaluate ([callBlockToBvi loc child] ++ right.map Bvi.Exp.var) env state =
         match evaluate [callBlockToBvi loc child] env state with
         | (.err error, next) => (.err error, next)
@@ -101,10 +117,10 @@ theorem evaluate_frame_core {C F : Type} (loc tag : Nat) (left right : List Nat)
         have valueRelated : valueRel g value value' := by
           simp only [resultRel] at related
           cases related with | cons h _ => exact h
-        have leftRelated := wfVars_list_rel left opt f env1 env2 environments leftWf
-        have rightRelated := wfVars_list_rel right opt f env1 env2 environments rightWf
-        have leftNext := listRel_submap f g _ _ leftRelated extension
-        have rightNext := listRel_submap f g _ _ rightRelated extension
+        have leftRelated := wfVars_list_rel left opt f env1 env2 ⟨environments, leftWf⟩
+        have rightRelated := wfVars_list_rel right opt f env1 env2 ⟨environments, rightWf⟩
+        have leftNext := listRel_submap f g _ _ ⟨leftRelated, extension⟩
+        have rightNext := listRel_submap f g _ _ ⟨rightRelated, extension⟩
         have fields : List.Forall₂ (valueRel g)
             ((right.map (fun n => holEl n env1)).reverse ++ [value] ++ (left.map (fun n => holEl n env1)).reverse)
             ((right.map (fun n => holEl n env2)).reverse ++ [value'] ++ (left.map (fun n => holEl n env2)).reverse) := by
@@ -117,28 +133,5 @@ theorem evaluate_frame_core {C F : Type} (loc tag : Nat) (left right : List Nat)
         · rw [evaluate_frame loc tag left right child env2 target targetLeft targetRight, targetRun]
           rfl
         · exact .cons (.block _ _ _ (by simpa [List.append_assoc] using fields)) .nil
-
-/-- Flapjack infrastructure: ordinary simulation of any well-formed call
-block, assuming simulation of its recursive-call leaf. The optimized worker
-and wrapper conclusions are not included. -/
-theorem evaluate_cb_core {C F : Type} (loc : Nat) (cb : CallBlock)
-    (source : BviState (Nat × C) F) (env1 : List Value) (opt : Bool)
-    (f : HolFiniteMapExact Nat Nat) (target : BviState C F) (env2 : List Value)
-    (environments : envRel opt f env1 env2)
-    (leafIH : ∀ ticks args result final, wfVars env1.length args →
-      evaluate [callBlockToBvi loc (.rCall ticks args)] env1 source = (result, final) →
-      result ≠ .err (.abort .typeError) →
-      Core [callBlockToBvi loc (.rCall ticks args)] env2 f target result final)
-    (result : BviResult) (final : BviState (Nat × C) F)
-    (wf : wfBlock env1.length cb) (run : evaluate [callBlockToBvi loc cb] env1 source = (result, final))
-    (notTypeError : result ≠ .err (.abort .typeError)) :
-    Core [callBlockToBvi loc cb] env2 f target result final := by
-  induction cb generalizing result final with
-  | rCall ticks args => exact leafIH ticks args result final wf run notTypeError
-  | callBlock tag left child right ih =>
-    apply evaluate_frame_core loc tag left right child source env1 result final opt f target env2
-      run notTypeError environments wf.1 wf.2.2.1
-    intro r mid childRun childSafe
-    exact ih r mid wf.2.1 childRun childSafe
 
 end Flapjack.Compiler.Backend.BviTmc.CallBlockFrame

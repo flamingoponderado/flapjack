@@ -41,7 +41,7 @@ theorem evaluatePost_equal_success {C F : Type} (s sMiddle sLast : ClosSem.State
   | val targetValues =>
     have argsRel : List.Forall₂ (vRel sMiddle.maxApp fMiddle tMiddle.refs tMiddle.code)
         values.reverse targetValues.reverse := by
-      simpa [resultRel, maxApp] using reverse_related related
+      simpa [resultRel, maxApp] using List.rel_reverse related
     obtain ⟨target, targetApp, stateEq, valueRel⟩ :=
       blockEqual_dispatch values.reverse targetValues.reverse sMiddle sLast tMiddle state argsRel value run
     subst sLast

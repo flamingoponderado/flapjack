@@ -5,8 +5,9 @@ public import Flapjack.Pancake.Semantics.CrepSem.HOLState
 
 @[expose] public section
 
-/-! Semantic type substitutions and source type-name resolution. The source
-and representation review of these definitions remains pending. -/
+/-! Semantic type substitutions and source type-name resolution. The tagged
+declarations have individual source reviews in the HOL theorem map; the
+finite-map representation of `typeSubst` is explicitly qualified there. -/
 namespace Flapjack.TypeSystemHOL
 open Flapjack.Basis.Pure.MlString Flapjack.NamespaceHOL Flapjack.AstHOL
 
@@ -75,6 +76,22 @@ end
 folded from the right, so the first duplicate key is retained. -/
 def typeSubstMap (entries : List (MlString × SemanticT)) : HolFiniteMapExact MlString SemanticT :=
   HolFiniteMapExact.updateListEq HolFiniteMapExact.empty entries.reverse
+
+/-- Flapjack lookup law for the source association-list substitution map. -/
+theorem lookupTypeSubstMap (entries : List (MlString × SemanticT)) (key : MlString) :
+    (typeSubstMap entries).lookup key = entries.lookup key := by
+  induction entries with
+  | nil => rfl
+  | cons entry entries ih =>
+    rcases entry with ⟨name, value⟩
+    by_cases same : key = name
+    · subst key
+      simp [typeSubstMap, HolFiniteMapExact.updateListEq, FUPDATE_LIST_HOL, List.foldl_append,
+        FUPDATE_HOL, List.lookup]
+    · have different : (key == name) = false := by simp [same]
+      simpa [typeSubstMap, HolFiniteMapExact.updateListEq, FUPDATE_LIST_HOL, List.foldl_append,
+        FUPDATE_HOL, List.lookup, same, different] using ih
+
 
 mutual
 @[hol "cakeml/semantics/typeSystemScript.sml" "type_name_subst_def"]

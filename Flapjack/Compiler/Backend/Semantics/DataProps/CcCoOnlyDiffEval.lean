@@ -895,7 +895,7 @@ private theorem ccCoOnlyDiffAt_returningForce {C F : Type} (dest : Nat) (live : 
               cases called : fixClock callState (evaluate body callState) with
               | mk outcome last =>
                 have bodyRun : evaluate body callState = (outcome, last) := by
-                  simpa [fixClock_evaluate] using called
+                  simpa [fixClockEvaluate] using called
                 simp only [callState] at called bodyRun
                 simp only [bodyRun] at called
                 simp only [evaluate, read, th, found, cut] at run
@@ -909,7 +909,7 @@ private theorem ccCoOnlyDiffAt_returningForce {C F : Type} (dest : Nat) (live : 
                     last bodyRun safe agreeCall
                   have clampedT : fixClock targetCallState (evaluate body targetCallState) =
                       (none, t1) := by
-                    rw [fixClock_evaluate, tRun]
+                    rw [fixClockEvaluate, tRun]
                   refine ⟨t1, ?_, tAgree⟩
                   simp only [evaluate, ← locals, cut, ← refs, ← code, ← frameSizes, read, th,
                     found]
@@ -925,7 +925,7 @@ private theorem ccCoOnlyDiffAt_returningForce {C F : Type} (dest : Nat) (live : 
                       (some (.err error)) last bodyRun safe agreeCall
                     have clampedT : fixClock targetCallState (evaluate body targetCallState) =
                         (some (.err error), t1) := by
-                      rw [fixClock_evaluate, tRun]
+                      rw [fixClockEvaluate, tRun]
                     refine ⟨t1, ?_, tAgree⟩
                     simp only [evaluate, ← locals, cut, ← refs, ← code, ← frameSizes, read, th,
                       found]
@@ -941,7 +941,7 @@ private theorem ccCoOnlyDiffAt_returningForce {C F : Type} (dest : Nat) (live : 
                         targetCallState (some (.val [])) last bodyRun safe agreeCall
                       have clampedT : fixClock targetCallState (evaluate body targetCallState) =
                           (some (.val []), t1) := by
-                        rw [fixClock_evaluate, tRun]
+                        rw [fixClockEvaluate, tRun]
                       refine ⟨t1, ?_, tAgree⟩
                       simp only [evaluate, ← locals, cut, ← refs, ← code, ← frameSizes, read, th,
                         found]
@@ -958,7 +958,7 @@ private theorem ccCoOnlyDiffAt_returningForce {C F : Type} (dest : Nat) (live : 
                           agreeCall
                         have clampedT : fixClock targetCallState (evaluate body targetCallState) =
                             (some (.val (head :: second :: rest)), t1) := by
-                          rw [fixClock_evaluate, tRun]
+                          rw [fixClockEvaluate, tRun]
                         refine ⟨t1, ?_, tAgree⟩
                         simp only [evaluate, ← locals, cut, ← refs, ← code, ← frameSizes, read,
                           th, found]
@@ -974,7 +974,7 @@ private theorem ccCoOnlyDiffAt_returningForce {C F : Type} (dest : Nat) (live : 
                             targetCallState (some (.val [head])) last bodyRun safe agreeCall
                           have clampedT : fixClock targetCallState (evaluate body targetCallState) =
                               (some (.val [head]), t1) := by
-                            rw [fixClock_evaluate, tRun]
+                            rw [fixClockEvaluate, tRun]
                           have tPop : popEnv t1 = none := popEnv_none_of_agree last t1 tAgree pop
                           refine ⟨t1, ?_, tAgree⟩
                           simp only [evaluate, ← locals, cut, ← refs, ← code, ← frameSizes, read,
@@ -995,7 +995,7 @@ private theorem ccCoOnlyDiffAt_returningForce {C F : Type} (dest : Nat) (live : 
                             targetCallState (some (.val [head])) last bodyRun lastSafe agreeCall
                           have clampedT : fixClock targetCallState (evaluate body targetCallState) =
                               (some (.val [head]), t1) := by
-                            rw [fixClock_evaluate, tRun]
+                            rw [fixClockEvaluate, tRun]
                           obtain ⟨t2, tPop, agreePopped⟩ := popEnv_ccCoOnlyDiff last t1 popped
                             ⟨tAgree, pop⟩
                           refine ⟨setVar dest head t2, ?_, ?_⟩

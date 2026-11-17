@@ -68,7 +68,7 @@ theorem evaluatorSimulation_nonTailCall_at {C F : Type} (returns : List Nat) (na
             cases called : DataSem.evaluate body sourceEntry with
             | mk outcome last =>
               have sourceClamped : fixClock sourceEntry (DataSem.evaluate body sourceEntry) = (outcome, last) := by
-                rw [fixClock_evaluate, called]
+                rw [fixClockEvaluate, called]
               simp only [sourceEntry] at sourceClamped
               cases outcome with
               | none =>
@@ -91,7 +91,7 @@ theorem evaluatorSimulation_nonTailCall_at {C F : Type} (returns : List Nat) (na
                     simp [DataSem.evaluate, read, found, unique, cut, zero, sourceClamped, lengths, sourcePopRun] at run
                     obtain ⟨rfl, rfl⟩ := run
                     have targetClamped : fixClock targetEntry (DataSem.evaluate body targetEntry) = (some (.val returned), targetLast) := by
-                      rw [fixClock_evaluate, targetRun]
+                      rw [fixClockEvaluate, targetRun]
                     simp only [targetEntry] at targetClamped
                     have afterRel : stateRel (setVars returns returned sourcePop) (setVars returns returned targetPop) .ln :=
                       stateRel_setVars sourcePop targetPop .ln returns returned lengths
@@ -111,7 +111,7 @@ theorem evaluatorSimulation_nonTailCall_at {C F : Type} (returns : List Nat) (na
                     obtain ⟨targetLast, targetRun, lastRel, _⟩ :=
                       bodyIH body sourceEntry targetEntry last _ smaller entryRel.1 entryRel.2 entryException notType called
                     have targetClamped := targetRun
-                    rw [← fixClock_evaluate body targetEntry] at targetClamped
+                    rw [← fixClockEvaluate targetEntry body] at targetClamped
                     simp only [targetEntry] at targetClamped
                     exact ⟨targetLast, by simp [DataSem.evaluate, targetRead, targetFound, unique, targetCut, targetNonzero, targetClamped], lastRel, by simp⟩
                   | raise value =>
@@ -123,7 +123,7 @@ theorem evaluatorSimulation_nonTailCall_at {C F : Type} (returns : List Nat) (na
                       obtain ⟨targetLast, targetRun, lastRel, _⟩ :=
                         bodyIH body sourceEntry targetEntry last (some (.err (.raise value))) smaller entryRel.1 entryRel.2 entryException (by simp) called
                       have targetClamped := targetRun
-                      rw [← fixClock_evaluate body targetEntry] at targetClamped
+                      rw [← fixClockEvaluate targetEntry body] at targetClamped
                       simp only [targetEntry, Option.isSome] at targetClamped
                       exact ⟨targetLast, by simp [DataSem.evaluate, targetRead, targetFound, unique, targetCut, targetNonzero, targetClamped], lastRel, by simp⟩
                     | some pair =>
@@ -155,7 +155,7 @@ theorem evaluatorSimulation_nonTailCall_at {C F : Type} (returns : List Nat) (na
                         bodyIH handlerBody (setVar name value last) (setVar name value targetLast) sourceNext result lastClock handlerRel
                           (by simp [setVar, sameLast]) handlerException notType handlerRun
                       have targetClamped := targetRun
-                      rw [← fixClock_evaluate body targetEntry] at targetClamped
+                      rw [← fixClockEvaluate targetEntry body] at targetClamped
                       simp only [targetEntry, Option.isSome] at targetClamped
                       refine ⟨targetNext, ?_, finalRel, finalLocals⟩
                       simpa [DataSem.evaluate, targetRead, targetFound, unique, targetCut, targetNonzero, targetClamped] using targetHandlerRun

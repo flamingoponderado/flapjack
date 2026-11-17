@@ -154,7 +154,8 @@ theorem FLOOKUP_MAP_KEYS_LINV {α β : Type} [Nonempty α] (f : α → α) (m : 
   have hinv : ∀ y, f (holLinv f (fun _ => True) y) = y := apply_holLinv_of_surjective hf.2
   have hlinj : Function.Injective (holLinv f (fun _ => True)) := fun x y h => by
     rw [← hinv x, ← hinv y, h]
-  have hli : holLinv f (fun _ => True) (f i) = i := holLinv_apply_of_injective hf.1 i
+  have hli : holLinv f (fun _ => True) (f i) = i := holLinvDef f (fun _ => True) (fun _ => True)
+    ⟨fun _ _ => trivial, fun _ _ _ he => hf.1 he⟩ i trivial
   conv_lhs => rw [← hli]
   exact HolFiniteMapExact.lookup_mapKeys_of_injective hlinj m (f i)
 
