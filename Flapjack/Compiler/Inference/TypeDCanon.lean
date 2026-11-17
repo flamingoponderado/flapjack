@@ -139,6 +139,60 @@ private theorem typeNameSubstListTenvEquiv (t1 : TenvAbbrev) (ts : List AstT)
 termination_by sizeOf ts
 end
 
+/-- Pattern and pattern-list typing are preserved by environment equivalence. -/
+@[hol "cakeml/compiler/inference/proofs/type_dCanonScript.sml" "type_p_tenv_equiv"]
+theorem typePTenvEquiv :
+    (∀ tvs env p t bindings, TypeP tvs env p t bindings →
+      ∀ target, tenvEquiv env target → TypeP tvs target p t bindings) ∧
+    (∀ tvs env ps ts bindings, TypePs tvs env ps ts bindings →
+      ∀ target, tenvEquiv env target → TypePs tvs target ps ts bindings) := by
+  constructor
+  all_goals
+    intro tvs env ps ts bindings h
+    let P := fun p t bindings (_ : TypeP tvs env p t bindings) =>
+      ∀ target, tenvEquiv env target → TypeP tvs target p t bindings
+    let Ps := fun ps ts bindings (_ : TypePs tvs env ps ts bindings) =>
+      ∀ target, tenvEquiv env target → TypePs tvs target ps ts bindings
+    first
+    | refine TypeP.rec (motive_1 := P) (motive_2 := Ps) ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ h
+    | refine TypePs.rec (motive_1 := P) (motive_2 := Ps) ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ h
+    case refine_1 =>
+      intro t free target equiv
+      exact .any tvs target t free
+    case refine_2 =>
+      intro name t free target equiv
+      exact .var tvs target name t free
+    case refine_3 => intro n target equiv; exact .intLit tvs target n
+    case refine_4 => intro c target equiv; exact .charLit tvs target c
+    case refine_5 => intro s target equiv; exact .stringLit tvs target s
+    case refine_6 => intro w target equiv; exact .word8Lit tvs target w
+    case refine_7 => intro w target equiv; exact .word64Lit tvs target w
+    case refine_8 =>
+      intro name ps types params id args bindings free arity typed lookup ih target equiv
+      apply TypeP.constructor tvs target name ps types params id args bindings free arity (ih target equiv)
+      rw [← nsAll2EqLookup equiv.2.1 name]
+      exact lookup
+    case refine_9 =>
+      intro ps types bindings typed ih target equiv
+      exact .tuple tvs target ps types bindings (ih target equiv)
+    case refine_10 =>
+      intro p t bindings typed ih target equiv
+      exact .reference tvs target p t bindings (ih target equiv)
+    case refine_11 =>
+      intro p name t bindings typed ih target equiv
+      exact .asPattern tvs target p name t bindings (ih target equiv)
+    case refine_12 =>
+      intro p t bindings free names typed ih target equiv
+      have names' := checkTypeNamesTenvEquiv env.t t target.t ⟨equiv.1, names⟩
+      have subst := typeNameSubstTenvEquiv env.t t target.t equiv.1
+      have typed' := ih target equiv
+      rw [subst] at typed' ⊢
+      exact .annotation tvs target p t bindings free names' typed'
+    case refine_13 => intro target equiv; exact .nil tvs target
+    case refine_14 =>
+      intro p ps t ts bindings rest head tail ihHead ihTail target equiv
+      exact .cons tvs target p ps t ts bindings rest (ihHead target equiv) (ihTail target equiv)
+
 /-- Every type identifier in the declarative environment belongs to the set. -/
 @[hol "cakeml/compiler/inference/proofs/type_dCanonScript.sml" "set_tids_tenv_def"]
 noncomputable def setTidsTenv (tids : Nat → Prop) (tenv : TypeEnv) : Prop :=

@@ -457,6 +457,7 @@ val _ = show "tenv_equiv_tenvLift_typed" type_dCanonTheory.tenv_equiv_tenvLift;
 val _ = show "lookup_var_tenv_equiv_typed" type_dCanonTheory.lookup_var_tenv_equiv;
 val _ = show "check_type_names_tenv_equiv_typed" type_dCanonTheory.check_type_names_tenv_equiv;
 val _ = show "type_name_subst_tenv_equiv_typed" type_dCanonTheory.type_name_subst_tenv_equiv;
+val _ = show "type_p_tenv_equiv_typed" type_dCanonTheory.type_p_tenv_equiv;
 val _ = show "set_tids_tenv_remap_typed" type_dCanonTheory.set_tids_tenv_remap;
 val set_tids_tenv_remap_replay = Q.prove(
   `probe_set_tids_tenv tids tenv ==>
