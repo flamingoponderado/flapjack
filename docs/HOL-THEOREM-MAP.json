@@ -1,5 +1,17 @@
 [
 {
+  "hol_path": "cakeml/compiler/inference/inferScript.sml", "hol_name": "bind_type_name_check_subst",
+  "lean_path": "Flapjack/Compiler/Inference/Infer/TypeNameCheckBind.lean", "lean_name": "bindTypeNameCheckSubst",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with the source and bind_type_name_check_subst_typed confirms both complete conjuncts, independent continuation result types, the arbitrary common state and every success and structured-error outcome."
+ },
+{
+  "hol_path": "cakeml/compiler/inference/inferScript.sml", "hol_name": "ignore_bind_type_name_check_subst",
+  "lean_path": "Flapjack/Compiler/Inference/Infer/TypeNameCheckBind.lean", "lean_name": "ignoreBindTypeNameCheckSubst",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with the source and ignore_bind_type_name_check_subst_typed confirms both complete conjuncts, independent continuation result types, the arbitrary common state and all success and error cases."
+ },
+{
   "hol_path": "cakeml/compiler/inference/inferScript.sml", "hol_name": "to_type_name_check_sub",
   "lean_path": "Flapjack/Compiler/Inference/Infer/TypeNameCheckEquiv.lean", "lean_name": "toTypeNameCheckSub",
   "statement_status": "reviewed_exact",

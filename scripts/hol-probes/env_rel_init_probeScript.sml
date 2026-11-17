@@ -43,6 +43,8 @@ val _ = show "check_dups_eq_find_dup_typed" inferTheory.check_dups_eq_find_dup;
 val _ = show "type_name_check_subst_typed" inferTheory.type_name_check_subst_def;
 val _ = show "type_name_check_sub_typed" inferTheory.type_name_check_sub_def;
 val _ = show "to_type_name_check_sub_typed" inferTheory.to_type_name_check_sub;
+val _ = show "bind_type_name_check_subst_typed" inferTheory.bind_type_name_check_subst;
+val _ = show "ignore_bind_type_name_check_subst_typed" inferTheory.ignore_bind_type_name_check_subst;
 val _ = show "type_name_check_sub_unbound_eval" (EVAL ``
   type_name_check_sub <|loc := NONE; err := nsEmpty|> nsEmpty [] (Atvar «a») (7:num)``);
 val _ = show "type_name_check_sub_missing_eval" (EVAL ``
