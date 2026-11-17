@@ -2,7 +2,10 @@ module
 
 public import Flapjack.Compiler.Backend.Semantics.DataSem.ApplyFields
 public import Flapjack.Compiler.Backend.Semantics.DataProps.AppWithClock
+public import Flapjack.Compiler.Backend.Semantics.DataProps.ApplyAuxFields
+public import Flapjack.Compiler.Backend.Semantics.DataProps.NonFfiResources
 public import Flapjack.Misc.MiscThe
+public import Aesop
 
 @[expose] public section
 
@@ -186,5 +189,87 @@ theorem doSpace_locals_eq {C F : Type} (op : ClosLang.Op) (values : List Value)
       by_cases fits : state.space < DataSpace.opSpaceReq op values.length
       · simp only [if_pos fits, Option.map_none]
       · simp only [if_neg fits, Option.map_some]
+
+/-- Successful auxiliary application keeps its value when only the safety
+    flag is replaced, recording the new flag existentially.  Flapjack
+    infrastructure toward the parked HOL `do_app_with_locals`; no separate HOL
+    original. -/
+private theorem doAppAux_safeSuccess' {C F : Type} (op : ClosLang.Op)
+    (values : List Value) (state next : State C F) (value : Value) (safe : Bool)
+    (run : doAppAux op values state = .val (value, next)) :
+    ∃ safe', doAppAux op values { state with safeForSpace := safe } =
+      .val (value, { next with safeForSpace := safe' }) := by
+  simp only [doAppAux] at run ⊢
+  all_goals repeat' (split at run <;> simp_all)
+  all_goals try (obtain ⟨safe', result⟩ :=
+    (applyNonFfi_successFields _ _ state next value safe (by assumption)).1; simp_all)
+  all_goals try aesop
+
+/-- Successful auxiliary application keeps its value, its stack maximum and its
+    peak-heap estimate when those fields and the safety flag are replaced.
+    Flapjack infrastructure toward the parked HOL `do_app_with_locals`; no
+    separate HOL original. -/
+private theorem doAppAux_safePeakStackMax' {C F : Type} (op : ClosLang.Op)
+    (values : List Value) (state next : State C F) (value : Value) (safe : Bool)
+    (mx : Option Nat) (peak : Nat)
+    (run : doAppAux op values state = .val (value, next)) :
+    ∃ safe', doAppAux op values
+        { state with
+          safeForSpace := safe
+          stackMax := mx
+          peakHeapLength := peak } =
+      .val (value, { next with
+        safeForSpace := safe'
+        stackMax := mx
+        peakHeapLength := peak }) := by
+  obtain ⟨safe', safeChange⟩ := doAppAux_safeSuccess' op values state next value safe run
+  have fields := doAppAux_withFields op values { state with safeForSpace := safe }
+    state.stack state.localsSize mx peak state.locals state.space state.handler state.clock
+    state.stackFrameSizes state.compile
+  rw [safeChange] at fields
+  refine ⟨safe', ?_⟩
+  obtain ⟨stackEq, localsSizeEq, _, _, localsEq, spaceEq, handlerEq, clockEq, frameSizesEq,
+    compileEq⟩ := doAppAux_fieldFrame op values state next value run
+  simpa [Flapjack.SemanticPrimitivesProps.mapResult, stackEq, localsSizeEq, localsEq, spaceEq,
+    handlerEq, clockEq, frameSizesEq, compileEq] using fields
+
+/-- Successful auxiliary application keeps its value when the locals, the
+    safety flag, the stack maximum and the peak-heap estimate are replaced.
+    Flapjack infrastructure toward the parked HOL `do_app_with_locals`; no
+    separate HOL original. -/
+private theorem doAppAux_changeFields' {C F : Type} (op : ClosLang.Op)
+    (values : List Value) (state next : State C F) (value : Value) (locals : Spt Value)
+    (safe : Bool) (mx : Option Nat) (peak : Nat)
+    (run : doAppAux op values state = .val (value, next)) :
+    ∃ safe', doAppAux op values
+        { state with
+          locals := locals
+          safeForSpace := safe
+          stackMax := mx
+          peakHeapLength := peak } =
+      .val (value, { next with
+        locals := locals
+        safeForSpace := safe'
+        stackMax := mx
+        peakHeapLength := peak }) := by
+  obtain ⟨safe', first⟩ :=
+    doAppAux_safePeakStackMax' op values state next value safe mx peak run
+  have second := doAppAux_withLocals op values
+    { state with safeForSpace := safe, stackMax := mx, peakHeapLength := peak } locals
+  rw [first] at second
+  refine ⟨safe', ?_⟩
+  have key :
+      { state with
+        locals := locals
+        safeForSpace := safe
+        stackMax := mx
+        peakHeapLength := peak } =
+      { { state with
+          safeForSpace := safe
+          stackMax := mx
+          peakHeapLength := peak } with
+        locals := locals } := rfl
+  rw [key]
+  simpa [Flapjack.SemanticPrimitivesProps.mapResult] using second
 
 end Flapjack.Compiler.Backend.DataProps
