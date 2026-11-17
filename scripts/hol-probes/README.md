@@ -1,3 +1,11 @@
+`infer_generalise_typed_probe.out` captures both inferred operation types and
+the complete typed `infer$generalise_def` equations. The capture used CakeML
+revision `857f0d98da8f8a3580f34423338e697809308ede` and HOL revision
+`a390cbabd3a4521bab4ee20281e3e42933a8a3ae`, matching the project submodules.
+Regenerate with `HOL_PROBE_ONLY=infer_generalise_typed_probeScript.sml
+scripts/hol-probes/regenerate.sh` using builds of those revisions. The capture
+supports source review; it does not prove cross-language equivalence.
+
 `data_space_code_labels_probe.out` captures the typed original reservation-pass label theorem, the whole-pass label theorem, and variable-read and stack-field lemmas.
 
 `bvl_to_bvi_proof_source_probe.out` also captures the typed exported whole-pass `compile_get_code_labels`, `compile_distinct_names`, full-oracle distinctness, whole-lowering and full-pipeline semantics, and whole-lowering no-mutcons, namespace-avoidance, and distinct-location theorems (including the typed half-open `between` definition), plus the full oracle and callback definitions and typed proof replays of the local namespace/free-names and oddness lemmas.

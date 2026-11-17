@@ -1229,9 +1229,16 @@ def tagged_declarations(
     for path in REFS["lean_files"]():
         rel = path.relative_to(root).as_posix()
         lines = path.read_text(encoding="utf-8").splitlines()
-        unsupported = REFS["unsupported_hol_attribute_commands"]("\n".join(lines))
-        if unsupported:
-            raise ValueError(f"{rel}:{unsupported[0]}: command-style HOL attributes are not supported by the inventory scanner")
+        try:
+            command_sites = REFS["generalise_command_sites"]("\n".join(lines), rel)
+        except ValueError as error:
+            raise ValueError(f"{rel}: invalid command-style HOL attribute: {error}") from error
+        if command_sites:
+            value = ("cakeml/compiler/inference/inferScript.sml", "generalise_def",
+                     (), (), (), (), False, (), False, False, (), (), None, (), (),
+                     False, False, (), (), (), (), (), (), ("subst", "component_2"))
+            for _, lean_name in command_sites:
+                tagged[(rel, lean_name)] = value
         for (line, hol_path, hol_name, _hol_line, list_fields,
              names_fields, boundary_fields, fmap_fields, fmap_result,
              fmap_relation, fmap_equalities, words_bitvec,

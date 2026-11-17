@@ -5840,6 +5840,17 @@ def prospective_generalise_command_errors(source: str, lean_path: str) -> list[s
     return errors
 
 
+def generalise_command_sites(source: str, lean_path: str) -> list[tuple[int, str]]:
+    """Recognize the single source-audited post-mutual attachment, or reject it."""
+    lines = unsupported_hol_attribute_commands(source)
+    if not lines:
+        return []
+    errors = prospective_generalise_command_errors(source, lean_path)
+    if errors:
+        raise ValueError("; ".join(errors))
+    return [(lines[0], "generaliseMap"), (lines[0], "generaliseListMap")]
+
+
 def nested_thunk_map_combination(hol_path: str, hol_name: str, lean_path: str, lean_name: str,
                                  nested: tuple[str, ...], fmap_fields: tuple[str, ...],
                                  relation: tuple[tuple[str, str], ...],
@@ -5875,10 +5886,28 @@ def main(argv: list[str]) -> int:
     for lean_path in lean_files():
         rel = lean_path.relative_to(ROOT).as_posix()
         lines = lean_path.read_text(encoding="utf-8").splitlines()
-        for number in unsupported_hol_attribute_commands("\n".join(lines)):
-            errors.append(f"{rel}:{number}: command-style HOL attributes are not supported by the reference scanner")
         module = module_name(lean_path)
         module_reported = False
+        try:
+            command_sites = generalise_command_sites("\n".join(lines), rel)
+        except ValueError as error:
+            errors.append(f"{rel}: invalid command-style HOL attribute: {error}")
+            command_sites = []
+        if command_sites:
+            hol_path = "cakeml/compiler/inference/inferScript.sml"
+            hol_name = "generalise_def"
+            if module not in reachable:
+                module_reported = True
+                errors.append(f"{rel}: module {module} carries HOL tags but is not imported from Flapjack.lean")
+            source_error = hol_source_error(ROOT, hol_path)
+            target = ROOT / hol_path
+            ref_error = (source_error or ("HOL file does not exist" if not target.is_file() else
+                                         hol_ref_error(target, hol_name, None, cache)))
+            if ref_error:
+                errors.append(f"{rel}: {hol_path} {ref_error}")
+            else:
+                for number, lean_name in command_sites:
+                    mapping.append((f"{rel}:{number}", lean_name, hol_path, hol_name))
         for (number, hol_path, hol_name, hol_line, list_fields,
              names_fields, boundary_fields, fmap_fields, fmap_result,
              fmap_relation, fmap_equalities, words_bitvec,

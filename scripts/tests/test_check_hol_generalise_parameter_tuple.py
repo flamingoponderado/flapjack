@@ -32,6 +32,8 @@ class GeneraliseParameterTupleSourceTest(unittest.TestCase):
         fixture = SOURCE.replace(anchor, anchor.replace('mutual\n', command + 'mutual\n'), 1)
         check = CHECKER["prospective_generalise_command_errors"]
         self.assertEqual(check(fixture, LEAN_PATH), [])
+        sites = CHECKER["generalise_command_sites"](fixture, LEAN_PATH)
+        self.assertEqual([name for _, name in sites], ["generaliseMap", "generaliseListMap"])
         for bad in (
             fixture.replace('generaliseMap generaliseListMap', 'generaliseMap other'),
             fixture.replace('component_2', 'component_1'),
@@ -43,6 +45,8 @@ class GeneraliseParameterTupleSourceTest(unittest.TestCase):
         ):
             with self.subTest(source=bad[-200:]):
                 self.assertTrue(check(bad, LEAN_PATH))
+                with self.assertRaises(ValueError):
+                    CHECKER["generalise_command_sites"](bad, LEAN_PATH)
         self.assertTrue(check(fixture, 'Other.lean'))
         self.assertTrue(CHECKER["unsupported_hol_attribute_commands"](fixture))
 

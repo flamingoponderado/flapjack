@@ -119,6 +119,26 @@ class CoordinatorPendingReviewNoteTest(unittest.TestCase):
 
 
 class GeneraliseMapQualifierInventoryTest(unittest.TestCase):
+    def test_command_scanner_tracks_both_actual_definitions(self):
+        rel = 'Flapjack/Compiler/Inference/Infer/Generalise.lean'
+        source = (Path(__file__).resolve().parents[2] / rel).read_text(encoding='utf-8')
+        anchor = 'termination_by ts => sizeOf ts\nend\n\nmutual\n'
+        command = ('attribute [hol "cakeml/compiler/inference/inferScript.sml" "generalise_def"\n'
+                   '  (fmap_as_finite_support_parameter_tuple_result := '
+                   '(map_parameter := subst) (result_component := component_2))]\n'
+                   '  generaliseMap generaliseListMap\n\n')
+        self.assertEqual(source.count(anchor), 1)
+        source = source.replace(anchor, anchor.replace('mutual\n', command + 'mutual\n'), 1)
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            path = root / rel
+            path.parent.mkdir(parents=True)
+            path.write_text(source, encoding='utf-8')
+            with patch.dict(MAP["REFS"], {"lean_files": lambda: [path]}):
+                tagged = MAP["tagged_declarations"](root)
+            for name in ('generaliseMap', 'generaliseListMap'):
+                self.assertEqual(tagged[(rel, name)][23], ('subst', 'component_2'))
+
     def test_scanner_preserves_the_combined_qualifier(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -134,7 +154,7 @@ def generaliseMap : Nat := 0
                              ("subst", "component_2"))
             source.write_text('attribute [hol "p" "n"] generaliseMap\n', encoding="utf-8")
             with patch.dict(MAP["REFS"], {"lean_files": lambda: [source]}):
-                with self.assertRaisesRegex(ValueError, "command-style HOL attributes"):
+                with self.assertRaisesRegex(ValueError, "invalid command-style HOL attribute"):
                     MAP["tagged_declarations"](root)
 
     def test_exact_sites_and_metadata_are_required(self):
