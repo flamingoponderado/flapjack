@@ -12,6 +12,13 @@
   "reviewer": "Independent source comparison and type_es_length_typed; exact expression and type-list typing premise, binder order and length conclusion."
  },
 {
+  "hol_path": "cakeml/semantics/proofs/typeSysPropsScript.sml", "hol_name": "check_freevars_subst_single",
+  "lean_path": "Flapjack/TypeSysProps/Freevars.lean", "lean_name": "checkFreevarsSubstSingle",
+  "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+  "fmap_as_finite_support_result_observations": ["Flapjack.HolFiniteMapExact.alistToFmap"],
+  "reviewer": "Independent comparison with the source and check_freevars_subst_single_typed confirms binder and premise order, the equal-length condition, free-variable checks and substituted result. The reviewed alistToFmap producer preserves the first occurrence of duplicate keys, as in HOL."
+ },
+{
   "hol_path": "cakeml/semantics/proofs/typeSysPropsScript.sml", "hol_name": "check_freevars_add",
   "lean_path": "Flapjack/TypeSysProps/Freevars.lean", "lean_name": "checkFreevarsAdd",
   "statement_status": "reviewed_exact",
