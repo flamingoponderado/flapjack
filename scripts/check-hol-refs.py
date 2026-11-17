@@ -5947,6 +5947,104 @@ def generalise_length_observer_errors(
     return []
 
 
+def infer_subst_submap_observer_errors(
+    source: str, lean_path: str, hol_ref: tuple[str, str], binders: tuple[str, ...],
+    producer_source: str, domain_source: str, submap_source: str, records: list[dict],
+) -> list[str]:
+    """Prospective source audit for the independently quantified submap theorem.
+
+    This does not enable a qualifier; elaborated binder, witness and exporter
+    checks must also be implemented before the theorem can be tagged.
+    """
+    expected_path = "Flapjack/Compiler/Inference/InferProps/Substitution.lean"
+    producer_path = "Flapjack/Compiler/Inference/Infer/Substitution.lean"
+    expected_ref = ("cakeml/compiler/inference/inferPropsScript.sml", "infer_subst_submap")
+    if (lean_path != expected_path or hol_ref != expected_ref or
+            binders != ("type_s1", "type_s2", "list_s1", "list_s2")):
+        return ["inference submap qualifier requires its exact site and four map occurrences"]
+    clean = strip_lean_comments(source)
+    if re.search(r"(?m)^\s*(?:variables?|include|omit|export|alias|attribute|set_option|universe|universes|run_cmd|run_elab|initialize|(?:(?:local|scoped)\s+)?(?:syntax|macro|macro_rules|elab|notation|infix|infixl|infixr|prefix|postfix|instance))\b", clean):
+        return ["inference submap qualifier rejects ambient binders or syntax changes"]
+    namespaces = re.findall(r"(?m)^\s*namespace\s+([^\s]+)", clean)
+    opens = [" ".join(item.split()) for item in re.findall(r"(?m)^\s*open\s+([^\n]+)", clean)]
+    imports = re.findall(r"(?m)^\s*(?:(?:public|meta)\s+)*import\s+([^\s]+)", clean)
+    if namespaces != ["Flapjack.Compiler.Inference.InferProps.Substitution"] or opens != [
+            "Flapjack.Compiler.Inference.Infer.Substitution", "Flapjack.Compiler.Inference.Unify"] or imports != [
+            "Flapjack.Compiler.Inference.Infer.Substitution", "Flapjack.Compiler.Inference.Unify.Vars",
+            "Flapjack.FiniteMap.DomainExact", "Flapjack.FiniteMap.SubmapExact"]:
+        return ["inference submap qualifier requires its exact namespace, imports and opens"]
+    directive_lines = list(re.finditer(r"(?m)^(?:public[ \t]+import|open)[ \t]+\S+[ \t]*$", clean))
+    if len(directive_lines) != 6:
+        return ["inference submap qualifier requires single-line imports and opens"]
+    for directive in directive_lines:
+        following = next((line for line in clean[directive.end():].splitlines() if line.strip()), "")
+        if following and following[0].isspace():
+            return ["inference submap qualifier rejects import or open continuations"]
+    if re.search(r"(?m)^\s*(?:(?:private|protected|local|scoped)\s+)*(?:def|theorem|lemma|axiom|opaque|abbrev|structure|inductive|class)\s+(?:inferSubst|tVars|InferT|Nat|List|Set|HolFiniteMapExact|domain|submap)\b", clean):
+        return ["inference submap qualifier rejects local producer or carrier shadows"]
+    expected = (r": (∀ (t : InferT) (s1 s2 : HolFiniteMapExact Nat Nat) (m : Nat), "
+                r"s1.submap s2 ∧ {v | tVars t v ∧ m ≤ v} ⊆ s1.domain ∧ "
+                r"(∀ v, v ∈ s2.domain \ s1.domain → m ≤ v) → inferSubst s1 t = inferSubst s2 t) ∧ "
+                r"(∀ (ts : List InferT) (s1 s2 : HolFiniteMapExact Nat Nat) (m : Nat), "
+                r"s1.submap s2 ∧ {v | ∃ s : Set Nat, s v ∧ s ∈ ts.map tVars ∧ m ≤ v} ⊆ s1.domain ∧ "
+                r"(∀ v, v ∈ s2.domain \ s1.domain → m ≤ v) → "
+                r"ts.map (inferSubst s1) = ts.map (inferSubst s2))")
+    statements = _statements_of_declaration(clean, "inferSubstSubmap")
+    if len(statements) != 1 or " ".join(statements[0].split()) != expected:
+        return ["inference submap theorem must have its complete reviewed conjunction"]
+    witness = ("(map : HolFiniteMapExact Nat Nat) (key : Nat) : "
+               "(FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad map)).lookup key = map.lookup key ∧ "
+               "(FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad map)).finiteSupport = map.finiteSupport ∧ "
+               "FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad map) = map")
+    statements = _statements_of_declaration(clean, "holFmapAsFiniteSupportNestedSubmapWitness")
+    if len(statements) != 1 or " ".join(statements[0].split()) != witness:
+        return ["inference submap requires its unconditional canonical-map witness"]
+    producer_clean = strip_lean_comments(producer_source)
+    producer_tag = ('@[hol "cakeml/compiler/inference/inferScript.sml" "infer_subst_def" '
+                    '(fmap_as_finite_support_parameters := [subst])]')
+    producer_expected = (
+        "module public import Flapjack.Compiler.Inference.InferT "
+        "public import Flapjack.FiniteMap.BroadCodec @[expose] public section "
+        "namespace Flapjack.Compiler.Inference.Infer.Substitution "
+        "theorem holFmapAsFiniteSupportParamWitness_inferSubst_subst "
+        "(subst : HolFiniteMapExact Nat Nat) (key : Nat) : "
+        "(FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad subst)).lookup key = subst.lookup key ∧ "
+        "(FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad subst)).finiteSupport = subst.finiteSupport ∧ "
+        "FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad subst) = subst := by cases subst exact ⟨rfl, rfl, rfl⟩ "
+        + producer_tag + " def inferSubst (subst : HolFiniteMapExact Nat Nat) : InferT → InferT "
+        "| .varDb n => .varDb n | .app ts name => .app (ts.map (inferSubst subst)) name "
+        "| .uvar n => match subst.lookup n with | none => .uvar n | some value => .varDb value "
+        "termination_by t => sizeOf t end Flapjack.Compiler.Inference.Infer.Substitution")
+    if " ".join(producer_clean.split()) != producer_expected:
+        return ["inference submap requires the reviewed substitution producer and codec witness"]
+    domain_expected = (
+        "module public import Flapjack.Pancake.Semantics.CrepSem.HOLState "
+        "public import Mathlib.Data.Set.Defs @[expose] public section "
+        "namespace Flapjack.HolFiniteMapExact "
+        "def domain (map : HolFiniteMapExact α β) : Set α := {key | map.lookup key ≠ none} "
+        "end Flapjack.HolFiniteMapExact")
+    submap_prefix = (
+        "module public import Flapjack.Pancake.Semantics.CrepSem.HOLState @[expose] public section "
+        "namespace Flapjack.HolFiniteMapExact "
+        "def submap {α β : Type} (f g : HolFiniteMapExact α β) : Prop := "
+        "∀ key value, f.lookup key = some value → g.lookup key = some value theorem submap_refl ")
+    if (" ".join(strip_lean_comments(domain_source).split()) != domain_expected or
+            not " ".join(strip_lean_comments(submap_source).split()).startswith(submap_prefix)):
+        return ["inference submap requires the reviewed finite-map domain and submap definitions"]
+    matching = [row for row in records if row.get("lean_path") == producer_path and
+                row.get("lean_name") == "inferSubst"]
+    if (len(matching) != 1 or matching[0].get("hol_path") != "cakeml/compiler/inference/inferScript.sml" or
+            matching[0].get("hol_name") != "infer_subst_def" or matching[0].get("hol_line") is not None or
+            matching[0].get("statement_status") != "reviewed_fmap_as_finite_support_parameters" or
+            matching[0].get("fmap_as_finite_support_parameters") != ["subst"] or
+            any(value for key, value in matching[0].items() if key != "fmap_as_finite_support_parameters" and
+                (key.startswith("fmap_as_") or key.startswith("names_as_") or key in {
+                    "list_as_array", "words_as_type_indexed_bitvec", "word_dimension_as_width",
+                    "word_dimensions_as_widths", "reals_as_rational_cuts", "nested_list_rel_as_mutual"}))):
+        return ["inference submap requires the unique reviewed substitution producer row"]
+    return []
+
+
 def nested_thunk_map_combination(hol_path: str, hol_name: str, lean_path: str, lean_name: str,
                                  nested: tuple[str, ...], fmap_fields: tuple[str, ...],
                                  relation: tuple[tuple[str, str], ...],

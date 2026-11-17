@@ -71,6 +71,16 @@ private theorem listSubmap (ts : List InferT) (s1 s2 : HolFiniteMapExact Nat Nat
 termination_by sizeOf ts
 end
 
+/-- The common canonical-map codec roundtrip applies to each independently
+    quantified map in the two HOL conjuncts. -/
+theorem holFmapAsFiniteSupportNestedSubmapWitness
+    (map : HolFiniteMapExact Nat Nat) (key : Nat) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad map)).lookup key = map.lookup key ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad map)).finiteSupport = map.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad map) = map := by
+  cases map
+  exact ⟨rfl, rfl, rfl⟩
+
 /-- The complete type and list substitution-submap result. The HOL theorem
     quantifies finite maps independently in both conjuncts; a qualifier for
     those nested binders is still needed before this can carry its HOL tag. -/
