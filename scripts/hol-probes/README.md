@@ -10538,6 +10538,7 @@ probe; regenerate with
 `HOL_PROBE_ONLY=env_rel_init_probeScript.sml`.
 
 `unify_encoding_probe.out` captures the polymorphic first-order term carrier,
+the guarded `unify_eq_tunify` equation with inferred types,
 inference atom carrier, complete encoding and decoding equations, and the
 inverse and injectivity theorems, and the substitution dependency and
 well-formedness declarations, the conditional variable-walk equation, its
