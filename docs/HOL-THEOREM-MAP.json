@@ -1,5 +1,47 @@
 [
 {
+  "hol_path": "cakeml/compiler/inference/inferPropsScript.sml", "hol_name": "prim_tids_def",
+  "lean_path": "Flapjack/Compiler/Inference/InferProps.lean", "lean_name": "primTids",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with source and prim_tids_typed confirms the Boolean containment equivalence over the exact primitive identifier list."
+ },
+{
+  "hol_path": "cakeml/compiler/inference/inferPropsScript.sml", "hol_name": "start_type_id_prim_tids_count",
+  "lean_path": "Flapjack/Compiler/Inference/InferProps.lean", "lean_name": "startTypeIdPrimTidsCount",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with source and start_type_id_prim_tids_count_typed confirms the bound premise and primitive membership in count n."
+ },
+{
+  "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "good_remap_def",
+  "lean_path": "Flapjack/Compiler/Inference/TypeDCanon.lean", "lean_name": "goodRemap",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with source and good_remap_typed confirms equality of the mapped primitive list."
+ },
+{
+  "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "extend_bij_def",
+  "lean_path": "Flapjack/Compiler/Inference/TypeDCanon.lean", "lean_name": "extendBij",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with source and extend_bij_typed confirms function and predicate carriers, the membership test and shifted and fallback branches."
+ },
+{
+  "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "extend_bij_id",
+  "lean_path": "Flapjack/Compiler/Inference/TypeDCanon.lean", "lean_name": "extendBijId",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with source and extend_bij_id_typed confirms both unconditioned function equalities."
+ },
+{
+  "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "extend_bij_compose",
+  "lean_path": "Flapjack/Compiler/Inference/TypeDCanon.lean", "lean_name": "extendBijCompose",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with source and extend_bij_compose_typed confirms the nested renamings, offset addition and set union."
+ },
+{
+  "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "good_remap_extend_bij",
+  "lean_path": "Flapjack/Compiler/Inference/TypeDCanon.lean", "lean_name": "goodRemapExtendBij",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with the active HOL-local theorem and good_remap_extend_bij_replay_typed confirms both premises and the complete good-renaming conclusion."
+ },
+{
   "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "type_pe_determ_canon_def",
   "lean_path": "Flapjack/Compiler/Inference/TypeDCanon.lean", "lean_name": "typePeDetermCanon",
   "statement_status": "reviewed_exact",

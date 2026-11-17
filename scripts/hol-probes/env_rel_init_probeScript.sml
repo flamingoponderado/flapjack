@@ -438,6 +438,8 @@ val _ = show "type_s_def_typed" typeSoundInvariantsTheory.type_s_def;
 val _ = show "type_all_env_def_typed" typeSoundInvariantsTheory.type_all_env_def;
 val _ = show "type_sound_invariant_def_typed" typeSoundInvariantsTheory.type_sound_invariant_def;
 val _ = show "set_tids_subset_typed" inferPropsTheory.set_tids_subset_def;
+val _ = show "prim_tids_typed" inferPropsTheory.prim_tids_def;
+val _ = show "start_type_id_prim_tids_count_typed" inferPropsTheory.start_type_id_prim_tids_count;
 val _ = show "ts_tid_rename_typed" inferPropsTheory.ts_tid_rename_def;
 val _ = show "ts_tid_rename_I_typed" inferPropsTheory.ts_tid_rename_I;
 val _ = show "set_tids_ts_tid_rename_typed" inferPropsTheory.set_tids_ts_tid_rename;
@@ -463,6 +465,16 @@ val _ = show "type_pe_determ_tenv_equiv_typed" type_dCanonTheory.type_pe_determ_
 val _ = show "type_pe_determ_canon_typed" type_dCanonTheory.type_pe_determ_canon_def;
 val _ = show "type_pe_determ_canon_tenv_equiv_typed" type_dCanonTheory.type_pe_determ_canon_tenv_equiv;
 val _ = show "type_d_canon_rules_typed" type_dCanonTheory.type_d_canon_rules;
+val _ = show "good_remap_typed" type_dCanonTheory.good_remap_def;
+val _ = show "extend_bij_typed" type_dCanonTheory.extend_bij_def;
+val _ = show "extend_bij_id_typed" type_dCanonTheory.extend_bij_id;
+val _ = show "extend_bij_compose_typed" type_dCanonTheory.extend_bij_compose;
+val good_remap_extend_bij_replay = Q.prove(
+  `type_dCanon$good_remap f /\ prim_tids F ids ==>
+     type_dCanon$good_remap (type_dCanon$extend_bij f g ids n)`,
+  rw[type_dCanonTheory.good_remap_def, type_dCanonTheory.extend_bij_def,
+     prim_tids_def, prim_type_nums_def]);
+val _ = show "good_remap_extend_bij_replay_typed" good_remap_extend_bij_replay;
 val _ = show "set_tids_tenv_remap_typed" type_dCanonTheory.set_tids_tenv_remap;
 val set_tids_tenv_remap_replay = Q.prove(
   `probe_set_tids_tenv tids tenv ==>

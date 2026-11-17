@@ -486,4 +486,50 @@ inductive TypeDsCanon : Nat → TypeEnv → List Dec → Nat → TypeEnv → Pro
       TypeDsCanon n env (d :: ds) (count1 + count2) (extendDecTenv env2 env1)
 end
 
+/-- A type-ID renaming fixes every primitive identifier. -/
+@[hol "cakeml/compiler/inference/proofs/type_dCanonScript.sml" "good_remap_def"]
+def goodRemap (f : Nat → Nat) : Prop :=
+  (TlistNum :: TboolNum :: primTypeNums).map f = TlistNum :: TboolNum :: primTypeNums
+
+/-- Extend a renaming on a selected set by a shifted second function. -/
+@[hol "cakeml/compiler/inference/proofs/type_dCanonScript.sml" "extend_bij_def"]
+noncomputable def extendBij (f g : Nat → Nat) (ids : Nat → Prop) (n v : Nat) : Nat := by
+  classical
+  exact if ids v then n + g v else f v
+
+/-- The source's two identity laws for extending a renaming. -/
+@[hol "cakeml/compiler/inference/proofs/type_dCanonScript.sml" "extend_bij_id"]
+theorem extendBijId (f g : Nat → Nat) (s : Nat → Prop) (n : Nat) :
+    (extendBij f f s 0 = f) ∧ (extendBij f g (fun _ => False) n = f) := by
+  classical
+  constructor <;> funext v <;> simp [extendBij]
+
+/-- Two consecutive extensions combine into one union extension. -/
+@[hol "cakeml/compiler/inference/proofs/type_dCanonScript.sml" "extend_bij_compose"]
+theorem extendBijCompose (f g h : Nat → Nat) (ids jds : Nat → Prop) (n m : Nat) :
+    extendBij (extendBij f g ids n) h jds (n + m) =
+      extendBij f (extendBij g h jds m) (fun v => ids v ∨ jds v) n := by
+  classical
+  funext v
+  by_cases hi : ids v <;> by_cases hj : jds v <;> simp [extendBij, hi, hj, Nat.add_assoc]
+
+/-- Extending away from the primitives preserves a good renaming. -/
+@[hol "cakeml/compiler/inference/proofs/type_dCanonScript.sml" "good_remap_extend_bij"]
+theorem goodRemapExtendBij (f g : Nat → Nat) (ids : Nat → Prop) (n : Nat) :
+    goodRemap f ∧ primTids false ids → goodRemap (extendBij f g ids n) := by
+  classical
+  rintro ⟨good, prim⟩
+  unfold goodRemap at good ⊢
+  calc
+    (TlistNum :: TboolNum :: primTypeNums).map (extendBij f g ids n) =
+        (TlistNum :: TboolNum :: primTypeNums).map f := by
+      apply List.map_congr_left
+      intro id mem
+      have absent : ¬ ids id := by
+        intro h
+        have := (prim id mem).1 h
+        contradiction
+      simp [extendBij, absent]
+    _ = TlistNum :: TboolNum :: primTypeNums := good
+
 end Flapjack.Compiler.Inference.TypeDCanon

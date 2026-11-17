@@ -199,6 +199,23 @@ end
 def setTidsSubset (tids : Nat → Prop) (t : SemanticT) : Prop :=
   ∀ id, setTids t id → tids id
 
+/-- The primitive type identifiers are either all included or all excluded. -/
+@[hol "cakeml/compiler/inference/inferPropsScript.sml" "prim_tids_def"]
+def primTids (contain : Bool) (tids : Nat → Prop) : Prop :=
+  ∀ id ∈ TlistNum :: TboolNum :: primTypeNums, tids id ↔ contain = true
+
+/-- Any count at least the initial identifier includes all primitive IDs. -/
+@[hol "cakeml/compiler/inference/inferPropsScript.sml" "start_type_id_prim_tids_count"]
+theorem startTypeIdPrimTidsCount (n : Nat) :
+    Infer.startTypeId ≤ n → primTids true (fun id => id < n) := by
+  intro bound id member
+  simp only [iff_true]
+  simp [primTypeNums, TlistNum, TboolNum, TarrayNum, TcharNum, TexnNum, TfnNum,
+    TintNum, TrefNum, TstringNum, TtupNum, TvectorNum, Tword64Num, Tword8Num,
+    Tword8arrayNum, TdoubleNum] at member
+  simp [Infer.startTypeId] at bound
+  omega
+
 @[hol "cakeml/compiler/inference/inferPropsScript.sml" "inf_set_tids_subset_def"]
 def infSetTidsSubset (tids : Nat → Prop) (t : InferT) : Prop :=
   ∀ id, infSetTids t id → tids id
