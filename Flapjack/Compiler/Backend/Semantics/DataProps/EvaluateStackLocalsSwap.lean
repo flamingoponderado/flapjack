@@ -4106,4 +4106,32 @@ private theorem localsLN_all {C F : Type} (program : DataLang.Prog) (state : Sta
   | force ret label src => exact localsLN_force ret label src state smaller
   | call ret dest names handler => exact localsLN_call ret dest names handler state smaller
 
+/-- A terminal evaluation result other than a type error leaves the locals tree
+    empty unless it raises. -/
+@[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "evaluate_locals_LN_lemma"]
+theorem evaluate_locals_LN_lemma {C F : Type} (program : DataLang.Prog)
+    (state : State C F) :
+    ((evaluate program state).1 ≠ none ∧
+        (evaluate program state).1 ≠ some (.err (.abort .typeError))) →
+      (evaluate program state).2.locals = .ln ∨
+        ∃ v : DataSem.Value, (evaluate program state).1 = some (.err (.raise v)) := by
+  intro h
+  obtain ⟨hne, hty⟩ := h
+  cases run : evaluate program state with
+  | mk res next =>
+    rw [run] at hne hty
+    simp only [] at hne hty ⊢
+    exact localsLN_all program state res next run hne hty
+
+/-- A non-raising, non-type-error terminal evaluation leaves the locals tree
+    empty. -/
+@[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "evaluate_locals_LN"]
+theorem evaluate_locals_LN {C F : Type} (program : DataLang.Prog) (state : State C F)
+    (res : Option (Result (List DataSem.Value) DataSem.Value)) (t : State C F)
+    (premise : evaluate program state = (res, t) ∧ res ≠ none ∧
+      res ≠ some (.err (.abort .typeError))) :
+    t.locals = .ln ∨ ∃ v : DataSem.Value, res = some (.err (.raise v)) := by
+  obtain ⟨run, hne, hty⟩ := premise
+  exact localsLN_all program state res t run hne hty
+
 end Flapjack.Compiler.Backend.DataProps

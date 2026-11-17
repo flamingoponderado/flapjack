@@ -223,3 +223,21 @@ val _ = emit "evaluate_stack_typed" "evaluate_stack";
 val _ = emit "evaluate_NONE_jump_exc_typed" "evaluate_NONE_jump_exc";
 val _ = emit "evaluate_NONE_jump_exc_ALT_typed" "evaluate_NONE_jump_exc_ALT";
 val _ = emit "evaluate_locals_LN_typed" "evaluate_locals_LN";
+
+(* Local theorem replay: HOL exports no DB entry for evaluate_locals_LN_lemma. *)
+val evaluate_locals_LN_lemma_replay = Q.prove(
+  `!c (s :(γ,'ffi) dataSem$state).
+      FST (evaluate (c,s)) <> NONE /\
+      FST (evaluate (c,s)) <> SOME (Rerr(Rabort Rtype_error)) ==>
+      ((SND (evaluate (c,s))).locals = LN) \/
+      ?t. FST (evaluate (c,s)) = SOME (Rerr(Rraise t))`,
+  recInduct dataSemTheory.evaluate_ind \\ REPEAT STRIP_TAC
+  \\ full_simp_tac(srw_ss())[dataSemTheory.evaluate_def]
+  \\ every_case_tac
+  \\ full_simp_tac(srw_ss())[dataSemTheory.call_env_def,dataSemTheory.flush_state_def]
+  \\ imp_res_tac do_app_err >> full_simp_tac(srw_ss())[] >> rev_full_simp_tac(srw_ss())[]
+  \\ SRW_TAC [] [] \\ full_simp_tac(srw_ss())[LET_DEF] \\ SRW_TAC [] [] \\ full_simp_tac(srw_ss())[]
+  \\ rpt(TOP_CASE_TAC >> fs[] >> rveq)
+  \\ fs[markerTheory.Abbrev_def]
+  \\ rpt(TOP_CASE_TAC >> fs[] >> rveq));
+val _ = show "evaluate_locals_LN_lemma_replay_typed" evaluate_locals_LN_lemma_replay;
