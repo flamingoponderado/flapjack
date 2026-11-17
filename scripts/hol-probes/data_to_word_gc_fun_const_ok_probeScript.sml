@@ -25,3 +25,7 @@ val _ = pr_typed "state_rel_get_vars_IMP_typed" state_rel_get_vars_IMP;
 val _ = pr_typed "state_rel_cut_env_typed" state_rel_cut_env;
 val _ = pr_typed "state_rel_cut_IMP_typed" state_rel_cut_IMP;
 val _ = pr_typed "cut_env_IMP_cut_env_typed" cut_env_IMP_cut_env;
+val _ = pr_typed "state_rel_cut_env_cut_env_typed" state_rel_cut_env_cut_env;
+load "data_to_word_assignProofTheory";
+open data_to_word_assignProofTheory;
+val _ = pr_typed "state_rel_cut_state_opt_SOME_typed" state_rel_cut_state_opt_SOME;
