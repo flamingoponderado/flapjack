@@ -1,5 +1,12 @@
 [
 {
+  "hol_path": "cakeml/compiler/inference/inferScript.sml", "hol_name": "infer_subst_def",
+  "lean_path": "Flapjack/Compiler/Inference/Infer/Substitution.lean", "lean_name": "inferSubst",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["subst"],
+  "reviewer": "Typed HOL source comparison covers the num-to-num subst map and all three inference-type equations, including recursive map over constructor arguments and both lookup results. The canonical finite-support map has an unconditional codec roundtrip."
+ },
+{
   "hol_path": "cakeml/compiler/inference/inferPropsScript.sml", "hol_name": "generalise_list_length",
   "lean_path": "Flapjack/Compiler/Inference/InferProps/Generalise.lean", "lean_name": "generaliseListLength",
   "statement_status": "reviewed_fmap_as_finite_support_parameter_tuple_observations",

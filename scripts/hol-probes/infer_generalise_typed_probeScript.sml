@@ -1,4 +1,4 @@
-(* Typed HOL source for the mutual inference generalization definition. *)
+(* Typed HOL source for inference generalization and substitution. *)
 load "preamble";
 load "inferTheory";
 load "inferPropsTheory";
@@ -15,3 +15,9 @@ val _ = (print "generalise_def_typed=";
   print_term (concl (DB.fetch "infer" "generalise_def")); print "\n");
 val _ = (print "generalise_list_length_typed=";
   print_term (concl (DB.fetch "inferProps" "generalise_list_length")); print "\n");
+val _ = (print "infer_subst_type=";
+  print (type_to_string (type_of ``infer$infer_subst``)); print "\n");
+val _ = (print "infer_subst_def_typed=";
+  print_term (concl (DB.fetch "infer" "infer_subst_def")); print "\n");
+val _ = (print "infer_subst_submap_typed=";
+  print_term (concl (DB.fetch "inferProps" "infer_subst_submap")); print "\n");
