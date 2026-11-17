@@ -220,3 +220,4 @@ val _ = emit "semantics_Term_IMP_PREFIX_typed" "semantics_Term_IMP_PREFIX";
 val _ = emit "evaluate_stack_and_locals_swap_typed" "evaluate_stack_and_locals_swap";
 val _ = emit "evaluate_stack_swap_typed" "evaluate_stack_swap";
 val _ = emit "evaluate_stack_typed" "evaluate_stack";
+val _ = emit "evaluate_NONE_jump_exc_typed" "evaluate_NONE_jump_exc";

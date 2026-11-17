@@ -136368,5 +136368,14 @@
   "statement_status": "reviewed_exact",
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "Compared evaluate_stack_typed (regenerated from dataPropsScript.sml, with the ^s antiquotation expanded): binders c then s, one shared state type (γ, 'ffi) rendered as {C F : Type}; the arms match the source — non-raising results keep stack and handler, raise gives the jump witness s2 with its locals, stack and handler, type error is vacuous, and both abort kinds assert stack = []. No resource witnesses and no extra binders. Read off evaluate_stack_swap. Inherits reals_as_rational_cuts through evaluate (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
+  "hol_name": "evaluate_NONE_jump_exc",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/EvaluateStackLocalsSwap.lean",
+  "lean_name": "evaluate_NONE_jump_exc",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_NONE_jump_exc_typed (regenerated from dataPropsScript.sml, with the ^s antiquotation expanded): binders c, s, u1, x in that order over one state type (γ, 'ffi) rendered as {C F : Type}; the hypothesis is HOL's single conjunction evaluate (c,s) = (NONE,u1) ∧ jump_exc u1 = SOME x, not curried, and the conclusion is jump_exc s = SOME of s with stack, handler, locals and locals_size replaced by x's, in that field order. The proof reads the non-raising arm of evaluate_stack and then unwinds jump_exc on both states, using that the two stacks and handlers agree. Inherits reals_as_rational_cuts through evaluate (docs/SOUNDNESS.md item 8)."
 }
 ]
