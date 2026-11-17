@@ -353,10 +353,6 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.ThunkBits
 import Flapjack.Compiler.Backend.DataToWord.Proofs.ValueLoc
 import Flapjack.Compiler.Backend.DataToWord.Proofs.JumpExc
 import Flapjack.Compiler.Backend.Semantics.NatListBounded
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.StoreEach
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.ConstructorFree
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.ConstructorHeap
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.ConstructorSetup
 import Flapjack.Compiler.Backend.Semantics.DataProps.ResourceCall
 import Flapjack.Compiler.Backend.Semantics.DataProps.OptionLemmas
 import Flapjack.Compiler.Backend.Semantics.DataProps.InitialStateLaws
