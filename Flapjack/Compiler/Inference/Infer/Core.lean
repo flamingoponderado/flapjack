@@ -230,9 +230,15 @@ def inferPatternFuel (fuel unifFuel : Nat) (env : Env) (p : Pat) (s : State) :
   discardFailureState (inferPatWorker fuel unifFuel env p) s
 
 
-private def primNum : PrimType → Nat
+@[hol "cakeml/compiler/inference/inferScript.sml" "t_num_of_def"]
+def tNumOf : PrimType → Nat
   | .boolT => 1 | .intT => 5 | .charT => 2 | .strT => 8
   | .wordT .w8 => 12 | .wordT .w64 => 11 | .float64T => 14
+
+@[hol "cakeml/compiler/inference/inferScript.sml" "word_tc_def"]
+def wordTc : WordSize → Nat
+  | .w8 => 12
+  | .w64 => 11
 
 private def arithArity (a : Arith) : PrimType → Option Nat
   | .intT => if a ∈ [Arith.add, .sub, .mul, .div, .mod] then some 2 else none
@@ -262,14 +268,14 @@ def opSimpleConstraints : Op → Bool × List InferT × InferT
     match arithArity a typ with
     | none => (false, [], .app [] 1)
     | some n =>
-      let t := InferT.app [] (primNum typ)
+      let t := InferT.app [] (tNumOf typ)
       (true, List.replicate n t, t)
   | .fromTo a b =>
-    (supportedConversion a b, [.app [] (primNum a)], .app [] (primNum b))
+    (supportedConversion a b, [.app [] (tNumOf a)], .app [] (tNumOf b))
   | .test test typ =>
-    (supportedTest test typ, [.app [] (primNum typ), .app [] (primNum typ)], .app [] 1)
+    (supportedTest test typ, [.app [] (tNumOf typ), .app [] (tNumOf typ)], .app [] 1)
   | .shift size _ _ =>
-    let n := match size with | .w8 => 12 | .w64 => 11
+    let n := wordTc size
     (true, [.app [] n], .app [] n)
   | .aw8alloc => (true, [.app [] 5, .app [] 12], .app [] 13)
   | .aw8sub => (true, [.app [] 13, .app [] 5], .app [] 12)

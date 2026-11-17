@@ -1,5 +1,17 @@
 [
 {
+  "hol_path": "cakeml/compiler/inference/inferScript.sml", "hol_name": "t_num_of_def",
+  "lean_path": "Flapjack/Compiler/Inference/Infer/Core.lean", "lean_name": "tNumOf",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with t_num_of_typed and the source type-constructor constants confirms all seven primitive types, including both word sizes."
+ },
+{
+  "hol_path": "cakeml/compiler/inference/inferScript.sml", "hol_name": "word_tc_def",
+  "lean_path": "Flapjack/Compiler/Inference/Infer/Core.lean", "lean_name": "wordTc",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with word_tc_typed and the source type-constructor constants confirms both word-size cases."
+ },
+{
   "hol_path": "cakeml/compiler/inference/inferScript.sml", "hol_name": "op_simple_constraints_def",
   "lean_path": "Flapjack/Compiler/Inference/Infer/Core.lean", "lean_name": "opSimpleConstraints",
   "statement_status": "reviewed_exact",
