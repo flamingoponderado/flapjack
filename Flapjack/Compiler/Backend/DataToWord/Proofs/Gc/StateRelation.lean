@@ -5,6 +5,7 @@ public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.StackRel
 public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.Limits
 public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation
 public import Flapjack.Compiler.Backend.WordGcFunctions
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Accessors
 public import Flapjack.Compiler.Backend.BackendProps
 public import Flapjack.Misc.FiniteMapApply
 public import Flapjack.Misc.GoodDimindex
@@ -73,5 +74,22 @@ theorem stateRel_withFpRegs {width : Nat} [NeZero width] {C F : Type}
     (related : stateRel conf l1 l2 source target values locs) :
     stateRel conf l1 l2 source { target with fpRegs := fpRegs } values locs := by
   exact related
+
+/-- A present source local has an adjusted target local under the complete
+relation. The HOL tag is pending review of `stateRel`'s compiler dependencies. -/
+theorem stateRel_getVar {width : Nat} [NeZero width] {C F : Type}
+    (conf : Config) (l1 l2 : Nat) (source : DataSem.State C F)
+    (target : WordSemStateFiniteExact width C F)
+    (values : Option (List (DataSem.Value × WordLocW width)))
+    (locs : List (Nat × Nat)) (n : Nat) (value : DataSem.Value)
+    (related : stateRel conf l1 l2 source target values locs)
+    (found : DataSem.getVar n source.locals = some value) :
+    ∃ word, WordSemStateFiniteExact.getVar (adjustVar n) target = some word := by
+  rcases related with ⟨_, _, _, _, _, _, _, _, _, _, _, targetPresent, _⟩
+  have present : (sptLookup n source.locals).isSome := by
+    change sptLookup n source.locals = some value at found
+    simp [found]
+  obtain ⟨word, hword⟩ := Option.isSome_iff_exists.mp (targetPresent n present)
+  exact ⟨word, hword⟩
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

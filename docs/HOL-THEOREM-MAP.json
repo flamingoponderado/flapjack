@@ -115855,6 +115855,24 @@
     "reviewer": "Source comparison: original lines 4440–4450 and typed data_to_word_gc_stack capture. All Env/Exc and handler-presence cases match. stackEnvRel factors the source Env conjuncts: nonzero even GC keys, equal optional sizes, zero non-GC keys, distinct GC keys, and equivalent lookup presence at adjustVar. DataSem.Stack and WordSemStackFrame retain the original fields and types; WordLocW uses the reviewed positive-width bit-vector representation."
   },
 {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/WordMlInvLookup.lean",
+    "lean_name": "wordMlInv_lookup",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+    "hol_name": "word_ml_inv_lookup",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: lines 419–437 and typed data_to_word_gc_fun_const_ok capture. The arbitrary heap/GC context, timestamp, configuration, references, prefixes and suffixes, local trees, and three conjunctive premises are retained. The conclusion adds exactly the located (source value, word) pair before the unchanged join. The proof derives membership in that join and applies the reviewed word_ml_inv_rearrange theorem; positive-width BitVec represents the HOL word carrier."
+  },
+{
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/WordMlInvInsert.lean",
+    "lean_name": "wordMlInv_insert",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+    "hol_name": "word_ml_inv_insert",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: lines 525–548 and typed data_to_word_gc_fun_const_ok capture. The arbitrary heap/GC context, timestamp, source and target local trees, inserted values, and trailing roots are retained; the sole invariant premise and complete updated-join conclusion match. The membership helper establishes that each new pair is either the already-related inserted pair or an old joined pair, allowing the reviewed word_ml_inv_rearrange theorem. Positive-width BitVec represents the HOL word carrier."
+  },
+{
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/MkLoc.lean",
     "lean_name": "mkLoc",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
