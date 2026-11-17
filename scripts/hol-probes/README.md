@@ -10492,7 +10492,8 @@ remapping over environment extension. It captures the original namespace-lift
 relation and declarative environment-equivalence and lookup theorems. The
 type-name checking, substitution, mutual pattern and expression typing, and
 pattern-expression determinacy equivalence theorems are captured directly
-from the original theory. The
+from the original theory, along with the canonical determinacy definition and
+complete mutual declaration-typing rules. The
 environment-relation, REPL, and type-soundness theories are not fetched by this
 probe; regenerate with
 `HOL_PROBE_ONLY=env_rel_init_probeScript.sml`.

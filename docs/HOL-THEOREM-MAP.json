@@ -1,5 +1,29 @@
 [
 {
+  "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "type_pe_determ_canon_def",
+  "lean_path": "Flapjack/Compiler/Inference/TypeDCanon.lean", "lean_name": "typePeDetermCanon",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with source and type_pe_determ_canon_typed confirms the four typing premises, both count-bounded binding checks and exact equality conclusion."
+ },
+{
+  "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "type_pe_determ_canon_tenv_equiv",
+  "lean_path": "Flapjack/Compiler/Inference/TypeDCanon.lean", "lean_name": "typePeDetermCanonTenvEquiv",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with source and type_pe_determ_canon_tenv_equiv_typed confirms both premises and the complete canonical determinacy conclusion."
+ },
+{
+  "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "type_d_canon",
+  "lean_path": "Flapjack/Compiler/Inference/TypeDCanon.lean", "lean_name": "TypeDCanon",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with source and type_d_canon_rules_typed confirms all eight declaration rules, principal typing and count bounds, sequential datatype IDs, namespace construction and recursive premises. The pointwise every2 encodes HOL LIST_REL."
+ },
+{
+  "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "type_d_canon",
+  "lean_path": "Flapjack/Compiler/Inference/TypeDCanon.lean", "lean_name": "TypeDsCanon",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with source and type_d_canon_rules_typed confirms both declaration-list rules, count offsets and environment-extension order."
+ },
+{
   "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "type_e_tenv_equiv",
   "lean_path": "Flapjack/Compiler/Inference/TypeDCanon.lean", "lean_name": "typeETenvEquiv",
   "statement_status": "reviewed_exact",

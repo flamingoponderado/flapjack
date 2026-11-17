@@ -460,6 +460,9 @@ val _ = show "type_name_subst_tenv_equiv_typed" type_dCanonTheory.type_name_subs
 val _ = show "type_p_tenv_equiv_typed" type_dCanonTheory.type_p_tenv_equiv;
 val _ = show "type_e_tenv_equiv_typed" type_dCanonTheory.type_e_tenv_equiv;
 val _ = show "type_pe_determ_tenv_equiv_typed" type_dCanonTheory.type_pe_determ_tenv_equiv;
+val _ = show "type_pe_determ_canon_typed" type_dCanonTheory.type_pe_determ_canon_def;
+val _ = show "type_pe_determ_canon_tenv_equiv_typed" type_dCanonTheory.type_pe_determ_canon_tenv_equiv;
+val _ = show "type_d_canon_rules_typed" type_dCanonTheory.type_d_canon_rules;
 val _ = show "set_tids_tenv_remap_typed" type_dCanonTheory.set_tids_tenv_remap;
 val set_tids_tenv_remap_replay = Q.prove(
   `probe_set_tids_tenv tids tenv ==>

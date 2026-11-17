@@ -310,6 +310,30 @@ noncomputable def setTidsTenv (tids : Nat → Prop) (tenv : TypeEnv) : Prop :=
   nsAll (fun _ entry => (∀ t ∈ entry.2.1, setTidsSubset tids t) ∧ tids entry.2.2) tenv.c ∧
   nsAll (fun _ entry => setTidsSubset tids entry.2) tenv.v
 
+/-- The source's determinacy condition for bindings below the canonical bound. -/
+@[hol "cakeml/compiler/inference/proofs/type_dCanonScript.sml" "type_pe_determ_canon_def"]
+def typePeDetermCanon (n : Nat) (env : TypeEnv) (localEnv : TenvValExp)
+    (p : Pat) (e : Flapjack.AstHOL.Exp) : Prop :=
+  ∀ t1 bindings1 t2 bindings2,
+    TypeP 0 env p t1 bindings1 ∧ TypeE env localEnv e t1 ∧
+    (∀ entry ∈ bindings1, setTidsSubset (fun id => id < n) entry.2) ∧
+    TypeP 0 env p t2 bindings2 ∧ TypeE env localEnv e t2 ∧
+    (∀ entry ∈ bindings2, setTidsSubset (fun id => id < n) entry.2) →
+    bindings1 = bindings2
+
+/-- Canonical pattern-expression determinacy respects environment equivalence. -/
+@[hol "cakeml/compiler/inference/proofs/type_dCanonScript.sml" "type_pe_determ_canon_tenv_equiv"]
+theorem typePeDetermCanonTenvEquiv (n : Nat) (t1 t2 : TypeEnv) (x : TenvValExp)
+    (y : Pat) (z : Flapjack.AstHOL.Exp) :
+    typePeDetermCanon n t1 x y z ∧ tenvEquiv t1 t2 → typePeDetermCanon n t2 x y z := by
+  rintro ⟨determ, equiv⟩ ty1 bs1 ty2 bs2 ⟨hp1, he1, ids1, hp2, he2, ids2⟩
+  have reverse := tenvEquivSym t1 t2 equiv
+  apply determ ty1 bs1 ty2 bs2
+  exact ⟨typePTenvEquiv.1 0 t2 y ty1 bs1 hp1 t1 reverse,
+    typeETenvEquiv.1 t2 x z ty1 he1 t1 reverse, ids1,
+    typePTenvEquiv.1 0 t2 y ty2 bs2 hp2 t1 reverse,
+    typeETenvEquiv.1 t2 x z ty2 he2 t1 reverse, ids2⟩
+
 /-- Extending two environments preserves their common type-ID bound. -/
 @[hol "cakeml/compiler/inference/proofs/type_dCanonScript.sml" "set_tids_tenv_extend_dec_tenv"]
 theorem setTidsTenvExtendDecTenv (s : Nat → Prop) (t : TypeEnv)
@@ -395,5 +419,71 @@ theorem setTidsTenvMono (tids : Nat → Prop) (tenv : TypeEnv) (tids' : Nat → 
     exact ⟨fun t mem => setTidsSubsetMono tids t tids' ⟨hall t mem, hsub⟩, hsub _ hid⟩
   · intro id entry h
     exact setTidsSubsetMono tids entry.2 tids' ⟨hv id entry h, hsub⟩
+
+mutual
+/-- Canonical declaration typing with sequentially allocated type identifiers. -/
+@[hol "cakeml/compiler/inference/proofs/type_dCanonScript.sml" "type_d_canon"]
+inductive TypeDCanon : Nat → TypeEnv → Dec → Nat → TypeEnv → Prop where
+  | value (n tvs : Nat) (env : TypeEnv) (p : Pat) (e : Flapjack.AstHOL.Exp)
+      (t : SemanticT) (bindings : List (MlString × SemanticT)) (loc : Flapjack.Misc.Location.Locs)
+      (value : isValue e = true) (distinct : (patBindings p).Nodup)
+      (pattern : TypeP tvs env p t bindings) (expression : TypeE env (bindTvar tvs .empty) e t)
+      (principal : ∀ tvs' bindings' t',
+        TypeP tvs' env p t' bindings' ∧ TypeE env (bindTvar tvs' .empty) e t' ∧
+          (∀ entry ∈ bindings', setTidsSubset (fun id => id < n) entry.2) →
+          every2 tschemeInst ((tenvAddTvs tvs' bindings').map Prod.snd)
+            ((tenvAddTvs tvs bindings).map Prod.snd)) :
+      TypeDCanon n env (.dlet loc p e) 0 ⟨alistToNs (tenvAddTvs tvs bindings), nsEmpty, nsEmpty⟩
+  | monomorphic (n : Nat) (env : TypeEnv) (p : Pat) (e : Flapjack.AstHOL.Exp)
+      (t : SemanticT) (bindings : List (MlString × SemanticT)) (loc : Flapjack.Misc.Location.Locs)
+      (restricted : isValue e = false ∧ typePeDetermCanon n env .empty p e)
+      (distinct : (patBindings p).Nodup) (pattern : TypeP 0 env p t bindings)
+      (expression : TypeE env .empty e t) :
+      TypeDCanon n env (.dlet loc p e) 0 ⟨alistToNs (tenvAddTvs 0 bindings), nsEmpty, nsEmpty⟩
+  | recursive (n : Nat) (env : TypeEnv) (funs : List (MlString × MlString × Flapjack.AstHOL.Exp))
+      (bindings : List (MlString × SemanticT)) (tvs : Nat) (loc : Flapjack.Misc.Location.Locs)
+      (typed : TypeFuns env (bindVarList 0 bindings (bindTvar tvs .empty)) funs bindings)
+      (principal : ∀ tvs' bindings',
+        TypeFuns env (bindVarList 0 bindings' (bindTvar tvs' .empty)) funs bindings' ∧
+          (∀ entry ∈ bindings', setTidsSubset (fun id => id < n) entry.2) →
+          every2 tschemeInst ((tenvAddTvs tvs' bindings').map Prod.snd)
+            ((tenvAddTvs tvs bindings).map Prod.snd)) :
+      TypeDCanon n env (.dletrec loc funs) 0 ⟨alistToNs (tenvAddTvs tvs bindings), nsEmpty, nsEmpty⟩
+  | datatype (n : Nat) (ids : List Nat) (env : TypeEnv) (defs : TypeDef)
+      (newTypes : TenvAbbrev) (loc : Flapjack.Misc.Location.Locs)
+      (bound : (TlistNum :: TboolNum :: primTypeNums).foldr max 0 < n)
+      (allocated : ids = (List.range defs.length).map (fun i => i + n))
+      (valid : checkCtorTenv (nsAppend newTypes env.t) defs)
+      (types : newTypes = alistToNs ((defs.zip ids).map fun ((params, name, _), id) =>
+        (name, (params, .app (params.map SemanticT.var) id)))) :
+      TypeDCanon n env (.dtype loc defs) defs.length
+        ⟨nsEmpty, buildCtorTenv (nsAppend newTypes env.t) defs ids, newTypes⟩
+  | abbreviation (n : Nat) (env : TypeEnv) (tvs : List MlString) (name : MlString)
+      (t : AstT) (loc : Flapjack.Misc.Location.Locs) (free : checkFreevarsAst tvs t = true)
+      (names : checkTypeNames env.t t = true) (distinct : tvs.Nodup) :
+      TypeDCanon n env (.dtabbrev loc tvs name t) 0
+        ⟨nsEmpty, nsEmpty, nsSing name (tvs, typeNameSubst env.t t)⟩
+  | exception (n : Nat) (env : TypeEnv) (name : MlString) (ts : List AstT) (loc : Flapjack.Misc.Location.Locs)
+      (free : ts.all (checkFreevarsAst []) = true) (names : ts.all (checkTypeNames env.t) = true) :
+      TypeDCanon n env (.dexn loc name ts) 0
+        ⟨nsEmpty, nsSing name ([], ts.map (typeNameSubst env.t), TexnNum), nsEmpty⟩
+  | module_ (n : Nat) (env : TypeEnv) (name : MlString) (ds : List Dec)
+      (count : Nat) (newEnv : TypeEnv) (typed : TypeDsCanon n env ds count newEnv) :
+      TypeDCanon n env (.dmod name ds) count (tenvLift name newEnv)
+  | local_ (n : Nat) (env : TypeEnv) (privateDs publicDs : List Dec)
+      (env1 env2 : TypeEnv) (count1 count2 : Nat)
+      (first : TypeDsCanon n env privateDs count1 env1)
+      (second : TypeDsCanon (n + count1) (extendDecTenv env1 env) publicDs count2 env2) :
+      TypeDCanon n env (.dlocal privateDs publicDs) (count1 + count2) env2
+
+/-- Canonical typing for declaration lists. -/
+@[hol "cakeml/compiler/inference/proofs/type_dCanonScript.sml" "type_d_canon"]
+inductive TypeDsCanon : Nat → TypeEnv → List Dec → Nat → TypeEnv → Prop where
+  | nil (n : Nat) (env : TypeEnv) : TypeDsCanon n env [] 0 ⟨nsEmpty, nsEmpty, nsEmpty⟩
+  | cons (n : Nat) (env : TypeEnv) (d : Dec) (ds : List Dec) (env1 env2 : TypeEnv)
+      (count1 count2 : Nat) (head : TypeDCanon n env d count1 env1)
+      (tail : TypeDsCanon (n + count1) (extendDecTenv env1 env) ds count2 env2) :
+      TypeDsCanon n env (d :: ds) (count1 + count2) (extendDecTenv env2 env1)
+end
 
 end Flapjack.Compiler.Inference.TypeDCanon
