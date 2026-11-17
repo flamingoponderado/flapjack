@@ -3828,6 +3828,7 @@ import Flapjack.TypeSysProps.Pattern
 import Flapjack.TypeSysProps.Expression
 import Flapjack.Compiler.Inference.TypeDCanon.WellFormed
 import Flapjack.Compiler.Inference.InferProps.ClosedSubst
+import Flapjack.Compiler.Inference.InferProps.Freevars
 import Flapjack.Compiler.Inference.InferComplete
 import Flapjack.Compiler.Inference.InferComplete.NamedSubst
 import Flapjack.Compiler.Inference.InferComplete.Binding

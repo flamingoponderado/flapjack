@@ -1,5 +1,11 @@
 [
 {
+  "hol_path": "cakeml/compiler/inference/inferPropsScript.sml", "hol_name": "check_freevars_more",
+  "lean_path": "Flapjack/Compiler/Inference/InferProps/Freevars.lean", "lean_name": "checkFreevarsMore",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with the source and check_freevars_more_typed confirms binder order, original free-variable check, name-set inclusion premise and the complete enlarged-name conclusion."
+ },
+{
   "hol_path": "cakeml/compiler/inference/inferPropsScript.sml", "hol_name": "infer_type_subst_empty_check",
   "lean_path": "Flapjack/Compiler/Inference/InferProps/ClosedSubst.lean", "lean_name": "inferTypeSubstEmptyCheck",
   "statement_status": "reviewed_exact",
