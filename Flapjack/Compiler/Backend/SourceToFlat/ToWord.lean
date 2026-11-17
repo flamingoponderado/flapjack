@@ -66,8 +66,7 @@ def compileCakeToWordWithStubsAndNames64InlineFuel
     Option (Config × ClosToBvl.Config × Nat × List (Nat × Nat × WordLangProgHOL (BitVec 64)) × Nat ×
       Spt Basis.Pure.MlString.MlString) := do
   let (source, closure, start, code, next, names) ← compileCakeToDataInlineFuel fuel source closure decls
-  let code := code.map fun (name, args, body) =>
-    (name, args + 1, (DataToWord.compileControl (width := 64) word name 2 body).1)
+  let code := code.map (DataToWord.compilePart (width := 64) word)
   let fixed ← DataToWord.fixedStubs? word
   let bignum ← WordBignum.generateStubs 64 DataToWord.bignumLocation
   pure (source, closure, start, fixed ++ bignum ++ code, next, names)
@@ -81,8 +80,7 @@ def compileCakeToWord64OptimizedFuel (fuel inlineLimit cutSize : Nat) (splitSeq 
       Spt Basis.Pure.MlString.MlString) := do
   let (source, closure, start, code, next, names) ←
     compileCakeToDataOptimizedFuel fuel inlineLimit cutSize splitSeq source closure decls
-  let code := code.map fun (name, args, body) =>
-    (name, args + 1, (DataToWord.compileControl (width := 64) word name 2 body).1)
+  let code := code.map (DataToWord.compilePart (width := 64) word)
   let fixed ← DataToWord.fixedStubs? word
   let bignum ← WordBignum.generateStubs 64 DataToWord.bignumLocation
   pure (source, closure, start, fixed ++ bignum ++ code, next, names)
@@ -94,9 +92,7 @@ def compileCakeToWord64ConfiguredFuel (fuel : Nat) (source : Config) (closure : 
       Spt Basis.Pure.MlString.MlString) := do
   let (source, closure, bvlConfig, code, names) ← compileCakeToBviConfiguredFuel fuel source closure bvlConfig decls
   let code := code.map fun (name, args, body) =>
-    let body := DataToWord.compileControl (width := 64) word name 2
-      (BviToData.compileExp args body)
-    (name, args + 1, body.1)
+    DataToWord.compilePart (width := 64) word (name, args, BviToData.compileExp args body)
   let fixed ← DataToWord.fixedStubs? word
   let bignum ← WordBignum.generateStubs 64 DataToWord.bignumLocation
   pure (source, closure, bvlConfig, fixed ++ bignum ++ code, names)

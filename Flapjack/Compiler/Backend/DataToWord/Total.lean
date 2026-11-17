@@ -34,6 +34,14 @@ def compileControl {width : Nat} [NeZero width] (conf : Config) (secn l : Nat)
     obtain ⟨result, h⟩ := compileControl_exists (width := width) conf secn l program
     simp [h])
 
+/-- Compile one labeled data function, incrementing its arity and discarding
+the next local label. This is the shape of HOL's `compile_part_def`, but is
+not tagged as its port until `compileControl` is reviewed against HOL `comp`. -/
+def compilePart {width : Nat} [NeZero width] (conf : Config)
+    (entry : Nat × Nat × DataLang.Prog) : Nat × Nat × WordLangProgHOL (BitVec width) :=
+  let (name, arity, body) := entry
+  (name, arity + 1, (compileControl conf name 2 body).1)
+
 /-- The total operation returns exactly the result of the existing traversal.
 This Flapjack-specific equation supports replacing option-valued calls. -/
 theorem compileControl_option {width : Nat} [NeZero width] (conf : Config) (secn l : Nat)
