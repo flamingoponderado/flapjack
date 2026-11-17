@@ -115,4 +115,29 @@ theorem generaliseListFromFiniteMap (minimum next : Nat) (subst : HolFiniteMapEx
       (count, sp2fm out, types) := by
   simpa only [finiteMapRoundtrip] using generaliseListCorresponds minimum next (fm2sp subst) ts
 
+/-- Input codec and returned-map lookup evidence for the single-type operation.
+    This supports a future representation qualifier; it is not a HOL theorem. -/
+theorem holFmapAsFiniteSupportParameterTupleResultWitness_generaliseMap
+    (minimum next : Nat) (subst : HolFiniteMapExact Nat Nat) (t : InferT) (key : Nat) :
+    (sp2fm (fm2sp subst)).lookup key = subst.lookup key ∧
+      (generaliseMap minimum next subst t).2.1.lookup key =
+        sptLookup key (Infer.generalise minimum next (fm2sp subst) t).2.1 := by
+  constructor
+  · exact lookupFm2sp key subst
+  · rw [generaliseFromFiniteMap]
+    cases Infer.generalise minimum next (fm2sp subst) t with
+    | mk count rest => cases rest; rfl
+
+/-- Input codec and returned-map lookup evidence for list generalization. -/
+theorem holFmapAsFiniteSupportParameterTupleResultWitness_generaliseListMap
+    (minimum next : Nat) (subst : HolFiniteMapExact Nat Nat) (ts : List InferT) (key : Nat) :
+    (sp2fm (fm2sp subst)).lookup key = subst.lookup key ∧
+      (generaliseListMap minimum next subst ts).2.1.lookup key =
+        sptLookup key (Infer.generaliseList minimum next (fm2sp subst) ts).2.1 := by
+  constructor
+  · exact lookupFm2sp key subst
+  · rw [generaliseListFromFiniteMap]
+    cases Infer.generaliseList minimum next (fm2sp subst) ts with
+    | mk count rest => cases rest; rfl
+
 end Flapjack.Compiler.Inference.Infer.Generalise
