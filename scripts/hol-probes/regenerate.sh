@@ -5929,7 +5929,7 @@ run_probe word_to_word_no_install_compile_single_probeScript.sml word_to_word_no
   no_install_no_alloc_compile_single_correct_statement no_install_no_alloc_compile_single_correct_typed \
   "$cake_dir/compiler/backend/proofs/word_to_wordProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe data_to_word_gc_fun_const_ok_probeScript.sml data_to_word_gc_fun_const_ok_probe.out \
-  gc_fun_const_ok_word_gc_fun_statement stack_rel_IMP_size_of_stack_typed \
+  gc_fun_const_ok_word_gc_fun_statement code_oracle_rel_def_typed \
   "$cake_dir/compiler/backend/proofs/data_to_word_gcProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe lab_props_every_sec_label_ok_probeScript.sml lab_props_every_sec_label_ok_probe.out \
   EVERY_sec_label_ok_statement EVERY_sec_label_ok_typed \
@@ -10810,7 +10810,7 @@ run_probe asm_sem_typed_probeScript.sml asm_sem_typed_probe.out \
   "$cake_dir/compiler/encoders/asm"
 
 run_probe backend_common_typed_probeScript.sml backend_common_typed_probe.out \
-  closure_tag_def_typed partial_app_tag_def_typed tuple_tag_def_typed data_num_stubs_def_typed stack_num_stubs_def_typed word_add_carry_def_typed word_num_stubs_def_typed word_shift_def_typed \
+  closure_tag_def_typed partial_app_tag_def_typed tuple_tag_def_typed data_num_stubs_def_typed stack_num_stubs_def_typed word_add_carry_def_typed word_num_stubs_def_typed word_shift_def_typed upper_w2w_def_typed upper_w2w_32 upper_w2w_64 upper_w2w_8 \
   bvl_num_stub_MOD_typed bvl_num_stubs_def_typed bvl_to_bvi_namespaces_def_typed opw_typed tra_typed mk_cons_def_typed orphan_trace_def_typed list_delete_def_typed \
   false_tag_def_typed true_tag_def_typed bool_to_tag_def_typed clos_tag_shift_def_typed bind_tag_def_typed chr_tag_def_typed div_tag_def_typed subscript_tag_def_typed \
   nil_tag_def_typed cons_tag_def_typed small_enough_int_def_typed \

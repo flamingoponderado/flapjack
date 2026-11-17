@@ -24877,6 +24877,15 @@
   },
 {
     "hol_path": "cakeml/compiler/backend/backend_commonScript.sml",
+    "hol_name": "upper_w2w_def",
+    "lean_path": "Flapjack/Compiler/Backend/BackendCommon/UpperW2w.lean",
+    "lean_name": "upperW2w",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: backend_commonScript.sml:165–168 and backend_common_typed_probe capture. The input has arbitrary positive HOL word dimension and the output is fixed word64; Lean uses BitVec width and BitVec 64. Both perform word conversion to 64 bits and then shift left 32 exactly when the input dimension is 32. HOL evaluations at widths 8, 32, and 64 are replayed in Lean. No configuration or input restriction is added."
+  },
+{
+    "hol_path": "cakeml/compiler/backend/backend_commonScript.sml",
     "hol_name": "word_num_stubs_def",
     "lean_path": "Flapjack/Compiler/Backend/BackendCommon.lean",
     "lean_name": "wordNumStubs",

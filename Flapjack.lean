@@ -291,6 +291,8 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.OptionLe
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Limits
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Mask
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.StackRel
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.CodeRelation
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.CodeOracleRelation
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.LocMerge
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.DecStack
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.StackRoots
@@ -3384,6 +3386,7 @@ import Flapjack.SemanticsProps.Clock
 import Flapjack.SemanticsProps.Determinism
 import Flapjack.AstHOL
 import Flapjack.Compiler.Backend.BackendCommon
+import Flapjack.Compiler.Backend.BackendCommon.UpperW2w
 import Flapjack.Compiler.Backend.BackendCommon.StubParity
 import Flapjack.Compiler.Backend.Semantics.WordSem
 import Flapjack.Compiler.Backend.Semantics.WordSem.State
