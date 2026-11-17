@@ -272,6 +272,9 @@ elab "#emit_hol_ref_export" : command => do
   let mut known : Std.HashMap Name Bool := {}
   let mut nestedKnown : Std.HashMap Name (Bool × Bool) := {}
   for (name, ref) in HolRef.all env do
+    if let some problem := pendingGeneraliseMapExportProblem ref.path ref.name
+        ref.fmapAsFiniteSupportParameterTupleResult then
+      throwError "{problem}: {name}"
     if !ref.nestedListRelAsMutual.isEmpty then
       let marker := ``Flapjack.Test.nestedRelationAudit_passed
       match env.getModuleIdxFor? marker with

@@ -43,6 +43,13 @@ class GeneraliseParameterTupleSourceTest(unittest.TestCase):
         self.assertIn("generalization map qualifier is not enabled",
                       pending(SOURCE, LEAN_PATH, "generaliseMap", HOL_REF, ("", "")))
 
+    def test_unqualified_reference_is_rejected(self):
+        reference = CHECKER["generalise_reference_errors"]
+        for name in ("generaliseMap", "generaliseListMap"):
+            self.assertEqual(reference(SOURCE, LEAN_PATH, name, HOL_REF, ()),
+                             ["generalise_def requires its combined map qualifier"])
+        self.assertEqual(reference(SOURCE, LEAN_PATH, "other", (HOL_REF[0], "other"), ()), [])
+
     def test_only_the_reviewed_sites_and_positions_are_eligible(self):
         self.assertTrue(self.check(path="Other.lean"))
         self.assertTrue(self.check(hol=(HOL_REF[0], "generalise_list_length")))

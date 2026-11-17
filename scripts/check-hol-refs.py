@@ -3829,6 +3829,18 @@ def prospective_generalise_map_errors(
     )
 
 
+def generalise_reference_errors(
+    source: str, lean_path: str, decl_name: str,
+    hol_ref: tuple[str, str], positions: tuple[str, ...],
+) -> list[str]:
+    """Reject both unqualified and not-yet-enabled generalization references."""
+    if hol_ref == ("cakeml/compiler/inference/inferScript.sml", "generalise_def") and not positions:
+        return ["generalise_def requires its combined map qualifier"]
+    if positions:
+        return prospective_generalise_map_errors(source, lean_path, decl_name, hol_ref, positions)
+    return []
+
+
 def _binder_types(binder_zone: str) -> list[str]:
     """Return the declared type text of each top-level binder.
 
@@ -5830,13 +5842,14 @@ def main(argv: list[str]) -> int:
                 include_generalise_map=True,
              ):
             where = f"{rel}:{number}"
-            if generalise_map:
-                # Keep the prospective syntax fail-closed until Lean attribute,
-                # manifest, and elaborated-export integration all exist.
+            if generalise_map or (hol_path == "cakeml/compiler/inference/inferScript.sml" and
+                                   hol_name == "generalise_def"):
+                # Both unqualified and prospective references fail closed until
+                # Lean, manifest, and elaborated-export integration all exist.
                 lean_name = find_lean_decl(lines, number - 1)
                 errors.extend(
-                    f"{where}: {error}" for error in prospective_generalise_map_errors(
-                        "\n".join(lines), rel, lean_name or "", (hol_path, hol_name), generalise_map,
+                    f"{where}: {error}" for error in generalise_reference_errors(
+                        "\n".join(lines), rel, lean_name, (hol_path, hol_name), generalise_map,
                     )
                 )
             tmc_ref = (hol_path == "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" and

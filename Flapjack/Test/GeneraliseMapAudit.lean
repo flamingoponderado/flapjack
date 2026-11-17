@@ -8,6 +8,17 @@ open Lean Meta Flapjack Flapjack.HOL.Transfer.Fmsp
   Flapjack.Compiler.Inference.Infer
   Flapjack.Compiler.Inference.Infer.Generalise
 
+/-- error: unauthorizedGeneralise: generalization map qualifier has the wrong declaration -/
+#guard_msgs in @[hol "cakeml/compiler/inference/inferScript.sml" "generalise_def"
+  (fmap_as_finite_support_parameter_tuple_result :=
+    (map_parameter := subst) (result_component := component_2))]
+def unauthorizedGeneralise (_ _ : Nat) (subst : HolFiniteMapExact Nat Nat) (t : InferT) :
+    Nat × HolFiniteMapExact Nat Nat × InferT := (0, subst, t)
+
+/-- error: unqualifiedGeneralise: generalise_def requires its combined map qualifier -/
+#guard_msgs in @[hol "cakeml/compiler/inference/inferScript.sml" "generalise_def"]
+def unqualifiedGeneralise : Nat := 0
+
 set_option linter.unusedVariables false in
 private def rawInput (_ _ : Nat) (subst : Nat → Option Nat) (_ : InferT) :
     Nat × HolFiniteMapExact Nat Nat × InferT := (0, HolFiniteMapExact.empty, .uvar 0)
@@ -81,6 +92,15 @@ private theorem swappedInputsWitness (minimum next : Nat) (subst : HolFiniteMapE
   holFmapAsFiniteSupportParameterTupleResultWitness_generaliseMap next minimum subst t key
 
 run_meta do
+  let sourcePath := "cakeml/compiler/inference/inferScript.sml"
+  unless pendingGeneraliseMapExportProblem sourcePath "generalise_def" #[] ==
+      some "generalise_def requires its combined map qualifier" do
+    throwError "unqualified generalization export must be rejected"
+  unless pendingGeneraliseMapExportProblem sourcePath "generalise_def" #["subst", "component_2"] ==
+      some "generalization map qualifier is not yet enabled for export" do
+    throwError "prospective qualified export must be rejected"
+  unless pendingGeneraliseMapExportProblem sourcePath "unrelated" #[] == none do
+    throwError "unrelated export must not be rejected"
   for (name, isList) in [(``generaliseMap, false), (``generaliseListMap, true)] do
     let qualified ← generaliseMapQualifiedProblems name
       "cakeml/compiler/inference/inferScript.sml" "generalise_def" none "subst" "component_2" false

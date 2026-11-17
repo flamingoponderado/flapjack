@@ -6,6 +6,7 @@ public meta import Flapjack.HolRef.SimulationBody
 public meta import Flapjack.HolRef.TmcUniversalBinder
 public meta import Flapjack.HolRef.TmcCallBlockDeclaration
 public meta import Flapjack.HolRef.UnificationTuple
+public meta import Flapjack.HolRef.GeneraliseMapAudit
 
 public meta section
 
@@ -199,6 +200,9 @@ structure HolRef where
       exactly the target operation's explicit inputs. It does not imply the
       input and result maps share a key/value type. -/
   fmapAsFiniteSupportHeterogeneousFunction : Array String := #[]
+  /-- Prospective combined map-input/tuple-result metadata. Source and export
+      gates must be integrated before declarations may be accepted as ports. -/
+  fmapAsFiniteSupportParameterTupleResult : Array String := #[]
   /-- Standalone declarations (definitions or theorems) whose own input or
       result carrier is the reviewed canonical `HolFiniteMapExact` translation,
       rather than a structure field. Distinct from `fmapAsFiniteSupport`, which
@@ -326,6 +330,9 @@ syntax "(" "fmap_as_finite_support" ":=" "[" ident,+ "]" ")" : holQualifier
 syntax "(" "fmap_as_finite_support_function" ":=" "[" ident,+ "]" ")" : holQualifier
 syntax "(" "fmap_as_finite_support_tuple" ":=" "[" ident,+ "]" ")" : holQualifier
 syntax "(" "fmap_as_finite_support_heterogeneous_function" ":=" "[" ident,+ "]" ")" : holQualifier
+syntax "(" "fmap_as_finite_support_parameter_tuple_result" ":="
+  "(" "map_parameter" ":=" ident ")"
+  "(" "result_component" ":=" ident ")" ")" : holQualifier
 syntax "(" "fmap_as_finite_support_result" ")" : holQualifier
 syntax "(" "fmap_as_finite_support_parameters" ":=" "[" ident,+ "]" ")" : holQualifier
 syntax "(" "fmap_as_finite_support_parameter_predicate_domain" ":=" "[" ident,+ "]" ")" : holQualifier
@@ -542,6 +549,10 @@ private def parseHolQualifier (stx : Syntax) : CoreM (String × Array String × 
       pure ("fmap_as_finite_support_tuple", positions.getElems.map (fun position => position.getId.eraseMacroScopes.toString), false, #[])
   | `(holQualifier| (fmap_as_finite_support_heterogeneous_function := [$positions:ident,*])) =>
       pure ("fmap_as_finite_support_heterogeneous_function", positions.getElems.map (fun position => position.getId.eraseMacroScopes.toString), false, #[])
+  | `(holQualifier| (fmap_as_finite_support_parameter_tuple_result :=
+        (map_parameter := $parameter:ident) (result_component := $component:ident))) =>
+      pure ("fmap_as_finite_support_parameter_tuple_result",
+        #[parameter.getId.eraseMacroScopes.toString, component.getId.eraseMacroScopes.toString], false, #[])
   | `(holQualifier| (fmap_as_finite_support_result)) =>
       pure ("fmap_as_finite_support_result", #[], true, #[])
   | `(holQualifier| (fmap_as_finite_support_parameters := [$parameters:ident,*])) =>
@@ -600,6 +611,8 @@ private def parseHolRefAttribute (stx : Syntax) : CoreM HolRef := do
     let mut fmapAsFiniteSupportFunction : Array String := #[]
     let mut fmapAsFiniteSupportTuple : Array String := #[]
     let mut fmapAsFiniteSupportHeterogeneousFunction : Array String := #[]
+    let mut generaliseMapQualifier : Array String := #[]
+    let mut seenGeneraliseMapQualifier := false
     let mut fmapAsFiniteSupportResult : Bool := false
     let mut fmapAsFiniteSupportParameters : Array String := #[]
     let mut predicateDomain : Array String := #[]
@@ -627,6 +640,11 @@ private def parseHolRefAttribute (stx : Syntax) : CoreM HolRef := do
       else if kind == "fmap_as_finite_support_function" then fmapAsFiniteSupportFunction := fmapAsFiniteSupportFunction ++ fields
       else if kind == "fmap_as_finite_support_tuple" then fmapAsFiniteSupportTuple := fmapAsFiniteSupportTuple ++ fields
       else if kind == "fmap_as_finite_support_heterogeneous_function" then fmapAsFiniteSupportHeterogeneousFunction := fmapAsFiniteSupportHeterogeneousFunction ++ fields
+      else if kind == "fmap_as_finite_support_parameter_tuple_result" then
+        if seenGeneraliseMapQualifier then
+          throwError "@[hol]: generalization map qualifier may appear only once"
+        seenGeneraliseMapQualifier := true
+        generaliseMapQualifier := fields
       else if kind == "fmap_as_finite_support_parameters" then
         if parameterObservations then
           throwError "@[hol]: parameter observations cannot combine with map parameters"
@@ -678,7 +696,12 @@ private def parseHolRefAttribute (stx : Syntax) : CoreM HolRef := do
       else if kind == "nested_list_rel_as_mutual" then
         nestedListRelAsMutual := nestedListRelAsMutual ++ fields
       else fmapAsFiniteSupport := fmapAsFiniteSupport ++ fields
-    checkedHolRef path name line? listAsArray namesAsString namesAsStringBoundary fmapAsFiniteSupport fmapAsFiniteSupportResult fmapAsFiniteSupportFunction fmapAsFiniteSupportHeterogeneousFunction fmapAsFiniteSupportParameters fmapAsFiniteSupportExistentials fmapAsFiniteSupportRelation fmapAsFiniteSupportEqualities fmapAsFiniteSupportEquality wordsAsTypeIndexedBitvec wordDimensionAsWidth realsAsRationalCuts fmapAsFiniteSupportResultObservations wordDimensionsAsWidths fmapAsFiniteSupportTuple nestedListRelAsMutual parameterObservations predicateDomain universalMaps
+    if seenGeneraliseMapQualifier then
+      unless qualifiers.size == 1 && generaliseMapQualifier == #["subst", "component_2"] &&
+          path == "cakeml/compiler/inference/inferScript.sml" && name == "generalise_def" && line?.isNone do
+        throwError "@[hol]: generalization map qualifier requires its unique HOL reference and exact fields, without other qualifiers"
+    let ref ← checkedHolRef path name line? listAsArray namesAsString namesAsStringBoundary fmapAsFiniteSupport fmapAsFiniteSupportResult fmapAsFiniteSupportFunction fmapAsFiniteSupportHeterogeneousFunction fmapAsFiniteSupportParameters fmapAsFiniteSupportExistentials fmapAsFiniteSupportRelation fmapAsFiniteSupportEqualities fmapAsFiniteSupportEquality wordsAsTypeIndexedBitvec wordDimensionAsWidth realsAsRationalCuts fmapAsFiniteSupportResultObservations wordDimensionsAsWidths fmapAsFiniteSupportTuple nestedListRelAsMutual parameterObservations predicateDomain universalMaps
+    pure { ref with fmapAsFiniteSupportParameterTupleResult := generaliseMapQualifier }
   match stx with
   | `(attr| hol $path:str $name:str $line:num $qualifiers:holQualifier*) =>
       parse path.getString name.getString (some line.getNat) qualifiers
@@ -1087,6 +1110,25 @@ initialize holRefAttribute : ParametricAttribute HolRef ← do
     descr := "original HOL4 declaration (file path and declaration name) ported by this Lean declaration"
     getParam := fun _ stx => parseHolRefAttribute stx
     afterSet := fun decl ref => do
+      if ref.path == "cakeml/compiler/inference/inferScript.sml" && ref.name == "generalise_def" &&
+          ref.fmapAsFiniteSupportParameterTupleResult.isEmpty then
+        logError m!"{decl}: generalise_def requires its combined map qualifier"
+      if !ref.fmapAsFiniteSupportParameterTupleResult.isEmpty then
+        let expected : HolRef := {
+          path := "cakeml/compiler/inference/inferScript.sml", name := "generalise_def",
+          fmapAsFiniteSupportParameterTupleResult := #["subst", "component_2"] }
+        unless ref == expected do
+          logError m!"{decl}: generalization map qualifier has unexpected metadata"
+        let single := `Flapjack.Compiler.Inference.Infer.Generalise.generaliseMap
+        let list := `Flapjack.Compiler.Inference.Infer.Generalise.generaliseListMap
+        unless decl == single || decl == list do
+          logError m!"{decl}: generalization map qualifier has the wrong declaration"
+        let env ← getEnv
+        match env.find? decl with
+        | some info =>
+          let problems ← (generaliseMapSignatureProblems info.type (decl == list)).run'
+          for problem in problems do logError m!"{decl}: (generalization map qualifier) {problem}"
+        | none => logError m!"{decl}: missing declaration for generalization map qualifier"
       if ref.path == "HOL/examples/algorithms/unification/triangular/first-order/unifDefScript.sml" &&
           ref.name == "WF_uR" && ref.fmapAsFiniteSupportTuple != #["component_1"] then
         logError m!"{decl}: WF_uR requires its unification tuple-map qualifier"
@@ -1191,6 +1233,8 @@ private def HolRef.qualifierSuffix (ref : HolRef) : String :=
     s!" (fmap_as_finite_support_tuple := [{String.intercalate ", " ref.fmapAsFiniteSupportTuple.toList}])"
   let fmapAsFiniteSupportHeterogeneousFunction := if ref.fmapAsFiniteSupportHeterogeneousFunction.isEmpty then "" else
     s!" (fmap_as_finite_support_heterogeneous_function := [{String.intercalate ", " ref.fmapAsFiniteSupportHeterogeneousFunction.toList}])"
+  let generaliseMapQualifier := if ref.fmapAsFiniteSupportParameterTupleResult.isEmpty then "" else
+    s!" (fmap_as_finite_support_parameter_tuple_result := (map_parameter := {ref.fmapAsFiniteSupportParameterTupleResult[0]!}) (result_component := {ref.fmapAsFiniteSupportParameterTupleResult[1]!}))"
   let fmapAsFiniteSupportParameters := if ref.fmapAsFiniteSupportParameters.isEmpty || ref.fmapAsFiniteSupportParameterObservations then "" else
     s!" (fmap_as_finite_support_parameters := [{String.intercalate ", " ref.fmapAsFiniteSupportParameters.toList}])"
   let predicateDomain := if ref.fmapAsFiniteSupportParameterPredicateDomain.isEmpty then "" else
@@ -1219,7 +1263,7 @@ private def HolRef.qualifierSuffix (ref : HolRef) : String :=
     s!" (fmap_as_finite_support_result_observations := [{String.intercalate ", " ref.fmapAsFiniteSupportResultObservations.toList}])"
   let nested := if ref.nestedListRelAsMutual.isEmpty then "" else
     s!" (nested_list_rel_as_mutual := [{String.intercalate ", " ref.nestedListRelAsMutual.toList}])"
-  observations ++ listAsArray ++ namesAsString ++ namesAsStringBoundary ++ fmapAsFiniteSupport ++ fmapAsFiniteSupportResult ++ fmapAsFiniteSupportFunction ++ fmapAsFiniteSupportTuple ++ fmapAsFiniteSupportHeterogeneousFunction ++ fmapAsFiniteSupportParameters ++ predicateDomain ++ universalMaps ++ fmapAsFiniteSupportExistentials ++ fmapAsFiniteSupportRelation ++ fmapAsFiniteSupportEqualities ++ fmapAsFiniteSupportEquality ++ wordsAsTypeIndexedBitvec ++ wordDimensionAsWidth ++ wordDimensionsAsWidths ++ realsAsRationalCuts ++ nested
+  observations ++ listAsArray ++ namesAsString ++ namesAsStringBoundary ++ fmapAsFiniteSupport ++ fmapAsFiniteSupportResult ++ fmapAsFiniteSupportFunction ++ fmapAsFiniteSupportTuple ++ fmapAsFiniteSupportHeterogeneousFunction ++ generaliseMapQualifier ++ fmapAsFiniteSupportParameters ++ predicateDomain ++ universalMaps ++ fmapAsFiniteSupportExistentials ++ fmapAsFiniteSupportRelation ++ fmapAsFiniteSupportEqualities ++ fmapAsFiniteSupportEquality ++ wordsAsTypeIndexedBitvec ++ wordDimensionAsWidth ++ wordDimensionsAsWidths ++ realsAsRationalCuts ++ nested
 
 /-! Parser regressions for the original syntax, each qualifier alone, and both
 qualifiers together. These elaborate temporary syntax values only; they do not
@@ -1477,6 +1521,39 @@ run_cmd do
       HolRef.qualifierSuffix fmapFunctionRef ==
         " (fmap_as_finite_support_function := [argument_4, result_3])" do
     throwError "@[hol] fmap_as_finite_support_function syntax regression"
+  let generaliseSyntax ← `(attr| hol "cakeml/compiler/inference/inferScript.sml" "generalise_def"
+    (fmap_as_finite_support_parameter_tuple_result :=
+      (map_parameter := subst) (result_component := component_2)))
+  let generaliseRef ← Lean.Elab.Command.liftCoreM (parseHolRefAttribute generaliseSyntax)
+  unless generaliseRef.fmapAsFiniteSupportParameterTupleResult == #["subst", "component_2"] &&
+      HolRef.qualifierSuffix generaliseRef ==
+        " (fmap_as_finite_support_parameter_tuple_result := (map_parameter := subst) (result_component := component_2))" do
+    throwError "@[hol] generalization map qualifier syntax regression"
+  let wrongGeneralise ← `(attr| hol "cakeml/compiler/inference/inferScript.sml" "generalise_def"
+    (fmap_as_finite_support_parameter_tuple_result :=
+      (map_parameter := subst) (result_component := component_1)))
+  let combinedGeneralise ← `(attr| hol "cakeml/compiler/inference/inferScript.sml" "generalise_def"
+    (fmap_as_finite_support_parameter_tuple_result :=
+      (map_parameter := subst) (result_component := component_2)) (reals_as_rational_cuts))
+  let duplicateGeneralise ← `(attr| hol "cakeml/compiler/inference/inferScript.sml" "generalise_def"
+    (fmap_as_finite_support_parameter_tuple_result :=
+      (map_parameter := subst) (result_component := component_2))
+    (fmap_as_finite_support_parameter_tuple_result :=
+      (map_parameter := subst) (result_component := component_2)))
+  let wrongGeneraliseRef ← `(attr| hol "cakeml/compiler/inference/inferScript.sml" "infer_type_subst_def"
+    (fmap_as_finite_support_parameter_tuple_result :=
+      (map_parameter := subst) (result_component := component_2)))
+  let numberedGeneralise ← `(attr| hol "cakeml/compiler/inference/inferScript.sml" "generalise_def" 151
+    (fmap_as_finite_support_parameter_tuple_result :=
+      (map_parameter := subst) (result_component := component_2)))
+  for bad in #[wrongGeneralise, combinedGeneralise, duplicateGeneralise, wrongGeneraliseRef,
+      numberedGeneralise] do
+    let rejected ← Lean.Elab.Command.liftCoreM do
+      try
+        let _ ← parseHolRefAttribute bad
+        pure false
+      catch _ => pure true
+    unless rejected do throwError "@[hol] generalization map qualifier must reject invalid metadata"
   let tupleSyntax ← `(attr| hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "v_inv_ck"
     (fmap_as_finite_support_tuple := [component_2, component_3]) (words_as_type_indexed_bitvec))
   let tupleRef ← Lean.Elab.Command.liftCoreM (parseHolRefAttribute tupleSyntax)
