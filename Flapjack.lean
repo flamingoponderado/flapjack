@@ -3826,6 +3826,7 @@ import Flapjack.Compiler.Inference.Infer.TypeNameCheckBind
 import Flapjack.Compiler.Inference.Infer.TypeDefinitions
 import Flapjack.Compiler.Inference.Infer.TypeDefinitionsExpand
 import Flapjack.Compiler.Inference.Infer.Constraint
+import Flapjack.Compiler.Inference.Infer.ConstraintListCorrect
 import Flapjack.Compiler.Inference.Infer.Pattern
 import Flapjack.Compiler.Inference.Infer.ConstraintDiagnostics
 import Flapjack.NamespaceProps.MapLookup

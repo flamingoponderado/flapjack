@@ -109,12 +109,37 @@ def constrain (_fuel : Nat) (a b : InferT) : M Unit := do
     | _, _ => fail .mismatch
   | some (some subst) => set { s with subst }
 
-private def constrainMany (fuel : Nat) : List InferT → List InferT → M Unit
+/-- Execute paired constraints in order, stopping at the first failure. -/
+def constrainMany (fuel : Nat) : List InferT → List InferT → M Unit
   | [], [] => pure ()
   | x :: xs, y :: ys => do
     constrain fuel x y
     constrainMany fuel xs ys
   | _, _ => fail .mismatch
+
+/-- Execution equations for comparing the executable list operation with
+    the source-state operation. These are Flapjack infrastructure. -/
+theorem constrainManyNil (fuel : Nat) (s : State) :
+    constrainMany fuel [] [] s = .ok ((), s) := rfl
+
+/-- Flapjack execution equation for an unmatched right-hand constraint. -/
+theorem constrainManyNilCons (fuel : Nat) (y : InferT) (ys : List InferT) (s : State) :
+    constrainMany fuel [] (y :: ys) s = .error .mismatch := rfl
+
+/-- Flapjack execution equation for an unmatched left-hand constraint. -/
+theorem constrainManyConsNil (fuel : Nat) (x : InferT) (xs : List InferT) (s : State) :
+    constrainMany fuel (x :: xs) [] s = .error .mismatch := rfl
+
+/-- Flapjack execution equation for two nonempty constraint lists. -/
+theorem constrainManyCons (fuel : Nat) (x y : InferT) (xs ys : List InferT) (s : State) :
+    constrainMany fuel (x :: xs) (y :: ys) s =
+      match constrain fuel x y s with
+      | .error e => .error e
+      | .ok (_, next) => constrainMany fuel xs ys next := by
+  simp only [constrainMany, Bind.bind, StateT.bind, Except.bind]
+  cases h : constrain fuel x y s with
+  | error e => rfl
+  | ok pair => cases pair; rfl
 
 private def litType : Lit → Option InferT
   | .intLit _ => some (.app [] 5)
