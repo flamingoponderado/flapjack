@@ -1423,6 +1423,336 @@ private theorem stackLocalsSwap_returningForce {C F : Type} (dest : Nat) (live :
                       simp only [locals7, stack7, handler7]
                       rfl
 
+/-- The `Call` case with a returning frame and no handler. Flapjack
+    infrastructure toward the port of HOL `evaluate_stack_and_locals_swap`;
+    no separate HOL original. -/
+private theorem stackLocalsSwap_returningCall_noHandler {C F : Type} (dest : Nat)
+    (names : List Nat) (returns : List Nat) (live : NumSet) (state : State C F)
+    (bodyIH : ∀ (body : DataLang.Prog) (called : State C F),
+      called.clock < state.clock → StackLocalsSwapAt body called) :
+    StackLocalsSwapAt (.call (some (returns, live)) dest names none) state := by
+  intro res next run
+  cases vars : DataSem.getVars names state.locals with
+  | none =>
+    simp only [evaluate, vars, typeError, Prod.mk.injEq] at run
+    obtain ⟨rfl, rfl⟩ := run
+    trivial
+  | some values =>
+    cases found : findCode dest values state.code state.stackFrameSizes with
+    | none =>
+      simp only [evaluate, vars, found, typeError, Prod.mk.injEq] at run
+      obtain ⟨rfl, rfl⟩ := run
+      trivial
+    | some entry =>
+      obtain ⟨args, body, size⟩ := entry
+      by_cases distinct : returns.Nodup
+      · cases cut : cutEnv live state.locals with
+        | none =>
+          simp only [evaluate, vars, found, distinct, cut, typeError] at run
+          obtain ⟨rfl, rfl⟩ := run
+          trivial
+        | some env =>
+          by_cases zero : state.clock = 0
+          · simp only [evaluate, vars, found, distinct, cut, zero, timeoutError] at run
+            obtain ⟨rfl, rfl⟩ := run
+            refine ⟨?_, ?_⟩
+            · simp
+            · intro xs lsz len
+              let targetCall := DataSem.callEnv args size
+                (DataSem.pushEnv env false
+                  (DataSem.decClock { state with stack := xs, localsSize := lsz }))
+              refine ⟨size, targetCall.safeForSpace, targetCall.stackMax,
+                targetCall.peakHeapLength, ?_⟩
+              simp only [evaluate, vars, found, distinct, cut, zero, timeoutError]
+              simp only [targetCall, DataSem.callEnv, DataSem.pushEnv, DataSem.decClock,
+                Option.isSome_none, Bool.false_eq_true, decide_true, Bool.not_true, if_true,
+                if_false]
+              rw [← zero]
+          · let callState := DataSem.callEnv args size
+              (DataSem.pushEnv env false (DataSem.decClock state))
+            have clockLt : callState.clock < state.clock := by
+              simp only [callState, DataSem.callEnv, DataSem.pushEnv, DataSem.decClock]
+              omega
+            have callStack : callState.stack = Stack.env state.localsSize env :: state.stack := rfl
+            have callHandler : callState.handler = state.handler := rfl
+            cases bodyRun : evaluate body callState with
+            | mk outcome last =>
+              simp only [evaluate, vars, found, distinct, cut, zero, if_false,
+                Option.isSome_none, Bool.false_eq_true, decide_true, Bool.not_true] at run ⊢
+              simp only [callState] at bodyRun
+              rw [bodyRun] at run
+              simp only [fixClock] at run ⊢
+              cases outcome with
+              | none =>
+                simp only [typeError, Prod.mk.injEq] at run
+                obtain ⟨rfl, rfl⟩ := run
+                trivial
+              | some outcome =>
+                cases outcome with
+                | val results =>
+                  by_cases length : results.length = returns.length
+                  · revert run
+                    cases popped : popEnv
+                        { last with clock := min callState.clock last.clock } with
+                    | none =>
+                      intro run
+                      simp only [length, typeError] at run
+                      obtain ⟨rfl, rfl⟩ := run
+                      trivial
+                    | some final =>
+                      intro run
+                      have bodyArm :=
+                        bodyIH body callState clockLt (some (.val results)) last bodyRun
+                      obtain ⟨lastStack, lastHandler, bodyHall⟩ := bodyArm
+                      have clampedStack :
+                          ({ last with clock := min callState.clock last.clock } :
+                            State C F).stack = Stack.env state.localsSize env :: state.stack := by
+                        simp only [lastStack, callStack]
+                      have poppedEq := popEnv_env_some
+                        { last with clock := min callState.clock last.clock }
+                        state.localsSize env state.stack clampedStack
+                      have finalEq : final =
+                          { { last with clock := min callState.clock last.clock } with
+                            locals := env
+                            stack := state.stack
+                            localsSize := state.localsSize } := by
+                        rw [poppedEq] at popped
+                        injection popped with h
+                        exact h.symm
+                      rw [finalEq] at run
+                      have resEq : res = none := by
+                        simpa [length] using (congrArg Prod.fst run).symm
+                      have nextEq : next =
+                          setVars returns results
+                            { { last with clock := min callState.clock last.clock } with
+                              locals := env
+                              stack := state.stack
+                              localsSize := state.localsSize } := by
+                        simpa [length] using (congrArg Prod.snd run).symm
+                      subst resEq
+                      subst nextEq
+                      refine ⟨?_, ?_, ?_⟩
+                      · simp only [setVars]
+                      · simp only [setVars, lastHandler, callHandler]
+                      · intro xs lsz len
+                        obtain ⟨lss, sfs, smx, phl, bodyTarget⟩ :=
+                          bodyHall (Stack.env lsz env :: xs) size (by
+                            rw [callStack]
+                            simp only [List.length_cons, len])
+                        let targetCall := DataSem.callEnv args size
+                          (DataSem.pushEnv env false
+                            (DataSem.decClock { state with stack := xs, localsSize := lsz }))
+                        have targetEq : targetCall =
+                            DataSem.callEnv args size
+                              (DataSem.pushEnv env false
+                                (DataSem.decClock { state with
+                                  stack := xs
+                                  localsSize := lsz })) := rfl
+                        obtain ⟨mx', safe', peak', moved⟩ :=
+                          evaluate_stackSafePeakSwap targetCall.stackMax targetCall.safeForSpace
+                            _ _ _ targetCall.peakHeapLength body bodyTarget
+                        have bridge : targetCall =
+                            { { callState with
+                                stack := Stack.env lsz env :: xs
+                                localsSize := size } with
+                              stackMax := targetCall.stackMax
+                              safeForSpace := targetCall.safeForSpace
+                              peakHeapLength := targetCall.peakHeapLength } := rfl
+                        let movedState : State C F :=
+                          { { last with
+                              localsSize := lss
+                              stack := Stack.env lsz env :: xs
+                              safeForSpace := sfs
+                              stackMax := smx
+                              peakHeapLength := phl } with
+                            stackMax := mx'
+                            safeForSpace := safe'
+                            peakHeapLength := peak' }
+                        let targetClamped : State C F :=
+                          { movedState with clock := min targetCall.clock movedState.clock }
+                        refine ⟨lsz, safe', mx', peak', ?_⟩
+                        rw [← targetEq, bridge, moved]
+                        have clockEq : min callState.clock last.clock =
+                            min targetCall.clock movedState.clock := rfl
+                        simp only [length, clockEq, if_true]
+                        rfl
+                  · simp only [length, typeError] at run
+                    obtain ⟨rfl, rfl⟩ := run
+                    trivial
+                | err error =>
+                  cases error with
+                  | abort a =>
+                    cases a with
+                    | typeError =>
+                      simp only [Prod.mk.injEq] at run
+                      obtain ⟨rfl, rfl⟩ := run
+                      trivial
+                    | timeoutError =>
+                      simp only [Prod.mk.injEq] at run
+                      obtain ⟨rfl, rfl⟩ := run
+                      have bodyArm :
+                          last.stack = [] ∧
+                            ∀ (xs : List Stack) (lsz : Option Nat),
+                              callState.stack.length = xs.length →
+                              ∃ lss sfs smx phl, evaluate body { callState with
+                                  stack := xs, localsSize := lsz } =
+                                (some (.err (.abort .timeoutError)),
+                                  { last with
+                                    localsSize := lss
+                                    safeForSpace := sfs
+                                    stackMax := smx
+                                    peakHeapLength := phl }) :=
+                        bodyIH body callState clockLt (some (.err (.abort .timeoutError)))
+                          last bodyRun
+                      obtain ⟨lastEmpty, bodyHall⟩ := bodyArm
+                      refine ⟨lastEmpty, ?_⟩
+                      intro xs lsz len
+                      obtain ⟨lss, sfs, smx, phl, bodyTarget⟩ :=
+                        bodyHall (Stack.env lsz env :: xs) size (by
+                          rw [callStack]
+                          simp only [List.length_cons, len])
+                      let targetCall := DataSem.callEnv args size
+                        (DataSem.pushEnv env false
+                          (DataSem.decClock { state with stack := xs, localsSize := lsz }))
+                      have targetEq : targetCall =
+                          DataSem.callEnv args size
+                            (DataSem.pushEnv env false
+                              (DataSem.decClock { state with
+                                stack := xs
+                                localsSize := lsz })) := rfl
+                      obtain ⟨mx', safe', peak', moved⟩ :=
+                        evaluate_stackSafePeakSwap targetCall.stackMax targetCall.safeForSpace
+                          _ _ _ targetCall.peakHeapLength body bodyTarget
+                      have bridge : targetCall =
+                          { { callState with
+                              stack := Stack.env lsz env :: xs
+                              localsSize := size } with
+                            stackMax := targetCall.stackMax
+                            safeForSpace := targetCall.safeForSpace
+                            peakHeapLength := targetCall.peakHeapLength } := rfl
+                      refine ⟨lss, safe', mx', peak', ?_⟩
+                      rw [← targetEq, bridge, moved]
+                    | ffiError event =>
+                      simp only [Prod.mk.injEq] at run
+                      obtain ⟨rfl, rfl⟩ := run
+                      have bodyArm :
+                          last.stack = [] ∧
+                            ∀ (xs : List Stack) (lsz : Option Nat),
+                              callState.stack.length = xs.length →
+                              ∃ lss sfs smx phl, evaluate body { callState with
+                                  stack := xs, localsSize := lsz } =
+                                (some (.err (.abort (.ffiError event))),
+                                  { last with
+                                    localsSize := lss
+                                    safeForSpace := sfs
+                                    stackMax := smx
+                                    peakHeapLength := phl }) :=
+                        bodyIH body callState clockLt (some (.err (.abort (.ffiError event))))
+                          last bodyRun
+                      obtain ⟨lastEmpty, bodyHall⟩ := bodyArm
+                      refine ⟨lastEmpty, ?_⟩
+                      intro xs lsz len
+                      obtain ⟨lss, sfs, smx, phl, bodyTarget⟩ :=
+                        bodyHall (Stack.env lsz env :: xs) size (by
+                          rw [callStack]
+                          simp only [List.length_cons, len])
+                      let targetCall := DataSem.callEnv args size
+                        (DataSem.pushEnv env false
+                          (DataSem.decClock { state with stack := xs, localsSize := lsz }))
+                      have targetEq : targetCall =
+                          DataSem.callEnv args size
+                            (DataSem.pushEnv env false
+                              (DataSem.decClock { state with
+                                stack := xs
+                                localsSize := lsz })) := rfl
+                      obtain ⟨mx', safe', peak', moved⟩ :=
+                        evaluate_stackSafePeakSwap targetCall.stackMax targetCall.safeForSpace
+                          _ _ _ targetCall.peakHeapLength body bodyTarget
+                      have bridge : targetCall =
+                          { { callState with
+                              stack := Stack.env lsz env :: xs
+                              localsSize := size } with
+                            stackMax := targetCall.stackMax
+                            safeForSpace := targetCall.safeForSpace
+                            peakHeapLength := targetCall.peakHeapLength } := rfl
+                      refine ⟨lss, safe', mx', peak', ?_⟩
+                      rw [← targetEq, bridge, moved]
+                  | raise t =>
+                    simp only [Prod.mk.injEq] at run
+                    obtain ⟨rfl, rfl⟩ := run
+                    have bodyArm :
+                        ∃ s2, jumpExc callState = some s2 ∧ s2.locals = last.locals ∧
+                          s2.stack = last.stack ∧ s2.handler = last.handler ∧
+                          ∀ (xs : List Stack) (s7 : State C F) (lsz : Option Nat),
+                            jumpExc { callState with stack := xs, localsSize := lsz } = some s7 →
+                            callState.stack.length = xs.length →
+                            ∃ lss sfs smx phl, evaluate body { callState with
+                                stack := xs, localsSize := lsz } =
+                              (some (.err (.raise t)),
+                                { last with
+                                  stack := s7.stack
+                                  handler := s7.handler
+                                  locals := s7.locals
+                                  localsSize := lss
+                                  safeForSpace := sfs
+                                  stackMax := smx
+                                  peakHeapLength := phl }) :=
+                      bodyIH body callState clockLt (some (.err (.raise t))) last bodyRun
+                    obtain ⟨s2, jumped, localsEq, stackEq, handlerEq, bodyHall⟩ := bodyArm
+                    obtain ⟨s3, jumpedState, locals3, stack3, handler3⟩ :=
+                      jumpExc_callToState state callState state.localsSize env callStack
+                        callHandler s2 jumped
+                    have clampedLocals :
+                        ({ last with clock := min callState.clock last.clock } :
+                          State C F).locals = s3.locals := by
+                      simp only [locals3, localsEq]
+                    have clampedStack :
+                        ({ last with clock := min callState.clock last.clock } :
+                          State C F).stack = s3.stack := by
+                      simp only [stack3, stackEq]
+                    have clampedHandler :
+                        ({ last with clock := min callState.clock last.clock } :
+                          State C F).handler = s3.handler := by
+                      simp only [handler3, handlerEq]
+                    refine ⟨s3, jumpedState, clampedLocals.symm, clampedStack.symm,
+                      clampedHandler.symm, ?_⟩
+                    intro xs s7 lsz jumpedRun len
+                    obtain ⟨s7', jumpedRun', locals7, stack7, handler7⟩ :=
+                      jumpExc_prependCall { state with stack := xs, localsSize := lsz }
+                        { callState with
+                          stack := Stack.env lsz env :: xs
+                          localsSize := size } lsz env rfl rfl s7 jumpedRun
+                    obtain ⟨lss, sfs, smx, phl, bodyTarget⟩ :=
+                      bodyHall (Stack.env lsz env :: xs) s7' size jumpedRun' (by
+                        rw [callStack]
+                        simp only [List.length_cons, len])
+                    let targetCall := DataSem.callEnv args size
+                      (DataSem.pushEnv env false
+                        (DataSem.decClock { state with stack := xs, localsSize := lsz }))
+                    have targetEq : targetCall =
+                        DataSem.callEnv args size
+                          (DataSem.pushEnv env false
+                            (DataSem.decClock { state with
+                              stack := xs
+                              localsSize := lsz })) := rfl
+                    obtain ⟨mx', safe', peak', moved⟩ :=
+                      evaluate_stackSafePeakSwap targetCall.stackMax targetCall.safeForSpace
+                        _ _ _ targetCall.peakHeapLength body bodyTarget
+                    have bridge : targetCall =
+                        { { callState with
+                            stack := Stack.env lsz env :: xs
+                            localsSize := size } with
+                          stackMax := targetCall.stackMax
+                          safeForSpace := targetCall.safeForSpace
+                          peakHeapLength := targetCall.peakHeapLength } := rfl
+                    refine ⟨lss, safe', mx', peak', ?_⟩
+                    rw [← targetEq, bridge, moved]
+                    simp only [locals7, stack7, handler7]
+                    rfl
+      · simp only [evaluate, vars, found, distinct, typeError] at run
+        obtain ⟨rfl, rfl⟩ := run
+        trivial
+
 /-- Reserving space reads only the reserved amount. Flapjack infrastructure
     toward the port of HOL `evaluate_stack_and_locals_swap`; no separate HOL
     original. -/
