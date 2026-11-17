@@ -1,5 +1,11 @@
 [
 {
+  "hol_path": "cakeml/semantics/proofs/typeSysPropsScript.sml", "hol_name": "type_e_freevars",
+  "lean_path": "Flapjack/TypeSysProps/Expression.lean", "lean_name": "typeEFreevars",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with the source and type_e_freevars_typed confirms all three mutual typing conjuncts, both environment invariants and the complete free-variable conclusions. The internal branch-list induction uses the source nonempty branch condition."
+ },
+{
   "hol_path": "cakeml/semantics/proofs/typeSysPropsScript.sml", "hol_name": "tveLookup_freevars_subst",
   "lean_path": "Flapjack/TypeSysProps/Environment.lean", "lean_name": "tveLookupFreevarsSubst",
   "statement_status": "reviewed_exact",
