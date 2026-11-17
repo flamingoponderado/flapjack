@@ -24,7 +24,7 @@ open Flapjack.Compiler.Inference.Infer.Duplicates
 deriving instance Repr for Flapjack.NamespaceHOL.Namespace
 
 inductive Error where
-  | exhausted | unsupported | mismatch | undefinedName | valueRestriction | envDeclaration
+  | exhausted | unsupported | mismatch | badConstraintLists | undefinedName | valueRestriction | envDeclaration
   | floatPattern | emptyCase | emptyHandle
   | unsafeOperation | thunkOperation | primitiveTypeMismatch
   | primitiveArity : String → Nat → Nat → Error
@@ -65,6 +65,7 @@ def withLoc (loc : Flapjack.Misc.Location.Locs) (env : Env) (action : M α) : M 
   | .error .unsafeOperation => .error (.located loc .unsafeOperation)
   | .error .thunkOperation => .error (.located loc .thunkOperation)
   | .error .primitiveTypeMismatch => .error (.located loc .primitiveTypeMismatch)
+  | .error .badConstraintLists => .error (.located loc .badConstraintLists)
   | .error (.primitiveArity name actual expected) => .error (.located loc (.primitiveArity name actual expected))
   | .error (.undefinedVariable name) => .error (.located loc (.undefinedVariable name))
   | .error (.undefinedConstructor name) => .error (.located loc (.undefinedConstructor name))
@@ -115,7 +116,7 @@ def constrainMany (fuel : Nat) : List InferT → List InferT → M Unit
   | x :: xs, y :: ys => do
     constrain fuel x y
     constrainMany fuel xs ys
-  | _, _ => fail .mismatch
+  | _, _ => fail .badConstraintLists
 
 /-- Execution equations for comparing the executable list operation with
     the source-state operation. These are Flapjack infrastructure. -/
@@ -124,11 +125,11 @@ theorem constrainManyNil (fuel : Nat) (s : State) :
 
 /-- Flapjack execution equation for an unmatched right-hand constraint. -/
 theorem constrainManyNilCons (fuel : Nat) (y : InferT) (ys : List InferT) (s : State) :
-    constrainMany fuel [] (y :: ys) s = .error .mismatch := rfl
+    constrainMany fuel [] (y :: ys) s = .error .badConstraintLists := rfl
 
 /-- Flapjack execution equation for an unmatched left-hand constraint. -/
 theorem constrainManyConsNil (fuel : Nat) (x : InferT) (xs : List InferT) (s : State) :
-    constrainMany fuel (x :: xs) [] s = .error .mismatch := rfl
+    constrainMany fuel (x :: xs) [] s = .error .badConstraintLists := rfl
 
 /-- Flapjack execution equation for two nonempty constraint lists. -/
 theorem constrainManyCons (fuel : Nat) (x y : InferT) (xs ys : List InferT) (s : State) :

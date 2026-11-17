@@ -13,10 +13,9 @@ open Flapjack.Compiler.Inference.Unify Flapjack.Compiler.Inference.Infer.HOLStat
 
 /-- Relate executable and source-shaped constraint lists on well-formed
     sparse substitutions. Executable failures discard state, so the source
-    failure state is existentially retained. An executable `.mismatch` is
-    related to the source internal-error message; this theorem does not claim
-    that the executable renders that message. This is Flapjack correspondence
-    infrastructure, not a separate HOL theorem. -/
+    failure state is existentially retained. An executable
+    `.badConstraintLists` represents the source internal-error message. This
+    is Flapjack correspondence infrastructure, not a separate HOL theorem. -/
 theorem constrainManyCorresponds (fuel : Nat) (l : Operations.LocErrInfo)
     (xs ys : List InferT) (s : Infer.State) (hw : cwfs s.subst) :
     match Core.constrainMany fuel xs ys s with
@@ -25,7 +24,7 @@ theorem constrainManyCorresponds (fuel : Nat) (l : Operations.LocErrInfo)
     | .error (.typeMismatch a b) =>
       ∃ out, addConstraintsModel l xs ys (ofExecutable s) =
         (.failure (l.loc, mismatchMessage l a b), out)
-    | .error .mismatch =>
+    | .error .badConstraintLists =>
       ∃ out, addConstraintsModel l xs ys (ofExecutable s) =
         (.failure (l.loc, ofString "Internal error: Bad call to add_constraints"), out)
     | .error _ => False := by

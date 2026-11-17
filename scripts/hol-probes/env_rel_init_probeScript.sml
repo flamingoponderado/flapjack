@@ -108,6 +108,12 @@ val _ = show "n_fresh_id_typed" inferTheory.n_fresh_id_def;
 val _ = show "get_next_uvar_typed" inferTheory.get_next_uvar_def;
 val _ = show "add_constraint_typed" inferTheory.add_constraint_def;
 val _ = show "add_constraints_typed" inferTheory.add_constraints_def;
+val _ = show "add_constraints_mismatch_eval" (EVAL ``
+  add_constraints <|loc := NONE; err := nsEmpty|> [] [Infer_Tuvar 0]
+    <|next_uvar := 3; subst := FEMPTY; next_id := 7|>``);
+val _ = show "add_constraints_mismatch_loc_eval" (EVAL ``
+  add_constraints <|loc := SOME (Locs (POSN 0 11) (POSN 0 15)); err := nsEmpty|>
+    [] [Infer_Tuvar 0] <|next_uvar := 3; subst := FEMPTY; next_id := 7|>``);
 val _ = show "apply_subst_typed" inferTheory.apply_subst_def;
 val _ = show "apply_subst_list_typed" inferTheory.apply_subst_list_def;
 val _ = show "extend_dec_ienv_typed" inferTheory.extend_dec_ienv_def;

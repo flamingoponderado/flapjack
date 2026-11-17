@@ -20,6 +20,21 @@ open Flapjack.Compiler.Inference.Infer.Diagnostics Flapjack.Basis.Pure.MlString
 private def loc : Locs := .locs (.posn 0 11) (.posn 0 15)
 private def qname : NamespaceHOL.Ident MlString MlString := .long (ofString "A") (.short (ofString "foo"))
 
+-- HOL add_constraints rejects unequal lists with this internal-error message.
+#guard match constrainMany 20 [] [.uvar 0] ⟨3, .ln, 7⟩ with
+  | .error .badConstraintLists => true
+  | _ => false
+
+#guard match withLoc loc emptyEnv (constrainMany 20 [] [.uvar 0]) ⟨3, .ln, 7⟩ with
+  | .error (.located actual .badConstraintLists) => actual == loc
+  | _ => false
+
+#guard renderUnsupportedPrimitive [] .badConstraintLists ==
+  some (ofString "### ERROR: type error\nInternal error: Bad call to add_constraints at unknown location\nProgram exited with nonzero exit code.\n").explode
+
+#guard renderUnsupportedPrimitive [] (.located loc .badConstraintLists) ==
+  some (ofString "### ERROR: type error\nInternal error: Bad call to add_constraints at line 1\n\n\n           ^^^^^\n\nProgram exited with nonzero exit code.\n").explode
+
 #guard match inferExprFuel 100 100 emptyEnv (.lannot (.var qname) loc) ⟨0, .ln, 15⟩ with
   | .error (.located actual (.undefinedVariable (.long a (.short b)))) =>
       actual == loc && a == ofString "A" && b == ofString "foo"
