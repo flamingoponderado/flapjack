@@ -1,6 +1,8 @@
 module
 
 public meta import Lean
+public meta import Lean.Util.CollectAxioms
+public meta import Flapjack.HolRef.GeneraliseMapAudit
 
 public meta section
 
@@ -46,5 +48,69 @@ def generaliseLengthStatementProblems (type : Expr) : MetaM (Array String) := do
     unless ← withTransparency .reducible (isDefEq result expectedConclusion) do
       return #["conclusion must state result length equals input length"]
     return #[]
+
+/-- Audit one unconditional codec witness without unfolding its roundtrip. -/
+def generaliseLengthWitnessProblems (type : Expr) (binderName : Name) : MetaM (Array String) := do
+  forallTelescope type fun args result => do
+    unless args.size == 2 do return #[s!"expected two witness binders, got {args.size}"]
+    let mapType := mkApp2 (mkConst `Flapjack.HolFiniteMapExact) (mkConst ``Nat) (mkConst ``Nat)
+    let mapBinder ← args[0]!.fvarId!.getDecl
+    let keyBinder ← args[1]!.fvarId!.getDecl
+    unless mapBinder.binderInfo == .default && keyBinder.binderInfo == .default &&
+        mapBinder.userName == binderName do return #["witness binders must be explicit and name the map"]
+    unless (← isDefEq mapBinder.type mapType) && (← isDefEq keyBinder.type (mkConst ``Nat)) do
+      return #["witness binders have the wrong carriers"]
+    let original := args[0]!
+    let key := args[1]!
+    let broad ← mkAppM `Flapjack.FiniteMapBroad.toBroad #[original]
+    let roundtrip ← mkAppM `Flapjack.FiniteMapBroad.ofBroad #[broad]
+    let lookupRoundtrip ← mkAppM `Flapjack.HolFiniteMapExact.lookup #[roundtrip, key]
+    let lookupOriginal ← mkAppM `Flapjack.HolFiniteMapExact.lookup #[original, key]
+    let lookupEq ← mkEq lookupRoundtrip lookupOriginal
+    let supportRoundtrip ← mkAppM `Flapjack.HolFiniteMapExact.finiteSupport #[roundtrip]
+    let supportOriginal ← mkAppM `Flapjack.HolFiniteMapExact.finiteSupport #[original]
+    let supportEq ← mkEq supportRoundtrip supportOriginal
+    let mapEq ← mkEq roundtrip original
+    let expected := mkApp2 (mkConst ``And) lookupEq (mkApp2 (mkConst ``And) supportEq mapEq)
+    unless result == expected do
+      return #["witness must state the exact lookup, support and map codec roundtrip"]
+    return #[]
+
+/-- Check the exact theorem, both local witnesses and their producer bundle.
+    HOL metadata and source review are separate requirements. -/
+def generaliseLengthBundleProblems (target : Name) : MetaM (Array String) := do
+  let expected := `Flapjack.Compiler.Inference.InferProps.Generalise.generaliseListLength
+  unless target == expected do return #["length qualifier requires the reviewed theorem"]
+  let owner := `Flapjack.Compiler.Inference.InferProps.Generalise
+  let substWitness := `Flapjack.Compiler.Inference.InferProps.Generalise.holFmapAsFiniteSupportParamWitness_generaliseListLength_subst
+  let outWitness := `Flapjack.Compiler.Inference.InferProps.Generalise.holFmapAsFiniteSupportParamWitness_generaliseListLength_out
+  let producer := `Flapjack.Compiler.Inference.Infer.Generalise.generaliseListMap
+  let env ← getEnv
+  let definingModule (name : Name) :=
+    match env.getModuleIdxFor? name with
+    | some idx => env.header.moduleNames[idx.toNat]!
+    | none => env.mainModule
+  let mut problems ← generaliseMapBundleProblems producer
+  for dependency in #[`Flapjack.FiniteMapBroad, `Flapjack.FiniteMapBroad.toBroad,
+      `Flapjack.FiniteMapBroad.ofBroad] do
+    if (env.find? dependency).isNone || definingModule dependency != `Flapjack.FiniteMap.BroadCodec then
+      problems := problems.push s!"{dependency} is missing or has the wrong defining module"
+  for (name, binder) in #[(target, `none), (substWitness, `subst), (outWitness, `out)] do
+    if definingModule name != owner then
+      problems := problems.push s!"{name} has the wrong defining module"
+    match env.find? name with
+    | some (.thmInfo info) =>
+      unless info.levelParams.isEmpty do
+        problems := problems.push s!"{name} must be monomorphic"
+      if name == target then
+        problems := problems ++ (← generaliseLengthStatementProblems info.type)
+      else
+        problems := problems ++ (← generaliseLengthWitnessProblems info.type binder)
+      let axioms ← Lean.collectAxioms name
+      for axiomName in axioms do
+        unless #[`propext, `Classical.choice, `Quot.sound].contains axiomName do
+          problems := problems.push s!"{name} depends on unexpected axiom {axiomName}"
+    | _ => problems := problems.push s!"{name} must be a theorem"
+  return problems
 
 end Flapjack
