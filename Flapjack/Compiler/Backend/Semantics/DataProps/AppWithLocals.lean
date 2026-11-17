@@ -199,9 +199,9 @@ theorem bind_eq_optionBind {α β : Type} (o : Option α) (f : α → Option β)
     Bind.bind o f = Option.bind o f := rfl
 
 /-- A successful non-FFI application cannot turn an unsafe state safe: safety
-    is only ever conjoined, never restored.  This is the forward half of the
-    auxiliary stage's safety accounting needed by the parked HOL
-    `do_app_with_locals`; no separate HOL original. -/
+    is only ever conjoined, never restored.  It is one half of the auxiliary
+    stage's safety accounting needed by the parked HOL `do_app_with_locals`; no
+    separate HOL original. -/
 theorem applyNonFfi_safeForSpace_of_false {C F : Type} (op : ClosLang.Op)
     (values : List Value) (state next : State C F) (value : Value)
     (run : applyNonFfi op values state = some (value, next))
