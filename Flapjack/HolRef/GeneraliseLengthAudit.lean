@@ -3,6 +3,7 @@ module
 public meta import Lean
 public meta import Lean.Util.CollectAxioms
 public meta import Flapjack.HolRef.GeneraliseMapAudit
+public meta import Flapjack.HolRef
 
 public meta section
 
@@ -112,5 +113,22 @@ def generaliseLengthBundleProblems (target : Name) : MetaM (Array String) := do
           problems := problems.push s!"{name} depends on unexpected axiom {axiomName}"
     | _ => problems := problems.push s!"{name} must be a theorem"
   return problems
+
+/-- Require the unique, fully qualified reference already audited for the
+    imported tuple producer. Manifest and observer metadata are checked by
+    separate gates before this can justify an observer tag. -/
+def generaliseLengthProducerRefProblems (ref : Option HolRef) : Array String := Id.run do
+  let expected : HolRef := {
+    path := "cakeml/compiler/inference/inferScript.sml", name := "generalise_def",
+    fmapAsFiniteSupportParameterTupleResult := #["subst", "component_2"] }
+  unless ref == some expected do return #["length theorem requires the exact reviewed producer reference"]
+  return #[]
+
+/-- Combine the theorem and witness bundle with the actual imported producer
+    attribute. This does not check observer metadata or the theorem manifest. -/
+def generaliseLengthProducerBundleProblems (target : Name) : MetaM (Array String) := do
+  let env ← getEnv
+  let ref := HolRef.get? env `Flapjack.Compiler.Inference.Infer.Generalise.generaliseListMap
+  return generaliseLengthProducerRefProblems ref ++ (← generaliseLengthBundleProblems target)
 
 end Flapjack

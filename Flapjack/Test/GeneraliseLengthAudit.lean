@@ -7,6 +7,21 @@ open Lean Meta Flapjack Flapjack.Compiler.Inference Flapjack.Compiler.Inference.
 private abbrev producerAlias := generaliseListMap
 
 run_meta do
+  let producerRef : HolRef := {
+    path := "cakeml/compiler/inference/inferScript.sml", name := "generalise_def",
+    fmapAsFiniteSupportParameterTupleResult := #["subst", "component_2"] }
+  let actualRef := HolRef.get? (← getEnv) ``generaliseListMap
+  unless (generaliseLengthProducerRefProblems actualRef).isEmpty do
+    throwError "generalization length audit rejected the real producer reference"
+  for bad in #[none, some { producerRef with line? := some 151 },
+      some { producerRef with name := "generalise_list_length" },
+      some { producerRef with fmapAsFiniteSupportParameterTupleResult := #[] },
+      some { producerRef with fmapAsFiniteSupportParameters := #["subst"] },
+      some { producerRef with fmapAsFiniteSupportParameterTupleResult := #["subst", "component_1"] }] do
+    if (generaliseLengthProducerRefProblems bad).isEmpty then
+      throwError "generalization length audit accepted altered producer metadata"
+  let qualifiedBundle ← generaliseLengthProducerBundleProblems ``generaliseListLength
+  unless qualifiedBundle.isEmpty do throwError "qualified generalization bundle rejected: {qualifiedBundle}"
   let bundle ← generaliseLengthBundleProblems ``generaliseListLength
   unless bundle.isEmpty do throwError "generalization length bundle rejected: {bundle}"
   if (← generaliseLengthBundleProblems ``producerAlias).isEmpty then
