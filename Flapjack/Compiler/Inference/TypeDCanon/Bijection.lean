@@ -8,6 +8,15 @@ public import Mathlib.Data.Set.Card
 /-! Bijections used to allocate canonical type identifiers. -/
 namespace Flapjack.Compiler.Inference.TypeDCanon
 
+/-- Cardinalities add on disjoint finite sets. The finiteness premises ensure
+that `Set.ncard` agrees with HOL `CARD` for each set in the conclusion. -/
+@[hol "cakeml/compiler/inference/proofs/type_dCanonScript.sml" "DISJOINT_CARD_UNION"]
+theorem disjointCardUnion {α : Type} (s t : Set α) :
+    s.Finite ∧ t.Finite ∧ Disjoint s t →
+      (s ∪ t).ncard = s.ncard + t.ncard := by
+  rintro ⟨hs, ht, hd⟩
+  exact Set.ncard_union_eq hd hs ht
+
 /-- Extend disjoint bijections to consecutive ranges of type identifiers.
 The `g` bijection embeds `ids` into a finite count, so `ids` is finite whenever
 the premise holds. On that domain `Set.ncard` agrees with HOL `CARD`; HOL's

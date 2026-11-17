@@ -10511,6 +10511,8 @@ identifier theorem is replayed, and both public binding-identifier invariants ar
 The source type-substitution and type-name identifier bounds, namespace association-list
 quantification, constructor-environment bounds and transport, and function-name
 and expression-list alignment are captured.
+The full mutual declaration-canonicalization theorem and its disjoint finite-set
+cardinality lemma are captured directly with their inferred types.
 The local-environment renaming definitions and laws are captured or replayed,
 including de Bruijn increment, substitution, and variable lookup.
 The environment-relation and REPL theories are not fetched by this

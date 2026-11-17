@@ -289,6 +289,12 @@
   "reviewer": "Independent comparison with source and sing_renum_NOTIN_tenv_ID_typed confirms the bounded environment and absent identifier premises and namespace-equivalence conclusion."
  },
 {
+  "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "DISJOINT_CARD_UNION",
+  "lean_path": "Flapjack/Compiler/Inference/TypeDCanon/Bijection.lean", "lean_name": "disjointCardUnion",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with the source and DISJOINT_CARD_UNION_typed confirms the polymorphic set carrier, finite and disjoint premises, and cardinality equality. The finite premises ensure Set.ncard agrees with HOL CARD for both sets and their union."
+ },
+{
   "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "BIJ_extend_bij",
   "lean_path": "Flapjack/Compiler/Inference/TypeDCanon/Bijection.lean", "lean_name": "bijExtendBij",
   "statement_status": "reviewed_exact",
