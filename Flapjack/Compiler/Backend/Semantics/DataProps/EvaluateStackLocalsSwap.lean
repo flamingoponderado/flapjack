@@ -3235,4 +3235,210 @@ private theorem stackLocalsSwap_all {C F : Type} (program : DataLang.Prog)
         exact stackLocalsSwap_returningCall_handler dest names returns live state handlerName
           handlerBody smaller
 
+/-- Replacing the stack by a list of the same length and replacing the locals
+    size preserves the evaluation outcome, leaving only the resource
+    observations free. -/
+@[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "evaluate_stack_and_locals_swap"]
+theorem evaluate_stack_and_locals_swap {C F : Type} (program : DataLang.Prog)
+    (state : State C F) :
+    (match evaluate program state with
+      | (some (.err (.abort .typeError)), _) => True
+      | (some (.err (.abort a)), next) =>
+        next.stack = [] ∧
+          ∀ (xs : List Stack) (lsz : Option Nat), state.stack.length = xs.length →
+            ∃ lss sfs smx phl,
+              evaluate program { state with stack := xs, localsSize := lsz } =
+                (some (.err (.abort a)),
+                  { next with
+                    localsSize := lss
+                    safeForSpace := sfs
+                    stackMax := smx
+                    peakHeapLength := phl })
+      | (some (.err (.raise t)), next) =>
+        ∃ s2, jumpExc state = some s2 ∧ s2.locals = next.locals ∧
+          s2.stack = next.stack ∧ s2.handler = next.handler ∧
+          ∀ (xs : List Stack) (s7 : State C F) (lsz : Option Nat),
+            jumpExc { state with stack := xs, localsSize := lsz } = some s7 →
+            state.stack.length = xs.length →
+              ∃ lss sfs smx phl,
+                evaluate program { state with stack := xs, localsSize := lsz } =
+                  (some (.err (.raise t)),
+                    { next with
+                      stack := s7.stack
+                      handler := s7.handler
+                      locals := s7.locals
+                      localsSize := lss
+                      safeForSpace := sfs
+                      stackMax := smx
+                      peakHeapLength := phl })
+      | (res, next) =>
+        next.stack = state.stack ∧ next.handler = state.handler ∧
+          ∀ (xs : List Stack) (lsz : Option Nat), state.stack.length = xs.length →
+            ∃ lss sfs smx phl,
+              evaluate program { state with stack := xs, localsSize := lsz } =
+                (res, { next with
+                  localsSize := lss
+                  stack := xs
+                  safeForSpace := sfs
+                  stackMax := smx
+                  peakHeapLength := phl })) := by
+  cases run : evaluate program state with
+  | mk res next =>
+    cases res with
+    | none =>
+      simp only []
+      exact stackLocalsSwap_all program state none next run
+    | some result =>
+      cases result with
+      | val values =>
+        simp only []
+        exact stackLocalsSwap_all program state (some (.val values)) next run
+      | err error =>
+        cases error with
+        | abort a =>
+          cases a with
+          | typeError =>
+            simp only []
+          | timeoutError =>
+            simp only []
+            exact stackLocalsSwap_all program state
+              (some (.err (.abort .timeoutError))) next run
+          | ffiError event =>
+            simp only []
+            exact stackLocalsSwap_all program state
+              (some (.err (.abort (.ffiError event)))) next run
+        | raise t =>
+          simp only []
+          exact stackLocalsSwap_all program state (some (.err (.raise t))) next run
+
+/-- Replacing only the stack by a list of the same length preserves the
+    evaluation outcome, leaving only the resource observations free. -/
+@[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "evaluate_stack_swap"]
+theorem evaluate_stack_swap {C F : Type} (program : DataLang.Prog) (state : State C F) :
+    (match evaluate program state with
+      | (some (.err (.abort .typeError)), _) => True
+      | (some (.err (.abort a)), next) =>
+        next.stack = [] ∧
+          ∀ (xs : List Stack), state.stack.length = xs.length →
+            ∃ lss sfs smx phl,
+              evaluate program { state with stack := xs } =
+                (some (.err (.abort a)),
+                  { next with
+                    localsSize := lss
+                    safeForSpace := sfs
+                    stackMax := smx
+                    peakHeapLength := phl })
+      | (some (.err (.raise t)), next) =>
+        ∃ s2, jumpExc state = some s2 ∧ s2.locals = next.locals ∧
+          s2.stack = next.stack ∧ s2.handler = next.handler ∧
+          ∀ (xs : List Stack) (s7 : State C F),
+            jumpExc { state with stack := xs } = some s7 →
+            state.stack.length = xs.length →
+              ∃ lss sfs smx phl,
+                evaluate program { state with stack := xs } =
+                  (some (.err (.raise t)),
+                    { next with
+                      stack := s7.stack
+                      handler := s7.handler
+                      locals := s7.locals
+                      localsSize := lss
+                      safeForSpace := sfs
+                      stackMax := smx
+                      peakHeapLength := phl })
+      | (res, next) =>
+        next.stack = state.stack ∧ next.handler = state.handler ∧
+          ∀ (xs : List Stack), state.stack.length = xs.length →
+            ∃ lss sfs smx phl,
+              evaluate program { state with stack := xs } =
+                (res, { next with
+                  localsSize := lss
+                  stack := xs
+                  safeForSpace := sfs
+                  stackMax := smx
+                  peakHeapLength := phl })) := by
+  cases run : evaluate program state with
+  | mk res next =>
+    have base := evaluate_stack_and_locals_swap program state
+    rw [run] at base
+    cases res with
+    | none =>
+      simp only [] at base ⊢
+      obtain ⟨stackEq, handlerEq, hall⟩ := base
+      refine ⟨stackEq, handlerEq, ?_⟩
+      intro xs len
+      exact hall xs state.localsSize len
+    | some result =>
+      cases result with
+      | val values =>
+        simp only [] at base ⊢
+        obtain ⟨stackEq, handlerEq, hall⟩ := base
+        refine ⟨stackEq, handlerEq, ?_⟩
+        intro xs len
+        exact hall xs state.localsSize len
+      | err error =>
+        cases error with
+        | abort a =>
+          cases a with
+          | typeError =>
+            simp only [] at base ⊢
+          | timeoutError =>
+            simp only [] at base ⊢
+            obtain ⟨stackEmpty, hall⟩ := base
+            refine ⟨stackEmpty, ?_⟩
+            intro xs len
+            exact hall xs state.localsSize len
+          | ffiError event =>
+            simp only [] at base ⊢
+            obtain ⟨stackEmpty, hall⟩ := base
+            refine ⟨stackEmpty, ?_⟩
+            intro xs len
+            exact hall xs state.localsSize len
+        | raise t =>
+          simp only [] at base ⊢
+          obtain ⟨s2, h2⟩ := base
+          refine ⟨s2, h2.1, h2.2.1, h2.2.2.1, h2.2.2.2.1, ?_⟩
+          intro xs s7 jumpedAt len
+          exact h2.2.2.2.2 xs s7 state.localsSize (by simpa using jumpedAt) len
+
+/-- Replacing the stack by a list of the same length leaves the unwound frames
+    unchanged, so the result's stack and handler are unchanged too. -/
+@[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "evaluate_stack"]
+theorem evaluate_stack {C F : Type} (program : DataLang.Prog) (state : State C F) :
+    (match evaluate program state with
+      | (some (.err (.abort .typeError)), _) => True
+      | (some (.err (.abort _)), next) => next.stack = []
+      | (some (.err _), next) =>
+        ∃ s2, jumpExc state = some s2 ∧ s2.locals = next.locals ∧
+          s2.stack = next.stack ∧ s2.handler = next.handler
+      | (_, next) => next.stack = state.stack ∧ next.handler = state.handler) := by
+  cases run : evaluate program state with
+  | mk res next =>
+    have base := evaluate_stack_swap program state
+    rw [run] at base
+    cases res with
+    | none =>
+      simp only [] at base ⊢
+      exact ⟨base.1, base.2.1⟩
+    | some result =>
+      cases result with
+      | val values =>
+        simp only [] at base ⊢
+        exact ⟨base.1, base.2.1⟩
+      | err error =>
+        cases error with
+        | abort a =>
+          cases a with
+          | typeError =>
+            simp only [] at base ⊢
+          | timeoutError =>
+            simp only [] at base ⊢
+            exact base.1
+          | ffiError event =>
+            simp only [] at base ⊢
+            exact base.1
+        | raise t =>
+          simp only [] at base ⊢
+          obtain ⟨s2, h2⟩ := base
+          exact ⟨s2, h2.1, h2.2.1, h2.2.2.1, h2.2.2.2.1⟩
+
 end Flapjack.Compiler.Backend.DataProps
