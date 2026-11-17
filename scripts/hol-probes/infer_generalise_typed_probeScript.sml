@@ -29,3 +29,5 @@ val _ = (print "t_vars_inc_typed=";
   print_term (concl (DB.fetch "inferProps" "t_vars_inc")); print "\n");
 val _ = (print "inc_wfs_typed=";
   print_term (concl (DB.fetch "inferProps" "inc_wfs")); print "\n");
+val _ = (print "vwalk_inc_typed=";
+  print_term (concl (DB.fetch "inferProps" "vwalk_inc")); print "\n");

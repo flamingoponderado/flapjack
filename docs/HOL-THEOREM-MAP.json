@@ -1,5 +1,12 @@
 [
 {
+  "hol_path": "cakeml/compiler/inference/inferPropsScript.sml", "hol_name": "vwalk_inc",
+  "lean_path": "Flapjack/Compiler/Inference/InferProps/DeBruijn/Walk.lean", "lean_name": "vwalkInc",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["s"],
+  "reviewer": "Typed HOL source comparison preserves all binders, the sole well-foundedness premise, and the equality. The guarded tVwalk equation and reviewed incWfs apply to the key-preserving map2 translation of HOL o_f; the canonical substitution witness covers s."
+ },
+{
   "hol_path": "cakeml/compiler/inference/inferPropsScript.sml", "hol_name": "inc_wfs",
   "lean_path": "Flapjack/Compiler/Inference/InferProps/DeBruijn/WellFounded.lean", "lean_name": "incWfs",
   "statement_status": "reviewed_fmap_as_finite_support_parameters",
