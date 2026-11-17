@@ -12,6 +12,12 @@
   "reviewer": "Independent source comparison and type_es_length_typed; exact expression and type-list typing premise, binder order and length conclusion."
  },
 {
+  "hol_path": "cakeml/semantics/proofs/typeSysPropsScript.sml", "hol_name": "check_ctor_tenv_ok",
+  "lean_path": "Flapjack/TypeSysProps/Constructor.lean", "lean_name": "checkCtorTenvOk",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with the source and check_ctor_tenv_ok_typed confirms the ordered equal-length, constructor-validity and abbreviation-well-formedness premises, the complete constructor-environment result, and independently polymorphic module and tag carriers."
+ },
+{
   "hol_path": "cakeml/semantics/proofs/typeSysPropsScript.sml", "hol_name": "tenv_val_exp_ok_bvl_funs",
   "lean_path": "Flapjack/TypeSysProps/Environment.lean", "lean_name": "tenvValExpOkBvlFuns",
   "statement_status": "reviewed_exact",
