@@ -10498,7 +10498,8 @@ renaming-extension and bijection-extension laws are captured directly, with a
 replay of the local
 good-renaming preservation lemma, the type-substitution and type-name
 renaming lemmas, and the free-variable and single-identifier renaming laws. The
-pattern-typing renaming theorem is captured directly from the source theory.
+pattern-typing and operator-typing renaming theorems are captured directly
+from the source theory.
 The local-environment renaming definitions and laws are captured or replayed,
 including de Bruijn increment, substitution, and variable lookup.
 The environment-relation and REPL theories are not fetched by this

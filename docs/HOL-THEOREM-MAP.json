@@ -1,5 +1,11 @@
 [
 {
+  "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "type_op_ts_tid_rename",
+  "lean_path": "Flapjack/Compiler/Inference/TypeDCanon/Operator.lean", "lean_name": "typeOpTsTidRename",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with the original theorem, type_op_ts_tid_rename_typed, and every type_op case confirms the good-renaming premise, quantified carriers and conclusion. The existing reviewed Prop encoding covers HOL Boolean typing; no extra assumptions are introduced."
+ },
+{
   "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "remap_tenvE_def",
   "lean_path": "Flapjack/Compiler/Inference/TypeDCanon/LocalEnv.lean", "lean_name": "remapTenvE",
   "statement_status": "reviewed_exact",
