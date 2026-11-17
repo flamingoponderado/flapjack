@@ -460,6 +460,7 @@ val _ = show "lookup_var_tenv_equiv_typed" type_dCanonTheory.lookup_var_tenv_equ
 val _ = show "check_type_names_tenv_equiv_typed" type_dCanonTheory.check_type_names_tenv_equiv;
 val _ = show "type_name_subst_tenv_equiv_typed" type_dCanonTheory.type_name_subst_tenv_equiv;
 val _ = show "type_p_tenv_equiv_typed" type_dCanonTheory.type_p_tenv_equiv;
+val _ = show "type_p_ts_tid_rename_typed" type_dCanonTheory.type_p_ts_tid_rename;
 val _ = show "type_e_tenv_equiv_typed" type_dCanonTheory.type_e_tenv_equiv;
 val _ = show "type_pe_determ_tenv_equiv_typed" type_dCanonTheory.type_pe_determ_tenv_equiv;
 val _ = show "type_pe_determ_canon_typed" type_dCanonTheory.type_pe_determ_canon_def;

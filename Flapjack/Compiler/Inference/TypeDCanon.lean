@@ -832,4 +832,111 @@ theorem singRenumNotInTenvId (tids : Nat → Prop) (tenv : TypeEnv) (m n : Nat) 
     have noId : ¬ setTids entry.2 m := fun member => absent (bound m member)
     simp [singRenumNotInId entry.2 m n noId]
 
+/-- Mapping a checked list of types preserves the free-variable check. -/
+private theorem checkFreevarsMapRename (tvs : Nat) (args : List SemanticT) (f : Nat → Nat)
+    (h : args.all (checkFreevars tvs []) = true) :
+    (args.map (tsTidRename f)).all (checkFreevars tvs []) = true := by
+  rw [List.all_eq_true] at h ⊢
+  intro t member
+  obtain ⟨original, originalMem, rfl⟩ := List.mem_map.mp member
+  exact (checkFreevarsTsTidRename tvs [] original f).2 (h original originalMem)
+
+/-- Constructor instantiation commutes with the source's type-ID renaming. -/
+private theorem mapSubstRename (params : List MlString) (args types : List SemanticT) (f : Nat → Nat) :
+    (types.map (typeSubst (typeSubstMap (params.zip args)))).map (tsTidRename f) =
+      (types.map (tsTidRename f)).map
+        (typeSubst (typeSubstMap (params.zip (args.map (tsTidRename f))))) := by
+  rw [zipMapValues, typeSubstMapMap]
+  simp only [List.map_map]
+  apply List.map_congr_left
+  intro t member
+  exact tsTidRenameTypeSubst _ t f
+
+/-- Good renamings transport both pattern and pattern-list typing. -/
+@[hol "cakeml/compiler/inference/proofs/type_dCanonScript.sml" "type_p_ts_tid_rename"]
+theorem typePTsTidRename (f : Nat → Nat) : goodRemap f →
+    (∀ tvs env p t bindings, TypeP tvs env p t bindings →
+      TypeP tvs (remapTenv f env) p (tsTidRename f t)
+        (bindings.map (fun entry => (entry.1, tsTidRename f entry.2)))) ∧
+    (∀ tvs env ps ts bindings, TypePs tvs env ps ts bindings →
+      TypePs tvs (remapTenv f env) ps (ts.map (tsTidRename f))
+        (bindings.map (fun entry => (entry.1, tsTidRename f entry.2)))) := by
+  intro good
+  have fixed := mapFixedOnMembers f (TlistNum :: TboolNum :: primTypeNums) good
+  have fint : f TintNum = TintNum := fixed TintNum (by simp [primTypeNums])
+  have fchar : f TcharNum = TcharNum := fixed TcharNum (by simp [primTypeNums])
+  have fstr : f TstringNum = TstringNum := fixed TstringNum (by simp [primTypeNums])
+  have fw8 : f Tword8Num = Tword8Num := fixed Tword8Num (by simp [primTypeNums])
+  have fw64 : f Tword64Num = Tword64Num := fixed Tword64Num (by simp [primTypeNums])
+  have ftup : f TtupNum = TtupNum := fixed TtupNum (by simp [primTypeNums])
+  have fref : f TrefNum = TrefNum := fixed TrefNum (by simp [primTypeNums])
+  constructor
+  all_goals
+    intro tvs env ps ts bindings h
+    let P := fun p t bindings (_ : TypeP tvs env p t bindings) =>
+      TypeP tvs (remapTenv f env) p (tsTidRename f t)
+        (bindings.map (fun entry => (entry.1, tsTidRename f entry.2)))
+    let Ps := fun ps ts bindings (_ : TypePs tvs env ps ts bindings) =>
+      TypePs tvs (remapTenv f env) ps (ts.map (tsTidRename f))
+        (bindings.map (fun entry => (entry.1, tsTidRename f entry.2)))
+    first
+    | refine TypeP.rec (motive_1 := P) (motive_2 := Ps) ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ h
+    | refine TypePs.rec (motive_1 := P) (motive_2 := Ps) ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ h
+    all_goals dsimp only [P, Ps] at *
+    case refine_1 =>
+      intro t free
+      exact .any tvs (remapTenv f env) _ ((checkFreevarsTsTidRename tvs [] t f).2 free)
+    case refine_2 =>
+      intro name t free
+      exact .var tvs (remapTenv f env) name _ ((checkFreevarsTsTidRename tvs [] t f).2 free)
+    case refine_3 =>
+      intro n
+      simpa [tsTidRename, tsTidRenameList, Tint, fint] using TypeP.intLit tvs (remapTenv f env) n
+    case refine_4 =>
+      intro c
+      simpa [tsTidRename, tsTidRenameList, Tchar, fchar] using TypeP.charLit tvs (remapTenv f env) c
+    case refine_5 =>
+      intro s
+      simpa [tsTidRename, tsTidRenameList, Tstring, fstr] using TypeP.stringLit tvs (remapTenv f env) s
+    case refine_6 =>
+      intro w
+      simpa [tsTidRename, tsTidRenameList, Tword8, fw8] using TypeP.word8Lit tvs (remapTenv f env) w
+    case refine_7 =>
+      intro w
+      simpa [tsTidRename, tsTidRenameList, Tword64, fw64] using TypeP.word64Lit tvs (remapTenv f env) w
+    case refine_8 =>
+      intro name ps types params id args bindings free arity typed lookup ih
+      have lookup' : nsLookup (remapTenv f env).c name =
+          some (params, types.map (tsTidRename f), f id) := by
+        simp [remapTenv, nsLookup_nsMap, lookup]
+      have typed' := ih
+      rw [mapSubstRename] at typed'
+      simpa [tsTidRename, tsTidRenameList_eq_map] using
+        TypeP.constructor tvs (remapTenv f env) name ps (types.map (tsTidRename f)) params (f id)
+          (args.map (tsTidRename f)) _ (checkFreevarsMapRename tvs args f free)
+          (by simpa using arity) typed' lookup'
+    case refine_9 =>
+      intro ps types bindings typed ih
+      simpa [tsTidRename, tsTidRenameList_eq_map, Ttup, ftup] using
+        TypeP.tuple tvs (remapTenv f env) ps (types.map (tsTidRename f)) _ ih
+    case refine_10 =>
+      intro p t bindings typed ih
+      simpa [tsTidRename, tsTidRenameList, Tref, fref] using
+        TypeP.reference tvs (remapTenv f env) p (tsTidRename f t) _ ih
+    case refine_11 =>
+      intro p name t bindings typed ih
+      simpa [List.map_append] using
+        TypeP.asPattern tvs (remapTenv f env) p name (tsTidRename f t) _ ih
+    case refine_12 =>
+      intro p t bindings free names typed ih
+      have names' := (checkTypeNamesTsTidRename env.t t f).1 names
+      have subst := tsTidRenameTypeNameSubst env.t t f () ⟨good, names⟩
+      rw [subst] at ih ⊢
+      exact .annotation tvs (remapTenv f env) p t _ free names' ih
+    case refine_13 => exact .nil tvs (remapTenv f env)
+    case refine_14 =>
+      intro p ps t ts bindings rest head tail ihH ihT
+      simpa [List.map_append] using
+        TypePs.cons tvs (remapTenv f env) p ps (tsTidRename f t) _ _ _ ihH ihT
+
 end Flapjack.Compiler.Inference.TypeDCanon

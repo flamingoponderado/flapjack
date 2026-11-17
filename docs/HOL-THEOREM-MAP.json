@@ -1,5 +1,11 @@
 [
 {
+  "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "type_p_ts_tid_rename",
+  "lean_path": "Flapjack/Compiler/Inference/TypeDCanon.lean", "lean_name": "typePTsTidRename",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with source and type_p_ts_tid_rename_typed confirms the good-renaming premise and both independently quantified pattern and list clauses. The constructor proof preserves truncated ZIP and first-duplicate finite-map behavior; annotation obligations and binding order match HOL."
+ },
+{
   "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "check_freevars_ts_tid_rename",
   "lean_path": "Flapjack/Compiler/Inference/TypeDCanon.lean", "lean_name": "checkFreevarsTsTidRename",
   "statement_status": "reviewed_exact",

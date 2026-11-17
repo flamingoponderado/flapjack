@@ -10483,7 +10483,7 @@ store-typing datatype. It also captures the original `type_v` rules and the
 store, environment and type-soundness invariant definitions with inferred
 types. It captures `set_tids_subset` and `start_type_id` and replays
 `set_tids_tenv` with its inferred namespace carriers, together with the
-source proofs of the type and environment identifier-set monotonicity lemmas
+source proofs of the type and environment identifier-set monotonicity lemmas,
 the local environment-extension lemma, and the environment-remapping theorem.
 The latter is also captured directly from `type_dCanonTheory`.
 It also captures the original type-identifier renaming definitions and their
@@ -10494,10 +10494,12 @@ type-name checking, substitution, mutual pattern and expression typing, and
 pattern-expression determinacy equivalence theorems are captured directly
 from the original theory, along with the canonical determinacy definition and
 complete mutual declaration-typing rules. Primitive type-ID conditions and
-renaming-extension and bijection-extension laws are captured directly, with a replay of the local
+renaming-extension and bijection-extension laws are captured directly, with a
+replay of the local
 good-renaming preservation lemma, the type-substitution and type-name
 renaming lemmas, and the free-variable and single-identifier renaming laws. The
-environment-relation, REPL, and type-soundness theories are not fetched by this
+pattern-typing renaming theorem is captured directly from the source theory.
+The environment-relation and REPL theories are not fetched by this
 probe; regenerate with
 `HOL_PROBE_ONLY=env_rel_init_probeScript.sml`.
 
