@@ -41,3 +41,5 @@ val _ = (print "infer_deBruijn_inc0_typed=";
   print_term (concl (DB.fetch "inferProps" "infer_deBruijn_inc0")); print "\n");
 val _ = (print "infer_deBruijn_inc0_id_typed=";
   print_term (concl (DB.fetch "inferProps" "infer_deBruijn_inc0_id")); print "\n");
+val _ = (print "extend_dec_ienv_empty_typed=";
+  print_term (concl (DB.fetch "inferProps" "extend_dec_ienv_empty")); print "\n");

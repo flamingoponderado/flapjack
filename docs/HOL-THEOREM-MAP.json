@@ -1,5 +1,11 @@
 [
 {
+  "hol_path": "cakeml/compiler/inference/inferPropsScript.sml", "hol_name": "extend_dec_ienv_empty",
+  "lean_path": "Flapjack/Compiler/Inference/InferProps/Environment.lean", "lean_name": "extendDecIenvEmpty",
+  "statement_status": "reviewed_exact",
+  "reviewer": "The typed HOL source capture preserves the single environment binder, both extension equations, and all three empty namespace fields. The value, constructor, and abbreviation namespace payloads match the original, with byte-list MlString names and no String qualifier."
+ },
+{
   "hol_path": "cakeml/compiler/inference/inferPropsScript.sml", "hol_name": "infer_deBruijn_inc0",
   "lean_path": "Flapjack/Compiler/Inference/InferProps/DeBruijn/Zero.lean", "lean_name": "inferDeBruijnInc0",
   "statement_status": "reviewed_exact",

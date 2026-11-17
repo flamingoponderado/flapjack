@@ -15,3 +15,4 @@ walkstar_inc_typed=∀(tvs :num) (s :num |-> infer_t) (t :infer_t). t_wfs s ⇒ 
 walkstar_inc2_typed=∀(tvs :num) (s :num |-> infer_t) (n :num). t_wfs s ⇒ t_walkstar (infer_deBruijn_inc tvs o_f s) (Infer_Tuvar n) = infer_deBruijn_inc tvs (t_walkstar s (Infer_Tuvar n))
 infer_deBruijn_inc0_typed=∀(n :num) (t :infer_t). infer_deBruijn_inc (0 :num) t = t
 infer_deBruijn_inc0_id_typed=infer_deBruijn_inc (0 :num) = (λ(x :infer_t). x)
+extend_dec_ienv_empty_typed=∀(ienv :inf_env). extend_dec_ienv ienv <|inf_v := (nsEmpty :(mlstring, mlstring, num # infer_t) namespace); inf_c := (nsEmpty :(mlstring, mlstring, mlstring list # t list # num) namespace); inf_t := (nsEmpty :(mlstring, mlstring, mlstring list # t) namespace)|> = ienv ∧ extend_dec_ienv <|inf_v := (nsEmpty :(mlstring, mlstring, num # infer_t) namespace); inf_c := (nsEmpty :(mlstring, mlstring, mlstring list # t list # num) namespace); inf_t := (nsEmpty :(mlstring, mlstring, mlstring list # t) namespace)|> ienv = ienv
