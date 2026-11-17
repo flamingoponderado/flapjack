@@ -12,6 +12,12 @@
   "reviewer": "Independent source comparison and type_es_length_typed; exact expression and type-list typing premise, binder order and length conclusion."
  },
 {
+  "hol_path": "cakeml/semantics/proofs/namespacePropsScript.sml", "hol_name": "nsAll2_nsAppend",
+  "lean_path": "Flapjack/NamespaceProps/Append.lean", "lean_name": "nsAll2NsAppend",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with source and nsAll2_nsAppend_typed confirms both value carriers, the identifier-dependent relation, premise order, and the append conclusion. The proof preserves both lookup directions and the left-biased module-shadowing behavior. Local classical equality adds no theorem premises."
+ },
+{
   "hol_path": "cakeml/semantics/proofs/namespacePropsScript.sml", "hol_name": "nsAll_nsSing",
   "lean_path": "Flapjack/NamespaceProps/All.lean", "lean_name": "nsAllNsSing",
   "statement_status": "reviewed_exact",

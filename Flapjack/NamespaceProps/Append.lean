@@ -166,4 +166,63 @@ theorem nsLookup_append_transfer {M N V W : Type} [DecidableEq M] [DecidableEq N
       obtain ⟨w, lookup, related⟩ := firstRelated value sourceFirst
       exact ⟨w, by simp [targetLookup, lookup], related⟩
 
+/-- Related namespaces have the same lookup and module domains. This is
+Flapjack proof infrastructure used to preserve the shadowing choices made by
+append in the source relational argument. -/
+private theorem nsAll2Domains {M N V W : Type} [DecidableEq M] [DecidableEq N]
+    (R : Ident M N → V → W → Prop) (a : Namespace M N V) (b : Namespace M N W)
+    (h : nsAll2 R a b) : nsDom a = nsDom b ∧ nsDomMod a = nsDomMod b := by
+  constructor
+  · funext id
+    apply propext
+    constructor
+    · rintro ⟨v, found⟩
+      obtain ⟨w, result, _⟩ := h.1.1 id v found
+      exact ⟨w, result⟩
+    · rintro ⟨w, found⟩
+      obtain ⟨v, result, _⟩ := h.2.1 id w found
+      exact ⟨v, result⟩
+  · funext path
+    apply propext
+    constructor
+    · rintro ⟨v, found⟩
+      cases result : nsLookupMod b path with
+      | none => rw [h.1.2 path result] at found; contradiction
+      | some w => exact ⟨w, result⟩
+    · rintro ⟨w, found⟩
+      cases result : nsLookupMod a path with
+      | none => rw [h.2.2 path result] at found; contradiction
+      | some v => exact ⟨v, result⟩
+
+noncomputable local instance appendClassicalDecidableEq (α : Type) : DecidableEq α :=
+  Classical.typeDecidableEq α
+
+/-- Appending related namespaces preserves their pointwise relation and module
+shadowing in both directions. -/
+@[hol "cakeml/semantics/proofs/namespacePropsScript.sml" "nsAll2_nsAppend"]
+theorem nsAll2NsAppend {M N V W : Type}
+    (R : Ident M N → V → W → Prop) (a a' : Namespace M N V) (b b' : Namespace M N W) :
+    nsAll2 R a b ∧ nsAll2 R a' b' → nsAll2 R (nsAppend a a') (nsAppend b b') := by
+  rintro ⟨left, right⟩
+  obtain ⟨domainLeft, modulesLeft⟩ := nsAll2Domains R a b left
+  obtain ⟨domainRight, modulesRight⟩ := nsAll2Domains R a' b' right
+  have appendDomains := nsDom_nsAppend_equal a a' b b' ⟨domainLeft, domainRight, modulesLeft, modulesRight⟩
+  refine ⟨⟨?_, ?_⟩, ⟨?_, ?_⟩⟩
+  · intro id value found
+    exact nsLookup_append_transfer b b' a a' domainLeft.symm modulesLeft.symm id value (R id)
+      (left.1.1 id) (right.1.1 id) found
+  · intro path absent
+    have same := congrFun appendDomains.2 path
+    change (∃ v, nsLookupMod (nsAppend a a') path = some v) =
+      (∃ v, nsLookupMod (nsAppend b b') path = some v) at same
+    cases h : nsLookupMod (nsAppend a a') path <;> simp_all
+  · intro id value found
+    exact nsLookup_append_transfer a a' b b' domainLeft modulesLeft id value (fun w v => R id v w)
+      (left.2.1 id) (right.2.1 id) found
+  · intro path absent
+    have same := congrFun appendDomains.2 path
+    change (∃ v, nsLookupMod (nsAppend a a') path = some v) =
+      (∃ v, nsLookupMod (nsAppend b b') path = some v) at same
+    cases h : nsLookupMod (nsAppend b b') path <;> simp_all
+
 end Flapjack.NamespaceHOL
