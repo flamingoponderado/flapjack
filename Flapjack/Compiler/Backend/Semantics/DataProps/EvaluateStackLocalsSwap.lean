@@ -217,4 +217,172 @@ private theorem stackLocalsSwap_if {C F : Type} (name : Nat) (yes no : DataLang.
         obtain ⟨rfl, rfl⟩ := run
         trivial
 
+/-- A sequential composition whose first half has stopped returns the first
+    half's result. Flapjack infrastructure toward the port of HOL
+    `evaluate_stack_and_locals_swap`; no separate HOL original. -/
+private theorem seq_some {C F : Type} (first second : DataLang.Prog) (state : State C F)
+    (stopped : Result (List DataSem.Value) DataSem.Value) (next : State C F)
+    (run : evaluate first state = (some stopped, next)) :
+    evaluate (.seq first second) state = (some stopped, next) := by
+  have bound : next.clock ≤ state.clock := evaluateClock first state (some stopped) next run
+  simp only [evaluate, run, fixClock, Nat.min_eq_right bound]
+
+/-- A sequential composition whose first half continues evaluates the second
+    half at the first half's result state. Flapjack infrastructure toward the
+    port of HOL `evaluate_stack_and_locals_swap`; no separate HOL original. -/
+private theorem seq_none {C F : Type} (first second : DataLang.Prog) (state mid : State C F)
+    (run : evaluate first state = (none, mid)) :
+    evaluate (.seq first second) state = evaluate second mid := by
+  have bound : mid.clock ≤ state.clock := by
+    simpa only [run] using evaluate_clock_le first state
+  simp only [evaluate, run, fixClock, Nat.min_eq_right bound]
+
+/-- The `Seq` case. Flapjack infrastructure toward the port of HOL
+    `evaluate_stack_and_locals_swap`; no separate HOL original. -/
+private theorem stackLocalsSwap_seq {C F : Type} (first second : DataLang.Prog)
+    (state : State C F) (firstIH : StackLocalsSwapAt first state)
+    (secondIH : ∀ mid : State C F, mid.clock ≤ state.clock → StackLocalsSwapAt second mid) :
+    StackLocalsSwapAt (.seq first second) state := by
+  intro res next run
+  cases firstRun : evaluate first state with
+  | mk outcome mid =>
+    have midClock : mid.clock ≤ state.clock := by
+      simpa only [firstRun] using evaluate_clock_le first state
+    cases outcome with
+    | some stopped =>
+      have clamp : fixClock state (evaluate first state) = (some stopped, mid) := by
+        rw [fixClock_evaluate, firstRun]
+      have hres : res = some stopped := by
+        have h := congrArg Prod.fst run
+        simpa only [evaluate, clamp] using h.symm
+      have hnext : next = mid := by
+        have h := congrArg Prod.snd run
+        simpa only [evaluate, clamp] using h.symm
+      rw [hres, hnext]
+      have firstArm := firstIH (some stopped) mid firstRun
+      cases stopped with
+      | val values =>
+        obtain ⟨stackSame, handlerSame, hall⟩ := firstArm
+        refine ⟨stackSame, handlerSame, ?_⟩
+        intro xs lsz len
+        obtain ⟨lss, sfs, smx, phl, targetRun⟩ := hall xs lsz len
+        refine ⟨lss, sfs, smx, phl, ?_⟩
+        rw [seq_some first second _ (.val values) _ targetRun]
+      | err error =>
+        cases error with
+        | abort reason =>
+          cases reason with
+          | typeError => trivial
+          | timeoutError =>
+            obtain ⟨stackEmpty, hall⟩ := firstArm
+            refine ⟨stackEmpty, ?_⟩
+            intro xs lsz len
+            obtain ⟨lss, sfs, smx, phl, targetRun⟩ := hall xs lsz len
+            refine ⟨lss, sfs, smx, phl, ?_⟩
+            rw [seq_some first second _ (.err (.abort .timeoutError)) _ targetRun]
+          | ffiError event =>
+            obtain ⟨stackEmpty, hall⟩ := firstArm
+            refine ⟨stackEmpty, ?_⟩
+            intro xs lsz len
+            obtain ⟨lss, sfs, smx, phl, targetRun⟩ := hall xs lsz len
+            refine ⟨lss, sfs, smx, phl, ?_⟩
+            rw [seq_some first second _ (.err (.abort (.ffiError event))) _ targetRun]
+        | raise value =>
+          obtain ⟨s2, jump, localsEq, stackEq, handlerEq, hall⟩ := firstArm
+          refine ⟨s2, jump, localsEq, stackEq, handlerEq, ?_⟩
+          intro xs s7 lsz jumpedRun len
+          obtain ⟨lss, sfs, smx, phl, targetRun⟩ := hall xs s7 lsz jumpedRun len
+          refine ⟨lss, sfs, smx, phl, ?_⟩
+          rw [seq_some first second _ (.err (.raise value)) _ targetRun]
+    | none =>
+      have secondRun : evaluate second mid = (res, next) := by
+        have clamp : fixClock state (evaluate first state) = (none, mid) := by
+          rw [fixClock_evaluate, firstRun]
+        simpa only [evaluate, clamp] using run
+      have secondArm := secondIH mid midClock res next secondRun
+      have firstArm := firstIH none mid firstRun
+      have midStack : mid.stack = state.stack := firstArm.1
+      have midHandler : mid.handler = state.handler := firstArm.2.1
+      have firstHall := firstArm.2.2
+      cases res with
+      | none =>
+        obtain ⟨stackSame, handlerSame, secondHall⟩ := secondArm
+        refine ⟨stackSame.trans midStack, handlerSame.trans midHandler, ?_⟩
+        intro xs lsz len
+        obtain ⟨lss1, sfs1, smx1, phl1, firstTarget⟩ := firstHall xs lsz len
+        obtain ⟨lss2, sfs2, smx2, phl2, secondTarget⟩ :=
+          secondHall xs lss1 (by rw [midStack]; exact len)
+        obtain ⟨mx', safe', peak', moved⟩ :=
+          evaluate_stackSafePeakSwap smx1 sfs1 _ _ _ phl1 second secondTarget
+        refine ⟨lss2, safe', mx', peak', ?_⟩
+        rw [seq_none first second _ _ firstTarget]
+        exact moved
+      | some result =>
+        cases result with
+        | val values =>
+          obtain ⟨stackSame, handlerSame, secondHall⟩ := secondArm
+          refine ⟨stackSame.trans midStack, handlerSame.trans midHandler, ?_⟩
+          intro xs lsz len
+          obtain ⟨lss1, sfs1, smx1, phl1, firstTarget⟩ := firstHall xs lsz len
+          obtain ⟨lss2, sfs2, smx2, phl2, secondTarget⟩ :=
+            secondHall xs lss1 (by rw [midStack]; exact len)
+          obtain ⟨mx', safe', peak', moved⟩ :=
+            evaluate_stackSafePeakSwap smx1 sfs1 _ _ _ phl1 second secondTarget
+          refine ⟨lss2, safe', mx', peak', ?_⟩
+          rw [seq_none first second _ _ firstTarget]
+          exact moved
+        | err error =>
+          cases error with
+          | abort reason =>
+            cases reason with
+            | typeError => trivial
+            | timeoutError =>
+              obtain ⟨stackEmpty, secondHall⟩ := secondArm
+              refine ⟨stackEmpty, ?_⟩
+              intro xs lsz len
+              obtain ⟨lss1, sfs1, smx1, phl1, firstTarget⟩ := firstHall xs lsz len
+              obtain ⟨lss2, sfs2, smx2, phl2, secondTarget⟩ :=
+                secondHall xs lss1 (by rw [midStack]; exact len)
+              obtain ⟨mx', safe', peak', moved⟩ :=
+                evaluate_stackSafePeakSwap smx1 sfs1 _ _ _ phl1 second secondTarget
+              refine ⟨lss2, safe', mx', peak', ?_⟩
+              rw [seq_none first second _ _ firstTarget]
+              exact moved
+            | ffiError event =>
+              obtain ⟨stackEmpty, secondHall⟩ := secondArm
+              refine ⟨stackEmpty, ?_⟩
+              intro xs lsz len
+              obtain ⟨lss1, sfs1, smx1, phl1, firstTarget⟩ := firstHall xs lsz len
+              obtain ⟨lss2, sfs2, smx2, phl2, secondTarget⟩ :=
+                secondHall xs lss1 (by rw [midStack]; exact len)
+              obtain ⟨mx', safe', peak', moved⟩ :=
+                evaluate_stackSafePeakSwap smx1 sfs1 _ _ _ phl1 second secondTarget
+              refine ⟨lss2, safe', mx', peak', ?_⟩
+              rw [seq_none first second _ _ firstTarget]
+              exact moved
+          | raise value =>
+            obtain ⟨s2, jump, localsEq, stackEq, handlerEq, secondHall⟩ := secondArm
+            have jumpState := jumpExc_transport mid state s2 midStack.symm midHandler.symm jump
+            refine ⟨{ state with
+                      stack := s2.stack
+                      handler := s2.handler
+                      locals := s2.locals
+                      localsSize := s2.localsSize }, jumpState, ?_, ?_, ?_, ?_⟩
+            · simpa using localsEq
+            · simpa using stackEq
+            · simpa using handlerEq
+            · intro xs s7 lsz jumpedRun len
+              have swappedJump := jumpExc_transport
+                { state with stack := xs, localsSize := lsz }
+                { mid with stack := xs, localsSize := lsz }
+                s7 rfl (by simp only [midHandler]) jumpedRun
+              obtain ⟨lss1, sfs1, smx1, phl1, firstTarget⟩ := firstHall xs lsz len
+              obtain ⟨lss2, sfs2, smx2, phl2, secondTarget⟩ :=
+                secondHall xs _ lss1 swappedJump (by rw [midStack]; exact len)
+              obtain ⟨mx', safe', peak', moved⟩ :=
+                evaluate_stackSafePeakSwap smx1 sfs1 _ _ _ phl1 second secondTarget
+              refine ⟨lss2, safe', mx', peak', ?_⟩
+              rw [seq_none first second _ _ firstTarget]
+              exact moved
+
 end Flapjack.Compiler.Backend.DataProps
