@@ -101,4 +101,90 @@ theorem doInstall_locals {C F R : Type} (args : List Value) (state : State C F)
   simp only [doInstall, mapResult, mapErrorResult]
   repeat' (split <;> try rfl)
 
+/-- The space stage reports the source's post-reset safety observation.
+    Flapjack infrastructure toward the parked HOL `do_app_with_locals`; no
+    separate HOL original. -/
+theorem doSpace_safeForSpace {C F : Type} (op : ClosLang.Op) (values : List Value)
+    (state next : State C F) (run : doSpace op values state = some next) :
+    next.safeForSpace = doSpaceSafe op values state := by
+  by_cases reset : DataLang.opSpaceReset op
+  · simp only [doSpace] at run
+    rw [if_pos reset] at run
+    simp only [Option.some.injEq] at run
+    subst next
+    simp only [doSpaceSafe]
+    rw [if_pos reset]
+  · by_cases req : DataSpace.opSpaceReq op values.length = 0
+    · simp only [doSpace] at run
+      rw [if_neg reset, if_pos req] at run
+      simp only [Option.some.injEq] at run
+      subst next
+      simp only [doSpaceSafe]
+      rw [if_neg reset]
+    · simp only [doSpace] at run
+      rw [if_neg reset, if_neg req] at run
+      unfold consumeSpace at run
+      by_cases fits : state.space < DataSpace.opSpaceReq op values.length
+      · rw [if_pos fits] at run
+        cases run
+      · rw [if_neg fits] at run
+        simp only [Option.some.injEq] at run
+        subst next
+        simp only [doSpaceSafe]
+        rw [if_neg reset]
+
+/-- The space stage reports the source's post-reset peak-heap estimate.
+    Flapjack infrastructure toward the parked HOL `do_app_with_locals`; no
+    separate HOL original. -/
+theorem doSpace_peakHeapLength {C F : Type} (op : ClosLang.Op) (values : List Value)
+    (state next : State C F) (run : doSpace op values state = some next) :
+    next.peakHeapLength = doSpacePeak op values state := by
+  by_cases reset : DataLang.opSpaceReset op
+  · simp only [doSpace] at run
+    rw [if_pos reset] at run
+    simp only [Option.some.injEq] at run
+    subst next
+    simp only [doSpacePeak]
+    rw [if_pos reset]
+  · by_cases req : DataSpace.opSpaceReq op values.length = 0
+    · simp only [doSpace] at run
+      rw [if_neg reset, if_pos req] at run
+      simp only [Option.some.injEq] at run
+      subst next
+      simp only [doSpacePeak]
+      rw [if_neg reset]
+    · simp only [doSpace] at run
+      rw [if_neg reset, if_neg req] at run
+      unfold consumeSpace at run
+      by_cases fits : state.space < DataSpace.opSpaceReq op values.length
+      · rw [if_pos fits] at run
+        cases run
+      · rw [if_neg fits] at run
+        simp only [Option.some.injEq] at run
+        subst next
+        simp only [doSpacePeak]
+        rw [if_neg reset]
+
+/-- The space stage depends on the locals only through its safety and peak
+    observations: replacing the locals replaces those two fields and the locals
+    themselves, and keeps the option's shape.  Flapjack infrastructure toward
+    the parked HOL `do_app_with_locals`; no separate HOL original. -/
+theorem doSpace_locals_eq {C F : Type} (op : ClosLang.Op) (values : List Value)
+    (state : State C F) (locals : Spt Value) :
+    doSpace op values { state with locals := locals } =
+      (doSpace op values state).map (fun next =>
+        { next with
+          locals := locals,
+          safeForSpace := doSpaceSafe op values { state with locals := locals },
+          peakHeapLength := doSpacePeak op values { state with locals := locals } }) := by
+  by_cases reset : DataLang.opSpaceReset op
+  · simp only [doSpace, doSpaceSafe, doSpacePeak, if_pos reset, Option.map_some]
+  · by_cases req : DataSpace.opSpaceReq op values.length = 0
+    · simp only [doSpace, doSpaceSafe, doSpacePeak, if_neg reset, if_pos req, Option.map_some]
+    · simp only [doSpace, doSpaceSafe, doSpacePeak, if_neg reset, if_neg req]
+      unfold consumeSpace
+      by_cases fits : state.space < DataSpace.opSpaceReq op values.length
+      · simp only [if_pos fits, Option.map_none]
+      · simp only [if_neg fits, Option.map_some]
+
 end Flapjack.Compiler.Backend.DataProps
