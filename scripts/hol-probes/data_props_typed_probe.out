@@ -110,3 +110,4 @@ evaluate_cc_co_only_diff_typed=∀(prog :dataLang$prog) (s :(α, 'ffi) dataSem$s
 the_NONE_typed=the (x :α) (NONE :α option) = x
 the_le_IMP_option_le_typed=the F (OPTION_MAP ($> (n :num)) (m :num option)) ⇒ option_le m (SOME n)
 jump_exc_IMP_typed=jump_exc (s :(α, β) dataSem$state) = SOME (t :(α, β) dataSem$state) ⇒ s.handler < LENGTH s.stack ∧ ∃(n :num) (e :v sptree$num_map) (ls :num option) (xs :stack list). LASTN (s.handler + (1 :num)) s.stack = Exc ls e n::xs ∧ t = s with <|handler := n; locals_size := ls; locals := e; stack := xs|>
+semantics_Term_IMP_PREFIX_typed=(semantics (ffi :α ffi_state) (prog :(num # dataLang$prog) sptree$num_map) (co :num -> β # (num # num # dataLang$prog) list) (cc :β -> (num # num # dataLang$prog) list -> (word8 list # word64 list # β) option) (lim :limits) (ss :num sptree$num_map) (start :num) :behaviour) = Terminate (tt :outcome) (l :io_event list) ⇒ ffi.io_events ≼ l
