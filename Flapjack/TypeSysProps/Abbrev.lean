@@ -24,9 +24,9 @@ theorem tenvAbbrevOkLookup {M N : Type}
   rintro ⟨wellFormed, found⟩
   exact wellFormed name (tvs, t) found
 
-/-- Connect the recursive list check to HOL's `EVERY`; this local traversal
-has no separate source declaration. -/
-private theorem checksListAll (dbmax : Nat) (tvs : List MlString) (ts : List SemanticT) :
+/-- The recursive list check agrees with HOL's `EVERY`. This Flapjack
+infrastructure is shared by the type-name and pattern proofs. -/
+theorem checkFreevarsListEqAll (dbmax : Nat) (tvs : List MlString) (ts : List SemanticT) :
     checkFreevarsList dbmax tvs ts = ts.all (checkFreevars dbmax tvs) := by
   induction ts with
   | nil => simp [checkFreevarsList]
@@ -79,7 +79,7 @@ theorem checkFreevarsTypeNameSubst (tvs : List MlString) (t : AstT) (dbmax : Nat
         exact tenvAbbrevOkLookup env name params body ⟨wellFormed, found⟩
       have lifted := checkFreevarsAdd 0 params body bodyFree dbmax (Nat.zero_le _)
       have all : (typeNameSubstList env args).all (checkFreevars dbmax tvs) = true := by
-        rw [← checksListAll]
+        rw [← checkFreevarsListEqAll]
         exact argsFree
       change checkFreevars dbmax tvs
         (typeSubst (typeSubstMap (params.zip (typeNameSubstList env args))) body) = true

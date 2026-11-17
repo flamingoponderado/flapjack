@@ -3824,6 +3824,7 @@ import Flapjack.NamespaceProps.All
 import Flapjack.TypeSysProps.Constructor
 import Flapjack.TypeSysProps.Abbrev
 import Flapjack.TypeSysProps.Freevars
+import Flapjack.TypeSysProps.Pattern
 import Flapjack.TypeSysProps.TypingLists
 import Flapjack.Compiler.Inference.InferProps.DeBruijn.Compose
 import Flapjack.Compiler.Inference.Unify.Walkstar.Empty
