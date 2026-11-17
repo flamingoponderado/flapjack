@@ -5,9 +5,8 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-CHECK = runpy.run_path(str(ROOT / "scripts/check-hol-refs.py"))[
-    "generalise_parameter_tuple_result_errors"
-]
+CHECKER = runpy.run_path(str(ROOT / "scripts/check-hol-refs.py"))
+CHECK = CHECKER["generalise_parameter_tuple_result_errors"]
 LEAN_PATH = "Flapjack/Compiler/Inference/Infer/Generalise.lean"
 HOL_REF = ("cakeml/compiler/inference/inferScript.sml", "generalise_def")
 SOURCE = (ROOT / LEAN_PATH).read_text()
@@ -21,6 +20,28 @@ class GeneraliseParameterTupleSourceTest(unittest.TestCase):
     def test_actual_operations(self):
         self.assertEqual(self.check(), [])
         self.assertEqual(self.check(name="generaliseListMap"), [])
+
+    def test_scanner_retains_valid_and_malformed_qualifiers(self):
+        qualifier = ("(fmap_as_finite_support_parameter_tuple_result := "
+                     "(map_parameter := subst) (result_component := component_2))")
+        tag = f'@[hol "{HOL_REF[0]}" "{HOL_REF[1]}" {qualifier}]'
+        scan = lambda text: list(CHECKER["hol_attribute_sites"](
+            [text], include_generalise_map=True))[0][-1]
+        self.assertEqual(scan(tag), ("subst", "component_2"))
+        self.assertEqual(scan(tag.replace("component_2", "component_1")),
+                         ("subst", "component_1"))
+        self.assertEqual(scan(tag.replace(qualifier, qualifier + " " + qualifier)), ("", ""))
+        self.assertEqual(scan(tag.replace("(map_parameter := subst)", "(map_parameter := )")), ("", ""))
+        self.assertEqual(scan(tag.replace(qualifier, "")), ())
+
+    def test_valid_and_malformed_uses_remain_disabled(self):
+        pending = CHECKER["prospective_generalise_map_errors"]
+        for name in ("generaliseMap", "generaliseListMap"):
+            self.assertEqual(pending(SOURCE, LEAN_PATH, name, HOL_REF,
+                                     ("subst", "component_2")),
+                             ["generalization map qualifier is not enabled"])
+        self.assertIn("generalization map qualifier is not enabled",
+                      pending(SOURCE, LEAN_PATH, "generaliseMap", HOL_REF, ("", "")))
 
     def test_only_the_reviewed_sites_and_positions_are_eligible(self):
         self.assertTrue(self.check(path="Other.lean"))

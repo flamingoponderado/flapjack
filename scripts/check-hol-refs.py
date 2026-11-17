@@ -325,6 +325,11 @@ FMAP_AS_FINITE_SUPPORT_FUNCTION_RE = re.compile(
 FMAP_AS_FINITE_SUPPORT_TUPLE_RE = re.compile(
     r'\(\s*fmap_as_finite_support_tuple\s*:=\s*\[([^]]*)\]\s*\)'
 )
+GENERALISE_MAP_QUALIFIER_RE = re.compile(
+    r'\(\s*fmap_as_finite_support_parameter_tuple_result\s*:=\s*'
+    r'\(\s*map_parameter\s*:=\s*([A-Za-z_][A-Za-z0-9_\']*)\s*\)\s*'
+    r'\(\s*result_component\s*:=\s*([A-Za-z_][A-Za-z0-9_\']*)\s*\)\s*\)'
+)
 NESTED_LIST_REL_AS_MUTUAL_RE = re.compile(
     r'\(\s*nested_list_rel_as_mutual\s*:=\s*\[([^]]*)\]\s*\)'
 )
@@ -579,7 +584,8 @@ def hol_attribute_sites(lines: list[str], *, include_fmap_existentials: bool = F
                         include_fmap_tuple: bool = False,
                         include_nested_list_rel: bool = False,
                         include_predicate_domain: bool = False,
-                        include_fmap_universals: bool = False):
+                        include_fmap_universals: bool = False,
+                        include_generalise_map: bool = False):
     """Yield HOL attributes, including attributes split across Lean lines."""
     comment_depth = 0
     start: int | None = None
@@ -699,6 +705,16 @@ def hol_attribute_sites(lines: list[str], *, include_fmap_existentials: bool = F
                     if len(matches) > 1:
                         names += ("",)
                     site += (names,)
+                if include_generalise_map:
+                    matches = list(GENERALISE_MAP_QUALIFIER_RE.finditer(attribute))
+                    occurrences = attribute.count("fmap_as_finite_support_parameter_tuple_result")
+                    if occurrences == 0:
+                        positions = ()
+                    elif occurrences != 1 or len(matches) != 1:
+                        positions = ("", "")  # malformed or repeated; fail closed
+                    else:
+                        positions = (matches[0].group(1), matches[0].group(2))
+                    site += (positions,)
                 yield site
         start = None
         chunks = []
@@ -3800,6 +3816,19 @@ termination_by ts => sizeOf ts
     return []
 
 
+def prospective_generalise_map_errors(
+    source: str, lean_path: str, decl_name: str,
+    hol_ref: tuple[str, str], positions: tuple[str, ...],
+) -> list[str]:
+    """Reject prospective syntax until every qualifier gate is integrated."""
+    errors = ["generalization map qualifier is not enabled"]
+    if len(positions) != 2:
+        return errors + ["malformed generalization map positions"]
+    return errors + generalise_parameter_tuple_result_errors(
+        source, lean_path, decl_name, hol_ref, positions[0], positions[1]
+    )
+
+
 def _binder_types(binder_zone: str) -> list[str]:
     """Return the declared type text of each top-level binder.
 
@@ -5785,7 +5814,7 @@ def main(argv: list[str]) -> int:
              fmap_parameters, fmap_existentials, dimension_width,
              fmap_function_positions, fmap_heterogeneous_function_positions, reals_cuts,
              fmap_equality, result_observations, dimension_widths, fmap_tuple, nested_list_rel,
-             predicate_domain, fmap_universals) in hol_attribute_sites(
+             predicate_domain, fmap_universals, generalise_map) in hol_attribute_sites(
                 lines, include_fmap_existentials=True,
                 include_word_dimension_width=True,
                 include_fmap_function=True,
@@ -5798,8 +5827,18 @@ def main(argv: list[str]) -> int:
                 include_nested_list_rel=True,
                 include_predicate_domain=True,
                 include_fmap_universals=True,
+                include_generalise_map=True,
              ):
             where = f"{rel}:{number}"
+            if generalise_map:
+                # Keep the prospective syntax fail-closed until Lean attribute,
+                # manifest, and elaborated-export integration all exist.
+                lean_name = find_lean_decl(lines, number - 1)
+                errors.extend(
+                    f"{where}: {error}" for error in prospective_generalise_map_errors(
+                        "\n".join(lines), rel, lean_name or "", (hol_path, hol_name), generalise_map,
+                    )
+                )
             tmc_ref = (hol_path == "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" and
                        hol_name == "hypothesis_def")
             tmc_call = (hol_path == "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" and
