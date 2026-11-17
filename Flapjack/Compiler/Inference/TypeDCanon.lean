@@ -3,6 +3,7 @@ module
 public import Flapjack.Compiler.Inference.InferProps
 public import Flapjack.NamespaceProps.MapLookup
 public import Flapjack.NamespaceProps.LiftLookup
+public import Flapjack.FiniteMap.MapKeys
 
 @[expose] public section
 
@@ -565,6 +566,143 @@ private theorem tsTidRenameTypeSubstList (s : HolFiniteMapExact MlString Semanti
   | cons t ts =>
     simp [typeSubstList, tsTidRenameList, tsTidRenameTypeSubst s t f,
       tsTidRenameTypeSubstList s ts f]
+termination_by sizeOf ts
+end
+
+mutual
+/-- Renaming abbreviation payloads does not change type-name checking. -/
+@[hol "cakeml/compiler/inference/proofs/type_dCanonScript.sml" "check_type_names_ts_tid_rename"]
+theorem checkTypeNamesTsTidRename (tenvt : TenvAbbrev) (t : AstT) (f : Nat → Nat) :
+    checkTypeNames tenvt t = true ↔
+      checkTypeNames (nsMap (fun entry => (entry.1, tsTidRename f entry.2)) tenvt) t = true := by
+  cases t with
+  | atvar name => simp [checkTypeNames]
+  | attup ts =>
+    simpa only [checkTypeNames] using checkTypeNamesListTsTidRename tenvt ts f
+  | atfun t1 t2 =>
+    simp only [checkTypeNames, Bool.and_eq_true]
+    exact and_congr (checkTypeNamesTsTidRename tenvt t1 f) (checkTypeNamesTsTidRename tenvt t2 f)
+  | atapp ts name =>
+    simp only [checkTypeNames, Bool.and_eq_true, nsLookup_nsMap]
+    cases found : nsLookup tenvt name with
+    | none => simp
+    | some entry =>
+      cases entry with
+      | mk params ty =>
+        simp only [Option.map_some]
+        exact and_congr Iff.rfl (checkTypeNamesListTsTidRename tenvt ts f)
+termination_by sizeOf t
+
+private theorem checkTypeNamesListTsTidRename (tenvt : TenvAbbrev) (ts : List AstT)
+    (f : Nat → Nat) : checkTypeNamesList tenvt ts = true ↔
+      checkTypeNamesList (nsMap (fun entry => (entry.1, tsTidRename f entry.2)) tenvt) ts = true := by
+  cases ts with
+  | nil => simp [checkTypeNamesList]
+  | cons t ts =>
+    simp only [checkTypeNamesList, Bool.and_eq_true]
+    exact and_congr (checkTypeNamesTsTidRename tenvt t f) (checkTypeNamesListTsTidRename tenvt ts f)
+termination_by sizeOf ts
+end
+
+/-- First-match lookup for the source's right-folded type-substitution map. -/
+private theorem lookupTypeSubstMap (entries : List (MlString × SemanticT)) (key : MlString) :
+    (typeSubstMap entries).lookup key = entries.lookup key := by
+  induction entries with
+  | nil => rfl
+  | cons entry entries ih =>
+    rcases entry with ⟨name, value⟩
+    by_cases same : key = name
+    · subst key
+      simp [typeSubstMap, HolFiniteMapExact.updateListEq, FUPDATE_LIST_HOL, List.foldl_append,
+        FUPDATE_HOL, List.lookup]
+    · have different : (key == name) = false := by simp [same]
+      simpa [typeSubstMap, HolFiniteMapExact.updateListEq, FUPDATE_LIST_HOL, List.foldl_append,
+        FUPDATE_HOL, List.lookup, same, different] using ih
+
+/-- Mapping values commutes with the source substitution-map construction. -/
+private theorem typeSubstMapMap (f : SemanticT → SemanticT) (entries : List (MlString × SemanticT)) :
+    typeSubstMap (entries.map (fun pair => (pair.1, f pair.2))) =
+      (typeSubstMap entries).map2 (fun pair => f pair.2) := by
+  apply HolFiniteMapExact.ext_lookup
+  intro key
+  simp only [lookupTypeSubstMap, HolFiniteMapExact.lookup_map2]
+  induction entries with
+  | nil => rfl
+  | cons entry entries ih =>
+    rcases entry with ⟨name, value⟩
+    by_cases same : key = name
+    · subst key; simp
+    · have different : (key == name) = false := by simp [same]
+      simpa [List.lookup, different] using ih
+
+private theorem zipMapValues (names : List MlString) (types : List SemanticT) (f : SemanticT → SemanticT) :
+    names.zip (types.map f) = (names.zip types).map (fun pair => (pair.1, f pair.2)) := by
+  induction names generalizing types with
+  | nil => rfl
+  | cons name names ih =>
+    cases types with
+    | nil => rfl
+    | cons t ts => simp [ih]
+
+private theorem mapFixedOnMembers {α : Type} (f : α → α) (xs : List α)
+    (h : xs.map f = xs) : ∀ x ∈ xs, f x = x := by
+  induction xs with
+  | nil => simp
+  | cons y ys ih =>
+    simp only [List.map_cons, List.cons.injEq] at h
+    intro x mem
+    rcases List.mem_cons.mp mem with rfl | mem
+    · exact h.1
+    · exact ih h.2 x mem
+
+mutual
+/-- Good renamings commute with checked source type-name substitution. -/
+@[hol "cakeml/compiler/inference/proofs/type_dCanonScript.sml" "ts_tid_rename_type_name_subst"]
+theorem tsTidRenameTypeNameSubst {α : Type} (tenvt : TenvAbbrev) (t : AstT) (f : Nat → Nat)
+    (tenv : α) :
+    goodRemap f ∧ checkTypeNames tenvt t = true →
+      tsTidRename f (typeNameSubst tenvt t) =
+        typeNameSubst (nsMap (fun entry => (entry.1, tsTidRename f entry.2)) tenvt) t := by
+  rintro ⟨good, checked⟩
+  have fixed := mapFixedOnMembers f (TlistNum :: TboolNum :: primTypeNums) good
+  have tup : f TtupNum = TtupNum := fixed TtupNum (by simp [primTypeNums])
+  have fn : f TfnNum = TfnNum := fixed TfnNum (by simp [primTypeNums])
+  cases t with
+  | atvar name => simp [typeNameSubst, tsTidRename]
+  | attup ts =>
+    simp only [checkTypeNames] at checked
+    simp [typeNameSubst, Ttup, tsTidRename, tup,
+      tsTidRenameTypeNameSubstList tenvt ts f tenv ⟨good, checked⟩]
+  | atfun left right =>
+    simp only [checkTypeNames, Bool.and_eq_true] at checked
+    simp [typeNameSubst, Tfn, tsTidRename, tsTidRenameList, fn,
+      tsTidRenameTypeNameSubst tenvt left f tenv ⟨good, checked.1⟩,
+      tsTidRenameTypeNameSubst tenvt right f tenv ⟨good, checked.2⟩]
+  | atapp ts name =>
+    simp only [checkTypeNames, Bool.and_eq_true] at checked
+    cases found : nsLookup tenvt name with
+    | none => simp [found] at checked
+    | some entry =>
+      cases entry with
+      | mk params ty =>
+        have mapped := tsTidRenameTypeNameSubstList tenvt ts f tenv ⟨good, checked.2⟩
+        simp only [typeNameSubst, nsLookup_nsMap, found, Option.map_some]
+        rw [tsTidRenameTypeSubst]
+        rw [← mapped, tsTidRenameList_eq_map, zipMapValues, typeSubstMapMap]
+termination_by sizeOf t
+
+private theorem tsTidRenameTypeNameSubstList {α : Type} (tenvt : TenvAbbrev) (ts : List AstT)
+    (f : Nat → Nat) (tenv : α) : goodRemap f ∧ checkTypeNamesList tenvt ts = true →
+      tsTidRenameList f (typeNameSubstList tenvt ts) =
+        typeNameSubstList (nsMap (fun entry => (entry.1, tsTidRename f entry.2)) tenvt) ts := by
+  rintro ⟨good, checked⟩
+  cases ts with
+  | nil => simp [typeNameSubstList, tsTidRenameList]
+  | cons t ts =>
+    simp only [checkTypeNamesList, Bool.and_eq_true] at checked
+    simp [typeNameSubstList, tsTidRenameList,
+      tsTidRenameTypeNameSubst tenvt t f tenv ⟨good, checked.1⟩,
+      tsTidRenameTypeNameSubstList tenvt ts f tenv ⟨good, checked.2⟩]
 termination_by sizeOf ts
 end
 

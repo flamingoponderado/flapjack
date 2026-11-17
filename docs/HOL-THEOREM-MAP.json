@@ -1,5 +1,17 @@
 [
 {
+  "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "check_type_names_ts_tid_rename",
+  "lean_path": "Flapjack/Compiler/Inference/TypeDCanon.lean", "lean_name": "checkTypeNamesTsTidRename",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with the HOL-local theorem and check_type_names_ts_tid_rename_replay_typed confirms the namespace carrier and Boolean equivalence. HOL's free renaming function is universally bound explicitly in Lean."
+ },
+{
+  "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "ts_tid_rename_type_name_subst",
+  "lean_path": "Flapjack/Compiler/Inference/TypeDCanon.lean", "lean_name": "tsTidRenameTypeNameSubst",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with the HOL-local theorem and ts_tid_rename_type_name_subst_replay_typed confirms the premises, result, and unused polymorphic tenv binder. The substitution-map proof preserves first-match duplicate keys and truncating ZIP behavior."
+ },
+{
   "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "ts_tid_rename_type_subst",
   "lean_path": "Flapjack/Compiler/Inference/TypeDCanon.lean", "lean_name": "tsTidRenameTypeSubst",
   "statement_status": "reviewed_fmap_as_finite_support_parameters",

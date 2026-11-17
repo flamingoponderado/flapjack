@@ -483,6 +483,31 @@ val ts_tid_rename_type_subst_replay = Q.prove(
     (TOP_CASE_TAC >> fs[FLOOKUP_o_f,ts_tid_rename_def]) >>
   fs[MAP_MAP_o,MAP_EQ_f]);
 val _ = show "ts_tid_rename_type_subst_replay_typed" ts_tid_rename_type_subst_replay;
+val check_type_names_ts_tid_rename_replay = Q.prove(
+  `!tenvt t. check_type_names tenvt t <=>
+     check_type_names (nsMap (\(ls,t). (ls,ts_tid_rename f t)) tenvt) t`,
+  ho_match_mp_tac check_type_names_ind >> rw[check_type_names_def] >>
+  fs[EVERY_MEM,namespacePropsTheory.nsLookup_nsMap] >>
+  Cases_on `nsLookup tenvt tn` >> fs[] >> pairarg_tac >> fs[]);
+val _ = show "check_type_names_ts_tid_rename_replay_typed" check_type_names_ts_tid_rename_replay;
+val ts_tid_rename_type_name_subst_replay = Q.prove(
+  `!tenvt t f tenv. type_dCanon$good_remap f /\ check_type_names tenvt t ==>
+     ts_tid_rename f (type_name_subst tenvt t) =
+       type_name_subst (nsMap (\(ls,t). (ls,ts_tid_rename f t)) tenvt) t`,
+  ho_match_mp_tac type_name_subst_ind >> rw[] >>
+  fs[type_name_subst_def,ts_tid_rename_def,check_type_names_def,EVERY_MEM] >-
+    (reverse CONJ_TAC >- fs[type_dCanonTheory.good_remap_def,prim_type_nums_def] >>
+     fs[MAP_MAP_o,MAP_EQ_f]) >-
+    fs[type_dCanonTheory.good_remap_def,prim_type_nums_def] >-
+    (simp[namespacePropsTheory.nsLookup_nsMap] >>
+     TOP_CASE_TAC >> fs[ts_tid_rename_def] >>
+     pairarg_tac >> fs[ts_tid_rename_def] >>
+     simp[ts_tid_rename_type_subst_replay] >>
+     AP_THM_TAC >> AP_TERM_TAC >>
+     fs[GSYM alist_to_fmap_MAP_values] >>
+     AP_TERM_TAC >> match_mp_tac LIST_EQ >> fs[EL_MAP,EL_ZIP] >>
+     metis_tac[EL_MEM]));
+val _ = show "ts_tid_rename_type_name_subst_replay_typed" ts_tid_rename_type_name_subst_replay;
 val _ = show "set_tids_tenv_remap_typed" type_dCanonTheory.set_tids_tenv_remap;
 val set_tids_tenv_remap_replay = Q.prove(
   `probe_set_tids_tenv tids tenv ==>

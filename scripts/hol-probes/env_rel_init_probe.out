@@ -134,6 +134,8 @@ extend_bij_id_typed=extend_bij (f :num -> num) f (s :num -> bool) (0 :num) = f �
 extend_bij_compose_typed=extend_bij (extend_bij (f :num -> num) (g :num -> num) (ids :num -> bool) (n :num)) (h :num -> num) (jds :num -> bool) (n + (m :num)) = extend_bij f (extend_bij g h jds m) (ids ∪ jds) n
 good_remap_extend_bij_replay_typed=good_remap (f :num -> num) ∧ prim_tids F (ids :num -> bool) ⇒ good_remap (extend_bij f (g :num -> num) ids (n :num))
 ts_tid_rename_type_subst_replay_typed=∀(s :mlstring |-> t) (t :t) (f :num -> num). ts_tid_rename f (type_subst s t) = type_subst (ts_tid_rename f o_f s) (ts_tid_rename f t)
+check_type_names_ts_tid_rename_replay_typed=∀(tenvt :(mlstring, mlstring, mlstring list # t) namespace) (t :ast_t). check_type_names tenvt t ⇔ check_type_names (nsMap (λ((ls :mlstring list),(t :t)). (ls,ts_tid_rename (f :num -> num) t)) tenvt) t
+ts_tid_rename_type_name_subst_replay_typed=∀(tenvt :(mlstring, mlstring, mlstring list # t) namespace) (t :ast_t) (f :num -> num) (tenv :α). good_remap f ∧ check_type_names tenvt t ⇒ ts_tid_rename f (type_name_subst tenvt t) = type_name_subst (nsMap (λ((ls :mlstring list),(t :t)). (ls,ts_tid_rename f t)) tenvt) t
 set_tids_tenv_remap_typed=set_tids_tenv (tids :num -> bool) (tenv :type_env) ⇒ set_tids_tenv (IMAGE (f :num -> num) tids) (remap_tenv f tenv)
 set_tids_tenv_remap_replay_typed=probe_set_tids_tenv (tids :num -> bool) (tenv :type_env) ⇒ probe_set_tids_tenv (IMAGE (f :num -> num) tids) (remap_tenv f tenv)
 remap_tenv_extend_dec_tenv_replay_typed=remap_tenv (f :num -> num) (extend_dec_tenv (t :type_env) (t' :type_env)) = extend_dec_tenv (remap_tenv f t) (remap_tenv f t')
