@@ -42,8 +42,11 @@ theorem stateRel_cutEnv {width : Nat} [NeZero width] {C F : Type}
     intro pair member
     simp only [List.mem_append] at member ⊢
     rcases member with (member | member) | member
-    · exact Or.inl (Or.inl (joinEnv_cutEnv_mem_general pair target.locals names
-        source.locals cut member cutRun))
+    · apply Or.inl
+      apply Or.inl
+      apply Assign.joinEnv_submap_mem cut source.locals target.locals target.locals pair
+      exact ⟨fun key value found => cutEnv_lookup_retained names source.locals cut cutRun key value found,
+        fun _ _ found => found, member⟩
     · exact Or.inl (Or.inr member)
     · exact Or.inr member
 

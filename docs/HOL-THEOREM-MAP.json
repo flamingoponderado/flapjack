@@ -8248,6 +8248,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "join_env_submap_MEM",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/JoinEnv.lean",
+  "lean_name": "joinEnv_submap_mem",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with join_env_submap_MEM_typed: both lookup-preservation premises retain independent source and target payload types and the full joined-membership result. The inhabitant used by joinEnv's HOL THE is derived from the already quantified pair; every selected source key is present, so neither side observes THE on NONE and this adds no hypothesis or choice difference."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
   "hol_name": "cut_env_cut_env_list_insert",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/CutState.lean",
   "lean_name": "cutEnv_cutEnv_listInsert",
@@ -113424,7 +113432,7 @@
     "hol_name": "MEM_join_env_cut_env",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "Source comparison: lines 102–115 and literal typed replay in data_to_word_space_control_probe. The source value carrier is DataSem.Value, matching HOL v, and the word carrier has an independent positive width. The free cut environment and quantified pair, word tree, live set and source tree are retained. The conjunction premise and membership conclusion follow the same joinEnv, inter, adjustSet and cutEnv operations, including noncanonical sparse trees."
+    "reviewer": "Source comparison: lines 102–115 and literal typed replay in data_to_word_space_control_probe. The source value carrier is DataSem.Value, matching HOL v, and the word carrier has an independent positive width. The free cut environment and quantified pair, word tree, live set and source tree are retained. The conjunction premise and membership conclusion follow the same joinEnv, inter, adjustSet and cutEnv operations, including noncanonical sparse trees. The independently reviewed proof now applies joinEnv_submap_mem with lookup preservation from the successful cut."
   },
 {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/AdjustedSet.lean",
