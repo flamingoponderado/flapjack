@@ -297,6 +297,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.StateRelation
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.CutState
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.CutState
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.JoinEnv
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.Heap
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.WordMlInvLookup
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.WordMlInvInsert
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.MkLoc

@@ -35,3 +35,4 @@ val _ = pr_typed "cut_env_idempotent_typed" cut_env_idempotent;
 val _ = pr_typed "cut_env_cut_env_list_insert_typed" cut_env_cut_env_list_insert;
 val _ = pr_typed "sptree_list_insert_def_typed" sptreeTheory.list_insert_def;
 val _ = pr_typed "join_env_submap_MEM_typed" join_env_submap_MEM;
+val _ = pr_typed "state_rel_FLOOKUP_heap_typed" state_rel_FLOOKUP_heap;
