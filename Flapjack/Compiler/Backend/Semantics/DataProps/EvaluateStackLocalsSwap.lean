@@ -3,6 +3,7 @@ module
 public import Flapjack.Compiler.Backend.Semantics.DataProps.EvaluateResourceSwap
 public import Flapjack.Compiler.Backend.Semantics.DataProps.AppWithLocals
 public import Flapjack.Compiler.Backend.Semantics.DataProps.ApplyAuxFields
+public import Flapjack.Compiler.Backend.Semantics.DataProps.ApplyConst
 public import Flapjack.Compiler.Backend.Semantics.DataProps.InitialStateLaws
 public import Flapjack.Compiler.Backend.Semantics.DataProps.Jump
 public import Flapjack.Misc.ClockWeightInduction
@@ -2055,5 +2056,138 @@ private theorem doApp_swapStackLocals_err {C F : Type} (op : ClosLang.Op)
   | thunkOp inner =>
     simp only [doApp] at run ⊢
     exact doAppGeneric_swapStackLocals_err (.thunkOp inner) values state xs lsz error run
+
+/-- The live-name cut commutes with replacing the stack and the locals size.
+    Flapjack infrastructure toward the port of HOL
+    `evaluate_stack_and_locals_swap`; no separate HOL original. -/
+private theorem cutStateOpt_swapStackLocals {C F : Type} (live : Option NumSet)
+    (state : State C F) (xs : List Stack) (lsz : Option Nat) :
+    cutStateOpt live { state with stack := xs, localsSize := lsz } =
+      (cutStateOpt live state).map
+        (fun next => { next with stack := xs, localsSize := lsz }) := by
+  cases live with
+  | none => rfl
+  | some names =>
+    simp only [cutStateOpt, cutState]
+    cases env : cutEnv names state.locals with
+    | none => rfl
+    | some value => rfl
+
+/-- A successful live-name cut at a stack-and-locals-swapped state reports the
+    source's cut state with the frame fields replaced. Flapjack infrastructure
+    toward the port of HOL `evaluate_stack_and_locals_swap`; no separate HOL
+    original. -/
+private theorem cutStateOpt_swapStackLocals_val {C F : Type} (live : Option NumSet)
+    (state : State C F) (xs : List Stack) (lsz : Option Nat) (next : State C F)
+    (run : cutStateOpt live state = some next) :
+    cutStateOpt live { state with stack := xs, localsSize := lsz } =
+      some { next with stack := xs, localsSize := lsz } := by
+  rw [cutStateOpt_swapStackLocals, run]
+  rfl
+
+/-- A failing live-name cut fails at a stack-and-locals-swapped state too.
+    Flapjack infrastructure toward the port of HOL
+    `evaluate_stack_and_locals_swap`; no separate HOL original. -/
+private theorem cutStateOpt_swapStackLocals_none {C F : Type} (live : Option NumSet)
+    (state : State C F) (xs : List Stack) (lsz : Option Nat)
+    (run : cutStateOpt live state = none) :
+    cutStateOpt live { state with stack := xs, localsSize := lsz } = none := by
+  rw [cutStateOpt_swapStackLocals, run]
+  rfl
+
+/-- The live-name cut leaves the stack and the handler alone. Flapjack
+    infrastructure toward the port of HOL `evaluate_stack_and_locals_swap`;
+    no separate HOL original. -/
+private theorem cutStateOpt_stack_handler {C F : Type} (live : Option NumSet)
+    (state next : State C F) (run : cutStateOpt live state = some next) :
+    next.stack = state.stack ∧ next.handler = state.handler := by
+  cases live with
+  | none =>
+    simp only [cutStateOpt, Option.some.injEq] at run
+    subst run
+    exact ⟨rfl, rfl⟩
+  | some names =>
+    simp only [cutStateOpt, cutState, Option.map_eq_some_iff] at run
+    obtain ⟨env, _, hnext⟩ := run
+    subst hnext
+    exact ⟨rfl, rfl⟩
+
+/-- The `Assign` case. Flapjack infrastructure toward the port of HOL
+    `evaluate_stack_and_locals_swap`; no separate HOL original. -/
+private theorem stackLocalsSwap_assign {C F : Type} (dest : Nat) (op : ClosLang.Op)
+    (names : List Nat) (live : Option NumSet) (state : State C F) :
+    StackLocalsSwapAt (.assign dest op names live) state := by
+  intro res next run
+  by_cases needs : (DataLang.opRequiresNames op == live.isNone) = true
+  · simp only [evaluate, needs, typeError] at run ⊢
+    obtain ⟨rfl, rfl⟩ := run
+    trivial
+  · have needsFalse : (DataLang.opRequiresNames op == live.isNone) = false := by
+      simpa using needs
+    simp only [evaluate, needsFalse] at run ⊢
+    cases vars : DataSem.getVars names state.locals with
+    | none =>
+      simp only [vars, typeError] at run
+      obtain ⟨rfl, rfl⟩ := run
+      trivial
+    | some values =>
+      simp only [vars] at run
+      cases cut : cutStateOpt live state with
+      | none =>
+        simp only [cut, typeError] at run
+        obtain ⟨rfl, rfl⟩ := run
+        trivial
+      | some mid =>
+        simp only [cut] at run
+        cases app : doApp op values mid with
+        | err error =>
+          simp only [app] at run
+          have resEq : res = some (.err error) := by
+            simpa using (congrArg Prod.fst run).symm
+          have nextEq : next = flushState true (installSfs op mid) := by
+            simpa using (congrArg Prod.snd run).symm
+          subst resEq
+          subst nextEq
+          rcases doApp_err op values mid error app with htype | ⟨name, outcome, opEq, errorEq⟩
+          · subst htype
+            trivial
+          · subst errorEq
+            constructor
+            · simp only [flushState, if_true]
+            · intro xs lsz len
+              refine ⟨some 0, (flushState true (installSfs op mid)).safeForSpace,
+                mid.stackMax, mid.peakHeapLength, ?_⟩
+              simp only [Bool.false_eq_true, if_false,
+                cutStateOpt_swapStackLocals_val live state xs lsz mid cut,
+                doApp_swapStackLocals_err op values mid xs lsz (.abort (.ffiError outcome)) app]
+              rfl
+        | val pair =>
+          obtain ⟨value, last⟩ := pair
+          simp only [app] at run
+          have resEq : res = none := by
+            simpa using (congrArg Prod.fst run).symm
+          have nextEq : next = setVar dest value (installSfs op last) := by
+            simpa using (congrArg Prod.snd run).symm
+          subst resEq
+          subst nextEq
+          have control := doApp_const op values mid value last app
+          obtain ⟨cutStack, cutHandler⟩ := cutStateOpt_stack_handler live state mid cut
+          refine ⟨?_, ?_, ?_⟩
+          · simp only [setVar, installSfs]
+            exact control.1.trans cutStack
+          · simp only [setVar, installSfs]
+            exact control.2.1.trans cutHandler
+          · intro xs lsz len
+            obtain ⟨sfs1, smx1, phl1, appVal⟩ :=
+              doApp_swapStackLocals_val op values mid xs lsz value last app
+            refine ⟨lsz, (installSfs op { last with
+                stack := xs
+                localsSize := lsz
+                safeForSpace := sfs1
+                stackMax := smx1
+                peakHeapLength := phl1 }).safeForSpace, smx1, phl1, ?_⟩
+            simp only [Bool.false_eq_true, if_false,
+              cutStateOpt_swapStackLocals_val live state xs lsz mid cut, appVal]
+            rfl
 
 end Flapjack.Compiler.Backend.DataProps
