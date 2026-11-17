@@ -1,5 +1,11 @@
 [
 {
+  "hol_path": "cakeml/compiler/inference/inferPropsScript.sml", "hol_name": "check_t_infer_type_subst_dbs",
+  "lean_path": "Flapjack/Compiler/Inference/InferProps/DbSubst.lean", "lean_name": "checkTInferTypeSubstDbs",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with the source and check_t_infer_type_subst_dbs_typed confirms all six binders, all three premises including the empty-list case, and the full substitution-check conclusion. Indexed lookup retains first-match behavior."
+ },
+{
   "hol_path": "cakeml/compiler/inference/inferPropsScript.sml", "hol_name": "check_freevars_more",
   "lean_path": "Flapjack/Compiler/Inference/InferProps/Freevars.lean", "lean_name": "checkFreevarsMore",
   "statement_status": "reviewed_exact",

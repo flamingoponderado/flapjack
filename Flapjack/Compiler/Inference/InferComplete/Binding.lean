@@ -4,28 +4,14 @@ public import Flapjack.Compiler.Inference.InferComplete.NamedSubst
 public import Flapjack.Misc.FindIndex.Membership
 public import Flapjack.Misc.ListEl
 public import Flapjack.TypeSysProps.Abbrev
+public import Flapjack.Compiler.Inference.InferProps.IndexedNames
 
 @[expose] public section
 
 /-! Substitution reindexing for inference environment completeness. -/
 namespace Flapjack.Compiler.Inference.InferComplete
-open Flapjack Flapjack.Misc Flapjack.Basis.Pure.MlString
+open Flapjack Flapjack.Misc Flapjack.Basis.Pure.MlString Flapjack.Compiler.Inference.InferProps
 local instance : Nonempty MlString := ⟨ofString ""⟩
-
-private theorem lookupIndexed (names : List MlString) (key : MlString) (offset : Nat) :
-    (names.zip ((List.range' offset names.length).map InferT.varDb)).lookup key =
-      (findIndex key names offset).map InferT.varDb := by
-  induction names generalizing offset with
-  | nil => rfl
-  | cons name names ih =>
-    by_cases same : name = key
-    · subst key; simp [findIndex, List.range']
-    · have different : (key == name) = false := by simp [Ne.symm same]
-      simpa [findIndex, same, List.range', List.lookup, different] using ih (offset + 1)
-private theorem lookupIndex0 (names : List MlString) (key : MlString) :
-    (names.zip ((List.range names.length).map InferT.varDb)).lookup key =
-      (findIndex key names 0).map InferT.varDb := by
-  simpa [List.range_eq_range'] using lookupIndexed names key 0
 
 private theorem namedCase (name : MlString) (fvs fvs' : List MlString) (subst : List InferT) (fallback : Nat)
     (member : name ∈ fvs') (otherMember : name ∈ fvs) :
