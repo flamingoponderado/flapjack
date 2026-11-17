@@ -7,6 +7,24 @@ public import Flapjack.NamespaceHOL
 /-! Lookup and quantification through a mapped namespace. -/
 namespace Flapjack.NamespaceHOL
 
+/-- Mapping twice composes the value transformations throughout a namespace. -/
+@[hol "cakeml/semantics/proofs/namespacePropsScript.sml" "nsMap_compose"]
+theorem nsMapCompose {M N V W X : Type} (g : V → W) (env : Namespace M N V) (f : W → X) :
+    nsMap f (nsMap g env) = nsMap (f ∘ g) env := by
+  cases env with
+  | bind values modules =>
+    simp only [nsMap, List.map_map]
+    congr 1
+    apply List.map_congr_left
+    intro p mem
+    cases p with
+    | mk name sub => simp only [Function.comp_apply, nsMapCompose g sub f]
+termination_by sizeOf env
+decreasing_by
+  have h := List.sizeOf_lt_of_mem mem
+  simp only [Prod.mk.sizeOf_spec, Namespace.bind.sizeOf_spec] at h ⊢
+  omega
+
 /-- Mapping the identity function preserves the namespace. -/
 @[hol "cakeml/semantics/proofs/namespacePropsScript.sml" "nsMap_I"]
 theorem nsMapId {M N V : Type} (env : Namespace M N V) : nsMap id env = env := by

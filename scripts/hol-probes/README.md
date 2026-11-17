@@ -10500,7 +10500,8 @@ good-renaming preservation lemma, the type-substitution and type-name
 renaming lemmas, and the free-variable and single-identifier renaming laws. The
 pattern-typing, operator-typing, and expression-typing renaming theorems are captured directly
 from the source theory, alongside the general and optional left-inverse laws,
-inverse-renaming laws, and renaming composition and identity characterizations.
+inverse-renaming laws, namespace and environment composition, and renaming
+composition and identity characterizations.
 The local-environment renaming definitions and laws are captured or replayed,
 including de Bruijn increment, substitution, and variable lookup.
 The environment-relation and REPL theories are not fetched by this

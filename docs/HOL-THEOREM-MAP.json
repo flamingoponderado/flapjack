@@ -1,5 +1,17 @@
 [
 {
+  "hol_path": "cakeml/semantics/proofs/namespacePropsScript.sml", "hol_name": "nsMap_compose",
+  "lean_path": "Flapjack/NamespaceProps/MapLookup.lean", "lean_name": "nsMapCompose",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent source comparison with nsMap_compose_typed confirms five independent namespace and value carriers, binder order, recursion and composition orientation."
+ },
+{
+  "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "remap_tenv_compose",
+  "lean_path": "Flapjack/Compiler/Inference/TypeDCanon/Inverse.lean", "lean_name": "remapTenvCompose",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent source comparison with remap_tenv_compose_typed confirms both renaming functions, the full type environment and the composition order across all three namespace fields."
+ },
+{
   "hol_path": "HOL/src/pred_set/src/pred_setScript.sml", "hol_name": "INJ_LINV_OPT",
   "lean_path": "Flapjack/Misc/PredSet.lean", "lean_name": "holInjLinvOpt",
   "statement_status": "reviewed_exact",

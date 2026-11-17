@@ -23,6 +23,7 @@ nsLookup_nsMap_typed=∀(n :(α, β, γ) namespace) (x :(α, β) id) (f :γ -> �
 nsLookupMod_nsMap_typed=∀(n :(α, β, γ) namespace) (x :α list) (f :γ -> δ). nsLookupMod (nsMap f n) x = OPTION_MAP (nsMap f :(α, β, γ) namespace -> (α, β, δ) namespace) (nsLookupMod n x)
 nsAll_nsMap_typed=∀(f :α -> β) (n :(γ, δ, α) namespace) (P :(γ, δ) id -> β -> bool). nsAll P (nsMap f n) ⇔ nsAll (λ(x :(γ, δ) id) (y :α). P x (f y)) n
 nsMap_I_typed=∀(ns :(α, β, γ) namespace). nsMap (I :γ -> γ) ns = ns
+nsMap_compose_typed=∀(g :α -> β) (e :(γ, δ, α) namespace) (f :β -> ε). nsMap f (nsMap g e) = nsMap (f ∘ g) e
 nsMap_nsAppend_typed=∀(n1 :(α, β, γ) namespace) (n2 :(α, β, γ) namespace) (f :γ -> δ). nsMap f (nsAppend n1 n2) = nsAppend (nsMap f n1) (nsMap f n2)
 nsAll_nsLift_typed=∀(R :(α, β) id -> γ -> bool) (mn :α) (e :(α, β, γ) namespace). nsAll R (nsLift mn e) ⇔ nsAll (λ(id :(α, β) id). R (Long mn id)) e
 nsAll2_nsLift_typed=∀(R :(α, β) id -> γ -> δ -> bool) (mn :α) (e1 :(α, β, γ) namespace) (e2 :(α, β, δ) namespace). nsAll2 R (nsLift mn e1) (nsLift mn e2) ⇔ nsAll2 (λ(id :(α, β) id). R (Long mn id)) e1 e2
@@ -136,6 +137,7 @@ LINVI_RINV_typed=INJ (f :α -> α) (s :α -> bool) (t :α -> bool) ∧ (∃(x :�
 good_remap_LINVI_typed=good_remap (f :num -> num) ∧ prim_tids T (s :num -> bool) ∧ INJ f s (t :num -> bool) ⇒ good_remap (LINVI f s)
 ts_tid_rename_LINVI_typed=∀(f :num -> num) (x :t). INJ f (s :num -> bool) (t :num -> bool) ∧ set_tids_subset s x ⇒ ts_tid_rename (LINVI f s) (ts_tid_rename f x) = x
 ts_tid_rename_compose_typed=∀(g :num -> num) (t :t) (f :num -> num). ts_tid_rename f (ts_tid_rename g t) = ts_tid_rename (f ∘ g) t
+remap_tenv_compose_typed=remap_tenv (f :num -> num) (remap_tenv (g :num -> num) (tenv :type_env)) = remap_tenv (f ∘ g) tenv
 ts_tid_rename_eq_id_typed=∀(f :num -> num) (t :t). ts_tid_rename f t = t ⇔ ∀(x :num). x ∈ set_tids t ⇒ f x = x
 remap_tenvE_typed=(∀(f :num -> num). remap_tenvE f Empty = Empty) ∧ (∀(f :num -> num) (n :num) (e :tenv_val_exp). remap_tenvE f (Bind_tvar n e) = Bind_tvar n (remap_tenvE f e)) ∧ ∀(f :num -> num) (s :mlstring) (n :num) (t :t) (e :tenv_val_exp). remap_tenvE f (Bind_name s n t e) = Bind_name s n (ts_tid_rename f t) (remap_tenvE f e)
 remap_tenvE_bind_tvar_typed=remap_tenvE (f :num -> num) (bind_tvar (tvs :num) (e :tenv_val_exp)) = bind_tvar tvs (remap_tenvE f e)

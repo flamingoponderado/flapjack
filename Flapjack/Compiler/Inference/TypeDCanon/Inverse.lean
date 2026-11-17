@@ -7,7 +7,7 @@ public import Flapjack.Misc.PredSet
 
 /-! Inverse identifier renamings for canonical declaration typing. -/
 namespace Flapjack.Compiler.Inference.TypeDCanon
-open Flapjack Flapjack.TypeSystemHOL Flapjack.Compiler.Inference.InferProps
+open Flapjack Flapjack.NamespaceHOL Flapjack.TypeSystemHOL Flapjack.Compiler.Inference.InferProps
 
 /-- Use the optional inverse when it exists, falling back to the original map. -/
 @[hol "cakeml/compiler/inference/proofs/type_dCanonScript.sml" "LINVI_def"]
@@ -35,6 +35,12 @@ private theorem tsTidRenameComposeList (g : Nat → Nat) (ts : List SemanticT) (
   | cons t ts => simp [tsTidRenameList, tsTidRenameCompose g t f, tsTidRenameComposeList g ts f]
 termination_by sizeOf ts
 end
+
+/-- Renaming a type environment twice composes the identifier maps. -/
+@[hol "cakeml/compiler/inference/proofs/type_dCanonScript.sml" "remap_tenv_compose"]
+theorem remapTenvCompose (f g : Nat → Nat) (env : TypeEnv) :
+    remapTenv f (remapTenv g env) = remapTenv (f ∘ g) env := by
+  simp [remapTenv, nsMapCompose, Function.comp_def, List.map_map, tsTidRenameCompose]
 
 mutual
 /-- A type is unchanged exactly when every identifier occurring in it is fixed. -/
