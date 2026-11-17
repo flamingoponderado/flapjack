@@ -1,5 +1,11 @@
 [
 {
+  "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "sing_renum_NOT_tscheme_inst",
+  "lean_path": "Flapjack/Compiler/Inference/TypeDCanon/Scheme.lean", "lean_name": "singRenumNotTschemeInst",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with the original local theorem and sing_renum_NOT_tscheme_inst_replay_typed confirms the identifier occurrence and inequality premises, renamed-type inequality, both independently quantified scheme counts and both non-instantiation directions."
+ },
+{
   "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "type_p_ts_tid_rename_sing_renum",
   "lean_path": "Flapjack/Compiler/Inference/TypeDCanon/SingleRename.lean", "lean_name": "typePTsTidRenameSingRenum",
   "statement_status": "reviewed_exact",

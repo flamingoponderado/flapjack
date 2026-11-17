@@ -550,6 +550,26 @@ val _ = show "type_pe_determ_canon_tenv_equiv_typed" type_dCanonTheory.type_pe_d
 val _ = show "type_d_canon_rules_typed" type_dCanonTheory.type_d_canon_rules;
 val _ = show "good_remap_typed" type_dCanonTheory.good_remap_def;
 val _ = show "sing_renum_typed" type_dCanonTheory.sing_renum_def;
+val sing_renum_NOT_tscheme_inst_replay = Q.prove(
+  `!t. m IN set_tids t /\ m <> n ==>
+    ts_tid_rename (type_dCanon$sing_renum m n) t <> t /\
+    !tvs tvs'.
+      ~tscheme_inst (tvs,ts_tid_rename (type_dCanon$sing_renum m n) t) (tvs',t) /\
+      ~tscheme_inst (tvs',t) (tvs,ts_tid_rename (type_dCanon$sing_renum m n) t)`,
+  ho_match_mp_tac t_ind >> rw[] >>
+  fs[set_tids_def,ts_tid_rename_def,type_dCanonTheory.sing_renum_def] >>
+  rw[] >> simp[tscheme_inst_def,deBruijn_subst_def] >> fs[EVERY_MEM,MEM_MAP]
+  >- (CCONTR_TAC >> fs[MAP_EQ_ID] >> metis_tac[])
+  >- (rw[] >> CCONTR_TAC >> fs[MAP_EQ_f, EVERY_MEM] >>
+      last_x_assum mp_tac >> rw[] >> asm_exists_tac >> simp[] >>
+      fsrw_tac[DNF_ss][tscheme_inst_def] >> disj2_tac >> disj1_tac >>
+      fs[check_freevars_def,EVERY_MEM] >> metis_tac[])
+  >> (rw[] >> CCONTR_TAC >> fs[MAP_EQ_f, EVERY_MEM] >>
+      last_x_assum mp_tac >> rw[] >> asm_exists_tac >> simp[] >>
+      fsrw_tac[DNF_ss][tscheme_inst_def] >> disj2_tac >> disj2_tac >>
+      fs[check_freevars_def,EVERY_MEM,MEM_MAP,PULL_EXISTS,MAP_MAP_o,MAP_EQ_ID] >>
+      metis_tac[]));
+val _ = show "sing_renum_NOT_tscheme_inst_replay_typed" sing_renum_NOT_tscheme_inst_replay;
 val _ = show "sing_renum_NOTIN_ID_typed" type_dCanonTheory.sing_renum_NOTIN_ID;
 val _ = show "sing_renum_IN_NOT_ID_typed" type_dCanonTheory.sing_renum_IN_NOT_ID;
 val _ = show "sing_renum_NOTIN_tenv_ID_typed" type_dCanonTheory.sing_renum_NOTIN_tenv_ID;

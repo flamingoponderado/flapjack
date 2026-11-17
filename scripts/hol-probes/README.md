@@ -10503,7 +10503,8 @@ from the source theory, alongside the general and optional left-inverse laws,
 inverse-renaming laws, environment inverse equivalences, namespace and environment
 composition, and renaming
 composition and identity characterizations. The single-identifier pattern and
-expression typing theorems are replayed, and the function-list theorem is captured.
+expression typing theorems and scheme non-instantiation theorem are replayed,
+and the function-list theorem is captured.
 The local-environment renaming definitions and laws are captured or replayed,
 including de Bruijn increment, substitution, and variable lookup.
 The environment-relation and REPL theories are not fetched by this
