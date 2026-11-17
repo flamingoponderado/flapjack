@@ -1,5 +1,11 @@
 [
 {
+  "hol_path": "cakeml/compiler/inference/proofs/inferCompleteScript.sml", "hol_name": "inf_set_tids_extend_dec_ienv",
+  "lean_path": "Flapjack/Compiler/Inference/InferComplete.lean", "lean_name": "infSetTidsExtendDecIenv",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent source comparison and inf_set_tids_extend_dec_ienv_replay_typed confirm the free-variable order, both inference-environment bounds, numeric ordering premise and extended-environment conclusion. The three namespace carriers and extension order match HOL."
+ },
+{
   "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "type_d_canon_tenv_ok",
   "lean_path": "Flapjack/Compiler/Inference/TypeDCanon/WellFormed.lean", "lean_name": "typeDCanonTenvOk",
   "statement_status": "reviewed_exact",

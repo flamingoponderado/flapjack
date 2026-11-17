@@ -77,6 +77,7 @@ the cited name occurs in one of the two syntactic forms.
 | `compiler/inference/infer_tScript.sml` | `Flapjack/Compiler/Inference/InferT.lean` and `Flapjack/Compiler/Inference/InferT/Display.lean` (inference types and rendering; source review pending) |
 | `compiler/inference/inferScript.sml` | `Flapjack/Compiler/Inference/Infer.lean`, `Flapjack/Compiler/Inference/Infer/Core.lean`, and `Flapjack/Compiler/Inference/Infer/TypesOutput.lean` (bounded inference and combined type-output infrastructure; source correspondence remains open) |
 | `compiler/inference/proofs/type_dCanonScript.sml` | `Flapjack/Compiler/Inference/TypeDCanon.lean` and submodules under `Flapjack/Compiler/Inference/TypeDCanon/` |
+| `compiler/inference/proofs/inferCompleteScript.sml` | `Flapjack/Compiler/Inference/InferComplete.lean` and submodules under `Flapjack/Compiler/Inference/InferComplete/` |
 | `compiler/parsing/lexer_implScript.sml` | `Flapjack/CakeParser/LexerImpl.lean` |
 | `semantics/gramScript.sml` | `Flapjack/CakeParser/Grammar.lean` |
 | `compiler/parsing/pegexec_cml_foScript.sml` | `Flapjack/CakeParser/PegChecks.lean` and `Flapjack/CakeParser/PegActions.lean` |

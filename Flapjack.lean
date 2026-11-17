@@ -3827,6 +3827,7 @@ import Flapjack.TypeSysProps.Freevars
 import Flapjack.TypeSysProps.Pattern
 import Flapjack.TypeSysProps.Expression
 import Flapjack.Compiler.Inference.TypeDCanon.WellFormed
+import Flapjack.Compiler.Inference.InferComplete
 import Flapjack.TypeSysProps.TypingLists
 import Flapjack.Compiler.Inference.InferProps.DeBruijn.Compose
 import Flapjack.Compiler.Inference.Unify.Walkstar.Empty

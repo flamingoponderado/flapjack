@@ -73,6 +73,30 @@ val _ = show "type_e_freevars_typed" typeSysPropsTheory.type_e_freevars;
 val _ = show "check_ctor_tenv_ok_typed" typeSysPropsTheory.check_ctor_tenv_ok;
 val _ = show "type_d_canon_tenv_ok_typed" type_dCanonTheory.type_d_canon_tenv_ok;
 
+(* Replay the source proof because inferCompleteTheory is not built here. *)
+val inf_set_tids_extend_dec_ienv_replay = Q.prove(
+  `inf_set_tids_ienv (count n) ienv2 /\
+   inf_set_tids_ienv (count m) ienv /\ m <= n ==>
+   inf_set_tids_ienv (count n) (extend_dec_ienv ienv2 ienv)`,
+  fs [inf_set_tids_ienv_def] >> rpt disch_tac >> fs [extend_dec_ienv_def] >>
+  conj_tac >-
+    (match_mp_tac namespacePropsTheory.nsAll_nsAppend >> fs [] >>
+     fs [inf_set_tids_unconvert, inf_set_tids_subset_def] >>
+     irule namespacePropsTheory.nsAll_mono >>
+     goal_assum (first_assum o mp_then Any mp_tac) >>
+     rw [SUBSET_DEF, UNCURRY] >> res_tac >> rw []) >>
+  conj_tac >-
+    (match_mp_tac namespacePropsTheory.nsAll_nsAppend >> fs [] >>
+     irule namespacePropsTheory.nsAll_mono >>
+     goal_assum (first_assum o mp_then Any mp_tac) >>
+     rw [SUBSET_DEF, UNCURRY, inf_set_tids_subset_def] >>
+     fs [EVERY_MEM] >> rw [] >> res_tac >> fs []) >>
+  match_mp_tac namespacePropsTheory.nsAll_nsAppend >> fs [] >>
+  irule namespacePropsTheory.nsAll_mono >>
+  goal_assum (first_assum o mp_then Any mp_tac) >>
+  rw [SUBSET_DEF, UNCURRY, inf_set_tids_subset_def] >> rw [] >> res_tac >> fs []);
+val _ = show "inf_set_tids_extend_dec_ienv_replay_typed" inf_set_tids_extend_dec_ienv_replay;
+
 val check_freevars_deBruijn_inc_replay = Q.prove(
   `!tvs tvs' t. check_freevars tvs tvs' t ==>
     !n n'. check_freevars (n+tvs) tvs' (deBruijn_inc n' n t)`,
