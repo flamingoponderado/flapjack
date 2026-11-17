@@ -3833,6 +3833,7 @@ import Flapjack.Compiler.Inference.InferProps.DbSubst
 import Flapjack.Compiler.Inference.InferComplete
 import Flapjack.Compiler.Inference.InferComplete.NamedSubst
 import Flapjack.Compiler.Inference.InferComplete.Binding
+import Flapjack.Compiler.Inference.InferComplete.Environment
 import Flapjack.Compiler.Inference.TypeEDeterm
 import Flapjack.TypeSysProps.TypingLists
 import Flapjack.Compiler.Inference.InferProps.DeBruijn.Compose

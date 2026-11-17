@@ -451,6 +451,136 @@ val probe_env_rel_def = Define `
     probe_env_rel_complete FEMPTY ienv tenv Empty`;
 val _ = show "env_rel_replay_typed" probe_env_rel_def;
 
+(* Replay the full source proof over the corresponding reconstructed relation. *)
+local
+  open typeSysPropsTheory unifyTheory
+in
+val probe_lookup_varE_empty = Q.prove(
+  `!x. lookup_varE x Empty = NONE`,
+  rw [lookup_varE_def, tveLookup_def] >> every_case_tac >> fs []);
+val env_rel_binding_replay = Q.prove(
+  `   !fvs t fvs' name.
+   check_freevars 0 fvs' t ∧
+   set fvs' ⊆ set fvs
+   ⇒
+   probe_env_rel
+     <|v :=
+        nsSing name
+          (LENGTH fvs,
+           type_subst
+             (alist_to_fmap (ZIP (fvs,MAP Tvar_db (GENLIST (λx. x) (LENGTH fvs)))))
+             t);
+      c := nsEmpty;
+      t := nsEmpty|>
+    <|inf_v :=
+        nsSing name
+          (LENGTH (nub fvs'),
+           infer_type_subst
+             (ZIP (nub fvs', MAP Infer_Tvar_db (COUNT_LIST (LENGTH (nub fvs')))))
+             t);
+      inf_c := nsEmpty;
+      inf_t := nsEmpty|>`,
+  rw [probe_env_rel_def]
+  >- (
+    rw [ienv_ok_def, ienv_val_ok_def] >>
+    Cases_on `nub fvs' = []` >>
+    fs []
+    >- (
+      simp [COUNT_LIST_def, nub_def] >>
+      irule (CONJUNCT1 infer_type_subst_empty_check) >> simp[])
+    >- (
+      irule check_t_infer_type_subst_dbs >>
+      qexists_tac `0` >>
+      rw [] >>
+      metis_tac [check_freevars_type_name_subst]))
+  >- (
+    rw [typeSoundInvariantsTheory.tenv_ok_def, typeSoundInvariantsTheory.tenv_val_ok_def] >>
+    irule check_freevars_subst_single >>
+    rw [EVERY_MAP, EVERY_GENLIST, check_freevars_def] >>
+    rw [] >>
+    irule check_freevars_add >>
+    qexists_tac `0` >>
+    rw [] >>
+    irule check_freevars_more >>
+    metis_tac [])
+  >- (
+    rw [probe_env_rel_sound_def, lookup_var_def, probe_lookup_varE_empty]
+    >- (
+      irule check_freevars_subst_single >>
+      rw [EVERY_MAP, EVERY_GENLIST, check_freevars_def] >>
+      irule check_freevars_add >>
+      qexists_tac `0` >>
+      rw [] >>
+      irule check_freevars_more >>
+      metis_tac []) >>
+    rw [probe_tscheme_approx_def, t_walkstar_FEMPTY] >>
+    drule (CONJUNCT1 unconvert_type_subst_replay) >>
+    disch_then (qspec_then `ZIP (fvs,MAP Tvar_db (GENLIST (λx. x) (LENGTH fvs)))` mp_tac) >>
+    impl_tac
+    >- (
+      fs [SUBSET_DEF] >>
+      rw [MEM_MAP, MEM_ZIP, LENGTH_GENLIST] >>
+      fs [PULL_EXISTS] >>
+      metis_tac [MEM_EL]) >>
+    simp [] >>
+    disch_then kall_tac >>
+    `MAP (\(x,y). (x:mlstring, unconvert_t y)) = MAP (\p. (FST p, unconvert_t (SND p)))`
+      by (AP_TERM_TAC >> rw [LAMBDA_PROD]) >>
+    simp [GSYM ZIP_MAP, LENGTH_GENLIST, MAP_GENLIST, combinTheory.o_DEF, unconvert_t_def] >>
+    EXISTS_TAC ``GENLIST (\n. case find_index (EL n (fvs:tvarN list)) (nub fvs') 0
+                                of NONE => Infer_Tapp [] TC_int
+                                 | SOME t => Infer_Tvar_db t) (LENGTH fvs)`` >>
+    rw [EVERY_GENLIST]
+    >- (
+      every_case_tac >>
+      rw [check_t_def] >>
+      drule find_index_LESS_LENGTH >>
+      rw []) >>
+    rw [MAP_GENLIST, combinTheory.o_DEF] >>
+    irule env_rel_binding_lemma_replay >>
+    rw [all_distinct_nub] >>
+    metis_tac [check_freevars_more, nub_set, SUBSET_DEF])
+  >- (
+   rw [probe_env_rel_complete_def, lookup_var_def, probe_lookup_varE_empty]
+   >- (
+     qexists_tac `LENGTH fvs` >>
+     irule check_freevars_subst_single >>
+     rw [EVERY_MAP, EVERY_GENLIST, check_freevars_def] >>
+     irule check_freevars_add >>
+     qexists_tac `0` >>
+     rw [] >>
+     irule check_freevars_more >>
+     metis_tac []) >>
+    rw [probe_tscheme_approx_def, t_walkstar_FEMPTY] >>
+    drule (CONJUNCT1 unconvert_type_subst_replay) >>
+    disch_then (qspec_then `ZIP (fvs,MAP Tvar_db (GENLIST (λx. x) (LENGTH fvs)))` mp_tac) >>
+    impl_tac
+    >- (
+      fs [SUBSET_DEF] >>
+      rw [MEM_MAP, MEM_ZIP, LENGTH_GENLIST] >>
+      fs [PULL_EXISTS] >>
+      metis_tac [MEM_EL]) >>
+    simp [] >>
+    disch_then kall_tac >>
+    `MAP (\(x,y). (x:mlstring, unconvert_t y)) = MAP (\p. (FST p, unconvert_t (SND p)))`
+      by (AP_TERM_TAC >> rw [LAMBDA_PROD]) >>
+    simp [GSYM ZIP_MAP, LENGTH_GENLIST, MAP_GENLIST, combinTheory.o_DEF, unconvert_t_def] >>
+    EXISTS_TAC ``GENLIST (\n. case find_index (EL n (nub fvs':tvarN list)) fvs 0
+                                of NONE => Infer_Tapp [] TC_int
+                                 | SOME t => Infer_Tvar_db t) (LENGTH (nub fvs'))`` >>
+    rw [EVERY_GENLIST]
+    >- (
+      every_case_tac >>
+      rw [check_t_def] >>
+      drule find_index_LESS_LENGTH >>
+      rw []) >>
+    rw [MAP_GENLIST, combinTheory.o_DEF] >>
+    irule env_rel_binding_lemma2_replay >>
+    rw [all_distinct_nub] >>
+    metis_tac [check_freevars_more, nub_set, SUBSET_DEF]));
+end;
+val _ = show "env_rel_binding_replay_typed" env_rel_binding_replay;
+
 val tscheme_approx_refl_replay = Q.prove(
   `!max_tvs s tvs t. probe_tscheme_approx max_tvs s (tvs,t) (tvs,t)`,
   rw [probe_tscheme_approx_def] >>

@@ -1,5 +1,12 @@
 [
 {
+  "hol_path": "cakeml/compiler/inference/proofs/inferCompleteScript.sml", "hol_name": "env_rel_binding",
+  "lean_path": "Flapjack/Compiler/Inference/InferComplete/Environment.lean", "lean_name": "envRelBinding",
+  "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+  "fmap_as_finite_support_result_observations": ["Flapjack.HolFiniteMapExact.holEmpty", "Flapjack.HolFiniteMapExact.alistToFmap"],
+  "reviewer": "Independent comparison with the source and env_rel_binding_replay_typed confirms all binders, both premises and every expanded environment-relation component. HOL nub and Lean dedup both retain last-occurrence order; association-map lookup retains the first duplicate key. Both observed finite-map producers have reviewed canonical representations."
+ },
+{
   "hol_path": "cakeml/compiler/inference/inferPropsScript.sml", "hol_name": "check_t_infer_type_subst_dbs",
   "lean_path": "Flapjack/Compiler/Inference/InferProps/DbSubst.lean", "lean_name": "checkTInferTypeSubstDbs",
   "statement_status": "reviewed_exact",
