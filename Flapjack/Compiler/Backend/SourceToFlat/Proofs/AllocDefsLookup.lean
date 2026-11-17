@@ -14,7 +14,8 @@ open Flapjack.AstHOL Flapjack.NamespaceHOL Flapjack.SemanticPrimitivesHOL
 open Flapjack.Compiler.Backend.BackendCommon
 
 /-- HOL's unbounded index equation for append, including out-of-range indices. -/
-@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "EL_APPEND_IF"]
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "EL_APPEND_IF"
+  (total_function_inhabitants := [α])]
 theorem holEl_append_if {α : Type} [Nonempty α] (i : Nat) (xs ys : List α) :
     holEl i (xs ++ ys) = if i < xs.length then holEl i xs else holEl (i - xs.length) ys := by
   induction xs generalizing i with
@@ -73,7 +74,8 @@ private theorem allocDefs_lookup_index {K : Type} (names : List K) :
         ih (next + 1) (base + 1) n bound' tailDistinct
 
 /-- A distinct function's reversed allocation is found at its corresponding global slot. -/
-@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "ALOOKUP_alloc_defs_EL"]
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "ALOOKUP_alloc_defs_EL"
+  (total_function_inhabitants := [K])]
 theorem aLookup_allocDefs_el {K A B : Type} [Nonempty K] :
     ∀ (funs : List (K × A × B)) (l n m : Nat),
       (funs.map fun (x, _, _) => x).Nodup ∧ n < funs.length →

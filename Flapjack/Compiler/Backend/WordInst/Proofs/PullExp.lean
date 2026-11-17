@@ -59,7 +59,8 @@ theorem PERM_SWAP_SIMP {α : Type} (A : List α) (B : α) (C : List α) :
     `[Nonempty α]` instance only discharges the inhabitation that the total
     `holEl` rendering of HOL `EL` needs (every HOL type is inhabited); it adds
     no hypothesis. -/
-@[hol "cakeml/compiler/backend/proofs/word_instProofScript.sml" "EL_FILTER"]
+@[hol "cakeml/compiler/backend/proofs/word_instProofScript.sml" "EL_FILTER"
+  (total_function_inhabitants := [α])]
 theorem EL_FILTER {α : Type} [Nonempty α] (P : α → Bool) :
     ∀ (ls : List α) (x : Nat), x < (ls.filter P).length → P (holEl x (ls.filter P)) = true := by
   intro ls x hx

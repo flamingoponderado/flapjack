@@ -372,7 +372,8 @@ theorem srcOracEnvInvs_lookup {C : Type} (interp : Option (Value → Option (Con
 /-- The source oracle is decodable at each step, and successive decoded
 configurations agree with incremental compilation. HOL types are inhabited;
 `Nonempty C` supplies the payload inhabitance needed for HOL's `THE NONE`. -/
-@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "src_orac_step_invs_def"]
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "src_orac_step_invs_def"
+  (total_function_inhabitants := [C])]
 noncomputable def srcOracStepInvs {C : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
     (evalState : Option EvalState) : Prop :=
@@ -410,7 +411,8 @@ theorem srcOracInvs_growth {C : Type} [Nonempty C]
 
 /-- The first two source-oracle entries expose consecutive incremental
 compilation configurations. This is the original local `step_1` statement. -/
-@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "step_1"]
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "step_1"
+  (total_function_inhabitants := [C])]
 theorem sourceOracle_firstStep {C : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
     (state : EvalOracleState)

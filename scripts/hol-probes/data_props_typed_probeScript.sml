@@ -212,3 +212,12 @@ val _ = show "cut_state_opt_locals_ok_typed"
     \\ rename1 `cut_env nm s.locals = SOME env`
     \\ drule_all locals_ok_cut_env \\ rw[]
     \\ qexists_tac `env` \\ fs[dataSemTheory.state_component_equality, locals_ok_refl]));
+val _ = emit "evaluate_cc_co_only_diff_typed" "evaluate_cc_co_only_diff";
+val _ = emit "the_NONE_typed" "the_NONE";
+val _ = emit "the_le_IMP_option_le_typed" "the_le_IMP_option_le";
+val _ = emit "jump_exc_IMP_typed" "jump_exc_IMP";
+val _ = emit "semantics_Term_IMP_PREFIX_typed" "semantics_Term_IMP_PREFIX";
+val _ = emit "evaluate_stack_and_locals_swap_typed" "evaluate_stack_and_locals_swap";
+val _ = emit "evaluate_stack_swap_typed" "evaluate_stack_swap";
+val _ = emit "evaluate_stack_typed" "evaluate_stack";
+val _ = emit "evaluate_NONE_jump_exc_typed" "evaluate_NONE_jump_exc";

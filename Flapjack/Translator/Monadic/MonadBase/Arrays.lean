@@ -26,7 +26,8 @@ namespace Flapjack.Translator.Monadic.MonadBase
 /-- Exact HOL `Msub_eq` (`ml_monadBaseScript.sml:131-138`):
 `!l n e. n < LENGTH l ==> Msub e n l = M_success (EL n l)`, HOL `EL` as the
 exact `holEl` (HOL types are inhabited, hence `[Nonempty value]`). -/
-@[hol "cakeml/translator/monadic/monad_base/ml_monadBaseScript.sml" "Msub_eq"]
+@[hol "cakeml/translator/monadic/monad_base/ml_monadBaseScript.sml" "Msub_eq"
+  (total_function_inhabitants := [value])]
 theorem msubEq {value exception : Type} [Nonempty value] :
     ∀ (l : List value) (n : Nat) (e : exception),
       n < l.length → mSub e n l = .success (holEl n l) := by

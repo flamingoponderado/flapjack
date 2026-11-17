@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.Semantics.DataProps.ResourceCall
+public import Flapjack.Misc.MiscThe
 
 @[expose] public section
 
@@ -8,6 +9,7 @@ public import Flapjack.Compiler.Backend.Semantics.DataProps.ResourceCall
 `Option.map₂`. -/
 
 namespace Flapjack
+open Flapjack.Compiler.Backend.BackendProps
 
 /-- Exact HOL `OPTION_MAP2_ADD_SOME_0` (`dataPropsScript.sml:87`): adding a
     `SOME 0` leaves the other operand alone. -/
@@ -41,5 +43,22 @@ three arguments in the same order. -/
 theorem optionElim_optionMap {α β γ : Type} (f : α → β) (a : Option α) (e : γ)
     (g : β → γ) : Option.elim (Option.map f a) e g = Option.elim a e (g ∘ f) := by
   cases a <;> rfl
+
+/-- Exact HOL `the_NONE` (`dataPropsScript.sml:107`): `the` applied to a
+    `NONE` option returns its default. -/
+@[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "the_NONE"]
+theorem miscThe_none {α : Type} (x : α) : miscThe x none = x := rfl
+
+/-- Exact HOL `the_le_IMP_option_le` (`dataPropsScript.sml:3295`): if the
+    defaulted `the` of the mapped bound is `T`, the optional bound holds.
+    HOL's `$> n` is `λx. n > x`, so the map keeps that argument order. -/
+@[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "the_le_IMP_option_le"]
+theorem miscThe_le_imp_optionLe (n : Nat) (m : Option Nat) :
+    miscThe false (Option.map (fun x => n > x) m) = true → optionLe m (some n) := by
+  cases m with
+  | none => simp [miscThe]
+  | some x =>
+    simp only [miscThe, Option.map, optionLe, decide_eq_true_eq]
+    omega
 
 end Flapjack

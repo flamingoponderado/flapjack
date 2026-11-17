@@ -56,7 +56,8 @@ theorem envRel_el (genv : GlobalEnv) (env : List (VarN × Value))
       Flapjack.holEl_eq_getElem n flatEnv flatBound] using related n bound
 
 /-- Pointwise relation at an index bounded by the second list. -/
-@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "LIST_REL_IMP_EL2"]
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "LIST_REL_IMP_EL2"
+  (total_function_inhabitants := [α, β])]
 theorem listRel_imp_el2 {α β : Type} [Nonempty α] [Nonempty β]
     (relation : α → β → Prop) (xs : List α) (ys : List β)
     (related : List.Forall₂ relation xs ys) (i : Nat) (bound : i < ys.length) :
@@ -66,7 +67,8 @@ theorem listRel_imp_el2 {α β : Type} [Nonempty α] [Nonempty β]
   exact related.get leftBound bound
 
 /-- Pointwise relation at an index bounded by the first list. -/
-@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "LIST_REL_IMP_EL"]
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "LIST_REL_IMP_EL"
+  (total_function_inhabitants := [α, β])]
 theorem listRel_imp_el {α β : Type} [Nonempty α] [Nonempty β]
     (relation : α → β → Prop) (xs : List α) (ys : List β)
     (related : List.Forall₂ relation xs ys) (i : Nat) (bound : i < xs.length) :

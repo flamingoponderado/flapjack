@@ -9,7 +9,8 @@ open Flapjack
 
 /-- Full original bounded membership-to-search statement. Repeated values are permitted, with first-match
 search and every EL bounded by the original existential witness. -/
-@[hol "cakeml/misc/miscScript.sml" "find_index_MEM"]
+@[hol "cakeml/misc/miscScript.sml" "find_index_MEM"
+  (total_function_inhabitants := [α])]
 theorem findIndex_mem {α : Type} [DecidableEq α] [Nonempty α]
     (values : List α) (target : α) (offset : Nat) :
     target ∈ values → ∃ index,

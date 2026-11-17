@@ -84,7 +84,8 @@ theorem noShareMem_lemma {width : Nat} [NeZero width] (ffiNames : List HolFfiNam
     cases hname
   · exact hni pc c l n hf
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "EL_get_ffi_index_MEM"]
+@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "EL_get_ffi_index_MEM"
+  (total_function_inhabitants := [α])]
 theorem el_getFfiIndex_mem {α : Type} [DecidableEq α] [Nonempty α] (s : α) (ls : List α) :
     s ∈ ls → holEl (getFfiIndex ls s) ls = s := by
   intro h

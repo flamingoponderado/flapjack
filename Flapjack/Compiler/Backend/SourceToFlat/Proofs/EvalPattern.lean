@@ -57,7 +57,8 @@ theorem pmatchRows_dropFour {C F E : Type} (values : List FlatSem.Value)
   simp [FlatSem.pmatchRows, FlatSem.pmatch, FlatSem.pmatchList, compatible, holLast, holEl, holHd]
 
 /-- The two tuple bindings are the original list after dropping four values. -/
-@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "drop_4_via_el"]
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "drop_4_via_el"
+  (total_function_inhabitants := [α])]
 theorem dropFour_viaEl {α : Type} [Nonempty α] (values : List α) (length : values.length = 6) :
     [holEl 4 values, holLast values] = values.drop 4 := by
   obtain ⟨a, b, c, d, e, f, rfl⟩ := OracleInvariant.list_length_six values length

@@ -145,7 +145,8 @@ theorem holFmapAsFiniteSupportParamWitness_FLOOKUP_MAP_KEYS_LINV_m {κ β : Type
     `holLinv` on `UNIV` (whose `[Nonempty α]` is HOL's type inhabitedness), `MAP_KEYS` the
     finite-support rendering `mapKeys`, and `FLOOKUP` is `lookup`. -/
 @[hol "cakeml/pancake/proofs/pan_to_targetProofScript.sml" "FLOOKUP_MAP_KEYS_LINV"
-  (fmap_as_finite_support_parameters := [m])]
+  (fmap_as_finite_support_parameters := [m])
+  (total_function_inhabitants := [α])]
 theorem FLOOKUP_MAP_KEYS_LINV {α β : Type} [Nonempty α] (f : α → α) (m : HolFiniteMapExact α β)
     (i : α) :
     Function.Bijective f →

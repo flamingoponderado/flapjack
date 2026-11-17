@@ -35,7 +35,8 @@ noncomputable def holLinvOpt {α β : Type} (f : α → β) (s : α → Prop) (y
 /-- HOL `LINV_LO` (`pred_setScript.sml:2776-2778`, `[nocompute]`):
 `LINV f s y = THE (LINV_OPT f s y)`, with `THE` the reviewed `holThe` (whose `THE NONE` is
 unspecified). The `Nonempty` binder is the inhabitedness every HOL type has. -/
-@[hol "HOL/src/pred_set/src/pred_setScript.sml" "LINV_LO"]
+@[hol "HOL/src/pred_set/src/pred_setScript.sml" "LINV_LO"
+  (total_function_inhabitants := [α])]
 noncomputable def holLinv {α β : Type} [Nonempty α] (f : α → β) (s : α → Prop) (y : β) : α :=
   holThe (holLinvOpt f s y)
 
