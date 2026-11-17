@@ -217,3 +217,6 @@ val _ = emit "the_NONE_typed" "the_NONE";
 val _ = emit "the_le_IMP_option_le_typed" "the_le_IMP_option_le";
 val _ = emit "jump_exc_IMP_typed" "jump_exc_IMP";
 val _ = emit "semantics_Term_IMP_PREFIX_typed" "semantics_Term_IMP_PREFIX";
+val _ = emit "evaluate_stack_and_locals_swap_typed" "evaluate_stack_and_locals_swap";
+val _ = emit "evaluate_stack_swap_typed" "evaluate_stack_swap";
+val _ = emit "evaluate_stack_typed" "evaluate_stack";

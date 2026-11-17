@@ -3258,8 +3258,8 @@ theorem evaluate_stack_and_locals_swap {C F : Type} (program : DataLang.Prog)
         ∃ s2, jumpExc state = some s2 ∧ s2.locals = next.locals ∧
           s2.stack = next.stack ∧ s2.handler = next.handler ∧
           ∀ (xs : List Stack) (s7 : State C F) (lsz : Option Nat),
-            jumpExc { state with stack := xs, localsSize := lsz } = some s7 →
-            state.stack.length = xs.length →
+            jumpExc { state with stack := xs, localsSize := lsz } = some s7 ∧
+              state.stack.length = xs.length →
               ∃ lss sfs smx phl,
                 evaluate program { state with stack := xs, localsSize := lsz } =
                   (some (.err (.raise t)),
@@ -3309,7 +3309,11 @@ theorem evaluate_stack_and_locals_swap {C F : Type} (program : DataLang.Prog)
               (some (.err (.abort (.ffiError event)))) next run
         | raise t =>
           simp only []
-          exact stackLocalsSwap_all program state (some (.err (.raise t))) next run
+          obtain ⟨s2, h2⟩ := stackLocalsSwap_all program state (some (.err (.raise t))) next run
+          refine ⟨s2, h2.1, h2.2.1, h2.2.2.1, h2.2.2.2.1, ?_⟩
+          intro xs s7 lsz hprem
+          obtain ⟨jumpedAt, len⟩ := hprem
+          exact h2.2.2.2.2 xs s7 lsz jumpedAt len
 
 /-- Replacing only the stack by a list of the same length preserves the
     evaluation outcome, leaving only the resource observations free. -/
@@ -3332,8 +3336,7 @@ theorem evaluate_stack_swap {C F : Type} (program : DataLang.Prog) (state : Stat
         ∃ s2, jumpExc state = some s2 ∧ s2.locals = next.locals ∧
           s2.stack = next.stack ∧ s2.handler = next.handler ∧
           ∀ (xs : List Stack) (s7 : State C F),
-            jumpExc { state with stack := xs } = some s7 →
-            state.stack.length = xs.length →
+            jumpExc { state with stack := xs } = some s7 ∧ state.stack.length = xs.length →
               ∃ lss sfs smx phl,
                 evaluate program { state with stack := xs } =
                   (some (.err (.raise t)),
@@ -3397,8 +3400,9 @@ theorem evaluate_stack_swap {C F : Type} (program : DataLang.Prog) (state : Stat
           simp only [] at base ⊢
           obtain ⟨s2, h2⟩ := base
           refine ⟨s2, h2.1, h2.2.1, h2.2.2.1, h2.2.2.2.1, ?_⟩
-          intro xs s7 jumpedAt len
-          exact h2.2.2.2.2 xs s7 state.localsSize (by simpa using jumpedAt) len
+          intro xs s7 hprem
+          obtain ⟨jumpedAt, len⟩ := hprem
+          exact h2.2.2.2.2 xs s7 state.localsSize ⟨by simpa using jumpedAt, len⟩
 
 /-- Replacing the stack by a list of the same length leaves the unwound frames
     unchanged, so the result's stack and handler are unchanged too. -/

@@ -136347,26 +136347,26 @@
   "hol_name": "evaluate_stack_and_locals_swap",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/EvaluateStackLocalsSwap.lean",
   "lean_name": "evaluate_stack_and_locals_swap",
-  "statement_status": "pending_statement_review",
+  "statement_status": "reviewed_exact",
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Statement written from the HOL source: the case expression on evaluate (c,s) is reproduced arm for arm (type-error vacuous, abort with the empty stack and the free resource observations, raise with the jump target and the per-stack witnesses, catch-all keeping stack and handler), with the same binder order xs s7 lsz and the same conjunction grouping. The typed HOL capture has not been regenerated yet, so the row stays pending_statement_review. Inherits reals_as_rational_cuts through evaluate (docs/SOUNDNESS.md item 8)."
+  "reviewer": "Compared evaluate_stack_and_locals_swap_typed (regenerated from dataPropsScript.sml, with the ^s antiquotation expanded to a universal s binder): binders c then s, one shared state type (γ, 'ffi) rendered as {C F : Type}; the case arms match arm for arm in source order — type error vacuous, abort with stack = [] and the free lss sfs smx phl, raise with the jump witness s2 and the result fields stack, handler, locals, locals_size, catch-all keeping stack and handler. The raise arm's premise is HOL's single conjunction jump_exc (...) = SOME s7 ∧ LENGTH s.stack = LENGTH xs, not curried, and the binder order xs s7 lsz and lss sfs smx phl is preserved. Proved from stackLocalsSwap_all. Inherits reals_as_rational_cuts through evaluate (docs/SOUNDNESS.md item 8)."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
   "hol_name": "evaluate_stack_swap",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/EvaluateStackLocalsSwap.lean",
   "lean_name": "evaluate_stack_swap",
-  "statement_status": "pending_statement_review",
+  "statement_status": "reviewed_exact",
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Statement written from the HOL source: the four arms match evaluate_stack_swap arm for arm, with the stack replaced by xs and no locals-size variable, the resource observations free, and the raise arm's witness order xs s7 preserved. The typed HOL capture has not been regenerated yet, so the row stays pending_statement_review. Inherits reals_as_rational_cuts through evaluate (docs/SOUNDNESS.md item 8)."
+  "reviewer": "Compared evaluate_stack_swap_typed (regenerated from dataPropsScript.sml, with the ^s antiquotation expanded): binders c then s, one shared state type (γ, 'ffi) rendered as {C F : Type}; the four arms match the source — abort with stack = [] and the free resource observations, raise with the jump witness s2 and the single conjunction premise jump_exc (s with stack := xs) = SOME s7 ∧ LENGTH s.stack = LENGTH xs, catch-all keeping stack and handler — with xs s7 as the only stack binders and lss sfs smx phl free. Read off evaluate_stack_and_locals_swap at locals_size = s.locals_size. Inherits reals_as_rational_cuts through evaluate (docs/SOUNDNESS.md item 8)."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
   "hol_name": "evaluate_stack",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/EvaluateStackLocalsSwap.lean",
   "lean_name": "evaluate_stack",
-  "statement_status": "pending_statement_review",
+  "statement_status": "reviewed_exact",
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Statement written from the HOL source: the four arms match evaluate_stack arm for arm, with the type-error arm vacuous, the abort arm asserting the empty stack, the error arm giving the jump target's locals, stack and handler, and the catch-all keeping stack and handler. The typed HOL capture has not been regenerated yet, so the row stays pending_statement_review. Inherits reals_as_rational_cuts through evaluate (docs/SOUNDNESS.md item 8)."
+  "reviewer": "Compared evaluate_stack_typed (regenerated from dataPropsScript.sml, with the ^s antiquotation expanded): binders c then s, one shared state type (γ, 'ffi) rendered as {C F : Type}; the arms match the source — non-raising results keep stack and handler, raise gives the jump witness s2 with its locals, stack and handler, type error is vacuous, and both abort kinds assert stack = []. No resource witnesses and no extra binders. Read off evaluate_stack_swap. Inherits reals_as_rational_cuts through evaluate (docs/SOUNDNESS.md item 8)."
 }
 ]
