@@ -469,6 +469,7 @@ val _ = show "good_remap_typed" type_dCanonTheory.good_remap_def;
 val _ = show "extend_bij_typed" type_dCanonTheory.extend_bij_def;
 val _ = show "extend_bij_id_typed" type_dCanonTheory.extend_bij_id;
 val _ = show "extend_bij_compose_typed" type_dCanonTheory.extend_bij_compose;
+val _ = show "BIJ_extend_bij_typed" type_dCanonTheory.BIJ_extend_bij;
 val good_remap_extend_bij_replay = Q.prove(
   `type_dCanon$good_remap f /\ prim_tids F ids ==>
      type_dCanon$good_remap (type_dCanon$extend_bij f g ids n)`,

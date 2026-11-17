@@ -132,6 +132,7 @@ good_remap_typed=∀(f :num -> num). good_remap f ⇔ MAP f (Tlist_num::Tbool_nu
 extend_bij_typed=∀(f :num -> num) (g :num -> num) (ids :num -> bool) (n :num) (v :num). extend_bij f g ids n v = if v ∈ ids then n + g v else f v
 extend_bij_id_typed=extend_bij (f :num -> num) f (s :num -> bool) (0 :num) = f ∧ extend_bij f (g :num -> num) (∅ :num -> bool) (n :num) = f
 extend_bij_compose_typed=extend_bij (extend_bij (f :num -> num) (g :num -> num) (ids :num -> bool) (n :num)) (h :num -> num) (jds :num -> bool) (n + (m :num)) = extend_bij f (extend_bij g h jds m) (ids ∪ jds) n
+BIJ_extend_bij_typed=DISJOINT (tids :num -> bool) (ids :num -> bool) ∧ BIJ (f :num -> num) tids (count (n :num)) ∧ BIJ (g :num -> num) ids (count (CARD ids)) ⇒ BIJ (extend_bij f g ids n) (tids ∪ ids) (count (n + CARD ids))
 good_remap_extend_bij_replay_typed=good_remap (f :num -> num) ∧ prim_tids F (ids :num -> bool) ⇒ good_remap (extend_bij f (g :num -> num) ids (n :num))
 ts_tid_rename_type_subst_replay_typed=∀(s :mlstring |-> t) (t :t) (f :num -> num). ts_tid_rename f (type_subst s t) = type_subst (ts_tid_rename f o_f s) (ts_tid_rename f t)
 check_type_names_ts_tid_rename_replay_typed=∀(tenvt :(mlstring, mlstring, mlstring list # t) namespace) (t :ast_t). check_type_names tenvt t ⇔ check_type_names (nsMap (λ((ls :mlstring list),(t :t)). (ls,ts_tid_rename (f :num -> num) t)) tenvt) t
