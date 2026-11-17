@@ -27,9 +27,8 @@ private def qname : NamespaceHOL.Ident MlString MlString := .long (ofString "A")
 #guard opToString (.arith .fma .float64T) == (ofString "Arith", 3)
 #guard opToString (.arith .fma .intT) == (ofString "Arith", 0)
 
-#guard renderUnsupportedPrimitive [] (.primitiveArity (.implode [255]) 2 1) ==
-  some ((ofString "### ERROR: type error\nPrimitive ").explode ++ [255] ++
-    (ofString " given 2 arguments, but expects 1 at unknown location\nProgram exited with nonzero exit code.\n").explode)
+#guard renderUnsupportedPrimitive [] (.primitiveArity .opref 12) ==
+  some (ofString "### ERROR: type error\nPrimitive Opref given 12 arguments, but expects 1 at unknown location\nProgram exited with nonzero exit code.\n").explode
 
 -- HOL add_constraints rejects unequal lists with this internal-error message.
 #guard match constrainMany 20 [] [.uvar 0] ⟨3, .ln, 7⟩ with

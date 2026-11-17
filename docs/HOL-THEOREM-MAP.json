@@ -1,5 +1,11 @@
 [
 {
+  "hol_path": "cakeml/compiler/inference/inferScript.sml", "hol_name": "op_n_args_msg_def",
+  "lean_path": "Flapjack/Compiler/Inference/Infer/Core.lean", "lean_name": "opNArgsMessage",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with op_n_args_msg_typed confirms both binders, source operator lookup and all message components. HOL mlint toString_thm reduces nonnegative integers to the reviewed holNumToDecString; op_n_args_msg_eval confirms the captured example."
+ },
+{
   "hol_path": "cakeml/compiler/inference/inferScript.sml", "hol_name": "op_to_string_def",
   "lean_path": "Flapjack/Compiler/Inference/Infer/Core.lean", "lean_name": "opToString",
   "statement_status": "reviewed_exact",

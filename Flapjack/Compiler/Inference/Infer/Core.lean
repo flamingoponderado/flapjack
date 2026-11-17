@@ -31,7 +31,7 @@ inductive Error where
   | exhausted | unsupported | mismatch | badConstraintLists | undefinedName | valueRestriction | envDeclaration
   | floatPattern | emptyCase | emptyHandle
   | unsafeOperation | thunkOperation | primitiveTypeMismatch
-  | primitiveArity : MlString → Nat → Nat → Error
+  | primitiveArity : Op → Nat → Error
   | typeMismatch : InferT → InferT → Error
   | typeMismatchEnv : TypeSystemHOL.TenvAbbrev → InferT → InferT → Error
   | unboundTypeVariable : MlString → Error
@@ -70,7 +70,7 @@ private def locateError (loc : Flapjack.Misc.Location.Locs) (env : Env) : Error 
   | .thunkOperation => .located loc .thunkOperation
   | .primitiveTypeMismatch => .located loc .primitiveTypeMismatch
   | .badConstraintLists => .located loc .badConstraintLists
-  | .primitiveArity name actual expected => .located loc (.primitiveArity name actual expected)
+  | .primitiveArity op actual => .located loc (.primitiveArity op actual)
   | .undefinedVariable name => .located loc (.undefinedVariable name)
   | .undefinedConstructor name => .located loc (.undefinedConstructor name)
   | .sourceTypeMessage message => .located loc (.sourceTypeMessage message)
@@ -315,11 +315,17 @@ def opToString (op : Op) : MlString × Nat :=
   | .thunkOp (.allocThunk _) => (ofString "AllocThunk", 1)
   | .thunkOp (.updateThunk _) => (ofString "UpdateThunk", 2)
 
+@[hol "cakeml/compiler/inference/inferScript.sml" "op_n_args_msg_def"]
+def opNArgsMessage (op : Op) (n : Nat) : MlString :=
+  let (name, expected) := opToString op
+  MlString.concat [ofString "Primitive ", name, ofString " given ",
+    .implode (Flapjack.holNumToDecString n), ofString " arguments, but expects ",
+    .implode (Flapjack.holNumToDecString expected)]
+
 private def inferOp (fuel : Nat) (op : Op) (ts : List InferT) : M InferT := do
   if let some (args, result) := simpleOp op then
     if ts.length != args.length then
-      let (name, expected) := opToString op
-      fail (.primitiveArity name ts.length expected)
+      fail (.primitiveArity op ts.length)
     constrainMany fuel ts args
     return result
   match op, ts with
@@ -386,8 +392,7 @@ private def inferOp (fuel : Nat) (op : Op) (ts : List InferT) : M InferT := do
     return .app [] 9
   | .arith _ _, _ | .fromTo _ _, _ | .test _ _, _ => fail .primitiveTypeMismatch
   | _, _ =>
-    let (name, expected) := opToString op
-    fail (.primitiveArity name ts.length expected)
+    fail (.primitiveArity op ts.length)
 
 private def bindVars (env : Env) (bindings : List (MlString × InferT)) : Env :=
   { env with infV := nsAppend (alistToNs (bindings.map (fun (name, t) => (name, (0, t))))) env.infV }

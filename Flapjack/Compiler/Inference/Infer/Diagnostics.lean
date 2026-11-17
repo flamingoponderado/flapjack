@@ -134,14 +134,13 @@ def renderUnsupportedPrimitive (input : List HolChar) (error : Error) : Option (
     | .located loc .thunkOperation => some (some loc, ascii "Thunk ops do not have a type")
     | .located loc .primitiveTypeMismatch => some (some loc, ascii "Type mismatch")
     | .located loc .badConstraintLists => some (some loc, ascii "Internal error: Bad call to add_constraints")
-    | .located loc (.primitiveArity name actual expected) => some (some loc,
-        ascii "Primitive " ++ name.explode ++ ascii s!" given {actual} arguments, but expects {expected}")
+    | .located loc (.primitiveArity op actual) => some (some loc,
+        (opNArgsMessage op actual).explode)
     | .unsafeOperation => some (none, ascii "Unsafe ops do not have a type")
     | .thunkOperation => some (none, ascii "Thunk ops do not have a type")
     | .primitiveTypeMismatch => some (none, ascii "Type mismatch")
     | .badConstraintLists => some (none, ascii "Internal error: Bad call to add_constraints")
-    | .primitiveArity name actual expected => some (none,
-        ascii "Primitive " ++ name.explode ++ ascii s!" given {actual} arguments, but expects {expected}")
+    | .primitiveArity op actual => some (none, (opNArgsMessage op actual).explode)
     | _ => none
   some (ascii "### ERROR: type error\n" ++ message ++ ascii " at " ++
     sourceLocation input loc ++ ascii "\nProgram exited with nonzero exit code.\n")
