@@ -190,6 +190,14 @@ theorem doSpace_locals_eq {C F : Type} (op : ClosLang.Op) (values : List Value)
       · simp only [if_pos fits, Option.map_none]
       · simp only [if_neg fits, Option.map_some]
 
+/-- Do-notation builds an `Option` bind through the `Bind` instance, so
+    `Option.bind_eq_some_iff` does not match it syntactically.  This bridge
+    lets the auxiliary-stage case analysis destruct those binds.  Flapjack
+    infrastructure toward the parked HOL `do_app_with_locals`; no separate HOL
+    original. -/
+theorem bind_eq_optionBind {α β : Type} (o : Option α) (f : α → Option β) :
+    Bind.bind o f = Option.bind o f := rfl
+
 /-- Successful auxiliary application keeps its value when only the safety
     flag is replaced, recording the new flag existentially.  Flapjack
     infrastructure toward the parked HOL `do_app_with_locals`; no separate HOL
