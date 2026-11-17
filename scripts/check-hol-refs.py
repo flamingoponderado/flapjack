@@ -6078,6 +6078,107 @@ def infer_subst_submap_observer_errors(
     return []
 
 
+def type_subst_walkstar_observer_errors(
+    source: str, lean_path: str, hol_ref: tuple[str, str], binders: tuple[str, ...],
+    dependency_sources: tuple[str, ...], records: list[dict],
+) -> list[str]:
+    """Prospective source check for the two independently quantified maps.
+
+    Elaborated premises, conclusions, dependency owners and qualifier/export
+    validation are separate requirements; this check does not enable a tag.
+    """
+    if (lean_path != "Flapjack/Compiler/Inference/InferProps/TypeSubstWalkstar.lean" or
+            hol_ref != ("cakeml/compiler/inference/inferPropsScript.sml", "subst_infer_subst_swap") or
+            binders != ("type_s", "list_s")):
+        return ["type-substitution walkstar qualifier requires its exact site and two map occurrences"]
+    clean = strip_lean_comments(source)
+    if re.search(r"(?m)^\s*(?:variables?|include|omit|export|alias|attribute|set_option|universe|universes|run_cmd|run_elab|initialize|(?:(?:local|scoped)\s+)?(?:syntax|macro|macro_rules|elab|notation|infix|infixl|infixr|prefix|postfix|instance))\b", clean):
+        return ["type-substitution walkstar qualifier rejects ambient binders or syntax changes"]
+    namespaces = re.findall(r"(?m)^\s*namespace\s+([^\s]+)", clean)
+    opens = [" ".join(item.split()) for item in re.findall(r"(?m)^\s*open\s+([^\n]+)", clean)]
+    imports = re.findall(r"(?m)^\s*(?:(?:public|meta)\s+)*import\s+([^\s]+)", clean)
+    if (namespaces != ["Flapjack.Compiler.Inference.InferProps.TypeSubstWalkstar"] or
+            opens != ["Flapjack.Compiler.Inference.Infer", "Flapjack.Compiler.Inference.Unify",
+                      "Flapjack.TypeSystemHOL Flapjack.Basis.Pure.MlString"] or
+            imports != ["Flapjack.Compiler.Inference.Infer.TypeSubst", "Flapjack.Compiler.Inference.Unify.Walkstar"]):
+        return ["type-substitution walkstar qualifier requires its exact namespace, imports and opens"]
+    directives = list(re.finditer(r"(?m)^(?:public[ \t]+import|open)[ \t]+[^\n]+$", clean))
+    expected_directives = ["public import Flapjack.Compiler.Inference.Infer.TypeSubst",
+        "public import Flapjack.Compiler.Inference.Unify.Walkstar",
+        "open Flapjack.Compiler.Inference.Infer", "open Flapjack.Compiler.Inference.Unify",
+        "open Flapjack.TypeSystemHOL Flapjack.Basis.Pure.MlString"]
+    if [" ".join(item.group().split()) for item in directives] != expected_directives:
+        return ["type-substitution walkstar qualifier requires single-line imports and opens"]
+    for directive in directives:
+        following = next((line for line in clean[directive.end():].splitlines() if line.strip()), "")
+        if following and following[0].isspace():
+            return ["type-substitution walkstar qualifier rejects directive continuations"]
+    if re.search(r"(?m)^\s*(?:(?:private|protected|local|scoped)\s+)*(?:def|theorem|lemma|axiom|opaque|abbrev|structure|inductive|class)\s+(?:SemanticT|MlString|InferT|Nat|List|HolFiniteMapExact|inferTypeSubst|tWalkstar|tWfs)\b", clean):
+        return ["type-substitution walkstar qualifier rejects local carrier or operation shadows"]
+    expected = (": (∀ (t : SemanticT) (names : List MlString) (s : HolFiniteMapExact Nat InferT) (offset : Nat), "
+        "tWfs s → tWalkstar s (inferTypeSubst (names.zip ((List.range names.length).map (fun n => InferT.uvar (offset + n)))) t) = "
+        "inferTypeSubst (names.zip ((List.range names.length).map (fun n => tWalkstar s (InferT.uvar (offset + n))))) t) ∧ "
+        "(∀ (ts : List SemanticT) (names : List MlString) (s : HolFiniteMapExact Nat InferT) (offset : Nat), "
+        "tWfs s → (ts.map (inferTypeSubst (names.zip ((List.range names.length).map (fun n => InferT.uvar (offset + n)))))).map (tWalkstar s) = "
+        "ts.map (inferTypeSubst (names.zip ((List.range names.length).map (fun n => tWalkstar s (InferT.uvar (offset + n)))))))")
+    statements = _statements_of_declaration(clean, "substInferSubstSwap")
+    if len(statements) != 1 or " ".join(statements[0].split()) != expected:
+        return ["type-substitution walkstar theorem must retain both complete reviewed conjuncts"]
+    witness = ("(map : HolFiniteMapExact Nat InferT) (key : Nat) : "
+               "(FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad map)).lookup key = map.lookup key ∧ "
+               "(FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad map)).finiteSupport = map.finiteSupport ∧ "
+               "FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad map) = map")
+    statements = _statements_of_declaration(clean, "holFmapAsFiniteSupportNestedWalkstarWitness")
+    if len(statements) != 1 or " ".join(statements[0].split()) != witness:
+        return ["type-substitution walkstar requires its unconditional canonical-map witness"]
+    # Pin the reviewed executable substitution equations, the guarded
+    # walkstar model and its theorem, and the definition of tWfs. Restrict the
+    # two larger modules to their relevant prefixes so unrelated later
+    # declarations can evolve independently.
+    fingerprints = (
+        (' end mutual @[hol "cakeml/compiler/inference/inferScript.sml" "infer_deBruijn_inc_def"]',
+         "c5e7f711ebacac1424e2a7907d117633e92cbd9e499c8d349cdadd109a6762f2"),
+        (None, "70caac537f2715df9c9def7342874bb4484b31fd416ee82a7be361aa9aa3678a"),
+        (" theorem holFmapAsFiniteSupportParamWitness_tWfsEqn_subst",
+         "55445d872487eaa261a2ba56b07d52ccaab36983bff622779197beb7f5daf7a7"),
+        (None, "433b404d7a4e2f5b76d589cf1b0850905932fa437b96228246addb6bf427a739"),
+        (None, "170799cff273e408f8c72e16f69147dfc197f111832970c007248ea7dcfa5ab6"),
+    )
+    if len(dependency_sources) != len(fingerprints):
+        return ["type-substitution walkstar requires all reviewed source dependencies"]
+    for dependency, (boundary, expected_hash) in zip(dependency_sources, fingerprints):
+        normalized = " ".join(strip_lean_comments(dependency).split())
+        if boundary is not None:
+            if normalized.count(boundary) != 1:
+                return ["type-substitution walkstar source dependency boundary changed"]
+            normalized = normalized.split(boundary, 1)[0]
+        if hashlib.sha256(normalized.encode("utf-8")).hexdigest() != expected_hash:
+            return ["type-substitution walkstar source dependency changed and requires review"]
+    dependencies = (
+        ("Flapjack/Compiler/Inference/Infer.lean", "inferTypeSubst", "cakeml/compiler/inference/inferScript.sml", "infer_type_subst_def", "reviewed_exact", None),
+        ("Flapjack/Compiler/Inference/Infer.lean", "inferTypeSubstList", "cakeml/compiler/inference/inferScript.sml", "infer_type_subst_def", "reviewed_exact", None),
+        ("Flapjack/Compiler/Inference/Unify/Substitution.lean", "tWfs", "cakeml/compiler/inference/unifyScript.sml", "t_wfs_def", "reviewed_fmap_as_finite_support_parameters", ["subst"]),
+        ("Flapjack/Compiler/Inference/Unify/Walkstar.lean", "walkstarEqn", "cakeml/compiler/inference/unifyScript.sml", "t_walkstar_eqn", "reviewed_fmap_as_finite_support_parameters", ["s"]),
+        ("Flapjack/Compiler/Inference/Unify/Walkstar.lean", "tWalkstarEqn1", "cakeml/compiler/inference/unifyScript.sml", "t_walkstar_eqn1", "reviewed_fmap_as_finite_support_parameters", ["s"]),
+        ("Flapjack/Compiler/Inference/Unify/Walk/Term.lean", "tWalkEqn", "cakeml/compiler/inference/unifyScript.sml", "t_walk_eqn", "reviewed_fmap_as_finite_support_parameters", ["s1", "s2", "s3"]),
+        ("Flapjack/Compiler/Inference/Unify/Walk.lean", "tVwalkEq", "cakeml/compiler/inference/unifyScript.sml", "t_vwalk_eqn", "reviewed_fmap_as_finite_support_parameters", ["subst"]),
+        ("Flapjack/Compiler/Inference/InferT.lean", "InferT", "cakeml/compiler/inference/infer_tScript.sml", "infer_t", "reviewed_exact", None),
+        ("Flapjack/TypeSystemHOL.lean", "SemanticT", "cakeml/semantics/typeSystemScript.sml", "t", "reviewed_exact", None),
+        ("Flapjack/Basis/Pure/MlString.lean", "MlString", "cakeml/basis/pure/mlstringScript.sml", "mlstring", "reviewed_exact", None),
+    )
+    for path, name, hol_path, hol_name, status, parameter in dependencies:
+        rows = [row for row in records if row.get("lean_path") == path and row.get("lean_name") == name]
+        if (len(rows) != 1 or rows[0].get("hol_path") != hol_path or rows[0].get("hol_name") != hol_name or
+                rows[0].get("hol_line") is not None or rows[0].get("statement_status") != status or
+                rows[0].get("fmap_as_finite_support_parameters") != parameter or
+                any(value for key, value in rows[0].items() if key != "fmap_as_finite_support_parameters" and
+                    (key.startswith("fmap_as_") or key.startswith("names_as_") or key in {
+                        "list_as_array", "words_as_type_indexed_bitvec", "word_dimension_as_width",
+                        "word_dimensions_as_widths", "reals_as_rational_cuts", "nested_list_rel_as_mutual"}))):
+            return [f"type-substitution walkstar requires the unique reviewed {name} dependency"]
+    return []
+
+
 def nested_thunk_map_combination(hol_path: str, hol_name: str, lean_path: str, lean_name: str,
                                  nested: tuple[str, ...], fmap_fields: tuple[str, ...],
                                  relation: tuple[tuple[str, str], ...],

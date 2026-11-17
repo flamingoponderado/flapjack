@@ -68,6 +68,15 @@ private theorem listSwap (ts : List SemanticT) (names : List MlString)
 termination_by sizeOf ts
 end
 
+/-- The canonical-map codec applies to either independently quantified
+    inference substitution. -/
+theorem holFmapAsFiniteSupportNestedWalkstarWitness
+    (map : HolFiniteMapExact Nat InferT) (key : Nat) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad map)).lookup key = map.lookup key ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad map)).finiteSupport = map.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad map) = map :=
+  holFmapAsFiniteSupportParamWitness_tVR_subst map key
+
 /-- The type and list substitution/walkstar equations under the original
     well-formedness assumption. A qualifier for the independently quantified
     finite-map binders is needed before this HOL theorem can be tagged. -/
