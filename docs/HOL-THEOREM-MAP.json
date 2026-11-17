@@ -12,6 +12,18 @@
   "reviewer": "Independent source comparison and type_es_length_typed; exact expression and type-list typing premise, binder order and length conclusion."
  },
 {
+  "hol_path": "cakeml/semantics/proofs/typeSysPropsScript.sml", "hol_name": "num_tvs_bind_var_list",
+  "lean_path": "Flapjack/TypeSysProps/Environment.lean", "lean_name": "numTvsBindVarList",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with the source and num_tvs_bind_var_list_typed confirms the type-variable count, binding list and local-environment binders and the unconditional equality for arbitrary binding levels."
+ },
+{
+  "hol_path": "cakeml/semantics/proofs/typeSysPropsScript.sml", "hol_name": "tenv_val_exp_ok_bvl",
+  "lean_path": "Flapjack/TypeSysProps/Environment.lean", "lean_name": "tenvValExpOkBvl",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with the source and tenv_val_exp_ok_bvl_typed confirms the local environment and binding list, both well-formedness and EVERY free-variable premises, and the level-zero binding conclusion."
+ },
+{
   "hol_path": "cakeml/semantics/proofs/typeSysPropsScript.sml", "hol_name": "check_ctor_tenv_ok",
   "lean_path": "Flapjack/TypeSysProps/Constructor.lean", "lean_name": "checkCtorTenvOk",
   "statement_status": "reviewed_exact",

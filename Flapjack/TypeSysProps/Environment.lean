@@ -11,10 +11,10 @@ namespace Flapjack.TypeSysProps
 open Flapjack.NamespaceHOL Flapjack.TypeSystemHOL Flapjack.TypeSoundInvariants
   Flapjack.Basis.Pure.MlString Flapjack.AstHOL
 
-/-- Binding names does not change the number of local type variables. This is
-a local unfolding of the HOL definitions used in the function-list proof. -/
-private theorem numTvsBind (bindings : List (MlString × SemanticT)) (env : TenvValExp) :
-    numTvs (bindVarList 0 bindings env) = numTvs env := by
+/-- Binding names does not change the number of local type variables. -/
+@[hol "cakeml/semantics/proofs/typeSysPropsScript.sml" "num_tvs_bind_var_list"]
+theorem numTvsBindVarList (tvs : Nat) (bindings : List (MlString × SemanticT)) (env : TenvValExp) :
+    numTvs (bindVarList tvs bindings env) = numTvs env := by
   induction bindings with
   | nil => simp [bindVarList]
   | cons entry rest ih =>
@@ -38,9 +38,24 @@ theorem tenvValExpOkBvlFuns {α : Type} (funs : List (MlString × MlString × Fl
   | cons first rest ih =>
     cases typed with
     | cons envE name arg body funs binds t1 t2 free typed tail unique =>
-      simp only [bindVarList, tenvValExpOk, numTvsBind, Nat.zero_add]
+      simp only [bindVarList, tenvValExpOk, numTvsBindVarList, Nat.zero_add]
       refine ⟨?_, ih _ tail⟩
-      simpa [numTvsBind] using free
+      simpa [numTvsBindVarList] using free
+
+/-- Adding well-formed monomorphic bindings preserves the local environment
+invariant. -/
+@[hol "cakeml/semantics/proofs/typeSysPropsScript.sml" "tenv_val_exp_ok_bvl"]
+theorem tenvValExpOkBvl (localEnv : TenvValExp) (bindings : List (MlString × SemanticT)) :
+    tenvValExpOk localEnv ∧ (bindings.map Prod.snd).all (checkFreevars (numTvs localEnv) []) = true →
+      tenvValExpOk (bindVarList 0 bindings localEnv) := by
+  intro ⟨ok, checks⟩
+  induction bindings with
+  | nil => simpa [bindVarList] using ok
+  | cons entry rest ih =>
+    rcases entry with ⟨name, ty⟩
+    simp only [List.map_cons, List.all_cons, Bool.and_eq_true] at checks
+    simp only [bindVarList, tenvValExpOk, numTvsBindVarList, Nat.zero_add]
+    exact ⟨checks.1, ih checks.2⟩
 
 @[hol "cakeml/semantics/proofs/typeSysPropsScript.sml" "extend_dec_tenv_ok"]
 theorem extendDecTenvOk (tenv tenv' : TypeEnv)
