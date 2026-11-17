@@ -56,6 +56,9 @@ val _ = show "type_name_check_sub_success_eval" (EVAL ``
 val _ = show "check_ctor_types_typed" inferTheory.check_ctor_types_def;
 val _ = show "check_ctors_typed" inferTheory.check_ctors_def;
 val _ = show "check_type_definition_typed" inferTheory.check_type_definition_def;
+val _ = show "check_ctor_types_expand_typed" inferTheory.check_ctor_types_expand;
+val _ = show "check_ctors_expand_typed" inferTheory.check_ctors_expand;
+val _ = show "check_type_definition_expand_typed" inferTheory.check_type_definition_expand;
 val _ = show "check_type_definition_dup_ctor_eval" (EVAL ``
   check_type_definition <|loc := NONE; err := nsEmpty|> nsEmpty
     [([«a»; «a»], «t», [(«C», []); («C», [])])] (7:num)``);

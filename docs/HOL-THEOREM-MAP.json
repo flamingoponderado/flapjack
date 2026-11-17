@@ -1,5 +1,23 @@
 [
 {
+  "hol_path": "cakeml/compiler/inference/inferScript.sml", "hol_name": "check_ctor_types_expand",
+  "lean_path": "Flapjack/Compiler/Inference/Infer/TypeDefinitionsExpand.lean", "lean_name": "checkCtorTypesExpand",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with the source and check_ctor_types_expand_typed confirms both full equations, arbitrary state, and all success and structured-error cases with returned state."
+ },
+{
+  "hol_path": "cakeml/compiler/inference/inferScript.sml", "hol_name": "check_ctors_expand",
+  "lean_path": "Flapjack/Compiler/Inference/Infer/TypeDefinitionsExpand.lean", "lean_name": "checkCtorsExpand",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with the source and check_ctors_expand_typed confirms both full equations, duplicate ordering and diagnostics, nested checker outcomes and arbitrary state without added premises."
+ },
+{
+  "hol_path": "cakeml/compiler/inference/inferScript.sml", "hol_name": "check_type_definition_expand",
+  "lean_path": "Flapjack/Compiler/Inference/Infer/TypeDefinitionsExpand.lean", "lean_name": "checkTypeDefinitionExpand",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with the source and check_type_definition_expand_typed confirms all binders, source type-name projection, duplicate selection and complete state/error outcome."
+ },
+{
   "hol_path": "cakeml/compiler/inference/inferScript.sml", "hol_name": "bind_type_name_check_subst",
   "lean_path": "Flapjack/Compiler/Inference/Infer/TypeNameCheckBind.lean", "lean_name": "bindTypeNameCheckSubst",
   "statement_status": "reviewed_exact",
