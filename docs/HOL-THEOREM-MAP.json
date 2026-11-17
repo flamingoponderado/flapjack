@@ -1,5 +1,53 @@
 [
 {
+  "hol_path": "HOL/src/pred_set/src/pred_setScript.sml", "hol_name": "INJ_LINV_OPT",
+  "lean_path": "Flapjack/Misc/PredSet.lean", "lean_name": "holInjLinvOpt",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent source comparison and inj_linv_opt_typed; independent domain and codomain, injection premise and complete equivalence."
+ },
+{
+  "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "LINVI_def",
+  "lean_path": "Flapjack/Compiler/Inference/TypeDCanon/Inverse.lean", "lean_name": "linvi",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent source comparison and linvi_def_typed; polymorphic endofunction and both optional-inverse branches."
+ },
+{
+  "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "INJ_LINVI",
+  "lean_path": "Flapjack/Compiler/Inference/TypeDCanon/Inverse.lean", "lean_name": "injLinvi",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent source comparison and inj_LINVI_typed; polymorphic carrier, injection and domain-membership premises."
+ },
+{
+  "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "LINVI_RINV",
+  "lean_path": "Flapjack/Compiler/Inference/TypeDCanon/Inverse.lean", "lean_name": "linviRinv",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent source comparison and LINVI_RINV_typed; polymorphic carrier and existential image premise."
+ },
+{
+  "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "good_remap_LINVI",
+  "lean_path": "Flapjack/Compiler/Inference/TypeDCanon/Inverse.lean", "lean_name": "goodRemapLinvi",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent source comparison and good_remap_LINVI_typed; original three premises and good-remap conclusion."
+ },
+{
+  "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "ts_tid_rename_LINVI",
+  "lean_path": "Flapjack/Compiler/Inference/TypeDCanon/Inverse.lean", "lean_name": "tsTidRenameLinvi",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent source comparison and ts_tid_rename_LINVI_typed; identifier-subset and injection premises and full conclusion."
+ },
+{
+  "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "ts_tid_rename_compose",
+  "lean_path": "Flapjack/Compiler/Inference/TypeDCanon/Inverse.lean", "lean_name": "tsTidRenameCompose",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent source comparison and ts_tid_rename_compose_typed; binder order and composition orientation."
+ },
+{
+  "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "ts_tid_rename_eq_id",
+  "lean_path": "Flapjack/Compiler/Inference/TypeDCanon/Inverse.lean", "lean_name": "tsTidRenameEqId",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent source comparison and ts_tid_rename_eq_id_typed; full equivalence over all identifiers in the type."
+ },
+{
   "hol_path": "HOL/src/pred_set/src/pred_setScript.sml", "hol_name": "LINV_DEF",
   "lean_path": "Flapjack/Misc/PredSet.lean", "lean_name": "holLinvDef",
   "statement_status": "reviewed_exact",

@@ -39,6 +39,30 @@ unspecified). The `Nonempty` binder is the inhabitedness every HOL type has. -/
 noncomputable def holLinv {α β : Type} [Nonempty α] (f : α → β) (s : α → Prop) (y : β) : α :=
   holThe (holLinvOpt f s y)
 
+/-- The optional inverse identifies exactly the domain elements of an injection. -/
+@[hol "HOL/src/pred_set/src/pred_setScript.sml" "INJ_LINV_OPT"]
+theorem holInjLinvOpt {α β : Type} (f : α → β) (s : α → Prop) (t : β → Prop) :
+    holInj f s t → ∀ x y, holLinvOpt f s y = some x ↔ y = f x ∧ s x ∧ t y := by
+  intro inj x y
+  classical
+  constructor
+  · intro found
+    unfold holLinvOpt at found
+    split at found
+    next h =>
+      have spec := Classical.choose_spec (show ∃ z, s z ∧ f z = y from
+        let ⟨z, h1, h2⟩ := h; ⟨z, h2, h1.symm⟩)
+      have equal := Option.some.inj found
+      rw [equal] at spec
+      exact ⟨spec.2.symm, spec.1, spec.2 ▸ inj.1 x spec.1⟩
+    next h => contradiction
+  · rintro ⟨rfl, hx, _⟩
+    have h : ∃ z, f x = f z ∧ s z := ⟨x, rfl, hx⟩
+    simp only [holLinvOpt, dif_pos h, Option.some.injEq]
+    have spec := Classical.choose_spec (show ∃ z, s z ∧ f z = f x from
+      let ⟨z, h1, h2⟩ := h; ⟨z, h2, h1.symm⟩)
+    exact inj.2 _ x ⟨spec.1, hx⟩ spec.2
+
 /-- An injective map's left inverse recovers every member of its domain. -/
 @[hol "HOL/src/pred_set/src/pred_setScript.sml" "LINV_DEF"]
 theorem holLinvDef {α β : Type} [Nonempty α] (f : α → β) (s : α → Prop) (t : β → Prop) :

@@ -129,6 +129,14 @@ type_e_ts_tid_rename_typed=good_remap (f :num -> num) ⇒ (∀(tenv :type_env) (
 linv_def_typed=∀(f :α -> β) (s :α -> bool) (t :β -> bool). INJ f s t ⇒ ∀(x :α). x ∈ s ⇒ LINV f s (f x) = x
 good_remap_LINV_typed=good_remap (f :num -> num) ∧ prim_tids T (s :num -> bool) ∧ INJ f s (t :num -> bool) ⇒ good_remap (LINV f s ∘ f)
 ts_tid_rename_LINV_typed=∀(f :num -> num) (x :t). INJ f (s :num -> bool) (t :num -> bool) ∧ set_tids_subset s x ⇒ ts_tid_rename (LINV f s) (ts_tid_rename f x) = x
+inj_linv_opt_typed=INJ (f :α -> β) (s :α -> bool) (t :β -> bool) ⇒ ∀(x :α) (y :β). LINV_OPT f s y = SOME x ⇔ y = f x ∧ x ∈ s ∧ y ∈ t
+linvi_def_typed=∀(f :α -> α) (s :α -> bool) (y :α). LINVI f s y = case LINV_OPT f s y of (NONE :α option) => f y | SOME x => x
+inj_LINVI_typed=INJ (f :α -> α) (s :α -> bool) (t :α -> bool) ∧ (x :α) ∈ s ⇒ LINVI f s (f x) = x
+LINVI_RINV_typed=INJ (f :α -> α) (s :α -> bool) (t :α -> bool) ∧ (∃(x :α). x ∈ s ∧ f x = (y :α)) ⇒ f (LINVI f s y) = y
+good_remap_LINVI_typed=good_remap (f :num -> num) ∧ prim_tids T (s :num -> bool) ∧ INJ f s (t :num -> bool) ⇒ good_remap (LINVI f s)
+ts_tid_rename_LINVI_typed=∀(f :num -> num) (x :t). INJ f (s :num -> bool) (t :num -> bool) ∧ set_tids_subset s x ⇒ ts_tid_rename (LINVI f s) (ts_tid_rename f x) = x
+ts_tid_rename_compose_typed=∀(g :num -> num) (t :t) (f :num -> num). ts_tid_rename f (ts_tid_rename g t) = ts_tid_rename (f ∘ g) t
+ts_tid_rename_eq_id_typed=∀(f :num -> num) (t :t). ts_tid_rename f t = t ⇔ ∀(x :num). x ∈ set_tids t ⇒ f x = x
 remap_tenvE_typed=(∀(f :num -> num). remap_tenvE f Empty = Empty) ∧ (∀(f :num -> num) (n :num) (e :tenv_val_exp). remap_tenvE f (Bind_tvar n e) = Bind_tvar n (remap_tenvE f e)) ∧ ∀(f :num -> num) (s :mlstring) (n :num) (t :t) (e :tenv_val_exp). remap_tenvE f (Bind_name s n t e) = Bind_name s n (ts_tid_rename f t) (remap_tenvE f e)
 remap_tenvE_bind_tvar_typed=remap_tenvE (f :num -> num) (bind_tvar (tvs :num) (e :tenv_val_exp)) = bind_tvar tvs (remap_tenvE f e)
 num_tvs_remap_tenvE_replay_typed=∀(tenvE :tenv_val_exp). num_tvs (remap_tenvE (f :num -> num) tenvE) = num_tvs tenvE
