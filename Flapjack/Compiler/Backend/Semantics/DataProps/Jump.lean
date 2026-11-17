@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.Semantics.DataSem.Control
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Env
 
 @[expose] public section
 
@@ -21,6 +22,44 @@ theorem jumpExc_transport {C F : Type} (source target jumped : State C F)
   subst jumped
   simp
 
+
+/-- Flapjack infrastructure for the reviewed HOL `rich_list$LASTN` rendering
+    `wordSemLastN`: the last `n` elements are the suffix dropped after
+    `LENGTH l - n`.  No separate HOL original; HOL states the corresponding
+    facts through `LASTN_def` and `REVERSE_TAKE`. -/
+theorem wordSemLastN_eq_drop {α : Type} (n : Nat) (l : List α) :
+    wordSemLastN n l = l.drop (l.length - n) := by
+  unfold wordSemLastN
+  rw [List.take_reverse, List.reverse_reverse]
+
+/-- Exact HOL `jump_exc_IMP` (`dataPropsScript.sml:1830`): a successful jump
+    finds the exception frame at `LASTN (handler + 1)` and returns the state
+    with that frame's handler, locals, stack tail and locals size. -/
+@[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "jump_exc_IMP"]
+theorem jumpExcImp {C F : Type} (s t : State C F) (run : jumpExc s = some t) :
+    s.handler < s.stack.length ∧
+    ∃ (n : Nat) (e : Spt DataSem.Value) (ls : Option Nat) (xs : List Stack),
+      wordSemLastN (s.handler + 1) s.stack = .exc ls e n :: xs ∧
+      t = { s with handler := n, locals := e, stack := xs, localsSize := ls } := by
+  unfold jumpExc at run
+  by_cases h : s.handler < s.stack.length
+  · simp only [h, if_true] at run
+    cases d : s.stack.drop (s.stack.length - (s.handler + 1)) with
+    | nil =>
+      simp only [d] at run
+      cases run
+    | cons frame rest =>
+      cases frame with
+      | env size env =>
+        simp only [d] at run
+        cases run
+      | exc ls e n =>
+        simp only [d, Option.some.injEq] at run
+        refine ⟨h, n, e, ls, rest, ?_, ?_⟩
+        · rw [wordSemLastN_eq_drop, d]
+        · rw [run]
+  · simp only [h, if_false] at run
+    cases run
 
 /-- Exact HOL `jump_exc_NONE` (`dataPropsScript.sml:1819`): the handler search
 reads only the handler index and the control stack, so updates to the locals,

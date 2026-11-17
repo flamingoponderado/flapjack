@@ -215,3 +215,4 @@ val _ = show "cut_state_opt_locals_ok_typed"
 val _ = emit "evaluate_cc_co_only_diff_typed" "evaluate_cc_co_only_diff";
 val _ = emit "the_NONE_typed" "the_NONE";
 val _ = emit "the_le_IMP_option_le_typed" "the_le_IMP_option_le";
+val _ = emit "jump_exc_IMP_typed" "jump_exc_IMP";
