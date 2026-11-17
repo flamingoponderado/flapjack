@@ -105,6 +105,17 @@ val type_p_pat_bindings_replay = Q.prove(
   ho_match_mp_tac type_p_ind >> rw [astTheory.pat_bindings_def]);
 val _ = show "type_p_pat_bindings_replay_typed" type_p_pat_bindings_replay;
 
+val t_vars_check_t_replay = Q.prove(
+  `(!t. ~check_t 0 {} t /\ check_t 0 s t ==>
+         ?n'. n' IN s /\ n' IN t_vars t) /\
+   (!ts. !x. MEM x ts ==> ~check_t 0 {} x /\ check_t 0 s x ==>
+         ?n'. n' IN s /\ n' IN t_vars x)`,
+  ho_match_mp_tac infer_tTheory.infer_t_induction >>
+  rw [check_t_def, unifyTheory.t_vars_eqn] >>
+  fs [EXISTS_MEM, EVERY_MEM] >> res_tac >> qexists_tac `n'` >>
+  fs [MEM_MAP] >> metis_tac []);
+val _ = show "t_vars_check_t_replay_typed" t_vars_check_t_replay;
+
 val check_freevars_deBruijn_inc_replay = Q.prove(
   `!tvs tvs' t. check_freevars tvs tvs' t ==>
     !n n'. check_freevars (n+tvs) tvs' (deBruijn_inc n' n t)`,

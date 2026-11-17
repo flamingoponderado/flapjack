@@ -1,5 +1,11 @@
 [
 {
+  "hol_path": "cakeml/compiler/inference/proofs/type_eDetermScript.sml", "hol_name": "t_vars_check_t",
+  "lean_path": "Flapjack/Compiler/Inference/TypeEDeterm.lean", "lean_name": "tVarsCheckT",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent source comparison and t_vars_check_t_replay_typed confirm the shared allowed-variable set, both complete conjuncts, list-membership premise and existential variable-membership conclusion."
+ },
+{
   "hol_path": "cakeml/compiler/inference/proofs/type_eDetermScript.sml", "hol_name": "type_p_pat_bindings",
   "lean_path": "Flapjack/Compiler/Inference/TypeEDeterm.lean", "lean_name": "typePPatBindings",
   "statement_status": "reviewed_exact",
