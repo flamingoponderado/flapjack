@@ -67,6 +67,7 @@ ALLOWED_QUALIFIERS = {
     "fmap_as_finite_support_function",
     "fmap_as_finite_support_tuple",
     "fmap_as_finite_support_heterogeneous_function",
+    "fmap_as_finite_support_parameter_tuple_result",
     "fmap_as_finite_support_result_observations",
     "fmap_as_finite_support_parameter_observations",
     "fmap_as_finite_support_parameter_predicate_domain",
@@ -215,6 +216,7 @@ def manifest_qualifiers(record: dict[str, Any]) -> dict[str, Any]:
         "fmap_as_finite_support_function",
         "fmap_as_finite_support_tuple",
         "fmap_as_finite_support_heterogeneous_function",
+        "fmap_as_finite_support_parameter_tuple_result",
         "fmap_as_finite_support_result_observations",
         "fmap_as_finite_support_parameters",
         "fmap_as_finite_support_parameter_predicate_domain",
@@ -266,6 +268,27 @@ def check_records(
         item = candidates[0]
         qualifiers = manifest_qualifiers(record)
         exported_qualifiers = item.get("qualifiers", {})
+        generalise_key = "fmap_as_finite_support_parameter_tuple_result"
+        if exported_qualifiers.get(generalise_key, []) != qualifiers.get(generalise_key, []):
+            raise ValueError(
+                f"{record['lean_path']}:{record['lean_name']}: generalization map qualifier "
+                "differs from elaborated @[hol] exporter"
+            )
+        generalise_ref = ("cakeml/compiler/inference/inferScript.sml", "generalise_def")
+        if (generalise_key in qualifiers or record.get("statement_status") ==
+                "reviewed_fmap_as_finite_support_parameter_tuple_result" or
+                (item["hol_path"], item["hol_name"]) == generalise_ref):
+            valid_targets = {
+                "Flapjack.Compiler.Inference.Infer.Generalise.generaliseMap",
+                "Flapjack.Compiler.Inference.Infer.Generalise.generaliseListMap",
+            }
+            if (record.get("statement_status") != "reviewed_fmap_as_finite_support_parameter_tuple_result"
+                    or item["lean_name"] not in valid_targets
+                    or record.get("lean_path") != "Flapjack/Compiler/Inference/Infer/Generalise.lean"
+                    or (item["hol_path"], item["hol_name"]) != generalise_ref
+                    or qualifiers.get(generalise_key) != ["subst", "component_2"]
+                    or any(value for key, value in exported_qualifiers.items() if key != generalise_key)):
+                raise ValueError("invalid generalization map qualifier metadata")
         if any(exported_qualifiers.get(name, []) != value
                for name, value in qualifiers.items()):
             raise ValueError(

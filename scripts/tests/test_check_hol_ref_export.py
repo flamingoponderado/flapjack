@@ -191,6 +191,48 @@ class HolRefExportTest(unittest.TestCase):
             {"fmap_as_finite_support_heterogeneous_function": ["argument_1"]},
         )
 
+    def test_generalisation_map_metadata_is_exact_and_bidirectional(self):
+        key = "fmap_as_finite_support_parameter_tuple_result"
+        fields = {key: ["subst", "component_2"]}
+        manifest = [{**self.manifest[0], "lean_name": "generaliseMap",
+                     "lean_path": "Flapjack/Compiler/Inference/Infer/Generalise.lean",
+                     "hol_path": "cakeml/compiler/inference/inferScript.sml",
+                     "hol_name": "generalise_def",
+                     "statement_status": "reviewed_" + key, **fields}]
+        exported = [{"lean_name": "Flapjack.Compiler.Inference.Infer.Generalise.generaliseMap",
+                     "hol_path": manifest[0]["hol_path"], "hol_name": "generalise_def",
+                     "qualifiers": fields}]
+        self.assertEqual(MODULE.check_records(manifest, exported), 1)
+        for qualifier in ({}, {key: ["subst", "component_1"]}):
+            with self.subTest(qualifier=qualifier), self.assertRaises(ValueError):
+                MODULE.check_records(manifest, [{**exported[0], "qualifiers": qualifier}])
+        with self.assertRaises(ValueError):
+            MODULE.check_records([{k: v for k, v in manifest[0].items() if k != key}], exported)
+        with self.assertRaises(ValueError):
+            MODULE.check_records([{k: v for k, v in manifest[0].items() if k != key}],
+                                 [{**exported[0], "qualifiers": {}}])
+        with self.assertRaises(ValueError):
+            MODULE.check_records([{**{k: v for k, v in manifest[0].items() if k != key},
+                                   "statement_status": "reviewed_exact"}],
+                                 [{**exported[0], "qualifiers": {}}])
+        with self.assertRaises(ValueError):
+            MODULE.check_records([{**manifest[0], "statement_status": "reviewed_exact"}], exported)
+        with self.assertRaises(ValueError):
+            MODULE.check_records(manifest, [{**exported[0], "qualifiers":
+                {**fields, "words_as_type_indexed_bitvec": True}}])
+        with self.assertRaises(ValueError):
+            MODULE.check_records(manifest, [{**exported[0],
+                "lean_name": "Flapjack.Unrelated.generaliseMap"}])
+        with self.assertRaises(ValueError):
+            MODULE.check_records([{**manifest[0], "lean_path": "Flapjack/Unrelated.lean"}], exported)
+        list_manifest = [{**manifest[0], "lean_name": "generaliseListMap"}]
+        list_exported = [{**exported[0], "lean_name":
+            "Flapjack.Compiler.Inference.Infer.Generalise.generaliseListMap"}]
+        self.assertEqual(MODULE.check_records(list_manifest, list_exported), 1)
+        with self.assertRaises(ValueError):
+            MODULE.check_records(list_manifest, [{**list_exported[0], "qualifiers": {}}])
+        self.assertEqual(MODULE.validate_export_record(exported[0], 1), exported[0])
+
     def test_fmap_as_finite_support_equalities_qualifier_must_match(self):
         self.check_qualifier(
             "reviewed_fmap_as_finite_support_equalities",
