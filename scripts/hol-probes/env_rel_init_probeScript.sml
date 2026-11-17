@@ -37,6 +37,18 @@ val _ = show "find_dup_typed" inferTheory.find_dup_def;
 val _ = show "check_dups_typed" inferTheory.check_dups_def;
 val _ = show "check_dups_eq_find_dup_typed" inferTheory.check_dups_eq_find_dup;
 val _ = show "type_name_check_subst_typed" inferTheory.type_name_check_subst_def;
+val _ = show "check_ctor_types_typed" inferTheory.check_ctor_types_def;
+val _ = show "check_ctors_typed" inferTheory.check_ctors_def;
+val _ = show "check_type_definition_typed" inferTheory.check_type_definition_def;
+val _ = show "check_type_definition_dup_ctor_eval" (EVAL ``
+  check_type_definition <|loc := NONE; err := nsEmpty|> nsEmpty
+    [([«a»; «a»], «t», [(«C», []); («C», [])])] (7:num)``);
+val _ = show "check_type_definition_dup_type_eval" (EVAL ``
+  check_type_definition <|loc := NONE; err := nsEmpty|> nsEmpty
+    [([], «t», []); ([], «t», [])] (7:num)``);
+val _ = show "check_type_definition_unbound_eval" (EVAL ``
+  check_type_definition <|loc := NONE; err := nsEmpty|> nsEmpty
+    [([], «t», [(«C», [Atvar «a»])])] (7:num)``);
 val _ = show "type_name_check_unbound_eval" (EVAL ``
   type_name_check_subst <|loc := NONE; err := nsEmpty|> (\x. x) nsEmpty [] (Atvar «a») (7:num)``);
 val _ = show "type_name_check_tuple_eval" (EVAL ``

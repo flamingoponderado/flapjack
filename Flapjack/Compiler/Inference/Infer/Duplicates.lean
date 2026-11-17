@@ -16,10 +16,11 @@ def findDup {α : Type} [DecidableEq α] : List α → Option α
   | [] => none
   | x :: xs => if x ∈ xs then some x else findDup xs
 
-private def checkDupsImpl {α state error : Type} [DecidableEq α] (l : LocErrInfo)
+/-- Computable duplicate checking with a supplied equality implementation. -/
+def checkDupsExec {α state error : Type} [DecidableEq α] (l : LocErrInfo)
     (f : α → error) : List α → M state Unit (Option Flapjack.Misc.Location.Locs × error)
   | [] => ret ()
-  | x :: xs => if x ∈ xs then failwith l (f x) else checkDupsImpl l f xs
+  | x :: xs => if x ∈ xs then failwith l (f x) else checkDupsExec l f xs
 
 /-- The source operation admits every HOL equality type. -/
 @[hol "cakeml/compiler/inference/inferScript.sml" "find_dup_def"]
@@ -30,7 +31,15 @@ noncomputable def findDupHOL {α : Type} (xs : List α) : Option α :=
 @[hol "cakeml/compiler/inference/inferScript.sml" "check_dups_def"]
 noncomputable def checkDups {α state error : Type} (l : LocErrInfo)
     (f : α → error) (xs : List α) : M state Unit (Option Flapjack.Misc.Location.Locs × error) :=
-  @checkDupsImpl α state error (Classical.typeDecidableEq α) l f xs
+  @checkDupsExec α state error (Classical.typeDecidableEq α) l f xs
+
+/-- Executable duplicate checking agrees with unrestricted source equality. -/
+theorem checkDups_eq {α state error : Type} [inst : DecidableEq α]
+    (l : LocErrInfo) (f : α → error) (xs : List α) :
+    checkDups (state := state) l f xs = checkDupsExec l f xs := by
+  unfold checkDups
+  have same : Classical.typeDecidableEq α = inst := Subsingleton.elim _ _
+  rw [same]
 
 /-- The executable equality implementation agrees with source equality. -/
 theorem findDupHOL_eq {α : Type} [inst : DecidableEq α] (xs : List α) :
@@ -54,7 +63,7 @@ theorem checkDupsEqFindDup {α state value error : Type}
   | cons x xs ih =>
     by_cases h : x ∈ xs
     · funext s
-      simp [checkDupsImpl, findDup, h, Operations.failwith, ignoreBind]
-    · simpa [checkDupsImpl, findDup, h] using ih
+      simp [checkDupsExec, findDup, h, Operations.failwith, ignoreBind]
+    · simpa [checkDupsExec, findDup, h] using ih
 
 end Flapjack.Compiler.Inference.Infer.Duplicates

@@ -1,5 +1,23 @@
 [
 {
+  "hol_path": "cakeml/compiler/inference/inferScript.sml", "hol_name": "check_ctor_types_def",
+  "lean_path": "Flapjack/Compiler/Inference/Infer/TypeDefinitions.lean", "lean_name": "checkCtorTypes",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with the source and check_ctor_types_typed confirms both clauses, arbitrary state and exception carriers, constructor order, source annotation checking and the exact unbound-variable message."
+ },
+{
+  "hol_path": "cakeml/compiler/inference/inferScript.sml", "hol_name": "check_ctors_def",
+  "lean_path": "Flapjack/Compiler/Inference/Infer/TypeDefinitions.lean", "lean_name": "checkCtors",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with the source and check_ctors_typed confirms the complete clauses, type-definition carrier, duplicate-check order and messages, constructor checks and state/error behavior. checkDups_eq connects executable name equality to unrestricted HOL duplicate checking."
+ },
+{
+  "hol_path": "cakeml/compiler/inference/inferScript.sml", "hol_name": "check_type_definition_def",
+  "lean_path": "Flapjack/Compiler/Inference/Infer/TypeDefinitions.lean", "lean_name": "checkTypeDefinition",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with the source and check_type_definition_typed confirms all carriers, type-name projection, duplicate-first ordering, source diagnostic and subsequent constructor checks. checkDups_eq establishes the executable duplicate check."
+ },
+{
   "hol_path": "cakeml/compiler/inference/inferScript.sml", "hol_name": "type_name_check_subst_def",
   "lean_path": "Flapjack/Compiler/Inference/Infer/TypeNameCheck.lean", "lean_name": "typeNameCheckSubst",
   "statement_status": "reviewed_exact",
