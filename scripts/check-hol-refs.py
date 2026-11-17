@@ -330,6 +330,12 @@ GENERALISE_MAP_QUALIFIER_RE = re.compile(
     r'\(\s*map_parameter\s*:=\s*([A-Za-z_][A-Za-z0-9_\']*)\s*\)\s*'
     r'\(\s*result_component\s*:=\s*([A-Za-z_][A-Za-z0-9_\']*)\s*\)\s*\)'
 )
+GENERALISE_LENGTH_QUALIFIER_RE = re.compile(
+    r'\(\s*fmap_as_finite_support_parameter_tuple_observations\s*:=\s*'
+    r'\(\s*map_parameters\s*:=\s*\[([^]]*)\]\s*\)\s*'
+    r'\(\s*map_producer\s*:=\s*([A-Za-z_][A-Za-z0-9_\'.]*)\s*\)\s*'
+    r'\(\s*result_component\s*:=\s*([A-Za-z_][A-Za-z0-9_\']*)\s*\)\s*\)'
+)
 NESTED_LIST_REL_AS_MUTUAL_RE = re.compile(
     r'\(\s*nested_list_rel_as_mutual\s*:=\s*\[([^]]*)\]\s*\)'
 )
@@ -585,7 +591,8 @@ def hol_attribute_sites(lines: list[str], *, include_fmap_existentials: bool = F
                         include_nested_list_rel: bool = False,
                         include_predicate_domain: bool = False,
                         include_fmap_universals: bool = False,
-                        include_generalise_map: bool = False):
+                        include_generalise_map: bool = False,
+                        include_generalise_length: bool = False):
     """Yield HOL attributes, including attributes split across Lean lines."""
     comment_depth = 0
     start: int | None = None
@@ -715,6 +722,17 @@ def hol_attribute_sites(lines: list[str], *, include_fmap_existentials: bool = F
                     else:
                         positions = (matches[0].group(1), matches[0].group(2))
                     site += (positions,)
+                if include_generalise_length:
+                    matches = list(GENERALISE_LENGTH_QUALIFIER_RE.finditer(attribute))
+                    occurrences = attribute.count("fmap_as_finite_support_parameter_tuple_observations")
+                    if occurrences == 0:
+                        fields = ()
+                    elif occurrences != 1 or len(matches) != 1:
+                        fields = ("",)  # malformed or repeated; fail closed
+                    else:
+                        fields = tuple(field.strip() for field in matches[0].group(1).split(","))
+                        fields += (matches[0].group(2), matches[0].group(3))
+                    site += (fields,)
                 yield site
         start = None
         chunks = []
@@ -5855,7 +5873,7 @@ def generalise_length_observer_errors(
     source: str, lean_path: str, hol_ref: tuple[str, str], parameters: tuple[str, ...],
     producer: str, component: str, producer_source: str, records: list[dict],
 ) -> list[str]:
-    """Prospective exact source check; it does not enable an observer qualifier."""
+    """Check the exact observer source and its reviewed tuple-map producer."""
     expected_path = "Flapjack/Compiler/Inference/InferProps/Generalise.lean"
     producer_path = "Flapjack/Compiler/Inference/Infer/Generalise.lean"
     producer_name = "Flapjack.Compiler.Inference.Infer.Generalise.generaliseListMap"
@@ -5992,7 +6010,7 @@ def main(argv: list[str]) -> int:
              fmap_parameters, fmap_existentials, dimension_width,
              fmap_function_positions, fmap_heterogeneous_function_positions, reals_cuts,
              fmap_equality, result_observations, dimension_widths, fmap_tuple, nested_list_rel,
-             predicate_domain, fmap_universals, generalise_map) in hol_attribute_sites(
+             predicate_domain, fmap_universals, generalise_map, generalise_length) in hol_attribute_sites(
                 lines, include_fmap_existentials=True,
                 include_word_dimension_width=True,
                 include_fmap_function=True,
@@ -6006,8 +6024,26 @@ def main(argv: list[str]) -> int:
                 include_predicate_domain=True,
                 include_fmap_universals=True,
                 include_generalise_map=True,
+                include_generalise_length=True,
              ):
             where = f"{rel}:{number}"
+            if generalise_length or (hol_path == "cakeml/compiler/inference/inferPropsScript.sml" and
+                                     hol_name == "generalise_list_length"):
+                if (len(generalise_length) != 4 or hol_line is not None or
+                        find_lean_decl(lines, number - 1) != "generaliseListLength" or
+                        any((list_fields, names_fields, boundary_fields, fmap_fields, fmap_result,
+                             fmap_relation, fmap_equalities, words_bitvec, fmap_parameters,
+                             fmap_existentials, dimension_width, fmap_function_positions,
+                             fmap_heterogeneous_function_positions, reals_cuts, fmap_equality,
+                             result_observations, dimension_widths, fmap_tuple, nested_list_rel,
+                             predicate_domain, fmap_universals, generalise_map))):
+                    errors.append(f"{where}: generalization length requires its sole qualifier and exact declaration")
+                else:
+                    producer_path = ROOT / "Flapjack/Compiler/Inference/Infer/Generalise.lean"
+                    producer_source = producer_path.read_text(encoding="utf-8") if producer_path.is_file() else ""
+                    errors.extend(f"{where}: {error}" for error in generalise_length_observer_errors(
+                        "\n".join(lines), rel, (hol_path, hol_name), generalise_length[:2],
+                        generalise_length[2], generalise_length[3], producer_source, observation_records))
             if generalise_map or (hol_path == "cakeml/compiler/inference/inferScript.sml" and
                                    hol_name == "generalise_def"):
                 # Both unqualified and prospective references fail closed until

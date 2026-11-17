@@ -426,6 +426,21 @@ permits only the canonical finite-support translation of the HOL finite-map
 input and returned map; it does not authorize other statement or behavior
 differences. Review the typed HOL source and both witnesses independently.
 
+**Qualify generalization length's map observations.** The narrow
+`(fmap_as_finite_support_parameter_tuple_observations :=
+  (map_parameters := [subst, out])
+  (map_producer := Flapjack.Compiler.Inference.Infer.Generalise.generaliseListMap)
+  (result_component := component_2))` qualifier is reserved for
+`generaliseListLength`, the counterpart of `generalise_list_length`. The
+theorem's two map binders use the canonical finite-support translation, and
+the observed tuple map is the separately reviewed producer's second component.
+The source checker validates the complete theorem and unconditional codec
+witnesses, the exporter audits their elaborated types, owners, axiom closures,
+and the producer bundle, and the manifest uses
+`reviewed_fmap_as_finite_support_parameter_tuple_observations`. These checks
+do not replace comparison with the typed HOL statement, and the qualifier
+permits no other change to its statement or semantics.
+
 **Qualify a heterogeneous finite-map function.** Use
 `(fmap_as_finite_support_heterogeneous_function := [argument_N, result_M])`
 only for a direct function definition with a typed result whose named explicit

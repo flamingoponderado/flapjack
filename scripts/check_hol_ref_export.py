@@ -68,6 +68,7 @@ ALLOWED_QUALIFIERS = {
     "fmap_as_finite_support_tuple",
     "fmap_as_finite_support_heterogeneous_function",
     "fmap_as_finite_support_parameter_tuple_result",
+    "fmap_as_finite_support_parameter_tuple_observations",
     "fmap_as_finite_support_result_observations",
     "fmap_as_finite_support_parameter_observations",
     "fmap_as_finite_support_parameter_predicate_domain",
@@ -143,11 +144,12 @@ def export_batches(umbrella: str, exporter: str, count: int = EXPORT_BATCH_COUNT
         return result
 
     direct = imports(header)
-    if direct.count("Flapjack") != 1 or direct.count("Flapjack.Test.NestedRelationAudit") != 1:
-        raise ValueError("HOL exporter must import the umbrella and nested relation audit")
+    shared = ("Flapjack.Test.NestedRelationAudit", "Flapjack.HolRef.GeneraliseLengthAudit")
+    if direct.count("Flapjack") != 1 or any(direct.count(name) != 1 for name in shared):
+        raise ValueError("HOL exporter must import the umbrella and shared audit modules")
     all_imports = list(dict.fromkeys(
         imports(umbrella) + [name for name in direct if name not in
-                             {"Flapjack", "Flapjack.Test.NestedRelationAudit"}]
+                             {"Flapjack", *shared}]
     ))
     if not all_imports or "Flapjack" in all_imports:
         raise ValueError("invalid umbrella imports for HOL export")
@@ -155,7 +157,7 @@ def export_batches(umbrella: str, exporter: str, count: int = EXPORT_BATCH_COUNT
     for index in range(count):
         selected = all_imports[len(all_imports) * index // count:len(all_imports) * (index + 1) // count]
         batch_header = "\n".join(f"import {name}" for name in
-                                 ["Flapjack.Test.NestedRelationAudit", *selected])
+                                 [*shared, *selected])
         batches.append(batch_header + marker + body)
     return batches
 
@@ -217,6 +219,7 @@ def manifest_qualifiers(record: dict[str, Any]) -> dict[str, Any]:
         "fmap_as_finite_support_tuple",
         "fmap_as_finite_support_heterogeneous_function",
         "fmap_as_finite_support_parameter_tuple_result",
+        "fmap_as_finite_support_parameter_tuple_observations",
         "fmap_as_finite_support_result_observations",
         "fmap_as_finite_support_parameters",
         "fmap_as_finite_support_parameter_predicate_domain",
@@ -268,6 +271,35 @@ def check_records(
         item = candidates[0]
         qualifiers = manifest_qualifiers(record)
         exported_qualifiers = item.get("qualifiers", {})
+        length_key = "fmap_as_finite_support_parameter_tuple_observations"
+        if exported_qualifiers.get(length_key, []) != qualifiers.get(length_key, []):
+            raise ValueError("generalization length qualifier differs from elaborated @[hol] exporter")
+        length_ref = ("cakeml/compiler/inference/inferPropsScript.sml", "generalise_list_length")
+        length_status = "reviewed_fmap_as_finite_support_parameter_tuple_observations"
+        if (length_key in qualifiers or record.get("statement_status") == length_status or
+                (item["hol_path"], item["hol_name"]) == length_ref):
+            producer = "Flapjack.Compiler.Inference.Infer.Generalise.generaliseListMap"
+            producer_rows = [row for row in manifest if
+                             row.get("lean_path") == "Flapjack/Compiler/Inference/Infer/Generalise.lean" and
+                             row.get("lean_name") == "generaliseListMap"]
+            if (record.get("statement_status") != length_status or
+                    record.get("lean_path") != "Flapjack/Compiler/Inference/InferProps/Generalise.lean" or
+                    item["lean_name"] != "Flapjack.Compiler.Inference.InferProps.Generalise.generaliseListLength" or
+                    (item["hol_path"], item["hol_name"]) != length_ref or
+                    record.get("hol_line") is not None or
+                    qualifiers.get(length_key) != ["subst", "out", producer, "component_2"] or
+                    any(value for key, value in exported_qualifiers.items() if key != length_key) or
+                    len(producer_rows) != 1 or
+                    producer_rows[0].get("hol_path") != "cakeml/compiler/inference/inferScript.sml" or
+                    producer_rows[0].get("hol_name") != "generalise_def" or
+                    producer_rows[0].get("hol_line") is not None or
+                    producer_rows[0].get("statement_status") !=
+                    "reviewed_fmap_as_finite_support_parameter_tuple_result" or
+                    manifest_qualifiers(producer_rows[0]).get("fmap_as_finite_support_parameter_tuple_result") !=
+                    ["subst", "component_2"] or
+                    any(value for key, value in manifest_qualifiers(producer_rows[0]).items()
+                        if key != "fmap_as_finite_support_parameter_tuple_result")):
+                raise ValueError("invalid generalization length qualifier metadata or producer")
         generalise_key = "fmap_as_finite_support_parameter_tuple_result"
         if exported_qualifiers.get(generalise_key, []) != qualifiers.get(generalise_key, []):
             raise ValueError(

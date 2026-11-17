@@ -233,6 +233,43 @@ class HolRefExportTest(unittest.TestCase):
             MODULE.check_records(list_manifest, [{**list_exported[0], "qualifiers": {}}])
         self.assertEqual(MODULE.validate_export_record(exported[0], 1), exported[0])
 
+    def test_generalisation_length_metadata_and_producer_are_exact(self):
+        key = "fmap_as_finite_support_parameter_tuple_observations"
+        producer = "Flapjack.Compiler.Inference.Infer.Generalise.generaliseListMap"
+        fields = {key: ["subst", "out", producer, "component_2"]}
+        row = {"lean_path": "Flapjack/Compiler/Inference/InferProps/Generalise.lean",
+               "lean_name": "generaliseListLength",
+               "hol_path": "cakeml/compiler/inference/inferPropsScript.sml",
+               "hol_name": "generalise_list_length", "statement_status": "reviewed_" + key, **fields}
+        producer_row = {"lean_path": "Flapjack/Compiler/Inference/Infer/Generalise.lean",
+                        "lean_name": "generaliseListMap",
+                        "hol_path": "cakeml/compiler/inference/inferScript.sml",
+                        "hol_name": "generalise_def",
+                        "statement_status": "reviewed_fmap_as_finite_support_parameter_tuple_result",
+                        "fmap_as_finite_support_parameter_tuple_result": ["subst", "component_2"]}
+        exported = [{"lean_name": "Flapjack.Compiler.Inference.InferProps.Generalise.generaliseListLength",
+                     "hol_path": row["hol_path"], "hol_name": row["hol_name"], "qualifiers": fields},
+                    {"lean_name": producer, "hol_path": producer_row["hol_path"],
+                     "hol_name": producer_row["hol_name"], "qualifiers": {
+                         "fmap_as_finite_support_parameter_tuple_result": ["subst", "component_2"]}}]
+        self.assertEqual(MODULE.check_records([row, producer_row], exported), 2)
+        self.assertEqual(MODULE.validate_export_record(exported[0], 1), exported[0])
+        for changed in ({**row, "statement_status": "reviewed_exact"},
+                        {**row, "lean_path": "Flapjack/Other.lean"},
+                        {**row, "hol_line": 10},
+                        {**row, key: ["out", "subst", producer, "component_2"]}):
+            with self.subTest(row=changed), self.assertRaises(ValueError):
+                MODULE.check_records([changed, producer_row], exported)
+        for rows in ([row], [row, producer_row, producer_row],
+                     [row, {**producer_row, "statement_status": "reviewed_exact"}],
+                     [row, {**producer_row, "words_as_type_indexed_bitvec": True}]):
+            with self.subTest(rows=rows), self.assertRaises(ValueError):
+                MODULE.check_records(rows, exported)
+        for changes in ({"qualifiers": {}}, {"lean_name": "Flapjack.Other.generaliseListLength"},
+                        {"qualifiers": {**fields, "words_as_type_indexed_bitvec": True}}):
+            with self.subTest(changes=changes), self.assertRaises(ValueError):
+                MODULE.check_records([row, producer_row], [{**exported[0], **changes}, exported[1]])
+
     def test_fmap_as_finite_support_equalities_qualifier_must_match(self):
         self.check_qualifier(
             "reviewed_fmap_as_finite_support_equalities",
@@ -379,18 +416,27 @@ class HolRefExportTest(unittest.TestCase):
     def test_batches_cover_umbrella_and_extra_imports(self):
         umbrella = "import Flapjack.A\nimport Flapjack.B\n"
         exporter = ("import Flapjack\nimport Flapjack.Test.NestedRelationAudit\n"
+                    "import Flapjack.HolRef.GeneraliseLengthAudit\n"
                     "import Flapjack.C\nopen Lean Elab Command Flapjack\n#emit_hol_ref_export\n")
         batches = MODULE.export_batches(umbrella, exporter, count=2)
         self.assertEqual(len(batches), 2)
         for name in ("Flapjack.A", "Flapjack.B", "Flapjack.C"):
             self.assertEqual(sum(f"import {name}\n" in batch for batch in batches), 1)
         self.assertTrue(all("import Flapjack.Test.NestedRelationAudit\n" in batch for batch in batches))
+        self.assertTrue(all("import Flapjack.HolRef.GeneraliseLengthAudit\n" in batch for batch in batches))
 
     def test_batches_reject_non_import_umbrella(self):
         exporter = ("import Flapjack\nimport Flapjack.Test.NestedRelationAudit\n"
+                    "import Flapjack.HolRef.GeneraliseLengthAudit\n"
                     "open Lean Elab Command Flapjack\n")
         with self.assertRaisesRegex(ValueError, "import-only"):
             MODULE.export_batches("import Flapjack.A\ndef extra := 1\n", exporter)
+
+    def test_batches_require_generalisation_length_audit(self):
+        exporter = ("import Flapjack\nimport Flapjack.Test.NestedRelationAudit\n"
+                    "open Lean Elab Command Flapjack\n")
+        with self.assertRaisesRegex(ValueError, "shared audit modules"):
+            MODULE.export_batches("import Flapjack.A\n", exporter)
 
     def test_batches_reject_disagreeing_records(self):
         first = self.export[0]

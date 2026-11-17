@@ -203,6 +203,8 @@ structure HolRef where
   /-- Prospective combined map-input/tuple-result metadata. Source and export
       gates must be integrated before declarations may be accepted as ports. -/
   fmapAsFiniteSupportParameterTupleResult : Array String := #[]
+  /-- Prospective metadata for an observer of a qualified tuple-map producer. -/
+  fmapAsFiniteSupportParameterTupleObservations : Array String := #[]
   /-- Standalone declarations (definitions or theorems) whose own input or
       result carrier is the reviewed canonical `HolFiniteMapExact` translation,
       rather than a structure field. Distinct from `fmapAsFiniteSupport`, which
@@ -332,6 +334,10 @@ syntax "(" "fmap_as_finite_support_tuple" ":=" "[" ident,+ "]" ")" : holQualifie
 syntax "(" "fmap_as_finite_support_heterogeneous_function" ":=" "[" ident,+ "]" ")" : holQualifier
 syntax "(" "fmap_as_finite_support_parameter_tuple_result" ":="
   "(" "map_parameter" ":=" ident ")"
+  "(" "result_component" ":=" ident ")" ")" : holQualifier
+syntax "(" "fmap_as_finite_support_parameter_tuple_observations" ":="
+  "(" "map_parameters" ":=" "[" ident,+ "]" ")"
+  "(" "map_producer" ":=" ident ")"
   "(" "result_component" ":=" ident ")" ")" : holQualifier
 syntax "(" "fmap_as_finite_support_result" ")" : holQualifier
 syntax "(" "fmap_as_finite_support_parameters" ":=" "[" ident,+ "]" ")" : holQualifier
@@ -553,6 +559,12 @@ private def parseHolQualifier (stx : Syntax) : CoreM (String × Array String × 
         (map_parameter := $parameter:ident) (result_component := $component:ident))) =>
       pure ("fmap_as_finite_support_parameter_tuple_result",
         #[parameter.getId.eraseMacroScopes.toString, component.getId.eraseMacroScopes.toString], false, #[])
+  | `(holQualifier| (fmap_as_finite_support_parameter_tuple_observations :=
+        (map_parameters := [$parameters:ident,*]) (map_producer := $producer:ident)
+        (result_component := $component:ident))) =>
+      pure ("fmap_as_finite_support_parameter_tuple_observations",
+        parameters.getElems.map (fun parameter => parameter.getId.eraseMacroScopes.toString) ++
+          #[producer.getId.eraseMacroScopes.toString, component.getId.eraseMacroScopes.toString], false, #[])
   | `(holQualifier| (fmap_as_finite_support_result)) =>
       pure ("fmap_as_finite_support_result", #[], true, #[])
   | `(holQualifier| (fmap_as_finite_support_parameters := [$parameters:ident,*])) =>
@@ -613,6 +625,8 @@ private def parseHolRefAttribute (stx : Syntax) : CoreM HolRef := do
     let mut fmapAsFiniteSupportHeterogeneousFunction : Array String := #[]
     let mut generaliseMapQualifier : Array String := #[]
     let mut seenGeneraliseMapQualifier := false
+    let mut generaliseLengthQualifier : Array String := #[]
+    let mut seenGeneraliseLengthQualifier := false
     let mut fmapAsFiniteSupportResult : Bool := false
     let mut fmapAsFiniteSupportParameters : Array String := #[]
     let mut predicateDomain : Array String := #[]
@@ -645,6 +659,11 @@ private def parseHolRefAttribute (stx : Syntax) : CoreM HolRef := do
           throwError "@[hol]: generalization map qualifier may appear only once"
         seenGeneraliseMapQualifier := true
         generaliseMapQualifier := fields
+      else if kind == "fmap_as_finite_support_parameter_tuple_observations" then
+        if seenGeneraliseLengthQualifier then
+          throwError "@[hol]: generalization length qualifier may appear only once"
+        seenGeneraliseLengthQualifier := true
+        generaliseLengthQualifier := fields
       else if kind == "fmap_as_finite_support_parameters" then
         if parameterObservations then
           throwError "@[hol]: parameter observations cannot combine with map parameters"
@@ -700,8 +719,14 @@ private def parseHolRefAttribute (stx : Syntax) : CoreM HolRef := do
       unless qualifiers.size == 1 && generaliseMapQualifier == #["subst", "component_2"] &&
           path == "cakeml/compiler/inference/inferScript.sml" && name == "generalise_def" && line?.isNone do
         throwError "@[hol]: generalization map qualifier requires its unique HOL reference and exact fields, without other qualifiers"
+    if seenGeneraliseLengthQualifier then
+      unless qualifiers.size == 1 && generaliseLengthQualifier == #["subst", "out",
+          "Flapjack.Compiler.Inference.Infer.Generalise.generaliseListMap", "component_2"] &&
+          path == "cakeml/compiler/inference/inferPropsScript.sml" && name == "generalise_list_length" && line?.isNone do
+        throwError "@[hol]: generalization length qualifier requires its unique HOL reference and exact fields, without other qualifiers"
     let ref ← checkedHolRef path name line? listAsArray namesAsString namesAsStringBoundary fmapAsFiniteSupport fmapAsFiniteSupportResult fmapAsFiniteSupportFunction fmapAsFiniteSupportHeterogeneousFunction fmapAsFiniteSupportParameters fmapAsFiniteSupportExistentials fmapAsFiniteSupportRelation fmapAsFiniteSupportEqualities fmapAsFiniteSupportEquality wordsAsTypeIndexedBitvec wordDimensionAsWidth realsAsRationalCuts fmapAsFiniteSupportResultObservations wordDimensionsAsWidths fmapAsFiniteSupportTuple nestedListRelAsMutual parameterObservations predicateDomain universalMaps
-    pure { ref with fmapAsFiniteSupportParameterTupleResult := generaliseMapQualifier }
+    let ref := { ref with fmapAsFiniteSupportParameterTupleResult := generaliseMapQualifier }
+    pure { ref with fmapAsFiniteSupportParameterTupleObservations := generaliseLengthQualifier }
   match stx with
   | `(attr| hol $path:str $name:str $line:num $qualifiers:holQualifier*) =>
       parse path.getString name.getString (some line.getNat) qualifiers
@@ -1110,6 +1135,16 @@ initialize holRefAttribute : ParametricAttribute HolRef ← do
     descr := "original HOL4 declaration (file path and declaration name) ported by this Lean declaration"
     getParam := fun _ stx => parseHolRefAttribute stx
     afterSet := fun decl ref => do
+      if ref.path == "cakeml/compiler/inference/inferPropsScript.sml" && ref.name == "generalise_list_length" &&
+          ref.fmapAsFiniteSupportParameterTupleObservations.isEmpty then
+        logError m!"{decl}: generalise_list_length requires its combined tuple-observer qualifier"
+      if !ref.fmapAsFiniteSupportParameterTupleObservations.isEmpty then
+        let expected : HolRef := {
+          path := "cakeml/compiler/inference/inferPropsScript.sml", name := "generalise_list_length",
+          fmapAsFiniteSupportParameterTupleObservations := #["subst", "out",
+            "Flapjack.Compiler.Inference.Infer.Generalise.generaliseListMap", "component_2"] }
+        unless ref == expected && decl == `Flapjack.Compiler.Inference.InferProps.Generalise.generaliseListLength do
+          logError m!"{decl}: generalization length qualifier has unexpected metadata or declaration"
       if ref.path == "cakeml/compiler/inference/inferScript.sml" && ref.name == "generalise_def" &&
           ref.fmapAsFiniteSupportParameterTupleResult.isEmpty then
         logError m!"{decl}: generalise_def requires its combined map qualifier"
@@ -1235,6 +1270,8 @@ private def HolRef.qualifierSuffix (ref : HolRef) : String :=
     s!" (fmap_as_finite_support_heterogeneous_function := [{String.intercalate ", " ref.fmapAsFiniteSupportHeterogeneousFunction.toList}])"
   let generaliseMapQualifier := if ref.fmapAsFiniteSupportParameterTupleResult.isEmpty then "" else
     s!" (fmap_as_finite_support_parameter_tuple_result := (map_parameter := {ref.fmapAsFiniteSupportParameterTupleResult[0]!}) (result_component := {ref.fmapAsFiniteSupportParameterTupleResult[1]!}))"
+  let generaliseLengthQualifier := if ref.fmapAsFiniteSupportParameterTupleObservations.isEmpty then "" else
+    s!" (fmap_as_finite_support_parameter_tuple_observations := (map_parameters := [subst, out]) (map_producer := {ref.fmapAsFiniteSupportParameterTupleObservations[2]!}) (result_component := {ref.fmapAsFiniteSupportParameterTupleObservations[3]!}))"
   let fmapAsFiniteSupportParameters := if ref.fmapAsFiniteSupportParameters.isEmpty || ref.fmapAsFiniteSupportParameterObservations then "" else
     s!" (fmap_as_finite_support_parameters := [{String.intercalate ", " ref.fmapAsFiniteSupportParameters.toList}])"
   let predicateDomain := if ref.fmapAsFiniteSupportParameterPredicateDomain.isEmpty then "" else
@@ -1263,7 +1300,7 @@ private def HolRef.qualifierSuffix (ref : HolRef) : String :=
     s!" (fmap_as_finite_support_result_observations := [{String.intercalate ", " ref.fmapAsFiniteSupportResultObservations.toList}])"
   let nested := if ref.nestedListRelAsMutual.isEmpty then "" else
     s!" (nested_list_rel_as_mutual := [{String.intercalate ", " ref.nestedListRelAsMutual.toList}])"
-  observations ++ listAsArray ++ namesAsString ++ namesAsStringBoundary ++ fmapAsFiniteSupport ++ fmapAsFiniteSupportResult ++ fmapAsFiniteSupportFunction ++ fmapAsFiniteSupportTuple ++ fmapAsFiniteSupportHeterogeneousFunction ++ generaliseMapQualifier ++ fmapAsFiniteSupportParameters ++ predicateDomain ++ universalMaps ++ fmapAsFiniteSupportExistentials ++ fmapAsFiniteSupportRelation ++ fmapAsFiniteSupportEqualities ++ fmapAsFiniteSupportEquality ++ wordsAsTypeIndexedBitvec ++ wordDimensionAsWidth ++ wordDimensionsAsWidths ++ realsAsRationalCuts ++ nested
+  observations ++ listAsArray ++ namesAsString ++ namesAsStringBoundary ++ fmapAsFiniteSupport ++ fmapAsFiniteSupportResult ++ fmapAsFiniteSupportFunction ++ fmapAsFiniteSupportTuple ++ fmapAsFiniteSupportHeterogeneousFunction ++ generaliseMapQualifier ++ generaliseLengthQualifier ++ fmapAsFiniteSupportParameters ++ predicateDomain ++ universalMaps ++ fmapAsFiniteSupportExistentials ++ fmapAsFiniteSupportRelation ++ fmapAsFiniteSupportEqualities ++ fmapAsFiniteSupportEquality ++ wordsAsTypeIndexedBitvec ++ wordDimensionAsWidth ++ wordDimensionsAsWidths ++ realsAsRationalCuts ++ nested
 
 /-! Parser regressions for the original syntax, each qualifier alone, and both
 qualifiers together. These elaborate temporary syntax values only; they do not
@@ -1529,6 +1566,41 @@ run_cmd do
       HolRef.qualifierSuffix generaliseRef ==
         " (fmap_as_finite_support_parameter_tuple_result := (map_parameter := subst) (result_component := component_2))" do
     throwError "@[hol] generalization map qualifier syntax regression"
+  let lengthSyntax ← `(attr| hol "cakeml/compiler/inference/inferPropsScript.sml" "generalise_list_length"
+    (fmap_as_finite_support_parameter_tuple_observations :=
+      (map_parameters := [subst, out])
+      (map_producer := Flapjack.Compiler.Inference.Infer.Generalise.generaliseListMap)
+      (result_component := component_2)))
+  let lengthRef ← Lean.Elab.Command.liftCoreM (parseHolRefAttribute lengthSyntax)
+  unless lengthRef.fmapAsFiniteSupportParameterTupleObservations == #["subst", "out",
+      "Flapjack.Compiler.Inference.Infer.Generalise.generaliseListMap", "component_2"] &&
+      HolRef.qualifierSuffix lengthRef ==
+        " (fmap_as_finite_support_parameter_tuple_observations := (map_parameters := [subst, out]) (map_producer := Flapjack.Compiler.Inference.Infer.Generalise.generaliseListMap) (result_component := component_2))" do
+    throwError "@[hol] generalization length qualifier syntax regression"
+  let wrongLength ← `(attr| hol "cakeml/compiler/inference/inferPropsScript.sml" "generalise_list_length"
+    (fmap_as_finite_support_parameter_tuple_observations :=
+      (map_parameters := [out, subst])
+      (map_producer := Flapjack.Compiler.Inference.Infer.Generalise.generaliseListMap)
+      (result_component := component_2)))
+  let wrongLengthRejected ← Lean.Elab.Command.liftCoreM do
+    try
+      let _ ← parseHolRefAttribute wrongLength
+      pure false
+    catch _ => pure true
+  unless wrongLengthRejected do
+    throwError "@[hol] wrong generalization length metadata must be rejected"
+  let combinedLength ← `(attr| hol "cakeml/compiler/inference/inferPropsScript.sml" "generalise_list_length"
+    (fmap_as_finite_support_parameter_tuple_observations :=
+      (map_parameters := [subst, out])
+      (map_producer := Flapjack.Compiler.Inference.Infer.Generalise.generaliseListMap)
+      (result_component := component_2)) (words_as_type_indexed_bitvec))
+  let combinedLengthRejected ← Lean.Elab.Command.liftCoreM do
+    try
+      let _ ← parseHolRefAttribute combinedLength
+      pure false
+    catch _ => pure true
+  unless combinedLengthRejected do
+    throwError "@[hol] generalization length qualifier cannot combine with other qualifiers"
   let wrongGeneralise ← `(attr| hol "cakeml/compiler/inference/inferScript.sml" "generalise_def"
     (fmap_as_finite_support_parameter_tuple_result :=
       (map_parameter := subst) (result_component := component_1)))

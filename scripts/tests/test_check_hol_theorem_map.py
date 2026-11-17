@@ -186,6 +186,30 @@ def generaliseMap : Nat := 0
                     {key: base + (("subst", "component_2"), ("future_qualifier",))}, set()))
 
 
+class GeneraliseLengthQualifierInventoryTest(unittest.TestCase):
+    def test_exact_site_and_metadata_are_required(self):
+        field = "fmap_as_finite_support_parameter_tuple_observations"
+        values = ("subst", "out", "Flapjack.Compiler.Inference.Infer.Generalise.generaliseListMap", "component_2")
+        record = {"hol_path": "cakeml/compiler/inference/inferPropsScript.sml",
+                  "hol_name": "generalise_list_length",
+                  "lean_path": "Flapjack/Compiler/Inference/InferProps/Generalise.lean",
+                  "lean_name": "generaliseListLength", "statement_status": "reviewed_" + field,
+                  "reviewer": "source comparison of subst, out and component_2", field: list(values)}
+        key = (record["lean_path"], record["lean_name"])
+        base = (record["hol_path"], record["hol_name"], (), (), (), (), False, (), False,
+                False, (), (), None, (), (), False, False, (), (), (), (), (), (), ())
+        tagged = {key: base + (values,)}
+        self.assertEqual(MAP["validate_inventory"]([record], set(), tagged, set()), [])
+        for changed in ({**record, field: list(reversed(values))},
+                        {**record, "statement_status": "reviewed_exact"},
+                        {**record, "reviewer": "source comparison"}):
+            with self.subTest(record=changed):
+                self.assertTrue(MAP["validate_inventory"]([changed], set(), tagged, set()))
+        self.assertTrue(MAP["validate_inventory"]([record], set(), {key: base}, set()))
+        self.assertTrue(MAP["validate_inventory"]([record], set(),
+            {key: base[:2] + (("other",),) + base[3:] + (values,)}, set()))
+
+
 class HeterogeneousFmapQualifierInventoryTest(unittest.TestCase):
     def test_combined_heterogeneous_words_status_is_accepted_only_with_both_tags(self):
         record = {

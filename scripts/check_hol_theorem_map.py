@@ -1053,6 +1053,7 @@ VALID_STATUSES = {
     "reviewed_fmap_as_finite_support_tuple_words_as_type_indexed_bitvec",
     "reviewed_fmap_as_finite_support_heterogeneous_function",
     "reviewed_fmap_as_finite_support_parameter_tuple_result",
+    "reviewed_fmap_as_finite_support_parameter_tuple_observations",
     "reviewed_fmap_as_finite_support_heterogeneous_function_words_as_type_indexed_bitvec",
     "reviewed_fmap_as_finite_support_result",
     "reviewed_fmap_as_finite_support_result_words_as_type_indexed_bitvec",
@@ -1236,7 +1237,7 @@ def tagged_declarations(
         if command_sites:
             value = ("cakeml/compiler/inference/inferScript.sml", "generalise_def",
                      (), (), (), (), False, (), False, False, (), (), None, (), (),
-                     False, False, (), (), (), (), (), (), ("subst", "component_2"))
+                     False, False, (), (), (), (), (), (), ("subst", "component_2"), ())
             for _, lean_name in command_sites:
                 tagged[(rel, lean_name)] = value
         for (line, hol_path, hol_name, _hol_line, list_fields,
@@ -1246,7 +1247,7 @@ def tagged_declarations(
              fmap_function_positions,
              fmap_heterogeneous_function_positions, reals_cuts,
              fmap_equality, result_observations, dimension_widths, fmap_tuple, nested_list_rel,
-             predicate_domain, fmap_universals, generalise_map) in HOL_ATTRIBUTE_SITES(
+             predicate_domain, fmap_universals, generalise_map, generalise_length) in HOL_ATTRIBUTE_SITES(
                  lines, include_fmap_existentials=True,
                  include_word_dimension_width=True,
                  include_fmap_function=True,
@@ -1260,6 +1261,7 @@ def tagged_declarations(
                  include_predicate_domain=True,
                  include_fmap_universals=True,
                  include_generalise_map=True,
+                 include_generalise_length=True,
              ):
             lean_name = FIND_LEAN_DECL(lines, line - 1)
             key = (rel, lean_name)
@@ -1270,7 +1272,7 @@ def tagged_declarations(
                      boundary_fields, fmap_fields, fmap_result, fmap_relation,
                      fmap_equalities, words_bitvec, fmap_parameters,
                      fmap_existentials, dimension_width, fmap_function_positions,
-                     fmap_heterogeneous_function_positions, reals_cuts, fmap_equality, result_observations, dimension_widths, fmap_tuple, nested_list_rel, predicate_domain, fmap_universals, generalise_map)
+                     fmap_heterogeneous_function_positions, reals_cuts, fmap_equality, result_observations, dimension_widths, fmap_tuple, nested_list_rel, predicate_domain, fmap_universals, generalise_map, generalise_length)
             if key in tagged and tagged[key] != value:
                 raise ValueError(f"conflicting @[hol] references for {rel}:{lean_name}")
             tagged[key] = value
@@ -1286,7 +1288,7 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
         fmap_result, fmap_relation, fmap_equalities, words_bitvec, fmap_parameters,
         fmap_existentials, dimension_width,
         fmap_function_positions, fmap_heterogeneous_function_positions, reals_cuts,
-        fmap_equality, result_observations, dimension_widths, fmap_tuple, nested_list_rel, predicate_domain, fmap_universals, generalise_map,
+        fmap_equality, result_observations, dimension_widths, fmap_tuple, nested_list_rel, predicate_domain, fmap_universals, generalise_map, generalise_length,
     ) in tagged.items():
         entry = {
             "hol_path": hol_path,
@@ -1326,6 +1328,8 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
             entry["fmap_as_finite_support_universals"] = list(fmap_universals)
         if generalise_map:
             entry["fmap_as_finite_support_parameter_tuple_result"] = list(generalise_map)
+        if generalise_length:
+            entry["fmap_as_finite_support_parameter_tuple_observations"] = list(generalise_length)
         if fmap_existentials:
             entry["fmap_as_finite_support_existentials"] = list(fmap_existentials)
         if fmap_relation:
@@ -1649,6 +1653,7 @@ def validate_inventory(
         predicate_domain = tag[21] if tag is not None and len(tag) > 21 else ()
         fmap_universals = tag[22] if tag is not None and len(tag) > 22 else ()
         generalise_map = tag[23] if tag is not None and len(tag) > 23 else ()
+        generalise_length = tag[24] if tag is not None and len(tag) > 24 else ()
         generalise_key = "fmap_as_finite_support_parameter_tuple_result"
         generalise_status = "reviewed_" + generalise_key
         generalise_ref = ("cakeml/compiler/inference/inferScript.sml", "generalise_def")
@@ -1667,6 +1672,22 @@ def validate_inventory(
             if (not isinstance(reviewer, str) or "source" not in reviewer.lower() or
                     "subst" not in reviewer or "component_2" not in reviewer):
                 errors.append(f"{key[0]}:{key[1]}: generalization map review must name the source and both map positions")
+        length_key = "fmap_as_finite_support_parameter_tuple_observations"
+        length_ref = ("cakeml/compiler/inference/inferPropsScript.sml", "generalise_list_length")
+        length_status = "reviewed_" + length_key
+        if tuple(record.get(length_key, ())) != generalise_length:
+            errors.append(f"{key[0]}:{key[1]}: generalization length metadata does not match @[hol] tag")
+        if (generalise_length or status == length_status or
+                ((hol_path, hol_name) == length_ref and str(status).startswith("reviewed_"))):
+            expected = ("subst", "out", "Flapjack.Compiler.Inference.Infer.Generalise.generaliseListMap", "component_2")
+            if ((hol_path, hol_name, key[0], key[1]) != (*length_ref,
+                    "Flapjack/Compiler/Inference/InferProps/Generalise.lean", "generaliseListLength") or
+                    generalise_length != expected or status != length_status or tag is None or
+                    any(tag[2:24]) or any(tag[25:])):
+                errors.append(f"{key[0]}:{key[1]}: generalization length qualifier requires its exact site, fields, status and no other qualifiers")
+            if (not isinstance(reviewer, str) or "source" not in reviewer.lower() or
+                    not all(part in reviewer for part in ("subst", "out", "component_2"))):
+                errors.append(f"{key[0]}:{key[1]}: generalization length review must name the source and map positions")
         universal_status = "reviewed_fmap_as_finite_support_relation_existentials_universals"
         if tuple(record.get("fmap_as_finite_support_universals", ())) != fmap_universals:
             errors.append(f"{key[0]}:{key[1]}: universal map binders do not match @[hol] tag")

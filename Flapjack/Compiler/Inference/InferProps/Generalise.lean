@@ -26,9 +26,12 @@ theorem holFmapAsFiniteSupportParamWitness_generaliseListLength_out
   cases out
   exact ⟨rfl, rfl, rfl⟩
 
-/-- The source-shaped finite-map generalizer preserves list length. The HOL
-    theorem's input and output map binders and observed tuple result still
-    require a combined representation qualifier for this statement. -/
+/-- The source-shaped finite-map generalizer preserves list length. -/
+@[hol "cakeml/compiler/inference/inferPropsScript.sml" "generalise_list_length"
+  (fmap_as_finite_support_parameter_tuple_observations :=
+    (map_parameters := [subst, out])
+    (map_producer := Flapjack.Compiler.Inference.Infer.Generalise.generaliseListMap)
+    (result_component := component_2))]
 theorem generaliseListLength (minimum next : Nat) (subst : HolFiniteMapExact Nat Nat)
     (input : List InferT) (count : Nat) (out : HolFiniteMapExact Nat Nat)
     (result : List InferT)

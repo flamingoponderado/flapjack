@@ -1,4 +1,4 @@
-"""Source checks for the prospective generalization length qualifier."""
+"""Source checks for the generalization length qualifier."""
 
 import json
 import runpy
@@ -8,6 +8,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 CHECKER = runpy.run_path(str(ROOT / "scripts/check-hol-refs.py"))
 CHECK = CHECKER["generalise_length_observer_errors"]
+SITES = CHECKER["hol_attribute_sites"]
 PATH = "Flapjack/Compiler/Inference/InferProps/Generalise.lean"
 PRODUCER_PATH = "Flapjack/Compiler/Inference/Infer/Generalise.lean"
 PRODUCER = "Flapjack.Compiler.Inference.Infer.Generalise.generaliseListMap"
@@ -18,6 +19,23 @@ ROWS = json.loads((ROOT / "docs/HOL-THEOREM-MAP.json").read_text())
 
 
 class GeneraliseLengthSourceTest(unittest.TestCase):
+    def test_qualifier_detection_handles_malformed_syntax(self):
+        prefix = '@[hol "otherScript.sml" "other" '
+        qualifier = "fmap_as_finite_support_parameter_tuple_observations"
+        for suffix in (f"({qualifier} := malformed)]", f"({qualifier}) ({qualifier})]",
+                       f"({qualifier} := (map_parameters := [subst, out]) "
+                       f"(map_producer := {PRODUCER}) (result_component := component_2))]"):
+            with self.subTest(suffix=suffix):
+                sites = list(SITES([prefix + suffix], include_generalise_length=True))
+                self.assertEqual(len(sites), 1)
+                self.assertTrue(sites[0][-1])
+        self.assertFalse(list(SITES(['@[hol "otherScript.sml" "other"]'],
+                                    include_generalise_length=True))[0][-1])
+        valid = (prefix + f"({qualifier} := (map_parameters := [subst, out]) "
+                 f"(map_producer := {PRODUCER}) (result_component := component_2))]")
+        self.assertEqual(list(SITES([valid], include_generalise_length=True))[0][-1],
+                         ("subst", "out", PRODUCER, "component_2"))
+
     def check(self, source=SOURCE, path=PATH, ref=REF, params=("subst", "out"),
               producer=PRODUCER, component="component_2", producer_source=PRODUCER_SOURCE,
               rows=ROWS):

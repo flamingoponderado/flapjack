@@ -1,3 +1,4 @@
+import Flapjack.HolRef.GeneraliseLengthAudit
 import Flapjack.Compiler.Backend.StackProps.EvaluateMono
 import Flapjack.Compiler.Backend.StackProps.EvaluateNeutral
 import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.Nonrecursive
@@ -272,6 +273,21 @@ elab "#emit_hol_ref_export" : command => do
   let mut known : Std.HashMap Name Bool := {}
   let mut nestedKnown : Std.HashMap Name (Bool × Bool) := {}
   for (name, ref) in HolRef.all env do
+    if ref.path == "cakeml/compiler/inference/inferPropsScript.sml" &&
+        ref.name == "generalise_list_length" && ref.fmapAsFiniteSupportParameterTupleObservations.isEmpty then
+      throwError "generalise_list_length requires its combined tuple-observer qualifier: {name}"
+    unless ref.fmapAsFiniteSupportParameterTupleObservations.isEmpty do
+      let expected : HolRef := {
+        path := "cakeml/compiler/inference/inferPropsScript.sml", name := "generalise_list_length",
+        fmapAsFiniteSupportParameterTupleObservations := #["subst", "out",
+          "Flapjack.Compiler.Inference.Infer.Generalise.generaliseListMap", "component_2"] }
+      unless ref == expected do
+        throwError "invalid generalization length qualifier metadata: {name}"
+      let problems ← liftTermElabM <| generaliseLengthQualifiedProblems name ref.path ref.name
+        ref.line? #["subst", "out"]
+        "Flapjack.Compiler.Inference.Infer.Generalise.generaliseListMap" "component_2" false
+      unless problems.isEmpty do
+        throwError "invalid generalization length declaration {name}: {problems}"
     if ref.path == "cakeml/compiler/inference/inferScript.sml" && ref.name == "generalise_def" &&
         ref.fmapAsFiniteSupportParameterTupleResult.isEmpty then
       throwError "generalise_def requires its combined map qualifier: {name}"
@@ -415,6 +431,10 @@ elab "#emit_hol_ref_export" : command => do
           qualifiers := qualifiers ++ [
             ("fmap_as_finite_support_parameter_tuple_result",
               toJson ref.fmapAsFiniteSupportParameterTupleResult)]
+        if !ref.fmapAsFiniteSupportParameterTupleObservations.isEmpty then
+          qualifiers := qualifiers ++ [
+            ("fmap_as_finite_support_parameter_tuple_observations",
+              toJson ref.fmapAsFiniteSupportParameterTupleObservations)]
         if !ref.fmapAsFiniteSupportTuple.isEmpty then
           qualifiers := qualifiers ++ [
             ("fmap_as_finite_support_tuple", toJson ref.fmapAsFiniteSupportTuple)]
