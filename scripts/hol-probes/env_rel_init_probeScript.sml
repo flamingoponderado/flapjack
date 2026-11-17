@@ -38,6 +38,8 @@ val _ = show "infer_read_typed" inferTheory.read_def;
 val _ = show "infer_write_typed" inferTheory.write_def;
 val _ = show "lookup_st_ex_typed" inferTheory.lookup_st_ex_def;
 val _ = show "option_case_rand_typed" inferTheory.option_case_rand;
+val fun_eq_thm_state_replay = prove (``f = g ⇔ ∀s. f s = g s``, simp [FUN_EQ_THM]);
+val _ = show "fun_eq_thm_state_replay_typed" fun_eq_thm_state_replay;
 val _ = show "st_ex_bind_failure_typed" inferTheory.st_ex_bind_failure;
 val _ = show "op_to_string_typed" inferTheory.op_to_string_def;
 val _ = show "supported_arith_typed" typeSystemTheory.supported_arith_def;

@@ -1,5 +1,11 @@
 [
 {
+  "hol_path": "cakeml/compiler/inference/inferScript.sml", "hol_name": "FUN_EQ_THM_state",
+  "lean_path": "Flapjack/Compiler/Inference/Infer/Operations.lean", "lean_name": "funEqThmState",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with the local source theorem and fun_eq_thm_state_replay_typed confirms both independent type carriers, complete pointwise equivalence and absence of extra assumptions."
+ },
+{
   "hol_path": "cakeml/compiler/inference/inferScript.sml", "hol_name": "t_num_of_def",
   "lean_path": "Flapjack/Compiler/Inference/Infer/Core.lean", "lean_name": "tNumOf",
   "statement_status": "reviewed_exact",

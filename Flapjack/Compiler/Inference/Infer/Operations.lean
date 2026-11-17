@@ -19,6 +19,13 @@ theorem optionCaseRand {α β γ : Type} (x : Option α) (y : β → γ)
       match x with | none => y s | some a => f a s := by
   cases x <;> rfl
 
+@[hol "cakeml/compiler/inference/inferScript.sml" "FUN_EQ_THM_state"]
+theorem funEqThmState {α β : Type} (f g : α → β) :
+    f = g ↔ ∀ s, f s = g s := by
+  constructor
+  · intro h s; rw [h]
+  · exact funext
+
 @[hol "cakeml/compiler/inference/inferScript.sml" "st_ex_bind_failure"]
 theorem bindFailure {state value result error : Type}
     (f : M state value error) (g : value → M state result error)
