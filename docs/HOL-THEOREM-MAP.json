@@ -115855,6 +115855,15 @@
     "reviewer": "Source comparison: original lines 4440–4450 and typed data_to_word_gc_stack capture. All Env/Exc and handler-presence cases match. stackEnvRel factors the source Env conjuncts: nonzero even GC keys, equal optional sizes, zero non-GC keys, distinct GC keys, and equivalent lookup presence at adjustVar. DataSem.Stack and WordSemStackFrame retain the original fields and types; WordLocW uses the reviewed positive-width bit-vector representation."
   },
 {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/MkLoc.lean",
+    "lean_name": "mkLoc",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+    "hol_name": "mk_loc_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: lines 4781–4783 and typed data_to_word_gc_fun_const_ok probe. The input payload type is independent of the positive result word dimension; SOME (payload,l1,l2) yields Loc l1 l2. The source equation leaves NONE unspecified; Lean uses a distinct opaque chosen value indexed by payload type and word width, with no equation relating it to any other unspecified value. The SOME equation is definitional and the choice uses Classical.choice, not a conjectured equality."
+  },
+{
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/StackRel.lean",
     "lean_name": "stackRel_sizeOfStack",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
