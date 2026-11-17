@@ -5851,6 +5851,84 @@ def generalise_command_sites(source: str, lean_path: str) -> list[tuple[int, str
     return [(lines[0], "generaliseMap"), (lines[0], "generaliseListMap")]
 
 
+def generalise_length_observer_errors(
+    source: str, lean_path: str, hol_ref: tuple[str, str], parameters: tuple[str, ...],
+    producer: str, component: str, producer_source: str, records: list[dict],
+) -> list[str]:
+    """Prospective exact source check; it does not enable an observer qualifier."""
+    expected_path = "Flapjack/Compiler/Inference/InferProps/Generalise.lean"
+    producer_path = "Flapjack/Compiler/Inference/Infer/Generalise.lean"
+    producer_name = "Flapjack.Compiler.Inference.Infer.Generalise.generaliseListMap"
+    if (lean_path != expected_path or hol_ref !=
+            ("cakeml/compiler/inference/inferPropsScript.sml", "generalise_list_length") or
+            parameters != ("subst", "out") or producer != producer_name or component != "component_2"):
+        return ["generalization length qualifier requires its exact site, map binders and producer"]
+    clean = strip_lean_comments(source)
+    if re.search(r"(?m)^\s*(?:variables?|include|omit|(?:(?:local|scoped)\s+)?(?:syntax|macro|notation|infix|infixl|infixr|prefix|postfix))\b", clean):
+        return ["generalization length qualifier rejects ambient binders or syntax changes"]
+    namespaces = re.findall(r"(?m)^\s*namespace\s+([^\s]+)", clean)
+    opens = [" ".join(item.split()) for item in re.findall(r"(?m)^\s*open\s+([^\n]+)", clean)]
+    imports = re.findall(r"(?m)^\s*(?:(?:public|meta)\s+)*import\s+([^\s]+)", clean)
+    if namespaces != ["Flapjack.Compiler.Inference.InferProps.Generalise"] or opens != [
+            "Flapjack.Compiler.Inference.Infer.Generalise"] or imports != [
+            "Flapjack.Compiler.Inference.Infer.Generalise", "Flapjack.FiniteMap.BroadCodec"]:
+        return ["generalization length qualifier requires its exact namespace, imports and producer open"]
+    import_lines = list(re.finditer(r"(?m)^public[ \t]+import[ \t]+\S+[ \t]*$", clean))
+    if len(import_lines) != 2:
+        return ["generalization length qualifier requires single-line public imports"]
+    for import_line in import_lines:
+        remaining = clean[import_line.end():].splitlines()
+        next_line = next((line for line in remaining if line.strip()), "")
+        if next_line and next_line[0].isspace():
+            return ["generalization length qualifier rejects import continuations"]
+    open_line = re.search(r"(?m)^open[ \t]+Flapjack\.Compiler\.Inference\.Infer\.Generalise[ \t]*$", clean)
+    if open_line is None:
+        return ["generalization length qualifier requires a single-line producer open"]
+    remaining = clean[open_line.end():].splitlines()
+    next_line = next((line for line in remaining if line.strip()), "")
+    if next_line and next_line[0].isspace():
+        return ["generalization length qualifier rejects producer open continuations"]
+    if re.search(r"(?m)^\s*(?:private\s+|protected\s+)?(?:def|theorem|lemma|axiom|opaque|abbrev|structure|inductive|class)\s+(?:generaliseListMap|HolFiniteMapExact|FiniteMapBroad)\b", clean):
+        return ["generalization length qualifier rejects local producer or carrier shadows"]
+    expected = ("(minimum next : Nat) (subst : HolFiniteMapExact Nat Nat) "
+                "(input : List InferT) (count : Nat) (out : HolFiniteMapExact Nat Nat) "
+                "(result : List InferT) "
+                "(h : generaliseListMap minimum next subst input = (count, out, result)) : "
+                "result.length = input.length")
+    statements = _statements_of_declaration(clean, "generaliseListLength")
+    if len(statements) != 1 or " ".join(statements[0].split()) != expected:
+        return ["generalization length theorem must have its complete reviewed statement"]
+    for binder in parameters:
+        name = f"holFmapAsFiniteSupportParamWitness_generaliseListLength_{binder}"
+        witness = (f"({binder} : HolFiniteMapExact Nat Nat) (key : Nat) : "
+                   f"(FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad {binder})).lookup key = {binder}.lookup key ∧ "
+                   f"(FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad {binder})).finiteSupport = {binder}.finiteSupport ∧ "
+                   f"FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad {binder}) = {binder}")
+        statements = _statements_of_declaration(clean, name)
+        if len(statements) != 1 or " ".join(statements[0].split()) != witness:
+            return [f"generalization length requires the unconditional {binder} codec witness"]
+    try:
+        sites = generalise_command_sites(producer_source, producer_path)
+    except ValueError as error:
+        return [f"generalization length producer failed its source audit: {error}"]
+    if [name for _, name in sites] != ["generaliseMap", "generaliseListMap"]:
+        return ["generalization length requires the reviewed producer tags"]
+    matching = [row for row in records if row.get("lean_path") == producer_path and
+                row.get("lean_name") == "generaliseListMap"]
+    if (len(matching) != 1 or matching[0].get("hol_path") !=
+            "cakeml/compiler/inference/inferScript.sml" or matching[0].get("hol_name") != "generalise_def" or
+            matching[0].get("hol_line") is not None or
+            matching[0].get("statement_status") != "reviewed_fmap_as_finite_support_parameter_tuple_result" or
+            matching[0].get("fmap_as_finite_support_parameter_tuple_result") != ["subst", "component_2"] or
+            any(value for key, value in matching[0].items() if key !=
+                "fmap_as_finite_support_parameter_tuple_result" and
+                (key.startswith("fmap_as_") or key.startswith("names_as_") or
+                 key in {"list_as_array", "words_as_type_indexed_bitvec", "word_dimension_as_width",
+                         "word_dimensions_as_widths", "reals_as_rational_cuts", "nested_list_rel_as_mutual"}))):
+        return ["generalization length requires the unique reviewed producer manifest row"]
+    return []
+
+
 def nested_thunk_map_combination(hol_path: str, hol_name: str, lean_path: str, lean_name: str,
                                  nested: tuple[str, ...], fmap_fields: tuple[str, ...],
                                  relation: tuple[tuple[str, str], ...],
