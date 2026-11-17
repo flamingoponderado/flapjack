@@ -39,14 +39,16 @@ unspecified). The `Nonempty` binder is the inhabitedness every HOL type has. -/
 noncomputable def holLinv {α β : Type} [Nonempty α] (f : α → β) (s : α → Prop) (y : β) : α :=
   holThe (holLinvOpt f s y)
 
-/-- `LINV_DEF` on `UNIV` for an injective `f` (Flapjack infrastructure; HOL's theorem takes
-`INJ f s t`). -/
-theorem holLinv_apply_of_injective {α β : Type} [Nonempty α] {f : α → β}
-    (hf : Function.Injective f) (x : α) : holLinv f (fun _ => True) (f x) = x := by
-  have h : ∃ z, f x = f z ∧ (fun _ => True) z := ⟨x, rfl, trivial⟩
+/-- An injective map's left inverse recovers every member of its domain. -/
+@[hol "HOL/src/pred_set/src/pred_setScript.sml" "LINV_DEF"]
+theorem holLinvDef {α β : Type} [Nonempty α] (f : α → β) (s : α → Prop) (t : β → Prop) :
+    holInj f s t → ∀ x, s x → holLinv f s (f x) = x := by
+  intro hf x hx
+  have h : ∃ z, f x = f z ∧ s z := ⟨x, rfl, hx⟩
   simp only [holLinv, holLinvOpt, dif_pos h, holThe]
-  exact hf (Classical.choose_spec (show ∃ z, (fun _ => True) z ∧ f z = f x from
-    let ⟨z, h1, h2⟩ := h; ⟨z, h2, h1.symm⟩)).2
+  have chosen := Classical.choose_spec (show ∃ z, s z ∧ f z = f x from
+    let ⟨z, h1, h2⟩ := h; ⟨z, h2, h1.symm⟩)
+  exact hf.2 _ x ⟨chosen.1, hx⟩ chosen.2
 
 /-- `BIJ_LINV_INV` on `UNIV` for a surjective `f` (Flapjack infrastructure; HOL's theorem takes
 `BIJ f s t`). -/

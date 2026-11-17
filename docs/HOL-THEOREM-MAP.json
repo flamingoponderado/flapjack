@@ -1,5 +1,23 @@
 [
 {
+  "hol_path": "HOL/src/pred_set/src/pred_setScript.sml", "hol_name": "LINV_DEF",
+  "lean_path": "Flapjack/Misc/PredSet.lean", "lean_name": "holLinvDef",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with source and linv_def_typed confirms the independent domain and codomain carriers, injectivity premise, domain membership and conclusion. Lean Nonempty expresses HOL type inhabitedness required by LINV."
+ },
+{
+  "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "good_remap_LINV",
+  "lean_path": "Flapjack/Compiler/Inference/TypeDCanon/Inverse.lean", "lean_name": "goodRemapLinv",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with source and good_remap_LINV_typed confirms the three original conjuncts and composed left-inverse conclusion, with no additional premise."
+ },
+{
+  "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "ts_tid_rename_LINV",
+  "lean_path": "Flapjack/Compiler/Inference/TypeDCanon/Inverse.lean", "lean_name": "tsTidRenameLinv",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with source and ts_tid_rename_LINV_typed confirms the inferred natural-number set carriers, injectivity and identifier-subset premises, and inverse-renaming equality."
+ },
+{
   "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "type_e_ts_tid_rename",
   "lean_path": "Flapjack/Compiler/Inference/TypeDCanon/Expression.lean", "lean_name": "typeETsTidRename",
   "statement_status": "reviewed_exact",
