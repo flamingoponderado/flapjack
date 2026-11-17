@@ -1,6 +1,7 @@
 module
 
 public meta import Lean
+public meta import Lean.Util.CollectAxioms
 public meta import Flapjack.HolRef
 
 public meta section
@@ -39,5 +40,101 @@ def unifyEqTunifyStatementProblems (type : Expr) : MetaM (Array String) := do
     unless conclusion.consumeMData == expected do
       return #["conclusion must be the exact selected/recursive equality on the original arguments"]
     return #[]
+
+/-- Check that the guarded equation, induction and intermediate invariant are
+    present in a proof dependency set. Presence does not establish their
+    source correspondence or prevent additional dependencies. -/
+def unifyEqTunifyProofDependencyProblems (names : Array Name) : Array String := Id.run do
+  let required := #[
+    `Flapjack.HOL.Unification.specifiedUnifyEquation,
+    `Flapjack.HOL.Unification.tunifyAuxEquation,
+    `Flapjack.HOL.Unification.tunifyAuxUP,
+    `Flapjack.HOL.Unification.tunifyAuxInd]
+  let mut problems := #[]
+  for name in required do
+    unless names.contains name do
+      problems := problems.push s!"unifier proof does not depend on {name}"
+  return problems
+
+/-- Collect body dependencies in the unification modules, including private
+    helpers and opaque theorem bodies. Dependencies are bounded to that
+    namespace; this is not a complete dependency inventory. -/
+private def unifyEqTunifyBodyDependencies (env : Environment) (target : Name) : Array Name := Id.run do
+  let mut visited : Std.HashSet Name := {}
+  let mut pending := #[target]
+  let mut result := #[]
+  while !pending.isEmpty do
+    let name := pending.back!
+    pending := pending.pop
+    unless visited.contains name do
+      visited := visited.insert name
+      result := result.push name
+      if let some info := env.find? name then
+        if let some body := info.value? (allowOpaque := true) then
+          for dep in body.getUsedConstants do
+            let moduleName := match env.getModuleIdxFor? dep with
+              | some idx => env.header.moduleNames[idx.toNat]!
+              | none => env.mainModule
+            if moduleName.toString.startsWith "Flapjack.HOL.Unification." then
+              pending := pending.push dep
+  return result
+
+/-- Check the reviewed statement's owner, its guarded model dependencies,
+    selected source references and axiom closure. This remains a prospective
+    audit and does not enable a HOL attribute. -/
+def unifyEqTunifyBundleProblems (target : Name) : MetaM (Array String) := do
+  let expected := `Flapjack.HOL.Unification.specifiedUnifyEqAux
+  unless target == expected do return #["unifier audit requires the selected equivalence theorem"]
+  let env ← getEnv
+  let owner (name : Name) :=
+    match env.getModuleIdxFor? name with
+    | some idx => env.header.moduleNames[idx.toNat]!
+    | none => env.mainModule
+  let dependencies := #[
+    (`Flapjack.HolFiniteMapExact, `Flapjack.FiniteMap.Exact),
+    (`Flapjack.HOL.Unification.Term, `Flapjack.HOL.Unification.Term),
+    (`Flapjack.HOL.Unification.wfs, `Flapjack.HOL.Unification.Subst),
+    (`Flapjack.HOL.Unification.vwalkEq, `Flapjack.HOL.Unification.Walk),
+    (`Flapjack.HOL.Unification.Oc, `Flapjack.HOL.Unification.Walkstar.Occurs),
+    (`Flapjack.HOL.Unification.uRWellFounded, `Flapjack.HOL.Unification.UnifDef.WellFounded),
+    (`Flapjack.HOL.Unification.tunifyAux, `Flapjack.HOL.Unification.UnifDef.Tunify),
+    (`Flapjack.HOL.Unification.tunifyAuxEquation, `Flapjack.HOL.Unification.UnifDef.Tunify),
+    (`Flapjack.HOL.Unification.tunifyAuxUP, `Flapjack.HOL.Unification.UnifDef.Tunify),
+    (`Flapjack.HOL.Unification.tunifyAuxInd, `Flapjack.HOL.Unification.UnifDef.Tunify),
+    (`Flapjack.HOL.Unification.UnifySpec, `Flapjack.HOL.Unification.UnifDef.Choice),
+    (`Flapjack.HOL.Unification.specifiedUnify, `Flapjack.HOL.Unification.UnifDef.Choice),
+    (`Flapjack.HOL.Unification.specifiedUnifyEquation, `Flapjack.HOL.Unification.UnifDef.Choice)]
+  let mut problems := #[]
+  for (name, moduleName) in dependencies do
+    if (env.find? name).isNone || owner name != moduleName then
+      problems := problems.push s!"{name} is missing or has the wrong defining module"
+  let refs : Array (Name × HolRef) := #[
+    (`Flapjack.HOL.Unification.Term,
+      { path := "HOL/examples/algorithms/unification/triangular/first-order/termScript.sml", name := "term" }),
+    (`Flapjack.HOL.Unification.wfs,
+      { path := "HOL/examples/algorithms/unification/triangular/first-order/substScript.sml", name := "wfs_def",
+        fmapAsFiniteSupportParameters := #["subst"] }),
+    (`Flapjack.HOL.Unification.vwalkEq,
+      { path := "HOL/examples/algorithms/unification/triangular/first-order/walkScript.sml", name := "vwalk_def",
+        fmapAsFiniteSupportParameters := #["subst"] }),
+    (`Flapjack.HOL.Unification.uRWellFounded,
+      { path := "HOL/examples/algorithms/unification/triangular/first-order/unifDefScript.sml", name := "WF_uR",
+        fmapAsFiniteSupportTuple := #["component_1"] })]
+  for (name, ref) in refs do
+    unless HolRef.get? env name == some ref do
+      problems := problems.push s!"{name} must retain its reviewed HOL reference"
+  if owner target != `Flapjack.HOL.Unification.UnifDef.Choice then
+    problems := problems.push "unifier theorem has the wrong defining module"
+  match env.find? target with
+  | some (.thmInfo info) =>
+    unless info.levelParams.isEmpty do problems := problems.push "unifier theorem must use HOL's Type carrier"
+    problems := problems ++ (← unifyEqTunifyStatementProblems info.type)
+    problems := problems ++ unifyEqTunifyProofDependencyProblems (unifyEqTunifyBodyDependencies env target)
+    let axioms ← Lean.collectAxioms target
+    for axiomName in axioms do
+      unless #[`propext, `Classical.choice, `Quot.sound].contains axiomName do
+        problems := problems.push s!"unifier theorem depends on unexpected axiom {axiomName}"
+  | _ => problems := problems.push "unifier target must be a theorem"
+  return problems
 
 end Flapjack

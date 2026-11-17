@@ -21,6 +21,16 @@ run_meta do
   let info ← getConstInfo ``specifiedUnifyEqAux
   let valid ← unifyEqTunifyStatementProblems info.type
   unless valid.isEmpty do throwError "unifier audit rejected the source-shaped statement: {valid}"
+  let bundle ← unifyEqTunifyBundleProblems ``specifiedUnifyEqAux
+  unless bundle.isEmpty do throwError "unifier audit rejected the source dependency bundle: {bundle}"
+  if (← unifyEqTunifyBundleProblems ``True).isEmpty then
+    throwError "unifier audit accepted an unrelated declaration"
+  let proofDeps := #[``specifiedUnifyEquation, ``tunifyAuxEquation, ``tunifyAuxUP, ``tunifyAuxInd]
+  unless (unifyEqTunifyProofDependencyProblems proofDeps).isEmpty do
+    throwError "unifier audit rejected all required proof dependencies"
+  for required in proofDeps do
+    if (unifyEqTunifyProofDependencyProblems (proofDeps.filter (· != required))).isEmpty then
+      throwError "unifier audit accepted missing proof dependency {required}"
   for index in [1:4] do
     if (← unifyEqTunifyStatementProblems (replaceBinderCarrier info.type index)).isEmpty then
       throwError "unifier audit accepted a changed carrier at binder {index}"
