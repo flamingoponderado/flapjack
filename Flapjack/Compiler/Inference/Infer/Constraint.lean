@@ -43,20 +43,13 @@ noncomputable def addConstraintsModel (l : LocErrInfo) : List InferT → List In
 private theorem constrainApply (fuel : Nat) (a b : InferT) (s : Infer.State) :
     Core.constrain fuel a b s =
       match unifyPartial s.subst a b with
-      | none => .error .exhausted
+      | none => (.error .exhausted, s)
       | some none =>
         match walkStar s.subst a, walkStar s.subst b with
-        | some left, some right => .error (.typeMismatch left right)
-        | _, _ => .error .mismatch
-      | some (some subst) => .ok ((), { s with subst }) := by
-  simp only [Core.constrain, Bind.bind, StateT.bind, MonadState.get, MonadStateOf.set,
-    getThe, MonadStateOf.get, StateT.get, Pure.pure, Except.pure, Except.bind]
-  cases unifyPartial s.subst a b with
-  | none => rfl
-  | some result =>
-    cases result with
-    | none => cases walkStar s.subst a <;> cases walkStar s.subst b <;> rfl
-    | some subst => rfl
+        | some left, some right => (.error (.typeMismatch left right), s)
+        | _, _ => (.error .mismatch, s)
+      | some (some subst) => (.ok (), { s with subst }) := by
+  rfl
 
 /-- On well-formed executable substitutions the partial constraint executor
     agrees with the source-shaped unifier and retains the types needed for the
@@ -65,11 +58,11 @@ theorem constrainCorresponds (fuel : Nat) (a b : InferT) (s : Infer.State)
     (l : LocErrInfo) (hw : cwfs s.subst) :
     match cunifyModel s.subst a b with
     | none =>
-      Core.constrain fuel a b s = .error (.typeMismatch (tWalkstar (sp2fm s.subst) a) (tWalkstar (sp2fm s.subst) b)) ∧
+      Core.constrain fuel a b s = (.error (.typeMismatch (tWalkstar (sp2fm s.subst) a) (tWalkstar (sp2fm s.subst) b)), s) ∧
       addConstraintModel l a b (ofExecutable s) =
         (.failure (l.loc, mismatchMessage l (tWalkstar (sp2fm s.subst) a) (tWalkstar (sp2fm s.subst) b)), ofExecutable s)
     | some subst =>
-      Core.constrain fuel a b s = .ok ((), { s with subst }) ∧
+      Core.constrain fuel a b s = (.ok (), { s with subst }) ∧
       addConstraintModel l a b (ofExecutable s) = (.success (), ofExecutable { s with subst }) := by
   have hu := unifyPartialMatchesSource s.subst a b hw
   have ha : walkStar s.subst a = some (tWalkstar (sp2fm s.subst) a) := by

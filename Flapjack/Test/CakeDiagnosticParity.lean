@@ -22,11 +22,27 @@ private def qname : NamespaceHOL.Ident MlString MlString := .long (ofString "A")
 
 -- HOL add_constraints rejects unequal lists with this internal-error message.
 #guard match constrainMany 20 [] [.uvar 0] ⟨3, .ln, 7⟩ with
-  | .error .badConstraintLists => true
+  | (.error .badConstraintLists, _) => true
   | _ => false
 
 #guard match withLoc loc emptyEnv (constrainMany 20 [] [.uvar 0]) ⟨3, .ln, 7⟩ with
-  | .error (.located actual .badConstraintLists) => actual == loc
+  | (.error (.located actual .badConstraintLists), _) => actual == loc
+  | _ => false
+
+-- The source retains fresh-variable allocation when a later pattern fails.
+#guard match inferPatternState 100 100 emptyEnv
+    (.pcon none [.pvar (ofString "a"), .plit (.float64 0)]) ⟨3, .ln, 7⟩ with
+  | (.error .floatPattern, state) =>
+      state.nextUvar == 4 && state.nextId == 7 && sptIsEmpty state.subst
+  | _ => false
+
+-- A datatype check fails after allocating its type identifier in HOL.
+#guard match inferDeclsState 100 100 emptyEnv
+    [.dtype (.locs (.posn 0 0) (.posn 0 1))
+      [([], ofString "t", [(ofString "C", []), (ofString "C", [])])]] ⟨3, .ln, 7⟩ with
+  | (.error (.located _ (.sourceTypeMessage message)), state) =>
+      message == ofString "Duplicate constructor C in the definition of type t" &&
+        state.nextUvar == 3 && state.nextId == 8 && sptIsEmpty state.subst
   | _ => false
 
 #guard renderUnsupportedPrimitive [] .badConstraintLists ==

@@ -12,22 +12,22 @@ open Flapjack.Compiler.Inference.Unify Flapjack.Compiler.Inference.Infer.HOLStat
   Flapjack.Basis.Pure.MlString
 
 /-- Relate executable and source-shaped constraint lists on well-formed
-    sparse substitutions. Executable failures discard state, so the source
-    failure state is existentially retained. An executable
-    `.badConstraintLists` represents the source internal-error message. This
-    is Flapjack correspondence infrastructure, not a separate HOL theorem. -/
+    sparse substitutions, including their actual states on failure. An
+    executable `.badConstraintLists` represents the source internal-error
+    message. This is Flapjack correspondence infrastructure, not a separate
+    HOL theorem. -/
 theorem constrainManyCorresponds (fuel : Nat) (l : Operations.LocErrInfo)
     (xs ys : List InferT) (s : Infer.State) (hw : cwfs s.subst) :
     match Core.constrainMany fuel xs ys s with
-    | .ok ((), out) =>
+    | (.ok (), out) =>
       addConstraintsModel l xs ys (ofExecutable s) = (.success (), ofExecutable out) ∧ cwfs out.subst
-    | .error (.typeMismatch a b) =>
-      ∃ out, addConstraintsModel l xs ys (ofExecutable s) =
-        (.failure (l.loc, mismatchMessage l a b), out)
-    | .error .badConstraintLists =>
-      ∃ out, addConstraintsModel l xs ys (ofExecutable s) =
-        (.failure (l.loc, ofString "Internal error: Bad call to add_constraints"), out)
-    | .error _ => False := by
+    | (.error (.typeMismatch a b), out) =>
+      addConstraintsModel l xs ys (ofExecutable s) =
+        (.failure (l.loc, mismatchMessage l a b), ofExecutable out)
+    | (.error .badConstraintLists, out) =>
+      addConstraintsModel l xs ys (ofExecutable s) =
+        (.failure (l.loc, ofString "Internal error: Bad call to add_constraints"), ofExecutable out)
+    | (.error _, _) => False := by
   induction xs generalizing ys s with
   | nil =>
     cases ys with

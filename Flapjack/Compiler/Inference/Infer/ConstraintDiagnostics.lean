@@ -33,7 +33,7 @@ theorem locatedConstraintCorresponds (fuel : Nat) (a b : InferT) (s : State)
       let left := tWalkstar (sp2fm s.subst) a
       let right := tWalkstar (sp2fm s.subst) b
       Core.withLoc loc env (Core.constrain fuel a b) s =
-        .error (.located loc (.typeMismatchEnv env.infT left right)) ∧
+        (.error (.located loc (.typeMismatchEnv env.infT left right)), s) ∧
       addConstraintModel ⟨some loc, env.infT⟩ a b (ofExecutable s) =
         (.failure (some loc, mismatchMessage ⟨some loc, env.infT⟩ left right), ofExecutable s) ∧
       renderTypeMismatch input (.located loc (.typeMismatchEnv env.infT left right)) =
@@ -42,7 +42,7 @@ theorem locatedConstraintCorresponds (fuel : Nat) (a b : InferT) (s : State)
           (ofString " at ").explode ++ sourceLocation input (some loc) ++
           (ofString "\nProgram exited with nonzero exit code.\n").explode)
     | some subst =>
-      Core.withLoc loc env (Core.constrain fuel a b) s = .ok ((), { s with subst }) ∧
+      Core.withLoc loc env (Core.constrain fuel a b) s = (.ok (), { s with subst }) ∧
       addConstraintModel ⟨some loc, env.infT⟩ a b (ofExecutable s) =
         (.success (), ofExecutable { s with subst }) := by
   have result := constrainCorresponds fuel a b s ⟨some loc, env.infT⟩ hw
@@ -50,7 +50,8 @@ theorem locatedConstraintCorresponds (fuel : Nat) (a b : InferT) (s : State)
   | none =>
     simp only [found] at result ⊢
     refine ⟨?_, result.2, renderMismatchMessage input loc env _ _⟩
-    simp [Core.withLoc, result.1]
+    simp only [Core.withLoc, result.1]
+    rfl
   | some subst =>
     simp only [found] at result ⊢
     exact ⟨by simp [Core.withLoc, result.1], result.2⟩

@@ -17,8 +17,9 @@ set_option backward.privateInPublic true
 set_option backward.privateInPublic.warn false
 
 /-! Bounded executable inference infrastructure. The result distinguishes
-unsupported forms from rejected inputs and resource exhaustion. It does not
-yet preserve HOL's diagnostic strings or error-state result. -/
+unsupported forms from rejected inputs and resource exhaustion. The state
+APIs retain failure state; the legacy fuel APIs omit it. Full correspondence
+with HOL's diagnostics and state transitions remains to be proved. -/
 namespace Flapjack.Compiler.Inference.Infer.Core
 open Flapjack.Basis.Pure.MlString Flapjack.NamespaceHOL Flapjack.AstHOL
 open Flapjack.Compiler.Inference.Unify
@@ -48,37 +49,46 @@ inductive Error where
   | located : Flapjack.Misc.Location.Locs → Error → Error
   deriving Repr
 
-abbrev M (α : Type) := StateT State (Except Error) α
+abbrev M (α : Type) := ExceptT Error (StateM State) α
 
-private def fail (e : Error) : M α := fun _ => .error e
+private def fail (e : Error) : M α := fun s => (.error e, s)
+
+/-- Adapt the state-preserving execution result to the existing public API. -/
+def discardFailureState (action : M α) (s : State) : Except Error (α × State) :=
+  match action s with
+  | (.ok value, next) => .ok (value, next)
+  | (.error error, _) => .error error
 
 /-- Preserve the innermost source location for errors that carry enough
 information for original-style rendering. Other error classes remain unchanged. -/
+private def locateError (loc : Flapjack.Misc.Location.Locs) (env : Env) : Error → Error
+  | .valueRestriction => .located loc .valueRestriction
+  | .floatPattern => .located loc .floatPattern
+  | .emptyCase => .located loc .emptyCase
+  | .emptyHandle => .located loc .emptyHandle
+  | .unsafeOperation => .located loc .unsafeOperation
+  | .thunkOperation => .located loc .thunkOperation
+  | .primitiveTypeMismatch => .located loc .primitiveTypeMismatch
+  | .badConstraintLists => .located loc .badConstraintLists
+  | .primitiveArity name actual expected => .located loc (.primitiveArity name actual expected)
+  | .undefinedVariable name => .located loc (.undefinedVariable name)
+  | .undefinedConstructor name => .located loc (.undefinedConstructor name)
+  | .sourceTypeMessage message => .located loc (.sourceTypeMessage message)
+  | .typeMismatch left right => .located loc (.typeMismatchEnv env.infT left right)
+  | .annotationTypeVariable name => .located loc (.annotationTypeVariable name)
+  | .abbreviationTypeVariable name typ => .located loc (.abbreviationTypeVariable name typ)
+  | .exceptionTypeVariable name ctor => .located loc (.exceptionTypeVariable name ctor)
+  | .duplicatePatternVariable name => .located loc (.duplicatePatternVariable name)
+  | .duplicateDefinitionVariable name => .located loc (.duplicateDefinitionVariable name)
+  | .duplicateFunctionName name isLocal => .located loc (.duplicateFunctionName name isLocal)
+  | .duplicateAbbreviationVariable name typ => .located loc (.duplicateAbbreviationVariable name typ)
+  | .constructorArity name actual expected => .located loc (.constructorArity name actual expected)
+  | other => other
+
 def withLoc (loc : Flapjack.Misc.Location.Locs) (env : Env) (action : M α) : M α := fun state =>
   match action state with
-  | .error .valueRestriction => .error (.located loc .valueRestriction)
-  | .error .floatPattern => .error (.located loc .floatPattern)
-  | .error .emptyCase => .error (.located loc .emptyCase)
-  | .error .emptyHandle => .error (.located loc .emptyHandle)
-  | .error .unsafeOperation => .error (.located loc .unsafeOperation)
-  | .error .thunkOperation => .error (.located loc .thunkOperation)
-  | .error .primitiveTypeMismatch => .error (.located loc .primitiveTypeMismatch)
-  | .error .badConstraintLists => .error (.located loc .badConstraintLists)
-  | .error (.primitiveArity name actual expected) => .error (.located loc (.primitiveArity name actual expected))
-  | .error (.undefinedVariable name) => .error (.located loc (.undefinedVariable name))
-  | .error (.undefinedConstructor name) => .error (.located loc (.undefinedConstructor name))
-  | .error (.sourceTypeMessage message) => .error (.located loc (.sourceTypeMessage message))
-  | .error (.typeMismatch left right) => .error (.located loc
-      (.typeMismatchEnv env.infT left right))
-  | .error (.annotationTypeVariable name) => .error (.located loc (.annotationTypeVariable name))
-  | .error (.abbreviationTypeVariable name typ) => .error (.located loc (.abbreviationTypeVariable name typ))
-  | .error (.exceptionTypeVariable name ctor) => .error (.located loc (.exceptionTypeVariable name ctor))
-  | .error (.duplicatePatternVariable name) => .error (.located loc (.duplicatePatternVariable name))
-  | .error (.duplicateDefinitionVariable name) => .error (.located loc (.duplicateDefinitionVariable name))
-  | .error (.duplicateFunctionName name isLocal) => .error (.located loc (.duplicateFunctionName name isLocal))
-  | .error (.duplicateAbbreviationVariable name typ) => .error (.located loc (.duplicateAbbreviationVariable name typ))
-  | .error (.constructorArity name actual expected) => .error (.located loc (.constructorArity name actual expected))
-  | other => other
+  | (.error error, next) => (.error (locateError loc env error), next)
+  | (.ok value, next) => (.ok value, next)
 private def fresh : M InferT := do
   let s ← get
   let (t, s) := freshUvar s
@@ -93,15 +103,14 @@ private def freshMany (n : Nat) : M (List InferT) := do
 
 /-- Executable constraint step. Its error carrier is Flapjack-specific;
     source and executable behavior are related in the constraint proof. -/
-def constrain (_fuel : Nat) (a b : InferT) : M Unit := do
-  let s ← get
+def constrain (_fuel : Nat) (a b : InferT) : M Unit := fun s =>
   match unifyPartial s.subst a b with
-  | none => fail .exhausted
+  | none => (.error .exhausted, s)
   | some none =>
     match walkStar s.subst a, walkStar s.subst b with
-    | some left, some right => fail (.typeMismatch left right)
-    | _, _ => fail .mismatch
-  | some (some subst) => set { s with subst }
+    | some left, some right => (.error (.typeMismatch left right), s)
+    | _, _ => (.error .mismatch, s)
+  | some (some subst) => (.ok (), { s with subst })
 
 /-- Execute paired constraints in order, stopping at the first failure. -/
 def constrainMany (fuel : Nat) : List InferT → List InferT → M Unit
@@ -114,26 +123,25 @@ def constrainMany (fuel : Nat) : List InferT → List InferT → M Unit
 /-- Execution equations for comparing the executable list operation with
     the source-state operation. These are Flapjack infrastructure. -/
 theorem constrainManyNil (fuel : Nat) (s : State) :
-    constrainMany fuel [] [] s = .ok ((), s) := rfl
+    constrainMany fuel [] [] s = (.ok (), s) := rfl
 
 /-- Flapjack execution equation for an unmatched right-hand constraint. -/
 theorem constrainManyNilCons (fuel : Nat) (y : InferT) (ys : List InferT) (s : State) :
-    constrainMany fuel [] (y :: ys) s = .error .badConstraintLists := rfl
+    constrainMany fuel [] (y :: ys) s = (.error .badConstraintLists, s) := rfl
 
 /-- Flapjack execution equation for an unmatched left-hand constraint. -/
 theorem constrainManyConsNil (fuel : Nat) (x : InferT) (xs : List InferT) (s : State) :
-    constrainMany fuel (x :: xs) [] s = .error .badConstraintLists := rfl
+    constrainMany fuel (x :: xs) [] s = (.error .badConstraintLists, s) := rfl
 
 /-- Flapjack execution equation for two nonempty constraint lists. -/
 theorem constrainManyCons (fuel : Nat) (x y : InferT) (xs ys : List InferT) (s : State) :
     constrainMany fuel (x :: xs) (y :: ys) s =
       match constrain fuel x y s with
-      | .error e => .error e
-      | .ok (_, next) => constrainMany fuel xs ys next := by
-  simp only [constrainMany, Bind.bind, StateT.bind, Except.bind]
+      | (.error e, next) => (.error e, next)
+      | (.ok _, next) => constrainMany fuel xs ys next := by
+  simp only [constrainMany, Bind.bind, ExceptT.bind, StateT.bind, ExceptT.mk]
   cases h : constrain fuel x y s with
-  | error e => rfl
-  | ok pair => cases pair; rfl
+  | mk result next => cases result <;> rfl
 
 private def litType : Lit → Option InferT
   | .intLit _ => some (.app [] 5)
@@ -211,10 +219,15 @@ private def inferPatsWorker : Nat → Nat → Env → List Pat → M (List Infer
     return (t :: ts, rest ++ bindings)
 end
 
-/-- Infer a pattern with explicit bounds. HOL's error messages and exact error-state behavior are not yet implemented. -/
+/-- Execute bounded pattern inference, retaining state on failure. -/
+def inferPatternState (fuel unifFuel : Nat) (env : Env) (p : Pat) (s : State) :
+    Except Error (InferT × List (MlString × InferT)) × State :=
+  (inferPatWorker fuel unifFuel env p) s
+
+/-- Infer a pattern with the existing result API, which omits failure state. -/
 def inferPatternFuel (fuel unifFuel : Nat) (env : Env) (p : Pat) (s : State) :
     Except Error ((InferT × List (MlString × InferT)) × State) :=
-  (inferPatWorker fuel unifFuel env p) s
+  discardFailureState (inferPatWorker fuel unifFuel env p) s
 
 
 private def primNum : PrimType → Nat
@@ -480,12 +493,15 @@ private def inferClausesWorker : Nat → Nat → Env → List (Pat × AstHOL.Exp
     inferClausesWorker fuel unifFuel env ps input output
 end
 
-/-- Infer the supported expression forms with explicit bounds. Unsupported
-forms are distinguished from type mismatches; diagnostic fidelity and the
-remaining cases are not implemented. -/
+/-- Execute bounded expression inference, retaining state on failure. -/
+def inferExprState (fuel unifFuel : Nat) (env : Env) (e : AstHOL.Exp) (s : State) :
+    Except Error InferT × State :=
+  (inferExprWorker fuel unifFuel env e) s
+
+/-- Infer expressions with the existing result API, which omits failure state. -/
 def inferExprFuel (fuel unifFuel : Nat) (env : Env) (e : AstHOL.Exp) (s : State) :
     Except Error (InferT × State) :=
-  (inferExprWorker fuel unifFuel env e) s
+  discardFailureState (inferExprWorker fuel unifFuel env e) s
 
 
 
@@ -575,11 +591,15 @@ private def inferDeclsWorker : Nat → Nat → Env → List Dec → M Env
     return extendDecIenv rest first
 end
 
-/-- Infer declarations with explicit bounds. Diagnostic messages and failure
-states still differ from HOL, and the bounded workers need correspondence proofs. -/
+/-- Execute bounded declaration inference, retaining state on failure. -/
+def inferDeclsState (fuel unifFuel : Nat) (env : Env) (decls : List Dec) (state : State) :
+    Except Error Env × State :=
+  (inferDeclsWorker fuel unifFuel env decls) state
+
+/-- Infer declarations with the existing result API, which omits failure state. -/
 def inferDeclsFuel (fuel unifFuel : Nat) (env : Env) (decls : List Dec) (state : State) :
     Except Error (Env × State) :=
-  (inferDeclsWorker fuel unifFuel env decls) state
+  discardFailureState (inferDeclsWorker fuel unifFuel env decls) state
 
 /-- The successful whole-program inference environment, starting with CakeML's
 primitive type environment and the first non-primitive type identifier. -/

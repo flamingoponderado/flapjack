@@ -55,6 +55,15 @@ val _ = show "infer_p_tuple_eval" (EVAL ``
     <|inf_v := nsEmpty; inf_c := nsEmpty; inf_t := nsEmpty|>
     (Pcon NONE [Pvar «a»; Pvar «b»])
     <|next_uvar := 3; subst := FEMPTY; next_id := 7|>``);
+val _ = show "infer_p_failure_state_eval" (EVAL ``
+  infer_p <|loc := NONE; err := nsEmpty|>
+    <|inf_v := nsEmpty; inf_c := nsEmpty; inf_t := nsEmpty|>
+    (Pcon NONE [Pvar «a»; Plit (Float64 0w)])
+    <|next_uvar := 3; subst := FEMPTY; next_id := 7|>``);
+val _ = show "infer_ds_failure_state_eval" (EVAL ``
+  infer_ds <|inf_v := nsEmpty; inf_c := nsEmpty; inf_t := nsEmpty|>
+    [Dtype (Locs (POSN 0 0) (POSN 0 1)) [([], «t», [(«C», []); («C», [])])]]
+    <|next_uvar := 3; subst := FEMPTY; next_id := 7|>``);
 val _ = show "type_name_check_sub_typed" inferTheory.type_name_check_sub_def;
 val _ = show "to_type_name_check_sub_typed" inferTheory.to_type_name_check_sub;
 val _ = show "bind_type_name_check_subst_typed" inferTheory.bind_type_name_check_subst;
