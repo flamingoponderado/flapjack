@@ -258,6 +258,32 @@ val _ = if List.exists (fn v => fst (dest_var v) = "TC_int")
               (free_vars (concl env_rel_binding_lemma2_replay)) then ()
         else raise Fail "expected source TC_int to remain a free variable";
 
+val infer_type_subst_check_t_less_replay = Q.prove(
+  `  LENGTH ls = LENGTH tvs ∧
+  EVERY (check_t n {}) ls ⇒
+  (!t.
+  check_freevars n tvs t
+  ⇒
+  check_t n {} (infer_type_subst (ZIP (tvs,ls)) t)) ∧
+  (!ts.
+  EVERY (check_freevars n tvs) ts
+  ⇒
+  EVERY (check_t n {}) (MAP (infer_type_subst (ZIP(tvs,ls))) ts))`,
+  strip_tac>>
+  Induct>>rw[]
+  >-
+    (rename1 ‘Tvar s’>>
+     fs[check_freevars_def,infer_type_subst_alt]>>
+    `?x. ALOOKUP (ZIP(tvs,ls)) s = SOME x` by
+      (Cases_on `ALOOKUP (ZIP(tvs,ls)) s` >> fs [ALOOKUP_NONE] >> metis_tac [MAP_ZIP])>>
+    imp_res_tac ALOOKUP_MEM>>
+    Q.ISPECL_THEN [`tvs`,`ls`,`s,x`] assume_tac MEM_ZIP>> rfs[]>>
+    metis_tac[EVERY_EL])
+  >>
+    fs[infer_type_subst_alt,check_t_def,check_freevars_def]>>
+    fs[EVERY_MAP]>>metis_tac[]);
+val _ = show "infer_type_subst_check_t_less_replay_typed" infer_type_subst_check_t_less_replay;
+
 val check_freevars_deBruijn_inc_replay = Q.prove(
   `!tvs tvs' t. check_freevars tvs tvs' t ==>
     !n n'. check_freevars (n+tvs) tvs' (deBruijn_inc n' n t)`,

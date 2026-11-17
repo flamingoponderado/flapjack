@@ -1,5 +1,11 @@
 [
 {
+  "hol_path": "cakeml/compiler/inference/proofs/infer_eCompleteScript.sml", "hol_name": "infer_type_subst_check_t_less",
+  "lean_path": "Flapjack/Compiler/Inference/InferEComplete/SubstCheck.lean", "lean_name": "inferTypeSubstCheckTLess",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with the local HOL source and infer_type_subst_check_t_less_replay_typed confirms the ordered values, names and bound binders, both premises, and the complete scalar and list conjuncts. Zipped lookup preserves first-match behavior."
+ },
+{
   "hol_path": "cakeml/compiler/inference/proofs/infer_eCompleteScript.sml", "hol_name": "convert_bi_remove",
   "lean_path": "Flapjack/Compiler/Inference/InferEComplete.lean", "lean_name": "convertBiRemove",
   "statement_status": "reviewed_exact",

@@ -3,6 +3,7 @@ module
 public import Flapjack.TypeSystemHOL.Environments
 public import Flapjack.TypeSystemHOL.TypeNames
 public import Flapjack.FiniteMap.AlistExact
+public import Flapjack.Misc.ListLookup
 
 @[expose] public section
 
@@ -51,19 +52,6 @@ theorem alistToFmapEqTypeSubstMap (entries : List (MlString × SemanticT)) :
       inferInstanceAs (DecidableEq MlString) := Subsingleton.elim _ _
   rw [same]
 
-/-- A zipped association list contains each key when both input lists have
-equal length. This is local list infrastructure used by the source proof. -/
-private theorem lookupZipExists (names : List MlString) (values : List SemanticT)
-    (lengths : names.length = values.length) (name : MlString) (member : name ∈ names) :
-    ∃ value, (names.zip values).lookup name = some value := by
-  have keys : (names.zip values).map Prod.fst = names := List.map_fst_zip (by omega)
-  have keyMember : name ∈ (names.zip values).map Prod.fst := by simpa [keys] using member
-  obtain ⟨entry, entryMember, entryEq⟩ := List.mem_map.mp keyMember
-  cases found : (names.zip values).lookup name with
-  | none =>
-    have absent := List.lookup_eq_none_iff.mp found entry entryMember
-    simp [entryEq] at absent
-  | some value => exact ⟨value, rfl⟩
 
 mutual
 /-- A well-formed substitution preserves the declared free-variable bound. -/
@@ -78,7 +66,7 @@ theorem checkFreevarsSubstSingle (dbmax : Nat) (tvs : List MlString) (t : Semant
   cases t with
   | var name =>
     have member : name ∈ tvs := by simpa [checkFreevars] using check
-    obtain ⟨value, found⟩ := lookupZipExists tvs ts lengths name member
+    obtain ⟨value, found⟩ := Flapjack.Misc.lookupZipExists tvs ts lengths name member
     obtain ⟨before, after, zipped, _⟩ := List.lookup_eq_some_iff.mp found
     have pairMember : (name, value) ∈ tvs.zip ts := by rw [zipped]; simp
     have valueMember : value ∈ ts := (List.of_mem_zip pairMember).2

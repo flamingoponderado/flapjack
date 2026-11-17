@@ -118,4 +118,18 @@ theorem listLookupReverseOfNodup {α β : Type} [BEq α] [LawfulBEq α]
   | some v =>
     exact listLookupOfMemNodup _ k v (List.mem_reverse.mpr (lookupMem _ _ _ h)) hnd'
 
+/-- Every key in an equal-length zip has a first-match lookup result. This is
+shared Flapjack proof infrastructure, not a separate HOL port. -/
+theorem lookupZipExists {α β : Type} [BEq α] [LawfulBEq α]
+    (names : List α) (values : List β) (lengths : names.length = values.length)
+    (name : α) (member : name ∈ names) : ∃ value, (names.zip values).lookup name = some value := by
+  have keys : (names.zip values).map Prod.fst = names := List.map_fst_zip (by omega)
+  have keyMember : name ∈ (names.zip values).map Prod.fst := by simpa [keys] using member
+  obtain ⟨entry, entryMember, entryEq⟩ := List.mem_map.mp keyMember
+  cases found : (names.zip values).lookup name with
+  | none =>
+    have absent := List.lookup_eq_none_iff.mp found entry entryMember
+    simp [entryEq] at absent
+  | some value => exact ⟨value, rfl⟩
+
 end Flapjack.Misc

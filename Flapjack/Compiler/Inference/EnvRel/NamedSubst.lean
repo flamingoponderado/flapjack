@@ -27,24 +27,6 @@ private theorem lookupZipMap (names : List MlString) (values : List InferT)
       · have hb : (key == name) = false := by simp [h]
         simpa [List.lookup, hb] using ih values
 
-/-- A name in an equally long zip always has a first matching value. -/
-private theorem lookupZipSome (names : List MlString) (values : List InferT)
-    (key : MlString) (hlen : names.length = values.length) (hmem : key ∈ names) :
-    ∃ value, (names.zip values).lookup key = some value := by
-  induction names generalizing values with
-  | nil => simp at hmem
-  | cons name names ih =>
-    cases values with
-    | nil => simp at hlen
-    | cons value values =>
-      simp only [List.length_cons, Nat.add_right_cancel_iff] at hlen
-      simp only [List.mem_cons] at hmem
-      by_cases heq : key = name
-      · subst key
-        exact ⟨value, by simp⟩
-      · have hb : (key == name) = false := by simp [heq]
-        obtain ⟨v, hv⟩ := ih values hlen (hmem.resolve_left heq)
-        exact ⟨v, by simpa [List.lookup, hb] using hv⟩
 
 mutual
 /-- Structural induction for conversion after named substitution. -/
@@ -56,7 +38,7 @@ private theorem convertTSubstType (t : SemanticT) (names : List MlString)
   cases t with
   | var name =>
     have hmem : name ∈ names := by simpa [checkFreevars] using h
-    obtain ⟨value, found⟩ := lookupZipSome names values name hlen hmem
+    obtain ⟨value, found⟩ := Flapjack.Misc.lookupZipExists names values hlen name hmem
     simp [Infer.inferTypeSubst, typeSubst, alistToFmapEqTypeSubstMap,
       lookupTypeSubstMap, lookupZipMap, found]
   | varDb n => simp [checkFreevars] at h
