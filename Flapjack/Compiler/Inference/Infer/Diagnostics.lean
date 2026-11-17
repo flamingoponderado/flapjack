@@ -64,12 +64,16 @@ def renderUndefinedVariable (input : List HolChar) : Error → Option (List HolC
       ascii "\nProgram exited with nonzero exit code.\n")
   | _ => none
 
-/-- Render missing constructor and type-constructor names. -/
+/-- Render missing constructors and source type-name-check diagnostics. -/
 def renderUndefinedConstructor (input : List HolChar) : Error → Option (List HolChar)
+  | .typeNameCheckMessage message => some (ascii "### ERROR: type error\n" ++ message.explode ++
+      ascii " at " ++ sourceLocation input none ++ ascii "\nProgram exited with nonzero exit code.\n")
+  | .located loc (.typeNameCheckMessage message) => some (ascii "### ERROR: type error\n" ++
+      message.explode ++ ascii " at " ++ sourceLocation input (some loc) ++
+      ascii "\nProgram exited with nonzero exit code.\n")
   | .located loc error => do
     let (kind, name) ← match error with
       | .undefinedConstructor name => some ("constructor", name)
-      | .undefinedTypeConstructor name => some ("type constructor", name)
       | _ => none
     some (ascii ("### ERROR: type error\nUndefined " ++ kind ++ ": ") ++ nameBytes name ++
       ascii " at " ++ sourceLocation input (some loc) ++ ascii "\nProgram exited with nonzero exit code.\n")
@@ -194,8 +198,6 @@ def renderBindingError (input : List HolChar) : Error → Option (List HolChar)
           ascii (if isLocal then " in mutually recursive function definition" else " a mutually recursive function definition"))
       | .duplicateAbbreviationVariable name typ => some (ascii "Duplicate type variable bindings for " ++ name.explode ++ ascii " in type abbreviation " ++ typ.explode)
       | .constructorArity name actual expected => some (ascii "Constructor " ++ nameBytes name ++
-          ascii (" given " ++ toString actual ++ " arguments, but expected " ++ toString expected))
-      | .typeConstructorArity name actual expected => some (ascii "Type constructor " ++ nameBytes name ++
           ascii (" given " ++ toString actual ++ " arguments, but expected " ++ toString expected))
       | _ => none
     some (ascii "### ERROR: type error\n" ++ message ++ ascii " at " ++

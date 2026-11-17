@@ -5,6 +5,7 @@ public import Flapjack.Compiler.Inference.Unify
 public import Flapjack.AstHOL.Syntax
 public import Flapjack.TypeSystemHOL.Values
 public import Flapjack.Compiler.Inference.Infer.Duplicates
+public import Flapjack.Compiler.Inference.Infer.TypeNameCheckSub
 public import Flapjack.TypeSystemHOL.TypeNames
 
 @[expose] public section
@@ -40,13 +41,12 @@ inductive Error where
   | duplicateFunctionName : MlString → Bool → Error
   | duplicateAbbreviationVariable : MlString → MlString → Error
   | constructorArity : Ident MlString MlString → Nat → Nat → Error
-  | typeConstructorArity : Ident MlString MlString → Nat → Nat → Error
+  | typeNameCheckMessage : MlString → Error
   | duplicateTypeName : MlString → Error
   | duplicateConstructor : MlString → MlString → Error
   | duplicateTypeVariable : MlString → MlString → Error
   | undefinedVariable : Ident MlString MlString → Error
   | undefinedConstructor : Ident MlString MlString → Error
-  | undefinedTypeConstructor : Ident MlString MlString → Error
   | located : Flapjack.Misc.Location.Locs → Error → Error
   deriving Repr
 
@@ -69,7 +69,7 @@ def withLoc (loc : Flapjack.Misc.Location.Locs) (env : Env) (action : M α) : M 
   | .error (.primitiveArity name actual expected) => .error (.located loc (.primitiveArity name actual expected))
   | .error (.undefinedVariable name) => .error (.located loc (.undefinedVariable name))
   | .error (.undefinedConstructor name) => .error (.located loc (.undefinedConstructor name))
-  | .error (.undefinedTypeConstructor name) => .error (.located loc (.undefinedTypeConstructor name))
+  | .error (.typeNameCheckMessage message) => .error (.located loc (.typeNameCheckMessage message))
   | .error (.typeMismatch left right) => .error (.located loc
       (.typeMismatchEnv env.infT left right))
   | .error (.annotationTypeVariable name) => .error (.located loc (.annotationTypeVariable name))
@@ -81,7 +81,6 @@ def withLoc (loc : Flapjack.Misc.Location.Locs) (env : Env) (action : M α) : M 
   | .error (.duplicateFunctionName name isLocal) => .error (.located loc (.duplicateFunctionName name isLocal))
   | .error (.duplicateAbbreviationVariable name typ) => .error (.located loc (.duplicateAbbreviationVariable name typ))
   | .error (.constructorArity name actual expected) => .error (.located loc (.constructorArity name actual expected))
-  | .error (.typeConstructorArity name actual expected) => .error (.located loc (.typeConstructorArity name actual expected))
   | .error (.duplicateTypeName name) => .error (.located loc (.duplicateTypeName name))
   | .error (.duplicateConstructor name typ) => .error (.located loc (.duplicateConstructor name typ))
   | .error (.duplicateTypeVariable name typ) => .error (.located loc (.duplicateTypeVariable name typ))
@@ -156,33 +155,22 @@ private def ctorInfo (env : Env) (name : Ident MlString MlString) : M (List MlSt
   | some x => pure x
 
 
-mutual
-private def annotationWorker : Nat → Env → List MlString → AstT → Except Error TypeSystemHOL.SemanticT
-  | 0, _, _, _ => .error .exhausted
-  | fuel + 1, env, free, typ => do
-    match typ with
-    | .atvar v => if v ∈ free then .ok (.var v) else .error (.unboundTypeVariable v)
-    | .attup ts => return .app (← annotationsWorker fuel env free ts) 9
-    | .atfun a b => return .app [← annotationWorker fuel env free a, ← annotationWorker fuel env free b] 4
-    | .atapp ts name =>
-      let ts ← annotationsWorker fuel env free ts
-      match nsLookup env.infT name with
-      | none => .error (.undefinedTypeConstructor name)
-      | some (params, body) =>
-        if params.length != ts.length then .error (.typeConstructorArity name ts.length params.length)
-        else .ok (TypeSystemHOL.typeSubst (TypeSystemHOL.typeSubstMap (List.zip params ts)) body)
+private def annotationWorker (env : Env) (free : List MlString) (typ : AstT) :
+    Except Error TypeSystemHOL.SemanticT :=
+  match TypeNameCheck.typeNameCheckSub ⟨none, env.infT⟩ env.infT free typ () with
+  | (.success t, _) => .ok t
+  | (.failure (_, .inr name), _) => .error (.unboundTypeVariable name)
+  | (.failure (_, .inl message), _) => .error (.typeNameCheckMessage message)
 
-private def annotationsWorker : Nat → Env → List MlString → List AstT → Except Error (List TypeSystemHOL.SemanticT)
-  | 0, _, _, _ => .error .exhausted
-  | _ + 1, _, _, [] => .ok []
-  | fuel + 1, env, free, t :: ts => do
-    let t ← annotationWorker fuel env free t
-    let ts ← annotationsWorker fuel env free ts
-    return t :: ts
-end
+private def annotationsWorker (env : Env) (free : List MlString) (ts : List AstT) :
+    Except Error (List TypeSystemHOL.SemanticT) :=
+  match TypeNameCheck.typeNameCheckSubList ⟨none, env.infT⟩ env.infT free ts () with
+  | (.success result, _) => .ok result
+  | (.failure (_, .inr name), _) => .error (.unboundTypeVariable name)
+  | (.failure (_, .inl message), _) => .error (.typeNameCheckMessage message)
 
-private def annotation (fuel : Nat) (env : Env) (t : AstT) : M InferT := do
-  match annotationWorker fuel env [] t with
+private def annotation (env : Env) (t : AstT) : M InferT := do
+  match annotationWorker env [] t with
   | .error (.unboundTypeVariable name) => fail (.annotationTypeVariable name)
   | .error e => fail e
   | .ok t => pure (inferTypeSubst [] t)
@@ -216,7 +204,7 @@ private def inferPatWorker : Nat → Nat → Env → Pat → M (InferT × List (
       return (t, bindings ++ [(v, t)])
     | .ptannot p typ =>
       let (t, bindings) ← inferPatWorker fuel unifFuel env p
-      let typ ← annotation fuel env typ
+      let typ ← annotation env typ
       constrain unifFuel t typ
       return (t, bindings)
 
@@ -454,7 +442,7 @@ private def inferExprWorker : Nat → Nat → Env → AstHOL.Exp → M InferT
     | .lannot body loc => withLoc loc env (inferExprWorker fuel unifFuel env body)
     | .tannot body typ =>
       let t ← inferExprWorker fuel unifFuel env body
-      let typ ← annotation fuel env typ
+      let typ ← annotation env typ
       constrain unifFuel t typ
       return t
     | .letrec funs body =>
@@ -513,21 +501,21 @@ private def applyFull (ts : List InferT) : M (List InferT) := do
   | none => fail .exhausted
   | some ts => pure ts
 
-private def asCheckedType (fuel : Nat) (env : Env) (free : List MlString) (t : AstT)
+private def asCheckedType (env : Env) (free : List MlString) (t : AstT)
     (unbound : MlString → Error) : M TypeSystemHOL.SemanticT := do
-  match annotationWorker fuel env free t with
+  match annotationWorker env free t with
   | .error (.unboundTypeVariable name) => fail (unbound name)
   | .error e => fail e
   | .ok t => pure t
 
-private def asCheckedTypes (fuel : Nat) (env : Env) (free : List MlString) (ts : List AstT)
+private def asCheckedTypes (env : Env) (free : List MlString) (ts : List AstT)
     (unbound : MlString → Error) : M (List TypeSystemHOL.SemanticT) := do
-  match annotationsWorker fuel env free ts with
+  match annotationsWorker env free ts with
   | .error (.unboundTypeVariable name) => fail (unbound name)
   | .error e => fail e
   | .ok ts => pure ts
 
-private def datatypeEnv (fuel : Nat) (env : Env) (defs : TypeDef) : M Env := do
+private def datatypeEnv (env : Env) (defs : TypeDef) : M Env := do
   let names := defs.map (fun (_, name, _) => name)
   if let some name := findDup names then fail (.duplicateTypeName name) else
   let s ← get
@@ -544,7 +532,7 @@ private def datatypeEnv (fuel : Nat) (env : Env) (defs : TypeDef) : M Env := do
       fail (.duplicateTypeVariable name typeName)
     let mut block := []
     for (name, ts) in ctors do
-      let ts ← asCheckedTypes fuel checkEnv vars ts (fun var => .datatypeTypeVariable var name)
+      let ts ← asCheckedTypes checkEnv vars ts (fun var => .datatypeTypeVariable var name)
       block := (name, (vars, ts, id)) :: block
     constructors := block ++ constructors
   return { emptyEnv with infC := alistToNs constructors, infT := tenv }
@@ -578,13 +566,13 @@ private def inferDeclWorker : Nat → Nat → Env → Dec → M Env
       let ts ← applyFull vars
       let (count, _, ts) := generaliseList 0 0 .ln ts
       return { emptyEnv with infV := alistToNs (List.zip names (ts.map (fun t => (count, t)))) }
-    | .dtype loc defs => withLoc loc env (datatypeEnv fuel env defs)
+    | .dtype loc defs => withLoc loc env (datatypeEnv env defs)
     | .dtabbrev loc vars name t => withLoc loc env do
       if let some varName := findDup vars then fail (.duplicateAbbreviationVariable varName name) else
-      let t ← asCheckedType fuel env vars t (fun var => .abbreviationTypeVariable var name)
+      let t ← asCheckedType env vars t (fun var => .abbreviationTypeVariable var name)
       return { emptyEnv with infT := alistToNs [(name, (vars, t))] }
     | .dexn loc name ts => withLoc loc env do
-      let ts ← asCheckedTypes fuel env [] ts (fun var => .exceptionTypeVariable var name)
+      let ts ← asCheckedTypes env [] ts (fun var => .exceptionTypeVariable var name)
       return { emptyEnv with infC := alistToNs [(name, ([], ts, 3))] }
     | .dmod name ds =>
       let env' ← inferDeclsWorker fuel unifFuel env ds
