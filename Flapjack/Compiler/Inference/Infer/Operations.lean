@@ -44,6 +44,32 @@ theorem ignoreBindGuard {state value error : Type} (p : Bool) (l : LocErrInfo) (
       if p then next s else (.failure (l.loc, msg), s) := by
   cases p <;> rfl
 
+@[hol "cakeml/compiler/inference/inferScript.sml" "st_ex_bind_pair"]
+theorem bindPair {state a b value error : Type} (op : M state (a × b) error)
+    (next : a × b → M state value error) :
+    bind op next = fun s =>
+      match op s with
+      | (.success (x, y), s') => next (x, y) s'
+      | (.failure e, s') => (.failure e, s') := by
+  funext s
+  cases h : op s with
+  | mk result state => cases result with
+    | success pair => cases pair <;> simp [Flapjack.Translator.Monadic.MonadBase.bind, h]
+    | failure e => simp [Flapjack.Translator.Monadic.MonadBase.bind, h]
+
+@[hol "cakeml/compiler/inference/inferScript.sml" "st_ex_bind_triple"]
+theorem bindTriple {state a b c value error : Type} (op : M state (a × b × c) error)
+    (next : a × b × c → M state value error) :
+    bind op next = fun s =>
+      match op s with
+      | (.success (x, y, z), s') => next (x, y, z) s'
+      | (.failure e, s') => (.failure e, s') := by
+  funext s
+  cases h : op s with
+  | mk result state => cases result with
+    | success triple => rcases triple with ⟨x, y, z⟩; simp [Flapjack.Translator.Monadic.MonadBase.bind, h]
+    | failure e => simp [Flapjack.Translator.Monadic.MonadBase.bind, h]
+
 @[hol "cakeml/compiler/inference/inferScript.sml" "read_def"]
 def read {state error : Type} : M state state error :=
   fun s => (.success s, s)

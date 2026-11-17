@@ -2,8 +2,10 @@ module
 
 public import Flapjack.Compiler.Inference.Infer.TypeNameCheck
 public import Flapjack.Compiler.Inference.Infer.TypeDefinitions
+public import Flapjack.Compiler.Inference.Infer.TypeNameCheckSub
 public meta import Flapjack.Compiler.Inference.Infer.TypeNameCheck
 public meta import Flapjack.Compiler.Inference.Infer.TypeDefinitions
+public meta import Flapjack.Compiler.Inference.Infer.TypeNameCheckSub
 
 @[expose] public section
 
@@ -16,6 +18,20 @@ open Flapjack.AstHOL Flapjack.NamespaceHOL Flapjack.TypeSystemHOL
 
 private def location : LocErrInfo := ⟨none, nsEmpty⟩
 private def a : MlString := ofString "a"
+
+#guard match typeNameCheckSub location nsEmpty [] (.atvar a) (7 : Nat) with
+  | (.failure (none, .inr name), 7) => name == a
+  | _ => false
+
+#guard match typeNameCheckSub location nsEmpty []
+    (.atapp [] (.short (ofString "missing"))) (7 : Nat) with
+  | (.failure (none, .inl message), 7) =>
+      message == ofString "Undefined type constructor: missing"
+  | _ => false
+
+#guard match typeNameCheckSub location nsEmpty [a] (.attup [.atvar a, .atvar a]) (7 : Nat) with
+  | (.success (.app [.var first, .var second] 9), 7) => first == a && second == a
+  | _ => false
 
 #guard match typeNameCheckSubst location id nsEmpty [] (.atvar a) (7 : Nat) with
   | (.failure (none, name), 7) => name == a

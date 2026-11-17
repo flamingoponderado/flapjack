@@ -1,5 +1,29 @@
 [
 {
+  "hol_path": "cakeml/compiler/inference/inferScript.sml", "hol_name": "st_ex_bind_pair",
+  "lean_path": "Flapjack/Compiler/Inference/Infer/Operations.lean", "lean_name": "bindPair",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with the source and st_ex_bind_pair_typed confirms arbitrary state, pair components, result and error carriers and both complete outcomes with the returned state."
+ },
+{
+  "hol_path": "cakeml/compiler/inference/inferScript.sml", "hol_name": "st_ex_bind_triple",
+  "lean_path": "Flapjack/Compiler/Inference/Infer/Operations.lean", "lean_name": "bindTriple",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with the source and st_ex_bind_triple_typed confirms independent carriers, product association, and complete success and failure outcomes with the returned state."
+ },
+{
+  "hol_path": "cakeml/compiler/inference/inferScript.sml", "hol_name": "type_name_check_sub_def",
+  "lean_path": "Flapjack/Compiler/Inference/Infer/TypeNameCheckSub.lean", "lean_name": "typeNameCheckSub",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent source comparison and type_name_check_sub_typed confirm all four clauses, polymorphic state, structured errors and their ordering, source diagnostics and first-match substitution."
+ },
+{
+  "hol_path": "cakeml/compiler/inference/inferScript.sml", "hol_name": "type_name_check_sub_def",
+  "lean_path": "Flapjack/Compiler/Inference/Infer/TypeNameCheckSub.lean", "lean_name": "typeNameCheckSubList",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent source comparison and type_name_check_sub_typed confirm both recursive list clauses, arbitrary state, structured exception and left-to-right failure order."
+ },
+{
   "hol_path": "cakeml/compiler/inference/inferScript.sml", "hol_name": "bind_guard",
   "lean_path": "Flapjack/Compiler/Inference/Infer/Operations.lean", "lean_name": "bindGuard",
   "statement_status": "reviewed_exact",

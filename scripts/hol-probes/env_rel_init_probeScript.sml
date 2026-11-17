@@ -32,6 +32,8 @@ val _ = show "failwith_typed" inferTheory.failwith_def;
 val _ = show "guard_typed" inferTheory.guard_def;
 val _ = show "bind_guard_typed" inferTheory.bind_guard;
 val _ = show "ignore_bind_guard_typed" inferTheory.ignore_bind_guard;
+val _ = show "st_ex_bind_pair_typed" inferTheory.st_ex_bind_pair;
+val _ = show "st_ex_bind_triple_typed" inferTheory.st_ex_bind_triple;
 val _ = show "infer_read_typed" inferTheory.read_def;
 val _ = show "infer_write_typed" inferTheory.write_def;
 val _ = show "lookup_st_ex_typed" inferTheory.lookup_st_ex_def;
@@ -39,6 +41,15 @@ val _ = show "find_dup_typed" inferTheory.find_dup_def;
 val _ = show "check_dups_typed" inferTheory.check_dups_def;
 val _ = show "check_dups_eq_find_dup_typed" inferTheory.check_dups_eq_find_dup;
 val _ = show "type_name_check_subst_typed" inferTheory.type_name_check_subst_def;
+val _ = show "type_name_check_sub_typed" inferTheory.type_name_check_sub_def;
+val _ = show "type_name_check_sub_unbound_eval" (EVAL ``
+  type_name_check_sub <|loc := NONE; err := nsEmpty|> nsEmpty [] (Atvar «a») (7:num)``);
+val _ = show "type_name_check_sub_missing_eval" (EVAL ``
+  type_name_check_sub <|loc := NONE; err := nsEmpty|> nsEmpty []
+    (Atapp [] (Short «missing»)) (7:num)``);
+val _ = show "type_name_check_sub_success_eval" (EVAL ``
+  type_name_check_sub <|loc := NONE; err := nsEmpty|> nsEmpty [«a»]
+    (Attup [Atvar «a»; Atvar «a»]) (7:num)``);
 val _ = show "check_ctor_types_typed" inferTheory.check_ctor_types_def;
 val _ = show "check_ctors_typed" inferTheory.check_ctors_def;
 val _ = show "check_type_definition_typed" inferTheory.check_type_definition_def;
