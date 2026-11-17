@@ -200,11 +200,12 @@ structure HolRef where
       exactly the target operation's explicit inputs. It does not imply the
       input and result maps share a key/value type. -/
   fmapAsFiniteSupportHeterogeneousFunction : Array String := #[]
-  /-- Prospective combined map-input/tuple-result metadata. Source and export
-      gates must be integrated before declarations may be accepted as ports. -/
+  /-- Combined map-input and tuple-result representation metadata. -/
   fmapAsFiniteSupportParameterTupleResult : Array String := #[]
-  /-- Prospective metadata for an observer of a qualified tuple-map producer. -/
+  /-- Metadata for an observer of a qualified tuple-map producer. -/
   fmapAsFiniteSupportParameterTupleObservations : Array String := #[]
+  /-- The four map occurrences in the two inference-submap conjuncts. -/
+  fmapAsFiniteSupportConjunctUniversals : Array String := #[]
   /-- Standalone declarations (definitions or theorems) whose own input or
       result carrier is the reviewed canonical `HolFiniteMapExact` translation,
       rather than a structure field. Distinct from `fmapAsFiniteSupport`, which
@@ -339,6 +340,7 @@ syntax "(" "fmap_as_finite_support_parameter_tuple_observations" ":="
   "(" "map_parameters" ":=" "[" ident,+ "]" ")"
   "(" "map_producer" ":=" ident ")"
   "(" "result_component" ":=" ident ")" ")" : holQualifier
+syntax "(" "fmap_as_finite_support_conjunct_universals" ":=" "[" ident,+ "]" ")" : holQualifier
 syntax "(" "fmap_as_finite_support_result" ")" : holQualifier
 syntax "(" "fmap_as_finite_support_parameters" ":=" "[" ident,+ "]" ")" : holQualifier
 syntax "(" "fmap_as_finite_support_parameter_predicate_domain" ":=" "[" ident,+ "]" ")" : holQualifier
@@ -565,6 +567,9 @@ private def parseHolQualifier (stx : Syntax) : CoreM (String × Array String × 
       pure ("fmap_as_finite_support_parameter_tuple_observations",
         parameters.getElems.map (fun parameter => parameter.getId.eraseMacroScopes.toString) ++
           #[producer.getId.eraseMacroScopes.toString, component.getId.eraseMacroScopes.toString], false, #[])
+  | `(holQualifier| (fmap_as_finite_support_conjunct_universals := [$fields:ident,*])) =>
+      pure ("fmap_as_finite_support_conjunct_universals",
+        fields.getElems.map (fun field => field.getId.eraseMacroScopes.toString), false, #[])
   | `(holQualifier| (fmap_as_finite_support_result)) =>
       pure ("fmap_as_finite_support_result", #[], true, #[])
   | `(holQualifier| (fmap_as_finite_support_parameters := [$parameters:ident,*])) =>
@@ -627,6 +632,8 @@ private def parseHolRefAttribute (stx : Syntax) : CoreM HolRef := do
     let mut seenGeneraliseMapQualifier := false
     let mut generaliseLengthQualifier : Array String := #[]
     let mut seenGeneraliseLengthQualifier := false
+    let mut conjunctUniversals : Array String := #[]
+    let mut seenConjunctUniversals := false
     let mut fmapAsFiniteSupportResult : Bool := false
     let mut fmapAsFiniteSupportParameters : Array String := #[]
     let mut predicateDomain : Array String := #[]
@@ -664,6 +671,11 @@ private def parseHolRefAttribute (stx : Syntax) : CoreM HolRef := do
           throwError "@[hol]: generalization length qualifier may appear only once"
         seenGeneraliseLengthQualifier := true
         generaliseLengthQualifier := fields
+      else if kind == "fmap_as_finite_support_conjunct_universals" then
+        if seenConjunctUniversals then
+          throwError "@[hol]: conjunct-universal qualifier may appear only once"
+        seenConjunctUniversals := true
+        conjunctUniversals := fields
       else if kind == "fmap_as_finite_support_parameters" then
         if parameterObservations then
           throwError "@[hol]: parameter observations cannot combine with map parameters"
@@ -724,9 +736,14 @@ private def parseHolRefAttribute (stx : Syntax) : CoreM HolRef := do
           "Flapjack.Compiler.Inference.Infer.Generalise.generaliseListMap", "component_2"] &&
           path == "cakeml/compiler/inference/inferPropsScript.sml" && name == "generalise_list_length" && line?.isNone do
         throwError "@[hol]: generalization length qualifier requires its unique HOL reference and exact fields, without other qualifiers"
+    if seenConjunctUniversals then
+      unless qualifiers.size == 1 && conjunctUniversals == #["type_s1", "type_s2", "list_s1", "list_s2"] &&
+          path == "cakeml/compiler/inference/inferPropsScript.sml" && name == "infer_subst_submap" && line?.isNone do
+        throwError "@[hol]: conjunct-universal qualifier requires its unique HOL reference and four ordered occurrences"
     let ref ← checkedHolRef path name line? listAsArray namesAsString namesAsStringBoundary fmapAsFiniteSupport fmapAsFiniteSupportResult fmapAsFiniteSupportFunction fmapAsFiniteSupportHeterogeneousFunction fmapAsFiniteSupportParameters fmapAsFiniteSupportExistentials fmapAsFiniteSupportRelation fmapAsFiniteSupportEqualities fmapAsFiniteSupportEquality wordsAsTypeIndexedBitvec wordDimensionAsWidth realsAsRationalCuts fmapAsFiniteSupportResultObservations wordDimensionsAsWidths fmapAsFiniteSupportTuple nestedListRelAsMutual parameterObservations predicateDomain universalMaps
     let ref := { ref with fmapAsFiniteSupportParameterTupleResult := generaliseMapQualifier }
-    pure { ref with fmapAsFiniteSupportParameterTupleObservations := generaliseLengthQualifier }
+    let ref := { ref with fmapAsFiniteSupportParameterTupleObservations := generaliseLengthQualifier }
+    pure { ref with fmapAsFiniteSupportConjunctUniversals := conjunctUniversals }
   match stx with
   | `(attr| hol $path:str $name:str $line:num $qualifiers:holQualifier*) =>
       parse path.getString name.getString (some line.getNat) qualifiers
@@ -1135,6 +1152,15 @@ initialize holRefAttribute : ParametricAttribute HolRef ← do
     descr := "original HOL4 declaration (file path and declaration name) ported by this Lean declaration"
     getParam := fun _ stx => parseHolRefAttribute stx
     afterSet := fun decl ref => do
+      if ref.path == "cakeml/compiler/inference/inferPropsScript.sml" && ref.name == "infer_subst_submap" &&
+          ref.fmapAsFiniteSupportConjunctUniversals.isEmpty then
+        logError m!"{decl}: infer_subst_submap requires its conjunct-universal qualifier"
+      if !ref.fmapAsFiniteSupportConjunctUniversals.isEmpty then
+        let expected : HolRef := {
+          path := "cakeml/compiler/inference/inferPropsScript.sml", name := "infer_subst_submap",
+          fmapAsFiniteSupportConjunctUniversals := #["type_s1", "type_s2", "list_s1", "list_s2"] }
+        unless ref == expected && decl == `Flapjack.Compiler.Inference.InferProps.Substitution.inferSubstSubmap do
+          logError m!"{decl}: conjunct-universal qualifier has unexpected metadata or declaration"
       if ref.path == "cakeml/compiler/inference/inferPropsScript.sml" && ref.name == "generalise_list_length" &&
           ref.fmapAsFiniteSupportParameterTupleObservations.isEmpty then
         logError m!"{decl}: generalise_list_length requires its combined tuple-observer qualifier"
@@ -1272,6 +1298,8 @@ private def HolRef.qualifierSuffix (ref : HolRef) : String :=
     s!" (fmap_as_finite_support_parameter_tuple_result := (map_parameter := {ref.fmapAsFiniteSupportParameterTupleResult[0]!}) (result_component := {ref.fmapAsFiniteSupportParameterTupleResult[1]!}))"
   let generaliseLengthQualifier := if ref.fmapAsFiniteSupportParameterTupleObservations.isEmpty then "" else
     s!" (fmap_as_finite_support_parameter_tuple_observations := (map_parameters := [subst, out]) (map_producer := {ref.fmapAsFiniteSupportParameterTupleObservations[2]!}) (result_component := {ref.fmapAsFiniteSupportParameterTupleObservations[3]!}))"
+  let conjunctUniversals := if ref.fmapAsFiniteSupportConjunctUniversals.isEmpty then "" else
+    s!" (fmap_as_finite_support_conjunct_universals := [{String.intercalate ", " ref.fmapAsFiniteSupportConjunctUniversals.toList}])"
   let fmapAsFiniteSupportParameters := if ref.fmapAsFiniteSupportParameters.isEmpty || ref.fmapAsFiniteSupportParameterObservations then "" else
     s!" (fmap_as_finite_support_parameters := [{String.intercalate ", " ref.fmapAsFiniteSupportParameters.toList}])"
   let predicateDomain := if ref.fmapAsFiniteSupportParameterPredicateDomain.isEmpty then "" else
@@ -1300,7 +1328,7 @@ private def HolRef.qualifierSuffix (ref : HolRef) : String :=
     s!" (fmap_as_finite_support_result_observations := [{String.intercalate ", " ref.fmapAsFiniteSupportResultObservations.toList}])"
   let nested := if ref.nestedListRelAsMutual.isEmpty then "" else
     s!" (nested_list_rel_as_mutual := [{String.intercalate ", " ref.nestedListRelAsMutual.toList}])"
-  observations ++ listAsArray ++ namesAsString ++ namesAsStringBoundary ++ fmapAsFiniteSupport ++ fmapAsFiniteSupportResult ++ fmapAsFiniteSupportFunction ++ fmapAsFiniteSupportTuple ++ fmapAsFiniteSupportHeterogeneousFunction ++ generaliseMapQualifier ++ generaliseLengthQualifier ++ fmapAsFiniteSupportParameters ++ predicateDomain ++ universalMaps ++ fmapAsFiniteSupportExistentials ++ fmapAsFiniteSupportRelation ++ fmapAsFiniteSupportEqualities ++ fmapAsFiniteSupportEquality ++ wordsAsTypeIndexedBitvec ++ wordDimensionAsWidth ++ wordDimensionsAsWidths ++ realsAsRationalCuts ++ nested
+  observations ++ listAsArray ++ namesAsString ++ namesAsStringBoundary ++ fmapAsFiniteSupport ++ fmapAsFiniteSupportResult ++ fmapAsFiniteSupportFunction ++ fmapAsFiniteSupportTuple ++ fmapAsFiniteSupportHeterogeneousFunction ++ generaliseMapQualifier ++ generaliseLengthQualifier ++ conjunctUniversals ++ fmapAsFiniteSupportParameters ++ predicateDomain ++ universalMaps ++ fmapAsFiniteSupportExistentials ++ fmapAsFiniteSupportRelation ++ fmapAsFiniteSupportEqualities ++ fmapAsFiniteSupportEquality ++ wordsAsTypeIndexedBitvec ++ wordDimensionAsWidth ++ wordDimensionsAsWidths ++ realsAsRationalCuts ++ nested
 
 /-! Parser regressions for the original syntax, each qualifier alone, and both
 qualifiers together. These elaborate temporary syntax values only; they do not
@@ -1601,6 +1629,32 @@ run_cmd do
     catch _ => pure true
   unless combinedLengthRejected do
     throwError "@[hol] generalization length qualifier cannot combine with other qualifiers"
+  let submapSyntax ← `(attr| hol "cakeml/compiler/inference/inferPropsScript.sml" "infer_subst_submap"
+    (fmap_as_finite_support_conjunct_universals := [type_s1, type_s2, list_s1, list_s2]))
+  let submapRef ← Lean.Elab.Command.liftCoreM (parseHolRefAttribute submapSyntax)
+  unless submapRef.fmapAsFiniteSupportConjunctUniversals == #["type_s1", "type_s2", "list_s1", "list_s2"] &&
+      HolRef.qualifierSuffix submapRef ==
+        " (fmap_as_finite_support_conjunct_universals := [type_s1, type_s2, list_s1, list_s2])" do
+    throwError "@[hol] conjunct-universal qualifier syntax regression"
+  let wrongSubmap ← `(attr| hol "cakeml/compiler/inference/inferPropsScript.sml" "infer_subst_submap"
+    (fmap_as_finite_support_conjunct_universals := [type_s1, type_s2, type_s1, type_s2]))
+  let wrongSubmapRejected ← Lean.Elab.Command.liftCoreM do
+    try
+      let _ ← parseHolRefAttribute wrongSubmap
+      pure false
+    catch _ => pure true
+  unless wrongSubmapRejected do
+    throwError "@[hol] conjunct-universal qualifier must preserve four independent positions"
+  let combinedSubmap ← `(attr| hol "cakeml/compiler/inference/inferPropsScript.sml" "infer_subst_submap"
+    (fmap_as_finite_support_conjunct_universals := [type_s1, type_s2, list_s1, list_s2])
+    (words_as_type_indexed_bitvec))
+  let combinedSubmapRejected ← Lean.Elab.Command.liftCoreM do
+    try
+      let _ ← parseHolRefAttribute combinedSubmap
+      pure false
+    catch _ => pure true
+  unless combinedSubmapRejected do
+    throwError "@[hol] conjunct-universal qualifier cannot combine with another qualifier"
   let wrongGeneralise ← `(attr| hol "cakeml/compiler/inference/inferScript.sml" "generalise_def"
     (fmap_as_finite_support_parameter_tuple_result :=
       (map_parameter := subst) (result_component := component_1)))

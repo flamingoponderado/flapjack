@@ -81,9 +81,9 @@ theorem holFmapAsFiniteSupportNestedSubmapWitness
   cases map
   exact ⟨rfl, rfl, rfl⟩
 
-/-- The complete type and list substitution-submap result. The HOL theorem
-    quantifies finite maps independently in both conjuncts; a qualifier for
-    those nested binders is still needed before this can carry its HOL tag. -/
+/-- The complete type and list substitution-submap result. -/
+@[hol "cakeml/compiler/inference/inferPropsScript.sml" "infer_subst_submap"
+  (fmap_as_finite_support_conjunct_universals := [type_s1, type_s2, list_s1, list_s2])]
 theorem inferSubstSubmap :
     (∀ (t : InferT) (s1 s2 : HolFiniteMapExact Nat Nat) (m : Nat),
       s1.submap s2 ∧

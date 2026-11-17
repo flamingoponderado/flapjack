@@ -7,9 +7,9 @@ public meta import Flapjack.HolRef.GeneraliseLengthAudit
 
 public meta section
 
-/-! Prospective elaborated audit for the independently quantified map binders
-of the inference substitution submap theorem. This audit alone does not enable
-a qualifier or establish the HOL-to-Lean correspondence. -/
+/-! Elaborated audit for the independently quantified map binders of the
+inference substitution submap theorem. This audit alone does not establish
+the HOL-to-Lean correspondence. -/
 namespace Flapjack
 open Lean Meta
 

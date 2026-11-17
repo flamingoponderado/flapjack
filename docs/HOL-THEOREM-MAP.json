@@ -1,5 +1,12 @@
 [
 {
+  "hol_path": "cakeml/compiler/inference/inferPropsScript.sml", "hol_name": "infer_subst_submap",
+  "lean_path": "Flapjack/Compiler/Inference/InferProps/Substitution.lean", "lean_name": "inferSubstSubmap",
+  "statement_status": "reviewed_fmap_as_finite_support_conjunct_universals",
+  "fmap_as_finite_support_conjunct_universals": ["type_s1", "type_s2", "list_s1", "list_s2"],
+  "reviewer": "Typed HOL source comparison covers both independent conjuncts and their type_s1, type_s2, list_s1, list_s2 maps, preserving submap, coverage and fresh-domain hypotheses and both substitution equalities. The canonical map codec witness applies independently to all four quantified maps."
+ },
+{
   "hol_path": "cakeml/compiler/inference/inferScript.sml", "hol_name": "infer_subst_def",
   "lean_path": "Flapjack/Compiler/Inference/Infer/Substitution.lean", "lean_name": "inferSubst",
   "statement_status": "reviewed_fmap_as_finite_support_parameters",

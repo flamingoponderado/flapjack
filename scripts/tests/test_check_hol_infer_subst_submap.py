@@ -1,4 +1,4 @@
-"""Prospective source checks for independently quantified substitution maps."""
+"""Source checks for independently quantified substitution maps."""
 
 import json
 import runpy
@@ -6,7 +6,8 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-CHECK = runpy.run_path(str(ROOT / "scripts/check-hol-refs.py"))["infer_subst_submap_observer_errors"]
+CHECKER = runpy.run_path(str(ROOT / "scripts/check-hol-refs.py"))
+CHECK = CHECKER["infer_subst_submap_observer_errors"]
 PATH = "Flapjack/Compiler/Inference/InferProps/Substitution.lean"
 PRODUCER_PATH = "Flapjack/Compiler/Inference/Infer/Substitution.lean"
 REF = ("cakeml/compiler/inference/inferPropsScript.sml", "infer_subst_submap")
@@ -15,13 +16,24 @@ SOURCE = (ROOT / PATH).read_text()
 PRODUCER = (ROOT / PRODUCER_PATH).read_text()
 DOMAIN = (ROOT / "Flapjack/FiniteMap/DomainExact.lean").read_text()
 SUBMAP = (ROOT / "Flapjack/FiniteMap/SubmapExact.lean").read_text()
+VARS = (ROOT / "Flapjack/Compiler/Inference/Unify/Substitution.lean").read_text()
 ROWS = json.loads((ROOT / "docs/HOL-THEOREM-MAP.json").read_text())
 
 
 class InferSubstSubmapSourceTest(unittest.TestCase):
+    def test_qualifier_scanner_rejects_malformed_and_repeated_uses(self):
+        prefix = '@[hol "p" "n" '
+        qualifier = "fmap_as_finite_support_conjunct_universals"
+        valid = f"({qualifier} := [type_s1, type_s2, list_s1, list_s2])]"
+        sites = CHECKER["hol_attribute_sites"]
+        self.assertEqual(list(sites([prefix + valid], include_infer_subst_submap=True))[0][-1], BINDERS)
+        for suffix in (f"({qualifier} := malformed)]", valid[:-1] + f" ({qualifier} := [x])]"):
+            self.assertEqual(list(sites([prefix + suffix], include_infer_subst_submap=True))[0][-1], ("",))
+        self.assertEqual(list(sites(['@[hol "p" "n"]'], include_infer_subst_submap=True))[0][-1], ())
+
     def check(self, source=SOURCE, path=PATH, ref=REF, binders=BINDERS, producer=PRODUCER,
-              domain=DOMAIN, submap=SUBMAP, rows=ROWS):
-        return CHECK(source, path, ref, binders, producer, domain, submap, rows)
+              domain=DOMAIN, submap=SUBMAP, vars=VARS, rows=ROWS):
+        return CHECK(source, path, ref, binders, producer, domain, submap, vars, rows)
 
     def test_actual_statement_and_producer(self):
         self.assertEqual(self.check(), [])
@@ -61,6 +73,10 @@ class InferSubstSubmapSourceTest(unittest.TestCase):
         self.assertTrue(self.check(producer=PRODUCER.replace("cases subst", "sorry")))
         self.assertTrue(self.check(domain=DOMAIN.replace("map.lookup key ≠ none", "True")))
         self.assertTrue(self.check(submap=SUBMAP.replace("g.lookup key = some value", "True", 1)))
+        self.assertTrue(self.check(vars=VARS.replace("vars (encodeInferT t)", "fun _ => False", 1)))
+        self.assertTrue(self.check(rows=[row for row in ROWS if not (
+            row.get("lean_path") == "Flapjack/Compiler/Inference/Unify/Substitution.lean" and
+            row.get("lean_name") == "tVars")]))
         rows = [row for row in ROWS if not (row.get("lean_path") == PRODUCER_PATH and
                                             row.get("lean_name") == "inferSubst")]
         self.assertTrue(self.check(rows=rows))

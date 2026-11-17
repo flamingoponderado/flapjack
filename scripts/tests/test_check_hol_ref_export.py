@@ -270,6 +270,44 @@ class HolRefExportTest(unittest.TestCase):
             with self.subTest(changes=changes), self.assertRaises(ValueError):
                 MODULE.check_records([row, producer_row], [{**exported[0], **changes}, exported[1]])
 
+    def test_infer_subst_submap_qualifier_is_exact_and_requires_producer(self):
+        key = "fmap_as_finite_support_conjunct_universals"
+        fields = {key: ["type_s1", "type_s2", "list_s1", "list_s2"]}
+        row = {"lean_path": "Flapjack/Compiler/Inference/InferProps/Substitution.lean",
+               "lean_name": "inferSubstSubmap", "hol_path": "cakeml/compiler/inference/inferPropsScript.sml",
+               "hol_name": "infer_subst_submap", "statement_status": "reviewed_" + key, **fields}
+        producer = {"lean_path": "Flapjack/Compiler/Inference/Infer/Substitution.lean",
+                    "lean_name": "inferSubst", "hol_path": "cakeml/compiler/inference/inferScript.sml",
+                    "hol_name": "infer_subst_def", "statement_status": "reviewed_fmap_as_finite_support_parameters",
+                    "fmap_as_finite_support_parameters": ["subst"]}
+        vars_row = {"lean_path": "Flapjack/Compiler/Inference/Unify/Substitution.lean", "lean_name": "tVars",
+                    "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "t_vars_def",
+                    "statement_status": "reviewed_exact"}
+        exported = [{"lean_name": "Flapjack.Compiler.Inference.InferProps.Substitution.inferSubstSubmap",
+                     "hol_path": row["hol_path"], "hol_name": row["hol_name"], "qualifiers": fields},
+                    {"lean_name": "Flapjack.Compiler.Inference.Infer.Substitution.inferSubst",
+                     "hol_path": producer["hol_path"], "hol_name": producer["hol_name"],
+                     "qualifiers": {"fmap_as_finite_support_parameters": ["subst"]}},
+                    {"lean_name": "Flapjack.Compiler.Inference.Unify.tVars", "hol_path": vars_row["hol_path"],
+                     "hol_name": vars_row["hol_name"], "qualifiers": {}}]
+        self.assertEqual(MODULE.check_records([row, producer, vars_row], exported), 3)
+        self.assertEqual(MODULE.validate_export_record(exported[0], 1), exported[0])
+        for changed in ({**row, "statement_status": "reviewed_exact"},
+                        {**row, "lean_path": "Flapjack/Other.lean"}, {**row, "hol_line": 168},
+                        {**row, key: ["type_s1", "type_s2", "type_s1", "type_s2"]}):
+            with self.subTest(row=changed), self.assertRaises(ValueError):
+                MODULE.check_records([changed, producer, vars_row], exported)
+        for rows in ([row, vars_row], [row, producer, producer, vars_row], [row, producer],
+                     [row, producer, {**vars_row, "statement_status": "pending_statement_review"}],
+                     [row, {**producer, "statement_status": "reviewed_exact"}, vars_row],
+                     [row, {**producer, "words_as_type_indexed_bitvec": True}, vars_row]):
+            with self.subTest(rows=rows), self.assertRaises(ValueError):
+                MODULE.check_records(rows, exported)
+        for changes in ({"qualifiers": {}}, {"lean_name": "Flapjack.Other.inferSubstSubmap"},
+                        {"qualifiers": {**fields, "words_as_type_indexed_bitvec": True}}):
+            with self.subTest(changes=changes), self.assertRaises(ValueError):
+                MODULE.check_records([row, producer, vars_row], [{**exported[0], **changes}, *exported[1:]])
+
     def test_fmap_as_finite_support_equalities_qualifier_must_match(self):
         self.check_qualifier(
             "reviewed_fmap_as_finite_support_equalities",
@@ -417,6 +455,7 @@ class HolRefExportTest(unittest.TestCase):
         umbrella = "import Flapjack.A\nimport Flapjack.B\n"
         exporter = ("import Flapjack\nimport Flapjack.Test.NestedRelationAudit\n"
                     "import Flapjack.HolRef.GeneraliseLengthAudit\n"
+                    "import Flapjack.HolRef.InferSubstSubmapAudit\n"
                     "import Flapjack.C\nopen Lean Elab Command Flapjack\n#emit_hol_ref_export\n")
         batches = MODULE.export_batches(umbrella, exporter, count=2)
         self.assertEqual(len(batches), 2)
@@ -424,16 +463,25 @@ class HolRefExportTest(unittest.TestCase):
             self.assertEqual(sum(f"import {name}\n" in batch for batch in batches), 1)
         self.assertTrue(all("import Flapjack.Test.NestedRelationAudit\n" in batch for batch in batches))
         self.assertTrue(all("import Flapjack.HolRef.GeneraliseLengthAudit\n" in batch for batch in batches))
+        self.assertTrue(all("import Flapjack.HolRef.InferSubstSubmapAudit\n" in batch for batch in batches))
 
     def test_batches_reject_non_import_umbrella(self):
         exporter = ("import Flapjack\nimport Flapjack.Test.NestedRelationAudit\n"
                     "import Flapjack.HolRef.GeneraliseLengthAudit\n"
+                    "import Flapjack.HolRef.InferSubstSubmapAudit\n"
                     "open Lean Elab Command Flapjack\n")
         with self.assertRaisesRegex(ValueError, "import-only"):
             MODULE.export_batches("import Flapjack.A\ndef extra := 1\n", exporter)
 
     def test_batches_require_generalisation_length_audit(self):
         exporter = ("import Flapjack\nimport Flapjack.Test.NestedRelationAudit\n"
+                    "open Lean Elab Command Flapjack\n")
+        with self.assertRaisesRegex(ValueError, "shared audit modules"):
+            MODULE.export_batches("import Flapjack.A\n", exporter)
+
+    def test_batches_require_inference_submap_audit(self):
+        exporter = ("import Flapjack\nimport Flapjack.Test.NestedRelationAudit\n"
+                    "import Flapjack.HolRef.GeneraliseLengthAudit\n"
                     "open Lean Elab Command Flapjack\n")
         with self.assertRaisesRegex(ValueError, "shared audit modules"):
             MODULE.export_batches("import Flapjack.A\n", exporter)

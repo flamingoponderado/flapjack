@@ -1,4 +1,5 @@
 import Flapjack.HolRef.GeneraliseLengthAudit
+import Flapjack.HolRef.InferSubstSubmapAudit
 import Flapjack.Compiler.Backend.StackProps.EvaluateMono
 import Flapjack.Compiler.Backend.StackProps.EvaluateNeutral
 import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.Nonrecursive
@@ -273,6 +274,16 @@ elab "#emit_hol_ref_export" : command => do
   let mut known : Std.HashMap Name Bool := {}
   let mut nestedKnown : Std.HashMap Name (Bool × Bool) := {}
   for (name, ref) in HolRef.all env do
+    if ref.path == "cakeml/compiler/inference/inferPropsScript.sml" && ref.name == "infer_subst_submap" &&
+        ref.fmapAsFiniteSupportConjunctUniversals.isEmpty then
+      throwError "infer_subst_submap requires its conjunct-universal qualifier: {name}"
+    unless ref.fmapAsFiniteSupportConjunctUniversals.isEmpty do
+      let expected : HolRef := {
+        path := "cakeml/compiler/inference/inferPropsScript.sml", name := "infer_subst_submap",
+        fmapAsFiniteSupportConjunctUniversals := #["type_s1", "type_s2", "list_s1", "list_s2"] }
+      unless ref == expected do throwError "invalid inference submap qualifier metadata: {name}"
+      let problems ← liftTermElabM <| inferSubstSubmapBundleProblems name
+      unless problems.isEmpty do throwError "invalid inference submap declaration {name}: {problems}"
     if ref.path == "cakeml/compiler/inference/inferPropsScript.sml" &&
         ref.name == "generalise_list_length" && ref.fmapAsFiniteSupportParameterTupleObservations.isEmpty then
       throwError "generalise_list_length requires its combined tuple-observer qualifier: {name}"
@@ -435,6 +446,10 @@ elab "#emit_hol_ref_export" : command => do
           qualifiers := qualifiers ++ [
             ("fmap_as_finite_support_parameter_tuple_observations",
               toJson ref.fmapAsFiniteSupportParameterTupleObservations)]
+        if !ref.fmapAsFiniteSupportConjunctUniversals.isEmpty then
+          qualifiers := qualifiers ++ [
+            ("fmap_as_finite_support_conjunct_universals",
+              toJson ref.fmapAsFiniteSupportConjunctUniversals)]
         if !ref.fmapAsFiniteSupportTuple.isEmpty then
           qualifiers := qualifiers ++ [
             ("fmap_as_finite_support_tuple", toJson ref.fmapAsFiniteSupportTuple)]

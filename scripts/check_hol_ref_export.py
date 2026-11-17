@@ -69,6 +69,7 @@ ALLOWED_QUALIFIERS = {
     "fmap_as_finite_support_heterogeneous_function",
     "fmap_as_finite_support_parameter_tuple_result",
     "fmap_as_finite_support_parameter_tuple_observations",
+    "fmap_as_finite_support_conjunct_universals",
     "fmap_as_finite_support_result_observations",
     "fmap_as_finite_support_parameter_observations",
     "fmap_as_finite_support_parameter_predicate_domain",
@@ -144,7 +145,8 @@ def export_batches(umbrella: str, exporter: str, count: int = EXPORT_BATCH_COUNT
         return result
 
     direct = imports(header)
-    shared = ("Flapjack.Test.NestedRelationAudit", "Flapjack.HolRef.GeneraliseLengthAudit")
+    shared = ("Flapjack.Test.NestedRelationAudit", "Flapjack.HolRef.GeneraliseLengthAudit",
+              "Flapjack.HolRef.InferSubstSubmapAudit")
     if direct.count("Flapjack") != 1 or any(direct.count(name) != 1 for name in shared):
         raise ValueError("HOL exporter must import the umbrella and shared audit modules")
     all_imports = list(dict.fromkeys(
@@ -220,6 +222,7 @@ def manifest_qualifiers(record: dict[str, Any]) -> dict[str, Any]:
         "fmap_as_finite_support_heterogeneous_function",
         "fmap_as_finite_support_parameter_tuple_result",
         "fmap_as_finite_support_parameter_tuple_observations",
+        "fmap_as_finite_support_conjunct_universals",
         "fmap_as_finite_support_result_observations",
         "fmap_as_finite_support_parameters",
         "fmap_as_finite_support_parameter_predicate_domain",
@@ -271,6 +274,37 @@ def check_records(
         item = candidates[0]
         qualifiers = manifest_qualifiers(record)
         exported_qualifiers = item.get("qualifiers", {})
+        submap_key = "fmap_as_finite_support_conjunct_universals"
+        if exported_qualifiers.get(submap_key, []) != qualifiers.get(submap_key, []):
+            raise ValueError("inference submap qualifier differs from elaborated @[hol] exporter")
+        submap_ref = ("cakeml/compiler/inference/inferPropsScript.sml", "infer_subst_submap")
+        submap_status = "reviewed_" + submap_key
+        if (submap_key in qualifiers or record.get("statement_status") == submap_status or
+                (item["hol_path"], item["hol_name"]) == submap_ref):
+            producer_rows = [row for row in manifest if
+                             row.get("lean_path") == "Flapjack/Compiler/Inference/Infer/Substitution.lean" and
+                             row.get("lean_name") == "inferSubst"]
+            vars_rows = [row for row in manifest if row.get("lean_path") ==
+                         "Flapjack/Compiler/Inference/Unify/Substitution.lean" and row.get("lean_name") == "tVars"]
+            if (record.get("statement_status") != submap_status or
+                    record.get("lean_path") != "Flapjack/Compiler/Inference/InferProps/Substitution.lean" or
+                    item["lean_name"] != "Flapjack.Compiler.Inference.InferProps.Substitution.inferSubstSubmap" or
+                    (item["hol_path"], item["hol_name"]) != submap_ref or record.get("hol_line") is not None or
+                    qualifiers.get(submap_key) != ["type_s1", "type_s2", "list_s1", "list_s2"] or
+                    any(value for key, value in exported_qualifiers.items() if key != submap_key) or
+                    len(producer_rows) != 1 or
+                    producer_rows[0].get("hol_path") != "cakeml/compiler/inference/inferScript.sml" or
+                    producer_rows[0].get("hol_name") != "infer_subst_def" or
+                    producer_rows[0].get("hol_line") is not None or
+                    producer_rows[0].get("statement_status") != "reviewed_fmap_as_finite_support_parameters" or
+                    manifest_qualifiers(producer_rows[0]).get("fmap_as_finite_support_parameters") != ["subst"] or
+                    any(value for key, value in manifest_qualifiers(producer_rows[0]).items()
+                        if key != "fmap_as_finite_support_parameters") or
+                    len(vars_rows) != 1 or vars_rows[0].get("hol_path") != "cakeml/compiler/inference/unifyScript.sml" or
+                    vars_rows[0].get("hol_name") != "t_vars_def" or vars_rows[0].get("hol_line") is not None or
+                    vars_rows[0].get("statement_status") != "reviewed_exact" or
+                    any(manifest_qualifiers(vars_rows[0]).values())):
+                raise ValueError("invalid inference submap qualifier metadata or producer")
         length_key = "fmap_as_finite_support_parameter_tuple_observations"
         if exported_qualifiers.get(length_key, []) != qualifiers.get(length_key, []):
             raise ValueError("generalization length qualifier differs from elaborated @[hol] exporter")

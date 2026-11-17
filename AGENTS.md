@@ -441,6 +441,20 @@ and the producer bundle, and the manifest uses
 do not replace comparison with the typed HOL statement, and the qualifier
 permits no other change to its statement or semantics.
 
+**Qualify independently quantified maps in substitution submap.** The narrow
+`(fmap_as_finite_support_conjunct_universals :=
+  [type_s1, type_s2, list_s1, list_s2])` qualifier applies only to
+`inferSubstSubmap`, the counterpart of `infer_subst_submap`. It names the two
+canonical finite maps independently quantified in each HOL conjunct; it does
+not identify maps across conjuncts. The same-module unconditional codec witness
+applies to each map. The source gate checks the complete statement, fixed
+producer, variable-set and domain/submap definitions; the elaborated audit checks both
+quantifier groups, all premises and conclusions, carrier and operation owners,
+references, witness and axiom closure. Record the identical ordered list with
+status `reviewed_fmap_as_finite_support_conjunct_universals`. These checks do
+not establish HOL-to-Lean equivalence or permit other statement differences;
+compare the typed HOL statement independently.
+
 **Qualify a heterogeneous finite-map function.** Use
 `(fmap_as_finite_support_heterogeneous_function := [argument_N, result_M])`
 only for a direct function definition with a typed result whose named explicit

@@ -336,6 +336,9 @@ GENERALISE_LENGTH_QUALIFIER_RE = re.compile(
     r'\(\s*map_producer\s*:=\s*([A-Za-z_][A-Za-z0-9_\'.]*)\s*\)\s*'
     r'\(\s*result_component\s*:=\s*([A-Za-z_][A-Za-z0-9_\']*)\s*\)\s*\)'
 )
+INFER_SUBST_SUBMAP_QUALIFIER_RE = re.compile(
+    r'\(\s*fmap_as_finite_support_conjunct_universals\s*:=\s*\[([^]]*)\]\s*\)'
+)
 NESTED_LIST_REL_AS_MUTUAL_RE = re.compile(
     r'\(\s*nested_list_rel_as_mutual\s*:=\s*\[([^]]*)\]\s*\)'
 )
@@ -592,7 +595,8 @@ def hol_attribute_sites(lines: list[str], *, include_fmap_existentials: bool = F
                         include_predicate_domain: bool = False,
                         include_fmap_universals: bool = False,
                         include_generalise_map: bool = False,
-                        include_generalise_length: bool = False):
+                        include_generalise_length: bool = False,
+                        include_infer_subst_submap: bool = False):
     """Yield HOL attributes, including attributes split across Lean lines."""
     comment_depth = 0
     start: int | None = None
@@ -732,6 +736,16 @@ def hol_attribute_sites(lines: list[str], *, include_fmap_existentials: bool = F
                     else:
                         fields = tuple(field.strip() for field in matches[0].group(1).split(","))
                         fields += (matches[0].group(2), matches[0].group(3))
+                    site += (fields,)
+                if include_infer_subst_submap:
+                    matches = list(INFER_SUBST_SUBMAP_QUALIFIER_RE.finditer(attribute))
+                    occurrences = attribute.count("fmap_as_finite_support_conjunct_universals")
+                    if occurrences == 0:
+                        fields = ()
+                    elif occurrences != 1 or len(matches) != 1:
+                        fields = ("",)
+                    else:
+                        fields = tuple(field.strip() for field in matches[0].group(1).split(","))
                     site += (fields,)
                 yield site
         start = None
@@ -5949,12 +5963,12 @@ def generalise_length_observer_errors(
 
 def infer_subst_submap_observer_errors(
     source: str, lean_path: str, hol_ref: tuple[str, str], binders: tuple[str, ...],
-    producer_source: str, domain_source: str, submap_source: str, records: list[dict],
+    producer_source: str, domain_source: str, submap_source: str, vars_source: str, records: list[dict],
 ) -> list[str]:
-    """Prospective source audit for the independently quantified submap theorem.
+    """Audit source for the independently quantified submap theorem.
 
-    This does not enable a qualifier; elaborated binder, witness and exporter
-    checks must also be implemented before the theorem can be tagged.
+    The elaborated binder, witness and exporter checks remain independently
+    necessary; this source audit alone cannot establish HOL correspondence.
     """
     expected_path = "Flapjack/Compiler/Inference/InferProps/Substitution.lean"
     producer_path = "Flapjack/Compiler/Inference/Infer/Substitution.lean"
@@ -6031,6 +6045,25 @@ def infer_subst_submap_observer_errors(
     if (" ".join(strip_lean_comments(domain_source).split()) != domain_expected or
             not " ".join(strip_lean_comments(submap_source).split()).startswith(submap_prefix)):
         return ["inference submap requires the reviewed finite-map domain and submap definitions"]
+    vars_prefix = (
+        "module public import Flapjack.Compiler.Inference.Unify.Encoding "
+        "public import Flapjack.HOL.Unification.Subst @[expose] public section "
+        "namespace Flapjack.Compiler.Inference.Unify open Flapjack.HOL.Unification "
+        '@[hol "cakeml/compiler/inference/unifyScript.sml" "t_vars_def"] '
+        "def tVars (t : InferT) : Nat → Prop := vars (encodeInferT t) "
+        "theorem holFmapAsFiniteSupportParamWitness_tVR_subst ")
+    if not " ".join(strip_lean_comments(vars_source).split()).startswith(vars_prefix):
+        return ["inference submap requires the reviewed inference variable-set definition"]
+    vars_rows = [row for row in records if row.get("lean_path") ==
+                 "Flapjack/Compiler/Inference/Unify/Substitution.lean" and row.get("lean_name") == "tVars"]
+    if (len(vars_rows) != 1 or vars_rows[0].get("hol_path") != "cakeml/compiler/inference/unifyScript.sml" or
+            vars_rows[0].get("hol_name") != "t_vars_def" or vars_rows[0].get("hol_line") is not None or
+            vars_rows[0].get("statement_status") != "reviewed_exact" or
+            any(value for key, value in vars_rows[0].items() if
+                key.startswith("fmap_as_") or key.startswith("names_as_") or key in {
+                    "list_as_array", "words_as_type_indexed_bitvec", "word_dimension_as_width",
+                    "word_dimensions_as_widths", "reals_as_rational_cuts", "nested_list_rel_as_mutual"})):
+        return ["inference submap requires the unique reviewed variable-set row"]
     matching = [row for row in records if row.get("lean_path") == producer_path and
                 row.get("lean_name") == "inferSubst"]
     if (len(matching) != 1 or matching[0].get("hol_path") != "cakeml/compiler/inference/inferScript.sml" or
@@ -6108,7 +6141,7 @@ def main(argv: list[str]) -> int:
              fmap_parameters, fmap_existentials, dimension_width,
              fmap_function_positions, fmap_heterogeneous_function_positions, reals_cuts,
              fmap_equality, result_observations, dimension_widths, fmap_tuple, nested_list_rel,
-             predicate_domain, fmap_universals, generalise_map, generalise_length) in hol_attribute_sites(
+             predicate_domain, fmap_universals, generalise_map, generalise_length, infer_subst_submap) in hol_attribute_sites(
                 lines, include_fmap_existentials=True,
                 include_word_dimension_width=True,
                 include_fmap_function=True,
@@ -6123,8 +6156,30 @@ def main(argv: list[str]) -> int:
                 include_fmap_universals=True,
                 include_generalise_map=True,
                 include_generalise_length=True,
+                include_infer_subst_submap=True,
              ):
             where = f"{rel}:{number}"
+            if infer_subst_submap or (hol_path == "cakeml/compiler/inference/inferPropsScript.sml" and
+                                      hol_name == "infer_subst_submap"):
+                if (len(infer_subst_submap) != 4 or hol_line is not None or
+                        find_lean_decl(lines, number - 1) != "inferSubstSubmap" or
+                        any((list_fields, names_fields, boundary_fields, fmap_fields, fmap_result,
+                             fmap_relation, fmap_equalities, words_bitvec, fmap_parameters,
+                             fmap_existentials, dimension_width, fmap_function_positions,
+                             fmap_heterogeneous_function_positions, reals_cuts, fmap_equality,
+                             result_observations, dimension_widths, fmap_tuple, nested_list_rel,
+                             predicate_domain, fmap_universals, generalise_map, generalise_length))):
+                    errors.append(f"{where}: inference submap requires its sole qualifier and exact declaration")
+                else:
+                    dependencies = [ROOT / name for name in (
+                        "Flapjack/Compiler/Inference/Infer/Substitution.lean",
+                        "Flapjack/FiniteMap/DomainExact.lean", "Flapjack/FiniteMap/SubmapExact.lean",
+                        "Flapjack/Compiler/Inference/Unify/Substitution.lean")]
+                    source_texts = [path.read_text(encoding="utf-8") if path.is_file() else ""
+                                    for path in dependencies]
+                    errors.extend(f"{where}: {error}" for error in infer_subst_submap_observer_errors(
+                        "\n".join(lines), rel, (hol_path, hol_name), infer_subst_submap,
+                        *source_texts, observation_records))
             if generalise_length or (hol_path == "cakeml/compiler/inference/inferPropsScript.sml" and
                                      hol_name == "generalise_list_length"):
                 if (len(generalise_length) != 4 or hol_line is not None or
