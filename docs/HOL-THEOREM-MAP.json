@@ -1,5 +1,23 @@
 [
 {
+  "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "type_pe_determ_remap",
+  "lean_path": "Flapjack/Compiler/Inference/TypeDCanon/DetermRemap.lean", "lean_name": "typePeDetermRemap",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with source and type_pe_determ_remap_typed confirms the full determinacy, good-remap, primitive-ID, bijection and environment premises, and canonical determinacy conclusion. Set.BijOn preserves the entire HOL BIJ/count condition; the list proof preserves order, duplicates and both identifier bounds."
+ },
+{
+  "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "ts_tid_rename_eq_f",
+  "lean_path": "Flapjack/Compiler/Inference/TypeDCanon/Inverse.lean", "lean_name": "tsTidRenameEqF",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent source comparison and ts_tid_rename_eq_f_typed; arbitrary functions, semantic type, exact identifier-set equivalence and binder order."
+ },
+{
+  "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "inj_ts_tid_rename_eq",
+  "lean_path": "Flapjack/Compiler/Inference/TypeDCanon/Inverse.lean", "lean_name": "injTsTidRenameEq",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent source comparison and inj_ts_tid_rename_eq_typed; arbitrary renaming and independent types, exact cross-type identifier premise and conclusion."
+ },
+{
   "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "type_pe_bindings_tids",
   "lean_path": "Flapjack/Compiler/Inference/TypeDCanon/BindingTids.lean", "lean_name": "typePeBindingsTids",
   "statement_status": "reviewed_exact",

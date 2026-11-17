@@ -43,32 +43,38 @@ theorem remapTenvCompose (f g : Nat → Nat) (env : TypeEnv) :
   simp [remapTenv, nsMapCompose, Function.comp_def, List.map_map, tsTidRenameCompose]
 
 mutual
-/-- A type is unchanged exactly when every identifier occurring in it is fixed. -/
-@[hol "cakeml/compiler/inference/proofs/type_dCanonScript.sml" "ts_tid_rename_eq_id"]
-theorem tsTidRenameEqId (f : Nat → Nat) (t : SemanticT) :
-    tsTidRename f t = t ↔ ∀ id, setTids t id → f id = id := by
+/-- Two renamings agree exactly when they agree on the identifiers in a type. -/
+@[hol "cakeml/compiler/inference/proofs/type_dCanonScript.sml" "ts_tid_rename_eq_f"]
+theorem tsTidRenameEqF (f : Nat → Nat) (t : SemanticT) (g : Nat → Nat) :
+    tsTidRename f t = tsTidRename g t ↔ ∀ x, setTids t x → f x = g x := by
   cases t with
   | var name => simp [tsTidRename, setTids]
-  | varDb n => simp [tsTidRename, setTids]
-  | app args id =>
-    simp [tsTidRename, setTids, tsTidRenameListEqId f args, and_comm]
+  | varDb index => simp [tsTidRename, setTids]
+  | app xs id => simp [tsTidRename, setTids, tsTidRenameEqFList f xs g, and_comm]
 termination_by sizeOf t
 
-/-- List traversal for the source characterization of identity renaming. -/
-private theorem tsTidRenameListEqId (f : Nat → Nat) (ts : List SemanticT) :
-    tsTidRenameList f ts = ts ↔ ∀ id, setTidsList ts id → f id = id := by
-  cases ts with
+/-- List traversal for the source equality-of-renamings induction. -/
+private theorem tsTidRenameEqFList (f : Nat → Nat) (xs : List SemanticT) (g : Nat → Nat) :
+    tsTidRenameList f xs = tsTidRenameList g xs ↔ ∀ x, setTidsList xs x → f x = g x := by
+  cases xs with
   | nil => simp [tsTidRenameList, setTidsList]
-  | cons t ts =>
-    simp only [tsTidRenameList, List.cons.injEq, tsTidRenameEqId f t, tsTidRenameListEqId f ts, setTidsList]
+  | cons x xs =>
+    simp only [tsTidRenameList, List.cons.injEq, tsTidRenameEqF f x g, tsTidRenameEqFList f xs g, setTidsList]
     constructor
     · rintro ⟨head, tail⟩ id (member | member)
       · exact head id member
       · exact tail id member
     · intro all
       exact ⟨fun id member => all id (Or.inl member), fun id member => all id (Or.inr member)⟩
-termination_by sizeOf ts
+termination_by sizeOf xs
 end
+
+
+/-- A type is unchanged exactly when every identifier occurring in it is fixed. -/
+@[hol "cakeml/compiler/inference/proofs/type_dCanonScript.sml" "ts_tid_rename_eq_id"]
+theorem tsTidRenameEqId (f : Nat → Nat) (t : SemanticT) :
+    tsTidRename f t = t ↔ ∀ id, setTids t id → f id = id := by
+  simpa [tsTidRenameId] using tsTidRenameEqF f t id
 
 /-- The optional inverse recovers each domain element of an injection. -/
 @[hol "cakeml/compiler/inference/proofs/type_dCanonScript.sml" "INJ_LINVI"]
@@ -135,5 +141,50 @@ theorem tsTidRenameLinvi (s t : Nat → Prop) (f : Nat → Nat) (x : SemanticT) 
   apply (tsTidRenameEqId _ x).2
   intro id member
   exact injLinvi f s t id ⟨inj, subset id member⟩
+
+mutual
+/-- Renaming equal types back is injective under the source cross-ID condition. -/
+@[hol "cakeml/compiler/inference/proofs/type_dCanonScript.sml" "inj_ts_tid_rename_eq"]
+theorem injTsTidRenameEq (f : Nat → Nat) (t1 t2 : SemanticT) :
+    (∀ x y, setTids t1 x ∧ setTids t2 y ∧ f x = f y → x = y) ∧
+      tsTidRename f t1 = tsTidRename f t2 → t1 = t2 := by
+  rintro ⟨inj, eq⟩
+  cases t1 with
+  | var name => cases t2 <;> simp_all [tsTidRename]
+  | varDb index => cases t2 <;> simp_all [tsTidRename]
+  | app xs a =>
+    cases t2 with
+    | var name => simp [tsTidRename] at eq
+    | varDb index => simp [tsTidRename] at eq
+    | app ys b =>
+      simp only [tsTidRename, SemanticT.app.injEq] at eq
+      have ab : a = b := inj a b ⟨by simp [setTids], by simp [setTids], eq.2⟩
+      have lists : xs = ys := injTsTidRenameEqList f xs ys (by
+        intro x y hx hy equal
+        apply inj x y
+        exact ⟨by simp [setTids, hx], by simp [setTids, hy], equal⟩) eq.1
+      simp [ab, lists]
+termination_by sizeOf t1
+
+/-- List traversal for the source cross-type renaming induction. -/
+private theorem injTsTidRenameEqList (f : Nat → Nat) (xs ys : List SemanticT)
+    (inj : ∀ x y, setTidsList xs x → setTidsList ys y → f x = f y → x = y)
+    (eq : tsTidRenameList f xs = tsTidRenameList f ys) : xs = ys := by
+  cases xs with
+  | nil => cases ys <;> simp_all [tsTidRenameList]
+  | cons x xs =>
+    cases ys with
+    | nil => simp [tsTidRenameList] at eq
+    | cons y ys =>
+      simp only [tsTidRenameList, List.cons.injEq] at eq
+      have head : x = y := injTsTidRenameEq f x y ⟨by
+        intro a b hab
+        exact inj a b (by simp [setTidsList, hab.1]) (by simp [setTidsList, hab.2.1]) hab.2.2, eq.1⟩
+      have tail : xs = ys := injTsTidRenameEqList f xs ys (by
+        intro a b ha hb equal
+        exact inj a b (by simp [setTidsList, ha]) (by simp [setTidsList, hb]) equal) eq.2
+      simp [head, tail]
+termination_by sizeOf xs
+end
 
 end Flapjack.Compiler.Inference.TypeDCanon

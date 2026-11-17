@@ -10502,7 +10502,9 @@ pattern-typing, operator-typing, and expression-typing renaming theorems are cap
 from the source theory, alongside the general and optional left-inverse laws,
 inverse-renaming laws, environment inverse equivalences, namespace and environment
 composition, and renaming
-composition and identity characterizations. The single-identifier pattern and
+composition, equality, identity and cross-type injectivity characterizations,
+and the canonical determinacy-remapping theorem.
+The single-identifier pattern and
 expression typing theorems and scheme non-instantiation theorem are replayed,
 and the function-list theorem is captured. The principal pattern-binding
 identifier theorem is replayed, and both public binding-identifier invariants are captured.
