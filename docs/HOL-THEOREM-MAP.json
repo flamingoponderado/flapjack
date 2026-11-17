@@ -37856,6 +37856,20 @@
     "reviewer": "flapjack-opus5 source comparison 2026-10-03 resource4.2 wordProps: original 1161-1180 arbitrary op/v/c/s/res/s' with sole share_inst=(res,s') premise and all14 field conjuncts in source order (be,gc_fun,mdomain,sh_mdomain,code,code_buffer,data_buffer,compile,compile_oracle,permute,clock,handler,stack_limit,stack_max); HOL result word width is the state width 'a so the native result width parameter is instantiated to width. Native exact WordSemStateFiniteExact with canonical fpRegs/store and same-module witness WordSemEvaluateStackMaxSupport.holFmapAsFiniteSupportWitness; positive width only."
   },
 {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/EvaluateStackMaxClock.lean",
+    "lean_name": "evaluate_stack_max_only_grows",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "evaluate_stack_max_only_grows",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "codewhale source comparison (2026-11-17, task 219): typed capture evaluate_stack_max_only_grows_typed in scripts/hol-probes/word_props_typed_probe.out gives ∀(p :α prog) (s :(α, β, γ) state) (r :α result option) (t :(α, β, γ) state) (ck :num) (r' :α result option) (t' :(α, β, γ) state). evaluate (p,s) = (r,t) ∧ evaluate (p,inc_clock ck s) = (r',t') ⇒ option_le t.stack_max t'.stack_max. Lean keeps HOL's binder order p s r t ck r' t' as seven separate binders, the single conjunction premise of the two runs, and the conclusion option_le t.stackMax t'.stackMax; inc_clock is the tagged incClock with its argument order (clock first). Only the type-indexed word carrier α becomes BitVec width with [NeZero width], and the state carrier's fpRegs/store finite-map fields use the reviewed canonical translation with the same-module witness WordSemEvaluateStackMaxClockSupport.holFmapAsFiniteSupportWitness. Inherited assumption: the statement mentions the native evaluate whose Inst clause calls the reals_as_rational_cuts-qualified inst; docs/SOUNDNESS.md item 8 applies to FP instructions, no numerical FP claim; marker propagates the assumption only.",
+    "inherits_reals_as_rational_cuts": true
+  },
+{
     "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
     "hol_name": "evaluate_stack_swap",
     "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/EvaluateStackSwap.lean",
