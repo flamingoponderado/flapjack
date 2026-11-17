@@ -3,8 +3,10 @@
 import copy
 import runpy
 import json
+import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 
 MAP = runpy.run_path(
@@ -114,6 +116,49 @@ class CoordinatorPendingReviewNoteTest(unittest.TestCase):
                 "coordinator review pending",
             )
         )
+
+
+class GeneraliseMapQualifierInventoryTest(unittest.TestCase):
+    def test_scanner_preserves_the_combined_qualifier(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / "Generalise.lean"
+            source.write_text('''@[hol "cakeml/compiler/inference/inferScript.sml" "generalise_def"
+  (fmap_as_finite_support_parameter_tuple_result :=
+    (map_parameter := subst) (result_component := component_2))]
+def generaliseMap : Nat := 0
+''', encoding="utf-8")
+            with patch.dict(MAP["REFS"], {"lean_files": lambda: [source]}):
+                tagged = MAP["tagged_declarations"](root)
+            self.assertEqual(tagged[("Generalise.lean", "generaliseMap")][23],
+                             ("subst", "component_2"))
+
+    def test_exact_sites_and_metadata_are_required(self):
+        field = "fmap_as_finite_support_parameter_tuple_result"
+        for name in ("generaliseMap", "generaliseListMap"):
+            record = {
+                "hol_path": "cakeml/compiler/inference/inferScript.sml",
+                "hol_name": "generalise_def",
+                "lean_path": "Flapjack/Compiler/Inference/Infer/Generalise.lean",
+                "lean_name": name, "statement_status": "reviewed_" + field,
+                "reviewer": "source comparison of subst and component_2", field: ["subst", "component_2"],
+            }
+            key = (record["lean_path"], name)
+            base = (record["hol_path"], record["hol_name"], (), (), (), (),
+                    False, (), False, False, (), (), None, (), (), False, False,
+                    (), (), (), (), (), ())
+            good = {key: base + (("subst", "component_2"),)}
+            with self.subTest(name=name):
+                self.assertEqual(MAP["validate_inventory"]([record], set(), good, set()), [])
+                for changed in ({**record, field: ["subst", "component_1"]},
+                                {**record, "statement_status": "reviewed_exact"},
+                                {**record, "reviewer": "source comparison"}):
+                    self.assertTrue(MAP["validate_inventory"]([changed], set(), good, set()))
+                self.assertTrue(MAP["validate_inventory"]([record], set(), {key: base}, set()))
+                self.assertTrue(MAP["validate_inventory"]([record], set(),
+                    {key: base[:2] + (("field",),) + base[3:] + (("subst", "component_2"),)}, set()))
+                self.assertTrue(MAP["validate_inventory"]([record], set(),
+                    {key: base + (("subst", "component_2"), ("future_qualifier",))}, set()))
 
 
 class HeterogeneousFmapQualifierInventoryTest(unittest.TestCase):
