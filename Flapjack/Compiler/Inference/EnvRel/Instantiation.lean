@@ -23,7 +23,7 @@ theorem tschemeInstToApprox (tvs : Nat) (t : SemanticT) (tvs' : Nat) (t' : Seman
     simp only [List.mem_map] at hx
     obtain ⟨y, hy, rfl⟩ := hx
     have cy : checkFreevars tvs [] y = true := (List.all_eq_true.mp allChecked) y hy
-    have ct := checkFreevarsToCheckT y tvs cy
+    have ct := checkFreevarsToCheckT tvs y () cy
     change Infer.checkT (0 + tvs) HolFiniteMapExact.holEmpty.domain (unconvertT y)
     have domainEmpty : (HolFiniteMapExact.holEmpty : HolFiniteMapExact Nat InferT).domain =
         (fun _ => False) := by
@@ -34,11 +34,11 @@ theorem tschemeInstToApprox (tvs : Nat) (t : SemanticT) (tvs' : Nat) (t' : Seman
     simpa [domainEmpty] using ct
   · intro inst instLen
     simp only [tWalkstarEmpty]
-    have unconverted := unconvertDbSubst t' subst tvs' checked
+    have unconverted := unconvertDbSubst t' subst () tvs' checked
     rw [same] at unconverted
     rw [unconverted]
     have checked' : Infer.checkT (subst.map unconvertT).length (fun _ => False) (unconvertT t') := by
-      simpa [len] using checkFreevarsToCheckT t' tvs' checked
+      simpa [len] using checkFreevarsToCheckT tvs' t' () checked
     have composed := (inferDeBruijnSubstTwice inst (subst.map unconvertT) (fun _ => False)).1
       (unconvertT t') checked'
     simpa [List.map_map, Function.comp_def] using composed

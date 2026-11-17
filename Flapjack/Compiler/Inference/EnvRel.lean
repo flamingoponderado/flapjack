@@ -104,9 +104,9 @@ private theorem closedConvertList (ts : List InferT) (n : Nat)
 termination_by sizeOf ts
 end
 
-/-- The source has an unused universally quantified set `n`; it is omitted. -/
+/-- The source's unused universally quantified set `n` is retained. -/
 @[hol "cakeml/compiler/inference/proofs/envRelScript.sml" "check_t_to_check_freevars"]
-theorem checkTToCheckFreevars (tvs : Nat) (t : InferT)
+theorem checkTToCheckFreevars (tvs : Nat) (_n : Nat → Prop) (t : InferT)
     (h : Infer.checkT tvs (fun _ => False) t) : checkFreevars tvs [] (convertT t) = true :=
   (closedConvertType t tvs h).1
 
@@ -226,10 +226,9 @@ theorem tenvToIenvExtend (tenv1 tenv2 : TypeEnv) :
 
 mutual
 /-- Closed declarative types convert to inference types with no unification variables.
-    The source also quantifies an unused polymorphic `z`; it is vacuous in
-    both premise and conclusion. -/
+    The source's unused polymorphic `z` is retained. -/
 @[hol "cakeml/compiler/inference/proofs/envRelScript.sml" "check_freevars_to_check_t"]
-theorem checkFreevarsToCheckT (t : SemanticT) (n : Nat)
+theorem checkFreevarsToCheckT {α : Type} (n : Nat) (t : SemanticT) (_z : α)
     (h : checkFreevars n [] t = true) :
     Infer.checkT n (fun _ => False) (unconvertT t) := by
   cases t with
@@ -249,7 +248,7 @@ private theorem checkFreevarsListToCheckT (ts : List SemanticT) (n : Nat)
   | cons t ts =>
     simp only [checkFreevarsList, Bool.and_eq_true] at h
     simp only [unconvertTList, Infer.checkTList_cons]
-    exact ⟨checkFreevarsToCheckT t n h.1, checkFreevarsListToCheckT ts n h.2⟩
+    exact ⟨checkFreevarsToCheckT n t () h.1, checkFreevarsListToCheckT ts n h.2⟩
 termination_by sizeOf ts
 end
 
@@ -325,9 +324,9 @@ private theorem unconvertDbSubstList (ts : List SemanticT) (subst : List Semanti
 termination_by sizeOf ts
 end
 
-/-- The source also quantifies an unused polymorphic `fvs`; it is vacuous. -/
+/-- The source's unused polymorphic `fvs` argument is retained. -/
 @[hol "cakeml/compiler/inference/proofs/envRelScript.sml" "unconvert_db_subst"]
-theorem unconvertDbSubst (t : SemanticT) (subst : List SemanticT) (bound : Nat)
+theorem unconvertDbSubst {α : Type} (t : SemanticT) (subst : List SemanticT) (_fvs : α) (bound : Nat)
     (h : checkFreevars bound [] t = true) :
     unconvertT (deBruijnSubst 0 subst t) =
       Infer.inferDeBruijnSubst (subst.map unconvertT) (unconvertT t) :=

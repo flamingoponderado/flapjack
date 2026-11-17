@@ -74,7 +74,7 @@ theorem envRelIenvToTenv (ienv : Env) (h : ienvOk (fun _ => False) ienv) :
       (nsMap (fun entry => (entry.1, convertT entry.2)) ienv.infV)
     rw [decEq, nsAll_nsMap]
     intro id entry found
-    exact checkTToCheckFreevars entry.1 entry.2 (valueOk id entry found)
+    exact checkTToCheckFreevars entry.1 (fun _ => False) entry.2 (valueOk id entry found)
   · intro path
     change nsLookupMod ienv.infV path = none ↔
       nsLookupMod (nsMap (fun entry => (entry.1, convertT entry.2)) ienv.infV) path = none
@@ -84,7 +84,7 @@ theorem envRelIenvToTenv (ienv : Env) (h : ienvOk (fun _ => False) ienv) :
     intro id ⟨tvs, t⟩ found
     have valid := valueOk id (tvs, t) found
     refine ⟨tvs, convertT t, ?_, ?_, ?_⟩
-    · simpa [numTvs] using checkTToCheckFreevars tvs t valid
+    · simpa [numTvs] using checkTToCheckFreevars tvs (fun _ => False) t valid
     · simp [lookupVar, lookupVarEEmpty, ienvToTenvModel, nsLookup_nsMap, found]
     · rw [checkTEmptyUnconvertConvertId t tvs valid]
       exact tschemeApproxModelRefl 0 HolFiniteMapExact.holEmpty tvs t
@@ -99,7 +99,7 @@ theorem envRelIenvToTenv (ienv : Env) (h : ienvOk (fun _ => False) ienv) :
       simp [src] at found'
       obtain ⟨rfl, rfl⟩ := found'
       have valid := valueOk id (n, ty) src
-      refine ⟨⟨n, checkTToCheckFreevars n ty valid⟩, n, ty, rfl, ?_⟩
+      refine ⟨⟨n, checkTToCheckFreevars n (fun _ => False) ty valid⟩, n, ty, rfl, ?_⟩
       rw [checkTEmptyUnconvertConvertId ty n valid]
       exact tschemeApproxModelRefl 0 HolFiniteMapExact.holEmpty n ty
 
@@ -133,7 +133,7 @@ theorem envRelTenvToIenv (tenv : TypeEnv) (h : tenvOk tenv) :
       (nsMap (fun entry => (entry.1, unconvertT entry.2)) tenv.v)
     rw [nsAll_nsMap]
     intro id entry found
-    exact checkFreevarsToCheckT entry.2 entry.1 (valueOk id entry found)
+    exact checkFreevarsToCheckT entry.1 entry.2 () (valueOk id entry found)
   · intro path
     change nsLookupMod (nsMap (fun entry => (entry.1, unconvertT entry.2)) tenv.v) path = none ↔ _
     rw [nsLookupMod_nsMap]

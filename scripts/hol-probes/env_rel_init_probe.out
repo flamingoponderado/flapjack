@@ -29,6 +29,7 @@ nsAll_nsLift_typed=∀(R :(α, β) id -> γ -> bool) (mn :α) (e :(α, β, γ) n
 nsAll2_nsLift_typed=∀(R :(α, β) id -> γ -> δ -> bool) (mn :α) (e1 :(α, β, γ) namespace) (e2 :(α, β, δ) namespace). nsAll2 R (nsLift mn e1) (nsLift mn e2) ⇔ nsAll2 (λ(id :(α, β) id). R (Long mn id)) e1 e2
 ienv_ok_lift_typed=∀(mn :mlstring) (ienv :inf_env) (n :num -> bool). ienv_ok n ienv ⇒ ienv_ok n (lift_ienv mn ienv)
 ienv_ok_extend_dec_ienv_typed=∀(e1 :inf_env) (e2 :inf_env) (n :num -> bool). ienv_ok n e1 ∧ ienv_ok n e2 ⇒ ienv_ok n (extend_dec_ienv e1 e2)
+infer_type_subst_empty_check_typed=(∀(t :t). check_freevars (0 :num) ([] :mlstring list) t ⇒ check_t (0 :num) (∅ :num -> bool) (infer_type_subst ([] :(mlstring # infer_t) list) t)) ∧ ∀(ts :t list). EVERY (check_freevars (0 :num) ([] :mlstring list)) ts ⇒ EVERY (check_t (0 :num) (∅ :num -> bool)) (MAP (infer_type_subst ([] :(mlstring # infer_t) list)) ts)
 extend_dec_tenv_ok_typed=∀(tenv :type_env) (tenv' :type_env). tenv_ok tenv ∧ tenv_ok tenv' ⇒ tenv_ok (extend_dec_tenv tenv tenv')
 tenv_abbrev_ok_lookup_typed=∀(tenvT :(α, β, mlstring list # t) namespace) (tn :(α, β) id) (tvs :mlstring list) (t :t). tenv_abbrev_ok tenvT ∧ nsLookup tenvT tn = SOME (tvs,t) ⇒ check_freevars (0 :num) tvs t
 check_freevars_add_typed=∀(tvs :num) (tvs' :mlstring list) (t :t). check_freevars tvs tvs' t ⇒ ∀(tvs'' :num). tvs'' ≥ tvs ⇒ check_freevars tvs'' tvs' t

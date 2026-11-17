@@ -1,5 +1,11 @@
 [
 {
+  "hol_path": "cakeml/compiler/inference/inferPropsScript.sml", "hol_name": "infer_type_subst_empty_check",
+  "lean_path": "Flapjack/Compiler/Inference/InferProps/ClosedSubst.lean", "lean_name": "inferTypeSubstEmptyCheck",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent source comparison and infer_type_subst_empty_check_typed confirm both complete scalar and list conjuncts, the closed-type premises, and the empty-uvar check on every substituted result."
+ },
+{
   "hol_path": "cakeml/compiler/inference/proofs/inferCompleteScript.sml", "hol_name": "env_rel_binding_lemma",
   "lean_path": "Flapjack/Compiler/Inference/InferComplete/Binding.lean", "lean_name": "envRelBindingLemma",
   "statement_status": "reviewed_exact",
@@ -138991,7 +138997,7 @@
   "lean_path": "Flapjack/Compiler/Inference/EnvRel.lean",
   "lean_name": "checkFreevarsToCheckT",
   "statement_status": "reviewed_exact",
-  "reviewer": "Compared HOL source and check_freevars_to_check_t_replay_typed: the full closed-free-variable premise implies the empty-uvar inference check at the same bound. The source polymorphic z binder is vacuous in both premise and conclusion and is omitted."
+  "reviewer": "Compared HOL source and check_freevars_to_check_t_replay_typed: the full closed-free-variable premise implies the empty-uvar inference check at the same bound. The free bound and the source's unused polymorphic z binder are retained."
 },
 {
   "hol_path": "cakeml/compiler/inference/proofs/envRelScript.sml",
@@ -139023,7 +139029,7 @@
   "lean_path": "Flapjack/Compiler/Inference/EnvRel.lean",
   "lean_name": "checkTToCheckFreevars",
   "statement_status": "reviewed_exact",
-  "reviewer": "Compared HOL source and check_t_to_check_freevars_replay_typed: the empty-uvar inference check implies the full closed-free-variable check for the converted type. The source num-set binder n is unused in premise and conclusion and is omitted."
+  "reviewer": "Compared HOL source and check_t_to_check_freevars_replay_typed: the empty-uvar inference check implies the full closed-free-variable check for the converted type. The source's unused num-set binder n is retained."
 },
 {
   "hol_path": "cakeml/compiler/inference/proofs/envRelScript.sml",
@@ -139320,7 +139326,7 @@
   "lean_path": "Flapjack/Compiler/Inference/EnvRel.lean",
   "lean_name": "unconvertDbSubst",
   "statement_status": "reviewed_exact",
-  "reviewer": "Compared HOL source and unconvert_db_subst_replay_typed: the arbitrary declarative type, substitution list and bound retain the closed-free-variable premise and full conversion/substitution equality. The source polymorphic fvs binder is vacuous in premise and conclusion and is omitted."
+  "reviewer": "Compared HOL source and unconvert_db_subst_replay_typed: the arbitrary declarative type, substitution list and bound retain the closed-free-variable premise and full conversion/substitution equality. The source's unused polymorphic fvs binder is retained."
 },
 {
     "hol_path": "cakeml/compiler/inference/proofs/envRelScript.sml",

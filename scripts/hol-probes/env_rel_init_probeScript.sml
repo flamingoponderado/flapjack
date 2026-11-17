@@ -56,6 +56,7 @@ val _ = show "nsAll_nsLift_typed" namespacePropsTheory.nsAll_nsLift;
 val _ = show "nsAll2_nsLift_typed" namespacePropsTheory.nsAll2_nsLift;
 val _ = show "ienv_ok_lift_typed" inferPropsTheory.ienv_ok_lift;
 val _ = show "ienv_ok_extend_dec_ienv_typed" inferPropsTheory.ienv_ok_extend_dec_ienv;
+val _ = show "infer_type_subst_empty_check_typed" inferPropsTheory.infer_type_subst_empty_check;
 val _ = show "extend_dec_tenv_ok_typed" typeSysPropsTheory.extend_dec_tenv_ok;
 val _ = show "tenv_abbrev_ok_lookup_typed" typeSysPropsTheory.tenv_abbrev_ok_lookup;
 val _ = show "check_freevars_add_typed" typeSysPropsTheory.check_freevars_add;
