@@ -1,5 +1,6 @@
-`infer_generalise_typed_probe.out` captures both inferred operation types and
-the complete typed `infer$generalise_def` equations. The capture used CakeML
+`infer_generalise_typed_probe.out` captures both inferred operation types, the
+complete typed `infer$generalise_def` equations, and the typed
+`inferProps$generalise_list_length` theorem. The capture used CakeML
 revision `857f0d98da8f8a3580f34423338e697809308ede` and HOL revision
 `a390cbabd3a4521bab4ee20281e3e42933a8a3ae`, matching the project submodules.
 Regenerate with `HOL_PROBE_ONLY=infer_generalise_typed_probeScript.sml

@@ -1,11 +1,30 @@
 module
 
 public import Flapjack.Compiler.Inference.Infer.Generalise
+public import Flapjack.FiniteMap.BroadCodec
 
 @[expose] public section
 
 namespace Flapjack.Compiler.Inference.InferProps.Generalise
 open Flapjack.Compiler.Inference.Infer.Generalise
+
+/-- The input substitution roundtrips through the finite-map codec. -/
+theorem holFmapAsFiniteSupportParamWitness_generaliseListLength_subst
+    (subst : HolFiniteMapExact Nat Nat) (key : Nat) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad subst)).lookup key = subst.lookup key ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad subst)).finiteSupport = subst.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad subst) = subst := by
+  cases subst
+  exact ⟨rfl, rfl, rfl⟩
+
+/-- The result substitution roundtrips through the same finite-map codec. -/
+theorem holFmapAsFiniteSupportParamWitness_generaliseListLength_out
+    (out : HolFiniteMapExact Nat Nat) (key : Nat) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad out)).lookup key = out.lookup key ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad out)).finiteSupport = out.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad out) = out := by
+  cases out
+  exact ⟨rfl, rfl, rfl⟩
 
 /-- The source-shaped finite-map generalizer preserves list length. The HOL
     theorem's input and output map binders and observed tuple result still
