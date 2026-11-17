@@ -369,6 +369,7 @@ import Flapjack.Compiler.Backend.Semantics.DataProps.AppWithLocals
 import Flapjack.Compiler.Backend.Semantics.DataProps.ConsumeSpaceFields
 import Flapjack.Compiler.Backend.Semantics.DataProps.EvaluateResourceSwap
 import Flapjack.Compiler.Backend.Semantics.DataProps.EvaluateLocals
+import Flapjack.Compiler.Backend.Semantics.DataProps.EvaluateStackLocalsSwap
 import Flapjack.Compiler.Backend.Semantics.DataProps.StackSize
 import Flapjack.Compiler.Backend.Semantics.DataProps.StateUpdates
 import Flapjack.Compiler.Backend.Semantics.DataSem.ControlClock
