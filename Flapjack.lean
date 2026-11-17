@@ -3832,6 +3832,7 @@ import Flapjack.Compiler.Inference.Infer.TypeSubst
 import Flapjack.Compiler.Inference.Infer.Generalise
 import Flapjack.Compiler.Inference.Infer.Substitution
 import Flapjack.Compiler.Inference.InferProps.Generalise
+import Flapjack.Compiler.Inference.InferProps.Substitution
 import Flapjack.Compiler.Inference.Infer.Pattern
 import Flapjack.Compiler.Inference.Infer.ConstraintDiagnostics
 import Flapjack.NamespaceProps.MapLookup
