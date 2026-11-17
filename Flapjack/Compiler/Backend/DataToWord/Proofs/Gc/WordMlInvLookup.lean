@@ -16,10 +16,10 @@ roots of the word/ML invariant. -/
   (words_as_type_indexed_bitvec)]
 theorem wordMlInv_lookup {width : Nat} [NeZero width]
     (heap : ValueHeap width) (be : Bool) (a sp sp1 : Nat) (gens : GcCombined.GenState)
-    (limit next : Nat) (conf : Config) (refs : Spt (BvlSem.Ref DataSem.Value))
-    (ys xs : List (DataSem.Value × WordLocW width))
-    (source : Spt DataSem.Value) (target : Spt (WordLocW width))
-    (n : Nat) (value : DataSem.Value) (word : WordLocW width)
+    (limit next : Nat) (conf : Config) (refs : Spt (BvlSem.Ref Flapjack.Compiler.Backend.DataSem.Value))
+    (ys xs : List (Flapjack.Compiler.Backend.DataSem.Value × WordLocW width))
+    (source : Spt Flapjack.Compiler.Backend.DataSem.Value) (target : Spt (WordLocW width))
+    (n : Nat) (value : Flapjack.Compiler.Backend.DataSem.Value) (word : WordLocW width)
     (premises :
       wordMlInv (heap, be, a, sp, sp1, gens) limit next conf refs
         (ys ++ joinEnv source (sptToAList (sptInter target (adjustSet source))) ++ xs) ∧

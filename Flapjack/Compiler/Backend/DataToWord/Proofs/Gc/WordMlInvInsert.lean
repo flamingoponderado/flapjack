@@ -12,9 +12,9 @@ open Flapjack Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
 pair or an old joined root. This Flapjack-specific helper discharges the
 membership argument in the original `word_ml_inv_insert` proof. -/
 theorem joinEnv_insert_subset {width : Nat} [NeZero width]
-    (source : Spt DataSem.Value) (target : Spt (WordLocW width))
-    (dest : Nat) (value : DataSem.Value) (word : WordLocW width)
-    (pair : DataSem.Value × WordLocW width)
+    (source : Spt Flapjack.Compiler.Backend.DataSem.Value) (target : Spt (WordLocW width))
+    (dest : Nat) (value : Flapjack.Compiler.Backend.DataSem.Value) (word : WordLocW width)
+    (pair : Flapjack.Compiler.Backend.DataSem.Value × WordLocW width)
     (h : pair ∈ joinEnv (sptInsert dest value source)
       (sptToAList (sptInter (sptInsert (adjustVar dest) word target)
         (adjustSet (sptInsert dest value source))))) :
@@ -70,10 +70,10 @@ invariant when that pair is already among its roots. -/
   (words_as_type_indexed_bitvec)]
 theorem wordMlInv_insert {width : Nat} [NeZero width]
     (heap : ValueHeap width) (be : Bool) (a sp sp1 : Nat) (gens : GcCombined.GenState)
-    (limit next : Nat) (conf : Config) (refs : Spt (BvlSem.Ref DataSem.Value))
-    (source : Spt DataSem.Value) (target : Spt (WordLocW width))
-    (dest : Nat) (value : DataSem.Value) (word : WordLocW width)
-    (xs : List (DataSem.Value × WordLocW width))
+    (limit next : Nat) (conf : Config) (refs : Spt (BvlSem.Ref Flapjack.Compiler.Backend.DataSem.Value))
+    (source : Spt Flapjack.Compiler.Backend.DataSem.Value) (target : Spt (WordLocW width))
+    (dest : Nat) (value : Flapjack.Compiler.Backend.DataSem.Value) (word : WordLocW width)
+    (xs : List (Flapjack.Compiler.Backend.DataSem.Value × WordLocW width))
     (invariant : wordMlInv (heap, be, a, sp, sp1, gens) limit next conf refs
       ([(value, word)] ++ joinEnv source (sptToAList (sptInter target (adjustSet source))) ++ xs)) :
     wordMlInv (heap, be, a, sp, sp1, gens) limit next conf refs
