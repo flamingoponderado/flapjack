@@ -17,6 +17,37 @@ theorem disjointCardUnion {α : Type} (s t : Set α) :
   rintro ⟨hs, ht, hd⟩
   exact Set.ncard_union_eq hd hs ht
 
+/-- The datatype case of declaration canonicalization indexes its distinct
+type identifiers by their positions in the source list. This Flapjack helper
+packages the list-to-range bijection constructed inline in the HOL proof. -/
+theorem listIdxOfBij (ids : List Nat) (distinct : ids.Nodup) :
+    ({id | id ∈ ids} : Set Nat).Finite ∧
+      ({id | id ∈ ids} : Set Nat).ncard = ids.length ∧
+      Set.BijOn ids.idxOf (fun id => id ∈ ids) (fun i => i < ids.length) ∧
+      ∀ (i : Nat) (h : i < ids.length), ids.idxOf ids[i] = i := by
+  have setEq : ({id | id ∈ ids} : Set Nat) = ↑ids.toFinset := by
+    ext id
+    simp
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · rw [setEq]
+    exact Finset.finite_toSet _
+  · rw [setEq, Set.ncard_coe_finset]
+    exact List.toFinset_card_of_nodup distinct
+  · refine ⟨?_, ?_, ?_⟩
+    · intro x hx
+      exact List.idxOf_lt_length_of_mem hx
+    · intro x hx y hy eq
+      have hx' := List.getElem_idxOf (List.idxOf_lt_length_of_mem hx)
+      have hy' := List.getElem_idxOf (List.idxOf_lt_length_of_mem hy)
+      change ids.idxOf x = ids.idxOf y at eq
+      have hx'' : ids[ids.idxOf y]'(List.idxOf_lt_length_of_mem hy) = x := by
+        simpa only [eq] using hx'
+      exact hx''.symm.trans hy'
+    · intro i hi
+      exact ⟨ids[i], List.getElem_mem hi, distinct.idxOf_getElem i hi⟩
+  · intro i hi
+    exact distinct.idxOf_getElem i hi
+
 /-- Extend disjoint bijections to consecutive ranges of type identifiers.
 The `g` bijection embeds `ids` into a finite count, so `ids` is finite whenever
 the premise holds. On that domain `Set.ncard` agrees with HOL `CARD`; HOL's
