@@ -22,6 +22,15 @@ HOL_REV = 'a390cbabd3a4521bab4ee20281e3e42933a8a3ae'
 # Small source programs covering forms outside the integer-expression fuzzer.
 # Run without the prelude so that unbound names also exercise diagnostics.
 SOURCE_CORPUS = [
+    ('datatype t = A | B | A | B;', 1),
+    ('datatype t = A and t = B;', 1),
+    ("datatype ('a,'a) t = C;", 1),
+    ("datatype t = C 'a;", 1),
+    ('datatype t = A | B and u = C t | D;', 0),
+    ("datatype 'a tree = Leaf 'a | Node ('a tree) ('a tree); val x = Leaf 2;", 0),
+    ('datatype t = A missing | A;', 1),
+    ("datatype ('a,'a) t = A missing | A;", 1),
+    ('datatype t = C int | D; val C x = C 2;', 0),
     ('val x : missing = 1;', 1),
     ("type 'a wrap = 'a; val x : wrap = 1;", 1),
     ("type 'a wrap = 'a; val x : (int,int) wrap = 1;", 1),

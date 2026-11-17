@@ -65,10 +65,10 @@ def renderUndefinedVariable (input : List HolChar) : Error → Option (List HolC
   | _ => none
 
 /-- Render missing constructors and source type-name-check diagnostics. -/
-def renderUndefinedConstructor (input : List HolChar) : Error → Option (List HolChar)
-  | .typeNameCheckMessage message => some (ascii "### ERROR: type error\n" ++ message.explode ++
+def renderSourceTypeError (input : List HolChar) : Error → Option (List HolChar)
+  | .sourceTypeMessage message => some (ascii "### ERROR: type error\n" ++ message.explode ++
       ascii " at " ++ sourceLocation input none ++ ascii "\nProgram exited with nonzero exit code.\n")
-  | .located loc (.typeNameCheckMessage message) => some (ascii "### ERROR: type error\n" ++
+  | .located loc (.sourceTypeMessage message) => some (ascii "### ERROR: type error\n" ++
       message.explode ++ ascii " at " ++ sourceLocation input (some loc) ++
       ascii "\nProgram exited with nonzero exit code.\n")
   | .located loc error => do
@@ -119,8 +119,6 @@ def renderUnboundTypeVariable (input : List HolChar) : Error → Option (List Ho
           ascii " found in type annotation. Type variables are not supported in type annotations.")
       | .abbreviationTypeVariable name typ => some (ascii "Unbound type variable " ++ name.explode ++
           ascii " in type abbreviation " ++ typ.explode)
-      | .datatypeTypeVariable name ctor => some (ascii "Unbound type variable " ++ name.explode ++
-          ascii " in type definition with constructor " ++ ctor.explode)
       | .exceptionTypeVariable name ctor => some (ascii "Type variable " ++ name.explode ++
           ascii " found in declaration of exception " ++ ctor.explode ++
           ascii ". Type variables are not allowed in exception declarations.")
@@ -170,21 +168,6 @@ def renderPatternError (input : List HolChar) (error : Error) : Option (List Hol
 /-- Render the value restriction at the declaration location. -/
 def renderValueRestriction (input : List HolChar) : Error → Option (List HolChar)
   | .located loc .valueRestriction => some (ascii "### ERROR: type error\nValue restriction violated at " ++
-      sourceLocation input (some loc) ++ ascii "\nProgram exited with nonzero exit code.\n")
-  | _ => none
-
-/-- Render duplicate names rejected by datatype definitions. -/
-def renderDatatypeError (input : List HolChar) : Error → Option (List HolChar)
-  | .located loc error => do
-    let message ← match error with
-      | .duplicateTypeName name => some (ascii "Duplicate type constructor " ++ name.explode ++
-          ascii " in a mutually recursive type definition")
-      | .duplicateConstructor name typ => some (ascii "Duplicate constructor " ++ name.explode ++
-          ascii " in the definition of type " ++ typ.explode)
-      | .duplicateTypeVariable name typ => some (ascii "Duplicate type variable binding " ++ name.explode ++
-          ascii " in the definition of type " ++ typ.explode)
-      | _ => none
-    some (ascii "### ERROR: type error\n" ++ message ++ ascii " at " ++
       sourceLocation input (some loc) ++ ascii "\nProgram exited with nonzero exit code.\n")
   | _ => none
 

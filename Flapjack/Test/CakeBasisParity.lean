@@ -17,6 +17,8 @@ public meta import Flapjack.NamespaceHOL
 public meta import Flapjack.Compiler.Backend.FlatPattern.Config
 public meta import Flapjack.Compiler.Inference.Infer
 public meta import Flapjack.Compiler.Inference.Infer.TypeNameCheckSub
+public meta import Flapjack.Compiler.Inference.Infer.TypeDefinitions
+public meta import Flapjack.TypeSystemHOL.Declarations
 public meta import Flapjack.Compiler.Inference.Unify
 public meta import Flapjack.Compiler.Backend.SourceToFlat.ToBvi
 public meta import Flapjack.Compiler.Backend.RiscVConfig.Names

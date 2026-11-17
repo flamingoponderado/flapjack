@@ -6,6 +6,8 @@ public import Flapjack.AstHOL.Syntax
 public import Flapjack.TypeSystemHOL.Values
 public import Flapjack.Compiler.Inference.Infer.Duplicates
 public import Flapjack.Compiler.Inference.Infer.TypeNameCheckSub
+public import Flapjack.Compiler.Inference.Infer.TypeDefinitions
+public import Flapjack.TypeSystemHOL.Declarations
 public import Flapjack.TypeSystemHOL.TypeNames
 
 @[expose] public section
@@ -34,17 +36,13 @@ inductive Error where
   | unboundTypeVariable : MlString → Error
   | annotationTypeVariable : MlString → Error
   | abbreviationTypeVariable : MlString → MlString → Error
-  | datatypeTypeVariable : MlString → MlString → Error
   | exceptionTypeVariable : MlString → MlString → Error
   | duplicatePatternVariable : MlString → Error
   | duplicateDefinitionVariable : MlString → Error
   | duplicateFunctionName : MlString → Bool → Error
   | duplicateAbbreviationVariable : MlString → MlString → Error
   | constructorArity : Ident MlString MlString → Nat → Nat → Error
-  | typeNameCheckMessage : MlString → Error
-  | duplicateTypeName : MlString → Error
-  | duplicateConstructor : MlString → MlString → Error
-  | duplicateTypeVariable : MlString → MlString → Error
+  | sourceTypeMessage : MlString → Error
   | undefinedVariable : Ident MlString MlString → Error
   | undefinedConstructor : Ident MlString MlString → Error
   | located : Flapjack.Misc.Location.Locs → Error → Error
@@ -69,21 +67,17 @@ def withLoc (loc : Flapjack.Misc.Location.Locs) (env : Env) (action : M α) : M 
   | .error (.primitiveArity name actual expected) => .error (.located loc (.primitiveArity name actual expected))
   | .error (.undefinedVariable name) => .error (.located loc (.undefinedVariable name))
   | .error (.undefinedConstructor name) => .error (.located loc (.undefinedConstructor name))
-  | .error (.typeNameCheckMessage message) => .error (.located loc (.typeNameCheckMessage message))
+  | .error (.sourceTypeMessage message) => .error (.located loc (.sourceTypeMessage message))
   | .error (.typeMismatch left right) => .error (.located loc
       (.typeMismatchEnv env.infT left right))
   | .error (.annotationTypeVariable name) => .error (.located loc (.annotationTypeVariable name))
   | .error (.abbreviationTypeVariable name typ) => .error (.located loc (.abbreviationTypeVariable name typ))
-  | .error (.datatypeTypeVariable name ctor) => .error (.located loc (.datatypeTypeVariable name ctor))
   | .error (.exceptionTypeVariable name ctor) => .error (.located loc (.exceptionTypeVariable name ctor))
   | .error (.duplicatePatternVariable name) => .error (.located loc (.duplicatePatternVariable name))
   | .error (.duplicateDefinitionVariable name) => .error (.located loc (.duplicateDefinitionVariable name))
   | .error (.duplicateFunctionName name isLocal) => .error (.located loc (.duplicateFunctionName name isLocal))
   | .error (.duplicateAbbreviationVariable name typ) => .error (.located loc (.duplicateAbbreviationVariable name typ))
   | .error (.constructorArity name actual expected) => .error (.located loc (.constructorArity name actual expected))
-  | .error (.duplicateTypeName name) => .error (.located loc (.duplicateTypeName name))
-  | .error (.duplicateConstructor name typ) => .error (.located loc (.duplicateConstructor name typ))
-  | .error (.duplicateTypeVariable name typ) => .error (.located loc (.duplicateTypeVariable name typ))
   | other => other
 private def fresh : M InferT := do
   let s ← get
@@ -160,14 +154,14 @@ private def annotationWorker (env : Env) (free : List MlString) (typ : AstT) :
   match TypeNameCheck.typeNameCheckSub ⟨none, env.infT⟩ env.infT free typ () with
   | (.success t, _) => .ok t
   | (.failure (_, .inr name), _) => .error (.unboundTypeVariable name)
-  | (.failure (_, .inl message), _) => .error (.typeNameCheckMessage message)
+  | (.failure (_, .inl message), _) => .error (.sourceTypeMessage message)
 
 private def annotationsWorker (env : Env) (free : List MlString) (ts : List AstT) :
     Except Error (List TypeSystemHOL.SemanticT) :=
   match TypeNameCheck.typeNameCheckSubList ⟨none, env.infT⟩ env.infT free ts () with
   | (.success result, _) => .ok result
   | (.failure (_, .inr name), _) => .error (.unboundTypeVariable name)
-  | (.failure (_, .inl message), _) => .error (.typeNameCheckMessage message)
+  | (.failure (_, .inl message), _) => .error (.sourceTypeMessage message)
 
 private def annotation (env : Env) (t : AstT) : M InferT := do
   match annotationWorker env [] t with
@@ -516,26 +510,16 @@ private def asCheckedTypes (env : Env) (free : List MlString) (ts : List AstT)
   | .ok ts => pure ts
 
 private def datatypeEnv (env : Env) (defs : TypeDef) : M Env := do
-  let names := defs.map (fun (_, name, _) => name)
-  if let some name := findDup names then fail (.duplicateTypeName name) else
   let s ← get
   let (ids, s) := freshIds defs.length s
   set s
   let tenv := alistToNs ((List.zip defs ids).map (fun ((vars, name, _), id) =>
     (name, (vars, TypeSystemHOL.SemanticT.app (vars.map TypeSystemHOL.SemanticT.var) id))))
-  let checkEnv := { env with infT := nsAppend tenv env.infT }
-  let mut constructors := []
-  for ((vars, typeName, ctors), id) in List.zip defs ids do
-    if let some name := findDup (ctors.map Prod.fst) then
-      fail (.duplicateConstructor name typeName)
-    if let some name := findDup vars then
-      fail (.duplicateTypeVariable name typeName)
-    let mut block := []
-    for (name, ts) in ctors do
-      let ts ← asCheckedTypes checkEnv vars ts (fun var => .datatypeTypeVariable var name)
-      block := (name, (vars, ts, id)) :: block
-    constructors := block ++ constructors
-  return { emptyEnv with infC := alistToNs constructors, infT := tenv }
+  let checkEnv := nsAppend tenv env.infT
+  match TypeDefinitions.checkTypeDefinition ⟨none, env.infT⟩ checkEnv defs () with
+  | (.failure (_, message), _) => fail (.sourceTypeMessage message)
+  | (.success (), _) =>
+    return { emptyEnv with infC := TypeSystemHOL.buildCtorTenv checkEnv defs ids, infT := tenv }
 
 mutual
 private def inferDeclWorker : Nat → Nat → Env → Dec → M Env

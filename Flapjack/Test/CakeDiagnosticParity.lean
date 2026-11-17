@@ -43,15 +43,15 @@ private def qname : NamespaceHOL.Ident MlString MlString := .long (ofString "A")
 #guard renderUndefinedVariable (ofString "val x = A.foo;").explode (.located loc (.undefinedVariable qname)) ==
   some (ofString "### ERROR: type error\nUndefined variable: A.foo at line 1\n\nval x = A.foo;\n           ^^^^^\n\nProgram exited with nonzero exit code.\n").explode
 
-#guard renderUndefinedConstructor (ofString "val x = A.foo;").explode
-    (.located loc (.typeNameCheckMessage (ofString "Undefined type constructor: A.foo"))) ==
+#guard renderSourceTypeError (ofString "val x = A.foo;").explode
+    (.located loc (.sourceTypeMessage (ofString "Undefined type constructor: A.foo"))) ==
   some (ofString "### ERROR: type error\nUndefined type constructor: A.foo at line 1\n\nval x = A.foo;\n           ^^^^^\n\nProgram exited with nonzero exit code.\n").explode
 
 -- The executable inference path calls the source structured-error checker.
 #guard match Flapjack.CakeParser.Frontend.parseSourceFuel 500 500
     (ofString "val x : missing = 1;").explode with
   | .success decls => match inferProgramFuel 500 500 decls with
-    | .error (.located _ (.typeNameCheckMessage message)) =>
+    | .error (.located _ (.sourceTypeMessage message)) =>
         message == ofString "Undefined type constructor: missing"
     | _ => false
   | _ => false
@@ -59,7 +59,7 @@ private def qname : NamespaceHOL.Ident MlString MlString := .long (ofString "A")
 #guard match Flapjack.CakeParser.Frontend.parseSourceFuel 500 500
     (ofString "type 'a wrap = 'a; val x : (int,int) wrap = 1;").explode with
   | .success decls => match inferProgramFuel 500 500 decls with
-    | .error (.located _ (.typeNameCheckMessage message)) =>
+    | .error (.located _ (.sourceTypeMessage message)) =>
         message == ofString "Type constructor wrap given 2 arguments, but expected 1"
     | _ => false
   | _ => false
@@ -108,7 +108,18 @@ private def qname : NamespaceHOL.Ident MlString MlString := .long (ofString "A")
 #guard match Flapjack.CakeParser.Frontend.parseSourceFuel 500 500
     (ofString "datatype t = A | B | A | B;").explode with
   | .success decls => match inferProgramFuel 500 500 decls with
-    | .error (.located _ (.duplicateConstructor name typ)) => name == ofString "A" && typ == ofString "t"
+    | .error (.located _ (.sourceTypeMessage message)) =>
+        message == ofString "Duplicate constructor A in the definition of type t"
+    | _ => false
+  | _ => false
+
+-- Constructor duplication is reported before duplicate type variables or
+-- invalid constructor argument types, as in the source checker.
+#guard match Flapjack.CakeParser.Frontend.parseSourceFuel 500 500
+    (ofString "datatype ('a,'a) t = A missing | A;").explode with
+  | .success decls => match inferProgramFuel 500 500 decls with
+    | .error (.located _ (.sourceTypeMessage message)) =>
+        message == ofString "Duplicate constructor A in the definition of type t"
     | _ => false
   | _ => false
 
@@ -125,7 +136,7 @@ private def qname : NamespaceHOL.Ident MlString MlString := .long (ofString "A")
     (.located (.locs (.posn 0 0) (.posn 0 17)) (.duplicateDefinitionVariable (ofString "x"))) ==
   some (ofString "### ERROR: type error\nDuplicate variable x in the left-hand side of a definition at line 1\n\nval (x,x) = (1,2);\n^^^^^^^^^^^^^^^^^^\n\nProgram exited with nonzero exit code.\n").explode
 
-#guard renderUndefinedConstructor [] (.located loc (.typeNameCheckMessage
+#guard renderSourceTypeError [] (.located loc (.sourceTypeMessage
     (ofString "Type constructor A.foo given 2 arguments, but expected 1"))) ==
   some (ofString "### ERROR: type error\nType constructor A.foo given 2 arguments, but expected 1 at line 1\n\n\n           ^^^^^\n\nProgram exited with nonzero exit code.\n").explode
 
