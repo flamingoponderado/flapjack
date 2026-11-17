@@ -4543,6 +4543,12 @@ def total_function_inhabitants_errors(signature: str, declaration_source: str,
     signature_code = strip_lean_comments(signature)
     if not listed or "" in listed:
         return ["total_function_inhabitants requires distinct type binders"]
+    duplicates = sorted({name for name in listed if listed.count(name) > 1})
+    if duplicates:
+        return [
+            "total_function_inhabitants lists "
+            f"{', '.join(duplicates)} more than once; distinct type binders are required"
+        ]
     errors: list[str] = []
     instances = [name.strip() for name in TOTAL_FUNCTION_INSTANCE_RE.findall(signature_code)]
     type_binders: set[str] = set()

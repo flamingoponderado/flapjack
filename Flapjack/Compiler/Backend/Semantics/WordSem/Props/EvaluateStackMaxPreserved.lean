@@ -524,7 +524,8 @@ theorem stackMaxOk_evaluate :
       have ht := (evaluate_def_rebound (width := width) (C := C) (F := F)).2.2.2.2.2.2.2.2.2.2.2.1
       rw [ht]
       by_cases hz : s.termdep = 0
-      · simp only [hz, dite_true, if_true]; exact h
+      · simp only [hz, dite_true, if_true]
+        exact h
       · simp only [hz, dite_false, if_false]
         have hq : StackMaxOk
             { s with clock := wordSemMustTerminateLimit width, termdep := s.termdep - 1 } :=

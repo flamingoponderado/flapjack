@@ -1346,16 +1346,24 @@ private theorem ccCoOnlyDiffAt_all {C F : Type} (program : DataLang.Prog) (state
   | seq first second =>
     apply ccCoOnlyDiffAt_seq first second state
     · exact exprIH first state (by omega)
-        (by simp only [DataLang.Prog.seq.sizeOf_spec]; omega)
+        (by
+          simp only [DataLang.Prog.seq.sizeOf_spec]
+          omega)
     · intro mid bound
       exact exprIH second mid bound
-        (by simp only [DataLang.Prog.seq.sizeOf_spec]; omega)
+        (by
+          simp only [DataLang.Prog.seq.sizeOf_spec]
+          omega)
   | ifThenElse name yes no =>
     apply ccCoOnlyDiffAt_if name yes no state
     · exact exprIH yes state (by omega)
-        (by simp only [DataLang.Prog.ifThenElse.sizeOf_spec]; omega)
+        (by
+          simp only [DataLang.Prog.ifThenElse.sizeOf_spec]
+          omega)
     · exact exprIH no state (by omega)
-        (by simp only [DataLang.Prog.ifThenElse.sizeOf_spec]; omega)
+        (by
+          simp only [DataLang.Prog.ifThenElse.sizeOf_spec]
+          omega)
   | force ret label src =>
     cases ret with
     | none => exact ccCoOnlyDiffAt_tailForce label src state smaller

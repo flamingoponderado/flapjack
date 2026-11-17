@@ -313,7 +313,9 @@ private theorem stackLocalsSwap_seq {C F : Type} (first second : DataLang.Prog)
         intro xs lsz len
         obtain ⟨lss1, sfs1, smx1, phl1, firstTarget⟩ := firstHall xs lsz len
         obtain ⟨lss2, sfs2, smx2, phl2, secondTarget⟩ :=
-          secondHall xs lss1 (by rw [midStack]; exact len)
+          secondHall xs lss1 (by
+            rw [midStack]
+            exact len)
         obtain ⟨mx', safe', peak', moved⟩ :=
           evaluate_stackSafePeakSwap smx1 sfs1 _ _ _ phl1 second secondTarget
         refine ⟨lss2, safe', mx', peak', ?_⟩
@@ -327,7 +329,9 @@ private theorem stackLocalsSwap_seq {C F : Type} (first second : DataLang.Prog)
           intro xs lsz len
           obtain ⟨lss1, sfs1, smx1, phl1, firstTarget⟩ := firstHall xs lsz len
           obtain ⟨lss2, sfs2, smx2, phl2, secondTarget⟩ :=
-            secondHall xs lss1 (by rw [midStack]; exact len)
+            secondHall xs lss1 (by
+              rw [midStack]
+              exact len)
           obtain ⟨mx', safe', peak', moved⟩ :=
             evaluate_stackSafePeakSwap smx1 sfs1 _ _ _ phl1 second secondTarget
           refine ⟨lss2, safe', mx', peak', ?_⟩
@@ -344,7 +348,9 @@ private theorem stackLocalsSwap_seq {C F : Type} (first second : DataLang.Prog)
               intro xs lsz len
               obtain ⟨lss1, sfs1, smx1, phl1, firstTarget⟩ := firstHall xs lsz len
               obtain ⟨lss2, sfs2, smx2, phl2, secondTarget⟩ :=
-                secondHall xs lss1 (by rw [midStack]; exact len)
+                secondHall xs lss1 (by
+                  rw [midStack]
+                  exact len)
               obtain ⟨mx', safe', peak', moved⟩ :=
                 evaluate_stackSafePeakSwap smx1 sfs1 _ _ _ phl1 second secondTarget
               refine ⟨lss2, safe', mx', peak', ?_⟩
@@ -356,7 +362,9 @@ private theorem stackLocalsSwap_seq {C F : Type} (first second : DataLang.Prog)
               intro xs lsz len
               obtain ⟨lss1, sfs1, smx1, phl1, firstTarget⟩ := firstHall xs lsz len
               obtain ⟨lss2, sfs2, smx2, phl2, secondTarget⟩ :=
-                secondHall xs lss1 (by rw [midStack]; exact len)
+                secondHall xs lss1 (by
+                  rw [midStack]
+                  exact len)
               obtain ⟨mx', safe', peak', moved⟩ :=
                 evaluate_stackSafePeakSwap smx1 sfs1 _ _ _ phl1 second secondTarget
               refine ⟨lss2, safe', mx', peak', ?_⟩
@@ -380,7 +388,9 @@ private theorem stackLocalsSwap_seq {C F : Type} (first second : DataLang.Prog)
                 s7 rfl (by simp only [midHandler]) jumpedRun
               obtain ⟨lss1, sfs1, smx1, phl1, firstTarget⟩ := firstHall xs lsz len
               obtain ⟨lss2, sfs2, smx2, phl2, secondTarget⟩ :=
-                secondHall xs _ lss1 swappedJump (by rw [midStack]; exact len)
+                secondHall xs _ lss1 swappedJump (by
+                  rw [midStack]
+                  exact len)
               obtain ⟨mx', safe', peak', moved⟩ :=
                 evaluate_stackSafePeakSwap smx1 sfs1 _ _ _ phl1 second secondTarget
               refine ⟨lss2, safe', mx', peak', ?_⟩

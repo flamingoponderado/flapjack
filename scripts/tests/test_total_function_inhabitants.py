@@ -48,8 +48,19 @@ class TotalFunctionInhabitantsCheckerTest(unittest.TestCase):
         self.assertTrue(self.errors(source=source))
 
     def test_rejects_duplicate_or_empty_names(self):
-        self.assertTrue(self.errors(names=("α", "α")))
+        single = (
+            "noncomputable def holHead {α : Type} [Nonempty α] (l : List α) : α := holHd l"
+        )
+        self.assertTrue(self.errors(signature=single, source=single, names=("α", "α")))
         self.assertTrue(self.errors(names=("α", "")))
+
+    def test_duplicate_binder_is_the_only_error(self):
+        single = (
+            "noncomputable def holHead {α : Type} [Nonempty α] (l : List α) : α := holHd l"
+        )
+        errors = self.errors(signature=single, source=single, names=("α", "α"))
+        self.assertEqual(len(errors), 1, errors)
+        self.assertIn("more than once", errors[0])
 
     def test_attribute_scanner_reports_the_listed_binders(self):
         def listed(text):

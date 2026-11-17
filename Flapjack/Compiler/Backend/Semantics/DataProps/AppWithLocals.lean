@@ -327,8 +327,11 @@ theorem doAppAux_safeSuccess {C F : Type} (op : ClosLang.Op)
       .val (value, { next with safeForSpace := safe' }) := by
   simp only [doAppAux] at run ⊢
   all_goals repeat' (split at run <;> simp_all)
-  all_goals try (obtain ⟨safe', result⟩ :=
-    (applyNonFfi_successFields _ _ state next value safe (by assumption)).1; simp_all)
+  all_goals
+    try
+      obtain ⟨safe', result⟩ :=
+        (applyNonFfi_successFields _ _ state next value safe (by assumption)).1
+      simp_all
   all_goals try aesop
 
 /-- Successful auxiliary application keeps its value, its stack maximum and its
