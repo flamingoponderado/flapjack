@@ -11,3 +11,6 @@ val _ = pr_hyps "stack_rel_IMP_size_of_stack_hypotheses" stack_rel_IMP_size_of_s
 val _ = pr_typed "stack_rel_IMP_size_of_stack_typed" stack_rel_IMP_size_of_stack;
 val _ = pr_typed "code_rel_def_typed" code_rel_def;
 val _ = pr_typed "code_oracle_rel_def_typed" code_oracle_rel_def;
+val _ = pr_typed "state_rel_thm_typed" state_rel_thm;
+val _ = pr_typed "state_rel_with_clock_typed" state_rel_with_clock;
+val _ = pr_typed "state_rel_with_fp_regs_typed" state_rel_with_fp_regs;
