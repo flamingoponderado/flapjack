@@ -13,6 +13,15 @@ SOURCE = (ROOT / LEAN_PATH).read_text()
 
 
 class GeneraliseParameterTupleSourceTest(unittest.TestCase):
+    def test_command_style_hol_attributes_fail_closed(self):
+        scan = CHECKER["unsupported_hol_attribute_commands"]
+        self.assertEqual(scan('attribute [hol "p" "n"] a b'), [1])
+        self.assertEqual(scan('attribute [simp,\n hol "p" "n"] a'), [1])
+        self.assertEqual(scan('attribute [other [x], «hol» "p" "n"] a'), [1])
+        self.assertEqual(scan('def s := "attribute [hol x] a"'), [])
+        self.assertEqual(scan('-- attribute [hol "p" "n"] a\n@[hol "p" "n"]\ndef a := 0'), [])
+        self.assertEqual(scan('attribute [simp] a'), [])
+
     def check(self, source=SOURCE, name="generaliseMap", path=LEAN_PATH,
               hol=HOL_REF, parameter="subst", component="component_2"):
         return CHECK(source, path, name, hol, parameter, component)

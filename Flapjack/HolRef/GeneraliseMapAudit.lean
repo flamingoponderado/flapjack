@@ -146,14 +146,6 @@ def generaliseMapMetadataProblems (target : Name) (path name : String)
   if otherQualifiers then return #["generalization qualifier cannot combine with other qualifiers"]
   return #[]
 
-/-- Until every gate is wired, reject either an unqualified reference or any
-    prospective qualified reference during export. -/
-def pendingGeneraliseMapExportProblem (path name : String) (positions : Array String) : Option String :=
-  if path == "cakeml/compiler/inference/inferScript.sml" && name == "generalise_def" && positions.isEmpty then
-    some "generalise_def requires its combined map qualifier"
-  else if !positions.isEmpty then some "generalization map qualifier is not yet enabled for export"
-  else none
-
 /-- Prospective combined metadata and elaborated bundle audit. Source-text
     validation and the manifest/export checks are still separately required. -/
 def generaliseMapQualifiedProblems (target : Name) (path name : String)

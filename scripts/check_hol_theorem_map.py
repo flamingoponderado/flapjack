@@ -1229,6 +1229,9 @@ def tagged_declarations(
     for path in REFS["lean_files"]():
         rel = path.relative_to(root).as_posix()
         lines = path.read_text(encoding="utf-8").splitlines()
+        unsupported = REFS["unsupported_hol_attribute_commands"]("\n".join(lines))
+        if unsupported:
+            raise ValueError(f"{rel}:{unsupported[0]}: command-style HOL attributes are not supported by the inventory scanner")
         for (line, hol_path, hol_name, _hol_line, list_fields,
              names_fields, boundary_fields, fmap_fields, fmap_result,
              fmap_relation, fmap_equalities, words_bitvec,

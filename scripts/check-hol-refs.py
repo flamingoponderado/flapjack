@@ -5783,6 +5783,24 @@ def nested_list_combination_allowed(fmap_fields: tuple[str, ...], producer: bool
             and not (producer and fmap_fields))
 
 
+def unsupported_hol_attribute_commands(source: str) -> list[int]:
+    """Reject command-style HOL tags until the reference scanner handles them."""
+    if "attribute" not in source:
+        return []
+    clean = strip_lean_comments(source)
+    clean = re.sub(r'"(?:\\[\s\S]|[^"\\])*(?:"|$)',
+                   lambda match: _NOT_NEWLINE_RE.sub(" ", match.group()), clean)
+    lines = []
+    for match in re.finditer(r"\battribute\s*\[", clean):
+        start, cursor, depth = match.start(), match.end(), 1
+        while cursor < len(clean) and depth:
+            depth += (clean[cursor] == "[") - (clean[cursor] == "]")
+            cursor += 1
+        if re.search(r"(?<![\w'])hol(?![\w'])", clean[match.end():cursor]):
+            lines.append(clean.count("\n", 0, start) + 1)
+    return lines
+
+
 def nested_thunk_map_combination(hol_path: str, hol_name: str, lean_path: str, lean_name: str,
                                  nested: tuple[str, ...], fmap_fields: tuple[str, ...],
                                  relation: tuple[tuple[str, str], ...],
@@ -5818,6 +5836,8 @@ def main(argv: list[str]) -> int:
     for lean_path in lean_files():
         rel = lean_path.relative_to(ROOT).as_posix()
         lines = lean_path.read_text(encoding="utf-8").splitlines()
+        for number in unsupported_hol_attribute_commands("\n".join(lines)):
+            errors.append(f"{rel}:{number}: command-style HOL attributes are not supported by the reference scanner")
         module = module_name(lean_path)
         module_reported = False
         for (number, hol_path, hol_name, hol_line, list_fields,

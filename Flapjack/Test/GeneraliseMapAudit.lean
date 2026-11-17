@@ -92,15 +92,6 @@ private theorem swappedInputsWitness (minimum next : Nat) (subst : HolFiniteMapE
   holFmapAsFiniteSupportParameterTupleResultWitness_generaliseMap next minimum subst t key
 
 run_meta do
-  let sourcePath := "cakeml/compiler/inference/inferScript.sml"
-  unless pendingGeneraliseMapExportProblem sourcePath "generalise_def" #[] ==
-      some "generalise_def requires its combined map qualifier" do
-    throwError "unqualified generalization export must be rejected"
-  unless pendingGeneraliseMapExportProblem sourcePath "generalise_def" #["subst", "component_2"] ==
-      some "generalization map qualifier is not yet enabled for export" do
-    throwError "prospective qualified export must be rejected"
-  unless pendingGeneraliseMapExportProblem sourcePath "unrelated" #[] == none do
-    throwError "unrelated export must not be rejected"
   for (name, isList) in [(``generaliseMap, false), (``generaliseListMap, true)] do
     let qualified ← generaliseMapQualifiedProblems name
       "cakeml/compiler/inference/inferScript.sml" "generalise_def" none "subst" "component_2" false

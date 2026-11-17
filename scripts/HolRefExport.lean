@@ -272,9 +272,19 @@ elab "#emit_hol_ref_export" : command => do
   let mut known : Std.HashMap Name Bool := {}
   let mut nestedKnown : Std.HashMap Name (Bool × Bool) := {}
   for (name, ref) in HolRef.all env do
-    if let some problem := pendingGeneraliseMapExportProblem ref.path ref.name
-        ref.fmapAsFiniteSupportParameterTupleResult then
-      throwError "{problem}: {name}"
+    if ref.path == "cakeml/compiler/inference/inferScript.sml" && ref.name == "generalise_def" &&
+        ref.fmapAsFiniteSupportParameterTupleResult.isEmpty then
+      throwError "generalise_def requires its combined map qualifier: {name}"
+    if !ref.fmapAsFiniteSupportParameterTupleResult.isEmpty then
+      let expected : HolRef := {
+        path := "cakeml/compiler/inference/inferScript.sml", name := "generalise_def",
+        fmapAsFiniteSupportParameterTupleResult := #["subst", "component_2"] }
+      unless ref == expected do
+        throwError "invalid generalization qualifier metadata: {name}"
+      let problems ← liftTermElabM <| generaliseMapQualifiedProblems name ref.path ref.name
+        ref.line? "subst" "component_2" false
+      unless problems.isEmpty do
+        throwError "invalid generalization map declaration {name}: {problems}"
     if !ref.nestedListRelAsMutual.isEmpty then
       let marker := ``Flapjack.Test.nestedRelationAudit_passed
       match env.getModuleIdxFor? marker with
@@ -401,6 +411,10 @@ elab "#emit_hol_ref_export" : command => do
           qualifiers := qualifiers ++ [
             ("fmap_as_finite_support_heterogeneous_function",
               toJson ref.fmapAsFiniteSupportHeterogeneousFunction)]
+        if !ref.fmapAsFiniteSupportParameterTupleResult.isEmpty then
+          qualifiers := qualifiers ++ [
+            ("fmap_as_finite_support_parameter_tuple_result",
+              toJson ref.fmapAsFiniteSupportParameterTupleResult)]
         if !ref.fmapAsFiniteSupportTuple.isEmpty then
           qualifiers := qualifiers ++ [
             ("fmap_as_finite_support_tuple", toJson ref.fmapAsFiniteSupportTuple)]

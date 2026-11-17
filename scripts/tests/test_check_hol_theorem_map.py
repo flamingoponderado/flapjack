@@ -132,6 +132,10 @@ def generaliseMap : Nat := 0
                 tagged = MAP["tagged_declarations"](root)
             self.assertEqual(tagged[("Generalise.lean", "generaliseMap")][23],
                              ("subst", "component_2"))
+            source.write_text('attribute [hol "p" "n"] generaliseMap\n', encoding="utf-8")
+            with patch.dict(MAP["REFS"], {"lean_files": lambda: [source]}):
+                with self.assertRaisesRegex(ValueError, "command-style HOL attributes"):
+                    MAP["tagged_declarations"](root)
 
     def test_exact_sites_and_metadata_are_required(self):
         field = "fmap_as_finite_support_parameter_tuple_result"
