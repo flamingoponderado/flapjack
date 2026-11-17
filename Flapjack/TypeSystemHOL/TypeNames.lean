@@ -5,8 +5,9 @@ public import Flapjack.Pancake.Semantics.CrepSem.HOLState
 
 @[expose] public section
 
-/-! Semantic type substitutions and source type-name resolution. The source
-and representation review of these definitions remains pending. -/
+/-! Semantic type substitutions and source type-name resolution. The tagged
+declarations have individual source reviews in the HOL theorem map; the
+finite-map representation of `typeSubst` is explicitly qualified there. -/
 namespace Flapjack.TypeSystemHOL
 open Flapjack.Basis.Pure.MlString Flapjack.NamespaceHOL Flapjack.AstHOL
 

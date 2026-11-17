@@ -532,4 +532,40 @@ theorem goodRemapExtendBij (f g : Nat → Nat) (ids : Nat → Prop) (n : Nat) :
       simp [extendBij, absent]
     _ = TlistNum :: TboolNum :: primTypeNums := good
 
+/-- Canonical finite-map codec witness for the substitution parameter. -/
+theorem holFmapAsFiniteSupportParamWitness_tsTidRenameTypeSubst_s
+    (s : HolFiniteMapExact MlString SemanticT) (key : MlString) :
+    (TypeSubstBroad.ofBroad (TypeSubstBroad.toBroad s)).lookup key = s.lookup key ∧
+    (TypeSubstBroad.ofBroad (TypeSubstBroad.toBroad s)).finiteSupport = s.finiteSupport ∧
+    TypeSubstBroad.ofBroad (TypeSubstBroad.toBroad s) = s :=
+  holFmapAsFiniteSupportParamWitness_typeSubst_subst s key
+
+mutual
+/-- Renaming commutes with substitution when the map's values are renamed. -/
+@[hol "cakeml/compiler/inference/proofs/type_dCanonScript.sml" "ts_tid_rename_type_subst"
+  (fmap_as_finite_support_parameters := [s])]
+theorem tsTidRenameTypeSubst (s : HolFiniteMapExact MlString SemanticT)
+    (t : SemanticT) (f : Nat → Nat) :
+    tsTidRename f (typeSubst s t) =
+      typeSubst (s.map2 (fun pair => tsTidRename f pair.2)) (tsTidRename f t) := by
+  cases t with
+  | var name =>
+    cases found : s.lookup name <;> simp [typeSubst, tsTidRename, found]
+  | varDb n => simp [typeSubst, tsTidRename]
+  | app ts id =>
+    simp [typeSubst, tsTidRename, tsTidRenameTypeSubstList s ts f]
+termination_by sizeOf t
+
+private theorem tsTidRenameTypeSubstList (s : HolFiniteMapExact MlString SemanticT)
+    (ts : List SemanticT) (f : Nat → Nat) :
+    tsTidRenameList f (typeSubstList s ts) =
+      typeSubstList (s.map2 (fun pair => tsTidRename f pair.2)) (tsTidRenameList f ts) := by
+  cases ts with
+  | nil => simp [typeSubstList, tsTidRenameList]
+  | cons t ts =>
+    simp [typeSubstList, tsTidRenameList, tsTidRenameTypeSubst s t f,
+      tsTidRenameTypeSubstList s ts f]
+termination_by sizeOf ts
+end
+
 end Flapjack.Compiler.Inference.TypeDCanon

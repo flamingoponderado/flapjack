@@ -475,6 +475,14 @@ val good_remap_extend_bij_replay = Q.prove(
   rw[type_dCanonTheory.good_remap_def, type_dCanonTheory.extend_bij_def,
      prim_tids_def, prim_type_nums_def]);
 val _ = show "good_remap_extend_bij_replay_typed" good_remap_extend_bij_replay;
+val ts_tid_rename_type_subst_replay = Q.prove(
+  `!s t f. ts_tid_rename f (type_subst s t) =
+     type_subst (ts_tid_rename f o_f s) (ts_tid_rename f t)`,
+  ho_match_mp_tac type_subst_ind >>
+  rw[type_subst_def,ts_tid_rename_def] >-
+    (TOP_CASE_TAC >> fs[FLOOKUP_o_f,ts_tid_rename_def]) >>
+  fs[MAP_MAP_o,MAP_EQ_f]);
+val _ = show "ts_tid_rename_type_subst_replay_typed" ts_tid_rename_type_subst_replay;
 val _ = show "set_tids_tenv_remap_typed" type_dCanonTheory.set_tids_tenv_remap;
 val set_tids_tenv_remap_replay = Q.prove(
   `probe_set_tids_tenv tids tenv ==>

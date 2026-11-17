@@ -1,5 +1,12 @@
 [
 {
+  "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "ts_tid_rename_type_subst",
+  "lean_path": "Flapjack/Compiler/Inference/TypeDCanon.lean", "lean_name": "tsTidRenameTypeSubst",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["s"],
+  "reviewer": "Independent comparison with the HOL-local theorem and ts_tid_rename_type_subst_replay_typed confirms the complete unconditioned equality and source carriers. The canonical finite-map parameter has a codec witness; map2 preserves keys and maps lookup values exactly as HOL o_f."
+ },
+{
   "hol_path": "cakeml/compiler/inference/inferPropsScript.sml", "hol_name": "prim_tids_def",
   "lean_path": "Flapjack/Compiler/Inference/InferProps.lean", "lean_name": "primTids",
   "statement_status": "reviewed_exact",
