@@ -67,6 +67,7 @@ val _ = show "type_name_check_subst_typed" inferTheory.type_name_check_subst_def
 val _ = show "infer_p_typed" inferTheory.infer_p_def;
 val _ = show "infer_type_subst_alt_typed" inferTheory.infer_type_subst_alt;
 val _ = show "generalise_typed" inferTheory.generalise_def;
+val _ = show "generalise_list_length_typed" inferPropsTheory.generalise_list_length;
 val _ = show "generalise_list_eval" (EVAL ``
   generalise_list 0 0 FEMPTY [Infer_Tuvar 3; Infer_Tuvar 3; Infer_Tuvar 7]``);
 val _ = show "infer_p_var_eval" (EVAL ``
