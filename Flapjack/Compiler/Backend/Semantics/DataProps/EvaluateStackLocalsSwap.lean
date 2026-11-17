@@ -385,4 +385,89 @@ private theorem stackLocalsSwap_seq {C F : Type} (first second : DataLang.Prog)
               rw [seq_none first second _ _ firstTarget]
               exact moved
 
+/-- Reserving space reads only the reserved amount. Flapjack infrastructure
+    toward the port of HOL `evaluate_stack_and_locals_swap`; no separate HOL
+    original. -/
+private theorem consumeSpace_swapStackLocals {C F : Type} (amount : Nat) (state : State C F)
+    (xs : List Stack) (lsz : Option Nat) :
+    consumeSpace amount { state with stack := xs, localsSize := lsz } =
+      (consumeSpace amount state).map
+        (fun next => { next with stack := xs, localsSize := lsz }) := by
+  simp only [consumeSpace]
+  split <;> simp_all
+
+/-- Space accounting at a stack-and-locals-swapped state. Flapjack
+    infrastructure toward the port of HOL `evaluate_stack_and_locals_swap`;
+    no separate HOL original. -/
+private theorem doSpace_swapStackLocals {C F : Type} (op : ClosLang.Op)
+    (values : List DataSem.Value)
+    (state : State C F) (xs : List Stack) (lsz : Option Nat) (next : State C F)
+    (run : doSpace op values state = some next) :
+    ∃ sfs phl, doSpace op values { state with stack := xs, localsSize := lsz } =
+      some { next with
+        stack := xs
+        localsSize := lsz
+        safeForSpace := sfs
+        peakHeapLength := phl } := by
+  by_cases reset : DataLang.opSpaceReset op
+  · rw [doSpaceAlt, if_pos reset] at run ⊢
+    cases run
+    exact ⟨_, _, rfl⟩
+  · rw [doSpaceAlt, if_neg reset] at run ⊢
+    cases consume : consumeSpace (DataSpace.opSpaceReq op values.length) state with
+    | none =>
+      simp only [consume] at run
+      simp at run
+    | some consumed =>
+      simp only [consume] at run
+      cases run
+      have swap := consumeSpace_swapStackLocals (DataSpace.opSpaceReq op values.length) state xs lsz
+      simp only [consume, Option.map_some] at swap
+      exact ⟨_, _, swap⟩
+
+/-- Space accounting fails at a stack-and-locals-swapped state exactly when it
+    fails at the original. Flapjack infrastructure toward the port of HOL
+    `evaluate_stack_and_locals_swap`; no separate HOL original. -/
+private theorem doSpace_swapStackLocals_none {C F : Type} (op : ClosLang.Op)
+    (values : List DataSem.Value) (state : State C F) (xs : List Stack) (lsz : Option Nat)
+    (run : doSpace op values state = none) :
+    doSpace op values { state with stack := xs, localsSize := lsz } = none := by
+  by_cases reset : DataLang.opSpaceReset op
+  · rw [doSpaceAlt, if_pos reset] at run
+    simp at run
+  · rw [doSpaceAlt, if_neg reset] at run ⊢
+    cases consume : consumeSpace (DataSpace.opSpaceReq op values.length) state with
+    | none =>
+      have swap := consumeSpace_swapStackLocals (DataSpace.opSpaceReq op values.length) state xs lsz
+      simp only [consume, Option.map_none] at swap
+      exact swap
+    | some consumed =>
+      simp only [consume] at run
+      simp at run
+
+/-- The limit check at a stack-and-locals-swapped state. Flapjack
+    infrastructure toward the port of HOL `evaluate_stack_and_locals_swap`;
+    no separate HOL original. -/
+private theorem doLimSafe_swapStackLocals {C F : Type} (op : ClosLang.Op)
+    (values : List DataSem.Value)
+    (state : State C F) (xs : List Stack) (lsz : Option Nat) :
+    doLimSafe { state with stack := xs, localsSize := lsz } op values =
+      { doLimSafe state op values with stack := xs, localsSize := lsz } := by
+  simp [doLimSafe]
+
+/-- Stack accounting at a stack-and-locals-swapped state. Flapjack
+    infrastructure toward the port of HOL `evaluate_stack_and_locals_swap`;
+    no separate HOL original. -/
+private theorem doStack_swapStackLocals {C F : Type} (op : ClosLang.Op)
+    (values : List DataSem.Value)
+    (state : State C F) (xs : List Stack) (lsz : Option Nat) :
+    ∃ smx sfs, doStack op values { state with stack := xs, localsSize := lsz } =
+      { doStack op values state with
+        stack := xs
+        localsSize := lsz
+        safeForSpace := sfs
+        stackMax := smx } := by
+  unfold doStack
+  exact ⟨_, _, rfl⟩
+
 end Flapjack.Compiler.Backend.DataProps
