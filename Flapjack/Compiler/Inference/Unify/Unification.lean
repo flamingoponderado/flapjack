@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Compiler.Inference.Unify.Encoding
 public import Flapjack.HOL.Unification.UnifDef.Choice
+public import Flapjack.HOL.Unification.UnifDef.OptionCodec
 
 @[expose] public section
 
@@ -53,5 +54,33 @@ theorem encodeDecodeSubstIff (s : HolFiniteMapExact Nat (Term Atom)) :
 noncomputable def tUnifyModel (s : HolFiniteMapExact Nat InferT) (t1 t2 : InferT) :
     Option (HolFiniteMapExact Nat InferT) :=
   (specifiedUnify (encodeSubst s) (encodeInferT t1) (encodeInferT t2)).map decodeSubst
+
+/-- The input substitution survives the canonical finite-map codec. This
+    representation witness is infrastructure for the source unifier port. -/
+theorem holFmapAsFiniteSupportParamWitness_tUnifyModel_s
+    (s : HolFiniteMapExact Nat InferT) (key : Nat) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad s)).lookup key = s.lookup key ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad s)).finiteSupport = s.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad s) = s := by
+  cases s
+  exact ⟨rfl, rfl, rfl⟩
+
+/-- The optional output survives the map codec, and its lookup is the
+    source-shaped option-map of the decoded first-order lookup. The theorem
+    has no HOL original: it witnesses the carrier boundary only. The
+    `specifiedUnify` on the right is Lean's choice, whose guarded agreement
+    with the HOL-selected unifier remains to be reviewed. -/
+theorem holFmapAsFiniteSupportOptionResultWitness_tUnifyModel
+    (s : HolFiniteMapExact Nat InferT) (t1 t2 : InferT) (key : Nat) :
+    ((tUnifyModel s t1 t2).map FiniteMapBroad.toBroad).map FiniteMapBroad.ofBroad =
+        tUnifyModel s t1 t2 ∧
+      (tUnifyModel s t1 t2).map (fun result => result.lookup key) =
+        (specifiedUnify (encodeSubst s) (encodeInferT t1) (encodeInferT t2)).map
+          (fun result => (result.lookup key).map decodeInferT) := by
+  constructor
+  · exact optionSubstCodecRoundtrip _
+  · cases found : specifiedUnify (encodeSubst s) (encodeInferT t1) (encodeInferT t2) with
+    | none => simp [tUnifyModel, found]
+    | some result => simp [tUnifyModel, found, decodeSubst]
 
 end Flapjack.Compiler.Inference.Unify
