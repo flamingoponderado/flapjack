@@ -375,6 +375,8 @@ TOTAL_FUNCTION_RENDERING_NAMES = (
     "holHdNil", "holFapply", "holFapplyOutside",
 )
 TOTAL_FUNCTION_INSTANCE_RE = re.compile(r"\[\s*(?:Nonempty|Inhabited)\s+([^\]]+)\]")
+# A binder group of type variables, for example `{α β : Type}` or `(α : Type u)`.
+TOTAL_FUNCTION_TYPE_BINDER_RE = re.compile(r"[{(]\s*([^:{}()]*?)\s*:\s*Type\b")
 # The reviewed binary64 real renderings: HOL `binary_ieee`/`machine_ieee`
 # reals as Lean `Rat`, and `fp64_sqrt`'s real square root as its rational cut
 # (docs/SOUNDNESS.md item 8).  A tagged declaration whose own source uses a
@@ -4543,6 +4545,9 @@ def total_function_inhabitants_errors(signature: str, declaration_source: str,
         return ["total_function_inhabitants requires distinct type binders"]
     errors: list[str] = []
     instances = [name.strip() for name in TOTAL_FUNCTION_INSTANCE_RE.findall(signature_code)]
+    type_binders: set[str] = set()
+    for match in TOTAL_FUNCTION_TYPE_BINDER_RE.finditer(signature_code):
+        type_binders.update(match.group(1).split())
     for name in listed:
         count = instances.count(name)
         if count == 0:
@@ -4553,7 +4558,7 @@ def total_function_inhabitants_errors(signature: str, declaration_source: str,
             errors.append(
                 f"total_function_inhabitants names {name}, which has {count} "
                 "Nonempty/Inhabited instance binders; exactly one is required")
-        if not re.search(rf"[{{(]\s*{re.escape(name)}\s*:\s*Type\b", signature_code):
+        if name not in type_binders:
             errors.append(
                 f"total_function_inhabitants names {name}, which is not a type binder "
                 "of the declaration")
