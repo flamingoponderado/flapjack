@@ -116,6 +116,18 @@ val t_vars_check_t_replay = Q.prove(
   fs [MEM_MAP] >> metis_tac []);
 val _ = show "t_vars_check_t_replay_typed" t_vars_check_t_replay;
 
+val t_walkstar_diff_replay = Q.prove(
+  `t_wfs s1 /\ t_wfs s2 /\
+    t_walkstar s1 (Infer_Tuvar n) <> t_walkstar s2 (Infer_Tuvar n) ==>
+   (!t. n IN t_vars t ==> t_walkstar s1 t <> t_walkstar s2 t) /\
+   (!ts. !x. MEM x ts ==> n IN t_vars x ==> t_walkstar s1 x <> t_walkstar s2 x)`,
+  strip_tac >> ho_match_mp_tac infer_tTheory.infer_t_induction >>
+  rw [unifyTheory.t_vars_eqn] >> fs [] >>
+  fs [unifyTheory.t_walkstar_eqn, unifyTheory.t_walk_eqn, MEM_MAP] >>
+  res_tac >> rfs [] >> SPOSE_NOT_THEN assume_tac >>
+  imp_res_tac MAP_EQ_f >> metis_tac []);
+val _ = show "t_walkstar_diff_replay_typed" t_walkstar_diff_replay;
+
 val check_freevars_deBruijn_inc_replay = Q.prove(
   `!tvs tvs' t. check_freevars tvs tvs' t ==>
     !n n'. check_freevars (n+tvs) tvs' (deBruijn_inc n' n t)`,

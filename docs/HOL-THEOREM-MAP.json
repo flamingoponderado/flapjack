@@ -1,5 +1,12 @@
 [
 {
+  "hol_path": "cakeml/compiler/inference/proofs/type_eDetermScript.sml", "hol_name": "t_walkstar_diff",
+  "lean_path": "Flapjack/Compiler/Inference/TypeEDeterm.lean", "lean_name": "tWalkstarDiff",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["s1", "s2"],
+  "reviewer": "Independent source comparison and t_walkstar_diff_replay_typed confirm both well-formedness premises, the variable-walk inequality and both complete quantified conclusions. Both finite-map inputs use the canonical carrier with checked lookup and roundtrip witnesses."
+ },
+{
   "hol_path": "cakeml/compiler/inference/proofs/type_eDetermScript.sml", "hol_name": "t_vars_check_t",
   "lean_path": "Flapjack/Compiler/Inference/TypeEDeterm.lean", "lean_name": "tVarsCheckT",
   "statement_status": "reviewed_exact",
