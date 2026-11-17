@@ -29,6 +29,16 @@ noncomputable def addConstraintModel (l : LocErrInfo) (a b : InferT) :
   | none => (.failure (l.loc, mismatchMessage l (tWalkstar s.subst a) (tWalkstar s.subst b)), s)
   | some subst => (.success (), { s with subst })
 
+/-- Source-shaped list constraint operation. It is not tagged as HOL's
+    `add_constraints_def` because its single-constraint operation uses the
+    unreviewed source unifier and normalizer choices on ill-formed maps. -/
+noncomputable def addConstraintsModel (l : LocErrInfo) : List InferT → List InferT →
+    M InferState Unit (Option Locs × MlString)
+  | [], [] => ret ()
+  | a :: as, b :: bs => bind (addConstraintModel l a b) (fun _ =>
+      bind (addConstraintsModel l as bs) (fun _ => ret ()))
+  | _, _ => failwith l (ofString "Internal error: Bad call to add_constraints")
+
 /-- Unfolding of the executable constraint step for the correspondence proof. -/
 private theorem constrainApply (fuel : Nat) (a b : InferT) (s : Infer.State) :
     Core.constrain fuel a b s =

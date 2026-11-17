@@ -75,7 +75,7 @@ the cited name occurs in one of the two syntactic forms.
 | `compiler/backend/gc/copying_gcScript.sml` | `Flapjack/Compiler/Backend/CopyingGc.lean` (abstract collector definitions; correctness proof remains open) |
 | `semantics/lexer_funScript.sml` | `Flapjack/CakeParser/Lexer.lean` |
 | `compiler/inference/infer_tScript.sml` | `Flapjack/Compiler/Inference/InferT.lean` and `Flapjack/Compiler/Inference/InferT/Display.lean` (inference types and rendering; source review pending) |
-| `compiler/inference/inferScript.sml` | `Flapjack/Compiler/Inference/Infer.lean`, `Flapjack/Compiler/Inference/Infer/Core.lean`, and `Flapjack/Compiler/Inference/Infer/TypesOutput.lean` (bounded inference and combined type-output infrastructure; source correspondence remains open) |
+| `compiler/inference/inferScript.sml` | `Flapjack/Compiler/Inference/Infer.lean` and `Flapjack/Compiler/Inference/Infer/` (including executable inference, source-shaped pattern inference, and type-output modules) |
 | `compiler/inference/proofs/type_dCanonScript.sml` | `Flapjack/Compiler/Inference/TypeDCanon.lean` and submodules under `Flapjack/Compiler/Inference/TypeDCanon/` |
 | `compiler/inference/proofs/inferCompleteScript.sml` | `Flapjack/Compiler/Inference/InferComplete.lean` and submodules under `Flapjack/Compiler/Inference/InferComplete/` |
 | `compiler/inference/proofs/infer_eCompleteScript.sml` | `Flapjack/Compiler/Inference/InferEComplete.lean` and submodules under `Flapjack/Compiler/Inference/InferEComplete/` |

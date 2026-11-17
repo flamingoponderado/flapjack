@@ -41,6 +41,20 @@ val _ = show "find_dup_typed" inferTheory.find_dup_def;
 val _ = show "check_dups_typed" inferTheory.check_dups_def;
 val _ = show "check_dups_eq_find_dup_typed" inferTheory.check_dups_eq_find_dup;
 val _ = show "type_name_check_subst_typed" inferTheory.type_name_check_subst_def;
+val _ = show "infer_p_typed" inferTheory.infer_p_def;
+val _ = show "infer_p_var_eval" (EVAL ``
+  infer_p <|loc := NONE; err := nsEmpty|>
+    <|inf_v := nsEmpty; inf_c := nsEmpty; inf_t := nsEmpty|> (Pvar «x»)
+    <|next_uvar := 3; subst := FEMPTY; next_id := 7|>``);
+val _ = show "infer_p_float_eval" (EVAL ``
+  infer_p <|loc := NONE; err := nsEmpty|>
+    <|inf_v := nsEmpty; inf_c := nsEmpty; inf_t := nsEmpty|> (Plit (Float64 0w))
+    <|next_uvar := 3; subst := FEMPTY; next_id := 7|>``);
+val _ = show "infer_p_tuple_eval" (EVAL ``
+  infer_p <|loc := NONE; err := nsEmpty|>
+    <|inf_v := nsEmpty; inf_c := nsEmpty; inf_t := nsEmpty|>
+    (Pcon NONE [Pvar «a»; Pvar «b»])
+    <|next_uvar := 3; subst := FEMPTY; next_id := 7|>``);
 val _ = show "type_name_check_sub_typed" inferTheory.type_name_check_sub_def;
 val _ = show "to_type_name_check_sub_typed" inferTheory.to_type_name_check_sub;
 val _ = show "bind_type_name_check_subst_typed" inferTheory.bind_type_name_check_subst;
