@@ -1506,4 +1506,171 @@ private theorem doStack_swapStackLocals {C F : Type} (op : ClosLang.Op)
   unfold doStack
   exact ⟨_, _, rfl⟩
 
+/-- A jump from a state whose stack starts with an exception frame and whose
+    handler counts the frames below it unwinds to that frame's saved handler,
+    environment and size. Flapjack infrastructure toward the port of HOL
+    `evaluate_stack_and_locals_swap`; no separate HOL original. -/
+private theorem jumpExc_excHead {C F : Type} (state : State C F) (size : Option Nat)
+    (env : Spt DataSem.Value) (saved : Nat) (rest : List Stack)
+    (stackEq : state.stack = Stack.exc size env saved :: rest)
+    (handlerEq : state.handler = rest.length) :
+    jumpExc state =
+      some { state with
+        handler := saved
+        locals := env
+        stack := rest
+        localsSize := size } := by
+  unfold DataSem.jumpExc
+  rw [stackEq, handlerEq]
+  simp only [List.length_cons]
+  rw [if_pos (by omega)]
+  simp only [Nat.sub_self, List.drop_zero]
+
+/-- Restoring the frame that a call pushed keeps the stack tail and installs
+    the saved environment, the caller's locals size and its handler. The
+    handler observation depends on the frame kind. Flapjack infrastructure
+    toward the port of HOL `evaluate_stack_and_locals_swap`; no separate HOL
+    original. -/
+private theorem popEnv_pushedFrame {C F : Type} (handler : Option (Nat × DataLang.Prog))
+    (source frameState : State C F) (env : Spt DataSem.Value) (lsz : Option Nat)
+    (rest : List Stack)
+    (stackEq : frameState.stack =
+      (if handler.isSome then Stack.exc lsz env source.handler else Stack.env lsz env) :: rest) :
+    popEnv frameState = some { frameState with
+      locals := env
+      stack := rest
+      localsSize := lsz
+      handler := if handler.isSome then source.handler else frameState.handler } := by
+  cases handler with
+  | none =>
+    simp only [Option.isSome_none, Bool.false_eq_true, if_false] at stackEq
+    exact popEnv_env_some frameState lsz env rest stackEq
+  | some entry =>
+    simp only [Option.isSome_some, if_true] at stackEq
+    exact popEnv_exc_some frameState lsz env source.handler rest stackEq
+
+/-- The callee of a returning call, evaluated at the stack-and-locals-swapped
+    call state, raises the same exception and unwinds to the swapped stack with
+    the saved environment. Flapjack infrastructure toward the port of HOL
+    `evaluate_stack_and_locals_swap`; no separate HOL original. -/
+private theorem callBody_raiseTarget {C F : Type} (args : List DataSem.Value) (size : Option Nat)
+    (env : Spt DataSem.Value) (handler : Option (Nat × DataLang.Prog)) (body : DataLang.Prog)
+    (state callState last : State C F) (value : DataSem.Value) (xs : List Stack) (lsz : Option Nat)
+    (callEq : callState = DataSem.callEnv args size
+      (DataSem.pushEnv env handler.isSome (DataSem.decClock state)))
+    (s7 : State C F) (len : state.stack.length = xs.length)
+    (jumpedRun : jumpExc (DataSem.callEnv args size
+        (DataSem.pushEnv env handler.isSome
+          (DataSem.decClock { state with stack := xs, localsSize := lsz }))) = some s7)
+    (s7Stack : s7.stack = xs) (s7Handler : s7.handler = state.handler) (s7Locals : s7.locals = env)
+    (bodyHall : ∀ (xs' : List Stack) (s7' : State C F) (lsz' : Option Nat),
+      jumpExc { callState with stack := xs', localsSize := lsz' } = some s7' →
+      callState.stack.length = xs'.length →
+      ∃ lss sfs smx phl, evaluate body { callState with stack := xs', localsSize := lsz' } =
+        (some (.err (.raise value)),
+          { last with
+            stack := s7'.stack
+            handler := s7'.handler
+            locals := s7'.locals
+            localsSize := lss
+            safeForSpace := sfs
+            stackMax := smx
+            peakHeapLength := phl })) :
+    ∃ lss sfs smx phl, evaluate body
+        (DataSem.callEnv args size
+          (DataSem.pushEnv env handler.isSome
+            (DataSem.decClock { state with stack := xs, localsSize := lsz }))) =
+      (some (.err (.raise value)),
+        { last with
+          stack := xs
+          handler := state.handler
+          locals := env
+          localsSize := lss
+          safeForSpace := sfs
+          stackMax := smx
+          peakHeapLength := phl }) := by
+  let frame : Stack :=
+    if handler.isSome then Stack.exc lsz env state.handler else Stack.env lsz env
+  let targetCall := DataSem.callEnv args size
+    (DataSem.pushEnv env handler.isSome
+      (DataSem.decClock { state with stack := xs, localsSize := lsz }))
+  let callFrame : State C F := { callState with stack := frame :: xs, localsSize := size }
+  have targetStack : targetCall.stack = frame :: xs := rfl
+  have callFrameStack : callFrame.stack = targetCall.stack := rfl
+  have callFrameHandler : callFrame.handler = targetCall.handler := by
+    have lhs : callFrame.handler =
+        if handler.isSome then state.stack.length else state.handler := by
+      show callState.handler = _
+      rw [callEq]
+      rfl
+    have rhs : targetCall.handler =
+        if handler.isSome then xs.length else state.handler := rfl
+    rw [lhs, rhs, len]
+  have jumpedAt : jumpExc callFrame = some { callFrame with
+      stack := s7.stack
+      handler := s7.handler
+      locals := s7.locals
+      localsSize := s7.localsSize } :=
+    jumpExc_transport targetCall callFrame s7 callFrameStack callFrameHandler jumpedRun
+  have callStack : callState.stack =
+      (if handler.isSome then Stack.exc state.localsSize env state.handler
+      else Stack.env state.localsSize env) :: state.stack := by
+    rw [callEq]
+    rfl
+  obtain ⟨lss, sfs, smx, phl, bodyTarget⟩ :=
+    bodyHall (frame :: xs)
+      { callFrame with
+        stack := s7.stack
+        handler := s7.handler
+        locals := s7.locals
+        localsSize := s7.localsSize }
+      size jumpedAt (by
+        have callLen : callState.stack.length = state.stack.length + 1 := by
+          rw [callStack]
+          simp only [List.length_cons]
+        have targetLen : (frame :: xs).length = xs.length + 1 := by
+          simp only [List.length_cons]
+        rw [callLen, targetLen, len])
+  have controlStack : ({ callFrame with
+      stack := s7.stack
+      handler := s7.handler
+      locals := s7.locals
+      localsSize := s7.localsSize } : State C F).stack = xs := by
+    simp only [s7Stack]
+  have controlHandler : ({ callFrame with
+      stack := s7.stack
+      handler := s7.handler
+      locals := s7.locals
+      localsSize := s7.localsSize } : State C F).handler = state.handler := by
+    simp only [s7Handler]
+  have controlLocals : ({ callFrame with
+      stack := s7.stack
+      handler := s7.handler
+      locals := s7.locals
+      localsSize := s7.localsSize } : State C F).locals = env := by
+    simp only [s7Locals]
+  have bridge : targetCall =
+      { callFrame with
+        stackMax := targetCall.stackMax
+        safeForSpace := targetCall.safeForSpace
+        peakHeapLength := targetCall.peakHeapLength } := by
+    have expand : targetCall =
+        { callFrame with
+          handler := targetCall.handler
+          stackMax := targetCall.stackMax
+          safeForSpace := targetCall.safeForSpace
+          peakHeapLength := targetCall.peakHeapLength } := by
+      dsimp only [targetCall, callFrame]
+      rw [callEq]
+      rfl
+    rw [expand, ← callFrameHandler]
+  obtain ⟨mx', safe', peak', moved⟩ :=
+    evaluate_stackSafePeakSwap targetCall.stackMax targetCall.safeForSpace _ _ _
+      targetCall.peakHeapLength body bodyTarget
+  have targetEq : targetCall = DataSem.callEnv args size
+      (DataSem.pushEnv env handler.isSome
+        (DataSem.decClock { state with stack := xs, localsSize := lsz })) := rfl
+  refine ⟨lss, safe', mx', peak', ?_⟩
+  rw [← targetEq, bridge, moved, controlStack, controlHandler, controlLocals]
+
 end Flapjack.Compiler.Backend.DataProps
