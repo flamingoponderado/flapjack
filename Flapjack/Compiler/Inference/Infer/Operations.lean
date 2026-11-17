@@ -19,6 +19,17 @@ theorem optionCaseRand {α β γ : Type} (x : Option α) (y : β → γ)
       match x with | none => y s | some a => f a s := by
   cases x <;> rfl
 
+@[hol "cakeml/compiler/inference/inferScript.sml" "st_ex_bind_failure"]
+theorem bindFailure {state value result error : Type}
+    (f : M state value error) (g : value → M state result error)
+    (s s' : state) (r : error) :
+    bind f g s = (.failure r, s') ↔
+      f s = (.failure r, s') ∨
+        ∃ x st, f s = (.success x, st) ∧ g x st = (.failure r, s') := by
+  cases h : f s with
+  | mk outcome st =>
+    cases outcome <;> simp [Flapjack.Translator.Monadic.MonadBase.bind, h, and_assoc]
+
 @[hol "cakeml/compiler/inference/inferScript.sml" "err_var"]
 abbrev ErrVar := TenvAbbrev
 
