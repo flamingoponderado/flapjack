@@ -12,6 +12,12 @@
   "reviewer": "Independent source comparison and type_es_length_typed; exact expression and type-list typing premise, binder order and length conclusion."
  },
 {
+  "hol_path": "cakeml/semantics/proofs/typeSysPropsScript.sml", "hol_name": "check_freevars_add",
+  "lean_path": "Flapjack/TypeSysProps/Freevars.lean", "lean_name": "checkFreevarsAdd",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with the source and check_freevars_add_typed confirms the ordered de Bruijn bound, named-variable list and semantic-type binders, the free-variable premise, and monotonic conclusion for every larger bound."
+ },
+{
   "hol_path": "cakeml/semantics/proofs/typeSysPropsScript.sml", "hol_name": "tenv_abbrev_ok_lookup",
   "lean_path": "Flapjack/TypeSysProps/Abbrev.lean", "lean_name": "tenvAbbrevOkLookup",
   "statement_status": "reviewed_exact",
