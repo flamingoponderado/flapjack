@@ -17,8 +17,8 @@ set_option backward.privateInPublic true
 set_option backward.privateInPublic.warn false
 
 /-! Bounded executable inference infrastructure. The result distinguishes
-unsupported forms from rejected inputs and resource exhaustion. The state
-APIs retain failure state; the legacy fuel APIs omit it. Full correspondence
+rejected inputs from resource exhaustion. The state APIs retain failure state;
+the legacy fuel APIs omit it. Full correspondence
 with HOL's diagnostics and state transitions remains to be proved. -/
 namespace Flapjack.Compiler.Inference.Infer.Core
 open Flapjack.Basis.Pure.MlString Flapjack.NamespaceHOL Flapjack.AstHOL
@@ -28,7 +28,7 @@ open Flapjack.Compiler.Inference.Infer.Duplicates
 deriving instance Repr for Flapjack.NamespaceHOL.Namespace
 
 inductive Error where
-  | exhausted | unsupported | mismatch | badConstraintLists | undefinedName | valueRestriction | envDeclaration
+  | exhausted | mismatch | badConstraintLists | valueRestriction | envDeclaration
   | floatPattern | emptyCase | emptyHandle
   | unsafeOperation | thunkOperation | primitiveTypeMismatch
   | primitiveArity : Op → Nat → Error
@@ -143,13 +143,13 @@ theorem constrainManyCons (fuel : Nat) (x y : InferT) (xs ys : List InferT) (s :
   cases h : constrain fuel x y s with
   | mk result next => cases result <;> rfl
 
-private def litType : Lit → Option InferT
-  | .intLit _ => some (.app [] 5)
-  | .char _ => some (.app [] 2)
-  | .strLit _ => some (.app [] 8)
-  | .word8 _ => some (.app [] 12)
-  | .word64 _ => some (.app [] 11)
-  | .float64 _ => some (.app [] 14)
+private def litType : Lit → InferT
+  | .intLit _ => .app [] 5
+  | .char _ => .app [] 2
+  | .strLit _ => .app [] 8
+  | .word8 _ => .app [] 12
+  | .word64 _ => .app [] 11
+  | .float64 _ => .app [] 14
 
 private def ctorInfo (env : Env) (name : Ident MlString MlString) : M (List MlString × List TypeSystemHOL.SemanticT × Nat) :=
   match nsLookup env.infC name with
@@ -185,9 +185,7 @@ private def inferPatWorker : Nat → Nat → Env → Pat → M (InferT × List (
     | .pvar v => let t ← fresh; return (t, [(v, t)])
     | .pany => let t ← fresh; return (t, [])
     | .plit (.float64 _) => fail .floatPattern
-    | .plit lit => match litType lit with
-      | some t => return (t, [])
-      | none => fail .unsupported
+    | .plit lit => return (litType lit, [])
     | .pcon none ps =>
       let (ts, bindings) ← inferPatsWorker fuel unifFuel env ps
       return (.app ts 9, bindings)
@@ -396,10 +394,6 @@ private def inferOp (fuel : Nat) (op : Op) (ts : List InferT) : M InferT := do
     constrain fuel x (.app [r] 6)
     constrain fuel y (.app [r] 6)
     return .app [r] 6
-  | .ffi _, [x, y] =>
-    constrain fuel x (.app [] 8)
-    constrain fuel y (.app [] 13)
-    return .app [] 9
   | .arith _ _, _ | .fromTo _ _, _ | .test _ _, _ => fail .primitiveTypeMismatch
   | _, _ =>
     fail (.primitiveArity op ts.length)
@@ -412,9 +406,7 @@ private def inferExprWorker : Nat → Nat → Env → AstHOL.Exp → M InferT
   | 0, _, _, _ => fail .exhausted
   | fuel + 1, unifFuel, env, expr => do
     match expr with
-    | .lit lit => match litType lit with
-      | some t => return t
-      | none => fail .unsupported
+    | .lit lit => return litType lit
     | .var name => match nsLookup env.infV name with
       | none => fail (.undefinedVariable name)
       | some (n, t) =>
