@@ -4,6 +4,7 @@ import Flapjack.Test.PredicateCodecOwnershipAudit
 import Flapjack.Test.UnificationTupleAudit
 import Flapjack.Test.UnificationTuplePublicImportAudit
 import Flapjack.Test.UnificationTupleAllImportAudit
+import Flapjack.Test.GeneraliseMapAudit
 import Flapjack.Test.SimulationBodyAudit
 import Flapjack.Test.PredicateDomainQualificationAudit
 import Flapjack.Test.ClosSemGeneratedSizeParity
