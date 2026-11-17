@@ -33,3 +33,7 @@ val _ = (print "vwalk_inc_typed=";
   print_term (concl (DB.fetch "inferProps" "vwalk_inc")); print "\n");
 val _ = (print "walk_inc_typed=";
   print_term (concl (DB.fetch "inferProps" "walk_inc")); print "\n");
+val _ = (print "walkstar_inc_typed=";
+  print_term (concl (DB.fetch "inferProps" "walkstar_inc")); print "\n");
+val _ = (print "walkstar_inc2_typed=";
+  print_term (concl (DB.fetch "inferProps" "walkstar_inc2")); print "\n");

@@ -1,5 +1,19 @@
 [
 {
+  "hol_path": "cakeml/compiler/inference/inferPropsScript.sml", "hol_name": "walkstar_inc",
+  "lean_path": "Flapjack/Compiler/Inference/InferProps/DeBruijn/Walkstar.lean", "lean_name": "walkstarInc",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["s"],
+  "reviewer": "Typed HOL source comparison preserves the quantified shift, substitution and type, sole tWfs premise and full equality. The map2 lookup implements key-preserving HOL o_f; the witness covers s. Guarded tWalkstar equations and induction use the reviewed walkInc and incWfs dependencies."
+ },
+{
+  "hol_path": "cakeml/compiler/inference/inferPropsScript.sml", "hol_name": "walkstar_inc2",
+  "lean_path": "Flapjack/Compiler/Inference/InferProps/DeBruijn/Walkstar.lean", "lean_name": "walkstarInc2",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["s"],
+  "reviewer": "Typed HOL source comparison preserves the quantified shift, substitution and variable, sole tWfs premise and uvar equality. The map2 lookup implements key-preserving HOL o_f; the witness covers s. This source corollary uses the guarded walkstarInc theorem."
+ },
+{
   "hol_path": "cakeml/compiler/inference/inferPropsScript.sml", "hol_name": "walk_inc",
   "lean_path": "Flapjack/Compiler/Inference/InferProps/DeBruijn/Walk.lean", "lean_name": "walkInc",
   "statement_status": "reviewed_fmap_as_finite_support_parameters",
