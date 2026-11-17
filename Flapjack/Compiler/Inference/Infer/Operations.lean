@@ -30,6 +30,20 @@ def guard {state error : Type} (p : Bool) (l : LocErrInfo) (msg : error) :
     M state Unit (Option Locs × error) :=
   if p then ret () else failwith l msg
 
+@[hol "cakeml/compiler/inference/inferScript.sml" "bind_guard"]
+theorem bindGuard {state value error : Type} (p : Bool) (l : LocErrInfo) (msg : error)
+    (next : Unit → M state value (Option Locs × error)) :
+    bind (guard p l msg) next = fun s =>
+      if p then next () s else (.failure (l.loc, msg), s) := by
+  cases p <;> rfl
+
+@[hol "cakeml/compiler/inference/inferScript.sml" "ignore_bind_guard"]
+theorem ignoreBindGuard {state value error : Type} (p : Bool) (l : LocErrInfo) (msg : error)
+    (next : M state value (Option Locs × error)) :
+    ignoreBind (guard p l msg) next = fun s =>
+      if p then next s else (.failure (l.loc, msg), s) := by
+  cases p <;> rfl
+
 @[hol "cakeml/compiler/inference/inferScript.sml" "read_def"]
 def read {state error : Type} : M state state error :=
   fun s => (.success s, s)

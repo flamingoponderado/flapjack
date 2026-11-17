@@ -1,5 +1,17 @@
 [
 {
+  "hol_path": "cakeml/compiler/inference/inferScript.sml", "hol_name": "bind_guard",
+  "lean_path": "Flapjack/Compiler/Inference/Infer/Operations.lean", "lean_name": "bindGuard",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with the source and bind_guard_typed confirms all independent state, result and error carriers, continuation type and the complete function equality including the unchanged failure state."
+ },
+{
+  "hol_path": "cakeml/compiler/inference/inferScript.sml", "hol_name": "ignore_bind_guard",
+  "lean_path": "Flapjack/Compiler/Inference/Infer/Operations.lean", "lean_name": "ignoreBindGuard",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with the source and ignore_bind_guard_typed confirms all independent carriers, continuation type and the complete function equality including the original failure location and state."
+ },
+{
   "hol_path": "cakeml/compiler/inference/inferScript.sml", "hol_name": "check_ctor_types_def",
   "lean_path": "Flapjack/Compiler/Inference/Infer/TypeDefinitions.lean", "lean_name": "checkCtorTypes",
   "statement_status": "reviewed_exact",
