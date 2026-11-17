@@ -3,6 +3,7 @@ module
 public import Flapjack.TypeSoundInvariants
 public import Flapjack.TypeSystemHOL.Declarations
 public import Flapjack.NamespaceProps
+public import Flapjack.TypeSysProps.Freevars
 
 @[expose] public section
 
@@ -56,6 +57,31 @@ theorem tenvValExpOkBvl (localEnv : TenvValExp) (bindings : List (MlString × Se
     simp only [List.map_cons, List.all_cons, Bool.and_eq_true] at checks
     simp only [bindVarList, tenvValExpOk, numTvsBindVarList, Nat.zero_add]
     exact ⟨checks.1, ih checks.2⟩
+
+/-- Instantiating a value found in a well-formed local environment preserves
+the free-variable bound. -/
+@[hol "cakeml/semantics/proofs/typeSysPropsScript.sml" "tveLookup_freevars_subst"]
+theorem tveLookupFreevarsSubst (localEnv : TenvValExp) (args : List SemanticT) (name : MlString)
+    (t : SemanticT) (inc : Nat) :
+    args.all (checkFreevars (inc + numTvs localEnv) []) = true ∧
+    tveLookup name inc localEnv = some (args.length, t) ∧ tenvValExpOk localEnv →
+      checkFreevars (inc + numTvs localEnv) [] (deBruijnSubst 0 args t) = true := by
+  induction localEnv generalizing inc t with
+  | empty => simp [tveLookup]
+  | bindTvar tvs rest ih =>
+    intro ⟨all, found, ok⟩
+    simp only [numTvs, tveLookup, tenvValExpOk] at all found ok ⊢
+    simpa [Nat.add_assoc] using ih t (inc + tvs) ⟨by simpa [Nat.add_assoc] using all, found, ok⟩
+  | bindName boundName tvs ty rest ih =>
+    intro ⟨all, found, ok⟩
+    simp only [numTvs, tveLookup, tenvValExpOk] at all found ok ⊢
+    by_cases same : boundName = name
+    · simp [same] at found
+      obtain ⟨rfl, rfl⟩ := found
+      apply checkFreevarsSubstInc _ [] ty ok.1 (numTvs rest) args inc
+      exact ⟨rfl, all⟩
+    · simp [same] at found
+      exact ih t inc ⟨all, found, ok.2⟩
 
 @[hol "cakeml/semantics/proofs/typeSysPropsScript.sml" "extend_dec_tenv_ok"]
 theorem extendDecTenvOk (tenv tenv' : TypeEnv)

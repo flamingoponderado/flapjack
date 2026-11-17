@@ -169,4 +169,54 @@ theorem deBruijnSubstCheckFreevars2 {α β : Type} (tvs : Nat) (names : List MlS
   rintro ⟨checked, args⟩
   exact substBound ts.length tvs names t ts (by omega) checked args
 
+mutual
+/-- Increasing de Bruijn indices preserves a correspondingly increased
+free-variable bound. This is the source-local HOL lemma. -/
+@[hol "cakeml/semantics/proofs/typeSysPropsScript.sml" "check_freevars_deBruijn_inc"]
+theorem checkFreevarsDeBruijnInc (tvs : Nat) (names : List MlString) (t : SemanticT) :
+    checkFreevars tvs names t = true → ∀ amount skip,
+      checkFreevars (amount + tvs) names (deBruijnInc skip amount t) = true := by
+  intro checked amount skip
+  cases t with
+  | var name => simpa [deBruijnInc, checkFreevars] using checked
+  | varDb index =>
+    simp only [checkFreevars, decide_eq_true_eq] at checked
+    simp only [deBruijnInc, checkFreevars, decide_eq_true_eq]
+    split <;> omega
+  | app ts id =>
+    simp only [checkFreevars] at checked
+    simp only [deBruijnInc, checkFreevars]
+    exact checkFreevarsListDeBruijnInc tvs names ts checked amount skip
+termination_by sizeOf t
+
+/-- List recursion for the source-local increment lemma, not a separate HOL
+declaration. -/
+private theorem checkFreevarsListDeBruijnInc (tvs : Nat) (names : List MlString) (ts : List SemanticT) :
+    checkFreevarsList tvs names ts = true → ∀ amount skip,
+      checkFreevarsList (amount + tvs) names (deBruijnIncList skip amount ts) = true := by
+  intro checked amount skip
+  cases ts with
+  | nil => simp [deBruijnIncList, checkFreevarsList]
+  | cons t rest =>
+    simp only [checkFreevarsList, Bool.and_eq_true] at checked
+    simp only [deBruijnIncList, checkFreevarsList, Bool.and_eq_true]
+    exact ⟨checkFreevarsDeBruijnInc tvs names t checked.1 amount skip,
+      checkFreevarsListDeBruijnInc tvs names rest checked.2 amount skip⟩
+termination_by sizeOf ts
+end
+
+/-- Incrementing and then substituting preserves the stated free-variable
+bound. -/
+@[hol "cakeml/semantics/proofs/typeSysPropsScript.sml" "check_freevars_subst_inc"]
+theorem checkFreevarsSubstInc (tvs : Nat) (names : List MlString) (t : SemanticT) :
+    checkFreevars tvs names t = true → ∀ rest (args : List SemanticT) amount,
+      tvs = args.length + rest ∧ args.all (checkFreevars (amount + rest) names) = true →
+      checkFreevars (amount + rest) names (deBruijnSubst 0 args (deBruijnInc args.length amount t)) = true := by
+  intro checked rest args amount ⟨size, all⟩
+  have increased := checkFreevarsDeBruijnInc tvs names t checked amount args.length
+  apply substBound (amount + tvs) (amount + rest) names _ args
+  · omega
+  · exact increased
+  · exact all
+
 end Flapjack.TypeSysProps

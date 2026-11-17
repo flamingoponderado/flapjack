@@ -67,10 +67,20 @@ val _ = show "num_tvs_bind_var_list_typed" typeSysPropsTheory.num_tvs_bind_var_l
 val _ = show "tenv_val_exp_ok_bvl_typed" typeSysPropsTheory.tenv_val_exp_ok_bvl;
 val _ = show "deBruijn_subst_check_freevars_typed" typeSysPropsTheory.deBruijn_subst_check_freevars;
 val _ = show "deBruijn_subst_check_freevars2_typed" typeSysPropsTheory.deBruijn_subst_check_freevars2;
+val _ = show "check_freevars_subst_inc_typed" typeSysPropsTheory.check_freevars_subst_inc;
 val _ = show "tveLookup_freevars_subst_typed" typeSysPropsTheory.tveLookup_freevars_subst;
 val _ = show "type_e_freevars_typed" typeSysPropsTheory.type_e_freevars;
 val _ = show "check_ctor_tenv_ok_typed" typeSysPropsTheory.check_ctor_tenv_ok;
 val _ = show "type_d_canon_tenv_ok_typed" type_dCanonTheory.type_d_canon_tenv_ok;
+
+val check_freevars_deBruijn_inc_replay = Q.prove(
+  `!tvs tvs' t. check_freevars tvs tvs' t ==>
+    !n n'. check_freevars (n+tvs) tvs' (deBruijn_inc n' n t)`,
+  ho_match_mp_tac check_freevars_ind >>
+  srw_tac[][check_freevars_def, deBruijn_inc_def] >>
+  full_simp_tac(srw_ss())[EVERY_MAP, EVERY_MEM] >>
+  srw_tac[][check_freevars_def] >> decide_tac);
+val _ = show "check_freevars_deBruijn_inc_replay_typed" check_freevars_deBruijn_inc_replay;
 
 val tenv_to_ienv_lift_replay = Q.prove(
   `!mn tenv. probe_tenv_to_ienv (tenvLift mn tenv) =

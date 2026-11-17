@@ -1,5 +1,23 @@
 [
 {
+  "hol_path": "cakeml/semantics/proofs/typeSysPropsScript.sml", "hol_name": "tveLookup_freevars_subst",
+  "lean_path": "Flapjack/TypeSysProps/Environment.lean", "lean_name": "tveLookupFreevarsSubst",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent source comparison and tveLookup_freevars_subst_typed confirm the ordered environment, argument, name, type and increment binders, all three premises, and the substitution conclusion."
+ },
+{
+  "hol_path": "cakeml/semantics/proofs/typeSysPropsScript.sml", "hol_name": "check_freevars_deBruijn_inc",
+  "lean_path": "Flapjack/TypeSysProps/Freevars.lean", "lean_name": "checkFreevarsDeBruijnInc",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent source comparison and typed replay confirm the complete increment theorem and binder order. The HOL declaration is source-local."
+ },
+{
+  "hol_path": "cakeml/semantics/proofs/typeSysPropsScript.sml", "hol_name": "check_freevars_subst_inc",
+  "lean_path": "Flapjack/TypeSysProps/Freevars.lean", "lean_name": "checkFreevarsSubstInc",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent source comparison and check_freevars_subst_inc_typed confirm all binders, both substitution premises, and the complete increment and substitution conclusion."
+ },
+{
   "hol_path": "cakeml/semantics/proofs/typeSysPropsScript.sml", "hol_name": "type_funs_MAP_FST",
   "lean_path": "Flapjack/TypeSysProps/TypingLists.lean", "lean_name": "typeFunsMapFst",
   "statement_status": "reviewed_exact",
