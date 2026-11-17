@@ -221,3 +221,5 @@ val _ = emit "evaluate_stack_and_locals_swap_typed" "evaluate_stack_and_locals_s
 val _ = emit "evaluate_stack_swap_typed" "evaluate_stack_swap";
 val _ = emit "evaluate_stack_typed" "evaluate_stack";
 val _ = emit "evaluate_NONE_jump_exc_typed" "evaluate_NONE_jump_exc";
+val _ = emit "evaluate_NONE_jump_exc_ALT_typed" "evaluate_NONE_jump_exc_ALT";
+val _ = emit "evaluate_locals_LN_typed" "evaluate_locals_LN";

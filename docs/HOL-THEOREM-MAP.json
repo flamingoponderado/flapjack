@@ -141225,5 +141225,14 @@
   "statement_status": "reviewed_exact",
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "Compared evaluate_NONE_jump_exc_typed (regenerated from dataPropsScript.sml, with the ^s antiquotation expanded): binders c, s, u1, x in that order over one state type (γ, 'ffi) rendered as {C F : Type}; the hypothesis is HOL's single conjunction evaluate (c,s) = (NONE,u1) ∧ jump_exc u1 = SOME x, not curried, and the conclusion is jump_exc s = SOME of s with stack, handler, locals and locals_size replaced by x's, in that field order. The proof reads the non-raising arm of evaluate_stack and then unwinds jump_exc on both states, using that the two stacks and handlers agree. Inherits reals_as_rational_cuts through evaluate (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
+  "hol_name": "evaluate_NONE_jump_exc_ALT",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/EvaluateStackLocalsSwap.lean",
+  "lean_name": "evaluate_NONE_jump_exc_ALT",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_NONE_jump_exc_ALT_typed (regenerated from dataPropsScript.sml, with the ^s antiquotation expanded): binders c, s, u1, x in that order over one state type (\u03b3, 'ffi) rendered as {C F : Type}; the hypothesis is HOL's single conjunction evaluate (c,s) = (NONE,u1) \u2227 jump_exc s = SOME x, not curried, and the conclusion is jump_exc u1 = SOME of u1 with stack, handler, locals and locals_size replaced by x's, in that field order. No extra premises and no projection for a pattern binder. The proof reads the non-raising arm of evaluate_stack to learn that u1's stack and handler equal the starting state's, then unwinds jump_exc on both states; because the unwind depends only on those two fields, the installed frames agree with x's. Inherits reals_as_rational_cuts through evaluate (docs/SOUNDNESS.md item 8)."
 }
 ]

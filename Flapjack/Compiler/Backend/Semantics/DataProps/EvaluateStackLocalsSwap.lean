@@ -3498,4 +3498,49 @@ theorem evaluate_NONE_jump_exc {C F : Type} (program : DataLang.Prog) (state u1 
     rw [if_neg hge] at jumped
     exact absurd jumped (by simp)
 
+/-- The alternative form of the unwinding statement: when the evaluation
+    returns no result, the frames the returned state unwinds to are the same
+    frames, installed over the returned state instead of the starting one. -/
+@[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "evaluate_NONE_jump_exc_ALT"]
+theorem evaluate_NONE_jump_exc_ALT {C F : Type} (program : DataLang.Prog)
+    (state u1 x : State C F)
+    (premise : evaluate program state = (none, u1) ∧ jumpExc state = some x) :
+    jumpExc u1 = some { u1 with
+      stack := x.stack
+      handler := x.handler
+      locals := x.locals
+      localsSize := x.localsSize } := by
+  obtain ⟨run, jumped⟩ := premise
+  have base := evaluate_stack program state
+  rw [run] at base
+  simp only [] at base
+  have stackEq : u1.stack = state.stack := base.1
+  have handlerEq : u1.handler = state.handler := base.2
+  unfold DataSem.jumpExc at jumped ⊢
+  rw [stackEq, handlerEq]
+  split
+  · rename_i hlt
+    split
+    · rename_i size env handler rest heq
+      rw [heq, if_pos hlt] at jumped
+      simp only [Option.some.injEq] at jumped
+      subst jumped
+      rfl
+    · rename_i hno
+      rw [if_pos hlt] at jumped
+      cases hdrop : List.drop (state.stack.length - (state.handler + 1)) state.stack with
+      | nil =>
+        rw [hdrop] at jumped
+        exact absurd jumped (by simp)
+      | cons frame rest =>
+        cases frame with
+        | env lsz env2 =>
+          rw [hdrop] at jumped
+          exact absurd jumped (by simp)
+        | exc size env handler =>
+          exact absurd hdrop (hno size env handler rest)
+  · rename_i hge
+    rw [if_neg hge] at jumped
+    exact absurd jumped (by simp)
+
 end Flapjack.Compiler.Backend.DataProps
