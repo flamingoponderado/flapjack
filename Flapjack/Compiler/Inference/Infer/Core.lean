@@ -31,7 +31,7 @@ inductive Error where
   | exhausted | unsupported | mismatch | badConstraintLists | undefinedName | valueRestriction | envDeclaration
   | floatPattern | emptyCase | emptyHandle
   | unsafeOperation | thunkOperation | primitiveTypeMismatch
-  | primitiveArity : String → Nat → Nat → Error
+  | primitiveArity : MlString → Nat → Nat → Error
   | typeMismatch : InferT → InferT → Error
   | typeMismatchEnv : TypeSystemHOL.TenvAbbrev → InferT → InferT → Error
   | unboundTypeVariable : MlString → Error
@@ -285,32 +285,40 @@ private def simpleOp : Op → Option (List InferT × InferT)
   | .strcat => some ([.app [.app [] 8] 6], .app [] 8)
   | _ => none
 
-/-- Names and arities used by the original primitive-argument diagnostic.
-This executable helper is not yet a reviewed HOL declaration port. -/
-private def primitiveInfo (op : Op) : String × Nat :=
+@[hol "cakeml/compiler/inference/inferScript.sml" "op_to_string_def"]
+def opToString (op : Op) : MlString × Nat :=
   match op with
-  | .arith a t => ("Arith", (arithArity a t).getD 0)
-  | .fromTo _ _ => ("FromTo", 1) | .test _ _ => ("Test", 2)
-  | .shift _ _ _ => ("Shift", 1) | .equality => ("Equality", 2)
-  | .opapp => ("Opapp", 2) | .opassign => ("Opassign", 2)
-  | .opref => ("Opref", 1) | .opderef => ("Opderef", 1)
-  | .aw8alloc => ("Aw8alloc", 2) | .aw8sub => ("Aw8sub", 2)
-  | .aw8length => ("Aw8length", 1) | .aw8update => ("Aw8update", 3)
-  | .copyStrStr => ("CopyStrStr", 3) | .copyStrAw8 => ("CopyStrAw8", 5)
-  | .copyAw8Str => ("CopyAw8Str", 3) | .copyAw8Aw8 => ("CopyAw8Aw8", 5)
-  | .implode => ("Implode", 1) | .explode => ("Explode", 1)
-  | .strsub => ("Strsub", 2) | .strlen => ("Strlen", 1) | .strcat => ("Strcat", 1)
-  | .vfromList => ("VfromList", 1) | .vsub => ("Vsub", 2) | .vlength => ("Vlength", 1)
-  | .aalloc => ("Aalloc", 2) | .aallocEmpty => ("AallocEmpty", 1)
-  | .asub => ("Asub", 2) | .alength => ("Alength", 1) | .aupdate => ("Aupdate", 3)
-  | .listAppend => ("ListAppend", 2) | .configGC => ("ConfigGC", 2) | .ffi _ => ("FFI", 2)
-  -- Unsafe and thunk operations produce their own errors before this helper is used.
-  | _ => ("", 0)
+  | .arith a t => (ofString "Arith", (arithArity a t).getD 0)
+  | .fromTo _ _ => (ofString "FromTo", 1) | .test _ _ => (ofString "Test", 2)
+  | .shift _ _ _ => (ofString "Shift", 1) | .equality => (ofString "Equality", 2)
+  | .opapp => (ofString "Opapp", 2) | .opassign => (ofString "Opassign", 2)
+  | .opref => (ofString "Opref", 1) | .opderef => (ofString "Opderef", 1)
+  | .aw8alloc => (ofString "Aw8alloc", 2) | .aw8sub => (ofString "Aw8sub", 2)
+  | .aw8length => (ofString "Aw8length", 1) | .aw8update => (ofString "Aw8update", 3)
+  | .copyStrStr => (ofString "CopyStrStr", 3) | .copyStrAw8 => (ofString "CopyStrAw8", 5)
+  | .copyAw8Str => (ofString "CopyAw8Str", 3) | .copyAw8Aw8 => (ofString "CopyAw8Aw8", 5)
+  | .implode => (ofString "Implode", 1) | .explode => (ofString "Explode", 1)
+  | .strsub => (ofString "Strsub", 2) | .strlen => (ofString "Strlen", 1) | .strcat => (ofString "Strcat", 1)
+  | .vfromList => (ofString "VfromList", 1) | .vsub => (ofString "Vsub", 2) | .vlength => (ofString "Vlength", 1)
+  | .aalloc => (ofString "Aalloc", 2) | .aallocEmpty => (ofString "AallocEmpty", 1)
+  | .asub => (ofString "Asub", 2) | .alength => (ofString "Alength", 1) | .aupdate => (ofString "Aupdate", 3)
+  | .listAppend => (ofString "ListAppend", 2) | .configGC => (ofString "ConfigGC", 2) | .ffi _ => (ofString "FFI", 2)
+  | .aw8subUnsafe => (ofString "Aw8sub_unsafe", 2)
+  | .aw8updateUnsafe => (ofString "Aw8update_unsafe", 3)
+  | .xorAw8StrUnsafe => (ofString "XorAw8Str_unsafe", 2)
+  | .vsubUnsafe => (ofString "Vsub_unsafe", 2)
+  | .asubUnsafe => (ofString "Asub_unsafe", 2)
+  | .aupdateUnsafe => (ofString "Aupdate_unsafe", 3)
+  | .aallocFixed => (ofString "AallocFixed", 1)
+  | .eval => (ofString "Eval", 6) | .envId => (ofString "Env_id", 1)
+  | .thunkOp .forceThunk => (ofString "ForceThunk", 1)
+  | .thunkOp (.allocThunk _) => (ofString "AllocThunk", 1)
+  | .thunkOp (.updateThunk _) => (ofString "UpdateThunk", 2)
 
 private def inferOp (fuel : Nat) (op : Op) (ts : List InferT) : M InferT := do
   if let some (args, result) := simpleOp op then
     if ts.length != args.length then
-      let (name, expected) := primitiveInfo op
+      let (name, expected) := opToString op
       fail (.primitiveArity name ts.length expected)
     constrainMany fuel ts args
     return result
@@ -378,7 +386,7 @@ private def inferOp (fuel : Nat) (op : Op) (ts : List InferT) : M InferT := do
     return .app [] 9
   | .arith _ _, _ | .fromTo _ _, _ | .test _ _, _ => fail .primitiveTypeMismatch
   | _, _ =>
-    let (name, expected) := primitiveInfo op
+    let (name, expected) := opToString op
     fail (.primitiveArity name ts.length expected)
 
 private def bindVars (env : Env) (bindings : List (MlString × InferT)) : Env :=

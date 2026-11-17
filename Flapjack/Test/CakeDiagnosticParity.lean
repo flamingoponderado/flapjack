@@ -20,6 +20,17 @@ open Flapjack.Compiler.Inference.Infer.Diagnostics Flapjack.Basis.Pure.MlString
 private def loc : Locs := .locs (.posn 0 11) (.posn 0 15)
 private def qname : NamespaceHOL.Ident MlString MlString := .long (ofString "A") (.short (ofString "foo"))
 
+-- HOL's operator table also covers unsafe and thunk operators, even though
+-- inference reports their dedicated errors before consulting their arities.
+#guard opToString .aallocFixed == (ofString "AallocFixed", 1)
+#guard opToString (.thunkOp (.updateThunk .notEvaluated)) == (ofString "UpdateThunk", 2)
+#guard opToString (.arith .fma .float64T) == (ofString "Arith", 3)
+#guard opToString (.arith .fma .intT) == (ofString "Arith", 0)
+
+#guard renderUnsupportedPrimitive [] (.primitiveArity (.implode [255]) 2 1) ==
+  some ((ofString "### ERROR: type error\nPrimitive ").explode ++ [255] ++
+    (ofString " given 2 arguments, but expects 1 at unknown location\nProgram exited with nonzero exit code.\n").explode)
+
 -- HOL add_constraints rejects unequal lists with this internal-error message.
 #guard match constrainMany 20 [] [.uvar 0] ⟨3, .ln, 7⟩ with
   | (.error .badConstraintLists, _) => true

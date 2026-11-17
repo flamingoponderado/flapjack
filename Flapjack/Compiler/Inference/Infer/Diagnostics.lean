@@ -130,20 +130,20 @@ def renderUnboundTypeVariable (input : List HolChar) : Error → Option (List Ho
 /-- Render primitive and constraint-list inference errors with their locations. -/
 def renderUnsupportedPrimitive (input : List HolChar) (error : Error) : Option (List HolChar) := do
   let (loc, message) ← match error with
-    | .located loc .unsafeOperation => some (some loc, "Unsafe ops do not have a type")
-    | .located loc .thunkOperation => some (some loc, "Thunk ops do not have a type")
-    | .located loc .primitiveTypeMismatch => some (some loc, "Type mismatch")
-    | .located loc .badConstraintLists => some (some loc, "Internal error: Bad call to add_constraints")
+    | .located loc .unsafeOperation => some (some loc, ascii "Unsafe ops do not have a type")
+    | .located loc .thunkOperation => some (some loc, ascii "Thunk ops do not have a type")
+    | .located loc .primitiveTypeMismatch => some (some loc, ascii "Type mismatch")
+    | .located loc .badConstraintLists => some (some loc, ascii "Internal error: Bad call to add_constraints")
     | .located loc (.primitiveArity name actual expected) => some (some loc,
-        s!"Primitive {name} given {actual} arguments, but expects {expected}")
-    | .unsafeOperation => some (none, "Unsafe ops do not have a type")
-    | .thunkOperation => some (none, "Thunk ops do not have a type")
-    | .primitiveTypeMismatch => some (none, "Type mismatch")
-    | .badConstraintLists => some (none, "Internal error: Bad call to add_constraints")
+        ascii "Primitive " ++ name.explode ++ ascii s!" given {actual} arguments, but expects {expected}")
+    | .unsafeOperation => some (none, ascii "Unsafe ops do not have a type")
+    | .thunkOperation => some (none, ascii "Thunk ops do not have a type")
+    | .primitiveTypeMismatch => some (none, ascii "Type mismatch")
+    | .badConstraintLists => some (none, ascii "Internal error: Bad call to add_constraints")
     | .primitiveArity name actual expected => some (none,
-        s!"Primitive {name} given {actual} arguments, but expects {expected}")
+        ascii "Primitive " ++ name.explode ++ ascii s!" given {actual} arguments, but expects {expected}")
     | _ => none
-  some (ascii "### ERROR: type error\n" ++ ascii message ++ ascii " at " ++
+  some (ascii "### ERROR: type error\n" ++ message ++ ascii " at " ++
     sourceLocation input loc ++ ascii "\nProgram exited with nonzero exit code.\n")
 
 /-- The original inference pass rejects `Denv` with no source location. -/
