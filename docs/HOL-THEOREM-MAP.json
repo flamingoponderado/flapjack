@@ -1,5 +1,11 @@
 [
 {
+  "hol_path": "cakeml/compiler/inference/proofs/type_eDetermScript.sml", "hol_name": "type_p_pat_bindings",
+  "lean_path": "Flapjack/Compiler/Inference/TypeEDeterm.lean", "lean_name": "typePPatBindings",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with the source and type_p_pat_bindings_replay_typed confirms both mutual conjuncts, exact carriers and the full ordered MAP FST equalities, including reverse accumulation for pattern lists."
+ },
+{
   "hol_path": "cakeml/compiler/inference/proofs/inferCompleteScript.sml", "hol_name": "inf_set_tids_extend_dec_ienv",
   "lean_path": "Flapjack/Compiler/Inference/InferComplete.lean", "lean_name": "infSetTidsExtendDecIenv",
   "statement_status": "reviewed_exact",

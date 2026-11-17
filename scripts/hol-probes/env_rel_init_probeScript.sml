@@ -97,6 +97,14 @@ val inf_set_tids_extend_dec_ienv_replay = Q.prove(
   rw [SUBSET_DEF, UNCURRY, inf_set_tids_subset_def] >> rw [] >> res_tac >> fs []);
 val _ = show "inf_set_tids_extend_dec_ienv_replay_typed" inf_set_tids_extend_dec_ienv_replay;
 
+val type_p_pat_bindings_replay = Q.prove(
+  `(!tvs tenv p t new_bindings.
+      type_p tvs tenv p t new_bindings ==> MAP FST new_bindings = pat_bindings p) /\
+   (!tvs tenv ps ts new_bindings.
+      type_ps tvs tenv ps ts new_bindings ==> MAP FST new_bindings = pats_bindings ps)`,
+  ho_match_mp_tac type_p_ind >> rw [astTheory.pat_bindings_def]);
+val _ = show "type_p_pat_bindings_replay_typed" type_p_pat_bindings_replay;
+
 val check_freevars_deBruijn_inc_replay = Q.prove(
   `!tvs tvs' t. check_freevars tvs tvs' t ==>
     !n n'. check_freevars (n+tvs) tvs' (deBruijn_inc n' n t)`,
