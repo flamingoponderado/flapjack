@@ -1,5 +1,11 @@
 [
 {
+  "hol_path": "cakeml/compiler/inference/inferPropsScript.sml", "hol_name": "ienv_unchanged",
+  "lean_path": "Flapjack/Compiler/Inference/InferProps/Environment.lean", "lean_name": "ienvUnchanged",
+  "statement_status": "reviewed_exact",
+  "reviewer": "The typed HOL source capture preserves the shared environment variable and all three self-update equations. The inference environment's value, constructor and type namespace fields have the corresponding HOL carriers."
+ },
+{
   "hol_path": "cakeml/compiler/inference/inferPropsScript.sml", "hol_name": "extend_dec_ienv_empty",
   "lean_path": "Flapjack/Compiler/Inference/InferProps/Environment.lean", "lean_name": "extendDecIenvEmpty",
   "statement_status": "reviewed_exact",

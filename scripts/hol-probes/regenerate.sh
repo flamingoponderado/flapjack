@@ -920,7 +920,7 @@ run_probe cake_inference_probeScript.sml cake_inference_probe.out \
   subst generalise unify occurs "$cake_dir/compiler/inference/inferScript.sml" "$cake_dir/compiler/inference"
 
 run_probe infer_generalise_typed_probeScript.sml infer_generalise_typed_probe.out \
-  generalise_type generalise_list_type generalise_def_typed generalise_list_length_typed infer_subst_type infer_subst_def_typed infer_subst_submap_typed infer_subst_FEMPTY_typed subst_infer_subst_swap_typed t_vars_inc_typed inc_wfs_typed vwalk_inc_typed walk_inc_typed walkstar_inc_typed walkstar_inc2_typed infer_deBruijn_inc0_typed infer_deBruijn_inc0_id_typed extend_dec_ienv_empty_typed "$cake_dir/compiler/inference/inferScript.sml" "$cake_dir/compiler/inference"
+  generalise_type generalise_list_type generalise_def_typed generalise_list_length_typed infer_subst_type infer_subst_def_typed infer_subst_submap_typed infer_subst_FEMPTY_typed subst_infer_subst_swap_typed t_vars_inc_typed inc_wfs_typed vwalk_inc_typed walk_inc_typed walkstar_inc_typed walkstar_inc2_typed infer_deBruijn_inc0_typed infer_deBruijn_inc0_id_typed extend_dec_ienv_empty_typed ienv_unchanged_typed "$cake_dir/compiler/inference/inferScript.sml" "$cake_dir/compiler/inference"
 
 run_probe compiler_config_probeScript.sml compiler_config_probe.out \
   compiler_config_axiom compiler_read_limits_replay compiler_config_ok_shape "$cake_dir/compiler/compilerScript.sml" "$cake_dir/compiler"
