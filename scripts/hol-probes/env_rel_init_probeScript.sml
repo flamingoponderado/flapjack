@@ -570,6 +570,30 @@ val sing_renum_NOT_tscheme_inst_replay = Q.prove(
       fs[check_freevars_def,EVERY_MEM,MEM_MAP,PULL_EXISTS,MAP_MAP_o,MAP_EQ_ID] >>
       metis_tac[]));
 val _ = show "sing_renum_NOT_tscheme_inst_replay_typed" sing_renum_NOT_tscheme_inst_replay;
+val type_pe_bindings_tids_replay = Q.prove(
+  `prim_tids T tids /\ type_dCanon$set_tids_tenv tids tenv /\
+   type_p tvs tenv p t bindings /\ type_e tenv (bind_tvar tvs Empty) e t /\
+   (!tvs' bindings' t'. type_p tvs' tenv p t' bindings' /\
+       type_e tenv (bind_tvar tvs' Empty) e t' ==>
+       LIST_REL tscheme_inst (MAP SND (MAP (\(n,t). (n,tvs',t)) bindings'))
+         (MAP SND (MAP (\(n,t). (n,tvs,t)) bindings))) ==>
+   !p_1 p_2. MEM (p_1,p_2) bindings ==> set_tids_subset tids p_2`,
+  CCONTR_TAC >> fs[set_tids_subset_def,SUBSET_DEF] >>
+  drule (GEN_ALL type_p_ts_tid_rename_sing_renum_replay) >>
+  rpt (disch_then drule) >> disch_then(qspec_then `x+1` mp_tac) >> strip_tac >>
+  first_x_assum drule >>
+  drule (GEN_ALL type_e_ts_tid_rename_sing_renum_replay) >>
+  rpt (disch_then drule) >> disch_then(qspec_then `x+1` mp_tac) >>
+  qmatch_goalsub_abbrev_tac `type_e _ tenvEE _ _` >>
+  `tenvEE = (bind_tvar tvs Empty)` by
+    rw[Abbr`tenvEE`,bind_tvar_def,type_dCanonTheory.remap_tenvE_def] >>
+  pop_assum SUBST_ALL_TAC >> simp[] >> rw[LIST_REL_EL_EQN] >>
+  fs[MEM_EL] >> asm_exists_tac >> fs[EL_MAP] >>
+  qpat_x_assum `(_,_) = _` sym_sub_tac >> fs[] >>
+  `x <> x+1` by fs[] >> metis_tac[sing_renum_NOT_tscheme_inst_replay]);
+val _ = show "type_pe_bindings_tids_replay_typed" type_pe_bindings_tids_replay;
+val _ = show "type_funs_bindings_tids_typed" type_dCanonTheory.type_funs_bindings_tids;
+val _ = show "type_pe_bindings_tids_0_typed" type_dCanonTheory.type_pe_bindings_tids_0;
 val _ = show "sing_renum_NOTIN_ID_typed" type_dCanonTheory.sing_renum_NOTIN_ID;
 val _ = show "sing_renum_IN_NOT_ID_typed" type_dCanonTheory.sing_renum_IN_NOT_ID;
 val _ = show "sing_renum_NOTIN_tenv_ID_typed" type_dCanonTheory.sing_renum_NOTIN_tenv_ID;

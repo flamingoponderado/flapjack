@@ -1,5 +1,23 @@
 [
 {
+  "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "type_pe_bindings_tids",
+  "lean_path": "Flapjack/Compiler/Inference/TypeDCanon/BindingTids.lean", "lean_name": "typePeBindingsTids",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent source comparison and type_pe_bindings_tids_replay_typed; preserves the full principal premise, independent binders, list relation and pair-membership conclusion."
+ },
+{
+  "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "type_funs_bindings_tids",
+  "lean_path": "Flapjack/Compiler/Inference/TypeDCanon/BindingTids.lean", "lean_name": "typeFunsBindingsTids",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent source comparison and type_funs_bindings_tids_typed; preserves the full function principal premise and EVERY as pointwise membership, including duplicates."
+ },
+{
+  "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "type_pe_bindings_tids_0",
+  "lean_path": "Flapjack/Compiler/Inference/TypeDCanon/BindingTids.lean", "lean_name": "typePeBindingsTidsZero",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent source comparison and type_pe_bindings_tids_0_typed; preserves the monomorphic typing and determinacy premises and pair-membership conclusion."
+ },
+{
   "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "sing_renum_NOT_tscheme_inst",
   "lean_path": "Flapjack/Compiler/Inference/TypeDCanon/Scheme.lean", "lean_name": "singRenumNotTschemeInst",
   "statement_status": "reviewed_exact",
