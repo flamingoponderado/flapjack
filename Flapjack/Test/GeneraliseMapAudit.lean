@@ -82,6 +82,18 @@ private theorem swappedInputsWitness (minimum next : Nat) (subst : HolFiniteMapE
 
 run_meta do
   for (name, isList) in [(``generaliseMap, false), (``generaliseListMap, true)] do
+    let qualified ← generaliseMapQualifiedProblems name
+      "cakeml/compiler/inference/inferScript.sml" "generalise_def" none "subst" "component_2" false
+    unless qualified.isEmpty do throwError "valid prospective qualifier {name} rejected: {qualified}"
+    for (path, holName, line, parameter, component, other) in [
+        ("cakeml/compiler/inference/inferScript.sml", "generalise_def", some 151, "subst", "component_2", false),
+        ("cakeml/compiler/inference/inferScript.sml", "wrong", none, "subst", "component_2", false),
+        ("other", "generalise_def", none, "subst", "component_2", false),
+        ("cakeml/compiler/inference/inferScript.sml", "generalise_def", none, "other", "component_2", false),
+        ("cakeml/compiler/inference/inferScript.sml", "generalise_def", none, "subst", "component_1", false),
+        ("cakeml/compiler/inference/inferScript.sml", "generalise_def", none, "subst", "component_2", true)] do
+      let bad := generaliseMapMetadataProblems name path holName line parameter component other
+      if bad.isEmpty then throwError "invalid prospective qualifier metadata accepted"
     let bundleErrors ← generaliseMapBundleProblems name
     unless bundleErrors.isEmpty do throwError "valid bundle {name} rejected: {bundleErrors}"
     let info ← getConstInfo name
@@ -99,6 +111,9 @@ run_meta do
   unless sameShape.isEmpty do throwError "same-signature fixture should pass the shape check"
   let sameBundle ← generaliseMapBundleProblems ``sameSignature
   if sameBundle.isEmpty then throwError "unapproved same-signature declaration accepted"
+  let sameQualified ← generaliseMapQualifiedProblems ``sameSignature
+    "cakeml/compiler/inference/inferScript.sml" "generalise_def" none "subst" "component_2" false
+  if sameQualified.isEmpty then throwError "unapproved same-signature qualifier accepted"
   for (name, isList) in [
       (``holFmapAsFiniteSupportParameterTupleResultWitness_generaliseMap, false),
       (``holFmapAsFiniteSupportParameterTupleResultWitness_generaliseListMap, true)] do

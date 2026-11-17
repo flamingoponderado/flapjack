@@ -131,4 +131,27 @@ def generaliseMapBundleProblems (target : Name) : MetaM (Array String) := do
         problems := problems.push s!"{name} depends on unexpected axiom {axiomName}"
   return problems
 
+/-- Check prospective qualifier metadata against the two source-reviewed
+    generalization declarations. No HOL attribute is enabled by this check. -/
+def generaliseMapMetadataProblems (target : Name) (path name : String)
+    (line : Option Nat) (parameter component : String) (otherQualifiers : Bool) : Array String := Id.run do
+  let single := `Flapjack.Compiler.Inference.Infer.Generalise.generaliseMap
+  let list := `Flapjack.Compiler.Inference.Infer.Generalise.generaliseListMap
+  unless target == single || target == list do
+    return #["generalization qualifier requires one of the two reviewed operations"]
+  unless path == "cakeml/compiler/inference/inferScript.sml" && name == "generalise_def" && line.isNone do
+    return #["generalization qualifier requires the unique reviewed HOL reference"]
+  unless parameter == "subst" && component == "component_2" do
+    return #["generalization qualifier requires subst and component_2"]
+  if otherQualifiers then return #["generalization qualifier cannot combine with other qualifiers"]
+  return #[]
+
+/-- Prospective combined metadata and elaborated bundle audit. Source-text
+    validation and the manifest/export checks are still separately required. -/
+def generaliseMapQualifiedProblems (target : Name) (path name : String)
+    (line : Option Nat) (parameter component : String) (otherQualifiers : Bool) : MetaM (Array String) := do
+  let metadata := generaliseMapMetadataProblems target path name line parameter component otherQualifiers
+  unless metadata.isEmpty do return metadata
+  generaliseMapBundleProblems target
+
 end Flapjack
