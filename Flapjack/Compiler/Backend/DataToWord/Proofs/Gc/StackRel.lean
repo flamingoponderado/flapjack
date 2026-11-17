@@ -86,6 +86,8 @@ theorem flatStack_append {width : Nat} [NeZero width]
 
 /-- Related data and word stacks have exactly the same optional accounted
 size, including exception-frame overhead. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "stack_rel_IMP_size_of_stack"
+  (words_as_type_indexed_bitvec)]
 theorem stackRel_sizeOfStack {width : Nat} [NeZero width]
     {source : List DataSem.Stack} {target : List (WordSemStackFrame width)}
     (related : List.Forall₂ stackRel source target) :

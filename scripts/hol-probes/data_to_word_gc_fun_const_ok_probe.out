@@ -1,3 +1,5 @@
 gc_fun_const_ok_word_gc_fun_statement=gc_fun_const_ok (word_gc_fun c)
 gc_fun_const_ok_word_gc_fun_hypotheses=0
 gc_fun_const_ok_word_gc_fun_typed=gc_fun_const_ok (word_gc_fun (c :data_to_word$config) :α word_loc list # (α word -> α word_loc) # (α word -> bool) # (store_name |-> α word_loc) -> (α word_loc list # (α word -> α word_loc) # (store_name |-> α word_loc)) option)
+stack_rel_IMP_size_of_stack_hypotheses=0
+stack_rel_IMP_size_of_stack_typed=∀(xs :stack list) (ys :α stack_frame list). LIST_REL (stack_rel :stack -> α stack_frame -> bool) xs ys ⇒ (stack_size ys :num option) = size_of_stack xs

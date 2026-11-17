@@ -5929,7 +5929,7 @@ run_probe word_to_word_no_install_compile_single_probeScript.sml word_to_word_no
   no_install_no_alloc_compile_single_correct_statement no_install_no_alloc_compile_single_correct_typed \
   "$cake_dir/compiler/backend/proofs/word_to_wordProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe data_to_word_gc_fun_const_ok_probeScript.sml data_to_word_gc_fun_const_ok_probe.out \
-  gc_fun_const_ok_word_gc_fun_statement gc_fun_const_ok_word_gc_fun_typed \
+  gc_fun_const_ok_word_gc_fun_statement stack_rel_IMP_size_of_stack_typed \
   "$cake_dir/compiler/backend/proofs/data_to_word_gcProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe lab_props_every_sec_label_ok_probeScript.sml lab_props_every_sec_label_ok_probe.out \
   EVERY_sec_label_ok_statement EVERY_sec_label_ok_typed \

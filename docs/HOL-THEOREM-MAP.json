@@ -115847,6 +115847,15 @@
   },
 {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/StackRel.lean",
+    "lean_name": "stackRel_sizeOfStack",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+    "hol_name": "stack_rel_IMP_size_of_stack",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: original lines 5127–5139 and typed data_to_word_gc_fun_const_ok probe capture the closed theorem and independent data and word stack lists. The sole LIST_REL stack_rel premise and equality of the optional accounted stack sizes match. Both size functions fold option addition from SOME 1, with exception frames adding 3; the stack relation and frame carriers retain their source cases. HOL word dimensions use the positive-width BitVec representation."
+  },
+{
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/StackRel.lean",
     "lean_name": "theGlobal",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
     "hol_name": "the_global_def",

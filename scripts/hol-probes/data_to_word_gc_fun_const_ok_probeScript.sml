@@ -7,3 +7,5 @@ fun pr_typed label th = (print (label ^ "="); Lib.with_flag (Globals.show_types,
 val _ = pr_stmt "gc_fun_const_ok_word_gc_fun_statement" gc_fun_const_ok_word_gc_fun;
 val _ = pr_hyps "gc_fun_const_ok_word_gc_fun_hypotheses" gc_fun_const_ok_word_gc_fun;
 val _ = pr_typed "gc_fun_const_ok_word_gc_fun_typed" gc_fun_const_ok_word_gc_fun;
+val _ = pr_hyps "stack_rel_IMP_size_of_stack_hypotheses" stack_rel_IMP_size_of_stack;
+val _ = pr_typed "stack_rel_IMP_size_of_stack_typed" stack_rel_IMP_size_of_stack;
