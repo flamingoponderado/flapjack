@@ -49,6 +49,15 @@ val _ = show "op_simple_constraints_typed" inferTheory.op_simple_constraints_def
 val _ = show "op_simple_constraints_false_eval" (EVAL ``op_simple_constraints (FromTo BoolT IntT)``);
 val _ = show "op_n_args_msg_typed" inferTheory.op_n_args_msg_def;
 val _ = show "op_n_args_msg_eval" (EVAL ``op_n_args_msg Opref 12``);
+val _ = show "constrain_op_ref_eval" (EVAL ``
+  constrain_op <|loc := NONE; err := nsEmpty|> Opref [Infer_Tapp [] Tint_num]
+    <|next_uvar := 3; subst := FEMPTY; next_id := 7|>``);
+val _ = show "constrain_op_arity_eval" (EVAL ``
+  constrain_op <|loc := NONE; err := nsEmpty|> Opref []
+    <|next_uvar := 3; subst := FEMPTY; next_id := 7|>``);
+val _ = show "constrain_op_unsafe_eval" (EVAL ``
+  constrain_op <|loc := NONE; err := nsEmpty|> Vsub_unsafe []
+    <|next_uvar := 3; subst := FEMPTY; next_id := 7|>``);
 val _ = show "find_dup_typed" inferTheory.find_dup_def;
 val _ = show "check_dups_typed" inferTheory.check_dups_def;
 val _ = show "check_dups_eq_find_dup_typed" inferTheory.check_dups_eq_find_dup;

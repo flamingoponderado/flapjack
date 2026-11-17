@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Inference.Infer.Pattern
+public import Flapjack.Compiler.Inference.Infer.Primitive
 
 @[expose] public section
 
@@ -10,8 +11,25 @@ open Flapjack.AstHOL Flapjack.NamespaceHOL Flapjack.TypeSystemHOL
   Flapjack.Basis.Pure.MlString Flapjack.Translator.Monadic.MonadBase
   Flapjack.Compiler.Inference.Infer Flapjack.Compiler.Inference.Infer.Pattern
   Flapjack.Compiler.Inference.Infer.HOLState Flapjack.Compiler.Inference.Infer.Operations
+  Flapjack.Compiler.Inference.Infer.Primitive
 
 private def loc : LocErrInfo := ⟨none, nsEmpty⟩
+
+-- These complete source evaluations are captured by the HOL probe.
+example (subst : Flapjack.HolFiniteMapExact Nat Flapjack.Compiler.Inference.InferT) :
+    constrainOpModel loc .opref [.app [] 5] ⟨3, subst, 7⟩ =
+      (.success (.app [.app [] 5] 7), ⟨3, subst, 7⟩) := by
+  rfl
+
+example (subst : Flapjack.HolFiniteMapExact Nat Flapjack.Compiler.Inference.InferT) :
+    constrainOpModel loc .opref [] ⟨3, subst, 7⟩ =
+      (.failure (none, Core.opNArgsMessage .opref 0), ⟨3, subst, 7⟩) := by
+  rfl
+
+example (subst : Flapjack.HolFiniteMapExact Nat Flapjack.Compiler.Inference.InferT) :
+    constrainOpModel loc .vsubUnsafe [] ⟨3, subst, 7⟩ =
+      (.failure (none, ofString "Unsafe ops do not have a type"), ⟨3, subst, 7⟩) := by
+  rfl
 
 example (subst : Flapjack.HolFiniteMapExact Nat Flapjack.Compiler.Inference.InferT) :
     inferPatternModel loc emptyEnv (.pvar (ofString "x")) ⟨3, subst, 7⟩ =
