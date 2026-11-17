@@ -1,5 +1,11 @@
 [
 {
+  "hol_path": "cakeml/compiler/inference/inferScript.sml", "hol_name": "option_case_rand",
+  "lean_path": "Flapjack/Compiler/Inference/Infer/Operations.lean", "lean_name": "optionCaseRand",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with the source and option_case_rand_typed confirms the three independent polymorphic carriers, both option cases and the complete equality without hypotheses."
+ },
+{
   "hol_path": "cakeml/compiler/inference/inferScript.sml", "hol_name": "check_ctor_types_expand",
   "lean_path": "Flapjack/Compiler/Inference/Infer/TypeDefinitionsExpand.lean", "lean_name": "checkCtorTypesExpand",
   "statement_status": "reviewed_exact",

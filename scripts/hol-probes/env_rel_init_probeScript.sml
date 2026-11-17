@@ -37,6 +37,7 @@ val _ = show "st_ex_bind_triple_typed" inferTheory.st_ex_bind_triple;
 val _ = show "infer_read_typed" inferTheory.read_def;
 val _ = show "infer_write_typed" inferTheory.write_def;
 val _ = show "lookup_st_ex_typed" inferTheory.lookup_st_ex_def;
+val _ = show "option_case_rand_typed" inferTheory.option_case_rand;
 val _ = show "find_dup_typed" inferTheory.find_dup_def;
 val _ = show "check_dups_typed" inferTheory.check_dups_def;
 val _ = show "check_dups_eq_find_dup_typed" inferTheory.check_dups_eq_find_dup;

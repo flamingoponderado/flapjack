@@ -12,6 +12,13 @@ open Flapjack.TypeSystemHOL Flapjack.NamespaceHOL Flapjack.Misc.Location
   Flapjack.Basis.Pure.MlString Flapjack.Translator.Monadic.MonadBase
   Flapjack.Compiler.Inference.InferTDisplay
 
+@[hol "cakeml/compiler/inference/inferScript.sml" "option_case_rand"]
+theorem optionCaseRand {α β γ : Type} (x : Option α) (y : β → γ)
+    (f : α → β → γ) (s : β) :
+    (match x with | none => y | some a => f a) s =
+      match x with | none => y s | some a => f a s := by
+  cases x <;> rfl
+
 @[hol "cakeml/compiler/inference/inferScript.sml" "err_var"]
 abbrev ErrVar := TenvAbbrev
 
