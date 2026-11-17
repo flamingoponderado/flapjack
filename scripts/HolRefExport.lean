@@ -364,7 +364,8 @@ elab "#emit_hol_ref_export" : command => do
         if ref.realsAsRationalCuts then
           qualifiers := qualifiers ++ [("reals_as_rational_cuts", toJson true)]
         if !ref.totalFunctionInhabitants.isEmpty then
-          qualifiers := qualifiers ++ [("total_function_inhabitants", toJson ref.totalFunctionInhabitants)]
+          qualifiers := qualifiers ++
+            [("total_function_inhabitants", toJson ref.totalFunctionInhabitants)]
         let mut fields : List (String × Json) := [
           ("lean_name", toJson name.toString),
           ("hol_path", toJson ref.path),
