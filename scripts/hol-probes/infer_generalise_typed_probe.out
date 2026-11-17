@@ -10,3 +10,4 @@ subst_infer_subst_swap_typed=(∀(t :t) (tvs :mlstring list) (s :num |-> infer_t
 t_vars_inc_typed=∀(tvs :num) (t :infer_t). t_vars (infer_deBruijn_inc tvs t) = t_vars t
 inc_wfs_typed=∀(tvs :num) (s :num |-> infer_t). t_wfs s ⇒ t_wfs (infer_deBruijn_inc tvs o_f s)
 vwalk_inc_typed=∀(s :num |-> infer_t) (tvs :num) (n :num). t_wfs s ⇒ t_vwalk (infer_deBruijn_inc tvs o_f s) n = infer_deBruijn_inc tvs (t_vwalk s n)
+walk_inc_typed=∀(s :num |-> infer_t) (tvs :num) (t :infer_t). t_wfs s ⇒ t_walk (infer_deBruijn_inc tvs o_f s) (infer_deBruijn_inc tvs t) = infer_deBruijn_inc tvs (t_walk s t)

@@ -1,5 +1,12 @@
 [
 {
+  "hol_path": "cakeml/compiler/inference/inferPropsScript.sml", "hol_name": "walk_inc",
+  "lean_path": "Flapjack/Compiler/Inference/InferProps/DeBruijn/Walk.lean", "lean_name": "walkInc",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["s"],
+  "reviewer": "Typed HOL source comparison preserves all binders, the original tWfs premise, and both shifted terms. The key-preserving map2 implements HOL o_f; the canonical witness covers s. The tWalk definition and tWalkEqn/vwalkInc dependencies match the guarded source walk."
+ },
+{
   "hol_path": "cakeml/compiler/inference/inferPropsScript.sml", "hol_name": "vwalk_inc",
   "lean_path": "Flapjack/Compiler/Inference/InferProps/DeBruijn/Walk.lean", "lean_name": "vwalkInc",
   "statement_status": "reviewed_fmap_as_finite_support_parameters",
