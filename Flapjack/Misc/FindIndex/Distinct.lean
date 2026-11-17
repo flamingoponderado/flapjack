@@ -11,7 +11,8 @@ starting offset and the bounded existential EL index. EL is reduced only under
 that original bound; no past-end default or extra outer bound is used.
 Nonempty exposes HOL's intrinsic inhabited type carrier, and DecidableEq is
 the propositional equality used by the reviewed find_index definition. -/
-@[hol "cakeml/misc/miscScript.sml" "find_index_ALL_DISTINCT_EL_eq"]
+@[hol "cakeml/misc/miscScript.sml" "find_index_ALL_DISTINCT_EL_eq"
+  (total_function_inhabitants := [α])]
 theorem findIndex_allDistinct_elEq {α : Type} [DecidableEq α] [Nonempty α]
     (values : List α) : values.Nodup → ∀ (target : α) (offset index : Nat),
     findIndex target values offset = some index ↔

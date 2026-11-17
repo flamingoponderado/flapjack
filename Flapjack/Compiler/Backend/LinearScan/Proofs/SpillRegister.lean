@@ -33,7 +33,7 @@ private theorem holEl_set_any {γ : Type} [Nonempty γ] (l : List γ) (i j : Nat
 the unused `e : α`, the active entries' first component `β` and the colour
 carrier `γ`. -/
 @[hol "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml"
-  "update_color_active_colors_same"]
+  "update_color_active_colors_same" (total_function_inhabitants := [γ])]
 theorem updateColorActiveColorsSame {α β γ : Type} [Nonempty γ] :
     ∀ (_e : α) (reg : Nat) (active : List (β × Nat)) (regcol : γ) (colors : List γ),
       (active.filter (fun x => decide (x.2 ≠ reg))).map

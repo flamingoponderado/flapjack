@@ -59,7 +59,8 @@ theorem union_defined_iff (left right : HolFiniteMapExact α β) (key : α) :
 open Classical in
 /-- The theorem returned by HOL's `FUNION_DEF` specification. -/
 @[hol "HOL/src/finite_maps/finite_mapScript.sml" "FUNION_DEF"
-  (fmap_as_finite_support_parameters := [left, right])]
+  (fmap_as_finite_support_parameters := [left, right])
+  (total_function_inhabitants := [β])]
 theorem union_spec {α β : Type} [Nonempty β]
     (left : HolFiniteMapExact α β) (right : HolFiniteMapExact α β) :
     (left.union right).domain = left.domain ∪ right.domain ∧

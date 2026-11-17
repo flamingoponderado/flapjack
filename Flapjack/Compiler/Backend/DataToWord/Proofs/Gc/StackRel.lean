@@ -47,7 +47,8 @@ def containsLoc {width : Nat} [NeZero width] : WordSemStackFrame width → Nat �
 /-- Match even, nonzero word local names with their corresponding data local.
 HOL's `THE` is retained even for a missing lookup, where its result is
 unspecified. -/
-@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "join_env_def"]
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "join_env_def"
+  (total_function_inhabitants := [α])]
 noncomputable def joinEnv {α β : Type} [Nonempty α] (env : Spt α)
     (values : List (Nat × β)) : List (α × β) :=
   (values.filter fun pair => pair.1 ≠ 0 ∧ pair.1 % 2 = 0).map fun (name, value) =>

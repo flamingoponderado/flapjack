@@ -1078,6 +1078,7 @@ VALID_STATUSES = {
     "reviewed_word_dimension_as_width",
     "reviewed_word_dimensions_as_widths",
     "reviewed_reals_as_rational_cuts",
+    "reviewed_total_function_inhabitants",
     "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
     "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
     "pending_statement_review",
@@ -1238,7 +1239,8 @@ def tagged_declarations(
         if command_sites:
             value = ("cakeml/compiler/inference/inferScript.sml", "generalise_def",
                      (), (), (), (), False, (), False, False, (), (), None, (), (),
-                     False, False, (), (), (), (), (), (), ("subst", "component_2"), (), ())
+                     False, False, (), (), (), (), (), (), ("subst", "component_2"), (), (),
+                     ())
             for _, lean_name in command_sites:
                 tagged[(rel, lean_name)] = value
         for (line, hol_path, hol_name, _hol_line, list_fields,
@@ -1248,7 +1250,8 @@ def tagged_declarations(
              fmap_function_positions,
              fmap_heterogeneous_function_positions, reals_cuts,
              fmap_equality, result_observations, dimension_widths, fmap_tuple, nested_list_rel,
-             predicate_domain, fmap_universals, generalise_map, generalise_length, infer_subst_submap) in HOL_ATTRIBUTE_SITES(
+             predicate_domain, fmap_universals, generalise_map, generalise_length,
+             infer_subst_submap, total_function_inhabitants) in HOL_ATTRIBUTE_SITES(
                  lines, include_fmap_existentials=True,
                  include_word_dimension_width=True,
                  include_fmap_function=True,
@@ -1264,6 +1267,7 @@ def tagged_declarations(
                  include_generalise_map=True,
                  include_generalise_length=True,
                  include_infer_subst_submap=True,
+                 include_total_function_inhabitants=True,
              ):
             lean_name = FIND_LEAN_DECL(lines, line - 1)
             key = (rel, lean_name)
@@ -1274,7 +1278,10 @@ def tagged_declarations(
                      boundary_fields, fmap_fields, fmap_result, fmap_relation,
                      fmap_equalities, words_bitvec, fmap_parameters,
                      fmap_existentials, dimension_width, fmap_function_positions,
-                     fmap_heterogeneous_function_positions, reals_cuts, fmap_equality, result_observations, dimension_widths, fmap_tuple, nested_list_rel, predicate_domain, fmap_universals, generalise_map, generalise_length, infer_subst_submap)
+                     fmap_heterogeneous_function_positions, reals_cuts, fmap_equality,
+                     result_observations, dimension_widths, fmap_tuple, nested_list_rel,
+                     predicate_domain, fmap_universals, generalise_map, generalise_length,
+                     infer_subst_submap, total_function_inhabitants)
             if key in tagged and tagged[key] != value:
                 raise ValueError(f"conflicting @[hol] references for {rel}:{lean_name}")
             tagged[key] = value
@@ -1290,7 +1297,9 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
         fmap_result, fmap_relation, fmap_equalities, words_bitvec, fmap_parameters,
         fmap_existentials, dimension_width,
         fmap_function_positions, fmap_heterogeneous_function_positions, reals_cuts,
-        fmap_equality, result_observations, dimension_widths, fmap_tuple, nested_list_rel, predicate_domain, fmap_universals, generalise_map, generalise_length, infer_subst_submap,
+        fmap_equality, result_observations, dimension_widths, fmap_tuple, nested_list_rel,
+        predicate_domain, fmap_universals, generalise_map, generalise_length, infer_subst_submap,
+        total_function_inhabitants,
     ) in tagged.items():
         entry = {
             "hol_path": hol_path,
@@ -1353,6 +1362,8 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
             entry["reals_as_rational_cuts"] = True
         if fmap_equality:
             entry["fmap_as_finite_support_equality"] = True
+        if total_function_inhabitants:
+            entry["total_function_inhabitants"] = list(total_function_inhabitants)
         inventory[(lean_path, lean_name)] = entry
 
     for lean_path, lean_name in proof_theorem_declarations(root):
@@ -1751,6 +1762,7 @@ def validate_inventory(
                         (("BviState.refs", "nextMap", "wrapMap", "workMap") if hypothesis else
                          ("BviState.refs", "ordinaryMap", "wrapMap", "auxMap", "workMap", "refs")))):
                 errors.append(f"{key[0]}:{key[1]}: TMC universal map review must name its source and maps")
+        total_function_inhabitants = tag[26] if tag is not None and len(tag) > 26 else ()
         predicate_status = "reviewed_fmap_as_finite_support_parameter_predicate_domain"
         if tuple(record.get("fmap_as_finite_support_parameter_predicate_domain", ())) != predicate_domain:
             errors.append(f"{key[0]}:{key[1]}: predicate-domain binders do not match @[hol] tag")
@@ -2033,6 +2045,45 @@ def validate_inventory(
         elif status == "reviewed_reals_as_rational_cuts":
             errors.append(
                 f"{key[0]}:{key[1]}: reviewed_reals_as_rational_cuts needs a matching @[hol] qualifier"
+            )
+        manifest_inhabitants = tuple(record.get("total_function_inhabitants", ()))
+        if manifest_inhabitants != total_function_inhabitants:
+            errors.append(
+                f"{key[0]}:{key[1]}: manifest total_function_inhabitants does not match its @[hol] tag"
+            )
+        if total_function_inhabitants:
+            if status == "reviewed_exact":
+                errors.append(
+                    f"{key[0]}:{key[1]}: total_function_inhabitants @[hol] tag cannot have "
+                    "reviewed_exact status"
+                )
+            other_representation = bool(
+                list_fields or names_fields or boundary_fields or fmap_fields or fmap_result
+                or fmap_relation or fmap_equalities or words_bitvec or fmap_parameters
+                or fmap_existentials or dimension_width or dimension_widths or fmap_function_positions
+                or fmap_heterogeneous_function_positions or reals_cuts or fmap_equality
+                or result_observations or fmap_tuple or nested_list_rel or predicate_domain
+                or fmap_universals or generalise_map or generalise_length or infer_subst_submap
+            )
+            if not other_representation and status != "reviewed_total_function_inhabitants":
+                errors.append(
+                    f"{key[0]}:{key[1]}: total_function_inhabitants alone needs "
+                    "reviewed_total_function_inhabitants status"
+                )
+            if other_representation and status == "reviewed_total_function_inhabitants":
+                errors.append(
+                    f"{key[0]}:{key[1]}: total_function_inhabitants with other qualifiers keeps "
+                    "the status those qualifiers require"
+                )
+            reviewer_text = reviewer.lower() if isinstance(reviewer, str) else ""
+            if "source" not in reviewer_text or "total_function_inhabitants" not in reviewer_text:
+                errors.append(
+                    f"{key[0]}:{key[1]}: total_function_inhabitants requires a "
+                    "source-comparison note naming the qualifier and the HOL total function(s) rendered"
+                )
+        elif status == "reviewed_total_function_inhabitants":
+            errors.append(
+                f"{key[0]}:{key[1]}: reviewed_total_function_inhabitants needs a matching @[hol] qualifier"
             )
         if record.get("inherits_reals_as_rational_cuts", False):
             if reals_cuts:

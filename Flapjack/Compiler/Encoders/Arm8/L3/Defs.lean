@@ -40,7 +40,8 @@ open Flapjack Compiler.Encoders.Arm8
 open Flapjack.Basis.Pure.MlString
 
 /-- HOL `arm8$raise'exception` (`raise'exception_def`), mechanically rendered from the elaborated HOL definition. -/
-@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "raise'exception_def"]
+@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "raise'exception_def"
+  (total_function_inhabitants := [Ta])]
 noncomputable def «raise'exception» {Ta : Type} [Nonempty Ta] (e : exception) : (arm8_state → (Ta × arm8_state)) :=
   (fun (state : arm8_state) => ((Flapjack.holArb Ta), ((if (state.exception == exception.NoException) then ((let r := state; { r with exception := ((fun (_eta1 : exception) => e)) r.exception })) else state))))
 

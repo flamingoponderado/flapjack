@@ -380,6 +380,7 @@ import Flapjack.Compiler.Backend.Semantics.DataProps.AppWithLocals
 import Flapjack.Compiler.Backend.Semantics.DataProps.ConsumeSpaceFields
 import Flapjack.Compiler.Backend.Semantics.DataProps.EvaluateResourceSwap
 import Flapjack.Compiler.Backend.Semantics.DataProps.EvaluateLocals
+import Flapjack.Compiler.Backend.Semantics.DataProps.EvaluateStackLocalsSwap
 import Flapjack.Compiler.Backend.Semantics.DataProps.StackSize
 import Flapjack.Compiler.Backend.Semantics.DataProps.StateUpdates
 import Flapjack.Compiler.Backend.Semantics.DataSem.ControlClock
@@ -1643,6 +1644,7 @@ import Flapjack.Compiler.Backend.Semantics.DataProps.ValueList
 import Flapjack.Compiler.Backend.Semantics.DataProps.CcCoOnlyDiff
 import Flapjack.Compiler.Backend.Semantics.DataProps.CcCoOnlyDiffApp
 import Flapjack.Compiler.Backend.Semantics.DataProps.CcCoOnlyDiffEval
+import Flapjack.Compiler.Backend.Semantics.DataProps.SemanticsPrefix
 import Flapjack.Compiler.Backend.DataSpace.Proofs.CodeLabels
 import Flapjack.Compiler.Backend.DataSpace.Proofs.Simulation
 import Flapjack.Compiler.Backend.DataSpace.Proofs.Seq
@@ -3222,6 +3224,8 @@ import Flapjack.Compiler.Backend.Semantics.WordSem.Props.MemStoreConst
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.JumpExcConst
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.AllocConst
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackMax
+import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackMaxClock
+import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackMaxPreserved
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.StateConst
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateConsts
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.StateLaws

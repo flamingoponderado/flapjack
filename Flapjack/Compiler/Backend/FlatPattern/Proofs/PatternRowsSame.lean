@@ -12,7 +12,8 @@ with the selected body taken from the corresponding row. HOL's vacuous row paylo
 types stay independent as `E` and `E'`; the `[Nonempty E]`/`[Nonempty E']`
 instances are HOL's type inhabitedness, supplying the arbitrary out-of-range value
 of HOL's total `EL` used to name the selected row. -/
-@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "pmatch_rows_same_FST"]
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "pmatch_rows_same_FST"
+  (total_function_inhabitants := [E, E'])]
 theorem pmatchRows_sameFst {C F E E' : Type} [Nonempty E] [Nonempty E']
     (state : FlatSem.State C F) (value : FlatSem.Value) :
     ∀ (rows : List (FlatLang.Pat × E)) (rows' : List (FlatLang.Pat × E')),

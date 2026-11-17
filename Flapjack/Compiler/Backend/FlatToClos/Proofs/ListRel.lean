@@ -11,7 +11,8 @@ namespace Flapjack.Compiler.Backend.FlatToClos
 
 /-- Pointwise list relation characterized by equal lengths and bounded HOL
 element lookup. -/
-@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "LIST_REL_EL"]
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "LIST_REL_EL"
+  (total_function_inhabitants := [α, β])]
 theorem listRel_el {α β : Type} [Nonempty α] [Nonempty β]
     (xs : List α) (ys : List β) (r : α → β → Prop) :
     List.Forall₂ r xs ys ↔ xs.length = ys.length ∧

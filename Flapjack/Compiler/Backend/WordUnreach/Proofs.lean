@@ -25,7 +25,8 @@ open Flapjack
 
 /-- Exact HOL `copy_vars_def` (`word_unreachProofScript.sml:40-44`), a definition local to
 the proof script; HOL `THE` is the tagged `holThe`. -/
-@[hol "cakeml/compiler/backend/proofs/word_unreachProofScript.sml" "copy_vars_def"]
+@[hol "cakeml/compiler/backend/proofs/word_unreachProofScript.sml" "copy_vars_def"
+  (total_function_inhabitants := [α])]
 noncomputable def copyVars {α : Type} [Nonempty α] :
     List (Nat × Nat) → Spt α → Spt α → Spt α
   | [], _, to => to
@@ -122,7 +123,8 @@ theorem lookupCopyVarsIgnore {α : Type} [Nonempty α] :
         exact lookupCopyVarsIgnore l1 h1 x y h
 
 /-- Exact HOL `lookup_copy_vars` (`word_unreachProofScript.sml:118-128`). -/
-@[hol "cakeml/compiler/backend/proofs/word_unreachProofScript.sml" "lookup_copy_vars"]
+@[hol "cakeml/compiler/backend/proofs/word_unreachProofScript.sml" "lookup_copy_vars"
+  (total_function_inhabitants := [α])]
 theorem lookupCopyVars {α : Type} [Nonempty α] :
     ∀ (l1 : List (Nat × Nat)) (h1 y : Nat) (s t : Spt α) (z : α),
       sptAListLookup h1 l1 = some y ∧ sptLookup h1 (copyVars l1 s t) = some z →

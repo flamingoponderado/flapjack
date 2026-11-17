@@ -321,6 +321,17 @@ structure HolRef where
       named mutually inductive auxiliary relation. This records only that
       factoring; constructor and witness checks do not prove HOL correspondence. -/
   nestedListRelAsMutual : Array String := #[]
+  /-- Type binders whose single `Nonempty`/`Inhabited` instance exists only to
+      render a HOL total function's unspecified value on bad input (HOL `EL`,
+      `HD`, `THE`, `LAST`, `ALOOKUP`, `LINV`, `ARB`). Every listed name must be
+      a type binder of the declaration with exactly one such instance, every
+      `Nonempty`/`Inhabited` instance in the signature must be listed, and the
+      declaration's own source must use at least one reviewed rendering
+      (`holEl`, `holHd`, `holLast`, `holThe`, `holAlookup`, `holLinv`,
+      `arbitrary`). The qualifier records only that rendering; it authorises no
+      other instance, hypothesis, or statement change, and source review must
+      confirm the instance is used only through those renderings. -/
+  totalFunctionInhabitants : Array String := #[]
   deriving Inhabited, Repr, BEq
 
 open Lean Meta
@@ -358,6 +369,7 @@ syntax "(" "word_dimension_as_width" ":=" ident ")" : holQualifier
 syntax "(" "word_dimensions_as_widths" ":=" "[" ident,* "]" ")" : holQualifier
 syntax "(" "reals_as_rational_cuts" ")" : holQualifier
 syntax "(" "nested_list_rel_as_mutual" ":=" "[" ident,+ "]" ")" : holQualifier
+syntax "(" "total_function_inhabitants" ":=" "[" ident,+ "]" ")" : holQualifier
 syntax (name := hol) "hol " str str (num)? holQualifier* : attr
 
 private def checkedHolRef (path name : String) (line? : Option Nat := none)
@@ -379,7 +391,8 @@ private def checkedHolRef (path name : String) (line? : Option Nat := none)
     (nestedListRelAsMutual : Array String := #[])
     (fmapAsFiniteSupportParameterObservations : Bool := false)
     (fmapAsFiniteSupportParameterPredicateDomain : Array String := #[])
-    (fmapAsFiniteSupportUniversals : Array String := #[]) : CoreM HolRef := do
+    (fmapAsFiniteSupportUniversals : Array String := #[])
+    (totalFunctionInhabitants : Array String := #[]) : CoreM HolRef := do
   unless (path.startsWith "cakeml/" && path.endsWith ".sml" ||
       -- Pinned upstream HOL submodule; `scripts/check-hol-refs.py` verifies the
       -- gitlink, checkout commit and blob of every cited `HOL/...` file.
@@ -539,7 +552,25 @@ private def checkedHolRef (path name : String) (line? : Option Nat := none)
         !fmapAsFiniteSupportResultObservations.isEmpty || wordsAsTypeIndexedBitvec ||
         wordDimensionAsWidth.isSome || !wordDimensionsAsWidths.isEmpty || realsAsRationalCuts then
       throwError "@[hol]: nested_list_rel_as_mutual cannot combine with other qualifiers"
-  pure { nestedListRelAsMutual, fmapAsFiniteSupportTuple, fmapAsFiniteSupportResultObservations, fmapAsFiniteSupportParameterObservations, fmapAsFiniteSupportParameterPredicateDomain, fmapAsFiniteSupportUniversals, path, name, line?, listAsArray, namesAsString, namesAsStringBoundary, fmapAsFiniteSupport, fmapAsFiniteSupportResult, fmapAsFiniteSupportFunction, fmapAsFiniteSupportHeterogeneousFunction, fmapAsFiniteSupportParameters, fmapAsFiniteSupportExistentials, fmapAsFiniteSupportRelation, fmapAsFiniteSupportEqualities, fmapAsFiniteSupportEquality, wordsAsTypeIndexedBitvec, wordDimensionAsWidth, wordDimensionsAsWidths, realsAsRationalCuts }
+  if totalFunctionInhabitants.toList.eraseDups.length != totalFunctionInhabitants.size then
+    throwError "@[hol]: total_function_inhabitants binders must be distinct"
+  pure {
+    nestedListRelAsMutual := nestedListRelAsMutual,
+    fmapAsFiniteSupportTuple := fmapAsFiniteSupportTuple,
+    fmapAsFiniteSupportResultObservations := fmapAsFiniteSupportResultObservations,
+    fmapAsFiniteSupportParameterObservations :=
+      fmapAsFiniteSupportParameterObservations,
+    fmapAsFiniteSupportParameterPredicateDomain :=
+      fmapAsFiniteSupportParameterPredicateDomain,
+    fmapAsFiniteSupportUniversals := fmapAsFiniteSupportUniversals,
+    totalFunctionInhabitants := totalFunctionInhabitants,
+    path, name, line?, listAsArray, namesAsString, namesAsStringBoundary,
+    fmapAsFiniteSupport, fmapAsFiniteSupportResult, fmapAsFiniteSupportFunction,
+    fmapAsFiniteSupportHeterogeneousFunction, fmapAsFiniteSupportParameters,
+    fmapAsFiniteSupportExistentials, fmapAsFiniteSupportRelation,
+    fmapAsFiniteSupportEqualities, fmapAsFiniteSupportEquality,
+    wordsAsTypeIndexedBitvec, wordDimensionAsWidth, wordDimensionsAsWidths,
+    realsAsRationalCuts }
 
 private def parseHolQualifier (stx : Syntax) : CoreM (String × Array String × Bool × Array (String × String)) := do
   match stx with
@@ -617,6 +648,9 @@ private def parseHolQualifier (stx : Syntax) : CoreM (String × Array String × 
       pure ("reals_as_rational_cuts", #[], true, #[])
   | `(holQualifier| (nested_list_rel_as_mutual := [$names:ident,*])) =>
       pure ("nested_list_rel_as_mutual", names.getElems.map (fun name => name.getId.eraseMacroScopes.toString), false, #[])
+  | `(holQualifier| (total_function_inhabitants := [$binders:ident,*])) =>
+      pure ("total_function_inhabitants", binders.getElems.map
+        (fun binder => binder.getId.eraseMacroScopes.toString), false, #[])
   | _ => throwError "@[hol]: malformed qualifier"
 
 private def parseHolRefAttribute (stx : Syntax) : CoreM HolRef := do
@@ -652,6 +686,7 @@ private def parseHolRefAttribute (stx : Syntax) : CoreM HolRef := do
     let mut parameterObservations := false
     let mut realsAsRationalCuts : Bool := false
     let mut nestedListRelAsMutual : Array String := #[]
+    let mut totalFunctionInhabitants : Array String := #[]
     for qualifier in qualifiers do
       let (kind, fields, isResult, pairs) ← parseHolQualifier qualifier
       if kind == "list_as_array" then listAsArray := listAsArray ++ fields
@@ -726,6 +761,8 @@ private def parseHolRefAttribute (stx : Syntax) : CoreM HolRef := do
         realsAsRationalCuts := true
       else if kind == "nested_list_rel_as_mutual" then
         nestedListRelAsMutual := nestedListRelAsMutual ++ fields
+      else if kind == "total_function_inhabitants" then
+        totalFunctionInhabitants := totalFunctionInhabitants ++ fields
       else fmapAsFiniteSupport := fmapAsFiniteSupport ++ fields
     if seenGeneraliseMapQualifier then
       unless qualifiers.size == 1 && generaliseMapQualifier == #["subst", "component_2"] &&
@@ -743,7 +780,15 @@ private def parseHolRefAttribute (stx : Syntax) : CoreM HolRef := do
       unless qualifiers.size == 1 && path == "cakeml/compiler/inference/inferPropsScript.sml" &&
           (submap || walkstar) && line?.isNone do
         throwError "@[hol]: conjunct-universal qualifier requires its reviewed HOL reference and ordered occurrences"
-    let ref ← checkedHolRef path name line? listAsArray namesAsString namesAsStringBoundary fmapAsFiniteSupport fmapAsFiniteSupportResult fmapAsFiniteSupportFunction fmapAsFiniteSupportHeterogeneousFunction fmapAsFiniteSupportParameters fmapAsFiniteSupportExistentials fmapAsFiniteSupportRelation fmapAsFiniteSupportEqualities fmapAsFiniteSupportEquality wordsAsTypeIndexedBitvec wordDimensionAsWidth realsAsRationalCuts fmapAsFiniteSupportResultObservations wordDimensionsAsWidths fmapAsFiniteSupportTuple nestedListRelAsMutual parameterObservations predicateDomain universalMaps
+    let ref ← checkedHolRef path name line? listAsArray namesAsString namesAsStringBoundary
+      fmapAsFiniteSupport fmapAsFiniteSupportResult fmapAsFiniteSupportFunction
+      fmapAsFiniteSupportHeterogeneousFunction fmapAsFiniteSupportParameters
+      fmapAsFiniteSupportExistentials fmapAsFiniteSupportRelation
+      fmapAsFiniteSupportEqualities fmapAsFiniteSupportEquality
+      wordsAsTypeIndexedBitvec wordDimensionAsWidth realsAsRationalCuts
+      fmapAsFiniteSupportResultObservations wordDimensionsAsWidths
+      fmapAsFiniteSupportTuple nestedListRelAsMutual parameterObservations
+      predicateDomain universalMaps totalFunctionInhabitants
     let ref := { ref with fmapAsFiniteSupportParameterTupleResult := generaliseMapQualifier }
     let ref := { ref with fmapAsFiniteSupportParameterTupleObservations := generaliseLengthQualifier }
     pure { ref with fmapAsFiniteSupportConjunctUniversals := conjunctUniversals }

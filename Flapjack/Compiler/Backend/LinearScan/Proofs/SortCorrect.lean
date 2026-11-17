@@ -124,7 +124,7 @@ theorem splitAtIndice {α : Type} :
 /-- Exact HOL `swap_perm_lemma` (`linear_scanProofScript.sml:3879-3912`); HOL
 types are inhabited, so the element type carries `[Nonempty α]` for `holEl`. -/
 @[hol "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml"
-  "swap_perm_lemma"]
+  "swap_perm_lemma" (total_function_inhabitants := [α])]
 theorem swapPermLemma {α : Type} [Nonempty α] :
     ∀ (l : List α) (i1 i2 : Nat), i1 < l.length ∧ i2 < l.length →
       holPerm l ((l.set i1 (holEl i2 l)).set i2 (holEl i1 l)) := by
