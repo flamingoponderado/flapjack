@@ -22,6 +22,30 @@ class GeneraliseParameterTupleSourceTest(unittest.TestCase):
         self.assertEqual(scan('-- attribute [hol "p" "n"] a\n@[hol "p" "n"]\ndef a := 0'), [])
         self.assertEqual(scan('attribute [simp] a'), [])
 
+    def test_prospective_post_mutual_command_is_pinned(self):
+        command = ('attribute [hol "cakeml/compiler/inference/inferScript.sml" "generalise_def"\n'
+                   '  (fmap_as_finite_support_parameter_tuple_result := '
+                   '(map_parameter := subst) (result_component := component_2))]\n'
+                   '  generaliseMap generaliseListMap\n\n')
+        anchor = 'termination_by ts => sizeOf ts\nend\n\nmutual\n'
+        self.assertEqual(SOURCE.count(anchor), 1)
+        fixture = SOURCE.replace(anchor, anchor.replace('mutual\n', command + 'mutual\n'), 1)
+        check = CHECKER["prospective_generalise_command_errors"]
+        self.assertEqual(check(fixture, LEAN_PATH), [])
+        for bad in (
+            fixture.replace('generaliseMap generaliseListMap', 'generaliseMap other'),
+            fixture.replace('component_2', 'component_1'),
+            fixture.replace('generaliseMap generaliseListMap', 'generaliseMap generaliseListMap extra'),
+            fixture.replace(command, command + command),
+            fixture.replace('def generaliseMap', '@[hol "cakeml/compiler/inference/inferScript.sml" "generalise_def"]\ndef generaliseMap', 1),
+            fixture.replace(command, 'mutual\ndef dummy : List Nat → Nat := fun _ => 0\n'
+                            'termination_by ts => sizeOf ts\nend\n\n' + command, 1),
+        ):
+            with self.subTest(source=bad[-200:]):
+                self.assertTrue(check(bad, LEAN_PATH))
+        self.assertTrue(check(fixture, 'Other.lean'))
+        self.assertTrue(CHECKER["unsupported_hol_attribute_commands"](fixture))
+
     def check(self, source=SOURCE, name="generaliseMap", path=LEAN_PATH,
               hol=HOL_REF, parameter="subst", component="component_2"):
         return CHECK(source, path, name, hol, parameter, component)

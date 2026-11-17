@@ -5801,6 +5801,45 @@ def unsupported_hol_attribute_commands(source: str) -> list[int]:
     return lines
 
 
+def prospective_generalise_command_errors(source: str, lean_path: str) -> list[str]:
+    """Audit the proposed post-mutual attachment without enabling it.
+
+    Both scanners still reject command-style tags. This narrowly checks the
+    single reviewed attachment shape needed before those guards can change.
+    """
+    clean = strip_lean_comments(source)
+    command = re.compile(
+        r'(?m)^termination_by ts => sizeOf ts[ \t]*\nend[ \t]*\n\s*attribute\s*\[\s*hol\s+'
+        r'"cakeml/compiler/inference/inferScript\.sml"\s+"generalise_def"\s+'
+        r'\(\s*fmap_as_finite_support_parameter_tuple_result\s*:=\s*'
+        r'\(\s*map_parameter\s*:=\s*subst\s*\)\s*'
+        r'\(\s*result_component\s*:=\s*component_2\s*\)\s*\)\s*\]'
+        r'\s+generaliseMap\s+generaliseListMap[ \t]*\n\s*mutual\b'
+    )
+    matches = list(command.finditer(clean))
+    commands = unsupported_hol_attribute_commands(source)
+    if len(matches) != 1 or len(commands) != 1:
+        return ["generalization requires exactly one post-mutual attribute command for both operations"]
+    declaration = re.search(r"(?m)^def generaliseListMap\b", clean)
+    if declaration is None:
+        return ["generalization list operation is missing"]
+    terminator = re.search(r"(?m)^termination_by ts => sizeOf ts[ \t]*$", clean[declaration.end():])
+    if terminator is None or declaration.end() + terminator.start() != matches[0].start():
+        return ["generalization attribute command must follow the actual mutual definitions"]
+    if any(hol_attribute_sites(source.splitlines())):
+        return ["generalization module must not also have declaration-site HOL attributes"]
+    command_line = clean.count("\n", 0, clean.index("attribute", matches[0].start())) + 1
+    if commands != [command_line]:
+        return ["generalization attribute command must be executable source"]
+    errors = []
+    for name in ("generaliseMap", "generaliseListMap"):
+        errors.extend(generalise_parameter_tuple_result_errors(
+            source, lean_path, name,
+            ("cakeml/compiler/inference/inferScript.sml", "generalise_def"),
+            "subst", "component_2"))
+    return errors
+
+
 def nested_thunk_map_combination(hol_path: str, hol_name: str, lean_path: str, lean_name: str,
                                  nested: tuple[str, ...], fmap_fields: tuple[str, ...],
                                  relation: tuple[tuple[str, str], ...],
