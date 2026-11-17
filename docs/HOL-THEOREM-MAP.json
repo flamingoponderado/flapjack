@@ -1,5 +1,11 @@
 [
 {
+  "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "type_d_canon_tenv_ok",
+  "lean_path": "Flapjack/Compiler/Inference/TypeDCanon/WellFormed.lean", "lean_name": "typeDCanonTenvOk",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with the source and type_d_canon_tenv_ok_typed confirms both declaration and declaration-list conjuncts, binder order and types, typing and environment premises, and well-formed output conclusion. The datatype case preserves the constructor and abbreviation checks."
+ },
+{
   "hol_path": "cakeml/semantics/proofs/typeSysPropsScript.sml", "hol_name": "type_e_freevars",
   "lean_path": "Flapjack/TypeSysProps/Expression.lean", "lean_name": "typeEFreevars",
   "statement_status": "reviewed_exact",
