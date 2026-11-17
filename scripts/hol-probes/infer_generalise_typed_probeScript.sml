@@ -21,3 +21,5 @@ val _ = (print "infer_subst_def_typed=";
   print_term (concl (DB.fetch "infer" "infer_subst_def")); print "\n");
 val _ = (print "infer_subst_submap_typed=";
   print_term (concl (DB.fetch "inferProps" "infer_subst_submap")); print "\n");
+val _ = (print "infer_subst_FEMPTY_typed=";
+  print_term (concl (DB.fetch "inferProps" "infer_subst_FEMPTY")); print "\n");

@@ -1,5 +1,12 @@
 [
 {
+  "hol_path": "cakeml/compiler/inference/inferPropsScript.sml", "hol_name": "infer_subst_FEMPTY",
+  "lean_path": "Flapjack/Compiler/Inference/InferProps/Substitution/Empty.lean", "lean_name": "inferSubstFempty",
+  "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+  "fmap_as_finite_support_result_observations": ["Flapjack.HolFiniteMapExact.holEmpty"],
+  "reviewer": "Typed HOL source comparison preserves the independently quantified type and list conjuncts and their equalities. The reviewed holEmpty producer represents the original num-to-num FEMPTY in both substitution calls."
+ },
+{
   "hol_path": "cakeml/compiler/inference/inferPropsScript.sml", "hol_name": "infer_subst_submap",
   "lean_path": "Flapjack/Compiler/Inference/InferProps/Substitution.lean", "lean_name": "inferSubstSubmap",
   "statement_status": "reviewed_fmap_as_finite_support_conjunct_universals",
