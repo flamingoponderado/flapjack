@@ -41,9 +41,10 @@ private theorem checkFreevarsListAdd (tvs : Nat) (names : List MlString) (ts : L
 termination_by sizeOf ts
 end
 
-/-- The specialized lookup map used elsewhere agrees with the reviewed generic
-HOL association-list map. This is a local representation bridge. -/
-private theorem mapAgreement (entries : List (MlString × SemanticT)) :
+/-- The specialized type-substitution map agrees with the reviewed generic
+HOL association-list map. This Flapjack representation lemma is shared by
+the substitution and type-name proofs. -/
+theorem alistToFmapEqTypeSubstMap (entries : List (MlString × SemanticT)) :
     Flapjack.HolFiniteMapExact.alistToFmap entries = typeSubstMap entries := by
   unfold Flapjack.HolFiniteMapExact.alistToFmap typeSubstMap
   have same : (fun (a b : MlString) => Classical.propDecidable (a = b)) =
@@ -82,7 +83,7 @@ theorem checkFreevarsSubstSingle (dbmax : Nat) (tvs : List MlString) (t : Semant
     have pairMember : (name, value) ∈ tvs.zip ts := by rw [zipped]; simp
     have valueMember : value ∈ ts := (List.of_mem_zip pairMember).2
     have result := (List.all_eq_true.mp valuesCheck) value valueMember
-    simpa [typeSubst, mapAgreement, lookupTypeSubstMap, found] using result
+    simpa [typeSubst, alistToFmapEqTypeSubstMap, lookupTypeSubstMap, found] using result
   | varDb index => simpa [typeSubst, checkFreevars] using check
   | app args id =>
     simp only [typeSubst, checkFreevars] at check ⊢
