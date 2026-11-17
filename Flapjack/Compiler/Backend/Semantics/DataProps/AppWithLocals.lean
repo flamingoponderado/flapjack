@@ -318,9 +318,9 @@ theorem doAppAux_safeForSpace_of_false {C F : Type} (op : ClosLang.Op) (values :
 
 /-- Successful auxiliary application keeps its value when only the safety
     flag is replaced, recording the new flag existentially.  Flapjack
-    infrastructure toward the parked HOL `do_app_with_locals`; no separate HOL
-    original. -/
-private theorem doAppAux_safeSuccess' {C F : Type} (op : ClosLang.Op)
+    infrastructure toward the HOL `do_app_with_locals` and
+    `evaluate_stack_and_locals_swap` ports; no separate HOL original. -/
+theorem doAppAux_safeSuccess {C F : Type} (op : ClosLang.Op)
     (values : List Value) (state next : State C F) (value : Value) (safe : Bool)
     (run : doAppAux op values state = .val (value, next)) :
     ∃ safe', doAppAux op values { state with safeForSpace := safe } =
@@ -333,9 +333,9 @@ private theorem doAppAux_safeSuccess' {C F : Type} (op : ClosLang.Op)
 
 /-- Successful auxiliary application keeps its value, its stack maximum and its
     peak-heap estimate when those fields and the safety flag are replaced.
-    Flapjack infrastructure toward the parked HOL `do_app_with_locals`; no
-    separate HOL original. -/
-private theorem doAppAux_safePeakStackMax' {C F : Type} (op : ClosLang.Op)
+    Flapjack infrastructure toward the HOL `do_app_with_locals` and
+    `evaluate_stack_and_locals_swap` ports; no separate HOL original. -/
+theorem doAppAux_safePeakStackMax {C F : Type} (op : ClosLang.Op)
     (values : List Value) (state next : State C F) (value : Value) (safe : Bool)
     (mx : Option Nat) (peak : Nat)
     (run : doAppAux op values state = .val (value, next)) :
@@ -348,7 +348,7 @@ private theorem doAppAux_safePeakStackMax' {C F : Type} (op : ClosLang.Op)
         safeForSpace := safe'
         stackMax := mx
         peakHeapLength := peak }) := by
-  obtain ⟨safe', safeChange⟩ := doAppAux_safeSuccess' op values state next value safe run
+  obtain ⟨safe', safeChange⟩ := doAppAux_safeSuccess op values state next value safe run
   have fields := doAppAux_withFields op values { state with safeForSpace := safe }
     state.stack state.localsSize mx peak state.locals state.space state.handler state.clock
     state.stackFrameSizes state.compile
@@ -379,7 +379,7 @@ private theorem doAppAux_changeFields' {C F : Type} (op : ClosLang.Op)
         stackMax := mx
         peakHeapLength := peak }) := by
   obtain ⟨safe', first⟩ :=
-    doAppAux_safePeakStackMax' op values state next value safe mx peak run
+    doAppAux_safePeakStackMax op values state next value safe mx peak run
   have second := doAppAux_withLocals op values
     { state with safeForSpace := safe, stackMax := mx, peakHeapLength := peak } locals
   rw [first] at second

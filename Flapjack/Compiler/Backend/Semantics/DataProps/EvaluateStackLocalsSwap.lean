@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.Semantics.DataProps.EvaluateResourceSwap
+public import Flapjack.Compiler.Backend.Semantics.DataProps.AppWithLocals
 public import Flapjack.Compiler.Backend.Semantics.DataProps.ApplyAuxFields
 public import Flapjack.Compiler.Backend.Semantics.DataProps.InitialStateLaws
 public import Flapjack.Compiler.Backend.Semantics.DataProps.Jump
@@ -1767,5 +1768,292 @@ private theorem doAppAux_swapStackLocals_err {C F : Type} (op : ClosLang.Op)
   rw [mapped, run]
   simp only [Flapjack.SemanticPrimitivesProps.mapResult]
   rw [Flapjack.SemanticPrimitivesProps.mapErrorResult_id]
+
+/-- Successful auxiliary application at a state whose stack, locals size,
+    safety flag, stack maximum and peak-heap estimate are replaced: it reads
+    none of those fields, so only the safety flag is left free. Flapjack
+    infrastructure toward the port of HOL `evaluate_stack_and_locals_swap`;
+    no separate HOL original. -/
+private theorem doAppAux_swapStackLocalsFields_val {C F : Type} (op : ClosLang.Op)
+    (values : List DataSem.Value) (state : State C F) (xs : List Stack) (lsz : Option Nat)
+    (safe : Bool) (smx : Option Nat) (phl : Nat) (value : DataSem.Value) (next : State C F)
+    (run : doAppAux op values state = .val (value, next)) :
+    ∃ sfs, doAppAux op values
+        { state with
+          stack := xs
+          localsSize := lsz
+          safeForSpace := safe
+          stackMax := smx
+          peakHeapLength := phl } =
+      .val (value, { next with
+        stack := xs
+        localsSize := lsz
+        safeForSpace := sfs
+        stackMax := smx
+        peakHeapLength := phl }) := by
+  obtain ⟨safe', first⟩ :=
+    doAppAux_safePeakStackMax op values state next value safe smx phl run
+  have fields := doAppAux_withFields op values
+    { state with safeForSpace := safe, stackMax := smx, peakHeapLength := phl }
+    xs lsz smx phl state.locals state.space state.handler state.clock state.stackFrameSizes
+    state.compile
+  rw [first] at fields
+  have frame := doAppAux_fieldFrame op values state next value run
+  refine ⟨safe', ?_⟩
+  simpa [Flapjack.SemanticPrimitivesProps.mapResult, frame.1, frame.2.1,
+    frame.2.2.1, frame.2.2.2.1, frame.2.2.2.2.1, frame.2.2.2.2.2.1, frame.2.2.2.2.2.2.1,
+    frame.2.2.2.2.2.2.2.1, frame.2.2.2.2.2.2.2.2.1, frame.2.2.2.2.2.2.2.2.2] using fields
+
+/-- The limit and stack stages at a stack-and-locals-swapped state report the
+    source's stack accounting with the frame fields replaced and the resource
+    observations free. Flapjack infrastructure toward the port of HOL
+    `evaluate_stack_and_locals_swap`; no separate HOL original. -/
+private theorem doStack_doLimSafe_swapStackLocals {C F : Type} (op : ClosLang.Op)
+    (values : List DataSem.Value) (state : State C F) (xs : List Stack) (lsz : Option Nat)
+    (safe : Bool) (peak : Nat) :
+    ∃ sfs smx phl,
+      doStack op values (doLimSafe { state with
+          stack := xs
+          localsSize := lsz
+          safeForSpace := safe
+          peakHeapLength := peak } op values) =
+        { doStack op values (doLimSafe state op values) with
+          stack := xs
+          localsSize := lsz
+          safeForSpace := sfs
+          stackMax := smx
+          peakHeapLength := phl } := by
+  let result := doStack op values (doLimSafe { state with
+    stack := xs
+    localsSize := lsz
+    safeForSpace := safe
+    peakHeapLength := peak } op values)
+  refine ⟨result.safeForSpace, result.stackMax, result.peakHeapLength, ?_⟩
+  rfl
+
+/-- The space, limit, stack and auxiliary stages carry a successful result
+    across a stack-and-locals replacement. Flapjack infrastructure toward the
+    port of HOL `evaluate_stack_and_locals_swap`; no separate HOL original. -/
+private theorem doAppGeneric_swapStackLocals_val {C F : Type} (op : ClosLang.Op)
+    (values : List DataSem.Value) (state : State C F) (xs : List Stack) (lsz : Option Nat)
+    (value : DataSem.Value) (next : State C F)
+    (run : (match doSpace op values state with
+      | none => (Result.err (.abort .typeError) :
+          Result (DataSem.Value × State C F) DataSem.Value)
+      | some mid => doAppAux op values (doStack op values (doLimSafe mid op values))) =
+        .val (value, next)) :
+    ∃ sfs smx phl,
+      (match doSpace op values { state with stack := xs, localsSize := lsz } with
+      | none => (Result.err (.abort .typeError) :
+          Result (DataSem.Value × State C F) DataSem.Value)
+      | some mid => doAppAux op values (doStack op values (doLimSafe mid op values))) =
+        .val (value, { next with
+          stack := xs
+          localsSize := lsz
+          safeForSpace := sfs
+          stackMax := smx
+          peakHeapLength := phl }) := by
+  cases space : doSpace op values state with
+  | none =>
+    rw [space] at run
+    cases run
+  | some mid =>
+    rw [space] at run
+    obtain ⟨sfs1, phl1, spaceTarget⟩ :=
+      doSpace_swapStackLocals op values state xs lsz mid space
+    simp only [spaceTarget]
+    obtain ⟨sfs2, smx2, phl2, stackTarget⟩ :=
+      doStack_doLimSafe_swapStackLocals op values mid xs lsz sfs1 phl1
+    simp only [stackTarget]
+    obtain ⟨sfs3, aux⟩ :=
+      doAppAux_swapStackLocalsFields_val op values
+        (doStack op values (doLimSafe mid op values)) xs lsz sfs2 smx2 phl2 value next run
+    exact ⟨sfs3, smx2, phl2, aux⟩
+
+/-- The space, limit, stack and auxiliary stages carry a failing result across
+    a stack-and-locals replacement. Flapjack infrastructure toward the port of
+    HOL `evaluate_stack_and_locals_swap`; no separate HOL original. -/
+private theorem doAppGeneric_swapStackLocals_err {C F : Type} (op : ClosLang.Op)
+    (values : List DataSem.Value) (state : State C F) (xs : List Stack) (lsz : Option Nat)
+    (error : ErrorResult DataSem.Value)
+    (run : (match doSpace op values state with
+      | none => (Result.err (.abort .typeError) :
+          Result (DataSem.Value × State C F) DataSem.Value)
+      | some mid => doAppAux op values (doStack op values (doLimSafe mid op values))) =
+        .err error) :
+    (match doSpace op values { state with stack := xs, localsSize := lsz } with
+    | none => (Result.err (.abort .typeError) :
+        Result (DataSem.Value × State C F) DataSem.Value)
+    | some mid => doAppAux op values (doStack op values (doLimSafe mid op values))) =
+      .err error := by
+  cases space : doSpace op values state with
+  | none =>
+    have runNone : (Result.err (.abort .typeError) :
+        Result (DataSem.Value × State C F) DataSem.Value) = .err error := by
+      simpa [space] using run
+    simp only [doSpace_swapStackLocals_none op values state xs lsz space]
+    exact runNone
+  | some mid =>
+    rw [space] at run
+    obtain ⟨sfs1, phl1, spaceTarget⟩ :=
+      doSpace_swapStackLocals op values state xs lsz mid space
+    simp only [spaceTarget]
+    obtain ⟨sfs2, smx2, phl2, stackTarget⟩ :=
+      doStack_doLimSafe_swapStackLocals op values mid xs lsz sfs1 phl1
+    simp only [stackTarget]
+    exact doAppAux_error_resource op values (doStack op values (doLimSafe mid op values))
+      sfs2 phl2 smx2 xs lsz (doStack op values (doLimSafe mid op values)).locals
+      (doStack op values (doLimSafe mid op values)).space error run
+
+/-- A successful primitive application carries its value across a
+    stack-and-locals replacement, with only the resource observations free.
+    Flapjack infrastructure toward the port of HOL
+    `evaluate_stack_and_locals_swap`; no separate HOL original. -/
+private theorem doApp_swapStackLocals_val {C F : Type} (op : ClosLang.Op)
+    (values : List DataSem.Value) (state : State C F) (xs : List Stack) (lsz : Option Nat)
+    (value : DataSem.Value) (next : State C F)
+    (run : doApp op values state = .val (value, next)) :
+    ∃ sfs smx phl, doApp op values { state with stack := xs, localsSize := lsz } =
+      .val (value, { next with
+        stack := xs
+        localsSize := lsz
+        safeForSpace := sfs
+        stackMax := smx
+        peakHeapLength := phl }) := by
+  cases op with
+  | install =>
+    simp only [doApp] at run ⊢
+    have installed :=
+      doInstall_swapStackLocals_val values
+        { state with stackMax := none, stackFrameSizes := .ln } xs lsz value next run
+    exact ⟨next.safeForSpace, next.stackMax, next.peakHeapLength, installed⟩
+  | intOp inner =>
+    cases inner with
+    | greater =>
+      simp only [doApp] at run
+      cases run
+    | greaterEq =>
+      simp only [doApp] at run
+      cases run
+    | const i =>
+      simp only [doApp] at run ⊢
+      exact doAppGeneric_swapStackLocals_val (.intOp (.const i)) values state xs lsz value next run
+    | add =>
+      simp only [doApp] at run ⊢
+      exact doAppGeneric_swapStackLocals_val (.intOp .add) values state xs lsz value next run
+    | sub =>
+      simp only [doApp] at run ⊢
+      exact doAppGeneric_swapStackLocals_val (.intOp .sub) values state xs lsz value next run
+    | mult =>
+      simp only [doApp] at run ⊢
+      exact doAppGeneric_swapStackLocals_val (.intOp .mult) values state xs lsz value next run
+    | div =>
+      simp only [doApp] at run ⊢
+      exact doAppGeneric_swapStackLocals_val (.intOp .div) values state xs lsz value next run
+    | mod =>
+      simp only [doApp] at run ⊢
+      exact doAppGeneric_swapStackLocals_val (.intOp .mod) values state xs lsz value next run
+    | less =>
+      simp only [doApp] at run ⊢
+      exact doAppGeneric_swapStackLocals_val (.intOp .less) values state xs lsz value next run
+    | lessEq =>
+      simp only [doApp] at run ⊢
+      exact doAppGeneric_swapStackLocals_val (.intOp .lessEq) values state xs lsz value next run
+    | lessConstSmall n =>
+      simp only [doApp] at run ⊢
+      exact doAppGeneric_swapStackLocals_val (.intOp (.lessConstSmall n)) values state xs lsz
+        value next run
+  | label label =>
+    simp only [doApp] at run ⊢
+    exact doAppGeneric_swapStackLocals_val (.label label) values state xs lsz value next run
+  | ffi name =>
+    simp only [doApp] at run ⊢
+    exact doAppGeneric_swapStackLocals_val (.ffi name) values state xs lsz value next run
+  | wordOp inner =>
+    simp only [doApp] at run ⊢
+    exact doAppGeneric_swapStackLocals_val (.wordOp inner) values state xs lsz value next run
+  | blockOp inner =>
+    simp only [doApp] at run ⊢
+    exact doAppGeneric_swapStackLocals_val (.blockOp inner) values state xs lsz value next run
+  | globOp inner =>
+    simp only [doApp] at run ⊢
+    exact doAppGeneric_swapStackLocals_val (.globOp inner) values state xs lsz value next run
+  | memOp inner =>
+    simp only [doApp] at run ⊢
+    exact doAppGeneric_swapStackLocals_val (.memOp inner) values state xs lsz value next run
+  | thunkOp inner =>
+    simp only [doApp] at run ⊢
+    exact doAppGeneric_swapStackLocals_val (.thunkOp inner) values state xs lsz value next run
+
+/-- A failing primitive application fails identically across a
+    stack-and-locals replacement. Flapjack infrastructure toward the port of
+    HOL `evaluate_stack_and_locals_swap`; no separate HOL original. -/
+private theorem doApp_swapStackLocals_err {C F : Type} (op : ClosLang.Op)
+    (values : List DataSem.Value) (state : State C F) (xs : List Stack) (lsz : Option Nat)
+    (error : ErrorResult DataSem.Value)
+    (run : doApp op values state = .err error) :
+    doApp op values { state with stack := xs, localsSize := lsz } = .err error := by
+  cases op with
+  | install =>
+    simp only [doApp] at run ⊢
+    exact doInstall_swapStackLocals_err values
+      { state with stackMax := none, stackFrameSizes := .ln } xs lsz error run
+  | intOp inner =>
+    cases inner with
+    | greater =>
+      simp only [doApp] at run ⊢
+      exact run
+    | greaterEq =>
+      simp only [doApp] at run ⊢
+      exact run
+    | const i =>
+      simp only [doApp] at run ⊢
+      exact doAppGeneric_swapStackLocals_err (.intOp (.const i)) values state xs lsz error run
+    | add =>
+      simp only [doApp] at run ⊢
+      exact doAppGeneric_swapStackLocals_err (.intOp .add) values state xs lsz error run
+    | sub =>
+      simp only [doApp] at run ⊢
+      exact doAppGeneric_swapStackLocals_err (.intOp .sub) values state xs lsz error run
+    | mult =>
+      simp only [doApp] at run ⊢
+      exact doAppGeneric_swapStackLocals_err (.intOp .mult) values state xs lsz error run
+    | div =>
+      simp only [doApp] at run ⊢
+      exact doAppGeneric_swapStackLocals_err (.intOp .div) values state xs lsz error run
+    | mod =>
+      simp only [doApp] at run ⊢
+      exact doAppGeneric_swapStackLocals_err (.intOp .mod) values state xs lsz error run
+    | less =>
+      simp only [doApp] at run ⊢
+      exact doAppGeneric_swapStackLocals_err (.intOp .less) values state xs lsz error run
+    | lessEq =>
+      simp only [doApp] at run ⊢
+      exact doAppGeneric_swapStackLocals_err (.intOp .lessEq) values state xs lsz error run
+    | lessConstSmall n =>
+      simp only [doApp] at run ⊢
+      exact doAppGeneric_swapStackLocals_err (.intOp (.lessConstSmall n)) values state xs lsz
+        error run
+  | label label =>
+    simp only [doApp] at run ⊢
+    exact doAppGeneric_swapStackLocals_err (.label label) values state xs lsz error run
+  | ffi name =>
+    simp only [doApp] at run ⊢
+    exact doAppGeneric_swapStackLocals_err (.ffi name) values state xs lsz error run
+  | wordOp inner =>
+    simp only [doApp] at run ⊢
+    exact doAppGeneric_swapStackLocals_err (.wordOp inner) values state xs lsz error run
+  | blockOp inner =>
+    simp only [doApp] at run ⊢
+    exact doAppGeneric_swapStackLocals_err (.blockOp inner) values state xs lsz error run
+  | globOp inner =>
+    simp only [doApp] at run ⊢
+    exact doAppGeneric_swapStackLocals_err (.globOp inner) values state xs lsz error run
+  | memOp inner =>
+    simp only [doApp] at run ⊢
+    exact doAppGeneric_swapStackLocals_err (.memOp inner) values state xs lsz error run
+  | thunkOp inner =>
+    simp only [doApp] at run ⊢
+    exact doAppGeneric_swapStackLocals_err (.thunkOp inner) values state xs lsz error run
 
 end Flapjack.Compiler.Backend.DataProps
