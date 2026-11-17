@@ -107,7 +107,7 @@ theorem doAppFallback_frame {C D F G : Type} (op : ClosLang.Op) (args : List Val
       | err error =>
         have swapped := BvlProps.doAppFallbackRerrSwap op args (toBvl source) error
           (toBvl (runtimeFrame source target)) notGlobal
-          ⟨original, notInstall, Or.inl (by intro key present; rwa [domainBvl])⟩
+          ⟨original, notInstall, Or.inl (Or.inl (by intro key present; rwa [domainBvl]))⟩
         rw [swapped]
         cases error <;> rfl
       | val pair =>

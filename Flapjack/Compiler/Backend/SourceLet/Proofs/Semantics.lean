@@ -10,23 +10,6 @@ public import Flapjack.Compiler.Backend.SourceEval.Proofs.OracleInduction
 namespace Flapjack.Compiler.Backend.SourceLet
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL Flapjack.EvaluateHOL Flapjack.SemanticsHOL
 
-/-- Non-failing source programs and their lifted versions have the same
-clock-indexed observations. This is Flapjack proof infrastructure. -/
-private theorem compileDecs_clock_observations {F : Type} (state : State F) (env : SemEnv Value)
-    (program : List Dec) (noFail : ¬ semanticsProg state env program .fail) (clock : Nat) :
-    evaluateProgWithClock state env clock (compileDecs program) =
-      evaluateProgWithClock state env clock program := by
-  cases run : evaluateDecs { state with clock := clock } env program with
-  | mk next result =>
-    have safe : result ≠ .err (.abort .typeError) := by
-      intro bad
-      apply noFail
-      change ∃ k, (evaluateProgWithClock state env k program).2 = .err (.abort .typeError)
-      refine ⟨clock, ?_⟩
-      simp [evaluateProgWithClock, run, bad]
-    have target := compile_decs_correct { state with clock := clock } env program next result ⟨run, safe⟩
-    simp [evaluateProgWithClock, run, target]
-
 /-- The source let-lifting pass preserves all original observations of a
 program that cannot fail with a type error. -/
 @[hol "cakeml/compiler/backend/proofs/source_letProofScript.sml" "compile_semantics"]
@@ -35,7 +18,19 @@ theorem compile_semantics {F : Type} (state : State F) (env : SemEnv Value)
     (premises : ¬ semanticsProg state env program .fail ∧ semanticsProg state env program outcome) :
     semanticsProg state env (compileDecs program) outcome := by
   obtain ⟨noFail, source⟩ := premises
-  have observations := compileDecs_clock_observations state env program noFail
+  have observations : ∀ clock, evaluateProgWithClock state env clock (compileDecs program) =
+      evaluateProgWithClock state env clock program := by
+    intro clock
+    cases run : evaluateDecs { state with clock := clock } env program with
+    | mk next result =>
+      have safe : result ≠ .err (.abort .typeError) := by
+        intro bad
+        apply noFail
+        change ∃ k, (evaluateProgWithClock state env k program).2 = .err (.abort .typeError)
+        refine ⟨clock, ?_⟩
+        simp [evaluateProgWithClock, run, bad]
+      have target := compile_decs_correct { state with clock := clock } env program next result ⟨run, safe⟩
+      simp [evaluateProgWithClock, run, target]
   cases outcome <;> simpa only [semanticsProg, observations] using source
 
 /-- Let-lifting preserves observable semantics when composed into an inserted

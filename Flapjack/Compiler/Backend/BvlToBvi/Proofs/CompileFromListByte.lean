@@ -71,7 +71,7 @@ theorem evaluate_fromListByteBody {C F : Type} (value : Value) (bytes : List (Bi
     decide
   have allocArgs : BviSem.evaluate [zero, lengthExp] (value :: env) start =
       (.val [.number 0, .number (Int.ofNat bytes.length)], middle) := by
-    exact evaluate_pair_threaded _ _ _ _ _ _ _ _ zeroStart lengthShifted
+    exact evaluate_pair _ _ _ _ _ _ zeroStart lengthShifted
   have allocRun : BviSem.evaluate [allocate] (value :: env) start = (.val [.refPtr true ptr], allocatedMiddle) := by
     dsimp [allocate]
     rw [BviSem.evaluate, BviSem.fixClock_evaluate, allocArgs]
@@ -80,7 +80,7 @@ theorem evaluate_fromListByteBody {C F : Type} (value : Value) (bytes : List (Bi
       middle, allocatedMiddle, allocated, BviProps.incClock, ptr, zeros, nonnegative]
   have argsRun : BviSem.evaluate [.var 0, zero, allocate] (value :: env) start =
       (.val [value, .number 0, .refPtr true ptr], allocatedMiddle) := by
-    have restRun := evaluate_pair_threaded zero allocate (value :: env) start start allocatedMiddle (.number 0) (.refPtr true ptr) zeroStart allocRun
+    have restRun := evaluate_pair zero allocate (value :: env) start (.number 0) (.refPtr true ptr) zeroStart allocRun
     exact evaluate_cons_threaded _ _ _ _ _ _ _ _ varStart restRun
   refine ⟨extra + lengthClock, ?_⟩
   change BviSem.evaluate [.call 0 (some fromListByteLocation) [.var 0, zero, allocate] none] (value :: env) start = _

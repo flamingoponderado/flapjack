@@ -63,7 +63,7 @@ theorem evaluatorSimulation_all {C F : Type} (program : DataLang.Prog) :
     have secondSize : sizeOf second < sizeOf (first.seq second) := by
       simp only [DataLang.Prog.seq.sizeOf_spec] at ⊢
       omega
-    rw [DataSem.evaluate, fixClock_evaluate] at run
+    rw [DataSem.evaluate, fixClockEvaluate] at run
     cases firstRun : DataSem.evaluate first source with
     | mk firstResult sourceMid =>
       rw [firstRun] at run
@@ -86,7 +86,7 @@ theorem evaluatorSimulation_all {C F : Type} (program : DataLang.Prog) :
           exprIH second sourceMid targetMid sourceNext result midClock secondSize midRel
             (midLocals rfl) midException notType run
         refine ⟨targetNext, ?_, finalRel, finalLocals⟩
-        rw [DataSem.evaluate, fixClock_evaluate, targetFirst]
+        rw [DataSem.evaluate, fixClockEvaluate, targetFirst]
         exact targetSecond
       | some outcome =>
         have equal : result = some outcome ∧ sourceNext = sourceMid := Prod.mk.inj run.symm
@@ -95,7 +95,7 @@ theorem evaluatorSimulation_all {C F : Type} (program : DataLang.Prog) :
           exprIH first source target sourceNext (some outcome) (by omega) firstSize related
             sameLocals exception notType firstRun
         refine ⟨targetNext, ?_, finalRel, by simp⟩
-        rw [DataSem.evaluate, fixClock_evaluate, targetFirst]
+        rw [DataSem.evaluate, fixClockEvaluate, targetFirst]
   | ifThenElse name yes no =>
     have yesSize : sizeOf yes < sizeOf (DataLang.Prog.ifThenElse name yes no) := by
       simp only [DataLang.Prog.ifThenElse.sizeOf_spec] at ⊢

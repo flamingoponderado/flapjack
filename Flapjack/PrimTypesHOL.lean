@@ -37,7 +37,7 @@ def primTypesProgram : List Dec :=
           .atapp [.atvar (ofString "'a")] (.short (ofString "list"))])])]]
 
 /-- Evaluate declarations and extend the semantic environment on success.
-The source evaluator and its carriers are pending complete source review. -/
+The source evaluator inherits the floating-point assumption in SOUNDNESS item 8. -/
 @[hol "cakeml/semantics/primTypesScript.sml" "add_to_sem_env_def"]
 noncomputable def addToSemEnv {σ : Type}
     (initial : SemanticPrimitivesHOL.State σ × SemanticPrimitivesHOL.SemEnv SemanticPrimitivesHOL.Value)
@@ -47,7 +47,7 @@ noncomputable def addToSemEnv {σ : Type}
   | (_, .err _) => none
 
 /-- Build the primitive semantic environment from the initial FFI state.
-This inherits the evaluator's pending source review and floating-point assumption. -/
+Its evaluator dependency inherits the floating-point assumption in SOUNDNESS item 8. -/
 @[hol "cakeml/semantics/primTypesScript.sml" "prim_sem_env_def"]
 noncomputable def primSemEnv {σ : Type} (ffi : HolFfiState σ) :
     Option (SemanticPrimitivesHOL.State σ × SemanticPrimitivesHOL.SemEnv SemanticPrimitivesHOL.Value) :=

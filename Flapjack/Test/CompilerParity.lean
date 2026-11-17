@@ -1,6 +1,13 @@
 import Flapjack.Test.NestedRelationAudit
 import Flapjack.Test.PredicateDomainAudit
 import Flapjack.Test.PredicateCodecOwnershipAudit
+import Flapjack.Test.UnificationTupleAudit
+import Flapjack.Test.UnificationTuplePublicImportAudit
+import Flapjack.Test.UnificationTupleAllImportAudit
+import Flapjack.Test.GeneraliseMapAudit
+import Flapjack.Test.GeneraliseLengthAudit
+import Flapjack.Test.InferSubstSubmapAudit
+import Flapjack.Test.TypeSubstWalkstarAudit
 import Flapjack.Test.SimulationBodyAudit
 import Flapjack.Test.PredicateDomainQualificationAudit
 import Flapjack.Test.ClosSemGeneratedSizeParity
@@ -355,6 +362,8 @@ import Flapjack.Test.CakeInferenceParity
 import Flapjack.Test.CakeInferCoreParity
 import Flapjack.Test.CakeInferDeclParity
 import Flapjack.Test.CakeDiagnosticParity
+import Flapjack.Test.CakeTypeNameCheckParity
+import Flapjack.Test.CakePatternModelParity
 import Flapjack.Test.CakeBasisParity
 import Flapjack.Test.CakeSourceStoreParity
 import Flapjack.Test.CakeSourceEvaluatorParity

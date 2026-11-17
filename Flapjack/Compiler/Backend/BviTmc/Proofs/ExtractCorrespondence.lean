@@ -42,10 +42,6 @@ private theorem callToBlock_eq_source (loc ticks : Nat) (dest : Option Nat) (arg
       | _, _ => none) = callToBlockSource loc ticks dest args handler := by
   cases dest <;> cases handler <;> simp [callToBlockSource, bind_eq_range, List.range_eq_range']
 
-/-- Shift source variable indices. -/
-@[hol "cakeml/compiler/backend/bvi_tmcScript.sml" "shift_vars_def"]
-def shiftVarsSource (n : Nat) (xs : List Nat) : List Nat := xs.map (· + n)
-
 private abbrev ExtractResult := List Exp × Sum (List Nat) CallBlock
 
 mutual
@@ -79,9 +75,9 @@ def extractListSource (n loc tag : Nat) : List Exp → Option ExtractResult
         | none => none
         | some (bs1, .inl vs1) =>
           if BackendCommon.smallEnoughInt (Int.ofNat (vs1.length + vs2.length)) then
-            some (bs1 ++ bs2, .inl (vs1 ++ shiftVarsSource bs1.length vs2)) else none
+            some (bs1 ++ bs2, .inl (vs1 ++ shiftVars bs1.length vs2)) else none
         | some (bs1, .inr (.callBlock _ [] child [])) =>
-          some (bs1 ++ bs2, .inr (.callBlock tag [] child (shiftVarsSource bs1.length vs2)))
+          some (bs1 ++ bs2, .inr (.callBlock tag [] child (shiftVars bs1.length vs2)))
         | some (_, .inr _) => none
       | some (bs2, .inr cb) =>
         match shiftBlock 1 cb with
@@ -179,13 +175,13 @@ theorem extractListFuel_success_eq (fuel n loc tag : Nat) (xs : List Exp) (resul
                       some (some (bs1 ++ bs2, Sum.inl (vs1 ++ vs2.map (· + bs1.length))))
                       else some none) = some result at run
                     split at run <;>
-                      simp_all [shiftVarsSource, BackendCommon.smallEnoughInt] <;>
+                      simp_all [shiftVars, BackendCommon.smallEnoughInt] <;>
                       omega
                   | inr cb =>
                     cases cb with
                     | rCall ticks args => simp_all
                     | callBlock t left child right =>
-                      cases left <;> cases right <;> simp_all [shiftVarsSource] <;> exact run.symm
+                      cases left <;> cases right <;> simp_all [shiftVars] <;> exact run.symm
 termination_by fuel
 end
 

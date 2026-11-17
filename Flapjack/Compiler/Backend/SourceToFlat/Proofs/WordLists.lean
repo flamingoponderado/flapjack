@@ -51,16 +51,6 @@ private theorem related_literals (genv : GlobalEnv) (lits : List Lit) (flat : Li
       have same := ((valueRel_eqns_nonGlobal).1 _ lit genv).mp head
       simp [same, ih _ tail]
 
-private theorem word8_recover (value : Value) (byte : BitVec 8)
-    (decoded : valueToWord8 value = some byte) : value = .litv (.word8 byte) := by
-  cases value <;> try (simp [valueToWord8] at decoded)
-  case litv lit => cases lit <;> simp_all
-
-private theorem word64_recover (value : Value) (word : BitVec 64)
-    (decoded : valueToWord64 value = some word) : value = .litv (.word64 word) := by
-  cases value <;> try (simp [valueToWord64] at decoded)
-  case litv lit => cases lit <;> simp_all
-
 /-- Successful source byte-list decoding is preserved by related flat values. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "v_to_word8_list_rel"
   (fmap_as_finite_support := [c, tys])]
@@ -74,7 +64,10 @@ theorem valueToWord8List_related (genv : GlobalEnv)
   | some values =>
     have decodedList : maybeAllList (values.map valueToWord8) = some bytes := by
       simpa [valueToWord8List, sourceList] using decoded
-    have shape := maybeAllList_shape valueToWord8 (fun b => Value.litv (.word8 b)) word8_recover values bytes decodedList
+    have shape := maybeAllList_shape valueToWord8 (fun b => Value.litv (.word8 b)) (by
+      intro value byte decoded
+      cases value <;> try (simp [valueToWord8] at decoded)
+      case litv lit => cases lit <;> simp_all) values bytes decodedList
     obtain ⟨flatValues, flatDecoded, listRel⟩ := valueToList_related genv ok source flat values ⟨related, sourceList⟩
     rw [shape] at listRel
     have flatShape : flatValues = bytes.map (FlatSem.Value.litv ∘ Lit.word8) := by
@@ -96,7 +89,10 @@ theorem valueToWord64List_related (genv : GlobalEnv)
   | some values =>
     have decodedList : maybeAllList (values.map valueToWord64) = some words := by
       simpa [valueToWord64List, sourceList] using decoded
-    have shape := maybeAllList_shape valueToWord64 (fun w => Value.litv (.word64 w)) word64_recover values words decodedList
+    have shape := maybeAllList_shape valueToWord64 (fun w => Value.litv (.word64 w)) (by
+      intro value word decoded
+      cases value <;> try (simp [valueToWord64] at decoded)
+      case litv lit => cases lit <;> simp_all) values words decodedList
     obtain ⟨flatValues, flatDecoded, listRel⟩ := valueToList_related genv ok source flat values ⟨related, sourceList⟩
     rw [shape] at listRel
     have flatShape : flatValues = words.map (FlatSem.Value.litv ∘ Lit.word64) := by

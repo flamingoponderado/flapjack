@@ -106,7 +106,7 @@ theorem call_nonTail_noHandler_correct {C F : Type} (returns : List Nat) (names 
             cases called : DataSem.evaluate body sourceEntry with
             | mk outcome last =>
               have sourceClamped : fixClock sourceEntry (DataSem.evaluate body sourceEntry) = (outcome, last) := by
-                rw [fixClock_evaluate, called]
+                rw [fixClockEvaluate, called]
               simp only [sourceEntry] at sourceClamped
               cases outcome with
               | none =>
@@ -123,7 +123,7 @@ theorem call_nonTail_noHandler_correct {C F : Type} (returns : List Nat) (names 
                     obtain ⟨targetLast, targetRun, lastRel, _⟩ :=
                       bodyIH body sourceEntry targetEntry last _ smaller entryRel.1 entryRel.2 entryException notType called
                     have targetClamped := targetRun
-                    rw [← fixClock_evaluate body targetEntry] at targetClamped
+                    rw [← fixClockEvaluate targetEntry body] at targetClamped
                     simp only [targetEntry] at targetClamped
                     refine ⟨targetLast, ?_, lastRel⟩
                     simp [compile, DataSem.evaluate, targetRead, targetFound, unique, targetCut, targetNonzero, targetClamped]
@@ -139,7 +139,7 @@ theorem call_nonTail_noHandler_correct {C F : Type} (returns : List Nat) (names 
                     simp [DataSem.evaluate, read, found, unique, cut, zero, sourceClamped, lengths, sourcePopRun] at run
                     obtain ⟨rfl, rfl⟩ := run
                     have targetClamped : fixClock targetEntry (DataSem.evaluate body targetEntry) = (some (.val returned), targetLast) := by
-                      rw [fixClock_evaluate, targetRun]
+                      rw [fixClockEvaluate, targetRun]
                     simp only [targetEntry] at targetClamped
                     refine ⟨setVars returns returned targetPop, ?_, stateRel_setVars sourcePop targetPop live returns returned lengths popRel⟩
                     simp [compile, DataSem.evaluate, targetRead, targetFound, unique, targetCut, targetNonzero, targetClamped, lengths, targetPopRun]

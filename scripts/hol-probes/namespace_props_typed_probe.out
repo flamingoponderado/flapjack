@@ -10,3 +10,6 @@ nsLookup_nsBind_typed=(∀(n :α) (v :β) (e :(γ, α, β) namespace). nsLookup 
 nsAppend_assoc_typed=∀(e1 :(α, β, γ) namespace) (e2 :(α, β, γ) namespace) (e3 :(α, β, γ) namespace). nsAppend e1 (nsAppend e2 e3) = nsAppend (nsAppend e1 e2) e3
 nsAppend_to_nsBindList_typed=∀(l :(α # β) list). nsAppend (alist_to_ns l :(γ, α, β) namespace) (e :(γ, α, β) namespace) = nsBindList l e
 nsAll_nsAppend_typed=∀(f :(α, β) id -> γ -> bool) (e1 :(α, β, γ) namespace) (e2 :(α, β, γ) namespace). nsAll f e1 ∧ nsAll f e2 ⇒ nsAll f (nsAppend e1 e2)
+nsAll_nsBind_typed=∀(P :(α, β) id -> γ -> bool) (x :β) (v :γ) (e :(α, β, γ) namespace). P (Short x :(α, β) id) v ∧ nsAll P e ⇒ nsAll P (nsBind x v e)
+nsAll_nsSing_typed=∀(R :(α, β) id -> γ -> bool) (n :β) (v :γ). nsAll R (nsSing n v :(α, β, γ) namespace) ⇔ R (Short n :(α, β) id) v
+nsAll2_nsAppend_typed=∀(R :(α, β) id -> γ -> δ -> bool) (e1 :(α, β, γ) namespace) (e1' :(α, β, γ) namespace) (e2 :(α, β, δ) namespace) (e2' :(α, β, δ) namespace). nsAll2 R e1 e2 ∧ nsAll2 R e1' e2' ⇒ nsAll2 R (nsAppend e1 e1') (nsAppend e2 e2')

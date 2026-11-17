@@ -68,6 +68,14 @@ theorem destOpNil_iff {α : Type} (f : Op → Option α) (x : Exp) (i : α) :
       cases args <;> simp
   exact reduction.trans (destOp_iff f x i [])
 
+/-- Recover an integer literal from the matcher. This Flapjack helper combines
+the source operation and integer matcher characterizations. -/
+theorem integerLiteral_of_match (x : Exp) (i : Int) (h : destOpNil destConst x = some i) :
+    ∃ trace, x = .op trace (.intOp (.const i)) [] := by
+  obtain ⟨trace, op, eq, found⟩ := (destOpNil_iff destConst x i).1 h
+  have opEq := (destConst_iff op i).1 found
+  exact ⟨trace, by simpa [opEq] using eq⟩
+
 /-- The source integer-expression matcher preserves the former pattern. -/
 theorem destOpConst_eq_previous (e : Exp) :
     destOpNil destConst e = match e with

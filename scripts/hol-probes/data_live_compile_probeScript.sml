@@ -10,6 +10,172 @@ fun show label th = if null (hyp th) then
   else raise Fail (label ^ " has hypotheses");
 
 val _ = show "is_pure_def_typed" data_liveTheory.is_pure_def;
+val _ = show "is_pure_pmatch_typed" data_liveTheory.is_pure_pmatch;
 val _ = show "compile_def_typed" data_liveTheory.compile_def;
 load "data_liveProofTheory";
 val _ = show "get_code_labels_compile_typed" data_liveProofTheory.get_code_labels_compile;
+val _ = show "compile_correct_typed" data_liveProofTheory.compile_correct;
+val _ = show "state_rel_def_typed" data_liveProofTheory.state_rel_def;
+(* Replay the local theorem with its source proof and inferred state types. *)
+val state_rel_ID_replay = Q.prove (
+  `!s live. data_liveProof$state_rel s s live`,
+  simp [data_liveProofTheory.state_rel_def]);
+val _ = show "state_rel_ID_replay_typed" state_rel_ID_replay;
+(* The source induction theorem is local. Capture the exact inferred source
+   statement; this quotation is typed evidence, not a replay of its proof. *)
+val evaluate_compile_statement = Term `
+  !c s1 res s2 l2 t1 l1 d.
+    (dataSem$evaluate (c,s1) = (res,s2)) /\
+    data_liveProof$state_rel s1 t1 l1 /\
+    (data_live$compile c l2 = (d,l1)) /\
+    (res <> SOME (Rerr (Rabort Rtype_error))) /\
+    (!s3. (dataSem$jump_exc s1 = SOME s3) ==>
+      ?t3. (dataSem$jump_exc t1 = SOME t3) /\
+        data_liveProof$state_rel s3 t3 LN /\
+        (t3.handler = s3.handler) /\ (LENGTH t3.stack = LENGTH s3.stack)) ==>
+    ?t2. (dataSem$evaluate (d,t1) = (res,t2)) /\
+      data_liveProof$state_rel s2 t2 (case res of NONE => l2 | _ => LN)`;
+val _ = (print "evaluate_compile_statement_typed="; print_term evaluate_compile_statement; print "\n");
+(* The local theorem is not exported; replay the original proof with inferred types. *)
+val domain_list_delete_replay = Q.prove (
+  `!xs l. sptree$domain (backend_common$list_delete xs l) =
+          sptree$domain l DIFF set xs`,
+  rw [pred_setTheory.EXTENSION, sptreeTheory.domain_lookup, backend_commonTheory.lookup_list_delete]
+  >> Cases_on `MEM x xs` >> fs []);
+val _ = show "domain_list_delete_replay_typed" domain_list_delete_replay;
+(* Local source statement with inferred types; the original proof is not replayed here. *)
+val pure_do_app_Rval_statement = Term `
+  data_live$is_pure op /\ dataSem$do_app op x s = Rval (q,r) ==>
+    ?safe smax. r = s with <|safe_for_space := safe; stack_max := smax|>`;
+val _ = (print "is_pure_do_app_Rval_statement_typed=";
+  print_term pure_do_app_Rval_statement; print "\n");
+
+load "preamble";
+open preamble data_liveTheory dataSemTheory dataLangTheory data_spaceTheory;
+fun cases_on_op q = Cases_on q >|
+  map (MAP_EVERY Cases_on) [[], [], [], [], [`b`], [`g`], [`m`], [], [`t`]];
+val pure_do_app_Rval_replay = prove (
+  ``is_pure op /\ do_app op x s = Rval (q,r) ==>
+    ?safe smax. r = s with <|safe_for_space := safe; stack_max := smax|>``,
+  cases_on_op `op` \\ TRY (rename [‘EqualConst cc’] \\ Cases_on ‘cc’)
+  \\ dsimp[oneline is_pure_def,do_app_def,do_app_aux_def,AllCaseEqs(),AllCasePreds()]
+  \\ simp[do_space_def,dataLangTheory.op_space_reset_def,
+          data_spaceTheory.op_space_req_def,consume_space_def,do_install_def,UNCURRY,AllCaseEqs()]
+  \\ rw[] \\ fs [state_component_equality,is_pure_def,dataLangTheory.op_space_reset_def,
+                data_spaceTheory.op_space_req_def,allowed_op_def,do_stack_def,AllCaseEqs()]);
+val _ = show "is_pure_do_app_Rval_replay_typed" pure_do_app_Rval_replay;
+
+val pure_do_app_Rerr_replay = prove (
+  ``is_pure op /\ do_app op xs s = Rerr e ==> Rabort Rtype_error = e``,
+  cases_on_op `op` \\ TRY (rename [‘EqualConst cc’] \\ Cases_on ‘cc’)
+  \\ fs [is_pure_def,do_app_def,do_app_aux_def]
+  \\ simp[do_space_def,data_spaceTheory.op_space_req_def,
+          case_eq_thms,do_install_def,UNCURRY] \\ rw[]);
+val _ = show "is_pure_do_app_Rerr_replay_typed" pure_do_app_Rerr_replay;
+
+open sptreeTheory data_liveProofTheory;
+val _ = temp_bring_to_front_overload "get_vars" {Name="get_vars",Thy="dataSem"};
+val _ = temp_bring_to_front_overload "get_var" {Name="get_var",Thy="dataSem"};
+val state_rel_get_vars_replay = prove (
+  ``!args s1 t1 t xs.
+      state_rel s1 t1 (list_insert args t) /\
+      (get_vars args s1.locals = SOME xs) ==>
+      (get_vars args t1.locals = SOME xs)``,
+  Induct \\ fs [get_vars_def] \\ REPEAT STRIP_TAC
+  \\ `state_rel s1 t1 (list_insert args t) /\
+      (get_var h s1.locals = get_var h t1.locals)` by
+   (fs [state_rel_def,list_insert_def,domain_list_insert,get_var_def]
+    \\ METIS_TAC []) \\ fs []
+  \\ every_case_tac >> fs[]
+  \\ RES_TAC \\ fs [] \\ SRW_TAC [] []);
+val _ = show "state_rel_IMP_get_vars_replay_typed" state_rel_get_vars_replay;
+
+val state_rel_IMP_do_app_aux_err = prove (
+  ``(do_app_aux op args s1 = Rerr e) /\ state_rel s1 t1 anything ==>
+    (do_app_aux op args t1 = Rerr e)``,
+  STRIP_TAC
+  \\ cases_on_op `op` \\ TRY (rename [‘EqualConst cc’] \\ Cases_on ‘cc’)
+  \\ fs [do_app_aux_def,do_space_def,with_fresh_ts_def]
+  \\ fs [state_rel_def,consume_space_def,case_eq_thms,do_install_def,UNCURRY]
+  \\ ASM_SIMP_TAC (srw_ss()) [dataSemTheory.state_component_equality]
+  \\ SRW_TAC [] [] \\ fs[]
+  \\ gvs [AllCaseEqs()]
+  \\ ASM_SIMP_TAC (srw_ss()) [dataSemTheory.state_component_equality]);
+val _ = show "state_rel_IMP_do_app_aux_err_replay_typed" state_rel_IMP_do_app_aux_err;
+val state_rel_IMP_do_app_err = prove (
+  ``(do_app op args s1 = Rerr e) /\ state_rel s1 t1 anything ==>
+    (do_app op args t1 = Rerr e)``,
+  STRIP_TAC \\ fs [do_app_def,do_space_def]
+  \\ fs [state_rel_def,consume_space_def,case_eq_thms,do_install_def,UNCURRY]
+  \\ TRY (rveq \\ fs [] \\ rfs [] \\ NO_TAC)
+  \\ qmatch_goalsub_abbrev_tac `do_app_aux op args t1'`
+  \\ TRY (qpat_x_assum `_ = s1'` (ASSUME_TAC o GSYM))
+  \\ `state_rel s1' t1' anything` by (UNABBREV_ALL_TAC \\ fs [state_rel_def])
+  \\ drule_then (qspecl_then [`t1'`,`anything`] mp_tac) state_rel_IMP_do_app_aux_err
+  \\ fs [state_rel_def] \\ rfs []);
+val _ = show "state_rel_IMP_do_app_err_replay_typed" state_rel_IMP_do_app_err;
+
+val state_rel_IMP_do_app_aux = prove (
+  ``(do_app_aux op args s1 = Rval (v,s2)) /\
+    state_rel s1 t1 anything ==>
+    (s1.handler = s2.handler) /\ (s1.stack = s2.stack) /\
+    (∃safe peak smx lss.
+       do_app_aux op args t1 =
+         Rval (v,s2 with <| locals := t1.locals ; locals_size := lss ;
+                            stack := t1.stack ; stack_max := smx ;
+                            handler := t1.handler ; safe_for_space := safe ;
+                            peak_heap_length := peak |>))``,
+  STRIP_TAC
+  \\ cases_on_op `op` \\ TRY (rename [‘EqualConst cc’] \\ Cases_on ‘cc’)
+  \\ fs [do_app_aux_def,do_space_def,with_fresh_ts_def,state_rel_def,check_lim_def]
+  \\ fs [state_rel_def,consume_space_def,case_eq_thms,do_install_def,UNCURRY]
+  \\ ASM_SIMP_TAC (srw_ss()) [dataSemTheory.state_component_equality]
+  \\ SRW_TAC [] [] \\ fs[]
+  \\ gvs [AllCaseEqs()]
+  \\ ASM_SIMP_TAC (srw_ss()) [dataSemTheory.state_component_equality]);
+val _ = show "state_rel_IMP_do_app_aux_replay_typed" state_rel_IMP_do_app_aux;
+
+load "dataPropsTheory";
+open dataPropsTheory;
+val state_rel_IMP_do_app = prove (
+  ``(do_app op args s1 = Rval (v,s2)) /\
+    state_rel s1 t1 anything ==>
+    (s1.handler = s2.handler) /\ (s1.stack = s2.stack) /\
+    (∃safe peak smx lss. do_app op args t1 = Rval (v,s2 with <| locals := t1.locals ;
+                                                   locals_size := lss ;
+                                                   stack := t1.stack ;
+                                                   stack_max := smx ;
+                                                   handler := t1.handler ;
+                                                   safe_for_space := safe ;
+                                                   peak_heap_length := peak|>))``,
+  STRIP_TAC
+  \\ IMP_RES_TAC do_app_const
+  \\ fs [do_app_def, do_space_def, do_install_def
+        , state_rel_def, consume_space_def
+        , UNCURRY, case_eq_thms]
+  \\ ASM_SIMP_TAC (srw_ss()) [dataSemTheory.state_component_equality]
+  >- (rveq \\ fs [] \\ rfs [])
+  \\ qmatch_goalsub_abbrev_tac `do_app_aux op args t1'`
+  \\ TRY (qpat_x_assum `_ = s1'` (ASSUME_TAC o GSYM))
+  \\ `state_rel s1' t1' anything` by (UNABBREV_ALL_TAC \\ fs [state_rel_def])
+  \\ drule_then (qspecl_then [`t1'`,`anything`] mp_tac) state_rel_IMP_do_app_aux
+  \\ fs [state_rel_def] \\ rfs [] \\ rveq
+  \\ fs [Abbr `t1'`]);
+val _ = show "state_rel_IMP_do_app_replay_typed" state_rel_IMP_do_app;
+
+val jump_exc_IMP_state_rel = prove (
+  ``!s1 t1 s2 t2.
+      (jump_exc s1 = SOME s2) /\ (jump_exc t1 = SOME t2) /\
+      state_rel s1 t1 LN /\ (LENGTH s2.stack = LENGTH t2.stack) ==>
+      state_rel (s2 with handler := s1.handler)
+                (t2 with handler := t1.handler) LN``,
+  REPEAT STRIP_TAC
+  \\ FULL_SIMP_TAC std_ss [jump_exc_def]
+  \\ every_case_tac >> fs[]
+  \\ SRW_TAC [] [] \\ fs [state_rel_def]);
+val _ = show "jump_exc_IMP_state_rel_replay_typed" jump_exc_IMP_state_rel;
+
+val SPLIT_PAIR = prove (
+  ``!x y z. (x = (y,z)) <=> (y = FST x) /\ (z = SND x)``,
+  Cases \\ SRW_TAC [] [] \\ METIS_TAC []);
+val _ = show "SPLIT_PAIR_replay_typed" SPLIT_PAIR;

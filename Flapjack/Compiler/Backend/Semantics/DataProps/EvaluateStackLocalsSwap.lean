@@ -253,7 +253,7 @@ private theorem stackLocalsSwap_seq {C F : Type} (first second : DataLang.Prog)
     cases outcome with
     | some stopped =>
       have clamp : fixClock state (evaluate first state) = (some stopped, mid) := by
-        rw [fixClock_evaluate, firstRun]
+        rw [fixClockEvaluate, firstRun]
       have hres : res = some stopped := by
         have h := congrArg Prod.fst run
         simpa only [evaluate, clamp] using h.symm
@@ -299,7 +299,7 @@ private theorem stackLocalsSwap_seq {C F : Type} (first second : DataLang.Prog)
     | none =>
       have secondRun : evaluate second mid = (res, next) := by
         have clamp : fixClock state (evaluate first state) = (none, mid) := by
-          rw [fixClock_evaluate, firstRun]
+          rw [fixClockEvaluate, firstRun]
         simpa only [evaluate, clamp] using run
       have secondArm := secondIH mid midClock res next secondRun
       have firstArm := firstIH none mid firstRun

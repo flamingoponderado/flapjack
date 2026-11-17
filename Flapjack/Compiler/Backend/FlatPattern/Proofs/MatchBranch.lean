@@ -227,13 +227,6 @@ theorem compile_mat_selected_forward {C F : Type} (cfg stateCfg : Config) (trace
       targetEnv targetStart targetNext value' targetScrutinee]
     exact dispatchRun
 
-/-- The generated default expression raises the flat binding exception. -/
-theorem evaluate_generated_bind_failure {C F : Type} (trace : BackendCommon.Tra)
-    (env : FlatSem.Environment FlatSem.Value) (state : FlatSem.State C F) :
-    FlatSem.evaluate env state [.raise trace (.con trace (some (0, none)) [])] =
-      (state, .err (.raise FlatSem.bindExnV)) := by
-  simp [FlatSem.evaluate, FlatSem.bindExnV, BackendCommon.bindTag]
-
 /-- The unmatched match-expression case raises the same exception on both
 sides after related scrutinees have been evaluated. -/
 theorem compile_mat_noMatch_forward {C F : Type} (cfg stateCfg : Config) (trace : BackendCommon.Tra)
@@ -266,6 +259,6 @@ theorem compile_mat_noMatch_forward {C F : Type} (cfg stateCfg : Config) (trace 
   rw [evaluate_let_singleton trace (encNumToName n) (compileExp cfg scrutinee).2.2 _
     targetEnv targetStart targetNext value' targetScrutinee]
   rw [dispatch]
-  exact evaluate_generated_bind_failure trace dispatchEnv _
+  simp [FlatSem.evaluate, FlatSem.bindExnV, BackendCommon.bindTag]
 
 end Flapjack.Compiler.Backend.FlatPattern

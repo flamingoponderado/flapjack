@@ -171,7 +171,7 @@ theorem evaluate_head_call_case {C F : Type}
               · exact (evaluate_append_frame_error loc tag child _ _ next headState error
                   (extended tailValues)).trans original
               · intro extras
-                have frameError := evaluate_append_frame_error loc tag child (shiftVarsSource firstBs.length vs)
+                have frameError := evaluate_append_frame_error loc tag child (shiftVars firstBs.length vs)
                   (headValues ++ (tailValues ++ extras)) next headState error
                   (extended (tailValues ++ extras))
                 simpa [List.append_assoc] using frameError.trans original
@@ -198,23 +198,23 @@ theorem evaluate_head_call_case {C F : Type}
               simp [BviSem.evaluateTuple, argsRun, tailRun]
             have count := evaluate_length firstBs env state next values argsRun
             have rightRun (extras : List Value) (s : BviState C F) :
-                evaluate ((shiftVarsSource firstBs.length vs).map Bvi.Exp.var)
+                evaluate ((shiftVars firstBs.length vs).map Bvi.Exp.var)
                   ((values ++ tailValues) ++ extras) s = (.val tailValues, s) := by
               have extended := evaluate_vars_expand_env vs tailValues s tailValues extras (varsRun s)
               have shifted := evaluate_shift_vars vs (tailValues ++ extras) s values
-              simpa [shiftVarsSource, shiftVars, ← count, List.append_assoc, extended] using shifted
+              simpa [shiftVars, ← count, List.append_assoc, extended] using shifted
             refine ⟨.val (values ++ tailValues), next, bindingsRun, ?_, ?_⟩
             · intro actual eq; cases eq
               obtain ⟨frame, extended⟩ := success values rfl
               obtain ⟨v, same, appended⟩ := evaluate_append_frame_success loc tag child
-                (shiftVarsSource firstBs.length vs) tailValues (values ++ tailValues) next headState
+                (shiftVars firstBs.length vs) tailValues (values ++ tailValues) next headState
                 (.block tag [value]) (by simpa using rightRun []) (extended tailValues)
               cases same
               constructor
               · exact appended.trans original
               · intro extras
                 obtain ⟨v, same, appended⟩ := evaluate_append_frame_success loc tag child
-                  (shiftVarsSource firstBs.length vs) tailValues ((values ++ tailValues) ++ extras)
+                  (shiftVars firstBs.length vs) tailValues ((values ++ tailValues) ++ extras)
                   next headState (.block tag [value]) (rightRun extras)
                   (by simpa [List.append_assoc] using extended (tailValues ++ extras))
                 cases same
@@ -367,7 +367,7 @@ private theorem evaluateOne_inr {C F : Type} (n loc tag : Nat) (e : Bvi.Exp)
       | cons childTag =>
         apply CallExtraction.evaluate_bvi_to_cb_aux_inr_constructor n loc tag childTag args
           (fun env state final result bs cb extracted run bound =>
-            evaluateList_inr n loc childTag args env state final result bs cb extracted run bound)
+            evaluateList_inr n loc childTag args env state final result bs cb ⟨extracted, run, bound⟩)
           env state final result bs cb extracted run bound
       | _ => simp only [extractOneSource] at extracted; split at extracted <;> simp_all
     | _ => simp only [extractOneSource] at extracted; split at extracted <;> simp_all
@@ -375,21 +375,21 @@ private theorem evaluateOne_inr {C F : Type} (n loc tag : Nat) (e : Bvi.Exp)
 termination_by expBudget e
 decreasing_by all_goals subst_vars; simp only [expBudget]; omega
 
-/-- Recursive-call extraction simulates evaluation for every argument list.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_bvi_to_cb_aux_inr" (fmap_as_finite_support := [refs])] -/
+/-- Recursive-call extraction simulates evaluation for every argument list. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_bvi_to_cb_aux_inr"
+  (fmap_as_finite_support := [refs])]
 theorem evaluateList_inr {C F : Type} (n loc tag : Nat) (args : List Bvi.Exp)
     (env : List Value) (state final : BviState C F) (result : BviResult)
     (bs : List Bvi.Exp) (cb : CallBlock)
-    (extracted : extractListSource n loc tag args = some (bs, .inr cb))
-    (run : evaluate [.op (.blockOp (.cons tag)) args] env state = (result, final))
-    (bound : n ≤ env.length) :
+    (h : extractListSource n loc tag args = some (bs, .inr cb) ∧
+      evaluate [.op (.blockOp (.cons tag)) args] env state = (result, final) ∧
+      n ≤ env.length) :
     ∃ argResult next, evaluate bs env state = (argResult, next) ∧
       (∀ values, argResult = .val values →
         evaluate [callBlockToBvi loc cb] values next = (result, final) ∧
         ∀ extras, evaluate [callBlockToBvi loc cb] (values ++ extras) next = (result, final)) ∧
       (∀ error, argResult = .err error → (argResult, next) = (result, final)) := by
+  obtain ⟨extracted, run, bound⟩ := h
   cases args with
   | nil => simp [extractListSource] at extracted
   | cons x xs =>
@@ -411,21 +411,20 @@ theorem evaluateList_inr {C F : Type} (n loc tag : Nat) (args : List Bvi.Exp)
         | inr tailCb =>
           exact evaluate_tail_call_case n loc tag x y ys tailBs tailCb tail
             (fun env state final result bs cb extracted run bound =>
-              evaluateList_inr n loc tag (y :: ys) env state final result bs cb extracted run bound)
+              evaluateList_inr n loc tag (y :: ys) env state final result bs cb ⟨extracted, run, bound⟩)
             env state final result bs cb extracted run bound
 termination_by listBudget args
 decreasing_by all_goals subst_vars; simp only [listBudget]; omega
 end
 
-/-- The complete mutual recursive-call extraction simulation.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_bvi_to_cb_aux_inr_lemma" (fmap_as_finite_support := [refs])] -/
+/-- The complete mutual recursive-call extraction simulation. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_bvi_to_cb_aux_inr_lemma"
+  (fmap_as_finite_support := [refs])]
 theorem evaluate_inr_lemma {C F : Type} :
     (∀ (n loc tag : Nat) (e : Bvi.Exp) (env : List Value) (state final : BviState C F)
       (result : BviResult) (bs : List Bvi.Exp) (cb : CallBlock),
-      extractOneSource n loc tag e = some (bs, .inr cb) →
-      evaluate [.op (.blockOp (.cons tag)) [e]] env state = (result, final) →
+      extractOneSource n loc tag e = some (bs, .inr cb) ∧
+      evaluate [.op (.blockOp (.cons tag)) [e]] env state = (result, final) ∧
       n ≤ env.length →
       ∃ argResult next, evaluate bs env state = (argResult, next) ∧
         (∀ values, argResult = .val values →
@@ -434,25 +433,28 @@ theorem evaluate_inr_lemma {C F : Type} :
         (∀ error, argResult = .err error → (argResult, next) = (result, final))) ∧
     (∀ (n loc tag : Nat) (args : List Bvi.Exp) (env : List Value) (state final : BviState C F)
       (result : BviResult) (bs : List Bvi.Exp) (cb : CallBlock),
-      extractListSource n loc tag args = some (bs, .inr cb) →
-      evaluate [.op (.blockOp (.cons tag)) args] env state = (result, final) →
+      extractListSource n loc tag args = some (bs, .inr cb) ∧
+      evaluate [.op (.blockOp (.cons tag)) args] env state = (result, final) ∧
       n ≤ env.length →
       ∃ argResult next, evaluate bs env state = (argResult, next) ∧
         (∀ values, argResult = .val values →
           evaluate [callBlockToBvi loc cb] values next = (result, final) ∧
           ∀ extras, evaluate [callBlockToBvi loc cb] (values ++ extras) next = (result, final)) ∧
         (∀ error, argResult = .err error → (argResult, next) = (result, final))) := by
-  exact ⟨evaluateOne_inr, evaluateList_inr⟩
+  constructor
+  · intro n loc tag e env state final result bs cb h
+    exact evaluateOne_inr n loc tag e env state final result bs cb h.1 h.2.1 h.2.2
+  · exact evaluateList_inr
 
-/-- Successful call-block conversion preserves evaluation when let-bound.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_bvi_to_cb" (fmap_as_finite_support := [refs])] -/
+/-- Successful call-block conversion preserves evaluation when let-bound. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_bvi_to_cb"
+  (fmap_as_finite_support := [refs])]
 theorem evaluate_bvi_to_cb {C F : Type} (cb : CallBlock) (n loc : Nat) (e : Bvi.Exp)
     (env : List Value) (state final : BviState C F) (result : BviResult) (bs : List Bvi.Exp)
-    (run : evaluate [e] env state = (result, final))
-    (extracted : toBlockSource n loc e = some (bs, cb)) (bound : n ≤ env.length) :
+    (h : evaluate [e] env state = (result, final) ∧
+      toBlockSource n loc e = some (bs, cb) ∧ n ≤ env.length) :
     evaluate [.let bs (callBlockToBvi loc cb)] env state = (result, final) := by
+  obtain ⟨run, extracted, bound⟩ := h
   cases e with
   | call ticks dest args handler =>
     exact CallExtraction.evaluate_bvi_to_cb_call cb n loc ticks dest args handler env state final result bs
@@ -473,7 +475,7 @@ theorem evaluate_bvi_to_cb {C F : Type} (cb : CallBlock) (n loc : Nat) (e : Bvi.
             simp [source] at extracted
             obtain ⟨rfl, rfl⟩ := extracted.symm
             obtain ⟨argResult, next, argsRun, success, failure⟩ :=
-              evaluateList_inr n loc tag args env state final result bindings child source run bound
+              evaluateList_inr n loc tag args env state final result bindings child ⟨source, run, bound⟩
             rw [BviSem.evaluate, BviSem.fixClock_evaluate, argsRun]
             cases argResult with
             | err error => exact failure error rfl

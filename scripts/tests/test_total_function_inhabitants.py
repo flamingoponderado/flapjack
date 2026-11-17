@@ -101,7 +101,7 @@ class TotalFunctionInhabitantsManifestTest(unittest.TestCase):
         return {(self.lean_path, self.lean_name): (
             self.hol_path, self.hol_name,
             (), (), (), (), False, (), False, False, (), (), None, (), (), False,
-            False, (), (), (), (), (), inhabitants,
+            False, (), (), (), (), (), (), (), (), (), inhabitants,
         )}
 
     def validate(self, record, inhabitants=("α", "β")):

@@ -632,7 +632,7 @@ def main (args : List String) : IO UInt32 := do
         let stderr ← IO.getStderr
         stderr.write (ByteArray.mk (bytes.map (fun b => UInt8.ofNat b.toNat)).toArray)
         return 1
-      if let some bytes := Flapjack.Compiler.Inference.Infer.Diagnostics.renderUndefinedConstructor chars error then
+      if let some bytes := Flapjack.Compiler.Inference.Infer.Diagnostics.renderSourceTypeError chars error then
         let stderr ← IO.getStderr
         stderr.write (ByteArray.mk (bytes.map (fun b => UInt8.ofNat b.toNat)).toArray)
         return 1
@@ -649,10 +649,6 @@ def main (args : List String) : IO UInt32 := do
         stderr.write (ByteArray.mk (bytes.map (fun b => UInt8.ofNat b.toNat)).toArray)
         return 1
       if let some bytes := Flapjack.Compiler.Inference.Infer.Diagnostics.renderValueRestriction chars error then
-        let stderr ← IO.getStderr
-        stderr.write (ByteArray.mk (bytes.map (fun b => UInt8.ofNat b.toNat)).toArray)
-        return 1
-      if let some bytes := Flapjack.Compiler.Inference.Infer.Diagnostics.renderDatatypeError chars error then
         let stderr ← IO.getStderr
         stderr.write (ByteArray.mk (bytes.map (fun b => UInt8.ofNat b.toNat)).toArray)
         return 1

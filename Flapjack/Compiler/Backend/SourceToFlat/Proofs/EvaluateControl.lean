@@ -92,15 +92,6 @@ def ExprListSim {C F : Type} (genv : GlobalEnv) (compMap : Environment) (trace :
   let flat := FlatSem.evaluate flatEnv flatState (compileExps trace compMap expressions)
   EvalResultRel genv source.2 flat.2 ∧ StateRel genv source.1 flat.1
 
-/-- A literal is simulated by the compiled literal. -/
-theorem exprSim_literal {C F : Type} (genv : GlobalEnv) (compMap : Environment) (trace : List VarN)
-    (sourceEnv : SemEnv SemanticPrimitivesHOL.Value) (flatEnv : FlatSem.Environment FlatSem.Value)
-    (sourceState : SemanticPrimitivesHOL.State F) (flatState : FlatSem.State C F)
-    (statesRel : StateRel genv sourceState flatState) (lit : Lit) :
-    ExprSim genv compMap trace sourceEnv flatEnv sourceState flatState (.lit lit) := by
-  simp only [ExprSim, EvaluateHOL.evaluate, compileExp, FlatSem.evaluate]
-  exact ⟨.value (.cons (.literal genv lit) .nil), statesRel⟩
-
 /-- Function creation preserves simulation when the captured local
 environment and the unshadowed global environment satisfy their relations. -/
 theorem exprSim_function {C F : Type} (genv : GlobalEnv) (compMap : Environment)

@@ -53,7 +53,7 @@ private theorem nonLabelErrorSwap {C D F : Type} (op : ClosLang.Op) (args : List
             simp [original] at run
             exact nonType run.symm
         have swapped := BvlProps.doAppFallbackRerrSwap op args (toBvl source) err
-          (toBvl (runtimeFrame source target)) notGlobal ⟨original, notInstall, domain'⟩
+          (toBvl (runtimeFrame source target)) notGlobal ⟨original, notInstall, Or.inl domain'⟩
         rw [swapped]
         cases err <;> simp_all
 

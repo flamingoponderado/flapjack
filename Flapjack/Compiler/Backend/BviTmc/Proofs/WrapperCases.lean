@@ -48,15 +48,22 @@ theorem wrapper_strip_tick (n loc locOpt : Nat) (body wrapper : Bvi.Exp)
   simp only [rewriteWrapperSource] at run
   cases h : rewriteWrapperSource loc locOpt n body <;> simp_all
 
-/-- Flapjack infrastructure: optimized code survives both evaluations. This
-is untagged until the underlying BVI evaluator is source-reviewed. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : BviStateBroad C F, (BviState.ofBroad s).toBroad = s) ∧
+      (∀ s : BviState C F, BviState.ofBroad s.toBroad = s) :=
+  BviSem.holFmapAsFiniteSupportWitness
+
+/-- Optimized code survives both evaluations. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_pres_opt_code"
+  (fmap_as_finite_support := [refs])]
 theorem evaluate_pres_opt_code {C D F G : Type} (loc locOpt : Nat)
-    (s1 u1 : BviState C F) (s2 u2 : BviState D G)
-    (xs : List Bvi.Exp) (env1 env2 : List Value) (r1 r2 : BviResult)
-    (code : optimisedCode loc locOpt s1.code s2.code)
-    (run1 : evaluate xs env1 s1 = (r1, u1))
-    (run2 : evaluate xs env2 s2 = (r2, u2)) :
+    (s1 : BviState C F) (s2 : BviState D G)
+    (xs : List Bvi.Exp) (env1 env2 : List Value) (r1 : BviResult) (u1 : BviState C F)
+    (r2 : BviResult) (u2 : BviState D G)
+    (h : optimisedCode loc locOpt s1.code s2.code ∧
+      evaluate xs env1 s1 = (r1, u1) ∧ evaluate xs env2 s2 = (r2, u2)) :
     optimisedCode loc locOpt u1.code u2.code := by
+  obtain ⟨code, run1, run2⟩ := h
   obtain ⟨arity, body, wrapper, worker, sourceFound, targetFound, workerFound, wrap, work⟩ := code
   have sourceGrowth := BviProps.evaluate_code_mono xs env1 s1 u1 r1 run1
   have targetGrowth := BviProps.evaluate_code_mono xs env2 s2 u2 r2 run2

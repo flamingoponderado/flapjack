@@ -4,8 +4,8 @@ public import Flapjack.TypeSystemHOL.Patterns
 
 @[expose] public section
 
-/-! Declarative primitive-operator typing from the source type system.
-These rules are separate from the executable inference implementation. -/
+/-! Primitive-operator predicates and declarative typing from the source type
+system. Executable inference also uses the shared predicates. -/
 namespace Flapjack.TypeSystemHOL
 open Flapjack.AstHOL
 

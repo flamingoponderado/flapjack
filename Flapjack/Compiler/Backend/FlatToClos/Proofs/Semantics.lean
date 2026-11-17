@@ -47,18 +47,6 @@ theorem decResultRel_outcome
     | timeoutError => rfl
     | ffiError event => rfl
 
-/-- Adding the initializer's unit value does not affect declaration result
-correspondence. -/
-theorem decResultRel_init (flat : Option (ErrorResult FlatSem.Value))
-    (clos : Result (List ClosSem.Value) ClosSem.Value) (related : DecResultRel flat clos) :
-    DecResultRel flat (match clos with
-      | .val values => .val (ClosSem.unitValue :: values)
-      | .err error => .err error) := by
-  cases related with
-  | success values => exact .success _
-  | raise rel => exact .raise rel
-  | abort error => exact .abort error
-
 /-- For every clock, the flat and compiled closure programs have related
 results and identical FFI state. -/
 theorem compileProg_clock_observation {C F : Type} (ffi : HolFfiState F)
@@ -79,7 +67,15 @@ theorem compileProg_clock_observation {C F : Type} (ffi : HolFfiState F)
       (FlatSem.evaluateDecs (FlatSem.initialState ffi k config) decs).2 = some (.abort .typeError) from ⟨clock, failure⟩]
   obtain ⟨result, target, relation, states, run⟩ :=
     compileProg_evaluate_related ffi maxApp clock config oracle compiler decs positive install matchFree noTypeError
-  have rel := decResultRel_init _ _ relation
+  have rel : ∀ flat clos, DecResultRel flat clos → DecResultRel flat (match clos with
+      | .val values => .val (ClosSem.unitValue :: values)
+      | .err error => .err error) := by
+    intro flat clos related
+    cases related with
+    | success values => exact .success _
+    | raise rel => exact .raise rel
+    | abort error => exact .abort error
+  have rel := rel _ _ relation
   have ffiEq := states.2.1
   rw [run]
   cases result <;> exact ⟨by simpa using rel, ffiEq⟩
@@ -213,8 +209,10 @@ theorem compileSemantics_source {C F : Type} (ffi : HolFfiState F)
   rintro ⟨positive, matchFree, oracleSafe, oracleEq, compilerEq⟩ safe
   let initialOracle : ClosSem.CompileOracle C := pureCo incCompileDecsProofSide ∘ config.compileOracle
   let initialCompiler := pureCc ClosInterp.insertProgram compiler
-  have install : installConfigRel config initialOracle initialCompiler :=
-    production_installConfigRel config compiler oracleSafe compilerEq
+  have install : installConfigRel config initialOracle initialCompiler := by
+    refine ⟨oracleSafe, rfl, ?_⟩
+    have factor := (incCompileDecs_intro (P := Unit) (fun (_ : Unit) => ((), [])) compiler).2
+    exact compilerEq.trans factor.symm
   have flatClos : ClosSem.semantics ffi maxApp HolFiniteMapExact.empty initialOracle
       initialCompiler (compileProg decs) = FlatSem.semantics config ffi decs := by
     simpa [HolFiniteMapExact.holEmpty] using

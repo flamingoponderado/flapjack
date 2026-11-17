@@ -25,24 +25,6 @@ theorem unavailable_mem_aux {C F : Type} (op : ClosLang.MemOp) (args : List Data
   cases op <;> simp [isUnavailableMemory] at unavailable <;>
     cases args <;> simp [doAppAux, applyNonFfi] at run
 
-/-- The unavailable byte-vector primitives are classified as pure. -/
-theorem unavailable_mem_isPure (op : ClosLang.MemOp) (unavailable : isUnavailableMemory op = true) :
-    isPure (.memOp op) = true := by
-  cases op <;> simp_all [isUnavailableMemory, isPure]
-
-/-- Dead assignments using unavailable byte-vector operations satisfy the
-liveness simulation because successful application is impossible. -/
-theorem simulationFor_removed_unavailableMemory {C F : Type} (dest : Nat) (op : ClosLang.MemOp)
-    (names : List Nat) (live : NumSet) (unavailable : isUnavailableMemory op = true)
-    (dead : sptLookup dest live = none) :
-    simulationFor (C := C) (F := F) (.assign dest (.memOp op) names none) live := by
-  have pure := unavailable_mem_isPure op unavailable
-  apply simulationFor_removed_of_frame dest (.memOp op) names live pure dead
-  intro args state next value run
-  have space := pure_mem_doSpace op args state pure
-  simp only [doApp, space] at run
-  exact False.elim (unavailable_mem_aux op args _ next value unavailable run)
-
 /-- If an operation requires a live-name annotation, its unannotated
 assignment is always a type error. -/
 theorem simulationFor_removed_requiresNames {C F : Type} (dest : Nat) (op : ClosLang.Op)
@@ -77,25 +59,6 @@ theorem memoryLength_aux_same {C F : Type} (op : ClosLang.MemOp) (args : List Da
             cases entry <;> simp [found] at run
             all_goals exact run.2.symm
 
-/-- Array-length reads are pure. -/
-theorem memoryLength_isPure (op : ClosLang.MemOp) (lengthOp : isMemoryLength op = true) :
-    isPure (.memOp op) = true := by
-  cases op <;> simp_all [isMemoryLength, isPure]
-
-/-- Dead array-length reads satisfy the liveness simulation. -/
-theorem simulationFor_removed_memoryLength {C F : Type} (dest : Nat) (op : ClosLang.MemOp)
-    (names : List Nat) (live : NumSet) (lengthOp : isMemoryLength op = true)
-    (dead : sptLookup dest live = none) :
-    simulationFor (C := C) (F := F) (.assign dest (.memOp op) names none) live := by
-  have pure := memoryLength_isPure op lengthOp
-  apply simulationFor_removed_of_frame dest (.memOp op) names live pure dead
-  intro args state next value run
-  have space := pure_mem_doSpace op args state pure
-  simp only [doApp, space] at run
-  have equal := memoryLength_aux_same op args _ next value lengthOp run
-  subst next
-  simp [stateRel, doStack, doLimSafe]
-
 /-- The pure memory bounds-check primitives. -/
 def isMemoryBounds : ClosLang.MemOp → Bool
   | .boundsCheckArray | .boundsCheckByte _ => true
@@ -122,25 +85,6 @@ theorem memoryBounds_aux_same {C F : Type} (op : ClosLang.MemOp) (args : List Da
             | some entry =>
               cases entry <;> simp [found] at run
               all_goals exact run.2.symm
-
-/-- Memory bounds checks are pure. -/
-theorem memoryBounds_isPure (op : ClosLang.MemOp) (boundsOp : isMemoryBounds op = true) :
-    isPure (.memOp op) = true := by
-  cases op <;> simp_all [isMemoryBounds, isPure]
-
-/-- Dead memory bounds checks satisfy the liveness simulation. -/
-theorem simulationFor_removed_memoryBounds {C F : Type} (dest : Nat) (op : ClosLang.MemOp)
-    (names : List Nat) (live : NumSet) (boundsOp : isMemoryBounds op = true)
-    (dead : sptLookup dest live = none) :
-    simulationFor (C := C) (F := F) (.assign dest (.memOp op) names none) live := by
-  have pure := memoryBounds_isPure op boundsOp
-  apply simulationFor_removed_of_frame dest (.memOp op) names live pure dead
-  intro args state next value run
-  have space := pure_mem_doSpace op args state pure
-  simp only [doApp, space] at run
-  have equal := memoryBounds_aux_same op args _ next value boundsOp run
-  subst next
-  simp [stateRel, doStack, doLimSafe]
 
 /-- Indexed value reads preserve the auxiliary state on success. -/
 theorem memEl_aux_same {C F : Type} (args : List DataSem.Value) (state next : State C F)
@@ -173,18 +117,6 @@ theorem memEl_aux_same {C F : Type} (args : List DataSem.Value) (state next : St
                 | none => simp [negative, slot] at run
                 | some item => simp [negative, slot] at run; exact run.2.symm
 
-/-- Dead indexed value reads satisfy the liveness simulation. -/
-theorem simulationFor_removed_memEl {C F : Type} (dest : Nat) (names : List Nat) (live : NumSet)
-    (dead : sptLookup dest live = none) :
-    simulationFor (C := C) (F := F) (.assign dest (.memOp .el) names none) live := by
-  apply simulationFor_removed_of_frame dest (.memOp .el) names live rfl dead
-  intro args state next value run
-  have space := pure_mem_doSpace .el args state rfl
-  simp only [doApp, space] at run
-  have equal := memEl_aux_same args _ next value run
-  subst next
-  simp [stateRel, doStack, doLimSafe]
-
 /-- Indexed byte reads preserve the auxiliary state on success. -/
 theorem derefByte_aux_same {C F : Type} (args : List DataSem.Value) (state next : State C F)
     (value : DataSem.Value) (run : doAppAux (.memOp .derefByte) args state = .val (value, next)) : next = state := by
@@ -209,36 +141,5 @@ theorem derefByte_aux_same {C F : Type} (args : List DataSem.Value) (state next 
               · cases slot : bytes[index.toNat]? with
                 | none => simp [negative, slot] at run
                 | some byte => simp [negative, slot] at run; exact run.2.symm
-
-/-- Dead indexed byte reads satisfy the liveness simulation. -/
-theorem simulationFor_removed_derefByte {C F : Type} (dest : Nat) (names : List Nat) (live : NumSet)
-    (dead : sptLookup dest live = none) :
-    simulationFor (C := C) (F := F) (.assign dest (.memOp .derefByte) names none) live := by
-  apply simulationFor_removed_of_frame dest (.memOp .derefByte) names live rfl dead
-  intro args state next value run
-  have space := pure_mem_doSpace .derefByte args state rfl
-  simp only [doApp, space] at run
-  have equal := derefByte_aux_same args _ next value run
-  subst next
-  simp [stateRel, doStack, doLimSafe]
-
-/-- All dead pure memory assignments satisfy the liveness simulation. This
-case is untagged pending the source evaluator and carrier review. -/
-theorem simulationFor_removed_memory {C F : Type} (dest : Nat) (op : ClosLang.MemOp)
-    (names : List Nat) (live : NumSet) (pure : isPure (.memOp op) = true)
-    (dead : sptLookup dest live = none) :
-    simulationFor (C := C) (F := F) (.assign dest (.memOp op) names none) live := by
-  cases op <;> simp [isPure] at pure
-  case el => exact simulationFor_removed_memEl dest names live dead
-  case length => exact simulationFor_removed_memoryLength dest _ names live rfl dead
-  case lengthByte => exact simulationFor_removed_memoryLength dest _ names live rfl dead
-  case derefByte => exact simulationFor_removed_derefByte dest names live dead
-  case concatByteVec => exact simulationFor_removed_unavailableMemory dest _ names live rfl dead
-  case toListByte => exact simulationFor_removed_unavailableMemory dest _ names live rfl dead
-  case lengthByteVec => exact simulationFor_removed_unavailableMemory dest _ names live rfl dead
-  case derefByteVec => exact simulationFor_removed_unavailableMemory dest _ names live rfl dead
-  case stringCmp fast cmp => exact simulationFor_removed_requiresNames dest _ names live rfl
-  case boundsCheckArray => exact simulationFor_removed_memoryBounds dest _ names live rfl dead
-  case boundsCheckByte loose => exact simulationFor_removed_memoryBounds dest _ names live rfl dead
 
 end Flapjack.Compiler.Backend.DataLive

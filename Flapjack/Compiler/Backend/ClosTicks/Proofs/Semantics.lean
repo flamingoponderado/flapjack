@@ -1,8 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.ClosTicks.Proofs.Simulation
-public import Flapjack.Compiler.Backend.Semantics.ClosSem.SemanticsSimulation
-public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateEventsClockFull
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.SemanticsRelated
 public import Flapjack.FiniteMap.EmptyExact
 public import Flapjack.Compiler.Backend.Semantics.ClosProps.ResultObservations
 
@@ -56,60 +55,20 @@ theorem semantics_remove_ticks_core {C F : Type} (ffi : HolFfiState F) (maxApp :
       have sourceError : sourceResult = .err (.abort .typeError) :=
         (resultRel_observations _ _ related).1.mpr resultEq
       exact sourceSafe (clock + extra) (by simpa [sourceRun] using sourceError)
-  have terminatingEq :
-      terminatingObservation ffi maxApp HolFiniteMapExact.empty oracle (pureCc compileInc compiler) program =
-      terminatingObservation ffi maxApp HolFiniteMapExact.empty (pureCo compileInc ∘ oracle) compiler (removeList program) := by
-    funext behavior
-    apply propext
-    constructor
-    · rintro ⟨clock, result, final, outcome, sourceRun, outcomeEq, behaviorEq⟩
-      have notTimeout : result ≠ .err (.abort .timeoutError) := by
-        intro impossible
-        subst result
-        simp at outcomeEq
-      cases targetRun : evaluate (removeList program) [] (targetState clock) with
-      | mk targetResult targetFinal =>
-        obtain ⟨extra, sourceResult, sourceFinal, sourceExtended, related, ffiEq⟩ :=
-          simulation clock targetResult targetFinal targetRun
-        have shifted := evaluate_initial_addClock ffi maxApp clock extra HolFiniteMapExact.empty oracle
-          (pureCc compileInc compiler) program result final sourceRun notTimeout
-        change evaluate program [] (sourceState (clock + extra)) = _ at shifted
-        rw [sourceExtended] at shifted
-        obtain ⟨resultEq, stateEq⟩ := Prod.mk.inj shifted
-        subst sourceResult
-        refine ⟨clock, targetResult, targetFinal, outcome, targetRun, ?_, ?_⟩
-        · exact (resultHasOutcome_iff _ outcome).mp
-            (((resultRel_observations _ _ related).2 outcome).mp ((resultHasOutcome_iff _ outcome).mpr outcomeEq))
-        · have finalFfi : final.ffi = targetFinal.ffi := by
-            rw [← ffiEq, stateEq]
-          simpa [finalFfi] using behaviorEq
-    · rintro ⟨clock, result, final, outcome, targetRun, outcomeEq, behaviorEq⟩
-      obtain ⟨extra, sourceResult, sourceFinal, sourceRun, related, ffiEq⟩ := simulation clock result final targetRun
-      refine ⟨clock + extra, sourceResult, sourceFinal, outcome, sourceRun, ?_, ?_⟩
-      · exact (resultHasOutcome_iff _ outcome).mp
-          (((resultRel_observations _ _ related).2 outcome).mpr ((resultHasOutcome_iff _ outcome).mpr outcomeEq))
-      · simpa [ffiEq] using behaviorEq
-  have tracesEq :
-      HolLList.buildLprefixLub (fun trace => ∃ clock, trace = HolLList.fromList
-        (evaluate (removeList program) [] (targetState clock)).2.ffi.ioEvents) =
-      HolLList.buildLprefixLub (fun trace => ∃ clock, trace = HolLList.fromList
-        (evaluate program [] (sourceState clock)).2.ffi.ioEvents) := by
-    apply clocked_traces_lub_eq
-    · exact evaluate_initial_ioEvents_mono ffi maxApp HolFiniteMapExact.empty (pureCo compileInc ∘ oracle) compiler (removeList program)
-    · exact evaluate_initial_ioEvents_mono ffi maxApp HolFiniteMapExact.empty oracle (pureCc compileInc compiler) program
-    · intro clock
-      cases targetRun : evaluate (removeList program) [] (targetState clock) with
-      | mk result final =>
-        obtain ⟨extra, sourceResult, sourceFinal, sourceRun, _, ffiEq⟩ := simulation clock result final targetRun
-        exact ⟨extra, by simp [sourceRun, ffiEq]⟩
-  unfold semantics
-  simp only [HolFiniteMapExact.holEmpty, show ¬ ∃ clock, (evaluate program [] (initialState ffi maxApp HolFiniteMapExact.empty oracle
-      (pureCc compileInc compiler) clock)).1 = .err (.abort .typeError) from
-      fun ⟨clock, error⟩ => sourceSafe clock error,
-    show ¬ ∃ clock, (evaluate (removeList program) [] (initialState ffi maxApp HolFiniteMapExact.empty
-      (pureCo compileInc ∘ oracle) compiler clock)).1 = .err (.abort .typeError) from
-      fun ⟨clock, error⟩ => targetSafe clock error, if_false]
-  rw [terminatingEq, ← tracesEq]
+  apply Eq.symm
+  apply semantics_eq_of_related_clocked_simulation ffi maxApp
+    HolFiniteMapExact.empty HolFiniteMapExact.empty
+    (pureCo compileInc ∘ oracle) oracle compiler (pureCc compileInc compiler)
+    (removeList program) program targetSafe
+  intro clock result final run
+  obtain ⟨extra, sourceResult, sourceFinal, sourceRun, related, ffiEq⟩ := simulation clock result final run
+  have toStandard (left right : Result (List Value) Value) (h : ResultRel left right) :
+      SemanticPrimitivesProps.resultRel (List.Forall₂ ValueRel) ValueRel left right := by
+    cases left <;> cases right <;> simp_all [ResultRel, SemanticPrimitivesProps.resultRel]
+    case err.err left right =>
+      cases left <;> cases right <;> simp_all [SemanticPrimitivesProps.excRel]
+  have observed := resultRelOutcome (List.Forall₂ ValueRel) ValueRel _ _ (toStandard _ _ related)
+  exact ⟨extra, sourceResult, sourceFinal, sourceRun, observed.1.symm, observed.2.symm, ffiEq.symm⟩
 
 /-- Tick removal preserves the original whole-program observations. -/
 @[hol "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml" "semantics_remove_ticks"

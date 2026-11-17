@@ -41,10 +41,13 @@ theorem evaluate_if {C F : Type} (condition yes no : Bvi.Exp)
         WorkerCore (rewriteWorkerSource loc locOpt env1.length (env1.length + 1) env1.length
           (.ifThenElse condition yes no)) env1 env2 f target holePtr result final) := by
   constructor
-  · apply evaluate_if_core condition yes no source env1 result final opt f target env2
+  · apply evaluate_if_to_core condition yes no yes no source env1 result final opt f target env2
       run notTypeError environments conditionIH
-    intro branch mid g t conditionRun selected branchRun env states
-    exact (branchIH branch mid g t conditionRun selected branchRun env states).1
+    intro branch branchTarget mid g t pair branchRun env states conditionRuns
+    obtain ⟨r, _, sourceCondition, _⟩ := conditionRuns
+    rcases pair with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
+    · exact (branchIH _ mid g t ⟨r, sourceCondition⟩ (Or.inl rfl) branchRun env states).1
+    · exact (branchIH _ mid g t ⟨r, sourceCondition⟩ (Or.inr rfl) branchRun env states).1
   · intro locOpt code
     constructor
     · intro wrapper wrapperRun

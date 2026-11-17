@@ -1,0 +1,28 @@
+(* Original CakeML computational walker, including its one-step result. *)
+load "unifyTheory";
+open HolKernel Parse boolLib bossLib;
+val _ = Globals.linewidth := 1000000;
+
+fun show label tm =
+  (print (label ^ "="); print_term (rhs (concl (EVAL tm))); print "\n");
+
+val _ = show "code_none" ``unify$cvwalk_code (LN :infer_t num_map) 7``;
+val _ = show "code_db" ``unify$cvwalk_code (insert 2 (Infer_Tvar_db 4) LN) 2``;
+val _ = show "code_app" ``unify$cvwalk_code (insert 2 (Infer_Tapp [Infer_Tuvar 3] 5) LN) 2``;
+val _ = show "code_var" ``unify$cvwalk_code (insert 2 (Infer_Tuvar 7) LN) 2``;
+val _ = show "walk_chain" ``unify$tcvwalk (insert 2 (Infer_Tuvar 7) (insert 7 (Infer_Tvar_db 4) LN)) 2``;
+val _ = show "occurs_empty" ``unify$tcocwl (LN :infer_t num_map) 3 [[]]``;
+val _ = show "occurs_var" ``unify$tcocwl (LN :infer_t num_map) 3 [[Infer_Tuvar 3]]``;
+val _ = show "occurs_db" ``unify$tcocwl (LN :infer_t num_map) 3 [[Infer_Tvar_db 3]]``;
+val _ = show "occurs_nested" ``unify$tcocwl (LN :infer_t num_map) 3 [[Infer_Tapp [Infer_Tvar_db 2; Infer_Tapp [Infer_Tuvar 3] 5] 4]]``;
+val _ = show "occurs_chain" ``unify$tcocwl (insert 2 (Infer_Tuvar 7) LN) 7 [[Infer_Tuvar 2]]``;
+val _ = show "star_empty" ``unify$tcwalkstar_p1 (LN :infer_t num_map) [] []``;
+val _ = show "star_var" ``unify$tcwalkstar_p1 (LN :infer_t num_map) [Infer_Tuvar 3] []``;
+val _ = show "star_nested" ``unify$tcwalkstar_p1 (LN :infer_t num_map) [Infer_Tapp [Infer_Tvar_db 2; Infer_Tapp [Infer_Tuvar 3] 5] 4] []``;
+val _ = show "star_chain" ``unify$tcwalkstar_p1 (insert 2 (Infer_Tuvar 7) (insert 7 (Infer_Tvar_db 4) LN)) [Infer_Tuvar 2] []``;
+val _ = show "star_order" ``unify$tcwalkstar_p1 (insert 2 (Infer_Tvar_db 4) LN) [Infer_Tuvar 2; Infer_Tvar_db 1; Infer_Tuvar 7] []``;
+val _ = show "unify_empty" ``unify$tcunify (LN :infer_t num_map) []``;
+val _ = show "unify_arity" ``unify$tcunify (LN :infer_t num_map) [([Infer_Tapp [Infer_Tvar_db 1] 4],[Infer_Tapp [] 4])]``;
+val _ = show "unify_db_mismatch" ``unify$tcunify (LN :infer_t num_map) [([Infer_Tvar_db 1],[Infer_Tvar_db 2])]``;
+val _ = show "unify_occurs" ``unify$tcunify (LN :infer_t num_map) [([Infer_Tuvar 0],[Infer_Tapp [Infer_Tapp [Infer_Tuvar 0] 6] 5])]``;
+val _ = show "unify_nested" ``unify$tcunify (LN :infer_t num_map) [([Infer_Tapp [Infer_Tuvar 0; Infer_Tuvar 1] 4],[Infer_Tapp [Infer_Tapp [] 5; Infer_Tuvar 0] 4])]``;

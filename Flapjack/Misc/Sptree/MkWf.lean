@@ -15,6 +15,21 @@ def sptMkWf {α : Type} : Spt α → Spt α
   | .bn left right => sptMkBN (sptMkWf left) (sptMkWf right)
   | .bs left value right => sptMkBS (sptMkWf left) value (sptMkWf right)
 
+/-- Normalization produces a well-formed sparse tree. -/
+@[hol "hol4/src/finite_maps/sptreeScript.sml" "wf_mk_wf"]
+theorem sptWf_mkWf {α : Type} (tree : Spt α) : sptWf (sptMkWf tree) = true := by
+  induction tree with
+  | ln => rfl
+  | ls value => rfl
+  | bn left right ihLeft ihRight =>
+    simp only [sptMkWf]
+    cases hleft : sptMkWf left <;> cases hright : sptMkWf right <;>
+      simp_all [sptMkBN, sptWf, sptIsEmpty]
+  | bs left value right ihLeft ihRight =>
+    simp only [sptMkWf]
+    cases hleft : sptMkWf left <;> cases hright : sptMkWf right <;>
+      simp_all [sptMkBS, sptWf, sptIsEmpty]
+
 private theorem lookup_mkBN {α : Type} (left right : Spt α) (key : Nat) :
     sptLookup key (sptMkBN left right) = sptLookup key (.bn left right) := by
   cases left <;> cases right <;> by_cases h0 : key = 0 <;>

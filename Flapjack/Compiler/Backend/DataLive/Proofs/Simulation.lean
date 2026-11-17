@@ -207,7 +207,7 @@ theorem simulationFor_seq {C F : Type} (first second : DataLang.Prog) (live : Nu
     cases firstResult with
     | none =>
       have secondRun : DataSem.evaluate second sourceMid = (result, sourceNext) := by
-        rw [DataSem.evaluate, fixClock_evaluate, firstRun] at run
+        rw [DataSem.evaluate, fixClockEvaluate, firstRun] at run
         exact run
       obtain ⟨targetMid, targetFirst, midRel⟩ :=
         firstIH source target none sourceMid firstRun firstRel (by simp) exception
@@ -219,17 +219,17 @@ theorem simulationFor_seq {C F : Type} (first second : DataLang.Prog) (live : Nu
         secondIH sourceMid targetMid result sourceNext secondRun midRel notType midException
       refine ⟨targetNext, ?_, finalRel⟩
       simp only [compile]
-      rw [DataSem.evaluate, fixClock_evaluate, targetFirst]
+      rw [DataSem.evaluate, fixClockEvaluate, targetFirst]
       exact targetSecond
     | some outcome =>
       have firstResultEq : result = some outcome ∧ sourceNext = sourceMid := by
-        rw [DataSem.evaluate, fixClock_evaluate, firstRun] at run
+        rw [DataSem.evaluate, fixClockEvaluate, firstRun] at run
         exact Prod.mk.inj run.symm
       obtain ⟨rfl, rfl⟩ := firstResultEq
       obtain ⟨targetNext, targetFirst, finalRel⟩ :=
         firstIH source target (some outcome) sourceNext firstRun firstRel notType exception
       refine ⟨targetNext, ?_, finalRel⟩
       simp only [compile]
-      rw [DataSem.evaluate, fixClock_evaluate, targetFirst]
+      rw [DataSem.evaluate, fixClockEvaluate, targetFirst]
 
 end Flapjack.Compiler.Backend.DataLive

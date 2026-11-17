@@ -28,6 +28,22 @@ termination_by ts => sizeOf ts
 end
 
 mutual
+/-- Shift every de Bruijn index in an inference type. -/
+@[hol "cakeml/compiler/inference/inferScript.sml" "infer_deBruijn_inc_def"]
+def inferDeBruijnInc (n : Nat) : InferT → InferT
+  | .varDb m => .varDb (m + n)
+  | .app ts tc => .app (inferDeBruijnIncList n ts) tc
+  | .uvar m => .uvar m
+termination_by t => sizeOf t
+
+/-- Structural list traversal for the source MAP clause. -/
+def inferDeBruijnIncList (n : Nat) : List InferT → List InferT
+  | [] => []
+  | t :: ts => inferDeBruijnInc n t :: inferDeBruijnIncList n ts
+termination_by ts => sizeOf ts
+end
+
+mutual
 @[hol "cakeml/compiler/inference/inferScript.sml" "infer_deBruijn_subst_def"]
 def inferDeBruijnSubst (s : List InferT) : InferT → InferT
   | .varDb n => (s[n]?).getD (.varDb (n - s.length))
@@ -81,6 +97,20 @@ def emptyEnv : Env := ⟨Flapjack.NamespaceHOL.nsEmpty, Flapjack.NamespaceHOL.ns
   Flapjack.NamespaceHOL.nsEmpty⟩
 
 
+/-- Extend an inference environment with newly inferred declarations. -/
+@[hol "cakeml/compiler/inference/inferScript.sml" "extend_dec_ienv_def"]
+def extendDecIenv (new old : Env) : Env :=
+  ⟨Flapjack.NamespaceHOL.nsAppend new.infV old.infV,
+    Flapjack.NamespaceHOL.nsAppend new.infC old.infC,
+    Flapjack.NamespaceHOL.nsAppend new.infT old.infT⟩
+
+/-- Lift an inference environment under a module name. -/
+@[hol "cakeml/compiler/inference/inferScript.sml" "lift_ienv_def"]
+def liftIenv (name : MlString) (env : Env) : Env :=
+  ⟨Flapjack.NamespaceHOL.nsLift name env.infV,
+    Flapjack.NamespaceHOL.nsLift name env.infC,
+    Flapjack.NamespaceHOL.nsLift name env.infT⟩
+
 /-- Initial CakeML inference namespaces: HOL's `init_config_def` over the
 reviewed primitive type environment. -/
 @[hol "cakeml/compiler/inference/inferScript.sml" "init_config_def"]
@@ -109,5 +139,9 @@ def freshIds (n : Nat) (s : State) : List Nat × State :=
 
 def resetState (s : State) : State :=
   { s with nextUvar := 0, subst := .ln }
+
+/-- First type identifier after the primitive type identifiers. -/
+@[hol "cakeml/compiler/inference/inferScript.sml" "start_type_id_def"]
+def startTypeId : Nat := 15
 
 end Flapjack.Compiler.Inference.Infer

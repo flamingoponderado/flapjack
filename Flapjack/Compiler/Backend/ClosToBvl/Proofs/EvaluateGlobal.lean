@@ -40,7 +40,7 @@ theorem evaluatePost_global_success {C F : Type} (s sMiddle sLast : ClosSem.Stat
   | val targetValues =>
     have argsRel : List.Forall₂ (vRel sMiddle.maxApp fMiddle tMiddle.refs tMiddle.code)
         values.reverse targetValues.reverse := by
-      simpa [resultRel, maxApp] using reverse_related related
+      simpa [resultRel, maxApp] using List.rel_reverse related
     obtain ⟨target, targetApp, stateEq, valueRel⟩ :=
       global_read_dispatch index values.reverse targetValues.reverse sMiddle sLast tMiddle state argsRel value run
     subst sLast
@@ -136,7 +136,7 @@ theorem evaluatePost_alloc_success {C F : Type} (s sMiddle sLast : ClosSem.State
   | val targetValues =>
     have argsRel : List.Forall₂ (vRel sMiddle.maxApp fMiddle tMiddle.refs tMiddle.code)
         [.number count] targetValues.reverse := by
-      simpa [resultRel, maxApp, argsEq] using reverse_related related
+      simpa [resultRel, maxApp, argsEq] using List.rel_reverse related
     have targetEq := vRel_numbers_inv [count] targetValues.reverse argsRel
     have allocation := global_alloc_related sMiddle tMiddle state count nonnegative
     subst value
@@ -236,7 +236,7 @@ theorem evaluatePost_setGlobal_success {C F : Type} (s sMiddle sLast : ClosSem.S
   | val targetValues =>
     have argsRel : List.Forall₂ (vRel sMiddle.maxApp fMiddle tMiddle.refs tMiddle.code)
         [stored] targetValues.reverse := by
-      simpa [resultRel, maxApp, argsEq] using reverse_related related
+      simpa [resultRel, maxApp, argsEq] using List.rel_reverse related
     cases reversed : targetValues.reverse with
     | nil =>
       rw [reversed] at argsRel

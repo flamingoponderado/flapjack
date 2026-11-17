@@ -148,15 +148,15 @@ theorem evaluate_aux_arguments {C F : Type} (indices : List Nat) (opt : Bool)
     simpa [List.getElem_append_left, bound, holEl_eq_getElem slot extras bound] using pointer
   refine ⟨?_, ?_, ?_, ?_⟩
   · rw [evaluate_shift_vars]
-    exact evaluate_vars_target indices env1.length env2 state wf (envRel_length opt f env1 env2 related)
+    exact evaluate_vars_target indices env1.length env2 state ⟨wf, envRel_length opt f env1 env2 related⟩
   · have run := evaluate_vars_target [slot] (extras ++ env2).length (extras ++ env2) state
-      (by intro n member; simp only [List.mem_singleton] at member; subst n; exact fullBound) (Nat.le_refl _)
+      ⟨(by intro n member; simp only [List.mem_singleton] at member; subst n; exact fullBound), Nat.le_refl _⟩
     simpa [holEl_eq_getElem slot (extras ++ env2) fullBound, slotEq] using run
   · rw [BviSem.evaluate, BviSem.fixClock_evaluate]
     simp only [BviSem.evaluate, BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux]
     simp only [BackendCommon.smallEnoughInt] at smallIdx ⊢
     split <;> simp_all
-  · exact CallBlockEnvironment.wfVars_env_rel_opt indices opt f env1 env2 ptr (Int.ofNat idx) related wf smallIdx
+  · exact CallBlockEnvironment.wfVars_env_rel_opt indices opt f env1 env2 ptr (Int.ofNat idx) ⟨related, wf, smallIdx⟩
 
 /-- Flapjack infrastructure: a worker call evaluates its ordinary arguments,
 then the hole pointer and index, and executes the resolved worker body. The
@@ -288,9 +288,9 @@ theorem evaluate_aux_call_from_worker {C F : Type} (ticks dest : Nat) (indices :
   refine ⟨result, next, g, callRun, resultRel, states, extension, fresh, unchanged, still, ?_⟩
   intro sourceValue resultEq
   obtain ⟨targetValue, blocks, hole'⟩ := success sourceValue resultEq
-  have finalNotFinal : holeNotFinalised next.refs ptr := still ptr outside initialHole.2
+  have finalNotFinal : holeNotFinalised next.refs ptr := still ptr ⟨outside, initialHole.2⟩
   exact ⟨targetValue,
-    MutableBlockOld.mutableBlockRel_old_subset g target.refs (next.refs.eraseEq ptr) sourceValue targetValue oldRefs blocks domain,
+    MutableBlockOld.mutableBlockRel_old_subset g target.refs (next.refs.eraseEq ptr) sourceValue targetValue oldRefs ⟨blocks, domain⟩,
     worker_hole_to_aux_general f sourceArgs targetArgs extras slot ptr idx next.refs targetValue
       sameLength hole' finalNotFinal bound pointer⟩
 
@@ -429,8 +429,7 @@ theorem evaluate_aux_rcall {C F : Type} (loc workerLoc ticks : Nat) (indices : L
   by_cases arityEq : (indices.map (fun n => holEl n env1)).length = arity
   · have found : findCode (some loc) (indices.map (fun n => holEl n env1)) source.code =
         some (indices.map (fun n => holEl n env1), body) := by simp [findCode, sourceLookup, arityEq]
-    have safe : noMutcons body := (findCode_rel f _ _ source target (some loc) _ body found
-      (CallBlockEnvironment.wfVars_list_rel indices opt f env1 env2 environments wf) states).1
+    have safe : noMutcons body := (stateRel_codeRel f source target states loc arity body sourceLookup).1
     by_cases timeout : source.clock < ticks + 1
     · simp [found, timeout] at run
       obtain ⟨rfl, rfl⟩ := run.symm

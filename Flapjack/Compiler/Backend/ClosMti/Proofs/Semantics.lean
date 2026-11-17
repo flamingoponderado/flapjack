@@ -1,7 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.ClosMti.Proofs.EvaluateMutual
-public import Flapjack.Compiler.Backend.Semantics.ClosSem.Semantics
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.SemanticsRelated
 public import Flapjack.FiniteMap.EmptyExact
 
 @[expose] public section
@@ -26,122 +26,6 @@ theorem initialStates_related {C F : Type} (ffi : HolFfiState F) (maxApp clock :
   · intro key value found
     simp [initialState, HolFiniteMapExact.empty] at found
 
-/-- Related evaluator results agree on an abort reason. -/
-theorem resultRel_abort_iff {A B C D : Type} (values : A → B → Prop) (errors : C → D → Prop)
-    (left : SemanticPrimitivesHOL.Result A C) (right : SemanticPrimitivesHOL.Result B D)
-    (related : resultRel values errors left right) (reason : SemanticPrimitivesHOL.Abort) :
-    left = .err (.abort reason) ↔ right = .err (.abort reason) := by
-  cases left <;> cases right <;> simp_all [resultRel]
-  case err.err leftError rightError =>
-    cases leftError <;> cases rightError <;> simp_all [excRel]
-
-/-- The outcome admitted by a closure result, excluding clock exhaustion. -/
-def terminatingResult {A B : Type} (result : SemanticPrimitivesHOL.Result A B) (outcome : HolOutcome) : Prop :=
-  match result with
-  | .err (.abort .timeoutError) => False
-  | .err (.abort (.ffiError event)) => outcome = .ffiOutcome event
-  | _ => outcome = .success
-
-/-- Related evaluator results induce the same termination outcome predicate. -/
-theorem resultRel_termination_iff {A B C D : Type} (values : A → B → Prop) (errors : C → D → Prop)
-    (left : SemanticPrimitivesHOL.Result A C) (right : SemanticPrimitivesHOL.Result B D)
-    (related : resultRel values errors left right) (outcome : HolOutcome) :
-    terminatingResult left outcome ↔ terminatingResult right outcome := by
-  cases left <;> cases right <;> simp_all [resultRel, terminatingResult]
-  case err.err leftError rightError =>
-    cases leftError <;> cases rightError <;> simp_all [excRel]
-    case abort.abort leftAbort rightAbort =>
-      subst rightAbort
-      cases leftAbort <;> rfl
-
-/-- Related clock-indexed results and equal FFI states imply equal
-observations, even when successful values use different representations. -/
-theorem semantics_eq_of_related_observations {C F : Type} (ffi : HolFfiState F) (maxApp : Nat)
-    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (sourceOracle targetOracle : CompileOracle C)
-    (sourceCompiler targetCompiler : Compiler C) (sourceProgram targetProgram : List ClosLang.Exp)
-    (related : ∀ clock,
-      resultRel (List.Forall₂ (ValueRel maxApp)) (ValueRel maxApp)
-        (evaluate sourceProgram [] (initialState ffi maxApp code sourceOracle sourceCompiler clock)).1
-        (evaluate targetProgram [] (initialState ffi maxApp code targetOracle targetCompiler clock)).1 ∧
-      (evaluate sourceProgram [] (initialState ffi maxApp code sourceOracle sourceCompiler clock)).2.ffi =
-        (evaluate targetProgram [] (initialState ffi maxApp code targetOracle targetCompiler clock)).2.ffi) :
-    semantics ffi maxApp code sourceOracle sourceCompiler sourceProgram =
-      semantics ffi maxApp code targetOracle targetCompiler targetProgram := by
-  classical
-  have failureEq :
-      (∃ clock, (evaluate sourceProgram [] (initialState ffi maxApp code sourceOracle sourceCompiler clock)).1 =
-        .err (.abort .typeError)) ↔
-      (∃ clock, (evaluate targetProgram [] (initialState ffi maxApp code targetOracle targetCompiler clock)).1 =
-        .err (.abort .typeError)) := by
-    constructor <;> rintro ⟨clock, failure⟩ <;> refine ⟨clock, ?_⟩
-    · exact (resultRel_abort_iff _ _ _ _ (related clock).1 _).mp failure
-    · exact (resultRel_abort_iff _ _ _ _ (related clock).1 _).mpr failure
-  have terminatingEq : terminatingObservation ffi maxApp code sourceOracle sourceCompiler sourceProgram =
-      terminatingObservation ffi maxApp code targetOracle targetCompiler targetProgram := by
-    funext behavior
-    unfold terminatingObservation
-    apply propext
-    constructor
-    · rintro ⟨clock, result, state, outcome, run, outcomeEq, behaviorEq⟩
-      have observed := related clock
-      rw [run] at observed
-      refine ⟨clock, (evaluate targetProgram [] (initialState ffi maxApp code targetOracle targetCompiler clock)).1,
-        (evaluate targetProgram [] (initialState ffi maxApp code targetOracle targetCompiler clock)).2,
-        outcome, ?_, ?_, ?_⟩
-      · exact (Prod.eta _).symm
-      · have initial : terminatingResult result outcome := by
-          cases result with
-          | val value => simpa [terminatingResult] using outcomeEq
-          | err error =>
-            cases error with
-            | raise value => simpa [terminatingResult] using outcomeEq
-            | abort reason => cases reason <;> simp [terminatingResult] at outcomeEq ⊢ <;> assumption
-        have output := (resultRel_termination_iff _ _ _ _ observed.1 outcome).mp initial
-        cases evaluated : (evaluate targetProgram []
-            (initialState ffi maxApp code targetOracle targetCompiler clock)).1 with
-        | val value => simpa [evaluated, terminatingResult] using output
-        | err error =>
-          cases error with
-          | raise value => simpa [evaluated, terminatingResult] using output
-          | abort reason => cases reason <;> simp [evaluated, terminatingResult] at output ⊢ <;> assumption
-      · simpa [← observed.2] using behaviorEq
-    · rintro ⟨clock, result, state, outcome, run, outcomeEq, behaviorEq⟩
-      have observed := related clock
-      rw [run] at observed
-      refine ⟨clock, (evaluate sourceProgram [] (initialState ffi maxApp code sourceOracle sourceCompiler clock)).1,
-        (evaluate sourceProgram [] (initialState ffi maxApp code sourceOracle sourceCompiler clock)).2,
-        outcome, ?_, ?_, ?_⟩
-      · exact (Prod.eta _).symm
-      · have initial : terminatingResult result outcome := by
-          cases result with
-          | val value => simpa [terminatingResult] using outcomeEq
-          | err error =>
-            cases error with
-            | raise value => simpa [terminatingResult] using outcomeEq
-            | abort reason => cases reason <;> simp [terminatingResult] at outcomeEq ⊢ <;> assumption
-        have output := (resultRel_termination_iff _ _ _ _ observed.1 outcome).mpr initial
-        cases evaluated : (evaluate sourceProgram []
-            (initialState ffi maxApp code sourceOracle sourceCompiler clock)).1 with
-        | val value => simpa [evaluated, terminatingResult] using output
-        | err error =>
-          cases error with
-          | raise value => simpa [evaluated, terminatingResult] using output
-          | abort reason => cases reason <;> simp [evaluated, terminatingResult] at output ⊢ <;> assumption
-      · simpa [observed.2] using behaviorEq
-  have tracesEq :
-      (fun trace => ∃ clock, trace = HolLList.fromList
-        (evaluate sourceProgram [] (initialState ffi maxApp code sourceOracle sourceCompiler clock)).2.ffi.ioEvents) =
-      (fun trace => ∃ clock, trace = HolLList.fromList
-        (evaluate targetProgram [] (initialState ffi maxApp code targetOracle targetCompiler clock)).2.ffi.ioEvents) := by
-    funext trace
-    apply propext
-    constructor <;> rintro ⟨clock, equal⟩ <;> refine ⟨clock, ?_⟩
-    · simpa [(related clock).2] using equal
-    · simpa [← (related clock).2] using equal
-  unfold semantics
-  simp only [failureEq]
-  rw [terminatingEq, tracesEq]
-
 /-- Multi-argument introduction preserves observable semantics under the
 original non-failure, oracle, application-limit, and unary assumptions. -/
 @[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "semantics_intro_multi"
@@ -160,7 +44,7 @@ theorem semantics_intro_multi {C F : Type} (ffi : HolFfiState F) (maxApp : Nat)
   change semantics ffi maxApp HolFiniteMapExact.empty oracle (pureCc (compileInc maxApp) compiler) program =
     semantics ffi maxApp HolFiniteMapExact.empty (pureCo (compileInc maxApp) ∘ oracle) compiler
       (introList maxApp program)
-  apply semantics_eq_of_related_observations
+  apply semantics_eq_of_related_evaluations
   intro clock
   let source := initialState ffi maxApp HolFiniteMapExact.empty oracle (pureCc (compileInc maxApp) compiler) clock
   let target := initialState ffi maxApp HolFiniteMapExact.empty (pureCo (compileInc maxApp) ∘ oracle) compiler clock
@@ -169,13 +53,16 @@ theorem semantics_intro_multi {C F : Type} (ffi : HolFfiState F) (maxApp : Nat)
   | mk sourceResult sourceFinal =>
     obtain ⟨targetResult, targetFinal, targetRun, resultsRelated, finalStates⟩ :=
       intro_multi_correct program [] source sourceResult sourceFinal [] () target ⟨sourceRun, unary, .nil, states⟩
-    change resultRel (List.Forall₂ (ValueRel maxApp)) (ValueRel maxApp)
-      sourceResult (evaluate (introList maxApp program) [] target).1 ∧
+    change resultOutcome sourceResult = resultOutcome (evaluate (introList maxApp program) [] target).1 ∧
+      (sourceResult = .err (.abort .typeError) ↔
+        (evaluate (introList maxApp program) [] target).1 = .err (.abort .typeError)) ∧
       sourceFinal.ffi = (evaluate (introList maxApp program) [] target).2.ffi
     have targetRun' : evaluate (introList maxApp program) [] target = (targetResult, targetFinal) := by
       simpa [source, initialState] using targetRun
     rw [targetRun']
-    exact ⟨by simpa [source, initialState] using resultsRelated, finalStates.2.2.2.2.2.2.1.symm⟩
+    have observed := resultRelOutcome (List.Forall₂ (ValueRel maxApp)) (ValueRel maxApp)
+      sourceResult targetResult (by simpa [source, initialState] using resultsRelated)
+    exact ⟨observed.1, observed.2, finalStates.2.2.2.2.2.2.1.symm⟩
 
 /-- The optional multi-argument pass preserves the original observable
 semantics under the HOL non-failure, compiler, oracle, and unary assumptions. -/

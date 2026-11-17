@@ -11,6 +11,20 @@ public import Flapjack.Misc.Sptree.Wf
 namespace Flapjack.Compiler.Backend.DataSpace
 open Flapjack Flapjack.Compiler.Backend.DataSem
 
+/-- Well-formed sparse trees with the same lookups are equal. -/
+@[hol "cakeml/compiler/backend/proofs/data_spaceProofScript.sml" "IMP_sptree_eq"]
+theorem impSptreeEq {α : Type} (x y : Spt α)
+    (premises : sptWf x = true ∧ sptWf y = true ∧ ∀ a, sptLookup a x = sptLookup a y) :
+    x = y :=
+  (sptEqThm x y ⟨premises.1, premises.2.1⟩).2 premises.2.2
+
+/-- Sparse-tree intersection is already normalized, even for arbitrary inputs. -/
+@[hol "cakeml/compiler/backend/proofs/data_spaceProofScript.sml" "mk_wf_inter"]
+theorem mkWfInter {α β : Type} (t1 : Spt α) (t2 : Spt β) :
+    sptInter t1 t2 = sptMkWf (sptInter t1 t2) :=
+  (sptEqThm _ _ ⟨sptWfInter _ _, sptWf_mkWf _⟩).2
+    (fun key => (sptLookup_mkWf key _).symm)
+
 /-- A successful variable read returns one value per requested name. -/
 @[hol "cakeml/compiler/backend/proofs/data_spaceProofScript.sml" "get_vars_IMP_LENGTH"]
 theorem getVars_length {α : Type} (names : List Nat) (env : Spt α) (values : List α)

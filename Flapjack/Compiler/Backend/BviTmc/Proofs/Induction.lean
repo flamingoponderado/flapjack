@@ -2,12 +2,18 @@ module
 
 public import Flapjack.Compiler.Backend.BviTmc.Proofs.StructuralCases
 public import Flapjack.Compiler.Backend.BviTmc.Proofs.LetCallSimulation
+public import Flapjack.Compiler.Backend.Bvi.GeneratedSize
 
 @[expose] public section
 
 /-! Assembly of the structural and clock induction cases for TMC. -/
 namespace Flapjack.Compiler.Backend.BviTmc.Induction
 open BviTmc BviSem BvlSem ListSimulation ClockHypothesis StructuralHypothesis StructuralCases SemanticPrimitivesProps ResultRelation
+
+/-- Lexicographic order on two natural measures is well founded. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "WF_I_I"]
+theorem wfII : WellFounded (Prod.Lex Nat.lt Nat.lt) :=
+  (Prod.lex Nat.lt_wfRel Nat.lt_wfRel).wf
 
 /-- Flapjack infrastructure: all singleton expression cases from the common
 smaller-weight and smaller-clock induction hypotheses. -/
@@ -124,20 +130,48 @@ theorem evaluate_general {C F : Type} (loc : Nat) (xs : List Bvi.Exp)
   exact all source.clock (expsWeight xs) xs source target env1 env2 opt f loc result final (Nat.le_refl _)
     (Nat.le_refl _) run safe environments states optLength notTypeError
 
-/-- Flapjack infrastructure: the assembled TMC evaluation simulation with
-explicit wrapper and worker conclusions. This stronger statement omits the
-original theorem's unused measure premise: `expsWeight` is an internal
-termination measure, not HOL's generated `list_size exp_size`. The declaration
-remains untagged until the full HOL statement and carriers are reviewed. -/
-theorem evaluate_rewrite_tmc_assembled {C F : Type} (xs : List Bvi.Exp)
+theorem holFmapAsFiniteSupportRelationWitness_BviState {C F : Type} :
+    (∀ s : BviStateBroad C F, (BviState.ofBroad s).toBroad = s) ∧
+      (∀ s : BviState C F, BviState.ofBroad s.toBroad = s) :=
+  BviSem.holFmapAsFiniteSupportWitness
+
+theorem holFmapAsFiniteSupportExistentialWitness_evaluate_rewrite_tmc_nextMap
+    (nextMap : HolFiniteMapExact Nat Nat) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad nextMap)).lookup = nextMap.lookup ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad nextMap)).finiteSupport = nextMap.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad nextMap) = nextMap := by
+  cases nextMap
+  exact ⟨rfl, rfl, rfl⟩
+
+theorem holFmapAsFiniteSupportExistentialWitness_evaluate_rewrite_tmc_wrapMap
+    (wrapMap : HolFiniteMapExact Nat Nat) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad wrapMap)).lookup = wrapMap.lookup ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad wrapMap)).finiteSupport = wrapMap.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad wrapMap) = wrapMap := by
+  cases wrapMap
+  exact ⟨rfl, rfl, rfl⟩
+
+theorem holFmapAsFiniteSupportExistentialWitness_evaluate_rewrite_tmc_workMap
+    (workMap : HolFiniteMapExact Nat Nat) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad workMap)).lookup = workMap.lookup ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad workMap)).finiteSupport = workMap.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad workMap) = workMap := by
+  cases workMap
+  exact ⟨rfl, rfl, rfl⟩
+
+/-- The TMC evaluation simulation, including wrapper and worker conclusions. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_rewrite_tmc"
+  (fmap_as_finite_support_relation := [BviState.refs, f])
+  (fmap_as_finite_support_existentials := [nextMap, wrapMap, workMap])]
+theorem evaluate_rewrite_tmc {C F : Type} (n : Nat × Nat) (xs : List Bvi.Exp)
     (source : BviState (Nat × C) F) (env1 : List Value) (result : BviResult)
     (final : BviState (Nat × C) F) (opt : Bool) (f : HolFiniteMapExact Nat Nat)
     (target : BviState C F) (env2 : List Value) (loc : Nat)
-    (run : evaluate xs env1 source = (result, final))
-    (environments : envRel opt f env1 env2) (safe : ∀ x ∈ xs, noMutcons x)
-    (states : stateRel f source target) (optLength : opt = true → xs.length = 1)
-    (notTypeError : result ≠ .err (.abort .typeError)) :
-    ∃ (next : BviState C F) (nextMap : HolFiniteMapExact Nat Nat) (nextResult : BviResult),
+    (h : evaluate xs env1 source = (result, final) ∧
+      n = (source.clock, Bvi.expListSizeHOL xs) ∧ envRel opt f env1 env2 ∧
+      (∀ x ∈ xs, noMutcons x) ∧ stateRel f source target ∧
+      (opt = true → xs.length = 1) ∧ result ≠ .err (.abort .typeError)) :
+    ∃ (next : BviState C F), ∃ (nextMap : HolFiniteMapExact Nat Nat), ∃ (nextResult : BviResult),
       evaluate xs env2 target = (nextResult, next) ∧
       resultRel (List.Forall₂ (valueRel nextMap)) (eorRel nextMap) result nextResult ∧
       stateRel nextMap final next ∧ f.submap nextMap ∧
@@ -146,7 +180,7 @@ theorem evaluate_rewrite_tmc_assembled {C F : Type} (xs : List Bvi.Exp)
       (∀ locOpt, optimisedCode loc locOpt source.code target.code →
         (∀ wrap, xs.length = 1 ∧ rewriteWrapperSource loc locOpt env1.length
             (@holHd Bvi.Exp ⟨.var 0⟩ xs) = some wrap →
-          ∃ (wrapState : BviState C F) (wrapMap : HolFiniteMapExact Nat Nat) (wrapResult : BviResult),
+          ∃ (wrapState : BviState C F), ∃ (wrapMap : HolFiniteMapExact Nat Nat), ∃ (wrapResult : BviResult),
             evaluate [wrap] env2 target = (wrapResult, wrapState) ∧
             resultRel (List.Forall₂ (valueRel wrapMap)) (eorRel wrapMap) result wrapResult ∧
             stateRel wrapMap final wrapState ∧ f.submap wrapMap ∧
@@ -157,7 +191,7 @@ theorem evaluate_rewrite_tmc_assembled {C F : Type} (xs : List Bvi.Exp)
           (∃ c, holeHasVal f env1 env2 target.refs c) ∧ holeNotFinalised target.refs holePtr ∧
           rewriteWorkerSource loc locOpt i j env1.length (@holHd Bvi.Exp ⟨.var 0⟩ xs) = work ∧
           holEl i env2 = .refPtr false holePtr →
-          ∃ (workResult : BviResult) (workMap : HolFiniteMapExact Nat Nat) (workState : BviState C F),
+          ∃ (workResult : BviResult), ∃ (workMap : HolFiniteMapExact Nat Nat), ∃ (workState : BviState C F),
             evaluate [work] env2 target = (workResult, workState) ∧
             optResRel workMap result workResult ∧ stateRel workMap final workState ∧
             f.submap workMap ∧ onlyFresh f workMap target.refs ∧
@@ -166,6 +200,7 @@ theorem evaluate_rewrite_tmc_assembled {C F : Type} (xs : List Bvi.Exp)
             ∀ resValue, result = .val [resValue] →
               ∃ resValue', mutableBlockRel workMap target.refs (workState.refs.eraseEq holePtr) resValue resValue' ∧
                 holeHasVal f env1 env2 workState.refs resValue')) := by
+  obtain ⟨run, _, environments, safe, states, optLength, notTypeError⟩ := h
   have post := evaluate_general loc xs source target env1 env2 opt f result final run notTypeError safe environments states optLength
   obtain ⟨next, g, targetResult, targetRun, related, nextStates, extension, fresh, unchanged, still⟩ := post.1
   refine ⟨next, g, targetResult, targetRun, related, nextStates, extension, fresh, unchanged, still, ?_⟩
@@ -193,5 +228,81 @@ theorem evaluate_rewrite_tmc_assembled {C F : Type} (xs : List Bvi.Exp)
         have worker := ((post.2 e rfl).2 locOpt code).2 optTrue ptr c hole notFinal pointer
         simpa only [rewrite, IfWorker.WorkerCore] using worker
       | cons first tail => simp at length
+
+/-- Canonical pointwise and finite-support roundtrip for the map quantified in
+the induction predicate. -/
+theorem holFmapAsFiniteSupportUniversalWitness_hypothesis_f (f : HolFiniteMapExact Nat Nat) :
+    (∀ key, (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad f)).lookup key = f.lookup key) ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad f)).finiteSupport = f.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad f) = f := by
+  cases f
+  exact ⟨fun _ => rfl, rfl, rfl⟩
+
+/-- The same unconditional codec roundtrip for the ordinary result map. -/
+theorem holFmapAsFiniteSupportExistentialWitness_hypothesis_nextMap (nextMap : HolFiniteMapExact Nat Nat) :
+    (∀ key, (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad nextMap)).lookup key = nextMap.lookup key) ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad nextMap)).finiteSupport = nextMap.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad nextMap) = nextMap :=
+  holFmapAsFiniteSupportUniversalWitness_hypothesis_f nextMap
+
+/-- The same unconditional codec roundtrip for the wrapper result map. -/
+theorem holFmapAsFiniteSupportExistentialWitness_hypothesis_wrapMap (wrapMap : HolFiniteMapExact Nat Nat) :
+    (∀ key, (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad wrapMap)).lookup key = wrapMap.lookup key) ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad wrapMap)).finiteSupport = wrapMap.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad wrapMap) = wrapMap :=
+  holFmapAsFiniteSupportUniversalWitness_hypothesis_f wrapMap
+
+/-- The same unconditional codec roundtrip for the worker result map. -/
+theorem holFmapAsFiniteSupportExistentialWitness_hypothesis_workMap (workMap : HolFiniteMapExact Nat Nat) :
+    (∀ key, (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad workMap)).lookup key = workMap.lookup key) ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad workMap)).finiteSupport = workMap.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad workMap) = workMap :=
+  holFmapAsFiniteSupportUniversalWitness_hypothesis_f workMap
+
+/-- The smaller-clock simulation predicate. The universal and existential
+maps and BVI reference field use canonical finite-support representations.
+Evaluator dependencies inherit the rational-cuts real model (SOUNDNESS item 8). -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "hypothesis_def"
+  (fmap_as_finite_support_relation := [BviState.refs])
+  (fmap_as_finite_support_existentials := [nextMap, wrapMap, workMap])
+  (fmap_as_finite_support_universals := [f])]
+noncomputable def hypothesis {C F : Type} (xs : List Bvi.Exp)
+    (source : BviState (Nat × C) F) (clock : Nat) : Prop :=
+  source.clock < clock →
+  ∀ (env1 : List Value) (result : BviResult) (final : BviState (Nat × C) F)
+    (opt : Bool) (f : HolFiniteMapExact Nat Nat) (target : BviState C F)
+    (env2 : List Value) (loc : Nat),
+    evaluate xs env1 source = (result, final) ∧ envRel opt f env1 env2 ∧
+      (∀ x ∈ xs, noMutcons x) ∧ stateRel f source target ∧
+      (opt = true → xs.length = 1) ∧ result ≠ .err (.abort .typeError) →
+    ∃ (next : BviState C F), ∃ (nextMap : HolFiniteMapExact Nat Nat), ∃ (nextResult : BviResult),
+      evaluate xs env2 target = (nextResult, next) ∧
+      resultRel (List.Forall₂ (valueRel nextMap)) (eorRel nextMap) result nextResult ∧
+      stateRel nextMap final next ∧ f.submap nextMap ∧
+      onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs next.refs ∅ ∧
+      holesStillNotFinalised f target.refs next.refs ∧
+      (∀ locOpt, optimisedCode loc locOpt source.code target.code →
+        (∀ wrap, xs.length = 1 ∧ rewriteWrapperSource loc locOpt env1.length
+            (@holHd Bvi.Exp ⟨.var 0⟩ xs) = some wrap →
+          ∃ (wrapState : BviState C F), ∃ (wrapMap : HolFiniteMapExact Nat Nat), ∃ (wrapResult : BviResult),
+            evaluate [wrap] env2 target = (wrapResult, wrapState) ∧
+            resultRel (List.Forall₂ (valueRel wrapMap)) (eorRel wrapMap) result wrapResult ∧
+            stateRel wrapMap final wrapState ∧ f.submap wrapMap ∧
+            onlyFresh f wrapMap target.refs ∧ holesUnchangedExcept f target.refs wrapState.refs ∅ ∧
+            holesStillNotFinalised f target.refs wrapState.refs) ∧
+        (opt = true → ∀ holePtr,
+          (∃ c, holeHasVal f env1 env2 target.refs c) ∧
+          holeNotFinalised target.refs holePtr ∧
+          holEl env1.length env2 = .refPtr false holePtr →
+          ∃ (workResult : BviResult), ∃ (workMap : HolFiniteMapExact Nat Nat), ∃ (workState : BviState C F),
+            evaluate [rewriteWorkerSource loc locOpt env1.length (env1.length + 1) env1.length
+              (@holHd Bvi.Exp ⟨.var 0⟩ xs)] env2 target = (workResult, workState) ∧
+            optResRel workMap result workResult ∧ stateRel workMap final workState ∧
+            f.submap workMap ∧ onlyFresh f workMap target.refs ∧
+            holesUnchangedExcept f target.refs workState.refs {holePtr} ∧
+            holesStillNotFinalised f target.refs workState.refs ∧
+            ∀ resValue, result = .val [resValue] →
+              ∃ resValue', mutableBlockRel workMap target.refs (workState.refs.eraseEq holePtr) resValue resValue' ∧
+                holeHasVal f env1 env2 workState.refs resValue'))
 
 end Flapjack.Compiler.Backend.BviTmc.Induction

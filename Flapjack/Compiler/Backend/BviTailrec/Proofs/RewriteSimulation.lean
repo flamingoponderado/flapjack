@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.BviTailrec.Proofs.PrimitiveRelation
+public import Flapjack.Compiler.Backend.BviTailrec.Proofs.AuxSimulation
 public import Flapjack.Compiler.Backend.BviTailrec.Proofs.RewriteScan
 public import Flapjack.Compiler.Backend.BviTailrec.Proofs.TermExtension
 public import Flapjack.Compiler.Backend.Semantics.BviProps.EvaluateGrowth
@@ -8,17 +9,17 @@ public import Flapjack.Compiler.Backend.Semantics.BviSem.Semantics
 public import Flapjack.Compiler.Backend.BviInline.Proofs.SemanticsSafety
 public import Flapjack.Compiler.Backend.BackendProps.StateCompiler
 public import Flapjack.Compiler.Backend.Semantics.BviProps.AdjustOracleEval
+public import Flapjack.Misc.ClockWeightInduction
 
 @[expose] public section
 
 
-/-! Cases of the source tail-recursion rewrite simulation. The evaluator,
-source scan and compilation carriers remain subject to HOL review. -/
+/-! Cases and assembly for the source tail-recursion rewrite simulation. -/
 namespace Flapjack.Compiler.Backend.BviTailrec
 open Bvi BvlSem
 
-/-- A scan never selects the non-optimizing operator. This is untagged until
-its scan and expression carriers have completed source review. -/
+/-- A scan never selects the non-optimizing operator. This Flapjack helper
+supports the rewrite simulation. -/
 theorem scanSing_ne_noop (ctx : List ValueType) (loc : Nat) (e : Bvi.Exp) :
     (scanSing ctx loc e).2.2.2 ≠ some .noop := by
   cases e with
@@ -91,16 +92,6 @@ theorem checkExpOriginal_scan (loc arity : Nat) (e : Bvi.Exp) (op : AssocOp)
       exact ⟨ctx, ty, branch, by rw [scanExpr_single, hscan], sameType, notAny, notOp⟩
     · simp at check
 
-/-- Every environment satisfies the all-unknown context used when checking a
-function body. -/
-theorem tyRel_replicate_any (values : List Value) :
-    tyRel values (List.replicate values.length .any) := by
-  induction values with
-  | nil => simp [tyRel]
-  | cons value rest ih =>
-    simp only [List.length_cons, List.replicate_succ]
-    exact .cons (by simp) ih
-
 /-- A successful checked function body returns a value satisfying the
 selected accumulator operator's type. -/
 theorem checkExpOriginal_result_type {C F : Type} (loc arity : Nat) (body : Bvi.Exp)
@@ -110,7 +101,7 @@ theorem checkExpOriginal_result_type {C F : Type} (loc arity : Nat) (body : Bvi.
     valueMatchesType value (opType op) := by
   obtain ⟨ctx, ty, branch, scan, sameType, _, _⟩ := checkExpOriginal_scan loc arity body op check
   have envType : tyRel env (List.replicate arity .any) := by
-    simpa [lengthEq] using tyRel_replicate_any env
+    simpa [lengthEq] using tyRel_unknown env
   have sound := scanSound_list (List.replicate arity .any) loc [body] env state next [value] envType run
   rw [scan] at sound
   simp only [List.map_cons, List.map_nil] at sound
@@ -183,8 +174,7 @@ theorem rewriteTailPropertyThrough_mono {C F : Type} {xs : List Bvi.Exp} {lower 
 
 /-- Well-founded induction for the rewrite simulation: structural recursion
 stays within the current clock bound, and arbitrary expressions may be used
-at a strictly smaller bound. The step itself remains to be established for all
-expression cases; this helper is not the HOL correctness theorem. -/
+at a strictly smaller bound. This Flapjack helper supports the closed simulation. -/
 theorem rewriteTailProperty_of_bounded_step {C F : Type}
     (step : ∀ limit xs,
       (∀ ys, sizeOf ys < sizeOf xs → rewriteTailPropertyThrough (C := C) (F := F) limit ys) →
@@ -192,20 +182,15 @@ theorem rewriteTailProperty_of_bounded_step {C F : Type}
       rewriteTailPropertyThrough (C := C) (F := F) limit xs) :
     ∀ xs, rewriteTailProperty (C := C) (F := F) xs := by
   have bounded : ∀ limit xs, rewriteTailPropertyThrough (C := C) (F := F) limit xs := by
-    intro limit
-    induction limit using Nat.strong_induction_on with
-    | h limit clockIH =>
-      have bySize : ∀ n xs, sizeOf xs = n → rewriteTailPropertyThrough (C := C) (F := F) limit xs := by
-        intro n
-        induction n using Nat.strong_induction_on with
-        | h n sizeIH =>
-          intro xs sizeEq
-          apply step limit xs
-          · intro ys smaller
-            exact sizeIH (sizeOf ys) (by omega) ys rfl
-          · exact clockIH
-      intro xs
-      exact bySize (sizeOf xs) xs rfl
+    intro limit xs
+    apply clockWeightInduction (α := List Bvi.Exp) (σ := Nat) id sizeOf
+      (motive := fun xs limit => rewriteTailPropertyThrough (C := C) (F := F) limit xs) ?_ xs limit
+    intro xs limit structuralIH clockIH
+    apply step limit xs
+    · intro ys smaller
+      exact structuralIH ys limit (Nat.le_refl _) smaller
+    · intro smaller smallerLt ys
+      exact clockIH ys smaller smallerLt
   intro xs source env1 result sourceNext optimized target acc env2 loc ts ty hyp
   exact bounded source.clock xs source env1 result sourceNext optimized target acc env2 loc ts ty
     (Nat.le_refl _) hyp
@@ -309,7 +294,7 @@ theorem term_prefix_simulation_through {C F : Type} (e : Bvi.Exp) (ctx : List Va
       BviSem.evaluate [e] env2 target = (.val [value], target) := by
   obtain ⟨suffix, rfl⟩ := prefixRel
   have extTypes := tyRel_prefix_extend env1 ctx suffix types
-  have extAccepted := term_extend e ctx (List.replicate suffix.length .any) termTy accepted
+  have extAccepted := term_extend ctx termTy e (List.replicate suffix.length .any) accepted
   obtain ⟨value, typed, sourceRun⟩ := term_total (C := Nat × C) (F := F) ctx termTy e env1 accepted types
   obtain ⟨targetValue, _, targetRun⟩ := term_total (C := C) (F := F)
     (ctx ++ List.replicate suffix.length .any) termTy e (env1 ++ suffix) extAccepted extTypes
@@ -339,7 +324,7 @@ theorem term_prefix_simulation_all_through {C F : Type} (e : Bvi.Exp) (ctx : Lis
   obtain ⟨sourceValue, _, sourceAll⟩ := term_total (C := Nat × C) (F := F) ctx termTy e env1 accepted types
   obtain ⟨suffix, rfl⟩ := prefixRel
   have extTypes := tyRel_prefix_extend env1 ctx suffix types
-  have extAccepted := term_extend e ctx (List.replicate suffix.length .any) termTy accepted
+  have extAccepted := term_extend ctx termTy e (List.replicate suffix.length .any) accepted
   obtain ⟨targetValue, _, targetAll⟩ := term_total (C := C) (F := F)
     (ctx ++ List.replicate suffix.length .any) termTy e (env1 ++ suffix) extAccepted extTypes
   have sourceEq : sourceValue = value := by
@@ -391,9 +376,22 @@ theorem rewriteTail_nil {C F : Type} (source : BviSem.BviState (Nat × C) F)
   have impossible := singleton enabled
   simp at impossible
 
+/-- A selected scan operation is not Noop. The unused polymorphic binder is
+present in the original theorem. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "scan_expr_not_Noop"]
+theorem scanExpr_notNoop {α : Type} (e : Bvi.Exp) (ts : List ValueType) (loc : Nat)
+    (tt : List ValueType) (ty : ValueType) (r : Bool) (_ok : α) (op : AssocOp)
+    (scan : scanExpr ts loc [e] = [(tt, ty, r, some op)]) : op ≠ .noop := by
+  intro same
+  subst op
+  rw [scanExpr_single] at scan
+  have eq : scanSing ts loc e = (tt, ty, r, some .noop) := by simpa using scan
+  have notNoop := scanSing_ne_noop ts loc e
+  rw [eq] at notNoop
+  exact notNoop rfl
+
 /-- Variable case of the source rewrite simulation. No optimization can be
-selected by a variable scan. This is untagged until the evaluator and source
-compilation definitions have completed source review. -/
+selected by a variable scan. This Flapjack helper supports the assembly. -/
 theorem rewriteTail_var {C F : Type} (n : Nat) (source : BviSem.BviState (Nat × C) F)
     (env1 : List Value) (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
     (optimized : Bool) (target : BviSem.BviState C F) (acc : Nat) (env2 : List Value)
@@ -703,7 +701,7 @@ theorem evaluate_related_callee {C F : Type} (loc arity : Nat) (body : Bvi.Exp)
       BviSem.evaluate [compiled] env target = (result, targetNext) ∧
       stateRel sourceNext targetNext := by
   have types : tyRel env (List.replicate arity .any) := by
-    simpa [lengthEq] using tyRel_replicate_any env
+    simpa [lengthEq] using tyRel_unknown env
   have codeRelated := stateRel_codeRel source target related
   cases check : checkExpOriginal loc arity body with
   | none =>
@@ -756,7 +754,7 @@ theorem evaluate_related_callee {C F : Type} (loc arity : Nat) (body : Bvi.Exp)
     subst r
     refine ⟨wrapper, t1, wrapperFound, ?_, finalRelated⟩
     change BviSem.evaluate [letWrap arity (identity op) worker] env target = _
-    rw [← lengthEq, evaluate_letWrap worker op env target notNoop]
+    rw [← lengthEq, evaluate_letWrap worker op env target () () notNoop]
     exact workerRun
 
 /-- A known accumulator can be applied after the selected conditional branch.
@@ -1229,7 +1227,7 @@ theorem evaluate_optimized_worker_body {C F : Type} (loc arity workerLoc : Nat)
   have envRelated : envRel (opType op) true arity args (args ++ [accumulator]) := by
     simpa [lengthEq] using envRel_worker op args accumulator notNoop typed
   have types : tyRel args (List.replicate arity .any) := by
-    simpa [lengthEq] using tyRel_replicate_any args
+    simpa [lengthEq] using tyRel_unknown args
   have hyp : rewriteTailHyp [body] source args result sourceNext true target arity (args ++ [accumulator])
       loc (List.replicate arity .any) (opType op) :=
     ⟨run, envRelated, related, types, by simp, notTypeError⟩
@@ -1297,7 +1295,7 @@ theorem evaluate_optimized_worker_call {C F : Type}
   have envRelated : envRel (opType op) true arity callArgs (callArgs ++ [newValue]) := by
     simpa [lengthEq] using envRel_worker op callArgs newValue notNoop typed
   have types : tyRel callArgs (List.replicate arity .any) := by
-    simpa [lengthEq] using tyRel_replicate_any callArgs
+    simpa [lengthEq] using tyRel_unknown callArgs
   have hyp : rewriteTailHyp [body] (BviSem.decClock (ticks + 1) sourceMiddle) callArgs bodyResult sourceNext
       true (BviSem.decClock (ticks + 1) targetMiddle) arity (callArgs ++ [newValue]) loc
       (List.replicate arity .any) (opType op) :=
@@ -1369,7 +1367,7 @@ theorem evaluate_worker_candidate_success {C F : Type}
   have envRelated : envRel (opType op) true arity callArgs (callArgs ++ [newValue]) := by
     simpa [lengthEq] using envRel_worker op callArgs newValue notNoop typed
   have types : tyRel callArgs (List.replicate arity .any) := by
-    simpa [lengthEq] using tyRel_replicate_any callArgs
+    simpa [lengthEq] using tyRel_unknown callArgs
   have hyp : rewriteTailHyp [body] (BviSem.decClock (ticks + 1) sourceMiddle) callArgs bodyResult sourceNext
       true (BviSem.decClock (ticks + 1) targetMiddle) arity (callArgs ++ [newValue]) loc
       (List.replicate arity .any) (opType op) :=
@@ -2384,7 +2382,7 @@ theorem rewriteTail_letCall_through {C F : Type} (limit : Nat) (rets ticks place
                       have contEnv := envRel_prepend ty false acc env1 env2 returned disabled
                       have contTypes : tyRel (returned ++ env1) (List.replicate returned.length .any ++ ts) :=
                         tyRel_append env1 ts (List.replicate returned.length .any) returned
-                          ⟨types, tyRel_replicate_any returned⟩
+                          ⟨types, tyRel_unknown returned⟩
                       have contHyp : rewriteTailHyp [cont] last (returned ++ env1) result sourceNext false
                           targetLast (returned.length + acc) (returned ++ env2) loc
                           (List.replicate returned.length .any ++ ts) ty :=
@@ -2818,8 +2816,8 @@ theorem rewriteTail_if_through {C F : Type} (limit : Nat) (cond yes no : Bvi.Exp
               cases flag <;> simpa [selected] using branchApplied
 
 
-/-- Operation evaluation is simulated when both successful applications and
-primitive errors agree on related states. This includes non-type FFI errors. -/
+/-- Operation evaluation is simulated when successful applications and
+non-type primitive errors agree on related states. This includes FFI errors. -/
 theorem evaluate_op_related_errors_through {C F : Type} (limit : Nat) (operation : ClosLang.Op) (args : List Bvi.Exp)
     (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
     (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
@@ -2833,7 +2831,7 @@ theorem evaluate_op_related_errors_through {C F : Type} (limit : Nat) (operation
     (appError : ∀ (values : List Value) (s : BviSem.BviState (Nat × C) F)
       (u : BviSem.BviState C F) (error : SemanticPrimitivesHOL.ErrorResult BviSem.ExnOrRet),
       stateRel s u → BviSem.doApp operation values s = .err error →
-      BviSem.doApp operation values u = .err error)
+      error ≠ .abort .typeError → BviSem.doApp operation values u = .err error)
     (clockBound : source.clock ≤ limit)
     (hyp : rewriteTailHyp [.op operation args] source env1 result sourceNext
       optimized target acc env2 loc ts ty) :
@@ -2868,7 +2866,11 @@ theorem evaluate_op_related_errors_through {C F : Type} (limit : Nat) (operation
       | err error =>
         have same : (.err error, middle) = (result, sourceNext) := by simpa [argsRun, applied] using run
         cases same
-        have targetApplied := appError values.reverse sourceNext targetMiddle error middleRelated applied
+        have errorOk : error ≠ .abort .typeError := by
+          intro bad
+          subst error
+          exact notTypeError rfl
+        have targetApplied := appError values.reverse sourceNext targetMiddle error middleRelated applied errorOk
         refine ⟨targetMiddle, ?_, middleRelated⟩
         rw [BviSem.evaluate, BviSem.fixClock_evaluate, targetArgs]
         dsimp only
@@ -2906,47 +2908,10 @@ theorem evaluate_op_related_through {C F : Type} (limit : Nat) (operation : Clos
       optimized target acc env2 loc ts ty) :
     ∃ targetNext, BviSem.evaluate [.op operation args] env2 target = (result, targetNext) ∧
       stateRel sourceNext targetNext := by
-  obtain ⟨run, envRelated, related, types, _, notTypeError⟩ := hyp
-  have disabled := envRel_disable ty optimized acc env1 env2 envRelated
-  rw [BviSem.evaluate, BviSem.fixClock_evaluate] at run
-  cases argsRun : BviSem.evaluate args env1 source with
-  | mk argsResult middle =>
-    cases argsResult with
-    | err error =>
-      simp only [argsRun] at run
-      have ok : (.err error : BviSem.BviResult) ≠ .err (.abort .typeError) := by
-        intro bad
-        apply notTypeError
-        exact (congrArg Prod.fst run).symm.trans bad
-      have argsHyp : rewriteTailHyp args source env1 (.err error) middle false
-          target acc env2 loc ts ty := ⟨argsRun, disabled, related, types, by simp, ok⟩
-      obtain ⟨targetMiddle, targetArgs, middleRelated, _⟩ :=
-        argsIH source env1 (.err error) middle false target acc env2 loc ts ty clockBound argsHyp
-      have same : (.err error, middle) = (result, sourceNext) := by simpa [argsRun] using run
-      cases same
-      refine ⟨targetMiddle, ?_, middleRelated⟩
-      rw [BviSem.evaluate, BviSem.fixClock_evaluate, targetArgs]
-    | val values =>
-      have argsHyp : rewriteTailHyp args source env1 (.val values) middle false
-          target acc env2 loc ts ty := ⟨argsRun, disabled, related, types, by simp, by simp⟩
-      obtain ⟨targetMiddle, targetArgs, middleRelated, _⟩ :=
-        argsIH source env1 (.val values) middle false target acc env2 loc ts ty clockBound argsHyp
-      cases applied : BviSem.doApp operation values.reverse middle with
-      | err error =>
-        have typeError := appError values.reverse middle error applied
-        subst error
-        simp [argsRun, applied] at run
-        exact (notTypeError run.1.symm).elim
-      | val pair =>
-        obtain ⟨value, last⟩ := pair
-        have same : (.val [value], last) = (result, sourceNext) := by simpa [argsRun, applied] using run
-        cases same
-        obtain ⟨targetNext, targetApplied, finalRelated⟩ :=
-          appSuccess values.reverse middle sourceNext targetMiddle value middleRelated applied
-        refine ⟨targetNext, ?_, finalRelated⟩
-        rw [BviSem.evaluate, BviSem.fixClock_evaluate, targetArgs]
-        dsimp only
-        rw [targetApplied]
+  apply evaluate_op_related_errors_through limit operation args source env1 result sourceNext
+    optimized target acc env2 loc ts ty argsIH appSuccess ?_ clockBound hyp
+  intro values s u error _ run errorOk
+  exact (errorOk (appError values s error run)).elim
 
 
 /-- Shared operation simulation for a primitive whose scan selects no
@@ -2999,7 +2964,17 @@ theorem rewriteTail_op_ffi_through {C F : Type} (limit : Nat) (name : Flapjack.B
       optimized target acc env2 loc ts ty := by
   obtain ⟨targetNext, targetRun, targetRelated⟩ :=
     evaluate_op_related_errors_through limit (.ffi name) args source env1 result sourceNext optimized target acc env2 loc ts ty
-      argsIH (stateRel_doApp_ffi name) (stateRel_doApp_ffi_error name) clockBound hyp
+      argsIH (fun vs source sourceNext target value related run =>
+        stateRel_doApp (.ffi name) vs source value sourceNext target
+          ⟨run, related, by simp, by
+            intro n
+            simp⟩) (fun vs source target error related run _errorOk =>
+        stateRel_doAppErr (.ffi name) vs source error target
+          ⟨run, related, by simp, by
+            intro n
+            simp, by
+            intro parts
+            simp⟩) clockBound hyp
   apply rewriteTailPost_of_no_scan (.op (.ffi name) args) source env1 result sourceNext
     optimized target targetNext acc env2 loc ts ty targetRun targetRelated
   intro tt resultTy branch op1 scan
@@ -3029,7 +3004,11 @@ theorem rewriteTail_op_blockFromList_through {C F : Type} (limit : Nat) (tag : N
     optimized target acc env2 loc ts ty argsIH
   · rw [scanSing_op_choice]
     simp [fromOp, BEq.beq, instBEqAssocOp.beq]
-  · exact stateRel_doApp_blockFromList tag
+  · intro vs source sourceNext target value related run
+    exact stateRel_doApp (.blockOp (.fromList tag)) vs source value sourceNext target
+      ⟨run, related, by simp, by
+        intro n
+        simp⟩
   · exact doApp_blockFromList_error tag
   · exact clockBound
   · exact hyp
@@ -3051,7 +3030,11 @@ theorem rewriteTail_op_refByte_through {C F : Type} (limit : Nat) (flag : Bool) 
     optimized target acc env2 loc ts ty argsIH
   · rw [scanSing_op_choice]
     simp [fromOp, BEq.beq, instBEqAssocOp.beq]
-  · exact stateRel_doApp_refByte flag
+  · intro vs source sourceNext target value related run
+    exact stateRel_doApp (.memOp (.refByte flag)) vs source value sourceNext target
+      ⟨run, related, by simp, by
+        intro n
+        simp⟩
   · exact doApp_refByte_error flag
   · exact clockBound
   · exact hyp
@@ -3073,7 +3056,11 @@ theorem rewriteTail_op_finaliseCons_through {C F : Type} (limit : Nat) (args : L
     optimized target acc env2 loc ts ty argsIH
   · rw [scanSing_op_choice]
     simp [fromOp, BEq.beq, instBEqAssocOp.beq]
-  · exact stateRel_doApp_finaliseCons
+  · intro vs source sourceNext target value related run
+    exact stateRel_doApp (.memOp .finaliseCons) vs source value sourceNext target
+      ⟨run, related, by simp, by
+        intro n
+        simp⟩
   · exact doApp_finaliseCons_error
   · exact clockBound
   · exact hyp
@@ -3095,7 +3082,11 @@ theorem rewriteTail_op_updateCons_through {C F : Type} (limit : Nat) (args : Lis
     optimized target acc env2 loc ts ty argsIH
   · rw [scanSing_op_choice]
     simp [fromOp, BEq.beq, instBEqAssocOp.beq]
-  · exact stateRel_doApp_updateCons
+  · intro vs source sourceNext target value related run
+    exact stateRel_doApp (.memOp .updateCons) vs source value sourceNext target
+      ⟨run, related, by simp, by
+        intro n
+        simp⟩
   · exact doApp_updateCons_error
   · exact clockBound
   · exact hyp
@@ -3117,7 +3108,11 @@ theorem rewriteTail_op_mutCons_through {C F : Type} (limit : Nat) (tag index : N
     optimized target acc env2 loc ts ty argsIH
   · rw [scanSing_op_choice]
     simp [fromOp, BEq.beq, instBEqAssocOp.beq]
-  · exact stateRel_doApp_mutCons tag index
+  · intro vs source sourceNext target value related run
+    exact stateRel_doApp (.memOp (.mutCons tag index)) vs source value sourceNext target
+      ⟨run, related, by simp, by
+        intro n
+        simp⟩
   · exact doApp_mutCons_error tag index
   · exact clockBound
   · exact hyp
@@ -3138,7 +3133,17 @@ theorem rewriteTail_op_thunkOp_through {C F : Type} (limit : Nat) (operation : A
       optimized target acc env2 loc ts ty := by
   obtain ⟨targetNext, targetRun, targetRelated⟩ :=
     evaluate_op_related_errors_through limit (.thunkOp operation) args source env1 result sourceNext optimized target acc env2 loc ts ty
-      argsIH (stateRel_doApp_thunk operation) (stateRel_doApp_thunk_error operation) clockBound hyp
+      argsIH (fun vs source sourceNext target value related run =>
+        stateRel_doApp (.thunkOp operation) vs source value sourceNext target
+          ⟨run, related, by simp, by
+            intro n
+            simp⟩) (fun vs source target error related run _errorOk =>
+        stateRel_doAppErr (.thunkOp operation) vs source error target
+          ⟨run, related, by simp, by
+            intro n
+            simp, by
+            intro parts
+            simp⟩) clockBound hyp
   apply rewriteTailPost_of_no_scan (.op (.thunkOp operation) args) source env1 result sourceNext
     optimized target targetNext acc env2 loc ts ty targetRun targetRelated
   intro tt resultTy branch op1 scan
@@ -3211,7 +3216,11 @@ theorem rewriteTail_op_globalsPtr_through {C F : Type} (limit : Nat)  (args : Li
     optimized target acc env2 loc ts ty argsIH
   · rw [scanSing_op_choice]
     simp [fromOp, BEq.beq, instBEqAssocOp.beq]
-  · exact stateRel_doApp_globalsPtr
+  · intro vs source sourceNext target value related run
+    exact stateRel_doApp (.globOp .globalsPtr) vs source value sourceNext target
+      ⟨run, related, by simp, by
+        intro n
+        simp⟩
   · exact doApp_globalsPtr_error
   · exact clockBound
   · exact hyp
@@ -3233,7 +3242,11 @@ theorem rewriteTail_op_global_through {C F : Type} (limit : Nat) (index : Nat) (
     optimized target acc env2 loc ts ty argsIH
   · rw [scanSing_op_choice]
     simp [fromOp, BEq.beq, instBEqAssocOp.beq]
-  · exact stateRel_doApp_global index
+  · intro vs source sourceNext target value related run
+    exact stateRel_doApp (.globOp (.global index)) vs source value sourceNext target
+      ⟨run, related, by simp, by
+        intro n
+        simp⟩
   · exact doApp_global_error index
   · exact clockBound
   · exact hyp
@@ -3255,7 +3268,11 @@ theorem rewriteTail_op_setGlobal_through {C F : Type} (limit : Nat) (index : Nat
     optimized target acc env2 loc ts ty argsIH
   · rw [scanSing_op_choice]
     simp [fromOp, BEq.beq, instBEqAssocOp.beq]
-  · exact stateRel_doApp_setGlobal index
+  · intro vs source sourceNext target value related run
+    exact stateRel_doApp (.globOp (.setGlobal index)) vs source value sourceNext target
+      ⟨run, related, by simp, by
+        intro n
+        simp⟩
   · exact doApp_setGlobal_error index
   · exact clockBound
   · exact hyp
@@ -3304,7 +3321,11 @@ theorem rewriteTail_op_setGlobalsPtr_through {C F : Type} (limit : Nat)  (args :
     optimized target acc env2 loc ts ty argsIH
   · rw [scanSing_op_choice]
     simp [fromOp, BEq.beq, instBEqAssocOp.beq]
-  · exact stateRel_doApp_setGlobalsPtr
+  · intro vs source sourceNext target value related run
+    exact stateRel_doApp (.globOp .setGlobalsPtr) vs source value sourceNext target
+      ⟨run, related, by simp, by
+        intro n
+        simp⟩
   · exact doApp_setGlobalsPtr_error
   · exact clockBound
   · exact hyp
@@ -3348,7 +3369,11 @@ theorem rewriteTail_op_nonAccumulatorInt_through {C F : Type} (limit : Nat) (ope
     optimized target acc env2 loc ts ty argsIH
   · rw [scanSing_op_choice, notAccumulator]
     rfl
-  · exact stateRel_doApp_intOp_success operation
+  · intro vs source sourceNext target value related run
+    exact stateRel_doApp (.intOp operation) vs source value sourceNext target
+      ⟨run, related, by simp, by
+        intro n
+        simp⟩
   · exact doApp_intOp_error operation
   · exact clockBound
   · exact hyp
@@ -3371,7 +3396,11 @@ theorem rewriteTail_op_word_through {C F : Type} (limit : Nat) (operation : Clos
     optimized target acc env2 loc ts ty argsIH
   · rw [scanSing_op_choice]
     simp [fromOp, BEq.beq, instBEqAssocOp.beq]
-  · exact stateRel_doApp_wordOp_success operation
+  · intro vs source sourceNext target value related run
+    exact stateRel_doApp (.wordOp operation) vs source value sourceNext target
+      ⟨run, related, by simp, by
+        intro n
+        simp⟩
   · exact doApp_wordOp_error operation
   · exact clockBound
   · exact hyp
@@ -3403,7 +3432,12 @@ theorem rewriteTail_op_accumulator_through {C F : Type} (limit : Nat) (assoc : A
       optimized target acc env2 loc ts ty := by
   obtain ⟨targetNext, ordinary, finalRelated⟩ :=
     evaluate_op_related_through limit (toOp assoc) args source env1 result sourceNext optimized target acc env2 loc ts ty
-      argsIH (stateRel_doApp_toOp assoc) (doApp_toOp_error_type assoc) clockBound hyp
+      argsIH (fun vs source sourceNext target value related run =>
+        stateRel_doApp (toOp assoc) vs source value sourceNext target
+          ⟨run, related, by cases assoc <;> simp [toOp], by
+            intro n
+            cases assoc <;> simp [toOp]⟩)
+      (doApp_toOp_error_type assoc) clockBound hyp
   refine ⟨targetNext, ordinary, finalRelated, ?_⟩
   intro enabled op workerLoc body arity required
   obtain ⟨sourceCode, optCode, opTypeEq, _⟩ := required
@@ -3562,7 +3596,10 @@ theorem rewriteTail_op_block_delegated_through {C F : Type} (limit : Nat) (opera
   · rw [scanSing_op_choice]
     cases operation <;> simp_all [fromOp, BEq.beq, instBEqAssocOp.beq]
   · intro values s next t value related run
-    exact stateRel_doApp_block_viaBvl operation values s next t value related notFromList run
+    exact stateRel_doApp (.blockOp operation) values s value next t
+      ⟨run, related, by simp, by
+        intro n
+        simp⟩
   · intro values s error run
     exact doApp_block_viaBvl_error operation values s notFromList error run
   · exact clockBound
@@ -3619,7 +3656,10 @@ theorem rewriteTail_op_memory_delegated_through {C F : Type} (limit : Nat) (oper
   · rw [scanSing_op_choice]
     simp [fromOp, BEq.beq, instBEqAssocOp.beq]
   · intro values s next t value related run
-    exact stateRel_doApp_memory_viaBvl operation values s next t value related delegated run
+    exact stateRel_doApp (.memOp operation) values s value next t
+      ⟨run, related, by simp, by
+        intro n
+        simp⟩
   · intro values s error run
     exact doApp_memory_viaBvl_error operation values s delegated error run
   · exact clockBound
@@ -3680,8 +3720,8 @@ theorem rewriteTail_op_memOp_through {C F : Type} (limit : Nat) (operation : Clo
       | exact rewriteTail_op_memory_rejected_through limit _ args source env1 result sourceNext optimized target acc env2 loc ts ty argsIH rfl clockBound hyp
 
 
-/-- All bounded operation cases follow from the remaining integer and block
-cases, which include the accumulator rewrite. These two premises remain open. -/
+/-- The bounded operation assembly reduces to the integer and block cases,
+which include the accumulator rewrite and are discharged in the closed proof. -/
 theorem rewriteTail_op_through_of_int_block {C F : Type} (limit : Nat)
     (operation : ClosLang.Op) (args : List Bvi.Exp)
     (structuralIH : ∀ xs, sizeOf xs < sizeOf [Bvi.Exp.op operation args] →
@@ -3935,14 +3975,8 @@ theorem rewriteTail_singleton_through {C F : Type} (limit : Nat) (e : Bvi.Exp)
     exact rewriteTail_return_through limit args (structuralIH args (by simp_wf; omega))
       source env1 result sourceNext optimized target acc env2 loc ts ty clockBound hyp
 
-/-- The complete rewrite simulation follows from the bounded operation case.
-The operation premise is still open; this reduction is not a HOL theorem port. -/
-theorem rewriteTailProperty_of_op_through {C F : Type}
-    (opStep : ∀ limit operation args,
-      (∀ xs, sizeOf xs < sizeOf [Bvi.Exp.op operation args] →
-        rewriteTailPropertyThrough (C := C) (F := F) limit xs) →
-      (∀ smaller, smaller < limit → ∀ xs, rewriteTailPropertyThrough (C := C) (F := F) smaller xs) →
-      rewriteTailPropertyThrough (C := C) (F := F) limit [.op operation args]) :
+/-- The rewrite simulation follows by induction on source clock and expression size. -/
+theorem rewriteTailProperty_all {C F : Type} :
     ∀ xs, rewriteTailProperty (C := C) (F := F) xs := by
   apply rewriteTailProperty_of_bounded_step
   intro limit xs structuralIH clockIH
@@ -3951,49 +3985,55 @@ theorem rewriteTailProperty_of_op_through {C F : Type}
   apply rewriteTail_singleton_through limit e singletonIH clockIH
   intro operation args opEq
   subst e
-  exact opStep limit operation args singletonIH clockIH
-
-/-- The rewrite simulation reduces to bounded integer and block operation
-steps. Both premises are outstanding; this is not a HOL theorem port. -/
-theorem rewriteTailProperty_of_int_block_through {C F : Type}
-    (intStep : ∀ limit op args,
-      (∀ xs, sizeOf xs < sizeOf [Bvi.Exp.op (.intOp op) args] →
-        rewriteTailPropertyThrough (C := C) (F := F) limit xs) →
-      (∀ smaller, smaller < limit → ∀ xs, rewriteTailPropertyThrough (C := C) (F := F) smaller xs) →
-      rewriteTailPropertyThrough (C := C) (F := F) limit [.op (.intOp op) args])
-    (blockStep : ∀ limit op args,
-      (∀ xs, sizeOf xs < sizeOf [Bvi.Exp.op (.blockOp op) args] →
-        rewriteTailPropertyThrough (C := C) (F := F) limit xs) →
-      (∀ smaller, smaller < limit → ∀ xs, rewriteTailPropertyThrough (C := C) (F := F) smaller xs) →
-      rewriteTailPropertyThrough (C := C) (F := F) limit [.op (.blockOp op) args]) :
-    ∀ xs, rewriteTailProperty (C := C) (F := F) xs := by
-  apply rewriteTailProperty_of_op_through
-  intro limit operation args structuralIH clockIH
-  apply rewriteTail_op_through_of_int_block limit operation args structuralIH
-  · intro op eq
-    subst operation
-    exact intStep limit op args structuralIH clockIH
-  · intro op eq
-    subst operation
-    exact blockStep limit op args structuralIH clockIH
-
-/-- The rewrite simulation follows by induction on the source clock and
-expression size. This Flapjack formulation still requires comparison with
-the complete HOL theorem statement before it can be tagged as its port. -/
-theorem rewriteTailProperty_all {C F : Type} :
-    ∀ xs, rewriteTailProperty (C := C) (F := F) xs := by
-  apply rewriteTailProperty_of_int_block_through
-  all_goals intro limit op args structuralIH clockIH
+  apply rewriteTail_op_through_of_int_block limit operation args singletonIH
+  all_goals intro op eq
+  all_goals subst operation
   all_goals intro source env1 result sourceNext optimized target acc env2 loc ts ty clockBound hyp
   all_goals first
     | apply rewriteTail_op_intOp_of_size_through limit op args source env1 result sourceNext optimized target
-        acc env2 loc ts ty structuralIH ?_ clockBound hyp
+        acc env2 loc ts ty singletonIH ?_ clockBound hyp
     | apply rewriteTail_op_blockOp_of_size_through limit op args source env1 result sourceNext optimized target
-        acc env2 loc ts ty structuralIH ?_ clockBound hyp
+        acc env2 loc ts ty singletonIH ?_ clockBound hyp
   all_goals
     intro body called values r last smaller opt target' acc' env2' loc' ts' ty' h
     exact clockIH called.clock (by omega) [body] called values r last opt target' acc' env2' loc' ts' ty'
       (Nat.le_refl _) h
+
+namespace RewriteSimulationCarrier
+/-- The BVI reference-map carrier roundtrips through its finite-support view. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : BviSem.BviStateBroad C F, (BviSem.BviState.ofBroad s).toBroad = s) ∧
+      (∀ s : BviSem.BviState C F, BviSem.BviState.ofBroad s.toBroad = s) :=
+  BviSem.holFmapAsFiniteSupportWitness
+end RewriteSimulationCarrier
+
+/-- Tail rewriting preserves evaluation and relates the source and target
+states. The evaluator inherits the real-model assumption in SOUNDNESS item 8. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "evaluate_rewrite_tail"
+  (fmap_as_finite_support := [refs])]
+theorem evaluateRewriteTail {C F : Type} (xs : List Bvi.Exp)
+    (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
+    (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
+    (optimized : Bool) (target : BviSem.BviState C F) (acc : Nat) (env2 : List Value)
+    (loc : Nat) (ts : List ValueType) (ty : ValueType)
+    (premises : BviSem.evaluate xs env1 source = (result, sourceNext) ∧
+      envRel ty optimized acc env1 env2 ∧ stateRel source target ∧ tyRel env1 ts ∧
+      (optimized = true → xs.length = 1) ∧ result ≠ .err (.abort .typeError)) :
+    ∃ targetNext, BviSem.evaluate xs env2 target = (result, targetNext) ∧
+      stateRel sourceNext targetNext ∧
+      (optimized = true → ∀ op workerLoc body arity,
+        sptLookup loc source.code = some (arity, body) ∧
+        optimizedCode loc arity body workerLoc target.code op ∧
+        opType op = ty ∧
+        (∃ op1 tt resultTy branch,
+          scanExpr ts loc [xs.headD (.var 0)] = [(tt, resultTy, branch, some op1)] ∧
+          resultTy ≠ .any ∧ op1 ≠ .noop ∧ opType op1 = opType op) →
+        let rewritten := (rewriteSource loc workerLoc op acc ts (xs.headD (.var 0))).2
+        ∃ rewrittenResult t1 t2,
+          BviSem.evaluate [rewritten] env2 target = (rewrittenResult, t1) ∧
+          BviSem.evaluate [applyOp op (.var acc) (xs.headD (.var 0))] env2 target = (rewrittenResult, t2) ∧
+          stateRel sourceNext t1 ∧ stateRel sourceNext t2) := by
+  exact rewriteTailProperty_all xs source env1 result sourceNext optimized target acc env2 loc ts ty premises
 
 /-- Initial states satisfy the tail-recursion relation under the source
 program and oracle conditions. This helper is not a HOL declaration port. -/
@@ -4012,28 +4052,56 @@ theorem initialState_compileEach_related {C F : Type}
   intro n ⟨member, worker⟩
   exact workerBound n ((sptFromAList_mem_iff _ n).mp member) worker
 
+/-- The tail-recursion oracle adapter is the standard incremental-pass
+oracle adapter. -/
+theorem transformOracle_eq_stateCo {C : Type} (oracle : BviSem.CompileOracle (Nat × C)) :
+    transformOracle oracle = BackendProps.stateCo compileEachSource oracle := by
+  funext index
+  cases h : oracle index with
+  | mk config program => cases config; rfl
+
+/-- The tail-recursion callback is the standard incremental-pass callback. -/
+theorem transformCompiler_eq_stateCc {C : Type} (compiler : BviSem.Compiler C) :
+    transformCompiler compiler = BackendProps.stateCc compileEachSource compiler := by
+  funext config program
+  rcases config with ⟨next, config⟩
+  cases h : compileEachSource next program with
+  | mk next' compiled =>
+    cases hcompiler : compiler config compiled with
+    | none => simp [transformCompiler, BackendProps.stateCc, h, hcompiler]
+    | some output =>
+      rcases output with ⟨bytes, data, config'⟩
+      simp [transformCompiler, BackendProps.stateCc, h, hcompiler]
+
+
 /-- Evaluation of the initial call is preserved by compiling every function.
-This source-shaped theorem remains untagged pending review of the BVI
-evaluator and the pass's state and code representations against HOL. -/
+The evaluator inherits the real-model assumption in SOUNDNESS item 8. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "evaluate_compile_each"
+  (fmap_as_finite_support := [refs])]
 theorem evaluateCompileEach {C F : Type}
-    (next : Nat) (program : List (Nat × Nat × Bvi.Exp)) (ffi : HolFfiState F)
-    (oracle : BviSem.CompileOracle (Nat × C)) (compiler : BviSem.Compiler C) (clock start : Nat)
+    (next : Nat) (program : List (Nat × Nat × Bvi.Exp))
+    (oracle : BviSem.CompileOracle (Nat × C)) (start : Nat) (ffi : HolFfiState F)
+    (compiler : BviSem.Compiler C) (clock : Nat)
     (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
-    (condition : inputCondition next program)
-    (oracleCondition : ∀ n, inputCondition (oracle n).1.1 (oracle n).2)
-    (workerBound : ∀ n, n ∈ (compileEachSource next program).2.map Prod.fst →
-      inWorkerNamespace n → n < (oracle 0).1.1)
-    (run : BviSem.evaluate [.call 0 (some start) [] none] []
-      (BviSem.initialState ffi (sptFromAList program) oracle (transformCompiler compiler) clock) =
-      (result, sourceNext))
-    (notTypeError : result ≠ .err (.abort .typeError)) :
-    ∃ targetNext,
+    (premises : inputCondition next program ∧
+      (∀ n next cfg prog, oracle n = ((next, cfg), prog) → inputCondition next prog) ∧
+      (∀ n, n ∈ (compileEachSource next program).2.map Prod.fst ∧
+        inWorkerNamespace n → n < (oracle 0).1.1) ∧
+      BviSem.evaluate [.call 0 (some start) [] none] []
+        (BviSem.initialState ffi (sptFromAList program) oracle
+          (BackendProps.stateCc compileEachSource compiler) clock) = (result, sourceNext) ∧
+      result ≠ .err (.abort .typeError)) :
+    ∃ targetNext : BviSem.BviState C F,
       BviSem.evaluate [.call 0 (some start) [] none] []
         (BviSem.initialState ffi (sptFromAList (compileEachSource next program).2)
-          (transformOracle oracle) compiler clock) = (result, targetNext) ∧
+          (BackendProps.stateCo compileEachSource oracle) compiler clock) = (result, targetNext) ∧
       stateRel sourceNext targetNext := by
+  obtain ⟨condition, oracleCondition, workerBound, run, notTypeError⟩ := premises
+  rw [← transformCompiler_eq_stateCc] at run
+  rw [← transformOracle_eq_stateCo]
   have related := initialState_compileEach_related next program ffi oracle compiler clock
-    condition oracleCondition workerBound
+    condition (fun n => oracleCondition n _ _ _ rfl)
+    (fun n member inNamespace => workerBound n ⟨member, inNamespace⟩)
   have simulation := rewriteTailProperty_all (C := C) (F := F) [.call 0 (some start) [] none]
     (BviSem.initialState ffi (sptFromAList program) oracle (transformCompiler compiler) clock)
     [] result sourceNext false
@@ -4067,8 +4135,12 @@ theorem compileEach_initial_observations {C F : Type}
       (BviSem.initialState ffi (sptFromAList program) oracle (transformCompiler compiler) clock) with
   | mk result sourceNext =>
     have notType : result ≠ .err (.abort .typeError) := by simpa [BviSem.evaluateTuple, run] using noType
-    obtain ⟨targetNext, targetRun, related⟩ := evaluateCompileEach next program ffi oracle compiler clock start
-      result sourceNext condition oracleCondition workerBound run notType
+    have sourceRun := run
+    rw [transformCompiler_eq_stateCc] at sourceRun
+    obtain ⟨targetNext, targetRun, related⟩ := evaluateCompileEach next program oracle start ffi compiler clock
+      result sourceNext ⟨condition, (by intro n n' cfg prog h; simpa only [h] using oracleCondition n),
+        (by intro n h; exact workerBound n h.1 h.2), sourceRun, notType⟩
+    rw [← transformOracle_eq_stateCo] at targetRun
     have ffiEqual := (stateRel_const sourceNext targetNext related).2.2.2
     simp [targetRun, ffiEqual]
 
@@ -4158,30 +4230,10 @@ theorem semantics_eq_of_initial_projections {C D F : Type} (ffi : HolFfiState F)
   unfold BviSem.semantics
   simp_rw [sameResult, sameTrace, sameObservation]
 
-/-- The tail-recursion oracle adapter is the standard incremental-pass
-oracle adapter. -/
-theorem transformOracle_eq_stateCo {C : Type} (oracle : BviSem.CompileOracle (Nat × C)) :
-    transformOracle oracle = BackendProps.stateCo compileEachSource oracle := by
-  funext index
-  cases h : oracle index with
-  | mk config program => cases config; rfl
-
-/-- The tail-recursion callback is the standard incremental-pass callback. -/
-theorem transformCompiler_eq_stateCc {C : Type} (compiler : BviSem.Compiler C) :
-    transformCompiler compiler = BackendProps.stateCc compileEachSource compiler := by
-  funext config program
-  rcases config with ⟨next, config⟩
-  cases h : compileEachSource next program with
-  | mk next' compiled =>
-    cases hcompiler : compiler config compiled with
-    | none => simp [transformCompiler, BackendProps.stateCc, h, hcompiler]
-    | some output =>
-      rcases output with ⟨bytes, data, config'⟩
-      simp [transformCompiler, BackendProps.stateCc, h, hcompiler]
-
 /-- Compiling each function preserves whole-program BVI behavior when the
-source does not fail. This source-shaped result remains untagged until the
-evaluator, state relation, and compilation carriers are reviewed against HOL. -/
+source does not fail. Semantics inherit the real-model assumption in SOUNDNESS
+item 8. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "compile_each_semantics"]
 theorem compileEach_semantics {C F : Type}
     (next : Nat) (program : List (Nat × Nat × Bvi.Exp))
     (oracle : BviSem.CompileOracle (Nat × C)) (compiled : List (Nat × Nat × Bvi.Exp))

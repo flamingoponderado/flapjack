@@ -19,20 +19,15 @@ private def mapofBroad {α β : Type} (lookup : α → Option β)
     (support : ∃ keys : List α, ∀ key, lookup key ≠ none → key ∈ keys) : HolFiniteMapExact α β :=
   ⟨lookup, support⟩
 
-/-- HOL finite-map range, as a membership predicate. -/
-def mapRange {α β : Type} (f : HolFiniteMapExact α β) : Set β :=
-  {value | ∃ key, f.lookup key = some value}
-
 theorem holFmapAsFiniteSupportParamWitness_holeHasVal_f (f : HolFiniteMapExact Nat Nat) :
     mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
 theorem holFmapAsFiniteSupportParamWitness_holeHasVal_refs (refs : HolFiniteMapExact Nat (Ref Value)) :
     mapofBroad (maptoBroadlookup refs) refs.finiteSupport = refs := by cases refs; rfl
 
 /-- The optimized environment identifies a mutable block containing the
-current value in its hole.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "hole_has_val_def" (fmap_as_finite_support_parameters := [f, refs])] -/
+current value in its hole. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "hole_has_val_def"
+  (fmap_as_finite_support_parameters := [f, refs])]
 noncomputable def holeHasVal (f : HolFiniteMapExact Nat Nat) (env1 env2 : List Value)
     (refs : HolFiniteMapExact Nat (Ref Value)) (c : Value) : Prop :=
   env2.length = env1.length + 2 ∧
@@ -49,14 +44,14 @@ theorem holFmapAsFiniteSupportParamWitness_holeHasVal_submap_fNext (fNext : HolF
 theorem holFmapAsFiniteSupportParamWitness_holeHasVal_submap_refs (refs : HolFiniteMapExact Nat (Ref Value)) :
     mapofBroad (maptoBroadlookup refs) refs.finiteSupport = refs := by cases refs; rfl
 
-/-- A hole outside a larger pointer-map range is outside a submap's range.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "hole_has_val_submap" (fmap_as_finite_support_parameters := [f, fNext, refs])] -/
+/-- A hole outside a larger pointer-map range is outside a submap's range. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "hole_has_val_submap"
+  (fmap_as_finite_support_parameters := [f, fNext, refs])]
 theorem holeHasVal_submap (f : HolFiniteMapExact Nat Nat) (fNext : HolFiniteMapExact Nat Nat)
     (env1 env2 : List Value) (refs : HolFiniteMapExact Nat (Ref Value)) (c : Value)
-    (hole : holeHasVal fNext env1 env2 refs c) (submap : f.submap fNext) :
+    (h : holeHasVal fNext env1 env2 refs c ∧ f.submap fNext) :
     holeHasVal f env1 env2 refs c := by
+  obtain ⟨hole, submap⟩ := h
   obtain ⟨length, ptr, tag, finalised, left, right, ptrEq, idxEq, small, outside, found⟩ := hole
   refine ⟨length, ptr, tag, finalised, left, right, ptrEq, idxEq, small, ?_, found⟩
   intro ⟨key, mapped⟩
@@ -74,14 +69,14 @@ theorem holFmapAsFiniteSupportParamWitness_holeHasVal_append_f (f : HolFiniteMap
 theorem holFmapAsFiniteSupportParamWitness_holeHasVal_append_refs (refs : HolFiniteMapExact Nat (Ref Value)) :
     mapofBroad (maptoBroadlookup refs) refs.finiteSupport = refs := by cases refs; rfl
 
-/-- Related bindings can be added in front of both optimized environments.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "hole_has_val_append" (fmap_as_finite_support_parameters := [f, refs])] -/
+/-- Related bindings can be added in front of both optimized environments. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "hole_has_val_append"
+  (fmap_as_finite_support_parameters := [f, refs])]
 theorem holeHasVal_append (f : HolFiniteMapExact Nat Nat) (env1 env2 : List Value)
     (refs : HolFiniteMapExact Nat (Ref Value)) (c : Value) (vs vs' : List Value)
-    (hole : holeHasVal f env1 env2 refs c) (bindings : List.Forall₂ (valueRel f) vs vs') :
+    (h : holeHasVal f env1 env2 refs c ∧ List.Forall₂ (valueRel f) vs vs') :
     holeHasVal f (vs ++ env1) (vs' ++ env2) refs c := by
+  obtain ⟨hole, bindings⟩ := h
   obtain ⟨length, ptr, tag, finalised, left, right, ptrEq, idxEq, small, outside, found⟩ := hole
   have sameLength := bindings.length_eq
   have ptrBound : env1.length < env2.length := by omega
@@ -96,14 +91,14 @@ theorem holFmapAsFiniteSupportParamWitness_holeHasVal_unappend_f (f : HolFiniteM
 theorem holFmapAsFiniteSupportParamWitness_holeHasVal_unappend_refs (refs : HolFiniteMapExact Nat (Ref Value)) :
     mapofBroad (maptoBroadlookup refs) refs.finiteSupport = refs := by cases refs; rfl
 
-/-- Removing related leading bindings recovers the original hole relation.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "hole_has_val_unappend" (fmap_as_finite_support_parameters := [f, refs])] -/
+/-- Removing related leading bindings recovers the original hole relation. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "hole_has_val_unappend"
+  (fmap_as_finite_support_parameters := [f, refs])]
 theorem holeHasVal_unappend (f : HolFiniteMapExact Nat Nat) (vs vs' env1 env2 : List Value)
     (refs : HolFiniteMapExact Nat (Ref Value)) (c : Value)
-    (hole : holeHasVal f (vs ++ env1) (vs' ++ env2) refs c)
-    (bindings : List.Forall₂ (valueRel f) vs vs') : holeHasVal f env1 env2 refs c := by
+    (h : holeHasVal f (vs ++ env1) (vs' ++ env2) refs c ∧
+      List.Forall₂ (valueRel f) vs vs') : holeHasVal f env1 env2 refs c := by
+  obtain ⟨hole, bindings⟩ := h
   obtain ⟨length, ptr, tag, finalised, left, right, ptrEq, idxEq, small, outside, found⟩ := hole
   have sameLength := bindings.length_eq
   simp only [List.length_append] at length ptrEq idxEq
@@ -123,15 +118,14 @@ theorem holFmapAsFiniteSupportRelationWitness_BviState {C F : Type} :
       (∀ s : BviSem.BviState C F, BviSem.BviState.ofBroad s.toBroad = s) :=
   BviSem.holFmapAsFiniteSupportWitness
 
-/-- Decrementing the evaluator clock does not affect the hole's heap entry.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "hole_has_val_dec" (fmap_as_finite_support_relation := [BviState.refs, f])] -/
+/-- Decrementing the evaluator clock does not affect the hole's heap entry. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "hole_has_val_dec"
+  (fmap_as_finite_support_relation := [BviState.refs, f])]
 theorem holeHasVal_dec {C F : Type} (f : HolFiniteMapExact Nat Nat) (env1 env2 : List Value)
     (state : BviSem.BviState C F) (c : Value) (n : Nat)
-    (hole : holeHasVal f env1 env2 state.refs c) (_clock : state.clock = n + 1) :
+    (h : holeHasVal f env1 env2 state.refs c ∧ state.clock = n + 1) :
     holeHasVal f env1 env2 (BviSem.decClock 1 state).refs c := by
-  exact hole
+  exact h.1
 
 theorem holFmapAsFiniteSupportParamWitness_holesUnchangedExcept_f {α β : Type}
     (f : HolFiniteMapExact α β) : mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
@@ -141,13 +135,12 @@ theorem holFmapAsFiniteSupportParamWitness_holesUnchangedExcept_refsNew {β γ :
     (refsNew : HolFiniteMapExact β (Ref γ)) : mapofBroad (maptoBroadlookup refsNew) refsNew.finiteSupport = refsNew := by cases refsNew; rfl
 
 /-- Existing mutable blocks outside the original pointer-map range keep
-their tag and surrounding values; listed holes may change their child.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "holes_unchanged_except_def" (fmap_as_finite_support_parameters := [f, refs, refsNew])] -/
+their tag and surrounding values; listed holes may change their child. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "holes_unchanged_except_def"
+  (fmap_as_finite_support_parameters := [f, refs, refsNew])]
 def holesUnchangedExcept {α β γ : Type} (f : HolFiniteMapExact α β)
     (refs : HolFiniteMapExact β (Ref γ)) (refsNew : HolFiniteMapExact β (Ref γ)) (changed : Set β) : Prop :=
-  ∀ ptr tag finalised left child right, ptr ∉ mapRange f →
+  ∀ ptr tag finalised left child right, ptr ∉ mapRange f ∧
     refs.lookup ptr = some (.mutBlock tag finalised left child right) →
     ∃ finalised' child', refsNew.lookup ptr = some (.mutBlock tag finalised' left child' right) ∧
       (ptr ∉ changed → child = child')
@@ -155,10 +148,9 @@ def holesUnchangedExcept {α β γ : Type} (f : HolFiniteMapExact α β)
 theorem holFmapAsFiniteSupportParamWitness_holeNotFinalised_refs {β γ : Type}
     (refs : HolFiniteMapExact β (Ref γ)) : mapofBroad (maptoBroadlookup refs) refs.finiteSupport = refs := by cases refs; rfl
 
-/-- A location holds a mutable block that is not yet finalised.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "hole_not_finalised_def" (fmap_as_finite_support_parameters := [refs])] -/
+/-- A location holds a mutable block that is not yet finalised. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "hole_not_finalised_def"
+  (fmap_as_finite_support_parameters := [refs])]
 def holeNotFinalised {β γ : Type} (refs : HolFiniteMapExact β (Ref γ)) (ptr : β) : Prop :=
   ∃ tag left child right, refs.lookup ptr = some (.mutBlock tag false left child right)
 
@@ -169,13 +161,12 @@ theorem holFmapAsFiniteSupportParamWitness_holesStillNotFinalised_refs {β γ : 
 theorem holFmapAsFiniteSupportParamWitness_holesStillNotFinalised_refsNew {β γ : Type}
     (refsNew : HolFiniteMapExact β (Ref γ)) : mapofBroad (maptoBroadlookup refsNew) refsNew.finiteSupport = refsNew := by cases refsNew; rfl
 
-/-- Every unfinalised hole outside the pointer-map range remains unfinalised.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "holes_still_not_finalised_def" (fmap_as_finite_support_parameters := [f, refs, refsNew])] -/
+/-- Every unfinalised hole outside the pointer-map range remains unfinalised. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "holes_still_not_finalised_def"
+  (fmap_as_finite_support_parameters := [f, refs, refsNew])]
 def holesStillNotFinalised {α β γ : Type} (f : HolFiniteMapExact α β)
     (refs : HolFiniteMapExact β (Ref γ)) (refsNew : HolFiniteMapExact β (Ref γ)) : Prop :=
-  ∀ ptr, ptr ∉ mapRange f → holeNotFinalised refs ptr → holeNotFinalised refsNew ptr
+  ∀ ptr, ptr ∉ mapRange f ∧ holeNotFinalised refs ptr → holeNotFinalised refsNew ptr
 
 theorem holFmapAsFiniteSupportParamWitness_onlyFresh_f (f : HolFiniteMapExact Nat Nat) :
     mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
@@ -184,10 +175,9 @@ theorem holFmapAsFiniteSupportParamWitness_onlyFresh_g (g : HolFiniteMapExact Na
 theorem holFmapAsFiniteSupportParamWitness_onlyFresh_refsOld (refsOld : HolFiniteMapExact Nat (Ref Value)) :
     mapofBroad (maptoBroadlookup refsOld) refsOld.finiteSupport = refsOld := by cases refsOld; rfl
 
-/-- Newly introduced pointer-map targets are absent from the old heap.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "only_fresh_def" (fmap_as_finite_support_parameters := [f, g, refsOld])] -/
+/-- Newly introduced pointer-map targets are absent from the old heap. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "only_fresh_def"
+  (fmap_as_finite_support_parameters := [f, g, refsOld])]
 def onlyFresh (f : HolFiniteMapExact Nat Nat) (g : HolFiniteMapExact Nat Nat)
     (refsOld : HolFiniteMapExact Nat (Ref Value)) : Prop :=
   ∀ n, n ∈ mapRange g ∧ n ∉ mapRange f → n ∉ refsOld.domain
@@ -201,18 +191,18 @@ theorem holFmapAsFiniteSupportParamWitness_unchanged_holeHasVal_refs (refs : Hol
 theorem holFmapAsFiniteSupportParamWitness_unchanged_holeHasVal_refsNext (refsNext : HolFiniteMapExact Nat (Ref Value)) :
     mapofBroad (maptoBroadlookup refsNext) refsNext.finiteSupport = refsNext := by cases refsNext; rfl
 
-/-- An unchanged hole remains valid when the pointer map grows only at fresh locations.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "unchanged_hole_has_val" (fmap_as_finite_support_parameters := [f, fNext, refs, refsNext])] -/
+/-- An unchanged hole remains valid when the pointer map grows only at fresh locations. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "unchanged_hole_has_val"
+  (fmap_as_finite_support_parameters := [f, fNext, refs, refsNext])]
 theorem unchanged_holeHasVal (f : HolFiniteMapExact Nat Nat) (fNext : HolFiniteMapExact Nat Nat)
     (env1 envPrefix : List Value) (holePtr : Nat) (holeIdx : Int)
     (refs : HolFiniteMapExact Nat (Ref Value)) (refsNext : HolFiniteMapExact Nat (Ref Value))
     (c : Value) (changed : Set Nat)
-    (hole : holeHasVal f env1 (envPrefix ++ [.refPtr false holePtr, .number holeIdx]) refs c)
-    (fresh : onlyFresh f fNext refs) (unchanged : holesUnchangedExcept f refs refsNext changed)
-    (notChanged : holePtr ∉ changed) :
+    (h : holeHasVal f env1 (envPrefix ++ [.refPtr false holePtr, .number holeIdx]) refs c ∧
+      onlyFresh f fNext refs ∧ holesUnchangedExcept f refs refsNext changed ∧
+      holePtr ∉ changed) :
     holeHasVal fNext env1 (envPrefix ++ [.refPtr false holePtr, .number holeIdx]) refsNext c := by
+  obtain ⟨hole, fresh, unchanged, notChanged⟩ := h
   obtain ⟨length, ptr, tag, finalised, left, right, ptrEq, idxEq, small, outside, found⟩ := hole
   have prefixLength : envPrefix.length = env1.length := by simp only [List.length_append, List.length_cons, List.length_nil] at length; omega
   have knownPtr : holEl env1.length (envPrefix ++ [.refPtr false holePtr, .number holeIdx]) =
@@ -223,7 +213,7 @@ theorem unchanged_holeHasVal (f : HolFiniteMapExact Nat Nat) (fNext : HolFiniteM
   have ptrSame : ptr = holePtr := by simpa using ptrEq.symm
   subst ptr
   obtain ⟨newFinal, newChild, newFound, sameChild⟩ :=
-    unchanged holePtr tag finalised left c right outside found
+    unchanged holePtr tag finalised left c right ⟨outside, found⟩
   have childEq := sameChild notChanged
   subst newChild
   have outsideNext : holePtr ∉ mapRange fNext := by
@@ -238,27 +228,47 @@ theorem holFmapAsFiniteSupportParamWitness_holesUnchanged_refl_f {α β : Type} 
 theorem holFmapAsFiniteSupportParamWitness_holesUnchanged_refl_refs {β γ : Type} (refs : HolFiniteMapExact β (Ref γ)) :
     mapofBroad (maptoBroadlookup refs) refs.finiteSupport = refs := by cases refs; rfl
 
-/-- A heap trivially preserves its own mutable holes.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "holes_unchanged_except_refl" (fmap_as_finite_support_parameters := [f, refs])] -/
+/-- A heap trivially preserves its own mutable holes. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "holes_unchanged_except_refl"
+  (fmap_as_finite_support_parameters := [f, refs])]
 theorem holesUnchanged_refl {α β γ : Type} (f : HolFiniteMapExact α β)
     (refs : HolFiniteMapExact β (Ref γ)) (changed : Set β) : holesUnchangedExcept f refs refs changed := by
-  intro ptr tag finalised left child right _ found
+  intro ptr tag finalised left child right ⟨_, found⟩
   exact ⟨finalised, child, found, fun _ => rfl⟩
+
+theorem holFmapAsFiniteSupportParamWitness_holesUnchanged_submap_f {α β : Type}
+    (f : HolFiniteMapExact α β) : mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
+theorem holFmapAsFiniteSupportParamWitness_holesUnchanged_submap_g {α β : Type}
+    (g : HolFiniteMapExact α β) : mapofBroad (maptoBroadlookup g) g.finiteSupport = g := by cases g; rfl
+theorem holFmapAsFiniteSupportParamWitness_holesUnchanged_submap_refs {β γ : Type}
+    (refs : HolFiniteMapExact β (Ref γ)) : mapofBroad (maptoBroadlookup refs) refs.finiteSupport = refs := by cases refs; rfl
+theorem holFmapAsFiniteSupportParamWitness_holesUnchanged_submap_refsNew {β γ : Type}
+    (refsNew : HolFiniteMapExact β (Ref γ)) : mapofBroad (maptoBroadlookup refsNew) refsNew.finiteSupport = refsNew := by cases refsNew; rfl
+
+/-- Extending the pointer map preserves the unchanged-hole invariant. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "holes_unchanged_except_submap"
+  (fmap_as_finite_support_parameters := [f, g, refs, refsNew])]
+theorem holesUnchanged_submap {α β γ : Type} (f : HolFiniteMapExact α β) (g : HolFiniteMapExact α β)
+    (refs : HolFiniteMapExact β (Ref γ)) (refsNew : HolFiniteMapExact β (Ref γ)) (changed : Set β)
+    (h : holesUnchangedExcept f refs refsNew changed ∧ f.submap g) :
+    holesUnchangedExcept g refs refsNew changed := by
+  intro ptr tag finalised left child right ⟨outside, found⟩
+  apply h.1 ptr tag finalised left child right
+  refine ⟨?_, found⟩
+  rintro ⟨key, mapped⟩
+  exact outside ⟨key, h.2 key ptr mapped⟩
 
 theorem holFmapAsFiniteSupportParamWitness_holesStill_refl_f {α β : Type} (f : HolFiniteMapExact α β) :
     mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
 theorem holFmapAsFiniteSupportParamWitness_holesStill_refl_refs {β γ : Type} (refs : HolFiniteMapExact β (Ref γ)) :
     mapofBroad (maptoBroadlookup refs) refs.finiteSupport = refs := by cases refs; rfl
 
-/-- A heap trivially preserves its own unfinalised holes.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "holes_still_not_finalised_refl" (fmap_as_finite_support_parameters := [f, refs])] -/
+/-- A heap trivially preserves its own unfinalised holes. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "holes_still_not_finalised_refl"
+  (fmap_as_finite_support_parameters := [f, refs])]
 theorem holesStill_refl {α β γ : Type} (f : HolFiniteMapExact α β)
     (refs : HolFiniteMapExact β (Ref γ)) : holesStillNotFinalised f refs refs := by
-  intro _ _ found
+  intro _ ⟨_, found⟩
   exact found
 
 theorem holFmapAsFiniteSupportParamWitness_holesStill_insert_f {α β : Type}
@@ -268,10 +278,9 @@ theorem holFmapAsFiniteSupportParamWitness_holesStill_insert_refs {β γ : Type}
 theorem holFmapAsFiniteSupportParamWitness_holesStill_insert_refsNew {β γ : Type}
     (refsNew : HolFiniteMapExact β (Ref γ)) : mapofBroad (maptoBroadlookup refsNew) refsNew.finiteSupport = refsNew := by cases refsNew; rfl
 
-/-- Inserting an unfinalised mutable block preserves all unfinalised holes.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "holes_still_not_finalised_ins" (fmap_as_finite_support_parameters := [f, refs, refsNew])] -/
+/-- Inserting an unfinalised mutable block preserves all unfinalised holes. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "holes_still_not_finalised_ins"
+  (fmap_as_finite_support_parameters := [f, refs, refsNew])]
 theorem holesStill_insert {α β γ : Type} (f : HolFiniteMapExact α β)
     (refs : HolFiniteMapExact β (Ref γ)) (refsNew : HolFiniteMapExact β (Ref γ)) (ptr : β) (tag : Nat)
     (left : List γ) (child : γ) (right : List γ)
@@ -280,11 +289,11 @@ theorem holesStill_insert {α β γ : Type} (f : HolFiniteMapExact α β)
       (@HolFiniteMapExact.updateEq β (Ref γ) (Classical.decEq β) refsNew
         (ptr, .mutBlock tag false left child right)) := by
   classical
-  intro key outside found
+  intro key ⟨outside, found⟩
   by_cases same : key = ptr
   · subst key
     exact ⟨tag, left, child, right, by simp [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL]⟩
-  · obtain ⟨oldTag, oldLeft, oldChild, oldRight, lookup⟩ := related key outside found
+  · obtain ⟨oldTag, oldLeft, oldChild, oldRight, lookup⟩ := related key ⟨outside, found⟩
     exact ⟨oldTag, oldLeft, oldChild, oldRight,
       by simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, same] using lookup⟩
 
@@ -295,10 +304,9 @@ theorem holFmapAsFiniteSupportParamWitness_holesStill_delete_refs {β γ : Type}
 theorem holFmapAsFiniteSupportParamWitness_holesStill_delete_refsNew {β γ : Type}
     (refsNew : HolFiniteMapExact β (Ref γ)) : mapofBroad (maptoBroadlookup refsNew) refsNew.finiteSupport = refsNew := by cases refsNew; rfl
 
-/-- Dropping an inserted unfinalised source hole preserves the hole invariant.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "holes_still_not_finalised_del" (fmap_as_finite_support_parameters := [f, refs, refsNew])] -/
+/-- Dropping an inserted unfinalised source hole preserves the hole invariant. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "holes_still_not_finalised_del"
+  (fmap_as_finite_support_parameters := [f, refs, refsNew])]
 theorem holesStill_delete {α β γ : Type} (f : HolFiniteMapExact α β)
     (refs : HolFiniteMapExact β (Ref γ)) (refsNew : HolFiniteMapExact β (Ref γ)) (ptr : β) (tag : Nat)
     (left : List γ) (child : γ) (right : List γ)
@@ -307,8 +315,9 @@ theorem holesStill_delete {α β γ : Type} (f : HolFiniteMapExact α β)
         (ptr, .mutBlock tag false left child right)) refsNew) :
     holesStillNotFinalised f refs refsNew := by
   classical
-  intro key outside found
-  apply related key outside
+  intro key ⟨outside, found⟩
+  apply related key
+  refine ⟨outside, ?_⟩
   by_cases same : key = ptr
   · subst key
     exact ⟨tag, left, child, right, by simp [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL]⟩
@@ -316,16 +325,25 @@ theorem holesStill_delete {α β γ : Type} (f : HolFiniteMapExact α β)
     exact ⟨oldTag, oldLeft, oldChild, oldRight,
       by simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, same] using lookup⟩
 
-/-- Flapjack infrastructure for removing a freshly allocated wrapper frame
-from the initial heap of an unchanged-hole relation. The HOL theorem
-`holes_unchanged_except_del_SING` still needs a full carrier review. -/
-theorem holesUnchanged_delete_fresh {α β γ : Type} (f : HolFiniteMapExact α β)
-    (refs refsNew : HolFiniteMapExact β (Ref γ)) (ptr : β) (value : Ref γ)
-    (related : holesUnchangedExcept f
-      (@HolFiniteMapExact.updateEq β (Ref γ) (Classical.decEq β) refs (ptr, value)) refsNew {ptr})
-    (fresh : ptr ∉ refs.domain) : holesUnchangedExcept f refs refsNew ∅ := by
+theorem holFmapAsFiniteSupportParamWitness_holesUnchanged_delete_f {α β : Type}
+    (f : HolFiniteMapExact α β) : mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
+theorem holFmapAsFiniteSupportParamWitness_holesUnchanged_delete_refs {β γ : Type}
+    (refs : HolFiniteMapExact β (Ref γ)) : mapofBroad (maptoBroadlookup refs) refs.finiteSupport = refs := by cases refs; rfl
+theorem holFmapAsFiniteSupportParamWitness_holesUnchanged_delete_refsNew {β γ : Type}
+    (refsNew : HolFiniteMapExact β (Ref γ)) : mapofBroad (maptoBroadlookup refsNew) refsNew.finiteSupport = refsNew := by cases refsNew; rfl
+
+/-- Removing a fresh source update removes that location from the changed set. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "holes_unchanged_except_del"
+  (fmap_as_finite_support_parameters := [f, refs, refsNew])]
+theorem holesUnchanged_delete {α β γ : Type} (f : HolFiniteMapExact α β)
+    (refs : HolFiniteMapExact β (Ref γ)) (refsNew : HolFiniteMapExact β (Ref γ))
+    (changed : Set β) (ptr : β) (value : Ref γ)
+    (h : holesUnchangedExcept f
+      (@HolFiniteMapExact.updateEq β (Ref γ) (Classical.decEq β) refs (ptr, value)) refsNew changed ∧
+      ptr ∉ refs.domain) : holesUnchangedExcept f refs refsNew (changed \ {ptr}) := by
   classical
-  intro key tag finalised left child right outside found
+  obtain ⟨related, fresh⟩ := h
+  intro key tag finalised left child right ⟨outside, found⟩
   have different : key ≠ ptr := by
     intro same
     subst key
@@ -334,17 +352,69 @@ theorem holesUnchanged_delete_fresh {α β γ : Type} (f : HolFiniteMapExact α 
   have updated : (refs.updateEq (ptr, value)).lookup key =
       some (.mutBlock tag finalised left child right) := by
     simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, different] using found
-  obtain ⟨fin, childNew, result, unchanged⟩ := related key tag finalised left child right outside updated
-  exact ⟨fin, childNew, result, fun _ => unchanged (by simpa using different)⟩
+  obtain ⟨fin, childNew, result, unchanged⟩ := related key tag finalised left child right ⟨outside, updated⟩
+  refine ⟨fin, childNew, result, fun absent => unchanged ?_⟩
+  intro member
+  exact absent ⟨member, by simpa using different⟩
 
-/-- Flapjack infrastructure: a freshness relation over an extended heap also
-holds over the original heap. The HOL theorem `only_fresh_del` still needs a
-full carrier review. -/
+theorem holFmapAsFiniteSupportParamWitness_holesUnchanged_delete_fresh_f {α β : Type}
+    (f : HolFiniteMapExact α β) : mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
+theorem holFmapAsFiniteSupportParamWitness_holesUnchanged_delete_fresh_refs {β γ : Type}
+    (refs : HolFiniteMapExact β (Ref γ)) : mapofBroad (maptoBroadlookup refs) refs.finiteSupport = refs := by cases refs; rfl
+theorem holFmapAsFiniteSupportParamWitness_holesUnchanged_delete_fresh_refsNew {β γ : Type}
+    (refsNew : HolFiniteMapExact β (Ref γ)) : mapofBroad (maptoBroadlookup refsNew) refsNew.finiteSupport = refsNew := by cases refsNew; rfl
+
+/-- The singleton changed-set case of removing a fresh source update. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "holes_unchanged_except_del_SING"
+  (fmap_as_finite_support_parameters := [f, refs, refsNew])]
+theorem holesUnchanged_delete_fresh {α β γ δ : Type} (f : HolFiniteMapExact α β)
+    (refs : HolFiniteMapExact β (Ref γ)) (refsNew : HolFiniteMapExact β (Ref γ))
+    (_changed : δ) (ptr : β) (value : Ref γ)
+    (h : holesUnchangedExcept f
+      (@HolFiniteMapExact.updateEq β (Ref γ) (Classical.decEq β) refs (ptr, value)) refsNew {ptr} ∧
+      ptr ∉ refs.domain) : holesUnchangedExcept f refs refsNew ∅ := by
+  simpa using holesUnchanged_delete f refs refsNew {ptr} ptr value h
+
+/-- Flapjack infrastructure: freshness over an updated heap implies freshness
+over the original heap, without needing a range condition on the updated key.
+This stronger fact supports the original theorem and existing frame proofs. -/
 theorem onlyFresh_delete_frame (f g : HolFiniteMapExact Nat Nat)
     (refs : HolFiniteMapExact Nat (Ref Value)) (ptr : Nat) (value : Ref Value)
     (fresh : onlyFresh f g (refs.updateEq (ptr, value))) : onlyFresh f g refs := by
   intro key newKey present
   exact fresh key newKey (BvlProps.refs_update_mono refs _ key _ present)
+
+theorem holFmapAsFiniteSupportParamWitness_onlyFresh_delete_f (f : HolFiniteMapExact Nat Nat) :
+    mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
+theorem holFmapAsFiniteSupportParamWitness_onlyFresh_delete_g (g : HolFiniteMapExact Nat Nat) :
+    mapofBroad (maptoBroadlookup g) g.finiteSupport = g := by cases g; rfl
+theorem holFmapAsFiniteSupportParamWitness_onlyFresh_delete_refs (refs : HolFiniteMapExact Nat (Ref Value)) :
+    mapofBroad (maptoBroadlookup refs) refs.finiteSupport = refs := by cases refs; rfl
+
+/-- Freshness of an updated heap entails freshness of the original heap. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "only_fresh_del"
+  (fmap_as_finite_support_parameters := [f, g, refs])]
+theorem onlyFresh_delete (f : HolFiniteMapExact Nat Nat) (g : HolFiniteMapExact Nat Nat)
+    (refs : HolFiniteMapExact Nat (Ref Value)) (ptr : Nat) (value : Ref Value)
+    (h : onlyFresh f g (refs.updateEq (ptr, value)) ∧ ptr ∉ mapRange f) : onlyFresh f g refs := by
+  exact onlyFresh_delete_frame f g refs ptr value h.1
+
+theorem holFmapAsFiniteSupportParamWitness_flookupComNeq_m {α β : Type}
+    (m : HolFiniteMapExact α β) :
+    mapofBroad (maptoBroadlookup m) m.finiteSupport = m := by cases m; rfl
+
+open Classical in
+/-- Updates at distinct keys commute on the canonical finite-map carrier. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "flookup_com_neq"
+  (fmap_as_finite_support_parameters := [m])]
+theorem flookupComNeq {α β : Type} (m : HolFiniteMapExact α β)
+    (k1 : α) (v1 : β) (k2 : α) (v2 : β) (different : k1 ≠ k2) :
+    (m.updateEq (k1, v1)).updateEq (k2, v2) =
+      (m.updateEq (k2, v2)).updateEq (k1, v1) := by
+  cases m with
+  | mk lookup support =>
+    simp only [HolFiniteMapExact.updateEq, HolFiniteMapExact.mk.injEq]
+    exact FUPDATE_HOL_comm lookup k1 v1 k2 v2 different
 
 theorem holFmapAsFiniteSupportParamWitness_holesUnchanged_filled_f {α β : Type}
     (f : HolFiniteMapExact α β) : mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
@@ -353,22 +423,22 @@ theorem holFmapAsFiniteSupportParamWitness_holesUnchanged_filled_refsOld {β γ 
 theorem holFmapAsFiniteSupportParamWitness_holesUnchanged_filled_refsNew {β γ : Type}
     (refsNew : HolFiniteMapExact β (Ref γ)) : mapofBroad (maptoBroadlookup refsNew) refsNew.finiteSupport = refsNew := by cases refsNew; rfl
 
-/-- Filling a previously existing hole leaves all other holes unchanged.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "holes_unchanged_except_filled" (fmap_as_finite_support_parameters := [f, refsOld, refsNew])] -/
+/-- Filling a previously existing hole leaves all other holes unchanged. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "holes_unchanged_except_filled"
+  (fmap_as_finite_support_parameters := [f, refsOld, refsNew])]
 theorem holesUnchanged_filled {α β γ δ : Type} (f : HolFiniteMapExact α β)
     (refsOld : HolFiniteMapExact β (Ref γ)) (refsNew : HolFiniteMapExact β (Ref γ))
     (_changed : δ) (ptr : β) (tag : Nat)
     (finalised : Bool) (left : List γ) (child : γ) (right : List γ)
     (oldFinalised : Bool) (oldChild : γ)
-    (related : holesUnchangedExcept f refsOld refsNew ∅)
-    (oldFound : refsOld.lookup ptr = some (.mutBlock tag oldFinalised left oldChild right)) :
+    (h : holesUnchangedExcept f refsOld refsNew ∅ ∧
+      refsOld.lookup ptr = some (.mutBlock tag oldFinalised left oldChild right)) :
     holesUnchangedExcept f refsOld
       (@HolFiniteMapExact.updateEq β (Ref γ) (Classical.decEq β) refsNew
         (ptr, .mutBlock tag finalised left child right)) {ptr} := by
+  obtain ⟨related, oldFound⟩ := h
   classical
-  intro key oldTag oldFinal oldLeft oldValue oldRight outside found
+  intro key oldTag oldFinal oldLeft oldValue oldRight ⟨outside, found⟩
   by_cases same : key = ptr
   · subst key
     rw [oldFound] at found
@@ -378,7 +448,7 @@ theorem holesUnchanged_filled {α β γ δ : Type} (f : HolFiniteMapExact α β)
     · simp [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL]
     · intro absent
       exact (absent (by simp)).elim
-  · obtain ⟨newFinal, newChild, lookup, equal⟩ := related key oldTag oldFinal oldLeft oldValue oldRight outside found
+  · obtain ⟨newFinal, newChild, lookup, equal⟩ := related key oldTag oldFinal oldLeft oldValue oldRight ⟨outside, found⟩
     refine ⟨newFinal, newChild, ?_, fun _ => equal (by simp)⟩
     simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, same] using lookup
 
@@ -389,22 +459,22 @@ theorem holFmapAsFiniteSupportParamWitness_holesUnchanged_changed_refsOld {β γ
 theorem holFmapAsFiniteSupportParamWitness_holesUnchanged_changed_refsNew {β γ : Type}
     (refsNew : HolFiniteMapExact β (Ref γ)) : mapofBroad (maptoBroadlookup refsNew) refsNew.finiteSupport = refsNew := by cases refsNew; rfl
 
-/-- Removing a prior hole update from the source permits that hole to differ.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "holes_unchanged_except_changed" (fmap_as_finite_support_parameters := [f, refsOld, refsNew])] -/
+/-- Removing a prior hole update from the source permits that hole to differ. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "holes_unchanged_except_changed"
+  (fmap_as_finite_support_parameters := [f, refsOld, refsNew])]
 theorem holesUnchanged_changed {α β γ δ : Type} (f : HolFiniteMapExact α β)
     (refsOld : HolFiniteMapExact β (Ref γ)) (refsNew : HolFiniteMapExact β (Ref γ))
     (_changed : δ) (ptr : β) (tag : Nat)
     (finalised : Bool) (left : List γ) (child : γ) (right : List γ)
     (oldFinalised : Bool) (oldChild : γ)
-    (related : holesUnchangedExcept f
+    (h : holesUnchangedExcept f
       (@HolFiniteMapExact.updateEq β (Ref γ) (Classical.decEq β) refsOld
-        (ptr, .mutBlock tag finalised left child right)) refsNew ∅)
-    (oldFound : refsOld.lookup ptr = some (.mutBlock tag oldFinalised left oldChild right)) :
+        (ptr, .mutBlock tag finalised left child right)) refsNew ∅ ∧
+      refsOld.lookup ptr = some (.mutBlock tag oldFinalised left oldChild right)) :
     holesUnchangedExcept f refsOld refsNew {ptr} := by
+  obtain ⟨related, oldFound⟩ := h
   classical
-  intro key oldTag oldFinal oldLeft oldValue oldRight outside found
+  intro key oldTag oldFinal oldLeft oldValue oldRight ⟨outside, found⟩
   by_cases same : key = ptr
   · subst key
     rw [oldFound] at found
@@ -414,14 +484,14 @@ theorem holesUnchanged_changed {α β γ δ : Type} (f : HolFiniteMapExact α β
         (ptr, .mutBlock tag finalised left child right)).lookup ptr =
         some (.mutBlock tag finalised left child right) := by
       simp [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL]
-    obtain ⟨newFinal, newChild, lookup, _⟩ := related ptr tag finalised left child right outside inserted
+    obtain ⟨newFinal, newChild, lookup, _⟩ := related ptr tag finalised left child right ⟨outside, inserted⟩
     exact ⟨newFinal, newChild, lookup, fun absent => (absent (by simp)).elim⟩
   · have inserted : (@HolFiniteMapExact.updateEq β (Ref γ) (Classical.decEq β) refsOld
         (ptr, .mutBlock tag finalised left child right)).lookup key =
         some (.mutBlock oldTag oldFinal oldLeft oldValue oldRight) := by
       simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, same] using found
     obtain ⟨newFinal, newChild, lookup, equal⟩ :=
-      related key oldTag oldFinal oldLeft oldValue oldRight outside inserted
+      related key oldTag oldFinal oldLeft oldValue oldRight ⟨outside, inserted⟩
     exact ⟨newFinal, newChild, lookup, fun _ => equal (by simp)⟩
 
 theorem holFmapAsFiniteSupportParamWitness_onlyFresh_refl_f (f : HolFiniteMapExact Nat Nat) :
@@ -429,10 +499,9 @@ theorem holFmapAsFiniteSupportParamWitness_onlyFresh_refl_f (f : HolFiniteMapExa
 theorem holFmapAsFiniteSupportParamWitness_onlyFresh_refl_refs (refs : HolFiniteMapExact Nat (Ref Value)) :
     mapofBroad (maptoBroadlookup refs) refs.finiteSupport = refs := by cases refs; rfl
 
-/-- A pointer map adds no targets relative to itself.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "only_fresh_refl" (fmap_as_finite_support_parameters := [f, refs])] -/
+/-- A pointer map adds no targets relative to itself. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "only_fresh_refl"
+  (fmap_as_finite_support_parameters := [f, refs])]
 theorem onlyFresh_refl (f : HolFiniteMapExact Nat Nat) (refs : HolFiniteMapExact Nat (Ref Value)) :
     onlyFresh f f refs := by
   intro _ ⟨member, absent⟩
@@ -445,16 +514,16 @@ theorem holFmapAsFiniteSupportParamWitness_holesUnchanged_subset_refs {β γ : T
 theorem holFmapAsFiniteSupportParamWitness_holesUnchanged_subset_refsNew {β γ : Type} (refsNew : HolFiniteMapExact β (Ref γ)) :
     mapofBroad (maptoBroadlookup refsNew) refsNew.finiteSupport = refsNew := by cases refsNew; rfl
 
-/-- Allowing changes at more locations preserves the hole invariant.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "holes_unchanged_except_subset" (fmap_as_finite_support_parameters := [f, refs, refsNew])] -/
+/-- Allowing changes at more locations preserves the hole invariant. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "holes_unchanged_except_subset"
+  (fmap_as_finite_support_parameters := [f, refs, refsNew])]
 theorem holesUnchanged_subset {α β γ : Type} (f : HolFiniteMapExact α β)
     (refs : HolFiniteMapExact β (Ref γ)) (refsNew : HolFiniteMapExact β (Ref γ))
-    (changed larger : Set β) (related : holesUnchangedExcept f refs refsNew changed)
-    (subset : changed ⊆ larger) : holesUnchangedExcept f refs refsNew larger := by
-  intro ptr tag finalised left child right outside found
-  obtain ⟨finalised', child', lookup, same⟩ := related ptr tag finalised left child right outside found
+    (changed larger : Set β) (h : holesUnchangedExcept f refs refsNew changed ∧ changed ⊆ larger) :
+    holesUnchangedExcept f refs refsNew larger := by
+  obtain ⟨related, subset⟩ := h
+  intro ptr tag finalised left child right ⟨outside, found⟩
+  obtain ⟨finalised', child', lookup, same⟩ := related ptr tag finalised left child right ⟨outside, found⟩
   exact ⟨finalised', child', lookup, fun absent => same (fun mem => absent (subset mem))⟩
 
 theorem holFmapAsFiniteSupportParamWitness_nonFresh_not_in_range_f (f : HolFiniteMapExact Nat Nat) :
@@ -465,15 +534,27 @@ theorem holFmapAsFiniteSupportParamWitness_nonFresh_not_in_range_refs (refs : Ho
     mapofBroad (maptoBroadlookup refs) refs.finiteSupport = refs := by cases refs; rfl
 
 /-- A previously allocated non-pointer-map location cannot become a new
-pointer-map target under the freshness relation.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "non_fresh_not_in_frange" (fmap_as_finite_support_parameters := [f, g, refs])] -/
+pointer-map target under the freshness relation. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "non_fresh_not_in_frange"
+  (fmap_as_finite_support_parameters := [f, g, refs])]
 theorem nonFresh_not_in_range (f : HolFiniteMapExact Nat Nat) (g : HolFiniteMapExact Nat Nat)
-    (refs : HolFiniteMapExact Nat (Ref Value)) (ptr : Nat) (allocated : ptr ∈ refs.domain)
-    (outside : ptr ∉ mapRange f) (fresh : onlyFresh f g refs) : ptr ∉ mapRange g := by
+    (refs : HolFiniteMapExact Nat (Ref Value)) (ptr : Nat)
+    (h : ptr ∈ refs.domain ∧ ptr ∉ mapRange f ∧ onlyFresh f g refs) : ptr ∉ mapRange g := by
+  obtain ⟨allocated, outside, fresh⟩ := h
   intro member
   exact fresh ptr ⟨member, outside⟩ allocated
+
+theorem holFmapAsFiniteSupportParamWitness_freshPtr_fresh_refs {α : Type}
+    (refs : HolFiniteMapExact Nat α) :
+    mapofBroad (maptoBroadlookup refs) refs.finiteSupport = refs := by cases refs; rfl
+
+open Classical in
+/-- The least natural outside a finite map's domain is outside that domain. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "fresh_ptr_fresh"
+  (fmap_as_finite_support_parameters := [refs])]
+theorem freshPtr_fresh {α : Type} (refs : HolFiniteMapExact Nat α) :
+    Nat.find (holFiniteMapExact_exists_unused refs) ∉ refs.domain := by
+  simpa [HolFiniteMapExact.domain] using Nat.find_spec (holFiniteMapExact_exists_unused refs)
 
 theorem holFmapAsFiniteSupportParamWitness_holesUnchanged_trans_f (f : HolFiniteMapExact Nat Nat) :
     mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
@@ -487,21 +568,21 @@ theorem holFmapAsFiniteSupportParamWitness_holesUnchanged_trans_final (final : H
     mapofBroad (maptoBroadlookup final) final.finiteSupport = final := by cases final; rfl
 
 /-- Hole preservation composes as the pointer map grows only into fresh
-heap locations.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "holes_unchanged_except_trans" (fmap_as_finite_support_parameters := [f, g, refs, middle, final])] -/
+heap locations. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "holes_unchanged_except_trans"
+  (fmap_as_finite_support_parameters := [f, g, refs, middle, final])]
 theorem holesUnchanged_trans (f : HolFiniteMapExact Nat Nat) (g : HolFiniteMapExact Nat Nat)
     (refs : HolFiniteMapExact Nat (Ref Value)) (middle : HolFiniteMapExact Nat (Ref Value))
     (final : HolFiniteMapExact Nat (Ref Value)) (changed : Set Nat)
-    (first : holesUnchangedExcept f refs middle changed) (second : holesUnchangedExcept g middle final changed)
-    (fresh : onlyFresh f g refs) (_submap : f.submap g) : holesUnchangedExcept f refs final changed := by
-  intro ptr tag finalised left child right outside found
-  obtain ⟨middleFinalised, middleChild, middleFound, same1⟩ := first ptr tag finalised left child right outside found
+    (h : holesUnchangedExcept f refs middle changed ∧ holesUnchangedExcept g middle final changed ∧
+      onlyFresh f g refs ∧ f.submap g) : holesUnchangedExcept f refs final changed := by
+  obtain ⟨first, second, fresh, _submap⟩ := h
+  intro ptr tag finalised left child right ⟨outside, found⟩
+  obtain ⟨middleFinalised, middleChild, middleFound, same1⟩ := first ptr tag finalised left child right ⟨outside, found⟩
   have allocated : ptr ∈ refs.domain := by simp [HolFiniteMapExact.domain, found]
-  have outsideNew := nonFresh_not_in_range f g refs ptr allocated outside fresh
+  have outsideNew := nonFresh_not_in_range f g refs ptr ⟨allocated, outside, fresh⟩
   obtain ⟨finalFinalised, finalChild, finalFound, same2⟩ :=
-    second ptr tag middleFinalised left middleChild right outsideNew middleFound
+    second ptr tag middleFinalised left middleChild right ⟨outsideNew, middleFound⟩
   exact ⟨finalFinalised, finalChild, finalFound, fun unchanged => (same1 unchanged).trans (same2 unchanged)⟩
 
 theorem holFmapAsFiniteSupportParamWitness_holesUnchanged_rangeUpdate_f {α β : Type}
@@ -509,14 +590,14 @@ theorem holFmapAsFiniteSupportParamWitness_holesUnchanged_rangeUpdate_f {α β :
 theorem holFmapAsFiniteSupportParamWitness_holesUnchanged_rangeUpdate_refs {β γ : Type}
     (refs : HolFiniteMapExact β (Ref γ)) : mapofBroad (maptoBroadlookup refs) refs.finiteSupport = refs := by cases refs; rfl
 
-/-- Updating a mapped location cannot change a mutable hole outside the map range.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "holes_unchanged_except_frange_update" (fmap_as_finite_support_parameters := [f, refs])] -/
-theorem holesUnchanged_rangeUpdate {α β γ : Type} [DecidableEq β] (f : HolFiniteMapExact α β)
+open Classical in
+/-- Updating a mapped location cannot change a mutable hole outside the map range. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "holes_unchanged_except_frange_update"
+  (fmap_as_finite_support_parameters := [f, refs])]
+theorem holesUnchanged_rangeUpdate {α β γ : Type} (f : HolFiniteMapExact α β)
     (p : α) (key : β) (value : Ref γ) (refs : HolFiniteMapExact β (Ref γ))
     (mapped : f.lookup p = some key) : holesUnchangedExcept f refs (refs.updateEq (key, value)) ∅ := by
-  intro ptr tag finalised left child right outside found
+  intro ptr tag finalised left child right ⟨outside, found⟩
   have different : ptr ≠ key := by
     intro equal
     subst ptr
@@ -529,14 +610,14 @@ theorem holFmapAsFiniteSupportParamWitness_holesStill_rangeUpdate_f {α β : Typ
 theorem holFmapAsFiniteSupportParamWitness_holesStill_rangeUpdate_refs {β γ : Type}
     (refs : HolFiniteMapExact β (Ref γ)) : mapofBroad (maptoBroadlookup refs) refs.finiteSupport = refs := by cases refs; rfl
 
-/-- Updating a mapped location preserves unfinalised holes outside the map range.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "holes_still_not_finalised_frange_update" (fmap_as_finite_support_parameters := [f, refs])] -/
-theorem holesStill_rangeUpdate {α β γ : Type} [DecidableEq β] (f : HolFiniteMapExact α β)
+open Classical in
+/-- Updating a mapped location preserves unfinalised holes outside the map range. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "holes_still_not_finalised_frange_update"
+  (fmap_as_finite_support_parameters := [f, refs])]
+theorem holesStill_rangeUpdate {α β γ : Type} (f : HolFiniteMapExact α β)
     (p : α) (key : β) (value : Ref γ) (refs : HolFiniteMapExact β (Ref γ))
     (mapped : f.lookup p = some key) : holesStillNotFinalised f refs (refs.updateEq (key, value)) := by
-  intro ptr outside ⟨tag, left, child, right, found⟩
+  intro ptr ⟨outside, tag, left, child, right, found⟩
   have different : ptr ≠ key := by
     intro equal
     subst ptr
@@ -554,19 +635,38 @@ theorem holFmapAsFiniteSupportParamWitness_onlyFresh_trans_refs (refs : HolFinit
 theorem holFmapAsFiniteSupportParamWitness_onlyFresh_trans_middle (middle : HolFiniteMapExact Nat (Ref Value)) :
     mapofBroad (maptoBroadlookup middle) middle.finiteSupport = middle := by cases middle; rfl
 
-/-- Freshness composes when the intermediate heap retains its old domain.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "only_fresh_trans" (fmap_as_finite_support_parameters := [f, g, h, refs, middle])] -/
+/-- Freshness composes when the intermediate heap retains its old domain. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "only_fresh_trans"
+  (fmap_as_finite_support_parameters := [f, g, h, refs, middle])]
 theorem onlyFresh_trans (f : HolFiniteMapExact Nat Nat) (g : HolFiniteMapExact Nat Nat) (h : HolFiniteMapExact Nat Nat)
     (refs : HolFiniteMapExact Nat (Ref Value)) (middle : HolFiniteMapExact Nat (Ref Value))
-    (first : onlyFresh f g refs) (second : onlyFresh g h middle)
-    (domain : refs.domain ⊆ middle.domain) : onlyFresh f h refs := by
+    (conditions : onlyFresh f g refs ∧ onlyFresh g h middle ∧
+      refs.domain ⊆ middle.domain) : onlyFresh f h refs := by
+  obtain ⟨first, second, domain⟩ := conditions
   intro ptr ⟨new, outside⟩
   by_cases intermediate : ptr ∈ mapRange g
   · exact first ptr ⟨intermediate, outside⟩
   · intro allocated
     exact second ptr ⟨new, intermediate⟩ (domain allocated)
+
+theorem holFmapAsFiniteSupportParamWitness_onlyFresh_submap_f (f : HolFiniteMapExact Nat Nat) :
+    mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
+theorem holFmapAsFiniteSupportParamWitness_onlyFresh_submap_g (g : HolFiniteMapExact Nat Nat) :
+    mapofBroad (maptoBroadlookup g) g.finiteSupport = g := by cases g; rfl
+theorem holFmapAsFiniteSupportParamWitness_onlyFresh_submap_h (h : HolFiniteMapExact Nat Nat) :
+    mapofBroad (maptoBroadlookup h) h.finiteSupport = h := by cases h; rfl
+theorem holFmapAsFiniteSupportParamWitness_onlyFresh_submap_refs (refs : HolFiniteMapExact Nat (Ref Value)) :
+    mapofBroad (maptoBroadlookup refs) refs.finiteSupport = refs := by cases refs; rfl
+
+/-- Freshness for a larger pointer map holds for any of its submaps. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "only_fresh_submap"
+  (fmap_as_finite_support_parameters := [f, g, h, refs])]
+theorem onlyFresh_submap (f : HolFiniteMapExact Nat Nat) (g : HolFiniteMapExact Nat Nat)
+    (h : HolFiniteMapExact Nat Nat) (refs : HolFiniteMapExact Nat (Ref Value))
+    (conditions : onlyFresh f h refs ∧ g.submap h) : onlyFresh f g refs := by
+  obtain ⟨fresh, submap⟩ := conditions
+  intro ptr ⟨⟨key, found⟩, outside⟩
+  exact fresh ptr ⟨⟨key, submap key ptr found⟩, outside⟩
 
 theorem holFmapAsFiniteSupportParamWitness_holesStill_trans_f (f : HolFiniteMapExact Nat Nat) :
     mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
@@ -579,21 +679,21 @@ theorem holFmapAsFiniteSupportParamWitness_holesStill_trans_middle (middle : Hol
 theorem holFmapAsFiniteSupportParamWitness_holesStill_trans_final (final : HolFiniteMapExact Nat (Ref Value)) :
     mapofBroad (maptoBroadlookup final) final.finiteSupport = final := by cases final; rfl
 
-/-- Unfinalised-hole preservation composes across fresh map extensions.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "holes_still_not_finalised_trans" (fmap_as_finite_support_parameters := [f, g, refs, middle, final])] -/
+/-- Unfinalised-hole preservation composes across fresh map extensions. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "holes_still_not_finalised_trans"
+  (fmap_as_finite_support_parameters := [f, g, refs, middle, final])]
 theorem holesStill_trans {α : Type} (f : HolFiniteMapExact Nat Nat) (g : HolFiniteMapExact Nat Nat)
     (refs : HolFiniteMapExact Nat (Ref Value)) (middle : HolFiniteMapExact Nat (Ref Value))
     (final : HolFiniteMapExact Nat (Ref Value)) (_changed : α)
-    (first : holesStillNotFinalised f refs middle) (second : holesStillNotFinalised g middle final)
-    (fresh : onlyFresh f g refs) (_submap : f.submap g) : holesStillNotFinalised f refs final := by
-  intro ptr outside hole
+    (h : holesStillNotFinalised f refs middle ∧ holesStillNotFinalised g middle final ∧
+      onlyFresh f g refs ∧ f.submap g) : holesStillNotFinalised f refs final := by
+  obtain ⟨first, second, fresh, _submap⟩ := h
+  intro ptr ⟨outside, hole⟩
   have allocated : ptr ∈ refs.domain := by
     obtain ⟨tag, left, child, right, found⟩ := hole
     simp [HolFiniteMapExact.domain, found]
-  have outsideNew := nonFresh_not_in_range f g refs ptr allocated outside fresh
-  exact second ptr outsideNew (first ptr outside hole)
+  have outsideNew := nonFresh_not_in_range f g refs ptr ⟨allocated, outside, fresh⟩
+  exact second ptr ⟨outsideNew, first ptr ⟨outside, hole⟩⟩
 
 theorem holFmapAsFiniteSupportParamWitness_fresh_not_in_range_f (f : HolFiniteMapExact Nat Nat) :
     mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
@@ -602,16 +702,17 @@ theorem holFmapAsFiniteSupportParamWitness_fresh_not_in_range_source (source : H
 theorem holFmapAsFiniteSupportParamWitness_fresh_not_in_range_target (target : HolFiniteMapExact Nat (Ref Value)) :
     mapofBroad (maptoBroadlookup target) target.finiteSupport = target := by cases target; rfl
 
-/-- A fresh target reference is outside the current pointer-map range.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "fresh_not_in_range_f" (fmap_as_finite_support_parameters := [f, source, target])] -/
+/-- A fresh target reference is outside the current pointer-map range. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "fresh_not_in_range_f"
+  (fmap_as_finite_support_parameters := [f, source, target])]
 theorem fresh_not_in_range (f : HolFiniteMapExact Nat Nat) (source : HolFiniteMapExact Nat (Ref Value))
     (target : HolFiniteMapExact Nat (Ref Value)) (related : stateRefRel f source target) :
     leastUnusedRef target ∉ mapRange f := by
   rintro ⟨key, mapped⟩
-  obtain ⟨_, _, _, found, _⟩ := stateRefRel_lookup f key (leastUnusedRef target) source target mapped related
-  rw [leastUnusedRef_unused] at found
-  contradiction
+  obtain ⟨_, _, _, found, _⟩ := stateRefRel_lookup f key (leastUnusedRef target) source target ⟨mapped, related⟩
+  have unused : leastUnusedRef target ∉ target.domain := by
+    simpa [leastUnusedRef, unusedRef_exists] using freshPtr_fresh target
+  apply unused
+  simp [HolFiniteMapExact.domain, found]
 
 end Flapjack.Compiler.Backend.BviTmc

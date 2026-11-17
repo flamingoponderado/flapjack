@@ -103,7 +103,8 @@ theorem doAppFallbackRvalSwap {C D F G : Type} (op : ClosLang.Op) (args : List B
     all_goals aesop
 
 /-- A non-global, non-install error transfers across independently typed compiler and FFI
-carriers when the target code domain is contained in the source domain. This
+carriers when the target code domain is contained in the source domain, the
+error is not a type error, or the operation is not a label. This
 Flapjack-specific variant of HOL's `do_app_Rerr_swap` excludes globals because
 the BVI fallback discards BVL globals, so the original lemma cannot be used directly. -/
 theorem doAppFallbackRerrSwap {C D F G : Type} (op : ClosLang.Op) (args : List BvlSem.Value)
@@ -111,8 +112,8 @@ theorem doAppFallbackRerrSwap {C D F G : Type} (op : ClosLang.Op) (args : List B
     (target : Flapjack.Compiler.Backend.BvlSem.State D G)
     (notGlobal : ∀ operation, op ≠ .globOp operation)
     (h : doApp op args source = .err error ∧ op ≠ .install ∧
-      ((∀ key, sptDomain target.code key → sptDomain source.code key) ∨
-        error ≠ .abort .typeError)) :
+      (((∀ key, sptDomain target.code key → sptDomain source.code key) ∨
+        error ≠ .abort .typeError) ∨ ∀ n, op ≠ .label n)) :
     doApp op args (fallbackFrame source target) = .err error := by
   rcases h with ⟨run, notInstall, domain⟩
   cases op with
@@ -130,6 +131,9 @@ theorem doAppFallbackRerrSwap {C D F G : Type} (op : ClosLang.Op) (args : List B
     cases found : applyNumeric (.wordOp operation) args source <;>
       simp_all [doApp, applyNumeric_frame, frameOption]
   | label index =>
+    have domain := domain.resolve_right (by
+      intro notLabel
+      exact notLabel index rfl)
     cases args with
     | cons a rest => simp_all [doApp]
     | nil =>

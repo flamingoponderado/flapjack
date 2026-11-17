@@ -371,7 +371,7 @@ theorem simulationFor_call {C F : Type} (ticks : Nat) (dest : Option Nat)
                         change DataSem.evaluate (.call (some ([nmid], namesOfList (live ++ corr))) dest names none) timed = _
                         have clamped : DataSem.fixClock entered ((some (.val [dataResult]) : Option (Result (List DataSem.Value) DataSem.Value)), targetNext) =
                             ((some (.val [dataResult]) : Option (Result (List DataSem.Value) DataSem.Value)), targetNext) := by
-                          rw [← targetRun, DataSem.fixClock_evaluate]
+                          rw [← targetRun, DataSem.fixClockEvaluate]
                         simp [DataSem.evaluate, readTimed, codeTimed, cutTimed, timedNonzero, entered, targetRun,
                           clamped, popRun, setSingleton]
                       · exact correctOutcome_seq values (.val [dataToBviValue dataResult]) t1 tmid final n nmid (nmid + 1)
@@ -391,7 +391,7 @@ theorem simulationFor_call {C F : Type} (ticks : Nat) (dest : Option Nat)
                       rw [DataSem.evaluate_mkTicks, if_neg ticksEnough]
                       change DataSem.evaluate (.call (some ([nmid], namesOfList (live ++ corr))) dest names none) timed = _
                       have clamped : DataSem.fixClock entered ((some (.err (.abort reason)) : Option (Result (List DataSem.Value) DataSem.Value)), targetNext) =
-                          ((some (.err (.abort reason)) : Option (Result (List DataSem.Value) DataSem.Value)), targetNext) := by rw [← targetRun, DataSem.fixClock_evaluate]
+                          ((some (.err (.abort reason)) : Option (Result (List DataSem.Value) DataSem.Value)), targetNext) := by rw [← targetRun, DataSem.fixClockEvaluate]
                       simp [DataSem.evaluate, readTimed, codeTimed, cutTimed, timedNonzero, entered, targetRun, clamped]
                     · exact correctOutcome_seq values (.err (.abort reason)) t1 tmid targetNext n nmid (nmid + 1)
                         corr live names [nmid] env false _ ls ls2 firstOutcome callOutcome
@@ -415,7 +415,7 @@ theorem simulationFor_call {C F : Type} (ticks : Nat) (dest : Option Nat)
                       rw [DataSem.evaluate_mkTicks, if_neg ticksEnough]
                       change DataSem.evaluate (.call (some ([nmid], namesOfList (live ++ corr))) dest names none) timed = _
                       have clamped : DataSem.fixClock entered ((some (.err (.raise raised)) : Option (Result (List DataSem.Value) DataSem.Value)), targetNext) =
-                          ((some (.err (.raise raised)) : Option (Result (List DataSem.Value) DataSem.Value)), targetNext) := by rw [← targetRun, DataSem.fixClock_evaluate]
+                          ((some (.err (.raise raised)) : Option (Result (List DataSem.Value) DataSem.Value)), targetNext) := by rw [← targetRun, DataSem.fixClockEvaluate]
                       simp [DataSem.evaluate, readTimed, codeTimed, cutTimed, timedNonzero, entered, targetRun, clamped]
                     · exact correctOutcome_seq values (.err (.raise (.exn (dataToBviValue raised)))) t1 tmid targetNext n nmid (nmid + 1)
                         corr live names [nmid] env false _ ls ls2 firstOutcome callOutcome
@@ -499,7 +499,7 @@ theorem simulationFor_call {C F : Type} (ticks : Nat) (dest : Option Nat)
                       have cutTimed : DataSem.cutEnv (namesOfList (live ++ corr)) timed.locals = some saved := by simpa [timed] using cut
                       have clamped : DataSem.fixClock entered ((some (.val [dataResult]) : Option (Result (List DataSem.Value) DataSem.Value)), targetNext) =
                           ((some (.val [dataResult]) : Option (Result (List DataSem.Value) DataSem.Value)), targetNext) := by
-                        rw [← targetRun, DataSem.fixClock_evaluate]
+                        rw [← targetRun, DataSem.fixClockEvaluate]
                       have callEval : DataSem.evaluate call timed = (none, moved) := by
                         simp [call, ret, DataSem.evaluate, readTimed, codeTimed, cutTimed, timedNonzero, entered, targetRun,
                           clamped, popRun, setSingleton]
@@ -575,7 +575,7 @@ theorem simulationFor_call {C F : Type} (ticks : Nat) (dest : Option Nat)
                   have cutTimed : DataSem.cutEnv (namesOfList (live ++ corr)) timed.locals = some saved := by simpa [timed] using cut
                   have clamped : DataSem.fixClock entered ((some (.err (.abort reason)) : Option (Result (List DataSem.Value) DataSem.Value)), targetNext) =
                       ((some (.err (.abort reason)) : Option (Result (List DataSem.Value) DataSem.Value)), targetNext) := by
-                    rw [← targetRun, DataSem.fixClock_evaluate]
+                    rw [← targetRun, DataSem.fixClockEvaluate]
                   have callEval : DataSem.evaluate call timed = (some (.err (.abort reason)), targetNext) := by
                     simp [call, ret, DataSem.evaluate, readTimed, codeTimed, cutTimed, timedNonzero, entered, targetRun, clamped]
                   have calleeBound := DataSem.evaluate_clock_le (compileExp dataArgs.length body) entered
@@ -719,7 +719,7 @@ theorem simulationFor_call {C F : Type} (ticks : Nat) (dest : Option Nat)
                                   evaluateSeq_continue handlerCode (.move n2 handlerName) handlerStart handlerNext _ handlerTarget handlerTargetBound moveRun
                                 have clamped : DataSem.fixClock entered ((some (.err (.raise dataValue)) : Option (Result (List DataSem.Value) DataSem.Value)), targetNext) =
                                     ((some (.err (.raise dataValue)) : Option (Result (List DataSem.Value) DataSem.Value)), targetNext) := by
-                                  rw [← targetRun, DataSem.fixClock_evaluate]
+                                  rw [← targetRun, DataSem.fixClockEvaluate]
                                 have callEval : DataSem.evaluate call timed = (none, moved) := by
                                   simp [call, ret, DataSem.evaluate, readTimed, codeTimed, cutTimed, timedNonzero, entered, targetRun,
                                     clamped, handlerStart, handlerProgRun]
@@ -780,7 +780,7 @@ theorem simulationFor_call {C F : Type} (ticks : Nat) (dest : Option Nat)
                                 evaluateSeq_stop handlerCode (.move n2 handlerName) handlerStart handlerNext result handlerTarget handlerTargetBound
                               have clamped : DataSem.fixClock entered ((some (.err (.raise dataValue)) : Option (Result (List DataSem.Value) DataSem.Value)), targetNext) =
                                   ((some (.err (.raise dataValue)) : Option (Result (List DataSem.Value) DataSem.Value)), targetNext) := by
-                                rw [← targetRun, DataSem.fixClock_evaluate]
+                                rw [← targetRun, DataSem.fixClockEvaluate]
                               have callEval : DataSem.evaluate call timed = (some result, handlerNext) := by
                                 simp [call, ret, DataSem.evaluate, readTimed, codeTimed, cutTimed, timedNonzero, entered, targetRun,
                                   clamped, handlerStart, handlerProgRun]

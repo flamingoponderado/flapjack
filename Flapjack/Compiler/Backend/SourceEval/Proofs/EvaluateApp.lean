@@ -119,42 +119,6 @@ private theorem continueEval_adjust {Config F : Type} (ci : CompilerInstance Con
       · simpa [continueEval, clock, decClock, original] using finish
       · simpa [continueEval, clock, decClock, compiled] using finish
 
-/-- Successful dynamic Eval branch, composed against the actual evaluator.
-This Flapjack lemma is a case-building step: it still takes the successful
-argument and decoder runs as premises. Its declaration induction hypothesis is
-restricted to the actual decremented-clock state. It is not the full HOL
-induction case. -/
-private theorem evaluate_eval_adjust_success {Config F : Type} (ci : CompilerInstance Config)
-    (f compile : List Dec → List Dec) (preserves : ∀ (s : State F) (env : SemEnv Value) (ds : List Dec) (next : State F)
-      (res : Result (SemEnv Value) Value),
-      evaluateDecs s env ds = (next, res) ∧ res ≠ .err (.abort .typeError) →
-        evaluateDecs s env (compile ds) = (next, res))
-    (state middle decoded next : State F) (env evalEnv : SemEnv Value)
-    (args : List AstHOL.Exp) (values : List Value) (decs : List Dec)
-    (argsIH : ExpsOracleAdjustedAt compile ci f state env args.reverse)
-    (decsIH : decoded.clock ≠ 0 → DecsOracleAdjustedAt compile ci f (decClock decoded) evalEnv decs)
-    (argsRun : evaluate state env args.reverse = (middle, .val values))
-    (decodedRun : doEvalRes (β := Value) values.reverse middle = (decoded, .val (evalEnv, decs)))
-    (result : Result (List Value) Value) (run : evaluate state env [.app .eval args] = (next, result))
-    (inserted : isInsertOracle ci f state.evalState) (safe : result ≠ .err (.abort .typeError)) :
-    isInsertOracle ci f next.evalState ∧
-      evaluate { state with evalState := adjustOracle ci (compile ∘ f) state.evalState } env [.app .eval args] =
-        ({ next with evalState := adjustOracle ci (compile ∘ f) next.evalState }, result) := by
-  obtain ⟨middleInserted, adjustedArgs⟩ := argsIH middle (.val values) ⟨argsRun, inserted, (by simp)⟩
-  obtain ⟨decodedInserted, adjustedDecode⟩ :=
-    doEvalRes_adjust_success ci f compile values.reverse middle decoded evalEnv decs decodedRun middleInserted
-  have continuation : continueEval middle decoded evalEnv decs = (next, result) := by
-    rw [← evaluate_eval_success state middle decoded env evalEnv args values decs argsRun decodedRun]
-    exact run
-  obtain ⟨nextInserted, original, compiled⟩ :=
-    continueEval_adjust ci f compile preserves middle decoded next evalEnv decs decsIH result continuation decodedInserted safe
-  refine ⟨nextInserted, ?_⟩
-  rcases adjustedDecode with transformed | unchanged
-  · rw [evaluate_eval_success _ _ _ env evalEnv args values (compile decs) adjustedArgs transformed]
-    exact compiled
-  · rw [evaluate_eval_success _ _ _ env evalEnv args values decs adjustedArgs unchanged]
-    exact original
-
 /-- Flapjack proof infrastructure for the dynamic Eval branch of HOL's
 application induction case, using the decoded declarations at the actual
 decremented-clock state. -/
@@ -202,9 +166,24 @@ private theorem adjustOracle_evaluate_Eval {Config F : Type} (ci : CompilerInsta
         obtain ⟨evalEnv, decs, evalState⟩ := output
         have decodedRun : doEvalRes (β := Value) values.reverse middle =
             ({ middle with evalState }, .val (evalEnv, decs)) := by simp [doEvalRes, decoded]
-        exact evaluate_eval_adjust_success ci f compile preserves state middle { middle with evalState } next
-          env evalEnv args values decs argsIH (decsIH middle _ values evalEnv decs argsRun decodedRun)
-          argsRun decodedRun result source inserted safe
+        let decodedState : State F := { middle with evalState }
+        have decodedIH : decodedState.clock ≠ 0 →
+            DecsOracleAdjustedAt compile ci f (decClock decodedState) evalEnv decs :=
+          decsIH middle decodedState values evalEnv decs argsRun decodedRun
+        obtain ⟨middleInserted, adjustedArgs⟩ := argsIH middle (.val values) ⟨argsRun, inserted, (by simp)⟩
+        obtain ⟨decodedInserted, adjustedDecode⟩ :=
+          doEvalRes_adjust_success ci f compile values.reverse middle decodedState evalEnv decs decodedRun middleInserted
+        have continuation : continueEval middle decodedState evalEnv decs = (next, result) := by
+          rw [← evaluate_eval_success state middle decodedState env evalEnv args values decs argsRun decodedRun]
+          exact source
+        obtain ⟨nextInserted, original, compiled⟩ :=
+          continueEval_adjust ci f compile preserves middle decodedState next evalEnv decs decodedIH result continuation decodedInserted safe
+        refine ⟨nextInserted, ?_⟩
+        rcases adjustedDecode with transformed | unchanged
+        · rw [evaluate_eval_success _ _ _ env evalEnv args values (compile decs) adjustedArgs transformed]
+          exact compiled
+        · rw [evaluate_eval_success _ _ _ env evalEnv args values decs adjustedArgs unchanged]
+          exact original
 
 
 /-- Flapjack proof infrastructure for the ordinary primitive-operation branch

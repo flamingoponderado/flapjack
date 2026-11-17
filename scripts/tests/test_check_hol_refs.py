@@ -19,6 +19,34 @@ REF_ERROR = CHECKER["hol_ref_error"]
 _REPO_REALS_RENDERING_NAMES = None
 
 
+class TmcUniversalMapsTest(unittest.TestCase):
+    def test_qualifier_parser_preserves_empty_and_duplicate(self):
+        def fields(qualifiers):
+            lines = [f'@[hol "cakeml/x.sml" "x" {qualifiers}]', 'def x : Prop := True']
+            return list(SITES(lines, include_fmap_universals=True))[0][-1]
+        self.assertEqual(fields("(fmap_as_finite_support_universals := [f])"), ("f",))
+        self.assertEqual(fields("(fmap_as_finite_support_universals := [])"), ("",))
+        self.assertEqual(fields("(fmap_as_finite_support_universals := [f]) "
+                                "(fmap_as_finite_support_universals := [f])"), ("f", "f", ""))
+
+    def test_witnesses_require_pointwise_unconditional_roundtrips(self):
+        source = (CHECKER["ROOT"] / "Flapjack/Compiler/Backend/BviTmc/Proofs/Induction.lean").read_text()
+        check = CHECKER["tmc_hypothesis_map_witness_errors"]
+        self.assertEqual(check(source.splitlines()), [])
+        mutations = [
+            source.replace("(f : HolFiniteMapExact Nat Nat) :\n    (∀ key,",
+                           "(f : HolFiniteMapExact Nat Nat) (extra : True) :\n    (∀ key,", 1),
+            source.replace("f.lookup key)", "f.lookup 0)", 1),
+            source.replace("f.finiteSupport ∧", "True ∧", 1),
+            source.replace("holFmapAsFiniteSupportUniversalWitness_hypothesis_f (f :",
+                           "notTheWitness (f :", 1),
+        ]
+        for mutation in mutations:
+            with self.subTest(mutation=mutation[:40]):
+                self.assertNotEqual(mutation, source)
+                self.assertTrue(check(mutation.splitlines()))
+
+
 def repo_reals_rendering_names():
     """The real tree's rendering-name scan, computed once for the module."""
     global _REPO_REALS_RENDERING_NAMES

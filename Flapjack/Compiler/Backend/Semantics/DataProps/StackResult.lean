@@ -31,7 +31,7 @@ theorem evaluate_seq_stackResult {C F : Type} (first second : DataLang.Prog) (st
     (secondIH : ∀ before after : State C F, ∀ outcome,
       before.clock ≤ state.clock → evaluate second before = (outcome, after) → stackResult before outcome after)
     (run : evaluate (.seq first second) state = (result, next)) : stackResult state result next := by
-  rw [evaluate, fixClock_evaluate] at run
+  rw [evaluate, fixClockEvaluate] at run
   cases firstRun : evaluate first state with
   | mk outcome mid =>
     rw [firstRun] at run

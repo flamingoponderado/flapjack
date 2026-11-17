@@ -662,10 +662,11 @@ def optimisedCode (loc workerLoc : Nat) (source target : Spt (Nat × Bvi.Exp)) :
 its corresponding worker. -/
 @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "code_rel_cases"]
 theorem codeRel_cases (loc arity : Nat) (body : Bvi.Exp) (source target : Spt (Nat × Bvi.Exp))
-    (found : sptLookup loc source = some (arity, body)) (related : codeRel source target) :
+    (h : sptLookup loc source = some (arity, body) ∧ codeRel source target) :
     noMutcons body ∧ ∃ workerLoc body', sptLookup loc target = some (arity, body') ∧
       (body ≠ body' → optimisedCode loc workerLoc source target ∧
         rewriteWrapperSource loc workerLoc arity body = some body') := by
+  obtain ⟨found, related⟩ := h
   obtain ⟨safe, workerLoc, unchanged, transformed⟩ := related loc arity body found
   refine ⟨safe, ?_⟩
   cases decision : compileExpSource loc workerLoc arity body with

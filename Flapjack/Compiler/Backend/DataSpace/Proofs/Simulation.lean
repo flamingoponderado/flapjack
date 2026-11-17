@@ -5,6 +5,7 @@ public import Flapjack.Compiler.Backend.Semantics.DataProps.Jump
 public import Flapjack.Compiler.Backend.Semantics.DataSem.EvaluateClock
 public import Flapjack.Compiler.Backend.DataLive.Proofs.PrimitiveAll
 public import Flapjack.Compiler.Backend.DataLive.Proofs.CompileCorrect
+public import Flapjack.Compiler.Backend.DataSimp.Proofs.Correct
 
 @[expose] public section
 
@@ -129,7 +130,7 @@ theorem simulationFor_unannotatedAssign {C F : Type} (dest : Nat) (op : ClosLang
         exact ⟨code, clock, spaceEq, ffi, refs, global, handler, stack, compiler, oracle, stamps, limits, frames, by simp [sptMem, sptDomain, sptLookup]⟩
       cases app : doApp op values source with
       | err error =>
-        have targetApp := DataLive.stateRel_doApp_error source target .ln op values error related app
+        have targetApp := DataLive.stateRel_doApp_error op values source error target .ln ⟨app, related⟩
         simp [DataSem.evaluate, invalid, read, cutStateOpt, app] at run
         obtain ⟨rfl, rfl⟩ := run
         refine ⟨.ln, (installSfs op source).safeForSpace, source.peakHeapLength, source.stackMax, ?_, ?_⟩
@@ -196,7 +197,7 @@ theorem simulationFor_makeSpace {C F : Type} (amount : Nat) (names : NumSet) :
       (addSpace { source with locals := env } amount).peakHeapLength,
       (addSpace { source with locals := env } amount).stackMax, ?_, ?_⟩
     · change DataSem.evaluate (.seq (.makeSpace amount names) .skip) { source with locals := locals } = _
-      rw [DataSem.evaluate_seq_skip]
+      rw [DataSimp.evaluate_Seq_Skip]
       simp [DataSem.evaluate, targetCut, addSpace]
     · exact (sptSubsptLookup _ _).2 (localsOk_refl _)
 

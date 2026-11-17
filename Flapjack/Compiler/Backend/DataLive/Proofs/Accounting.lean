@@ -1,6 +1,6 @@
 module
 
-public import Flapjack.Compiler.Backend.DataLive.Proofs.PureMemory
+public import Flapjack.Compiler.Backend.DataLive.Proofs.PureSuccess
 
 @[expose] public section
 
@@ -218,7 +218,7 @@ theorem simulationFor_assign_int {C F : Type} (dest : Nat) (op : ClosLang.IntOp)
   | true =>
     have parts : (sptLookup dest live).isNone = true ∧ isPure (.intOp op) = true := by simpa using retained
     have dead : sptLookup dest live = none := Option.isNone_iff_eq_none.mp parts.1
-    exact simulationFor_removed_int dest op names live parts.2 dead
+    exact simulationFor_removed_pure dest (.intOp op) names live parts.2 dead
 
 /-- Every unannotated word assignment satisfies the liveness simulation. -/
 theorem simulationFor_assign_word {C F : Type} (dest : Nat) (op : ClosLang.WordOp)
@@ -229,7 +229,7 @@ theorem simulationFor_assign_word {C F : Type} (dest : Nat) (op : ClosLang.WordO
   | true =>
     have parts : (sptLookup dest live).isNone = true ∧ isPure (.wordOp op) = true := by simpa using retained
     have dead : sptLookup dest live = none := Option.isNone_iff_eq_none.mp parts.1
-    exact simulationFor_removed_word dest op names live parts.2 dead
+    exact simulationFor_removed_pure dest (.wordOp op) names live parts.2 dead
 
 /-- The label dispatcher preserves related states and returns equal results. -/
 theorem stateRel_doApp_label {C F : Type} (source target : State C F) (live : NumSet)
@@ -261,7 +261,7 @@ theorem simulationFor_assign_label {C F : Type} (dest label : Nat) (names : List
     exact stateRel_doApp_label source target _ label args related
   | true =>
     have dead : sptLookup dest live = none := by simpa [isPure] using retained
-    exact simulationFor_removed_label dest label names live dead
+    exact simulationFor_removed_pure dest (.label label) names live rfl dead
 
 /-- A successful source environment cut can be mirrored by cutting the
 target to the live intersection. This auxiliary fact preserves all state

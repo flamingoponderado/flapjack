@@ -1,7 +1,6 @@
 module
 
 public import Flapjack.Compiler.Backend.BviTmc.Proofs.CallBlockFrame
-public import Flapjack.Compiler.Backend.BviTmc.Proofs.CallRelation
 
 @[expose] public section
 
@@ -31,8 +30,8 @@ theorem evaluate_rcall_core {C F : Type} (loc ticks : Nat) (indices : List Nat)
       Core [body'] args' f (BviSem.decClock (ticks + 1) target) bodyResult final) :
     Core [callBlockToBvi loc (.rCall ticks indices)] env2 f target result final := by
   have sourceArgs := evaluate_vars_source indices env1 source wf
-  have targetArgs := evaluate_vars_target indices env1.length env2 target wf (envRel_length opt f env1 env2 environments)
-  have argsRelated := wfVars_list_rel indices opt f env1 env2 environments wf
+  have targetArgs := evaluate_vars_target indices env1.length env2 target ⟨wf, envRel_length opt f env1 env2 environments⟩
+  have argsRelated := wfVars_list_rel indices opt f env1 env2 ⟨environments, wf⟩
   simp only [callBlockToBvi] at run ⊢
   rw [BviSem.evaluate, BviSem.fixClock_evaluate, sourceArgs] at run
   cases found : findCode (some loc) (indices.map (fun n => holEl n env1)) source.code with
@@ -54,7 +53,7 @@ theorem evaluate_rcall_core {C F : Type} (loc ticks : Nat) (indices : List Nat)
         · simp [findCode, lookup, arityEq] at found
           obtain ⟨rfl, rfl⟩ := found
           obtain ⟨safe, worker, targetBody, targetLookup, changed⟩ :=
-            codeRel_cases loc arity sourceBody source.code target.code lookup (stateRel_codeRel f source target states)
+            codeRel_cases loc arity sourceBody source.code target.code ⟨lookup, stateRel_codeRel f source target states⟩
           have lengths := argsRelated.length_eq
           refine ⟨safe, _, targetBody, ?_, listRel_envRel f _ _ argsRelated, ?_⟩
           · simp [findCode, targetLookup, ← lengths, arityEq]
@@ -150,12 +149,17 @@ theorem evaluate_cb_ordinary {C F : Type} (loc : Nat) (cb : CallBlock)
     (wf : wfBlock env1.length cb) (run : evaluate [callBlockToBvi loc cb] env1 source = (result, final))
     (notTypeError : result ≠ .err (.abort .typeError)) :
     Core [callBlockToBvi loc cb] env2 f target result final := by
-  apply CallBlockFrame.evaluate_cb_core loc cb source env1 opt f target env2 environments ?_ result final wf run notTypeError
-  intro ticks indices leafResult leafFinal leafWf leafRun leafSafe
-  apply evaluate_rcall_core loc ticks indices source env1 leafResult leafFinal opt f target env2
-    leafRun leafSafe leafWf environments states
-  intro body body' args args' bodyResult clockBound sourceFound targetFound argsRel safe changed bodyRun bodySafe
-  exact bodyIH ticks indices body body' args args' bodyResult leafFinal leafWf clockBound sourceFound targetFound
-    argsRel safe changed bodyRun bodySafe
+  induction cb generalizing result final with
+  | rCall ticks indices =>
+    apply evaluate_rcall_core loc ticks indices source env1 result final opt f target env2
+      run notTypeError wf environments states
+    intro body body' args args' bodyResult clockBound sourceFound targetFound argsRel safe changed bodyRun bodySafe
+    exact bodyIH ticks indices body body' args args' bodyResult final wf clockBound sourceFound targetFound
+      argsRel safe changed bodyRun bodySafe
+  | callBlock tag left child right ih =>
+    apply CallBlockFrame.evaluate_frame_core loc tag left right child source env1 result final opt f target env2
+      run notTypeError environments wf.1 wf.2.2.1
+    intro r mid childRun childSafe
+    exact ih r mid wf.2.1 childRun childSafe
 
 end Flapjack.Compiler.Backend.BviTmc.CallBlockLeaf

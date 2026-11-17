@@ -106,20 +106,30 @@ theorem semantics_eq_of_observations {C D F : Type} (ffi : HolFfiState F)
   dsimp only
   rw [propext fatalEq, observationEq, traceEq]
 
-/-- Flapjack infrastructure: TMC compilation preserves whole-program BVI
-behavior under the program and oracle conditions when the source does not
-fail. The full HOL statement and its carriers remain to be source-reviewed. -/
-theorem compileEach_semantics_assembled {C F : Type} (next start : Nat)
+/-- TMC compilation preserves whole-program BVI behavior under the original
+program and oracle conditions. The semantics inherit the rational-cuts real
+model documented in SOUNDNESS item 8. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "compile_each_semantics"]
+theorem compileEach_semantics {C F : Type} (next start : Nat)
     (program : List (Nat × Nat × Bvi.Exp)) (ffi : HolFfiState F)
     (oracle : BviSem.CompileOracle (Nat × C)) (compiler : BviSem.Compiler C)
-    (condition : inputCondition next program)
-    (oracleConditions : ∀ n, inputCondition (oracle n).1.1 (oracle n).2)
-    (workerBound : ∀ n, n ∈ ((compileEachSource next program).2.map Prod.fst) →
-      inWorkerNamespace n → n < (oracle 0).1.1)
-    (notFail : BviSem.semantics ffi (sptFromAList program) oracle (stateCc compileEachSource compiler) start ≠ .fail) :
+    (compiled : List (Nat × Nat × Bvi.Exp))
+    (h : inputCondition next program ∧
+      (∀ k n cfg prog, oracle k = ((n, cfg), prog) → inputCondition n prog) ∧
+      (∀ n, n ∈ compiled.map Prod.fst ∧ inWorkerNamespace n → n < (oracle 0).1.1) ∧
+      (compileEachSource next program).2 = compiled ∧
+      BviSem.semantics ffi (sptFromAList program) oracle
+        (stateCc compileEachSource compiler) start ≠ .fail) :
     BviSem.semantics ffi (sptFromAList program) oracle (stateCc compileEachSource compiler) start =
-      BviSem.semantics ffi (sptFromAList (compileEachSource next program).2)
+      BviSem.semantics ffi (sptFromAList compiled)
         (stateCo compileEachSource oracle) compiler start := by
+  obtain ⟨condition, oracleCondition, workerCondition, outputEq, notFail⟩ := h
+  subst compiled
+  have oracleConditions : ∀ n, inputCondition (oracle n).1.1 (oracle n).2 :=
+    fun n => oracleCondition n _ _ _ rfl
+  have workerBound : ∀ n, n ∈ ((compileEachSource next program).2.map Prod.fst) →
+      inWorkerNamespace n → n < (oracle 0).1.1 :=
+    fun n member worker => workerCondition n ⟨member, worker⟩
   apply semantics_eq_of_observations ffi _ _ oracle (stateCo compileEachSource oracle)
     (stateCc compileEachSource compiler) compiler start
   intro clock
@@ -131,9 +141,11 @@ theorem compileEach_semantics_assembled {C F : Type} (next start : Nat)
     have notType : result ≠ .err (.abort .typeError) := by simpa [BviSem.evaluateTuple, run] using noType
     obtain ⟨f, targetFinal, targetResult, targetRun, related, states⟩ :=
       CompileSemantics.evaluate_compile_each_assembled next start clock program ffi oracle compiler result final
-        condition oracleConditions workerBound run notType
+        ⟨condition, (fun n next cfg prog eq => by
+          have h := oracleConditions n
+          simpa [eq] using h), (fun n h => workerBound n h.1 h.2), run, notType⟩
     have observations := related_observations f result targetResult related
-    have ffiEqual := states.2.2.2.1
+    have ffiEqual := (stateRel_const f final targetFinal states).2
     simp only [targetRun]
     exact ⟨observations.1, observations.2, (congrArg HolFfiState.ioEvents ffiEqual).symm⟩
 
@@ -168,11 +180,7 @@ theorem compileProgSource_semantics {C F : Type} (next : Nat)
     rw [passEq] at notFail ⊢
     have outputEq : (compileEachSource next program).2 = compiled := by
       simpa [compileProgSource] using compiledEq
-    have bound : ∀ n, n ∈ ((compileEachSource next program).2.map Prod.fst) →
-        inWorkerNamespace n → n < (oracle 0).1.1 := by
-      rw [outputEq]
-      exact fun n member worker => workerBound n ⟨member, worker⟩
-    simpa only [outputEq] using compileEach_semantics_assembled next start program ffi oracle compiler
-      condition (fun k => oracleCondition k _ _ _ rfl) bound notFail
+    exact compileEach_semantics next start program ffi oracle compiler compiled
+      ⟨condition, oracleCondition, workerBound, outputEq, notFail⟩
 
 end Flapjack.Compiler.Backend.BviTmc.Observation

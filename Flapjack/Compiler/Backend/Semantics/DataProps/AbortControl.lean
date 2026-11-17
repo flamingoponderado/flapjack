@@ -30,7 +30,7 @@ theorem evaluate_abort_control {C F : Type} (program : DataLang.Prog) (state nex
   | raise name => simp only [evaluate] at run; repeat' (split at run <;> try simp_all)
   | «return» names => simp only [evaluate] at run; split at run <;> simp_all
   | seq first second =>
-    rw [evaluate, fixClock_evaluate] at run
+    rw [evaluate, fixClockEvaluate] at run
     cases firstRun : evaluate first state with
     | mk outcome mid =>
       rw [firstRun] at run
@@ -113,7 +113,7 @@ theorem evaluate_abort_control {C F : Type} (program : DataLang.Prog) (state nex
                 · let entered := callEnv args size (pushEnv env false (decClock state))
                   cases bodyRun : evaluate body entered with
                   | mk outcome last =>
-                    have clamped : fixClock entered (evaluate body entered) = (outcome, last) := by rw [fixClock_evaluate, bodyRun]
+                    have clamped : fixClock entered (evaluate body entered) = (outcome, last) := by rw [fixClockEvaluate, bodyRun]
                     simp only [entered] at clamped
                     cases outcome with
                     | none => simp [evaluate, read, inspect, found, cut, zero, clamped] at run; exact False.elim (notType run.1.symm)
@@ -174,7 +174,7 @@ theorem evaluate_abort_control {C F : Type} (program : DataLang.Prog) (state nex
               · let entered := callEnv params size (pushEnv env handler.isSome (decClock state))
                 cases bodyRun : evaluate body entered with
                 | mk outcome last =>
-                  have clamped : fixClock entered (evaluate body entered) = (outcome, last) := by rw [fixClock_evaluate, bodyRun]
+                  have clamped : fixClock entered (evaluate body entered) = (outcome, last) := by rw [fixClockEvaluate, bodyRun]
                   have bound := evaluate_clock_le body entered
                   rw [bodyRun] at bound
                   change last.clock ≤ entered.clock at bound

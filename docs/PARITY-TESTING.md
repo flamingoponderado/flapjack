@@ -390,6 +390,27 @@ compiler driver diff adds Pancake feature handling; its normal CakeML path is
 unchanged. These facts make the comparisons useful evidence, but the historical
 binary is not a pinned oracle and the hashes are not a cross-language proof.
 
+On 2026-11-16, after the inference walker adopted the original
+`cvwalk_code` step, all 236 CLI cases matched the pinned CakeML executable
+in complete stdout, stderr and exit status using
+`scripts/check-cake-cli-parity.py --check-pinned-reference
+/var/tmp/flapjack-pinned-cake`. The HOL `unify_exec_walk_probe` also records
+all four walker-step outcomes and a two-binding walk. These finite comparisons
+do not establish parity for all programs. The current unifier uses unbounded
+`partial_fixpoint` recursion: its outer `Option` models possible nontermination,
+which can loop at runtime rather than return `none`. `Unify.WorklistTotal` proves
+termination under the original `cwfs` guard; preservation of that guard along
+the full executable inference path remains a separate obligation.
+
+At branch commit `214c408ddc`, after rebuilding `cake`, all 236 CLI cases and
+all 161 fixed corpus cases matched the pinned CakeML executable in complete
+stdout, stderr, and exit status:
+
+```sh
+python3 scripts/check-cake-cli-parity.py --check-pinned-reference /var/tmp/flapjack-pinned-cake
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --corpus --timeout 60
+```
+
 For an additional deterministic sample of generated integer, conditional,
 local-binding and closure programs, run
 `python3 scripts/fuzz-cake-source-parity.py --reference /path/to/pinned/cake`.

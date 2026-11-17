@@ -10,20 +10,6 @@ public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.OracleStep
 namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL
 
-/-- Storing the generated environment ID updates only the reserved first
-reference and returns normally. This is a local semantic lemma over the
-proof-side flat evaluator, not the full HOL `declare_env_store_env_id` theorem. -/
-theorem evaluateStoreEnvId {C F : Type} (state : FlatSem.State C F)
-    (gen id : Nat) (globals : List (Option FlatSem.Value))
-    (old : FlatSem.Value) (refs : List (StoreValue FlatSem.Value))
-    (globalHead : state.globals = some (.loc true 0) :: globals)
-    (referenceHead : state.refs = .refv old :: refs) :
-    FlatSem.evaluateDecs state [storeEnvId gen id] =
-      ({ state with refs := .refv (.conv none [.litv (.intLit (gen : Int)), .litv (.intLit (id : Int))]) :: refs }, none) := by
-  simp [FlatSem.evaluateDecs, FlatSem.evaluate, storeEnvId, envIdTuple, FlatSem.fixClock,
-    FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppFlat, FlatSem.doAppNumeric,
-    FlatSem.doAppMemory, storeAssign, storeValueSameType, FlatSem.unitValue, globalHead, referenceHead]
-
 namespace OracleInvariant
 
 /-- Extending the current source generation preserves the environment-map

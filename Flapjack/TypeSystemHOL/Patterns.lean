@@ -4,8 +4,8 @@ public import Flapjack.TypeSystemHOL.TypeNames
 
 @[expose] public section
 
-/-! Declarative CakeML pattern typing. The judgments below retain the original
-rules; full source and carrier review remains pending. -/
+/-! Declarative CakeML pattern typing with the original mutually defined
+pattern and pattern-list judgments. -/
 namespace Flapjack.TypeSystemHOL
 open Flapjack.Basis.Pure.MlString Flapjack.NamespaceHOL Flapjack.AstHOL
 

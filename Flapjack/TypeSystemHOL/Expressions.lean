@@ -4,15 +4,13 @@ public import Flapjack.TypeSystemHOL.Operators
 
 @[expose] public section
 
-/-! Declarative CakeML expression-typing infrastructure. `TypeE` uses an
-inductively encoded branch list in its match and handler rules; HOL instead
-states a membership-indexed existential for each branch. This translation
-requires an equivalence proof and representation review before the judgments
-can be tagged as HOL ports. -/
+/-! Declarative CakeML expression typing. `TypeBranches` packages the source's
+membership-indexed branch premises; `typeBranches_iff` proves their equivalence. -/
 namespace Flapjack.TypeSystemHOL
 open Flapjack.Basis.Pure.MlString Flapjack.NamespaceHOL Flapjack.AstHOL Flapjack.Misc.Location
 
 mutual
+@[hol "cakeml/semantics/typeSystemScript.sml" "type_e"]
 inductive TypeE : TypeEnv → TenvValExp → AstHOL.Exp → SemanticT → Prop where
   | intLit (env : TypeEnv) (localEnv : TenvValExp) (n : Int) :
       TypeE env localEnv (.lit (.intLit n)) (.app [] 5)
@@ -83,12 +81,14 @@ inductive TypeE : TypeEnv → TenvValExp → AstHOL.Exp → SemanticT → Prop w
   | location (env : TypeEnv) (localEnv : TenvValExp) (e : AstHOL.Exp) (loc : Locs) (t : SemanticT)
       (typed : TypeE env localEnv e t) : TypeE env localEnv (.lannot e loc) t
 
+@[hol "cakeml/semantics/typeSystemScript.sml" "type_e"]
 inductive TypeEs : TypeEnv → TenvValExp → List AstHOL.Exp → List SemanticT → Prop where
   | nil (env : TypeEnv) (localEnv : TenvValExp) : TypeEs env localEnv [] []
   | cons (env : TypeEnv) (localEnv : TenvValExp) (e : AstHOL.Exp) (es : List AstHOL.Exp)
       (t : SemanticT) (ts : List SemanticT) (head : TypeE env localEnv e t)
       (tail : TypeEs env localEnv es ts) : TypeEs env localEnv (e :: es) (t :: ts)
 
+@[hol "cakeml/semantics/typeSystemScript.sml" "type_e"]
 inductive TypeFuns : TypeEnv → TenvValExp → List (MlString × MlString × AstHOL.Exp) →
     List (MlString × SemanticT) → Prop where
   | nil (env : TypeEnv) (localEnv : TenvValExp) : TypeFuns env localEnv [] []

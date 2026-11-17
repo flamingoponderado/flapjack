@@ -40,7 +40,7 @@ theorem evaluatePost_word_success {C F : Type} (s sMiddle : ClosSem.State C F)
   | val targetValues =>
     have argsRel : List.Forall₂ (vRel sMiddle.maxApp fMiddle tMiddle.refs tMiddle.code)
         values.reverse targetValues.reverse := by
-      simpa [resultRel, maxApp] using reverse_related related
+      simpa [resultRel, maxApp] using List.rel_reverse related
     obtain ⟨target, targetWord, valueRel⟩ := doWordApp_related op values.reverse targetValues.reverse argsRel value run
     refine ⟨clock, .val [target], tMiddle, fMiddle, ?_, ?_, state, map, refs, annotations, clocks⟩
     · rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, targetRun]

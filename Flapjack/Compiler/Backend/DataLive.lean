@@ -25,6 +25,63 @@ def isPure : ClosLang.Op → Bool
   | .install | .thunkOp _ => false
   | _ => true
 
+/-- The source-order pattern match for the purity classifier. -/
+@[hol "cakeml/compiler/backend/data_liveScript.sml" "is_pure_pmatch"]
+theorem isPure_pmatch (op : ClosLang.Op) :
+    isPure op = match op with
+      | .ffi _ => false
+      | .globOp (.setGlobal _) => false
+      | .globOp .setGlobalsPtr => false
+      | .wordOp (.wordOpw .w64 _) => false
+      | .wordOp (.wordShift .w64 _ _) => false
+      | .wordOp .wordFromInt => false
+      | .wordOp .wordToInt => false
+      | .wordOp (.wordFromWord _) => false
+      | .wordOp (.fpUop _) => false
+      | .wordOp (.fpBop _) => false
+      | .wordOp (.fpTop _) => false
+      | .blockOp (.build _) => false
+      | .blockOp (.cons _) => false
+      | .blockOp (.consExtend _) => false
+      | .blockOp (.fromList _) => false
+      | .blockOp .listAppend => false
+      | .blockOp .equal => false
+      | .memOp .ref => false
+      | .memOp (.refByte _) => false
+      | .memOp .refArray => false
+      | .memOp .update => false
+      | .memOp (.mutCons _ _) => false
+      | .memOp .updateCons => false
+      | .memOp .finaliseCons => false
+      | .memOp .updateByte => false
+      | .memOp .fromListByte => false
+      | .memOp (.copyByte _) => false
+      | .memOp .xorByte => false
+      | .intOp .add => false
+      | .intOp .sub => false
+      | .intOp .mult => false
+      | .intOp .div => false
+      | .intOp .mod => false
+      | .intOp .less => false
+      | .intOp .lessEq => false
+      | .install => false
+      | .memOp .configGC => false
+      | .thunkOp _ => false
+      | _ => true := by
+  cases op with
+  | ffi name => rfl
+  | label n => rfl
+  | intOp op => cases op <;> rfl
+  | wordOp op =>
+    cases op <;> try rfl
+    case wordOpw size operation => cases size <;> rfl
+    case wordShift size operation amount => cases size <;> rfl
+  | blockOp op => cases op <;> rfl
+  | globOp op => cases op <;> rfl
+  | memOp op => cases op <;> rfl
+  | install => rfl
+  | thunkOp op => rfl
+
 /-- Rewrite live-name annotations and remove unused pure assignments. -/
 @[hol "cakeml/compiler/backend/data_liveScript.sml" "compile_def"]
 def compile : Prog → NumSet → Prog × NumSet

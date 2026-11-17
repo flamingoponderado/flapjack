@@ -24,6 +24,93 @@ theorem stateRel_doAppAux_block {C F : Type} (source target : State C F) (live :
     case equal => exact stateRel_doAppAux_equal source target live args related
     case build parts => exact stateRel_doAppAux_build source target live parts args related
 
+/-- Related states yield matching auxiliary primitive outcomes. This helper
+assembles the operation-specific simulations and has no separate HOL declaration. -/
+private theorem stateRel_doAppAux {C F : Type} (source target : State C F) (live : NumSet)
+    (op : ClosLang.Op) (args : List DataSem.Value) (related : stateRel source target live) :
+    appRel live (doAppAux op args source) (doAppAux op args target) := by
+  cases op with
+  | label label =>
+    cases args with
+    | cons first rest => simp [doAppAux, applyNonFfi, appRel]
+    | nil =>
+      cases found : sptLookup label source.code with
+      | none =>
+        have other : sptLookup label target.code = none := by rw [← related.1, found]
+        simp [doAppAux, applyNonFfi, found, other, appRel]
+      | some entry =>
+        have other : sptLookup label target.code = some entry := by rw [← related.1, found]
+        simpa [doAppAux, applyNonFfi, found, other, appRel] using related
+  | ffi name => exact stateRel_doAppAux_ffi source target live name args related
+  | intOp op =>
+    rw [doAppAux_int_exact, doAppAux_int_exact]
+    split <;> (simp only [appRel, true_and]; try exact related)
+  | wordOp op =>
+    rw [doAppAux_word_exact, doAppAux_word_exact]
+    split <;> (simp only [appRel, true_and]; try exact related)
+  | blockOp op => exact stateRel_doAppAux_block source target live op args related
+  | globOp op => exact stateRel_doAppAux_global source target live op args related
+  | memOp op => exact stateRel_doAppAux_memory source target live op args related
+  | install => simp [doAppAux, applyNonFfi, appRel]
+  | thunkOp op => exact stateRel_doAppAux_thunk source target live op args related
+
+/-- Reconstruct the target state from the fields preserved by the liveness
+relation and its unchanged local control fields. This is Lean proof infrastructure. -/
+private theorem stateRel_reconstruct {C F : Type} (source target initial : State C F)
+    (live : NumSet) (related : stateRel source target live)
+    (locals : target.locals = initial.locals) (stack : target.stack = initial.stack)
+    (handler : target.handler = initial.handler) :
+    target = { source with locals := initial.locals, localsSize := target.localsSize, stack := initial.stack, stackMax := target.stackMax, handler := initial.handler, safeForSpace := target.safeForSpace, peakHeapLength := target.peakHeapLength } := by
+  rcases related with ⟨code, clock, space, ffi, refs, global, hand, size, compiler, oracle, stamps, limits, frames, liveLocals⟩
+  cases source
+  cases target
+  cases initial
+  simp_all
+
+/-- A successful auxiliary primitive has the complete target-state shape in
+the original liveness proof. The dispatcher inherits SOUNDNESS item 8. -/
+@[hol "cakeml/compiler/backend/proofs/data_liveProofScript.sml" "state_rel_IMP_do_app_aux"]
+theorem stateRel_doAppAux_success_exact {C F : Type} (op : ClosLang.Op) (args : List DataSem.Value)
+    (source : State C F) (value : DataSem.Value) (next target : State C F) (live : NumSet)
+    (premises : doAppAux op args source = .val (value, next) ∧ stateRel source target live) :
+    source.handler = next.handler ∧ source.stack = next.stack ∧
+    ∃ safe peak smx lss, doAppAux op args target = .val (value,
+      { next with locals := target.locals, localsSize := lss, stack := target.stack, stackMax := smx, handler := target.handler, safeForSpace := safe, peakHeapLength := peak }) := by
+  obtain ⟨run, related⟩ := premises
+  have sourceFrame := doAppAux_fieldFrame op args source next value run
+  refine ⟨sourceFrame.2.2.2.2.2.2.1.symm, sourceFrame.1.symm, ?_⟩
+  have simulation := stateRel_doAppAux source target live op args related
+  rw [run] at simulation
+  cases targetRun : doAppAux op args target with
+  | err error => simp [targetRun, appRel] at simulation
+  | val pair =>
+    obtain ⟨targetValue, targetNext⟩ := pair
+    simp [targetRun, appRel] at simulation
+    obtain ⟨rfl, nextRel⟩ := simulation
+    have targetFrame := doAppAux_fieldFrame op args target targetNext value targetRun
+    refine ⟨targetNext.safeForSpace, targetNext.peakHeapLength, targetNext.stackMax,
+      targetNext.localsSize, ?_⟩
+    exact congrArg (fun state => (Result.val (value, state) : Result (DataSem.Value × State C F) DataSem.Value))
+      (stateRel_reconstruct next targetNext target live nextRel targetFrame.2.2.2.2.1
+        targetFrame.1 targetFrame.2.2.2.2.2.2.1)
+
+/-- Auxiliary primitive errors are reproduced in any related target state.
+The dispatcher inherits the real-model assumption in SOUNDNESS item 8. -/
+@[hol "cakeml/compiler/backend/proofs/data_liveProofScript.sml" "state_rel_IMP_do_app_aux_err"]
+theorem stateRel_doAppAux_error {C F : Type} (op : ClosLang.Op) (args : List DataSem.Value)
+    (source : State C F) (error : ErrorResult DataSem.Value) (target : State C F) (live : NumSet)
+    (premises : doAppAux op args source = .err error ∧ stateRel source target live) :
+    doAppAux op args target = .err error := by
+  obtain ⟨run, related⟩ := premises
+  have simulation := stateRel_doAppAux source target live op args related
+  rw [run] at simulation
+  cases targetRun : doAppAux op args target with
+  | err targetError =>
+    simp [targetRun, appRel] at simulation
+    cases simulation
+    rfl
+  | val value => simp [targetRun, appRel] at simulation
+
 /-- Every primitive application produces matching errors or values and
 related successful states. This is the current Lean evaluator's counterpart
 of the source primitive simulation, untagged pending source review. -/
@@ -47,11 +134,14 @@ theorem stateRel_doApp {C F : Type} (source target : State C F) (live : NumSet)
   | install => exact stateRel_doApp_install source target live args related
   | thunkOp op => exact stateRel_doApp_thunk source target live op args related
 
-/-- A source primitive error is reproduced by every related target state. -/
-theorem stateRel_doApp_error {C F : Type} (source target : State C F) (live : NumSet)
-    (op : ClosLang.Op) (args : List DataSem.Value) (error : ErrorResult DataSem.Value)
-    (related : stateRel source target live) (run : doApp op args source = .err error) :
+/-- A source primitive error is reproduced by every related target state.
+The dispatcher inherits the real-model assumption in SOUNDNESS item 8. -/
+@[hol "cakeml/compiler/backend/proofs/data_liveProofScript.sml" "state_rel_IMP_do_app_err"]
+theorem stateRel_doApp_error {C F : Type} (op : ClosLang.Op) (args : List DataSem.Value)
+    (source : State C F) (error : ErrorResult DataSem.Value) (target : State C F) (live : NumSet)
+    (premises : doApp op args source = .err error ∧ stateRel source target live) :
     doApp op args target = .err error := by
+  obtain ⟨run, related⟩ := premises
   have simulation := stateRel_doApp source target live op args related
   rw [run] at simulation
   cases targetRun : doApp op args target with
@@ -76,6 +166,28 @@ theorem stateRel_doApp_success {C F : Type} (source target sourceNext : State C 
     simp [targetRun, appRel] at simulation
     obtain ⟨rfl, nextRel⟩ := simulation
     exact ⟨targetNext, rfl, nextRel⟩
+
+/-- A successful primitive has the complete target-state shape in the
+original liveness proof. The dispatcher inherits SOUNDNESS item 8. -/
+@[hol "cakeml/compiler/backend/proofs/data_liveProofScript.sml" "state_rel_IMP_do_app"]
+theorem stateRel_doApp_success_exact {C F : Type} (op : ClosLang.Op) (args : List DataSem.Value)
+    (source : State C F) (value : DataSem.Value) (next target : State C F) (live : NumSet)
+    (premises : doApp op args source = .val (value, next) ∧ stateRel source target live) :
+    source.handler = next.handler ∧ source.stack = next.stack ∧
+    ∃ safe peak smx lss, doApp op args target = .val (value,
+      { next with locals := target.locals, localsSize := lss, stack := target.stack, stackMax := smx, handler := target.handler, safeForSpace := safe, peakHeapLength := peak }) := by
+  obtain ⟨run, related⟩ := premises
+  have sourceFrame := doApp_control op args source next value run
+  refine ⟨sourceFrame.2.2.1.symm, sourceFrame.2.1.symm, ?_⟩
+  obtain ⟨targetNext, targetRun, nextRel⟩ :=
+    stateRel_doApp_success source target next live op args value related run
+  have targetFrame := doApp_control op args target targetNext value targetRun
+  refine ⟨targetNext.safeForSpace, targetNext.peakHeapLength, targetNext.stackMax,
+    targetNext.localsSize, ?_⟩
+  exact targetRun.trans (congrArg
+    (fun state => (Result.val (value, state) : Result (DataSem.Value × State C F) DataSem.Value))
+    (stateRel_reconstruct next targetNext target live nextRel targetFrame.1
+      targetFrame.2.1 targetFrame.2.2.1))
 
 /-- If the initial local environments are equal, a successful primitive
 preserves that equality as well as the liveness relation. This auxiliary

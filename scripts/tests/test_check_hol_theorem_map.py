@@ -3,8 +3,10 @@
 import copy
 import runpy
 import json
+import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 
 MAP = runpy.run_path(
@@ -114,6 +116,150 @@ class CoordinatorPendingReviewNoteTest(unittest.TestCase):
                 "coordinator review pending",
             )
         )
+
+
+class GeneraliseMapQualifierInventoryTest(unittest.TestCase):
+    def test_command_scanner_tracks_both_actual_definitions(self):
+        rel = 'Flapjack/Compiler/Inference/Infer/Generalise.lean'
+        source = (Path(__file__).resolve().parents[2] / rel).read_text(encoding='utf-8')
+        anchor = 'termination_by ts => sizeOf ts\nend\n\nmutual\n'
+        command = ('attribute [hol "cakeml/compiler/inference/inferScript.sml" "generalise_def"\n'
+                   '  (fmap_as_finite_support_parameter_tuple_result := '
+                   '(map_parameter := subst) (result_component := component_2))]\n'
+                   '  generaliseMap generaliseListMap\n\n')
+        source = source.replace(command, '')
+        self.assertEqual(source.count(anchor), 1)
+        source = source.replace(anchor, anchor.replace('mutual\n', command + 'mutual\n'), 1)
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            path = root / rel
+            path.parent.mkdir(parents=True)
+            path.write_text(source, encoding='utf-8')
+            with patch.dict(MAP["REFS"], {"lean_files": lambda: [path]}):
+                tagged = MAP["tagged_declarations"](root)
+            for name in ('generaliseMap', 'generaliseListMap'):
+                self.assertEqual(tagged[(rel, name)][23], ('subst', 'component_2'))
+
+    def test_scanner_preserves_the_combined_qualifier(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / "Generalise.lean"
+            source.write_text('''@[hol "cakeml/compiler/inference/inferScript.sml" "generalise_def"
+  (fmap_as_finite_support_parameter_tuple_result :=
+    (map_parameter := subst) (result_component := component_2))]
+def generaliseMap : Nat := 0
+''', encoding="utf-8")
+            with patch.dict(MAP["REFS"], {"lean_files": lambda: [source]}):
+                tagged = MAP["tagged_declarations"](root)
+            self.assertEqual(tagged[("Generalise.lean", "generaliseMap")][23],
+                             ("subst", "component_2"))
+            source.write_text('attribute [hol "p" "n"] generaliseMap\n', encoding="utf-8")
+            with patch.dict(MAP["REFS"], {"lean_files": lambda: [source]}):
+                with self.assertRaisesRegex(ValueError, "invalid command-style HOL attribute"):
+                    MAP["tagged_declarations"](root)
+
+    def test_exact_sites_and_metadata_are_required(self):
+        field = "fmap_as_finite_support_parameter_tuple_result"
+        for name in ("generaliseMap", "generaliseListMap"):
+            record = {
+                "hol_path": "cakeml/compiler/inference/inferScript.sml",
+                "hol_name": "generalise_def",
+                "lean_path": "Flapjack/Compiler/Inference/Infer/Generalise.lean",
+                "lean_name": name, "statement_status": "reviewed_" + field,
+                "reviewer": "source comparison of subst and component_2", field: ["subst", "component_2"],
+            }
+            key = (record["lean_path"], name)
+            base = (record["hol_path"], record["hol_name"], (), (), (), (),
+                    False, (), False, False, (), (), None, (), (), False, False,
+                    (), (), (), (), (), ())
+            good = {key: base + (("subst", "component_2"),)}
+            with self.subTest(name=name):
+                self.assertEqual(MAP["validate_inventory"]([record], set(), good, set()), [])
+                for changed in ({**record, field: ["subst", "component_1"]},
+                                {**record, "statement_status": "reviewed_exact"},
+                                {**record, "reviewer": "source comparison"}):
+                    self.assertTrue(MAP["validate_inventory"]([changed], set(), good, set()))
+                self.assertTrue(MAP["validate_inventory"]([record], set(), {key: base}, set()))
+                self.assertTrue(MAP["validate_inventory"]([record], set(),
+                    {key: base[:2] + (("field",),) + base[3:] + (("subst", "component_2"),)}, set()))
+                self.assertTrue(MAP["validate_inventory"]([record], set(),
+                    {key: base + (("subst", "component_2"), ("future_qualifier",))}, set()))
+
+
+class GeneraliseLengthQualifierInventoryTest(unittest.TestCase):
+    def test_exact_site_and_metadata_are_required(self):
+        field = "fmap_as_finite_support_parameter_tuple_observations"
+        values = ("subst", "out", "Flapjack.Compiler.Inference.Infer.Generalise.generaliseListMap", "component_2")
+        record = {"hol_path": "cakeml/compiler/inference/inferPropsScript.sml",
+                  "hol_name": "generalise_list_length",
+                  "lean_path": "Flapjack/Compiler/Inference/InferProps/Generalise.lean",
+                  "lean_name": "generaliseListLength", "statement_status": "reviewed_" + field,
+                  "reviewer": "source comparison of subst, out and component_2", field: list(values)}
+        key = (record["lean_path"], record["lean_name"])
+        base = (record["hol_path"], record["hol_name"], (), (), (), (), False, (), False,
+                False, (), (), None, (), (), False, False, (), (), (), (), (), (), ())
+        tagged = {key: base + (values,)}
+        self.assertEqual(MAP["validate_inventory"]([record], set(), tagged, set()), [])
+        for changed in ({**record, field: list(reversed(values))},
+                        {**record, "statement_status": "reviewed_exact"},
+                        {**record, "reviewer": "source comparison"}):
+            with self.subTest(record=changed):
+                self.assertTrue(MAP["validate_inventory"]([changed], set(), tagged, set()))
+        self.assertTrue(MAP["validate_inventory"]([record], set(), {key: base}, set()))
+        self.assertTrue(MAP["validate_inventory"]([record], set(),
+            {key: base[:2] + (("other",),) + base[3:] + (values,)}, set()))
+
+
+class InferSubstSubmapQualifierInventoryTest(unittest.TestCase):
+    def test_exact_site_and_four_occurrences_are_required(self):
+        field = "fmap_as_finite_support_conjunct_universals"
+        values = ("type_s1", "type_s2", "list_s1", "list_s2")
+        record = {"hol_path": "cakeml/compiler/inference/inferPropsScript.sml",
+                  "hol_name": "infer_subst_submap",
+                  "lean_path": "Flapjack/Compiler/Inference/InferProps/Substitution.lean",
+                  "lean_name": "inferSubstSubmap", "statement_status": "reviewed_" + field,
+                  "reviewer": "source comparison type_s1 type_s2 list_s1 list_s2", field: list(values)}
+        key = (record["lean_path"], record["lean_name"])
+        base = (record["hol_path"], record["hol_name"], (), (), (), (), False, (), False,
+                False, (), (), None, (), (), False, False, (), (), (), (), (), (), (), ())
+        tagged = {key: base + (values,)}
+        self.assertEqual(MAP["validate_inventory"]([record], set(), tagged, set()), [])
+        retagged = {**record, "hol_name": "unrelated", "statement_status": "reviewed_exact", field: []}
+        self.assertTrue(MAP["validate_inventory"]([retagged], set(),
+            {key: (base[0], "unrelated") + base[2:]}, set()))
+        for changed in ({**record, field: list(reversed(values))},
+                        {**record, "statement_status": "reviewed_exact"},
+                        {**record, "reviewer": "source comparison"}):
+            with self.subTest(record=changed):
+                self.assertTrue(MAP["validate_inventory"]([changed], set(), tagged, set()))
+        self.assertTrue(MAP["validate_inventory"]([record], set(), {key: base}, set()))
+        self.assertTrue(MAP["validate_inventory"]([record], set(),
+            {key: base[:2] + (("other",),) + base[3:] + (values,)}, set()))
+
+    def test_walkstar_requires_two_independent_occurrences(self):
+        field = "fmap_as_finite_support_conjunct_universals"
+        values = ("type_s", "list_s")
+        record = {"hol_path": "cakeml/compiler/inference/inferPropsScript.sml",
+                  "hol_name": "subst_infer_subst_swap",
+                  "lean_path": "Flapjack/Compiler/Inference/InferProps/TypeSubstWalkstar.lean",
+                  "lean_name": "substInferSubstSwap", "statement_status": "reviewed_" + field,
+                  "reviewer": "source comparison type_s list_s", field: list(values)}
+        key = (record["lean_path"], record["lean_name"])
+        base = (record["hol_path"], record["hol_name"], (), (), (), (), False, (), False,
+                False, (), (), None, (), (), False, False, (), (), (), (), (), (), (), ())
+        tagged = {key: base + (values,)}
+        self.assertEqual(MAP["validate_inventory"]([record], set(), tagged, set()), [])
+        retagged = {**record, "hol_name": "unrelated", "statement_status": "reviewed_exact", field: []}
+        self.assertTrue(MAP["validate_inventory"]([retagged], set(),
+            {key: (base[0], "unrelated") + base[2:]}, set()))
+        for changed in ({**record, field: ["type_s", "type_s"]},
+                        {**record, "statement_status": "reviewed_exact"},
+                        {**record, "reviewer": "source comparison"}):
+            with self.subTest(record=changed):
+                self.assertTrue(MAP["validate_inventory"]([changed], set(), tagged, set()))
+        self.assertTrue(MAP["validate_inventory"]([record], set(), {key: base}, set()))
+        self.assertTrue(MAP["validate_inventory"]([record], set(),
+            {key: base[:2] + (("other",),) + base[3:] + (values,)}, set()))
 
 
 class HeterogeneousFmapQualifierInventoryTest(unittest.TestCase):
@@ -1789,6 +1935,61 @@ class ValidateInventoryTest(unittest.TestCase):
         self.assertNotIn(mismatch, MAP["tagged_declarations"]())
 
 
+class TmcUniversalStatusTest(unittest.TestCase):
+    def test_call_block_requires_its_exact_site_and_map_scopes(self):
+        key = ("Flapjack/Compiler/Backend/BviTmc/Proofs/CallBlockCorrectness.lean", "evaluate_cb")
+        record = {
+            "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+            "hol_name": "evaluate_cb", "lean_path": key[0], "lean_name": key[1],
+            "statement_status": "reviewed_fmap_as_finite_support_relation_existentials_universals",
+            "fmap_as_finite_support_relation": ["BviState.refs", "f"],
+            "fmap_as_finite_support_existentials": ["ordinaryMap", "wrapMap", "auxMap", "workMap"],
+            "fmap_as_finite_support_universals": ["refs"],
+            "reviewer": "Source comparison BviState.refs f refs ordinaryMap wrapMap auxMap workMap.",
+        }
+        tag = (record["hol_path"], record["hol_name"], (), (), (), (), False,
+               (("BviState", "refs"), ("f", "")), False, False, (),
+               ("ordinaryMap", "wrapMap", "auxMap", "workMap"), None, (), (), False,
+               False, (), (), (), (), (), ("refs",))
+        validate = MAP["validate_inventory"]
+        self.assertEqual(validate([record], set(), {key: tag}, set()), [])
+        for index in (7, 11, 22):
+            changed = list(tag)
+            changed[index] = ()
+            self.assertTrue(validate([record], set(), {key: tuple(changed)}, set()))
+        self.assertTrue(validate([{**record, "lean_name": "other"}], set(),
+                                 {(key[0], "other"): tag}, set()))
+
+    def test_exact_site_and_all_map_qualifiers_are_required(self):
+        key = ("Flapjack/Compiler/Backend/BviTmc/Proofs/Induction.lean", "hypothesis")
+        record = {
+            "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+            "hol_name": "hypothesis_def", "lean_path": key[0], "lean_name": key[1],
+            "statement_status": "reviewed_fmap_as_finite_support_relation_existentials_universals",
+            "fmap_as_finite_support_relation": ["BviState.refs"],
+            "fmap_as_finite_support_existentials": ["nextMap", "wrapMap", "workMap"],
+            "fmap_as_finite_support_universals": ["f"],
+            "reviewer": "Source comparison BviState.refs f nextMap wrapMap workMap.",
+        }
+        tag = (record["hol_path"], record["hol_name"], (), (), (), (), False,
+               (("BviState", "refs"),), False, False, (), ("nextMap", "wrapMap", "workMap"),
+               None, (), (), False, False, (), (), (), (), (), ("f",))
+        validate = MAP["validate_inventory"]
+        self.assertEqual(validate([record], set(), {key: tag}, set()), [])
+        for changed in ({"statement_status": "reviewed_exact"},
+                        {"fmap_as_finite_support_universals": []},
+                        {"fmap_as_finite_support_existentials": ["wrapMap", "nextMap", "workMap"]},
+                        {"fmap_as_finite_support_relation": ["Other.refs"]},
+                        {"reviewer": "Source comparison."}):
+            self.assertTrue(validate([{**record, **changed}], set(), {key: tag}, set()))
+        bad_key = (key[0], "other")
+        self.assertTrue(validate([{**record, "lean_name": "other"}], set(), {bad_key: tag}, set()))
+        for index in (7, 11, 22):
+            modified = list(tag)
+            modified[index] = ()
+            self.assertTrue(validate([record], set(), {key: tuple(modified)}, set()))
+
+
 class PredicateDomainStatusTest(unittest.TestCase):
     def test_exact_site_binders_status_and_review_are_required(self):
         key = ("Flapjack/Compiler/Backend/ClosToBvl/Proofs/EvalSim.lean", "evalSim")
@@ -1909,6 +2110,28 @@ class TupleFmapStatusTest(unittest.TestCase):
         ):
             self.assertTrue(validate([{**self.record, **changed}], set(), {self.key: self.tag}, set()))
         self.assertTrue(validate([self.record], set(), {self.key: self.tag[:-1] + ((),)}, set()))
+
+    def test_unification_tuple_status_is_restricted_to_exact_site(self):
+        key = ("Flapjack/HOL/Unification/UnifDef/WellFounded.lean", "uRWellFounded")
+        record = {
+            "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/unifDefScript.sml",
+            "hol_name": "WF_uR", "lean_path": key[0], "lean_name": key[1],
+            "statement_status": "reviewed_fmap_as_finite_support_tuple",
+            "fmap_as_finite_support_tuple": ["component_1"],
+            "reviewer": "source comparison: component_1 is the canonical finite map",
+        }
+        tag = (record["hol_path"], record["hol_name"], (), (), (), (),
+               False, (), False, False, (), (), None, (), (), False, False, (), (),
+               ("component_1",))
+        validate = MAP["validate_inventory"]
+        self.assertEqual(validate([record], set(), {key: tag}, set()), [])
+        for changed in (
+            {"hol_name": "uR_def"}, {"lean_name": "other"},
+            {"fmap_as_finite_support_tuple": ["component_2"]},
+            {"statement_status": "reviewed_fmap_as_finite_support_tuple_words_as_type_indexed_bitvec"},
+            {"words_as_type_indexed_bitvec": True},
+        ):
+            self.assertTrue(validate([{**record, **changed}], set(), {key: tag}, set()))
 
 
 class ExistentialFmapStatusTest(unittest.TestCase):

@@ -6,9 +6,7 @@ public import Flapjack.SemanticPrimitivesHOL.Control
 
 @[expose] public section
 
-/-! Prerequisites for declarative declaration typing. The expression judgment
-uses a proved-equivalent branch-list encoding and remains pending full source
-and carrier review. -/
+/-! The mutually defined declarative typing judgments for declarations. -/
 namespace Flapjack.TypeSystemHOL
 open Flapjack.Basis.Pure.MlString Flapjack.NamespaceHOL Flapjack.AstHOL
 open Flapjack.SemanticPrimitivesHOL
@@ -43,8 +41,8 @@ def buildCtorTenv {α β γ δ ε : Type} (env : TenvAbbrev) :
 def tenvAddTvs (tvs : Nat) (bindings : List (MlString × SemanticT)) : List (MlString × (Nat × SemanticT)) :=
   bindings.map (fun (name, t) => (name, (tvs, t)))
 
-/-- Flapjack infrastructure corresponding to the shape of source pattern and
-expression determinacy. It uses the unreviewed `TypeE` encoding. -/
+/-- Determinacy of the bindings assigned to a pattern and expression. -/
+@[hol "cakeml/semantics/typeSystemScript.sml" "type_pe_determ_def"]
 def typePeDeterm (env : TypeEnv) (localEnv : TenvValExp) (p : Pat) (e : AstHOL.Exp) : Prop :=
   ∀ t₁ bindings₁ t₂ bindings₂,
     TypeP 0 env p t₁ bindings₁ ∧ TypeE env localEnv e t₁ ∧
@@ -81,10 +79,8 @@ def primTypeNums : List Nat :=
   [TarrayNum, TcharNum, TexnNum, TfnNum, TintNum, TrefNum, TstringNum, TtupNum,
    TvectorNum, Tword64Num, Tword8Num, Tword8arrayNum, TdoubleNum]
 
-/-! `TypeD` and `TypeDs` follow the source declaration rules but depend on the
-untagged `TypeE` representation. Their source correspondence remains open;
-they are Flapjack infrastructure until that dependency is reviewed. -/
 mutual
+@[hol "cakeml/semantics/typeSystemScript.sml" "type_d"]
 inductive TypeD : Bool → TypeEnv → Dec → TypeIds → TypeEnv → Prop where
   | value (extra : Bool) (tvs : Nat) (env : TypeEnv) (p : Pat) (e : AstHOL.Exp)
       (t : SemanticT) (bindings : List (MlString × SemanticT)) (loc : Misc.Location.Locs)
@@ -136,6 +132,7 @@ inductive TypeD : Bool → TypeEnv → Dec → TypeIds → TypeEnv → Prop wher
       (disjoint : disjointTypeIds ids₁ ids₂) :
       TypeD extra env (.dlocal privateDs publicDs) (unionTypeIds ids₁ ids₂) env₂
 
+@[hol "cakeml/semantics/typeSystemScript.sml" "type_d"]
 inductive TypeDs : Bool → TypeEnv → List Dec → TypeIds → TypeEnv → Prop where
   | nil (extra : Bool) (env : TypeEnv) : TypeDs extra env [] (fun _ => False) ⟨nsEmpty, nsEmpty, nsEmpty⟩
   | cons (extra : Bool) (env : TypeEnv) (d : Dec) (ds : List Dec) (env₁ env₂ : TypeEnv)

@@ -1,8 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.ClosNumber.Proofs.Evaluate
-public import Flapjack.Compiler.Backend.Semantics.ClosSem.Semantics
-public import Flapjack.Compiler.Backend.Semantics.ClosProps.ResultObservations
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.SemanticsRelated
 public import Flapjack.FiniteMap.EmptyExact
 
 @[expose] public section
@@ -15,38 +14,6 @@ set_option backward.privateInPublic.warn false
 namespace Flapjack.Compiler.Backend.ClosNumber
 open Flapjack Flapjack.Compiler.Backend.ClosSem Flapjack.Compiler.Backend.BackendProps
 open Flapjack.SemanticPrimitivesHOL (Result)
-open Flapjack.Compiler.Backend.ClosProps (resultHasOutcome resultHasOutcome_iff)
-
-/-- Numbering-related results agree on type errors and on every terminating
-observable outcome, without requiring their returned values to be equal. -/
-theorem resultRel_observations (maxApp : Nat) (left right : Result (List Value) Value)
-    (related : ResultRel maxApp left right) :
-    (left = .err (.abort .typeError) ↔ right = .err (.abort .typeError)) ∧
-    ∀ outcome : HolOutcome, resultHasOutcome left outcome ↔ resultHasOutcome right outcome := by
-  cases left with
-  | val values =>
-    cases right with
-    | val nextValues => simp [resultHasOutcome]
-    | err error => cases error <;> simp [ResultRel] at related
-  | err error =>
-    cases error with
-    | raise value =>
-      cases right with
-      | val values => simp [ResultRel] at related
-      | err nextError =>
-        cases nextError with
-        | raise nextValue => simp [resultHasOutcome]
-        | abort reason => cases related
-    | abort reason =>
-      cases right with
-      | val values => simp [ResultRel] at related
-      | err nextError =>
-        cases nextError with
-        | raise value => simp [ResultRel] at related
-        | abort nextReason =>
-          have same : reason = nextReason := related
-          subst nextReason
-          cases reason <;> simp [resultHasOutcome]
 
 /-- Initial source and numbered target states satisfy the proof-side state
 relation when every oracle program is safe for numbering. -/
@@ -94,55 +61,17 @@ theorem semantics_number {C F : Type} (ffi : HolFfiState F) (maxApp number : Nat
           (initialState_related ffi maxApp clock oracle compiler oracleSafe)
       rw [targetRun]
       exact ⟨resultRel, stateRel.2.1⟩
-  have targetSafe : ∀ clock,
-      (evaluate (renumberList number program).2 []
-        (initialState ffi maxApp HolFiniteMapExact.empty (stateCo (ignoreTable compileInc) oracle) compiler clock)).1 ≠
-          .err (.abort .typeError) := by
-    intro clock bad
-    exact sourceSafe clock ((resultRel_observations _ _ _ (simulations clock).1).1.mpr bad)
-  have terminatingEq :
-      terminatingObservation ffi maxApp HolFiniteMapExact.empty oracle (stateCc (ignoreTable compileInc) compiler) program =
-      terminatingObservation ffi maxApp HolFiniteMapExact.empty (stateCo (ignoreTable compileInc) oracle) compiler
-        (renumberList number program).2 := by
-    funext behavior
-    apply propext
-    constructor <;> intro observed
-    · obtain ⟨clock, result, final, outcome, run, outcomeEq, behaviorEq⟩ := observed
-      have sim := simulations clock
-      rw [run] at sim
-      refine ⟨clock, _, _, outcome, rfl, ?_, ?_⟩
-      · apply (resultHasOutcome_iff _ outcome).mp
-        apply ((resultRel_observations _ _ _ sim.1).2 outcome).mp
-        exact (resultHasOutcome_iff result outcome).mpr outcomeEq
-      · simpa [← sim.2] using behaviorEq
-    · obtain ⟨clock, result, final, outcome, run, outcomeEq, behaviorEq⟩ := observed
-      have sim := simulations clock
-      rw [run] at sim
-      refine ⟨clock, _, _, outcome, rfl, ?_, ?_⟩
-      · apply (resultHasOutcome_iff _ outcome).mp
-        apply ((resultRel_observations _ _ _ sim.1).2 outcome).mpr
-        exact (resultHasOutcome_iff result outcome).mpr outcomeEq
-      · simpa [sim.2] using behaviorEq
-  have tracesEq :
-      (fun trace => ∃ clock, trace = HolLList.fromList
-        (evaluate program [] (initialState ffi maxApp HolFiniteMapExact.empty oracle
-          (stateCc (ignoreTable compileInc) compiler) clock)).2.ffi.ioEvents) =
-      (fun trace => ∃ clock, trace = HolLList.fromList
-        (evaluate (renumberList number program).2 []
-          (initialState ffi maxApp HolFiniteMapExact.empty (stateCo (ignoreTable compileInc) oracle) compiler clock)).2.ffi.ioEvents) := by
-    funext trace
-    apply propext
-    constructor <;> rintro ⟨clock, h⟩ <;> refine ⟨clock, ?_⟩
-    · simpa [(simulations clock).2] using h
-    · simpa [← (simulations clock).2] using h
-  unfold semantics
-  simp only [show ¬ ∃ clock, (evaluate program [] (initialState ffi maxApp HolFiniteMapExact.empty oracle
-      (stateCc (ignoreTable compileInc) compiler) clock)).1 = .err (.abort .typeError) from
-        fun ⟨clock, error⟩ => sourceSafe clock error,
-    show ¬ ∃ clock, (evaluate (renumberList number program).2 []
-      (initialState ffi maxApp HolFiniteMapExact.empty (stateCo (ignoreTable compileInc) oracle) compiler clock)).1 =
-        .err (.abort .typeError) from fun ⟨clock, error⟩ => targetSafe clock error, if_false]
-  rw [← terminatingEq, ← tracesEq]
+  apply Eq.symm
+  apply semantics_eq_of_related_evaluations
+  intro clock
+  obtain ⟨results, ffiEq⟩ := simulations clock
+  have toStandard (left right : Result (List Value) Value) (h : ResultRel maxApp left right) :
+      SemanticPrimitivesProps.resultRel (List.Forall₂ (ValueRel maxApp)) (ValueRel maxApp) left right := by
+    cases left <;> cases right <;> simp_all [ResultRel, SemanticPrimitivesProps.resultRel]
+    case err.err left right =>
+      cases left <;> cases right <;> simp_all [SemanticPrimitivesProps.excRel]
+  have observed := resultRelOutcome (List.Forall₂ (ValueRel maxApp)) (ValueRel maxApp) _ _ (toStandard _ _ results)
+  exact ⟨observed.1, observed.2, ffiEq⟩
 
 /-- Closure numbering preserves whole-program observations for a safe,
 non-failing source program and safe oracle. -/

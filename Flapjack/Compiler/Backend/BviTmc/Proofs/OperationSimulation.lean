@@ -45,7 +45,7 @@ theorem evaluate_op_core {C F : Type} (op : ClosLang.Op) (args : List Bvi.Exp)
       | err error => simp [resultRel] at related
       | val values' =>
         have reversed : List.Forall₂ (valueRel g) values.reverse values'.reverse :=
-          List.rel_reverse related
+          (listRel_reverse (valueRel g) values values').mp related
         rw [BviSem.evaluate, BviSem.fixClock_evaluate, argsRun] at run
         cases appRun : BviSem.doApp op values.reverse middle with
         | err error =>
@@ -55,7 +55,7 @@ theorem evaluate_op_core {C F : Type} (op : ClosLang.Op) (args : List Bvi.Exp)
           rcases classification with bad | ⟨name, outcome, rfl, rfl⟩
           · exact False.elim (notTypeError (congrArg _ bad))
           · have targetApp := doApp_op_err_rel name values.reverse values'.reverse final middleTarget g outcome
-              appRun middleStates reversed
+              ⟨appRun, middleStates, reversed⟩
             refine ⟨middleTarget, g, .err (.abort (.ffiError outcome)), ?_, ?_, middleStates,
               extension, fresh, unchanged, still⟩
             · rw [BviSem.evaluate, BviSem.fixClock_evaluate, targetRun]
@@ -67,16 +67,16 @@ theorem evaluate_op_core {C F : Type} (op : ClosLang.Op) (args : List Bvi.Exp)
           obtain ⟨rfl, rfl⟩ := run.symm
           obtain ⟨h, value', lastTarget, targetApp, valueRel', nextStates, appExtension,
             appFresh, appUnchanged, appStill⟩ :=
-            doApp_op_rel g op values.reverse values'.reverse middle final middleTarget value
-              appRun safeOp reversed middleStates
+            doApp_op_rel g op values.reverse values'.reverse middle middleTarget final value
+              ⟨appRun, safeOp, reversed, middleStates⟩
           have submap : f.submap h := by
             intro k v found; exact appExtension k v (extension k v found)
-          have domain := BviProps.evaluate_refs_subset args env2 target middleTarget (.val values') targetRun
-          have allFresh := onlyFresh_trans f g h target.refs middleTarget.refs fresh appFresh domain
+          have domain := BviTmc.evaluate_refs_subset args env2 target (.val values') middleTarget targetRun
+          have allFresh := onlyFresh_trans f g h target.refs middleTarget.refs ⟨fresh, appFresh, domain⟩
           have allUnchanged := holesUnchanged_trans f g target.refs middleTarget.refs lastTarget.refs ∅
-            unchanged appUnchanged fresh extension
+            ⟨unchanged, appUnchanged, fresh, extension⟩
           have allStill := holesStill_trans f g target.refs middleTarget.refs lastTarget.refs ()
-            still appStill fresh extension
+            ⟨still, appStill, fresh, extension⟩
           refine ⟨lastTarget, h, .val [value'], ?_, ?_, nextStates, submap, allFresh, allUnchanged, allStill⟩
           · rw [BviSem.evaluate, BviSem.fixClock_evaluate, targetRun]
             simp [targetApp]
@@ -115,8 +115,8 @@ theorem evaluate_op_non_extracted {C F : Type} (op : ClosLang.Op) (args : List B
       have optEnv : envRel true f env1 env2 := by simpa [optTrue] using environments
       obtain ⟨next, g, targetResult, targetRun, resultRel', nextStates, extension, fresh, unchanged, still⟩ := core
       obtain ⟨fillResult, fillMap, fillState, fillRun, rel, state, ext, only, unch, rest, filled⟩ :=
-        FillHole.evaluate_fill_hole (.op op args) f g env1 env2 source final target next result targetResult c holePtr
-          run targetRun optEnv states extension resultRel' hole notFinal unchanged still fresh nextStates pointer
+        FillHole.evaluate_fill_hole holePtr (.op op args) f g env1 env2 source final target next result targetResult c
+          ⟨run, targetRun, optEnv, states, extension, resultRel', hole, notFinal, unchanged, still, fresh, nextStates, pointer⟩
       simp only [rewriteWorkerSource, notExtracted]
       exact ⟨fillResult, fillMap, fillState, fillRun, rel, state, ext, only, unch, rest, filled⟩
 

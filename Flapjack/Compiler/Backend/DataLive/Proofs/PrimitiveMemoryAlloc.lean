@@ -96,7 +96,7 @@ theorem simulationFor_assign_memory_of_aux {C F : Type} (dest : Nat) (op : ClosL
     | false => exact simulationFor_retained_of_appRel dest (.memOp op) args live retained primitiveRel
     | true =>
       have parts : (sptLookup dest live).isNone = true ∧ isPure (.memOp op) = true := by simpa using retained
-      exact simulationFor_removed_memory dest op args live parts.2 (Option.isNone_iff_eq_none.mp parts.1)
+      exact simulationFor_removed_pure dest (.memOp op) args live parts.2 (Option.isNone_iff_eq_none.mp parts.1)
   | some names => exact simulationFor_annotated_of_appRel dest (.memOp op) args names live primitiveRel
 
 /-- Related states allocate the same mutable constructor. -/

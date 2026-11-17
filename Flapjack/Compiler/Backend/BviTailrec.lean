@@ -40,14 +40,4 @@ def hasRecBounded (fuel loc : Nat) (e : Exp) : Option Bool :=
   | some result => some result
   | none => hasRecFuel (max fuel (expBudget e + 1)) loc e
 
-/-- Compatibility path that retains a program only when the optimizer is
-disabled or every function fails its necessary recursion test. Positive
-cases return `none`; `Rewrite` provides the full checked rewrite path. -/
-def compileNoRecFuel (fuel : Nat) (enabled : Bool) (next : Nat)
-    (code : List (Nat × Nat × Exp)) : Option (Nat × List (Nat × Nat × Exp)) := do
-  if !enabled then return (next, code)
-  for (loc, _, body) in code do
-    if ← hasRecBounded fuel loc body then failure
-  pure (next, code)
-
 end Flapjack.Compiler.Backend.BviTailrec

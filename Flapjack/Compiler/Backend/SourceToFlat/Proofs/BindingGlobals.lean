@@ -183,13 +183,6 @@ private theorem bindingRangeBag_distinct (start count : Nat) :
   have nd : ((List.range count).map (start + ·)).Nodup := List.Nodup.map inj List.nodup_range
   exact List.nodup_iff_count.mp nd
 
-private theorem bindingRangeBag_below (start count key : Nat) (below : key < start) :
-    bindingRangeBag start count key = 0 := by
-  apply List.count_eq_zero_of_not_mem
-  intro member
-  obtain ⟨i, _, equal⟩ := List.mem_map.mp member
-  omega
-
 /-- The complete source-to-flat compiler initializes each global at most once. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "compile_globals_BAG_ALL_DISTINCT"]
 theorem compile_globals_distinct (c : Config) (p : List Dec) :
@@ -208,7 +201,12 @@ theorem compile_globals_distinct (c : Config) (p : List Dec) :
   apply compileFlat_bagAllDistinct
   intro key
   have distinct := bindingRangeBag_distinct next.vidx (numBindingsList p) key
-  have zero := bindingRangeBag_below next.vidx (numBindingsList p) 0 (by simp [next])
+  have zero : bindingRangeBag next.vidx (numBindingsList p) 0 = 0 := by
+    apply List.count_eq_zero_of_not_mem
+    intro member
+    obtain ⟨i, _, equal⟩ := List.mem_map.mp member
+    dsimp [next] at equal
+    omega
   simp only [elistGlobals, globAlloc, allocEnvRef, setGlobals, opGlobalBag,
     body, unionGlobalBag, emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag]
   by_cases eq : key = 0

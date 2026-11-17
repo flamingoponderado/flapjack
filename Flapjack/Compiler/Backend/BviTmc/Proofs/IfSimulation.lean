@@ -85,16 +85,16 @@ theorem evaluate_if_to_core {C F : Type} (condition yes no yesTarget noTarget : 
           obtain ⟨last, h, branchResult, branchRun, branchRel, states, branchExtension,
             branchFresh, branchUnchanged, branchStill⟩ :=
             branchIH selected selectedTarget middle g middleTarget branchPair branchSource
-              (envRel_submap opt f g env1 env2 environments extension) middleStates
+              (envRel_submap opt f g env1 env2 ⟨environments, extension⟩) middleStates
               ⟨.val [value], .val [value'], conditionRun, targetRun⟩
           have submap : f.submap h := by
             intro k v found; exact branchExtension k v (extension k v found)
-          have domain := BviProps.evaluate_refs_subset [condition] env2 target middleTarget (.val [value']) targetRun
-          have allFresh := onlyFresh_trans f g h target.refs middleTarget.refs fresh branchFresh domain
+          have domain := BviTmc.evaluate_refs_subset [condition] env2 target (.val [value']) middleTarget targetRun
+          have allFresh := onlyFresh_trans f g h target.refs middleTarget.refs ⟨fresh, branchFresh, domain⟩
           have allUnchanged := holesUnchanged_trans f g target.refs middleTarget.refs last.refs ∅
-            unchanged branchUnchanged fresh extension
+            ⟨unchanged, branchUnchanged, fresh, extension⟩
           have allStill := holesStill_trans f g target.refs middleTarget.refs last.refs ()
-            still branchStill fresh extension
+            ⟨still, branchStill, fresh, extension⟩
           refine ⟨last, h, branchResult, ?_, branchRel, states, submap, allFresh, allUnchanged, allStill⟩
           rw [BviSem.evaluate, BviSem.fixClock_evaluate, targetRun]
           change (match asBool value' with
@@ -102,31 +102,6 @@ theorem evaluate_if_to_core {C F : Type} (condition yes no yesTarget noTarget : 
             | some true => evaluate [yesTarget] env2 middleTarget
             | some false => evaluate [noTarget] env2 middleTarget) = _
           cases boolean <;> simpa [decoded', selectedTarget] using branchRun
-
-/-- Flapjack infrastructure: ordinary conditional simulation from the
-condition and selected-branch induction hypotheses. The source measure,
-safety premises, and optimized wrapper/worker conclusions are not included. -/
-theorem evaluate_if_core {C F : Type} (condition yes no : Bvi.Exp)
-    (source : BviState (Nat × C) F) (env1 : List Value) (result : BviResult)
-    (final : BviState (Nat × C) F) (opt : Bool) (f : HolFiniteMapExact Nat Nat)
-    (target : BviState C F) (env2 : List Value)
-    (run : evaluate [.ifThenElse condition yes no] env1 source = (result, final))
-    (notTypeError : result ≠ .err (.abort .typeError))
-    (environments : envRel opt f env1 env2)
-    (conditionIH : ∀ r mid, evaluate [condition] env1 source = (r, mid) →
-      r ≠ .err (.abort .typeError) → Core [condition] env2 f target r mid)
-    (branchIH : ∀ branch mid (g : HolFiniteMapExact Nat Nat) (t : BviState C F),
-      (∃ r, evaluate [condition] env1 source = (r, mid)) →
-      (branch = yes ∨ branch = no) → evaluate [branch] env1 mid = (result, final) →
-      envRel opt g env1 env2 → stateRel g mid t → Core [branch] env2 g t result final) :
-    Core [.ifThenElse condition yes no] env2 f target result final := by
-  apply evaluate_if_to_core condition yes no yes no source env1 result final opt f target env2
-    run notTypeError environments conditionIH
-  intro branch branchTarget mid g t pair branchRun env states conditionRuns
-  obtain ⟨r, _, sourceCondition, _⟩ := conditionRuns
-  rcases pair with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
-  · exact branchIH _ mid g t ⟨r, sourceCondition⟩ (Or.inl rfl) branchRun env states
-  · exact branchIH _ mid g t ⟨r, sourceCondition⟩ (Or.inr rfl) branchRun env states
 
 /-- Flapjack infrastructure: the wrapper branch of conditional simulation,
 assuming the condition and selected-branch induction hypotheses. The branch
@@ -159,8 +134,8 @@ theorem evaluate_if_wrapper {C F : Type} (condition yes no wrapper : Bvi.Exp)
       run notTypeError environments conditionIH
     intro branch branchTarget mid g t pair branchRun env states conditionRuns
     obtain ⟨r, r', sourceCondition, targetCondition⟩ := conditionRuns
-    have nextCode := WrapperCases.evaluate_pres_opt_code loc locOpt source mid target t
-      [condition] env1 env2 r r' code sourceCondition targetCondition
+    have nextCode := WrapperCases.evaluate_pres_opt_code loc locOpt source target
+      [condition] env1 env2 r mid r' t ⟨code, sourceCondition, targetCondition⟩
     rcases pair with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
     · apply branchIH _ _ mid g t r sourceCondition (Or.inl rfl) ?_ branchRun env states nextCode
       simp_all

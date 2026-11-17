@@ -1,3 +1,6 @@
+import Flapjack.HolRef.GeneraliseLengthAudit
+import Flapjack.HolRef.InferSubstSubmapAudit
+import Flapjack.HolRef.TypeSubstWalkstarAudit
 import Flapjack.Compiler.Backend.StackProps.EvaluateMono
 import Flapjack.Compiler.Backend.StackProps.EvaluateNeutral
 import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.Nonrecursive
@@ -272,6 +275,51 @@ elab "#emit_hol_ref_export" : command => do
   let mut known : Std.HashMap Name Bool := {}
   let mut nestedKnown : Std.HashMap Name (Bool × Bool) := {}
   for (name, ref) in HolRef.all env do
+    if ref.path == "cakeml/compiler/inference/inferPropsScript.sml" &&
+        (ref.name == "infer_subst_submap" || ref.name == "subst_infer_subst_swap") &&
+        ref.fmapAsFiniteSupportConjunctUniversals.isEmpty then
+      throwError "the inference theorem requires its conjunct-universal qualifier: {name}"
+    unless ref.fmapAsFiniteSupportConjunctUniversals.isEmpty do
+      let submap : HolRef := {
+        path := "cakeml/compiler/inference/inferPropsScript.sml", name := "infer_subst_submap",
+        fmapAsFiniteSupportConjunctUniversals := #["type_s1", "type_s2", "list_s1", "list_s2"] }
+      let walkstar : HolRef := {
+        path := "cakeml/compiler/inference/inferPropsScript.sml", name := "subst_infer_subst_swap",
+        fmapAsFiniteSupportConjunctUniversals := #["type_s", "list_s"] }
+      let problems ← if ref == submap then
+        liftTermElabM <| inferSubstSubmapBundleProblems name
+      else if ref == walkstar then
+        liftTermElabM <| typeSubstWalkstarBundleProblems name
+      else throwError "invalid conjunct-universal qualifier metadata: {name}"
+      unless problems.isEmpty do throwError "invalid conjunct-universal declaration {name}: {problems}"
+    if ref.path == "cakeml/compiler/inference/inferPropsScript.sml" &&
+        ref.name == "generalise_list_length" && ref.fmapAsFiniteSupportParameterTupleObservations.isEmpty then
+      throwError "generalise_list_length requires its combined tuple-observer qualifier: {name}"
+    unless ref.fmapAsFiniteSupportParameterTupleObservations.isEmpty do
+      let expected : HolRef := {
+        path := "cakeml/compiler/inference/inferPropsScript.sml", name := "generalise_list_length",
+        fmapAsFiniteSupportParameterTupleObservations := #["subst", "out",
+          "Flapjack.Compiler.Inference.Infer.Generalise.generaliseListMap", "component_2"] }
+      unless ref == expected do
+        throwError "invalid generalization length qualifier metadata: {name}"
+      let problems ← liftTermElabM <| generaliseLengthQualifiedProblems name ref.path ref.name
+        ref.line? #["subst", "out"]
+        "Flapjack.Compiler.Inference.Infer.Generalise.generaliseListMap" "component_2" false
+      unless problems.isEmpty do
+        throwError "invalid generalization length declaration {name}: {problems}"
+    if ref.path == "cakeml/compiler/inference/inferScript.sml" && ref.name == "generalise_def" &&
+        ref.fmapAsFiniteSupportParameterTupleResult.isEmpty then
+      throwError "generalise_def requires its combined map qualifier: {name}"
+    if !ref.fmapAsFiniteSupportParameterTupleResult.isEmpty then
+      let expected : HolRef := {
+        path := "cakeml/compiler/inference/inferScript.sml", name := "generalise_def",
+        fmapAsFiniteSupportParameterTupleResult := #["subst", "component_2"] }
+      unless ref == expected do
+        throwError "invalid generalization qualifier metadata: {name}"
+      let problems ← liftTermElabM <| generaliseMapQualifiedProblems name ref.path ref.name
+        ref.line? "subst" "component_2" false
+      unless problems.isEmpty do
+        throwError "invalid generalization map declaration {name}: {problems}"
     if !ref.nestedListRelAsMutual.isEmpty then
       let marker := ``Flapjack.Test.nestedRelationAudit_passed
       match env.getModuleIdxFor? marker with
@@ -282,6 +330,49 @@ elab "#emit_hol_ref_export" : command => do
     match env.find? name with
     | none => throwError "missing declaration {name}"
     | some info =>
+        if ref.path == "HOL/examples/algorithms/unification/triangular/first-order/unifDefScript.sml" &&
+            ref.name == "WF_uR" then
+          let expected : HolRef := {
+            path := "HOL/examples/algorithms/unification/triangular/first-order/unifDefScript.sml",
+            name := "WF_uR", fmapAsFiniteSupportTuple := #["component_1"] }
+          unless name == `Flapjack.HOL.Unification.uRWellFounded && ref == expected do
+            throwError "invalid unification tuple reference on {name}"
+          unless unificationRelationReferenceValid
+              (HolRef.get? env `Flapjack.HOL.Unification.uREq) do
+            throwError "changed imported unification relation reference for {name}"
+          let problems ← liftTermElabM unificationTupleElaboratedProblems
+          unless problems.isEmpty do
+            throwError "invalid unification tuple declaration {name}: {problems}"
+        if ref.path == "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" &&
+            (ref.name == "hypothesis_def" || ref.name == "evaluate_cb") &&
+            ref.fmapAsFiniteSupportUniversals.isEmpty then
+          throwError "missing TMC universal map qualifier on {name}"
+        if !ref.fmapAsFiniteSupportUniversals.isEmpty then
+          let hypothesis := ref.name == "hypothesis_def" && ref.fmapAsFiniteSupportUniversals == #["f"] &&
+              ref.fmapAsFiniteSupportRelation == #[("BviState", "refs")] &&
+              ref.fmapAsFiniteSupportExistentials == #["nextMap", "wrapMap", "workMap"]
+          let callBlock := ref.name == "evaluate_cb" && ref.fmapAsFiniteSupportUniversals == #["refs"] &&
+              ref.fmapAsFiniteSupportRelation == #[("BviState", "refs"), ("", "f")] &&
+              ref.fmapAsFiniteSupportExistentials == #["ordinaryMap", "wrapMap", "auxMap", "workMap"]
+          unless ref.path == "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" &&
+              (hypothesis || callBlock) && ref.line?.isNone && ref.listAsArray.isEmpty && ref.namesAsString.isEmpty &&
+              ref.namesAsStringBoundary.isEmpty && ref.fmapAsFiniteSupport.isEmpty &&
+              !ref.fmapAsFiniteSupportResult && ref.fmapAsFiniteSupportFunction.isEmpty &&
+              ref.fmapAsFiniteSupportTuple.isEmpty && ref.fmapAsFiniteSupportHeterogeneousFunction.isEmpty &&
+              ref.fmapAsFiniteSupportParameters.isEmpty && ref.fmapAsFiniteSupportParameterPredicateDomain.isEmpty &&
+              !ref.fmapAsFiniteSupportEqualities && !ref.fmapAsFiniteSupportEquality &&
+              ref.fmapAsFiniteSupportResultObservations.isEmpty && !ref.fmapAsFiniteSupportParameterObservations &&
+              !ref.wordsAsTypeIndexedBitvec && ref.wordDimensionAsWidth.isNone &&
+              ref.wordDimensionsAsWidths.isEmpty && !ref.realsAsRationalCuts && ref.nestedListRelAsMutual.isEmpty do
+            throwError "invalid TMC universal map reference or binders on {name}"
+          if callBlock then
+            unless tmcHypothesisReferenceValid
+                (HolRef.get? env `Flapjack.Compiler.Backend.BviTmc.Induction.hypothesis) do
+              throwError "changed imported TMC hypothesis reference for {name}"
+          let problems ← liftTermElabM (if hypothesis then
+            tmcHypothesisDeclarationProblems name else tmcCallBlockDeclarationProblems name)
+          unless problems.isEmpty do
+            throwError "invalid TMC hypothesis {name}: {problems}"
         if !ref.fmapAsFiniteSupportParameterPredicateDomain.isEmpty then
           unless ref.path == "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" &&
               (ref.name == "eval_sim_def" || ref.name == "IMP_semantics_eq") &&
@@ -348,10 +439,25 @@ elab "#emit_hol_ref_export" : command => do
         if !ref.fmapAsFiniteSupportParameterPredicateDomain.isEmpty then
           qualifiers := qualifiers ++ [("fmap_as_finite_support_parameter_predicate_domain",
             toJson ref.fmapAsFiniteSupportParameterPredicateDomain)]
+        if !ref.fmapAsFiniteSupportUniversals.isEmpty then
+          qualifiers := qualifiers ++ [("fmap_as_finite_support_universals",
+            toJson ref.fmapAsFiniteSupportUniversals)]
         if !ref.fmapAsFiniteSupportHeterogeneousFunction.isEmpty then
           qualifiers := qualifiers ++ [
             ("fmap_as_finite_support_heterogeneous_function",
               toJson ref.fmapAsFiniteSupportHeterogeneousFunction)]
+        if !ref.fmapAsFiniteSupportParameterTupleResult.isEmpty then
+          qualifiers := qualifiers ++ [
+            ("fmap_as_finite_support_parameter_tuple_result",
+              toJson ref.fmapAsFiniteSupportParameterTupleResult)]
+        if !ref.fmapAsFiniteSupportParameterTupleObservations.isEmpty then
+          qualifiers := qualifiers ++ [
+            ("fmap_as_finite_support_parameter_tuple_observations",
+              toJson ref.fmapAsFiniteSupportParameterTupleObservations)]
+        if !ref.fmapAsFiniteSupportConjunctUniversals.isEmpty then
+          qualifiers := qualifiers ++ [
+            ("fmap_as_finite_support_conjunct_universals",
+              toJson ref.fmapAsFiniteSupportConjunctUniversals)]
         if !ref.fmapAsFiniteSupportTuple.isEmpty then
           qualifiers := qualifiers ++ [
             ("fmap_as_finite_support_tuple", toJson ref.fmapAsFiniteSupportTuple)]

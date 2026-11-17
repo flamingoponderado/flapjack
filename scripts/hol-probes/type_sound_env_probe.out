@@ -1,0 +1,5 @@
+tenv_abbrev_ok_def_typed=∀(tenvT :(α, β, mlstring list # t) namespace). tenv_abbrev_ok tenvT ⇔ nsAll (λ(id :(α, β) id) ((tvs :mlstring list),(t :t)). check_freevars (0 :num) tvs t) tenvT
+tenv_ctor_ok_def_typed=∀(tenvC :(α, β, mlstring list # t list # γ) namespace). tenv_ctor_ok tenvC ⇔ nsAll (λ(id :(α, β) id) ((tvs :mlstring list),(ts :t list),(tn :γ)). EVERY (check_freevars (0 :num) tvs) ts) tenvC
+tenv_val_ok_def_typed=∀(tenvV :(α, β, num # t) namespace). tenv_val_ok tenvV ⇔ nsAll (λ(id :(α, β) id) ((tvs :num),(t :t)). check_freevars tvs ([] :mlstring list) t) tenvV
+tenv_ok_def_typed=∀(tenv :type_env). tenv_ok tenv ⇔ tenv_val_ok tenv.v ∧ tenv_ctor_ok tenv.c ∧ tenv_abbrev_ok tenv.t
+tenv_ok_prim_tenv_replay_typed=tenv_ok prim_tenv

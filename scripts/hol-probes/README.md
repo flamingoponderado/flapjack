@@ -1,10 +1,22 @@
+`infer_generalise_typed_probe.out` captures both inferred operation types, the
+complete typed `infer$generalise_def` equations, the typed
+`inferProps$generalise_list_length` theorem, and the inferred type and equations
+of `infer$infer_subst_def` and statements of `inferProps$infer_subst_submap`,
+`inferProps$infer_subst_FEMPTY`, and `inferProps$subst_infer_subst_swap`.
+The capture used CakeML
+revision `857f0d98da8f8a3580f34423338e697809308ede` and HOL revision
+`a390cbabd3a4521bab4ee20281e3e42933a8a3ae`, matching the project submodules.
+Regenerate with `HOL_PROBE_ONLY=infer_generalise_typed_probeScript.sml
+scripts/hol-probes/regenerate.sh` using builds of those revisions. The capture
+supports source review; it does not prove cross-language equivalence.
+
 `data_space_code_labels_probe.out` captures the typed original reservation-pass label theorem, the whole-pass label theorem, and variable-read and stack-field lemmas.
 
 `bvl_to_bvi_proof_source_probe.out` also captures the typed exported whole-pass `compile_get_code_labels`, `compile_distinct_names`, full-oracle distinctness, whole-lowering and full-pipeline semantics, and whole-lowering no-mutcons, namespace-avoidance, and distinct-location theorems (including the typed half-open `between` definition), plus the full oracle and callback definitions and typed proof replays of the local namespace/free-names and oddness lemmas.
 
 `bvl_to_bvi_source_probe.out` captures the typed original whole-pass compilation definition, including the eight-result tuple and name-tree carrier.
 
-`bvi_tmc_proof_source_probe.out` captures the typed original function-list and program name-preservation theorems and replays the local variable-list, worker, wrapper, mutual extraction, top-level extraction, rewrite, and expression-compilation label proofs with inferred types. It also captures the exported TMC function-list and whole-program label-closure and semantics theorems with inferred types.
+`bvi_tmc_proof_source_probe.out` captures the typed original TMC exception/return and optimized-result relations, empty-map injectivity, function-list and program name-preservation theorems and replays the local variable-list, worker, wrapper, mutual extraction, top-level extraction, rewrite, and expression-compilation label proofs with inferred types. It also captures the exported TMC function-list and whole-program label-closure and semantics theorems with inferred types.
 
 `flat_do_app_preservation_probe.out` also captures the typed original flat
 primitive simulation and its semantic-primitives store-relation and arithmetic
@@ -648,7 +660,7 @@ exported global-invariant equation and replay its original simplifier derivation
 
 `cake_parse_error_probe.out` captures the first unconsumed token's location after malformed declarations, including a multiline example. The CLI renders those locations as the original compiler's parse diagnostic; parser failures without an unconsumed-token location are not covered by this probe.
 
-`cake_type_diagnostic_probe.out` captures the original inferencer's formatting for function, nested list, tuple, variable, and user-defined types. The CLI retains names from the inference environment in lookup order; cases where the bounded traversal cannot recover a name remain unsupported.
+`cake_type_diagnostic_probe.out` captures the original inferencer's formatting for function, nested list, tuple, variable, and user-defined types. The CLI retains the inference type namespace and uses the source-shaped renderer. `cake_type_display_probe.out` also captures byte-valued names and duplicate entries.
 
 `cake_duplicate_datatype_probe.out` captures the duplicate-name selection order and an original duplicate-constructor error. The CLI uses that order for duplicate type constructors, datatype constructors, and datatype type variables.
 
@@ -9689,6 +9701,9 @@ The capture is finite regression evidence, not a cross-language equivalence proo
 
 `prim_sem_env_probeScript.sml` captures the original semantic initialization types for `Flapjack/PrimTypesHOL.lean`.
 
+`prim_sem_env_eq_probe.out` replays the original `prim_sem_env_eq` EVAL theorem,
+including its polymorphic FFI and the complete initialized environment.
+
 `cake_evaluate_ffi_props_probeScript.sml` captures the pinned typed evaluator, primitive-application, FFI trace, and oracle-preservation lemmas used by `Flapjack/EvaluateProps.lean`.
 
 `source_to_flat_env_domain_probe.out` records the polymorphic type and four
@@ -10452,6 +10467,93 @@ the lprefix_lub capture is evidence only: its audit found independent element
 type variables and curried conjunction premises that the Lean rows still share
 or curry, so those rows remain pending fixes.
 
+`infer_subst_probe.out` captures typed inference substitution definitions and
+the alternative de Bruijn substitution equation. Regenerate with
+`HOL_PROBE_ONLY=infer_subst_probeScript.sml`.
+
+`infer_props_tids_probe.out` captures typed identifier-set and conversion
+definitions, `inf_set_tids_unconvert`, and the de Bruijn substitution
+identities, check-preservation, check-monotonicity and variable-set theorems,
+prerequisites for the initial
+inference environment in `compilerProof$type_config_ok`. Regenerate with
+`HOL_PROBE_ONLY=infer_props_tids_probeScript.sml`. The capture supports source
+review; it is not a cross-language equivalence proof.
+
+`type_sound_env_probe.out` captures the declarative environment invariants
+with their independent namespace key and constructor-tag types, and replays
+the `tenv_ok_prim_tenv` proof from `repl_typesScript.sml` without building in
+the read-only reference checkout. Regenerate with
+`HOL_PROBE_ONLY=type_sound_env_probeScript.sml`.
+
+`env_rel_init_probe.out` reconstructs the original `tenv_to_ienv` definition
+and replays the `lookup_varE_empty` and `init_config_tenv_to_ienv` proofs with
+their inferred types. It also reconstructs `tenv_val_exp_ok` and `add_tenvE`
+from the type-soundness source, including the polymorphic module carrier, and
+reconstructs `type_ctor`, `ctMap_ok`, the primitive constructor-map
+invariants, and `consistent_ctMap` with inferred finite-map types, plus the
+store-typing datatype. It also captures the original `type_v` rules and the
+store, environment and type-soundness invariant definitions with inferred
+types. It captures `set_tids_subset` and `start_type_id` and replays
+`set_tids_tenv` with its inferred namespace carriers, together with the
+source proofs of the type and environment identifier-set monotonicity lemmas,
+the local environment-extension lemma, and the environment-remapping theorem.
+The latter is also captured directly from `type_dCanonTheory`.
+It also captures the original type-identifier renaming definitions and their
+identifier-set and identity theorems, namespace map laws, and a replay of
+remapping over environment extension. It captures the original namespace-lift
+relation and declarative environment-equivalence and lookup theorems. The
+type-name checking, substitution, mutual pattern and expression typing, and
+pattern-expression determinacy equivalence theorems are captured directly
+from the original theory, along with the canonical determinacy definition and
+complete mutual declaration-typing rules. Primitive type-ID conditions and
+renaming-extension and bijection-extension laws are captured directly, with a
+replay of the local
+good-renaming preservation lemma, the type-substitution and type-name
+renaming lemmas, and the free-variable and single-identifier renaming laws. The
+pattern-typing, operator-typing, and expression-typing renaming theorems are captured directly
+from the source theory, alongside the general and optional left-inverse laws,
+inverse-renaming laws, environment inverse equivalences, namespace and environment
+composition, and renaming
+composition, equality, identity and cross-type injectivity characterizations,
+and the canonical determinacy-remapping theorem.
+The single-identifier pattern and
+expression typing theorems and scheme non-instantiation theorem are replayed,
+and the function-list theorem is captured. The principal pattern-binding
+identifier theorem is replayed, and both public binding-identifier invariants are captured.
+The source type-substitution and type-name identifier bounds, namespace association-list
+quantification, constructor-environment bounds and transport, and function-name
+and expression-list alignment are captured.
+The full mutual declaration-canonicalization theorem and its disjoint finite-set
+cardinality lemma are captured directly with their inferred types.
+The canonical environment-well-formedness theorem and its source type-system
+free-variable and constructor-environment prerequisites are captured directly.
+The local-environment renaming definitions and laws are captured or replayed,
+including de Bruijn increment, substitution, and variable lookup.
+The environment-relation and REPL theories are not fetched by this
+probe; regenerate with
+`HOL_PROBE_ONLY=env_rel_init_probeScript.sml`.
+
+`unify_encoding_probe.out` captures the polymorphic first-order term carrier,
+inference atom carrier, complete encoding and decoding equations, and the
+inverse and injectivity theorems, and the substitution dependency and
+well-formedness declarations, the conditional variable-walk equation, its
+domain properties, its dependency-closure theorem, and the conditional
+normalization equation, inference substitution dependencies, and typed
+inference walker, occurrence, encoded-list occurrence, variable-set and normalization equations and invariants, including replays of their
+local encoding and list lemmas, the empty-substitution and submap theorems,
+inference substitution compatibility, and computational walker well-formedness.
+It also parses the full local `encode_unify_lemma` statement with inferred types;
+that capture does not replay the theorem's proof.
+The worklist-variable, bag-flattening and termination-relation declarations are
+captured with their inferred types as prerequisites for the executable unifier.
+Regenerate with
+`HOL_PROBE_ONLY=unify_encoding_probeScript.sml`. The capture is source-review
+evidence; it does not establish unifier equivalence.
+
+`unify_exec_walk_probe.out` records CakeML's computational walker step for
+unbound, de Bruijn, application, and variable bindings, plus a two-binding
+walk. Regenerate with `HOL_PROBE_ONLY=unify_exec_walk_probeScript.sml`.
+
 `loop_live_proof_typed_probe.out` (12 rows) captures the typed statements of
 the reviewed `loop_liveProofScript.sml` rows that the earlier probes did not
 cover (task 184). `loop_liveProofTheory` is built in the private copy; the
@@ -10757,12 +10859,12 @@ Lean twin omits as a documented vacuous binder. Regenerate with
 scripts/hol-probes/regenerate.sh`.
 
 `gram_defs_typed_probe.out`, `type_system_defs_typed_probe.out` and
-`semantics_props_defs_typed_probe.out` (5+4+4 rows) capture the reviewed
+`semantics_props_defs_typed_probe.out` (5+7+4 rows) capture
 cakeml semantics rows that earlier probes did not cover (task 189):
 `validMultSym_def`, `validAddSym_def`, `validRelSym_def`, `validListSym_def`,
 `validPrefixSym_def` (gram); the `tenv_abbrev`, `tenv_ctor` and `tenv_val` Type
-abbreviations plus the `type_p` Inductive captured as its generated
-`type_p_rules` (typeSystem); and `extend_with_resource_limit'_def`,
+abbreviations plus the `type_p`, `type_e`, and `type_d` inductive rules and
+`type_pe_determ_def` (typeSystem); and `extend_with_resource_limit'_def`,
 `implements'_def`, `implements'_F` and the `[local]` `isPREFIX_IMP_LPREFIX`
 (semanticsProps). Regenerate each with `CAKEML=<cakeml tree>
 HOL4=<HOL tree> HOL_PROBE_ONLY=<probe>_probeScript.sml
@@ -10873,3 +10975,27 @@ directories on the load path before the theory load) and
 `arm8_config_proof_typed` (the L3 machine-config predicate and its two
 correctness theorems). `riscvScript.sml` and `arm8Script.sml` themselves are
 fully generated by L3 and were already covered by `<name>_typed` captures.
+
+`compiler_config_probe.out` captures the original compiler configuration's
+inferred field and result types, including its word-indexed assembler carrier,
+and replays the backend limits definition and its top-level wrapper with
+inferred machine-state and projection types. It also reconstructs the
+`config_ok` conjunct shape using explicitly typed local stubs for its
+environment and machine predicates; this captures types and order, not the
+original predicate bodies. These support source review of the top-level
+correctness prerequisites; the replay uses local names.
+
+`backend_stack_frames_probe.out` replays the original stack-frame sizing
+definition and its compiler equation. The inferred definition has independent
+assembler and program word types; the equation instantiates them to one type.
+
+`backend_source_pipeline_probe.out` captures the inferred source-to-flat,
+closure, BVL, BVI, and data pipeline definitions, including their intermediate
+configuration updates, code and name carriers.
+
+`data_word_force_typed_probe.out` captures the complete thunk-force compilation
+equation and its independent sparse-tree payload type, plus the inferred
+four-argument dispatch, word comparison, string comparison, and byte-array,
+array and block bounds-check equations, and general equality and integer
+ordering, block length, tag-length and tag equality equations. Concrete equality, ordering, tail-call, returning-call,
+and bad-header cases are in `cake_word_array_probe.out`.

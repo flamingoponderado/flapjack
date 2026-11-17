@@ -164,7 +164,7 @@ theorem simulationFor_assign_pureBlock_all {C F : Type} (dest : Nat) (op : ClosL
       exact stateRel_doApp_pureBlock source target _ op values pure related
     | true =>
       have dead : sptLookup dest live = none := by simpa [pure] using retained
-      exact simulationFor_removed_block dest op args live pure dead
+      exact simulationFor_removed_pure dest (.blockOp op) args live pure dead
   | some names =>
     apply simulationFor_annotated_of_appRel dest (.blockOp op) args names live
     intro source target values related

@@ -278,7 +278,7 @@ theorem simulationFor_force {C F : Type} (location index : Nat) (env : List BvlS
                         have clamped : DataSem.fixClock (DataSem.callEnv dataArgs size (DataSem.pushEnv saved false (DataSem.decClock t1)))
                             ((some (.val [dataResult]) : Option (Result (List DataSem.Value) DataSem.Value)), targetNext) =
                               ((some (.val [dataResult]) : Option (Result (List DataSem.Value) DataSem.Value)), targetNext) := by
-                          rw [← run', DataSem.fixClock_evaluate]
+                          rw [← run', DataSem.fixClockEvaluate]
                         simp [DataSem.evaluate, dataRead, dataInspect, targetCode, targetNonzero, cut, run', clamped, popRun, final]
                       · simpa [nextEq, dataToBviResult] using outcome
                 | err error =>
@@ -295,7 +295,7 @@ theorem simulationFor_force {C F : Type} (location index : Nat) (env : List BvlS
                       have clamped : DataSem.fixClock (DataSem.callEnv dataArgs size (DataSem.pushEnv saved false (DataSem.decClock t1)))
                           ((some (.err (.abort reason)) : Option (Result (List DataSem.Value) DataSem.Value)), targetNext) =
                           ((some (.err (.abort reason)) : Option (Result (List DataSem.Value) DataSem.Value)), targetNext) := by
-                        rw [← run', DataSem.fixClock_evaluate]
+                        rw [← run', DataSem.fixClockEvaluate]
                       simp [DataSem.evaluate, dataRead, dataInspect, targetCode, targetNonzero, cut, run', clamped]
                     · simp [correctOutcome, dataToBviResult, isReturn, isResult, isException]
                   | raise raised =>
@@ -317,7 +317,7 @@ theorem simulationFor_force {C F : Type} (location index : Nat) (env : List BvlS
                       have clamped : DataSem.fixClock (DataSem.callEnv dataArgs size (DataSem.pushEnv saved false (DataSem.decClock t1)))
                           ((some (.err (.raise raised)) : Option (Result (List DataSem.Value) DataSem.Value)), targetNext) =
                             ((some (.err (.raise raised)) : Option (Result (List DataSem.Value) DataSem.Value)), targetNext) := by
-                        rw [← run', DataSem.fixClock_evaluate]
+                        rw [← run', DataSem.fixClockEvaluate]
                       simp [DataSem.evaluate, dataRead, dataInspect, targetCode, targetNonzero, cut, run', clamped]
                     · simp [correctOutcome, dataToBviResult, isReturn, isResult, isException, stripped]
 end Flapjack.Compiler.Backend.BviToData

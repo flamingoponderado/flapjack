@@ -44,8 +44,8 @@ theorem continuation_from_weight {C F : Type} (loc rets ticks destination : Nat)
           simpa [resultRel, excRel, eorRel] using related
         have envRelated : envRel false h (returned ++ env1) (returnedTarget ++ env2) :=
           envRel_append false h env1 env2 returned returnedTarget
-            (envRel_relax opt h env1 env2 (envRel_submap opt f h env1 env2 environments
-              (fun key value found => extension key value (initialExtension key value found)))) valuesRelated
+            ⟨envRel_relax opt h env1 env2 (envRel_submap opt f h env1 env2 ⟨environments,
+              (fun key value found => extension key value (initialExtension key value found))⟩), valuesRelated⟩
         have finalClock : bodyFinal.clock ≤ initial.clock := by
           have bound := evaluate_clock_le [body] callEnv bodyStart
           rw [bodyRun] at bound
@@ -92,7 +92,7 @@ theorem evaluate_letcall_return {C F : Type} (loc rets ticks destination : Nat)
   | err error => simp [resultRel] at argsRelated
   | val values' =>
     obtain ⟨bodySafe, callArgs', body', bodyLoc, targetFound, callEnv, _, changed⟩ :=
-      findCode_rel g values values' middle middleTarget (some destination) callArgs body found argsRelated middleStates
+      findCode_rel g values values' middle middleTarget (some destination) callArgs body ⟨found, argsRelated, middleStates⟩
     have targetEnough : ¬middleTarget.clock < ticks + 1 := by simpa [middleStates.2.1] using enough
     have argsClock := BviSem.evaluate_clock_le args env1 source
     rw [argsRun] at argsClock
@@ -119,20 +119,20 @@ theorem evaluate_letcall_return {C F : Type} (loc rets ticks destination : Nat)
         continuationRun notTypeError safe.2 environments extension weightIH
     obtain ⟨last, k, targetResult, targetContinuationRun, related, lastStates, continuationExtension,
       continuationFresh, continuationUnchanged, continuationStill⟩ := continuationCore
-    have argsDomain := BviProps.evaluate_refs_subset args env2 target middleTarget (.val values') targetArgsRun
-    have bodyDomain := BviProps.evaluate_refs_subset [body'] callArgs' (decClock (ticks + 1) middleTarget) next
-      (.err (.raise (.ret returnedTarget))) targetBodyRun
+    have argsDomain := BviTmc.evaluate_refs_subset args env2 target (.val values') middleTarget targetArgsRun
+    have bodyDomain := BviTmc.evaluate_refs_subset [body'] callArgs' (decClock (ticks + 1) middleTarget)
+      (.err (.raise (.ret returnedTarget))) next targetBodyRun
     have firstExtension : f.submap h := fun key value present => bodyExtension key value (extension key value present)
-    have firstFresh := onlyFresh_trans f g h target.refs middleTarget.refs fresh bodyFresh argsDomain
+    have firstFresh := onlyFresh_trans f g h target.refs middleTarget.refs ⟨fresh, bodyFresh, argsDomain⟩
     have firstUnchanged := holesUnchanged_trans f g target.refs middleTarget.refs next.refs ∅
-      unchanged bodyUnchanged fresh extension
-    have firstStill := holesStill_trans f g target.refs middleTarget.refs next.refs () still bodyStill fresh extension
+      ⟨unchanged, bodyUnchanged, fresh, extension⟩
+    have firstStill := holesStill_trans f g target.refs middleTarget.refs next.refs () ⟨still, bodyStill, fresh, extension⟩
     have allExtension : f.submap k := fun key value present => continuationExtension key value (firstExtension key value present)
-    have allFresh := onlyFresh_trans f h k target.refs next.refs firstFresh continuationFresh
-      (Set.Subset.trans argsDomain bodyDomain)
+    have allFresh := onlyFresh_trans f h k target.refs next.refs
+      ⟨firstFresh, continuationFresh, Set.Subset.trans argsDomain bodyDomain⟩
     have allUnchanged := holesUnchanged_trans f h target.refs next.refs last.refs ∅
-      firstUnchanged continuationUnchanged firstFresh firstExtension
-    have allStill := holesStill_trans f h target.refs next.refs last.refs () firstStill continuationStill firstFresh firstExtension
+      ⟨firstUnchanged, continuationUnchanged, firstFresh, firstExtension⟩
+    have allStill := holesStill_trans f h target.refs next.refs last.refs () ⟨firstStill, continuationStill, firstFresh, firstExtension⟩
     refine ⟨last, k, targetResult, ?_, related, lastStates, allExtension, allFresh, allUnchanged, allStill⟩
     rw [BviSem.evaluate, BviSem.fixClock_evaluate, targetArgsRun]
     simp only [targetFound, targetEnough, ↓reduceIte]
@@ -178,9 +178,9 @@ theorem evaluate_letcall_return_post {C F : Type} (loc rets ticks destination : 
     have optEnv : envRel true f env1 env2 := by simpa [optTrue] using environments
     obtain ⟨next, g, targetResult, targetRun, related, nextStates, extension, fresh, unchanged, still⟩ := core
     obtain ⟨fillResult, fillMap, fillState, fillRun, rel, state, ext, only, unch, rest, filled⟩ :=
-      FillHole.evaluate_fill_hole (.letCall rets ticks destination args continuation) f g env1 env2 source
-        final target next result targetResult c holePtr run targetRun optEnv states extension related hole
-        notFinal unchanged still fresh nextStates pointer
+      FillHole.evaluate_fill_hole holePtr (.letCall rets ticks destination args continuation) f g env1 env2 source
+        final target next result targetResult c ⟨run, targetRun, optEnv, states, extension, related, hole,
+        notFinal, unchanged, still, fresh, nextStates, pointer⟩
     simp only [rewriteWorkerSource]
     exact ⟨fillResult, fillMap, fillState, fillRun, rel, state, ext, only, unch, rest, filled⟩
 
@@ -276,9 +276,9 @@ theorem evaluate_letcall_error_post {C F : Type} (loc rets ticks destination : N
     · intro optTrue holePtr c hole notFinal pointer
       have optEnv : envRel true f env1 env2 := by simpa [optTrue] using environments
       obtain ⟨fillResult, fillMap, fillState, fillRun, rel, state, ext, only, unch, rest, filled⟩ :=
-        FillHole.evaluate_fill_hole (.letCall rets ticks destination args continuation) f g env1 env2 source
-          final target next (.err error) (.err targetError) c holePtr sourceRun targetRun optEnv states extension
-          related hole notFinal unchanged still fresh nextStates pointer
+        FillHole.evaluate_fill_hole holePtr (.letCall rets ticks destination args continuation) f g env1 env2 source
+          final target next (.err error) (.err targetError) c ⟨sourceRun, targetRun, optEnv, states, extension,
+          related, hole, notFinal, unchanged, still, fresh, nextStates, pointer⟩
       simp only [rewriteWorkerSource]
       exact ⟨fillResult, fillMap, fillState, fillRun, rel, state, ext, only, unch, rest, filled⟩
 

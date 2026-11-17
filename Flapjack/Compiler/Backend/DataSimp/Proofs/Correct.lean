@@ -8,12 +8,33 @@ public import Flapjack.Compiler.Backend.Semantics.DataSem.EvaluateClock
 /-! Data simplification proof infrastructure. -/
 namespace Flapjack.Compiler.Backend.DataSimp
 
-/-- Sequencing with a continuation has the same result as `pSeq`. This is
-untagged pending correspondence review of the data evaluator. -/
+/-- Sequencing with a trailing skip leaves evaluation unchanged.
+The evaluator inherits the real-model assumption in SOUNDNESS item 8. -/
+@[hol "cakeml/compiler/backend/proofs/data_simpProofScript.sml" "evaluate_Seq_Skip"]
+theorem evaluate_Seq_Skip {C F : Type} (program : DataLang.Prog) (state : DataSem.State C F) :
+    DataSem.evaluate (.seq program .skip) state = DataSem.evaluate program state := by
+  have clockBound := DataSem.evaluate_clock_le program state
+  cases run : DataSem.evaluate program state with
+  | mk result next =>
+    simp only [run] at clockBound
+    cases result <;> simp [DataSem.evaluate, run, DataSem.fixClock, Nat.min_eq_right clockBound]
+
+/-- The continuation that evaluates a trailing skip is the identity on a
+result and state pair. The evaluator inherits SOUNDNESS item 8. -/
+@[hol "cakeml/compiler/backend/proofs/data_simpProofScript.sml" "lam_skip_id"]
+theorem lam_skip_id {C F : Type}
+    (x : Option (Flapjack.SemanticPrimitivesHOL.Result (List DataSem.Value) DataSem.Value) × DataSem.State C F) :
+    (fun (result, state) => if result = none then DataSem.evaluate .skip state else (result, state)) x = x := by
+  obtain ⟨result, state⟩ := x
+  cases result <;> simp [DataSem.evaluate]
+
+/-- Sequencing with a continuation has the same result as `pSeq`.
+The evaluator inherits the real-model assumption in SOUNDNESS item 8. -/
+@[hol "cakeml/compiler/backend/proofs/data_simpProofScript.sml" "evaluate_pSeq"]
 theorem evaluate_pSeq {C F : Type} (first continuation : DataLang.Prog)
     (state : DataSem.State C F) :
     DataSem.evaluate (pSeq first continuation) state = DataSem.evaluate (.seq first continuation) state := by
-  cases continuation <;> simp [pSeq, DataSem.evaluate_seq_skip]
+  cases continuation <;> simp [pSeq, evaluate_Seq_Skip]
 
 /-- Sequencing is associative under the clocked data evaluator. -/
 theorem evaluate_seq_assoc {C F : Type} (first second third : DataLang.Prog)
@@ -63,9 +84,10 @@ theorem evaluate_if_congr {C F : Type} (name : Nat) (yes yes' no no' : DataLang.
     DataSem.evaluate (.ifThenElse name yes no) state = DataSem.evaluate (.ifThenElse name yes' no') state := by
   simp only [DataSem.evaluate, hYes, hNo]
 
-/-- Simplifying a program with a continuation preserves its evaluation. This
-is untagged pending correspondence review of the data evaluator. -/
-theorem evaluate_simp {C F : Type} (program continuation : DataLang.Prog) (state : DataSem.State C F) :
+/-- Simplifying a program with a continuation preserves its evaluation.
+The evaluator inherits the real-model assumption in SOUNDNESS item 8. -/
+@[hol "cakeml/compiler/backend/proofs/data_simpProofScript.sml" "evaluate_simp"]
+theorem evaluate_simp {C F : Type} (program : DataLang.Prog) (state : DataSem.State C F) (continuation : DataLang.Prog) :
     DataSem.evaluate (simp program continuation) state = DataSem.evaluate (.seq program continuation) state := by
   cases program with
   | skip => simp [DataSimp.simp, DataSem.evaluate, DataSem.fixClock]
@@ -86,11 +108,11 @@ theorem evaluate_simp {C F : Type} (program continuation : DataLang.Prog) (state
     calc
       DataSem.evaluate (simp (.seq first second) continuation) state =
           DataSem.evaluate (.seq first (simp second continuation)) state := by
-            simpa [DataSimp.simp] using evaluate_simp first (simp second continuation) state
+            simpa [DataSimp.simp] using evaluate_simp first state (simp second continuation)
       _ = DataSem.evaluate (.seq first (.seq second continuation)) state := by
         apply evaluate_seq_congr first first (simp second continuation) (.seq second continuation)
         · intro state; rfl
-        · intro state; exact evaluate_simp second continuation state
+        · intro state; exact evaluate_simp second state continuation
       _ = DataSem.evaluate (.seq (.seq first second) continuation) state :=
         (evaluate_seq_assoc first second continuation state).symm
   | ifThenElse name yes no =>
@@ -98,8 +120,8 @@ theorem evaluate_simp {C F : Type} (program continuation : DataLang.Prog) (state
     apply evaluate_seq_congr _ _ continuation continuation
     · intro state
       apply evaluate_if_congr
-      · intro state; simpa [DataSem.evaluate_seq_skip] using evaluate_simp yes .skip state
-      · intro state; simpa [DataSem.evaluate_seq_skip] using evaluate_simp no .skip state
+      · intro state; simpa [evaluate_Seq_Skip] using evaluate_simp yes state .skip
+      · intro state; simpa [evaluate_Seq_Skip] using evaluate_simp no state .skip
     · intro state; rfl
   | call ret dest names handler =>
     cases handler with
@@ -111,7 +133,7 @@ theorem evaluate_simp {C F : Type} (program continuation : DataLang.Prog) (state
       · intro state
         apply evaluate_call_handler_congr
         intro state
-        simpa [DataSem.evaluate_seq_skip] using evaluate_simp handler .skip state
+        simpa [evaluate_Seq_Skip] using evaluate_simp handler state .skip
       · intro state; rfl
   | move dest src => simp [DataSimp.simp, evaluate_pSeq]
   | assign dest op names live => simp [DataSimp.simp, evaluate_pSeq]
@@ -121,9 +143,11 @@ theorem evaluate_simp {C F : Type} (program continuation : DataLang.Prog) (state
 termination_by sizeOf program
 decreasing_by all_goals (simp_wf; omega)
 
-/-- Simplifying with a trailing skip preserves the program's evaluation. -/
+/-- Simplifying with a trailing skip preserves the program's evaluation.
+The evaluator inherits the real-model assumption in SOUNDNESS item 8. -/
+@[hol "cakeml/compiler/backend/proofs/data_simpProofScript.sml" "simp_correct"]
 theorem simp_correct {C F : Type} (program : DataLang.Prog) (state : DataSem.State C F) :
     DataSem.evaluate (simp program .skip) state = DataSem.evaluate program state := by
-  simpa [DataSem.evaluate_seq_skip] using evaluate_simp program .skip state
+  simpa [evaluate_Seq_Skip] using evaluate_simp program state .skip
 
 end Flapjack.Compiler.Backend.DataSimp

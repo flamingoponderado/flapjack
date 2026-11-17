@@ -33,8 +33,8 @@ theorem doInstall_success_rel {C F : Type} (f : HolFiniteMapExact Nat Nat)
         | cons len2Rel restRel =>
           cases len2Rel
           cases restRel
-          have targetDecode1 := valueToBytes_rel v1 bytes f targetV1 decode1 firstRel
-          have targetDecode2 := valueToWords_rel v2 data f targetV2 decode2 secondRel
+          have targetDecode1 := valueToBytes_rel v1 bytes f targetV1 ⟨decode1, firstRel⟩
+          have targetDecode2 := valueToWords_rel v2 data f targetV2 ⟨decode2, secondRel⟩
           obtain ⟨next, config⟩ := cfg
           let code := (key, arity, body) :: rest
           let compiled := (compileEachSource next code).2

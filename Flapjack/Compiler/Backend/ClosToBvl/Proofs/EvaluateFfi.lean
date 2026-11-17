@@ -46,7 +46,7 @@ theorem evaluatePost_ffi_call {C F : Type} (s sMiddle sLast : ClosSem.State C F)
   | val targetValues =>
     have argsRel : List.Forall₂ (vRel sMiddle.maxApp fMiddle tMiddle.refs tMiddle.code)
         [.byteVector config, .refPtr flag ptr] targetValues.reverse := by
-      simpa [resultRel, maxApp, argsEq] using reverse_related related
+      simpa [resultRel, maxApp, argsEq] using List.rel_reverse related
     generalize reversed : targetValues.reverse = targetList at argsRel
     cases argsRel with
     | cons configRel tail =>

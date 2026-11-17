@@ -4,8 +4,8 @@ public import Flapjack.Compiler.Backend.BviTailrec.Proofs.RewriteCorrespondence
 
 @[expose] public section
 
-/-! Relationships between scan results and tail-rewrite flags. The source
-carriers remain subject to HOL review. -/
+/-! Relationships between scan results and tail-rewrite flags. Untagged
+helpers support the source-shaped theorems below. -/
 namespace Flapjack.Compiler.Backend.BviTailrec
 open Bvi
 
@@ -70,8 +70,8 @@ theorem rewriteSingle_op_scan (ctx : List ValueType) (loc next acc : Nat)
           exact (same scan).elim
         · simp at scan
 
-/-- The rewrite flag agrees with the scan's operator choice. This is
-untagged until the evaluator-independent carriers are source-reviewed. -/
+/-- The singleton rewrite flag agrees with the scan's operator choice.
+This Flapjack helper supports the full source-shaped theorem below. -/
 theorem rewriteSingle_scan (e : Exp) (ctx : List ValueType) (loc next acc : Nat)
     (assoc : AssocOp) (notNoop : assoc ≠ .noop) :
     ((scanSing ctx loc e).2.2.2 = none → (rewriteSingle loc next assoc acc ctx e).1 = false) ∧
@@ -261,8 +261,8 @@ theorem scanList_choice_type (xs : List Exp) (ctx : List ValueType) (loc : Nat) 
     · exact scanList_choice_type rest (scanSing ctx loc x).1 loc entry member
 termination_by sizeOf xs
 
-/-- Source-shaped operator-type invariant for every entry in a list scan.
-This remains untagged until the scan carriers are source-reviewed. -/
+/-- Operator-type invariant for every entry in a list scan. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "scan_expr_op_type"]
 theorem scanExpr_op_type (ctx : List ValueType) (loc : Nat) (xs : List Exp)
     (ys : List (List ValueType × ValueType × Bool × Option AssocOp))
     (scan : scanExpr ctx loc xs = ys) :
@@ -273,18 +273,18 @@ theorem scanExpr_op_type (ctx : List ValueType) (loc : Nat) (xs : List Exp)
   rw [scanExpr_list]
   exact scanList_choice_type xs ctx loc
 
-/-- Source-shaped rewrite/scan invariant: no scan choice means no rewrite;
-a matching selected operator forces the rewrite flag. The scan and rewrite
-carriers remain subject to source review. -/
+/-- No scan choice means no rewrite; a matching selected operator forces
+the rewrite flag. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "rewrite_scan_expr"]
 theorem rewrite_scan_expr (loc next : Nat) (assoc : AssocOp) (acc : Nat)
     (ctx : List ValueType) (e : Exp) (outCtx : List ValueType) (ty : ValueType)
     (flag : Bool) (output : Exp) (branch : Bool) (choice : Option AssocOp)
-    (rewritten : rewriteSource loc next assoc acc ctx e = (flag, output))
-    (notNoop : assoc ≠ .noop)
-    (scanned : scanExpr ctx loc [e] = [(outCtx, ty, branch, choice)]) :
+    (premises : rewriteSource loc next assoc acc ctx e = (flag, output) ∧
+      assoc ≠ .noop ∧ scanExpr ctx loc [e] = [(outCtx, ty, branch, choice)]) :
     match choice with
     | none => flag = false
     | some selected => assoc = selected → flag = true := by
+  obtain ⟨rewritten, notNoop, scanned⟩ := premises
   have invariant := rewriteSingle_scan e ctx loc next acc assoc notNoop
   rw [rewriteSingle_eq_source, rewritten] at invariant
   have selected : (scanSing ctx loc e).2.2.2 = choice := by
@@ -297,5 +297,115 @@ theorem rewrite_scan_expr (loc next : Nat) (assoc : AssocOp) (acc : Nat)
     intro same
     subst op
     exact invariant.2 selected
+
+/-- A selected operation has a successful accumulator check. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "scan_expr_check_op"]
+theorem scanExpr_checkOp (ts : List ValueType) (loc : Nat) (op : ClosLang.Op)
+    (xs : List Bvi.Exp) (tt : List ValueType) (ty : ValueType) (r : Bool) (opr : AssocOp)
+    (scan : scanExpr ts loc [.op op xs] = [(tt, ty, r, some opr)]) :
+    (checkOp ts opr loc (.op op xs)).isSome = true := by
+  have choice : (scanSing ts loc (.op op xs)).2.2.2 = some opr := by
+    rw [scanExpr_single] at scan
+    have eq : scanSing ts loc (.op op xs) = (tt, ty, r, some opr) := by simpa using scan
+    rw [eq]
+  rw [scanSing_op_choice] at choice
+  split at choice
+  · simp at choice
+  · split at choice
+    · have same : fromOp op = opr := by simpa using choice
+      subst opr
+      assumption
+    · simp at choice
+
+/-- A selected accumulator represents the original operation. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "scan_expr_op_same"]
+theorem scanExpr_opSame (ts : List ValueType) (loc : Nat) (op : ClosLang.Op)
+    (xs : List Bvi.Exp) (tt : List ValueType) (ty : ValueType) (r : Bool) (opr : AssocOp)
+    (scan : scanExpr ts loc [.op op xs] = [(tt, ty, r, some opr)]) :
+    op = toOp opr := by
+  have choice : (scanSing ts loc (.op op xs)).2.2.2 = some opr := by
+    rw [scanExpr_single] at scan
+    have eq : scanSing ts loc (.op op xs) = (tt, ty, r, some opr) := by simpa using scan
+    rw [eq]
+  rw [scanSing_op_choice] at choice
+  split at choice
+  · simp at choice
+  · rename_i notNoop
+    split at choice
+    · have same : fromOp op = opr := by simpa using choice
+      subst opr
+      have recognized : fromOp op ≠ .noop := by
+        intro eq
+        rw [eq] at notNoop
+        exact notNoop rfl
+      exact (toOp_fromOp op recognized).symm
+    · simp at choice
+
+/-- A specific merged type requires both input types to be specific. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "decide_ty_imp"]
+theorem decideType_imp (ty1 ty2 : ValueType) (specific : decideType ty1 ty2 ≠ .any) :
+    ty1 ≠ .any ∧ ty2 ≠ .any := by
+  cases ty1 <;> cases ty2 <;> simp_all [decideType]
+
+/-- The accumulator type determines the corresponding operation. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "op_type_simp"]
+theorem opType_simp (op : AssocOp) :
+    (.list = opType op ↔ op = .append) ∧
+      (.any = opType op ↔ op = .noop) ∧
+      (.int = opType op ↔ op = .plus ∨ op = .times) := by
+  cases op <;> simp [opType]
+
+/-- Nontrivial accumulator operations have a specific operand type. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "op_type_lem"]
+theorem opType_lem (op : AssocOp) : op ≠ .noop ↔ opType op ≠ .any := by
+  cases op <;> simp [opType]
+
+/-- A selected operation and its rewrite flag agree with the requested
+accumulator operation. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "scan_expr_Op"]
+theorem scanExpr_Op (ts : List ValueType) (loc : Nat) (op : ClosLang.Op)
+    (xs : List Bvi.Exp) (tt : List ValueType) (ty : ValueType) (r : Bool) (opr : AssocOp)
+    (n : Nat) (op1 : AssocOp) (acc : Nat) (lr : Bool) (x : Bvi.Exp)
+    (premises : scanExpr ts loc [.op op xs] = [(tt, ty, r, some opr)] ∧
+      rewriteSource loc n op1 acc ts (.op op xs) = (lr, x)) :
+    op = toOp opr ∧ (op1 = opr ↔ lr = true) := by
+  have sourceOp := scanExpr_opSame ts loc op xs tt ty r opr premises.1
+  refine ⟨sourceOp, ?_⟩
+  by_cases same : op1 = opr
+  · subst op1
+    have checked := scanExpr_checkOp ts loc op xs tt ty r opr premises.1
+    cases checkedRun : checkOp ts opr loc (.op op xs) with
+    | none => simp [checkedRun] at checked
+    | some checkedValue =>
+      obtain ⟨pure, ticks, callArgs, _, _, _, worked⟩ :=
+        checkOp_rewrite_worker ts opr loc n acc (.op op xs) checkedValue checkedRun
+      have flag : lr = true := congrArg Prod.fst (premises.2.symm.trans worked)
+      simp [flag]
+  · have guard : (fromOp op == op1 && op1 != .noop) = false := by
+      rw [sourceOp, fromOp_toOp]
+      cases opr <;> cases op1 <;>
+        simp_all [BEq.beq, instBEqAssocOp.beq, AssocOp.ctorIdx, bne]
+    have fallback := rewriteSource_op_fallback ts loc n acc op1 op xs (Or.inl guard)
+    have flag : lr = false := congrArg Prod.fst (premises.2.symm.trans fallback)
+    simp [same, flag]
+
+/-- The merged type is specific exactly when both inputs have that type. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "decide_ty_simp1"]
+theorem decideType_simp1 (ty1 ty2 : ValueType) :
+    (decideType ty1 ty2 = .int ↔ ty1 = .int ∧ ty2 = .int) ∧
+      (decideType ty1 ty2 = .list ↔ ty1 = .list ∧ ty2 = .list) := by
+  cases ty1 <;> cases ty2 <;> simp [decideType]
+
+/-- A specific merged type agrees with both inputs. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "decide_ty_simp"]
+theorem decideType_simp (ty1 ty2 ty3 : ValueType) :
+    (decideType ty1 ty2 = ty3 ∧ ty3 ≠ .any) ↔
+      (ty1 = ty3 ∧ ty2 = ty3 ∧ ty3 ≠ .any) := by
+  cases ty1 <;> cases ty2 <;> cases ty3 <;> simp [decideType]
+
+/-- Conversion of accumulator operations to source operations is injective. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "to_op_11"]
+theorem toOp_injective_iff (op1 op2 : AssocOp) : toOp op1 = toOp op2 ↔ op1 = op2 := by
+  cases op1 <;> cases op2 <;> simp [toOp]
 
 end Flapjack.Compiler.Backend.BviTailrec

@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.ClosLang.Syntax
-import Flapjack.AstHOL.GeneratedSize
-import Flapjack.Compiler.Backend.BackendCommon.Trace.GeneratedSize
-import Flapjack.Misc.List.Size
-import Flapjack.Misc.GeneratedSize
+module
+
+public import Flapjack.Compiler.Backend.ClosLang.Syntax
+public import Flapjack.AstHOL.GeneratedSize
+public import Flapjack.Compiler.Backend.BackendCommon.Trace.GeneratedSize
+public import Flapjack.Misc.List.Size
+public import Flapjack.Misc.GeneratedSize
+
+@[expose] public section
 
 /-! Datatype-generated sizes needed by closure-value proofs. -/
 namespace Flapjack.Compiler.Backend.ClosLang

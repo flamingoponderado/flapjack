@@ -36,7 +36,7 @@ private def config : Backend.Config :=
 #guard match compilePrimitiveCheckedSourceFuel 500 500 100 100 100 config
     (ofString "val x = 1 2;").explode with
   | .inferenceError (.located _ (.typeMismatch _ _)) => true
-  | .inferenceError (.located _ (.typeMismatchNames _ _ _)) => true
+  | .inferenceError (.located _ (.typeMismatchEnv _ _ _)) => true
   | .inferenceError (.typeMismatch _ _) => true
   | _ => false
 

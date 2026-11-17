@@ -68,13 +68,6 @@ theorem compileExp_handle_body (cfg : Config) (trace : BackendCommon.Tra)
         cases rest with
         | mk rowFlag compiledRows => simp [compileExp, first, matchResult]
 
-/-- The unmatched generated handler re-raises the bound exception. -/
-theorem evaluate_generated_reraise {C F : Type} (trace : BackendCommon.Tra) (name : VarN)
-    (env : FlatSem.Environment FlatSem.Value) (state : FlatSem.State C F) (value : FlatSem.Value)
-    (found : env.v.lookup name = some value) :
-    FlatSem.evaluate env state [.raise trace (.varLocal trace name)] = (state, .err (.raise value)) := by
-  simp [FlatSem.evaluate, found]
-
 /-- Selected-handler case after the protected expression has raised related
 values in related post-states. The remaining premise is the selected body's
 induction hypothesis. -/
@@ -156,8 +149,7 @@ theorem compile_handle_noMatch_forward {C F : Type} (cfg stateCfg : Config) (tra
   rw [evaluate_handle_generated trace (encNumToName n) (compileExp cfg protectedExpr).2.2 _
     targetEnv targetStart targetNext value' targetProtected]
   rw [dispatch]
-  apply evaluate_generated_reraise
-  simp [dispatchEnv]
+  simp [FlatSem.evaluate, dispatchEnv]
 
 /-- A handler leaves normal results and aborts unchanged after clock fixing. -/
 theorem evaluate_handle_passthrough {C F : Type} (trace : BackendCommon.Tra)

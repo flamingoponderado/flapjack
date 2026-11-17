@@ -337,7 +337,8 @@ theorem dischargeThese_s2
     have key : ∃ x, saveRegs x = true ∧
         r = holLinv (StackNames.findNameSpt stackConf.regNames) (fun _ => True) x := by
       refine ⟨StackNames.findNameSpt stackConf.regNames r, ?_,
-        (holLinv_apply_of_injective hbij.1 r).symm⟩
+        (holLinvDef _ (fun _ => True) (fun _ => True)
+          ⟨fun _ _ => trivial, fun _ _ _ he => hbij.1 he⟩ r trivial).symm⟩
       rcases hr with h | h | h <;> rw [h]
       · have := hsave 2 (by simp); rwa [show 2 + sp - 2 = sp by omega] at this
       · have := hsave 3 (by simp); rwa [show 3 + sp - 2 = sp + 1 by omega] at this
@@ -356,7 +357,8 @@ theorem s2_regs_lookup (hbij : Function.Bijective (StackNames.findNameSpt stackC
       (holLinv (StackNames.findNameSpt stackConf.regNames) (fun _ => True)) := by
     intro a b hab; rw [← hinv a, ← hinv b, hab]
   have hi' : i = holLinv (StackNames.findNameSpt stackConf.regNames) (fun _ => True)
-      (StackNames.findNameSpt stackConf.regNames i) := (holLinv_apply_of_injective hbij.1 i).symm
+      (StackNames.findNameSpt stackConf.regNames i) := (holLinvDef _ (fun _ => True) (fun _ => True)
+        ⟨fun _ _ => trivial, fun _ _ _ he => hbij.1 he⟩ i trivial).symm
   simp only [s2, StackNames.makeInit]
   rw [hi', HolFiniteMapExact.lookup_mapKeys_of_injective hlinj, ← hi']
   have d23 : StackNames.findNameSpt stackConf.regNames 2 ≠

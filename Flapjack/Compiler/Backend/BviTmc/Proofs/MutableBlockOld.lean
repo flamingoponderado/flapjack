@@ -2,40 +2,40 @@ module
 
 public import Flapjack.Compiler.Backend.BviTmc.Proofs.MutableBlockRelation
 public import Flapjack.Compiler.Backend.Semantics.BviSem.Finalise
+public import Flapjack.FiniteMap.BroadCodec
 
 @[expose] public section
-
--- Public declarations below use private helpers.
-set_option backward.privateInPublic true
-set_option backward.privateInPublic.warn false
 
 /-! Weakening the old reference domain in the mutable-block relation. -/
 namespace Flapjack.Compiler.Backend.BviTmc.MutableBlockOld
 open BviTmc BvlSem
 
-private def maptoBroadlookup {α β : Type} (f : HolFiniteMapExact α β) : α → Option β := f.lookup
-private def mapofBroad {α β : Type} (lookup : α → Option β)
-    (support : ∃ keys : List α, ∀ key, lookup key ≠ none → key ∈ keys) : HolFiniteMapExact α β :=
-  ⟨lookup, support⟩
-
 theorem holFmapAsFiniteSupportParamWitness_mutableBlockRel_old_subset_f (f : HolFiniteMapExact Nat Nat) :
-    mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
+    (∀ key, (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad f)).lookup key = f.lookup key) ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad f)).finiteSupport = f.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad f) = f := by cases f; exact ⟨fun _ => rfl, rfl, rfl⟩
 theorem holFmapAsFiniteSupportParamWitness_mutableBlockRel_old_subset_larger (larger : HolFiniteMapExact Nat (Ref Value)) :
-    mapofBroad (maptoBroadlookup larger) larger.finiteSupport = larger := by cases larger; rfl
+    (∀ key, (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad larger)).lookup key = larger.lookup key) ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad larger)).finiteSupport = larger.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad larger) = larger := by cases larger; exact ⟨fun _ => rfl, rfl, rfl⟩
 theorem holFmapAsFiniteSupportParamWitness_mutableBlockRel_old_subset_refs (refs : HolFiniteMapExact Nat (Ref Value)) :
-    mapofBroad (maptoBroadlookup refs) refs.finiteSupport = refs := by cases refs; rfl
+    (∀ key, (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad refs)).lookup key = refs.lookup key) ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad refs)).finiteSupport = refs.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad refs) = refs := by cases refs; exact ⟨fun _ => rfl, rfl, rfl⟩
 theorem holFmapAsFiniteSupportParamWitness_mutableBlockRel_old_subset_smaller (smaller : HolFiniteMapExact Nat (Ref Value)) :
-    mapofBroad (maptoBroadlookup smaller) smaller.finiteSupport = smaller := by cases smaller; rfl
+    (∀ key, (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad smaller)).lookup key = smaller.lookup key) ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad smaller)).finiteSupport = smaller.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad smaller) = smaller := by cases smaller; exact ⟨fun _ => rfl, rfl, rfl⟩
 
-/-- A mutable-block relation remains valid when the old domain shrinks.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "mb_rel_refs_old_subset" (fmap_as_finite_support_parameters := [f, larger, refs, smaller])] -/
+/-- A mutable-block relation remains valid when the old domain shrinks. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "mb_rel_refs_old_subset"
+  (fmap_as_finite_support_parameters := [f, larger, refs, smaller])]
 theorem mutableBlockRel_old_subset (f : HolFiniteMapExact Nat Nat)
     (larger : HolFiniteMapExact Nat (Ref Value)) (refs : HolFiniteMapExact Nat (Ref Value))
     (source target : Value) (smaller : HolFiniteMapExact Nat (Ref Value))
-    (related : mutableBlockRel f larger refs source target)
-    (subset : smaller.domain ⊆ larger.domain) : mutableBlockRel f smaller refs source target := by
+    (h : mutableBlockRel f larger refs source target ∧ smaller.domain ⊆ larger.domain) :
+    mutableBlockRel f smaller refs source target := by
+  obtain ⟨related, subset⟩ := h
   cases source with
   | block tag xs =>
     cases target with
@@ -60,7 +60,7 @@ theorem mutableBlockRel_old_subset (f : HolFiniteMapExact Nat Nat)
             simp only at related ⊢
             obtain ⟨tagEq, finalEq, left', child', right', shape, lrel, inner, rrel⟩ := related
             refine ⟨tagEq, finalEq, left', child', right', shape, lrel, ?_, rrel⟩
-            exact mutableBlockRel_old_subset f larger (refs.eraseEq ptr) child' child smaller inner subset
+            exact mutableBlockRel_old_subset f larger (refs.eraseEq ptr) child' child smaller ⟨inner, subset⟩
           | _ => rw [found] at related; contradiction
     | _ => rw [mutableBlockRel.eq_def] at related ⊢; exact related
   | _ => cases target <;> rw [mutableBlockRel.eq_def] at related ⊢ <;> exact related

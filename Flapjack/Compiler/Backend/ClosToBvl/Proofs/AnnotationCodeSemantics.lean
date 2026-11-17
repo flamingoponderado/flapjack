@@ -2,7 +2,8 @@ module
 
 public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.SourceChain
 public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ChainEvaluation
-public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.SemanticsCorrect
+public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.AnnotateCorrect
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.SemanticsRelated
 
 @[expose] public section
 
@@ -86,7 +87,7 @@ theorem annotation_installed_semantics {C F : Type} (ffi : HolFfiState F) (maxAp
     semantics ffi maxApp (initialSourceCode code) oracle (pureCc ClosAnnotate.compileInc compiler) program =
       semantics ffi maxApp (initialSourceCode (ClosAnnotate.compile code))
         (pureCo ClosAnnotate.compileInc ∘ oracle) compiler (ClosAnnotate.annotateList 0 program) := by
-  apply ClosAnnotate.semantics_eq_of_related
+  apply semantics_eq_of_related_evaluations
   intro clock
   let source := initialState ffi maxApp (initialSourceCode code) oracle (pureCc ClosAnnotate.compileInc compiler) clock
   let target := initialState ffi maxApp (initialSourceCode (ClosAnnotate.compile code))
@@ -107,6 +108,7 @@ theorem annotation_installed_semantics {C F : Type} (ffi : HolFfiState F) (maxAp
          (initialState_annotated_code_related ffi maxApp clock code oracle compiler)⟩
   rw [(ClosAnnotate.annotateSource_sing_eq 0 (.var .none 0) program).2] at targetRun
   rw [targetRun]
-  exact ⟨results, ((ClosAnnotate.stateRelSource_iff outcome.2 targetNext).mp nextRel).2.1⟩
+  have observed := resultRelOutcome (List.Forall₂ ClosAnnotate.ValueRel) ClosAnnotate.ValueRel _ _ results
+  exact ⟨observed.1, observed.2, ((ClosAnnotate.stateRelSource_iff outcome.2 targetNext).mp nextRel).2.1⟩
 
 end Flapjack.Compiler.Backend.ClosToBvl

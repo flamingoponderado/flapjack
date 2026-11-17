@@ -1,7 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.Semantics.DataProps.NonFfiResources
-public import Flapjack.Compiler.Backend.Semantics.DataProps.EvaluateControl
+public import Flapjack.Compiler.Backend.Semantics.DataSem.EvaluateClock
 public import Flapjack.Compiler.Backend.BackendProps
 
 @[expose] public section

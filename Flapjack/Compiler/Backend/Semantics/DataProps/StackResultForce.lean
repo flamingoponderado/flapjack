@@ -122,7 +122,7 @@ theorem evaluate_force_stackResult {C F : Type} (ret : Option (Nat × NumSet)) (
                   have smaller : entered.clock < state.clock := by simp [entered, callEnv, pushEnv, decClock]; omega
                   cases called : fixClock entered (evaluate body entered) with
                   | mk outcome last =>
-                    have bodyRun : evaluate body entered = (outcome, last) := by simpa [fixClock_evaluate] using called
+                    have bodyRun : evaluate body entered = (outcome, last) := by simpa [fixClockEvaluate] using called
                     have bodyControl := bodyIH body entered last outcome smaller bodyRun
                     simp only [entered] at called
                     cases outcome with

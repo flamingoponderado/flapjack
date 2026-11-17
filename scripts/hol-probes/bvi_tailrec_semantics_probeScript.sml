@@ -1,4 +1,5 @@
 load "bvi_tailrecProofTheory";
+load "preamble";
 open HolKernel Parse boolLib bossLib;
 val _ = Globals.linewidth := 1000000;
 fun show_thm label th =
@@ -8,3 +9,153 @@ fun show_thm label th =
 val _ = show_thm "input_condition_def_typed=" bvi_tailrecProofTheory.input_condition_def;
 val _ = show_thm "compile_prog_semantics_typed=" bvi_tailrecProofTheory.compile_prog_semantics;
 val _ = show_thm "compile_each_semantics_typed=" bvi_tailrecProofTheory.compile_each_semantics;
+val _ = show_thm "evaluate_compile_each_typed=" bvi_tailrecProofTheory.evaluate_compile_each;
+val _ = show_thm "state_rel_def_typed=" bvi_tailrecProofTheory.state_rel_def;
+val _ = show_thm "state_rel_const_typed=" bvi_tailrecProofTheory.state_rel_const;
+val _ = show_thm "state_rel_with_clock_typed=" bvi_tailrecProofTheory.state_rel_with_clock;
+val _ = show_thm "state_rel_code_rel_typed=" bvi_tailrecProofTheory.state_rel_code_rel;
+val _ = show_thm "code_rel_def_typed=" bvi_tailrecProofTheory.code_rel_def;
+val _ = show_thm "code_rel_domain_typed=" bvi_tailrecProofTheory.code_rel_domain;
+val _ = show_thm "evaluate_let_wrap_typed=" bvi_tailrecProofTheory.evaluate_let_wrap;
+val _ = show_thm "evaluate_complete_ind_typed=" bvi_tailrecProofTheory.evaluate_complete_ind;
+val _ = show_thm "EVERY_LAST1_typed=" bvi_tailrecProofTheory.EVERY_LAST1;
+val _ = show_thm "scan_expr_LENGTH_typed=" bvi_tailrecProofTheory.scan_expr_LENGTH;
+val _ = show_thm "LAST1_thm_typed=" bvi_tailrecProofTheory.LAST1_thm;
+val _ = show_thm "try_update_LENGTH_typed=" bvi_tailrecProofTheory.try_update_LENGTH;
+val _ = show_thm "update_context_LENGTH_typed=" bvi_tailrecProofTheory.update_context_LENGTH;
+val _ = show_thm "try_update_EL_typed=" bvi_tailrecProofTheory.try_update_EL;
+val _ = show_thm "try_update_twice_typed=" bvi_tailrecProofTheory.try_update_twice;
+val _ = show_thm "index_of_simp_typed=" bvi_tailrecProofTheory.index_of_simp;
+val _ = show_thm "scan_expr_ty_rel_typed=" bvi_tailrecProofTheory.scan_expr_ty_rel;
+val _ = show_thm "check_op_thm_typed=" bvi_tailrecProofTheory.check_op_thm;
+val _ = show_thm "optimized_code_def_typed=" bvi_tailrecProofTheory.optimized_code_def;
+val _ = show_thm "code_rel_subspt_typed=" bvi_tailrecProofTheory.code_rel_subspt;
+val _ = show_thm "compile_each_LENGTH_typed=" bvi_tailrecProofTheory.compile_each_LENGTH;
+val _ = show_thm "rewrite_scan_expr_typed=" bvi_tailrecProofTheory.rewrite_scan_expr;
+val _ = show_thm "scan_expr_op_type_typed=" bvi_tailrecProofTheory.scan_expr_op_type;
+val _ = show_thm "compile_each_next_mono_typed=" bvi_tailrecProofTheory.compile_each_next_mono;
+val _ = show_thm "compile_prog_next_mono_typed=" bvi_tailrecProofTheory.compile_prog_next_mono;
+val _ = show_thm "compile_each_MEM_typed=" bvi_tailrecProofTheory.compile_each_MEM;
+val _ = show_thm "compile_prog_MEM_typed=" bvi_tailrecProofTheory.compile_prog_MEM;
+val _ = show_thm "compile_each_untouched_typed=" bvi_tailrecProofTheory.compile_each_untouched;
+val _ = show_thm "compile_each_touched_typed=" bvi_tailrecProofTheory.compile_each_touched;
+val _ = show_thm "compile_each_code_rel_typed=" bvi_tailrecProofTheory.compile_each_code_rel;
+val _ = show_thm "compile_each_ALL_DISTINCT_typed=" bvi_tailrecProofTheory.compile_each_ALL_DISTINCT;
+val _ = show_thm "compile_prog_ALL_DISTINCT_typed=" bvi_tailrecProofTheory.compile_prog_ALL_DISTINCT;
+val _ = show_thm "code_rel_union_typed=" bvi_tailrecProofTheory.code_rel_union;
+val _ = show_thm "namespace_rel_union_typed=" bvi_tailrecProofTheory.namespace_rel_union;
+val _ = show_thm "compile_each_namespace_rel_typed=" bvi_tailrecProofTheory.compile_each_namespace_rel;
+val _ = show_thm "do_app_to_op_state_typed=" bvi_tailrecProofTheory.do_app_to_op_state;
+val _ = show_thm "state_rel_do_app_aux_typed=" bvi_tailrecProofTheory.state_rel_do_app_aux;
+val _ = show_thm "state_rel_do_app_typed=" bvi_tailrecProofTheory.state_rel_do_app;
+val _ = show_thm "state_rel_do_app_err_typed=" bvi_tailrecProofTheory.state_rel_do_app_err;
+(* The two find-code theorems are local in the original script. Replay their
+   original statements and proofs so their inferred types are captured. *)
+open preamble bvi_tailrecProofTheory bvi_tailrecTheory bviPropsTheory bviSemTheory;
+val find_code_def = bvlSemTheory.find_code_def;
+val code_rel_find_code_some_replay = Q.prove
+  (`∀c1 c2 (args: v list) a exp.
+      code_rel c1 c2 ∧ find_code (SOME n) args c1 = SOME (a, exp) ⇒
+        find_code (SOME n) args c2 ≠ NONE`,
+   rw [find_code_def, code_rel_def]
+   \\ pop_assum mp_tac
+   \\ rpt (PURE_TOP_CASE_TAC \\ fs [])
+   \\ first_x_assum drule
+   \\ fs [compile_exp_def]
+   \\ CASE_TAC \\ fs [] \\ rw []
+   \\ pairarg_tac \\ fs []);
+val _ = show_thm "code_rel_find_code_SOME_replay_typed=" code_rel_find_code_some_replay;
+val code_rel_find_code_none_replay = Q.prove
+  (`∀c1 c2 (args: v list) a exp.
+      code_rel c1 c2 ∧ find_code NONE args c1 = SOME (a, exp) ⇒
+        find_code NONE args c2 ≠ NONE`,
+   rw [find_code_def, code_rel_def]
+   \\ pop_assum mp_tac
+   \\ rpt (PURE_TOP_CASE_TAC \\ fs []) \\ rw []
+   >- (first_x_assum drule
+       \\ fs [compile_exp_def]
+       \\ CASE_TAC \\ fs [] \\ rw []
+       \\ pairarg_tac \\ fs [])
+   \\ first_x_assum drule
+   \\ fs [compile_exp_def]
+   \\ CASE_TAC \\ fs [] \\ rw []
+   \\ pairarg_tac \\ fs []);
+val _ = show_thm "code_rel_find_code_NONE_replay_typed=" code_rel_find_code_none_replay;
+val _ = show_thm "scan_expr_check_op_typed=" bvi_tailrecProofTheory.scan_expr_check_op;
+val _ = show_thm "scan_expr_op_same_typed=" bvi_tailrecProofTheory.scan_expr_op_same;
+val _ = show_thm "term_ok_int_extend_typed=" bvi_tailrecProofTheory.term_ok_int_extend;
+val _ = show_thm "term_ok_any_extend_typed=" bvi_tailrecProofTheory.term_ok_any_extend;
+val _ = show_thm "term_ok_extend_typed=" bvi_tailrecProofTheory.term_ok_extend;
+val _ = show_thm "term_ok_int_SING_typed=" bvi_tailrecProofTheory.term_ok_int_SING;
+val _ = show_thm "term_ok_any_SING_typed=" bvi_tailrecProofTheory.term_ok_any_SING;
+val _ = show_thm "term_ok_SING_typed=" bvi_tailrecProofTheory.term_ok_SING;
+val _ = show_thm "decide_ty_imp_typed=" bvi_tailrecProofTheory.decide_ty_imp;
+val _ = show_thm "op_type_simp_typed=" bvi_tailrecProofTheory.op_type_simp;
+val _ = show_thm "op_type_lem_typed=" bvi_tailrecProofTheory.op_type_lem;
+val _ = show_thm "is_rec_term_ok_typed=" bvi_tailrecProofTheory.is_rec_term_ok;
+val _ = show_thm "scan_expr_Op_typed=" bvi_tailrecProofTheory.scan_expr_Op;
+val _ = show_thm "evaluate_rewrite_tail_typed=" bvi_tailrecProofTheory.evaluate_rewrite_tail;
+val _ = show_thm "decide_ty_simp1_typed=" bvi_tailrecProofTheory.decide_ty_simp1;
+val _ = show_thm "decide_ty_simp_typed=" bvi_tailrecProofTheory.decide_ty_simp;
+val _ = show_thm "to_op_11_typed=" bvi_tailrecProofTheory.to_op_11;
+val _ = show_thm "get_bin_args_SOME_typed=" bvi_tailrecProofTheory.get_bin_args_SOME;
+val _ = show_thm "opbinargs_SOME_typed=" bvi_tailrecProofTheory.opbinargs_SOME;
+val _ = show_thm "to_op_eq_simp_typed=" bvi_tailrecProofTheory.to_op_eq_simp;
+val _ = show_thm "op_eq_simp_typed=" bvi_tailrecProofTheory.op_eq_simp;
+val _ = show_thm "scan_expr_not_Noop_typed=" bvi_tailrecProofTheory.scan_expr_not_Noop;
+val _ = show_thm "scan_expr_EVERY_SING_typed=" bvi_tailrecProofTheory.scan_expr_EVERY_SING;
+val _ = show_thm "env_rel_def_typed=" bvi_tailrecProofTheory.env_rel_def;
+val more_free_names_replay = Q.prove
+  (`free_names n name ⇒ free_names (n + bvl_to_bvi_namespaces) name`,
+   fs [bvi_tailrecProofTheory.free_names_def] \\ rpt strip_tac
+   \\ first_x_assum (qspec_then `k + 1` mp_tac) \\ strip_tac \\ rw []);
+val _ = show_thm "more_free_names_replay_typed=" more_free_names_replay;
+val is_free_name_replay = Q.prove
+  (`free_names n name ⇒ n ≠ name`,
+   fs [bvi_tailrecProofTheory.free_names_def] \\ strip_tac
+   \\ first_x_assum (qspec_then `0` mp_tac) \\ strip_tac \\ rw []);
+val _ = show_thm "is_free_name_replay_typed=" is_free_name_replay;
+val compile_exp_next_addr_replay = Q.prove
+  (`compile_exp loc next args exp = NONE ⇒
+      compile_exp loc (next + bvl_to_bvi_namespaces) args exp = NONE`,
+   fs [bvi_tailrecTheory.compile_exp_def] \\ every_case_tac \\ pairarg_tac \\ fs []);
+val _ = show_thm "compile_exp_next_addr_replay_typed=" compile_exp_next_addr_replay;
+val check_exp_NONE_compile_exp_replay = Q.prove
+  (`check_exp loc arity exp = NONE ⇒ compile_exp loc next arity exp = NONE`,
+   fs [bvi_tailrecTheory.compile_exp_def]);
+val _ = show_thm "check_exp_NONE_compile_exp_replay_typed=" check_exp_NONE_compile_exp_replay;
+val check_exp_SOME_compile_exp_replay = Q.prove
+  (`check_exp loc arity exp = SOME p ⇒ ∃q. compile_exp loc next arity exp = SOME q`,
+   fs [bvi_tailrecTheory.compile_exp_def, bvi_tailrecTheory.check_exp_def]
+   \\ rw [] \\ rw [] \\ pairarg_tac \\ fs []);
+val _ = show_thm "check_exp_SOME_compile_exp_replay_typed=" check_exp_SOME_compile_exp_replay;
+val EVERY_free_names_SUCSUC_replay = Q.prove
+  (`∀xs. EVERY (free_names n o FST) xs ⇒
+      EVERY (free_names (n + bvl_to_bvi_namespaces) o FST) xs`,
+   Induct \\ strip_tac \\ fs [] \\ strip_tac \\ imp_res_tac more_free_names_replay);
+val _ = show_thm "EVERY_free_names_SUCSUC_replay_typed=" EVERY_free_names_SUCSUC_replay;
+val EVERY_free_names_thm_replay = Q.prove
+  (`EVERY (free_names next o FST) prog ∧ lookup loc (fromAList prog) = SOME x ⇒
+      free_names next loc`,
+   rw [sptreeTheory.lookup_fromAList, EVERY_MEM]
+   \\ imp_res_tac ALOOKUP_MEM
+   \\ first_x_assum (qspec_then `(loc, x)` mp_tac) \\ rw []);
+val _ = show_thm "EVERY_free_names_thm_replay_typed=" EVERY_free_names_thm_replay;
+val compile_each_intro_replay = Q.prove
+  (`∀xs n ys n1 name.
+      ¬MEM name (MAP FST xs) ∧ free_names n name ∧
+      compile_each n xs = (n1, ys) ⇒
+        ¬MEM name (MAP FST ys) ∧ free_names n1 name`,
+   Induct
+   >- fs [bvi_tailrecTheory.compile_each_def]
+   \\ gen_tac
+   \\ PairCases_on `h`
+   \\ rpt gen_tac
+   \\ simp [bvi_tailrecTheory.compile_each_def]
+   \\ rpt (pairarg_tac \\ fs [])
+   \\ PURE_TOP_CASE_TAC \\ fs []
+   >- (rpt strip_tac \\ rveq \\ fs [] \\ metis_tac [])
+   \\ PURE_CASE_TAC \\ fs []
+   \\ rpt strip_tac \\ rveq \\ fs []
+   \\ metis_tac [is_free_name_replay, more_free_names_replay]);
+val _ = show_thm "compile_each_intro_replay_typed=" compile_each_intro_replay;

@@ -10,6 +10,7 @@ namespace Flapjack.Compiler.Backend.BviTailrec
 open Bvi BvlSem
 
 /-- Relation between an original code tree and its transformed code tree. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "code_rel_def"]
 def codeRel (source target : Spt (Nat × Bvi.Exp)) : Prop :=
   ∀ loc arity body op, sptLookup loc source = some (arity, body) →
     (checkExpOriginal loc arity body = none → sptLookup loc target = some (arity, body)) ∧
@@ -20,6 +21,7 @@ def codeRel (source target : Spt (Nat × Bvi.Exp)) : Prop :=
 
 /-- An optimized function and its worker are present at their designated
 locations in a transformed code tree. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "optimized_code_def"]
 def optimizedCode (loc arity : Nat) (body : Bvi.Exp) (workerLoc : Nat)
     (code : Spt (Nat × Bvi.Exp)) (op : AssocOp) : Prop :=
   ∃ wrapper worker, compileExpSource loc workerLoc arity body = some (wrapper, worker) ∧
@@ -50,25 +52,26 @@ theorem optimizedCode_find_worker (loc arity : Nat) (body : Bvi.Exp) (workerLoc 
   have found := optimizedCode_worker_lookup loc arity body workerLoc code op optimized
   simp [findCode, found, length]
 
-/-- A positive source check always determines a wrapper and worker for any
-chosen fresh worker location. -/
-theorem compileExpSource_of_check (loc next arity : Nat) (body : Bvi.Exp) (op : AssocOp)
-    (check : checkExpOriginal loc arity body = some op) :
-    ∃ wrapper worker, compileExpSource loc next arity body = some (wrapper, worker) := by
+/-- A failed source compilation remains failed at the next worker location. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "compile_exp_next_addr"]
+theorem compileExpSource_none_next (loc next arity : Nat) (body : Bvi.Exp)
+    (failed : compileExpSource loc next arity body = none) :
+    compileExpSource loc (next + Flapjack.bvlToBviNamespaces) arity body = none := by
+  cases check : checkExpOriginal loc arity body <;> simp_all [compileExpSource]
+
+/-- A failed source check produces no compiled expression pair. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "check_exp_NONE_compile_exp"]
+theorem compileExpSource_of_check_none (loc arity : Nat) (body : Bvi.Exp) (next : Nat)
+    (check : checkExpOriginal loc arity body = none) :
+    compileExpSource loc next arity body = none := by
   simp [compileExpSource, check]
 
-/-- Related code retains a function at every original location. -/
-theorem codeRel_lookup_exists (source target : Spt (Nat × Bvi.Exp)) (h : codeRel source target)
-    (loc arity : Nat) (body : Bvi.Exp) (lookup : sptLookup loc source = some (arity, body)) :
-    ∃ compiled, sptLookup loc target = some compiled := by
-  cases check : checkExpOriginal loc arity body with
-  | none =>
-    have untouched := (h loc arity body .noop lookup).1 check
-    exact ⟨(arity, body), untouched⟩
-  | some op =>
-    obtain ⟨workerLoc, workerLookup⟩ := (h loc arity body op lookup).2 check
-    obtain ⟨wrapper, worker, compiled⟩ := compileExpSource_of_check loc workerLoc arity body op check
-    exact ⟨(arity, wrapper), (workerLookup wrapper worker compiled).1⟩
+/-- A successful source check produces a compiled expression pair. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "check_exp_SOME_compile_exp"]
+theorem compileExpSource_of_check_some (loc arity : Nat) (body : Bvi.Exp) (op : AssocOp) (next : Nat)
+    (check : checkExpOriginal loc arity body = some op) :
+    ∃ pair, compileExpSource loc next arity body = some pair := by
+  simp [compileExpSource, check]
 
 /-- Related code retains the original arity at every original location. -/
 theorem codeRel_lookup_arity (source target : Spt (Nat × Bvi.Exp)) (h : codeRel source target)
@@ -78,15 +81,18 @@ theorem codeRel_lookup_arity (source target : Spt (Nat × Bvi.Exp)) (h : codeRel
   | none => exact ⟨body, (h loc arity body .noop lookup).1 check⟩
   | some op =>
     obtain ⟨workerLoc, workerLookup⟩ := (h loc arity body op lookup).2 check
-    obtain ⟨wrapper, worker, compiled⟩ := compileExpSource_of_check loc workerLoc arity body op check
+    obtain ⟨⟨wrapper, worker⟩, compiled⟩ := compileExpSource_of_check_some loc arity body op workerLoc check
     exact ⟨wrapper, (workerLookup wrapper worker compiled).1⟩
 
 /-- A direct call that resolves in the original code also resolves in the
 related target code. -/
-theorem codeRel_findCode_some (source target : Spt (Nat × Bvi.Exp)) (h : codeRel source target)
-    (loc : Nat) (args actualArgs : List Value) (body : Bvi.Exp)
-    (run : findCode (some loc) args source = some (actualArgs, body)) :
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "code_rel_find_code_SOME"]
+theorem codeRel_findCode_some {loc : Nat} (source target : Spt (Nat × Bvi.Exp))
+    (args actualArgs : List Value) (body : Bvi.Exp)
+    (premises : codeRel source target ∧
+      findCode (some loc) args source = some (actualArgs, body)) :
     findCode (some loc) args target ≠ none := by
+  obtain ⟨h, run⟩ := premises
   cases lookup : sptLookup loc source with
   | none => simp [findCode, lookup] at run
   | some pair =>
@@ -99,10 +105,12 @@ theorem codeRel_findCode_some (source target : Spt (Nat × Bvi.Exp)) (h : codeRe
 
 /-- An indirect call that resolves through a code pointer in the original
 code also resolves in the related target code. -/
-theorem codeRel_findCode_none (source target : Spt (Nat × Bvi.Exp)) (h : codeRel source target)
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "code_rel_find_code_NONE"]
+theorem codeRel_findCode_none (source target : Spt (Nat × Bvi.Exp))
     (args actualArgs : List Value) (body : Bvi.Exp)
-    (run : findCode none args source = some (actualArgs, body)) :
+    (premises : codeRel source target ∧ findCode none args source = some (actualArgs, body)) :
     findCode none args target ≠ none := by
+  obtain ⟨h, run⟩ := premises
   cases empty : args.isEmpty with
   | true => simp [findCode, empty] at run
   | false =>
@@ -120,14 +128,16 @@ theorem codeRel_findCode_none (source target : Spt (Nat × Bvi.Exp)) (h : codeRe
     | _ => simp [findCode, empty, last] at run
 
 /-- The source code domain is included in the related target code domain. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "code_rel_domain"]
 theorem codeRel_domain (source target : Spt (Nat × Bvi.Exp)) (h : codeRel source target) :
     ∀ loc, sptMem loc source → sptMem loc target := by
   intro loc mem
   obtain ⟨⟨arity, body⟩, lookup⟩ := (sptMem_iff_lookup loc source).mp mem
-  obtain ⟨compiled, found⟩ := codeRel_lookup_exists source target h loc arity body lookup
-  exact (sptMem_iff_lookup loc target).mpr ⟨compiled, found⟩
+  obtain ⟨compiled, found⟩ := codeRel_lookup_arity source target h loc arity body lookup
+  exact (sptMem_iff_lookup loc target).mpr ⟨(arity, compiled), found⟩
 
 /-- Extending a related target tree preserves the code relation. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "code_rel_subspt"]
 theorem codeRel_subspt (source target extended : Spt (Nat × Bvi.Exp))
     (h : codeRel source target ∧ sptSubspt target extended) : codeRel source extended := by
   obtain ⟨related, subset⟩ := h
@@ -161,6 +171,7 @@ theorem lookup_union_right_of_disjoint {α : Type} (left right : Spt α)
 
 /-- Disjoint target installations preserve the code relation under
 left-biased code-tree union. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "code_rel_union"]
 theorem codeRel_union (x y t s : Spt (Nat × Bvi.Exp))
     (h : codeRel x y ∧ codeRel t s ∧ (∀ n, sptMem n s → ¬sptMem n y)) :
     codeRel (sptUnion x t) (sptUnion y s) := by
@@ -196,6 +207,7 @@ theorem codeRel_union (x y t s : Spt (Nat × Bvi.Exp))
         lookup_union_right_of_disjoint y s disjoint workerLoc _ workerFound⟩
 
 /-- Function-list compilation never reduces the number of entries. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "compile_each_LENGTH"]
 theorem compileEachSource_length (next : Nat) (code : List (Nat × Nat × Bvi.Exp)) :
     code.length ≤ (compileEachSource next code).2.length := by
   induction code generalizing next with
@@ -341,7 +353,14 @@ theorem freeNames_advance (next name steps : Nat) (free : freeNames next name) :
   apply free (steps + k)
   simpa [Nat.mul_add, Nat.add_assoc] using eq
 
-/-- The current worker label itself is not free. -/
+/-- A free name remains free after advancing by one worker namespace. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "more_free_names"]
+theorem freeNames_advance_one (next name : Nat) (free : freeNames next name) :
+    freeNames (next + Flapjack.bvlToBviNamespaces) name := by
+  simpa using freeNames_advance next name 1 free
+
+/-- A free name differs from the current worker label. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "is_free_name"]
 theorem freeNames_ne_current (next name : Nat) (free : freeNames next name) : next ≠ name := by
   simpa using free 0
 
@@ -362,6 +381,37 @@ theorem compileEachSource_avoids_free (next name : Nat) (code : List (Nat × Nat
   · exact absent old
   · apply free k
     simpa [Nat.mul_comm] using eq.symm
+
+/-- Advancing the worker namespace preserves freedom for every list entry. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "EVERY_free_names_SUCSUC"]
+theorem everyFreeNames_advance {α : Type} (n : Nat) (xs : List (Nat × α))
+    (free : xs.Forall (fun entry => freeNames n entry.1)) :
+    xs.Forall (fun entry => freeNames (n + Flapjack.bvlToBviNamespaces) entry.1) := by
+  exact free.imp (fun _ h => freeNames_advance_one n _ h)
+
+/-- A successful first-match lookup inherits freedom from its input list. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "EVERY_free_names_thm"]
+theorem everyFreeNames_lookup {α : Type} (next : Nat) (prog : List (Nat × α))
+    (loc : Nat) (x : α)
+    (premises : prog.Forall (fun entry => freeNames next entry.1) ∧
+      sptLookup loc (sptFromAList prog) = some x) : freeNames next loc := by
+  have member : (loc, x) ∈ prog :=
+    sptAListLookup_mem loc prog x (by simpa [sptLookup_sptFromAList] using premises.2)
+  exact (List.forall_iff_forall_mem.mp premises.1) (loc, x) member
+
+/-- Compilation neither introduces a free absent name nor consumes its
+freedom at the next worker location. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "compile_each_intro"]
+theorem compileEachSource_intro (xs : List (Nat × Nat × Bvi.Exp)) (n : Nat)
+    (ys : List (Nat × Nat × Bvi.Exp)) (n1 name : Nat)
+    (premises : name ∉ xs.map Prod.fst ∧ freeNames n name ∧
+      compileEachSource n xs = (n1, ys)) :
+    name ∉ ys.map Prod.fst ∧ freeNames n1 name := by
+  obtain ⟨absent, free, compiled⟩ := premises
+  have avoid := compileEachSource_avoids_free n name xs free absent
+  have preserved := compileEachSource_preserves_free n name xs free
+  rw [compiled] at avoid preserved
+  exact ⟨avoid, preserved⟩
 
 /-- Any label below the next worker is free. -/
 theorem freeNames_of_lt (next name : Nat) (bound : name < next) : freeNames next name := by
@@ -430,25 +480,17 @@ theorem compileEachSource_labels_nodup (code : List (Nat × Nat × Bvi.Exp)) (ne
           · simpa [tail] using distinct
         simpa [compileEachSource, compiled, tail] using all
 
-/-- Compiled code keeps distinct labels and leaves every output label free
-from the next worker namespace. -/
-theorem compileEachSource_distinct_and_free (next : Nat) (code : List (Nat × Nat × Bvi.Exp))
-    (unique : (code.map Prod.fst).Nodup)
-    (free : ∀ name ∈ code.map Prod.fst, freeNames next name) :
-    ((compileEachSource next code).2.map Prod.fst).Nodup ∧
-      ∀ name ∈ (compileEachSource next code).2.map Prod.fst,
-        freeNames (compileEachSource next code).1 name :=
-  ⟨compileEachSource_labels_nodup code next unique free, compileEachSource_output_free next code free⟩
-
 /-- Each original function remains unchanged or is replaced by its wrapper
 and worker in the compiled function list. -/
 theorem compileEachSource_entry (code : List (Nat × Nat × Bvi.Exp)) (next loc arity : Nat) (body : Bvi.Exp) (op : AssocOp)
     (member : (loc, arity, body) ∈ code) :
     (checkExpOriginal loc arity body = none → (loc, arity, body) ∈ (compileEachSource next code).2) ∧
-    (checkExpOriginal loc arity body = some op → ∃ workerLoc,
-      ∀ wrapper worker, compileExpSource loc workerLoc arity body = some (wrapper, worker) →
+    (checkExpOriginal loc arity body = some op → ∃ k,
+      ∀ wrapper worker, compileExpSource loc (next + Flapjack.bvlToBviNamespaces * k) arity body =
+          some (wrapper, worker) →
         (loc, arity, wrapper) ∈ (compileEachSource next code).2 ∧
-        (workerLoc, arity + 1, worker) ∈ (compileEachSource next code).2) := by
+        (next + Flapjack.bvlToBviNamespaces * k, arity + 1, worker) ∈
+          (compileEachSource next code).2) := by
   induction code generalizing next with
   | nil => simp at member
   | cons entry rest ih =>
@@ -464,7 +506,7 @@ theorem compileEachSource_entry (code : List (Nat × Nat × Bvi.Exp)) (next loc 
           constructor
           · intro _; simp
           · intro check
-            obtain ⟨wrapper, worker, existsRun⟩ := compileExpSource_of_check loc next arity body op check
+            obtain ⟨⟨wrapper, worker⟩, existsRun⟩ := compileExpSource_of_check_some loc arity body op next check
             rw [compiled] at existsRun
             contradiction
         · have both := ih next other
@@ -472,8 +514,8 @@ theorem compileEachSource_entry (code : List (Nat × Nat × Bvi.Exp)) (next loc 
           constructor
           · intro check; exact List.mem_cons_of_mem _ (both.1 check)
           · intro check
-            obtain ⟨workerLoc, found⟩ := both.2 check
-            exact ⟨workerLoc, fun wrapper worker run =>
+            obtain ⟨k, found⟩ := both.2 check
+            exact ⟨k, fun wrapper worker run =>
               ⟨List.mem_cons_of_mem _ (found wrapper worker run).1,
                 List.mem_cons_of_mem _ (found wrapper worker run).2⟩⟩
     | some pair =>
@@ -487,8 +529,9 @@ theorem compileEachSource_entry (code : List (Nat × Nat × Bvi.Exp)) (next loc 
           · intro check
             simp [compileExpSource, check] at compiled
           · intro _
-            refine ⟨next, ?_⟩
+            refine ⟨0, ?_⟩
             intro wrapper worker run
+            simp only [Nat.mul_zero, Nat.add_zero] at run ⊢
             rw [compiled] at run
             cases run
             exact ⟨by simp, by simp⟩
@@ -497,10 +540,16 @@ theorem compileEachSource_entry (code : List (Nat × Nat × Bvi.Exp)) (next loc 
           constructor
           · intro check; exact List.mem_cons_of_mem _ (List.mem_cons_of_mem _ (both.1 check))
           · intro check
-            obtain ⟨workerLoc, found⟩ := both.2 check
-            exact ⟨workerLoc, fun wrapper worker run =>
-              ⟨List.mem_cons_of_mem _ (List.mem_cons_of_mem _ (found wrapper worker run).1),
-                List.mem_cons_of_mem _ (List.mem_cons_of_mem _ (found wrapper worker run).2)⟩⟩
+            obtain ⟨k, found⟩ := both.2 check
+            refine ⟨k + 1, ?_⟩
+            intro wrapper worker run
+            have labelEq : next + Flapjack.bvlToBviNamespaces * (k + 1) =
+                (next + Flapjack.bvlToBviNamespaces) + Flapjack.bvlToBviNamespaces * k := by
+              simp [Nat.mul_add]
+              omega
+            rw [labelEq] at run ⊢
+            exact ⟨List.mem_cons_of_mem _ (List.mem_cons_of_mem _ (found wrapper worker run).1),
+              List.mem_cons_of_mem _ (List.mem_cons_of_mem _ (found wrapper worker run).2)⟩
 
 /-- A distinct association list maps each present key to its listed value. -/
 theorem sptFromAList_lookup_of_mem {α : Type} (entries : List (Nat × α)) (key : Nat) (value : α)
@@ -540,12 +589,13 @@ theorem compileEachSource_codeRel (next : Nat) (code : List (Nat × Nat × Bvi.E
   · intro check
     exact sptFromAList_lookup_of_mem _ loc (arity, body) compiledUnique (facts.1 check)
   · intro check
-    obtain ⟨workerLoc, entries⟩ := facts.2 check
-    refine ⟨workerLoc, ?_⟩
+    obtain ⟨k, entries⟩ := facts.2 check
+    refine ⟨next + Flapjack.bvlToBviNamespaces * k, ?_⟩
     intro wrapper worker run
     obtain ⟨wrapperMem, workerMem⟩ := entries wrapper worker run
     exact ⟨sptFromAList_lookup_of_mem _ loc (arity, wrapper) compiledUnique wrapperMem,
-      sptFromAList_lookup_of_mem _ workerLoc (arity + 1, worker) compiledUnique workerMem⟩
+      sptFromAList_lookup_of_mem _ (next + Flapjack.bvlToBviNamespaces * k)
+        (arity + 1, worker) compiledUnique workerMem⟩
 
 /-- Worker labels use namespace residue two. -/
 def inWorkerNamespace (name : Nat) : Prop := name % Flapjack.bvlToBviNamespaces = 2
@@ -567,11 +617,25 @@ theorem sptFromAList_mem_iff {α : Type} (code : List (Nat × α)) (name : Nat) 
     obtain ⟨key, value⟩ := entry
     simp [sptFromAList, sptMem_sptInsert, ih]
 
-/-- Compiling code preserves the source-to-worker namespace relation. -/
-theorem compileEachSource_namespaceRel (next : Nat) (code : List (Nat × Nat × Bvi.Exp))
-    (bounds : Flapjack.bvlNumStubs ≤ next) (worker : inWorkerNamespace next)
-    (original : ∀ name ∈ code.map Prod.fst, Flapjack.bvlNumStubs ≤ name → ¬inWorkerNamespace name) :
-    namespaceRel (sptFromAList code) (sptFromAList (compileEachSource next code).2) := by
+/-- Compilation places original and worker labels in their source namespaces. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "compile_each_namespace_rel"]
+theorem compileEach_namespaceRel (next : Nat) (code : List (Nat × Nat × Bvi.Exp))
+    (next1 : Nat) (prog2 : List (Nat × Nat × Bvi.Exp))
+    (premises : compileEachSource next code = (next1, prog2) ∧
+      inWorkerNamespace next ∧ Flapjack.bvlNumStubs ≤ next ∧
+      ∀ entry ∈ code.filter (fun entry => decide (Flapjack.bvlNumStubs ≤ entry.1)),
+        ¬inWorkerNamespace entry.1) :
+    namespaceRel (sptFromAList code) (sptFromAList prog2) := by
+  obtain ⟨compiled, worker, _, outside⟩ := premises
+  have original : ∀ name ∈ code.map Prod.fst,
+      Flapjack.bvlNumStubs ≤ name → ¬inWorkerNamespace name := by
+    intro name member above
+    obtain ⟨entry, present, eq⟩ := List.mem_map.mp member
+    have selected : entry ∈ code.filter (fun entry => decide (Flapjack.bvlNumStubs ≤ entry.1)) :=
+      List.mem_filter.mpr ⟨present, by simpa [eq] using above⟩
+    simpa [eq] using outside entry selected
+  have output : (compileEachSource next code).2 = prog2 := by rw [compiled]
+  rw [← output]
   have generated (name : Nat) (k : Nat) (eq : name = next + k * Flapjack.bvlToBviNamespaces) :
       inWorkerNamespace name := by
     subst name
@@ -597,11 +661,12 @@ theorem compileEachSource_namespaceRel (next : Nat) (code : List (Nat × Nat × 
     · exact old
     · omega
 
-/-- Union preserves the namespace relation. This applies in particular to
-the disjoint code installations used by the source simulation. -/
+/-- Disjoint target installations preserve the namespace relation under union. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "namespace_rel_union"]
 theorem namespaceRel_union {α : Type} (x y t s : Spt α)
-    (left : namespaceRel x y) (right : namespaceRel t s) :
+    (premises : namespaceRel x y ∧ namespaceRel t s ∧ (∀ n, sptMem n s → ¬sptMem n y)) :
     namespaceRel (sptUnion x t) (sptUnion y s) := by
+  obtain ⟨left, right, _⟩ := premises
   obtain ⟨leftAbove, leftNoWorker, leftBelow⟩ := left
   obtain ⟨rightAbove, rightNoWorker, rightBelow⟩ := right
   refine ⟨?_, ?_, ?_⟩
@@ -651,15 +716,9 @@ theorem compileEachSource_install_relations (next : Nat) (code : List (Nat × Na
     obtain ⟨entry, present, equal⟩ := List.mem_map.mp member
     subst name
     exact free entry present
-  have outsideLabels : ∀ name ∈ code.map Prod.fst,
-      Flapjack.bvlNumStubs ≤ name → ¬inWorkerNamespace name := by
-    intro name member above
-    obtain ⟨entry, present, equal⟩ := List.mem_map.mp member
-    subst name
-    apply outside entry
-    exact List.mem_filter.mpr ⟨present, by simpa using above⟩
   exact ⟨compileEachSource_codeRel next code unique freeLabels,
-    compileEachSource_namespaceRel next code bounds worker outsideLabels,
+    compileEach_namespaceRel next code (compileEachSource next code).1 (compileEachSource next code).2
+      ⟨(Prod.eta _).symm, worker, bounds, outside⟩,
     compileEachSource_labels_nodup code next unique freeLabels⟩
 
 /-- Compiled installation entries are disjoint from existing target code
@@ -733,8 +792,17 @@ def transformCompiler {C : Type} (compiler : BviSem.Compiler C) : BviSem.Compile
     let (next', compiled) := compileEachSource next program
     (compiler config compiled).map fun (bytes, data, config') => (bytes, data, (next', config'))
 
-/-- Source-shaped state relation used by the tail-recursion simulation. It is
-untagged until the evaluator and the source compilation carriers are reviewed. -/
+namespace StateRelCarrier
+/-- The BVI reference-map carrier roundtrips through its finite-support view. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : BviSem.BviStateBroad C F, (BviSem.BviState.ofBroad s).toBroad = s) ∧
+      (∀ s : BviSem.BviState C F, BviSem.BviState.ofBroad s.toBroad = s) :=
+  BviSem.holFmapAsFiniteSupportWitness
+end StateRelCarrier
+
+/-- State relation used by the tail-recursion simulation. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "state_rel_def"
+  (fmap_as_finite_support := [refs])]
 def stateRel {C F : Type} (source : BviSem.BviState (Nat × C) F) (target : BviSem.BviState C F) : Prop :=
   target.refs = source.refs ∧
   target.clock = source.clock ∧
@@ -748,6 +816,8 @@ def stateRel {C F : Type} (source : BviSem.BviState (Nat × C) F) (target : BviS
   (∀ n, sptMem n target.code ∧ inWorkerNamespace n → n < (source.compileOracle 0).1.1)
 
 /-- Related states agree on the data fields used by primitive evaluation. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "state_rel_const"
+  (fmap_as_finite_support := [refs])]
 theorem stateRel_const {C F : Type} (source : BviSem.BviState (Nat × C) F)
     (target : BviSem.BviState C F) (h : stateRel source target) :
     target.refs = source.refs ∧ target.clock = source.clock ∧
@@ -755,6 +825,8 @@ theorem stateRel_const {C F : Type} (source : BviSem.BviState (Nat × C) F)
   exact ⟨h.1, h.2.1, h.2.2.1, h.2.2.2.1⟩
 
 /-- Resetting both clocks to the same value preserves the state relation. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "state_rel_with_clock"
+  (fmap_as_finite_support := [refs])]
 theorem stateRel_withClock {C F : Type} (source : BviSem.BviState (Nat × C) F)
     (target : BviSem.BviState C F) (clock : Nat) (h : stateRel source target) :
     stateRel { source with clock := clock } { target with clock := clock } := by
@@ -762,6 +834,8 @@ theorem stateRel_withClock {C F : Type} (source : BviSem.BviState (Nat × C) F)
   exact ⟨refs, rfl, global, ffi, oracle, compiler, code, ns, input, bound⟩
 
 /-- The state relation includes the code relation. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "state_rel_code_rel"
+  (fmap_as_finite_support := [refs])]
 theorem stateRel_codeRel {C F : Type} (source : BviSem.BviState (Nat × C) F)
     (target : BviSem.BviState C F) (h : stateRel source target) : codeRel source.code target.code :=
   h.2.2.2.2.2.2.1
@@ -792,7 +866,7 @@ theorem stateRel_install_code_and_oracle {C F : Type} (source : BviSem.BviState 
     rw [oracle]
     rfl
   · exact codeRel_union _ _ _ _ ⟨codeRelOld, codeRelNew, disjoint⟩
-  · exact namespaceRel_union _ _ _ _ namespaceOld namespaceNew
+  · exact namespaceRel_union _ _ _ _ ⟨namespaceOld, namespaceNew, disjoint⟩
   · intro n
     exact conditions (n + 1)
   · intro n ⟨mem, worker⟩

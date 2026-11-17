@@ -90,38 +90,6 @@ theorem stubs_append_compileIncSource_names_nodup (start count counter : Nat)
       ⟨_, _, label⟩ | ⟨_, _, _, label⟩ <;> rw [label] <;> omega
   omega
 
-/-- The complete initial BVI program, including runtime stubs, meets the
-tail-recursion namespace condition. -/
-theorem initialProgram_tailrec_inputCondition (start count counter next : Nat)
-    (program : List (Nat × Nat × Bvl.Exp))
-    (distinct : (program.map Prod.fst).Nodup)
-    (nextBound : bvlNumStubs ≤ next) (worker : inWorkerNamespace next) :
-    inputCondition next (stubs start count ++ (compileIncSource counter program).2) := by
-  apply tailrec_inputCondition_of_names next _
-    (stubs_append_compileIncSource_names_nodup start count counter program distinct) nextBound worker
-  intro entry member above
-  rcases List.mem_append.mp member with stub | compiled
-  · have below := stubs_below_namespace start count entry stub
-    omega
-  · exact compileIncSource_outside_tailrec_namespace counter program entry.1
-      (List.mem_map.mpr ⟨entry, compiled, rfl⟩)
-
-/-- The executed initial BVL-to-BVI program, including stubs, meets the
-tail-recursion input condition. -/
-theorem compileProgFuel_tailrec_inputCondition (fuel optFuel start counter next targetStart targetCounter : Nat)
-    (program : List (Nat × Nat × Bvl.Exp)) (compiled : List (Nat × Nat × Bvi.Exp))
-    (distinct : (program.map Prod.fst).Nodup)
-    (nextBound : bvlNumStubs ≤ next) (worker : inWorkerNamespace next)
-    (run : compileProgFuel fuel optFuel start counter program = some (targetStart, compiled, targetCounter)) :
-    inputCondition next compiled := by
-  have equal := (compileProgFuel_eq_source fuel optFuel start counter program).symm.trans run
-  have codeEq :
-      stubs (bvlNumStubs + bvlToBviNamespaces * start)
-        (globalCountList (program.map (fun (_, _, body) => body))) ++ (compileIncSource counter program).2 =
-        compiled := congrArg (fun p => p.2.1) (Option.some.inj equal)
-  rw [← codeEq]
-  exact initialProgram_tailrec_inputCondition _ _ counter next program distinct nextBound worker
-
 /-- The production tail-recursion counter starts in worker namespace two. -/
 theorem production_tailrec_start_valid :
     bvlNumStubs ≤ bvlNumStubs + 2 ∧ inWorkerNamespace (bvlNumStubs + 2) := by
@@ -131,18 +99,6 @@ theorem production_tailrec_start_valid :
     have stubMod := bvlNumStubMod
     simp only [bvlToBviNamespaces] at stubMod ⊢
     omega
-
-/-- The production BVL-to-BVI program is ready for tail-recursion
-elimination when its source labels are distinct. -/
-theorem compileProgFuel_production_tailrec_inputCondition
-    (fuel optFuel start counter targetStart targetCounter : Nat)
-    (program : List (Nat × Nat × Bvl.Exp)) (compiled : List (Nat × Nat × Bvi.Exp))
-    (distinct : (program.map Prod.fst).Nodup)
-    (run : compileProgFuel fuel optFuel start counter program = some (targetStart, compiled, targetCounter)) :
-    inputCondition (bvlNumStubs + 2) compiled :=
-  compileProgFuel_tailrec_inputCondition fuel optFuel start counter (bvlNumStubs + 2)
-    targetStart targetCounter program compiled distinct production_tailrec_start_valid.1
-    production_tailrec_start_valid.2 run
 
 open Classical in
 /-- Whole-program lowering preserves distinct names and the exact auxiliary namespace bounds. -/
@@ -192,6 +148,27 @@ theorem compileProg_distinctLocs (start n loc final : Nat) (prog : List (Nat × 
       have below := stubs_below_namespace 0 0 entry present
       have sub : x - bvlNumStubs = 0 := by omega
       simp [inNs, sub]
+
+/-- The production BVL-to-BVI program is ready for tail-recursion
+elimination when its source labels are distinct. -/
+theorem compileProgFuel_production_tailrec_inputCondition
+    (fuel optFuel start counter targetStart targetCounter : Nat)
+    (program : List (Nat × Nat × Bvl.Exp)) (compiled : List (Nat × Nat × Bvi.Exp))
+    (distinct : (program.map Prod.fst).Nodup)
+    (run : compileProgFuel fuel optFuel start counter program = some (targetStart, compiled, targetCounter)) :
+    inputCondition (bvlNumStubs + 2) compiled := by
+  have sourceRun : compileProgSource start counter program = (targetStart, compiled, targetCounter) := by
+    have equal := Option.some.inj ((compileProgFuel_eq_source fuel optFuel start counter program).symm.trans run)
+    simpa only [compileProgSource, compileIncSource, ← allocGlobCount_eq_globalCountList.2] using equal
+  have facts := compileProg_distinctLocs start counter targetStart targetCounter program compiled ⟨sourceRun, distinct⟩
+  apply tailrec_inputCondition_of_names _ _ facts.1 production_tailrec_start_valid.1 production_tailrec_start_valid.2
+  intro entry member above worker
+  have noWorker := (facts.2.2 entry.1 (List.mem_map.mpr ⟨entry, member, rfl⟩)).1
+  apply noWorker
+  unfold inNs inWorkerNamespace at *
+  have stubMod := bvlNumStubMod
+  simp only [bvlToBviNamespaces] at *
+  omega
 
 /-- Lowering avoids tail-recursion worker locations above the stub boundary. -/
 @[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "compile_prog_avoids_nss_2"]
