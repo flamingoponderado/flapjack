@@ -1043,6 +1043,43 @@ private theorem jumpExc_callToState {C F : Type} (state called : State C F)
     jumpExc_envFrame state size env _ transported
   exact ⟨next', nextRun, locals', stack', handler'⟩
 
+/-- Pushing a frame of either kind prepends it to the current stack, keeps the
+    locals size and builds the frame from the current locals size, so a
+    stack-and-locals update passes through it with only the stack maximum and
+    the safety observation free. Flapjack infrastructure toward the port of HOL
+    `evaluate_stack_and_locals_swap`; no separate HOL original. -/
+private theorem pushEnv_swapStackLocals {C F : Type} (env : Spt DataSem.Value) (handler : Bool)
+    (state : State C F) (xs : List Stack) (lsz : Option Nat) :
+    DataSem.pushEnv env handler { state with stack := xs, localsSize := lsz } =
+      { DataSem.pushEnv env handler state with
+        stack := (if handler then Stack.exc lsz env state.handler else Stack.env lsz env) :: xs
+        localsSize := lsz
+        handler := if handler then xs.length else state.handler
+        stackMax :=
+          (DataSem.pushEnv env handler { state with
+            stack := xs
+            localsSize := lsz }).stackMax
+        safeForSpace :=
+          (DataSem.pushEnv env handler { state with
+            stack := xs
+            localsSize := lsz }).safeForSpace } := by
+  unfold DataSem.pushEnv
+  cases handler <;> rfl
+
+/-- Restoring an exception frame installs its saved handler along with its locals
+    and stack tail. Flapjack infrastructure toward the port of HOL
+    `evaluate_stack_and_locals_swap`; no separate HOL original. -/
+private theorem popEnv_exc_some {C F : Type} (state : State C F) (size : Option Nat)
+    (env : Spt DataSem.Value) (saved : Nat) (rest : List Stack)
+    (stackEq : state.stack = Stack.exc size env saved :: rest) :
+    popEnv state =
+      some { state with
+        locals := env
+        stack := rest
+        localsSize := size
+        handler := saved } := by
+  simp only [DataSem.popEnv, stackEq]
+
 /-- Restoring an environment frame prepends nothing and keeps the handler, so the
     popped state keeps the stack tail and the handler. Flapjack infrastructure
     toward the port of HOL `evaluate_stack_and_locals_swap`; no separate HOL
