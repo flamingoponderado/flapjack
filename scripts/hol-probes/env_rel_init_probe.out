@@ -136,6 +136,9 @@ inj_LINVI_typed=INJ (f :α -> α) (s :α -> bool) (t :α -> bool) ∧ (x :α) �
 LINVI_RINV_typed=INJ (f :α -> α) (s :α -> bool) (t :α -> bool) ∧ (∃(x :α). x ∈ s ∧ f x = (y :α)) ⇒ f (LINVI f s y) = y
 good_remap_LINVI_typed=good_remap (f :num -> num) ∧ prim_tids T (s :num -> bool) ∧ INJ f s (t :num -> bool) ⇒ good_remap (LINVI f s)
 ts_tid_rename_LINVI_typed=∀(f :num -> num) (x :t). INJ f (s :num -> bool) (t :num -> bool) ∧ set_tids_subset s x ⇒ ts_tid_rename (LINVI f s) (ts_tid_rename f x) = x
+remap_tenv_LINV_typed=BIJ (f :num -> num) (s :num -> bool) (t :num -> bool) ∧ set_tids_tenv s (tenv :type_env) ⇒ tenv_equiv (remap_tenv (LINV f s) (remap_tenv f tenv)) tenv
+good_remap_BIJ_typed=good_remap (f :num -> num) ∧ prim_tids T (s :num -> bool) ∧ BIJ f s (t :num -> bool) ⇒ good_remap (LINV f s)
+remap_tenv_LINVI_typed=INJ (f :num -> num) (s :num -> bool) (t :num -> bool) ∧ set_tids_tenv s (tenv :type_env) ⇒ tenv_equiv (remap_tenv (LINVI f s) (remap_tenv f tenv)) tenv
 ts_tid_rename_compose_typed=∀(g :num -> num) (t :t) (f :num -> num). ts_tid_rename f (ts_tid_rename g t) = ts_tid_rename (f ∘ g) t
 remap_tenv_compose_typed=remap_tenv (f :num -> num) (remap_tenv (g :num -> num) (tenv :type_env)) = remap_tenv (f ∘ g) tenv
 ts_tid_rename_eq_id_typed=∀(f :num -> num) (t :t). ts_tid_rename f t = t ⇔ ∀(x :num). x ∈ set_tids t ⇒ f x = x

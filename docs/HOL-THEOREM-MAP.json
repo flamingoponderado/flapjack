@@ -1,5 +1,23 @@
 [
 {
+  "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "good_remap_BIJ",
+  "lean_path": "Flapjack/Compiler/Inference/TypeDCanon/EnvironmentInverse.lean", "lean_name": "goodRemapBij",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent source comparison with good_remap_BIJ_typed confirms all three premises and the left-inverse good-remap conclusion. Set.BijOn retains the complete mapping, injection and surjection clauses of HOL BIJ."
+ },
+{
+  "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "remap_tenv_LINV",
+  "lean_path": "Flapjack/Compiler/Inference/TypeDCanon/EnvironmentInverse.lean", "lean_name": "remapTenvLinv",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with source and remap_tenv_LINV_typed confirms bijection and identifier-set premises, full environment and lookup equivalence. Set.BijOn expresses all BIJ clauses; mapped lookups retain duplicate-name and module-absence behavior."
+ },
+{
+  "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "remap_tenv_LINVI",
+  "lean_path": "Flapjack/Compiler/Inference/TypeDCanon/EnvironmentInverse.lean", "lean_name": "remapTenvLinvi",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with source and remap_tenv_LINVI_typed confirms the original injection and identifier-set premises and full lookup equivalence; all three type-environment fields and namespace module-absence cases are preserved."
+ },
+{
   "hol_path": "cakeml/semantics/proofs/namespacePropsScript.sml", "hol_name": "nsMap_compose",
   "lean_path": "Flapjack/NamespaceProps/MapLookup.lean", "lean_name": "nsMapCompose",
   "statement_status": "reviewed_exact",
