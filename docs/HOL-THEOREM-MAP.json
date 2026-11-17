@@ -8239,6 +8239,22 @@
   "reviewer": "Compared soundness_size_of_gen_typed against the exported source theorem: explicit sizing result n2/r2/s2, reference-cell reachability, no-thunk and value-relation premises, permuted and duplicated roots, good dimension, reference-map domain inclusion, architecture condition, and the existential summed-length bound and reachable-address coverage are retained. f and tf use canonical finite-support maps with same-module parameter witnesses; the single source word type uses a positive-width BitVec."
 },
 {
+  "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
+  "hol_name": "list_insert_def",
+  "lean_path": "Flapjack/Misc/Sptree.lean",
+  "lean_name": "sptListInsert",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with sptree_list_insert_def_typed and the pinned HOL source: both clauses use a natural-number list and sparse-tree unit set, preserving the recursive insertion order and empty-list result."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "cut_env_cut_env_list_insert",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/CutState.lean",
+  "lean_name": "cutEnv_cutEnv_listInsert",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with cut_env_cut_env_list_insert_typed: both successful wide and narrow cuts and the exact narrow-cut result are retained over an arbitrary payload type and the original sparse-tree/list carriers."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
   "hol_name": "cut_env_idempotent",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/CutState.lean",

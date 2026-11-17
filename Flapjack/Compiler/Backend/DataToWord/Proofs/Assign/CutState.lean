@@ -45,6 +45,54 @@ theorem cutEnv_idempotent {α : Type} (names : NumSet) (source env : Spt α)
     cases sptLookup key source <;> cases sptLookup key names <;> rfl
   next => contradiction
 
+/-- A narrow cut after an argument-augmented cut equals the direct narrow
+cut. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml" "cut_env_cut_env_list_insert"]
+theorem cutEnv_cutEnv_listInsert {α : Type} (args : List Nat) (names : NumSet)
+    (source wide narrow : Spt α)
+    (premises : DataSem.cutEnv (sptListInsert args names) source = some wide ∧
+      DataSem.cutEnv names source = some narrow) :
+    DataSem.cutEnv names wide = some narrow := by
+  obtain ⟨wideRun, narrowRun⟩ := premises
+  have includeNames : ∀ keys base key, sptMem key base → sptMem key (sptListInsert keys base) := by
+    intro keys
+    induction keys with
+    | nil => intro base key h; exact h
+    | cons head tail ih =>
+      intro base key h
+      apply ih
+      exact (sptMem_sptInsert key head () base).mpr (Or.inr h)
+  unfold DataSem.cutEnv at wideRun narrowRun
+  split at wideRun
+  next wideLive =>
+    split at narrowRun
+    next narrowLive =>
+      simp only [Option.some.injEq] at wideRun narrowRun
+      subst wide
+      subst narrow
+      have narrowWide : ∀ key, sptMem key names →
+          sptMem key (sptMkWf (sptInter source (sptListInsert args names))) := by
+        intro key member
+        obtain ⟨v, sourceFound⟩ := (sptMem_iff_lookup key source).mp (narrowLive key member)
+        obtain ⟨u, wideFound⟩ := (sptMem_iff_lookup key (sptListInsert args names)).mp
+          (includeNames args names key member)
+        apply (sptMem_iff_lookup _ _).mpr
+        refine ⟨v, ?_⟩
+        rw [sptLookup_mkWf, sptLookup_sptInterCases, sourceFound, wideFound]
+      simp only [DataSem.cutEnv, if_pos narrowWide, Option.some.injEq]
+      apply (sptEqThm _ _ ⟨sptWf_mkWf _, sptWf_mkWf _⟩).2
+      intro key
+      simp only [sptLookup_mkWf, sptLookup_sptInterCases]
+      cases sourceLookup : sptLookup key source <;> cases nameLookup : sptLookup key names with
+      | none => cases sptLookup key (sptListInsert args names) <;> rfl
+      | some entry =>
+        have wideMember := includeNames args names key
+          ((sptMem_iff_lookup key names).mpr ⟨entry, nameLookup⟩)
+        obtain ⟨u, wideLookup⟩ := (sptMem_iff_lookup key (sptListInsert args names)).mp wideMember
+        simp [wideLookup]
+    next => contradiction
+  next => contradiction
+
 /-- Inserting a binding before and after a successful cut commutes when the
 inserted name is also retained. This is the sparse-tree step in the HOL proof. -/
 private theorem cutEnv_insert {α : Type} (names : NumSet) (env cut : Spt α)

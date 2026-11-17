@@ -32,3 +32,5 @@ val _ = pr_typed "state_rel_cut_state_opt_SOME_typed" state_rel_cut_state_opt_SO
 val _ = pr_typed "cut_state_opt_SOME_eq_typed" cut_state_opt_SOME_eq;
 val _ = pr_typed "state_rel_cut_state_opt_set_var_typed" state_rel_cut_state_opt_set_var;
 val _ = pr_typed "cut_env_idempotent_typed" cut_env_idempotent;
+val _ = pr_typed "cut_env_cut_env_list_insert_typed" cut_env_cut_env_list_insert;
+val _ = pr_typed "sptree_list_insert_def_typed" sptreeTheory.list_insert_def;
