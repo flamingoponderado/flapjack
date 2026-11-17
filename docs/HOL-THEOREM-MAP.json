@@ -1,5 +1,12 @@
 [
 {
+  "hol_path": "cakeml/compiler/inference/inferPropsScript.sml", "hol_name": "subst_infer_subst_swap",
+  "lean_path": "Flapjack/Compiler/Inference/InferProps/TypeSubstWalkstar.lean", "lean_name": "substInferSubstSwap",
+  "statement_status": "reviewed_fmap_as_finite_support_conjunct_universals",
+  "fmap_as_finite_support_conjunct_universals": ["type_s", "list_s"],
+  "reviewer": "Typed HOL source comparison preserves the independent type_s and list_s maps, both well-formedness premises, the ZIP and COUNT_LIST construction, and both type and list conclusions. The canonical codec witness applies to each map; guarded walkstar and substitution dependencies are separately reviewed."
+ },
+{
   "hol_path": "cakeml/compiler/inference/inferPropsScript.sml", "hol_name": "infer_subst_FEMPTY",
   "lean_path": "Flapjack/Compiler/Inference/InferProps/Substitution/Empty.lean", "lean_name": "inferSubstFempty",
   "statement_status": "reviewed_fmap_as_finite_support_result_observations",

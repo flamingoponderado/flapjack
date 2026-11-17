@@ -6082,10 +6082,10 @@ def type_subst_walkstar_observer_errors(
     source: str, lean_path: str, hol_ref: tuple[str, str], binders: tuple[str, ...],
     dependency_sources: tuple[str, ...], records: list[dict],
 ) -> list[str]:
-    """Prospective source check for the two independently quantified maps.
+    """Source check for the two independently quantified maps.
 
     Elaborated premises, conclusions, dependency owners and qualifier/export
-    validation are separate requirements; this check does not enable a tag.
+    validation remain independently necessary for the tagged theorem.
     """
     if (lean_path != "Flapjack/Compiler/Inference/InferProps/TypeSubstWalkstar.lean" or
             hol_ref != ("cakeml/compiler/inference/inferPropsScript.sml", "subst_infer_subst_swap") or
@@ -6260,17 +6260,44 @@ def main(argv: list[str]) -> int:
                 include_infer_subst_submap=True,
              ):
             where = f"{rel}:{number}"
-            if infer_subst_submap or (hol_path == "cakeml/compiler/inference/inferPropsScript.sml" and
-                                      hol_name == "infer_subst_submap"):
-                if (len(infer_subst_submap) != 4 or hol_line is not None or
-                        find_lean_decl(lines, number - 1) != "inferSubstSubmap" or
+            walkstar_ref = (hol_path, hol_name) == (
+                "cakeml/compiler/inference/inferPropsScript.sml", "subst_infer_subst_swap")
+            submap_ref = (hol_path, hol_name) == (
+                "cakeml/compiler/inference/inferPropsScript.sml", "infer_subst_submap")
+            target_paths = {
+                "Flapjack/Compiler/Inference/InferProps/TypeSubstWalkstar.lean",
+                "Flapjack/Compiler/Inference/InferProps/Substitution.lean",
+            }
+            decl_name = find_lean_decl(lines, number - 1) if rel in target_paths else None
+            walkstar_target = (rel, decl_name) == (
+                "Flapjack/Compiler/Inference/InferProps/TypeSubstWalkstar.lean", "substInferSubstSwap")
+            submap_target = (rel, decl_name) == (
+                "Flapjack/Compiler/Inference/InferProps/Substitution.lean", "inferSubstSubmap")
+            if infer_subst_submap or submap_ref or walkstar_ref or walkstar_target or submap_target:
+                is_walkstar = walkstar_ref or walkstar_target
+                expected_name = "substInferSubstSwap" if is_walkstar else "inferSubstSubmap"
+                expected_size = 2 if is_walkstar else 4
+                if (len(infer_subst_submap) != expected_size or hol_line is not None or
+                        find_lean_decl(lines, number - 1) != expected_name or
                         any((list_fields, names_fields, boundary_fields, fmap_fields, fmap_result,
                              fmap_relation, fmap_equalities, words_bitvec, fmap_parameters,
                              fmap_existentials, dimension_width, fmap_function_positions,
                              fmap_heterogeneous_function_positions, reals_cuts, fmap_equality,
                              result_observations, dimension_widths, fmap_tuple, nested_list_rel,
                              predicate_domain, fmap_universals, generalise_map, generalise_length))):
-                    errors.append(f"{where}: inference submap requires its sole qualifier and exact declaration")
+                    errors.append(f"{where}: conjunct-universal qualifier requires its sole qualifier and exact declaration")
+                elif is_walkstar:
+                    dependencies = [ROOT / name for name in (
+                        "Flapjack/Compiler/Inference/Infer.lean",
+                        "Flapjack/Compiler/Inference/Unify/Walkstar.lean",
+                        "Flapjack/Compiler/Inference/Unify/Substitution.lean",
+                        "Flapjack/Compiler/Inference/Unify/Walk/Term.lean",
+                        "Flapjack/Compiler/Inference/Unify/Walk.lean")]
+                    source_texts = tuple(path.read_text(encoding="utf-8") if path.is_file() else ""
+                                         for path in dependencies)
+                    errors.extend(f"{where}: {error}" for error in type_subst_walkstar_observer_errors(
+                        "\n".join(lines), rel, (hol_path, hol_name), infer_subst_submap,
+                        source_texts, observation_records))
                 else:
                     dependencies = [ROOT / name for name in (
                         "Flapjack/Compiler/Inference/Infer/Substitution.lean",

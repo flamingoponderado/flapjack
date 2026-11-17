@@ -455,6 +455,16 @@ status `reviewed_fmap_as_finite_support_conjunct_universals`. These checks do
 not establish HOL-to-Lean equivalence or permit other statement differences;
 compare the typed HOL statement independently.
 
+For `substInferSubstSwap` (`subst_infer_subst_swap`), the same qualifier uses
+the distinct ordered occurrences `[type_s, list_s]`, one finite map in each
+conjunct. Its same-module unconditional codec witness has `Nat` keys and
+`InferT` values. The source gate pins the complete statement and reviewed
+substitution and guarded-walk dependencies; the elaborated audit checks both
+groups, the original well-formedness premises, full conclusions, references,
+owners, witness and axiom closure. Record the exact list under the same
+reviewed status. The qualifier permits no other difference and does not replace
+independent comparison with the typed HOL theorem.
+
 **Qualify a heterogeneous finite-map function.** Use
 `(fmap_as_finite_support_heterogeneous_function := [argument_N, result_M])`
 only for a direct function definition with a typed result whose named explicit

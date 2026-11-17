@@ -6,8 +6,8 @@ public meta import Flapjack.HolRef
 
 public meta section
 
-/-! Prospective elaborated checks for the two independently quantified maps in
-the type-substitution/walkstar theorem. These checks do not enable a tag. -/
+/-! Elaborated checks for the two independently quantified maps in the
+type-substitution/walkstar theorem. These checks do not establish source fidelity. -/
 namespace Flapjack
 open Lean Meta
 

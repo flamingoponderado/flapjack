@@ -224,7 +224,35 @@ class InferSubstSubmapQualifierInventoryTest(unittest.TestCase):
                 False, (), (), None, (), (), False, False, (), (), (), (), (), (), (), ())
         tagged = {key: base + (values,)}
         self.assertEqual(MAP["validate_inventory"]([record], set(), tagged, set()), [])
+        retagged = {**record, "hol_name": "unrelated", "statement_status": "reviewed_exact", field: []}
+        self.assertTrue(MAP["validate_inventory"]([retagged], set(),
+            {key: (base[0], "unrelated") + base[2:]}, set()))
         for changed in ({**record, field: list(reversed(values))},
+                        {**record, "statement_status": "reviewed_exact"},
+                        {**record, "reviewer": "source comparison"}):
+            with self.subTest(record=changed):
+                self.assertTrue(MAP["validate_inventory"]([changed], set(), tagged, set()))
+        self.assertTrue(MAP["validate_inventory"]([record], set(), {key: base}, set()))
+        self.assertTrue(MAP["validate_inventory"]([record], set(),
+            {key: base[:2] + (("other",),) + base[3:] + (values,)}, set()))
+
+    def test_walkstar_requires_two_independent_occurrences(self):
+        field = "fmap_as_finite_support_conjunct_universals"
+        values = ("type_s", "list_s")
+        record = {"hol_path": "cakeml/compiler/inference/inferPropsScript.sml",
+                  "hol_name": "subst_infer_subst_swap",
+                  "lean_path": "Flapjack/Compiler/Inference/InferProps/TypeSubstWalkstar.lean",
+                  "lean_name": "substInferSubstSwap", "statement_status": "reviewed_" + field,
+                  "reviewer": "source comparison type_s list_s", field: list(values)}
+        key = (record["lean_path"], record["lean_name"])
+        base = (record["hol_path"], record["hol_name"], (), (), (), (), False, (), False,
+                False, (), (), None, (), (), False, False, (), (), (), (), (), (), (), ())
+        tagged = {key: base + (values,)}
+        self.assertEqual(MAP["validate_inventory"]([record], set(), tagged, set()), [])
+        retagged = {**record, "hol_name": "unrelated", "statement_status": "reviewed_exact", field: []}
+        self.assertTrue(MAP["validate_inventory"]([retagged], set(),
+            {key: (base[0], "unrelated") + base[2:]}, set()))
+        for changed in ({**record, field: ["type_s", "type_s"]},
                         {**record, "statement_status": "reviewed_exact"},
                         {**record, "reviewer": "source comparison"}):
             with self.subTest(record=changed):

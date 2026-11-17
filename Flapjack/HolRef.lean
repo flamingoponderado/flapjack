@@ -204,7 +204,7 @@ structure HolRef where
   fmapAsFiniteSupportParameterTupleResult : Array String := #[]
   /-- Metadata for an observer of a qualified tuple-map producer. -/
   fmapAsFiniteSupportParameterTupleObservations : Array String := #[]
-  /-- The four map occurrences in the two inference-submap conjuncts. -/
+  /-- Independently quantified finite maps in reviewed theorem conjuncts. -/
   fmapAsFiniteSupportConjunctUniversals : Array String := #[]
   /-- Standalone declarations (definitions or theorems) whose own input or
       result carrier is the reviewed canonical `HolFiniteMapExact` translation,
@@ -737,9 +737,12 @@ private def parseHolRefAttribute (stx : Syntax) : CoreM HolRef := do
           path == "cakeml/compiler/inference/inferPropsScript.sml" && name == "generalise_list_length" && line?.isNone do
         throwError "@[hol]: generalization length qualifier requires its unique HOL reference and exact fields, without other qualifiers"
     if seenConjunctUniversals then
-      unless qualifiers.size == 1 && conjunctUniversals == #["type_s1", "type_s2", "list_s1", "list_s2"] &&
-          path == "cakeml/compiler/inference/inferPropsScript.sml" && name == "infer_subst_submap" && line?.isNone do
-        throwError "@[hol]: conjunct-universal qualifier requires its unique HOL reference and four ordered occurrences"
+      let submap := name == "infer_subst_submap" &&
+        conjunctUniversals == #["type_s1", "type_s2", "list_s1", "list_s2"]
+      let walkstar := name == "subst_infer_subst_swap" && conjunctUniversals == #["type_s", "list_s"]
+      unless qualifiers.size == 1 && path == "cakeml/compiler/inference/inferPropsScript.sml" &&
+          (submap || walkstar) && line?.isNone do
+        throwError "@[hol]: conjunct-universal qualifier requires its reviewed HOL reference and ordered occurrences"
     let ref ← checkedHolRef path name line? listAsArray namesAsString namesAsStringBoundary fmapAsFiniteSupport fmapAsFiniteSupportResult fmapAsFiniteSupportFunction fmapAsFiniteSupportHeterogeneousFunction fmapAsFiniteSupportParameters fmapAsFiniteSupportExistentials fmapAsFiniteSupportRelation fmapAsFiniteSupportEqualities fmapAsFiniteSupportEquality wordsAsTypeIndexedBitvec wordDimensionAsWidth realsAsRationalCuts fmapAsFiniteSupportResultObservations wordDimensionsAsWidths fmapAsFiniteSupportTuple nestedListRelAsMutual parameterObservations predicateDomain universalMaps
     let ref := { ref with fmapAsFiniteSupportParameterTupleResult := generaliseMapQualifier }
     let ref := { ref with fmapAsFiniteSupportParameterTupleObservations := generaliseLengthQualifier }
@@ -1152,14 +1155,22 @@ initialize holRefAttribute : ParametricAttribute HolRef ← do
     descr := "original HOL4 declaration (file path and declaration name) ported by this Lean declaration"
     getParam := fun _ stx => parseHolRefAttribute stx
     afterSet := fun decl ref => do
-      if ref.path == "cakeml/compiler/inference/inferPropsScript.sml" && ref.name == "infer_subst_submap" &&
+      let submap : HolRef := {
+        path := "cakeml/compiler/inference/inferPropsScript.sml", name := "infer_subst_submap",
+        fmapAsFiniteSupportConjunctUniversals := #["type_s1", "type_s2", "list_s1", "list_s2"] }
+      let walkstar : HolRef := {
+        path := "cakeml/compiler/inference/inferPropsScript.sml", name := "subst_infer_subst_swap",
+        fmapAsFiniteSupportConjunctUniversals := #["type_s", "list_s"] }
+      if (decl == `Flapjack.Compiler.Inference.InferProps.Substitution.inferSubstSubmap && ref != submap) ||
+          (decl == `Flapjack.Compiler.Inference.InferProps.TypeSubstWalkstar.substInferSubstSwap && ref != walkstar) then
+        logError m!"{decl}: this theorem requires its exact reviewed HOL reference and qualifier"
+      if ref.path == "cakeml/compiler/inference/inferPropsScript.sml" &&
+          (ref.name == "infer_subst_submap" || ref.name == "subst_infer_subst_swap") &&
           ref.fmapAsFiniteSupportConjunctUniversals.isEmpty then
-        logError m!"{decl}: infer_subst_submap requires its conjunct-universal qualifier"
+        logError m!"{decl}: this theorem requires its conjunct-universal qualifier"
       if !ref.fmapAsFiniteSupportConjunctUniversals.isEmpty then
-        let expected : HolRef := {
-          path := "cakeml/compiler/inference/inferPropsScript.sml", name := "infer_subst_submap",
-          fmapAsFiniteSupportConjunctUniversals := #["type_s1", "type_s2", "list_s1", "list_s2"] }
-        unless ref == expected && decl == `Flapjack.Compiler.Inference.InferProps.Substitution.inferSubstSubmap do
+        unless (ref == submap && decl == `Flapjack.Compiler.Inference.InferProps.Substitution.inferSubstSubmap) ||
+            (ref == walkstar && decl == `Flapjack.Compiler.Inference.InferProps.TypeSubstWalkstar.substInferSubstSwap) do
           logError m!"{decl}: conjunct-universal qualifier has unexpected metadata or declaration"
       if ref.path == "cakeml/compiler/inference/inferPropsScript.sml" && ref.name == "generalise_list_length" &&
           ref.fmapAsFiniteSupportParameterTupleObservations.isEmpty then
@@ -1655,6 +1666,22 @@ run_cmd do
     catch _ => pure true
   unless combinedSubmapRejected do
     throwError "@[hol] conjunct-universal qualifier cannot combine with another qualifier"
+  let walkstarSyntax ← `(attr| hol "cakeml/compiler/inference/inferPropsScript.sml" "subst_infer_subst_swap"
+    (fmap_as_finite_support_conjunct_universals := [type_s, list_s]))
+  let walkstarRef ← Lean.Elab.Command.liftCoreM (parseHolRefAttribute walkstarSyntax)
+  unless walkstarRef.fmapAsFiniteSupportConjunctUniversals == #["type_s", "list_s"] &&
+      HolRef.qualifierSuffix walkstarRef ==
+        " (fmap_as_finite_support_conjunct_universals := [type_s, list_s])" do
+    throwError "@[hol] walkstar conjunct-universal syntax regression"
+  let wrongWalkstar ← `(attr| hol "cakeml/compiler/inference/inferPropsScript.sml" "subst_infer_subst_swap"
+    (fmap_as_finite_support_conjunct_universals := [type_s, type_s]))
+  let wrongWalkstarRejected ← Lean.Elab.Command.liftCoreM do
+    try
+      let _ ← parseHolRefAttribute wrongWalkstar
+      pure false
+    catch _ => pure true
+  unless wrongWalkstarRejected do
+    throwError "@[hol] walkstar qualifier must preserve independent map positions"
   let wrongGeneralise ← `(attr| hol "cakeml/compiler/inference/inferScript.sml" "generalise_def"
     (fmap_as_finite_support_parameter_tuple_result :=
       (map_parameter := subst) (result_component := component_1)))

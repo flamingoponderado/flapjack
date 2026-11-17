@@ -1,5 +1,6 @@
 import Flapjack.HolRef.GeneraliseLengthAudit
 import Flapjack.HolRef.InferSubstSubmapAudit
+import Flapjack.HolRef.TypeSubstWalkstarAudit
 import Flapjack.Compiler.Backend.StackProps.EvaluateMono
 import Flapjack.Compiler.Backend.StackProps.EvaluateNeutral
 import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.Nonrecursive
@@ -274,16 +275,23 @@ elab "#emit_hol_ref_export" : command => do
   let mut known : Std.HashMap Name Bool := {}
   let mut nestedKnown : Std.HashMap Name (Bool × Bool) := {}
   for (name, ref) in HolRef.all env do
-    if ref.path == "cakeml/compiler/inference/inferPropsScript.sml" && ref.name == "infer_subst_submap" &&
+    if ref.path == "cakeml/compiler/inference/inferPropsScript.sml" &&
+        (ref.name == "infer_subst_submap" || ref.name == "subst_infer_subst_swap") &&
         ref.fmapAsFiniteSupportConjunctUniversals.isEmpty then
-      throwError "infer_subst_submap requires its conjunct-universal qualifier: {name}"
+      throwError "the inference theorem requires its conjunct-universal qualifier: {name}"
     unless ref.fmapAsFiniteSupportConjunctUniversals.isEmpty do
-      let expected : HolRef := {
+      let submap : HolRef := {
         path := "cakeml/compiler/inference/inferPropsScript.sml", name := "infer_subst_submap",
         fmapAsFiniteSupportConjunctUniversals := #["type_s1", "type_s2", "list_s1", "list_s2"] }
-      unless ref == expected do throwError "invalid inference submap qualifier metadata: {name}"
-      let problems ← liftTermElabM <| inferSubstSubmapBundleProblems name
-      unless problems.isEmpty do throwError "invalid inference submap declaration {name}: {problems}"
+      let walkstar : HolRef := {
+        path := "cakeml/compiler/inference/inferPropsScript.sml", name := "subst_infer_subst_swap",
+        fmapAsFiniteSupportConjunctUniversals := #["type_s", "list_s"] }
+      let problems ← if ref == submap then
+        liftTermElabM <| inferSubstSubmapBundleProblems name
+      else if ref == walkstar then
+        liftTermElabM <| typeSubstWalkstarBundleProblems name
+      else throwError "invalid conjunct-universal qualifier metadata: {name}"
+      unless problems.isEmpty do throwError "invalid conjunct-universal declaration {name}: {problems}"
     if ref.path == "cakeml/compiler/inference/inferPropsScript.sml" &&
         ref.name == "generalise_list_length" && ref.fmapAsFiniteSupportParameterTupleObservations.isEmpty then
       throwError "generalise_list_length requires its combined tuple-observer qualifier: {name}"

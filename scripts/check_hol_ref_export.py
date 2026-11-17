@@ -146,7 +146,7 @@ def export_batches(umbrella: str, exporter: str, count: int = EXPORT_BATCH_COUNT
 
     direct = imports(header)
     shared = ("Flapjack.Test.NestedRelationAudit", "Flapjack.HolRef.GeneraliseLengthAudit",
-              "Flapjack.HolRef.InferSubstSubmapAudit")
+              "Flapjack.HolRef.InferSubstSubmapAudit", "Flapjack.HolRef.TypeSubstWalkstarAudit")
     if direct.count("Flapjack") != 1 or any(direct.count(name) != 1 for name in shared):
         raise ValueError("HOL exporter must import the umbrella and shared audit modules")
     all_imports = list(dict.fromkeys(
@@ -278,9 +278,20 @@ def check_records(
         if exported_qualifiers.get(submap_key, []) != qualifiers.get(submap_key, []):
             raise ValueError("inference submap qualifier differs from elaborated @[hol] exporter")
         submap_ref = ("cakeml/compiler/inference/inferPropsScript.sml", "infer_subst_submap")
+        walkstar_ref = ("cakeml/compiler/inference/inferPropsScript.sml", "subst_infer_subst_swap")
+        for site, full_name, expected_ref in (
+            (("Flapjack/Compiler/Inference/InferProps/Substitution.lean", "inferSubstSubmap"),
+             "Flapjack.Compiler.Inference.InferProps.Substitution.inferSubstSubmap", submap_ref),
+            (("Flapjack/Compiler/Inference/InferProps/TypeSubstWalkstar.lean", "substInferSubstSwap"),
+             "Flapjack.Compiler.Inference.InferProps.TypeSubstWalkstar.substInferSubstSwap", walkstar_ref),
+        ):
+            if ((record.get("lean_path"), record.get("lean_name")) == site or item["lean_name"] == full_name):
+                if item["lean_name"] != full_name or (item["hol_path"], item["hol_name"]) != expected_ref:
+                    raise ValueError("theorem requires its exact reviewed HOL reference and declaration")
         submap_status = "reviewed_" + submap_key
-        if (submap_key in qualifiers or record.get("statement_status") == submap_status or
-                (item["hol_path"], item["hol_name"]) == submap_ref):
+        if ((submap_key in qualifiers or record.get("statement_status") == submap_status or
+                (item["hol_path"], item["hol_name"]) == submap_ref) and
+                (item["hol_path"], item["hol_name"]) != walkstar_ref):
             producer_rows = [row for row in manifest if
                              row.get("lean_path") == "Flapjack/Compiler/Inference/Infer/Substitution.lean" and
                              row.get("lean_name") == "inferSubst"]
@@ -305,6 +316,34 @@ def check_records(
                     vars_rows[0].get("statement_status") != "reviewed_exact" or
                     any(manifest_qualifiers(vars_rows[0]).values())):
                 raise ValueError("invalid inference submap qualifier metadata or producer")
+        if (item["hol_path"], item["hol_name"]) == walkstar_ref:
+            if (record.get("statement_status") != submap_status or
+                    record.get("lean_path") != "Flapjack/Compiler/Inference/InferProps/TypeSubstWalkstar.lean" or
+                    item["lean_name"] != "Flapjack.Compiler.Inference.InferProps.TypeSubstWalkstar.substInferSubstSwap" or
+                    record.get("hol_line") is not None or qualifiers.get(submap_key) != ["type_s", "list_s"] or
+                    any(value for key, value in exported_qualifiers.items() if key != submap_key)):
+                raise ValueError("invalid type-substitution walkstar qualifier metadata")
+            dependencies = (
+                ("Flapjack/Compiler/Inference/Infer.lean", "inferTypeSubst", "cakeml/compiler/inference/inferScript.sml", "infer_type_subst_def", None),
+                ("Flapjack/Compiler/Inference/Infer.lean", "inferTypeSubstList", "cakeml/compiler/inference/inferScript.sml", "infer_type_subst_def", None),
+                ("Flapjack/Compiler/Inference/Unify/Substitution.lean", "tWfs", "cakeml/compiler/inference/unifyScript.sml", "t_wfs_def", ["subst"]),
+                ("Flapjack/Compiler/Inference/Unify/Walkstar.lean", "walkstarEqn", "cakeml/compiler/inference/unifyScript.sml", "t_walkstar_eqn", ["s"]),
+                ("Flapjack/Compiler/Inference/Unify/Walkstar.lean", "tWalkstarEqn1", "cakeml/compiler/inference/unifyScript.sml", "t_walkstar_eqn1", ["s"]),
+                ("Flapjack/Compiler/Inference/Unify/Walk/Term.lean", "tWalkEqn", "cakeml/compiler/inference/unifyScript.sml", "t_walk_eqn", ["s1", "s2", "s3"]),
+                ("Flapjack/Compiler/Inference/Unify/Walk.lean", "tVwalkEq", "cakeml/compiler/inference/unifyScript.sml", "t_vwalk_eqn", ["subst"]),
+                ("Flapjack/Compiler/Inference/InferT.lean", "InferT", "cakeml/compiler/inference/infer_tScript.sml", "infer_t", None),
+                ("Flapjack/TypeSystemHOL.lean", "SemanticT", "cakeml/semantics/typeSystemScript.sml", "t", None),
+                ("Flapjack/Basis/Pure/MlString.lean", "MlString", "cakeml/basis/pure/mlstringScript.sml", "mlstring", None),
+            )
+            for path, leaf_name, hol_path, hol_name, parameter in dependencies:
+                rows = [row for row in manifest if row.get("lean_path") == path and row.get("lean_name") == leaf_name]
+                status = "reviewed_exact" if parameter is None else "reviewed_fmap_as_finite_support_parameters"
+                if (len(rows) != 1 or rows[0].get("hol_path") != hol_path or rows[0].get("hol_name") != hol_name or
+                        rows[0].get("hol_line") is not None or rows[0].get("statement_status") != status or
+                        rows[0].get("fmap_as_finite_support_parameters") != parameter or
+                        any(value for key, value in manifest_qualifiers(rows[0]).items()
+                            if key != "fmap_as_finite_support_parameters")):
+                    raise ValueError(f"invalid type-substitution walkstar dependency: {leaf_name}")
         length_key = "fmap_as_finite_support_parameter_tuple_observations"
         if exported_qualifiers.get(length_key, []) != qualifiers.get(length_key, []):
             raise ValueError("generalization length qualifier differs from elaborated @[hol] exporter")

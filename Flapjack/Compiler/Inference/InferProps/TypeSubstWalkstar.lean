@@ -78,8 +78,9 @@ theorem holFmapAsFiniteSupportNestedWalkstarWitness
   holFmapAsFiniteSupportParamWitness_tVR_subst map key
 
 /-- The type and list substitution/walkstar equations under the original
-    well-formedness assumption. A qualifier for the independently quantified
-    finite-map binders is needed before this HOL theorem can be tagged. -/
+    well-formedness assumption. -/
+@[hol "cakeml/compiler/inference/inferPropsScript.sml" "subst_infer_subst_swap"
+  (fmap_as_finite_support_conjunct_universals := [type_s, list_s])]
 theorem substInferSubstSwap :
     (∀ (t : SemanticT) (names : List MlString) (s : HolFiniteMapExact Nat InferT) (offset : Nat),
       tWfs s →

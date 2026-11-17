@@ -1,4 +1,4 @@
-"""Prospective checks for independent substitution maps in both HOL cases."""
+"""Source checks for independent substitution maps in both HOL cases."""
 
 import json
 import runpy

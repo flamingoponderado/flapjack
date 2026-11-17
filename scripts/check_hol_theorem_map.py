@@ -1695,11 +1695,19 @@ def validate_inventory(
                 errors.append(f"{key[0]}:{key[1]}: generalization length review must name the source and map positions")
         submap_key = "fmap_as_finite_support_conjunct_universals"
         submap_ref = ("cakeml/compiler/inference/inferPropsScript.sml", "infer_subst_submap")
+        walkstar_ref = ("cakeml/compiler/inference/inferPropsScript.sml", "subst_infer_subst_swap")
+        for site, expected_ref in (
+            (("Flapjack/Compiler/Inference/InferProps/Substitution.lean", "inferSubstSubmap"), submap_ref),
+            (("Flapjack/Compiler/Inference/InferProps/TypeSubstWalkstar.lean", "substInferSubstSwap"), walkstar_ref),
+        ):
+            if key == site and (hol_path, hol_name) != expected_ref:
+                errors.append(f"{key[0]}:{key[1]}: theorem requires its exact reviewed HOL reference")
         submap_status = "reviewed_" + submap_key
         if tuple(record.get(submap_key, ())) != infer_subst_submap:
             errors.append(f"{key[0]}:{key[1]}: inference submap metadata does not match @[hol] tag")
-        if (infer_subst_submap or status == submap_status or
-                ((hol_path, hol_name) == submap_ref and str(status).startswith("reviewed_"))):
+        if ((infer_subst_submap or status == submap_status or
+                ((hol_path, hol_name) == submap_ref and str(status).startswith("reviewed_"))) and
+                (hol_path, hol_name) != walkstar_ref):
             expected = ("type_s1", "type_s2", "list_s1", "list_s2")
             if ((hol_path, hol_name, key[0], key[1]) != (*submap_ref,
                     "Flapjack/Compiler/Inference/InferProps/Substitution.lean", "inferSubstSubmap") or
@@ -1709,6 +1717,15 @@ def validate_inventory(
             if (not isinstance(reviewer, str) or "source" not in reviewer.lower() or
                     not all(part in reviewer for part in expected)):
                 errors.append(f"{key[0]}:{key[1]}: inference submap review must name the source and all four map positions")
+        if (hol_path, hol_name) == walkstar_ref and (infer_subst_submap or str(status).startswith("reviewed_")):
+            expected = ("type_s", "list_s")
+            if ((key[0], key[1]) != ("Flapjack/Compiler/Inference/InferProps/TypeSubstWalkstar.lean", "substInferSubstSwap") or
+                    infer_subst_submap != expected or status != submap_status or tag is None or
+                    any(tag[2:25]) or any(tag[26:])):
+                errors.append(f"{key[0]}:{key[1]}: type-substitution walkstar qualifier requires its exact site, two positions, status and no other qualifiers")
+            if (not isinstance(reviewer, str) or "source" not in reviewer.lower() or
+                    not all(part in reviewer for part in expected)):
+                errors.append(f"{key[0]}:{key[1]}: type-substitution walkstar review must name the source and both map positions")
         universal_status = "reviewed_fmap_as_finite_support_relation_existentials_universals"
         if tuple(record.get("fmap_as_finite_support_universals", ())) != fmap_universals:
             errors.append(f"{key[0]}:{key[1]}: universal map binders do not match @[hol] tag")
