@@ -108,4 +108,65 @@ termination_by sizeOf xs
 end
 
 
+mutual
+/-- Shared induction for the two HOL de Bruijn substitution bounds. The
+arithmetic premise is proved at each call; it is not an assumption of either
+ported theorem. -/
+private theorem substBound (source target : Nat) (names : List MlString) (t : SemanticT)
+    (ts : List SemanticT) (bound : source ≤ target + ts.length)
+    (checked : checkFreevars source names t = true)
+    (args : ts.all (checkFreevars target names) = true) :
+    checkFreevars target names (deBruijnSubst 0 ts t) = true := by
+  cases t with
+  | var name => simpa [deBruijnSubst, checkFreevars] using checked
+  | varDb index =>
+    have indexBound : index < source := by simpa [checkFreevars] using checked
+    by_cases inside : index < ts.length
+    · have replacement := (List.all_eq_true.mp args) ts[index] (List.getElem_mem inside)
+      simpa [deBruijnSubst, inside] using replacement
+    · simp only [deBruijnSubst, Nat.zero_le, true_and, Nat.add_zero, inside, ↓reduceDIte, ↓reduceIte,
+        checkFreevars, decide_eq_true_eq]
+      omega
+  | app children id =>
+    simp only [checkFreevars] at checked ⊢
+    simp only [deBruijnSubst, checkFreevars]
+    exact substListBound source target names children ts bound checked args
+termination_by sizeOf t
+
+/-- List traversal for the shared substitution induction; HOL performs this
+recursion within its proofs. -/
+private theorem substListBound (source target : Nat) (names : List MlString) (xs ts : List SemanticT)
+    (bound : source ≤ target + ts.length) (checked : checkFreevarsList source names xs = true)
+    (args : ts.all (checkFreevars target names) = true) :
+    checkFreevarsList target names (deBruijnSubstList 0 ts xs) = true := by
+  cases xs with
+  | nil => simp [deBruijnSubstList, checkFreevarsList]
+  | cons x xs =>
+    simp only [checkFreevarsList, Bool.and_eq_true] at checked
+    simp only [deBruijnSubstList, checkFreevarsList, Bool.and_eq_true]
+    exact ⟨substBound source target names x ts bound checked.1 args,
+      substListBound source target names xs ts bound checked.2 args⟩
+termination_by sizeOf xs
+end
+
+/-- Substitution preserves a free-variable bound when both the source type and
+replacement types satisfy it. The unused polymorphic binder is retained from HOL. -/
+@[hol "cakeml/semantics/proofs/typeSysPropsScript.sml" "deBruijn_subst_check_freevars"]
+theorem deBruijnSubstCheckFreevars {α : Type} (tvs : Nat) (names : List MlString) (t : SemanticT)
+    (ts : List SemanticT) (_unused : α) :
+    checkFreevars tvs names t = true ∧ ts.all (checkFreevars tvs names) = true →
+      checkFreevars tvs names (deBruijnSubst 0 ts t) = true := by
+  rintro ⟨checked, args⟩
+  exact substBound tvs tvs names t ts (by omega) checked args
+
+/-- Substituting a complete de Bruijn context preserves the replacements'
+free-variable bound. Both unused polymorphic HOL binders are retained. -/
+@[hol "cakeml/semantics/proofs/typeSysPropsScript.sml" "deBruijn_subst_check_freevars2"]
+theorem deBruijnSubstCheckFreevars2 {α β : Type} (tvs : Nat) (names : List MlString) (t : SemanticT)
+    (ts : List SemanticT) (_unused : α) (_unused2 : β) :
+    checkFreevars ts.length names t = true ∧ ts.all (checkFreevars tvs names) = true →
+      checkFreevars tvs names (deBruijnSubst 0 ts t) = true := by
+  rintro ⟨checked, args⟩
+  exact substBound ts.length tvs names t ts (by omega) checked args
+
 end Flapjack.TypeSysProps

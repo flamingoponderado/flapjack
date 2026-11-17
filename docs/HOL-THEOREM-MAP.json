@@ -12,6 +12,18 @@
   "reviewer": "Independent source comparison and type_es_length_typed; exact expression and type-list typing premise, binder order and length conclusion."
  },
 {
+  "hol_path": "cakeml/semantics/proofs/typeSysPropsScript.sml", "hol_name": "deBruijn_subst_check_freevars",
+  "lean_path": "Flapjack/TypeSysProps/Freevars.lean", "lean_name": "deBruijnSubstCheckFreevars",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with the source and deBruijn_subst_check_freevars_typed confirms binder order, the two free-variable premises and substitution conclusion. The unused polymorphic HOL binder is retained."
+ },
+{
+  "hol_path": "cakeml/semantics/proofs/typeSysPropsScript.sml", "hol_name": "deBruijn_subst_check_freevars2",
+  "lean_path": "Flapjack/TypeSysProps/Freevars.lean", "lean_name": "deBruijnSubstCheckFreevars2",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with the source and deBruijn_subst_check_freevars2_typed confirms the length-bounded input, replacement free-variable premise, result, and both independently polymorphic unused HOL binders."
+ },
+{
   "hol_path": "cakeml/semantics/proofs/typeSysPropsScript.sml", "hol_name": "num_tvs_bind_var_list",
   "lean_path": "Flapjack/TypeSysProps/Environment.lean", "lean_name": "numTvsBindVarList",
   "statement_status": "reviewed_exact",
