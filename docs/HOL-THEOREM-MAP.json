@@ -1,5 +1,11 @@
 [
 {
+  "hol_path": "cakeml/compiler/inference/inferScript.sml", "hol_name": "infer_type_subst_alt",
+  "lean_path": "Flapjack/Compiler/Inference/Infer/TypeSubst.lean", "lean_name": "inferTypeSubstAlt",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with infer_type_subst_alt_typed confirms all three equations and carriers. MlString List.lookup uses structural equality and preserves HOL ALOOKUP's first match and default; the application case maps the complete argument list."
+ },
+{
   "hol_path": "cakeml/compiler/inference/inferScript.sml", "hol_name": "FUN_EQ_THM_state",
   "lean_path": "Flapjack/Compiler/Inference/Infer/Operations.lean", "lean_name": "funEqThmState",
   "statement_status": "reviewed_exact",
