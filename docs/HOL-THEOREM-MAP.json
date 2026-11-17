@@ -1,5 +1,23 @@
 [
 {
+  "hol_path": "cakeml/compiler/inference/inferScript.sml", "hol_name": "find_dup_def",
+  "lean_path": "Flapjack/Compiler/Inference/Infer/Duplicates.lean", "lean_name": "findDupHOL",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent source comparison and find_dup_typed confirm unrestricted polymorphic equality, both clauses and the first element repeated later. Classical source equality agrees with the executable implementation by findDupHOL_eq."
+ },
+{
+  "hol_path": "cakeml/compiler/inference/inferScript.sml", "hol_name": "check_dups_def",
+  "lean_path": "Flapjack/Compiler/Inference/Infer/Duplicates.lean", "lean_name": "checkDups",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent source comparison and check_dups_typed confirm unrestricted element, state and error types, both clauses, first-duplicate selection and the original location and state behavior."
+ },
+{
+  "hol_path": "cakeml/compiler/inference/inferScript.sml", "hol_name": "check_dups_eq_find_dup",
+  "lean_path": "Flapjack/Compiler/Inference/Infer/Duplicates.lean", "lean_name": "checkDupsEqFindDup",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent source comparison and check_dups_eq_find_dup_typed confirm unrestricted element, state, result and error types, all binders, no extra premises, and both complete success and failure outcomes."
+ },
+{
   "hol_path": "cakeml/compiler/inference/proofs/infer_eCompleteScript.sml", "hol_name": "infer_type_subst_check_t_less",
   "lean_path": "Flapjack/Compiler/Inference/InferEComplete/SubstCheck.lean", "lean_name": "inferTypeSubstCheckTLess",
   "statement_status": "reviewed_exact",
