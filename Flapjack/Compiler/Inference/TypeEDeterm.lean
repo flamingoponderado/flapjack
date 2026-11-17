@@ -120,7 +120,7 @@ theorem holFmapAsFiniteSupportParamWitness_tWalkstarDiff_s2
 /-- A difference at an occurring variable remains visible after walking a type. -/
 @[hol "cakeml/compiler/inference/proofs/type_eDetermScript.sml" "t_walkstar_diff"
   (fmap_as_finite_support_parameters := [s1, s2])]
-theorem tWalkstarDiff (s1 s2 : HolFiniteMapExact Nat InferT) (n : Nat) :
+theorem tWalkstarDiff (s1 : HolFiniteMapExact Nat InferT) (s2 : HolFiniteMapExact Nat InferT) (n : Nat) :
     tWfs s1 ∧ tWfs s2 ∧ tWalkstar s1 (.uvar n) ≠ tWalkstar s2 (.uvar n) →
       (∀ t, tVars t n → tWalkstar s1 t ≠ tWalkstar s2 t) ∧
       (∀ (ts : List InferT) x, x ∈ ts → tVars x n → tWalkstar s1 x ≠ tWalkstar s2 x) := by
