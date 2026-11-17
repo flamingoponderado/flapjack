@@ -6078,6 +6078,141 @@ def infer_subst_submap_observer_errors(
     return []
 
 
+UNIFY_EQ_TUNIFY_SOURCE_PATHS = (
+    "Flapjack/HOL/Unification/UnifDef/Choice.lean",
+    "Flapjack/HOL/Unification/UnifDef/Tunify.lean",
+    "Flapjack/HOL/Unification/UnifDef/WellFounded.lean",
+    "Flapjack/HOL/Unification/UnifDef.lean",
+    "Flapjack/HOL/Unification/Walkstar/Occurs.lean",
+    "Flapjack/HOL/Unification/Walk.lean",
+    "Flapjack/HOL/Unification/Subst.lean",
+    "Flapjack/HOL/Unification/Term.lean",
+    "Flapjack/FiniteMap/Exact.lean",
+    "Flapjack/FiniteMap/BroadCodec.lean",
+    "Flapjack/HOL/Unification/UnifDef/OptionCodec.lean",
+    "Flapjack/HOL/Unification/Walkstar.lean",
+    "Flapjack/FiniteMap/Basic.lean",
+    "Flapjack/FiniteMap/DomainExact.lean",
+    "Flapjack/HOL/Unification/Walk/ToVar.lean",
+    "Flapjack/HOL/Unification/Walkstar/Induction.lean",
+    "Flapjack/HOL/Unification/Walkstar/NotDomain.lean",
+    "Flapjack/HOL/Unification/Walk/Range.lean",
+    "Flapjack/HOL/Unification/Walkstar/Walk.lean",
+)
+
+UNIFY_EQ_TUNIFY_HOL_PATHS = tuple(
+    "HOL/examples/algorithms/unification/triangular/first-order/" + name
+    for name in ("termScript.sml", "substScript.sml", "walkScript.sml",
+                 "walkstarScript.sml", "unifDefScript.sml")
+) + ("HOL/src/finite_maps/finite_mapScript.sml",)
+
+
+def unify_eq_tunify_pinned_hol_errors(root: Path) -> list[str]:
+    """Check every original source used in the source review against the HOL gitlink."""
+    return [f"{path}: {error}" for path in UNIFY_EQ_TUNIFY_HOL_PATHS
+            if (error := hol_submodule_source_error(root, path))]
+
+
+def unify_eq_tunify_observer_errors(
+    source: str, lean_path: str, hol_ref: tuple[str, str], binders: tuple[str, ...],
+    dependency_sources: tuple[str, ...], records: list[dict],
+) -> list[str]:
+    """Prospective source guard for the guarded option-map observations.
+
+    This freezes the reviewed Lean sources and manifest dependencies. It does
+    not establish HOL correspondence or enable a representation qualifier.
+    """
+    hol_file = "HOL/examples/algorithms/unification/triangular/first-order/unifDefScript.sml"
+    if (lean_path != UNIFY_EQ_TUNIFY_SOURCE_PATHS[0] or
+            hol_ref != (hol_file, "unify_eq_tunify") or binders != ("s",)):
+        return ["guarded unifier option observation requires its exact site and map parameter"]
+    if len(dependency_sources) != len(UNIFY_EQ_TUNIFY_SOURCE_PATHS) or source != dependency_sources[0]:
+        return ["guarded unifier option observation requires its exact source and dependencies"]
+    fingerprints = (
+        "ee156540b85461a120d15525e1e55f2af5d8e64c1d43ddf0ba3b3f4c3c688eee",
+        "4bac2138ad9bcbfe57b78fc6dbb7edb52423e39505e970c865043c84f6d64b5a",
+        "b040c2edeba1ef86d9d70b972b43701e413d0f831a44d11a2b2c154909e9f754",
+        "9bfcfba6db8b27f663a4dae0282a3083fa07c7fc059ece27d92205e21c317832",
+        "1e2e8d0c2ca7bfec2f46c18007f1ab9b3a3f35403d62a199055eb858ed2ec8c7",
+        "331efe1727a5de511f488d542f3d1f050a274b65546ce4dda73798b85d5a72eb",
+        "fcb7f9153d66286914d779f19f3c9bf0d30e6bfa620ef9b2450e7d27f466fd92",
+        "115bb978f7540adfb0bdc6d1ff4b149d7be4978693fe57dd7468a8876f3d85e2",
+        "b46cfdc77d4409ccf87d51d8cd45ca22e898c6ea3093cdb581ee126011369c48",
+        "3246bd4b3ff013f4069727a1084ea14da0b2f60d3c078c7cde3b3af71beaeb71",
+        "2c3c4932071098ed1654e8e47240d80c6fcb2892c4e68d54f94b297a1a86df66",
+        "c38021b15ea5ead81bc06f983e162af23d6ee34fa6e15492d958ccdbba340d30",
+        "cb56e6e285edab6e0461b41dc179bc3d33a1215c236125187f016383c9dd0a88",
+        "6cd6fabd5713cee7f211adb916818338928a30a7a21148b22748ff82edd953f4",
+        "a63dd9d5757563075d01800f2538929e074b01ffb646f3a9214e5b6fe0ad850d",
+        "ccc5d98eb787959003e07f1df89ec18da7d7f2fd2014eb429922ab08bdf76d50",
+        "91a5a8f6e30fca86413f06eb18f7c7bb5a91b3aa6b4bdfbeccc05939a126d52e",
+        "e148017cd270b8bd72b315bf5aeaf09731053864128d22afc01f0a47c778ee5a",
+        "054732046d2b922c33af2c05e56feec5d47dc8b814a6e8bcf9fa09b87975d65f",
+    )
+    # Permit only the planned literal attribute itself to be added later; its
+    # position and elaborated metadata must be checked independently.
+    attr = re.compile(r'(?m)^[ \t]*@\[\s*hol\s+"' + re.escape(hol_file) +
+        r'"\s+"unify_eq_tunify"\s*\(\s*fmap_as_finite_support_guarded_option_observations\s*:=\s*\[\s*s\s*\]\s*\)\s*\]')
+    for index, (dependency, expected_hash) in enumerate(zip(dependency_sources, fingerprints)):
+        clean = strip_lean_comments(dependency)
+        if index == 0:
+            attributes = list(attr.finditer(clean))
+            if len(attributes) > 1 or (attributes and not re.match(
+                    r"\s*theorem\s+specifiedUnifyEqAux\b", clean[attributes[0].end():])):
+                return ["guarded unifier option attribute must occur once at the exact theorem"]
+            clean = attr.sub("", clean)
+        normalized = " ".join(clean.split())
+        if hashlib.sha256(normalized.encode("utf-8")).hexdigest() != expected_hash:
+            return [f"guarded unifier source dependency changed: {UNIFY_EQ_TUNIFY_SOURCE_PATHS[index]}"]
+    reviewed = (
+        ("Flapjack/HOL/Unification/Term.lean", "Term", "termScript.sml", "term", "reviewed_exact", None, None),
+        ("Flapjack/HOL/Unification/Subst.lean", "wfs", "substScript.sml", "wfs_def", "reviewed_fmap_as_finite_support_parameters", ["subst"], None),
+        ("Flapjack/HOL/Unification/Walk.lean", "vwalkEq", "walkScript.sml", "vwalk_def", "reviewed_fmap_as_finite_support_parameters", ["subst"], None),
+        ("Flapjack/HOL/Unification/UnifDef/WellFounded.lean", "uRWellFounded", "unifDefScript.sml", "WF_uR", "reviewed_fmap_as_finite_support_tuple", None, ["component_1"]),
+        ("Flapjack/HOL/Unification/Walkstar.lean", "walkstarEq", "walkstarScript.sml", "walkstar_def", "reviewed_fmap_as_finite_support_parameters", ["subst"], None),
+        ("Flapjack/HOL/Unification/Walkstar/Occurs.lean", "ocEqVarsWalkstar", "walkstarScript.sml", "oc_eq_vars_walkstar", "reviewed_fmap_as_finite_support_parameters", ["s"], None),
+        ("Flapjack/HOL/Unification/Walkstar/Occurs.lean", "ocWalking", "walkstarScript.sml", "oc_walking", "reviewed_fmap_as_finite_support_parameters", ["s"], None),
+        ("Flapjack/HOL/Unification/UnifDef.lean", "uP", "unifDefScript.sml", "uP_def", "reviewed_fmap_as_finite_support_parameters", ["sx", "s"], None),
+        ("Flapjack/HOL/Unification/UnifDef.lean", "uREq", "unifDefScript.sml", "uR_def", "reviewed_fmap_as_finite_support_parameters", ["sx", "s"], None),
+        ("Flapjack/HOL/Unification/UnifDef.lean", "uRSubterm", "unifDefScript.sml", "uR_subterm", "reviewed_fmap_as_finite_support_parameters", ["s"], None),
+        ("Flapjack/HOL/Unification/UnifDef.lean", "tcaThm", "unifDefScript.sml", "tca_thm", "reviewed_fmap_as_finite_support_parameters", ["s"], None),
+        ("Flapjack/HOL/Unification/UnifDef.lean", "uPImpSubtermUR", "unifDefScript.sml", "uP_IMP_subterm_uR", "reviewed_fmap_as_finite_support_parameters", ["sx", "s"], None),
+        ("Flapjack/HOL/Unification/UnifDef.lean", "uPSym", "unifDefScript.sml", "uP_sym", "reviewed_fmap_as_finite_support_parameters", ["sx", "s"], None),
+        ("Flapjack/HOL/Unification/UnifDef.lean", "uPFupdate", "unifDefScript.sml", "uP_FUPDATE", "reviewed_fmap_as_finite_support_parameters", ["s"], None),
+        ("Flapjack/HOL/Unification/Walk/Range.lean", "walkToVar", "walkScript.sml", "walk_to_var", "reviewed_fmap_as_finite_support_parameters", ["s"], None),
+        ("Flapjack/HOL/Unification/Walkstar/Walk.lean", "walkstarWalk", "walkstarScript.sml", "walkstar_walk", "reviewed_fmap_as_finite_support_parameters", ["s"], None),
+        ("Flapjack/HOL/Unification/Walkstar/Induction.lean", "walkstarInd", "walkstarScript.sml", "walkstar_ind", "reviewed_fmap_as_finite_support_parameters", ["s"], None),
+        ("Flapjack/HOL/Unification/Walkstar/NotDomain.lean", "notFdomWalkstar", "walkstarScript.sml", "NOT_FDOM_walkstar", "reviewed_fmap_as_finite_support_parameters", ["s"], None),
+    )
+    prefix = "HOL/examples/algorithms/unification/triangular/first-order/"
+    for path, name, script, hol_name, status, params, tuple_fields in reviewed:
+        rows = [row for row in records if row.get("lean_path") == path and row.get("lean_name") == name]
+        if (len(rows) != 1 or rows[0].get("hol_path") != prefix + script or
+                rows[0].get("hol_name") != hol_name or rows[0].get("hol_line") is not None or
+                rows[0].get("statement_status") != status or
+                not isinstance(rows[0].get("reviewer"), str) or
+                "source" not in rows[0]["reviewer"].lower() or
+                rows[0].get("fmap_as_finite_support_parameters") != params or
+                rows[0].get("fmap_as_finite_support_tuple") != tuple_fields or
+                any(value for key, value in rows[0].items() if key not in {
+                    "fmap_as_finite_support_parameters", "fmap_as_finite_support_tuple"} and
+                    (key.startswith("fmap_as_") or key.startswith("names_as_") or key in {
+                        "list_as_array", "words_as_type_indexed_bitvec", "word_dimension_as_width",
+                        "word_dimensions_as_widths", "reals_as_rational_cuts", "nested_list_rel_as_mutual"}))):
+            return [f"guarded unifier requires the unique reviewed {name} dependency"]
+    return []
+
+
+def unify_eq_tunify_preflight(root: Path, records: list[dict]) -> list[str]:
+    """Run the unifier source/manifest and pinned-HOL checks before tagging."""
+    dependencies = tuple((root / path).read_text(encoding="utf-8") if (root / path).is_file() else ""
+                         for path in UNIFY_EQ_TUNIFY_SOURCE_PATHS)
+    errors = unify_eq_tunify_observer_errors(
+        dependencies[0], UNIFY_EQ_TUNIFY_SOURCE_PATHS[0],
+        (UNIFY_EQ_TUNIFY_HOL_PATHS[4], "unify_eq_tunify"), ("s",), dependencies, records)
+    return errors + unify_eq_tunify_pinned_hol_errors(root)
+
+
 def type_subst_walkstar_observer_errors(
     source: str, lean_path: str, hol_ref: tuple[str, str], binders: tuple[str, ...],
     dependency_sources: tuple[str, ...], records: list[dict],
@@ -6210,6 +6345,13 @@ def main(argv: list[str]) -> int:
 
     observation_manifest = ROOT / "docs/HOL-THEOREM-MAP.json"
     observation_records = json.loads(observation_manifest.read_text()) if observation_manifest.is_file() else []
+    # The source-shaped theorem already exists untagged. Keep this audit live
+    # while its representation qualifier is being developed, not only after a
+    # tag is installed. Minimal synthetic checker fixtures lack the umbrella
+    # module; a real checkout must not bypass this by deleting the target.
+    if (ROOT / "Flapjack.lean").is_file():
+        errors.extend(f"guarded unifier preflight: {error}" for error in
+                      unify_eq_tunify_preflight(ROOT, observation_records))
     reals_names = reals_rendering_names(ROOT)
     for lean_path in lean_files():
         rel = lean_path.relative_to(ROOT).as_posix()
