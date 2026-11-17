@@ -1,5 +1,36 @@
 [
 {
+  "hol_path": "cakeml/semantics/proofs/namespacePropsScript.sml", "hol_name": "nsAll_alist_to_ns",
+  "lean_path": "Flapjack/NamespaceProps/All.lean", "lean_name": "nsAllAlistToNs",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent source comparison and nsAll_alist_to_ns_typed; all polymorphic carriers, exact EVERY premise and first-match duplicate-key behavior, with local classical equality."
+ },
+{
+  "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "build_ctor_tenv_type_identities",
+  "lean_path": "Flapjack/Compiler/Inference/TypeDCanon/ConstructorBounds.lean", "lean_name": "buildCtorTenvTypeIdentities",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent source comparison and build_ctor_tenv_type_identities_typed; four independent constructor and namespace carriers, primitive and environment bounds, exact length and union conclusion."
+ },
+{
+  "hol_path": "cakeml/semantics/proofs/typeSysPropsScript.sml", "hol_name": "check_ctor_tenv_change_tenvT",
+  "lean_path": "Flapjack/TypeSysProps/Constructor.lean", "lean_name": "checkCtorTenvChangeTenvT",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent source comparison and check_ctor_tenv_change_tenvT_typed; exact conditional EVERY over flattened constructor lists, constructor validity and both type-name environments."
+ },
+{
+  "hol_path": "cakeml/compiler/inference/inferPropsScript.sml", "hol_name": "set_tids_subset_type_subst",
+  "lean_path": "Flapjack/Compiler/Inference/InferProps/SubstBounds.lean", "lean_name": "setTidsSubsetTypeSubst",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["s"],
+  "reviewer": "Independent source comparison with set_tids_subset_type_subst_typed confirms FEVERY is exactly the successful-lookup condition and both original bound premises. The canonical finite-map parameter has the lookup and finite-support codec witness."
+ },
+{
+  "hol_path": "cakeml/compiler/inference/inferPropsScript.sml", "hol_name": "set_tids_subset_type_name_subst",
+  "lean_path": "Flapjack/Compiler/Inference/InferProps/NameBounds.lean", "lean_name": "setTidsSubsetTypeNameSubst",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent source comparison with set_tids_subset_type_name_subst_typed confirms the full namespace and AST carriers, primitive and namespace premises, unresolved-name fallback, truncated ZIP and first-match duplicate-key behavior; no success premise is added."
+ },
+{
   "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "type_pe_determ_remap",
   "lean_path": "Flapjack/Compiler/Inference/TypeDCanon/DetermRemap.lean", "lean_name": "typePeDetermRemap",
   "statement_status": "reviewed_exact",

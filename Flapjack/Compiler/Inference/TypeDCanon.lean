@@ -604,21 +604,6 @@ private theorem checkTypeNamesListTsTidRename (tenvt : TenvAbbrev) (ts : List As
 termination_by sizeOf ts
 end
 
-/-- First-match lookup for the source's right-folded type-substitution map. -/
-private theorem lookupTypeSubstMap (entries : List (MlString × SemanticT)) (key : MlString) :
-    (typeSubstMap entries).lookup key = entries.lookup key := by
-  induction entries with
-  | nil => rfl
-  | cons entry entries ih =>
-    rcases entry with ⟨name, value⟩
-    by_cases same : key = name
-    · subst key
-      simp [typeSubstMap, HolFiniteMapExact.updateListEq, FUPDATE_LIST_HOL, List.foldl_append,
-        FUPDATE_HOL, List.lookup]
-    · have different : (key == name) = false := by simp [same]
-      simpa [typeSubstMap, HolFiniteMapExact.updateListEq, FUPDATE_LIST_HOL, List.foldl_append,
-        FUPDATE_HOL, List.lookup, same, different] using ih
-
 /-- Mapping values commutes with the source substitution-map construction. -/
 private theorem typeSubstMapMap (f : SemanticT → SemanticT) (entries : List (MlString × SemanticT)) :
     typeSubstMap (entries.map (fun pair => (pair.1, f pair.2))) =

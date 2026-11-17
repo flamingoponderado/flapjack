@@ -3801,6 +3801,8 @@ import Flapjack.Test.CakeFromSexpParity
 import Flapjack.RiscV.CakeArtifactFormat
 import Flapjack.Compiler.Inference.Infer
 import Flapjack.Compiler.Inference.InferProps
+import Flapjack.Compiler.Inference.InferProps.SubstBounds
+import Flapjack.Compiler.Inference.InferProps.NameBounds
 import Flapjack.Compiler.Inference.Unify.Encoding
 import Flapjack.Compiler.Inference.Unify.Substitution
 import Flapjack.Compiler.Inference.Unify.Substitution.Submap
@@ -3818,6 +3820,8 @@ import Flapjack.Compiler.Inference.Infer.Operations
 import Flapjack.Compiler.Inference.Infer.Constraint
 import Flapjack.Compiler.Inference.Infer.ConstraintDiagnostics
 import Flapjack.NamespaceProps.MapLookup
+import Flapjack.NamespaceProps.All
+import Flapjack.TypeSysProps.Constructor
 import Flapjack.Compiler.Inference.InferProps.DeBruijn.Compose
 import Flapjack.Compiler.Inference.Unify.Walkstar.Empty
 import Flapjack.Compiler.Inference.Unify.Walkstar.Idempotent
@@ -3903,6 +3907,7 @@ import Flapjack.Compiler.Inference.TypeDCanon.SingleRename
 import Flapjack.Compiler.Inference.TypeDCanon.Scheme
 import Flapjack.Compiler.Inference.TypeDCanon.BindingTids
 import Flapjack.Compiler.Inference.TypeDCanon.DetermRemap
+import Flapjack.Compiler.Inference.TypeDCanon.ConstructorBounds
 import Flapjack.PrimSemEnv
 import Flapjack.Compiler.Repl.ReplTypes
 import Flapjack.Compiler.Proofs.CompilerProof

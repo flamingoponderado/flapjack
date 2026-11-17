@@ -10508,6 +10508,8 @@ The single-identifier pattern and
 expression typing theorems and scheme non-instantiation theorem are replayed,
 and the function-list theorem is captured. The principal pattern-binding
 identifier theorem is replayed, and both public binding-identifier invariants are captured.
+The source type-substitution and type-name identifier bounds, namespace association-list
+quantification, and constructor-environment bounds and transport are captured.
 The local-environment renaming definitions and laws are captured or replayed,
 including de Bruijn increment, substitution, and variable lookup.
 The environment-relation and REPL theories are not fetched by this
