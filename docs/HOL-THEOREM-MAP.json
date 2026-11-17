@@ -1,5 +1,23 @@
 [
 {
+  "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "type_p_ts_tid_rename_sing_renum",
+  "lean_path": "Flapjack/Compiler/Inference/TypeDCanon/SingleRename.lean", "lean_name": "typePTsTidRenameSingRenum",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent source comparison and type_p_ts_tid_rename_sing_renum_replay_typed; source-local proof replay confirms all premises, pattern type and mapped bindings."
+ },
+{
+  "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "type_e_ts_tid_rename_sing_renum",
+  "lean_path": "Flapjack/Compiler/Inference/TypeDCanon/SingleRename.lean", "lean_name": "typeETsTidRenameSingRenum",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent source comparison and type_e_ts_tid_rename_sing_renum_replay_typed; source-local proof replay confirms all premises, local environment and result type."
+ },
+{
+  "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "type_funs_ts_tid_rename_sing_renum",
+  "lean_path": "Flapjack/Compiler/Inference/TypeDCanon/SingleRename.lean", "lean_name": "typeFunsTsTidRenameSingRenum",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent source comparison and type_funs_ts_tid_rename_sing_renum_typed; direct capture confirms all premises, function-list carrier and mapped bindings."
+ },
+{
   "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "good_remap_BIJ",
   "lean_path": "Flapjack/Compiler/Inference/TypeDCanon/EnvironmentInverse.lean", "lean_name": "goodRemapBij",
   "statement_status": "reviewed_exact",

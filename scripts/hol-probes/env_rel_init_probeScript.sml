@@ -464,6 +464,37 @@ val _ = show "type_p_tenv_equiv_typed" type_dCanonTheory.type_p_tenv_equiv;
 val _ = show "type_p_ts_tid_rename_typed" type_dCanonTheory.type_p_ts_tid_rename;
 val _ = show "type_op_ts_tid_rename_typed" type_dCanonTheory.type_op_ts_tid_rename;
 val _ = show "type_e_ts_tid_rename_typed" type_dCanonTheory.type_e_ts_tid_rename;
+val _ = show "type_funs_ts_tid_rename_sing_renum_typed" type_dCanonTheory.type_funs_ts_tid_rename_sing_renum;
+val type_p_ts_tid_rename_sing_renum_replay = Q.prove(
+  `m NOTIN tids /\ prim_tids T tids /\ type_p tvs tenv p t bindings /\
+   type_dCanon$set_tids_tenv tids tenv ==>
+   type_p tvs tenv p (ts_tid_rename (type_dCanon$sing_renum m n) t)
+     (MAP (\(nn,t). (nn,ts_tid_rename (type_dCanon$sing_renum m n) t)) bindings)`,
+  rw[] >>
+  `type_dCanon$good_remap (type_dCanon$sing_renum m n)` by
+    (fs[type_dCanonTheory.good_remap_def,type_dCanonTheory.sing_renum_def] >>
+     fs[prim_tids_def] >> rw[] >> fs[] >> simp[MAP_EQ_ID] >>
+     fs[prim_type_nums_def] >> rw[] >> fs[]) >>
+  drule type_dCanonTheory.type_p_ts_tid_rename >>
+  strip_tac >> first_x_assum drule >>
+  drule type_dCanonTheory.sing_renum_NOTIN_tenv_ID >>
+  simp[] >> rw[] >> metis_tac[type_dCanonTheory.type_p_tenv_equiv]);
+val _ = show "type_p_ts_tid_rename_sing_renum_replay_typed" type_p_ts_tid_rename_sing_renum_replay;
+val type_e_ts_tid_rename_sing_renum_replay = Q.prove(
+  `m NOTIN tids /\ prim_tids T tids /\ type_e tenv tenvE e t /\
+   type_dCanon$set_tids_tenv tids tenv ==>
+   type_e tenv (type_dCanon$remap_tenvE (type_dCanon$sing_renum m n) tenvE) e
+     (ts_tid_rename (type_dCanon$sing_renum m n) t)`,
+  rw[] >>
+  `type_dCanon$good_remap (type_dCanon$sing_renum m n)` by
+    (fs[type_dCanonTheory.good_remap_def,type_dCanonTheory.sing_renum_def] >>
+     fs[prim_tids_def] >> rw[] >> fs[] >> simp[MAP_EQ_ID] >>
+     fs[prim_type_nums_def] >> rw[] >> fs[]) >>
+  drule type_dCanonTheory.type_e_ts_tid_rename >>
+  strip_tac >> first_x_assum drule >>
+  drule type_dCanonTheory.sing_renum_NOTIN_tenv_ID >>
+  simp[] >> rw[] >> metis_tac[type_dCanonTheory.type_e_tenv_equiv]);
+val _ = show "type_e_ts_tid_rename_sing_renum_replay_typed" type_e_ts_tid_rename_sing_renum_replay;
 val _ = show "linv_def_typed" pred_setTheory.LINV_DEF;
 val _ = show "good_remap_LINV_typed" type_dCanonTheory.good_remap_LINV;
 val _ = show "ts_tid_rename_LINV_typed" type_dCanonTheory.ts_tid_rename_LINV;

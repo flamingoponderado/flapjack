@@ -3899,6 +3899,7 @@ import Flapjack.Compiler.Inference.TypeDCanon.Operator
 import Flapjack.Compiler.Inference.TypeDCanon.Expression
 import Flapjack.Compiler.Inference.TypeDCanon.Inverse
 import Flapjack.Compiler.Inference.TypeDCanon.EnvironmentInverse
+import Flapjack.Compiler.Inference.TypeDCanon.SingleRename
 import Flapjack.PrimSemEnv
 import Flapjack.Compiler.Repl.ReplTypes
 import Flapjack.Compiler.Proofs.CompilerProof
