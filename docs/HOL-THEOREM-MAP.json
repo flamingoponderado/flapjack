@@ -1,5 +1,17 @@
 [
 {
+  "hol_path": "cakeml/semantics/proofs/typeSysPropsScript.sml", "hol_name": "type_funs_MAP_FST",
+  "lean_path": "Flapjack/TypeSysProps/TypingLists.lean", "lean_name": "typeFunsMapFst",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent source comparison and type_funs_MAP_FST_typed; exact function and binding carriers, source binder order and name-list equality."
+ },
+{
+  "hol_path": "cakeml/semantics/proofs/typeSysPropsScript.sml", "hol_name": "type_es_length",
+  "lean_path": "Flapjack/TypeSysProps/TypingLists.lean", "lean_name": "typeEsLength",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent source comparison and type_es_length_typed; exact expression and type-list typing premise, binder order and length conclusion."
+ },
+{
   "hol_path": "cakeml/semantics/proofs/namespacePropsScript.sml", "hol_name": "nsAll_alist_to_ns",
   "lean_path": "Flapjack/NamespaceProps/All.lean", "lean_name": "nsAllAlistToNs",
   "statement_status": "reviewed_exact",

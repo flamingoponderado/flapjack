@@ -68,6 +68,22 @@ private theorem clashList (ts : List SemanticT) (m n : Nat) (present : setTidsLi
 termination_by sizeOf ts
 end
 
+/-- Flapjack proof infrastructure for the source declaration-canonicalization
+argument: HOL proves this scheme-instance transport inline using the mapped
+substitution witness. There is no separate HOL theorem for the helper. -/
+theorem tschemeInstRename (f : Nat → Nat) (specCount implCount : Nat) (spec impl : SemanticT) :
+    tschemeInst (specCount, spec) (implCount, impl) →
+    tschemeInst (specCount, tsTidRename f spec) (implCount, tsTidRename f impl) := by
+  rintro ⟨sub, length, freeImpl, freeSub, result⟩
+  refine ⟨sub.map (tsTidRename f), ?_, ?_, ?_, ?_⟩
+  · simpa using length
+  · exact (checkFreevarsTsTidRename implCount [] impl f).2 freeImpl
+  · rw [List.all_eq_true] at freeSub ⊢
+    intro renamed member
+    obtain ⟨original, originalMem, rfl⟩ := List.mem_map.mp member
+    exact (checkFreevarsTsTidRename specCount [] original f).2 (freeSub original originalMem)
+  · rw [← tsTidRenameDeBruijnSubst, result]
+
 /-- Renaming an occurring identifier to a distinct one prevents type-scheme
 instantiation in either direction. -/
 @[hol "cakeml/compiler/inference/proofs/type_dCanonScript.sml" "sing_renum_NOT_tscheme_inst"]
