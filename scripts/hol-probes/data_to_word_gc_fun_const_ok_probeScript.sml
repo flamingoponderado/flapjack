@@ -30,3 +30,5 @@ load "data_to_word_assignProofTheory";
 open data_to_word_assignProofTheory;
 val _ = pr_typed "state_rel_cut_state_opt_SOME_typed" state_rel_cut_state_opt_SOME;
 val _ = pr_typed "cut_state_opt_SOME_eq_typed" cut_state_opt_SOME_eq;
+val _ = pr_typed "state_rel_cut_state_opt_set_var_typed" state_rel_cut_state_opt_set_var;
+val _ = pr_typed "cut_env_idempotent_typed" cut_env_idempotent;

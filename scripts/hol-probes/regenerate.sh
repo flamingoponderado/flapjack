@@ -5929,7 +5929,7 @@ run_probe word_to_word_no_install_compile_single_probeScript.sml word_to_word_no
   no_install_no_alloc_compile_single_correct_statement no_install_no_alloc_compile_single_correct_typed \
   "$cake_dir/compiler/backend/proofs/word_to_wordProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe data_to_word_gc_fun_const_ok_probeScript.sml data_to_word_gc_fun_const_ok_probe.out \
-  gc_fun_const_ok_word_gc_fun_statement cut_state_opt_SOME_eq_typed \
+  gc_fun_const_ok_word_gc_fun_statement cut_env_idempotent_typed \
   "$cake_dir/compiler/backend/proofs/data_to_word_gcProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe data_to_word_correct_typed_probeScript.sml data_to_word_correct_typed_probe.out \
   data_compile_correct_hypotheses data_compile_correct_typed \

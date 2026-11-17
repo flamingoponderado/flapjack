@@ -8240,6 +8240,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "cut_env_idempotent",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/CutState.lean",
+  "lean_name": "cutEnv_idempotent",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with cut_env_idempotent_typed: the same successful sparse-tree cut is idempotent at arbitrary payload type, with the original sole premise and result equality; no representation qualifier is required."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
   "hol_name": "cut_state_opt_SOME_eq",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/CutState.lean",
   "lean_name": "cutStateOpt_some_eq",
