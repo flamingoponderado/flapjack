@@ -1,5 +1,17 @@
 [
 {
+  "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "type_e_tenv_equiv",
+  "lean_path": "Flapjack/Compiler/Inference/TypeDCanon.lean", "lean_name": "typeETenvEquiv",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with source and type_e_tenv_equiv_typed confirms all three independently quantified expression, expression-list and function clauses. typeBranches_iff establishes the source membership-indexed handler and match premises."
+ },
+{
+  "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "type_pe_determ_tenv_equiv",
+  "lean_path": "Flapjack/Compiler/Inference/TypeDCanon.lean", "lean_name": "typePeDetermTenvEquiv",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with source and type_pe_determ_tenv_equiv_typed confirms the declarative environment, local environment, pattern and expression carriers, full determinacy premise and conclusion."
+ },
+{
   "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "type_p_tenv_equiv",
   "lean_path": "Flapjack/Compiler/Inference/TypeDCanon.lean", "lean_name": "typePTenvEquiv",
   "statement_status": "reviewed_exact",

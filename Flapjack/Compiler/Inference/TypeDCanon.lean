@@ -193,6 +193,116 @@ theorem typePTenvEquiv :
       intro p ps t ts bindings rest head tail ihHead ihTail target equiv
       exact .cons tvs target p ps t ts bindings rest (ihHead target equiv) (ihTail target equiv)
 
+/-- Expression, expression-list, and function typing respect environment equivalence. -/
+@[hol "cakeml/compiler/inference/proofs/type_dCanonScript.sml" "type_e_tenv_equiv"]
+theorem typeETenvEquiv :
+    (∀ env bvs e t, TypeE env bvs e t →
+      ∀ target, tenvEquiv env target → TypeE target bvs e t) ∧
+    (∀ env bvs es ts, TypeEs env bvs es ts →
+      ∀ target, tenvEquiv env target → TypeEs target bvs es ts) ∧
+    (∀ env bvs funs ts, TypeFuns env bvs funs ts →
+      ∀ target, tenvEquiv env target → TypeFuns target bvs funs ts) := by
+  refine ⟨?_, ?_, ?_⟩
+  all_goals
+    intro env bvs es ts h
+    let P := fun bvs e t (_ : TypeE env bvs e t) =>
+      ∀ target, tenvEquiv env target → TypeE target bvs e t
+    let Ps := fun bvs es ts (_ : TypeEs env bvs es ts) =>
+      ∀ target, tenvEquiv env target → TypeEs target bvs es ts
+    let Pf := fun bvs funs ts (_ : TypeFuns env bvs funs ts) =>
+      ∀ target, tenvEquiv env target → TypeFuns target bvs funs ts
+    let Pb := fun bvs input output clauses (_ : TypeBranches env bvs input output clauses) =>
+      ∀ target, tenvEquiv env target → TypeBranches target bvs input output clauses
+    first
+    | refine TypeE.rec (motive_1 := P) (motive_2 := Ps) (motive_3 := Pf) (motive_4 := Pb)
+        ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ h
+    | refine TypeEs.rec (motive_1 := P) (motive_2 := Ps) (motive_3 := Pf) (motive_4 := Pb)
+        ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ h
+    | refine TypeFuns.rec (motive_1 := P) (motive_2 := Ps) (motive_3 := Pf) (motive_4 := Pb)
+        ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ h
+    case refine_1 => intro b n target equiv; exact .intLit target b n
+    case refine_2 => intro b c target equiv; exact .charLit target b c
+    case refine_3 => intro b s target equiv; exact .stringLit target b s
+    case refine_4 => intro b w target equiv; exact .word8Lit target b w
+    case refine_5 => intro b w target equiv; exact .word64Lit target b w
+    case refine_6 => intro b w target equiv; exact .float64Lit target b w
+    case refine_7 =>
+      intro b e t free typed ih target equiv
+      exact .raise target b e t free (ih target equiv)
+    case refine_8 =>
+      intro b e clauses t typed nonempty branches ih ihBranches target equiv
+      exact .handle target b e clauses t (ih target equiv) nonempty (ihBranches target equiv)
+    case refine_9 =>
+      intro b name es params id args types free arity typed lookup ih target equiv
+      apply TypeE.constructor target b name es params id args types free arity (ih target equiv)
+      rw [← nsAll2EqLookup equiv.2.1 name]
+      exact lookup
+    case refine_10 =>
+      intro b es types typed ih target equiv
+      exact .tuple target b es types (ih target equiv)
+    case refine_11 =>
+      intro b name t args tvs arity free lookup target equiv
+      apply TypeE.var target b name t args tvs arity free
+      rw [← lookupVarTenvEquiv env target name b equiv]
+      exact lookup
+    case refine_12 =>
+      intro b name body t1 t2 free typed ih target equiv
+      exact .fn target b name body t1 t2 free (ih target equiv)
+    case refine_13 =>
+      intro b op es ts t typed operator free ih target equiv
+      exact .app target b op es ts t (ih target equiv) operator free
+    case refine_14 =>
+      intro b op e1 e2 first second ih1 ih2 target equiv
+      exact .log target b op e1 e2 (ih1 target equiv) (ih2 target equiv)
+    case refine_15 =>
+      intro b guard yes no t condition thenBranch elseBranch ih1 ih2 ih3 target equiv
+      exact .if_ target b guard yes no t (ih1 target equiv) (ih2 target equiv) (ih3 target equiv)
+    case refine_16 =>
+      intro b e clauses t1 t2 typed nonempty branches ih ihBranches target equiv
+      exact .match_ target b e clauses t1 t2 (ih target equiv) nonempty (ihBranches target equiv)
+    case refine_17 =>
+      intro b name e1 e2 t1 t2 value body ih1 ih2 target equiv
+      exact .let_ target b name e1 e2 t1 t2 (ih1 target equiv) (ih2 target equiv)
+    case refine_18 =>
+      intro b funs e t bindings functions body ihF ihE target equiv
+      exact .letrec target b funs e t bindings (ihF target equiv) (ihE target equiv)
+    case refine_19 =>
+      intro b e t free names typed ih target equiv
+      have names' := checkTypeNamesTenvEquiv env.t t target.t ⟨equiv.1, names⟩
+      have subst := typeNameSubstTenvEquiv env.t t target.t equiv.1
+      have typed' := ih target equiv
+      rw [subst] at typed' ⊢
+      exact .annotation target b e t free names' typed'
+    case refine_20 =>
+      intro b e loc t typed ih target equiv
+      exact .location target b e loc t (ih target equiv)
+    case refine_21 => intro b target equiv; exact .nil target b
+    case refine_22 =>
+      intro b e es t ts head tail ihH ihT target equiv
+      exact .cons target b e es t ts (ihH target equiv) (ihT target equiv)
+    case refine_23 => intro b target equiv; exact .nil target b
+    case refine_24 =>
+      intro b name arg body funs bindings t1 t2 free typed tail unique ihH ihT target equiv
+      exact .cons target b name arg body funs bindings t1 t2 free (ihH target equiv) (ihT target equiv) unique
+    case refine_25 => intro b input output target equiv; exact .nil target b input output
+    case refine_26 =>
+      intro b input output p body rest bindings distinct pattern expression tail ihE ihT target equiv
+      exact .cons target b input output p body rest bindings distinct
+        (typePTenvEquiv.1 (numTvs b) env p input bindings pattern target equiv)
+        (ihE target equiv) (ihT target equiv)
+
+/-- Pattern-expression determinacy is preserved by environment equivalence. -/
+@[hol "cakeml/compiler/inference/proofs/type_dCanonScript.sml" "type_pe_determ_tenv_equiv"]
+theorem typePeDetermTenvEquiv (t1 t2 : TypeEnv) (x : TenvValExp) (y : Pat) (z : Flapjack.AstHOL.Exp) :
+    typePeDeterm t1 x y z ∧ tenvEquiv t1 t2 → typePeDeterm t2 x y z := by
+  rintro ⟨determ, equiv⟩ ty1 bs1 ty2 bs2 ⟨hp1, he1, hp2, he2⟩
+  have reverse := tenvEquivSym t1 t2 equiv
+  apply determ ty1 bs1 ty2 bs2
+  exact ⟨typePTenvEquiv.1 0 t2 y ty1 bs1 hp1 t1 reverse,
+    typeETenvEquiv.1 t2 x z ty1 he1 t1 reverse,
+    typePTenvEquiv.1 0 t2 y ty2 bs2 hp2 t1 reverse,
+    typeETenvEquiv.1 t2 x z ty2 he2 t1 reverse⟩
+
 /-- Every type identifier in the declarative environment belongs to the set. -/
 @[hol "cakeml/compiler/inference/proofs/type_dCanonScript.sml" "set_tids_tenv_def"]
 noncomputable def setTidsTenv (tids : Nat → Prop) (tenv : TypeEnv) : Prop :=
