@@ -466,6 +466,10 @@ val _ = show "type_pe_determ_canon_typed" type_dCanonTheory.type_pe_determ_canon
 val _ = show "type_pe_determ_canon_tenv_equiv_typed" type_dCanonTheory.type_pe_determ_canon_tenv_equiv;
 val _ = show "type_d_canon_rules_typed" type_dCanonTheory.type_d_canon_rules;
 val _ = show "good_remap_typed" type_dCanonTheory.good_remap_def;
+val _ = show "sing_renum_typed" type_dCanonTheory.sing_renum_def;
+val _ = show "sing_renum_NOTIN_ID_typed" type_dCanonTheory.sing_renum_NOTIN_ID;
+val _ = show "sing_renum_IN_NOT_ID_typed" type_dCanonTheory.sing_renum_IN_NOT_ID;
+val _ = show "sing_renum_NOTIN_tenv_ID_typed" type_dCanonTheory.sing_renum_NOTIN_tenv_ID;
 val _ = show "extend_bij_typed" type_dCanonTheory.extend_bij_def;
 val _ = show "extend_bij_id_typed" type_dCanonTheory.extend_bij_id;
 val _ = show "extend_bij_compose_typed" type_dCanonTheory.extend_bij_compose;
@@ -476,6 +480,11 @@ val good_remap_extend_bij_replay = Q.prove(
   rw[type_dCanonTheory.good_remap_def, type_dCanonTheory.extend_bij_def,
      prim_tids_def, prim_type_nums_def]);
 val _ = show "good_remap_extend_bij_replay_typed" good_remap_extend_bij_replay;
+val check_freevars_ts_tid_rename_replay = Q.prove(
+  `!ts ls t. check_freevars ts ls (ts_tid_rename f t) <=> check_freevars ts ls t`,
+  ho_match_mp_tac check_freevars_ind >>
+  fs[ts_tid_rename_def,check_freevars_def,EVERY_MAP,EVERY_MEM]);
+val _ = show "check_freevars_ts_tid_rename_replay_typed" check_freevars_ts_tid_rename_replay;
 val ts_tid_rename_type_subst_replay = Q.prove(
   `!s t f. ts_tid_rename f (type_subst s t) =
      type_subst (ts_tid_rename f o_f s) (ts_tid_rename f t)`,

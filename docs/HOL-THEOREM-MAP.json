@@ -1,5 +1,35 @@
 [
 {
+  "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "check_freevars_ts_tid_rename",
+  "lean_path": "Flapjack/Compiler/Inference/TypeDCanon.lean", "lean_name": "checkFreevarsTsTidRename",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with the HOL-local theorem and check_freevars_ts_tid_rename_replay_typed confirms the Boolean equivalence, semantic type and variable carriers; HOL's schematic renaming function is explicitly bound in Lean."
+ },
+{
+  "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "sing_renum_def",
+  "lean_path": "Flapjack/Compiler/Inference/TypeDCanon.lean", "lean_name": "singRenum",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with source and sing_renum_typed confirms the polymorphic carrier and exact equality-test and replacement branches."
+ },
+{
+  "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "sing_renum_NOTIN_ID",
+  "lean_path": "Flapjack/Compiler/Inference/TypeDCanon.lean", "lean_name": "singRenumNotInId",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with source and sing_renum_NOTIN_ID_typed confirms the absence premise and unchanged semantic type conclusion."
+ },
+{
+  "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "sing_renum_IN_NOT_ID",
+  "lean_path": "Flapjack/Compiler/Inference/TypeDCanon.lean", "lean_name": "singRenumInNotId",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with source and sing_renum_IN_NOT_ID_typed confirms both presence and distinctness premises and the inequality conclusion."
+ },
+{
+  "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "sing_renum_NOTIN_tenv_ID",
+  "lean_path": "Flapjack/Compiler/Inference/TypeDCanon.lean", "lean_name": "singRenumNotInTenvId",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with source and sing_renum_NOTIN_tenv_ID_typed confirms the bounded environment and absent identifier premises and namespace-equivalence conclusion."
+ },
+{
   "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "BIJ_extend_bij",
   "lean_path": "Flapjack/Compiler/Inference/TypeDCanon/Bijection.lean", "lean_name": "bijExtendBij",
   "statement_status": "reviewed_exact",

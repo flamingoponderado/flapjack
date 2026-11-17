@@ -10495,8 +10495,8 @@ pattern-expression determinacy equivalence theorems are captured directly
 from the original theory, along with the canonical determinacy definition and
 complete mutual declaration-typing rules. Primitive type-ID conditions and
 renaming-extension and bijection-extension laws are captured directly, with a replay of the local
-good-renaming preservation lemma and the type-substitution and type-name
-renaming lemmas. The
+good-renaming preservation lemma, the type-substitution and type-name
+renaming lemmas, and the free-variable and single-identifier renaming laws. The
 environment-relation, REPL, and type-soundness theories are not fetched by this
 probe; regenerate with
 `HOL_PROBE_ONLY=env_rel_init_probeScript.sml`.

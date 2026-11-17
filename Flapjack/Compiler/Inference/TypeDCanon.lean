@@ -706,4 +706,130 @@ private theorem tsTidRenameTypeNameSubstList {α : Type} (tenvt : TenvAbbrev) (t
 termination_by sizeOf ts
 end
 
+mutual
+/-- Renaming identifiers preserves the source free-variable check. -/
+@[hol "cakeml/compiler/inference/proofs/type_dCanonScript.sml" "check_freevars_ts_tid_rename"]
+theorem checkFreevarsTsTidRename (ts : Nat) (ls : List MlString) (t : SemanticT)
+    (f : Nat → Nat) : checkFreevars ts ls (tsTidRename f t) = true ↔ checkFreevars ts ls t = true := by
+  cases t with
+  | var name => simp [tsTidRename]
+  | varDb n => simp [tsTidRename]
+  | app args id =>
+    simpa only [tsTidRename, checkFreevars] using checkFreevarsListTsTidRename ts ls args f
+termination_by sizeOf t
+
+private theorem checkFreevarsListTsTidRename (ts : Nat) (ls : List MlString)
+    (args : List SemanticT) (f : Nat → Nat) :
+    checkFreevarsList ts ls (tsTidRenameList f args) = true ↔ checkFreevarsList ts ls args = true := by
+  cases args with
+  | nil => simp [tsTidRenameList, checkFreevarsList]
+  | cons arg args =>
+    simp only [tsTidRenameList, checkFreevarsList, Bool.and_eq_true]
+    exact and_congr (checkFreevarsTsTidRename ts ls arg f) (checkFreevarsListTsTidRename ts ls args f)
+termination_by sizeOf args
+end
+
+/-- Change one type identifier and leave every other identifier fixed. -/
+@[hol "cakeml/compiler/inference/proofs/type_dCanonScript.sml" "sing_renum_def"]
+noncomputable def singRenum {α : Type} (m n x : α) : α := by
+  classical
+  exact if x = m then n else x
+
+mutual
+/-- Renaming an absent identifier leaves a type unchanged. -/
+@[hol "cakeml/compiler/inference/proofs/type_dCanonScript.sml" "sing_renum_NOTIN_ID"]
+theorem singRenumNotInId (t : SemanticT) (m n : Nat) :
+    ¬ setTids t m → tsTidRename (singRenum m n) t = t := by
+  intro absent
+  cases t with
+  | var name => simp [tsTidRename]
+  | varDb id => simp [tsTidRename]
+  | app args id =>
+    simp only [setTids] at absent
+    have different : id ≠ m := by
+      intro equal
+      apply absent
+      simp [equal]
+    have absentArgs : ¬ setTidsList args m := fun h => absent (Or.inr h)
+    simp [tsTidRename, singRenum, different, singRenumNotInList args m n absentArgs]
+termination_by sizeOf t
+
+private theorem singRenumNotInList (args : List SemanticT) (m n : Nat) :
+    ¬ setTidsList args m → tsTidRenameList (singRenum m n) args = args := by
+  intro absent
+  cases args with
+  | nil => simp [tsTidRenameList]
+  | cons arg args =>
+    simp only [setTidsList] at absent
+    have head : ¬ setTids arg m := fun h => absent (Or.inl h)
+    have tail : ¬ setTidsList args m := fun h => absent (Or.inr h)
+    simp [tsTidRenameList, singRenumNotInId arg m n head, singRenumNotInList args m n tail]
+termination_by sizeOf args
+end
+
+/-- Renaming a present identifier to a different one changes the type. -/
+@[hol "cakeml/compiler/inference/proofs/type_dCanonScript.sml" "sing_renum_IN_NOT_ID"]
+theorem singRenumInNotId (t : SemanticT) (m n : Nat) :
+    setTids t m ∧ m ≠ n → tsTidRename (singRenum m n) t ≠ t := by
+  rintro ⟨present, different⟩ equal
+  have renamed : setTids (tsTidRename (singRenum m n) t) m := by simpa [equal] using present
+  rw [setTidsTsTidRename] at renamed
+  obtain ⟨old, _, maps⟩ := renamed
+  by_cases same : old = m
+  · subst old
+    simp [singRenum] at maps
+    exact different maps.symm
+  · simp [singRenum, same] at maps
+
+/-- Renaming an identifier absent from the bound preserves environment equivalence. -/
+@[hol "cakeml/compiler/inference/proofs/type_dCanonScript.sml" "sing_renum_NOTIN_tenv_ID"]
+theorem singRenumNotInTenvId (tids : Nat → Prop) (tenv : TypeEnv) (m n : Nat) :
+    setTidsTenv tids tenv ∧ ¬ tids m → tenvEquiv (remapTenv (singRenum m n) tenv) tenv := by
+  rintro ⟨⟨ht, hc, hv⟩, absent⟩
+  have mapRel {V : Type} (ren : V → V) (env : Namespace MlString MlString V)
+      (fixed : nsAll (fun _ v => ren v = v) env) :
+      nsAll2 (fun _ a b => a = b) (nsMap ren env) env := by
+    constructor
+    · constructor
+      · intro id value found
+        rw [nsLookup_nsMap] at found
+        cases source : nsLookup env id with
+        | none => simp [source] at found
+        | some v =>
+          simp only [source, Option.map_some, Option.some.injEq] at found
+          subst value
+          exact ⟨v, rfl, fixed id v source⟩
+      · intro path missing
+        simp [nsLookupMod_nsMap, missing]
+    · constructor
+      · intro id value found
+        refine ⟨value, ?_, rfl⟩
+        simp [nsLookup_nsMap, found, fixed id value found]
+      · intro path missing
+        rw [nsLookupMod_nsMap] at missing
+        cases source : nsLookupMod env path <;> simp_all
+  refine ⟨?_, ?_, ?_⟩
+  · apply mapRel
+    intro id entry found
+    have bound := ht id entry found
+    have noId : ¬ setTids entry.2 m := fun member => absent (bound m member)
+    simp [singRenumNotInId entry.2 m n noId]
+  · apply mapRel
+    intro id entry found
+    obtain ⟨bound, tid⟩ := hc id entry found
+    have noTid : entry.2.2 ≠ m := fun equal => absent (equal ▸ tid)
+    have fixedArgs : entry.2.1.map (tsTidRename (singRenum m n)) = entry.2.1 := by
+      calc
+        entry.2.1.map (tsTidRename (singRenum m n)) = entry.2.1.map (fun ty => ty) := by
+          apply List.map_congr_left
+          intro ty member
+          exact singRenumNotInId ty m n (fun used => absent (bound ty member m used))
+        _ = entry.2.1 := List.map_id _
+    simp [fixedArgs, singRenum, noTid, Prod.eta]
+  · apply mapRel
+    intro id entry found
+    have bound := hv id entry found
+    have noId : ¬ setTids entry.2 m := fun member => absent (bound m member)
+    simp [singRenumNotInId entry.2 m n noId]
+
 end Flapjack.Compiler.Inference.TypeDCanon
