@@ -12,6 +12,12 @@
   "reviewer": "Independent source comparison and type_es_length_typed; exact expression and type-list typing premise, binder order and length conclusion."
  },
 {
+  "hol_path": "cakeml/semantics/proofs/typeSysPropsScript.sml", "hol_name": "tenv_val_exp_ok_bvl_funs",
+  "lean_path": "Flapjack/TypeSysProps/Environment.lean", "lean_name": "tenvValExpOkBvlFuns",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with the source and tenv_val_exp_ok_bvl_funs_typed confirms the ordered function, binding, environment and local-environment carriers, both premises and the bound-function invariant conclusion. The source's unused polymorphic tenv_val binder is retained."
+ },
+{
   "hol_path": "cakeml/semantics/proofs/typeSysPropsScript.sml", "hol_name": "type_p_freevars",
   "lean_path": "Flapjack/TypeSysProps/Pattern.lean", "lean_name": "typePFreevars",
   "statement_status": "reviewed_exact",
