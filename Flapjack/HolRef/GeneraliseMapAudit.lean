@@ -99,6 +99,7 @@ def generaliseMapBundleProblems (target : Name) : MetaM (Array String) := do
   let dependencies : Array (Name × Name) := #[
     (`Flapjack.HolFiniteMapExact, `Flapjack.FiniteMap.Exact),
     (`Flapjack.HolFiniteMapExact.lookup, `Flapjack.FiniteMap.Exact),
+    (`Flapjack.HolFiniteMapExact.updateEq, `Flapjack.FiniteMap.Exact),
     (`Flapjack.Compiler.Inference.InferT, `Flapjack.Compiler.Inference.InferT),
     (`Flapjack.Spt, `Flapjack.Misc.Sptree),
     (`Flapjack.HOL.Transfer.Fmsp.sp2fm, `Flapjack.HOL.Transfer.Fmsp),

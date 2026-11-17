@@ -3707,6 +3707,99 @@ def _statements_of_declaration(source: str, name: str) -> list[str]:
     return results
 
 
+def generalise_parameter_tuple_result_errors(
+    source: str, lean_path: str, decl_name: str,
+    hol_ref: tuple[str, str], parameter: str, component: str,
+) -> list[str]:
+    """Prospective, deliberately narrow source gate for generalise_def.
+
+    This helper alone does not enable a qualifier. The eventual attribute and
+    exporter must also invoke the elaborated owner/type/witness audit and check
+    the HOL metadata. Exact statement matching intentionally fails closed on
+    unfamiliar syntax; source review remains necessary even when it passes.
+    """
+    if (lean_path != "Flapjack/Compiler/Inference/Infer/Generalise.lean" or
+            hol_ref != ("cakeml/compiler/inference/inferScript.sml", "generalise_def") or
+            decl_name not in {"generaliseMap", "generaliseListMap"} or
+            parameter != "subst" or component != "component_2"):
+        return ["generalization qualifier requires the exact source site and map positions"]
+    clean = strip_lean_comments(source)
+    if re.search(r"(?m)^\s*(?:variables?|include|omit|(?:(?:local|scoped)\s+)?(?:syntax|macro|notation|infix|infixl|infixr|prefix|postfix))\b", clean):
+        return ["generalization qualifier rejects ambient binders or syntax changes"]
+    opens = [" ".join(entry.split()) for entry in
+             re.findall(r"(?m)^\s*open\s+([^\n]+)", clean)]
+    if opens != ["Flapjack.HOL.Transfer.Fmsp"]:
+        return ["generalization qualifier requires the reviewed open declaration"]
+    namespaces = re.findall(r"(?m)^\s*namespace\s+([^\s]+)", clean)
+    if namespaces != ["Flapjack.Compiler.Inference.Infer.Generalise"]:
+        return ["generalization qualifier requires its exact owning namespace"]
+    value = "List InferT" if decl_name == "generaliseListMap" else "InferT"
+    arg = "ts" if decl_name == "generaliseListMap" else "t"
+    exec_name = "generaliseList" if decl_name == "generaliseListMap" else "generalise"
+    expected_bodies = {
+        "generaliseMap": """
+def generaliseMap (minimum next : Nat) (subst : HolFiniteMapExact Nat Nat) :
+    InferT → Nat × HolFiniteMapExact Nat Nat × InferT
+  | .app ts name =>
+    let (count, subst, ts) := generaliseListMap minimum next subst ts
+    (count, subst, .app ts name)
+  | .uvar n => match subst.lookup n with
+    | some v => (0, subst, .varDb v)
+    | none => if minimum ≤ n then (1, subst.updateEq (n, next), .varDb next)
+      else (0, subst, .uvar n)
+  | .varDb n => (0, subst, .varDb n)
+termination_by t => sizeOf t
+""",
+        "generaliseListMap": """
+def generaliseListMap (minimum next : Nat) (subst : HolFiniteMapExact Nat Nat) :
+    List InferT → Nat × HolFiniteMapExact Nat Nat × List InferT
+  | [] => (0, subst, [])
+  | t :: ts =>
+    let (count, subst, t) := generaliseMap minimum next subst t
+    let (count', subst, ts) := generaliseListMap minimum (count + next) subst ts
+    (count + count', subst, t :: ts)
+termination_by ts => sizeOf ts
+""",
+    }
+    for operation, expected_body in expected_bodies.items():
+        declarations = list(re.finditer(
+            rf"(?m)^\s*(?:private\s+|protected\s+)?(?:def|theorem|lemma|axiom|opaque|abbrev)\s+{re.escape(operation)}\b",
+            clean,
+        ))
+        if len(declarations) != 1:
+            return ["generalization operation must be uniquely declared"]
+        start = declarations[0].start()
+        tail = clean[declarations[0].end():]
+        termination = re.search(r"(?m)^\s*termination_by\b[^\n]*", tail)
+        next_declaration = re.search(
+            r"(?m)^\s*(?:private\s+|protected\s+)?(?:def|theorem|lemma|axiom|opaque|abbrev|end)\b",
+            tail,
+        )
+        if termination is None or (next_declaration is not None and
+                                   next_declaration.start() < termination.start()):
+            return ["generalization operation is missing its own termination clause"]
+        end = declarations[0].end() + termination.end()
+        if " ".join(clean[start:end].split()) != " ".join(expected_body.split()):
+            return [f"{operation} differs from the reviewed signature or complete body"]
+    witness = f"holFmapAsFiniteSupportParameterTupleResultWitness_{decl_name}"
+    witness_decls = re.findall(
+        rf"(?m)^\s*(?:private\s+|protected\s+)?(?:def|theorem|lemma|axiom|opaque|abbrev)\s+{re.escape(witness)}\b",
+        clean,
+    )
+    if len(witness_decls) != 1:
+        return ["generalization witness must be uniquely declared"]
+    statements = _statements_of_declaration(clean, witness)
+    expected = (
+        f"(minimum next : Nat) (subst : HolFiniteMapExact Nat Nat) ({arg} : {value}) (key : Nat) : "
+        f"(sp2fm (fm2sp subst)).lookup key = subst.lookup key ∧ "
+        f"({decl_name} minimum next subst {arg}).2.1.lookup key = "
+        f"sptLookup key (Infer.{exec_name} minimum next (fm2sp subst) {arg}).2.1"
+    )
+    if len(statements) != 1 or " ".join(statements[0].split()) != expected:
+        return ["generalization witness must state the exact unconditional lookup correspondence"]
+    return []
+
+
 def _binder_types(binder_zone: str) -> list[str]:
     """Return the declared type text of each top-level binder.
 
