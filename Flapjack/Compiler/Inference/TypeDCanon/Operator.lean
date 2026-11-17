@@ -9,21 +9,11 @@ import Aesop
 namespace Flapjack.Compiler.Inference.TypeDCanon
 open Flapjack.AstHOL Flapjack.TypeSystemHOL Flapjack.Compiler.Inference.InferProps
 
-private theorem fixed {α : Type} (f : α → α) (xs : List α) (h : xs.map f = xs) : ∀ x ∈ xs, f x = x := by
-  induction xs with
-  | nil => simp
-  | cons y ys ih =>
-    simp only [List.map_cons, List.cons.injEq] at h
-    intro x mem
-    rcases List.mem_cons.mp mem with rfl | mem
-    · exact h.1
-    · exact ih h.2 x mem
-
 /-- Good identifier renamings preserve every source operator typing rule. -/
 @[hol "cakeml/compiler/inference/proofs/type_dCanonScript.sml" "type_op_ts_tid_rename"]
 theorem typeOpTsTidRename (f : Nat → Nat) (good : goodRemap f) (op : Op) (ts : List SemanticT) (t : SemanticT)
     (h : typeOp op ts t) : typeOp op (ts.map (tsTidRename f)) (tsTidRename f t) := by
-  have fix := fixed f (TlistNum :: TboolNum :: primTypeNums) good
+  have fix := mapFixedOnMembers f (TlistNum :: TboolNum :: primTypeNums) good
   have fList : f TlistNum = TlistNum := fix _ (by simp)
   have fBool : f TboolNum = TboolNum := fix _ (by simp)
   have fArray : f TarrayNum = TarrayNum := fix _ (by simp [primTypeNums])

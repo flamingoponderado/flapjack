@@ -10,17 +10,6 @@ namespace Flapjack.Compiler.Inference.TypeDCanon
 open Flapjack Flapjack.Basis.Pure.MlString Flapjack.NamespaceHOL Flapjack.AstHOL Flapjack.TypeSystemHOL
   Flapjack.Compiler.Inference.InferProps Flapjack.Compiler.Inference.TypeDCanon
 
-/-- List-map identity supplies the fixed IDs used in the source proof. -/
-private theorem fixed {α : Type} (f : α → α) (xs : List α) (h : xs.map f = xs) : ∀ x ∈ xs, f x = x := by
-  induction xs with
-  | nil => simp
-  | cons y ys ih =>
-    simp only [List.map_cons, List.cons.injEq] at h
-    intro x mem
-    rcases List.mem_cons.mp mem with rfl | mem
-    · exact h.1
-    · exact ih h.2 x mem
-
 /-- The function-list rule's name lookup is unchanged by renaming binding types. -/
 private theorem lookupMapNone (name : MlString) (bindings : List (MlString × SemanticT)) (f : Nat → Nat) :
     bindings.lookup name = none →
@@ -41,7 +30,7 @@ theorem typeETsTidRename (f : Nat → Nat) : goodRemap f →
     (∀ env bvs es ts, TypeEs env bvs es ts → TypeEs (remapTenv f env) (remapTenvE f bvs) es (ts.map (tsTidRename f))) ∧
     (∀ env bvs funs bindings, TypeFuns env bvs funs bindings → TypeFuns (remapTenv f env) (remapTenvE f bvs) funs (bindings.map (fun entry => (entry.1, tsTidRename f entry.2)))) := by
   intro good
-  have fixed := fixed f (TlistNum :: TboolNum :: primTypeNums) good
+  have fixed := mapFixedOnMembers f (TlistNum :: TboolNum :: primTypeNums) good
   have fint : f TintNum = TintNum := fixed TintNum (by simp [primTypeNums])
   have fchar : f TcharNum = TcharNum := fixed TcharNum (by simp [primTypeNums])
   have fstr : f TstringNum = TstringNum := fixed TstringNum (by simp [primTypeNums])

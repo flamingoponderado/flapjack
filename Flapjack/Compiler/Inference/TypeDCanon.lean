@@ -644,7 +644,8 @@ private theorem zipMapValues (names : List MlString) (types : List SemanticT) (f
     | nil => rfl
     | cons t ts => simp [ih]
 
-private theorem mapFixedOnMembers {α : Type} (f : α → α) (xs : List α)
+/-- Flapjack proof helper used by the source type-ID renaming arguments. -/
+theorem mapFixedOnMembers {α : Type} (f : α → α) (xs : List α)
     (h : xs.map f = xs) : ∀ x ∈ xs, f x = x := by
   induction xs with
   | nil => simp
