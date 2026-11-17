@@ -19,14 +19,12 @@ structure WordStage where
   names : Spt MlString
 
 /-- Lower all optimized data functions and prepend the compiler's runtime
-stubs. `none` denotes a rejected lowering or unsupported stub configuration. -/
+stubs. `none` denotes a rejected lowering. -/
 def captureWord64 (config : DataToWord.Config) (data : DataStages) : Option WordStage := do
   let functions ← data.spaced.mapM fun (n, arity, body) => do
     let (body, _) ← DataToWord.compileControl? (width := 64) config n 2 body
     pure (n, arity + 1, body)
-  let fixed ← DataToWord.fixedStubs? config
-  let bignum ← WordBignum.generateStubs 64 DataToWord.bignumLocation
-  pure ⟨fixed ++ bignum ++ functions, data.names⟩
+  pure ⟨DataToWord.stubs config ++ functions, data.names⟩
 
 /-- Render the captured WordLang stage with CakeML's original heading. -/
 def wordReportBytes (stage : WordStage) : List HolChar :=
