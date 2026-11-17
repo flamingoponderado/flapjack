@@ -92,4 +92,35 @@ theorem stateRel_getVar {width : Nat} [NeZero width] {C F : Type}
   obtain ⟨word, hword⟩ := Option.isSome_iff_exists.mp (targetPresent n present)
   exact ⟨word, hword⟩
 
+/-- Reading a list of source locals yields a same-length list of adjusted
+target locals. The HOL tag is pending review of `stateRel`'s dependencies. -/
+theorem stateRel_getVars {width : Nat} [NeZero width] {C F : Type}
+    (conf : Config) (l1 l2 : Nat) (source : DataSem.State C F)
+    (target : WordSemStateFiniteExact width C F) (locs : List (Nat × Nat))
+    (names : List Nat) (values : List DataSem.Value)
+    (related : stateRel conf l1 l2 source target none locs)
+    (found : DataSem.getVars names source.locals = some values) :
+    ∃ words, WordSemStateFiniteExact.getVars (names.map adjustVar) target = some words ∧
+      values.length = words.length := by
+  induction names generalizing values with
+  | nil =>
+    simp [DataSem.getVars] at found
+    subst values
+    exact ⟨[], rfl, rfl⟩
+  | cons name names ih =>
+    cases head : DataSem.getVar name source.locals with
+    | none => simp [DataSem.getVars, head] at found
+    | some value =>
+      cases tail : DataSem.getVars names source.locals with
+      | none => simp [DataSem.getVars, head, tail] at found
+      | some rest =>
+        have valuesEq : values = value :: rest := by
+          simpa [DataSem.getVars, head, tail] using found.symm
+        subst values
+        obtain ⟨word, wordFound⟩ := stateRel_getVar conf l1 l2 source target none locs name value related head
+        obtain ⟨words, wordsFound, lengths⟩ := ih rest tail
+        refine ⟨word :: words, ?_, ?_⟩
+        · simp [WordSemStateFiniteExact.getVars, wordFound, wordsFound]
+        · simpa using lengths
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

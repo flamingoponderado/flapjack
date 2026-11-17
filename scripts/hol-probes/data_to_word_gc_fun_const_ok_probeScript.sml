@@ -21,3 +21,4 @@ val _ = (print "mk_loc_function_type=";
 val _ = pr_typed "state_rel_get_var_IMP_typed" state_rel_get_var_IMP;
 val _ = pr_typed "word_ml_inv_lookup_typed" word_ml_inv_lookup;
 val _ = pr_typed "word_ml_inv_insert_typed" word_ml_inv_insert;
+val _ = pr_typed "state_rel_get_vars_IMP_typed" state_rel_get_vars_IMP;
