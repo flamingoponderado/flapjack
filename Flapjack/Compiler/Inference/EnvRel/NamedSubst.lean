@@ -3,27 +3,13 @@ module
 public import Flapjack.Compiler.Inference.EnvRel
 public import Flapjack.TypeSystemHOL.TypeNames
 public import Flapjack.FiniteMap.AlistExact
+public import Flapjack.TypeSysProps.Freevars
 
 @[expose] public section
 
 /-! Conversion of named type substitutions. -/
 namespace Flapjack.Compiler.Inference.EnvRel
-open Flapjack.TypeSystemHOL Flapjack.Basis.Pure.MlString
-
-/-- A canonical map built from an association list has first-match lookup. -/
-private theorem lookupAlistMap (entries : List (MlString × SemanticT)) (key : MlString) :
-    (HolFiniteMapExact.alistToFmap entries).lookup key = entries.lookup key := by
-  induction entries with
-  | nil => rfl
-  | cons entry entries ih =>
-    rcases entry with ⟨k, v⟩
-    by_cases h : key = k
-    · subst key
-      rw [HolFiniteMapExact.lookup_alistToFmap_head]
-      simp [List.lookup]
-    · rw [HolFiniteMapExact.lookup_alistToFmap_tail (key := key) _ _ h]
-      have hb : (key == k) = false := by simp [h]
-      simpa [List.lookup, hb] using ih
+open Flapjack.TypeSystemHOL Flapjack.Basis.Pure.MlString Flapjack.TypeSysProps
 
 /-- Zipping names with mapped values maps the result of first-match lookup. -/
 private theorem lookupZipMap (names : List MlString) (values : List InferT)
@@ -71,7 +57,8 @@ private theorem convertTSubstType (t : SemanticT) (names : List MlString)
   | var name =>
     have hmem : name ∈ names := by simpa [checkFreevars] using h
     obtain ⟨value, found⟩ := lookupZipSome names values name hlen hmem
-    simp [Infer.inferTypeSubst, typeSubst, lookupAlistMap, lookupZipMap, found]
+    simp [Infer.inferTypeSubst, typeSubst, alistToFmapEqTypeSubstMap,
+      lookupTypeSubstMap, lookupZipMap, found]
   | varDb n => simp [checkFreevars] at h
   | app ts tc =>
     have hl : checkFreevarsList 0 names ts = true := by simpa [checkFreevars] using h

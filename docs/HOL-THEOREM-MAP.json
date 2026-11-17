@@ -1,5 +1,12 @@
 [
 {
+  "hol_path": "cakeml/compiler/inference/proofs/inferCompleteScript.sml", "hol_name": "unconvert_type_subst",
+  "lean_path": "Flapjack/Compiler/Inference/InferComplete/NamedSubst.lean", "lean_name": "unconvertTypeSubst",
+  "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+  "fmap_as_finite_support_result_observations": ["Flapjack.HolFiniteMapExact.alistToFmap"],
+  "reviewer": "Independent source comparison and unconvert_type_subst_replay_typed confirm both type and type-list conjuncts, all premises and ordered equalities. The reviewed alist-to-finite-map producer preserves first-match lookup for duplicate keys."
+ },
+{
   "hol_path": "cakeml/compiler/inference/proofs/type_eDetermScript.sml", "hol_name": "t_walkstar_diff",
   "lean_path": "Flapjack/Compiler/Inference/TypeEDeterm.lean", "lean_name": "tWalkstarDiff",
   "statement_status": "reviewed_fmap_as_finite_support_parameters",

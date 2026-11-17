@@ -128,6 +128,22 @@ val t_walkstar_diff_replay = Q.prove(
   imp_res_tac MAP_EQ_f >> metis_tac []);
 val _ = show "t_walkstar_diff_replay_typed" t_walkstar_diff_replay;
 
+val unconvert_type_subst_replay = Q.prove(
+  `(!t subst fvs.
+       check_freevars 0 fvs t /\ set fvs SUBSET set (MAP FST subst) ==>
+       unconvert_t (type_subst (alist_to_fmap subst) t) =
+       infer_type_subst (MAP (\(x,y). (x, unconvert_t y)) subst) t) /\
+   (!ts subst fvs.
+       EVERY (check_freevars 0 fvs) ts /\ set fvs SUBSET set (MAP FST subst) ==>
+       MAP (unconvert_t o type_subst (alist_to_fmap subst)) ts =
+       MAP (infer_type_subst (MAP (\(x,y). (x, unconvert_t y)) subst)) ts)`,
+  Induct >>
+  rw [unconvert_t_def, type_subst_def, infer_type_subst_alt, MAP_MAP_o,
+      check_freevars_def] >> fs [combinTheory.o_DEF] >-
+    (every_case_tac >> fs [ALOOKUP_MAP] >> fs [] >>
+     fs [ALOOKUP_NONE, SUBSET_DEF] >> metis_tac []) >> metis_tac []);
+val _ = show "unconvert_type_subst_replay_typed" unconvert_type_subst_replay;
+
 val check_freevars_deBruijn_inc_replay = Q.prove(
   `!tvs tvs' t. check_freevars tvs tvs' t ==>
     !n n'. check_freevars (n+tvs) tvs' (deBruijn_inc n' n t)`,
