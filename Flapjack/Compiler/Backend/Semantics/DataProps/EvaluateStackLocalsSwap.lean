@@ -1594,7 +1594,7 @@ private theorem stackLocalsSwap_returningForce {C F : Type} (dest : Nat) (live :
 /-- The `Call` case with a returning frame and no handler. Flapjack
     infrastructure toward the port of HOL `evaluate_stack_and_locals_swap`;
     no separate HOL original. -/
-private theorem stackLocalsSwap_returningCall_noHandler {C F : Type} (dest : Nat)
+private theorem stackLocalsSwap_returningCall_noHandler {C F : Type} (dest : Option Nat)
     (names : List Nat) (returns : List Nat) (live : NumSet) (state : State C F)
     (bodyIH : ∀ (body : DataLang.Prog) (called : State C F),
       called.clock < state.clock → StackLocalsSwapAt body called) :
@@ -1958,7 +1958,7 @@ private theorem handlerSwapState {C F : Type} (state last : State C F)
     whose callee raises into an installed handler: the handler body runs from the
     raised value at the unwound state. Flapjack infrastructure toward the port of
     HOL `evaluate_stack_and_locals_swap`; no separate HOL original. -/
-private theorem stackLocalsSwap_returningCall_handler {C F : Type} (dest : Nat)
+private theorem stackLocalsSwap_returningCall_handler {C F : Type} (dest : Option Nat)
     (names : List Nat) (returns : List Nat) (live : NumSet) (state : State C F)
     (handlerName : Nat) (handlerBody : DataLang.Prog)
     (bodyIH : ∀ (body : DataLang.Prog) (called : State C F),
@@ -3180,5 +3180,59 @@ private theorem stackLocalsSwap_assign {C F : Type} (dest : Nat) (op : ClosLang.
             simp only [Bool.false_eq_true, if_false,
               cutStateOpt_swapStackLocals_val live state xs lsz mid cut, appVal]
             rfl
+
+/-- Every program satisfies the stack-and-locals replacement property: the
+    induction is HOL's `evaluate_ind` measure, clock first and program weight
+    second. Flapjack infrastructure toward the port of HOL
+    `evaluate_stack_and_locals_swap`; no separate HOL original. -/
+private theorem stackLocalsSwap_all {C F : Type} (program : DataLang.Prog)
+    (state : State C F) :
+    StackLocalsSwapAt program state := by
+  refine clockWeightInduction (α := DataLang.Prog) (σ := State C F) (·.clock) sizeOf
+    (motive := fun program state => StackLocalsSwapAt program state) ?_ program state
+  intro program state exprIH smaller
+  cases program with
+  | skip => exact stackLocalsSwap_skip state
+  | move dest src => exact stackLocalsSwap_move dest src state
+  | assign dest op names live => exact stackLocalsSwap_assign dest op names live state
+  | tick => exact stackLocalsSwap_tick state
+  | makeSpace amount names => exact stackLocalsSwap_makeSpace amount names state
+  | raise name => exact stackLocalsSwap_raise name state
+  | «return» names => exact stackLocalsSwap_return names state
+  | seq first second =>
+    apply stackLocalsSwap_seq first second state
+    · apply exprIH first state (by omega)
+      simp only [DataLang.Prog.seq.sizeOf_spec]
+      omega
+    · intro mid bound
+      apply exprIH second mid bound
+      simp only [DataLang.Prog.seq.sizeOf_spec]
+      omega
+  | ifThenElse name yes no =>
+    apply stackLocalsSwap_if name yes no state
+    · apply exprIH yes state (by omega)
+      simp only [DataLang.Prog.ifThenElse.sizeOf_spec]
+      omega
+    · apply exprIH no state (by omega)
+      simp only [DataLang.Prog.ifThenElse.sizeOf_spec]
+      omega
+  | force ret label src =>
+    cases ret with
+    | none => exact stackLocalsSwap_tailForce label src state smaller
+    | some ret =>
+      obtain ⟨dest, live⟩ := ret
+      exact stackLocalsSwap_returningForce dest live label src state smaller
+  | call ret dest names handler =>
+    cases ret with
+    | none => exact stackLocalsSwap_tailCall dest names handler state smaller
+    | some ret =>
+      obtain ⟨returns, live⟩ := ret
+      cases handler with
+      | none =>
+        exact stackLocalsSwap_returningCall_noHandler dest names returns live state smaller
+      | some entry =>
+        obtain ⟨handlerName, handlerBody⟩ := entry
+        exact stackLocalsSwap_returningCall_handler dest names returns live state handlerName
+          handlerBody smaller
 
 end Flapjack.Compiler.Backend.DataProps
