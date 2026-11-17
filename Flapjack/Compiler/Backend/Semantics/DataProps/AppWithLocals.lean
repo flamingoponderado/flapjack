@@ -272,4 +272,40 @@ private theorem doAppAux_changeFields' {C F : Type} (op : ClosLang.Op)
   rw [key]
   simpa [Flapjack.SemanticPrimitivesProps.mapResult] using second
 
+/-- A non-admitted operation consumes no stack.  Flapjack infrastructure
+    toward the parked HOL `do_app_with_locals`; no separate HOL original. -/
+theorem stackConsumed_none {C F : Type} (op : ClosLang.Op) (values : List Value)
+    (state : State C F) (h : ¬ allowedOp op values.length) :
+    stackConsumed state.stackFrameSizes state.limits op values = none := by
+  unfold stackConsumed
+  split
+  all_goals first | rw [if_neg h] | simp_all [allowedOp]
+
+/-- The limit and stack stages install exactly the source's safety observation:
+    after `doLimSafe` and `doStack` the flag equals `doAppSafe` at the source
+    state.  Flapjack infrastructure toward the parked HOL `do_app_with_locals`;
+    no separate HOL original. -/
+theorem doStack_doLimSafe_safeForSpace {C F : Type} (op : ClosLang.Op)
+    (values : List Value) (state space : State C F)
+    (run : doSpace op values state = some space) :
+    (doStack op values (doLimSafe space op values)).safeForSpace =
+      doAppSafe op values state := by
+  obtain ⟨hstack, hlocalsSize, hframes, hlimits, _, _⟩ :=
+    doSpace_fields op values state space run
+  have hsafe := doSpace_safeForSpace op values state space run
+  unfold doStack doLimSafe doAppSafe
+  rw [hstack, hlocalsSize, hframes, hlimits, hsafe]
+  by_cases hallowed : allowedOp op values.length
+  · rw [if_pos hallowed]
+    simp only [Bool.and_assoc, Bool.and_comm]
+    cases ho : (Option.map (fun n => decide (state.limits.stackLimit > n))
+      (Option.map₂ (fun x1 x2 => x1 + x2)
+        (stackConsumed state.stackFrameSizes state.limits op values)
+        (Option.map₂ (fun x1 x2 => x1 + x2) (sizeOfStack state.stack)
+          state.localsSize))) <;>
+      simp [miscThe, Option.getD]
+  · rw [if_neg hallowed]
+    rw [stackConsumed_none op values state hallowed]
+    simp
+
 end Flapjack.Compiler.Backend.DataProps
