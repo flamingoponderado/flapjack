@@ -1,5 +1,11 @@
 [
 {
+  "hol_path": "cakeml/compiler/inference/proofs/infer_eCompleteScript.sml", "hol_name": "convert_bi_remove",
+  "lean_path": "Flapjack/Compiler/Inference/InferEComplete.lean", "lean_name": "convertBiRemove",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with the source and convert_bi_remove_replay_typed confirms both inference-type binders, the independently quantified numeric bounds, all three premises and the full equality conclusion. The empty-uvar checks exclude the unspecified conversion case."
+ },
+{
   "hol_path": "cakeml/compiler/inference/proofs/inferCompleteScript.sml", "hol_name": "env_rel_binding",
   "lean_path": "Flapjack/Compiler/Inference/InferComplete/Environment.lean", "lean_name": "envRelBinding",
   "statement_status": "reviewed_fmap_as_finite_support_result_observations",

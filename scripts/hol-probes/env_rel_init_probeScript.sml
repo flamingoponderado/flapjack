@@ -385,6 +385,13 @@ val check_t_empty_unconvert_convert_id_replay = Q.prove(
 val _ = show "check_t_empty_unconvert_convert_id_replay_typed"
   check_t_empty_unconvert_convert_id_replay;
 
+val convert_bi_remove_replay = Q.prove(
+  `probe_convert_t A = probe_convert_t B /\
+   check_t n {} A /\ check_t m {} B ==> A = B`,
+  rw [] >> last_x_assum (assume_tac o (Q.AP_TERM `unconvert_t`)) >>
+  metis_tac [check_t_empty_unconvert_convert_id_replay]);
+val _ = show "convert_bi_remove_replay_typed" convert_bi_remove_replay;
+
 val check_freevars_empty_convert_unconvert_id_replay = Q.prove(
   `!t. check_freevars n [] t ⇒ probe_convert_t (unconvert_t t) = t`,
   ho_match_mp_tac unconvert_t_ind >>
