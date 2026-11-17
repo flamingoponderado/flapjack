@@ -1,5 +1,17 @@
 [
 {
+  "hol_path": "cakeml/compiler/inference/inferScript.sml", "hol_name": "type_name_check_subst_def",
+  "lean_path": "Flapjack/Compiler/Inference/Infer/TypeNameCheck.lean", "lean_name": "typeNameCheckSubst",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with the source and type_name_check_subst_typed confirms all four clauses, full polymorphic state and error carriers, evaluation and failure order, first-match substitution-map lookup and decimal diagnostics via mlint toString_thm and holNumToDecString."
+ },
+{
+  "hol_path": "cakeml/compiler/inference/inferScript.sml", "hol_name": "type_name_check_subst_def",
+  "lean_path": "Flapjack/Compiler/Inference/Infer/TypeNameCheck.lean", "lean_name": "typeNameCheckSubstList",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with the source and type_name_check_subst_typed confirms both list clauses, arbitrary state, error carrier and left-to-right processing. This is the list half of the mutual HOL definition."
+ },
+{
   "hol_path": "cakeml/compiler/inference/inferScript.sml", "hol_name": "find_dup_def",
   "lean_path": "Flapjack/Compiler/Inference/Infer/Duplicates.lean", "lean_name": "findDupHOL",
   "statement_status": "reviewed_exact",

@@ -36,6 +36,23 @@ val _ = show "lookup_st_ex_typed" inferTheory.lookup_st_ex_def;
 val _ = show "find_dup_typed" inferTheory.find_dup_def;
 val _ = show "check_dups_typed" inferTheory.check_dups_def;
 val _ = show "check_dups_eq_find_dup_typed" inferTheory.check_dups_eq_find_dup;
+val _ = show "type_name_check_subst_typed" inferTheory.type_name_check_subst_def;
+val _ = show "type_name_check_unbound_eval" (EVAL ``
+  type_name_check_subst <|loc := NONE; err := nsEmpty|> (\x. x) nsEmpty [] (Atvar «a») (7:num)``);
+val _ = show "type_name_check_tuple_eval" (EVAL ``
+  type_name_check_subst <|loc := NONE; err := nsEmpty|> (\x. x) nsEmpty [«a»]
+    (Attup [Atvar «a»; Atvar «a»]) (7:num)``);
+val _ = show "type_name_check_unknown_ctor_eval" (EVAL ``
+  type_name_check_subst <|loc := NONE; err := nsEmpty|> (\x. x) nsEmpty []
+    (Atapp [] (Short «missing»)) (7:num)``);
+val _ = show "type_name_check_duplicate_param_eval" (EVAL ``
+  type_name_check_subst <|loc := NONE; err := nsEmpty|> (\x. x)
+    (nsBind «pair» ([«x»; «x»], Tvar «x») nsEmpty) [«a»; «b»]
+    (Atapp [Atvar «a»; Atvar «b»] (Short «pair»)) (7:num)``);
+val _ = show "type_name_check_arity_eval" (EVAL ``
+  type_name_check_subst <|loc := NONE; err := nsEmpty|> (\x. x)
+    (nsBind «pair» ([«x»; «y»], Tvar «x») nsEmpty) []
+    (Atapp [] (Short «pair»)) (7:num)``);
 val _ = show "id_to_string_typed" infer_tTheory.id_to_string_def;
 val _ = show "infer_st_axiom_typed" (TypeBase.axiom_of ``:infer_st``);
 val _ = show "init_infer_state_typed" inferTheory.init_infer_state_def;
