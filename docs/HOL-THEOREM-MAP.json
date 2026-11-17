@@ -1,5 +1,17 @@
 [
 {
+  "hol_path": "cakeml/compiler/inference/inferPropsScript.sml", "hol_name": "infer_deBruijn_inc0",
+  "lean_path": "Flapjack/Compiler/Inference/InferProps/DeBruijn/Zero.lean", "lean_name": "inferDeBruijnInc0",
+  "statement_status": "reviewed_exact",
+  "reviewer": "The typed HOL source capture preserves both quantified binders, including the unused natural number, and the unconditional inference-type equality."
+ },
+{
+  "hol_path": "cakeml/compiler/inference/inferPropsScript.sml", "hol_name": "infer_deBruijn_inc0_id",
+  "lean_path": "Flapjack/Compiler/Inference/InferProps/DeBruijn/Zero.lean", "lean_name": "inferDeBruijnInc0Id",
+  "statement_status": "reviewed_exact",
+  "reviewer": "The typed HOL source capture preserves the unquantified function equality with the identity on inference types."
+ },
+{
   "hol_path": "cakeml/compiler/inference/inferPropsScript.sml", "hol_name": "walkstar_inc",
   "lean_path": "Flapjack/Compiler/Inference/InferProps/DeBruijn/Walkstar.lean", "lean_name": "walkstarInc",
   "statement_status": "reviewed_fmap_as_finite_support_parameters",

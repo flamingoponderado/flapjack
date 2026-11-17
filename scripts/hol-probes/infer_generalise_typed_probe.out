@@ -13,3 +13,5 @@ vwalk_inc_typed=∀(s :num |-> infer_t) (tvs :num) (n :num). t_wfs s ⇒ t_vwalk
 walk_inc_typed=∀(s :num |-> infer_t) (tvs :num) (t :infer_t). t_wfs s ⇒ t_walk (infer_deBruijn_inc tvs o_f s) (infer_deBruijn_inc tvs t) = infer_deBruijn_inc tvs (t_walk s t)
 walkstar_inc_typed=∀(tvs :num) (s :num |-> infer_t) (t :infer_t). t_wfs s ⇒ t_walkstar (infer_deBruijn_inc tvs o_f s) (infer_deBruijn_inc tvs t) = infer_deBruijn_inc tvs (t_walkstar s t)
 walkstar_inc2_typed=∀(tvs :num) (s :num |-> infer_t) (n :num). t_wfs s ⇒ t_walkstar (infer_deBruijn_inc tvs o_f s) (Infer_Tuvar n) = infer_deBruijn_inc tvs (t_walkstar s (Infer_Tuvar n))
+infer_deBruijn_inc0_typed=∀(n :num) (t :infer_t). infer_deBruijn_inc (0 :num) t = t
+infer_deBruijn_inc0_id_typed=infer_deBruijn_inc (0 :num) = (λ(x :infer_t). x)

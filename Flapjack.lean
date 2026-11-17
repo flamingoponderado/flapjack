@@ -3919,6 +3919,7 @@ import Flapjack.Compiler.Inference.InferProps.DeBruijn.Vars
 import Flapjack.Compiler.Inference.InferProps.DeBruijn.WellFounded
 import Flapjack.Compiler.Inference.InferProps.DeBruijn.Walk
 import Flapjack.Compiler.Inference.InferProps.DeBruijn.Walkstar
+import Flapjack.Compiler.Inference.InferProps.DeBruijn.Zero
 import Flapjack.Compiler.Inference.InferProps.DeBruijn.Bounded
 import Flapjack.Compiler.Inference.InferProps.DeBruijn.PreservesCheck
 import Flapjack.Compiler.Inference.InferProps.CheckMonotone

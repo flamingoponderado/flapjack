@@ -1,5 +1,6 @@
 `infer_generalise_typed_probe.out` captures `t_vars_inc`, `inc_wfs`, and
-`vwalk_inc`, `walk_inc`, `walkstar_inc`, and `walkstar_inc2` with inferred types,
+`vwalk_inc`, `walk_inc`, `walkstar_inc`, `walkstar_inc2`, and the two
+`infer_deBruijn_inc0` theorems with inferred types,
 both inferred operation types, the
 complete typed `infer$generalise_def` equations, the typed
 `inferProps$generalise_list_length` theorem, and the inferred type and equations
