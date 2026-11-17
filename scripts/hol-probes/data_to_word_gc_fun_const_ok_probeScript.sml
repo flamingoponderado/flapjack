@@ -22,3 +22,6 @@ val _ = pr_typed "state_rel_get_var_IMP_typed" state_rel_get_var_IMP;
 val _ = pr_typed "word_ml_inv_lookup_typed" word_ml_inv_lookup;
 val _ = pr_typed "word_ml_inv_insert_typed" word_ml_inv_insert;
 val _ = pr_typed "state_rel_get_vars_IMP_typed" state_rel_get_vars_IMP;
+val _ = pr_typed "state_rel_cut_env_typed" state_rel_cut_env;
+val _ = pr_typed "state_rel_cut_IMP_typed" state_rel_cut_IMP;
+val _ = pr_typed "cut_env_IMP_cut_env_typed" cut_env_IMP_cut_env;

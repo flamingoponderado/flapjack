@@ -58,13 +58,13 @@ theorem joinEnv_cutEnv_mem_general {α β : Type} [Nonempty α]
       simpa [index, targetLookup, sourceLookup] using equal
 
 /-- Every environment pair retained after cutting also occurs in the join
-over the original source environment. The source value carrier and word width
-are independent, as in the typed HOL replay. -/
+over the original source environment. -/
 @[hol "cakeml/compiler/backend/proofs/data_to_wordProofScript.sml" "MEM_join_env_cut_env"
   (words_as_type_indexed_bitvec)]
-theorem mem_joinEnv_cutEnv {width : Nat} [NeZero width] {α : Type} [Nonempty α]
-    (target : Spt α) (pair : α × WordLocW width) (word : Spt (WordLocW width))
-    (names : NumSet) (source : Spt α)
+theorem mem_joinEnv_cutEnv {width : Nat} [NeZero width]
+    (target : Spt Flapjack.Compiler.Backend.DataSem.Value)
+    (pair : Flapjack.Compiler.Backend.DataSem.Value × WordLocW width) (word : Spt (WordLocW width))
+    (names : NumSet) (source : Spt Flapjack.Compiler.Backend.DataSem.Value)
     (premises : pair ∈ joinEnv target (sptToAList (sptInter word (adjustSet target))) ∧
       DataSem.cutEnv names source = some target) :
     pair ∈ joinEnv source (sptToAList (sptInter word (adjustSet source))) :=
