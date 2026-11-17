@@ -461,6 +461,39 @@ val _ = show "check_type_names_tenv_equiv_typed" type_dCanonTheory.check_type_na
 val _ = show "type_name_subst_tenv_equiv_typed" type_dCanonTheory.type_name_subst_tenv_equiv;
 val _ = show "type_p_tenv_equiv_typed" type_dCanonTheory.type_p_tenv_equiv;
 val _ = show "type_p_ts_tid_rename_typed" type_dCanonTheory.type_p_ts_tid_rename;
+val _ = show "remap_tenvE_typed" type_dCanonTheory.remap_tenvE_def;
+val _ = show "remap_tenvE_bind_tvar_typed" type_dCanonTheory.remap_tenvE_bind_tvar;
+val num_tvs_remap_tenvE_replay = Q.prove(
+  `!tenvE. num_tvs (remap_tenvE f tenvE) = num_tvs tenvE`,
+  Induct >> fs[type_dCanonTheory.remap_tenvE_def]);
+val _ = show "num_tvs_remap_tenvE_replay_typed" num_tvs_remap_tenvE_replay;
+val remap_tenvE_bind_var_list_replay = Q.prove(
+  `!n env tenvE. remap_tenvE f (bind_var_list n env tenvE) =
+     bind_var_list n (MAP (\(n,t). (n,ts_tid_rename f t)) env) (remap_tenvE f tenvE)`,
+  ho_match_mp_tac bind_var_list_ind >>
+  fs[bind_var_list_def,type_dCanonTheory.remap_tenvE_def] >> rw[]);
+val _ = show "remap_tenvE_bind_var_list_replay_typed" remap_tenvE_bind_var_list_replay;
+val deBruijn_inc_ts_tid_rename_replay = Q.prove(
+  `!skip n t. ts_tid_rename f (deBruijn_inc skip n t) =
+     deBruijn_inc skip n (ts_tid_rename f t)`,
+  ho_match_mp_tac deBruijn_inc_ind >>
+  rw[deBruijn_inc_def,ts_tid_rename_def,MAP_MAP_o] >> fs[MAP_EQ_f]);
+val _ = show "deBruijn_inc_ts_tid_rename_replay_typed" deBruijn_inc_ts_tid_rename_replay;
+val lookup_varE_remap_tenvE_replay = Q.prove(
+  `!n tenvE. lookup_varE n (remap_tenvE f tenvE) =
+     OPTION_MAP (\(id,t). (id,ts_tid_rename f t)) (lookup_varE n tenvE)`,
+  fs[lookup_varE_def] >> Cases >> fs[] >>
+  qabbrev_tac `n=0n` >> pop_assum kall_tac >> qid_spec_tac `n` >>
+  Induct_on `tenvE` >> fs[type_dCanonTheory.remap_tenvE_def,tveLookup_def] >> rw[] >>
+  fs[deBruijn_inc_ts_tid_rename_replay]);
+val _ = show "lookup_varE_remap_tenvE_replay_typed" lookup_varE_remap_tenvE_replay;
+val ts_tid_rename_deBruijn_subst_replay = Q.prove(
+  `!n targs t. ts_tid_rename f (deBruijn_subst n targs t) =
+     deBruijn_subst n (MAP (ts_tid_rename f) targs) (ts_tid_rename f t)`,
+  ho_match_mp_tac deBruijn_subst_ind >> rw[] >>
+  rw[ts_tid_rename_def,deBruijn_subst_def] >>
+  fs[EL_MAP,MAP_MAP_o] >> fs[MAP_EQ_f]);
+val _ = show "ts_tid_rename_deBruijn_subst_replay_typed" ts_tid_rename_deBruijn_subst_replay;
 val _ = show "type_e_tenv_equiv_typed" type_dCanonTheory.type_e_tenv_equiv;
 val _ = show "type_pe_determ_tenv_equiv_typed" type_dCanonTheory.type_pe_determ_tenv_equiv;
 val _ = show "type_pe_determ_canon_typed" type_dCanonTheory.type_pe_determ_canon_def;

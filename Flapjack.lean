@@ -3894,6 +3894,7 @@ import Flapjack.TypeSoundInvariants.CtorMap
 import Flapjack.TypeSoundInvariants.ValueTyping
 import Flapjack.Compiler.Inference.TypeDCanon
 import Flapjack.Compiler.Inference.TypeDCanon.Bijection
+import Flapjack.Compiler.Inference.TypeDCanon.LocalEnv
 import Flapjack.PrimSemEnv
 import Flapjack.Compiler.Repl.ReplTypes
 import Flapjack.Compiler.Proofs.CompilerProof

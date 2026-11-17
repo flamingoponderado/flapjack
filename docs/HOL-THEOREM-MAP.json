@@ -1,5 +1,47 @@
 [
 {
+  "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "remap_tenvE_def",
+  "lean_path": "Flapjack/Compiler/Inference/TypeDCanon/LocalEnv.lean", "lean_name": "remapTenvE",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with source and remap_tenvE_typed confirms all local-environment constructors and the renamed type payload."
+ },
+{
+  "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "num_tvs_remap_tenvE",
+  "lean_path": "Flapjack/Compiler/Inference/TypeDCanon/LocalEnv.lean", "lean_name": "numTvsRemapTenvE",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with the HOL-local theorem and num_tvs_remap_tenvE_replay_typed confirms preservation of the complete type-variable count."
+ },
+{
+  "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "remap_tenvE_bind_var_list",
+  "lean_path": "Flapjack/Compiler/Inference/TypeDCanon/LocalEnv.lean", "lean_name": "remapTenvEBindVarList",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with the HOL-local theorem and remap_tenvE_bind_var_list_replay_typed confirms binder order and the mapped bindings and environment."
+ },
+{
+  "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "remap_tenvE_bind_tvar",
+  "lean_path": "Flapjack/Compiler/Inference/TypeDCanon/LocalEnv.lean", "lean_name": "remapTenvEBindTvar",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with source and remap_tenvE_bind_tvar_typed confirms the complete equation for arbitrary binder count and environment."
+ },
+{
+  "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "deBruijn_inc_ts_tid_rename",
+  "lean_path": "Flapjack/Compiler/Inference/TypeDCanon/LocalEnv.lean", "lean_name": "deBruijnIncTsTidRename",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with the HOL-local theorem and deBruijn_inc_ts_tid_rename_replay_typed confirms the index parameters, semantic type and unconditional equation."
+ },
+{
+  "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "lookup_varE_remap_tenvE",
+  "lean_path": "Flapjack/Compiler/Inference/TypeDCanon/LocalEnv.lean", "lean_name": "lookupVarERemapTenvE",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with the HOL-local theorem and lookup_varE_remap_tenvE_replay_typed confirms identifier and environment carriers, optional lookup and value mapping."
+ },
+{
+  "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "ts_tid_rename_deBruijn_subst",
+  "lean_path": "Flapjack/Compiler/Inference/TypeDCanon/LocalEnv.lean", "lean_name": "tsTidRenameDeBruijnSubst",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with the HOL-local theorem and ts_tid_rename_deBruijn_subst_replay_typed confirms all quantified carriers, substitution bounds and result equation."
+ },
+{
   "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "type_p_ts_tid_rename",
   "lean_path": "Flapjack/Compiler/Inference/TypeDCanon.lean", "lean_name": "typePTsTidRename",
   "statement_status": "reviewed_exact",
