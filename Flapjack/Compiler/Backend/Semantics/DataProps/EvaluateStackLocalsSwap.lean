@@ -463,6 +463,230 @@ private theorem jumpExc_agree {C F : Type} (left right : State C F)
   · rw [if_neg guard] at run
     simp at run
 
+/-- The `Call` case with a tail call. Flapjack infrastructure toward the port of
+    HOL `evaluate_stack_and_locals_swap`; no separate HOL original. -/
+private theorem stackLocalsSwap_tailCall {C F : Type} (dest : Option Nat) (names : List Nat)
+    (handler : Option (Nat × DataLang.Prog)) (state : State C F)
+    (bodyIH : ∀ (body : DataLang.Prog) (called : State C F),
+      called.clock < state.clock → StackLocalsSwapAt body called) :
+    StackLocalsSwapAt (.call none dest names handler) state := by
+  intro res next run
+  cases read : DataSem.getVars names state.locals with
+  | none =>
+    simp only [evaluate, read, typeError, Prod.mk.injEq] at run
+    obtain ⟨rfl, rfl⟩ := run
+    trivial
+  | some values =>
+    cases found : findCode dest values state.code state.stackFrameSizes with
+    | none =>
+      simp only [evaluate, read, found, typeError, Prod.mk.injEq] at run
+      obtain ⟨rfl, rfl⟩ := run
+      trivial
+    | some entry =>
+      obtain ⟨args, body, size⟩ := entry
+      cases handler with
+      | some handled =>
+        simp only [evaluate, read, found, Option.isSome_some, if_true, typeError,
+          Prod.mk.injEq] at run
+        obtain ⟨rfl, rfl⟩ := run
+        trivial
+      | none =>
+        by_cases zero : state.clock = 0
+        · simp only [evaluate, read, found, Option.isSome_none, Bool.false_eq_true, if_false,
+            zero, if_true, timeoutError, Prod.mk.injEq] at run
+          obtain ⟨rfl, rfl⟩ := run
+          refine ⟨?_, ?_⟩
+          · simp [flushState]
+          · intro xs lsz len
+            exact ⟨some 0, state.safeForSpace, state.stackMax, state.peakHeapLength,
+              by simp [evaluate, read, found, zero, flushState]⟩
+        · let called := DataSem.callEnv args size (DataSem.decClock state)
+          have clockLt : called.clock < state.clock := by
+            simp only [called, DataSem.callEnv, DataSem.decClock]
+            omega
+          have calledStack : called.stack = state.stack := rfl
+          have calledHandler : called.handler = state.handler := rfl
+          cases bodyRun : evaluate body called with
+          | mk outcome last =>
+            simp only [evaluate, read, found, Option.isSome_none, Bool.false_eq_true, if_false,
+              zero, if_false] at run ⊢
+            simp only [called] at bodyRun
+            rw [bodyRun] at run
+            cases outcome with
+            | none =>
+              obtain ⟨rfl, rfl⟩ := run
+              trivial
+            | some outcome =>
+              cases outcome with
+              | val values' =>
+                obtain ⟨rfl, rfl⟩ := run
+                have bodyArm := bodyIH body called clockLt (some (.val values')) last bodyRun
+                obtain ⟨lastStack, lastHandler, bodyHall⟩ := bodyArm
+                refine ⟨lastStack.trans calledStack.symm,
+                  lastHandler.trans calledHandler.symm, ?_⟩
+                intro xs lsz len
+                obtain ⟨lss, sfs, smx, phl, bodyTarget⟩ :=
+                  bodyHall xs size (by
+                    rw [calledStack]
+                    exact len)
+                obtain ⟨callMax, callSafe, callEq⟩ :=
+                  callEnv_swapStackLocals args size (DataSem.decClock state) xs lsz
+                obtain ⟨mx', safe', peak', moved⟩ :=
+                  evaluate_stackSafePeakSwap callMax callSafe _ _ _ state.peakHeapLength body
+                    bodyTarget
+                refine ⟨lss, safe', mx', peak', ?_⟩
+                have bridge :
+                    DataSem.callEnv args size
+                        (DataSem.decClock { state with stack := xs, localsSize := lsz }) =
+                      { { called with
+                          stack := xs
+                          localsSize := size } with
+                        stackMax := callMax
+                        safeForSpace := callSafe
+                        peakHeapLength := state.peakHeapLength } := by
+                  rw [decClock_swapStackLocals, callEq]
+                  rfl
+                rw [bridge, moved]
+              | err error =>
+                cases error with
+                | abort a =>
+                  cases a with
+                  | typeError =>
+                    obtain ⟨rfl, rfl⟩ := run
+                    trivial
+                  | timeoutError =>
+                    obtain ⟨rfl, rfl⟩ := run
+                    have bodyArm :
+                        last.stack = [] ∧
+                          ∀ (xs : List Stack) (lsz : Option Nat),
+                            called.stack.length = xs.length →
+                            ∃ lss sfs smx phl, evaluate body { called with
+                                stack := xs, localsSize := lsz } =
+                              (some (.err (.abort .timeoutError)),
+                                { last with
+                                  localsSize := lss
+                                  safeForSpace := sfs
+                                  stackMax := smx
+                                  peakHeapLength := phl }) :=
+                      bodyIH body called clockLt (some (.err (.abort .timeoutError))) last bodyRun
+                    obtain ⟨lastEmpty, bodyHall⟩ := bodyArm
+                    refine ⟨lastEmpty, ?_⟩
+                    intro xs lsz len
+                    obtain ⟨lss, sfs, smx, phl, bodyTarget⟩ :=
+                      bodyHall xs size (by
+                        rw [calledStack]
+                        exact len)
+                    obtain ⟨callMax, callSafe, callEq⟩ :=
+                      callEnv_swapStackLocals args size (DataSem.decClock state) xs lsz
+                    obtain ⟨mx', safe', peak', moved⟩ :=
+                      evaluate_stackSafePeakSwap callMax callSafe _ _ _ state.peakHeapLength body
+                        bodyTarget
+                    refine ⟨lss, safe', mx', peak', ?_⟩
+                    have bridge :
+                        DataSem.callEnv args size
+                            (DataSem.decClock { state with stack := xs, localsSize := lsz }) =
+                          { { called with
+                              stack := xs
+                              localsSize := size } with
+                            stackMax := callMax
+                            safeForSpace := callSafe
+                            peakHeapLength := state.peakHeapLength } := by
+                      rw [decClock_swapStackLocals, callEq]
+                      rfl
+                    rw [bridge, moved]
+                  | ffiError event =>
+                    obtain ⟨rfl, rfl⟩ := run
+                    have bodyArm :
+                        last.stack = [] ∧
+                          ∀ (xs : List Stack) (lsz : Option Nat),
+                            called.stack.length = xs.length →
+                            ∃ lss sfs smx phl, evaluate body { called with
+                                stack := xs, localsSize := lsz } =
+                              (some (.err (.abort (.ffiError event))),
+                                { last with
+                                  localsSize := lss
+                                  safeForSpace := sfs
+                                  stackMax := smx
+                                  peakHeapLength := phl }) :=
+                      bodyIH body called clockLt (some (.err (.abort (.ffiError event))))
+                        last bodyRun
+                    obtain ⟨lastEmpty, bodyHall⟩ := bodyArm
+                    refine ⟨lastEmpty, ?_⟩
+                    intro xs lsz len
+                    obtain ⟨lss, sfs, smx, phl, bodyTarget⟩ :=
+                      bodyHall xs size (by
+                        rw [calledStack]
+                        exact len)
+                    obtain ⟨callMax, callSafe, callEq⟩ :=
+                      callEnv_swapStackLocals args size (DataSem.decClock state) xs lsz
+                    obtain ⟨mx', safe', peak', moved⟩ :=
+                      evaluate_stackSafePeakSwap callMax callSafe _ _ _ state.peakHeapLength body
+                        bodyTarget
+                    refine ⟨lss, safe', mx', peak', ?_⟩
+                    have bridge :
+                        DataSem.callEnv args size
+                            (DataSem.decClock { state with stack := xs, localsSize := lsz }) =
+                          { { called with
+                              stack := xs
+                              localsSize := size } with
+                            stackMax := callMax
+                            safeForSpace := callSafe
+                            peakHeapLength := state.peakHeapLength } := by
+                      rw [decClock_swapStackLocals, callEq]
+                      rfl
+                    rw [bridge, moved]
+                | raise t =>
+                  obtain ⟨rfl, rfl⟩ := run
+                  have bodyArm :
+                      ∃ s2, jumpExc called = some s2 ∧ s2.locals = last.locals ∧
+                        s2.stack = last.stack ∧ s2.handler = last.handler ∧
+                        ∀ (xs : List Stack) (s7 : State C F) (lsz : Option Nat),
+                          jumpExc { called with stack := xs, localsSize := lsz } = some s7 →
+                          called.stack.length = xs.length →
+                          ∃ lss sfs smx phl, evaluate body { called with
+                              stack := xs, localsSize := lsz } =
+                            (some (.err (.raise t)),
+                              { last with
+                                stack := s7.stack
+                                handler := s7.handler
+                                locals := s7.locals
+                                localsSize := lss
+                                safeForSpace := sfs
+                                stackMax := smx
+                                peakHeapLength := phl }) :=
+                    bodyIH body called clockLt (some (.err (.raise t))) last bodyRun
+                  obtain ⟨s2, jumped, localsEq, stackEq, handlerEq, bodyHall⟩ := bodyArm
+                  obtain ⟨s3, jumpedState, locals3, stack3, handler3⟩ :=
+                    jumpExc_agree called state rfl rfl s2 jumped
+                  refine ⟨s3, jumpedState, locals3.trans localsEq, stack3.trans stackEq,
+                    handler3.trans handlerEq, ?_⟩
+                  intro xs s7 lsz jumpedRun len
+                  obtain ⟨s7', jumpedRun', locals7, stack7, handler7⟩ :=
+                    jumpExc_agree { state with stack := xs, localsSize := lsz }
+                      { called with stack := xs, localsSize := size } rfl rfl s7 jumpedRun
+                  obtain ⟨lss, sfs, smx, phl, bodyTarget⟩ :=
+                    bodyHall xs s7' size jumpedRun' (by
+                      rw [calledStack]
+                      exact len)
+                  obtain ⟨callMax, callSafe, callEq⟩ :=
+                    callEnv_swapStackLocals args size (DataSem.decClock state) xs lsz
+                  obtain ⟨mx', safe', peak', moved⟩ :=
+                    evaluate_stackSafePeakSwap callMax callSafe _ _ _ state.peakHeapLength body
+                      bodyTarget
+                  refine ⟨lss, safe', mx', peak', ?_⟩
+                  have bridge :
+                      DataSem.callEnv args size
+                          (DataSem.decClock { state with stack := xs, localsSize := lsz }) =
+                        { { called with
+                            stack := xs
+                            localsSize := size } with
+                          stackMax := callMax
+                          safeForSpace := callSafe
+                          peakHeapLength := state.peakHeapLength } := by
+                    rw [decClock_swapStackLocals, callEq]
+                    rfl
+                  rw [bridge, moved, locals7, stack7, handler7]
+
 /-- The `Force` case with a tail call. Flapjack infrastructure toward the port
     of HOL `evaluate_stack_and_locals_swap`; no separate HOL original. -/
 private theorem stackLocalsSwap_tailForce {C F : Type} (label src : Nat) (state : State C F)
