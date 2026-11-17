@@ -9,6 +9,27 @@ namespace Flapjack.NamespaceHOL
 
 noncomputable local instance (α : Type) : DecidableEq α := Classical.typeDecidableEq α
 
+/-- A singleton namespace satisfies a predicate exactly when its entry does. -/
+@[hol "cakeml/semantics/proofs/namespacePropsScript.sml" "nsAll_nsSing"]
+theorem nsAllNsSing {M N V : Type}
+    (R : Ident M N → V → Prop) (name : N) (value : V) :
+    nsAll R (nsSing name value) ↔ R (.short name) value := by
+  constructor
+  · intro all
+    apply all (.short name) value
+    simp [nsSing, nsLookup]
+  · intro holds id result found
+    cases id with
+    | short key =>
+      by_cases same : key = name
+      · subst key
+        simp [nsSing, nsLookup, List.lookup] at found
+        subst result
+        exact holds
+      · have ne : (key == name) = false := by simp [same]
+        simp [nsSing, nsLookup, List.lookup, ne] at found
+    | long moduleName rest => simp [nsSing, nsLookup] at found
+
 /-- If every association satisfies a predicate, so does its namespace. -/
 @[hol "cakeml/semantics/proofs/namespacePropsScript.sml" "nsAll_alist_to_ns"]
 theorem nsAllAlistToNs {M N V : Type}

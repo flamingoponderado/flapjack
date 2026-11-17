@@ -10950,7 +10950,7 @@ run_probe semantics_props_typed_probeScript.sml semantics_props_typed_probe.out 
 
 run_probe namespace_props_typed_probeScript.sml namespace_props_typed_probe.out \
   nsLookup_nsEmpty_typed nsLookupMod_nsEmpty_typed nsLookup_nsLift_typed nsLookupMod_nsLift_typed nsDom_nsLift_typed nsDomMod_nsLift_typed nsDom_nsAppend_equal_typed nsAppend_nsEmpty_typed \
-  nsLookup_nsBind_typed nsAppend_assoc_typed nsAppend_to_nsBindList_typed nsAll_nsAppend_typed nsAll_nsBind_typed \
+  nsLookup_nsBind_typed nsAppend_assoc_typed nsAppend_to_nsBindList_typed nsAll_nsAppend_typed nsAll_nsBind_typed nsAll_nsSing_typed \
   "$cake_dir/semantics/proofs/namespacePropsScript.sml" \
   "$cake_dir/semantics/proofs"
 

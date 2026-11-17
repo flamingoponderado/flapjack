@@ -44,3 +44,4 @@ val _ = emit "nsAppend_assoc_typed" "nsAppend_assoc";
 val _ = emit "nsAppend_to_nsBindList_typed" "nsAppend_to_nsBindList";
 val _ = emit "nsAll_nsAppend_typed" "nsAll_nsAppend";
 val _ = emit "nsAll_nsBind_typed" "nsAll_nsBind";
+val _ = emit "nsAll_nsSing_typed" "nsAll_nsSing";

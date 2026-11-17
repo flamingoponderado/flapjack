@@ -12,6 +12,12 @@
   "reviewer": "Independent source comparison and type_es_length_typed; exact expression and type-list typing premise, binder order and length conclusion."
  },
 {
+  "hol_path": "cakeml/semantics/proofs/namespacePropsScript.sml", "hol_name": "nsAll_nsSing",
+  "lean_path": "Flapjack/NamespaceProps/All.lean", "lean_name": "nsAllNsSing",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with the source and nsAll_nsSing_typed confirms independent module, name and value carriers, the identifier-sensitive predicate, and both directions of the singleton equivalence. Local classical equality introduces no theorem premises."
+ },
+{
   "hol_path": "cakeml/semantics/proofs/namespacePropsScript.sml", "hol_name": "nsAll_alist_to_ns",
   "lean_path": "Flapjack/NamespaceProps/All.lean", "lean_name": "nsAllAlistToNs",
   "statement_status": "reviewed_exact",
