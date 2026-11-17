@@ -3909,6 +3909,7 @@ import Flapjack.Compiler.Inference.TypeDCanon.Scheme
 import Flapjack.Compiler.Inference.TypeDCanon.BindingTids
 import Flapjack.Compiler.Inference.TypeDCanon.DetermRemap
 import Flapjack.Compiler.Inference.TypeDCanon.ConstructorBounds
+import Flapjack.Compiler.Inference.TypeDCanon.Declarations
 import Flapjack.PrimSemEnv
 import Flapjack.Compiler.Repl.ReplTypes
 import Flapjack.Compiler.Proofs.CompilerProof
