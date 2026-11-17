@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Compiler.Inference.Infer
 public import Flapjack.HOL.Transfer.Fmsp.Operations
+public import Flapjack.HOL.Transfer.Fmsp.Inverse
 
 @[expose] public section
 
@@ -88,5 +89,30 @@ theorem generaliseListCorresponds (minimum next : Nat) (subst : Spt Nat) (ts : L
           | mk out types => simp [second] at tail; simp [tail]
 termination_by sizeOf ts
 end
+
+/-- Every finite map has the same lookups after conversion through the sparse
+    representation; this is the input codec for the generalization proof. -/
+private theorem finiteMapRoundtrip (subst : HolFiniteMapExact Nat Nat) :
+    sp2fm (fm2sp subst) = subst := by
+  apply HolFiniteMapExact.ext_lookup
+  intro key
+  exact lookupFm2sp key subst
+
+/-- The complete finite-map model can be computed through the executable
+    generalizer for any input map, with its entire output map reconstructed. -/
+theorem generaliseFromFiniteMap (minimum next : Nat) (subst : HolFiniteMapExact Nat Nat)
+    (t : InferT) :
+    generaliseMap minimum next subst t =
+      let (count, out, typ) := Infer.generalise minimum next (fm2sp subst) t
+      (count, sp2fm out, typ) := by
+  simpa only [finiteMapRoundtrip] using generaliseCorresponds minimum next (fm2sp subst) t
+
+/-- The list case has the same unconditional complete output correspondence. -/
+theorem generaliseListFromFiniteMap (minimum next : Nat) (subst : HolFiniteMapExact Nat Nat)
+    (ts : List InferT) :
+    generaliseListMap minimum next subst ts =
+      let (count, out, types) := Infer.generaliseList minimum next (fm2sp subst) ts
+      (count, sp2fm out, types) := by
+  simpa only [finiteMapRoundtrip] using generaliseListCorresponds minimum next (fm2sp subst) ts
 
 end Flapjack.Compiler.Inference.Infer.Generalise
