@@ -3212,6 +3212,7 @@ import Flapjack.Compiler.Backend.Semantics.WordSem.Props.JumpExcConst
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.AllocConst
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackMax
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackMaxClock
+import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackMaxPreserved
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.StateConst
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateConsts
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.StateLaws

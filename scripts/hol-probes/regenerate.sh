@@ -10077,7 +10077,7 @@ run_probe word_props_typed_probeScript.sml word_props_typed_probe.out \
   SND_alt_def_typed cont_loop_not_timeout_typed evaluate_add_clock_body_typed \
   evaluate_clock_with_const_typed evaluate_clock_const_typed get_code_labels_not_created_typed \
   evaluate_call_push_dec_option_le_stack_max_typed push_call_option_le_stack_max_preserved_typed \
-  evaluate_stack_max_only_grows_typed \
+  evaluate_stack_max_only_grows_typed evaluate_option_le_stack_max_preserved_typed \
   "$cake_dir/compiler/backend/semantics/wordPropsScript.sml" \
   "$cake_dir/compiler/backend/semantics"
 

@@ -37871,6 +37871,20 @@
   },
 {
     "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "evaluate_option_le_stack_max_preserved",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/EvaluateStackMaxPreserved.lean",
+    "lean_name": "evaluate_option_le_stack_max_preserved",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "codewhale source comparison (2026-11-17, task 220): typed capture evaluate_option_le_stack_max_preserved_typed in scripts/hol-probes/word_props_typed_probe.out gives ∀(p :α prog) (s :(α, β, γ) state) (r :α result option) (t :(α, β, γ) state). evaluate (p,s) = (r,t) ∧ option_le (OPTION_MAP2 $+ (stack_size s.stack) s.locals_size) s.stack_max ⇒ option_le (OPTION_MAP2 $+ (stack_size t.stack) t.locals_size) t.stack_max. Lean keeps HOL's binder order p s r t as four separate binders, HOL's single conjunction premise (the run and the incoming frame-size bound), and the conclusion option_le (wordSemOptionAdd (stack_size t.stack) t.localsSize) t.stackMax; HOL's OPTION_MAP2 $+ is the untagged wordSemOptionAdd. Only the type-indexed word carrier α becomes BitVec width with [NeZero width], and the state carrier's fpRegs/store finite-map fields use the reviewed canonical translation with the same-module witness WordSemEvaluateStackMaxPreservedSupport.holFmapAsFiniteSupportWitness. Inherited assumption: the statement mentions the native evaluate whose Inst clause calls the reals_as_rational_cuts-qualified inst; docs/SOUNDNESS.md item 8 applies to FP instructions, no numerical FP claim; the marker propagates the assumption only.",
+    "inherits_reals_as_rational_cuts": true
+  },
+{
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
     "hol_name": "evaluate_stack_swap",
     "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/EvaluateStackSwap.lean",
     "lean_name": "evaluateStackSwap",
