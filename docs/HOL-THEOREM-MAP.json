@@ -12,6 +12,12 @@
   "reviewer": "Independent source comparison and type_es_length_typed; exact expression and type-list typing premise, binder order and length conclusion."
  },
 {
+  "hol_path": "cakeml/semantics/proofs/typeSysPropsScript.sml", "hol_name": "tenv_abbrev_ok_lookup",
+  "lean_path": "Flapjack/TypeSysProps/Abbrev.lean", "lean_name": "tenvAbbrevOkLookup",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with the source and tenv_abbrev_ok_lookup_typed confirms the independent namespace module and identifier types, abbreviation payload, lookup and well-formedness premises, and free-variable conclusion. Local classical equality adds no theorem premises."
+ },
+{
   "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "type_d_type_d_canon",
   "lean_path": "Flapjack/Compiler/Inference/TypeDCanon/Declarations.lean", "lean_name": "typeDTypeDCanon",
   "statement_status": "reviewed_exact",

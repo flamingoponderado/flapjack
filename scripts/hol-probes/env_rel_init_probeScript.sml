@@ -57,6 +57,15 @@ val _ = show "nsAll2_nsLift_typed" namespacePropsTheory.nsAll2_nsLift;
 val _ = show "ienv_ok_lift_typed" inferPropsTheory.ienv_ok_lift;
 val _ = show "ienv_ok_extend_dec_ienv_typed" inferPropsTheory.ienv_ok_extend_dec_ienv;
 val _ = show "extend_dec_tenv_ok_typed" typeSysPropsTheory.extend_dec_tenv_ok;
+val _ = show "tenv_abbrev_ok_lookup_typed" typeSysPropsTheory.tenv_abbrev_ok_lookup;
+val _ = show "check_freevars_add_typed" typeSysPropsTheory.check_freevars_add;
+val _ = show "check_freevars_subst_single_typed" typeSysPropsTheory.check_freevars_subst_single;
+val _ = show "check_freevars_type_name_subst_typed" typeSysPropsTheory.check_freevars_type_name_subst;
+val _ = show "type_p_freevars_typed" typeSysPropsTheory.type_p_freevars;
+val _ = show "tenv_val_exp_ok_bvl_funs_typed" typeSysPropsTheory.tenv_val_exp_ok_bvl_funs;
+val _ = show "type_e_freevars_typed" typeSysPropsTheory.type_e_freevars;
+val _ = show "check_ctor_tenv_ok_typed" typeSysPropsTheory.check_ctor_tenv_ok;
+val _ = show "type_d_canon_tenv_ok_typed" type_dCanonTheory.type_d_canon_tenv_ok;
 
 val tenv_to_ienv_lift_replay = Q.prove(
   `!mn tenv. probe_tenv_to_ienv (tenvLift mn tenv) =
