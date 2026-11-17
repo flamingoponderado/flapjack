@@ -144,6 +144,62 @@ val unconvert_type_subst_replay = Q.prove(
      fs [ALOOKUP_NONE, SUBSET_DEF] >> metis_tac []) >> metis_tac []);
 val _ = show "unconvert_type_subst_replay_typed" unconvert_type_subst_replay;
 
+val env_rel_binding_lemma_replay = Q.prove(
+  `  !t fvs fvs' subst.
+   check_freevars 0 fvs' t ∧
+   set fvs' ⊆ set fvs ∧
+   ALL_DISTINCT fvs'
+   ⇒
+   infer_deBruijn_subst subst
+     (infer_type_subst (ZIP (fvs',MAP Infer_Tvar_db (COUNT_LIST (LENGTH (fvs'))))) t) =
+   infer_deBruijn_subst
+     (GENLIST (λn.
+          infer_deBruijn_subst subst
+            (case find_index (EL n fvs) fvs' 0 of
+               NONE => Infer_Tapp [] arb
+             | SOME t => Infer_Tvar_db t)) (LENGTH fvs))
+     (infer_type_subst (ZIP (fvs,GENLIST (λx. Infer_Tvar_db x) (LENGTH fvs))) t)`,
+  ho_match_mp_tac t_ind >>
+  rw [infer_type_subst_alt, infer_deBruijn_subst_alt, check_freevars_def]
+  >- (
+    qmatch_assum_abbrev_tac `MEM name _` >>
+    every_case_tac >>
+    fs [ALOOKUP_FAILS, SUBSET_DEF, MEM_MAP, MEM_ZIP, LENGTH_COUNT_LIST,
+        infer_deBruijn_subst_alt]
+    >- (
+      every_case_tac >>
+      fs [GSYM find_index_NOT_MEM, infer_deBruijn_subst_alt, MEM_EL] >>
+      rw [] >>
+      metis_tac [])
+    >- (
+      every_case_tac >>
+      fs [GSYM find_index_NOT_MEM, infer_deBruijn_subst_alt, MEM_EL] >>
+      rw [] >>
+      metis_tac [])
+    >- (
+      every_case_tac >>
+      fs [GSYM find_index_NOT_MEM, infer_deBruijn_subst_alt, MEM_EL] >>
+      rw [] >>
+      metis_tac [])
+    >- (
+      imp_res_tac ALOOKUP_MEM >>
+      fs [MEM_ZIP, LENGTH_COUNT_LIST] >>
+      rw [] >>
+      fs [EL_MAP, LENGTH_COUNT_LIST, infer_deBruijn_subst_alt, EL_COUNT_LIST] >>
+      drule find_index_ALL_DISTINCT_EL >>
+      disch_then drule >>
+      disch_then (qspec_then `0` mp_tac) >>
+      asm_simp_tac std_ss [] >>
+      rw [infer_deBruijn_subst_alt]))
+  >- (
+    irule LIST_EQ >>
+    rw [EL_MAP] >>
+    fs [EVERY_EL]));
+val _ = show "env_rel_binding_lemma_replay_typed" env_rel_binding_lemma_replay;
+val _ = if List.exists (fn v => fst (dest_var v) = "arb")
+              (free_vars (concl env_rel_binding_lemma_replay)) then ()
+        else raise Fail "expected source arb to remain a free variable";
+
 val env_rel_binding_lemma2_replay = Q.prove(
   `   !t fvs fvs' subst.
     check_freevars 0 fvs' t ∧
@@ -195,6 +251,9 @@ val env_rel_binding_lemma2_replay = Q.prove(
     rw [EL_MAP] >>
     fs [EVERY_EL]));
 val _ = show "env_rel_binding_lemma2_replay_typed" env_rel_binding_lemma2_replay;
+val _ = if List.exists (fn v => fst (dest_var v) = "TC_int")
+              (free_vars (concl env_rel_binding_lemma2_replay)) then ()
+        else raise Fail "expected source TC_int to remain a free variable";
 
 val check_freevars_deBruijn_inc_replay = Q.prove(
   `!tvs tvs' t. check_freevars tvs tvs' t ==>

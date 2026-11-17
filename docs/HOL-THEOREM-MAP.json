@@ -1,5 +1,11 @@
 [
 {
+  "hol_path": "cakeml/compiler/inference/proofs/inferCompleteScript.sml", "hol_name": "env_rel_binding_lemma",
+  "lean_path": "Flapjack/Compiler/Inference/InferComplete/Binding.lean", "lean_name": "envRelBindingLemma",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent source comparison and env_rel_binding_lemma_replay_typed confirm the full premises and ordered reindexing equality, including the source's free arb natural-number fallback. Generated EL accesses are in range and duplicate-name lookup uses the first match."
+ },
+{
   "hol_path": "cakeml/compiler/inference/proofs/inferCompleteScript.sml", "hol_name": "env_rel_binding_lemma2",
   "lean_path": "Flapjack/Compiler/Inference/InferComplete/Binding.lean", "lean_name": "envRelBindingLemma2",
   "statement_status": "reviewed_exact",
