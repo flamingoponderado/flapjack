@@ -3,6 +3,7 @@ module
 public import Flapjack.Compiler.Inference.Infer
 public import Flapjack.Compiler.Inference.Unify
 public import Flapjack.AstHOL.Syntax
+public import Flapjack.TypeSystemHOL.Operators
 public import Flapjack.TypeSystemHOL.Values
 public import Flapjack.Compiler.Inference.Infer.Duplicates
 public import Flapjack.Compiler.Inference.Infer.TypeNameCheckSub
@@ -238,40 +239,18 @@ def wordTc : WordSize → Nat
   | .w8 => 12
   | .w64 => 11
 
-private def arithArity (a : Arith) : PrimType → Option Nat
-  | .intT => if a ∈ [Arith.add, .sub, .mul, .div, .mod] then some 2 else none
-  | .float64T => if a ∈ [Arith.abs, .neg, .sqrt] then some 1
-    else if a ∈ [Arith.add, .sub, .mul, .div] then some 2
-    else if a == .fma then some 3 else none
-  | .wordT _ => if a ∈ [Arith.add, .sub, .and, .or, .xor] then some 2 else none
-  | .boolT => if a == .not then some 1 else none
-  | _ => none
-
-private def supportedTest (test : Test) (typ : PrimType) : Bool :=
-  match test with
-  | .equal => true
-  | .compare _ => typ ∈ [PrimType.intT, .charT, .wordT .w8, .float64T, .strT]
-  | .altCompare _ => typ == .strT
-
-private def supportedConversion (a b : PrimType) : Bool :=
-  match a, b with
-  | .wordT _, .intT | .intT, .wordT _ | .charT, .intT | .intT, .charT
-  | .charT, .wordT .w8 | .wordT .w8, .charT | .float64T, .wordT .w64
-  | .wordT .w64, .float64T => true
-  | _, _ => false
-
 @[hol "cakeml/compiler/inference/inferScript.sml" "op_simple_constraints_def"]
 def opSimpleConstraints : Op → Bool × List InferT × InferT
   | .arith a typ =>
-    match arithArity a typ with
+    match TypeSystemHOL.supportedArith a typ with
     | none => (false, [], .app [] 1)
     | some n =>
       let t := InferT.app [] (tNumOf typ)
       (true, List.replicate n t, t)
   | .fromTo a b =>
-    (supportedConversion a b, [.app [] (tNumOf a)], .app [] (tNumOf b))
+    (TypeSystemHOL.supportedConversion a b, [.app [] (tNumOf a)], .app [] (tNumOf b))
   | .test test typ =>
-    (supportedTest test typ, [.app [] (tNumOf typ), .app [] (tNumOf typ)], .app [] 1)
+    (TypeSystemHOL.supportedTest test typ, [.app [] (tNumOf typ), .app [] (tNumOf typ)], .app [] 1)
   | .shift size _ _ =>
     let n := wordTc size
     (true, [.app [] n], .app [] n)
@@ -295,7 +274,7 @@ def opSimpleConstraints : Op → Bool × List InferT × InferT
 @[hol "cakeml/compiler/inference/inferScript.sml" "op_to_string_def"]
 def opToString (op : Op) : MlString × Nat :=
   match op with
-  | .arith a t => (ofString "Arith", (arithArity a t).getD 0)
+  | .arith a t => (ofString "Arith", (TypeSystemHOL.supportedArith a t).getD 0)
   | .fromTo _ _ => (ofString "FromTo", 1) | .test _ _ => (ofString "Test", 2)
   | .shift _ _ _ => (ofString "Shift", 1) | .equality => (ofString "Equality", 2)
   | .opapp => (ofString "Opapp", 2) | .opassign => (ofString "Opassign", 2)
