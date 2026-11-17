@@ -3821,6 +3821,7 @@ import Flapjack.Compiler.Inference.Infer.Duplicates
 import Flapjack.Compiler.Inference.Infer.TypeNameCheck
 import Flapjack.Compiler.Inference.Infer.TypeNameCheckState
 import Flapjack.Compiler.Inference.Infer.TypeNameCheckSub
+import Flapjack.Compiler.Inference.Infer.TypeNameCheckEquiv
 import Flapjack.Compiler.Inference.Infer.TypeDefinitions
 import Flapjack.Compiler.Inference.Infer.Constraint
 import Flapjack.Compiler.Inference.Infer.ConstraintDiagnostics
