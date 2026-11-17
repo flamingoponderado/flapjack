@@ -832,8 +832,9 @@ theorem singRenumNotInTenvId (tids : Nat → Prop) (tenv : TypeEnv) (m n : Nat) 
     have noId : ¬ setTids entry.2 m := fun member => absent (bound m member)
     simp [singRenumNotInId entry.2 m n noId]
 
-/-- Mapping a checked list of types preserves the free-variable check. -/
-private theorem checkFreevarsMapRename (tvs : Nat) (args : List SemanticT) (f : Nat → Nat)
+/-- Flapjack proof helper for the source pattern and expression renaming proofs:
+mapping a checked type list preserves the free-variable check. -/
+theorem checkFreevarsMapRename (tvs : Nat) (args : List SemanticT) (f : Nat → Nat)
     (h : args.all (checkFreevars tvs []) = true) :
     (args.map (tsTidRename f)).all (checkFreevars tvs []) = true := by
   rw [List.all_eq_true] at h ⊢
@@ -841,8 +842,9 @@ private theorem checkFreevarsMapRename (tvs : Nat) (args : List SemanticT) (f : 
   obtain ⟨original, originalMem, rfl⟩ := List.mem_map.mp member
   exact (checkFreevarsTsTidRename tvs [] original f).2 (h original originalMem)
 
-/-- Constructor instantiation commutes with the source's type-ID renaming. -/
-private theorem mapSubstRename (params : List MlString) (args types : List SemanticT) (f : Nat → Nat) :
+/-- Flapjack proof helper for the source pattern and expression renaming proofs:
+constructor instantiation commutes with type-ID renaming. -/
+theorem mapSubstRename (params : List MlString) (args types : List SemanticT) (f : Nat → Nat) :
     (types.map (typeSubst (typeSubstMap (params.zip args)))).map (tsTidRename f) =
       (types.map (tsTidRename f)).map
         (typeSubst (typeSubstMap (params.zip (args.map (tsTidRename f))))) := by

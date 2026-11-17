@@ -1,5 +1,11 @@
 [
 {
+  "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "type_e_ts_tid_rename",
+  "lean_path": "Flapjack/Compiler/Inference/TypeDCanon/Expression.lean", "lean_name": "typeETsTidRename",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with the source and type_e_ts_tid_rename_typed confirms all three expression, expression-list and function-typing conjuncts, carriers, premise and result. The proof uses the reviewed TypeBranches encoding of the membership-indexed premises and introduces no additional assumptions."
+ },
+{
   "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "type_op_ts_tid_rename",
   "lean_path": "Flapjack/Compiler/Inference/TypeDCanon/Operator.lean", "lean_name": "typeOpTsTidRename",
   "statement_status": "reviewed_exact",
