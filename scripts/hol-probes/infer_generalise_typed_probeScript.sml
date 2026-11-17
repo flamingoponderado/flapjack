@@ -27,3 +27,5 @@ val _ = (print "subst_infer_subst_swap_typed=";
   print_term (concl (DB.fetch "inferProps" "subst_infer_subst_swap")); print "\n");
 val _ = (print "t_vars_inc_typed=";
   print_term (concl (DB.fetch "inferProps" "t_vars_inc")); print "\n");
+val _ = (print "inc_wfs_typed=";
+  print_term (concl (DB.fetch "inferProps" "inc_wfs")); print "\n");

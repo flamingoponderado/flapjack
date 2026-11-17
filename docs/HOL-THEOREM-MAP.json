@@ -1,5 +1,12 @@
 [
 {
+  "hol_path": "cakeml/compiler/inference/inferPropsScript.sml", "hol_name": "inc_wfs",
+  "lean_path": "Flapjack/Compiler/Inference/InferProps/DeBruijn/WellFounded.lean", "lean_name": "incWfs",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["s"],
+  "reviewer": "Typed HOL source comparison preserves both binders, the original well-foundedness premise and conclusion. HOL o_f maps present range values while preserving keys; the canonical map2 lookup and substitution roundtrip witness implement that translation."
+ },
+{
   "hol_path": "cakeml/compiler/inference/inferPropsScript.sml", "hol_name": "t_vars_inc",
   "lean_path": "Flapjack/Compiler/Inference/InferProps/DeBruijn/Vars.lean", "lean_name": "tVarsInc",
   "statement_status": "reviewed_exact",
