@@ -8240,6 +8240,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "cut_state_opt_SOME_eq",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/CutState.lean",
+  "lean_name": "cutStateOpt_some_eq",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent source review against cut_state_opt_SOME_eq_typed: the sole successful optional-cut premise yields the same normalized sparse-tree intersection in the result's locals; names and the two independent data-state type parameters retain their original carriers."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
   "hol_name": "size_of_cons_seen_Block",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/SizeSeen.lean",
   "lean_name": "sizeOfValues_cons_seen_block",

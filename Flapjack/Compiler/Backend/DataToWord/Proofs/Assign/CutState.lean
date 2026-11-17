@@ -9,6 +9,18 @@ public import Flapjack.Compiler.Backend.DataSpace.Proofs.State
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Assign
 open Flapjack Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
 
+/-- A successful restricted cut returns the normalized intersection. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml" "cut_state_opt_SOME_eq"]
+theorem cutStateOpt_some_eq {C F : Type} (names : NumSet)
+    (state result : DataSem.State C F)
+    (run : DataSem.cutStateOpt (some names) state = some result) :
+    result = { state with locals := sptMkWf (sptInter state.locals names) } := by
+  simp only [DataSem.cutStateOpt, DataSem.cutState] at run
+  unfold DataSem.cutEnv at run
+  split at run
+  · simpa using run.symm
+  · simp at run
+
 /-- A successful optional source cut and argument read can be matched by a
 target cut and argument read while retaining both state relations. The HOL
 tag is pending review of the state relation and its compiler dependencies. -/
