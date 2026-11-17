@@ -5,6 +5,7 @@ public import Flapjack.Compiler.Inference.Unify
 public import Flapjack.AstHOL.Syntax
 public import Flapjack.TypeSystemHOL.Values
 public import Flapjack.Compiler.Inference.Infer.Duplicates
+public import Flapjack.TypeSystemHOL.TypeNames
 
 @[expose] public section
 
@@ -130,21 +131,6 @@ private def ctorInfo (env : Env) (name : Ident MlString MlString) : M (List MlSt
 
 
 mutual
-private def semanticSubst (s : List (MlString × TypeSystemHOL.SemanticT)) :
-    TypeSystemHOL.SemanticT → TypeSystemHOL.SemanticT
-  | .var v => (s.lookup v).getD (.var v)
-  | .varDb n => .varDb n
-  | .app ts name => .app (semanticSubstList s ts) name
-termination_by t => sizeOf t
-
-private def semanticSubstList (s : List (MlString × TypeSystemHOL.SemanticT)) :
-    List TypeSystemHOL.SemanticT → List TypeSystemHOL.SemanticT
-  | [] => []
-  | x :: xs => semanticSubst s x :: semanticSubstList s xs
-termination_by ts => sizeOf ts
-end
-
-mutual
 private def annotationWorker : Nat → Env → List MlString → AstT → Except Error TypeSystemHOL.SemanticT
   | 0, _, _, _ => .error .exhausted
   | fuel + 1, env, free, typ => do
@@ -158,7 +144,7 @@ private def annotationWorker : Nat → Env → List MlString → AstT → Except
       | none => .error (.undefinedTypeConstructor name)
       | some (params, body) =>
         if params.length != ts.length then .error (.typeConstructorArity name ts.length params.length)
-        else .ok (semanticSubst (List.zip params ts) body)
+        else .ok (TypeSystemHOL.typeSubst (TypeSystemHOL.typeSubstMap (List.zip params ts)) body)
 
 private def annotationsWorker : Nat → Env → List MlString → List AstT → Except Error (List TypeSystemHOL.SemanticT)
   | 0, _, _, _ => .error .exhausted
