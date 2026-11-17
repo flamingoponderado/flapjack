@@ -7,6 +7,31 @@ open Lean Meta Flapjack Flapjack.Compiler.Inference Flapjack.Compiler.Inference.
 private abbrev producerAlias := generaliseListMap
 
 run_meta do
+  let target := ``generaliseListLength
+  let path := "cakeml/compiler/inference/inferPropsScript.sml"
+  let name := "generalise_list_length"
+  let producer := "Flapjack.Compiler.Inference.Infer.Generalise.generaliseListMap"
+  let qualified ← generaliseLengthQualifiedProblems target path name none #["subst", "out"]
+    producer "component_2" false
+  unless qualified.isEmpty do throwError "qualified length audit rejected: {qualified}"
+  if (← generaliseLengthQualifiedProblems target path name none #["subst", "out"]
+      producer "component_1" false).isEmpty then
+    throwError "qualified length audit accepted incorrect tuple metadata"
+  if (← generaliseLengthQualifiedProblems target path name none #["subst", "out"]
+      producer "component_2" true).isEmpty then
+    throwError "qualified length audit accepted another qualifier"
+  let invalid := #[
+    generaliseLengthMetadataProblems ``producerAlias path name none #["subst", "out"] producer "component_2" false,
+    generaliseLengthMetadataProblems target "other" name none #["subst", "out"] producer "component_2" false,
+    generaliseLengthMetadataProblems target path "other" none #["subst", "out"] producer "component_2" false,
+    generaliseLengthMetadataProblems target path name (some 198) #["subst", "out"] producer "component_2" false,
+    generaliseLengthMetadataProblems target path name none #["out", "subst"] producer "component_2" false,
+    generaliseLengthMetadataProblems target path name none #["subst", "subst"] producer "component_2" false,
+    generaliseLengthMetadataProblems target path name none #["subst", "out"] "generaliseListMap" "component_2" false,
+    generaliseLengthMetadataProblems target path name none #["subst", "out"] producer "component_1" false,
+    generaliseLengthMetadataProblems target path name none #["subst", "out"] producer "component_2" true]
+  for problems in invalid do
+    if problems.isEmpty then throwError "generalization length audit accepted invalid metadata"
   let producerRef : HolRef := {
     path := "cakeml/compiler/inference/inferScript.sml", name := "generalise_def",
     fmapAsFiniteSupportParameterTupleResult := #["subst", "component_2"] }

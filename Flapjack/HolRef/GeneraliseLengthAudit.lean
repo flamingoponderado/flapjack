@@ -131,4 +131,28 @@ def generaliseLengthProducerBundleProblems (target : Name) : MetaM (Array String
   let ref := HolRef.get? env `Flapjack.Compiler.Inference.Infer.Generalise.generaliseListMap
   return generaliseLengthProducerRefProblems ref ++ (← generaliseLengthBundleProblems target)
 
+/-- The prospective observer qualifier is restricted to the one reviewed
+    theorem, its two map binders and the imported tuple producer's map slot. -/
+def generaliseLengthMetadataProblems (target : Name) (path name : String) (line : Option Nat)
+    (parameters : Array String) (producer component : String) (otherQualifiers : Bool) : Array String := Id.run do
+  unless target == `Flapjack.Compiler.Inference.InferProps.Generalise.generaliseListLength do
+    return #["length qualifier requires the reviewed theorem"]
+  unless path == "cakeml/compiler/inference/inferPropsScript.sml" &&
+      name == "generalise_list_length" && line.isNone do
+    return #["length qualifier requires the unique reviewed HOL reference"]
+  unless parameters == #["subst", "out"] &&
+      producer == "Flapjack.Compiler.Inference.Infer.Generalise.generaliseListMap" &&
+      component == "component_2" do
+    return #["length qualifier requires the reviewed map binders, producer and tuple component"]
+  if otherQualifiers then return #["length qualifier cannot combine with other qualifiers"]
+  return #[]
+
+/-- Combine exact prospective metadata with the producer and theorem bundle.
+    Source and manifest validation remain separate and mandatory. -/
+def generaliseLengthQualifiedProblems (target : Name) (path name : String) (line : Option Nat)
+    (parameters : Array String) (producer component : String) (otherQualifiers : Bool) : MetaM (Array String) := do
+  let metadata := generaliseLengthMetadataProblems target path name line parameters producer component otherQualifiers
+  unless metadata.isEmpty do return metadata
+  generaliseLengthProducerBundleProblems target
+
 end Flapjack
