@@ -27,6 +27,13 @@ private def qname : NamespaceHOL.Ident MlString MlString := .long (ofString "A")
 #guard opToString (.arith .fma .float64T) == (ofString "Arith", 3)
 #guard opToString (.arith .fma .intT) == (ofString "Arith", 0)
 
+-- HOL preserves the type list and result even when this conversion is unsupported.
+#guard opSimpleConstraints (.fromTo .boolT .intT) ==
+  (false, [.app [] 1], .app [] 5)
+#guard opSimpleConstraints (.arith .fma .float64T) ==
+  (true, [.app [] 14, .app [] 14, .app [] 14], .app [] 14)
+#guard opSimpleConstraints .opapp == (false, [], .app [] 1)
+
 #guard renderUnsupportedPrimitive [] (.primitiveArity .opref 12) ==
   some (ofString "### ERROR: type error\nPrimitive Opref given 12 arguments, but expects 1 at unknown location\nProgram exited with nonzero exit code.\n").explode
 

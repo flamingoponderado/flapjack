@@ -1,5 +1,11 @@
 [
 {
+  "hol_path": "cakeml/compiler/inference/inferScript.sml", "hol_name": "op_simple_constraints_def",
+  "lean_path": "Flapjack/Compiler/Inference/Infer/Core.lean", "lean_name": "opSimpleConstraints",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with op_simple_constraints_typed covers every source branch and the full false-result tuples, including op_simple_constraints_false_eval. The arithmetic, test, conversion, type-number and word-size helpers were compared against their typed HOL definitions."
+ },
+{
   "hol_path": "cakeml/compiler/inference/inferScript.sml", "hol_name": "op_n_args_msg_def",
   "lean_path": "Flapjack/Compiler/Inference/Infer/Core.lean", "lean_name": "opNArgsMessage",
   "statement_status": "reviewed_exact",

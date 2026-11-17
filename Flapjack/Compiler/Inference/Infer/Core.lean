@@ -256,34 +256,37 @@ private def supportedConversion (a b : PrimType) : Bool :=
   | .wordT .w64, .float64T => true
   | _, _ => false
 
-private def simpleOp : Op → Option (List InferT × InferT)
-  | .arith a typ => do
-    let n ← arithArity a typ
-    let t := InferT.app [] (primNum typ)
-    some (List.replicate n t, t)
+@[hol "cakeml/compiler/inference/inferScript.sml" "op_simple_constraints_def"]
+def opSimpleConstraints : Op → Bool × List InferT × InferT
+  | .arith a typ =>
+    match arithArity a typ with
+    | none => (false, [], .app [] 1)
+    | some n =>
+      let t := InferT.app [] (primNum typ)
+      (true, List.replicate n t, t)
   | .fromTo a b =>
-    if supportedConversion a b then some ([.app [] (primNum a)], .app [] (primNum b)) else none
+    (supportedConversion a b, [.app [] (primNum a)], .app [] (primNum b))
   | .test test typ =>
-    if supportedTest test typ then some ([.app [] (primNum typ), .app [] (primNum typ)], .app [] 1) else none
+    (supportedTest test typ, [.app [] (primNum typ), .app [] (primNum typ)], .app [] 1)
   | .shift size _ _ =>
     let n := match size with | .w8 => 12 | .w64 => 11
-    some ([.app [] n], .app [] n)
-  | .aw8alloc => some ([.app [] 5, .app [] 12], .app [] 13)
-  | .aw8sub => some ([.app [] 13, .app [] 5], .app [] 12)
-  | .aw8length => some ([.app [] 13], .app [] 5)
-  | .aw8update => some ([.app [] 13, .app [] 5, .app [] 12], .app [] 9)
-  | .copyStrStr => some ([.app [] 8, .app [] 5, .app [] 5], .app [] 8)
-  | .copyStrAw8 => some ([.app [] 8, .app [] 5, .app [] 5, .app [] 13, .app [] 5], .app [] 9)
-  | .copyAw8Str => some ([.app [] 13, .app [] 5, .app [] 5], .app [] 8)
-  | .copyAw8Aw8 => some ([.app [] 13, .app [] 5, .app [] 5, .app [] 13, .app [] 5], .app [] 9)
-  | .strsub => some ([.app [] 8, .app [] 5], .app [] 2)
-  | .strlen => some ([.app [] 8], .app [] 5)
-  | .configGC => some ([.app [] 5, .app [] 5], .app [] 9)
-  | .ffi _ => some ([.app [] 8, .app [] 13], .app [] 9)
-  | .implode => some ([.app [.app [] 2] 6], .app [] 8)
-  | .explode => some ([.app [] 8], .app [.app [] 2] 6)
-  | .strcat => some ([.app [.app [] 8] 6], .app [] 8)
-  | _ => none
+    (true, [.app [] n], .app [] n)
+  | .aw8alloc => (true, [.app [] 5, .app [] 12], .app [] 13)
+  | .aw8sub => (true, [.app [] 13, .app [] 5], .app [] 12)
+  | .aw8length => (true, [.app [] 13], .app [] 5)
+  | .aw8update => (true, [.app [] 13, .app [] 5, .app [] 12], .app [] 9)
+  | .copyStrStr => (true, [.app [] 8, .app [] 5, .app [] 5], .app [] 8)
+  | .copyStrAw8 => (true, [.app [] 8, .app [] 5, .app [] 5, .app [] 13, .app [] 5], .app [] 9)
+  | .copyAw8Str => (true, [.app [] 13, .app [] 5, .app [] 5], .app [] 8)
+  | .copyAw8Aw8 => (true, [.app [] 13, .app [] 5, .app [] 5, .app [] 13, .app [] 5], .app [] 9)
+  | .strsub => (true, [.app [] 8, .app [] 5], .app [] 2)
+  | .strlen => (true, [.app [] 8], .app [] 5)
+  | .configGC => (true, [.app [] 5, .app [] 5], .app [] 9)
+  | .ffi _ => (true, [.app [] 8, .app [] 13], .app [] 9)
+  | .implode => (true, [.app [.app [] 2] 6], .app [] 8)
+  | .explode => (true, [.app [] 8], .app [.app [] 2] 6)
+  | .strcat => (true, [.app [.app [] 8] 6], .app [] 8)
+  | _ => (false, [], .app [] 1)
 
 @[hol "cakeml/compiler/inference/inferScript.sml" "op_to_string_def"]
 def opToString (op : Op) : MlString × Nat :=
@@ -323,7 +326,8 @@ def opNArgsMessage (op : Op) (n : Nat) : MlString :=
     .implode (Flapjack.holNumToDecString expected)]
 
 private def inferOp (fuel : Nat) (op : Op) (ts : List InferT) : M InferT := do
-  if let some (args, result) := simpleOp op then
+  let (simple, args, result) := opSimpleConstraints op
+  if simple then
     if ts.length != args.length then
       fail (.primitiveArity op ts.length)
     constrainMany fuel ts args
