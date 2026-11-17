@@ -213,6 +213,109 @@ theorem applyNonFfi_safeForSpace_of_false {C F : Type} (op : ClosLang.Op)
   · rw [hsafe] at mono
     exact Bool.noConfusion (mono hnext)
 
+/-- The FFI branch of the auxiliary dispatcher leaves the safety flag as it
+    found it, so a successful FFI call cannot make an unsafe state safe.
+    Flapjack infrastructure toward the parked HOL `do_app_with_locals`; no
+    separate HOL original. -/
+private theorem doAppAuxFfi_safeForSpace_of_false {C F : Type}
+    (name : Basis.Pure.MlString.MlString) (values : List Value)
+    (state next : State C F) (value : Value)
+    (run : doAppAux (.ffi name) values state = .val (value, next))
+    (hsafe : state.safeForSpace = false) :
+    next.safeForSpace = false := by
+  rcases values with _ | ⟨_, _ | ⟨_, _ | ⟨_, _ | ⟨_, _⟩⟩⟩⟩ <;>
+    simp only [doAppAux] at run ⊢
+  all_goals repeat' (first | split at run | simp_all)
+  all_goals rcases run with ⟨_, rfl⟩
+  all_goals simp
+
+/-- A successful auxiliary application cannot turn an unsafe state safe: every
+    branch either keeps the flag or conjoins a further test with it, and the FFI
+    branch keeps it unchanged.  Together with the limit-check bound this is the
+    auxiliary half of HOL `do_app_safe`'s accounting.  Flapjack infrastructure
+    toward the parked HOL `do_app_with_locals`; no separate HOL original. -/
+theorem doAppAux_safeForSpace_of_false {C F : Type} (op : ClosLang.Op) (values : List Value)
+    (state next : State C F) (value : Value)
+    (run : doAppAux op values state = .val (value, next))
+    (hsafe : state.safeForSpace = false) :
+    next.safeForSpace = false := by
+  cases op with
+  | ffi name => exact doAppAuxFfi_safeForSpace_of_false name values state next value run hsafe
+  | install =>
+    rcases values with _ | ⟨_, _ | ⟨_, _ | ⟨_, _⟩⟩⟩ <;>
+      simp only [doAppAux] at run ⊢
+    all_goals repeat' (first | split at run | simp_all [applyNonFfi])
+  | intOp op' =>
+    cases h : applyNonFfi (.intOp op') values state with
+    | none =>
+      simp only [doAppAux, h] at run
+      cases run
+    | some pair =>
+      simp only [doAppAux, h] at run
+      injection run with hp
+      rw [hp] at h
+      exact applyNonFfi_safeForSpace_of_false (.intOp op') values state next value h hsafe
+  | wordOp op' =>
+    cases h : applyNonFfi (.wordOp op') values state with
+    | none =>
+      simp only [doAppAux, h] at run
+      cases run
+    | some pair =>
+      simp only [doAppAux, h] at run
+      injection run with hp
+      rw [hp] at h
+      exact applyNonFfi_safeForSpace_of_false (.wordOp op') values state next value h hsafe
+  | label l =>
+    cases h : applyNonFfi (.label l) values state with
+    | none =>
+      simp only [doAppAux, h] at run
+      cases run
+    | some pair =>
+      simp only [doAppAux, h] at run
+      injection run with hp
+      rw [hp] at h
+      exact applyNonFfi_safeForSpace_of_false (.label l) values state next value h hsafe
+  | thunkOp op' =>
+    cases h : applyNonFfi (.thunkOp op') values state with
+    | none =>
+      simp only [doAppAux, h] at run
+      cases run
+    | some pair =>
+      simp only [doAppAux, h] at run
+      injection run with hp
+      rw [hp] at h
+      exact applyNonFfi_safeForSpace_of_false (.thunkOp op') values state next value h hsafe
+  | globOp op' =>
+    cases h : applyNonFfi (.globOp op') values state with
+    | none =>
+      simp only [doAppAux, h] at run
+      cases run
+    | some pair =>
+      simp only [doAppAux, h] at run
+      injection run with hp
+      rw [hp] at h
+      exact applyNonFfi_safeForSpace_of_false (.globOp op') values state next value h hsafe
+  | blockOp op' =>
+    cases h : applyNonFfi (.blockOp op') values state with
+    | none =>
+      simp only [doAppAux, h] at run
+      cases run
+    | some pair =>
+      simp only [doAppAux, h] at run
+      injection run with hp
+      rw [hp] at h
+      exact applyNonFfi_safeForSpace_of_false (.blockOp op') values state next value h hsafe
+  | memOp op' =>
+    cases h : applyNonFfi (.memOp op') values state with
+    | none =>
+      simp only [doAppAux, h] at run
+      cases run
+    | some pair =>
+      simp only [doAppAux, h] at run
+      injection run with hp
+      rw [hp] at h
+      exact applyNonFfi_safeForSpace_of_false (.memOp op') values state next value h hsafe
+
 /-- Successful auxiliary application keeps its value when only the safety
     flag is replaced, recording the new flag existentially.  Flapjack
     infrastructure toward the parked HOL `do_app_with_locals`; no separate HOL
