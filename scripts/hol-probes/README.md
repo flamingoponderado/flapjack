@@ -1,4 +1,5 @@
-`infer_generalise_typed_probe.out` captures both inferred operation types, the
+`infer_generalise_typed_probe.out` captures `t_vars_inc` with inferred types,
+both inferred operation types, the
 complete typed `infer$generalise_def` equations, the typed
 `inferProps$generalise_list_length` theorem, and the inferred type and equations
 of `infer$infer_subst_def` and statements of `inferProps$infer_subst_submap`,

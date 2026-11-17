@@ -25,3 +25,5 @@ val _ = (print "infer_subst_FEMPTY_typed=";
   print_term (concl (DB.fetch "inferProps" "infer_subst_FEMPTY")); print "\n");
 val _ = (print "subst_infer_subst_swap_typed=";
   print_term (concl (DB.fetch "inferProps" "subst_infer_subst_swap")); print "\n");
+val _ = (print "t_vars_inc_typed=";
+  print_term (concl (DB.fetch "inferProps" "t_vars_inc")); print "\n");
