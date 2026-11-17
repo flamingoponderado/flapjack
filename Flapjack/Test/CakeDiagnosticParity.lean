@@ -20,6 +20,11 @@ open Flapjack.Compiler.Inference.Infer.Diagnostics Flapjack.Basis.Pure.MlString
 private def loc : Locs := .locs (.posn 0 11) (.posn 0 15)
 private def qname : NamespaceHOL.Ident MlString MlString := .long (ofString "A") (.short (ofString "foo"))
 
+-- HOL generalise_list shares repeated variables and allocates fresh indices.
+#guard let (count, subst, types) := generaliseList 0 0 .ln [.uvar 3, .uvar 3, .uvar 7]
+  count == 2 && sptLookup 3 subst == some 0 && sptLookup 7 subst == some 1 &&
+    types == [.varDb 0, .varDb 0, .varDb 1]
+
 -- HOL's operator table also covers unsafe and thunk operators, even though
 -- inference reports their dedicated errors before consulting their arities.
 #guard opToString .aallocFixed == (ofString "AallocFixed", 1)
