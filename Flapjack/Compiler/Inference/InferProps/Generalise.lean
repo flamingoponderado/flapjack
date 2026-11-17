@@ -7,9 +7,9 @@ public import Flapjack.Compiler.Inference.Infer.Generalise
 namespace Flapjack.Compiler.Inference.InferProps.Generalise
 open Flapjack.Compiler.Inference.Infer.Generalise
 
-/-- The source-shaped finite-map generalizer preserves list length. This is
-    not tagged as the HOL theorem until its generalization operation's
-    finite-map input and tuple result have a supported representation tag. -/
+/-- The source-shaped finite-map generalizer preserves list length. The HOL
+    theorem's input and output map binders and observed tuple result still
+    require a combined representation qualifier for this statement. -/
 theorem generaliseListLength (minimum next : Nat) (subst : HolFiniteMapExact Nat Nat)
     (input : List InferT) (count : Nat) (out : HolFiniteMapExact Nat Nat)
     (result : List InferT)

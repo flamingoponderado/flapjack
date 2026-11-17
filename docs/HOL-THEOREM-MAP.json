@@ -1,5 +1,19 @@
 [
 {
+  "hol_path": "cakeml/compiler/inference/inferScript.sml", "hol_name": "generalise_def",
+  "lean_path": "Flapjack/Compiler/Inference/Infer/Generalise.lean", "lean_name": "generaliseMap",
+  "statement_status": "reviewed_fmap_as_finite_support_parameter_tuple_result",
+  "fmap_as_finite_support_parameter_tuple_result": ["subst", "component_2"],
+  "reviewer": "Typed HOL source comparison covers all inference-type cases, count and de Bruijn index, lookup and update. The canonical subst input and returned component_2 map have checked lookup witnesses and full correspondence to the executed sparse-tree operation; direct compiler routing through this finite-map definition remains open."
+ },
+{
+  "hol_path": "cakeml/compiler/inference/inferScript.sml", "hol_name": "generalise_def",
+  "lean_path": "Flapjack/Compiler/Inference/Infer/Generalise.lean", "lean_name": "generaliseListMap",
+  "statement_status": "reviewed_fmap_as_finite_support_parameter_tuple_result",
+  "fmap_as_finite_support_parameter_tuple_result": ["subst", "component_2"],
+  "reviewer": "Typed HOL source comparison covers the empty and cons equations, recursive count and index order, and result list. The canonical subst input and returned component_2 map have checked lookup witnesses and full correspondence to the executed sparse-tree operation; direct compiler routing through this finite-map definition remains open."
+ },
+{
   "hol_path": "cakeml/compiler/inference/inferScript.sml", "hol_name": "infer_type_subst_alt",
   "lean_path": "Flapjack/Compiler/Inference/Infer/TypeSubst.lean", "lean_name": "inferTypeSubstAlt",
   "statement_status": "reviewed_exact",

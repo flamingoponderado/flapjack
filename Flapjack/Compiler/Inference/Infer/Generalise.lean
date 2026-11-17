@@ -6,14 +6,15 @@ public import Flapjack.HOL.Transfer.Fmsp.Inverse
 
 @[expose] public section
 
-/-! Finite-map generalization and its executable sparse-tree correspondence. -/
+/-! Finite-map generalization and its executable sparse-tree correspondence.
+The compiler currently executes the sparse-tree operations; direct routing
+through the reviewed finite-map definitions remains open. -/
 namespace Flapjack.Compiler.Inference.Infer.Generalise
 open Flapjack.HOL.Transfer.Fmsp
 
 mutual
-/-- Source-shaped generalization over canonical finite maps. This is not tagged
-    as `generalise_def`: its finite-map input and tuple result require a
-    representation qualifier that has not yet been established. -/
+/-- Generalization over canonical finite maps, with the HOL map input and
+    returned tuple component recorded by the combined representation qualifier. -/
 def generaliseMap (minimum next : Nat) (subst : HolFiniteMapExact Nat Nat) :
     InferT → Nat × HolFiniteMapExact Nat Nat × InferT
   | .app ts name =>
@@ -26,8 +27,7 @@ def generaliseMap (minimum next : Nat) (subst : HolFiniteMapExact Nat Nat) :
   | .varDb n => (0, subst, .varDb n)
 termination_by t => sizeOf t
 
-/-- The source-shaped list traversal uses the same finite-map carrier as
-    `generaliseMap`; its source tag awaits the same tuple qualifier. -/
+/-- The list traversal uses the same canonical finite-map carrier. -/
 def generaliseListMap (minimum next : Nat) (subst : HolFiniteMapExact Nat Nat) :
     List InferT → Nat × HolFiniteMapExact Nat Nat × List InferT
   | [] => (0, subst, [])
@@ -37,6 +37,10 @@ def generaliseListMap (minimum next : Nat) (subst : HolFiniteMapExact Nat Nat) :
     (count + count', subst, t :: ts)
 termination_by ts => sizeOf ts
 end
+
+attribute [hol "cakeml/compiler/inference/inferScript.sml" "generalise_def"
+  (fmap_as_finite_support_parameter_tuple_result := (map_parameter := subst) (result_component := component_2))]
+  generaliseMap generaliseListMap
 
 mutual
 /-- The executable sparse-tree operation agrees with the finite-map model on

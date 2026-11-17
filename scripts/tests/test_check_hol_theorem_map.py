@@ -127,6 +127,7 @@ class GeneraliseMapQualifierInventoryTest(unittest.TestCase):
                    '  (fmap_as_finite_support_parameter_tuple_result := '
                    '(map_parameter := subst) (result_component := component_2))]\n'
                    '  generaliseMap generaliseListMap\n\n')
+        source = source.replace(command, '')
         self.assertEqual(source.count(anchor), 1)
         source = source.replace(anchor, anchor.replace('mutual\n', command + 'mutual\n'), 1)
         with tempfile.TemporaryDirectory() as directory:

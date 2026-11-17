@@ -28,8 +28,9 @@ class GeneraliseParameterTupleSourceTest(unittest.TestCase):
                    '(map_parameter := subst) (result_component := component_2))]\n'
                    '  generaliseMap generaliseListMap\n\n')
         anchor = 'termination_by ts => sizeOf ts\nend\n\nmutual\n'
-        self.assertEqual(SOURCE.count(anchor), 1)
-        fixture = SOURCE.replace(anchor, anchor.replace('mutual\n', command + 'mutual\n'), 1)
+        untagged = SOURCE.replace(command, '')
+        self.assertEqual(untagged.count(anchor), 1)
+        fixture = untagged.replace(anchor, anchor.replace('mutual\n', command + 'mutual\n'), 1)
         check = CHECKER["prospective_generalise_command_errors"]
         self.assertEqual(check(fixture, LEAN_PATH), [])
         sites = CHECKER["generalise_command_sites"](fixture, LEAN_PATH)

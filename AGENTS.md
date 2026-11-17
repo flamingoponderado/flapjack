@@ -411,6 +411,21 @@ with the other finite-map qualifiers. Its syntactic checker and Lean witness
 do not prove HOL-to-Lean equivalence; review the entire function domain,
 codomain, and surrounding word/set carriers against HOL before tagging.
 
+**Qualify generalization's map input and tuple result.** The narrow
+`(fmap_as_finite_support_parameter_tuple_result :=
+  (map_parameter := subst) (result_component := component_2))` qualifier is
+reserved for `generaliseMap` and `generaliseListMap` in the inference
+generalization counterpart of `infer$generalise_def`. Their post-mutual
+`attribute [hol ...]` command attaches the shared HOL reference to exactly
+those two definitions; declaration-site attributes also reach Lean's
+generated mutual helper and are rejected. The source checker pins the complete
+mutual bodies and witnesses, the elaborated export audits their types, owners
+and axiom closures, and the theorem map records the same positions under
+`reviewed_fmap_as_finite_support_parameter_tuple_result`. This qualifier
+permits only the canonical finite-support translation of the HOL finite-map
+input and returned map; it does not authorize other statement or behavior
+differences. Review the typed HOL source and both witnesses independently.
+
 **Qualify a heterogeneous finite-map function.** Use
 `(fmap_as_finite_support_heterogeneous_function := [argument_N, result_M])`
 only for a direct function definition with a typed result whose named explicit
