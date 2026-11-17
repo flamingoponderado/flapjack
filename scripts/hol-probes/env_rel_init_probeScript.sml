@@ -144,6 +144,58 @@ val unconvert_type_subst_replay = Q.prove(
      fs [ALOOKUP_NONE, SUBSET_DEF] >> metis_tac []) >> metis_tac []);
 val _ = show "unconvert_type_subst_replay_typed" unconvert_type_subst_replay;
 
+val env_rel_binding_lemma2_replay = Q.prove(
+  `   !t fvs fvs' subst.
+    check_freevars 0 fvs' t ∧
+    set fvs' ⊆ set fvs ∧
+    ALL_DISTINCT fvs'
+    ⇒
+    infer_deBruijn_subst subst
+      (infer_type_subst (ZIP (fvs,GENLIST (λx. Infer_Tvar_db x) (LENGTH fvs))) t) =
+    infer_deBruijn_subst
+      (GENLIST (λn.
+           infer_deBruijn_subst subst
+             (case find_index (EL n fvs') fvs 0 of
+                NONE => Infer_Tapp [] TC_int
+              | SOME t => Infer_Tvar_db t)) (LENGTH fvs'))
+      (infer_type_subst (ZIP (fvs',MAP Infer_Tvar_db (COUNT_LIST (LENGTH fvs')))) t)`,
+  ho_match_mp_tac t_ind >>
+  rw [infer_type_subst_alt, infer_deBruijn_subst_alt, check_freevars_def]
+  >- (
+    qmatch_assum_abbrev_tac `MEM name _` >>
+    every_case_tac >>
+    fs [ALOOKUP_FAILS, SUBSET_DEF, MEM_MAP, MEM_ZIP, LENGTH_COUNT_LIST,
+        infer_deBruijn_subst_alt]
+    >- (
+      every_case_tac >>
+      fs [GSYM find_index_NOT_MEM, infer_deBruijn_subst_alt, MEM_EL] >>
+      rw [] >>
+      metis_tac [])
+    >- (
+      every_case_tac >>
+      fs [GSYM find_index_NOT_MEM, infer_deBruijn_subst_alt, MEM_EL] >>
+      rw [] >>
+      metis_tac [])
+    >- (
+      every_case_tac >>
+      fs [GSYM find_index_NOT_MEM, infer_deBruijn_subst_alt, MEM_EL] >>
+      rw [] >>
+      metis_tac [])
+    >- (
+      imp_res_tac ALOOKUP_MEM >>
+      fs [MEM_ZIP, LENGTH_COUNT_LIST] >>
+      rw [] >>
+      fs [EL_MAP, LENGTH_COUNT_LIST, infer_deBruijn_subst_alt, EL_COUNT_LIST] >>
+      imp_res_tac ALOOKUP_find_index_SOME >>
+      fs [MAP_ZIP, EL_ZIP, LENGTH_GENLIST, LENGTH_ZIP] >>
+      rfs [MAP_ZIP, EL_ZIP, LENGTH_GENLIST, LENGTH_ZIP] >>
+      rw [infer_deBruijn_subst_alt]))
+  >- (
+    irule LIST_EQ >>
+    rw [EL_MAP] >>
+    fs [EVERY_EL]));
+val _ = show "env_rel_binding_lemma2_replay_typed" env_rel_binding_lemma2_replay;
+
 val check_freevars_deBruijn_inc_replay = Q.prove(
   `!tvs tvs' t. check_freevars tvs tvs' t ==>
     !n n'. check_freevars (n+tvs) tvs' (deBruijn_inc n' n t)`,
