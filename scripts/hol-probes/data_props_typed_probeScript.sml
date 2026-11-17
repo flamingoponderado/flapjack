@@ -213,3 +213,5 @@ val _ = show "cut_state_opt_locals_ok_typed"
     \\ drule_all locals_ok_cut_env \\ rw[]
     \\ qexists_tac `env` \\ fs[dataSemTheory.state_component_equality, locals_ok_refl]));
 val _ = emit "evaluate_cc_co_only_diff_typed" "evaluate_cc_co_only_diff";
+val _ = emit "the_NONE_typed" "the_NONE";
+val _ = emit "the_le_IMP_option_le_typed" "the_le_IMP_option_le";

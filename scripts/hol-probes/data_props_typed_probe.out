@@ -107,3 +107,5 @@ v_to_list_SOME_NIL_IFF_typed=∀(v :v). v_to_list v = SOME ([] :v list) ⇔ ∃(
 locals_ok_cut_env_typed=locals_ok (l1 :α sptree$num_map) (l2 :α sptree$num_map) ∧ cut_env (names :sptree$num_set) l1 = SOME (x :α sptree$num_map) ⇒ cut_env names l2 = SOME x
 cut_state_opt_locals_ok_typed=∀(names_opt :sptree$num_set option) (s :(γ, 'ffi) dataSem$state) (l :v sptree$num_map) (s1 :(γ, 'ffi) dataSem$state). locals_ok s.locals l ∧ cut_state_opt names_opt s = SOME s1 ⇒ ∃(l' :v sptree$num_map). cut_state_opt names_opt (s with locals := l) = SOME (s1 with locals := l') ∧ locals_ok s1.locals l'
 evaluate_cc_co_only_diff_typed=∀(prog :dataLang$prog) (s :(α, 'ffi) dataSem$state) (res :(v list, v) result option) (s1 :(α, 'ffi) dataSem$state) (t :(β, 'ffi) dataSem$state). (evaluate (prog,s) :(v list, v) result option # (α, 'ffi) dataSem$state) = (res,s1) ∧ s1.safe_for_space ∧ cc_co_only_diff s t ⇒ ∃(t1 :(β, 'ffi) dataSem$state). (evaluate (prog,t) :(v list, v) result option # (β, 'ffi) dataSem$state) = (res,t1) ∧ cc_co_only_diff s1 t1
+the_NONE_typed=the (x :α) (NONE :α option) = x
+the_le_IMP_option_le_typed=the F (OPTION_MAP ($> (n :num)) (m :num option)) ⇒ option_le m (SOME n)
