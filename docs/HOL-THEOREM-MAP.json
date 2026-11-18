@@ -143733,4 +143733,54 @@
     "statement_status": "reviewed_exact",
     "reviewer": "typed HOL source comparison (word_alloc_proof_local_typed_probe.out, ssa_cut_inter_lemma_typed): source7657-7664. `domain ssa' INTER domain (union x1 x2) = domain x1 UNION domain x2 ==> xx IN domain (union x1 x2) ==> xx IN domain ssa'`; the capture keeps ssa' : alpha sptree, x1/x2 : beta sptree, xx : num. HOL set intersection and union are the predicate conjunction and disjunction, domain is sptDomain, and union is the reviewed sptUnion; the proof rewrites with the tagged sptDomain_sptUnion. HOL two implications stay two hypotheses, in the same order."
   }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "pos_val_MOD_0_lemma",
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/AlignedPosVal.lean",
+    "lean_name": "posValMOD0Lemma",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (lab_to_target_proof_local_typed_probe.out, pos_val_MOD_0_lemma_typed): source2949-2952. `(0 MOD 2 ** mc_conf.target.config.code_alignment = 0)`; the capture keeps mc_conf : (alpha, beta, gamma) machine_config. The Lean statement is 0 % 2 ^ mc.target.config.codeAlignment = 0 over the reviewed MachineConfig width S Q carrier, whose header binds [NeZero width] and whose fields are BitVec width (the only translation is HOL's type-indexed word). No premise; the HOL proof is a simp step."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "EXP_IMP_ZERO_LT",
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/AlignedPosVal.lean",
+    "lean_name": "expImpZeroLt",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (lab_to_target_proof_local_typed_probe.out, EXP_IMP_ZERO_LT_typed): source5878-5881. `(2 ** y = x) ==> 0 < x`; the capture keeps y then x as the free-variable order. HOL `**` is Lean `^` on Nat, one premise, conclusion 0 < x. No carrier."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "find_index_in_range",
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Positions.lean",
+    "lean_name": "findIndexInRange",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (lab_to_target_proof_local_typed_probe.out, find_index_in_range_typed): source3084-3093. `forall n. find_index s l n = SOME x ==> x < n + LENGTH l /\\ x >= n`; the capture keeps s : alpha, l : alpha list, x : num free and binds n. find_index is the tagged Flapjack.Misc.findIndex, DecidableEq alpha is the lawful rendering of HOL's total equality on the element type, LENGTH is List.length and >= is <=. One premise, conjunction conclusion preserved."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "find_index_in_range0",
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Positions.lean",
+    "lean_name": "findIndexInRange0",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (lab_to_target_proof_local_typed_probe.out, find_index_in_range0_typed): source3095-3099. `find_index s l 0 = SOME x ==> x < LENGTH l /\\ x >= 0`; the capture keeps s, l, x free. Same renderings as find_index_in_range, one premise, and the conclusion keeps the vacuous 0 <= x conjunct (HOL derives it from find_index_in_range at n = 0)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "Sh_not_Ext",
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/ShmemInfo.lean",
+    "lean_name": "shNotExt",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (lab_to_target_proof_typed_probe.out, Sh_not_Ext_typed): source7441-7444. `(exists s. x = SharedMem s) <=> (forall s. x <> ExtCall s)`; the capture keeps x : ffiname free and shows the two quantifiers at different carriers (s : shmem_op versus s : mlstring). Both are kept as separate binders; SharedMem/ExtCall are the HolFfiName constructors and mlstring is the exact MlString carrier. No premise, no word carrier."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "not_Sh_Ext",
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/ShmemInfo.lean",
+    "lean_name": "notShExt",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (lab_to_target_proof_typed_probe.out, not_Sh_Ext_typed): source7447-7450. `(forall s. x <> SharedMem s) <=> (exists s. x = ExtCall s)`; the capture keeps x : ffiname free with s : shmem_op on the left and s : mlstring on the right. Both quantifiers stay separate binders; no premise and no word carrier."
+  }
 ]

@@ -91,4 +91,36 @@ def getJumpOffset {regImmWidth : Nat} {width : Nat} [NeZero regImmWidth] [NeZero
   | .halt => 0 - BitVec.ofNat width (pos + ffiOffset)
   | a => BitVec.ofNat width (findPos (getLabel a) labs) - BitVec.ofNat width pos
 
+/-- Exact HOL `find_index_in_range` (`lab_to_targetProofScript.sml:3084-3093`):
+a first-match index lies in `[n, n + LENGTH l)`. -/
+@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "find_index_in_range"]
+theorem findIndexInRange {α : Type} [DecidableEq α] (s : α) (l : List α) (x : Nat) :
+    ∀ n, findIndex s l n = some x → x < n + l.length ∧ n ≤ x := by
+  intro n
+  induction l generalizing n with
+  | nil =>
+      intro h
+      simp [findIndex] at h
+  | cons a as ih =>
+      intro h
+      simp only [findIndex] at h
+      split at h
+      · rename_i heq
+        injection h with hx
+        subst hx
+        simp only [List.length_cons]
+        omega
+      · rename_i hne
+        obtain ⟨hlt, hge⟩ := ih (n + 1) h
+        simp only [List.length_cons] at hlt ⊢
+        omega
+
+/-- Exact HOL `find_index_in_range0` (`lab_to_targetProofScript.sml:3095-3099`):
+the zero-offset case of `find_index_in_range`. -/
+@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "find_index_in_range0"]
+theorem findIndexInRange0 {α : Type} [DecidableEq α] (s : α) (l : List α) (x : Nat)
+    (h : findIndex s l 0 = some x) : x < l.length ∧ 0 ≤ x := by
+  have hrange := findIndexInRange s l x 0 h
+  simpa using hrange
+
 end Flapjack.Compiler.Backend.LabToTarget

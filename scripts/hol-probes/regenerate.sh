@@ -10073,6 +10073,9 @@ run_probe lab_to_target_proof_typed_probeScript.sml lab_to_target_proof_typed_pr
   lines_ok_lines_enc_with_nop_typed EVEN_add_AND_typed word_loc_val_byte_def_typed word_loc_val_def_typed zero_labs_acc_exist_eq_typed label_zero_pos_ok_even_labels_typed label_zero_pos_ok_lines_even_labels_typed enc_lines_again_simp_label_zero_typed \
   enc_secs_again_label_zero_typed EVERY_label_zero_pad_section_typed EVERY_sec_label_zero_pad_code_typed compute_labels_alt_domain_labs_typed remove_labels_loop_domain_labs_typed remove_labels_domain_labs_typed extract_labels_loc_to_pc_typed find_ffi_names_ALL_DISTINCT_typed \
   read_ffi_bytearrays_with_next_interfer_typed read_ffi_bytearrays_shift_interfer_typed read_ffi_bytearrays_ffi_interfer_typed \
+  has_io_name_EXISTS_typed EVERY_is_Label_add_nop_typed sec_labels_ok_filter_skip_typed \
+  get_labels_upd_lab_len_typed sec_pos_val_acc_typed FILTER_mmio_pcs_min_index_typed \
+  Sh_not_Ext_typed not_Sh_Ext_typed all_pc_adjust_pc_typed \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
 
@@ -11752,6 +11755,8 @@ run_probe lab_to_target_proof_local_typed_probeScript.sml lab_to_target_proof_lo
   sec_get_zero_labs_acc_eq_sec_get_zero_labels_typed semantics_compile_lemma_typed \
   semantics_compile_lemma_prime_typed shift_interfer_0_typed upd_pc_with_pc_typed \
   word_cmp_lemma_typed write_bytearray_NOT_Loc_typed zero_labs_acc_of_eq_zero_labs_of_typed \
+  pos_val_MOD_0_lemma_typed find_index_in_range_typed find_index_in_range0_typed \
+  EXP_IMP_ZERO_LT_typed FILTER_NOT_MEM_Mapped_typed \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
 run_probe stack_to_lab_proof_local_typed_probeScript.sml stack_to_lab_proof_local_typed_probe.out \
