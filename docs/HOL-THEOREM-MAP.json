@@ -130205,6 +130205,24 @@
   },
 {
     "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "ByteCopyAdd_code_def",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Stubs.lean",
+    "lean_name": "byteCopyAddCode",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Independent comparison with ByteCopyAdd_code_def_typed confirms every branch, load/store order, positive offsets, pointer updates and recursive call at all positive word widths. Production dispatch uses the original location and arity; the captured fixed-stub oracle covers 64-bit output."
+  },
+{
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "ByteCopySub_code_def",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Stubs.lean",
+    "lean_name": "byteCopySubCode",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Independent comparison with ByteCopySub_code_def_typed confirms every branch, load/store order, modular negative offsets, pointer updates and recursive call at all positive word widths. Production dispatch uses the original location and arity; the captured fixed-stub oracle covers 64-bit output."
+  },
+{
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
     "hol_name": "MemCopy_code_def",
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Stubs.lean",
     "lean_name": "memCopyCode",

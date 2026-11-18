@@ -39,6 +39,18 @@ private def byteCopyLoop {width : Nat} (forward : Bool) : WordLangProgHOL (BitVe
       .assign 13 (.op op [.var 6, .const 4]),
       .call none (some loc) [0, 9, 11, 13, 8] none])
 
+/-- Copy bytes in increasing address order. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "ByteCopyAdd_code_def"
+  (words_as_type_indexed_bitvec)]
+def byteCopyAddCode {width : Nat} [NeZero width] : WordLangProgHOL (BitVec width) :=
+  byteCopyLoop true
+
+/-- Copy bytes in decreasing address order. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "ByteCopySub_code_def"
+  (words_as_type_indexed_bitvec)]
+def byteCopySubCode {width : Nat} [NeZero width] : WordLangProgHOL (BitVec width) :=
+  byteCopyLoop false
+
 /-- Add the size of a numeric value to the pending allocation size. -/
 @[hol "cakeml/compiler/backend/data_to_wordScript.sml" "AddNumSize_def"
   (words_as_type_indexed_bitvec)]
@@ -198,8 +210,8 @@ def compileStub? {width : Nat} [NeZero width] (location : Nat) : Option (Nat × 
     some (6, stringCmpLoopCode)
   else if location = replicateLocation then
     some (5, replicateCode)
-  else if location = byteCopyAddLocation then some (5, byteCopyLoop true)
-  else if location = byteCopySubLocation then some (5, byteCopyLoop false)
+  else if location = byteCopyAddLocation then some (5, byteCopyAddCode)
+  else if location = byteCopySubLocation then some (5, byteCopySubCode)
   else if location = xorLoopLocation then
     some (4, xorLoopCode)
   else if location = installLocation then
