@@ -23122,6 +23122,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "LASTN_LIST_REL_LEMMA",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/StackSplit.lean",
+  "lean_name": "lastn_list_rel_lemma",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared LASTN_LIST_REL_LEMMA_typed: source and target element types are independent, and the two unused outer HOL binders retain their independent types. The nonempty source suffix and list relation imply the existential related target suffix."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "option_le_stack_size_cons",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/StackSizeTail.lean",
   "lean_name": "optionLe_stackSize_cons",

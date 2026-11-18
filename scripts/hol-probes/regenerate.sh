@@ -5955,7 +5955,7 @@ run_probe data_to_word_gc_fun_const_ok_probeScript.sml data_to_word_gc_fun_const
   get_var_isT_OR_isF_typed state_rel_cut_state_opt_get_var_typed set_vars_sing_typed jump_exc_call_env_typed \
   jump_exc_dec_clock_typed jump_exc_push_env_NONE_typed option_le_stack_size_cons_typed \
   option_le_stack_size_append_typed inter_insert_union_typed state_rel_pop_env_IMP_typed \
-  state_rel_pop_env_set_var_IMP_typed BUTLASTN_APPEND_LASTN_typed \
+  state_rel_pop_env_set_var_IMP_typed BUTLASTN_APPEND_LASTN_typed LASTN_LIST_REL_LEMMA_typed \
   "$cake_dir/compiler/backend/proofs/data_to_word_gcProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe data_to_word_correct_typed_probeScript.sml data_to_word_correct_typed_probe.out \
   data_compile_correct_hypotheses data_compile_correct_typed \
