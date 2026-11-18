@@ -22134,7 +22134,7 @@
     "hol_path": "cakeml/compiler/backend/clos_callScript.sml", "hol_name": "compile_def",
     "lean_path": "Flapjack/Compiler/Backend/ClosCall/Compile.lean", "lean_name": "compile",
     "statement_status": "reviewed_exact",
-    "reviewer": "Compared compile_def_typed in clos_call_frontend_probe.out, including both flag values and empty initial state. compileFuel_eq_compile proves agreement with the executed pass."
+    "reviewer": "Compared compile_def_typed in clos_call_frontend_probe.out, including both flag values and empty initial state. The production whole-program compiler calls this definition."
   },
 {
     "hol_path": "cakeml/compiler/backend/clos_callScript.sml", "hol_name": "compile_inc_def",

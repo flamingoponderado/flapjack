@@ -8,7 +8,7 @@ public import Flapjack.Compiler.Backend.ClosToBvl.Stubs
 public import Flapjack.Compiler.Backend.ClosAnnotate.Shift
 public import Flapjack.Compiler.Backend.ClosNumber
 public import Flapjack.Compiler.Backend.ClosMti
-public import Flapjack.Compiler.Backend.ClosCall
+public import Flapjack.Compiler.Backend.ClosCall.Compile
 public import Flapjack.Compiler.Backend.ClosKnown.Compile
 
 @[expose] public section
@@ -40,7 +40,7 @@ def compileCallMtiFuel? (fuel : Nat) (c : Config) (es : List ClosLang.Exp) :
   let aligned := if next % 2 = 0 then next else next + 1
   let (next, transformed) := ClosNumber.renumberList aligned transformed
   let (known, transformed) := ClosKnown.compile c.knownConf transformed
-  let (transformed, callState) ← ClosCall.compileFuel fuel c.doCall transformed
+  let (transformed, callState) := ClosCall.compile c.doCall transformed
   let prog := ClosAnnotate.compile (chainExps c.nextLoc transformed ++ callState.2)
   let current := { c with start := c.nextLoc, nextLoc := next, knownConf := known, callState := callState }
   compilePrepared? c current es prog

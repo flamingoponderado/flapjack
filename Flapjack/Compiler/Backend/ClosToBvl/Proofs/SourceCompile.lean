@@ -71,7 +71,7 @@ theorem compileExp_checked_eq (maxApp : Nat) (expression : ClosLang.Exp)
       | mk b aux2 =>
         have cs := compileExpList_checked_eq maxApp xs aux1
         rw [hs] at cs
-        simp [compileExp?, compileExpHOL, cx, cs, hx, hs] <;> rfl
+        simp [compileExp?, compileExpHOL, cx, cs, hx, hs]; rfl
   | fn t loc vs args x =>
     cases hx : compileExpHOL maxApp x aux with
     | mk a aux1 =>
@@ -97,7 +97,7 @@ theorem compileExp_checked_eq (maxApp : Nat) (expression : ClosLang.Exp)
             have cb := compileExp_checked_eq maxApp body (entry :: aux1)
             rw [hb] at cb
             simp only [entry, List.append_assoc, List.singleton_append] at cb hb
-            simp [compileExp?, compileExpHOL, cf, cb, hf, hb] <;> rfl
+            simp [compileExp?, compileExpHOL, cf, cb, hf, hb]
       | cons second rest =>
         cases hf : compileExpFunsHOL maxApp (first :: second :: rest) aux with
         | mk compiled aux1 =>
@@ -114,7 +114,7 @@ theorem compileExp_checked_eq (maxApp : Nat) (expression : ClosLang.Exp)
               (vs.getD []) (loc.getD 0 + numStubs maxApp) result (by simp)
             simp only [nextAux, cases, List.length_cons] at cb hb
             simp only [List.length_map, List.length_cons, List.map_cons] at check
-            simp [compileExp?, compileExpHOL, cf, cb, hf, hb, check] <;> rfl
+            simp [compileExp?, compileExpHOL, cf, cb, hf, hb, check]
 termination_by sizeOf expression
 decreasing_by all_goals simp_wf <;> omega
 
