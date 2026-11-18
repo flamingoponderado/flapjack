@@ -88,4 +88,13 @@ theorem stateRel_insert_3_1 {width : Nat} [NeZero width] {C F : Type}
       stateRel_insert_3 conf l1 l2 s {t with locals := sptInsert 1 y t.locals} v locs x
     _ = stateRel conf l1 l2 s t v locs := stateRel_insert_1 conf l1 l2 s t v locs y
 
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "state_rel_inc_clock"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem stateRel_incClock {width : Nat} [NeZero width] {C F : Type} (conf : Config) (l1 l2 : Nat)
+    (s : Flapjack.Compiler.Backend.DataSem.State C F) (t : WordSemStateFiniteExact width C F)
+    (locs : List (Nat × Nat)) (h : stateRel conf l1 l2 s t none locs) :
+    stateRel conf l1 l2 {s with clock := s.clock + 1} {t with clock := t.clock + 1} none locs := by
+  have hc : t.clock = s.clock := h.2.1
+  simpa [hc] using stateRel_withClock conf l1 l2 s t none locs (s.clock + 1) h
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

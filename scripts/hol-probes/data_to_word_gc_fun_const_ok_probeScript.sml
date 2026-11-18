@@ -158,3 +158,4 @@ val _ = pr_typed "state_rel_insert_1_typed" data_to_word_gcProofTheory.state_rel
 val _ = pr_typed "state_rel_insert_3_typed" data_to_word_gcProofTheory.state_rel_insert_3;
 val _ = pr_typed "state_rel_insert_7_typed" data_to_word_gcProofTheory.state_rel_insert_7;
 val _ = pr_typed "state_rel_insert_3_1_typed" data_to_word_gcProofTheory.state_rel_insert_3_1;
+val _ = pr_typed "state_rel_inc_clock_typed" data_to_word_gcProofTheory.state_rel_inc_clock;
