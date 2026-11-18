@@ -121,8 +121,12 @@ theorem alookupIffMem {α β : Type} (l : List (α × β)) (q : α) (r : β)
         · exact (ih hd').mpr htail
 
 /-- Exact HOL `LAST_add_ret_loc` (`word_to_stackProofScript.sml:3307-3311`): the
-appended return location does not change the last argument. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "LAST_add_ret_loc"]
+appended return location does not change the last argument. The argument list is
+the width-indexed `WordLocW` carrier, whose header carries `[NeZero width]` and
+whose `word` constructor payload mentions `BitVec width`, so the word
+translation is the only carrier difference. -/
+@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "LAST_add_ret_loc"
+  (words_as_type_indexed_bitvec)]
 theorem lastAddRetLoc {width : Nat} [NeZero width] {β γ δ : Type}
     (ret : Option (β × γ × δ × Nat × Nat)) (args' : List (WordLocW width))
     (hne : args' ≠ []) :

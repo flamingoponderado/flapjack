@@ -1379,12 +1379,15 @@ theorem evaluate_swap_limits {C F : Type} (program : DataLang.Prog)
   exact otherRun
 
 /-- The evaluation result of a program does not depend on the configured
-    limits. Port of HOL `evaluate_zero_limits_FST`. -/
+    limits. Port of HOL `evaluate_zero_limits_FST`. HOL binds the unused result
+    pair `r s'` after `c s`; they occur nowhere in the conclusion, so their
+    types are free and independent (the typed capture shows `r :α`, `s' :β`).
+    The vacuous binders are retained here as `_res : ρ` and `_next : σ` with
+    their own type parameters. -/
 @[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml"
   "evaluate_zero_limits_FST"]
-theorem evaluate_zero_limits_FST {C F : Type} (program : DataLang.Prog)
-    (state : State C F) (_res : Option (Result (List DataSem.Value) DataSem.Value))
-    (_next : State C F) :
+theorem evaluate_zero_limits_FST {C F ρ σ : Type} (program : DataLang.Prog)
+    (state : State C F) (_res : ρ) (_next : σ) :
     (evaluate program state).1 =
       (evaluate program { state with limits := zeroLimits }).1 := by
   cases runEq : evaluate program state with
@@ -1394,12 +1397,15 @@ theorem evaluate_zero_limits_FST {C F : Type} (program : DataLang.Prog)
     rw [runSwap]
 
 /-- The final FFI state of a program does not depend on the configured limits.
-    Port of HOL `evaluate_zero_limits_ffi`. -/
+    Port of HOL `evaluate_zero_limits_ffi`. HOL binds the unused result pair
+    `r s'` after `c s`; they occur nowhere in the conclusion, so their types are
+    free and independent (the typed capture shows `r :α`, `s' :β`). The vacuous
+    binders are retained here as `_res : ρ` and `_next : σ` with their own type
+    parameters. -/
 @[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml"
   "evaluate_zero_limits_ffi"]
-theorem evaluate_zero_limits_ffi {C F : Type} (program : DataLang.Prog)
-    (state : State C F) (_res : Option (Result (List DataSem.Value) DataSem.Value))
-    (_next : State C F) :
+theorem evaluate_zero_limits_ffi {C F ρ σ : Type} (program : DataLang.Prog)
+    (state : State C F) (_res : ρ) (_next : σ) :
     (evaluate program state).2.ffi =
       (evaluate program { state with limits := zeroLimits }).2.ffi := by
   cases runEq : evaluate program state with
