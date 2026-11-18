@@ -9,9 +9,9 @@ public import Flapjack.Compiler.Backend.WordBignum.Compile
 mini-compiler. This is not yet the original shallow-to-deep generator. -/
 namespace Flapjack.Compiler.Backend.WordBignum
 
-/-- Compile the captured mini-program and assemble its generated entries.
-This executable definition has the shape of HOL's generated_bignum_stubs;
-it remains untagged until the generated mini-program is source-reviewed. -/
+/-- Compile the generated mini-program and assemble its word-language stubs. -/
+@[hol "cakeml/compiler/backend/word_bignumScript.sml" "generated_bignum_stubs_def"
+  (words_as_type_indexed_bitvec)]
 def generatedBignumStubs (width : Nat) [NeZero width] (location : Nat) :
     List (Nat × Nat × WordLangProgHOL (BitVec width)) :=
   let (body, _, _, (_, installed)) :=
