@@ -934,6 +934,21 @@ def assignConsExtend {width : Nat} [NeZero width] (conf : Config) (secn l dest :
                 (some memCopyLocation) [15, 11, 13, 3] none))], l + 1)
   | _ => (.skip, l)
 
+/-- Compile byte copying using the routine selected by argument count. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "assign_CopyByte_def"
+  (words_as_type_indexed_bitvec)]
+def assignCopyByte {width : Nat} [NeZero width] (_conf : Config) (secn l dest : Nat)
+    (names : Option NumSet) (args : List Nat) : WordLangProgHOL (BitVec width) × Nat :=
+  let loc := match args with
+    | [_, _, _, _, _] => some byteCopyLocation
+    | [_, _, _] => some byteCopyNewLocation
+    | _ => none
+  match loc with
+  | some loc => (.mustTerminate (.call
+      (some ([adjustVar dest], adjustSets (names.getD .ln), .skip, secn, l))
+      (some loc) (args.map adjustVar) none), l + 1)
+  | none => (.skip, l)
+
 /-- Total assignment dispatch used by the executable traversal. Its full
     source-level correspondence with HOL's assignment dispatcher is pending
     review of all operation cases. -/
@@ -1242,15 +1257,7 @@ def compileAssign {width : Nat} [NeZero width] (conf : Config) (secn l dest : Na
               (some refArrayLocation) [adjustVar x, adjustVar y] none)], l + 1)
       | _ => (.skip, l)
   | (.memOp (.copyByte _)), args, names =>
-      let loc := match args with
-        | [_, _, _, _, _] => some byteCopyLocation
-        | [_, _, _] => some byteCopyNewLocation
-        | _ => none
-      match loc with
-      | some loc => (.mustTerminate (.call
-          (some ([adjustVar dest], adjustSets (names.getD .ln), .skip, secn, l))
-          (some loc) (args.map adjustVar) none), l + 1)
-      | none => (.skip, l)
+      assignCopyByte conf secn l dest names args
   | (.memOp .configGC), args, names =>
       match args with
       | [_, _] =>

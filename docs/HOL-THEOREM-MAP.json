@@ -8494,6 +8494,15 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+  "hol_name": "assign_CopyByte_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
+  "lean_name": "assignCopyByte",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared HOL source and inferred-type capture: five arguments call ByteCopy and three call ByteCopyNew, with adjusted arguments, cut sets, return metadata, MustTerminate and incremented label; all other arities return Skip unchanged. The unused config and polymorphic positive word width are retained."
+},
+{
+  "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
   "hol_name": "assign_ConsExtend_def",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
   "lean_name": "assignConsExtend",

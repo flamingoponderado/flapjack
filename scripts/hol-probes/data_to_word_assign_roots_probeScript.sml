@@ -34,3 +34,4 @@ val _ = emit "get_vars_cut_env_typed" data_to_word_assignProofTheory.get_vars_cu
 val _ = emit "get_vars_IMP_domain_typed" data_to_word_assignProofTheory.get_vars_IMP_domain;
 val _ = emit "assign_ConsExtend_def_typed" data_to_wordTheory.assign_ConsExtend_def;
 val _ = emit "assign_ConsExtend_expand_typed" data_to_word_assignProofTheory.assign_ConsExtend_expand;
+val _ = emit "assign_CopyByte_def_typed" data_to_wordTheory.assign_CopyByte_def;
