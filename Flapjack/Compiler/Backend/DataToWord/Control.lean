@@ -314,7 +314,9 @@ private def fpResult {width : Nat} [NeZero width] (conf : Config) (dest : Nat)
 def tagMask {width : Nat} (conf : Config) : BitVec width :=
   BitVec.ofNat width (((2 ^ (width - conf.lenSize) - 1) / 4) * 4)
 
-/-- Internal pointer-field program used by the checked allocation cases. -/
+/-- Construct the pointer fields used by the allocation code. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "Make_ptr_bits_code_def"
+  (words_as_type_indexed_bitvec)]
 def makePtrBitsCode {width : Nat} [NeZero width] (conf : Config) (tag len dest : Nat) :
     WordLangProgHOL (BitVec width) :=
   let maxout (bits shift src : Nat) : WordLangProgHOL (BitVec width) :=
