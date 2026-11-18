@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Compiler.Backend.WordToStack
 public import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapWordLemmas
+public import Flapjack.RiscV.L3.Support
 
 @[expose] public section
 
@@ -80,5 +81,38 @@ theorem genlistBitsToWordAlt {width : Nat} [NeZero width] (xs ys : List Bool)
     simp only [List.getElem_map, List.getElem_range]
     rw [BitmapBitStructureSupport.bitmapBitLookup (xs ++ ys) i (by simpa using (show i < width by simp at h; omega))]
     simp [List.getElem?_append, hi2]
+
+/-- Exact HOL `bits_to_word_bitstring_reverse` (`word_to_stackProofScript.sml:1074-1082`):
+`bits_to_word` is `bitstring$v2w` of the reversed bit list, i.e. the same word
+read least-significant-bit first. The typed capture
+(`bits_to_word_bitstring_reverse_typed`) has the single binder `xs :bool list`
+and no premise. `v2w` is rendered by the reviewed `holV2w` library rendering
+(`bitstring$v2w_def` as an FCP of `testbit`), shared with the RiscV L3 model and
+re-exported by the Arm8 encoder support. -/
+@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
+  "bits_to_word_bitstring_reverse" (words_as_type_indexed_bitvec)]
+theorem bitsToWordBitstringReverse {width : Nat} [NeZero width] (xs : List Bool) :
+    (bitsToWordW xs : BitVec width) =
+      Flapjack.RiscV.L3.holV2w width xs.reverse := by
+  apply BitVec.eq_of_getLsbD_eq
+  intro i hi
+  rw [BitmapBitStructureSupport.bitmapBitLookup xs i hi]
+  rw [Flapjack.RiscV.L3.holV2w, Flapjack.getLsbD_holFcpWord]
+  simp only [hi, decide_true, Bool.true_and]
+  by_cases hlen : i < xs.length
+  · have hk : xs.reverse.length - 1 - i < xs.length := by
+      simp only [List.length_reverse]
+      omega
+    have hidx : xs.length - 1 - (xs.reverse.length - 1 - i) = i := by
+      simp only [List.length_reverse]
+      omega
+    have hrev : i < xs.reverse.length := by simpa using hlen
+    rw [decide_eq_true_eq.mpr hrev, Bool.true_and, List.getD_eq_getElem?_getD,
+      List.getElem?_reverse hk, hidx]
+  · have hrev : ¬ i < xs.reverse.length := by simpa using hlen
+    rw [decide_eq_false_iff_not.mpr hrev]
+    simp only [Bool.false_and]
+    rw [List.getElem?_eq_none (by omega)]
+    rfl
 
 end Flapjack.Compiler.Backend.WordToStack
