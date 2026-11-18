@@ -1,7 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.WordBignum.Helpers
-public import Flapjack.Compiler.Backend.WordBignum.Equality
+public import Flapjack.Compiler.Backend.WordBignum.Proofs.Equality
 
 @[expose] public section
 
@@ -13,16 +13,12 @@ namespace Flapjack.Compiler.Backend.WordBignum
 abbrev CodeEntry (width : Nat) := Mini (BitVec width) × Nat × WordLangProgHOL (BitVec width)
 abbrev CodeAcc (width : Nat) := Nat × List (CodeEntry width)
 
-/-- Find the first structurally equal mini-program in the installed code. -/
-def lookupCode {width : Nat} (code : Mini (BitVec width)) : List (CodeEntry width) → Option Nat
-  | [] => none
-  | (body, index, _) :: rest => if miniEq code body then some index else lookupCode code rest
-
-/-- A successful source-style code lookup returns an existing index; otherwise
-the accumulator's next index is available for compilation. -/
-def hasCompiled {width : Nat} (code : Mini (BitVec width)) (cs : CodeAcc width) : Sum Nat Nat :=
-  match lookupCode code cs.2 with
-  | some index => .inl index
+/-- Executable first-match cache lookup with a decidable key equality. -/
+def hasCompiled {α β : Type} [DecidableEq α] (code : α)
+    (cs : Nat × List (α × Nat × β)) : Sum Nat Nat :=
+  letI : BEq α := ⟨fun x y => decide (x = y)⟩
+  match cs.2.lookup code with
+  | some (index, _) => .inl index
   | none => .inr cs.1
 
 /-- Advance the next code index while retaining the arbitrary accumulator payload. -/

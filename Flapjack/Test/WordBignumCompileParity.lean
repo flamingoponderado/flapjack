@@ -17,13 +17,17 @@ private abbrev M := Mini (BitVec 64)
 private abbrev C := CodeAcc 64
 private def initial : C := (40, [])
 
-#guard lookupCode (.assign 1 (.op .add [.var 1, .const 3]) : M)
-    [(.assign 1 (.op .add [.var 1, .const 4]), 7, .skip),
+#guard match hasCompiled (.assign 1 (.op .add [.var 1, .const 3]) : M)
+    ((40, [(.assign 1 (.op .add [.var 1, .const 4]), 7, .skip),
      (.assign 1 (.op .add [.var 1, .const 3]), 8, .skip),
-     (.assign 1 (.op .add [.var 1, .const 3]), 9, .skip)] == some 8
+     (.assign 1 (.op .add [.var 1, .const 3]), 9, .skip)]) : C) with
+  | .inl 8 => true
+  | _ => false
 
-#guard lookupCode (.assign 1 (.op .add [.var 1, .const 3]) : M)
-    [(.assign 1 (.op .add [.var 1, .const 4]), 7, .skip)] == none
+#guard match hasCompiled (.assign 1 (.op .add [.var 1, .const 3]) : M)
+    ((40, [(.assign 1 (.op .add [.var 1, .const 4]), 7, .skip)]) : C) with
+  | .inr 40 => true
+  | _ => false
 
 #guard match compileBounded 0 39 2 1 initial (.skip : M) with
   | some (.skip, 2, 1, (40, [])) => true

@@ -1,5 +1,6 @@
 compile_type=:num -> num -> num -> num # (α mini # num # α prog) list -> α mini -> α prog # num # num # num # (α mini # num # α prog) list
 has_compiled_type=:α -> num # (α # num # β) list -> num + num
+has_compiled_def_typed=∀(code :α) (n :num) (code_list :(α # num # β) list). has_compiled code (n,code_list) = case ALOOKUP code_list code of (NONE :(num # β) option) => (INR n :num + num) | SOME (index,word_code) => (INL index :num + num)
 code_acc_next_type=:num # α -> num # α
 install_type=:α -> β # α list -> β # α list
 skip=((Skip :64 prog),(2 :num),(1 :num),(40 :num),([] :(64 mini # num # 64 prog) list))
