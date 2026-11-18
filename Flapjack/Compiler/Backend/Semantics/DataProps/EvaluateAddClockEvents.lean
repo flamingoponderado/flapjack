@@ -263,4 +263,198 @@ private theorem addClockEvents_seq {C F : Type} (first second : DataLang.Prog)
         simp only [fixClock]
         exact List.prefix_refl _
 
+/-- The result dispatch of a direct force run has the run's own events. -/
+private theorem forceDispatchEvents {C F : Type} (run : EvalResult C F) :
+    (match run.1 with
+      | none => typeError run.2
+      | some value => (some value, run.2)).2.ffi.ioEvents =
+      run.2.ffi.ioEvents := by
+  cases run with
+  | mk res next =>
+    cases res with
+    | none => simp [typeError]
+    | some value => rfl
+
+/-- The result dispatch of a returning force run has the run's own events. -/
+private theorem forceRetDispatchEvents {C F : Type} (dest : Nat) (run : EvalResult C F) :
+    (match run.1 with
+      | some (.val [value]) =>
+        match popEnv run.2 with
+        | none => typeError run.2
+        | some popped => (none, setVar dest value popped)
+      | some (.val _) | none => typeError run.2
+      | some (.err error) => (some (.err error), run.2)).2.ffi.ioEvents =
+      run.2.ffi.ioEvents := by
+  cases run with
+  | mk res next =>
+    cases res with
+    | none => simp [typeError]
+    | some result =>
+      cases result with
+      | err error => rfl
+      | val values =>
+        cases values with
+        | nil => simp [typeError]
+        | cons value rest =>
+          cases rest with
+          | nil =>
+            cases stackEq : next.stack with
+            | nil => simp [popEnv, stackEq, typeError]
+            | cons frame frames =>
+              cases frame with
+              | env size envSpt => simp [popEnv, stackEq, setVar]
+              | exc size envSpt handler => simp [popEnv, stackEq, setVar]
+          | cons _ _ => simp [typeError]
+
+set_option linter.unusedSimpArgs false in
+/-- A force follows its thunk: the evaluated, direct, and body branches each
+    extend the starting events. -/
+private theorem addClockEvents_force {C F : Type} (ret : Option (Nat × NumSet))
+    (label src : Nat) (state : State C F)
+    (bodyIH : ∀ body : DataLang.Prog, ∀ next : State C F, next.clock < state.clock →
+      AddClockEventsAt body next) :
+    AddClockEventsAt (.force ret label src) state := by
+  intro extra
+  simp only [evaluate]
+  cases read : getVar src state.locals with
+  | none => simp [typeError]
+  | some thunk =>
+    simp only [read]
+    generalize destEq : destThunk thunk state.refs = dest at ⊢
+    cases dest with
+    | badRef =>
+      simp only []
+      simp [typeError]
+    | notThunk =>
+      simp only []
+      simp [typeError]
+    | isThunk mode thunkValue =>
+      cases mode with
+      | evaluated =>
+        simp only []
+        cases ret with
+        | none =>
+          simp only []
+          rw [flushState_addClockState]
+          exact List.prefix_refl _
+        | some retPair =>
+          obtain ⟨dest', names⟩ := retPair
+          simp only []
+          cases cut : cutEnv names state.locals with
+          | none => simp [typeError]
+          | some env =>
+            simp only []
+            have comm : { addClockState state extra with locals := env } =
+                addClockState { state with locals := env } extra := rfl
+            rw [comm, setVar_addClockState]
+            exact List.prefix_refl _
+      | notEvaluated =>
+        simp only []
+        generalize foundEq : findCode (some label) [thunk, thunkValue] state.code
+            state.stackFrameSizes = found at ⊢
+        cases found with
+        | none =>
+          simp only []
+          simp [typeError]
+        | some entry =>
+          obtain ⟨args, body, size⟩ := entry
+          simp only []
+          cases ret with
+          | none =>
+            simp only []
+            by_cases zero : state.clock = 0
+            · rw [if_pos zero]
+              by_cases extraZero : extra = 0
+              · have shiftZero : state.clock + extra = 0 := by omega
+                rw [if_pos shiftZero]
+                simp only [timeoutError]
+                exact List.prefix_refl _
+              · have shiftPos : ¬ state.clock + extra = 0 := by omega
+                rw [if_neg shiftPos]
+                simp only [timeoutError]
+                have ffiEq : (callEnv args size
+                    (decClock (addClockState state extra))).ffi = state.ffi := by
+                  simp [callEnv, decClock]
+                have start := evaluate_events_start body
+                  (callEnv args size (decClock (addClockState state extra)))
+                rw [ffiEq] at start
+                generalize runEq : evaluate body
+                  (callEnv args size (decClock (addClockState state extra))) = run at ⊢
+                cases run with
+                | mk res next =>
+                  rw [runEq] at start
+                  cases res with
+                  | none => simpa [typeError] using start
+                  | some value => simpa using start
+            · rw [if_neg zero]
+              have shiftPos : ¬ state.clock + extra = 0 := by omega
+              rw [if_neg shiftPos]
+              rw [decClock_addClockState state extra zero, callEnv_addClockState]
+              have h := bodyIH body (callEnv args size (decClock state)) (by
+                simp only [callEnv, decClock]
+                omega) extra
+              generalize runEq : evaluate body (callEnv args size (decClock state)) = run at ⊢
+              generalize shiftEq : evaluate body
+                  (addClockState (callEnv args size (decClock state)) extra) = shiftRun at ⊢
+              rw [runEq, shiftEq] at h
+              cases run with
+              | mk res next =>
+                cases shiftRun with
+                | mk res' next' =>
+                  cases res <;> cases res' <;> simpa [typeError] using h
+          | some retPair =>
+            obtain ⟨dest', names⟩ := retPair
+            simp only []
+            cases cut : cutEnv names state.locals with
+            | none => simp [typeError]
+            | some env =>
+              simp only []
+              by_cases zero : state.clock = 0
+              · rw [if_pos zero]
+                by_cases extraZero : extra = 0
+                · have shiftZero : state.clock + extra = 0 := by omega
+                  rw [if_pos shiftZero]
+                  simp only [timeoutError]
+                  exact List.prefix_refl _
+                · have shiftPos : ¬ state.clock + extra = 0 := by omega
+                  rw [if_neg shiftPos]
+                  simp only [timeoutError]
+                  have ffiEq : (callEnv args size
+                      (pushEnv env false (decClock (addClockState state extra)))).ffi =
+                      state.ffi := by
+                    simp [callEnv, pushEnv, decClock]
+                  have start := evaluate_events_start body
+                    (callEnv args size (pushEnv env false (decClock (addClockState state extra))))
+                  rw [ffiEq] at start
+                  generalize runEq : evaluate body (callEnv args size (pushEnv env false
+                    (decClock (addClockState state extra)))) = run at ⊢
+                  have rightEq := forceRetDispatchEvents dest' (fixClock
+                    (callEnv args size (pushEnv env false (decClock (addClockState state extra))))
+                    run)
+                  rw [runEq] at start
+                  simp only [fixClock] at rightEq
+                  simp only [callEnv, pushEnv, decClock] at rightEq ⊢
+                  exact rightEq.symm ▸ start
+              · rw [if_neg zero]
+                have shiftPos : ¬ state.clock + extra = 0 := by omega
+                rw [if_neg shiftPos]
+                rw [decClock_addClockState state extra zero, pushEnv_addClockState,
+                  callEnv_addClockState]
+                have h := bodyIH body
+                  (callEnv args size (pushEnv env false (decClock state))) (by
+                  simp only [callEnv, pushEnv, decClock]
+                  omega) extra
+                generalize runEq : evaluate body
+                  (callEnv args size (pushEnv env false (decClock state))) = run at ⊢
+                generalize shiftEq : evaluate body (addClockState (callEnv args size
+                  (pushEnv env false (decClock state))) extra) = shiftRun at ⊢
+                rw [runEq, shiftEq] at h
+                have leftEq := forceRetDispatchEvents dest' (fixClock
+                  (callEnv args size (pushEnv env false (decClock state))) run)
+                have rightEq := forceRetDispatchEvents dest' (fixClock
+                  (addClockState (callEnv args size (pushEnv env false (decClock state))) extra)
+                  shiftRun)
+                simp only [fixClock] at leftEq rightEq ⊢
+                exact leftEq.symm ▸ rightEq.symm ▸ h
+
 end Flapjack.Compiler.Backend.DataProps
