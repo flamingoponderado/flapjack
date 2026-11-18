@@ -8418,6 +8418,16 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "cut_env_get_vars_get_vars",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/CutState.lean",
+  "lean_name": "cutEnv_getVars_getVars",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Independent comparison with cut_env_get_vars_get_vars_typed: the source cut and both successful reads have the same shared word width, independent compiler and FFI types, and all three original premises and equality conclusion. The qualifiers describe the canonical fpRegs/store finite maps and positive-width word representation; locals remain an sptree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
   "hol_name": "cut_env_lookup",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/CutState.lean",
   "lean_name": "cutEnv_lookup",

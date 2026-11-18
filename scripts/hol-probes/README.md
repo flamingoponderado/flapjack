@@ -1,3 +1,10 @@
+`data_to_word_cut_get_vars_probe.out` captures the exported HOL theorem
+`cut_env_get_vars_get_vars` with inferred types and checks that it has no
+hypotheses. Regenerate with
+`HOL_PROBE_ONLY=data_to_word_cut_get_vars_probeScript.sml scripts/hol-probes/regenerate.sh`
+using the pinned CakeML and HOL revisions. This is source-review evidence,
+not a cross-language equivalence proof.
+
 `data_to_word_cut_envs_wf_replay_probe.out` captures the inferred types of
 `cut_envs_wf` and `cut_env_lookup` by replaying their original statements and
 proofs against the pinned word semantics theory. Regenerate with

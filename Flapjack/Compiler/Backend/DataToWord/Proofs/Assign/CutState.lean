@@ -38,6 +38,53 @@ theorem cutEnv_lookup {α : Type} (names : WordLangCutsetsHOL) (env cut : Spt α
   cases read : sptLookup key env <;> cases first : sptLookup key names.1 <;>
     cases second : sptLookup key names.2 <;> simp_all
 
+namespace CutEnvGetVarsPort
+
+/-- The word state uses the canonical finite-support representation. -/
+theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {C F : Type} :
+    (∀ (state : WordSemStateBroad width C F) (h : state.FiniteSupport),
+      (WordSemStateBroad.ofBroad state h).toBroad = state) ∧
+    (∀ state : WordSemStateFiniteExact width C F,
+      WordSemStateBroad.ofBroad state.toBroad state.toBroad_finiteSupport = state) :=
+  WordSemStateExact.holFmapAsFiniteSupportWitness
+
+end CutEnvGetVarsPort
+
+/-- Successful variable reads agree before and after cutting the environment. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml" "cut_env_get_vars_get_vars"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem cutEnv_getVars_getVars {width : Nat} [NeZero width] {C F : Type}
+    (names : WordLangCutsetsHOL) (state : WordSemStateFiniteExact width C F)
+    (cut : Spt (WordLocW width)) :
+    ∀ (vars : List Nat) (values original : List (WordLocW width)),
+      wordSemCutEnv names state.locals = some cut ∧
+      WordSemStateFiniteExact.getVars vars { state with locals := cut } = some values ∧
+      WordSemStateFiniteExact.getVars vars state = some original → values = original := by
+  intro vars
+  induction vars with
+  | nil =>
+    intro values original premises
+    simp [WordSemStateFiniteExact.getVars] at premises
+    simp_all
+  | cons key rest ih =>
+    intro values original ⟨cutRun, cutRead, originalRead⟩
+    cases head : WordSemStateFiniteExact.getVar key { state with locals := cut } with
+    | none => simp [WordSemStateFiniteExact.getVars, head] at cutRead
+    | some value =>
+      have originalHead : WordSemStateFiniteExact.getVar key state = some value :=
+        cutEnv_lookup names state.locals cut key value ⟨cutRun, head⟩
+      cases tail : WordSemStateFiniteExact.getVars rest { state with locals := cut } with
+      | none => simp [WordSemStateFiniteExact.getVars, head, tail] at cutRead
+      | some restValues =>
+        cases oldTail : WordSemStateFiniteExact.getVars rest state with
+        | none => simp [WordSemStateFiniteExact.getVars, originalHead, oldTail] at originalRead
+        | some oldValues =>
+          simp [WordSemStateFiniteExact.getVars, head, tail] at cutRead
+          simp [WordSemStateFiniteExact.getVars, originalHead, oldTail] at originalRead
+          subst values
+          subst original
+          rw [ih restValues oldValues ⟨cutRun, tail, oldTail⟩]
+
 /-- A successful optional cut is equal to the total GC cut operation. -/
 @[hol "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml" "cut_state_opt_IMP_cut_locals"]
 theorem cutStateOpt_imp_cutLocals {C F : Type} (names : NumSet)
