@@ -8260,6 +8260,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "inter_union_lemma",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/InterUnion.lean",
+  "lean_name": "interUnionLemma",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared inter_union_lemma_typed: independent tree and live-set payloads, every association keyed at zero, and structural equality of the two intersections are retained."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "gc_add_call_env",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/GcAddCallEnv.lean",
   "lean_name": "gcAddCallEnv",
