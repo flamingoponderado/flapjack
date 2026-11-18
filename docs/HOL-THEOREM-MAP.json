@@ -141606,5 +141606,38 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, state_rel_set_var_prime_typed): source2953-2959; free-variable order ac k f f' s t lens extra x y v retained, the original single conjunction premise state_rel … ∧ x < k ∧ y = x*2 kept as one premise, source set_var y / target set_var x with y = x*2, full stateRel and arbitrary extra; canonical five finite-map fields and positive width translation as qualified."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/EvaluateWLive.lean",
+    "lean_name": "listRearrange_id",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "list_rearrange_I",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, list_rearrange_I_typed): source689-694; HOL states the function equality list_rearrange I = I with the identity function I on num. Lean binds the element type α and xs explicitly and states the pointwise form wordSemListRearrange id xs = xs, the same proposition by function extensionality, with id rendering HOL I and the reviewed list_rearrange_def rendering used. No word, finite-map or totality carrier and no added premise."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CompCodeLabels.lean",
+    "lean_name": "subUnionLemma",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "sub_union_lemma",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, sub_union_lemma_typed): source11897-11901; binders x y z as α → bool sets, the single premise x ⊆ y and conclusion x ⊆ y ∪ z retained, SUBSET/UNION rendered as Set.subset/Set.union."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/RegisterWrite.lean",
+    "lean_name": "wRegWrite1Thm1Weak",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "wRegWrite1_thm1_weak",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, wRegWrite1_thm1_weak_typed): source3745-3756; free-variable order ac k f f' s t lens m v kont retained, the three premises (full stateRel extra 0, m < f'+k, and the arbitrary kont run for every n ≤ k) and the existential run plus full postrelation conclusion retained. Only the stack-length/stack-space facts of wRegWrite1_thm1 are dropped, exactly as HOL derives this theorem by metis_tac. Canonical five finite-map fields and positive width translation as qualified; evaluator closure inherits reals_as_rational_cuts without numerical FP claim."
   }
 ]

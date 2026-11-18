@@ -49,6 +49,12 @@ theorem holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact
 local instance {width : Nat} [NeZero width] : Nonempty (WordSemStackFrame width) :=
   ⟨.stackFrame none [] [] none⟩
 
+/-- Exact HOL `list_rearrange_I` (`word_to_stackProofScript.sml:689-694`):
+`list_rearrange I = I`. HOL states a function equality; Lean binds `xs`
+explicitly and states the pointwise form, which is the same proposition by
+function extensionality. HOL's identity function `I` is Lean's `id` at `Nat`;
+the list rearrangement is the reviewed `list_rearrange_def` rendering. -/
+@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "list_rearrange_I"]
 theorem listRearrange_id {α : Type} (xs : List α) : wordSemListRearrange id xs = xs := by
   unfold wordSemListRearrange
   split

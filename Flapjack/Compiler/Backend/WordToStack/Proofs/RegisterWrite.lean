@@ -75,4 +75,32 @@ theorem wRegWrite1Thm1 {width : Nat} [NeZero width] {C F : Type}
       have preserved := StateRelRegisterUpdate.wordToStackStateRelSetVar2 m value
         target.stack target.stackSpace scratch physical bound rfl rfl
       simpa only [post,slot] using preserved
+
+/-- Exact HOL `wRegWrite1_thm1_weak` (`word_to_stackProofScript.sml:3745-3756`):
+the same premises and run/relation conclusion as `wRegWrite1_thm1`, without its
+stack-length and stack-space facts (HOL derives it by `metis_tac`). Binders
+follow the typed capture (`ac`, `k`, `f`, `f'`, `s`, `t`, `lens`, `m`, `v`,
+`kont`). -/
+@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "wRegWrite1_thm1_weak"
+  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
+    WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
+    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
+  (words_as_type_indexed_bitvec)]
+theorem wRegWrite1Thm1Weak {width : Nat} [NeZero width] {C F : Type}
+    (ac : AsmConfigExact width) (k f frame : Nat)
+    (source : WordSemStateFiniteExact width (Nat × C) F)
+    (target : StackSemStateFiniteExact width C F) (lens : List Nat)
+    (m : Nat) (value : WordLocW width) (kont : Nat → HolProg width)
+    (related : stateRel ac k f frame source target lens 0)
+    (bound : m < frame+k)
+    (run : ∀ n, n ≤ k → StackSemEvaluate.evaluate (kont n,target) =
+      (none,StackSemStateOps.setVar n value target)) :
+    ∃ post : StackSemStateFiniteExact width C F,
+      StackSemEvaluate.evaluate (wRegWrite1Native kont (2*m) (k,f,frame),target) =
+        (none,post) ∧
+      stateRel ac k f frame (WordSemStateFiniteExact.setVar (2*m) value source)
+        post lens 0 := by
+  obtain ⟨post, ran, related', -, -⟩ :=
+    wRegWrite1Thm1 ac k f frame m source target lens value kont related bound run
+  exact ⟨post, ran, related'⟩
 end Flapjack.WordToStackProofs.RegisterWrite
