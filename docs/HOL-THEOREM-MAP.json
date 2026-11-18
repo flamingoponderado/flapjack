@@ -23345,6 +23345,17 @@
   "reviewer": "Compared mk_loc_eq_push_env_exc_Exception_typed: an exception result from evaluation after pushing the specified handler and entering the call preserves the prior jump_exc location. Both exception values and the handler program use the target word type. Target finite maps and positive-width words use the reviewed representations; the proof inherits rational-cut reals through evaluate_stack_swap."
 },
 {
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "evaluate_IMP_domain_EQ",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/EvaluateDomain.lean",
+  "lean_name": "evaluate_imp_domainEq",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_IMP_domain_EQ_typed: the original Result evaluation and successful pop imply equality of the restored local domain with the union of both saved domains. Result label and value list retain their distinct HOL types; the handler is arbitrary. Target finite maps and positive-width words use the reviewed representations; the proof inherits rational-cut reals through evaluate_stack_swap."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "cut_env_IMP_MEM",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CutEnvProperties.lean", "lean_name": "cutEnv_imp_mem",
   "statement_status": "reviewed_exact", "reviewer": "Compared cut_env_IMP_MEM_typed: successful source cut makes an arbitrary key present exactly when it is present in the requested set."
