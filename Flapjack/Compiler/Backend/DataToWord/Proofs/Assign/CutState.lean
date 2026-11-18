@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.CutState
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.CutLocals
 public import Flapjack.Compiler.Backend.DataSpace.Proofs.State
 
 @[expose] public section
@@ -8,6 +9,16 @@ public import Flapjack.Compiler.Backend.DataSpace.Proofs.State
 /-! Cut-state preparation for data-to-word assignment correctness. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Assign
 open Flapjack Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
+
+/-- A successful optional cut is equal to the total GC cut operation. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml" "cut_state_opt_IMP_cut_locals"]
+theorem cutStateOpt_imp_cutLocals {C F : Type} (names : NumSet)
+    (state result : DataSem.State C F)
+    (run : DataSem.cutStateOpt (some names) state = some result) :
+    cutLocals names state = result := by
+  cases envRun : DataSem.cutEnv names state.locals with
+  | none => simp [DataSem.cutStateOpt, DataSem.cutState, envRun] at run
+  | some env => simpa [DataSem.cutStateOpt, DataSem.cutState, cutLocals, envRun] using run
 
 /-- A successful restricted cut returns the normalized intersection. -/
 @[hol "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml" "cut_state_opt_SOME_eq"]

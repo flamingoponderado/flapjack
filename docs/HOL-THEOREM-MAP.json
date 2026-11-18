@@ -8252,6 +8252,22 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "cut_locals_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CutLocals.lean",
+  "lean_name": "cutLocals",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent source and cut_locals_def_typed comparison: both branches retain the two independent state parameters and update only locals, using the cut result on success and the empty sparse tree on failure."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "cut_state_opt_IMP_cut_locals",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/CutState.lean",
+  "lean_name": "cutStateOpt_imp_cutLocals",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with cut_state_opt_IMP_cut_locals_typed: the sole successful optional-cut premise implies the same total cut_locals result, with unchanged sparse-tree names and independent data-state parameters."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "cut_env_adjust_sets_insert_ODD",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CutOdd.lean",
   "lean_name": "cutEnv_adjustSets_insertOdd",

@@ -296,6 +296,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.CodeOracleRelation
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.StateRelation
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.CutState
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.CutOdd
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.CutLocals
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.CutState
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.JoinEnv
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.Heap
