@@ -23043,6 +23043,26 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "jump_exc_call_env",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/JumpExc.lean",
+  "lean_name": "jumpExc_callEnv",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared jump_exc_call_env_typed: exception unwinding after call_env equals unwinding with the same stack maximum update. The arbitrary word state, argument list and optional size agree; target finite-map fields and positive-width words use reviewed representations."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "jump_exc_dec_clock",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/JumpExc.lean",
+  "lean_name": "jumpExc_decClock",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared jump_exc_dec_clock_typed: mk_loc of exception unwinding is unchanged by clock decrement. The output location width and state word width remain independently quantified; target finite-map fields and positive-width words use reviewed representations."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "set_vars_sing",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CutEnvs.lean",
   "lean_name": "setVars_singleton",
