@@ -103,6 +103,21 @@ def divCode {width : Nat} [NeZero width] : WordLangProgHOL (BitVec width) := ari
   (words_as_type_indexed_bitvec)]
 def modCode {width : Nat} [NeZero width] : WordLangProgHOL (BitVec width) := arithWrapperCode 6
 
+/-- Compare two arrays of words from their most significant elements. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "Compare1_code_def"
+  (words_as_type_indexed_bitvec)]
+def compare1Code {width : Nat} [NeZero width] : WordLangProgHOL (BitVec width) :=
+  let bytes := BitVec.ofNat width (width / 8)
+  let result (n : Nat) := WordLangProgHOL.seq (.assign 2 (.const (BitVec.ofNat width n))) (.return 0 [2])
+  .ite .equal 2 (.imm 0) (result 1) (listSeq [
+    .assign 8 (.load (.var 4)), .assign 9 (.load (.var 6)),
+    .ite .equal 8 (.reg 9) (listSeq [
+      .assign 2 (.op .sub [.var 2, .const 1]),
+      .assign 4 (.op .sub [.var 4, .const bytes]),
+      .assign 6 (.op .sub [.var 6, .const bytes]),
+      .call none (some compare1Location) [0, 2, 4, 6] none])
+      (.ite .lower 8 (.reg 9) (result 0) (result 2))])
+
 /-- Flapjack's partial stub lookup. It supplies only the listed stubs and
 returns `none` for all others; the complete HOL `stubs` list, including
 bignum code, remains unported. -/
@@ -150,16 +165,7 @@ def compileStub? {width : Nat} [NeZero width] (location : Nat) : Option (Nat × 
       .set .bitmapBuffer (.var 2), .set .codeBuffer (.var 4),
       .install 3 4 1 2 (.ls (), .ln), .return 0 [3]])
   else if location = compare1Location then
-    let bytes := BitVec.ofNat width (width / 8)
-    let result (n : Nat) := WordLangProgHOL.seq (.assign 2 (.const (BitVec.ofNat width n))) (.return 0 [2])
-    some (4, .ite .equal 2 (.imm 0) (result 1) (listSeq [
-      .assign 8 (.load (.var 4)), .assign 9 (.load (.var 6)),
-      .ite .equal 8 (.reg 9) (listSeq [
-        .assign 2 (.op .sub [.var 2, .const 1]),
-        .assign 4 (.op .sub [.var 4, .const bytes]),
-        .assign 6 (.op .sub [.var 6, .const bytes]),
-        .call none (some compare1Location) [0, 2, 4, 6] none])
-        (.ite .lower 8 (.reg 9) (result 0) (result 2))]))
+    some (4, compare1Code)
   else if location = equal1Location then
     let bytes := BitVec.ofNat width (width / 8)
     some (4, listSeq [

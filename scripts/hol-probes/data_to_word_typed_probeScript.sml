@@ -110,6 +110,7 @@ val _ = emit "Sub_code_def_typed" "Sub_code_def";
 val _ = emit "Mul_code_def_typed" "Mul_code_def";
 val _ = emit "Div_code_def_typed" "Div_code_def";
 val _ = emit "Mod_code_def_typed" "Mod_code_def";
+val _ = emit "Compare1_code_def_typed" "Compare1_code_def";
 val _ = emit "StoreEach_def_typed" "StoreEach_def";
 val _ = emit "MemEqList_def_typed" "MemEqList_def";
 val _ = emit "LoadBignum_def_typed" "LoadBignum_def";
