@@ -129,7 +129,7 @@ adjusted keys present in the source name tree. -/
 @[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "adjust_var_cut_env_IMP_MEM"]
 theorem adjustVar_cutEnvs_imp_mem {α β : Type} (names : Spt α) (env : Spt β)
     (cut : Spt β × Spt β) (key : Nat) (run : wordSemCutEnvs (adjustSets names) env = some cut) :
-    (∀ key, sptDomain cut.2 key → key % 2 = 0) ∧
+    (∀ wordKey, sptDomain cut.2 wordKey → wordKey % 2 = 0) ∧
       ((sptLookup (adjustVar key) cut.2).isSome ↔ (sptLookup key names).isSome) := by
   have shape := cutEnvs_shape (adjustSets names) env cut run
   have subset := cutEnvs_second_subset (adjustSets names) env cut run
