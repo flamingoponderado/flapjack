@@ -29,11 +29,11 @@ rest of the port's tooling uses, so the numbers stay consistent with CI:
   sections: **Port scope completion**, which measures how much of the *in-scope*
   CakeML surface (see below) has a port, with the largest still-unported scripts
   listed; and **End-to-end correctness · AST → RISC-V**, which lays out the
-  verified source-to-machine chain(s) for both front-ends. CakeML and Pancake
-  share the same backend and RISC-V target encoder, so both reach RISC-V through
-  `riscv_encoder_correct`; the chains differ at the front end — Pancake's
-  `pan_to_target_compile_semantics` is ported, while CakeML's `compile_correct`
-  (source → installed machine code) is shown as not yet ported.
+  verified CakeML source-to-machine chain. CakeML reaches RISC-V through the
+  shared backend and RISC-V target encoder (`riscv_encoder_correct`,
+  `riscv_target_ok`, both ported); its front-end `compile_correct`
+  (source → installed machine code) is shown as not yet ported and is the
+  focus of this view (rendered full-width; the Pancake chain is not shown).
   The CakeML `compile_correct` step is **expandable**: it renders a **dependency DAG** of the theorems it composes (roughly 95), built straight from the CakeML proof scripts. The top composition `compile_correct -> compile_correct_lemma -> compile_correct_gen` feeds the front-end (`parse`/`infertype`/`compile`), type soundness (`semantics_type_sound`) and the backend per-pass chain (`compile_correct'`: flat -> clos -> bvl -> bvi -> data -> word -> stack -> lab -> target, each pass's output feeding the next). Nodes are coloured by whether that *exact* theorem has a reviewed Lean port. Because the DAG uses the real theorems (not only the mapped ones) it exposes precise gaps — e.g. `data_to_word`'s own `compile_correct` is still open even though its `data_compile_correct` is ported.
 - **Pipeline** — the curated major-compilation passes in order from the CakeML
   front-end through the shared backend to RISC-V, one row per `<pass>ProofScript.sml`,

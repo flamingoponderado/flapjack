@@ -148,12 +148,12 @@ PIPELINE = [
      "filter_skip_semantics"),
 ]
 
-# The end-to-end AST -> RISC-V correctness chain(s). Two front-ends feed the SAME
-# backend and the SAME RISC-V target encoder, so there are two source-to-machine
-# chains: Pancake and CakeML. Each link is (hol_script [submodule-relative],
-# hol_name, lean_path substring, description). Port status is computed by
-# (script, theorem) via pipe_status, so a front-end link that is not yet ported
-# (e.g. CakeML's compile_correct) is shown as an open gap, never falsely claimed.
+# The end-to-end AST -> RISC-V correctness chain. CakeML's front-end
+# (compile_correct) feeds the SAME backend and the SAME RISC-V target encoder,
+# so there is one source-to-machine chain. Each link is (hol_script
+# [submodule-relative], hol_name, lean_path substring, description). Port status
+# is computed by (script, theorem) via pipe_status, so the unported front-end
+# (compile_correct) is shown as an open gap, never falsely claimed.
 E2E_CHAINS = [
     {
         "label": "CakeML",
@@ -165,23 +165,6 @@ E2E_CHAINS = [
              "machine_sem): parse, type and compile are all handled, for any target config "
              "including RISC-V -- the whole CakeML front-end plus shared backend in one "
              "theorem. NOT YET PORTED to Lean. Click to expand its constituent theorems."),
-            ("compiler/encoders/riscv/proofs/riscv_targetProofScript.sml", "riscv_encoder_correct",
-             "RiscV/CorrectnessEncoding/",
-             "Each target instruction's machine-code encoding matches its RISC-V model "
-             "step (26 instruction-family cases). Shared with the Pancake chain."),
-            ("compiler/encoders/riscv/proofs/riscv_targetProofScript.sml", "riscv_target_ok",
-             "RiscV/CorrectnessEncoding/TargetOk.lean",
-             "Well-formedness of the compiled target program fed to the RISC-V model."),
-        ],
-    },
-    {
-        "label": "Pancake",
-        "src_lang": "Pancake source IR → RISC-V",
-        "links": [
-            ("pancake/proofs/pan_to_targetProofScript.sml", "pan_to_target_compile_semantics",
-             "Pancake/Proofs/PanToTarget/AssemblyTop.lean",
-             "Pancake AST semantics -> compiled target-assembly word semantics "
-             "(the whole Pancake->target pipeline in one theorem)."),
             ("compiler/encoders/riscv/proofs/riscv_targetProofScript.sml", "riscv_encoder_correct",
              "RiscV/CorrectnessEncoding/",
              "Each target instruction's machine-code encoding matches its RISC-V model "
@@ -1075,7 +1058,7 @@ footer{color:var(--muted);font-size:12px;padding:22px 20px;border-top:1px solid 
 .e2e .arrow{color:var(--muted);text-align:center;font-size:11px;margin:-2px 0}
 .e2e .arrow b{color:var(--accent);font-weight:600}
 .e2e-grid{display:flex;gap:16px;flex-wrap:wrap;margin:10px 0}
-.e2e-col{flex:1 1 330px;min-width:320px;background:var(--panel2);border:1px solid var(--line);
+.e2e-col{flex:1 1 100%;min-width:0;background:var(--panel2);border:1px solid var(--line);
   border-radius:10px;padding:12px 14px;display:flex;flex-direction:column}
 .e2e-col > .e2e{margin:8px 0 0}
 .e2e-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:13.5px}
@@ -1247,7 +1230,7 @@ function e2eHtml(){
   }).join("");
   return `
     <h2>End-to-end correctness · CakeML AST → RISC-V <span class="hint">the CakeML compiler's source-to-machine chain, with its unported front-end broken down</span></h2>
-    <div class="note" style="border-left-color:var(--accent2)"><b>CakeML</b> <span class="mono">compile_correct</span> (source → installed RISC-V machine code) is <b>not yet ported</b>. <b>Expand it</b> to see the <b>dependency DAG</b> of the theorems it composes, built straight from the CakeML proof scripts: the top composition <span class="mono">compile_correct → compile_correct_lemma → compile_correct_gen</span> feeds the front-end (<span class="mono">parse</span>/<span class="mono">infertype</span>/<span class="mono">compile</span>), type soundness (<span class="mono">semantics_type_sound</span>) and the backend per-pass chain (<span class="mono">compile_correct'</span>, flat → clos → bvl → bvi → data → word → stack → lab → target, each pass's output feeding the next). Nodes are coloured by whether that <i>exact</i> theorem has a reviewed Lean port. Because the DAG uses the real theorems (not just the mapped ones), it exposes precise gaps — e.g. <span class="mono">data_to_word</span>'s own <span class="mono">compile_correct</span> is still open even though its <span class="mono">data_compile_correct</span> is ported. The backend + RISC-V encoder it relies on are the <b>same</b> ones the <b>Pancake</b> chain below uses — and Pancake's front-end (<span class="mono">pan_to_target_compile_semantics</span>) is already ported, so that chain is fully green.</div>
+    <div class="note" style="border-left-color:var(--accent2)"><b>CakeML</b> <span class="mono">compile_correct</span> (source → installed RISC-V machine code) is <b>not yet ported</b>. <b>Expand it</b> to see the <b>dependency DAG</b> of the theorems it composes, built straight from the CakeML proof scripts: the top composition <span class="mono">compile_correct → compile_correct_lemma → compile_correct_gen</span> feeds the front-end (<span class="mono">parse</span>/<span class="mono">infertype</span>/<span class="mono">compile</span>), type soundness (<span class="mono">semantics_type_sound</span>) and the backend per-pass chain (<span class="mono">compile_correct'</span>, flat → clos → bvl → bvi → data → word → stack → lab → target, each pass's output feeding the next). Nodes are coloured by whether that <i>exact</i> theorem has a reviewed Lean port. Because the DAG uses the real theorems (not just the mapped ones), it exposes precise gaps — e.g. <span class="mono">data_to_word</span>'s own <span class="mono">compile_correct</span> is still open even though its <span class="mono">data_compile_correct</span> is ported. Its backend and RISC-V encoder (<span class="mono">riscv_encoder_correct</span>, <span class="mono">riscv_target_ok</span>) are already reviewed.</div>
     <div class="e2e-grid">${cols}</div>`;
 }
 
