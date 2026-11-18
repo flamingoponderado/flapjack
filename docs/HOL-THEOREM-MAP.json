@@ -8230,6 +8230,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "LIST_REL_exists_witness",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/SizeSoundness.lean",
+  "lean_name": "listRelExistsWitness",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with the source and LIST_REL_exists_witness_typed confirms independently polymorphic element types, arbitrary relation, pointwise witness premise, and existence of a related list. The original general theorem replaces a narrower helper in the sizing proof."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "get_vars_PERM_toList_inter",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/GetVarsPerm.lean",
   "lean_name": "getVarsPermToListInter",

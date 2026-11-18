@@ -13,6 +13,7 @@ state_rel_gc_gen_typed=(state_rel (c :data_to_word$config) (l1 :num) (l2 :num) (
 PERM_toList_lookup_eq_typed=∀(m1 :α sptree$num_map) (m2 :α sptree$num_map). (∀(k :num). (lookup k m1 :α option) = (lookup k m2 :α option)) ⇒ PERM (toList m1 :α list) (toList m2 :α list)
 PERM_toList_delete_typed=∀(k :num) (s :α sptree$num_map) (x :α). (lookup k s :α option) = SOME x ⇒ PERM (toList s :α list) (x::(toList (delete k s :α sptree$num_map) :α list))
 get_vars_PERM_toList_inter_typed=∀(args :num list) (x' :sptree$num_set) (vals :α list). (get_vars args (locals :α sptree$num_map) :α list option) = SOME vals ⇒ ∃(dups :α list). PERM (vals ++ (toList (inter locals x') :α list)) (dups ++ (toList (inter locals (list_insert args x')) :α list)) ∧ set dups ⊆ set vals ∧ set vals ⊆ set (toList (inter locals (list_insert args x')) :α list)
+LIST_REL_exists_witness_typed=∀(xs :α list). (∀(x :α). MEM x xs ⇒ ∃(y :β). (P :α -> β -> bool) x y) ⇒ ∃(ys :β list). LIST_REL P xs ys
 stack_rel_imp_subset_typed=∀(xs :stack list) (ys :α stack_frame list). LIST_REL (stack_rel :stack -> α stack_frame -> bool) xs ys ⇒ set (enc_stack ys) ⊆ set (MAP (SND :v # α word_loc -> α word_loc) (flat xs ys))
 mk_loc_def_typed=(mk_loc (SOME ((t1 :β),(d1 :num),(d2 :num))) :α word_loc) = (Loc d1 d2 :α word_loc)
 mk_loc_function_type=:(β # num # num) option -> α word_loc
