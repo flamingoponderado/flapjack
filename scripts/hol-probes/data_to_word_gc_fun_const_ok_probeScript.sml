@@ -162,3 +162,24 @@ val _ = pr_typed "state_rel_inc_clock_typed" data_to_word_gcProofTheory.state_re
 val _ = pr_typed "word_gc_move_IMP_isWord_typed" data_to_word_gcProofTheory.word_gc_move_IMP_isWord;
 val _ = pr_typed "word_gen_gc_move_IMP_isWord_typed" data_to_word_gcProofTheory.word_gen_gc_move_IMP_isWord;
 val _ = pr_typed "word_gen_gc_partial_move_IMP_isWord_typed" data_to_word_gcProofTheory.word_gen_gc_partial_move_IMP_isWord;
+
+(* Replay the local HOL theorem, which is not exported by the theory. *)
+open word_gcFunctionsTheory wordSemTheory;
+val word_gc_move_roots_IMP_FILTER0_replay = Q.prove(
+  `∀ws i pa old m dm ws2 i2 pa2 m2 c2 c.
+    word_gc_move_roots c (ws,i,pa,old,m,dm) = (ws2,i2,pa2,m2,c2) ∧
+    EVERY loc_ok ws ⇒
+    word_gc_move_roots c (FILTER isWord ws,i,pa,old,m,dm) =
+                         (FILTER isWord ws2,i2,pa2,m2,c2)`,
+  Induct \\ full_simp_tac(srw_ss())[word_gc_move_roots_def]
+  \\ Cases \\ full_simp_tac(srw_ss())[]
+  \\ srw_tac[][] \\ full_simp_tac(srw_ss())[word_gc_move_roots_def]
+  THEN1
+   (srw_tac[][] \\ full_simp_tac(srw_ss())[LET_DEF]
+    \\ imp_res_tac word_gc_move_IMP_isWord
+    \\ rpt (pairarg_tac \\ fs []) \\ fs [] \\ rveq
+    \\ res_tac \\ fs [])
+  \\ fs [isWord_def,word_gc_move_def,LET_DEF]
+  \\ rpt (pairarg_tac \\ fs []) \\ fs [] \\ rveq
+  \\ res_tac \\ fs [isWord_def]);
+val _ = pr_typed "word_gc_move_roots_IMP_FILTER0_replay_typed" word_gc_move_roots_IMP_FILTER0_replay;
