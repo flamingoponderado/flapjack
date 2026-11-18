@@ -54,6 +54,12 @@ theorem unifyWorkPartialPreservesCwfs : ∀ s work sx, cwfs s →
             | none => simp [hx, hy] at result
             | some b =>
               simp only [hx, hy] at result
+              have hxModel : tcwalkModel s x = a := by
+                simpa only [walkExecutableCorrect s hw x, tcwalkCorrectModel s x hw,
+                  Option.some.injEq] using hx
+              have hyModel : tcwalkModel s y = b := by
+                simpa only [walkExecutableCorrect s hw y, tcwalkCorrectModel s y hw,
+                  Option.some.injEq] using hy
               cases a <;> cases b <;> simp at result
               case varDb.varDb | app.app =>
                 split at result
@@ -62,11 +68,11 @@ theorem unifyWorkPartialPreservesCwfs : ∀ s work sx, cwfs s →
               case varDb.uvar =>
                 rename_i db v
                 exact ih _ _ sx (cwfsInsertTvarDb s v db
-                  ⟨(walkExecutableToVar s y v ⟨hw, hy⟩).1, hw⟩) result
+                  ⟨(tcwalkEqInferTuvarModel s y v ⟨hw, hyModel⟩).1, hw⟩) result
               case uvar.varDb =>
                 rename_i v db
                 exact ih _ _ sx (cwfsInsertTvarDb s v db
-                  ⟨(walkExecutableToVar s x v ⟨hw, hx⟩).1, hw⟩) result
+                  ⟨(tcwalkEqInferTuvarModel s x v ⟨hw, hxModel⟩).1, hw⟩) result
               case app.uvar =>
                 rename_i ts tc v
                 cases ho : occursWorkPartial s v [ts] with
@@ -77,7 +83,7 @@ theorem unifyWorkPartialPreservesCwfs : ∀ s work sx, cwfs s →
                   | false =>
                     simp [ho] at result
                     exact ih _ _ sx (cwfsInsertAppOfOccursFalse s v tc ts
-                      ⟨(walkExecutableToVar s y v ⟨hw, hy⟩).1, hw, ho⟩) result
+                      ⟨(tcwalkEqInferTuvarModel s y v ⟨hw, hyModel⟩).1, hw, ho⟩) result
               case uvar.app =>
                 rename_i v ts tc
                 cases ho : occursWorkPartial s v [ts] with
@@ -88,14 +94,14 @@ theorem unifyWorkPartialPreservesCwfs : ∀ s work sx, cwfs s →
                   | false =>
                     simp [ho] at result
                     exact ih _ _ sx (cwfsInsertAppOfOccursFalse s v tc ts
-                      ⟨(walkExecutableToVar s x v ⟨hw, hx⟩).1, hw, ho⟩) result
+                      ⟨(tcwalkEqInferTuvarModel s x v ⟨hw, hxModel⟩).1, hw, ho⟩) result
               case uvar.uvar =>
                 rename_i v1 v2
                 split at result
                 · exact ih _ _ sx hw result
                 · rename_i ne
-                  have fresh1 := (walkExecutableToVar s x v1 ⟨hw, hx⟩).1
-                  have fresh2 := (walkExecutableToVar s y v2 ⟨hw, hy⟩).1
+                  have fresh1 := (tcwalkEqInferTuvarModel s x v1 ⟨hw, hxModel⟩).1
+                  have fresh2 := (tcwalkEqInferTuvarModel s y v2 ⟨hw, hyModel⟩).1
                   exact ih _ _ sx (cwfsVar2Extend s v1 v2 ⟨hw, ne, fresh1, fresh2⟩) result
 
 end Flapjack.Compiler.Inference.Unify

@@ -10,17 +10,14 @@ public import Flapjack.Compiler.Inference.Unify.Walk.ToVar
 namespace Flapjack.Compiler.Inference.Unify
 open Flapjack.HOL.Unification Flapjack.HOL.Transfer.Fmsp
 
-/-- If the executed walker actually returns a variable on a well-formed
-    substitution, that variable is absent from the tree and its input was a
-    variable. This raw `Option` result supports the unifier's update proof;
-    it is not tagged as HOL's total `tcwalk_EQ_Infer_Tuvar` theorem. -/
-theorem walkExecutableToVar (s : Spt InferT) (t : InferT) (v : Nat)
-    (h : cwfs s ∧ walkExecutable s t = some (.uvar v)) :
+/-- A variable returned by the total walker is fresh in the substitution,
+    and the walk started from a variable. -/
+@[hol "cakeml/compiler/inference/unifyScript.sml" "tcwalk_EQ_Infer_Tuvar"]
+theorem tcwalkEqInferTuvarModel (s : Spt InferT) (t : InferT) (v : Nat)
+    (h : cwfs s ∧ tcwalkModel s t = .uvar v) :
     ¬ sptDomain s v ∧ ∃ u, t = .uvar u := by
   obtain ⟨hw, result⟩ := h
-  have model := walkExecutableCorrect s hw t
-  rw [result] at model
-  have eq : cwalkModel s t = .uvar v := (Option.some.inj model).symm
+  have eq : cwalkModel s t = .uvar v := (tcwalkCorrectModel s t hw).trans result
   cases t with
   | varDb n => simp [cwalkThm s (.varDb n) hw] at eq
   | app l n => simp [cwalkThm s (.app l n) hw] at eq
@@ -38,13 +35,5 @@ theorem walkExecutableToVar (s : Spt InferT) (t : InferT) (v : Nat)
       change sptLookup v s ≠ none
       simp [found]
     · exact ⟨u, rfl⟩
-
-@[hol "cakeml/compiler/inference/unifyScript.sml" "tcwalk_EQ_Infer_Tuvar"]
-theorem tcwalkEqInferTuvarModel (s : Spt InferT) (t : InferT) (v : Nat)
-    (h : cwfs s ∧ tcwalkModel s t = .uvar v) :
-    ¬ sptDomain s v ∧ ∃ u, t = .uvar u := by
-  apply walkExecutableToVar s t v
-  refine ⟨h.1, ?_⟩
-  rw [walkExecutableCorrect s h.1 t, tcwalkCorrectModel s t h.1, h.2]
 
 end Flapjack.Compiler.Inference.Unify
