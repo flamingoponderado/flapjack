@@ -48,56 +48,38 @@ private theorem finiteBagMultisetCountAt {α : Type} (b : Bag α) (h : finiteBag
 theorem wfBagMultisetStep {α : Type} (r : α → α → Prop) (hr : WellFounded r) :
     WellFounded (bagMultisetStep r) := by
   classical
-  have ht : WellFounded (Relation.TransGen r) := hr.transGen
-  have noSelf : ∀ a, ¬ Relation.TransGen r a a := by
-    intro a
-    induction a using ht.induction with
-    | h a ih =>
-      intro h
-      exact ih a h h
+  have noSelf : ∀ a, ¬ Relation.TransGen r a a := fun a h => hr.transGen.asymmetric a a h h
   let : Preorder α := {
     le := Relation.ReflTransGen r
     lt := Relation.TransGen r
     le_refl := fun _ => .refl
     le_trans := fun _ _ _ => Relation.ReflTransGen.trans
-    lt_iff_le_not_ge := by
-      intro a b
-      constructor
-      · intro h
-        refine ⟨h.to_reflTransGen, ?_⟩
-        intro back
-        exact noSelf a (h.trans_left back)
-      · rintro ⟨forward, notBack⟩
+    lt_iff_le_not_ge := fun a b => ⟨fun h =>
+      ⟨h.to_reflTransGen, fun back => noSelf a (h.trans_left back)⟩, by
+        rintro ⟨forward, notBack⟩
         rcases Relation.reflTransGen_iff_eq_or_transGen.mp forward with eq | path
         · subst b
           exact (notBack .refl).elim
-        · exact path }
-  let : WellFoundedLT α := ⟨ht⟩
+        · exact path⟩ }
+  let : WellFoundedLT α := ⟨hr.transGen⟩
   apply Subrelation.wf _ (InvImage.wf finiteBagMultiset Multiset.wellFounded_isDershowitzMannaLT)
-  intro left right h
-  obtain ⟨hl, hr', e, rep, res, eqLeft, eqRight, related⟩ := h
-  have hparts : finiteBag rep ∧ finiteBag res :=
-    (finiteBagUnionIff rep res).mp (eqLeft ▸ hl)
+  rintro left right ⟨hl, hr', e, rep, res, eqLeft, eqRight, related⟩
+  have hparts : finiteBag rep ∧ finiteBag res := (finiteBagUnionIff rep res).mp (eqLeft ▸ hl)
   refine ⟨finiteBagMultiset res, finiteBagMultiset rep, {e}, by simp, ?_, ?_, ?_⟩
-  · apply Multiset.ext'
-    intro x
-    simp only [Multiset.count_add, finiteBagMultisetCountAt _ hl,
-      finiteBagMultisetCountAt _ hparts.1, finiteBagMultisetCountAt _ hparts.2]
+  · refine Multiset.ext' (fun x => ?_)
     have eq := congrFun eqLeft x
-    simp only [bagUnion] at eq
+    simp only [bagUnion, Multiset.count_add, finiteBagMultisetCountAt _ hl,
+      finiteBagMultisetCountAt _ hparts.1, finiteBagMultisetCountAt _ hparts.2] at eq ⊢
     omega
-  · apply Multiset.ext'
-    intro x
-    simp only [Multiset.count_add, finiteBagMultisetCountAt _ hr',
-      finiteBagMultisetCountAt _ hparts.2]
+  · refine Multiset.ext' (fun x => ?_)
     have eq := congrFun eqRight x
-    by_cases hx : x = e <;> simp [bagUnion, bagInsert, emptyBag, hx] at eq ⊢ <;> omega
+    by_cases hx : x = e <;> simp [bagUnion, bagInsert, emptyBag, hx,
+      Multiset.count_add, finiteBagMultisetCountAt _ hr',
+      finiteBagMultisetCountAt _ hparts.2] at eq ⊢ <;> omega
   · intro y hy
-    have hypos : 0 < Multiset.count y (finiteBagMultiset rep) := Multiset.count_pos.mpr hy
-    rw [finiteBagMultisetCountAt rep hparts.1 y] at hypos
     have mem : bagIn y rep := by
-      change 1 ≤ rep y
-      omega
+      rw [bagIn, bagInn, ← finiteBagMultisetCountAt rep hparts.1 y]
+      exact Multiset.count_pos.mpr hy
     exact ⟨e, by simp, Relation.TransGen.single (related y mem)⟩
 
 end Flapjack
