@@ -95,19 +95,6 @@ def wordSemIsWordLoc {width : Nat} [NeZero width] : WordLocW width → Bool
   | .word _ => true
   | _ => false
 
-/-- Kernel agreement of the two identically completed definitions. -/
-theorem wordSemTheWord_eq_getWord {width : Nat} [NeZero width]
-    (v : WordLocW width) : wordSemTheWord v = wordSemGetWord v := by
-  cases v <;> rfl
-
-/-- Compatibility specialization to the specified Word clause. -/
-theorem wordSemTheWord_eq_getWord_of_isWord {width : Nat} [NeZero width]
-    (v : WordLocW width) (h : wordSemIsWordLoc v = true) :
-    wordSemTheWord v = wordSemGetWord v := by
-  cases v with
-  | word w => rfl
-  | loc label offset => simp [wordSemIsWordLoc] at h
-
 /-- Exact HOL `word_cmp_def` (`wordSemScript.sml:56-68`).  On two `Word`s,
     each of HOL's eight clauses is the same comparison as the corresponding
     clause of the tagged `asm$word_cmp` (`wordCmpHOL`).  For example, `Less` is
