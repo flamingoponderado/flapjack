@@ -62,10 +62,20 @@ private def anyHeader {width : Nat} [NeZero width] (conf : Config) (r : Nat) (ot
         (listSeq [.set (.temp t1) (.const 3), .set (.temp t2) (.lookup heap),
           .set (.temp t3) (.op .sub [.const 0, shiftN .asr (.var r) 2]), .assign 7 (.const 0)])))
 
+/-- Generate the runtime loop for filling a block with a repeated value. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "Replicate_code_def"
+  (words_as_type_indexed_bitvec)]
+def replicateCode {width : Nat} [NeZero width] : WordLangProgHOL (BitVec width) :=
+  .ite .equal 6 (.imm 0) (.return 0 [8]) (listSeq [
+    .assign 2 (.op .add [.var 2, .const (BitVec.ofNat width (width / 8))]),
+    .store (.var 2) 4,
+    .assign 6 (.op .sub [.var 6, .const 4]),
+    .call none (some replicateLocation) [0, 2, 4, 6, 8] none])
+
 /-- Flapjack's partial stub lookup. It supplies only the listed stubs and
 returns `none` for all others; the complete HOL `stubs` list, including
 bignum code, remains unported. -/
-def compileStub? {width : Nat} (location : Nat) : Option (Nat × WordLangProgHOL (BitVec width)) :=
+def compileStub? {width : Nat} [NeZero width] (location : Nat) : Option (Nat × WordLangProgHOL (BitVec width)) :=
   if location = memCopyLocation then
     some (5, .ite .test 2 (.reg 2) (.return 0 [8]) (listSeq [
       .assign 1 (.load (.var 4)),
@@ -85,11 +95,7 @@ def compileStub? {width : Nat} (location : Nat) : Option (Nat × WordLangProgHOL
         .assign 6 (.op .sub [.var 6, .const 1]),
         .call none (some stringCmpLoopLocation) [0, 2, 4, 6, 8, 10] none]))
   else if location = replicateLocation then
-    some (5, .ite .equal 6 (.imm 0) (.return 0 [8]) (listSeq [
-      .assign 2 (.op .add [.var 2, .const (BitVec.ofNat width (width / 8))]),
-      .store (.var 2) 4,
-      .assign 6 (.op .sub [.var 6, .const 4]),
-      .call none (some replicateLocation) [0, 2, 4, 6, 8] none]))
+    some (5, replicateCode)
   else if location = byteCopyAddLocation then some (5, byteCopyLoop true)
   else if location = byteCopySubLocation then some (5, byteCopyLoop false)
   else if location = xorLoopLocation then
