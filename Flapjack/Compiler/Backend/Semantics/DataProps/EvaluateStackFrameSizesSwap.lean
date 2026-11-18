@@ -1602,13 +1602,14 @@ theorem evaluate_swap_stack_frame_sizes {C F : Type} (program : DataLang.Prog)
 
 /-- The evaluation result of a program does not depend on the starting
     frame-size map. Port of HOL `evaluate_stack_frame_sizes_FST`. HOL binds the
-    unused result pair `r s'` after `c s`; the same vacuous binders are retained
-    here (as `_res`/`_next`) rather than omitted. -/
+    unused result pair `r s'` after `c s`; they occur nowhere in the conclusion,
+    so their types are free and independent (the typed capture shows `r :α`,
+    `s' :β`). The vacuous binders are retained here as `_res : ρ` and
+    `_next : σ` with their own type parameters. -/
 @[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml"
   "evaluate_stack_frame_sizes_FST"]
-theorem evaluate_stack_frame_sizes_FST {C F : Type} (program : DataLang.Prog)
-    (state : State C F) (_res : Option (Result (List DataSem.Value) DataSem.Value))
-    (_next : State C F) :
+theorem evaluate_stack_frame_sizes_FST {C F ρ σ : Type} (program : DataLang.Prog)
+    (state : State C F) (_res : ρ) (_next : σ) :
     (evaluate program state).1 =
       (evaluate program { state with stackFrameSizes := .ln }).1 := by
   cases runEq : evaluate program state with
@@ -1619,13 +1620,14 @@ theorem evaluate_stack_frame_sizes_FST {C F : Type} (program : DataLang.Prog)
 
 /-- The final FFI state of a program does not depend on the starting frame-size
     map. Port of HOL `evaluate_stack_frame_sizes_ffi`. HOL binds the unused
-    result pair `r s'` after `c s`; the same vacuous binders are retained here
-    (as `_res`/`_next`) rather than omitted. -/
+    result pair `r s'` after `c s`; they occur nowhere in the conclusion, so
+    their types are free and independent (the typed capture shows `r :α`,
+    `s' :β`). The vacuous binders are retained here as `_res : ρ` and
+    `_next : σ` with their own type parameters. -/
 @[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml"
   "evaluate_stack_frame_sizes_ffi"]
-theorem evaluate_stack_frame_sizes_ffi {C F : Type} (program : DataLang.Prog)
-    (state : State C F) (_res : Option (Result (List DataSem.Value) DataSem.Value))
-    (_next : State C F) :
+theorem evaluate_stack_frame_sizes_ffi {C F ρ σ : Type} (program : DataLang.Prog)
+    (state : State C F) (_res : ρ) (_next : σ) :
     (evaluate program state).2.ffi =
       (evaluate program { state with stackFrameSizes := .ln }).2.ffi := by
   cases runEq : evaluate program state with

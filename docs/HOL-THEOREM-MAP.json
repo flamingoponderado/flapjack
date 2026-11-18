@@ -142802,7 +142802,7 @@
   "lean_name": "evaluate_stack_frame_sizes_FST",
   "statement_status": "reviewed_exact",
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared evaluate_stack_frame_sizes_FST_replay_typed (a typed replay, since the HOL theorem is [local] and has no DB entry). HOL binds c s r s' over (gamma,'ffi) dataSem$state rendered as {C F : Type}, with r :(v list, v) result option as Option (Result (List DataSem.Value) DataSem.Value); r and s' do not occur in the statement and are vacuous, and the Lean statement RETAINS them (as _res/_next) after program state, in HOL's binder order, rather than omitting them; the docstring records this. The conclusion is FST (evaluate (c,s)) = FST (evaluate (c, s with stack_frame_sizes := LN)), rendered as (evaluate program state).1 = (evaluate program {state with stackFrameSizes := .ln}).1, with Spt.ln the canonical empty sptree. No premise. Follows from evaluate_swap_stack_frame_sizes at sfs = LN. No representation qualifier applies. Inherits reals_as_rational_cuts through evaluate (docs/SOUNDNESS.md item 8)."
+  "reviewer": "Compared evaluate_stack_frame_sizes_FST_replay_typed (a typed replay, since the HOL theorem is [local] and has no DB entry; regenerated with the free-type binders). HOL binds c s r s' with c over dataLang$prog and s over the (gamma,'ffi) dataSem$state rendered as {C F : Type}; r and s' occur nowhere in the statement, so their types are free and independent — the capture shows r :α and s' :β. The Lean statement retains both vacuous binders after program state, in HOL's binder order, as _res : ρ and _next : σ with their own independent type parameters; the docstring records this. The conclusion is FST (evaluate (c,s)) = FST (evaluate (c, s with stack_frame_sizes := LN)), rendered as (evaluate program state).1 = (evaluate program {state with stackFrameSizes := .ln}).1, with Spt.ln the canonical empty sptree. No premise. Follows from evaluate_swap_stack_frame_sizes at sfs = LN. No representation qualifier applies. Inherits reals_as_rational_cuts through evaluate (docs/SOUNDNESS.md item 8)."
 }
 ,
 {
@@ -142812,7 +142812,7 @@
   "lean_name": "evaluate_stack_frame_sizes_ffi",
   "statement_status": "reviewed_exact",
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared evaluate_stack_frame_sizes_ffi_replay_typed (a typed replay, since the HOL theorem is [local] and has no DB entry). HOL binds c s r s' over (gamma,'ffi) dataSem$state rendered as {C F : Type}, with r :(v list, v) result option as Option (Result (List DataSem.Value) DataSem.Value); r and s' do not occur in the statement and are vacuous, and the Lean statement RETAINS them (as _res/_next) after program state, in HOL's binder order; the docstring records this. The conclusion is (SND (evaluate (c,s))).ffi = (SND (evaluate (c, s with stack_frame_sizes := LN))).ffi, rendered as (evaluate program state).2.ffi = (evaluate program {state with stackFrameSizes := .ln}).2.ffi, with Spt.ln the canonical empty sptree. No premise. Follows from evaluate_swap_stack_frame_sizes at sfs = LN, since ffi is not one of the replaced fields. No representation qualifier applies. Inherits reals_as_rational_cuts through evaluate (docs/SOUNDNESS.md item 8)."
+  "reviewer": "Compared evaluate_stack_frame_sizes_ffi_replay_typed (a typed replay, since the HOL theorem is [local] and has no DB entry; regenerated with the free-type binders). HOL binds c s r s' with c over dataLang$prog and s over the (gamma,'ffi) dataSem$state rendered as {C F : Type}; r and s' occur nowhere in the statement, so their types are free and independent — the capture shows r :α and s' :β. The Lean statement retains both vacuous binders after program state, in HOL's binder order, as _res : ρ and _next : σ with their own independent type parameters; the docstring records this. The conclusion is (SND (evaluate (c,s))).ffi = (SND (evaluate (c, s with stack_frame_sizes := LN))).ffi, rendered as (evaluate program state).2.ffi = (evaluate program {state with stackFrameSizes := .ln}).2.ffi, with Spt.ln the canonical empty sptree. No premise. Follows from evaluate_swap_stack_frame_sizes at sfs = LN, since ffi is not one of the replaced fields. No representation qualifier applies. Inherits reals_as_rational_cuts through evaluate (docs/SOUNDNESS.md item 8)."
 },
 {
  "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
@@ -142821,7 +142821,7 @@
  "lean_name": "evaluate_swap_limits",
  "statement_status": "reviewed_exact",
  "inherits_reals_as_rational_cuts": true,
- "reviewer": "Compared evaluate_swap_limits_typed (show_types). HOL binds c s r s' limits over one shared state type (alpha,beta) dataSem$state rendered as {C F : Type}, r :(v list, v) result option as Option (Result (List DataSem.Value) DataSem.Value), limits :limits as Limits; the Lean binders are program state res next limits in HOL's order. The premise is the single equation evaluate (c,s) = (r,s'); the conclusion is the existential smx :num option, safe :bool, peak :num (Lean Option Nat, Bool, Option Nat) with evaluate (c, s with limits := limits) equal to (r, s' with <|limits := limits; stack_max := smx; safe_for_space := safe; peak_heap_length := peak|>), the same four replaced fields in HOL's order. No representation qualifier applies: the signature has no finite-map or BitVec carrier. Inherits reals_as_rational_cuts through evaluate (docs/SOUNDNESS.md item 8)."
+ "reviewer": "Compared evaluate_swap_limits_typed (show_types). HOL binds c s r s' limits over one shared state type (alpha,beta) dataSem$state rendered as {C F : Type}, r :(v list, v) result option as Option (Result (List DataSem.Value) DataSem.Value), limits :limits as Limits; the Lean binders are program state res next limits in HOL's order. The premise is the single equation evaluate (c,s) = (r,s'); the conclusion is the existential smx :num option, safe :bool, peak :num (Lean Option Nat, Bool, Nat — peak is a plain Nat, not an Option) with evaluate (c, s with limits := limits) equal to (r, s' with <|limits := limits; stack_max := smx; safe_for_space := safe; peak_heap_length := peak|>), the same four replaced fields in HOL's order. No representation qualifier applies: the signature has no finite-map or BitVec carrier. Inherits reals_as_rational_cuts through evaluate (docs/SOUNDNESS.md item 8)."
 },
 {
  "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
@@ -142830,7 +142830,7 @@
  "lean_name": "evaluate_zero_limits_FST",
  "statement_status": "reviewed_exact",
  "inherits_reals_as_rational_cuts": true,
- "reviewer": "Compared evaluate_zero_limits_FST_replay_typed (a typed replay, since the HOL theorem is [local] and has no DB entry). HOL binds c s r s' over (gamma,'ffi) dataSem$state rendered as {C F : Type}, with r :(v list, v) result option as Option (Result (List DataSem.Value) DataSem.Value); r and s' are vacuous and the Lean statement RETAINS them (as _res/_next) after program state, in HOL's binder order; the docstring records this. The conclusion is FST (evaluate (c,s)) = FST (evaluate (c, s with limits := zero_limits)), rendered as (evaluate program state).1 = (evaluate program {state with limits := zeroLimits}).1. zeroLimits is the reviewed zero_limits_def rendering: the three limits are zero and HOL's unspecified arch_64_bit/has_fp_ops/has_fp_tops are holArb Bool (see its row), so this states HOL's ARB instance rather than a concrete false instance. No representation qualifier applies. Inherits reals_as_rational_cuts through evaluate (docs/SOUNDNESS.md item 8)."
+ "reviewer": "Compared evaluate_zero_limits_FST_replay_typed (a typed replay, since the HOL theorem is [local] and has no DB entry; regenerated with the free-type binders). HOL binds c s r s' with c over dataLang$prog and s over the (gamma,'ffi) dataSem$state rendered as {C F : Type}; r and s' occur nowhere in the statement, so their types are free and independent — the capture shows r :α and s' :β. The Lean statement retains both vacuous binders after program state, in HOL's binder order, as _res : ρ and _next : σ with their own independent type parameters; the docstring records this. The conclusion is FST (evaluate (c,s)) = FST (evaluate (c, s with limits := zero_limits)), rendered as (evaluate program state).1 = (evaluate program {state with limits := zeroLimits}).1. zeroLimits is the reviewed zero_limits_def rendering: the three limits are zero and HOL's unspecified arch_64_bit/has_fp_ops/has_fp_tops are holArb Bool (see its row), so this states HOL's ARB instance rather than a concrete false instance. No representation qualifier applies. Inherits reals_as_rational_cuts through evaluate (docs/SOUNDNESS.md item 8)."
 },
 {
  "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
@@ -142839,7 +142839,7 @@
  "lean_name": "evaluate_zero_limits_ffi",
  "statement_status": "reviewed_exact",
  "inherits_reals_as_rational_cuts": true,
- "reviewer": "Compared evaluate_zero_limits_ffi_replay_typed (a typed replay, since the HOL theorem is [local] and has no DB entry). HOL binds c s r s' over (gamma,'ffi) dataSem$state rendered as {C F : Type}, with r :(v list, v) result option as Option (Result (List DataSem.Value) DataSem.Value); r and s' are vacuous and the Lean statement RETAINS them (as _res/_next) after program state, in HOL's binder order; the docstring records this. The conclusion is (SND (evaluate (c,s))).ffi = (SND (evaluate (c, s with limits := zero_limits))).ffi, rendered as (evaluate program state).2.ffi = (evaluate program {state with limits := zeroLimits}).2.ffi; the SND pair component is the final state and .2 in Lean is the same component. zeroLimits is the reviewed zero_limits_def rendering with holArb Bool for the three unspecified Boolean fields. No representation qualifier applies. Inherits reals_as_rational_cuts through evaluate (docs/SOUNDNESS.md item 8)."
+ "reviewer": "Compared evaluate_zero_limits_ffi_replay_typed (a typed replay, since the HOL theorem is [local] and has no DB entry; regenerated with the free-type binders). HOL binds c s r s' with c over dataLang$prog and s over the (gamma,'ffi) dataSem$state rendered as {C F : Type}; r and s' occur nowhere in the statement, so their types are free and independent — the capture shows r :α and s' :β. The Lean statement retains both vacuous binders after program state, in HOL's binder order, as _res : ρ and _next : σ with their own independent type parameters; the docstring records this. The conclusion is (SND (evaluate (c,s))).ffi = (SND (evaluate (c, s with limits := zero_limits))).ffi, rendered as (evaluate program state).2.ffi = (evaluate program {state with limits := zeroLimits}).2.ffi; the SND pair component is the final state and .2 in Lean is the same component. zeroLimits is the reviewed zero_limits_def rendering with holArb Bool for the three unspecified Boolean fields. No representation qualifier applies. Inherits reals_as_rational_cuts through evaluate (docs/SOUNDNESS.md item 8)."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
@@ -142976,8 +142976,9 @@
     "hol_name": "LAST_add_ret_loc",
     "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/SupportLemmas.lean",
     "lean_name": "lastAddRetLoc",
-    "statement_status": "reviewed_exact",
-    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, LAST_add_ret_loc_typed): source3307-3313; LAST rendered by holLast (only cons equations used since the premise keeps the argument list nonempty), add_ret_loc as wordSemAddRetLoc, ret carrier Option (β × γ × δ × Num × Num) with independent β γ δ, nonempty premise retained; the concrete WordLocW element type uses the global Nonempty instance, so no type-binder qualifier."
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, LAST_add_ret_loc_typed): source3307-3313; LAST rendered by holLast (only cons equations used since the premise keeps the argument list nonempty), add_ret_loc as wordSemAddRetLoc, ret carrier Option (β × γ × δ × Num × Num) with independent β γ δ, nonempty premise retained. The argument list is the width-indexed WordLocW carrier, whose header carries [NeZero width] and whose word constructor payload mentions BitVec width, so the positive-width word translation is the only carrier difference; no type-binder qualifier is needed because WordLocW is inhabited concretely."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
@@ -143100,7 +143101,7 @@
     "lean_name": "bitsToWordBit",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, bits_to_word_bit_typed): source998-1006; bs arbitrary Bool list and i num, one conjunction premise i < dimindex (:α) ∧ i < LENGTH bs kept as two premises, bits_to_word as bitsToWordW over BitVec width with NeZero width, word bit ' as getLsbD, EL i bs as the bounded list indexing (the i < LENGTH guard makes the total EL the ordinary element, so no total-function rendering), bool equality orientation retained."
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, bits_to_word_bit_typed): source998-1006; bs arbitrary Bool list and i num; HOL's single conjunction premise i < dimindex (:α) ∧ i < LENGTH bs is ONE hypothesis in HOL's order (Lean binds h : i < width ∧ i < bits.length), bits_to_word as bitsToWordW over BitVec width with NeZero width, word bit ' as getLsbD, EL i bs as the bounded list indexing (the i < LENGTH guard makes the total EL the ordinary element, so no total-function rendering), bool equality orientation retained."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
@@ -143223,20 +143224,30 @@
     "lean_name": "evaluatePopHandlerSeq",
     "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
     "hol_name": "evaluate_PopHandler_seq",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
-    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, evaluate_PopHandler_seq_typed): source5566-5572; free-variable order prog t k f f' retained, with the frame triple bound as separate k, f and f' variables exactly as in the typed capture, HOL's F is the false constant, and the two unused frame fields stay independently polymorphic. Conclusion evaluate (PopHandler F (k,f,f') prog,t) = evaluate (Seq (PopHandler F (k,f,f') Skip) prog,t) retained, with Seq composed through the reviewed sequenceAssoc and skip-right evaluation laws (Flapjack-only helpers with no separate HOL originals). Positive BitVec width; evaluator closure inherits reals_as_rational_cuts (SOUNDNESS item 8) without a numerical FP assertion."
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, evaluate_PopHandler_seq_typed): source5566-5572; free-variable order prog t k f f' retained, with the frame triple bound as separate k, f and f' variables exactly as in the typed capture, HOL's F is the false constant, and the two unused frame fields stay independently polymorphic. The target is the StackSemStateFiniteExact carrier, whose canonical finite-map fields regs, fpRegs and store are the same reviewed HolFiniteMapExact translation as on the adjacent evaluate_copy_ret_Seq' row, with the same-module canonical witness; the positive BitVec width translation is unchanged. Conclusion evaluate (PopHandler F (k,f,f') prog,t) = evaluate (Seq (PopHandler F (k,f,f') Skip) prog,t) retained, with Seq composed through the reviewed sequenceAssoc and skip-right evaluation laws (Flapjack-only helpers with no separate HOL originals). Evaluator closure inherits reals_as_rational_cuts (SOUNDNESS item 8) without a numerical FP assertion."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CallReturnEval.lean",
     "lean_name": "evaluatePopHandlerClock",
     "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
     "hol_name": "evaluate_PopHandler_clock",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
-    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, evaluate_PopHandler_clock_typed): source5554-5565; free-variable order t k f f' clk retained, with the frame triple bound as separate k, f and f' variables, all Nat as HOL annotates (k,f:num,f':num) and the regenerated typed capture confirms; HOL's F is the false constant. HOL's let prog = PopHandler F (k,f,f') Skip is kept, and the conclusion evaluate (prog,t with clock := clk) = (FST (evaluate (prog,t)), SND (evaluate (prog,t)) with clock := clk) is stated with Prod.fst/Prod.snd and the clock update on t; no conjunction premise. Clock freeness is established by Flapjack-only per-constructor helpers (clockFree_set, clockFree_stackFree) with no separate HOL originals. Positive BitVec width; evaluator closure inherits reals_as_rational_cuts (SOUNDNESS item 8) without a numerical FP assertion."
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, evaluate_PopHandler_clock_typed): source5554-5565; free-variable order t k f f' clk retained, with the frame triple bound as separate k, f and f' variables, all Nat as HOL annotates (k,f:num,f':num) and the regenerated typed capture confirms; HOL's F is the false constant. The target is the StackSemStateFiniteExact carrier, whose canonical finite-map fields regs, fpRegs and store are the same reviewed HolFiniteMapExact translation as on the adjacent evaluate_copy_ret_Seq' row, with the same-module canonical witness. HOL's let prog = PopHandler F (k,f,f') Skip is kept, and the conclusion evaluate (prog,t with clock := clk) = (FST (evaluate (prog,t)), SND (evaluate (prog,t)) with clock := clk) is stated with Prod.fst/Prod.snd and the clock update on t; no conjunction premise. Clock freeness is established by Flapjack-only per-constructor helpers (clockFree_set, clockFree_stackFree) with no separate HOL originals. Positive BitVec width; evaluator closure inherits reals_as_rational_cuts (SOUNDNESS item 8) without a numerical FP assertion."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/RegisterWrite.lean",

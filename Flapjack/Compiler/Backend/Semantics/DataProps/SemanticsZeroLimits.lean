@@ -45,20 +45,24 @@ private theorem initialCallRun_swap {C F : Type} (ffi : HolFfiState F)
           limits := zeroLimits } with stackFrameSizes := .ln } := rfl
   constructor
   · rw [evaluate_zero_limits_FST (.call none (some start) [] none)
-        (initialState ffi code oracle compiler true limits frameSizes clock) none
+        (initialState ffi code oracle compiler true limits frameSizes clock)
+        (none : Option (Result (List DataSem.Value) DataSem.Value))
         (initialState ffi code oracle compiler true limits frameSizes clock),
       evaluate_stack_frame_sizes_FST (.call none (some start) [] none)
         { initialState ffi code oracle compiler true limits frameSizes clock with
-          limits := zeroLimits } none
+          limits := zeroLimits }
+        (none : Option (Result (List DataSem.Value) DataSem.Value))
         { initialState ffi code oracle compiler true limits frameSizes clock with
           limits := zeroLimits },
       runSwap]
   · rw [evaluate_zero_limits_ffi (.call none (some start) [] none)
-        (initialState ffi code oracle compiler true limits frameSizes clock) none
+        (initialState ffi code oracle compiler true limits frameSizes clock)
+        (none : Option (Result (List DataSem.Value) DataSem.Value))
         (initialState ffi code oracle compiler true limits frameSizes clock),
       evaluate_stack_frame_sizes_ffi (.call none (some start) [] none)
         { initialState ffi code oracle compiler true limits frameSizes clock with
-          limits := zeroLimits } none
+          limits := zeroLimits }
+        (none : Option (Result (List DataSem.Value) DataSem.Value))
         { initialState ffi code oracle compiler true limits frameSizes clock with
           limits := zeroLimits },
       runSwap]

@@ -264,13 +264,13 @@ val _ = emit "evaluate_swap_stack_frame_sizes_typed" "evaluate_swap_stack_frame_
 
 (* Local theorem replays: HOL exports no DB entry for these [local] theorems. *)
 val evaluate_stack_frame_sizes_FST_replay = Q.prove(
-  `!c (s :(γ,'ffi) dataSem$state) (r :(v list, v) result option) (s' :(γ,'ffi) dataSem$state).
+  `!c (s :(γ,'ffi) dataSem$state) (r) (s').
       FST (evaluate (c,s)) = FST (evaluate (c, s with stack_frame_sizes := LN))`,
   rw[] \\ Cases_on `evaluate (c,s)` \\ metis_tac[FST, evaluate_swap_stack_frame_sizes]);
 val _ = show "evaluate_stack_frame_sizes_FST_replay_typed" evaluate_stack_frame_sizes_FST_replay;
 
 val evaluate_stack_frame_sizes_ffi_replay = Q.prove(
-  `!c (s :(γ,'ffi) dataSem$state) (r :(v list, v) result option) (s' :(γ,'ffi) dataSem$state).
+  `!c (s :(γ,'ffi) dataSem$state) (r) (s').
       (SND (evaluate (c,s))).ffi = (SND (evaluate (c, s with stack_frame_sizes := LN))).ffi`,
   rw[] \\ Cases_on `evaluate (c,s)`
   \\ drule_then (qspec_then `LN` strip_assume_tac) evaluate_swap_stack_frame_sizes
@@ -282,13 +282,13 @@ val _ = emit "zero_limits_def_typed" "zero_limits_def";
 
 (* Local theorem replays: HOL exports no DB entry for these [local] theorems. *)
 val evaluate_zero_limits_FST_replay = Q.prove(
-  `!c (s :(γ,'ffi) dataSem$state) (r :(v list, v) result option) (s' :(γ,'ffi) dataSem$state).
+  `!c (s :(γ,'ffi) dataSem$state) (r) (s').
       FST (evaluate (c,s)) = FST (evaluate (c, s with limits := zero_limits))`,
   rw[] \\ Cases_on `evaluate (c,s)` \\ metis_tac[FST, evaluate_swap_limits]);
 val _ = show "evaluate_zero_limits_FST_replay_typed" evaluate_zero_limits_FST_replay;
 
 val evaluate_zero_limits_ffi_replay = Q.prove(
-  `!c (s :(γ,'ffi) dataSem$state) (r :(v list, v) result option) (s' :(γ,'ffi) dataSem$state).
+  `!c (s :(γ,'ffi) dataSem$state) (r) (s').
       (SND (evaluate (c,s))).ffi = (SND (evaluate (c, s with limits := zero_limits))).ffi`,
   rw[] \\ Cases_on `evaluate (c,s)`
   \\ drule_then (qspec_then `zero_limits` strip_assume_tac) evaluate_swap_limits

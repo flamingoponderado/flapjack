@@ -201,7 +201,7 @@ as its skip-continuation form followed by that continuation. HOL's `F` is the
 false constant, the frame triple is bound as the separate variables `k`, `f`,
 `f'`, and the two unused frame fields stay independent. -/
 @[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "evaluate_PopHandler_seq"
-  (words_as_type_indexed_bitvec)]
+  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem evaluatePopHandlerSeq {width : Nat} [NeZero width] {C F β γ : Type}
     (program : HolProg width) (t : StackSemStateFiniteExact width C F)
     (k : Nat) (f : β) (f' : γ) :
@@ -508,7 +508,7 @@ the handler restoration program's evaluation is clock-shifted. HOL's `F` is the
 false constant, and HOL annotates the frame triple as `(k,f:num,f':num)`, so
 `f` and `f'` are fixed `Nat`s. -/
 @[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "evaluate_PopHandler_clock"
-  (words_as_type_indexed_bitvec)]
+  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem evaluatePopHandlerClock {width : Nat} [NeZero width] {C F : Type}
     (t : StackSemStateFiniteExact width C F) (k f f' : Nat) (clk : Nat) :
     (let prog := popHandlerNative false (k, f, f') .skip
