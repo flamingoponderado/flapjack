@@ -27,3 +27,5 @@ val _ = emit "get_real_addr_lemma_typed" data_to_word_bignumProofTheory.get_real
 val _ = emit "memcopy_def_typed" data_to_word_assignProofTheory.memcopy_def;
 val _ = emit "MemCopy_thm_typed" data_to_word_assignProofTheory.MemCopy_thm;
 val _ = emit "memory_rel_IMP_free_space_typed" data_to_word_assignProofTheory.memory_rel_IMP_free_space;
+val _ = emit "store_list_def_typed" data_to_word_memoryProofTheory.store_list_def;
+val _ = emit "IMP_store_list_SOME_typed" data_to_word_assignProofTheory.IMP_store_list_SOME;

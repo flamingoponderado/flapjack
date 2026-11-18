@@ -8484,6 +8484,24 @@
   "reviewer": "Independent comparison with the HOL source and get_real_byte_offset_lemma_typed: the successful word lookup and original good-dimension premise imply the same byte-offset expression result. The qualifiers record the word-state finite maps and positive-width word carrier; compiler and FFI types remain independent."
 },
 {
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "store_list_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/StoreList.lean",
+  "lean_name": "storeList",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared both original equations and the typed capture: empty input preserves memory; a nonempty list checks its current domain address, updates that address and advances by bytes_in_word before recursion, otherwise failing. Address and WordLoc payload share the positive word width."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "IMP_store_list_SOME",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/StoreList.lean",
+  "lean_name": "storeList_exists",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared the HOL statement and typed capture: the sole assumptions are the framed free word-list assertion and length bound; the existential memory, successful store_list, exact written prefix, remaining suffix and arbitrary frame over the original domain agree. Words and their WordLoc payload use the same positive width."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
   "hol_name": "memory_rel_IMP_free_space",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/FreeSpace.lean",
