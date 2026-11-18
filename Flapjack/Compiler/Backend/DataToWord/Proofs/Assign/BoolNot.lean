@@ -26,8 +26,9 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {C F : Type} 
 end assignBoolNotMap
 
 /-- The empty-block branch of `memory_rel_Block_IMP` gives the concrete
-Boolean word used in the HOL Boolean-negation assignment proof. -/
-private theorem boolBlock_word {width : Nat} [NeZero width] (conf : Config)
+Boolean word used in the HOL Boolean assignment proofs. This is a local
+factoring of the empty-block case, with no separate HOL declaration. -/
+theorem boolBlock_word {width : Nat} [NeZero width] (conf : Config)
     (be : Bool) (next : Nat) (refs : Spt (BvlSem.Ref DataSem.Value)) (space : Nat)
     (store : HolFiniteMapExact WordStoreHOL (WordLocW width))
     (memory : BitVec width → WordLocW width) (domain : BitVec width → Bool)
