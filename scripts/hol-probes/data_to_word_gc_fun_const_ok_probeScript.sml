@@ -123,3 +123,4 @@ val _ = pr_typed "evaluate_mk_loc_EQ_typed" data_to_word_gcProofTheory.evaluate_
 val _ = pr_typed "mk_loc_eq_push_env_exc_Exception_typed" data_to_word_gcProofTheory.mk_loc_eq_push_env_exc_Exception;
 val _ = pr_typed "evaluate_IMP_domain_EQ_typed" data_to_word_gcProofTheory.evaluate_IMP_domain_EQ;
 val _ = pr_typed "evaluate_IMP_domain_EQ_Exc_typed" data_to_word_gcProofTheory.evaluate_IMP_domain_EQ_Exc;
+val _ = pr_typed "mk_loc_jump_exc_typed" data_to_word_gcProofTheory.mk_loc_jump_exc;

@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.StackKeys
+public import Flapjack.Compiler.Backend.DataToWord.Variables
 public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.MkLoc
 public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackSwap
 @[expose] public section
@@ -86,5 +87,19 @@ theorem mkLoc_pushEnv_exception {width : Nat} [NeZero width] {C F : Type}
     rw [← handlerVal'] at handlerEq
     rw [← tailEq] at keys
     exact mkLocJumpKeyEq t1 t keys handlerEq
+
+/-- Unwinding immediately after installing a handler selects its saved location. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "mk_loc_jump_exc"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem mkLoc_jumpExc {width : Nat} {outWidth : Nat} [NeZero width] [NeZero outWidth] {C F : Type}
+    (args : List (WordLocW width)) (ss : Option Nat)
+    (envs : Spt (WordLocW width) × Spt (WordLocW width)) (n x0 l : Nat)
+    (prog1 : WordLangProgHOL (BitVec width)) (t : WordSemStateFiniteExact width C F) :
+    mkLoc (width := outWidth) (jumpExc (WordSemStateFiniteExact.callEnv args ss
+      (pushEnv envs (some (Flapjack.Compiler.Backend.DataToWord.adjustVar n, prog1, x0, l)) (decClock t)))) = .loc x0 l := by
+  cases envList : wordSemEnvToList envs.2 t.permute with
+  | mk entries perm =>
+    simp [WordSemStateFiniteExact.callEnv, pushEnv, decClock, envList, jumpExc,
+      wordSemLastN, List.take_of_length_le, mkLoc]
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
