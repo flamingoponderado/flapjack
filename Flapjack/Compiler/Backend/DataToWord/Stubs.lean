@@ -162,6 +162,23 @@ def fromListCode {width : Nat} [NeZero width] (conf : Config) : WordLangProgHOL 
         .assign 7 (shiftN .lsr (.var 2) 2), .assign 9 (shiftN .lsr (.var 6) 4),
         ptr, .call none (some fromList1Location) [0, 1, 4, 2, 3, 5] none])
 
+/-- Write one list element and continue building the allocated block. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "FromList1_code_def"
+  (words_as_type_indexed_bitvec)]
+def fromList1Code {width : Nat} [NeZero width] (conf : Config) : WordLangProgHOL (BitVec width) :=
+  let bytes := (wordSemBytesInWord : BitVec width)
+  listSeq [
+    .store (.var 2) 10,
+    .assign 2 (.op .add [.var 2, .const bytes]),
+    .ite .equal 6 (.imm 0)
+      (listSeq [.set .nextFree (.var 2), .return 0 [8]])
+      (listSeq [
+        .assign 4 (realAddr conf 4),
+        .assign 10 (.load (.op .add [.var 4, .const bytes])),
+        .assign 4 (.load (.op .add [.var 4, .const (2 * bytes)])),
+        .assign 6 (.op .sub [.var 6, .const 4]),
+        .call none (some fromList1Location) [0, 2, 4, 6, 8, 10] none])]
+
 /-- Extend the partial stub lookup with configuration-dependent cases. The
 unimplemented stubs still return `none`, so this is not HOL's complete list. -/
 def compileConfiguredStub? {width : Nat} [NeZero width] (conf : Config) (location : Nat) :
@@ -213,18 +230,7 @@ def compileConfiguredStub? {width : Nat} [NeZero width] (conf : Config) (locatio
       .store (.var 1) 5,
       .call none (some replicateLocation) [0, 1, 4, 2, 3] none])
   else if location = fromList1Location then
-    let bytes := (wordSemBytesInWord : BitVec width)
-    some (6, listSeq [
-      .store (.var 2) 10,
-      .assign 2 (.op .add [.var 2, .const bytes]),
-      .ite .equal 6 (.imm 0)
-        (listSeq [.set .nextFree (.var 2), .return 0 [8]])
-        (listSeq [
-          .assign 4 (realAddr conf 4),
-          .assign 10 (.load (.op .add [.var 4, .const bytes])),
-          .assign 4 (.load (.op .add [.var 4, .const (2 * bytes)])),
-          .assign 6 (.op .sub [.var 6, .const 4]),
-          .call none (some fromList1Location) [0, 2, 4, 6, 8, 10] none])])
+    some (6, fromList1Code conf)
   else if location = byteCopyLocation then
     let bytes := (wordSemBytesInWord : BitVec width)
     some (6, listSeq [

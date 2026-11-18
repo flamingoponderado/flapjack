@@ -129968,6 +129968,15 @@
   },
 {
     "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "FromList1_code_def",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Stubs.lean",
+    "lean_name": "fromList1Code",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison with FromList1_code_def_typed: the ordered store, pointer increment, terminal return and recursive branch agree, including the word-sized byte offsets and call operands. The executed stub lookup uses this definition at the original location and arity; the fixed-stub oracle compares its generated body with original HOL."
+  },
+{
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
     "hol_name": "StoreEach_def",
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
     "lean_name": "storeEach",
