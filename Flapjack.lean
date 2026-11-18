@@ -1642,6 +1642,7 @@ import Flapjack.Compiler.Backend.Semantics.DataProps.CcCoOnlyDiff
 import Flapjack.Compiler.Backend.Semantics.DataProps.CcCoOnlyDiffApp
 import Flapjack.Compiler.Backend.Semantics.DataProps.CcCoOnlyDiffEval
 import Flapjack.Compiler.Backend.Semantics.DataProps.SemanticsPrefix
+import Flapjack.Compiler.Backend.Semantics.DataProps.SemanticsZeroLimits
 import Flapjack.Compiler.Backend.DataSpace.Proofs.CodeLabels
 import Flapjack.Compiler.Backend.DataSpace.Proofs.Simulation
 import Flapjack.Compiler.Backend.DataSpace.Proofs.Seq
