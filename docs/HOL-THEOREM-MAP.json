@@ -23043,6 +23043,24 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "option_le_stack_size_cons",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/StackSizeTail.lean",
+  "lean_name": "optionLe_stackSize_cons",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared option_le_stack_size_cons_typed: the original optional size of any stack is bounded by the size after prepending an arbitrary frame, at the same positive word width."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "option_le_stack_size_append",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/StackSizeTail.lean",
+  "lean_name": "optionLe_stackSize_append",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared option_le_stack_size_append_typed: the original optional size of any suffix is bounded by the size after prepending an arbitrary list of frames, at the same positive word width."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "jump_exc_push_env_NONE",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/JumpExc.lean",
   "lean_name": "jumpExc_pushEnv_none",

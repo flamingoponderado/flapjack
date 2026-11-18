@@ -82,3 +82,5 @@ val _ = pr_typed "set_vars_sing_typed" data_to_word_gcProofTheory.set_vars_sing;
 val _ = pr_typed "jump_exc_call_env_typed" data_to_word_gcProofTheory.jump_exc_call_env;
 val _ = pr_typed "jump_exc_dec_clock_typed" data_to_word_gcProofTheory.jump_exc_dec_clock;
 val _ = pr_typed "jump_exc_push_env_NONE_typed" data_to_word_gcProofTheory.jump_exc_push_env_NONE;
+val _ = pr_typed "option_le_stack_size_cons_typed" data_to_word_gcProofTheory.option_le_stack_size_cons;
+val _ = pr_typed "option_le_stack_size_append_typed" data_to_word_gcProofTheory.option_le_stack_size_append;

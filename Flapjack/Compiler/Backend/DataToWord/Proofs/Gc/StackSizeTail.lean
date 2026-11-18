@@ -45,6 +45,28 @@ theorem optionLeOptionMap2Max (n m : Option Nat) :
     (optionLe (Option.map₂ max m n) n ↔ optionLe m n) := by
   simp [optionLe_max, optionLe_refl]
 
+/-- Adding a stack frame cannot reduce its optional stack-size bound. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "option_le_stack_size_cons"
+  (words_as_type_indexed_bitvec)]
+theorem optionLe_stackSize_cons {width : Nat} [NeZero width]
+    (frame : WordSemStackFrame width) (stack : List (WordSemStackFrame width)) :
+    optionLe (wordSemStackSize stack) (wordSemStackSize (frame :: stack)) := by
+  change optionLe (wordSemStackSize stack)
+    (wordSemOptionAdd (wordSemStackSizeFrame frame) (wordSemStackSize stack))
+  cases wordSemStackSizeFrame frame <;> cases wordSemStackSize stack <;>
+    simp [wordSemOptionAdd, optionLe]
+
+/-- Prepending any stack frames cannot reduce the optional stack-size bound. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "option_le_stack_size_append"
+  (words_as_type_indexed_bitvec)]
+theorem optionLe_stackSize_append {width : Nat} [NeZero width]
+    (front suffix : List (WordSemStackFrame width)) :
+    optionLe (wordSemStackSize suffix) (wordSemStackSize (front ++ suffix)) := by
+  induction front with
+  | nil => exact optionLe_refl _
+  | cons frame front ih =>
+    exact optionLe_trans _ _ _ ⟨ih, optionLe_stackSize_cons frame (front ++ suffix)⟩
+
 /-- Removing the top frame preserves its saved local-size bound. -/
 @[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "option_le_tl"
   (words_as_type_indexed_bitvec)]
