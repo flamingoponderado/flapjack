@@ -23516,6 +23516,16 @@
   "statement_status": "reviewed_exact", "reviewer": "Compared NOT_5_domain_typed: five is absent from the adjusted domain of an arbitrary-payload name tree."
 },
 {
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "cut_names_adjust_set_insert_1",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CutOdd.lean", "lean_name": "cutNames_adjustSet_insert_one",
+  "statement_status": "reviewed_exact", "reviewer": "Compared cut_names_adjust_set_insert_1_typed: inserting any value at key one preserves the adjusted cut, with independent name-tree and environment payload types."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "cut_names_adjust_set_insert_3",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CutOdd.lean", "lean_name": "cutNames_adjustSet_insert_three",
+  "statement_status": "reviewed_exact", "reviewer": "Compared cut_names_adjust_set_insert_3_typed: inserting any value at key three preserves the adjusted cut, with independent name-tree and environment payload types."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "cut_env_IMP_MEM",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CutEnvProperties.lean", "lean_name": "cutEnv_imp_mem",
   "statement_status": "reviewed_exact", "reviewer": "Compared cut_env_IMP_MEM_typed: successful source cut makes an arbitrary key present exactly when it is present in the requested set."

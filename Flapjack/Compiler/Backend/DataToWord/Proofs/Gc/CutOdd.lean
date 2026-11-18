@@ -64,4 +64,16 @@ theorem cutEnv_adjustSets_insertOdd {α β : Type} (names : Spt α) (env : Spt �
   rw [cutNames_insert_notMem (.ls ()) env n value notZero,
     cutNames_insert_notMem (adjustSet names) env n value notAdjusted]
 
+/-- Inserting key one does not change the adjusted cut. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "cut_names_adjust_set_insert_1"]
+theorem cutNames_adjustSet_insert_one {α β : Type} (names : Spt α) (env : Spt β) (w : β) :
+    wordSemCutNames (adjustSet names) (sptInsert 1 w env) = wordSemCutNames (adjustSet names) env :=
+  cutNames_insert_notMem (adjustSet names) env 1 w (not_one_adjustSet names)
+
+/-- Inserting key three does not change the adjusted cut. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "cut_names_adjust_set_insert_3"]
+theorem cutNames_adjustSet_insert_three {α β : Type} (names : Spt α) (env : Spt β) (w : β) :
+    wordSemCutNames (adjustSet names) (sptInsert 3 w env) = wordSemCutNames (adjustSet names) env :=
+  cutNames_insert_notMem (adjustSet names) env 3 w (not_three_adjustSet names)
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

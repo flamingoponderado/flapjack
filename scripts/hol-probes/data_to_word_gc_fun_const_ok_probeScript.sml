@@ -141,3 +141,5 @@ val _ = pr_typed "eval_exc_stack_shorter_typed" data_to_word_gcProofTheory.eval_
 val _ = pr_typed "NOT_1_domain_typed" data_to_word_gcProofTheory.NOT_1_domain;
 val _ = pr_typed "NOT_3_domain_typed" data_to_word_gcProofTheory.NOT_3_domain;
 val _ = pr_typed "NOT_5_domain_typed" data_to_word_gcProofTheory.NOT_5_domain;
+val _ = pr_typed "cut_names_adjust_set_insert_1_typed" data_to_word_gcProofTheory.cut_names_adjust_set_insert_1;
+val _ = pr_typed "cut_names_adjust_set_insert_3_typed" data_to_word_gcProofTheory.cut_names_adjust_set_insert_3;

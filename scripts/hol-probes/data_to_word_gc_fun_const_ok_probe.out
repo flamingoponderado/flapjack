@@ -115,3 +115,5 @@ eval_exc_stack_shorter_typed=(evaluate ((c :dataLang$prog),call_env (ys :v list)
 NOT_1_domain_typed=(1 :num) ∉ (domain (adjust_set (names :α sptree$num_map)) :num -> bool)
 NOT_3_domain_typed=(3 :num) ∉ (domain (adjust_set (names :α sptree$num_map)) :num -> bool)
 NOT_5_domain_typed=(5 :num) ∉ (domain (adjust_set (names :α sptree$num_map)) :num -> bool)
+cut_names_adjust_set_insert_1_typed=cut_names (adjust_set (names :β sptree$num_map)) (insert (1 :num) (w :α) (l :α sptree$num_map) :α sptree$num_map) = cut_names (adjust_set names) l
+cut_names_adjust_set_insert_3_typed=cut_names (adjust_set (names :β sptree$num_map)) (insert (3 :num) (w :α) (l :α sptree$num_map) :α sptree$num_map) = cut_names (adjust_set names) l
