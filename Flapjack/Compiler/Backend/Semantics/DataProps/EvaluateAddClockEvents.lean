@@ -457,4 +457,51 @@ private theorem addClockEvents_force {C F : Type} (ret : Option (Nat × NumSet))
                 simp only [fixClock] at leftEq rightEq ⊢
                 exact leftEq.symm ▸ rightEq.symm ▸ h
 
+/-- The result dispatch of a returning call extends the run's events.
+    Flapjack infrastructure for `evaluate_add_clock_io_events_mono`; no separate
+    HOL original. -/
+private theorem callRetDispatchEvents_ge {C F : Type} (returns : List Nat)
+    (handler : Option (Nat × DataLang.Prog)) (run : EvalResult C F) :
+    run.2.ffi.ioEvents <+:
+      (match run.1 with
+        | some (.val values) =>
+          if values.length = returns.length then
+            match popEnv run.2 with
+            | none => typeError run.2
+            | some popped => (none, setVars returns values popped)
+          else typeError run.2
+        | some (.err (.raise value)) =>
+          match handler with
+          | none => (some (.err (.raise value)), run.2)
+          | some entry => evaluate entry.2 (setVar entry.1 value run.2)
+        | none => typeError run.2
+        | some (.err error) => (some (.err error), run.2)).2.ffi.ioEvents := by
+  cases run with
+  | mk res next =>
+    cases res with
+    | none => simp [typeError]
+    | some result =>
+      cases result with
+      | val values =>
+        simp only []
+        by_cases sameLength : values.length = returns.length
+        · rw [if_pos sameLength]
+          cases stackEq : next.stack with
+          | nil => simp [popEnv, stackEq, typeError]
+          | cons frame frames =>
+            cases frame with
+            | env frameSize envSpt => simp [popEnv, stackEq, setVars]
+            | exc frameSize envSpt frameHandler => simp [popEnv, stackEq, setVars]
+        · rw [if_neg sameLength]
+          simp [typeError]
+      | err error =>
+        cases error with
+        | abort reason => simp
+        | raise value =>
+          cases handler with
+          | none => simp
+          | some entry =>
+            obtain ⟨name, body⟩ := entry
+            simpa [setVar] using evaluate_events_start body (setVar name value next)
+
 end Flapjack.Compiler.Backend.DataProps
