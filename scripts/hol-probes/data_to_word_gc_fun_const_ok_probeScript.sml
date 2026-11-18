@@ -96,3 +96,5 @@ val _ = pr_typed "get_vars_IMP_LENGTH_typed" data_to_word_gcProofTheory.get_vars
 val _ = pr_typed "get_vars_IMP_LENGTH_word_typed" data_to_word_gcProofTheory.get_vars_IMP_LENGTH_word;
 val _ = pr_typed "lookup_adjust_var_fromList2_typed" data_to_word_gcProofTheory.lookup_adjust_var_fromList2;
 val _ = pr_typed "state_rel_call_env_typed" data_to_word_gcProofTheory.state_rel_call_env;
+val _ = pr_typed "word_ml_inv_CodePtr_typed" data_to_word_gcProofTheory.word_ml_inv_CodePtr;
+val _ = pr_typed "state_rel_CodePtr_typed" data_to_word_gcProofTheory.state_rel_CodePtr;

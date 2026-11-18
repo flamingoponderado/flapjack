@@ -23192,6 +23192,25 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "word_ml_inv_CodePtr",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CodePointer.lean",
+  "lean_name": "wordMlInv_codePtr",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared word_ml_inv_CodePtr_typed: the original arbitrary heap, data state refs and root tail are retained, and a leading CodePtr root implies exactly the corresponding Loc label 0. Positive-width words use the reviewed representation."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "state_rel_CodePtr",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CodePointer.lean",
+  "lean_name": "stateRel_codePtr",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared state_rel_CodePtr_typed: the full initial state relation, both successful argument reads, source LAST code-pointer equality and nonempty premise imply a nonempty word list whose LAST is the corresponding Loc label 0. Target finite maps and positive-width words use the reviewed representations."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "option_le_stack_size_cons",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/StackSizeTail.lean",
   "lean_name": "optionLe_stackSize_cons",
