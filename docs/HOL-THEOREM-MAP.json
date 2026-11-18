@@ -23023,6 +23023,16 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "get_var_T_OR_F",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/BoolLookup.lean",
+  "lean_name": "getVar_trueOrFalse",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared get_var_T_OR_F_typed: the full state relation and both local lookups imply the original modulo inequality and both conditional Boolean encodings. Target finite-map fields and positive-width words use the reviewed representations."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "state_rel_0_get_vars_IMP",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/StateRelation.lean",
   "lean_name": "stateRel_zero_getVars",
