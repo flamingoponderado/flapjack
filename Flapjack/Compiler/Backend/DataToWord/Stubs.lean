@@ -335,6 +335,33 @@ def compareCode {width : Nat} [NeZero width] (conf : Config) : WordLangProgHOL (
               (.ite .test 3 (.imm 16) (.ite .lower 6 (.reg 8) (result 0) (result 2)) (result 2))
               (.ite .test 3 (.imm 16) (result 0) (.ite .lower 6 (.reg 8) (result 2) (result 0))))]))
 
+/-- Compare two values for structural equality. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "Equal_code_def"
+  (words_as_type_indexed_bitvec)]
+def equalCode {width : Nat} [NeZero width] (conf : Config) : WordLangProgHOL (BitVec width) :=
+    let bytes := (wordSemBytesInWord : BitVec width)
+    let result (n : Nat) := WordLangProgHOL.seq (.assign 2 (.const (BitVec.ofNat width n))) (.return 0 [2])
+    let tagMask := tagMask conf ||| 2
+    listSeq [
+      .ite .equal 2 (.reg 4) (result 1) .skip,
+      .assign 1 (.op .and [.var 2, .var 4]), .ite .test 1 (.imm 1) (result 0) .skip,
+      .assign 20 (realAddr conf 2), .assign 40 (realAddr conf 4),
+      .assign 21 (.load (.var 20)), .assign 41 (.load (.var 40)),
+      .ite .test 21 (.imm 12) (listSeq [
+        .assign 1 (.op .and [.var 21, .const tagMask]),
+        .ite .equal 1 (.imm 482) (result 1) .skip,
+        .ite .equal 1 (.imm 498) (result 1) .skip,
+        .ite .equal 21 (.reg 41) .skip (result 0),
+        .assign 6 (shiftVar .lsr 21 (width - conf.lenSize)),
+        .assign 20 (.op .add [.var 20, .const bytes]), .assign 40 (.op .add [.var 40, .const bytes]),
+        .call none (some equal1Location) [0, 6, 20, 40] none]) .skip,
+      .ite .equal 21 (.reg 41) .skip (result 0), .ite .test 21 (.imm 4) (result 0) .skip,
+      .assign 1 (.op .and [.var 21, .const 24]), .ite .equal 1 (.imm 16) (result 0) .skip,
+      .assign 6 (shiftVar .lsr 21 (width - conf.lenSize)),
+      .assign 2 (.op .add [.var 20, shiftVar .lsl 6 (wordShiftAmount width)]),
+      .assign 4 (.op .add [.var 40, shiftVar .lsl 6 (wordShiftAmount width)]),
+      .call none (some compare1Location) [0, 6, 2, 4] none]
+
 /-- Extend the partial stub lookup with configuration-dependent cases. The
 unimplemented stubs still return `none`, so this is not HOL's complete list. -/
 def compileConfiguredStub? {width : Nat} [NeZero width] (conf : Config) (location : Nat) :
@@ -428,28 +455,7 @@ def compileConfiguredStub? {width : Nat} [NeZero width] (conf : Config) (locatio
   else if location = compareLocation then
     some (3, compareCode conf)
   else if location = equalLocation then
-    let bytes := (wordSemBytesInWord : BitVec width)
-    let result (n : Nat) := WordLangProgHOL.seq (.assign 2 (.const (BitVec.ofNat width n))) (.return 0 [2])
-    let tagMask := tagMask conf ||| 2
-    some (3, listSeq [
-      .ite .equal 2 (.reg 4) (result 1) .skip,
-      .assign 1 (.op .and [.var 2, .var 4]), .ite .test 1 (.imm 1) (result 0) .skip,
-      .assign 20 (realAddr conf 2), .assign 40 (realAddr conf 4),
-      .assign 21 (.load (.var 20)), .assign 41 (.load (.var 40)),
-      .ite .test 21 (.imm 12) (listSeq [
-        .assign 1 (.op .and [.var 21, .const tagMask]),
-        .ite .equal 1 (.imm 482) (result 1) .skip,
-        .ite .equal 1 (.imm 498) (result 1) .skip,
-        .ite .equal 21 (.reg 41) .skip (result 0),
-        .assign 6 (shiftVar .lsr 21 (width - conf.lenSize)),
-        .assign 20 (.op .add [.var 20, .const bytes]), .assign 40 (.op .add [.var 40, .const bytes]),
-        .call none (some equal1Location) [0, 6, 20, 40] none]) .skip,
-      .ite .equal 21 (.reg 41) .skip (result 0), .ite .test 21 (.imm 4) (result 0) .skip,
-      .assign 1 (.op .and [.var 21, .const 24]), .ite .equal 1 (.imm 16) (result 0) .skip,
-      .assign 6 (shiftVar .lsr 21 (width - conf.lenSize)),
-      .assign 2 (.op .add [.var 20, shiftVar .lsl 6 (wordShiftAmount width)]),
-      .assign 4 (.op .add [.var 40, shiftVar .lsl 6 (wordShiftAmount width)]),
-      .call none (some compare1Location) [0, 6, 2, 4] none])
+    some (3, equalCode conf)
   else if location = longDivLocation then
     if conf.hasLongdiv then
       some (4, listSeq [.inst (.arith (.longDiv 1 3 2 4 6)),
