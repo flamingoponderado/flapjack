@@ -117,3 +117,5 @@ val _ = pr_typed "find_code_thm_ret_typed" data_to_word_gcProofTheory.find_code_
 val _ = pr_typed "find_code_thm_handler_typed" data_to_word_gcProofTheory.find_code_thm_handler;
 val _ = pr_typed "bad_dest_args_def_polymorphic_typed" wordSemTheory.bad_dest_args_def;
 val _ = pr_typed "data_find_code_typed" data_to_word_gcProofTheory.data_find_code;
+val _ = pr_typed "gc_s_key_eq_LENGTH_typed" data_to_word_gcProofTheory.s_key_eq_LENGTH;
+val _ = pr_typed "gc_s_key_eq_LASTN_typed" data_to_word_gcProofTheory.s_key_eq_LASTN;
