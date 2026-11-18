@@ -101,3 +101,5 @@ mk_loc_jump_exc_typed=(mk_loc (jump_exc (call_env (args1 :β word_loc list) (ss 
 gc_inc_clock_def_typed=∀(n :num) (t :(α, γ, 'ffi) wordSem$state). inc_clock n t = t with clock := t.clock + n
 gc_inc_clock_0_typed=∀(t :(α, β, γ) wordSem$state). inc_clock (0 :num) t = t
 gc_inc_clock_inc_clock_typed=∀(t :(α, β, γ) wordSem$state). inc_clock (n :num) (inc_clock (m :num) t) = inc_clock (n + m) t
+mk_loc_jmup_exc_inc_clock_typed=(mk_loc (jump_exc (inc_clock (ck :num) (t :(β, γ, δ) wordSem$state)) :((β, γ, δ) wordSem$state # num # num) option) :α word_loc) = (mk_loc (jump_exc t :((β, γ, δ) wordSem$state # num # num) option) :α word_loc)
+jump_exc_inc_clock_EQ_NONE_typed=(jump_exc (inc_clock (n :num) (s :(α, β, γ) wordSem$state)) :((α, β, γ) wordSem$state # num # num) option) = (NONE :((α, β, γ) wordSem$state # num # num) option) ⇔ (jump_exc s :((α, β, γ) wordSem$state # num # num) option) = (NONE :((α, β, γ) wordSem$state # num # num) option)

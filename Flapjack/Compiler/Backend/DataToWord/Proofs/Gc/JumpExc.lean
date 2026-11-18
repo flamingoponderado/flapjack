@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.MkLoc
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.Clock
 public import Flapjack.Compiler.Backend.Semantics.WordSem.Env
 
 @[expose] public section
@@ -84,5 +85,25 @@ theorem jumpExc_pushEnv_none {width : Nat} {out1 : Nat} {out2 : Nat} {out3 : Nat
       mkLoc (width := out3) (jumpExc state) := by
   refine ⟨jumpExc_decClock state, ?_, mkLoc_pushEnv_noHandler state envs max⟩
   simpa using mkLoc_pushEnv_noHandler (outWidth := out2) state envs (pushEnv envs none state).stackMax
+
+/-- Incrementing the clock preserves the selected unwind location. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "mk_loc_jmup_exc_inc_clock"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem mkLoc_jumpExc_incClock {width : Nat} {outWidth : Nat} [NeZero width] [NeZero outWidth] {C F : Type}
+    (ck : Nat) (t : WordSemStateFiniteExact width C F) :
+    mkLoc (width := outWidth) (jumpExc (gcIncClock ck t)) = mkLoc (width := outWidth) (jumpExc t) := by
+  unfold jumpExc gcIncClock incClock
+  split <;> simp_all
+  split <;> simp_all [mkLoc]
+
+/-- Incrementing the clock preserves whether exception unwinding fails. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "jump_exc_inc_clock_EQ_NONE"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem jumpExc_incClock_eqNone {width : Nat} [NeZero width] {C F : Type}
+    (n : Nat) (s : WordSemStateFiniteExact width C F) :
+    jumpExc (gcIncClock n s) = none ↔ jumpExc s = none := by
+  unfold jumpExc gcIncClock incClock
+  split <;> simp_all
+  split <;> simp_all
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

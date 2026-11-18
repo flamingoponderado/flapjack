@@ -127,3 +127,5 @@ val _ = pr_typed "mk_loc_jump_exc_typed" data_to_word_gcProofTheory.mk_loc_jump_
 val _ = pr_typed "gc_inc_clock_def_typed" data_to_word_gcProofTheory.inc_clock_def;
 val _ = pr_typed "gc_inc_clock_0_typed" data_to_word_gcProofTheory.inc_clock_0;
 val _ = pr_typed "gc_inc_clock_inc_clock_typed" data_to_word_gcProofTheory.inc_clock_inc_clock;
+val _ = pr_typed "mk_loc_jmup_exc_inc_clock_typed" data_to_word_gcProofTheory.mk_loc_jmup_exc_inc_clock;
+val _ = pr_typed "jump_exc_inc_clock_EQ_NONE_typed" data_to_word_gcProofTheory.jump_exc_inc_clock_EQ_NONE;
