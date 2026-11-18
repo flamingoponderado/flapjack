@@ -308,3 +308,5 @@ val _ = emit "evaluate_add_clock_io_events_mono_typed" "evaluate_add_clock_io_ev
 val _ = emit "semantics_zero_limits_typed" "semantics_zero_limits";
 
 val _ = emit "semantics_Div_IMP_LPREFIX_typed" "semantics_Div_IMP_LPREFIX";
+
+val _ = emit "Resource_limit_hit_implements_semantics_typed" "Resource_limit_hit_implements_semantics";
