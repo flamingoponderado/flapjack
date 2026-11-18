@@ -115,7 +115,7 @@ theorem assignConst_correct {width : Nat} [NeZero width] {C F : Type}
     have compiled : compileControl (width := width) conf n l (.assign dest (.intOp (.const i)) args none) =
         (.assign (adjustVar dest) (.const (smallnum i)), l) := by
       have h := compileControl_option (width := width) conf n l (.assign dest (.intOp (.const i)) args none)
-      by_cases neg : i < 0 <;> simpa [compileControl?, assignConst, smallnum, neg] using h.symm
+      by_cases neg : i < 0 <;> simpa [compileControl?, compileAssign, assignConst, smallnum, neg] using h.symm
     refine ⟨none, WordSemStateFiniteExact.setVar (adjustVar dest) (.word (smallnum i)) target, ?_, ?_, ?_⟩
     · simp [compiled, WordSemStateFiniteExact.evaluate, WordSemStateFiniteExact.wordExp]
     · simp

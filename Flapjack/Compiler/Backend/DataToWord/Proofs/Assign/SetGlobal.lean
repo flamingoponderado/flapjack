@@ -178,7 +178,7 @@ theorem assignSetGlobal_correct {width : Nat} [NeZero width] {C F : Type}
                         (.assign dest (.globOp (.setGlobal i)) [arg] none) = assignSetGlobal conf i l dest arg := by
                       have h := compileControl_option (width := width) conf n l
                         (.assign dest (.globOp (.setGlobal i)) [arg] none)
-                      simpa [compileControl?, arg1] using h.symm
+                      simpa [compileControl?, compileAssign, arg1] using h.symm
                     have domain' : target.mdomain
                         (addr + (BitVec.ofNat width (width / 8) +
                           BitVec.ofNat width (width / 8) * BitVec.ofNat width i)) = true := by

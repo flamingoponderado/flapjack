@@ -82,7 +82,7 @@ theorem assignGlobalsPtr_correct {width : Nat} [NeZero width] {C F : Type}
           have compiled : compileControl (width := width) conf n l (.assign dest (.globOp .globalsPtr) args none) =
               (.assign (adjustVar dest) (.lookup .globals), l) := by
             have h := compileControl_option (width := width) conf n l (.assign dest (.globOp .globalsPtr) args none)
-            simpa [compileControl?] using h.symm
+            simpa [compileControl?, compileAssign] using h.symm
           refine ⟨none, WordSemStateFiniteExact.setVar (adjustVar dest) word target, ?_, ?_, ?_⟩
           · simp [compiled, WordSemStateFiniteExact.evaluate, WordSemStateFiniteExact.wordExp,
               WordSemStateFiniteExact.getStore, storeEq]

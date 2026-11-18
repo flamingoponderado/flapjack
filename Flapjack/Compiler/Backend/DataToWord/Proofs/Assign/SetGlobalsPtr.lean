@@ -172,7 +172,7 @@ theorem assignSetGlobalsPtr_correct {width : Nat} [NeZero width] {C F : Type}
                     (.assign dest (.globOp .setGlobalsPtr) [arg] none) = assignSetGlobalsPtr conf l dest arg := by
                   have h := compileControl_option (width := width) conf n l
                     (.assign dest (.globOp .setGlobalsPtr) [arg] none)
-                  simpa [compileControl?, arg1] using h.symm
+                  simpa [compileControl?, compileAssign, arg1] using h.symm
                 refine ⟨none, WordSemStateFiniteExact.setVar (adjustVar dest) (.word 2) midTarget, ?_, ?_, ?_⟩
                 · simp [compiled, assignSetGlobalsPtr, unitExp, WordSemStateFiniteExact.evaluate,
                     WordSemStateFiniteExact.wordExp, WordSemStateFiniteExact.setStore,
