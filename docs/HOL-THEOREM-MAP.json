@@ -23211,6 +23211,26 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "data_get_vars_SNOC_IMP",
+  "hol_line": 5196,
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/GetVarsSnoc.lean",
+  "lean_name": "dataGetVars_snoc",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared data_get_vars_SNOC_IMP_typed: the sole successful read of a snoc list implies the original existential final value, prefix values and both successful reads over an arbitrary sparse value type."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "word_get_vars_SNOC_IMP",
+  "hol_line": 5207,
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/GetVarsSnoc.lean",
+  "lean_name": "wordGetVars_snoc",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared word_get_vars_SNOC_IMP_typed: the sole successful read of a snoc list implies the original existential final word, prefix words and both successful reads. Target finite-map fields and positive-width words use the reviewed representations."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "option_le_stack_size_cons",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/StackSizeTail.lean",
   "lean_name": "optionLe_stackSize_cons",
