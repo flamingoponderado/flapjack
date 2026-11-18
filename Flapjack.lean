@@ -313,6 +313,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.CallEnv
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.CodePointer
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GetVarsSnoc
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.FindCode
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.CutEnvProperties
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.CutState
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.JoinEnv
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.Heap

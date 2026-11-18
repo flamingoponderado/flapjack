@@ -23241,6 +23241,52 @@
   "reviewer": "Compared find_code_thm_typed: the full initial relation, both argument reads and successful data lookup imply a word lookup of a compiled body and the full relation between entered call environments. The destination and frame-size tree are arbitrary, and both direct and indirect calls are covered. Target finite maps and positive-width words use the reviewed representations."
 },
 {
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "cut_env_adjust_set_lookup_0",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CutEnvProperties.lean", "lean_name": "cutEnvs_adjust_lookup_zero",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec", "fmap_as_finite_support": ["fpRegs", "store"], "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared cut_env_adjust_set_lookup_0_typed: a successful adjusted cut preserves the original word state's zero lookup in its first component; the names carrier is independent. Target finite maps and positive-width words use the reviewed representations."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "cut_env_IMP_MEM",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CutEnvProperties.lean", "lean_name": "cutEnv_imp_mem",
+  "statement_status": "reviewed_exact", "reviewer": "Compared cut_env_IMP_MEM_typed: successful source cut makes an arbitrary key present exactly when it is present in the requested set."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "cut_env_IMP_lookup",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CutEnvProperties.lean", "lean_name": "wordCutEnv_imp_lookup",
+  "statement_status": "reviewed_exact", "reviewer": "Compared cut_env_IMP_lookup_typed: a successful word cut and a successful result lookup imply the same source lookup for an arbitrary value type."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "cut_env_IMP_lookup_EQ",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CutEnvProperties.lean", "lean_name": "cutEnv_imp_lookup_eq",
+  "statement_status": "reviewed_exact", "reviewer": "Compared cut_env_IMP_lookup_EQ_typed: a successful data cut preserves the original lookup for any key in the requested names domain."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "cut_env_res_IS_SOME_IMP",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CutEnvProperties.lean", "lean_name": "cutEnvs_second_isSome",
+  "statement_status": "reviewed_exact", "reviewer": "Compared cut_env_res_IS_SOME_IMP_typed: a present key in the second successful cut is present in both the original environment and the second cutset."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "adjust_var_cut_env_IMP_MEM",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CutEnvProperties.lean", "lean_name": "adjustVar_cutEnvs_imp_mem",
+  "statement_status": "reviewed_exact", "reviewer": "Compared adjust_var_cut_env_IMP_MEM_typed: successful adjusted cuts yield an even second-cut domain and the exact adjusted-key presence equivalence, with independent name and environment types."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "NOT_0_domain",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CutEnvProperties.lean", "lean_name": "not_zero_adjustSet",
+  "statement_status": "reviewed_exact", "reviewer": "Compared NOT_0_domain_typed: zero is absent from the adjusted domain of an arbitrary sparse name tree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "cut_envs_SND_nonzero",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CutEnvProperties.lean", "lean_name": "cutEnvs_adjust_second_zero",
+  "statement_status": "reviewed_exact", "reviewer": "Compared cut_envs_SND_nonzero_typed: a successful adjusted two-part cut has no zero binding in its second component, with independent name and environment types."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "lookup_adjust_var_after_cut",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CutEnvProperties.lean", "lean_name": "lookup_adjustVar_after_cut",
+  "statement_status": "reviewed_exact", "reviewer": "Compared lookup_adjust_var_after_cut_typed: a successful adjusted-key lookup in the second cut and in its original environment yields equal values."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "option_le_stack_size_cons",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/StackSizeTail.lean",

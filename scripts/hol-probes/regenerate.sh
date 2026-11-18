@@ -5959,7 +5959,9 @@ run_probe data_to_word_gc_fun_const_ok_probeScript.sml data_to_word_gc_fun_const
   LASTN_CONS_IMP_LENGTH_typed LASTN_IMP_APPEND_typed state_rel_jump_exc_typed \
   get_vars_IMP_LENGTH_typed get_vars_IMP_LENGTH_word_typed lookup_adjust_var_fromList2_typed state_rel_call_env_typed \
   word_ml_inv_CodePtr_typed state_rel_CodePtr_typed data_get_vars_SNOC_IMP_typed word_get_vars_SNOC_IMP_typed \
-  find_code_thm_typed \
+  find_code_thm_typed cut_env_adjust_set_lookup_0_typed cut_env_IMP_MEM_typed cut_env_IMP_lookup_typed \
+  cut_env_IMP_lookup_EQ_typed cut_env_res_IS_SOME_IMP_typed adjust_var_cut_env_IMP_MEM_typed NOT_0_domain_typed \
+  cut_envs_SND_nonzero_typed lookup_adjust_var_after_cut_typed \
   "$cake_dir/compiler/backend/proofs/data_to_word_gcProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe data_to_word_correct_typed_probeScript.sml data_to_word_correct_typed_probe.out \
   data_compile_correct_hypotheses data_compile_correct_typed \
