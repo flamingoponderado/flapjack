@@ -143271,5 +143271,22 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, evaluate_wStackStore_wReg1_new_typed): source4577-4606; free-variable order ac k f f' s t lens r c x r' kont LENGTH_t_stack t_stack_space retained, with k, f, f', x and r' bound separately; HOL's single conjunction premise wReg1 r (k,f,f') = (x,r') ∧ EVEN r ∧ r < 2*f' + 2*k ∧ (∃t'. evaluate (kont,t) = (NONE,set_var r' c t') ∧ state_rel … ∧ LENGTH t'.stack = LENGTH_t_stack ∧ t'.stack_space = t_stack_space) is one hypothesis in HOL's order; the existential run of Seq kont (wStackStore x Skip), the full postrelation and the same stack-length/space equalities retained. wReg1/wStackStore use the reviewed native renderings; EVEN is Lean's Even. Canonical five finite-map fields and positive width translation as qualified; evaluator closure inherits reals_as_rational_cuts without numerical FP claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/SupportLemmas.lean",
+    "lean_name": "isSomeOptionMap2Eq",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "IS_SOME_OPTION_MAP2_EQ",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, IS_SOME_OPTION_MAP2_EQ_typed): source5439-5443; binder order f A B retained with the captured result type β -> γ -> α on f, β option on A and γ option on B; HOL's single ⇔ conclusion carries its ∧ on the right, so the Lean statement has no premise hypothesis; OPTION_MAP2 is rendered by the untagged optionMap2 helper, which is the exact optionTheory definition (the tree otherwise carries only the num specializations wordSemOptionAdd and wordSemOptionMax); no word, finite-map or ARB carrier occurs, so no representation qualifier applies."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/SupportLemmas.lean",
+    "lean_name": "withSameLocalsWordSem",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "with_same_locals",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, with_same_locals_typed): source3127; the single state binder and the identity statement s with locals := s.locals = s are retained, with no premise and no existential. The carrier WordSemStateFiniteExact width C F carries [NeZero width] and its memory field mentions BitVec width, so the only difference is the standard type-indexed word translation; locals is an Spt (sptree) field, not a HOL |-> finite map, so no finite-map qualifier is named and no canonical finite-map witness is claimed for it."
   }
 ]

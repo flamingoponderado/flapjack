@@ -195,6 +195,24 @@ theorem isSomeOptionMap {α β : Type} (f : α → β) :
   funext o
   cases o <;> rfl
 
+/-- HOL `OPTION_MAP2` (`optionTheory`): `OPTION_MAP2 f (SOME x) (SOME y) =
+SOME (f x y)`, otherwise `NONE`. Untagged Flapjack rendering: the HOL source is
+outside `cakeml/`, and the tree otherwise carries only the `num`
+specializations `wordSemOptionAdd` and `wordSemOptionMax`. -/
+def optionMap2 {α β γ : Type} (f : α → β → γ) : Option α → Option β → Option γ
+  | some x, some y => some (f x y)
+  | _, _ => none
+
+/-- Exact HOL `IS_SOME_OPTION_MAP2_EQ` (`word_to_stackProofScript.sml:5439-5443`):
+`OPTION_MAP2` is defined exactly when both arguments are. The typed capture
+(`f :β -> γ -> α`, `A :β option`, `B :γ option`) fixes the binder order
+`f`, `A`, `B`; HOL's single `⇔` conclusion carries its `∧` on the right, so
+there is no premise to group. -/
+@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "IS_SOME_OPTION_MAP2_EQ"]
+theorem isSomeOptionMap2Eq {α β γ : Type} (f : β → γ → α) (A : Option β) (B : Option γ) :
+    (optionMap2 f A B).isSome ↔ A.isSome ∧ B.isSome := by
+  cases A <;> cases B <;> simp [optionMap2]
+
 /-- Exact HOL `DROP_SUB` (`word_to_stackProofScript.sml:5446-5452`): a suffix of a
 prefix is the front part of the suffix. Binders follow the typed capture
 (`a`, `ls`, `b`) and HOL's single conjunction premise `a ≤ LENGTH ls ∧ b ≤ a`
@@ -305,5 +323,20 @@ theorem evenDiv2Props (a b : Nat) (h : a % 2 = 0 ∧ b % 2 = 0) :
     exact hne (by omega)
   · intro hne hdiv
     exact hne (by omega)
+
+/-- Exact HOL `with_same_locals` (`word_to_stackProofScript.sml:3127`): rewriting
+`locals` with its own value leaves the wordSem state unchanged. The typed
+capture (`(s :(α, β, γ) state) with locals := s.locals = s`) has a single state
+binder and an identity statement. The carrier `WordSemStateFiniteExact width C F`
+carries `[NeZero width]` and mentions `BitVec width` in its `memory` field, so the
+only carrier difference is the standard type-indexed word translation; `locals`
+is an `Spt` (sptree), not a HOL `|->` finite map, so no finite-map qualifier
+applies. -/
+@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "with_same_locals"
+  (words_as_type_indexed_bitvec)]
+theorem withSameLocalsWordSem {width : Nat} [NeZero width] {C F : Type}
+    (s : WordSemStateFiniteExact width C F) :
+    ({ s with locals := s.locals } : WordSemStateFiniteExact width C F) = s := by
+  rfl
 
 end Flapjack.WordToStackProofs
