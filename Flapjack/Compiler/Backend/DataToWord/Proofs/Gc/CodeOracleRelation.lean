@@ -5,6 +5,7 @@ public import Flapjack.Compiler.Backend.BackendCommon.UpperW2w
 public import Flapjack.Compiler.Backend.Semantics.DataSem.State
 public import Flapjack.Compiler.Backend.Semantics.WordSem.State
 public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.CollectorStore
+public import Flapjack.FiniteMap.BroadCodec
 
 @[expose] public section
 
@@ -12,11 +13,22 @@ public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.CollectorStore
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
 open Flapjack
 
+namespace codeOracleRelMap
+/-- Canonical lookup and support roundtrip for the oracle relation's store. -/
+theorem holFmapAsFiniteSupportParamWitness_codeOracleRel_store
+    {width : Nat} [NeZero width]
+    (store : HolFiniteMapExact WordStoreHOL (WordLocW width)) (key : WordStoreHOL) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad store)).lookup key = store.lookup key ∧
+      (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad store)).finiteSupport = store.finiteSupport ∧
+      FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad store) = store := ⟨rfl, rfl, rfl⟩
+end codeOracleRelMap
+
 /-- The buffers, compiler callbacks, and future compilation requests agree
-across the data-to-word pass. This follows the complete shape of HOL's
-`code_oracle_rel_def`; its tag remains pending source review of the executed
-`compilePart` traversal and its finite-map and word carriers. -/
-def codeOracleRel {storeWidth compilerWidth oracleWidth codeElemWidth dataElemWidth : Nat}
+across the data-to-word pass. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "code_oracle_rel_def"
+  (fmap_as_finite_support_parameters := [store]) (words_as_type_indexed_bitvec)]
+def codeOracleRel {storeWidth : Nat} {compilerWidth : Nat} {oracleWidth : Nat}
+    {codeElemWidth : Nat} {dataElemWidth : Nat}
     [NeZero storeWidth] [NeZero compilerWidth] [NeZero oracleWidth]
     [NeZero codeElemWidth] [NeZero dataElemWidth] {C OracleKey OracleConfig : Type}
     (conf : Config) (sourceCompile : DataSem.Compiler C)
