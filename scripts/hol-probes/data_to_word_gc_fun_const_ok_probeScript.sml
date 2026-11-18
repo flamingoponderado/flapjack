@@ -92,3 +92,6 @@ val _ = pr_typed "LASTN_LIST_REL_LEMMA_typed" data_to_word_gcProofTheory.LASTN_L
 val _ = pr_typed "LASTN_CONS_IMP_LENGTH_typed" data_to_word_gcProofTheory.LASTN_CONS_IMP_LENGTH;
 val _ = pr_typed "LASTN_IMP_APPEND_typed" data_to_word_gcProofTheory.LASTN_IMP_APPEND;
 val _ = pr_typed "state_rel_jump_exc_typed" data_to_word_gcProofTheory.state_rel_jump_exc;
+val _ = pr_typed "get_vars_IMP_LENGTH_typed" data_to_word_gcProofTheory.get_vars_IMP_LENGTH;
+val _ = pr_typed "get_vars_IMP_LENGTH_word_typed" data_to_word_gcProofTheory.get_vars_IMP_LENGTH_word;
+val _ = pr_typed "lookup_adjust_var_fromList2_typed" data_to_word_gcProofTheory.lookup_adjust_var_fromList2;

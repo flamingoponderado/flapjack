@@ -23156,6 +23156,32 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "get_vars_IMP_LENGTH",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CallEnv.lean",
+  "lean_name": "getVars_imp_length",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared get_vars_IMP_LENGTH_typed: arbitrary value type, requested names, returned values and sparse environment retain the single successful-read premise and exact length equality."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "get_vars_IMP_LENGTH_word",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CallEnv.lean",
+  "lean_name": "wordGetVars_imp_length",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared get_vars_IMP_LENGTH_word_typed: arbitrary names, returned word locations and target state retain the successful-read premise and exact length equality. Target finite-map fields and positive-width words use the reviewed representations."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "lookup_adjust_var_fromList2",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CallEnv.lean",
+  "lean_name": "lookup_adjustVar_fromList2",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared lookup_adjust_var_fromList2_typed: lookup at the adjusted index in the even-key tree of w::ws equals lookup at n in the sequential tree of ws, for an arbitrary element type."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "option_le_stack_size_cons",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/StackSizeTail.lean",
   "lean_name": "optionLe_stackSize_cons",

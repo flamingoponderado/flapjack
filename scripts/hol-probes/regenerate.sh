@@ -5957,6 +5957,7 @@ run_probe data_to_word_gc_fun_const_ok_probeScript.sml data_to_word_gc_fun_const
   option_le_stack_size_append_typed inter_insert_union_typed state_rel_pop_env_IMP_typed \
   state_rel_pop_env_set_var_IMP_typed BUTLASTN_APPEND_LASTN_typed LASTN_LIST_REL_LEMMA_typed \
   LASTN_CONS_IMP_LENGTH_typed LASTN_IMP_APPEND_typed state_rel_jump_exc_typed \
+  get_vars_IMP_LENGTH_typed get_vars_IMP_LENGTH_word_typed lookup_adjust_var_fromList2_typed \
   "$cake_dir/compiler/backend/proofs/data_to_word_gcProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe data_to_word_correct_typed_probeScript.sml data_to_word_correct_typed_probe.out \
   data_compile_correct_hypotheses data_compile_correct_typed \
