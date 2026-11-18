@@ -38,3 +38,7 @@ val _ = emit "assign_CopyByte_def_typed" data_to_wordTheory.assign_CopyByte_def;
 val _ = emit "assign_ListAppend_def_typed" data_to_wordTheory.assign_ListAppend_def;
 val _ = emit "assign_FromList_def_typed" data_to_wordTheory.assign_FromList_def;
 val _ = emit "assign_RefArray_def_typed" data_to_wordTheory.assign_RefArray_def;
+val _ = emit "assign_Ref_def_typed" data_to_wordTheory.assign_Ref_def;
+val _ = emit "assign_AllocThunk_def_typed" data_to_wordTheory.assign_AllocThunk_def;
+val _ = emit "assign_RefByte_def_typed" data_to_wordTheory.assign_RefByte_def;
+val _ = emit "assign_ConfigGC_def_typed" data_to_wordTheory.assign_ConfigGC_def;

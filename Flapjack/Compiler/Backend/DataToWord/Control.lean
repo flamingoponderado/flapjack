@@ -986,6 +986,64 @@ def assignRefArray {width : Nat} [NeZero width] (conf : Config) (secn l dest : N
     .mustTerminate (.call (some ([adjustVar dest], adjustSets names, .skip, secn, l))
       (some refArrayLocation) [adjustVar first, adjustVar second] none)], l + 1)
 
+/-- Compile allocation of a reference with its initial fields. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "assign_Ref_def"
+  (words_as_type_indexed_bitvec)]
+def assignRef {width : Nat} [NeZero width] (conf : Config) (_secn l dest : Nat)
+    (_names : Option NumSet) (args : List Nat) : WordLangProgHOL (BitVec width) × Nat :=
+  match encodeHeader (width := width) conf 2 args.length with
+  | none => (giveUp, l)
+  | some header =>
+      let bytes := (wordSemBytesInWord : BitVec width) * BitVec.ofNat width (args.length + 1)
+      (wordListSeq [
+        .set .triggerGC (.op .sub [.lookup .triggerGC, .const bytes]),
+        .assign 1 (.op .sub [.lookup .endOfHeap, .const bytes]),
+        .set .endOfHeap (.var 1), .assign 3 (.const header),
+        storeEach 1 (3 :: args.map adjustVar) 0,
+        .assign (adjustVar dest) (.op .or [
+          shiftN .lsl (.op .sub [.var 1, .lookup .currHeap]) (shiftLength conf - wordShiftAmount width),
+          .const 1])], l)
+
+/-- Compile allocation of a thunk with its initial value. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "assign_AllocThunk_def"
+  (words_as_type_indexed_bitvec)]
+def assignAllocThunk {width : Nat} [NeZero width] (mode : AstHOL.ThunkMode) (conf : Config)
+    (_secn l dest : Nat) (_names : Option NumSet) (arg : Nat) : WordLangProgHOL (BitVec width) × Nat :=
+  let tag := match mode with
+    | .evaluated => 14
+    | .notEvaluated => 6
+  match encodeHeader (width := width) conf tag 1 with
+  | none => (giveUp, l)
+  | some header =>
+      let bytes := (wordSemBytesInWord : BitVec width) * 2
+      (wordListSeq [
+        .set .triggerGC (.op .sub [.lookup .triggerGC, .const bytes]),
+        .assign 1 (.op .sub [.lookup .endOfHeap, .const bytes]),
+        .set .endOfHeap (.var 1), .assign 3 (.const header),
+        storeEach 1 [3, adjustVar arg] 0,
+        .assign (adjustVar dest) (.op .or [
+          shiftN .lsl (.op .sub [.var 1, .lookup .currHeap]) (shiftLength conf - wordShiftAmount width),
+          .const 1])], l)
+
+/-- Compile the runtime call that allocates a byte array. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "assign_RefByte_def"
+  (words_as_type_indexed_bitvec)]
+def assignRefByte {width : Nat} [NeZero width] (_conf : Config) (secn l dest : Nat)
+    (names : Option NumSet) (immutable : Bool) (first second : Nat) : WordLangProgHOL (BitVec width) × Nat :=
+  (.seq (.assign 1 (.const (if immutable then 0 else 16)))
+    (.mustTerminate (.call
+      (some ([adjustVar dest], adjustSets (names.getD .ln), .skip, secn, l))
+      (some refByteLocation) [adjustVar first, adjustVar second, 1] none)), l + 1)
+
+/-- Compile a garbage-collector configuration operation. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "assign_ConfigGC_def"
+  (words_as_type_indexed_bitvec)]
+def assignConfigGC {width : Nat} [NeZero width] {α β : Type} (conf : Config) (_secn l dest : Nat)
+    (names : Option NumSet) (_first : α) (_second : β) : WordLangProgHOL (BitVec width) × Nat :=
+  let names := adjustSets (names.getD .ln)
+  (wordListSeq [silentFfi conf 3 names, .assign 1 (.const 0), .alloc 1 names,
+    silentFfi conf 3 names, .assign (adjustVar dest) (.const 2)], l)
+
 /-- Total assignment dispatch used by the executable traversal. Its full
     source-level correspondence with HOL's assignment dispatcher is pending
     review of all operation cases. -/
@@ -1237,12 +1295,7 @@ def compileAssign {width : Nat} [NeZero width] (conf : Config) (secn l dest : Na
   | (.memOp (.boundsCheckByte leq)), args, names =>
       (arg2 args (assignBoundsCheckByte conf secn l dest names leq) (.skip, l))
   | (.memOp (.refByte immutable)), args, names =>
-      match args with
-      | [x, y] => (.seq (.assign 1 (.const (if immutable then 0 else 16)))
-          (.mustTerminate (.call
-            (some ([adjustVar dest], adjustSets (names.getD .ln), .skip, secn, l))
-            (some refByteLocation) [adjustVar x, adjustVar y, 1] none)), l + 1)
-      | _ => (.skip, l)
+      arg2 args (assignRefByte conf secn l dest names immutable) (.skip, l)
   | (.memOp .el), args, _ =>
       (arg2 args (assignEl conf l dest) (.skip, l))
   | (.memOp .length), args, names =>
@@ -1253,31 +1306,14 @@ def compileAssign {width : Nat} [NeZero width] (conf : Config) (secn l dest : Na
       (arg2 args (assignDerefByte conf l dest) (.skip, l))
   | (.memOp .updateByte), args, _ =>
       (arg3 args (assignUpdateByte conf l dest) (.skip, l))
-  | (.memOp .ref), args, _ =>
-      match encodeHeader (width := width) conf 2 args.length with
-      | none => (giveUp, l)
-      | some header =>
-          let bytes := (wordSemBytesInWord : BitVec width) * BitVec.ofNat width (args.length + 1)
-          (wordListSeq [
-            .set .triggerGC (.op .sub [.lookup .triggerGC, .const bytes]),
-            .assign 1 (.op .sub [.lookup .endOfHeap, .const bytes]),
-            .set .endOfHeap (.var 1),
-            .assign 3 (.const header),
-            storeEach 1 (3 :: args.map adjustVar) 0,
-            .assign (adjustVar dest) (.op .or [
-              shiftN .lsl (.op .sub [.var 1, .lookup .currHeap]) (shiftLength conf - wordShiftAmount width),
-              .const 1])], l)
+  | (.memOp .ref), args, names =>
+      assignRef conf secn l dest names args
   | (.memOp .refArray), args, names =>
       arg2 args (assignRefArray conf secn l dest names) (.skip, l)
   | (.memOp (.copyByte _)), args, names =>
       assignCopyByte conf secn l dest names args
   | (.memOp .configGC), args, names =>
-      match args with
-      | [_, _] =>
-          let names := adjustSets (names.getD .ln)
-          (wordListSeq [silentFfi conf 3 names, .assign 1 (.const 0), .alloc 1 names,
-            silentFfi conf 3 names, .assign (adjustVar dest) (.const 2)], l)
-      | _ => (.skip, l)
+      arg2 args (assignConfigGC conf secn l dest names) (.skip, l)
   | (.memOp .xorByte), args, names =>
       match args with
       | [first, second] =>
@@ -1302,25 +1338,8 @@ def compileAssign {width : Nat} [NeZero width] (conf : Config) (secn l dest : Na
       | .update, args | .updateCons, args =>
           (arg3 args (assignUpdate conf l dest) (.skip, l))
       | _, _ => (.skip, l)
-  | (.thunkOp (.allocThunk mode)), args, _ =>
-      match args with
-      | [arg] =>
-          let tag := match mode with
-            | .evaluated => 14
-            | .notEvaluated => 6
-          match encodeHeader (width := width) conf tag 1 with
-          | none => (giveUp, l)
-          | some header =>
-              let bytes := BitVec.ofNat width (2 * (width / 8))
-              (wordListSeq [
-                .set .triggerGC (.op .sub [.lookup .triggerGC, .const bytes]),
-                .assign 1 (.op .sub [.lookup .endOfHeap, .const bytes]),
-                .set .endOfHeap (.var 1), .assign 3 (.const header),
-                storeEach 1 [3, adjustVar arg] 0,
-                .assign (adjustVar dest) (.op .or [
-                  shiftN .lsl (.op .sub [.var 1, .lookup .currHeap]) (shiftLength conf - wordShiftAmount width),
-                  .const 1])], l)
-      | _ => (.skip, l)
+  | (.thunkOp (.allocThunk mode)), args, names =>
+      arg1 args (assignAllocThunk mode conf secn l dest names) (.skip, l)
   | (.thunkOp (.updateThunk mode)), args, _ =>
       (arg2 args (assignUpdateThunk mode conf l dest) (.skip, l))
   | .install, args, names =>

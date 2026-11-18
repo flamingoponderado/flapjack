@@ -4,8 +4,8 @@ byte-offset evaluation, positive and negative immediate-root theorems, and the
 value-array dereference, real-address evaluation, memory-copy definition and theorem,
 memory-relation free-space theorem, store-list definition and existence theorem, and
 get-vars environment-cut and domain theorems, and constructor-extension
-compiler definition and expansion, and byte-copy, list, and reference-array compiler
-definitions, with inferred types. Regenerate
+compiler definition and expansion, plus byte-copy, list, reference-array, and
+allocation compiler definitions, with inferred types. Regenerate
 with `HOL_PROBE_ONLY=data_to_word_assign_roots_probeScript.sml scripts/hol-probes/regenerate.sh`
 using the pinned CakeML and HOL revisions. This is source-review evidence,
 not a cross-language equivalence proof.
