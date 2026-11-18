@@ -113,6 +113,18 @@ class GuardedUnifierSourceTest(unittest.TestCase):
             self.assertNotEqual(status, 0)
             self.assertIn("guarded unifier preflight: preflight test", output)
             self.assertEqual(seen, [root])
+            declaration = "theorem specifiedUnifyEqAux : True := trivial\n"
+            forms = (ATTRIBUTE.replace('@[hol ', '@[simp, hol ') + declaration,
+                     declaration + ATTRIBUTE.replace('@[hol ', 'attribute [simp, hol ').rstrip() +
+                     " specifiedUnifyEqAux\n")
+            for source in forms:
+                with self.subTest(source=source):
+                    seen.clear()
+                    target.write_text(source)
+                    status, output = run()
+                    self.assertNotEqual(status, 0)
+                    self.assertIn("guarded unifier preflight: preflight test", output)
+                    self.assertEqual(seen, [root])
 
 
 if __name__ == "__main__":

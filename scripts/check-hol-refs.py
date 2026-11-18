@@ -6449,12 +6449,12 @@ def main(argv: list[str]) -> int:
     observation_records = json.loads(observation_manifest.read_text()) if observation_manifest.is_file() else []
     # The prospective audit must not freeze shared sources while the theorem
     # is untagged. Once a tag is introduced, audit all its dependencies.
-    unifier_ref = re.compile(
-        r'(?:@|\battribute\s*)\[\s*hol\s+"HOL/examples/algorithms/unification/triangular/first-order/'
-        r'unifDefScript\.sml"\s+"unify_eq_tunify"')
+    unifier_ref = ("HOL/examples/algorithms/unification/triangular/first-order/unifDefScript.sml",
+                   "unify_eq_tunify")
     files = list(lean_files())
-    if any(unifier_ref.search(strip_lean_comments(path.read_text(encoding="utf-8")))
-           for path in files):
+    if any((match.group(1), match.group(2)) == unifier_ref
+           for path in files
+           for match in ATTR_RE.finditer(strip_lean_comments(path.read_text(encoding="utf-8")))):
         errors.extend(f"guarded unifier preflight: {error}" for error in
                       unify_eq_tunify_preflight(ROOT, observation_records))
     reals_names = reals_rendering_names(ROOT)
