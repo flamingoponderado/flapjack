@@ -8251,6 +8251,14 @@
   "reviewer": "Independent comparison with sptree_list_insert_def_typed and the pinned HOL source: both clauses use a natural-number list and sparse-tree unit set, preserving the recursive insertion order and empty-list result."
 },
 {
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "cut_env_adjust_sets_insert_ODD",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CutOdd.lean",
+  "lean_name": "cutEnv_adjustSets_insertOdd",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with cut_env_adjust_sets_insert_ODD_typed: the odd natural key, independent name-tree and environment payload types, unrestricted inserted value and complete optional cut equality are retained."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
   "hol_name": "join_env_submap_MEM",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/JoinEnv.lean",

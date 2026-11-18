@@ -25,6 +25,7 @@ val _ = pr_typed "state_rel_get_vars_IMP_typed" state_rel_get_vars_IMP;
 val _ = pr_typed "state_rel_cut_env_typed" state_rel_cut_env;
 val _ = pr_typed "state_rel_cut_IMP_typed" state_rel_cut_IMP;
 val _ = pr_typed "cut_env_IMP_cut_env_typed" cut_env_IMP_cut_env;
+val _ = pr_typed "cut_env_adjust_sets_insert_ODD_typed" cut_env_adjust_sets_insert_ODD;
 val _ = pr_typed "state_rel_cut_env_cut_env_typed" state_rel_cut_env_cut_env;
 load "data_to_word_assignProofTheory";
 open data_to_word_assignProofTheory;
@@ -36,3 +37,4 @@ val _ = pr_typed "cut_env_cut_env_list_insert_typed" cut_env_cut_env_list_insert
 val _ = pr_typed "sptree_list_insert_def_typed" sptreeTheory.list_insert_def;
 val _ = pr_typed "join_env_submap_MEM_typed" join_env_submap_MEM;
 val _ = pr_typed "state_rel_FLOOKUP_heap_typed" state_rel_FLOOKUP_heap;
+val _ = pr_typed "evaluate_SilentFFI_3_typed" evaluate_SilentFFI_3;
