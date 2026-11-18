@@ -14,6 +14,7 @@ val _ = pr_typed "code_oracle_rel_def_typed" code_oracle_rel_def;
 val _ = pr_typed "state_rel_thm_typed" state_rel_thm;
 val _ = pr_typed "state_rel_with_clock_typed" state_rel_with_clock;
 val _ = pr_typed "state_rel_with_fp_regs_typed" state_rel_with_fp_regs;
+val _ = pr_typed "dec_clock_inc_clock_typed" dec_clock_inc_clock;
 val _ = pr_typed "mk_loc_def_typed" mk_loc_def;
 val mkLocLhs = fst (dest_eq (concl mk_loc_def));
 val _ = (print "mk_loc_function_type=";

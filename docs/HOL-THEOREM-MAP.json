@@ -8277,6 +8277,16 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "dec_clock_inc_clock",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/Clock.lean",
+  "lean_name": "decClockIncClock",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Independent comparison with dec_clock_inc_clock_typed confirms both unconditional clock identities and independent data and word state type parameters. The canonical witness records the word state's finite maps; its HOL word dimension uses a positive-width BitVec."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "gc_add_call_env",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/GcAddCallEnv.lean",
   "lean_name": "gcAddCallEnv",
