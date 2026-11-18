@@ -12,11 +12,22 @@ public import Flapjack.FfiBridge
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Assign
 open Flapjack Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
 
-/-- The full silent-FFI evaluation result. The HOL tag is pending review of
-the state relation and compiler dependencies. The evaluator inherits the
+namespace reviewedEvaluate_silentFfi_threeMap
+/-- Canonical roundtrip for the target state used by this HOL port. -/
+theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {C F : Type} :
+    (∀ (state : WordSemStateBroad width C F) (h : state.FiniteSupport),
+      (WordSemStateBroad.ofBroad state h).toBroad = state) ∧
+    (∀ state : WordSemStateFiniteExact width C F,
+      WordSemStateBroad.ofBroad state.toBroad state.toBroad_finiteSupport = state) :=
+  WordSemStateExact.holFmapAsFiniteSupportWitness
+end reviewedEvaluate_silentFfi_threeMap
+
+/-- The full silent-FFI evaluation result. The evaluator inherits the
 real-model assumption recorded in SOUNDNESS item 8. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml" "evaluate_SilentFFI_3"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem evaluate_silentFfi_three {width : Nat} [NeZero width] {C F N : Type}
-    (conf : Config) (l1 l2 : Nat) (source : DataSem.State C F)
+    (conf : Flapjack.Compiler.Backend.DataToWord.Config) (l1 l2 : Nat) (source : Flapjack.Compiler.Backend.DataSem.State C F)
     (target : WordSemStateFiniteExact width C F) (locs : List (Nat × Nat))
     (names : Spt N) (env : Spt (WordLocW width))
     (premises : conf.callEmptyFfi = true ∧ stateRel conf l1 l2 source target none locs ∧

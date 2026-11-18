@@ -10,16 +10,12 @@ public import Flapjack.Pancake.WordLang
 set_option backward.privateInPublic true
 set_option backward.privateInPublic.warn false
 
-/-! A partial selection of data-to-word runtime stubs. -/
+/-! Data-to-word runtime stub definitions and their lookup helpers.
+The complete table is assembled in `CompleteStubs`. -/
 namespace Flapjack.Compiler.Backend.DataToWord
 
-private def listSeq {α : Type} : List (WordLangProgHOL α) → WordLangProgHOL α
-  | [] => .skip
-  | [x] => x
-  | x :: y :: xs => .seq x (listSeq (y :: xs))
-
 /-- Internal common shape of the two directional byte-copy loops. -/
-private def byteCopyLoop {width : Nat} (forward : Bool) : WordLangProgHOL (BitVec width) :=
+private def byteCopyLoop {width : Nat} [NeZero width] (forward : Bool) : WordLangProgHOL (BitVec width) :=
   let offset (n : Nat) : BitVec width :=
     if forward then BitVec.ofNat width n else -(BitVec.ofNat width n)
   let load (r n : Nat) := WordLangProgHOL.inst (.mem .load8 r (.addr 4 (offset n)))
@@ -28,11 +24,11 @@ private def byteCopyLoop {width : Nat} (forward : Bool) : WordLangProgHOL (BitVe
   let loc := if forward then byteCopyAddLocation else byteCopySubLocation
   .ite .lower 2 (.imm 4)
     (.ite .lower 2 (.imm 2)
-      (.ite .equal 2 (.imm 0) (.return 0 [8]) (listSeq [load 1 0, store 1 0, .return 0 [8]]))
-      (listSeq [load 1 0, load 3 1,
-        .ite .equal 2 (.imm 2) (listSeq [store 1 0, store 3 1, .return 0 [8]])
-          (listSeq [load 5 2, store 1 0, store 3 1, store 5 2, .return 0 [8]])]))
-    (listSeq [load 1 0, load 3 1, load 5 2, load 7 3,
+      (.ite .equal 2 (.imm 0) (.return 0 [8]) (wordListSeq [load 1 0, store 1 0, .return 0 [8]]))
+      (wordListSeq [load 1 0, load 3 1,
+        .ite .equal 2 (.imm 2) (wordListSeq [store 1 0, store 3 1, .return 0 [8]])
+          (wordListSeq [load 5 2, store 1 0, store 3 1, store 5 2, .return 0 [8]])]))
+    (wordListSeq [load 1 0, load 3 1, load 5 2, load 7 3,
       store 1 0, store 3 1, store 5 2, store 7 3,
       .assign 9 (.op .sub [.var 2, .const 4]),
       .assign 11 (.op op [.var 4, .const 4]),
@@ -66,25 +62,25 @@ def addNumSize {width : Nat} [NeZero width] (conf : Config) (src : Nat) : WordLa
 def anyHeader {width : Nat} [NeZero width] (conf : Config) (r : Nat) (other : Bool)
     (t1 t2 t3 : BitVec 5) : WordLangProgHOL (BitVec width) :=
   let heap : WordStoreHOL := if other then .otherHeap else .nextFree
-  .ite .equal r (.imm 0) (listSeq [.assign 7 (.const 0), .set (.temp t1) (.var r),
+  .ite .equal r (.imm 0) (wordListSeq [.assign 7 (.const 0), .set (.temp t1) (.var r),
     .set (.temp t2) (.var r), .set (.temp t3) (.var r)])
-    (.ite .notTest r (.imm 1) (listSeq [
+    (.ite .notTest r (.imm 1) (wordListSeq [
       .assign 7 (realAddr conf r),
       .set (.temp t2) (.op .add [.var 7, .const (BitVec.ofNat width (width / 8))]),
       .set (.temp t1) (.op .add [shiftN .lsl (shiftN .lsr (.load (.var 7)) (width - conf.lenSize)) 1,
         .op .and [.const 1, shiftN .lsr (.load (.var 7)) 4]]),
       .set (.temp t3) (.const 0)])
       (.ite .notLess r (.imm 0)
-        (listSeq [.set (.temp t1) (.const 2), .set (.temp t2) (.lookup heap),
+        (wordListSeq [.set (.temp t1) (.const 2), .set (.temp t2) (.lookup heap),
           .set (.temp t3) (shiftN .lsr (.var r) 2), .assign 7 (.const 0)])
-        (listSeq [.set (.temp t1) (.const 3), .set (.temp t2) (.lookup heap),
+        (wordListSeq [.set (.temp t1) (.const 3), .set (.temp t2) (.lookup heap),
           .set (.temp t3) (.op .sub [.const 0, shiftN .asr (.var r) 2]), .assign 7 (.const 0)])))
 
 /-- Generate the runtime loop for filling a block with a repeated value. -/
 @[hol "cakeml/compiler/backend/data_to_wordScript.sml" "Replicate_code_def"
   (words_as_type_indexed_bitvec)]
 def replicateCode {width : Nat} [NeZero width] : WordLangProgHOL (BitVec width) :=
-  .ite .equal 6 (.imm 0) (.return 0 [8]) (listSeq [
+  .ite .equal 6 (.imm 0) (.return 0 [8]) (wordListSeq [
     .assign 2 (.op .add [.var 2, .const (BitVec.ofNat width (width / 8))]),
     .store (.var 2) 4,
     .assign 6 (.op .sub [.var 6, .const 4]),
@@ -121,9 +117,9 @@ def modCode {width : Nat} [NeZero width] : WordLangProgHOL (BitVec width) := ari
 def compare1Code {width : Nat} [NeZero width] : WordLangProgHOL (BitVec width) :=
   let bytes := BitVec.ofNat width (width / 8)
   let result (n : Nat) := WordLangProgHOL.seq (.assign 2 (.const (BitVec.ofNat width n))) (.return 0 [2])
-  .ite .equal 2 (.imm 0) (result 1) (listSeq [
+  .ite .equal 2 (.imm 0) (result 1) (wordListSeq [
     .assign 8 (.load (.var 4)), .assign 9 (.load (.var 6)),
-    .ite .equal 8 (.reg 9) (listSeq [
+    .ite .equal 8 (.reg 9) (wordListSeq [
       .assign 2 (.op .sub [.var 2, .const 1]),
       .assign 4 (.op .sub [.var 4, .const bytes]),
       .assign 6 (.op .sub [.var 6, .const bytes]),
@@ -135,7 +131,7 @@ def compare1Code {width : Nat} [NeZero width] : WordLangProgHOL (BitVec width) :
   (words_as_type_indexed_bitvec)]
 def equal1Code {width : Nat} [NeZero width] : WordLangProgHOL (BitVec width) :=
   let bytes := BitVec.ofNat width (width / 8)
-  listSeq [
+  wordListSeq [
     .ite .equal 2 (.imm 0) (.seq (.assign 2 (.const 1)) (.return 0 [2])) .skip,
     .assign 1 (.load (.var 4)), .assign 3 (.load (.var 6)),
     .call (some ([5], (sptListInsert [0, 2, 4, 6] .ln, .ln), .skip, equal1Location, 2))
@@ -150,7 +146,7 @@ def equal1Code {width : Nat} [NeZero width] : WordLangProgHOL (BitVec width) :=
 @[hol "cakeml/compiler/backend/data_to_wordScript.sml" "Install_code_def"
   (words_as_type_indexed_bitvec)]
 def installCode {width : Nat} [NeZero width] {C : Type} (_conf : C) : WordLangProgHOL (BitVec width) :=
-  listSeq [.assign 1 (.lookup .bitmapBuffer), .assign 3 (.lookup .codeBuffer),
+  wordListSeq [.assign 1 (.lookup .bitmapBuffer), .assign 3 (.lookup .codeBuffer),
     .set .bitmapBuffer (.var 2), .set .codeBuffer (.var 4),
     .install 3 4 1 2 (.ls (), .ln), .return 0 [3]]
 
@@ -160,11 +156,11 @@ def installCode {width : Nat} [NeZero width] {C : Type} (_conf : C) : WordLangPr
 def xorLoopCode {width : Nat} [NeZero width] : WordLangProgHOL (BitVec width) :=
     let bytes := BitVec.ofNat width (width / 8)
     .ite .lower 6 (.imm 2)
-      (.ite .equal 6 (.imm 0) (listSeq [.assign 1 (.const 2), .return 0 [1]])
-        (listSeq [.assign 5 (.load (.var 4)), .assign 3 (.load (.var 2)),
+      (.ite .equal 6 (.imm 0) (wordListSeq [.assign 1 (.const 2), .return 0 [1]])
+        (wordListSeq [.assign 5 (.load (.var 4)), .assign 3 (.load (.var 2)),
           .assign 7 (.op .xor [.var 5, .var 3]), .store (.var 2) 7,
           .assign 1 (.const 2), .return 0 [1]]))
-      (listSeq [.assign 5 (.load (.var 4)), .assign 3 (.load (.var 2)),
+      (wordListSeq [.assign 5 (.load (.var 4)), .assign 3 (.load (.var 2)),
         .assign 9 (.load (.op .add [.var 4, .const bytes])),
         .assign 7 (.load (.op .add [.var 2, .const bytes])),
         .assign 6 (.op .sub [.var 6, .const 2]),
@@ -179,7 +175,7 @@ def xorLoopCode {width : Nat} [NeZero width] : WordLangProgHOL (BitVec width) :=
   (words_as_type_indexed_bitvec)]
 def stringCmpLoopCode {width : Nat} [NeZero width] : WordLangProgHOL (BitVec width) :=
   .ite .equal 6 (.imm (BitVec.ofNat width (width / 8))) (.return 0 [8, 10])
-    (listSeq [
+    (wordListSeq [
       .inst (.mem .load8 1 (.addr 2 0)),
       .inst (.mem .load8 3 (.addr 4 0)),
       .ite .notEqual 1 (.reg 3) (.return 0 [1, 3]) .skip,
@@ -192,7 +188,7 @@ def stringCmpLoopCode {width : Nat} [NeZero width] : WordLangProgHOL (BitVec wid
 @[hol "cakeml/compiler/backend/data_to_wordScript.sml" "MemCopy_code_def"
   (words_as_type_indexed_bitvec)]
 def memCopyCode {width : Nat} [NeZero width] : WordLangProgHOL (BitVec width) :=
-  .ite .test 2 (.reg 2) (.return 0 [8]) (listSeq [
+  .ite .test 2 (.reg 2) (.return 0 [8]) (wordListSeq [
     .assign 1 (.load (.var 4)),
     .assign 2 (.op .sub [.var 2, .const 4]),
     .assign 4 (.op .add [.var 4, .const (BitVec.ofNat width (width / 8))]),
@@ -200,9 +196,8 @@ def memCopyCode {width : Nat} [NeZero width] : WordLangProgHOL (BitVec width) :=
     .assign 6 (.op .add [.var 6, .const (BitVec.ofNat width (width / 8))]),
     .call none (some memCopyLocation) [0, 2, 4, 6, 8] none])
 
-/-- Flapjack's partial stub lookup. It supplies only the listed stubs and
-returns `none` for all others; the complete HOL `stubs` list, including
-bignum code, remains unported. -/
+/-- Flapjack's fixed, configuration-independent stub lookup. The complete
+HOL table, including generated bignum code, is assembled in `CompleteStubs`. -/
 def compileStub? {width : Nat} [NeZero width] (location : Nat) : Option (Nat × WordLangProgHOL (BitVec width)) :=
   if location = memCopyLocation then
     some (5, memCopyCode)
@@ -237,8 +232,8 @@ def fromListCode {width : Nat} [NeZero width] (conf : Config) : WordLangProgHOL 
     let ptr := makePtrBitsCode conf 9 7 3
     let limit := min (2 ^ conf.lenSize) (2 ^ width / 16)
     .ite .equal 2 (.imm 0)
-      (listSeq [.assign 6 (.op .add [.var 6, .const 2]), .return 0 [6]])
-      (listSeq [
+      (wordListSeq [.assign 6 (.op .add [.var 6, .const 2]), .return 0 [6]])
+      (wordListSeq [
         .ite .test 2 (.imm 1) .skip giveUp,
         .assign 1 (.var 2), allocVar conf limit (sptListInsert [0, 1, 2] .ln),
         .assign 1 (.lookup .nextFree),
@@ -251,12 +246,12 @@ def fromListCode {width : Nat} [NeZero width] (conf : Config) : WordLangProgHOL 
   (words_as_type_indexed_bitvec)]
 def fromList1Code {width : Nat} [NeZero width] (conf : Config) : WordLangProgHOL (BitVec width) :=
   let bytes := (wordSemBytesInWord : BitVec width)
-  listSeq [
+  wordListSeq [
     .store (.var 2) 10,
     .assign 2 (.op .add [.var 2, .const bytes]),
     .ite .equal 6 (.imm 0)
-      (listSeq [.set .nextFree (.var 2), .return 0 [8]])
-      (listSeq [
+      (wordListSeq [.set .nextFree (.var 2), .return 0 [8]])
+      (wordListSeq [
         .assign 4 (realAddr conf 4),
         .assign 10 (.load (.op .add [.var 4, .const bytes])),
         .assign 4 (.load (.op .add [.var 4, .const (2 * bytes)])),
@@ -271,7 +266,7 @@ def refByteCode {width : Nat} [NeZero width] (conf : Config) : WordLangProgHOL (
     let h := WordLangExpHOL.op .add [shiftN .lsr (.var 2) 2, .const bytes]
     let x := smallLsr h (width - 63)
     let y := shiftN .lsl h (width - wordShiftAmount width - conf.lenSize)
-    let makeBytes := listSeq [
+    let makeBytes := wordListSeq [
       .assign 4 (shiftN .lsr (.var 4) 2),
       .assign 4 (.op .or [.var 4, shiftN .lsl (.var 4) 8]),
       .assign 4 (.op .or [.var 4, shiftN .lsl (.var 4) 16]),
@@ -281,7 +276,7 @@ def refByteCode {width : Nat} [NeZero width] (conf : Config) : WordLangProgHOL (
       WordLangProgHOL.ite .equal 11 (.imm (BitVec.ofNat width offset)) .skip
         (.seq (.inst (.mem .store8 4 (.addr 1 (BitVec.ofNat width offset)))) tail)) .skip
     let limit := min (2 ^ conf.lenSize) (2 ^ width / 16)
-    listSeq [
+    wordListSeq [
       .ite .test 2 (.imm 1) .skip giveUp,
       .assign 1 x, allocVar conf limit (sptListInsert [0, 1, 2] .ln),
       .assign 5 (shiftN .lsr h (wordShiftAmount width)),
@@ -303,7 +298,7 @@ def refByteCode {width : Nat} [NeZero width] (conf : Config) : WordLangProgHOL (
 def refArrayCode {width : Nat} [NeZero width] (conf : Config) : WordLangProgHOL (BitVec width) :=
   let shiftN (op : Shift) (value : WordLangExpHOL (BitVec width)) (amount : Nat) :=
     WordLangExpHOL.shift op value (.const (BitVec.ofNat width amount))
-  listSeq [
+  wordListSeq [
     .assign 1 (shiftN .lsl (.op .add [shiftN .lsr (.var 2) 2, .const 1]) (wordShiftAmount width)),
     .set .triggerGC (.op .sub [.lookup .triggerGC, .var 1]),
     .assign 1 (.op .sub [.lookup .endOfHeap, .var 1]),
@@ -321,7 +316,7 @@ def refArrayCode {width : Nat} [NeZero width] (conf : Config) : WordLangProgHOL 
 def anyArithCode {width : Nat} [NeZero width] (conf : Config) : WordLangProgHOL (BitVec width) :=
     let bytes := (wordSemBytesInWord : BitVec width)
     let retSmall (value : WordLangExpHOL (BitVec width)) := WordLangProgHOL.seq (.assign 1 value) (.return 0 [1])
-    listSeq [
+    wordListSeq [
       .assign 1 (.const 4), addNumSize conf 0, addNumSize conf 1, .set (.temp 29) (.var 1),
       allocVar conf (2 ^ conf.lenSize) (sptListInsert [0, 1, 2] .ln),
       anyHeader conf 2 false 0 31 12, anyHeader conf 4 true 1 30 11,
@@ -355,15 +350,15 @@ def anyArithCode {width : Nat} [NeZero width] (conf : Config) : WordLangProgHOL 
 def compareCode {width : Nat} [NeZero width] (conf : Config) : WordLangProgHOL (BitVec width) :=
     let result (n : Nat) := WordLangProgHOL.seq (.assign 2 (.const (BitVec.ofNat width n))) (.return 0 [2])
     .ite .test 2 (.imm 1)
-      (listSeq [.assign 1 (.load (realAddr conf 4)), .ite .test 1 (.imm 16) (result 0) (result 2)])
+      (wordListSeq [.assign 1 (.load (realAddr conf 4)), .ite .test 1 (.imm 16) (result 0) (result 2)])
       (.ite .test 4 (.imm 1)
-        (listSeq [.assign 1 (.load (realAddr conf 2)), .ite .test 1 (.imm 16) (result 2) (result 0)])
-        (listSeq [.assign 11 (realAddr conf 2), .assign 1 (.load (.var 11)),
+        (wordListSeq [.assign 1 (.load (realAddr conf 2)), .ite .test 1 (.imm 16) (result 2) (result 0)])
+        (wordListSeq [.assign 11 (realAddr conf 2), .assign 1 (.load (.var 11)),
           .assign 13 (realAddr conf 4), .assign 3 (.load (.var 13)),
           .assign 6 (shiftN .lsr (.var 1) (width - conf.lenSize)),
           .assign 8 (shiftN .lsr (.var 3) (width - conf.lenSize)),
           .ite .equal 1 (.reg 3)
-            (listSeq [.assign 2 (.op .add [.var 11, shiftN .lsl (.var 6) (wordShiftAmount width)]),
+            (wordListSeq [.assign 2 (.op .add [.var 11, shiftN .lsl (.var 6) (wordShiftAmount width)]),
               .assign 4 (.op .add [.var 13, shiftN .lsl (.var 6) (wordShiftAmount width)]),
               .ite .test 1 (.imm 16) (.call none (some compare1Location) [0, 6, 2, 4] none)
                 (.call none (some compare1Location) [0, 6, 4, 2] none)])
@@ -378,12 +373,12 @@ def equalCode {width : Nat} [NeZero width] (conf : Config) : WordLangProgHOL (Bi
     let bytes := (wordSemBytesInWord : BitVec width)
     let result (n : Nat) := WordLangProgHOL.seq (.assign 2 (.const (BitVec.ofNat width n))) (.return 0 [2])
     let tagMask := tagMask conf ||| 2
-    listSeq [
+    wordListSeq [
       .ite .equal 2 (.reg 4) (result 1) .skip,
       .assign 1 (.op .and [.var 2, .var 4]), .ite .test 1 (.imm 1) (result 0) .skip,
       .assign 20 (realAddr conf 2), .assign 40 (realAddr conf 4),
       .assign 21 (.load (.var 20)), .assign 41 (.load (.var 40)),
-      .ite .test 21 (.imm 12) (listSeq [
+      .ite .test 21 (.imm 12) (wordListSeq [
         .assign 1 (.op .and [.var 21, .const tagMask]),
         .ite .equal 1 (.imm 482) (result 1) .skip,
         .ite .equal 1 (.imm 498) (result 1) .skip,
@@ -406,7 +401,7 @@ def longDiv1Code {width : Nat} [NeZero width] (conf : Config) : WordLangProgHOL 
     let recur : WordLangProgHOL (BitVec width) :=
       .call none (some longDiv1Location) [0, 2, 4, 6, 8, 10, 12] none
     .ite .test 2 (.reg 2) (.seq (.set (.temp 28) (.var 10)) (.return 0 [8]))
-      (listSeq [.assign 6 (.op .or [shiftVar .lsr 6 1, shiftVar .lsl 4 (width - 1)]),
+      (wordListSeq [.assign 6 (.op .or [shiftVar .lsr 6 1, shiftVar .lsl 4 (width - 1)]),
         .assign 4 (shiftVar .lsr 4 1), .assign 8 (shiftVar .lsl 8 1),
         .assign 2 (.op .sub [.var 2, .const 1]),
         .ite .lower 12 (.reg 4) recur .skip,
@@ -421,7 +416,7 @@ def longDiv1Code {width : Nat} [NeZero width] (conf : Config) : WordLangProgHOL 
   (words_as_type_indexed_bitvec)]
 def longDivCode {width : Nat} [NeZero width] (conf : Config) : WordLangProgHOL (BitVec width) :=
   if conf.hasLongdiv then
-    listSeq [.inst (.arith (.longDiv 1 3 2 4 6)),
+    wordListSeq [.inst (.arith (.longDiv 1 3 2 4 6)),
       .set (.temp 28) (.var 3), .return 0 [1]]
   else .seq (.assign 10 (.const 0))
     (.seq (.assign 11 (.const (BitVec.ofNat width width)))
@@ -434,7 +429,7 @@ def installCodeStub {width : Nat} [NeZero width] (conf : Config) : WordLangProgH
   let bytes := (wordSemBytesInWord : BitVec width)
   .ite .test 2 (.imm 1)
     (.seq (.assign 2 (.lookup .bitmapBuffer)) (.call none (some installDataLocation) [0, 2, 4, 6] none))
-    (listSeq [.assign 3 (realAddr conf 2),
+    (wordListSeq [.assign 3 (realAddr conf 2),
       .assign 2 (.load (.op .add [.var 3, .const bytes])),
       .assign 2 (shiftVar .lsr 2 2), .codeBufferWrite 6 2,
       .assign 6 (.op .add [.var 6, .const 1]),
@@ -448,7 +443,7 @@ def installDataStub {width : Nat} [NeZero width] (conf : Config) : WordLangProgH
   let bytes := (wordSemBytesInWord : BitVec width)
   .ite .test 4 (.imm 1)
     (.call none (some installLocation) [0, 2, 6] none)
-    (listSeq [.assign 3 (realAddr conf 4),
+    (wordListSeq [.assign 3 (realAddr conf 4),
       .assign 4 (.load (.op .add [.var 3, .const bytes])), .assign 4 (realAddr conf 4),
       .assign 4 (.load (.op .add [.var 4, .const bytes])), .dataBufferWrite 2 4,
       .assign 2 (.op .add [.var 2, .const bytes]),
@@ -463,7 +458,7 @@ def appendCode {width : Nat} [NeZero width] (conf : Config) : WordLangProgHOL (B
   | none => .skip
   | some header =>
       let ptr := getLowerBits conf (.word (ptrBits conf 0 2))
-      .ite .test 4 (.imm 1) (.return 0 [2]) (listSeq [
+      .ite .test 4 (.imm 1) (.return 0 [2]) (wordListSeq [
         .set (.temp 0) (.var 2), .set (.temp 1) (.var 4),
         .assign 1 (.lookup .nextFree), .assign 3 (.const header),
         .assign 5 (.op .sub [.lookup .triggerGC, .var 1]),
@@ -477,14 +472,14 @@ def appendCode {width : Nat} [NeZero width] (conf : Config) : WordLangProgHOL (B
   (words_as_type_indexed_bitvec)]
 def appendMainLoopCode {width : Nat} [NeZero width] (conf : Config) : WordLangProgHOL (BitVec width) :=
     let bytes := (wordSemBytesInWord : BitVec width)
-    listSeq [
+    wordListSeq [
       .assign 1 (realAddr conf 4),
       .assign 3 (.load (.op .add [.var 1, .const bytes])),
       .assign 5 (.load (.op .add [.var 1, .const (2 * bytes)])),
       .ite .lower 8 (.imm (3 * bytes))
         (.seq (.assign 1 (.const 0)) (.call none (some appendLenLoopLocation) [0, 4, 1] none)) .skip,
       .store (.var 2) 6, .store (.op .add [.var 2, .const bytes]) 3,
-      .ite .test 5 (.imm 1) .skip (listSeq [
+      .ite .test 5 (.imm 1) .skip (wordListSeq [
         .assign 10 (.op .add [.var 10, .const (BitVec.ofNat width (3 * 2 ^ shiftLength conf))]),
         .assign 8 (.op .sub [.var 8, .const (3 * bytes)]),
         .store (.op .add [.var 2, .const (2 * bytes)]) 10,
@@ -499,12 +494,12 @@ def appendMainLoopCode {width : Nat} [NeZero width] (conf : Config) : WordLangPr
   (words_as_type_indexed_bitvec)]
 def appendLenLoopCode {width : Nat} [NeZero width] (conf : Config) : WordLangProgHOL (BitVec width) :=
   let bytes := (wordSemBytesInWord : BitVec width)
-  .ite .test 2 (.imm 1) (listSeq [
+  .ite .test 2 (.imm 1) (wordListSeq [
     .assign 1 (.op .sub [.lookup .triggerGC, .lookup .nextFree]),
     .assign 1 (.op .add [.var 4, shiftVar .lsr 1 (wordShiftAmount width - 2)]),
     .assign 4 (.lookup (.temp 0)), .assign 2 (.lookup (.temp 1)),
     allocVar conf (2 ^ width / 8 - 1) (sptListInsert [0, 1] .ln),
-    .call none (some appendLocation) [0, 4, 2] none]) (listSeq [
+    .call none (some appendLocation) [0, 4, 2] none]) (wordListSeq [
       .assign 2 (.load (.op .add [realAddr conf 2, .const (2 * bytes)])),
       .assign 4 (.op .add [.var 4, .const 12]),
       .call none (some appendLenLoopLocation) [0, 2, 4] none])
@@ -514,21 +509,21 @@ def appendLenLoopCode {width : Nat} [NeZero width] (conf : Config) : WordLangPro
   (words_as_type_indexed_bitvec)]
 def byteCopyCode {width : Nat} [NeZero width] (conf : Config) : WordLangProgHOL (BitVec width) :=
   let bytes := (wordSemBytesInWord : BitVec width)
-  listSeq [
+  wordListSeq [
     .assign 4 (shiftVar .lsr 4 2), .assign 6 (shiftVar .lsr 6 2),
     .assign 10 (shiftVar .lsr 10 2), .assign 1 unitExp,
     .assign 2 (.op .add [realAddr conf 2, .const bytes, .var 4]),
     .assign 8 (.op .add [realAddr conf 8, .const bytes, .var 10]),
     .ite .lower 4 (.reg 10)
-      (listSeq [
+      (wordListSeq [
         .assign 3 (.op .sub [.var 6, .const 1]),
         .assign 2 (.op .add [.var 2, .var 3]),
         .assign 8 (.op .add [.var 8, .var 3]),
         .call none (some byteCopySubLocation) [0, 6, 2, 8, 1] none])
       (.call none (some byteCopyAddLocation) [0, 6, 2, 8, 1] none)]
 
-/-- Extend the partial stub lookup with configuration-dependent cases. The
-unimplemented stubs still return `none`, so this is not HOL's complete list. -/
+/-- Extend the fixed stub lookup with configuration-dependent cases. The
+complete table also includes generated bignum stubs. -/
 def compileConfiguredStub? {width : Nat} [NeZero width] (conf : Config) (location : Nat) :
     Option (Nat × WordLangProgHOL (BitVec width)) :=
   if location = fromListLocation then

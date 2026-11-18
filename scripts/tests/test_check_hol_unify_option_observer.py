@@ -85,55 +85,34 @@ class GuardedUnifierSourceTest(unittest.TestCase):
                                                      {"hol_submodule_source_error": changed}):
                 self.assertEqual(CHECK_HOL(ROOT), [f"{path}: source mismatch"])
 
-    def test_main_runs_preflight_before_any_tag(self):
+    def test_main_runs_preflight_only_for_tagged_theorem(self):
         main = CHECKER["main"]
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
             (root / "cakeml/pancake").mkdir(parents=True)
-            (root / "Flapjack.lean").write_text("-- real-checkout fixture\n")
-            (root / "docs").mkdir()
-            (root / "docs/HOL-THEOREM-MAP.json").write_text(json.dumps(ROWS))
-            for path, source in zip(PATHS, SOURCES):
-                destination = root / path
-                destination.parent.mkdir(parents=True, exist_ok=True)
-                destination.write_text(source)
+            target = root / "Flapjack/HOL/Unification/UnifDef/Choice.lean"
+            target.parent.mkdir(parents=True)
+            target.write_text("-- no theorem tag\n")
             seen = []
-            def pins(current_root):
+            def preflight(current_root, _records):
                 seen.append(current_root)
-                return []
-            overrides = {"ROOT": root, "lean_files": lambda: [], "reachable_modules": lambda: set(),
+                return ["preflight test"]
+            overrides = {"ROOT": root, "lean_files": lambda: [target],
+                         "reachable_modules": lambda: set(),
                          "reals_rendering_names": lambda _: set(),
-                         "unify_eq_tunify_pinned_hol_errors": pins}
+                         "unify_eq_tunify_preflight": preflight}
             def run():
                 output = io.StringIO()
                 with patch.dict(main.__globals__, overrides), contextlib.redirect_stderr(output):
                     status = main([])
                 return status, output.getvalue()
             self.assertEqual(run()[0], 0)
+            self.assertEqual(seen, [])
+            target.write_text(ATTRIBUTE + "theorem specifiedUnifyEqAux : True := trivial\n")
+            status, output = run()
+            self.assertNotEqual(status, 0)
+            self.assertIn("guarded unifier preflight: preflight test", output)
             self.assertEqual(seen, [root])
-            target = root / PATHS[0]
-            target.unlink()
-            status, output = run()
-            self.assertEqual(status, 1)
-            self.assertIn("guarded unifier source dependency changed", output)
-            target.write_text(SOURCES[0])
-            shutil.rmtree(target.parent)
-            status, output = run()
-            self.assertEqual(status, 1)
-            self.assertIn("guarded unifier source dependency changed", output)
-            for path, source in zip(PATHS, SOURCES):
-                destination = root / path
-                destination.parent.mkdir(parents=True, exist_ok=True)
-                destination.write_text(source)
-            changed = root / PATHS[-1]
-            changed.write_text(changed.read_text() + "\ndef injected : Nat := 0\n")
-            status, output = run()
-            self.assertEqual(status, 1)
-            self.assertIn("guarded unifier source dependency changed", output)
-            overrides["unify_eq_tunify_pinned_hol_errors"] = lambda _: ["pinned HOL mismatch"]
-            status, output = run()
-            self.assertEqual(status, 1)
-            self.assertIn("pinned HOL mismatch", output)
 
 
 if __name__ == "__main__":

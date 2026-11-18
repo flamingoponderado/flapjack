@@ -40,6 +40,8 @@ probe_needs_refresh() {
   local probe="$2"
   local source="$3"
   [[ ! -f "$output" || "$probe" -nt "$output" || "$source" -nt "$output" ]] ||
+    [[ "$(basename "$probe")" == data_to_word_cut_envs_wf_replay_probeScript.sml &&
+       "$cake_dir/compiler/backend/semantics/wordSemScript.sml" -nt "$output" ]] ||
     [[ "$(basename "$probe")" == infer_generalise_typed_probeScript.sml &&
        "$cake_dir/compiler/inference/inferPropsScript.sml" -nt "$output" ]] ||
     [[ "$(basename "$probe")" == pattern_exh_steps_probeScript.sml &&
@@ -648,7 +650,8 @@ run_probe bignum_helpers_probeScript.sml bignum_helpers_probe.out \
 run_probe bignum_compile_probeScript.sml bignum_compile_probe.out \
   compile_type has_compiled_type skip continue assign recurse loop_new loop_reused loop_seq load store sub divide delete loop_body swap if_reg if_imm add multiply "$cake_dir/compiler/backend/word_bignumScript.sml" "$cake_dir/compiler/backend"
 run_probe bignum_mini_probeScript.sml bignum_mini_probe.out \
-  mini_type generic generated_bignum_stubs_def_typed "$cake_dir/compiler/backend/word_bignumScript.sml" "$cake_dir/compiler/backend"
+  mini_type generic mini mc_iop_code_def_typed all_code_defs_typed generated_bignum_stubs_def_typed \
+  "$cake_dir/compiler/backend/word_bignumScript.sml" "$cake_dir/compiler/backend"
 run_probe bignum_mini_types_probeScript.sml bignum_mini_types_probe.out \
   skip assign delete seq load store if swap add sub mul div loop continue rec loop_body "$cake_dir/compiler/backend/word_bignumScript.sml" "$cake_dir/compiler/backend"
 run_probe flat_to_clos_globals_probeScript.sml flat_to_clos_globals_probe.out \
@@ -920,7 +923,12 @@ run_probe cake_inference_probeScript.sml cake_inference_probe.out \
   subst generalise unify occurs "$cake_dir/compiler/inference/inferScript.sml" "$cake_dir/compiler/inference"
 
 run_probe infer_generalise_typed_probeScript.sml infer_generalise_typed_probe.out \
-  generalise_type generalise_list_type generalise_def_typed generalise_list_length_typed infer_subst_type infer_subst_def_typed infer_subst_submap_typed infer_subst_FEMPTY_typed subst_infer_subst_swap_typed t_vars_inc_typed inc_wfs_typed vwalk_inc_typed walk_inc_typed walkstar_inc_typed walkstar_inc2_typed infer_deBruijn_inc0_typed infer_deBruijn_inc0_id_typed extend_dec_ienv_empty_typed ienv_unchanged_typed "$cake_dir/compiler/inference/inferScript.sml" "$cake_dir/compiler/inference"
+  generalise_type type_name_check_subst_state_typed generalise_list_type generalise_def_typed \
+  generalise_list_length_typed infer_subst_type infer_subst_def_typed infer_subst_submap_typed \
+  infer_subst_FEMPTY_typed subst_infer_subst_swap_typed t_vars_inc_typed inc_wfs_typed vwalk_inc_typed \
+  walk_inc_typed walkstar_inc_typed walkstar_inc2_typed infer_deBruijn_inc0_typed infer_deBruijn_inc0_id_typed \
+  extend_dec_ienv_empty_typed ienv_unchanged_typed \
+  "$cake_dir/compiler/inference/inferScript.sml" "$cake_dir/compiler/inference"
 
 run_probe compiler_config_probeScript.sml compiler_config_probe.out \
   compiler_config_axiom compiler_read_limits_replay compiler_config_ok_shape "$cake_dir/compiler/compilerScript.sml" "$cake_dir/compiler"
@@ -5929,7 +5937,25 @@ run_probe word_to_word_no_install_compile_single_probeScript.sml word_to_word_no
   no_install_no_alloc_compile_single_correct_statement no_install_no_alloc_compile_single_correct_typed \
   "$cake_dir/compiler/backend/proofs/word_to_wordProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe data_to_word_gc_fun_const_ok_probeScript.sml data_to_word_gc_fun_const_ok_probe.out \
-  gc_fun_const_ok_word_gc_fun_statement BUTLASTN_APPEND_LASTN_typed \
+  gc_fun_const_ok_word_gc_fun_statement gc_fun_const_ok_word_gc_fun_hypotheses gc_fun_const_ok_word_gc_fun_typed \
+  stack_rel_IMP_size_of_stack_hypotheses stack_rel_IMP_size_of_stack_typed code_rel_def_typed \
+  code_oracle_rel_def_typed state_rel_thm_typed state_rel_with_clock_typed state_rel_with_fp_regs_typed \
+  dec_clock_inc_clock_typed state_rel_gc_gen_typed PERM_toList_lookup_eq_typed PERM_toList_delete_typed \
+  get_vars_PERM_toList_inter_typed LIST_REL_exists_witness_typed size_of_heap_call_push_env_typed \
+  option_le_OPTION_MAP2_MAX_typed bytes_in_word_ADD_1_NOT_ZERO_typed w2n_minus_1_LESS_EQ_typed \
+  get_var_inc_clock_typed get_vars_inc_clock_typed set_var_inc_clock_typed stack_rel_imp_subset_typed \
+  mk_loc_def_typed mk_loc_function_type state_rel_get_var_IMP_typed word_ml_inv_lookup_typed \
+  word_ml_inv_insert_typed state_rel_get_vars_IMP_typed state_rel_cut_env_typed state_rel_cut_IMP_typed \
+  cut_env_IMP_cut_env_typed cut_env_IMP_cut_envs_typed gc_add_call_env_typed inter_union_lemma_typed \
+  option_le_tl_typed cut_env_adjust_sets_insert_ODD_typed cut_locals_def_typed state_rel_cut_env_cut_env_typed \
+  state_rel_cut_state_opt_SOME_typed cut_state_opt_SOME_eq_typed state_rel_cut_state_opt_set_var_typed \
+  cut_env_idempotent_typed cut_env_cut_env_list_insert_typed sptree_list_insert_def_typed \
+  join_env_submap_MEM_typed state_rel_FLOOKUP_heap_typed evaluate_SilentFFI_3_typed \
+  cut_state_opt_IMP_cut_locals_typed state_rel_0_get_vars_IMP_typed get_var_T_OR_F_typed \
+  get_var_isT_OR_isF_typed state_rel_cut_state_opt_get_var_typed set_vars_sing_typed jump_exc_call_env_typed \
+  jump_exc_dec_clock_typed jump_exc_push_env_NONE_typed option_le_stack_size_cons_typed \
+  option_le_stack_size_append_typed inter_insert_union_typed state_rel_pop_env_IMP_typed \
+  state_rel_pop_env_set_var_IMP_typed BUTLASTN_APPEND_LASTN_typed \
   "$cake_dir/compiler/backend/proofs/data_to_word_gcProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe data_to_word_correct_typed_probeScript.sml data_to_word_correct_typed_probe.out \
   data_compile_correct_hypotheses data_compile_correct_typed \
@@ -10271,21 +10297,42 @@ run_probe semantic_primitives_typed_probeScript.sml semantic_primitives_typed_pr
   "$cake_dir/semantics"
 
 run_probe data_to_word_typed_probeScript.sml data_to_word_typed_probe.out \
-  conf_ok_def_typed config_typed gc_kind_typed get_gen_size_def_typed shift_length_def_typed small_shift_length_def_typed max_heap_limit_def_typed get_lowerbits_def_typed \
-  make_byte_header_def_typed all_ones_def_typed maxout_bits_def_typed ptr_bits_def_typed small_int_def_typed Smallnum_def_typed write_bytes_def_typed adjust_var_def_typed \
-  adjust_set_def_typed adjust_sets_def_typed make_header_def_typed encode_header_def_typed FromList_location_def_typed FromList1_location_def_typed RefByte_location_def_typed RefArray_location_def_typed \
-  Replicate_location_def_typed AnyArith_location_def_typed Add_location_def_typed Sub_location_def_typed Mul_location_def_typed Div_location_def_typed Mod_location_def_typed Compare1_location_def_typed \
-  Compare_location_def_typed Equal1_location_def_typed Equal_location_def_typed LongDiv1_location_def_typed LongDiv_location_def_typed MemCopy_location_def_typed ByteCopy_location_def_typed ByteCopyAdd_location_def_typed \
-  ByteCopySub_location_def_typed ByteCopyNew_location_def_typed Install_location_def_typed InstallCode_location_def_typed InstallData_location_def_typed Dummy_location_def_typed Append_location_def_typed AppendMainLoop_location_def_typed \
-  AppendLenLoop_location_def_typed XorLoop_location_def_typed Unused_location_def_typed StringCmpLoop_location_def_typed Bignum_location_def_typed word_op_type_typed lookup_word_op_def_typed stub_names_def_typed \
-  fp_cmp_inst_def_typed fp_bop_inst_def_typed fp_uop_inst_def_typed fp_top_inst_def_typed real_addr_def_typed GiveUp_def_typed ShiftVar_def_typed list_Seq_def_typed \
-  StoreEach_def_typed MemEqList_def_typed LoadBignum_def_typed WriteWord32_on_32_def_typed assign_WordFromInt_def_typed assign_WordToInt_def_typed assign_WordFromWord_def_typed LoadWord64_def_typed \
-  WordShift64_on_32_def_typed assign_WordShiftW64_def_typed WriteWord64_def_typed WriteWord64_on_32_def_typed WordOp64_on_32_def_typed assign_WordOpW64_def_typed assign_LengthBlock_def_typed assign_LessConstSmall_def_typed \
-  assign_BoolTest_def_typed assign_BoolNot_def_typed assign_FinaliseCons_def_typed assign_Length_def_typed assign_LengthByte_def_typed Unit_def_typed assign_UpdateThunk_def_typed arg3_def_typed \
-  real_byte_offset_def_typed assign_DerefByte_def_typed assign_Update_def_typed assign_UpdateByte_def_typed arg2_def_typed real_offset_def_typed assign_El_def_typed assign_ElemAt_def_typed \
-  arg1_def_typed assign_SetGlobalsPtr_def_typed assign_Global_def_typed assign_SetGlobal_def_typed assign_Const_def_typed AllocVar_def_typed SilentFFI_def_typed AnyArith_call_tree_def_typed \
-  getWords_def_typed StoreAnyConsts_def_typed lookup_mem_def_typed get_Word_def_typed make_ptr_def_typed part_to_words_def_typed parts_to_words_def_typed const_parts_to_words_def_typed \
-  byte_len_def_typed \
+  conf_ok_def_typed config_typed gc_kind_typed get_gen_size_def_typed shift_length_def_typed \
+  small_shift_length_def_typed max_heap_limit_def_typed get_lowerbits_def_typed make_byte_header_def_typed \
+  all_ones_def_typed maxout_bits_def_typed ptr_bits_def_typed small_int_def_typed Smallnum_def_typed \
+  write_bytes_def_typed adjust_var_def_typed adjust_set_def_typed adjust_sets_def_typed make_header_def_typed \
+  encode_header_def_typed FromList_location_def_typed FromList1_location_def_typed RefByte_location_def_typed \
+  RefArray_location_def_typed Replicate_location_def_typed AnyArith_location_def_typed Add_location_def_typed \
+  Sub_location_def_typed Mul_location_def_typed Div_location_def_typed Mod_location_def_typed \
+  Compare1_location_def_typed Compare_location_def_typed Equal1_location_def_typed Equal_location_def_typed \
+  LongDiv1_location_def_typed LongDiv_location_def_typed MemCopy_location_def_typed ByteCopy_location_def_typed \
+  ByteCopyAdd_location_def_typed ByteCopySub_location_def_typed ByteCopyNew_location_def_typed \
+  Install_location_def_typed InstallCode_location_def_typed InstallData_location_def_typed \
+  Dummy_location_def_typed Append_location_def_typed AppendMainLoop_location_def_typed \
+  AppendLenLoop_location_def_typed XorLoop_location_def_typed Unused_location_def_typed \
+  StringCmpLoop_location_def_typed Bignum_location_def_typed word_op_type_typed lookup_word_op_def_typed \
+  stub_names_def_typed fp_cmp_inst_def_typed fp_bop_inst_def_typed fp_uop_inst_def_typed fp_top_inst_def_typed \
+  real_addr_def_typed GiveUp_def_typed ShiftVar_def_typed list_Seq_def_typed Maxout_bits_code_def_typed \
+  Make_ptr_bits_code_def_typed FromList_code_def_typed FromList1_code_def_typed RefByte_code_def_typed \
+  RefArray_code_def_typed Replicate_code_def_typed AddNumSize_def_typed AnyHeader_def_typed \
+  AnyArith_code_def_typed Add_code_def_typed Sub_code_def_typed Mul_code_def_typed Div_code_def_typed \
+  Mod_code_def_typed Compare1_code_def_typed Compare_code_def_typed Equal1_code_def_typed Equal_code_def_typed \
+  LongDiv1_code_def_typed LongDiv_code_def_typed Install_code_def_typed InstallCode_code_def_typed \
+  InstallData_code_def_typed Append_code_def_typed AppendMainLoop_code_def_typed AppendLenLoop_code_def_typed \
+  XorLoop_code_def_typed StringCmpLoop_code_def_typed MemCopy_code_def_typed ByteCopy_code_def_typed \
+  ByteCopyAdd_code_def_typed ByteCopySub_code_def_typed StoreEach_def_typed MemEqList_def_typed \
+  LoadBignum_def_typed WriteWord32_on_32_def_typed assign_WordFromInt_def_typed assign_WordToInt_def_typed \
+  assign_WordFromWord_def_typed LoadWord64_def_typed WordShift64_on_32_def_typed assign_WordShiftW64_def_typed \
+  WriteWord64_def_typed WriteWord64_on_32_def_typed WordOp64_on_32_def_typed assign_WordOpW64_def_typed \
+  assign_LengthBlock_def_typed assign_LessConstSmall_def_typed assign_BoolTest_def_typed \
+  assign_BoolNot_def_typed assign_FinaliseCons_def_typed assign_Length_def_typed assign_LengthByte_def_typed \
+  Unit_def_typed assign_UpdateThunk_def_typed arg3_def_typed real_byte_offset_def_typed \
+  assign_DerefByte_def_typed assign_Update_def_typed assign_UpdateByte_def_typed arg2_def_typed \
+  real_offset_def_typed assign_El_def_typed assign_ElemAt_def_typed arg1_def_typed \
+  assign_SetGlobalsPtr_def_typed assign_Global_def_typed assign_SetGlobal_def_typed assign_Const_def_typed \
+  AllocVar_def_typed SilentFFI_def_typed AnyArith_call_tree_def_typed getWords_def_typed \
+  StoreAnyConsts_def_typed lookup_mem_def_typed get_Word_def_typed make_ptr_def_typed part_to_words_def_typed \
+  parts_to_words_def_typed const_parts_to_words_def_typed byte_len_def_typed \
   "$cake_dir/compiler/backend/data_to_wordScript.sml" \
   "$cake_dir/compiler/backend"
 
@@ -12175,7 +12222,21 @@ run_probe data_to_word_cut_get_vars_probeScript.sml data_to_word_cut_get_vars_pr
   "$cake_dir/compiler/backend/proofs"
 
 run_probe data_to_word_assign_roots_probeScript.sml data_to_word_assign_roots_probe.out \
-  word_ml_inv_get_vars_IMP_lemma_typed assign_Label_typed \
+  word_ml_inv_get_vars_IMP_lemma_typed memory_rel_lookup_var_IMP_typed get_real_offset_lemma_typed \
+  get_real_byte_offset_lemma_typed reorder_lemma_typed reorder_2_lemma_typed word_ml_inv_num_typed \
+  word_ml_inv_neg_num_typed word_ml_inv_zero_typed memory_rel_Deref_prime_typed get_real_addr_lemma_typed \
+  memcopy_def_typed MemCopy_thm_typed memory_rel_IMP_free_space_typed store_list_def_typed \
+  IMP_store_list_SOME_typed get_vars_cut_env_typed get_vars_IMP_domain_typed assign_ConsExtend_def_typed \
+  assign_ConsExtend_expand_typed assign_CopyByte_def_typed assign_ListAppend_def_typed assign_FromList_def_typed \
+  assign_RefArray_def_typed assign_Ref_def_typed assign_AllocThunk_def_typed assign_RefByte_def_typed \
+  assign_ConfigGC_def_typed assign_Cons_def_typed assign_MutCons_def_typed SmallLsr_def_typed \
+  assign_XorByte_def_typed SmallLsr_zero_eval SmallLsr_one_eval assign_Build_def_typed assign_Install_def_typed \
+  assign_EqualConst_def_typed assign_FFI_def_typed assign_WordTest_def_typed assign_WordOpW8_def_typed \
+  assign_WordShiftW8_def_typed assign_FP_cmp_def_typed assign_FP_bop_def_typed assign_FP_uop_def_typed \
+  assign_FP_top_def_typed assign_Add_def_typed assign_Sub_def_typed assign_Mult_def_typed assign_Div_def_typed \
+  assign_Mod_def_typed assign_def_typed comp_def_typed compile_part_def_typed assign_SetGlobalsPtr_typed \
+  stubs_def_typed code_rel_def_typed assign_Const_typed assign_GlobalsPtr_typed assign_Global_typed \
+  assign_SetGlobal_typed assign_BoolNot_typed assign_BoolTest_typed assign_Label_typed \
   "$cake_dir/compiler/backend/proofs/data_to_word_assignProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
 

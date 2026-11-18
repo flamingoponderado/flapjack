@@ -36,7 +36,10 @@ theorem wordMaxLeIffAddOneEqZero {width : Nat} [NeZero width] (w : BitVec width)
   (words_as_type_indexed_bitvec)]
 theorem bytesInWordAddOneNeZero {width : Nat} [NeZero width] (w : BitVec width)
     (good : goodDimindex width) : wordSemBytesInWord * w + 1 ≠ 0 := by
-  rcases good with h | h <;> subst width <;> simp only [wordSemBytesInWord] <;> bv_decide
+  rcases good with h | h <;> subst width <;> intro zero
+  all_goals have h := congrArg BitVec.toNat zero
+  all_goals simp [wordSemBytesInWord, BitVec.toNat_add, BitVec.toNat_mul] at h
+  all_goals omega
 
 /-- Taking a maximum with the bound preserves the other operand's comparison. -/
 @[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "option_le_OPTION_MAP2_MAX"]

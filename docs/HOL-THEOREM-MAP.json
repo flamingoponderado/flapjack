@@ -36,28 +36,28 @@
   "lean_path": "Flapjack/Compiler/Inference/InferProps/DeBruijn/Walkstar.lean", "lean_name": "walkstarInc",
   "statement_status": "reviewed_fmap_as_finite_support_parameters",
   "fmap_as_finite_support_parameters": ["s"],
-  "reviewer": "Typed HOL source comparison preserves the quantified shift, substitution and type, sole tWfs premise and full equality. The map2 lookup implements key-preserving HOL o_f; the witness covers s. Guarded tWalkstar equations and induction use the reviewed walkInc and incWfs dependencies."
+  "reviewer": "Typed HOL source comparison preserves the quantified shift, substitution and type, sole tWfs premise and full equality. The map2 lookup implements key-preserving HOL o_f; the witness covers s. The tWalkstar model agrees with HOL only under the tWfs premise; its guarded equations and induction use the reviewed walkInc and incWfs dependencies."
  },
 {
   "hol_path": "cakeml/compiler/inference/inferPropsScript.sml", "hol_name": "walkstar_inc2",
   "lean_path": "Flapjack/Compiler/Inference/InferProps/DeBruijn/Walkstar.lean", "lean_name": "walkstarInc2",
   "statement_status": "reviewed_fmap_as_finite_support_parameters",
   "fmap_as_finite_support_parameters": ["s"],
-  "reviewer": "Typed HOL source comparison preserves the quantified shift, substitution and variable, sole tWfs premise and uvar equality. The map2 lookup implements key-preserving HOL o_f; the witness covers s. This source corollary uses the guarded walkstarInc theorem."
+  "reviewer": "Typed HOL source comparison preserves the quantified shift, substitution and variable, sole tWfs premise and uvar equality. The map2 lookup implements key-preserving HOL o_f; the witness covers s. The tWalkstar model agrees with HOL only under the tWfs premise; this source corollary uses the guarded walkstarInc theorem."
  },
 {
   "hol_path": "cakeml/compiler/inference/inferPropsScript.sml", "hol_name": "walk_inc",
   "lean_path": "Flapjack/Compiler/Inference/InferProps/DeBruijn/Walk.lean", "lean_name": "walkInc",
   "statement_status": "reviewed_fmap_as_finite_support_parameters",
   "fmap_as_finite_support_parameters": ["s"],
-  "reviewer": "Typed HOL source comparison preserves all binders, the original tWfs premise, and both shifted terms. The key-preserving map2 implements HOL o_f; the canonical witness covers s. The tWalk definition and tWalkEqn/vwalkInc dependencies match the guarded source walk."
+  "reviewer": "Typed HOL source comparison preserves all binders, the original tWfs premise, and both shifted terms. The key-preserving map2 implements HOL o_f; the canonical witness covers s. The tWalk and tVwalk models agree with HOL only under the tWfs premise; the proof uses their guarded equations."
  },
 {
   "hol_path": "cakeml/compiler/inference/inferPropsScript.sml", "hol_name": "vwalk_inc",
   "lean_path": "Flapjack/Compiler/Inference/InferProps/DeBruijn/Walk.lean", "lean_name": "vwalkInc",
   "statement_status": "reviewed_fmap_as_finite_support_parameters",
   "fmap_as_finite_support_parameters": ["s"],
-  "reviewer": "Typed HOL source comparison preserves all binders, the sole well-foundedness premise, and the equality. The guarded tVwalk equation and reviewed incWfs apply to the key-preserving map2 translation of HOL o_f; the canonical substitution witness covers s."
+  "reviewer": "Typed HOL source comparison preserves all binders, the sole well-foundedness premise, and the equality. The tVwalk model agrees with HOL only under the tWfs premise; its guarded equation and reviewed incWfs apply to the key-preserving map2 translation of HOL o_f. The canonical substitution witness covers s."
  },
 {
   "hol_path": "cakeml/compiler/inference/inferPropsScript.sml", "hol_name": "inc_wfs",
@@ -8499,7 +8499,7 @@
   "lean_name": "compileControl",
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
-  "reviewer": "Compared the complete HOL equation and typed capture: all program constructors, recursive label threading, assignment and thunk delegates, MakeSpace overflow behavior, and call/handler branches match. The option traversal is total and the executed total wrapper selects its only result."
+  "reviewer": "Compared the complete HOL equation, force_thunk clauses and typed capture: all program constructors, recursive label threading, assignment and thunk delegates, MakeSpace overflow behavior, and call/handler branches match. The option traversal is total and the executed total wrapper selects its only result."
 },
 {
   "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
@@ -8643,7 +8643,7 @@
   "lean_name": "assignEqualConst",
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
-  "reviewer": "Compared HOL source and typed capture: immediate, integer, string, word64, constructor and failure branches retain the same comparisons, word lists, address, assignments and label; section and names are unused."
+  "reviewer": "Compared HOL source and typed capture: immediate, integer, string, word64, constructor and failure branches retain the same comparisons, word lists, address, assignments and label; section and names are unused. Lean drop 1 agrees with HOL TL since part_to_words on W64 is nonempty."
 },
 {
   "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
@@ -22989,7 +22989,7 @@
   "lean_name": "stubs",
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
-  "reviewer": "Compared the complete HOL source and typed capture: every fixed location, arity, body and order agrees, followed by the reviewed generated bignum stubs. ByteCopyNew_code_def is directly simplified to Skip in its lookup route; Unused and Dummy are literal Skip in HOL. The fixed lookup is total for all configs and widths; the executable total wrapper returns that table. This does not prove the shallow-to-deep generator correct."
+  "reviewer": "Compared stubs_def and typed capture: all 33 fixed location constants, arities, bodies and their table order agree, followed by the reviewed generated bignum stubs. MakeBytes and WriteLastBytes are inlined, and fromList [();();()] is sptListInsert [0,1,2] .ln. ByteCopyNew_code_def is simplified to Skip in its lookup route; Unused and Dummy are literal Skip in HOL. The fixed lookup is total for all configs and widths; the executable total wrapper returns that table. This does not prove the shallow-to-deep generator correct."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
@@ -23068,6 +23068,49 @@
   "fmap_as_finite_support": ["fpRegs", "store"],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Compared state_rel_pop_env_set_var_IMP_typed: a state relation containing the singleton returned root and a successful source pop imply a target pop, the location-list decomposition, and the complete state relation after both set_var operations. Target finite-map fields and positive-width words use the reviewed representations."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "state_rel_FLOOKUP_heap",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/Heap.lean",
+  "lean_name": "stateRel_lookupHeap",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared state_rel_FLOOKUP_heap_typed: the full state relation with NONE roots entails the three existential NextFree, CurrHeap and HeapLength word lookups. Target state maps and words use the reviewed representations."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "evaluate_SilentFFI_3",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/SilentFfi.lean",
+  "lean_name": "evaluate_silentFfi_three",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_SilentFFI_3_typed: the FFI flag, full state relation, arbitrary sparse names, cut result and complete evaluator output agree. Target state maps and words use the reviewed representations; the evaluator inherits the real-model assumption in SOUNDNESS item 8."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_wordProofScript.sml",
+  "hol_name": "data_compile_correct",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Correct/Skip.lean",
+  "lean_name": "dataCompileCorrect_skip",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the Skip case with data_compile_correct_typed: the original premises and all result and space-failure conclusions are retained. This is a case of the HOL theorem; its full assembly remains unported. Target maps and words use the reviewed representations, and the evaluator inherits SOUNDNESS item 8."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_wordProofScript.sml",
+  "hol_name": "data_compile_correct",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Correct/Move.lean",
+  "lean_name": "dataCompileCorrect_move",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the Move case with data_compile_correct_typed: the original premises and all result and space-failure conclusions are retained. This is a case of the HOL theorem; its full assembly remains unported. Target maps and words use the reviewed representations, and the evaluator inherits SOUNDNESS item 8."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",

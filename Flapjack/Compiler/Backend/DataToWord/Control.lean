@@ -1472,7 +1472,7 @@ def compileAssign {width : Nat} [NeZero width] (conf : Config) (secn l dest : Na
   | _, _, _ => (.skip, l)
 
 /-- Flapjack's option-valued traversal. Its totality is proved separately;
-source-level correspondence with HOL's `comp` remains to be reviewed. -/
+the total wrapper `compileControl` is reviewed against HOL's `comp`. -/
 def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
     Nat → DataLang.Prog → Option (WordLangProgHOL (BitVec width) × Nat)
   | l, .skip => some (.skip, l)

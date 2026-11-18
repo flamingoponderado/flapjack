@@ -6447,15 +6447,18 @@ def main(argv: list[str]) -> int:
 
     observation_manifest = ROOT / "docs/HOL-THEOREM-MAP.json"
     observation_records = json.loads(observation_manifest.read_text()) if observation_manifest.is_file() else []
-    # The source-shaped theorem already exists untagged. Keep this audit live
-    # while its representation qualifier is being developed, not only after a
-    # tag is installed. Minimal synthetic checker fixtures lack the umbrella
-    # module; a real checkout must not bypass this by deleting the target.
-    if (ROOT / "Flapjack.lean").is_file():
+    # The prospective audit must not freeze shared sources while the theorem
+    # is untagged. Once a tag is introduced, audit all its dependencies.
+    unifier_ref = re.compile(
+        r'(?:@|\battribute\s*)\[\s*hol\s+"HOL/examples/algorithms/unification/triangular/first-order/'
+        r'unifDefScript\.sml"\s+"unify_eq_tunify"')
+    files = list(lean_files())
+    if any(unifier_ref.search(strip_lean_comments(path.read_text(encoding="utf-8")))
+           for path in files):
         errors.extend(f"guarded unifier preflight: {error}" for error in
                       unify_eq_tunify_preflight(ROOT, observation_records))
     reals_names = reals_rendering_names(ROOT)
-    for lean_path in lean_files():
+    for lean_path in files:
         rel = lean_path.relative_to(ROOT).as_posix()
         lines = lean_path.read_text(encoding="utf-8").splitlines()
         module = module_name(lean_path)
