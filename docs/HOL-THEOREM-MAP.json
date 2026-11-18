@@ -23114,6 +23114,180 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "BUTLASTN_APPEND_LASTN",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/StackSplit.lean",
+  "lean_name": "butlastn_append_lastn",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared BUTLASTN_APPEND_LASTN_typed and the HOL rich_list definitions: reverse/drop/reverse is BUTLASTN and wordSemLastN is reverse/take/reverse. The count and element type are unrestricted."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "LASTN_LIST_REL_LEMMA",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/StackSplit.lean",
+  "lean_name": "lastn_list_rel_lemma",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared LASTN_LIST_REL_LEMMA_typed: source and target element types are independent, and the two unused outer HOL binders retain their independent types. The nonempty source suffix and list relation imply the existential related target suffix."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "LASTN_CONS_IMP_LENGTH",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/StackSplit.lean",
+  "lean_name": "lastn_cons_imp_length",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared LASTN_CONS_IMP_LENGTH_typed: the bounded count and nonempty suffix premises entail the exact suffix length; all list elements share the same arbitrary type."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "LASTN_IMP_APPEND",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/StackSplit.lean",
+  "lean_name": "lastn_imp_append",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared LASTN_IMP_APPEND_typed: a bounded count and the LASTN equation imply an existential prefix and the exact suffix length over an arbitrary list type."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "state_rel_jump_exc",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/JumpExcState.lean",
+  "lean_name": "stateRel_jumpExc",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared state_rel_jump_exc_typed: the full state relation, source and adjusted target lookups, and successful source jump imply a target jump, the location suffix, and the restored relation for every destination. Target finite-map fields and positive-width words use the reviewed representations."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "get_vars_IMP_LENGTH",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CallEnv.lean",
+  "lean_name": "getVars_imp_length",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared get_vars_IMP_LENGTH_typed: arbitrary value type, requested names, returned values and sparse environment retain the single successful-read premise and exact length equality."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "get_vars_IMP_LENGTH_word",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CallEnv.lean",
+  "lean_name": "wordGetVars_imp_length",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared get_vars_IMP_LENGTH_word_typed: arbitrary names, returned word locations and target state retain the successful-read premise and exact length equality. Target finite-map fields and positive-width words use the reviewed representations."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "lookup_adjust_var_fromList2",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CallEnv.lean",
+  "lean_name": "lookup_adjustVar_fromList2",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared lookup_adjust_var_fromList2_typed: lookup at the adjusted index in the even-key tree of w::ws equals lookup at n in the sequential tree of ws, for an arbitrary element type."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "state_rel_call_env",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CallEnv.lean",
+  "lean_name": "stateRel_callEnv",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared state_rel_call_env_typed: successful data and adjusted word argument reads and the full initial state relation imply the full relation after both clocks are decremented and call environments are installed, including the leading return location. Target finite-map fields and positive-width words use the reviewed representations."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "word_ml_inv_CodePtr",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CodePointer.lean",
+  "lean_name": "wordMlInv_codePtr",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared word_ml_inv_CodePtr_typed: the original arbitrary heap, data state refs and root tail are retained, and a leading CodePtr root implies exactly the corresponding Loc label 0. Positive-width words use the reviewed representation."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "state_rel_CodePtr",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CodePointer.lean",
+  "lean_name": "stateRel_codePtr",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared state_rel_CodePtr_typed: the full initial state relation, both successful argument reads, source LAST code-pointer equality and nonempty premise imply a nonempty word list whose LAST is the corresponding Loc label 0. Target finite maps and positive-width words use the reviewed representations."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "data_get_vars_SNOC_IMP",
+  "hol_line": 5196,
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/GetVarsSnoc.lean",
+  "lean_name": "dataGetVars_snoc",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared data_get_vars_SNOC_IMP_typed: the sole successful read of a snoc list implies the original existential final value, prefix values and both successful reads over an arbitrary sparse value type."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "word_get_vars_SNOC_IMP",
+  "hol_line": 5207,
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/GetVarsSnoc.lean",
+  "lean_name": "wordGetVars_snoc",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared word_get_vars_SNOC_IMP_typed: the sole successful read of a snoc list implies the original existential final word, prefix words and both successful reads. Target finite-map fields and positive-width words use the reviewed representations."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "find_code_thm",
+  "hol_line": 5277,
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/FindCode.lean",
+  "lean_name": "findCode_correct",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared find_code_thm_typed: the full initial relation, both argument reads and successful data lookup imply a word lookup of a compiled body and the full relation between entered call environments. The destination and frame-size tree are arbitrary, and both direct and indirect calls are covered. Target finite maps and positive-width words use the reviewed representations."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "cut_env_adjust_set_lookup_0",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CutEnvProperties.lean", "lean_name": "cutEnvs_adjust_lookup_zero",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec", "fmap_as_finite_support": ["fpRegs", "store"], "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared cut_env_adjust_set_lookup_0_typed: a successful adjusted cut preserves the original word state's zero lookup in its first component; the names carrier is independent. Target finite maps and positive-width words use the reviewed representations."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "cut_env_IMP_MEM",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CutEnvProperties.lean", "lean_name": "cutEnv_imp_mem",
+  "statement_status": "reviewed_exact", "reviewer": "Compared cut_env_IMP_MEM_typed: successful source cut makes an arbitrary key present exactly when it is present in the requested set."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "cut_env_IMP_lookup",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CutEnvProperties.lean", "lean_name": "wordCutEnv_imp_lookup",
+  "statement_status": "reviewed_exact", "reviewer": "Compared cut_env_IMP_lookup_typed: a successful word cut and a successful result lookup imply the same source lookup for an arbitrary value type."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "cut_env_IMP_lookup_EQ",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CutEnvProperties.lean", "lean_name": "cutEnv_imp_lookup_eq",
+  "statement_status": "reviewed_exact", "reviewer": "Compared cut_env_IMP_lookup_EQ_typed: a successful data cut preserves the original lookup for any key in the requested names domain."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "cut_env_res_IS_SOME_IMP",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CutEnvProperties.lean", "lean_name": "cutEnvs_second_isSome",
+  "statement_status": "reviewed_exact", "reviewer": "Compared cut_env_res_IS_SOME_IMP_typed: a present key in the second successful cut is present in both the original environment and the second cutset."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "adjust_var_cut_env_IMP_MEM",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CutEnvProperties.lean", "lean_name": "adjustVar_cutEnvs_imp_mem",
+  "statement_status": "reviewed_exact", "reviewer": "Compared adjust_var_cut_env_IMP_MEM_typed: successful adjusted cuts yield an even second-cut domain and the exact adjusted-key presence equivalence, with independent name and environment types."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "NOT_0_domain",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CutEnvProperties.lean", "lean_name": "not_zero_adjustSet",
+  "statement_status": "reviewed_exact", "reviewer": "Compared NOT_0_domain_typed: zero is absent from the adjusted domain of an arbitrary sparse name tree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "cut_envs_SND_nonzero",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CutEnvProperties.lean", "lean_name": "cutEnvs_adjust_second_zero",
+  "statement_status": "reviewed_exact", "reviewer": "Compared cut_envs_SND_nonzero_typed: a successful adjusted two-part cut has no zero binding in its second component, with independent name and environment types."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "lookup_adjust_var_after_cut",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CutEnvProperties.lean", "lean_name": "lookup_adjustVar_after_cut",
+  "statement_status": "reviewed_exact", "reviewer": "Compared lookup_adjust_var_after_cut_typed: a successful adjusted-key lookup in the second cut and in its original environment yields equal values."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "option_le_stack_size_cons",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/StackSizeTail.lean",
   "lean_name": "optionLe_stackSize_cons",

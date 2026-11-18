@@ -1,0 +1,58 @@
+module
+
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Env
+public import Mathlib.Data.List.Forall2
+
+@[expose] public section
+
+/-! Splitting a stack into its HOL `BUTLASTN` and `LASTN` parts. -/
+namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
+open Flapjack
+
+/-- HOL `BUTLASTN` and `LASTN` partition a list for every count. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "BUTLASTN_APPEND_LASTN"]
+theorem butlastn_append_lastn {α : Type} (n : Nat) (xs : List α) :
+    (xs.reverse.drop n).reverse ++ wordSemLastN n xs = xs := by
+  simp [wordSemLastN, ← List.reverse_append]
+
+/-- If related lists have a nonempty source suffix, the target suffix has a
+related head and tail. HOL also quantifies two unused independent values. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "LASTN_LIST_REL_LEMMA"]
+theorem lastn_list_rel_lemma {α β γ δ : Type} (source : List α) (target : List β)
+    (tail : List α) (n : Nat) (_unusedY : γ) (_unusedYs : δ) (head : α) (rel : α → β → Prop)
+    (premises : wordSemLastN n source = head :: tail ∧ List.Forall₂ rel source target) :
+    ∃ targetHead targetTail, wordSemLastN n target = targetHead :: targetTail ∧
+      rel head targetHead ∧ List.Forall₂ rel tail targetTail := by
+  have suffix : List.Forall₂ rel (wordSemLastN n source) (wordSemLastN n target) := by
+    unfold wordSemLastN
+    apply List.forall₂_reverse_iff.mpr
+    exact List.forall₂_take n (List.forall₂_reverse_iff.mpr premises.2)
+  rw [premises.1] at suffix
+  cases targetSuffix : wordSemLastN n target with
+  | nil => simp [targetSuffix] at suffix
+  | cons targetHead targetTail =>
+    rw [targetSuffix] at suffix
+    cases suffix with
+    | cons related rest => exact ⟨targetHead, targetTail, rfl, related, rest⟩
+
+/-- A nonempty `LASTN` suffix has the requested length when the count fits. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "LASTN_CONS_IMP_LENGTH"]
+theorem lastn_cons_imp_length {α : Type} (xs : List α) (n : Nat) (y : α) (ys : List α)
+    (bound : n ≤ xs.length) (suffix : wordSemLastN n xs = y :: ys) :
+    (y :: ys).length = n := by
+  have lengthEq := congrArg List.length suffix
+  simpa [wordSemLastN, Nat.min_eq_left bound] using lengthEq.symm
+
+/-- A bounded `LASTN` suffix separates the original list at that suffix. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "LASTN_IMP_APPEND"]
+theorem lastn_imp_append {α : Type} (xs : List α) (n : Nat) (ys : List α)
+    (premises : n ≤ xs.length ∧ wordSemLastN n xs = ys) :
+    ∃ zs, xs = zs ++ ys ∧ ys.length = n := by
+  obtain ⟨bound, suffix⟩ := premises
+  refine ⟨(xs.reverse.drop n).reverse, ?_, ?_⟩
+  · rw [← suffix]
+    exact (butlastn_append_lastn n xs).symm
+  · rw [← suffix]
+    simp [wordSemLastN, Nat.min_eq_left bound]
+
+end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
