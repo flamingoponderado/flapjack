@@ -21,3 +21,4 @@ EXISTS_PULL_FORALL3_typed=(∃(x :α). ∀(y :β) (z :γ) (a :δ). (P :β # γ #
 SUB_SUB_SUB_MAX_typed=(a :num) − (b :num) − ((c :num) − b) = a − MAX b c
 MAX_LE_typed=(a :num) ≤ (b :num) ⇒ MAX a b = b
 EVEN_DIV_2_props_typed=(a :num) MOD (2 :num) = (0 :num) ∧ (b :num) MOD (2 :num) = (0 :num) ⇒ (a ≠ b ⇒ a DIV (2 :num) ≠ b DIV (2 :num)) ∧ (a ≠ (0 :num) ⇒ a DIV (2 :num) ≠ (0 :num))
+bits_to_word_bit_typed=∀(bs :bool list) (i :num). i < dimindex (:α) ∧ i < LENGTH bs ⇒ ((((bits_to_word bs :α word) ' i) :bool) ⇔ bs❲i❳)

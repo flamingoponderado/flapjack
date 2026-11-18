@@ -70,6 +70,27 @@ theorem stateRelSetVar {width : Nat} [NeZero width] {C F : Type}
           different] using placement
       · rw [if_neg inReg] at placement ⊢
         exact placement
+
+/-- Exact HOL `state_rel_set_var'` (`word_to_stackProofScript.sml:2953-2959`):
+with the doubled source index `y = x * 2`, the physical-register update law.
+The original single conjunction premise is retained. -/
+@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "state_rel_set_var'"
+  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
+    WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
+    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
+  (words_as_type_indexed_bitvec)]
+theorem stateRelSetVarPrime {width : Nat} [NeZero width] {C F : Type}
+    {ac : AsmConfigExact width} {k f frame : Nat}
+    {source : WordSemStateFiniteExact width (Nat × C) F}
+    {target : StackSemStateFiniteExact width C F} {lens : List Nat} {extra : Nat}
+    (x y : Nat) (value : WordLocW width)
+    (premises : stateRel ac k f frame source target lens extra ∧ x < k ∧ y = x * 2) :
+    stateRel ac k f frame (WordSemStateFiniteExact.setVar y value source)
+      (StackSemStateOps.setVar x value target) lens extra := by
+  obtain ⟨related, physical, eq⟩ := premises
+  subst eq
+  simpa [Nat.mul_comm] using stateRelSetVar x value related physical
+
 /-- Full original spilled-local update law (2962–2997), including the explicit
 original stack/space equalities and every full stateRel conjunct. Bounds follow
 from the original relation and source index guards. -/

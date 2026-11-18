@@ -141581,5 +141581,30 @@
     "lean_name": "evenDiv2Props",
     "statement_status": "reviewed_exact",
     "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, EVEN_DIV_2_props_typed): source10944-10954; binders a b, one conjunction premise a MOD 2 = 0 ∧ b MOD 2 = 0 kept as two premises, both conclusions (a ≠ b ⇒ a DIV 2 ≠ b DIV 2) ∧ (a ≠ 0 ⇒ a DIV 2 ≠ 0) retained, MOD/DIV as Nat % and /."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "bits_to_word_bit",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/BitmapBitStructure.lean",
+    "lean_name": "bitsToWordBit",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, bits_to_word_bit_typed): source998-1006; bs arbitrary Bool list and i num, one conjunction premise i < dimindex (:α) ∧ i < LENGTH bs kept as two premises, bits_to_word as bitsToWordW over BitVec width with NeZero width, word bit ' as getLsbD, EL i bs as the bounded list indexing (the i < LENGTH guard makes the total EL the ordinary element, so no total-function rendering), bool equality orientation retained."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "state_rel_set_var'",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/StateRelRegisterUpdate.lean",
+    "lean_name": "stateRelSetVarPrime",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, state_rel_set_var_prime_typed): source2953-2959; free-variable order ac k f f' s t lens extra x y v retained, the original single conjunction premise state_rel … ∧ x < k ∧ y = x*2 kept as one premise, source set_var y / target set_var x with y = x*2, full stateRel and arbitrary extra; canonical five finite-map fields and positive width translation as qualified."
   }
 ]

@@ -51,3 +51,5 @@ val _ = show "SUB_SUB_SUB_MAX_typed" ``a - b - (c - b) = a - MAX b c``;
 val _ = show "MAX_LE_typed" ``a <= b ==> MAX a b = b``;
 val _ = show "EVEN_DIV_2_props_typed" ``a MOD 2 = 0 ∧ b MOD 2 = 0 ⇒
     (a ≠ b ⇒ a DIV 2 ≠ b DIV 2) ∧ (a ≠ 0 ⇒ a DIV 2 ≠ 0)``;
+val _ = show "bits_to_word_bit_typed" ``∀bs i. i < dimindex (:'a) ∧ i < LENGTH bs ⇒
+    ((bits_to_word bs:'a word) ' i = EL i bs)``;
