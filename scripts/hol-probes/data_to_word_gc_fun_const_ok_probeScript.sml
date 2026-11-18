@@ -1,5 +1,5 @@
-load "data_to_word_gcProofTheory";
-open HolKernel Parse bossLib data_to_word_gcProofTheory;
+load "preamble"; load "data_to_word_gcProofTheory";
+open HolKernel Parse bossLib preamble data_to_word_gcProofTheory;
 val _ = Globals.linewidth := 1000000;
 fun pr_stmt label th = (print (label ^ "="); print_term (concl th); print "\n");
 fun pr_hyps label th = (print (label ^ "="); print (Int.toString (length (hyp th))); print "\n");
@@ -15,6 +15,23 @@ val _ = pr_typed "state_rel_thm_typed" state_rel_thm;
 val _ = pr_typed "state_rel_with_clock_typed" state_rel_with_clock;
 val _ = pr_typed "state_rel_with_fp_regs_typed" state_rel_with_fp_regs;
 val _ = pr_typed "dec_clock_inc_clock_typed" dec_clock_inc_clock;
+(* The source theorem is local: replay its original statement and proof. *)
+val stack_rel_imp_subset_replay = prove (
+  ``∀xs ys. LIST_REL stack_rel xs ys ⇒
+      set (wordSem$enc_stack ys) ⊆ set (MAP SND (flat xs ys))``,
+  Induct \\ gvs [wordSemTheory.enc_stack_def,PULL_EXISTS]
+  \\ Cases \\ Cases_on ‘y’ \\ gvs [stack_rel_def]
+  \\ rw [] \\ rename [‘StackFrame opt l1 l2 han’]
+  \\ Cases_on ‘han’ \\ TRY (PairCases_on ‘x’)
+  \\ gvs [wordSemTheory.enc_stack_def,flat_def,stack_rel_def]
+  \\ last_x_assum old_drule \\ strip_tac \\ gvs []
+  \\ (qsuff_tac ‘set (MAP SND l2) ⊆ set (MAP SND (join_env s l2))’
+      >- gvs [SUBSET_DEF])
+  \\ gvs [SUBSET_DEF,join_env_def,MAP_MAP_o,o_DEF]
+  \\ gvs [LAMBDA_PROD]
+  \\ gvs [EVERY_MEM,FORALL_PROD,MEM_MAP,PULL_EXISTS,EXISTS_PROD]
+  \\ gvs [MEM_FILTER] \\ metis_tac []);
+val _ = pr_typed "stack_rel_imp_subset_typed" stack_rel_imp_subset_replay;
 val _ = pr_typed "mk_loc_def_typed" mk_loc_def;
 val mkLocLhs = fst (dest_eq (concl mk_loc_def));
 val _ = (print "mk_loc_function_type=";

@@ -8222,6 +8222,15 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "stack_rel_imp_subset",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/StackRoots.lean",
+  "lean_name": "stackRel_imp_subset",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Independent comparison with source lines 7189–7204 and the typed replay confirms the stack relation premise, encoded-root subset and shared word dimension. The original local HOL proof was replayed; the Lean proof derives the same result from the stronger root-list equality."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "flat_PERM_extract_stack",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/FrameRoots.lean",
   "lean_name": "flatStack_values_perm",
