@@ -130178,6 +130178,24 @@
   },
 {
     "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "MemCopy_code_def",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Stubs.lean",
+    "lean_name": "memCopyCode",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Independent comparison with MemCopy_code_def_typed confirms the test, loads, updates, store and recursive call at every positive word width. Production dispatch uses the source location and arity; a captured HOL oracle checks the generated body at 64 bits."
+  },
+{
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "StringCmpLoop_code_def",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Stubs.lean",
+    "lean_name": "stringCmpLoopCode",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Independent comparison with StringCmpLoop_code_def_typed confirms the byte loads, boundary and inequality branches, pointer updates and recursive call at every positive word width. Production dispatch uses the source location and arity; captured HOL oracle checks cover a 64-bit generated body."
+  },
+{
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
     "hol_name": "StoreEach_def",
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
     "lean_name": "storeEach",

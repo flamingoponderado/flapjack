@@ -162,28 +162,40 @@ def xorLoopCode {width : Nat} [NeZero width] : WordLangProgHOL (BitVec width) :=
         .assign 2 (.op .add [.var 2, .const (2 * bytes)]),
         .call none (some xorLoopLocation) [0, 2, 4, 6] none])
 
+/-- Compare byte strings until a difference or the word boundary. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "StringCmpLoop_code_def"
+  (words_as_type_indexed_bitvec)]
+def stringCmpLoopCode {width : Nat} [NeZero width] : WordLangProgHOL (BitVec width) :=
+  .ite .equal 6 (.imm (BitVec.ofNat width (width / 8))) (.return 0 [8, 10])
+    (listSeq [
+      .inst (.mem .load8 1 (.addr 2 0)),
+      .inst (.mem .load8 3 (.addr 4 0)),
+      .ite .notEqual 1 (.reg 3) (.return 0 [1, 3]) .skip,
+      .assign 2 (.op .add [.var 2, .const 1]),
+      .assign 4 (.op .add [.var 4, .const 1]),
+      .assign 6 (.op .sub [.var 6, .const 1]),
+      .call none (some stringCmpLoopLocation) [0, 2, 4, 6, 8, 10] none])
+
+/-- Generate the word-copy loop. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "MemCopy_code_def"
+  (words_as_type_indexed_bitvec)]
+def memCopyCode {width : Nat} [NeZero width] : WordLangProgHOL (BitVec width) :=
+  .ite .test 2 (.reg 2) (.return 0 [8]) (listSeq [
+    .assign 1 (.load (.var 4)),
+    .assign 2 (.op .sub [.var 2, .const 4]),
+    .assign 4 (.op .add [.var 4, .const (BitVec.ofNat width (width / 8))]),
+    .store (.var 6) 1,
+    .assign 6 (.op .add [.var 6, .const (BitVec.ofNat width (width / 8))]),
+    .call none (some memCopyLocation) [0, 2, 4, 6, 8] none])
+
 /-- Flapjack's partial stub lookup. It supplies only the listed stubs and
 returns `none` for all others; the complete HOL `stubs` list, including
 bignum code, remains unported. -/
 def compileStub? {width : Nat} [NeZero width] (location : Nat) : Option (Nat × WordLangProgHOL (BitVec width)) :=
   if location = memCopyLocation then
-    some (5, .ite .test 2 (.reg 2) (.return 0 [8]) (listSeq [
-      .assign 1 (.load (.var 4)),
-      .assign 2 (.op .sub [.var 2, .const 4]),
-      .assign 4 (.op .add [.var 4, .const (BitVec.ofNat width (width / 8))]),
-      .store (.var 6) 1,
-      .assign 6 (.op .add [.var 6, .const (BitVec.ofNat width (width / 8))]),
-      .call none (some memCopyLocation) [0, 2, 4, 6, 8] none]))
+    some (5, memCopyCode)
   else if location = stringCmpLoopLocation then
-    some (6, .ite .equal 6 (.imm (BitVec.ofNat width (width / 8))) (.return 0 [8, 10])
-      (listSeq [
-        .inst (.mem .load8 1 (.addr 2 0)),
-        .inst (.mem .load8 3 (.addr 4 0)),
-        .ite .notEqual 1 (.reg 3) (.return 0 [1, 3]) .skip,
-        .assign 2 (.op .add [.var 2, .const 1]),
-        .assign 4 (.op .add [.var 4, .const 1]),
-        .assign 6 (.op .sub [.var 6, .const 1]),
-        .call none (some stringCmpLoopLocation) [0, 2, 4, 6, 8, 10] none]))
+    some (6, stringCmpLoopCode)
   else if location = replicateLocation then
     some (5, replicateCode)
   else if location = byteCopyAddLocation then some (5, byteCopyLoop true)
