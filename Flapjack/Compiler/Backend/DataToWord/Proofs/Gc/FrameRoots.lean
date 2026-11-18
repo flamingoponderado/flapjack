@@ -82,6 +82,22 @@ theorem pairList_nodup_of_keys {α β : Type} (pairs : List (α × β))
     simp only [List.map_cons, List.nodup_cons] at unique ⊢
     exact ⟨fun member => unique.1 (List.mem_map.mpr ⟨pair, member, rfl⟩), ih unique.2⟩
 
+/-- Pointwise equal sparse-tree lookups enumerate the same multiset of values. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "PERM_toList_lookup_eq"]
+theorem permToListLookupEq {α : Type} (left right : Spt α)
+    (lookupEq : ∀ key, sptLookup key left = sptLookup key right) :
+    (sptToList left).Perm (sptToList right) := by
+  classical
+  have leftUnique := pairList_nodup_of_keys (sptToAList left) (sptAllDistinctMapFstToAList left)
+  have rightUnique := pairList_nodup_of_keys (sptToAList right) (sptAllDistinctMapFstToAList right)
+  have pairs : (sptToAList left).Perm (sptToAList right) := by
+    apply (List.perm_ext_iff_of_nodup leftUnique rightUnique).mpr
+    intro pair
+    rcases pair with ⟨key, value⟩
+    rw [sptMemToAList, sptMemToAList, lookupEq]
+  exact (sptToAList_values_perm left).symm.trans
+    ((pairs.map Prod.snd).trans (sptToAList_values_perm right))
+
 /-- Flapjack infrastructure: rebuilding keyed entries from any duplicate-free
 enumeration of a sparse-tree domain preserves the tree's association list. -/
 theorem sptToAList_perm_of_keys {α : Type} [Nonempty α] (tree : Spt α) (keys : List Nat)

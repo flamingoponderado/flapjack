@@ -8230,6 +8230,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "PERM_toList_lookup_eq",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/FrameRoots.lean",
+  "lean_name": "permToListLookupEq",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with the source and PERM_toList_lookup_eq_typed confirms both arbitrary sparse trees, pointwise lookup equality, and permutation of value lists. No tree well-formedness or value-uniqueness premise is added; duplicate values retain their multiplicities."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "stack_rel_imp_subset",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/StackRoots.lean",
   "lean_name": "stackRel_imp_subset",
