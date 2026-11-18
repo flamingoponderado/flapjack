@@ -132,4 +132,26 @@ theorem joinEnv_cons {α β : Type} [Nonempty α] (s : Spt α) (n : Nat) (v : β
       else joinEnv s xs := by
   by_cases hn : n = 0 <;> by_cases he : n % 2 = 0 <;> simp [joinEnv, hn, he]
 
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "stack_rel_simp"
+  (words_as_type_indexed_bitvec)]
+theorem stackRel_simp {width : Nat} [NeZero width] (i : Option Nat)
+    (s : Spt Flapjack.Compiler.Backend.DataSem.Value) (n : Nat) (y : WordSemStackFrame width) :
+    (stackRel (.env i s) y ↔ ∃ rets vs, stackRel (.env i s) y ∧ y = .stackFrame i rets vs none) ∧
+    (stackRel (.exc i s n) y ↔ ∃ rets vs x1 x2 x3,
+      stackRel (.exc i s n) y ∧ y = .stackFrame i rets vs (some (x1,x2,x3))) := by
+  cases y with
+  | stackFrame size rets vs handler =>
+    cases handler with
+    | none =>
+      simp [stackRel, stackEnvRel]
+      intros
+      subst size
+      rfl
+    | some triple =>
+      rcases triple with ⟨x1, x2, x3⟩
+      simp [stackRel, stackEnvRel]
+      intros
+      subst size
+      rfl
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

@@ -234,3 +234,4 @@ val _ = pr_typed "EVERY2_loc_merge_typed" data_to_word_gcProofTheory.EVERY2_loc_
 val _ = pr_typed "ALOOKUP_ZIP_typed" data_to_word_gcProofTheory.ALOOKUP_ZIP;
 val _ = pr_typed "join_env_NIL_typed" data_to_word_gcProofTheory.join_env_NIL;
 val _ = pr_typed "join_env_CONS_typed" data_to_word_gcProofTheory.join_env_CONS;
+val _ = pr_typed "stack_rel_simp_typed" data_to_word_gcProofTheory.stack_rel_simp;
