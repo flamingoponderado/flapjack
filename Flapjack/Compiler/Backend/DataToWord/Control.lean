@@ -1114,6 +1114,49 @@ def assignInstall {width : Nat} [NeZero width] (_conf : Config) (secn l dest : N
     .mustTerminate (.call (some ([adjustVar dest], adjustSets (names.getD .ln), .skip, secn, l))
       (some installCodeLocation) [code, data, 1] none)], l + 1)
 
+/-- Compile a comparison with a precomputed constant. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "assign_EqualConst_def"
+  (words_as_type_indexed_bitvec)]
+def assignEqualConst {width : Nat} [NeZero width] (part : ClosLang.ConstPart) (conf : Config)
+    (_secn l dest : Nat) (_names : Option NumSet) (src : Nat) : WordLangProgHOL (BitVec width) × Nat :=
+  match Build.partWords conf .ln part 0 with
+  | none => (.assign (adjustVar dest) (.const 2), l)
+  | some ((false, w), _) => (boolResult dest .equal (adjustVar src) (.imm (Build.getWord w)), l)
+  | some ((true, _), words) =>
+      let words := words.map (fun w => Build.getWord w.2)
+      let compare (address : WordLangExpHOL (BitVec width)) (words : List (BitVec width)) :=
+        wordListSeq [.assign 1 (.const 2), .assign 3 address, memEqList 0 words,
+          .assign (adjustVar dest) (.var 1)]
+      let code := match part with
+        | .int _ => .ite .test (adjustVar src) (.imm 1)
+            (.assign (adjustVar dest) (.const 2)) (compare (realAddr conf (adjustVar src)) words)
+        | .w64 _ => compare (.op .add [realAddr conf (adjustVar src),
+            .const ((wordSemBytesInWord : BitVec width))]) (words.drop 1)
+        | .str _ => compare (realAddr conf (adjustVar src)) words
+        | _ => .skip
+      (code, l)
+
+/-- Compile a foreign call, including the empty-name optimization. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "assign_FFI_def"
+  (words_as_type_indexed_bitvec)]
+def assignFfi {width : Nat} [NeZero width] (ffiName : Flapjack.Basis.Pure.MlString.MlString) (conf : Config)
+    (_secn l dest : Nat) (names : Option NumSet) (first second : Nat) : WordLangProgHOL (BitVec width) × Nat :=
+  if !conf.callEmptyFfi && ffiName == Flapjack.Basis.Pure.MlString.ofString "" then
+    (.assign (adjustVar dest) (.const 2), l)
+  else
+    let bytes := (wordSemBytesInWord : BitVec width)
+    let offset := width - wordShiftAmount width - conf.lenSize
+    let addr1 := realAddr conf (adjustVar first)
+    let addr2 := realAddr conf (adjustVar second)
+    let empty := ffiName == Flapjack.Basis.Pure.MlString.ofString ""
+    (wordListSeq [
+      .assign 1 (.op .add [addr1, .const bytes]),
+      .assign 3 (.op .sub [shiftN .lsr (.load addr1) offset, .const bytes]),
+      .assign 5 (if empty then .const 0 else .op .add [addr2, .const bytes]),
+      .assign 7 (if empty then .const 0 else .op .sub [shiftN .lsr (.load addr2) offset, .const bytes]),
+      .ffi ffiName 1 3 5 7 (adjustSets (names.getD .ln)),
+      .assign (adjustVar dest) (.const 2)], l)
+
 /-- Total assignment dispatch used by the executable traversal. Its full
     source-level correspondence with HOL's assignment dispatcher is pending
     review of all operation cases. -/
@@ -1150,26 +1193,8 @@ def compileAssign {width : Nat} [NeZero width] (conf : Config) (secn l dest : Na
       (arg2 args (assignBoolTest l dest test) (.skip, l))
   | (.blockOp .equal), args, names =>
       (arg2 args (assignEqual conf secn l dest names) (.skip, l))
-  | (.blockOp (.equalConst part)), args, _ =>
-      match args with
-      | [src] =>
-          match Build.partWords conf .ln part 0 with
-          | none => (.assign (adjustVar dest) (.const 2), l)
-          | some ((false, w), _) => (boolResult dest .equal (adjustVar src) (.imm (Build.getWord w)), l)
-          | some ((true, _), words) =>
-              let words := words.map (fun w => Build.getWord w.2)
-              let compare (address : WordLangExpHOL (BitVec width)) (words : List (BitVec width)) :=
-                wordListSeq [.assign 1 (.const 2), .assign 3 address, memEqList 0 words,
-                  .assign (adjustVar dest) (.var 1)]
-              let code := match part with
-                | .int _ => .ite .test (adjustVar src) (.imm 1)
-                    (.assign (adjustVar dest) (.const 2)) (compare (realAddr conf (adjustVar src)) words)
-                | .w64 _ => compare (.op .add [realAddr conf (adjustVar src),
-                    .const ((wordSemBytesInWord : BitVec width))]) (words.drop 1)
-                | .str _ => compare (realAddr conf (adjustVar src)) words
-                | _ => .skip
-              (code, l)
-      | _ => (.skip, l)
+  | (.blockOp (.equalConst part)), args, names =>
+      arg1 args (assignEqualConst part conf secn l dest names) (.skip, l)
   | (.intOp (.lessConstSmall i)), args, _ =>
       (arg1 args (assignLessConstSmall l dest i) (.skip, l))
   | (.intOp .less), args, names =>
@@ -1334,24 +1359,7 @@ def compileAssign {width : Nat} [NeZero width] (conf : Config) (secn l dest : Na
   | (.blockOp (.elemAt n)), args, _ =>
       (arg1 args (assignElemAt conf n l dest) (.skip, l))
   | (.ffi ffiName), args, names =>
-      match args with
-      | [x, y] =>
-          if !conf.callEmptyFfi && ffiName == Flapjack.Basis.Pure.MlString.ofString "" then
-            (.assign (adjustVar dest) (.const 2), l)
-          else
-            let bytes := (wordSemBytesInWord : BitVec width)
-            let offset := width - wordShiftAmount width - conf.lenSize
-            let addr1 := realAddr conf (adjustVar x)
-            let addr2 := realAddr conf (adjustVar y)
-            let empty := ffiName == Flapjack.Basis.Pure.MlString.ofString ""
-            (wordListSeq [
-              .assign 1 (.op .add [addr1, .const bytes]),
-              .assign 3 (.op .sub [shiftN .lsr (.load addr1) offset, .const bytes]),
-              .assign 5 (if empty then .const 0 else .op .add [addr2, .const bytes]),
-              .assign 7 (if empty then .const 0 else .op .sub [shiftN .lsr (.load addr2) offset, .const bytes]),
-              .ffi ffiName 1 3 5 7 (adjustSets (names.getD .ln)),
-              .assign (adjustVar dest) (.const 2)], l)
-      | _ => (.skip, l)
+      arg2 args (assignFfi ffiName conf secn l dest names) (.skip, l)
   | (.memOp .boundsCheckArray), args, names =>
       (arg2 args (assignBoundsCheckArray conf secn l dest names) (.skip, l))
   | (.memOp (.stringCmp fast cmp)), args, names =>

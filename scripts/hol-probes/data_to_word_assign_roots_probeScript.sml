@@ -50,3 +50,5 @@ val _ = emit "SmallLsr_zero_eval" (EVAL ``data_to_word$SmallLsr (wordLang$Load (
 val _ = emit "SmallLsr_one_eval" (EVAL ``data_to_word$SmallLsr (wordLang$Load (wordLang$Var 3)) 1 : 32 wordLang$exp``);
 val _ = emit "assign_Build_def_typed" data_to_wordTheory.assign_Build_def;
 val _ = emit "assign_Install_def_typed" data_to_wordTheory.assign_Install_def;
+val _ = emit "assign_EqualConst_def_typed" data_to_wordTheory.assign_EqualConst_def;
+val _ = emit "assign_FFI_def_typed" data_to_wordTheory.assign_FFI_def;
