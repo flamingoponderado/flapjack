@@ -23043,6 +23043,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "inter_insert_union",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/InterUnion.lean",
+  "lean_name": "interInsertUnion",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared inter_insert_union_typed: insertion, left-biased union and intersection agree over arbitrary trees, and the intersecting tree's payload type remains independent."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "option_le_stack_size_cons",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/StackSizeTail.lean",
   "lean_name": "optionLe_stackSize_cons",

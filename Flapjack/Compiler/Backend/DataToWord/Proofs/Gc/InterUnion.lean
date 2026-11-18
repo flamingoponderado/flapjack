@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.AdjustedSet
+public import Flapjack.Misc.Sptree.UnionAlgebra
 
 @[expose] public section
 
@@ -33,5 +34,14 @@ theorem interUnionLemma {α β : Type} (ws : List (Nat × α)) (t : Spt α) (s :
         have keyZero := zero (key, value) member
         exact False.elim (keyNe keyZero)
     cases sptLookup key t <;> simp [missing]
+
+/-- Insertion into the left side of a union commutes with intersection. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "inter_insert_union"]
+theorem interInsertUnion {α β : Type} (key : Nat) (value : α)
+    (left right : Spt α) (domain : Spt β) :
+    sptInter (sptInsert key value (sptUnion left right)) domain =
+      sptInter (sptUnion (sptInsert key value left) right) domain := by
+  rw [sptInsert_union key value (sptUnion left right),
+    sptInsert_union key value left, sptUnion_assoc]
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
