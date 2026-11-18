@@ -117,3 +117,5 @@ NOT_3_domain_typed=(3 :num) ∉ (domain (adjust_set (names :α sptree$num_map)) 
 NOT_5_domain_typed=(5 :num) ∉ (domain (adjust_set (names :α sptree$num_map)) :num -> bool)
 cut_names_adjust_set_insert_1_typed=cut_names (adjust_set (names :β sptree$num_map)) (insert (1 :num) (w :α) (l :α sptree$num_map) :α sptree$num_map) = cut_names (adjust_set names) l
 cut_names_adjust_set_insert_3_typed=cut_names (adjust_set (names :β sptree$num_map)) (insert (3 :num) (w :α) (l :α sptree$num_map) :α sptree$num_map) = cut_names (adjust_set names) l
+case_EQ_SOME_IFF_typed=(case (p :β option) of (NONE :β option) => (NONE :α option) | SOME x => (g :β -> α option) x) = SOME (y :α) ⇔ ∃(x :β). p = SOME x ∧ g x = SOME y
+state_rel_set_store_AllocSize_typed=(state_rel (c :data_to_word$config) (l1 :num) (l2 :num) (s :(α, β) dataSem$state) (set_store AllocSize (Word (w :γ word)) (t :(γ, α, β) wordSem$state)) (v :(v # γ word_loc) list option) (locs :(num # num) list) :bool) ⇔ (state_rel c l1 l2 s t v locs :bool)
