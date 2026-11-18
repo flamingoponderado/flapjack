@@ -137,3 +137,4 @@ val _ = pr_typed "eval_NONE_IMP_jump_exc_NONE_EQ_typed" data_to_word_gcProofTheo
 val _ = pr_typed "jump_exc_push_env_SOME_typed" data_to_word_gcProofTheory.jump_exc_push_env_SOME;
 val _ = pr_typed "eval_push_env_T_Raise_IMP_stack_length_typed" data_to_word_gcProofTheory.eval_push_env_T_Raise_IMP_stack_length;
 val _ = pr_typed "eval_push_env_SOME_exc_IMP_s_key_eq_typed" data_to_word_gcProofTheory.eval_push_env_SOME_exc_IMP_s_key_eq;
+val _ = pr_typed "eval_exc_stack_shorter_typed" data_to_word_gcProofTheory.eval_exc_stack_shorter;
