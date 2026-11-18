@@ -8485,6 +8485,17 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "MemCopy_thm",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/MemCopyCorrect.lean",
+  "lean_name": "memCopy_correct",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared HOL source and typed capture: all memory-copy, state, code lookup, clock, word-range and five register premises agree; the existential stack maximum, exact return and final state update, and stack bound are preserved. The state maps and positive-width words use the named translations. The evaluator inherits the real-model assumption in docs/SOUNDNESS.md item 8."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
   "hol_name": "memcopy_def",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/MemCopy.lean",
   "lean_name": "memcopy",

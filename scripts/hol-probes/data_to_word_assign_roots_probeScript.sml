@@ -25,3 +25,4 @@ val _ = emit "word_ml_inv_zero_typed" data_to_word_memoryProofTheory.word_ml_inv
 val _ = emit "memory_rel_Deref_prime_typed" data_to_word_memoryProofTheory.memory_rel_Deref';
 val _ = emit "get_real_addr_lemma_typed" data_to_word_bignumProofTheory.get_real_addr_lemma;
 val _ = emit "memcopy_def_typed" data_to_word_assignProofTheory.memcopy_def;
+val _ = emit "MemCopy_thm_typed" data_to_word_assignProofTheory.MemCopy_thm;
