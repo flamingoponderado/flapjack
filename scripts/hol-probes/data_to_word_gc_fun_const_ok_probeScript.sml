@@ -138,3 +138,6 @@ val _ = pr_typed "jump_exc_push_env_SOME_typed" data_to_word_gcProofTheory.jump_
 val _ = pr_typed "eval_push_env_T_Raise_IMP_stack_length_typed" data_to_word_gcProofTheory.eval_push_env_T_Raise_IMP_stack_length;
 val _ = pr_typed "eval_push_env_SOME_exc_IMP_s_key_eq_typed" data_to_word_gcProofTheory.eval_push_env_SOME_exc_IMP_s_key_eq;
 val _ = pr_typed "eval_exc_stack_shorter_typed" data_to_word_gcProofTheory.eval_exc_stack_shorter;
+val _ = pr_typed "NOT_1_domain_typed" data_to_word_gcProofTheory.NOT_1_domain;
+val _ = pr_typed "NOT_3_domain_typed" data_to_word_gcProofTheory.NOT_3_domain;
+val _ = pr_typed "NOT_5_domain_typed" data_to_word_gcProofTheory.NOT_5_domain;

@@ -23501,6 +23501,21 @@
   "reviewer": "Compared eval_exc_stack_shorter_typed: an original raise result after call entry and a non-handler push implies the resulting stack is strictly shorter than the original. The proof inherits rational-cut reals through dataProps evaluate_stack_swap."
 },
 {
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "NOT_1_domain",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/AdjustedSet.lean", "lean_name": "not_one_adjustSet",
+  "statement_status": "reviewed_exact", "reviewer": "Compared NOT_1_domain_typed: one is absent from the adjusted domain of an arbitrary-payload name tree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "NOT_3_domain",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/AdjustedSet.lean", "lean_name": "not_three_adjustSet",
+  "statement_status": "reviewed_exact", "reviewer": "Compared NOT_3_domain_typed: three is absent from the adjusted domain of an arbitrary-payload name tree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "NOT_5_domain",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/AdjustedSet.lean", "lean_name": "not_five_adjustSet",
+  "statement_status": "reviewed_exact", "reviewer": "Compared NOT_5_domain_typed: five is absent from the adjusted domain of an arbitrary-payload name tree."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "cut_env_IMP_MEM",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CutEnvProperties.lean", "lean_name": "cutEnv_imp_mem",
   "statement_status": "reviewed_exact", "reviewer": "Compared cut_env_IMP_MEM_typed: successful source cut makes an arbitrary key present exactly when it is present in the requested set."
