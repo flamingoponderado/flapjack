@@ -464,6 +464,21 @@ def appendMainLoopCode {width : Nat} [NeZero width] (conf : Config) : WordLangPr
       .store (.op .add [.var 2, .const (2 * bytes)]) 1,
       .set .nextFree (.op .add [.var 2, .const (3 * bytes)]), .return 0 [3]]
 
+/-- Count the remaining list length before retrying an append allocation. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "AppendLenLoop_code_def"
+  (words_as_type_indexed_bitvec)]
+def appendLenLoopCode {width : Nat} [NeZero width] (conf : Config) : WordLangProgHOL (BitVec width) :=
+  let bytes := (wordSemBytesInWord : BitVec width)
+  .ite .test 2 (.imm 1) (listSeq [
+    .assign 1 (.op .sub [.lookup .triggerGC, .lookup .nextFree]),
+    .assign 1 (.op .add [.var 4, shiftVar .lsr 1 (wordShiftAmount width - 2)]),
+    .assign 4 (.lookup (.temp 0)), .assign 2 (.lookup (.temp 1)),
+    allocVar conf (2 ^ width / 8 - 1) (sptListInsert [0, 1] .ln),
+    .call none (some appendLocation) [0, 4, 2] none]) (listSeq [
+      .assign 2 (.load (.op .add [realAddr conf 2, .const (2 * bytes)])),
+      .assign 4 (.op .add [.var 4, .const 12]),
+      .call none (some appendLenLoopLocation) [0, 2, 4] none])
+
 /-- Extend the partial stub lookup with configuration-dependent cases. The
 unimplemented stubs still return `none`, so this is not HOL's complete list. -/
 def compileConfiguredStub? {width : Nat} [NeZero width] (conf : Config) (location : Nat) :
@@ -495,16 +510,7 @@ def compileConfiguredStub? {width : Nat} [NeZero width] (conf : Config) (locatio
   else if location = appendMainLoopLocation then
     some (6, appendMainLoopCode conf)
   else if location = appendLenLoopLocation then
-    let bytes := (wordSemBytesInWord : BitVec width)
-    some (3, .ite .test 2 (.imm 1) (listSeq [
-      .assign 1 (.op .sub [.lookup .triggerGC, .lookup .nextFree]),
-      .assign 1 (.op .add [.var 4, shiftVar .lsr 1 (wordShiftAmount width - 2)]),
-      .assign 4 (.lookup (.temp 0)), .assign 2 (.lookup (.temp 1)),
-      allocVar conf (2 ^ width / 8 - 1) (sptListInsert [0, 1] .ln),
-      .call none (some appendLocation) [0, 4, 2] none]) (listSeq [
-        .assign 2 (.load (.op .add [realAddr conf 2, .const (2 * bytes)])),
-        .assign 4 (.op .add [.var 4, .const 12]),
-        .call none (some appendLenLoopLocation) [0, 2, 4] none]))
+    some (3, appendLenLoopCode conf)
   else if location = anyArithLocation then
     some (4, anyArithCode conf)
   else if location = installCodeLocation then

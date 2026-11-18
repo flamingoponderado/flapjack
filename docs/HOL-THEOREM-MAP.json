@@ -130160,6 +130160,15 @@
   },
 {
     "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "AppendLenLoop_code_def",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Stubs.lean",
+    "lean_name": "appendLenLoopCode",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Independent comparison with AppendLenLoop_code_def_typed confirms both branches, natural allocation bound dimword DIV 8 - 1, live names and call operands. Fixed word5 temporaries remain distinct from the generic positive-width program word. Production dispatch uses the source location and arity; a captured HOL oracle checks the generated body for a 64-bit configuration."
+  },
+{
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
     "hol_name": "StoreEach_def",
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
     "lean_name": "storeEach",

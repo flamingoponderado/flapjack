@@ -121,6 +121,7 @@ val _ = emit "InstallCode_code_def_typed" "InstallCode_code_def";
 val _ = emit "InstallData_code_def_typed" "InstallData_code_def";
 val _ = emit "Append_code_def_typed" "Append_code_def";
 val _ = emit "AppendMainLoop_code_def_typed" "AppendMainLoop_code_def";
+val _ = emit "AppendLenLoop_code_def_typed" "AppendLenLoop_code_def";
 val _ = emit "StoreEach_def_typed" "StoreEach_def";
 val _ = emit "MemEqList_def_typed" "MemEqList_def";
 val _ = emit "LoadBignum_def_typed" "LoadBignum_def";
