@@ -179,13 +179,10 @@ def fromList1Code {width : Nat} [NeZero width] (conf : Config) : WordLangProgHOL
         .assign 6 (.op .sub [.var 6, .const 4]),
         .call none (some fromList1Location) [0, 2, 4, 6, 8, 10] none])]
 
-/-- Extend the partial stub lookup with configuration-dependent cases. The
-unimplemented stubs still return `none`, so this is not HOL's complete list. -/
-def compileConfiguredStub? {width : Nat} [NeZero width] (conf : Config) (location : Nat) :
-    Option (Nat × WordLangProgHOL (BitVec width)) :=
-  if location = fromListLocation then
-    some (4, fromListCode conf)
-  else if location = refByteLocation then
+/-- Allocate and initialize a byte array. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "RefByte_code_def"
+  (words_as_type_indexed_bitvec)]
+def refByteCode {width : Nat} [NeZero width] (conf : Config) : WordLangProgHOL (BitVec width) :=
     let bytes := (wordSemBytesInWord : BitVec width)
     let h := WordLangExpHOL.op .add [shiftN .lsr (.var 2) 2, .const bytes]
     let x := if width - 63 = 0 then h else shiftN .lsr h (width - 63)
@@ -200,7 +197,7 @@ def compileConfiguredStub? {width : Nat} [NeZero width] (conf : Config) (locatio
       WordLangProgHOL.ite .equal 11 (.imm (BitVec.ofNat width offset)) .skip
         (.seq (.inst (.mem .store8 4 (.addr 1 (BitVec.ofNat width offset)))) tail)) .skip
     let limit := min (2 ^ conf.lenSize) (2 ^ width / 16)
-    some (4, listSeq [
+    listSeq [
       .ite .test 2 (.imm 1) .skip giveUp,
       .assign 1 x, allocVar conf limit (sptListInsert [0, 1, 2] .ln),
       .assign 5 (shiftN .lsr h (wordShiftAmount width)),
@@ -214,7 +211,16 @@ def compileConfiguredStub? {width : Nat} [NeZero width] (conf : Config) (locatio
       .assign 11 (.op .and [shiftN .lsr (.var 2) 2, .const (bytes - 1)]),
       .assign 13 (.const 0), .store (.var 1) 13, writeLast,
       .assign 7 (.op .sub [.var 7, .const 4]),
-      .call none (some replicateLocation) [0, 9, 4, 7, 3] none])
+      .call none (some replicateLocation) [0, 9, 4, 7, 3] none]
+
+/-- Extend the partial stub lookup with configuration-dependent cases. The
+unimplemented stubs still return `none`, so this is not HOL's complete list. -/
+def compileConfiguredStub? {width : Nat} [NeZero width] (conf : Config) (location : Nat) :
+    Option (Nat × WordLangProgHOL (BitVec width)) :=
+  if location = fromListLocation then
+    some (4, fromListCode conf)
+  else if location = refByteLocation then
+    some (4, refByteCode conf)
   else if location = refArrayLocation then
     let shiftN (op : Shift) (value : WordLangExpHOL (BitVec width)) (amount : Nat) :=
       WordLangExpHOL.shift op value (.const (BitVec.ofNat width amount))
