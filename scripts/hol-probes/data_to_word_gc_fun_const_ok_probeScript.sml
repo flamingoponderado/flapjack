@@ -26,6 +26,7 @@ val _ = pr_typed "state_rel_cut_env_typed" state_rel_cut_env;
 val _ = pr_typed "state_rel_cut_IMP_typed" state_rel_cut_IMP;
 val _ = pr_typed "cut_env_IMP_cut_env_typed" cut_env_IMP_cut_env;
 val _ = pr_typed "cut_env_IMP_cut_envs_typed" cut_env_IMP_cut_envs;
+val _ = pr_typed "gc_add_call_env_typed" gc_add_call_env;
 val _ = pr_typed "cut_env_adjust_sets_insert_ODD_typed" cut_env_adjust_sets_insert_ODD;
 val _ = pr_typed "cut_locals_def_typed" cut_locals_def;
 val _ = pr_typed "state_rel_cut_env_cut_env_typed" state_rel_cut_env_cut_env;

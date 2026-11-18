@@ -8260,6 +8260,16 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "gc_add_call_env",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/GcAddCallEnv.lean",
+  "lean_name": "gcAddCallEnv",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Independent source and gc_add_call_env_typed comparison: the result word width and state word width remain independently quantified, with independent state payload types. The premise and conclusion retain the same GC and pop error branches, arbitrary continuation, and states. The canonical same-module witness records the state finite maps; both widths use positive-width BitVecs."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "cut_locals_def",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CutLocals.lean",
   "lean_name": "cutLocals",
