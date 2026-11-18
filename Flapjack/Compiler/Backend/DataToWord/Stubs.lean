@@ -380,6 +380,17 @@ def longDiv1Code {width : Nat} [NeZero width] (conf : Config) : WordLangProgHOL 
         .assign 14 (.op .xor [.var 4, .const (-1)]), .assign 1 (.const 1),
         .inst (.arith (.addCarry 10 10 16 1)), .inst (.arith (.addCarry 12 12 14 1)), recur])
 
+/-- Select hardware or software long division. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "LongDiv_code_def"
+  (words_as_type_indexed_bitvec)]
+def longDivCode {width : Nat} [NeZero width] (conf : Config) : WordLangProgHOL (BitVec width) :=
+  if conf.hasLongdiv then
+    listSeq [.inst (.arith (.longDiv 1 3 2 4 6)),
+      .set (.temp 28) (.var 3), .return 0 [1]]
+  else .seq (.assign 10 (.const 0))
+    (.seq (.assign 11 (.const (BitVec.ofNat width width)))
+      (.call none (some longDiv1Location) [0, 11, 6, 10, 10, 4, 2] none))
+
 /-- Extend the partial stub lookup with configuration-dependent cases. The
 unimplemented stubs still return `none`, so this is not HOL's complete list. -/
 def compileConfiguredStub? {width : Nat} [NeZero width] (conf : Config) (location : Nat) :
@@ -475,12 +486,7 @@ def compileConfiguredStub? {width : Nat} [NeZero width] (conf : Config) (locatio
   else if location = equalLocation then
     some (3, equalCode conf)
   else if location = longDivLocation then
-    if conf.hasLongdiv then
-      some (4, listSeq [.inst (.arith (.longDiv 1 3 2 4 6)),
-        .set (.temp 28) (.var 3), .return 0 [1]])
-    else some (4, .seq (.assign 10 (.const 0))
-      (.seq (.assign 11 (.const (BitVec.ofNat width width)))
-        (.call none (some longDiv1Location) [0, 11, 6, 10, 10, 4, 2] none)))
+    some (4, longDivCode conf)
   else if location = longDiv1Location then
     some (7, longDiv1Code conf)
   else compileStub? location

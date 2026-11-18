@@ -130106,6 +130106,15 @@
   },
 {
     "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "LongDiv_code_def",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Stubs.lean",
+    "lean_name": "longDivCode",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Independent comparison with LongDiv_code_def_typed confirms hardware and software branches, all instruction operands and the fixed word5 temporary index. The width value is converted modulo the generic positive-width word as in HOL. Production dispatch uses the source location and arity; captured HOL oracle checks cover both configuration branches at 64 bits."
+  },
+{
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
     "hol_name": "StoreEach_def",
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
     "lean_name": "storeEach",
