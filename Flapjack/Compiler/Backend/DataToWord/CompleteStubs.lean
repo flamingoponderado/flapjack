@@ -26,9 +26,9 @@ theorem fixedStubs_succeeds {width : Nat} [NeZero width] (conf : Config) :
       appendLocation, appendMainLoopLocation, appendLenLoopLocation, xorLoopLocation,
       unusedLocation, stringCmpLoopLocation, wordNumStubs, stackNumStubs]
 
-/-- Assemble the fixed table and generated bignum entries in source order.
-This executes on the CakeML compiler path. It is not tagged as HOL's `stubs`
-until the fixed bodies and shallow-to-deep bignum generator are source-reviewed. -/
+/-- Assemble the fixed table and generated bignum entries in source order. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "stubs_def"
+  (words_as_type_indexed_bitvec)]
 def stubs {width : Nat} [NeZero width] (conf : Config) :
     List (Nat × Nat × WordLangProgHOL (BitVec width)) :=
   (fixedStubs? conf).get (by

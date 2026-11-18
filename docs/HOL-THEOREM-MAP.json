@@ -22983,6 +22983,15 @@
     "reviewer": "Independent comparison with install_type and the source definition confirms the entry and accumulator key have independent arbitrary types, the key is preserved, and the entry is prepended. The executed mini-compiler specializes these helpers to the same source code accumulator."
   },
   {
+  "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+  "hol_name": "stubs_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/CompleteStubs.lean",
+  "lean_name": "stubs",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared the complete HOL source and typed capture: every fixed location, arity, body and order agrees, followed by the reviewed generated bignum stubs. ByteCopyNew_code_def is directly simplified to Skip in its lookup route; Unused and Dummy are literal Skip in HOL. The fixed lookup is total for all configs and widths; the executable total wrapper returns that table. This does not prove the shallow-to-deep generator correct."
+},
+{
   "hol_path": "cakeml/compiler/backend/word_bignumScript.sml",
   "hol_name": "mc_iop_code_def",
   "lean_path": "Flapjack/Compiler/Backend/WordBignum/GeneratedMini.lean",
