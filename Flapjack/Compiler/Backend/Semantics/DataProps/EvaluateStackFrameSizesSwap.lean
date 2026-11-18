@@ -1258,4 +1258,205 @@ private theorem stackFrameSwap_returningCall_noHandler {C F : Type} (dest : Opti
         refine ⟨other, ?_, h, rel⟩
         simp [evaluate, typeError, localsEq, vars, codeEq, foundOther', distinct]
 
+/-- The `Call` case that returns into a variable list with an exception
+    handler: a raised value starts the handler body at the raised value, and
+    the relation survives the pop, the variable assignment and the handler
+    body. Flapjack infrastructure toward the port of HOL
+    `evaluate_swap_stack_frame_sizes_aux`; no separate HOL original. -/
+private theorem stackFrameSwap_returningCall_handler {C F : Type} (dest : Option Nat)
+    (names : List Nat) (returns : List Nat) (live : NumSet)
+    (handlerName : Nat) (handlerBody : DataLang.Prog) (state : State C F)
+    (bodyIH : ∀ (body : DataLang.Prog) (called : State C F),
+      called.clock < state.clock → StackFrameSwapAt body called) :
+    StackFrameSwapAt
+      (.call (some (returns, live)) dest names (some (handlerName, handlerBody))) state := by
+  intro res next other run h rel
+  have localsEq := frameSwapState_locals h
+  have clockEq := frameSwapState_clock h
+  have codeEq := frameSwapState_code h
+  cases vars : DataSem.getVars names state.locals with
+  | none =>
+    simp only [evaluate, vars, typeError, Prod.mk.injEq] at run
+    obtain ⟨rfl, rfl⟩ := run
+    refine ⟨other, ?_, h, rel⟩
+    simp [evaluate, typeError, localsEq, vars]
+  | some values =>
+    have varsOther : DataSem.getVars names other.locals = some values := by
+      rw [localsEq]
+      exact vars
+    cases found : findCode dest values state.code state.stackFrameSizes with
+    | none =>
+      obtain ⟨_, foundOther⟩ := findCode_size_upto dest values state.code
+        state.stackFrameSizes other.stackFrameSizes none found
+      simp only [evaluate, vars, found, typeError, Prod.mk.injEq] at run
+      obtain ⟨rfl, rfl⟩ := run
+      refine ⟨other, ?_, h, rel⟩
+      simp [evaluate, typeError, varsOther, codeEq, foundOther]
+    | some foundEntry =>
+      obtain ⟨otherSize, foundOther⟩ := findCode_size_upto dest values state.code
+        state.stackFrameSizes other.stackFrameSizes foundEntry found
+      obtain ⟨args, body, size⟩ := foundEntry
+      have foundOther' : findCode dest values state.code other.stackFrameSizes =
+          some (args, body, otherSize) := by simpa using foundOther
+      by_cases distinct : returns.Nodup
+      · cases cut : cutEnv live state.locals with
+        | none =>
+          simp [evaluate, vars, found, distinct, cut, typeError] at run
+          obtain ⟨rfl, rfl⟩ := run
+          refine ⟨other, ?_, h, rel⟩
+          simp [evaluate, typeError, localsEq, vars, codeEq, foundOther', distinct, cut]
+        | some env =>
+          by_cases zero : state.clock = 0
+          · simp [evaluate, vars, found, distinct, cut, zero, timeoutError] at run
+            obtain ⟨rfl, rfl⟩ := run
+            let callState : State C F :=
+              DataSem.callEnv args size (DataSem.pushEnv env true (DataSem.decClock state))
+            let callOther : State C F :=
+              DataSem.callEnv args otherSize (DataSem.pushEnv env true (DataSem.decClock other))
+            have relPush := pushEnv_frameSwap env true (DataSem.decClock state)
+              (DataSem.decClock other) (by
+                rw [h]
+                simp [DataSem.decClock]) rel
+            have relCall : FrameSwapState callState callOther :=
+              callEnv_frameSwap args size otherSize _ _ relPush.1
+            refine ⟨{ callOther with stack := [], locals := .ln }, ?_, ?_, ?_⟩
+            · simp [evaluate, timeoutError, localsEq, vars, codeEq, foundOther', clockEq,
+                callOther, distinct, if_pos zero, cut]
+            · simpa [zero, callState, callOther] using clearState_frameSwap relCall
+            · exact List.Forall₂.nil
+          · let callState : State C F :=
+              DataSem.callEnv args size (DataSem.pushEnv env true (DataSem.decClock state))
+            let callOther : State C F :=
+              DataSem.callEnv args otherSize (DataSem.pushEnv env true (DataSem.decClock other))
+            have clockLt : callState.clock < state.clock := by
+              simp only [callState, DataSem.callEnv, DataSem.pushEnv, DataSem.decClock]
+              omega
+            have relPush := pushEnv_frameSwap env true (DataSem.decClock state)
+              (DataSem.decClock other) (by
+                rw [h]
+                simp [DataSem.decClock]) rel
+            have relCall : FrameSwapState callState callOther :=
+              callEnv_frameSwap args size otherSize _ _ relPush.1
+            have stackCall : List.Forall₂ stackFrameSizeRel callState.stack callOther.stack := by
+              simpa [callState, callOther, DataSem.callEnv, DataSem.pushEnv, DataSem.decClock]
+                using relPush.2
+            cases bodyRun : evaluate body callState with
+            | mk outcome last =>
+              obtain ⟨lastOther, bodyOther, relBody, stackBody⟩ :=
+                bodyIH body callState clockLt outcome last callOther bodyRun relCall stackCall
+              have bodyRun' :
+                  evaluate body
+                      (DataSem.callEnv args size
+                        (DataSem.pushEnv env true (DataSem.decClock state))) =
+                    (outcome, last) := bodyRun
+              have bodyOther' :
+                  evaluate body
+                      (DataSem.callEnv args otherSize
+                        (DataSem.pushEnv env true (DataSem.decClock other))) =
+                    (outcome, lastOther) := bodyOther
+              have relClamp : FrameSwapState
+                  { last with clock := min callState.clock last.clock }
+                  { lastOther with clock := min callOther.clock lastOther.clock } :=
+                fixClock_frameSwap outcome last lastOther relCall relBody
+              have stackClamp : List.Forall₂ stackFrameSizeRel
+                  ({ last with clock := min callState.clock last.clock } : State C F).stack
+                  ({ lastOther with clock := min callOther.clock lastOther.clock } :
+                    State C F).stack := by simpa using stackBody
+              simp only [evaluate, vars, found, distinct, decide_true, Bool.not_true,
+                Bool.false_eq_true, if_false, Option.isSome_some, cut, zero] at run
+              rw [bodyRun'] at run
+              have clampEq :
+                  (fixClock callState (outcome, last)).2 =
+                    ({ last with clock := min callState.clock last.clock } : State C F) := rfl
+              rw [clampEq] at run
+              simp only [fixClock] at run
+              cases outcome with
+              | none =>
+                simp only [typeError] at run
+                obtain ⟨rfl, rfl⟩ := run
+                refine ⟨_, ?_, relClamp, stackClamp⟩
+                simp [evaluate, localsEq, vars, codeEq, foundOther', clockEq, cut, callOther,
+                  distinct, if_neg zero, bodyOther', fixClock, typeError]
+              | some stopped =>
+                cases stopped with
+                | val results =>
+                  dsimp only at run
+                  by_cases length : results.length = returns.length
+                  · rw [if_pos length] at run
+                    cases pop : DataSem.popEnv
+                        ({ last with clock := min callState.clock last.clock } : State C F) with
+                    | none =>
+                      simp only [pop, typeError] at run
+                      obtain ⟨rfl, rfl⟩ := run
+                      have popOtherNone := popEnv_none_of_related _ _ stackClamp pop
+                      refine ⟨_, ?_, relClamp, stackClamp⟩
+                      simp [evaluate, localsEq, vars, codeEq, foundOther', clockEq, cut, callOther,
+                        Option.isSome_some, distinct, if_neg zero, bodyOther', fixClock,
+                        popOtherNone, typeError]
+                    | some popped =>
+                      obtain ⟨poppedOther, popOther, relPopped, stackPopped⟩ :=
+                        popEnv_frameSwap _ _ popped relClamp stackClamp pop
+                      simp only [pop] at run
+                      obtain ⟨rfl, rfl⟩ := run
+                      refine ⟨setVars returns results poppedOther, ?_, ?_, ?_⟩
+                      · simp [evaluate, localsEq, vars, codeEq, foundOther', clockEq, cut,
+                          callOther, Option.isSome_some, distinct, if_pos length, if_neg zero,
+                          bodyOther', fixClock, popOther]
+                      · exact setVars_frameSwap returns results relPopped
+                      · simpa [setVars] using stackPopped
+                  · rw [if_neg length] at run
+                    simp only [typeError] at run
+                    obtain ⟨rfl, rfl⟩ := run
+                    refine ⟨_, ?_, relClamp, stackClamp⟩
+                    simp [evaluate, localsEq, vars, codeEq, foundOther', clockEq, cut, callOther,
+                      distinct, if_neg zero, bodyOther', fixClock, if_neg length, typeError]
+                | err error =>
+                  cases error with
+                  | raise value =>
+                    have runHandler :
+                        evaluate handlerBody
+                            (setVar handlerName value
+                              ({ last with clock := min callState.clock last.clock } :
+                                State C F)) = (res, next) := run
+                    have relHandler : FrameSwapState
+                        (setVar handlerName value
+                          ({ last with clock := min callState.clock last.clock } : State C F))
+                        (setVar handlerName value
+                          ({ lastOther with clock := min callOther.clock lastOther.clock } :
+                            State C F)) := setVar_frameSwap handlerName value relClamp
+                    have stackHandler : List.Forall₂ stackFrameSizeRel
+                        (setVar handlerName value
+                          ({ last with clock := min callState.clock last.clock } :
+                            State C F)).stack
+                        (setVar handlerName value
+                          ({ lastOther with clock := min callOther.clock lastOther.clock } :
+                            State C F)).stack := by simpa [setVar] using stackClamp
+                    have clockLtHandler :
+                        (setVar handlerName value
+                          ({ last with clock := min callState.clock last.clock } :
+                            State C F)).clock < state.clock := by
+                      simp only [setVar]
+                      omega
+                    obtain ⟨handlerOther, handlerRun, relHandlerOut, stackHandlerOut⟩ :=
+                      bodyIH handlerBody
+                        (setVar handlerName value
+                          ({ last with clock := min callState.clock last.clock } :
+                            State C F)) clockLtHandler res next
+                        (setVar handlerName value
+                          ({ lastOther with clock := min callOther.clock lastOther.clock } :
+                            State C F)) runHandler relHandler stackHandler
+                    refine ⟨handlerOther, ?_, relHandlerOut, stackHandlerOut⟩
+                    simp only [evaluate, localsEq, vars, codeEq, foundOther', clockEq, cut,
+                      Option.isSome_some, distinct, if_neg zero, bodyOther', fixClock]
+                    exact handlerRun
+                  | abort reason =>
+                    obtain ⟨rfl, rfl⟩ := run
+                    refine ⟨_, ?_, relClamp, stackClamp⟩
+                    simp [evaluate, localsEq, vars, codeEq, foundOther', clockEq, cut, callOther,
+                      distinct, if_neg zero, bodyOther', fixClock]
+      · simp [evaluate, vars, found, distinct, typeError] at run
+        obtain ⟨rfl, rfl⟩ := run
+        refine ⟨other, ?_, h, rel⟩
+        simp [evaluate, typeError, localsEq, vars, codeEq, foundOther', distinct]
+
 end Flapjack.Compiler.Backend.DataProps
