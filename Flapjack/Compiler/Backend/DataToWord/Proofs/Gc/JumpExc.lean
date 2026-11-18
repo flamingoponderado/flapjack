@@ -41,4 +41,48 @@ theorem jumpExc_decClock {width : Nat} {outWidth : Nat} [NeZero width] [NeZero o
   split <;> simp_all
   split <;> simp_all [mkLoc]
 
+/-- Taking a suffix no longer than the tail ignores the prepended frame.
+This factors the `LASTN_TL` step used in the HOL exception proof. -/
+private theorem lastN_cons_of_le {α : Type} (n : Nat) (x : α) (xs : List α)
+    (h : n ≤ xs.length) : wordSemLastN n (x :: xs) = wordSemLastN n xs := by
+  unfold wordSemLastN
+  rw [List.reverse_cons, List.take_append_of_le_length (by simpa using h)]
+
+/-- Pushing a frame without a handler preserves the exception destination,
+even if the stack maximum is subsequently replaced. This factors two
+conjuncts of the HOL theorem. -/
+private theorem mkLoc_pushEnv_noHandler {width : Nat} {outWidth : Nat}
+    [NeZero width] [NeZero outWidth] {C F : Type}
+    (state : WordSemStateFiniteExact width C F)
+    (envs : Spt (WordLocW width) × Spt (WordLocW width)) (max : Option Nat) :
+    mkLoc (width := outWidth) (jumpExc { pushEnv envs none state with stackMax := max }) =
+      mkLoc (width := outWidth) (jumpExc state) := by
+  unfold pushEnv
+  generalize henv : wordSemEnvToList envs.2 state.permute = result
+  obtain ⟨values, permute⟩ := result
+  by_cases hlt : state.handler < state.stack.length
+  · have hle : state.handler + 1 ≤ state.stack.length := by omega
+    simp only [jumpExc, hlt, if_true, List.length_cons, Nat.lt_succ_of_lt hlt,
+      lastN_cons_of_le _ _ _ hle]
+    split <;> simp_all [mkLoc]
+  · by_cases heq : state.handler = state.stack.length
+    · simp [jumpExc, henv, heq, wordSemLastN, List.take_of_length_le, mkLoc]
+    · have hnot : ¬ state.handler < state.stack.length + 1 := by omega
+      simp [jumpExc, henv, hlt, hnot]
+
+/-- Pushing a frame without a handler preserves each independently typed
+exception destination, including after a stack-maximum update. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "jump_exc_push_env_NONE"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem jumpExc_pushEnv_none {width : Nat} {out1 : Nat} {out2 : Nat} {out3 : Nat}
+    [NeZero width] [NeZero out1] [NeZero out2] [NeZero out3] {C F : Type}
+    (state : WordSemStateFiniteExact width C F)
+    (envs : Spt (WordLocW width) × Spt (WordLocW width)) (max : Option Nat) :
+    mkLoc (width := out1) (jumpExc (decClock state)) = mkLoc (width := out1) (jumpExc state) ∧
+    mkLoc (width := out2) (jumpExc (pushEnv envs none state)) = mkLoc (width := out2) (jumpExc state) ∧
+    mkLoc (width := out3) (jumpExc { pushEnv envs none state with stackMax := max }) =
+      mkLoc (width := out3) (jumpExc state) := by
+  refine ⟨jumpExc_decClock state, ?_, mkLoc_pushEnv_noHandler state envs max⟩
+  simpa using mkLoc_pushEnv_noHandler (outWidth := out2) state envs (pushEnv envs none state).stackMax
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

@@ -23043,6 +23043,16 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "jump_exc_push_env_NONE",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/JumpExc.lean",
+  "lean_name": "jumpExc_pushEnv_none",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared jump_exc_push_env_NONE_typed: all three original exception-destination equalities share the word state and keep the three result widths independent, including the optional stack-maximum update. Target finite-map fields and positive-width words use reviewed representations."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "jump_exc_call_env",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/JumpExc.lean",
   "lean_name": "jumpExc_callEnv",
