@@ -555,19 +555,34 @@ These gates do not replace source review or authorize any other carrier,
 premise, result, evaluator, or semantic difference. Record the inherited
 real-model assumption separately when it applies.
 
-**Qualify the TMC hypothesis's body-bound map.** The narrow
-`(fmap_as_finite_support_universals := [f])` qualifier is restricted to
-`hypothesis_def` and its exact `Induction.hypothesis` counterpart. It requires
-`(fmap_as_finite_support_relation := [BviState.refs])` and
-`(fmap_as_finite_support_existentials := [nextMap, wrapMap, workMap])`, with
-no other representation qualifiers. Record these exact ordered lists and
+**Qualify the TMC declarations' body-bound maps.** The narrow
+`(fmap_as_finite_support_universals := [...])` qualifier is restricted to two
+reviewed declarations of
+`cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml`, and to no others.
+
+- `hypothesis_def`, ported as `Induction.hypothesis`: universals `[f]`, with
+  `(fmap_as_finite_support_relation := [BviState.refs])` and
+  `(fmap_as_finite_support_existentials := [nextMap, wrapMap, workMap])`. The
+  theorem must bind `f` as a universal `HolFiniteMapExact Nat Nat`.
+- `evaluate_cb`, ported as `CallBlockCorrectness.evaluate_cb`: universals
+  `[refs]`, with
+  `(fmap_as_finite_support_relation := [BviState.refs, f])` and
+  `(fmap_as_finite_support_existentials :=
+  [ordinaryMap, wrapMap, auxMap, workMap])`. The theorem must bind `refs` as a
+  universal `HolFiniteMapExact Nat (Ref Value)`.
+
+Neither site may combine with any other representation qualifier. Record the
+exact ordered lists for the site you tag and status
 `reviewed_fmap_as_finite_support_relation_existentials_universals` after
-comparing the complete typed HOL definition. The source checker validates
-the map binders and local codec witnesses; the attribute and export additionally
-audit the checked definition, map-binder scopes, witness types, owners, codec
-bodies and axiom closure. These checks do not establish HOL correspondence or
-authorize other semantic differences. Record inherited real-model assumptions
-separately. The qualifier does not cover `evaluate_cb` or any other declaration.
+comparing the complete typed HOL declaration. The source checker validates
+the map binders and the same-module codec witness for that site
+(`holFmapAsFiniteSupportUniversalWitness_hypothesis_f` for the hypothesis and
+`holFmapAsFiniteSupportUniversalWitness_evaluate_cb_refs` for the call block);
+the attribute and export additionally audit the checked declaration,
+map-binder scopes, witness types, owners, codec bodies and axiom closure. These
+checks do not establish HOL correspondence or authorize other semantic
+differences. Record inherited real-model assumptions separately. The qualifier
+covers only these two declarations, not any other TMC declaration.
 
 **Qualify observations of computed finite-map results.** Use
 `(fmap_as_finite_support_result_observations := [Producer, ...])` only
