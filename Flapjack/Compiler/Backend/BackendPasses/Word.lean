@@ -18,13 +18,11 @@ structure WordStage where
   functions : List (Nat × Nat × WordLangProgHOL (BitVec 64))
   names : Spt MlString
 
-/-- Lower all optimized data functions and prepend the compiler's runtime
-stubs. `none` denotes a rejected lowering. -/
-def captureWord64 (config : DataToWord.Config) (data : DataStages) : Option WordStage := do
-  let functions ← data.spaced.mapM fun (n, arity, body) => do
-    let (body, _) ← DataToWord.compileControl? (width := 64) config n 2 body
-    pure (n, arity + 1, body)
-  pure ⟨DataToWord.stubs config ++ functions, data.names⟩
+/-- Lower all optimized data functions and prepend the compiler's runtime stubs. -/
+def captureWord64 (config : DataToWord.Config) (data : DataStages) : Option WordStage :=
+  let functions := data.spaced.map fun (n, arity, body) =>
+    (n, arity + 1, (DataToWord.compileControl (width := 64) config n 2 body).1)
+  some ⟨DataToWord.stubs config ++ functions, data.names⟩
 
 /-- Render the captured WordLang stage with CakeML's original heading. -/
 def wordReportBytes (stage : WordStage) : List HolChar :=

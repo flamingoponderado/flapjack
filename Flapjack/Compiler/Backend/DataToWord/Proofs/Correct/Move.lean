@@ -85,12 +85,24 @@ private theorem stateRel_move {width : Nat} [NeZero width] {C F : Type}
       ⟨by simpa [rest] using hinv, sourceFound, targetFound⟩
   simpa [rest] using added
 
+namespace reviewedDataCompileCorrect_moveMap
+/-- Canonical roundtrip for the target state used by this HOL port. -/
+theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {C F : Type} :
+    (∀ (state : WordSemStateBroad width C F) (h : state.FiniteSupport),
+      (WordSemStateBroad.ofBroad state h).toBroad = state) ∧
+    (∀ state : WordSemStateFiniteExact width C F,
+      WordSemStateBroad.ofBroad state.toBroad state.toBroad_finiteSupport = state) :=
+  WordSemStateExact.holFmapAsFiniteSupportWitness
+end reviewedDataCompileCorrect_moveMap
+
 /-- The full HOL `Move` simulation case, including every result branch. The
-HOL tag is pending compiler and state-relation dependency review. The word
-evaluator inherits the real-model assumption in `docs/SOUNDNESS.md` item 8. -/
+word evaluator inherits the real-model assumption in `docs/SOUNDNESS.md` item 8.
+The full theorem still requires an assembly of all HOL cases. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_wordProofScript.sml" "data_compile_correct"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem dataCompileCorrect_move {width : Nat} [NeZero width] {C F : Type}
-    (source : DataSem.State C F) (conf : Config) (n l l1 l2 dest src : Nat)
-    (res : Option (Result (List DataSem.Value) DataSem.Value)) (source1 : DataSem.State C F)
+    (source : Flapjack.Compiler.Backend.DataSem.State C F) (conf : Flapjack.Compiler.Backend.DataToWord.Config) (n l l1 l2 dest src : Nat)
+    (res : Option (Result (List Flapjack.Compiler.Backend.DataSem.Value) Flapjack.Compiler.Backend.DataSem.Value)) (source1 : Flapjack.Compiler.Backend.DataSem.State C F)
     (target : WordSemStateFiniteExact width C F) (locs : List (Nat × Nat))
     (run : DataSem.evaluate (.move dest src) source = (res, source1))
     (notTypeError : res ≠ some (.err (.abort .typeError)))

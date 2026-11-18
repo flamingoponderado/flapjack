@@ -14,15 +14,26 @@ open Flapjack Flapjack.SemanticPrimitivesHOL
 open Flapjack.Compiler.Backend.BackendProps
 open Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
 
+namespace reviewedDataCompileCorrect_skipMap
+/-- Canonical roundtrip for the target state used by this HOL port. -/
+theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {C F : Type} :
+    (∀ (state : WordSemStateBroad width C F) (h : state.FiniteSupport),
+      (WordSemStateBroad.ofBroad state h).toBroad = state) ∧
+    (∀ state : WordSemStateFiniteExact width C F,
+      WordSemStateBroad.ofBroad state.toBroad state.toBroad_finiteSupport = state) :=
+  WordSemStateExact.holFmapAsFiniteSupportWitness
+end reviewedDataCompileCorrect_skipMap
+
 /-- The `Skip` case retains the complete conclusion of
 `data_compile_correct`, including all result and space-failure branches.
-Its HOL tag is pending source review of the executable compiler and the
-state relation's code and oracle dependencies. The word evaluator carries
-the real-model assumption documented in `docs/SOUNDNESS.md` item 8; this
-case executes no floating-point instruction. -/
+The word evaluator carries the real-model assumption documented in
+`docs/SOUNDNESS.md` item 8; this case executes no floating-point instruction.
+The full theorem still requires an assembly of all HOL cases. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_wordProofScript.sml" "data_compile_correct"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem dataCompileCorrect_skip {width : Nat} [NeZero width] {C F : Type}
-    (source : DataSem.State C F) (conf : Config) (n l l1 l2 : Nat)
-    (res : Option (Result (List DataSem.Value) DataSem.Value)) (source1 : DataSem.State C F)
+    (source : Flapjack.Compiler.Backend.DataSem.State C F) (conf : Flapjack.Compiler.Backend.DataToWord.Config) (n l l1 l2 : Nat)
+    (res : Option (Result (List Flapjack.Compiler.Backend.DataSem.Value) Flapjack.Compiler.Backend.DataSem.Value)) (source1 : Flapjack.Compiler.Backend.DataSem.State C F)
     (target : WordSemStateFiniteExact width C F) (locs : List (Nat × Nat))
     (run : DataSem.evaluate .skip source = (res, source1))
     (notTypeError : res ≠ some (.err (.abort .typeError)))

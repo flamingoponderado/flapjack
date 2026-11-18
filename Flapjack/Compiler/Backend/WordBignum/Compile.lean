@@ -1,7 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.WordBignum.Helpers
-public import Flapjack.Compiler.Backend.WordBignum.Proofs.Equality
+public import Flapjack.Compiler.Backend.WordBignum.Equality
 
 @[expose] public section
 
