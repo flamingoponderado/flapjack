@@ -104,6 +104,7 @@ val _ = emit "RefArray_code_def_typed" "RefArray_code_def";
 val _ = emit "Replicate_code_def_typed" "Replicate_code_def";
 val _ = emit "AddNumSize_def_typed" "AddNumSize_def";
 val _ = emit "AnyHeader_def_typed" "AnyHeader_def";
+val _ = emit "AnyArith_code_def_typed" "AnyArith_code_def";
 val _ = emit "StoreEach_def_typed" "StoreEach_def";
 val _ = emit "MemEqList_def_typed" "MemEqList_def";
 val _ = emit "LoadBignum_def_typed" "LoadBignum_def";

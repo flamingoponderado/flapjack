@@ -130022,6 +130022,15 @@
   },
 {
     "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "AnyArith_code_def",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Stubs.lean",
+    "lean_name": "anyArithCode",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Independent comparison with AnyArith_code_def_typed confirms the complete sequence, allocation cutset, both call handlers, small-number branches and final heap updates. Fixed word5 temporary indices remain distinct from the positive-width program word. The executed fixed-stub lookup uses this definition at the original location and arity; captured HOL oracle checks cover its generated body."
+  },
+{
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
     "hol_name": "StoreEach_def",
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
     "lean_name": "storeEach",

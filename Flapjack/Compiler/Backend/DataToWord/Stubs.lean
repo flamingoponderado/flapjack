@@ -243,6 +243,40 @@ def refArrayCode {width : Nat} [NeZero width] (conf : Config) : WordLangProgHOL 
     .store (.var 1) 5,
     .call none (some replicateLocation) [0, 1, 4, 2, 3] none]
 
+/-- Generate the arbitrary-precision arithmetic runtime stub. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "AnyArith_code_def"
+  (words_as_type_indexed_bitvec)]
+def anyArithCode {width : Nat} [NeZero width] (conf : Config) : WordLangProgHOL (BitVec width) :=
+    let bytes := (wordSemBytesInWord : BitVec width)
+    let retSmall (value : WordLangExpHOL (BitVec width)) := WordLangProgHOL.seq (.assign 1 value) (.return 0 [1])
+    listSeq [
+      .assign 1 (.const 4), addNumSize conf 0, addNumSize conf 1, .set (.temp 29) (.var 1),
+      allocVar conf (2 ^ conf.lenSize) (sptListInsert [0, 1, 2] .ln),
+      anyHeader conf 2 false 0 31 12, anyHeader conf 4 true 1 30 11,
+      .get 1 (.temp 11), .store (.lookup .otherHeap) 1,
+      .get 1 (.temp 12), .store (.lookup .nextFree) 1,
+      .get 1 (.temp 29), .assign 2 (.lookup .nextFree), .set (.temp 29) (.var 2),
+      .set (.temp 3) (shiftN .lsr (.var 6) 2), .assign 3 (.const 0),
+      .call (some ([0], (.ls (), .ln), .skip, anyArithLocation, 2)) (some replicateLocation) [2, 3, 1, 0] none,
+      .set (.temp 29) (.op .add [.lookup (.temp 29), .const bytes]),
+      .call (some ([1], (.ls (), .ln), .skip, anyArithLocation, 3)) (some bignumLocation) [] none,
+      .get 1 (.temp 10), .ite .test 1 (.reg 1) (.return 0 [1]) .skip,
+      .assign 3 (.load (.op .add [.lookup .nextFree, .const bytes])),
+      .ite .equal 1 (.imm 2)
+        (.seq (.assign 5 (shiftN .lsr (.var 3) (width - 3)))
+          (.ite .test 5 (.reg 5) (retSmall (shiftN .lsl (.var 3) 2)) .skip))
+        (.ite .equal 1 (.imm 3)
+          (.seq (.assign 5 (shiftN .lsr (.op .sub [.var 3, .const 1]) (width - 3)))
+            (.ite .test 5 (.reg 5) (retSmall (.op .sub [.const 0, shiftN .lsl (.var 3) 2])) .skip))
+          (.assign 5 (.const 0))),
+      .assign 5 (.lookup .nextFree), .assign 6 (shiftVar .lsr 1 1),
+      .assign 8 (.op .and [.var 1, .const 1]),
+      .assign 7 (.op .or [.const 15, shiftVar .lsl 6 (width - conf.lenSize), shiftVar .lsl 8 4]),
+      .store (.var 5) 7, .assign 1 (.op .sub [.var 5, .lookup .currHeap]),
+      .assign 1 (.op .or [shiftVar .lsl 1 (shiftLength conf - wordShiftAmount width), .const 1]),
+      .set .nextFree (.op .add [.var 5, .const bytes, shiftVar .lsl 6 (wordShiftAmount width)]),
+      .return 0 [1]]
+
 /-- Extend the partial stub lookup with configuration-dependent cases. The
 unimplemented stubs still return `none`, so this is not HOL's complete list. -/
 def compileConfiguredStub? {width : Nat} [NeZero width] (conf : Config) (location : Nat) :
@@ -312,35 +346,7 @@ def compileConfiguredStub? {width : Nat} [NeZero width] (conf : Config) (locatio
         .assign 4 (.op .add [.var 4, .const 12]),
         .call none (some appendLenLoopLocation) [0, 2, 4] none]))
   else if location = anyArithLocation then
-    let bytes := (wordSemBytesInWord : BitVec width)
-    let retSmall (value : WordLangExpHOL (BitVec width)) := WordLangProgHOL.seq (.assign 1 value) (.return 0 [1])
-    some (4, listSeq [
-      .assign 1 (.const 4), addNumSize conf 0, addNumSize conf 1, .set (.temp 29) (.var 1),
-      allocVar conf (2 ^ conf.lenSize) (sptListInsert [0, 1, 2] .ln),
-      anyHeader conf 2 false 0 31 12, anyHeader conf 4 true 1 30 11,
-      .get 1 (.temp 11), .store (.lookup .otherHeap) 1,
-      .get 1 (.temp 12), .store (.lookup .nextFree) 1,
-      .get 1 (.temp 29), .assign 2 (.lookup .nextFree), .set (.temp 29) (.var 2),
-      .set (.temp 3) (shiftN .lsr (.var 6) 2), .assign 3 (.const 0),
-      .call (some ([0], (.ls (), .ln), .skip, anyArithLocation, 2)) (some replicateLocation) [2, 3, 1, 0] none,
-      .set (.temp 29) (.op .add [.lookup (.temp 29), .const bytes]),
-      .call (some ([1], (.ls (), .ln), .skip, anyArithLocation, 3)) (some bignumLocation) [] none,
-      .get 1 (.temp 10), .ite .test 1 (.reg 1) (.return 0 [1]) .skip,
-      .assign 3 (.load (.op .add [.lookup .nextFree, .const bytes])),
-      .ite .equal 1 (.imm 2)
-        (.seq (.assign 5 (shiftN .lsr (.var 3) (width - 3)))
-          (.ite .test 5 (.reg 5) (retSmall (shiftN .lsl (.var 3) 2)) .skip))
-        (.ite .equal 1 (.imm 3)
-          (.seq (.assign 5 (shiftN .lsr (.op .sub [.var 3, .const 1]) (width - 3)))
-            (.ite .test 5 (.reg 5) (retSmall (.op .sub [.const 0, shiftN .lsl (.var 3) 2])) .skip))
-          (.assign 5 (.const 0))),
-      .assign 5 (.lookup .nextFree), .assign 6 (shiftVar .lsr 1 1),
-      .assign 8 (.op .and [.var 1, .const 1]),
-      .assign 7 (.op .or [.const 15, shiftVar .lsl 6 (width - conf.lenSize), shiftVar .lsl 8 4]),
-      .store (.var 5) 7, .assign 1 (.op .sub [.var 5, .lookup .currHeap]),
-      .assign 1 (.op .or [shiftVar .lsl 1 (shiftLength conf - wordShiftAmount width), .const 1]),
-      .set .nextFree (.op .add [.var 5, .const bytes, shiftVar .lsl 6 (wordShiftAmount width)]),
-      .return 0 [1]])
+    some (4, anyArithCode conf)
   else if location = installCodeLocation then
     let bytes := (wordSemBytesInWord : BitVec width)
     some (4, .ite .test 2 (.imm 1)
