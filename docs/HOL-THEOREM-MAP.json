@@ -8833,7 +8833,7 @@
   "fmap_as_finite_support": ["fpRegs", "store"],
   "words_as_type_indexed_bitvec": true,
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared HOL source and typed capture: all memory-copy, state, code lookup, clock, word-range and five register premises agree; the existential stack maximum, exact return and final state update, and stack bound are preserved. The state maps and positive-width words use the named translations. The evaluator inherits the real-model assumption in docs/SOUNDNESS.md item 8."
+  "reviewer": "Compared HOL source and typed capture: all memory-copy, state, code lookup, clock, word-range and five register premises agree; the existential stack maximum, exact return and final state update, and stack bound are preserved. The state maps and positive-width words use the named translations. The evaluator inherits the reals_as_rational_cuts real-model assumption in docs/SOUNDNESS.md item 8."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
@@ -23008,7 +23008,7 @@
   "statement_status": "reviewed_fmap_as_finite_support_parameters_words_as_type_indexed_bitvec",
   "fmap_as_finite_support_parameters": ["store"],
   "words_as_type_indexed_bitvec": true,
-  "reviewer": "Compared the complete definition with code_oracle_rel_def_typed: the compiler and oracle callbacks, buffer conditions, store lookups, arithmetic and stub bound agree. The store, compiler, oracle and two buffer-element word widths remain independently quantified as in HOL. The canonical finite-support store codec records the HOL finite-map translation; words use positive-width BitVec."
+  "reviewer": "Compared the complete HOL source definition with code_oracle_rel_def_typed: the compiler and oracle callbacks, buffer conditions, store lookups, arithmetic and stub bound agree. The store, compiler, oracle and two buffer-element word widths remain independently quantified as in HOL. The canonical finite-support store codec records the HOL finite-map translation; words use positive-width BitVec."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
@@ -23088,7 +23088,7 @@
   "fmap_as_finite_support": ["fpRegs", "store"],
   "words_as_type_indexed_bitvec": true,
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared evaluate_SilentFFI_3_typed: the FFI flag, full state relation, arbitrary sparse names, cut result and complete evaluator output agree. Target state maps and words use the reviewed representations; the evaluator inherits the real-model assumption in SOUNDNESS item 8."
+  "reviewer": "Compared evaluate_SilentFFI_3_typed: the FFI flag, full state relation, arbitrary sparse names, cut result and complete evaluator output agree. Target state maps and words use the reviewed representations; the evaluator inherits the reals_as_rational_cuts real-model assumption in docs/SOUNDNESS.md item 8."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_wordProofScript.sml",
@@ -23099,7 +23099,7 @@
   "fmap_as_finite_support": ["fpRegs", "store"],
   "words_as_type_indexed_bitvec": true,
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared the Skip case with data_compile_correct_typed: the original premises and all result and space-failure conclusions are retained. This is a case of the HOL theorem; its full assembly remains unported. Target maps and words use the reviewed representations, and the evaluator inherits SOUNDNESS item 8."
+  "reviewer": "Compared the Skip case with data_compile_correct_typed: the original premises and all result and space-failure conclusions are retained. This is a case of the HOL theorem; its full assembly remains unported. Target maps and words use the reviewed representations, and the evaluator inherits the reals_as_rational_cuts real-model assumption in docs/SOUNDNESS.md item 8."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_wordProofScript.sml",
@@ -23110,7 +23110,7 @@
   "fmap_as_finite_support": ["fpRegs", "store"],
   "words_as_type_indexed_bitvec": true,
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared the Move case with data_compile_correct_typed: the original premises and all result and space-failure conclusions are retained. This is a case of the HOL theorem; its full assembly remains unported. Target maps and words use the reviewed representations, and the evaluator inherits SOUNDNESS item 8."
+  "reviewer": "Compared the Move case with data_compile_correct_typed: the original premises and all result and space-failure conclusions are retained. This is a case of the HOL theorem; its full assembly remains unported. Target maps and words use the reviewed representations, and the evaluator inherits the reals_as_rational_cuts real-model assumption in docs/SOUNDNESS.md item 8."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
@@ -23268,7 +23268,7 @@
   "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
   "fmap_as_finite_support_relation": ["WordSemStateFiniteExact.fpRegs", "WordSemStateFiniteExact.store", "fpRegs"],
   "words_as_type_indexed_bitvec": true,
-  "reviewer": "Compared the typed HOL theorem: the sole complete state-relation premise and conclusion updating only the target FP registers to an arbitrary map agree. The target fields and separate FP-register parameter use canonical finite maps; words use positive-width BitVec."
+  "reviewer": "Compared the HOL source and typed HOL theorem: the sole complete state-relation premise and conclusion updating only the target FP registers to an arbitrary map agree. The target fields and separate FP-register parameter use canonical finite maps; words use positive-width BitVec."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
