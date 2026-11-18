@@ -378,6 +378,7 @@ import Flapjack.Compiler.Backend.Semantics.DataProps.EvaluateAddClock
 import Flapjack.Compiler.Backend.Semantics.DataProps.EvaluateAddClockEvents
 import Flapjack.Compiler.Backend.Semantics.DataProps.EvaluateStackLocalsSwap
 import Flapjack.Compiler.Backend.Semantics.DataProps.StackSize
+import Flapjack.Compiler.Backend.Semantics.DataProps.StackMaxLimit
 import Flapjack.Compiler.Backend.Semantics.DataProps.StateUpdates
 import Flapjack.Compiler.Backend.Semantics.DataSem.ControlClock
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.Limits

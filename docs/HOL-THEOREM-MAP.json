@@ -141355,5 +141355,14 @@
   "statement_status": "reviewed_exact",
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "Compared evaluate_stack_limit_typed (show_types). HOL binds c2 :dataLang$prog, s and s1 over one shared state type (alpha,beta) dataSem$state rendered as {C F : Type}, and res :(v list, v) result option as Option (Result (List DataSem.Value) DataSem.Value); the Lean binders are program state res next in HOL's order. The premise is the single equation evaluate (c2,s) = (res,s1); the conclusion is s1.limits.stack_limit = s.limits.stack_limit, rendered as next.limits.stackLimit = state.limits.stackLimit with the same Limits field. Follows from evaluate_swap_limits at limits := state.limits, which fixes the result state's limits. No representation qualifier applies. Inherits reals_as_rational_cuts through evaluate (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
+  "hol_name": "do_app_stack_max_le_stack_limit",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/StackMaxLimit.lean",
+  "lean_name": "doApp_stackMax_le_stackLimit",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared do_app_stack_max_le_stack_limit_typed (show_types): HOL binds op :closLang$op, xs :v list, s :(\u03b1,\u03b2) dataSem$state, res :v and s1 :(\u03b1,\u03b2) dataSem$state; the Lean binders are op, values, state, res, next in HOL's free-variable order over one shared state type rendered as {C F : Type} with res : DataSem.Value. HOL's premise is ONE conjunction, do_app op xs s = Rval(res,s1) and s1.safe_for_space and option_le s.stack_max (SOME s.limits.stack_limit), rendered as one conjunction premise in the same order with the same Limits.stackLimit field; the conclusion option_le s1.stack_max (SOME s1.limits.stack_limit) is unchanged. No representation qualifier applies: the signature has no finite-map or BitVec carrier. The proof follows HOL's op case split: doAppAux_limits and doStack_stackMax_le are the untagged Lean infrastructure for the do_app_aux/do_stack stages, doApp_of_space isolates the dispatcher's space branch, and doApp_stackMax_le_of_aux carries the bound through doSpace, doStack and doAppAux; install is closed by doInstall_resource_frame (safe_for_space becomes false) and greater/greater_eq by their abort results. Inherits reals_as_rational_cuts through doApp (docs/SOUNDNESS.md item 8)."
 }
 ]
