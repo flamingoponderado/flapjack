@@ -127,3 +127,4 @@ lookup_5_adjust_set_typed=(lookup (5 :num) (adjust_set (l :α sptree$num_map)) :
 lookup_ODD_adjust_set_typed=ODD (n :num) ⇒ (lookup n (adjust_set (l :α sptree$num_map)) :unit option) = (NONE :unit option)
 wf_adjust_set_typed=wf (adjust_set (s :α sptree$num_map))
 lookup_adjust_set_typed=(lookup (n :num) (adjust_set (s :α sptree$num_map)) :unit option) = if ODD n ∨ n = (0 :num) then (NONE :unit option) else if (n − (2 :num)) DIV (2 :num) ∈ (domain s :num -> bool) then SOME () else (NONE :unit option)
+adjust_set_inter_typed=adjust_set (inter (t1 :α sptree$num_map) (t2 :β sptree$num_map)) = inter (adjust_set t1) (adjust_set t2)

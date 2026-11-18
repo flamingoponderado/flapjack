@@ -164,4 +164,16 @@ theorem lookup_adjustSet {α : Type} (n : Nat) (names : Spt α) :
     cases value
     simp [notodd, hm]
 
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "adjust_set_inter"]
+theorem adjustSet_inter {α β : Type} (t1 : Spt α) (t2 : Spt β) :
+    adjustSet (sptInter t1 t2) = sptInter (adjustSet t1) (adjustSet t2) := by
+  apply (sptEqThm _ _ ⟨wf_adjustSet _, sptWfInter _ _⟩).2
+  intro n
+  rw [lookup_adjustSet, sptLookup_sptInterCases, lookup_adjustSet, lookup_adjustSet]
+  by_cases h : n % 2 = 1 ∨ n = 0
+  · simp [h]
+  · simp only [h, if_false, sptDomain_sptInter]
+    by_cases h1 : sptDomain t1 ((n - 2) / 2) <;>
+      by_cases h2 : sptDomain t2 ((n - 2) / 2) <;> simp [h1, h2]
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
