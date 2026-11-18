@@ -5,7 +5,8 @@ value-array dereference, real-address evaluation, memory-copy definition and the
 memory-relation free-space theorem, store-list definition and existence theorem, and
 get-vars environment-cut and domain theorems, and constructor-extension
 compiler definition and expansion, plus byte-copy, list, reference-array, and
-allocation and constructor compiler definitions, with inferred types. Regenerate
+allocation, constructor, and XOR compiler definitions, with inferred types.
+It also evaluates zero and nonzero SmallLsr expressions for output parity. Regenerate
 with `HOL_PROBE_ONLY=data_to_word_assign_roots_probeScript.sml scripts/hol-probes/regenerate.sh`
 using the pinned CakeML and HOL revisions. This is source-review evidence,
 not a cross-language equivalence proof.

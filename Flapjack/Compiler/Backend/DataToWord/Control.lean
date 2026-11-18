@@ -126,6 +126,13 @@ private def boolResult {width : Nat} [NeZero width] (dest : Nat) (cmp : Cmp) (r 
 def shiftN {width : Nat} (op : Shift) (e : WordLangExpHOL (BitVec width)) (n : Nat) :
     WordLangExpHOL (BitVec width) := .shift op e (.const (BitVec.ofNat width n))
 
+/-- Emit a logical right shift only when its amount is nonzero. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "SmallLsr_def"
+  (words_as_type_indexed_bitvec)]
+def smallLsr {width : Nat} [NeZero width] (value : WordLangExpHOL (BitVec width))
+    (amount : Nat) : WordLangExpHOL (BitVec width) :=
+  if amount = 0 then value else shiftN .lsr value amount
+
 /-- Construct a variable shift with the original rotate and saturation rules. -/
 @[hol "cakeml/compiler/backend/data_to_wordScript.sml" "ShiftVar_def"
   (words_as_type_indexed_bitvec)]
@@ -1054,6 +1061,22 @@ def assignConfigGC {width : Nat} [NeZero width] {α β : Type} (conf : Config) (
   (wordListSeq [silentFfi conf 3 names, .assign 1 (.const 0), .alloc 1 names,
     silentFfi conf 3 names, .assign (adjustVar dest) (.const 2)], l)
 
+/-- Compile bytewise XOR using the runtime loop. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "assign_XorByte_def"
+  (words_as_type_indexed_bitvec)]
+def assignXorByte {width : Nat} [NeZero width] (conf : Config) (secn l dest : Nat)
+    (names : Option NumSet) (first second : Nat) : WordLangProgHOL (BitVec width) × Nat :=
+  let bytes := (wordSemBytesInWord : BitVec width)
+  (wordListSeq [
+    .assign 1 (realAddr conf (adjustVar first)),
+    .assign 3 (realAddr conf (adjustVar second)),
+    .assign 5 (smallLsr (.load (.var 3)) (width - conf.lenSize)),
+    .assign 1 (.op .add [.var 1, .const bytes]),
+    .assign 3 (.op .add [.var 3, .const bytes]),
+    .mustTerminate (.call
+      (some ([adjustVar dest], adjustSets (names.getD .ln), .skip, secn, l))
+      (some xorLoopLocation) [1, 3, 5] none)], l + 1)
+
 /-- Total assignment dispatch used by the executable traversal. Its full
     source-level correspondence with HOL's assignment dispatcher is pending
     review of all operation cases. -/
@@ -1325,19 +1348,7 @@ def compileAssign {width : Nat} [NeZero width] (conf : Config) (secn l dest : Na
   | (.memOp .configGC), args, names =>
       arg2 args (assignConfigGC conf secn l dest names) (.skip, l)
   | (.memOp .xorByte), args, names =>
-      match args with
-      | [first, second] =>
-          let bytes := (wordSemBytesInWord : BitVec width)
-          (wordListSeq [
-            .assign 1 (realAddr conf (adjustVar first)),
-            .assign 3 (realAddr conf (adjustVar second)),
-            .assign 5 (shiftN .lsr (.load (.var 3)) (width - conf.lenSize)),
-            .assign 1 (.op .add [.var 1, .const bytes]),
-            .assign 3 (.op .add [.var 3, .const bytes]),
-            .mustTerminate (.call
-              (some ([adjustVar dest], adjustSets (names.getD .ln), .skip, secn, l))
-              (some xorLoopLocation) [1, 3, 5] none)], l + 1)
-      | _ => (.skip, l)
+      arg2 args (assignXorByte conf secn l dest names) (.skip, l)
   | (.memOp op), args, _ =>
       match op, args with
       | .mutCons tag _, _ => assignMutCons conf l dest tag args

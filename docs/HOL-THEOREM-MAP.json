@@ -8494,6 +8494,24 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+  "hol_name": "SmallLsr_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
+  "lean_name": "smallLsr",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared HOL source and inferred-type capture: zero returns the input expression and every nonzero natural amount constructs the same logical-right-shift expression with a word-encoded amount."
+},
+{
+  "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+  "hol_name": "assign_XorByte_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
+  "lean_name": "assignXorByte",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared HOL source and inferred-type capture: both pointer addresses, SmallLsr of the second header, byte offsets, XOR runtime call, cut sets, ordered registers and incremented label agree. The production arg2 wrapper preserves the source wrong-arity fallback."
+},
+{
+  "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
   "hol_name": "assign_Cons_def",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
   "lean_name": "assignCons",

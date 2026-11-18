@@ -12,6 +12,32 @@ open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Backend.DataToWord
 
 private def conf : Config := ⟨1, 2, 3, 16, false, false, false, false, false, false, .simple⟩
 
+/-- The XOR layout uses the HOL-captured `SmallLsr` expression for its
+length. See `SmallLsr_zero_eval` and `SmallLsr_one_eval` in the assignment
+root probe. -/
+private def xorExpected (cfg : Config) (lengthExp : WordLangExpHOL (BitVec 32)) :
+    WordLangProgHOL (BitVec 32) :=
+  wordListSeq [
+    .assign 1 (realAddr cfg (adjustVar 1)),
+    .assign 3 (realAddr cfg (adjustVar 2)),
+    .assign 5 lengthExp,
+    .assign 1 (.op .add [.var 1, .const 4]),
+    .assign 3 (.op .add [.var 3, .const 4]),
+    .mustTerminate (.call (some ([adjustVar 3], adjustSets (.ln : NumSet), .skip, 4, 9))
+      (some xorLoopLocation) [1, 3, 5] none)]
+
+example : compileControl? (width := 32) { conf with lenSize := 32 } 4 9
+    (.assign 3 (.memOp .xorByte) [1, 2] none) =
+    some (xorExpected { conf with lenSize := 32 } (.load (.var 3)), 10) := by rfl
+
+example : compileControl? (width := 32) { conf with lenSize := 33 } 4 9
+    (.assign 3 (.memOp .xorByte) [1, 2] none) =
+    some (xorExpected { conf with lenSize := 33 } (.load (.var 3)), 10) := by rfl
+
+example : compileControl? (width := 32) { conf with lenSize := 31 } 4 9
+    (.assign 3 (.memOp .xorByte) [1, 2] none) =
+    some (xorExpected { conf with lenSize := 31 } (.shift .lsr (.load (.var 3)) (.const 1)), 10) := by rfl
+
 /-- The HOL-observed two-word integer-to-Word64 conversion program. -/
 private def expectedFromIntSmall {width : Nat} [NeZero width] (cfg : Config)
     (header : BitVec width) (addressShift lengthShift bytes : Nat) : WordLangProgHOL (BitVec width) :=

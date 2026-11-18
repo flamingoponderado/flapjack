@@ -44,3 +44,7 @@ val _ = emit "assign_RefByte_def_typed" data_to_wordTheory.assign_RefByte_def;
 val _ = emit "assign_ConfigGC_def_typed" data_to_wordTheory.assign_ConfigGC_def;
 val _ = emit "assign_Cons_def_typed" data_to_wordTheory.assign_Cons_def;
 val _ = emit "assign_MutCons_def_typed" data_to_wordTheory.assign_MutCons_def;
+val _ = emit "SmallLsr_def_typed" data_to_wordTheory.SmallLsr_def;
+val _ = emit "assign_XorByte_def_typed" data_to_wordTheory.assign_XorByte_def;
+val _ = emit "SmallLsr_zero_eval" (EVAL ``data_to_word$SmallLsr (wordLang$Load (wordLang$Var 3)) 0 : 32 wordLang$exp``);
+val _ = emit "SmallLsr_one_eval" (EVAL ``data_to_word$SmallLsr (wordLang$Load (wordLang$Var 3)) 1 : 32 wordLang$exp``);
