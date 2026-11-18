@@ -142,6 +142,26 @@ def installCode {width : Nat} [NeZero width] {C : Type} (_conf : C) : WordLangPr
     .set .bitmapBuffer (.var 2), .set .codeBuffer (.var 4),
     .install 3 4 1 2 (.ls (), .ln), .return 0 [3]]
 
+/-- Generate the word-wise XOR loop. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "XorLoop_code_def"
+  (words_as_type_indexed_bitvec)]
+def xorLoopCode {width : Nat} [NeZero width] : WordLangProgHOL (BitVec width) :=
+    let bytes := BitVec.ofNat width (width / 8)
+    .ite .lower 6 (.imm 2)
+      (.ite .equal 6 (.imm 0) (listSeq [.assign 1 (.const 2), .return 0 [1]])
+        (listSeq [.assign 5 (.load (.var 4)), .assign 3 (.load (.var 2)),
+          .assign 7 (.op .xor [.var 5, .var 3]), .store (.var 2) 7,
+          .assign 1 (.const 2), .return 0 [1]]))
+      (listSeq [.assign 5 (.load (.var 4)), .assign 3 (.load (.var 2)),
+        .assign 9 (.load (.op .add [.var 4, .const bytes])),
+        .assign 7 (.load (.op .add [.var 2, .const bytes])),
+        .assign 6 (.op .sub [.var 6, .const 2]),
+        .assign 5 (.op .xor [.var 5, .var 3]), .assign 9 (.op .xor [.var 9, .var 7]),
+        .store (.var 2) 5, .store (.op .add [.var 2, .const bytes]) 9,
+        .assign 4 (.op .add [.var 4, .const (2 * bytes)]),
+        .assign 2 (.op .add [.var 2, .const (2 * bytes)]),
+        .call none (some xorLoopLocation) [0, 2, 4, 6] none])
+
 /-- Flapjack's partial stub lookup. It supplies only the listed stubs and
 returns `none` for all others; the complete HOL `stubs` list, including
 bignum code, remains unported. -/
@@ -169,21 +189,7 @@ def compileStub? {width : Nat} [NeZero width] (location : Nat) : Option (Nat × 
   else if location = byteCopyAddLocation then some (5, byteCopyLoop true)
   else if location = byteCopySubLocation then some (5, byteCopyLoop false)
   else if location = xorLoopLocation then
-    let bytes := BitVec.ofNat width (width / 8)
-    some (4, .ite .lower 6 (.imm 2)
-      (.ite .equal 6 (.imm 0) (listSeq [.assign 1 (.const 2), .return 0 [1]])
-        (listSeq [.assign 5 (.load (.var 4)), .assign 3 (.load (.var 2)),
-          .assign 7 (.op .xor [.var 5, .var 3]), .store (.var 2) 7,
-          .assign 1 (.const 2), .return 0 [1]]))
-      (listSeq [.assign 5 (.load (.var 4)), .assign 3 (.load (.var 2)),
-        .assign 9 (.load (.op .add [.var 4, .const bytes])),
-        .assign 7 (.load (.op .add [.var 2, .const bytes])),
-        .assign 6 (.op .sub [.var 6, .const 2]),
-        .assign 5 (.op .xor [.var 5, .var 3]), .assign 9 (.op .xor [.var 9, .var 7]),
-        .store (.var 2) 5, .store (.op .add [.var 2, .const bytes]) 9,
-        .assign 4 (.op .add [.var 4, .const (2 * bytes)]),
-        .assign 2 (.op .add [.var 2, .const (2 * bytes)]),
-        .call none (some xorLoopLocation) [0, 2, 4, 6] none]))
+    some (4, xorLoopCode)
   else if location = installLocation then
     some (3, installCode ())
   else if location = compare1Location then
