@@ -1246,6 +1246,101 @@ def assignFpTop {width : Nat} [NeZero width] (operation : FpTop) (conf : Config)
   if !conf.hasFpOps || !conf.hasFpTern then (giveUp, l)
   else (fpResult conf dest [first, second, third] (fpTopInst operation) 0, l)
 
+/-- Common emitted sequence for integer addition and subtraction. -/
+private def assignAddSub {width : Nat} [NeZero width] (subtract : Bool) (secn l dest : Nat)
+    (names : Option NumSet) (first second : Nat) : WordLangProgHOL (BitVec width) × Nat :=
+  let cutsets := adjustSets (names.getD .ln)
+  let instr := if subtract then WordLangArith.subOverflow 1 (adjustVar first) (adjustVar second) 3
+    else WordLangArith.addOverflow 1 (adjustVar first) (adjustVar second) 3
+  let loc := if subtract then subLocation else addLocation
+  (wordListSeq [
+    .inst (.arith instr),
+    .assign 3 (.op .or [.var 3, .var (adjustVar first), .var (adjustVar second)]),
+    .ite .test 3 (.imm 1) .skip
+      (.mustTerminate (.call (some ([1], cutsets, .skip, secn, l))
+        (some loc) [adjustVar first, adjustVar second] none)),
+    .move 2 [(adjustVar dest, 1)]], l + 1)
+
+/-- Compile integer addition with a bignum fallback. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "assign_Add_def"
+  (words_as_type_indexed_bitvec)]
+def assignAdd {width : Nat} [NeZero width] (_conf : Config) (secn l dest : Nat)
+    (names : Option NumSet) (first second : Nat) : WordLangProgHOL (BitVec width) × Nat :=
+  assignAddSub false secn l dest names first second
+
+/-- Compile integer subtraction with a bignum fallback. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "assign_Sub_def"
+  (words_as_type_indexed_bitvec)]
+def assignSub {width : Nat} [NeZero width] (_conf : Config) (secn l dest : Nat)
+    (names : Option NumSet) (first second : Nat) : WordLangProgHOL (BitVec width) × Nat :=
+  assignAddSub true secn l dest names first second
+
+/-- Compile integer multiplication with a bignum fallback. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "assign_Mult_def"
+  (words_as_type_indexed_bitvec)]
+def assignMult {width : Nat} [NeZero width] (_conf : Config) (secn l dest : Nat)
+    (names : Option NumSet) (first second : Nat) : WordLangProgHOL (BitVec width) × Nat :=
+  let cutsets := adjustSets (names.getD .ln)
+  (wordListSeq [
+    .assign 1 (shiftVar .lsr (adjustVar first) 1),
+    .inst (.arith (.longMul 3 1 1 (adjustVar second))),
+    .assign 3 (.op .or [.var 3, .op .and [.const 1, .op .or [.var (adjustVar first), .var (adjustVar second)]]]),
+    .assign 1 (shiftVar .lsr 1 1),
+    .ite .equal 3 (.imm 0) .skip (.mustTerminate
+      (.call (some ([1], cutsets, .skip, secn, l)) (some mulLocation) [adjustVar first, adjustVar second] none)),
+    .move 2 [(adjustVar dest, 1)]], l + 1)
+
+/-- Compile integer division, selecting native, long-division or runtime code. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "assign_Div_def"
+  (words_as_type_indexed_bitvec)]
+def assignDiv {width : Nat} [NeZero width] (conf : Config) (secn l dest : Nat)
+    (names : Option NumSet) (first second : Nat) : WordLangProgHOL (BitVec width) × Nat :=
+  let cutsets := adjustSets (names.getD .ln)
+  let fast := if conf.hasDiv then wordListSeq [
+      .inst (.arith (.div 1 (adjustVar first) (adjustVar second))),
+      .assign (adjustVar dest) (shiftVar .lsl 1 2)]
+    else if conf.hasLongdiv then wordListSeq [
+      .assign 1 (.const 0), .inst (.arith (.longDiv 1 3 1 (adjustVar first) (adjustVar second))),
+      .assign (adjustVar dest) (shiftVar .lsl 1 2)]
+    else wordListSeq [
+      .assign 1 (.const 0),
+      .mustTerminate (.call (some ([1], cutsets, .skip, secn, l + 1))
+        (some longDivLocation) [1, adjustVar first, adjustVar second] none),
+      .assign (adjustVar dest) (shiftVar .lsl 1 2)]
+  (wordListSeq [
+    .assign 1 (.op .or [.var (adjustVar first), .var (adjustVar second)]),
+    .assign 1 (.op .or [.var 1, shiftVar .lsr 1 (width - 1)]),
+    .ite .test 1 (.imm 1) fast (wordListSeq [
+      .mustTerminate (.call (some ([1], cutsets, .skip, secn, l))
+        (some divLocation) [adjustVar first, adjustVar second] none),
+      .move 2 [(adjustVar dest, 1)]])], l + 2)
+
+/-- Compile integer remainder, selecting native, long-division or runtime code. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "assign_Mod_def"
+  (words_as_type_indexed_bitvec)]
+def assignMod {width : Nat} [NeZero width] (conf : Config) (secn l dest : Nat)
+    (names : Option NumSet) (first second : Nat) : WordLangProgHOL (BitVec width) × Nat :=
+  let cutsets := adjustSets (names.getD .ln)
+  let fast := if conf.hasDiv then wordListSeq [
+      .inst (.arith (.div 1 (adjustVar first) (adjustVar second))),
+      .inst (.arith (.longMul 3 1 1 (adjustVar second))),
+      .assign (adjustVar dest) (.op .sub [.var (adjustVar first), .var 1])]
+    else if conf.hasLongdiv then wordListSeq [
+      .assign 1 (.const 0), .inst (.arith (.longDiv 1 3 1 (adjustVar first) (adjustVar second))),
+      .move 2 [(adjustVar dest, 3)]]
+    else wordListSeq [
+      .assign 1 (.const 0),
+      .mustTerminate (.call (some ([1], cutsets, .skip, secn, l + 1))
+        (some longDivLocation) [1, adjustVar first, adjustVar second] none),
+      .get (adjustVar dest) (.temp 28)]
+  (wordListSeq [
+    .assign 1 (.op .or [.var (adjustVar first), .var (adjustVar second)]),
+    .assign 1 (.op .or [.var 1, shiftVar .lsr 1 (width - 1)]),
+    .ite .test 1 (.imm 1) fast (wordListSeq [
+      .mustTerminate (.call (some ([1], cutsets, .skip, secn, l))
+        (some modLocation) [adjustVar first, adjustVar second] none),
+      .move 2 [(adjustVar dest, 1)]])], l + 2)
+
 /-- Total assignment dispatch used by the executable traversal. Its full
     source-level correspondence with HOL's assignment dispatcher is pending
     review of all operation cases. -/
@@ -1290,74 +1385,12 @@ def compileAssign {width : Nat} [NeZero width] (conf : Config) (secn l dest : Na
       (arg2 args (assignLess conf secn l dest names) (.skip, l))
   | (.intOp .lessEq), args, names =>
       (arg2 args (assignLessEq conf secn l dest names) (.skip, l))
-  | (.intOp op), args, names =>
-      match op, args with
-      | .add, [x, y] | .sub, [x, y] =>
-          let cutsets := adjustSets (names.getD .ln)
-          let (instr, loc) := match op with
-            | .add => (WordLangArith.addOverflow 1 (adjustVar x) (adjustVar y) 3, addLocation)
-            | _ => (WordLangArith.subOverflow 1 (adjustVar x) (adjustVar y) 3, subLocation)
-          (wordListSeq [
-            .inst (.arith instr),
-            .assign 3 (.op .or [.var 3, .var (adjustVar x), .var (adjustVar y)]),
-            .ite .test 3 (.imm 1) .skip
-              (.mustTerminate (.call (some ([1], cutsets, .skip, secn, l))
-                (some loc) [adjustVar x, adjustVar y] none)),
-            .move 2 [(adjustVar dest, 1)]], l + 1)
-      | .add, _ | .sub, _ => (.skip, l)
-      | .mult, [x, y] =>
-          let cutsets := adjustSets (names.getD .ln)
-          (wordListSeq [
-            .assign 1 (shiftVar .lsr (adjustVar x) 1),
-            .inst (.arith (.longMul 3 1 1 (adjustVar y))),
-            .assign 3 (.op .or [.var 3, .op .and [.const 1, .op .or [.var (adjustVar x), .var (adjustVar y)]]]),
-            .assign 1 (shiftVar .lsr 1 1),
-            .ite .equal 3 (.imm 0) .skip (.mustTerminate
-              (.call (some ([1], cutsets, .skip, secn, l)) (some mulLocation) [adjustVar x, adjustVar y] none)),
-            .move 2 [(adjustVar dest, 1)]], l + 1)
-      | .div, [x, y] =>
-          let cutsets := adjustSets (names.getD .ln)
-          let fast := if conf.hasDiv then wordListSeq [
-              .inst (.arith (.div 1 (adjustVar x) (adjustVar y))),
-              .assign (adjustVar dest) (shiftVar .lsl 1 2)]
-            else if conf.hasLongdiv then wordListSeq [
-              .assign 1 (.const 0), .inst (.arith (.longDiv 1 3 1 (adjustVar x) (adjustVar y))),
-              .assign (adjustVar dest) (shiftVar .lsl 1 2)]
-            else wordListSeq [
-              .assign 1 (.const 0),
-              .mustTerminate (.call (some ([1], cutsets, .skip, secn, l + 1))
-                (some longDivLocation) [1, adjustVar x, adjustVar y] none),
-              .assign (adjustVar dest) (shiftVar .lsl 1 2)]
-          (wordListSeq [
-            .assign 1 (.op .or [.var (adjustVar x), .var (adjustVar y)]),
-            .assign 1 (.op .or [.var 1, shiftVar .lsr 1 (width - 1)]),
-            .ite .test 1 (.imm 1) fast (wordListSeq [
-              .mustTerminate (.call (some ([1], cutsets, .skip, secn, l))
-                (some divLocation) [adjustVar x, adjustVar y] none),
-              .move 2 [(adjustVar dest, 1)]])], l + 2)
-      | .mod, [x, y] =>
-          let cutsets := adjustSets (names.getD .ln)
-          let fast := if conf.hasDiv then wordListSeq [
-              .inst (.arith (.div 1 (adjustVar x) (adjustVar y))),
-              .inst (.arith (.longMul 3 1 1 (adjustVar y))),
-              .assign (adjustVar dest) (.op .sub [.var (adjustVar x), .var 1])]
-            else if conf.hasLongdiv then wordListSeq [
-              .assign 1 (.const 0), .inst (.arith (.longDiv 1 3 1 (adjustVar x) (adjustVar y))),
-              .move 2 [(adjustVar dest, 3)]]
-            else wordListSeq [
-              .assign 1 (.const 0),
-              .mustTerminate (.call (some ([1], cutsets, .skip, secn, l + 1))
-                (some longDivLocation) [1, adjustVar x, adjustVar y] none),
-              .get (adjustVar dest) (.temp 28)]
-          (wordListSeq [
-            .assign 1 (.op .or [.var (adjustVar x), .var (adjustVar y)]),
-            .assign 1 (.op .or [.var 1, shiftVar .lsr 1 (width - 1)]),
-            .ite .test 1 (.imm 1) fast (wordListSeq [
-              .mustTerminate (.call (some ([1], cutsets, .skip, secn, l))
-                (some modLocation) [adjustVar x, adjustVar y] none),
-              .move 2 [(adjustVar dest, 1)]])], l + 2)
-      | .mult, _ | .div, _ | .mod, _ => (.skip, l)
-      | _, _ => (.skip, l)
+  | (.intOp .add), args, names => arg2 args (assignAdd conf secn l dest names) (.skip, l)
+  | (.intOp .sub), args, names => arg2 args (assignSub conf secn l dest names) (.skip, l)
+  | (.intOp .mult), args, names => arg2 args (assignMult conf secn l dest names) (.skip, l)
+  | (.intOp .div), args, names => arg2 args (assignDiv conf secn l dest names) (.skip, l)
+  | (.intOp .mod), args, names => arg2 args (assignMod conf secn l dest names) (.skip, l)
+  | (.intOp _), _, _ => (.skip, l)
   | (.wordOp (.wordTest _ test)), args, _ =>
       arg2 args (assignWordTest l dest test) (.skip, l)
   | (.wordOp (.fpCmp comparison)), args, names =>
