@@ -55,3 +55,7 @@ val _ = emit "assign_FFI_def_typed" data_to_wordTheory.assign_FFI_def;
 val _ = emit "assign_WordTest_def_typed" data_to_wordTheory.assign_WordTest_def;
 val _ = emit "assign_WordOpW8_def_typed" data_to_wordTheory.assign_WordOpW8_def;
 val _ = emit "assign_WordShiftW8_def_typed" data_to_wordTheory.assign_WordShiftW8_def;
+val _ = emit "assign_FP_cmp_def_typed" data_to_wordTheory.assign_FP_cmp_def;
+val _ = emit "assign_FP_bop_def_typed" data_to_wordTheory.assign_FP_bop_def;
+val _ = emit "assign_FP_uop_def_typed" data_to_wordTheory.assign_FP_uop_def;
+val _ = emit "assign_FP_top_def_typed" data_to_wordTheory.assign_FP_top_def;

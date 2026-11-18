@@ -1199,6 +1199,53 @@ def assignWordShiftW8 {width : Nat} [NeZero width] (sh : Shift) (n : Nat) (_conf
           shiftN .lsr (shiftVar .lsl src ((width - 2) - n)) (width - 10)]
   (.assign (adjustVar dest) value, l)
 
+/-- Compile a floating-point comparison. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "assign_FP_cmp_def"
+  (words_as_type_indexed_bitvec)]
+def assignFpCmp {width : Nat} [NeZero width] (comparison : FpCmp) (conf : Config)
+    (_secn l dest : Nat) (_names : Option NumSet) (left right : Nat) : WordLangProgHOL (BitVec width) × Nat :=
+  if !conf.hasFpOps then (giveUp, l)
+  else
+    let bytes := (wordSemBytesInWord : BitVec width)
+    let finish : List (WordLangProgHOL (BitVec width)) := [
+      .inst (.fp (fpCmpInst comparison)),
+      .assign (adjustVar dest) (.op .add [shiftVar .lsl 3 4, .const 2])]
+    if width = 64 then
+      (wordListSeq ([
+        .assign 3 (.load (.op .add [realAddr conf (adjustVar left), .const bytes])),
+        .assign 5 (.load (.op .add [realAddr conf (adjustVar right), .const bytes])),
+        .inst (.fp (.fpMovFromReg 0 3 3)), .inst (.fp (.fpMovFromReg 1 5 5))] ++ finish), l)
+    else
+      (wordListSeq ([
+        .assign 15 (realAddr conf (adjustVar left)), .assign 17 (realAddr conf (adjustVar right)),
+        .assign 11 (.load (.op .add [.var 15, .const bytes])),
+        .assign 13 (.load (.op .add [.var 15, .const (2 * bytes)])),
+        .assign 21 (.load (.op .add [.var 17, .const bytes])),
+        .assign 23 (.load (.op .add [.var 17, .const (2 * bytes)])),
+        .inst (.fp (.fpMovFromReg 0 13 11)), .inst (.fp (.fpMovFromReg 1 23 21))] ++ finish), l)
+
+/-- Compile a floating-point binary operation and allocate its result. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "assign_FP_bop_def"
+  (words_as_type_indexed_bitvec)]
+def assignFpBop {width : Nat} [NeZero width] (operation : FpBop) (conf : Config)
+    (_secn l dest : Nat) (_names : Option NumSet) (left right : Nat) : WordLangProgHOL (BitVec width) × Nat :=
+  if !conf.hasFpOps then (giveUp, l) else (fpResult conf dest [left, right] (fpBopInst operation) 0, l)
+
+/-- Compile a floating-point unary operation and allocate its result. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "assign_FP_uop_def"
+  (words_as_type_indexed_bitvec)]
+def assignFpUop {width : Nat} [NeZero width] (operation : FpUop) (conf : Config)
+    (_secn l dest : Nat) (_names : Option NumSet) (source : Nat) : WordLangProgHOL (BitVec width) × Nat :=
+  if !conf.hasFpOps then (giveUp, l) else (fpResult conf dest [source] (fpUopInst operation) 1, l)
+
+/-- Compile a floating-point ternary operation and allocate its result. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "assign_FP_top_def"
+  (words_as_type_indexed_bitvec)]
+def assignFpTop {width : Nat} [NeZero width] (operation : FpTop) (conf : Config)
+    (_secn l dest : Nat) (_names : Option NumSet) (first second third : Nat) : WordLangProgHOL (BitVec width) × Nat :=
+  if !conf.hasFpOps || !conf.hasFpTern then (giveUp, l)
+  else (fpResult conf dest [first, second, third] (fpTopInst operation) 0, l)
+
 /-- Total assignment dispatch used by the executable traversal. Its full
     source-level correspondence with HOL's assignment dispatcher is pending
     review of all operation cases. -/
@@ -1313,44 +1360,14 @@ def compileAssign {width : Nat} [NeZero width] (conf : Config) (secn l dest : Na
       | _, _ => (.skip, l)
   | (.wordOp (.wordTest _ test)), args, _ =>
       arg2 args (assignWordTest l dest test) (.skip, l)
-  | (.wordOp (.fpCmp comparison)), args, _ =>
-      match args with
-      | [left, right] =>
-          if !conf.hasFpOps then (giveUp, l)
-          else
-            let bytes := (wordSemBytesInWord : BitVec width)
-            let finish : List (WordLangProgHOL (BitVec width)) := [
-              .inst (.fp (fpCmpInst comparison)),
-              .assign (adjustVar dest) (.op .add [shiftVar .lsl 3 4, .const 2])]
-            if width = 64 then
-              (wordListSeq ([
-                .assign 3 (.load (.op .add [realAddr conf (adjustVar left), .const bytes])),
-                .assign 5 (.load (.op .add [realAddr conf (adjustVar right), .const bytes])),
-                .inst (.fp (.fpMovFromReg 0 3 3)), .inst (.fp (.fpMovFromReg 1 5 5))] ++ finish), l)
-            else
-              (wordListSeq ([
-                .assign 15 (realAddr conf (adjustVar left)), .assign 17 (realAddr conf (adjustVar right)),
-                .assign 11 (.load (.op .add [.var 15, .const bytes])),
-                .assign 13 (.load (.op .add [.var 15, .const (2 * bytes)])),
-                .assign 21 (.load (.op .add [.var 17, .const bytes])),
-                .assign 23 (.load (.op .add [.var 17, .const (2 * bytes)])),
-                .inst (.fp (.fpMovFromReg 0 13 11)), .inst (.fp (.fpMovFromReg 1 23 21))] ++ finish), l)
-      | _ => (.skip, l)
-  | (.wordOp (.fpBop operation)), args, _ =>
-      match args with
-      | [left, right] => if !conf.hasFpOps then (giveUp, l)
-          else (fpResult conf dest [left, right] (fpBopInst operation) 0, l)
-      | _ => (.skip, l)
-  | (.wordOp (.fpUop operation)), args, _ =>
-      match args with
-      | [source] => if !conf.hasFpOps then (giveUp, l)
-          else (fpResult conf dest [source] (fpUopInst operation) 1, l)
-      | _ => (.skip, l)
-  | (.wordOp (.fpTop operation)), args, _ =>
-      match args with
-      | [first, second, third] => if !conf.hasFpOps || !conf.hasFpTern then (giveUp, l)
-          else (fpResult conf dest [first, second, third] (fpTopInst operation) 0, l)
-      | _ => (.skip, l)
+  | (.wordOp (.fpCmp comparison)), args, names =>
+      arg2 args (assignFpCmp comparison conf secn l dest names) (.skip, l)
+  | (.wordOp (.fpBop operation)), args, names =>
+      arg2 args (assignFpBop operation conf secn l dest names) (.skip, l)
+  | (.wordOp (.fpUop operation)), args, names =>
+      arg1 args (assignFpUop operation conf secn l dest names) (.skip, l)
+  | (.wordOp (.fpTop operation)), args, names =>
+      arg3 args (assignFpTop operation conf secn l dest names) (.skip, l)
   | (.wordOp (.wordOpw .w8 op)), args, names =>
       arg2 args (assignWordOpW8 op conf secn l dest names) (.skip, l)
   | (.wordOp (.wordOpw .w64 op)), args, names =>
