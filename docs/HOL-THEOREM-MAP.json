@@ -129986,6 +129986,15 @@
   },
 {
     "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "RefArray_code_def",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Stubs.lean",
+    "lean_name": "refArrayCode",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Independent comparison with RefArray_code_def_typed confirms all eight instructions, shifts, header, store and Replicate call with one positive-width word carrier. The production stub lookup executes this definition at the original location and arity; the fixed-stub oracle checks its generated body against HOL."
+  },
+{
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
     "hol_name": "StoreEach_def",
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
     "lean_name": "storeEach",

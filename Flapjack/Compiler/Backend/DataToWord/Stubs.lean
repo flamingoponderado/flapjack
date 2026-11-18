@@ -213,6 +213,24 @@ def refByteCode {width : Nat} [NeZero width] (conf : Config) : WordLangProgHOL (
       .assign 7 (.op .sub [.var 7, .const 4]),
       .call none (some replicateLocation) [0, 9, 4, 7, 3] none]
 
+/-- Construct a reference array in the heap. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "RefArray_code_def"
+  (words_as_type_indexed_bitvec)]
+def refArrayCode {width : Nat} [NeZero width] (conf : Config) : WordLangProgHOL (BitVec width) :=
+  let shiftN (op : Shift) (value : WordLangExpHOL (BitVec width)) (amount : Nat) :=
+    WordLangExpHOL.shift op value (.const (BitVec.ofNat width amount))
+  listSeq [
+    .assign 1 (shiftN .lsl (.op .add [shiftN .lsr (.var 2) 2, .const 1]) (wordShiftAmount width)),
+    .set .triggerGC (.op .sub [.lookup .triggerGC, .var 1]),
+    .assign 1 (.op .sub [.lookup .endOfHeap, .var 1]),
+    .set .endOfHeap (.var 1),
+    .assign 3 (.op .or [shiftN .lsl (.op .sub [.var 1, .lookup .currHeap])
+      (shiftLength conf - wordShiftAmount width), .const 1]),
+    .assign 5 (.op .or [shiftN .lsl (.var 2) (width - conf.lenSize - 2),
+      .const (makeHeader conf 2 0)]),
+    .store (.var 1) 5,
+    .call none (some replicateLocation) [0, 1, 4, 2, 3] none]
+
 /-- Extend the partial stub lookup with configuration-dependent cases. The
 unimplemented stubs still return `none`, so this is not HOL's complete list. -/
 def compileConfiguredStub? {width : Nat} [NeZero width] (conf : Config) (location : Nat) :
@@ -222,19 +240,7 @@ def compileConfiguredStub? {width : Nat} [NeZero width] (conf : Config) (locatio
   else if location = refByteLocation then
     some (4, refByteCode conf)
   else if location = refArrayLocation then
-    let shiftN (op : Shift) (value : WordLangExpHOL (BitVec width)) (amount : Nat) :=
-      WordLangExpHOL.shift op value (.const (BitVec.ofNat width amount))
-    some (3, listSeq [
-      .assign 1 (shiftN .lsl (.op .add [shiftN .lsr (.var 2) 2, .const 1]) (wordShiftAmount width)),
-      .set .triggerGC (.op .sub [.lookup .triggerGC, .var 1]),
-      .assign 1 (.op .sub [.lookup .endOfHeap, .var 1]),
-      .set .endOfHeap (.var 1),
-      .assign 3 (.op .or [shiftN .lsl (.op .sub [.var 1, .lookup .currHeap])
-        (shiftLength conf - wordShiftAmount width), .const 1]),
-      .assign 5 (.op .or [shiftN .lsl (.var 2) (width - conf.lenSize - 2),
-        .const (makeHeader conf 2 0)]),
-      .store (.var 1) 5,
-      .call none (some replicateLocation) [0, 1, 4, 2, 3] none])
+    some (3, refArrayCode conf)
   else if location = fromList1Location then
     some (6, fromList1Code conf)
   else if location = byteCopyLocation then

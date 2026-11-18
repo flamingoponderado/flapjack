@@ -100,6 +100,7 @@ val _ = emit "Make_ptr_bits_code_def_typed" "Make_ptr_bits_code_def";
 val _ = emit "FromList_code_def_typed" "FromList_code_def";
 val _ = emit "FromList1_code_def_typed" "FromList1_code_def";
 val _ = emit "RefByte_code_def_typed" "RefByte_code_def";
+val _ = emit "RefArray_code_def_typed" "RefArray_code_def";
 val _ = emit "StoreEach_def_typed" "StoreEach_def";
 val _ = emit "MemEqList_def_typed" "MemEqList_def";
 val _ = emit "LoadBignum_def_typed" "LoadBignum_def";
