@@ -143564,5 +143564,173 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, SORTS_SORT_key_val_compare_typed): source1252-1257. HOL's SORTS sort key_val_compare at 'a word_loc is holSorts (α := Nat × WordLocW width) Basis.Pure.MlList.sort wordSemKeyValCompare; sort is the tagged mllist sort and key_val_compare is the tagged wordSemKeyValCompare. No premise: HOL derives the statement from sort_SORTS and the comparator's transitivity and totality. Positive BitVec width with NeZero width is the only carrier translation; no finite-map carrier occurs."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "SUBSET_OF_INSERT",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/ScopedInjection.lean",
+    "lean_name": "subsetOfInsert",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (word_alloc_proof_local_typed_probe.out, SUBSET_OF_INSERT_typed): source27-30. `!s x. s subseteq x INSERT s`; the typed capture is `forall (s : alpha -> bool) (x : alpha). s subseteq x INSERT s`. HOL polymorphic sets are predicates on a generic Type carrier, and INSERT is `y = x \\/ s y`, so the Lean statement quantifies `forall y, s y -> y = x \\/ s y`. No premise, no word or finite-map carrier."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "LET_FORALL_ELIM'",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SupportLemmas.lean",
+    "lean_name": "letForallElim",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (word_alloc_proof_local_typed_probe.out, LET_FORALL_ELIM_prime_typed; the [local] theorem is not exported, so the statement is parsed from the pinned source): source51-54. `LET f v <=> $! (S ($==> o $= v) f)`; the typed capture is `LET (f : alpha -> bool) (v : alpha) <=> $! (S ($==> o $= v) f)`. HOL LET is the applied function, $! is forall over a Prop-valued function, $==> is implication and o composition, so the Lean statement is `f v <-> forall x, x = v -> f x` with f : alpha -> Prop. No premise, no carrier."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "INJ_ALL_DISTINCT_MAP",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/ScopedInjection.lean",
+    "lean_name": "injAllDistinctMap",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (word_alloc_proof_local_typed_probe.out, INJ_ALL_DISTINCT_MAP_typed): source79-84. `forall ls. ALL_DISTINCT (MAP f ls) ==> INJ f (set ls) UNIV`; the typed capture is `forall (ls : alpha list). ALL_DISTINCT (MAP (f : alpha -> beta) ls) ==> INJ f (set ls) UNIV(beta)`. ALL_DISTINCT is List.Nodup, set ls is list membership, and INJ f s UNIV is explicit local injectivity, so the Lean statement keeps one premise and concludes x = y for x, y in ls. Generic Type carriers, no word or map translation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "LASTN_LENGTH2",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SupportLemmas.lean",
+    "lean_name": "lastNLength2",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (word_alloc_proof_local_typed_probe.out, LASTN_LENGTH2_typed): source815-818. `LASTN (LENGTH xs +1) (x::xs) = x::xs`; the typed capture is `LASTN (LENGTH (xs : alpha list) + (1 : num)) ((x : alpha)::xs) = x::xs`. HOL rich_list LASTN (outside cakeml) is the untagged Flapjack.wordSemLastN rendering, LASTN n xs = REVERSE (TAKE n (REVERSE xs)). Binder order xs then x follows the capture first-occurrence order. No premise, no word or finite-map carrier."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "toAList_not_empty",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAReconcileListProps.lean",
+    "lean_name": "toAListNotEmpty",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (word_alloc_proof_local_typed_probe.out, toAList_not_empty_typed): source822-827. `domain t <> {} ==> toAList t <> []`; the typed capture is `(domain (t : alpha sptree$num_map) : num -> bool) <> (empty : num -> bool) ==> toAList t <> ([] :(num # alpha) list)`. domain is sptDomain, the empty set is the everywhere-false predicate, and toAList is the reviewed sptToAList; the proof uses the tagged sptMemToAList. Generic payload, no word carrier."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "PAIR_CASE_PAIR_MAP",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SupportLemmas.lean",
+    "lean_name": "pairCasePairMap",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (word_alloc_proof_local_typed_probe.out, PAIR_CASE_PAIR_MAP_typed): source830-833. `pair_CASE ((f ## g) e) h = case e of (x,y) => h (f x) (g y)`; the typed capture is `(pair_CASE (((f : delta -> beta) ## (g : epsilon -> gamma)) (e : delta # epsilon)) (h : beta -> gamma -> alpha) : alpha) = case e of (x,y) => h (f x) (g y)`. pair_CASE is Lean Prod.casesOn with the explicit motive, ## is Prod.map, so both sides are the same product case. No premise, generic Type carriers."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "MEM_ZIP_weak",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SupportLemmas.lean",
+    "lean_name": "memZipWeak",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (word_alloc_proof_local_typed_probe.out, MEM_ZIP_weak_typed): source853-860. `LENGTH l1 = LENGTH l2 /\\ MEM (x1,x2) (ZIP(l1,l2)) ==> MEM x1 l1 /\\ MEM x2 l2`; the typed capture keeps l1 : alpha list and l2 : beta list. HOL single conjunction is ONE premise in the same order; ZIP is List.zip and the conclusion is read through the untagged List.of_mem_zip. Generic Type carriers, no word or map translation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "apply_colour_exp_I",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/ColourOccurrences.lean",
+    "lean_name": "applyColourExpI",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (word_alloc_proof_local_typed_probe.out, apply_colour_exp_I_typed): source3479-3488. `apply_colour_exp I exp = exp`; the typed capture is `apply_colour_exp (I : num -> num) (exp : alpha exp) = exp`. HOL I is Lean id and apply_colour_exp is the tagged applyColourExp; the capture alpha is the HOL type-indexed word, translated to the positive BitVec width carrier with NeZero width. No premise, no finite-map carrier."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "get_var_ignore",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAGetSetVars.lean",
+    "lean_name": "getVarIgnore",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (word_alloc_proof_local_typed_probe.out, get_var_ignore_typed): source5215-5226. `forall ls a. get_var x cst = SOME y /\\ ~MEM x ls /\\ LENGTH ls = LENGTH a ==> get_var x (set_vars ls a cst) = SOME y`; the capture shows ls : num list, a : alpha word_loc list, cst : (alpha,beta,gamma) state, y : alpha word_loc. HOL three-way conjunction is ONE premise in the same order; get_var/set_vars are the tagged WordSem accessors over the faithful WordSemStateFiniteExact carrier (fpRegs/store finite maps; locals stays the Spt tree map and is not named), and word_loc is WordLocW width over BitVec width. Binder order: free x, cst, y, then the forall-bound ls, a."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "PAIR_ZIP_MEM",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SupportLemmas.lean",
+    "lean_name": "pairZipMem",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (word_alloc_proof_local_typed_probe.out, PAIR_ZIP_MEM_typed): source6212-6219. `LENGTH c = LENGTH d /\\ MEM (a,b) (ZIP (c,d)) ==> MEM a c /\\ MEM b d`; the typed capture keeps c : alpha list and d : beta list. HOL single conjunction is ONE premise; the script states the same fact as MEM_ZIP_weak with different names, and the Lean declaration keeps that separate statement. Generic Type carriers."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ALOOKUP_ZIP_MEM",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SupportLemmas.lean",
+    "lean_name": "alookupZipMem",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (word_alloc_proof_local_typed_probe.out, ALOOKUP_ZIP_MEM_typed): source6222-6230. `LENGTH a = LENGTH b /\\ ALOOKUP (ZIP (a,b)) x = SOME y ==> MEM x a /\\ MEM y b`; the typed capture keeps a : alpha list, b : beta list, x : alpha, y : beta. HOL single conjunction is ONE premise; ALOOKUP is holAlookup, and a successful result is a list member through the private Flapjack helper mem_of_holAlookup (HOL uses ALOOKUP_MEM). DecidableEq alpha supplies lawful classical equality for the association-list lookup, not a key restriction. Generic Type carriers."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ALOOKUP_ALL_DISTINCT_REMAP",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SupportLemmas.lean",
+    "lean_name": "alookupAllDistinctRemap",
+    "statement_status": "reviewed_total_function_inhabitants",
+    "total_function_inhabitants": [
+      "α"
+    ],
+    "reviewer": "typed HOL source comparison (word_alloc_proof_local_typed_probe.out, ALOOKUP_ALL_DISTINCT_REMAP_typed): source6232-6255. `forall ls x f y n. LENGTH ls = LENGTH x /\\ ALL_DISTINCT (MAP f ls) /\\ n < LENGTH ls /\\ ALOOKUP (ZIP (ls,x)) ls[n] = SOME y ==> ALOOKUP (ZIP (MAP f ls,x)) (f ls[n]) = SOME y`; the typed capture keeps ls : alpha list, x : beta list, f : alpha -> gamma, y : beta, n : num. HOL four-way conjunction is ONE premise; HOL EL is the tagged holEl, and total_function_inhabitants records the Nonempty instance that renders HOL EL on out-of-bounds indices, which is HOL type inhabitance and nothing else, and DecidableEq alpha/gamma is lawful classical equality for ALOOKUP. No word or finite-map carrier."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "get_var_set_vars_notin",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAGetSetVars.lean",
+    "lean_name": "getVarSetVarsNotin",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (word_alloc_proof_local_typed_probe.out, get_var_set_vars_notin_typed): source6310-6319. `~MEM v ls /\\ LENGTH ls = LENGTH vs ==> get_var v (set_vars ls vs st) = get_var v st`; the capture keeps v : num, ls : num list, vs : alpha word_loc list, st : (alpha,beta,gamma) state. HOL conjunction is ONE premise; same tagged accessors and WordSemStateFiniteExact carrier as get_var_ignore, word_loc as WordLocW width. Binder order v, ls, vs, st follows the capture."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "get_vars_NOT_MEM",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAGetSetVars.lean",
+    "lean_name": "getVarsNotMem",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (word_alloc_proof_local_typed_probe.out, get_vars_NOT_MEM_typed): source6425-6430. `~MEM h xs ==> get_vars xs ((cs with locals := insert h h' ys)) = get_vars xs (cs with locals := ys)`; the capture keeps h : num, xs : num list, cs : (alpha,beta,gamma) state, h' : alpha word_loc, ys : alpha word_loc sptree. The record update is the Lean structure update over the reviewed sptInsert; locals is the sptree field, so it is not named under the finite-map qualifier. Binder order h, xs, cs, h', ys follows the capture."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "get_vars_eq_alist_insert",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAGetSetVars.lean",
+    "lean_name": "getVarsEqAlistInsert",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (word_alloc_proof_local_typed_probe.out, get_vars_eq_alist_insert_typed): source6432-6445. `forall regs l. ALL_DISTINCT regs /\\ LENGTH regs = LENGTH l /\\ (forall x. MEM x regs ==> lookup x st.locals = lookup x (alist_insert regs l rest)) ==> get_vars regs st = SOME l`; the capture keeps regs : num list, l : alpha word_loc list, st : (alpha,beta,gamma) state, rest : alpha word_loc sptree. HOL three-way conjunction is ONE premise; alist_insert is the reviewed sptAlistInsert, locals remains the sptree field. Binder order: free st, rest, then the forall-bound regs, l."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_reconcile_distinct_lemma",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAReconcileListProps.lean",
+    "lean_name": "ssaReconcileDistinctLemma",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (word_alloc_proof_local_typed_probe.out, ssa_reconcile_distinct_lemma_typed): source6459-6485. `forall f g ns. INJ f (domain ns) UNIV ==> ALL_DISTINCT (MAP FST (FILTER (fun (a,b). a <> b) (MAP (fun v. (f v, g v)) (MAP FST (toAList ns)))))`; the capture keeps f : num -> alpha, g : num -> alpha, ns : beta sptree. INJ f (domain ns) UNIV is explicit local injectivity, FST/FILTER are Prod.fst/List.filter with the Boolean test written decide, toAList is the reviewed sptToAList. DecidableEq alpha supplies lawful classical equality for the pair test. Generic payloads, no word carrier."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_reconcile_filtered_in_dom",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAReconcileListProps.lean",
+    "lean_name": "ssaReconcileFilteredInDom",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (word_alloc_proof_local_typed_probe.out, ssa_reconcile_filtered_in_dom_typed): source6510-6523. `forall v. MEM v (FILTER (fun v. case lookup v cur_ssa of NONE => F | SOME cv => option_lookup tgt_ssa v <> cv) (MAP FST (toAList ns))) ==> v IN domain ns /\\ (exists cv. lookup v cur_ssa = SOME cv /\\ option_lookup tgt_ssa v <> cv /\\ THE (lookup v cur_ssa) = cv)`; the capture keeps cur_ssa/tgt_ssa : num sptree, ns : alpha sptree, v : num. The filter test is the same Boolean form as the sibling ssa_reconcile_filtered_all_distinct port; THE is the tagged holThe over Nat, which is inhabited without a binder. Binder order: free cur_ssa, tgt_ssa, ns, then the forall-bound v."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cut_inter_lemma",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSACutEnvsDomain.lean",
+    "lean_name": "ssaCutInterLemma",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (word_alloc_proof_local_typed_probe.out, ssa_cut_inter_lemma_typed): source7657-7664. `domain ssa' INTER domain (union x1 x2) = domain x1 UNION domain x2 ==> xx IN domain (union x1 x2) ==> xx IN domain ssa'`; the capture keeps ssa' : alpha sptree, x1/x2 : beta sptree, xx : num. HOL set intersection and union are the predicate conjunction and disjunction, domain is sptDomain, and union is the reviewed sptUnion; the proof rewrites with the tagged sptDomain_sptUnion. HOL two implications stay two hypotheses, in the same order."
   }
 ]
