@@ -10,6 +10,13 @@ public import Mathlib.Tactic
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
 open Flapjack Flapjack.Compiler.Backend.BackendProps
 
+/-- Taking a maximum with the bound preserves the other operand's comparison. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "option_le_OPTION_MAP2_MAX"]
+theorem optionLeOptionMap2Max (n m : Option Nat) :
+    (optionLe (Option.map₂ max n m) n ↔ optionLe m n) ∧
+    (optionLe (Option.map₂ max m n) n ↔ optionLe m n) := by
+  simp [optionLe_max, optionLe_refl]
+
 /-- Removing the top frame preserves its saved local-size bound. -/
 @[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "option_le_tl"
   (words_as_type_indexed_bitvec)]

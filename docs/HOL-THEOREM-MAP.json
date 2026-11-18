@@ -8230,6 +8230,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "option_le_OPTION_MAP2_MAX",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/StackSizeTail.lean",
+  "lean_name": "optionLeOptionMap2Max",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with the source and option_le_OPTION_MAP2_MAX_typed confirms both maximum-ordering conjuncts for arbitrary natural-number options. HOL Boolean equality is rendered as equivalence over the reviewed proposition-valued optionLe."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "size_of_heap_call_push_env",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/HeapCall.lean",
   "lean_name": "sizeOfHeapCallPushEnv",
