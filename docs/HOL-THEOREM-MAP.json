@@ -8230,6 +8230,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "size_of_heap_call_push_env",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/HeapCall.lean",
+  "lean_name": "sizeOfHeapCallPushEnv",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with the source and size_of_heap_call_push_env_typed confirms both arbitrary state type parameters, optional stack size, the original cut-environment premise and the complete heap-size equality. The proof follows the source's root-list simplification."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "LIST_REL_exists_witness",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/SizeSoundness.lean",
   "lean_name": "listRelExistsWitness",
