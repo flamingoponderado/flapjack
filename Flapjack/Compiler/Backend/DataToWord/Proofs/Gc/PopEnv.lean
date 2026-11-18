@@ -28,9 +28,9 @@ private theorem optionMapAdd (a b : Option Nat) :
     Option.map₂ (· + ·) a b = wordSemOptionAdd a b := by
   cases a <;> cases b <;> rfl
 
-/-- A restored local root occurs in the saved GC frame. This factors the
-membership reasoning in the HOL pop-environment proof. -/
-private theorem restored_join_mem {α β : Type} [Nonempty α]
+/-- A restored local root occurs in the saved GC frame. This Flapjack-specific
+helper factors membership reasoning shared by the HOL pop and jump proofs. -/
+theorem restored_join_mem {α β : Type} [Nonempty α]
     (env : Spt α) (nonGc gc : List (Nat × β)) (pair : α × β)
     (zero : ∀ p ∈ nonGc, p.1 = 0)
     (member : pair ∈ joinEnv env (sptToAList
