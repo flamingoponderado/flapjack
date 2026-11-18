@@ -40,49 +40,31 @@ theorem ocEqVarsWalkstar {α : Type} (s : HolFiniteMapExact Nat (Term α)) (t : 
     | direct hv absent => exact notFdomWalkstar s _ hw _ absent hv
     | @follow t v u t' hu eq oc ih =>
       apply walkstarVarLift s hw t u v hu
-      have same : walkstar s (.var u) = walkstar s t' := by
-        classical
-        simp only [walkstar, dif_pos hw]
-        simpa [eq] using normalizeWalkVar s hw u
-      rw [same]
-      exact ih
+      simp only [walkstar, dif_pos hw]
+      rw [normalizeWalkVar s hw u, eq]
+      simpa only [walkstar, dif_pos hw] using ih
   · have allTerms : ∀ t, vars (walkstar s t) v → Oc s t v := by
-      apply walkstarInd s hw
-      intro t ih hv
-      have we := walkstarEq s hw t
+      refine walkstarInd s hw (fun t => vars (walkstar s t) v → Oc s t v)
+        (fun t ih hv => ?_)
+      rw [walkstarEq s hw t] at hv
       have onwalk : Oc s (walk s t) v := by
         cases hit : walk s t with
         | var u =>
-          have eqv : v = u := by
-            rw [we, hit] at hv
-            exact hv
-          subst v
-          have absent : u ∉ s.domain := by
-            cases t with
-            | var x => exact vwalkToVar s hw x u hit
-            | pair a b => simp [walk] at hit
-            | const c => simp [walk] at hit
-          exact .direct rfl absent
+          rw [hit] at hv
+          cases hv
+          cases t with
+          | var x => exact .direct rfl (vwalkToVar s hw x v hit)
+          | pair a b => simp [walk] at hit
+          | const c => simp [walk] at hit
         | const c =>
-          have : False := by
-            rw [we, hit] at hv
-            exact hv
-          exact this.elim
+          rw [hit] at hv
+          exact hv.elim
         | pair a b =>
-          have hvars : vars (walkstar s a) v ∨ vars (walkstar s b) v := by
-            rw [we, hit] at hv
-            exact hv
-          rcases hvars with ha | hb
-          · have oa := ih.2 a b hit ha
-            exact ocSub s a (.pair a b) v (fun _ h => Or.inl h) oa
-          · have ob := ih.1 a b hit hb
-            exact ocSub s b (.pair a b) v (fun _ h => Or.inr h) ob
-      cases t with
-      | var u =>
-        apply Oc.follow (t := .var u) (u := u) rfl rfl
-        exact onwalk
-      | pair a b => exact onwalk
-      | const c => exact onwalk
+          rw [hit] at hv
+          rcases hv with ha | hb
+          · exact ocSub s a (.pair a b) v (fun _ h => Or.inl h) (ih.2 a b hit ha)
+          · exact ocSub s b (.pair a b) v (fun _ h => Or.inr h) (ih.1 a b hit hb)
+      cases t <;> first | exact .follow rfl rfl onwalk | exact onwalk
     exact allTerms t
 
 /-- The substitution survives the canonical finite-map codec roundtrip. -/
