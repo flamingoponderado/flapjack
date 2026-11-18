@@ -16,8 +16,7 @@ configuration and positive word width. This Flapjack-specific fact removes
 the option wrapper; it does not establish correspondence with HOL's stubs. -/
 theorem fixedStubs_succeeds {width : Nat} [NeZero width] (conf : Config) :
     ∃ stubs, fixedStubs? (width := width) conf = some stubs := by
-  cases h : encodeHeader (width := width) conf 0 2 <;>
-    simp [fixedStubs?, compileConfiguredStub?, compileStub?, h,
+  simp [fixedStubs?, compileConfiguredStub?, compileStub?,
       fromListLocation, fromList1Location, refByteLocation, refArrayLocation,
       replicateLocation, anyArithLocation, addLocation, subLocation, mulLocation,
       divLocation, modLocation, compare1Location, compareLocation, equal1Location,

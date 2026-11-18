@@ -425,6 +425,23 @@ def installDataStub {width : Nat} [NeZero width] (conf : Config) : WordLangProgH
       .assign 4 (.load (.op .add [.var 3, .const (2 * bytes)])),
       .call none (some installDataLocation) [0, 2, 4, 6] none])
 
+/-- Generate the entry point for list append. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "Append_code_def"
+  (words_as_type_indexed_bitvec)]
+def appendCode {width : Nat} [NeZero width] (conf : Config) : WordLangProgHOL (BitVec width) :=
+  match encodeHeader (width := width) conf 0 2 with
+  | none => .skip
+  | some header =>
+      let ptr := getLowerBits conf (.word (ptrBits conf 0 2))
+      .ite .test 4 (.imm 1) (.return 0 [2]) (listSeq [
+        .set (.temp 0) (.var 2), .set (.temp 1) (.var 4),
+        .assign 1 (.lookup .nextFree), .assign 3 (.const header),
+        .assign 5 (.op .sub [.lookup .triggerGC, .var 1]),
+        .assign 7 (.op .or [shiftN .lsl (.op .sub [.var 1, .lookup .currHeap])
+          (shiftLength conf - wordShiftAmount width), .const ptr]),
+        .set (.temp 2) (.var 7),
+        .call none (some appendMainLoopLocation) [0, 1, 4, 3, 5, 7] none])
+
 /-- Extend the partial stub lookup with configuration-dependent cases. The
 unimplemented stubs still return `none`, so this is not HOL's complete list. -/
 def compileConfiguredStub? {width : Nat} [NeZero width] (conf : Config) (location : Nat) :
@@ -452,18 +469,7 @@ def compileConfiguredStub? {width : Nat} [NeZero width] (conf : Config) (locatio
           .call none (some byteCopySubLocation) [0, 6, 2, 8, 1] none])
         (.call none (some byteCopyAddLocation) [0, 6, 2, 8, 1] none)])
   else if location = appendLocation then
-    match encodeHeader (width := width) conf 0 2 with
-    | none => some (3, .skip)
-    | some header =>
-        let ptr := getLowerBits conf (.word (ptrBits conf 0 2))
-        some (3, .ite .test 4 (.imm 1) (.return 0 [2]) (listSeq [
-          .set (.temp 0) (.var 2), .set (.temp 1) (.var 4),
-          .assign 1 (.lookup .nextFree), .assign 3 (.const header),
-          .assign 5 (.op .sub [.lookup .triggerGC, .var 1]),
-          .assign 7 (.op .or [shiftN .lsl (.op .sub [.var 1, .lookup .currHeap])
-            (shiftLength conf - wordShiftAmount width), .const ptr]),
-          .set (.temp 2) (.var 7),
-          .call none (some appendMainLoopLocation) [0, 1, 4, 3, 5, 7] none]))
+    some (3, appendCode conf)
   else if location = appendMainLoopLocation then
     let bytes := (wordSemBytesInWord : BitVec width)
     some (6, listSeq [
