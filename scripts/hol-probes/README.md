@@ -8,7 +8,7 @@ compiler definition and expansion, plus byte-copy, list, reference-array, and
 allocation, constructor, XOR, build, installation, constant-equality, FFI, and
 byte-word, floating-point, integer-arithmetic, assignment-dispatcher, and control
 compiler definitions, the complete stub table, the code relation, and constant
-and global, Boolean-negation and Boolean-test assignment correctness cases, with inferred types.
+and global, label, Boolean-negation and Boolean-test assignment correctness cases, with inferred types.
 It also evaluates zero and nonzero SmallLsr expressions for output parity. Regenerate
 with `HOL_PROBE_ONLY=data_to_word_assign_roots_probeScript.sml scripts/hol-probes/regenerate.sh`
 using the pinned CakeML and HOL revisions. This is source-review evidence,
