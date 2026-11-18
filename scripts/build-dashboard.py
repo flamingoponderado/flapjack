@@ -228,6 +228,117 @@ CAKEML_COMPILE_CORRECT = [
     ("Backend pass", "compiler/backend/proofs/lab_to_targetProofScript.sml", "compile_correct"),
 ]
 
+# --------------------------------------------------------------------------- #
+# CakeML compile_correct dependency DAG (richer constituent view)
+# --------------------------------------------------------------------------- #
+# Built from the real CakeML proof scripts (submodule `cakeml/`), so every node
+# is a genuine theorem and every edge is a genuine proof dependency.  Used only
+# by the dashboard (a dev aid); if the submodule is missing the view degrades to
+# the flat constituent list below.
+CAKE = ROOT / "cakeml"
+
+# Verified composition of the top-level theorem, read from
+# compiler/proofs/compilerProofScript.sml:
+#   compile_correct        = SPEC_ALL compile_correct_lemma
+#   compile_correct_lemma  = Q.ISPEC_THEN st mp_tac compile_correct_gen  (+ primSemEnv)
+#   compile_correct_gen    composes the front-end, type soundness and the backend
+#                          (backendProofTheory.compile_correct').
+CAKE_TOP_GLUE = [
+    {"t": "compile_correct",        "script": "compiler/proofs/compilerProofScript.sml",
+     "kind": "root",   "stage": "CakeML front-end", "group": "Top composition"},
+    {"t": "compile_correct_lemma",  "script": "compiler/proofs/compilerProofScript.sml",
+     "kind": "glue",   "stage": "CakeML front-end", "group": "Top composition"},
+    {"t": "compile_correct_gen",    "script": "compiler/proofs/compilerProofScript.sml",
+     "kind": "glue",   "stage": "CakeML front-end", "group": "Top composition"},
+    {"t": "prim_sem_env_eq",        "script": "compiler/scheme/proofs/scheme_to_machine_code_correctScript.sml",
+     "kind": "helper", "stage": "scheme", "group": "Top composition"},
+    {"t": "prim_type_sound_invariants", "script": "compiler/scheme/proofs/scheme_to_machine_code_correctScript.sml",
+     "kind": "helper", "stage": "scheme", "group": "Top composition"},
+]
+CAKE_FRONTEND = ["parse_prog_correct", "infertype_prog_correct", "compile_tap_compile"]
+CAKE_TYPESOUND = ["semantics_type_sound"]
+
+# The backend spine: the per-pass headline correctness theorem, in compilation
+# order (source -> flat -> clos -> bvl -> bvi -> data -> word -> stack -> lab ->
+# target).  Headlines are the real top theorem of each pass's proof script
+# (verified against the checked-out CakeML source), so e.g. data_to_word shows
+# its genuine `compile_correct` (still unported) rather than only the mapped
+# `data_compile_correct`.
+CAKE_SPINE = [
+    ("Backend · closure", "flat_to_clos", "compiler/backend/proofs/flat_to_closProofScript.sml", "compile_correct"),
+    ("Backend · closure", "clos_to_bvl", "compiler/backend/proofs/clos_to_bvlProofScript.sml", "compile_semantics"),
+    ("BVL → BVI", "bvl_to_bvi", "compiler/backend/proofs/bvl_to_bviProofScript.sml", "compile_prog_semantics"),
+    ("BVI optimizer", "bvi_let", "compiler/backend/proofs/bvi_letProofScript.sml", "compile_thm"),
+    ("BVI optimizer", "bvi_inline", "compiler/backend/proofs/bvi_inlineProofScript.sml", "compile_prog_semantics"),
+    ("BVI optimizer", "bvi_tailrec", "compiler/backend/proofs/bvi_tailrecProofScript.sml", "compile_prog_semantics"),
+    ("BVI optimizer", "bvi_tmc", "compiler/backend/proofs/bvi_tmcProofScript.sml", "compile_prog_semantics"),
+    ("BVI → Data", "bvi_to_data", "compiler/backend/proofs/bvi_to_dataProofScript.sml", "compile_correct"),
+    ("Data", "data_live", "compiler/backend/proofs/data_liveProofScript.sml", "compile_correct"),
+    ("Data", "data_simp", "compiler/backend/proofs/data_simpProofScript.sml", "simp_correct"),
+    ("Data", "data_space", "compiler/backend/proofs/data_spaceProofScript.sml", "compile_correct"),
+    ("Data → Word", "data_to_word", "compiler/backend/proofs/data_to_wordProofScript.sml", "compile_correct"),
+    ("Word", "word_to_word", "compiler/backend/proofs/word_to_wordProofScript.sml", "word_to_word_compile_semantics"),
+    ("Word", "word_alloc", "compiler/backend/proofs/word_allocProofScript.sml", "full_ssa_cc_trans_correct"),
+    ("Word", "word_copy", "compiler/backend/proofs/word_copyProofScript.sml", "copy_prop_correct"),
+    ("Word", "word_cse", "compiler/backend/proofs/word_cseProofScript.sml", "word_common_subexp_elim_correct"),
+    ("Word", "word_remove", "compiler/backend/proofs/word_removeProofScript.sml", "word_remove_correct"),
+    ("Word → Stack", "word_to_stack", "compiler/backend/proofs/word_to_stackProofScript.sml", "word_to_stack_compile_no_install"),
+    ("Stack → Lab", "stack_alloc", "compiler/backend/proofs/stack_allocProofScript.sml", "make_init_semantics"),
+    ("Stack → Lab", "stack_remove", "compiler/backend/proofs/stack_removeProofScript.sml", "stack_remove_call_args"),
+    ("Stack → Lab", "stack_to_lab", "compiler/backend/proofs/stack_to_labProofScript.sml", "stack_to_lab_compile_no_install"),
+    ("Lab → target", "lab_to_target", "compiler/backend/proofs/lab_to_targetProofScript.sml", "compile_correct"),
+]
+
+# Token words that are tactics / sort / boilerplate, never theorem dependencies.
+_CAKE_TAC = set(
+    """metis_tac fs srw_tac gen_tac strip_tac disch_then drule rw_tac Cases_on Cases qexists_tac
+    qmatch_goalsub_abbrev_tac qpat_x_assum unabbrev_all_tac rename1 sg THEN1 CONV_TAC simpCases simp
+    every_case_tac pairarg_tac rveq res_tac old_drule qspec_then mp_tac instPairs boolTheory std_ss
+    PULL_EXISTS FORALL_PROD EXISTS_PROD SKOLEM_THM EXTENSION domain_lookup lookup_map spt_eq eq_shape_map
+    QED Proof DEP_REWRITE_TAC impl_tac DISCH_THM CONJUNCTS SIMP_RULE REWRITE_RULE Q.INST Q.ISPEC""".split()
+)
+
+_proof_cache: dict[str, dict] = {}
+
+def _parse_hol_proof(path: Path) -> dict[str, dict]:
+    """Top-level Theorem/Triviality decls in a HOL proof script -> {name: {proof}}.
+
+    The proof body is the tactic text between `Proof` and `QED`; declarations with
+    an inline `Q.prove(...)` keep their whole segment (their dependencies are not
+    needed here — only the named spine theorems are parsed)."""
+    key = str(path)
+    if key in _proof_cache:
+        return _proof_cache[key]
+    decls: dict[str, dict] = {}
+    try:
+        text = path.read_text(encoding="utf-8")
+    except OSError:
+        _proof_cache[key] = decls
+        return decls
+    starts = [(m.start(), m.group(2)) for m in
+              re.finditer(r'(?m)^[ \t]*(Theorem|Triviality)\s+([A-Za-z0-9_]+)\s*[:=]', text)]
+    for i, (start, name) in enumerate(starts):
+        end = starts[i + 1][0] if i + 1 < len(starts) else len(text)
+        seg = text[start:end]
+        pm = re.search(r'\bProof\b(.*?)\bQED\b', seg, re.S)
+        decls[name] = {"proof": pm.group(1) if pm else seg}
+    _proof_cache[key] = decls
+    return decls
+
+def _direct_lemmas(headline: str, script_rel: str) -> list[str]:
+    """Theorems declared in the same pass script that `headline`'s proof cites."""
+    decls = _parse_hol_proof(CAKE / script_rel)
+    if headline not in decls:
+        return []
+    scope = set(decls)
+    out = set()
+    for tok in set(re.findall(r'[A-Za-z_][A-Za-z0-9_]*', decls[headline]["proof"])):
+        if tok == headline or tok in _CAKE_TAC or tok.endswith("_def"):
+            continue
+        if tok in scope:                       # a same-script top-level theorem ref
+            out.add(tok)
+    return sorted(out)
+
 
 def _git_rev(path: Path) -> str:
     try:
@@ -659,26 +770,64 @@ def build() -> dict:
             "links": links, "any_open": any_open,
         })
 
-    # Expand CakeML's compile_correct into the correctness theorems it composes.
-    cakeml_parts: list[dict] = []
-    for group, script, name in CAKEML_COMPILE_CORRECT:
-        base = script.rsplit("/", 1)[-1]
-        if base.endswith("ProofScript.sml"):
-            base = base[: -len("ProofScript.sml")]
-        cakeml_parts.append({
-            "group": group, "pass": base, "name": name, "script": script,
-            "status": pipe_status(script, name),
-            "lean_path": pipe_loc.get((script, name), ("", ""))[0],
-        })
+    # Expand CakeML's compile_correct into the correctness theorems it composes,
+    # as a dependency DAG built from the real proof scripts (see CAKE_* above).
+    def _mk(t, script, kind, stage, group):
+        return {"name": t, "script": script, "kind": kind, "stage": stage,
+                "group": group, "status": pipe_status(script, t),
+                "lean": pipe_loc.get((script, t), ("", ""))[0], "children": []}
+
+    root = _mk("compile_correct", "compiler/proofs/compilerProofScript.sml",
+               "root", "CakeML front-end", "Top composition")
+    lemma = _mk("compile_correct_lemma", "compiler/proofs/compilerProofScript.sml",
+                "glue", "CakeML front-end", "Top composition")
+    gen = _mk("compile_correct_gen", "compiler/proofs/compilerProofScript.sml",
+              "glue", "CakeML front-end", "Top composition")
+    helpers = [_mk(x, "compiler/scheme/proofs/scheme_to_machine_code_correctScript.sml",
+                   "helper", "scheme", "Top composition")
+               for x in ("prim_sem_env_eq", "prim_type_sound_invariants")]
+    fe_nodes = [_mk(x, "compiler/proofs/compilerProofScript.sml",
+                    "frontend", "CakeML front-end", "Front-end") for x in CAKE_FRONTEND]
+    ts_nodes = [_mk(x, "compiler/proofs/compilerProofScript.sml",
+                    "typesound", "CakeML front-end", "Type soundness") for x in CAKE_TYPESOUND]
+
+    # Backend spine (compile_correct'): the per-pass chain, each pass with the
+    # same-script theorems its headline proof directly cites.
+    spine = {"name": "compile_correct'",
+             "script": "compiler/backend/proofs/backendProofScript.sml",
+             "kind": "spine", "stage": "Backend", "group": "Backend · per-pass chain",
+             "status": "spine", "lean": "", "children": []}
+    for stage, passn, script, hdr in CAKE_SPINE:
+        pnode = _mk(hdr, script, "pass", stage, "Backend pass")
+        pnode["pass"] = passn
+        for lem in _direct_lemmas(hdr, script):
+            pnode["children"].append(_mk(lem, script, "lemma", stage, "Backend pass"))
+        spine["children"].append(pnode)
+
+    gen["children"] = fe_nodes + ts_nodes + [spine]
+    lemma["children"] = helpers + [gen]
+    root["children"] = [lemma]
+    cake_dag = root
+
+    def _walk(n):
+        yield n
+        for c in n["children"]:
+            yield from _walk(c)
+    all_nodes = list(_walk(cake_dag))
+    # Flat view (legacy table + counts); partsTree is the nested DAG render.
+    cakeml_parts = [{"group": p["group"], "pass": p.get("pass", p["kind"]), "name": p["name"],
+                     "script": p["script"], "status": p["status"], "lean_path": p["lean"]}
+                    for p in all_nodes]
     for ch in e2e_chains:
         if ch["label"] != "CakeML":
             continue
         for link in ch["links"]:
             if link["hol_name"] == "compile_correct":
-                n_ported = sum(1 for p in cakeml_parts if p["status"] == "ported")
                 link["parts"] = cakeml_parts
-                link["parts_ported"] = n_ported
+                link["parts_ported"] = sum(1 for p in cakeml_parts if p["status"] == "ported")
                 link["parts_total"] = len(cakeml_parts)
+                link["partsTree"] = cake_dag
+                link["partsSpineLen"] = len(spine["children"])
 
     # Headline correctness theorems: reviewed theorem-kind ports with a
     # correctness-statement name.  Join map status with the Lean keyword scan.
@@ -943,6 +1092,28 @@ footer{color:var(--muted);font-size:12px;padding:22px 20px;border-top:1px solid 
   letter-spacing:.3px;padding:3px 6px;border-bottom:1px solid var(--line)}
 .parts-t td{padding:3px 6px;border-bottom:1px solid var(--line);vertical-align:middle}
 .parts-t tr:last-child td{border-bottom:none}
+/* compile_correct dependency DAG */
+.dk-node{margin:2px 0}
+.dk-node>.dk-h{display:flex;align-items:center;gap:7px;flex-wrap:wrap;padding:2px 0}
+.dk-kids{margin-left:14px;padding-left:12px;border-left:1px solid var(--line)}
+.dk-dot{width:8px;height:8px;border-radius:50%;flex:none;background:#5b6476}
+.dk-dot.dot-p{background:var(--reviewed)}
+.dk-dot.dot-s{background:var(--accent2)}
+.dk-name{font-weight:600;color:var(--ink)}
+.dk-pass{font-size:10px;color:var(--accent);font-weight:600}
+.dk-stage{font-size:10.5px;color:var(--muted)}
+.dk-lean{font-size:10px;color:var(--muted)}
+.dk-node .mono{font-size:12px}
+.dk-spine{display:flex;flex-wrap:wrap;align-items:flex-start;gap:4px;margin:8px 0 4px}
+.dk-spine-lbl{width:100%;font-size:10.5px;color:var(--muted);margin-bottom:4px}
+.dk-arrow{color:var(--muted);align-self:center;padding:4px 0;font-size:14px}
+.dk-pcard{border:1px solid var(--line);border-radius:7px;padding:5px 8px;background:var(--panel);min-width:150px;max-width:200px;display:flex;flex-direction:column;gap:4px}
+.dk-pcard-h{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.dk-pcard .dk-name{font-size:11.5px}
+.dk-pcard .dk-stage{flex-basis:100%}
+.dk-lemmas{display:flex;flex-direction:column;gap:2px;border-top:1px solid var(--line);padding-top:4px}
+.dk-lem{display:flex;align-items:center;gap:6px;font-size:10.5px;color:var(--ink)}
+.dk-lem .mono{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
 .parts-t td.g{color:var(--muted);white-space:nowrap}
 </style>
 </head>
@@ -1060,9 +1231,7 @@ function e2eLinkHtml(e){
   const badge=ported?'<span class="badge ported">ported</span>':`<span class="badge not_ported">${esc((e.status||'other').replace('_',' ')||'other')}</span>`;
   const cases=e.n>1?` <span class="muted">(${e.n} cases)</span>`:'';
   const loc=e.lean_path?`<span class="mono sh">${esc(e.lean_path.replace(/^Flapjack\//,''))}</span> · `:'';
-  const parts = e.parts ? `<details class="parts"><summary><span class="idx ${ported?'':'open'}">${ported?'✓':'○'}</span> ${e.parts_ported} / ${e.parts_total} constituent theorems ported <span class="cnt">expand the ${e.parts_total} theorems that make up compile_correct</span></summary>
-      <div class="inner"><table class="parts-t"><thead><tr><th>Ported</th><th>Theorem (HOL side)</th><th>Pass / source</th><th>Group</th></tr></thead>
-      <tbody>${e.parts.map(p=>`<tr><td>${p.status==='ported'?'<span class="badge ported">ported</span>':'<span class="badge not_ported">not ported</span>'}</td><td class="mono sh">${esc(p.name)}</td><td class="mono sh">${esc(p.pass)}</td><td class="g">${esc(p.group)}</td></tr>`).join("")}</tbody></table></div></details>` : '';
+  const parts = e.partsTree ? renderDag(e.partsTree, e) : '';
   const idx = e.parts ? '' : `<div class="idx ${ported?'':'open'}">${ported?'✓':'○'}</div>`;
   return `<div class="step">${idx}<div class="body">
       <div class="nm">${esc(e.hol_name)}</div>
@@ -1078,8 +1247,48 @@ function e2eHtml(){
   }).join("");
   return `
     <h2>End-to-end correctness · CakeML AST → RISC-V <span class="hint">the CakeML compiler's source-to-machine chain, with its unported front-end broken down</span></h2>
-    <div class="note" style="border-left-color:var(--accent2)">The <b>CakeML</b> chain is the focus: its front-end theorem <span class="mono">compile_correct</span> (CakeML source → installed RISC-V machine code) is <b>not yet ported</b> — <b>expand it</b> to see the correctness theorems it composes: the front-end and type-soundness lemmas (all unported) and the per-pass backend chain (18 of 22 ported; the gaps are <span class="mono">bvi_let</span>, <span class="mono">data_live</span>, <span class="mono">data_simp</span>, <span class="mono">data_to_word</span>). The backend + RISC-V encoder it relies on are the <b>same</b> ones the <b>Pancake</b> chain below uses — and Pancake's front-end (<span class="mono">pan_to_target_compile_semantics</span>) is already ported, so that chain is fully green. Arrows between steps carry the compiled target program forward.</div>
+    <div class="note" style="border-left-color:var(--accent2)"><b>CakeML</b> <span class="mono">compile_correct</span> (source → installed RISC-V machine code) is <b>not yet ported</b>. <b>Expand it</b> to see the <b>dependency DAG</b> of the theorems it composes, built straight from the CakeML proof scripts: the top composition <span class="mono">compile_correct → compile_correct_lemma → compile_correct_gen</span> feeds the front-end (<span class="mono">parse</span>/<span class="mono">infertype</span>/<span class="mono">compile</span>), type soundness (<span class="mono">semantics_type_sound</span>) and the backend per-pass chain (<span class="mono">compile_correct'</span>, flat → clos → bvl → bvi → data → word → stack → lab → target, each pass's output feeding the next). Nodes are coloured by whether that <i>exact</i> theorem has a reviewed Lean port. Because the DAG uses the real theorems (not just the mapped ones), it exposes precise gaps — e.g. <span class="mono">data_to_word</span>'s own <span class="mono">compile_correct</span> is still open even though its <span class="mono">data_compile_correct</span> is ported. The backend + RISC-V encoder it relies on are the <b>same</b> ones the <b>Pancake</b> chain below uses — and Pancake's front-end (<span class="mono">pan_to_target_compile_semantics</span>) is already ported, so that chain is fully green.</div>
     <div class="e2e-grid">${cols}</div>`;
+}
+
+// compile_correct dependency DAG (built from the real CakeML proof scripts).
+function dkBadge(st){
+  if(st==='ported') return '<span class="badge ported">ported</span>';
+  if(st==='spine')  return '<span class="badge partial">backend chain</span>';
+  return `<span class="badge not_ported">${esc((st||'not_ported').replace(/_/g,' ')||'not ported')}</span>`;
+}
+function dkDot(n){
+  const st=n.status, cls = st==='ported'?'dot-p':st==='spine'?'dot-s':'dot-n';
+  const tip = st==='ported'?'reviewed port':st==='spine'?'backend composition chain':'not yet ported';
+  return `<span class="dk-dot ${cls}" title="${tip}"></span>`;
+}
+function dkLemmas(children){
+  return `<div class="dk-lemmas">${children.map(c=>`<div class="dk-lem">${dkDot(c)}<span class="mono sh">${esc(c.name)}</span>${dkBadge(c.status)}</div>`).join('')}</div>`;
+}
+function dkPassCard(p){
+  return `<div class="dk-pcard"><div class="dk-pcard-h">${dkDot(p)}<span class="dk-pass">${esc(p.pass||'')}</span><span class="dk-name mono">${esc(p.name)}</span>${dkBadge(p.status)}</div><div class="dk-stage">${esc(p.stage)}</div>${(p.children&&p.children.length)?dkLemmas(p.children):''}</div>`;
+}
+function dkSpine(passes){
+  const lbl='backend <span class="mono">compile_correct\u2019</span> \u2014 per-pass chain (each pass\u2019s output feeds the next)';
+  return `<div class="dk-spine"><div class="dk-spine-lbl">${lbl}</div>${passes.map((p,i)=>(i>0?'<div class="dk-arrow">\u2192</div>':'')+dkPassCard(p)).join('')}</div>`;
+}
+function dkNode(n){
+  if(n.kind==='spine') return dkSpine(n.children||[]);
+  const label = n.kind==='pass'
+    ? `<span class="dk-stage">${esc(n.stage)}</span> <span class="dk-name mono">${esc(n.name)}</span>`
+    : `<span class="dk-name mono">${esc(n.name)}</span>`;
+  const lean = n.lean?`<div class="dk-lean mono sh">${esc(n.lean.replace(/^Flapjack\//,''))}</div>`:'';
+  const kids = (n.children&&n.children.length)
+    ? `<div class="dk-kids">${n.children.map(c=>dkNode(c)).join('')}</div>` : '';
+  const pc = (n.kind==='pass'&&n.children&&n.children.length)?`<span class="muted">(${n.children.length} lemmas)</span>`:'';
+  return `<div class="dk-node dk-${esc(n.kind)}" data-q="${esc((n.name+' '+n.stage+' '+n.group).toLowerCase())}"><div class="dk-h">${dkDot(n)}${label}${dkBadge(n.status)}${pc}${lean}</div>${kids}</div>`;
+}
+function renderDag(t,e){
+  if(!t) return '';
+  const total=e.parts_total, ported=e.parts_ported, spine=e.partsSpineLen;
+  return `<details class="parts dk-parts"><summary><span class="idx open">\u25CB</span> dependency DAG \u00b7 ${total} theorems that make up compile_correct
+      <span class="cnt">${ported} reviewed \u00b7 ${total-ported} gaps \u00b7 ${spine} backend passes \u00b7 read top\u2193, spine left\u2192right</span></summary>
+      <div class="inner">${dkNode(t)}</div></details>`;
 }
 
 function card(n,k,sub,hl){return `<div class="card ${hl?'hl':''}"><div class="n">${n}</div><div class="k">${k}</div>${sub?`<div class="sub">${sub}</div>`:''}</div>`;}
