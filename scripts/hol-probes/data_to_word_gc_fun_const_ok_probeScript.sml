@@ -113,3 +113,4 @@ val _ = pr_typed "lookup_adjust_var_after_cut_typed" data_to_word_gcProofTheory.
 val _ = pr_typed "state_rel_call_env_push_opt_typed" data_to_word_gcProofTheory.state_rel_call_env_push_opt;
 val _ = pr_typed "state_rel_call_env_push_typed" data_to_word_gcProofTheory.state_rel_call_env_push;
 val _ = pr_typed "state_rel_call_env_push_env_typed" data_to_word_gcProofTheory.state_rel_call_env_push_env;
+val _ = pr_typed "find_code_thm_ret_typed" data_to_word_gcProofTheory.find_code_thm_ret;
