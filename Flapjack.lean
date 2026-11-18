@@ -299,6 +299,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.CutOdd
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.CutLocals
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.CutEnvs
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GcAddCallEnv
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GetVarsPerm
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.Clock
 import Flapjack.Compiler.Inference.InferProps.TypeNameCheckState
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.InterUnion
