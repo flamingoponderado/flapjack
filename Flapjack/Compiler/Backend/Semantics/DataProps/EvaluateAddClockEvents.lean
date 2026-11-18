@@ -459,7 +459,10 @@ private theorem addClockEvents_force {C F : Type} (ret : Option (Nat × NumSet))
 
 /-- The result dispatch of a returning call extends the run's events.
     Flapjack infrastructure for `evaluate_add_clock_io_events_mono`; no separate
-    HOL original. -/
+    HOL original. The handler arm destructures `some (name, body)` exactly as
+    `evaluate` does: a `some entry` binder with `entry.1`/`entry.2` projections
+    compiles to a different `Option.casesOn` term, so the statement would not be
+    definitionally equal to the evaluator's own dispatch. -/
 private theorem callRetDispatchEvents_ge {C F : Type} (returns : List Nat)
     (handler : Option (Nat × DataLang.Prog)) (run : EvalResult C F) :
     run.2.ffi.ioEvents <+:
@@ -473,7 +476,7 @@ private theorem callRetDispatchEvents_ge {C F : Type} (returns : List Nat)
         | some (.err (.raise value)) =>
           match handler with
           | none => (some (.err (.raise value)), run.2)
-          | some entry => evaluate entry.2 (setVar entry.1 value run.2)
+          | some (name, body) => evaluate body (setVar name value run.2)
         | none => typeError run.2
         | some (.err error) => (some (.err error), run.2)).2.ffi.ioEvents := by
   cases run with
@@ -500,8 +503,8 @@ private theorem callRetDispatchEvents_ge {C F : Type} (returns : List Nat)
         | raise value =>
           cases handler with
           | none => simp
-          | some entry =>
-            obtain ⟨name, body⟩ := entry
+          | some pair =>
+            obtain ⟨name, body⟩ := pair
             simpa [setVar] using evaluate_events_start body (setVar name value next)
 
 end Flapjack.Compiler.Backend.DataProps
