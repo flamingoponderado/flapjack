@@ -276,3 +276,20 @@ val evaluate_stack_frame_sizes_ffi_replay = Q.prove(
   \\ drule_then (qspec_then `LN` strip_assume_tac) evaluate_swap_stack_frame_sizes
   \\ rw[]);
 val _ = show "evaluate_stack_frame_sizes_ffi_replay_typed" evaluate_stack_frame_sizes_ffi_replay;
+
+val _ = emit "evaluate_swap_limits_typed" "evaluate_swap_limits";
+
+(* Local theorem replays: HOL exports no DB entry for these [local] theorems. *)
+val evaluate_zero_limits_FST_replay = Q.prove(
+  `!c (s :(γ,'ffi) dataSem$state).
+      FST (evaluate (c,s)) = FST (evaluate (c, s with limits := zero_limits))`,
+  rw[] \\ Cases_on `evaluate (c,s)` \\ metis_tac[FST, evaluate_swap_limits]);
+val _ = show "evaluate_zero_limits_FST_replay_typed" evaluate_zero_limits_FST_replay;
+
+val evaluate_zero_limits_ffi_replay = Q.prove(
+  `!c (s :(γ,'ffi) dataSem$state).
+      (SND (evaluate (c,s))).ffi = (SND (evaluate (c, s with limits := zero_limits))).ffi`,
+  rw[] \\ Cases_on `evaluate (c,s)`
+  \\ drule_then (qspec_then `zero_limits` strip_assume_tac) evaluate_swap_limits
+  \\ rw[]);
+val _ = show "evaluate_zero_limits_ffi_replay_typed" evaluate_zero_limits_ffi_replay;

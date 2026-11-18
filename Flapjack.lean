@@ -373,6 +373,7 @@ import Flapjack.Compiler.Backend.Semantics.DataProps.ConsumeSpaceFields
 import Flapjack.Compiler.Backend.Semantics.DataProps.EvaluateResourceSwap
 import Flapjack.Compiler.Backend.Semantics.DataProps.EvaluateLocals
 import Flapjack.Compiler.Backend.Semantics.DataProps.EvaluateStackFrameSizesSwap
+import Flapjack.Compiler.Backend.Semantics.DataProps.EvaluateLimitsSwap
 import Flapjack.Compiler.Backend.Semantics.DataProps.EvaluateStackLocalsSwap
 import Flapjack.Compiler.Backend.Semantics.DataProps.StackSize
 import Flapjack.Compiler.Backend.Semantics.DataProps.StateUpdates

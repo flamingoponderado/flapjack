@@ -141302,5 +141302,32 @@
   "statement_status": "reviewed_exact",
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "Compared evaluate_stack_frame_sizes_ffi_replay_typed (a typed replay, since the HOL theorem is [local] and has no DB entry): the HOL binders are c s r s' over one shared state type (gamma,'ffi) rendered as {C F : Type}; r and s' do not occur in the statement and are vacuous, so the Lean statement quantifies c and s only, which source review confirms. The conclusion is (SND (evaluate (c,s))).ffi = (SND (evaluate (c, s with stack_frame_sizes := LN))).ffi, rendered as (evaluate program state).2.ffi = (evaluate program {state with stackFrameSizes := .ln}).2.ffi, with Spt.ln the canonical empty sptree. No premise. Follows from evaluate_swap_stack_frame_sizes at sfs = LN, since ffi is not one of the replaced fields. No representation qualifier applies. Inherits reals_as_rational_cuts through evaluate (docs/SOUNDNESS.md item 8)."
+},
+{
+ "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
+ "hol_name": "evaluate_swap_limits",
+ "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/EvaluateLimitsSwap.lean",
+ "lean_name": "evaluate_swap_limits",
+ "statement_status": "reviewed_exact",
+ "inherits_reals_as_rational_cuts": true,
+ "reviewer": "Compared evaluate_swap_limits_typed (show_types): HOL binders c s r s' limits over one shared state type (alpha,beta) dataSem$state rendered as {C F : Type}, r :(v list, v) result option rendered as Option (Result (List DataSem.Value) DataSem.Value), limits :limits as Limits. Premise evaluate (c,s) = (r,s'); conclusion is the existential over smx :num option, safe :bool, peak :num that evaluate (c, s with limits := limits) equals (r, s' with <|limits := limits; stack_max := smx; safe_for_space := safe; peak_heap_length := peak|>). Lean keeps the same binders, the same run premise and the same existential and replaced-field set (stackMax : Option Nat, safeForSpace : Bool, peakHeapLength : Option Nat). No representation qualifier applies: the signature has no finite-map or BitVec carrier. Inherits reals_as_rational_cuts through evaluate (docs/SOUNDNESS.md item 8)."
+},
+{
+ "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
+ "hol_name": "evaluate_zero_limits_FST",
+ "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/EvaluateLimitsSwap.lean",
+ "lean_name": "evaluate_zero_limits_FST",
+ "statement_status": "reviewed_exact",
+ "inherits_reals_as_rational_cuts": true,
+ "reviewer": "Compared evaluate_zero_limits_FST_replay_typed (a typed replay, since the HOL theorem is [local] and has no DB entry): HOL binds c s r s' over (gamma,'ffi) dataSem$state rendered as {C F : Type}; r and s' are vacuous, so the Lean statement quantifies program and state only. Conclusion FST (evaluate (c,s)) = FST (evaluate (c, s with limits := zero_limits)), rendered as (evaluate program state).1 = (evaluate program {state with limits := zeroLimits}).1. zeroLimits renders HOL's partial record literal with the three limits zero and the arch/FP flags as false; source review confirms the conclusion does not inspect those fields and the theorem follows for every Limits value. No representation qualifier applies. Inherits reals_as_rational_cuts through evaluate (docs/SOUNDNESS.md item 8)."
+},
+{
+ "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
+ "hol_name": "evaluate_zero_limits_ffi",
+ "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/EvaluateLimitsSwap.lean",
+ "lean_name": "evaluate_zero_limits_ffi",
+ "statement_status": "reviewed_exact",
+ "inherits_reals_as_rational_cuts": true,
+ "reviewer": "Compared evaluate_zero_limits_ffi_replay_typed (a typed replay, since the HOL theorem is [local] and has no DB entry): HOL binds c s r s' over (gamma,'ffi) dataSem$state rendered as {C F : Type}; r and s' are vacuous, so the Lean statement quantifies program and state only. Conclusion (SND (evaluate (c,s))).ffi = (SND (evaluate (c, s with limits := zero_limits))).ffi, rendered as (evaluate program state).2.ffi = (evaluate program {state with limits := zeroLimits}).2.ffi; the SND pair component is the final state and .2 in Lean is the same component. zeroLimits is the reviewed partial-record rendering described on evaluate_zero_limits_FST. No representation qualifier applies. Inherits reals_as_rational_cuts through evaluate (docs/SOUNDNESS.md item 8)."
 }
 ]
