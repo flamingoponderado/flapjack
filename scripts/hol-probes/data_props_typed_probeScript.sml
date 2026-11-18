@@ -294,3 +294,5 @@ val evaluate_zero_limits_ffi_replay = Q.prove(
   \\ drule_then (qspec_then `zero_limits` strip_assume_tac) evaluate_swap_limits
   \\ rw[]);
 val _ = show "evaluate_zero_limits_ffi_replay_typed" evaluate_zero_limits_ffi_replay;
+
+val _ = emit "evaluate_add_clock_typed" "evaluate_add_clock";

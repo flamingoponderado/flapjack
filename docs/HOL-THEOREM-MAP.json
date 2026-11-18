@@ -141337,5 +141337,14 @@
   "lean_name": "zeroLimits",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared zero_limits_def_typed (show_types): HOL defines zero_limits as the partial record literal <|heap_limit := 0; length_limit := 0; stack_limit := 0|> :dataSem$limits, so the three size limits are 0 and the remaining fields arch_64_bit, has_fp_ops and has_fp_tops are HOL ARB at bool. The Lean zeroLimits sets heapLimit, lengthLimit and stackLimit to 0 and renders each unspecified field by the shared opaque holArb Bool, the canonical ARB rendering used elsewhere in the port, not a concrete Boolean; source review confirms the partial record literal has no other field values. No type binder appears in the declaration, so total_function_inhabitants does not apply (there is no Nonempty/Inhabited instance binder; holArb Bool uses the global Nonempty Bool instance). No representation qualifier applies. No inherits_reals_as_rational_cuts flag: zeroLimits does not reach the evaluator."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
+  "hol_name": "evaluate_add_clock",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/EvaluateAddClock.lean",
+  "lean_name": "evaluate_add_clock",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_add_clock_typed (show_types). HOL binds exps :dataLang$prog, s1 and s2 over one shared state type (alpha,beta) dataSem$state rendered as {C F : Type}, and res :(v list, v) result option as Option (Result (List DataSem.Value) DataSem.Value); the Lean binders are program state res next in HOL's order. HOL's premise is ONE conjunction (evaluate (exps,s1) = (res,s2) and res is not Rerr (Rabort Rtimeout_error)), rendered as one conjunction premise with the timeout error as some (.err (.abort .timeoutError)); the quantifier over ck :num is the final Nat binder, matching HOL. The conclusion is evaluate (exps, s1 with clock := s1.clock + ck) = (res, s2 with clock := s2.clock + ck), rendered as evaluate program (addClockState state ck) = (res, addClockState next ck) where addClockState shifts only the clock by ck. No representation qualifier applies: the signature has no finite-map or BitVec carrier. Inherits reals_as_rational_cuts through evaluate (docs/SOUNDNESS.md item 8)."
 }
 ]
