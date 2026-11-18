@@ -328,16 +328,25 @@ theorem evenDiv2Props (a b : Nat) (h : a % 2 = 0 ∧ b % 2 = 0) :
   · intro hne hdiv
     exact hne (by omega)
 
+/-- Canonical WordSem codec re-export for the tagged state carrier's finite-map
+fields (`fpRegs`, `store`); no separate HOL original. -/
+theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {C F : Type} :
+    (∀ (state : WordSemStateBroad width C F) (h : state.FiniteSupport),
+        (WordSemStateBroad.ofBroad state h).toBroad = state) ∧
+    (∀ state : WordSemStateFiniteExact width C F,
+        WordSemStateBroad.ofBroad state.toBroad state.toBroad_finiteSupport = state) :=
+  WordSemEnvSupport.holFmapAsFiniteSupportWitness
+
 /-- Exact HOL `with_same_locals` (`word_to_stackProofScript.sml:3127`): rewriting
 `locals` with its own value leaves the wordSem state unchanged. The typed
 capture (`(s :(α, β, γ) state) with locals := s.locals = s`) has a single state
 binder and an identity statement. The carrier `WordSemStateFiniteExact width C F`
 carries `[NeZero width]` and mentions `BitVec width` in its `memory` field, so the
-only carrier difference is the standard type-indexed word translation; `locals`
-is an `Spt` (sptree), not a HOL `|->` finite map, so no finite-map qualifier
-applies. -/
+standard type-indexed word translation applies; its `fpRegs` and `store` fields
+are the reviewed `HolFiniteMapExact` translation, so the finite-map qualifier
+names them, while `locals` is an `Spt` (sptree) and is not named. -/
 @[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "with_same_locals"
-  (words_as_type_indexed_bitvec)]
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem withSameLocalsWordSem {width : Nat} [NeZero width] {C F : Type}
     (s : WordSemStateFiniteExact width C F) :
     ({ s with locals := s.locals } : WordSemStateFiniteExact width C F) = s := by

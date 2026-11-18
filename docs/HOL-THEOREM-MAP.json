@@ -143470,9 +143470,13 @@
     "lean_name": "withSameLocalsWordSem",
     "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
     "hol_name": "with_same_locals",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, with_same_locals_typed): source3127; the single state binder and the identity statement s with locals := s.locals = s are retained, with no premise and no existential. The carrier WordSemStateFiniteExact width C F carries [NeZero width] and its memory field mentions BitVec width, so the only difference is the standard type-indexed word translation; locals is an Spt (sptree) field, not a HOL |-> finite map, so no finite-map qualifier is named and no canonical finite-map witness is claimed for it."
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, with_same_locals_typed): source3127; the single state binder and the identity statement s with locals := s.locals = s are retained, with no premise and no existential. The carrier WordSemStateFiniteExact width C F carries [NeZero width] and its memory field mentions BitVec width, so the standard type-indexed word translation applies, and its fpRegs and store fields are the reviewed HolFiniteMapExact translation, named here with the same-module canonical witness holFmapAsFiniteSupportWitness (re-exported from WordSemEnvSupport). locals is an Spt (sptree) field, not a HOL |-> finite map, so it is deliberately not named."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/SupportLemmas.lean",
