@@ -18,7 +18,7 @@ theorem compileCallMtiFuel_eq_source (fuel : Nat) (config : Config)
     (expressions : List ClosLang.Exp) :
     compileCallMtiFuel? fuel config expressions = some (compileSource config expressions) := by
   simp [compileCallMtiFuel?, compileCommon, ClosMti.compileFuel_eq_compile,
-    ClosKnown.compileFuel_eq_source, ClosCall.compileFuel_eq_compile,
+    ClosKnown.compileSource_eq_compile, ClosCall.compileFuel_eq_compile,
     ClosAnnotate.compileSource_eq_compile, compileSource, compilePrepared?,
     compileProg_checked_eq_original]
 

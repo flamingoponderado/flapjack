@@ -39,7 +39,7 @@ def compileCallMtiFuel? (fuel : Nat) (c : Config) (es : List ClosLang.Exp) :
   let next := c.nextLoc + max 1 transformed.length
   let aligned := if next % 2 = 0 then next else next + 1
   let (next, transformed) := ClosNumber.renumberList aligned transformed
-  let (known, transformed) ← ClosKnown.compileFuel fuel c.knownConf transformed
+  let (known, transformed) := ClosKnown.compile c.knownConf transformed
   let (transformed, callState) ← ClosCall.compileFuel fuel c.doCall transformed
   let prog := ClosAnnotate.compile (chainExps c.nextLoc transformed ++ callState.2)
   let current := { c with start := c.nextLoc, nextLoc := next, knownConf := known, callState := callState }

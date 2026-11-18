@@ -36,7 +36,7 @@ def captureClosure (fuel : Nat) (c : ClosToBvl.Config) (es : List ClosLang.Exp) 
   let loc := c.nextLoc + max 1 mti.length
   let loc := if loc % 2 = 0 then loc else loc + 1
   let (next, numbered) := ClosNumber.renumberList loc mti
-  let (knownConfig, known) ← ClosKnown.compileFuel fuel c.knownConf numbered
+  let (knownConfig, known) := ClosKnown.compile c.knownConf numbered
   let (called, callState) ← ClosCall.compileFuel fuel c.doCall known
   let annotated := ClosAnnotate.compile (ClosToBvl.chainExps c.nextLoc called ++ callState.2)
   let current := { c with start := c.nextLoc, nextLoc := next, knownConf := knownConfig, callState := callState }
@@ -55,7 +55,6 @@ theorem captureClosure_result (fuel : Nat) (c : ClosToBvl.Config) (es : List Clo
       some (stages.config, ClosToBvl.codeSort stages.bvl, stages.names) := by
   simp only [captureClosure, Option.bind_eq_bind, Option.bind] at h
   simp only [ClosToBvl.compileCallMtiFuel?, ClosToBvl.compilePrepared?, Option.bind_eq_bind, Option.bind]
-  split at h <;> simp_all
   split at h <;> simp_all
   split at h <;> simp_all
   split at h <;> simp_all
