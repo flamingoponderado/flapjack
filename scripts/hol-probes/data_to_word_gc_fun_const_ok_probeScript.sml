@@ -229,3 +229,5 @@ val _ = pr_typed "word_gc_fun_APPEND_IMP_typed" data_to_word_gcProofTheory.word_
 val _ = pr_typed "IMP_loc_merge_APPEND_typed" data_to_word_gcProofTheory.IMP_loc_merge_APPEND;
 val _ = pr_typed "TAKE_DROP_loc_merge_APPEND_typed" data_to_word_gcProofTheory.TAKE_DROP_loc_merge_APPEND;
 val _ = pr_typed "loc_merge_NIL_typed" data_to_word_gcProofTheory.loc_merge_NIL;
+val _ = pr_typed "loc_merge_APPEND_typed" data_to_word_gcProofTheory.loc_merge_APPEND;
+val _ = pr_typed "EVERY2_loc_merge_typed" data_to_word_gcProofTheory.EVERY2_loc_merge;

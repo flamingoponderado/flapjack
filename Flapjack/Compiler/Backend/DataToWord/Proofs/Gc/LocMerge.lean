@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.Semantics.WordSem.Alloc
+public import Flapjack.Pancake.Semantics.PanSem.DecCallExact
 
 @[expose] public section
 
@@ -109,5 +110,56 @@ theorem locMerge_nil {width : Nat} [NeZero width] (xs : List (WordLocW width)) :
   induction xs with
   | nil => rfl
   | cons x xs ih => cases x <;> simp [locMerge, ih]
+
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "loc_merge_APPEND"
+  (words_as_type_indexed_bitvec)]
+theorem locMerge_append_split {width : Nat} [NeZero width] (xs1 xs2 ys : List (WordLocW width)) :
+    ∃ zs1 zs2, locMerge (xs1 ++ xs2) ys = zs1 ++ zs2 ∧
+      zs1.length = xs1.length ∧ xs2.length = xs2.length ∧ ∃ ts, locMerge xs2 ts = zs2 := by
+  induction xs1 generalizing ys with
+  | nil => exact ⟨[], locMerge xs2 ys, rfl, rfl, rfl, ys, rfl⟩
+  | cons x xs1 ih =>
+    cases x with
+    | loc a b =>
+      obtain ⟨zs1, zs2, eq, len, taut, ts, tail⟩ := ih ys
+      refine ⟨.loc a b :: zs1, zs2, ?_, ?_, taut, ts, tail⟩
+      · simpa [locMerge] using congrArg (List.cons (.loc a b)) eq
+      · simp [len]
+    | word w =>
+      cases ys with
+      | nil =>
+        refine ⟨.word w :: xs1, xs2, ?_, rfl, rfl, [], locMerge_nil xs2⟩
+        simp [locMerge]
+      | cons y ys =>
+        obtain ⟨zs1, zs2, eq, len, taut, ts, tail⟩ := ih ys
+        refine ⟨y :: zs1, zs2, ?_, ?_, taut, ts, tail⟩
+        · simpa [locMerge] using congrArg (List.cons y) eq
+        · simp [len]
+
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "EVERY2_loc_merge"
+  (words_as_type_indexed_bitvec)]
+theorem every2_locMerge {width : Nat} [NeZero width] (xs ys : List (WordLocW width)) :
+    ListRel (fun x y => (wordSemIsWordLoc y = true → wordSemIsWordLoc x = true) ∧
+      (wordSemIsWordLoc x = false → x = y)) xs (locMerge xs ys) := by
+  have reflRel : ∀ zs : List (WordLocW width), ListRel (fun x y => (wordSemIsWordLoc y = true → wordSemIsWordLoc x = true) ∧ (wordSemIsWordLoc x = false → x = y)) zs zs := by
+    intro zs
+    induction zs with
+    | nil => exact .nil
+    | cons z zs ih => exact .cons ⟨fun h => h, fun _ => rfl⟩ ih
+  induction xs generalizing ys with
+  | nil => exact .nil
+  | cons x xs ih =>
+    cases x with
+    | loc a b =>
+      simp only [locMerge]
+      exact .cons ⟨by simp [wordSemIsWordLoc], fun _ => rfl⟩ (ih ys)
+    | word w =>
+      cases ys with
+      | nil =>
+        rw [locMerge_nil]
+        exact .cons ⟨fun _ => rfl, by simp [wordSemIsWordLoc]⟩ (reflRel xs)
+      | cons y ys =>
+        simp only [locMerge]
+        exact .cons ⟨fun _ => rfl, by simp [wordSemIsWordLoc]⟩ (ih ys)
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
