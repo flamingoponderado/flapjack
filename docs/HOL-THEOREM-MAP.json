@@ -141671,7 +141671,7 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
-    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, evaluate_copy_ret_Seq_prime_typed): source7622-7631; HOL's F is the false constant, so the capture binds is_handle, k, f, f', vs, k0, t and copies into the literal f + 3. Lean evaluates copyRetNative false and keeps HOL's let-bound n = num_stack_ret k vs with the same Seq (copy_ret_aux k (if is_handle then f + 3 else f) n) (SeqStackFree n k0) right-hand side; the return-value and unused frame-component carriers stay independent. Imported canonical regs/fpRegs/store translation with same-module witness and positive BitVec width; names the evaluator, so it inherits reals_as_rational_cuts (SOUNDNESS item 8) without a numerical FP assertion."
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, evaluate_copy_ret_Seq_prime_typed): source7622-7631; HOL's F is the false constant, so the capture binds is_handle, k, f, f', vs, k0, t and copies into the literal f + 3. Lean binds the frame triple as separate k, f and f' variables, matching HOL, and evaluates copyRetNative false b (k, f, f') with HOL's let-bound n = num_stack_ret k vs and the same Seq (copy_ret_aux k (if is_handle then f + 3 else f) n) (SeqStackFree n k0) right-hand side; the return-value and unused frame-component carriers stay independent. Imported canonical regs/fpRegs/store translation with same-module witness and positive BitVec width; names the evaluator, so it inherits reals_as_rational_cuts (SOUNDNESS item 8) without a numerical FP assertion."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/RegisterWrite.lean",
@@ -141689,5 +141689,22 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, wRegWrite2_thm1_typed): source3814-3831; free-variable order ac k f f' s t lens m v kont retained; HOL's single conjunction premise state_rel … ∧ m < f'+k ∧ (∀n. n ≤ k+1 ⇒ evaluate (kont n,t) = (NONE,set_var n v t)) kept as one hypothesis in HOL's order; the existential run and full postrelation (set_var (2*m) v s) conclusion retained. Native wRegWrite2 lowers physical kont m or spilled Seq(kont (k+1),StackStore (k+1) slot); the callback is used exactly. Canonical five finite-map fields and positive width translation as qualified; evaluator closure inherits reals_as_rational_cuts without numerical FP claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/RegisterWrite.lean",
+    "lean_name": "wRegWrite1Thm2",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "wRegWrite1_thm2",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, wRegWrite1_thm2_typed): source3758-3788; free-variable order ac k f f' s t lens m v v' kont retained; HOL's single conjunction premise state_rel … ∧ m < f'+k ∧ (∀n. n ≤ k ⇒ evaluate (kont n,t) = (NONE,set_var 0 v' (set_var n v t))) kept as one hypothesis in HOL's order; the existential run, full postrelation set_var 0 v' (set_var (2*m) v s) and the stack-length/stack-space facts retained. Canonical five finite-map fields and positive width translation as qualified; evaluator closure inherits reals_as_rational_cuts without numerical FP claim."
   }
 ]
