@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.SizeSoundness
 public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.WordGcCorrect
+public import Flapjack.Compiler.Backend.WordGcFunctions.Roots
 
 @[expose] public section
 
@@ -9,28 +10,6 @@ public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.WordGcCorrect
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
 open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Backend.WordGcFunctions
 open Flapjack.Compiler.Backend.DataToWord.Proofs.Memory Flapjack.Compiler.Backend.GcCombined
-
-/-- Flapjack infrastructure: a successful production collection preserves
-the number of represented stack roots. -/
-theorem wordGcFun_result_length {width : Nat} [NeZero width]
-    (conf : Config) (value : DataSem.Value) (stack : List (DataSem.Value × WordLocW width))
-    (refs : Spt (BvlSem.Ref DataSem.Value)) (heap : ValueHeap width)
-    (be : Bool) (a sp sp1 limit next : Nat) (gens : GenState)
-    (store : HolFiniteMapExact WordStoreHOL (WordLocW width))
-    (memory : BitVec width → WordLocW width) (domain : BitVec width → Bool)
-    (stack1 : List (WordLocW width)) (outMemory : BitVec width → WordLocW width)
-    (outStore : HolFiniteMapExact WordStoreHOL (WordLocW width))
-    (good : goodDimindex width)
-    (heapMem : heapInMemoryStore heap a sp sp1 gens conf store memory domain limit)
-    (source : wordMlInv (heap, be, a, sp, sp1, gens) limit next conf refs
-      ((value, holFapply store .globals) :: stack))
-    (run : wordGcFun conf (stack.map Prod.snd, memory, domain, store) = some (stack1, outMemory, outStore)) :
-    stack1.length = stack.length := by
-  obtain ⟨_, _, _, _, _, resultStack, resultMemory, resultStore, _, _, execution, _, _, _, _, length, _⟩ :=
-    wordGc_combined_memory conf value stack refs heap be a sp sp1 limit next gens store memory domain source good heapMem
-  rw [run] at execution
-  have same : resultStack = stack1 := by cases execution; rfl
-  simpa [same] using length
 
 /-- Flapjack infrastructure: the executed collector's failed-space result
 implies the source sizing bound for the input roots. The caller must still
@@ -65,9 +44,9 @@ theorem wordGcFun_failed_sourceSize {width : Nat} [NeZero width] {C F : Type}
   refine ⟨stack1, outMemory, outStore, run, ?_⟩
   intro failed roots2 dups perm duplicates
   obtain ⟨insufficient, reachable, heapSplit⟩ := failedResult failed
-  have length := wordGcFun_result_length conf value stack refs heap be a sp sp1 limit next gens
-    store memory domain stack1 outMemory outStore good heapMem source run
-  have zipBound : (stack.map Prod.fst).length ≤ stack1.length := by simp [length]
+  have length := word_gc_fun_LENGTH run
+  have zipBound : (stack.map Prod.fst).length ≤ stack1.length := by
+    simpa using Nat.le_of_eq length
   have invariant' : absMlInv conf (value :: stack.map Prod.fst) refs
       (root1 :: roots1, heap1, be, a1, free1, free2, gens1) limit next := by
     simpa only [List.map_fst_zip zipBound] using invariant
