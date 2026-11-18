@@ -296,3 +296,5 @@ val evaluate_zero_limits_ffi_replay = Q.prove(
 val _ = show "evaluate_zero_limits_ffi_replay_typed" evaluate_zero_limits_ffi_replay;
 
 val _ = emit "evaluate_add_clock_typed" "evaluate_add_clock";
+
+val _ = emit "evaluate_stack_limit_typed" "evaluate_stack_limit";

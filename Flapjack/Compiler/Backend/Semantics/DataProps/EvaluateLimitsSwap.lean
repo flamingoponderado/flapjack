@@ -1408,4 +1408,25 @@ theorem evaluate_zero_limits_ffi {C F : Type} (program : DataLang.Prog)
       evaluate_swap_limits program state res next zeroLimits runEq
     rw [runSwap]
 
+/-- The evaluation result carries the starting state's stack limit. Port of HOL
+    `evaluate_stack_limit`. -/
+@[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "evaluate_stack_limit"]
+theorem evaluate_stack_limit {C F : Type} (program : DataLang.Prog) (state : State C F)
+    (res : Option (Result (List DataSem.Value) DataSem.Value)) (next : State C F)
+    (run : evaluate program state = (res, next)) :
+    next.limits.stackLimit = state.limits.stackLimit := by
+  obtain ⟨smx, safe, peak, runSwap⟩ :=
+    evaluate_swap_limits program state res next state.limits run
+  rw [show { state with limits := state.limits } = state from rfl] at runSwap
+  rw [run] at runSwap
+  have eqState : { next with
+      limits := state.limits
+      stackMax := smx
+      safeForSpace := safe
+      peakHeapLength := peak } = next := (congrArg Prod.snd runSwap).symm
+  have limitsEq : next.limits = state.limits := by
+    have := congrArg (fun s : State C F => s.limits) eqState
+    simpa using this.symm
+  exact congrArg Limits.stackLimit limitsEq
+
 end Flapjack.Compiler.Backend.DataProps

@@ -141346,5 +141346,14 @@
   "statement_status": "reviewed_exact",
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "Compared evaluate_add_clock_typed (show_types). HOL binds exps :dataLang$prog, s1 and s2 over one shared state type (alpha,beta) dataSem$state rendered as {C F : Type}, and res :(v list, v) result option as Option (Result (List DataSem.Value) DataSem.Value); the Lean binders are program state res next in HOL's order. HOL's premise is ONE conjunction (evaluate (exps,s1) = (res,s2) and res is not Rerr (Rabort Rtimeout_error)), rendered as one conjunction premise with the timeout error as some (.err (.abort .timeoutError)); the quantifier over ck :num is the final Nat binder, matching HOL. The conclusion is evaluate (exps, s1 with clock := s1.clock + ck) = (res, s2 with clock := s2.clock + ck), rendered as the literal record updates evaluate program { state with clock := state.clock + ck } = (res, { next with clock := next.clock + ck }), matching HOL's written form; the addClockState abbrev is used only inside the proof helpers, not in the tagged statement. No representation qualifier applies: the signature has no finite-map or BitVec carrier. Inherits reals_as_rational_cuts through evaluate (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
+  "hol_name": "evaluate_stack_limit",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/EvaluateLimitsSwap.lean",
+  "lean_name": "evaluate_stack_limit",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_stack_limit_typed (show_types). HOL binds c2 :dataLang$prog, s and s1 over one shared state type (alpha,beta) dataSem$state rendered as {C F : Type}, and res :(v list, v) result option as Option (Result (List DataSem.Value) DataSem.Value); the Lean binders are program state res next in HOL's order. The premise is the single equation evaluate (c2,s) = (res,s1); the conclusion is s1.limits.stack_limit = s.limits.stack_limit, rendered as next.limits.stackLimit = state.limits.stackLimit with the same Limits field. Follows from evaluate_swap_limits at limits := state.limits, which fixes the result state's limits. No representation qualifier applies. Inherits reals_as_rational_cuts through evaluate (docs/SOUNDNESS.md item 8)."
 }
 ]
