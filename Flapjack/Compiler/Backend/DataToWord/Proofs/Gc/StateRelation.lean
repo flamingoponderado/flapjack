@@ -19,8 +19,8 @@ open Flapjack Flapjack.Compiler.Backend.BackendProps
 /-- The full relation between data and word states, including compiled code,
 callbacks, stack shape, resource limits, and the GC-compatible memory
 abstraction. This follows the typed `state_rel_thm` source statement. It is
-untagged while the code and oracle relations' compiler dependencies remain
-unreviewed against HOL. -/
+untagged while the oracle relation and its carriers remain unreviewed against
+HOL. -/
 noncomputable def stateRel {width : Nat} [NeZero width] {C F : Type}
     (conf : Config) (l1 l2 : Nat) (source : DataSem.State C F)
     (target : WordSemStateFiniteExact width C F)

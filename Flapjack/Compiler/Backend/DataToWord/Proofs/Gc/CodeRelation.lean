@@ -10,9 +10,9 @@ namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
 open Flapjack
 
 /-- The target code contains exactly the source labels and stub labels; it
-contains each stub and the compiled body of each source function. This has
-the shape of HOL's `code_rel_def`, but is untagged until the executed `stubs`
-and `compileControl` have been source-reviewed against HOL. -/
+contains each stub and the compiled body of each source function. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "code_rel_def"
+  (words_as_type_indexed_bitvec)]
 def codeRel {width : Nat} [NeZero width] (conf : Config)
     (source : Spt (Nat × DataLang.Prog))
     (target : Spt (Nat × WordLangProgHOL (BitVec width))) : Prop :=

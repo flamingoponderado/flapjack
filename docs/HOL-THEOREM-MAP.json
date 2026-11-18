@@ -22992,6 +22992,15 @@
   "reviewer": "Compared the complete HOL source and typed capture: every fixed location, arity, body and order agrees, followed by the reviewed generated bignum stubs. ByteCopyNew_code_def is directly simplified to Skip in its lookup route; Unused and Dummy are literal Skip in HOL. The fixed lookup is total for all configs and widths; the executable total wrapper returns that table. This does not prove the shallow-to-deep generator correct."
 },
 {
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "code_rel_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CodeRelation.lean",
+  "lean_name": "codeRel",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared the complete source and inferred types: both Spt code trees, domain equality and union, every stub lookup, and every source-function lookup and compiled target agree. The executed stubs and compileControl are separately reviewed. HOL's finite word type is represented by positive-width BitVec."
+},
+{
   "hol_path": "cakeml/compiler/backend/word_bignumScript.sml",
   "hol_name": "mc_iop_code_def",
   "lean_path": "Flapjack/Compiler/Backend/WordBignum/GeneratedMini.lean",
