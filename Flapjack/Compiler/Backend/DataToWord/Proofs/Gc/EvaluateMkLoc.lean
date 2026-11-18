@@ -102,4 +102,44 @@ theorem mkLoc_jumpExc {width : Nat} {outWidth : Nat} [NeZero width] [NeZero outW
     simp [WordSemStateFiniteExact.callEnv, pushEnv, decClock, envList, jumpExc,
       wordSemLastN, List.take_of_length_le, mkLoc]
 
+/-- Stack-key and handler equality preserve the presence of an unwind target. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "s_key_eq_handler_eq_IMP"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem jumpExc_keyEq_iff {width : Nat} [NeZero width] {C F D G : Type}
+    (t : WordSemStateFiniteExact width C F) (t1 : WordSemStateFiniteExact width D G)
+    (premises : sKeyEq t.stack t1.stack ∧ t.handler = t1.handler) :
+    (jumpExc t1 ≠ none ↔ jumpExc t ≠ none) := by
+  obtain ⟨keys, handlers⟩ := premises
+  have lengths := sKeyEqLength t.stack t1.stack keys
+  have suffix := sKeyEqLastN t.stack t1.stack (t.handler + 1) keys
+  unfold jumpExc
+  rw [← handlers, ← lengths]
+  split
+  · generalize h1 : wordSemLastN (t.handler + 1) t.stack = xs at suffix ⊢
+    generalize h2 : wordSemLastN (t.handler + 1) t1.stack = ys at suffix ⊢
+    cases xs with
+    | nil => cases ys <;> simp_all [sKeyEq]
+    | cons x xs =>
+      cases ys with
+      | nil => simp [sKeyEq] at suffix
+      | cons y ys =>
+        cases x with
+        | stackFrame m a b h =>
+          cases y with
+          | stackFrame n c d k =>
+            cases h <;> cases k <;> simp_all [sKeyEq, sFrameKeyEq]
+  · simp
+
+/-- Normal evaluation preserves whether exception unwinding fails. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "eval_NONE_IMP_jump_exc_NONE_EQ"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem evaluate_jumpExc_none_iff {width : Nat} [NeZero width] {C F : Type}
+    (q : WordLangProgHOL (BitVec width)) (t t1 : WordSemStateFiniteExact width C F)
+    (run : evaluate q t = (none, t1)) :
+    (jumpExc t1 = none ↔ jumpExc t = none) := by
+  have post := evaluateStackSwap q t
+  simp only [stackSwapPost, run] at post
+  have eq := jumpExc_keyEq_iff t t1 ⟨post.1, post.2.1.symm⟩
+  by_cases h1 : jumpExc t1 = none <;> by_cases h2 : jumpExc t = none <;> simp_all
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

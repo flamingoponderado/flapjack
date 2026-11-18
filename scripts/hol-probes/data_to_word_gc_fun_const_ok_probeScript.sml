@@ -131,3 +131,7 @@ val _ = pr_typed "mk_loc_jmup_exc_inc_clock_typed" data_to_word_gcProofTheory.mk
 val _ = pr_typed "jump_exc_inc_clock_EQ_NONE_typed" data_to_word_gcProofTheory.jump_exc_inc_clock_EQ_NONE;
 val _ = pr_typed "state_rel_lookup_globals_typed" data_to_word_gcProofTheory.state_rel_lookup_globals;
 val _ = pr_typed "state_rel_get_var_Block_typed" data_to_word_gcProofTheory.state_rel_get_var_Block;
+val _ = pr_typed "jump_exc_push_env_NONE_simp_typed" data_to_word_gcProofTheory.jump_exc_push_env_NONE_simp;
+val _ = pr_typed "s_key_eq_handler_eq_IMP_typed" data_to_word_gcProofTheory.s_key_eq_handler_eq_IMP;
+val _ = pr_typed "eval_NONE_IMP_jump_exc_NONE_EQ_typed" data_to_word_gcProofTheory.eval_NONE_IMP_jump_exc_NONE_EQ;
+val _ = pr_typed "jump_exc_push_env_SOME_typed" data_to_word_gcProofTheory.jump_exc_push_env_SOME;

@@ -23447,6 +23447,31 @@
   "reviewer": "Compared state_rel_get_var_Block_typed: the full state relation and a successful data Block lookup imply an adjusted target lookup of an existential Word. The optional roots and block fields remain arbitrary. Target finite maps and positive-width words use the reviewed representations."
 },
 {
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "jump_exc_push_env_NONE_simp",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/JumpExc.lean", "lean_name": "jumpExc_pushEnv_none_iff",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec", "fmap_as_finite_support": ["fpRegs", "store"], "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared jump_exc_push_env_NONE_simp_typed: all three original iff conjuncts preserve unwind failure under clock decrement, non-handler push and stack-maximum update."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "s_key_eq_handler_eq_IMP",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/EvaluateMkLoc.lean", "lean_name": "jumpExc_keyEq_iff",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec", "fmap_as_finite_support": ["fpRegs", "store"], "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared s_key_eq_handler_eq_IMP_typed: related stack keys and equal handlers imply the full non-NONE equivalence. The two word states retain independent payload types and a shared word width."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "eval_NONE_IMP_jump_exc_NONE_EQ",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/EvaluateMkLoc.lean", "lean_name": "evaluate_jumpExc_none_iff",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec", "fmap_as_finite_support": ["fpRegs", "store"], "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared eval_NONE_IMP_jump_exc_NONE_EQ_typed: normal evaluation implies the full equivalence of unwind failure before and after evaluation. The proof inherits rational-cut reals through evaluate_stack_swap."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "jump_exc_push_env_SOME",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/JumpExc.lean", "lean_name": "jumpExc_pushEnv_some",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec", "fmap_as_finite_support": ["fpRegs", "store"], "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared jump_exc_push_env_SOME_typed: pushing any handler makes jump_exc non-NONE, with the complete arbitrary handler tuple and no extra premises."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "cut_env_IMP_MEM",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CutEnvProperties.lean", "lean_name": "cutEnv_imp_mem",
   "statement_status": "reviewed_exact", "reviewer": "Compared cut_env_IMP_MEM_typed: successful source cut makes an arbitrary key present exactly when it is present in the requested set."
