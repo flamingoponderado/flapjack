@@ -116,4 +116,20 @@ theorem stackRel_sizeOfStack {width : Nat} [NeZero width]
     rw [frameSize, ih]
     cases DataSem.sizeOfStackFrame frame <;> cases DataSem.sizeOfStack rest <;> rfl
 
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "join_env_NIL"
+  (total_function_inhabitants := [α])]
+theorem joinEnv_nil {α β : Type} [Nonempty α] (s : Spt α) :
+    joinEnv s ([] : List (Nat × β)) = [] := by
+  change (([] : List (Nat × β)).filter (fun pair => pair.1 ≠ 0 ∧ pair.1 % 2 = 0)).map
+      (fun (name, value) => (holThe (sptLookup ((name - 2) / 2) s), value)) = []
+  rfl
+
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "join_env_CONS"
+  (total_function_inhabitants := [α])]
+theorem joinEnv_cons {α β : Type} [Nonempty α] (s : Spt α) (n : Nat) (v : β) (xs : List (Nat × β)) :
+    joinEnv s ((n,v) :: xs) =
+      if n ≠ 0 ∧ n % 2 = 0 then (holThe (sptLookup ((n - 2) / 2) s), v) :: joinEnv s xs
+      else joinEnv s xs := by
+  by_cases hn : n = 0 <;> by_cases he : n % 2 = 0 <;> simp [joinEnv, hn, he]
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

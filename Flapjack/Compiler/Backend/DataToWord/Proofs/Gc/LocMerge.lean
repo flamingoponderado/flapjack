@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Compiler.Backend.Semantics.WordSem.Alloc
 public import Flapjack.Pancake.Semantics.PanSem.DecCallExact
+public import Flapjack.Misc.Sptree
 
 @[expose] public section
 
@@ -161,5 +162,32 @@ theorem every2_locMerge {width : Nat} [NeZero width] (xs ys : List (WordLocW wid
       | cons y ys =>
         simp only [locMerge]
         exact .cons ⟨fun _ => rfl, by simp [wordSemIsWordLoc]⟩ (ih ys)
+
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "ALOOKUP_ZIP"
+  (words_as_type_indexed_bitvec)]
+theorem alookup_zip {width : Nat} [NeZero width] (l : List (Nat × WordLocW width))
+    (zs : List (WordLocW width)) (q r : Nat)
+    (premises : sptAListLookup 0 l = some (.loc q r) ∧
+      ListRel (fun x y => (wordSemIsWordLoc y = true → wordSemIsWordLoc x = true) ∧
+        (wordSemIsWordLoc x = false → x = y)) (l.map Prod.snd) zs) :
+    sptAListLookup 0 (List.zip (l.map Prod.fst) zs) = some (.loc q r) := by
+  induction l generalizing zs with
+  | nil => simp [sptAListLookup] at premises
+  | cons pair l ih =>
+    rcases pair with ⟨n, value⟩
+    simp only [List.map_cons] at premises ⊢
+    cases zs with
+    | nil => cases premises.2
+    | cons z zs =>
+      cases premises.2 with
+      | cons head tail =>
+        by_cases h : n = 0
+        · subst n
+          simp [sptAListLookup] at premises ⊢
+          cases premises.1
+          have eq := head.2 rfl
+          simpa using eq.symm
+        · simp [sptAListLookup, Ne.symm h] at premises ⊢
+          exact ih zs ⟨premises.1, tail⟩
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

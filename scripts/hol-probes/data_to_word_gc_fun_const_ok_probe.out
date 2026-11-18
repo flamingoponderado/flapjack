@@ -145,3 +145,6 @@ TAKE_DROP_loc_merge_APPEND_typed=TAKE (LENGTH (q :(β # α word_loc) list)) (loc
 loc_merge_NIL_typed=∀(xs :α word_loc list). loc_merge xs ([] :α word_loc list) = xs
 loc_merge_APPEND_typed=∀(xs1 :α word_loc list) (xs2 :α word_loc list) (ys :α word_loc list). ∃(zs1 :α word_loc list) (zs2 :α word_loc list). loc_merge (xs1 ++ xs2) ys = zs1 ++ zs2 ∧ LENGTH zs1 = LENGTH xs1 ∧ LENGTH xs2 = LENGTH xs2 ∧ ∃(ts :α word_loc list). loc_merge xs2 ts = zs2
 EVERY2_loc_merge_typed=∀(xs :α word_loc list) (ys :α word_loc list). LIST_REL (λ(x :α word_loc) (y :α word_loc). (isWord y ⇒ isWord x) ∧ (¬isWord x ⇒ x = y)) xs (loc_merge xs ys)
+ALOOKUP_ZIP_typed=∀(l :(num # α word_loc) list) (zs1 :α word_loc list). ALOOKUP l (0 :num) = SOME (Loc (q :num) (r :num) :α word_loc) ∧ LIST_REL (λ(x :α word_loc) (y :α word_loc). (isWord y ⇒ isWord x) ∧ (¬isWord x ⇒ x = y)) (MAP (SND :num # α word_loc -> α word_loc) l) zs1 ⇒ ALOOKUP (ZIP (MAP (FST :num # α word_loc -> num) l,zs1)) (0 :num) = SOME (Loc q r :α word_loc)
+join_env_NIL_typed=join_env (s :α sptree$num_map) ([] :(num # β) list) = ([] :(α # β) list)
+join_env_CONS_typed=join_env (s :α sptree$num_map) (((n :num),(v :β))::(xs :(num # β) list)) = if n ≠ (0 :num) ∧ EVEN n then (THE (lookup ((n − (2 :num)) DIV (2 :num)) s :α option),v)::join_env s xs else join_env s xs

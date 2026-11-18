@@ -23684,6 +23684,24 @@
   "reviewer": "Compared EVERY2_loc_merge_typed: the full pointwise word/location relation over the original and merged lists; HOL words use positive-width BitVecs."
 },
 {
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "ALOOKUP_ZIP",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/LocMerge.lean", "lean_name": "alookup_zip",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec", "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared ALOOKUP_ZIP_typed: lookup of key zero and the complete LIST_REL premise imply the same location lookup after zipping first components with the related list. Numeric-key first-match lookup and HOL words use the reviewed translations."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "join_env_NIL",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/StackRel.lean", "lean_name": "joinEnv_nil",
+  "statement_status": "reviewed_total_function_inhabitants", "total_function_inhabitants": ["α"],
+  "reviewer": "Compared join_env_NIL_typed: empty input produces an empty result, with independent environment and payload types. Nonempty α solely represents HOL THE as in joinEnv."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "join_env_CONS",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/StackRel.lean", "lean_name": "joinEnv_cons",
+  "statement_status": "reviewed_total_function_inhabitants", "total_function_inhabitants": ["α"],
+  "reviewer": "Compared join_env_CONS_typed: the full conditional cons equation and HOL THE value, with independent environment and payload types. Nonempty α solely represents HOL THE as in joinEnv."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "cut_env_IMP_MEM",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CutEnvProperties.lean", "lean_name": "cutEnv_imp_mem",
   "statement_status": "reviewed_exact", "reviewer": "Compared cut_env_IMP_MEM_typed: successful source cut makes an arbitrary key present exactly when it is present in the requested set."
