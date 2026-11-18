@@ -8230,6 +8230,15 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "w2n_minus_1_LESS_EQ",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/StackSizeTail.lean",
+  "lean_name": "wordMaxLeIffAddOneEqZero",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Independent comparison with w2n_minus_1_LESS_EQ_typed confirms the original unconditional equivalence for an arbitrary word. BitVec.toNat models w2n, and the positive-width BitVec carrier retains the HOL word arithmetic and dimension."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "bytes_in_word_ADD_1_NOT_ZERO",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/StackSizeTail.lean",
   "lean_name": "bytesInWordAddOneNeZero",
