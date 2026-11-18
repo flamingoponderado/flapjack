@@ -36,4 +36,17 @@ theorem getRealOffset_lemma {width : Nat} [NeZero width] {C F : Type}
       WordSemStateFiniteExact.wordExp, shiftN, theWords, wordOpHOL, wordShiftHOL, read] at offset ⊢ <;>
     subst output <;> simp [wordOp, BitVec.add_comm]
 
+/-- The compiled byte-offset expression evaluates to the original offset. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml" "get_real_byte_offset_lemma"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem getRealByteOffset_lemma {width : Nat} [NeZero width] {C F : Type}
+    (v : Nat) (state : WordSemStateFiniteExact width C F) (input : BitVec width)
+    (premises : WordSemStateFiniteExact.getVar v state = some (.word input) ∧ goodDimindex width) :
+    WordSemStateFiniteExact.wordExp state (realByteOffset v) =
+      some (.word (wordSemBytesInWord + (input >>> 2))) := by
+  obtain ⟨read, good⟩ := premises
+  rcases good with h | h <;> subst width <;>
+    simp [realByteOffset, wordSemBytesInWord, WordSemStateFiniteExact.wordExp,
+      shiftN, theWords, wordOpHOL, wordOp, wordShiftHOL, read]
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Assign

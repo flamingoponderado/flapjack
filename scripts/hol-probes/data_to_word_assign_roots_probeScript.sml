@@ -13,3 +13,5 @@ val _ = emit "memory_rel_lookup_var_IMP_typed"
   data_to_word_assignProofTheory.memory_rel_lookup_var_IMP;
 val _ = emit "get_real_offset_lemma_typed"
   data_to_word_assignProofTheory.get_real_offset_lemma;
+val _ = emit "get_real_byte_offset_lemma_typed"
+  data_to_word_assignProofTheory.get_real_byte_offset_lemma;

@@ -1,5 +1,6 @@
 `data_to_word_assign_roots_probe.out` captures the exported HOL root-invariant,
-memory-relation variable-lookup, and real-offset evaluation theorems with inferred types. Regenerate
+memory-relation variable-lookup, and real-offset and byte-offset evaluation
+theorems with inferred types. Regenerate
 with `HOL_PROBE_ONLY=data_to_word_assign_roots_probeScript.sml scripts/hol-probes/regenerate.sh`
 using the pinned CakeML and HOL revisions. This is source-review evidence,
 not a cross-language equivalence proof.
