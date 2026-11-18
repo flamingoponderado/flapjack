@@ -306,3 +306,5 @@ val _ = emit "evaluate_stack_max_le_stack_limit_typed" "evaluate_stack_max_le_st
 val _ = emit "evaluate_add_clock_io_events_mono_typed" "evaluate_add_clock_io_events_mono";
 
 val _ = emit "semantics_zero_limits_typed" "semantics_zero_limits";
+
+val _ = emit "semantics_Div_IMP_LPREFIX_typed" "semantics_Div_IMP_LPREFIX";
