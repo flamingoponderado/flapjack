@@ -97,6 +97,7 @@ val _ = emit "ShiftVar_def_typed" "ShiftVar_def";
 val _ = emit "list_Seq_def_typed" "list_Seq_def";
 val _ = emit "Maxout_bits_code_def_typed" "Maxout_bits_code_def";
 val _ = emit "Make_ptr_bits_code_def_typed" "Make_ptr_bits_code_def";
+val _ = emit "FromList_code_def_typed" "FromList_code_def";
 val _ = emit "StoreEach_def_typed" "StoreEach_def";
 val _ = emit "MemEqList_def_typed" "MemEqList_def";
 val _ = emit "LoadBignum_def_typed" "LoadBignum_def";
