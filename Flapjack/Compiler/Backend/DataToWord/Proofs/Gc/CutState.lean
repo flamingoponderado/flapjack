@@ -11,12 +11,23 @@ public import Flapjack.Compiler.Backend.Semantics.WordSem.Env
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
 open Flapjack Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
 
-/-- Cutting source locals preserves the full relation. The HOL tag is pending
-review of the state relation and its compiler dependencies. -/
+namespace cutStateMap
+/-- Canonical target-state roundtrip for cut-environment theorems. -/
+theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {C F : Type} :
+    (∀ (state : WordSemStateBroad width C F) (h : state.FiniteSupport),
+      (WordSemStateBroad.ofBroad state h).toBroad = state) ∧
+    (∀ state : WordSemStateFiniteExact width C F,
+      WordSemStateBroad.ofBroad state.toBroad state.toBroad_finiteSupport = state) :=
+  WordSemStateExact.holFmapAsFiniteSupportWitness
+end cutStateMap
+
+/-- Cutting source locals preserves the full relation. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "state_rel_cut_env"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem stateRel_cutEnv {width : Nat} [NeZero width] {C F : Type}
-    (conf : Config) (l1 l2 : Nat) (source : DataSem.State C F)
+    (conf : Config) (l1 l2 : Nat) (source : Flapjack.Compiler.Backend.DataSem.State C F)
     (target : WordSemStateFiniteExact width C F) (locs : List (Nat × Nat))
-    (names : NumSet) (cut : Spt DataSem.Value)
+    (names : NumSet) (cut : Spt Flapjack.Compiler.Backend.DataSem.Value)
     (premises : stateRel conf l1 l2 source target none locs ∧
       DataSem.cutEnv names source.locals = some cut) :
     stateRel conf l1 l2 { source with locals := cut } target none locs := by
@@ -50,8 +61,8 @@ theorem stateRel_cutEnv {width : Nat} [NeZero width] {C F : Type}
     · exact Or.inl (Or.inr member)
     · exact Or.inr member
 
-/-- A successful optional cut preserves the full state relation. The HOL tag
-is pending review of the state relation and its compiler dependencies. -/
+/-- A successful optional cut preserves the full state relation. This factors
+the source assignment proof and has no separate HOL declaration. -/
 theorem stateRel_cutOpt {width : Nat} [NeZero width] {C F : Type}
     (conf : Config) (l1 l2 : Nat) (source : DataSem.State C F)
     (target : WordSemStateFiniteExact width C F) (locs : List (Nat × Nat))
@@ -74,12 +85,13 @@ theorem stateRel_cutOpt {width : Nat} [NeZero width] {C F : Type}
       subst cut
       exact stateRel_cutEnv conf l1 l2 source target locs names env ⟨related, envRun⟩
 
-/-- A successful source cut has a corresponding successful target cut. The
-HOL tag is pending review of the state relation and its compiler dependencies. -/
+/-- A successful source cut has a corresponding successful target cut. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "cut_env_IMP_cut_env"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem cutEnv_imp_wordCutEnv {width : Nat} [NeZero width] {C F : Type}
-    (conf : Config) (l1 l2 : Nat) (source : DataSem.State C F)
+    (conf : Config) (l1 l2 : Nat) (source : Flapjack.Compiler.Backend.DataSem.State C F)
     (target : WordSemStateFiniteExact width C F) (locs : List (Nat × Nat))
-    (names : NumSet) (cut : Spt DataSem.Value)
+    (names : NumSet) (cut : Spt Flapjack.Compiler.Backend.DataSem.Value)
     (premises : stateRel conf l1 l2 source target none locs ∧
       DataSem.cutEnv names source.locals = some cut) :
     ∃ wordCut, wordSemCutEnv (adjustSets names) target.locals = some wordCut := by
@@ -108,12 +120,13 @@ theorem cutEnv_imp_wordCutEnv {width : Nat} [NeZero width] {C F : Type}
     exact (sptMem_iff_lookup _ _).mpr ⟨word, found⟩
   simp [wordSemCutEnv, wordSemCutEnvs, wordSemCutNames, adjustSets, first, second]
 
-/-- Cutting both environments preserves the complete state relation. The HOL
-tag is pending review of the state relation and its compiler dependencies. -/
+/-- Cutting both environments preserves the complete state relation. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "state_rel_cut_env_cut_env"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem stateRel_cutEnv_cutEnv {width : Nat} [NeZero width] {C F : Type}
-    (conf : Config) (l1 l2 : Nat) (source : DataSem.State C F)
+    (conf : Config) (l1 l2 : Nat) (source : Flapjack.Compiler.Backend.DataSem.State C F)
     (target : WordSemStateFiniteExact width C F) (locs : List (Nat × Nat))
-    (names : NumSet) (cut : Spt DataSem.Value) (wordCut : Spt (WordLocW width))
+    (names : NumSet) (cut : Spt Flapjack.Compiler.Backend.DataSem.Value) (wordCut : Spt (WordLocW width))
     (premises : stateRel conf l1 l2 source target none locs ∧
       DataSem.cutEnv names source.locals = some cut ∧
       wordSemCutEnv (adjustSets names) target.locals = some wordCut) :

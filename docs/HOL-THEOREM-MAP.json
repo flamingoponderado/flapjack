@@ -23043,6 +23043,36 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "state_rel_cut_env",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CutState.lean",
+  "lean_name": "stateRel_cutEnv",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared state_rel_cut_env_typed: the original state relation and source cut imply the full relation with only source locals replaced. Source and target locals and live sets use the reviewed sparse-tree carrier; target finite-map fields and positive-width words use the reviewed representations."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "cut_env_IMP_cut_env",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CutState.lean",
+  "lean_name": "cutEnv_imp_wordCutEnv",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared cut_env_IMP_cut_env_typed: the original state relation and source cut imply existence of a successful adjusted target cut. Source and target locals and live sets use the reviewed sparse-tree carrier; target finite-map fields and positive-width words use the reviewed representations."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "state_rel_cut_env_cut_env",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CutState.lean",
+  "lean_name": "stateRel_cutEnv_cutEnv",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared state_rel_cut_env_cut_env_typed: the original state relation and both successful cuts imply the full relation with both locals replaced. Source and target locals and live sets use the reviewed sparse-tree carrier; target finite-map fields and positive-width words use the reviewed representations."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "state_rel_0_get_vars_IMP",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/StateRelation.lean",
   "lean_name": "stateRel_zero_getVars",
