@@ -8230,6 +8230,15 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "bytes_in_word_ADD_1_NOT_ZERO",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/StackSizeTail.lean",
+  "lean_name": "bytesInWordAddOneNeZero",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Independent comparison with bytes_in_word_ADD_1_NOT_ZERO_typed confirms the original good_dimindex premise, arbitrary word, and modular inequality. The reviewed bytes_in_word and good_dimindex translations retain the HOL byte count and 32-or-64 width condition."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "option_le_OPTION_MAP2_MAX",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/StackSizeTail.lean",
   "lean_name": "optionLeOptionMap2Max",

@@ -22,6 +22,7 @@ val _ = pr_typed "get_vars_PERM_toList_inter_typed" get_vars_PERM_toList_inter;
 val _ = pr_typed "LIST_REL_exists_witness_typed" LIST_REL_exists_witness;
 val _ = pr_typed "size_of_heap_call_push_env_typed" size_of_heap_call_push_env;
 val _ = pr_typed "option_le_OPTION_MAP2_MAX_typed" option_le_OPTION_MAP2_MAX;
+val _ = pr_typed "bytes_in_word_ADD_1_NOT_ZERO_typed" bytes_in_word_ADD_1_NOT_ZERO;
 (* The source theorem is local: replay its original statement and proof. *)
 val stack_rel_imp_subset_replay = prove (
   ``∀xs ys. LIST_REL stack_rel xs ys ⇒

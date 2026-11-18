@@ -2,6 +2,8 @@ module
 
 public import Flapjack.Compiler.Backend.BackendProps
 public import Flapjack.Compiler.Backend.Semantics.WordSem.State
+public import Flapjack.Compiler.Backend.Semantics.WordSem.CallHelpers
+public import Flapjack.Misc.GoodDimindex
 public import Mathlib.Tactic
 
 @[expose] public section
@@ -9,6 +11,13 @@ public import Mathlib.Tactic
 /-! Stack accounting for the data-to-word pop-environment proof. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
 open Flapjack Flapjack.Compiler.Backend.BackendProps
+
+/-- A byte-aligned word plus one cannot be zero at a supported word width. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "bytes_in_word_ADD_1_NOT_ZERO"
+  (words_as_type_indexed_bitvec)]
+theorem bytesInWordAddOneNeZero {width : Nat} [NeZero width] (w : BitVec width)
+    (good : goodDimindex width) : wordSemBytesInWord * w + 1 ≠ 0 := by
+  rcases good with h | h <;> subst width <;> simp only [wordSemBytesInWord] <;> bv_decide
 
 /-- Taking a maximum with the bound preserves the other operand's comparison. -/
 @[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "option_le_OPTION_MAP2_MAX"]
