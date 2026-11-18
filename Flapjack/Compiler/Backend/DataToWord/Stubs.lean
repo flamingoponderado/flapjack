@@ -397,6 +397,20 @@ def longDivCode {width : Nat} [NeZero width] (conf : Config) : WordLangProgHOL (
     (.seq (.assign 11 (.const (BitVec.ofNat width width)))
       (.call none (some longDiv1Location) [0, 11, 6, 10, 10, 4, 2] none))
 
+/-- Copy code bytes into the installation buffer. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "InstallCode_code_def"
+  (words_as_type_indexed_bitvec)]
+def installCodeStub {width : Nat} [NeZero width] (conf : Config) : WordLangProgHOL (BitVec width) :=
+  let bytes := (wordSemBytesInWord : BitVec width)
+  .ite .test 2 (.imm 1)
+    (.seq (.assign 2 (.lookup .bitmapBuffer)) (.call none (some installDataLocation) [0, 2, 4, 6] none))
+    (listSeq [.assign 3 (realAddr conf 2),
+      .assign 2 (.load (.op .add [.var 3, .const bytes])),
+      .assign 2 (shiftVar .lsr 2 2), .codeBufferWrite 6 2,
+      .assign 6 (.op .add [.var 6, .const 1]),
+      .assign 2 (.load (.op .add [.var 3, .const (2 * bytes)])),
+      .call none (some installCodeLocation) [0, 2, 4, 6] none])
+
 /-- Extend the partial stub lookup with configuration-dependent cases. The
 unimplemented stubs still return `none`, so this is not HOL's complete list. -/
 def compileConfiguredStub? {width : Nat} [NeZero width] (conf : Config) (location : Nat) :
@@ -468,15 +482,7 @@ def compileConfiguredStub? {width : Nat} [NeZero width] (conf : Config) (locatio
   else if location = anyArithLocation then
     some (4, anyArithCode conf)
   else if location = installCodeLocation then
-    let bytes := (wordSemBytesInWord : BitVec width)
-    some (4, .ite .test 2 (.imm 1)
-      (.seq (.assign 2 (.lookup .bitmapBuffer)) (.call none (some installDataLocation) [0, 2, 4, 6] none))
-      (listSeq [.assign 3 (realAddr conf 2),
-        .assign 2 (.load (.op .add [.var 3, .const bytes])),
-        .assign 2 (shiftVar .lsr 2 2), .codeBufferWrite 6 2,
-        .assign 6 (.op .add [.var 6, .const 1]),
-        .assign 2 (.load (.op .add [.var 3, .const (2 * bytes)])),
-        .call none (some installCodeLocation) [0, 2, 4, 6] none]))
+    some (4, installCodeStub conf)
   else if location = installDataLocation then
     let bytes := (wordSemBytesInWord : BitVec width)
     some (4, .ite .test 4 (.imm 1)
