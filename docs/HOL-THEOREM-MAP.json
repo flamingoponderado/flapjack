@@ -141253,4 +141253,54 @@
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "Compared evaluate_locals_LN_typed (regenerated from dataPropsScript.sml, with the ^s antiquotation expanded): binders c, s, res, t in that order over one state type (\u03b3, 'ffi) rendered as {C F : Type}; the hypothesis is HOL's flat three-part conjunction evaluate (c,s) = (res,t) \u2227 res \u2260 NONE \u2227 res \u2260 SOME (Rerr (Rabort Rtype_error)), and the conclusion is isEmpty t.locals \u2228 \u2203 v. res = SOME (Rerr (Rraise v)), where isEmpty is the sptree overload of t.locals = LN. The proof applies the local induction lemma to the pair equation. Inherits reals_as_rational_cuts through evaluate (docs/SOUNDNESS.md item 8)."
 }
+,
+{
+  "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
+  "hol_name": "evaluate_swap_stack_frame_sizes_aux",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/EvaluateStackFrameSizesSwap.lean",
+  "lean_name": "evaluate_swap_stack_frame_sizes_aux",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_swap_stack_frame_sizes_aux_typed, printed with show_types from the HOL declaration term because the theorem is [local] and has no DB entry: binders c s r s' xs lsz sfs in HOL order over one shared state type (gamma,'ffi) rendered as {C F : Type}; the premise is HOL's single conjunction evaluate (c,s) = (r,s') with LIST_REL stack_frame_size_rel s.stack xs, not curried; the let s0 is inlined as the record update replacing locals_size, stack and stack_frame_sizes; the conclusion is the existential xs lsz smx safe peak sfs' with the run at s0 equal to (r, s' with locals_size, safe_for_space, stack, stack_frame_sizes, stack_max and peak_heap_length replaced) and LIST_REL stack_frame_size_rel s'.stack xs. No extra premise and no changed field. Proved from stackFrameSwap_all, whose FrameSwapState relation is exactly the record replacement in the conclusion. The state's locals, code and refs are sptrees and no word-valued carrier occurs in the statement, so no representation qualifier applies. Inherits reals_as_rational_cuts through evaluate (docs/SOUNDNESS.md item 8)."
+}
+,
+{
+  "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
+  "hol_name": "evaluate_swap_local_sizes",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/EvaluateStackFrameSizesSwap.lean",
+  "lean_name": "evaluate_swap_local_sizes",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_swap_local_sizes_typed (regenerated from dataPropsScript.sml): binders c s r s' lss in HOL order over one shared state type (gamma,'ffi) rendered as {C F : Type}; the single premise is evaluate (c,s) = (r,s'); the conclusion is the existential xs lsz sfs smx safe peak in HOL order with evaluate (c, s with locals_size := lss) = (r, s' with locals_size := lsz, safe_for_space := safe, stack := xs, stack_frame_sizes := sfs, stack_max := smx and peak_heap_length := peak) and LIST_REL stack_frame_size_rel s'.stack xs. No extra premise. Read off evaluate_swap_stack_frame_sizes_aux at xs = s.stack, lsz = lss and sfs = s.stack_frame_sizes, with reflexivity of the frame relation; the three record fields left at their own values make the starting state exactly s with locals_size := lss. No representation qualifier applies. Inherits reals_as_rational_cuts through evaluate (docs/SOUNDNESS.md item 8)."
+}
+,
+{
+  "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
+  "hol_name": "evaluate_swap_stack_frame_sizes",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/EvaluateStackFrameSizesSwap.lean",
+  "lean_name": "evaluate_swap_stack_frame_sizes",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_swap_stack_frame_sizes_typed (regenerated from dataPropsScript.sml): binders c s r s' sfs in HOL order over one shared state type (gamma,'ffi) rendered as {C F : Type}; the single premise is evaluate (c,s) = (r,s'); the conclusion is the existential xs lsz smx safe peak sfs' in HOL order with evaluate (c, s with stack_frame_sizes := sfs) = (r, s' with locals_size := lsz, safe_for_space := safe, stack := xs, stack_frame_sizes := sfs', stack_max := smx and peak_heap_length := peak) and LIST_REL stack_frame_size_rel s'.stack xs. No extra premise. Read off evaluate_swap_stack_frame_sizes_aux at xs = s.stack, lsz = s.locals_size and sfs = sfs; the record fields left at their own values make the starting state exactly s with stack_frame_sizes := sfs. No representation qualifier applies. Inherits reals_as_rational_cuts through evaluate (docs/SOUNDNESS.md item 8)."
+}
+,
+{
+  "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
+  "hol_name": "evaluate_stack_frame_sizes_FST",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/EvaluateStackFrameSizesSwap.lean",
+  "lean_name": "evaluate_stack_frame_sizes_FST",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_stack_frame_sizes_FST_replay_typed (a typed replay, since the HOL theorem is [local] and has no DB entry): the HOL binders are c s r s' over one shared state type (gamma,'ffi) rendered as {C F : Type}; r and s' do not occur in the statement and are vacuous, so the Lean statement quantifies c and s only, which source review confirms. The conclusion is FST (evaluate (c,s)) = FST (evaluate (c, s with stack_frame_sizes := LN)), rendered as (evaluate program state).1 = (evaluate program {state with stackFrameSizes := .ln}).1, with Spt.ln the canonical empty sptree. No premise. Follows from evaluate_swap_stack_frame_sizes at sfs = LN. No representation qualifier applies. Inherits reals_as_rational_cuts through evaluate (docs/SOUNDNESS.md item 8)."
+}
+,
+{
+  "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
+  "hol_name": "evaluate_stack_frame_sizes_ffi",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/EvaluateStackFrameSizesSwap.lean",
+  "lean_name": "evaluate_stack_frame_sizes_ffi",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_stack_frame_sizes_ffi_replay_typed (a typed replay, since the HOL theorem is [local] and has no DB entry): the HOL binders are c s r s' over one shared state type (gamma,'ffi) rendered as {C F : Type}; r and s' do not occur in the statement and are vacuous, so the Lean statement quantifies c and s only, which source review confirms. The conclusion is (SND (evaluate (c,s))).ffi = (SND (evaluate (c, s with stack_frame_sizes := LN))).ffi, rendered as (evaluate program state).2.ffi = (evaluate program {state with stackFrameSizes := .ln}).2.ffi, with Spt.ln the canonical empty sptree. No premise. Follows from evaluate_swap_stack_frame_sizes at sfs = LN, since ffi is not one of the replaced fields. No representation qualifier applies. Inherits reals_as_rational_cuts through evaluate (docs/SOUNDNESS.md item 8)."
+}
 ]

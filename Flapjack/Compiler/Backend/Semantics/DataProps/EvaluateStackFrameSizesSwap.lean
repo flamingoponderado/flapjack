@@ -7,6 +7,7 @@ public import Flapjack.Compiler.Backend.Semantics.DataProps.FindCodeSize
 public import Flapjack.Compiler.Backend.Semantics.DataProps.ResourceSwap
 public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.PermuteSwapStack
 public import Flapjack.Misc.ClockWeightInduction
+public import Flapjack.HolRef
 
 @[expose] public section
 
@@ -1512,5 +1513,114 @@ private theorem stackFrameSwap_all {C F : Type} (program : DataLang.Prog)
         obtain ⟨handlerName, handlerBody⟩ := entry
         exact stackFrameSwap_returningCall_handler dest names returns live handlerName
           handlerBody state smaller
+
+/-- Replacing the locals size, the stack and the frame-size map of the starting
+    state preserves the evaluation result, with the frame-size map and the
+    resource observations free in the result. Port of HOL
+    `evaluate_swap_stack_frame_sizes_aux`. -/
+@[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml"
+  "evaluate_swap_stack_frame_sizes_aux"]
+theorem evaluate_swap_stack_frame_sizes_aux {C F : Type} (program : DataLang.Prog)
+    (state next : State C F) (res : Option (Result (List DataSem.Value) DataSem.Value))
+    (xs : List Stack) (localsSize : Option Nat) (sfs : Spt Nat)
+    (run : evaluate program state = (res, next))
+    (related : List.Forall₂ stackFrameSizeRel state.stack xs) :
+    ∃ xs' localsSize' smx safe peak sfs',
+      evaluate program { state with
+          localsSize := localsSize
+          stack := xs
+          stackFrameSizes := sfs } =
+        (res, { next with
+          localsSize := localsSize'
+          safeForSpace := safe
+          stack := xs'
+          stackFrameSizes := sfs'
+          stackMax := smx
+          peakHeapLength := peak }) ∧
+      List.Forall₂ stackFrameSizeRel next.stack xs' := by
+  obtain ⟨other, otherRun, relNext, stackNext⟩ :=
+    stackFrameSwap_all program state res next
+      { state with localsSize := localsSize, stack := xs, stackFrameSizes := sfs }
+      run rfl related
+  refine ⟨other.stack, other.localsSize, other.stackMax, other.safeForSpace,
+    other.peakHeapLength, other.stackFrameSizes, ?_, stackNext⟩
+  rw [relNext] at otherRun
+  exact otherRun
+
+/-- Replacing only the locals size of the starting state preserves the
+    evaluation result, with the stack, the frame-size map and the resource
+    observations free in the result. Port of HOL `evaluate_swap_local_sizes`. -/
+@[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "evaluate_swap_local_sizes"]
+theorem evaluate_swap_local_sizes {C F : Type} (program : DataLang.Prog)
+    (state next : State C F) (res : Option (Result (List DataSem.Value) DataSem.Value))
+    (localsSize : Option Nat) (run : evaluate program state = (res, next)) :
+    ∃ xs' localsSize' sfs' smx safe peak,
+      evaluate program { state with localsSize := localsSize } =
+        (res, { next with
+          localsSize := localsSize'
+          safeForSpace := safe
+          stack := xs'
+          stackFrameSizes := sfs'
+          stackMax := smx
+          peakHeapLength := peak }) ∧
+      List.Forall₂ stackFrameSizeRel next.stack xs' := by
+  obtain ⟨xs', localsSize', smx, safe, peak, sfs', runSwap, related⟩ :=
+    evaluate_swap_stack_frame_sizes_aux program state next res state.stack localsSize
+      state.stackFrameSizes run (forall₂_stackFrameSizeRel_refl state.stack)
+  refine ⟨xs', localsSize', sfs', smx, safe, peak, ?_, related⟩
+  simpa using runSwap
+
+/-- Replacing only the frame-size map of the starting state preserves the
+    evaluation result, with the stack, the locals size and the resource
+    observations free in the result. Port of HOL
+    `evaluate_swap_stack_frame_sizes`. -/
+@[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml"
+  "evaluate_swap_stack_frame_sizes"]
+theorem evaluate_swap_stack_frame_sizes {C F : Type} (program : DataLang.Prog)
+    (state next : State C F) (res : Option (Result (List DataSem.Value) DataSem.Value))
+    (sfs : Spt Nat) (run : evaluate program state = (res, next)) :
+    ∃ xs' localsSize' smx safe peak sfs',
+      evaluate program { state with stackFrameSizes := sfs } =
+        (res, { next with
+          localsSize := localsSize'
+          safeForSpace := safe
+          stack := xs'
+          stackFrameSizes := sfs'
+          stackMax := smx
+          peakHeapLength := peak }) ∧
+      List.Forall₂ stackFrameSizeRel next.stack xs' := by
+  obtain ⟨xs', localsSize', smx, safe, peak, sfs', runSwap, related⟩ :=
+    evaluate_swap_stack_frame_sizes_aux program state next res state.stack state.localsSize
+      sfs run (forall₂_stackFrameSizeRel_refl state.stack)
+  refine ⟨xs', localsSize', smx, safe, peak, sfs', ?_, related⟩
+  simpa using runSwap
+
+/-- The evaluation result of a program does not depend on the starting
+    frame-size map. Port of HOL `evaluate_stack_frame_sizes_FST`. -/
+@[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml"
+  "evaluate_stack_frame_sizes_FST"]
+theorem evaluate_stack_frame_sizes_FST {C F : Type} (program : DataLang.Prog)
+    (state : State C F) :
+    (evaluate program state).1 =
+      (evaluate program { state with stackFrameSizes := .ln }).1 := by
+  cases runEq : evaluate program state with
+  | mk res next =>
+    obtain ⟨xs', localsSize', smx, safe, peak, sfs', runSwap, related⟩ :=
+      evaluate_swap_stack_frame_sizes program state next res .ln runEq
+    rw [runSwap]
+
+/-- The final FFI state of a program does not depend on the starting frame-size
+    map. Port of HOL `evaluate_stack_frame_sizes_ffi`. -/
+@[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml"
+  "evaluate_stack_frame_sizes_ffi"]
+theorem evaluate_stack_frame_sizes_ffi {C F : Type} (program : DataLang.Prog)
+    (state : State C F) :
+    (evaluate program state).2.ffi =
+      (evaluate program { state with stackFrameSizes := .ln }).2.ffi := by
+  cases runEq : evaluate program state with
+  | mk res next =>
+    obtain ⟨xs', localsSize', smx, safe, peak, sfs', runSwap, related⟩ :=
+      evaluate_swap_stack_frame_sizes program state next res .ln runEq
+    rw [runSwap]
 
 end Flapjack.Compiler.Backend.DataProps
