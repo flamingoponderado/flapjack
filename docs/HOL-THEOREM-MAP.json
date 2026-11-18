@@ -23231,6 +23231,17 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "find_code_thm",
+  "hol_line": 5277,
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/FindCode.lean",
+  "lean_name": "findCode_correct",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared find_code_thm_typed: the full initial relation, both argument reads and successful data lookup imply a word lookup of a compiled body and the full relation between entered call environments. The destination and frame-size tree are arbitrary, and both direct and indirect calls are covered. Target finite maps and positive-width words use the reviewed representations."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "option_le_stack_size_cons",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/StackSizeTail.lean",
   "lean_name": "optionLe_stackSize_cons",

@@ -100,3 +100,4 @@ val _ = pr_typed "word_ml_inv_CodePtr_typed" data_to_word_gcProofTheory.word_ml_
 val _ = pr_typed "state_rel_CodePtr_typed" data_to_word_gcProofTheory.state_rel_CodePtr;
 val _ = pr_typed "data_get_vars_SNOC_IMP_typed" data_to_word_gcProofTheory.data_get_vars_SNOC_IMP;
 val _ = pr_typed "word_get_vars_SNOC_IMP_typed" data_to_word_gcProofTheory.word_get_vars_SNOC_IMP;
+val _ = pr_typed "find_code_thm_typed" data_to_word_gcProofTheory.find_code_thm;
