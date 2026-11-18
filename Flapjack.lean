@@ -313,6 +313,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.WordMlInvLookup
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.WordMlInvGetVars
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.Roots
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.Offset
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.Const
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.WordMlInvInsert
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.MkLoc
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.Skip

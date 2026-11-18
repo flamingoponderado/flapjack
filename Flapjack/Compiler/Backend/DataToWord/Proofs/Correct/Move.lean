@@ -16,19 +16,23 @@ open Flapjack.Compiler.Backend.BackendProps
 open Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
 open Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
 
-/-- Updating matching locals preserves the full state relation. This is the
-intermediate argument used directly by the source `Move` case. -/
-private theorem stateRel_move {width : Nat} [NeZero width] {C F : Type}
+/-- Updating matching locals preserves the state relation when their pair is
+already represented in the memory roots. This shared proof step supports the
+HOL Move and constant-assignment cases; it has no standalone HOL declaration. -/
+theorem stateRel_insertRoot {width : Nat} [NeZero width] {C F : Type}
     (conf : Config) (l1 l2 : Nat) (source : DataSem.State C F)
     (target : WordSemStateFiniteExact width C F) (locs : List (Nat × Nat))
-    (dest src : Nat) (value : DataSem.Value) (word : WordLocW width)
+    (dest : Nat) (value : DataSem.Value) (word : WordLocW width)
     (related : stateRel conf l1 l2 source target none locs)
-    (sourceFound : DataSem.getVar src source.locals = some value)
-    (targetFound : WordSemStateFiniteExact.getVar (adjustVar src) target = some word) :
+    (root : memoryRel conf target.be (holThe source.tstamps) source.refs source.space
+      target.store target.memory target.mdomain
+      ((value, word) :: joinEnv source.locals
+        (sptToAList (sptInter target.locals (adjustSet source.locals))) ++
+        [(theGlobal source.global, holFapply target.store .globals)] ++ flatStack source.stack target.stack)) :
     stateRel conf l1 l2 (DataSem.setVar dest value source)
       (WordSemStateFiniteExact.setVar (adjustVar dest) word target) none locs := by
   rcases related with ⟨hffi, hclock, hhandler, hgc, hcode, horacle, hgood, hshift,
-    htstamp, hglobal, hzero, hpresent, hstack, hlocs, hacc, hmax, hsizes, hlocals, hlim, hmem⟩
+    htstamp, hglobal, hzero, hpresent, hstack, hlocs, hacc, hmax, hsizes, hlocals, hlim, _⟩
   refine ⟨hffi, hclock, hhandler, hgc, hcode, horacle, hgood, hshift, htstamp, hglobal,
     ?_, ?_, hstack, hlocs, hacc, hmax, hsizes, hlocals, hlim, ?_⟩
   · intro _
@@ -53,19 +57,33 @@ private theorem stateRel_move {width : Nat} [NeZero width] {C F : Type}
         (sptToAList (sptInter (sptInsert (adjustVar dest) word target.locals)
           (adjustSet (sptInsert dest value source.locals)))) ++
         [(theGlobal source.global, holFapply target.store .globals)] ++ flatStack source.stack target.stack)
-    obtain ⟨heap, limit, a, sp, sp1, gens, hstore, hinv, hbound, hspace⟩ := hmem
+    obtain ⟨heap, limit, a, sp, sp1, gens, hstore, hinv, hbound, hspace⟩ := root
     refine ⟨heap, limit, a, sp, sp1, gens, hstore, ?_, hbound, hspace⟩
-    have srcLookup : sptLookup src source.locals = some value := sourceFound
-    have targetLookup : sptLookup (adjustVar src) target.locals = some word := targetFound
     let rest := [(theGlobal source.global, holFapply target.store .globals)] ++ flatStack source.stack target.stack
-    have before : wordMlInv (heap, target.be, a, sp, sp1, gens) limit (holThe source.tstamps) conf source.refs
-        (joinEnv source.locals (sptToAList (sptInter target.locals (adjustSet source.locals))) ++ rest) := by
-      simpa [rest] using hinv
-    have added := wordMlInv_lookup heap target.be a sp sp1 gens limit (holThe source.tstamps)
-      conf source.refs [] rest source.locals target.locals src value word ⟨by simpa using before, srcLookup, targetLookup⟩
     have updated := wordMlInv_insert heap target.be a sp sp1 gens limit (holThe source.tstamps)
-      conf source.refs source.locals target.locals dest value word rest (by simpa using added)
+      conf source.refs source.locals target.locals dest value word rest (by simpa [rest] using hinv)
     simpa [rest] using updated
+
+/-- The Move case obtains its new root from the matching source and word
+lookups before applying the shared state-update argument. -/
+private theorem stateRel_move {width : Nat} [NeZero width] {C F : Type}
+    (conf : Config) (l1 l2 : Nat) (source : DataSem.State C F)
+    (target : WordSemStateFiniteExact width C F) (locs : List (Nat × Nat))
+    (dest src : Nat) (value : DataSem.Value) (word : WordLocW width)
+    (related : stateRel conf l1 l2 source target none locs)
+    (sourceFound : DataSem.getVar src source.locals = some value)
+    (targetFound : WordSemStateFiniteExact.getVar (adjustVar src) target = some word) :
+    stateRel conf l1 l2 (DataSem.setVar dest value source)
+      (WordSemStateFiniteExact.setVar (adjustVar dest) word target) none locs := by
+  apply stateRel_insertRoot conf l1 l2 source target locs dest value word related
+  rcases related with ⟨_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, hmem⟩
+  obtain ⟨heap, limit, a, sp, sp1, gens, hstore, hinv, hbound, hspace⟩ := hmem
+  refine ⟨heap, limit, a, sp, sp1, gens, hstore, ?_, hbound, hspace⟩
+  let rest := [(theGlobal source.global, holFapply target.store .globals)] ++ flatStack source.stack target.stack
+  have added := wordMlInv_lookup heap target.be a sp sp1 gens limit (holThe source.tstamps)
+    conf source.refs [] rest source.locals target.locals src value word
+      ⟨by simpa [rest] using hinv, sourceFound, targetFound⟩
+  simpa [rest] using added
 
 /-- The full HOL `Move` simulation case, including every result branch. The
 HOL tag is pending compiler and state-relation dependency review. The word
