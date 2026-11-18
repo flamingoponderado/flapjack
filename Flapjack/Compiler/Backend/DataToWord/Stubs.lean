@@ -78,6 +78,31 @@ def replicateCode {width : Nat} [NeZero width] : WordLangProgHOL (BitVec width) 
     .assign 6 (.op .sub [.var 6, .const 4]),
     .call none (some replicateLocation) [0, 2, 4, 6, 8] none])
 
+/-- Shared construction of the source arithmetic entry-point stubs. -/
+def arithWrapperCode {width : Nat} (operation : Nat) : WordLangProgHOL (BitVec width) :=
+  .seq (.assign 6 (.const (BitVec.ofNat width (4 * operation))))
+    (.call none (some anyArithLocation) [0, 2, 4, 6] none)
+
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "Add_code_def"
+  (words_as_type_indexed_bitvec)]
+def addCode {width : Nat} [NeZero width] : WordLangProgHOL (BitVec width) := arithWrapperCode 0
+
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "Sub_code_def"
+  (words_as_type_indexed_bitvec)]
+def subCode {width : Nat} [NeZero width] : WordLangProgHOL (BitVec width) := arithWrapperCode 1
+
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "Mul_code_def"
+  (words_as_type_indexed_bitvec)]
+def mulCode {width : Nat} [NeZero width] : WordLangProgHOL (BitVec width) := arithWrapperCode 4
+
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "Div_code_def"
+  (words_as_type_indexed_bitvec)]
+def divCode {width : Nat} [NeZero width] : WordLangProgHOL (BitVec width) := arithWrapperCode 5
+
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "Mod_code_def"
+  (words_as_type_indexed_bitvec)]
+def modCode {width : Nat} [NeZero width] : WordLangProgHOL (BitVec width) := arithWrapperCode 6
+
 /-- Flapjack's partial stub lookup. It supplies only the listed stubs and
 returns `none` for all others; the complete HOL `stubs` list, including
 bignum code, remains unported. -/
@@ -147,12 +172,11 @@ def compileStub? {width : Nat} [NeZero width] (location : Nat) : Option (Nat × 
       .assign 4 (.op .add [.var 4, .const bytes]),
       .assign 6 (.op .add [.var 6, .const bytes]),
       .call none (some equal1Location) [0, 2, 4, 6] none])
-  else if location = addLocation ∨ location = subLocation ∨ location = mulLocation ∨
-      location = divLocation ∨ location = modLocation then
-    let operation := if location = addLocation then 0 else if location = subLocation then 1
-      else if location = mulLocation then 4 else if location = divLocation then 5 else 6
-    some (3, .seq (.assign 6 (.const (BitVec.ofNat width (4 * operation))))
-      (.call none (some anyArithLocation) [0, 2, 4, 6] none))
+  else if location = addLocation then some (3, addCode)
+  else if location = subLocation then some (3, subCode)
+  else if location = mulLocation then some (3, mulCode)
+  else if location = divLocation then some (3, divCode)
+  else if location = modLocation then some (3, modCode)
   else if location = unusedLocation then some (6, .skip)
   else if location = byteCopyNewLocation then some (4, .skip)
   else if location = dummyLocation then some (0, .skip)

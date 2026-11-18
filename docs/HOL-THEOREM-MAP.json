@@ -130030,6 +130030,36 @@
     "reviewer": "Independent comparison with AnyArith_code_def_typed confirms the complete sequence, allocation cutset, both call handlers, small-number branches and final heap updates. Fixed word5 temporary indices remain distinct from the positive-width program word. The executed fixed-stub lookup uses this definition at the original location and arity; captured HOL oracle checks cover its generated body."
   },
 {
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml", "hol_name": "Add_code_def",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Stubs.lean", "lean_name": "addCode",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec", "words_as_type_indexed_bitvec": true,
+    "reviewer": "Independent comparison with Add_code_def_typed: shared wrapper expands to Assign 6 with n2w (4 * 0), then the original AnyArith call. Production dispatch uses the source location and arity."
+  },
+{
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml", "hol_name": "Sub_code_def",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Stubs.lean", "lean_name": "subCode",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec", "words_as_type_indexed_bitvec": true,
+    "reviewer": "Independent comparison with Sub_code_def_typed: shared wrapper expands to Assign 6 with n2w (4 * 1), then the original AnyArith call. Production dispatch uses the source location and arity."
+  },
+{
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml", "hol_name": "Mul_code_def",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Stubs.lean", "lean_name": "mulCode",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec", "words_as_type_indexed_bitvec": true,
+    "reviewer": "Independent comparison with Mul_code_def_typed: shared wrapper expands to Assign 6 with n2w (4 * 4), then the original AnyArith call. Production dispatch uses the source location and arity."
+  },
+{
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml", "hol_name": "Div_code_def",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Stubs.lean", "lean_name": "divCode",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec", "words_as_type_indexed_bitvec": true,
+    "reviewer": "Independent comparison with Div_code_def_typed: shared wrapper expands to Assign 6 with n2w (4 * 5), then the original AnyArith call. Production dispatch uses the source location and arity."
+  },
+{
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml", "hol_name": "Mod_code_def",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Stubs.lean", "lean_name": "modCode",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec", "words_as_type_indexed_bitvec": true,
+    "reviewer": "Independent comparison with Mod_code_def_typed: shared wrapper expands to Assign 6 with n2w (4 * 6), then the original AnyArith call. Production dispatch uses the source location and arity."
+  },
+{
     "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
     "hol_name": "StoreEach_def",
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
