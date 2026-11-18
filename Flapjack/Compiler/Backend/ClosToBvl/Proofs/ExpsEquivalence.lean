@@ -102,7 +102,7 @@ theorem compileExpsSingleton_eq (maxApp : Nat) (e : ClosLang.Exp) (aux : Aux) :
       | mk b aux2 =>
         have cs := compileExps_eq_list maxApp xs aux1
         rw [hs] at cs
-        simp [compileExpsSingletonHOL, compileExpHOL, cx, cs, hx, hs] <;> rfl
+        simp [compileExpsSingletonHOL, compileExpHOL, cx, cs, hx, hs]; rfl
   | fn t loc vs args x =>
     cases hx : compileExpHOL maxApp x aux with
     | mk a aux1 =>
@@ -130,7 +130,7 @@ theorem compileExpsSingleton_eq (maxApp : Nat) (e : ClosLang.Exp) (aux : Aux) :
             have cb := compileExps_eq_list maxApp [body] (entry :: aux1)
             simp [compileExpListHOL, hb] at cb
             simp only [entry, List.append_assoc, List.singleton_append] at cb hb
-            simp [compileExpsSingletonHOL, compileExpHOL, cf, cb, hf, hb, Flapjack.holHd] <;> rfl
+            simp [compileExpsSingletonHOL, compileExpHOL, cf, cb, hf, hb, Flapjack.holHd]
       | cons second rest =>
         cases hf : compileExpListHOL maxApp ((first :: second :: rest).map Prod.snd) aux with
         | mk compiled aux1 =>
@@ -147,7 +147,7 @@ theorem compileExpsSingleton_eq (maxApp : Nat) (e : ClosLang.Exp) (aux : Aux) :
             simp [compileExpListHOL, hb] at cb
             simp only [nextAux, cases, List.length_cons, List.map_cons] at cb hb
             simp [compileExpsSingletonHOL, compileExpHOL, cf, gf, cb, hb,
-              map_zip_eq_zipWith, Flapjack.holHd] <;> rfl
+              map_zip_eq_zipWith, Flapjack.holHd]
 termination_by 2 * sizeOf e + 1
 decreasing_by
   all_goals simp_wf

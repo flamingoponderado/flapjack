@@ -3,6 +3,7 @@ module
 public import Flapjack.Compiler.Backend.ClosCall.Stubs
 public import Flapjack.Compiler.Backend.Semantics.ClosProps.Syntactic.LabelsAndArity
 public import Flapjack.Compiler.Backend.Semantics.ClosProps.FreeVars.Append
+import Mathlib.Tactic
 
 @[expose] public section
 

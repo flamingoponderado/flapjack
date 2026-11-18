@@ -22,17 +22,27 @@ theorem compileControl_exists {width : Nat} [NeZero width] (conf : Config) (secn
     obtain ⟨a, b, ha⟩ := ihx
     obtain ⟨c, d, hc⟩ := ihy b
     simp [ha, hc]
-  case case118 l ns names target args n handler ih =>
+  case case13 l ns names target args n handler ih =>
     obtain ⟨a, b, ha⟩ := ih
     simp [ha]
 
-/-- The traversal exposed as a total function, with failure ruled out by
-`compileControl_exists`. Source-level comparison with HOL remains open. -/
+/-- Compile a data-language program, threading the local label counter. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "comp_def"
+  (words_as_type_indexed_bitvec)]
 def compileControl {width : Nat} [NeZero width] (conf : Config) (secn l : Nat)
     (program : DataLang.Prog) : WordLangProgHOL (BitVec width) × Nat :=
   (compileControl? conf secn l program).get (by
     obtain ⟨result, h⟩ := compileControl_exists (width := width) conf secn l program
     simp [h])
+
+/-- Compile one labeled data function, incrementing its arity and discarding
+    the next local label. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "compile_part_def"
+  (words_as_type_indexed_bitvec)]
+def compilePart {width : Nat} [NeZero width] (conf : Config)
+    (entry : Nat × Nat × DataLang.Prog) : Nat × Nat × WordLangProgHOL (BitVec width) :=
+  let (name, arity, body) := entry
+  (name, arity + 1, (compileControl conf name 2 body).1)
 
 /-- The total operation returns exactly the result of the existing traversal.
 This Flapjack-specific equation supports replacing option-valued calls. -/

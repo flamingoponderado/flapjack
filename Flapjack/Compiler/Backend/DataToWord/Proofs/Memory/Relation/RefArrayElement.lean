@@ -186,25 +186,25 @@ theorem absMlInv_refArrayChild {width : Nat} [NeZero width] (conf : Config)
             exact Relation.ReflTransGen.head edge path
           · exact ⟨root, start, old, inRefs, path⟩
 
-/-- Reading a value-array element gives the concrete payload word and extends
-the full memory relation with the corresponding source value. This is
-Lean-side infrastructure for the array case of field access. -/
-theorem memoryRel_refArrayElement {width : Nat} [NeZero width] (conf : Config) (bigEndian : Bool)
+/-- Reading a value-array element extends the full memory relation with the
+corresponding source value and the word at the payload address. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "memory_rel_Deref'"
+  (fmap_as_finite_support_relation := [store]) (words_as_type_indexed_bitvec)]
+theorem memoryRel_deref {width : Nat} [NeZero width] (conf : Config) (bigEndian : Bool)
     (next : Nat) (refs : Spt (BvlSem.Ref Value)) (space : Nat)
     (store : HolFiniteMapExact WordStoreHOL (WordLocW width))
     (memory : BitVec width → WordLocW width) (domain : BitVec width → Bool)
     (bit : Bool) (ref : Nat) (values : List Value) (location : WordLocW width)
-    (vars : List (Value × WordLocW width)) (i : Nat) (bound : i < values.length)
-    (found : sptLookup ref refs = some (.valueArray values))
+    (vars : List (Value × WordLocW width)) (i : Nat)
     (h : memoryRel conf bigEndian next refs space store memory domain ((.refPtr bit ref, location) :: vars) ∧
-      goodDimindex width) :
+      sptLookup ref refs = some (.valueArray values) ∧ goodDimindex width ∧ i < values.length) :
     ∃ w addr : BitVec width,
-      location = .word w ∧ getRealAddr conf store w = some addr ∧ getRealSimpleAddr conf store w = some addr ∧
+      location = .word w ∧ getRealAddr conf store w = some addr ∧
       domain (addr + StackRemove.bytesInWord width + StackRemove.bytesInWord width * BitVec.ofNat width i) = true ∧
       memoryRel conf bigEndian next refs space store memory domain
-        ((values[i], memory (addr + StackRemove.bytesInWord width + StackRemove.bytesInWord width * BitVec.ofNat width i)) ::
+        ((values[i]'h.2.2.2, memory (addr + StackRemove.bytesInWord width + StackRemove.bytesInWord width * BitVec.ofNat width i)) ::
           (.refPtr bit ref, location) :: vars) := by
-  obtain ⟨⟨heap, limit, a, sp, sp1, gens, heapMem, wordInv, limitBound, spaceBound⟩, good⟩ := h
+  obtain ⟨⟨heap, limit, a, sp, sp1, gens, heapMem, wordInv, limitBound, spaceBound⟩, found, good, bound⟩ := h
   obtain ⟨roots, absInv, addresses⟩ := wordInv
   obtain ⟨parent, child, rest, ptr, childRoots, childBound, rootsEq, parentEq, cell, childEq, extended⟩ :=
     absMlInv_refArrayChild conf (vars.map Prod.fst) refs roots heap bigEndian a sp sp1 gens limit next
@@ -213,7 +213,7 @@ theorem memoryRel_refArrayElement {width : Nat} [NeZero width] (conf : Config) (
   cases addresses with
   | cons parentAddr restAddresses =>
     subst parent
-    obtain ⟨addr, addressEq, simpleEq, memoryEq, domainEq⟩ :=
+    obtain ⟨addr, addressEq, _, memoryEq, domainEq⟩ :=
       heapInMemoryStore_refElement conf heap ptr childRoots i childBound a sp sp1 gens store memory domain limit
         (.word 0) good cell heapMem
     have memChild : memory (addr + StackRemove.bytesInWord width + StackRemove.bytesInWord width * BitVec.ofNat width i) =
@@ -221,7 +221,7 @@ theorem memoryRel_refArrayElement {width : Nat} [NeZero width] (conf : Config) (
       simpa only [childEq, BitVec.mul_comm] using memoryEq
     have inDomain : domain (addr + StackRemove.bytesInWord width + StackRemove.bytesInWord width * BitVec.ofNat width i) = true := by
       simpa only [BitVec.mul_comm] using domainEq
-    refine ⟨getAddr conf ptr (.word 0), addr, ?_, addressEq, simpleEq, inDomain, ?_⟩
+    refine ⟨getAddr conf ptr (.word 0), addr, ?_, addressEq, inDomain, ?_⟩
     · simpa only [wordAddr] using parentAddr.symm
     · refine ⟨heap, limit, a, sp, sp1, gens, heapMem, ?_, limitBound, spaceBound⟩
       refine ⟨child :: .pointer ptr (.word 0) :: rest, extended, ?_⟩

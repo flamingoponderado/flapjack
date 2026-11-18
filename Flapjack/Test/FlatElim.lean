@@ -316,9 +316,9 @@ example : Flapjack.Compiler.Backend.PatternExh.specRow (.tagC 2 1)
         x == ofString "x" && x' == x
   | _ => false
 #guard pattern_constructor_branch
-#guard match Flapjack.Compiler.Backend.SourceToFlat.compileToClosFuel 100
+#guard match Flapjack.Compiler.Backend.SourceToFlat.compileToClos
     Flapjack.Compiler.Backend.SourceToFlat.emptyConfig [] with
-  | some (_, [
+  | (_, [
       .let .none [.op .none (.globOp .allocGlobal) [.op .none (.intOp (.const 1)) []],
         .op .none (.blockOp (.cons 0)) []] (.op .none (.globOp (.setGlobal 0)) [.var .none 1]),
       .let (.cons (.sourceLoc 2 2 1 1) 1)
@@ -329,10 +329,10 @@ example : Flapjack.Compiler.Backend.PatternExh.specRow (.tagC 2 1)
       .op .none (.globOp (.setGlobal 1)) [.op .none (.memOp .ref) [.op .none (.blockOp (.cons 0)) []]]]) => true
   | _ => false
 #guard empty_source_to_clos
-private def referenceOutput (result : Option (Flapjack.Compiler.Backend.SourceToFlat.Config ×
-    List Flapjack.Compiler.Backend.ClosLang.Exp)) : Bool :=
+private def referenceOutput (result : Flapjack.Compiler.Backend.SourceToFlat.Config ×
+    List Flapjack.Compiler.Backend.ClosLang.Exp) : Bool :=
   match result with
-  | some (_, [
+  | (_, [
       .let .none [.op .none (.globOp .allocGlobal) [.op .none (.intOp (.const 1)) []],
         .op .none (.blockOp (.cons 0)) []] (.op .none (.globOp (.setGlobal 0)) [.var .none 1]),
       .let (.cons (.sourceLoc 2 2 1 1) 1)
@@ -344,7 +344,7 @@ private def referenceOutput (result : Option (Flapjack.Compiler.Backend.SourceTo
       .let .none [.op .none (.memOp .ref) [.op .none (.intOp (.const 1)) []]]
         (.let .none [.var .none 0] (.op .none (.globOp (.setGlobal 2)) [.var .none 0]))]) => true
   | _ => false
-#guard referenceOutput (Flapjack.Compiler.Backend.SourceToFlat.compileToClosFuel 100
+#guard referenceOutput (Flapjack.Compiler.Backend.SourceToFlat.compileToClos
     Flapjack.Compiler.Backend.SourceToFlat.emptyConfig
     [.dlet Flapjack.Misc.Location.unknownLoc (.pvar (ofString "x")) (.app .opref [.lit (.intLit 1)])])
 #guard reference_source_to_clos
@@ -386,17 +386,17 @@ example : Flapjack.Compiler.Backend.SourceLet.compileDecs
     ↓reduceIte, List.reverse_cons, List.reverse_nil, List.nil_append,
     Flapjack.Compiler.Backend.SourceLet.compileDecs.eq_1]
   rfl
-#guard referenceOutput (Flapjack.Compiler.Backend.SourceToFlat.compileCakeToClosFuel 100
+#guard referenceOutput (Flapjack.Compiler.Backend.SourceToFlat.compileCakeToClos
     Flapjack.Compiler.Backend.SourceToFlat.emptyConfig
     [.dlet Flapjack.Misc.Location.unknownLoc (.pvar (ofString "x"))
       (.let_ (some (ofString "y")) (.app .opref [.lit (.intLit 1)]) (.var (.short (ofString "y"))))])
 #guard lifted_source_to_clos
-#guard match Flapjack.Compiler.Backend.SourceToFlat.compileCakeToClosFuel 100
+#guard match Flapjack.Compiler.Backend.SourceToFlat.compileCakeToClos
     Flapjack.Compiler.Backend.SourceToFlat.emptyConfig
     [.dlet Flapjack.Misc.Location.unknownLoc (.pvar (ofString "x"))
       (.app .opref [.mat (.lit (.intLit 1))
         [(.plit (.intLit 1), .lit (.intLit 2)), (.pany, .lit (.intLit 3))]])] with
-  | some (_, [
+  | (_, [
       .let .none [.op .none (.globOp .allocGlobal) [.op .none (.intOp (.const 1)) []],
         .op .none (.blockOp (.cons 0)) []] (.op .none (.globOp (.setGlobal 0)) [.var .none 1]),
       .let (.cons (.sourceLoc 2 2 1 1) 1)
@@ -412,12 +412,12 @@ example : Flapjack.Compiler.Backend.SourceLet.compileDecs
         (.let .none [.var .none 0] (.op .none (.globOp (.setGlobal 2)) [.var .none 0]))]) => true
   | _ => false
 #guard match_source_to_clos
-#guard match Flapjack.Compiler.Backend.SourceToFlat.compileCakeToClosFuel 100
+#guard match Flapjack.Compiler.Backend.SourceToFlat.compileCakeToClos
     Flapjack.Compiler.Backend.SourceToFlat.emptyConfig
     [.dlet Flapjack.Misc.Location.unknownLoc (.pvar (ofString "x"))
       (.app .opref [.mat (.lit (.intLit 1))
         [(.pvar (ofString "y"), .var (.short (ofString "y")))]])] with
-  | some (_, [
+  | (_, [
       .let .none [.op .none (.globOp .allocGlobal) [.op .none (.intOp (.const 1)) []],
         .op .none (.blockOp (.cons 0)) []] (.op .none (.globOp (.setGlobal 0)) [.var .none 1]),
       .let (.cons (.sourceLoc 2 2 1 1) 1)

@@ -2,6 +2,8 @@ module
 
 public import Flapjack.Compiler.Backend.ClosCall.Calls
 public import Flapjack.Misc.ListEl
+public import Batteries.Data.List.Basic
+import Mathlib.Tactic
 
 @[expose] public section
 

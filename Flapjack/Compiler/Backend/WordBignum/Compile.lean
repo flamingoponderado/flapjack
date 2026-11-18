@@ -13,20 +13,21 @@ namespace Flapjack.Compiler.Backend.WordBignum
 abbrev CodeEntry (width : Nat) := Mini (BitVec width) × Nat × WordLangProgHOL (BitVec width)
 abbrev CodeAcc (width : Nat) := Nat × List (CodeEntry width)
 
-/-- Find the first structurally equal mini-program in the installed code. -/
-def lookupCode {width : Nat} (code : Mini (BitVec width)) : List (CodeEntry width) → Option Nat
-  | [] => none
-  | (body, index, _) :: rest => if miniEq code body then some index else lookupCode code rest
-
-/-- A successful source-style code lookup returns an existing index; otherwise
-the accumulator's next index is available for compilation. -/
-def hasCompiled {width : Nat} (code : Mini (BitVec width)) (cs : CodeAcc width) : Sum Nat Nat :=
-  match lookupCode code cs.2 with
-  | some index => .inl index
+/-- Executable first-match cache lookup with a decidable key equality. -/
+def hasCompiled {α β : Type} [DecidableEq α] (code : α)
+    (cs : Nat × List (α × Nat × β)) : Sum Nat Nat :=
+  letI : BEq α := ⟨fun x y => decide (x = y)⟩
+  match cs.2.lookup code with
+  | some (index, _) => .inl index
   | none => .inr cs.1
 
-def codeAccNext {width : Nat} (cs : CodeAcc width) : CodeAcc width := (cs.1 + 1, cs.2)
-def install {width : Nat} (entry : CodeEntry width) (cs : CodeAcc width) : CodeAcc width :=
+/-- Advance the next code index while retaining the arbitrary accumulator payload. -/
+@[hol "cakeml/compiler/backend/word_bignumScript.sml" "code_acc_next_def"]
+def codeAccNext {α : Type} (cs : Nat × α) : Nat × α := (cs.1 + 1, cs.2)
+
+/-- Add an arbitrary entry to the installed-code list. -/
+@[hol "cakeml/compiler/backend/word_bignumScript.sml" "install_def"]
+def install {α β : Type} (entry : α) (cs : β × List α) : β × List α :=
   (cs.1, entry :: cs.2)
 
 /-- A computable structural bound on recursive mini-program compilation. -/
@@ -101,14 +102,6 @@ def compileFuel {width : Nat} [NeZero width] : Nat → Nat → Nat → Nat → C
         (.seq (divCode n l i (i + 1) (i + 2) (i + 3) (i + 4))
           (.seq (.set (.temp (BitVec.ofNat 5 r0)) (.var i))
             (.set (.temp (BitVec.ofNat 5 r1)) (.var (i + 1))))))), l + 1, i + 5, cs)
-
-/-- Preserve an initial result and retry exhausted structural recursion. -/
-def compileBounded {width : Nat} [NeZero width] (fuel n l i : Nat) (cs : CodeAcc width)
-    (code : Mini (BitVec width)) :
-    Option (WordLangProgHOL (BitVec width) × Nat × Nat × CodeAcc width) :=
-  match compileFuel fuel n l i cs code with
-  | some result => some result
-  | none => compileFuel (max fuel (miniBudget code + 1)) n l i cs code
 
 /-- Total mini compilation with a structural bound. The default is unreachable:
 `compileFuel_succeeds` proves the structural traversal always returns a result.

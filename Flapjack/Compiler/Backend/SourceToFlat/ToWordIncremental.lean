@@ -18,8 +18,7 @@ def compileCakeIncToWord64Fuel (fuel : Nat)
     Option ((Config × ClosToBvl.Config × BvlToBvi.Config) ×
       List (Nat × Nat × WordLangProgHOL (BitVec 64))) := do
   let (config, program) ← compileCakeIncToDataFuel fuel config envId declarations
-  let program := program.map fun (name, args, body) =>
-    (name, args + 1, (DataToWord.compileControl (width := 64) word name 2 body).1)
+  let program := program.map (DataToWord.compilePart (width := 64) word)
   pure (config, program)
 
 end Flapjack.Compiler.Backend.SourceToFlat

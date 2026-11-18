@@ -255,13 +255,6 @@ theorem callsListBounded_correct (fuel : Nat) (es : List Exp) (state : State) :
     have eq := callsListFuel_correct _ es state result retry
     simpa [first, eq] using retry
 
-/-- The executable conditional pass agrees with the total traversal when
-enabled and returns the unchanged input when disabled. This is a bridge from
-the fuel adapter to HOL's `compile_eq`. -/
-private theorem compileFuel_correct (fuel : Nat) (enabled : Bool) (es : List Exp) :
-    compileFuel fuel enabled es = some (if enabled then callsSingList es (.ln, []) else (es, (.ln, []))) := by
-  cases enabled <;> simp [compileFuel, callsListBounded_correct]
-
 /-- The executed incremental pass returns the total traversal's known set,
 expressions and generated code. This bridges the fuel adapter to HOL's
 `compile_inc_eq`; the incoming auxiliary code is discarded. -/
@@ -271,11 +264,6 @@ private theorem compileIncFuel_correct (fuel : Nat) (known : NumSet)
       some (let result := callsSingList program.1 (known, [])
         (result.2.1, (result.1, result.2.2))) := by
   simp [compileIncFuel?, callsListBounded_correct]
-
-/-- The bounded executable compiler agrees with the total HOL compiler. -/
-theorem compileFuel_eq_compile (fuel : Nat) (enabled : Bool) (es : List Exp) :
-    compileFuel fuel enabled es = some (compile enabled es) := by
-  simpa [compile, calls] using compileFuel_correct fuel enabled es
 
 /-- The bounded executable incremental pass agrees with HOL's total pass. -/
 theorem compileIncFuel_eq_compileInc (fuel : Nat) (known : NumSet)

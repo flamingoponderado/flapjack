@@ -33,10 +33,8 @@ namespace Flapjack.Test.WordBignumGenerateParity
 open Flapjack.Compiler.Backend.WordBignum
 
 def matchesOriginal : Bool :=
-  match generateStubs 64 39 with
-  | none => false
-  | some entries => BignumWordOracle.matchesCaptured
-      (entries.map fun (location, arity, code) => (location, arity, code, 0))
+  BignumWordOracle.matchesCaptured
+    ((generatedBignumStubs 64 39).map fun (location, arity, code) => (location, arity, code, 0))
 
 #guard matchesOriginal
 

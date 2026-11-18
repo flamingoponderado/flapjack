@@ -21,8 +21,8 @@ theorem toBvi_executable (fuel : Nat) (c : Config) (p : List AstHOL.Dec) :
       (fun (source, clos, bvl, program, names) =>
         ({ c with sourceConf := source, closConf := clos, bvlConf := bvl },
           program, SourceToFlat.backendNames names)) = some (toBvi c p) := by
-  simp [SourceToFlat.compileCakeToBviConfiguredFuel, SourceToFlat.compileCakeToClosFuel,
-    SourceToFlat.compileToClosFuel, ClosToBvl.compileCallMtiFuel_eq_source,
+  simp [SourceToFlat.compileCakeToBviConfiguredFuel, SourceToFlat.compileCakeToClos,
+    SourceToFlat.compileToClos, ClosToBvl.compileCallMtiFuel_eq_source,
     toBvi, toBvl, toClos, toFlat, SourceToFlat.backendNames]
 
 end Flapjack.Compiler.Backend.Backend

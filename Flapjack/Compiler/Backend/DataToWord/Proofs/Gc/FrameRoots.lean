@@ -3,6 +3,7 @@ module
 public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.SizeSoundness
 public import Flapjack.Misc.Sptree.ToList
 public import Flapjack.Misc.Sptree.ToAList
+public import Flapjack.Misc.SptreeLookup
 
 @[expose] public section
 
@@ -81,6 +82,48 @@ theorem pairList_nodup_of_keys {α β : Type} (pairs : List (α × β))
   | cons pair rest ih =>
     simp only [List.map_cons, List.nodup_cons] at unique ⊢
     exact ⟨fun member => unique.1 (List.mem_map.mpr ⟨pair, member, rfl⟩), ih unique.2⟩
+
+/-- Deleting a present sparse-tree entry removes exactly one occurrence of its value. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "PERM_toList_delete"]
+theorem permToListDelete {α : Type} (key : Nat) (tree : Spt α) (value : α)
+    (found : sptLookup key tree = some value) :
+    (sptToList tree).Perm (value :: sptToList (sptDelete key tree)) := by
+  classical
+  have leftUnique := pairList_nodup_of_keys (sptToAList tree) (sptAllDistinctMapFstToAList tree)
+  have restUnique := pairList_nodup_of_keys (sptToAList (sptDelete key tree))
+    (sptAllDistinctMapFstToAList (sptDelete key tree))
+  have absent : (key, value) ∉ sptToAList (sptDelete key tree) := by
+    rw [sptMemToAList, sptLookup_sptDelete]
+    simp
+  have rightUnique : ((key, value) :: sptToAList (sptDelete key tree)).Nodup :=
+    List.nodup_cons.mpr ⟨absent, restUnique⟩
+  have pairs : (sptToAList tree).Perm ((key, value) :: sptToAList (sptDelete key tree)) := by
+    apply (List.perm_ext_iff_of_nodup leftUnique rightUnique).mpr
+    intro pair
+    rcases pair with ⟨k, v⟩
+    simp only [List.mem_cons, Prod.mk.injEq, sptMemToAList, sptLookup_sptDelete]
+    by_cases eq : k = key
+    · subst k
+      simp [found, eq_comm]
+    · simp [eq]
+  exact (sptToAList_values_perm tree).symm.trans
+    ((pairs.map Prod.snd).trans ((sptToAList_values_perm (sptDelete key tree)).cons value))
+
+/-- Pointwise equal sparse-tree lookups enumerate the same multiset of values. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "PERM_toList_lookup_eq"]
+theorem permToListLookupEq {α : Type} (left right : Spt α)
+    (lookupEq : ∀ key, sptLookup key left = sptLookup key right) :
+    (sptToList left).Perm (sptToList right) := by
+  classical
+  have leftUnique := pairList_nodup_of_keys (sptToAList left) (sptAllDistinctMapFstToAList left)
+  have rightUnique := pairList_nodup_of_keys (sptToAList right) (sptAllDistinctMapFstToAList right)
+  have pairs : (sptToAList left).Perm (sptToAList right) := by
+    apply (List.perm_ext_iff_of_nodup leftUnique rightUnique).mpr
+    intro pair
+    rcases pair with ⟨key, value⟩
+    rw [sptMemToAList, sptMemToAList, lookupEq]
+  exact (sptToAList_values_perm left).symm.trans
+    ((pairs.map Prod.snd).trans (sptToAList_values_perm right))
 
 /-- Flapjack infrastructure: rebuilding keyed entries from any duplicate-free
 enumeration of a sparse-tree domain preserves the tree's association list. -/

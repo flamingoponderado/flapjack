@@ -21,16 +21,16 @@ theorem forall₂_member_witness {α β : Type} (R : α → β → Prop)
     · exact ⟨_, h⟩
     · exact ih later
 
-/-- Flapjack infrastructure: select related heap addresses for a list whose
-members are all represented in an existing related list. -/
-theorem forall₂_subset_witness {α β : Type} (R : α → β → Prop)
-    (xs roots : List α) (addresses : List β) (related : List.Forall₂ R roots addresses)
-    (subset : ∀ x, x ∈ xs → x ∈ roots) : ∃ selected, List.Forall₂ R xs selected := by
+/-- Pointwise witnesses can be assembled into a related list. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "LIST_REL_exists_witness"]
+theorem listRelExistsWitness {α β : Type} (R : α → β → Prop)
+    (xs : List α) (witness : ∀ x, x ∈ xs → ∃ y, R x y) :
+    ∃ selected, List.Forall₂ R xs selected := by
   induction xs with
   | nil => exact ⟨[], List.Forall₂.nil⟩
   | cons value tail ih =>
-    obtain ⟨address, pair⟩ := forall₂_member_witness R roots addresses related value (subset value (by simp))
-    obtain ⟨rest, pairs⟩ := ih (fun x member => subset x (by simp [member]))
+    obtain ⟨address, pair⟩ := witness value (by simp)
+    obtain ⟨rest, pairs⟩ := ih (fun x member => witness x (by simp [member]))
     exact ⟨address :: rest, List.Forall₂.cons pair pairs⟩
 
 /-- Flapjack infrastructure: source sizing bounds a list covering every heap
@@ -51,8 +51,9 @@ theorem sizeSound_reachable {width : Nat} [NeZero width]
       Memory.bcRefInv conf key refs (f, tf, heap, be)) :
     ∃ after : List Nat, (after.map (Memory.lookupLen heap)).sum ≤ (DataSem.sizeOfValues limits roots2 refs .ln).1 ∧
       ∀ ptr, reachableAddresses addresses heap ptr → ptr ∈ after := by
-  obtain ⟨dupAddresses, dupRelated⟩ := forall₂_subset_witness
-    (fun v a => Memory.valueInv conf v refs (a, f, tf, heap)) dups roots addresses related duplicates
+  obtain ⟨dupAddresses, dupRelated⟩ := listRelExistsWitness
+    (fun v a => Memory.valueInv conf v refs (a, f, tf, heap)) dups
+      (fun value member => forall₂_member_witness _ roots addresses related value (duplicates value member))
   have allRelated := List.rel_append dupRelated related
   have allCells : ∀ key ptr, Memory.reachableRefs (dups ++ roots) refs key → f.lookup key = some ptr →
       Memory.bcRefInv conf key refs (f, tf, heap, be) := by

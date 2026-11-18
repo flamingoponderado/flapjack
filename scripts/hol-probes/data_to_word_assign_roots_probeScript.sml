@@ -1,0 +1,79 @@
+load "preamble";
+load "data_to_word_gcProofTheory";
+load "data_to_word_memoryProofTheory";
+load "data_to_word_assignProofTheory";
+load "data_to_word_bignumProofTheory";
+open HolKernel Parse boolLib bossLib;
+val _ = Globals.linewidth := 1000000;
+val _ = show_types := true;
+fun emit label th =
+  if null (hyp th) then (print (label ^ "="); print_term (concl th); print "\n")
+  else raise Fail (label ^ " has unexpected hypotheses");
+val _ = emit "word_ml_inv_get_vars_IMP_lemma_typed"
+  data_to_word_gcProofTheory.word_ml_inv_get_vars_IMP_lemma;
+val _ = emit "memory_rel_lookup_var_IMP_typed"
+  data_to_word_assignProofTheory.memory_rel_lookup_var_IMP;
+val _ = emit "get_real_offset_lemma_typed"
+  data_to_word_assignProofTheory.get_real_offset_lemma;
+val _ = emit "get_real_byte_offset_lemma_typed"
+  data_to_word_assignProofTheory.get_real_byte_offset_lemma;
+val _ = emit "reorder_lemma_typed" data_to_word_assignProofTheory.reorder_lemma;
+val _ = emit "reorder_2_lemma_typed" data_to_word_assignProofTheory.reorder_2_lemma;
+val _ = emit "word_ml_inv_num_typed" data_to_word_memoryProofTheory.word_ml_inv_num;
+val _ = emit "word_ml_inv_neg_num_typed" data_to_word_memoryProofTheory.word_ml_inv_neg_num;
+val _ = emit "word_ml_inv_zero_typed" data_to_word_memoryProofTheory.word_ml_inv_zero;
+val _ = emit "memory_rel_Deref_prime_typed" data_to_word_memoryProofTheory.memory_rel_Deref';
+val _ = emit "get_real_addr_lemma_typed" data_to_word_bignumProofTheory.get_real_addr_lemma;
+val _ = emit "memcopy_def_typed" data_to_word_assignProofTheory.memcopy_def;
+val _ = emit "MemCopy_thm_typed" data_to_word_assignProofTheory.MemCopy_thm;
+val _ = emit "memory_rel_IMP_free_space_typed" data_to_word_assignProofTheory.memory_rel_IMP_free_space;
+val _ = emit "store_list_def_typed" data_to_word_memoryProofTheory.store_list_def;
+val _ = emit "IMP_store_list_SOME_typed" data_to_word_assignProofTheory.IMP_store_list_SOME;
+
+val _ = emit "get_vars_cut_env_typed" data_to_word_assignProofTheory.get_vars_cut_env;
+val _ = emit "get_vars_IMP_domain_typed" data_to_word_assignProofTheory.get_vars_IMP_domain;
+val _ = emit "assign_ConsExtend_def_typed" data_to_wordTheory.assign_ConsExtend_def;
+val _ = emit "assign_ConsExtend_expand_typed" data_to_word_assignProofTheory.assign_ConsExtend_expand;
+val _ = emit "assign_CopyByte_def_typed" data_to_wordTheory.assign_CopyByte_def;
+val _ = emit "assign_ListAppend_def_typed" data_to_wordTheory.assign_ListAppend_def;
+val _ = emit "assign_FromList_def_typed" data_to_wordTheory.assign_FromList_def;
+val _ = emit "assign_RefArray_def_typed" data_to_wordTheory.assign_RefArray_def;
+val _ = emit "assign_Ref_def_typed" data_to_wordTheory.assign_Ref_def;
+val _ = emit "assign_AllocThunk_def_typed" data_to_wordTheory.assign_AllocThunk_def;
+val _ = emit "assign_RefByte_def_typed" data_to_wordTheory.assign_RefByte_def;
+val _ = emit "assign_ConfigGC_def_typed" data_to_wordTheory.assign_ConfigGC_def;
+val _ = emit "assign_Cons_def_typed" data_to_wordTheory.assign_Cons_def;
+val _ = emit "assign_MutCons_def_typed" data_to_wordTheory.assign_MutCons_def;
+val _ = emit "SmallLsr_def_typed" data_to_wordTheory.SmallLsr_def;
+val _ = emit "assign_XorByte_def_typed" data_to_wordTheory.assign_XorByte_def;
+val _ = emit "SmallLsr_zero_eval" (EVAL ``data_to_word$SmallLsr (wordLang$Load (wordLang$Var 3)) 0 : 32 wordLang$exp``);
+val _ = emit "SmallLsr_one_eval" (EVAL ``data_to_word$SmallLsr (wordLang$Load (wordLang$Var 3)) 1 : 32 wordLang$exp``);
+val _ = emit "assign_Build_def_typed" data_to_wordTheory.assign_Build_def;
+val _ = emit "assign_Install_def_typed" data_to_wordTheory.assign_Install_def;
+val _ = emit "assign_EqualConst_def_typed" data_to_wordTheory.assign_EqualConst_def;
+val _ = emit "assign_FFI_def_typed" data_to_wordTheory.assign_FFI_def;
+val _ = emit "assign_WordTest_def_typed" data_to_wordTheory.assign_WordTest_def;
+val _ = emit "assign_WordOpW8_def_typed" data_to_wordTheory.assign_WordOpW8_def;
+val _ = emit "assign_WordShiftW8_def_typed" data_to_wordTheory.assign_WordShiftW8_def;
+val _ = emit "assign_FP_cmp_def_typed" data_to_wordTheory.assign_FP_cmp_def;
+val _ = emit "assign_FP_bop_def_typed" data_to_wordTheory.assign_FP_bop_def;
+val _ = emit "assign_FP_uop_def_typed" data_to_wordTheory.assign_FP_uop_def;
+val _ = emit "assign_FP_top_def_typed" data_to_wordTheory.assign_FP_top_def;
+val _ = emit "assign_Add_def_typed" data_to_wordTheory.assign_Add_def;
+val _ = emit "assign_Sub_def_typed" data_to_wordTheory.assign_Sub_def;
+val _ = emit "assign_Mult_def_typed" data_to_wordTheory.assign_Mult_def;
+val _ = emit "assign_Div_def_typed" data_to_wordTheory.assign_Div_def;
+val _ = emit "assign_Mod_def_typed" data_to_wordTheory.assign_Mod_def;
+val _ = emit "assign_def_typed" data_to_wordTheory.assign_def;
+val _ = emit "comp_def_typed" data_to_wordTheory.comp_def;
+val _ = emit "compile_part_def_typed" data_to_wordTheory.compile_part_def;
+val _ = emit "assign_SetGlobalsPtr_typed" data_to_word_assignProofTheory.assign_SetGlobalsPtr;
+val _ = emit "stubs_def_typed" data_to_wordTheory.stubs_def;
+val _ = emit "code_rel_def_typed" data_to_word_gcProofTheory.code_rel_def;
+val _ = emit "assign_Const_typed" data_to_word_assignProofTheory.assign_Const;
+val _ = emit "assign_GlobalsPtr_typed" data_to_word_assignProofTheory.assign_GlobalsPtr;
+val _ = emit "assign_Global_typed" data_to_word_assignProofTheory.assign_Global;
+val _ = emit "assign_SetGlobal_typed" data_to_word_assignProofTheory.assign_SetGlobal;
+val _ = emit "assign_BoolNot_typed" data_to_word_assignProofTheory.assign_BoolNot;
+val _ = emit "assign_BoolTest_typed" data_to_word_assignProofTheory.assign_BoolTest;
+val _ = emit "assign_Label_typed" data_to_word_assignProofTheory.assign_Label;

@@ -1,0 +1,2 @@
+cut_envs_wf_replay_typed=cut_envs (kept_names :sptree$num_set # sptree$num_set) (t :α sptree$num_map) = SOME ((y1 :α sptree$num_map),(y2 :α sptree$num_map)) ⇒ wf y1 ∧ wf y2
+cut_env_lookup_replay_typed=cut_env (names :sptree$num_set # sptree$num_set) (t :α sptree$num_map) = SOME (y :α sptree$num_map) ∧ lookup (n :num) y = SOME (a :α) ⇒ lookup n t = SOME a

@@ -38,10 +38,10 @@ def toClos (c : Config) (p : List AstHOL.Dec) : Config × List ClosLang.Exp :=
 /-- The executable source-to-closure entry point returns this pipeline's
     closure program and updated source configuration. This is a Flapjack
     connection lemma; it is not a separate HOL theorem. -/
-theorem toClos_executable (fuel : Nat) (c : Config) (p : List AstHOL.Dec) :
-    SourceToFlat.compileCakeToClosFuel fuel c.sourceConf p =
-      some ((toClos c p).1.sourceConf, (toClos c p).2) := by
-  simp [SourceToFlat.compileCakeToClosFuel, SourceToFlat.compileToClosFuel, toClos, toFlat]
+theorem toClos_executable (c : Config) (p : List AstHOL.Dec) :
+    SourceToFlat.compileCakeToClos c.sourceConf p =
+      ((toClos c p).1.sourceConf, (toClos c p).2) := by
+  simp [SourceToFlat.compileCakeToClos, SourceToFlat.compileToClos, toClos, toFlat]
 
 /-- Continue through closure optimization and BVL code generation. -/
 @[hol "cakeml/compiler/backend/backendScript.sml" "to_bvl_def"]

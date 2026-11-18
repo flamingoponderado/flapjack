@@ -1,4 +1,51 @@
-`infer_generalise_typed_probe.out` captures both inferred operation types, the
+`data_to_word_assign_roots_probe.out` captures the exported HOL root-invariant,
+memory-relation variable-lookup and root-reordering, real-offset and
+byte-offset evaluation, positive and negative immediate-root theorems, and the
+value-array dereference, real-address evaluation, memory-copy definition and theorem,
+memory-relation free-space theorem, store-list definition and existence theorem, and
+get-vars environment-cut and domain theorems, and constructor-extension
+compiler definition and expansion, plus byte-copy, list, reference-array, and
+allocation, constructor, XOR, build, installation, constant-equality, FFI, and
+byte-word, floating-point, integer-arithmetic, assignment-dispatcher, and control
+compiler definitions, the complete stub table, the code relation, and constant
+and global, label, Boolean-negation and Boolean-test assignment correctness cases, with inferred types.
+It also evaluates zero and nonzero SmallLsr expressions for output parity. Regenerate
+with `HOL_PROBE_ONLY=data_to_word_assign_roots_probeScript.sml scripts/hol-probes/regenerate.sh`
+using the pinned CakeML and HOL revisions. This is source-review evidence,
+not a cross-language equivalence proof.
+
+`data_to_word_cut_get_vars_probe.out` captures the exported HOL theorem
+`cut_env_get_vars_get_vars` with inferred types and checks that it has no
+hypotheses. Regenerate with
+`HOL_PROBE_ONLY=data_to_word_cut_get_vars_probeScript.sml scripts/hol-probes/regenerate.sh`
+using the pinned CakeML and HOL revisions. This is source-review evidence,
+not a cross-language equivalence proof.
+
+`data_to_word_cut_envs_wf_replay_probe.out` captures the inferred types of
+`cut_envs_wf` and `cut_env_lookup` by replaying their original statements and
+proofs against the pinned word semantics theory. Regenerate with
+`HOL_PROBE_ONLY=data_to_word_cut_envs_wf_replay_probeScript.sml scripts/hol-probes/regenerate.sh`
+using the pinned CakeML and HOL revisions. This capture supports source review;
+it does not establish cross-language equivalence.
+
+`backend_common_typed_probe.out` includes the inferred `upper_w2w_def` equation
+and 8-, 32-, and 64-bit evaluations. Regenerate with
+`HOL_PROBE_ONLY=backend_common_typed_probeScript.sml scripts/hol-probes/regenerate.sh`
+using the pinned prebuilt CakeML and HOL sources. These captures support source
+review; they do not establish cross-language equivalence.
+
+`data_to_word_correct_typed_probe.out` captures the exported
+`data_compile_correct` theorem and its hypothesis count with inferred HOL
+types. Regenerate with `HOL_PROBE_ONLY=data_to_word_correct_typed_probeScript.sml
+scripts/hol-probes/regenerate.sh` using a prebuilt pinned CakeML oracle whose
+`data_to_wordProofTheory` has been built. This is source-review evidence, not a
+cross-language equivalence proof.
+
+`infer_generalise_typed_probe.out` captures `t_vars_inc`, `inc_wfs`, and
+`vwalk_inc`, `walk_inc`, `walkstar_inc`, `walkstar_inc2`, and the two
+`infer_deBruijn_inc0` theorems, `extend_dec_ienv_empty`, and `ienv_unchanged`
+with inferred types,
+both inferred operation types, the
 complete typed `infer$generalise_def` equations, the typed
 `inferProps$generalise_list_length` theorem, and the inferred type and equations
 of `infer$infer_subst_def` and statements of `inferProps$infer_subst_submap`,
@@ -736,7 +783,7 @@ exported global-invariant equation and replay its original simplifier derivation
 
 `bignum_compile_probe.out` records the inferred mini-compiler and cache types and examples for every mini-language constructor, including fresh and reused loop code. `Flapjack.Test.WordBignumCompileParity` replays those results. Regenerate with `HOL_PROBE_ONLY=bignum_compile_probeScript.sml scripts/hol-probes/regenerate.sh`. These examples do not establish general HOL correspondence.
 
-`bignum_mini_probe.out` captures the pinned shallow-to-deep generator's polymorphic `mc_iop_code` result and its 64-bit instance. `scripts/generate-bignum-mini.py` translates the matching captures into Lean; `--check` verifies the generated file. `Flapjack.Test.WordBignumGenerateParity` checks all 23 64-bit word stubs against `bignum_word_probe.out`. Regenerate with `HOL_PROBE_ONLY=bignum_mini_probeScript.sml scripts/hol-probes/regenerate.sh`. The capture and test do not prove the original shallow-to-deep generator or general cross-language equivalence.
+`bignum_mini_probe.out` captures the pinned shallow-to-deep generator's polymorphic `mc_iop_code` result, its 64-bit instance, the typed generated definition graph, and the generic stub-table equation. `scripts/generate-bignum-mini.py` translates the matching captures into Lean; `--check` verifies the generated file. `Flapjack.Test.WordBignumGenerateParity` checks all 23 64-bit word stubs against `bignum_word_probe.out`. Regenerate with `HOL_PROBE_ONLY=bignum_mini_probeScript.sml scripts/hol-probes/regenerate.sh`. The capture and test do not prove the original shallow-to-deep generator or general cross-language equivalence.
 
 `bignum_mini_types_probe.out` records the source types of all sixteen mini-language constructors. Regenerate with `HOL_PROBE_ONLY=bignum_mini_types_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
@@ -900,7 +947,7 @@ correspondence additionally covers arbitrary partner lists.
 `word_alloc_distinct_tar_reg_probe.out` captures the full zero-hypothesis statements (also typed) of the exported word_allocProof `ssa_cc_trans_distinct_tar_reg` and `full_ssa_cc_trans_distinct_tar_reg` for `WordAlloc/Proofs/SSAConventions/DistinctTarReg.lean`; its `[local]` helpers are reviewed against the script. Statement evidence for source review only.
 `word_convs_compile_single_not_created_probe.out` captures the zero-hypothesis `compile_single_not_created_subprogs` of wordConvsProof (also typed) for `Pancake/Proofs/WordConvs/NotCreatedTail.lean`; the per-pass `not_created_subprogs` lemmas in `NotCreatedPasses.lean`/`NotCreatedSSA.lean` are `[local]` and compared against the script. Statement evidence for source review only.
 `word_to_word_syntactic_probe.out` captures the statement, hypothesis count and typed form of the word_to_wordProof syntactic group (`cond16bit_inst_select_exp'` as `cond16bit_inst_select_exp_prime`, `cond16bit_inst_select`, the `no_share_inst`/`no_mt` lemmas, `code_rel_not_created_subprogs`, `code_rel_ext_def`, `code_rel_ext_word_to_word`, `no_mt_code_rel_ext`, `code_rel_no_share_inst`) and wordProps `no_mt_code_def`, for `Compiler/Backend/WordToWord/Proofs/Syntactic.lean` and `WordSem/Props/NoMtCode.lean`. The `[local]` `code_rel_no_alloc`/`code_rel_no_install` are compared against the script. Statement evidence for source review only.
-`data_to_word_gc_fun_const_ok_probe.out` captures the statement, hypothesis count and typed form of `gc_fun_const_ok_word_gc_fun` for `Compiler/Backend/DataToWord/Proofs/Gc/GcFunConstOk.lean`. Statement evidence for source review only.
+`data_to_word_gc_fun_const_ok_probe.out` captures the statement, hypothesis count and typed form of `gc_fun_const_ok_word_gc_fun`, the hypothesis count and typed statement of `stack_rel_IMP_size_of_stack`, the typed code, compiler-oracle, and state relations, the clock, FP-register and local-cut preservation (including the assignment cut-state prerequisite), single, list, reserved-location and Boolean local-read and word/ML lookup and insertion theorems, and the polymorphic `mk_loc` source equation and function type. These captures support source review; they do not establish cross-language equivalence. Regenerate with `HOL_PROBE_ONLY=data_to_word_gc_fun_const_ok_probeScript.sml scripts/hol-probes/regenerate.sh` using a prebuilt pinned CakeML oracle.
 `word_convs_good_handlers_word_to_word_probe.out` captures the statement, hypothesis count and typed form of the exported `word_good_handlers_word_to_word_incr` and `word_good_handlers_word_to_word` for `Pancake/Proofs/WordConvs/GoodHandlersTail.lean`; the per-pass `word_good_handlers_*` lemmas in `GoodHandlersPasses.lean`/`GoodHandlersSSA.lean`/`GoodHandlersTail.lean` are `[local]` and compared against the script. Statement evidence for source review only.
 `pan_to_word_lab_pres_probe.out` captures the statement, hypothesis count and typed form of the loop_to_wordProof lab_pres section (`loop_to_word_comp_extract_labels_len` through `loop_to_word_compile_lab_min`) and of pan_to_wordProof `pan_to_word_good_handlers`, `pan_to_word_compile_lab_pres` and `pan_to_word_compile_prog_lab_min`, for `Pancake/LoopToWord/Proofs/LabPres.lean` and `Pancake/Proofs/PanToWord/LabPres.lean`. Statement evidence for source review only.
 `lab_props_every_sec_label_ok_probe.out` captures the statement, hypothesis count and typed form of labProps `EVERY_sec_label_ok` for `Compiler/Backend/LabProps/SecLabelOk.lean`. Statement evidence for source review only.
@@ -10534,6 +10581,8 @@ probe; regenerate with
 `HOL_PROBE_ONLY=env_rel_init_probeScript.sml`.
 
 `unify_encoding_probe.out` captures the polymorphic first-order term carrier,
+the guarded `unify_eq_tunify` equation and the stored `tunify_defn` term with
+inferred types (the latter is a source-term capture, not a replayed theorem),
 inference atom carrier, complete encoding and decoding equations, and the
 inverse and injectivity theorems, and the substitution dependency and
 well-formedness declarations, the conditional variable-walk equation, its
