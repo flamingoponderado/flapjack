@@ -9,9 +9,10 @@ public import Flapjack.Basis.Pure.MlList
 /-!
 # HOL `mergesort`: sortedness and tail-recursive correctness
 
-Lean counterpart of the sortedness and tail-correctness part of
+Lean counterpart of the sortedness, permutation and tail-correctness part of
 `HOL/src/sort/mergesortScript.sml`: the non-tail `sort2`, `sort3`, `merge` and
-`mergesortN`, the theorems that they sort, and the theorems relating the
+`mergesortN`, the theorems that they sort and permute their input, and the
+theorems relating the
 tail-recursive `sort2_tail`, `sort3_tail`, `merge_tail` and `mergesortN_tail` (rendered,
 untagged, in `Flapjack.Basis.Pure.MlList`) to them. As in `MlList`, a HOL relation
 `R : 'a -> 'a -> bool` is a Lean `r : α → α → Bool`; where HOL uses `R` as a proposition
