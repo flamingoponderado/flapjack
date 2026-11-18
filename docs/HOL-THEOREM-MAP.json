@@ -23043,6 +23043,50 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "assign_Const",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/Const.lean",
+  "lean_name": "assignConst_correct",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the typed HOL theorem and full assignment goal: the original operation condition, every premise, existential target evaluation and both result branches agree. The target state uses canonical finite maps and positive-width words. The evaluator inherits reals_as_rational_cuts through instruction semantics; see SOUNDNESS.md item 8."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "assign_GlobalsPtr",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/GlobalsPtr.lean",
+  "lean_name": "assignGlobalsPtr_correct",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the typed HOL theorem and full assignment goal: the original operation condition, every premise, existential target evaluation and both result branches agree. The target state uses canonical finite maps and positive-width words. The evaluator inherits reals_as_rational_cuts through instruction semantics; see SOUNDNESS.md item 8."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "assign_Global",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/Global.lean",
+  "lean_name": "assignGlobal_correct",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the typed HOL theorem and full assignment goal: the original operation condition, every premise, existential target evaluation and both result branches agree. The target state uses canonical finite maps and positive-width words. The evaluator inherits reals_as_rational_cuts through instruction semantics; see SOUNDNESS.md item 8."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "assign_SetGlobal",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/SetGlobal.lean",
+  "lean_name": "assignSetGlobal_correct",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the typed HOL theorem and full assignment goal: the original operation condition, every premise, existential target evaluation and both result branches agree. The target state uses canonical finite maps and positive-width words. The evaluator inherits reals_as_rational_cuts through instruction semantics; see SOUNDNESS.md item 8."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
   "hol_name": "assign_SetGlobalsPtr",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/SetGlobalsPtr.lean",
   "lean_name": "assignSetGlobalsPtr_correct",

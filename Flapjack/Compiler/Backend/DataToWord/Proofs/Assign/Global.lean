@@ -12,13 +12,26 @@ open Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
 open Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
 open Flapjack.Compiler.Backend.BackendProps
 
-/-- The global-value case retains the source assignment goal. Its compiler
-and state relation are pending source review, so it is not yet HOL-tagged. -/
+namespace assignGlobal_correctMap
+/-- Canonical target-state roundtrip for the assignment simulation. -/
+theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {C F : Type} :
+    (∀ (state : WordSemStateBroad width C F) (h : state.FiniteSupport),
+      (WordSemStateBroad.ofBroad state h).toBroad = state) ∧
+    (∀ state : WordSemStateFiniteExact width C F,
+      WordSemStateBroad.ofBroad state.toBroad state.toBroad_finiteSupport = state) :=
+  WordSemStateExact.holFmapAsFiniteSupportWitness
+end assignGlobal_correctMap
+
+/-- The original assignment correctness goal for this operation. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml" "assign_Global"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem assignGlobal_correct {width : Nat} [NeZero width] {C F : Type}
-    (conf : Config) (n l l1 l2 dest : Nat) (op : ClosLang.Op)
-    (args : List Nat) (names : Option NumSet) (source cut resultState : DataSem.State C F)
+    (conf : Flapjack.Compiler.Backend.DataToWord.Config) (n l l1 l2 dest : Nat)
+    (op : Flapjack.Compiler.Backend.ClosLang.Op)
+    (args : List Nat) (names : Option NumSet) (source cut resultState : Flapjack.Compiler.Backend.DataSem.State C F)
     (target : WordSemStateFiniteExact width C F) (locs : List (Nat × Nat))
-    (values : List DataSem.Value) (result : DataSem.Value)
+    (values : List Flapjack.Compiler.Backend.DataSem.Value)
+    (result : Flapjack.Compiler.Backend.DataSem.Value)
     (globalOp : ∃ i, op = .globOp (.global i))
     (related : stateRel conf l1 l2 source target none locs)
     (validNames : DataLang.opRequiresNames op ≠ names.isNone)

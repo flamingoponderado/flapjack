@@ -70,3 +70,7 @@ val _ = emit "compile_part_def_typed" data_to_wordTheory.compile_part_def;
 val _ = emit "assign_SetGlobalsPtr_typed" data_to_word_assignProofTheory.assign_SetGlobalsPtr;
 val _ = emit "stubs_def_typed" data_to_wordTheory.stubs_def;
 val _ = emit "code_rel_def_typed" data_to_word_gcProofTheory.code_rel_def;
+val _ = emit "assign_Const_typed" data_to_word_assignProofTheory.assign_Const;
+val _ = emit "assign_GlobalsPtr_typed" data_to_word_assignProofTheory.assign_GlobalsPtr;
+val _ = emit "assign_Global_typed" data_to_word_assignProofTheory.assign_Global;
+val _ = emit "assign_SetGlobal_typed" data_to_word_assignProofTheory.assign_SetGlobal;
