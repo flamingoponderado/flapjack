@@ -134,6 +134,14 @@ def equal1Code {width : Nat} [NeZero width] : WordLangProgHOL (BitVec width) :=
     .assign 6 (.op .add [.var 6, .const bytes]),
     .call none (some equal1Location) [0, 2, 4, 6] none]
 
+/-- Generate the code installation stub; the source argument is unused. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "Install_code_def"
+  (words_as_type_indexed_bitvec)]
+def installCode {width : Nat} [NeZero width] {C : Type} (_conf : C) : WordLangProgHOL (BitVec width) :=
+  listSeq [.assign 1 (.lookup .bitmapBuffer), .assign 3 (.lookup .codeBuffer),
+    .set .bitmapBuffer (.var 2), .set .codeBuffer (.var 4),
+    .install 3 4 1 2 (.ls (), .ln), .return 0 [3]]
+
 /-- Flapjack's partial stub lookup. It supplies only the listed stubs and
 returns `none` for all others; the complete HOL `stubs` list, including
 bignum code, remains unported. -/
@@ -177,9 +185,7 @@ def compileStub? {width : Nat} [NeZero width] (location : Nat) : Option (Nat × 
         .assign 2 (.op .add [.var 2, .const (2 * bytes)]),
         .call none (some xorLoopLocation) [0, 2, 4, 6] none]))
   else if location = installLocation then
-    some (3, listSeq [.assign 1 (.lookup .bitmapBuffer), .assign 3 (.lookup .codeBuffer),
-      .set .bitmapBuffer (.var 2), .set .codeBuffer (.var 4),
-      .install 3 4 1 2 (.ls (), .ln), .return 0 [3]])
+    some (3, installCode ())
   else if location = compare1Location then
     some (4, compare1Code)
   else if location = equal1Location then
