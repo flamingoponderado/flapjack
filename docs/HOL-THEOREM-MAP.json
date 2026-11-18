@@ -8494,6 +8494,24 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+  "hol_name": "assign_Build_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
+  "lean_name": "assignBuild",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared HOL source and typed capture: failure of const_parts_to_words returns GiveUp; success reads NextFree, derives the heap offset, invokes StoreAnyConsts with the source words and preserves the label. Section and names are unused."
+},
+{
+  "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+  "hol_name": "assign_Install_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
+  "lean_name": "assignInstall",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared HOL source and typed capture: both tagged length guards, bitmap and code buffer bounds checks, InstallCode call metadata and arguments, and incremented label agree; config is unused."
+},
+{
+  "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
   "hol_name": "SmallLsr_def",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
   "lean_name": "smallLsr",

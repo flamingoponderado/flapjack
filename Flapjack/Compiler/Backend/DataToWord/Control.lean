@@ -1077,6 +1077,43 @@ def assignXorByte {width : Nat} [NeZero width] (conf : Config) (secn l dest : Na
       (some ([adjustVar dest], adjustSets (names.getD .ln), .skip, secn, l))
       (some xorLoopLocation) [1, 3, 5] none)], l + 1)
 
+/-- Compile a constant construction into its word representation. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "assign_Build_def"
+  (words_as_type_indexed_bitvec)]
+def assignBuild {width : Nat} [NeZero width] (conf : Config) (_secn l dest : Nat)
+    (_names : Option NumSet) (parts : List ClosLang.ConstPart) : WordLangProgHOL (BitVec width) × Nat :=
+  match Build.partsWords (width := width) conf parts with
+  | none => (giveUp, l)
+  | some (value, words) =>
+      let store := storeAnyConsts (adjustVar dest) 1 3 words value
+      (wordListSeq [.assign 1 (.lookup .nextFree),
+        .assign 3 (shiftN .lsl (.op .sub [.var 1, .lookup .currHeap])
+          (shiftLength conf - wordShiftAmount width)), store], l)
+
+/-- Compile an installation request with its code and data bounds checks. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "assign_Install_def"
+  (words_as_type_indexed_bitvec)]
+def assignInstall {width : Nat} [NeZero width] (_conf : Config) (secn l dest : Nat)
+    (names : Option NumSet) (code data codeLen dataLen : Nat) : WordLangProgHOL (BitVec width) × Nat :=
+  let code := adjustVar code
+  let data := adjustVar data
+  let codeLen := adjustVar codeLen
+  let dataLen := adjustVar dataLen
+  let halt (r : Nat) := WordLangProgHOL.ite .test r (.imm 1) .skip giveUp
+  (wordListSeq [
+    halt codeLen, halt dataLen,
+    .assign 1 (.lookup .bitmapBuffer),
+    .assign 3 (.op .sub [.lookup .bitmapBufferEnd, .var 1]),
+    .assign 5 (shiftVar .lsr dataLen 2),
+    .assign 3 (shiftVar .lsr 3 (wordShiftAmount width)),
+    .ite .lower 3 (.reg 5) giveUp .skip,
+    .assign 1 (.lookup .codeBuffer),
+    .assign 3 (.op .sub [.lookup .codeBufferEnd, .var 1]),
+    .assign 5 (shiftVar .lsr codeLen 2),
+    .ite .lower 3 (.reg 5) giveUp .skip,
+    .mustTerminate (.call (some ([adjustVar dest], adjustSets (names.getD .ln), .skip, secn, l))
+      (some installCodeLocation) [code, data, 1] none)], l + 1)
+
 /-- Total assignment dispatch used by the executable traversal. Its full
     source-level correspondence with HOL's assignment dispatcher is pending
     review of all operation cases. -/
@@ -1093,14 +1130,8 @@ def compileAssign {width : Nat} [NeZero width] (conf : Config) (secn l dest : Na
       (assignGlobal conf n l dest)
   | (.globOp (.setGlobal n)), args, _ =>
       (arg1 args (assignSetGlobal conf n l dest) (.skip, l))
-  | (.blockOp (.build parts)), _, _ =>
-      match Build.partsWords (width := width) conf parts with
-      | none => (giveUp, l)
-      | some (value, words) =>
-          let store := storeAnyConsts (adjustVar dest) 1 3 words value
-          (wordListSeq [.assign 1 (.lookup .nextFree),
-            .assign 3 (shiftN .lsl (.op .sub [.var 1, .lookup .currHeap])
-              (shiftLength conf - wordShiftAmount width)), store], l)
+  | (.blockOp (.build parts)), _, names =>
+      assignBuild conf secn l dest names parts
   | (.blockOp (.fromList tag)), args, names =>
       arg2 args (assignFromList conf secn l dest names tag) (.skip, l)
   | (.blockOp .listAppend), args, names =>
@@ -1361,25 +1392,7 @@ def compileAssign {width : Nat} [NeZero width] (conf : Config) (secn l dest : Na
   | (.thunkOp (.updateThunk mode)), args, _ =>
       (arg2 args (assignUpdateThunk mode conf l dest) (.skip, l))
   | .install, args, names =>
-      (arg4 args (fun code data codeLen dataLen =>
-          let code := adjustVar code
-          let data := adjustVar data
-          let codeLen := adjustVar codeLen
-          let dataLen := adjustVar dataLen
-          let halt (r : Nat) := WordLangProgHOL.ite .test r (.imm 1) .skip giveUp
-          (wordListSeq [
-            halt codeLen, halt dataLen,
-            .assign 1 (.lookup .bitmapBuffer),
-            .assign 3 (.op .sub [.lookup .bitmapBufferEnd, .var 1]),
-            .assign 5 (shiftVar .lsr dataLen 2),
-            .assign 3 (shiftVar .lsr 3 (wordShiftAmount width)),
-            .ite .lower 3 (.reg 5) giveUp .skip,
-            .assign 1 (.lookup .codeBuffer),
-            .assign 3 (.op .sub [.lookup .codeBufferEnd, .var 1]),
-            .assign 5 (shiftVar .lsr codeLen 2),
-            .ite .lower 3 (.reg 5) giveUp .skip,
-            .mustTerminate (.call (some ([adjustVar dest], adjustSets (names.getD .ln), .skip, secn, l))
-              (some installCodeLocation) [code, data, 1] none)], l + 1)) (.skip, l))
+      arg4 args (assignInstall conf secn l dest names) (.skip, l)
   | (.label n), _, _ => (.locValue (adjustVar dest) n, l)
   -- HOL's final assignment case returns Skip for operations that should
   -- have been lowered by earlier passes, including AllocGlobal and Constant.

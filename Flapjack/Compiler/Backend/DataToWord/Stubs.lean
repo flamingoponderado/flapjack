@@ -269,7 +269,7 @@ def fromList1Code {width : Nat} [NeZero width] (conf : Config) : WordLangProgHOL
 def refByteCode {width : Nat} [NeZero width] (conf : Config) : WordLangProgHOL (BitVec width) :=
     let bytes := (wordSemBytesInWord : BitVec width)
     let h := WordLangExpHOL.op .add [shiftN .lsr (.var 2) 2, .const bytes]
-    let x := if width - 63 = 0 then h else shiftN .lsr h (width - 63)
+    let x := smallLsr h (width - 63)
     let y := shiftN .lsl h (width - wordShiftAmount width - conf.lenSize)
     let makeBytes := listSeq [
       .assign 4 (shiftN .lsr (.var 4) 2),

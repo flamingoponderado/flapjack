@@ -48,3 +48,5 @@ val _ = emit "SmallLsr_def_typed" data_to_wordTheory.SmallLsr_def;
 val _ = emit "assign_XorByte_def_typed" data_to_wordTheory.assign_XorByte_def;
 val _ = emit "SmallLsr_zero_eval" (EVAL ``data_to_word$SmallLsr (wordLang$Load (wordLang$Var 3)) 0 : 32 wordLang$exp``);
 val _ = emit "SmallLsr_one_eval" (EVAL ``data_to_word$SmallLsr (wordLang$Load (wordLang$Var 3)) 1 : 32 wordLang$exp``);
+val _ = emit "assign_Build_def_typed" data_to_wordTheory.assign_Build_def;
+val _ = emit "assign_Install_def_typed" data_to_wordTheory.assign_Install_def;
