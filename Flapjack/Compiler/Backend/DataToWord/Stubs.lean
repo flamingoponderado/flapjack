@@ -411,6 +411,20 @@ def installCodeStub {width : Nat} [NeZero width] (conf : Config) : WordLangProgH
       .assign 2 (.load (.op .add [.var 3, .const (2 * bytes)])),
       .call none (some installCodeLocation) [0, 2, 4, 6] none])
 
+/-- Copy data words into the installation buffer. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "InstallData_code_def"
+  (words_as_type_indexed_bitvec)]
+def installDataStub {width : Nat} [NeZero width] (conf : Config) : WordLangProgHOL (BitVec width) :=
+  let bytes := (wordSemBytesInWord : BitVec width)
+  .ite .test 4 (.imm 1)
+    (.call none (some installLocation) [0, 2, 6] none)
+    (listSeq [.assign 3 (realAddr conf 4),
+      .assign 4 (.load (.op .add [.var 3, .const bytes])), .assign 4 (realAddr conf 4),
+      .assign 4 (.load (.op .add [.var 4, .const bytes])), .dataBufferWrite 2 4,
+      .assign 2 (.op .add [.var 2, .const bytes]),
+      .assign 4 (.load (.op .add [.var 3, .const (2 * bytes)])),
+      .call none (some installDataLocation) [0, 2, 4, 6] none])
+
 /-- Extend the partial stub lookup with configuration-dependent cases. The
 unimplemented stubs still return `none`, so this is not HOL's complete list. -/
 def compileConfiguredStub? {width : Nat} [NeZero width] (conf : Config) (location : Nat) :
@@ -484,15 +498,7 @@ def compileConfiguredStub? {width : Nat} [NeZero width] (conf : Config) (locatio
   else if location = installCodeLocation then
     some (4, installCodeStub conf)
   else if location = installDataLocation then
-    let bytes := (wordSemBytesInWord : BitVec width)
-    some (4, .ite .test 4 (.imm 1)
-      (.call none (some installLocation) [0, 2, 6] none)
-      (listSeq [.assign 3 (realAddr conf 4),
-        .assign 4 (.load (.op .add [.var 3, .const bytes])), .assign 4 (realAddr conf 4),
-        .assign 4 (.load (.op .add [.var 4, .const bytes])), .dataBufferWrite 2 4,
-        .assign 2 (.op .add [.var 2, .const bytes]),
-        .assign 4 (.load (.op .add [.var 3, .const (2 * bytes)])),
-        .call none (some installDataLocation) [0, 2, 4, 6] none]))
+    some (4, installDataStub conf)
   else if location = compareLocation then
     some (3, compareCode conf)
   else if location = equalLocation then

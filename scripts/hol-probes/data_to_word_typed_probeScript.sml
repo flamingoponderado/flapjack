@@ -118,6 +118,7 @@ val _ = emit "LongDiv1_code_def_typed" "LongDiv1_code_def";
 val _ = emit "LongDiv_code_def_typed" "LongDiv_code_def";
 val _ = emit "Install_code_def_typed" "Install_code_def";
 val _ = emit "InstallCode_code_def_typed" "InstallCode_code_def";
+val _ = emit "InstallData_code_def_typed" "InstallData_code_def";
 val _ = emit "StoreEach_def_typed" "StoreEach_def";
 val _ = emit "MemEqList_def_typed" "MemEqList_def";
 val _ = emit "LoadBignum_def_typed" "LoadBignum_def";

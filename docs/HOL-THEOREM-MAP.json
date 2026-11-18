@@ -130133,6 +130133,15 @@
   },
 {
     "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "InstallData_code_def",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Stubs.lean",
+    "lean_name": "installDataStub",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Independent comparison with InstallData_code_def_typed confirms both branches, ordered loads, buffer write, modular byte offsets and calls. Production dispatch uses the source location and arity; a captured HOL oracle checks the generated body for a 64-bit configuration."
+  },
+{
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
     "hol_name": "StoreEach_def",
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
     "lean_name": "storeEach",
