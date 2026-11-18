@@ -12164,6 +12164,11 @@ run_probe data_to_word_assign_typed_probeScript.sml data_to_word_assign_typed_pr
   "$cake_dir/compiler/backend/proofs/data_to_word_assignProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
 
+run_probe data_to_word_cut_envs_wf_replay_probeScript.sml data_to_word_cut_envs_wf_replay_probe.out \
+  cut_envs_wf_replay_typed \
+  "$cake_dir/compiler/backend/proofs/data_to_word_assignProofScript.sml" \
+  "$cake_dir/compiler/backend/semantics"
+
 run_probe word_remove_proof_local_typed_probeScript.sml word_remove_proof_local_typed_probe.out \
   evaluate_add_clock_compile_state_typed \
   "$cake_dir/compiler/backend/proofs/word_removeProofScript.sml" \

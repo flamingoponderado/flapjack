@@ -8418,6 +8418,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "cut_envs_wf",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/CutState.lean",
+  "lean_name": "cutEnvs_wf",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with cut_envs_wf_replay_typed and the HOL source: the two name sets and all three polymorphic value trees retain their source carriers, with exactly the successful-cut premise and both well-formedness conclusions. The typed HOL replay uses the original statement and proof and has no hypotheses."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
   "hol_name": "cut_state_opt_IMP_cut_locals",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/CutState.lean",
   "lean_name": "cutStateOpt_imp_cutLocals",

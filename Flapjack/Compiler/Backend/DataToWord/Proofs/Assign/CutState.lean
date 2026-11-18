@@ -10,6 +10,18 @@ public import Flapjack.Compiler.Backend.DataSpace.Proofs.State
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Assign
 open Flapjack Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
 
+/-- Both environments returned by a successful word-environment cut are
+well-formed sparse trees. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml" "cut_envs_wf"]
+theorem cutEnvs_wf {α : Type} (names : WordLangCutsetsHOL) (env first second : Spt α)
+    (run : wordSemCutEnvs names env = some (first, second)) :
+    sptWf first = true ∧ sptWf second = true := by
+  by_cases h1 : LoopSemStateFiniteExact.sptSubsetLive names.1 env <;>
+    by_cases h2 : LoopSemStateFiniteExact.sptSubsetLive names.2 env <;>
+    simp [wordSemCutEnvs, wordSemCutNames, h1, h2] at run
+  obtain ⟨rfl, rfl⟩ := run
+  exact ⟨sptWfInter _ _, sptWfInter _ _⟩
+
 /-- A successful optional cut is equal to the total GC cut operation. -/
 @[hol "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml" "cut_state_opt_IMP_cut_locals"]
 theorem cutStateOpt_imp_cutLocals {C F : Type} (names : NumSet)

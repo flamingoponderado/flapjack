@@ -1,3 +1,10 @@
+`data_to_word_cut_envs_wf_replay_probe.out` captures the inferred type of
+`cut_envs_wf` by replaying its original statement and proof against the pinned
+word semantics theory. Regenerate with
+`HOL_PROBE_ONLY=data_to_word_cut_envs_wf_replay_probeScript.sml scripts/hol-probes/regenerate.sh`
+using the pinned CakeML and HOL revisions. This capture supports source review;
+it does not establish cross-language equivalence.
+
 `backend_common_typed_probe.out` includes the inferred `upper_w2w_def` equation
 and 8-, 32-, and 64-bit evaluations. Regenerate with
 `HOL_PROBE_ONLY=backend_common_typed_probeScript.sml scripts/hol-probes/regenerate.sh`
