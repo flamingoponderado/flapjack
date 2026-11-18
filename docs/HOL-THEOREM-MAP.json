@@ -8428,6 +8428,16 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "get_real_offset_lemma",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/Offset.lean",
+  "lean_name": "getRealOffset_lemma",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Independent comparison with the HOL source and get_real_offset_lemma_typed: the word-state lookup, good-dimension and offset-result premises and the compiled expression evaluation conclusion all match. The word-state finite maps and positive-width word carrier use the named translations; the compiler and FFI types remain independent."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
   "hol_name": "memory_rel_lookup_var_IMP",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/Roots.lean",
   "lean_name": "memoryRel_lookupVars",
