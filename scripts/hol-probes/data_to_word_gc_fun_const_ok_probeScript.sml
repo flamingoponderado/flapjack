@@ -145,3 +145,4 @@ val _ = pr_typed "cut_names_adjust_set_insert_1_typed" data_to_word_gcProofTheor
 val _ = pr_typed "cut_names_adjust_set_insert_3_typed" data_to_word_gcProofTheory.cut_names_adjust_set_insert_3;
 val _ = pr_typed "case_EQ_SOME_IFF_typed" data_to_word_gcProofTheory.case_EQ_SOME_IFF;
 val _ = pr_typed "state_rel_set_store_AllocSize_typed" data_to_word_gcProofTheory.state_rel_set_store_AllocSize;
+val _ = pr_typed "inter_insert_typed" data_to_word_gcProofTheory.inter_insert;

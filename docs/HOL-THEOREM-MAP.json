@@ -23537,6 +23537,11 @@
   "reviewer": "Compared state_rel_set_store_AllocSize_typed: updating the target AllocSize with an arbitrary word leaves the complete state relation equal in both directions, with arbitrary optional roots. Target finite maps and positive-width words use the reviewed representations."
 },
 {
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "inter_insert",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/InterInsert.lean", "lean_name": "inter_insert",
+  "statement_status": "reviewed_exact", "reviewer": "Compared inter_insert_typed: intersection distributes over insertion according to membership in the right tree, with independent tree payload types and no well-formedness assumptions."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "cut_env_IMP_MEM",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CutEnvProperties.lean", "lean_name": "cutEnv_imp_mem",
   "statement_status": "reviewed_exact", "reviewer": "Compared cut_env_IMP_MEM_typed: successful source cut makes an arbitrary key present exactly when it is present in the requested set."
