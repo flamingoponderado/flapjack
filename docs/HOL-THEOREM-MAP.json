@@ -8252,6 +8252,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "cut_env_IMP_cut_envs",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CutEnvs.lean",
+  "lean_name": "cutEnv_imp_cutEnvs",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with cut_env_IMP_cut_envs_typed: a successful combined word-environment cut yields the two component cuts and the same reversed-order union, over arbitrary payloads and the original pair of sparse-tree name sets."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "cut_locals_def",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CutLocals.lean",
   "lean_name": "cutLocals",
@@ -52238,7 +52246,7 @@
     "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/CutEnvLemma.lean",
     "lean_name": "cutEnvLemma",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-ds9 source comparison 2026-10-01 bead flapjack-pxn.18.5.11.1.11: original word_allocProofScript.sml:340-378, declared exactly once at line 340. The three HOL premises are kept as one conjunction: one global scoped injection INJ f (domain (FST names) UNION domain (SND names)) UNIV, rendered as the pointwise implication ∀ a b, (sptDomain n1 a ∨ sptDomain n2 a) → (sptDomain n1 b ∨ sptDomain n2 b) → f a = f b → a = b; cut_env names sloc = SOME x, rendered as wordSemCutEnv (n1, n2) sloc = some x with names the Unit Spt cutsets pair (n1, n2); strong_locals_rel f (domain (FST names) UNION domain (SND names)) sloc tloc. The five HOL conclusions are kept in order: ∃ y, cut_env (apply_nummaps_key f names) tloc = SOME y; domain y = IMAGE f (domain x) rendered as sptDomain y = (fun key => ∃ source, sptDomain x source ∧ f source = key); strong_locals_rel f (union domains) x y; INJ f (domain x) UNIV rendered pointwise; domain x = domain (FST names) UNION domain (SND names). Exact Spt tree, Unit name-set and generic beta environment carriers; no representation qualifier; no added premise. Proof mirrors HOL: splits wordSemCutEnv into the exact wordSemCutEnvs success x = sptUnion x2 x1, invokes reviewed cutEnvsLemma on n1,n2, derives the two restricted relations and cross-unions the conclusions via reviewed strongLocalsRelRestrictedTreeUnion (sptUnion x2 x1), and closes domain x from the two source domain equalities."
+    "reviewer": "flapjack-ds9 source comparison 2026-10-01 bead flapjack-pxn.18.5.11.1.11: original word_allocProofScript.sml:340-378, declared exactly once at line 340. The three HOL premises are kept as one conjunction: one global scoped injection INJ f (domain (FST names) UNION domain (SND names)) UNIV, rendered as the pointwise implication ∀ a b, (sptDomain n1 a ∨ sptDomain n2 a) → (sptDomain n1 b ∨ sptDomain n2 b) → f a = f b → a = b; cut_env names sloc = SOME x, rendered as wordSemCutEnv (n1, n2) sloc = some x with names the Unit Spt cutsets pair (n1, n2); strong_locals_rel f (domain (FST names) UNION domain (SND names)) sloc tloc. The five HOL conclusions are kept in order: ∃ y, cut_env (apply_nummaps_key f names) tloc = SOME y; domain y = IMAGE f (domain x) rendered as sptDomain y = (fun key => ∃ source, sptDomain x source ∧ f source = key); strong_locals_rel f (union domains) x y; INJ f (domain x) UNIV rendered pointwise; domain x = domain (FST names) UNION domain (SND names). Exact Spt tree, Unit name-set and generic beta environment carriers; no representation qualifier; no added premise. Proof mirrors HOL: uses the separately source-reviewed cutEnv_imp_cutEnvs for the paired cut and union, invokes reviewed cutEnvsLemma on n1,n2, derives the two restricted relations and cross-unions the conclusions via reviewed strongLocalsRelRestrictedTreeUnion (sptUnion x2 x1), and closes domain x from the two source domain equalities."
   },
 {
     "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
