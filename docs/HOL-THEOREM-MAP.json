@@ -8417,6 +8417,33 @@
   "reviewer": "Independent source and cut_locals_def_typed comparison: both branches retain the two independent state parameters and update only locals, using the cut result on success and the empty sparse tree on failure."
 },
 {
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "word_ml_inv_zero",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/SmallNumber.lean",
+  "lean_name": "wordMlInv_zero",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Independent comparison with the HOL source and word_ml_inv_zero_typed: the heap and root invariant, good-dimension and small_enough_int 0 premises, and Number 0/Word 0 conclusion agree. The source state parameters remain independent."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "word_ml_inv_num",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/SmallNumber.lean",
+  "lean_name": "wordMlInv_num",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Independent comparison with the HOL source and word_ml_inv_num_typed: the heap tuple, source state's refs, invariant, good-dimension and small-enough premises and nonnegative encoded root agree. The source compiler and FFI types remain independent."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "word_ml_inv_neg_num",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/SmallNumber.lean",
+  "lean_name": "wordMlInv_negNum",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Independent comparison with the HOL source and word_ml_inv_neg_num_typed: the heap tuple, source state's refs, invariant, good-dimension, negative small-enough and nonzero premises and negated encoded root agree. The source compiler and FFI types remain independent."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "word_ml_inv_get_vars_IMP_lemma",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/WordMlInvGetVars.lean",

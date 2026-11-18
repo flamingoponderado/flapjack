@@ -1,5 +1,6 @@
 load "preamble";
 load "data_to_word_gcProofTheory";
+load "data_to_word_memoryProofTheory";
 load "data_to_word_assignProofTheory";
 open HolKernel Parse boolLib bossLib;
 val _ = Globals.linewidth := 1000000;
@@ -17,3 +18,6 @@ val _ = emit "get_real_byte_offset_lemma_typed"
   data_to_word_assignProofTheory.get_real_byte_offset_lemma;
 val _ = emit "reorder_lemma_typed" data_to_word_assignProofTheory.reorder_lemma;
 val _ = emit "reorder_2_lemma_typed" data_to_word_assignProofTheory.reorder_2_lemma;
+val _ = emit "word_ml_inv_num_typed" data_to_word_memoryProofTheory.word_ml_inv_num;
+val _ = emit "word_ml_inv_neg_num_typed" data_to_word_memoryProofTheory.word_ml_inv_neg_num;
+val _ = emit "word_ml_inv_zero_typed" data_to_word_memoryProofTheory.word_ml_inv_zero;

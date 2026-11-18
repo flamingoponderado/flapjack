@@ -3,6 +3,7 @@ module
 public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.StackOperations
 public import Flapjack.Compiler.Backend.DataToWord.Proofs.Numbers
 public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BitLemmas
+public import Flapjack.Compiler.Backend.BackendCommon.SmallInt
 
 @[expose] public section
 
@@ -99,6 +100,76 @@ theorem smallnum_mask {width : Nat} [NeZero width] (good : goodDimindex width) (
   all_goals split <;> apply bitAndNotOneEq <;> rw [bitLowToNat] <;>
     simp [BitVec.toNat_neg] <;> omega
 
+/-- Add a represented small integer to the roots of the word invariant.
+This helper is used to prove both original signed-number cases below. -/
+private theorem wordMlInv_small {width : Nat} [NeZero width] (conf : Config)
+    (heap : ValueHeap width) (be : Bool) (a sp sp1 : Nat) (gens : GenState)
+    (limit next : Nat) (refs : Spt (BvlSem.Ref Flapjack.Compiler.Backend.DataSem.Value))
+    (vars : List (Flapjack.Compiler.Backend.DataSem.Value × WordLocW width)) (i : Int)
+    (good : goodDimindex width) (small : smallInt width i)
+    (inv : wordMlInv (heap, be, a, sp, sp1, gens) limit next conf refs vars) :
+    wordMlInv (heap, be, a, sp, sp1, gens) limit next conf refs
+      ((.number i, .word (smallnum i)) :: vars) := by
+  obtain ⟨roots, abstractInv, addresses⟩ := inv
+  refine ⟨.data (.word (smallnum i)) :: roots, ?_, ?_⟩
+  · exact absMlInv_num conf (vars.map Prod.fst) refs roots heap be a sp sp1 gens limit next i ⟨abstractInv, small⟩
+  · apply List.Forall₂.cons
+    · simp only [wordAddr]
+      rw [smallnum_mask good i]
+    · exact addresses
+
+/-- A nonnegative source integer fitting the compiler's bound is a root. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "word_ml_inv_num"
+  (words_as_type_indexed_bitvec)]
+theorem wordMlInv_num {width : Nat} [NeZero width] {C F : Type}
+    (heap : ValueHeap width) (be : Bool) (a sp sp1 : Nat) (gens : GenState)
+    (limit next : Nat) (conf : Config) (state : Flapjack.Compiler.Backend.DataSem.State C F)
+    (vars : List (Flapjack.Compiler.Backend.DataSem.Value × WordLocW width)) (n : Nat)
+    (premises : wordMlInv (heap, be, a, sp, sp1, gens) limit next conf state.refs vars ∧
+      goodDimindex width ∧ BackendCommon.smallEnoughInt (Int.ofNat n)) :
+    wordMlInv (heap, be, a, sp, sp1, gens) limit next conf state.refs
+      ((.number (Int.ofNat n), .word (BitVec.ofNat width (4 * n))) :: vars) := by
+  obtain ⟨inv, good, enough⟩ := premises
+  have small : smallInt width (Int.ofNat n) := by
+    rcases good with h | h <;> subst width <;>
+      simp [smallInt, BackendCommon.smallEnoughInt] at enough ⊢ <;> omega
+  have result := wordMlInv_small conf heap be a sp sp1 gens limit next state.refs vars (Int.ofNat n) good small inv
+  have notNegative : ¬ (Int.ofNat n < 0) := Int.not_lt.mpr (Int.natCast_nonneg n)
+  rw [smallnum_eq_inlined, if_neg notNegative] at result
+  simpa using result
+
+/-- Zero has the source immediate representation and preserves the invariant. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "word_ml_inv_zero"
+  (words_as_type_indexed_bitvec)]
+theorem wordMlInv_zero {width : Nat} [NeZero width] {C F : Type}
+    (heap : ValueHeap width) (be : Bool) (a sp sp1 : Nat) (gens : GenState)
+    (limit next : Nat) (conf : Config) (state : Flapjack.Compiler.Backend.DataSem.State C F)
+    (vars : List (Flapjack.Compiler.Backend.DataSem.Value × WordLocW width))
+    (premises : wordMlInv (heap, be, a, sp, sp1, gens) limit next conf state.refs vars ∧
+      goodDimindex width ∧ BackendCommon.smallEnoughInt 0) :
+    wordMlInv (heap, be, a, sp, sp1, gens) limit next conf state.refs
+      ((.number 0, .word 0) :: vars) := by
+  simpa using wordMlInv_num heap be a sp sp1 gens limit next conf state vars 0 premises
+
+/-- A negative source integer fitting the compiler's bound is a root. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "word_ml_inv_neg_num"
+  (words_as_type_indexed_bitvec)]
+theorem wordMlInv_negNum {width : Nat} [NeZero width] {C F : Type}
+    (heap : ValueHeap width) (be : Bool) (a sp sp1 : Nat) (gens : GenState)
+    (limit next : Nat) (conf : Config) (state : Flapjack.Compiler.Backend.DataSem.State C F)
+    (vars : List (Flapjack.Compiler.Backend.DataSem.Value × WordLocW width)) (n : Nat)
+    (premises : wordMlInv (heap, be, a, sp, sp1, gens) limit next conf state.refs vars ∧
+      goodDimindex width ∧ BackendCommon.smallEnoughInt (-(Int.ofNat n)) ∧ n ≠ 0) :
+    wordMlInv (heap, be, a, sp, sp1, gens) limit next conf state.refs
+      ((.number (-(Int.ofNat n)), .word (-(BitVec.ofNat width (4 * n)))) :: vars) := by
+  obtain ⟨inv, good, enough, nonzero⟩ := premises
+  have small : smallInt width (-(Int.ofNat n)) := by
+    rcases good with h | h <;> subst width <;>
+      simp [smallInt, BackendCommon.smallEnoughInt] at enough ⊢ <;> omega
+  have result := wordMlInv_small conf heap be a sp sp1 gens limit next state.refs vars (-(Int.ofNat n)) good small inv
+  have positive : 0 < n := Nat.pos_of_ne_zero nonzero
+  simpa [smallnum_eq_inlined, positive] using result
+
 /-- A small integer and its tagged word can be added to the full memory relation. -/
 @[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "IMP_memory_rel_Number"
   (fmap_as_finite_support_relation := [store]) (words_as_type_indexed_bitvec)]
@@ -110,13 +181,8 @@ theorem impMemoryRel_number {width : Nat} [NeZero width] (conf : Config) (bigEnd
     goodDimindex width ∧ smallInt width i ∧ memoryRel conf bigEndian next refs space store memory domain vars →
     memoryRel conf bigEndian next refs space store memory domain ((.number i, .word (smallnum i)) :: vars) := by
   rintro ⟨good, small, heap, limit, a, sp, sp1, gens, heapMem, wordInv, bound, spaceBound⟩
-  refine ⟨heap, limit, a, sp, sp1, gens, heapMem, ?_, bound, spaceBound⟩
-  obtain ⟨roots, inv, addresses⟩ := wordInv
-  refine ⟨.data (.word (smallnum i)) :: roots, ?_, ?_⟩
-  · exact absMlInv_num conf (vars.map Prod.fst) refs roots heap bigEndian a sp sp1 gens limit next i ⟨inv, small⟩
-  · apply List.Forall₂.cons
-    · simp only [wordAddr]
-      rw [smallnum_mask good i]
-    · exact addresses
+  exact ⟨heap, limit, a, sp, sp1, gens, heapMem,
+    wordMlInv_small conf heap bigEndian a sp sp1 gens limit next refs vars i good small wordInv,
+    bound, spaceBound⟩
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
