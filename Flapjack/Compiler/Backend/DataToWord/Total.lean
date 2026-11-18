@@ -26,8 +26,9 @@ theorem compileControl_exists {width : Nat} [NeZero width] (conf : Config) (secn
     obtain ⟨a, b, ha⟩ := ih
     simp [ha]
 
-/-- The traversal exposed as a total function, with failure ruled out by
-`compileControl_exists`. Source-level comparison with HOL remains open. -/
+/-- Compile a data-language program, threading the local label counter. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "comp_def"
+  (words_as_type_indexed_bitvec)]
 def compileControl {width : Nat} [NeZero width] (conf : Config) (secn l : Nat)
     (program : DataLang.Prog) : WordLangProgHOL (BitVec width) × Nat :=
   (compileControl? conf secn l program).get (by
@@ -35,8 +36,9 @@ def compileControl {width : Nat} [NeZero width] (conf : Config) (secn l : Nat)
     simp [h])
 
 /-- Compile one labeled data function, incrementing its arity and discarding
-the next local label. This is the shape of HOL's `compile_part_def`, but is
-not tagged as its port until `compileControl` is reviewed against HOL `comp`. -/
+    the next local label. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "compile_part_def"
+  (words_as_type_indexed_bitvec)]
 def compilePart {width : Nat} [NeZero width] (conf : Config)
     (entry : Nat × Nat × DataLang.Prog) : Nat × Nat × WordLangProgHOL (BitVec width) :=
   let (name, arity, body) := entry

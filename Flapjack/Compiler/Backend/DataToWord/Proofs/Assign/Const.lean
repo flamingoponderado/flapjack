@@ -100,7 +100,7 @@ theorem assignConst_correct {width : Nat} [NeZero width] {C F : Type}
     (_depth : target.termdep > 1)
     (run : DataSem.doApp op values cut = .val (result, resultState)) :
     ∃ q r,
-      WordSemStateFiniteExact.evaluate (compileControl conf n l (.assign dest op args names)).1 target = (q, r) ∧
+      WordSemStateFiniteExact.evaluate (compileAssign conf n l dest op args names).1 target = (q, r) ∧
       (q = some .notEnoughSpace → r.ffi = target.ffi ∧ optionLe r.stackMax resultState.stackMax ∧
         (conf.gcKind ≠ .none → resultState.safeForSpace = false)) ∧
       (q ≠ some .notEnoughSpace →
@@ -112,10 +112,9 @@ theorem assignConst_correct {width : Nat} [NeZero width] {C F : Type}
     have cutIsSource : cut = source := by simpa [DataSem.cutStateOpt] using cutEq.symm
     subst cut
     have updated := stateRel_afterConst conf l1 l2 source resultState target locs dest i values result related run
-    have compiled : compileControl (width := width) conf n l (.assign dest (.intOp (.const i)) args none) =
+    have compiled : compileAssign (width := width) conf n l dest (.intOp (.const i)) args none =
         (.assign (adjustVar dest) (.const (smallnum i)), l) := by
-      have h := compileControl_option (width := width) conf n l (.assign dest (.intOp (.const i)) args none)
-      by_cases neg : i < 0 <;> simpa [compileControl?, compileAssign, assignConst, smallnum, neg] using h.symm
+      by_cases neg : i < 0 <;> simp [compileAssign, assignConst, smallnum, neg]
     refine ⟨none, WordSemStateFiniteExact.setVar (adjustVar dest) (.word (smallnum i)) target, ?_, ?_, ?_⟩
     · simp [compiled, WordSemStateFiniteExact.evaluate, WordSemStateFiniteExact.wordExp]
     · simp

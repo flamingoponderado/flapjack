@@ -50,7 +50,7 @@ private theorem stateRel_replaceGlobals {width : Nat} [NeZero width] {C F : Type
 
 /-- The source global-pointer update case, with all original assignment-goal
 premises and result branches. It remains untagged pending review of the
-shared compiler and state-relation dependencies. -/
+shared state-relation and stub dependencies. -/
 theorem assignSetGlobalsPtr_correct {width : Nat} [NeZero width] {C F : Type}
     (conf : Config) (n l l1 l2 dest : Nat) (op : ClosLang.Op)
     (args : List Nat) (names : Option NumSet) (source cut resultState : DataSem.State C F)
@@ -64,7 +64,7 @@ theorem assignSetGlobalsPtr_correct {width : Nat} [NeZero width] {C F : Type}
     (_depth : target.termdep > 1)
     (run : DataSem.doApp op values cut = .val (result, resultState)) :
     ∃ q r,
-      WordSemStateFiniteExact.evaluate (compileControl conf n l (.assign dest op args names)).1 target = (q, r) ∧
+      WordSemStateFiniteExact.evaluate (compileAssign conf n l dest op args names).1 target = (q, r) ∧
       (q = some .notEnoughSpace → r.ffi = target.ffi ∧ optionLe r.stackMax resultState.stackMax ∧
         (conf.gcKind ≠ .none → resultState.safeForSpace = false)) ∧
       (q ≠ some .notEnoughSpace →
@@ -168,11 +168,9 @@ theorem assignSetGlobalsPtr_correct {width : Nat} [NeZero width] {C F : Type}
                   · simpa [first, WordSemStateFiniteExact.setStore, getRealAddr,
                       HolFiniteMapExact.updateEq, FUPDATE_HOL] using realDecoded
                 dsimp [first, WordSemStateFiniteExact.setStore] at addressEval
-                have compiled : compileControl (width := width) conf n l
-                    (.assign dest (.globOp .setGlobalsPtr) [arg] none) = assignSetGlobalsPtr conf l dest arg := by
-                  have h := compileControl_option (width := width) conf n l
-                    (.assign dest (.globOp .setGlobalsPtr) [arg] none)
-                  simpa [compileControl?, compileAssign, arg1] using h.symm
+                have compiled : compileAssign (width := width) conf n l dest
+                    (.globOp .setGlobalsPtr) [arg] none = assignSetGlobalsPtr conf l dest arg := by
+                  rfl
                 refine ⟨none, WordSemStateFiniteExact.setVar (adjustVar dest) (.word 2) midTarget, ?_, ?_, ?_⟩
                 · simp [compiled, assignSetGlobalsPtr, unitExp, WordSemStateFiniteExact.evaluate,
                     WordSemStateFiniteExact.wordExp, WordSemStateFiniteExact.setStore,

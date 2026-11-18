@@ -8494,6 +8494,24 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+  "hol_name": "comp_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Total.lean",
+  "lean_name": "compileControl",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared the complete HOL equation and typed capture: all program constructors, recursive label threading, assignment and thunk delegates, MakeSpace overflow behavior, and call/handler branches match. The option traversal is total and the executed total wrapper selects its only result."
+},
+{
+  "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+  "hol_name": "compile_part_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Total.lean",
+  "lean_name": "compilePart",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared HOL source and typed capture: source label and body feed the reviewed control compiler at label two, arity increases by one, and the final local label is discarded."
+},
+{
+  "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
   "hol_name": "assign_def",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
   "lean_name": "compileAssign",

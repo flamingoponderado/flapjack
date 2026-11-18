@@ -65,3 +65,6 @@ val _ = emit "assign_Mult_def_typed" data_to_wordTheory.assign_Mult_def;
 val _ = emit "assign_Div_def_typed" data_to_wordTheory.assign_Div_def;
 val _ = emit "assign_Mod_def_typed" data_to_wordTheory.assign_Mod_def;
 val _ = emit "assign_def_typed" data_to_wordTheory.assign_def;
+val _ = emit "comp_def_typed" data_to_wordTheory.comp_def;
+val _ = emit "compile_part_def_typed" data_to_wordTheory.compile_part_def;
+val _ = emit "assign_SetGlobalsPtr_typed" data_to_word_assignProofTheory.assign_SetGlobalsPtr;

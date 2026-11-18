@@ -27,7 +27,7 @@ theorem assignGlobal_correct {width : Nat} [NeZero width] {C F : Type}
     (_depth : target.termdep > 1)
     (run : DataSem.doApp op values cut = .val (result, resultState)) :
     ∃ q r,
-      WordSemStateFiniteExact.evaluate (compileControl conf n l (.assign dest op args names)).1 target = (q, r) ∧
+      WordSemStateFiniteExact.evaluate (compileAssign conf n l dest op args names).1 target = (q, r) ∧
       (q = some .notEnoughSpace → r.ffi = target.ffi ∧ optionLe r.stackMax resultState.stackMax ∧
         (conf.gcKind ≠ .none → resultState.safeForSpace = false)) ∧
       (q ≠ some .notEnoughSpace →
@@ -126,10 +126,8 @@ theorem assignGlobal_correct {width : Nat} [NeZero width] {C F : Type}
                 tauto
               have updated := stateRel_insertRoot conf l1 l2 next target locs dest entry loaded nextRel (by
                 simpa [locals, rest, globals] using newRoot)
-              have compiled : compileControl (width := width) conf n l (.assign dest (.globOp (.global i)) args none) =
-                  (assignGlobal conf i l dest) := by
-                have h := compileControl_option (width := width) conf n l (.assign dest (.globOp (.global i)) args none)
-                simpa [compileControl?, compileAssign] using h.symm
+              have compiled : compileAssign (width := width) conf n l dest (.globOp (.global i)) args none =
+                  assignGlobal conf i l dest := by rfl
               have domain' : target.mdomain
                   (addr + (BitVec.ofNat width (width / 8) +
                     BitVec.ofNat width (width / 8) * BitVec.ofNat width i)) = true := by
