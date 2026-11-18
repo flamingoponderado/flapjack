@@ -307,6 +307,28 @@ def anyArithCode {width : Nat} [NeZero width] (conf : Config) : WordLangProgHOL 
       .set .nextFree (.op .add [.var 5, .const bytes, shiftVar .lsl 6 (wordShiftAmount width)]),
       .return 0 [1]]
 
+/-- Compare numeric values using their heap representations. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "Compare_code_def"
+  (words_as_type_indexed_bitvec)]
+def compareCode {width : Nat} [NeZero width] (conf : Config) : WordLangProgHOL (BitVec width) :=
+    let result (n : Nat) := WordLangProgHOL.seq (.assign 2 (.const (BitVec.ofNat width n))) (.return 0 [2])
+    .ite .test 2 (.imm 1)
+      (listSeq [.assign 1 (.load (realAddr conf 4)), .ite .test 1 (.imm 16) (result 0) (result 2)])
+      (.ite .test 4 (.imm 1)
+        (listSeq [.assign 1 (.load (realAddr conf 2)), .ite .test 1 (.imm 16) (result 2) (result 0)])
+        (listSeq [.assign 11 (realAddr conf 2), .assign 1 (.load (.var 11)),
+          .assign 13 (realAddr conf 4), .assign 3 (.load (.var 13)),
+          .assign 6 (shiftN .lsr (.var 1) (width - conf.lenSize)),
+          .assign 8 (shiftN .lsr (.var 3) (width - conf.lenSize)),
+          .ite .equal 1 (.reg 3)
+            (listSeq [.assign 2 (.op .add [.var 11, shiftN .lsl (.var 6) (wordShiftAmount width)]),
+              .assign 4 (.op .add [.var 13, shiftN .lsl (.var 6) (wordShiftAmount width)]),
+              .ite .test 1 (.imm 16) (.call none (some compare1Location) [0, 6, 2, 4] none)
+                (.call none (some compare1Location) [0, 6, 4, 2] none)])
+            (.ite .test 1 (.imm 16)
+              (.ite .test 3 (.imm 16) (.ite .lower 6 (.reg 8) (result 0) (result 2)) (result 2))
+              (.ite .test 3 (.imm 16) (result 0) (.ite .lower 6 (.reg 8) (result 2) (result 0))))]))
+
 /-- Extend the partial stub lookup with configuration-dependent cases. The
 unimplemented stubs still return `none`, so this is not HOL's complete list. -/
 def compileConfiguredStub? {width : Nat} [NeZero width] (conf : Config) (location : Nat) :
@@ -398,23 +420,7 @@ def compileConfiguredStub? {width : Nat} [NeZero width] (conf : Config) (locatio
         .assign 4 (.load (.op .add [.var 3, .const (2 * bytes)])),
         .call none (some installDataLocation) [0, 2, 4, 6] none]))
   else if location = compareLocation then
-    let result (n : Nat) := WordLangProgHOL.seq (.assign 2 (.const (BitVec.ofNat width n))) (.return 0 [2])
-    some (3, .ite .test 2 (.imm 1)
-      (listSeq [.assign 1 (.load (realAddr conf 4)), .ite .test 1 (.imm 16) (result 0) (result 2)])
-      (.ite .test 4 (.imm 1)
-        (listSeq [.assign 1 (.load (realAddr conf 2)), .ite .test 1 (.imm 16) (result 2) (result 0)])
-        (listSeq [.assign 11 (realAddr conf 2), .assign 1 (.load (.var 11)),
-          .assign 13 (realAddr conf 4), .assign 3 (.load (.var 13)),
-          .assign 6 (shiftN .lsr (.var 1) (width - conf.lenSize)),
-          .assign 8 (shiftN .lsr (.var 3) (width - conf.lenSize)),
-          .ite .equal 1 (.reg 3)
-            (listSeq [.assign 2 (.op .add [.var 11, shiftN .lsl (.var 6) (wordShiftAmount width)]),
-              .assign 4 (.op .add [.var 13, shiftN .lsl (.var 6) (wordShiftAmount width)]),
-              .ite .test 1 (.imm 16) (.call none (some compare1Location) [0, 6, 2, 4] none)
-                (.call none (some compare1Location) [0, 6, 4, 2] none)])
-            (.ite .test 1 (.imm 16)
-              (.ite .test 3 (.imm 16) (.ite .lower 6 (.reg 8) (result 0) (result 2)) (result 2))
-              (.ite .test 3 (.imm 16) (result 0) (.ite .lower 6 (.reg 8) (result 2) (result 0))))])))
+    some (3, compareCode conf)
   else if location = equalLocation then
     let bytes := (wordSemBytesInWord : BitVec width)
     let result (n : Nat) := WordLangProgHOL.seq (.assign 2 (.const (BitVec.ofNat width n))) (.return 0 [2])
