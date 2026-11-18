@@ -118,6 +118,22 @@ def compare1Code {width : Nat} [NeZero width] : WordLangProgHOL (BitVec width) :
       .call none (some compare1Location) [0, 2, 4, 6] none])
       (.ite .lower 8 (.reg 9) (result 0) (result 2))])
 
+/-- Compare corresponding elements of two blocks for equality. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "Equal1_code_def"
+  (words_as_type_indexed_bitvec)]
+def equal1Code {width : Nat} [NeZero width] : WordLangProgHOL (BitVec width) :=
+  let bytes := BitVec.ofNat width (width / 8)
+  listSeq [
+    .ite .equal 2 (.imm 0) (.seq (.assign 2 (.const 1)) (.return 0 [2])) .skip,
+    .assign 1 (.load (.var 4)), .assign 3 (.load (.var 6)),
+    .call (some ([5], (sptListInsert [0, 2, 4, 6] .ln, .ln), .skip, equal1Location, 2))
+      (some equalLocation) [1, 3] none,
+    .ite .equal 5 (.imm 1) .skip (.return 0 [5]),
+    .assign 2 (.op .sub [.var 2, .const 1]),
+    .assign 4 (.op .add [.var 4, .const bytes]),
+    .assign 6 (.op .add [.var 6, .const bytes]),
+    .call none (some equal1Location) [0, 2, 4, 6] none]
+
 /-- Flapjack's partial stub lookup. It supplies only the listed stubs and
 returns `none` for all others; the complete HOL `stubs` list, including
 bignum code, remains unported. -/
@@ -167,17 +183,7 @@ def compileStub? {width : Nat} [NeZero width] (location : Nat) : Option (Nat × 
   else if location = compare1Location then
     some (4, compare1Code)
   else if location = equal1Location then
-    let bytes := BitVec.ofNat width (width / 8)
-    some (4, listSeq [
-      .ite .equal 2 (.imm 0) (.seq (.assign 2 (.const 1)) (.return 0 [2])) .skip,
-      .assign 1 (.load (.var 4)), .assign 3 (.load (.var 6)),
-      .call (some ([5], (sptListInsert [0, 2, 4, 6] .ln, .ln), .skip, equal1Location, 2))
-        (some equalLocation) [1, 3] none,
-      .ite .equal 5 (.imm 1) .skip (.return 0 [5]),
-      .assign 2 (.op .sub [.var 2, .const 1]),
-      .assign 4 (.op .add [.var 4, .const bytes]),
-      .assign 6 (.op .add [.var 6, .const bytes]),
-      .call none (some equal1Location) [0, 2, 4, 6] none])
+    some (4, equal1Code)
   else if location = addLocation then some (3, addCode)
   else if location = subLocation then some (3, subCode)
   else if location = mulLocation then some (3, mulCode)
