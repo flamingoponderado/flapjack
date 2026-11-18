@@ -8268,6 +8268,15 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "option_le_tl",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/StackSizeTail.lean",
+  "lean_name": "optionLe_tail",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Independent comparison with option_le_tl_typed: the original stack-frame bound and tail conclusion are preserved, including optional-size behavior and handler overhead. HOL word locations use the positive-width BitVec carrier."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "gc_add_call_env",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/GcAddCallEnv.lean",
   "lean_name": "gcAddCallEnv",
