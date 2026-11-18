@@ -73,8 +73,8 @@ private def qname : NamespaceHOL.Ident MlString MlString := .long (ofString "A")
 #guard renderUnsupportedPrimitive [] (.located loc .badConstraintLists) ==
   some (ofString "### ERROR: type error\nInternal error: Bad call to add_constraints at line 1\n\n\n           ^^^^^\n\nProgram exited with nonzero exit code.\n").explode
 
-#guard match inferExprFuel 100 100 emptyEnv (.lannot (.var qname) loc) ⟨0, .ln, 15⟩ with
-  | .error (.located actual (.undefinedVariable (.long a (.short b)))) =>
+#guard match inferExprState 100 100 emptyEnv (.lannot (.var qname) loc) ⟨0, .ln, 15⟩ with
+  | (.error (.located actual (.undefinedVariable (.long a (.short b)))), _) =>
       actual == loc && a == ofString "A" && b == ofString "foo"
   | _ => false
 

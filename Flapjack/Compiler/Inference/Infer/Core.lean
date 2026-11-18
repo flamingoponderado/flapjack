@@ -18,9 +18,8 @@ set_option backward.privateInPublic true
 set_option backward.privateInPublic.warn false
 
 /-! Bounded executable inference infrastructure. The result distinguishes
-rejected inputs from resource exhaustion. The state APIs retain failure state;
-the legacy fuel APIs omit it. Full correspondence
-with HOL's diagnostics and state transitions remains to be proved. -/
+rejected inputs from resource exhaustion and retains failure state. Full
+correspondence with HOL's diagnostics and state transitions remains to be proved. -/
 namespace Flapjack.Compiler.Inference.Infer.Core
 open Flapjack.Basis.Pure.MlString Flapjack.NamespaceHOL Flapjack.AstHOL
 open Flapjack.Compiler.Inference.Unify
@@ -53,12 +52,6 @@ inductive Error where
 abbrev M (α : Type) := ExceptT Error (StateM State) α
 
 private def fail (e : Error) : M α := fun s => (.error e, s)
-
-/-- Adapt the state-preserving execution result to the existing public API. -/
-def discardFailureState (action : M α) (s : State) : Except Error (α × State) :=
-  match action s with
-  | (.ok value, next) => .ok (value, next)
-  | (.error error, _) => .error error
 
 /-- Preserve the innermost source location for errors that carry enough
 information for original-style rendering. Other error classes remain unchanged. -/
@@ -222,11 +215,6 @@ end
 def inferPatternState (fuel unifFuel : Nat) (env : Env) (p : Pat) (s : State) :
     Except Error (InferT × List (MlString × InferT)) × State :=
   (inferPatWorker fuel unifFuel env p) s
-
-/-- Infer a pattern with the existing result API, which omits failure state. -/
-def inferPatternFuel (fuel unifFuel : Nat) (env : Env) (p : Pat) (s : State) :
-    Except Error ((InferT × List (MlString × InferT)) × State) :=
-  discardFailureState (inferPatWorker fuel unifFuel env p) s
 
 
 @[hol "cakeml/compiler/inference/inferScript.sml" "t_num_of_def"]
@@ -492,11 +480,6 @@ def inferExprState (fuel unifFuel : Nat) (env : Env) (e : AstHOL.Exp) (s : State
     Except Error InferT × State :=
   (inferExprWorker fuel unifFuel env e) s
 
-/-- Infer expressions with the existing result API, which omits failure state. -/
-def inferExprFuel (fuel unifFuel : Nat) (env : Env) (e : AstHOL.Exp) (s : State) :
-    Except Error (InferT × State) :=
-  discardFailureState (inferExprWorker fuel unifFuel env e) s
-
 
 
 private def applyFull (ts : List InferT) : M (List InferT) := do
@@ -590,15 +573,11 @@ def inferDeclsState (fuel unifFuel : Nat) (env : Env) (decls : List Dec) (state 
     Except Error Env × State :=
   (inferDeclsWorker fuel unifFuel env decls) state
 
-/-- Infer declarations with the existing result API, which omits failure state. -/
-def inferDeclsFuel (fuel unifFuel : Nat) (env : Env) (decls : List Dec) (state : State) :
-    Except Error (Env × State) :=
-  discardFailureState (inferDeclsWorker fuel unifFuel env decls) state
-
 /-- The successful whole-program inference environment, starting with CakeML's
 primitive type environment and the first non-primitive type identifier. -/
-def inferProgramFuel (fuel unifFuel : Nat) (decls : List Dec) : Except Error Env := do
-  let (env, _) ← inferDeclsFuel fuel unifFuel initConfig decls ⟨0, .ln, startTypeId⟩
-  return extendDecIenv env initConfig
+def inferProgramFuel (fuel unifFuel : Nat) (decls : List Dec) : Except Error Env :=
+  match inferDeclsState fuel unifFuel initConfig decls ⟨0, .ln, startTypeId⟩ with
+  | (.ok env, _) => .ok (extendDecIenv env initConfig)
+  | (.error error, _) => .error error
 
 end Flapjack.Compiler.Inference.Infer.Core
