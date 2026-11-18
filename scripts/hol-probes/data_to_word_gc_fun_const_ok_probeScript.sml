@@ -115,3 +115,5 @@ val _ = pr_typed "state_rel_call_env_push_typed" data_to_word_gcProofTheory.stat
 val _ = pr_typed "state_rel_call_env_push_env_typed" data_to_word_gcProofTheory.state_rel_call_env_push_env;
 val _ = pr_typed "find_code_thm_ret_typed" data_to_word_gcProofTheory.find_code_thm_ret;
 val _ = pr_typed "find_code_thm_handler_typed" data_to_word_gcProofTheory.find_code_thm_handler;
+val _ = pr_typed "bad_dest_args_def_polymorphic_typed" wordSemTheory.bad_dest_args_def;
+val _ = pr_typed "data_find_code_typed" data_to_word_gcProofTheory.data_find_code;

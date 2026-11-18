@@ -4,6 +4,7 @@ public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.PushCallEnv
 public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.CodePointer
 public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GetVarsSnoc
 public import Flapjack.Compiler.Backend.Semantics.WordSem.Alloc
+public import Flapjack.Compiler.Backend.Semantics.WordSem.CallHelpers
 
 @[expose] public section
 
@@ -289,5 +290,19 @@ theorem findCode_handler {width : Nat} [NeZero width] {C F : Type}
         (WordSemStateFiniteExact.callEnv args1 size (WordSemStateFiniteExact.pushEnv cutWords (some (adjustVar x0, prog1, nn, l + 1)) (WordSemStateFiniteExact.decClock target))) none ((l1,l2)::locs) := by
   simpa using findCode_pushEnv conf l1 l2 q l source target locs args values words dest fs
     result body (some (adjustVar x0, prog1, nn, l + 1)) size names cutData cutWords premises
+
+/-- A successful data code lookup cannot have an indirect destination with
+an empty argument list. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "data_find_code"]
+theorem dataFindCode {α β : Type} (dest : Option Nat) (xs ys : List DataSem.Value)
+    (code : Spt (Nat × α)) (fs : Spt β) (prog : α) (ss : Option β)
+    (found : DataSem.findCode dest xs code fs = some (ys, prog, ss)) :
+    ¬ wordSemBadDestArgs dest xs = true := by
+  cases dest with
+  | none =>
+    cases xs with
+    | nil => simp [DataSem.findCode] at found
+    | cons x xs => simp [wordSemBadDestArgs]
+  | some n => simp [wordSemBadDestArgs]
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

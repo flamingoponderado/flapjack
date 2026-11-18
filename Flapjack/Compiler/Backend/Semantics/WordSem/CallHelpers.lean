@@ -61,8 +61,10 @@ def wordSemAddRetLoc {width : Nat} [NeZero width]
 /-- Exact HOL `bad_dest_args_def` (`wordSemScript.sml:952-954`):
     `bad_dest_args dest args ⇔ dest = NONE ∧ args = []`. -/
 @[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "bad_dest_args_def"]
-def wordSemBadDestArgs (dest : Option Nat) (args : List Nat) : Bool :=
-  decide (dest = none ∧ args = [])
+def wordSemBadDestArgs {α β : Type} (dest : Option α) (args : List β) : Bool :=
+  match dest, args with
+  | none, [] => true
+  | _, _ => false
 
 namespace WordSemStateFiniteExact
 

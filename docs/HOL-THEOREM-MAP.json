@@ -23297,6 +23297,14 @@
   "reviewer": "Compared find_code_thm_handler_typed: the original state relation, corresponding argument reads, successful data lookup and two cuts imply a compiled word lookup and the complete pushed-handler call relation. The handler's adjusted variable, program, number and l + 1 match HOL, and its program shares the target word type. Target finite maps and positive-width words use the reviewed representations."
 },
 {
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "data_find_code",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/FindCode.lean",
+  "lean_name": "dataFindCode",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared data_find_code_typed: a successful data lookup over independently polymorphic program and frame-size payloads excludes bad_dest_args on its original value list. The polymorphic wordSemBadDestArgs owner preserves the HOL predicate's independent argument carriers."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "cut_env_IMP_MEM",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CutEnvProperties.lean", "lean_name": "cutEnv_imp_mem",
   "statement_status": "reviewed_exact", "reviewer": "Compared cut_env_IMP_MEM_typed: successful source cut makes an arbitrary key present exactly when it is present in the requested set."
@@ -39921,7 +39929,7 @@
     "hol_path": "cakeml/compiler/backend/semantics/wordSemScript.sml",
     "hol_name": "bad_dest_args_def",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-h29l.7): HOL bad_dest_args dest args (:952-954) <=> dest = NONE ∧ args = []; Lean the decided Bool of the same conjunction over num option / num list. Rows bad_dest_args_* of scripts/hol-probes/word_sem_call_helpers_probe.out are checked by Flapjack.Test.WordSemCallHelpersParity."
+    "reviewer": "Compared bad_dest_args_def_polymorphic_typed: HOL quantifies independent arbitrary option and list element types. Lean matches both constructors directly, returning true exactly for NONE and the empty list, without decidable equality assumptions. This replaces the earlier num-only specialization; existing concrete call-helper parity rows remain applicable."
   },
 {
     "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/CallHelpers.lean",

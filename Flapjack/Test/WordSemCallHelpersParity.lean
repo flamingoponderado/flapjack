@@ -47,14 +47,16 @@ example : wordSemAddRetLoc
     (none : Option (Bool × (Nat × Nat) × BitVec 32 × Nat × Nat))
     [(.word 7 : WordLocW 8)] = [.word 7] := rfl
 
+example : wordSemBadDestArgs (none : Option Bool) ([] : List String) = true := rfl
+
 /-- All 25 rows of the probe output, in order. -/
 def rows : List (String × Bool) :=
   [("add_ret_loc_none", wordSemAddRetLoc (ReturnValue := Unit) (ReturnNames := Unit) (ReturnHandler := Unit) none [(.word 1 : W)] == [.word 1]),
    ("add_ret_loc_some", wordSemAddRetLoc (some ([1, 2], ((.ln, .ln) : WordLangCutsetsHOL), (.skip : WordLangProgHOL (BitVec 64)), 5, 6)) [(.word 1 : W)]
       == [.loc 5 6, .word 1]),
-   ("bad_dest_args_nil", wordSemBadDestArgs none [] == true),
-   ("bad_dest_args_dest", wordSemBadDestArgs (some 3) [] == false),
-   ("bad_dest_args_args", wordSemBadDestArgs none [1] == false),
+   ("bad_dest_args_nil", wordSemBadDestArgs (none : Option Nat) ([] : List Nat) == true),
+   ("bad_dest_args_dest", wordSemBadDestArgs (some 3 : Option Nat) ([] : List Nat) == false),
+   ("bad_dest_args_args", wordSemBadDestArgs (none : Option Nat) ([1] : List Nat) == false),
    ("const_addresses_hit", wordSemConstAddresses (8 : BitVec 64) [(true, 1), (false, 2)]
       (fun a => a = 8 || a = 16) == true),
    ("const_addresses_miss", wordSemConstAddresses (8 : BitVec 64) [(true, 1), (false, 2)]
