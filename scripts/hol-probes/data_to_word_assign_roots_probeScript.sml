@@ -42,3 +42,5 @@ val _ = emit "assign_Ref_def_typed" data_to_wordTheory.assign_Ref_def;
 val _ = emit "assign_AllocThunk_def_typed" data_to_wordTheory.assign_AllocThunk_def;
 val _ = emit "assign_RefByte_def_typed" data_to_wordTheory.assign_RefByte_def;
 val _ = emit "assign_ConfigGC_def_typed" data_to_wordTheory.assign_ConfigGC_def;
+val _ = emit "assign_Cons_def_typed" data_to_wordTheory.assign_Cons_def;
+val _ = emit "assign_MutCons_def_typed" data_to_wordTheory.assign_MutCons_def;

@@ -345,9 +345,10 @@ def allocVar {width : Nat} [NeZero width] (conf : Config) (limit : Nat) (names :
     .ite .lower 3 (.reg 1)
       (wordListSeq [silentFfi conf 3 ffiCutsets, .alloc 1 cutsets, silentFfi conf 3 cutsets]) .skip]
 
-/-- Shared constructor lowering for immutable and non-generational mutable
-blocks. This is bounded-path infrastructure, not a separately reviewed port. -/
-private def compileCons {width : Nat} [NeZero width] (conf : Config) (l dest tag : Nat)
+/-- Compile an immutable constructor, with a direct immediate for no fields. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "assign_Cons_def"
+  (words_as_type_indexed_bitvec)]
+def assignCons {width : Nat} [NeZero width] (conf : Config) (l dest tag : Nat)
     (args : List Nat) : WordLangProgHOL (BitVec width) × Nat :=
   if args.isEmpty then
     if tag < 2 ^ width / 16 then
@@ -365,6 +366,15 @@ private def compileCons {width : Nat} [NeZero width] (conf : Config) (l dest tag
             shiftN .lsl (.op .sub [.var 1, .lookup .currHeap]) (shiftLength conf - wordShiftAmount width),
             .const pointer]),
           .set .nextFree (.op .add [.var 1, .const bytes])], l)
+
+/-- Compile a mutable constructor, rejecting a generational collector. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "assign_MutCons_def"
+  (words_as_type_indexed_bitvec)]
+def assignMutCons {width : Nat} [NeZero width] (conf : Config) (l dest tag : Nat)
+    (args : List Nat) : WordLangProgHOL (BitVec width) × Nat :=
+  match conf.gcKind with
+  | .generational _ => (giveUp, l)
+  | _ => assignCons conf l dest tag args
 
 /-- Lower an integer constant into its tagged word representation. -/
 @[hol "cakeml/compiler/backend/data_to_wordScript.sml" "assign_Const_def"
@@ -1264,7 +1274,7 @@ def compileAssign {width : Nat} [NeZero width] (conf : Config) (secn l dest : Na
   | (.blockOp .boundsCheckBlock), args, names =>
       (arg2 args (assignBoundsCheckBlock conf secn l dest names) (.skip, l))
   | (.blockOp (.cons tag)), args, _ =>
-      (compileCons conf l dest tag args)
+      (assignCons conf l dest tag args)
   | (.blockOp (.consExtend tag)), args, names =>
       (assignConsExtend conf secn l dest names tag args)
   | (.blockOp (.elemAt n)), args, _ =>
@@ -1330,10 +1340,7 @@ def compileAssign {width : Nat} [NeZero width] (conf : Config) (secn l dest : Na
       | _ => (.skip, l)
   | (.memOp op), args, _ =>
       match op, args with
-      | .mutCons tag _, _ =>
-          match conf.gcKind with
-          | .generational _ => (giveUp, l)
-          | _ => (compileCons conf l dest tag args)
+      | .mutCons tag _, _ => assignMutCons conf l dest tag args
       | .finaliseCons, args => (arg1 args (assignFinaliseCons l dest) (.skip, l))
       | .update, args | .updateCons, args =>
           (arg3 args (assignUpdate conf l dest) (.skip, l))

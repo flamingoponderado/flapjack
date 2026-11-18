@@ -8494,6 +8494,24 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+  "hol_name": "assign_Cons_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
+  "lean_name": "assignCons",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared HOL source and inferred capture: empty constructors use the same tag bound and immediate; nonempty constructors check the same header and emit the ordered header and field stores, tagged pointer and NextFree update. The reviewed getLowerBits word branch is the source low-bit slice OR 1, using the always-positive smallShiftLength."
+},
+{
+  "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+  "hol_name": "assign_MutCons_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
+  "lean_name": "assignMutCons",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared HOL source and inferred capture: generational GC yields GiveUp and every other collector delegates to assignCons with unchanged arguments and label."
+},
+{
+  "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
   "hol_name": "assign_Ref_def",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
   "lean_name": "assignRef",
