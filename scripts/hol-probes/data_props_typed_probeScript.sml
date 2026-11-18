@@ -310,3 +310,7 @@ val _ = emit "semantics_zero_limits_typed" "semantics_zero_limits";
 val _ = emit "semantics_Div_IMP_LPREFIX_typed" "semantics_Div_IMP_LPREFIX";
 
 val _ = emit "Resource_limit_hit_implements_semantics_typed" "Resource_limit_hit_implements_semantics";
+
+val _ = emit "approx_of_def_typed" "approx_of_def";
+
+val _ = emit "size_of_approx_of_typed" "size_of_approx_of";

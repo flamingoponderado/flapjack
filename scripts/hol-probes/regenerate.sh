@@ -10897,6 +10897,7 @@ run_probe data_props_typed_probeScript.sml data_props_typed_probe.out \
   do_app_stack_max_le_stack_limit_typed evaluate_stack_max_le_stack_limit_typed \
   evaluate_add_clock_io_events_mono_typed semantics_zero_limits_typed \
   semantics_Div_IMP_LPREFIX_typed Resource_limit_hit_implements_semantics_typed \
+  approx_of_def_typed size_of_approx_of_typed \
   "$cake_dir/compiler/backend/semantics/dataPropsScript.sml" \
   "$cake_dir/compiler/backend/semantics"
 
