@@ -8494,6 +8494,24 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+  "hol_name": "assign_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
+  "lean_name": "compileAssign",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared the complete HOL dispatcher and inferred-type capture against each production branch and its reviewed operation definition, including constructor payloads, argument arities and the wildcard Skip. The exact MlString and fixed-width Word64 payloads are retained; target words use positive-width BitVec."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "assign_ConsExtend_expand",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/ConsExtendExpand.lean",
+  "lean_name": "assignConsExtend_expand",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared the full inferred HOL expansion: the assignment dispatcher equals the explicit argument-list and header cases, with the complete allocation, store and MemCopy code and its label updates. The exact source dispatcher and constructor-extension implementation are used."
+},
+{
+  "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
   "hol_name": "assign_Add_def",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
   "lean_name": "assignAdd",

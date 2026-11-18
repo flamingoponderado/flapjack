@@ -6,7 +6,8 @@ memory-relation free-space theorem, store-list definition and existence theorem,
 get-vars environment-cut and domain theorems, and constructor-extension
 compiler definition and expansion, plus byte-copy, list, reference-array, and
 allocation, constructor, XOR, build, installation, constant-equality, FFI, and
-byte-word, floating-point, and integer-arithmetic compiler definitions, with inferred types.
+byte-word, floating-point, integer-arithmetic, and assignment-dispatcher compiler
+definitions, with inferred types.
 It also evaluates zero and nonzero SmallLsr expressions for output parity. Regenerate
 with `HOL_PROBE_ONLY=data_to_word_assign_roots_probeScript.sml scripts/hol-probes/regenerate.sh`
 using the pinned CakeML and HOL revisions. This is source-review evidence,

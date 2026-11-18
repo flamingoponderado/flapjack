@@ -1341,9 +1341,9 @@ def assignMod {width : Nat} [NeZero width] (conf : Config) (secn l dest : Nat)
         (some modLocation) [adjustVar first, adjustVar second] none),
       .move 2 [(adjustVar dest, 1)]])], l + 2)
 
-/-- Total assignment dispatch used by the executable traversal. Its full
-    source-level correspondence with HOL's assignment dispatcher is pending
-    review of all operation cases. -/
+/-- Dispatch each source assignment to its word-language compiler. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "assign_def"
+  (words_as_type_indexed_bitvec)]
 def compileAssign {width : Nat} [NeZero width] (conf : Config) (secn l dest : Nat)
     (op : ClosLang.Op) (args : List Nat) (names : Option NumSet) : WordLangProgHOL (BitVec width) × Nat :=
   match op, args, names with

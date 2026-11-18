@@ -64,3 +64,4 @@ val _ = emit "assign_Sub_def_typed" data_to_wordTheory.assign_Sub_def;
 val _ = emit "assign_Mult_def_typed" data_to_wordTheory.assign_Mult_def;
 val _ = emit "assign_Div_def_typed" data_to_wordTheory.assign_Div_def;
 val _ = emit "assign_Mod_def_typed" data_to_wordTheory.assign_Mod_def;
+val _ = emit "assign_def_typed" data_to_wordTheory.assign_def;
