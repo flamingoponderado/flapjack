@@ -130097,6 +130097,15 @@
   },
 {
     "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "LongDiv1_code_def",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Stubs.lean",
+    "lean_name": "longDiv1Code",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Independent comparison with LongDiv1_code_def_typed confirms both hardware-availability branches, recursive calls and AddCarry operands, including width-one shift behavior. The fixed word5 temporary index remains distinct from the generic positive-width word. Production dispatch uses the source location and arity; captured HOL oracle checks cover both configuration branches at 64 bits."
+  },
+{
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
     "hol_name": "StoreEach_def",
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
     "lean_name": "storeEach",

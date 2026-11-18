@@ -362,6 +362,24 @@ def equalCode {width : Nat} [NeZero width] (conf : Config) : WordLangProgHOL (Bi
       .assign 4 (.op .add [.var 40, shiftVar .lsl 6 (wordShiftAmount width)]),
       .call none (some compare1Location) [0, 6, 2, 4] none]
 
+/-- Generate the software long-division loop when hardware division is absent. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "LongDiv1_code_def"
+  (words_as_type_indexed_bitvec)]
+def longDiv1Code {width : Nat} [NeZero width] (conf : Config) : WordLangProgHOL (BitVec width) :=
+  if conf.hasLongdiv then .skip else
+    let recur : WordLangProgHOL (BitVec width) :=
+      .call none (some longDiv1Location) [0, 2, 4, 6, 8, 10, 12] none
+    .ite .test 2 (.reg 2) (.seq (.set (.temp 28) (.var 10)) (.return 0 [8]))
+      (listSeq [.assign 6 (.op .or [shiftVar .lsr 6 1, shiftVar .lsl 4 (width - 1)]),
+        .assign 4 (shiftVar .lsr 4 1), .assign 8 (shiftVar .lsl 8 1),
+        .assign 2 (.op .sub [.var 2, .const 1]),
+        .ite .lower 12 (.reg 4) recur .skip,
+        .ite .equal 12 (.reg 4) (.ite .lower 10 (.reg 6) recur .skip) .skip,
+        .assign 8 (.op .add [.var 8, .const 1]),
+        .assign 16 (.op .xor [.var 6, .const (-1)]),
+        .assign 14 (.op .xor [.var 4, .const (-1)]), .assign 1 (.const 1),
+        .inst (.arith (.addCarry 10 10 16 1)), .inst (.arith (.addCarry 12 12 14 1)), recur])
+
 /-- Extend the partial stub lookup with configuration-dependent cases. The
 unimplemented stubs still return `none`, so this is not HOL's complete list. -/
 def compileConfiguredStub? {width : Nat} [NeZero width] (conf : Config) (location : Nat) :
@@ -464,19 +482,7 @@ def compileConfiguredStub? {width : Nat} [NeZero width] (conf : Config) (locatio
       (.seq (.assign 11 (.const (BitVec.ofNat width width)))
         (.call none (some longDiv1Location) [0, 11, 6, 10, 10, 4, 2] none)))
   else if location = longDiv1Location then
-    if conf.hasLongdiv then some (7, .skip) else
-      let recur : WordLangProgHOL (BitVec width) :=
-        .call none (some longDiv1Location) [0, 2, 4, 6, 8, 10, 12] none
-      some (7, .ite .test 2 (.reg 2) (.seq (.set (.temp 28) (.var 10)) (.return 0 [8]))
-        (listSeq [.assign 6 (.op .or [shiftVar .lsr 6 1, shiftVar .lsl 4 (width - 1)]),
-          .assign 4 (shiftVar .lsr 4 1), .assign 8 (shiftVar .lsl 8 1),
-          .assign 2 (.op .sub [.var 2, .const 1]),
-          .ite .lower 12 (.reg 4) recur .skip,
-          .ite .equal 12 (.reg 4) (.ite .lower 10 (.reg 6) recur .skip) .skip,
-          .assign 8 (.op .add [.var 8, .const 1]),
-          .assign 16 (.op .xor [.var 6, .const (-1)]),
-          .assign 14 (.op .xor [.var 4, .const (-1)]), .assign 1 (.const 1),
-          .inst (.arith (.addCarry 10 10 16 1)), .inst (.arith (.addCarry 12 12 14 1)), recur]))
+    some (7, longDiv1Code conf)
   else compileStub? location
 
 /-- The fixed prefix of the source stub table, in source order. The generated
