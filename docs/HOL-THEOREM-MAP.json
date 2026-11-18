@@ -23247,6 +23247,296 @@
   "reviewer": "Compared cut_env_adjust_set_lookup_0_typed: a successful adjusted cut preserves the original word state's zero lookup in its first component; the names carrier is independent. Target finite maps and positive-width words use the reviewed representations."
 },
 {
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "state_rel_call_env_push_opt",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/PushCallEnv.lean",
+  "lean_name": "stateRel_callEnv_pushOpt",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared state_rel_call_env_push_opt_typed: the original state relation over zipped arguments, reserved location, equal lengths and two successful cuts imply the complete pushed-call relation, for arbitrary handler options. The handler program shares the target word type in HOL; state payload types remain independent. Target finite maps and positive-width words use the reviewed representations."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "state_rel_call_env_push",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/PushCallEnv.lean",
+  "lean_name": "stateRel_callEnv_push",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared state_rel_call_env_push_typed: the original relation over zipped arguments, equal lengths, reserved location and two successful cuts imply the complete call relation after pushing a non-handler frame. Target finite maps and positive-width words use the reviewed representations."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "state_rel_call_env_push_env",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/PushCallEnv.lean",
+  "lean_name": "stateRel_callEnv_pushEnv",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared state_rel_call_env_push_env_typed: the initial relation, successful corresponding argument reads and successful cuts imply the complete pushed-call relation for an arbitrary handler option. Its handler program and target use the same HOL word carrier, while state payload types remain independent. Target finite maps and positive-width words use the reviewed representations."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "find_code_thm_ret",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/FindCode.lean",
+  "lean_name": "findCode_return",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared find_code_thm_ret_typed: the original state relation, corresponding argument reads, successful data lookup and two successful cuts imply a compiled word lookup and the full relation after pushing non-handler frames. Both direct and indirect destinations and all original existential results remain. Target finite maps and positive-width words use the reviewed representations."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "find_code_thm_handler",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/FindCode.lean",
+  "lean_name": "findCode_handler",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared find_code_thm_handler_typed: the original state relation, corresponding argument reads, successful data lookup and two cuts imply a compiled word lookup and the complete pushed-handler call relation. The handler's adjusted variable, program, number and l + 1 match HOL, and its program shares the target word type. Target finite maps and positive-width words use the reviewed representations."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "data_find_code",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/FindCode.lean",
+  "lean_name": "dataFindCode",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared data_find_code_typed: a successful data lookup over independently polymorphic program and frame-size payloads excludes bad_dest_args on its original value list. The polymorphic wordSemBadDestArgs owner preserves the HOL predicate's independent argument carriers."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "s_key_eq_LENGTH",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/StackKeys.lean",
+  "lean_name": "sKeyEq_length",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared gc_s_key_eq_LENGTH_typed: stack-key related lists over the same word carrier have equal lengths; the proof reuses the reviewed wordProps result."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "s_key_eq_LASTN",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/StackKeys.lean",
+  "lean_name": "sKeyEq_lastN",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared gc_s_key_eq_LASTN_typed: for any n, taking LASTN on both stack-key related lists preserves the relation; the proof reuses the reviewed wordProps result."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "evaluate_mk_loc_EQ",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/EvaluateMkLoc.lean",
+  "lean_name": "evaluate_mkLoc",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_mk_loc_EQ_typed: any normal-result word evaluation preserves the mk_loc of jump_exc, with the program, state and resulting location at the same word type. Target finite maps and positive-width words use the reviewed representations. The proof inherits the rational-cut real representation through evaluate_stack_swap."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "mk_loc_eq_push_env_exc_Exception",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/EvaluateMkLoc.lean",
+  "lean_name": "mkLoc_pushEnv_exception",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared mk_loc_eq_push_env_exc_Exception_typed: an exception result from evaluation after pushing the specified handler and entering the call preserves the prior jump_exc location. Both exception values and the handler program use the target word type. Target finite maps and positive-width words use the reviewed representations; the proof inherits rational-cut reals through evaluate_stack_swap."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "evaluate_IMP_domain_EQ",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/EvaluateDomain.lean",
+  "lean_name": "evaluate_imp_domainEq",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_IMP_domain_EQ_typed: the original Result evaluation and successful pop imply equality of the restored local domain with the union of both saved domains. Result label and value list retain their distinct HOL types; the handler is arbitrary. Target finite maps and positive-width words use the reviewed representations; the proof inherits rational-cut reals through evaluate_stack_swap."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "evaluate_IMP_domain_EQ_Exc",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/EvaluateDomain.lean",
+  "lean_name": "evaluate_imp_domainEq_exception",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_IMP_domain_EQ_Exc_typed: an exception result after pushing the specified handler implies that the resulting local domain is the union of both saved domains. Both exception payloads and the handler program share the target word type. Target finite maps and positive-width words use the reviewed representations; the proof inherits rational-cut reals through evaluate_stack_swap."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "mk_loc_jump_exc",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/EvaluateMkLoc.lean",
+  "lean_name": "mkLoc_jumpExc",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared mk_loc_jump_exc_typed: unwinding immediately after a pushed handler and call entry produces Loc x0 l, with the output word type independently quantified from the input state's word type. Target finite maps and both positive-width word types use the reviewed representations."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "inc_clock_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/Clock.lean",
+  "lean_name": "gcIncClock",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared gc_inc_clock_def_typed: the GC theory's distinct clock increment updates clock by adding n. The abbreviation uses the identical reviewed wordProps implementation; target finite maps and positive-width words use the reviewed representations."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "inc_clock_0",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/Clock.lean",
+  "lean_name": "gcIncClock_zero",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared gc_inc_clock_0_typed: zero increment preserves every word state. The proof reuses the identical reviewed wordProps result."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "inc_clock_inc_clock",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/Clock.lean",
+  "lean_name": "gcIncClock_incClock",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared gc_inc_clock_inc_clock_typed: increments n and m compose as n + m on every word state. The proof reuses the identical reviewed wordProps result."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "mk_loc_jmup_exc_inc_clock",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/JumpExc.lean",
+  "lean_name": "mkLoc_jumpExc_incClock",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared mk_loc_jmup_exc_inc_clock_typed: clock increment preserves the exception location, with output word width independent of the input state width. Target finite maps and positive-width words use the reviewed representations."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "jump_exc_inc_clock_EQ_NONE",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/JumpExc.lean",
+  "lean_name": "jumpExc_incClock_eqNone",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared jump_exc_inc_clock_EQ_NONE_typed: incrementing the clock preserves exactly whether jump_exc returns NONE. Target finite maps and positive-width words use the reviewed representations."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "state_rel_lookup_globals",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/GlobalLookup.lean",
+  "lean_name": "stateRel_lookupGlobals",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared state_rel_lookup_globals_typed: the full state relation and a present data global imply that Globals contains a word encoded by get_addr for existential index and annotation. The optional roots remain arbitrary; target finite maps and positive-width words use the reviewed representations."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "state_rel_get_var_Block",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/BlockLookup.lean",
+  "lean_name": "stateRel_getVar_block",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared state_rel_get_var_Block_typed: the full state relation and a successful data Block lookup imply an adjusted target lookup of an existential Word. The optional roots and block fields remain arbitrary. Target finite maps and positive-width words use the reviewed representations."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "jump_exc_push_env_NONE_simp",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/JumpExc.lean", "lean_name": "jumpExc_pushEnv_none_iff",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec", "fmap_as_finite_support": ["fpRegs", "store"], "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared jump_exc_push_env_NONE_simp_typed: all three original iff conjuncts preserve unwind failure under clock decrement, non-handler push and stack-maximum update."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "s_key_eq_handler_eq_IMP",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/EvaluateMkLoc.lean", "lean_name": "jumpExc_keyEq_iff",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec", "fmap_as_finite_support": ["fpRegs", "store"], "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared s_key_eq_handler_eq_IMP_typed: related stack keys and equal handlers imply the full non-NONE equivalence. The two word states retain independent payload types and a shared word width."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "eval_NONE_IMP_jump_exc_NONE_EQ",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/EvaluateMkLoc.lean", "lean_name": "evaluate_jumpExc_none_iff",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec", "fmap_as_finite_support": ["fpRegs", "store"], "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared eval_NONE_IMP_jump_exc_NONE_EQ_typed: normal evaluation implies the full equivalence of unwind failure before and after evaluation. The proof inherits rational-cut reals through evaluate_stack_swap."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "jump_exc_push_env_SOME",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/JumpExc.lean", "lean_name": "jumpExc_pushEnv_some",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec", "fmap_as_finite_support": ["fpRegs", "store"], "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared jump_exc_push_env_SOME_typed: pushing any handler makes jump_exc non-NONE, with the complete arbitrary handler tuple and no extra premises."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "eval_push_env_T_Raise_IMP_stack_length",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/DataRaiseStack.lean",
+  "lean_name": "evaluate_pushEnv_raise_stackLength",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared eval_push_env_T_Raise_IMP_stack_length_typed: the original raise result after call entry with a pushed handler implies equal original and result stack lengths. The proof inherits rational-cut reals through dataProps evaluate_stack_swap."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "eval_push_env_SOME_exc_IMP_s_key_eq",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/EvaluateMkLoc.lean",
+  "lean_name": "evaluate_pushEnv_exception_keys",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared eval_push_env_SOME_exc_IMP_s_key_eq_typed: the original exception result after pushed-handler call entry implies both stack-key relation and handler equality. The arbitrary handler tuple, both exception values and all state carriers remain. The proof inherits rational-cut reals through evaluate_stack_swap."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "eval_exc_stack_shorter",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/DataRaiseStack.lean",
+  "lean_name": "evaluate_raise_stackShorter",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared eval_exc_stack_shorter_typed: an original raise result after call entry and a non-handler push implies the resulting stack is strictly shorter than the original. The proof inherits rational-cut reals through dataProps evaluate_stack_swap."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "NOT_1_domain",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/AdjustedSet.lean", "lean_name": "not_one_adjustSet",
+  "statement_status": "reviewed_exact", "reviewer": "Compared NOT_1_domain_typed: one is absent from the adjusted domain of an arbitrary-payload name tree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "NOT_3_domain",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/AdjustedSet.lean", "lean_name": "not_three_adjustSet",
+  "statement_status": "reviewed_exact", "reviewer": "Compared NOT_3_domain_typed: three is absent from the adjusted domain of an arbitrary-payload name tree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "NOT_5_domain",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/AdjustedSet.lean", "lean_name": "not_five_adjustSet",
+  "statement_status": "reviewed_exact", "reviewer": "Compared NOT_5_domain_typed: five is absent from the adjusted domain of an arbitrary-payload name tree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "cut_names_adjust_set_insert_1",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CutOdd.lean", "lean_name": "cutNames_adjustSet_insert_one",
+  "statement_status": "reviewed_exact", "reviewer": "Compared cut_names_adjust_set_insert_1_typed: inserting any value at key one preserves the adjusted cut, with independent name-tree and environment payload types."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "cut_names_adjust_set_insert_3",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CutOdd.lean", "lean_name": "cutNames_adjustSet_insert_three",
+  "statement_status": "reviewed_exact", "reviewer": "Compared cut_names_adjust_set_insert_3_typed: inserting any value at key three preserves the adjusted cut, with independent name-tree and environment payload types."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "case_EQ_SOME_IFF",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CaseEqSome.lean", "lean_name": "optionCase_eq_some",
+  "statement_status": "reviewed_exact", "reviewer": "Compared case_EQ_SOME_IFF_typed: the option-case equation is equivalent to an existential input whose branch returns the result; input and output types are independent."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "state_rel_set_store_AllocSize",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/StateRelation.lean", "lean_name": "stateRel_setStore_allocSize",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec", "fmap_as_finite_support": ["fpRegs", "store"], "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared state_rel_set_store_AllocSize_typed: updating the target AllocSize with an arbitrary word leaves the complete state relation equal in both directions, with arbitrary optional roots. Target finite maps and positive-width words use the reviewed representations."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "cut_env_IMP_MEM",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CutEnvProperties.lean", "lean_name": "cutEnv_imp_mem",
   "statement_status": "reviewed_exact", "reviewer": "Compared cut_env_IMP_MEM_typed: successful source cut makes an arbitrary key present exactly when it is present in the requested set."
@@ -39871,7 +40161,7 @@
     "hol_path": "cakeml/compiler/backend/semantics/wordSemScript.sml",
     "hol_name": "bad_dest_args_def",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-h29l.7): HOL bad_dest_args dest args (:952-954) <=> dest = NONE ∧ args = []; Lean the decided Bool of the same conjunction over num option / num list. Rows bad_dest_args_* of scripts/hol-probes/word_sem_call_helpers_probe.out are checked by Flapjack.Test.WordSemCallHelpersParity."
+    "reviewer": "Compared bad_dest_args_def_polymorphic_typed: HOL quantifies independent arbitrary option and list element types. Lean matches both constructors directly, returning true exactly for NONE and the empty list, without decidable equality assumptions. This replaces the earlier num-only specialization; existing concrete call-helper parity rows remain applicable."
   },
 {
     "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/CallHelpers.lean",

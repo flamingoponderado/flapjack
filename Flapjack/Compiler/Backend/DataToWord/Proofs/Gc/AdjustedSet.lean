@@ -70,4 +70,27 @@ theorem adjustVar_mem_adjustSet (n : Nat) (names : NumSet) :
     sptDomain (adjustSet names) (adjustVar n) ↔ sptDomain names n := by
   simp [sptDomain, lookup_adjustVar_adjustSet]
 
+/-- Adjusted keys are even; this factors the three HOL reserved-key proofs. -/
+private theorem oddNotAdjusted {α : Type} (names : Spt α) (k : Nat) (odd : k % 2 = 1) :
+    ¬ sptDomain (adjustSet names) k := by
+  intro member
+  obtain ⟨n, eq, _⟩ := (adjustSet_domain names k).mp member
+  simp only [adjustVar] at eq
+  omega
+
+/-- One is absent from every adjusted domain. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "NOT_1_domain"]
+theorem not_one_adjustSet {α : Type} (names : Spt α) : ¬ sptDomain (adjustSet names) 1 :=
+  oddNotAdjusted names 1 rfl
+
+/-- Three is absent from every adjusted domain. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "NOT_3_domain"]
+theorem not_three_adjustSet {α : Type} (names : Spt α) : ¬ sptDomain (adjustSet names) 3 :=
+  oddNotAdjusted names 3 rfl
+
+/-- Five is absent from every adjusted domain. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "NOT_5_domain"]
+theorem not_five_adjustSet {α : Type} (names : Spt α) : ¬ sptDomain (adjustSet names) 5 :=
+  oddNotAdjusted names 5 rfl
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

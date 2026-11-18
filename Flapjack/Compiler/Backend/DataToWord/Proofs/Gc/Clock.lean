@@ -53,4 +53,26 @@ theorem setVarIncClock {width : Nat} [NeZero width] {C F : Type}
     WordSemStateFiniteExact.setVar n x (WordSemStateFiniteExact.incClock k s) =
       WordSemStateFiniteExact.incClock k (WordSemStateFiniteExact.setVar n x s) := rfl
 
+/-- The GC theory's clock increment shares the word-semantics implementation. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "inc_clock_def"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+abbrev gcIncClock {width : Nat} [NeZero width] {C F : Type}
+    (n : Nat) (state : WordSemStateFiniteExact width C F) : WordSemStateFiniteExact width C F :=
+  WordSemStateFiniteExact.incClock n state
+
+/-- Zero clock increment leaves the state unchanged. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "inc_clock_0"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem gcIncClock_zero {width : Nat} [NeZero width] {C F : Type}
+    (state : WordSemStateFiniteExact width C F) : gcIncClock 0 state = state :=
+  WordSemStateFiniteExact.incClock_zero state
+
+/-- Successive clock increments compose by addition. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "inc_clock_inc_clock"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem gcIncClock_incClock {width : Nat} [NeZero width] {C F : Type}
+    (n m : Nat) (state : WordSemStateFiniteExact width C F) :
+    gcIncClock n (gcIncClock m state) = gcIncClock (n + m) state :=
+  WordSemStateFiniteExact.incClock_incClock n m state
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
