@@ -105,3 +105,11 @@ val _ = show "evaluate_wStackStore_wReg1_new_typed" ``∀ac k f f' s t lens r c 
     evaluate(Seq kont (wStackStore x Skip),t) = (NONE,t') ∧
     state_rel ac k f f' (set_var r c s) t' lens 0 ∧
     LENGTH t'.stack = LENGTH_t_stack ∧ t'.stack_space = t_stack_space``;
+val _ = show "map_var_def_typed" ``∀(f :num -> num) (n :num) (e :'a exp) (b :binop)
+    (ls :'a exp list) (sh :shift) (e1 :'a exp) (e2 :'a exp) (c :'a word) (v :store_name).
+    map_var f (Var n) = Var (f n) ∧
+    map_var f (Load e) = Load (map_var f e) ∧
+    map_var f (Op b ls) = Op b (MAP (map_var f) ls) ∧
+    map_var f (Shift sh e1 e2) = Shift sh (map_var f e1) (map_var f e2) ∧
+    map_var f (Const c) = Const c ∧
+    map_var f (Lookup v) = Lookup v``;

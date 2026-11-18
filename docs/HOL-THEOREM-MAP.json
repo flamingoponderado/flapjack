@@ -143288,5 +143288,13 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, with_same_locals_typed): source3127; the single state binder and the identity statement s with locals := s.locals = s are retained, with no premise and no existential. The carrier WordSemStateFiniteExact width C F carries [NeZero width] and its memory field mentions BitVec width, so the only difference is the standard type-indexed word translation; locals is an Spt (sptree) field, not a HOL |-> finite map, so no finite-map qualifier is named and no canonical finite-map witness is claimed for it."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/SupportLemmas.lean",
+    "lean_name": "mapVar",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "map_var_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, map_var_def_typed): source4054-4062; all six clauses are retained (Var -> Var (f n), Load -> Load of the mapped body, Op -> Op with MAP (map_var f), Shift -> Shift of both mapped operands, Const and Lookup unchanged), and the definition's termination measure corresponds to HOL's measure on exp_size. Lean's constructor order differs from HOL's clause order; the equation set is identical, which is what the definition states. The capture shows 'a word for Const, but the reviewed exp carrier's own row carries that value type as the generic alpha parameter, so this definition's signature has no width-indexed carrier and no representation qualifier is claimed."
   }
 ]
