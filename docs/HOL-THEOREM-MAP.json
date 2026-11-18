@@ -141639,5 +141639,23 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, wRegWrite1_thm1_weak_typed): source3745-3756; free-variable order ac k f f' s t lens m v kont retained, the three premises (full stateRel extra 0, m < f'+k, and the arbitrary kont run for every n ≤ k) and the existential run plus full postrelation conclusion retained. Only the stack-length/stack-space facts of wRegWrite1_thm1 are dropped, exactly as HOL derives this theorem by metis_tac. Canonical five finite-map fields and positive width translation as qualified; evaluator closure inherits reals_as_rational_cuts without numerical FP claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/StackRelAuxStackSize.lean",
+    "lean_name": "stackRelAuxLength",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "stack_rel_aux_LENGTH",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, stack_rel_aux_LENGTH_typed): source2438-2444; source frame list α stack_frame, target list ((β word_loc # γ word_loc) option # bool list # α word_loc list) list, sole premise the full auxiliary relation, conclusion LENGTH xs = LENGTH ys. Lean binds the relation arguments in HOL's order (first binder is HOL k, second HOL len, as in the sibling stackRelAuxStackSize), keeps one premise and the same length equality; independent frame, handler-location and saved-handler widths carry their own NeZero."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/StackRelAuxStackSize.lean",
+    "lean_name": "stackRelAuxLastN",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "stack_rel_aux_LASTN",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, stack_rel_aux_LASTN_typed): source2447-2457; free-variable order k len xs ys n retained, sole premise the full auxiliary relation and conclusion stack_rel_aux k len (LASTN n xs) (LASTN n ys). LASTN is the reviewed untagged wordSemLastN rendering of rich_list LASTN (outside cakeml); the Flapjack-only helper wordSemLastN_of_length_le (whole list when LENGTH ≤ n) has no separate HOL original. Independent widths each carry NeZero."
   }
 ]
