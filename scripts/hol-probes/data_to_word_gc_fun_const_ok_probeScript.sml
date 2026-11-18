@@ -111,3 +111,4 @@ val _ = pr_typed "NOT_0_domain_typed" data_to_word_gcProofTheory.NOT_0_domain;
 val _ = pr_typed "cut_envs_SND_nonzero_typed" data_to_word_gcProofTheory.cut_envs_SND_nonzero;
 val _ = pr_typed "lookup_adjust_var_after_cut_typed" data_to_word_gcProofTheory.lookup_adjust_var_after_cut;
 val _ = pr_typed "state_rel_call_env_push_opt_typed" data_to_word_gcProofTheory.state_rel_call_env_push_opt;
+val _ = pr_typed "state_rel_call_env_push_typed" data_to_word_gcProofTheory.state_rel_call_env_push;

@@ -233,4 +233,26 @@ theorem stateRel_callEnv_pushOpt {width : Nat} [NeZero width] {C F : Type}
         · exact Or.inl (Or.inl (Or.inr (savedMem pair saved)))
         · exact Or.inr old
 
+/-- Pushing a non-handler frame and entering a call preserves the full
+state relation. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "state_rel_call_env_push"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem stateRel_callEnv_push {width : Nat} [NeZero width] {C F : Type}
+    (conf : Config) (l1 l2 q l : Nat) (source : Flapjack.Compiler.Backend.DataSem.State C F)
+    (target : WordSemStateFiniteExact width C F) (locs : List (Nat × Nat))
+    (values : List Flapjack.Compiler.Backend.DataSem.Value) (words : List (WordLocW width)) (size : Option Nat)
+    (names : NumSet) (cutData : Spt Flapjack.Compiler.Backend.DataSem.Value) (cutWords : Spt (WordLocW width) × Spt (WordLocW width))
+    (premises : stateRel conf l1 l2 source target (some (values.zip words)) locs ∧
+      values.length = words.length ∧ sptLookup 0 target.locals = some (.loc l1 l2) ∧
+      DataSem.cutEnv names source.locals = some cutData ∧
+      wordSemCutEnvs (adjustSets names) target.locals = some cutWords) :
+    stateRel conf q l
+      (DataSem.callEnv values size (DataSem.pushEnv cutData false (DataSem.decClock source)))
+      (WordSemStateFiniteExact.callEnv (.loc q l :: words) size
+        (WordSemStateFiniteExact.pushEnv cutWords none (WordSemStateFiniteExact.decClock target)))
+      none ((l1,l2)::locs) := by
+  apply stateRel_callEnv_pushOpt conf l1 l2 q l source target locs values words size names cutData cutWords none
+  obtain ⟨related, lengthEq, zero, sourceCut, targetCut⟩ := premises
+  exact ⟨related, zero, lengthEq, sourceCut, targetCut⟩
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
