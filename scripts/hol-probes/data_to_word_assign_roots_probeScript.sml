@@ -35,3 +35,6 @@ val _ = emit "get_vars_IMP_domain_typed" data_to_word_assignProofTheory.get_vars
 val _ = emit "assign_ConsExtend_def_typed" data_to_wordTheory.assign_ConsExtend_def;
 val _ = emit "assign_ConsExtend_expand_typed" data_to_word_assignProofTheory.assign_ConsExtend_expand;
 val _ = emit "assign_CopyByte_def_typed" data_to_wordTheory.assign_CopyByte_def;
+val _ = emit "assign_ListAppend_def_typed" data_to_wordTheory.assign_ListAppend_def;
+val _ = emit "assign_FromList_def_typed" data_to_wordTheory.assign_FromList_def;
+val _ = emit "assign_RefArray_def_typed" data_to_wordTheory.assign_RefArray_def;

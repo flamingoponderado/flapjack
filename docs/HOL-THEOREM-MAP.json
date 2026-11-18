@@ -8494,6 +8494,33 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+  "hol_name": "assign_ListAppend_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
+  "lean_name": "assignListAppend",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared HOL source and typed capture: header failure gives GiveUp, success calls Append with the original reversed adjusted argument order, cut sets, return metadata and incremented label."
+},
+{
+  "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+  "hol_name": "assign_FromList_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
+  "lean_name": "assignFromList",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared HOL source and typed capture: header failure gives GiveUp, success constructs the tag argument and calls FromList with both adjusted arguments, cut sets, return metadata and incremented label."
+},
+{
+  "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+  "hol_name": "assign_RefArray_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
+  "lean_name": "assignRefArray",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared HOL source and typed capture: the allocation limit, integer guard, move, allocation roots, RefArray call, cut sets, argument order and incremented label agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
   "hol_name": "assign_CopyByte_def",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
   "lean_name": "assignCopyByte",

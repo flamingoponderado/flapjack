@@ -949,6 +949,43 @@ def assignCopyByte {width : Nat} [NeZero width] (_conf : Config) (secn l dest : 
       (some loc) (args.map adjustVar) none), l + 1)
   | none => (.skip, l)
 
+/-- Compile list append by calling its runtime routine. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "assign_ListAppend_def"
+  (words_as_type_indexed_bitvec)]
+def assignListAppend {width : Nat} [NeZero width] (conf : Config) (secn l dest : Nat)
+    (names : Option NumSet) (first second : Nat) : WordLangProgHOL (BitVec width) × Nat :=
+  match encodeHeader (width := width) conf 0 2 with
+  | none => (giveUp, l)
+  | some _ => (.mustTerminate (.call
+      (some ([adjustVar dest], adjustSets (names.getD .ln), .skip, secn, l))
+      (some appendLocation) [adjustVar second, adjustVar first] none), l + 1)
+
+/-- Compile construction from a list by calling its runtime routine. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "assign_FromList_def"
+  (words_as_type_indexed_bitvec)]
+def assignFromList {width : Nat} [NeZero width] (conf : Config) (secn l dest : Nat)
+    (names : Option NumSet) (tag first second : Nat) : WordLangProgHOL (BitVec width) × Nat :=
+  match encodeHeader (width := width) conf (4 * tag) 0 with
+  | none => (giveUp, l)
+  | some _ => (.mustTerminate (wordListSeq [
+      .assign 1 (.const (BitVec.ofNat width (16 * tag))),
+      .call (some ([adjustVar dest], adjustSets (names.getD .ln), .skip, secn, l))
+        (some fromListLocation) [adjustVar first, adjustVar second, 1] none]), l + 1)
+
+/-- Compile reference-array allocation and initialization. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "assign_RefArray_def"
+  (words_as_type_indexed_bitvec)]
+def assignRefArray {width : Nat} [NeZero width] (conf : Config) (secn l dest : Nat)
+    (names : Option NumSet) (first second : Nat) : WordLangProgHOL (BitVec width) × Nat :=
+  let names := names.getD .ln
+  let limit := min (2 ^ conf.lenSize) (2 ^ width / 16)
+  (wordListSeq [
+    .ite .test (adjustVar first) (.imm 1) .skip giveUp,
+    .move 0 [(1, adjustVar first)],
+    allocVar conf limit (sptListInsert [first, second] names),
+    .mustTerminate (.call (some ([adjustVar dest], adjustSets names, .skip, secn, l))
+      (some refArrayLocation) [adjustVar first, adjustVar second] none)], l + 1)
+
 /-- Total assignment dispatch used by the executable traversal. Its full
     source-level correspondence with HOL's assignment dispatcher is pending
     review of all operation cases. -/
@@ -974,23 +1011,9 @@ def compileAssign {width : Nat} [NeZero width] (conf : Config) (secn l dest : Na
             .assign 3 (shiftN .lsl (.op .sub [.var 1, .lookup .currHeap])
               (shiftLength conf - wordShiftAmount width)), store], l)
   | (.blockOp (.fromList tag)), args, names =>
-      match args with
-      | [x, y] => match encodeHeader (width := width) conf (4 * tag) 0 with
-        | none => (giveUp, l)
-        | some _ => (.mustTerminate (wordListSeq [
-            .assign 1 (.const (BitVec.ofNat width (16 * tag))),
-            .call (some ([adjustVar dest], adjustSets (names.getD .ln), .skip, secn, l))
-              (some fromListLocation) [adjustVar x, adjustVar y, 1] none]), l + 1)
-      | _ => (.skip, l)
+      arg2 args (assignFromList conf secn l dest names tag) (.skip, l)
   | (.blockOp .listAppend), args, names =>
-      match args with
-      | [first, second] =>
-          match encodeHeader (width := width) conf 0 2 with
-          | none => (giveUp, l)
-          | some _ => (.mustTerminate (.call
-              (some ([adjustVar dest], adjustSets (names.getD .ln), .skip, secn, l))
-              (some appendLocation) [adjustVar second, adjustVar first] none), l + 1)
-      | _ => (.skip, l)
+      arg2 args (assignListAppend conf secn l dest names) (.skip, l)
   | (.blockOp .boolNot), args, _ =>
       (arg1 args (assignBoolNot l dest) (.skip, l))
   | (.blockOp .lengthBlock), args, names =>
@@ -1245,17 +1268,7 @@ def compileAssign {width : Nat} [NeZero width] (conf : Config) (secn l dest : Na
               shiftN .lsl (.op .sub [.var 1, .lookup .currHeap]) (shiftLength conf - wordShiftAmount width),
               .const 1])], l)
   | (.memOp .refArray), args, names =>
-      match args with
-      | [x, y] =>
-          let names := names.getD .ln
-          let limit := min (2 ^ conf.lenSize) (2 ^ width / 16)
-          (wordListSeq [
-            .ite .test (adjustVar x) (.imm 1) .skip giveUp,
-            .move 0 [(1, adjustVar x)],
-            allocVar conf limit (sptListInsert [x, y] names),
-            .mustTerminate (.call (some ([adjustVar dest], adjustSets names, .skip, secn, l))
-              (some refArrayLocation) [adjustVar x, adjustVar y] none)], l + 1)
-      | _ => (.skip, l)
+      arg2 args (assignRefArray conf secn l dest names) (.skip, l)
   | (.memOp (.copyByte _)), args, names =>
       assignCopyByte conf secn l dest names args
   | (.memOp .configGC), args, names =>
