@@ -320,6 +320,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.EvaluateMkLoc
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.EvaluateDomain
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GlobalLookup
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.BlockLookup
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.DataRaiseStack
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.CutState
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.JoinEnv
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.Heap
