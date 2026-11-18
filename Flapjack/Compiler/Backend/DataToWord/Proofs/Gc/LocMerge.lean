@@ -71,4 +71,43 @@ theorem decStack_locMerge_encStack {width : Nat} [NeZero width]
   apply decStack_of_length
   exact length_locMerge _ _
 
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "IMP_loc_merge_APPEND"
+  (words_as_type_indexed_bitvec)]
+theorem locMerge_append_of_length {width : Nat} [NeZero width] (ts qs xs ys : List (WordLocW width))
+    (h : (ts.filter wordSemIsWordLoc).length = qs.length) :
+    locMerge (ts ++ xs) (qs ++ ys) = locMerge ts qs ++ locMerge xs ys := by
+  induction ts generalizing qs with
+  | nil =>
+    cases qs <;> simp_all [locMerge]
+  | cons t ts ih =>
+    cases t with
+    | loc a b =>
+      simp only [List.filter_cons, wordSemIsWordLoc, Bool.false_eq_true, ↓reduceIte] at h
+      simp only [List.cons_append, locMerge]
+      rw [ih qs h]
+    | word w =>
+      cases qs with
+      | nil => simp [wordSemIsWordLoc] at h
+      | cons q qs =>
+        simp only [List.filter_cons, wordSemIsWordLoc, ↓reduceIte, List.length_cons, Nat.succ.injEq] at h
+        simp only [List.cons_append, locMerge]
+        rw [ih qs h]
+
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "TAKE_DROP_loc_merge_APPEND"
+  (words_as_type_indexed_bitvec)]
+theorem take_drop_locMerge_append {width : Nat} [NeZero width] {β : Type} (q : List (β × WordLocW width))
+    (xs ys : List (WordLocW width)) :
+    ((locMerge (q.map Prod.snd) xs ++ ys).take q.length = locMerge (q.map Prod.snd) xs) ∧
+    ((locMerge (q.map Prod.snd) xs ++ ys).drop q.length = ys) := by
+  have h : (locMerge (q.map Prod.snd) xs).length = q.length := by simp [length_locMerge]
+  rw [← h]
+  simp
+
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "loc_merge_NIL"
+  (words_as_type_indexed_bitvec)]
+theorem locMerge_nil {width : Nat} [NeZero width] (xs : List (WordLocW width)) : locMerge xs [] = xs := by
+  induction xs with
+  | nil => rfl
+  | cons x xs ih => cases x <;> simp [locMerge, ih]
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
