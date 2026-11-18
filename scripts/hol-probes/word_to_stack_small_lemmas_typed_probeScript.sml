@@ -58,7 +58,7 @@ val _ = show "stack_rel_aux_LENGTH_typed" ``∀k len xs ys. stack_rel_aux k len 
 val _ = show "stack_rel_aux_LASTN_typed" ``∀k len xs ys n. stack_rel_aux k len xs ys ⇒
     stack_rel_aux k len (LASTN n xs) (LASTN n ys)``;
 val _ = show "sub_union_lemma_typed" ``∀x y z. x SUBSET y ⇒ x SUBSET y UNION z``;
-val _ = show "evaluate_copy_ret_Seq_prime_typed" ``∀F is_handle k f f' vs k0 t.
+val _ = show "evaluate_copy_ret_Seq_prime_typed" ``∀is_handle k f f' vs k0 t.
     evaluate (copy_ret F is_handle (k,f,f') vs k0,t) =
     let n = num_stack_ret k vs in
     evaluate (Seq (copy_ret_aux k (if is_handle then f + 3 else f) n)
@@ -81,10 +81,10 @@ val _ = show "wRegWrite2_thm1_typed" ``∀ac k f f' s t lens m v kont.
     state_rel ac k f f' (set_var (2 * m) v s) t' lens 0``;
 val _ = show "bits_to_word_bitstring_reverse_typed" ``∀xs.
     (bits_to_word xs:'a word) = bitstring$v2w (REVERSE xs)``;
-val _ = show "evaluate_PopHandler_clock_typed" ``∀(t:('a,'c,'ffi) stackSem$state) F k f f' clk.
+val _ = show "evaluate_PopHandler_clock_typed" ``∀(t:('a,'c,'ffi) stackSem$state) k f f' clk.
     let prog = PopHandler F (k,f,f') Skip in
     evaluate (prog,t with clock:=clk) =
     (FST (evaluate(prog,t)), SND (evaluate(prog,t)) with clock:=clk)``;
-val _ = show "evaluate_PopHandler_seq_typed" ``∀prog (t:('a,'c,'ffi) stackSem$state) F k f f'.
+val _ = show "evaluate_PopHandler_seq_typed" ``∀prog (t:('a,'c,'ffi) stackSem$state) k f f'.
     evaluate (PopHandler F (k,f,f') prog,t) =
     evaluate (Seq (PopHandler F (k,f,f') Skip) prog,t)``;

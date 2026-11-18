@@ -77,10 +77,12 @@ theorem wRegWrite1Thm1 {width : Nat} [NeZero width] {C F : Type}
       simpa only [post,slot] using preserved
 
 /-- Exact HOL `wRegWrite1_thm1_weak` (`word_to_stackProofScript.sml:3745-3756`):
-the same premises and run/relation conclusion as `wRegWrite1_thm1`, without its
+the same run/relation conclusion as `wRegWrite1_thm1`, without its
 stack-length and stack-space facts (HOL derives it by `metis_tac`). Binders
 follow the typed capture (`ac`, `k`, `f`, `f'`, `s`, `t`, `lens`, `m`, `v`,
-`kont`). -/
+`kont`), and HOL's single conjunction premise
+`state_rel … ∧ m < f' + k ∧ (∀n. …)` is kept as one hypothesis in HOL's
+order. -/
 @[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "wRegWrite1_thm1_weak"
   (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
     WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
@@ -91,15 +93,15 @@ theorem wRegWrite1Thm1Weak {width : Nat} [NeZero width] {C F : Type}
     (source : WordSemStateFiniteExact width (Nat × C) F)
     (target : StackSemStateFiniteExact width C F) (lens : List Nat)
     (m : Nat) (value : WordLocW width) (kont : Nat → HolProg width)
-    (related : stateRel ac k f frame source target lens 0)
-    (bound : m < frame+k)
-    (run : ∀ n, n ≤ k → StackSemEvaluate.evaluate (kont n,target) =
-      (none,StackSemStateOps.setVar n value target)) :
+    (h : stateRel ac k f frame source target lens 0 ∧ m < frame+k ∧
+      ∀ n, n ≤ k → StackSemEvaluate.evaluate (kont n,target) =
+        (none,StackSemStateOps.setVar n value target)) :
     ∃ post : StackSemStateFiniteExact width C F,
       StackSemEvaluate.evaluate (wRegWrite1Native kont (2*m) (k,f,frame),target) =
         (none,post) ∧
       stateRel ac k f frame (WordSemStateFiniteExact.setVar (2*m) value source)
         post lens 0 := by
+  obtain ⟨related, bound, run⟩ := h
   obtain ⟨post, ran, related', -, -⟩ :=
     wRegWrite1Thm1 ac k f frame m source target lens value kont related bound run
   exact ⟨post, ran, related'⟩

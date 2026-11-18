@@ -141609,11 +141609,11 @@
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/EvaluateWLive.lean",
-    "lean_name": "listRearrange_id",
+    "lean_name": "listRearrange",
     "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
     "hol_name": "list_rearrange_I",
     "statement_status": "reviewed_exact",
-    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, list_rearrange_I_typed): source689-694; HOL states the function equality list_rearrange I = I with the identity function I on num. Lean binds the element type α and xs explicitly and states the pointwise form wordSemListRearrange id xs = xs, the same proposition by function extensionality, with id rendering HOL I and the reviewed list_rearrange_def rendering used. No word, finite-map or totality carrier and no added premise."
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, list_rearrange_I_typed): source689-694; HOL states the function equality list_rearrange I = I with the identity function I on num. Lean states the same function equality wordSemListRearrange id = id, proved by funext from the untagged pointwise helper listRearrange_id, with id rendering HOL I and the reviewed list_rearrange_def rendering used. No word, finite-map or totality carrier and no added premise."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CompCodeLabels.lean",
@@ -141657,5 +141657,20 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, stack_rel_aux_LASTN_typed): source2447-2457; free-variable order k len xs ys n retained, sole premise the full auxiliary relation and conclusion stack_rel_aux k len (LASTN n xs) (LASTN n ys). LASTN is the reviewed untagged wordSemLastN rendering of rich_list LASTN (outside cakeml); the Flapjack-only helper wordSemLastN_of_length_le (whole list when LENGTH ≤ n) has no separate HOL original. Independent widths each carry NeZero."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CallReturnEval.lean",
+    "lean_name": "evaluateCopyRetSeqPrime",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "evaluate_copy_ret_Seq'",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, evaluate_copy_ret_Seq_prime_typed): source7622-7631; HOL's F is the false constant, so the capture binds is_handle, k, f, f', vs, k0, t and copies into the literal f + 3. Lean evaluates copyRetNative false and keeps HOL's let-bound n = num_stack_ret k vs with the same Seq (copy_ret_aux k (if is_handle then f + 3 else f) n) (SeqStackFree n k0) right-hand side; the return-value and unused frame-component carriers stay independent. Imported canonical regs/fpRegs/store translation with same-module witness and positive BitVec width; names the evaluator, so it inherits reals_as_rational_cuts (SOUNDNESS item 8) without a numerical FP assertion."
   }
 ]

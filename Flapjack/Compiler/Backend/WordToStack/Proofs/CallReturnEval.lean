@@ -217,6 +217,27 @@ theorem evaluateCopyRetSeq {width : Nat} [NeZero width] {C F β γ : Type}
     intro s'
     rw [seq_skip_left]
 
+/-- Exact HOL `evaluate_copy_ret_Seq'` (`word_to_stackProofScript.sml:7622-7631`).
+HOL's `F` is the false constant, so the copied-frame offset is the literal
+`f + 3`; the let-bound `n` is kept as HOL states it. The return-value and
+unused frame-component carriers are independent, as in `copy_ret_def`. -/
+@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "evaluate_copy_ret_Seq'"
+  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem evaluateCopyRetSeqPrime {width : Nat} [NeZero width] {C F β γ : Type}
+    (b : Bool) (kf : Nat × Nat × γ) (vs : List β) (k0 : HolProg width)
+    (t : StackSemStateFiniteExact width C F) :
+    StackSemEvaluate.evaluate (copyRetNative false b kf vs k0, t) =
+      (let n := Compiler.Backend.WordToStack.numStackRet kf.1 vs
+       StackSemEvaluate.evaluate
+        (.seq (copyRetAuxNative kf.1 (if b then kf.2.1 + 3 else kf.2.1) n)
+          (seqStackFreeNative n k0), t)) := by
+  unfold copyRetNative
+  by_cases hn : Compiler.Backend.WordToStack.numStackRet kf.1 vs = 0
+  · simp only [hn, if_true, copyRetAuxNative, seqStackFreeNative]
+    rw [seq_skip_left]
+  · simp only [if_neg hn, Compiler.Backend.WordToStack.handlerSlots]
+    rfl
+
 theorem getElem_of_drop_eq {α : Type} {l l' : List α} {m i : Nat}
     (h : l'.drop m = l.drop m) (hi : m ≤ i) (hl : i < l.length) (hl' : i < l'.length) :
     l'[i] = l[i] := by
