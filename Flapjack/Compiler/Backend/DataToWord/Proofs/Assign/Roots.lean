@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.WordMlInvGetVars
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Rearrange
 
 @[expose] public section
 
@@ -20,6 +21,46 @@ theorem holFmapAsFiniteSupportRelationWitness_WordSemStateFiniteExact
   WordSemStateExact.holFmapAsFiniteSupportWitness
 
 end MemoryRelLookupVarPort
+
+namespace ReorderPort
+
+theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {C F : Type} :
+    (∀ (state : WordSemStateBroad width C F) (h : state.FiniteSupport),
+      (WordSemStateBroad.ofBroad state h).toBroad = state) ∧
+    (∀ state : WordSemStateFiniteExact width C F,
+      WordSemStateBroad.ofBroad state.toBroad state.toBroad_finiteSupport = state) :=
+  WordSemStateExact.holFmapAsFiniteSupportWitness
+
+end ReorderPort
+
+/-- Rotate three leading roots without changing the memory relation. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml" "reorder_lemma"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem reorder_lemma {width : Nat} [NeZero width] {C F D G : Type}
+    (conf : Config) (be : Bool) (next : Nat)
+    (source : Flapjack.Compiler.Backend.DataSem.State C F)
+    (target : WordSemStateFiniteExact width D G)
+    (x1 x2 x3 : Flapjack.Compiler.Backend.DataSem.Value × WordLocW width)
+    (xs : List (Flapjack.Compiler.Backend.DataSem.Value × WordLocW width)) :
+    memoryRel conf be next source.refs source.space target.store target.memory target.mdomain (x1 :: x2 :: x3 :: xs) →
+    memoryRel conf be next source.refs source.space target.store target.memory target.mdomain (x3 :: x1 :: x2 :: xs) := by
+  apply memoryRel_rearrange conf be next source.refs source.space target.store target.memory target.mdomain _ _
+  intro pair member
+  simp only [List.mem_cons] at member ⊢
+  tauto
+
+/-- Swap two leading roots without changing the memory relation. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml" "reorder_2_lemma"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem reorder₂_lemma {width : Nat} [NeZero width] {C F D G : Type}
+    (conf : Config) (be : Bool) (next : Nat)
+    (source : Flapjack.Compiler.Backend.DataSem.State C F)
+    (target : WordSemStateFiniteExact width D G)
+    (x1 x2 : Flapjack.Compiler.Backend.DataSem.Value × WordLocW width)
+    (xs : List (Flapjack.Compiler.Backend.DataSem.Value × WordLocW width)) :
+    memoryRel conf be next source.refs source.space target.store target.memory target.mdomain (x1 :: x2 :: xs) →
+    memoryRel conf be next source.refs source.space target.store target.memory target.mdomain (x2 :: x1 :: xs) :=
+  memoryRel_swap conf be next source.refs source.space target.store target.memory target.mdomain x1 x2 xs
 
 /-- Adding successfully read corresponding locals preserves the memory relation. -/
 @[hol "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml" "memory_rel_lookup_var_IMP"

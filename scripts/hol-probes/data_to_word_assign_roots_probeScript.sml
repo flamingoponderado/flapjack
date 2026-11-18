@@ -15,3 +15,5 @@ val _ = emit "get_real_offset_lemma_typed"
   data_to_word_assignProofTheory.get_real_offset_lemma;
 val _ = emit "get_real_byte_offset_lemma_typed"
   data_to_word_assignProofTheory.get_real_byte_offset_lemma;
+val _ = emit "reorder_lemma_typed" data_to_word_assignProofTheory.reorder_lemma;
+val _ = emit "reorder_2_lemma_typed" data_to_word_assignProofTheory.reorder_2_lemma;

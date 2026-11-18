@@ -8428,6 +8428,26 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "reorder_lemma",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/Roots.lean",
+  "lean_name": "reorder_lemma",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Independent comparison with the HOL source and reorder_lemma_typed: the same memory relation rotates the first three roots with its original sole premise. Source and word state parameters remain independent; the qualifiers record the word-state finite maps and positive-width words."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "reorder_2_lemma",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/Roots.lean",
+  "lean_name": "reorder₂_lemma",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Independent comparison with the HOL source and reorder_2_lemma_typed: the same memory relation swaps its first two roots with the original sole premise. Source and word state parameters remain independent; the qualifiers record the word-state finite maps and positive-width words."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
   "hol_name": "get_real_byte_offset_lemma",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/Offset.lean",
   "lean_name": "getRealByteOffset_lemma",
