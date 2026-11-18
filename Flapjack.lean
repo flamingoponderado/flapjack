@@ -307,6 +307,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.InterUnion
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.PopEnv
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.PopEnvSetVar
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.StackSizeTail
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.StackSplit
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.CutState
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.JoinEnv
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.Heap

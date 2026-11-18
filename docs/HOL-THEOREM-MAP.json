@@ -23071,6 +23071,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "BUTLASTN_APPEND_LASTN",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/StackSplit.lean",
+  "lean_name": "butlastn_append_lastn",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared BUTLASTN_APPEND_LASTN_typed and the HOL rich_list definitions: reverse/drop/reverse is BUTLASTN and wordSemLastN is reverse/take/reverse. The count and element type are unrestricted."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "option_le_stack_size_cons",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/StackSizeTail.lean",
   "lean_name": "optionLe_stackSize_cons",
