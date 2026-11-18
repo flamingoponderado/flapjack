@@ -56,7 +56,7 @@ private theorem optionMapAdd (a b : Option Nat) :
 
 /-- New argument roots come from the paired call arguments. This helper
 factors the membership reasoning in the HOL call-environment proof. -/
-private theorem callJoin_mem {width : Nat} [NeZero width]
+theorem callJoin_mem {width : Nat} [NeZero width]
     (values : List Flapjack.Compiler.Backend.DataSem.Value) (words : List (WordLocW width)) (loc : WordLocW width)
     (pair : Flapjack.Compiler.Backend.DataSem.Value × WordLocW width)
     (member : pair ∈ joinEnv (sptFromList values) (sptToAList
