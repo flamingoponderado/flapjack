@@ -669,4 +669,125 @@ private theorem stackFrameSwap_raise {C F : Type} (name : Nat) (state : State C 
         jumpExc_frameSwap state other jumped h rel jump
       exact ⟨jumpedOther, by simp [evaluate, localsEq, read, jumpOther], relJump, stackJump⟩
 
+/-- Clearing the stack and the locals keeps the relation. Flapjack
+    infrastructure toward the port of HOL `evaluate_swap_stack_frame_sizes_aux`;
+    no separate HOL original. -/
+private theorem clearState_frameSwap {C F : Type} {state other : State C F}
+    (h : FrameSwapState state other) :
+    FrameSwapState { state with stack := [], locals := .ln }
+      { other with stack := [], locals := .ln } := by
+  rw [h]
+  simp
+
+/-- Assigning several locals keeps the relation: only the locals change, and
+    both states install the same bindings. Flapjack infrastructure toward the
+    port of HOL `evaluate_swap_stack_frame_sizes_aux`; no separate HOL original. -/
+private theorem setVars_frameSwap {C F : Type} (names : List Nat) (values : List DataSem.Value)
+    {state other : State C F} (h : FrameSwapState state other) :
+    FrameSwapState (setVars names values state) (setVars names values other) := by
+  unfold setVars
+  rw [h]
+  simp
+
+/-- The `Force` case without a destination: the thunk is forced in place or the
+    called body runs at the call state, whose frame size comes from the swapped
+    frame-size map. Flapjack infrastructure toward the port of HOL
+    `evaluate_swap_stack_frame_sizes_aux`; no separate HOL original. -/
+private theorem stackFrameSwap_tailForce {C F : Type} (label src : Nat) (state : State C F)
+    (bodyIH : ∀ (body : DataLang.Prog) (called : State C F),
+      called.clock < state.clock → StackFrameSwapAt body called) :
+    StackFrameSwapAt (.force none label src) state := by
+  intro res next other run h rel
+  have localsEq := frameSwapState_locals h
+  have refsEq := frameSwapState_refs h
+  have clockEq := frameSwapState_clock h
+  have codeEq := frameSwapState_code h
+  cases read : getVar src state.locals with
+  | none =>
+    simp only [evaluate, read, typeError, Prod.mk.injEq] at run
+    obtain ⟨rfl, rfl⟩ := run
+    refine ⟨other, ?_, h, rel⟩
+    simp [evaluate, typeError, localsEq, read]
+  | some thunk =>
+    cases th : destThunk thunk state.refs with
+    | badRef =>
+      simp only [evaluate, read, th, typeError, Prod.mk.injEq] at run
+      obtain ⟨rfl, rfl⟩ := run
+      refine ⟨other, ?_, h, rel⟩
+      simp [evaluate, typeError, localsEq, read, refsEq, th]
+    | notThunk =>
+      simp only [evaluate, read, th, typeError, Prod.mk.injEq] at run
+      obtain ⟨rfl, rfl⟩ := run
+      refine ⟨other, ?_, h, rel⟩
+      simp [evaluate, typeError, localsEq, read, refsEq, th]
+    | isThunk mode value =>
+      cases mode with
+      | evaluated =>
+        simp only [evaluate, read, th, Prod.mk.injEq] at run
+        obtain ⟨rfl, rfl⟩ := run
+        refine ⟨flushState false other, ?_, ?_, ?_⟩
+        · simp [evaluate, localsEq, read, refsEq, th]
+        · exact flushState_frameSwap false h
+        · simpa [flushState] using rel
+      | notEvaluated =>
+        cases found : findCode (some label) [thunk, value] state.code state.stackFrameSizes with
+        | none =>
+          obtain ⟨_, foundOther⟩ := findCode_size_upto (some label) [thunk, value] state.code
+            state.stackFrameSizes other.stackFrameSizes none found
+          simp only [evaluate, read, th, found, typeError, Prod.mk.injEq] at run
+          obtain ⟨rfl, rfl⟩ := run
+          refine ⟨other, ?_, h, rel⟩
+          simp [evaluate, typeError, localsEq, read, refsEq, th, codeEq, foundOther]
+        | some foundEntry =>
+          obtain ⟨otherSize, foundOther⟩ := findCode_size_upto (some label) [thunk, value]
+            state.code state.stackFrameSizes other.stackFrameSizes foundEntry found
+          obtain ⟨args, body, size⟩ := foundEntry
+          have foundOther' : findCode (some label) [thunk, value] state.code other.stackFrameSizes =
+              some (args, body, otherSize) := by simpa using foundOther
+          by_cases zero : state.clock = 0
+          · simp only [evaluate, read, th, found, zero, timeoutError] at run
+            obtain ⟨rfl, rfl⟩ := run
+            refine ⟨{ other with stack := [], locals := .ln }, ?_, ?_, ?_⟩
+            · simp [evaluate, timeoutError, localsEq, read, refsEq, th, codeEq, foundOther',
+                clockEq, if_pos zero]
+            · simpa [zero] using clearState_frameSwap h
+            · exact List.Forall₂.nil
+          · let called := DataSem.callEnv args size (DataSem.decClock state)
+            let calledOther := DataSem.callEnv args otherSize (DataSem.decClock other)
+            have clockLt : called.clock < state.clock := by
+              simp only [called, DataSem.callEnv, DataSem.decClock]
+              omega
+            have relClock : FrameSwapState (DataSem.decClock state) (DataSem.decClock other) := by
+              rw [h]
+              simp [DataSem.decClock]
+            have relCall : FrameSwapState called calledOther :=
+              callEnv_frameSwap args size otherSize (DataSem.decClock state)
+                (DataSem.decClock other) relClock
+            have stackCall : List.Forall₂ stackFrameSizeRel called.stack calledOther.stack := by
+              simpa [called, calledOther, DataSem.callEnv, DataSem.decClock] using rel
+            cases bodyRun : evaluate body called with
+            | mk outcome last =>
+              obtain ⟨lastOther, bodyOther, relBody, stackBody⟩ :=
+                bodyIH body called clockLt outcome last calledOther bodyRun relCall stackCall
+              have bodyRun' :
+                  evaluate body (DataSem.callEnv args size (DataSem.decClock state)) =
+                    (outcome, last) := bodyRun
+              have bodyOther' :
+                  evaluate body (DataSem.callEnv args otherSize (DataSem.decClock other)) =
+                    (outcome, lastOther) := bodyOther
+              simp only [evaluate, read, th, found, zero] at run
+              rw [bodyRun'] at run
+              cases outcome with
+              | none =>
+                simp only [typeError] at run
+                obtain ⟨rfl, rfl⟩ := run
+                refine ⟨lastOther, ?_, relBody, stackBody⟩
+                simp only [evaluate, localsEq, read, refsEq, th, codeEq, foundOther', clockEq,
+                  if_neg zero, bodyOther', typeError]
+              | some stopped =>
+                obtain ⟨rfl, rfl⟩ := run
+                refine ⟨lastOther, ?_, relBody, stackBody⟩
+                simp only [evaluate, localsEq, read, refsEq, th, codeEq, foundOther', clockEq,
+                  if_neg zero, bodyOther']
+
 end Flapjack.Compiler.Backend.DataProps
