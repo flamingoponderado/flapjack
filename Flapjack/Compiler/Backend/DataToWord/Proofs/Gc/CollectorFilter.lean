@@ -227,4 +227,22 @@ theorem wordGcFun_imp_filter {width : Nat} [NeZero width] (conf : Config)
   rw [rootsEq, filter_locMerge_of_rootRel roots filteredRoots related]
   exact filteredRun
 
+/-- A successful collector traversal splits its output at the input boundary. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "word_gc_fun_APPEND_IMP"
+  (fmap_as_finite_support_relation := [store, store']) (words_as_type_indexed_bitvec)]
+theorem wordGcFun_append_imp {width : Nat} [NeZero width]
+    (c : Flapjack.Compiler.Backend.DataToWord.Config) (xs ys zs : List (WordLocW width))
+    (m m1 : BitVec width → WordLocW width) (dm : BitVec width → Bool)
+    (store : HolFiniteMapExact WordStoreHOL (WordLocW width))
+    (store' : HolFiniteMapExact WordStoreHOL (WordLocW width))
+    (h : wordGcFun c (xs ++ ys, m, dm, store) = some (zs, m1, store')) :
+    ∃ zs1 zs2, zs = zs1 ++ zs2 ∧ xs.length = zs1.length ∧ ys.length = zs2.length := by
+  have len := word_gc_fun_LENGTH h
+  refine ⟨zs.take xs.length, zs.drop xs.length, ?_, ?_, ?_⟩
+  · exact (List.take_append_drop _ _).symm
+  · simp only [List.length_take, List.length_append] at *
+    omega
+  · simp only [List.length_drop, List.length_append] at *
+    omega
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

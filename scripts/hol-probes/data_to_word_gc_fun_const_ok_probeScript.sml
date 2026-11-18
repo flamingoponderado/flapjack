@@ -225,3 +225,4 @@ val word_gen_gc_partial_move_roots_IMP_FILTER_first_replay = Q.prove(
   \\ rpt (pairarg_tac \\ fs []) \\ fs [] \\ rveq
   \\ res_tac \\ fs [isWord_def]);
 val _ = pr_typed "word_gen_gc_partial_move_roots_IMP_FILTER_first_replay_typed" word_gen_gc_partial_move_roots_IMP_FILTER_first_replay;
+val _ = pr_typed "word_gc_fun_APPEND_IMP_typed" data_to_word_gcProofTheory.word_gc_fun_APPEND_IMP;
