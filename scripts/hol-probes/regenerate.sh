@@ -10894,7 +10894,7 @@ run_probe data_props_typed_probeScript.sml data_props_typed_probe.out \
   evaluate_stack_frame_sizes_FST_replay_typed evaluate_stack_frame_sizes_ffi_replay_typed \
   evaluate_swap_limits_typed zero_limits_def_typed evaluate_zero_limits_FST_replay_typed evaluate_zero_limits_ffi_replay_typed \
   evaluate_add_clock_typed evaluate_stack_limit_typed \
-  do_app_stack_max_le_stack_limit_typed \
+  do_app_stack_max_le_stack_limit_typed evaluate_stack_max_le_stack_limit_typed \
   "$cake_dir/compiler/backend/semantics/dataPropsScript.sml" \
   "$cake_dir/compiler/backend/semantics"
 
