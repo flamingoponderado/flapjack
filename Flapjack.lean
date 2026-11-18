@@ -294,6 +294,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.StackRel
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.CodeRelation
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.CodeOracleRelation
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.StateRelation
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.StateInsert
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.CutState
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.CutOdd
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.CutLocals

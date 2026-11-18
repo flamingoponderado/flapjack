@@ -154,3 +154,7 @@ val _ = pr_typed "lookup_ODD_adjust_set_typed" data_to_word_gcProofTheory.lookup
 val _ = pr_typed "wf_adjust_set_typed" data_to_word_gcProofTheory.wf_adjust_set;
 val _ = pr_typed "lookup_adjust_set_typed" data_to_word_gcProofTheory.lookup_adjust_set;
 val _ = pr_typed "adjust_set_inter_typed" data_to_word_gcProofTheory.adjust_set_inter;
+val _ = pr_typed "state_rel_insert_1_typed" data_to_word_gcProofTheory.state_rel_insert_1;
+val _ = pr_typed "state_rel_insert_3_typed" data_to_word_gcProofTheory.state_rel_insert_3;
+val _ = pr_typed "state_rel_insert_7_typed" data_to_word_gcProofTheory.state_rel_insert_7;
+val _ = pr_typed "state_rel_insert_3_1_typed" data_to_word_gcProofTheory.state_rel_insert_3_1;
