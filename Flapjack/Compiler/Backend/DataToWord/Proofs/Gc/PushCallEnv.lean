@@ -255,4 +255,43 @@ theorem stateRel_callEnv_push {width : Nat} [NeZero width] {C F : Type}
   obtain ⟨related, lengthEq, zero, sourceCut, targetCut⟩ := premises
   exact ⟨related, zero, lengthEq, sourceCut, targetCut⟩
 
+/-- Argument reads and successful cuts establish the pushed call relation. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "state_rel_call_env_push_env"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem stateRel_callEnv_pushEnv {width : Nat} [NeZero width] {C F : Type}
+    (conf : Config) (l1 l2 q l : Nat) (source : DataSem.State C F)
+    (target : WordSemStateFiniteExact width C F) (locs : List (Nat × Nat))
+    (args : List Nat) (values : List DataSem.Value) (words : List (WordLocW width)) (size : Option Nat)
+    (names : NumSet) (cutData : Spt DataSem.Value) (cutWords : Spt (WordLocW width) × Spt (WordLocW width))
+    (handler : Option (Nat × WordLangProgHOL (BitVec width) × Nat × Nat))
+    (premises : stateRel conf l1 l2 source target none locs ∧
+      DataSem.getVars args source.locals = some values ∧
+      WordSemStateFiniteExact.getVars (args.map adjustVar) target = some words ∧
+      DataSem.cutEnv names source.locals = some cutData ∧
+      wordSemCutEnvs (adjustSets names) target.locals = some cutWords) :
+    stateRel conf q l
+      (DataSem.callEnv values size (DataSem.pushEnv cutData handler.isSome (DataSem.decClock source)))
+      (WordSemStateFiniteExact.callEnv (.loc q l :: words) size
+        (WordSemStateFiniteExact.pushEnv cutWords handler (WordSemStateFiniteExact.decClock target)))
+      none ((l1,l2)::locs) := by
+  obtain ⟨related, sourceRead, targetRead, sourceCut, targetCut⟩ := premises
+  have eqLen : values.length = words.length := by
+    have hs := getVars_imp_length args values source.locals sourceRead
+    have ht := wordGetVars_imp_length (args.map adjustVar) words target targetRead
+    simp only [List.length_map] at ht
+    exact hs.symm.trans ht
+  rcases related with ⟨hffi, hclock, hhandler, hgc, hcode, horacle, hgood, hshift,
+    htstamp, hglobal, hzero, hpresent, hstack, hlocs, hacc, hmax, hsizes, hlocals, hlim, hmem⟩
+  have zero := hzero rfl
+  apply stateRel_callEnv_pushOpt conf l1 l2 q l source target locs values words size names cutData cutWords handler
+  refine ⟨⟨hffi, hclock, hhandler, hgc, hcode, horacle, hgood, hshift, htstamp, hglobal,
+    ?_, hpresent, hstack, hlocs, hacc, hmax, hsizes, hlocals, hlim, ?_⟩, zero, eqLen, sourceCut, targetCut⟩
+  · simp
+  · obtain ⟨heap, limit, a, sp, sp1, gens, hstore, hinv, hbound, hspace⟩ := hmem
+    refine ⟨heap, limit, a, sp, sp1, gens, hstore, ?_, hbound, hspace⟩
+    simpa only [Option.getD_some, List.append_assoc] using wordMlInv_getVars heap target.be a sp sp1 gens limit (holThe source.tstamps)
+      conf source.refs source.locals target args values words
+      ([(theGlobal source.global, holFapply target.store .globals)] ++ flatStack source.stack target.stack)
+      ⟨by simpa using hinv, sourceRead, targetRead⟩
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

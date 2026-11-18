@@ -23267,6 +23267,16 @@
   "reviewer": "Compared state_rel_call_env_push_typed: the original relation over zipped arguments, equal lengths, reserved location and two successful cuts imply the complete call relation after pushing a non-handler frame. Target finite maps and positive-width words use the reviewed representations."
 },
 {
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "state_rel_call_env_push_env",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/PushCallEnv.lean",
+  "lean_name": "stateRel_callEnv_pushEnv",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared state_rel_call_env_push_env_typed: the initial relation, successful corresponding argument reads and successful cuts imply the complete pushed-call relation for an arbitrary handler option. Its handler program and target use the same HOL word carrier, while state payload types remain independent. Target finite maps and positive-width words use the reviewed representations."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "cut_env_IMP_MEM",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CutEnvProperties.lean", "lean_name": "cutEnv_imp_mem",
   "statement_status": "reviewed_exact", "reviewer": "Compared cut_env_IMP_MEM_typed: successful source cut makes an arbitrary key present exactly when it is present in the requested set."
