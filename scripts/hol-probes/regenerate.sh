@@ -12175,7 +12175,7 @@ run_probe data_to_word_cut_get_vars_probeScript.sml data_to_word_cut_get_vars_pr
   "$cake_dir/compiler/backend/proofs"
 
 run_probe data_to_word_assign_roots_probeScript.sml data_to_word_assign_roots_probe.out \
-  word_ml_inv_get_vars_IMP_lemma_typed memory_rel_Deref_prime_typed \
+  word_ml_inv_get_vars_IMP_lemma_typed get_real_addr_lemma_typed \
   "$cake_dir/compiler/backend/proofs/data_to_word_assignProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
 

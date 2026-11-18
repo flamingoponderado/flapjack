@@ -2,6 +2,7 @@ load "preamble";
 load "data_to_word_gcProofTheory";
 load "data_to_word_memoryProofTheory";
 load "data_to_word_assignProofTheory";
+load "data_to_word_bignumProofTheory";
 open HolKernel Parse boolLib bossLib;
 val _ = Globals.linewidth := 1000000;
 val _ = show_types := true;
@@ -22,3 +23,4 @@ val _ = emit "word_ml_inv_num_typed" data_to_word_memoryProofTheory.word_ml_inv_
 val _ = emit "word_ml_inv_neg_num_typed" data_to_word_memoryProofTheory.word_ml_inv_neg_num;
 val _ = emit "word_ml_inv_zero_typed" data_to_word_memoryProofTheory.word_ml_inv_zero;
 val _ = emit "memory_rel_Deref_prime_typed" data_to_word_memoryProofTheory.memory_rel_Deref';
+val _ = emit "get_real_addr_lemma_typed" data_to_word_bignumProofTheory.get_real_addr_lemma;

@@ -317,6 +317,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.Const
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.GlobalsPtr
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.Global
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.SetGlobal
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Bignum.RealAddress
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.WordMlInvInsert
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.MkLoc
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.Skip

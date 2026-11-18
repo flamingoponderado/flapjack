@@ -8484,6 +8484,16 @@
   "reviewer": "Independent comparison with the HOL source and get_real_byte_offset_lemma_typed: the successful word lookup and original good-dimension premise imply the same byte-offset expression result. The qualifiers record the word-state finite maps and positive-width word carrier; compiler and FFI types remain independent."
 },
 {
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_bignumProofScript.sml",
+  "hol_name": "get_real_addr_lemma",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Bignum/RealAddress.lean",
+  "lean_name": "getRealAddr_lemma",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared the HOL source and typed capture: the strict shift bound, good dimension, successful word-variable lookup and address decoding imply evaluation of the same real-address expression to the same word. The word-state finite maps and positive-width carrier use the named representations; compiler and FFI types remain independent."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
   "hol_name": "get_real_offset_lemma",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/Offset.lean",
