@@ -442,6 +442,28 @@ def appendCode {width : Nat} [NeZero width] (conf : Config) : WordLangProgHOL (B
         .set (.temp 2) (.var 7),
         .call none (some appendMainLoopLocation) [0, 1, 4, 3, 5, 7] none])
 
+/-- Generate the main loop used by list append. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "AppendMainLoop_code_def"
+  (words_as_type_indexed_bitvec)]
+def appendMainLoopCode {width : Nat} [NeZero width] (conf : Config) : WordLangProgHOL (BitVec width) :=
+    let bytes := (wordSemBytesInWord : BitVec width)
+    listSeq [
+      .assign 1 (realAddr conf 4),
+      .assign 3 (.load (.op .add [.var 1, .const bytes])),
+      .assign 5 (.load (.op .add [.var 1, .const (2 * bytes)])),
+      .ite .lower 8 (.imm (3 * bytes))
+        (.seq (.assign 1 (.const 0)) (.call none (some appendLenLoopLocation) [0, 4, 1] none)) .skip,
+      .store (.var 2) 6, .store (.op .add [.var 2, .const bytes]) 3,
+      .ite .test 5 (.imm 1) .skip (listSeq [
+        .assign 10 (.op .add [.var 10, .const (BitVec.ofNat width (3 * 2 ^ shiftLength conf))]),
+        .assign 8 (.op .sub [.var 8, .const (3 * bytes)]),
+        .store (.op .add [.var 2, .const (2 * bytes)]) 10,
+        .assign 2 (.op .add [.var 2, .const (3 * bytes)]),
+        .call none (some appendMainLoopLocation) [0, 2, 5, 6, 8, 10] none]),
+      .assign 1 (.lookup (.temp 0)), .assign 3 (.lookup (.temp 2)),
+      .store (.op .add [.var 2, .const (2 * bytes)]) 1,
+      .set .nextFree (.op .add [.var 2, .const (3 * bytes)]), .return 0 [3]]
+
 /-- Extend the partial stub lookup with configuration-dependent cases. The
 unimplemented stubs still return `none`, so this is not HOL's complete list. -/
 def compileConfiguredStub? {width : Nat} [NeZero width] (conf : Config) (location : Nat) :
@@ -471,23 +493,7 @@ def compileConfiguredStub? {width : Nat} [NeZero width] (conf : Config) (locatio
   else if location = appendLocation then
     some (3, appendCode conf)
   else if location = appendMainLoopLocation then
-    let bytes := (wordSemBytesInWord : BitVec width)
-    some (6, listSeq [
-      .assign 1 (realAddr conf 4),
-      .assign 3 (.load (.op .add [.var 1, .const bytes])),
-      .assign 5 (.load (.op .add [.var 1, .const (2 * bytes)])),
-      .ite .lower 8 (.imm (3 * bytes))
-        (.seq (.assign 1 (.const 0)) (.call none (some appendLenLoopLocation) [0, 4, 1] none)) .skip,
-      .store (.var 2) 6, .store (.op .add [.var 2, .const bytes]) 3,
-      .ite .test 5 (.imm 1) .skip (listSeq [
-        .assign 10 (.op .add [.var 10, .const (BitVec.ofNat width (3 * 2 ^ shiftLength conf))]),
-        .assign 8 (.op .sub [.var 8, .const (3 * bytes)]),
-        .store (.op .add [.var 2, .const (2 * bytes)]) 10,
-        .assign 2 (.op .add [.var 2, .const (3 * bytes)]),
-        .call none (some appendMainLoopLocation) [0, 2, 5, 6, 8, 10] none]),
-      .assign 1 (.lookup (.temp 0)), .assign 3 (.lookup (.temp 2)),
-      .store (.op .add [.var 2, .const (2 * bytes)]) 1,
-      .set .nextFree (.op .add [.var 2, .const (3 * bytes)]), .return 0 [3]])
+    some (6, appendMainLoopCode conf)
   else if location = appendLenLoopLocation then
     let bytes := (wordSemBytesInWord : BitVec width)
     some (3, .ite .test 2 (.imm 1) (listSeq [
