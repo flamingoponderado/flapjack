@@ -23377,6 +23377,36 @@
   "reviewer": "Compared mk_loc_jump_exc_typed: unwinding immediately after a pushed handler and call entry produces Loc x0 l, with the output word type independently quantified from the input state's word type. Target finite maps and both positive-width word types use the reviewed representations."
 },
 {
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "inc_clock_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/Clock.lean",
+  "lean_name": "gcIncClock",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared gc_inc_clock_def_typed: the GC theory's distinct clock increment updates clock by adding n. The abbreviation uses the identical reviewed wordProps implementation; target finite maps and positive-width words use the reviewed representations."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "inc_clock_0",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/Clock.lean",
+  "lean_name": "gcIncClock_zero",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared gc_inc_clock_0_typed: zero increment preserves every word state. The proof reuses the identical reviewed wordProps result."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "inc_clock_inc_clock",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/Clock.lean",
+  "lean_name": "gcIncClock_incClock",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared gc_inc_clock_inc_clock_typed: increments n and m compose as n + m on every word state. The proof reuses the identical reviewed wordProps result."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "cut_env_IMP_MEM",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CutEnvProperties.lean", "lean_name": "cutEnv_imp_mem",
   "statement_status": "reviewed_exact", "reviewer": "Compared cut_env_IMP_MEM_typed: successful source cut makes an arbitrary key present exactly when it is present in the requested set."
