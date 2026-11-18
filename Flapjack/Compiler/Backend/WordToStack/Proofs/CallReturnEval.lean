@@ -198,37 +198,38 @@ theorem seq_congr_left {width : Nat} [NeZero width] {C F : Type} (a a' b : HolPr
 /-- Exact HOL `evaluate_PopHandler_seq` (`word_to_stackProofScript.sml:5566-5572`):
 the handler restoration program composes with an arbitrary continuation exactly
 as its skip-continuation form followed by that continuation. HOL's `F` is the
-false constant, and the two unused frame fields stay independent. -/
+false constant, the frame triple is bound as the separate variables `k`, `f`,
+`f'`, and the two unused frame fields stay independent. -/
 @[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "evaluate_PopHandler_seq"
   (words_as_type_indexed_bitvec)]
 theorem evaluatePopHandlerSeq {width : Nat} [NeZero width] {C F β γ : Type}
     (program : HolProg width) (t : StackSemStateFiniteExact width C F)
-    (kf : Nat × β × γ) :
-    StackSemEvaluate.evaluate (popHandlerNative false kf program, t) =
-      StackSemEvaluate.evaluate (.seq (popHandlerNative false kf .skip) program, t) := by
+    (k : Nat) (f : β) (f' : γ) :
+    StackSemEvaluate.evaluate (popHandlerNative false (k, f, f') program, t) =
+      StackSemEvaluate.evaluate (.seq (popHandlerNative false (k, f, f') .skip) program, t) := by
   unfold popHandlerNative
-  rw [Compiler.Backend.StackRemove.CopyLoopProof.sequenceAssoc (.stackLoad kf.1 2)
-      (.set .handler kf.1)
+  rw [Compiler.Backend.StackRemove.CopyLoopProof.sequenceAssoc (.stackLoad k 2)
+      (.set .handler k)
       (.seq (.stackFree (Compiler.Backend.WordToStack.handlerSlots false)) program)]
   rw [Compiler.Backend.StackRemove.CopyLoopProof.sequenceAssoc
-      (.seq (.stackLoad kf.1 2) (.set .handler kf.1))
+      (.seq (.stackLoad k 2) (.set .handler k))
       (.stackFree (Compiler.Backend.WordToStack.handlerSlots false)) program]
   refine (seq_congr_left
-    (.seq (.stackLoad kf.1 2)
-      (.seq (.set .handler kf.1)
+    (.seq (.stackLoad k 2)
+      (.seq (.set .handler k)
         (.seq (.stackFree (Compiler.Backend.WordToStack.handlerSlots false)) .skip)))
-    (.seq (.seq (.stackLoad kf.1 2) (.set .handler kf.1))
+    (.seq (.seq (.stackLoad k 2) (.set .handler k))
       (.stackFree (Compiler.Backend.WordToStack.handlerSlots false)))
     program ?_ t).symm
   intro s
-  rw [Compiler.Backend.StackRemove.CopyLoopProof.sequenceAssoc (.stackLoad kf.1 2)
-      (.set .handler kf.1)
+  rw [Compiler.Backend.StackRemove.CopyLoopProof.sequenceAssoc (.stackLoad k 2)
+      (.set .handler k)
       (.seq (.stackFree (Compiler.Backend.WordToStack.handlerSlots false)) .skip)]
   rw [Compiler.Backend.StackRemove.CopyLoopProof.sequenceAssoc
-      (.seq (.stackLoad kf.1 2) (.set .handler kf.1))
+      (.seq (.stackLoad k 2) (.set .handler k))
       (.stackFree (Compiler.Backend.WordToStack.handlerSlots false)) .skip]
   exact seq_skip_right
-    (.seq (.seq (.stackLoad kf.1 2) (.set .handler kf.1))
+    (.seq (.seq (.stackLoad k 2) (.set .handler k))
       (.stackFree (Compiler.Backend.WordToStack.handlerSlots false))) s
 
 /-- Exact HOL `evaluate_copy_ret_aux_clock` (`word_to_stackProofScript.sml:7706-7718`).
@@ -471,5 +472,48 @@ theorem evaluateCopyRetAux {width : Nat} [NeZero width] {C F : Type} :
           rw [h]
           simp only [t2, List.getElem_set]
           rw [if_neg (by omega)]
+
+/-- Flapjack-only clock freeness of the handler store write, used by
+`evaluate_PopHandler_clock`; no separate HOL original. -/
+theorem clockFree_set {width : Nat} [NeZero width] {C F : Type} (name : StoreName) (r : Nat) :
+    ClockFree (C := C) (F := F) (.set name r : HolProg width) := by
+  intro t clk
+  rw [StackSemEvaluate.evaluate_set, StackSemEvaluate.evaluate_set]
+  simp only [StackSemStateOps.getVar, StackSemStateOps.setStore]
+  repeat' split
+  all_goals simp [Prod.map]
+
+/-- Flapjack-only clock freeness of the stack free, used by
+`evaluate_PopHandler_clock`; no separate HOL original. -/
+theorem clockFree_stackFree {width : Nat} [NeZero width] {C F : Type} (n : Nat) :
+    ClockFree (C := C) (F := F) (.stackFree n : HolProg width) := by
+  intro t clk
+  rw [StackSemEvaluate.evaluate_stackFree, StackSemEvaluate.evaluate_stackFree]
+  repeat' split
+  all_goals simp [Prod.map, StackSemStateOps.emptyEnv]
+
+/-- Flapjack-only clock freeness of the handler restoration program, used by
+`evaluate_PopHandler_clock`; no separate HOL original. -/
+theorem clockFree_popHandler {width : Nat} [NeZero width] {C F β γ : Type}
+    (k : Nat) (f : β) (f' : γ) :
+    ClockFree (C := C) (F := F) (width := width) (popHandlerNative false (k, f, f') .skip) := by
+  unfold popHandlerNative
+  exact clockFree_seq (width := width) _ _ (clockFree_stackLoad (width := width) _ _)
+    (clockFree_seq (width := width) _ _ (clockFree_set (width := width) _ _)
+      (clockFree_seq (width := width) _ _ (clockFree_stackFree (width := width) _)
+        (clockFree_skip (width := width))))
+
+/-- Exact HOL `evaluate_PopHandler_clock` (`word_to_stackProofScript.sml:5554-5565`):
+the handler restoration program's evaluation is clock-shifted, with HOL's
+`F` the false constant and both unused frame fields independent. -/
+@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "evaluate_PopHandler_clock"
+  (words_as_type_indexed_bitvec)]
+theorem evaluatePopHandlerClock {width : Nat} [NeZero width] {C F β γ : Type}
+    (t : StackSemStateFiniteExact width C F) (k : Nat) (f : β) (f' : γ) (clk : Nat) :
+    (let prog := popHandlerNative false (k, f, f') .skip
+     StackSemEvaluate.evaluate (prog, {t with clock := clk}) =
+       (Prod.fst (StackSemEvaluate.evaluate (prog, t)),
+        {Prod.snd (StackSemEvaluate.evaluate (prog, t)) with clock := clk})) := by
+  exact clockFree_popHandler (C := C) (F := F) k f f' t clk
 
 end Flapjack.WordToStackProofs.CallReturnEval

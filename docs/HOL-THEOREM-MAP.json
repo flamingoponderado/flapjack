@@ -141715,6 +141715,16 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
-    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, evaluate_PopHandler_seq_typed): source5566-5572; free-variable order prog t k f f' retained (Lean binds program, t and the frame pair kf separately, as in the reviewed popHandlerNative), HOL's F is the false constant, and the two unused frame fields stay independently polymorphic. Conclusion evaluate (PopHandler F (k,f,f') prog,t) = evaluate (Seq (PopHandler F (k,f,f') Skip) prog,t) retained, with Seq composed through the reviewed sequenceAssoc and skip-right evaluation laws (Flapjack-only helpers with no separate HOL originals). Positive BitVec width; evaluator closure inherits reals_as_rational_cuts (SOUNDNESS item 8) without a numerical FP assertion."
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, evaluate_PopHandler_seq_typed): source5566-5572; free-variable order prog t k f f' retained, with the frame triple bound as separate k, f and f' variables exactly as in the typed capture, HOL's F is the false constant, and the two unused frame fields stay independently polymorphic. Conclusion evaluate (PopHandler F (k,f,f') prog,t) = evaluate (Seq (PopHandler F (k,f,f') Skip) prog,t) retained, with Seq composed through the reviewed sequenceAssoc and skip-right evaluation laws (Flapjack-only helpers with no separate HOL originals). Positive BitVec width; evaluator closure inherits reals_as_rational_cuts (SOUNDNESS item 8) without a numerical FP assertion."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CallReturnEval.lean",
+    "lean_name": "evaluatePopHandlerClock",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "evaluate_PopHandler_clock",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, evaluate_PopHandler_clock_typed): source5554-5565; free-variable order t k f f' clk retained, with the frame triple bound as separate k, f and f' variables exactly as in the typed capture, HOL's F is the false constant and the two unused frame fields stay independently polymorphic. HOL's let prog = PopHandler F (k,f,f') Skip is kept, and the conclusion evaluate (prog,t with clock := clk) = (FST (evaluate (prog,t)), SND (evaluate (prog,t)) with clock := clk) is stated with Prod.fst/Prod.snd and the clock update on t; no conjunction premise. Clock freeness is established by Flapjack-only per-constructor helpers (clockFree_set, clockFree_stackFree) with no separate HOL originals. Positive BitVec width; evaluator closure inherits reals_as_rational_cuts (SOUNDNESS item 8) without a numerical FP assertion."
   }
 ]
