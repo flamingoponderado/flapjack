@@ -17,7 +17,7 @@ compiler output parity or correctness. -/
 def compileCakeToBviBeforeOptimizationsFuel (fuel : Nat) (source : Config)
     (closure : ClosToBvl.Config) (decls : List AstHOL.Dec) :
     Option (Config × ClosToBvl.Config × Nat × List (Nat × Nat × Bvi.Exp) × Nat × Spt Basis.Pure.MlString.MlString) := do
-  let (source, exps) ← compileCakeToClosFuel fuel source decls
+  let (source, exps) := compileCakeToClos source decls
   let (closure, bvl, names) ← ClosToBvl.compileCallMtiFuel? fuel closure exps
   let (start, code, next) ← BvlToBvi.compileProgFuel fuel fuel closure.start 0 bvl
   let names := BvlToBvi.getNames (code.map fun (n, _, _) => n) names
@@ -28,7 +28,7 @@ subsequent BVI optimizations remain separate. -/
 def compileCakeToBviBvlOptimizedFuel (fuel inlineLimit cutSize : Nat) (splitSeq : Bool)
     (source : Config) (closure : ClosToBvl.Config) (decls : List AstHOL.Dec) :
     Option (Config × ClosToBvl.Config × Nat × List (Nat × Nat × Bvi.Exp) × Nat × Spt Basis.Pure.MlString.MlString) := do
-  let (source, exps) ← compileCakeToClosFuel fuel source decls
+  let (source, exps) := compileCakeToClos source decls
   let (closure, bvl, names) ← ClosToBvl.compileCallMtiFuel? fuel closure exps
   let (_, bvl) ← BvlInline.compileProgFuel fuel inlineLimit cutSize splitSeq bvl
   let (start, code, next) ← BvlToBvi.compileProgFuel fuel fuel closure.start 0 bvl
@@ -40,7 +40,7 @@ and wrapper inlining, using explicit traversal fuel. -/
 def compileCakeToBviOptimizedInlineFuel (fuel inlineLimit cutSize : Nat) (splitSeq : Bool)
     (source : Config) (closure : ClosToBvl.Config) (decls : List AstHOL.Dec) :
     Option (Config × ClosToBvl.Config × Nat × List (Nat × Nat × Bvi.Exp) × Nat × Spt Basis.Pure.MlString.MlString) := do
-  let (source, exps) ← compileCakeToClosFuel fuel source decls
+  let (source, exps) := compileCakeToClos source decls
   let (closure, bvl, names) ← ClosToBvl.compileCallMtiFuel? fuel closure exps
   let (_, bvl) ← BvlInline.compileProgFuel fuel inlineLimit cutSize splitSeq bvl
   let (start, code, next) ← BvlToBvi.compileProgFuel fuel fuel closure.start 0 bvl
@@ -55,7 +55,7 @@ maps and fresh-name counters for subsequent compiler invocations. -/
 def compileCakeToBviConfiguredFuel (fuel : Nat) (source : Config) (closure : ClosToBvl.Config)
     (bvlConfig : BvlToBvi.Config) (decls : List AstHOL.Dec) :
     Option (Config × ClosToBvl.Config × BvlToBvi.Config × List (Nat × Nat × Bvi.Exp) × Spt Basis.Pure.MlString.MlString) := do
-  let (source, exps) ← compileCakeToClosFuel fuel source decls
+  let (source, exps) := compileCakeToClos source decls
   let (closure, bvl, names) ← ClosToBvl.compileCallMtiFuel? fuel closure exps
   let (start, code, inlines, bviInlines, next1, next2, next3, names) :=
     BvlToBvi.compileSource closure.start bvlConfig names bvl

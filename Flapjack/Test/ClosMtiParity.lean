@@ -69,7 +69,7 @@ private def mtiConfig : ClosToBvl.Config :=
 -- compiler entry points to the production pipeline.
 private def bvlStage (withHandle : Bool) (decls : List AstHOL.Dec) :
     Option (List (Nat × Nat × Bvi.Exp)) := do
-  let (_, exps) ← SourceToFlat.compileCakeToClosFuel 100 SourceToFlat.emptyConfig decls
+  let (_, exps) := SourceToFlat.compileCakeToClos SourceToFlat.emptyConfig decls
   let (closure, bvl, _) ← ClosToBvl.compileCallMtiFuel? 100 mtiConfig exps
   let bvl := (BvlInline.tickCompileProg 8 .ln bvl).2.map fun (n, a, e) =>
     (n, a, BvlInline.letOpSing (BvlInline.removeTicksSing e))
