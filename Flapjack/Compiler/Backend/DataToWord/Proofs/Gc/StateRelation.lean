@@ -24,6 +24,15 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {C : Type} {F
     (∀ state : WordSemStateFiniteExact width C F,
       WordSemStateBroad.ofBroad state.toBroad state.toBroad_finiteSupport = state) :=
   WordSemStateExact.holFmapAsFiniteSupportWitness
+
+/-- Canonical target-state roundtrip for relations with additional map inputs. -/
+theorem holFmapAsFiniteSupportRelationWitness_WordSemStateFiniteExact
+    {width : Nat} [NeZero width] {C F : Type} :
+    (∀ (state : WordSemStateBroad width C F) (h : state.FiniteSupport),
+      (WordSemStateBroad.ofBroad state h).toBroad = state) ∧
+    (∀ state : WordSemStateFiniteExact width C F,
+      WordSemStateBroad.ofBroad state.toBroad state.toBroad_finiteSupport = state) :=
+  WordSemStateExact.holFmapAsFiniteSupportWitness
 end stateRelMap
 
 /-- The full relation between data and word states, including compiled code,
@@ -63,23 +72,26 @@ noncomputable def stateRel {width : Nat} [NeZero width] {C F : Type}
       [(theGlobal source.global, holFapply target.store .globals)] ++
       flatStack source.stack target.stack)
 
-/-- Replacing both clocks by the same value preserves the complete relation.
-The HOL tag is pending independent review of this theorem. -/
+/-- Replacing both clocks by the same value preserves the complete relation. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "state_rel_with_clock"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem stateRel_withClock {width : Nat} [NeZero width] {C F : Type}
     (conf : Config) (l1 l2 : Nat) (source : DataSem.State C F)
     (target : WordSemStateFiniteExact width C F)
-    (values : Option (List (DataSem.Value × WordLocW width)))
+    (values : Option (List (Flapjack.Compiler.Backend.DataSem.Value × WordLocW width)))
     (locs : List (Nat × Nat)) (clock : Nat)
     (related : stateRel conf l1 l2 source target values locs) :
     stateRel conf l1 l2 { source with clock := clock } { target with clock := clock } values locs := by
   exact ⟨related.1, rfl, related.2.2⟩
 
-/-- The complete relation does not constrain the word state's FP registers.
-The HOL tag is pending independent review of this theorem. -/
+/-- The complete relation does not constrain the word state's FP registers. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "state_rel_with_fp_regs"
+  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
+    WordSemStateFiniteExact.store, fpRegs]) (words_as_type_indexed_bitvec)]
 theorem stateRel_withFpRegs {width : Nat} [NeZero width] {C F : Type}
     (conf : Config) (l1 l2 : Nat) (source : DataSem.State C F)
     (target : WordSemStateFiniteExact width C F)
-    (values : Option (List (DataSem.Value × WordLocW width)))
+    (values : Option (List (Flapjack.Compiler.Backend.DataSem.Value × WordLocW width)))
     (locs : List (Nat × Nat)) (fpRegs : HolFiniteMapExact Nat (BitVec 64))
     (related : stateRel conf l1 l2 source target values locs) :
     stateRel conf l1 l2 source { target with fpRegs := fpRegs } values locs := by

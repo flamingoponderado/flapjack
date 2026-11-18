@@ -23022,6 +23022,26 @@
   "reviewer": "Compared the full definition and state_rel_thm_typed: state, code, callback, stack, limit and memory clauses retain their source carriers and order. The canonical target-state codec records the finite-map fields; HOL words use positive-width BitVec. The presence conjuncts guard the timestamp and Globals observations."
 },
 {
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "state_rel_with_clock",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/StateRelation.lean",
+  "lean_name": "stateRel_withClock",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared the typed HOL theorem: the sole complete state-relation premise and conclusion updating both clocks to the same arbitrary natural agree. The target state uses the canonical finite-map fields and positive-width word representation."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "state_rel_with_fp_regs",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/StateRelation.lean",
+  "lean_name": "stateRel_withFpRegs",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": ["WordSemStateFiniteExact.fpRegs", "WordSemStateFiniteExact.store", "fpRegs"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared the typed HOL theorem: the sole complete state-relation premise and conclusion updating only the target FP registers to an arbitrary map agree. The target fields and separate FP-register parameter use canonical finite maps; words use positive-width BitVec."
+},
+{
   "hol_path": "cakeml/compiler/backend/word_bignumScript.sml",
   "hol_name": "mc_iop_code_def",
   "lean_path": "Flapjack/Compiler/Backend/WordBignum/GeneratedMini.lean",
