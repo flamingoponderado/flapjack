@@ -10,6 +10,7 @@ public import Mathlib.Tactic
 /-! Lookup properties of the data-to-word live-set translation. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
 open Flapjack
+open Classical
 
 /-- The adjusted live-set lookup records whether the source name exists,
 independently of the source map's payload type. This helper generalizes the
@@ -132,5 +133,35 @@ theorem lookup_odd_adjustSet {α : Type} (n : Nat) (names : Spt α)
 @[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "wf_adjust_set"]
 theorem wf_adjustSet {α : Type} (names : Spt α) : sptWf (adjustSet names) = true := by
   exact sptWfFromAList _
+
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "lookup_adjust_set"]
+theorem lookup_adjustSet {α : Type} (n : Nat) (names : Spt α) :
+    sptLookup n (adjustSet names) =
+      if n % 2 = 1 ∨ n = 0 then none else
+      if sptDomain names ((n - 2) / 2) then some () else none := by
+  have domain : sptDomain (adjustSet names) n ↔
+      n % 2 = 0 ∧ n ≠ 0 ∧ sptDomain names ((n - 2) / 2) := by
+    rw [adjustSet_domain]
+    constructor
+    · rintro ⟨k, hk, hmem⟩
+      simp only [adjustVar] at hk
+      have hd : (n - 2) / 2 = k := by omega
+      refine ⟨by omega, by omega, ?_⟩
+      simpa [hd] using hmem
+    · rintro ⟨heven, hnonzero, hmem⟩
+      refine ⟨(n - 2) / 2, ?_, hmem⟩
+      simp only [adjustVar]
+      omega
+  cases h : sptLookup n (adjustSet names) with
+  | none =>
+    have absent : ¬ sptDomain (adjustSet names) n := by simp [sptDomain, h]
+    have absent2 := mt domain.mpr absent
+    split <;> simp_all
+  | some value =>
+    have present : sptDomain (adjustSet names) n := by simp [sptDomain, h]
+    have ⟨heven, hn, hm⟩ := domain.mp present
+    have notodd : ¬ (n % 2 = 1 ∨ n = 0) := by omega
+    cases value
+    simp [notodd, hm]
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

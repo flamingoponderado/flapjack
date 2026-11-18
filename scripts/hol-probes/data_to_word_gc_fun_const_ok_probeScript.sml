@@ -152,3 +152,4 @@ val _ = pr_typed "lookup_3_adjust_set_typed" data_to_word_gcProofTheory.lookup_3
 val _ = pr_typed "lookup_5_adjust_set_typed" data_to_word_gcProofTheory.lookup_5_adjust_set;
 val _ = pr_typed "lookup_ODD_adjust_set_typed" data_to_word_gcProofTheory.lookup_ODD_adjust_set;
 val _ = pr_typed "wf_adjust_set_typed" data_to_word_gcProofTheory.wf_adjust_set;
+val _ = pr_typed "lookup_adjust_set_typed" data_to_word_gcProofTheory.lookup_adjust_set;
