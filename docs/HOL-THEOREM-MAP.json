@@ -141706,5 +141706,15 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, wRegWrite1_thm2_typed): source3758-3788; free-variable order ac k f f' s t lens m v v' kont retained; HOL's single conjunction premise state_rel … ∧ m < f'+k ∧ (∀n. n ≤ k ⇒ evaluate (kont n,t) = (NONE,set_var 0 v' (set_var n v t))) kept as one hypothesis in HOL's order; the existential run, full postrelation set_var 0 v' (set_var (2*m) v s) and the stack-length/stack-space facts retained. Canonical five finite-map fields and positive width translation as qualified; evaluator closure inherits reals_as_rational_cuts without numerical FP claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CallReturnEval.lean",
+    "lean_name": "evaluatePopHandlerSeq",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "evaluate_PopHandler_seq",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, evaluate_PopHandler_seq_typed): source5566-5572; free-variable order prog t k f f' retained (Lean binds program, t and the frame pair kf separately, as in the reviewed popHandlerNative), HOL's F is the false constant, and the two unused frame fields stay independently polymorphic. Conclusion evaluate (PopHandler F (k,f,f') prog,t) = evaluate (Seq (PopHandler F (k,f,f') Skip) prog,t) retained, with Seq composed through the reviewed sequenceAssoc and skip-right evaluation laws (Flapjack-only helpers with no separate HOL originals). Positive BitVec width; evaluator closure inherits reals_as_rational_cuts (SOUNDNESS item 8) without a numerical FP assertion."
   }
 ]
