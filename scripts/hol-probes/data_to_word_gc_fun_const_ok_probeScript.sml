@@ -74,3 +74,4 @@ val _ = pr_typed "join_env_submap_MEM_typed" join_env_submap_MEM;
 val _ = pr_typed "state_rel_FLOOKUP_heap_typed" state_rel_FLOOKUP_heap;
 val _ = pr_typed "evaluate_SilentFFI_3_typed" evaluate_SilentFFI_3;
 val _ = pr_typed "cut_state_opt_IMP_cut_locals_typed" cut_state_opt_IMP_cut_locals;
+val _ = pr_typed "state_rel_0_get_vars_IMP_typed" data_to_word_gcProofTheory.state_rel_0_get_vars_IMP;

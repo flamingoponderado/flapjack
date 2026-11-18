@@ -147,4 +147,20 @@ theorem stateRel_getVars {width : Nat} [NeZero width] {C F : Type}
         · simp [WordSemStateFiniteExact.getVars, wordFound, wordsFound]
         · simpa using lengths
 
+/-- Reading the reserved return location followed by adjusted source locals. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "state_rel_0_get_vars_IMP"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem stateRel_zero_getVars {width : Nat} [NeZero width] {C F : Type}
+    (conf : Config) (l1 l2 : Nat) (source : Flapjack.Compiler.Backend.DataSem.State C F)
+    (target : WordSemStateFiniteExact width C F) (locs : List (Nat × Nat))
+    (names : List Nat) (values : List Flapjack.Compiler.Backend.DataSem.Value)
+    (related : stateRel conf l1 l2 source target none locs)
+    (found : DataSem.getVars names source.locals = some values) :
+    ∃ words, WordSemStateFiniteExact.getVars (0 :: names.map adjustVar) target =
+      some (.loc l1 l2 :: words) ∧ values.length = words.length := by
+  obtain ⟨words, read, length⟩ := stateRel_getVars conf l1 l2 source target locs names values related found
+  have zero := related.2.2.2.2.2.2.2.2.2.2.1 rfl
+  refine ⟨words, ?_, length⟩
+  simp [WordSemStateFiniteExact.getVars, WordSemStateFiniteExact.getVar, zero, read]
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
