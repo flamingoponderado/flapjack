@@ -143494,5 +143494,18 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, bits_to_word_bitstring_reverse_typed): source1074-1082; the single binder xs :bool list is retained with no premise, bits_to_word is bitsToWordW at BitVec width with NeZero width, REVERSE xs is xs.reverse, and bitstring$v2w is the reviewed holV2w library rendering (bitstring$v2w_def as an FCP of testbit, shared with the RiscV L3 model and re-exported by the Arm8 encoder support), with the equality orientation retained. The positive width translation is the only carrier difference; no finite-map carrier occurs and the theorem does not reach the evaluator, so no inherits flag is recorded."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/Initialization.lean",
+    "lean_name": "makeInit",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "make_init_def",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, make_init_def_typed): source10398-10425. Binders ac k t code coracle in source order with the captured types: ac :'a asm_config is AsmConfigExact width, k :num is Nat, t :('a,'c,'ffi) stackSem$state is StackSemStateFiniteExact width C F, code :(num # 'a prog) sptree$num_map is Spt (Nat × WordLangProgHOL (BitVec width)), coracle :num -> (num # 'c) # (num # num # 'a prog) list is Nat → (Nat × C) × List (Nat × Nat × WordLangProgHOL (BitVec width)). The source returns wordSem$state at 'c := num # 'c, so compile's option is word8 list # 'a word list # (num # 'c); the captured OPTION_MAP returns (bytes, append (FST bm), (SND bm, cfg)) and Lean returns (bytes, appListAppend bm.1, (bm.2, cfg)), the same three-tuple whose third component is the bitmap count/config pair. All 24 fields are retained verbatim: locals insert 0 (Loc 1 0) LN as sptInsert 0 (.loc 1 0) .ln, fp_regs and store transferred (store \\ Handler is eraseEq .handler), stack [], memory/mdomain/sh_mdomain, permute K I, gc_fun, handler 0, clock, code, data_buffer, code_buffer, compile (the let-bound fs is unused in HOL too), compile_oracle, be, ffi, termdep 0, stack_limit LENGTH t.stack, stack_max stack_size [] as wordSemStackSize [], stack_size mapi (FST o SND o compile_prog) code as sptMapi over code, locals_size SOME 0. Both the read input carrier StackSemStateFiniteExact and the written result carrier declare fp_regs/store as the canonical HolFiniteMapExact translation, so the signature spells the result carrier with its full name, which resolves the single-owner qualifier to the constructed carrier (the input carrier is itself a reviewed tagged carrier); the same-module canonical witness holFmapAsFiniteSupportWitness covers it. locals, code and stack_size are sptree maps, not HOL |-> finite maps, so they are deliberately not named. Positive BitVec width with NeZero width throughout. No premise; this is a definition."
   }
 ]
