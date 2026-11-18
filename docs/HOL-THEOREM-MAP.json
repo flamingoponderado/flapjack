@@ -8230,6 +8230,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "PERM_toList_delete",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/FrameRoots.lean",
+  "lean_name": "permToListDelete",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with the source and PERM_toList_delete_typed confirms the generic tree, key and value, the successful lookup premise, and the value-list permutation after deletion. No well-formedness or distinct-value premise is added; repeated values retain multiplicity."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "PERM_toList_lookup_eq",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/FrameRoots.lean",
   "lean_name": "permToListLookupEq",
