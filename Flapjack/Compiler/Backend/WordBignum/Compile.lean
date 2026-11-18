@@ -103,14 +103,6 @@ def compileFuel {width : Nat} [NeZero width] : Nat → Nat → Nat → Nat → C
           (.seq (.set (.temp (BitVec.ofNat 5 r0)) (.var i))
             (.set (.temp (BitVec.ofNat 5 r1)) (.var (i + 1))))))), l + 1, i + 5, cs)
 
-/-- Preserve an initial result and retry exhausted structural recursion. -/
-def compileBounded {width : Nat} [NeZero width] (fuel n l i : Nat) (cs : CodeAcc width)
-    (code : Mini (BitVec width)) :
-    Option (WordLangProgHOL (BitVec width) × Nat × Nat × CodeAcc width) :=
-  match compileFuel fuel n l i cs code with
-  | some result => some result
-  | none => compileFuel (max fuel (miniBudget code + 1)) n l i cs code
-
 /-- Total mini compilation with a structural bound. The default is unreachable:
 `compileFuel_succeeds` proves the structural traversal always returns a result.
 The source-shaped equations are checked in `Proofs/CompileEquations`. -/
