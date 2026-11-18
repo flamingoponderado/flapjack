@@ -55,9 +55,8 @@ private theorem preservesLookup {σ α : Type} (l : LocErrInfo) (kind : MlString
   split <;> rfl
 
 mutual
-/-- Source type checking does not change inference state. This Flapjack
-    correspondence fact supports comparison with the executable checker;
-    it has no separately named HOL original. -/
+/-- A projection form of the type case of HOL's state-preservation theorem;
+    it supports assembling the original implication-shaped conjunction. -/
 theorem typeNameCheckPreservesState {σ : Type} (l : LocErrInfo) (f : MlString → MlString)
     (env : TenvAbbrev) (fvs : List MlString) (t : AstT) :
     ∀ s, (typeNameCheckSubst (state := σ) l f env fvs t s).2 = s := by
@@ -80,8 +79,7 @@ theorem typeNameCheckPreservesState {σ : Type} (l : LocErrInfo) (f : MlString �
         preservesIgnoreBind _ _ (preservesGuard _ _ _) (preservesRet _)))
 termination_by sizeOf t
 
-/-- List counterpart for executable correspondence, with no separately named
-    HOL original. -/
+/-- A projection form of the list case, used to assemble the HOL theorem. -/
 theorem typeNameChecksPreserveState {σ : Type} (l : LocErrInfo) (f : MlString → MlString)
     (env : TenvAbbrev) (fvs : List MlString) (ts : List AstT) :
     ∀ s, (typeNameCheckSubstList (state := σ) l f env fvs ts s).2 = s := by

@@ -1,5 +1,13 @@
 [
 {
+  "hol_path": "cakeml/compiler/inference/inferPropsScript.sml",
+  "hol_name": "type_name_check_subst_state",
+  "lean_path": "Flapjack/Compiler/Inference/InferProps/TypeNameCheckState.lean",
+  "lean_name": "typeNameCheckSubstState",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with source lines 764–782 and type_name_check_subst_state_typed confirms both implication clauses, their shared arbitrary state type, separate result types, all parameters, and unchanged state conclusions. The type, namespace, location and mlstring carriers are constructor-for-constructor ports."
+},
+{
   "hol_path": "cakeml/compiler/inference/inferPropsScript.sml", "hol_name": "ienv_unchanged",
   "lean_path": "Flapjack/Compiler/Inference/InferProps/Environment.lean", "lean_name": "ienvUnchanged",
   "statement_status": "reviewed_exact",
