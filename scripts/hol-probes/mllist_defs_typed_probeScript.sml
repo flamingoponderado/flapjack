@@ -405,3 +405,4 @@ val _ = emit_exported "sort_SORTED_typed" "sort_SORTED";
 val _ = emit_exported "sort_MEM_typed" "sort_MEM";
 val _ = emit_exported "sort_PERM_typed" "sort_PERM";
 val _ = emit_exported "sort_LENGTH_typed" "sort_LENGTH";
+val _ = emit_exported "sort_SORTS_typed" "sort_SORTS";

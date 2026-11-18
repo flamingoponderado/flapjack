@@ -57,6 +57,14 @@ def holSorted {α : Type} (R : α → α → Prop) : List α → Prop
   | [_] => True
   | x :: y :: rest => R x y ∧ holSorted R (y :: rest)
 
+/-- Exact HOL `SORTS_DEF` (`sortingScript.sml:570-572`):
+`SORTS f R = !l. PERM l (f R l) /\ SORTED R (f R l)`. The sorting function
+`f` takes the HOL boolean comparator and a list. -/
+@[hol "HOL/src/sort/sortingScript.sml" "SORTS_DEF"]
+def holSorts {α : Type} (f : (α → α → Bool) → List α → List α)
+    (R : α → α → Bool) : Prop :=
+  ∀ l, holPerm l (f R l) ∧ holSorted (fun a b => R a b = true) (f R l)
+
 /-- Pairwise related elements are adjacent-sorted. This is Flapjack
 infrastructure relating Lean's list predicate to HOL's `SORTED`. -/
 theorem holSorted_of_pairwise {α : Type} (R : α → α → Prop) :

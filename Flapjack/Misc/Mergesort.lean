@@ -101,6 +101,93 @@ private theorem sorted_prefix {α : Type} (R : α → α → Prop) :
   | [_], _, _ => trivial
   | _ :: b :: l1, l2, h => ⟨h.1, sorted_prefix R (b :: l1) l2 h.2⟩
 
+/-- Any arrangement of three elements permutes `[a, b, c]`. Flapjack list
+infrastructure: HOL's `PERM_ss` discharges these directly, so this has no
+separate HOL original. -/
+private theorem perm3SwapTail {α : Type} (a b c : α) : List.Perm [a, b, c] [a, c, b] :=
+  (List.Perm.cons a (List.Perm.swap b c [])).symm
+
+/-- Flapjack list infrastructure for the three-element permutations; no
+separate HOL original. -/
+private theorem perm3Rotate {α : Type} (a b c : α) : List.Perm [a, b, c] [c, a, b] :=
+  List.perm_append_comm (l₁ := [a, b]) (l₂ := [c])
+
+/-- Flapjack list infrastructure for the three-element permutations; no
+separate HOL original. -/
+private theorem perm3SwapHead {α : Type} (a b c : α) : List.Perm [a, b, c] [b, a, c] :=
+  List.Perm.append (List.perm_append_comm (l₁ := [a]) (l₂ := [b])) (List.Perm.refl [c])
+
+/-- Exact HOL `sort2_perm` (`mergesortScript.sml:166-170`). -/
+@[hol "HOL/src/sort/mergesortScript.sml" "sort2_perm"]
+theorem sort2Perm {α : Type} (r : α → α → Bool) (x y : α) :
+    holPerm [x, y] (sort2 r x y) := by
+  rw [holPerm_iff]
+  unfold sort2
+  split
+  · exact List.Perm.refl _
+  · exact (List.Perm.swap x y []).symm
+
+/-- Exact HOL `sort3_perm` (`mergesortScript.sml:172-176`). -/
+@[hol "HOL/src/sort/mergesortScript.sml" "sort3_perm"]
+theorem sort3Perm {α : Type} (r : α → α → Bool) (x y z : α) :
+    holPerm [x, y, z] (sort3 r x y z) := by
+  rw [holPerm_iff]
+  unfold sort3
+  split <;> split <;> try split
+  · exact List.Perm.refl _
+  · exact perm3SwapTail x y z
+  · exact perm3Rotate x y z
+  · exact perm3SwapHead x y z
+  · exact List.Perm.trans (perm3SwapHead x y z) (perm3SwapTail y x z)
+  · exact List.Perm.trans (perm3Rotate x y z) (perm3SwapTail z x y)
+
+/-- Exact HOL `merge_perm` (`mergesortScript.sml:178-184`). -/
+@[hol "HOL/src/sort/mergesortScript.sml" "merge_perm"]
+theorem mergePerm {α : Type} (r : α → α → Bool) :
+    ∀ (l1 l2 : List α), holPerm (l1 ++ l2) (merge r l1 l2) := by
+  intro l1 l2
+  rw [holPerm_iff]
+  fun_induction merge r l1 l2 with
+  | case1 => exact List.Perm.refl _
+  | case2 l _ => simp
+  | case3 l _ => simp
+  | case4 x l1 y l2 hxy ih => exact List.Perm.cons x ih
+  | case5 x l1 y l2 hxy ih =>
+      refine List.Perm.trans ?_ (List.Perm.cons y ih)
+      simpa using List.perm_middle (l₁ := x :: l1) (a := y) (l₂ := l2)
+
+/-- Exact HOL `mergesortN_perm` (`mergesortScript.sml:186-205`). -/
+@[hol "HOL/src/sort/mergesortScript.sml" "mergesortN_perm"]
+theorem mergesortNPerm {α : Type} :
+    ∀ (r : α → α → Bool) (n : Nat) (l : List α),
+      holPerm (l.take n) (mergesortN r n l) := by
+  intro r n l
+  rw [holPerm_iff]
+  fun_induction mergesortN r n l with
+  | case1 l => exact List.Perm.refl _
+  | case2 x l => exact List.Perm.refl _
+  | case3 => exact List.Perm.refl _
+  | case4 x y l => exact (holPerm_iff _ _).mp (sort2Perm r x y)
+  | case5 x => exact List.Perm.refl _
+  | case6 => exact List.Perm.refl _
+  | case7 x y z l => exact (holPerm_iff _ _).mp (sort3Perm r x y z)
+  | case8 x y => exact (holPerm_iff _ _).mp (sort2Perm r x y)
+  | case9 x => exact List.Perm.refl _
+  | case10 => exact List.Perm.refl _
+  | case11 n l len1 ihA ihB =>
+      have hlen1 : len1 ≤ n + 4 := by
+        simp only [len1]
+        omega
+      have hsplit : List.Perm (List.take (n + 4) l)
+          (List.take len1 l ++ List.take (n + 4 - len1) (List.drop len1 l)) := by
+        rw [← List.take_append_drop len1 (List.take (n + 4) l)]
+        rw [List.take_take, Nat.min_eq_left hlen1, List.drop_take]
+      refine List.Perm.trans hsplit ?_
+      refine List.Perm.trans (List.Perm.append ihA ihB) ?_
+      simpa using (holPerm_iff _ _).mp
+        (mergePerm r (mergesortN r len1 l)
+          (mergesortN r (n + 4 - len1) (List.drop len1 l)))
+
 /-- Exact HOL `sort2_sorted` (`mergesortScript.sml:216-224`). -/
 @[hol "HOL/src/sort/mergesortScript.sml" "sort2_sorted"]
 theorem sort2Sorted {α : Type} :

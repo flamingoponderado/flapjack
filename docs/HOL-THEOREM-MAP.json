@@ -143507,5 +143507,62 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, make_init_def_typed): source10398-10425. Binders ac k t code coracle in source order with the captured types: ac :'a asm_config is AsmConfigExact width, k :num is Nat, t :('a,'c,'ffi) stackSem$state is StackSemStateFiniteExact width C F, code :(num # 'a prog) sptree$num_map is Spt (Nat × WordLangProgHOL (BitVec width)), coracle :num -> (num # 'c) # (num # num # 'a prog) list is Nat → (Nat × C) × List (Nat × Nat × WordLangProgHOL (BitVec width)). The source returns wordSem$state at 'c := num # 'c, so compile's option is word8 list # 'a word list # (num # 'c); the captured OPTION_MAP returns (bytes, append (FST bm), (SND bm, cfg)) and Lean returns (bytes, appListAppend bm.1, (bm.2, cfg)), the same three-tuple whose third component is the bitmap count/config pair. All 24 fields are retained verbatim: locals insert 0 (Loc 1 0) LN as sptInsert 0 (.loc 1 0) .ln, fp_regs and store transferred (store \\ Handler is eraseEq .handler), stack [], memory/mdomain/sh_mdomain, permute K I, gc_fun, handler 0, clock, code, data_buffer, code_buffer, compile (the let-bound fs is unused in HOL too), compile_oracle, be, ffi, termdep 0, stack_limit LENGTH t.stack, stack_max stack_size [] as wordSemStackSize [], stack_size mapi (FST o SND o compile_prog) code as sptMapi over code, locals_size SOME 0. Both the read input carrier StackSemStateFiniteExact and the written result carrier declare fp_regs/store as the canonical HolFiniteMapExact translation, so the signature spells the result carrier with its full name, which resolves the single-owner qualifier to the constructed carrier (the input carrier is itself a reviewed tagged carrier); the same-module canonical witness holFmapAsFiniteSupportWitness covers it. locals, code and stack_size are sptree maps, not HOL |-> finite maps, so they are deliberately not named. Positive BitVec width with NeZero width throughout. No premise; this is a definition."
+  },
+  {
+    "lean_path": "Flapjack/Misc/Sorting.lean",
+    "lean_name": "holSorts",
+    "hol_path": "HOL/src/sort/sortingScript.sml",
+    "hol_name": "SORTS_DEF",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (hol_sorting_typed_probe.out, sorts_def_typed): source570-572. Binders f R in source order with the captured types (α -> α -> bool) -> α list -> α list and α -> α -> bool. HOL's SORTS f R ⇔ ∀ l. PERM l (f R l) ∧ SORTED R (f R l) is rendered as holPerm and holSorted over fun a b => R a b = true, the tree's standard Bool-to-Prop rendering of HOL relations (as in holSortedEq); the iff orientation is retained. No premise, no word, finite-map or ARB carrier."
+  },
+  {
+    "lean_path": "Flapjack/Misc/Mergesort.lean",
+    "lean_name": "sort2Perm",
+    "hol_path": "HOL/src/sort/mergesortScript.sml",
+    "hol_name": "sort2_perm",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (hol_mergesort_typed_probe.out, sort2_perm_typed): source166-170. Binders R x y in source order with the captured types α -> α -> bool, α, α. HOL's PERM [x; y] (sort2 R x y) is holPerm [x, y] (sort2 r x y), with HOL's list literal [x; y] the Lean [x, y] and PERM the tagged holPerm. No premise; no word or finite-map carrier."
+  },
+  {
+    "lean_path": "Flapjack/Misc/Mergesort.lean",
+    "lean_name": "sort3Perm",
+    "hol_path": "HOL/src/sort/mergesortScript.sml",
+    "hol_name": "sort3_perm",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (hol_mergesort_typed_probe.out, sort3_perm_typed): source172-176. Binders R x y z in source order with the captured types α -> α -> bool, α, α, α. HOL's PERM [x; y; z] (sort3 R x y z) is holPerm [x, y, z] (sort3 r x y z). No premise; no word or finite-map carrier."
+  },
+  {
+    "lean_path": "Flapjack/Misc/Mergesort.lean",
+    "lean_name": "mergePerm",
+    "hol_path": "HOL/src/sort/mergesortScript.sml",
+    "hol_name": "merge_perm",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (hol_mergesort_typed_probe.out, merge_perm_typed): source178-184. Binders R l1 l2 in source order with the captured types α -> α -> bool, α list, α list. HOL's PERM (l1 ⧺ l2) (merge R l1 l2) is holPerm (l1 ++ l2) (merge r l1 l2). No premise; no word or finite-map carrier."
+  },
+  {
+    "lean_path": "Flapjack/Misc/Mergesort.lean",
+    "lean_name": "mergesortNPerm",
+    "hol_path": "HOL/src/sort/mergesortScript.sml",
+    "hol_name": "mergesortN_perm",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (hol_mergesort_typed_probe.out, mergesortN_perm_typed): source186-205. Binders R n l in source order with the captured types α -> α -> bool, num, α list; n is Nat and TAKE n l is l.take n. HOL's PERM (TAKE n l) (mergesortN R n l) is holPerm (l.take n) (mergesortN r n l). No premise; no word or finite-map carrier."
+  },
+  {
+    "lean_path": "Flapjack/Basis/Pure/MlList/SortPerm.lean",
+    "lean_name": "sortSorts",
+    "hol_path": "cakeml/basis/pure/mllistScript.sml",
+    "hol_name": "sort_SORTS",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (mllist_defs_typed_probe.out, sort_SORTS_typed): source325-329. The single binder R :α -> α -> bool is retained. HOL's one conjunction premise transitive R ∧ total R is ONE Lean hypothesis holTransitive (fun a b => R a b = true) ∧ holTotal (fun a b => R a b = true), and the conclusion SORTS sort R is holSorts sort R with sort the tagged mllist sort. No word or finite-map carrier."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/KeyValueOrder.lean",
+    "lean_name": "sortsSortKeyValCompare",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "SORTS_SORT_key_val_compare",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, SORTS_SORT_key_val_compare_typed): source1252-1257. HOL's SORTS sort key_val_compare at 'a word_loc is holSorts (α := Nat × WordLocW width) Basis.Pure.MlList.sort wordSemKeyValCompare; sort is the tagged mllist sort and key_val_compare is the tagged wordSemKeyValCompare. No premise: HOL derives the statement from sort_SORTS and the comparator's transitivity and totality. Positive BitVec width with NeZero width is the only carrier translation; no finite-map carrier occurs."
   }
 ]

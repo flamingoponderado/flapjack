@@ -143,3 +143,4 @@ val _ = show "make_init_def_typed" ``∀(ac :'a asm_config) (k :num)
      ; stack_size  := mapi (λn (arg_count,prog).
          FST (SND (compile_prog ac F prog arg_count k (Nil,0)))) code
      ; locals_size := SOME 0|>``;
+val _ = show "SORTS_SORT_key_val_compare_typed" ``SORTS sort key_val_compare``;
