@@ -23481,6 +23481,17 @@
   "reviewer": "Compared eval_push_env_T_Raise_IMP_stack_length_typed: the original raise result after call entry with a pushed handler implies equal original and result stack lengths. The proof inherits rational-cut reals through dataProps evaluate_stack_swap."
 },
 {
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "eval_push_env_SOME_exc_IMP_s_key_eq",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/EvaluateMkLoc.lean",
+  "lean_name": "evaluate_pushEnv_exception_keys",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared eval_push_env_SOME_exc_IMP_s_key_eq_typed: the original exception result after pushed-handler call entry implies both stack-key relation and handler equality. The arbitrary handler tuple, both exception values and all state carriers remain. The proof inherits rational-cut reals through evaluate_stack_swap."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "cut_env_IMP_MEM",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CutEnvProperties.lean", "lean_name": "cutEnv_imp_mem",
   "statement_status": "reviewed_exact", "reviewer": "Compared cut_env_IMP_MEM_typed: successful source cut makes an arbitrary key present exactly when it is present in the requested set."

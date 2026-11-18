@@ -56,17 +56,17 @@ theorem evaluate_mkLoc {width : Nat} [NeZero width] {C F : Type}
   have post := evaluateStackSwap q t
   simp only [stackSwapPost, run] at post
   exact (mkLocJumpKeyEq t t1 post.1 post.2.1.symm).symm
-/-- A caught exception after a pushed handler preserves the prior unwind location. -/
-@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "mk_loc_eq_push_env_exc_Exception"
+/-- An exception from a pushed handler preserves the original stack keys and handler. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "eval_push_env_SOME_exc_IMP_s_key_eq"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
-theorem mkLoc_pushEnv_exception {width : Nat} [NeZero width] {C F : Type}
+theorem evaluate_pushEnv_exception_keys {width : Nat} [NeZero width] {C F : Type}
     (c : WordLangProgHOL (BitVec width)) (args : List (WordLocW width)) (ss : Option Nat)
     (envs : Spt (WordLocW width) × Spt (WordLocW width)) (x0 x1 l : Nat)
     (prog1 : WordLangProgHOL (BitVec width)) (t t1 : WordSemStateFiniteExact width C F)
     (xx w : WordLocW width)
     (run : evaluate c (WordSemStateFiniteExact.callEnv args ss (pushEnv envs (some (x0,prog1,x1,l)) (decClock t))) =
       (some (.exception xx w), t1)) :
-    mkLoc (width := width) (jumpExc t1) = mkLoc (width := width) (jumpExc t) := by
+    sKeyEq t1.stack t.stack ∧ t.handler = t1.handler := by
   have post := evaluateStackSwap c (WordSemStateFiniteExact.callEnv args ss (pushEnv envs (some (x0,prog1,x1,l)) (decClock t)))
   simp only [stackSwapPost, run] at post
   cases envList : wordSemEnvToList envs.2 t.permute with
@@ -86,7 +86,21 @@ theorem mkLoc_pushEnv_exception {width : Nat} [NeZero width] {C F : Type}
     have handlerVal' := Option.some.inj handlerVal
     rw [← handlerVal'] at handlerEq
     rw [← tailEq] at keys
-    exact mkLocJumpKeyEq t1 t keys handlerEq
+    exact ⟨keys, handlerEq.symm⟩
+
+/-- A caught exception after a pushed handler preserves the prior unwind location. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "mk_loc_eq_push_env_exc_Exception"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem mkLoc_pushEnv_exception {width : Nat} [NeZero width] {C F : Type}
+    (c : WordLangProgHOL (BitVec width)) (args : List (WordLocW width)) (ss : Option Nat)
+    (envs : Spt (WordLocW width) × Spt (WordLocW width)) (x0 x1 l : Nat)
+    (prog1 : WordLangProgHOL (BitVec width)) (t t1 : WordSemStateFiniteExact width C F)
+    (xx w : WordLocW width)
+    (run : evaluate c (WordSemStateFiniteExact.callEnv args ss (pushEnv envs (some (x0,prog1,x1,l)) (decClock t))) =
+      (some (.exception xx w), t1)) :
+    mkLoc (width := width) (jumpExc t1) = mkLoc (width := width) (jumpExc t) := by
+  obtain ⟨keys, handlerEq⟩ := evaluate_pushEnv_exception_keys c args ss envs x0 x1 l prog1 t t1 xx w run
+  exact mkLocJumpKeyEq t1 t keys handlerEq.symm
 
 /-- Unwinding immediately after installing a handler selects its saved location. -/
 @[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "mk_loc_jump_exc"
