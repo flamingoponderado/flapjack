@@ -22481,6 +22481,18 @@
     "reviewer": "Compared all four quantified conjuncts in source lines 5639-5672 with typed capture source_to_flat_compile_globals_probe.out. Trace is a list of MlString, environment and all source/flat expression, pattern and function carriers match the corresponding tagged syntax. HOL num bags are num -> num; EVERY is pointwise list membership. Lean's rowGlobals and funGlobals helpers are proved equal to elistGlobals of the same source projections. All expression cases, including Eval, AallocEmpty, Env_id, annotations and recursive bodies, are kernel-checked. This invariant is not the source-to-flat simulation theorem. Independent source and typed-capture review confirms the complete statement and the reviewed FlatProps and compiler definition carriers."
   },
 {
+    "hol_path": "cakeml/compiler/backend/word_bignumScript.sml", "hol_name": "code_acc_next_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Compile.lean", "lean_name": "codeAccNext",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent comparison with code_acc_next_type and the source definition confirms the arbitrary accumulator payload is preserved while the natural index is incremented."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_bignumScript.sml", "hol_name": "install_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Compile.lean", "lean_name": "install",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent comparison with install_type and the source definition confirms the entry and accumulator key have independent arbitrary types, the key is preserved, and the entry is prepended. The executed mini-compiler specializes these helpers to the same source code accumulator."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/word_bignumScript.sml", "hol_name": "compile_def",
     "lean_path": "Flapjack/Compiler/Backend/WordBignum/Compile.lean", "lean_name": "compile",
     "statement_status": "reviewed_words_as_type_indexed_bitvec", "words_as_type_indexed_bitvec": true,

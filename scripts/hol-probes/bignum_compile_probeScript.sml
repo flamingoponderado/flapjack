@@ -7,6 +7,8 @@ fun ty name term = (print (name ^ "="); print_type (type_of term); print "\n");
 fun row name term = (print (name ^ "="); print_term (rhs (concl (EVAL term))); print "\n");
 val _ = ty "compile_type" ``word_bignum$compile``;
 val _ = ty "has_compiled_type" ``word_bignum$has_compiled``;
+val _ = ty "code_acc_next_type" ``word_bignum$code_acc_next``;
+val _ = ty "install_type" ``word_bignum$install``;
 val _ = row "skip" ``word_bignum$compile 39 2 1 (40,[]) (word_bignum$Skip : 64 word_bignum$mini)``;
 val _ = row "continue" ``word_bignum$compile 39 2 1 (40,[]) (word_bignum$Continue : 64 word_bignum$mini)``;
 val _ = row "assign" ``word_bignum$compile 39 2 1 (40,[]) (word_bignum$Assign 33 (wordLang$Var 34) : 64 word_bignum$mini)``;

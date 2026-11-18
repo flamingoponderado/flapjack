@@ -25,8 +25,13 @@ def hasCompiled {width : Nat} (code : Mini (BitVec width)) (cs : CodeAcc width) 
   | some index => .inl index
   | none => .inr cs.1
 
-def codeAccNext {width : Nat} (cs : CodeAcc width) : CodeAcc width := (cs.1 + 1, cs.2)
-def install {width : Nat} (entry : CodeEntry width) (cs : CodeAcc width) : CodeAcc width :=
+/-- Advance the next code index while retaining the arbitrary accumulator payload. -/
+@[hol "cakeml/compiler/backend/word_bignumScript.sml" "code_acc_next_def"]
+def codeAccNext {α : Type} (cs : Nat × α) : Nat × α := (cs.1 + 1, cs.2)
+
+/-- Add an arbitrary entry to the installed-code list. -/
+@[hol "cakeml/compiler/backend/word_bignumScript.sml" "install_def"]
+def install {α β : Type} (entry : α) (cs : β × List α) : β × List α :=
   (cs.1, entry :: cs.2)
 
 /-- A computable structural bound on recursive mini-program compilation. -/
