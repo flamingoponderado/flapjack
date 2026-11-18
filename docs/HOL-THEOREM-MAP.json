@@ -23130,6 +23130,22 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "LASTN_CONS_IMP_LENGTH",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/StackSplit.lean",
+  "lean_name": "lastn_cons_imp_length",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared LASTN_CONS_IMP_LENGTH_typed: the bounded count and nonempty suffix premises entail the exact suffix length; all list elements share the same arbitrary type."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "LASTN_IMP_APPEND",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/StackSplit.lean",
+  "lean_name": "lastn_imp_append",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared LASTN_IMP_APPEND_typed: a bounded count and the LASTN equation imply an existential prefix and the exact suffix length over an arbitrary list type."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "option_le_stack_size_cons",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/StackSizeTail.lean",
   "lean_name": "optionLe_stackSize_cons",

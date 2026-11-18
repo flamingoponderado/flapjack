@@ -89,3 +89,5 @@ val _ = pr_typed "state_rel_pop_env_IMP_typed" data_to_word_gcProofTheory.state_
 val _ = pr_typed "state_rel_pop_env_set_var_IMP_typed" data_to_word_gcProofTheory.state_rel_pop_env_set_var_IMP;
 val _ = pr_typed "BUTLASTN_APPEND_LASTN_typed" data_to_word_gcProofTheory.BUTLASTN_APPEND_LASTN;
 val _ = pr_typed "LASTN_LIST_REL_LEMMA_typed" data_to_word_gcProofTheory.LASTN_LIST_REL_LEMMA;
+val _ = pr_typed "LASTN_CONS_IMP_LENGTH_typed" data_to_word_gcProofTheory.LASTN_CONS_IMP_LENGTH;
+val _ = pr_typed "LASTN_IMP_APPEND_typed" data_to_word_gcProofTheory.LASTN_IMP_APPEND;

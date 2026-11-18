@@ -35,4 +35,24 @@ theorem lastn_list_rel_lemma {α β γ δ : Type} (source : List α) (target : L
     cases suffix with
     | cons related rest => exact ⟨targetHead, targetTail, rfl, related, rest⟩
 
+/-- A nonempty `LASTN` suffix has the requested length when the count fits. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "LASTN_CONS_IMP_LENGTH"]
+theorem lastn_cons_imp_length {α : Type} (xs : List α) (n : Nat) (y : α) (ys : List α)
+    (bound : n ≤ xs.length) (suffix : wordSemLastN n xs = y :: ys) :
+    (y :: ys).length = n := by
+  have lengthEq := congrArg List.length suffix
+  simpa [wordSemLastN, Nat.min_eq_left bound] using lengthEq.symm
+
+/-- A bounded `LASTN` suffix separates the original list at that suffix. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "LASTN_IMP_APPEND"]
+theorem lastn_imp_append {α : Type} (xs : List α) (n : Nat) (ys : List α)
+    (premises : n ≤ xs.length ∧ wordSemLastN n xs = ys) :
+    ∃ zs, xs = zs ++ ys ∧ ys.length = n := by
+  obtain ⟨bound, suffix⟩ := premises
+  refine ⟨(xs.reverse.drop n).reverse, ?_, ?_⟩
+  · rw [← suffix]
+    exact (butlastn_append_lastn n xs).symm
+  · rw [← suffix]
+    simp [wordSemLastN, Nat.min_eq_left bound]
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
