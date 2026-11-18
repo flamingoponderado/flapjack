@@ -12,6 +12,16 @@ open Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
 open Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
 open Flapjack.Compiler.Backend.BackendProps
 
+namespace assignSetGlobalsPtrMap
+/-- Canonical target-state roundtrip for the assignment simulation. -/
+theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {C F : Type} :
+    (∀ (state : WordSemStateBroad width C F) (h : state.FiniteSupport),
+      (WordSemStateBroad.ofBroad state h).toBroad = state) ∧
+    (∀ state : WordSemStateFiniteExact width C F,
+      WordSemStateBroad.ofBroad state.toBroad state.toBroad_finiteSupport = state) :=
+  WordSemStateExact.holFmapAsFiniteSupportWitness
+end assignSetGlobalsPtrMap
+
 /-- Reconstruct the state relation after changing the global pointer and its
 two target store entries. The supplied memory relation is established by
 the global-store update proof. -/
@@ -49,13 +59,17 @@ private theorem stateRel_replaceGlobals {width : Nat} [NeZero width] {C F : Type
   · simpa [theGlobal, holFapply_of_lookup, HolFiniteMapExact.updateEq, FUPDATE_HOL] using heap
 
 /-- The source global-pointer update case, with all original assignment-goal
-premises and result branches. It remains untagged pending review of the
-shared state-relation and stub dependencies. -/
+premises and result branches. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml" "assign_SetGlobalsPtr"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem assignSetGlobalsPtr_correct {width : Nat} [NeZero width] {C F : Type}
-    (conf : Config) (n l l1 l2 dest : Nat) (op : ClosLang.Op)
-    (args : List Nat) (names : Option NumSet) (source cut resultState : DataSem.State C F)
+    (conf : Flapjack.Compiler.Backend.DataToWord.Config) (n l l1 l2 dest : Nat)
+    (op : Flapjack.Compiler.Backend.ClosLang.Op)
+    (args : List Nat) (names : Option NumSet)
+    (source cut resultState : Flapjack.Compiler.Backend.DataSem.State C F)
     (target : WordSemStateFiniteExact width C F) (locs : List (Nat × Nat))
-    (values : List DataSem.Value) (result : DataSem.Value)
+    (values : List Flapjack.Compiler.Backend.DataSem.Value)
+    (result : Flapjack.Compiler.Backend.DataSem.Value)
     (globalOp : op = .globOp .setGlobalsPtr)
     (related : stateRel conf l1 l2 source target none locs)
     (validNames : DataLang.opRequiresNames op ≠ names.isNone)

@@ -23042,6 +23042,17 @@
   "reviewer": "Compared the typed HOL theorem: the sole complete state-relation premise and conclusion updating only the target FP registers to an arbitrary map agree. The target fields and separate FP-register parameter use canonical finite maps; words use positive-width BitVec."
 },
 {
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "assign_SetGlobalsPtr",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/SetGlobalsPtr.lean",
+  "lean_name": "assignSetGlobalsPtr_correct",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared assign_SetGlobalsPtr_typed: the original operation case and all assignment-goal premises, existential target execution, out-of-space branch and successful state-relation branch agree. The target state uses canonical finite maps and positive-width words. The evaluator inherits reals_as_rational_cuts through instruction semantics; see SOUNDNESS.md item 8."
+},
+{
   "hol_path": "cakeml/compiler/backend/word_bignumScript.sml",
   "hol_name": "mc_iop_code_def",
   "lean_path": "Flapjack/Compiler/Backend/WordBignum/GeneratedMini.lean",
