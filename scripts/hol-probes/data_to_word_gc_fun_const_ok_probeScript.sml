@@ -24,6 +24,9 @@ val _ = pr_typed "size_of_heap_call_push_env_typed" size_of_heap_call_push_env;
 val _ = pr_typed "option_le_OPTION_MAP2_MAX_typed" option_le_OPTION_MAP2_MAX;
 val _ = pr_typed "bytes_in_word_ADD_1_NOT_ZERO_typed" bytes_in_word_ADD_1_NOT_ZERO;
 val _ = pr_typed "w2n_minus_1_LESS_EQ_typed" w2n_minus_1_LESS_EQ;
+val _ = pr_typed "get_var_inc_clock_typed" get_var_inc_clock;
+val _ = pr_typed "get_vars_inc_clock_typed" get_vars_inc_clock;
+val _ = pr_typed "set_var_inc_clock_typed" set_var_inc_clock;
 (* The source theorem is local: replay its original statement and proof. *)
 val stack_rel_imp_subset_replay = prove (
   ``∀xs ys. LIST_REL stack_rel xs ys ⇒

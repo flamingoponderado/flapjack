@@ -18,6 +18,9 @@ size_of_heap_call_push_env_typed=cut_env (names :sptree$num_set) (s :(α, β) da
 option_le_OPTION_MAP2_MAX_typed=(option_le (OPTION_MAP2 MAX (n :num option) (m :num option)) n ⇔ option_le m n) ∧ (option_le (OPTION_MAP2 MAX m n) n ⇔ option_le m n)
 bytes_in_word_ADD_1_NOT_ZERO_typed=good_dimindex (:α) ⇒ (bytes_in_word :α word) * (w :α word) + (1w :α word) ≠ (0w :α word)
 w2n_minus_1_LESS_EQ_typed=w2n (-(1w :α word)) ≤ w2n (w :α word) ⇔ w + (1w :α word) = (0w :α word)
+get_var_inc_clock_typed=(get_var (n :num) (inc_clock (k :num) (s :(α, β, γ) wordSem$state)) :α word_loc option) = (get_var n s :α word_loc option)
+get_vars_inc_clock_typed=(get_vars (n :num list) (inc_clock (k :num) (s :(α, β, γ) wordSem$state)) :α word_loc list option) = (get_vars n s :α word_loc list option)
+set_var_inc_clock_typed=set_var (n :num) (x :α word_loc) (inc_clock (ck :num) (t :(α, β, γ) wordSem$state)) = inc_clock ck (set_var n x t)
 stack_rel_imp_subset_typed=∀(xs :stack list) (ys :α stack_frame list). LIST_REL (stack_rel :stack -> α stack_frame -> bool) xs ys ⇒ set (enc_stack ys) ⊆ set (MAP (SND :v # α word_loc -> α word_loc) (flat xs ys))
 mk_loc_def_typed=(mk_loc (SOME ((t1 :β),(d1 :num),(d2 :num))) :α word_loc) = (Loc d1 d2 :α word_loc)
 mk_loc_function_type=:(β # num # num) option -> α word_loc

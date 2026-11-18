@@ -8360,6 +8360,36 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "get_var_inc_clock",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/Clock.lean",
+  "lean_name": "getVarIncClock",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Independent comparison with get_var_inc_clock_typed confirms the unconditional lookup equality and independent compiler and FFI state parameters. The qualifiers record the canonical state maps and positive-width word carrier."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "get_vars_inc_clock",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/Clock.lean",
+  "lean_name": "getVarsIncClock",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Independent comparison with get_vars_inc_clock_typed confirms the unconditional list-lookup equality and independent compiler and FFI state parameters. The qualifiers record the canonical state maps and positive-width word carrier."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "set_var_inc_clock",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/Clock.lean",
+  "lean_name": "setVarIncClock",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Independent comparison with set_var_inc_clock_typed confirms the unconditional update equality and independent compiler and FFI state parameters. The qualifiers record the canonical state maps and positive-width word carrier."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "dec_clock_inc_clock",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/Clock.lean",
   "lean_name": "decClockIncClock",
