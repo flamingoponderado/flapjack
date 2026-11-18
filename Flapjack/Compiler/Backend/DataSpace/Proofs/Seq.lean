@@ -4,6 +4,7 @@ public import Flapjack.Compiler.Backend.Semantics.DataProps.EvaluateLocals
 public import Flapjack.Compiler.Backend.Semantics.DataProps.ApplyAuxFields
 public import Flapjack.Compiler.Backend.Semantics.DataProps.Variables
 public import Flapjack.Compiler.Backend.Semantics.DataSem.Space
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.GetVarsCutEnv
 
 @[expose] public section
 
@@ -168,30 +169,6 @@ private theorem cutEnv_before_move {α : Type} (source target : Spt α) (names :
     · simp [member] at resultRead
 
 
-/-- A successful argument read is preserved by a cut retaining every
-argument name. -/
-private theorem getVars_after_cut {α : Type} (arguments : List Nat) (env cut : Spt α) (names : NumSet)
-    (values : List α) (read : DataSem.getVars arguments env = some values)
-    (cutRun : cutEnv names env = some cut) (kept : ∀ key ∈ arguments, sptMem key names) :
-    DataSem.getVars arguments cut = some values := by
-  induction arguments generalizing values with
-  | nil => simpa [DataSem.getVars] using read
-  | cons name arguments ih =>
-    cases first : DataSem.getVar name env with
-    | none => simp [DataSem.getVars, first] at read
-    | some value =>
-      cases rest : DataSem.getVars arguments env with
-      | none => simp [DataSem.getVars, first, rest] at read
-      | some tail =>
-        have present : sptMem name names := kept name (by simp)
-        have cutFirst : DataSem.getVar name cut = some value := by
-          change sptLookup name env = some value at first
-          simpa [DataSem.getVar, present, first] using DataLive.cutEnv_lookup names env cut cutRun name
-        have cutRest := ih tail rest (by intro key member; exact kept key (by simp [member]))
-        simp [DataSem.getVars, first, rest] at read
-        subst values
-        simp [DataSem.getVars, cutFirst, cutRest]
-
 /-- Cutting before an assignment keeps all operand values and produces a
 post-write environment extending the original post-assignment cut. -/
 private theorem cutEnv_before_assign {α : Type} (source target : Spt α) (names : NumSet)
@@ -224,8 +201,9 @@ private theorem cutEnv_before_assign {α : Type} (source target : Spt α) (names
     simp only [cutEnv, if_pos prePresent]
     rfl
   have beforeRead : DataSem.getVars arguments before = some values :=
-    getVars_after_cut arguments target before preNames values targetRead beforeCut
-      (fun key member => (DataLive.mem_listInsert arguments _ key).2 (Or.inl member))
+    DataToWord.Proofs.Assign.getVars_cutEnv preNames target before arguments values
+      ⟨beforeCut, targetRead,
+        fun key member => (DataLive.mem_listInsert arguments _ key).2 (Or.inl member)⟩
   refine ⟨before, beforeCut, beforeRead, ?_⟩
   rw [sptSubsptLookup]
   intro key found resultRead

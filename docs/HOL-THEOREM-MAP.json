@@ -8494,6 +8494,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "get_vars_cut_env",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/GetVarsCutEnv.lean",
+  "lean_name": "getVars_cutEnv",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the HOL theorem and inferred-type capture: the sparse environment has arbitrary payload type, and successful cut and source read plus membership of each requested name imply the same successful read after cutting."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
   "hol_name": "IMP_store_list_SOME",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/StoreList.lean",
   "lean_name": "storeList_exists",

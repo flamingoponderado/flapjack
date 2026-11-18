@@ -323,6 +323,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.MemCopyCorrect
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.FreeSpace
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.StoreList
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.StoreList
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.GetVarsCutEnv
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Bignum.RealAddress
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.WordMlInvInsert
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.MkLoc
