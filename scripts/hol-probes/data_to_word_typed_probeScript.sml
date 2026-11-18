@@ -125,6 +125,7 @@ val _ = emit "AppendLenLoop_code_def_typed" "AppendLenLoop_code_def";
 val _ = emit "XorLoop_code_def_typed" "XorLoop_code_def";
 val _ = emit "StringCmpLoop_code_def_typed" "StringCmpLoop_code_def";
 val _ = emit "MemCopy_code_def_typed" "MemCopy_code_def";
+val _ = emit "ByteCopy_code_def_typed" "ByteCopy_code_def";
 val _ = emit "ByteCopyAdd_code_def_typed" "ByteCopyAdd_code_def";
 val _ = emit "ByteCopySub_code_def_typed" "ByteCopySub_code_def";
 val _ = emit "StoreEach_def_typed" "StoreEach_def";

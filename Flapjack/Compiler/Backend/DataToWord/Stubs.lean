@@ -509,6 +509,24 @@ def appendLenLoopCode {width : Nat} [NeZero width] (conf : Config) : WordLangPro
       .assign 4 (.op .add [.var 4, .const 12]),
       .call none (some appendLenLoopLocation) [0, 2, 4] none])
 
+/-- Select the appropriate directional loop for a byte-array copy. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "ByteCopy_code_def"
+  (words_as_type_indexed_bitvec)]
+def byteCopyCode {width : Nat} [NeZero width] (conf : Config) : WordLangProgHOL (BitVec width) :=
+  let bytes := (wordSemBytesInWord : BitVec width)
+  listSeq [
+    .assign 4 (shiftVar .lsr 4 2), .assign 6 (shiftVar .lsr 6 2),
+    .assign 10 (shiftVar .lsr 10 2), .assign 1 unitExp,
+    .assign 2 (.op .add [realAddr conf 2, .const bytes, .var 4]),
+    .assign 8 (.op .add [realAddr conf 8, .const bytes, .var 10]),
+    .ite .lower 4 (.reg 10)
+      (listSeq [
+        .assign 3 (.op .sub [.var 6, .const 1]),
+        .assign 2 (.op .add [.var 2, .var 3]),
+        .assign 8 (.op .add [.var 8, .var 3]),
+        .call none (some byteCopySubLocation) [0, 6, 2, 8, 1] none])
+      (.call none (some byteCopyAddLocation) [0, 6, 2, 8, 1] none)]
+
 /-- Extend the partial stub lookup with configuration-dependent cases. The
 unimplemented stubs still return `none`, so this is not HOL's complete list. -/
 def compileConfiguredStub? {width : Nat} [NeZero width] (conf : Config) (location : Nat) :
@@ -522,19 +540,7 @@ def compileConfiguredStub? {width : Nat} [NeZero width] (conf : Config) (locatio
   else if location = fromList1Location then
     some (6, fromList1Code conf)
   else if location = byteCopyLocation then
-    let bytes := (wordSemBytesInWord : BitVec width)
-    some (6, listSeq [
-      .assign 4 (shiftVar .lsr 4 2), .assign 6 (shiftVar .lsr 6 2),
-      .assign 10 (shiftVar .lsr 10 2), .assign 1 (.const 2),
-      .assign 2 (.op .add [realAddr conf 2, .const bytes, .var 4]),
-      .assign 8 (.op .add [realAddr conf 8, .const bytes, .var 10]),
-      .ite .lower 4 (.reg 10)
-        (listSeq [
-          .assign 3 (.op .sub [.var 6, .const 1]),
-          .assign 2 (.op .add [.var 2, .var 3]),
-          .assign 8 (.op .add [.var 8, .var 3]),
-          .call none (some byteCopySubLocation) [0, 6, 2, 8, 1] none])
-        (.call none (some byteCopyAddLocation) [0, 6, 2, 8, 1] none)])
+    some (6, byteCopyCode conf)
   else if location = appendLocation then
     some (3, appendCode conf)
   else if location = appendMainLoopLocation then
