@@ -23043,6 +23043,26 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "state_rel_cut_IMP",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CutState.lean",
+  "lean_name": "stateRel_cutOpt",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared state_rel_cut_IMP_typed: the original state relation and successful optional source cut imply the complete relation for the cut state. Target finite-map fields and positive-width words use the reviewed representations."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "state_rel_cut_state_opt_get_var",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CutState.lean",
+  "lean_name": "stateRel_cutOpt_getVar",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared state_rel_cut_state_opt_get_var_typed: the full state relation, successful optional cut and source local lookup imply existence of a related state with the same lookup. Target finite-map fields and positive-width words use the reviewed representations."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "state_rel_cut_env",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CutState.lean",
   "lean_name": "stateRel_cutEnv",

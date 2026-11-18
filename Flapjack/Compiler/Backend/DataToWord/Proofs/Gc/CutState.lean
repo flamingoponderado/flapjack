@@ -61,12 +61,13 @@ theorem stateRel_cutEnv {width : Nat} [NeZero width] {C F : Type}
     · exact Or.inl (Or.inr member)
     · exact Or.inr member
 
-/-- A successful optional cut preserves the full state relation. This factors
-the source assignment proof and has no separate HOL declaration. -/
+/-- A successful optional cut preserves the full state relation. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "state_rel_cut_IMP"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem stateRel_cutOpt {width : Nat} [NeZero width] {C F : Type}
-    (conf : Config) (l1 l2 : Nat) (source : DataSem.State C F)
+    (conf : Config) (l1 l2 : Nat) (source : Flapjack.Compiler.Backend.DataSem.State C F)
     (target : WordSemStateFiniteExact width C F) (locs : List (Nat × Nat))
-    (names : Option NumSet) (cut : DataSem.State C F)
+    (names : Option NumSet) (cut : Flapjack.Compiler.Backend.DataSem.State C F)
     (premises : stateRel conf l1 l2 source target none locs ∧
       DataSem.cutStateOpt names source = some cut) :
     stateRel conf l1 l2 cut target none locs := by
@@ -84,6 +85,21 @@ theorem stateRel_cutOpt {width : Nat} [NeZero width] {C F : Type}
         simpa [DataSem.cutStateOpt, DataSem.cutState, envRun] using cutRun.symm
       subst cut
       exact stateRel_cutEnv conf l1 l2 source target locs names env ⟨related, envRun⟩
+
+/-- A local read after an optional cut is witnessed by a related source state. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "state_rel_cut_state_opt_get_var"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem stateRel_cutOpt_getVar {width : Nat} [NeZero width] {C F : Type}
+    (conf : Config) (l1 l2 : Nat) (source : Flapjack.Compiler.Backend.DataSem.State C F)
+    (target : WordSemStateFiniteExact width C F) (locs : List (Nat × Nat))
+    (names : Option NumSet) (cut : Flapjack.Compiler.Backend.DataSem.State C F)
+    (key : Nat) (value : Flapjack.Compiler.Backend.DataSem.Value)
+    (premises : stateRel conf l1 l2 source target none locs ∧
+      DataSem.cutStateOpt names source = some cut ∧ DataSem.getVar key cut.locals = some value) :
+    ∃ source', stateRel conf l1 l2 source' target none locs ∧
+      DataSem.getVar key source'.locals = some value := by
+  exact ⟨cut, stateRel_cutOpt conf l1 l2 source target locs names cut ⟨premises.1, premises.2.1⟩,
+    premises.2.2⟩
 
 /-- A successful source cut has a corresponding successful target cut. -/
 @[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "cut_env_IMP_cut_env"
