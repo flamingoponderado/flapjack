@@ -120,3 +120,9 @@ cut_names_adjust_set_insert_3_typed=cut_names (adjust_set (names :β sptree$num_
 case_EQ_SOME_IFF_typed=(case (p :β option) of (NONE :β option) => (NONE :α option) | SOME x => (g :β -> α option) x) = SOME (y :α) ⇔ ∃(x :β). p = SOME x ∧ g x = SOME y
 state_rel_set_store_AllocSize_typed=(state_rel (c :data_to_word$config) (l1 :num) (l2 :num) (s :(α, β) dataSem$state) (set_store AllocSize (Word (w :γ word)) (t :(γ, α, β) wordSem$state)) (v :(v # γ word_loc) list option) (locs :(num # num) list) :bool) ⇔ (state_rel c l1 l2 s t v locs :bool)
 inter_insert_typed=inter (insert (n :num) (x :α) (t1 :α sptree$num_map) :α sptree$num_map) (t2 :β sptree$num_map) = if n ∈ (domain t2 :num -> bool) then (insert n x (inter t1 t2) :α sptree$num_map) else inter t1 t2
+lookup_0_adjust_set_typed=(lookup (0 :num) (adjust_set (l :α sptree$num_map)) :unit option) = (NONE :unit option)
+lookup_1_adjust_set_typed=(lookup (1 :num) (adjust_set (l :α sptree$num_map)) :unit option) = (NONE :unit option)
+lookup_3_adjust_set_typed=(lookup (3 :num) (adjust_set (l :α sptree$num_map)) :unit option) = (NONE :unit option)
+lookup_5_adjust_set_typed=(lookup (5 :num) (adjust_set (l :α sptree$num_map)) :unit option) = (NONE :unit option)
+lookup_ODD_adjust_set_typed=ODD (n :num) ⇒ (lookup n (adjust_set (l :α sptree$num_map)) :unit option) = (NONE :unit option)
+wf_adjust_set_typed=wf (adjust_set (s :α sptree$num_map))

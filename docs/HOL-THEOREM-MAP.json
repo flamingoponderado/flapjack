@@ -23542,6 +23542,36 @@
   "statement_status": "reviewed_exact", "reviewer": "Compared inter_insert_typed: intersection distributes over insertion according to membership in the right tree, with independent tree payload types and no well-formedness assumptions."
 },
 {
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "lookup_0_adjust_set",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/AdjustedSet.lean", "lean_name": "lookup_zero_adjustSet",
+  "statement_status": "reviewed_exact", "reviewer": "Compared lookup_0_adjust_set_typed: lookup at zero for an arbitrary source tree payload."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "lookup_1_adjust_set",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/AdjustedSet.lean", "lean_name": "lookup_one_adjustSet",
+  "statement_status": "reviewed_exact", "reviewer": "Compared lookup_1_adjust_set_typed: lookup at one for an arbitrary source tree payload."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "lookup_3_adjust_set",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/AdjustedSet.lean", "lean_name": "lookup_three_adjustSet",
+  "statement_status": "reviewed_exact", "reviewer": "Compared lookup_3_adjust_set_typed: lookup at three for an arbitrary source tree payload."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "lookup_5_adjust_set",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/AdjustedSet.lean", "lean_name": "lookup_five_adjustSet",
+  "statement_status": "reviewed_exact", "reviewer": "Compared lookup_5_adjust_set_typed: lookup at five for an arbitrary source tree payload."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "lookup_ODD_adjust_set",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/AdjustedSet.lean", "lean_name": "lookup_odd_adjustSet",
+  "statement_status": "reviewed_exact", "reviewer": "Compared lookup_ODD_adjust_set_typed: lookup at an arbitrary odd key for an arbitrary source tree payload."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "wf_adjust_set",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/AdjustedSet.lean", "lean_name": "wf_adjustSet",
+  "statement_status": "reviewed_exact", "reviewer": "Compared wf_adjust_set_typed: well-formedness of the adjusted tree for an arbitrary source tree payload."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "cut_env_IMP_MEM",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CutEnvProperties.lean", "lean_name": "cutEnv_imp_mem",
   "statement_status": "reviewed_exact", "reviewer": "Compared cut_env_IMP_MEM_typed: successful source cut makes an arbitrary key present exactly when it is present in the requested set."

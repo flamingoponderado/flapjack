@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Compiler.Backend.DataToWord.Variables
 public import Flapjack.Misc.Sptree.ToAList
+public import Flapjack.Misc.Sptree.Wf
 public import Mathlib.Tactic
 
 @[expose] public section
@@ -92,5 +93,44 @@ theorem not_three_adjustSet {α : Type} (names : Spt α) : ¬ sptDomain (adjustS
 @[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "NOT_5_domain"]
 theorem not_five_adjustSet {α : Type} (names : Spt α) : ¬ sptDomain (adjustSet names) 5 :=
   oddNotAdjusted names 5 rfl
+
+
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "lookup_0_adjust_set"]
+theorem lookup_zero_adjustSet {α : Type} (names : Spt α) :
+    sptLookup 0 (adjustSet names) = none := by
+  have absent : ¬ sptDomain (adjustSet names) 0 := by
+    intro member
+    obtain ⟨n, eq, _⟩ := (adjustSet_domain names 0).mp member
+    simp only [adjustVar] at eq
+    omega
+  cases h : sptLookup 0 (adjustSet names) <;> simp_all [sptDomain]
+
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "lookup_1_adjust_set"]
+theorem lookup_one_adjustSet {α : Type} (names : Spt α) :
+    sptLookup 1 (adjustSet names) = none := by
+  have absent := not_one_adjustSet names
+  cases h : sptLookup 1 (adjustSet names) <;> simp_all [sptDomain]
+
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "lookup_3_adjust_set"]
+theorem lookup_three_adjustSet {α : Type} (names : Spt α) :
+    sptLookup 3 (adjustSet names) = none := by
+  have absent := not_three_adjustSet names
+  cases h : sptLookup 3 (adjustSet names) <;> simp_all [sptDomain]
+
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "lookup_5_adjust_set"]
+theorem lookup_five_adjustSet {α : Type} (names : Spt α) :
+    sptLookup 5 (adjustSet names) = none := by
+  have absent := not_five_adjustSet names
+  cases h : sptLookup 5 (adjustSet names) <;> simp_all [sptDomain]
+
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "lookup_ODD_adjust_set"]
+theorem lookup_odd_adjustSet {α : Type} (n : Nat) (names : Spt α)
+    (odd : n % 2 = 1) : sptLookup n (adjustSet names) = none := by
+  have absent := oddNotAdjusted names n odd
+  cases h : sptLookup n (adjustSet names) <;> simp_all [sptDomain]
+
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "wf_adjust_set"]
+theorem wf_adjustSet {α : Type} (names : Spt α) : sptWf (adjustSet names) = true := by
+  exact sptWfFromAList _
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
