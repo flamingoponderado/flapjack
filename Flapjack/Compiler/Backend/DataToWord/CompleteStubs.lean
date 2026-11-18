@@ -34,17 +34,6 @@ def stubs {width : Nat} [NeZero width] (conf : Config) :
   (fixedStubs? conf).get (by
     obtain ⟨result, h⟩ := fixedStubs_succeeds (width := width) conf
     simp [h]) ++
-  (WordBignum.generateStubs width bignumLocation).get (by
-    simp [WordBignum.generateStubs])
-
-/-- The total table preserves the result of the former option-valued
-composition for every configuration and positive word width. -/
-theorem stubs_eq_option {width : Nat} [NeZero width] (conf : Config) :
-    (do
-      let fixed ← fixedStubs? (width := width) conf
-      let generated ← WordBignum.generateStubs width bignumLocation
-      pure (fixed ++ generated)) = some (stubs conf) := by
-  obtain ⟨fixed, hf⟩ := fixedStubs_succeeds (width := width) conf
-  simp [stubs, hf, WordBignum.generateStubs]
+  WordBignum.generatedBignumStubs width bignumLocation
 
 end Flapjack.Compiler.Backend.DataToWord

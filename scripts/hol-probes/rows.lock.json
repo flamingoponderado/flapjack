@@ -101,7 +101,7 @@
     {"bytes": 251, "out": "bignum_compile_exp_probe.out", "rows": 5, "sha256": "f598d2077a88cb7f1018348a04f238e7c202002239abce71b3b2988c949c0d00"},
     {"bytes": 6580, "out": "bignum_compile_probe.out", "rows": 23, "sha256": "463901a3a62bbcdee9f6ade7513e658d7bceb1e8c30c9c6e68a11163912e905d"},
     {"bytes": 1812, "out": "bignum_helpers_probe.out", "rows": 20, "sha256": "a7eae35463e4fd2a9388fed776529de3aaf7560ce420a224e87ed8490b000b3e"},
-    {"bytes": 40842, "out": "bignum_mini_probe.out", "rows": 3, "sha256": "aea1e5e2f8a60da297810188f81aa63cc65b5549d2defbde57b9e37c72a0e357"},
+    {"bytes": 88026, "out": "bignum_mini_probe.out", "rows": 6, "sha256": "18a11f8389fdea271b5bba6e839c9bdab6049c01f982720289c8deeb64eb2333"},
     {"bytes": 597, "out": "bignum_mini_types_probe.out", "rows": 16, "sha256": "f4a1317d4e228fa7c6a89f5298bf2876d779c167ec2646c0f1b0288d3a625825"},
     {"bytes": 52893, "out": "bignum_word_probe.out", "rows": 1, "sha256": "f8ef288c9475f60ca86248254462a83f9488818a33eb97bafe774ac7a84cd855"},
     {"bytes": 6574, "out": "binary_ieee_arith_probe.out", "rows": 11, "sha256": "a2cb9579b438dec7c876c20af1d4457e806d4707c7569b69401f35bec27072aa"},

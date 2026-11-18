@@ -648,7 +648,7 @@ run_probe bignum_helpers_probeScript.sml bignum_helpers_probe.out \
 run_probe bignum_compile_probeScript.sml bignum_compile_probe.out \
   compile_type has_compiled_type skip continue assign recurse loop_new loop_reused loop_seq load store sub divide delete loop_body swap if_reg if_imm add multiply "$cake_dir/compiler/backend/word_bignumScript.sml" "$cake_dir/compiler/backend"
 run_probe bignum_mini_probeScript.sml bignum_mini_probe.out \
-  mini_type generic mini "$cake_dir/compiler/backend/word_bignumScript.sml" "$cake_dir/compiler/backend"
+  mini_type generic generated_bignum_stubs_def_typed "$cake_dir/compiler/backend/word_bignumScript.sml" "$cake_dir/compiler/backend"
 run_probe bignum_mini_types_probeScript.sml bignum_mini_types_probe.out \
   skip assign delete seq load store if swap add sub mul div loop continue rec loop_body "$cake_dir/compiler/backend/word_bignumScript.sml" "$cake_dir/compiler/backend"
 run_probe flat_to_clos_globals_probeScript.sml flat_to_clos_globals_probe.out \
