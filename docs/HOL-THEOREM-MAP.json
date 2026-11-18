@@ -8484,6 +8484,15 @@
   "reviewer": "Independent comparison with the HOL source and get_real_byte_offset_lemma_typed: the successful word lookup and original good-dimension premise imply the same byte-offset expression result. The qualifiers record the word-state finite maps and positive-width word carrier; compiler and FFI types remain independent."
 },
 {
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "memcopy_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/MemCopy.lean",
+  "lean_name": "memcopy",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared the original definition and typed capture: count, source and destination word addresses, independent memory payload, Boolean domain, sequential source read and destination update, zero case, failure case and word-sized address increment agree. The qualifier records the positive-width BitVec translation."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_bignumProofScript.sml",
   "hol_name": "get_real_addr_lemma",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Bignum/RealAddress.lean",

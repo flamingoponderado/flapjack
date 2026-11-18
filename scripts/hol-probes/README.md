@@ -1,7 +1,7 @@
 `data_to_word_assign_roots_probe.out` captures the exported HOL root-invariant,
 memory-relation variable-lookup and root-reordering, real-offset and
 byte-offset evaluation, positive and negative immediate-root theorems, and the
-value-array dereference and real-address evaluation theorems with
+value-array dereference, real-address evaluation, and memory-copy definition with
 inferred types. Regenerate
 with `HOL_PROBE_ONLY=data_to_word_assign_roots_probeScript.sml scripts/hol-probes/regenerate.sh`
 using the pinned CakeML and HOL revisions. This is source-review evidence,
