@@ -994,4 +994,96 @@ private theorem stackFrameSwap_returningForce {C F : Type} (dest : Nat) (live : 
                           · exact setVar_frameSwap dest value relPopped
                           · simpa [setVar] using stackPopped
 
+/-- The `Call` case without a destination: a tail call looks the body up in the
+    swapped frame-size map, runs it at the call state, and keeps the relation
+    through the body. Flapjack infrastructure toward the port of HOL
+    `evaluate_swap_stack_frame_sizes_aux`; no separate HOL original. -/
+private theorem stackFrameSwap_tailCall {C F : Type} (dest : Option Nat) (names : List Nat)
+    (handler : Option (Nat × DataLang.Prog)) (state : State C F)
+    (bodyIH : ∀ (body : DataLang.Prog) (called : State C F),
+      called.clock < state.clock → StackFrameSwapAt body called) :
+    StackFrameSwapAt (.call none dest names handler) state := by
+  intro res next other run h rel
+  have localsEq := frameSwapState_locals h
+  have clockEq := frameSwapState_clock h
+  have codeEq := frameSwapState_code h
+  cases vars : DataSem.getVars names state.locals with
+  | none =>
+    simp only [evaluate, vars, typeError, Prod.mk.injEq] at run
+    obtain ⟨rfl, rfl⟩ := run
+    refine ⟨other, ?_, h, rel⟩
+    simp [evaluate, typeError, localsEq, vars]
+  | some values =>
+    have varsOther : DataSem.getVars names other.locals = some values := by
+      rw [localsEq]
+      exact vars
+    cases found : findCode dest values state.code state.stackFrameSizes with
+    | none =>
+      obtain ⟨_, foundOther⟩ := findCode_size_upto dest values state.code
+        state.stackFrameSizes other.stackFrameSizes none found
+      simp only [evaluate, vars, found, typeError, Prod.mk.injEq] at run
+      obtain ⟨rfl, rfl⟩ := run
+      refine ⟨other, ?_, h, rel⟩
+      simp [evaluate, typeError, varsOther, codeEq, foundOther]
+    | some foundEntry =>
+      obtain ⟨otherSize, foundOther⟩ := findCode_size_upto dest values state.code
+        state.stackFrameSizes other.stackFrameSizes foundEntry found
+      obtain ⟨args, body, size⟩ := foundEntry
+      have foundOther' : findCode dest values state.code other.stackFrameSizes =
+          some (args, body, otherSize) := by simpa using foundOther
+      cases handler with
+      | some handled =>
+        simp only [evaluate, vars, found, Option.isSome_some, if_true, typeError,
+          Prod.mk.injEq] at run
+        obtain ⟨rfl, rfl⟩ := run
+        refine ⟨other, ?_, h, rel⟩
+        simp [evaluate, typeError, varsOther, codeEq, foundOther']
+      | none =>
+        by_cases zero : state.clock = 0
+        · simp only [evaluate, vars, found, Option.isSome_none, Bool.false_eq_true, if_false,
+            zero, timeoutError] at run
+          obtain ⟨rfl, rfl⟩ := run
+          refine ⟨flushState true other, ?_, ?_, ?_⟩
+          · simp [evaluate, timeoutError, varsOther, codeEq, foundOther', clockEq, if_pos zero]
+          · exact flushState_frameSwap true h
+          · simp [flushState]
+        · let called := DataSem.callEnv args size (DataSem.decClock state)
+          let calledOther := DataSem.callEnv args otherSize (DataSem.decClock other)
+          have clockLt : called.clock < state.clock := by
+            simp only [called, DataSem.callEnv, DataSem.decClock]
+            omega
+          have relClock : FrameSwapState (DataSem.decClock state) (DataSem.decClock other) := by
+            rw [h]
+            simp [DataSem.decClock]
+          have relCall : FrameSwapState called calledOther :=
+            callEnv_frameSwap args size otherSize (DataSem.decClock state)
+              (DataSem.decClock other) relClock
+          have stackCall : List.Forall₂ stackFrameSizeRel called.stack calledOther.stack := by
+            simpa [called, calledOther, DataSem.callEnv, DataSem.decClock] using rel
+          cases bodyRun : evaluate body called with
+          | mk outcome last =>
+            obtain ⟨lastOther, bodyOther, relBody, stackBody⟩ :=
+              bodyIH body called clockLt outcome last calledOther bodyRun relCall stackCall
+            have bodyRun' :
+                evaluate body (DataSem.callEnv args size (DataSem.decClock state)) =
+                  (outcome, last) := bodyRun
+            have bodyOther' :
+                evaluate body (DataSem.callEnv args otherSize (DataSem.decClock other)) =
+                  (outcome, lastOther) := bodyOther
+            simp only [evaluate, vars, found, Option.isSome_none, Bool.false_eq_true, if_false,
+              zero] at run
+            rw [bodyRun'] at run
+            cases outcome with
+            | none =>
+              simp only [typeError] at run
+              obtain ⟨rfl, rfl⟩ := run
+              refine ⟨lastOther, ?_, relBody, stackBody⟩
+              simp [evaluate, varsOther, codeEq, foundOther', clockEq, if_neg zero,
+                Option.isSome_none, bodyOther', typeError]
+            | some stopped =>
+              obtain ⟨rfl, rfl⟩ := run
+              refine ⟨lastOther, ?_, relBody, stackBody⟩
+              simp [evaluate, varsOther, codeEq, foundOther', clockEq, if_neg zero,
+                Option.isSome_none, bodyOther']
+
 end Flapjack.Compiler.Backend.DataProps
