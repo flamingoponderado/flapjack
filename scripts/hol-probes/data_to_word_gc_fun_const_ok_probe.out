@@ -93,3 +93,4 @@ bad_dest_args_def_polymorphic_typed=∀(dest :α option) (args :β list). bad_de
 data_find_code_typed=(find_code (dest :num option) (xs :v list) (code :(num # α) sptree$num_map) (fs :β sptree$num_map) :(v list # α # β option) option) = SOME ((ys :v list),(prog :α),(ss :β option)) ⇒ ¬bad_dest_args dest xs
 gc_s_key_eq_LENGTH_typed=∀(xs :α stack_frame list) (ys :α stack_frame list). s_key_eq xs ys ⇒ LENGTH xs = LENGTH ys
 gc_s_key_eq_LASTN_typed=∀(xs :α stack_frame list) (ys :α stack_frame list) (n :num). s_key_eq xs ys ⇒ s_key_eq (LASTN n xs) (LASTN n ys)
+evaluate_mk_loc_EQ_typed=(evaluate ((q :α wordLang$prog),(t :(α, β, γ) wordSem$state)) :α result option # (α, β, γ) wordSem$state) = ((NONE :α result option),(t1 :(α, β, γ) wordSem$state)) ⇒ (mk_loc (jump_exc t1 :((α, β, γ) wordSem$state # num # num) option) :α word_loc) = (mk_loc (jump_exc t :((α, β, γ) wordSem$state # num # num) option) :α word_loc)

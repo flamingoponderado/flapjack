@@ -119,3 +119,4 @@ val _ = pr_typed "bad_dest_args_def_polymorphic_typed" wordSemTheory.bad_dest_ar
 val _ = pr_typed "data_find_code_typed" data_to_word_gcProofTheory.data_find_code;
 val _ = pr_typed "gc_s_key_eq_LENGTH_typed" data_to_word_gcProofTheory.s_key_eq_LENGTH;
 val _ = pr_typed "gc_s_key_eq_LASTN_typed" data_to_word_gcProofTheory.s_key_eq_LASTN;
+val _ = pr_typed "evaluate_mk_loc_EQ_typed" data_to_word_gcProofTheory.evaluate_mk_loc_EQ;
