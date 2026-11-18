@@ -802,7 +802,8 @@ theorem evaluate_add_clock {C F : Type} (program : DataLang.Prog) (state : State
     (premise : evaluate program state = (res, next) ∧
       res ≠ some (.err (.abort .timeoutError)))
     (ck : Nat) :
-    evaluate program (addClockState state ck) = (res, addClockState next ck) :=
+    evaluate program { state with clock := state.clock + ck } =
+      (res, { next with clock := next.clock + ck }) :=
   addClock_all program state ck res next premise.1 premise.2
 
 end Flapjack.Compiler.Backend.DataProps
