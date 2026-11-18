@@ -168,15 +168,4 @@ theorem traverseHeap_reachable {α β : Type} (heap : List (HeapElement α β))
   · exact traverseHeap_reachable_rtc heap roots after run root ptr path present
   · simp at impossible
 
-/-- Flapjack infrastructure: a traversal from roots that reach every data
-object accounts for at least the data length of the heap. -/
-theorem traverseHeap_dataLength_le {α β : Type} (heap : List (HeapElement α β))
-    (roots : List (HeapAddress α)) (after : List Nat)
-    (run : traverseHeap heap [] roots after)
-    (reachable : Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.allReachableFromRoots roots heap) :
-    Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.dataLength heap ≤
-      (after.map (Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.lookupLen heap)).sum := by
-  exact dataLength_le_reachableCover roots heap after reachable
-    (fun ptr reach => traverseHeap_reachable heap roots after ptr run reach)
-
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

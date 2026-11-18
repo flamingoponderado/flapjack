@@ -30,38 +30,6 @@ theorem ticks_letop_bounded (fuel : Nat) (program : List ClosLang.Exp) :
     rw [ih]
     rfl
 
-/-- The enabled executable known-function pipeline returns exactly the
-source-shaped free-variable, known, tick and let-operation outputs. This
-Lean-side production agreement has no standalone HOL declaration. -/
-theorem known_compileFuel_eq (fuel : Nat) (config : ClosKnown.Config) (program : List ClosLang.Exp)
-    (optimized : List (ClosLang.Exp × ValApprox)) (globals : Spt ValApprox)
-    (knownRun : ClosKnown.knownListTotal config (ClosFvs.compile program) [] .ln = (optimized, globals)) :
-    ClosKnown.compileFuel fuel (some config) program =
-      some (some { config with valApproxSpt := globals },
-        ClosLetop.compileList (ClosTicks.removeList (optimized.map Prod.fst))) := by
-  simp only [ClosKnown.compileFuel, ClosFvs.compileBounded_eq_source, ClosKnown.knownListBounded,
-    knownRun, bind, Option.bind]
-  have mapEq : (optimized.mapM fun entry => do
-      let e ← ClosTicks.removeBounded fuel entry.1
-      ClosLetop.compileBounded fuel e) =
-      some (ClosLetop.compileList (ClosTicks.removeList (optimized.map Prod.fst))) := by
-    simpa only [List.mapM_map, Function.comp_def] using ticks_letop_bounded fuel (optimized.map Prod.fst)
-  simp only [bind, Option.bind] at mapEq
-  rw [mapEq]
-  rfl
-
-/-- For every fuel and both configuration branches, the executed optimizer
-returns the source traversal. This Lean-side production agreement has no
-standalone HOL declaration. -/
-theorem compileFuel_eq_source (fuel : Nat) (config : Option Config) (program : List ClosLang.Exp) :
-    compileFuel fuel config program = some (compile config program) := by
-  cases config with
-  | none => rfl
-  | some c =>
-    cases run : knownListTotal c (ClosFvs.compile program) [] .ln with
-    | mk optimized globals =>
-      simpa [compile, run] using known_compileFuel_eq fuel c program optimized globals run
-
 /-- For every fuel and incremental input, the executed driver agrees with
 the source optimizer after applying the source static-configuration and
 configuration-update operations. This is Lean-side production agreement. -/

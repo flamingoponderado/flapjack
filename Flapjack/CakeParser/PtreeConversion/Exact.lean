@@ -867,10 +867,6 @@ theorem isAlphaChar_and_upper (c : HolChar) :
   rw [isAlphaChar_and_isUpperChar]
   rfl
 
-/-- `"*"` is not the symbolic constructor name `"::"`. -/
-theorem star_ne_cons : (ofString "*").explode ≠ [58, 58] := by
-  decide
-
 /-- A boolean `if` over two `Exp` options is a `some` of the `if`. -/
 theorem ite_some_exp (b : Bool) (x y : AstHOL.Exp) :
     (if b = true then some x else some y) = some (if b then x else y) := by
@@ -880,13 +876,6 @@ theorem ite_some_exp (b : Bool) (x y : AstHOL.Exp) :
 theorem ite_some_bool (b c : Bool) :
     (if b then (some true : Option Bool) else some c) = some (b || c) := by
   cases b <;> rfl
-
-/-- Deciding equality against the two-byte list `[58, 58]` splits into bytes. -/
-theorem decide_cons_cons (c : HolChar) (rest : List HolChar) :
-    decide (c :: rest = [58, 58]) = (decide (c = 58) && decide (rest = [58])) := by
-  cases rest with
-  | nil => simp [List.cons.injEq]
-  | cons c' rest' => simp [List.cons.injEq]
 
 /-- Structural equality of two `implode`s is equality of the byte lists. -/
 theorem implode_beq (d e : List HolChar) :
@@ -916,14 +905,6 @@ theorem isConstructorHOL_eq_constructorName (s : MlString) :
       simp [isConstructorHOL, isSymbolicConstructorHOL, ifMHOL, isAlphaChar_and_upper,
         ite_some_bool, implode_beq, PtreeConversion.constructorName, PtreeConversion.uppercase,
         ofString, MlString.explode, Flapjack.oHD]
-
-/-- `isSymbolicConstructorHOL` on an exploded name is the executed `== "::"`. -/
-theorem isSymbolicConstructorHOL_eq_beq (s : MlString) :
-    isSymbolicConstructorHOL s.explode = some (s == ofString "::") := by
-  cases s with
-  | implode d =>
-    simp [isSymbolicConstructorHOL, implode_beq, ofString, MlString.explode] <;> rfl
-
 
 /-- The exact generic `ptree_OpID` twin agrees with the executable conversion. -/
 theorem ptreeOpIDHOL_toGrammarTree (pt : CakeParser.ParseTree) :

@@ -3,7 +3,7 @@ module
 public import Flapjack.Compiler.Backend.SourceToFlat.ToData
 public import Flapjack.Compiler.Backend.BviToData.CompileSource
 public import Flapjack.Compiler.Backend.DataToWord.Total
-public import Flapjack.Compiler.Backend.DataToWord.Stubs
+public import Flapjack.Compiler.Backend.DataToWord.CompleteStubs
 public import Flapjack.Compiler.Backend.WordBignum.Generated64
 public import Flapjack.Compiler.Backend.WordBignum.Generate
 
@@ -54,9 +54,7 @@ def compileCakeToWordWithStubs64NoOptsFuel
     (word : DataToWord.Config) (decls : List AstHOL.Dec) :
     Option (Config × ClosToBvl.Config × Nat × List (Nat × Nat × WordLangProgHOL (BitVec 64)) × Nat) := do
   let (source, closure, start, code, next) ← compileCakeToWordNoOptsFuel fuel source closure word decls
-  let fixed ← DataToWord.fixedStubs? word
-  let bignum ← WordBignum.generateStubs 64 DataToWord.bignumLocation
-  pure (source, closure, start, fixed ++ bignum ++ code, next)
+  pure (source, closure, start, DataToWord.stubs word ++ code, next)
 
 /-- Continue the checked closure and BVI-inlining route to the 64-bit
 word stage. Unsupported upstream operations and exhausted fuel return `none`. -/
@@ -66,14 +64,11 @@ def compileCakeToWordWithStubsAndNames64InlineFuel
     Option (Config × ClosToBvl.Config × Nat × List (Nat × Nat × WordLangProgHOL (BitVec 64)) × Nat ×
       Spt Basis.Pure.MlString.MlString) := do
   let (source, closure, start, code, next, names) ← compileCakeToDataInlineFuel fuel source closure decls
-  let code := code.map fun (name, args, body) =>
-    (name, args + 1, (DataToWord.compileControl (width := 64) word name 2 body).1)
-  let fixed ← DataToWord.fixedStubs? word
-  let bignum ← WordBignum.generateStubs 64 DataToWord.bignumLocation
-  pure (source, closure, start, fixed ++ bignum ++ code, next, names)
+  let code := code.map (DataToWord.compilePart (width := 64) word)
+  pure (source, closure, start, DataToWord.stubs word ++ code, next, names)
 
 /-- Continue the checked BVL-optimized route through 64-bit word lowering.
-Earlier compilation and stub generation may return `none`. -/
+Earlier compilation may return `none`. -/
 def compileCakeToWord64OptimizedFuel (fuel inlineLimit cutSize : Nat) (splitSeq : Bool)
     (source : Config) (closure : ClosToBvl.Config) (word : DataToWord.Config)
     (decls : List AstHOL.Dec) :
@@ -81,11 +76,8 @@ def compileCakeToWord64OptimizedFuel (fuel inlineLimit cutSize : Nat) (splitSeq 
       Spt Basis.Pure.MlString.MlString) := do
   let (source, closure, start, code, next, names) ←
     compileCakeToDataOptimizedFuel fuel inlineLimit cutSize splitSeq source closure decls
-  let code := code.map fun (name, args, body) =>
-    (name, args + 1, (DataToWord.compileControl (width := 64) word name 2 body).1)
-  let fixed ← DataToWord.fixedStubs? word
-  let bignum ← WordBignum.generateStubs 64 DataToWord.bignumLocation
-  pure (source, closure, start, fixed ++ bignum ++ code, next, names)
+  let code := code.map (DataToWord.compilePart (width := 64) word)
+  pure (source, closure, start, DataToWord.stubs word ++ code, next, names)
 
 /-- Continue the configured BVL/BVI pipeline through 64-bit word lowering. -/
 def compileCakeToWord64ConfiguredFuel (fuel : Nat) (source : Config) (closure : ClosToBvl.Config)
@@ -94,11 +86,7 @@ def compileCakeToWord64ConfiguredFuel (fuel : Nat) (source : Config) (closure : 
       Spt Basis.Pure.MlString.MlString) := do
   let (source, closure, bvlConfig, code, names) ← compileCakeToBviConfiguredFuel fuel source closure bvlConfig decls
   let code := code.map fun (name, args, body) =>
-    let body := DataToWord.compileControl (width := 64) word name 2
-      (BviToData.compileExp args body)
-    (name, args + 1, body.1)
-  let fixed ← DataToWord.fixedStubs? word
-  let bignum ← WordBignum.generateStubs 64 DataToWord.bignumLocation
-  pure (source, closure, bvlConfig, fixed ++ bignum ++ code, names)
+    DataToWord.compilePart (width := 64) word (name, args, BviToData.compileExp args body)
+  pure (source, closure, bvlConfig, DataToWord.stubs word ++ code, names)
 
 end Flapjack.Compiler.Backend.SourceToFlat

@@ -55,6 +55,18 @@ theorem flatStack_values_eq_encStack {width : Nat} [NeZero width]
         simp only [flatStack, List.map_append, wordSemEncStack, ih]
         rw [joinEnv_values env gc keys]
 
+/-- Every encoded root occurs among the flattened related stack values. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "stack_rel_imp_subset"
+  (words_as_type_indexed_bitvec)]
+theorem stackRel_imp_subset {width : Nat} [NeZero width]
+    (source : List DataSem.Stack) (target : List (WordSemStackFrame width))
+    (related : List.Forall₂ stackRel source target) :
+    {word | word ∈ wordSemEncStack target} ⊆
+      {word | word ∈ (flatStack source target).map Prod.snd} := by
+  rw [flatStack_values_eq_encStack source target related]
+  intro word member
+  exact member
+
 @[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "FILTER_enc_stack_lemma"
   (words_as_type_indexed_bitvec)]
 theorem filter_encStack {width : Nat} [NeZero width]

@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Compiler.Inference.Unify.Encoding
 public import Flapjack.HOL.Unification.UnifDef.Choice
+public import Flapjack.HOL.Unification.UnifDef.OptionCodec
 
 @[expose] public section
 

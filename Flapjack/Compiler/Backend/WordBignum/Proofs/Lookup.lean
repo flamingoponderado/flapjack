@@ -5,31 +5,23 @@ public import Flapjack.Compiler.Backend.WordBignum.Proofs.Equality
 
 @[expose] public section
 
-/-! The executable code cache compares the complete syntax, including nested
-expressions. This is a Flapjack infrastructure fact, not a HOL theorem port. -/
+/-! The polymorphic source cache lookup and its executable specialization. -/
 namespace Flapjack.Compiler.Backend.WordBignum
 
-/-- Proof-side first-match lookup using the checked decidable equality. -/
-def lookupCodeByEquality {width : Nat} (code : Mini (BitVec width)) :
-    List (CodeEntry width) → Option Nat
-  | [] => none
-  | (body, index, _) :: rest => if code = body then some index else lookupCodeByEquality code rest
+/-- HOL's first-match code lookup, with unrestricted key and code types.
+The executable compiler uses `hasCompiled`; the theorem below connects it to
+this source definition using the checked structural equality. -/
+@[hol "cakeml/compiler/backend/word_bignumScript.sml" "has_compiled_def"]
+noncomputable def hasCompiledHOL {α β : Type} (code : α) (cs : Nat × List (α × Nat × β)) : Sum Nat Nat := by
+  classical
+  exact hasCompiled code cs
 
-/-- Cache lookup implements first-match propositional equality. -/
-theorem lookupCode_eq_byEquality {width : Nat} (code : Mini (BitVec width))
-    (entries : List (CodeEntry width)) : lookupCode code entries = lookupCodeByEquality code entries := by
-  induction entries with
-  | nil => rfl
-  | cons entry entries ih =>
-    obtain ⟨body, index, result⟩ := entry
-    by_cases h : code = body
-    · subst code
-      have eq := (miniEq_iff body body).mpr rfl
-      simp [lookupCode, lookupCodeByEquality, eq]
-    · have ne : miniEq code body = false := by
-        cases he : miniEq code body with
-        | false => rfl
-        | true => exact False.elim (h ((miniEq_iff code body).mp he))
-      simp [lookupCode, lookupCodeByEquality, ne, h, ih]
+/-- The executed cache operation agrees with the polymorphic HOL definition.
+This is a representation-connection theorem, with no separate HOL name. -/
+theorem hasCompiled_eq_HOL {α β : Type} [inst : DecidableEq α]
+    (code : α) (cs : Nat × List (α × Nat × β)) :
+    hasCompiled code cs = hasCompiledHOL code cs := by
+  exact congrArg (fun d : DecidableEq α => @hasCompiled α β d code cs)
+    (Subsingleton.elim inst (Classical.typeDecidableEq α))
 
 end Flapjack.Compiler.Backend.WordBignum

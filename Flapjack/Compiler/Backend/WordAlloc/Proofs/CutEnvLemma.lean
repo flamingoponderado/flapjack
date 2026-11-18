@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutEnvs
 public import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutEnv
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.CutEnvs
 
 @[expose] public section
 
@@ -28,12 +29,7 @@ theorem cutEnvLemma {β : Type}
   rcases h with ⟨hinj, hcut, hrel⟩
   obtain ⟨x1, x2, hcuts, hx⟩ :
       ∃ x1 x2, wordSemCutEnvs (n1, n2) sloc = some (x1, x2) ∧ x = sptUnion x2 x1 := by
-    cases hcs : wordSemCutEnvs (n1, n2) sloc with
-    | none => simp [wordSemCutEnv, hcs] at hcut
-    | some p =>
-      obtain ⟨a, b⟩ := p
-      simp only [wordSemCutEnv, hcs] at hcut
-      exact ⟨a, b, rfl, (Option.some.inj hcut).symm⟩
+    exact Compiler.Backend.DataToWord.Proofs.Gc.cutEnv_imp_cutEnvs (n1, n2) sloc x hcut
   have hinj1 : ∀ a b, sptDomain n1 a → sptDomain n1 b → f a = f b → a = b :=
     fun a b ha hb heq => hinj a b (Or.inl ha) (Or.inl hb) heq
   have hinj2 : ∀ a b, sptDomain n2 a → sptDomain n2 b → f a = f b → a = b :=

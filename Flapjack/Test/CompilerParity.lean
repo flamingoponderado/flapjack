@@ -8,6 +8,7 @@ import Flapjack.Test.GeneraliseMapAudit
 import Flapjack.Test.GeneraliseLengthAudit
 import Flapjack.Test.InferSubstSubmapAudit
 import Flapjack.Test.TypeSubstWalkstarAudit
+import Flapjack.Test.UnifyEqTunifyAudit
 import Flapjack.Test.SimulationBodyAudit
 import Flapjack.Test.PredicateDomainQualificationAudit
 import Flapjack.Test.ClosSemGeneratedSizeParity

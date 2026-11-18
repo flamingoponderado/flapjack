@@ -21,8 +21,8 @@ private def initial : State := ⟨0, .ln, 15⟩
 private def idDec : Dec := .dlet unknownLoc (.pvar (ofString "id"))
   (.fn (ofString "x") (.var (.short (ofString "x"))))
 
-#guard match inferDeclsFuel 100 100 emptyEnv [idDec] initial with
-  | .ok (env, s) =>
+#guard match inferDeclsState 100 100 emptyEnv [idDec] initial with
+  | (.ok env, s) =>
     nsLookup env.infV (.short (ofString "id")) == some (1, .app [.varDb 0, .varDb 0] 4) &&
     s.nextUvar == 2 && s.nextId == 15 &&
     sptLookup 1 s.subst == some (.app [.uvar 0, .uvar 0] 4)
@@ -31,8 +31,8 @@ private def idDec : Dec := .dlet unknownLoc (.pvar (ofString "id"))
 private def datatypeDec : Dec := .dtype unknownLoc
   [([], ofString "t", [(ofString "A", []), (ofString "B", [])])]
 
-#guard match inferDeclsFuel 100 100 emptyEnv [datatypeDec] initial with
-  | .ok (env, s) => match env.infC, env.infT with
+#guard match inferDeclsState 100 100 emptyEnv [datatypeDec] initial with
+  | (.ok env, s) => match env.infC, env.infT with
     | .bind [(b, ([], [], 15)), (a, ([], [], 15))] [],
       .bind [(t, ([], .app [] 15))] [] =>
         a == ofString "A" && b == ofString "B" && t == ofString "t" && s.nextId == 16

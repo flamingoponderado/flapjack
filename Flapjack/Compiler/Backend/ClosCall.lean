@@ -197,8 +197,4 @@ def compileIncFuel? (fuel : Nat) (known : NumSet)
   let (expressions, state) ← callsListBounded fuel program.1 (known, [])
   pure (state.1, (expressions, state.2))
 
-/-- Apply the bounded closure-call pass when enabled. -/
-def compileFuel (fuel : Nat) (enabled : Bool) (es : List Exp) : Option (List Exp × State) :=
-  if enabled then callsListBounded fuel es (.ln, []) else some (es, (.ln, []))
-
 end Flapjack.Compiler.Backend.ClosCall

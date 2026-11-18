@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.HOL.Unification.UnifDef.Tunify
+public import Flapjack.HOL.Unification.UnifDef.OptionCodec
 
 @[expose] public section
 
@@ -67,6 +68,29 @@ private theorem unifySpecEqAux {α : Type}
         simp only [Option.bind]
         exact ih.1 a d b e mid ⟨hw, l, r, first⟩ midWfs
   exact all s t1 t2 hw
+
+/-- The source theorem's input substitution survives the canonical map codec. -/
+theorem holFmapAsFiniteSupportParamWitness_specifiedUnifyEqAux_s {α : Type}
+    (s : HolFiniteMapExact Nat (Term α)) (key : Nat) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad s)).lookup key = s.lookup key ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad s)).finiteSupport = s.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad s) = s := by
+  cases s
+  exact ⟨rfl, rfl, rfl⟩
+
+/-- Both option-valued map observations survive the codec and their equality
+    is reflected by it. This unconditional representation witness does not
+    assert that either operation agrees with its HOL source. -/
+theorem holFmapAsFiniteSupportGuardedOptionObservationsWitness_specifiedUnifyEqAux {α : Type}
+    (s : HolFiniteMapExact Nat (Term α)) (t1 t2 : Term α) :
+    ((specifiedUnify s t1 t2).map FiniteMapBroad.toBroad).map FiniteMapBroad.ofBroad =
+        specifiedUnify s t1 t2 ∧
+      ((tunifyAux s t1 t2).map FiniteMapBroad.toBroad).map FiniteMapBroad.ofBroad =
+        tunifyAux s t1 t2 ∧
+      ((specifiedUnify s t1 t2).map FiniteMapBroad.toBroad =
+          (tunifyAux s t1 t2).map FiniteMapBroad.toBroad ↔
+        specifiedUnify s t1 t2 = tunifyAux s t1 t2) :=
+  ⟨optionSubstCodecRoundtrip _, optionSubstCodecRoundtrip _, optionSubstCodecInjective _ _⟩
 
 /-- The chosen specification and restricted recursion agree under the source
     guard. This is infrastructure for HOL's `unify_eq_tunify`: the right

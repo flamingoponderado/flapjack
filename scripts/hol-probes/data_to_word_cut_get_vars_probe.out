@@ -1,0 +1,1 @@
+cut_env_get_vars_get_vars_typed=∀(vs :num list) (ws :α word_loc list) (ws' :α word_loc list). cut_env (kept_names :sptree$num_set # sptree$num_set) (t :(α, β, γ) wordSem$state).locals = SOME (y :α word_loc sptree$num_map) ∧ (get_vars vs (t with locals := y) :α word_loc list option) = SOME ws ∧ (get_vars vs t :α word_loc list option) = SOME ws' ⇒ ws = ws'

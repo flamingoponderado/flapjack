@@ -2516,6 +2516,26 @@ class DataToWordAssignDeclarationsTest(unittest.TestCase):
         self.assertEqual(parse(path, source.replace("val thm = Define q", "val thm = other q")), [])
 
 
+class WordBignumGeneratedDeclarationTest(unittest.TestCase):
+    def test_pinned_generated_name_and_line(self):
+        path = CHECKER["ROOT"] / CHECKER["WORD_BIGNUM_SCRIPT"]
+        source = path.read_text()
+        parse = CHECKER["word_bignum_mc_iop_declaration"]
+        self.assertEqual(parse(path, source), ("mc_iop_code_def", 412))
+        self.assertIsNone(REF_ERROR(path, "mc_iop_code_def", 412, {}))
+        self.assertIn("not at line", REF_ERROR(path, "mc_iop_code_def", 413, {}))
+        self.assertIn("declares no", REF_ERROR(path, "mc_iadd_code_def", None, {}))
+
+    def test_rejects_changed_source_wrong_path_and_hidden_invocation(self):
+        path = CHECKER["ROOT"] / CHECKER["WORD_BIGNUM_SCRIPT"]
+        source = path.read_text()
+        parse = CHECKER["word_bignum_mc_iop_declaration"]
+        self.assertIsNone(parse(Path("elsewhere/word_bignumScript.sml"), source))
+        self.assertIsNone(parse(path, source + "\n"))
+        hidden = source.replace("val def = mc_iop_def |> to_deep", " " * len("val def = mc_iop_def |> to_deep"))
+        self.assertIsNone(parse(path, source, hidden))
+
+
 class SmlCommentDeclarationsTest(unittest.TestCase):
     """SML comments nest and string literals are not comment starts."""
 

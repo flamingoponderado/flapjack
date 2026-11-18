@@ -41,10 +41,10 @@ def captureFrontend (config : SourceToFlat.Config) (decls : List AstHOL.Dec) : F
   ⟨decls, lifted, rawFlat, reducedFlat, patternedFlat, closure, config⟩
 
 /-- Capturing stages does not alter the executed source-to-closure result. -/
-theorem captureFrontend_result (fuel : Nat) (config : SourceToFlat.Config)
+theorem captureFrontend_result (config : SourceToFlat.Config)
     (decls : List AstHOL.Dec) :
-    SourceToFlat.compileCakeToClosFuel fuel config decls =
-      some ((captureFrontend config decls).config, (captureFrontend config decls).closure) := by
+    SourceToFlat.compileCakeToClos config decls =
+      ((captureFrontend config decls).config, (captureFrontend config decls).closure) := by
   rfl
 
 private def title (s : String) : List HolChar := (ofString ("# " ++ s ++ "\n\n")).explode

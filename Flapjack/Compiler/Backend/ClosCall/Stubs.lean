@@ -1,7 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.ClosCall
-public import Mathlib.Tactic
+import Mathlib.Tactic
 
 @[expose] public section
 

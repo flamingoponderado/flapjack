@@ -1,0 +1,39 @@
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Stubs
+public import Flapjack.Compiler.Backend.WordBignum.Generate
+
+@[expose] public section
+
+/-! Total executable stub table for data-to-word compilation. -/
+namespace Flapjack.Compiler.Backend.DataToWord
+open Flapjack Flapjack.Compiler.Backend.BackendCommon
+
+set_option maxRecDepth 10000 in
+set_option maxHeartbeats 1500000 in
+/-- Every location in the fixed table has an implementation, for every
+configuration and positive word width. This Flapjack-specific fact removes
+the option wrapper; it does not establish correspondence with HOL's stubs. -/
+theorem fixedStubs_succeeds {width : Nat} [NeZero width] (conf : Config) :
+    ∃ stubs, fixedStubs? (width := width) conf = some stubs := by
+  simp [fixedStubs?, compileConfiguredStub?, compileStub?,
+      fromListLocation, fromList1Location, refByteLocation, refArrayLocation,
+      replicateLocation, anyArithLocation, addLocation, subLocation, mulLocation,
+      divLocation, modLocation, compare1Location, compareLocation, equal1Location,
+      equalLocation, longDiv1Location, longDivLocation, memCopyLocation,
+      byteCopyLocation, byteCopyAddLocation, byteCopySubLocation, byteCopyNewLocation,
+      installLocation, installCodeLocation, installDataLocation, dummyLocation,
+      appendLocation, appendMainLoopLocation, appendLenLoopLocation, xorLoopLocation,
+      unusedLocation, stringCmpLoopLocation, wordNumStubs, stackNumStubs]
+
+/-- Assemble the fixed table and generated bignum entries in source order. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "stubs_def"
+  (words_as_type_indexed_bitvec)]
+def stubs {width : Nat} [NeZero width] (conf : Config) :
+    List (Nat × Nat × WordLangProgHOL (BitVec width)) :=
+  (fixedStubs? conf).get (by
+    obtain ⟨result, h⟩ := fixedStubs_succeeds (width := width) conf
+    simp [h]) ++
+  WordBignum.generatedBignumStubs width bignumLocation
+
+end Flapjack.Compiler.Backend.DataToWord

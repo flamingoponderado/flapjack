@@ -84,18 +84,4 @@ theorem compile_eq_of_success {width : Nat} [NeZero width] (fuel n l i : Nat)
   have same := compileFuel_unique _ _ n l i cs code canonical result hc h
   simp [compile, hc, same]
 
-/-- Every bounded retry agrees with the total entry point. -/
-theorem compileBounded_eq_compile {width : Nat} [NeZero width] (fuel n l i : Nat)
-    (cs : CodeAcc width) (code : Mini (BitVec width)) :
-    compileBounded fuel n l i cs code = some (compile n l i cs code) := by
-  cases h : compileFuel fuel n l i cs code with
-  | some result =>
-    have eq := compile_eq_of_success fuel n l i cs code result h
-    simp [compileBounded, h, eq]
-  | none =>
-    have bound : miniBudget code < max fuel (miniBudget code + 1) := by omega
-    obtain ⟨result, done⟩ := compileFuel_succeeds _ n l i cs code bound
-    have eq := compile_eq_of_success _ n l i cs code result done
-    simp [compileBounded, h, done, eq]
-
 end Flapjack.Compiler.Backend.WordBignum
