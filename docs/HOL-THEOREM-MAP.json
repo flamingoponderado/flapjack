@@ -141725,6 +141725,40 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
-    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, evaluate_PopHandler_clock_typed): source5554-5565; free-variable order t k f f' clk retained, with the frame triple bound as separate k, f and f' variables exactly as in the typed capture, HOL's F is the false constant and the two unused frame fields stay independently polymorphic. HOL's let prog = PopHandler F (k,f,f') Skip is kept, and the conclusion evaluate (prog,t with clock := clk) = (FST (evaluate (prog,t)), SND (evaluate (prog,t)) with clock := clk) is stated with Prod.fst/Prod.snd and the clock update on t; no conjunction premise. Clock freeness is established by Flapjack-only per-constructor helpers (clockFree_set, clockFree_stackFree) with no separate HOL originals. Positive BitVec width; evaluator closure inherits reals_as_rational_cuts (SOUNDNESS item 8) without a numerical FP assertion."
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, evaluate_PopHandler_clock_typed): source5554-5565; free-variable order t k f f' clk retained, with the frame triple bound as separate k, f and f' variables, all Nat as HOL annotates (k,f:num,f':num) and the regenerated typed capture confirms; HOL's F is the false constant. HOL's let prog = PopHandler F (k,f,f') Skip is kept, and the conclusion evaluate (prog,t with clock := clk) = (FST (evaluate (prog,t)), SND (evaluate (prog,t)) with clock := clk) is stated with Prod.fst/Prod.snd and the clock update on t; no conjunction premise. Clock freeness is established by Flapjack-only per-constructor helpers (clockFree_set, clockFree_stackFree) with no separate HOL originals. Positive BitVec width; evaluator closure inherits reals_as_rational_cuts (SOUNDNESS item 8) without a numerical FP assertion."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/RegisterWrite.lean",
+    "lean_name": "evaluateWStackStoreWReg1Strong",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "evaluate_wStackStore_wReg1_strong",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, evaluate_wStackStore_wReg1_strong_typed): source4550-4575; free-variable order ac k f f' s t lens r c x r' retained, with k, f, f', x and r' bound separately as the typed capture shows; HOL's single conjunction premise wReg1 r (k,f,f') = (x,r') ∧ EVEN r ∧ r < 2*f' + 2*k ∧ state_rel … is one hypothesis in HOL's order; the existential run of wStackStore x Skip on set_var r' c t as set_var r' c t', the full postrelation set_var r c s / set_var r' c t' and the stack-length/space facts retained. wReg1/wStackStore use the reviewed native renderings; EVEN is Lean's Even. Canonical five finite-map fields and positive width translation as qualified; evaluator closure inherits reals_as_rational_cuts without numerical FP claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/RegisterWrite.lean",
+    "lean_name": "evaluateWStackStoreWReg1New",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "evaluate_wStackStore_wReg1_new",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, evaluate_wStackStore_wReg1_new_typed): source4577-4606; free-variable order ac k f f' s t lens r c x r' kont LENGTH_t_stack t_stack_space retained, with k, f, f', x and r' bound separately; HOL's single conjunction premise wReg1 r (k,f,f') = (x,r') ∧ EVEN r ∧ r < 2*f' + 2*k ∧ (∃t'. evaluate (kont,t) = (NONE,set_var r' c t') ∧ state_rel … ∧ LENGTH t'.stack = LENGTH_t_stack ∧ t'.stack_space = t_stack_space) is one hypothesis in HOL's order; the existential run of Seq kont (wStackStore x Skip), the full postrelation and the same stack-length/space equalities retained. wReg1/wStackStore use the reviewed native renderings; EVEN is Lean's Even. Canonical five finite-map fields and positive width translation as qualified; evaluator closure inherits reals_as_rational_cuts without numerical FP claim."
   }
 ]

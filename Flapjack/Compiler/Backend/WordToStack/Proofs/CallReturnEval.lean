@@ -494,8 +494,8 @@ theorem clockFree_stackFree {width : Nat} [NeZero width] {C F : Type} (n : Nat) 
 
 /-- Flapjack-only clock freeness of the handler restoration program, used by
 `evaluate_PopHandler_clock`; no separate HOL original. -/
-theorem clockFree_popHandler {width : Nat} [NeZero width] {C F β γ : Type}
-    (k : Nat) (f : β) (f' : γ) :
+theorem clockFree_popHandler {width : Nat} [NeZero width] {C F : Type}
+    (k f f' : Nat) :
     ClockFree (C := C) (F := F) (width := width) (popHandlerNative false (k, f, f') .skip) := by
   unfold popHandlerNative
   exact clockFree_seq (width := width) _ _ (clockFree_stackLoad (width := width) _ _)
@@ -504,12 +504,13 @@ theorem clockFree_popHandler {width : Nat} [NeZero width] {C F β γ : Type}
         (clockFree_skip (width := width))))
 
 /-- Exact HOL `evaluate_PopHandler_clock` (`word_to_stackProofScript.sml:5554-5565`):
-the handler restoration program's evaluation is clock-shifted, with HOL's
-`F` the false constant and both unused frame fields independent. -/
+the handler restoration program's evaluation is clock-shifted. HOL's `F` is the
+false constant, and HOL annotates the frame triple as `(k,f:num,f':num)`, so
+`f` and `f'` are fixed `Nat`s. -/
 @[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "evaluate_PopHandler_clock"
   (words_as_type_indexed_bitvec)]
-theorem evaluatePopHandlerClock {width : Nat} [NeZero width] {C F β γ : Type}
-    (t : StackSemStateFiniteExact width C F) (k : Nat) (f : β) (f' : γ) (clk : Nat) :
+theorem evaluatePopHandlerClock {width : Nat} [NeZero width] {C F : Type}
+    (t : StackSemStateFiniteExact width C F) (k f f' : Nat) (clk : Nat) :
     (let prog := popHandlerNative false (k, f, f') .skip
      StackSemEvaluate.evaluate (prog, {t with clock := clk}) =
        (Prod.fst (StackSemEvaluate.evaluate (prog, t)),

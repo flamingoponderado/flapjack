@@ -81,10 +81,27 @@ val _ = show "wRegWrite2_thm1_typed" ``∀ac k f f' s t lens m v kont.
     state_rel ac k f f' (set_var (2 * m) v s) t' lens 0``;
 val _ = show "bits_to_word_bitstring_reverse_typed" ``∀xs.
     (bits_to_word xs:'a word) = bitstring$v2w (REVERSE xs)``;
-val _ = show "evaluate_PopHandler_clock_typed" ``∀(t:('a,'c,'ffi) stackSem$state) k f f' clk.
+val _ = show "evaluate_PopHandler_clock_typed" ``∀(t:('a,'c,'ffi) stackSem$state) (k:num) (f:num) (f':num) (clk:num).
     let prog = PopHandler F (k,f,f') Skip in
     evaluate (prog,t with clock:=clk) =
     (FST (evaluate(prog,t)), SND (evaluate(prog,t)) with clock:=clk)``;
 val _ = show "evaluate_PopHandler_seq_typed" ``∀prog (t:('a,'c,'ffi) stackSem$state) k f f'.
     evaluate (PopHandler F (k,f,f') prog,t) =
     evaluate (Seq (PopHandler F (k,f,f') Skip) prog,t)``;
+val _ = show "evaluate_wStackStore_wReg1_strong_typed" ``∀ac k f f' s t lens r c x r'.
+    wReg1 r (k,f,f') = (x,r') ∧ EVEN r ∧ r < 2 * f' + 2 * k ∧
+    state_rel ac k f f' s t lens 0 ⇒
+    ∃(t':('a,'b,'c) stackSem$state).
+    evaluate(wStackStore x Skip,(set_var r' c t)) = (NONE,set_var r' c t') ∧
+    state_rel ac k f f' (set_var r c s) (set_var r' c t') lens 0 ∧
+    LENGTH t'.stack = LENGTH t.stack ∧ t'.stack_space = t.stack_space``;
+val _ = show "evaluate_wStackStore_wReg1_new_typed" ``∀ac k f f' s t lens r c x r' kont
+    LENGTH_t_stack t_stack_space.
+    wReg1 r (k,f,f') = (x,r') ∧ EVEN r ∧ r < 2 * f' + 2 * k ∧
+    (∃t'. evaluate (kont,t) = (NONE,set_var r' c t') ∧
+      state_rel ac k f f' s t' lens 0 ∧
+      LENGTH t'.stack = LENGTH_t_stack ∧ t'.stack_space = t_stack_space) ⇒
+    ∃(t':('a,'b,'c) stackSem$state).
+    evaluate(Seq kont (wStackStore x Skip),t) = (NONE,t') ∧
+    state_rel ac k f f' (set_var r c s) t' lens 0 ∧
+    LENGTH t'.stack = LENGTH_t_stack ∧ t'.stack_space = t_stack_space``;
