@@ -8493,6 +8493,15 @@
   "reviewer": "Compared both original equations and the typed capture: empty input preserves memory; a nonempty list checks its current domain address, updates that address and advances by bytes_in_word before recursion, otherwise failing. Address and WordLoc payload share the positive word width."
 },
 {
+  "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+  "hol_name": "assign_ConsExtend_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
+  "lean_name": "assignConsExtend",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared the HOL definition and inferred-type capture, including the insufficient-argument and failed-header cases, allocation and store sequence, optional copy call, names and label handling. This extracted total definition is used directly by the production compiler; its positive word width is represented by BitVec."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
   "hol_name": "get_vars_IMP_domain",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/GetVarsCutEnv.lean",

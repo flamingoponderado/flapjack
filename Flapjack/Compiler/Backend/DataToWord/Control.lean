@@ -902,6 +902,38 @@ def assignTagEq {width : Nat} [NeZero width] (conf : Config) (_secn l dest : Nat
       boolResult dest .equal 1 (.imm (BitVec.ofNat width (16 * tag + 2)))], l)
   else (.assign (adjustVar dest) (.const 2), l)
 
+/-- Compile a constructor extension, including allocation and the optional
+    memory-copy call. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "assign_ConsExtend_def"
+  (words_as_type_indexed_bitvec)]
+def assignConsExtend {width : Nat} [NeZero width] (conf : Config) (secn l dest : Nat)
+    (names : Option NumSet) (tag : Nat) (args : List Nat) : WordLangProgHOL (BitVec width) × Nat :=
+  match args with
+  | old :: start :: len :: total :: rest =>
+      match encodeHeader (width := width) conf (4 * tag) 0 with
+      | none => (giveUp, l)
+      | some header =>
+          let names := names.getD .ln
+          let bytes := (wordSemBytesInWord : BitVec width)
+          let limit := min (2 ^ conf.lenSize) (2 ^ width / 16)
+          let total := adjustVar total
+          (wordListSeq [
+            .ite .test total (.imm 1) .skip giveUp,
+            .assign 1 (.var total), allocVar conf limit (sptListInsert args names),
+            .assign 1 (.lookup .nextFree),
+            .assign 5 (.op .or [shiftN .lsl (.var total) (width - conf.lenSize - 2), .const header]),
+            .assign 7 (shiftN .lsr (.var total) 2), .assign 9 (.const (BitVec.ofNat width tag)),
+            storeEach 1 (5 :: rest.map adjustVar) 0, makePtrBitsCode conf 9 7 3,
+            .set .nextFree (.op .add [.var 1, .const bytes, shiftN .lsl (.var 7) (wordShiftAmount width)]),
+            .assign 15 (.var (adjustVar len)),
+            .assign 13 (.op .add [.var 1, .const (bytes * BitVec.ofNat width (rest.length + 1))]),
+            .assign 11 (.op .add [realAddr conf (adjustVar old), .const bytes,
+              shiftVar .lsl (adjustVar start) (wordShiftAmount width - 2)]),
+            .ite .test 15 (.reg 15) (.assign (adjustVar dest) (.var 3))
+              (.mustTerminate (.call (some ([adjustVar dest], adjustSets names, .skip, secn, l))
+                (some memCopyLocation) [15, 11, 13, 3] none))], l + 1)
+  | _ => (.skip, l)
+
 /-- Flapjack's option-valued traversal. Its totality is proved separately;
 source-level correspondence with HOL's `comp` remains to be reviewed. -/
 def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
@@ -1158,31 +1190,7 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
   | l, .assign dest (.blockOp (.cons tag)) args _ =>
       some (compileCons conf l dest tag args)
   | l, .assign dest (.blockOp (.consExtend tag)) args names =>
-      match args with
-      | old :: start :: len :: total :: rest =>
-          match encodeHeader (width := width) conf (4 * tag) 0 with
-          | none => some (giveUp, l)
-          | some header =>
-              let names := names.getD .ln
-              let bytes := (wordSemBytesInWord : BitVec width)
-              let limit := min (2 ^ conf.lenSize) (2 ^ width / 16)
-              let total := adjustVar total
-              some (wordListSeq [
-                .ite .test total (.imm 1) .skip giveUp,
-                .assign 1 (.var total), allocVar conf limit (sptListInsert args names),
-                .assign 1 (.lookup .nextFree),
-                .assign 5 (.op .or [shiftN .lsl (.var total) (width - conf.lenSize - 2), .const header]),
-                .assign 7 (shiftN .lsr (.var total) 2), .assign 9 (.const (BitVec.ofNat width tag)),
-                storeEach 1 (5 :: rest.map adjustVar) 0, makePtrBitsCode conf 9 7 3,
-                .set .nextFree (.op .add [.var 1, .const bytes, shiftN .lsl (.var 7) (wordShiftAmount width)]),
-                .assign 15 (.var (adjustVar len)),
-                .assign 13 (.op .add [.var 1, .const (bytes * BitVec.ofNat width (rest.length + 1))]),
-                .assign 11 (.op .add [realAddr conf (adjustVar old), .const bytes,
-                  shiftVar .lsl (adjustVar start) (wordShiftAmount width - 2)]),
-                .ite .test 15 (.reg 15) (.assign (adjustVar dest) (.var 3))
-                  (.mustTerminate (.call (some ([adjustVar dest], adjustSets names, .skip, secn, l))
-                    (some memCopyLocation) [15, 11, 13, 3] none))], l + 1)
-      | _ => some (.skip, l)
+      some (assignConsExtend conf secn l dest names tag args)
   | l, .assign dest (.blockOp (.elemAt n)) args _ =>
       some (arg1 args (assignElemAt conf n l dest) (.skip, l))
   | l, .assign dest (.ffi ffiName) args names =>

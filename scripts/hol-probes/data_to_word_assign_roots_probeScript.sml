@@ -32,3 +32,5 @@ val _ = emit "IMP_store_list_SOME_typed" data_to_word_assignProofTheory.IMP_stor
 
 val _ = emit "get_vars_cut_env_typed" data_to_word_assignProofTheory.get_vars_cut_env;
 val _ = emit "get_vars_IMP_domain_typed" data_to_word_assignProofTheory.get_vars_IMP_domain;
+val _ = emit "assign_ConsExtend_def_typed" data_to_wordTheory.assign_ConsExtend_def;
+val _ = emit "assign_ConsExtend_expand_typed" data_to_word_assignProofTheory.assign_ConsExtend_expand;
