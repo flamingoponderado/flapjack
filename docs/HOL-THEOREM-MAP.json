@@ -23011,6 +23011,17 @@
   "reviewer": "Compared the complete definition with code_oracle_rel_def_typed: the compiler and oracle callbacks, buffer conditions, store lookups, arithmetic and stub bound agree. The store, compiler, oracle and two buffer-element word widths remain independently quantified as in HOL. The canonical finite-support store codec records the HOL finite-map translation; words use positive-width BitVec."
 },
 {
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "state_rel_thm",
+  "hol_line": 4503,
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/StateRelation.lean",
+  "lean_name": "stateRel",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared the full definition and state_rel_thm_typed: state, code, callback, stack, limit and memory clauses retain their source carriers and order. The canonical target-state codec records the finite-map fields; HOL words use positive-width BitVec. The presence conjuncts guard the timestamp and Globals observations."
+},
+{
   "hol_path": "cakeml/compiler/backend/word_bignumScript.sml",
   "hol_name": "mc_iop_code_def",
   "lean_path": "Flapjack/Compiler/Backend/WordBignum/GeneratedMini.lean",

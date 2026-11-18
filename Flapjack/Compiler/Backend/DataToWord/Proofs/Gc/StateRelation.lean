@@ -12,19 +12,29 @@ public import Flapjack.Misc.GoodDimindex
 
 @[expose] public section
 
-/-! Complete data-to-word state relation, pending compiler source review. -/
+/-! Complete data-to-word state relation. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
 open Flapjack Flapjack.Compiler.Backend.BackendProps
 
+namespace stateRelMap
+/-- Canonical roundtrip for the target state's finite-map fields. -/
+theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {C : Type} {F : Type} :
+    (∀ (state : WordSemStateBroad width C F) (h : state.FiniteSupport),
+      (WordSemStateBroad.ofBroad state h).toBroad = state) ∧
+    (∀ state : WordSemStateFiniteExact width C F,
+      WordSemStateBroad.ofBroad state.toBroad state.toBroad_finiteSupport = state) :=
+  WordSemStateExact.holFmapAsFiniteSupportWitness
+end stateRelMap
+
 /-- The full relation between data and word states, including compiled code,
 callbacks, stack shape, resource limits, and the GC-compatible memory
-abstraction. This follows the typed `state_rel_thm` source statement. It is
-untagged while the oracle relation and its carriers remain unreviewed against
-HOL. -/
+abstraction. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "state_rel_thm" 4503
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 noncomputable def stateRel {width : Nat} [NeZero width] {C F : Type}
     (conf : Config) (l1 l2 : Nat) (source : DataSem.State C F)
     (target : WordSemStateFiniteExact width C F)
-    (values : Option (List (DataSem.Value × WordLocW width)))
+    (values : Option (List (Flapjack.Compiler.Backend.DataSem.Value × WordLocW width)))
     (locs : List (Nat × Nat)) : Prop :=
   target.ffi = source.ffi ∧
   target.clock = source.clock ∧
@@ -54,7 +64,7 @@ noncomputable def stateRel {width : Nat} [NeZero width] {C F : Type}
       flatStack source.stack target.stack)
 
 /-- Replacing both clocks by the same value preserves the complete relation.
-The HOL tag is pending review of `stateRel`'s compiler dependencies. -/
+The HOL tag is pending independent review of this theorem. -/
 theorem stateRel_withClock {width : Nat} [NeZero width] {C F : Type}
     (conf : Config) (l1 l2 : Nat) (source : DataSem.State C F)
     (target : WordSemStateFiniteExact width C F)
@@ -65,7 +75,7 @@ theorem stateRel_withClock {width : Nat} [NeZero width] {C F : Type}
   exact ⟨related.1, rfl, related.2.2⟩
 
 /-- The complete relation does not constrain the word state's FP registers.
-The HOL tag is pending review of `stateRel`'s compiler dependencies. -/
+The HOL tag is pending independent review of this theorem. -/
 theorem stateRel_withFpRegs {width : Nat} [NeZero width] {C F : Type}
     (conf : Config) (l1 l2 : Nat) (source : DataSem.State C F)
     (target : WordSemStateFiniteExact width C F)
@@ -76,7 +86,7 @@ theorem stateRel_withFpRegs {width : Nat} [NeZero width] {C F : Type}
   exact related
 
 /-- A present source local has an adjusted target local under the complete
-relation. The HOL tag is pending review of `stateRel`'s compiler dependencies. -/
+relation. The HOL tag is pending independent review of this theorem. -/
 theorem stateRel_getVar {width : Nat} [NeZero width] {C F : Type}
     (conf : Config) (l1 l2 : Nat) (source : DataSem.State C F)
     (target : WordSemStateFiniteExact width C F)
@@ -93,7 +103,7 @@ theorem stateRel_getVar {width : Nat} [NeZero width] {C F : Type}
   exact ⟨word, hword⟩
 
 /-- Reading a list of source locals yields a same-length list of adjusted
-target locals. The HOL tag is pending review of `stateRel`'s dependencies. -/
+target locals. The HOL tag is pending independent review of this theorem. -/
 theorem stateRel_getVars {width : Nat} [NeZero width] {C F : Type}
     (conf : Config) (l1 l2 : Nat) (source : DataSem.State C F)
     (target : WordSemStateFiniteExact width C F) (locs : List (Nat × Nat))
