@@ -21,3 +21,4 @@ val _ = emit "reorder_2_lemma_typed" data_to_word_assignProofTheory.reorder_2_le
 val _ = emit "word_ml_inv_num_typed" data_to_word_memoryProofTheory.word_ml_inv_num;
 val _ = emit "word_ml_inv_neg_num_typed" data_to_word_memoryProofTheory.word_ml_inv_neg_num;
 val _ = emit "word_ml_inv_zero_typed" data_to_word_memoryProofTheory.word_ml_inv_zero;
+val _ = emit "memory_rel_Deref_prime_typed" data_to_word_memoryProofTheory.memory_rel_Deref';
