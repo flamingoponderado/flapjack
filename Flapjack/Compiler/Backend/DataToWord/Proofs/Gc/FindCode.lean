@@ -138,17 +138,16 @@ theorem findCode_correct {width : Nat} [NeZero width] {C F : Type}
     | word64 x => simp [DataSem.findCode, lastSnoc] at hfind
 
 
-/-- A successful data lookup for a returning call has a compiled word lookup
-and preserves the relation after pushing the caller's environments. -/
-@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "find_code_thm_ret"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
-theorem findCode_return {width : Nat} [NeZero width] {C F : Type}
+/-- Shared call lookup reasoning for the returning and handler cases of the
+HOL proof. The handler remains arbitrary until each source theorem fixes it. -/
+private theorem findCode_pushEnv {width : Nat} [NeZero width] {C F : Type}
     (conf : Flapjack.Compiler.Backend.DataToWord.Config) (l1 l2 q l : Nat) (source : Flapjack.Compiler.Backend.DataSem.State C F)
     (target : WordSemStateFiniteExact width C F) (locs : List (Nat × Nat))
     (args : List Nat) (values : List Flapjack.Compiler.Backend.DataSem.Value) (words : List (WordLocW width))
     (dest : Option Nat) (fs : Spt Nat) (result : List Flapjack.Compiler.Backend.DataSem.Value)
     (body : Flapjack.Compiler.Backend.DataLang.Prog)
-    (size : Option Nat) (names : NumSet) (cutData : Spt Flapjack.Compiler.Backend.DataSem.Value)
+    (handler : Option (Nat × WordLangProgHOL (BitVec width) × Nat × Nat))
+    (size : Option Nat) (names : NumSet) (cutData : Spt DataSem.Value)
     (cutWords : Spt (WordLocW width) × Spt (WordLocW width))
     (premises : stateRel conf l1 l2 source target none locs ∧
       DataSem.getVars args source.locals = some values ∧
@@ -159,8 +158,8 @@ theorem findCode_return {width : Nat} [NeZero width] {C F : Type}
     ∃ args1 n1 n2,
       wordSemFindCode dest (.loc q l :: words) target.code fs =
         some (args1, (compileControl conf n1 n2 body).1, size) ∧
-      stateRel conf q l (DataSem.callEnv result size (DataSem.pushEnv cutData false (DataSem.decClock source)))
-        (WordSemStateFiniteExact.callEnv args1 size (WordSemStateFiniteExact.pushEnv cutWords none (WordSemStateFiniteExact.decClock target))) none ((l1,l2)::locs) := by
+      stateRel conf q l (DataSem.callEnv result size (DataSem.pushEnv cutData handler.isSome (DataSem.decClock source)))
+        (WordSemStateFiniteExact.callEnv args1 size (WordSemStateFiniteExact.pushEnv cutWords handler (WordSemStateFiniteExact.decClock target))) none ((l1,l2)::locs) := by
   obtain ⟨related, sourceRead, wordRead, found, sourceCut, targetCut⟩ := premises
   have dataLen := getVars_imp_length args values source.locals sourceRead
   have wordLen := wordGetVars_imp_length (args.map adjustVar) words target wordRead
@@ -179,7 +178,7 @@ theorem findCode_return {width : Nat} [NeZero width] {C F : Type}
         have targetCode := codeRel.2.2 label arity program code
         refine ⟨.loc q l :: words, label, 2, ?_, ?_⟩
         · simp [wordSemFindCode, targetCode, valid, ← sameLen]
-        · exact stateRel_callEnv_pushEnv conf l1 l2 q l source target locs args values words _ names cutData cutWords none
+        · exact stateRel_callEnv_pushEnv conf l1 l2 q l source target locs args values words _ names cutData cutWords handler
             ⟨related, sourceRead, wordRead, sourceCut, targetCut⟩
       · simp [DataSem.findCode, code, valid] at found
   | none =>
@@ -230,7 +229,7 @@ theorem findCode_return {width : Nat} [NeZero width] {C F : Type}
                 (List.dropLast_concat (l₁ := .loc q l :: prefixWords) (b := .loc label 0))
             change wordSemFindCode none ((.loc q l :: prefixWords) ++ [.loc label 0]) target.code fs = _
             simp [wordSemFindCode, targetCode, prefixLength, Nat.add_assoc, dropEq]
-          · exact stateRel_callEnv_pushEnv conf l1 l2 q l source target locs init prefixValues prefixWords _ names cutData cutWords none
+          · exact stateRel_callEnv_pushEnv conf l1 l2 q l source target locs init prefixValues prefixWords _ names cutData cutWords handler
               ⟨related, prefixSource, prefixTarget, sourceCut, targetCut⟩
         · simp only [List.length_append, List.length_singleton, Nat.add_right_cancel_iff] at valid
           simp [DataSem.findCode, lastSnoc, code, valid] at hfind
@@ -239,5 +238,56 @@ theorem findCode_return {width : Nat} [NeZero width] {C F : Type}
     | refPtr x y => simp [DataSem.findCode, lastSnoc] at hfind
     | word64 x => simp [DataSem.findCode, lastSnoc] at hfind
 
+/-- A successful data lookup for a returning call has a compiled word lookup
+and preserves the relation after pushing the caller's environments. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "find_code_thm_ret"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem findCode_return {width : Nat} [NeZero width] {C F : Type}
+    (conf : Flapjack.Compiler.Backend.DataToWord.Config) (l1 l2 q l : Nat) (source : Flapjack.Compiler.Backend.DataSem.State C F)
+    (target : WordSemStateFiniteExact width C F) (locs : List (Nat × Nat))
+    (args : List Nat) (values : List Flapjack.Compiler.Backend.DataSem.Value) (words : List (WordLocW width))
+    (dest : Option Nat) (fs : Spt Nat) (result : List Flapjack.Compiler.Backend.DataSem.Value)
+    (body : Flapjack.Compiler.Backend.DataLang.Prog)
+    (size : Option Nat) (names : NumSet) (cutData : Spt Flapjack.Compiler.Backend.DataSem.Value)
+    (cutWords : Spt (WordLocW width) × Spt (WordLocW width))
+    (premises : stateRel conf l1 l2 source target none locs ∧
+      DataSem.getVars args source.locals = some values ∧
+      WordSemStateFiniteExact.getVars (args.map adjustVar) target = some words ∧
+      DataSem.findCode dest values source.code fs = some (result, body, size) ∧
+      DataSem.cutEnv names source.locals = some cutData ∧
+      wordSemCutEnvs (adjustSets names) target.locals = some cutWords) :
+    ∃ args1 n1 n2,
+      wordSemFindCode dest (.loc q l :: words) target.code fs =
+        some (args1, (compileControl conf n1 n2 body).1, size) ∧
+      stateRel conf q l (DataSem.callEnv result size (DataSem.pushEnv cutData false (DataSem.decClock source)))
+        (WordSemStateFiniteExact.callEnv args1 size (WordSemStateFiniteExact.pushEnv cutWords none (WordSemStateFiniteExact.decClock target))) none ((l1,l2)::locs) := by
+  simpa using findCode_pushEnv conf l1 l2 q l source target locs args values words dest fs
+    result body none size names cutData cutWords premises
+
+/-- A successful handler call lookup preserves the pushed call relation. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "find_code_thm_handler"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem findCode_handler {width : Nat} [NeZero width] {C F : Type}
+    (conf : Flapjack.Compiler.Backend.DataToWord.Config) (l1 l2 q l : Nat) (source : Flapjack.Compiler.Backend.DataSem.State C F)
+    (target : WordSemStateFiniteExact width C F) (locs : List (Nat × Nat))
+    (args : List Nat) (values : List Flapjack.Compiler.Backend.DataSem.Value) (words : List (WordLocW width))
+    (dest : Option Nat) (fs : Spt Nat) (result : List Flapjack.Compiler.Backend.DataSem.Value)
+    (body : Flapjack.Compiler.Backend.DataLang.Prog)
+    (x0 nn : Nat) (prog1 : WordLangProgHOL (BitVec width))
+    (size : Option Nat) (names : NumSet) (cutData : Spt Flapjack.Compiler.Backend.DataSem.Value)
+    (cutWords : Spt (WordLocW width) × Spt (WordLocW width))
+    (premises : stateRel conf l1 l2 source target none locs ∧
+      DataSem.getVars args source.locals = some values ∧
+      WordSemStateFiniteExact.getVars (args.map adjustVar) target = some words ∧
+      DataSem.findCode dest values source.code fs = some (result, body, size) ∧
+      DataSem.cutEnv names source.locals = some cutData ∧
+      wordSemCutEnvs (adjustSets names) target.locals = some cutWords) :
+    ∃ args1 n1 n2,
+      wordSemFindCode dest (.loc q l :: words) target.code fs =
+        some (args1, (compileControl conf n1 n2 body).1, size) ∧
+      stateRel conf q l (DataSem.callEnv result size (DataSem.pushEnv cutData true (DataSem.decClock source)))
+        (WordSemStateFiniteExact.callEnv args1 size (WordSemStateFiniteExact.pushEnv cutWords (some (adjustVar x0, prog1, nn, l + 1)) (WordSemStateFiniteExact.decClock target))) none ((l1,l2)::locs) := by
+  simpa using findCode_pushEnv conf l1 l2 q l source target locs args values words dest fs
+    result body (some (adjustVar x0, prog1, nn, l + 1)) size names cutData cutWords premises
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
