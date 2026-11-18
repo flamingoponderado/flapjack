@@ -8494,6 +8494,33 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+  "hol_name": "assign_WordTest_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
+  "lean_name": "assignWordTest",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared HOL source and typed capture: Equal, Compare Lt and Compare Leq construct the same conditional and all other tests yield Skip; adjusted operand order and label agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+  "hol_name": "assign_WordOpW8_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
+  "lean_name": "assignWordOpW8",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared HOL source and typed capture: bitwise operations and carried operations construct the same expression, including both shifts by dimindex minus ten, with all original inputs and unchanged label."
+},
+{
+  "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+  "hol_name": "assign_WordShiftW8_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
+  "lean_name": "assignWordShiftW8",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared HOL source and typed capture: all four shift forms, clamped or modulo amounts, natural subtraction, adjusted register, result assignment and unchanged label agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
   "hol_name": "assign_EqualConst_def",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
   "lean_name": "assignEqualConst",

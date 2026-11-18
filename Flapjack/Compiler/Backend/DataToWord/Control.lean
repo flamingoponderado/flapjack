@@ -1157,6 +1157,48 @@ def assignFfi {width : Nat} [NeZero width] (ffiName : Flapjack.Basis.Pure.MlStri
       .ffi ffiName 1 3 5 7 (adjustSets (names.getD .ln)),
       .assign (adjustVar dest) (.const 2)], l)
 
+/-- Compile an unsigned word comparison. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "assign_WordTest_def"
+  (words_as_type_indexed_bitvec)]
+def assignWordTest {width : Nat} [NeZero width] (l dest : Nat) (test : AstHOL.Test)
+    (first second : Nat) : WordLangProgHOL (BitVec width) × Nat :=
+  match test with
+  | .equal => (boolResult dest .equal (adjustVar first) (.reg (adjustVar second)), l)
+  | .compare .lt => (boolResult dest .lower (adjustVar first) (.reg (adjustVar second)), l)
+  | .compare .leq => (boolResult dest .notLower (adjustVar second) (.reg (adjustVar first)), l)
+  | _ => (.skip, l)
+
+/-- Compile an eight-bit word operation on the tagged word representation. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "assign_WordOpW8_def"
+  (words_as_type_indexed_bitvec)]
+def assignWordOpW8 {width : Nat} [NeZero width] (op : BackendCommon.Opw) (_conf : Config)
+    (_secn l dest : Nat) (_names : Option NumSet) (first second : Nat) : WordLangProgHOL (BitVec width) × Nat :=
+  let (binop, carried) := match lookupWordOp op with
+    | .bitwise b => (b, false)
+    | .carried b => (b, true)
+  let value := WordLangExpHOL.op binop [.var (adjustVar first), .var (adjustVar second)]
+  let amount := BitVec.ofNat width (width - 10)
+  let value := if carried then WordLangExpHOL.shift .lsr (.shift .lsl value (.const amount)) (.const amount)
+    else value
+  (.assign (adjustVar dest) value, l)
+
+/-- Compile an eight-bit shift or rotation. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "assign_WordShiftW8_def"
+  (words_as_type_indexed_bitvec)]
+def assignWordShiftW8 {width : Nat} [NeZero width] (sh : Shift) (n : Nat) (_conf : Config)
+    (_secn l dest : Nat) (_names : Option NumSet) (src : Nat) : WordLangProgHOL (BitVec width) × Nat :=
+  let src := adjustVar src
+  let amount := min n 8
+  let value := match sh with
+    | .lsl => shiftN .lsr (shiftN .lsl (.var src) (width - 10 + amount)) (width - 10)
+    | .lsr => shiftN .lsl (shiftN .lsr (.var src) (amount + 2)) 2
+    | .asr => shiftN .lsl (shiftN .lsr (shiftN .asr (shiftN .lsl (.var src) (width - 10)) amount) (width - 8)) 2
+    | .ror =>
+        let n := n % 8
+        WordLangExpHOL.op .or [shiftN .lsl (shiftVar .lsr src (n + 2)) 2,
+          shiftN .lsr (shiftVar .lsl src ((width - 2) - n)) (width - 10)]
+  (.assign (adjustVar dest) value, l)
+
 /-- Total assignment dispatch used by the executable traversal. Its full
     source-level correspondence with HOL's assignment dispatcher is pending
     review of all operation cases. -/
@@ -1270,11 +1312,7 @@ def compileAssign {width : Nat} [NeZero width] (conf : Config) (secn l dest : Na
       | .mult, _ | .div, _ | .mod, _ => (.skip, l)
       | _, _ => (.skip, l)
   | (.wordOp (.wordTest _ test)), args, _ =>
-      match args, test with
-      | [x, y], .equal => (boolResult dest .equal (adjustVar x) (.reg (adjustVar y)), l)
-      | [x, y], .compare .lt => (boolResult dest .lower (adjustVar x) (.reg (adjustVar y)), l)
-      | [x, y], .compare .leq => (boolResult dest .notLower (adjustVar y) (.reg (adjustVar x)), l)
-      | _, _ => (.skip, l)
+      arg2 args (assignWordTest l dest test) (.skip, l)
   | (.wordOp (.fpCmp comparison)), args, _ =>
       match args with
       | [left, right] =>
@@ -1313,35 +1351,12 @@ def compileAssign {width : Nat} [NeZero width] (conf : Config) (secn l dest : Na
       | [first, second, third] => if !conf.hasFpOps || !conf.hasFpTern then (giveUp, l)
           else (fpResult conf dest [first, second, third] (fpTopInst operation) 0, l)
       | _ => (.skip, l)
-  | (.wordOp (.wordOpw .w8 op)), args, _ =>
-      match args with
-      | [x, y] =>
-          let (binop, carried) := match lookupWordOp op with
-            | .bitwise b => (b, false)
-            | .carried b => (b, true)
-          let value := WordLangExpHOL.op binop [.var (adjustVar x), .var (adjustVar y)]
-          let amount := BitVec.ofNat width (width - 10)
-          let value := if carried then WordLangExpHOL.shift .lsr (.shift .lsl value (.const amount)) (.const amount)
-            else value
-          (.assign (adjustVar dest) value, l)
-      | _ => (.skip, l)
+  | (.wordOp (.wordOpw .w8 op)), args, names =>
+      arg2 args (assignWordOpW8 op conf secn l dest names) (.skip, l)
   | (.wordOp (.wordOpw .w64 op)), args, names =>
       (arg2 args (assignWordOpW64 op conf secn l dest names) (.skip, l))
-  | (.wordOp (.wordShift .w8 sh n)), args, _ =>
-      match args with
-      | [src] =>
-          let src := adjustVar src
-          let amount := min n 8
-          let value := match sh with
-            | .lsl => shiftN .lsr (shiftN .lsl (.var src) (width - 10 + amount)) (width - 10)
-            | .lsr => shiftN .lsl (shiftN .lsr (.var src) (amount + 2)) 2
-            | .asr => shiftN .lsl (shiftN .lsr (shiftN .asr (shiftN .lsl (.var src) (width - 10)) amount) (width - 8)) 2
-            | .ror =>
-                let n := n % 8
-                WordLangExpHOL.op .or [shiftN .lsl (shiftVar .lsr src (n + 2)) 2,
-                  shiftN .lsr (shiftVar .lsl src ((width - 2) - n)) (width - 10)]
-          (.assign (adjustVar dest) value, l)
-      | _ => (.skip, l)
+  | (.wordOp (.wordShift .w8 sh n)), args, names =>
+      arg1 args (assignWordShiftW8 sh n conf secn l dest names) (.skip, l)
   | (.wordOp (.wordShift .w64 sh n)), args, names =>
       (arg1 args (assignWordShiftW64 sh n conf secn l dest names) (.skip, l))
   | (.wordOp (.wordFromWord narrow)), args, names =>

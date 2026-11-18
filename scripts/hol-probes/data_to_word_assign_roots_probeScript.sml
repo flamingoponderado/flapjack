@@ -52,3 +52,6 @@ val _ = emit "assign_Build_def_typed" data_to_wordTheory.assign_Build_def;
 val _ = emit "assign_Install_def_typed" data_to_wordTheory.assign_Install_def;
 val _ = emit "assign_EqualConst_def_typed" data_to_wordTheory.assign_EqualConst_def;
 val _ = emit "assign_FFI_def_typed" data_to_wordTheory.assign_FFI_def;
+val _ = emit "assign_WordTest_def_typed" data_to_wordTheory.assign_WordTest_def;
+val _ = emit "assign_WordOpW8_def_typed" data_to_wordTheory.assign_WordOpW8_def;
+val _ = emit "assign_WordShiftW8_def_typed" data_to_wordTheory.assign_WordShiftW8_def;
