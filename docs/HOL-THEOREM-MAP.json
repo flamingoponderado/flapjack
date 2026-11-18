@@ -8485,6 +8485,16 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "memory_rel_IMP_free_space",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/FreeSpace.lean",
+  "lean_name": "memoryRel_freeSpace",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": ["store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared the HOL source and typed capture: the full memory relation implies the same existential NextFree and CurrHeap words, store lookups, and framed word-list assertion over the memory/domain graph. The store uses the canonical finite-support map and the word carrier uses positive-width BitVec."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
   "hol_name": "MemCopy_thm",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/MemCopyCorrect.lean",
   "lean_name": "memCopy_correct",
