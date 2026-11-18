@@ -183,3 +183,45 @@ val word_gc_move_roots_IMP_FILTER0_replay = Q.prove(
   \\ rpt (pairarg_tac \\ fs []) \\ fs [] \\ rveq
   \\ res_tac \\ fs [isWord_def]);
 val _ = pr_typed "word_gc_move_roots_IMP_FILTER0_replay_typed" word_gc_move_roots_IMP_FILTER0_replay;
+
+(* Replay the local generational theorem. *)
+val word_gen_gc_move_roots_IMP_FILTER0_replay = Q.prove(
+  `∀ws i pa ib pb old m dm ws2 i2 pa2 ib2 pb2 m2 c2 c.
+    word_gen_gc_move_roots c (ws,i,pa,ib,pb,old,m,dm) =
+                             (ws2,i2,pa2,ib2,pb2,m2,c2) ∧
+    EVERY loc_ok ws ⇒
+    word_gen_gc_move_roots c (FILTER isWord ws,i,pa,ib,pb,old,m,dm) =
+                             (FILTER isWord ws2,i2,pa2,ib2,pb2,m2,c2)`,
+  Induct \\ full_simp_tac(srw_ss())[word_gen_gc_move_roots_def]
+  \\ Cases \\ full_simp_tac(srw_ss())[]
+  \\ srw_tac[][] \\ full_simp_tac(srw_ss())[word_gen_gc_move_roots_def]
+  THEN1
+   (srw_tac[][] \\ full_simp_tac(srw_ss())[LET_DEF]
+    \\ imp_res_tac word_gen_gc_move_IMP_isWord
+    \\ rpt (pairarg_tac \\ fs []) \\ fs [] \\ rveq
+    \\ res_tac \\ fs [])
+  \\ fs [isWord_def,word_gen_gc_move_def,LET_DEF]
+  \\ rpt (pairarg_tac \\ fs []) \\ fs [] \\ rveq
+  \\ res_tac \\ fs [isWord_def]);
+val _ = pr_typed "word_gen_gc_move_roots_IMP_FILTER0_replay_typed" word_gen_gc_move_roots_IMP_FILTER0_replay;
+
+(* Replay the first of two declarations with this HOL name. *)
+val word_gen_gc_partial_move_roots_IMP_FILTER_first_replay = Q.prove(
+  `∀ws i pa ib pb old m dm ws2 i2 pa2 ib2 pb2 m2 c2 c.
+    word_gen_gc_partial_move_roots c (ws,i,pa,old,m,dm,gs,rs) =
+                                     (ws2,i2,pa2,m2,c2) ∧
+    EVERY loc_ok ws ⇒
+    word_gen_gc_partial_move_roots c (FILTER isWord ws,i,pa,old,m,dm,gs,rs) =
+                                     (FILTER isWord ws2,i2,pa2,m2,c2)`,
+  Induct \\ full_simp_tac(srw_ss())[word_gen_gc_partial_move_roots_def]
+  \\ Cases \\ full_simp_tac(srw_ss())[]
+  \\ srw_tac[][] \\ full_simp_tac(srw_ss())[word_gen_gc_partial_move_roots_def]
+  THEN1
+   (srw_tac[][] \\ full_simp_tac(srw_ss())[LET_DEF]
+    \\ imp_res_tac word_gen_gc_partial_move_IMP_isWord
+    \\ rpt (pairarg_tac \\ fs []) \\ fs [] \\ rveq
+    \\ res_tac \\ fs [])
+  \\ fs [isWord_def,word_gen_gc_partial_move_def,LET_DEF]
+  \\ rpt (pairarg_tac \\ fs []) \\ fs [] \\ rveq
+  \\ res_tac \\ fs [isWord_def]);
+val _ = pr_typed "word_gen_gc_partial_move_roots_IMP_FILTER_first_replay_typed" word_gen_gc_partial_move_roots_IMP_FILTER_first_replay;

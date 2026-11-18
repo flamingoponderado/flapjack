@@ -23636,6 +23636,18 @@
   "reviewer": "Compared the typed replay of the local HOL proof: a complete original root traversal result and valid locations imply the filtered traversal returns the filtered moved roots with all other outputs unchanged. HOL words use positive-width BitVecs."
 },
 {
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "word_gen_gc_move_roots_IMP_FILTER0",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CollectorFilter.lean", "lean_name": "wordGenGcMoveRoots_imp_filter0",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec", "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared typed replay of the local HOL proof: original generational root traversal and valid locations imply the filtered traversal returns filtered moved roots and the same complete remaining output tuple. HOL words use positive-width BitVecs."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "word_gen_gc_partial_move_roots_IMP_FILTER", "hol_line": 6211,
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CollectorFilter.lean", "lean_name": "wordGenGcPartialMoveRoots_imp_filter_first",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec", "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared typed replay of the first HOL declaration at line 6211: full original partial traversal and valid locations imply filtered traversal with filtered output, retaining four unused independently typed quantifiers and the same other tuple outputs. HOL words use positive-width BitVecs."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "cut_env_IMP_MEM",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CutEnvProperties.lean", "lean_name": "cutEnv_imp_mem",
   "statement_status": "reviewed_exact", "reviewer": "Compared cut_env_IMP_MEM_typed: successful source cut makes an arbitrary key present exactly when it is present in the requested set."
