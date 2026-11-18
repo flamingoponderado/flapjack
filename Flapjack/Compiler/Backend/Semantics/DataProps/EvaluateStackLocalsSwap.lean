@@ -3498,4 +3498,640 @@ theorem evaluate_NONE_jump_exc {C F : Type} (program : DataLang.Prog) (state u1 
     rw [if_neg hge] at jumped
     exact absurd jumped (by simp)
 
+/-- The alternative form of the unwinding statement: when the evaluation
+    returns no result, the frames the returned state unwinds to are the same
+    frames, installed over the returned state instead of the starting one. -/
+@[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "evaluate_NONE_jump_exc_ALT"]
+theorem evaluate_NONE_jump_exc_ALT {C F : Type} (program : DataLang.Prog)
+    (state u1 x : State C F)
+    (premise : evaluate program state = (none, u1) ∧ jumpExc state = some x) :
+    jumpExc u1 = some { u1 with
+      stack := x.stack
+      handler := x.handler
+      locals := x.locals
+      localsSize := x.localsSize } := by
+  obtain ⟨run, jumped⟩ := premise
+  have base := evaluate_stack program state
+  rw [run] at base
+  simp only [] at base
+  have stackEq : u1.stack = state.stack := base.1
+  have handlerEq : u1.handler = state.handler := base.2
+  unfold DataSem.jumpExc at jumped ⊢
+  rw [stackEq, handlerEq]
+  split
+  · rename_i hlt
+    split
+    · rename_i size env handler rest heq
+      rw [heq, if_pos hlt] at jumped
+      simp only [Option.some.injEq] at jumped
+      subst jumped
+      rfl
+    · rename_i hno
+      rw [if_pos hlt] at jumped
+      cases hdrop : List.drop (state.stack.length - (state.handler + 1)) state.stack with
+      | nil =>
+        rw [hdrop] at jumped
+        exact absurd jumped (by simp)
+      | cons frame rest =>
+        cases frame with
+        | env lsz env2 =>
+          rw [hdrop] at jumped
+          exact absurd jumped (by simp)
+        | exc size env handler =>
+          exact absurd hdrop (hno size env handler rest)
+  · rename_i hge
+    rw [if_neg hge] at jumped
+    exact absurd jumped (by simp)
+
+/-- The locals-empty-or-raise property for one program and state: a terminal
+    result other than a type error either leaves an empty locals tree or
+    raises. -/
+private def LocalsLNOrRaiseAt {C F : Type} (program : DataLang.Prog)
+    (state : State C F) : Prop :=
+  ∀ (res : Option (Result (List DataSem.Value) DataSem.Value)) (next : State C F),
+    evaluate program state = (res, next) → res ≠ none →
+    res ≠ some (.err (.abort .typeError)) →
+    next.locals = .ln ∨ ∃ v : DataSem.Value, res = some (.err (.raise v))
+
+/-- The `Skip` case. Flapjack infrastructure toward the port of HOL
+    `evaluate_locals_LN_lemma`; no separate HOL original. -/
+private theorem localsLN_skip {C F : Type} (state : State C F) :
+    LocalsLNOrRaiseAt (.skip : DataLang.Prog) state := by
+  intro res next run hne _
+  simp only [evaluate, Prod.mk.injEq] at run
+  obtain ⟨rfl, rfl⟩ := run
+  exact absurd rfl hne
+
+/-- The `Move` case. Flapjack infrastructure toward the port of HOL
+    `evaluate_locals_LN_lemma`; no separate HOL original. -/
+private theorem localsLN_move {C F : Type} (dest src : Nat) (state : State C F) :
+    LocalsLNOrRaiseAt (.move dest src) state := by
+  intro res next run hne hty
+  cases read : getVar src state.locals with
+  | none =>
+    simp only [evaluate, read, typeError, Prod.mk.injEq] at run
+    obtain ⟨rfl, rfl⟩ := run
+    exact absurd rfl hty
+  | some value =>
+    simp only [evaluate, read, Prod.mk.injEq] at run
+    obtain ⟨rfl, rfl⟩ := run
+    exact absurd rfl hne
+
+/-- The `Assign` case. Flapjack infrastructure toward the port of HOL
+    `evaluate_locals_LN_lemma`; no separate HOL original. -/
+private theorem localsLN_assign {C F : Type} (dest : Nat) (op : ClosLang.Op)
+    (names : List Nat) (live : Option NumSet) (state : State C F) :
+    LocalsLNOrRaiseAt (.assign dest op names live) state := by
+  intro res next run hne hty
+  by_cases needs : (DataLang.opRequiresNames op == live.isNone) = true
+  · simp only [evaluate, needs, typeError] at run
+    obtain ⟨rfl, rfl⟩ := run
+    exact absurd rfl hty
+  · have needsFalse : (DataLang.opRequiresNames op == live.isNone) = false := by
+      simpa using needs
+    simp only [evaluate, needsFalse] at run
+    cases vars : DataSem.getVars names state.locals with
+    | none =>
+      simp only [vars, typeError] at run
+      obtain ⟨rfl, rfl⟩ := run
+      exact absurd rfl hty
+    | some values =>
+      simp only [vars] at run
+      cases cut : cutStateOpt live state with
+      | none =>
+        simp only [cut, typeError] at run
+        obtain ⟨rfl, rfl⟩ := run
+        exact absurd rfl hty
+      | some mid =>
+        simp only [cut] at run
+        cases app : doApp op values mid with
+        | err error =>
+          simp only [app] at run
+          have resEq : res = some (.err error) := by
+            simpa using (congrArg Prod.fst run).symm
+          have nextEq : next = flushState true (installSfs op mid) := by
+            simpa using (congrArg Prod.snd run).symm
+          rcases doApp_err op values mid error app with htype | ⟨name, outcome, opEq, errorEq⟩
+          · subst htype
+            exact absurd resEq hty
+          · subst errorEq
+            left
+            rw [nextEq]
+            simp [flushState]
+        | val pair =>
+          obtain ⟨value, last⟩ := pair
+          simp only [app] at run
+          have resEq : res = none := by
+            simpa using (congrArg Prod.fst run).symm
+          exact absurd resEq hne
+
+/-- The `Tick` case. Flapjack infrastructure toward the port of HOL
+    `evaluate_locals_LN_lemma`; no separate HOL original. -/
+private theorem localsLN_tick {C F : Type} (state : State C F) :
+    LocalsLNOrRaiseAt (.tick : DataLang.Prog) state := by
+  intro res next run hne hty
+  by_cases zero : state.clock = 0
+  · simp only [evaluate, zero, timeoutError] at run
+    obtain ⟨rfl, rfl⟩ := run
+    left
+    simp [flushState]
+  · simp only [evaluate, zero] at run
+    obtain ⟨rfl, rfl⟩ := run
+    exact absurd rfl hne
+
+/-- The `MakeSpace` case. Flapjack infrastructure toward the port of HOL
+    `evaluate_locals_LN_lemma`; no separate HOL original. -/
+private theorem localsLN_makeSpace {C F : Type} (amount : Nat) (names : NumSet)
+    (state : State C F) :
+    LocalsLNOrRaiseAt (.makeSpace amount names) state := by
+  intro res next run hne hty
+  cases cut : cutEnv names state.locals with
+  | none =>
+    simp only [evaluate, cut, typeError, Prod.mk.injEq] at run
+    obtain ⟨rfl, rfl⟩ := run
+    exact absurd rfl hty
+  | some env =>
+    simp only [evaluate, cut, Prod.mk.injEq] at run
+    obtain ⟨rfl, rfl⟩ := run
+    exact absurd rfl hne
+
+/-- The `Raise` case. Flapjack infrastructure toward the port of HOL
+    `evaluate_locals_LN_lemma`; no separate HOL original. -/
+private theorem localsLN_raise {C F : Type} (name : Nat) (state : State C F) :
+    LocalsLNOrRaiseAt (.raise name) state := by
+  intro res next run hne hty
+  cases read : getVar name state.locals with
+  | none =>
+    simp only [evaluate, read, typeError, Prod.mk.injEq] at run
+    obtain ⟨rfl, rfl⟩ := run
+    exact absurd rfl hty
+  | some value =>
+    cases jump : jumpExc state with
+    | none =>
+      simp only [evaluate, read, jump, typeError, Prod.mk.injEq] at run
+      obtain ⟨rfl, rfl⟩ := run
+      exact absurd rfl hty
+    | some jumped =>
+      simp only [evaluate, read, jump, Prod.mk.injEq] at run
+      obtain ⟨rfl, rfl⟩ := run
+      right
+      exact ⟨value, rfl⟩
+
+/-- The `Return` case. Flapjack infrastructure toward the port of HOL
+    `evaluate_locals_LN_lemma`; no separate HOL original. -/
+private theorem localsLN_return {C F : Type} (names : List Nat) (state : State C F) :
+    LocalsLNOrRaiseAt (.return names) state := by
+  intro res next run hne hty
+  cases read : DataSem.getVars names state.locals with
+  | none =>
+    simp only [evaluate, read, typeError, Prod.mk.injEq] at run
+    obtain ⟨rfl, rfl⟩ := run
+    exact absurd rfl hty
+  | some values =>
+    simp only [evaluate, read, Prod.mk.injEq] at run
+    obtain ⟨rfl, rfl⟩ := run
+    left
+    simp [flushState]
+
+/-- The `If` case. Flapjack infrastructure toward the port of HOL
+    `evaluate_locals_LN_lemma`; no separate HOL original. -/
+private theorem localsLN_if {C F : Type} (name : Nat) (yes no : DataLang.Prog)
+    (state : State C F) (yesIH : LocalsLNOrRaiseAt yes state)
+    (noIH : LocalsLNOrRaiseAt no state) :
+    LocalsLNOrRaiseAt (.ifThenElse name yes no) state := by
+  intro res next run hne hty
+  cases read : getVar name state.locals with
+  | none =>
+    simp only [evaluate, read, typeError, Prod.mk.injEq] at run
+    obtain ⟨rfl, rfl⟩ := run
+    exact absurd rfl hty
+  | some value =>
+    by_cases yesValue : isBool true value
+    · have branch : evaluate yes state = (res, next) := by
+        simpa [evaluate, read, yesValue] using run
+      exact yesIH res next branch hne hty
+    · by_cases noValue : isBool false value
+      · have branch : evaluate no state = (res, next) := by
+          simpa [evaluate, read, yesValue, noValue] using run
+        exact noIH res next branch hne hty
+      · simp only [evaluate, read, yesValue, noValue, typeError] at run
+        obtain ⟨rfl, rfl⟩ := run
+        exact absurd rfl hty
+
+/-- The `Seq` case. Flapjack infrastructure toward the port of HOL
+    `evaluate_locals_LN_lemma`; no separate HOL original. -/
+private theorem localsLN_seq {C F : Type} (first second : DataLang.Prog)
+    (state : State C F) (firstIH : LocalsLNOrRaiseAt first state)
+    (secondIH : ∀ mid : State C F, mid.clock ≤ state.clock → LocalsLNOrRaiseAt second mid) :
+    LocalsLNOrRaiseAt (.seq first second) state := by
+  intro res next run hne hty
+  cases firstRun : evaluate first state with
+  | mk outcome mid =>
+    have midClock : mid.clock ≤ state.clock := by
+      simpa only [firstRun] using evaluate_clock_le first state
+    cases outcome with
+    | some stopped =>
+      have clamp : fixClock state (evaluate first state) = (some stopped, mid) := by
+        rw [fixClockEvaluate, firstRun]
+      simp only [evaluate, clamp, Prod.mk.injEq] at run
+      obtain ⟨hres, hnext⟩ := run
+      have hne1 : (some stopped : Option (Result (List DataSem.Value) DataSem.Value)) ≠
+          none := by
+        intro h
+        exact hne (hres.symm.trans h)
+      have hty1 : (some stopped : Option (Result (List DataSem.Value) DataSem.Value)) ≠
+          some (.err (.abort .typeError)) := by
+        intro h
+        exact hty (hres.symm.trans h)
+      rcases firstIH (some stopped) mid firstRun hne1 hty1 with hln | ⟨v, hv⟩
+      · left
+        rw [← hnext]
+        exact hln
+      · right
+        exact ⟨v, hres.symm.trans hv⟩
+    | none =>
+      have clamp : fixClock state (evaluate first state) = (none, mid) := by
+        rw [fixClockEvaluate, firstRun]
+      simp only [evaluate, clamp] at run
+      exact secondIH mid midClock res next run hne hty
+
+/-- The `Force` case. Flapjack infrastructure toward the port of HOL
+    `evaluate_locals_LN_lemma`; no separate HOL original. -/
+private theorem localsLN_force {C F : Type} (ret : Option (Nat × NumSet)) (label src : Nat)
+    (state : State C F)
+    (bodyIH : ∀ (body : DataLang.Prog) (called : State C F),
+      called.clock < state.clock → LocalsLNOrRaiseAt body called) :
+    LocalsLNOrRaiseAt (.force ret label src) state := by
+  intro res next run hne hty
+  cases read : getVar src state.locals with
+  | none =>
+    simp only [evaluate, read, typeError, Prod.mk.injEq] at run
+    obtain ⟨rfl, rfl⟩ := run
+    exact absurd rfl hty
+  | some thunk =>
+    cases dest : destThunk thunk state.refs with
+    | badRef =>
+      simp only [evaluate, read, dest, typeError, Prod.mk.injEq] at run
+      obtain ⟨rfl, rfl⟩ := run
+      exact absurd rfl hty
+    | notThunk =>
+      simp only [evaluate, read, dest, typeError, Prod.mk.injEq] at run
+      obtain ⟨rfl, rfl⟩ := run
+      exact absurd rfl hty
+    | isThunk mode value =>
+      cases mode with
+      | evaluated =>
+        cases ret with
+        | none =>
+          simp only [evaluate, read, dest, Prod.mk.injEq] at run
+          obtain ⟨rfl, rfl⟩ := run
+          left
+          simp [flushState]
+        | some target =>
+          obtain ⟨targetDest, names⟩ := target
+          cases cut : cutEnv names state.locals with
+          | none =>
+            simp only [evaluate, read, dest, cut, typeError, Prod.mk.injEq] at run
+            obtain ⟨rfl, rfl⟩ := run
+            exact absurd rfl hty
+          | some env =>
+            simp only [evaluate, read, dest, cut, Prod.mk.injEq] at run
+            obtain ⟨rfl, rfl⟩ := run
+            exact absurd rfl hne
+      | notEvaluated =>
+        cases found : findCode (some label) [thunk, value] state.code
+            state.stackFrameSizes with
+        | none =>
+          simp only [evaluate, read, dest, found, typeError, Prod.mk.injEq] at run
+          obtain ⟨rfl, rfl⟩ := run
+          exact absurd rfl hty
+        | some entry =>
+          obtain ⟨args, body, size⟩ := entry
+          cases ret with
+          | none =>
+            by_cases zero : state.clock = 0
+            · simp only [evaluate, read, dest, found, zero, timeoutError] at run
+              obtain ⟨rfl, rfl⟩ := run
+              left
+              simp
+            · let called := DataSem.callEnv args size (DataSem.decClock state)
+              have clockLt : called.clock < state.clock := by
+                simp only [called, DataSem.callEnv, DataSem.decClock]
+                omega
+              cases bodyRun : evaluate body called with
+              | mk outcome last =>
+                simp only [evaluate, read, dest, found, zero] at run
+                simp only [called] at bodyRun
+                rw [bodyRun] at run
+                cases outcome with
+                | none =>
+                  simp only [typeError] at run
+                  obtain ⟨rfl, rfl⟩ := run
+                  exact absurd rfl hty
+                | some value =>
+                  have hres : res = some value := by
+                    simpa using (congrArg Prod.fst run).symm
+                  have hne1 : (some value : Option (Result (List DataSem.Value) DataSem.Value)) ≠
+                      none := by
+                    intro h
+                    exact hne (hres.trans h)
+                  have hty1 : (some value : Option (Result (List DataSem.Value) DataSem.Value)) ≠
+                      some (.err (.abort .typeError)) := by
+                    intro h
+                    exact hty (hres.trans h)
+                  have hnext : next = last := by
+                    simpa using (congrArg Prod.snd run).symm
+                  rw [hres, hnext]
+                  exact bodyIH body called clockLt (some value) last bodyRun hne1 hty1
+          | some target =>
+            obtain ⟨targetDest, names⟩ := target
+            cases cut : cutEnv names state.locals with
+            | none =>
+              simp only [evaluate, read, dest, found, cut, typeError,
+                Prod.mk.injEq] at run
+              obtain ⟨rfl, rfl⟩ := run
+              exact absurd rfl hty
+            | some env =>
+              by_cases zero : state.clock = 0
+              · simp only [evaluate, read, dest, found, cut, zero, timeoutError] at run
+                obtain ⟨rfl, rfl⟩ := run
+                left
+                simp
+              · let called := DataSem.callEnv args size
+                  (DataSem.pushEnv env false (DataSem.decClock state))
+                have clockLt : called.clock < state.clock := by
+                  simp only [called, DataSem.callEnv, DataSem.pushEnv, DataSem.decClock]
+                  omega
+                cases bodyRun : evaluate body called with
+                | mk outcome last =>
+                  simp only [evaluate, read, dest, found, cut, zero] at run
+                  rw [fixClockEvaluate] at run
+                  rw [bodyRun] at run
+                  cases outcome with
+                  | none =>
+                    simp only [typeError] at run
+                    obtain ⟨rfl, rfl⟩ := run
+                    exact absurd rfl hty
+                  | some result =>
+                    cases result with
+                    | val values =>
+                      cases values with
+                      | nil =>
+                        simp only [typeError] at run
+                        obtain ⟨rfl, rfl⟩ := run
+                        exact absurd rfl hty
+                      | cons v rest =>
+                        cases rest with
+                        | nil =>
+                          cases pop : DataSem.popEnv last with
+                          | none =>
+                            simp only [pop, typeError] at run
+                            obtain ⟨rfl, rfl⟩ := run
+                            exact absurd rfl hty
+                          | some final =>
+                            simp only [pop] at run
+                            obtain ⟨rfl, rfl⟩ := run
+                            exact absurd rfl hne
+                        | cons w ws =>
+                          simp only [typeError] at run
+                          obtain ⟨rfl, rfl⟩ := run
+                          exact absurd rfl hty
+                    | err error =>
+                      have hres : res = some (.err error) := by
+                        simpa using (congrArg Prod.fst run).symm
+                      have hne1 : (some (Result.err error) :
+                          Option (Result (List DataSem.Value) DataSem.Value)) ≠ none := by
+                        intro h
+                        exact hne (hres.trans h)
+                      have hty1 : (some (Result.err error) :
+                          Option (Result (List DataSem.Value) DataSem.Value)) ≠
+                          some (.err (.abort .typeError)) := by
+                        intro h
+                        exact hty (hres.trans h)
+                      have hnext : next = last := by
+                        simpa using (congrArg Prod.snd run).symm
+                      rw [hres, hnext]
+                      exact bodyIH body called clockLt
+                        (some (Result.err error) :
+                          Option (Result (List DataSem.Value) DataSem.Value)) last bodyRun
+                        hne1 hty1
+
+/-- The `Call` case. Flapjack infrastructure toward the port of HOL
+    `evaluate_locals_LN_lemma`; no separate HOL original. -/
+private theorem localsLN_call {C F : Type} (ret : Option (List Nat × NumSet))
+    (dest : Option Nat) (names : List Nat) (handler : Option (Nat × DataLang.Prog))
+    (state : State C F)
+    (bodyIH : ∀ (body : DataLang.Prog) (called : State C F),
+      called.clock < state.clock → LocalsLNOrRaiseAt body called) :
+    LocalsLNOrRaiseAt (.call ret dest names handler) state := by
+  intro res next run hne hty
+  cases read : DataSem.getVars names state.locals with
+  | none =>
+    simp only [evaluate, read, typeError, Prod.mk.injEq] at run
+    obtain ⟨rfl, rfl⟩ := run
+    exact absurd rfl hty
+  | some values =>
+    cases found : findCode dest values state.code state.stackFrameSizes with
+    | none =>
+      simp only [evaluate, read, found, typeError, Prod.mk.injEq] at run
+      obtain ⟨rfl, rfl⟩ := run
+      exact absurd rfl hty
+    | some entry =>
+      obtain ⟨args, body, size⟩ := entry
+      cases ret with
+      | none =>
+        cases handler with
+        | some handled =>
+          simp only [evaluate, read, found, Option.isSome_some, if_true, typeError,
+            Prod.mk.injEq] at run
+          obtain ⟨rfl, rfl⟩ := run
+          exact absurd rfl hty
+        | none =>
+          by_cases zero : state.clock = 0
+          · simp only [evaluate, read, found, Option.isSome_none, Bool.false_eq_true,
+              if_false, zero, timeoutError] at run
+            obtain ⟨rfl, rfl⟩ := run
+            left
+            simp [flushState]
+          · let called := DataSem.callEnv args size (DataSem.decClock state)
+            have clockLt : called.clock < state.clock := by
+              simp only [called, DataSem.callEnv, DataSem.decClock]
+              omega
+            cases bodyRun : evaluate body called with
+            | mk outcome last =>
+              simp only [evaluate, read, found, Option.isSome_none, Bool.false_eq_true,
+                if_false, zero] at run
+              simp only [called] at bodyRun
+              rw [bodyRun] at run
+              cases outcome with
+              | none =>
+                simp only [typeError, Prod.mk.injEq] at run
+                obtain ⟨rfl, rfl⟩ := run
+                exact absurd rfl hty
+              | some value =>
+                have hres : res = some value := by
+                  simpa using (congrArg Prod.fst run).symm
+                have hne1 : (some value : Option (Result (List DataSem.Value) DataSem.Value)) ≠
+                    none := by
+                  intro h
+                  exact hne (hres.trans h)
+                have hty1 : (some value : Option (Result (List DataSem.Value) DataSem.Value)) ≠
+                    some (.err (.abort .typeError)) := by
+                  intro h
+                  exact hty (hres.trans h)
+                have hnext : next = last := by
+                  simpa using (congrArg Prod.snd run).symm
+                rw [hres, hnext]
+                exact bodyIH body called clockLt (some value) last bodyRun hne1 hty1
+      | some returns =>
+        obtain ⟨returnNames, live⟩ := returns
+        by_cases distinct : returnNames.Nodup
+        · cases cut : cutEnv live state.locals with
+          | none =>
+            simp only [evaluate, read, found, distinct, cut, typeError] at run
+            obtain ⟨rfl, rfl⟩ := run
+            exact absurd rfl hty
+          | some env =>
+            by_cases zero : state.clock = 0
+            · simp only [evaluate, read, found, distinct, cut, zero, timeoutError] at run
+              obtain ⟨rfl, rfl⟩ := run
+              left
+              simp
+            · let called := DataSem.callEnv args size
+                (DataSem.pushEnv env handler.isSome (DataSem.decClock state))
+              have clockLt : called.clock < state.clock := by
+                simp only [called, DataSem.callEnv, DataSem.pushEnv, DataSem.decClock]
+                omega
+              cases bodyRun : evaluate body called with
+              | mk outcome last =>
+                simp only [evaluate, read, found, distinct, cut, zero] at run
+                rw [fixClockEvaluate] at run
+                rw [bodyRun] at run
+                cases outcome with
+                | none =>
+                  simp only [typeError] at run
+                  obtain ⟨rfl, rfl⟩ := run
+                  exact absurd rfl hty
+                | some result =>
+                  cases result with
+                  | val results =>
+                    by_cases length : results.length = returnNames.length
+                    · cases pop : DataSem.popEnv last with
+                      | none =>
+                        simp only [length, pop, typeError] at run
+                        obtain ⟨rfl, rfl⟩ := run
+                        exact absurd rfl hty
+                      | some final =>
+                        simp only [length, pop] at run
+                        obtain ⟨rfl, rfl⟩ := run
+                        exact absurd rfl hne
+                    · simp only [length, typeError] at run
+                      obtain ⟨rfl, rfl⟩ := run
+                      exact absurd rfl hty
+                  | err error =>
+                    cases error with
+                    | raise value =>
+                      cases handler with
+                      | none =>
+                        rw [Prod.mk.injEq] at run
+                        obtain ⟨rfl, rfl⟩ := run
+                        right
+                        exact ⟨value, rfl⟩
+                      | some handled =>
+                        obtain ⟨handlerName, handlerBody⟩ := handled
+                        have handlerClock : (DataSem.setVar handlerName value last).clock <
+                            state.clock := by
+                          have bound : last.clock ≤ called.clock := by
+                            simpa only [bodyRun] using evaluate_clock_le body called
+                          simp only [DataSem.setVar]
+                          omega
+                        exact bodyIH handlerBody (DataSem.setVar handlerName value last)
+                          handlerClock res next run hne hty
+                    | abort reason =>
+                      have hres : res = some (.err (.abort reason)) := by
+                        simpa using (congrArg Prod.fst run).symm
+                      have hne1 : (some (Result.err (.abort reason)) :
+                          Option (Result (List DataSem.Value) DataSem.Value)) ≠ none := by
+                        intro h
+                        exact hne (hres.trans h)
+                      have hty1 : (some (Result.err (.abort reason)) :
+                          Option (Result (List DataSem.Value) DataSem.Value)) ≠
+                          some (.err (.abort .typeError)) := by
+                        intro h
+                        exact hty (hres.trans h)
+                      have hnext : next = last := by
+                        simpa using (congrArg Prod.snd run).symm
+                      rw [hres, hnext]
+                      exact bodyIH body called clockLt
+                        (some (Result.err (.abort reason)) :
+                          Option (Result (List DataSem.Value) DataSem.Value)) last bodyRun
+                        hne1 hty1
+        · simp only [evaluate, read, found, distinct, typeError] at run
+          obtain ⟨rfl, rfl⟩ := run
+          exact absurd rfl hty
+
+/-- The evaluator's induction, assembled from the per-constructor cases.
+    Flapjack infrastructure toward the port of HOL `evaluate_locals_LN_lemma`;
+    no separate HOL original. -/
+private theorem localsLN_all {C F : Type} (program : DataLang.Prog) (state : State C F) :
+    LocalsLNOrRaiseAt program state := by
+  refine clockWeightInduction (α := DataLang.Prog) (σ := State C F) (·.clock) sizeOf
+    (motive := fun program state => LocalsLNOrRaiseAt program state) ?_ program state
+  intro program state exprIH smaller
+  cases program with
+  | skip => exact localsLN_skip state
+  | move dest src => exact localsLN_move dest src state
+  | assign dest op names live => exact localsLN_assign dest op names live state
+  | tick => exact localsLN_tick state
+  | makeSpace amount names => exact localsLN_makeSpace amount names state
+  | raise name => exact localsLN_raise name state
+  | «return» names => exact localsLN_return names state
+  | seq first second =>
+    apply localsLN_seq first second state
+    · apply exprIH first state (by omega)
+      simp only [DataLang.Prog.seq.sizeOf_spec]
+      omega
+    · intro mid bound
+      apply exprIH second mid bound
+      simp only [DataLang.Prog.seq.sizeOf_spec]
+      omega
+  | ifThenElse name yes no =>
+    apply localsLN_if name yes no state
+    · apply exprIH yes state (by omega)
+      simp only [DataLang.Prog.ifThenElse.sizeOf_spec]
+      omega
+    · apply exprIH no state (by omega)
+      simp only [DataLang.Prog.ifThenElse.sizeOf_spec]
+      omega
+  | force ret label src => exact localsLN_force ret label src state smaller
+  | call ret dest names handler => exact localsLN_call ret dest names handler state smaller
+
+/-- A terminal evaluation result other than a type error leaves the locals tree
+    empty unless it raises. -/
+@[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "evaluate_locals_LN_lemma"]
+theorem evaluate_locals_LN_lemma {C F : Type} (program : DataLang.Prog)
+    (state : State C F) :
+    ((evaluate program state).1 ≠ none ∧
+        (evaluate program state).1 ≠ some (.err (.abort .typeError))) →
+      (evaluate program state).2.locals = .ln ∨
+        ∃ v : DataSem.Value, (evaluate program state).1 = some (.err (.raise v)) := by
+  intro h
+  obtain ⟨hne, hty⟩ := h
+  cases run : evaluate program state with
+  | mk res next =>
+    rw [run] at hne hty
+    simp only [] at hne hty ⊢
+    exact localsLN_all program state res next run hne hty
+
+/-- A non-raising, non-type-error terminal evaluation leaves the locals tree
+    empty. -/
+@[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "evaluate_locals_LN"]
+theorem evaluate_locals_LN {C F : Type} (program : DataLang.Prog) (state : State C F)
+    (res : Option (Result (List DataSem.Value) DataSem.Value)) (t : State C F)
+    (premise : evaluate program state = (res, t) ∧ res ≠ none ∧
+      res ≠ some (.err (.abort .typeError))) :
+    t.locals = .ln ∨ ∃ v : DataSem.Value, res = some (.err (.raise v)) := by
+  obtain ⟨run, hne, hty⟩ := premise
+  exact localsLN_all program state res t run hne hty
+
 end Flapjack.Compiler.Backend.DataProps

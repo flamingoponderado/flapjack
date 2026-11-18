@@ -311,4 +311,12 @@ theorem wordToStackCompCodeLabels {width : Nat} [NeZero width]
       have bound := handlerIH label member
       tauto
 
+/-- Exact HOL `sub_union_lemma` (`word_to_stackProofScript.sml:11897-11901`):
+a subset stays a subset after adjoining another set to the right. HOL's
+`SUBSET`/`UNION` on `α → bool` sets are `Set.subset`/`Set.union`. -/
+@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "sub_union_lemma"]
+theorem subUnionLemma {α : Type} (x y z : Set α) (h : x ⊆ y) :
+    x ⊆ y ∪ z :=
+  h.trans Set.subset_union_left
+
 end Flapjack.Compiler.Backend.WordToStack.Native

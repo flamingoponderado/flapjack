@@ -421,8 +421,13 @@ import Flapjack.Compiler.Backend.Semantics.DataProps.AppWithLocals
 import Flapjack.Compiler.Backend.Semantics.DataProps.ConsumeSpaceFields
 import Flapjack.Compiler.Backend.Semantics.DataProps.EvaluateResourceSwap
 import Flapjack.Compiler.Backend.Semantics.DataProps.EvaluateLocals
+import Flapjack.Compiler.Backend.Semantics.DataProps.EvaluateStackFrameSizesSwap
+import Flapjack.Compiler.Backend.Semantics.DataProps.EvaluateLimitsSwap
+import Flapjack.Compiler.Backend.Semantics.DataProps.EvaluateAddClock
+import Flapjack.Compiler.Backend.Semantics.DataProps.EvaluateAddClockEvents
 import Flapjack.Compiler.Backend.Semantics.DataProps.EvaluateStackLocalsSwap
 import Flapjack.Compiler.Backend.Semantics.DataProps.StackSize
+import Flapjack.Compiler.Backend.Semantics.DataProps.StackMaxLimit
 import Flapjack.Compiler.Backend.Semantics.DataProps.StateUpdates
 import Flapjack.Compiler.Backend.Semantics.DataSem.ControlClock
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.Limits
@@ -1685,6 +1690,10 @@ import Flapjack.Compiler.Backend.Semantics.DataProps.CcCoOnlyDiff
 import Flapjack.Compiler.Backend.Semantics.DataProps.CcCoOnlyDiffApp
 import Flapjack.Compiler.Backend.Semantics.DataProps.CcCoOnlyDiffEval
 import Flapjack.Compiler.Backend.Semantics.DataProps.SemanticsPrefix
+import Flapjack.Compiler.Backend.Semantics.DataProps.SemanticsZeroLimits
+import Flapjack.Compiler.Backend.Semantics.DataProps.ResourceLimitSemantics
+import Flapjack.Compiler.Backend.Semantics.DataProps.ApproxOf
+import Flapjack.Compiler.Backend.Semantics.DataProps.SizeOfApproxOf
 import Flapjack.Compiler.Backend.DataSpace.Proofs.CodeLabels
 import Flapjack.Compiler.Backend.DataSpace.Proofs.Simulation
 import Flapjack.Compiler.Backend.DataSpace.Proofs.Seq
@@ -4518,6 +4527,7 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.MemoryLoad
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.MemoryStore
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.Memory
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.Skip
+import Flapjack.Compiler.Backend.WordToStack.Proofs.SupportLemmas
 
 -- Tagged modules required by the HOL reference coverage gate.
 

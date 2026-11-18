@@ -6235,7 +6235,9 @@ def unify_eq_tunify_observer_errors(
         "4bac2138ad9bcbfe57b78fc6dbb7edb52423e39505e970c865043c84f6d64b5a",
         "b040c2edeba1ef86d9d70b972b43701e413d0f831a44d11a2b2c154909e9f754",
         "9bfcfba6db8b27f663a4dae0282a3083fa07c7fc059ece27d92205e21c317832",
-        "1e2e8d0c2ca7bfec2f46c18007f1ab9b3a3f35403d62a199055eb858ed2ec8c7",
+        # Reviewed proof-only shrink of `oc_eq_vars_walkstar` on dev-2026-11-18
+        # (bdad599ffe); its statement and dependencies are unchanged.
+        "12d56d57e1c2547882c10bea0a57d6d7d147c426add20d97a0e7325b6a746c09",
         "331efe1727a5de511f488d542f3d1f050a274b65546ce4dda73798b85d5a72eb",
         "fcb7f9153d66286914d779f19f3c9bf0d30e6bfa620ef9b2450e7d27f466fd92",
         "115bb978f7540adfb0bdc6d1ff4b149d7be4978693fe57dd7468a8876f3d85e2",
