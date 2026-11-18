@@ -130004,6 +130004,24 @@
   },
 {
     "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "AddNumSize_def",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Stubs.lean",
+    "lean_name": "addNumSize",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Independent comparison with AddNumSize_def_typed confirms both tests, adjusted source register, size increment and heap load/shift expression. Positive-width BitVec represents the generic HOL word; this helper is executed by AnyArith."
+  },
+{
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "AnyHeader_def",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Stubs.lean",
+    "lean_name": "anyHeader",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Independent comparison with AnyHeader_def_typed confirms every branch, heap selection and header/payload assignment. The three fixed HOL word5 temporary indices remain BitVec 5, independent of the generic positive-width program word. This helper is executed by AnyArith."
+  },
+{
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
     "hol_name": "StoreEach_def",
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
     "lean_name": "storeEach",

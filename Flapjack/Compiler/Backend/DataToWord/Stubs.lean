@@ -39,13 +39,19 @@ private def byteCopyLoop {width : Nat} (forward : Bool) : WordLangProgHOL (BitVe
       .assign 13 (.op op [.var 6, .const 4]),
       .call none (some loc) [0, 9, 11, 13, 8] none])
 
-private def addNumSize {width : Nat} [NeZero width] (conf : Config) (src : Nat) : WordLangProgHOL (BitVec width) :=
+/-- Add the size of a numeric value to the pending allocation size. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "AddNumSize_def"
+  (words_as_type_indexed_bitvec)]
+def addNumSize {width : Nat} [NeZero width] (conf : Config) (src : Nat) : WordLangProgHOL (BitVec width) :=
   let r := adjustVar src
   .ite .equal r (.imm 0) .skip (.ite .test r (.imm 1)
     (.assign 1 (.op .add [.var 1, .const 4]))
     (.assign 1 (.op .add [.var 1, shiftN .lsl (shiftN .lsr (.load (realAddr conf r)) (width - conf.lenSize)) 2])))
 
-private def anyHeader {width : Nat} [NeZero width] (conf : Config) (r : Nat) (other : Bool)
+/-- Compute the header and payload locations for an arithmetic operand. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "AnyHeader_def"
+  (words_as_type_indexed_bitvec)]
+def anyHeader {width : Nat} [NeZero width] (conf : Config) (r : Nat) (other : Bool)
     (t1 t2 t3 : BitVec 5) : WordLangProgHOL (BitVec width) :=
   let heap : WordStoreHOL := if other then .otherHeap else .nextFree
   .ite .equal r (.imm 0) (listSeq [.assign 7 (.const 0), .set (.temp t1) (.var r),
