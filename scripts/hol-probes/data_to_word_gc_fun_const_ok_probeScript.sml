@@ -130,3 +130,4 @@ val _ = pr_typed "gc_inc_clock_inc_clock_typed" data_to_word_gcProofTheory.inc_c
 val _ = pr_typed "mk_loc_jmup_exc_inc_clock_typed" data_to_word_gcProofTheory.mk_loc_jmup_exc_inc_clock;
 val _ = pr_typed "jump_exc_inc_clock_EQ_NONE_typed" data_to_word_gcProofTheory.jump_exc_inc_clock_EQ_NONE;
 val _ = pr_typed "state_rel_lookup_globals_typed" data_to_word_gcProofTheory.state_rel_lookup_globals;
+val _ = pr_typed "state_rel_get_var_Block_typed" data_to_word_gcProofTheory.state_rel_get_var_Block;

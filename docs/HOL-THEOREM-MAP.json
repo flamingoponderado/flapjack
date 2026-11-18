@@ -23437,6 +23437,16 @@
   "reviewer": "Compared state_rel_lookup_globals_typed: the full state relation and a present data global imply that Globals contains a word encoded by get_addr for existential index and annotation. The optional roots remain arbitrary; target finite maps and positive-width words use the reviewed representations."
 },
 {
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "state_rel_get_var_Block",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/BlockLookup.lean",
+  "lean_name": "stateRel_getVar_block",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared state_rel_get_var_Block_typed: the full state relation and a successful data Block lookup imply an adjusted target lookup of an existential Word. The optional roots and block fields remain arbitrary. Target finite maps and positive-width words use the reviewed representations."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "cut_env_IMP_MEM",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CutEnvProperties.lean", "lean_name": "cutEnv_imp_mem",
   "statement_status": "reviewed_exact", "reviewer": "Compared cut_env_IMP_MEM_typed: successful source cut makes an arbitrary key present exactly when it is present in the requested set."
