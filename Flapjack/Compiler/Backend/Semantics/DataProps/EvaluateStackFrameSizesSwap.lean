@@ -1459,4 +1459,58 @@ private theorem stackFrameSwap_returningCall_handler {C F : Type} (dest : Option
         refine ⟨other, ?_, h, rel⟩
         simp [evaluate, typeError, localsEq, vars, codeEq, foundOther', distinct]
 
+/-- Every frame-size swap step preserves the relation, by the lexicographic
+    `(clock, weight)` induction over the program. Flapjack infrastructure toward
+    the port of HOL `evaluate_swap_stack_frame_sizes_aux`; no separate HOL
+    original. -/
+private theorem stackFrameSwap_all {C F : Type} (program : DataLang.Prog)
+    (state : State C F) :
+    StackFrameSwapAt program state := by
+  refine clockWeightInduction (α := DataLang.Prog) (σ := State C F) (·.clock) sizeOf
+    (motive := fun program state => StackFrameSwapAt program state) ?_ program state
+  intro program state exprIH smaller
+  cases program with
+  | skip => exact stackFrameSwap_skip state
+  | move dest src => exact stackFrameSwap_move dest src state
+  | assign dest op names live => exact stackFrameSwap_assign dest op names live state
+  | tick => exact stackFrameSwap_tick state
+  | makeSpace amount names => exact stackFrameSwap_makeSpace amount names state
+  | raise name => exact stackFrameSwap_raise name state
+  | «return» names => exact stackFrameSwap_return names state
+  | seq first second =>
+    apply stackFrameSwap_seq first second state
+    · apply exprIH first state (by omega)
+      simp only [DataLang.Prog.seq.sizeOf_spec]
+      omega
+    · intro mid bound
+      apply exprIH second mid bound
+      simp only [DataLang.Prog.seq.sizeOf_spec]
+      omega
+  | ifThenElse name yes no =>
+    apply stackFrameSwap_if name yes no state
+    · apply exprIH yes state (by omega)
+      simp only [DataLang.Prog.ifThenElse.sizeOf_spec]
+      omega
+    · apply exprIH no state (by omega)
+      simp only [DataLang.Prog.ifThenElse.sizeOf_spec]
+      omega
+  | force ret label src =>
+    cases ret with
+    | none => exact stackFrameSwap_tailForce label src state smaller
+    | some ret =>
+      obtain ⟨dest, live⟩ := ret
+      exact stackFrameSwap_returningForce dest live label src state smaller
+  | call ret dest names handler =>
+    cases ret with
+    | none => exact stackFrameSwap_tailCall dest names handler state smaller
+    | some ret =>
+      obtain ⟨returns, live⟩ := ret
+      cases handler with
+      | none =>
+        exact stackFrameSwap_returningCall_noHandler dest names returns live state smaller
+      | some entry =>
+        obtain ⟨handlerName, handlerBody⟩ := entry
+        exact stackFrameSwap_returningCall_handler dest names returns live handlerName
+          handlerBody state smaller
+
 end Flapjack.Compiler.Backend.DataProps
