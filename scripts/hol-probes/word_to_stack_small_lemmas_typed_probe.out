@@ -1,0 +1,23 @@
+copy_ret_F_typed=copy_ret F (is_handle :bool) ((k :num),(f :num),(f' :β)) (vs :γ list) (kont :α stackLang$prog) = (let (n :num) = num_stack_ret k vs in if n = (0 :num) then kont else Seq (copy_ret_aux k (if is_handle then f + (3 :num) else f) n :α stackLang$prog) (SeqStackFree n kont))
+LASTN_HD_typed=∀(ls :α list) (x :num). x ≤ LENGTH ls ⇒ HD (LASTN x ls) = ls❲LENGTH ls − x❳
+list_rearrange_I_typed=(list_rearrange (I :num -> num) :α list -> α list) = (I :α list -> α list)
+EL_REVERSE_REWRITE_typed=∀(l :α list) (n :num) (k :num). n < LENGTH l ∧ k < n ⇒ l❲LENGTH l − n + k❳ = (REVERSE l)❲n − k − (1 :num)❳
+ALOOKUP_IFF_MEM_typed=ALL_DISTINCT (MAP (FST :α # β -> α) (l :(α # β) list)) ⇒ (ALOOKUP l (q :α) = SOME (r :β) ⇔ MEM (q,r) l)
+state_rel_set_var_prime_typed=state_rel (ac :α asm_config) (k :num) (f :num) (f' :num) (s :(α, num # β, γ) state) (t :(α, β, γ) stackSem$state) (lens :num list) (extra :num) ∧ (x :num) < k ∧ (y :num) = x * (2 :num) ⇒ state_rel ac k f f' (set_var y (v :α word_loc) s) (set_var x v t) lens extra
+with_same_locals_typed=(s :(α, β, γ) state) with locals := s.locals = s
+LAST_add_ret_loc_typed=(args' :α word_loc list) ≠ ([] :α word_loc list) ⇒ LAST (add_ret_loc (ret :(β # γ # δ # num # num) option) args') = LAST args'
+MAP_o_THE_FILTER_IS_SOME_typed=MAP ((f :β -> α) ∘ (THE :β option -> β)) (FILTER (IS_SOME :β option -> bool) (ls :β option list)) = MAP ((THE :α option -> α) ∘ OPTION_MAP f) (FILTER (IS_SOME :β option -> bool) ls)
+MAP_OPTION_MAP_FILTER_IS_SOME_typed=MAP (OPTION_MAP (f :α -> α)) (FILTER (IS_SOME :α option -> bool) (ls :α option list)) = FILTER (IS_SOME :α option -> bool) (MAP (OPTION_MAP f) ls)
+MAP_FILTER_IS_SOME_typed=MAP (f :β option -> α) (FILTER (IS_SOME :β option -> bool) (ls :β option list)) = MAP (f ∘ (SOME :β -> β option) ∘ (THE :β option -> β)) (FILTER (IS_SOME :β option -> bool) ls)
+PAIR_MAP_SOME_SWAP_typed=((SOME :γ -> γ option) ## (SOME :δ -> δ option)) ∘ ((f :α -> γ) ## (g :β -> δ)) = (OPTION_MAP f ## OPTION_MAP g) ∘ ((SOME :α -> α option) ## (SOME :β -> β option))
+IS_SOME_o_OPTION_MAP_typed=(IS_SOME :β option -> bool) ∘ OPTION_MAP (f :α -> β) = (IS_SOME :α option -> bool)
+IS_SOME_OPTION_MAP2_EQ_typed=IS_SOME (OPTION_MAP2 (f :β -> γ -> α) (A :β option) (B :γ option)) ⇔ IS_SOME A ∧ IS_SOME B
+DROP_SUB_typed=(a :num) ≤ LENGTH (ls :α list) ∧ (b :num) ≤ a ⇒ DROP (a − b) ls = DROP (a − b) (TAKE a ls) ++ DROP a ls
+DROP_SUB2_typed=∀(a :num) (ls :α list) (b :num). b ≤ a ∧ a = LENGTH ls ⇒ ∃(rest :α list). DROP (a − b) ls = rest ∧ LENGTH rest = b
+SUB_ADD_EQ_typed=(a :num) ≤ (b :num) ⇒ a + (b − a) = b
+EXISTS_PULL_FORALL1_typed=(∃(x :α). ∀(y :β). Abbrev (y = (P :β)) ⇒ (Q :α -> β -> bool) x y) ⇔ ∀(y :β). Abbrev (y = P) ⇒ ∃(x :α). Q x y
+EXISTS_PULL_FORALL2_typed=(∃(x :α). ∀(y :β) (z :γ). (P :β # γ) = (y,z) ⇒ (Q :α -> β -> γ -> bool) x y z) ⇔ ∀(y :β) (z :γ). P = (y,z) ⇒ ∃(x :α). Q x y z
+EXISTS_PULL_FORALL3_typed=(∃(x :α). ∀(y :β) (z :γ) (a :δ). (P :β # γ # δ) = (y,z,a) ⇒ (Q :α -> β -> γ -> δ -> bool) x y z a) ⇔ ∀(y :β) (z :γ) (a :δ). P = (y,z,a) ⇒ ∃(x :α). Q x y z a
+SUB_SUB_SUB_MAX_typed=(a :num) − (b :num) − ((c :num) − b) = a − MAX b c
+MAX_LE_typed=(a :num) ≤ (b :num) ⇒ MAX a b = b
+EVEN_DIV_2_props_typed=(a :num) MOD (2 :num) = (0 :num) ∧ (b :num) MOD (2 :num) = (0 :num) ⇒ (a ≠ b ⇒ a DIV (2 :num) ≠ b DIV (2 :num)) ∧ (a ≠ (0 :num) ⇒ a DIV (2 :num) ≠ (0 :num))

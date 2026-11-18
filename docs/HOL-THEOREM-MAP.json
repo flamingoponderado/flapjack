@@ -141425,5 +141425,161 @@
   "lean_name": "sizeOfApproxOf",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared size_of_approx_of_typed (show_types): HOL binds lims :limits, xs :v list, refs :v ref sptree$num_map, seen :sptree$num_set, n1 :num, refs1 :v ref sptree$num_map and seen1 :sptree$num_set; the Lean binders are limits, values, refs, seen, n, refs', seen' in the same order and with the same carriers (List Value, Spt (BvlSem.Ref Value), Spt Unit, Nat). HOL's premise is ONE equation, size_of lims xs refs seen = (n1,refs1,seen1), rendered as the single hypothesis run; the conclusion n1 ≤ approx_of lims xs refs is rendered as n ≤ approxOf limits values refs. No representation qualifier applies: the signature has no finite-map or BitVec carrier (the sptree maps are the reviewed Spt carrier, not HOL |-> maps). The proof follows HOL's: the untagged private sizeOfApproxOf_aux is HOL's qsuff_tac strengthening (it adds the subspt refs refsT parameter; HOL introduces that statement with qsuff_tac, so it has no separate HOL declaration) and is proved by well-founded recursion on (sptSize refs, sizeOf values) case by case like ho_match_mp_tac size_of_ind, using the approxOf_refPtr_* helpers for the RefPtr clauses; the tagged theorem instantiates refsT := refs with the reflexive subspt."
-}
+},
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "copy_ret_F",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/SupportLemmas.lean",
+    "lean_name": "copyRetF",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, copy_ret_F_typed): source88-96; copy_ret F with F=false, is_handle bool, (k,f,f') with independent f' type, polymorphic vs list and kont ProgM, RHS let n = num_stack_ret k vs / if n = 0 then kont else Seq (copy_ret_aux k (if is_handle then f + 3 else f) n) (SeqStackFree n kont) with handler_slots F = 3; Lean copyRet false keeps the same let/if/seq shape and independent carriers."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "LASTN_HD",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/SupportLemmas.lean",
+    "lean_name": "lastNHd",
+    "statement_status": "reviewed_total_function_inhabitants",
+    "total_function_inhabitants": ["α"],
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, LASTN_HD_typed): source291-306; binders ls then x, one premise x ≤ LENGTH ls, HD and EL rendered by holHd/holEl with total_function_inhabitants [α] (HOL HD/EL unspecified on the empty list and past-the-end index), LASTN as wordSemLastN (reverse/take/reverse), index arithmetic LENGTH ls - x retained."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "EL_REVERSE_REWRITE",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/SupportLemmas.lean",
+    "lean_name": "elReverseRewrite",
+    "statement_status": "reviewed_total_function_inhabitants",
+    "total_function_inhabitants": ["α"],
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, EL_REVERSE_REWRITE_typed): source2601-2606; binders l n k, two premises n < LENGTH l and k < n, EL rendered by holEl with total_function_inhabitants [α] (HOL EL unspecified past the end), REVERSE as List.reverse, exact index arithmetic LENGTH l - n + k and n - k - 1 retained."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "ALOOKUP_IFF_MEM",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/SupportLemmas.lean",
+    "lean_name": "alookupIffMem",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, ALOOKUP_IFF_MEM_typed): source2628-2633; independent key type α and payload type β, ALL_DISTINCT (MAP FST l) as (l.map Prod.fst).Nodup, ALOOKUP as keyLookup (holAlookup with classical propositional key equality), q and r independent, exact iff orientation with MEM (q,r) l."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "LAST_add_ret_loc",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/SupportLemmas.lean",
+    "lean_name": "lastAddRetLoc",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, LAST_add_ret_loc_typed): source3307-3313; LAST rendered by holLast (only cons equations used since the premise keeps the argument list nonempty), add_ret_loc as wordSemAddRetLoc, ret carrier Option (β × γ × δ × Num × Num) with independent β γ δ, nonempty premise retained; the concrete WordLocW element type uses the global Nonempty instance, so no type-binder qualifier."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "MAP_o_THE_FILTER_IS_SOME",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/SupportLemmas.lean",
+    "lean_name": "mapOTheFilterIsSome",
+    "statement_status": "reviewed_total_function_inhabitants",
+    "total_function_inhabitants": ["α", "β"],
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, MAP_o_THE_FILTER_IS_SOME_typed): source3431-3436; independent β (payload) and α (result) type variables, THE rendered by holThe with total_function_inhabitants [α, β] (only SOME entries survive FILTER IS_SOME), OPTION_MAP as Option.map, FILTER IS_SOME as List.filter Option.isSome, both MAP sides and composition order retained."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "MAP_OPTION_MAP_FILTER_IS_SOME",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/SupportLemmas.lean",
+    "lean_name": "mapOptionMapFilterIsSome",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, MAP_OPTION_MAP_FILTER_IS_SOME_typed): source3438-3443; single α carrier with f : α → α, OPTION_MAP as Option.map, FILTER IS_SOME as List.filter Option.isSome, exact MAP/filter orientation on both sides."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "MAP_FILTER_IS_SOME",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/SupportLemmas.lean",
+    "lean_name": "mapFilterIsSome",
+    "statement_status": "reviewed_total_function_inhabitants",
+    "total_function_inhabitants": ["β"],
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, MAP_FILTER_IS_SOME_typed): source3445-3449; f : Option β → α, THE rendered by holThe with total_function_inhabitants [β], FILTER IS_SOME as List.filter Option.isSome, RHS composition f ∘ SOME ∘ THE as f (some (holThe o)) retained."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "PAIR_MAP_SOME_SWAP",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/SupportLemmas.lean",
+    "lean_name": "pairMapSomeSwap",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, PAIR_MAP_SOME_SWAP_typed): source3484-3488; four independent types α β γ δ with f : α → γ and g : β → δ, pair map ## as Prod.map, OPTION_MAP as Option.map, function composition order on both sides retained."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "IS_SOME_o_OPTION_MAP",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/SupportLemmas.lean",
+    "lean_name": "isSomeOptionMap",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, IS_SOME_o_OPTION_MAP_typed): source3490-3494; independent α β with f : α → β, IS_SOME as Option.isSome, OPTION_MAP as Option.map, composition orientation retained."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "DROP_SUB",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/SupportLemmas.lean",
+    "lean_name": "dropSub",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, DROP_SUB_typed): source5446-5454; binders ls a b, one conjunction premise a ≤ LENGTH ls ∧ b ≤ a kept as the same two premises, DROP/TAKE as List.drop/List.take, append order DROP (a-b) (TAKE a ls) ++ DROP a ls retained."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "DROP_SUB2",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/SupportLemmas.lean",
+    "lean_name": "dropSub2",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, DROP_SUB2_typed): source5456-5466; binders a ls b, premises b ≤ a and a = LENGTH ls, existential rest with DROP (a-b) ls = rest and LENGTH rest = b retained."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "SUB_ADD_EQ",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/SupportLemmas.lean",
+    "lean_name": "subAddEq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, SUB_ADD_EQ_typed): source6600-6604; binders a b, one premise a ≤ b, exact orientation a + (b - a) = b, Num-only carriers."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "EXISTS_PULL_FORALL1",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/SupportLemmas.lean",
+    "lean_name": "existsPullForall1",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, EXISTS_PULL_FORALL1_typed): source6925-6929; independent α β, HOL Abbrev (y = P) rendered as the identity guard y = P, exact quantifier swap ?x !y / !y ?x and guard orientation retained."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "EXISTS_PULL_FORALL2",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/SupportLemmas.lean",
+    "lean_name": "existsPullForall2",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, EXISTS_PULL_FORALL2_typed): source6931-6935; independent α β γ, P : β # γ as β × γ, exact pair guard P = (y,z), quantifier swap retained."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "EXISTS_PULL_FORALL3",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/SupportLemmas.lean",
+    "lean_name": "existsPullForall3",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, EXISTS_PULL_FORALL3_typed): source6937-6941; independent α β γ δ, P : β # γ # δ as β × γ × δ, exact triple guard P = (y,z,a), quantifier swap retained."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "SUB_SUB_SUB_MAX",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/SupportLemmas.lean",
+    "lean_name": "subSubSubMax",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, SUB_SUB_SUB_MAX_typed): source7589-7594; binders a b c, exact orientation a - b - (c - b) = a - MAX b c with MAX as Nat.max, Num-only carriers."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "MAX_LE",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/SupportLemmas.lean",
+    "lean_name": "maxLe",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, MAX_LE_typed): source7596-7600; binders a b, one premise a ≤ b, conclusion MAX a b = b with MAX as Nat.max."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "EVEN_DIV_2_props",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/SupportLemmas.lean",
+    "lean_name": "evenDiv2Props",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, EVEN_DIV_2_props_typed): source10944-10954; binders a b, one conjunction premise a MOD 2 = 0 ∧ b MOD 2 = 0 kept as two premises, both conclusions (a ≠ b ⇒ a DIV 2 ≠ b DIV 2) ∧ (a ≠ 0 ⇒ a DIV 2 ≠ 0) retained, MOD/DIV as Nat % and /."
+  }
 ]
