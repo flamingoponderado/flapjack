@@ -3,6 +3,12 @@ module
 public import Flapjack.Compiler.Backend.Semantics.DataProps.AppWithLocals
 public import Flapjack.Compiler.Backend.Semantics.DataProps.PrimitiveResources
 public import Flapjack.Compiler.Backend.Semantics.DataProps.ResourceMonotonicity
+public import Flapjack.Compiler.Backend.Semantics.DataProps.ResourceCall
+public import Flapjack.Compiler.Backend.Semantics.DataProps.CutSwap
+public import Flapjack.Compiler.Backend.Semantics.DataProps.CutFields
+public import Flapjack.Compiler.Backend.Semantics.DataProps.Jump
+public import Flapjack.Compiler.Backend.Semantics.DataSem.EvaluateClock
+public import Flapjack.Misc.ClockWeightInduction
 public import Flapjack.HolRef
 
 @[expose] public section
@@ -271,5 +277,233 @@ theorem doApp_stackMax_le_stackLimit {C F : Type} (op : ClosLang.Op) (values : L
         | some accounted =>
           simp only [hspace] at run
           exact doApp_stackMax_le_of_aux op values state accounted res next hspace run safe bound
+
+/-- Along a safe run, the recorded stack maximum stays within the configured
+    stack limit. -/
+private def StackMaxLimitAt {C F : Type} (program : DataLang.Prog) (state : State C F) : Prop :=
+  ∀ (res : Option (Flapjack.SemanticPrimitivesHOL.Result (List DataSem.Value) DataSem.Value))
+    (next : State C F),
+    evaluate program state = (res, next) → next.safeForSpace = true →
+    BackendProps.optionLe state.stackMax (some state.limits.stackLimit) →
+    BackendProps.optionLe next.stackMax (some next.limits.stackLimit)
+
+/-- The narrow local cut leaves the configured limits untouched.  Flapjack
+    infrastructure for `evaluate_stack_max_le_stack_limit`; no separate HOL
+    original. -/
+private theorem cutStateOpt_limits {C F : Type} (names : Option NumSet)
+    (state next : State C F) (run : cutStateOpt names state = some next) :
+    next.limits = state.limits := by
+  cases names with
+  | none =>
+    simp only [cutStateOpt, Option.some.injEq] at run
+    rw [← run]
+  | some names =>
+    simp only [cutStateOpt, cutState] at run
+    cases found : cutEnv names state.locals with
+    | none => simp [found] at run
+    | some env =>
+      simp only [found, Option.map_some, Option.some.injEq] at run
+      rw [← run]
+
+private theorem stackMaxLimitAt_skip {C F : Type} (state : State C F) :
+    StackMaxLimitAt .skip state := by
+  intro res next run safe bound
+  simp only [evaluate, Prod.mk.injEq] at run
+  obtain ⟨rfl, rfl⟩ := run
+  exact bound
+
+private theorem stackMaxLimitAt_move {C F : Type} (dest src : Nat) (state : State C F) :
+    StackMaxLimitAt (.move dest src) state := by
+  intro res next run safe bound
+  cases read : DataSem.getVar src state.locals with
+  | none =>
+    simp [evaluate, read] at run
+    obtain ⟨rfl, rfl⟩ := run
+    exact bound
+  | some value =>
+    simp [evaluate, read] at run
+    obtain ⟨rfl, rfl⟩ := run
+    simpa [setVar] using bound
+
+private theorem stackMaxLimitAt_assign {C F : Type} (dest : Nat) (op : ClosLang.Op)
+    (names : List Nat) (live : Option NumSet) (state : State C F) :
+    StackMaxLimitAt (.assign dest op names live) state := by
+  intro res next run safe bound
+  simp only [evaluate] at run ⊢
+  by_cases requires : (DataLang.opRequiresNames op == live.isNone) = true
+  · rw [if_pos requires] at run
+    simp [typeError] at run ⊢
+    obtain ⟨rfl, rfl⟩ := run
+    exact bound
+  · rw [if_neg requires] at run
+    cases read : DataSem.getVars names state.locals with
+    | none =>
+      simp [read, typeError] at run ⊢
+      obtain ⟨rfl, rfl⟩ := run
+      exact bound
+    | some values =>
+      simp only [read] at run ⊢
+      cases cut : cutStateOpt live state with
+      | none =>
+        simp [cut, typeError] at run ⊢
+        obtain ⟨rfl, rfl⟩ := run
+        exact bound
+      | some mid =>
+        simp only [cut] at run ⊢
+        have midMax := cutStateOpt_stackMax live state mid cut
+        have midLim := cutStateOpt_limits live state mid cut
+        have midBound : BackendProps.optionLe mid.stackMax (some mid.limits.stackLimit) := by
+          rw [midMax, midLim]
+          exact bound
+        cases app : doApp op values mid with
+        | err error =>
+          simp only [app] at run
+          obtain ⟨rfl, rfl⟩ := run
+          simpa [flushState, installSfs, midLim] using midBound
+        | val pair =>
+          obtain ⟨value, last⟩ := pair
+          simp only [app] at run
+          obtain ⟨rfl, rfl⟩ := run
+          have lastSafe : last.safeForSpace = true := by
+            by_cases install : op = .install
+            · subst install
+              simp [setVar, installSfs] at safe
+            · simp only [setVar, installSfs] at safe
+              exact safe
+          have lastBound := doApp_stackMax_le_stackLimit op values mid value last
+            ⟨app, lastSafe, midBound⟩
+          simpa [setVar, installSfs] using lastBound
+
+private theorem stackMaxLimitAt_tick {C F : Type} (state : State C F) :
+    StackMaxLimitAt .tick state := by
+  intro res next run safe bound
+  simp only [evaluate] at run ⊢
+  by_cases zero : state.clock = 0
+  · rw [if_pos zero] at run
+    simp [timeoutError, flushState] at run ⊢
+    obtain ⟨rfl, rfl⟩ := run
+    simpa [flushState] using bound
+  · rw [if_neg zero] at run
+    simp [decClock] at run ⊢
+    obtain ⟨rfl, rfl⟩ := run
+    simpa [decClock] using bound
+
+private theorem stackMaxLimitAt_makeSpace {C F : Type} (amount : Nat) (names : NumSet)
+    (state : State C F) : StackMaxLimitAt (.makeSpace amount names) state := by
+  intro res next run safe bound
+  simp only [evaluate] at run ⊢
+  cases cut : cutEnv names state.locals with
+  | none =>
+    simp [cut, typeError] at run ⊢
+    obtain ⟨rfl, rfl⟩ := run
+    exact bound
+  | some env =>
+    simp only [cut] at run ⊢
+    obtain ⟨rfl, rfl⟩ := run
+    simpa [addSpace] using bound
+
+private theorem stackMaxLimitAt_raise {C F : Type} (name : Nat) (state : State C F) :
+    StackMaxLimitAt (.raise name) state := by
+  intro res next run safe bound
+  simp only [evaluate] at run ⊢
+  cases read : DataSem.getVar name state.locals with
+  | none =>
+    simp [read, typeError] at run ⊢
+    obtain ⟨rfl, rfl⟩ := run
+    exact bound
+  | some value =>
+    simp only [read] at run ⊢
+    generalize jumpEq : jumpExc state = jump at run ⊢
+    by_cases hasJump : ∃ t : State C F, jumpExc state = some t
+    · obtain ⟨target, targetRun⟩ := hasJump
+      have jumpSome : jump = some target := by
+        rw [← jumpEq, targetRun]
+      rw [jumpSome] at run
+      simp only [] at run ⊢
+      have nextEq : next = target := by simpa using (congrArg Prod.snd run).symm
+      rw [nextEq]
+      obtain ⟨_, n, e, ls, xs, _, targetEq⟩ := jumpExcImp state target targetRun
+      rw [targetEq]
+      simpa using bound
+    · have jumpNone : jump = none := by
+        rw [← jumpEq]
+        cases found : jumpExc state with
+        | none => rfl
+        | some t => exact absurd ⟨t, found⟩ hasJump
+      rw [jumpNone] at run
+      simp only [] at run ⊢
+      obtain ⟨rfl, rfl⟩ := run
+      exact bound
+
+private theorem stackMaxLimitAt_return {C F : Type} (names : List Nat) (state : State C F) :
+    StackMaxLimitAt (.return names) state := by
+  intro res next run safe bound
+  simp only [evaluate] at run ⊢
+  cases read : DataSem.getVars names state.locals with
+  | none =>
+    simp [read, typeError] at run ⊢
+    obtain ⟨rfl, rfl⟩ := run
+    exact bound
+  | some values =>
+    simp only [read] at run ⊢
+    obtain ⟨rfl, rfl⟩ := run
+    simpa [flushState] using bound
+
+private theorem stackMaxLimitAt_if {C F : Type} (name : Nat) (yes no : DataLang.Prog)
+    (state : State C F) (yesIH : StackMaxLimitAt yes state) (noIH : StackMaxLimitAt no state) :
+    StackMaxLimitAt (.ifThenElse name yes no) state := by
+  intro res next run safe bound
+  simp only [evaluate] at run ⊢
+  cases read : DataSem.getVar name state.locals with
+  | none =>
+    simp [read, typeError] at run ⊢
+    obtain ⟨rfl, rfl⟩ := run
+    exact bound
+  | some value =>
+    simp only [read] at run ⊢
+    by_cases isTrue : DataSem.isBool true value = true
+    · rw [if_pos isTrue] at run
+      exact yesIH res next run safe bound
+    · by_cases isFalse : DataSem.isBool false value = true
+      · rw [if_neg isTrue, if_pos isFalse] at run
+        exact noIH res next run safe bound
+      · rw [if_neg isTrue, if_neg isFalse] at run
+        simp [typeError] at run ⊢
+        obtain ⟨rfl, rfl⟩ := run
+        exact bound
+
+private theorem stackMaxLimitAt_seq {C F : Type} (first second : DataLang.Prog)
+    (state : State C F) (firstIH : StackMaxLimitAt first state)
+    (secondIH : ∀ mid : State C F, mid.clock ≤ state.clock → StackMaxLimitAt second mid) :
+    StackMaxLimitAt (.seq first second) state := by
+  intro res next run safe bound
+  simp only [evaluate] at run ⊢
+  cases firstRun : evaluate first state with
+  | mk outcome mid =>
+    rw [firstRun] at run
+    simp only [fixClock] at run ⊢
+    cases outcome with
+    | none =>
+      simp only [] at run
+      have clockLe : (fixClock state ((none : Option (SemanticPrimitivesHOL.Result
+          (List DataSem.Value) DataSem.Value)), mid)).2.clock ≤ state.clock := by
+        simp only [fixClock]
+        exact Nat.min_le_left _ _
+      have midSafe : (fixClock state ((none : Option (SemanticPrimitivesHOL.Result
+          (List DataSem.Value) DataSem.Value)), mid)).2.safeForSpace = true :=
+        evaluate_safety_of_result second
+          (fixClock state ((none : Option (SemanticPrimitivesHOL.Result
+            (List DataSem.Value) DataSem.Value)), mid)).2 res next ⟨run, safe⟩
+      have midBound : BackendProps.optionLe (fixClock state ((none : Option
+            (SemanticPrimitivesHOL.Result (List DataSem.Value) DataSem.Value)), mid)).2.stackMax
+          (some (fixClock state ((none : Option (SemanticPrimitivesHOL.Result
+            (List DataSem.Value) DataSem.Value)), mid)).2.limits.stackLimit) := by
+        simpa only [fixClock] using firstIH none mid firstRun midSafe bound
+      exact secondIH (fixClock state ((none : Option (SemanticPrimitivesHOL.Result
+        (List DataSem.Value) DataSem.Value)), mid)).2 clockLe res next run safe midBound
+    | some result =>
+      simp only [] at run
+      obtain ⟨rfl, rfl⟩ := run
+      simpa only [fixClock] using firstIH (some result) mid firstRun safe bound
 
 end Flapjack.Compiler.Backend.DataProps
