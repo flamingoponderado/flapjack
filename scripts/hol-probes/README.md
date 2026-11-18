@@ -1,6 +1,6 @@
-`data_to_word_cut_envs_wf_replay_probe.out` captures the inferred type of
-`cut_envs_wf` by replaying its original statement and proof against the pinned
-word semantics theory. Regenerate with
+`data_to_word_cut_envs_wf_replay_probe.out` captures the inferred types of
+`cut_envs_wf` and `cut_env_lookup` by replaying their original statements and
+proofs against the pinned word semantics theory. Regenerate with
 `HOL_PROBE_ONLY=data_to_word_cut_envs_wf_replay_probeScript.sml scripts/hol-probes/regenerate.sh`
 using the pinned CakeML and HOL revisions. This capture supports source review;
 it does not establish cross-language equivalence.

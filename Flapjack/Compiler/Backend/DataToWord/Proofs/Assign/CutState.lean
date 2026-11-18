@@ -22,6 +22,22 @@ theorem cutEnvs_wf {α : Type} (names : WordLangCutsetsHOL) (env first second : 
   obtain ⟨rfl, rfl⟩ := run
   exact ⟨sptWfInter _ _, sptWfInter _ _⟩
 
+/-- A binding found after a successful word-environment cut was present
+in the original environment. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml" "cut_env_lookup"]
+theorem cutEnv_lookup {α : Type} (names : WordLangCutsetsHOL) (env cut : Spt α)
+    (key : Nat) (value : α)
+    (premises : wordSemCutEnv names env = some cut ∧ sptLookup key cut = some value) :
+    sptLookup key env = some value := by
+  obtain ⟨run, found⟩ := premises
+  by_cases h1 : LoopSemStateFiniteExact.sptSubsetLive names.1 env <;>
+    by_cases h2 : LoopSemStateFiniteExact.sptSubsetLive names.2 env <;>
+    simp [wordSemCutEnv, wordSemCutEnvs, wordSemCutNames, h1, h2] at run
+  subst cut
+  rw [sptLookup_sptUnion, sptLookup_sptInterCases, sptLookup_sptInterCases] at found
+  cases read : sptLookup key env <;> cases first : sptLookup key names.1 <;>
+    cases second : sptLookup key names.2 <;> simp_all
+
 /-- A successful optional cut is equal to the total GC cut operation. -/
 @[hol "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml" "cut_state_opt_IMP_cut_locals"]
 theorem cutStateOpt_imp_cutLocals {C F : Type} (names : NumSet)

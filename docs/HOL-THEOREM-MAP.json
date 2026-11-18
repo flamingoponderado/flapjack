@@ -8418,6 +8418,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "cut_env_lookup",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/CutState.lean",
+  "lean_name": "cutEnv_lookup",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with cut_env_lookup_replay_typed and the HOL source: the cutsets, shared polymorphic tree payload and key/value carriers agree, as do the two conjunctive premises and the original lookup conclusion. The typed HOL replay uses the original statement and proof and has no hypotheses."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
   "hol_name": "cut_envs_wf",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/CutState.lean",
   "lean_name": "cutEnvs_wf",

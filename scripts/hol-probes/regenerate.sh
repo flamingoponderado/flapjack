@@ -12165,7 +12165,7 @@ run_probe data_to_word_assign_typed_probeScript.sml data_to_word_assign_typed_pr
   "$cake_dir/compiler/backend/proofs"
 
 run_probe data_to_word_cut_envs_wf_replay_probeScript.sml data_to_word_cut_envs_wf_replay_probe.out \
-  cut_envs_wf_replay_typed \
+  cut_envs_wf_replay_typed cut_env_lookup_replay_typed \
   "$cake_dir/compiler/backend/proofs/data_to_word_assignProofScript.sml" \
   "$cake_dir/compiler/backend/semantics"
 
