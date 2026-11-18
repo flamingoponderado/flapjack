@@ -1,3 +1,9 @@
+`data_to_word_assign_roots_probe.out` captures the exported HOL root-invariant
+and memory-relation variable-lookup theorems with inferred types. Regenerate
+with `HOL_PROBE_ONLY=data_to_word_assign_roots_probeScript.sml scripts/hol-probes/regenerate.sh`
+using the pinned CakeML and HOL revisions. This is source-review evidence,
+not a cross-language equivalence proof.
+
 `data_to_word_cut_get_vars_probe.out` captures the exported HOL theorem
 `cut_env_get_vars_get_vars` with inferred types and checks that it has no
 hypotheses. Regenerate with

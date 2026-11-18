@@ -310,6 +310,8 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.JoinEnv
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.Heap
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.SilentFfi
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.WordMlInvLookup
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.WordMlInvGetVars
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.Roots
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.WordMlInvInsert
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.MkLoc
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.Skip

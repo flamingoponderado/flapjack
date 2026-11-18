@@ -8417,6 +8417,26 @@
   "reviewer": "Independent source and cut_locals_def_typed comparison: both branches retain the two independent state parameters and update only locals, using the cut result on success and the empty sparse tree on failure."
 },
 {
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "word_ml_inv_get_vars_IMP_lemma",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/WordMlInvGetVars.lean",
+  "lean_name": "wordMlInv_getVars",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Independent comparison with the HOL source and word_ml_inv_get_vars_IMP_lemma_typed: the source and target reads, root invariant and ZIP conclusion have the original carriers and premises. The qualifier records the word state's fpRegs/store finite maps and positive-width words; its compiler and FFI types remain independent."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "memory_rel_lookup_var_IMP",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/Roots.lean",
+  "lean_name": "memoryRel_lookupVars",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": ["store", "WordSemStateFiniteExact.fpRegs", "WordSemStateFiniteExact.store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Independent comparison with the HOL source and memory_rel_lookup_var_IMP_typed: the memory relation, both variable reads, all shared carriers and the ZIP conclusion agree with HOL. The qualifier records the standalone store map and the word state's fpRegs/store fields, plus the positive-width word representation; the state roundtrip witness is provided in the module."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
   "hol_name": "cut_env_get_vars_get_vars",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/CutState.lean",
