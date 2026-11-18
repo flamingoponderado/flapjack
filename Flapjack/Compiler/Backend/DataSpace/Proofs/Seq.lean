@@ -188,7 +188,7 @@ private theorem cutEnv_before_assign {α : Type} (source target : Spt α) (names
   have prePresent : ∀ key, sptMem key preNames → sptMem key target := by
     intro key member
     rcases (DataLive.mem_listInsert arguments _ key).1 member with argument | rest
-    · exact DataProps.getVars_imp_domain arguments key target values ⟨argument, targetRead⟩
+    · exact DataToWord.Proofs.Assign.getVars_imp_domain arguments target values targetRead key argument
     · have other : key ≠ dest := by
         intro same
         subst key

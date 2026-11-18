@@ -8494,6 +8494,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "get_vars_IMP_domain",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/GetVarsCutEnv.lean",
+  "lean_name": "getVars_imp_domain",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the HOL source and inferred-type capture: for an arbitrary sparse environment and payload type, a successful list read implies that each requested variable belongs to the domain. The proof derives the original EVERY conclusion from the independently ported dataProps membership theorem."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
   "hol_name": "get_vars_cut_env",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/GetVarsCutEnv.lean",
   "lean_name": "getVars_cutEnv",

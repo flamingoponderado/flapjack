@@ -31,3 +31,4 @@ val _ = emit "store_list_def_typed" data_to_word_memoryProofTheory.store_list_de
 val _ = emit "IMP_store_list_SOME_typed" data_to_word_assignProofTheory.IMP_store_list_SOME;
 
 val _ = emit "get_vars_cut_env_typed" data_to_word_assignProofTheory.get_vars_cut_env;
+val _ = emit "get_vars_IMP_domain_typed" data_to_word_assignProofTheory.get_vars_IMP_domain;

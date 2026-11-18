@@ -34,4 +34,13 @@ theorem getVars_cutEnv {α : Type} (names : NumSet) (source target : Spt α)
         subst values
         simp [DataSem.getVars, cutFirst, cutRest]
 
+/-- A successful list read establishes that every requested variable is in
+    the environment domain. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml" "get_vars_IMP_domain"]
+theorem getVars_imp_domain {α : Type} (vars : List Nat) (env : Spt α) (values : List α)
+    (read : DataSem.getVars vars env = some values) :
+    ∀ key ∈ vars, sptDomain env key := by
+  intro key member
+  exact DataProps.getVars_imp_domain vars key env values ⟨member, read⟩
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Assign
