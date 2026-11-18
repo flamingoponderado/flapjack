@@ -4,6 +4,7 @@ public import Flapjack.Compiler.Backend.Semantics.DataProps.EvaluateStackLocalsS
 public import Flapjack.Compiler.Backend.Semantics.DataProps.CutFields
 public import Flapjack.Compiler.Backend.Semantics.DataProps.ResourceSwap
 public import Flapjack.Misc.ClockWeightInduction
+public import Flapjack.HolArb
 public import Flapjack.HolRef
 
 @[expose] public section
@@ -1347,21 +1348,23 @@ private theorem limitSwap_all {C F : Type} (lim : Limits) (program : DataLang.Pr
         exact limitSwap_returningCall_handler lim dest names returns live handlerName
           handlerBody state smaller
 
-/-- HOL's `zero_limits`: the three size limits are zero and the architecture
-    flags, which HOL's partial record literal leaves as `ARB`, are rendered by
-    `false`. Flapjack rendering of HOL `zero_limits_def`; the theorems below hold
-    for every limits value, so the choice of the `ARB` fields is immaterial. -/
-def zeroLimits : Limits :=
-  { heapLimit := 0, lengthLimit := 0, stackLimit := 0, arch64Bit := false,
-    hasFpOps := false, hasFpTops := false }
+/-- HOL's `zero_limits_def`: the three size limits are zero, and the partial
+    record literal leaves `arch_64_bit`, `has_fp_ops` and `has_fp_tops` as HOL
+    `ARB` at `bool`. Each unspecified field is rendered by the shared opaque
+    `holArb Bool`, the same ARB rendering used elsewhere, rather than a concrete
+    Boolean. -/
+@[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "zero_limits_def"]
+noncomputable def zeroLimits : Limits :=
+  { heapLimit := 0, lengthLimit := 0, stackLimit := 0, arch64Bit := holArb Bool,
+    hasFpOps := holArb Bool, hasFpTops := holArb Bool }
 
 /-- Replacing the configured limits of the starting state preserves the
     evaluation result, with the stack maximum, the safety flag and the peak heap
     length free in the result. Port of HOL `evaluate_swap_limits`. -/
 @[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "evaluate_swap_limits"]
 theorem evaluate_swap_limits {C F : Type} (program : DataLang.Prog)
-    (state next : State C F) (res : Option (Result (List DataSem.Value) DataSem.Value))
-    (limits : Limits) (run : evaluate program state = (res, next)) :
+    (state : State C F) (res : Option (Result (List DataSem.Value) DataSem.Value))
+    (next : State C F) (limits : Limits) (run : evaluate program state = (res, next)) :
     ∃ smx safe peak,
       evaluate program { state with limits := limits } =
         (res, { next with
@@ -1380,13 +1383,14 @@ theorem evaluate_swap_limits {C F : Type} (program : DataLang.Prog)
 @[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml"
   "evaluate_zero_limits_FST"]
 theorem evaluate_zero_limits_FST {C F : Type} (program : DataLang.Prog)
-    (state : State C F) :
+    (state : State C F) (_res : Option (Result (List DataSem.Value) DataSem.Value))
+    (_next : State C F) :
     (evaluate program state).1 =
       (evaluate program { state with limits := zeroLimits }).1 := by
   cases runEq : evaluate program state with
   | mk res next =>
     obtain ⟨smx, safe, peak, runSwap⟩ :=
-      evaluate_swap_limits program state next res zeroLimits runEq
+      evaluate_swap_limits program state res next zeroLimits runEq
     rw [runSwap]
 
 /-- The final FFI state of a program does not depend on the configured limits.
@@ -1394,13 +1398,14 @@ theorem evaluate_zero_limits_FST {C F : Type} (program : DataLang.Prog)
 @[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml"
   "evaluate_zero_limits_ffi"]
 theorem evaluate_zero_limits_ffi {C F : Type} (program : DataLang.Prog)
-    (state : State C F) :
+    (state : State C F) (_res : Option (Result (List DataSem.Value) DataSem.Value))
+    (_next : State C F) :
     (evaluate program state).2.ffi =
       (evaluate program { state with limits := zeroLimits }).2.ffi := by
   cases runEq : evaluate program state with
   | mk res next =>
     obtain ⟨smx, safe, peak, runSwap⟩ :=
-      evaluate_swap_limits program state next res zeroLimits runEq
+      evaluate_swap_limits program state res next zeroLimits runEq
     rw [runSwap]
 
 end Flapjack.Compiler.Backend.DataProps

@@ -1517,19 +1517,22 @@ private theorem stackFrameSwap_all {C F : Type} (program : DataLang.Prog)
 /-- Replacing the locals size, the stack and the frame-size map of the starting
     state preserves the evaluation result, with the frame-size map and the
     resource observations free in the result. Port of HOL
-    `evaluate_swap_stack_frame_sizes_aux`. -/
+    `evaluate_swap_stack_frame_sizes_aux`: HOL's single conjunction premise
+    (`evaluate (c,s) = (r,s')` and the frame-size relation) is one premise here,
+    and the replaced starting state is HOL's `let s0`. -/
 @[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml"
   "evaluate_swap_stack_frame_sizes_aux"]
 theorem evaluate_swap_stack_frame_sizes_aux {C F : Type} (program : DataLang.Prog)
-    (state next : State C F) (res : Option (Result (List DataSem.Value) DataSem.Value))
-    (xs : List Stack) (localsSize : Option Nat) (sfs : Spt Nat)
-    (run : evaluate program state = (res, next))
-    (related : List.Forall₂ stackFrameSizeRel state.stack xs) :
+    (state : State C F) (res : Option (Result (List DataSem.Value) DataSem.Value))
+    (next : State C F) (xs : List Stack) (localsSize : Option Nat) (sfs : Spt Nat)
+    (premise : evaluate program state = (res, next) ∧
+      List.Forall₂ stackFrameSizeRel state.stack xs) :
+    let start := { state with
+      localsSize := localsSize
+      stack := xs
+      stackFrameSizes := sfs }
     ∃ xs' localsSize' smx safe peak sfs',
-      evaluate program { state with
-          localsSize := localsSize
-          stack := xs
-          stackFrameSizes := sfs } =
+      evaluate program start =
         (res, { next with
           localsSize := localsSize'
           safeForSpace := safe
@@ -1538,6 +1541,8 @@ theorem evaluate_swap_stack_frame_sizes_aux {C F : Type} (program : DataLang.Pro
           stackMax := smx
           peakHeapLength := peak }) ∧
       List.Forall₂ stackFrameSizeRel next.stack xs' := by
+  dsimp only
+  obtain ⟨run, related⟩ := premise
   obtain ⟨other, otherRun, relNext, stackNext⟩ :=
     stackFrameSwap_all program state res next
       { state with localsSize := localsSize, stack := xs, stackFrameSizes := sfs }
@@ -1552,8 +1557,8 @@ theorem evaluate_swap_stack_frame_sizes_aux {C F : Type} (program : DataLang.Pro
     observations free in the result. Port of HOL `evaluate_swap_local_sizes`. -/
 @[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "evaluate_swap_local_sizes"]
 theorem evaluate_swap_local_sizes {C F : Type} (program : DataLang.Prog)
-    (state next : State C F) (res : Option (Result (List DataSem.Value) DataSem.Value))
-    (localsSize : Option Nat) (run : evaluate program state = (res, next)) :
+    (state : State C F) (res : Option (Result (List DataSem.Value) DataSem.Value))
+    (next : State C F) (localsSize : Option Nat) (run : evaluate program state = (res, next)) :
     ∃ xs' localsSize' sfs' smx safe peak,
       evaluate program { state with localsSize := localsSize } =
         (res, { next with
@@ -1565,8 +1570,8 @@ theorem evaluate_swap_local_sizes {C F : Type} (program : DataLang.Prog)
           peakHeapLength := peak }) ∧
       List.Forall₂ stackFrameSizeRel next.stack xs' := by
   obtain ⟨xs', localsSize', smx, safe, peak, sfs', runSwap, related⟩ :=
-    evaluate_swap_stack_frame_sizes_aux program state next res state.stack localsSize
-      state.stackFrameSizes run (forall₂_stackFrameSizeRel_refl state.stack)
+    evaluate_swap_stack_frame_sizes_aux program state res next state.stack localsSize
+      state.stackFrameSizes ⟨run, forall₂_stackFrameSizeRel_refl state.stack⟩
   refine ⟨xs', localsSize', sfs', smx, safe, peak, ?_, related⟩
   simpa using runSwap
 
@@ -1577,8 +1582,8 @@ theorem evaluate_swap_local_sizes {C F : Type} (program : DataLang.Prog)
 @[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml"
   "evaluate_swap_stack_frame_sizes"]
 theorem evaluate_swap_stack_frame_sizes {C F : Type} (program : DataLang.Prog)
-    (state next : State C F) (res : Option (Result (List DataSem.Value) DataSem.Value))
-    (sfs : Spt Nat) (run : evaluate program state = (res, next)) :
+    (state : State C F) (res : Option (Result (List DataSem.Value) DataSem.Value))
+    (next : State C F) (sfs : Spt Nat) (run : evaluate program state = (res, next)) :
     ∃ xs' localsSize' smx safe peak sfs',
       evaluate program { state with stackFrameSizes := sfs } =
         (res, { next with
@@ -1590,37 +1595,43 @@ theorem evaluate_swap_stack_frame_sizes {C F : Type} (program : DataLang.Prog)
           peakHeapLength := peak }) ∧
       List.Forall₂ stackFrameSizeRel next.stack xs' := by
   obtain ⟨xs', localsSize', smx, safe, peak, sfs', runSwap, related⟩ :=
-    evaluate_swap_stack_frame_sizes_aux program state next res state.stack state.localsSize
-      sfs run (forall₂_stackFrameSizeRel_refl state.stack)
+    evaluate_swap_stack_frame_sizes_aux program state res next state.stack state.localsSize
+      sfs ⟨run, forall₂_stackFrameSizeRel_refl state.stack⟩
   refine ⟨xs', localsSize', smx, safe, peak, sfs', ?_, related⟩
   simpa using runSwap
 
 /-- The evaluation result of a program does not depend on the starting
-    frame-size map. Port of HOL `evaluate_stack_frame_sizes_FST`. -/
+    frame-size map. Port of HOL `evaluate_stack_frame_sizes_FST`. HOL binds the
+    unused result pair `r s'` after `c s`; the same vacuous binders are retained
+    here (as `_res`/`_next`) rather than omitted. -/
 @[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml"
   "evaluate_stack_frame_sizes_FST"]
 theorem evaluate_stack_frame_sizes_FST {C F : Type} (program : DataLang.Prog)
-    (state : State C F) :
+    (state : State C F) (_res : Option (Result (List DataSem.Value) DataSem.Value))
+    (_next : State C F) :
     (evaluate program state).1 =
       (evaluate program { state with stackFrameSizes := .ln }).1 := by
   cases runEq : evaluate program state with
   | mk res next =>
     obtain ⟨xs', localsSize', smx, safe, peak, sfs', runSwap, related⟩ :=
-      evaluate_swap_stack_frame_sizes program state next res .ln runEq
+      evaluate_swap_stack_frame_sizes program state res next .ln runEq
     rw [runSwap]
 
 /-- The final FFI state of a program does not depend on the starting frame-size
-    map. Port of HOL `evaluate_stack_frame_sizes_ffi`. -/
+    map. Port of HOL `evaluate_stack_frame_sizes_ffi`. HOL binds the unused
+    result pair `r s'` after `c s`; the same vacuous binders are retained here
+    (as `_res`/`_next`) rather than omitted. -/
 @[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml"
   "evaluate_stack_frame_sizes_ffi"]
 theorem evaluate_stack_frame_sizes_ffi {C F : Type} (program : DataLang.Prog)
-    (state : State C F) :
+    (state : State C F) (_res : Option (Result (List DataSem.Value) DataSem.Value))
+    (_next : State C F) :
     (evaluate program state).2.ffi =
       (evaluate program { state with stackFrameSizes := .ln }).2.ffi := by
   cases runEq : evaluate program state with
   | mk res next =>
     obtain ⟨xs', localsSize', smx, safe, peak, sfs', runSwap, related⟩ :=
-      evaluate_swap_stack_frame_sizes program state next res .ln runEq
+      evaluate_swap_stack_frame_sizes program state res next .ln runEq
     rw [runSwap]
 
 end Flapjack.Compiler.Backend.DataProps
