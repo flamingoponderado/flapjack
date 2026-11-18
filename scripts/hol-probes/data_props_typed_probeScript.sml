@@ -221,3 +221,96 @@ val _ = emit "evaluate_stack_and_locals_swap_typed" "evaluate_stack_and_locals_s
 val _ = emit "evaluate_stack_swap_typed" "evaluate_stack_swap";
 val _ = emit "evaluate_stack_typed" "evaluate_stack";
 val _ = emit "evaluate_NONE_jump_exc_typed" "evaluate_NONE_jump_exc";
+val _ = emit "evaluate_NONE_jump_exc_ALT_typed" "evaluate_NONE_jump_exc_ALT";
+val _ = emit "evaluate_locals_LN_typed" "evaluate_locals_LN";
+
+(* Local theorem replay: HOL exports no DB entry for evaluate_locals_LN_lemma. *)
+val evaluate_locals_LN_lemma_replay = Q.prove(
+  `!c (s :(γ,'ffi) dataSem$state).
+      FST (evaluate (c,s)) <> NONE /\
+      FST (evaluate (c,s)) <> SOME (Rerr(Rabort Rtype_error)) ==>
+      ((SND (evaluate (c,s))).locals = LN) \/
+      ?t. FST (evaluate (c,s)) = SOME (Rerr(Rraise t))`,
+  recInduct dataSemTheory.evaluate_ind \\ REPEAT STRIP_TAC
+  \\ full_simp_tac(srw_ss())[dataSemTheory.evaluate_def]
+  \\ every_case_tac
+  \\ full_simp_tac(srw_ss())[dataSemTheory.call_env_def,dataSemTheory.flush_state_def]
+  \\ imp_res_tac do_app_err >> full_simp_tac(srw_ss())[] >> rev_full_simp_tac(srw_ss())[]
+  \\ SRW_TAC [] [] \\ full_simp_tac(srw_ss())[LET_DEF] \\ SRW_TAC [] [] \\ full_simp_tac(srw_ss())[]
+  \\ rpt(TOP_CASE_TAC >> fs[] >> rveq)
+  \\ fs[markerTheory.Abbrev_def]
+  \\ rpt(TOP_CASE_TAC >> fs[] >> rveq));
+val _ = show "evaluate_locals_LN_lemma_replay_typed" evaluate_locals_LN_lemma_replay;
+
+(* evaluate_swap_stack_frame_sizes_aux is [local], so HOL exports no DB entry:
+   capture its source typing directly from the declaration term. *)
+fun show_statement label tm = (print (label ^ "="); print_term tm; print "\n");
+
+val _ = show_statement "evaluate_swap_stack_frame_sizes_aux_typed"
+  (``!c (s :(γ,'ffi) dataSem$state) r (s':(γ,'ffi) dataSem$state) xs lsz sfs.
+      evaluate (c,s) = (r,s') /\ LIST_REL stack_frame_size_rel s.stack xs ==>
+      let s0 = s with <|locals_size := lsz; stack := xs; stack_frame_sizes := sfs|>
+      in ?xs lsz smx safe peak sfs'.
+        (evaluate (c,s0) = (r, s' with <|locals_size := lsz;
+                                        safe_for_space := safe;
+                                        stack := xs;
+                                        stack_frame_sizes := sfs';
+                                        stack_max := smx;
+                                        peak_heap_length := peak|>) /\
+         LIST_REL stack_frame_size_rel s'.stack xs)``);
+
+val _ = emit "evaluate_swap_local_sizes_typed" "evaluate_swap_local_sizes";
+val _ = emit "evaluate_swap_stack_frame_sizes_typed" "evaluate_swap_stack_frame_sizes";
+
+(* Local theorem replays: HOL exports no DB entry for these [local] theorems. *)
+val evaluate_stack_frame_sizes_FST_replay = Q.prove(
+  `!c (s :(γ,'ffi) dataSem$state) (r) (s').
+      FST (evaluate (c,s)) = FST (evaluate (c, s with stack_frame_sizes := LN))`,
+  rw[] \\ Cases_on `evaluate (c,s)` \\ metis_tac[FST, evaluate_swap_stack_frame_sizes]);
+val _ = show "evaluate_stack_frame_sizes_FST_replay_typed" evaluate_stack_frame_sizes_FST_replay;
+
+val evaluate_stack_frame_sizes_ffi_replay = Q.prove(
+  `!c (s :(γ,'ffi) dataSem$state) (r) (s').
+      (SND (evaluate (c,s))).ffi = (SND (evaluate (c, s with stack_frame_sizes := LN))).ffi`,
+  rw[] \\ Cases_on `evaluate (c,s)`
+  \\ drule_then (qspec_then `LN` strip_assume_tac) evaluate_swap_stack_frame_sizes
+  \\ rw[]);
+val _ = show "evaluate_stack_frame_sizes_ffi_replay_typed" evaluate_stack_frame_sizes_ffi_replay;
+
+val _ = emit "evaluate_swap_limits_typed" "evaluate_swap_limits";
+val _ = emit "zero_limits_def_typed" "zero_limits_def";
+
+(* Local theorem replays: HOL exports no DB entry for these [local] theorems. *)
+val evaluate_zero_limits_FST_replay = Q.prove(
+  `!c (s :(γ,'ffi) dataSem$state) (r) (s').
+      FST (evaluate (c,s)) = FST (evaluate (c, s with limits := zero_limits))`,
+  rw[] \\ Cases_on `evaluate (c,s)` \\ metis_tac[FST, evaluate_swap_limits]);
+val _ = show "evaluate_zero_limits_FST_replay_typed" evaluate_zero_limits_FST_replay;
+
+val evaluate_zero_limits_ffi_replay = Q.prove(
+  `!c (s :(γ,'ffi) dataSem$state) (r) (s').
+      (SND (evaluate (c,s))).ffi = (SND (evaluate (c, s with limits := zero_limits))).ffi`,
+  rw[] \\ Cases_on `evaluate (c,s)`
+  \\ drule_then (qspec_then `zero_limits` strip_assume_tac) evaluate_swap_limits
+  \\ rw[]);
+val _ = show "evaluate_zero_limits_ffi_replay_typed" evaluate_zero_limits_ffi_replay;
+
+val _ = emit "evaluate_add_clock_typed" "evaluate_add_clock";
+
+val _ = emit "evaluate_stack_limit_typed" "evaluate_stack_limit";
+
+val _ = emit "do_app_stack_max_le_stack_limit_typed" "do_app_stack_max_le_stack_limit";
+
+val _ = emit "evaluate_stack_max_le_stack_limit_typed" "evaluate_stack_max_le_stack_limit";
+
+val _ = emit "evaluate_add_clock_io_events_mono_typed" "evaluate_add_clock_io_events_mono";
+
+val _ = emit "semantics_zero_limits_typed" "semantics_zero_limits";
+
+val _ = emit "semantics_Div_IMP_LPREFIX_typed" "semantics_Div_IMP_LPREFIX";
+
+val _ = emit "Resource_limit_hit_implements_semantics_typed" "Resource_limit_hit_implements_semantics";
+
+val _ = emit "approx_of_def_typed" "approx_of_def";
+
+val _ = emit "size_of_approx_of_typed" "size_of_approx_of";

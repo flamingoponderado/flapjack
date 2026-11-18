@@ -49,6 +49,9 @@ theorem holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact
 local instance {width : Nat} [NeZero width] : Nonempty (WordSemStackFrame width) :=
   ⟨.stackFrame none [] [] none⟩
 
+/-- Pointwise helper for the `list_rearrange_I` port: rearranging a list by
+the identity map returns it unchanged. Flapjack-only infrastructure, no
+separate HOL original (HOL states the function equality `list_rearrange I = I`). -/
 theorem listRearrange_id {α : Type} (xs : List α) : wordSemListRearrange id xs = xs := by
   unfold wordSemListRearrange
   split
@@ -57,6 +60,15 @@ theorem listRearrange_id {α : Type} (xs : List α) : wordSemListRearrange id xs
     · intro i h1 h2
       simp
   · rfl
+
+/-- Exact HOL `list_rearrange_I` (`word_to_stackProofScript.sml:689-694`):
+`list_rearrange I = I`, stated as the same function equality. HOL's identity
+function `I` is Lean's `id` at `Nat`; the list rearrangement is the reviewed
+`list_rearrange_def` rendering. -/
+@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "list_rearrange_I"]
+theorem listRearrange {α : Type} : wordSemListRearrange (α := α) id = id := by
+  funext xs
+  exact listRearrange_id xs
 
 theorem envToList_fst {width : Nat} [NeZero width] (env : Spt (WordLocW width))
     (p : Nat → Nat → Nat) (hp : p 0 = id) :

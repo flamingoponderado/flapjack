@@ -143200,5 +143200,551 @@
   "statement_status": "reviewed_exact",
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "Compared evaluate_NONE_jump_exc_typed (regenerated from dataPropsScript.sml, with the ^s antiquotation expanded): binders c, s, u1, x in that order over one state type (γ, 'ffi) rendered as {C F : Type}; the hypothesis is HOL's single conjunction evaluate (c,s) = (NONE,u1) ∧ jump_exc u1 = SOME x, not curried, and the conclusion is jump_exc s = SOME of s with stack, handler, locals and locals_size replaced by x's, in that field order. The proof reads the non-raising arm of evaluate_stack and then unwinds jump_exc on both states, using that the two stacks and handlers agree. Inherits reals_as_rational_cuts through evaluate (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
+  "hol_name": "evaluate_NONE_jump_exc_ALT",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/EvaluateStackLocalsSwap.lean",
+  "lean_name": "evaluate_NONE_jump_exc_ALT",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_NONE_jump_exc_ALT_typed (regenerated from dataPropsScript.sml, with the ^s antiquotation expanded): binders c, s, u1, x in that order over one state type (\u03b3, 'ffi) rendered as {C F : Type}; the hypothesis is HOL's single conjunction evaluate (c,s) = (NONE,u1) \u2227 jump_exc s = SOME x, not curried, and the conclusion is jump_exc u1 = SOME of u1 with stack, handler, locals and locals_size replaced by x's, in that field order. No extra premises and no projection for a pattern binder. The proof reads the non-raising arm of evaluate_stack to learn that u1's stack and handler equal the starting state's, then unwinds jump_exc on both states; because the unwind depends only on those two fields, the installed frames agree with x's. Inherits reals_as_rational_cuts through evaluate (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
+  "hol_name": "evaluate_locals_LN_lemma",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/EvaluateStackLocalsSwap.lean",
+  "lean_name": "evaluate_locals_LN_lemma",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_locals_LN_lemma_replay_typed, a typed replay of the [local] HOL source statement and proof (HOL exports no DB entry for this local theorem): binders c then s over one state type (\u03b3, 'ffi) rendered as {C F : Type}; the hypothesis is HOL's single conjunction FST (evaluate (c,s)) \u2260 NONE \u2227 FST (evaluate (c,s)) \u2260 SOME (Rerr (Rabort Rtype_error)), and the conclusion is isEmpty (SND (evaluate (c,s))).locals \u2228 \u2203 t. FST (evaluate (c,s)) = SOME (Rerr (Rraise t)). Lean renders FST/SND as the pair projections .1/.2, the sptree overload isEmpty as locals = .ln, and the value binder as DataSem.Value. The proof is the clock-weight induction with the per-constructor cases. Inherits reals_as_rational_cuts through evaluate (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
+  "hol_name": "evaluate_locals_LN",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/EvaluateStackLocalsSwap.lean",
+  "lean_name": "evaluate_locals_LN",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_locals_LN_typed (regenerated from dataPropsScript.sml, with the ^s antiquotation expanded): binders c, s, res, t in that order over one state type (\u03b3, 'ffi) rendered as {C F : Type}; the hypothesis is HOL's flat three-part conjunction evaluate (c,s) = (res,t) \u2227 res \u2260 NONE \u2227 res \u2260 SOME (Rerr (Rabort Rtype_error)), and the conclusion is isEmpty t.locals \u2228 \u2203 v. res = SOME (Rerr (Rraise v)), where isEmpty is the sptree overload of t.locals = LN. The proof applies the local induction lemma to the pair equation. Inherits reals_as_rational_cuts through evaluate (docs/SOUNDNESS.md item 8)."
 }
+,
+{
+  "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
+  "hol_name": "evaluate_swap_stack_frame_sizes_aux",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/EvaluateStackFrameSizesSwap.lean",
+  "lean_name": "evaluate_swap_stack_frame_sizes_aux",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_swap_stack_frame_sizes_aux_typed (show_types from the declaration term, since the HOL theorem is [local] and has no DB entry). HOL binds c s r s' xs lsz sfs over one shared state type (gamma,'ffi) dataSem$state rendered as {C F : Type}, r :(v list, v) result option as Option (Result (List DataSem.Value) DataSem.Value), xs :stack list as List Stack, lsz :num option as Option Nat, sfs :num sptree$num_map as Spt Nat; the Lean binders are program state res next xs localsSize sfs in HOL's order. HOL's premise is ONE conjunction (evaluate (c,s) = (r,s') and LIST_REL stack_frame_size_rel s.stack xs), rendered as one conjunction premise (evaluate program state = (res, next) \u2227 List.Forall\u2082 stackFrameSizeRel state.stack xs). HOL's replaced starting state is the let s0 = s with <|locals_size := lsz; stack := xs; stack_frame_sizes := sfs|>, kept as a let start in the Lean statement rather than inlined. The existential order xs lsz smx safe peak sfs' and the conclusion conjunction with the six replaced fields (locals_size, safe_for_space, stack, stack_frame_sizes, stack_max, peak_heap_length, in HOL's order) match the capture. No representation qualifier applies: the signature has no finite-map or BitVec carrier (Spt is the reviewed tree-map carrier, not a HOL |-> field). Inherits reals_as_rational_cuts through evaluate (docs/SOUNDNESS.md item 8)."
+}
+,
+{
+  "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
+  "hol_name": "evaluate_swap_local_sizes",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/EvaluateStackFrameSizesSwap.lean",
+  "lean_name": "evaluate_swap_local_sizes",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_swap_local_sizes_typed (show_types). HOL binds c s r s' lss over (alpha,beta) dataSem$state rendered as {C F : Type}, r as Option (Result (List DataSem.Value) DataSem.Value), lss :num option as Option Nat; the Lean binders are program state res next localsSize in HOL's order. The premise is the single equation evaluate (c,s) = (r,s'); the conclusion is the existential xs lsz sfs smx safe peak (HOL's order) with evaluate (c, s with locals_size := lss) equal to the result state with locals_size, safe_for_space, stack, stack_frame_sizes, stack_max and peak_heap_length replaced, conjoined with LIST_REL stack_frame_size_rel s'.stack xs. The Lean statement has the same binder order, existential order and conjunction. No representation qualifier applies. Inherits reals_as_rational_cuts through evaluate (docs/SOUNDNESS.md item 8)."
+}
+,
+{
+  "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
+  "hol_name": "evaluate_swap_stack_frame_sizes",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/EvaluateStackFrameSizesSwap.lean",
+  "lean_name": "evaluate_swap_stack_frame_sizes",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_swap_stack_frame_sizes_typed (show_types). HOL binds c s r s' sfs over (alpha,beta) dataSem$state rendered as {C F : Type}, r as Option (Result (List DataSem.Value) DataSem.Value), sfs :num sptree$num_map as Spt Nat; the Lean binders are program state res next sfs in HOL's order. The premise is the single equation evaluate (c,s) = (r,s'); the conclusion is the existential xs lsz smx safe peak sfs' (HOL's order) with evaluate (c, s with stack_frame_sizes := sfs) equal to the result state with locals_size, safe_for_space, stack, stack_frame_sizes, stack_max and peak_heap_length replaced, conjoined with LIST_REL stack_frame_size_rel s'.stack xs. The Lean statement has the same binder order, existential order and conjunction. No representation qualifier applies. Inherits reals_as_rational_cuts through evaluate (docs/SOUNDNESS.md item 8)."
+}
+,
+{
+  "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
+  "hol_name": "evaluate_stack_frame_sizes_FST",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/EvaluateStackFrameSizesSwap.lean",
+  "lean_name": "evaluate_stack_frame_sizes_FST",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_stack_frame_sizes_FST_replay_typed (a typed replay, since the HOL theorem is [local] and has no DB entry; regenerated with the free-type binders). HOL binds c s r s' with c over dataLang$prog and s over the (gamma,'ffi) dataSem$state rendered as {C F : Type}; r and s' occur nowhere in the statement, so their types are free and independent — the capture shows r :α and s' :β. The Lean statement retains both vacuous binders after program state, in HOL's binder order, as _res : ρ and _next : σ with their own independent type parameters; the docstring records this. The conclusion is FST (evaluate (c,s)) = FST (evaluate (c, s with stack_frame_sizes := LN)), rendered as (evaluate program state).1 = (evaluate program {state with stackFrameSizes := .ln}).1, with Spt.ln the canonical empty sptree. No premise. Follows from evaluate_swap_stack_frame_sizes at sfs = LN. No representation qualifier applies. Inherits reals_as_rational_cuts through evaluate (docs/SOUNDNESS.md item 8)."
+}
+,
+{
+  "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
+  "hol_name": "evaluate_stack_frame_sizes_ffi",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/EvaluateStackFrameSizesSwap.lean",
+  "lean_name": "evaluate_stack_frame_sizes_ffi",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_stack_frame_sizes_ffi_replay_typed (a typed replay, since the HOL theorem is [local] and has no DB entry; regenerated with the free-type binders). HOL binds c s r s' with c over dataLang$prog and s over the (gamma,'ffi) dataSem$state rendered as {C F : Type}; r and s' occur nowhere in the statement, so their types are free and independent — the capture shows r :α and s' :β. The Lean statement retains both vacuous binders after program state, in HOL's binder order, as _res : ρ and _next : σ with their own independent type parameters; the docstring records this. The conclusion is (SND (evaluate (c,s))).ffi = (SND (evaluate (c, s with stack_frame_sizes := LN))).ffi, rendered as (evaluate program state).2.ffi = (evaluate program {state with stackFrameSizes := .ln}).2.ffi, with Spt.ln the canonical empty sptree. No premise. Follows from evaluate_swap_stack_frame_sizes at sfs = LN, since ffi is not one of the replaced fields. No representation qualifier applies. Inherits reals_as_rational_cuts through evaluate (docs/SOUNDNESS.md item 8)."
+},
+{
+ "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
+ "hol_name": "evaluate_swap_limits",
+ "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/EvaluateLimitsSwap.lean",
+ "lean_name": "evaluate_swap_limits",
+ "statement_status": "reviewed_exact",
+ "inherits_reals_as_rational_cuts": true,
+ "reviewer": "Compared evaluate_swap_limits_typed (show_types). HOL binds c s r s' limits over one shared state type (alpha,beta) dataSem$state rendered as {C F : Type}, r :(v list, v) result option as Option (Result (List DataSem.Value) DataSem.Value), limits :limits as Limits; the Lean binders are program state res next limits in HOL's order. The premise is the single equation evaluate (c,s) = (r,s'); the conclusion is the existential smx :num option, safe :bool, peak :num (Lean Option Nat, Bool, Nat — peak is a plain Nat, not an Option) with evaluate (c, s with limits := limits) equal to (r, s' with <|limits := limits; stack_max := smx; safe_for_space := safe; peak_heap_length := peak|>), the same four replaced fields in HOL's order. No representation qualifier applies: the signature has no finite-map or BitVec carrier. Inherits reals_as_rational_cuts through evaluate (docs/SOUNDNESS.md item 8)."
+},
+{
+ "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
+ "hol_name": "evaluate_zero_limits_FST",
+ "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/EvaluateLimitsSwap.lean",
+ "lean_name": "evaluate_zero_limits_FST",
+ "statement_status": "reviewed_exact",
+ "inherits_reals_as_rational_cuts": true,
+ "reviewer": "Compared evaluate_zero_limits_FST_replay_typed (a typed replay, since the HOL theorem is [local] and has no DB entry; regenerated with the free-type binders). HOL binds c s r s' with c over dataLang$prog and s over the (gamma,'ffi) dataSem$state rendered as {C F : Type}; r and s' occur nowhere in the statement, so their types are free and independent — the capture shows r :α and s' :β. The Lean statement retains both vacuous binders after program state, in HOL's binder order, as _res : ρ and _next : σ with their own independent type parameters; the docstring records this. The conclusion is FST (evaluate (c,s)) = FST (evaluate (c, s with limits := zero_limits)), rendered as (evaluate program state).1 = (evaluate program {state with limits := zeroLimits}).1. zeroLimits is the reviewed zero_limits_def rendering: the three limits are zero and HOL's unspecified arch_64_bit/has_fp_ops/has_fp_tops are holArb Bool (see its row), so this states HOL's ARB instance rather than a concrete false instance. No representation qualifier applies. Inherits reals_as_rational_cuts through evaluate (docs/SOUNDNESS.md item 8)."
+},
+{
+ "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
+ "hol_name": "evaluate_zero_limits_ffi",
+ "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/EvaluateLimitsSwap.lean",
+ "lean_name": "evaluate_zero_limits_ffi",
+ "statement_status": "reviewed_exact",
+ "inherits_reals_as_rational_cuts": true,
+ "reviewer": "Compared evaluate_zero_limits_ffi_replay_typed (a typed replay, since the HOL theorem is [local] and has no DB entry; regenerated with the free-type binders). HOL binds c s r s' with c over dataLang$prog and s over the (gamma,'ffi) dataSem$state rendered as {C F : Type}; r and s' occur nowhere in the statement, so their types are free and independent — the capture shows r :α and s' :β. The Lean statement retains both vacuous binders after program state, in HOL's binder order, as _res : ρ and _next : σ with their own independent type parameters; the docstring records this. The conclusion is (SND (evaluate (c,s))).ffi = (SND (evaluate (c, s with limits := zero_limits))).ffi, rendered as (evaluate program state).2.ffi = (evaluate program {state with limits := zeroLimits}).2.ffi; the SND pair component is the final state and .2 in Lean is the same component. zeroLimits is the reviewed zero_limits_def rendering with holArb Bool for the three unspecified Boolean fields. No representation qualifier applies. Inherits reals_as_rational_cuts through evaluate (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
+  "hol_name": "zero_limits_def",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/EvaluateLimitsSwap.lean",
+  "lean_name": "zeroLimits",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared zero_limits_def_typed (show_types): HOL defines zero_limits as the partial record literal <|heap_limit := 0; length_limit := 0; stack_limit := 0|> :dataSem$limits, so the three size limits are 0 and the remaining fields arch_64_bit, has_fp_ops and has_fp_tops are HOL ARB at bool. The Lean zeroLimits sets heapLimit, lengthLimit and stackLimit to 0 and renders each unspecified field by the shared opaque holArb Bool, the canonical ARB rendering used elsewhere in the port, not a concrete Boolean; source review confirms the partial record literal has no other field values. No type binder appears in the declaration, so total_function_inhabitants does not apply (there is no Nonempty/Inhabited instance binder; holArb Bool uses the global Nonempty Bool instance). No representation qualifier applies. No inherits_reals_as_rational_cuts flag: zeroLimits does not reach the evaluator."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
+  "hol_name": "evaluate_add_clock",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/EvaluateAddClock.lean",
+  "lean_name": "evaluate_add_clock",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_add_clock_typed (show_types). HOL binds exps :dataLang$prog, s1 and s2 over one shared state type (alpha,beta) dataSem$state rendered as {C F : Type}, and res :(v list, v) result option as Option (Result (List DataSem.Value) DataSem.Value); the Lean binders are program state res next in HOL's order. HOL's premise is ONE conjunction (evaluate (exps,s1) = (res,s2) and res is not Rerr (Rabort Rtimeout_error)), rendered as one conjunction premise with the timeout error as some (.err (.abort .timeoutError)); the quantifier over ck :num is the final Nat binder, matching HOL. The conclusion is evaluate (exps, s1 with clock := s1.clock + ck) = (res, s2 with clock := s2.clock + ck), rendered as the literal record updates evaluate program { state with clock := state.clock + ck } = (res, { next with clock := next.clock + ck }), matching HOL's written form; the addClockState abbrev is used only inside the proof helpers, not in the tagged statement. No representation qualifier applies: the signature has no finite-map or BitVec carrier. Inherits reals_as_rational_cuts through evaluate (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
+  "hol_name": "evaluate_stack_limit",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/EvaluateLimitsSwap.lean",
+  "lean_name": "evaluate_stack_limit",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_stack_limit_typed (show_types). HOL binds c2 :dataLang$prog, s and s1 over one shared state type (alpha,beta) dataSem$state rendered as {C F : Type}, and res :(v list, v) result option as Option (Result (List DataSem.Value) DataSem.Value); the Lean binders are program state res next in HOL's order. The premise is the single equation evaluate (c2,s) = (res,s1); the conclusion is s1.limits.stack_limit = s.limits.stack_limit, rendered as next.limits.stackLimit = state.limits.stackLimit with the same Limits field. Follows from evaluate_swap_limits at limits := state.limits, which fixes the result state's limits. No representation qualifier applies. Inherits reals_as_rational_cuts through evaluate (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
+  "hol_name": "do_app_stack_max_le_stack_limit",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/StackMaxLimit.lean",
+  "lean_name": "doApp_stackMax_le_stackLimit",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared do_app_stack_max_le_stack_limit_typed (show_types): HOL binds op :closLang$op, xs :v list, s :(\u03b1,\u03b2) dataSem$state, res :v and s1 :(\u03b1,\u03b2) dataSem$state; the Lean binders are op, values, state, res, next in HOL's free-variable order over one shared state type rendered as {C F : Type} with res : DataSem.Value. HOL's premise is ONE conjunction, do_app op xs s = Rval(res,s1) and s1.safe_for_space and option_le s.stack_max (SOME s.limits.stack_limit), rendered as one conjunction premise in the same order with the same Limits.stackLimit field; the conclusion option_le s1.stack_max (SOME s1.limits.stack_limit) is unchanged. No representation qualifier applies: the signature has no finite-map or BitVec carrier. The proof follows HOL's op case split: doAppAux_limits and doStack_stackMax_le are the untagged Lean infrastructure for the do_app_aux/do_stack stages, doApp_of_space isolates the dispatcher's space branch, and doApp_stackMax_le_of_aux carries the bound through doSpace, doStack and doAppAux; install is closed by doInstall_resource_frame (safe_for_space becomes false) and greater/greater_eq by their abort results. Inherits reals_as_rational_cuts through doApp (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
+  "hol_name": "evaluate_stack_max_le_stack_limit",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/StackMaxLimit.lean",
+  "lean_name": "evaluate_stackMax_le_stackLimit",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_stack_max_le_stack_limit_typed (show_types): HOL binds prog :dataLang$prog, s :(\u03b1,\u03b2) dataSem$state, res :(v list, v) result option and s1 :(\u03b1,\u03b2) dataSem$state; the Lean binders are program, state, res, next in HOL's free-variable order over one shared state type rendered as {C F : Type}. HOL's premise is ONE conjunction, evaluate (prog,s) = (res,s1) and s1.safe_for_space and option_le s.stack_max (SOME s.limits.stack_limit), rendered as one conjunction premise in the same order with the same Limits.stackLimit field; the conclusion option_le s1.stack_max (SOME s1.limits.stack_limit) is unchanged. No representation qualifier applies: the signature has no finite-map or BitVec carrier. The proof is the clock-and-size induction of HOL's recInduct evaluate_ind: the untagged stackMaxLimitAt_* lemmas are its constructor cases (skip, move, assign, tick, makeSpace, raise, return, seq, ifThenElse, force, call), stackMaxLimitAt_all assembles them by clockWeightInduction, and the force and call cases use callEnv_stackMax_le, pushEnv_stackMax_le and popEnv_stackMax for the call-frame stages. Inherits reals_as_rational_cuts through evaluate (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
+  "hol_name": "evaluate_add_clock_io_events_mono",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/EvaluateAddClockEvents.lean",
+  "lean_name": "evaluate_add_clock_io_events_mono",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_add_clock_io_events_mono_typed (show_types): HOL binds exps :dataLang$prog, s :(\u03b1,\u03b2) dataSem$state and extra :num; the Lean binders are exps, state, extra in the same order over one shared state type rendered as {C F : Type}. HOL's conclusion is (SND (evaluate (exps,s))).ffi.io_events \u227c (SND (evaluate (exps,s with clock := s.clock + extra))).ffi.io_events, rendered as (evaluate exps state).2.ffi.ioEvents <+: (evaluate exps { state with clock := state.clock + extra }).2.ffi.ioEvents with List.IsPrefix for \u227c, .2 for SND, and the record update written literally as HOL writes it (no addClockState abbrev in the statement). There is no premise, and the evaluator is dataSem$evaluate on both sides. No representation qualifier applies: the signature has no finite-map or BitVec carrier. The proof is the lexicographic (clock, weight) induction of HOL's recInduct evaluate_ind: the untagged addClockEvents_* lemmas are its constructor cases (skip, move, assign, tick, makeSpace, raise, return, seq, ifThenElse, force, call), addClockEvents_all assembles them by clockWeightInduction, and the call case uses callRetDispatchEvents_ge for the returning call's result dispatch. Inherits reals_as_rational_cuts through evaluate (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
+  "hol_name": "semantics_zero_limits",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/SemanticsZeroLimits.lean",
+  "lean_name": "semantics_zero_limits",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared semantics_zero_limits_typed (show_types): HOL binds ffi :\u03b1 ffi_state, code :(num # dataLang$prog) sptree$num_map, co :num -> \u03b2 # (num # num # dataLang$prog) list, cc :\u03b2 -> (num # num # dataLang$prog) list -> (word8 list # word64 list # \u03b2) option, lim :limits, ss :num sptree$num_map and start :num; the Lean binders are ffi, code, oracle, compiler, limits, frameSizes, start in the same order over one shared state type {C F : Type}. HOL's conclusion is semantics ffi code co cc lim ss start = semantics ffi code co cc zero_limits LN start with no premise, rendered with zeroLimits (the reviewed zero_limits_def) for zero_limits and Spt.ln for (LN :num sptree$num_map); the argument order matches HOL exactly. No representation qualifier applies: the signature has no finite-map or BitVec carrier (the sptree maps are the reviewed Spt carrier, not HOL |-> maps). The proof composes the reviewed evaluate_zero_limits_FST/_ffi and evaluate_stack_frame_sizes_FST/_ffi step lemmas per clock, then compares the two semantics unfoldings: the fail guard is invariant, the terminating observation predicate is equal by funext/propext (the initial call's result component and final FFI state are unchanged), the diverge trace set is equal, and the two guarded choices are identified with ite_congr. Inherits reals_as_rational_cuts through evaluate (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
+  "hol_name": "semantics_Div_IMP_LPREFIX",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/SemanticsPrefix.lean",
+  "lean_name": "semanticsDivImpLprefix",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared semantics_Div_IMP_LPREFIX_typed (show_types): HOL binds ffi :\u03b1 ffi_state, prog :(num # dataLang$prog) sptree$num_map, co :num -> \u03b2 # (num # num # dataLang$prog) list, cc :\u03b2 -> (num # num # dataLang$prog) list -> (word8 list # word64 list # \u03b2) option, lim :limits, ss :num sptree$num_map, start :num and l :io_event llist; the Lean binders are ffi, prog, co, cc, lim, ss, start, l in HOL's free-variable order over one shared state type {C F : Type}. HOL's premise is ONE equation, semantics ffi prog co cc lim ss start = Diverge l, rendered as the hypothesis run with HolBehaviour.diverge; the conclusion LPREFIX (fromList ffi.io_events) l is rendered as HolLList.lprefix (HolLList.fromList ffi.ioEvents) l using the reviewed llist and lprefix carriers. No representation qualifier applies: the signature has no finite-map or BitVec carrier (the sptree maps are the reviewed Spt carrier, not HOL |-> maps). The proof follows HOL's: unfold semantics, split the fail guard and the guarded choice on the chosen observation (the chosen behaviour is a terminating observation, so it cannot be Diverge), identify l with buildLprefixLub of the per-clock trace set, then use buildLprefixLub_upper with membership at clock 0 (the initial call at clock zero cannot perform an FFI operation) and the chain property from evaluate_add_clock_io_events_mono. Inherits reals_as_rational_cuts through evaluate (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
+  "hol_name": "Resource_limit_hit_implements_semantics",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/ResourceLimitSemantics.lean",
+  "lean_name": "resourceLimitHitImplementsSemantics",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared Resource_limit_hit_implements_semantics_typed (show_types): HOL binds ffi :\u03b1 ffi_state, prog :(num # num # dataLang$prog) list, co :num -> \u03b2 # (num # num # dataLang$prog) list, cc :\u03b2 -> (num # num # dataLang$prog) list -> (word8 list # word64 list # \u03b2) option, lim :limits, ss :num sptree$num_map and start :num; the Lean binders are ffi, prog, co, cc, lim, ss, start in the same order over one shared state type {C F : Type}, with prog :List (Nat \u00d7 Nat \u00d7 DataLang.Prog) so that sptFromAList prog has the Spt (Nat \u00d7 DataLang.Prog) type of semantics' code argument. HOL's conclusion is implements {Terminate Resource_limit_hit ffi.io_events} {(semantics ffi (fromAList prog) co cc lim ss start)}, rendered as implementsHOL (fun behavior => behavior = .terminate .resourceLimitHit ffi.ioEvents) (fun behavior => behavior = semantics ffi (sptFromAList prog) co cc lim ss start); implementsHOL is the reviewed implements_def port (unprimed implements, compiled set first as HOL writes it), the set literals are the behaviour-equality predicates used by the other implements rows, fromAList is sptFromAList, and Resource_limit_hit is HolOutcome.resourceLimitHit. There is no premise. The proof is HOL's: unfold implements and extend_with_resource_limit, case on the semantics (fail gives the vacuous case; terminate uses semantics_Term_IMP_PREFIX in the first extension disjunct; diverge uses semantics_Div_IMP_LPREFIX in the second). Inherits reals_as_rational_cuts through evaluate (docs/SOUNDNESS.md item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
+  "hol_name": "approx_of_def",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/ApproxOf.lean",
+  "lean_name": "approxOf",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared approx_of_def_typed (show_types): HOL defines approx_of by eight equations over lims :limits, refs :v ref sptree$num_map and the value list; the Lean approxOf is the same eight-clause recursion over limits, values :List Value and refs :Spt (BvlSem.Ref Value), written as one structural match in HOL's clause order ([], x::y::ys, [Word64 v0], [Number i], [CodePtr v1], [RefPtr v2 r], [Block ts tag []], [Block ts tag (v21::v22)]). The RefPtr clause is HOL's case on lookup r refs: NONE gives 0; ByteArray v3 bs gives LENGTH bs DIV (arch_size lims DIV 8) + 2; ValueArray vs gives approx_of lims vs (delete r refs) + LENGTH vs + 1; Thunk v5 v gives approx_of lims [v] (delete r refs) + 2; MutBlock tg fin ls c rs gives approx_of lims (ls ++ [c] ++ rs) (delete r refs) + LENGTH ls + LENGTH rs + 2. The Lean match lists those five Ref constructors in a different branch order, which is the same case analysis; arch_size, small_num and bignum_size are archSize, smallNum and bignumSize at the same limits field, lookup and delete are sptLookup and sptDelete, LENGTH is List.length, and the value carriers are the reviewed BvlSem Value/Ref ports. No representation qualifier applies: the signature has no finite-map or BitVec carrier (the sptree map is the reviewed Spt carrier, not a HOL |-> map). The termination measure is HOL's (sptree$size refs, list_size v_size vs), rendered as (sptSize refs, sizeOf values) with the decreasing obligations discharged from sptSize_delete_lt and sizeOf positivity."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
+  "hol_name": "size_of_approx_of",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/SizeOfApproxOf.lean",
+  "lean_name": "sizeOfApproxOf",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared size_of_approx_of_typed (show_types): HOL binds lims :limits, xs :v list, refs :v ref sptree$num_map, seen :sptree$num_set, n1 :num, refs1 :v ref sptree$num_map and seen1 :sptree$num_set; the Lean binders are limits, values, refs, seen, n, refs', seen' in the same order and with the same carriers (List Value, Spt (BvlSem.Ref Value), Spt Unit, Nat). HOL's premise is ONE equation, size_of lims xs refs seen = (n1,refs1,seen1), rendered as the single hypothesis run; the conclusion n1 ≤ approx_of lims xs refs is rendered as n ≤ approxOf limits values refs. No representation qualifier applies: the signature has no finite-map or BitVec carrier (the sptree maps are the reviewed Spt carrier, not HOL |-> maps). The proof follows HOL's: the untagged private sizeOfApproxOf_aux is HOL's qsuff_tac strengthening (it adds the subspt refs refsT parameter; HOL introduces that statement with qsuff_tac, so it has no separate HOL declaration) and is proved by well-founded recursion on (sptSize refs, sizeOf values) case by case like ho_match_mp_tac size_of_ind, using the approxOf_refPtr_* helpers for the RefPtr clauses; the tagged theorem instantiates refsT := refs with the reflexive subspt."
+},
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "copy_ret_F",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/SupportLemmas.lean",
+    "lean_name": "copyRetF",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, copy_ret_F_typed): source88-96; copy_ret F with F=false, is_handle bool, (k,f,f') with independent f' type, polymorphic vs list and kont ProgM, RHS let n = num_stack_ret k vs / if n = 0 then kont else Seq (copy_ret_aux k (if is_handle then f + 3 else f) n) (SeqStackFree n kont) with handler_slots F = 3; Lean copyRet false keeps the same let/if/seq shape and independent carriers."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "LASTN_HD",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/SupportLemmas.lean",
+    "lean_name": "lastNHd",
+    "statement_status": "reviewed_total_function_inhabitants",
+    "total_function_inhabitants": ["α"],
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, LASTN_HD_typed): source291-306; binders ls then x, one premise x ≤ LENGTH ls, HD and EL rendered by holHd/holEl with total_function_inhabitants [α] (HOL HD/EL unspecified on the empty list and past-the-end index), LASTN as wordSemLastN (reverse/take/reverse), index arithmetic LENGTH ls - x retained."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "EL_REVERSE_REWRITE",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/SupportLemmas.lean",
+    "lean_name": "elReverseRewrite",
+    "statement_status": "reviewed_total_function_inhabitants",
+    "total_function_inhabitants": ["α"],
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, EL_REVERSE_REWRITE_typed): source2601-2606; binders l n k, one conjunction premise n < LENGTH l ∧ k < n kept as a single hypothesis in HOL's order, EL rendered by holEl with total_function_inhabitants [α] (HOL EL unspecified past the end), REVERSE as List.reverse, exact index arithmetic LENGTH l - n + k and n - k - 1 retained."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "ALOOKUP_IFF_MEM",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/SupportLemmas.lean",
+    "lean_name": "alookupIffMem",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, ALOOKUP_IFF_MEM_typed): source2628-2633; independent key type α and payload type β, ALL_DISTINCT (MAP FST l) as (l.map Prod.fst).Nodup, ALOOKUP as keyLookup (holAlookup with classical propositional key equality), q and r independent, exact iff orientation with MEM (q,r) l."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "LAST_add_ret_loc",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/SupportLemmas.lean",
+    "lean_name": "lastAddRetLoc",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, LAST_add_ret_loc_typed): source3307-3313; LAST rendered by holLast (only cons equations used since the premise keeps the argument list nonempty), add_ret_loc as wordSemAddRetLoc, ret carrier Option (β × γ × δ × Num × Num) with independent β γ δ, nonempty premise retained. The argument list is the width-indexed WordLocW carrier, whose header carries [NeZero width] and whose word constructor payload mentions BitVec width, so the positive-width word translation is the only carrier difference; no type-binder qualifier is needed because WordLocW is inhabited concretely."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "MAP_o_THE_FILTER_IS_SOME",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/SupportLemmas.lean",
+    "lean_name": "mapOTheFilterIsSome",
+    "statement_status": "reviewed_total_function_inhabitants",
+    "total_function_inhabitants": ["α", "β"],
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, MAP_o_THE_FILTER_IS_SOME_typed): source3431-3436; independent β (payload) and α (result) type variables, THE rendered by holThe with total_function_inhabitants [α, β] (only SOME entries survive FILTER IS_SOME), OPTION_MAP as Option.map, FILTER IS_SOME as List.filter Option.isSome, both MAP sides and composition order retained."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "MAP_OPTION_MAP_FILTER_IS_SOME",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/SupportLemmas.lean",
+    "lean_name": "mapOptionMapFilterIsSome",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, MAP_OPTION_MAP_FILTER_IS_SOME_typed): source3438-3443; single α carrier with f : α → α, OPTION_MAP as Option.map, FILTER IS_SOME as List.filter Option.isSome, exact MAP/filter orientation on both sides."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "MAP_FILTER_IS_SOME",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/SupportLemmas.lean",
+    "lean_name": "mapFilterIsSome",
+    "statement_status": "reviewed_total_function_inhabitants",
+    "total_function_inhabitants": ["β"],
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, MAP_FILTER_IS_SOME_typed): source3445-3449; f : Option β → α, THE rendered by holThe with total_function_inhabitants [β], FILTER IS_SOME as List.filter Option.isSome, RHS composition f ∘ SOME ∘ THE as f (some (holThe o)) retained."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "PAIR_MAP_SOME_SWAP",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/SupportLemmas.lean",
+    "lean_name": "pairMapSomeSwap",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, PAIR_MAP_SOME_SWAP_typed): source3484-3488; four independent types α β γ δ with f : α → γ and g : β → δ, pair map ## as Prod.map, OPTION_MAP as Option.map, function composition order on both sides retained."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "IS_SOME_o_OPTION_MAP",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/SupportLemmas.lean",
+    "lean_name": "isSomeOptionMap",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, IS_SOME_o_OPTION_MAP_typed): source3490-3494; independent α β with f : α → β, IS_SOME as Option.isSome, OPTION_MAP as Option.map, composition orientation retained."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "DROP_SUB",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/SupportLemmas.lean",
+    "lean_name": "dropSub",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, DROP_SUB_typed): source5446-5454; binders a ls b (typed capture order), one conjunction premise a ≤ LENGTH ls ∧ b ≤ a kept as a single hypothesis in HOL's order, DROP/TAKE as List.drop/List.take, append order DROP (a-b) (TAKE a ls) ++ DROP a ls retained."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "DROP_SUB2",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/SupportLemmas.lean",
+    "lean_name": "dropSub2",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, DROP_SUB2_typed): source5456-5466; binders a ls b, one conjunction premise b ≤ a ∧ a = LENGTH ls kept as a single hypothesis in HOL's order, existential rest with DROP (a-b) ls = rest and LENGTH rest = b retained."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "SUB_ADD_EQ",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/SupportLemmas.lean",
+    "lean_name": "subAddEq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, SUB_ADD_EQ_typed): source6600-6604; binders a b, one premise a ≤ b, exact orientation a + (b - a) = b, Num-only carriers."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "EXISTS_PULL_FORALL1",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/SupportLemmas.lean",
+    "lean_name": "existsPullForall1",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, EXISTS_PULL_FORALL1_typed): source6925-6929; independent α β, HOL Abbrev (y = P) rendered as the identity guard y = P, exact quantifier swap ?x !y / !y ?x and guard orientation retained."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "EXISTS_PULL_FORALL2",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/SupportLemmas.lean",
+    "lean_name": "existsPullForall2",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, EXISTS_PULL_FORALL2_typed): source6931-6935; independent α β γ, P : β # γ as β × γ, exact pair guard P = (y,z), quantifier swap retained."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "EXISTS_PULL_FORALL3",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/SupportLemmas.lean",
+    "lean_name": "existsPullForall3",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, EXISTS_PULL_FORALL3_typed): source6937-6941; independent α β γ δ, P : β # γ # δ as β × γ × δ, exact triple guard P = (y,z,a), quantifier swap retained."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "SUB_SUB_SUB_MAX",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/SupportLemmas.lean",
+    "lean_name": "subSubSubMax",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, SUB_SUB_SUB_MAX_typed): source7589-7594; binders a b c, exact orientation a - b - (c - b) = a - MAX b c with MAX as Nat.max, Num-only carriers."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "MAX_LE",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/SupportLemmas.lean",
+    "lean_name": "maxLe",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, MAX_LE_typed): source7596-7600; binders a b, one premise a ≤ b, conclusion MAX a b = b with MAX as Nat.max."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "EVEN_DIV_2_props",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/SupportLemmas.lean",
+    "lean_name": "evenDiv2Props",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, EVEN_DIV_2_props_typed): source10944-10954; binders a b, one conjunction premise a MOD 2 = 0 ∧ b MOD 2 = 0 kept as a single hypothesis in HOL's order, both conclusions (a ≠ b ⇒ a DIV 2 ≠ b DIV 2) ∧ (a ≠ 0 ⇒ a DIV 2 ≠ 0) retained, MOD/DIV as Nat % and /."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "bits_to_word_bit",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/BitmapBitStructure.lean",
+    "lean_name": "bitsToWordBit",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, bits_to_word_bit_typed): source998-1006; bs arbitrary Bool list and i num; HOL's single conjunction premise i < dimindex (:α) ∧ i < LENGTH bs is ONE hypothesis in HOL's order (Lean binds h : i < width ∧ i < bits.length), bits_to_word as bitsToWordW over BitVec width with NeZero width, word bit ' as getLsbD, EL i bs as the bounded list indexing (the i < LENGTH guard makes the total EL the ordinary element, so no total-function rendering), bool equality orientation retained."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "state_rel_set_var'",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/StateRelRegisterUpdate.lean",
+    "lean_name": "stateRelSetVarPrime",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, state_rel_set_var_prime_typed): source2953-2959; free-variable order ac k f f' s t lens extra x y v retained, the original single conjunction premise state_rel … ∧ x < k ∧ y = x*2 kept as one premise, source set_var y / target set_var x with y = x*2, full stateRel and arbitrary extra; canonical five finite-map fields and positive width translation as qualified."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/EvaluateWLive.lean",
+    "lean_name": "listRearrange",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "list_rearrange_I",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, list_rearrange_I_typed): source689-694; HOL states the function equality list_rearrange I = I with the identity function I on num. Lean states the same function equality wordSemListRearrange id = id, proved by funext from the untagged pointwise helper listRearrange_id, with id rendering HOL I and the reviewed list_rearrange_def rendering used. No word, finite-map or totality carrier and no added premise."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CompCodeLabels.lean",
+    "lean_name": "subUnionLemma",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "sub_union_lemma",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, sub_union_lemma_typed): source11897-11901; binders x y z as α → bool sets, the single premise x ⊆ y and conclusion x ⊆ y ∪ z retained, SUBSET/UNION rendered as Set.subset/Set.union."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/RegisterWrite.lean",
+    "lean_name": "wRegWrite1Thm1Weak",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "wRegWrite1_thm1_weak",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, wRegWrite1_thm1_weak_typed): source3745-3756; free-variable order ac k f f' s t lens m v kont retained, the three premises (full stateRel extra 0, m < f'+k, and the arbitrary kont run for every n ≤ k) and the existential run plus full postrelation conclusion retained. Only the stack-length/stack-space facts of wRegWrite1_thm1 are dropped, exactly as HOL derives this theorem by metis_tac. Canonical five finite-map fields and positive width translation as qualified; evaluator closure inherits reals_as_rational_cuts without numerical FP claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/StackRelAuxStackSize.lean",
+    "lean_name": "stackRelAuxLength",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "stack_rel_aux_LENGTH",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, stack_rel_aux_LENGTH_typed): source2438-2444; source frame list α stack_frame, target list ((β word_loc # γ word_loc) option # bool list # α word_loc list) list, sole premise the full auxiliary relation, conclusion LENGTH xs = LENGTH ys. Lean binds the relation arguments in HOL's order (first binder is HOL k, second HOL len, as in the sibling stackRelAuxStackSize), keeps one premise and the same length equality; independent frame, handler-location and saved-handler widths carry their own NeZero."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/StackRelAuxStackSize.lean",
+    "lean_name": "stackRelAuxLastN",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "stack_rel_aux_LASTN",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, stack_rel_aux_LASTN_typed): source2447-2457; free-variable order k len xs ys n retained, sole premise the full auxiliary relation and conclusion stack_rel_aux k len (LASTN n xs) (LASTN n ys). LASTN is the reviewed untagged wordSemLastN rendering of rich_list LASTN (outside cakeml); the Flapjack-only helper wordSemLastN_of_length_le (whole list when LENGTH ≤ n) has no separate HOL original. Independent widths each carry NeZero."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CallReturnEval.lean",
+    "lean_name": "evaluateCopyRetSeqPrime",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "evaluate_copy_ret_Seq'",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, evaluate_copy_ret_Seq_prime_typed): source7622-7631; HOL's F is the false constant, so the capture binds is_handle, k, f, f', vs, k0, t and copies into the literal f + 3. Lean binds the frame triple as separate k, f and f' variables, matching HOL, and evaluates copyRetNative false b (k, f, f') with HOL's let-bound n = num_stack_ret k vs and the same Seq (copy_ret_aux k (if is_handle then f + 3 else f) n) (SeqStackFree n k0) right-hand side; the return-value and unused frame-component carriers stay independent. Imported canonical regs/fpRegs/store translation with same-module witness and positive BitVec width; names the evaluator, so it inherits reals_as_rational_cuts (SOUNDNESS item 8) without a numerical FP assertion."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/RegisterWrite.lean",
+    "lean_name": "wRegWrite2Thm1",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "wRegWrite2_thm1",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, wRegWrite2_thm1_typed): source3814-3831; free-variable order ac k f f' s t lens m v kont retained; HOL's single conjunction premise state_rel … ∧ m < f'+k ∧ (∀n. n ≤ k+1 ⇒ evaluate (kont n,t) = (NONE,set_var n v t)) kept as one hypothesis in HOL's order; the existential run and full postrelation (set_var (2*m) v s) conclusion retained. Native wRegWrite2 lowers physical kont m or spilled Seq(kont (k+1),StackStore (k+1) slot); the callback is used exactly. Canonical five finite-map fields and positive width translation as qualified; evaluator closure inherits reals_as_rational_cuts without numerical FP claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/RegisterWrite.lean",
+    "lean_name": "wRegWrite1Thm2",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "wRegWrite1_thm2",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, wRegWrite1_thm2_typed): source3758-3788; free-variable order ac k f f' s t lens m v v' kont retained; HOL's single conjunction premise state_rel … ∧ m < f'+k ∧ (∀n. n ≤ k ⇒ evaluate (kont n,t) = (NONE,set_var 0 v' (set_var n v t))) kept as one hypothesis in HOL's order; the existential run, full postrelation set_var 0 v' (set_var (2*m) v s) and the stack-length/stack-space facts retained. Canonical five finite-map fields and positive width translation as qualified; evaluator closure inherits reals_as_rational_cuts without numerical FP claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CallReturnEval.lean",
+    "lean_name": "evaluatePopHandlerSeq",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "evaluate_PopHandler_seq",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, evaluate_PopHandler_seq_typed): source5566-5572; free-variable order prog t k f f' retained, with the frame triple bound as separate k, f and f' variables exactly as in the typed capture, HOL's F is the false constant, and the two unused frame fields stay independently polymorphic. The target is the StackSemStateFiniteExact carrier, whose canonical finite-map fields regs, fpRegs and store are the same reviewed HolFiniteMapExact translation as on the adjacent evaluate_copy_ret_Seq' row, with the same-module canonical witness; the positive BitVec width translation is unchanged. Conclusion evaluate (PopHandler F (k,f,f') prog,t) = evaluate (Seq (PopHandler F (k,f,f') Skip) prog,t) retained, with Seq composed through the reviewed sequenceAssoc and skip-right evaluation laws (Flapjack-only helpers with no separate HOL originals). Evaluator closure inherits reals_as_rational_cuts (SOUNDNESS item 8) without a numerical FP assertion."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CallReturnEval.lean",
+    "lean_name": "evaluatePopHandlerClock",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "evaluate_PopHandler_clock",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, evaluate_PopHandler_clock_typed): source5554-5565; free-variable order t k f f' clk retained, with the frame triple bound as separate k, f and f' variables, all Nat as HOL annotates (k,f:num,f':num) and the regenerated typed capture confirms; HOL's F is the false constant. The target is the StackSemStateFiniteExact carrier, whose canonical finite-map fields regs, fpRegs and store are the same reviewed HolFiniteMapExact translation as on the adjacent evaluate_copy_ret_Seq' row, with the same-module canonical witness. HOL's let prog = PopHandler F (k,f,f') Skip is kept, and the conclusion evaluate (prog,t with clock := clk) = (FST (evaluate (prog,t)), SND (evaluate (prog,t)) with clock := clk) is stated with Prod.fst/Prod.snd and the clock update on t; no conjunction premise. Clock freeness is established by Flapjack-only per-constructor helpers (clockFree_set, clockFree_stackFree) with no separate HOL originals. Positive BitVec width; evaluator closure inherits reals_as_rational_cuts (SOUNDNESS item 8) without a numerical FP assertion."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/RegisterWrite.lean",
+    "lean_name": "evaluateWStackStoreWReg1Strong",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "evaluate_wStackStore_wReg1_strong",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, evaluate_wStackStore_wReg1_strong_typed): source4550-4575; free-variable order ac k f f' s t lens r c x r' retained, with k, f, f', x and r' bound separately as the typed capture shows; HOL's single conjunction premise wReg1 r (k,f,f') = (x,r') ∧ EVEN r ∧ r < 2*f' + 2*k ∧ state_rel … is one hypothesis in HOL's order; the existential run of wStackStore x Skip on set_var r' c t as set_var r' c t', the full postrelation set_var r c s / set_var r' c t' and the stack-length/space facts retained. wReg1/wStackStore use the reviewed native renderings; EVEN is Lean's Even. Canonical five finite-map fields and positive width translation as qualified; evaluator closure inherits reals_as_rational_cuts without numerical FP claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/RegisterWrite.lean",
+    "lean_name": "evaluateWStackStoreWReg1New",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "evaluate_wStackStore_wReg1_new",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, evaluate_wStackStore_wReg1_new_typed): source4577-4606; free-variable order ac k f f' s t lens r c x r' kont LENGTH_t_stack t_stack_space retained, with k, f, f', x and r' bound separately; HOL's single conjunction premise wReg1 r (k,f,f') = (x,r') ∧ EVEN r ∧ r < 2*f' + 2*k ∧ (∃t'. evaluate (kont,t) = (NONE,set_var r' c t') ∧ state_rel … ∧ LENGTH t'.stack = LENGTH_t_stack ∧ t'.stack_space = t_stack_space) is one hypothesis in HOL's order; the existential run of Seq kont (wStackStore x Skip), the full postrelation and the same stack-length/space equalities retained. wReg1/wStackStore use the reviewed native renderings; EVEN is Lean's Even. Canonical five finite-map fields and positive width translation as qualified; evaluator closure inherits reals_as_rational_cuts without numerical FP claim."
+  }
 ]

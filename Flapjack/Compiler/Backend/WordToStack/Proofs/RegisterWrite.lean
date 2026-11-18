@@ -1,6 +1,8 @@
 module
 
 public import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelRegisterUpdate
+public import Flapjack.Compiler.Backend.WordToStack.NativeStackStore
+public import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateClock
 
 @[expose] public section
 namespace Flapjack.WordToStackProofs.RegisterWrite
@@ -75,4 +77,292 @@ theorem wRegWrite1Thm1 {width : Nat} [NeZero width] {C F : Type}
       have preserved := StateRelRegisterUpdate.wordToStackStateRelSetVar2 m value
         target.stack target.stackSpace scratch physical bound rfl rfl
       simpa only [post,slot] using preserved
+
+/-- Exact HOL `wRegWrite1_thm1_weak` (`word_to_stackProofScript.sml:3745-3756`):
+the same run/relation conclusion as `wRegWrite1_thm1`, without its
+stack-length and stack-space facts (HOL derives it by `metis_tac`). Binders
+follow the typed capture (`ac`, `k`, `f`, `f'`, `s`, `t`, `lens`, `m`, `v`,
+`kont`), and HOL's single conjunction premise
+`state_rel … ∧ m < f' + k ∧ (∀n. …)` is kept as one hypothesis in HOL's
+order. -/
+@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "wRegWrite1_thm1_weak"
+  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
+    WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
+    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
+  (words_as_type_indexed_bitvec)]
+theorem wRegWrite1Thm1Weak {width : Nat} [NeZero width] {C F : Type}
+    (ac : AsmConfigExact width) (k f frame : Nat)
+    (source : WordSemStateFiniteExact width (Nat × C) F)
+    (target : StackSemStateFiniteExact width C F) (lens : List Nat)
+    (m : Nat) (value : WordLocW width) (kont : Nat → HolProg width)
+    (h : stateRel ac k f frame source target lens 0 ∧ m < frame+k ∧
+      ∀ n, n ≤ k → StackSemEvaluate.evaluate (kont n,target) =
+        (none,StackSemStateOps.setVar n value target)) :
+    ∃ post : StackSemStateFiniteExact width C F,
+      StackSemEvaluate.evaluate (wRegWrite1Native kont (2*m) (k,f,frame),target) =
+        (none,post) ∧
+      stateRel ac k f frame (WordSemStateFiniteExact.setVar (2*m) value source)
+        post lens 0 := by
+  obtain ⟨related, bound, run⟩ := h
+  obtain ⟨post, ran, related', -, -⟩ :=
+    wRegWrite1Thm1 ac k f frame m source target lens value kont related bound run
+  exact ⟨post, ran, related'⟩
+
+/-- Exact HOL `wRegWrite2_thm1` (`word_to_stackProofScript.sml:3814-3831`):
+the second temporary-register write over an arbitrary continuation, with HOL's
+single conjunction premise (`state_rel … ∧ m < f' + k ∧ ∀n, n ≤ k + 1 ⇒ …`)
+kept as one hypothesis in HOL's order. -/
+@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "wRegWrite2_thm1"
+  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
+    WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
+    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
+  (words_as_type_indexed_bitvec)]
+theorem wRegWrite2Thm1 {width : Nat} [NeZero width] {C F : Type}
+    (ac : AsmConfigExact width) (k f frame : Nat)
+    (source : WordSemStateFiniteExact width (Nat × C) F)
+    (target : StackSemStateFiniteExact width C F) (lens : List Nat)
+    (m : Nat) (value : WordLocW width) (kont : Nat → HolProg width)
+    (h : stateRel ac k f frame source target lens 0 ∧ m < frame+k ∧
+      ∀ n, n ≤ k + 1 → StackSemEvaluate.evaluate (kont n,target) =
+        (none,StackSemStateOps.setVar n value target)) :
+    ∃ post : StackSemStateFiniteExact width C F,
+      StackSemEvaluate.evaluate (wRegWrite2Native kont (2*m) (k,f,frame),target) =
+        (none,post) ∧
+      stateRel ac k f frame (WordSemStateFiniteExact.setVar (2*m) value source)
+        post lens 0 := by
+  obtain ⟨related, bound, run⟩ := h
+  have half : 2*m/2 = m := by omega
+  by_cases physical : m < k
+  · simp only [wRegWrite2Native,half,if_pos physical]
+    exact ⟨StackSemStateOps.setVar m value target, run m (by omega),
+      StateRelRegisterUpdate.stateRelSetVar m value related physical⟩
+  · have shape : if frame=0 then f=0 else f=frame+1 :=
+      related.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.1
+    have frameShape : f=frame+1 := by split at shape <;> omega
+    have resource : target.stackSpace+f ≤ target.stack.length :=
+      related.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.1
+    have slot : f-1-(m-k) = f+k-(m+1) := by omega
+    have slotBound : target.stackSpace+(f-1-(m-k)) < target.stack.length := by omega
+    have useStack : target.useStack = true := related.2.2.2.2.1
+    let post := {StackSemStateOps.setVar (k+1) value target with
+      stack := target.stack.set (target.stackSpace+(f-1-(m-k))) value}
+    refine ⟨post,?_,?_⟩
+    · simp only [wRegWrite2Native,half,if_neg physical,StackSemEvaluate.evaluate_seq,
+        run (k+1) (by omega)]
+      simp [StackSemControl.fixClock,StackSemStateOps.setVar,
+        StackSemEvaluate.evaluate_stackStore,useStack,slotBound,
+        StackSemStateOps.getVar,HolFiniteMapExact.updateEq,FUPDATE_HOL,post]
+    · have scratch := CallDest.stateRel_setVar_of_ge (k+1) (by omega) value related
+      have preserved := StateRelRegisterUpdate.wordToStackStateRelSetVar2 m value
+        target.stack target.stackSpace scratch physical bound rfl rfl
+      simpa only [post,slot] using preserved
+
+/-- Exact HOL `wRegWrite1_thm2` (`word_to_stackProofScript.sml:3758-3788`):
+the first temporary-register write when every continuation run also writes
+`v'` into register 0. HOL's single conjunction premise
+(`state_rel … ∧ m < f' + k ∧ ∀n, n ≤ k ⇒ …`) is one hypothesis in HOL's order;
+the stack-length and stack-space facts are retained. -/
+@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "wRegWrite1_thm2"
+  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
+    WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
+    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
+  (words_as_type_indexed_bitvec)]
+theorem wRegWrite1Thm2 {width : Nat} [NeZero width] {C F : Type}
+    (ac : AsmConfigExact width) (k f frame : Nat)
+    (source : WordSemStateFiniteExact width (Nat × C) F)
+    (target : StackSemStateFiniteExact width C F) (lens : List Nat)
+    (m : Nat) (value v' : WordLocW width) (kont : Nat → HolProg width)
+    (h : stateRel ac k f frame source target lens 0 ∧ m < frame+k ∧
+      ∀ n, n ≤ k → StackSemEvaluate.evaluate (kont n,target) =
+        (none,StackSemStateOps.setVar 0 v' (StackSemStateOps.setVar n value target))) :
+    ∃ post : StackSemStateFiniteExact width C F,
+      StackSemEvaluate.evaluate (wRegWrite1Native kont (2*m) (k,f,frame),target) =
+        (none,post) ∧
+      stateRel ac k f frame
+        (WordSemStateFiniteExact.setVar 0 v'
+          (WordSemStateFiniteExact.setVar (2*m) value source)) post lens 0 ∧
+      post.stack.length = target.stack.length ∧ post.stackSpace = target.stackSpace := by
+  obtain ⟨related, bound, run⟩ := h
+  have half : 2*m/2 = m := by omega
+  have hk : 4 < k := related.2.2.2.2.2.2.2.2.2.1
+  have hk0 : k ≠ 0 := by omega
+  by_cases physical : m < k
+  · simp only [wRegWrite1Native,half,if_pos physical]
+    have r1 := StateRelRegisterUpdate.stateRelSetVar m value related physical
+    have r2 := StateRelRegisterUpdate.stateRelSetVar 0 v' r1 (by omega)
+    exact ⟨StackSemStateOps.setVar 0 v' (StackSemStateOps.setVar m value target),
+      run m (by omega), r2, rfl, rfl⟩
+  · have shape : if frame=0 then f=0 else f=frame+1 :=
+      related.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.1
+    have frameShape : f=frame+1 := by split at shape <;> omega
+    have resource : target.stackSpace+f ≤ target.stack.length :=
+      related.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.1
+    have slot : f-1-(m-k) = f+k-(m+1) := by omega
+    have slotBound : target.stackSpace+(f-1-(m-k)) < target.stack.length := by omega
+    have useStack : target.useStack = true := related.2.2.2.2.1
+    let post := StackSemStateOps.setVar 0 v'
+      {StackSemStateOps.setVar k value target with
+        stack := target.stack.set (target.stackSpace+(f-1-(m-k))) value}
+    refine ⟨post,?_,?_,by simp [post, StackSemStateOps.setVar, List.length_set],rfl⟩
+    · simp only [wRegWrite1Native,half,if_neg physical,StackSemEvaluate.evaluate_seq,
+        run k (Nat.le_refl k)]
+      simp [StackSemControl.fixClock,StackSemStateOps.setVar,
+        StackSemEvaluate.evaluate_stackStore,useStack,slotBound,
+        StackSemStateOps.getVar,HolFiniteMapExact.updateEq,FUPDATE_HOL,hk0,post]
+    · have scratch := CallDest.stateRel_setVar_of_ge k (Nat.le_refl k) value related
+      have preserved := StateRelRegisterUpdate.wordToStackStateRelSetVar2 m value
+        target.stack target.stackSpace scratch physical bound rfl rfl
+      have lifted := StateRelRegisterUpdate.stateRelSetVar 0 v' preserved (by omega)
+      simpa only [post,slot] using lifted
+
+/-- Exact HOL `evaluate_wStackStore_wReg1_strong` (`word_to_stackProofScript.sml:4550-4575`):
+the reverse-ordered spill stores for `wReg1`, with HOL's single conjunction
+premise (`wReg1 … = (x,r') ∧ EVEN r ∧ r < 2*f' + 2*k ∧ state_rel …`) kept as
+one hypothesis in HOL's order. -/
+@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
+  "evaluate_wStackStore_wReg1_strong"
+  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
+    WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
+    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
+  (words_as_type_indexed_bitvec)]
+theorem evaluateWStackStoreWReg1Strong {width : Nat} [NeZero width] {C F : Type}
+    (ac : AsmConfigExact width) (k f frame : Nat)
+    (source : WordSemStateFiniteExact width (Nat × C) F)
+    (target : StackSemStateFiniteExact width C F) (lens : List Nat)
+    (r : Nat) (c : WordLocW width) (x : List (Nat × Nat)) (r' : Nat)
+    (h : Flapjack.Compiler.Backend.WordToStackRegFormat.wReg1 r (k, f, frame) = (x, r') ∧
+      Even r ∧ r < 2*frame + 2*k ∧ stateRel ac k f frame source target lens 0) :
+    ∃ post : StackSemStateFiniteExact width C F,
+      StackSemEvaluate.evaluate (wStackStoreNative x .skip,
+        StackSemStateOps.setVar r' c target) =
+        (none,StackSemStateOps.setVar r' c post) ∧
+      stateRel ac k f frame (WordSemStateFiniteExact.setVar r c source)
+        (StackSemStateOps.setVar r' c post) lens 0 ∧
+      post.stack.length = target.stack.length ∧ post.stackSpace = target.stackSpace := by
+  obtain ⟨wregEq, even, bound, related⟩ := h
+  obtain ⟨m, hm⟩ := even
+  have half : r / 2 = m := by omega
+  have hr : r = 2*m := by omega
+  rw [Flapjack.Compiler.Backend.WordToStackRegFormat.wReg1, half] at wregEq
+  by_cases physical : m < k
+  · rw [if_pos physical] at wregEq
+    obtain ⟨hx, hr'⟩ := Prod.mk.inj wregEq
+    subst hx
+    subst hr'
+    refine ⟨target, ?_, ?_, rfl, rfl⟩
+    · simp only [wStackStoreNative, StackSemEvaluate.evaluate_skip]
+    · have := StateRelRegisterUpdate.stateRelSetVar m c related physical
+      simpa only [hr] using this
+  · rw [if_neg physical] at wregEq
+    obtain ⟨hx, hr'⟩ := Prod.mk.inj wregEq
+    subst hx
+    subst hr'
+    have shape : if frame=0 then f=0 else f=frame+1 :=
+      related.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.1
+    have frameShape : f=frame+1 := by split at shape <;> omega
+    have resource : target.stackSpace+f ≤ target.stack.length :=
+      related.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.1
+    have slot : f-1-(m-k) = f+k-(m+1) := by omega
+    have slotBound : target.stackSpace+(f-1-(m-k)) < target.stack.length := by omega
+    have useStack : target.useStack = true := related.2.2.2.2.1
+    have hk : 4 < k := related.2.2.2.2.2.2.2.2.2.1
+    let post := {target with stack := target.stack.set (target.stackSpace+(f-1-(m-k))) c}
+    refine ⟨post, ?_, ?_, by simp [post, List.length_set], rfl⟩
+    · simp [wStackStoreNative, StackSemEvaluate.evaluate_seq,
+        StackSemEvaluate.evaluate_skip, StackSemControl.fixClock,
+        StackSemEvaluate.evaluate_stackStore, useStack, slotBound,
+        StackSemStateOps.getVar, StackSemStateOps.setVar,
+        HolFiniteMapExact.updateEq, FUPDATE_HOL, post]
+    · have scratch := CallDest.stateRel_setVar_of_ge k (Nat.le_refl k) c related
+      have mBound : m < frame + k := by omega
+      have preserved := StateRelRegisterUpdate.wordToStackStateRelSetVar2 m c
+        target.stack target.stackSpace scratch physical mBound rfl rfl
+      simpa only [post, slot, hr, StackSemStateOps.setVar] using preserved
+
+/-- Exact HOL `evaluate_wStackStore_wReg1_new` (`word_to_stackProofScript.sml:4577-4606`):
+the same spill stores after an arbitrary continuation run. HOL's single
+conjunction premise (`wReg1 … = (x,r') ∧ EVEN r ∧ r < 2*f' + 2*k ∧ ∃t', …`) is
+one hypothesis in HOL's order; the free stack-length and stack-space variables
+are explicit. -/
+@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
+  "evaluate_wStackStore_wReg1_new"
+  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
+    WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
+    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
+  (words_as_type_indexed_bitvec)]
+theorem evaluateWStackStoreWReg1New {width : Nat} [NeZero width] {C F : Type}
+    (ac : AsmConfigExact width) (k f frame : Nat)
+    (source : WordSemStateFiniteExact width (Nat × C) F)
+    (target : StackSemStateFiniteExact width C F) (lens : List Nat)
+    (r : Nat) (c : WordLocW width) (x : List (Nat × Nat)) (r' : Nat)
+    (kont : HolProg width) (stackLength stackSpace : Nat)
+    (h : Flapjack.Compiler.Backend.WordToStackRegFormat.wReg1 r (k, f, frame) = (x, r') ∧
+      Even r ∧ r < 2*frame + 2*k ∧
+      ∃ t' : StackSemStateFiniteExact width C F,
+        StackSemEvaluate.evaluate (kont, target) =
+          (none,StackSemStateOps.setVar r' c t') ∧
+        stateRel ac k f frame source t' lens 0 ∧
+        t'.stack.length = stackLength ∧ t'.stackSpace = stackSpace) :
+    ∃ post : StackSemStateFiniteExact width C F,
+      StackSemEvaluate.evaluate (.seq kont (wStackStoreNative x .skip), target) =
+        (none,post) ∧
+      stateRel ac k f frame (WordSemStateFiniteExact.setVar r c source) post lens 0 ∧
+      post.stack.length = stackLength ∧ post.stackSpace = stackSpace := by
+  obtain ⟨wregEq, even, bound, t', run, related, lenEq, spaceEq⟩ := h
+  obtain ⟨m, hm⟩ := even
+  have half : r / 2 = m := by omega
+  have hr : r = 2*m := by omega
+  rw [Flapjack.Compiler.Backend.WordToStackRegFormat.wReg1, half] at wregEq
+  by_cases physical : m < k
+  · rw [if_pos physical] at wregEq
+    obtain ⟨hx, hr'⟩ := Prod.mk.inj wregEq
+    subst hx
+    subst hr'
+    refine ⟨StackSemStateOps.setVar m c t', ?_, ?_, ?_, ?_⟩
+    · have clockLe : t'.clock ≤ target.clock := by
+        have h := StackSemEvaluateClock.evaluateClock kont target none
+          (StackSemStateOps.setVar m c t') run
+        simpa [StackSemStateOps.setVar] using h
+      simp [wStackStoreNative, StackSemEvaluate.evaluate_seq, run,
+        StackSemEvaluate.evaluate_skip, StackSemControl.fixClock,
+        StackSemStateOps.setVar, clockLe]
+    · have := StateRelRegisterUpdate.stateRelSetVar m c related physical
+      simpa only [hr] using this
+    · simp only [StackSemStateOps.setVar]
+      exact lenEq
+    · simp only [StackSemStateOps.setVar]
+      exact spaceEq
+  · rw [if_neg physical] at wregEq
+    obtain ⟨hx, hr'⟩ := Prod.mk.inj wregEq
+    subst hx
+    subst hr'
+    have shape : if frame=0 then f=0 else f=frame+1 :=
+      related.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.1
+    have frameShape : f=frame+1 := by split at shape <;> omega
+    have resource : t'.stackSpace+f ≤ t'.stack.length :=
+      related.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.1
+    have slot : f-1-(m-k) = f+k-(m+1) := by omega
+    have slotBound : t'.stackSpace+(f-1-(m-k)) < t'.stack.length := by omega
+    have useStack : t'.useStack = true := related.2.2.2.2.1
+    let post := {StackSemStateOps.setVar k c t' with
+      stack := t'.stack.set (t'.stackSpace+(f-1-(m-k))) c}
+    refine ⟨post, ?_, ?_, ?_, ?_⟩
+    · have clockLe : t'.clock ≤ target.clock := by
+        have h := StackSemEvaluateClock.evaluateClock kont target none
+          (StackSemStateOps.setVar k c t') run
+        simpa [StackSemStateOps.setVar] using h
+      simp [wStackStoreNative, StackSemEvaluate.evaluate_seq, run,
+        StackSemEvaluate.evaluate_skip, StackSemControl.fixClock,
+        StackSemEvaluate.evaluate_stackStore, useStack, slotBound,
+        StackSemStateOps.getVar, StackSemStateOps.setVar,
+        HolFiniteMapExact.updateEq, FUPDATE_HOL, post, clockLe]
+    · have scratch := CallDest.stateRel_setVar_of_ge k (Nat.le_refl k) c related
+      have mBound : m < frame + k := by omega
+      have preserved := StateRelRegisterUpdate.wordToStackStateRelSetVar2 m c
+        t'.stack t'.stackSpace scratch physical mBound rfl rfl
+      simpa only [post, slot, hr] using preserved
+    · simp only [post, List.length_set]
+      exact lenEq
+    · simp only [post, StackSemStateOps.setVar]
+      exact spaceEq
 end Flapjack.WordToStackProofs.RegisterWrite

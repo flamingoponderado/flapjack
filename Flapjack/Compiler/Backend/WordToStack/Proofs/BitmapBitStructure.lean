@@ -36,6 +36,18 @@ theorem bitsToWordMiss {width : Nat} [NeZero width] (bits : List Bool) (i : Nat)
   rw [BitmapBitStructureSupport.bitmapBitLookup bits i h.1]
   simp [List.getElem?_eq_none h.2]
 
+/-- Full original in-range bit result: under the word-index and list-length
+guards the `i`-th bit of `bits_to_word` is the ordinary `EL` element (the
+bounds make the total `EL` equal to the list indexing). -/
+@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "bits_to_word_bit"
+  (words_as_type_indexed_bitvec)]
+theorem bitsToWordBit {width : Nat} [NeZero width] (bits : List Bool) (i : Nat)
+    (h : i < width ∧ i < bits.length) :
+    (bitsToWordW bits : BitVec width).getLsbD i = bits[i]'h.2 := by
+  rw [BitmapBitStructureSupport.bitmapBitLookup bits i h.1]
+  rw [List.getElem?_eq_getElem h.2]
+  rfl
+
 /-- Full original SNOC equation, including arbitrary truncating lists. -/
 @[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "bits_to_word_SNOC"
   (words_as_type_indexed_bitvec)]

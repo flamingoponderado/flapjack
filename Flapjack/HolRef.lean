@@ -1384,7 +1384,18 @@ private def HolRef.qualifierSuffix (ref : HolRef) : String :=
     s!" (fmap_as_finite_support_result_observations := [{String.intercalate ", " ref.fmapAsFiniteSupportResultObservations.toList}])"
   let nested := if ref.nestedListRelAsMutual.isEmpty then "" else
     s!" (nested_list_rel_as_mutual := [{String.intercalate ", " ref.nestedListRelAsMutual.toList}])"
-  observations ++ listAsArray ++ namesAsString ++ namesAsStringBoundary ++ fmapAsFiniteSupport ++ fmapAsFiniteSupportResult ++ fmapAsFiniteSupportFunction ++ fmapAsFiniteSupportTuple ++ fmapAsFiniteSupportHeterogeneousFunction ++ generaliseMapQualifier ++ generaliseLengthQualifier ++ conjunctUniversals ++ fmapAsFiniteSupportParameters ++ predicateDomain ++ universalMaps ++ fmapAsFiniteSupportExistentials ++ fmapAsFiniteSupportRelation ++ fmapAsFiniteSupportEqualities ++ fmapAsFiniteSupportEquality ++ wordsAsTypeIndexedBitvec ++ wordDimensionAsWidth ++ wordDimensionsAsWidths ++ realsAsRationalCuts ++ nested
+  let inhabitantList := String.intercalate ", " ref.totalFunctionInhabitants.toList
+  let totalFunctionInhabitants := if ref.totalFunctionInhabitants.isEmpty then "" else
+    s!" (total_function_inhabitants := [{inhabitantList}])"
+  observations ++ listAsArray ++ namesAsString ++ namesAsStringBoundary ++
+    fmapAsFiniteSupport ++ fmapAsFiniteSupportResult ++ fmapAsFiniteSupportFunction ++
+    fmapAsFiniteSupportTuple ++ fmapAsFiniteSupportHeterogeneousFunction ++
+    generaliseMapQualifier ++ generaliseLengthQualifier ++ conjunctUniversals ++
+    fmapAsFiniteSupportParameters ++ predicateDomain ++ universalMaps ++
+    fmapAsFiniteSupportExistentials ++ fmapAsFiniteSupportRelation ++
+    fmapAsFiniteSupportEqualities ++ fmapAsFiniteSupportEquality ++
+    wordsAsTypeIndexedBitvec ++ wordDimensionAsWidth ++ wordDimensionsAsWidths ++
+    realsAsRationalCuts ++ totalFunctionInhabitants ++ nested
 
 /-! Parser regressions for the original syntax, each qualifier alone, and both
 qualifiers together. These elaborate temporary syntax values only; they do not
@@ -1451,6 +1462,20 @@ run_cmd do
   unless HolRef.qualifierSuffix both ==
       " (list_as_array := [fields]) (names_as_string := [name, fieldName])" do
     throwError "@[hol] #hol_refs qualifier-output regression"
+  let inhabitantsSyntax ← `(attr| hol "hol4/src/coretypes/optionScript.sml" "THE_DEF"
+    (total_function_inhabitants := [α]))
+  let inhabitantsRef ← Lean.Elab.Command.liftCoreM (parseHolRefAttribute inhabitantsSyntax)
+  unless inhabitantsRef.totalFunctionInhabitants == #["α"] &&
+      HolRef.qualifierSuffix inhabitantsRef == " (total_function_inhabitants := [α])" do
+    throwError "@[hol] total_function_inhabitants display regression"
+  let inhabitantsCombinedSyntax ← `(attr| hol "hol4/src/coretypes/optionScript.sml" "THE_DEF"
+    (words_as_type_indexed_bitvec) (total_function_inhabitants := [α]))
+  let inhabitantsCombined ← Lean.Elab.Command.liftCoreM
+    (parseHolRefAttribute inhabitantsCombinedSyntax)
+  unless inhabitantsCombined.totalFunctionInhabitants == #["α"] &&
+      HolRef.qualifierSuffix inhabitantsCombined ==
+        " (words_as_type_indexed_bitvec) (total_function_inhabitants := [α])" do
+    throwError "@[hol] total_function_inhabitants combined display regression"
   let dimensionSyntax ← `(attr| hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "MustTerminate_limit_def"
     (word_dimension_as_width := width))
   let dimensionRef ← Lean.Elab.Command.liftCoreM (parseHolRefAttribute dimensionSyntax)
