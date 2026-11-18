@@ -857,7 +857,9 @@ private theorem stackFrameSwap_returningForce {C F : Type} (dest : Nat) (live : 
           obtain ⟨rfl, rfl⟩ := run
           refine ⟨setVar dest value { other with locals := env }, ?_, ?_, ?_⟩
           · simp [evaluate, localsEq, read, refsEq, th, cut]
-          · exact setVar_frameSwap dest value (by rw [h]; simp)
+          · exact setVar_frameSwap dest value (by
+              rw [h]
+              simp)
           · simpa [setVar] using rel
       | notEvaluated =>
         cases found : findCode (some label) [thunk, value] state.code state.stackFrameSizes with
@@ -892,7 +894,9 @@ private theorem stackFrameSwap_returningForce {C F : Type} (dest : Nat) (live : 
               let callOther :=
                 DataSem.callEnv args otherSize (DataSem.pushEnv env false (DataSem.decClock other))
               have relPush := pushEnv_frameSwap env false (DataSem.decClock state)
-                (DataSem.decClock other) (by rw [h]; simp [DataSem.decClock]) rel
+                (DataSem.decClock other) (by
+                  rw [h]
+                  simp [DataSem.decClock]) rel
               have relCall : FrameSwapState callState callOther :=
                 callEnv_frameSwap args size otherSize _ _ relPush.1
               refine ⟨{ callOther with stack := [], locals := .ln }, ?_, ?_, ?_⟩
@@ -908,7 +912,9 @@ private theorem stackFrameSwap_returningForce {C F : Type} (dest : Nat) (live : 
                 simp only [callState, DataSem.callEnv, DataSem.pushEnv, DataSem.decClock]
                 omega
               have relPush := pushEnv_frameSwap env false (DataSem.decClock state)
-                (DataSem.decClock other) (by rw [h]; simp [DataSem.decClock]) rel
+                (DataSem.decClock other) (by
+                  rw [h]
+                  simp [DataSem.decClock]) rel
               have relCall : FrameSwapState callState callOther :=
                 callEnv_frameSwap args size otherSize _ _ relPush.1
               have stackCall : List.Forall₂ stackFrameSizeRel callState.stack callOther.stack := by
