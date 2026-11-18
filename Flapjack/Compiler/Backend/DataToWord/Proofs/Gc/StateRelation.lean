@@ -97,13 +97,14 @@ theorem stateRel_withFpRegs {width : Nat} [NeZero width] {C F : Type}
     stateRel conf l1 l2 source { target with fpRegs := fpRegs } values locs := by
   exact related
 
-/-- A present source local has an adjusted target local under the complete
-relation. The HOL tag is pending independent review of this theorem. -/
+/-- A present source local has an adjusted target local under the complete relation. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "state_rel_get_var_IMP"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem stateRel_getVar {width : Nat} [NeZero width] {C F : Type}
-    (conf : Config) (l1 l2 : Nat) (source : DataSem.State C F)
+    (conf : Config) (l1 l2 : Nat) (source : Flapjack.Compiler.Backend.DataSem.State C F)
     (target : WordSemStateFiniteExact width C F)
-    (values : Option (List (DataSem.Value × WordLocW width)))
-    (locs : List (Nat × Nat)) (n : Nat) (value : DataSem.Value)
+    (values : Option (List (Flapjack.Compiler.Backend.DataSem.Value × WordLocW width)))
+    (locs : List (Nat × Nat)) (n : Nat) (value : Flapjack.Compiler.Backend.DataSem.Value)
     (related : stateRel conf l1 l2 source target values locs)
     (found : DataSem.getVar n source.locals = some value) :
     ∃ word, WordSemStateFiniteExact.getVar (adjustVar n) target = some word := by
@@ -114,12 +115,13 @@ theorem stateRel_getVar {width : Nat} [NeZero width] {C F : Type}
   obtain ⟨word, hword⟩ := Option.isSome_iff_exists.mp (targetPresent n present)
   exact ⟨word, hword⟩
 
-/-- Reading a list of source locals yields a same-length list of adjusted
-target locals. The HOL tag is pending independent review of this theorem. -/
+/-- Reading a list of source locals yields a same-length list of adjusted target locals. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "state_rel_get_vars_IMP"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem stateRel_getVars {width : Nat} [NeZero width] {C F : Type}
-    (conf : Config) (l1 l2 : Nat) (source : DataSem.State C F)
+    (conf : Config) (l1 l2 : Nat) (source : Flapjack.Compiler.Backend.DataSem.State C F)
     (target : WordSemStateFiniteExact width C F) (locs : List (Nat × Nat))
-    (names : List Nat) (values : List DataSem.Value)
+    (names : List Nat) (values : List Flapjack.Compiler.Backend.DataSem.Value)
     (related : stateRel conf l1 l2 source target none locs)
     (found : DataSem.getVars names source.locals = some values) :
     ∃ words, WordSemStateFiniteExact.getVars (names.map adjustVar) target = some words ∧
