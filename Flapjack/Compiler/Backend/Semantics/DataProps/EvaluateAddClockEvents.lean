@@ -507,4 +507,303 @@ private theorem callRetDispatchEvents_ge {C F : Type} (returns : List Nat)
             obtain ⟨name, body⟩ := pair
             simpa [setVar] using evaluate_events_start body (setVar name value next)
 
+set_option linter.unusedSimpArgs false in
+/-- A call runs the callee body and, on a raised exception, the handler.
+    Flapjack infrastructure for `evaluate_add_clock_io_events_mono`; no separate
+    HOL original. -/
+private theorem addClockEvents_call {C F : Type} (ret : Option (List Nat × NumSet))
+    (dest : Option Nat) (names : List Nat) (handler : Option (Nat × DataLang.Prog))
+    (state : State C F)
+    (bodyIH : ∀ body : DataLang.Prog, ∀ next : State C F, next.clock < state.clock →
+      AddClockEventsAt body next) :
+    AddClockEventsAt (.call ret dest names handler) state := by
+  intro extra
+  simp only [evaluate]
+  cases read : DataSem.getVars names state.locals with
+  | none =>
+    simp [typeError, addClockState]
+  | some values =>
+    simp only [read]
+    generalize foundEq : DataSem.findCode dest values state.code state.stackFrameSizes = found at ⊢
+    cases found with
+    | none =>
+      simp [typeError, addClockState]
+    | some entry =>
+      obtain ⟨args, body, size⟩ := entry
+      simp only []
+      cases ret with
+      | none =>
+        simp only []
+        by_cases someHandler : handler.isSome = true
+        · simp [someHandler, typeError, addClockState]
+        · simp only [someHandler, Bool.false_eq_true, if_false] at ⊢
+          by_cases zero : state.clock = 0
+          · by_cases extraZero : extra = 0
+            · have shiftZero : state.clock + extra = 0 := by omega
+              rw [if_pos zero, if_pos shiftZero]
+              simp [someHandler, timeoutError, flushState, addClockState]
+            · have shiftPos : ¬ state.clock + extra = 0 := by omega
+              rw [if_pos zero, if_neg shiftPos]
+              simp only [timeoutError, flushState]
+              have ffiEq : (DataSem.callEnv args size
+                  (decClock (addClockState state extra))).ffi = state.ffi := by
+                simp [DataSem.callEnv, decClock]
+              have start := evaluate_events_start body
+                (DataSem.callEnv args size (decClock (addClockState state extra)))
+              rw [ffiEq] at start
+              generalize runEq : evaluate body
+                  (DataSem.callEnv args size (decClock (addClockState state extra))) = run at ⊢
+              cases run with
+              | mk res next =>
+                rw [runEq] at start
+                cases res with
+                | none => simpa [typeError] using start
+                | some value => simpa using start
+          · rw [if_neg zero]
+            have shiftPos : ¬ state.clock + extra = 0 := by omega
+            rw [if_neg shiftPos]
+            rw [decClock_addClockState state extra zero, callEnv_addClockState]
+            have h := bodyIH body (DataSem.callEnv args size (decClock state)) (by
+              simp only [DataSem.callEnv, decClock]
+              omega) extra
+            generalize runEq : evaluate body
+                (DataSem.callEnv args size (decClock state)) = run at ⊢
+            generalize shiftEq : evaluate body
+                (addClockState (DataSem.callEnv args size (decClock state)) extra) = shiftRun at ⊢
+            rw [runEq, shiftEq] at h
+            cases run with
+            | mk res next =>
+              cases shiftRun with
+              | mk res' next' =>
+                cases res <;> cases res' <;> simpa [typeError, someHandler] using h
+      | some retPair =>
+        obtain ⟨returns, live⟩ := retPair
+        simp only []
+        by_cases nodup : (!returns.Nodup) = true
+        · simp [nodup, typeError, addClockState]
+        · simp only [nodup, Bool.false_eq_true, if_false] at ⊢
+          cases cut : DataSem.cutEnv live state.locals with
+          | none =>
+            simp [nodup, typeError, addClockState]
+          | some env =>
+            simp only []
+            by_cases zero : state.clock = 0
+            · rw [if_pos zero]
+              by_cases extraZero : extra = 0
+              · have shiftZero : state.clock + extra = 0 := by omega
+                rw [if_pos shiftZero]
+                simp [nodup, timeoutError, DataSem.callEnv, DataSem.pushEnv, decClock,
+                  addClockState]
+              · have shiftPos : ¬ state.clock + extra = 0 := by omega
+                rw [if_neg shiftPos]
+                simp only [timeoutError]
+                have ffiEq : (DataSem.callEnv args size
+                    (DataSem.pushEnv env handler.isSome
+                      (decClock (addClockState state extra)))).ffi =
+                    (DataSem.callEnv args size
+                      (DataSem.pushEnv env handler.isSome (decClock state))).ffi := by
+                  simp [DataSem.callEnv, DataSem.pushEnv, decClock, addClockState]
+                have start := evaluate_events_start body
+                  (DataSem.callEnv args size
+                    (DataSem.pushEnv env handler.isSome (decClock (addClockState state extra))))
+                rw [ffiEq] at start
+                generalize runEq : evaluate body
+                    (DataSem.callEnv args size
+                      (DataSem.pushEnv env handler.isSome
+                        (decClock (addClockState state extra)))) = run at ⊢
+                cases run with
+                | mk res next =>
+                  rw [runEq] at start
+                  have geRight := callRetDispatchEvents_ge returns handler (fixClock
+                    (DataSem.callEnv args size
+                      (DataSem.pushEnv env handler.isSome
+                        (decClock (addClockState state extra)))) (res, next))
+                  simp only [fixClock] at geRight ⊢
+                  refine List.IsPrefix.trans ?_ geRight
+                  exact start
+            · rw [if_neg zero]
+              have shiftPos : ¬ state.clock + extra = 0 := by omega
+              rw [if_neg shiftPos]
+              simp only [decClock_addClockState state extra zero, pushEnv_addClockState,
+                callEnv_addClockState] at ⊢
+              have h := bodyIH body
+                (DataSem.callEnv args size
+                  (DataSem.pushEnv env handler.isSome (decClock state))) (by
+                simp only [DataSem.callEnv, DataSem.pushEnv, decClock]
+                omega) extra
+              generalize runEq : evaluate body
+                  (DataSem.callEnv args size
+                    (DataSem.pushEnv env handler.isSome (decClock state))) = run at ⊢
+              cases run with
+              | mk res next =>
+                rw [runEq] at h
+                cases res with
+                | none =>
+                  cases shiftEq : evaluate body
+                      (addClockState (DataSem.callEnv args size
+                        (DataSem.pushEnv env handler.isSome (decClock state))) extra) with
+                  | mk res' next' =>
+                    rw [shiftEq] at h
+                    have geRight := callRetDispatchEvents_ge returns handler (fixClock
+                      (addClockState (DataSem.callEnv args size
+                        (DataSem.pushEnv env handler.isSome (decClock state))) extra)
+                      (res', next'))
+                    simp only [fixClock, typeError] at geRight ⊢
+                    refine List.IsPrefix.trans ?_ geRight
+                    exact h
+                | some result =>
+                  cases result with
+                  | val values =>
+                    by_cases sameLength : values.length = returns.length
+                    · cases shiftEq : evaluate body
+                          (addClockState (DataSem.callEnv args size
+                            (DataSem.pushEnv env handler.isSome (decClock state))) extra) with
+                      | mk res' next' =>
+                        rw [shiftEq] at h
+                        simp only [fixClock] at ⊢
+                        simp only [if_pos sameLength] at ⊢
+                        have geRight := callRetDispatchEvents_ge returns handler (fixClock
+                          (addClockState (DataSem.callEnv args size
+                            (DataSem.pushEnv env handler.isSome (decClock state))) extra)
+                          (res', next'))
+                        simp only [fixClock] at geRight ⊢
+                        cases stackEq : next.stack with
+                        | nil =>
+                          simp only [popEnv, stackEq, typeError] at ⊢
+                          refine List.IsPrefix.trans ?_ geRight
+                          exact h
+                        | cons frame frames =>
+                          cases frame with
+                          | env frameSize envSpt =>
+                            simp only [popEnv, stackEq, setVars] at ⊢
+                            refine List.IsPrefix.trans ?_ geRight
+                            exact h
+                          | exc frameSize envSpt frameHandler =>
+                            simp only [popEnv, stackEq, setVars] at ⊢
+                            refine List.IsPrefix.trans ?_ geRight
+                            exact h
+                    · cases shiftEq : evaluate body
+                          (addClockState (DataSem.callEnv args size
+                            (DataSem.pushEnv env handler.isSome (decClock state))) extra) with
+                      | mk res' next' =>
+                        rw [shiftEq] at h
+                        simp only [fixClock] at ⊢
+                        simp only [if_neg sameLength] at ⊢
+                        have geRight := callRetDispatchEvents_ge returns handler (fixClock
+                          (addClockState (DataSem.callEnv args size
+                            (DataSem.pushEnv env handler.isSome (decClock state))) extra)
+                          (res', next'))
+                        simp only [fixClock, typeError] at geRight ⊢
+                        refine List.IsPrefix.trans ?_ geRight
+                        exact h
+                  | err error =>
+                    cases error with
+                    | abort reason =>
+                      cases shiftEq : evaluate body
+                          (addClockState (DataSem.callEnv args size
+                            (DataSem.pushEnv env handler.isSome (decClock state))) extra) with
+                      | mk res' next' =>
+                        rw [shiftEq] at h
+                        have geRight := callRetDispatchEvents_ge returns handler (fixClock
+                          (addClockState (DataSem.callEnv args size
+                            (DataSem.pushEnv env handler.isSome (decClock state))) extra)
+                          (res', next'))
+                        simp only [fixClock, typeError] at geRight ⊢
+                        refine List.IsPrefix.trans ?_ geRight
+                        exact h
+                    | raise value =>
+                      cases handlerEq : handler with
+                      | none =>
+                        rw [handlerEq] at h
+                        simp only [Option.isSome_none, Bool.false_eq_true, if_false] at h ⊢
+                        cases shiftEq : evaluate body
+                            (addClockState (DataSem.callEnv args size
+                              (DataSem.pushEnv env false (decClock state))) extra) with
+                        | mk res' next' =>
+                          rw [shiftEq] at h
+                          have geRight := callRetDispatchEvents_ge returns none (fixClock
+                            (addClockState (DataSem.callEnv args size
+                              (DataSem.pushEnv env false (decClock state))) extra)
+                            (res', next'))
+                          simp only [fixClock] at geRight ⊢
+                          refine List.IsPrefix.trans ?_ geRight
+                          exact h
+                      | some handlerPair =>
+                        obtain ⟨handlerName, handlerBody⟩ := handlerPair
+                        rw [handlerEq] at h runEq
+                        have isSomeEq : (some (handlerName, handlerBody)).isSome = true := rfl
+                        rw [isSomeEq] at h runEq ⊢
+                        have bodySwap := evaluate_add_clock body
+                          (DataSem.callEnv args size
+                            (DataSem.pushEnv env true (decClock state)))
+                          (some (.err (.raise value))) next ⟨runEq, by simp⟩ extra
+                        rw [bodySwap] at ⊢
+                        simp only [fixClock_addClockState, setVar_addClockState] at ⊢
+                        let handlerState : State C F := DataSem.setVar handlerName value
+                          (fixClock (DataSem.callEnv args size
+                            (DataSem.pushEnv env true (decClock state)))
+                            ((some (.err (.raise value)) : Option (Result (List DataSem.Value)
+                              DataSem.Value)), next)).2
+                        have handlerClock : handlerState.clock < state.clock := by
+                          simp only [handlerState, DataSem.setVar, fixClock]
+                          exact lt_of_le_of_lt (Nat.min_le_left _ _) (by
+                            simp only [DataSem.callEnv, DataSem.pushEnv, decClock]
+                            omega)
+                        exact bodyIH handlerBody handlerState handlerClock extra
+
+/-- Every program satisfies the event-prefix property, by the lexicographic
+    `(clock, weight)` induction over the program. -/
+private theorem addClockEvents_all {C F : Type} (program : DataLang.Prog) (state : State C F) :
+    AddClockEventsAt program state := by
+  refine clockWeightInduction (α := DataLang.Prog) (σ := State C F) (·.clock) sizeOf
+    (motive := fun program state => AddClockEventsAt program state) ?_ program state
+  intro program state exprIH smaller
+  cases program with
+  | skip => exact addClockEvents_skip state
+  | move dest src => exact addClockEvents_move dest src state
+  | assign dest op names live => exact addClockEvents_assign dest op names live state
+  | tick => exact addClockEvents_tick state
+  | makeSpace amount names => exact addClockEvents_makeSpace amount names state
+  | raise name => exact addClockEvents_raise name state
+  | «return» names => exact addClockEvents_return names state
+  | seq first second =>
+    apply addClockEvents_seq first second state
+    · exact exprIH first state (by omega)
+        (by
+          simp only [DataLang.Prog.seq.sizeOf_spec]
+          omega)
+    · intro mid bound
+      exact exprIH second mid bound
+        (by
+          simp only [DataLang.Prog.seq.sizeOf_spec]
+          omega)
+  | ifThenElse name yes no =>
+    apply addClockEvents_if name yes no state
+    · exact exprIH yes state (by omega)
+        (by
+          simp only [DataLang.Prog.ifThenElse.sizeOf_spec]
+          omega)
+    · exact exprIH no state (by omega)
+        (by
+          simp only [DataLang.Prog.ifThenElse.sizeOf_spec]
+          omega)
+  | force ret label src =>
+    apply addClockEvents_force ret label src state
+    intro body next clockLt
+    exact smaller body next clockLt
+  | call ret dest names handler =>
+    apply addClockEvents_call ret dest names handler state
+    intro body next clockLt
+    exact smaller body next clockLt
+
+/-- Extending the starting clock by `extra` cannot remove I/O events: the run at
+    the original clock produces an event prefix of the run at the extended clock.
+    Port of HOL `evaluate_add_clock_io_events_mono`. -/
+@[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "evaluate_add_clock_io_events_mono"]
+theorem evaluate_add_clock_io_events_mono {C F : Type} (exps : DataLang.Prog)
+    (state : State C F) (extra : Nat) :
+    (evaluate exps state).2.ffi.ioEvents <+:
+      (evaluate exps { state with clock := state.clock + extra }).2.ffi.ioEvents :=
+  addClockEvents_all exps state extra
+
 end Flapjack.Compiler.Backend.DataProps

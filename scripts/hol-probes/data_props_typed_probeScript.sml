@@ -302,3 +302,5 @@ val _ = emit "evaluate_stack_limit_typed" "evaluate_stack_limit";
 val _ = emit "do_app_stack_max_le_stack_limit_typed" "do_app_stack_max_le_stack_limit";
 
 val _ = emit "evaluate_stack_max_le_stack_limit_typed" "evaluate_stack_max_le_stack_limit";
+
+val _ = emit "evaluate_add_clock_io_events_mono_typed" "evaluate_add_clock_io_events_mono";
