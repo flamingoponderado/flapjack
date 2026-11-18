@@ -64,12 +64,14 @@ theorem lastNHd {α : Type} [Nonempty α] (ls : List α) (x : Nat) (hx : x ≤ l
     simp [holHd]
 
 /-- Exact HOL `EL_REVERSE_REWRITE` (`word_to_stackProofScript.sml:2601-2606`):
-reversed indexing inside a suffix. -/
+reversed indexing inside a suffix. HOL's single conjunction premise
+`n < LENGTH l ∧ k < n` is kept as one hypothesis in HOL's order. -/
 @[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "EL_REVERSE_REWRITE"
   (total_function_inhabitants := [α])]
 theorem elReverseRewrite {α : Type} [Nonempty α] (l : List α) (n k : Nat)
-    (hn : n < l.length) (hk : k < n) :
+    (h : n < l.length ∧ k < n) :
     holEl (l.length - n + k) l = holEl (n - k - 1) l.reverse := by
+  obtain ⟨hn, hk⟩ := h
   have h1 : l.length - n + k < l.length := by omega
   have h2 : n - k - 1 < l.reverse.length := by
     simp
@@ -194,21 +196,27 @@ theorem isSomeOptionMap {α β : Type} (f : α → β) :
   cases o <;> rfl
 
 /-- Exact HOL `DROP_SUB` (`word_to_stackProofScript.sml:5446-5452`): a suffix of a
-prefix is the front part of the suffix. -/
+prefix is the front part of the suffix. Binders follow the typed capture
+(`a`, `ls`, `b`) and HOL's single conjunction premise `a ≤ LENGTH ls ∧ b ≤ a`
+is one hypothesis in HOL's order. -/
 @[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "DROP_SUB"]
-theorem dropSub {α : Type} (ls : List α) (a b : Nat) (ha : a ≤ ls.length) (hb : b ≤ a) :
+theorem dropSub {α : Type} (a : Nat) (ls : List α) (b : Nat)
+    (h : a ≤ ls.length ∧ b ≤ a) :
     ls.drop (a - b) = (ls.take a).drop (a - b) ++ ls.drop a := by
+  obtain ⟨ha, hb⟩ := h
   rw [← List.take_append_drop a ls]
   rw [List.drop_append_of_le_length]
   · simp
   · rw [List.length_take]
     omega
 
-/-- Exact HOL `DROP_SUB2` (`word_to_stackProofScript.sml:5456-5462`). -/
+/-- Exact HOL `DROP_SUB2` (`word_to_stackProofScript.sml:5456-5462`): HOL's single
+conjunction premise `b ≤ a ∧ a = LENGTH ls` is one hypothesis in HOL's order. -/
 @[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "DROP_SUB2"]
-theorem dropSub2 {α : Type} (a : Nat) (ls : List α) (b : Nat) (hb : b ≤ a)
-    (ha : a = ls.length) :
+theorem dropSub2 {α : Type} (a : Nat) (ls : List α) (b : Nat)
+    (h : b ≤ a ∧ a = ls.length) :
     ∃ rest, ls.drop (a - b) = rest ∧ rest.length = b := by
+  obtain ⟨hb, ha⟩ := h
   refine ⟨ls.drop (a - b), rfl, ?_⟩
   rw [List.length_drop]
   omega
@@ -285,10 +293,13 @@ theorem maxLe (a b : Nat) (h : a ≤ b) : Nat.max a b = b := by
   simp [h]
 
 /-- Exact HOL `EVEN_DIV_2_props` (`word_to_stackProofScript.sml:10944-10955`):
-halving is injective on even numbers and keeps them nonzero. -/
+halving is injective on even numbers and keeps them nonzero. HOL's single
+conjunction premise `a MOD 2 = 0 ∧ b MOD 2 = 0` is one hypothesis in HOL's
+order. -/
 @[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "EVEN_DIV_2_props"]
-theorem evenDiv2Props (a b : Nat) (ha : a % 2 = 0) (hb : b % 2 = 0) :
+theorem evenDiv2Props (a b : Nat) (h : a % 2 = 0 ∧ b % 2 = 0) :
     (a ≠ b → a / 2 ≠ b / 2) ∧ (a ≠ 0 → a / 2 ≠ 0) := by
+  obtain ⟨ha, hb⟩ := h
   constructor
   · intro hne hdiv
     exact hne (by omega)

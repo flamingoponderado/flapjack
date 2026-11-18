@@ -141450,7 +141450,7 @@
     "lean_name": "elReverseRewrite",
     "statement_status": "reviewed_total_function_inhabitants",
     "total_function_inhabitants": ["α"],
-    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, EL_REVERSE_REWRITE_typed): source2601-2606; binders l n k, two premises n < LENGTH l and k < n, EL rendered by holEl with total_function_inhabitants [α] (HOL EL unspecified past the end), REVERSE as List.reverse, exact index arithmetic LENGTH l - n + k and n - k - 1 retained."
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, EL_REVERSE_REWRITE_typed): source2601-2606; binders l n k, one conjunction premise n < LENGTH l ∧ k < n kept as a single hypothesis in HOL's order, EL rendered by holEl with total_function_inhabitants [α] (HOL EL unspecified past the end), REVERSE as List.reverse, exact index arithmetic LENGTH l - n + k and n - k - 1 retained."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
@@ -141516,7 +141516,7 @@
     "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/SupportLemmas.lean",
     "lean_name": "dropSub",
     "statement_status": "reviewed_exact",
-    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, DROP_SUB_typed): source5446-5454; binders ls a b, one conjunction premise a ≤ LENGTH ls ∧ b ≤ a kept as the same two premises, DROP/TAKE as List.drop/List.take, append order DROP (a-b) (TAKE a ls) ++ DROP a ls retained."
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, DROP_SUB_typed): source5446-5454; binders a ls b (typed capture order), one conjunction premise a ≤ LENGTH ls ∧ b ≤ a kept as a single hypothesis in HOL's order, DROP/TAKE as List.drop/List.take, append order DROP (a-b) (TAKE a ls) ++ DROP a ls retained."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
@@ -141524,7 +141524,7 @@
     "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/SupportLemmas.lean",
     "lean_name": "dropSub2",
     "statement_status": "reviewed_exact",
-    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, DROP_SUB2_typed): source5456-5466; binders a ls b, premises b ≤ a and a = LENGTH ls, existential rest with DROP (a-b) ls = rest and LENGTH rest = b retained."
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, DROP_SUB2_typed): source5456-5466; binders a ls b, one conjunction premise b ≤ a ∧ a = LENGTH ls kept as a single hypothesis in HOL's order, existential rest with DROP (a-b) ls = rest and LENGTH rest = b retained."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
@@ -141580,7 +141580,7 @@
     "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/SupportLemmas.lean",
     "lean_name": "evenDiv2Props",
     "statement_status": "reviewed_exact",
-    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, EVEN_DIV_2_props_typed): source10944-10954; binders a b, one conjunction premise a MOD 2 = 0 ∧ b MOD 2 = 0 kept as two premises, both conclusions (a ≠ b ⇒ a DIV 2 ≠ b DIV 2) ∧ (a ≠ 0 ⇒ a DIV 2 ≠ 0) retained, MOD/DIV as Nat % and /."
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, EVEN_DIV_2_props_typed): source10944-10954; binders a b, one conjunction premise a MOD 2 = 0 ∧ b MOD 2 = 0 kept as a single hypothesis in HOL's order, both conclusions (a ≠ b ⇒ a DIV 2 ≠ b DIV 2) ∧ (a ≠ 0 ⇒ a DIV 2 ≠ 0) retained, MOD/DIV as Nat % and /."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
