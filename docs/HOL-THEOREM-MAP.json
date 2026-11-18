@@ -23043,6 +23043,16 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "set_vars_sing",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CutEnvs.lean",
+  "lean_name": "setVars_singleton",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared set_vars_sing_typed: singleton names and values updated in an arbitrary word state equal the single-variable update. Target finite-map fields and positive-width words use the reviewed representations."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "state_rel_cut_IMP",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CutState.lean",
   "lean_name": "stateRel_cutOpt",

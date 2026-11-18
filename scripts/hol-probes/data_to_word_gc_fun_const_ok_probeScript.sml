@@ -78,3 +78,4 @@ val _ = pr_typed "state_rel_0_get_vars_IMP_typed" data_to_word_gcProofTheory.sta
 val _ = pr_typed "get_var_T_OR_F_typed" data_to_word_gcProofTheory.get_var_T_OR_F;
 val _ = pr_typed "get_var_isT_OR_isF_typed" data_to_word_gcProofTheory.get_var_isT_OR_isF;
 val _ = pr_typed "state_rel_cut_state_opt_get_var_typed" data_to_word_gcProofTheory.state_rel_cut_state_opt_get_var;
+val _ = pr_typed "set_vars_sing_typed" data_to_word_gcProofTheory.set_vars_sing;
