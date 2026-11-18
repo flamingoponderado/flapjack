@@ -86,3 +86,4 @@ val _ = pr_typed "option_le_stack_size_cons_typed" data_to_word_gcProofTheory.op
 val _ = pr_typed "option_le_stack_size_append_typed" data_to_word_gcProofTheory.option_le_stack_size_append;
 val _ = pr_typed "inter_insert_union_typed" data_to_word_gcProofTheory.inter_insert_union;
 val _ = pr_typed "state_rel_pop_env_IMP_typed" data_to_word_gcProofTheory.state_rel_pop_env_IMP;
+val _ = pr_typed "state_rel_pop_env_set_var_IMP_typed" data_to_word_gcProofTheory.state_rel_pop_env_set_var_IMP;
