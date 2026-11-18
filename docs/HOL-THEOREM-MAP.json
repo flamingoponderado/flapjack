@@ -23087,6 +23087,17 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "assign_BoolNot",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/BoolNot.lean",
+  "lean_name": "assignBoolNot_correct",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared assign_BoolNot_typed: the operation condition, all original assignment-goal premises, existential target evaluation and both outcome branches agree. The target state uses canonical finite maps and positive-width words. The evaluator inherits reals_as_rational_cuts through instruction semantics; see SOUNDNESS.md item 8."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
   "hol_name": "assign_SetGlobalsPtr",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/SetGlobalsPtr.lean",
   "lean_name": "assignSetGlobalsPtr_correct",

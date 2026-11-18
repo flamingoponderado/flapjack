@@ -74,3 +74,4 @@ val _ = emit "assign_Const_typed" data_to_word_assignProofTheory.assign_Const;
 val _ = emit "assign_GlobalsPtr_typed" data_to_word_assignProofTheory.assign_GlobalsPtr;
 val _ = emit "assign_Global_typed" data_to_word_assignProofTheory.assign_Global;
 val _ = emit "assign_SetGlobal_typed" data_to_word_assignProofTheory.assign_SetGlobal;
+val _ = emit "assign_BoolNot_typed" data_to_word_assignProofTheory.assign_BoolNot;
