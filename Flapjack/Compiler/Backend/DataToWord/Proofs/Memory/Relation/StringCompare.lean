@@ -3,6 +3,7 @@ module
 public import Flapjack.Compiler.Backend.Semantics.WordSem.CallHelpers
 public import Flapjack.Compiler.Backend.Semantics.WordSem
 public import Flapjack.Compiler.Backend.WordGcFunctions
+public import Flapjack.HolArb
 
 @[expose] public section
 
@@ -51,5 +52,19 @@ noncomputable def wordStrCmp {width : Nat} [NeZero width]
       wordStrCmpLoop (a1 + wordSemBytesInWord) (a2 + wordSemBytesInWord)
         l1 l2 len dm m be (2 ^ width)
   else none
+
+/-- Find the first differing words. HOL pattern completion assigns `ARB` at
+    the result-pair type to either unequal-length case. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "find_diff_def"
+  (words_as_type_indexed_bitvec)]
+noncomputable def findDiff {inputWidth : Nat} {resultWidth1 : Nat} {resultWidth2 : Nat}
+    [NeZero inputWidth] [NeZero resultWidth1] [NeZero resultWidth2] :
+    List (BitVec inputWidth) → List (BitVec inputWidth) →
+      BitVec resultWidth1 → BitVec resultWidth2 → BitVec resultWidth1 × BitVec resultWidth2
+  | [], [], r1, r2 => (r1, r2)
+  | x :: xs, y :: ys, r1, r2 =>
+      if x = y then findDiff xs ys r1 r2
+      else (BitVec.ofNat resultWidth1 x.toNat, BitVec.ofNat resultWidth2 y.toNat)
+  | _, _, _, _ => holArb _
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

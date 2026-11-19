@@ -539,3 +539,12 @@ val _ = emit "parts_to_words_IMP_build_words_typed" data_to_word_memoryProofTheo
 
 val _ = emit "word_str_cmp_loop_def_typed" data_to_word_memoryProofTheory.word_str_cmp_loop_def;
 val _ = emit "word_str_cmp_def_typed" data_to_word_memoryProofTheory.word_str_cmp_def;
+val _ = emit "find_diff_def_typed" data_to_word_memoryProofTheory.find_diff_def;
+(* Replay the same equations through HOL's definition compiler, to expose the
+   completion of unequal-length patterns that the exported equations omit. *)
+val (_,_,(find_diff_functional,_),_) = Defn.build_eqns `
+ (find_diff_probe [] [] (r1 : α word) (r2 : β word) = (r1,r2)) ∧
+ (find_diff_probe ((x : γ word)::xs) (y::ys) r1 r2 =
+   if x = y then find_diff_probe xs ys r1 r2 else (w2w x,w2w y))`;
+fun emitTerm label tm = (print (label ^ "="); print_term tm; print "\n");
+val _ = emitTerm "find_diff_functional_typed" find_diff_functional;
