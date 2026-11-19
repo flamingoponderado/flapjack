@@ -109,7 +109,9 @@ theorem getVars_locals {width : Nat} [NeZero width] {C : Type} {F : Type}
           have hx : x = value :: rest := (Option.some.inj hget).symm
           rw [hx] at hmem
           rcases List.mem_cons.mp hmem with hsame | htail
-          · exact ⟨head, by rw [hsame]; exact hvalue⟩
+          · refine ⟨head, ?_⟩
+            rw [hsame]
+            exact hvalue
           · exact ih rest ⟨hrest, htail⟩
 
 /-- Exact HOL `get_vars_get_locals` (`word_elimProofScript.sml:429-436`): a

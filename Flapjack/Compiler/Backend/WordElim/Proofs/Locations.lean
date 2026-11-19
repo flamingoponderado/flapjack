@@ -140,12 +140,16 @@ theorem sptLookup_exists_bs {width : Nat} [NeZero width] (left : Spt (WordLocW w
       exact ⟨offset, by simpa using hkey⟩
     · rw [sptLookup, if_neg hzero] at hkey
       by_cases heven : key % 2 = 0
-      · right; left
+      · right
+        left
         exact ⟨(key - 1) / 2, offset, by simpa [heven] using hkey⟩
-      · right; right
+      · right
+        right
         exact ⟨(key - 1) / 2, offset, by simpa [heven] using hkey⟩
   · rintro (⟨offset, hvalue⟩ | ⟨key, offset, hkey⟩ | ⟨key, offset, hkey⟩)
-    · exact ⟨0, offset, by rw [sptLookup]; simpa using hvalue⟩
+    · refine ⟨0, offset, ?_⟩
+      rw [sptLookup]
+      simpa using hvalue
     · refine ⟨2 * key + 2, offset, ?_⟩
       rw [sptLookup]
       simp only [if_neg (by omega : ¬ 2 * key + 2 = 0),
@@ -291,7 +295,9 @@ theorem mem_filterMap_destWordLoc {width : Nat} [NeZero width] :
         ∃ offset, (.loc location offset) ∈ entries.map Prod.snd := by
   intro entries
   induction entries with
-  | nil => intro location; simp
+  | nil =>
+      intro location
+      simp
   | cons head rest ih =>
       intro location
       obtain ⟨key, value⟩ := head
@@ -432,7 +438,8 @@ theorem getLocals_inter_subset {width : Nat} [NeZero width] {β : Type}
       | some other =>
           rw [hleft, hright] at hkey
           simp only [Option.some.injEq] at hkey
-          exact (domainGetLocalsLookup location a).mpr
-            ⟨key, offset, by rw [hleft]; exact congrArg some hkey⟩
+          refine (domainGetLocalsLookup location a).mpr ⟨key, offset, ?_⟩
+          rw [hleft]
+          exact congrArg some hkey
 
 end Flapjack.Compiler.Backend.WordElim
