@@ -3155,6 +3155,7 @@ import Flapjack.Pancake.Proofs.WordConvs.SSAFlatFull
 import Flapjack.Pancake.Proofs.WordConvs.SSALabelHelpers
 import Flapjack.Pancake.Proofs.WordConvs.SSALabelFull
 import Flapjack.Pancake.Proofs.WordConvs.InstSelectExp
+import Flapjack.Pancake.Proofs.WordConvs.InstSelectExpCodeLabels
 import Flapjack.Pancake.Proofs.WordConvs.InstSelectProgram
 import Flapjack.Pancake.Proofs.WordConvs.ThreeToTwo
 import Flapjack.Pancake.Proofs.WordConvs.Unreach

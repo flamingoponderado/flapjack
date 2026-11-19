@@ -143914,4 +143914,14 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "typed HOL source comparison (word_convs_proof_typed_probe.out, word_get_code_labels_fake_moves_typed): source1230-1234. `forall (a : num list) (b c : num sptree$num_map) (d : num) (e f : alpha prog) (g : num) (h i : num sptree$num_map). (fake_moves (prio : (unit + unit) option) a b c d) = (e,f,g,h,i) ==> word_get_code_labels e = emptyset /\\ word_get_code_labels f = emptyset`; the capture keeps prio free first, then a..i in order, with the actual producer equality as the single premise. fake_moves is the tagged fakeMoves and word_get_code_labels is getCodeLabelsHOL. Only HOL's type-indexed word becomes BitVec width."
   }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_get_code_labels_inst_select_exp",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/InstSelectExpCodeLabels.lean",
+    "lean_name": "instSelectExp_codeLabels",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (word_convs_proof_typed_probe.out, word_get_code_labels_inst_select_exp_typed): source936-939. `forall (a : alpha asm_config) (b : num) (c : num) (exp : alpha exp). word_get_code_labels (inst_select_exp a b c exp) = (emptyset : num -> bool)`; the capture keeps a, b, c, exp in order. inst_select_exp is the tagged instSelectExp and word_get_code_labels is getCodeLabelsHOL; HOL's emptyset is Lean Set.empty. Only HOL's type-indexed word becomes BitVec width. No premise."
+  }
 ]
