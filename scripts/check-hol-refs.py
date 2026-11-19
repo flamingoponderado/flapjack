@@ -5180,7 +5180,8 @@ def words_as_type_indexed_bitvec_errors(
         ]
     stripped = strip_lean_comments(declaration_text)
     decl_start = re.search(
-        r"(?:^|\s)(?:def|theorem|lemma|abbrev|instance|structure)\s", stripped
+        r"(?:^|\s)(?:def|theorem|lemma|abbrev|instance|structure|inductive|class|opaque|axiom|constant)\s",
+        stripped,
     )
     if decl_start is not None:
         stripped = stripped[decl_start.start():]

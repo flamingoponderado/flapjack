@@ -144592,4 +144592,149 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "Source comparison: single_sub_word_def is let (z,c) = single_sub w1 w2 (c <> 0w) in (z, b2w c). Lean keeps the let, the word-nonzero test and the b2w carry rendering; no clause differs."
   }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "state",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/Semantics.lean",
+    "lean_name": "MiniState",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: the typed capture recordtype.state : (num |-> \u03b1 word) -> (address -> \u03b1 word list) -> num -> \u03b1 state fixes the three fields in order: regs, arrays, clock. Lean keeps that order and carriers; regs is the canonical HolFiniteMapExact and the word dimension is the positive BitVec width."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "eval_exp_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/Semantics.lean",
+    "lean_name": "evalExp",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: all eleven clauses in HOL's order - Const, Var, Op Add/Sub/And/Or/Xor over exactly two arguments, and Shift Lsl/Asr/Lsr/Ror with w2n of the second operand. HOL's remaining patterns fall to ARB; Lean's catch-all returns holArb. HOL word_and/word_or/word_xor/word_ror and the four shifts are rendered by the BitVec operations with the same Nat shift amount."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "eval_exp_pre_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/Semantics.lean",
+    "lean_name": "evalExpPre",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: the typed capture shows the five source clauses expanded over the constructors - Const is T, Var is FDOM membership, Op with exactly two arguments is the conjunction of the operand preconditions, Shift adds w2n (eval_exp s x2) < 32, and every other shape is F. Lean keeps that order and the same numeric bound."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "eval_ri_pre_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/Semantics.lean",
+    "lean_name": "evalRiPre",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: Reg r is eval_exp_pre s (Var r) and Imm w is T, matching both source clauses."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "eval_ri_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/Semantics.lean",
+    "lean_name": "evalRi",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: Reg r evaluates Var r and Imm w returns w, matching both source clauses."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "dec_clock_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/Semantics.lean",
+    "lean_name": "decClock",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: dec_clock s = s with clock := s.clock - 1; Lean keeps the record update and HOL's truncated natural subtraction."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "reg_write_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/Semantics.lean",
+    "lean_name": "regWrite",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: reg_write v NONE s removes v from the register map and reg_write n (SOME v) s inserts (n,v). Lean keeps both clauses in source order, with the canonical map erase and update operations standing for HOL's \\ and |+."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "delete_vars_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/Semantics.lean",
+    "lean_name": "deleteVars",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: delete_vars [] s = s and delete_vars (v::vs) s = reg_write v NONE (delete_vars vs s). Lean keeps both clauses and the recursion order."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "array_write_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/Semantics.lean",
+    "lean_name": "arrayWrite",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: array_write n v s = s with arrays := (n =+ v) s.arrays. Lean keeps the record update and the function update at the same array index."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "clock_write_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/Semantics.lean",
+    "lean_name": "clockWrite",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: clock_write l s = s with clock := l; Lean keeps the record update."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "copy_vars_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/Semantics.lean",
+    "lean_name": "copyVars",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: copy_vars [] s t = SOME t and the n::ns clause looks the name up in the source map, returning NONE when absent and otherwise recursing after reg_write n (SOME x). Lean keeps both clauses, the lookup failure and the recursion."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "eval",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/Semantics.lean",
+    "lean_name": "Eval",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: all seventeen source rules are present in HOL's order - Skip, Continue, Delete, Assign, Seq, If, Load, Store, Swap, Add, Sub, Mul, Div, Loop, Rec, LoopBody-return and LoopBody-continue. Each source rule's conjunction of premises becomes that many constructor arguments, which is the same rule; every guard, the INL/INR result side, the recursion target, the clock test and the copy_vars success are preserved. Add/Sub use single_add_word/single_sub_word, Mul/Div single_mul/single_div with single_div_pre, and If uses word_cmp, all at the state's single word dimension."
+  }
 ]

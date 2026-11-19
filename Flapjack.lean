@@ -661,6 +661,7 @@ import Flapjack.Compiler.Backend.WordBignum.Proofs.Lookup
 import Flapjack.Compiler.Backend.WordBignum.Proofs.CompileTotal
 import Flapjack.Compiler.Backend.WordBignum.Proofs.FuelMonotone
 import Flapjack.Compiler.Backend.WordBignum.Proofs.CompileEquations
+import Flapjack.Compiler.Backend.WordBignum.Proofs.Semantics
 import Flapjack.Compiler.Backend.WordBignum.Generate
 import Flapjack.Compiler.Backend.ClosLang.Syntax
 import Flapjack.Compiler.Backend.ClosLang.GeneratedSize
