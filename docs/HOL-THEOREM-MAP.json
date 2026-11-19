@@ -144294,5 +144294,18 @@
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Source comparison with word_ml_inv_get_var_IMP_typed in data_to_word_gc_fun_const_ok_probe.out and the HOL source: the full root invariant, both successful reads, and all corresponding roots in the conclusion are retained. Source and target state compiler and FFI parameters remain independently quantified, as in the typed HOL theorem. The word state uses canonical finite maps and a shared positive word width.",
   "hol_line": 8846
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "word_ml_inv_get_var_IMP_lemma",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/WordMlInvGetVars.lean",
+  "lean_name": "wordMlInv_getVar",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source comparison with word_ml_inv_get_var_IMP_lemma_typed in data_to_word_gc_fun_const_ok_probe.out and HOL lines 439-451: the full root invariant and both successful corresponding local reads imply the invariant with exactly that pair prepended. The target state retains independent compiler and FFI parameters, canonical finite maps and the shared positive word width."
 }
 ]

@@ -19,6 +19,25 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {C F : Type} 
 
 end WordMlInvGetVarsPort
 
+/-- Reading corresponding single locals preserves the root invariant. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "word_ml_inv_get_var_IMP_lemma"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem wordMlInv_getVar {width : Nat} [NeZero width] {C F : Type}
+    (heap : ValueHeap width) (be : Bool) (a sp sp1 : Nat) (gens : GcCombined.GenState)
+    (limit ts : Nat) (c : Config) (refs : Spt (BvlSem.Ref Flapjack.Compiler.Backend.DataSem.Value))
+    (ll : Spt Flapjack.Compiler.Backend.DataSem.Value) (t : WordSemStateFiniteExact width C F)
+    (envs : List (Flapjack.Compiler.Backend.DataSem.Value × WordLocW width))
+    (n : Nat) (x : Flapjack.Compiler.Backend.DataSem.Value) (w : WordLocW width)
+    (h : wordMlInv (heap, be, a, sp, sp1, gens) limit ts c refs
+        (joinEnv ll (sptToAList (sptInter t.locals (adjustSet ll))) ++ envs) ∧
+      DataSem.getVar n ll = some x ∧
+      WordSemStateFiniteExact.getVar (adjustVar n) t = some w) :
+    wordMlInv (heap, be, a, sp, sp1, gens) limit ts c refs
+      ([(x, w)] ++ joinEnv ll (sptToAList (sptInter t.locals (adjustSet ll))) ++ envs) := by
+  obtain ⟨inv, sourceRead, targetRead⟩ := h
+  simpa using wordMlInv_lookup heap be a sp sp1 gens limit ts c refs [] envs
+    ll t.locals n x w ⟨by simpa using inv, sourceRead, targetRead⟩
+
 /-- Reading corresponding source and word locals preserves the root invariant. -/
 @[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "word_ml_inv_get_vars_IMP_lemma"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
@@ -59,8 +78,8 @@ theorem wordMlInv_getVars {width : Nat} [NeZero width] {C F : Type}
             simp [WordSemStateFiniteExact.getVars, wordRead, wordReads] at hw
             subst values
             subst words
-            have withHead := wordMlInv_lookup heap be a sp sp1 gens limit next conf refs [] envs
-              source target.locals key value word ⟨by simpa using inv, read, wordRead⟩
+            have withHead := wordMlInv_getVar heap be a sp sp1 gens limit next conf refs
+              source target envs key value word ⟨inv, read, wordRead⟩
             have reordered : wordMlInv (heap, be, a, sp, sp1, gens) limit next conf refs
                 (joinEnv source (sptToAList (sptInter target.locals (adjustSet source))) ++ (value, word) :: envs) := by
               apply wordMlInv_rearrange heap be a sp sp1 gens limit next conf refs _ _ ?_ withHead
