@@ -100,11 +100,46 @@ theorem ssaReconcile_noLabels {width : Nat} [NeZero width] {β : Type}
 theorem getCodeLabels_fakeSeq {width : Nat} [NeZero width]
     (names : List Nat) :
     getCodeLabelsHOL
-      ((names.map (fakeMove : Nat → WordLangProgHOL (BitVec width))).foldr .seq .skip) = ∅ := by
+      ((names.map (fun r => (fakeMove r : WordLangProgHOL (BitVec width)))).foldr
+        .seq .skip) = ∅ := by
   induction names with
   | nil => simp [getCodeLabelsHOL]
   | cons name names ih =>
-      simp [getCodeLabelsHOL, fakeMove, ih]
+      simp only [List.map_cons, List.foldr_cons, getCodeLabelsHOL]
+      rw [ih]
+      simp [getCodeLabelsHOL, fakeMove]
+
+/-- Original loop setup empty code labels with the actual producer equation as
+sole premise; no SSA map or register-bound assumptions are added. -/
+@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
+  "loop_setup_get_code_labels" (words_as_type_indexed_bitvec)]
+theorem loopSetup_codeLabels {width : Nat} [NeZero width]
+    (names exitNames : Spt Unit) (ssa : Spt Nat) (na : Nat)
+    (setupProg : WordLangProgHOL (BitVec width)) (ssaRefreshed : Spt Nat)
+    (naRefreshed : Nat)
+    (setup : loopSetup names exitNames ssa na = (setupProg, ssaRefreshed, naRefreshed)) :
+    getCodeLabelsHOL setupProg = ∅ := by
+  unfold loopSetup at setup
+  generalize hr : listNextVarRename
+    (((sptToAList (sptUnion names exitNames)).map Prod.fst).filter
+      fun v => (sptLookup v ssa).isNone) ssa na = renamed at setup
+  rcases renamed with ⟨fresh, extended, next⟩
+  generalize hm : listNextVarRenameMove (width := width) extended next
+    (((sptToAList (sptUnion names exitNames)).map Prod.fst).filter
+      fun v => (sptLookup v ssa).isSome) = moved at setup
+  rcases moved with ⟨moves, refreshed, nextOut⟩
+  simp only [hr, hm] at setup
+  have fake := getCodeLabels_fakeSeq (width := width) fresh
+  have moveConvention : getCodeLabelsHOL moves = ∅ := by
+    unfold listNextVarRenameMove at hm
+    have projected := congrArg Prod.fst hm
+    simp only at projected
+    rw [← projected]
+    simp [getCodeLabelsHOL]
+  have output := congrArg Prod.fst setup
+  simp only at output
+  rw [← output]
+  simp only [getCodeLabelsHOL, fake, moveConvention, Set.empty_union]
 
 /-- Original unconditional reconciliation empty code labels. -/
 @[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"

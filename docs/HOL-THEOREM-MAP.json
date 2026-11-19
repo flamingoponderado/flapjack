@@ -143894,7 +143894,7 @@
     "lean_name": "getCodeLabels_fakeSeq",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "typed HOL source comparison (word_convs_proof_typed_probe.out, fake_seq_get_code_labels_typed): source993-996. `forall (ls : num list). word_get_code_labels (FOLDR (Seq) (Skip) (MAP (fun r. fake_move r) ls)) = (emptyset : num -> bool)`; the capture keeps ls. word_get_code_labels is getCodeLabelsHOL, FOLDR is List.foldr, MAP is List.map and fake_move is the tagged fakeMove (.inst (.const v 0)). Only HOL's type-indexed word becomes BitVec width. No premise."
+    "reviewer": "typed HOL source comparison (word_convs_proof_typed_probe.out, fake_seq_get_code_labels_typed): source993-996. `forall (ls : num list). word_get_code_labels (FOLDR (Seq) (Skip) (MAP (fun r. fake_move r) ls)) = (emptyset : num -> bool)`; the capture keeps ls. word_get_code_labels is getCodeLabelsHOL, FOLDR is List.foldr, MAP is List.map with HOL's `fun r. fake_move r` stated inline as `fun r => fakeMove r`, and fake_move is the tagged fakeMove (.inst (.const v 0)). Only HOL's type-indexed word becomes BitVec width. No premise."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
@@ -143923,5 +143923,15 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "typed HOL source comparison (word_convs_proof_typed_probe.out, word_get_code_labels_inst_select_exp_typed): source936-939. `forall (a : alpha asm_config) (b : num) (c : num) (exp : alpha exp). word_get_code_labels (inst_select_exp a b c exp) = (emptyset : num -> bool)`; the capture keeps a, b, c, exp in order. inst_select_exp is the tagged instSelectExp and word_get_code_labels is getCodeLabelsHOL; HOL's emptyset is Lean Set.empty. Only HOL's type-indexed word becomes BitVec width. No premise."
+  }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "loop_setup_get_code_labels",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/SSALabelHelpers.lean",
+    "lean_name": "loopSetup_codeLabels",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (word_convs_proof_typed_probe.out, loop_setup_get_code_labels_typed): source1058-1061. `(loop_setup (names : sptree$num_set) (exit_names : sptree$num_set) (ssa : num sptree$num_map) (na : num) : alpha prog # num sptree$num_map # num) = ((setup_prog : alpha prog),(ssa' : num sptree$num_map),(na' : num)) ==> word_get_code_labels setup_prog = (emptyset : num -> bool)`; the capture keeps names, exit_names, ssa, na and binds setup_prog, ssa', na'. HOL num_set is Spt Unit, num_map is Spt Nat; loop_setup is the tagged loopSetup and word_get_code_labels is getCodeLabelsHOL. The producer equality is the single premise. Only HOL's type-indexed word becomes BitVec width."
   }
 ]
