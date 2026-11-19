@@ -145539,5 +145539,31 @@
   "words_as_type_indexed_bitvec": true,
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "Compared original local evaluate_StringCmpMin and its typed proof replay: the full evaluator equality, continuation, source locals, both word lookup cases, minimum assignment and original self-referential fallback are preserved. The exact state maps and positive-width word use named translations; the evaluator inherits the documented real-model assumption."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/RealAddress.lean",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "hol_name": "word_exp_real_addr",
+  "lean_name": "wordExpRealAddr",
+  "reviewer": "Compared word_exp_real_addr_typed: the original address lookup, strict shift and dimension bounds, adjusted-variable lookup, universally quantified scratch word, and resulting expression evaluation match HOL."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/RealAddress.lean",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "hol_name": "word_exp_real_addr_2",
+  "lean_name": "wordExpRealAddr2",
+  "reviewer": "Compared word_exp_real_addr_2_typed: the original premises, both universally quantified scratch words, ordered inserts at 3 and 1, and resulting expression evaluation match HOL."
 }
 ]

@@ -580,3 +580,6 @@ in
   \\‘w2n c' < w2n c’ by decide_tac \\gvs [])
 end;
 val _ = emit "evaluate_StringCmpMin_typed" evaluate_StringCmpMin_replay;
+val _ = emit "assign_StringCmp_typed" data_to_word_assignProofTheory.assign_StringCmp;
+val _ = emit "word_exp_real_addr_typed" data_to_word_assignProofTheory.word_exp_real_addr;
+val _ = emit "word_exp_real_addr_2_typed" data_to_word_assignProofTheory.word_exp_real_addr_2;
