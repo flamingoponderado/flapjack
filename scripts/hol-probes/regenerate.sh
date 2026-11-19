@@ -12492,7 +12492,14 @@ run_probe word_bignum_proof_typed_probeScript.sml word_bignum_proof_typed_probe.
   Eval_NONE_IMP_typed evaluate_Seq_Seq_typed word_list_APPEND_typed compile_thm_typed \
   reg_write_simp_alt_typed FLOOKUP_DOMSUB_typed evaluate_mc_iop_typed \
   compile_NIL_IMP_typed \
-  state_rel_delete_vars_282_typed code_subset_refl_typed code_subset_trans_typed \
+  state_rel_delete_vars_282_typed state_rel_delete_vars_293_typed \
+  env_to_list_insert_0_LN_typed evaluate_LoadRegs_typed evaluate_SaveRegs_typed \
+  Corr_Skip_typed Corr_Seq_typed Corr_Seq_alt_typed Corr_Continue_typed \
+  Corr_Assign_typed Corr_Delete_typed Corr_Load_typed Corr_Store_typed \
+  Corr_Swap_typed Corr_Add_typed Corr_Sub_typed Corr_Mul_typed Corr_Div_typed \
+  Corr_If_typed Corr_LoopBody_typed Corr_Loop_lemma_typed Corr_STRENGTHEN_TERM_typed \
+  Corr_move_pre_typed mc_fac_corr_typed \
+  code_subset_refl_typed code_subset_trans_typed \
   compile_IMP_code_subset_typed has_compiled_lemma_typed state_rel_IN_FDOM_typed \
   compile_exp_thm_typed evaluate_SeqTemp_typed evaluate_SeqTempImm_typed \
   evaluate_SeqTempImmNot_typed LESS_LENGTH_IMP_APPEND_typed shift_eq_bytes_in_word_typed \

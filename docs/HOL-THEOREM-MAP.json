@@ -145167,6 +145167,41 @@
     "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/HeapLemmas.lean",
     "lean_name": "domainListUpdate",
     "statement_status": "reviewed_exact",
-    "reviewer": "Source comparison against domain_list_update_typed: HOL binds xs ys x t in that order and states x IN domain (list_update xs ys t) <=> MEM x xs \/ x IN domain t. Lean keeps those binders and both sides; HOL's domain membership is the reviewed sptMem on the Spt carrier and MEM is list membership. The signature carries the carrier's Nonempty instance only because listUpdateSpt needs it for ARB; it does not appear in the statement's terms, and this declaration does not itself use a total-function rendering, so total_function_inhabitants is not claimed here."
+    "reviewer": "Source comparison against domain_list_update_typed: HOL binds xs ys x t in that order and states x IN domain (list_update xs ys t) <=> MEM x xs OR x IN domain t. Lean keeps those binders and both sides; HOL's domain membership is the reviewed sptMem on the Spt carrier and MEM is list membership. The signature carries the carrier's Nonempty instance only because listUpdateSpt needs it for ARB; it does not appear in the statement's terms, and this declaration does not itself use a total-function rendering, so total_function_inhabitants is not claimed here."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "state_rel_delete_vars",
+    "hol_line": 282,
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/StateRel.lean",
+    "lean_name": "stateRel_delete_vars_regs",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": ["MiniState.regs", "WordSemStateFiniteExact.store"],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Source comparison against state_rel_delete_vars_282_typed: HOL binds s1 s2 t1 cs t0 frame in that order and has two premises, the conjunction s1.arrays = s2.arrays AND s1.clock = s2.clock AND s2.regs SUBMAP s1.regs (ONE premise, kept as one Lean hypothesis) and state_rel s1 t1 cs t0 frame. HOL's SUBMAP is written out as its definition, the pointwise FLOOKUP implication on the canonical register map; every other conjunct of state_rel is carried over unchanged. Inherits the reviewed reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8) through stateRel and divCodeAssum; the theorem is a dependent, not itself qualified."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "state_rel_delete_vars",
+    "hol_line": 293,
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/StateRel.lean",
+    "lean_name": "stateRel_delete_vars",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": ["MiniState.regs", "WordSemStateFiniteExact.store"],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Source comparison against state_rel_delete_vars_293_typed: HOL binds vs first and then s1 t1 cs t0 frame, and states state_rel s1 t1 cs t0 frame ==> state_rel (delete_vars vs s1) t1 cs t0 frame, one premise. Lean keeps that binder order and the single premise; the proof inducts over vs as HOL does and applies the first declaration through reg_write NONE, whose register map is the canonical erase. Inherits the reviewed reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8) through stateRel; the theorem is a dependent, not itself qualified."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "state_rel_IN_FDOM",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/StateRel.lean",
+    "lean_name": "stateRel_IN_FDOM",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": ["MiniState.regs", "WordSemStateFiniteExact.store"],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Source comparison against state_rel_IN_FDOM_typed: HOL binds s1 t1 cs2 t0 frame r in that order and has one conjunction premise state_rel s1 t1 cs2 t0 frame AND r IN FDOM s1.regs, then concludes Temp (n2w r) IN FDOM t1.store AND t1.store ' Temp (n2w r) = Word (s1.regs ' r). Lean keeps the binder order and the ONE conjunction premise; FDOM membership is the canonical defined-lookup domain of each carrier, FAPPLY on both sides is the reviewed holFapply, and Word is WordLocW.word. Inherits the reviewed reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8) through stateRel; the theorem is a dependent, not itself qualified."
   }
 ]

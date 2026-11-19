@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.WordBignum.Proofs.Relations
+public import Flapjack.Compiler.Backend.WordBignum.Proofs.MiniStateOps
 public import Flapjack.Misc.WordList
 public import Flapjack.Misc.Sptree
 public import Flapjack.Compiler.Backend.Semantics.WordSem.Accessors
@@ -161,5 +162,108 @@ def stateRel {width : Nat} [NeZero width] {β : Type} {C F : Type}
     t0.stackLimit = t.stackLimit ∧ t0.stackSize = t.stackSize ∧
     t.store.lookup tempOut = t0.store.lookup tempOut ∧
     (∀ n, (∀ r, n ≠ .temp r) → t.store.lookup n = t0.store.lookup n)
+
+/-- Flapjack-only inhabitant for the `wordSem` location carrier, so the reviewed
+`holFapply` rendering of HOL `FAPPLY` can be used without putting the instance
+into any tagged signature. -/
+instance wordLocWNonempty {width : Nat} [NeZero width] : Nonempty (WordLocW width) := ⟨.word 0⟩
+
+/-- Flapjack-only helper for the `state_rel_delete_vars` port: a lookup that
+survives domain subtraction at another key was already defined. -/
+theorem HolFiniteMapExact.eraseEq_lookup_some {α β : Type} [DecidableEq α]
+    (map : HolFiniteMapExact α β) (key other : α) {value : β}
+    (h : (map.eraseEq key).lookup other = some value) : map.lookup other = some value := by
+  by_cases hk : other = key
+  · subst hk
+    simp [HolFiniteMapExact.eraseEq, FDOMSUB_HOL] at h
+  · simpa [HolFiniteMapExact.eraseEq, FDOMSUB_HOL, hk] using h
+
+/-- HOL `state_rel_delete_vars` (first declaration,
+`word_bignumProofScript.sml:282`): a state that agrees on arrays and clock and
+whose registers are a HOL `SUBMAP` of the first state's registers satisfies the
+same state relation. HOL's `SUBMAP` is written out as its definition, the
+pointwise lookup implication. -/
+@[hol "cakeml/compiler/backend/proofs/word_bignumProofScript.sml" "state_rel_delete_vars" 282
+  (fmap_as_finite_support_relation := [MiniState.regs, WordSemStateFiniteExact.store])
+  (words_as_type_indexed_bitvec)]
+theorem stateRel_delete_vars_regs {width : Nat} [NeZero width] {β : Type} {C F : Type}
+    (s1 s2 : MiniState width)
+    (t1 : WordSemStateFiniteExact width C F)
+    (cs : β × List (Mini (BitVec width) × Nat × WordLangProgHOL (BitVec width)))
+    (t0 : WordSemStateFiniteExact width C F)
+    (frame : ((BitVec width × WordLocW width) → Prop) → Prop) :
+    (s1.arrays = s2.arrays ∧ s1.clock = s2.clock ∧
+        ∀ (n : Nat) (v : BitVec width), s2.regs.lookup n = some v → s1.regs.lookup n = some v) →
+      stateRel s1 t1 cs t0 frame → stateRel s2 t1 cs t0 frame := by
+  intro hsub hrel
+  obtain ⟨harrays, hclock, hregs⟩ := hsub
+  obtain ⟨hc, ha, hr, hcode, hdiv, htd, h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12,
+    h13, h14⟩ := hrel
+  refine ⟨?_, ?_, ?_, hcode, hdiv, htd, h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12,
+    h13, h14⟩
+  · rw [← hclock]
+    exact hc
+  · rw [← harrays]
+    exact ha
+  · intro a v hv
+    exact hr a v (hregs a v hv)
+
+/-- HOL `state_rel_delete_vars` (second declaration,
+`word_bignumProofScript.sml:293`): deleting a register list preserves the state
+relation, since `reg_write v NONE` only erases a register. -/
+@[hol "cakeml/compiler/backend/proofs/word_bignumProofScript.sml" "state_rel_delete_vars" 293
+  (fmap_as_finite_support_relation := [MiniState.regs, WordSemStateFiniteExact.store])
+  (words_as_type_indexed_bitvec)]
+theorem stateRel_delete_vars {width : Nat} [NeZero width] {β : Type} {C F : Type}
+    (vs : List Nat) (s1 : MiniState width)
+    (t1 : WordSemStateFiniteExact width C F)
+    (cs : β × List (Mini (BitVec width) × Nat × WordLangProgHOL (BitVec width)))
+    (t0 : WordSemStateFiniteExact width C F)
+    (frame : ((BitVec width × WordLocW width) → Prop) → Prop) :
+    stateRel s1 t1 cs t0 frame → stateRel (deleteVars vs s1) t1 cs t0 frame := by
+  induction vs with
+  | nil =>
+    intro hrel
+    exact hrel
+  | cons head tail ih =>
+    intro hrel
+    have hprev := ih hrel
+    have hw : (regWrite head none (deleteVars tail s1)).regs =
+        (deleteVars tail s1).regs.eraseEq head := (regWrite_simp head 0 none _).1
+    refine stateRel_delete_vars_regs (deleteVars tail s1)
+      (regWrite head none (deleteVars tail s1)) t1 cs t0 frame ⟨?_, ?_, ?_⟩ hprev
+    · rw [(regWrite_simp head 0 none (deleteVars tail s1)).2.2.1]
+    · rw [(regWrite_simp head 0 none (deleteVars tail s1)).2.2.2]
+    · intro n v hv
+      rw [hw] at hv
+      exact HolFiniteMapExact.eraseEq_lookup_some _ head n hv
+
+/-- HOL `state_rel_IN_FDOM` (`word_bignumProofScript.sml:420`): a live mini-state
+register is a live temporary register in the `wordSem` store, holding the same
+value. -/
+@[hol "cakeml/compiler/backend/proofs/word_bignumProofScript.sml" "state_rel_IN_FDOM"
+  (fmap_as_finite_support_relation := [MiniState.regs, WordSemStateFiniteExact.store])
+  (words_as_type_indexed_bitvec)]
+theorem stateRel_IN_FDOM {width : Nat} [NeZero width] {β : Type} {C F : Type}
+    (s1 : MiniState width)
+    (t1 : WordSemStateFiniteExact width C F)
+    (cs2 : β × List (Mini (BitVec width) × Nat × WordLangProgHOL (BitVec width)))
+    (t0 : WordSemStateFiniteExact width C F)
+    (frame : ((BitVec width × WordLocW width) → Prop) → Prop)
+    (r : Nat) :
+    stateRel s1 t1 cs2 t0 frame ∧ r ∈ s1.regs.dom →
+      (.temp (BitVec.ofNat 5 r)) ∈ t1.store.dom ∧
+        holFapply t1.store (.temp (BitVec.ofNat 5 r)) = .word (holFapply s1.regs r) := by
+  intro h
+  obtain ⟨hrel, hdom⟩ := h
+  obtain ⟨_, _, hr, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _⟩ := hrel
+  cases hl : s1.regs.lookup r with
+  | none => exact absurd hl hdom
+  | some v =>
+    have hstore := (hr r v hl).2
+    refine ⟨?_, ?_⟩
+    · simp only [HolFiniteMapExact.dom, Set.mem_ofPred_eq, hstore]
+      simp
+    · rw [holFapply_of_lookup hstore, holFapply_of_lookup hl]
 
 end Flapjack.Compiler.Backend.WordBignum
