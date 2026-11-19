@@ -144003,5 +144003,14 @@
   ],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Source comparison with memory_rel_Temp_typed from data_to_word_gc_fun_const_ok_probe.out and HOL source lines 8827-8831: the two full memory relations are equivalent after the finite-map update at Temp i; i is the fixed five-bit word, and w, store, memory and roots retain their shared word width. The store uses the canonical finite-support finite map and HOL words use positive-width BitVecs."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "MustTerminate_limit_NOT_0",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/TerminateLimit.lean",
+  "lean_name": "mustTerminateLimit_ne_zero",
+  "statement_status": "reviewed_word_dimension_as_width",
+  "word_dimension_as_width": "width",
+  "reviewer": "Source comparison with MustTerminate_limit_NOT_0_typed in data_to_word_gc_fun_const_ok_probe.out and HOL source lines 8821-8824: for each HOL word type the original termination limit is nonzero. The word-free type dimension is represented by the explicit positive Nat width, using the reviewed wordSemMustTerminateLimit definition."
 }
 ]

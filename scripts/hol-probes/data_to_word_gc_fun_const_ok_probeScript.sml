@@ -244,3 +244,4 @@ val _ = pr_typed "PERM_lookup_toList_lemma_typed" data_to_word_gcProofTheory.PER
 val _ = pr_typed "get_vars_sing_typed" data_to_word_gcProofTheory.get_vars_sing;
 val _ = pr_typed "adjust_var_not_15_typed" data_to_word_gcProofTheory.adjust_var_not_15;
 val _ = pr_typed "memory_rel_Temp_typed" data_to_word_gcProofTheory.memory_rel_Temp;
+val _ = pr_typed "MustTerminate_limit_NOT_0_typed" data_to_word_gcProofTheory.MustTerminate_limit_NOT_0;

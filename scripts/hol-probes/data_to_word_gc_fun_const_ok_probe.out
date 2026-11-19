@@ -158,3 +158,4 @@ PERM_lookup_toList_lemma_typed=∀(l :(num # α) list) (s :β sptree$num_map). (
 get_vars_sing_typed=(get_vars [(n :num)] (t :(α, β, γ) wordSem$state) :α word_loc list option) = SOME (x :α word_loc list) ⇔ ∃(x1 :α word_loc). (get_vars [n] t :α word_loc list option) = SOME [x1] ∧ x = [x1]
 adjust_var_not_15_typed=adjust_var (a2 :num) ≠ (15 :num)
 memory_rel_Temp_typed=memory_rel (c :data_to_word$config) (be :bool) (ts :num) (refs :v ref sptree$num_map) (sp :num) (st :store_name |-> α word_loc)⟨Temp (i :word5) ↦ (w :α word_loc)⟩ (m :α word -> α word_loc) (dm :α word -> bool) (vars :(v # α word_loc) list) ⇔ memory_rel c be ts refs sp st m dm vars
+MustTerminate_limit_NOT_0_typed=MustTerminate_limit (:α) ≠ (0 :num)
