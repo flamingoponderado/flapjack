@@ -267,3 +267,4 @@ val _ = pr_typed "get_vars_SOME_IFF_eq_typed" data_to_word_gcProofTheory.get_var
 val _ = pr_typed "memory_rel_get_vars_IMP_lemma_typed" data_to_word_gcProofTheory.memory_rel_get_vars_IMP_lemma;
 val _ = pr_typed "memory_rel_get_vars_IMP_typed" data_to_word_gcProofTheory.memory_rel_get_vars_IMP;
 val _ = pr_typed "memory_rel_get_var_IMP_typed" data_to_word_gcProofTheory.memory_rel_get_var_IMP;
+val _ = pr_typed "lookup_RefByte_location_typed" data_to_word_gcProofTheory.lookup_RefByte_location;

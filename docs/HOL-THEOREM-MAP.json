@@ -144254,5 +144254,18 @@
   ],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Source comparison with memory_rel_get_var_IMP_typed in data_to_word_gc_fun_const_ok_probe.out and HOL source lines 8642-8674: the full memory relation and both successful reads imply the full memory relation with corresponding roots prepended. The standalone store and word-state maps use canonical finite supports; target words share the positive width, and state parameters retain their HOL relationships."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "lookup_RefByte_location",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/StubLookup.lean",
+  "lean_name": "lookupRefByteLocation",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source comparison with lookup_RefByte_location_typed in data_to_word_gc_fun_const_ok_probe.out and HOL lines 8676-8690: the full state relation implies all ten fixed code lookups, with their original labels, arities, bodies and order. Source and target states retain their shared compiler/FFI parameters, and the target uses canonical finite maps and a common positive word width."
 }
 ]
