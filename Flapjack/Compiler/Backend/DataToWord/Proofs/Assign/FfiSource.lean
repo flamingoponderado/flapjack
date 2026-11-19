@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.Semantics.DataSem.Apply
+public import Flapjack.FfiBridge
 
 @[expose] public section
 
@@ -84,5 +85,78 @@ theorem doApp_ffi_success {C F : Type}
     have lengthEq := callFFIHOL_ret_length state.ffi (.extCall name) config bytes updated ffi call
     exact ⟨base, flag1, flag2, first, second, config, bytes, updated, ffi,
       rfl, argsEq, firstRead, secondRead, call, lengthEq, result, nextEq⟩
+
+/-- Inverting a final FFI primitive exposes the original argument reads and
+final foreign-call event. This factors the corresponding HOL proof case; it
+has no separate HOL declaration. -/
+private theorem doAppAux_ffi_final {C F : Type}
+    (name : Basis.Pure.MlString.MlString) (args : List DataSem.Value)
+    (state : DataSem.State C F) (event : HolFinalEvent)
+    (run : DataSem.doAppAux (.ffi name) args state = .err (.abort (.ffiError event))) :
+    ∃ (firstFlag secondFlag : Bool) (first second : Nat) (config bytes : List (BitVec 8)),
+      args = [.refPtr firstFlag first, .refPtr secondFlag second] ∧
+      sptLookup first state.refs = some (.byteArray true config) ∧
+      sptLookup second state.refs = some (.byteArray false bytes) ∧
+      callFFIHOL state.ffi (.extCall name) config bytes = .final event := by
+  cases args with
+  | nil => simp [DataSem.doAppAux] at run
+  | cons a rest =>
+    cases rest with
+    | nil => simp [DataSem.doAppAux] at run
+    | cons b rest =>
+      cases rest with
+      | cons c rest => simp [DataSem.doAppAux] at run
+      | nil =>
+        cases a <;> cases b <;> simp only [DataSem.doAppAux] at run
+        all_goals try (simp only [SemanticPrimitivesHOL.Result.err.injEq,
+          SemanticPrimitivesHOL.ErrorResult.abort.injEq, reduceCtorEq] at run)
+        all_goals split at run <;> try contradiction
+        all_goals try (simp only [SemanticPrimitivesHOL.Result.err.injEq,
+          SemanticPrimitivesHOL.ErrorResult.abort.injEq, reduceCtorEq] at run)
+        all_goals split at run <;> try contradiction
+        all_goals simp only [SemanticPrimitivesHOL.Result.err.injEq,
+          SemanticPrimitivesHOL.ErrorResult.abort.injEq,
+          SemanticPrimitivesHOL.Abort.ffiError.injEq] at run
+        all_goals subst event
+        all_goals exact ⟨_, _, _, _, _, _, rfl, by assumption, by assumption, by assumption⟩
+
+/-- A final source FFI application has exactly two reference arguments, the
+corresponding byte arrays, and a final foreign-call event. This factors the
+case analysis in the HOL assignment proof and has no separate HOL declaration. -/
+theorem doApp_ffi_final {C F : Type}
+    (name : Basis.Pure.MlString.MlString) (args : List DataSem.Value)
+    (state : DataSem.State C F) (event : HolFinalEvent)
+    (run : DataSem.doApp (.ffi name) args state = .err (.abort (.ffiError event))) :
+    ∃ (firstFlag secondFlag : Bool) (first second : Nat) (config bytes : List (BitVec 8)),
+      args = [.refPtr firstFlag first, .refPtr secondFlag second] ∧
+      sptLookup first state.refs = some (.byteArray true config) ∧
+      sptLookup second state.refs = some (.byteArray false bytes) ∧
+      callFFIHOL state.ffi (.extCall name) config bytes = .final event ∧
+      name ≠ Basis.Pure.MlString.ofString "" := by
+  cases spaceRun : DataSem.doSpace (.ffi name) args state with
+  | none => simp [DataSem.doApp, spaceRun] at run
+  | some base =>
+    have auxRun : DataSem.doAppAux (.ffi name) args
+        (DataSem.doStack (.ffi name) args (DataSem.doLimSafe base (.ffi name) args)) =
+          .err (.abort (.ffiError event)) := by
+      simpa [DataSem.doApp, spaceRun] using run
+    have refs : base.refs = state.refs := by
+      simp [DataSem.doSpace, DataLang.opSpaceReset] at spaceRun
+      subst base
+      rfl
+    have ffiEq : base.ffi = state.ffi := by
+      simp [DataSem.doSpace, DataLang.opSpaceReset] at spaceRun
+      subst base
+      rfl
+    obtain ⟨flag1, flag2, first, second, config, bytes, argsEq, firstRead, secondRead, call⟩ :=
+      doAppAux_ffi_final name args _ event auxRun
+    simp only [DataSem.doStack, DataSem.doLimSafe] at firstRead secondRead call
+    rw [refs] at firstRead secondRead
+    rw [ffiEq] at call
+    have notEmpty : name ≠ Basis.Pure.MlString.ofString "" := by
+      intro equal
+      rw [equal] at call
+      simp [Basis.Pure.MlString.ofString, callFFIHOL_empty_extCall] at call
+    exact ⟨flag1, flag2, first, second, config, bytes, argsEq, firstRead, secondRead, call, notEmpty⟩
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Assign

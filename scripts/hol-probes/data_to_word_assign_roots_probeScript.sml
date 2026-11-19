@@ -78,3 +78,4 @@ val _ = emit "assign_BoolNot_typed" data_to_word_assignProofTheory.assign_BoolNo
 val _ = emit "assign_BoolTest_typed" data_to_word_assignProofTheory.assign_BoolTest;
 val _ = emit "assign_Label_typed" data_to_word_assignProofTheory.assign_Label;
 val _ = emit "assign_FFI_typed" data_to_word_assignProofTheory.assign_FFI;
+val _ = emit "assign_FFI_final_typed" data_to_word_assignProofTheory.assign_FFI_final;
