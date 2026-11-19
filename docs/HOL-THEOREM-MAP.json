@@ -144657,5 +144657,15 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Compared read_bytearray_LENGTH_typed with miscScript.sml lines 124-130: the arbitrary result element type is independent of the positive address-word dimension, and the original successful-read premise and length equality are retained. This replaces the previous word-valued specialization."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "state_rel_cut_state_opt_set_var",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/CutState.lean",
+  "lean_name": "stateRel_cutStateOpt_setVar",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared state_rel_cut_state_opt_set_var_typed with HOL source lines 2214-2218: both premises, the complete conclusion and the shared source/target state parameters agree. The word-state finite maps use the canonical finite-support representation and HOL words use the positive type-indexed bit-vector representation."
 }
 ]
