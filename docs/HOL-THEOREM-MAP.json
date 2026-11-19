@@ -144707,5 +144707,23 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Compared getWords_thm_typed with HOL source lines 16632-16643: the independently polymorphic annotation type, successful empty-accumulator read premise, and exact mapped-prefix-plus-remainder conclusion agree. HOL words and word_loc use the positive-width BitVec translation."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "word_cond_add_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/WordCondAdd.lean",
+  "lean_name": "wordCondAdd",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared word_cond_add_def_typed with HOL source lines 18088-18091: false flags preserve any word location, true flags add the shifted offset to words and preserve locations. HOL words and word_loc use the positive-width BitVec translation."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "store_list_word_cond_add_IMP",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/StoreConsts.lean",
+  "lean_name": "storeList_wordCondAdd_imp",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared store_list_word_cond_add_IMP_typed with HOL source lines 16645-16659: the arbitrary word list, memory, offset, result, start address, configuration and domain retain the original successful store premise, address-domain conclusion and exact final memory equality. HOL words and word_loc use the positive-width BitVec translation."
 }
 ]

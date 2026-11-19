@@ -81,3 +81,5 @@ val _ = emit "assign_FFI_typed" data_to_word_assignProofTheory.assign_FFI;
 val _ = emit "assign_FFI_final_typed" data_to_word_assignProofTheory.assign_FFI_final;
 val _ = emit "getWords_acc_typed" data_to_word_assignProofTheory.getWords_acc;
 val _ = emit "getWords_thm_typed" data_to_word_assignProofTheory.getWords_thm;
+val _ = emit "word_cond_add_def_typed" data_to_word_memoryProofTheory.word_cond_add_def;
+val _ = emit "store_list_word_cond_add_IMP_typed" data_to_word_assignProofTheory.store_list_word_cond_add_IMP;
