@@ -145087,5 +145087,14 @@
   "lean_name": "heapStoreUnusedAlt_exists",
   "statement_status": "reviewed_exact",
   "reviewer": "Source comparison with typed replay of the original local HOL proof: the unused-space and size premises imply an existential heap with all nine original allocation, unused-space, lookup, length, forwarding, membership, data-location set and preservation conclusions. The HOL set is a predicate on natural-number addresses and both generic heap carriers remain independent."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "cons_thm_alt",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/ConsAlt.lean",
+  "lean_name": "consThm_alt",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared cons_thm_alt_typed: the original abstract invariant, field-count bound and nonempty fields imply existential field roots, remaining roots and allocated heap with the same split, lengths, successful store and complete resulting abstract invariant. The two BlockRep length expressions retain independently polymorphic payload types beta and gamma, while the heap payload and all words use the shared HOL word width translated to positive-width BitVec."
 }
 ]
