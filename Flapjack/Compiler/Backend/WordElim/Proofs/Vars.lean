@@ -58,10 +58,9 @@ theorem sptLookup_sptFromList2_mem {width : Nat} [NeZero width] (values : List (
     successful lookup in a zipped association list lands in the second list.
     HOL's two premises stay two arrows; `x` and `y` keep their independent
     element types, as in the typed capture. -/
-@[hol "cakeml/compiler/backend/proofs/word_elimProofScript.sml" "ALOOKUP_ZIP_SUCCESS"
-  (words_as_type_indexed_bitvec)]
-theorem holAlookup_zip_success {width : Nat} [NeZero width] {β : Type}
-    (x : List (BitVec width)) (y : List β) (k : BitVec width) (v : β) :
+@[hol "cakeml/compiler/backend/proofs/word_elimProofScript.sml" "ALOOKUP_ZIP_SUCCESS"]
+theorem holAlookup_zip_success {α β : Type} [DecidableEq α]
+    (x : List α) (y : List β) (k : α) (v : β) :
     x.length = y.length →
       holAlookup (x.zip y) k = some v → v ∈ y := by
   intro hlen halookup
