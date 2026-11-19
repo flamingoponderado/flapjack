@@ -144511,4 +144511,85 @@
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only list identity: zipping a list with its own all-NONE oracle list is the same as pairing each element with NONE. HOL uses ZIP_MAP/MAP_MAP_o/o_DEF inline."
   }
+,
+  {
+    "lean_path": "Flapjack/Misc/Multiword.lean",
+    "lean_name": "b2n",
+    "hol_path": "HOL/examples/machine-code/multiword/multiwordScript.sml",
+    "hol_name": "b2n_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: b2n_def clause by clause. T maps to 1 and F maps to 0, matching HOL's two equations exactly."
+  },
+  {
+    "lean_path": "Flapjack/Misc/Multiword.lean",
+    "lean_name": "b2w",
+    "hol_path": "HOL/examples/machine-code/multiword/multiwordScript.sml",
+    "hol_name": "b2w_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: b2w_def is the total function b2w c = n2w (b2n c). HOL's type-indexed 'a word becomes BitVec width with a positive width; n2w is BitVec.ofNat width at that same width."
+  },
+  {
+    "lean_path": "Flapjack/Misc/Multiword.lean",
+    "lean_name": "singleAdd",
+    "hol_path": "HOL/examples/machine-code/multiword/multiwordScript.sml",
+    "hol_name": "single_add_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: single_add_def returns the wrapped sum x + y + b2w c and the carry flag dimword (:'a) <= w2n x + w2n y + b2n c. Lean keeps both components in HOL's order, renders dimword as 2 ^ width and w2n as .toNat; the carry Bool is the decide of the same numeric comparison."
+  },
+  {
+    "lean_path": "Flapjack/Misc/Multiword.lean",
+    "lean_name": "singleSub",
+    "hol_path": "HOL/examples/machine-code/multiword/multiwordScript.sml",
+    "hol_name": "single_sub_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: single_sub_def is single_add x (~y) c with HOL word complement; Lean uses ~~~y on BitVec and the same singleAdd helper. No clause or guard differs."
+  },
+  {
+    "lean_path": "Flapjack/Misc/Multiword.lean",
+    "lean_name": "singleMul",
+    "hol_path": "HOL/examples/machine-code/multiword/multiwordScript.sml",
+    "hol_name": "single_mul_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: single_mul_def returns x * y + c and n2w ((w2n x * w2n y + w2n c) DIV dimword (:'a)). Lean keeps the wrapped low word and the high word via Nat division by 2 ^ width, with n2w as BitVec.ofNat at the same width."
+  },
+  {
+    "lean_path": "Flapjack/Misc/Multiword.lean",
+    "lean_name": "singleDiv",
+    "hol_path": "HOL/examples/machine-code/multiword/multiwordScript.sml",
+    "hol_name": "single_div_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: single_div_def divides the two-word dividend w2n x1 * dimword (:'a) + w2n x2 by w2n y, returning the quotient and remainder as n2w values. Lean keeps Nat DIV/MOD (HOL's total division by zero, where DIV 0 = 0 and MOD 0 = the dividend) and renders dimword as 2 ^ width and n2w as BitVec.ofNat."
+  },
+  {
+    "lean_path": "Flapjack/Misc/Multiword/SingleWord.lean",
+    "lean_name": "singleDivPre",
+    "hol_path": "HOL/examples/machine-code/multiword/mc_multiwordScript.sml",
+    "hol_name": "single_div_pre_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: the typed capture shows the dividend operands carry independent dimensions, r2 : \u03b2 word, r0 : \u03b3 word, r9 : \u03b1 word, with only \u03b1 entering dimword. Lean binds three separate positive widths \u03b1 \u03b2 \u03b3, each with its own NeZero, and keeps the single conjunction r9 <> 0 /\\ (w2n r2 * dimword + w2n r0) DIV w2n r9 < dimword."
+  },
+  {
+    "lean_path": "Flapjack/Misc/Multiword/SingleWord.lean",
+    "lean_name": "singleAddWord",
+    "hol_path": "HOL/examples/machine-code/multiword/mc_multiwordScript.sml",
+    "hol_name": "single_add_word_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: single_add_word_def is let (z,c) = single_add w1 w2 (c <> 0w) in (z, b2w c). Lean keeps the let, the word-nonzero test as decide (c != 0) and the b2w carry rendering; no clause differs."
+  },
+  {
+    "lean_path": "Flapjack/Misc/Multiword/SingleWord.lean",
+    "lean_name": "singleSubWord",
+    "hol_path": "HOL/examples/machine-code/multiword/mc_multiwordScript.sml",
+    "hol_name": "single_sub_word_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: single_sub_word_def is let (z,c) = single_sub w1 w2 (c <> 0w) in (z, b2w c). Lean keeps the let, the word-nonzero test and the b2w carry rendering; no clause differs."
+  }
 ]

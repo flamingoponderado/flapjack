@@ -479,6 +479,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Word64
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.NumberHeader
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BignumCompare
 import Flapjack.Misc.Multiword.Length
+import Flapjack.Misc.Multiword.SingleWord
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.WordEquality.Word64
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.WordEquality.Number
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.WordEquality.Block

@@ -12477,3 +12477,33 @@ run_probe arm8_step_defs_typed_probeScript.sml arm8_step_defs_typed_probe.out \
 run_probe arm8_config_proof_typed_probeScript.sml arm8_config_proof_typed_probe.out \
   is_arm8_machine_config_def_typed arm8_machine_config_ok_typed arm8_init_ok_typed \
   "$cake_dir/compiler/backend/arm8/proofs/arm8_configProofScript.sml" "$cake_dir/compiler/backend/arm8/proofs"
+
+run_probe word_bignum_proof_typed_probeScript.sml word_bignum_proof_typed_probe.out \
+  b2n_def_typed b2w_def_typed single_add_def_typed single_sub_def_typed \
+  single_mul_def_typed single_div_def_typed single_div_pre_def_typed \
+  single_add_word_def_typed single_sub_word_def_typed \
+  state_typed eval_exp_def_typed eval_exp_pre_def_typed eval_ri_pre_def_typed \
+  eval_ri_def_typed dec_clock_def_typed reg_write_def_typed delete_vars_def_typed \
+  array_write_def_typed clock_write_def_typed copy_vars_def_typed eval_rules_typed \
+  exp_ok_def_typed syntax_ok_aux_def_typed syntax_ok_def_typed \
+  list_update_def_typed list_store_def_typed loop_app_def_typed tick_before_def_typed \
+  code_subset_def_typed array_rel_def_typed code_rel_def_typed div_code_assum_def_typed \
+  state_rel_def_typed good_code_def_typed Corr_def_typed \
+  Eval_NONE_IMP_typed evaluate_Seq_Seq_typed word_list_APPEND_typed compile_thm_typed \
+  reg_write_simp_alt_typed FLOOKUP_DOMSUB_typed evaluate_mc_iop_typed \
+  compile_NIL_IMP_typed \
+  state_rel_delete_vars_282_typed code_subset_refl_typed code_subset_trans_typed \
+  compile_IMP_code_subset_typed has_compiled_lemma_typed state_rel_IN_FDOM_typed \
+  compile_exp_thm_typed evaluate_SeqTemp_typed evaluate_SeqTempImm_typed \
+  evaluate_SeqTempImmNot_typed LESS_LENGTH_IMP_APPEND_typed shift_eq_bytes_in_word_typed \
+  b2w_if_typed b2n_if_typed list_update_alist_insert_typed domain_list_update_typed \
+  list_store_FUPDATE_typed FLOOKUP_list_store_ignore_typed copy_vars_const_typed \
+  lookup_list_update_ADD_2_typed copy_vars_ignore_typed copy_vars_IMP_typed \
+  LIST_REL_lemma_typed compile_LESS_mini_size_typed MEM_compile_typed loop_app_EQ_typed \
+  true_pres_typed dec_clock_thm_typed array_write_cancel_typed reg_write_cancel_typed \
+  state_eq_lemma_typed clock_write_simp_typed dec_clock_write_simp_typed \
+  reg_write_simp_typed array_write_simp_typed delete_vars_simp_typed \
+  reg_read_lemma1_typed reg_read_lemma2_typed array_read_lemma_typed clock_read_lemma_typed \
+  i2mw_NOT_NIL_typed mw_ok_SND_i2mw_typed \
+  "$cake_dir/compiler/backend/proofs/word_bignumProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
