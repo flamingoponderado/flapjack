@@ -530,4 +530,98 @@ theorem evaluateAddClockInitialState {C F : Type} (expressions : List Bvl.Exp)
   simpa [incClock, initialState] using
     evaluateAddClock expressions env (initialState ffi code oracle compiler clock) result final premises extra
 
+/-- Reassigning the code field to its own value leaves the state unchanged. -/
+@[hol "cakeml/compiler/backend/semantics/bvlPropsScript.sml" "with_same_code"
+  (fmap_as_finite_support := [refs])]
+theorem withSameCode {C F : Type} (s : Flapjack.Compiler.Backend.BvlSem.State C F) :
+    { s with code := s.code } = s := by
+  cases s
+  rfl
+
+/-- Reassigning the clock field to its own value leaves the state unchanged. -/
+@[hol "cakeml/compiler/backend/semantics/bvlPropsScript.sml" "with_same_clock"
+  (fmap_as_finite_support := [refs])]
+theorem withSameClock {C F : Type} (s : Flapjack.Compiler.Backend.BvlSem.State C F) :
+    { s with clock := s.clock } = s := by
+  cases s
+  rfl
+
+/-- Decreasing the clock commutes with replacing the code. -/
+@[hol "cakeml/compiler/backend/semantics/bvlPropsScript.sml" "dec_clock_with_code"
+  (fmap_as_finite_support := [refs])]
+theorem decClock_with_code {C F : Type} (n : Nat)
+    (s : Flapjack.Compiler.Backend.BvlSem.State C F) (c : Spt (Nat × Bvl.Exp)) :
+    decClock n { s with code := c } = { decClock n s with code := c } := by
+  cases s
+  rfl
+
+/-- Increasing the clock leaves the code unchanged. -/
+@[hol "cakeml/compiler/backend/semantics/bvlPropsScript.sml" "inc_clock_code"
+  (fmap_as_finite_support := [refs])]
+theorem incClock_code {C F : Type} (n : Nat)
+    (s : Flapjack.Compiler.Backend.BvlSem.State C F) : (incClock n s).code = s.code := rfl
+
+/-- Increasing the clock leaves the reference store unchanged. -/
+@[hol "cakeml/compiler/backend/semantics/bvlPropsScript.sml" "inc_clock_refs"
+  (fmap_as_finite_support := [refs])]
+theorem incClock_refs {C F : Type} (n : Nat)
+    (s : Flapjack.Compiler.Backend.BvlSem.State C F) : (incClock n s).refs = s.refs := rfl
+
+/-- Increasing the clock leaves the FFI state unchanged. -/
+@[hol "cakeml/compiler/backend/semantics/bvlPropsScript.sml" "inc_clock_ffi"
+  (fmap_as_finite_support := [refs])]
+theorem incClock_ffi {C F : Type} (n : Nat)
+    (s : Flapjack.Compiler.Backend.BvlSem.State C F) : (incClock n s).ffi = s.ffi := rfl
+
+/-- Increasing the clock adds to the stored clock. -/
+@[hol "cakeml/compiler/backend/semantics/bvlPropsScript.sml" "inc_clock_clock"
+  (fmap_as_finite_support := [refs])]
+theorem incClock_clock {C F : Type} (n : Nat)
+    (s : Flapjack.Compiler.Backend.BvlSem.State C F) : (incClock n s).clock = s.clock + n := rfl
+
+/-- Increasing by zero leaves the state unchanged.  HOL's `n` is free and
+    unused, so it keeps an independent type. -/
+@[hol "cakeml/compiler/backend/semantics/bvlPropsScript.sml" "inc_clock0"
+  (fmap_as_finite_support := [refs])]
+theorem incClock_zero {α C F : Type} (_n : α)
+    (s : Flapjack.Compiler.Backend.BvlSem.State C F) : incClock 0 s = s := by
+  cases s
+  simp [incClock]
+
+/-- Two successive clock increases add up. -/
+@[hol "cakeml/compiler/backend/semantics/bvlPropsScript.sml" "inc_clock_add"
+  (fmap_as_finite_support := [refs])]
+theorem incClock_add {C F : Type} (k1 k2 : Nat)
+    (s : Flapjack.Compiler.Backend.BvlSem.State C F) :
+    incClock k1 (incClock k2 s) = incClock (k1 + k2) s := by
+  cases s
+  simp [incClock, Nat.add_comm, Nat.add_left_comm]
+
+/-- Decreasing the clock leaves the code unchanged. -/
+@[hol "cakeml/compiler/backend/semantics/bvlPropsScript.sml" "dec_clock_code"
+  (fmap_as_finite_support := [refs])]
+theorem decClock_code {C F : Type} (n : Nat)
+    (s : Flapjack.Compiler.Backend.BvlSem.State C F) : (decClock n s).code = s.code := rfl
+
+/-- Decreasing the clock leaves the reference store unchanged. -/
+@[hol "cakeml/compiler/backend/semantics/bvlPropsScript.sml" "dec_clock_refs"
+  (fmap_as_finite_support := [refs])]
+theorem decClock_refs {C F : Type} (n : Nat)
+    (s : Flapjack.Compiler.Backend.BvlSem.State C F) : (decClock n s).refs = s.refs := rfl
+
+/-- Decreasing the clock leaves the FFI state unchanged. -/
+@[hol "cakeml/compiler/backend/semantics/bvlPropsScript.sml" "dec_clock_ffi"
+  (fmap_as_finite_support := [refs])]
+theorem decClock_ffi {C F : Type} (n : Nat)
+    (s : Flapjack.Compiler.Backend.BvlSem.State C F) : (decClock n s).ffi = s.ffi := rfl
+
+/-- Decreasing by zero leaves the state unchanged.  HOL's `n` is free and
+    unused, so it keeps an independent type. -/
+@[hol "cakeml/compiler/backend/semantics/bvlPropsScript.sml" "dec_clock0"
+  (fmap_as_finite_support := [refs])]
+theorem decClock_zero {α C F : Type} (_n : α)
+    (s : Flapjack.Compiler.Backend.BvlSem.State C F) : decClock 0 s = s := by
+  cases s
+  simp [decClock]
+
 end Flapjack.Compiler.Backend.BvlProps
