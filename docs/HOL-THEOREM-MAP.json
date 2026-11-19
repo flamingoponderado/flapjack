@@ -144914,5 +144914,68 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Compared make_cons_ptr_add_typed with HOL: the same alignment, good_dimindex and shift-length premises imply the constructor pointer equality with the original low-bit term. HOL words use positive-width BitVec."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "all_ones_bit",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/PointerBits.lean",
+  "lean_name": "allOnes_bit",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared all_ones_bit_typed with HOL: at any in-range bit, the mask bit is set exactly when the bit lies between the original lower and upper bounds. HOL words use positive-width BitVec."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "maxout_bits_bit",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/PointerBits.lean",
+  "lean_name": "maxoutBits_bit",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared maxout_bits_bit_typed with HOL: any in-range set bit of the source maxout field lies at or above its offset and strictly below offset plus field length. HOL words use positive-width BitVec."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "maxout_bits_IMP",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/PointerBits.lean",
+  "lean_name": "maxoutBits_imp",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared maxout_bits_IMP_typed with HOL: an in-range set bit of the source maxout field is strictly below its offset plus length. HOL words use positive-width BitVec."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "get_lowerbits_ptrbits",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/PointerBits.lean",
+  "lean_name": "getLowerBits_ptrBits",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared get_lowerbits_ptrbits_typed with HOL: extracting the original pointer annotation's low bits yields the full pointer annotation OR the marker bit for arbitrary configuration, tag and length. HOL words use positive-width BitVec."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "make_cons_ptr_thm",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/PointerBits.lean",
+  "lean_name": "makeConsPtr_eq",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared make_cons_ptr_thm_typed with HOL: the arbitrary constructor pointer equals the shifted offset OR the marker OR the full pointer annotation, with no additional premises. HOL words use positive-width BitVec."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "part_to_words_IMP_build_words",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/BuildCorrespondence.lean",
+  "lean_name": "partWords_imp_build",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared part_to_words_IMP_build_words_typed with HOL: successful single-part lowering, good_dimindex, byte alignment and the original shift bound imply the proof-side builder returns the second projections of the original result and output list. HOL words use positive-width BitVec."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "parts_to_words_IMP_build_words",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/BuildCorrespondence.lean",
+  "lean_name": "partsWords_imp_build",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared parts_to_words_IMP_build_words_typed with HOL: arbitrary sparse constant memory, index, parts, offset and outputs retain successful lowering, good_dimindex, byte alignment and the shift bound; the complete proof-side builder yields the same projected outputs. HOL words use positive-width BitVec."
 }
 ]

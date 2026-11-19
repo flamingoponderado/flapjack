@@ -16,7 +16,8 @@ constant-build timestamp preservation, bignum sizing, and constant-part
 length and location prerequisites, constructor-pointer and proof-side
 constant-builder definitions,
 single-part timestamp preservation, the least unused sparse-tree key, and
-word-stride alignment and pointer-addition prerequisites,
+word-stride alignment, pointer addition, pointer-tag bit bounds, and
+constant-builder correspondence,
 with inferred types.
 It also evaluates zero and nonzero SmallLsr expressions for output parity. Regenerate
 with `HOL_PROBE_ONLY=data_to_word_assign_roots_probeScript.sml scripts/hol-probes/regenerate.sh`
