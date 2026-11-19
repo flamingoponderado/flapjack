@@ -3,6 +3,8 @@ module
 public import Flapjack.Compiler.Backend.StackRemove.Proofs.StackHeap
 public import Flapjack.Compiler.Backend.WordBignum.Proofs.EvaluateLemmas
 public import Flapjack.Pancake.Semantics.LoopSemStateExact
+public import Flapjack.Misc.GoodDimindex
+public import Flapjack.Compiler.Backend.BackendCommon
 
 @[expose] public section
 
@@ -23,13 +25,14 @@ open Flapjack.Compiler.Backend.StackRemove
 /-- HOL `word_list_APPEND` (`word_bignumProofScript.sml:499`): appending two
 payload lists lays the second list after the first, at the address advanced by
 `LENGTH xs * bytes_in_word`. HOL writes the product as
-`n2w (LENGTH xs) * bytes_in_word`; Lean keeps that order and proves the fact
-from the tagged `stack_removeProof` port, whose statement has the same product
-in the commuted order. -/
+`n2w (LENGTH xs) * bytes_in_word`; Lean keeps that order, its element type
+variable `α` matching HOL's `α` payload type, and proves the fact from the
+tagged `stack_removeProof` port, whose statement has the same product in the
+commuted order. -/
 @[hol "cakeml/compiler/backend/proofs/word_bignumProofScript.sml" "word_list_APPEND"
   (words_as_type_indexed_bitvec)]
-theorem wordListAppendWordBignum {width : Nat} [NeZero width] {β : Type}
-    (xs ys : List β) (a : BitVec width) :
+theorem wordListAppendWordBignum {width : Nat} [NeZero width] {α : Type}
+    (xs ys : List α) (a : BitVec width) :
     Misc.wordList a (xs ++ ys) =
       star (Misc.wordList a xs)
         (Misc.wordList (a + BitVec.ofNat width xs.length * bytesInWord width) ys) := by
@@ -124,5 +127,24 @@ theorem lookupListUpdateAdd2 {α : Type} [Nonempty α]
       simp only [List.map_cons, listUpdateSpt]
       rw [sptLookup_sptInsert_ne (head + 2) 0 _ _ (by omega)]
       exact ih values l
+
+/-- HOL `shift_eq_bytes_in_word` (`word_bignumProofScript.sml:507`): at a
+`good_dimindex` width, shifting left by `shift` (HOL's `word_shift`, the
+reviewed `wordShiftAmount`) multiplies by `bytes_in_word`. HOL writes the shift
+amount as `shift (:α) MOD dimword (:α)`; Lean keeps that modulo, `dimword` is
+`2 ^ width`, and `bytes_in_word` is the reviewed `bytesInWord` (`width / 8`). -/
+@[hol "cakeml/compiler/backend/proofs/word_bignumProofScript.sml" "shift_eq_bytes_in_word"
+  (words_as_type_indexed_bitvec)]
+theorem shiftEqBytesInWord {width : Nat} [NeZero width] (w : BitVec width) :
+    goodDimindex width →
+      w <<< (wordShiftAmount width % 2 ^ width) = w * bytesInWord width := by
+  intro h
+  rcases h with h32 | h64
+  · subst h32
+    apply BitVec.eq_of_toNat_eq
+    simp [BitVec.toNat_shiftLeft, Nat.shiftLeft_eq, wordShiftAmount, bytesInWord]
+  · subst h64
+    apply BitVec.eq_of_toNat_eq
+    simp [BitVec.toNat_shiftLeft, Nat.shiftLeft_eq, wordShiftAmount, bytesInWord]
 
 end Flapjack.Compiler.Backend.WordBignum

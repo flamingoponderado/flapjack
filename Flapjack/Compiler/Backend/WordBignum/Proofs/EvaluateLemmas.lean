@@ -57,14 +57,14 @@ theorem evaluate_seqSeq {width : Nat} [NeZero width] {C F : Type}
 `SeqTemp` source register is a live temporary register, the sequence evaluates
 as the body with that register copied into the destination; otherwise the
 statement is the trivial rewrite-to-itself that HOL writes. HOL's guard
-`Temp (n2w r) IN FDOM t.store` is rendered as the store lookup being defined,
-and `t.store ' Temp (n2w r)` as the reviewed `holFapply`. -/
+`Temp (n2w r) IN FDOM t.store` keeps its domain form (`∈ … .dom`), and
+`t.store ' Temp (n2w r)` is the reviewed `holFapply`. -/
 @[hol "cakeml/compiler/backend/proofs/word_bignumProofScript.sml" "evaluate_SeqTemp"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem evaluate_seqTemp {width : Nat} [NeZero width] {C F : Type}
     (i r : Nat) (p : WordLangProgHOL (BitVec width)) (t : WordSemStateFiniteExact width C F) :
     WordSemStateFiniteExact.evaluate (seqTemp i r p) t =
-      if t.store.lookup (.temp (BitVec.ofNat 5 r)) ≠ none then
+      if (.temp (BitVec.ofNat 5 r)) ∈ t.store.dom then
         WordSemStateFiniteExact.evaluate p
           (WordSemStateFiniteExact.setVar i
             (holFapply t.store (.temp (BitVec.ofNat 5 r))) t)
@@ -77,7 +77,7 @@ theorem evaluate_seqTemp {width : Nat} [NeZero width] {C F : Type}
   rw [hseq, hasg]
   simp only [WordSemStateFiniteExact.wordExp, WordSemStateFiniteExact.getStore]
   cases hl : t.store.lookup (.temp (BitVec.ofNat 5 r)) with
-  | none => simp
-  | some v => simp [holFapply_of_lookup hl]
+  | none => simp [HolFiniteMapExact.dom, hl]
+  | some v => simp [HolFiniteMapExact.dom, hl, holFapply_of_lookup hl]
 
 end Flapjack.Compiler.Backend.WordBignum

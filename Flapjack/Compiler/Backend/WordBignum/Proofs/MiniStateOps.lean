@@ -18,6 +18,13 @@ value. Flapjack helper mirroring the HOL library domain function. -/
 def HolFiniteMapExact.dom {α β : Type} (map : HolFiniteMapExact α β) : Set α :=
   { key | map.lookup key ≠ none }
 
+/-- Flapjack helper: domain membership is decidable from the value type's
+`DecidableEq`, so HOL's `IN FDOM` guards can be written literally inside an
+`if`. -/
+instance HolFiniteMapExact.decidableMemDom {α β : Type} [DecidableEq β]
+    (map : HolFiniteMapExact α β) (key : α) : Decidable (key ∈ map.dom) :=
+  decidable_of_iff (map.lookup key ≠ none) Iff.rfl
+
 /-- Flapjack helper: two canonical finite maps with the same lookup are equal.
 This module's own form of `HolFiniteMapExact.ext`, renamed to avoid the
 imported PanSem extensionality lemma of that name. -/

@@ -131,15 +131,16 @@ theorem Corr_Seq_alt {width : Nat} [NeZero width]
   exact Eval.seq none s s1 s2 p1 p2 (h1 h.1) (hb hq h.2)
 
 /-- HOL `Corr_STRENGTHEN_TERM`: a guarded evaluation to a right injection can be
-restated at that injection with a stronger guard. -/
+restated at that injection with a stronger guard. HOL binds `f'` and `q'` after
+the first premise, so Lean quantifies them in the conclusion. -/
 @[hol "cakeml/compiler/backend/proofs/word_bignumProofScript.sml" "Corr_STRENGTHEN_TERM"
   (fmap_as_finite_support := [regs]) (words_as_type_indexed_bitvec)]
 theorem Corr_STRENGTHEN_TERM {width : Nat} [NeZero width]
     (p : Mini (BitVec width)) (s : MiniState width)
-    (f : Sum (MiniState width) (MiniState width)) (q : Bool)
-    (f' : MiniState width) (q' : Bool) :
-    Corr p s f q → (q' = true → f = .inr f' ∧ q = true) → Corr p s (.inr f') q' := by
-  intro h hf hq
+    (f : Sum (MiniState width) (MiniState width)) (q : Bool) :
+    Corr p s f q → ∀ (f' : MiniState width) (q' : Bool),
+      (q' = true → f = .inr f' ∧ q = true) → Corr p s (.inr f') q' := by
+  intro h f' q' hf hq
   obtain ⟨hfinr, hqtrue⟩ := hf hq
   rw [hfinr] at h
   exact h hqtrue
