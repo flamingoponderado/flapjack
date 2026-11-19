@@ -261,4 +261,45 @@ inductive Eval {width : Nat} [NeZero width] :
       (h2 : Eval r (decClock s2) (.loopBody p) (.inr s3)) :
       Eval r s1 (.loopBody p) (.inr s3)
 
+/-- A top-level evaluation is also an evaluation with any recursion target: the
+recursion target only reaches the `Rec` and `Loop` rules, which ignore it. -/
+@[hol "cakeml/compiler/backend/proofs/word_bignumProofScript.sml" "Eval_NONE_IMP"
+  (fmap_as_finite_support := [regs]) (words_as_type_indexed_bitvec)]
+theorem Eval_NONE_IMP {width : Nat} [NeZero width] :
+    ∀ (s1 : MiniState width) (c : Mini (BitVec width))
+      (s2 : Sum (MiniState width) (MiniState width)) (p : Mini (BitVec width)),
+      Eval none s1 c s2 → Eval (some p) s1 c s2 := by
+  intro s1 c s2 p h
+  generalize hr : (none : Option (Mini (BitVec width))) = r at h
+  induction h with
+  | skip r s => exact Eval.skip (some p) s
+  | «continue» r s => exact Eval.continue (some p) s
+  | delete r vs s => exact Eval.delete (some p) vs s
+  | assign r s x n hpre => exact Eval.assign (some p) s x n hpre
+  | seq r s1 s2 s3 p1 p2 h1 h2 ih1 ih2 =>
+    exact Eval.seq (some p) s1 s2 s3 p1 p2 (ih1 hr) (ih2 hr)
+  | ite rec s1 cmp r ri p1 p2 s2 hreg hri h ih =>
+    exact Eval.ite (some p) s1 cmp r ri p1 p2 s2 hreg hri (ih hr)
+  | load rec s r i a w hlookup hbound =>
+    exact Eval.load (some p) s r i a w hlookup hbound
+  | store rec s r i w wr hlookup hvalue hbound =>
+    exact Eval.store (some p) s r i w wr hlookup hvalue hbound
+  | swap r s => exact Eval.swap (some p) s
+  | add n1 n2 n3 n4 n5 r s r1 r2 hreg h4 h5 hcarry hdistinct hadd =>
+    exact Eval.add n1 n2 n3 n4 n5 (some p) s r1 r2 hreg h4 h5 hcarry hdistinct hadd
+  | sub n1 n2 n3 n4 n5 r s r1 r2 hreg h4 h5 hcarry hdistinct hsub =>
+    exact Eval.sub n1 n2 n3 n4 n5 (some p) s r1 r2 hreg h4 h5 hcarry hdistinct hsub
+  | mul n1 n2 n3 n4 r s h3 h4 hdistinct =>
+    exact Eval.mul n1 n2 n3 n4 (some p) s h3 h4 hdistinct
+  | div n1 n2 n3 n4 n5 r s h3 h4 h5 hdistinct hpre =>
+    exact Eval.div n1 n2 n3 n4 n5 (some p) s h3 h4 h5 hdistinct hpre
+  | loop r s1 body vs s2 rec h hclock =>
+    exact Eval.loop (some p) s1 body vs s2 rec h hclock
+  | recurse s1 saveRegs vs body s2 s3 h hcopy hclock =>
+    exact absurd hr (by simp)
+  | loopBodyReturn r s1 body s2 h ih =>
+    exact Eval.loopBodyReturn (some p) s1 body s2 (ih hr)
+  | loopBodyContinue r s1 s2 s3 body h1 hclock h2 ih1 ih2 =>
+    exact Eval.loopBodyContinue (some p) s1 s2 s3 body (ih1 hr) hclock (ih2 hr)
+
 end Flapjack.Compiler.Backend.WordBignum
