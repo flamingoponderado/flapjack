@@ -145517,5 +145517,16 @@
   "words_as_type_indexed_bitvec": true,
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "Compared evaluate_StringCmpLoop_typed: all loop result, memory, domain, endianness, clock, word dimension, code lookup and six register premises are retained. The original existential clock and stack maximum, exact evaluator result and updated state, and conditional stack bound are preserved. The state maps and positive word width use the named translations; the evaluator inherits the real-model assumption in docs/SOUNDNESS.md item 8."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "evaluate_AssignCmp",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/StringCmpLoop.lean",
+  "lean_name": "evaluateAssignCmp",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_AssignCmp_typed: full evaluation equality, all input cases including the original self-referential fallback, numeric comparison and encoded boolean state update are retained. The exact word-state maps and positive word carrier use the named translations; the evaluator inherits the documented real-model assumption."
 }
 ]

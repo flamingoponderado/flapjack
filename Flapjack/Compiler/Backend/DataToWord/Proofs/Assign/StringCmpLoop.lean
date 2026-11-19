@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.StringCompare
 public import Flapjack.Compiler.Backend.DataToWord.Stubs
+public import Flapjack.Compiler.Backend.DataToWord.Control
 public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.StateRelation
 public import Flapjack.Compiler.Backend.Semantics.WordSem.Evaluate
 
@@ -11,6 +12,7 @@ namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Assign
 open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Backend.DataToWord
 open Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
 open Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
+open Flapjack.SemanticPrimitivesHOL
 
 namespace StringCmpLoopWitness
 
@@ -158,5 +160,35 @@ theorem evaluateStringCmpLoop {width : Nat} [NeZero width] {C F : Type}
               Compiler.Encoders.Asm.wordCmpHOL,
               hmem, hdom, ← hbe, read1, read2]
             simp [byteTest]
+
+/-- Evaluate the generated numeric comparison for the original word inputs.
+The fallback is the original evaluator expression, as in HOL. The evaluator
+inherits the real-model assumption in `docs/SOUNDNESS.md` item 8. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml" "evaluate_AssignCmp"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem evaluateAssignCmp {width : Nat} [NeZero width] {C F : Type} (dest : Nat) (cmp : Flapjack.Opb) (v1 v2 : Nat)
+    (s : WordSemStateFiniteExact width C F) :
+    WordSemStateFiniteExact.evaluate (assignCmp dest cmp v1 v2) s =
+      match WordSemStateFiniteExact.getVar v1 s, WordSemStateFiniteExact.getVar v2 s with
+      | some (.word x1), some (.word x2) =>
+          (none, WordSemStateFiniteExact.setVar dest (.word (if numCmp cmp x1.toNat x2.toNat then 18 else 2)) s)
+      | _, _ => WordSemStateFiniteExact.evaluate (assignCmp dest cmp v1 v2) s := by
+  cases hv1 : WordSemStateFiniteExact.getVar v1 s with
+  | none => simp
+  | some a =>
+    cases a with
+    | loc x y => simp
+    | word x =>
+      cases hv2 : WordSemStateFiniteExact.getVar v2 s with
+      | none => simp
+      | some b =>
+        cases b with
+        | loc u v => simp
+        | word y =>
+          cases cmp <;> by_cases hxy : x.toNat < y.toNat <;> by_cases hyx : y.toNat < x.toNat <;> by_cases heq : x.toNat = y.toNat <;>
+            simp [hv1,hv2,assignCmp,setBool,WordSemStateFiniteExact.evaluate,
+              WordSemStateFiniteExact.getVarImm,wordSemWordCmp,Compiler.Encoders.Asm.wordCmpHOL,
+              WordSemStateFiniteExact.wordExp,numCmp,compare,compareOfLessAndEq, BitVec.lt_def, hxy, hyx, heq]
+          all_goals first | omega | rfl
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Assign

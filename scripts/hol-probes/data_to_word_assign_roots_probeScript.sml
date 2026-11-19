@@ -554,3 +554,4 @@ val _ = emit "find_diff_str_cmp_thm1_typed" data_to_word_memoryProofTheory.find_
 val _ = emit "find_diff_str_cmp_thm2_typed" data_to_word_memoryProofTheory.find_diff_str_cmp_thm2;
 val _ = emit "memory_rel_str_cmp_typed" data_to_word_memoryProofTheory.memory_rel_str_cmp;
 val _ = emit "evaluate_StringCmpLoop_typed" data_to_word_assignProofTheory.evaluate_StringCmpLoop;
+val _ = emit "evaluate_AssignCmp_typed" data_to_word_assignProofTheory.evaluate_AssignCmp;
