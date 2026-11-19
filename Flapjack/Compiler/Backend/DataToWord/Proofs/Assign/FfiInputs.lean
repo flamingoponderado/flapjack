@@ -103,6 +103,10 @@ theorem ffi_success_inputs {width : Nat} [NeZero width] {C F : Type}
       sptLookup second source.refs = some (.byteArray false bytes) ∧
       callFFIHOL source.ffi (.extCall name) config bytes = .ret ffi updated ∧
       updated.length = bytes.length ∧
+      (∃ base, DataSem.doSpace (.ffi name) values cut = some base ∧
+        result = DataSem.unitValue ∧
+        resultState = { DataSem.doStack (.ffi name) values (DataSem.doLimSafe base (.ffi name) values) with
+          refs := sptInsert second (.byteArray false updated) source.refs, ffi := ffi }) ∧
       Memory.memoryRel conf target.be (holThe source.tstamps) source.refs source.space
         target.store target.memory target.mdomain
         ((.refPtr firstFlag first, firstWord) :: (.refPtr secondFlag second, secondWord) ::
@@ -280,11 +284,12 @@ theorem ffi_success_inputs {width : Nat} [NeZero width] {C F : Type}
                   addrAfter3, ptrAfter3,
                   ffi_length_expression conf _ _ address2 header2 bytes.length good addrAfter5 dom2 mem2 decoded2.1⟩
               refine ⟨firstVar, secondVar, flag1, flag2, first, second, config, bytes,
-                updated, ffi, firstWord, secondWord, rfl, valuesEq, ?_, ?_, ?_, ?_, lengthEq, ?_⟩
+                updated, ffi, firstWord, secondWord, rfl, valuesEq, ?_, ?_, ?_, ?_, lengthEq, ?_, ?_⟩
               · simpa using wordRead
               · simpa using firstRead
               · simpa using secondRead
               · simpa using call
+              · exact ⟨base, baseRun, resultEq, resultStateEq⟩
               · exact ⟨roots, w1, w2, address1, address2, header1, header2,
                   loc1, loc2, real1, real2, mem1, mem2, configRead, bytesRead, bound1, bound2,
                   decoded1, decoded2, addrEval1, ptrEval1, afterTemps⟩

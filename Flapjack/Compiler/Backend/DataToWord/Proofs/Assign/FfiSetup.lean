@@ -5,6 +5,7 @@ public import Flapjack.Compiler.Backend.Semantics.WordSem.Evaluate
 public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.CutOdd
 public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ByteArrayWrite
 public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Space
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.Const
 public import Flapjack.FfiBridge
 
 @[expose] public section
@@ -12,6 +13,28 @@ public import Flapjack.FfiBridge
 /-! Execution of the argument setup used by the FFI assignment proof. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Assign
 open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
+
+/-- The source space reset for an FFI operation preserves the relation at zero
+requested space. This is an intermediate step in the HOL assignment proof. -/
+private theorem stateRel_doSpace_ffi {width : Nat} [NeZero width] {C F : Type}
+    (conf : Config) (l1 l2 : Nat) (source : DataSem.State C F)
+    (target : WordSemStateFiniteExact width C F) (locs : List (Nat × Nat))
+    (name : Basis.Pure.MlString.MlString) (values : List DataSem.Value)
+    (related : stateRel conf l1 l2 source target none locs) :
+    ∃ base, DataSem.doSpace (.ffi name) values source = some base ∧
+      stateRel conf l1 l2 base target none locs := by
+  classical
+  let used := DataSem.sizeOfHeapArgs values source + DataSem.spaceConsumed source (.ffi name) values
+  let safe := source.safeForSpace && decide (DataSem.noThunksInRefs source.refs ∧ used ≤ source.limits.heapLimit)
+  let base := { source with space := 0, safeForSpace := safe, peakHeapLength := max source.peakHeapLength used }
+  refine ⟨base, ?_, ?_⟩
+  · simp [DataSem.doSpace, DataLang.opSpaceReset, base, used, safe]
+  · rcases related with ⟨hffi, hclock, hhandler, hgc, hcode, horacle, hgood, hshift,
+      htstamp, hglobal, hzero, hpresent, hstack, hlocs, hacc, hmax, hsizes, hlocals, hlim, hmem⟩
+    refine ⟨hffi, hclock, hhandler, hgc, hcode, horacle, hgood, hshift, htstamp, hglobal,
+      hzero, hpresent, hstack, hlocs, hacc, hmax, hsizes, hlocals, hlim, ?_⟩
+    exact Memory.memoryRel_zeroSpace conf target.be (holThe source.tstamps) source.refs
+      source.space target.store target.memory target.mdomain _ hmem
 
 /-- The setup, successful foreign call and post-call memory relation used in
 the HOL FFI assignment proof. This factoring has no separate HOL declaration.
@@ -70,10 +93,17 @@ theorem ffi_success_setup_call {width : Nat} [NeZero width] {C F : Type}
         target.mdomain
         (joinEnv cut.locals (sptToAList (sptInter wordCut (adjustSet cut.locals))) ++
           [(theGlobal source.global, holFapply target.store .globals)] ++
-          flatStack source.stack target.stack) := by
+          flatStack source.stack target.stack) ∧
+      (∃ base, DataSem.doSpace (.ffi name) values cut = some base ∧
+        result = DataSem.unitValue ∧
+        resultState = { DataSem.doStack (.ffi name) values (DataSem.doLimSafe base (.ffi name) values) with
+          refs := sptInsert second (.byteArray false updated) source.refs, ffi := ffi } ∧
+        stateRel conf l1 l2
+          (DataSem.doStack (.ffi name) values (DataSem.doLimSafe base (.ffi name) values))
+          { target with locals := wordCut } none locs) := by
   obtain ⟨firstVar, secondVar, flag1, flag2, first, second, config, bytes, updated, ffi,
     firstWord, secondWord, argsEq, valuesEq, wordRead, firstRead, secondRead, call,
-    lengthEq, roots, w1, w2, address1, address2, header1, header2, loc1, loc2,
+    lengthEq, sourceOutcome, roots, w1, w2, address1, address2, header1, header2, loc1, loc2,
     real1, real2, mem1, mem2, configRead, bytesRead, bound1, bound2, decoded1,
     decoded2, addressEval, ptrEval, afterTemps⟩ :=
     ffi_success_inputs conf l1 l2 source cut resultState target locs names args values name result
@@ -81,7 +111,7 @@ theorem ffi_success_setup_call {width : Nat} [NeZero width] {C F : Type}
   obtain ⟨wordCut, words, wordCutRun, wordsRun, sourceLen, targetLen, cutRelated, cutWordRelated⟩ :=
     stateRel_cutStateOpt_some conf l1 l2 source target locs args values names cut ⟨related, read, cutRun⟩
   refine ⟨firstVar, secondVar, first, second, config, bytes, updated, ffi, address1, address2, wordCut,
-    argsEq, firstRead, secondRead, call, lengthEq, configRead, bytesRead, ?_, wordCutRun, cutWordRelated, ?_, ?_⟩
+    argsEq, firstRead, secondRead, call, lengthEq, configRead, bytesRead, ?_, wordCutRun, cutWordRelated, ?_, ?_, ?_⟩
   · try dsimp only
     cases empty : (name == Basis.Pure.MlString.ofString "") <;>
       simp only [Bool.false_eq_true, ↓reduceIte]
@@ -195,5 +225,15 @@ theorem ffi_success_setup_call {width : Nat} [NeZero width] {C F : Type}
         0 target.store target.memory target.mdomain _ _ tailRoots
       exact Memory.memoryRel_rearrange conf target.be (holThe source.tstamps) source.refs 0
         target.store target.memory target.mdomain _ _ rootSubset originalTail
+  · obtain ⟨base, baseRun, resultEq, resultStateEq⟩ := sourceOutcome
+    obtain ⟨relatedBase, relatedRun, baseRel⟩ := stateRel_doSpace_ffi conf l1 l2 cut
+      { target with locals := wordCut } locs name values cutWordRelated
+    have baseEq : base = relatedBase := Option.some.inj (baseRun.symm.trans relatedRun)
+    subst relatedBase
+    have limRel := stateRel_doLimSafe conf l1 l2 base { target with locals := wordCut } locs
+      (.ffi name) values baseRel
+    have stackRel := stateRel_doStack conf l1 l2 (DataSem.doLimSafe base (.ffi name) values)
+      { target with locals := wordCut } locs (.ffi name) values limRel
+    exact ⟨base, baseRun, resultEq, resultStateEq, stackRel⟩
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Assign
