@@ -1383,20 +1383,72 @@ def tagged_declaration_source(lines: list[str], attribute_start: int) -> str:
     return signature + "\n" + "\n".join(body)
 
 
-def header_result_is_prop(header: str) -> bool:
-    """True when a tagged declaration's written header ends in `: Prop`.
+PROP_DEF_KIND_RE = re.compile(
+    r"(?m)^[ \t]*(?:(?:private|protected|noncomputable|partial|unsafe)\s+)*"
+    r"(def|theorem|lemma|abbrev|instance|structure|inductive|opaque|class|axiom|constant)\b"
+)
+
+
+def prop_def_leading_forall_binders(source: str) -> str | None:
+    """Binder types of the leading `∀ (…)` group after `:=` in a `: Prop` def.
 
     A predicate definition whose universal quantifiers live in its body names
-    the finite-map carrier there, not in the header. For those declarations the
-    `fmap_as_finite_support` carrier disambiguation reads the whole declaration
-    instead of only the signature; every other declaration still resolves its
-    carrier from the signature. This is a syntactic convenience, not evidence
-    of HOL correspondence.
+    the finite-map carrier in those binder types, not in its header.  This
+    returns only that leading quantifier group, so a carrier mentioned in a
+    comment, in a string literal, in a discarded `let` or anywhere later cannot
+    select an owner.  It returns None (fail closed) unless the declaration is a
+    `def` whose written header ends in `: Prop` and whose body starts with a
+    parenthesized `∀` binder group; comments and string literals are masked
+    before the scan.  This is a syntactic convenience for carrier
+    disambiguation, not evidence of HOL correspondence.
     """
-    text = header.strip()
-    if text.endswith(":="):
-        text = text[:-2].strip()
-    return bool(re.search(r":\s*Prop\s*$", text))
+    masked = _predicate_domain_code_only(source)
+    if masked is None:
+        return None
+    kind = PROP_DEF_KIND_RE.search(masked)
+    if kind is None or kind.group(1) != "def":
+        return None
+    assignment = top_level_assignment_offset(masked)
+    if assignment is None:
+        return None
+    if not re.search(r":\s*Prop\s*$", masked[:assignment].rstrip()):
+        return None
+    body = masked[assignment + 2:]
+    cursor = 0
+    length = len(body)
+    while cursor < length and body[cursor].isspace():
+        cursor += 1
+    if cursor >= length or body[cursor] != "∀":
+        return None
+    cursor += 1
+    groups: list[str] = []
+    while True:
+        while cursor < length and body[cursor].isspace():
+            cursor += 1
+        if cursor >= length or body[cursor] != "(":
+            break
+        depth = 0
+        start = cursor
+        while cursor < length:
+            char = body[cursor]
+            if char == "(":
+                depth += 1
+            elif char == ")":
+                depth -= 1
+                if depth == 0:
+                    cursor += 1
+                    break
+            cursor += 1
+        if depth != 0:
+            return None
+        groups.append(body[start:cursor])
+    if not groups:
+        return None
+    while cursor < length and body[cursor].isspace():
+        cursor += 1
+    if cursor >= length or body[cursor] != ",":
+        return None
+    return " ".join(groups)
 
 
 TO_FUNCTION_RE = re.compile(r"\bto([A-Z][A-Za-z0-9_']*)")
@@ -6753,12 +6805,18 @@ def main(argv: list[str]) -> int:
                 fmap_errors = fmap_as_finite_support_errors(
                     lines, fmap_fields, rel, fmap_header
                 )
-                if fmap_errors and header_result_is_prop(fmap_header):
-                    # A predicate definition binds its universals in the body, so
-                    # the owning carrier is named there rather than in the header.
-                    fmap_errors = fmap_as_finite_support_errors(
-                        lines, fmap_fields, rel, tagged_declaration_source(lines, number)
+                if fmap_errors:
+                    # A `: Prop` predicate definition binds its universals in the
+                    # body; only their leading binder types may disambiguate the
+                    # carrier (comments, strings, discarded lets and later
+                    # mentions are masked out and cannot select an owner).
+                    leading = prop_def_leading_forall_binders(
+                        tagged_declaration_source(lines, number)
                     )
+                    if leading is not None:
+                        fmap_errors = fmap_as_finite_support_errors(
+                            lines, fmap_fields, rel, leading
+                        )
                 errors.extend(f"{where}: {error}" for error in fmap_errors)
             if fmap_parameters:
                 if fmap_fields or fmap_result or fmap_relation or fmap_equalities:

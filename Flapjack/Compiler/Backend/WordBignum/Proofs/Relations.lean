@@ -222,7 +222,7 @@ theorem Corr_Load {width : Nat} [NeZero width] (r i : Nat) (a : Address)
   | none => exact absurd hl hdom
   | some w =>
     rw [holFapply_of_lookup hl] at hbound ⊢
-    exact Eval.load none s r i a w hl hbound
+    exact Eval.load none s r i a w ⟨hl, hbound⟩
 
 /-- HOL `Corr_Store`: storing a register into the out array evaluates to the
 written state when both registers are live and the index is in bounds. -/
@@ -245,7 +245,7 @@ theorem Corr_Store {width : Nat} [NeZero width] (r i : Nat) (s : MiniState width
     | some wr =>
       rw [holFapply_of_lookup hl] at hbound ⊢
       rw [holFapply_of_lookup hr]
-      exact Eval.store none s r i w wr hl hr hbound
+      exact Eval.store none s r i w wr ⟨hl, hr, hbound⟩
 
 /-- HOL `loop_app_EQ` (`word_bignumProofScript.sml:1864`): the two shapes in
 which `loop_app` returns a state with a true guard, one for each side of the
@@ -297,7 +297,7 @@ theorem Corr_Add {width : Nat} [NeZero width]
   obtain ⟨hreg, h4, h5, hcarry, hdistinct⟩ := h
   cases hadd : singleAddWord (holFapply s.regs n3) (evalRi s ri1) (evalRi s ri2) with
   | mk r1 r2 =>
-    exact Eval.add n1 n2 n3 ri1 ri2 none s r1 r2 hreg h4 h5 hcarry hdistinct hadd
+    exact Eval.add n1 n2 n3 ri1 ri2 none s r1 r2 ⟨hreg, h4, h5, hcarry, hdistinct, hadd⟩
 
 /-- HOL `Corr_Sub`: the carry-word subtraction evaluates to the two written
 registers under the same side conditions as the addition. -/
@@ -317,7 +317,7 @@ theorem Corr_Sub {width : Nat} [NeZero width]
   obtain ⟨hreg, h4, h5, hcarry, hdistinct⟩ := h
   cases hsub : singleSubWord (holFapply s.regs n3) (evalRi s ri1) (evalRi s ri2) with
   | mk r1 r2 =>
-    exact Eval.sub none s n1 n2 n3 ri1 ri2 r1 r2 hreg h4 h5 hcarry hdistinct hsub
+    exact Eval.sub none s n1 n2 n3 ri1 ri2 r1 r2 ⟨hreg, h4, h5, hcarry, hdistinct, hsub⟩
 
 /-- HOL `Corr_Mul`: the long multiplication evaluates to the two written
 registers when both source registers are live and the destinations differ. -/
@@ -334,7 +334,7 @@ theorem Corr_Mul {width : Nat} [NeZero width]
   intro h
   rw [decide_eq_true_eq] at h
   obtain ⟨h3, h4, hdistinct⟩ := h
-  exact Eval.mul none s n1 n2 n3 n4 h3 h4 hdistinct
+  exact Eval.mul none s n1 n2 n3 n4 ⟨h3, h4, hdistinct⟩
 
 /-- HOL `Corr_Div`: the long division evaluates to the two written registers
 when the three source registers are live, the destinations differ and the
@@ -354,7 +354,7 @@ theorem Corr_Div {width : Nat} [NeZero width]
   intro h
   rw [decide_eq_true_eq] at h
   obtain ⟨h3, h4, h5, hdistinct, hpre⟩ := h
-  exact Eval.div none s n1 n2 n3 n4 n5 h3 h4 h5 hdistinct hpre
+  exact Eval.div none s n1 n2 n3 n4 n5 ⟨h3, h4, h5, hdistinct, hpre⟩
 
 /-- HOL `Corr_If`: a conditional evaluates the branch chosen by the word
 comparison, with the matching branch's guard conjoined to the comparison

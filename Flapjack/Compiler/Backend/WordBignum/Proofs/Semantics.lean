@@ -160,11 +160,20 @@ def copyVars {width : Nat} [NeZero width] : List Nat →
     | none => none
     | some x => copyVars ns source (regWrite n (some x) t)
 
-/-- The source's small-step relation over mini-programs: the recursion target
-(`none` for a top-level program, `some p` while executing `p`), the state, the
-program, and the result (`inl` for `Continue`, `inr` for a final state). -/
-@[hol "cakeml/compiler/backend/proofs/word_bignumProofScript.sml" "eval"
-  (fmap_as_finite_support := [regs]) (words_as_type_indexed_bitvec)]
+/-- Untagged implementation of the source's small-step relation over
+mini-programs: the recursion target (`none` for a top-level program, `some p`
+while executing `p`), the state, the program, and the result (`inl` for
+`Continue`, `inr` for a final state).  This inductive has no `@[hol]` tag: it is
+the implementation of HOL's `eval` inductive, and the tagged `evalRules` theorem
+below states HOL's `eval_rules` in the source's own rule shapes.  The
+non-recursive rules (Load, Store, Add, Sub, Mul, Div) keep their premise as ONE
+conjunction in HOL's right-associated order.  For the recursive rules (Seq, If,
+Loop, Rec, LoopBody-continue) Lean 4's kernel forbids a single `∧` premise whose
+conjuncts are `Eval` occurrences: the nested `And` would have to take the
+constructor's own index variables as parameters, which the kernel rejects with
+`invalid nested inductive datatype 'And', nested inductive datatypes parameters
+cannot contain local variables`.  Those constructors therefore carry HOL's
+conjuncts as separate arguments, in HOL's order. -/
 inductive Eval {width : Nat} [NeZero width] :
     Option (Mini (BitVec width)) → MiniState width → Mini (BitVec width) →
     Sum (MiniState width) (MiniState width) → Prop
@@ -191,33 +200,31 @@ inductive Eval {width : Nat} [NeZero width] :
       Eval rec s1 (.ite c r ri p1 p2) s2
   | load (rec : Option (Mini (BitVec width))) (s : MiniState width)
       (r i : Nat) (a : Address) (w : BitVec width)
-      (hlookup : s.regs.lookup i = some w) (hbound : w.toNat < (s.arrays a).length) :
+      (h : s.regs.lookup i = some w ∧ w.toNat < (s.arrays a).length) :
       Eval rec s (.load r i a) (.inr (regWrite r (some (holEl w.toNat (s.arrays a))) s))
   | store (rec : Option (Mini (BitVec width))) (s : MiniState width)
       (r i : Nat) (w wr : BitVec width)
-      (hlookup : s.regs.lookup i = some w) (hvalue : s.regs.lookup r = some wr)
-      (hbound : w.toNat < (s.arrays .out).length) :
+      (h : s.regs.lookup i = some w ∧ s.regs.lookup r = some wr ∧
+        w.toNat < (s.arrays .out).length) :
       Eval rec s (.store r i) (.inr (arrayWrite .out ((s.arrays .out).set w.toNat wr) s))
   | swap (r : Option (Mini (BitVec width))) (s : MiniState width) :
       Eval r s .swap (.inr (arrayWrite .in1 (s.arrays .in2) (arrayWrite .in2 (s.arrays .in1) s)))
   | add (n1 n2 n3 : Nat) (n4 n5 : WordRegImm (BitVec width))
       (r : Option (Mini (BitVec width))) (s : MiniState width) (r1 r2 : BitVec width)
-      (hreg : n3 ∈ s.regs.dom) (h4 : evalRiPre s n4) (h5 : evalRiPre s n5)
-      (hcarry : evalRi s n5 ≠ 0 → evalRi s n5 = 1)
-      (hdistinct : n1 ≠ n2)
-      (hadd : singleAddWord (holFapply s.regs n3)
-        (evalRi s n4) (evalRi s n5) = (r1, r2)) :
+      (h : n3 ∈ s.regs.dom ∧ evalRiPre s n4 ∧ evalRiPre s n5 ∧
+        (evalRi s n5 ≠ 0 → evalRi s n5 = 1) ∧ n1 ≠ n2 ∧
+        singleAddWord (holFapply s.regs n3)
+          (evalRi s n4) (evalRi s n5) = (r1, r2)) :
       Eval r s (.add n1 n2 n3 n4 n5) (.inr (regWrite n1 (some r1) (regWrite n2 (some r2) s)))
   | sub (r : Option (Mini (BitVec width))) (s : MiniState width)
       (n1 n2 n3 : Nat) (n4 n5 : WordRegImm (BitVec width)) (r1 r2 : BitVec width)
-      (hreg : n3 ∈ s.regs.dom) (h4 : evalRiPre s n4) (h5 : evalRiPre s n5)
-      (hcarry : evalRi s n5 ≠ 0 → evalRi s n5 = 1)
-      (hdistinct : n1 ≠ n2)
-      (hsub : singleSubWord (holFapply s.regs n3)
-        (evalRi s n4) (evalRi s n5) = (r1, r2)) :
+      (h : n3 ∈ s.regs.dom ∧ evalRiPre s n4 ∧ evalRiPre s n5 ∧
+        (evalRi s n5 ≠ 0 → evalRi s n5 = 1) ∧ n1 ≠ n2 ∧
+        singleSubWord (holFapply s.regs n3)
+          (evalRi s n4) (evalRi s n5) = (r1, r2)) :
       Eval r s (.sub n1 n2 n3 n4 n5) (.inr (regWrite n1 (some r1) (regWrite n2 (some r2) s)))
   | mul (r : Option (Mini (BitVec width))) (s : MiniState width) (n1 n2 n3 n4 : Nat)
-      (h3 : n3 ∈ s.regs.dom) (h4 : n4 ∈ s.regs.dom) (hdistinct : n1 ≠ n2) :
+      (h : n3 ∈ s.regs.dom ∧ n4 ∈ s.regs.dom ∧ n1 ≠ n2) :
       Eval r s (.mul n1 n2 n3 n4)
         (.inr (regWrite n1
           (some (singleMul (holFapply s.regs n3)
@@ -226,11 +233,10 @@ inductive Eval {width : Nat} [NeZero width] :
             (some (singleMul (holFapply s.regs n3)
               (holFapply s.regs n4) 0).2) s)))
   | div (r : Option (Mini (BitVec width))) (s : MiniState width) (n1 n2 n3 n4 n5 : Nat)
-      (h3 : n3 ∈ s.regs.dom) (h4 : n4 ∈ s.regs.dom)
-      (h5 : n5 ∈ s.regs.dom) (hdistinct : n1 ≠ n2)
-      (hpre : singleDivPre (holFapply s.regs n3)
-        (holFapply s.regs n4)
-        (holFapply s.regs n5)) :
+      (h : n3 ∈ s.regs.dom ∧ n4 ∈ s.regs.dom ∧ n5 ∈ s.regs.dom ∧ n1 ≠ n2 ∧
+        singleDivPre (holFapply s.regs n3)
+          (holFapply s.regs n4)
+          (holFapply s.regs n5)) :
       Eval r s (.div n1 n2 n3 n4 n5)
         (.inr (regWrite n1
           (some (singleDiv (holFapply s.regs n3)
@@ -262,6 +268,135 @@ inductive Eval {width : Nat} [NeZero width] :
       (h2 : Eval r (decClock s2) (.loopBody p) (.inr s3)) :
       Eval r s1 (.loopBody p) (.inr s3)
 
+/-- HOL `eval_rules` (`word_bignumProofScript.sml:91-158`): the source's
+inductive rules in HOL's order, each with its ONE conjunction premise in HOL's
+right-associated order.  This is the source-shaped statement of the relation
+whose implementation is the untagged `Eval` inductive above: the recursive rules
+cannot carry a single `∧` premise inside that inductive (see its docstring), but
+they are stated with HOL's shape here and proved from the constructors. -/
+@[hol "cakeml/compiler/backend/proofs/word_bignumProofScript.sml" "eval_rules"
+  (fmap_as_finite_support := [regs]) (words_as_type_indexed_bitvec)]
+theorem evalRules {width : Nat} [NeZero width] :
+    (∀ (r : Option (Mini (BitVec width))) (s : MiniState width),
+      Eval r s .skip (.inr s)) ∧
+    (∀ (r : Option (Mini (BitVec width))) (s : MiniState width),
+      Eval r s .continue (.inl s)) ∧
+    (∀ (r : Option (Mini (BitVec width))) (vs : List Nat) (s : MiniState width),
+      Eval r s (.delete vs) (.inr (deleteVars vs s))) ∧
+    (∀ (r : Option (Mini (BitVec width))) (s : MiniState width)
+        (x : WordLangExpHOL (BitVec width)) (n : Nat),
+      evalExpPre s x →
+        Eval r s (.assign n x) (.inr (regWrite n (some (evalExp s x)) s))) ∧
+    (∀ (r : Option (Mini (BitVec width))) (s1 s2 : MiniState width)
+        (s3 : Sum (MiniState width) (MiniState width)) (p1 p2 : Mini (BitVec width)),
+      Eval r s1 p1 (.inr s2) ∧ Eval r s2 p2 s3 → Eval r s1 (.seq p1 p2) s3) ∧
+    (∀ (rec : Option (Mini (BitVec width))) (s1 : MiniState width) (c : Cmp) (r : Nat)
+        (ri : WordRegImm (BitVec width)) (p1 p2 : Mini (BitVec width))
+        (s2 : Sum (MiniState width) (MiniState width)),
+      r ∈ s1.regs.dom ∧ evalRiPre s1 ri ∧
+          Eval rec s1
+            (if wordCmpHOL c (evalExp s1 (.var r)) (evalRi s1 ri) then p1 else p2) s2 →
+        Eval rec s1 (.ite c r ri p1 p2) s2) ∧
+    (∀ (rec : Option (Mini (BitVec width))) (s : MiniState width) (r i : Nat)
+        (a : Address) (w : BitVec width),
+      s.regs.lookup i = some w ∧ w.toNat < (s.arrays a).length →
+        Eval rec s (.load r i a)
+          (.inr (regWrite r (some (holEl w.toNat (s.arrays a))) s))) ∧
+    (∀ (rec : Option (Mini (BitVec width))) (s : MiniState width) (r i : Nat)
+        (w wr : BitVec width),
+      s.regs.lookup i = some w ∧ s.regs.lookup r = some wr ∧
+          w.toNat < (s.arrays .out).length →
+        Eval rec s (.store r i)
+          (.inr (arrayWrite .out ((s.arrays .out).set w.toNat wr) s))) ∧
+    (∀ (r : Option (Mini (BitVec width))) (s : MiniState width),
+      Eval r s .swap
+        (.inr (arrayWrite .in1 (s.arrays .in2) (arrayWrite .in2 (s.arrays .in1) s)))) ∧
+    (∀ (n1 n2 n3 : Nat) (n4 n5 : WordRegImm (BitVec width))
+        (r : Option (Mini (BitVec width))) (s : MiniState width) (r1 r2 : BitVec width),
+      n3 ∈ s.regs.dom ∧ evalRiPre s n4 ∧ evalRiPre s n5 ∧
+          (evalRi s n5 ≠ 0 → evalRi s n5 = 1) ∧ n1 ≠ n2 ∧
+          singleAddWord (holFapply s.regs n3) (evalRi s n4) (evalRi s n5) = (r1, r2) →
+        Eval r s (.add n1 n2 n3 n4 n5)
+          (.inr (regWrite n1 (some r1) (regWrite n2 (some r2) s)))) ∧
+    (∀ (r : Option (Mini (BitVec width))) (s : MiniState width) (n1 n2 n3 : Nat)
+        (n4 n5 : WordRegImm (BitVec width)) (r1 r2 : BitVec width),
+      n3 ∈ s.regs.dom ∧ evalRiPre s n4 ∧ evalRiPre s n5 ∧
+          (evalRi s n5 ≠ 0 → evalRi s n5 = 1) ∧ n1 ≠ n2 ∧
+          singleSubWord (holFapply s.regs n3) (evalRi s n4) (evalRi s n5) = (r1, r2) →
+        Eval r s (.sub n1 n2 n3 n4 n5)
+          (.inr (regWrite n1 (some r1) (regWrite n2 (some r2) s)))) ∧
+    (∀ (r : Option (Mini (BitVec width))) (s : MiniState width) (n1 n2 n3 n4 : Nat),
+      n3 ∈ s.regs.dom ∧ n4 ∈ s.regs.dom ∧ n1 ≠ n2 →
+        Eval r s (.mul n1 n2 n3 n4)
+          (.inr (regWrite n1
+            (some (singleMul (holFapply s.regs n3) (holFapply s.regs n4) 0).1)
+            (regWrite n2
+              (some (singleMul (holFapply s.regs n3) (holFapply s.regs n4) 0).2) s)))) ∧
+    (∀ (r : Option (Mini (BitVec width))) (s : MiniState width) (n1 n2 n3 n4 n5 : Nat),
+      n3 ∈ s.regs.dom ∧ n4 ∈ s.regs.dom ∧ n5 ∈ s.regs.dom ∧ n1 ≠ n2 ∧
+          singleDivPre (holFapply s.regs n3) (holFapply s.regs n4)
+            (holFapply s.regs n5) →
+        Eval r s (.div n1 n2 n3 n4 n5)
+          (.inr (regWrite n1
+            (some (singleDiv (holFapply s.regs n3) (holFapply s.regs n4)
+              (holFapply s.regs n5)).1)
+            (regWrite n2
+              (some (singleDiv (holFapply s.regs n3) (holFapply s.regs n4)
+                (holFapply s.regs n5)).2) s)))) ∧
+    (∀ (r : Option (Mini (BitVec width))) (s1 : MiniState width)
+        (p : Mini (BitVec width)) (vs : List Nat) (s2 : MiniState width) (rec : Bool),
+      Eval (if rec then some p else none) (deleteVars vs (decClock s1))
+          (.loopBody p) (.inr s2) ∧ s1.clock ≠ 0 →
+        Eval r s1 (.loop rec vs p) (.inr s2)) ∧
+    (∀ (s1 : MiniState width) (saveRegs vs : List Nat) (p : Mini (BitVec width))
+        (s2 s3 : MiniState width),
+      Eval (some p) (deleteVars vs (decClock s1)) (.loopBody p) (.inr s2) ∧
+          copyVars saveRegs s1.regs s2 = some s3 ∧ s1.clock ≠ 0 →
+        Eval (some p) s1 (.recurse saveRegs vs) (.inr s3)) ∧
+    (∀ (r : Option (Mini (BitVec width))) (s1 : MiniState width)
+        (p : Mini (BitVec width)) (s2 : MiniState width),
+      Eval r s1 p (.inr s2) → Eval r s1 (.loopBody p) (.inr s2)) ∧
+    ∀ (r : Option (Mini (BitVec width))) (s1 s2 s3 : MiniState width)
+        (p : Mini (BitVec width)),
+      Eval r s1 p (.inl s2) ∧ s2.clock ≠ 0 ∧
+          Eval r (decClock s2) (.loopBody p) (.inr s3) →
+        Eval r s1 (.loopBody p) (.inr s3) := by
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  · intro r s
+    exact Eval.skip r s
+  · intro r s
+    exact Eval.continue r s
+  · intro r vs s
+    exact Eval.delete r vs s
+  · intro r s x n h
+    exact Eval.assign r s x n h
+  · intro r s1 s2 s3 p1 p2 h
+    exact Eval.seq r s1 s2 s3 p1 p2 h.1 h.2
+  · intro rec s1 c r ri p1 p2 s2 h
+    exact Eval.ite rec s1 c r ri p1 p2 s2 h.1 h.2.1 h.2.2
+  · intro rec s r i a w h
+    exact Eval.load rec s r i a w h
+  · intro rec s r i w wr h
+    exact Eval.store rec s r i w wr h
+  · intro r s
+    exact Eval.swap r s
+  · intro n1 n2 n3 n4 n5 r s r1 r2 h
+    exact Eval.add n1 n2 n3 n4 n5 r s r1 r2 h
+  · intro r s n1 n2 n3 n4 n5 r1 r2 h
+    exact Eval.sub r s n1 n2 n3 n4 n5 r1 r2 h
+  · intro r s n1 n2 n3 n4 h
+    exact Eval.mul r s n1 n2 n3 n4 h
+  · intro r s n1 n2 n3 n4 n5 h
+    exact Eval.div r s n1 n2 n3 n4 n5 h
+  · intro r s1 p vs s2 rec h
+    exact Eval.loop r s1 p vs s2 rec h.1 h.2
+  · intro s1 saveRegs vs p s2 s3 h
+    exact Eval.recurse s1 saveRegs vs p s2 s3 h.1 h.2.1 h.2.2
+  · intro r s1 p s2 h
+    exact Eval.loopBodyReturn r s1 p s2 h
+  · intro r s1 s2 s3 p h
+    exact Eval.loopBodyContinue r s1 s2 s3 p h.1 h.2.1 h.2.2
+
 /-- A top-level evaluation is also an evaluation with any recursion target: the
 recursion target only reaches the `Rec` and `Loop` rules, which ignore it. -/
 @[hol "cakeml/compiler/backend/proofs/word_bignumProofScript.sml" "Eval_NONE_IMP"
@@ -281,19 +416,17 @@ theorem Eval_NONE_IMP {width : Nat} [NeZero width] :
     exact Eval.seq (some p) s1 s2 s3 p1 p2 (ih1 hr) (ih2 hr)
   | ite rec s1 cmp r ri p1 p2 s2 hreg hri h ih =>
     exact Eval.ite (some p) s1 cmp r ri p1 p2 s2 hreg hri (ih hr)
-  | load rec s r i a w hlookup hbound =>
-    exact Eval.load (some p) s r i a w hlookup hbound
-  | store rec s r i w wr hlookup hvalue hbound =>
-    exact Eval.store (some p) s r i w wr hlookup hvalue hbound
+  | load rec s r i a w h => exact Eval.load (some p) s r i a w h
+  | store rec s r i w wr h => exact Eval.store (some p) s r i w wr h
   | swap r s => exact Eval.swap (some p) s
-  | add n1 n2 n3 n4 n5 r s r1 r2 hreg h4 h5 hcarry hdistinct hadd =>
-    exact Eval.add n1 n2 n3 n4 n5 (some p) s r1 r2 hreg h4 h5 hcarry hdistinct hadd
-  | sub r s n1 n2 n3 n4 n5 r1 r2 hreg h4 h5 hcarry hdistinct hsub =>
-    exact Eval.sub (some p) s n1 n2 n3 n4 n5 r1 r2 hreg h4 h5 hcarry hdistinct hsub
-  | mul r s n1 n2 n3 n4 h3 h4 hdistinct =>
-    exact Eval.mul (some p) s n1 n2 n3 n4 h3 h4 hdistinct
-  | div r s n1 n2 n3 n4 n5 h3 h4 h5 hdistinct hpre =>
-    exact Eval.div (some p) s n1 n2 n3 n4 n5 h3 h4 h5 hdistinct hpre
+  | add n1 n2 n3 n4 n5 r s r1 r2 h =>
+    exact Eval.add n1 n2 n3 n4 n5 (some p) s r1 r2 h
+  | sub r s n1 n2 n3 n4 n5 r1 r2 h =>
+    exact Eval.sub (some p) s n1 n2 n3 n4 n5 r1 r2 h
+  | mul r s n1 n2 n3 n4 h =>
+    exact Eval.mul (some p) s n1 n2 n3 n4 h
+  | div r s n1 n2 n3 n4 n5 h =>
+    exact Eval.div (some p) s n1 n2 n3 n4 n5 h
   | loop r s1 body vs s2 rec h hclock =>
     exact Eval.loop (some p) s1 body vs s2 rec h hclock
   | recurse s1 saveRegs vs body s2 s3 h hcopy hclock =>

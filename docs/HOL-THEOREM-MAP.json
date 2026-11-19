@@ -144727,15 +144727,15 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
-    "hol_name": "eval",
+    "hol_name": "eval_rules",
     "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/Semantics.lean",
-    "lean_name": "Eval",
+    "lean_name": "evalRules",
     "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
     "fmap_as_finite_support": [
       "regs"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "Source comparison against eval_rules_typed: all seventeen source rules are present in HOL's order - Skip, Continue, Delete, Assign, Seq, If, Load, Store, Swap, Add, Sub, Mul, Div, Loop, Rec, LoopBody-return and LoopBody-continue. Each rule's HOL conjunction is preserved conjunct by conjunct, in HOL's order, as the constructor's arguments; a single conjunction premise over the indexed Eval family is not expressible in Lean 4, because the kernel rejects a nested And whose parameters contain the constructor's own index variables (invalid nested inductive datatype 'And', nested inductive datatypes parameters cannot contain local variables), so the constructor arguments are exactly HOL's conjuncts and the inductive is the same least relation. Constructor binder order follows the capture, including r, s before the numeric parameters for Sub, Mul and Div and after them for Add. HOL's IN FDOM guards are stated literally as membership in s.regs.dom, FLOOKUP as the carrier lookup and FAPPLY (`s.regs ' n`) with the reviewed holFapply; Add/Sub use singleAddWord/singleSubWord, Mul/Div singleMul/singleDiv with singleDivPre, and If uses wordCmpHOL, all at the state's single word dimension."
+    "reviewer": "Source comparison against eval_rules_typed: HOL's eval_rules is the right-associated conjunction of all seventeen rules, each quantified as in the source - Skip, Continue, Delete, Assign, Seq, If, Load, Store, Swap, Add, Sub, Mul, Div, Loop, Rec, LoopBody-return and LoopBody-continue. This tagged theorem states them in exactly that shape, with each rule's ONE conjunction premise in HOL's right-associated order (Seq, If, Loop, Rec and LoopBody-continue included), proved from the constructors of the untagged Eval inductive. The inductive itself is untagged: its non-recursive rules (Load, Store, Add, Sub, Mul, Div) carry HOL's premise as one conjunction in HOL's order, while the recursive rules cannot, because Lean 4's kernel rejects a single And premise whose conjuncts are Eval occurrences over the constructor's own index variables (invalid nested inductive datatype 'And', nested inductive datatypes parameters cannot contain local variables). That is a limitation of the Lean implementation, not an accepted change to the source statement, and no exact-port claim is made for the inductive. Binder order follows the capture, including r, s before the numeric parameters for Sub, Mul and Div and after them for Add; IN FDOM is stated as membership in s.regs.dom, FLOOKUP as the carrier lookup, FAPPLY (`s.regs ' n`) as holFapply; Add/Sub use singleAddWord/singleSubWord, Mul/Div singleMul/singleDiv with singleDivPre, and If uses wordCmpHOL, all at the state's single word dimension."
   }
 ,
   {
