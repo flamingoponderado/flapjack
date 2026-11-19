@@ -3,6 +3,8 @@ module
 public import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.FfiInputs
 public import Flapjack.Compiler.Backend.Semantics.WordSem.Evaluate
 public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.CutOdd
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ByteArrayWrite
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Space
 public import Flapjack.FfiBridge
 
 @[expose] public section
@@ -11,9 +13,9 @@ public import Flapjack.FfiBridge
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Assign
 open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
 
-/-- The setup and successful foreign call evaluated in the HOL FFI assignment
-proof. This factoring has no separate HOL declaration. Both empty and nonempty
-names are covered. The compiler emits
+/-- The setup, successful foreign call and post-call memory relation used in
+the HOL FFI assignment proof. This factoring has no separate HOL declaration.
+Both empty and nonempty names are covered. The compiler emits
 this setup only when `conf.callEmptyFfi` is true or `name` is nonempty; the
 other branch emits a direct unit assignment instead. -/
 theorem ffi_success_setup_call {width : Nat} [NeZero width] {C F : Type}
@@ -60,7 +62,15 @@ theorem ffi_success_setup_call {width : Nat} [NeZero width] {C F : Type}
         { target with locals := (sptInsert 7 (.word len2)
           (sptInsert 5 (.word ptr2) (sptInsert 3 (.word len1)
             (sptInsert 1 (.word ptr1) target.locals)))) } =
-        (none, { target with locals := wordCut, fpRegs := HolFiniteMapExact.empty, ffi := ffi, memory := (if empty then target.memory else writeBytearrayExact ptr2 updated target.memory target.mdomain target.be) }) := by
+        (none, { target with locals := wordCut, fpRegs := HolFiniteMapExact.empty, ffi := ffi, memory := (if empty then target.memory else writeBytearrayExact ptr2 updated target.memory target.mdomain target.be) }) ∧
+      Memory.memoryRel conf target.be (holThe source.tstamps)
+        (sptInsert second (.byteArray false updated) source.refs) 0 target.store
+        (if empty then target.memory else
+          writeBytearrayExact (address2 + wordSemBytesInWord) updated target.memory target.mdomain target.be)
+        target.mdomain
+        (joinEnv cut.locals (sptToAList (sptInter wordCut (adjustSet cut.locals))) ++
+          [(theGlobal source.global, holFapply target.store .globals)] ++
+          flatStack source.stack target.stack) := by
   obtain ⟨firstVar, secondVar, flag1, flag2, first, second, config, bytes, updated, ffi,
     firstWord, secondWord, argsEq, valuesEq, wordRead, firstRead, secondRead, call,
     lengthEq, roots, w1, w2, address1, address2, header1, header2, loc1, loc2,
@@ -71,7 +81,7 @@ theorem ffi_success_setup_call {width : Nat} [NeZero width] {C F : Type}
   obtain ⟨wordCut, words, wordCutRun, wordsRun, sourceLen, targetLen, cutRelated, cutWordRelated⟩ :=
     stateRel_cutStateOpt_some conf l1 l2 source target locs args values names cut ⟨related, read, cutRun⟩
   refine ⟨firstVar, secondVar, first, second, config, bytes, updated, ffi, address1, address2, wordCut,
-    argsEq, firstRead, secondRead, call, lengthEq, configRead, bytesRead, ?_, wordCutRun, cutWordRelated, ?_⟩
+    argsEq, firstRead, secondRead, call, lengthEq, configRead, bytesRead, ?_, wordCutRun, cutWordRelated, ?_, ?_⟩
   · try dsimp only
     cases empty : (name == Basis.Pure.MlString.ofString "") <;>
       simp only [Bool.false_eq_true, ↓reduceIte]
@@ -122,5 +132,68 @@ theorem ffi_success_setup_call {width : Nat} [NeZero width] {C F : Type}
         readBytearrayWordHOL, readBytearrayGenericHOL, wordSemBytesInWord,
         len1, configRead', ffiEq, nameEq, Basis.Pure.MlString.ofString,
         callFFIHOL_empty_extCall, writeBytearrayExact, ffiReturn]
+  · have good := related.2.2.2.2.2.2.1
+    have zeroRoots := Memory.memoryRel_zeroSpace conf target.be (holThe source.tstamps) source.refs
+      source.space target.store target.memory target.mdomain _ roots
+    have tailRoots := Memory.memoryRel_tl conf target.be (holThe source.tstamps) source.refs
+      0 target.store target.memory target.mdomain _ _ zeroRoots
+    obtain ⟨w, address, header, _, loc, _, _, _, _, _, simple, real, _, _, _, _, _⟩ :=
+      Memory.memoryRel_byteArrayImp (β := Unit) conf target.be (holThe source.tstamps)
+        source.refs 0 target.store target.memory target.mdomain flag2 false second bytes
+        secondWord _ ⟨tailRoots, secondRead, good⟩
+    have wEq : w = w2 := WordLocW.word.inj (loc.symm.trans loc2)
+    subst w
+    have addrEq : address = address2 := Option.some.inj (real.symm.trans real2)
+    subst address
+    rw [loc2] at tailRoots
+    have updatedRoots := Memory.memoryRel_writeBytearray conf target.be (holThe source.tstamps)
+      0 target.store target.mdomain flag2 second w2 address2 _ updated bytes target.memory source.refs
+      ⟨tailRoots, secondRead, lengthEq, simple, good⟩
+    have updatedTail := Memory.memoryRel_tl conf target.be (holThe source.tstamps) _ 0 target.store _ target.mdomain
+      _ _ updatedRoots
+    have rootSubset : ∀ pair,
+        pair ∈ (joinEnv cut.locals (sptToAList (sptInter wordCut (adjustSet cut.locals))) ++
+          [(theGlobal source.global, holFapply target.store .globals)] ++ flatStack source.stack target.stack) →
+        pair ∈ (joinEnv source.locals (sptToAList (sptInter target.locals (adjustSet source.locals))) ++
+          [(theGlobal source.global, holFapply target.store .globals)] ++ flatStack source.stack target.stack) := by
+      intro pair member
+      simp only [List.mem_append] at member ⊢
+      rcases member with (member | member) | member
+      · apply Or.inl
+        apply Or.inl
+        apply joinEnv_submap_mem cut.locals source.locals wordCut target.locals pair
+        refine ⟨?_, ?_, member⟩
+        · intro key value found
+          have cutEq := cutStateOpt_some_eq names source cut cutRun
+          rw [cutEq] at found
+          simp only [sptLookup_mkWf, sptLookup_sptInterCases] at found
+          cases original : sptLookup key source.locals with
+          | none => simp [original] at found
+          | some originalValue =>
+            cases retained : sptLookup key names with
+            | none => simp [original, retained] at found
+            | some entry => simpa [original, retained] using found
+        · intro key value found
+          exact cutEnv_lookup (adjustSets names) target.locals wordCut key value ⟨wordCutRun, found⟩
+      · exact Or.inl (Or.inr member)
+      · exact Or.inr member
+    cases empty : (name == Basis.Pure.MlString.ofString "") with
+    | false =>
+      simp only [Bool.false_eq_true, ↓reduceIte]
+      apply Memory.memoryRel_rearrange conf target.be (holThe source.tstamps) _ 0 target.store _ target.mdomain _ _ rootSubset
+      simpa [wordSemBytesInWord, StackRemove.bytesInWord] using updatedTail
+    | true =>
+      simp only [↓reduceIte]
+      have nameEq : name = Basis.Pure.MlString.ofString "" := by simpa using empty
+      have updatedEq : updated = bytes := by
+        rw [nameEq] at call
+        have eqs : ffi = source.ffi ∧ updated = bytes := by
+          simpa [Basis.Pure.MlString.ofString, callFFIHOL_empty_extCall] using call.symm
+        exact eqs.2
+      rw [updatedEq, sptInsertUnchanged source.refs second (.byteArray false bytes) secondRead]
+      have originalTail := Memory.memoryRel_tl conf target.be (holThe source.tstamps) source.refs
+        0 target.store target.memory target.mdomain _ _ tailRoots
+      exact Memory.memoryRel_rearrange conf target.be (holThe source.tstamps) source.refs 0
+        target.store target.memory target.mdomain _ _ rootSubset originalTail
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Assign
