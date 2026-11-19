@@ -347,6 +347,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.FfiCorrect
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.FfiFinal
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.GetWords
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.StoreConsts
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.StoreAnyConsts
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.WordMlInvLookup
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.WordMlInvGetVars
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.Roots

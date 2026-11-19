@@ -144743,5 +144743,16 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Compared store_list_APPEND_typed with HOL source lines 15398-15407: both arbitrary word-location lists, address, memory and domain are retained, with the same failure and success branches and wrapped address advance. HOL words and word_loc use the positive-width BitVec translation."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "evaluate_StoreAnyConsts",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/StoreAnyConsts.lean",
+  "lean_name": "evaluate_storeAnyConsts",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_StoreAnyConsts_typed with HOL source lines 16661-16740: the successful list store, memory and domain equalities, distinct registers, valid locations and register values are preserved, as are the existential full target evaluation, resulting memory and NextFree store, output register and preservation of all other locals. The target state uses canonical finite maps and positive-width words. The evaluator inherits reals_as_rational_cuts through instruction semantics; see SOUNDNESS.md item 8."
 }
 ]
