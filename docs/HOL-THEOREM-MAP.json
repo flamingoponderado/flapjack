@@ -144817,5 +144817,32 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Compared const_parts_to_words_good_loc_typed with HOL: successful lowering of arbitrary parts gives a valid result location and valid locations in every output pair for an arbitrary code set; there are no extra premises. HOL words use positive-width BitVec and code sets are membership predicates."
+},
+{
+  "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+  "hol_name": "make_cons_ptr_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Build.lean",
+  "lean_name": "makeConsPtr",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared make_cons_ptr_def_typed with HOL: offset shift, low marker bit and get_lowerbits of the pointer annotation are combined by word OR in the same order. The compiler's partWords retains its distinct source expression. HOL words use positive-width BitVec."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "build_part_words_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/BuildWords.lean",
+  "lean_name": "buildPartWords",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared build_part_words_def_typed with every HOL clause, including width-wrapped sign tag, constructor-pointer operation, 64-bit input slices and string-byte packing. The memory input is a total function and word locations use positive-width BitVec."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "build_words_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/BuildWords.lean",
+  "lean_name": "buildWords",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared build_words_def_typed with HOL: the empty-list lookup, total-function update, incremented index, word-sized offset advance, failure branches and appended output lists match. HOL words use positive-width BitVec."
 }
 ]

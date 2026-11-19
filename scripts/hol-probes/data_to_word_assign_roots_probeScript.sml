@@ -92,3 +92,6 @@ val _ = emit "LESS_EQ_num_size_typed" data_to_word_memoryProofTheory.LESS_EQ_num
 val _ = emit "part_to_words_LENGTH_typed" data_to_word_memoryProofTheory.part_to_words_LENGTH;
 val _ = emit "const_parts_to_words_LENGTH_typed" data_to_word_memoryProofTheory.const_parts_to_words_LENGTH;
 val _ = emit "const_parts_to_words_good_loc_typed" data_to_word_memoryProofTheory.const_parts_to_words_good_loc;
+val _ = emit "make_cons_ptr_def_typed" data_to_wordTheory.make_cons_ptr_def;
+val _ = emit "build_part_words_def_typed" data_to_word_memoryProofTheory.build_part_words_def;
+val _ = emit "build_words_def_typed" data_to_word_memoryProofTheory.build_words_def;
