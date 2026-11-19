@@ -17,7 +17,7 @@ open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Backend.DataToWord.Pro
 
 /-- The source space reset for an FFI operation preserves the relation at zero
 requested space. This is an intermediate step in the HOL assignment proof. -/
-private theorem stateRel_doSpace_ffi {width : Nat} [NeZero width] {C F : Type}
+theorem stateRel_doSpace_ffi {width : Nat} [NeZero width] {C F : Type}
     (conf : Config) (l1 l2 : Nat) (source : DataSem.State C F)
     (target : WordSemStateFiniteExact width C F) (locs : List (Nat × Nat))
     (name : Basis.Pure.MlString.MlString) (values : List DataSem.Value)
@@ -36,6 +36,54 @@ private theorem stateRel_doSpace_ffi {width : Nat} [NeZero width] {C F : Type}
       hzero, hpresent, hstack, hlocs, hacc, hmax, hsizes, hlocals, hlim, ?_⟩
     exact Memory.memoryRel_zeroSpace conf target.be (holThe source.tstamps) source.refs
       source.space target.store target.memory target.mdomain _ hmem
+
+/-- Sequencing an assignment preserves the assignment's state before the
+continuation. -/
+private theorem evaluate_seq_assign {width : Nat} [NeZero width] {C F : Type}
+    (state : WordSemStateFiniteExact width C F) (reg : Nat)
+    (exp : WordLangExpHOL (BitVec width)) (tail : WordLangProgHOL (BitVec width)) :
+    WordSemStateFiniteExact.evaluate (.seq (.assign reg exp) tail) state =
+      match WordSemStateFiniteExact.wordExp state exp with
+      | none => (some .error, state)
+      | some value => WordSemStateFiniteExact.evaluate tail (WordSemStateFiniteExact.setVar reg value state) := by
+  cases h : WordSemStateFiniteExact.wordExp state exp <;>
+    simp [WordSemStateFiniteExact.evaluate, WordSemStateFiniteExact.fixClock,
+      WordSemStateFiniteExact.setVar, h]
+
+/-- Four successful assignments can be followed by a continuation without
+changing their intermediate state. This is the sequencing step used by the
+HOL FFI assignment proof. -/
+private theorem evaluate_four_assign_append {width : Nat} [NeZero width] {C F : Type}
+    (state result : WordSemStateFiniteExact width C F)
+    (e1 e2 e3 e4 : WordLangExpHOL (BitVec width))
+    (tail : WordLangProgHOL (BitVec width))
+    (run : WordSemStateFiniteExact.evaluate (wordListSeq [
+      .assign 1 e1, .assign 3 e2, .assign 5 e3, .assign 7 e4]) state = (none, result)) :
+    WordSemStateFiniteExact.evaluate (wordListSeq [
+      .assign 1 e1, .assign 3 e2, .assign 5 e3, .assign 7 e4, tail]) state =
+      WordSemStateFiniteExact.evaluate tail result := by
+  simp only [wordListSeq, evaluate_seq_assign] at run ⊢
+  cases h1 : WordSemStateFiniteExact.wordExp state e1 with
+  | none => simp [h1] at run
+  | some v1 =>
+    simp only [h1] at run ⊢
+    cases h2 : WordSemStateFiniteExact.wordExp (WordSemStateFiniteExact.setVar 1 v1 state) e2 with
+    | none => simp [h2] at run
+    | some v2 =>
+      simp only [h2] at run ⊢
+      cases h3 : WordSemStateFiniteExact.wordExp
+          (WordSemStateFiniteExact.setVar 3 v2 (WordSemStateFiniteExact.setVar 1 v1 state)) e3 with
+      | none => simp [h3] at run
+      | some v3 =>
+        simp only [h3] at run ⊢
+        cases h4 : WordSemStateFiniteExact.wordExp
+            (WordSemStateFiniteExact.setVar 5 v3 (WordSemStateFiniteExact.setVar 3 v2
+              (WordSemStateFiniteExact.setVar 1 v1 state))) e4 with
+        | none => simp [WordSemStateFiniteExact.evaluate, h4] at run
+        | some v4 =>
+          simp only [WordSemStateFiniteExact.evaluate, h4, Prod.mk.injEq, true_and] at run
+          subst result
+          rfl
 
 /-- The setup, successful foreign call and post-call memory relation used in
 the HOL FFI assignment proof. This factoring has no separate HOL declaration.
@@ -273,7 +321,16 @@ theorem ffi_success_postState {width : Nat} [NeZero width] {C F : Type}
       WordSemStateFiniteExact.evaluate (.ffi name 1 3 5 7 (adjustSets names)) setupState = (none, post) ∧
       result = DataSem.unitValue ∧
       stateRel conf l1 l2 resultState post none locs ∧
-      ∀ dest, WordSemStateFiniteExact.evaluate (.assign (adjustVar dest) (.const 2)) post =
+      ∀ dest, WordSemStateFiniteExact.evaluate (wordListSeq [
+          .assign 1 (.op .add [realAddr conf (adjustVar firstVar), .const wordSemBytesInWord]),
+          .assign 3 (.op .sub [shiftN .lsr (.load (realAddr conf (adjustVar firstVar)))
+            (width - wordShiftAmount width - conf.lenSize), .const wordSemBytesInWord]),
+          .assign 5 (if empty then .const 0 else
+            .op .add [realAddr conf (adjustVar secondVar), .const wordSemBytesInWord]),
+          .assign 7 (if empty then .const 0 else
+            .op .sub [shiftN .lsr (.load (realAddr conf (adjustVar secondVar)))
+              (width - wordShiftAmount width - conf.lenSize), .const wordSemBytesInWord]),
+          .ffi name 1 3 5 7 (adjustSets names), .assign (adjustVar dest) (.const 2)]) target =
           (none, WordSemStateFiniteExact.setVar (adjustVar dest) (.word 2) post) ∧
         stateRel conf l1 l2 (DataSem.setVar dest result resultState)
           (WordSemStateFiniteExact.setVar (adjustVar dest) (.word 2) post) none locs := by
@@ -300,7 +357,22 @@ theorem ffi_success_postState {width : Nat} [NeZero width] {C F : Type}
       simpa [post, emptyName] using postRelated
   · intro dest
     constructor
-    · simp [WordSemStateFiniteExact.evaluate, WordSemStateFiniteExact.wordExp]
+    · change WordSemStateFiniteExact.evaluate (wordListSeq [
+        .assign 1 (.op .add [realAddr conf (adjustVar firstVar), .const wordSemBytesInWord]),
+        .assign 3 (.op .sub [shiftN .lsr (.load (realAddr conf (adjustVar firstVar)))
+          (width - wordShiftAmount width - conf.lenSize), .const wordSemBytesInWord]),
+        .assign 5 (if name == Basis.Pure.MlString.ofString "" then .const 0 else
+          .op .add [realAddr conf (adjustVar secondVar), .const wordSemBytesInWord]),
+        .assign 7 (if name == Basis.Pure.MlString.ofString "" then .const 0 else
+          .op .sub [shiftN .lsr (.load (realAddr conf (adjustVar secondVar)))
+            (width - wordShiftAmount width - conf.lenSize), .const wordSemBytesInWord]),
+        wordListSeq [.ffi name 1 3 5 7 (adjustSets names), .assign (adjustVar dest) (.const 2)]]) target = _
+      rw [evaluate_four_assign_append _ _ _ _ _ _ _ setupRun]
+      change WordSemStateFiniteExact.evaluate
+        (.seq (.ffi name 1 3 5 7 (adjustSets names)) (.assign (adjustVar dest) (.const 2))) _ = _
+      rw [WordSemStateFiniteExact.evaluate, callRun]
+      simp [WordSemStateFiniteExact.fixClock, WordSemStateFiniteExact.evaluate,
+        WordSemStateFiniteExact.wordExp]
     · have good := postRelated.2.2.2.2.2.2.1
       have memory := postRelated.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2
       have unitRoot := Memory.memoryRel_unit conf post.be (holThe resultState.tstamps) resultState.refs

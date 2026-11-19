@@ -144667,5 +144667,16 @@
   "fmap_as_finite_support": ["fpRegs", "store"],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Compared state_rel_cut_state_opt_set_var_typed with HOL source lines 2214-2218: both premises, the complete conclusion and the shared source/target state parameters agree. The word-state finite maps use the canonical finite-support representation and HOL words use the positive type-indexed bit-vector representation."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "assign_FFI",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/FfiCorrect.lean",
+  "lean_name": "assignFfi_correct",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared assign_FFI_typed with HOL source lines 1765-1777 and 16246-16484: the existential FFI operation condition, all original assignment-goal premises, existential target evaluation and both outcome implications agree. The target state uses canonical finite maps and positive-width words. The evaluator inherits reals_as_rational_cuts through instruction semantics; see SOUNDNESS.md item 8."
 }
 ]

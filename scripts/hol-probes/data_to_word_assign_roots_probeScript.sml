@@ -77,3 +77,4 @@ val _ = emit "assign_SetGlobal_typed" data_to_word_assignProofTheory.assign_SetG
 val _ = emit "assign_BoolNot_typed" data_to_word_assignProofTheory.assign_BoolNot;
 val _ = emit "assign_BoolTest_typed" data_to_word_assignProofTheory.assign_BoolTest;
 val _ = emit "assign_Label_typed" data_to_word_assignProofTheory.assign_Label;
+val _ = emit "assign_FFI_typed" data_to_word_assignProofTheory.assign_FFI;

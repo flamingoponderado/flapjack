@@ -12255,7 +12255,7 @@ run_probe data_to_word_assign_roots_probeScript.sml data_to_word_assign_roots_pr
   assign_FP_top_def_typed assign_Add_def_typed assign_Sub_def_typed assign_Mult_def_typed assign_Div_def_typed \
   assign_Mod_def_typed assign_def_typed comp_def_typed compile_part_def_typed assign_SetGlobalsPtr_typed \
   stubs_def_typed code_rel_def_typed assign_Const_typed assign_GlobalsPtr_typed assign_Global_typed \
-  assign_SetGlobal_typed assign_BoolNot_typed assign_BoolTest_typed assign_Label_typed \
+  assign_SetGlobal_typed assign_BoolNot_typed assign_BoolTest_typed assign_Label_typed assign_FFI_typed \
   "$cake_dir/compiler/backend/proofs/data_to_word_assignProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
 
