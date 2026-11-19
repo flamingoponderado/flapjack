@@ -143830,4 +143830,13 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "typed HOL source comparison (lab_to_target_proof_typed_probe.out, has_io_name_EXISTS_typed): source3110-3120. `forall name ls. has_io_name name ls <=> EXISTS (fun x. case x of LabAsm (CallFFI i) _ _ _ => i = name | _ => F) (FLAT (MAP Section_lines ls))`; the capture keeps name : mlstring and ls : alpha sec list and prints the full line match. has_io_name is the tagged hasIoName (a Prop, so HOL's Boolean <=> becomes <->), Section_lines is Section.lines, FLAT is List.flatten and EXISTS is the Prop form exists x IN flattened lines. The section-level equation is the Flapjack helper hasIoName_section, documented beside it as infrastructure with no separate HOL declaration. Only HOL's type-indexed word becomes BitVec width."
   }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "FILTER_mmio_pcs_min_index",
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/MmioShmem.lean",
+    "lean_name": "filter_mmioPcsMinIndex",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (lab_to_target_proof_typed_probe.out, FILTER_mmio_pcs_min_index_typed): source6678-6700. `EVERY (fun x. exists op. x = SharedMem op) l ==> mmio_pcs_min_index (FILTER (fun x. exists s. x = ExtCall s) ffis ++ l) = SOME (LENGTH (FILTER (fun x. exists s. x = ExtCall s) ffis))`; the capture keeps l and ffis as ffiname lists. EVERY is the Prop form forall x IN l, one premise; the FILTER test is the Boolean constructor test isExtCall, documented beside it as Flapjack infrastructure naming HOL's exists-ExtCall predicate; mmio_pcs_min_index is the tagged mmioPcsMinIndex, whose proof goes through the tagged mmioPcsMinIndex_eq_some and the existing boundary machinery. No word or finite-map carrier."
+  }
 ]
