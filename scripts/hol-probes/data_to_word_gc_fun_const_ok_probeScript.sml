@@ -238,3 +238,4 @@ val _ = pr_typed "stack_rel_simp_typed" data_to_word_gcProofTheory.stack_rel_sim
 val _ = pr_typed "join_env_EQ_ZIP_typed" data_to_word_gcProofTheory.join_env_EQ_ZIP;
 val _ = pr_typed "LENGTH_MAP_SND_join_env_IMP_typed" data_to_word_gcProofTheory.LENGTH_MAP_SND_join_env_IMP;
 val _ = pr_typed "lemma1_typed" data_to_word_gcProofTheory.lemma1;
+val _ = pr_typed "word_ml_inv_cons_snoc_typed" data_to_word_gcProofTheory.word_ml_inv_cons_snoc;
