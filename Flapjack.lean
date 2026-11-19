@@ -1416,6 +1416,9 @@ import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateClockShift
 import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateEvents
 import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateEventsClock
 import Flapjack.Compiler.Backend.Semantics.BvlProps.FindCode
+import Flapjack.Compiler.Backend.Semantics.BvlProps.InitialState
+import Flapjack.Compiler.Backend.Semantics.BvlProps.BoolTag
+import Flapjack.Compiler.Backend.Semantics.BvlProps.ApplySplit
 import Flapjack.Compiler.Backend.Semantics.BvlSem.ApplyCode
 import Flapjack.Compiler.Backend.Semantics.BvlSem.MemoryChoice
 import Flapjack.Test.BvlSemValuesParity
