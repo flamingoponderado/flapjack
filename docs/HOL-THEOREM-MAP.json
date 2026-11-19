@@ -145371,5 +145371,32 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Compared xor_words_word_list_typed: the successful XOR, good dimension, original word-count bound and complete disjoint source/destination/frame assertion imply an existential final memory with the same full post-assertion and successful word_xor_bytes run. The unused be binder retains its independently quantified HOL type; the source, destination and memory words share the positive indexed width."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "xor_words_word_list_alias",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/XorWordList.lean",
+  "lean_name": "xorWordsWordListAlias",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Typed source comparison retains self-aliasing, successful word XOR, good dimension, source length bound, complete separated frame, existential final memory and successful word_xor_bytes; the unused be binder remains independently polymorphic."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "xor_bytes_word_list",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/XorWordList.lean",
+  "lean_name": "xorBytesWordList",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Typed source comparison retains successful byte XOR, good dimension, exact zero-buffer length bound, both separated packed buffers and frame, and the complete final memory and word XOR result; be is Bool."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "xor_bytes_word_list_alias",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/XorWordList.lean",
+  "lean_name": "xorBytesWordListAlias",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Typed source comparison retains self-aliasing byte XOR, good dimension, exact zero-buffer length bound, the complete separated frame, existential final memory and successful word XOR; be is Bool."
 }
 ]

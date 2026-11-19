@@ -215,4 +215,139 @@ theorem xorWordsWordList {width : Nat} [NeZero width] {β : Type} (xs ys res : L
             simp only [notSmall, ↓reduceIte, r12.1, r12.2, r3, r4, Bool.true_and]
             simpa only [countSub, m1, m2] using finalRun
 
+
+/-- XORing a separated word list with itself preserves the frame and stores the complete result. The unused `be` binder retains its independent HOL type. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "xor_words_word_list_alias"
+  (words_as_type_indexed_bitvec)]
+theorem xorWordsWordListAlias {width : Nat} [NeZero width] {β : Type} (xs res : List (BitVec width))
+    (a : BitVec width) (_be : β) (frame : ((BitVec width × WordLocW width) → Prop) → Prop)
+    (m : BitVec width → WordLocW width) (dm : BitVec width → Bool)
+    (h : xorWords xs xs = some res) (good : goodDimindex width) (bound : xs.length < 2 ^ width)
+    (sep : SetSep.star (Misc.wordList a (xs.map WordLocW.word)) frame (SetSep.fun2Set (m, fun k => dm k = true))) :
+    ∃ m1, SetSep.star (Misc.wordList a (res.map WordLocW.word)) frame (SetSep.fun2Set (m1, fun k => dm k = true)) ∧
+      wordXorBytes a a (BitVec.ofNat width xs.length) dm m = some m1 := by
+  induction xs using List.twoStepInduction generalizing res a frame m with
+  | nil =>
+    simp [xorWords] at h
+    subst res
+    refine ⟨m, sep, ?_⟩
+    rcases good with hw | hw <;> subst width <;> rw [wordXorBytes] <;> simp [goodDimindex]
+  | singleton x =>
+    simp [xorWords] at h
+    subst res
+    have read := readHead a x [] frame m dm (by simpa using sep)
+    have write := wordList_write a [.word x] 0 (.word (x ^^^ x)) m (fun k => dm k = true) frame (by simp) (by simpa using sep)
+    refine ⟨(fun k => if k = a then .word (x ^^^ x) else m k), ?_, ?_⟩
+    · simpa using write
+    · rcases good with hw | hw <;> subst width <;> rw [wordXorBytes] <;> simp [read, goodDimindex]
+  | cons_cons x x2 xs ih ih1 =>
+    simp only [xorWords] at h
+    cases hx : xorWords xs xs with
+    | none => simp [hx] at h
+    | some rest =>
+      simp [hx] at h
+      subst res
+      have sep0 : SetSep.star (Misc.wordList a (.word x :: .word x2 :: xs.map WordLocW.word)) frame
+          (SetSep.fun2Set (m, fun k => dm k = true)) := by simpa using sep
+      have r0 := readHead a x (.word x2 :: xs.map WordLocW.word) frame m dm sep0
+      have r1 : readWord dm m (a + wordSemBytesInWord) = (x2, true) := by
+        simpa [wordSemBytesInWord, StackRemove.bytesInWord] using
+          readAt a (.word x :: .word x2 :: xs.map WordLocW.word) 1 (by simp) x2 (by simp) frame m dm sep0
+      let m1 : BitVec width → WordLocW width := fun k => if k = a then .word (x ^^^ x) else m k
+      let m2 : BitVec width → WordLocW width := fun k => if k = a + wordSemBytesInWord then .word (x2 ^^^ x2) else m1 k
+      have sep1 : SetSep.star (Misc.wordList a (.word (x ^^^ x) :: .word x2 :: xs.map WordLocW.word)) frame
+          (SetSep.fun2Set (m1, fun k => dm k = true)) := by
+        have w := wordList_write a (.word x :: .word x2 :: xs.map WordLocW.word) 0 (.word (x ^^^ x))
+          m (fun k => dm k = true) frame (by simp) sep0
+        simpa [m1] using w
+      have sep2 : SetSep.star (Misc.wordList a (.word (x ^^^ x) :: .word (x2 ^^^ x2) :: xs.map WordLocW.word)) frame
+          (SetSep.fun2Set (m2, fun k => dm k = true)) := by
+        have w := wordList_write a (.word (x ^^^ x) :: .word x2 :: xs.map WordLocW.word) 1 (.word (x2 ^^^ x2))
+          m1 (fun k => dm k = true) frame (by simp) sep1
+        simpa [m2, wordSemBytesInWord, StackRemove.bytesInWord] using w
+      have split : Misc.wordList a (.word (x ^^^ x) :: .word (x2 ^^^ x2) :: xs.map WordLocW.word) =
+          SetSep.star (Misc.wordList a [.word (x ^^^ x), .word (x2 ^^^ x2)])
+            (Misc.wordList (a + 2 * wordSemBytesInWord) (xs.map WordLocW.word)) := by
+        simpa [wordSemBytesInWord, StackRemove.bytesInWord] using
+          wordListAppend [.word (x ^^^ x), .word (x2 ^^^ x2)] (xs.map WordLocW.word) a
+      let tailFrame := SetSep.star (Misc.wordList a [.word (x ^^^ x), .word (x2 ^^^ x2)]) frame
+      have tailSep : SetSep.star (Misc.wordList (a + 2 * wordSemBytesInWord) (xs.map WordLocW.word)) tailFrame
+          (SetSep.fun2Set (m2, fun k => dm k = true)) := by
+        dsimp [tailFrame]
+        rw [split, ← SetSep.starAssoc, star_swap_first] at sep2
+        exact sep2
+      have tailBound : xs.length < 2 ^ width := by simp at bound; omega
+      obtain ⟨mf, finalSep, finalRun⟩ := ih rest (a + 2 * wordSemBytesInWord) tailFrame m2 hx tailBound tailSep
+      refine ⟨mf, ?_, ?_⟩
+      · dsimp [tailFrame] at finalSep
+        rw [star_swap_first, SetSep.starAssoc] at finalSep
+        have finalSplit : Misc.wordList a (.word (x ^^^ x) :: .word (x2 ^^^ x2) :: rest.map WordLocW.word) =
+            SetSep.star (Misc.wordList a [.word (x ^^^ x), .word (x2 ^^^ x2)])
+              (Misc.wordList (a + 2 * wordSemBytesInWord) (rest.map WordLocW.word)) := by
+          simpa [wordSemBytesInWord, StackRemove.bytesInWord] using
+            wordListAppend [.word (x ^^^ x), .word (x2 ^^^ x2)] (rest.map WordLocW.word) a
+        simp only [BitVec.xor_self] at finalSplit finalSep ⊢
+        simp only [List.map_cons]
+        rw [finalSplit]
+        simpa [BitVec.ofNat] using finalSep
+      · have countBound : xs.length + 2 < 2 ^ width := by simpa [List.length_cons] using bound
+        have countNat : (BitVec.ofNat width (xs.length + 2)).toNat = xs.length + 2 := by
+          simp [BitVec.toNat_ofNat, Nat.mod_eq_of_lt countBound]
+        have twoNat : (2 : BitVec width).toNat = 2 := by
+          rcases good with hw | hw <;> subst width <;> decide
+        have notSmall : ¬ ((BitVec.ofNat width (xs.length + 2)).toNat < (2 : BitVec width).toNat ∨ ¬ goodDimindex width) := by
+          simp only [not_or, not_not, countNat, twoNat, good, and_true]
+          omega
+        have countSub : BitVec.ofNat width (xs.length + 2) - 2 = BitVec.ofNat width xs.length := by
+          simp only [BitVec.ofNat_add]
+          simp
+        change wordXorBytes a a (BitVec.ofNat width (xs.length + 2)) dm m = some mf
+        rw [wordXorBytes]
+        simp only [notSmall, ↓reduceIte, r0, r1, Bool.true_and]
+        simpa only [countSub, m1, m2] using finalRun
+
+
+/-- XORing disjoint packed byte buffers preserves the source buffer and frame. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "xor_bytes_word_list"
+  (words_as_type_indexed_bitvec)]
+theorem xorBytesWordList {width : Nat} [NeZero width] (vals1 vals2 res : List (BitVec 8))
+    (a b : BitVec width) (be : Bool) (frame : ((BitVec width × WordLocW width) → Prop) → Prop)
+    (m : BitVec width → WordLocW width) (dm : BitVec width → Bool)
+    (h : SemanticPrimitivesHOL.xorBytes vals1 vals2 = some res) (good : goodDimindex width)
+    (bound : (makeZeros (width := width) vals1).length < 2 ^ width)
+    (sep : SetSep.star (SetSep.star
+      (Misc.wordList a ((writeBytes vals1 (makeZeros (width := width) vals1) be).map WordLocW.word))
+      (Misc.wordList b ((writeBytes vals2 (makeZeros (width := width) vals2) be).map WordLocW.word)))
+      frame (SetSep.fun2Set (m, fun k => dm k = true))) :
+    ∃ m1, SetSep.star (SetSep.star
+      (Misc.wordList a ((writeBytes vals1 (makeZeros (width := width) vals1) be).map WordLocW.word))
+      (Misc.wordList b ((writeBytes res (makeZeros (width := width) vals2) be).map WordLocW.word)))
+      frame (SetSep.fun2Set (m1, fun k => dm k = true)) ∧
+      wordXorBytes a b (BitVec.ofNat width (makeZeros (width := width) vals1).length) dm m = some m1 := by
+  have xors := xorBytesXorWords (width := width) vals1 vals2 res be h good
+  have result := xorWordsWordList (writeBytes vals1 (makeZeros (width := width) vals1) be)
+    (writeBytes vals2 (makeZeros (width := width) vals2) be)
+    (writeBytes res (makeZeros (width := width) vals2) be)
+    a b be frame m dm xors good (by simpa [writeBytes_wordCount] using bound) sep
+  simpa [writeBytes_wordCount] using result
+
+/-- XORing a packed byte buffer with itself preserves the frame. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "xor_bytes_word_list_alias"
+  (words_as_type_indexed_bitvec)]
+theorem xorBytesWordListAlias {width : Nat} [NeZero width] (vals res : List (BitVec 8))
+    (a : BitVec width) (be : Bool) (frame : ((BitVec width × WordLocW width) → Prop) → Prop)
+    (m : BitVec width → WordLocW width) (dm : BitVec width → Bool)
+    (h : SemanticPrimitivesHOL.xorBytes vals vals = some res) (good : goodDimindex width)
+    (bound : (makeZeros (width := width) vals).length < 2 ^ width)
+    (sep : SetSep.star (Misc.wordList a ((writeBytes vals (makeZeros (width := width) vals) be).map WordLocW.word))
+      frame (SetSep.fun2Set (m, fun k => dm k = true))) :
+    ∃ m1, SetSep.star (Misc.wordList a ((writeBytes res (makeZeros (width := width) vals) be).map WordLocW.word))
+      frame (SetSep.fun2Set (m1, fun k => dm k = true)) ∧
+      wordXorBytes a a (BitVec.ofNat width (makeZeros (width := width) vals).length) dm m = some m1 := by
+  have xors := xorBytesXorWords (width := width) vals vals res be h good
+  have result := xorWordsWordListAlias (writeBytes vals (makeZeros (width := width) vals) be)
+    (writeBytes res (makeZeros (width := width) vals) be)
+    a be frame m dm xors good (by simpa [writeBytes_wordCount] using bound) sep
+  simpa [writeBytes_wordCount] using result
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
