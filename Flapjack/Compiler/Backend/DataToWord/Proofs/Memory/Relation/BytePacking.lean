@@ -86,24 +86,10 @@ theorem getByte_bytesToWord {width : Nat} [NeZero width] (i k : Nat) (be : Bool)
   intro bytes word h
   simpa using readBytesAux (2 ^ k) 0 bytes word be i h.2.2.2 (by omega) h.2.1 h.1
 
-/-- Packing preserves the number of destination words (Flapjack helper). -/
-private theorem packedLength {width : Nat} [NeZero width] (bytes : List (BitVec 8))
-    (words : List (BitVec width)) (be : Bool) :
-    (DataToWord.writeBytes bytes words be).length = words.length := by
-  induction words generalizing bytes with
-  | nil => rfl
-  | cons x xs ih => simp [DataToWord.writeBytes, ih]
-
-/-- Byte packing preserves the destination word count. -/
-theorem writeBytes_wordCount {width : Nat} [NeZero width] (bytes : List (BitVec 8))
-    (words : List (BitVec width)) (be : Bool) :
-    (DataToWord.writeBytes bytes words be).length = words.length :=
-  packedLength bytes words be
-
 /-- Identify one packed word with its input byte group (Flapjack helper). -/
 private theorem packedAt {width : Nat} [NeZero width] (words : List (BitVec width)) (bytes : List (BitVec 8))
     (be : Bool) (i : Nat) (h : i < words.length) :
-    (DataToWord.writeBytes bytes words be)[i]'(by simpa [packedLength] using h) =
+    (DataToWord.writeBytes bytes words be)[i]'(by simpa [writeBytes_wordCount] using h) =
       bytesToWord (width / 8) 0 (bytes.drop (i * (width / 8))) words[i] be := by
   induction words generalizing bytes i with
   | nil => simp at h

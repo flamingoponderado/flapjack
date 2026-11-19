@@ -145415,5 +145415,14 @@
   "lean_name": "blocksUniqueInsertByteArray2",
   "statement_status": "reviewed_exact",
   "reviewer": "Typed HOL comparison retains both reference pointers and the entire mapped stack; the second component type in vars is independently polymorphic, and the only premise is original block uniqueness."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "LENGTH_write_bytes",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/BytePackingLength.lean",
+  "lean_name": "writeBytes_wordCount",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared LENGTH_write_bytes_typed: HOL binder order is retained for the arbitrary positive-width destination words, fixed word8 bytes and endian flag, and the result is the exact equality of packed and input word-list lengths."
 }
 ]

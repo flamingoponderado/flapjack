@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.WordMemoryEquality
 public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.RefEquality
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BytePackingLength
 
 @[expose] public section
 
@@ -18,14 +19,6 @@ private theorem extractStar {α : Type} (p q r s t f : (α → Prop) → Prop) :
   have : Std.Associative (SetSep.star (α := α)) := ⟨fun p q r => (SetSep.starAssoc p q r).symm⟩
   have : Std.Commutative (SetSep.star (α := α)) := ⟨SetSep.starComm⟩
   ac_rfl
-
-/-- Byte packing preserves the number of input words (Flapjack helper). -/
-private theorem writeBytes_length {width : Nat} [NeZero width] (bytes : List (BitVec 8))
-    (words : List (BitVec width)) (be : Bool) :
-    (DataToWord.writeBytes bytes words be).length = words.length := by
-  induction words generalizing bytes with
-  | nil => rfl
-  | cons x xs ih => simp [DataToWord.writeBytes, ih]
 
 /-- Extract a byte cell and its full frame from a word heap (Flapjack helper). -/
 private theorem byteHeap {width : Nat} [NeZero width] (conf : DataToWord.Config)
@@ -50,7 +43,7 @@ private theorem byteHeap {width : Nat} [NeZero width] (conf : DataToWord.Config)
   subst index
   rw [wordHeapAppend] at assertion
   simp only [wordHeap, wordEl, bytesRep, wordPayload, List.isEmpty_nil, Bool.true_and,
-    List.length_map, Misc.wordList, writeBytes_length] at assertion
+    List.length_map, Misc.wordList, writeBytes_wordCount] at assertion
   have facts := assertion
   obtain ⟨_, _, _, ⟨_, _, _, _, ⟨_, _, _, ⟨_, _, _, _, pure⟩, _⟩⟩, _⟩ := facts
   have bounds := pure.2
