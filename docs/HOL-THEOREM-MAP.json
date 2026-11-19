@@ -144581,5 +144581,14 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Compared the typed probe and source lines 11738-11744: both original premises, the self-alignment equation, shared word width, target word and endian flag are retained."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "decode_length_make_byte_header",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/ByteHeaderDecode.lean",
+  "lean_name": "decodeLength_makeByteHeader",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared decode_length_make_byte_header_typed and HOL source lines 10417-10423: the shared positive word dimension, good_dimindex and both length bounds are retained, as are the two inequalities and arbitrary configuration, flag and byte length. The local HOL shift_def aliases backend_common word_shift_def, represented by wordShiftAmount."
 }
 ]

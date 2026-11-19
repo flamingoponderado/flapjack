@@ -261,3 +261,4 @@ val _ = emit "write_bytes_same_typed" "write_bytes_same";
 val _ = emit "w2n_add_byte_align_lemma_typed" "w2n_add_byte_align_lemma";
 val _ = emit "get_byte_byte_align_typed" "get_byte_byte_align";
 val _ = emit "get_byte_eq_typed" "get_byte_eq";
+val _ = emit "decode_length_make_byte_header_typed" "decode_length_make_byte_header";

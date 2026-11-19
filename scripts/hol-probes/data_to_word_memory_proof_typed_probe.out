@@ -229,3 +229,4 @@ write_bytes_same_typed=∀(ws :α word list) (b1 :word8 list) (b2 :word8 list). 
 w2n_add_byte_align_lemma_typed=good_dimindex (:α) ⇒ w2n ((a' :α word) + byte_align (a :α word)) MOD (dimindex (:α) DIV (8 :num)) = w2n a' MOD (dimindex (:α) DIV (8 :num))
 get_byte_byte_align_typed=good_dimindex (:α) ⇒ get_byte ((a' :α word) + byte_align (a :α word)) (w :α word) (be :bool) = get_byte a' w be
 get_byte_eq_typed=good_dimindex (:α) ∧ (a :α word) = byte_align a + (a' :α word) ⇒ get_byte a (w :α word) (be :bool) = get_byte a' w be
+decode_length_make_byte_header_typed=good_dimindex (:α) ∧ (c :data_to_word$config).len_size + (7 :num) < dimindex (:α) ∧ (len :num) + (2 :num) ** (shift (:α) :num) < (2 :num) ** (c.len_size + (shift (:α) :num)) ⇒ len ≤ w2n (decode_length c (make_byte_header c (fl :bool) len :α word)) * (dimindex (:α) DIV (8 :num)) ∧ w2n (decode_length c (make_byte_header c fl len :α word)) ≤ len DIV (dimindex (:α) DIV (8 :num)) + (1 :num)
