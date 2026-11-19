@@ -144737,4 +144737,58 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "Source comparison: all seventeen source rules are present in HOL's order - Skip, Continue, Delete, Assign, Seq, If, Load, Store, Swap, Add, Sub, Mul, Div, Loop, Rec, LoopBody-return and LoopBody-continue. Each source rule's conjunction of premises becomes that many constructor arguments, which is the same rule; every guard, the INL/INR result side, the recursion target, the clock test and the copy_vars success are preserved. Add/Sub use single_add_word/single_sub_word, Mul/Div single_mul/single_div with single_div_pre, and If uses word_cmp, all at the state's single word dimension."
   }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "b2w_if",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/WordArith.lean",
+    "lean_name": "b2w_if",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: b2w b = if b then 1w else 0w, proved by the same two-case split. HOL's 'a word becomes BitVec width at a positive width; the two word literals are 1 and 0 at that width."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "b2n_if",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/WordArith.lean",
+    "lean_name": "b2n_if",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: b2n b = if ~b then 0 else 1. Lean keeps the Boolean negation and the same branch values."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "LESS_LENGTH_IMP_APPEND",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/WordArith.lean",
+    "lean_name": "lessLengthImpAppend",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: for n < LENGTH xs there are ys, z and zs with xs = ys ++ z::zs and LENGTH ys = n. Lean keeps the strict bound, the three existentials, the split equation and the length equation in the same order."
+  }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "exp_ok_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/Syntax.lean",
+    "lean_name": "expOk",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: the typed capture shows the source clauses expanded over the constructors - Const is T, Var i is i < 25, Op with exactly two arguments is the conjunction of the operand checks, Shift checks only the first operand, and every other shape is F. Lean keeps those clauses in source order with the literal bound 25 standing for the source's max_var_name overload. HOL's bool-valued definition is stated as a proposition."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "syntax_ok_aux_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/Syntax.lean",
+    "lean_name": "syntaxOkAux",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: every source clause is present - Loop recurses into the body, LoopBody is F, Seq is the conjunction, Assign checks the destination and exp_ok, Load/Store check both registers, If checks t2 and the register test on t3 plus both branches, Add/Sub check n1 n2 n3 and the register tests on n4 n5, Mul checks four registers, Div checks five, Rec requires every saved register below the bound and ALL_DISTINCT, and Skip/Delete/Swap/Continue are T. The source's bool-valued definition is stated as a proposition: EVERY becomes membership, ALL_DISTINCT becomes List.Nodup, and !r. t3 = Reg r ==> r < 25 stays a universal implication."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "syntax_ok_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/Syntax.lean",
+    "lean_name": "syntaxOk",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: syntax_ok (LoopBody body) is syntax_ok_aux body and every other program shape is syntax_ok_aux p, matching both source clauses. The source's bool-valued definition is stated as a proposition."
+  }
 ]
