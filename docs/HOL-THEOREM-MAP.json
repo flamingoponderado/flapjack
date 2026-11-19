@@ -23518,12 +23518,12 @@
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "cut_names_adjust_set_insert_1",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CutOdd.lean", "lean_name": "cutNames_adjustSet_insert_one",
-  "statement_status": "reviewed_exact", "reviewer": "Compared cut_names_adjust_set_insert_1_typed: inserting any value at key one preserves the adjusted cut, with independent name-tree and environment payload types."
+  "statement_status": "reviewed_exact", "reviewer": "Compared cut_names_adjust_set_insert_1_typed: inserting any value at key one preserves the adjusted wordSem$cut_names result, with independent name-tree and environment payload types. The HOL result is an optional sparse tree; HOL spt and Lean Spt correspond constructor-for-constructor."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "cut_names_adjust_set_insert_3",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CutOdd.lean", "lean_name": "cutNames_adjustSet_insert_three",
-  "statement_status": "reviewed_exact", "reviewer": "Compared cut_names_adjust_set_insert_3_typed: inserting any value at key three preserves the adjusted cut, with independent name-tree and environment payload types."
+  "statement_status": "reviewed_exact", "reviewer": "Compared cut_names_adjust_set_insert_3_typed: inserting any value at key three preserves the adjusted wordSem$cut_names result, with independent name-tree and environment payload types. The HOL result is an optional sparse tree; HOL spt and Lean Spt correspond constructor-for-constructor."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "case_EQ_SOME_IFF",
@@ -144377,5 +144377,26 @@
   "words_as_type_indexed_bitvec": true,
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "Compared the Seq case with data_compile_correct_typed, data_evaluate_ind_typed and HOL proof lines 870-907: both original evaluator induction hypotheses and all original premises and conclusions are retained. The proof covers normal continuation, early result, and first-program out-of-space with trace, safety and stack monotonicity, and transports exception location and jump presence. Full theorem assembly remains unported. Target maps/words use reviewed representations; the evaluator inherits the reals_as_rational_cuts assumption in docs/SOUNDNESS.md item 8."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "cut_names_adjust_set_insert_ODD",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CutOdd.lean",
+  "lean_name": "cutNames_adjustSet_insertOdd",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Source comparison with cut_names_adjust_set_insert_ODD_typed and cut_names_adjust_set_insert_ODD_result_type in data_to_word_gc_fun_const_ok_probe.out and HOL source lines 7933-7946: the oddness premise and equality of option-valued wordSem cuts retain independent name-set and environment payload types. The separate result-type capture disambiguates the printed insert annotation from the cut result."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "alloc_locals_insert_1",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/AllocLocals.lean",
+  "lean_name": "alloc_locals_insert_one",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source comparison with alloc_locals_insert_1_typed and HOL source lines 7976-7987: equality holds for the full allocation result and final state after insertion of any word location at key one; name-set payload and compiler/FFI state types remain independent. The word state uses canonical finite maps and a shared positive width."
 }
 ]

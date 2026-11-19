@@ -272,3 +272,8 @@ val _ = pr_typed "word_ml_inv_get_vars_IMP_typed" data_to_word_gcProofTheory.wor
 val _ = pr_typed "word_ml_inv_get_var_IMP_typed" data_to_word_gcProofTheory.word_ml_inv_get_var_IMP;
 val _ = pr_typed "word_ml_inv_get_var_IMP_lemma_typed" data_to_word_gcProofTheory.word_ml_inv_get_var_IMP_lemma;
 val _ = pr_typed "data_evaluate_ind_typed" dataSemTheory.evaluate_ind;
+val _ = pr_typed "cut_names_adjust_set_insert_ODD_typed" data_to_word_gcProofTheory.cut_names_adjust_set_insert_ODD;
+val _ = pr_typed "alloc_locals_insert_1_typed" data_to_word_gcProofTheory.alloc_locals_insert_1;
+val cutNameHead = #1 (strip_comb (lhs (rand (concl data_to_word_gcProofTheory.cut_names_adjust_set_insert_ODD))));
+val {Thy=cutNameThy, Name=cutNameName, Ty=_} = dest_thy_const cutNameHead;
+val _ = (print ("cut_names_adjust_set_insert_ODD_result_type=" ^ cutNameThy ^ "$" ^ cutNameName ^ " : " ); print_type (type_of (lhs (rand (concl data_to_word_gcProofTheory.cut_names_adjust_set_insert_ODD)))); print "\n");

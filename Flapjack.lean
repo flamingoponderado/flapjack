@@ -301,6 +301,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.StateInsert
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.MoveIsWord
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.CutState
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.CutOdd
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.AllocLocals
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.CutLocals
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.CutEnvs
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GcAddCallEnv
