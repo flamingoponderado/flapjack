@@ -144754,5 +144754,13 @@
   "words_as_type_indexed_bitvec": true,
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "Compared evaluate_StoreAnyConsts_typed with HOL source lines 16661-16740: the successful list store, memory and domain equalities, distinct registers, valid locations and register values are preserved, as are the existential full target evaluation, resulting memory and NextFree store, output register and preservation of all other locals. The target state uses canonical finite maps and positive-width words. The evaluator inherits reals_as_rational_cuts through instruction semantics; see SOUNDNESS.md item 8."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "do_build_const_IMP_SOME",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/BuildTimestamp.lean",
+  "lean_name": "doBuildConstSome",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared do_build_const_IMP_SOME_typed with HOL source lines 16738-16750: the arbitrary constant parts, polymorphic reference-tree payload, initial timestamp, complete build-result equation and existential final timestamp agree."
 }
 ]
