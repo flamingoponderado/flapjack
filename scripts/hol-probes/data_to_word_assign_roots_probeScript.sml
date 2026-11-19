@@ -1,4 +1,5 @@
 load "preamble";
+load "helperLib";
 load "data_to_word_gcProofTheory";
 load "data_to_word_memoryProofTheory";
 load "data_to_word_assignProofTheory";
@@ -108,6 +109,49 @@ val _ = emit "maxout_bits_bit_typed" data_to_word_memoryProofTheory.maxout_bits_
 val _ = emit "maxout_bits_IMP_typed" data_to_word_memoryProofTheory.maxout_bits_IMP;
 val _ = emit "get_lowerbits_ptrbits_typed" data_to_word_memoryProofTheory.get_lowerbits_ptrbits;
 val _ = emit "make_cons_ptr_thm_typed" data_to_word_memoryProofTheory.make_cons_ptr_thm;
+(* Replay the original local heap_split_heap_store proof: local HOL theorems
+   are not exported by data_to_word_memoryProofTheory. *)
+val heap_split_heap_store_replay = let
+  open preamble helperLib gc_sharedTheory data_to_word_memoryProofTheory
+in
+  Q.prove (`!heap e h1 h2 a y heap2.
+      heap_split e heap = SOME (h1,h2) /\
+      heap_store a y heap = (heap2,T) /\ e <= a ==>
+      ?h3. heap_split e heap2 = SOME (h1,h3)`,
+    Induct \\ fs [heap_split_def,heap_store_def]
+    \\ rpt gen_tac
+    \\ IF_CASES_TAC \\ fs []
+    \\ TOP_CASE_TAC \\ fs []
+    \\ TOP_CASE_TAC \\ fs []
+    \\ strip_tac \\ rveq
+    \\ Cases_on `a=0` \\ fs []
+    \\ Cases_on `a < el_length h` \\ fs []
+    \\ pairarg_tac \\ fs [] \\ rveq \\ fs []
+    \\ res_tac \\ rfs []
+    \\ fs [heap_split_def])
+end;
+val _ = emit "heap_split_heap_store_typed" heap_split_heap_store_replay;
+(* Replay the dependent original local generation-state theorem. *)
+val heap_store_unused_alt_gen_state_ok_replay = let
+  open preamble helperLib gc_sharedTheory data_to_word_memoryProofTheory
+  val heap_split_heap_store = heap_split_heap_store_replay
+in
+  Q.prove (`heap_store_unused_alt a k x heap = (heap2,T) /\
+    gen_state_ok a (a + k) heap gens ==>
+    gen_state_ok (a + el_length x) (a + k) heap2 gens`,
+    Cases_on `gens` \\ fs [gen_state_ok_def]
+    \\ fs [EVERY_MEM] \\ rw [] \\ res_tac \\ fs []
+    \\ fs [gen_start_ok_def]
+    \\ rw [] \\ CCONTR_TAC \\ fs []
+    \\ fs [GSYM NOT_LESS] \\ fs [NOT_LESS]
+    \\ fs [heap_store_unused_alt_def]
+    \\ every_case_tac \\ fs []
+    \\ fs [GSYM IMP_DISJ_THM]
+    \\ imp_res_tac heap_split_heap_store \\ fs []
+    \\ rveq \\ fs [] \\ res_tac \\ fs [])
+end;
+val _ = emit "heap_store_unused_alt_gen_state_ok_typed" heap_store_unused_alt_gen_state_ok_replay;
+
 val _ = emit "heap_store_unused_alt_heap_lookup_typed" data_to_word_memoryProofTheory.heap_store_unused_alt_heap_lookup;
 val _ = emit "heap_store_unused_alt_def_typed" data_to_word_memoryProofTheory.heap_store_unused_alt_def;
 val _ = emit "heap_store_rel_def_typed" data_to_word_memoryProofTheory.heap_store_rel_def;

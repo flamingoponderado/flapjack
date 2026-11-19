@@ -74,6 +74,66 @@ theorem heapStoreUnusedAlt_lookup {α β : Type} (heap heap2 : List (HeapElement
   · exact heapStore_lookup_before heap offset n _ heap2 run before
   · simp at run
 
+/-- A successful store at or after a split preserves the split prefix. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "heap_split_heap_store"]
+theorem heapSplit_heapStore {α β : Type} (heap : List (HeapElement α β))
+    (position : Nat) (left right : List (HeapElement α β)) (offset : Nat)
+    (replacement heap2 : List (HeapElement α β)) :
+    heapSplit position heap = some (left, right) ∧
+      heapStore offset replacement heap = (heap2, true) ∧ position ≤ offset →
+    ∃ right2, heapSplit position heap2 = some (left, right2) := by
+  induction heap generalizing position left right offset heap2 with
+  | nil => simp [heapStore]
+  | cons head tail ih =>
+    rintro ⟨split, store, order⟩
+    by_cases zero : position = 0
+    · subst position
+      simp [heapSplit] at split
+      obtain ⟨rfl, rfl⟩ := split
+      cases heap2 <;> simp [heapSplit]
+    · by_cases inside : position < elLength head
+      · simp [heapSplit, zero, inside] at split
+      · cases hs : heapSplit (position - elLength head) tail with
+        | none => simp [heapSplit, zero, inside, hs] at split
+        | some pair =>
+          obtain ⟨first, second⟩ := pair
+          simp [heapSplit, zero, inside, hs] at split
+          obtain ⟨rfl, rfl⟩ := split
+          have offsetPos : offset ≠ 0 := by omega
+          have offsetOutside : ¬ offset < elLength head := by omega
+          simp only [heapStore, offsetPos, offsetOutside, ↓reduceIte] at store
+          cases ht : heapStore (offset - elLength head) replacement tail with
+          | mk rest flag =>
+            simp [ht] at store
+            obtain ⟨rfl, rfl⟩ := store
+            obtain ⟨right2, split2⟩ := ih _ _ _ _ _ ⟨hs, ht, by omega⟩
+            exact ⟨right2, by simp [heapSplit, zero, inside, split2]⟩
+
+/-- Allocating unused space preserves the generation-start invariant. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "heap_store_unused_alt_gen_state_ok"]
+theorem heapStoreUnusedAlt_genStateOk {α β : Type} (offset length : Nat)
+    (element : HeapElement α β) (heap heap2 : List (HeapElement α β)) (gens : GcCombined.GenState) :
+    heapStoreUnusedAlt offset length element heap = (heap2, true) ∧
+      genStateOk offset (offset + length) heap gens →
+    genStateOk (offset + elLength element) (offset + length) heap2 gens := by
+  classical
+  rintro ⟨run, valid⟩
+  cases gens with
+  | genState count starts =>
+    obtain ⟨bounds, startsOk⟩ := valid
+    constructor
+    · intro start member
+      have := bounds start member
+      omega
+    · intro start member
+      obtain ⟨left, right, split, restriction⟩ := startsOk start member
+      have order := bounds start member
+      unfold heapStoreUnusedAlt at run
+      split at run
+      · obtain ⟨right2, split2⟩ := heapSplit_heapStore heap start left right offset _ heap2 ⟨split, run, order⟩
+        exact ⟨left, right2, split2, restriction⟩
+      · simp at run
+
 /-- Storing at a heap-pre boundary replaces exactly the next element and
 reports whether its allocated length matches the replacement. -/
 @[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "heap_store_lemma"]

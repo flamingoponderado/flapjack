@@ -145031,5 +145031,21 @@
   "lean_name": "heapStoreUnusedAlt_lookup",
   "statement_status": "reviewed_exact",
   "reviewer": "Source comparison: The typed HOL theorem and Lean statement retain arbitrary independent heap carriers, successful allocation and an index strictly before its target, concluding equality of the corresponding heap lookups."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "heap_split_heap_store",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/HeapStore.lean",
+  "lean_name": "heapSplit_heapStore",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Source comparison: Replayed the local HOL proof with types: arbitrary independent heap carriers, successful split and store, and split position at most the store offset imply an existential split of the new heap retaining the same left side."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "heap_store_unused_alt_gen_state_ok",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/HeapStore.lean",
+  "lean_name": "heapStoreUnusedAlt_genStateOk",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Source comparison: Replayed the local HOL proof with types: successful unused allocation and the original generation-state invariant imply the invariant after advancing the allocation boundary by the element length, preserving the reference boundary and generic heap carriers."
 }
 ]
