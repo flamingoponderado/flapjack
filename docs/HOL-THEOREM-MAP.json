@@ -145565,5 +145565,14 @@
   "hol_name": "word_exp_real_addr_2",
   "lean_name": "wordExpRealAddr2",
   "reviewer": "Compared word_exp_real_addr_2_typed: the original premises, both universally quantified scratch words, ordered inserts at 3 and 1, and resulting expression evaluation match HOL."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "env_to_list_domain",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/EnvToList.lean",
+  "lean_name": "envToList_domain",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared env_to_list_domain_typed: the original environment-list equation, independently quantified permutation, and domain equality use the same exact sparse-tree and association-list operations; the word carrier uses the named positive-width translation."
 }
 ]
