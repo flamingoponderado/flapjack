@@ -187,9 +187,9 @@ theorem xorBytesXorWordsAux {width : Nat} [NeZero width] (zs1 zs2 : List (BitVec
   (words_as_type_indexed_bitvec)]
 theorem xorBytesXorWords {width : Nat} [NeZero width] (vals1 vals2 res : List (BitVec 8)) (be : Bool)
     (h : SemanticPrimitivesHOL.xorBytes vals1 vals2 = some res) (good : goodDimindex width) :
-    xorWords (writeBytes vals1 (makeZeros (width := width) vals1) be)
-      (writeBytes vals2 (makeZeros (width := width) vals2) be) =
-      some (writeBytes res (makeZeros (width := width) vals2) be : List (BitVec width)) := by
+    xorWords (writeBytes vals1 (makeZeros vals1 : List (BitVec width)) be)
+      (writeBytes vals2 (makeZeros vals2 : List (BitVec width)) be) =
+      some (writeBytes res (makeZeros vals2 : List (BitVec width)) be) := by
   apply xorBytesXorWordsAux (makeZeros vals1) (makeZeros vals2) vals1 vals2 res be h good
   · simp [makeZeros, List.forall_iff_forall_mem]
   · simp [makeZeros, List.forall_iff_forall_mem]
