@@ -264,3 +264,5 @@ val _ = emit "get_byte_eq_typed" "get_byte_eq";
 val _ = emit "decode_length_make_byte_header_typed" "decode_length_make_byte_header";
 val _ = emit "heap_in_memory_store_UpdateByte_typed" "heap_in_memory_store_UpdateByte";
 val _ = emit "memory_rel_ByteArray_IMP_typed" "memory_rel_ByteArray_IMP";
+val _ = emit "write_bytearray_isWord_typed" "write_bytearray_isWord";
+val _ = emit "write_bytearray_append_typed" "write_bytearray_append";

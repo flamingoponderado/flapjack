@@ -144610,5 +144610,23 @@
   "fmap_as_finite_support_relation": ["store"],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Compared memory_rel_ByteArray_IMP_typed with HOL source lines 11988-12013: the original memory relation, reference lookup and good_dimindex premises, all four existentials, header bits, both real addresses, memory and domain facts, universal byte loads and byte updates, and both width-specific header conclusions are retained. The unused existential l has its own independent HOL type beta, represented by Lean beta with Nonempty beta because HOL types are nonempty. The store is the canonical finite-support map and all source words share one positive width."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "write_bytearray_isWord",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/WriteBytearray.lean",
+  "lean_name": "writeBytearray_isWord",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared write_bytearray_isWord_typed with HOL source lines 16229-16237: arbitrary byte list, initial memory, domain, endianness, address and observed point are retained; the original isWord implication and shared positive word width are unchanged."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "write_bytearray_append",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/WriteBytearray.lean",
+  "lean_name": "writeBytearray_append",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared write_bytearray_append_typed with HOL source lines 16239-16258: both byte lists, original memory and domain, endianness, word address, universal successful-load premise and exact tail-before-prefix write equality are retained."
 }
 ]
