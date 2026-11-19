@@ -144808,5 +144808,14 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Compared const_parts_to_words_LENGTH_typed with HOL: successful lowering of an arbitrary list and good_dimindex imply that the output list length is bounded by the sum of the original part_space_req values. HOL words use positive-width BitVec."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "const_parts_to_words_good_loc",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/ConstPartsGoodLoc.lean",
+  "lean_name": "constPartsWords_good",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared const_parts_to_words_good_loc_typed with HOL: successful lowering of arbitrary parts gives a valid result location and valid locations in every output pair for an arbitrary code set; there are no extra premises. HOL words use positive-width BitVec and code sets are membership predicates."
 }
 ]
