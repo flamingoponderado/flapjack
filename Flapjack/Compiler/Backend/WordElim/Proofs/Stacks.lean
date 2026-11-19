@@ -195,4 +195,89 @@ theorem getStack_encStack {width : Nat} [NeZero width] {β : Type}
                 exact Or.inr hmem)
             exact ih hpremTail e htail
 
+/-- Flapjack-only helper: `get_stack_dec_stack` by induction on the stack, with
+    the encoded value list, `reachable` and the decoded stack generalised; the
+    three HOL premises are separate arguments here. -/
+theorem getStack_decStack_aux {width : Nat} [NeZero width] {β : Type}
+    (stack : List (WordSemStackFrame width)) :
+    ∀ (locs : List (WordLocW width)) (reachable : Spt β)
+      (newStack : List (WordSemStackFrame width)),
+      (∀ n n0, (.loc n n0 : WordLocW width) ∈ locs → sptMem n reachable) →
+      sptDomainSet (getStack stack) ⊆ sptDomainSet reachable →
+      wordSemDecStack locs stack = some newStack →
+      sptDomainSet (getStack newStack) ⊆ sptDomainSet reachable := by
+  induction stack with
+  | nil =>
+      intro locs reachable newStack hlocals hprem hdec
+      cases locs with
+      | nil =>
+          simp only [wordSemDecStack] at hdec
+          injection hdec with hnew
+          subst hnew
+          intro location hmem
+          exact hprem hmem
+      | cons head tail =>
+          simp only [wordSemDecStack] at hdec
+          exact absurd hdec (by simp)
+  | cons frame rest ih =>
+      intro locs reachable newStack hlocals hprem hdec
+      cases frame with
+      | stackFrame lsz nonGcCutset gcCutset handler =>
+          rw [wordSemDecStack] at hdec
+          split at hdec
+          · exact absurd hdec (by simp)
+          · split at hdec
+            · exact absurd hdec (by simp)
+            · rename_i decoded hdecSome
+              injection hdec with hnew
+              subst hnew
+              intro location hmem
+              have ihapp := ih (locs.drop gcCutset.length) reachable decoded
+                (fun n n0 hmem => hlocals n n0 (List.mem_of_mem_drop hmem))
+                (by
+                  intro location hmem'
+                  exact hprem (by
+                    change sptMem location
+                      (getStack (.stackFrame lsz nonGcCutset gcCutset handler :: rest))
+                    rw [getStack_cons, sptMem_sptUnion, sptMem_sptUnion]
+                    exact Or.inr hmem'))
+                hdecSome
+              change sptMem location
+                (sptUnion
+                  (sptUnion (getNumWordlocAlist nonGcCutset)
+                    (getNumWordlocAlist
+                      ((gcCutset.map Prod.fst).zip (locs.take gcCutset.length))))
+                  (getStack decoded)) at hmem
+              rw [sptMem_sptUnion, sptMem_sptUnion] at hmem
+              rcases hmem with (hnonGc | hgc) | htail
+              · exact hprem (by
+                  change sptMem location
+                    (getStack (.stackFrame lsz nonGcCutset gcCutset handler :: rest))
+                  rw [getStack_cons, sptMem_sptUnion, sptMem_sptUnion]
+                  exact Or.inl (Or.inl hnonGc))
+              · obtain ⟨offset, hentry⟩ :=
+                  (getNumWordlocAlist_thm (α := Unit) location ()
+                    ((gcCutset.map Prod.fst).zip (locs.take gcCutset.length))).mpr hgc
+                rw [List.map_snd_zip (l₁ := gcCutset.map Prod.fst)
+                  (l₂ := locs.take gcCutset.length) (by simp)] at hentry
+                exact hlocals location offset (List.mem_of_mem_take hentry)
+              · exact ihapp htail
+
+/-- Exact HOL `get_stack_dec_stack` (`word_elimProofScript.sml:262-287`): after
+    decoding, the new stack's locations are inside `reachable`, given the
+    encoded values, the old stack and the decoded stack.  HOL states the three
+    conditions as ONE conjunction premise; `reachable` is a `num_map`, so its
+    payload type is independent, as in the typed capture. -/
+@[hol "cakeml/compiler/backend/proofs/word_elimProofScript.sml" "get_stack_dec_stack"
+  (words_as_type_indexed_bitvec)]
+theorem getStack_decStack {width : Nat} [NeZero width] {β : Type}
+    (locs : List (WordLocW width)) (stack : List (WordSemStackFrame width))
+    (reachable : Spt β) (newStack : List (WordSemStackFrame width)) :
+    ((∀ n n0, (.loc n n0 : WordLocW width) ∈ locs → sptMem n reachable) ∧
+      sptDomainSet (getStack stack) ⊆ sptDomainSet reachable ∧
+      wordSemDecStack locs stack = some newStack) →
+    sptDomainSet (getStack newStack) ⊆ sptDomainSet reachable := by
+  rintro ⟨hlocals, hprem, hdec⟩
+  exact getStack_decStack_aux stack locs reachable newStack hlocals hprem hdec
+
 end Flapjack.Compiler.Backend.WordElim
