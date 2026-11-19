@@ -297,6 +297,7 @@ in
   \\ rfs [GSYM SUB_PLUS]
   )
 end;
+val _ = emit "memory_rel_Cons1_typed" data_to_word_memoryProofTheory.memory_rel_Cons1;
 val _ = emit "store_list_thm_typed" data_to_word_memoryProofTheory.store_list_thm;
 val _ = emit "heap_store_unused_alt_IMP_length_typed" data_to_word_memoryProofTheory.heap_store_unused_alt_IMP_length;
 val _ = emit "cons_thm_alt_typed" data_to_word_memoryProofTheory.cons_thm_alt;

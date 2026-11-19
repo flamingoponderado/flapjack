@@ -145130,5 +145130,17 @@
   "lean_name": "every2_function_eq",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared the typed replay of the original local HOL proof: for arbitrary independently typed lists and function, pointwise function equality is equivalent to equality of the mapped first list with the second."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "memory_rel_Cons1",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/ConsMemory.lean",
+  "lean_name": "memoryRel_cons1",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "st"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source comparison: memory_rel_Cons1 and its typed capture retain the full input memory relation, equal field lengths, nonempty values, successful header encoding, space bound and good_dimindex. The existential free/current addresses and memory retain both store lookups, successful word-list store and full post memory relation with NextFree updated and constructor pointer. The store uses the canonical finite-support map and HOL words share one positive BitVec width."
 }
 ]

@@ -553,6 +553,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ArrayUpdateSt
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ArrayUpdateElement
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ArrayStore
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.GlobalsSet
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ConsMemory
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ConsAlt
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.HeapAllocate
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.HeapStore
