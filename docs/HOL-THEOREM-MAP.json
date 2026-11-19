@@ -144071,4 +144071,88 @@
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only wrapper consequence for the try_if_hoist1 entry point, derived from getCodeLabels_tryIfHoist2. HOL inlines try_if_hoist1_def and applies word_get_code_labels_try_if_hoist2 inside its word_get_code_labels_simp_duplicate_if proof; no separately named HOL declaration states the wrapper containment."
   }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_get_code_labels_inst_select",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/InstSelectCodeLabels.lean",
+    "lean_name": "instSelect_codeLabels",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (word_convs_proof_typed_probe.out, word_get_code_labels_inst_select_typed): source945-950. `forall (ac : alpha asm_config) (v : num) (ps : alpha prog). word_get_code_labels (inst_select ac v ps) = word_get_code_labels ps`; the capture binds ac, v, ps in that order, matching Lean's `(config : AsmConfigExact width) (temporary : Nat) (program : ...)`. inst_select is the tagged instSelect and word_get_code_labels is the tagged getCodeLabelsHOL. No premise. Only HOL's type-indexed word becomes BitVec width."
+  }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_get_code_labels_ssa_cc_trans",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/SSACodeLabels.lean",
+    "lean_name": "codeLabels_ssaCcTrans",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (word_convs_proof_typed_probe.out, word_get_code_labels_ssa_cc_trans_typed): source1243-1250. `forall (x : alpha prog) (y : num sptree$num_map) (z : num) (lt : (num sptree$num_map # sptree$num_set # sptree$num_set) list) (a : alpha prog) (b : num sptree$num_map) (c : num). ssa_cc_trans x y z lt = (a,b,c) ==> word_get_code_labels a = word_get_code_labels x`; every variable is universal and Lean binds x y z lt a b c in the same order (HOL's tuple pattern (a,b,c) is written as three separate binders). ssa_cc_trans is the tagged ssaCcTrans, num_map/num_set are the reviewed Spt Nat / Spt Unit carriers, and word_get_code_labels is the tagged getCodeLabelsHOL. The producer equality is the single premise. Only HOL's type-indexed word becomes BitVec width."
+  }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_get_code_labels_full_ssa_cc_trans",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/SSACodeLabels.lean",
+    "lean_name": "codeLabels_fullSsaCcTrans",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (word_convs_proof_typed_probe.out, word_get_code_labels_full_ssa_cc_trans_typed): source1294-1298. `forall (m : num) (p : alpha prog). word_get_code_labels (full_ssa_cc_trans m p) = word_get_code_labels p`; the capture binds m then p, matching Lean's `(m : Nat) (p : ...)`. full_ssa_cc_trans is the tagged fullSsaCcTrans and word_get_code_labels is the tagged getCodeLabelsHOL. No premise. Only HOL's type-indexed word becomes BitVec width."
+  }
+,
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/SSACodeLabels.lean",
+    "lean_name": "codeLabels_ssaCcTrans_fst",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only first-component invariant of ssa_cc_trans, proved by structural recursion mirroring HOL's recInduct ssa_cc_trans_ind walk; HOL states only the producer-equation form, which is derived here as codeLabels_ssaCcTrans."
+  }
+,
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/SSACodeLabels.lean",
+    "lean_name": "fakeMovesLabels1",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only projection corollary of getCodeLabels_fakeMoves for the left output; HOL applies word_get_code_labels_fake_moves inline with pairarg_tac."
+  }
+,
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/SSACodeLabels.lean",
+    "lean_name": "fakeMovesLabels2",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only projection corollary of getCodeLabels_fakeMoves for the right output; HOL applies word_get_code_labels_fake_moves inline."
+  }
+,
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/SSACodeLabels.lean",
+    "lean_name": "fixLabels1",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only label analogue of fix_inconsistencies' left branch: both emitted branches are move/fake-move sequences, hence label-free. HOL unfolds fix_inconsistencies_def and applies word_get_code_labels_fake_moves inline."
+  }
+,
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/SSACodeLabels.lean",
+    "lean_name": "fixLabels2",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only label analogue for the right branch of fix_inconsistencies; same HOL inlining as fixLabels1."
+  }
+,
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/SSACodeLabels.lean",
+    "lean_name": "loopSetupLabels",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only projection corollary of loop_setup_get_code_labels for the setup program, so the loop case does not need to name the producer equality; HOL applies loop_setup_get_code_labels with drule."
+  }
 ]
