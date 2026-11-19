@@ -145007,5 +145007,29 @@
   ],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Source comparison: memory_rel_Cons_empty and memory_rel_Cons_empty_typed: the full memory relation, tag below dimword divided by 16, and good_dimindex imply the same relation with the empty block and its BlockNil word prepended. The store uses canonical finite support and HOL words use positive-width BitVec."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "heap_store_unused_alt_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/HeapStore.lean",
+  "lean_name": "heapStoreUnusedAlt",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Source comparison: The typed HOL definition and Lean body preserve independent address and payload carriers, the unused lookup and size test, allocation order, exact store call and failure result."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "heap_store_rel_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/HeapStore.lean",
+  "lean_name": "heapStoreRel",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Source comparison: The typed HOL definition and Lean body preserve independent heap carriers and quantify over all offsets, requiring each existing data-element lookup to remain equal."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "heap_store_unused_alt_heap_lookup",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/HeapStore.lean",
+  "lean_name": "heapStoreUnusedAlt_lookup",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Source comparison: The typed HOL theorem and Lean statement retain arbitrary independent heap carriers, successful allocation and an index strictly before its target, concluding equality of the corresponding heap lookups."
 }
 ]
