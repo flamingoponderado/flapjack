@@ -433,3 +433,23 @@ val _ = capture "wf_numset_list_delete_eq_typed" "wf_numset_list_delete_eq";
 val _ = capture "with_same_locals_typed" "with_same_locals";
 val _ = capture "with_same_store_typed" "with_same_store";
 val _ = capture "word_alloc_full_inst_ok_less_lem_typed" "word_alloc_full_inst_ok_less_lem";
+
+(* Shared script-level `[local]` lemmas (task 234). *)
+val _ = capture "SUBSET_OF_INSERT_typed" "SUBSET_OF_INSERT";
+val _ = capture "LET_FORALL_ELIM_prime_typed" "LET_FORALL_ELIM'";
+val _ = capture "INJ_ALL_DISTINCT_MAP_typed" "INJ_ALL_DISTINCT_MAP";
+val _ = capture "LASTN_LENGTH2_typed" "LASTN_LENGTH2";
+val _ = capture "toAList_not_empty_typed" "toAList_not_empty";
+val _ = capture "PAIR_CASE_PAIR_MAP_typed" "PAIR_CASE_PAIR_MAP";
+val _ = capture "MEM_ZIP_weak_typed" "MEM_ZIP_weak";
+val _ = capture "apply_colour_exp_I_typed" "apply_colour_exp_I";
+val _ = capture "get_var_ignore_typed" "get_var_ignore";
+val _ = capture "PAIR_ZIP_MEM_typed" "PAIR_ZIP_MEM";
+val _ = capture "ALOOKUP_ZIP_MEM_typed" "ALOOKUP_ZIP_MEM";
+val _ = capture "ALOOKUP_ALL_DISTINCT_REMAP_typed" "ALOOKUP_ALL_DISTINCT_REMAP";
+val _ = capture "get_var_set_vars_notin_typed" "get_var_set_vars_notin";
+val _ = capture "get_vars_NOT_MEM_typed" "get_vars_NOT_MEM";
+val _ = capture "get_vars_eq_alist_insert_typed" "get_vars_eq_alist_insert";
+val _ = capture "ssa_reconcile_distinct_lemma_typed" "ssa_reconcile_distinct_lemma";
+val _ = capture "ssa_reconcile_filtered_in_dom_typed" "ssa_reconcile_filtered_in_dom";
+val _ = capture "ssa_cut_inter_lemma_typed" "ssa_cut_inter_lemma";

@@ -3,3 +3,4 @@ sort_SORTED_typed=∀(R :α -> α -> bool) (L :α list). transitive R ∧ total 
 sort_MEM_typed=∀(R :α -> α -> bool) (L :α list). MEM (x :α) (sort R L) ⇔ MEM x L
 sort_PERM_typed=∀(R :α -> α -> bool) (L :α list). PERM L (sort R L)
 sort_LENGTH_typed=∀(R :α -> α -> bool) (l :α list). LENGTH (sort R l) = LENGTH l
+sort_SORTS_typed=∀(R :α -> α -> bool). transitive R ∧ total R ⇒ SORTS (sort :(α -> α -> bool) -> α list -> α list) R

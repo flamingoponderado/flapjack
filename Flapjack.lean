@@ -155,6 +155,13 @@ import Flapjack.Compiler.Backend.WordToStack.ProductionMoveMaterialization
 import Flapjack.Compiler.Backend.WordToStack.ProductionBitmapTransport
 import Flapjack.Compiler.Backend.WordToStack.ProductionBitmapWritePair
 import Flapjack.Compiler.Backend.WordToStack.ProductionBitmapConsumption
+import Flapjack.Compiler.Backend.WordElim.Definitions
+import Flapjack.Compiler.Backend.WordElim.Proofs.Definitions
+import Flapjack.Compiler.Backend.WordElim.Proofs.Analysis
+import Flapjack.Compiler.Backend.WordElim.Proofs.Locations
+import Flapjack.Compiler.Backend.WordElim.Proofs.Stacks
+import Flapjack.Compiler.Backend.WordElim.Proofs.ConstWrites
+import Flapjack.Compiler.Backend.WordElim.Proofs.Vars
 import Flapjack.RiscV.CorrectnessEncoding.ShiftRorImmediate
 import Flapjack.RiscV.CorrectnessEncoding.RorExecution
 import Flapjack.RiscV.CorrectnessEncoding.RorStep
@@ -479,6 +486,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Word64
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.NumberHeader
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BignumCompare
 import Flapjack.Misc.Multiword.Length
+import Flapjack.Misc.Multiword.SingleWord
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.WordEquality.Word64
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.WordEquality.Number
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.WordEquality.Block
@@ -660,6 +668,17 @@ import Flapjack.Compiler.Backend.WordBignum.Proofs.Lookup
 import Flapjack.Compiler.Backend.WordBignum.Proofs.CompileTotal
 import Flapjack.Compiler.Backend.WordBignum.Proofs.FuelMonotone
 import Flapjack.Compiler.Backend.WordBignum.Proofs.CompileEquations
+import Flapjack.Compiler.Backend.WordBignum.Proofs.Semantics
+import Flapjack.Compiler.Backend.WordBignum.Proofs.WordArith
+import Flapjack.Compiler.Backend.WordBignum.Proofs.Syntax
+import Flapjack.Compiler.Backend.WordBignum.Proofs.MiniStateOps
+import Flapjack.Compiler.Backend.WordBignum.Proofs.CodeSubset
+import Flapjack.Compiler.Backend.WordBignum.Proofs.Relations
+import Flapjack.Compiler.Backend.WordBignum.Proofs.StateRel
+import Flapjack.Compiler.Backend.WordBignum.Proofs.EvaluateLemmas
+import Flapjack.Compiler.Backend.WordBignum.Proofs.HeapLemmas
+import Flapjack.Compiler.Backend.WordBignum.Proofs.MultiwordLemmas
+import Flapjack.Compiler.Backend.WordBignum.Proofs.FiniteMapLemmas
 import Flapjack.Compiler.Backend.WordBignum.Generate
 import Flapjack.Compiler.Backend.ClosLang.Syntax
 import Flapjack.Compiler.Backend.ClosLang.GeneratedSize
@@ -2435,6 +2454,7 @@ import Flapjack.FiniteMap.Comparison.Properties
 import Flapjack.FiniteMap.AlistExact
 import Flapjack.FiniteMap.AlistExact.Append
 import Flapjack.FiniteMap.Exact.Submap
+import Flapjack.FiniteMap.DomExact
 import Flapjack.Misc.BalancedMap.Core
 import Flapjack.Misc.BalancedMap.Insert
 import Flapjack.Misc.BalancedMap.Invariants
@@ -2827,6 +2847,7 @@ import Flapjack.Compiler.Backend.LabToTarget.Navigation
 import Flapjack.Compiler.Backend.LabToTarget.Memory
 import Flapjack.Compiler.Backend.Parmove.InjOnState.Step
 import Flapjack.Compiler.Backend.LabToTarget.Fetch
+import Flapjack.Compiler.Backend.LabToTarget.PcAdjust
 import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar
 import Flapjack.Compiler.Backend.RegAlloc.SortedMem
 import Flapjack.Compiler.Backend.Parmove.AllDistinct.Steps
@@ -3151,6 +3172,7 @@ import Flapjack.Pancake.Proofs.PanGlobals.MemoryUpdate
 import Flapjack.Pancake.Proofs.PanGlobals.ShMemLoadLemmas
 import Flapjack.Compiler.Backend.StackProps.RemoveNames
 import Flapjack.Pancake.Proofs.WordConvs.SmartSeqLabels
+import Flapjack.Pancake.Proofs.WordConvs.FlatExpShareInst
 import Flapjack.Pancake.Proofs.WordConvs.RemoveDead
 import Flapjack.Pancake.Proofs.WordConvs.ApplyColour
 import Flapjack.Pancake.Proofs.WordConvs.WordAlloc
@@ -3159,12 +3181,17 @@ import Flapjack.Pancake.Proofs.WordConvs.SSAFlatInst
 import Flapjack.Pancake.Proofs.WordConvs.SSAFlatProgram
 import Flapjack.Pancake.Proofs.WordConvs.SSAFlatFull
 import Flapjack.Pancake.Proofs.WordConvs.SSALabelHelpers
+import Flapjack.Pancake.Proofs.WordConvs.SSACodeLabels
 import Flapjack.Pancake.Proofs.WordConvs.SSALabelFull
 import Flapjack.Pancake.Proofs.WordConvs.InstSelectExp
+import Flapjack.Pancake.Proofs.WordConvs.InstSelectExpCodeLabels
 import Flapjack.Pancake.Proofs.WordConvs.InstSelectProgram
+import Flapjack.Pancake.Proofs.WordConvs.InstSelectCodeLabels
 import Flapjack.Pancake.Proofs.WordConvs.ThreeToTwo
+import Flapjack.Pancake.Proofs.WordConvs.ThreeToTwoCodeLabels
 import Flapjack.Pancake.Proofs.WordConvs.Unreach
 import Flapjack.Pancake.Proofs.WordConvs.UnreachLabels
+import Flapjack.Pancake.Proofs.WordConvs.UnreachCodeLabels
 import Flapjack.Pancake.Proofs.WordConvs.WordSimpInstructions
 import Flapjack.Pancake.Proofs.WordConvs.WordSimpLabels.Sequence
 import Flapjack.Pancake.Proofs.WordConvs.WordSimpLabels.PushOut
@@ -3181,6 +3208,7 @@ import Flapjack.Pancake.Proofs.WordConvs.NotCreatedTail
 import Flapjack.Pancake.Proofs.WordConvs.GoodHandlersPasses
 import Flapjack.Pancake.Proofs.WordConvs.GoodHandlersSSA
 import Flapjack.Pancake.Proofs.WordConvs.GoodHandlersTail
+import Flapjack.Pancake.Proofs.WordConvs.WordToWordCodeLabels
 import Flapjack.Pancake.Proofs.WordConvs.UnreachPreAlloc
 import Flapjack.Compiler.Backend.WordRemove
 import Flapjack.Compiler.Backend.WordRemove.Production
@@ -4490,6 +4518,7 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsGetVars
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticCallCase
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticCorrect
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.FullSSACorrect
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SupportLemmas
 import Flapjack.Compiler.Backend.LabToTarget.Encoding
 import Flapjack.Compiler.Backend.LabToTarget.LabsDomain
 import Flapjack.Compiler.Backend.LabToTarget.SecondPass

@@ -90,4 +90,70 @@ theorem mmioPcsMinIndex_getShmemInfo {width : Nat} [NeZero width]
   obtain ⟨op,rfl⟩ := hl x hx
   intro h
   cases h
+
+/-- Flapjack infrastructure naming HOL's `FILTER` test
+`fun x. exists s. x = ExtCall s` as a Boolean constructor test. -/
+def isExtCall : HolFfiName → Bool
+  | .extCall _ => true
+  | _ => false
+
+/-- Exact HOL `FILTER_mmio_pcs_min_index` (`lab_to_targetProofScript.sml:6678-6700`):
+filtering the FFI names to the external calls and appending a shared-memory-only
+suffix puts the MMIO boundary at the filtered length. HOL's `FILTER` predicate
+`fun x. exists s. x = ExtCall s` is stated inline; the proof rewrites it to the
+Boolean constructor test `isExtCall`. -/
+@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
+  "FILTER_mmio_pcs_min_index"]
+theorem filter_mmioPcsMinIndex (l ffis : List HolFfiName)
+    (hl : ∀ x ∈ l, ∃ op, x = HolFfiName.sharedMem op) :
+    mmioPcsMinIndex ((ffis.filter (fun x => by
+        classical exact decide (∃ s, x = HolFfiName.extCall s))) ++ l) =
+      some (ffis.filter (fun x => by
+        classical exact decide (∃ s, x = HolFfiName.extCall s))).length := by
+  have hfilter : ffis.filter (fun x => by
+        classical exact decide (∃ s, x = HolFfiName.extCall s))
+      = ffis.filter isExtCall := by
+    apply List.filter_congr
+    intro x _
+    classical
+    cases x with
+    | extCall name =>
+        simp only [isExtCall]
+        exact decide_eq_true_eq.mpr ⟨name, rfl⟩
+    | sharedMem op =>
+        simp only [isExtCall]
+        exact decide_eq_false_iff_not.mpr (by
+          rintro ⟨s, hs⟩
+          cases hs)
+  rw [hfilter]
+  apply mmioPcsMinIndex_eq_some
+  refine ⟨by simp, ?_, ?_⟩
+  · intro j hj
+    have hmem : (ffis.filter isExtCall)[j] ∈ ffis.filter isExtCall :=
+      List.getElem_mem hj
+    have hisExt := (List.mem_filter.mp hmem).2
+    obtain ⟨name, hname⟩ : ∃ name, (ffis.filter isExtCall)[j] =
+        HolFfiName.extCall name := by
+      cases hx : (ffis.filter isExtCall)[j] <;> simp_all [isExtCall]
+    refine ⟨name, ?_⟩
+    have hj' : j < (ffis.filter isExtCall ++ l).length := by
+      simp only [List.length_append]
+      omega
+    rw [holEl_eq_getElem j _ hj']
+    rw [List.getElem_append_left hj]
+    exact hname
+  · intro j hj hb
+    have hjl : j - (ffis.filter isExtCall).length < l.length := by
+      simp at hb
+      omega
+    obtain ⟨op, hop⟩ := hl (l[j - (ffis.filter isExtCall).length]'hjl)
+      (List.getElem_mem hjl)
+    refine ⟨op, ?_⟩
+    have hj'' : j < (ffis.filter isExtCall ++ l).length := by
+      simp only [List.length_append]
+      omega
+    rw [holEl_eq_getElem j _ hj'']
+    rw [List.getElem_append_right hj]
+    exact hop
+
 end Flapjack.Compiler.Backend.LabToTarget

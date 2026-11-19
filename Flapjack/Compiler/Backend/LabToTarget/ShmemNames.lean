@@ -61,4 +61,21 @@ theorem getShmemInfo_mappedNames {width : Nat} [NeZero width]
   refine ⟨(getShmemInfo secs pos [] []).1,
     (getShmemInfo_prepend secs pos ffiNames info newFfiNames newInfo h).1,?_⟩
   exact shmemNamesShared secs pos [] [] (by simp)
+
+/-- Exact HOL `FILTER_NOT_MEM_Mapped` (`lab_to_targetProofScript.sml:9745-9749`):
+filtering out the `MappedRead` and `MappedWrite` names leaves neither behind.
+HOL's `string` is `char list`, rendered as `List HolChar`, and its `"MappedRead"`
+/ `"MappedWrite"` literals are `MlString.explode (ofString ...)`, the exact
+character-code list of HOL's `strlit`. The `FILTER` predicate is stated inline
+as HOL writes it. -/
+@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
+  "FILTER_NOT_MEM_Mapped"]
+theorem filter_notMemMapped (l : List (List HolChar)) :
+    ¬ MlString.explode (ofString "MappedRead") ∈
+        l.filter (fun x => decide (x ≠ MlString.explode (ofString "MappedRead") ∧
+          x ≠ MlString.explode (ofString "MappedWrite"))) ∧
+    ¬ MlString.explode (ofString "MappedWrite") ∈
+        l.filter (fun x => decide (x ≠ MlString.explode (ofString "MappedRead") ∧
+          x ≠ MlString.explode (ofString "MappedWrite"))) := by
+  simp [List.mem_filter]
 end Flapjack.Compiler.Backend.LabToTarget

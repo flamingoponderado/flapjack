@@ -218,6 +218,36 @@ theorem labelsRelHoist2 {width : Nat} [NeZero width]
               intermLabels (by assumption) (by omega)
 
 
+/-- Original label containment of a successful hoist2: the output keeps only
+labels of the two source programs, the intermediate prefix and the duplicate
+tail. HOL's universal `s` is vacuous in both guards and the conclusion and is
+omitted here, as in `labelsRelHoist2`. -/
+@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
+  "word_get_code_labels_try_if_hoist2" (words_as_type_indexed_bitvec)]
+theorem getCodeLabels_tryIfHoist2 {width : Nat} [NeZero width]
+    (out : WordLangProgHOL (BitVec width)) (count : Nat)
+    (first interm dummy second : WordLangProgHOL (BitVec width))
+    (hoisted : tryIfHoist2 count first interm dummy second = some out) :
+    getCodeLabelsHOL out ⊆
+      getCodeLabelsHOL first ∪ getCodeLabelsHOL interm ∪ getCodeLabelsHOL second := by
+  fun_induction tryIfHoist2 count first interm dummy second <;>
+    simp_all [getCodeLabelsHOL, destIfIff, Set.union_assoc]
+  case case4 =>
+    rw [← hoisted]
+    intro x hx
+    have h := getCodeLabels_constFp _ hx
+    simp only [getCodeLabelsHOL, Set.mem_union] at h ⊢
+    tauto
+  case case7 =>
+    rw [← hoisted]
+    intro x hx
+    simp only [getCodeLabelsHOL, Set.mem_union] at hx ⊢
+    rcases hx with hx | hx
+    · tauto
+    · have h := getCodeLabels_constFp _ hx
+      simp only [getCodeLabelsHOL, Set.mem_union] at h
+      tauto
+
 /-- Flapjack-only wrapper consequence: the actual hoist1 output has the
 relation established by the complete original hoist2 theorem. -/
 private theorem hoist1Labels {width : Nat} [NeZero width]
@@ -261,5 +291,73 @@ theorem labelsRelSimpDuplicateIf {width : Nat} [NeZero width]
     rw [extractLabelsSeqAssoc]
     exact labelsRel_trans (labelsRel_append ihA ihB) (hoist1Labels p1x p2x p3 run)
 
+/-- Flapjack-only wrapper consequence for the hoist1 entry point: a successful
+`try_if_hoist1` output keeps only the two operands' labels. HOL inlines
+`try_if_hoist1_def` and applies `word_get_code_labels_try_if_hoist2` inside its
+simp_duplicate_if proof; no separately named HOL declaration. -/
+private theorem getCodeLabels_tryIfHoist1 {width : Nat} [NeZero width]
+    (first second out : WordLangProgHOL (BitVec width))
+    (run : tryIfHoist1 first second = some out) :
+    getCodeLabelsHOL out ⊆ getCodeLabelsHOL first ∪ getCodeLabelsHOL second := by
+  unfold tryIfHoist1 at run
+  split at run
+  · contradiction
+  · rename_i cmp lhs rhs a b dest
+    have h := getCodeLabels_tryIfHoist2 out rewriteDuplicateIfMaxReassoc first .skip
+      (.ite cmp lhs rhs (.raise 1) (.raise 2)) second run
+    simpa [getCodeLabelsHOL, Set.empty_union, Set.union_empty] using h
+
+/-- Original code-label containment of the duplicate-if traversal: the output
+keeps only source labels, for every call return and exception-handler family. -/
+@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
+  "word_get_code_labels_simp_duplicate_if" (words_as_type_indexed_bitvec)]
+theorem getCodeLabels_simpDuplicateIf {width : Nat} [NeZero width]
+    (program : WordLangProgHOL (BitVec width)) :
+    getCodeLabelsHOL (simpDuplicateIf program) ⊆ getCodeLabelsHOL program := by
+  fun_induction simpDuplicateIf program <;>
+    try simp_all only [getCodeLabelsHOL, getCodeLabels_seqAssoc]
+  case case2 retProg dest args handler ihRet ihHandler =>
+    cases retProg with
+    | none =>
+      cases handler with
+      | none =>
+        simp only [getCodeLabelsHOL]
+        exact Set.Subset.refl _
+      | some h =>
+        obtain ⟨n, body, l1, l2⟩ := h
+        simp only [getCodeLabelsHOL] at ihHandler ⊢
+        refine Set.union_subset Set.subset_union_left ?_
+        exact ihHandler.trans Set.subset_union_right
+    | some r =>
+      obtain ⟨ns, cuts, q, l1, l2⟩ := r
+      cases handler with
+      | none =>
+        simp only [getCodeLabelsHOL] at ihRet ⊢
+        refine Set.union_subset (Set.union_subset ?_ ?_) (Set.empty_subset _)
+        · exact Set.subset_union_left.trans Set.subset_union_left
+        · exact ihRet.trans (Set.subset_union_right.trans Set.subset_union_left)
+      | some h =>
+        obtain ⟨n, body, h1, h2⟩ := h
+        simp only [getCodeLabelsHOL] at ihRet ihHandler ⊢
+        refine Set.union_subset (Set.union_subset ?_ ?_) ?_
+        · exact Set.subset_union_left.trans Set.subset_union_left
+        · exact ihRet.trans (Set.subset_union_right.trans Set.subset_union_left)
+        · exact ihHandler.trans Set.subset_union_right
+  case case3 cmp lhs rhs br1 br2 ih2 ih1 =>
+    exact Set.union_subset (ih2.trans Set.subset_union_left)
+      (ih1.trans Set.subset_union_right)
+  case case4 p1 p2 p1x p2x run ih2 ih1 =>
+    exact Set.union_subset (ih2.trans Set.subset_union_left)
+      (ih1.trans Set.subset_union_right)
+  case case5 p1 p2 p1x p2x p3 run ih2 ih1 =>
+    simp only [Set.empty_union]
+    refine (getCodeLabels_tryIfHoist1 p1x p2x p3 run).trans ?_
+    intro x hx
+    simp only [Set.mem_union] at hx ⊢
+    rcases hx with hx | hx
+    · exact Or.inl (ih2 hx)
+    · exact Or.inr (ih1 hx)
+  case case7 =>
+    exact Set.Subset.refl _
 
 end Flapjack.WordConvs.WordSimpLabels

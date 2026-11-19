@@ -143746,5 +143746,1525 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, evaluate_wStackStore_wReg1_new_typed): source4577-4606; free-variable order ac k f f' s t lens r c x r' kont LENGTH_t_stack t_stack_space retained, with k, f, f', x and r' bound separately; HOL's single conjunction premise wReg1 r (k,f,f') = (x,r') ∧ EVEN r ∧ r < 2*f' + 2*k ∧ (∃t'. evaluate (kont,t) = (NONE,set_var r' c t') ∧ state_rel … ∧ LENGTH t'.stack = LENGTH_t_stack ∧ t'.stack_space = t_stack_space) is one hypothesis in HOL's order; the existential run of Seq kont (wStackStore x Skip), the full postrelation and the same stack-length/space equalities retained. wReg1/wStackStore use the reviewed native renderings; EVEN is Lean's Even. Canonical five finite-map fields and positive width translation as qualified; evaluator closure inherits reals_as_rational_cuts without numerical FP claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/SupportLemmas.lean",
+    "lean_name": "isSomeOptionMap2Eq",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "IS_SOME_OPTION_MAP2_EQ",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, IS_SOME_OPTION_MAP2_EQ_typed): source5439-5443; binder order f A B retained with the captured result type β -> γ -> α on f, β option on A and γ option on B; HOL's single ⇔ conclusion carries its ∧ on the right, so the Lean statement has no premise hypothesis; OPTION_MAP2 is rendered by the untagged optionMap2 helper, which is the exact optionTheory definition (the tree otherwise carries only the num specializations wordSemOptionAdd and wordSemOptionMax); no word, finite-map or ARB carrier occurs, so no representation qualifier applies."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/SupportLemmas.lean",
+    "lean_name": "withSameLocalsWordSem",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "with_same_locals",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, with_same_locals_typed): source3127; the single state binder and the identity statement s with locals := s.locals = s are retained, with no premise and no existential. The carrier WordSemStateFiniteExact width C F carries [NeZero width] and its memory field mentions BitVec width, so the standard type-indexed word translation applies, and its fpRegs and store fields are the reviewed HolFiniteMapExact translation, named here with the same-module canonical witness holFmapAsFiniteSupportWitness (re-exported from WordSemEnvSupport). locals is an Spt (sptree) field, not a HOL |-> finite map, so it is deliberately not named."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/SupportLemmas.lean",
+    "lean_name": "mapVar",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "map_var_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, map_var_def_typed): source4054-4062; all six clauses are retained (Var -> Var (f n), Load -> Load of the mapped body, Op -> Op with MAP (map_var f), Shift -> Shift of both mapped operands, Const and Lookup unchanged), and the definition's termination measure corresponds to HOL's measure on exp_size. Lean's constructor order differs from HOL's clause order; the equation set is identical, which is what the definition states. The capture shows 'a word for Const, but the reviewed exp carrier's own row carries that value type as the generic alpha parameter, so this definition's signature has no width-indexed carrier and no representation qualifier is claimed."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/BitmapBitStructure.lean",
+    "lean_name": "bitsToWordBitstringReverse",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "bits_to_word_bitstring_reverse",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, bits_to_word_bitstring_reverse_typed): source1074-1082; the single binder xs :bool list is retained with no premise, bits_to_word is bitsToWordW at BitVec width with NeZero width, REVERSE xs is xs.reverse, and bitstring$v2w is the reviewed holV2w library rendering (bitstring$v2w_def as an FCP of testbit, shared with the RiscV L3 model and re-exported by the Arm8 encoder support), with the equality orientation retained. The positive width translation is the only carrier difference; no finite-map carrier occurs and the theorem does not reach the evaluator, so no inherits flag is recorded."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/Initialization.lean",
+    "lean_name": "makeInit",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "make_init_def",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, make_init_def_typed): source10398-10425. Binders ac k t code coracle in source order with the captured types: ac :'a asm_config is AsmConfigExact width, k :num is Nat, t :('a,'c,'ffi) stackSem$state is StackSemStateFiniteExact width C F, code :(num # 'a prog) sptree$num_map is Spt (Nat × WordLangProgHOL (BitVec width)), coracle :num -> (num # 'c) # (num # num # 'a prog) list is Nat → (Nat × C) × List (Nat × Nat × WordLangProgHOL (BitVec width)). The source returns wordSem$state at 'c := num # 'c, so compile's option is word8 list # 'a word list # (num # 'c); the captured OPTION_MAP returns (bytes, append (FST bm), (SND bm, cfg)) and Lean returns (bytes, appListAppend bm.1, (bm.2, cfg)), the same three-tuple whose third component is the bitmap count/config pair. All 24 fields are retained verbatim: locals insert 0 (Loc 1 0) LN as sptInsert 0 (.loc 1 0) .ln, fp_regs and store transferred (store \\ Handler is eraseEq .handler), stack [], memory/mdomain/sh_mdomain, permute K I, gc_fun, handler 0, clock, code, data_buffer, code_buffer, compile (the let-bound fs is unused in HOL too), compile_oracle, be, ffi, termdep 0, stack_limit LENGTH t.stack, stack_max stack_size [] as wordSemStackSize [], stack_size mapi (FST o SND o compile_prog) code as sptMapi over code, locals_size SOME 0. Both the read input carrier StackSemStateFiniteExact and the written result carrier declare fp_regs/store as the canonical HolFiniteMapExact translation, so the signature spells the result carrier with its full name, which resolves the single-owner qualifier to the constructed carrier (the input carrier is itself a reviewed tagged carrier); the same-module canonical witness holFmapAsFiniteSupportWitness covers it. locals, code and stack_size are sptree maps, not HOL |-> finite maps, so they are deliberately not named. Positive BitVec width with NeZero width throughout. No premise; this is a definition."
+  },
+  {
+    "lean_path": "Flapjack/Misc/Sorting.lean",
+    "lean_name": "holSorts",
+    "hol_path": "HOL/src/sort/sortingScript.sml",
+    "hol_name": "SORTS_DEF",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (hol_sorting_typed_probe.out, sorts_def_typed): source570-572. Binders f R in source order with the captured types (α -> α -> bool) -> α list -> α list and α -> α -> bool. HOL's SORTS f R ⇔ ∀ l. PERM l (f R l) ∧ SORTED R (f R l) is rendered as holPerm and holSorted over fun a b => R a b = true, the tree's standard Bool-to-Prop rendering of HOL relations (as in holSortedEq); the iff orientation is retained. No premise, no word, finite-map or ARB carrier."
+  },
+  {
+    "lean_path": "Flapjack/Misc/Mergesort.lean",
+    "lean_name": "sort2Perm",
+    "hol_path": "HOL/src/sort/mergesortScript.sml",
+    "hol_name": "sort2_perm",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (hol_mergesort_typed_probe.out, sort2_perm_typed): source166-170. Binders R x y in source order with the captured types α -> α -> bool, α, α. HOL's PERM [x; y] (sort2 R x y) is holPerm [x, y] (sort2 r x y), with HOL's list literal [x; y] the Lean [x, y] and PERM the tagged holPerm. No premise; no word or finite-map carrier."
+  },
+  {
+    "lean_path": "Flapjack/Misc/Mergesort.lean",
+    "lean_name": "sort3Perm",
+    "hol_path": "HOL/src/sort/mergesortScript.sml",
+    "hol_name": "sort3_perm",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (hol_mergesort_typed_probe.out, sort3_perm_typed): source172-176. Binders R x y z in source order with the captured types α -> α -> bool, α, α, α. HOL's PERM [x; y; z] (sort3 R x y z) is holPerm [x, y, z] (sort3 r x y z). No premise; no word or finite-map carrier."
+  },
+  {
+    "lean_path": "Flapjack/Misc/Mergesort.lean",
+    "lean_name": "mergePerm",
+    "hol_path": "HOL/src/sort/mergesortScript.sml",
+    "hol_name": "merge_perm",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (hol_mergesort_typed_probe.out, merge_perm_typed): source178-184. Binders R l1 l2 in source order with the captured types α -> α -> bool, α list, α list. HOL's PERM (l1 ⧺ l2) (merge R l1 l2) is holPerm (l1 ++ l2) (merge r l1 l2). No premise; no word or finite-map carrier."
+  },
+  {
+    "lean_path": "Flapjack/Misc/Mergesort.lean",
+    "lean_name": "mergesortNPerm",
+    "hol_path": "HOL/src/sort/mergesortScript.sml",
+    "hol_name": "mergesortN_perm",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (hol_mergesort_typed_probe.out, mergesortN_perm_typed): source186-205. Binders R n l in source order with the captured types α -> α -> bool, num, α list; n is Nat and TAKE n l is l.take n. HOL's PERM (TAKE n l) (mergesortN R n l) is holPerm (l.take n) (mergesortN r n l). No premise; no word or finite-map carrier."
+  },
+  {
+    "lean_path": "Flapjack/Basis/Pure/MlList/SortPerm.lean",
+    "lean_name": "sortSorts",
+    "hol_path": "cakeml/basis/pure/mllistScript.sml",
+    "hol_name": "sort_SORTS",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (mllist_defs_typed_probe.out, sort_SORTS_typed): source325-329. The single binder R :α -> α -> bool is retained. HOL's one conjunction premise transitive R ∧ total R is ONE Lean hypothesis holTransitive (fun a b => R a b = true) ∧ holTotal (fun a b => R a b = true), and the conclusion SORTS sort R is holSorts sort R with sort the tagged mllist sort. No word or finite-map carrier."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/KeyValueOrder.lean",
+    "lean_name": "sortsSortKeyValCompare",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "SORTS_SORT_key_val_compare",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, SORTS_SORT_key_val_compare_typed): source1252-1257. HOL's SORTS sort key_val_compare at 'a word_loc is holSorts (α := Nat × WordLocW width) Basis.Pure.MlList.sort wordSemKeyValCompare; sort is the tagged mllist sort and key_val_compare is the tagged wordSemKeyValCompare. No premise: HOL derives the statement from sort_SORTS and the comparator's transitivity and totality. Positive BitVec width with NeZero width is the only carrier translation; no finite-map carrier occurs."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "SUBSET_OF_INSERT",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/ScopedInjection.lean",
+    "lean_name": "subsetOfInsert",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (word_alloc_proof_local_typed_probe.out, SUBSET_OF_INSERT_typed): source27-30. `!s x. s subseteq x INSERT s`; the typed capture is `forall (s : alpha -> bool) (x : alpha). s subseteq x INSERT s`. HOL polymorphic sets are predicates on a generic Type carrier, and INSERT is `y = x \\/ s y`, so the Lean statement quantifies `forall y, s y -> y = x \\/ s y`. No premise, no word or finite-map carrier."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "LET_FORALL_ELIM'",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SupportLemmas.lean",
+    "lean_name": "letForallElim",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (word_alloc_proof_local_typed_probe.out, LET_FORALL_ELIM_prime_typed; the [local] theorem is not exported, so the statement is parsed from the pinned source): source51-54. `LET f v <=> $! (S ($==> o $= v) f)`; the typed capture is `LET (f : alpha -> bool) (v : alpha) <=> $! (S ($==> o $= v) f)`. HOL LET is the applied function, $! is forall over a Prop-valued function, $==> is implication and o composition, so the Lean statement is `f v <-> forall x, x = v -> f x` with f : alpha -> Prop. No premise, no carrier."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "INJ_ALL_DISTINCT_MAP",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/ScopedInjection.lean",
+    "lean_name": "injAllDistinctMap",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (word_alloc_proof_local_typed_probe.out, INJ_ALL_DISTINCT_MAP_typed): source79-84. `forall ls. ALL_DISTINCT (MAP f ls) ==> INJ f (set ls) UNIV`; the typed capture is `forall (ls : alpha list). ALL_DISTINCT (MAP (f : alpha -> beta) ls) ==> INJ f (set ls) UNIV(beta)`. ALL_DISTINCT is List.Nodup, set ls is list membership, and INJ f s UNIV is explicit local injectivity, so the Lean statement keeps one premise and concludes x = y for x, y in ls. Generic Type carriers, no word or map translation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "LASTN_LENGTH2",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SupportLemmas.lean",
+    "lean_name": "lastNLength2",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (word_alloc_proof_local_typed_probe.out, LASTN_LENGTH2_typed): source815-818. `LASTN (LENGTH xs +1) (x::xs) = x::xs`; the typed capture is `LASTN (LENGTH (xs : alpha list) + (1 : num)) ((x : alpha)::xs) = x::xs`. HOL rich_list LASTN (outside cakeml) is the untagged Flapjack.wordSemLastN rendering, LASTN n xs = REVERSE (TAKE n (REVERSE xs)). Binder order xs then x follows the capture first-occurrence order. No premise, no word or finite-map carrier."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "toAList_not_empty",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAReconcileListProps.lean",
+    "lean_name": "toAListNotEmpty",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (word_alloc_proof_local_typed_probe.out, toAList_not_empty_typed): source822-827. `domain t <> {} ==> toAList t <> []`; the typed capture is `(domain (t : alpha sptree$num_map) : num -> bool) <> (empty : num -> bool) ==> toAList t <> ([] :(num # alpha) list)`. domain is sptDomain, the empty set is the everywhere-false predicate, and toAList is the reviewed sptToAList; the proof uses the tagged sptMemToAList. Generic payload, no word carrier."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "PAIR_CASE_PAIR_MAP",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SupportLemmas.lean",
+    "lean_name": "pairCasePairMap",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (word_alloc_proof_local_typed_probe.out, PAIR_CASE_PAIR_MAP_typed): source830-833. `pair_CASE ((f ## g) e) h = case e of (x,y) => h (f x) (g y)`; the typed capture is `(pair_CASE (((f : delta -> beta) ## (g : epsilon -> gamma)) (e : delta # epsilon)) (h : beta -> gamma -> alpha) : alpha) = case e of (x,y) => h (f x) (g y)`. pair_CASE is Lean Prod.casesOn with the explicit motive, ## is Prod.map, so both sides are the same product case. No premise, generic Type carriers."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "MEM_ZIP_weak",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SupportLemmas.lean",
+    "lean_name": "memZipWeak",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (word_alloc_proof_local_typed_probe.out, MEM_ZIP_weak_typed): source853-860. `LENGTH l1 = LENGTH l2 /\\ MEM (x1,x2) (ZIP(l1,l2)) ==> MEM x1 l1 /\\ MEM x2 l2`; the typed capture keeps l1 : alpha list and l2 : beta list. HOL single conjunction is ONE premise in the same order; ZIP is List.zip and the conclusion is read through the untagged List.of_mem_zip. Generic Type carriers, no word or map translation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "apply_colour_exp_I",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/ColourOccurrences.lean",
+    "lean_name": "applyColourExpI",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (word_alloc_proof_local_typed_probe.out, apply_colour_exp_I_typed): source3479-3488. `apply_colour_exp I exp = exp`; the typed capture is `apply_colour_exp (I : num -> num) (exp : alpha exp) = exp`. HOL I is Lean id and apply_colour_exp is the tagged applyColourExp; the capture alpha is the HOL type-indexed word, translated to the positive BitVec width carrier with NeZero width. No premise, no finite-map carrier."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "get_var_ignore",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAGetSetVars.lean",
+    "lean_name": "getVarIgnore",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (word_alloc_proof_local_typed_probe.out, get_var_ignore_typed): source5215-5226. `forall ls a. get_var x cst = SOME y /\\ ~MEM x ls /\\ LENGTH ls = LENGTH a ==> get_var x (set_vars ls a cst) = SOME y`; the capture shows ls : num list, a : alpha word_loc list, cst : (alpha,beta,gamma) state, y : alpha word_loc. HOL three-way conjunction is ONE premise in the same order; get_var/set_vars are the tagged WordSem accessors over the faithful WordSemStateFiniteExact carrier (fpRegs/store finite maps; locals stays the Spt tree map and is not named), and word_loc is WordLocW width over BitVec width. Binder order: free x, cst, y, then the forall-bound ls, a."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "PAIR_ZIP_MEM",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SupportLemmas.lean",
+    "lean_name": "pairZipMem",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (word_alloc_proof_local_typed_probe.out, PAIR_ZIP_MEM_typed): source6212-6219. `LENGTH c = LENGTH d /\\ MEM (a,b) (ZIP (c,d)) ==> MEM a c /\\ MEM b d`; the typed capture keeps c : alpha list and d : beta list. HOL single conjunction is ONE premise; the script states the same fact as MEM_ZIP_weak with different names, and the Lean declaration keeps that separate statement. Generic Type carriers."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ALOOKUP_ZIP_MEM",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SupportLemmas.lean",
+    "lean_name": "alookupZipMem",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (word_alloc_proof_local_typed_probe.out, ALOOKUP_ZIP_MEM_typed): source6222-6230. `LENGTH a = LENGTH b /\\ ALOOKUP (ZIP (a,b)) x = SOME y ==> MEM x a /\\ MEM y b`; the typed capture keeps a : alpha list, b : beta list, x : alpha, y : beta. HOL single conjunction is ONE premise; ALOOKUP is holAlookup, and a successful result is a list member through the private Flapjack helper mem_of_holAlookup (HOL uses ALOOKUP_MEM). DecidableEq alpha supplies lawful classical equality for the association-list lookup, not a key restriction. Generic Type carriers."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ALOOKUP_ALL_DISTINCT_REMAP",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SupportLemmas.lean",
+    "lean_name": "alookupAllDistinctRemap",
+    "statement_status": "reviewed_total_function_inhabitants",
+    "total_function_inhabitants": [
+      "α"
+    ],
+    "reviewer": "typed HOL source comparison (word_alloc_proof_local_typed_probe.out, ALOOKUP_ALL_DISTINCT_REMAP_typed): source6232-6255. `forall ls x f y n. LENGTH ls = LENGTH x /\\ ALL_DISTINCT (MAP f ls) /\\ n < LENGTH ls /\\ ALOOKUP (ZIP (ls,x)) ls[n] = SOME y ==> ALOOKUP (ZIP (MAP f ls,x)) (f ls[n]) = SOME y`; the typed capture keeps ls : alpha list, x : beta list, f : alpha -> gamma, y : beta, n : num. HOL four-way conjunction is ONE premise; HOL EL is the tagged holEl, and total_function_inhabitants records the Nonempty instance that renders HOL EL on out-of-bounds indices, which is HOL type inhabitance and nothing else, and DecidableEq alpha/gamma is lawful classical equality for ALOOKUP. No word or finite-map carrier."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "get_var_set_vars_notin",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAGetSetVars.lean",
+    "lean_name": "getVarSetVarsNotin",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (word_alloc_proof_local_typed_probe.out, get_var_set_vars_notin_typed): source6310-6319. `~MEM v ls /\\ LENGTH ls = LENGTH vs ==> get_var v (set_vars ls vs st) = get_var v st`; the capture keeps v : num, ls : num list, vs : alpha word_loc list, st : (alpha,beta,gamma) state. HOL conjunction is ONE premise; same tagged accessors and WordSemStateFiniteExact carrier as get_var_ignore, word_loc as WordLocW width. Binder order v, ls, vs, st follows the capture."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "get_vars_NOT_MEM",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAGetSetVars.lean",
+    "lean_name": "getVarsNotMem",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (word_alloc_proof_local_typed_probe.out, get_vars_NOT_MEM_typed): source6425-6430. `~MEM h xs ==> get_vars xs ((cs with locals := insert h h' ys)) = get_vars xs (cs with locals := ys)`; the capture keeps h : num, xs : num list, cs : (alpha,beta,gamma) state, h' : alpha word_loc, ys : alpha word_loc sptree. The record update is the Lean structure update over the reviewed sptInsert; locals is the sptree field, so it is not named under the finite-map qualifier. Binder order h, xs, cs, h', ys follows the capture."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "get_vars_eq_alist_insert",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAGetSetVars.lean",
+    "lean_name": "getVarsEqAlistInsert",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (word_alloc_proof_local_typed_probe.out, get_vars_eq_alist_insert_typed): source6432-6445. `forall regs l. ALL_DISTINCT regs /\\ LENGTH regs = LENGTH l /\\ (forall x. MEM x regs ==> lookup x st.locals = lookup x (alist_insert regs l rest)) ==> get_vars regs st = SOME l`; the capture keeps regs : num list, l : alpha word_loc list, st : (alpha,beta,gamma) state, rest : alpha word_loc sptree. HOL three-way conjunction is ONE premise; alist_insert is the reviewed sptAlistInsert, locals remains the sptree field. Binder order: free st, rest, then the forall-bound regs, l."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_reconcile_distinct_lemma",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAReconcileListProps.lean",
+    "lean_name": "ssaReconcileDistinctLemma",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (word_alloc_proof_local_typed_probe.out, ssa_reconcile_distinct_lemma_typed): source6459-6485. `forall f g ns. INJ f (domain ns) UNIV ==> ALL_DISTINCT (MAP FST (FILTER (fun (a,b). a <> b) (MAP (fun v. (f v, g v)) (MAP FST (toAList ns)))))`; the capture keeps f : num -> alpha, g : num -> alpha, ns : beta sptree. INJ f (domain ns) UNIV is explicit local injectivity, FST/FILTER are Prod.fst/List.filter with the Boolean test written decide, toAList is the reviewed sptToAList. DecidableEq alpha supplies lawful classical equality for the pair test. Generic payloads, no word carrier."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_reconcile_filtered_in_dom",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAReconcileListProps.lean",
+    "lean_name": "ssaReconcileFilteredInDom",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (word_alloc_proof_local_typed_probe.out, ssa_reconcile_filtered_in_dom_typed): source6510-6523. `forall v. MEM v (FILTER (fun v. case lookup v cur_ssa of NONE => F | SOME cv => option_lookup tgt_ssa v <> cv) (MAP FST (toAList ns))) ==> v IN domain ns /\\ (exists cv. lookup v cur_ssa = SOME cv /\\ option_lookup tgt_ssa v <> cv /\\ THE (lookup v cur_ssa) = cv)`; the capture keeps cur_ssa/tgt_ssa : num sptree, ns : alpha sptree, v : num. The filter test is the same Boolean form as the sibling ssa_reconcile_filtered_all_distinct port; THE is the tagged holThe over Nat, which is inhabited without a binder. Binder order: free cur_ssa, tgt_ssa, ns, then the forall-bound v."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cut_inter_lemma",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSACutEnvsDomain.lean",
+    "lean_name": "ssaCutInterLemma",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (word_alloc_proof_local_typed_probe.out, ssa_cut_inter_lemma_typed): source7657-7664. `domain ssa' INTER domain (union x1 x2) = domain x1 UNION domain x2 ==> xx IN domain (union x1 x2) ==> xx IN domain ssa'`; the capture keeps ssa' : alpha sptree, x1/x2 : beta sptree, xx : num. HOL set intersection and union are the predicate conjunction and disjunction, domain is sptDomain, and union is the reviewed sptUnion; the proof rewrites with the tagged sptDomain_sptUnion. HOL two implications stay two hypotheses, in the same order."
   }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "pos_val_MOD_0_lemma",
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/AlignedPosVal.lean",
+    "lean_name": "posValMOD0Lemma",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (lab_to_target_proof_local_typed_probe.out, pos_val_MOD_0_lemma_typed): source2949-2952. `(0 MOD 2 ** mc_conf.target.config.code_alignment = 0)`; the capture keeps mc_conf : (alpha, beta, gamma) machine_config. The Lean statement is 0 % 2 ^ mc.target.config.codeAlignment = 0 over the reviewed MachineConfig width S Q carrier, whose header binds [NeZero width] and whose fields are BitVec width (the only translation is HOL's type-indexed word). No premise; the HOL proof is a simp step."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "EXP_IMP_ZERO_LT",
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/AlignedPosVal.lean",
+    "lean_name": "expImpZeroLt",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (lab_to_target_proof_local_typed_probe.out, EXP_IMP_ZERO_LT_typed): source5878-5881. `(2 ** y = x) ==> 0 < x`; the capture keeps y then x as the free-variable order. HOL `**` is Lean `^` on Nat, one premise, conclusion 0 < x. No carrier."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "find_index_in_range",
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Positions.lean",
+    "lean_name": "findIndexInRange",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (lab_to_target_proof_local_typed_probe.out, find_index_in_range_typed): source3084-3093. `forall n. find_index s l n = SOME x ==> x < n + LENGTH l /\\ x >= n`; the capture keeps s : alpha, l : alpha list, x : num free and binds n. find_index is the tagged Flapjack.Misc.findIndex, DecidableEq alpha is the lawful rendering of HOL's total equality on the element type, LENGTH is List.length, and the second conjunct is stated as `x >= n`, the same term as HOL's `x >= n`. One premise, conjunction conclusion preserved."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "find_index_in_range0",
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Positions.lean",
+    "lean_name": "findIndexInRange0",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (lab_to_target_proof_local_typed_probe.out, find_index_in_range0_typed): source3095-3099. `find_index s l 0 = SOME x ==> x < LENGTH l /\\ x >= 0`; the capture keeps s, l, x free. Same renderings as find_index_in_range, one premise, and the conclusion is stated as `x >= 0`, keeping the vacuous conjunct that HOL derives from find_index_in_range at n = 0."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "Sh_not_Ext",
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/ShmemInfo.lean",
+    "lean_name": "shNotExt",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (lab_to_target_proof_typed_probe.out, Sh_not_Ext_typed): source7441-7444. `(exists s. x = SharedMem s) <=> (forall s. x <> ExtCall s)`; the capture keeps x : ffiname free and shows the two quantifiers at different carriers (s : shmem_op versus s : mlstring). Both are kept as separate binders; SharedMem/ExtCall are the HolFfiName constructors and mlstring is the exact MlString carrier. No premise, no word carrier."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "not_Sh_Ext",
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/ShmemInfo.lean",
+    "lean_name": "notShExt",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (lab_to_target_proof_typed_probe.out, not_Sh_Ext_typed): source7447-7450. `(forall s. x <> SharedMem s) <=> (exists s. x = ExtCall s)`; the capture keeps x : ffiname free with s : shmem_op on the left and s : mlstring on the right. Both quantifiers stay separate binders; no premise and no word carrier."
+  }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "EVERY_is_Label_add_nop",
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/AddNopProps.lean",
+    "lean_name": "everyIsLabel_addNop_eq",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (lab_to_target_proof_typed_probe.out, EVERY_is_Label_add_nop_typed): source3280-3284. `forall nop ls. EVERY is_Label ls ==> add_nop nop ls = ls`; the capture keeps nop : word8 list and ls : alpha line list. EVERY is the Prop form forall line IN ls, isLabelHOL line = true, the same rendering as the sibling EVERY_is_Label_add_nop_preserved port; add_nop is the tagged addNop. One premise, conclusion unchanged; the only carrier translation is HOL's type-indexed word to BitVec width."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "sec_pos_val_acc",
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/PositionValues.lean",
+    "lean_name": "secPosValAcc",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (lab_to_target_proof_local_typed_probe.out, sec_pos_val_acc_typed): source6451-6455. `forall l n i. len_no_lab l <= i ==> sec_pos_val i n l = NONE`; the capture spells len_no_lab out as LENGTH (FILTER (not o is_Label) l) and binds l, n, i in that order. len_no_lab is the tagged lenNoLab, sec_pos_val the tagged secPosVal; one premise. This is the script's second copy of the same proposition as sec_pos_val_too_big (different binder names/order), and the Lean declaration is a separate tagged statement proved from the earlier port."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "get_labels_upd_lab_len",
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/CodeSimilar/LabelUpdates.lean",
+    "lean_name": "getLabels_updLabLen",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (lab_to_target_proof_typed_probe.out, get_labels_upd_lab_len_typed): source5181-5184. `get_labels (upd_lab_len pos code) = get_labels code`; the capture keeps pos : num and code : alpha sec list. get_labels is the tagged getLabels, upd_lab_len the tagged updLabLen; HOL derives the equality from code_similar_get_labels, code_similar_upd_lab_len and code_similar_refl, and the Lean proof does the same through the tagged codeSimilar_updLabLen, codeSimilar_refl and codeSimilar_labels. No premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "sec_labels_ok_filter_skip",
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/FilterSkipSafety.lean",
+    "lean_name": "secLabelsOk_filterSkip",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (lab_to_target_proof_typed_probe.out, sec_labels_ok_filter_skip_typed): source3601-3612. `forall code. EVERY sec_labels_ok (filter_skip code) <=> EVERY sec_labels_ok code`; the capture keeps code : alpha sec list. EVERY is the Prop form forall sec IN code, secLabelsOk sec, filter_skip is the tagged filterSkip and sec_labels_ok the tagged secLabelsOk; HOL's Boolean <=> becomes <-> of the two Prop forms. The per-section step uses the Flapjack helper secLabelOk_of_notSkip_false (a not_skip-removed line is not a label, which HOL discharges by EVAL_TAC), documented beside it as infrastructure with no separate HOL declaration."
+  }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "has_io_name_EXISTS",
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/FfiBytearray.lean",
+    "lean_name": "hasIoName_exists",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (lab_to_target_proof_typed_probe.out, has_io_name_EXISTS_typed): source3110-3120. `forall name ls. has_io_name name ls <=> EXISTS (fun x. case x of LabAsm (CallFFI i) _ _ _ => i = name | _ => F) (FLAT (MAP Section_lines ls))`; the capture keeps name : mlstring and ls : alpha sec list and prints the full line match. has_io_name is the tagged hasIoName (a Prop, so HOL's Boolean <=> becomes <->), Section_lines is Section.lines, FLAT is List.flatten and EXISTS is the Prop form exists x IN flattened lines. The section-level equation is the Flapjack helper hasIoName_section, documented beside it as infrastructure with no separate HOL declaration. Only HOL's type-indexed word becomes BitVec width."
+  }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "FILTER_mmio_pcs_min_index",
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/MmioShmem.lean",
+    "lean_name": "filter_mmioPcsMinIndex",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (lab_to_target_proof_typed_probe.out, FILTER_mmio_pcs_min_index_typed): source6678-6700. `EVERY (fun x. exists op. x = SharedMem op) l ==> mmio_pcs_min_index (FILTER (fun x. exists s. x = ExtCall s) ffis ++ l) = SOME (LENGTH (FILTER (fun x. exists s. x = ExtCall s) ffis))`; the capture keeps l and ffis as ffiname lists. EVERY is the Prop form forall x IN l, one premise. The FILTER predicate is stated inline as `fun x => by classical exact decide (exists s, x = HolFfiName.extCall s)`, matching HOL's `fun x. exists s. x = ExtCall s`; the proof rewrites it to the Boolean constructor test isExtCall, documented beside it as Flapjack infrastructure naming that exists-ExtCall predicate. mmio_pcs_min_index is the tagged mmioPcsMinIndex, whose proof goes through the tagged mmioPcsMinIndex_eq_some and the existing boundary machinery. No word or finite-map carrier."
+  }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "FILTER_NOT_MEM_Mapped",
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/ShmemNames.lean",
+    "lean_name": "filter_notMemMapped",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (lab_to_target_proof_local_typed_probe.out, FILTER_NOT_MEM_Mapped_typed): source9745-9749. `~MEM \"MappedRead\" (FILTER (\\x. x <> \"MappedRead\" /\\ x <> \"MappedWrite\") (l : string list)) /\\ ~MEM \"MappedWrite\" (FILTER (\\x. x <> \"MappedRead\" /\\ x <> \"MappedWrite\") l)`; the capture keeps l free as a `string list`. HOL `string` is `char list`, rendered as `List HolChar`; the `\"MappedRead\"`/`\"MappedWrite\"` string literals are `MlString.explode (ofString ...)`, the exact character-code list of HOL's `strlit`. MEM is membership and the FILTER predicate is stated inline as HOL writes it; there is no premise, and both conjuncts keep HOL's orientation. No word or finite-map carrier."
+  }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "all_pc_adjust_pc",
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/PcAdjust.lean",
+    "lean_name": "allPcAdjustPc",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (lab_to_target_proof_typed_probe.out, all_pc_adjust_pc_typed): source10729-10789. `forall (code : alpha sec list) (p : num). p < num_pcs (filter_skip code) ==> exists (k : num). adjust_pc k code = p`; the capture keeps code and p, binds k. num_pcs is the tagged numPcs, filter_skip is the tagged filterSkip and adjust_pc is the tagged adjustPc (lab_filter counterpart). Binder order code, p, one premise; the conclusion is the existential. Only HOL's type-indexed word becomes BitVec width."
+  }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_get_code_labels_SmartSeq",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/SmartSeqLabels.lean",
+    "lean_name": "getCodeLabels_smartSeqHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (word_convs_proof_typed_probe.out, word_get_code_labels_SmartSeq_typed): source631-635. `word_get_code_labels (SmartSeq (p : alpha prog) (q : alpha prog)) = word_get_code_labels p UNION word_get_code_labels q`; the capture keeps p and q in order and the conclusion is an equality of code-label sets. word_get_code_labels is the tagged getCodeLabelsHOL and SmartSeq is the tagged smartSeqHOL; HOL's UNION is Lean Set.union. Only HOL's type-indexed word becomes BitVec width. No premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "flat_exp_conventions_ShareInst",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/FlatExpShareInst.lean",
+    "lean_name": "flatExpConventions_shareInst",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (word_convs_proof_typed_probe.out, flat_exp_conventions_ShareInst_typed): source1390-1393. `flat_exp_conventions (ShareInst (op : memop) (v : num) (exp : alpha exp)) <=> (exists (v : num) (c : alpha word). exp = Op Add [Var v; Const c]) \\/ (exists (v : num). exp = Var v)`; the capture keeps op, v, exp and binds the inner v and c. flat_exp_conventions is the tagged flatExpConventions, so HOL's Boolean equivalence is `= true <->`, ShareInst/Op Add/Var/Const are the WordLangProgHOL constructors, and the existential over the word constant c becomes BitVec width. Only HOL's type-indexed word becomes BitVec width. No premise."
+  }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_get_code_labels_drop_consts",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordSimpLabels/Sequence.lean",
+    "lean_name": "getCodeLabels_dropConsts",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (word_convs_proof_typed_probe.out, word_get_code_labels_drop_consts_typed): source638-641. `forall (args : num list). word_get_code_labels (drop_consts (l : alpha word sptree$num_map) args) = (emptyset : num -> bool)`; the capture keeps the free knowledge tree l and binds args, in that order. word_get_code_labels is the tagged getCodeLabelsHOL and drop_consts is the tagged dropConsts over Spt (BitVec width). HOL's emptyset is Lean Set.empty. Only HOL's type-indexed word becomes BitVec width. No premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "fake_seq_get_code_labels",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/SSALabelHelpers.lean",
+    "lean_name": "getCodeLabels_fakeSeq",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (word_convs_proof_typed_probe.out, fake_seq_get_code_labels_typed): source993-996. `forall (ls : num list). word_get_code_labels (FOLDR (Seq) (Skip) (MAP (fun r. fake_move r) ls)) = (emptyset : num -> bool)`; the capture keeps ls. word_get_code_labels is getCodeLabelsHOL, FOLDR is List.foldr, MAP is List.map with HOL's `fun r. fake_move r` stated inline as `fun r => fakeMove r`, and fake_move is the tagged fakeMove (.inst (.const v 0)). Only HOL's type-indexed word becomes BitVec width. No premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "ssa_reconcile_get_code_labels",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/SSALabelHelpers.lean",
+    "lean_name": "getCodeLabels_ssaReconcile",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (word_convs_proof_typed_probe.out, ssa_reconcile_get_code_labels_typed): source1023-1025. `word_get_code_labels (ssa_reconcile (cur_ssa : num sptree$num_map) (tgt_ssa : num sptree$num_map) (ns : beta sptree$num_map) : alpha prog) = (emptyset : num -> bool)`; the capture keeps the three free binders cur_ssa, tgt_ssa, ns in order, with the payload type beta independent. word_get_code_labels is getCodeLabelsHOL and ssa_reconcile is the tagged ssaReconcile over Spt carriers. Only HOL's type-indexed word becomes BitVec width. No premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_get_code_labels_fake_moves",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/SSALabelHelpers.lean",
+    "lean_name": "getCodeLabels_fakeMoves",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (word_convs_proof_typed_probe.out, word_get_code_labels_fake_moves_typed): source1230-1234. `forall (a : num list) (b c : num sptree$num_map) (d : num) (e f : alpha prog) (g : num) (h i : num sptree$num_map). (fake_moves (prio : (unit + unit) option) a b c d) = (e,f,g,h,i) ==> word_get_code_labels e = emptyset /\\ word_get_code_labels f = emptyset`; the capture keeps prio free first, then a..i in order, with the actual producer equality as the single premise. fake_moves is the tagged fakeMoves and word_get_code_labels is getCodeLabelsHOL. Only HOL's type-indexed word becomes BitVec width."
+  }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_get_code_labels_inst_select_exp",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/InstSelectExpCodeLabels.lean",
+    "lean_name": "instSelectExp_codeLabels",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (word_convs_proof_typed_probe.out, word_get_code_labels_inst_select_exp_typed): source936-939. `forall (a : alpha asm_config) (b : num) (c : num) (exp : alpha exp). word_get_code_labels (inst_select_exp a b c exp) = (emptyset : num -> bool)`; the capture keeps a, b, c, exp in order. inst_select_exp is the tagged instSelectExp and word_get_code_labels is getCodeLabelsHOL; HOL's emptyset is Lean Set.empty. Only HOL's type-indexed word becomes BitVec width. No premise."
+  }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "loop_setup_get_code_labels",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/SSALabelHelpers.lean",
+    "lean_name": "loopSetup_codeLabels",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (word_convs_proof_typed_probe.out, loop_setup_get_code_labels_typed): source1058-1061. `(loop_setup (names : sptree$num_set) (exit_names : sptree$num_set) (ssa : num sptree$num_map) (na : num) : alpha prog # num sptree$num_map # num) = ((setup_prog : alpha prog),(ssa' : num sptree$num_map),(na' : num)) ==> word_get_code_labels setup_prog = (emptyset : num -> bool)`; the capture keeps names, exit_names, ssa, na and binds setup_prog, ssa', na'. HOL num_set is Spt Unit, num_map is Spt Nat; loop_setup is the tagged loopSetup and word_get_code_labels is getCodeLabelsHOL. The producer equality is the single premise. Only HOL's type-indexed word becomes BitVec width."
+  }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_get_code_labels_dest_Seq_Move",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/UnreachCodeLabels.lean",
+    "lean_name": "getCodeLabels_destSeqMove",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (word_convs_proof_typed_probe.out, word_get_code_labels_dest_Seq_Move_typed): source2302-2305. `forall (p : alpha prog). dest_Seq_Move p = SOME ((x : num),(y : (num # num) list),(z : alpha prog)) ==> word_get_code_labels z = word_get_code_labels p`; the capture keeps x, y, z free and binds p, in that order, matching Lean's `(x : Nat) (y : List (Nat \u00d7 Nat)) (z : ...) (p : ...)` binders. HOL's tuple pattern (x,y,z) is written as three separate Lean binders, not one tuple variable. dest_Seq_Move is the tagged destSeqMove and word_get_code_labels is the tagged getCodeLabelsHOL. The producer equality is the single premise. Only HOL's type-indexed word becomes BitVec width."
+  }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_get_code_labels_SimpSeq",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/UnreachCodeLabels.lean",
+    "lean_name": "getCodeLabels_simpSeq",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (word_convs_proof_typed_probe.out, word_get_code_labels_SimpSeq_typed): source2311-2314. `word_get_code_labels (SimpSeq (p : alpha prog) (q : alpha prog)) SUBSET word_get_code_labels p UNION word_get_code_labels q`; the capture keeps both free program variables p and q, in that order, matching Lean's `(p q : ...)`. SimpSeq is the tagged simpSeq and word_get_code_labels is the tagged getCodeLabelsHOL; HOL's SUBSET/UNION are Lean's subset/union on Set Nat. No premise. Only HOL's type-indexed word becomes BitVec width."
+  }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_get_code_labels_Seq_assoc_right",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/UnreachCodeLabels.lean",
+    "lean_name": "getCodeLabels_seqAssocRight",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (word_convs_proof_typed_probe.out, word_get_code_labels_Seq_assoc_right_typed): source2322-2325. `forall (ps : alpha prog) (qs : alpha prog). word_get_code_labels (Seq_assoc_right ps qs) SUBSET word_get_code_labels ps UNION word_get_code_labels qs`; the capture binds ps then qs, matching Lean's `(ps qs : ...)`. Seq_assoc_right is the tagged seqAssocRight and word_get_code_labels is the tagged getCodeLabelsHOL; SUBSET/UNION are Lean's subset/union. No premise. Only HOL's type-indexed word becomes BitVec width."
+  }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_get_code_labels_remove_unreach",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/UnreachCodeLabels.lean",
+    "lean_name": "getCodeLabels_removeUnreach",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (word_convs_proof_typed_probe.out, word_get_code_labels_remove_unreach_typed): source2351-2354. `word_get_code_labels (remove_unreach (ps : alpha prog)) SUBSET word_get_code_labels ps`; the capture keeps the free program variable ps, matching Lean's `(ps : ...)`. remove_unreach is the tagged removeUnreach and word_get_code_labels is the tagged getCodeLabelsHOL; SUBSET is Lean's subset. No premise. Only HOL's type-indexed word becomes BitVec width."
+  }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_get_code_labels_three_to_two_reg_prog",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/ThreeToTwoCodeLabels.lean",
+    "lean_name": "getCodeLabels_threeToTwoRegProg",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (word_convs_proof_typed_probe.out, word_get_code_labels_three_to_two_reg_prog_typed): source2279-2283. `forall (ps : alpha prog). word_get_code_labels (three_to_two_reg_prog (b : bool) ps) = word_get_code_labels ps`; the capture keeps the free flag b and binds ps, matching Lean's `(b : Bool) (ps : ...)` binder order. three_to_two_reg_prog is the tagged threeToTwoRegProg and word_get_code_labels is the tagged getCodeLabelsHOL. No premise. Only HOL's type-indexed word becomes BitVec width."
+  }
+,
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/UnreachCodeLabels.lean",
+    "lean_name": "subset_of_destSeqMove",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only consequence of getCodeLabels_destSeqMove, used to close the SimpSeq move-merge branch of word_get_code_labels_SimpSeq. HOL proves that branch inline in word_get_code_labels_SimpSeq; no separately named HOL declaration with this subset premise exists."
+  }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_get_code_labels_const_fp_loop",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordSimpLabels/ConstFp.lean",
+    "lean_name": "getCodeLabels_constFpLoop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (word_convs_proof_typed_probe.out, word_get_code_labels_const_fp_loop_typed): source646-650. `forall (p : alpha prog) (l : alpha word sptree$num_map). word_get_code_labels (FST (const_fp_loop p l)) SUBSET word_get_code_labels p`; the capture binds p then l, matching Lean's `(program : ...) (cs : Spt (BitVec width))` order. const_fp_loop is the tagged constFpLoop over the Spt knowledge tree and word_get_code_labels is the tagged getCodeLabelsHOL; FST is the `.1` projection and SUBSET is Lean's subset. No premise. Only HOL's type-indexed word becomes BitVec width."
+  }
+,
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordSimpLabels/ConstFp.lean",
+    "lean_name": "getCodeLabels_constFp",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only consequence of getCodeLabels_constFpLoop for the constFp wrapper: HOL inlines const_fp_def and applies word_get_code_labels_const_fp_loop inside its try_if_hoist2 proof; no separately named HOL declaration states the wrapper containment."
+  }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_get_code_labels_Seq_assoc",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordSimpLabels/Sequence.lean",
+    "lean_name": "getCodeLabels_seqAssoc",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (word_convs_proof_typed_probe.out, word_get_code_labels_Seq_assoc_typed): source684-687. `forall (p1 : alpha prog) (p2 : alpha prog). word_get_code_labels (Seq_assoc p1 p2) = word_get_code_labels p1 UNION word_get_code_labels p2`; the capture binds p1 then p2, matching Lean's `(p1 p2 : ...)`. Seq_assoc is the tagged seqAssoc (accumulator first) and word_get_code_labels is the tagged getCodeLabelsHOL; UNION is Lean's set union. No premise. Only HOL's type-indexed word becomes BitVec width."
+  }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_get_code_labels_try_if_hoist2",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordSimpLabels/Hoist.lean",
+    "lean_name": "getCodeLabels_tryIfHoist2",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (word_convs_proof_typed_probe.out, word_get_code_labels_try_if_hoist2_typed): source765-770. `forall (N : num) (p1 : alpha prog) (interm : alpha prog) (dummy : alpha prog) (p2 : alpha prog) (s : beta). try_if_hoist2 N p1 interm dummy p2 = SOME (p3 : alpha prog) ==> word_get_code_labels p3 SUBSET word_get_code_labels p1 UNION word_get_code_labels interm UNION word_get_code_labels p2`; the free output p3 is bound first, then N, p1, interm, dummy, p2 as HOL quantifies them. HOL's universal `s : beta` is vacuous in both the guard and the conclusion and is omitted here, documented beside the declaration as in labelsRelHoist2. The producer equality is the single premise; SUBSET/UNION are Lean's subset/union. Only HOL's type-indexed word becomes BitVec width."
+  }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_get_code_labels_simp_duplicate_if",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordSimpLabels/Hoist.lean",
+    "lean_name": "getCodeLabels_simpDuplicateIf",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (word_convs_proof_typed_probe.out, word_get_code_labels_simp_duplicate_if_typed): source798-800. `forall (p : alpha prog). word_get_code_labels (simp_duplicate_if p) SUBSET word_get_code_labels p`; the capture binds p, matching Lean's `(program : ...)`. simp_duplicate_if is the tagged simpDuplicateIf and word_get_code_labels is the tagged getCodeLabelsHOL; SUBSET is Lean's subset. No premise. Only HOL's type-indexed word becomes BitVec width."
+  }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_get_code_labels_push_out_if",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordSimpLabels/PushOut.lean",
+    "lean_name": "getCodeLabels_pushOutIf",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (word_convs_proof_typed_probe.out, word_get_code_labels_push_out_if_typed): source815-817. `forall (p : alpha prog). word_get_code_labels (push_out_if p) SUBSET word_get_code_labels p`; the capture binds p, matching Lean's `(program : ...)`. push_out_if is the tagged pushOutIf (the `.1` projection of pushOutIfAux) and word_get_code_labels is the tagged getCodeLabelsHOL; SUBSET is Lean's subset. No premise. Only HOL's type-indexed word becomes BitVec width."
+  }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_get_code_labels_word_simp",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordSimpLabels/CompileExp.lean",
+    "lean_name": "getCodeLabels_compileExp",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (word_convs_proof_typed_probe.out, word_get_code_labels_word_simp_typed): source828-832. `forall (ps : alpha prog). word_get_code_labels (word_simp$compile_exp ps) SUBSET word_get_code_labels ps`; the capture binds ps, matching Lean's `(program : ...)`. HOL's compile_exp is the tagged compileExp (Seq_assoc Skip, const_fp, simp_duplicate_if, push_out_if in source order) and word_get_code_labels is the tagged getCodeLabelsHOL; SUBSET is Lean's subset. No premise. Only HOL's type-indexed word becomes BitVec width."
+  }
+,
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordSimpLabels/Hoist.lean",
+    "lean_name": "getCodeLabels_tryIfHoist1",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only wrapper consequence for the try_if_hoist1 entry point, derived from getCodeLabels_tryIfHoist2. HOL inlines try_if_hoist1_def and applies word_get_code_labels_try_if_hoist2 inside its word_get_code_labels_simp_duplicate_if proof; no separately named HOL declaration states the wrapper containment."
+  }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_get_code_labels_inst_select",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/InstSelectCodeLabels.lean",
+    "lean_name": "instSelect_codeLabels",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (word_convs_proof_typed_probe.out, word_get_code_labels_inst_select_typed): source945-950. `forall (ac : alpha asm_config) (v : num) (ps : alpha prog). word_get_code_labels (inst_select ac v ps) = word_get_code_labels ps`; the capture binds ac, v, ps in that order, matching Lean's `(config : AsmConfigExact width) (temporary : Nat) (program : ...)`. inst_select is the tagged instSelect and word_get_code_labels is the tagged getCodeLabelsHOL. No premise. Only HOL's type-indexed word becomes BitVec width."
+  }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_get_code_labels_ssa_cc_trans",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/SSACodeLabels.lean",
+    "lean_name": "codeLabels_ssaCcTrans",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (word_convs_proof_typed_probe.out, word_get_code_labels_ssa_cc_trans_typed): source1243-1250. `forall (x : alpha prog) (y : num sptree$num_map) (z : num) (lt : (num sptree$num_map # sptree$num_set # sptree$num_set) list) (a : alpha prog) (b : num sptree$num_map) (c : num). ssa_cc_trans x y z lt = (a,b,c) ==> word_get_code_labels a = word_get_code_labels x`; every variable is universal and Lean binds x y z lt a b c in the same order (HOL's tuple pattern (a,b,c) is written as three separate binders). ssa_cc_trans is the tagged ssaCcTrans, num_map/num_set are the reviewed Spt Nat / Spt Unit carriers, and word_get_code_labels is the tagged getCodeLabelsHOL. The producer equality is the single premise. Only HOL's type-indexed word becomes BitVec width."
+  }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_get_code_labels_full_ssa_cc_trans",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/SSACodeLabels.lean",
+    "lean_name": "codeLabels_fullSsaCcTrans",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (word_convs_proof_typed_probe.out, word_get_code_labels_full_ssa_cc_trans_typed): source1294-1298. `forall (m : num) (p : alpha prog). word_get_code_labels (full_ssa_cc_trans m p) = word_get_code_labels p`; the capture binds m then p, matching Lean's `(m : Nat) (p : ...)`. full_ssa_cc_trans is the tagged fullSsaCcTrans and word_get_code_labels is the tagged getCodeLabelsHOL. No premise. Only HOL's type-indexed word becomes BitVec width."
+  }
+,
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/SSACodeLabels.lean",
+    "lean_name": "codeLabels_ssaCcTrans_fst",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only first-component invariant of ssa_cc_trans, proved by structural recursion mirroring HOL's recInduct ssa_cc_trans_ind walk; HOL states only the producer-equation form, which is derived here as codeLabels_ssaCcTrans."
+  }
+,
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/SSACodeLabels.lean",
+    "lean_name": "fakeMovesLabels1",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only projection corollary of getCodeLabels_fakeMoves for the left output; HOL applies word_get_code_labels_fake_moves inline with pairarg_tac."
+  }
+,
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/SSACodeLabels.lean",
+    "lean_name": "fakeMovesLabels2",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only projection corollary of getCodeLabels_fakeMoves for the right output; HOL applies word_get_code_labels_fake_moves inline."
+  }
+,
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/SSACodeLabels.lean",
+    "lean_name": "fixLabels1",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only label analogue of fix_inconsistencies' left branch: both emitted branches are move/fake-move sequences, hence label-free. HOL unfolds fix_inconsistencies_def and applies word_get_code_labels_fake_moves inline."
+  }
+,
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/SSACodeLabels.lean",
+    "lean_name": "fixLabels2",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only label analogue for the right branch of fix_inconsistencies; same HOL inlining as fixLabels1."
+  }
+,
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/SSACodeLabels.lean",
+    "lean_name": "loopSetupLabels",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only projection corollary of loop_setup_get_code_labels for the setup program, so the loop case does not need to name the producer equality; HOL applies loop_setup_get_code_labels with drule."
+  }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_good_code_labels_word_to_word_incr_helper",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordToWordCodeLabels.lean",
+    "lean_name": "goodCodeLabels_wordToWord_incrHelper",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (word_convs_proof_typed_probe.out, word_good_code_labels_word_to_word_incr_helper_typed): source3037-3056. `forall (oracles : num sptree$num_map option list). LENGTH (progs : (num # num # alpha prog) list) = LENGTH oracles ==> word_good_code_labels progs (elabs : num -> bool) ==> word_good_code_labels (MAP (full_compile_single (tra : bool) (reg_count1 : num) (ralg : num) (asm_c : alpha asm_config)) (ZIP (progs,oracles))) elabs`; the capture keeps progs, elabs, tra, reg_count1, ralg, asm_c free and binds oracles, matching Lean's binder order. word_good_code_labels is the tagged goodCodeLabelsHOL (num -> bool rendered as Set Nat), full_compile_single the tagged fullCompileSingle, ZIP/MAP List.zip/List.map, LENGTH List.length. The length equation is ONE premise and the source safety predicate the second. num sptree$num_map is the reviewed Spt Nat carrier. Only HOL's type-indexed word becomes BitVec width."
+  }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_good_code_labels_word_to_word_incr",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordToWordCodeLabels.lean",
+    "lean_name": "goodCodeLabels_wordToWord_incr",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (word_convs_proof_typed_probe.out, word_good_code_labels_word_to_word_incr_typed): source3085-3093. `word_good_code_labels (progs : (num # num # alpha prog) list) (elabs : num -> bool) ==> word_good_code_labels (MAP (lambda (p : num # num # alpha prog). full_compile_single (tra : bool) (reg_count1 : num) (ralg : num) (asm_c : alpha asm_config) (p,(NONE : num sptree$num_map option))) progs) elabs`; the capture keeps progs, elabs, tra, reg_count1, ralg, asm_c free, matching Lean's binder order. HOL's lambda is written inline as `fun p => fullCompileSingle tra regCount1 ralg asmC (p, none)`, not eta-reduced. The source safety predicate is the single premise. Only HOL's type-indexed word becomes BitVec width."
+  }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_good_code_labels_word_to_word",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordToWordCodeLabels.lean",
+    "lean_name": "goodCodeLabels_wordToWord",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (word_convs_proof_typed_probe.out, word_good_code_labels_word_to_word_typed): source3095-3102. `word_good_code_labels (progs : (num # num # alpha prog) list) (elabs : num -> bool) ==> word_good_code_labels (SND (compile (wc : config) (ac : alpha asm_config) progs)) elabs`; the capture keeps progs, elabs, wc, ac free, matching Lean's binder order. SND is the `.2` projection and compile is the tagged compile (whose register count is HOL's truncated num subtraction). The source safety predicate is the single premise. Only HOL's type-indexed word becomes BitVec width."
+  }
+,
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordToWordCodeLabels.lean",
+    "lean_name": "getCodeLabels_fullCompileSingle",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack infrastructure: HOL's per-element step of word_good_code_labels_word_to_word_incr_helper. The whole compile_single chain followed by remove_must_terminate keeps only source code labels; HOL derives this inline in the helper's subset argument."
+  }
+,
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordToWordCodeLabels.lean",
+    "lean_name": "sUnion_labels_compileSingle",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only union monotonicity for the same per-element step: every compiled row's label set is contained in its source row's, so the union over the output list sits inside the union over the input list. HOL derives this inline with SUBSET_DEF/MEM_MAP/MEM_ZIP."
+  }
+,
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordToWordCodeLabels.lean",
+    "lean_name": "names_compileSingle_eq",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only name-preservation fact for the same step: full_compile_single keeps the owner number, so the output owner list is the input owner list. HOL derives this inline in the same subset argument."
+  }
+,
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordToWordCodeLabels.lean",
+    "lean_name": "zip_none_map",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only list identity: zipping a list with its own all-NONE oracle list is the same as pairing each element with NONE. HOL uses ZIP_MAP/MAP_MAP_o/o_DEF inline."
+  }
+,
+  {
+    "lean_path": "Flapjack/Misc/Multiword.lean",
+    "lean_name": "b2n",
+    "hol_path": "HOL/examples/machine-code/multiword/multiwordScript.sml",
+    "hol_name": "b2n_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: b2n_def clause by clause. T maps to 1 and F maps to 0, matching HOL's two equations exactly."
+  },
+  {
+    "lean_path": "Flapjack/Misc/Multiword.lean",
+    "lean_name": "b2w",
+    "hol_path": "HOL/examples/machine-code/multiword/multiwordScript.sml",
+    "hol_name": "b2w_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: b2w_def is the total function b2w c = n2w (b2n c). HOL's type-indexed 'a word becomes BitVec width with a positive width; n2w is BitVec.ofNat width at that same width."
+  },
+  {
+    "lean_path": "Flapjack/Misc/Multiword.lean",
+    "lean_name": "singleAdd",
+    "hol_path": "HOL/examples/machine-code/multiword/multiwordScript.sml",
+    "hol_name": "single_add_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: single_add_def returns the wrapped sum x + y + b2w c and the carry flag dimword (:'a) <= w2n x + w2n y + b2n c. Lean keeps both components in HOL's order, renders dimword as 2 ^ width and w2n as .toNat; the carry Bool is the decide of the same numeric comparison."
+  },
+  {
+    "lean_path": "Flapjack/Misc/Multiword.lean",
+    "lean_name": "singleSub",
+    "hol_path": "HOL/examples/machine-code/multiword/multiwordScript.sml",
+    "hol_name": "single_sub_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: single_sub_def is single_add x (~y) c with HOL word complement; Lean uses ~~~y on BitVec and the same singleAdd helper. No clause or guard differs."
+  },
+  {
+    "lean_path": "Flapjack/Misc/Multiword.lean",
+    "lean_name": "singleMul",
+    "hol_path": "HOL/examples/machine-code/multiword/multiwordScript.sml",
+    "hol_name": "single_mul_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: single_mul_def returns x * y + c and n2w ((w2n x * w2n y + w2n c) DIV dimword (:'a)). Lean keeps the wrapped low word and the high word via Nat division by 2 ^ width, with n2w as BitVec.ofNat at the same width."
+  },
+  {
+    "lean_path": "Flapjack/Misc/Multiword.lean",
+    "lean_name": "singleDiv",
+    "hol_path": "HOL/examples/machine-code/multiword/multiwordScript.sml",
+    "hol_name": "single_div_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: single_div_def divides the two-word dividend w2n x1 * dimword (:'a) + w2n x2 by w2n y, returning the quotient and remainder as n2w values. Lean keeps Nat DIV/MOD (HOL's total division by zero, where DIV 0 = 0 and MOD 0 = the dividend) and renders dimword as 2 ^ width and n2w as BitVec.ofNat."
+  },
+  {
+    "lean_path": "Flapjack/Misc/Multiword/SingleWord.lean",
+    "lean_name": "singleDivPre",
+    "hol_path": "HOL/examples/machine-code/multiword/mc_multiwordScript.sml",
+    "hol_name": "single_div_pre_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: the typed capture shows the dividend operands carry independent dimensions, r2 : \u03b2 word, r0 : \u03b3 word, r9 : \u03b1 word, with only \u03b1 entering dimword. Lean binds three separate positive widths \u03b1 \u03b2 \u03b3, each with its own NeZero, and keeps the single conjunction r9 <> 0 /\\ (w2n r2 * dimword + w2n r0) DIV w2n r9 < dimword."
+  },
+  {
+    "lean_path": "Flapjack/Misc/Multiword/SingleWord.lean",
+    "lean_name": "singleAddWord",
+    "hol_path": "HOL/examples/machine-code/multiword/mc_multiwordScript.sml",
+    "hol_name": "single_add_word_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: single_add_word_def is let (z,c) = single_add w1 w2 (c <> 0w) in (z, b2w c). Lean keeps the let, the word-nonzero test as decide (c != 0) and the b2w carry rendering; no clause differs."
+  },
+  {
+    "lean_path": "Flapjack/Misc/Multiword/SingleWord.lean",
+    "lean_name": "singleSubWord",
+    "hol_path": "HOL/examples/machine-code/multiword/mc_multiwordScript.sml",
+    "hol_name": "single_sub_word_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: single_sub_word_def is let (z,c) = single_sub w1 w2 (c <> 0w) in (z, b2w c). Lean keeps the let, the word-nonzero test and the b2w carry rendering; no clause differs."
+  }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "state",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/Semantics.lean",
+    "lean_name": "MiniState",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: the typed capture recordtype.state : (num |-> \u03b1 word) -> (address -> \u03b1 word list) -> num -> \u03b1 state fixes the three fields in order: regs, arrays, clock. Lean keeps that order and carriers; regs is the canonical HolFiniteMapExact and the word dimension is the positive BitVec width."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "eval_exp_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/Semantics.lean",
+    "lean_name": "evalExp",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: all eleven clauses in HOL's order - Const, Var, Op Add/Sub/And/Or/Xor over exactly two arguments, and Shift Lsl/Asr/Lsr/Ror with w2n of the second operand. The Var clause is HOL's FAPPLY `s.regs ' v`, rendered with the reviewed holFapply on the canonical finite-map carrier; the module's bitVecNonempty instance supplies the word carrier's inhabitant, so no Nonempty binder appears in any tagged signature and total_function_inhabitants does not apply. HOL's remaining patterns fall to ARB; Lean's catch-all returns holArb. HOL word_and/word_or/word_xor/word_ror and the four shifts are rendered by the BitVec operations with the same Nat shift amount."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "eval_exp_pre_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/Semantics.lean",
+    "lean_name": "evalExpPre",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: the typed capture shows the five source clauses expanded over the constructors - Const is T, Var is FDOM membership, Op with exactly two arguments is the conjunction of the operand preconditions, Shift adds w2n (eval_exp s x2) < 32, and every other shape is F. Lean keeps that order and the same numeric bound; the Var clause is stated literally as v in s.regs.dom (HOL's v in FDOM s.regs) rather than as lookup non-absence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "eval_ri_pre_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/Semantics.lean",
+    "lean_name": "evalRiPre",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: Reg r is eval_exp_pre s (Var r) and Imm w is T, matching both source clauses."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "eval_ri_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/Semantics.lean",
+    "lean_name": "evalRi",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: Reg r evaluates Var r and Imm w returns w, matching both source clauses."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "dec_clock_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/Semantics.lean",
+    "lean_name": "decClock",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: dec_clock s = s with clock := s.clock - 1; Lean keeps the record update and HOL's truncated natural subtraction."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "reg_write_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/Semantics.lean",
+    "lean_name": "regWrite",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: reg_write v NONE s removes v from the register map and reg_write n (SOME v) s inserts (n,v). Lean keeps both clauses in source order, with the canonical map erase and update operations standing for HOL's \\ and |+."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "delete_vars_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/Semantics.lean",
+    "lean_name": "deleteVars",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: delete_vars [] s = s and delete_vars (v::vs) s = reg_write v NONE (delete_vars vs s). Lean keeps both clauses and the recursion order."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "array_write_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/Semantics.lean",
+    "lean_name": "arrayWrite",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: array_write n v s = s with arrays := (n =+ v) s.arrays. Lean keeps the record update and the function update at the same array index."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "clock_write_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/Semantics.lean",
+    "lean_name": "clockWrite",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: clock_write l s = s with clock := l; Lean keeps the record update."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "copy_vars_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/Semantics.lean",
+    "lean_name": "copyVars",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: copy_vars [] s t = SOME t and the n::ns clause looks the name up in the source map, returning NONE when absent and otherwise recursing after reg_write n (SOME x). Lean keeps both clauses, the lookup failure and the recursion."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "eval_rules",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/Semantics.lean",
+    "lean_name": "evalRules",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison against eval_rules_typed: HOL's eval_rules is the right-associated conjunction of all seventeen rules, each quantified as in the source - Skip, Continue, Delete, Assign, Seq, If, Load, Store, Swap, Add, Sub, Mul, Div, Loop, Rec, LoopBody-return and LoopBody-continue. This tagged theorem states them in exactly that shape, with each rule's ONE conjunction premise in HOL's right-associated order (Seq, If, Loop, Rec and LoopBody-continue included), proved from the constructors of the untagged Eval inductive. The inductive itself is untagged: its non-recursive rules (Load, Store, Add, Sub, Mul, Div) carry HOL's premise as one conjunction in HOL's order, while the recursive rules cannot, because Lean 4's kernel rejects a single And premise whose conjuncts are Eval occurrences over the constructor's own index variables (invalid nested inductive datatype 'And', nested inductive datatypes parameters cannot contain local variables). That is a limitation of the Lean implementation, not an accepted change to the source statement, and no exact-port claim is made for the inductive. Binder order follows the capture, including r, s before the numeric parameters for Sub, Mul and Div and after them for Add; IN FDOM is stated as membership in s.regs.dom, FLOOKUP as the carrier lookup, FAPPLY (`s.regs ' n`) as holFapply; Add/Sub use singleAddWord/singleSubWord, Mul/Div singleMul/singleDiv with singleDivPre, and If uses wordCmpHOL, all at the state's single word dimension."
+  }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "b2w_if",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/WordArith.lean",
+    "lean_name": "b2w_if",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: b2w b = if b then 1w else 0w, proved by the same two-case split. HOL's 'a word becomes BitVec width at a positive width; the two word literals are 1 and 0 at that width."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "b2n_if",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/WordArith.lean",
+    "lean_name": "b2n_if",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: b2n b = if ~b then 0 else 1. Lean keeps the Boolean negation and the same branch values."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "LESS_LENGTH_IMP_APPEND",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/WordArith.lean",
+    "lean_name": "lessLengthImpAppend",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: for n < LENGTH xs there are ys, z and zs with xs = ys ++ z::zs and LENGTH ys = n. Lean keeps the strict bound, the three existentials, the split equation and the length equation in the same order."
+  }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "exp_ok_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/Syntax.lean",
+    "lean_name": "expOk",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: the typed capture shows the source clauses expanded over the constructors - Const is T, Var i is i < 25, Op with exactly two arguments is the conjunction of the operand checks, Shift checks only the first operand, and every other shape is F. Lean keeps those clauses in source order with the literal bound 25 standing for the source's max_var_name overload. HOL's bool-valued definition is stated as a proposition."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "syntax_ok_aux_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/Syntax.lean",
+    "lean_name": "syntaxOkAux",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: every source clause is present - Loop recurses into the body, LoopBody is F, Seq is the conjunction, Assign checks the destination and exp_ok, Load/Store check both registers, If checks t2 and the register test on t3 plus both branches, Add/Sub check n1 n2 n3 and the register tests on n4 n5, Mul checks four registers, Div checks five, Rec requires every saved register below the bound and ALL_DISTINCT, and Skip/Delete/Swap/Continue are T. The source's bool-valued definition is stated as a proposition: EVERY becomes membership, ALL_DISTINCT becomes List.Nodup, and !r. t3 = Reg r ==> r < 25 stays a universal implication."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "syntax_ok_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/Syntax.lean",
+    "lean_name": "syntaxOk",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: syntax_ok (LoopBody body) is syntax_ok_aux body and every other program shape is syntax_ok_aux p, matching both source clauses. The source's bool-valued definition is stated as a proposition."
+  }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "array_write_cancel",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/MiniStateOps.lean",
+    "lean_name": "arrayWrite_cancel",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: array_write n (s.arrays n) s = s. Lean keeps the same array index and contents; the function update with the current value is the identity."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "reg_write_cancel",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/MiniStateOps.lean",
+    "lean_name": "regWrite_cancel",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: two clauses - writing n with the current value (HOL's `SOME (s.regs ' n)`) when n is in the domain, and deleting n when it is not. Lean keeps both directions, states the domain test as membership in the canonical key set, and renders the current value with the reviewed holFapply."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "state_eq_lemma",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/MiniStateOps.lean",
+    "lean_name": "stateEqLemma",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: state equality is exactly clock equality, register-domain equality, equal register values on the domain (HOL's `s0.regs ' n = s1.regs ' n`), and equal array contents, in HOL's conjunct order. Lean states the domain equality as an equality of the canonical key sets and the value agreement with the reviewed holFapply."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "clock_write_simp",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/MiniStateOps.lean",
+    "lean_name": "clockWrite_simp",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: clock_write leaves regs and arrays and sets clock to the given value; Lean keeps the three conjuncts in source order."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "dec_clock_write_simp",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/MiniStateOps.lean",
+    "lean_name": "decClock_write_simp",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: dec_clock leaves regs and arrays and sets clock to s.clock - 1; Lean keeps the three conjuncts in source order."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "reg_write_simp",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/MiniStateOps.lean",
+    "lean_name": "regWrite_simp",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: the erased and updated register maps for the NONE and SOME cases, plus that arrays and clock are untouched for a generic value. Lean keeps the four conjuncts and both register clauses."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "reg_write_simp_alt",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/MiniStateOps.lean",
+    "lean_name": "regWrite_simp_alt",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: the four source conjuncts - FAPPLY after a NONE write is the empty map's FAPPLY at a matching key and the old FAPPLY otherwise, FAPPLY after a SOME write is the new value at a matching key, FDOM after a NONE write is the old domain with n deleted, and FDOM after a SOME write is the old domain with n inserted. Lean keeps all four, renders both FAPPLY columns with the reviewed holFapply, and states the domains as canonical key sets."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "array_write_simp",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/MiniStateOps.lean",
+    "lean_name": "arrayWrite_simp",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: array_write leaves regs and clock and updates only arrays at n; Lean keeps the three conjuncts with the same function update."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "delete_vars_simp",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/MiniStateOps.lean",
+    "lean_name": "deleteVars_simp",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: deleting a register list leaves the clock and arrays untouched, makes the lookup of a listed register absent, and removes listed registers from the domain while keeping the others. Lean keeps the four conjuncts, the MEM tests and the recursion. HOL's FDOM of the register finite map is stated on the canonical carrier as the set of keys with a defined lookup (`HolFiniteMapExact.dom`), and FLOOKUP results are the carrier's Option lookups."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "reg_read_lemma1",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/MiniStateOps.lean",
+    "lean_name": "regReadLemma1",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: a defined lookup implies domain membership, stated as the iff with True. Lean keeps the implication and the iff conclusion; the domain test is the canonical defined-lookup test."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "reg_read_lemma2",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/MiniStateOps.lean",
+    "lean_name": "regReadLemma2",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: FLOOKUP s.regs n = SOME v implies HOL's FAPPLY `s.regs ' n = v`. Lean keeps the premise as a canonical lookup and states the conclusion with the reviewed holFapply, discharging it through holFapply_of_lookup."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "array_read_lemma",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/MiniStateOps.lean",
+    "lean_name": "arrayReadLemma",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: reading an array returns its contents; Lean keeps the identical premise and conclusion."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "clock_read_lemma",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/MiniStateOps.lean",
+    "lean_name": "clockReadLemma",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: reading the clock returns its value; Lean keeps the identical premise and conclusion."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "copy_vars_const",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/MiniStateOps.lean",
+    "lean_name": "copyVars_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison against copy_vars_const_typed: HOL binds save_regs s2 s3 with s1 free and reads s1.regs. Lean binds s1 first (as the source's free state), then save_regs s2 s3, and states the same single copy_vars premise over s1.regs; both conjuncts (clock, arrays) are kept. The arbitrary-source-map helper copyVars_const_source is untagged Flapjack infrastructure."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "copy_vars_ignore",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/MiniStateOps.lean",
+    "lean_name": "copyVars_ignore",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison against copy_vars_ignore_typed: HOL binds save_regs regs s2 s3 (a free) and states ONE conjunction premise copy_vars save_regs regs s2 = SOME s3 AND ~MEM a save_regs AND a < max_var_name AND EVERY (lambda n. n < max_var_name) save_regs. Lean binds a first as the free variable and then save_regs regs s2 s3 in HOL's binder order, keeps the four conjuncts as ONE hypothesis in the same order, writes the literal 25 for max_var_name (the probe now reinstates the source's local Overload max_var_name = 25n), and states HOL's FAPPLY equality with the reviewed holFapply on both sides."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "copy_vars_IMP",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/MiniStateOps.lean",
+    "lean_name": "copyVars_IMP",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison against copy_vars_IMP_typed: HOL binds save_regs s2 s3 with s1 free and reads s1.regs; a successful copy supplies a value list pointwise related to the saved registers by FLOOKUP s1.regs n = SOME v. Lean binds s1 first, then save_regs s2 s3, states HOL's EVERY2 as List.Forall\u2082 with the same pointwise relation on s1.regs, and keeps the existential over the value list. The arbitrary-source-map helper copyVars_IMP_source is untagged Flapjack infrastructure."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "dec_clock_thm",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/MiniStateOps.lean",
+    "lean_name": "decClock_thm",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: dec_clock s = clock_write (s.clock - 1) s; Lean keeps both sides and the truncated subtraction."
+  }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "code_subset_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/CodeSubset.lean",
+    "lean_name": "codeSubset",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: code_subset (n1,cs1) (n2,cs2) holds when every value the first alist maps a key to is also mapped by the second. Lean matches the source's two pair patterns directly and discards the vacuous n1/n2 binder heads, keeping both alists and the pointwise implication with the same key and value quantifiers. HOL's ALOOKUP uses total equality on the key type; the Lean association-list lookup holAlookup needs a DecidableEq instance, which is the only added binder."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "code_subset_refl",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/CodeSubset.lean",
+    "lean_name": "codeSubset_refl",
+    "hol_line": 368,
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: code_subset c1 c1. The source script declares this name twice (line 368 and line 2281, the second a duplicate of the same fact); this theorem carries the first declaration's line and proves the same reflexive statement. The duplicate declaration is covered by codeSubset_refl_again."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "code_subset_trans",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/CodeSubset.lean",
+    "lean_name": "codeSubset_trans",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: code_subset c1 c2 and code_subset c2 c3 imply code_subset c1 c3. HOL's premise is ONE conjunction code_subset c1 c2 AND code_subset c2 c3, kept as one Lean hypothesis in that order; the three pair arguments keep their source order."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "loop_app_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/Relations.lean",
+    "lean_name": "loopApp",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: the source case split on f x - an INL state is decremented and paired with g x /\\ s.clock <> 0, an INR value passes through with g x. Lean keeps both branches, the INL/INR sides, the clock test and the independent result type."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "tick_before_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/Relations.lean",
+    "lean_name": "tickBefore",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: at clock zero the state and F are returned, otherwise f runs on delete_vars vs (dec_clock s). Lean keeps the guard, both results and the same body call."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "Corr_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/Relations.lean",
+    "lean_name": "Corr",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: Corr prog s s1 p holds exactly when the guard p implies Eval NONE s prog s1. Lean keeps the four arguments in source order, the NONE recursion target and the guard implication."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "good_code_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/Relations.lean",
+    "lean_name": "goodCode",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: every entry (prog,n,p2) of the installed-code list compiles from some accumulator cs1 to exactly p2 with labels l2' and temporaries i2, and the resulting accumulator extends cs3. Lean keeps the MEM test, the four existentials, the compile call at n 2 1 and the code_subset conclusion."
+  }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "code_subset_refl",
+    "hol_line": 2281,
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/CodeSubset.lean",
+    "lean_name": "codeSubset_refl_again",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: the source script declares code_subset_refl a second time at line 2281 with the same reflexive statement. This theorem carries that declaration's line and restates the identical fact; the first declaration at line 368 is codeSubset_refl. Evidence for this second occurrence is the distinct capture code_subset_refl_2281_typed, produced by capture_at on source line 2281, so the cited occurrence has its own typed evidence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "code_rel_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/StateRel.lean",
+    "lean_name": "codeRel",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: the typed capture binds the pair `cs` and the sptree `code` as single variables and projects with SND cs, exactly as Lean does with `cs.2`; the body quantifies prog n p2, tests ALOOKUP (SND cs) prog = SOME (n,p2), and concludes with four existentials cs1 l2 i2 cs2, `compile n 2 1 cs1 prog = (p2,l2,i2,cs2)`, `lookup n code = SOME (1, Seq p2 (Return 0 [0]))` and `code_subset cs2 cs`. Lean keeps that order and every carrier: holAlookup for ALOOKUP, sptLookup for the sptree lookup, the literal labels 1 and temporaries 0, and codeSubset for the accumulator relation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "div_code_assum_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/StateRel.lean",
+    "lean_name": "divCodeAssum",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": ["fpRegs", "store"],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Source comparison against div_code_assum_def_typed: HOL binds the code and then, inside the definition body, t1 n l i0 i1 i2 i3 i4 w3 w4 w5 ret_val; Lean keeps that exact order with the same universals inside the definition's Prop body, exactly as HOL writes them (no Pi-typed result and no eta-expansion in stateRel); the fmap_as_finite_support carrier WordSemStateFiniteExact is named in the body, which the checker accepts for a declaration whose header ends in : Prop; stateRel keeps HOL's conjunct directly as divCodeAssum t.code. The conjunction is 0 < i0 through 0 < i4, ALL_DISTINCT [i0;i1;i2;i3;i4] (List.Nodup), t1.code = code, t1.termdep <> 0, get_var 0 t1 = SOME ret_val and single_div_pre w3 w4 w5, then exists max with evaluate (DivCode n l i0 i1 i2 i3 i4, t1 with locals := insert i2 (Word w3) (insert i3 (Word w4) (insert i4 (Word w5) t1.locals))) = (NONE, let (w1,w2) = single_div w3 w4 w5 in (set_var 0 ret_val o set_var i1 (Word w2) o set_var i0 (Word w1) o set_store (Temp 28w) (Word w2)) (t1 with <|permute := (fun n => t1.permute (n + 1)); locals := LN; stack_max := max|>)). Lean keeps the nested insert order, the composition order and argument, the word5 literal 28, LN, and the permute shift; the post-state record update is bound by a let because Lean does not parse a multi-field record update as a deeply nested argument (the value is identical). Inherits the reviewed reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8) through the WordSem evaluator and setVar/setStore definitions in its constant closure; the definition is a dependent, not itself qualified."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "array_rel_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/StateRel.lean",
+    "lean_name": "arrayRel",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison against array_rel_def_typed: the binders are arr, v1 v2 v3, m, dm, frame with the source's independent payload and address word widths (each a positive BitVec width with its own NeZero). The body is exists a1 a2 a3 rest1 rest2 with v1 = SOME (Word a1), v2 = SOME (Word a2), v3 = SOME (Word a3), then the three separation conjuncts in source order: (word_list a1 (MAP Word (arr In1)) * word_list a3 (MAP Word (arr Out)) * rest1) (fun2set (m,dm)), the same with a2/In2/rest2, and (word_list a3 (MAP Word (arr Out)) * frame) (fun2set (m,dm)). Lean keeps the left-associative star grouping (confirmed by probe), the In1/In2/Out selectors, MAP Word as List.map .word, fun2set (m,dm) as fun2Set (m, fun a => dm a = true) and the same existential order."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "state_rel_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/StateRel.lean",
+    "lean_name": "stateRel",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": ["MiniState.regs", "WordSemStateFiniteExact.store"],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Source comparison against state_rel_def_typed: the binders are s t cs t0 frame in source order and every conjunct appears in HOL's order - s.clock = t.clock; array_rel s.arrays (FLOOKUP t.store TempIn1) (FLOOKUP t.store TempIn2) (FLOOKUP t.store TempOut) t.memory t.mdomain frame; the register conjunct (forall a v, FLOOKUP s.regs a = SOME v => a < 25 and FLOOKUP t.store (Temp (n2w a)) = SOME (Word v)); code_rel cs t.code; div_code_assum (:'ffi) (:'c) t.code, kept directly as divCodeAssum t.code (the definition carries HOL's universals inside its Prop body, so no eta-expansion is needed); t.termdep <> 0; then t0.gc_fun, handler, termdep, code, be, ffi, compile, compile_oracle, code_buffer, data_buffer, stack_limit, stack_size equalities with t's fields, FLOOKUP t.store TempOut = FLOOKUP t0.store TempOut and the residual forall n, (forall r, n <> Temp r) => FLOOKUP t.store n = FLOOKUP t0.store n. HOL's boolean `t0.be <=> t.be` is rendered as Bool equality, the standard rendering for a Bool field. The commented-out locals_size/stack_max conjuncts are absent in the source too. FLOOKUP on both finite maps is the carrier lookup; the two map carriers are MiniState.regs and WordSemStateFiniteExact.store, each with the same-module roundtrip witness. Inherits the reviewed reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8) through divCodeAssum and the WordSem state definitions in its constant closure; the relation is a dependent, not itself qualified."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "Eval_NONE_IMP",
+    "hol_line": 179,
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/Semantics.lean",
+    "lean_name": "Eval_NONE_IMP",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": ["regs"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison against Eval_NONE_IMP_typed: HOL binds s1 c s2 p in that order and states Eval NONE s1 c s2 ==> Eval (SOME p) s1 c s2. Lean keeps the same binders and the same single implication premise, with the sum result carrier Sum (MiniState width) (MiniState width) and the mini program over BitVec width. The proof generalizes the recursion target to the NONE option and inducts over the derivation, replaying HOL's qsuff_tac generalization and ho_match_mp_tac eval_ind."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "evaluate_Seq_Seq",
+    "hol_line": 345,
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/EvaluateLemmas.lean",
+    "lean_name": "evaluate_seqSeq",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": ["fpRegs", "store"],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Source comparison against evaluate_Seq_Seq_typed: HOL binds p1 p2 p3 t1 in that order and states evaluate (Seq p1 (Seq p2 p3),t1) = evaluate (Seq (Seq p1 p2) p3,t1). Lean keeps the same binders and both sides, with the program over BitVec width and independent C and F parameters for the state's other two type arguments. The proof expands the rebound Seq clause (fix_clock_evaluate applied, as HOL does with its rebound evaluate_def) and splits on the evaluate p1 and evaluate p2 results; HOL's induction over p1 is not needed because the clause only plumbs those results. Inherits the reviewed reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8) through the evaluator's inst clause; the lemma is a dependent, not itself qualified."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "word_list_APPEND",
+    "hol_line": 499,
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/HeapLemmas.lean",
+    "lean_name": "wordListAppendWordBignum",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison against word_list_APPEND_typed: HOL binds xs ys a in that order and states word_list a (xs ++ ys) = word_list a xs * word_list (a + n2w (LENGTH xs) * bytes_in_word) ys. Lean keeps the same binders, the same star, and HOL's product order (BitVec.ofNat width xs.length * bytesInWord width); the generic element type is Lean's α, matching HOL's α payload type (the typed capture shows xs ys : α list), and the word carrier is BitVec width for HOL's β word. bytesInWord is the reviewed width-indexed bytes_in_word (width / 8). The fact is the same as the tagged stack_removeProof port, and the proof is that lemma plus commutativity of word multiplication, so the commuted product order of that port does not leak into this statement."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "list_update_def",
+    "hol_line": 527,
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/HeapLemmas.lean",
+    "lean_name": "listUpdateSpt",
+    "statement_status": "reviewed_total_function_inhabitants",
+    "total_function_inhabitants": ["α"],
+    "reviewer": "Source comparison against list_update_def_typed: the three source clauses in order are list_update [] ys t = t, list_update (x::xs) (y::ys) t = insert x y (list_update xs ys t), and list_update (x::xs) [] t = insert x ARB (list_update xs [] t). Lean keeps that clause order, the key list and payload list, and the sptree insert on the reviewed Spt carrier; the unspecified ARB payload is the shared opaque holArb, so the only added binder is the carrier's Nonempty instance, recorded by total_function_inhabitants."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "domain_list_update",
+    "hol_line": 575,
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/HeapLemmas.lean",
+    "lean_name": "domainListUpdate",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison against domain_list_update_typed: HOL binds xs ys x t in that order and states x IN domain (list_update xs ys t) <=> MEM x xs OR x IN domain t. Lean keeps those binders and both sides; HOL's domain membership is the reviewed sptMem on the Spt carrier and MEM is list membership. The signature carries the carrier's Nonempty instance only because listUpdateSpt needs it for ARB. The total_function_inhabitants qualifier does not apply: it requires the tagged declaration's own source to use a reviewed total-function rendering (holEl, holHd, holLast, holThe, holLinv, holArb, holHdNil, holFapply, holFapplyOutside), and these statements mention only listUpdateSpt, whose ARB use is already recorded on its own declaration; the reference checker rejects the qualifier here. So no qualifier is claimed and the inherited instance is documented instead."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "state_rel_delete_vars",
+    "hol_line": 282,
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/StateRel.lean",
+    "lean_name": "stateRel_delete_vars_regs",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": ["MiniState.regs", "WordSemStateFiniteExact.store"],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Source comparison against state_rel_delete_vars_282_typed: HOL binds s1 s2 t1 cs t0 frame in that order and has two premises, the conjunction s1.arrays = s2.arrays AND s1.clock = s2.clock AND s2.regs SUBMAP s1.regs (ONE premise, kept as one Lean hypothesis) and state_rel s1 t1 cs t0 frame. HOL's SUBMAP is written out as its definition, the pointwise FLOOKUP implication on the canonical register map; every other conjunct of state_rel is carried over unchanged. Inherits the reviewed reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8) through stateRel and divCodeAssum; the theorem is a dependent, not itself qualified."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "state_rel_delete_vars",
+    "hol_line": 293,
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/StateRel.lean",
+    "lean_name": "stateRel_delete_vars",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": ["MiniState.regs", "WordSemStateFiniteExact.store"],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Source comparison against state_rel_delete_vars_293_typed: HOL binds vs first and then s1 t1 cs t0 frame, and states state_rel s1 t1 cs t0 frame ==> state_rel (delete_vars vs s1) t1 cs t0 frame, one premise. Lean keeps that binder order and the single premise; the proof inducts over vs as HOL does and applies the first declaration through reg_write NONE, whose register map is the canonical erase. Inherits the reviewed reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8) through stateRel; the theorem is a dependent, not itself qualified."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "state_rel_IN_FDOM",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/StateRel.lean",
+    "lean_name": "stateRel_IN_FDOM",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": ["MiniState.regs", "WordSemStateFiniteExact.store"],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Source comparison against state_rel_IN_FDOM_typed: HOL binds s1 t1 cs2 t0 frame r in that order and has one conjunction premise state_rel s1 t1 cs2 t0 frame AND r IN FDOM s1.regs, then concludes Temp (n2w r) IN FDOM t1.store AND t1.store ' Temp (n2w r) = Word (s1.regs ' r). Lean keeps the binder order and the ONE conjunction premise; FDOM membership is the canonical defined-lookup domain of each carrier, FAPPLY on both sides is the reviewed holFapply, and Word is WordLocW.word. Inherits the reviewed reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8) through stateRel; the theorem is a dependent, not itself qualified."
+  },
+  {"hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml", "hol_name": "Corr_Skip", "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/Relations.lean", "lean_name": "Corr_Skip", "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec", "fmap_as_finite_support": ["regs"], "words_as_type_indexed_bitvec": true, "reviewer": "Source comparison against Corr_Skip_typed: HOL binds s and states Corr Skip s (INR s) T. Lean keeps the binder and the same Corr argument order, with T rendered as the Boolean true and Skip as .skip; the proof is the Eval.skip rule."},
+  {"hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml", "hol_name": "Corr_Continue", "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/Relations.lean", "lean_name": "Corr_Continue", "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec", "fmap_as_finite_support": ["regs"], "words_as_type_indexed_bitvec": true, "reviewer": "Source comparison against Corr_Continue_typed: HOL binds s and states Corr Continue s (INL s) T. Lean keeps the binder and both injections, with T rendered as true and Continue as .continue; the proof is the Eval.continue rule."},
+  {"hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml", "hol_name": "Corr_Delete", "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/Relations.lean", "lean_name": "Corr_Delete", "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec", "fmap_as_finite_support": ["regs"], "words_as_type_indexed_bitvec": true, "reviewer": "Source comparison against Corr_Delete_typed: HOL binds vs then s and states Corr (Delete vs) s (INR (delete_vars vs s)) T. Lean keeps that binder order, the same target state and the true guard; the proof is the Eval.delete rule."},
+  {"hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml", "hol_name": "Corr_Swap", "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/Relations.lean", "lean_name": "Corr_Swap", "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec", "fmap_as_finite_support": ["regs"], "words_as_type_indexed_bitvec": true, "reviewer": "Source comparison against Corr_Swap_typed: HOL binds s and states Corr Swap s (INR (array_write In1 (s.arrays In2) (array_write In2 (s.arrays In1) s))) T. Lean keeps the nested array writes in the same order with In1/In2 as .in1/.in2 and the true guard; the proof is the Eval.swap rule."},
+  {"hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml", "hol_name": "Corr_Seq", "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/Relations.lean", "lean_name": "Corr_Seq", "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec", "fmap_as_finite_support": ["regs"], "words_as_type_indexed_bitvec": true, "reviewer": "Source comparison against Corr_Seq_typed: HOL binds p2 s1 s2 q2 p1 s q1 in that order and has two premises Corr p2 s1 s2 q2 and Corr p1 s (INR s1) q1 (each ONE hypothesis), concluding Corr (Seq p1 p2) s s2 (q1 /\\ q2). Lean keeps the binder order, both premises and the conjunction, rendered as the Boolean &&; the proof splits the guard into q1 and q2 and applies Eval.seq."},
+  {"hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml", "hol_name": "Corr_Seq_alt", "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/Relations.lean", "lean_name": "Corr_Seq_alt", "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec", "fmap_as_finite_support": ["regs"], "words_as_type_indexed_bitvec": true, "reviewer": "Source comparison against Corr_Seq_alt_typed: HOL binds b p2 s1 s2 q2 p1 s q1 in that order and has three premises (b ==> Corr p2 s1 s2 q2), Corr p1 s (INR s1) q1 and b, concluding Corr (Seq p1 p2) s s2 (q1 /\\ q2). Lean keeps the binder order and all three premises, with the Boolean b as b = true and the conjunction as &&; the proof applies the continuation premise at b."},
+  {"hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml", "hol_name": "Corr_STRENGTHEN_TERM", "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/Relations.lean", "lean_name": "Corr_STRENGTHEN_TERM", "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec", "fmap_as_finite_support": ["regs"], "words_as_type_indexed_bitvec": true, "reviewer": "Source comparison against Corr_STRENGTHEN_TERM_typed: HOL binds p s f q, then has the first premise Corr p s f q and quantifies f' q' AFTER it: !f' q'. (q' ==> (f = INR f') and q) ==> Corr p s (INR f') q'. Lean states exactly that scope - (p s f q) : Corr p s f q -> forall (f' : MiniState width) (q' : Bool), (q' = true -> f = .inr f' and q = true) -> Corr p s (.inr f') q' - with q and q' as Booleans and f = INR f' as the right injection."},
+  {"hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml", "hol_name": "Corr_move_pre", "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/Relations.lean", "lean_name": "Corr_move_pre", "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec", "fmap_as_finite_support": ["regs"], "words_as_type_indexed_bitvec": true, "reviewer": "Source comparison against Corr_move_pre_typed: HOL binds b code s f p and states (b ==> Corr code s f p) <=> Corr code s f (b /\\ p). Lean keeps the binder order, the iff and both sides, with the Boolean premise as b = true and the conjunction as b && p; the proof cases on b."},
+  {"hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml", "hol_name": "evaluate_SeqTemp", "hol_line": 454, "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/EvaluateLemmas.lean", "lean_name": "evaluate_seqTemp", "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec", "fmap_as_finite_support": ["fpRegs", "store"], "words_as_type_indexed_bitvec": true, "inherits_reals_as_rational_cuts": true, "reviewer": "Source comparison against evaluate_SeqTemp_typed: HOL binds i r p t in that order and states evaluate (SeqTemp i r p,t) = if Temp (n2w r) IN FDOM t.store then evaluate (p, set_var i (t.store ' Temp (n2w r)) t) else evaluate (SeqTemp i r p,t). Lean keeps the binder order, both branches (including HOL's rewrite-to-itself else branch) and HOL's domain form of the guard, (.temp (BitVec.ofNat 5 r)) ∈ t.store.dom, with Temp (n2w r) as .temp (BitVec.ofNat 5 r); FAPPLY is the reviewed holFapply. The proof expands the rebound Seq and Assign clauses and splits on the store lookup. Inherits the reviewed reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8) through the evaluator; the lemma is a dependent, not itself qualified."},
+  {"hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml", "hol_name": "list_update_alist_insert", "hol_line": 533, "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/HeapLemmas.lean", "lean_name": "listUpdateSpt_alistInsert", "statement_status": "reviewed_exact", "reviewer": "Source comparison against list_update_alist_insert_typed: HOL binds xs ys t in that order and states LENGTH xs = LENGTH ys ==> list_update xs ys t = alist_insert xs ys t. Lean keeps the binder order, the single length premise and both sides; HOL's alist_insert is the sptree library function, rendered by the tagged sptAlistInsert port of the same three clauses, and list_update is listUpdateSpt. The signature carries the carrier's Nonempty instance only because listUpdateSpt needs it for ARB. The total_function_inhabitants qualifier does not apply: it requires the tagged declaration's own source to use a reviewed total-function rendering (holEl, holHd, holLast, holThe, holLinv, holArb, holHdNil, holFapply, holFapplyOutside), and these statements mention only listUpdateSpt, whose ARB use is already recorded on its own declaration; the reference checker rejects the qualifier here. So no qualifier is claimed and the inherited instance is documented instead."},
+  {"hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml", "hol_name": "lookup_list_update_ADD_2", "hol_line": 641, "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/HeapLemmas.lean", "lean_name": "lookupListUpdateAdd2", "statement_status": "reviewed_exact", "reviewer": "Source comparison against lookup_list_update_ADD_2_typed: HOL binds save_regs ws and then the free tree l, and states lookup 0 (list_update (MAP (fun n => n + 2) save_regs) ws l) = lookup 0 l. Lean keeps that binder order, the shifted key list (List.map (fun n => n + 2)) and the same lookup on both sides, using the canonical sptree carrier's sptLookup. The signature carries the carrier's Nonempty instance only because listUpdateSpt needs it for ARB. The total_function_inhabitants qualifier does not apply: it requires the tagged declaration's own source to use a reviewed total-function rendering (holEl, holHd, holLast, holThe, holLinv, holArb, holHdNil, holFapply, holFapplyOutside), and these statements mention only listUpdateSpt, whose ARB use is already recorded on its own declaration; the reference checker rejects the qualifier here. So no qualifier is claimed and the inherited instance is documented instead."},
+  {"hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml", "hol_name": "loop_app_EQ", "hol_line": 1864, "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/Relations.lean", "lean_name": "loopApp_EQ", "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec", "fmap_as_finite_support": ["regs"], "words_as_type_indexed_bitvec": true, "reviewer": "Source comparison against loop_app_EQ_typed: HOL binds f g x t in that order and states the conjunction of two equivalences - loop_app f g x = (INR t,T) iff f x = INR t and g x, and loop_app f g x = (INL t,T) iff there is x' with f x = INL x', dec_clock x' = t, g x and x'.clock <> 0. Lean keeps the binder order, both equivalences, the two result shapes, the existential, the clock guard and HOL's T as the Boolean true. HOL's loop_app body has the same two branches in the tagged loopApp definition."},
+  {"hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml", "hol_name": "shift_eq_bytes_in_word", "hol_line": 507, "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/HeapLemmas.lean", "lean_name": "shiftEqBytesInWord", "statement_status": "reviewed_words_as_type_indexed_bitvec", "words_as_type_indexed_bitvec": true, "reviewer": "Source comparison against shift_eq_bytes_in_word_typed: HOL states good_dimindex (:α) ==> (w :α word) << (shift (:α) MOD dimword (:α)) = w * (bytes_in_word :α word). Lean binds w and keeps the implication as the premise, HOL's shift amount including the modulo by dimword (rendered 2 ^ width), HOL's << as the BitVec shift, and bytes_in_word as the reviewed bytesInWord (width / 8); shift is HOL's word_shift overload, the reviewed wordShiftAmount. good_dimindex is the reviewed goodDimindex. The proof cases on the two admissible widths and compares toNat values."},
+  {"hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml", "hol_name": "LIST_REL_lemma", "hol_line": 668, "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/HeapLemmas.lean", "lean_name": "listRelLemma", "statement_status": "reviewed_exact", "reviewer": "Source comparison against LIST_REL_lemma_typed: HOL binds xs ys and states (forall x y, MEM x xs AND MEM y ys ==> P x y ==> Q x y) ==> LIST_REL P xs ys ==> LIST_REL Q xs ys. Lean keeps the binder order, the pointwise premise as ONE conjunction hypothesis inside the forall, and both LIST_REL premises/conclusions as List.Forall2. HOL's Boolean relations P Q are rendered as = true; no representation qualifier applies because no finite-map or word carrier appears in the statement."},
+  {"hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml", "hol_name": "i2mw_NOT_NIL", "hol_line": 2268, "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/MultiwordLemmas.lean", "lean_name": "i2mw_snd_ne_nil", "statement_status": "reviewed_words_as_type_indexed_bitvec", "words_as_type_indexed_bitvec": true, "reviewer": "Source comparison against i2mw_NOT_NIL_typed: HOL binds i and states SND (i2mw i) <> [] <=> i <> 0, with the empty list annotated at the word list type. Lean keeps the binder, the second component of i2mw, the empty-list test on the magnitude words and the integer-zero test, and annotates the empty list as List (BitVec width), matching HOL's 'a word list; the width parameter is inferred from that annotation. The proof splits the tagged n2mw clause and uses the integer magnitude, with a Flapjack-only helper n2mw_ne_nil for that clause split."},
+  {"hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml", "hol_name": "Corr_Assign", "hol_line": 1372, "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/Relations.lean", "lean_name": "Corr_Assign", "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec", "fmap_as_finite_support": ["regs"], "words_as_type_indexed_bitvec": true, "reviewer": "Source comparison against Corr_Assign_typed: HOL binds n x s and states Corr (Assign n x) s (INR (reg_write n (SOME (eval_exp s x)) s)) (eval_exp_pre s x). Lean keeps the binder order, the target state and the same program; HOL's Boolean guard eval_exp_pre is stated as decide (evalExpPre s x), with a Flapjack-only Decidable instance for the tagged evalExpPre propositions, and the proof applies Eval.assign through of_decide_eq_true."},
+  {"hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml", "hol_name": "Corr_Load", "hol_line": 1386, "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/Relations.lean", "lean_name": "Corr_Load", "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec", "fmap_as_finite_support": ["regs"], "words_as_type_indexed_bitvec": true, "reviewer": "Source comparison against Corr_Load_typed: HOL binds r i a s and states Corr (Load r i a) s (INR (reg_write r (SOME (s.arrays a ❲w2n s.regs⟨i⟩❳)) s)) (i IN FDOM s.regs AND w2n s.regs⟨i⟩ < LENGTH (s.arrays a)). Lean keeps the binder order, the target state, the array element as holEl at the index's toNat, and FAPPLY as holFapply; HOL's Boolean conjunction is stated as decide of the same conjunction, using the canonical dom membership and its Decidable instance. The proof splits the index register's lookup and applies Eval.load."},
+  {"hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml", "hol_name": "Corr_Store", "hol_line": 1404, "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/Relations.lean", "lean_name": "Corr_Store", "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec", "fmap_as_finite_support": ["regs"], "words_as_type_indexed_bitvec": true, "reviewer": "Source comparison against Corr_Store_typed: HOL binds r i s and states Corr (Store r i) s (INR (array_write Out (s.arrays Out) ❲w2n s.regs⟨i⟩ ↦ s.regs⟨r⟩❳ s)) (r IN FDOM s.regs AND i IN FDOM s.regs AND w2n s.regs⟨i⟩ < LENGTH (s.arrays Out)). Lean keeps the binder order, the out-array update at the same index and value, both FDOM memberships and the bound; HOL's Boolean conjunction is decide of that conjunction, FAPPLY is holFapply. The proof splits both register lookups and applies Eval.store."},
+  {"hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml", "hol_name": "Corr_Add", "hol_line": 1413, "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/Relations.lean", "lean_name": "Corr_Add", "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec", "fmap_as_finite_support": ["regs"], "words_as_type_indexed_bitvec": true, "reviewer": "Source comparison against Corr_Add_typed: HOL binds n1 n2 n3 ri1 ri2 s and states Corr (Add n1 n2 n3 ri1 ri2) s (INR (reg_write n1 (SOME (FST (single_add_word s.regs<n3> (eval_ri s ri1) (eval_ri s ri2)))) (reg_write n2 (SOME (SND ...)) s))) (n3 IN FDOM s.regs AND eval_ri_pre s ri1 AND eval_ri_pre s ri2 AND (eval_ri s ri2 <> 0w ==> eval_ri s ri2 = 1w) AND n1 <> n2). Lean keeps the binder order, both FST/SND projections of the single-word addition, FAPPLY as holFapply, and the same five side conditions in order. HOL's Boolean conjunction guard is stated as decide of the same proposition (all its components are propositions once FAPPLY, FDOM and the preconditions are rendered), and the target state matches the typed capture term for term. The proof splits the addition's pair result and applies Eval.add; that constructor takes the same n3 in s.regs.dom conjunct."},
+  {"hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml", "hol_name": "Corr_Sub", "hol_line": 1427, "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/Relations.lean", "lean_name": "Corr_Sub", "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec", "fmap_as_finite_support": ["regs"], "words_as_type_indexed_bitvec": true, "reviewer": "Source comparison against Corr_Sub_typed: HOL binds n1 n2 n3 ri1 ri2 s and states the same shape as Corr_Add with single_sub_word instead of single_add_word, the same five side conditions in order (n3 IN FDOM, both eval_ri_pre, the zero-or-one carry operand and n1 <> n2). Lean keeps the binder order, both FST/SND projections, FAPPLY as holFapply and the same conjunction. HOL's Boolean conjunction guard is stated as decide of the same proposition (all its components are propositions once FAPPLY, FDOM and the preconditions are rendered), and the target state matches the typed capture term for term. The proof splits the subtraction's pair result and applies Eval.sub; that constructor takes the same n3 in s.regs.dom conjunct."},
+  {"hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml", "hol_name": "Corr_Mul", "hol_line": 1442, "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/Relations.lean", "lean_name": "Corr_Mul", "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec", "fmap_as_finite_support": ["regs"], "words_as_type_indexed_bitvec": true, "reviewer": "Source comparison against Corr_Mul_typed: HOL binds n1 n2 n3 n4 s and states Corr (Mul n1 n2 n3 n4) s (INR (reg_write n1 (SOME (FST (single_mul s.regs<n3> s.regs<n4> 0w))) (reg_write n2 (SOME (SND ...)) s))) (n3 IN FDOM s.regs AND n4 IN FDOM s.regs AND n1 <> n2). Lean keeps the binder order, the two FAPPLY reads, the zero carry word and the same three side conditions. HOL's Boolean conjunction guard is stated as decide of the same proposition (all its components are propositions once FAPPLY, FDOM and the preconditions are rendered), and the target state matches the typed capture term for term. The proof applies Eval.mul directly; that constructor takes the same two in s.regs.dom conjuncts."},
+  {"hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml", "hol_name": "Corr_Div", "hol_line": 1452, "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/Relations.lean", "lean_name": "Corr_Div", "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec", "fmap_as_finite_support": ["regs"], "words_as_type_indexed_bitvec": true, "reviewer": "Source comparison against Corr_Div_typed: HOL binds n1 n2 n3 n4 n5 s and states Corr (Div n1 n2 n3 n4 n5) s (INR (reg_write n1 (SOME (FST (single_div s.regs<n3> s.regs<n4> s.regs<n5>))) (reg_write n2 (SOME (SND ...)) s))) (n3 IN FDOM s.regs AND n4 IN FDOM s.regs AND n5 IN FDOM s.regs AND n1 <> n2 AND single_div_pre s.regs<n3> s.regs<n4> s.regs<n5>). Lean keeps the binder order, the three FAPPLY reads, both projections and all five side conditions in order; the division precondition is the tagged singleDivPre, with a Flapjack-only Decidable instance so the Boolean guard can be written with decide. HOL's Boolean conjunction guard is stated as decide of the same proposition (all its components are propositions once FAPPLY, FDOM and the preconditions are rendered), and the target state matches the typed capture term for term. The proof applies Eval.div; that constructor takes the same three in s.regs.dom conjuncts."},
+  {"hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml", "hol_name": "Corr_If", "hol_line": 1465, "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/Relations.lean", "lean_name": "Corr_If", "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec", "fmap_as_finite_support": ["regs"], "words_as_type_indexed_bitvec": true, "reviewer": "Source comparison against Corr_If_typed: HOL binds p1 s f1 q1 p2 f2 q2 c r ri in that order and has ONE conjunction premise, Corr p1 s f1 q1 AND Corr p2 s f2 q2 (kept as one Lean hypothesis), concluding Corr (If c r ri p1 p2) s (if word_cmp c (eval_exp s (Var r)) (eval_ri s ri) then f1 else f2) (r IN FDOM s.regs AND eval_ri_pre s ri AND if word_cmp ... then q1 else q2). Lean keeps the binder order, the one conjunction premise, the same conditional result and the same right-associated guard; because the chosen branch's guard q1/q2 is itself a Bool, the guard is a && of the two decided propositions and that Bool, right-associated as HOL writes it. word_cmp is the tagged wordCmpHOL. The proof splits the comparison and applies Eval.ite in the matching branch; that constructor takes HOL's r IN FDOM s1.regs guard as membership in s.regs.dom."},
+  {"hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml", "hol_name": "FLOOKUP_DOMSUB", "hol_line": 1621, "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/FiniteMapLemmas.lean", "lean_name": "FLOOKUP_DOMSUB", "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["f"], "reviewer": "Source comparison against FLOOKUP_DOMSUB_typed: HOL binds f n m and states FLOOKUP (f \\ n) m = if m = n then NONE else FLOOKUP f m, with f : beta |-> alpha. Lean keeps the binder order and both sides; HOL's \\ is the equality-based domain subtraction of the canonical carrier (eraseEq, using DecidableEq on the key type as HOL equality), and FLOOKUP is the carrier lookup. The standalone map parameter is recorded with fmap_as_finite_support_parameters and the same-module holFmapAsFiniteSupportParamWitness_FLOOKUP_DOMSUB_f states the reviewed broad-lookup codec roundtrip."},
+{"hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml", "hol_name": "list_store_def", "hol_line": 581, "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/HeapLemmas.lean", "lean_name": "listStore", "statement_status": "reviewed_fmap_as_finite_support_result", "fmap_as_finite_support_result": true, "total_function_inhabitants": ["α"], "reviewer": "Source comparison against list_store_def_typed: the two source clauses in order are list_store [] ys s = s and list_store (x::xs) ys s = (list_store xs (TL ys) s) |+ (Temp (n2w x), HD ys). Lean keeps the clause order and binders, HOL's TL as List.tail, HD as the reviewed total holHd (so the element type's Nonempty instance is recorded by total_function_inhabitants), and HOL-equality |+ as updateEq on the canonical HolFiniteMapExact carrier; Temp (n2w x) is .temp (BitVec.ofNat 5 x). The result-carrier witness holFmapAsFiniteSupportResultWitness_listStore states the unconditional lookup correspondence to the raw listStoreRaw rendering applied through the input map's lookup."},
+{"hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml", "hol_name": "list_store_FUPDATE", "hol_line": 586, "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/HeapLemmas.lean", "lean_name": "listStore_FUPDATE", "statement_status": "reviewed_fmap_as_finite_support_parameters_words_as_type_indexed_bitvec", "fmap_as_finite_support_parameters": ["st"], "words_as_type_indexed_bitvec": true, "reviewer": "Source comparison against list_store_FUPDATE_typed: HOL binds save_regs, st and ys and states ONE conjunction premise ~MEM h save_regs /\\ h < max_var_name /\\ EVERY (\\n. n < max_var_name) save_regs ==> list_store save_regs ys st<|Temp (n2w h) |-> Word v|> = (list_store save_regs ys st)<|Temp (n2w h) |-> Word v|>. Lean keeps that single conjunction hypothesis in HOL's order, max_var_name as 25, HOL's store map as the canonical HolFiniteMapExact parameter st (named by fmap_as_finite_support_parameters, with the codec witness holFmapAsFiniteSupportParamWitness_listStore_FUPDATE_st), the source's word_loc carrier as WordLocW width, and |+ as updateEq. The typed capture prints 25 rather than a free max_var_name because the probe reinstates the source's local Overload max_var_name = 25n."},
+{"hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml", "hol_name": "FLOOKUP_list_store_ignore", "hol_line": 618, "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/HeapLemmas.lean", "lean_name": "FLOOKUP_list_store_ignore", "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["st"], "reviewer": "Source comparison against FLOOKUP_list_store_ignore_typed: HOL binds save_regs, vals and st and states EVERY (\\n. n < max_var_name) save_regs ==> FLOOKUP (list_store save_regs vals st) TempIn1 = FLOOKUP st TempIn1 /\\ FLOOKUP ... TempIn2 = ... /\\ FLOOKUP ... TempOut = ... /\\ !n. (!r. n <> Temp r) ==> FLOOKUP ... n = FLOOKUP st n. Lean keeps that binder order, the single EVERY premise as membership plus 25, the right-associated conjunction, TempIn1/TempIn2/TempOut as the tagged tempIn1/tempIn2/tempOut, FLOOKUP as the carrier lookup, and the canonical HolFiniteMapExact parameter st with its codec witness holFmapAsFiniteSupportParamWitness_FLOOKUP_list_store_ignore_st. The typed capture prints 25 rather than a free max_var_name because the probe reinstates the source's local Overload max_var_name = 25n."},
+{"hol_path": "cakeml/compiler/backend/word_elimScript.sml", "hol_name": "find_word_loc_def", "lean_path": "Flapjack/Compiler/Backend/WordElim/Definitions.lean", "lean_name": "findWordLoc", "statement_status": "reviewed_exact", "reviewer": "Source comparison against find_word_loc_def_typed: HOL defines find_word_loc by the tuple pattern (name:num, _, _) = name. Lean pattern-matches the same three-component tuple (Nat x alpha x beta) and keeps the independent payload type variables alpha and beta, which HOL infers and never inspects."},
+{"hol_path": "cakeml/compiler/backend/word_elimScript.sml", "hol_name": "find_word_ref_def", "lean_path": "Flapjack/Compiler/Backend/WordElim/Definitions.lean", "lean_name": "findWordRef", "statement_status": "reviewed_exact", "reviewer": "Source comparison against find_word_ref_def_typed: Lean keeps HOL's clauses in order (MustTerminate, Call, Seq, If, LocValue, Loop, default LN), the nested union grouping union (case target) (union (case ret) (case handler)) with the return label inserted together with the return handler's references, insert n () LN for LocValue, and LN for every other constructor. HOL's num_set is Spt Unit and its prog is the tagged WordLangProgHOL alpha."},
+{"hol_path": "cakeml/compiler/backend/word_elimScript.sml", "hol_name": "analyse_word_code_def", "lean_path": "Flapjack/Compiler/Backend/WordElim/Definitions.lean", "lean_name": "analyseWordCode", "statement_status": "reviewed_exact", "reviewer": "Source comparison against analyse_word_code_def_typed: HOL gives LN for the empty code list and insert n (find_word_ref prog) (analyse_word_code t) for (n,args,prog)::t. Lean keeps the tuple pattern as three separate components (Nat x alpha x WordLangProgHOL beta), ignores the arity exactly as HOL does, and builds the Spt NumSet map with the tagged findWordRef."},
+{"hol_path": "cakeml/compiler/backend/word_elimScript.sml", "hol_name": "remove_word_code_def", "lean_path": "Flapjack/Compiler/Backend/WordElim/Definitions.lean", "lean_name": "removeWordCode", "statement_status": "reviewed_exact", "reviewer": "Source comparison against remove_word_code_def_typed: HOL filters l with the inline lambda (\\x. IS_SOME (lookup (FST x) reachable)). Lean writes the same inline lambda over the entry pair, IS_SOME as Option.isSome, FST as entry.1, and lookup as sptLookup; the code payload type alpha is independent as in HOL, and so is the reachable map's payload beta (HOL's reachable : beta sptree$num_map), which removeWordCode binds as its own type parameter."},
+{"hol_path": "cakeml/compiler/backend/word_elimScript.sml", "hol_name": "remove_word_prog_def", "lean_path": "Flapjack/Compiler/Backend/WordElim/Definitions.lean", "lean_name": "removeWordProg", "statement_status": "reviewed_exact", "reviewer": "Source comparison against remove_word_prog_def_typed: HOL binds the let t = analyse_word_code code and let reachable = closure_spt (insert n () LN) t, then remove_word_code reachable code. Lean keeps both lets in that order, insert n () LN on Spt Unit, and renders closure_spt with the reviewed closureTotal (tagged closure_spt_def through closureTotal_step in Flapjack/Compiler/Backend/FlatElim/Reachability.lean)."},
+{"hol_path": "cakeml/compiler/backend/proofs/word_elimProofScript.sml", "hol_name": "dest_word_loc_def", "lean_path": "Flapjack/Compiler/Backend/WordElim/Proofs/Definitions.lean", "lean_name": "destWordLoc", "statement_status": "reviewed_words_as_type_indexed_bitvec", "words_as_type_indexed_bitvec": true, "reviewer": "Source comparison against dest_word_loc_def_typed: HOL has dest_word_loc (Loc n _) = SOME n and dest_word_loc (_:'a word_loc) = NONE. Lean keeps the Loc clause and the Word fallback, with HOL's type-indexed word_loc rendered as the reviewed WordLocW width carrier (its Word payload is BitVec width) and the dimension bound as (width : Nat) with [NeZero width]."},
+{"hol_path": "cakeml/compiler/backend/proofs/word_elimProofScript.sml", "hol_name": "dest_result_loc_def", "lean_path": "Flapjack/Compiler/Backend/WordElim/Proofs/Definitions.lean", "lean_name": "destResultLoc", "statement_status": "reviewed_words_as_type_indexed_bitvec", "words_as_type_indexed_bitvec": true, "reviewer": "Source comparison against dest_result_loc_def_typed: HOL gives BIGUNION (set (MAP (\\x. case dest_word_loc x of NONE => empty | SOME x => {x}) ns)) for SOME (Result w ns), {n} for SOME (Exception w (Loc n n0)), and empty otherwise. Lean renders HOL's num -> bool sets as predicates: the BIGUNION clause is the pointwise existential over ns, the exception clause is location = block, and the fallback is constantly False. WordLocW width carries HOL's type-indexed word_loc, with [NeZero width]."},
+{"hol_path": "cakeml/compiler/backend/proofs/word_elimProofScript.sml", "hol_name": "get_locals_def", "lean_path": "Flapjack/Compiler/Backend/WordElim/Proofs/Definitions.lean", "lean_name": "getLocals", "statement_status": "reviewed_words_as_type_indexed_bitvec", "words_as_type_indexed_bitvec": true, "reviewer": "Source comparison against get_locals_def_typed: HOL gives LN for LN, insert n () LN or LN for LS a by dest_word_loc, union for BN, and the let t = union (get_locals t1) (get_locals t2) followed by insert n () t or t for BS t1 a t2. Lean keeps all four clauses in HOL's order, the same let, and Spt Unit as num_set; the locals carrier is Spt (WordLocW width) with [NeZero width]."},
+{"hol_path": "cakeml/compiler/backend/proofs/word_elimProofScript.sml", "hol_name": "get_num_wordloc_alist_def", "lean_path": "Flapjack/Compiler/Backend/WordElim/Proofs/Definitions.lean", "lean_name": "getNumWordlocAlist", "statement_status": "reviewed_words_as_type_indexed_bitvec", "words_as_type_indexed_bitvec": true, "reviewer": "Source comparison against get_num_wordloc_alist_def_typed: HOL computes let locs = MAP THE (FILTER IS_SOME (MAP (dest_word_loc o SND) l)) then FOLDL (\\acc loc. insert loc () acc) LN locs. Lean renders MAP THE (FILTER IS_SOME (MAP f l)) as List.filterMap f l, applies it to SND (entry.2), and keeps the same left fold over Spt Unit. WordLocW width carries HOL's type-indexed word_loc, with [NeZero width]."},
+{"hol_path": "cakeml/compiler/backend/proofs/word_elimProofScript.sml", "hol_name": "get_stack_def", "lean_path": "Flapjack/Compiler/Backend/WordElim/Proofs/Definitions.lean", "lean_name": "getStack", "statement_status": "reviewed_words_as_type_indexed_bitvec", "words_as_type_indexed_bitvec": true, "reviewer": "Source comparison against get_stack_def_typed: HOL gives LN for [] and union (union (get_num_wordloc_alist e0) (get_num_wordloc_alist e)) (get_stack xs) for StackFrame lsz e0 e _::xs. Lean keeps that nested union order and both cut sets; the frame is the tagged WordSemStackFrame width carrier, so its payloads are WordLocW width with [NeZero width]."},
+{"hol_path": "cakeml/compiler/backend/proofs/word_elimProofScript.sml", "hol_name": "code_rel_def", "lean_path": "Flapjack/Compiler/Backend/WordElim/Proofs/Definitions.lean", "lean_name": "codeRel", "statement_status": "reviewed_words_as_type_indexed_bitvec", "words_as_type_indexed_bitvec": true, "reviewer": "Source comparison against code_rel_def_typed: HOL states code_rel reachable s_code t_code <=> !n. n IN domain reachable ==> lookup n s_code = lookup n t_code. Lean keeps the universal, IN domain as sptMem and lookup as sptLookup on the two Spt maps; the state's code map payload is the tagged WordLangProgHOL over BitVec width, so the dimension is bound as (width : Nat) with [NeZero width]."},
+{"hol_path": "cakeml/compiler/backend/proofs/word_elimProofScript.sml", "hol_name": "code_closed_def", "lean_path": "Flapjack/Compiler/Backend/WordElim/Proofs/Definitions.lean", "lean_name": "codeClosed", "statement_status": "reviewed_exact", "reviewer": "Source comparison against code_closed_def_typed: HOL states code_closed reachable c1 <=> ?code1. c1 = fromAList code1 /\\ !n m. n IN domain reachable /\\ is_reachable (analyse_word_code code1) n m ==> m IN domain reachable. Lean keeps that existential, fromAList as sptFromAList, the conjunction inside the universal, is_reachable as the tagged isReachable, and analyse_word_code as analyseWordCode. HOL's reachable payload type and the code's arity type are free, so Lean keeps the independent parameters alpha, beta and gamma; no word carrier occurs."},
+{"hol_path": "cakeml/compiler/backend/proofs/word_elimProofScript.sml", "hol_name": "lookup_analyse_word_code", "lean_path": "Flapjack/Compiler/Backend/WordElim/Proofs/Analysis.lean", "lean_name": "lookupAnalyseWordCode", "statement_status": "reviewed_exact", "reviewer": "Source comparison against lookup_analyse_word_code_typed: HOL binds code, n, arity and prog, with ALOOKUP code n = SOME (arity,prog) as ONE premise, and concludes lookup n (analyse_word_code code) = SOME (find_word_ref prog). Lean keeps that binder order and the single premise, ALOOKUP as holAlookup, lookup as sptLookup and analyse_word_code/find_word_ref as the tagged definitions; code is a List of three-component tuples and arity/prog keep HOL's independent types."},
+{"hol_path": "cakeml/compiler/backend/proofs/word_elimProofScript.sml", "hol_name": "remove_word_code_thm", "lean_path": "Flapjack/Compiler/Backend/WordElim/Proofs/Analysis.lean", "lean_name": "removeWordCode_thm", "statement_status": "reviewed_exact", "reviewer": "Source comparison against remove_word_code_thm_typed: HOL binds n, reachable and l, takes ALL_DISTINCT (MAP FST l) as ONE premise, then quantifies v AFTER the premise, and concludes the iff between n IN domain reachable /\\ MEM (n,v) l and MEM (n,v) (remove_word_code reachable l). Lean keeps the binder order, the single distinct-label premise as List.Nodup of the mapped labels, v after the premise, domain membership as sptMem and the same iff."},
+{"hol_path": "cakeml/compiler/backend/proofs/word_elimProofScript.sml", "hol_name": "remove_word_code_MAP_FST_lemma", "lean_path": "Flapjack/Compiler/Backend/WordElim/Proofs/Analysis.lean", "lean_name": "removeWordCode_MAP_FST_lemma", "statement_status": "reviewed_exact", "reviewer": "Source comparison against remove_word_code_MAP_FST_lemma_typed: HOL binds reachable and l : (num,num # alpha prog) alist and states MAP FST (FILTER (lambda x. IS_SOME (lookup (FST x) reachable)) l) = FILTER (lambda x. IS_SOME (lookup x reachable)) (MAP FST l). Lean states the same left-to-right equality with HOL's left side written as the inline filter: `(l.filter (fun x => (sptLookup x.1 reachable).isSome)).map Prod.fst = (l.map Prod.fst).filter (fun x => (sptLookup x reachable).isSome)`, not via remove_word_code; the lambda variable shapes x / x.1 are kept, FST is Prod.fst and lookup is sptLookup."},
+{"hol_path": "cakeml/compiler/backend/proofs/word_elimProofScript.sml", "hol_name": "remove_word_code_thm_FST", "lean_path": "Flapjack/Compiler/Backend/WordElim/Proofs/Analysis.lean", "lean_name": "removeWordCode_thm_FST", "statement_status": "reviewed_exact", "reviewer": "Source comparison against remove_word_code_thm_FST_typed: HOL binds n, reachable and l and takes ALL_DISTINCT (MAP FST l) as ONE premise; the conclusion is the iff between n IN domain reachable /\\ MEM n (MAP FST l) and MEM n (MAP FST (remove_word_code reachable l)). Lean keeps the binder order, the single premise as List.Nodup, domain membership as sptMem, and the same label-level iff. The payload type alpha stays independent as in HOL."},
+{"hol_path": "cakeml/compiler/backend/proofs/word_elimProofScript.sml", "hol_name": "domain_get_locals_lookup", "lean_path": "Flapjack/Compiler/Backend/WordElim/Proofs/Locations.lean", "lean_name": "domainGetLocalsLookup", "statement_status": "reviewed_words_as_type_indexed_bitvec", "words_as_type_indexed_bitvec": true, "reviewer": "Source comparison against domain_get_locals_lookup_typed: HOL binds n and t and states n IN domain (get_locals t) <=> ?k n1. lookup k t = SOME (Loc n n1). Lean keeps that binder order, the same iff with HOL's independent key and offset existentials, IN domain as sptMem, lookup as sptLookup, and get_locals as the tagged getLocals over Spt (WordLocW width) with [NeZero width]."},
+{"hol_path": "cakeml/compiler/backend/proofs/word_elimProofScript.sml", "hol_name": "get_locals_insert_Loc", "lean_path": "Flapjack/Compiler/Backend/WordElim/Proofs/Locations.lean", "lean_name": "getLocals_insert_Loc", "statement_status": "reviewed_words_as_type_indexed_bitvec", "words_as_type_indexed_bitvec": true, "reviewer": "Source comparison against get_locals_insert_Loc_typed: HOL binds k, n1, n0 and locals and states domain (get_locals (insert k (Loc n1 n0) locals)) SUBSET domain (get_locals locals) UNION {n1}. Lean keeps HOL's binder names and order k n1 n0 locals, insert as sptInsert, and states the subset literally at the Set carrier: sptDomainSet (get_locals ...) ⊆ sptDomainSet (get_locals locals) ∪ {n1}, where sptDomainSet is the reviewed sptDomain predicate at Mathlib's Set carrier."},
+{"hol_path": "cakeml/compiler/backend/proofs/word_elimProofScript.sml", "hol_name": "get_locals_insert", "lean_path": "Flapjack/Compiler/Backend/WordElim/Proofs/Locations.lean", "lean_name": "getLocals_insert", "statement_status": "reviewed_words_as_type_indexed_bitvec", "words_as_type_indexed_bitvec": true, "reviewer": "Source comparison against get_locals_insert_typed: HOL binds k, v and locals and states domain (get_locals (insert k v locals)) SUBSET domain (get_locals locals) UNION (case dest_word_loc v of NONE => empty | SOME n => {n}). Lean keeps HOL's binder names and order k v locals and states the subset literally: sptDomainSet (get_locals (insert k v locals)) ⊆ sptDomainSet (get_locals locals) ∪ (match dest_word_loc v with NONE => empty | SOME n => {n}), with the case rendered as the same match over destWordLoc."},
+{"hol_path": "cakeml/compiler/backend/proofs/word_elimProofScript.sml", "hol_name": "get_num_wordloc_alist_thm", "lean_path": "Flapjack/Compiler/Backend/WordElim/Proofs/Locations.lean", "lean_name": "getNumWordlocAlist_thm", "statement_status": "reviewed_words_as_type_indexed_bitvec", "words_as_type_indexed_bitvec": true, "reviewer": "Source comparison against get_num_wordloc_alist_thm_typed: HOL binds n, e and l with e of an independent type and unused, and states (?n0. MEM (Loc n n0) (MAP SND l)) <=> n IN domain (get_num_wordloc_alist l). Lean keeps the binder order, e as an unused parameter of its own type, MAP SND as entries.map Prod.snd, MEM as membership, and the same iff."},
+{"hol_path": "cakeml/compiler/backend/proofs/word_elimProofScript.sml", "hol_name": "get_num_wordloc_alist_get_locals", "lean_path": "Flapjack/Compiler/Backend/WordElim/Proofs/Locations.lean", "lean_name": "getNumWordlocAlist_get_locals", "statement_status": "reviewed_words_as_type_indexed_bitvec", "words_as_type_indexed_bitvec": true, "reviewer": "Source comparison against get_num_wordloc_alist_get_locals_typed: HOL binds e : (num # alpha word_loc) list and states domain (get_locals (fromAList e)) SUBSET domain (get_num_wordloc_alist e). Lean keeps HOL's binder name e and states the subset literally: sptDomainSet (get_locals (sptFromAList e)) ⊆ sptDomainSet (getNumWordlocAlist e), with fromAList as sptFromAList."},
+{"hol_path": "cakeml/compiler/backend/proofs/word_elimProofScript.sml", "hol_name": "get_locals_union_subset", "lean_path": "Flapjack/Compiler/Backend/WordElim/Proofs/Locations.lean", "lean_name": "getLocals_union_subset", "statement_status": "reviewed_words_as_type_indexed_bitvec", "words_as_type_indexed_bitvec": true, "reviewer": "Source comparison against get_locals_union_subset_typed: HOL binds A and B and states domain (get_locals (union A B)) SUBSET domain (union (get_locals A) (get_locals B)). Lean keeps HOL's binder names and order A B and states the subset literally: sptDomainSet (getLocals (sptUnion A B)) ⊆ sptDomainSet (sptUnion (getLocals A) (getLocals B)), with union as sptUnion on both levels."},
+{"hol_path": "cakeml/compiler/backend/proofs/word_elimProofScript.sml", "hol_name": "get_locals_fromList2_extension", "lean_path": "Flapjack/Compiler/Backend/WordElim/Proofs/Locations.lean", "lean_name": "getLocals_fromList2_extension", "statement_status": "reviewed_words_as_type_indexed_bitvec", "words_as_type_indexed_bitvec": true, "reviewer": "Source comparison against get_locals_fromList2_extension_typed: HOL binds x, y and ys and takes x IN domain (get_locals (fromList2 ys)) as ONE premise, concluding x IN domain (get_locals (fromList2 (ys ++ [y]))). Lean keeps that binder order and single premise, fromList2 as sptFromList2, ++ [y] as ys ++ [y], and IN domain as sptMem."},
+{"hol_path": "cakeml/compiler/backend/proofs/word_elimProofScript.sml", "hol_name": "get_stack_hd_thm", "lean_path": "Flapjack/Compiler/Backend/WordElim/Proofs/Stacks.lean", "lean_name": "getStack_hd_thm", "statement_status": "reviewed_words_as_type_indexed_bitvec", "words_as_type_indexed_bitvec": true, "reviewer": "Source comparison against get_stack_hd_thm_typed: HOL binds stack, dr, l0, l, opt and t, with lsz free (the typed capture shows lsz : num option as a free variable), and states the ONE conjunction premise domain (get_stack stack) SUBSET dr /\\ stack = StackFrame lsz l l0 opt::t, concluding domain (get_locals (union (fromAList l0) (fromAList l))) SUBSET dr /\\ domain (get_stack t) SUBSET dr. Lean keeps that single conjunction premise in HOL's order, the same conclusion conjunction, the same frame field positions (l is the non-GC cutset, l0 the GC cutset), union/fromAList as sptUnion/sptFromAList, and states both subsets literally with sptDomainSet (the reviewed sptDomain at the Set carrier): sptDomainSet (getStack stack) ⊆ dr in the premise and sptDomainSet ... ⊆ dr in each conjunct. lsz is free in the source statement and is bound after t."},
+{"hol_path": "cakeml/compiler/backend/proofs/word_elimProofScript.sml", "hol_name": "get_stack_CONS", "lean_path": "Flapjack/Compiler/Backend/WordElim/Proofs/Stacks.lean", "lean_name": "getStack_CONS", "statement_status": "reviewed_words_as_type_indexed_bitvec", "words_as_type_indexed_bitvec": true, "reviewer": "Source comparison against get_stack_CONS_typed: HOL binds h and t and concludes the conjunction domain (get_stack [h]) SUBSET domain (get_stack (h::t)) /\\ domain (get_stack t) SUBSET domain (get_stack (h::t)). Lean keeps the binder order and both conjuncts, with the frame as the tagged WordSemStackFrame width, [h] as [h], h::t as h :: t, and states both subsets literally with sptDomainSet (the reviewed sptDomain at the Set carrier): sptDomainSet (getStack [h]) ⊆ sptDomainSet (getStack (h::t)) and sptDomainSet (getStack t) ⊆ sptDomainSet (getStack (h::t))."},
+{"hol_path": "cakeml/compiler/backend/proofs/word_elimProofScript.sml", "hol_name": "get_locals_inter_subset", "lean_path": "Flapjack/Compiler/Backend/WordElim/Proofs/Locations.lean", "lean_name": "getLocals_inter_subset", "statement_status": "reviewed_words_as_type_indexed_bitvec", "words_as_type_indexed_bitvec": true, "reviewer": "Source comparison against get_locals_inter_subset_typed: HOL marks the theorem [local] and states the single subset domain (get_locals (inter a b)) SUBSET domain (get_locals a), with a : α word_loc num_map and b : β num_map, so the right tree's payload type is independent. Lean binds a : Spt (WordLocW width) and an independent {β : Type} b : Spt β in HOL's order and states the subset literally: sptDomainSet (getLocals (sptInter a b)) \u2286 sptDomainSet (getLocals a), with inter as sptInter."},
+{"hol_path": "cakeml/compiler/backend/proofs/word_elimProofScript.sml", "hol_name": "get_stack_LASTN", "lean_path": "Flapjack/Compiler/Backend/WordElim/Proofs/Stacks.lean", "lean_name": "getStack_LASTN", "statement_status": "reviewed_words_as_type_indexed_bitvec", "words_as_type_indexed_bitvec": true, "reviewer": "Source comparison against get_stack_LASTN_typed: HOL binds stack and n in that order and states the single subset domain (get_stack (LASTN n stack)) SUBSET domain (get_stack stack). Lean keeps that binder order and states the subset literally with sptDomainSet; LASTN is the reviewed wordSemLastN rendering (HOL rich_list LASTN_def via LASTN_ALT, carried by the untagged wordSemLastN_eq_drop helper) and stack is a list of the tagged WordSemStackFrame width."},
+{"hol_path": "cakeml/compiler/backend/proofs/word_elimProofScript.sml", "hol_name": "get_stack_enc_stack", "lean_path": "Flapjack/Compiler/Backend/WordElim/Proofs/Stacks.lean", "lean_name": "getStack_encStack", "statement_status": "reviewed_words_as_type_indexed_bitvec", "words_as_type_indexed_bitvec": true, "reviewer": "Source comparison against get_stack_enc_stack_typed: HOL binds stack and reachable : β num_map, takes domain (get_stack stack) SUBSET domain reachable as ONE premise, then quantifies e : α word_loc after it and takes MEM e (enc_stack stack) as a second premise, concluding (case dest_word_loc e of NONE => {} | SOME n => {n}) SUBSET domain reachable. Lean keeps that binder order, both premises as successive arrows with the \u2200 e where HOL places it, reachable as an independent Spt β, enc_stack as wordSemEncStack, the dest_word_loc case as an inline match over Set Nat, and both subsets literally with sptDomainSet."},
+{"hol_path": "cakeml/compiler/backend/proofs/word_elimProofScript.sml", "hol_name": "get_stack_dec_stack", "lean_path": "Flapjack/Compiler/Backend/WordElim/Proofs/Stacks.lean", "lean_name": "getStack_decStack", "statement_status": "reviewed_words_as_type_indexed_bitvec", "words_as_type_indexed_bitvec": true, "reviewer": "Source comparison against get_stack_dec_stack_typed: HOL binds locs, stack, reachable and new_stack in that order and states ONE conjunction premise ((\u2200 n n0, MEM (Loc n n0) locs \u21d2 n \u2208 domain reachable) \u2227 domain (get_stack stack) SUBSET domain reachable \u2227 dec_stack locs stack = SOME new_stack), concluding domain (get_stack new_stack) SUBSET domain reachable. Lean keeps that binder order, the three conjuncts in HOL's order as a single premise, MEM (Loc n n0) locs as (.loc n n0) \u2208 locs, IN domain as sptMem, dec_stack as wordSemDecStack with SOME as some, and states the subset literally with sptDomainSet. reachable is an independent Spt \u03b2, as in the capture."},
+{"hol_path": "cakeml/compiler/backend/proofs/word_elimProofScript.sml", "hol_name": "const_writes_eq_Loc", "lean_path": "Flapjack/Compiler/Backend/WordElim/Proofs/ConstWrites.lean", "lean_name": "wordSemConstWrites_eq_Loc", "statement_status": "reviewed_words_as_type_indexed_bitvec", "words_as_type_indexed_bitvec": true, "reviewer": "Source comparison against const_writes_eq_Loc_typed: HOL binds words, a, c, m, k, l1 and l2 in that order (words : (bool # \u03b1 word) list, a c : \u03b1 word, m : \u03b1 word -> \u03b1 word_loc, k : \u03b1 word, l1 l2 : num) and states the ONE implication const_writes a c words m k = Loc l1 l2 ==> m k = Loc l1 l2. Lean keeps that binder order and single premise, const_writes as wordSemConstWrites, Loc as .loc with Nat offsets, and the word carrier as BitVec width."},
+{"hol_path": "cakeml/compiler/backend/proofs/word_elimProofScript.sml", "hol_name": "push_env_def2", "lean_path": "Flapjack/Compiler/Backend/WordElim/Proofs/Stacks.lean", "lean_name": "pushEnv_def2", "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec", "fmap_as_finite_support": ["fpRegs", "store"], "words_as_type_indexed_bitvec": true, "reviewer": "Source comparison against push_env_def2_typed: HOL states the equation push_env env handler s = (let l0 = toAList (FST env); (l,permute) = env_to_list (SND env) s.permute; handler = case handler of NONE => NONE | SOME (w,h,l1,l2) => SOME (s.handler,l1,l2); stack = StackFrame s.locals_size l0 l handler::s.stack in s with <|stack := stack; stack_max := OPTION_MAP2 MAX s.stack_max (stack_size stack); permute := permute; handler := case handler of NONE => s.handler | SOME x => LENGTH s.stack|>) with env, handler and s free. Lean binds the same pair envs, handler and state in that order, keeps every let binding including the rebound handler and the final case over it, and renders toAList/env_to_list/OPTION_MAP2 MAX/stack_size as sptToAList/wordSemEnvToList/wordSemOptionMax/wordSemStackSize. The state carrier is the tagged WordSemStateFiniteExact whose fpRegs and store fields are HolFiniteMapExact, so the fmap qualifier names them; the same-module canonical witness is re-exported in namespace WordElimStacksSupport."},
+{"hol_path": "cakeml/compiler/backend/proofs/word_elimProofScript.sml", "hol_name": "ALOOKUP_ZIP_SUCCESS", "lean_path": "Flapjack/Compiler/Backend/WordElim/Proofs/Vars.lean", "lean_name": "holAlookup_zip_success", "statement_status": "reviewed_exact", "reviewer": "Source comparison against ALOOKUP_ZIP_SUCCESS_typed: HOL binds x, y, k and v in that order with x : \u03b1 list, y : \u03b2 list, k : \u03b1 and v : \u03b2 (independent element types), and states the two premises LENGTH x = LENGTH y and ALOOKUP (ZIP (x,y)) k = SOME v, concluding MEM v y. Lean binds the same four in the same order at independent {\u03b1 \u03b2 : Type} with [DecidableEq \u03b1] for the lookup, keeps both premises as successive arrows, ZIP as x.zip y, ALOOKUP as holAlookup, SOME as some and MEM as \u2208 y. No word or state carrier appears, so no representation qualifier applies."},
+{"hol_path": "cakeml/compiler/backend/proofs/word_elimProofScript.sml", "hol_name": "get_vars_locals", "lean_path": "Flapjack/Compiler/Backend/WordElim/Proofs/Vars.lean", "lean_name": "getVars_locals", "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec", "fmap_as_finite_support": ["fpRegs", "store"], "words_as_type_indexed_bitvec": true, "reviewer": "Source comparison against get_vars_locals_typed: HOL binds args, s, x and y in that order and states ONE conjunction premise get_vars args s = SOME x /\\ MEM y x, concluding \u2203 n, lookup n s.locals = SOME y. Lean keeps that binder order, the single conjunction premise as one hypothesis, get_vars as WordSemStateFiniteExact.getVars, lookup as sptLookup, SOME as some and MEM as \u2208. The state carrier WordSemStateFiniteExact has HolFiniteMapExact fpRegs/store fields, so the fmap qualifier names them; the same-module witness is re-exported in namespace WordElimVarsSupport."},
+{"hol_path": "cakeml/compiler/backend/proofs/word_elimProofScript.sml", "hol_name": "get_vars_get_locals", "lean_path": "Flapjack/Compiler/Backend/WordElim/Proofs/Vars.lean", "lean_name": "getVars_get_locals", "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec", "fmap_as_finite_support": ["fpRegs", "store"], "words_as_type_indexed_bitvec": true, "reviewer": "Source comparison against get_vars_get_locals_typed: HOL binds args, s, x, n and n1 in that order and states ONE conjunction premise get_vars args s = SOME x /\\ MEM (Loc n n1) x, concluding n IN domain (get_locals s.locals). Lean keeps that binder order and the single premise, with MEM (Loc n n1) x as (.loc n n1) \u2208 x and IN domain as sptMem. The fmap qualifier covers the WordSemStateFiniteExact fpRegs/store fields with the same-module witness."},
+{"hol_path": "cakeml/compiler/backend/proofs/word_elimProofScript.sml", "hol_name": "get_locals_fromList2", "lean_path": "Flapjack/Compiler/Backend/WordElim/Proofs/Vars.lean", "lean_name": "getLocals_fromList2", "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec", "fmap_as_finite_support": ["fpRegs", "store"], "words_as_type_indexed_bitvec": true, "reviewer": "Source comparison against get_locals_fromList2_typed: HOL binds args, s, x and t in that order and states ONE conjunction premise get_vars args s = SOME x /\\ x <> [] /\\ t = fromList2 x, concluding domain (get_locals t) SUBSET domain (get_locals s.locals). Lean keeps that binder order, the three conjuncts in HOL's order as a single premise, fromList2 as sptFromList2 and the subset literally with sptDomainSet. The fmap qualifier covers the fpRegs/store fields."},
+{"hol_path": "cakeml/compiler/backend/proofs/word_elimProofScript.sml", "hol_name": "get_locals_fromList2_FRONT", "lean_path": "Flapjack/Compiler/Backend/WordElim/Proofs/Vars.lean", "lean_name": "getLocals_fromList2_FRONT", "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec", "fmap_as_finite_support": ["fpRegs", "store"], "words_as_type_indexed_bitvec": true, "reviewer": "Source comparison against get_locals_fromList2_FRONT_typed: HOL binds args, s, x, xf and t in that order and states ONE conjunction premise get_vars args s = SOME x /\\ x <> [] /\\ xf = FRONT x /\\ t = fromList2 xf, concluding domain (get_locals t) SUBSET domain (get_locals s.locals). Lean keeps that binder order, the four conjuncts in HOL's order as a single premise, FRONT as List.dropLast, fromList2 as sptFromList2 and the subset literally with sptDomainSet. The fmap qualifier covers the fpRegs/store fields."}
 ]

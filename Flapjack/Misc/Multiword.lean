@@ -87,4 +87,46 @@ theorem mw2i_i2mw {width : Nat} [NeZero width] (i : Int) : mw2i (i2mw i : Bool �
     rw [Int.negSucc_eq]
     simp
 
+/-- HOL's boolean-to-natural embedding. -/
+@[hol "HOL/examples/machine-code/multiword/multiwordScript.sml" "b2n_def"]
+def b2n : Bool → Nat
+  | true => 1
+  | false => 0
+
+/-- HOL's boolean-to-word embedding: the natural value as a word. -/
+@[hol "HOL/examples/machine-code/multiword/multiwordScript.sml" "b2w_def"
+  (words_as_type_indexed_bitvec)]
+def b2w {width : Nat} [NeZero width] (c : Bool) : BitVec width :=
+  BitVec.ofNat width (b2n c)
+
+/-- Single-word addition with carry: the wrapped sum and the carry-out flag. -/
+@[hol "HOL/examples/machine-code/multiword/multiwordScript.sml" "single_add_def"
+  (words_as_type_indexed_bitvec)]
+def singleAdd {width : Nat} [NeZero width] (x y : BitVec width) (c : Bool) :
+    BitVec width × Bool :=
+  (x + y + b2w c, decide (2 ^ width ≤ x.toNat + y.toNat + b2n c))
+
+/-- Single-word subtraction with borrow, as complemented addition. -/
+@[hol "HOL/examples/machine-code/multiword/multiwordScript.sml" "single_sub_def"
+  (words_as_type_indexed_bitvec)]
+def singleSub {width : Nat} [NeZero width] (x y : BitVec width) (c : Bool) :
+    BitVec width × Bool :=
+  singleAdd x (~~~y) c
+
+/-- Single-word multiplication with carry-in: the low word and the high word. -/
+@[hol "HOL/examples/machine-code/multiword/multiwordScript.sml" "single_mul_def"
+  (words_as_type_indexed_bitvec)]
+def singleMul {width : Nat} [NeZero width] (x y c : BitVec width) :
+    BitVec width × BitVec width :=
+  (x * y + c, BitVec.ofNat width ((x.toNat * y.toNat + c.toNat) / 2 ^ width))
+
+/-- Single-word division of the two-word dividend `x1 x2` by `y`: quotient and
+remainder, with HOL's total division by zero. -/
+@[hol "HOL/examples/machine-code/multiword/multiwordScript.sml" "single_div_def"
+  (words_as_type_indexed_bitvec)]
+def singleDiv {width : Nat} [NeZero width] (x1 x2 y : BitVec width) :
+    BitVec width × BitVec width :=
+  (BitVec.ofNat width ((x1.toNat * 2 ^ width + x2.toNat) / y.toNat),
+    BitVec.ofNat width ((x1.toNat * 2 ^ width + x2.toNat) % y.toNat))
+
 end Flapjack.Misc.Multiword

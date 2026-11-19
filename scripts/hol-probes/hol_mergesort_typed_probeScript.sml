@@ -33,3 +33,7 @@ val _ = show_thm "sort2_tail_correct_typed=" mergesortTheory.sort2_tail_correct;
 val _ = show_thm "sort3_def_typed=" mergesortTheory.sort3_def;
 val _ = show_thm "sort3_sorted_typed=" mergesortTheory.sort3_sorted;
 val _ = show_thm "sort3_tail_correct_typed=" mergesortTheory.sort3_tail_correct;
+val _ = show_thm "merge_perm_typed=" mergesortTheory.merge_perm;
+val _ = show_thm "mergesortN_perm_typed=" mergesortTheory.mergesortN_perm;
+val _ = show_thm "sort2_perm_typed=" mergesortTheory.sort2_perm;
+val _ = show_thm "sort3_perm_typed=" mergesortTheory.sort3_perm;

@@ -29,18 +29,33 @@ theorem holFmapAsFiniteSupportRelationWitness_WordSemStateFiniteExact
       WordSemStateBroad.ofBroad s.toBroad s.toBroad_finiteSupport = s) :=
   WordSemStateExact.holFmapAsFiniteSupportWitness
 
-/-- Complete original Word-to-Stack source-state initializer. The source compile
-configuration is the bitmap-counter/target-config pair; native compilation
+/-- Canonical owning-state roundtrip for the constructed Word state carrier;
+Flapjack representation infrastructure, not an independent HOL theorem. -/
+theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {C F : Type} :
+    (∀ (s : WordSemStateBroad width (Nat × C) F) (h : s.FiniteSupport),
+      (WordSemStateBroad.ofBroad s h).toBroad = s) ∧
+    (∀ s : WordSemStateFiniteExact width (Nat × C) F,
+      WordSemStateBroad.ofBroad s.toBroad s.toBroad_finiteSupport = s) :=
+  WordSemStateExact.holFmapAsFiniteSupportWitness
+
+/-- HOL `make_init_def` (`word_to_stackProofScript.sml:10398`). The source
+compile configuration is the bitmap-counter/target-config pair, so the result
+state carrier is `wordSem$state` at `'c := num # 'c`; native compilation
 threads both the complete bitmap AppList and returned target configuration.
-The initializer remains untagged: its transferred fp/store fields span two
-finite-map state carriers, and the relation-only qualifier does not cover
-state-valued conversions. Source locals/code/frame sizes remain exact Spt trees.
-This definition does not establish init_state_ok or the held state relation. -/
+Both the input `StackSemStateFiniteExact` and the constructed result carrier
+declare `fp_regs`/`store` as the canonical `HolFiniteMapExact` translation (the
+definition reads the input pair and writes the result pair), so the signature
+spells the result carrier with its full name: that is what resolves the
+single-owner `fmap_as_finite_support` qualifier. Source `locals`, `code` and
+`stack_size` remain exact Spt trees. This definition does not establish
+`init_state_ok` or the held state relation. -/
+@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "make_init_def"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 def makeInit {width : Nat} [NeZero width] {C F : Type}
     (conf : AsmConfigExact width) (k : Nat) (t : StackSemStateFiniteExact width C F)
     (code : Spt (Nat × WordLangProgHOL (BitVec width)))
     (coracle : Nat → (Nat × C) × List (Nat × Nat × WordLangProgHOL (BitVec width))) :
-    WordSemStateFiniteExact width (Nat × C) F where
+    Flapjack.WordSemStateFiniteExact width (Nat × C) F where
   locals := sptInsert 0 (.loc 1 0) .ln
   fpRegs := t.fpRegs
   store := t.store.eraseEq .handler

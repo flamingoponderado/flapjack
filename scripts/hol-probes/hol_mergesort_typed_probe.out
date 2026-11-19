@@ -15,3 +15,7 @@ sort2_tail_correct_typed=∀(neg :bool) (R :α -> α -> bool) (x :α) (y :α). s
 sort3_def_typed=∀(R :α -> α -> bool) (x :α) (y :α) (z :α). sort3 R x y z = if R x y then if R y z then [x; y; z] else if R x z then [x; z; y] else [z; x; y] else if R y z then if R x z then [y; x; z] else [y; z; x] else [z; y; x]
 sort3_sorted_typed=∀(R :α -> α -> bool) (x :α) (y :α) (z :α). total R ⇒ SORTED R (sort3 R x y z)
 sort3_tail_correct_typed=∀(neg :bool) (R :α -> α -> bool) (x :α) (y :α) (z :α). sort3_tail neg R x y z = if neg then REVERSE (sort3 R x y z) else sort3 R x y z
+merge_perm_typed=∀(R :α -> α -> bool) (l1 :α list) (l2 :α list). PERM (l1 ⧺ l2) (merge R l1 l2)
+mergesortN_perm_typed=∀(R :α -> α -> bool) (n :num) (l :α list). PERM (TAKE n l) (mergesortN R n l)
+sort2_perm_typed=∀(R :α -> α -> bool) (x :α) (y :α). PERM [x; y] (sort2 R x y)
+sort3_perm_typed=∀(R :α -> α -> bool) (x :α) (y :α) (z :α). PERM [x; y; z] (sort3 R x y z)

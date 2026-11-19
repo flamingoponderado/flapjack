@@ -4819,7 +4819,7 @@ run_probe hol_mergesort_probeScript.sml hol_mergesort_probe.out \
   "$repo_dir/HOL/src/sort/mergesortScript.sml" "$cake_dir/compiler/backend/reg_alloc"
 
 run_probe hol_sorting_typed_probeScript.sml hol_sorting_typed_probe.out \
-  perm_def_typed sorted_def_typed sorted_eq_typed sorted_tl_typed part_def_typed parts_have_prop_typed partition_def_typed \
+  perm_def_typed sorted_def_typed sorted_eq_typed sorted_tl_typed part_def_typed parts_have_prop_typed partition_def_typed sorts_def_typed \
   "$repo_dir/HOL/src/sort/sortingScript.sml" "$cake_dir/compiler/backend/reg_alloc"
 run_probe hol_list_typed_probeScript.sml hol_list_typed_probe.out \
   hd_typed last_def_typed last_cons_typed el_def_typed every2_lupdate_same_typed list_size_thm_typed ohd_def_typed \
@@ -4905,7 +4905,7 @@ run_probe hol_llist_typed_probeScript.sml hol_llist_typed_probe.out \
   "$repo_dir/HOL/src/coalgebras/llistScript.sml" "$cake_dir/pancake"
 
 run_probe hol_mergesort_typed_probeScript.sml hol_mergesort_typed_probe.out \
-  mem_sorted_append_typed merge_def_typed merge_empty_typed merge_last_lem1_typed merge_last_lem2_typed merge_sorted_typed merge_tail_correct1_typed merge_tail_correct2_typed mergesortN_def_typed mergesortN_correct_typed mergesortN_sorted_typed sort2_def_typed sort2_sorted_typed sort2_tail_correct_typed sort3_def_typed sort3_sorted_typed sort3_tail_correct_typed \
+  mem_sorted_append_typed merge_def_typed merge_empty_typed merge_last_lem1_typed merge_last_lem2_typed merge_sorted_typed merge_tail_correct1_typed merge_tail_correct2_typed mergesortN_def_typed mergesortN_correct_typed mergesortN_sorted_typed sort2_def_typed sort2_sorted_typed sort2_tail_correct_typed sort3_def_typed sort3_sorted_typed sort3_tail_correct_typed merge_perm_typed mergesortN_perm_typed sort2_perm_typed sort3_perm_typed \
   "$repo_dir/HOL/src/sort/mergesortScript.sml" "$cake_dir/pancake"
 
 run_probe bag_typed_probeScript.sml bag_typed_probe.out \
@@ -6184,7 +6184,7 @@ run_probe word_to_stack_sorted_alist_probeScript.sml word_to_stack_sorted_alist_
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe word_to_stack_small_lemmas_typed_probeScript.sml word_to_stack_small_lemmas_typed_probe.out \
-  copy_ret_F_typed LASTN_HD_typed list_rearrange_I_typed EL_REVERSE_REWRITE_typed ALOOKUP_IFF_MEM_typed state_rel_set_var_prime_typed with_same_locals_typed LAST_add_ret_loc_typed MAP_o_THE_FILTER_IS_SOME_typed MAP_OPTION_MAP_FILTER_IS_SOME_typed MAP_FILTER_IS_SOME_typed PAIR_MAP_SOME_SWAP_typed IS_SOME_o_OPTION_MAP_typed IS_SOME_OPTION_MAP2_EQ_typed DROP_SUB_typed DROP_SUB2_typed SUB_ADD_EQ_typed EXISTS_PULL_FORALL1_typed EXISTS_PULL_FORALL2_typed EXISTS_PULL_FORALL3_typed SUB_SUB_SUB_MAX_typed MAX_LE_typed EVEN_DIV_2_props_typed bits_to_word_bit_typed stack_rel_aux_LENGTH_typed stack_rel_aux_LASTN_typed sub_union_lemma_typed evaluate_copy_ret_Seq_prime_typed wRegWrite1_thm1_weak_typed wRegWrite1_thm2_typed wRegWrite2_thm1_typed bits_to_word_bitstring_reverse_typed evaluate_PopHandler_clock_typed evaluate_PopHandler_seq_typed evaluate_wStackStore_wReg1_strong_typed evaluate_wStackStore_wReg1_new_typed \
+  copy_ret_F_typed LASTN_HD_typed list_rearrange_I_typed EL_REVERSE_REWRITE_typed ALOOKUP_IFF_MEM_typed state_rel_set_var_prime_typed with_same_locals_typed LAST_add_ret_loc_typed MAP_o_THE_FILTER_IS_SOME_typed MAP_OPTION_MAP_FILTER_IS_SOME_typed MAP_FILTER_IS_SOME_typed PAIR_MAP_SOME_SWAP_typed IS_SOME_o_OPTION_MAP_typed IS_SOME_OPTION_MAP2_EQ_typed DROP_SUB_typed DROP_SUB2_typed SUB_ADD_EQ_typed EXISTS_PULL_FORALL1_typed EXISTS_PULL_FORALL2_typed EXISTS_PULL_FORALL3_typed SUB_SUB_SUB_MAX_typed MAX_LE_typed EVEN_DIV_2_props_typed bits_to_word_bit_typed stack_rel_aux_LENGTH_typed stack_rel_aux_LASTN_typed sub_union_lemma_typed evaluate_copy_ret_Seq_prime_typed wRegWrite1_thm1_weak_typed wRegWrite1_thm2_typed wRegWrite2_thm1_typed bits_to_word_bitstring_reverse_typed evaluate_PopHandler_clock_typed evaluate_PopHandler_seq_typed evaluate_wStackStore_wReg1_strong_typed evaluate_wStackStore_wReg1_new_typed map_var_def_typed make_init_def_typed SORTS_SORT_key_val_compare_typed \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe ssa_cc_trans_correct_inst_load_probeScript.sml ssa_cc_trans_correct_inst_load_probe.out \
@@ -10073,6 +10073,9 @@ run_probe lab_to_target_proof_typed_probeScript.sml lab_to_target_proof_typed_pr
   lines_ok_lines_enc_with_nop_typed EVEN_add_AND_typed word_loc_val_byte_def_typed word_loc_val_def_typed zero_labs_acc_exist_eq_typed label_zero_pos_ok_even_labels_typed label_zero_pos_ok_lines_even_labels_typed enc_lines_again_simp_label_zero_typed \
   enc_secs_again_label_zero_typed EVERY_label_zero_pad_section_typed EVERY_sec_label_zero_pad_code_typed compute_labels_alt_domain_labs_typed remove_labels_loop_domain_labs_typed remove_labels_domain_labs_typed extract_labels_loc_to_pc_typed find_ffi_names_ALL_DISTINCT_typed \
   read_ffi_bytearrays_with_next_interfer_typed read_ffi_bytearrays_shift_interfer_typed read_ffi_bytearrays_ffi_interfer_typed \
+  has_io_name_EXISTS_typed EVERY_is_Label_add_nop_typed sec_labels_ok_filter_skip_typed \
+  get_labels_upd_lab_len_typed sec_pos_val_acc_typed FILTER_mmio_pcs_min_index_typed \
+  Sh_not_Ext_typed not_Sh_Ext_typed all_pc_adjust_pc_typed \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
 
@@ -11468,7 +11471,13 @@ run_probe word_convs_proof_typed_probeScript.sml word_convs_proof_typed_probe.ou
   fake_moves_no_labs_typed fake_seq_no_labs_typed loop_setup_no_labs_typed \
   ssa_reconcile_no_labs_typed fake_moves_wf_cutsets_typed fake_seq_wf_cutsets_typed \
   loop_setup_wf_cutsets_typed ssa_cc_trans_wf_cutsets_typed ssa_reconcile_wf_cutsets_typed \
-  extract_labels_SmartSeq_typed every_inst_Seq_assoc_right_lemma_typed every_inst_SimpSeq_typed \
+  extract_labels_SmartSeq_typed word_get_code_labels_SmartSeq_typed \
+  flat_exp_conventions_ShareInst_typed \
+  word_get_code_labels_drop_consts_typed word_get_code_labels_Seq_assoc_typed \
+  word_get_code_labels_inst_select_exp_typed word_get_code_labels_inst_select_typed \
+  fake_seq_get_code_labels_typed ssa_reconcile_get_code_labels_typed \
+  loop_setup_get_code_labels_typed word_get_code_labels_fake_moves_typed \
+  every_inst_Seq_assoc_right_lemma_typed every_inst_SimpSeq_typed \
   flat_exp_conventions_Seq_assoc_right_lemma_typed flat_exp_conventions_SimpSeq_typed \
   full_inst_ok_less_Seq_assoc_right_lemma_typed wf_cutsets_Seq_assoc_right_lemma_typed \
   wf_cutsets_SimpSeq_typed ALL_DISTINCT_extract_labels_remove_unreach_typed \
@@ -11503,6 +11512,15 @@ run_probe word_convs_proof_typed_probeScript.sml word_convs_proof_typed_probe.ou
   word_good_handlers_fake_moves_typed word_good_handlers_ssa_cc_trans_typed \
   word_good_handlers_full_ssa_cc_trans_typed word_good_handlers_word_to_word_incr_helper_typed \
   loop_setup_good_handlers_typed fake_seq_good_handlers_typed ssa_reconcile_good_handlers_typed \
+  word_get_code_labels_dest_Seq_Move_typed word_get_code_labels_SimpSeq_typed \
+  word_get_code_labels_Seq_assoc_right_typed word_get_code_labels_remove_unreach_typed \
+  word_get_code_labels_three_to_two_reg_prog_typed word_get_code_labels_const_fp_loop_typed \
+  word_get_code_labels_try_if_hoist2_typed word_get_code_labels_simp_duplicate_if_typed \
+  word_get_code_labels_push_out_if_typed word_get_code_labels_word_simp_typed \
+  word_get_code_labels_ssa_cc_trans_typed \
+  word_get_code_labels_full_ssa_cc_trans_typed \
+  word_good_code_labels_word_to_word_incr_helper_typed \
+  word_good_code_labels_word_to_word_incr_typed word_good_code_labels_word_to_word_typed \
   const_fp_loop_Seq_typed \
   "$cake_dir/compiler/backend/proofs/wordConvsProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
@@ -11752,6 +11770,8 @@ run_probe lab_to_target_proof_local_typed_probeScript.sml lab_to_target_proof_lo
   sec_get_zero_labs_acc_eq_sec_get_zero_labels_typed semantics_compile_lemma_typed \
   semantics_compile_lemma_prime_typed shift_interfer_0_typed upd_pc_with_pc_typed \
   word_cmp_lemma_typed write_bytearray_NOT_Loc_typed zero_labs_acc_of_eq_zero_labs_of_typed \
+  pos_val_MOD_0_lemma_typed find_index_in_range_typed find_index_in_range0_typed \
+  EXP_IMP_ZERO_LT_typed FILTER_NOT_MEM_Mapped_typed \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
 run_probe stack_to_lab_proof_local_typed_probeScript.sml stack_to_lab_proof_local_typed_probe.out \
@@ -11815,6 +11835,9 @@ run_probe word_alloc_proof_local_typed_probeScript.sml word_alloc_proof_local_ty
   strong_locals_rel_subset_typed strong_locals_rel_subset_domain_typed union_apply_nummaps_key_typed \
   wf_delete_swap_typed wf_get_live_exp_typed wf_insert_swap_typed wf_numset_list_delete_eq_typed \
   with_same_locals_typed with_same_store_typed word_alloc_full_inst_ok_less_lem_typed \
+  SUBSET_OF_INSERT_typed LET_FORALL_ELIM_prime_typed INJ_ALL_DISTINCT_MAP_typed LASTN_LENGTH2_typed toAList_not_empty_typed PAIR_CASE_PAIR_MAP_typed MEM_ZIP_weak_typed \
+  apply_colour_exp_I_typed get_var_ignore_typed PAIR_ZIP_MEM_typed ALOOKUP_ZIP_MEM_typed ALOOKUP_ALL_DISTINCT_REMAP_typed get_var_set_vars_notin_typed \
+  get_vars_NOT_MEM_typed get_vars_eq_alist_insert_typed ssa_reconcile_distinct_lemma_typed ssa_reconcile_filtered_in_dom_typed ssa_cut_inter_lemma_typed \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
 run_probe word_to_stack_proof_local_typed_probeScript.sml word_to_stack_proof_local_typed_probe.out \
@@ -12051,7 +12074,7 @@ run_probe pan_globals_primed_typed_probeScript.sml pan_globals_primed_typed_prob
   "$cake_dir/pancake/proofs"
 
 run_probe mllist_defs_typed_probeScript.sml mllist_defs_typed_probe.out \
-  sort_def_typed sort_SORTED_typed sort_MEM_typed sort_PERM_typed sort_LENGTH_typed \
+  sort_def_typed sort_SORTED_typed sort_MEM_typed sort_PERM_typed sort_LENGTH_typed sort_SORTS_typed \
   "$cake_dir/basis/pure/mllistScript.sml" \
   "$cake_dir/basis/pure"
 
@@ -12454,3 +12477,74 @@ run_probe arm8_step_defs_typed_probeScript.sml arm8_step_defs_typed_probe.out \
 run_probe arm8_config_proof_typed_probeScript.sml arm8_config_proof_typed_probe.out \
   is_arm8_machine_config_def_typed arm8_machine_config_ok_typed arm8_init_ok_typed \
   "$cake_dir/compiler/backend/arm8/proofs/arm8_configProofScript.sml" "$cake_dir/compiler/backend/arm8/proofs"
+
+run_probe word_elim_proof_typed_probeScript.sml word_elim_proof_typed_probe.out \
+  find_word_loc_def_typed find_word_ref_def_typed analyse_word_code_def_typed \
+  remove_word_code_def_typed remove_word_prog_def_typed \
+  dest_word_loc_def_typed dest_result_loc_def_typed get_locals_def_typed \
+  get_store_def_typed get_num_wordloc_alist_def_typed get_stack_def_typed \
+  get_memory_def_typed find_loc_state_def_typed code_rel_def_typed \
+  code_closed_def_typed gc_no_new_locs_def_typed word_state_rel_def_typed \
+  lookup_analyse_word_code_typed remove_word_code_thm_typed \
+  domain_get_locals_lookup_typed get_locals_insert_Loc_typed get_locals_insert_typed \
+  domain_get_store_typed get_store_update_typed \
+  get_num_wordloc_alist_thm_typed get_num_wordloc_alist_get_locals_typed \
+  get_locals_union_subset_typed get_stack_hd_thm_typed get_stack_LASTN_typed \
+  get_stack_CONS_typed get_stack_enc_stack_typed get_stack_dec_stack_typed \
+  FINITE_mdom_mem_typed domain_get_memory_typed get_memory_update_typed \
+  domain_find_loc_state_typed ALOOKUP_ZIP_SUCCESS_typed get_vars_locals_typed \
+  get_vars_get_locals_typed get_locals_fromList2_typed \
+  get_locals_fromList2_extension_typed get_locals_fromList2_FRONT_typed \
+  get_memory_write_bytearray_lemma_typed stack_list_rearrange_lemma_typed \
+  remove_word_code_thm_FST_typed remove_word_code_MAP_FST_lemma_typed \
+  word_state_rel_get_var_typed word_state_rel_get_store_typed \
+  word_state_rel_get_vars_typed word_state_rel_set_var_typed \
+  word_state_rel_set_var_word_typed word_state_rel_set_vars_typed \
+  word_state_rel_set_fp_var_typed word_state_rel_word_exp_typed \
+  word_state_rel_mem_load_typed word_state_rel_mem_load_32_typed \
+  word_state_rel_get_fp_var_typed word_state_rel_assign_NONE_typed \
+  word_state_rel_inst_NONE_typed word_state_rel_assign_SOME_typed \
+  word_state_rel_inst_SOME_typed word_state_rel_pop_env_NONE_typed \
+  word_state_rel_pop_env_typed word_state_rel_jump_exc_typed \
+  word_state_rel_gc_typed word_state_rel_alloc_typed const_writes_eq_Loc_typed \
+  push_env_def2_typed get_locals_inter_subset_typed word_removal_lemma_typed \
+  word_removal_thm_typed \
+  "$cake_dir/compiler/backend/proofs/word_elimProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+
+run_probe word_bignum_proof_typed_probeScript.sml word_bignum_proof_typed_probe.out \
+  b2n_def_typed b2w_def_typed single_add_def_typed single_sub_def_typed \
+  single_mul_def_typed single_div_def_typed single_div_pre_def_typed \
+  single_add_word_def_typed single_sub_word_def_typed \
+  state_typed eval_exp_def_typed eval_exp_pre_def_typed eval_ri_pre_def_typed \
+  eval_ri_def_typed dec_clock_def_typed reg_write_def_typed delete_vars_def_typed \
+  array_write_def_typed clock_write_def_typed copy_vars_def_typed eval_rules_typed \
+  exp_ok_def_typed syntax_ok_aux_def_typed syntax_ok_def_typed \
+  list_update_def_typed list_store_def_typed loop_app_def_typed tick_before_def_typed \
+  code_subset_def_typed array_rel_def_typed code_rel_def_typed div_code_assum_def_typed \
+  state_rel_def_typed good_code_def_typed Corr_def_typed \
+  Eval_NONE_IMP_typed evaluate_Seq_Seq_typed word_list_APPEND_typed compile_thm_typed \
+  reg_write_simp_alt_typed FLOOKUP_DOMSUB_typed evaluate_mc_iop_typed \
+  compile_NIL_IMP_typed \
+  state_rel_delete_vars_282_typed state_rel_delete_vars_293_typed \
+  env_to_list_insert_0_LN_typed evaluate_LoadRegs_typed evaluate_SaveRegs_typed \
+  Corr_Skip_typed Corr_Seq_typed Corr_Seq_alt_typed Corr_Continue_typed \
+  Corr_Assign_typed Corr_Delete_typed Corr_Load_typed Corr_Store_typed \
+  Corr_Swap_typed Corr_Add_typed Corr_Sub_typed Corr_Mul_typed Corr_Div_typed \
+  Corr_If_typed Corr_LoopBody_typed Corr_Loop_lemma_typed Corr_STRENGTHEN_TERM_typed \
+  Corr_move_pre_typed mc_fac_corr_typed \
+  code_subset_refl_typed code_subset_trans_typed \
+  compile_IMP_code_subset_typed has_compiled_lemma_typed state_rel_IN_FDOM_typed \
+  compile_exp_thm_typed evaluate_SeqTemp_typed evaluate_SeqTempImm_typed \
+  evaluate_SeqTempImmNot_typed LESS_LENGTH_IMP_APPEND_typed shift_eq_bytes_in_word_typed \
+  b2w_if_typed b2n_if_typed list_update_alist_insert_typed domain_list_update_typed \
+  list_store_FUPDATE_typed FLOOKUP_list_store_ignore_typed copy_vars_const_typed \
+  lookup_list_update_ADD_2_typed copy_vars_ignore_typed copy_vars_IMP_typed \
+  LIST_REL_lemma_typed compile_LESS_mini_size_typed MEM_compile_typed loop_app_EQ_typed \
+  true_pres_typed dec_clock_thm_typed array_write_cancel_typed reg_write_cancel_typed \
+  state_eq_lemma_typed clock_write_simp_typed dec_clock_write_simp_typed \
+  reg_write_simp_typed array_write_simp_typed delete_vars_simp_typed \
+  reg_read_lemma1_typed reg_read_lemma2_typed array_read_lemma_typed clock_read_lemma_typed \
+  i2mw_NOT_NIL_typed mw_ok_SND_i2mw_typed \
+  "$cake_dir/compiler/backend/proofs/word_bignumProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"

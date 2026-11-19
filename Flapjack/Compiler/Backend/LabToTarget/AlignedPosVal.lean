@@ -138,4 +138,20 @@ theorem allEncOk_aligned_posVal {width : Nat} [NeZero width] {S Q : Type}
       Nat.mod_eq_zero_of_dvd (Nat.dvd_trans (Nat.pow_dvd_pow 2 h) (Nat.dvd_of_mod_eq_zero hm))
     rw [this]; simp
 
+/-- Exact HOL `pos_val_MOD_0_lemma` (`lab_to_targetProofScript.sml:2949-2952`):
+zero is aligned at every code alignment. -/
+@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "pos_val_MOD_0_lemma"
+  (words_as_type_indexed_bitvec)]
+theorem posValMOD0Lemma {width : Nat} [NeZero width] {S Q : Type}
+    (mc : MachineConfig width S Q) :
+    0 % 2 ^ mc.target.config.codeAlignment = 0 :=
+  Nat.zero_mod _
+
+/-- Exact HOL `EXP_IMP_ZERO_LT` (`lab_to_targetProofScript.sml:5878-5881`):
+a power of two is positive. -/
+@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "EXP_IMP_ZERO_LT"]
+theorem expImpZeroLt {y x : Nat} (h : 2 ^ y = x) : 0 < x := by
+  rw [← h]
+  exact Nat.two_pow_pos y
+
 end Flapjack.Compiler.Backend.LabToTarget
