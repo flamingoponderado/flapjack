@@ -144455,5 +144455,19 @@
   ],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Compared alloc_lemma_typed and its zero HOL hypotheses in data_to_word_gc_fun_const_ok_probe.out with source lines 7894-7911: the original related-state, source-cut and allocation-result premises, heap-size failure bound, and complete success-state postcondition are preserved. The proof specializes alloc_lemma_gen using the original size_of_global_to_vs theorem. The target state uses canonical finite-support maps and the word, result and target state share the original positive width."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_wordProofScript.sml",
+  "hol_name": "data_compile_correct",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Correct/MakeSpace.lean",
+  "lean_name": "dataCompileCorrect_makeSpace",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the complete MakeSpace case with data_compile_correct_typed and HOL proof lines 753-833: the original hypotheses and all result, stack-bound and space-failure conclusions are retained. Both allocation results and both settings of call_empty_ffi are covered using the original allocation and silent-FFI lemmas. Full theorem assembly remains open. The target state uses canonical finite-support maps and positive-width words; the evaluator inherits the reals_as_rational_cuts assumption in docs/SOUNDNESS.md item 8."
 }
 ]

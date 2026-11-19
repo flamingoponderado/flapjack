@@ -362,6 +362,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.WordMlInvInsert
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.MkLoc
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.Skip
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.Tick
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.MakeSpace
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.Return
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.Raise
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.If
