@@ -24,7 +24,8 @@ not a cross-language equivalence proof.
 `data_to_word_memory_proof_typed_probe.out` includes the inferred statements
 of `write_bytes_APPEND`, `write_bytes_same`, `w2n_add_byte_align_lemma`,
 `get_byte_byte_align`, `get_byte_eq`, `decode_length_make_byte_header`, and
-`heap_in_memory_store_UpdateByte` from the original memory proof.
+`heap_in_memory_store_UpdateByte`, and `memory_rel_ByteArray_IMP` from the
+original memory proof.
 Regenerate it with `HOL_PROBE_ONLY=data_to_word_memory_proof_typed_probeScript.sml
 scripts/hol-probes/regenerate.sh` using the pinned source revisions.
 

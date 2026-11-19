@@ -116,7 +116,7 @@ theorem memoryRel_valueArrayImp {width : Nat} [NeZero width] (conf : DataToWord.
         · simpa [childLen] using lenBound
 
 /-- Byte-array header tag bits at supported widths (Flapjack helper). -/
-private theorem byteHeaderBits {width : Nat} [NeZero width] (conf : DataToWord.Config) (len : Nat) (flag : Bool)
+theorem byteHeaderBits {width : Nat} [NeZero width] (conf : DataToWord.Config) (len : Nat) (flag : Bool)
     (good : goodDimindex width) (bound : conf.lenSize + 7 < width) :
     (DataToWord.makeByteHeader (width := width) conf flag len).getLsbD 3 = false ∧
     (DataToWord.makeByteHeader (width := width) conf flag len).getLsbD 2 = true := by

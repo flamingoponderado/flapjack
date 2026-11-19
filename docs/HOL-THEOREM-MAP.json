@@ -144600,5 +144600,15 @@
   "fmap_as_finite_support_relation": ["store"],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Compared heap_in_memory_store_UpdateByte_typed with HOL source lines 11786-11796: the entire heap/store relation, heap decomposition, in-range byte index, address equation, current-heap lookup, memory read and good_dimindex premises are retained, as is the complete updated heap/store relation with aligned-address functional memory update. The byte is fixed at 8 bits; the heap, store, memory addresses and values share HOL's positive word dimension. The store is the canonical finite-support map."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "memory_rel_ByteArray_IMP",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/ByteArrayImp.lean",
+  "lean_name": "memoryRel_byteArrayImp",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": ["store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared memory_rel_ByteArray_IMP_typed with HOL source lines 11988-12013: the original memory relation, reference lookup and good_dimindex premises, all four existentials, header bits, both real addresses, memory and domain facts, universal byte loads and byte updates, and both width-specific header conclusions are retained. The unused existential l has its own independent HOL type beta, represented by Lean beta with Nonempty beta because HOL types are nonempty. The store is the canonical finite-support map and all source words share one positive width."
 }
 ]
