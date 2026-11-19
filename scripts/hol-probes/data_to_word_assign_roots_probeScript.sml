@@ -375,6 +375,71 @@ val _ = emit "xor_words_def_typed" data_to_word_memoryProofTheory.xor_words_def;
 val _ = emit "word_xor_set_byte_typed" data_to_word_memoryProofTheory.word_xor_set_byte;
 val _ = emit "xor_bytes_length_typed" data_to_word_memoryProofTheory.xor_bytes_length;
 val _ = emit "xor_bytes_xor_words_typed" data_to_word_memoryProofTheory.xor_bytes_xor_words;
+
+(* Replay source-local XOR lemmas before comparing their inferred types. *)
+val xor_bytes_bytes_to_word_replay = let
+  open preamble helperLib byteTheory wordsTheory data_to_wordTheory
+    data_to_word_memoryProofTheory semanticPrimitivesTheory
+in
+  Q.prove (`∀k vals1 vals2 res_vals a.
+    xor_bytes vals1 vals2 = SOME res_vals ⇒
+    bytes_to_word k a vals1 0w be ⊕ bytes_to_word k a vals2 0w be =
+      bytes_to_word k a res_vals 0w be`,
+    Induct \\ gvs [] \\ once_rewrite_tac [bytes_to_word_def] \\ simp []
+    \\ Cases \\ Cases_on ‘vals2’ \\ simp [semanticPrimitivesTheory.xor_bytes_def]
+    \\ simp [CaseEq"option",PULL_EXISTS] \\ rpt strip_tac
+    \\ last_x_assum old_drule \\ disch_then $ rewrite_tac o single o GSYM
+    \\ gvs [word_xor_set_byte])
+end;
+val _ = emit "xor_bytes_bytes_to_word_typed" xor_bytes_bytes_to_word_replay;
+val xor_bytes_drop_replay = let
+  open preamble helperLib semanticPrimitivesTheory
+in
+  Q.prove (`∀n xs ys zs. xor_bytes xs ys = SOME zs ⇒
+    xor_bytes (DROP n xs) (DROP n ys) = SOME (DROP n zs)`,
+    Induct_on ‘xs’ \\ Cases_on ‘ys’ \\ gvs [semanticPrimitivesTheory.xor_bytes_def]
+    \\ Cases_on ‘n’ \\ gvs [] \\ gvs [semanticPrimitivesTheory.xor_bytes_def,CaseEq"option"]
+    \\ rw [] \\ gvs [])
+end;
+val _ = emit "xor_bytes_drop_typed" xor_bytes_drop_replay;
+
+(* Replay the source-local general packed-word XOR theorem. *)
+val xor_bytes_xor_words_local_replay = let
+  open preamble helperLib byteTheory wordsTheory data_to_wordTheory
+    data_to_word_memoryProofTheory semanticPrimitivesTheory miscTheory
+in
+  Q.prove (`∀zs1 zs2 vals1 vals2 res_vals.
+    xor_bytes vals1 vals2 = SOME res_vals ∧ misc$good_dimindex (:'a) ∧
+    EVERY (λw. w = 0w) zs1 ∧ EVERY (λw. w = 0w) zs2 ∧
+    LENGTH zs1 = LENGTH vals1 DIV (dimindex (:α) DIV 8) + 1 ∧
+    LENGTH zs2 = LENGTH vals2 DIV (dimindex (:α) DIV 8) + 1 ⇒
+    xor_words (write_bytes vals1 zs1 be)
+              (write_bytes vals2 zs2 be) =
+    SOME (write_bytes res_vals zs2 be : 'a word list)`,
+  Cases_on ‘good_dimindex (:'a)’ \\ fs []
+  \\ Induct_on ‘zs1’ \\ Cases_on ‘zs2’ \\ gvs []
+  \\ rpt strip_tac \\ gvs [ADD1]
+  \\ gvs [write_bytes_def,xor_words_def,CaseEq"option"]
+  \\ irule_at Any xor_bytes_bytes_to_word_replay
+  \\ simp []
+  \\ old_drule xor_bytes_drop_replay
+  \\ disch_then $ qspec_then ‘dimindex (:α) DIV 8’ assume_tac
+  \\ Cases_on ‘LENGTH vals1 < (dimindex (:α) DIV 8)’
+  >- (gvs [LESS_DIV_EQ_ZERO]
+      \\ ‘DROP (dimindex (:α) DIV 8) vals1 = []’ by
+           (irule DROP_LENGTH_TOO_LONG \\ gvs [])
+      \\ gvs [write_bytes_def,xor_words_def,semanticPrimitivesTheory.xor_bytes_def])
+  \\ gvs [NOT_LESS]
+  \\ last_x_assum irule \\ gvs []
+  \\ ‘dimindex (:α) DIV 8 ≤ LENGTH vals2’ by
+    (imp_res_tac xor_bytes_length \\ decide_tac)
+  \\ imp_res_tac LESS_EQ_LENGTH \\ gvs []
+  \\ DEP_REWRITE_TAC [ADD_DIV_EQ]
+  \\ gvs [miscTheory.good_dimindex_def])
+end;
+val _ = emit "xor_bytes_xor_words_local_typed" xor_bytes_xor_words_local_replay;
+
+
 val _ = emit "memory_rel_RefByte_content_typed" data_to_word_memoryProofTheory.memory_rel_RefByte_content;
 val _ = emit "memory_rel_Word64_alt_typed" data_to_word_memoryProofTheory.memory_rel_Word64_alt;
 val _ = emit "word64_alt_thm_typed" data_to_word_memoryProofTheory.word64_alt_thm;

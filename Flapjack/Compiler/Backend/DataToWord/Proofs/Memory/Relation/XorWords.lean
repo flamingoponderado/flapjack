@@ -4,7 +4,7 @@ public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ByteUp
 public import Flapjack.SemanticPrimitivesHOL.Thunk
 public import Flapjack.Compiler.Backend.Semantics.WordSem.CallHelpers
 public import Flapjack.Compiler.Backend.Semantics.WordSem.Accessors
-open Flapjack Flapjack.Compiler.Backend Flapjack.HolByte
+open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Backend.DataToWord Flapjack.HolByte
 
 @[expose] public section
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
@@ -89,5 +89,111 @@ theorem xorBytesLength (xs ys zs : List (BitVec 8)) (h : Flapjack.SemanticPrimit
         have result := ih ys rest recEq
         simp only [List.length_cons] at *
         omega
+
+
+/-- Packing two byte lists commutes with their successful bytewise XOR. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "xor_bytes_bytes_to_word"
+  (words_as_type_indexed_bitvec)]
+theorem xorBytesBytesToWord {width : Nat} [NeZero width] (k : Nat) (xs ys zs : List (BitVec 8)) (a : BitVec width) (be : Bool)
+    (h : SemanticPrimitivesHOL.xorBytes xs ys = some zs) :
+    bytesToWord k a xs 0 be ^^^ bytesToWord k a ys 0 be = bytesToWord k a zs 0 be := by
+  induction k generalizing xs ys zs a with
+  | zero => simp [bytesToWord]
+  | succ k ih =>
+    cases xs with
+    | nil => simp [SemanticPrimitivesHOL.xorBytes] at h; subst zs; simp [bytesToWord]
+    | cons x xs =>
+      cases ys with
+      | nil => simp [SemanticPrimitivesHOL.xorBytes] at h
+      | cons y ys =>
+        simp only [SemanticPrimitivesHOL.xorBytes] at h
+        cases recEq : SemanticPrimitivesHOL.xorBytes xs ys with
+        | none => simp [recEq] at h
+        | some rest =>
+          simp [recEq] at h
+          subst zs
+          simp only [bytesToWord]
+          rw [wordXorSetByte, ih xs ys rest (a+1) recEq]
+
+/-- Dropping the same prefix preserves a successful byte XOR. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "xor_bytes_drop"]
+theorem xorBytesDrop (n : Nat) (xs ys zs : List (BitVec 8)) (h : SemanticPrimitivesHOL.xorBytes xs ys = some zs) :
+    SemanticPrimitivesHOL.xorBytes (xs.drop n) (ys.drop n) = some (zs.drop n) := by
+  induction xs generalizing ys zs n with
+  | nil => simp [SemanticPrimitivesHOL.xorBytes] at h; subst zs; simp [SemanticPrimitivesHOL.xorBytes]
+  | cons x xs ih =>
+    cases ys with
+    | nil => simp [SemanticPrimitivesHOL.xorBytes] at h
+    | cons y ys =>
+      cases n with
+      | zero => simpa using h
+      | succ n =>
+        simp only [SemanticPrimitivesHOL.xorBytes] at h
+        cases recEq : SemanticPrimitivesHOL.xorBytes xs ys with
+        | none => simp [recEq] at h
+        | some rest =>
+          simp [recEq] at h
+          subst zs
+          simpa using ih n ys rest recEq
+
+
+/-- Successful byte XOR agrees with packed XOR for zero-initialized word lists. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "xor_bytes_xor_words" 18451
+  (words_as_type_indexed_bitvec)]
+theorem xorBytesXorWordsAux {width : Nat} [NeZero width] (zs1 zs2 : List (BitVec width))
+    (vals1 vals2 res : List (BitVec 8)) (be : Bool)
+    (h : SemanticPrimitivesHOL.xorBytes vals1 vals2 = some res)
+    (good : goodDimindex width) (z1 : zs1.Forall (fun w => w = 0)) (z2 : zs2.Forall (fun w => w = 0))
+    (len1 : zs1.length = vals1.length / (width / 8) + 1)
+    (len2 : zs2.length = vals2.length / (width / 8) + 1) :
+    xorWords (writeBytes vals1 zs1 be) (writeBytes vals2 zs2 be) = some (writeBytes res zs2 be) := by
+  induction zs1 generalizing zs2 vals1 vals2 res with
+  | nil => simp at len1
+  | cons w ws ih =>
+    cases zs2 with
+    | nil => simp at len2
+    | cons v vs =>
+      simp only [List.forall_cons] at z1 z2
+      have wz : w = 0 := z1.1
+      have vz : v = 0 := z2.1
+      subst w; subst v
+      have z1t : ws.Forall (fun w => w = 0) := z1.2
+      have z2t : vs.Forall (fun w => w = 0) := z2.2
+      have packed := xorBytesBytesToWord (width := width) (width / 8) vals1 vals2 res 0 be h
+      have dropped := xorBytesDrop (width / 8) vals1 vals2 res h
+      simp only [writeBytes, xorWords, Option.map_eq_some_iff, List.cons.injEq]
+      refine ⟨writeBytes (res.drop (width / 8)) vs be, ?_, packed, rfl⟩
+      by_cases short : vals1.length < width / 8
+      · have div0 : vals1.length / (width / 8) = 0 := Nat.div_eq_of_lt short
+        have wsNil : ws = [] := by cases ws with | nil => rfl | cons q qs => simp [div0] at len1
+        have dropNil : vals1.drop (width / 8) = [] := List.drop_eq_nil_of_le (by omega)
+        simp [dropNil, SemanticPrimitivesHOL.xorBytes] at dropped
+        subst ws
+        simp [writeBytes, xorWords, dropped]
+      · have long1 : width / 8 ≤ vals1.length := by omega
+        have lengths := xorBytesLength vals1 vals2 res h
+        have long2 : width / 8 ≤ vals2.length := by omega
+        have l1 : ws.length = (vals1.drop (width / 8)).length / (width / 8) + 1 := by
+          simp only [List.length_drop, List.length_cons] at len1 ⊢
+          rcases good with hw | hw <;> subst width <;> norm_num at * <;> omega
+        have l2 : vs.length = (vals2.drop (width / 8)).length / (width / 8) + 1 := by
+          simp only [List.length_drop, List.length_cons] at len2 ⊢
+          rcases good with hw | hw <;> subst width <;> norm_num at * <;> omega
+        exact ih vs _ _ _ dropped z1t z2t l1 l2
+
+
+/-- Packing successful byte XOR agrees with XORing the packed zero buffers. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "xor_bytes_xor_words" 18483
+  (words_as_type_indexed_bitvec)]
+theorem xorBytesXorWords {width : Nat} [NeZero width] (vals1 vals2 res : List (BitVec 8)) (be : Bool)
+    (h : SemanticPrimitivesHOL.xorBytes vals1 vals2 = some res) (good : goodDimindex width) :
+    xorWords (writeBytes vals1 (makeZeros (width := width) vals1) be)
+      (writeBytes vals2 (makeZeros (width := width) vals2) be) =
+      some (writeBytes res (makeZeros (width := width) vals2) be) := by
+  apply xorBytesXorWordsAux (makeZeros vals1) (makeZeros vals2) vals1 vals2 res be h good
+  · simp [makeZeros, List.forall_iff_forall_mem]
+  · simp [makeZeros, List.forall_iff_forall_mem]
+  · simp [makeZeros]
+  · simp [makeZeros]
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

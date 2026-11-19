@@ -145317,5 +145317,42 @@
   "lean_name": "xorBytesLength",
   "statement_status": "reviewed_exact",
   "reviewer": "The typed HOL theorem quantifies three fixed word8 lists and retains the successful xor_bytes premise and both length conclusions."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "xor_bytes_bytes_to_word",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/XorWords.lean",
+  "lean_name": "xorBytesBytesToWord",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared the original source-local proof replay and inferred type: arbitrary count and address, fixed word8 lists, successful byte XOR, zero initial words and all three packed expressions are retained."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "xor_bytes_drop",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/XorWords.lean",
+  "lean_name": "xorBytesDrop",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the source-local proof replay and inferred type: three fixed word8 lists and arbitrary count retain the successful XOR premise and the exact dropped result."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "xor_bytes_xor_words",
+  "hol_line": 18451,
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/XorWords.lean",
+  "lean_name": "xorBytesXorWordsAux",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared the source-local proof replay and typed statement: successful byte XOR, good dimension, EVERY-zero word lists and both exact length equations imply the complete packed XOR equality; List.Forall represents EVERY."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "xor_bytes_xor_words",
+  "hol_line": 18483,
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/XorWords.lean",
+  "lean_name": "xorBytesXorWords",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared the typed public theorem: successful byte XOR and good dimension imply XOR of both zero-initialized packed buffers produces the packed result with the second buffer size."
 }
 ]
