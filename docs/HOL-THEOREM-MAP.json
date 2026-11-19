@@ -143820,4 +143820,14 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "typed HOL source comparison (lab_to_target_proof_typed_probe.out, sec_labels_ok_filter_skip_typed): source3601-3612. `forall code. EVERY sec_labels_ok (filter_skip code) <=> EVERY sec_labels_ok code`; the capture keeps code : alpha sec list. EVERY is the Prop form forall sec IN code, secLabelsOk sec, filter_skip is the tagged filterSkip and sec_labels_ok the tagged secLabelsOk; HOL's Boolean <=> becomes <-> of the two Prop forms. The per-section step uses the Flapjack helper secLabelOk_of_notSkip_false (a not_skip-removed line is not a label, which HOL discharges by EVAL_TAC), documented beside it as infrastructure with no separate HOL declaration."
   }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "has_io_name_EXISTS",
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/FfiBytearray.lean",
+    "lean_name": "hasIoName_exists",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (lab_to_target_proof_typed_probe.out, has_io_name_EXISTS_typed): source3110-3120. `forall name ls. has_io_name name ls <=> EXISTS (fun x. case x of LabAsm (CallFFI i) _ _ _ => i = name | _ => F) (FLAT (MAP Section_lines ls))`; the capture keeps name : mlstring and ls : alpha sec list and prints the full line match. has_io_name is the tagged hasIoName (a Prop, so HOL's Boolean <=> becomes <->), Section_lines is Section.lines, FLAT is List.flatten and EXISTS is the Prop form exists x IN flattened lines. The section-level equation is the Flapjack helper hasIoName_section, documented beside it as infrastructure with no separate HOL declaration. Only HOL's type-indexed word becomes BitVec width."
+  }
 ]
