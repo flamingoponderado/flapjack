@@ -145234,5 +145234,15 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Source comparison with new_byte_alt_thm_typed: the full abstract invariant, abbreviated payload-length equality, sparse-tree freshness and space premise imply an existential successful Bytes store and complete post-invariant, including the arbitrary reference bit and flag, inserted byte array, pointer and original allocation arithmetic. Bytes use fixed eight-bit words and target words use one shared positive BitVec width."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "memory_rel_RefByte_content",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/ByteMemory.lean",
+  "lean_name": "memoryRel_freshByte",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": ["st"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source comparison with memory_rel_RefByte_content_typed: the complete input memory relation, fresh sparse-tree key, all byte-length bounds, length equality and good dimension imply the original existential free/current addresses and memory, both store lookups, packed byte store and complete post-memory relation with the inserted reference and updated NextFree. The store uses canonical finite support, bytes remain fixed eight-bit words, and all target words share one positive BitVec width."
 }
 ]

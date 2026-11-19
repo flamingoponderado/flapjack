@@ -564,6 +564,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Word64Memory
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BignumProof
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BignumMemory
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.FreshByteProof
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ByteMemory
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.HeapAllocate
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.HeapStore
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ByteUpdateValue

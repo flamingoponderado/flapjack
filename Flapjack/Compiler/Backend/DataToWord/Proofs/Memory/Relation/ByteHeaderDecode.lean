@@ -30,13 +30,12 @@ private theorem decodeAux {width : Nat} [NeZero width] (n s k : Nat) (tag : BitV
   rw [BitVec.ushiftRight_or_distrib, zero]
   simpa using shiftNat (width := width) n s k hs hn
 
-@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "decode_length_make_byte_header"
-  (words_as_type_indexed_bitvec)]
-theorem decodeLength_makeByteHeader {width : Nat} [NeZero width] (conf : Config) (flag : Bool) (len : Nat) :
+/-- The decoded byte-array length equals the allocated word count. This
+Flapjack helper supplies the concrete byte-allocation proof. -/
+theorem decodeLength_makeByteHeader_exact {width : Nat} [NeZero width] (conf : Config) (flag : Bool) (len : Nat) :
     goodDimindex width ∧ conf.lenSize + 7 < width ∧
       len + 2 ^ wordShiftAmount width < 2 ^ (conf.lenSize + wordShiftAmount width) →
-    len ≤ (WordGcFunctions.decodeLength conf (makeByteHeader conf flag len) : BitVec width).toNat * (width / 8) ∧
-      (WordGcFunctions.decodeLength conf (makeByteHeader conf flag len) : BitVec width).toNat ≤ len / (width / 8) + 1 := by
+    (WordGcFunctions.decodeLength conf (makeByteHeader conf flag len) : BitVec width).toNat = len / (width / 8) + 1 := by
   rintro ⟨good, config, bound⟩
   rcases good with hw | hw <;> subst width
   · have hsize : conf.lenSize + 2 ≤ 32 := by omega
@@ -56,7 +55,6 @@ theorem decodeLength_makeByteHeader {width : Nat} [NeZero width] (conf : Config)
         (len + 4) / 4 := by simpa [WordGcFunctions.decodeLength, makeByteHeader] using decoded
     rw [decodedEq]
     norm_num
-    omega
   · have hsize : conf.lenSize + 3 ≤ 64 := by omega
     have hs : 64 - 3 - conf.lenSize ≤ 64 := by omega
     have shiftEq : 64 - 3 - conf.lenSize + 3 = 64 - conf.lenSize := by omega
@@ -74,6 +72,17 @@ theorem decodeLength_makeByteHeader {width : Nat} [NeZero width] (conf : Config)
         (len + 8) / 8 := by simpa [WordGcFunctions.decodeLength, makeByteHeader] using decoded
     rw [decodedEq]
     norm_num
-    omega
+
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "decode_length_make_byte_header"
+  (words_as_type_indexed_bitvec)]
+theorem decodeLength_makeByteHeader {width : Nat} [NeZero width] (conf : Config) (flag : Bool) (len : Nat) :
+    goodDimindex width ∧ conf.lenSize + 7 < width ∧
+      len + 2 ^ wordShiftAmount width < 2 ^ (conf.lenSize + wordShiftAmount width) →
+    len ≤ (WordGcFunctions.decodeLength conf (makeByteHeader conf flag len) : BitVec width).toNat * (width / 8) ∧
+      (WordGcFunctions.decodeLength conf (makeByteHeader conf flag len) : BitVec width).toNat ≤ len / (width / 8) + 1 := by
+  rintro ⟨good, config, bound⟩
+  have exactLength := decodeLength_makeByteHeader_exact conf flag len ⟨good, config, bound⟩
+  rw [exactLength]
+  rcases good with h | h <;> subst width <;> norm_num <;> omega
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
