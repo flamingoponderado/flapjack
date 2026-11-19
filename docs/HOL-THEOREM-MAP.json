@@ -144012,4 +144012,63 @@
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only consequence of getCodeLabels_constFpLoop for the constFp wrapper: HOL inlines const_fp_def and applies word_get_code_labels_const_fp_loop inside its try_if_hoist2 proof; no separately named HOL declaration states the wrapper containment."
   }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_get_code_labels_Seq_assoc",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordSimpLabels/Sequence.lean",
+    "lean_name": "getCodeLabels_seqAssoc",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (word_convs_proof_typed_probe.out, word_get_code_labels_Seq_assoc_typed): source684-687. `forall (p1 : alpha prog) (p2 : alpha prog). word_get_code_labels (Seq_assoc p1 p2) = word_get_code_labels p1 UNION word_get_code_labels p2`; the capture binds p1 then p2, matching Lean's `(p1 p2 : ...)`. Seq_assoc is the tagged seqAssoc (accumulator first) and word_get_code_labels is the tagged getCodeLabelsHOL; UNION is Lean's set union. No premise. Only HOL's type-indexed word becomes BitVec width."
+  }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_get_code_labels_try_if_hoist2",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordSimpLabels/Hoist.lean",
+    "lean_name": "getCodeLabels_tryIfHoist2",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (word_convs_proof_typed_probe.out, word_get_code_labels_try_if_hoist2_typed): source765-770. `forall (N : num) (p1 : alpha prog) (interm : alpha prog) (dummy : alpha prog) (p2 : alpha prog) (s : beta). try_if_hoist2 N p1 interm dummy p2 = SOME (p3 : alpha prog) ==> word_get_code_labels p3 SUBSET word_get_code_labels p1 UNION word_get_code_labels interm UNION word_get_code_labels p2`; the free output p3 is bound first, then N, p1, interm, dummy, p2 as HOL quantifies them. HOL's universal `s : beta` is vacuous in both the guard and the conclusion and is omitted here, documented beside the declaration as in labelsRelHoist2. The producer equality is the single premise; SUBSET/UNION are Lean's subset/union. Only HOL's type-indexed word becomes BitVec width."
+  }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_get_code_labels_simp_duplicate_if",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordSimpLabels/Hoist.lean",
+    "lean_name": "getCodeLabels_simpDuplicateIf",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (word_convs_proof_typed_probe.out, word_get_code_labels_simp_duplicate_if_typed): source798-800. `forall (p : alpha prog). word_get_code_labels (simp_duplicate_if p) SUBSET word_get_code_labels p`; the capture binds p, matching Lean's `(program : ...)`. simp_duplicate_if is the tagged simpDuplicateIf and word_get_code_labels is the tagged getCodeLabelsHOL; SUBSET is Lean's subset. No premise. Only HOL's type-indexed word becomes BitVec width."
+  }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_get_code_labels_push_out_if",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordSimpLabels/PushOut.lean",
+    "lean_name": "getCodeLabels_pushOutIf",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (word_convs_proof_typed_probe.out, word_get_code_labels_push_out_if_typed): source815-817. `forall (p : alpha prog). word_get_code_labels (push_out_if p) SUBSET word_get_code_labels p`; the capture binds p, matching Lean's `(program : ...)`. push_out_if is the tagged pushOutIf (the `.1` projection of pushOutIfAux) and word_get_code_labels is the tagged getCodeLabelsHOL; SUBSET is Lean's subset. No premise. Only HOL's type-indexed word becomes BitVec width."
+  }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_get_code_labels_word_simp",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordSimpLabels/CompileExp.lean",
+    "lean_name": "getCodeLabels_compileExp",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (word_convs_proof_typed_probe.out, word_get_code_labels_word_simp_typed): source828-832. `forall (ps : alpha prog). word_get_code_labels (word_simp$compile_exp ps) SUBSET word_get_code_labels ps`; the capture binds ps, matching Lean's `(program : ...)`. HOL's compile_exp is the tagged compileExp (Seq_assoc Skip, const_fp, simp_duplicate_if, push_out_if in source order) and word_get_code_labels is the tagged getCodeLabelsHOL; SUBSET is Lean's subset. No premise. Only HOL's type-indexed word becomes BitVec width."
+  }
+,
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordSimpLabels/Hoist.lean",
+    "lean_name": "getCodeLabels_tryIfHoist1",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only wrapper consequence for the try_if_hoist1 entry point, derived from getCodeLabels_tryIfHoist2. HOL inlines try_if_hoist1_def and applies word_get_code_labels_try_if_hoist2 inside its word_get_code_labels_simp_duplicate_if proof; no separately named HOL declaration states the wrapper containment."
+  }
 ]
