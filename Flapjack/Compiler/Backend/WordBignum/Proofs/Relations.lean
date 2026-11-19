@@ -356,8 +356,10 @@ theorem Corr_Div {width : Nat} [NeZero width]
 
 /-- HOL `Corr_If`: a conditional evaluates the branch chosen by the word
 comparison, with the matching branch's guard conjoined to the comparison
-side conditions. HOL's Boolean guard is a `&&` of the two decided propositions
-and the chosen branch's Boolean guard, since that guard is itself a `Bool`. -/
+side conditions. HOL's premise is ONE conjunction of the two branch
+correctness facts, and its guard is right-associated; HOL's Boolean guard is a
+`&&` of the two decided propositions and the chosen branch's Boolean guard,
+since that guard is itself a `Bool`. -/
 @[hol "cakeml/compiler/backend/proofs/word_bignumProofScript.sml" "Corr_If"
   (fmap_as_finite_support := [regs]) (words_as_type_indexed_bitvec)]
 theorem Corr_If {width : Nat} [NeZero width]
@@ -365,14 +367,15 @@ theorem Corr_If {width : Nat} [NeZero width]
     (f1 : Sum (MiniState width) (MiniState width)) (q1 : Bool)
     (p2 : Mini (BitVec width)) (f2 : Sum (MiniState width) (MiniState width)) (q2 : Bool)
     (c : Cmp) (r : Nat) (ri : WordRegImm (BitVec width)) :
-    Corr p1 s f1 q1 → Corr p2 s f2 q2 →
+    (Corr p1 s f1 q1 ∧ Corr p2 s f2 q2) →
       Corr (.ite c r ri p1 p2) s
         (if wordCmpHOL c (evalExp s (.var r)) (evalRi s ri) then f1 else f2)
-        (decide (r ∈ s.regs.dom) && decide (evalRiPre s ri) &&
-          if wordCmpHOL c (evalExp s (.var r)) (evalRi s ri) then q1 else q2) := by
-  intro h1 h2 h
+        (decide (r ∈ s.regs.dom) && (decide (evalRiPre s ri) &&
+          if wordCmpHOL c (evalExp s (.var r)) (evalRi s ri) then q1 else q2)) := by
+  intro hpq h
+  obtain ⟨h1, h2⟩ := hpq
   rw [Bool.and_eq_true, Bool.and_eq_true] at h
-  obtain ⟨⟨hdom, hpre⟩, hq⟩ := h
+  obtain ⟨hdom, hpre, hq⟩ := h
   have hreg : s.regs.lookup r ≠ none := by
     simpa [HolFiniteMapExact.dom] using of_decide_eq_true hdom
   have hri : evalRiPre s ri := of_decide_eq_true hpre
