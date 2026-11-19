@@ -144074,5 +144074,13 @@
   "lean_name": "inter_deleteOdd_adjustSet",
   "statement_status": "reviewed_exact",
   "reviewer": "Source comparison with inter_delete_ODD_adjust_set_alt_typed from data_to_word_gc_fun_const_ok_probe.out and HOL source lines 8788-8795: the odd-key premise and complete intersection equality after deletion are preserved for independent payload types α and β; HOL ODD is rendered as remainder one modulo two."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "inter_insert_ODD_adjust_set",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/OddInter.lean",
+  "lean_name": "inter_insertOdd_adjustSet_dest",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Source comparison with inter_insert_ODD_adjust_set_typed in data_to_word_gc_fun_const_ok_probe.out and HOL source lines 8768-8776: the odd-key premise, outer adjusted-destination insertion, inner insertion and full equality are preserved for independent payload types α and β; HOL ODD is rendered as remainder one modulo two."
 }
 ]

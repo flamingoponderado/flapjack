@@ -30,9 +30,6 @@ theorem joinEnvLocals_insertDestOdd {α β : Type} [Nonempty α] (n : Nat) (sl :
     (dest : Nat) (w v : β) (ls : Spt β) (odd : n % 2 = 1) :
     joinEnvLocals sl (sptInsert (adjustVar dest) w (sptInsert n v ls)) =
       joinEnvLocals sl (sptInsert (adjustVar dest) w ls) := by
-  simp only [joinEnvLocals]
-  conv_lhs => rw [inter_insert]
-  conv_rhs => rw [inter_insert]
-  rw [inter_insertOdd_adjustSet n v ls sl odd]
+  simp only [joinEnvLocals, inter_insertOdd_adjustSet_dest n dest w v ls sl odd]
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
