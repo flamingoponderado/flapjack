@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ByteUpdate
 public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BytePackingUpdate
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ByteAlignment
 public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BlockElement
 public import Flapjack.Compiler.Backend.LabToTarget.InstMem
 public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Heap
@@ -12,6 +13,7 @@ public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ByteUp
 /-! Concrete writes to a separated packed byte payload. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
 open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Backend.DataToWord Flapjack.HolByte
+open Flapjack.Compiler.Backend.LabToTarget
 
 /-- Exchange the first two separated assertions while retaining the frame. -/
 theorem star_swap_first {α : Type} (p q r : (α → Prop) → Prop) :
@@ -94,5 +96,53 @@ theorem wordList_packedByteWrite {width : Nat} [NeZero width] (bytes : List (Bit
   refine ⟨memoryEq, inDomain, ?_⟩
   rw [mappedEq]
   exact wordList_write address _ j _ memory domain frame (by simpa using bound) separated
+
+/-- Flapjack separation infrastructure for the HOL byte-array memory proof:
+reading an in-range source byte from the packed list returns that byte. -/
+theorem wordList_packedByteRead {width : Nat} [NeZero width] (bytes : List (BitVec 8)) (words : List (BitVec width))
+    (be : Bool) (i : Nat) (good : goodDimindex width)
+    (capacity : bytes.length ≤ words.length * (width / 8)) (bound : i < bytes.length)
+    (base : BitVec width) (baseAligned : base.toNat % (width / 8) = 0)
+    (memory : BitVec width → WordLocW width) (domain : BitVec width → Bool)
+    (frame : ((BitVec width × WordLocW width) → Prop) → Prop)
+    (separated : SetSep.star (Misc.wordList base ((writeBytes bytes words be).map WordLocW.word)) frame
+      (SetSep.fun2Set (memory, fun addr => domain addr = true))) :
+    memLoadByteAuxExact memory domain be (base + BitVec.ofNat width i) = some bytes[i] := by
+  let bw := width / 8
+  let j := i / bw
+  let r := i % bw
+  have pos : 0 < bw := by rcases good with h | h <;> subst width <;> decide
+  have rbound : r < width / 8 := Nat.mod_lt i pos
+  have decom : j * (width / 8) + r = i := by simpa [j, r, bw, Nat.mul_comm] using Nat.div_add_mod i bw
+  have jbound : j < words.length := (Nat.div_lt_iff_lt_mul pos).2 (by dsimp [bw] at *; omega)
+  let addr := base + BitVec.ofNat width j * StackRemove.bytesInWord width
+  have addrMod : addr.toNat % (width / 8) = 0 := by
+    rcases good with h | h <;> subst width <;>
+      norm_num [addr, StackRemove.bytesInWord, BitVec.toNat_add, BitVec.toNat_mul,
+        BitVec.toNat_ofNat, Nat.mod_mod_of_dvd, Nat.add_mod, Nat.mul_mod] at * <;> assumption
+  have addressEq : base + BitVec.ofNat width i = addr + BitVec.ofNat width r := by
+    rw [← decom]
+    dsimp [addr, StackRemove.bytesInWord]
+    simp only [BitVec.ofNat_add, BitVec.ofNat_mul]
+    ac_rfl
+  have aligned : holByteAlign (base + BitVec.ofNat width i) = addr := by
+    rw [addressEq]
+    exact holByteAlign_aligned_add good addr addrMod r rbound
+  have graph : SetSep.fun2Set (memory, fun addr => domain addr = true)
+      (addr, .word ((writeBytes bytes words be)[j]'(by simpa [writeBytes_wordCount] using jbound))) := by
+    obtain ⟨payload, rest, split, assertion, _⟩ := separated
+    rw [← split.1]
+    left
+    have h := wordList_indexMember ((writeBytes bytes words be).map WordLocW.word) j
+      (by simpa [writeBytes_wordCount] using jbound) base payload assertion
+    simpa [addr] using h
+  obtain ⟨read, member⟩ := (SetSep.fun2SetThm memory _ _ _).mp graph
+  have byteEq : getByte (base + BitVec.ofNat width i) ((writeBytes bytes words be)[j]'(by simpa [writeBytes_wordCount] using jbound)) be =
+      getByte (BitVec.ofNat width r) ((writeBytes bytes words be)[j]'(by simpa [writeBytes_wordCount] using jbound)) be := by
+    apply getByte_eq
+    exact ⟨good, by rw [aligned, addressEq]⟩
+  have recover := getByte_writeBytes words bytes be i good capacity bound
+  change getByte (BitVec.ofNat width r) ((writeBytes bytes words be)[j]'(by simpa [writeBytes_wordCount] using jbound)) be = bytes[i] at recover
+  simp only [memLoadByteAuxExact, riscvByteAlignHOL_eq good, aligned, read, member, ite_true, getByteHOL8_eq, byteEq, recover]
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
