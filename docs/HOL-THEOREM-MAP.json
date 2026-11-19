@@ -145434,5 +145434,14 @@
   "fmap_as_finite_support_relation": ["st"],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Compared the typed HOL memory_rel_xor_bytes: both reference lookups, XOR success, good_dimindex, both returned addresses and source header, concrete XOR execution, and the complete updated memory relation are retained. The store is the canonical finite-support map; the shared source word type is positive-width BitVec, with fixed word8 byte lists."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "word_str_cmp_loop_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/StringCompare.lean",
+  "lean_name": "wordStrCmpLoop",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared the source and word_str_cmp_loop_def_typed: address/memory width and both result-word widths remain independent. Zero clock, length termination, both original byte-load failures, matching-byte recursion, and the independently widened or truncated differing bytes match the original."
 }
 ]

@@ -536,3 +536,5 @@ val _ = emit "parts_to_words_add_typed" data_to_word_memoryProofTheory.parts_to_
 val _ = emit "part_to_words_add_typed" data_to_word_memoryProofTheory.part_to_words_add;
 val _ = emit "part_to_words_IMP_build_words_typed" data_to_word_memoryProofTheory.part_to_words_IMP_build_words;
 val _ = emit "parts_to_words_IMP_build_words_typed" data_to_word_memoryProofTheory.parts_to_words_IMP_build_words;
+
+val _ = emit "word_str_cmp_loop_def_typed" data_to_word_memoryProofTheory.word_str_cmp_loop_def;
