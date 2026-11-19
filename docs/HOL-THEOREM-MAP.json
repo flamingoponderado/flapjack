@@ -145506,5 +145506,16 @@
   "fmap_as_finite_support_relation": ["st"],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Compared memory_rel_str_cmp_typed: both ordered related references and lookups, good_dimindex, both address witnesses, original independent unused existential types beta and gamma, concrete comparison result, and source/numeric comparison iff are retained. HOL type inhabitance is represented by separate Nonempty binders; st uses the canonical finite-support map and the shared word carrier uses positive indexed BitVec."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "evaluate_StringCmpLoop",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/StringCmpLoop.lean",
+  "lean_name": "evaluateStringCmpLoop",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_StringCmpLoop_typed: all loop result, memory, domain, endianness, clock, word dimension, code lookup and six register premises are retained. The original existential clock and stack maximum, exact evaluator result and updated state, and conditional stack bound are preserved. The state maps and positive word width use the named translations; the evaluator inherits the real-model assumption in docs/SOUNDNESS.md item 8."
 }
 ]

@@ -376,6 +376,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.SetGlobal
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.SetGlobalsPtr
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.MemCopy
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.MemCopyCorrect
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.StringCmpLoop
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.FreeSpace
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.StoreListThm
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.StoreList
