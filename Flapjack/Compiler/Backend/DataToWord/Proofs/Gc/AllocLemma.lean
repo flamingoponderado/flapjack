@@ -5,6 +5,8 @@ public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GcAddCallEnv
 public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.CutState
 public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.CutEnvs
 public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.HasSpace
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.CutLocals
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.SizeValues
 
 @[expose] public section
 
@@ -182,5 +184,47 @@ theorem allocLemma_gen {width : Nat} [NeZero width] {C F : Type}
       · have h := (WordSemStateFiniteExact.popEnvConst _ _ popRun).2.2.2.2.1
         simpa [t0, WordSemStateFiniteExact.callEnv, WordSemStateFiniteExact.pushEnv, t5,
           WordSemStateFiniteExact.setStore] using h
+
+
+/-- Allocation has the original heap-size bound on failure and the full success postcondition. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "alloc_lemma"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem allocLemma {width : Nat} [NeZero width] {C F : Type}
+    (conf : Flapjack.Compiler.Backend.DataToWord.Config) (l1 l2 : Nat)
+    (source : Flapjack.Compiler.Backend.DataSem.State C F)
+    (target result : WordSemStateFiniteExact width C F)
+    (locs : List (Nat × Nat)) (names : NumSet)
+    (cutData : Spt Flapjack.Compiler.Backend.DataSem.Value) (k : Nat)
+    (q : Option (WordSemResult width))
+    (premises : stateRel conf l1 l2 source target none locs ∧
+      DataSem.cutEnv names source.locals = some cutData ∧
+      WordSemStateFiniteExact.alloc (gcAllocSize k) (adjustSets names) target = (q, result)) :
+    (q = some .notEnoughSpace → result.ffi = source.ffi ∧ optionLe result.stackMax source.stackMax ∧
+      (conf.gcKind ≠ .none ∧ DataSem.noThunksInRefs source.refs →
+        source.limits.heapLimit < DataSem.sizeOfHeap (cutLocals names source) + k)) ∧
+    (q ≠ some .notEnoughSpace →
+      stateRel conf l1 l2 {source with locals := cutData, space := k} result none locs ∧
+      gcAllocSize k ≠ (-1 : BitVec width) ∧
+      result.store.lookup (.temp 29) = target.store.lookup (.temp 29) ∧
+      result.code = target.code ∧ result.codeBuffer = target.codeBuffer ∧
+      result.dataBuffer = target.dataBuffer ∧ result.compileOracle = target.compileOracle ∧ q = none) := by
+  have gen := allocLemma_gen conf l1 l2 source target result locs names cutData k q premises
+  constructor
+  · intro qbad
+    obtain ⟨ffi, stack, bound⟩ := gen.1 qbad
+    refine ⟨ffi, stack, ?_⟩
+    intro good
+    have bound := bound good
+    let roots := sptToList cutData ++ source.stack.flatMap DataSem.extractStack ++ [theGlobal source.global]
+    obtain ⟨n, r, seen, hn⟩ : ∃ n r seen, DataSem.sizeOfValues source.limits roots source.refs .ln = (n, r, seen) := by
+      cases h : DataSem.sizeOfValues source.limits roots source.refs .ln with
+      | mk n rest => cases rest with | mk r seen => exact ⟨n, r, seen, rfl⟩
+    have hbound := bound roots [] n r seen ⟨by simp [roots], by simp, hn⟩
+    have sizeEq : DataSem.sizeOfHeap (cutLocals names source) = n := by
+      simp only [cutLocals, premises.2.1, DataSem.sizeOfHeap, DataSem.stackToValues]
+      rw [sizeOfValues_global]
+      simpa [roots, List.append_assoc] using congrArg Prod.fst hn
+    simpa [sizeEq] using hbound
+  · exact gen.2
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

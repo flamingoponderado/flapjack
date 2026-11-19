@@ -144442,5 +144442,18 @@
   ],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Compared alloc_lemma_gen_typed and its zero HOL hypotheses in data_to_word_gc_fun_const_ok_probe.out with source lines 7753-7776: the full related-state, source-cut and allocation-result premises and both original conditional conclusions are preserved, including the universally quantified failure bound and all success-state equalities. The target state uses canonical finite-support maps and the word, result and target state share the original positive width."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "alloc_lemma",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/AllocLemma.lean",
+  "lean_name": "allocLemma",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared alloc_lemma_typed and its zero HOL hypotheses in data_to_word_gc_fun_const_ok_probe.out with source lines 7894-7911: the original related-state, source-cut and allocation-result premises, heap-size failure bound, and complete success-state postcondition are preserved. The proof specializes alloc_lemma_gen using the original size_of_global_to_vs theorem. The target state uses canonical finite-support maps and the word, result and target state share the original positive width."
 }
 ]
