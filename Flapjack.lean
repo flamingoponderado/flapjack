@@ -568,6 +568,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ByteMemory
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BuildMemory
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.XorWords
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.XorWordList
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ByteXorInvariants
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.HeapAllocate
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.HeapStore
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ByteUpdateValue

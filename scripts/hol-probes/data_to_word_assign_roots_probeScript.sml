@@ -379,6 +379,9 @@ val _ = emit "xor_words_word_list_typed" data_to_word_memoryProofTheory.xor_word
 val _ = emit "xor_words_word_list_alias_typed" data_to_word_memoryProofTheory.xor_words_word_list_alias;
 val _ = emit "xor_bytes_word_list_typed" data_to_word_memoryProofTheory.xor_bytes_word_list;
 val _ = emit "xor_bytes_word_list_alias_typed" data_to_word_memoryProofTheory.xor_bytes_word_list_alias;
+val _ = emit "el_length_Bytes_typed" data_to_word_memoryProofTheory.el_length_Bytes;
+val _ = emit "blocks_unique_insert_ByteArray2_typed" data_to_word_memoryProofTheory.blocks_unique_insert_ByteArray2;
+val _ = emit "memory_rel_xor_bytes_typed" data_to_word_memoryProofTheory.memory_rel_xor_bytes;
 
 (* Replay source-local XOR lemmas before comparing their inferred types. *)
 val xor_bytes_bytes_to_word_replay = let

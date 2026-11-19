@@ -145398,5 +145398,22 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Typed source comparison retains self-aliasing byte XOR, good dimension, exact zero-buffer length bound, the complete separated frame, existential final memory and successful word XOR; be is Bool."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "el_length_Bytes",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/ByteXorInvariants.lean",
+  "lean_name": "elLengthBytes",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Typed HOL comparison retains both flags, fixed word8 bytes, arbitrary positive indexed zero-word width, and the exact zero-list length plus header."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "blocks_unique_insert_ByteArray2",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/ByteXorInvariants.lean",
+  "lean_name": "blocksUniqueInsertByteArray2",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Typed HOL comparison retains both reference pointers and the entire mapped stack; the second component type in vars is independently polymorphic, and the only premise is original block uniqueness."
 }
 ]
