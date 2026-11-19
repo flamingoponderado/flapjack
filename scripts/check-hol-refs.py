@@ -6242,6 +6242,7 @@ def unify_eq_tunify_observer_errors(
         "331efe1727a5de511f488d542f3d1f050a274b65546ce4dda73798b85d5a72eb",
         "fcb7f9153d66286914d779f19f3c9bf0d30e6bfa620ef9b2450e7d27f466fd92",
         "115bb978f7540adfb0bdc6d1ff4b149d7be4978693fe57dd7468a8876f3d85e2",
+        # Additive toBroadlookup/ofBroadlookup codec helpers in Exact.lean (d99c534c2a).
         "880da125e9b682faa11dc4dd80b48ae9335a30a87688ff3b1df95ba1027b6038",
         "3246bd4b3ff013f4069727a1084ea14da0b2f60d3c078c7cde3b3af71beaeb71",
         "2c3c4932071098ed1654e8e47240d80c6fcb2892c4e68d54f94b297a1a86df66",

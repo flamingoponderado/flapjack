@@ -12478,6 +12478,40 @@ run_probe arm8_config_proof_typed_probeScript.sml arm8_config_proof_typed_probe.
   is_arm8_machine_config_def_typed arm8_machine_config_ok_typed arm8_init_ok_typed \
   "$cake_dir/compiler/backend/arm8/proofs/arm8_configProofScript.sml" "$cake_dir/compiler/backend/arm8/proofs"
 
+run_probe word_elim_proof_typed_probeScript.sml word_elim_proof_typed_probe.out \
+  find_word_loc_def_typed find_word_ref_def_typed analyse_word_code_def_typed \
+  remove_word_code_def_typed remove_word_prog_def_typed \
+  dest_word_loc_def_typed dest_result_loc_def_typed get_locals_def_typed \
+  get_store_def_typed get_num_wordloc_alist_def_typed get_stack_def_typed \
+  get_memory_def_typed find_loc_state_def_typed code_rel_def_typed \
+  code_closed_def_typed gc_no_new_locs_def_typed word_state_rel_def_typed \
+  lookup_analyse_word_code_typed remove_word_code_thm_typed \
+  domain_get_locals_lookup_typed get_locals_insert_Loc_typed get_locals_insert_typed \
+  domain_get_store_typed get_store_update_typed \
+  get_num_wordloc_alist_thm_typed get_num_wordloc_alist_get_locals_typed \
+  get_locals_union_subset_typed get_stack_hd_thm_typed get_stack_LASTN_typed \
+  get_stack_CONS_typed get_stack_enc_stack_typed get_stack_dec_stack_typed \
+  FINITE_mdom_mem_typed domain_get_memory_typed get_memory_update_typed \
+  domain_find_loc_state_typed ALOOKUP_ZIP_SUCCESS_typed get_vars_locals_typed \
+  get_vars_get_locals_typed get_locals_fromList2_typed \
+  get_locals_fromList2_extension_typed get_locals_fromList2_FRONT_typed \
+  get_memory_write_bytearray_lemma_typed stack_list_rearrange_lemma_typed \
+  remove_word_code_thm_FST_typed remove_word_code_MAP_FST_lemma_typed \
+  word_state_rel_get_var_typed word_state_rel_get_store_typed \
+  word_state_rel_get_vars_typed word_state_rel_set_var_typed \
+  word_state_rel_set_var_word_typed word_state_rel_set_vars_typed \
+  word_state_rel_set_fp_var_typed word_state_rel_word_exp_typed \
+  word_state_rel_mem_load_typed word_state_rel_mem_load_32_typed \
+  word_state_rel_get_fp_var_typed word_state_rel_assign_NONE_typed \
+  word_state_rel_inst_NONE_typed word_state_rel_assign_SOME_typed \
+  word_state_rel_inst_SOME_typed word_state_rel_pop_env_NONE_typed \
+  word_state_rel_pop_env_typed word_state_rel_jump_exc_typed \
+  word_state_rel_gc_typed word_state_rel_alloc_typed const_writes_eq_Loc_typed \
+  push_env_def2_typed get_locals_inter_subset_typed word_removal_lemma_typed \
+  word_removal_thm_typed \
+  "$cake_dir/compiler/backend/proofs/word_elimProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+
 run_probe word_bignum_proof_typed_probeScript.sml word_bignum_proof_typed_probe.out \
   b2n_def_typed b2w_def_typed single_add_def_typed single_sub_def_typed \
   single_mul_def_typed single_div_def_typed single_div_pre_def_typed \
