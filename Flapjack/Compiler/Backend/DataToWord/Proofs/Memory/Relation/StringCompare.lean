@@ -153,6 +153,13 @@ theorem strCmpCons (b : Bool) (cmp : Flapjack.Opb)
       Flapjack.SemanticPrimitivesHOL.strCmp b cmp (.implode xs) (.implode ys) = true := by
   cases b <;> by_cases h : xs.length = ys.length <;> simp [Flapjack.SemanticPrimitivesHOL.strCmp, Flapjack.Basis.Pure.MlString.MlString.explode, compare, compareOfLessAndEq, h]
 
+/-- Bytes fit unchanged in either word width admitted by `goodDimindex`.
+This is local support for both HOL string-comparison proofs. -/
+private theorem byteToWordMod {width : Nat} [NeZero width] (x : BitVec 8)
+    (good : goodDimindex width) : x.toNat % 2 ^ width = x.toNat := by
+  apply Nat.mod_eq_of_lt
+  rcases good with hw | hw <;> subst width <;> have h := x.isLt <;> simp_all <;> omega
+
 /-- The first differing byte determines fast comparison of equal-length strings. -/
 @[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "find_diff_str_cmp_thm1"
   (words_as_type_indexed_bitvec)]
@@ -185,16 +192,8 @@ theorem findDiffStrCmpThm1 {width : Nat} [NeZero width] (vals1 vals2 : List (Bit
             (ys.map (fun x => BitVec.ofNat 8 x.toNat))).trans cmpEq
       · refine ⟨BitVec.ofNat width x.toNat, BitVec.ofNat width y.toNat, ?_, ?_⟩
         · simp [findDiff, h]
-        · have hx : (BitVec.ofNat width x.toNat).toNat = x.toNat := by
-            rw [BitVec.toNat_ofNat]
-            apply Nat.mod_eq_of_lt
-            rcases good with hw | hw <;> subst width <;> have h := x.isLt <;> simp_all <;> omega
-          have hy : (BitVec.ofNat width y.toNat).toNat = y.toNat := by
-            rw [BitVec.toNat_ofNat]
-            apply Nat.mod_eq_of_lt
-            rcases good with hw | hw <;> subst width <;> have h := y.isLt <;> simp_all <;> omega
-          have hxmod : x.toNat % 2 ^ width = x.toNat := by simpa [BitVec.toNat_ofNat] using hx
-          have hymod : y.toNat % 2 ^ width = y.toNat := by simpa [BitVec.toNat_ofNat] using hy
+        · have hxmod := byteToWordMod (width := width) x good
+          have hymod := byteToWordMod (width := width) y good
           have neNum : x.toNat ≠ y.toNat := fun heq => h (BitVec.eq_of_toNat_eq heq)
           cases hc : compare x.toNat y.toNat with
           | lt => simp [strCmp, numCmp, MlString.explode, lens, hxmod, hymod, hc]
@@ -202,5 +201,91 @@ theorem findDiffStrCmpThm1 {width : Nat} [NeZero width] (vals1 vals2 : List (Bit
             have heq : x.toNat = y.toNat := Std.compare_eq_iff_eq.mp hc
             exact (neNum heq).elim
           | gt => simp [strCmp, numCmp, MlString.explode, lens, hxmod, hymod, hc]
+
+/-- The first differing prefix determines ordinary string comparison. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "find_diff_str_cmp_thm2"
+  (words_as_type_indexed_bitvec)]
+theorem findDiffStrCmpThm2 {width : Nat} [NeZero width] (k : Nat) (vals1 vals2 : List (BitVec 8))
+    (l1 l2 : Nat) (cmp : Flapjack.Opb)
+    (len1 : l1 = vals1.length + 2 ^ Flapjack.wordShiftAmount width)
+    (len2 : l2 = vals2.length + 2 ^ Flapjack.wordShiftAmount width)
+    (bound1 : k + l1 < 2 ^ width) (bound2 : k + l2 < 2 ^ width) (good : goodDimindex width) :
+    ∃ (r1 r2 : BitVec width),
+      findDiff (vals1.take (min vals1.length vals2.length))
+        (vals2.take (min vals1.length vals2.length)) (BitVec.ofNat width (k + l1))
+        (BitVec.ofNat width (k + l2)) = (r1, r2) ∧
+      (strCmp false cmp (.implode (vals1.map (fun x => BitVec.ofNat 8 x.toNat)))
+        (.implode (vals2.map (fun x => BitVec.ofNat 8 x.toNat))) = true ↔
+       numCmp cmp r1.toNat r2.toNat = true) := by
+  subst l1
+  subst l2
+  induction vals1 generalizing vals2 k with
+  | nil =>
+    cases vals2 with
+    | nil =>
+      refine ⟨BitVec.ofNat width (k + 2 ^ Flapjack.wordShiftAmount width),
+        BitVec.ofNat width (k + 2 ^ Flapjack.wordShiftAmount width), ?_, ?_⟩
+      · simp [findDiff]
+      · simp [strCmp, numCmp, MlString.explode]
+        rfl
+    | cons y ys =>
+      have hlt : (BitVec.ofNat width (k + ([] : List (BitVec 8)).length + 2 ^ Flapjack.wordShiftAmount width)).toNat <
+          (BitVec.ofNat width (k + (y :: ys).length + 2 ^ Flapjack.wordShiftAmount width)).toNat := by
+        rw [BitVec.toNat_ofNat, BitVec.toNat_ofNat]
+        have h1 : k + ([] : List (BitVec 8)).length + 2 ^ Flapjack.wordShiftAmount width < 2 ^ width := by simpa [Nat.add_assoc] using bound1
+        have h2 : k + (y :: ys).length + 2 ^ Flapjack.wordShiftAmount width < 2 ^ width := by simpa [Nat.add_assoc] using bound2
+        rw [Nat.mod_eq_of_lt h1, Nat.mod_eq_of_lt h2]
+        simp only [List.length_nil, List.length_cons]
+        omega
+      refine ⟨BitVec.ofNat width (k + 2 ^ Flapjack.wordShiftAmount width),
+        BitVec.ofNat width (k + ((y :: ys).length + 2 ^ Flapjack.wordShiftAmount width)), ?_, ?_⟩
+      · simp [findDiff]
+      · simp only [List.length_nil, List.length_cons, Nat.zero_add, Nat.add_assoc, BitVec.toNat_ofNat] at hlt
+        simp [strCmp, numCmp, MlString.explode, compare, compareOfLessAndEq, Nat.add_assoc, hlt]
+        rfl
+  | cons x xs ih =>
+    cases vals2 with
+    | nil =>
+      have hgt : (BitVec.ofNat width (k + ([] : List (BitVec 8)).length + 2 ^ Flapjack.wordShiftAmount width)).toNat <
+          (BitVec.ofNat width (k + (x :: xs).length + 2 ^ Flapjack.wordShiftAmount width)).toNat := by
+        rw [BitVec.toNat_ofNat, BitVec.toNat_ofNat]
+        have h1 : k + ([] : List (BitVec 8)).length + 2 ^ Flapjack.wordShiftAmount width < 2 ^ width := by simpa [Nat.add_assoc] using bound2
+        have h2 : k + (x :: xs).length + 2 ^ Flapjack.wordShiftAmount width < 2 ^ width := by simpa [Nat.add_assoc] using bound1
+        rw [Nat.mod_eq_of_lt h1, Nat.mod_eq_of_lt h2]
+        simp only [List.length_nil, List.length_cons]
+        omega
+      refine ⟨BitVec.ofNat width (k + ((x :: xs).length + 2 ^ Flapjack.wordShiftAmount width)),
+        BitVec.ofNat width (k + 2 ^ Flapjack.wordShiftAmount width), ?_, ?_⟩
+      · simp [findDiff]
+      · simp only [List.length_nil, List.length_cons, Nat.zero_add, Nat.add_assoc, BitVec.toNat_ofNat] at hgt
+        simp [strCmp, numCmp, MlString.explode, compare, compareOfLessAndEq,
+          Nat.add_assoc, Nat.not_lt_of_ge (Nat.le_of_lt hgt), Nat.ne_of_gt hgt]
+        rfl
+    | cons y ys =>
+      by_cases h : x = y
+      · subst y
+        have b1 : (k + 1) + (xs.length + 2 ^ Flapjack.wordShiftAmount width) < 2 ^ width := by
+          simp only [List.length_cons] at bound1
+          omega
+        have b2 : (k + 1) + (ys.length + 2 ^ Flapjack.wordShiftAmount width) < 2 ^ width := by
+          simp only [List.length_cons] at bound2
+          omega
+        obtain ⟨r1,r2,eq,cmpEq⟩ := ih (k+1) ys b1 b2
+        refine ⟨r1,r2, ?_, ?_⟩
+        · simp only [List.length_cons, Nat.succ_min_succ, List.take_succ_cons, findDiff, if_pos]
+          simpa [Nat.add_assoc, Nat.add_comm, Nat.add_left_comm] using eq
+        · simpa using (strCmpCons false cmp x (xs.map (fun x => BitVec.ofNat 8 x.toNat))
+            (ys.map (fun x => BitVec.ofNat 8 x.toNat))).trans cmpEq
+      · refine ⟨BitVec.ofNat width x.toNat, BitVec.ofNat width y.toNat, ?_, ?_⟩
+        · simp only [List.length_cons, Nat.succ_min_succ, List.take_succ_cons, findDiff, if_neg h]
+        · have hxmod := byteToWordMod (width := width) x good
+          have hymod := byteToWordMod (width := width) y good
+          have neNum : x.toNat ≠ y.toNat := fun heq => h (BitVec.eq_of_toNat_eq heq)
+          cases hc : compare x.toNat y.toNat with
+          | lt => simp [strCmp, numCmp, MlString.explode, hxmod, hymod, hc]
+          | eq =>
+            have heq : x.toNat = y.toNat := Std.compare_eq_iff_eq.mp hc
+            exact (neNum heq).elim
+          | gt => simp [strCmp, numCmp, MlString.explode, hxmod, hymod, hc]
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

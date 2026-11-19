@@ -145487,5 +145487,14 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Compared find_diff_str_cmp_thm1_typed: the original equal-length and good_dimindex premises, both result witnesses, exact find_diff equality, and iff between fast source string comparison and numeric result comparison are retained. Input word8 bytes map to reviewed HOL character bytes; the result word uses a positive indexed BitVec."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "find_diff_str_cmp_thm2",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/StringCompare.lean",
+  "lean_name": "findDiffStrCmpThm2",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared find_diff_str_cmp_thm2_typed: both Abbrev length equalities, original dimensional bounds and good_dimindex, both result witnesses, minimum-length prefixes, find_diff equality and ordinary string/numeric comparison iff are retained. Word8 inputs map to the reviewed fixed-byte character carrier and results use the positive indexed word."
 }
 ]
