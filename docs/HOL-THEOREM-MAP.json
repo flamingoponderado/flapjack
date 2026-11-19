@@ -145079,5 +145079,13 @@
   "lean_name": "heapStoreUnusedAlt_shape",
   "statement_status": "reviewed_exact",
   "reviewer": "Source comparison with the typed replay of the local HOL proof: the split, successful allocation and resulting unused-space invariant imply an existential preceding heap with the same four original decomposition, length and replacement conclusions. Both generic heap-element carriers remain independent."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "IMP_heap_store_unused_alt",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/HeapAllocate.lean",
+  "lean_name": "heapStoreUnusedAlt_exists",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Source comparison with typed replay of the original local HOL proof: the unused-space and size premises imply an existential heap with all nine original allocation, unused-space, lookup, length, forwarding, membership, data-location set and preservation conclusions. The HOL set is a predicate on natural-number addresses and both generic heap carriers remain independent."
 }
 ]
