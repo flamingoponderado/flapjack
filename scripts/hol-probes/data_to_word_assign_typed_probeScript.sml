@@ -429,3 +429,4 @@ fun capture_val_quote label name =
 
 val _ = emit_exported "size_of_seen_SUBSET_typed" "size_of_seen_SUBSET";
 val _ = emit_exported "size_of_seen_Block_typed" "size_of_seen_Block";
+val _ = emit_exported "IMP_read_bytearray_GENLIST_typed" "IMP_read_bytearray_GENLIST";

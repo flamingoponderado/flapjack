@@ -43,6 +43,6 @@ theorem evaluate_silentFfi_three {width : Nat} [NeZero width] {C F N : Type}
     WordSemStateFiniteExact.fixClock, theWords, wordOpHOL, wordOp,
     sptLookup_sptInsert_same, sptLookup_sptInsert_ne,
     hnf, hcurr, hlen, cut, cutEnv_adjustSets_insertOdd,
-    readBytearrayWordHOL, writeBytearrayExact, callFFIHOL_empty_extCall]
+    readBytearrayWordHOL, readBytearrayGenericHOL, writeBytearrayExact, callFFIHOL_empty_extCall]
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Assign

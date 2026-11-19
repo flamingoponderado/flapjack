@@ -61,13 +61,13 @@ theorem stateRelWriteBytearrayHOL {width : Nat} {σ : Type} [NeZero width] :
       exact hrel
   | cons b rest ih =>
       intro bs ⟨hrel, hread⟩
-      simp only [List.length_cons, readBytearrayWordHOL] at hread
+      simp only [List.length_cons, readBytearrayWordHOL, readBytearrayGenericHOL] at hread
       cases hbyte : @panMemLoadByteWord8HOL width _ s.memory s.memaddrs
           (fun a => Classical.propDecidable (s.memaddrs a)) s.be sz with
       | none => rw [hbyte] at hread; cases hread
       | some byte0 =>
           rw [hbyte] at hread
-          cases htail : readBytearrayWordHOL (sz + 1) rest.length
+          cases htail : readBytearrayGenericHOL (sz + 1) rest.length
               (@panMemLoadByteWord8HOL width _ s.memory s.memaddrs
                 (fun a => Classical.propDecidable (s.memaddrs a)) s.be) with
           | none => rw [htail] at hread; cases hread

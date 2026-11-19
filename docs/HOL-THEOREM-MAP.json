@@ -105310,9 +105310,10 @@
     "hol_path": "cakeml/misc/miscScript.sml",
     "hol_name": "read_bytearray_def",
     "lean_path": "Flapjack/Pancake/Semantics/LoopSem.lean",
-    "lean_name": "readBytearrayWordHOL",
-    "statement_status": "reviewed_exact",
-    "reviewer": "Flapjack source comparison (2026-09-27; flapjack-4ac.5.16.5.4): HOL miscScript.sml:113-121 gives the zero equation SOME [] and successor equation that reads get_byte a, recursively reads at a+1, and propagates either NONE. Lean has the same two equations, with independent positive BitVec widths for HOL address words and returned byte words; [NeZero width] and [NeZero byteWidth] encode HOL's positive dimindex for both word types. Direct evaluator tests replay the HOL read-byte rows in pan_sem_state_eval_probe.out using the byteWidth=8 instance."
+    "lean_name": "readBytearrayGenericHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Compared read_bytearray_def_typed in misc_typed_probe.out with miscScript.sml:113-121: the zero and successor equations preserve failure propagation and accept an arbitrary result type independent of the positive address-word dimension. Existing word-valued execution uses the definitional specialization readBytearrayWordHOL."
   },
 {
     "hol_path": "cakeml/pancake/semantics/loopSemScript.sml",
@@ -144638,5 +144639,14 @@
   "fmap_as_finite_support_relation": ["store"],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Compared memory_rel_write_bytearray_typed with the original theorem and its local induction at lines 16260-16299: the full memory relation, byte-array lookup with false flag, equal lengths, simple-address lookup and good_dimindex premises are retained. The conclusion retains the exact sptree reference update, tail-first byte-array memory write, all state parameters and the unchanged root list. The store is the canonical finite-support map and the source word dimension is shared and positive."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "IMP_read_bytearray_GENLIST",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/ReadBytearray.lean",
+  "lean_name": "imp_readBytearray_genList",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared IMP_read_bytearray_GENLIST_typed with HOL source lines 423-439: the arbitrary result type is independent of the positive address-word dimension, and the exact length equality, bounded pointwise successful reads and complete read result are retained. Lean packages the list index bound as a proof witness, which is implied by the original length equality."
 }
 ]

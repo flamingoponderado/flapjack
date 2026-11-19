@@ -31,11 +31,11 @@ namespace Flapjack
 
 /-- Flapjack byte-array reader with the recursive equation and argument order
     of HOL `read_bytearray_def` (`miscScript.sml:113`). It fixes the result
-    element to `UInt8`; HOL leaves the `get_byte` result word type polymorphic,
+    element to `UInt8`; HOL leaves the `get_byte` result type polymorphic,
     and the Crep call site specializes it to HOL `word8` (`BitVec 8`). Since
     `UInt8` is a different Lean carrier and no qualifier is approved for this
     translation, this declaration remains untagged. The exact positive-width
-    helper is `readBytearrayWordHOL`; its `UInt8` projection is proved in
+    helper is `readBytearrayGenericHOL`; its `UInt8` projection is proved in
     `PanSem/ExtCallExact.lean`. -/
 def readBytearrayHOL {width : Nat} (address : RiscV.Word width) (length : Nat)
     (getByte : RiscV.Word width → Option UInt8) : Option (List UInt8) :=
@@ -46,36 +46,29 @@ def readBytearrayHOL {width : Nat} (address : RiscV.Word width) (length : Nat)
       let rest ← readBytearrayHOL (address + 1) length getByte
       pure (byte :: rest)
 
-/-- Exact positive-word specialization family of HOL `read_bytearray_def`
-    (`cakeml/misc/miscScript.sml:113`): both the address word and returned
-    byte word retain their independent HOL dimensions. The zero/successor
-    recursion and failure propagation match the two HOL equations directly.
-    HOL's `get_byte` result word type is polymorphic (see the comment above
-    `read_bytearray_def`), so the independent `byteWidth` parameter is faithful.
-    `(words_as_type_indexed_bitvec)` is inapplicable here because the
-    declaration binds two independent dimension parameters (both guarded by
-    `[NeZero]`); the checker rejects the qualifier in that case. -/
-@[hol "cakeml/misc/miscScript.sml" "read_bytearray_def"]
-def readBytearrayWordHOL {width byteWidth : Nat} [NeZero width] [NeZero byteWidth]
+/-- The HOL reader accepts an arbitrary result type independently of its
+address word, and retains the original failure propagation. -/
+@[hol "cakeml/misc/miscScript.sml" "read_bytearray_def" (words_as_type_indexed_bitvec)]
+def readBytearrayGenericHOL {width : Nat} [NeZero width] {α : Type}
     (address : RiscV.Word width) (length : Nat)
-    (getByte : RiscV.Word width → Option (BitVec byteWidth)) :
-    Option (List (BitVec byteWidth)) :=
+    (getByte : RiscV.Word width → Option α) : Option (List α) :=
   match length with
   | 0 => some []
   | length + 1 => do
       let byte ← getByte address
-      let rest ← readBytearrayWordHOL (address + 1) length getByte
+      let rest ← readBytearrayGenericHOL (address + 1) length getByte
       pure (byte :: rest)
 
-/-- Flapjack-only support lemma: a successful `readBytearrayWordHOL` returns a
-    list whose length is the requested length. HOL analogue:
-    `read_bytearray_LENGTH` (`cakeml/misc/miscScript.sml:124`), whose statement
-    is `(read_bytearray a n f = SOME x) ==> (LENGTH x = n)` for a fixed
-    `word8`-valued reader `f : 'a word -> word8 option`. This lemma is NOT
-    tagged as an exact port of that declaration because `readBytearrayWordHOL`
-    generalizes HOL's fixed byte carrier to a parameterized `byteWidth` and an
-    arbitrary `getByte : Word width -> BitVec byteWidth option`; the length
-    fact is proved over that generalized interface rather than HOL's fixed one. -/
+/-- Word-valued specialization used by existing compiler semantics. -/
+abbrev readBytearrayWordHOL {width byteWidth : Nat} [NeZero width] [NeZero byteWidth]
+    (address : RiscV.Word width) (length : Nat)
+    (getByte : RiscV.Word width → Option (BitVec byteWidth)) :
+    Option (List (BitVec byteWidth)) :=
+  readBytearrayGenericHOL address length getByte
+
+/-- Flapjack-only support lemma: a successful word-valued reader returns a
+list of the requested length. The HOL theorem is polymorphic in the result
+type, so this specialization is untagged. -/
 theorem readBytearrayWordHOL_length {width byteWidth : Nat} [NeZero width] [NeZero byteWidth]
     (address : RiscV.Word width) (length : Nat)
     (getByte : RiscV.Word width → Option (BitVec byteWidth))
@@ -84,16 +77,16 @@ theorem readBytearrayWordHOL_length {width byteWidth : Nat} [NeZero width] [NeZe
     bytes.length = length := by
   induction length generalizing address bytes with
   | zero =>
-      simp only [readBytearrayWordHOL] at h
+      simp only [readBytearrayWordHOL, readBytearrayGenericHOL] at h
       injection h with hb
       rw [← hb]; rfl
   | succ length ih =>
-      simp only [readBytearrayWordHOL] at h
+      simp only [readBytearrayWordHOL, readBytearrayGenericHOL] at h
       cases hb : getByte address with
       | none => simp [hb] at h
       | some byte =>
           simp only [hb] at h
-          cases hr : readBytearrayWordHOL (byteWidth := byteWidth) (address+1) length getByte with
+          cases hr : readBytearrayGenericHOL (address+1) length getByte with
           | none => rw [hr] at h; simp at h
           | some rest =>
               simp only [hr] at h

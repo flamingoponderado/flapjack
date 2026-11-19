@@ -30,6 +30,10 @@ of `write_bytes_APPEND`, `write_bytes_same`, `w2n_add_byte_align_lemma`,
 Regenerate it with `HOL_PROBE_ONLY=data_to_word_memory_proof_typed_probeScript.sml
 scripts/hol-probes/regenerate.sh` using the pinned source revisions.
 
+`data_to_word_assign_typed_probe.out` also captures
+`IMP_read_bytearray_GENLIST`, including its arbitrary element type and its
+independent address-word dimension.
+
 `data_to_word_cut_envs_wf_replay_probe.out` captures the inferred types of
 `cut_envs_wf` and `cut_env_lookup` by replaying their original statements and
 proofs against the pinned word semantics theory. Regenerate with

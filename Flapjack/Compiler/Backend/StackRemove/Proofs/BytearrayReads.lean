@@ -35,22 +35,23 @@ theorem readBytearrayImp {width : Nat} [NeZero width] {C F : Type}
       (memLoadByteAuxExact target.memory target.mdomain target.be) = some bytes := by
   rcases hypothesis with ⟨relation, run⟩
   induction count generalizing address bytes with
-  | zero => simpa only [readBytearrayWordHOL] using run
+  | zero => simpa only [readBytearrayWordHOL, readBytearrayGenericHOL] using run
   | succ count ih =>
-    simp only [readBytearrayWordHOL] at run ⊢
+    simp only [readBytearrayWordHOL, readBytearrayGenericHOL] at run ⊢
     cases head : memLoadByteAuxExact source.memory source.mdomain source.be address with
     | none => simp [head] at run
     | some byte =>
       have targetHead := MemoryLoads.memLoadByteAuxImp jump bounds pointer source target address byte ⟨relation, head⟩
       rw [head] at run
       rw [targetHead]
-      cases tail : readBytearrayWordHOL (address + 1) count
+      cases tail : readBytearrayGenericHOL (address + 1) count
           (memLoadByteAuxExact source.memory source.mdomain source.be) with
       | none =>
         rw [tail] at run
         simp at run
       | some rest =>
         have targetTail := ih (address + 1) rest tail
+        simp only [readBytearrayWordHOL] at targetTail
         rw [tail] at run
         rw [targetTail]
         exact run
