@@ -20,6 +20,19 @@ The untagged helpers `getStack_nil`, `getStack_cons` and
 
 namespace Flapjack.Compiler.Backend.WordElim
 
+namespace WordElimStacksSupport
+
+/-- Same-module canonical finite-support witness for the `fpRegs`/`store`
+    fields named by the tagged `pushEnv_def2` of this module. -/
+theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {C : Type} {F : Type} :
+    (∀ (state : WordSemStateBroad width C F) (h : state.FiniteSupport),
+        (WordSemStateBroad.ofBroad state h).toBroad = state) ∧
+    (∀ state : WordSemStateFiniteExact width C F,
+        WordSemStateBroad.ofBroad state.toBroad state.toBroad_finiteSupport = state) :=
+  WordSemStateExact.holFmapAsFiniteSupportWitness
+
+end WordElimStacksSupport
+
 /-- Flapjack-only helper: the `get_stack` clause for the empty stack. -/
 @[simp] theorem getStack_nil {width : Nat} [NeZero width] :
     getStack ([] : List (WordSemStackFrame width)) = .ln := rfl
@@ -279,5 +292,36 @@ theorem getStack_decStack {width : Nat} [NeZero width] {β : Type}
     sptDomainSet (getStack newStack) ⊆ sptDomainSet reachable := by
   rintro ⟨hlocals, hprem, hdec⟩
   exact getStack_decStack_aux stack locs reachable newStack hlocals hprem hdec
+
+/-- Exact HOL `push_env_def2` (`word_elimProofScript.sml:910-922`): the fully
+    expanded `push_env` with its `let` bindings, including the handler field
+    update `case handler of NONE => s.handler | SOME x => LENGTH s.stack` on
+    the rebound handler.  HOL writes the statement with free `env`, `handler`
+    and `s`; Lean binds the same three in that order. -/
+@[hol "cakeml/compiler/backend/proofs/word_elimProofScript.sml" "push_env_def2"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem pushEnv_def2 {width : Nat} [NeZero width] {C : Type} {F : Type}
+    (envs : Spt (WordLocW width) × Spt (WordLocW width))
+    (handler : Option (Nat × WordLangProgHOL (BitVec width) × Nat × Nat))
+    (state : WordSemStateFiniteExact width C F) :
+    WordSemStateFiniteExact.pushEnv envs handler state =
+      (let l0 := sptToAList envs.1
+       let (l, permute) := wordSemEnvToList envs.2 state.permute
+       let handler := match handler with
+         | none => none
+         | some (_, _, l1, l2) => some (state.handler, l1, l2)
+       let stack := WordSemStackFrame.stackFrame state.localsSize l0 l handler :: state.stack
+       { state with
+         stack := stack
+         stackMax := wordSemOptionMax state.stackMax (wordSemStackSize stack)
+         permute := permute
+         handler := match handler with
+           | none => state.handler
+           | some _ => state.stack.length }) := by
+  cases handler with
+  | none => rfl
+  | some entry =>
+      obtain ⟨w, h, l1, l2⟩ := entry
+      rfl
 
 end Flapjack.Compiler.Backend.WordElim

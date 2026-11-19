@@ -160,6 +160,7 @@ import Flapjack.Compiler.Backend.WordElim.Proofs.Definitions
 import Flapjack.Compiler.Backend.WordElim.Proofs.Analysis
 import Flapjack.Compiler.Backend.WordElim.Proofs.Locations
 import Flapjack.Compiler.Backend.WordElim.Proofs.Stacks
+import Flapjack.Compiler.Backend.WordElim.Proofs.ConstWrites
 import Flapjack.RiscV.CorrectnessEncoding.ShiftRorImmediate
 import Flapjack.RiscV.CorrectnessEncoding.RorExecution
 import Flapjack.RiscV.CorrectnessEncoding.RorStep
