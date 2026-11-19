@@ -1,10 +1,11 @@
 module
 
 public import Flapjack.Compiler.Backend.Semantics.WordSem.Accessors
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.StateConst
 
 @[expose] public section
 
-/-! A singleton read from the word semantics produces exactly one value. -/
+/-! Variable-list lookup properties used by the data-to-word GC proof. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
 open Flapjack
 
@@ -29,5 +30,14 @@ theorem getVars_sing {width : Nat} [NeZero width] {C F : Type}
       ∃ x1, WordSemStateFiniteExact.getVars [n] t = some [x1] ∧ x = [x1] := by
   cases h : WordSemStateFiniteExact.getVar n t <;>
     simp [WordSemStateFiniteExact.getVars, h, eq_comm]
+
+/-- Reading variables is unaffected by decrementing the termination depth. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "get_vars_termdep"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec), simp]
+theorem getVars_termdep {width : Nat} [NeZero width] {C F : Type}
+    (t : WordSemStateFiniteExact width C F) :
+    ∀ xs : List Nat, WordSemStateFiniteExact.getVars xs {t with termdep := t.termdep - 1} =
+      WordSemStateFiniteExact.getVars xs t := by
+  exact WordSemStateFiniteExact.getVars_congr t {t with termdep := t.termdep - 1} rfl
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

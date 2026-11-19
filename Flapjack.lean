@@ -3208,7 +3208,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.CollectorPartial
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.CollectorCombined
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.WordGcCorrect
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.StateRelGc
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GetVarsSingle
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GetVars
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.AdjustVar
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.MemoryTemp
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.TerminateLimit

@@ -163,3 +163,4 @@ join_env_locals_def_typed=∀(sl :α sptree$num_map) (tl :β sptree$num_map). jo
 join_env_locals_insert_odd_typed=ODD (n :num) ⇒ join_env_locals (sl :α sptree$num_map) (insert n (v :β) (ls :β sptree$num_map) :β sptree$num_map) = join_env_locals sl ls
 join_env_locals_insert_dest_odd_typed=ODD (n :num) ⇒ join_env_locals (sl :α sptree$num_map) (insert (adjust_var (dest :num)) (w :β) (insert n (v :β) (ls :β sptree$num_map) :β sptree$num_map) :β sptree$num_map) = join_env_locals sl (insert (adjust_var dest) w ls :β sptree$num_map)
 inter_insert_ODD_adjust_set_alt_typed=∀(k :num). ODD k ⇒ inter (insert k (v :α) (s :α sptree$num_map) :α sptree$num_map) (adjust_set (t :β sptree$num_map)) = inter s (adjust_set t)
+get_vars_termdep_typed=∀(xs :num list). (get_vars xs ((t :(α, β, γ) wordSem$state) with termdep := t.termdep − (1 :num)) :α word_loc list option) = (get_vars xs t :α word_loc list option)

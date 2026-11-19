@@ -143974,7 +143974,7 @@
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "get_vars_sing",
-  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/GetVarsSingle.lean",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/GetVars.lean",
   "lean_name": "getVars_sing",
   "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
   "fmap_as_finite_support": [
@@ -144053,5 +144053,18 @@
   "hol_name": "join_env_locals_insert_dest_odd",
   "lean_name": "joinEnvLocals_insertDestOdd",
   "reviewer": "Source comparison with join_env_locals_insert_dest_odd_typed: the odd premise, both insertion orders, destination, values and full equality are preserved for independent α and β. total_function_inhabitants records only the instance passed through joinEnvLocals to the reviewed HOL THE rendering."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "get_vars_termdep",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/GetVars.lean",
+  "lean_name": "getVars_termdep",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source comparison with get_vars_termdep_typed in data_to_word_gc_fun_const_ok_probe.out and HOL source lines 8798-8801: every variable list returns the same result after subtracting one from the original state termination depth. The state carrier retains independent compiler and FFI parameters, canonical finite maps, and the positive-width word translation."
 }
 ]
