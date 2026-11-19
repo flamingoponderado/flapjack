@@ -4860,7 +4860,8 @@ def reals_as_rational_cuts_errors(declaration_source: str, qualified: bool,
 
 
 def total_function_inhabitants_errors(signature: str, declaration_source: str,
-                                      listed: tuple[str, ...]) -> list[str]:
+                                      listed: tuple[str, ...],
+                                      transitive_rendering: str | None = None) -> list[str]:
     """`(total_function_inhabitants := [...])` records that each listed type
     binder's single `Nonempty`/`Inhabited` instance exists only to render a HOL
     total function's unspecified value on bad input.  The qualifier records only
@@ -4902,12 +4903,32 @@ def total_function_inhabitants_errors(signature: str, declaration_source: str,
                 "total_function_inhabitants does not list")
     source_code = strip_lean_comments(declaration_source)
     if not any(identifier_token_occurs(source_code, name)
-               for name in TOTAL_FUNCTION_RENDERING_NAMES):
+               for name in TOTAL_FUNCTION_RENDERING_NAMES) and not (
+            transitive_rendering and identifier_token_occurs(source_code, transitive_rendering)):
         errors.append(
             "total_function_inhabitants requires the declaration's own source to use a "
             "reviewed total-function rendering ("
             + ", ".join(TOTAL_FUNCTION_RENDERING_NAMES) + ")")
     return errors
+
+
+def join_env_locals_transitive_rendering(hol_path: str, hol_name: str, lean_path: str,
+                                         lean_name: str, listed: tuple[str, ...]) -> str | None:
+    """Only these reviewed GC declarations may inherit joinEnv's HOL THE instance.
+
+    The elaborated exporter separately checks the producer metadata, complete
+    wrapper body, and the full theorem statements; this identifies a source site
+    and does not by itself establish semantic correspondence.
+    """
+    if (hol_path != "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" or
+            lean_path != "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/JoinEnvLocals.lean" or
+            listed != ("α",)):
+        return None
+    return {
+        ("join_env_locals_def", "joinEnvLocals"): "joinEnv",
+        ("join_env_locals_insert_odd", "joinEnvLocals_insertOdd"): "joinEnvLocals",
+        ("join_env_locals_insert_dest_odd", "joinEnvLocals_insertDestOdd"): "joinEnvLocals",
+    }.get((hol_name, lean_name))
 
 
 def _qualified_word_owner_names(module: str, name: str, root: str) -> set[str]:
@@ -6735,12 +6756,16 @@ def main(argv: list[str]) -> int:
                     errors.extend(f"{where}: {error}" for error in fmap_result_observation_errors(
                         lines, module, declaration_source, result_observations, observation_records))
             if total_function_inhabitants:
+                transitive = join_env_locals_transitive_rendering(
+                    hol_path, hol_name, rel, find_lean_decl(lines, number - 1),
+                    total_function_inhabitants)
                 errors.extend(
                     f"{where}: {error}"
                     for error in total_function_inhabitants_errors(
                         tagged_declaration_text(lines, number),
                         tagged_declaration_source(lines, number),
                         total_function_inhabitants,
+                        transitive,
                     )
                 )
             errors.extend(

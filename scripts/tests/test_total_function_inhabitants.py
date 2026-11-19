@@ -75,6 +75,27 @@ class TotalFunctionInhabitantsCheckerTest(unittest.TestCase):
         self.assertTrue(self.errors(names=listed(
             "(total_function_inhabitants := [α]) (total_function_inhabitants := [β])")))
 
+    def test_transitive_rendering_is_restricted_to_the_reviewed_sites(self):
+        route = REFS["join_env_locals_transitive_rendering"]
+        path = "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml"
+        lean = "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/JoinEnvLocals.lean"
+        cases = [("join_env_locals_def", "joinEnvLocals", "joinEnv"),
+                 ("join_env_locals_insert_odd", "joinEnvLocals_insertOdd", "joinEnvLocals"),
+                 ("join_env_locals_insert_dest_odd", "joinEnvLocals_insertDestOdd", "joinEnvLocals")]
+        for hol_name, lean_name, expected in cases:
+            self.assertEqual(route(path, hol_name, lean, lean_name, ("α",)), expected)
+            self.assertIsNone(route(path, hol_name, lean, lean_name, ("β",)))
+            self.assertIsNone(route(path, hol_name, lean, "other", ("α",)))
+            self.assertIsNone(route(path, hol_name, "Flapjack/Other.lean", lean_name, ("α",)))
+            self.assertIsNone(route("cakeml/other.sml", hol_name, lean, lean_name, ("α",)))
+
+    def test_transitive_rendering_still_requires_the_named_call(self):
+        signature = "def joined {α β : Type} [Nonempty α] (x : α) : α := x"
+        check = REFS["total_function_inhabitants_errors"]
+        self.assertTrue(check(signature, signature, ("α",), "joinEnv"))
+        self.assertFalse(check(signature, signature + " joinEnv", ("α",), "joinEnv"))
+        self.assertTrue(check(signature, signature + " -- joinEnv", ("α",), "joinEnv"))
+
 
 class TotalFunctionInhabitantsManifestTest(unittest.TestCase):
     hol_path = "cakeml/compiler/backend/proofs/wordPropsScript.sml"

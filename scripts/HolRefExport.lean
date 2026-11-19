@@ -1,6 +1,7 @@
 import Flapjack.HolRef.GeneraliseLengthAudit
 import Flapjack.HolRef.InferSubstSubmapAudit
 import Flapjack.HolRef.TypeSubstWalkstarAudit
+import Flapjack.HolRef.JoinEnvLocalsAudit
 import Flapjack.Compiler.Backend.StackProps.EvaluateMono
 import Flapjack.Compiler.Backend.StackProps.EvaluateNeutral
 import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.Nonrecursive
@@ -275,6 +276,22 @@ elab "#emit_hol_ref_export" : command => do
   let mut known : Std.HashMap Name Bool := {}
   let mut nestedKnown : Std.HashMap Name (Bool × Bool) := {}
   for (name, ref) in HolRef.all env do
+    let joinTargets := #[
+      (`Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.joinEnvLocals, "join_env_locals_def"),
+      (`Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.joinEnvLocals_insertOdd, "join_env_locals_insert_odd"),
+      (`Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.joinEnvLocals_insertDestOdd,
+        "join_env_locals_insert_dest_odd")]
+    let joinPath := "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml"
+    let expectedJoin := joinTargets.find? (fun entry => entry.1 == name)
+    if expectedJoin.isSome || (ref.path == joinPath && joinTargets.any (fun entry => entry.2 == ref.name)) then
+      let some (_, holName) := expectedJoin
+        | throwError "unexpected joined-local HOL target: {name}"
+      let expectedRef : HolRef := {
+        path := joinPath, name := holName,
+        totalFunctionInhabitants := #["α"] }
+      unless ref == expectedRef do throwError "invalid joined-local HOL metadata: {name}"
+      let problems ← liftTermElabM <| joinEnvLocalsBundleProblems name
+      unless problems.isEmpty do throwError "invalid joined-local declaration {name}: {problems}"
     let gcTarget := `Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.stateRel_gcGen
     let gcRef : HolRef := {
       path := "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",

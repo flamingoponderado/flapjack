@@ -924,6 +924,15 @@ instance, hypothesis, or statement change, and source review must confirm the
 instance is used only through those renderings. `check_hol_ref_export.py`
 compares the manifest field with the elaborated attribute in both directions.
 
+The only approved transitive use is the `joinEnvLocals` definition and its
+two odd-insertion theorems in the data-to-word GC counterpart. Their one
+`Nonempty α` instance flows through `joinEnvLocals` to the reviewed `joinEnv`
+rendering of HOL `THE`; the independent payload type `β` has no instance.
+The source checker restricts this exception to those three declarations, and
+the elaborated exporter checks the producer metadata, complete wrapper body,
+theorem binders, premises and conclusions. The manifest note must explain the
+transitive rendering. These checks do not replace comparison with typed HOL.
+
 **Qualify unused HOL existential types.** The narrow
 `hol_existential_inhabitants := [T2._t2, W1._w1, W2._w2]` qualifier applies
 only to `stateRel_gcGen` for HOL `state_rel_gc_gen`. HOL's three independent

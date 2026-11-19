@@ -144020,5 +144020,38 @@
   "lean_name": "inter_insertOdd_adjustSet",
   "statement_status": "reviewed_exact",
   "reviewer": "Source comparison with inter_insert_ODD_adjust_set_alt_typed in data_to_word_gc_fun_const_ok_probe.out and HOL source lines 8778-8785: the odd-key premise, both Spt maps with independent payload types, insertion value and complete intersection equality are preserved. HOL ODD is rendered as remainder one modulo two."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/JoinEnvLocals.lean",
+  "statement_status": "reviewed_total_function_inhabitants",
+  "total_function_inhabitants": [
+    "α"
+  ],
+  "hol_name": "join_env_locals_def",
+  "lean_name": "joinEnvLocals",
+  "reviewer": "Source comparison with join_env_locals_def_typed: independently generic α and β trees, the intersection order and the resulting pair list are unchanged. total_function_inhabitants records only the Nonempty α instance passed to the reviewed joinEnv rendering of HOL THE."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/JoinEnvLocals.lean",
+  "statement_status": "reviewed_total_function_inhabitants",
+  "total_function_inhabitants": [
+    "α"
+  ],
+  "hol_name": "join_env_locals_insert_odd",
+  "lean_name": "joinEnvLocals_insertOdd",
+  "reviewer": "Source comparison with join_env_locals_insert_odd_typed: the odd premise and full unchanged-join equality are preserved for independent α and β. total_function_inhabitants records only the instance passed through joinEnvLocals to the reviewed HOL THE rendering."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/JoinEnvLocals.lean",
+  "statement_status": "reviewed_total_function_inhabitants",
+  "total_function_inhabitants": [
+    "α"
+  ],
+  "hol_name": "join_env_locals_insert_dest_odd",
+  "lean_name": "joinEnvLocals_insertDestOdd",
+  "reviewer": "Source comparison with join_env_locals_insert_dest_odd_typed: the odd premise, both insertion orders, destination, values and full equality are preserved for independent α and β. total_function_inhabitants records only the instance passed through joinEnvLocals to the reviewed HOL THE rendering."
 }
 ]
