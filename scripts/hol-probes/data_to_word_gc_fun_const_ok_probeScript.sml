@@ -252,3 +252,6 @@ val _ = pr_typed "inter_insert_ODD_adjust_set_alt_typed" data_to_word_gcProofThe
 val _ = pr_typed "get_vars_termdep_typed" data_to_word_gcProofTheory.get_vars_termdep;
 val _ = pr_typed "inter_delete_ODD_adjust_set_alt_typed" data_to_word_gcProofTheory.inter_delete_ODD_adjust_set_alt;
 val _ = pr_typed "inter_insert_ODD_adjust_set_typed" data_to_word_gcProofTheory.inter_insert_ODD_adjust_set;
+val _ = pr_typed "get_vars_1_IMP_typed" data_to_word_gcProofTheory.get_vars_1_IMP;
+val _ = pr_typed "get_vars_2_IMP_typed" data_to_word_gcProofTheory.get_vars_2_IMP;
+val _ = pr_typed "get_vars_3_IMP_typed" data_to_word_gcProofTheory.get_vars_3_IMP;

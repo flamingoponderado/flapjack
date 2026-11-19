@@ -40,4 +40,40 @@ theorem getVars_termdep {width : Nat} [NeZero width] {C F : Type}
       WordSemStateFiniteExact.getVars xs t := by
   exact WordSemStateFiniteExact.getVars_congr t {t with termdep := t.termdep - 1} rfl
 
+/-- A successful one-variable read determines its individual result. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "get_vars_1_IMP"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem getVars_one_imp {width : Nat} [NeZero width] {C F : Type}
+    (s : WordSemStateFiniteExact width C F) (x1 : Nat) (v1 : WordLocW width)
+    (h : WordSemStateFiniteExact.getVars [x1] s = some [v1]) :
+    WordSemStateFiniteExact.getVar x1 s = some v1 := by
+  cases a : WordSemStateFiniteExact.getVar x1 s <;>
+    simp_all [WordSemStateFiniteExact.getVars]
+
+/-- A successful two-variable read determines both individual results. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "get_vars_2_IMP"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem getVars_two_imp {width : Nat} [NeZero width] {C F : Type}
+    (s : WordSemStateFiniteExact width C F) (x1 x2 : Nat) (v1 v2 : WordLocW width)
+    (h : WordSemStateFiniteExact.getVars [x1, x2] s = some [v1, v2]) :
+    WordSemStateFiniteExact.getVar x1 s = some v1 ∧
+      WordSemStateFiniteExact.getVar x2 s = some v2 := by
+  cases a : WordSemStateFiniteExact.getVar x1 s <;>
+    cases b : WordSemStateFiniteExact.getVar x2 s <;>
+    simp_all [WordSemStateFiniteExact.getVars]
+
+/-- A successful three-variable read determines all three individual results. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "get_vars_3_IMP"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem getVars_three_imp {width : Nat} [NeZero width] {C F : Type}
+    (s : WordSemStateFiniteExact width C F) (x1 x2 x3 : Nat) (v1 v2 v3 : WordLocW width)
+    (h : WordSemStateFiniteExact.getVars [x1, x2, x3] s = some [v1, v2, v3]) :
+    WordSemStateFiniteExact.getVar x1 s = some v1 ∧
+      WordSemStateFiniteExact.getVar x2 s = some v2 ∧
+      WordSemStateFiniteExact.getVar x3 s = some v3 := by
+  cases a : WordSemStateFiniteExact.getVar x1 s <;>
+    cases b : WordSemStateFiniteExact.getVar x2 s <;>
+    cases c : WordSemStateFiniteExact.getVar x3 s <;>
+    simp_all [WordSemStateFiniteExact.getVars]
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

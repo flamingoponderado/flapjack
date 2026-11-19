@@ -144082,5 +144082,44 @@
   "lean_name": "inter_insertOdd_adjustSet_dest",
   "statement_status": "reviewed_exact",
   "reviewer": "Source comparison with inter_insert_ODD_adjust_set_typed in data_to_word_gc_fun_const_ok_probe.out and HOL source lines 8768-8776: the odd-key premise, outer adjusted-destination insertion, inner insertion and full equality are preserved for independent payload types α and β; HOL ODD is rendered as remainder one modulo two."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/GetVars.lean",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "hol_name": "get_vars_1_IMP",
+  "lean_name": "getVars_one_imp",
+  "reviewer": "Source comparison with get_vars_1_IMP_typed in data_to_word_gc_fun_const_ok_probe.out and HOL source lines 8744-8765: the successful 1-element word-variable read implies each corresponding individual lookup in order, with no additional premises. The word state retains independent compiler and FFI parameters and uses canonical finite maps and the positive-width word translation."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/GetVars.lean",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "hol_name": "get_vars_2_IMP",
+  "lean_name": "getVars_two_imp",
+  "reviewer": "Source comparison with get_vars_2_IMP_typed in data_to_word_gc_fun_const_ok_probe.out and HOL source lines 8744-8765: the successful 2-element word-variable read implies each corresponding individual lookup in order, with no additional premises. The word state retains independent compiler and FFI parameters and uses canonical finite maps and the positive-width word translation."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/GetVars.lean",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "hol_name": "get_vars_3_IMP",
+  "lean_name": "getVars_three_imp",
+  "reviewer": "Source comparison with get_vars_3_IMP_typed in data_to_word_gc_fun_const_ok_probe.out and HOL source lines 8744-8765: the successful 3-element word-variable read implies each corresponding individual lookup in order, with no additional premises. The word state retains independent compiler and FFI parameters and uses canonical finite maps and the positive-width word translation."
 }
 ]
