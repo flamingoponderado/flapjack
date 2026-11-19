@@ -109,6 +109,12 @@ val _ = emit "maxout_bits_bit_typed" data_to_word_memoryProofTheory.maxout_bits_
 val _ = emit "maxout_bits_IMP_typed" data_to_word_memoryProofTheory.maxout_bits_IMP;
 val _ = emit "get_lowerbits_ptrbits_typed" data_to_word_memoryProofTheory.get_lowerbits_ptrbits;
 val _ = emit "make_cons_ptr_thm_typed" data_to_word_memoryProofTheory.make_cons_ptr_thm;
+(* Replay the original local functional list-relation theorem. *)
+val EVERY2_f_EQ_replay = let open preamble in
+  Q.prove (`!rs ws f. EVERY2 (\v w. f v = w) rs ws <=> MAP f rs = ws`,
+    Induct \\ fs [] \\ rw [] \\ eq_tac \\ rw [] \\ fs [])
+end;
+val _ = emit "EVERY2_f_EQ_typed" EVERY2_f_EQ_replay;
 (* Replay the local header decoding theorem with its local power bounds. *)
 val encode_header_IMP_replay = let
   open preamble helperLib wordsTheory alignmentTheory data_to_wordTheory word_gcFunctionsTheory data_to_word_memoryProofTheory

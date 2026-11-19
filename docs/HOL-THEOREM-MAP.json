@@ -145122,5 +145122,13 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Compared the typed replay of local encode_header_IMP: successful encoding, the len_size plus five bound and good_dimindex imply both the original length bound and exact decode_length equality. The source and result words share the positive-width BitVec translation; the original good_dimindex premise remains even though the Lean proof derives the result more generally."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "EVERY2_f_EQ",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/StoreListThm.lean",
+  "lean_name": "every2_function_eq",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed replay of the original local HOL proof: for arbitrary independently typed lists and function, pointwise function equality is equivalent to equality of the mapped first list with the second."
 }
 ]

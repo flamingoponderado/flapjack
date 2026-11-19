@@ -92,6 +92,7 @@ maxout_bits_bit_typed=(((maxout_bits (n :num) (l :num) (b :num) :α word) ' (i :
 maxout_bits_IMP_typed=(i :num) < dimindex (:α) ∧ (((maxout_bits (tag :num) (k :num) (n :num) :α word) ' i) :bool) ⇒ i < n + k
 get_lowerbits_ptrbits_typed=get_lowerbits (c :data_to_word$config) (Word (ptr_bits c (x :num) (y :num) :α word)) = (ptr_bits c x y :α word) ‖ (1w :α word)
 make_cons_ptr_thm_typed=make_cons_ptr (conf :data_to_word$config) (f :α word) (tag :num) (len :num) = Word (f ≪ (shift_length conf − (shift (:α) :num)) ‖ (1w :α word) ‖ (ptr_bits conf tag len :α word))
+EVERY2_f_EQ_typed=∀(rs :α list) (ws :β list) (f :α -> β). LIST_REL (λ(v :α) (w :β). f v = w) rs ws ⇔ MAP f rs = ws
 encode_header_IMP_typed=(encode_header (c :data_to_word$config) (tag :num) (len :num) :α word option) = SOME (hd :α word) ∧ c.len_size + (5 :num) < dimindex (:α) ∧ good_dimindex (:α) ⇒ len < (2 :num) ** (dimindex (:α) − (4 :num)) ∧ decode_length c hd = (n2w len :α word)
 isSomeDataElement_heap_lookup_lemma1_typed=isSomeDataElement (heap_lookup (n :num) ((Unused (k :num) :(α, β) heap_element)::(xs :(α, β) heap_element list))) ⇔ k < n ∧ isSomeDataElement (heap_lookup (n − (k + (1 :num))) xs)
 isSomeDataElement_heap_lookup_lemma2_typed=isSomeDataElement (heap_lookup (n :num) ((heap_expand (k :num) :(α, β) heap_element list) ++ (xs :(α, β) heap_element list))) ⇔ k ≤ n ∧ isSomeDataElement (heap_lookup (n − k) xs)

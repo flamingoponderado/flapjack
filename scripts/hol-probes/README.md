@@ -17,7 +17,7 @@ length and location prerequisites, constructor-pointer and proof-side
 constant-builder definitions,
 single-part timestamp preservation, the least unused sparse-tree key, and
 word-stride alignment, pointer addition, pointer-tag bit bounds, and
-constant-builder correspondence, empty-constructor memory relation, generic heap allocation, its full existence invariant, length and structural decomposition, the framed word-store theorem and header length decoding, the nonempty constructor invariant, unused-space lookup identities, lookup and split preservation, and generation-state preservation (including replayed local HOL proofs), and single-part and list relocation
+constant-builder correspondence, empty-constructor memory relation, generic heap allocation, its full existence invariant, length and structural decomposition, the framed word-store theorem, functional list relation and header length decoding, the nonempty constructor invariant, unused-space lookup identities, lookup and split preservation, and generation-state preservation (including replayed local HOL proofs), and single-part and list relocation
 theorems, with inferred types.
 It also evaluates zero and nonzero SmallLsr expressions for output parity. Regenerate
 with `HOL_PROBE_ONLY=data_to_word_assign_roots_probeScript.sml scripts/hol-probes/regenerate.sh`

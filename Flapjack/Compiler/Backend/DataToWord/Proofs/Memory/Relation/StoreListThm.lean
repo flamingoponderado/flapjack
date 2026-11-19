@@ -54,4 +54,12 @@ theorem storeListThm {width : Nat} [NeZero width] (xs : List (WordLocW width))
         (Misc.wordList (a + StackRemove.bytesInWord width) xs)) frame _
       rw [SetSep.starAssoc, SetSep.starComm (Misc.wordList (a + StackRemove.bytesInWord width) xs) (SetSep.one (a, x))] at post
       exact post
+/-- Pointwise functional correspondence is equality with the mapped list. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "EVERY2_f_EQ"]
+theorem every2_function_eq {α β : Type} (rs : List α) (ws : List β) (f : α → β) :
+    List.Forall₂ (fun v w => f v = w) rs ws ↔ rs.map f = ws := by
+  induction rs generalizing ws with
+  | nil => cases ws <;> simp
+  | cons x xs ih => cases ws <;> simp [ih]
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
