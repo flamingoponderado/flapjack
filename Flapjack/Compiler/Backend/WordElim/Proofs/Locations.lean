@@ -401,4 +401,38 @@ theorem getLocals_fromList2_extension {width : Nat} [NeZero width] (location : N
       (by omega)]
   exact hkey
 
+/-- Exact HOL `get_locals_inter_subset` (`word_elimProofScript.sml:924-930`):
+    intersecting a locals tree with another tree keeps only the locations of
+    the left tree.  HOL marks it `[local]` and writes it
+    `domain (get_locals (inter a b)) ⊆ domain (get_locals a)`; the right tree's
+    payload type is independent, as in the typed capture. -/
+@[hol "cakeml/compiler/backend/proofs/word_elimProofScript.sml" "get_locals_inter_subset"
+  (words_as_type_indexed_bitvec)]
+theorem getLocals_inter_subset {width : Nat} [NeZero width] {β : Type}
+    (a : Spt (WordLocW width)) (b : Spt β) :
+    sptDomainSet (getLocals (sptInter a b)) ⊆ sptDomainSet (getLocals a) := by
+  intro location hmem
+  obtain ⟨key, offset, hkey⟩ :=
+    (domainGetLocalsLookup location (sptInter a b)).mp hmem
+  rw [sptLookup_sptInterCases] at hkey
+  cases hleft : sptLookup key a with
+  | none =>
+      cases hright : sptLookup key b with
+      | none =>
+          rw [hleft, hright] at hkey
+          simp at hkey
+      | some other =>
+          rw [hleft, hright] at hkey
+          simp at hkey
+  | some value =>
+      cases hright : sptLookup key b with
+      | none =>
+          rw [hleft, hright] at hkey
+          simp at hkey
+      | some other =>
+          rw [hleft, hright] at hkey
+          simp only [Option.some.injEq] at hkey
+          exact (domainGetLocalsLookup location a).mpr
+            ⟨key, offset, by rw [hleft]; exact congrArg some hkey⟩
+
 end Flapjack.Compiler.Backend.WordElim

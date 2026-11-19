@@ -96,4 +96,103 @@ theorem getStack_CONS {width : Nat} [NeZero width] (h : WordSemStackFrame width)
         rw [getStack_cons, sptMem_sptUnion, sptMem_sptUnion]
         exact Or.inr hmem
 
+/-- Flapjack-only helper: HOL's `LASTN_ALT` (`rich_list`, outside `cakeml/`),
+    `LASTN n xs = DROP (LENGTH xs - n) xs`, for the `wordSemLastN` rendering. -/
+theorem wordSemLastN_eq_drop {α : Type} (n : Nat) (xs : List α) :
+    wordSemLastN n xs = xs.drop (xs.length - n) := by
+  simp only [wordSemLastN, List.take_reverse, List.reverse_reverse]
+
+/-- Flapjack-only helper: `get_stack` of a concatenation is the union of the
+    two halves' location sets. -/
+theorem getStack_append {width : Nat} [NeZero width]
+    (xs ys : List (WordSemStackFrame width)) :
+    getStack (xs ++ ys) = sptUnion (getStack xs) (getStack ys) := by
+  induction xs with
+  | nil => simp [getStack_nil, sptUnion]
+  | cons head tail ih =>
+      cases head with
+      | stackFrame lsz nonGcCutset gcCutset handler =>
+          simp only [List.cons_append, getStack_cons, ih, sptUnion_assoc]
+
+/-- Flapjack-only helper: a suffix's location set is inside the whole list's. -/
+theorem getStack_suffix {width : Nat} [NeZero width]
+    (xs ys : List (WordSemStackFrame width)) :
+    sptDomainSet (getStack ys) ⊆ sptDomainSet (getStack (xs ++ ys)) := by
+  intro location hmem
+  rw [getStack_append]
+  change sptMem location (sptUnion (getStack xs) (getStack ys))
+  rw [sptMem_sptUnion]
+  exact Or.inr hmem
+
+/-- Flapjack-only helper: dropping a prefix keeps the location set inside the
+    whole stack's. -/
+theorem getStack_drop {width : Nat} [NeZero width] (k : Nat)
+    (stack : List (WordSemStackFrame width)) :
+    sptDomainSet (getStack (stack.drop k)) ⊆ sptDomainSet (getStack stack) := by
+  conv_rhs => rw [← List.take_append_drop k stack]
+  exact getStack_suffix (stack.take k) (stack.drop k)
+
+/-- Exact HOL `get_stack_LASTN` (`word_elimProofScript.sml:233-239`): the last
+    `n` frames contribute only locations already in the whole stack.  HOL's
+    `LASTN` is `wordSemLastN`, and `domain … ⊆ …` is stated literally with
+    `sptDomainSet`. -/
+@[hol "cakeml/compiler/backend/proofs/word_elimProofScript.sml" "get_stack_LASTN"
+  (words_as_type_indexed_bitvec)]
+theorem getStack_LASTN {width : Nat} [NeZero width] (stack : List (WordSemStackFrame width))
+    (n : Nat) :
+    sptDomainSet (getStack (wordSemLastN n stack)) ⊆ sptDomainSet (getStack stack) := by
+  rw [wordSemLastN_eq_drop]
+  exact getStack_drop (stack.length - n) stack
+
+/-- Exact HOL `get_stack_enc_stack` (`word_elimProofScript.sml:248-260`): every
+    location named by an encoded stack entry lies in `reachable`, given that
+    the stack's own locations do.  HOL's `reachable` is a `num_map`, so its
+    payload type is independent, as in the typed capture; the `case
+    dest_word_loc e of` result is stated as a `match`.
+-/
+@[hol "cakeml/compiler/backend/proofs/word_elimProofScript.sml" "get_stack_enc_stack"
+  (words_as_type_indexed_bitvec)]
+theorem getStack_encStack {width : Nat} [NeZero width] {β : Type}
+    (stack : List (WordSemStackFrame width)) (reachable : Spt β) :
+    sptDomainSet (getStack stack) ⊆ sptDomainSet reachable →
+      ∀ e, e ∈ wordSemEncStack stack →
+        (match destWordLoc e with
+          | none => (∅ : Set Nat)
+          | some n => ({n} : Set Nat)) ⊆ sptDomainSet reachable := by
+  induction stack with
+  | nil =>
+      intro _ e hmem
+      simp only [wordSemEncStack, List.not_mem_nil] at hmem
+  | cons head tail ih =>
+      cases head with
+      | stackFrame lsz nonGcCutset gcCutset handler =>
+          intro hprem e hmem
+          simp only [wordSemEncStack, List.mem_append, List.mem_map] at hmem
+          rcases hmem with ⟨⟨key, value⟩, hentry, hvalue⟩ | htail
+          · cases e with
+            | word w =>
+                simp [destWordLoc_word]
+            | loc block offset =>
+                rw [destWordLoc_loc]
+                have hval : value = .loc block offset := hvalue
+                rw [hval] at hentry
+                intro location hmem
+                simp only [Set.mem_singleton_iff] at hmem
+                rw [hmem]
+                exact hprem (by
+                  change sptMem block
+                    (getStack (.stackFrame lsz nonGcCutset gcCutset handler :: tail))
+                  rw [getStack_cons, sptMem_sptUnion, sptMem_sptUnion]
+                  exact Or.inl (Or.inr
+                    ((getNumWordlocAlist_thm (α := Unit) block () gcCutset).mp
+                      ⟨offset, List.mem_map.mpr ⟨(key, .loc block offset), hentry, rfl⟩⟩)))
+          · have hpremTail : sptDomainSet (getStack tail) ⊆ sptDomainSet reachable := by
+              intro location hmem
+              exact hprem (by
+                change sptMem location
+                  (getStack (.stackFrame lsz nonGcCutset gcCutset handler :: tail))
+                rw [getStack_cons, sptMem_sptUnion, sptMem_sptUnion]
+                exact Or.inr hmem)
+            exact ih hpremTail e htail
+
 end Flapjack.Compiler.Backend.WordElim
