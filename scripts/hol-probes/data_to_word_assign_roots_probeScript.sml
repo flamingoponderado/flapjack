@@ -95,3 +95,5 @@ val _ = emit "const_parts_to_words_good_loc_typed" data_to_word_memoryProofTheor
 val _ = emit "make_cons_ptr_def_typed" data_to_wordTheory.make_cons_ptr_def;
 val _ = emit "build_part_words_def_typed" data_to_word_memoryProofTheory.build_part_words_def;
 val _ = emit "build_words_def_typed" data_to_word_memoryProofTheory.build_words_def;
+val _ = emit "do_part_SOME_IMP_SOME_typed" data_to_word_memoryProofTheory.do_part_SOME_IMP_SOME;
+val _ = emit "least_notin_domain_typed" data_to_word_memoryProofTheory.least_notin_domain;

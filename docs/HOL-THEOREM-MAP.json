@@ -144844,5 +144844,21 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Compared build_words_def_typed with HOL: the empty-list lookup, total-function update, incremented index, word-sized offset advance, failure branches and appended output lists match. HOL words use positive-width BitVec."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "do_part_SOME_IMP_SOME",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/BuildFacts.lean",
+  "lean_name": "doPartSome",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared do_part_SOME_IMP_SOME_typed with HOL: the arbitrary value function, constant part, polymorphic reference payload, input timestamp and complete result equation imply the existence of a final timestamp."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "least_notin_domain",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/BuildFacts.lean",
+  "lean_name": "leastNotInDomain",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared least_notin_domain_typed with HOL: for a sparse tree with arbitrary payload, Nat.find chooses the least natural outside its domain and that key is outside the domain. The generalized leastUnusedRef implementation and its minimality theorem give the same LEAST selection."
 }
 ]

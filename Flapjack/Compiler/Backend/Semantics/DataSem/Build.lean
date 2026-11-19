@@ -24,7 +24,7 @@ def withFreshTimestamp {C F R : Type} (state : State C F) (count : Nat) (f : Nat
   | none => f 0 state
 
 /-- Every sparse tree has an unallocated natural key. -/
-theorem unusedRef_exists {α : Type} (refs : Spt (BvlSem.Ref α)) : ∃ key, sptLookup key refs = none := by
+theorem unusedRef_exists {α : Type} (refs : Spt α) : ∃ key, sptLookup key refs = none := by
   obtain ⟨bound, bounded⟩ := natList_bounded ((sptToAList refs).map Prod.fst)
   refine ⟨bound, ?_⟩
   cases found : sptLookup bound refs with
@@ -38,18 +38,18 @@ theorem unusedRef_exists {α : Type} (refs : Spt (BvlSem.Ref α)) : ∃ key, spt
     omega
 
 /-- The least unused reference index exists because the source tree is finite. -/
-noncomputable def leastUnusedRef {α : Type} (refs : Spt (BvlSem.Ref α)) : Nat := by
+noncomputable def leastUnusedRef {α : Type} (refs : Spt α) : Nat := by
   classical
   exact Nat.find (unusedRef_exists refs)
 
 /-- The chosen index is unused in the source tree. -/
-theorem leastUnusedRef_unused {α : Type} (refs : Spt (BvlSem.Ref α)) :
+theorem leastUnusedRef_unused {α : Type} (refs : Spt α) :
     sptLookup (leastUnusedRef refs) refs = none := by
   classical
   exact Nat.find_spec (unusedRef_exists refs)
 
 /-- Every smaller source-tree index is occupied. -/
-theorem leastUnusedRef_minimal {α : Type} (refs : Spt (BvlSem.Ref α)) (index : Nat)
+theorem leastUnusedRef_minimal {α : Type} (refs : Spt α) (index : Nat)
     (smaller : index < leastUnusedRef refs) : sptLookup index refs ≠ none := by
   classical
   exact Nat.find_min (unusedRef_exists refs) smaller
