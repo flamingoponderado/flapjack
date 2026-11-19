@@ -10,6 +10,7 @@ public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.NumberSize
 public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Unit
 public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.BuildFacts
 public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Rearrange
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.PartAdd
 public import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.StoreConsts
 open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Backend.DataSem Flapjack.Compiler.Backend.DataToWord Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
 
@@ -389,5 +390,60 @@ theorem memoryRel_doBuild {width : Nat} [NeZero width] {β : Type} (c : Config) 
                   exact finalRel
                 · rw [Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.storeList_append, stored]
                   exact finalStore
+
+
+/-- Building a constant preserves the memory relation and stores the relocated words. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "memory_rel_do_build_const"
+  (fmap_as_finite_support_relation := [st]) (words_as_type_indexed_bitvec)]
+theorem memoryRel_doBuildConst {width : Nat} [NeZero width] (c : Config) (be : Bool)
+    (parts : List ClosLang.ConstPart) (refs refs1 : Spt (BvlSem.Ref Value)) (ts ts1 : Nat)
+    (value : Value) (w : Build.Value width) (ws : List (Build.Value width))
+    (sp : Nat) (st : HolFiniteMapExact WordStoreHOL (WordLocW width))
+    (m : BitVec width → WordLocW width) (dm : BitVec width → Bool)
+    (vars : List (Value × WordLocW width)) (free curr : BitVec width)
+    (sourceRun : doBuildConst parts refs (some ts) = (value, refs1, some ts1))
+    (targetRun : Build.partsWords c parts = some (w, ws))
+    (rel : memoryRel c be ts refs sp st m dm vars)
+    (budget : (parts.map DataSpace.partSpaceReq).sum ≤ sp)
+    (freeLookup : st.lookup .nextFree = some (.word free))
+    (currLookup : st.lookup .currHeap = some (.word curr)) (good : goodDimindex width) :
+    ∃ m1, memoryRel c be ts1 refs1 (sp - ws.length)
+      (st.update (.nextFree, .word (free + wordSemBytesInWord * BitVec.ofNat width ws.length))) m1 dm
+      ((value, wordCondAdd c (free - curr) w) :: vars) ∧
+      storeList free (ws.map (wordCondAdd c (free - curr))) m dm = some m1 := by
+  obtain ⟨heap, limit, a, sp0, sp1, gens, heapMem, wordInv, heapBound, spaceBound⟩ := rel
+  have rel : memoryRel c be ts refs sp st m dm vars :=
+    ⟨heap, limit, a, sp0, sp1, gens, heapMem, wordInv, heapBound, spaceBound⟩
+  obtain ⟨h1, h2, shiftBound, h4, h5, h6, h7, oldCurr, other, currAligned, otherAligned,
+    currGet, otherGet, freeGet, rest⟩ := heapMem
+  have currEq : oldCurr = curr := by simpa [currLookup] using currGet.symm
+  subst oldCurr
+  have freeEq : free = curr + StackRemove.bytesInWord width * BitVec.ofNat width a := by
+    simpa [freeLookup] using freeGet
+  have offsetAligned : holByteAligned (free - curr) = true := by
+    rw [freeEq]
+    simpa [StackRemove.bytesInWord, wordSemBytesInWord] using (byteAlignMultBytesInWord (BitVec.ofNat width a) good).2
+  have context : ∀ ks : List Nat, memoryRel c be ts refs sp st m dm
+      (ks.map (fun _ => (Value.number 0, WordLocW.word (0 : BitVec width))) ++ vars) := by
+    intro ks
+    induction ks with
+    | nil => simpa using rel
+    | cons k ks ih =>
+      have small : smallInt width 0 := by rcases good with h | h <;> simp [smallInt, h]
+      have h := impMemoryRel_number c be ts refs sp st m dm _ 0 ⟨good, small, ih⟩
+      simpa [smallnum] using h
+  have targetRun1 : Build.partsToWords c .ln 0 parts 0 = some (w, ws) := targetRun
+  obtain ⟨v1, ws1, relocated, wordsEq, valueEq⟩ :=
+    partsWords_add c parts .ln 0 0 (free - curr) w ws .ln targetRun1
+      (by simp [holByteAligned, holAligned, holAlign_eq_shift]) offsetAligned good shiftBound (by intro i; simp [Build.lookupMem, wordCondAdd])
+  have built := partsWords_imp_build c .ln 0 parts (free - curr) v1 ws1 (by simpa using relocated)
+    good offsetAligned shiftBound
+  have built0 : buildWords c (fun _ => .word (0 : BitVec width)) 0 parts (free - curr) =
+      some (wordCondAdd c (free - curr) w, ws.map (wordCondAdd c (free - curr))) := by
+    simpa [Build.lookupMem, valueEq, wordsEq] using built
+  have h := memoryRel_doBuild c be parts 0 st free curr sp (fun _ => .number 0) (fun _ => .word 0)
+    refs ts refs1 () m value (ws.map (wordCondAdd c (free-curr))) ts1 _ dm vars
+    (by simpa [doBuildConst] using sourceRun) built0 budget freeLookup currLookup context good
+  simpa using h
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

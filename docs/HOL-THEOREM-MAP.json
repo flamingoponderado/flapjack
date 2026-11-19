@@ -145254,5 +145254,15 @@
   "fmap_as_finite_support_relation": ["st"],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Compared the complete theorem and memory_rel_do_build_typed with the HOL source: both successful build equations, space and lookup premises, universally quantified mapped context, good dimension, and existential final memory with the exact updated relation and list store are retained. The independent shadowed HOL v : beta binder is preserved as _shadowed : beta, separate from the returned source value. The store is the canonical finite-support map and target words share one positive BitVec width."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "memory_rel_do_build_const",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/BuildMemory.lean",
+  "lean_name": "memoryRel_doBuildConst",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": ["st"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared the complete typed HOL statement: successful source and target constant construction, the full memory relation, space bound, both store lookups and good dimension imply one final memory with the exact relocated result, store update and list store. The store is the canonical finite-support map and all target words share one positive BitVec width."
 }
 ]

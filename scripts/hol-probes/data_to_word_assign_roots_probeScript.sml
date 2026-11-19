@@ -367,6 +367,7 @@ val _ = emit "all_ts_cons_no_block_typed" data_to_word_memoryProofTheory.all_ts_
 val _ = emit "blocks_unique_new_byte_alt_typed" data_to_word_memoryProofTheory.blocks_unique_new_byte_alt;
 val _ = emit "new_byte_alt_thm_typed" data_to_word_memoryProofTheory.new_byte_alt_thm;
 val _ = emit "memory_rel_do_build_typed" data_to_word_memoryProofTheory.memory_rel_do_build;
+val _ = emit "memory_rel_do_build_const_typed" data_to_word_memoryProofTheory.memory_rel_do_build_const;
 val _ = emit "memory_rel_RefByte_content_typed" data_to_word_memoryProofTheory.memory_rel_RefByte_content;
 val _ = emit "memory_rel_Word64_alt_typed" data_to_word_memoryProofTheory.memory_rel_Word64_alt;
 val _ = emit "word64_alt_thm_typed" data_to_word_memoryProofTheory.word64_alt_thm;
