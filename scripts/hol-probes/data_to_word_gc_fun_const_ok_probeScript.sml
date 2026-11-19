@@ -287,3 +287,5 @@ val _ = pr_hyps "alloc_size_dimword_hypotheses" data_to_word_gcProofTheory.alloc
 val _ = pr_typed "alloc_size_dimword_typed" data_to_word_gcProofTheory.alloc_size_dimword;
 val _ = pr_hyps "evaluate_GiveUp_hypotheses" data_to_word_gcProofTheory.evaluate_GiveUp;
 val _ = pr_typed "evaluate_GiveUp_typed" data_to_word_gcProofTheory.evaluate_GiveUp;
+val _ = pr_hyps "alloc_fail_hypotheses" data_to_word_gcProofTheory.alloc_fail;
+val _ = pr_typed "alloc_fail_typed" data_to_word_gcProofTheory.alloc_fail;

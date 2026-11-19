@@ -199,3 +199,5 @@ alloc_size_dimword_hypotheses=0
 alloc_size_dimword_typed=good_dimindex (:α) ⇒ (alloc_size (dimword (:α)) :α word) = -(1w :α word)
 evaluate_GiveUp_hypotheses=0
 evaluate_GiveUp_typed=(state_rel (c :data_to_word$config) (l1 :num) (l2 :num) (s :(γ, 'ffi) dataSem$state) (t :(α, γ, 'ffi) wordSem$state) (NONE :(v # α word_loc) list option) (locs :(num # num) list) :bool) ⇒ ∃(r :(α, γ, 'ffi) wordSem$state). (evaluate ((GiveUp :α wordLang$prog),t) :α result option # (α, γ, 'ffi) wordSem$state) = (SOME (NotEnoughSpace :α result),r) ∧ r.ffi = s.ffi ∧ t.ffi = s.ffi
+alloc_fail_hypotheses=0
+alloc_fail_typed=good_dimindex (:α) ∧ (state_rel (c :data_to_word$config) (l1 :num) (l2 :num) (s :(γ, 'ffi) dataSem$state) (t :(α, γ, 'ffi) wordSem$state) (NONE :(v # α word_loc) list option) (locs :(num # num) list) :bool) ∧ cut_env (names :sptree$num_set) s.locals = SOME (x :v sptree$num_map) ∧ alloc (-(1w :α word)) (adjust_sets names) t = ((q :α result option),(r :(α, γ, 'ffi) wordSem$state)) ⇒ (q = SOME (NotEnoughSpace :α result) ⇒ r.ffi = s.ffi ∧ option_le r.stack_max s.stack_max) ∧ q = SOME (NotEnoughSpace :α result)

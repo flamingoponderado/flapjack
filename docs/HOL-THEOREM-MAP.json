@@ -144505,5 +144505,18 @@
   ],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Compared state_rel_cut_state_opt_SOME_typed in data_to_word_gc_fun_const_ok_probe.out with HOL source lines 2177-2201: the state relation, argument read and successful optional source-cut premises, both existential witnesses, both length equalities and both complete state relations are preserved. The target state uses canonical finite-support maps and positive-width words; source and target retain the same independent compiler and FFI carrier types."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "alloc_fail",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/AllocFail.lean",
+  "lean_name": "allocFail",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared alloc_fail_typed and its zero HOL hypotheses in data_to_word_gc_fun_const_ok_probe.out with source lines 8051-8057: the original good-dimension, state-relation, source-cut and all-ones allocation premises and both FFI/stack and unconditional NotEnoughSpace conclusions are retained. The target state uses canonical finite-support maps and positive-width words."
 }
 ]

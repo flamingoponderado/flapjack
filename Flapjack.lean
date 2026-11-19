@@ -305,6 +305,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.AllocLocals
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.HasSpace
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GcLemma
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.AllocDimword
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.AllocFail
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GiveUp
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.AllocLemma
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.CutLocals
