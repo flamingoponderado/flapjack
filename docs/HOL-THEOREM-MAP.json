@@ -144725,5 +144725,23 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Compared store_list_word_cond_add_IMP_typed with HOL source lines 16645-16659: the arbitrary word list, memory, offset, result, start address, configuration and domain retain the original successful store premise, address-domain conclusion and exact final memory equality. HOL words and word_loc use the positive-width BitVec translation."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "good_loc_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/GoodLoc.lean",
+  "lean_name": "goodLoc",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared good_loc_def_typed with HOL source lines 18263-18266: words are valid for every code set; locations require zero offset and membership of their label in that set. HOL sets use predicates and HOL words/word_loc use the positive-width BitVec translation."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "store_list_APPEND",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/StoreConsts.lean",
+  "lean_name": "storeList_append",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared store_list_APPEND_typed with HOL source lines 15398-15407: both arbitrary word-location lists, address, memory and domain are retained, with the same failure and success branches and wrapped address advance. HOL words and word_loc use the positive-width BitVec translation."
 }
 ]

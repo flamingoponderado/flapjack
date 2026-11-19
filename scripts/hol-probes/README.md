@@ -10,8 +10,9 @@ byte-word, floating-point, integer-arithmetic, assignment-dispatcher, and contro
 compiler definitions, the complete stub table, the code relation, and constant
 and global, label, Boolean-negation, Boolean-test and FFI assignment correctness cases,
 including the final-event case, plus the word-prefix accumulator and
-reconstruction theorems, conditional word adjustment and constant-store
-implication, with inferred types.
+reconstruction theorems, conditional word adjustment, constant-store
+implication, location validity, list-store append and constant-store evaluator,
+with inferred types.
 It also evaluates zero and nonzero SmallLsr expressions for output parity. Regenerate
 with `HOL_PROBE_ONLY=data_to_word_assign_roots_probeScript.sml scripts/hol-probes/regenerate.sh`
 using the pinned CakeML and HOL revisions. This is source-review evidence,
