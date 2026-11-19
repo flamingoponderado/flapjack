@@ -144554,5 +144554,32 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Compared set_byte_change_a_typed in hol_byte_typed_probe.out with HOL source lines 91-97: both address words and the destination share the original arbitrary positive width, the input byte is fixed at 8 bits, and the only premise is equality of their natural byte offsets modulo width DIV 8. The conclusion keeps the same byte, destination and endianness on both sides, including at widths below 8."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "w2n_add_byte_align_lemma",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/ByteAlignment.lean",
+  "lean_name": "toNat_add_byteAlign",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared the typed probe and source lines 11715-11728: the shared positive word width, good_dimindex premise, wrapped word addition, byte alignment and modulo byte-count equality are retained."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "get_byte_byte_align",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/ByteAlignment.lean",
+  "lean_name": "getByte_byteAlign",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared the typed probe and source lines 11730-11736: the good_dimindex premise, shared word width, aligned addition, target word and endian flag are retained in both sides of the equality."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "get_byte_eq",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/ByteAlignment.lean",
+  "lean_name": "getByte_eq",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared the typed probe and source lines 11738-11744: both original premises, the self-alignment equation, shared word width, target word and endian flag are retained."
 }
 ]

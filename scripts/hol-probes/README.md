@@ -22,7 +22,8 @@ using the pinned CakeML and HOL revisions. This is source-review evidence,
 not a cross-language equivalence proof.
 
 `data_to_word_memory_proof_typed_probe.out` includes the inferred statements
-of `write_bytes_APPEND` and `write_bytes_same` from the original memory proof.
+of `write_bytes_APPEND`, `write_bytes_same`, `w2n_add_byte_align_lemma`,
+`get_byte_byte_align`, and `get_byte_eq` from the original memory proof.
 Regenerate it with `HOL_PROBE_ONLY=data_to_word_memory_proof_typed_probeScript.sml
 scripts/hol-probes/regenerate.sh` using the pinned source revisions.
 

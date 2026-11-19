@@ -258,3 +258,6 @@ val _ = emit "memory_rel_Thunk_IMP_typed" "memory_rel_Thunk_IMP";
 val _ = emit "memory_rel_Thunk_inlined_typed" "memory_rel_Thunk_inlined";
 val _ = emit "write_bytes_APPEND_typed" "write_bytes_APPEND";
 val _ = emit "write_bytes_same_typed" "write_bytes_same";
+val _ = emit "w2n_add_byte_align_lemma_typed" "w2n_add_byte_align_lemma";
+val _ = emit "get_byte_byte_align_typed" "get_byte_byte_align";
+val _ = emit "get_byte_eq_typed" "get_byte_eq";
