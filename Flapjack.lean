@@ -358,6 +358,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.BuildFacts
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.WordStrideAlignment
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.PointerAdd
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.PointerBits
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.PartAdd
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BuildCorrespondence
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.WordMlInvLookup
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.WordMlInvGetVars

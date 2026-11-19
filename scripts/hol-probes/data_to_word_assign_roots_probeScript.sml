@@ -108,5 +108,7 @@ val _ = emit "maxout_bits_bit_typed" data_to_word_memoryProofTheory.maxout_bits_
 val _ = emit "maxout_bits_IMP_typed" data_to_word_memoryProofTheory.maxout_bits_IMP;
 val _ = emit "get_lowerbits_ptrbits_typed" data_to_word_memoryProofTheory.get_lowerbits_ptrbits;
 val _ = emit "make_cons_ptr_thm_typed" data_to_word_memoryProofTheory.make_cons_ptr_thm;
+val _ = emit "parts_to_words_add_typed" data_to_word_memoryProofTheory.parts_to_words_add;
+val _ = emit "part_to_words_add_typed" data_to_word_memoryProofTheory.part_to_words_add;
 val _ = emit "part_to_words_IMP_build_words_typed" data_to_word_memoryProofTheory.part_to_words_IMP_build_words;
 val _ = emit "parts_to_words_IMP_build_words_typed" data_to_word_memoryProofTheory.parts_to_words_IMP_build_words;

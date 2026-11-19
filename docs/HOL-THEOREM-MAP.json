@@ -144977,5 +144977,23 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Compared parts_to_words_IMP_build_words_typed with HOL: arbitrary sparse constant memory, index, parts, offset and outputs retain successful lowering, good_dimindex, byte alignment and the shift bound; the complete proof-side builder yields the same projected outputs. HOL words use positive-width BitVec."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "part_to_words_add",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/PartAdd.lean",
+  "lean_name": "partWords_add",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared part_to_words_add_typed with HOL: both aligned offsets, good_dimindex, shift bound, successful part lowering and pointwise sparse-memory relation imply the same existential relocated part and mapped outputs. HOL words use positive-width BitVec."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "parts_to_words_add",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/PartAdd.lean",
+  "lean_name": "partsWords_add",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared parts_to_words_add_typed with HOL: the arbitrary list, sparse memories and index retain the original successful lowering, alignment, width, shift and pointwise memory premises, with the same existential relocated result and mapped outputs. HOL words use positive-width BitVec."
 }
 ]
