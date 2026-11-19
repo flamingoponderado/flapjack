@@ -144411,5 +144411,23 @@
   ],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Compared has_space_state_rel_typed in data_to_word_gc_fun_const_ok_probe.out with HOL source lines 7664-7684: a successful check of Word (alloc_size k) and the complete input state relation imply the complete state relation with source space set to k, with no added assumptions. Source and target state parameters match, target finite maps use canonical support, and all words share the positive width."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "gc_lemma_gen",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/GcLemma.lean",
+  "lean_name": "gcLemma_gen",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "st",
+    "WordSemStateFiniteExact.fpRegs",
+    "WordSemStateFiniteExact.store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "gc_lemma_existential_inhabitants": [
+    "W1._w1",
+    "W2._w2"
+  ],
+  "reviewer": "Source comparison with gc_lemma_gen_typed in data_to_word_gc_fun_const_ok_probe.out and HOL source lines 7559-7662: all four original premises, seven ordered existential witnesses, collector/decode/pop and store equalities, full quantified failure bound, and post-collection state relation are retained. The gc_lemma_existential_inhabitants qualifier retains the two independent unused inhabited HOL types; st and the word state use canonical finite maps and words share the positive width."
 }
 ]

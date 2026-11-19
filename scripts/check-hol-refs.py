@@ -388,6 +388,9 @@ TOTAL_FUNCTION_INHABITANTS_RE = re.compile(
 HOL_EXISTENTIAL_INHABITANTS_RE = re.compile(
     r'\(\s*hol_existential_inhabitants\s*:=\s*\[([^]]*)\]\s*\)'
 )
+GC_LEMMA_EXISTENTIAL_INHABITANTS_RE = re.compile(
+    r'\(\s*gc_lemma_existential_inhabitants\s*:=\s*\[([^]]*)\]\s*\)'
+)
 # The reviewed renderings of HOL's total functions on bad input.  HOL returns
 # an unspecified value for `EL`/`HD`/`THE`/`LAST`/`ALOOKUP`/`LINV`/`ARB`; Lean
 # takes it from a `Nonempty`/`Inhabited` instance on the element type.
@@ -615,7 +618,8 @@ def hol_attribute_sites(lines: list[str], *, include_fmap_existentials: bool = F
                         include_generalise_length: bool = False,
                         include_infer_subst_submap: bool = False,
                         include_total_function_inhabitants: bool = False,
-                        include_hol_existential_inhabitants: bool = False):
+                        include_hol_existential_inhabitants: bool = False,
+                        include_gc_lemma_existential_inhabitants: bool = False):
     """Yield HOL attributes, including attributes split across Lean lines."""
     comment_depth = 0
     start: int | None = None
@@ -776,6 +780,16 @@ def hol_attribute_sites(lines: list[str], *, include_fmap_existentials: bool = F
                 if include_hol_existential_inhabitants:
                     matches = list(HOL_EXISTENTIAL_INHABITANTS_RE.finditer(attribute))
                     occurrences = attribute.count("hol_existential_inhabitants")
+                    if occurrences == 0:
+                        names = ()
+                    elif occurrences != 1 or len(matches) != 1:
+                        names = ("",)
+                    else:
+                        names = tuple(field.strip() for field in matches[0].group(1).split(","))
+                    site += (names,)
+                if include_gc_lemma_existential_inhabitants:
+                    matches = list(GC_LEMMA_EXISTENTIAL_INHABITANTS_RE.finditer(attribute))
+                    occurrences = attribute.count("gc_lemma_existential_inhabitants")
                     if occurrences == 0:
                         names = ()
                     elif occurrences != 1 or len(matches) != 1:
@@ -1695,7 +1709,7 @@ def parameter_has_hol_finite_map_binder(declaration_text: str, name: str) -> boo
 
 def fmap_as_finite_support_relation_errors(
     lines: list[str], entries: tuple[tuple[str, str], ...], module: str,
-    declaration_text: str = "",
+    declaration_text: str = "", *, audited_gc_store: bool = False,
 ) -> list[str]:
     """Validate a multi-carrier finite-map relation qualifier.
 
@@ -1713,6 +1727,7 @@ def fmap_as_finite_support_relation_errors(
     `fmap_as_finite_support` gate and does not relax it.
     """
     errors: list[str] = []
+    audited_gc_header = ""
     # The multi-owner qualifier is for relations, not state-valued conversions.
     # Theorems and lemmas are proposition-valued by Lean construction. For a
     # definition or abbreviation, require a visibly Prop-valued result; this
@@ -1742,6 +1757,8 @@ def fmap_as_finite_support_relation_errors(
             assignment = top_level_assignment_offset(declaration_text)
             if assignment is not None:
                 declaration_text = declaration_text[:assignment]
+            if audited_gc_store:
+                audited_gc_header = declaration_text
             # A `:=` in an unparenthesized let/have expression belongs to the
             # expression, not necessarily the declaration. Without a Lean
             # parser its extent and resulting type cannot be determined here.
@@ -1783,6 +1800,12 @@ def fmap_as_finite_support_relation_errors(
                 f"fmap_as_finite_support_relation bare entry `{name}` must be a "
                 "plain finite-map parameter name"
             )
+        elif audited_gc_store and name == "st":
+            # The two GC lemmas have a separately audited existential store.
+            # Their exact site, metadata, carrier and existential telescope are
+            # checked by the qualifier and elaborated-export gates.
+            if not re.search(r"∃[\s\S]*?\(st\s*:\s*HolFiniteMapExact\b", audited_gc_header):
+                errors.append("the audited GC store must be an existential HolFiniteMapExact")
         elif re.search(
             r"(?:∃!?\s*(?:\([^()]*\)\s*)*|\bExists\s*\(?\s*fun\s*)\(?\s*"
             + re.escape(name) + r"\s*:\s*HolFiniteMapExact\b", declaration_text
@@ -6527,7 +6550,8 @@ def main(argv: list[str]) -> int:
              fmap_function_positions, fmap_heterogeneous_function_positions, reals_cuts,
              fmap_equality, result_observations, dimension_widths, fmap_tuple, nested_list_rel,
              predicate_domain, fmap_universals, generalise_map, generalise_length,
-             infer_subst_submap, total_function_inhabitants, hol_existential_inhabitants) in hol_attribute_sites(
+             infer_subst_submap, total_function_inhabitants, hol_existential_inhabitants,
+             gc_lemma_existential_inhabitants) in hol_attribute_sites(
                 lines, include_fmap_existentials=True,
                 include_word_dimension_width=True,
                 include_fmap_function=True,
@@ -6545,15 +6569,23 @@ def main(argv: list[str]) -> int:
                 include_infer_subst_submap=True,
                 include_total_function_inhabitants=True,
                 include_hol_existential_inhabitants=True,
+                include_gc_lemma_existential_inhabitants=True,
              ):
             where = f"{rel}:{number}"
             gc_ref = (hol_path, hol_name) == (
                 "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "state_rel_gc_gen")
-            if gc_ref or hol_existential_inhabitants:
-                expected = ("T2._t2", "W1._w1", "W2._w2")
-                if not (gc_ref and hol_line is None and hol_existential_inhabitants == expected and
-                        rel == "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/StateRelGc.lean" and
-                        find_lean_decl(lines, number - 1) == "stateRel_gcGen" and
+            gc_lemma_ref = (hol_path, hol_name) == (
+                "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "gc_lemma_gen")
+            if gc_ref or gc_lemma_ref or hol_existential_inhabitants or gc_lemma_existential_inhabitants:
+                old_site = (gc_ref and hol_existential_inhabitants == ("T2._t2", "W1._w1", "W2._w2") and
+                            not gc_lemma_existential_inhabitants and
+                            (rel, find_lean_decl(lines, number - 1)) ==
+                            ("Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/StateRelGc.lean", "stateRel_gcGen"))
+                new_site = (gc_lemma_ref and gc_lemma_existential_inhabitants == ("W1._w1", "W2._w2") and
+                            not hol_existential_inhabitants and
+                            (rel, find_lean_decl(lines, number - 1)) ==
+                            ("Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/GcLemma.lean", "gcLemma_gen"))
+                if not ((old_site or new_site) and hol_line is None and
                         fmap_relation == (("st", ""), ("WordSemStateFiniteExact", "fpRegs"),
                                           ("WordSemStateFiniteExact", "store")) and
                         words_bitvec and not (list_fields or names_fields or boundary_fields or
@@ -6864,7 +6896,8 @@ def main(argv: list[str]) -> int:
                 errors.extend(
                     f"{where}: {error}"
                     for error in fmap_as_finite_support_relation_errors(
-                        lines, fmap_relation, rel, tagged_declaration_text(lines, number)
+                        lines, fmap_relation, rel, tagged_declaration_text(lines, number),
+                        audited_gc_store=gc_ref or gc_lemma_ref,
                     )
                 )
             if fmap_equalities:

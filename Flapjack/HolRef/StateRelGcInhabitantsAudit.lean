@@ -34,6 +34,13 @@ private partial def containsInhabitation (e : Expr) : MetaM Bool := do
 private partial def scanExists (result : Expr) (carriers : Array (Name × Name × Expr))
     (seen : Array Name := #[]) : MetaM (Array String) := do
   let e := result.consumeMData
+  if let .letE _ type value body _ := e then
+    if (← containsInhabitation type) || (← containsInhabitation value) then
+      return #["let binding contains an inhabitance assumption"]
+    for (carrierName, _, carrier) in carriers do
+      if containsFVar type carrier || containsFVar value carrier then
+        return #[s!"carrier {carrierName} occurs in a let binding"]
+    return ← scanExists (body.instantiate1 value) carriers seen
   if e.getAppFn.isConstOf ``Exists then
     let args := e.getAppArgs
     unless args.size == 2 do return #["malformed Exists"]
@@ -62,9 +69,8 @@ private partial def scanExists (result : Expr) (carriers : Array (Name × Name �
 
 /-- Check that the HOL-only types occur solely as unused existential domains,
     with one canonical inhabitance instance for each type. -/
-def stateRelGcInhabitantProblems (type : Expr) : MetaM (Array String) := do
+def unusedExistentialInhabitantProblems (type : Expr) (pairs : Array (Name × Name)) : MetaM (Array String) := do
   forallTelescope type fun args result => do
-    let pairs : Array (Name × Name) := #[(`T2, `_t2), (`W1, `_w1), (`W2, `_w2)]
     let mut carriers : Array (Name × Name × Expr) := #[]
     for (carrierName, witnessName) in pairs do
       let foundBinders ← args.filterM fun a => do
@@ -76,11 +82,11 @@ def stateRelGcInhabitantProblems (type : Expr) : MetaM (Array String) := do
           decl.binderInfo == .implicit do
         return #[s!"carrier {carrierName} must be an implicit Type binder"]
       carriers := carriers.push (carrierName, witnessName, carrier)
-    let mut counts : Array Nat := #[0, 0, 0]
+    let mut counts : Array Nat := Array.replicate pairs.size 0
     for arg in args do
       let decl ← arg.fvarId!.getDecl
       let ty := decl.type.consumeMData
-      if ty.isSort && !#[`C, `F, `T2, `W1, `W2].contains decl.userName then
+      if ty.isSort && !((#[`C, `F] ++ pairs.map Prod.fst).contains decl.userName) then
         return #[s!"unexpected type or proposition binder {decl.userName}"]
       if ty.getAppFn.isConstOf ``Nonempty then
         unless decl.binderInfo == .instImplicit && ty.getAppArgs.size == 1 do
@@ -93,8 +99,12 @@ def stateRelGcInhabitantProblems (type : Expr) : MetaM (Array String) := do
         if ← containsInhabitation ty then return #["nested or noncanonical inhabitance"]
         for (carrierName, _, carrier) in carriers do
           if containsFVar ty carrier then return #[s!"carrier {carrierName} used outside its instance and witness"]
-    unless counts == #[1, 1, 1] do return #["each carrier needs exactly one Nonempty instance"]
+    unless counts.all (· == 1) do return #["each carrier needs exactly one Nonempty instance"]
     scanExists result carriers
+
+/-- Audit the three unused HOL carriers of `state_rel_gc_gen`. -/
+def stateRelGcInhabitantProblems (type : Expr) : MetaM (Array String) :=
+  unusedExistentialInhabitantProblems type #[(`T2, `_t2), (`W1, `_w1), (`W2, `_w2)]
 
 private partial def exactExistsProblems (result : Expr) (expected : Array (Name × Expr))
     (index : Nat := 0) : MetaM (Array String) := do
@@ -184,6 +194,89 @@ def stateRelGcTelescopeProblems (type : Expr) : MetaM (Array String) := do
     let existentialProblems ← exactExistsProblems result expected
     unless existentialProblems.isEmpty do return existentialProblems
     stateRelGcInhabitantProblems type
+
+/-- Audit the exact outer binders, original four premises, existential order,
+and the two independent unused HOL witness carriers of `gc_lemma_gen`. -/
+def gcLemmaGenTelescopeProblems (type : Expr) : MetaM (Array String) := do
+  forallTelescope type fun args result => do
+    unless args.size == 20 do return #["expected exactly twenty outer binders"]
+    let names : Array (Option Name) := #[some `width, none, some `C, some `F,
+      some `W1, some `W2, none, none, some `conf, some `l1, some `l2,
+      some `source, some `target, some `locs, some `names, some `cutData,
+      some `cutWords, some `ss, some `k, some `premises]
+    for i in [0:20] do
+      let decl ← args[i]!.fvarId!.getDecl
+      if let some name := names[i]! then
+        unless decl.userName == name do return #[s!"unexpected binder at position {i + 1}"]
+      let expectedInfo := if i == 1 || i == 6 || i == 7 then .instImplicit
+        else if i == 0 || (2 ≤ i && i ≤ 5) then .implicit else .default
+      unless decl.binderInfo == expectedInfo do
+        return #[s!"unexpected binder visibility at position {i + 1}"]
+      if 2 ≤ i && i ≤ 5 then
+        unless decl.type.consumeMData == .sort (.succ .zero) do
+          return #[s!"binder {decl.userName} must be a Type"]
+    for i in #[0, 9, 10, 18] do
+      unless (← args[i]!.fvarId!.getDecl).type == mkConst ``Nat do
+        return #[s!"binder at position {i + 1} must have type Nat"]
+    let width := args[0]!
+    let inst := args[1]!
+    unless (← args[1]!.fvarId!.getDecl).type == (← mkAppM ``NeZero #[width]) do
+      return #["width must have its own NeZero instance"]
+    let c := args[2]!
+    let f := args[3]!
+    let conf := args[8]!
+    let l1 := args[9]!
+    let l2 := args[10]!
+    let source := args[11]!
+    let target := args[12]!
+    let locs := args[13]!
+    let names := args[14]!
+    let cutData := args[15]!
+    let cutWords := args[16]!
+    let k := args[18]!
+    let value := mkConst `Flapjack.Compiler.Backend.DataSem.Value
+    let wordLoc := mkApp2 (mkConst `Flapjack.WordLocW) width inst
+    let sourceType := mkApp2 (mkConst `Flapjack.Compiler.Backend.DataSem.State) c f
+    let targetType := mkAppN (mkConst `Flapjack.WordSemStateFiniteExact) #[width, inst, c, f]
+    unless (← args[11]!.fvarId!.getDecl).type == sourceType &&
+        (← args[12]!.fvarId!.getDecl).type == targetType do
+      return #["source and target state carriers must share their HOL parameters"]
+    unless (← args[17]!.fvarId!.getDecl).type == mkApp (mkConst ``Option [0]) (mkConst ``Nat) do
+      return #["ss must be an optional natural"]
+    let noneType := mkApp (mkConst ``List [0]) (mkApp2 (mkConst ``Prod [0, 0]) value wordLoc)
+    let none := mkApp (mkConst ``Option.none [0]) noneType
+    let rel := mkAppN (mkConst `Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.stateRel)
+      #[width, inst, c, f, conf, l1, l2, source, target, none, locs]
+    let sourceLocals := mkAppN (mkConst `Flapjack.Compiler.Backend.DataSem.State.locals) #[c, f, source]
+    let sourceCut ← mkAppM `Flapjack.Compiler.Backend.DataSem.cutEnv #[names, sourceLocals]
+    let cutDataSome ← mkAppM ``Option.some #[cutData]
+    let sourceCutEq ← mkEq sourceCut cutDataSome
+    let store := mkAppN (mkConst `Flapjack.WordSemStateFiniteExact.store) #[width, inst, c, f, target]
+    let allocSize := mkApp (mkConst `Flapjack.WordStore.allocSize [0]) (mkConst ``Unit)
+    let lookup := mkAppN (mkConst `Flapjack.HolFiniteMapExact.lookup)
+      #[mkConst `Flapjack.WordStoreHOL, wordLoc, store, allocSize]
+    let allocation := mkAppN (mkConst `Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.gcAllocSize)
+      #[width, inst, k]
+    let word := mkAppN (mkConst `Flapjack.WordLocW.word) #[width, inst, allocation]
+    let allocEq ← mkEq lookup (mkApp2 (mkConst ``Option.some [0]) wordLoc word)
+    let targetLocals := mkAppN (mkConst `Flapjack.WordSemStateFiniteExact.locals) #[width, inst, c, f, target]
+    let adjusted ← mkAppM `Flapjack.Compiler.Backend.DataToWord.adjustSets #[names]
+    let targetCut ← mkAppM `Flapjack.wordSemCutEnvs #[adjusted, targetLocals]
+    let cutWordsSome ← mkAppM ``Option.some #[cutWords]
+    let targetCutEq ← mkEq targetCut cutWordsSome
+    let expectedPremises := mkApp2 (mkConst ``And) sourceCutEq
+      (mkApp2 (mkConst ``And) rel (mkApp2 (mkConst ``And) allocEq targetCutEq))
+    unless (← args[19]!.fvarId!.getDecl).type == expectedPremises do
+      return #["premises must be exactly the four original GC premises"]
+    let memory ← mkArrow (mkApp (mkConst ``BitVec) width) wordLoc
+    let map := mkApp2 (mkConst `Flapjack.HolFiniteMapExact) (mkConst `Flapjack.WordStoreHOL) wordLoc
+    let frame := mkApp2 (mkConst `Flapjack.WordSemStackFrame) width inst
+    let expected := #[(`t2, targetType), (`wl, mkApp (mkConst ``List [0]) wordLoc),
+      (`m, memory), (`st, map), (`_w1, args[4]!), (`_w2, args[5]!),
+      (`stack, mkApp (mkConst ``List [0]) frame)]
+    let existentialProblems ← exactExistsProblems (← whnf result) expected
+    unless existentialProblems.isEmpty do return existentialProblems
+    unusedExistentialInhabitantProblems type #[(`W1, `_w1), (`W2, `_w2)]
 
 
 end Flapjack

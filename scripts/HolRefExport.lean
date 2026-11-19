@@ -300,13 +300,23 @@ elab "#emit_hol_ref_export" : command => do
         ("WordSemStateFiniteExact", "store")],
       wordsAsTypeIndexedBitvec := true,
       holExistentialInhabitants := #["T2._t2", "W1._w1", "W2._w2"] }
+    let gcLemmaTarget := `Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.gcLemma_gen
+    let gcLemmaRef : HolRef := {
+      path := "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+      name := "gc_lemma_gen",
+      fmapAsFiniteSupportRelation := #[("", "st"), ("WordSemStateFiniteExact", "fpRegs"),
+        ("WordSemStateFiniteExact", "store")],
+      wordsAsTypeIndexedBitvec := true,
+      gcLemmaExistentialInhabitants := #["W1._w1", "W2._w2"] }
     if name == gcTarget || (ref.path == gcRef.path && ref.name == gcRef.name) ||
-        !ref.holExistentialInhabitants.isEmpty then
-      unless name == gcTarget && ref == gcRef do
+        name == gcLemmaTarget || (ref.path == gcLemmaRef.path && ref.name == gcLemmaRef.name) ||
+        !ref.holExistentialInhabitants.isEmpty || !ref.gcLemmaExistentialInhabitants.isEmpty then
+      unless (name == gcTarget && ref == gcRef) || (name == gcLemmaTarget && ref == gcLemmaRef) do
         throwError "invalid existential inhabitance reference or target: {name}"
       match env.find? name with
       | some (.thmInfo info) =>
-        let problems ← liftTermElabM <| stateRelGcTelescopeProblems info.type
+        let problems ← liftTermElabM <| if name == gcTarget then stateRelGcTelescopeProblems info.type
+          else gcLemmaGenTelescopeProblems info.type
         unless problems.isEmpty do
           throwError "invalid existential inhabitance theorem {name}: {problems}"
       | _ => throwError "existential inhabitance target must be a theorem: {name}"
@@ -510,6 +520,9 @@ elab "#emit_hol_ref_export" : command => do
         if !ref.holExistentialInhabitants.isEmpty then
           qualifiers := qualifiers ++
             [("hol_existential_inhabitants", toJson ref.holExistentialInhabitants)]
+        if !ref.gcLemmaExistentialInhabitants.isEmpty then
+          qualifiers := qualifiers ++
+            [("gc_lemma_existential_inhabitants", toJson ref.gcLemmaExistentialInhabitants)]
         let mut fields : List (String × Json) := [
           ("lean_name", toJson name.toString),
           ("hol_path", toJson ref.path),

@@ -948,6 +948,18 @@ review status. The elaborated audit and export check enforce the metadata and
 witness restrictions; neither proves that the rest of the statement matches
 HOL. Independently compare the complete typed HOL theorem before review.
 
+**Qualify generalized collection's unused HOL witnesses.** The distinct
+`gc_lemma_existential_inhabitants := [W1._w1, W2._w2]` qualifier is reserved
+for `gcLemma_gen`, the counterpart of `gc_lemma_gen`. It records the two
+independent, inhabited HOL types used only for unused existential witnesses.
+The theorem must retain both witnesses and one canonical `Nonempty` instance
+for each type, with no other occurrences or added inhabitance assumptions.
+Its dedicated telescope audit checks the original four premises and all seven
+existential domains. Use it with the exact finite-map relation and word
+qualifiers, and record the same ordered witness list and source comparison in
+the theorem map. The audits do not establish correspondence of the remaining
+conclusion: review the complete typed HOL statement and proof independently.
+
 **Port the executable path, too.** As HOL definitions are ported, make the
 compiler that `flapjack-compile` actually runs call the reviewed `@[hol]`
 definitions. A tagged proof-only duplicate beside a different production

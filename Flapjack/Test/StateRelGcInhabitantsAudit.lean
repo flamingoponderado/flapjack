@@ -1,5 +1,6 @@
 import Flapjack.HolRef.StateRelGcInhabitantsAudit
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.StateRelGc
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GcLemma
 
 open Lean Meta Flapjack
 
@@ -116,3 +117,37 @@ run_meta do
       let changed ← mkForallFVars (args.push extra) result
       if (← stateRelGcTelescopeProblems changed).isEmpty then
         throwError "target audit accepted an extra premise"
+
+run_meta do
+  let info ← getConstInfo ``Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.gcLemma_gen
+  let problems ← gcLemmaGenTelescopeProblems info.type
+  unless problems.isEmpty do throwError "GC lemma telescope rejected: {problems}"
+  let hidden := mkApp (mkConst ``HiddenNERegular) (mkConst ``Nat)
+  let mutations := #[
+    alterBinder info.type 3 (fun _ t b => (`C, t, b)),
+    alterBinder info.type 0 (fun n t _ => (n, t, .default)),
+    alterBinder info.type 1 (fun n _ b => (n, mkConst ``True, b)),
+    alterBinder info.type 4 (fun n _ b => (n, mkSort .zero, b)),
+    alterBinder info.type 17 (fun n _ b => (n, mkConst ``Nat, b)),
+    alterBinder info.type 19 (fun n t b => (n, mkApp2 (mkConst ``And) t hidden, b))]
+  for changed in mutations do
+    if (← gcLemmaGenTelescopeProblems changed).isEmpty then
+      throwError "GC lemma audit accepted a changed telescope"
+  forallTelescope info.type fun args result => do
+    let unfolded ← whnf result
+    for changedResult in #[
+        alterExistential unfolded 4 (fun _ ty => (`wrongWitness, ty)),
+        alterExistential unfolded 3 (fun name _ => (name, hidden))] do
+      let changed ← mkForallFVars args changedResult
+      if (← gcLemmaGenTelescopeProblems changed).isEmpty then
+        throwError "GC lemma audit accepted a changed existential"
+    let hiddenType := mkApp (mkConst ``Nonempty [0]) (mkConst ``Nat)
+    let hiddenValue ← mkAppM ``Nonempty.intro #[mkNatLit 0]
+    let hiddenLet := Expr.letE `hidden hiddenType hiddenValue result false
+    let changed ← mkForallFVars args hiddenLet
+    if (← gcLemmaGenTelescopeProblems changed).isEmpty then
+      throwError "GC lemma audit accepted hidden inhabitance in a let binding"
+    withLocalDeclD `extra (mkConst ``True) fun extra => do
+      let changed ← mkForallFVars (args.push extra) result
+      if (← gcLemmaGenTelescopeProblems changed).isEmpty then
+        throwError "GC lemma audit accepted an extra premise"
