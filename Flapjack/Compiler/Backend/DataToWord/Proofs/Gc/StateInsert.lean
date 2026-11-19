@@ -19,7 +19,10 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {C F : Type} 
   WordSemStateExact.holFmapAsFiniteSupportWitness
 end stateInsertMap
 
-private theorem stateRel_insertOdd {width : Nat} [NeZero width] {C F : Type} (conf : Config) (l1 l2 : Nat)
+/-- An odd scratch register does not affect the data-to-word state relation.
+This general helper has no separate HOL declaration; the original proofs use
+the state relation directly for scratch registers such as 5. -/
+theorem stateRel_insertOdd {width : Nat} [NeZero width] {C F : Type} (conf : Config) (l1 l2 : Nat)
     (s : Flapjack.Compiler.Backend.DataSem.State C F) (t : WordSemStateFiniteExact width C F)
     (v : Option (List (Flapjack.Compiler.Backend.DataSem.Value × WordLocW width))) (locs : List (Nat × Nat))
     (key : Nat) (x : WordLocW width) (odd : key % 2 = 1) :
