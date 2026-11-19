@@ -109,6 +109,58 @@ val _ = emit "maxout_bits_bit_typed" data_to_word_memoryProofTheory.maxout_bits_
 val _ = emit "maxout_bits_IMP_typed" data_to_word_memoryProofTheory.maxout_bits_IMP;
 val _ = emit "get_lowerbits_ptrbits_typed" data_to_word_memoryProofTheory.get_lowerbits_ptrbits;
 val _ = emit "make_cons_ptr_thm_typed" data_to_word_memoryProofTheory.make_cons_ptr_thm;
+(* Replay the local header decoding theorem with its local power bounds. *)
+val encode_header_IMP_replay = let
+  open preamble helperLib wordsTheory alignmentTheory data_to_wordTheory word_gcFunctionsTheory data_to_word_memoryProofTheory
+  val good_dimindex_def = miscTheory.good_dimindex_def
+  val _ = temp_delsimps ["NORMEQ_CONV", "lift_disj_eq", "lift_imp_disj"]
+  val _ = diminish_srw_ss ["ABBREV"]
+  val _ = set_trace "BasicProvers.var_eq_old" 1
+  val LESS_EXO_SUB = Q.prove (`n < 2 ** (k - m) ==> n < 2n ** k`,
+  rw [] \\ match_mp_tac LESS_LESS_EQ_TRANS
+  \\ asm_exists_tac \\ fs []
+  )
+  val LESS_EXO_SUB_ALT = Q.prove (`m <= k ==> n < 2 ** (k - m) ==> n * 2 ** m < 2n ** k`,
+  rw [] \\ match_mp_tac LESS_LESS_EQ_TRANS
+  \\ qexists_tac `2 ** (k - m) * 2 ** m`
+  \\ fs [GSYM EXP_ADD]
+  )
+  val less_pow_dimindex_sub_imp = Q.prove (`n < 2 ** (dimindex (:'a) - k) ==> n < dimword (:'a)`,
+  fs [dimword_def] \\ metis_tac [LESS_EXO_SUB]
+  )
+  val encode_header_IMP = Q.prove (`encode_header c tag len = SOME (hd:'a word) /\
+    c.len_size + 5 < dimindex (:'a) /\ good_dimindex (:'a) ==>
+    len < 2 ** (dimindex (:'a) - 4) /\
+    decode_length c hd = n2w len`,
+  fs [encode_header_def] \\ rw [make_header_def] \\ fs [decode_length_def]
+  \\ `3w >>> (dimindex (:α) − c.len_size) = 0w:'a word` by
+      (match_mp_tac n2w_lsr_eq_0
+       \\ fs [good_dimindex_def,dimword_def]
+       \\ fs [DIV_EQ_X]
+       \\ match_mp_tac LESS_LESS_EQ_TRANS
+       \\ qexists_tac `2 ** 2`
+       \\ strip_tac \\ TRY (EVAL_TAC \\ NO_TAC)
+       \\ simp_tac std_ss [EXP_BASE_LE_IFF] \\ fs [])
+  \\ `n2w tag << 2 ⋙ (dimindex (:α) - c.len_size) = 0w:'a word` by
+      (fs [WORD_MUL_LSL,word_mul_n2w]
+       \\ match_mp_tac n2w_lsr_eq_0
+       \\ rpt strip_tac \\ TRY (match_mp_tac LESS_DIV_EQ_ZERO)
+       \\ `2 ** (dimindex (:α) − c.len_size) =
+           2n ** 2 * 2 ** (dimindex (:α) − (c.len_size + 2))` by
+              (full_simp_tac std_ss [GSYM EXP_ADD] \\ fs []) \\ fs []
+       \\ `4 * tag = tag * 2 ** 2` by fs []
+       \\ asm_rewrite_tac [dimword_def]
+       \\ match_mp_tac (MP_CANON LESS_EXO_SUB_ALT)
+       \\ full_simp_tac std_ss [SUB_PLUS |> ONCE_REWRITE_RULE [ADD_COMM]]
+       \\ imp_res_tac LESS_EXO_SUB \\ fs [])
+  \\ fs [] \\ match_mp_tac lsl_lsr
+  \\ imp_res_tac less_pow_dimindex_sub_imp \\ fs []
+  \\ `dimword (:'a) = 2 ** c.len_size * 2 ** (dimindex (:α) − c.len_size)`
+        suffices_by fs []
+  \\ fs [GSYM EXP_ADD,dimword_def]
+  )
+in encode_header_IMP end;
+val _ = emit "encode_header_IMP_typed" encode_header_IMP_replay;
 (* Replay the three local data-lookup lemmas used by the allocation proof. *)
 val (lookup_unused_replay, lookup_expand_replay, lookup_cons_replay) = let
   open preamble helperLib gc_sharedTheory
