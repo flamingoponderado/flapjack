@@ -143877,4 +143877,41 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "typed HOL source comparison (word_convs_proof_typed_probe.out, flat_exp_conventions_ShareInst_typed): source1390-1393. `flat_exp_conventions (ShareInst (op : memop) (v : num) (exp : alpha exp)) <=> (exists (v : num) (c : alpha word). exp = Op Add [Var v; Const c]) \\/ (exists (v : num). exp = Var v)`; the capture keeps op, v, exp and binds the inner v and c. flat_exp_conventions is the tagged flatExpConventions, so HOL's Boolean equivalence is `= true <->`, ShareInst/Op Add/Var/Const are the WordLangProgHOL constructors, and the existential over the word constant c becomes BitVec width. Only HOL's type-indexed word becomes BitVec width. No premise."
   }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_get_code_labels_drop_consts",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordSimpLabels/Sequence.lean",
+    "lean_name": "getCodeLabels_dropConsts",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (word_convs_proof_typed_probe.out, word_get_code_labels_drop_consts_typed): source638-641. `forall (args : num list). word_get_code_labels (drop_consts (l : alpha word sptree$num_map) args) = (emptyset : num -> bool)`; the capture keeps the free knowledge tree l and binds args, in that order. word_get_code_labels is the tagged getCodeLabelsHOL and drop_consts is the tagged dropConsts over Spt (BitVec width). HOL's emptyset is Lean Set.empty. Only HOL's type-indexed word becomes BitVec width. No premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "fake_seq_get_code_labels",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/SSALabelHelpers.lean",
+    "lean_name": "getCodeLabels_fakeSeq",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (word_convs_proof_typed_probe.out, fake_seq_get_code_labels_typed): source993-996. `forall (ls : num list). word_get_code_labels (FOLDR (Seq) (Skip) (MAP (fun r. fake_move r) ls)) = (emptyset : num -> bool)`; the capture keeps ls. word_get_code_labels is getCodeLabelsHOL, FOLDR is List.foldr, MAP is List.map and fake_move is the tagged fakeMove (.inst (.const v 0)). Only HOL's type-indexed word becomes BitVec width. No premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "ssa_reconcile_get_code_labels",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/SSALabelHelpers.lean",
+    "lean_name": "getCodeLabels_ssaReconcile",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (word_convs_proof_typed_probe.out, ssa_reconcile_get_code_labels_typed): source1023-1025. `word_get_code_labels (ssa_reconcile (cur_ssa : num sptree$num_map) (tgt_ssa : num sptree$num_map) (ns : beta sptree$num_map) : alpha prog) = (emptyset : num -> bool)`; the capture keeps the three free binders cur_ssa, tgt_ssa, ns in order, with the payload type beta independent. word_get_code_labels is getCodeLabelsHOL and ssa_reconcile is the tagged ssaReconcile over Spt carriers. Only HOL's type-indexed word becomes BitVec width. No premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_get_code_labels_fake_moves",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/SSALabelHelpers.lean",
+    "lean_name": "getCodeLabels_fakeMoves",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (word_convs_proof_typed_probe.out, word_get_code_labels_fake_moves_typed): source1230-1234. `forall (a : num list) (b c : num sptree$num_map) (d : num) (e f : alpha prog) (g : num) (h i : num sptree$num_map). (fake_moves (prio : (unit + unit) option) a b c d) = (e,f,g,h,i) ==> word_get_code_labels e = emptyset /\\ word_get_code_labels f = emptyset`; the capture keeps prio free first, then a..i in order, with the actual producer equality as the single premise. fake_moves is the tagged fakeMoves and word_get_code_labels is getCodeLabelsHOL. Only HOL's type-indexed word becomes BitVec width."
+  }
 ]

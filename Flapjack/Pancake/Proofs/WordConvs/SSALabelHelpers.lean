@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions
 public import Flapjack.Pancake.WordConvs
+public import Flapjack.Pancake.WordConvs.CodeLabels
 
 @[expose] public section
 
@@ -92,5 +93,62 @@ theorem ssaReconcile_noLabels {width : Nat} [NeZero width] {β : Type}
   unfold ssaReconcile
   dsimp only
   split <;> rfl
+
+/-- Original fake-sequence empty code labels, with arbitrary source list. -/
+@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
+  "fake_seq_get_code_labels" (words_as_type_indexed_bitvec)]
+theorem getCodeLabels_fakeSeq {width : Nat} [NeZero width]
+    (names : List Nat) :
+    getCodeLabelsHOL
+      ((names.map (fakeMove : Nat → WordLangProgHOL (BitVec width))).foldr .seq .skip) = ∅ := by
+  induction names with
+  | nil => simp [getCodeLabelsHOL]
+  | cons name names ih =>
+      simp [getCodeLabelsHOL, fakeMove, ih]
+
+/-- Original unconditional reconciliation empty code labels. -/
+@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
+  "ssa_reconcile_get_code_labels" (words_as_type_indexed_bitvec)]
+theorem getCodeLabels_ssaReconcile {width : Nat} [NeZero width] {β : Type}
+    (current target : Spt Nat) (names : Spt β) :
+    getCodeLabelsHOL (ssaReconcile current target names : WordLangProgHOL (BitVec width)) = ∅ := by
+  unfold ssaReconcile
+  dsimp only
+  split
+  all_goals simp [getCodeLabelsHOL]
+
+/-- Original reconciliation empty-label pair conclusion, with the actual
+fake-move producer equality as the sole premise. -/
+@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
+  "word_get_code_labels_fake_moves" (words_as_type_indexed_bitvec)]
+theorem getCodeLabels_fakeMoves {width : Nat} [NeZero width]
+    (prio : Option (Unit ⊕ Unit)) (names : List Nat)
+    (ssaL ssaR : Spt Nat) (next : Nat)
+    (left right : WordLangProgHOL (BitVec width)) (finalNext : Nat)
+    (finalL finalR : Spt Nat)
+    (produced : fakeMoves prio names ssaL ssaR next = (left, right, finalNext, finalL, finalR)) :
+    getCodeLabelsHOL left = ∅ ∧ getCodeLabelsHOL right = ∅ := by
+  have all : ∀ (ls : List Nat) (l r : Spt Nat) (na : Nat),
+      let (a, b, _, _, _) := fakeMoves (width := width) prio ls l r na
+      getCodeLabelsHOL a = ∅ ∧ getCodeLabelsHOL b = ∅ := by
+    intro ls
+    induction ls with
+    | nil =>
+        intro l r na
+        simp [fakeMoves, getCodeLabelsHOL]
+    | cons x xs ih =>
+        intro l r na
+        generalize he : fakeMoves (width := width) prio xs l r na = result
+        rcases result with ⟨a, b, count, treeL, treeR⟩
+        have previous := ih l r na
+        rw [he] at previous
+        simp only [fakeMoves, he]
+        cases hl : sptLookup x treeL
+        all_goals
+          cases hr : sptLookup x treeR
+          all_goals simp_all [getCodeLabelsHOL, fakeMove]
+  have result := all names ssaL ssaR next
+  rw [produced] at result
+  exact result
 
 end Flapjack.WordAlloc

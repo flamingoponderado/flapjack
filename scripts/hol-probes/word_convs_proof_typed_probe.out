@@ -102,6 +102,14 @@ ssa_reconcile_wf_cutsets_typed=wf_cutsets (ssa_reconcile (cur_ssa :num sptree$nu
 extract_labels_SmartSeq_typed=extract_labels (SmartSeq (p1 :α prog) (p2 :α prog)) = extract_labels (Seq p1 p2)
 word_get_code_labels_SmartSeq_typed=word_get_code_labels (SmartSeq (p :α prog) (q :α prog)) = word_get_code_labels p ∪ word_get_code_labels q
 flat_exp_conventions_ShareInst_typed=flat_exp_conventions (ShareInst (op :memop) (v :num) (exp :α exp)) ⇔ (∃(v :num) (c :α word). exp = Op Add [(Var v :α exp); (Const c :α exp)]) ∨ ∃(v :num). exp = (Var v :α exp)
+word_get_code_labels_drop_consts_typed=∀(args :num list). word_get_code_labels (drop_consts (l :α word sptree$num_map) args) = (∅ :num -> bool)
+word_get_code_labels_Seq_assoc_typed=∀(p1 :α prog) (p2 :α prog). word_get_code_labels (Seq_assoc p1 p2) = word_get_code_labels p1 ∪ word_get_code_labels p2
+word_get_code_labels_inst_select_exp_typed=∀(a :α asm_config) (b :num) (c :num) (exp :α exp). word_get_code_labels (inst_select_exp a b c exp) = (∅ :num -> bool)
+word_get_code_labels_inst_select_typed=∀(ac :α asm_config) (v :num) (ps :α prog). word_get_code_labels (inst_select ac v ps) = word_get_code_labels ps
+fake_seq_get_code_labels_typed=∀(ls :num list). word_get_code_labels (FOLDR (Seq :α prog -> α prog -> α prog) (Skip :α prog) (MAP (λ(r :num). (fake_move r :α prog)) ls)) = (∅ :num -> bool)
+ssa_reconcile_get_code_labels_typed=word_get_code_labels (ssa_reconcile (cur_ssa :num sptree$num_map) (tgt_ssa :num sptree$num_map) (ns :β sptree$num_map) :α prog) = (∅ :num -> bool)
+loop_setup_get_code_labels_typed=(loop_setup (names :sptree$num_set) (exit_names :sptree$num_set) (ssa :num sptree$num_map) (na :num) :α prog # num sptree$num_map # num) = ((setup_prog :α prog),(ssa' :num sptree$num_map),(na' :num)) ⇒ word_get_code_labels setup_prog = (∅ :num -> bool)
+word_get_code_labels_fake_moves_typed=∀(a :num list) (b :num sptree$num_map) (c :num sptree$num_map) (d :num) (e :α prog) (f :α prog) (g :num) (h :num sptree$num_map) (i :num sptree$num_map). (fake_moves (prio :(unit + unit) option) a b c d :α prog # α prog # num # num sptree$num_map # num sptree$num_map) = (e,f,g,h,i) ⇒ word_get_code_labels e = (∅ :num -> bool) ∧ word_get_code_labels f = (∅ :num -> bool)
 every_inst_Seq_assoc_right_lemma_typed=∀(p1 :α prog) (p2 :α prog). every_inst (P :α inst -> bool) p1 ∧ every_inst P p2 ⇒ every_inst P (Seq_assoc_right p1 p2)
 every_inst_SimpSeq_typed=every_inst (P :α inst -> bool) (p1 :α prog) ∧ every_inst P (p2 :α prog) ⇒ every_inst P (SimpSeq p1 p2)
 flat_exp_conventions_Seq_assoc_right_lemma_typed=∀(p1 :α prog) (p2 :α prog). flat_exp_conventions p1 ∧ flat_exp_conventions p2 ⇒ flat_exp_conventions (Seq_assoc_right p1 p2)
