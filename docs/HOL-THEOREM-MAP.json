@@ -144762,5 +144762,14 @@
   "lean_name": "doBuildConstSome",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared do_build_const_IMP_SOME_typed with HOL source lines 16738-16750: the arbitrary constant parts, polymorphic reference-tree payload, initial timestamp, complete build-result equation and existential final timestamp agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "bignum_size",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/BignumSize.lean",
+  "lean_name": "bignumSize_eq",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared bignum_size_typed with the HOL source: good_dimindex remains the sole premise, the bignum size selects 64-bit architecture exactly when the word width is 64, and the conclusion uses the length of the magnitude's word digits plus one. HOL words use the positive-width BitVec translation."
 }
 ]

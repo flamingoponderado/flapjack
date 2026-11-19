@@ -87,3 +87,4 @@ val _ = emit "good_loc_def_typed" data_to_word_memoryProofTheory.good_loc_def;
 val _ = emit "store_list_APPEND_typed" data_to_word_assignProofTheory.store_list_APPEND;
 val _ = emit "evaluate_StoreAnyConsts_typed" data_to_word_assignProofTheory.evaluate_StoreAnyConsts;
 val _ = emit "do_build_const_IMP_SOME_typed" data_to_word_assignProofTheory.do_build_const_IMP_SOME;
+val _ = emit "bignum_size_typed" data_to_word_assignProofTheory.bignum_size;
