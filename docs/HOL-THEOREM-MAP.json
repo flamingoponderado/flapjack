@@ -144212,5 +144212,47 @@
   ],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Source comparison with get_vars_SOME_IFF_eq_typed in data_to_word_gc_fun_const_ok_probe.out and HOL source lines 8623-8640: both conjuncts, list-shape equality and lookup conditions are preserved with no additional hypotheses. The state keeps independent compiler and FFI parameters, canonical finite maps and the shared positive word width."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "memory_rel_get_vars_IMP_lemma",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/MemoryRelation.lean",
+  "lean_name": "memoryRel_getVars_aux",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "st",
+    "WordSemStateFiniteExact.fpRegs",
+    "WordSemStateFiniteExact.store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source comparison with memory_rel_get_vars_IMP_lemma_typed in data_to_word_gc_fun_const_ok_probe.out and HOL source lines 8642-8674: the full memory relation and both successful reads imply the full memory relation with corresponding roots prepended. The standalone store and word-state maps use canonical finite supports; target words share the positive width, and state parameters retain their HOL relationships."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "memory_rel_get_vars_IMP",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/MemoryRelation.lean",
+  "lean_name": "memoryRel_getVars",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "st",
+    "WordSemStateFiniteExact.fpRegs",
+    "WordSemStateFiniteExact.store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source comparison with memory_rel_get_vars_IMP_typed in data_to_word_gc_fun_const_ok_probe.out and HOL source lines 8642-8674: the full memory relation and both successful reads imply the full memory relation with corresponding roots prepended. The standalone store and word-state maps use canonical finite supports; target words share the positive width, and state parameters retain their HOL relationships."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "memory_rel_get_var_IMP",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/MemoryRelation.lean",
+  "lean_name": "memoryRel_getVar",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "st",
+    "WordSemStateFiniteExact.fpRegs",
+    "WordSemStateFiniteExact.store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source comparison with memory_rel_get_var_IMP_typed in data_to_word_gc_fun_const_ok_probe.out and HOL source lines 8642-8674: the full memory relation and both successful reads imply the full memory relation with corresponding roots prepended. The standalone store and word-state maps use canonical finite supports; target words share the positive width, and state parameters retain their HOL relationships."
 }
 ]

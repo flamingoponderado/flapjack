@@ -264,3 +264,6 @@ val _ = pr_typed "get_vars_SOME_IFF_data_typed" data_to_word_gcProofTheory.get_v
 val _ = pr_typed "get_vars_SOME_IFF_data_eq_typed" data_to_word_gcProofTheory.get_vars_SOME_IFF_data_eq;
 val _ = pr_typed "get_vars_SOME_IFF_typed" data_to_word_gcProofTheory.get_vars_SOME_IFF;
 val _ = pr_typed "get_vars_SOME_IFF_eq_typed" data_to_word_gcProofTheory.get_vars_SOME_IFF_eq;
+val _ = pr_typed "memory_rel_get_vars_IMP_lemma_typed" data_to_word_gcProofTheory.memory_rel_get_vars_IMP_lemma;
+val _ = pr_typed "memory_rel_get_vars_IMP_typed" data_to_word_gcProofTheory.memory_rel_get_vars_IMP;
+val _ = pr_typed "memory_rel_get_var_IMP_typed" data_to_word_gcProofTheory.memory_rel_get_var_IMP;
