@@ -1,5 +1,5 @@
 module
-public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ConsMemory
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ConcreteLeafAlloc
 public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Word64Proof
 public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Word64Concrete
 @[expose] public section
@@ -40,60 +40,18 @@ theorem memoryRel_word64Alt {width : Nat} [NeZero width] (c : DataToWord.Config)
     simpa [List.map_append] using h
   rw [rootsEq, List.map_append] at addrMap
   have ⟨mapped, tailMap⟩ := List.append_inj addrMap (by simpa using rootsLen)
-  have positive : sp0 + sp1 ≠ 0 := by omega
-  have found := absInv1.2.2.2.1.1 positive
-  obtain ⟨pre, post, heapShape, aEq⟩ := heapLookup_split heap a _ found
-  have expand : (heapExpand (sp0 + sp1) : ValueHeap width) = [.unused (sp0 + sp1 - 1)] := by
-    unfold heapExpand
-    rw [if_neg positive]
-  have heapOld : heap = pre ++ heapExpand (sp0 + sp1) ++ post := by
-    simpa [expand, List.append_assoc] using heapShape
   have storedCell : heapStoreUnusedAlt a (sp0 + sp1) (.dataElement [] ws.length (.word64Tag, ws)) heap = (heap2, true) := by
     simpa [rep] using stored
-  have heap2Shape : heap2 = pre ++ [.dataElement [] ws.length (.word64Tag, ws)] ++ heapExpand (sp0 + sp1 - (ws.length + 1)) ++ post := by
-    have store := storedCell
-    classical
-    simp only [heapStoreUnusedAlt, found, show elLength (.dataElement [] ws.length (.word64Tag, ws) : HeapElement (WordLocW width) (HeapTag × List (WordLocW width))) ≤ sp0 + sp1 by simp [elLength]; omega,
-      and_self, ↓reduceIte] at store
-    rw [heapShape, aEq, heapStore_atPrefix] at store
-    have h := congrArg Prod.fst store
-    simpa [elLength, List.append_assoc] using h.symm
-  obtain ⟨heapBound, byteBound, shiftBound, lenPos, lenBound, shiftWidth, globals, curr, other,
-    currAligned, otherAligned, currLookup, otherLookup, freeLookup, triggerLookup, endLookup,
-    heapLenLookup, globInv, genInv, heapSep⟩ := heapMem
-  have heapSepOld : SetSep.star (wordHeap curr (pre ++ heapExpand (sp0 + sp1) ++ post) c)
-      (wordHeap other (heapExpand limit) c) (SetSep.fun2Set (m, fun x => dm x = true)) := by
-    simpa [heapOld] using heapSep
-  obtain ⟨m1, run, heapSepNew⟩ := wordHeapAlloc c curr pre post (sp0 + sp1)
-    (.dataElement [] ws.length (.word64Tag, ws)) ws hd (wordHeap other (heapExpand limit) c) m dm
-    (by omega) (by simp [elLength]) (wordElWord64Eq c _ ws hd encoded (by omega) good) heapSepOld
-  have nLen : heapLength heap2 = heapLength heap :=
-    heapStoreUnusedAlt_imp_length a (sp0 + sp1) (word64Rep word) heap heap2 stored
-  let free := curr + StackRemove.bytesInWord width * BitVec.ofNat width a
-  let newFree := free + wordSemBytesInWord * BitVec.ofNat width (ws.length + 1)
-  let st1 := st.update (.nextFree, .word newFree)
-  have nstore : st1.lookup .nextFree = some (.word newFree) := by
-    simp [st1, HolFiniteMapExact.update, FUPDATE]
-  have shapeSep : SetSep.star (wordHeap curr heap2 c) (wordHeap other (heapExpand limit) c)
-      (SetSep.fun2Set (m1, fun x => dm x = true)) := by simpa [heap2Shape] using heapSepNew
-  have spFit : ws.length + 1 ≤ sp0 := by omega
-  have addSub : a + (ws.length + 1) + (sp0 - (ws.length + 1)) = a + sp0 := by omega
-  have addSub1 : a + (ws.length + 1) + (sp0 - (ws.length + 1)) + sp1 = a + sp0 + sp1 := by omega
-  have nfreeEq : newFree = curr + StackRemove.bytesInWord width * BitVec.ofNat width (a + (ws.length + 1)) := by
-    simp only [newFree, free, wordSemBytesInWord, StackRemove.bytesInWord, BitVec.ofNat_add, BitVec.mul_add]
-    rw [BitVec.add_assoc]
-  have heapMem1 : heapInMemoryStore heap2 (a + (ws.length + 1)) (sp0 - (ws.length + 1)) sp1 gens c st1 m1 dm limit := by
-    refine ⟨by simpa [nLen] using heapBound, by simpa [nLen] using byteBound, shiftBound, lenPos, lenBound, shiftWidth, ?_, curr, other,
-      currAligned, otherAligned, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, shapeSep⟩
-    · simpa [st1, HolFiniteMapExact.update, FUPDATE] using globals
-    · simpa [st1, HolFiniteMapExact.update, FUPDATE] using currLookup
-    · simpa [st1, HolFiniteMapExact.update, FUPDATE] using otherLookup
-    · simpa [nfreeEq] using nstore
-    · simpa [st1, HolFiniteMapExact.update, FUPDATE, addSub] using triggerLookup
-    · simpa [st1, HolFiniteMapExact.update, FUPDATE, addSub1] using endLookup
-    · simpa [st1, HolFiniteMapExact.update, FUPDATE] using heapLenLookup
-    · simpa [st1, HolFiniteMapExact.update, FUPDATE] using globInv
-    · simpa [st1, HolFiniteMapExact.update, FUPDATE] using genInv
+  have heapMemCopy := heapMem
+  obtain ⟨heapBound, byteBound, shiftBound, lenPos, lenBound, shiftWidth, globals, oldCurr, other,
+    currAligned, otherAligned, oldCurrLookup, otherLookup, oldFreeLookup, triggerLookup, endLookup,
+    heapLenLookup, globInv, genInv, heapSep⟩ := heapMemCopy
+  have configBound : c.lenSize + 5 < width := by omega
+  obtain ⟨free, curr, m1, freeLookup, currLookup, freeEq, run, heapMem1⟩ :=
+    heapInMemoryStore_allocateLeaf c heap heap2 a sp0 sp1 gens st m dm limit .word64Tag (ws) hd
+      absInv1.2.2.2.1 (by simpa using (show ws.length + 1 ≤ sp0 by omega))
+      (by simpa using storedCell) (fun addr => by simpa using wordElWord64Eq c addr ws hd encoded configBound good) heapMem
+  let st1 := st.update (.nextFree, .word (free + wordSemBytesInWord * BitVec.ofNat width (ws.length + 1)))
   have ptrEq : wordAddr c (.pointer a (.word 0)) =
       Build.makePtr c (free - curr) (0 : BitVec width) ws.length := by
     have stride : StackRemove.bytesInWord width * BitVec.ofNat width a =
@@ -101,7 +59,7 @@ theorem memoryRel_word64Alt {width : Nat} [NeZero width] (c : DataToWord.Config)
       rcases good with h | h <;> subst width <;> apply BitVec.eq_of_toNat_eq <;>
         simp [StackRemove.bytesInWord, wordShiftAmount, BitVec.toNat_mul,
           BitVec.toNat_shiftLeft, BitVec.toNat_ofNat, Nat.shiftLeft_eq, Nat.mul_comm, Nat.mul_mod]
-    have delta : free - curr = StackRemove.bytesInWord width * BitVec.ofNat width a := by simp [free]
+    have delta : free - curr = StackRemove.bytesInWord width * BitVec.ofNat width a := by simp [freeEq]
     have shifts : wordShiftAmount width + (shiftLength c - wordShiftAmount width) = shiftLength c := by omega
     simp only [Build.makePtr, delta, stride, ← BitVec.shiftLeft_add, shifts, wordAddr, getAddr, getLowerBits]
     simp
@@ -114,9 +72,9 @@ theorem memoryRel_word64Alt {width : Nat} [NeZero width] (c : DataToWord.Config)
     · simp only [List.map_cons]
       exact List.Forall₂.cons ptrEq afterRoots
   refine ⟨free, curr, m1, ?_, currLookup, ?_, ?_⟩
-  · simpa [free] using freeLookup
-  · simpa [free, aEq] using run
+  · exact freeLookup
+  · simpa using run
   · change memoryRel c be ts refs (sp - (ws.length + 1)) st1 m1 dm _
     exact ⟨heap2, limit, a + (ws.length + 1), sp0 - (ws.length + 1), sp1, gens,
-      heapMem1, wordInv1, limitBound, by omega⟩
+      by simpa [st1] using heapMem1, wordInv1, limitBound, by omega⟩
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

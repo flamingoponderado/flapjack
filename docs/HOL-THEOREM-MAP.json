@@ -145188,5 +145188,16 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Compared bignum_alt_thm_typed: the full abstract invariant, equal stack and root prefix lengths, non-small integer premise, exact Bignum data-cell equality with arbitrary tag and payload, and payload-space bound imply an existential successful store and the complete resulting abstract invariant with the original pointer and state updates. HOL words share one positive BitVec width."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "IMP_memory_rel_bignum_alt",
+  "hol_line": 9113,
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/BignumMemory.lean",
+  "lean_name": "memoryRel_bignumAlt",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": ["st"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source comparison with IMP_memory_rel_bignum_alt_typed at the exported specialized declaration: the full memory relation, good dimension, non-small integer, exact signed Bignum cell, space and header premises imply the original existential addresses and memory, both store lookups, successful header-and-payload store, and full post memory relation. The store uses canonical finite support and all target words share one positive BitVec width."
 }
 ]
