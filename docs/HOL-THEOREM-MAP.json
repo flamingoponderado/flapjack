@@ -144267,5 +144267,32 @@
   ],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Source comparison with lookup_RefByte_location_typed in data_to_word_gc_fun_const_ok_probe.out and HOL lines 8676-8690: the full state relation implies all ten fixed code lookups, with their original labels, arities, bodies and order. Source and target states retain their shared compiler/FFI parameters, and the target uses canonical finite maps and a common positive word width."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "word_ml_inv_get_vars_IMP",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/WordMlInvGetVars.lean",
+  "lean_name": "wordMlInv_getVars_state",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source comparison with word_ml_inv_get_vars_IMP_typed in data_to_word_gc_fun_const_ok_probe.out and the HOL source: the full root invariant, both successful reads, and all corresponding roots in the conclusion are retained. Source and target state compiler and FFI parameters remain independently quantified, as in the typed HOL theorem. The word state uses canonical finite maps and a shared positive word width."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "word_ml_inv_get_var_IMP",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/WordMlInvGetVars.lean",
+  "lean_name": "wordMlInv_getVar_state",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source comparison with word_ml_inv_get_var_IMP_typed in data_to_word_gc_fun_const_ok_probe.out and the HOL source: the full root invariant, both successful reads, and all corresponding roots in the conclusion are retained. Source and target state compiler and FFI parameters remain independently quantified, as in the typed HOL theorem. The word state uses canonical finite maps and a shared positive word width.",
+  "hol_line": 8846
 }
 ]

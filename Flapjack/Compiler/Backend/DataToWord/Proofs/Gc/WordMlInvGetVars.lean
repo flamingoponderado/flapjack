@@ -73,4 +73,42 @@ theorem wordMlInv_getVars {width : Nat} [NeZero width] {C F : Type}
             simp only [List.zip_cons_cons, List.mem_cons, List.mem_append] at member ⊢
             tauto
 
+/-- Related variable-list reads add their corresponding roots to the invariant. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "word_ml_inv_get_vars_IMP"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem wordMlInv_getVars_state {width : Nat} [NeZero width] {C₁ F₁ C₂ F₂ : Type}
+    (heap : ValueHeap width) (be : Bool) (a sp sp1 : Nat) (gens : GcCombined.GenState)
+    (limit ts : Nat) (c : Config) (refs : Spt (BvlSem.Ref Flapjack.Compiler.Backend.DataSem.Value))
+    (s : Flapjack.Compiler.Backend.DataSem.State C₁ F₁) (t : WordSemStateFiniteExact width C₂ F₂)
+    (envs : List (Flapjack.Compiler.Backend.DataSem.Value × WordLocW width)) (n : List Nat)
+    (x : List Flapjack.Compiler.Backend.DataSem.Value) (w : List (WordLocW width))
+    (h : wordMlInv (heap, be, a, sp, sp1, gens) limit ts c refs
+      (joinEnv s.locals (sptToAList (sptInter t.locals (adjustSet s.locals))) ++ envs) ∧
+      DataSem.getVars n s.locals = some x ∧
+      WordSemStateFiniteExact.getVars (n.map adjustVar) t = some w) :
+    wordMlInv (heap, be, a, sp, sp1, gens) limit ts c refs
+      (x.zip w ++ joinEnv s.locals (sptToAList (sptInter t.locals (adjustSet s.locals))) ++ envs) :=
+  wordMlInv_getVars heap be a sp sp1 gens limit ts c refs s.locals t n x w envs h
+
+/-- Related single-variable reads add their corresponding root to the invariant. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "word_ml_inv_get_var_IMP" 8846
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem wordMlInv_getVar_state {width : Nat} [NeZero width] {C₁ F₁ C₂ F₂ : Type}
+    (x1 : Flapjack.Compiler.Backend.DataSem.Value) (ts : Nat) (t : WordSemStateFiniteExact width C₂ F₂)
+    (sp1 sp : Nat) (s : Flapjack.Compiler.Backend.DataSem.State C₁ F₁) (refs : Spt (BvlSem.Ref Flapjack.Compiler.Backend.DataSem.Value))
+    (n1 limit : Nat) (heap : ValueHeap width) (gens : GcCombined.GenState)
+    (envs : List (Flapjack.Compiler.Backend.DataSem.Value × WordLocW width)) (c : Config) (be : Bool)
+    (a : Nat) (x1' : WordLocW width)
+    (h : wordMlInv (heap, be, a, sp, sp1, gens) limit ts c refs
+      (joinEnv s.locals (sptToAList (sptInter t.locals (adjustSet s.locals))) ++ envs) ∧
+      DataSem.getVar n1 s.locals = some x1 ∧
+      WordSemStateFiniteExact.getVar (adjustVar n1) t = some x1') :
+    wordMlInv (heap, be, a, sp, sp1, gens) limit ts c refs
+      ((x1, x1') :: (joinEnv s.locals (sptToAList (sptInter t.locals (adjustSet s.locals))) ++ envs)) := by
+  obtain ⟨inv, dataRead, wordRead⟩ := h
+  have dataReads : DataSem.getVars [n1] s.locals = some [x1] := by simp [DataSem.getVars, dataRead]
+  have wordReads : WordSemStateFiniteExact.getVars ([n1].map adjustVar) t = some [x1'] := by
+    simp [WordSemStateFiniteExact.getVars, wordRead]
+  simpa using wordMlInv_getVars_state heap be a sp sp1 gens limit ts c refs s t envs [n1] [x1] [x1']
+    ⟨inv, dataReads, wordReads⟩
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
