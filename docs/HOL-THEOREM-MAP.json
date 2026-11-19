@@ -143993,4 +143993,23 @@
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only consequence of getCodeLabels_destSeqMove, used to close the SimpSeq move-merge branch of word_get_code_labels_SimpSeq. HOL proves that branch inline in word_get_code_labels_SimpSeq; no separately named HOL declaration with this subset premise exists."
   }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_get_code_labels_const_fp_loop",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordSimpLabels/ConstFp.lean",
+    "lean_name": "getCodeLabels_constFpLoop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (word_convs_proof_typed_probe.out, word_get_code_labels_const_fp_loop_typed): source646-650. `forall (p : alpha prog) (l : alpha word sptree$num_map). word_get_code_labels (FST (const_fp_loop p l)) SUBSET word_get_code_labels p`; the capture binds p then l, matching Lean's `(program : ...) (cs : Spt (BitVec width))` order. const_fp_loop is the tagged constFpLoop over the Spt knowledge tree and word_get_code_labels is the tagged getCodeLabelsHOL; FST is the `.1` projection and SUBSET is Lean's subset. No premise. Only HOL's type-indexed word becomes BitVec width."
+  }
+,
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordSimpLabels/ConstFp.lean",
+    "lean_name": "getCodeLabels_constFp",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only consequence of getCodeLabels_constFpLoop for the constFp wrapper: HOL inlines const_fp_def and applies word_get_code_labels_const_fp_loop inside its try_if_hoist2 proof; no separately named HOL declaration states the wrapper containment."
+  }
 ]
