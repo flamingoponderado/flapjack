@@ -3,6 +3,7 @@ module
 public import Flapjack.Compiler.Backend.WordElim.Proofs.Analysis
 public import Flapjack.Misc.Sptree.UnionAlgebra
 public import Flapjack.Misc.Sptree.FromList2
+public import Mathlib.Data.Set.Defs
 
 @[expose] public section
 
@@ -11,11 +12,15 @@ public import Flapjack.Misc.Sptree.FromList2
 
 Counterpart of `cakeml/compiler/backend/proofs/word_elimProofScript.sml:72-203`
 and `:438-462`: the `get_locals`, `get_num_wordloc_alist` and `fromList2`
-domain lemmas.  HOL sets are predicates, so `domain t` membership is
-`sptMem` and `A SUBSET B` is pointwise implication.
+domain lemmas.  HOL's `domain t` is the reviewed `sptDomain`
+(`Flapjack/Misc/Sptree.lean`); `sptDomainSet` is the same predicate at
+Mathlib's `Set` carrier so HOL's `SUBSET`/`UNION` notation is stated literally
+(`A ⊆ B ∪ {n}`).  Membership statements keep `sptMem`, which is definitionally
+`sptDomain t key`.
 
 The untagged helpers below are Flapjack infrastructure with no separate HOL
-original: the `getLocals`/`destWordLoc` clause equations, `destWordLoc_eq_some_iff`
+original: `sptDomainSet` (the `Set` carrier bridge), the
+`getLocals`/`destWordLoc` clause equations, `destWordLoc_eq_some_iff`
 for the `Loc` clause, `sptMem_foldl_sptInsert` for the left fold used by
 `get_num_wordloc_alist`, and the `sptLookup_exists_*` lemmas that move an
 existential lookup through the `BN`/`BS` key arithmetic.
@@ -24,6 +29,10 @@ existential lookup through the `BN`/`BS` key arithmetic.
 namespace Flapjack.Compiler.Backend.WordElim
 
 open Flapjack.Compiler.Backend.FlatElim
+
+/-- Flapjack-only bridge: the reviewed `sptDomain` predicate at Mathlib's
+    `Set` carrier, so the source's `⊆`/`∪` notation applies unchanged. -/
+def sptDomainSet {α : Type} (tree : Spt α) : Set Nat := sptDomain tree
 
 /-- Flapjack-only helper: `dest_word_loc` on a `Word`. -/
 @[simp] theorem destWordLoc_word {width : Nat} [NeZero width] (value : BitVec width) :
@@ -227,49 +236,51 @@ theorem sptFromList2_append_singleton {α : Type} (values : List α) (value : α
     inserting a `Loc` adds at most its block. -/
 @[hol "cakeml/compiler/backend/proofs/word_elimProofScript.sml" "get_locals_insert_Loc"
   (words_as_type_indexed_bitvec)]
-theorem getLocals_insert_Loc {width : Nat} [NeZero width] (key block offset : Nat)
+theorem getLocals_insert_Loc {width : Nat} [NeZero width] (k n1 n0 : Nat)
     (locals : Spt (WordLocW width)) :
-    ∀ location, sptMem location (getLocals (sptInsert key (.loc block offset) locals)) →
-      sptMem location (getLocals locals) ∨ location = block := by
+    sptDomainSet (getLocals (sptInsert k (.loc n1 n0) locals)) ⊆
+      sptDomainSet (getLocals locals) ∪ ({n1} : Set Nat) := by
   intro location hmem
   obtain ⟨found, other, hkey⟩ :=
-    (domainGetLocalsLookup location (sptInsert key (.loc block offset) locals)).mp hmem
-  by_cases hsame : found = key
+    (domainGetLocalsLookup location (sptInsert k (.loc n1 n0) locals)).mp hmem
+  by_cases hsame : found = k
   · rw [hsame, sptLookup_sptInsert_same] at hkey
     have hinj := Option.some.inj hkey
     injection hinj with hblock _
     exact Or.inr hblock.symm
-  · rw [sptLookup_sptInsert_ne key found (.loc block offset) locals hsame] at hkey
+  · rw [sptLookup_sptInsert_ne k found (.loc n1 n0) locals hsame] at hkey
     exact Or.inl ((domainGetLocalsLookup location locals).mpr ⟨found, other, hkey⟩)
 
 /-- Exact HOL `get_locals_insert` (`word_elimProofScript.sml:116-128`):
     inserting a value adds at most its own block. -/
 @[hol "cakeml/compiler/backend/proofs/word_elimProofScript.sml" "get_locals_insert"
   (words_as_type_indexed_bitvec)]
-theorem getLocals_insert {width : Nat} [NeZero width] (key : Nat) (value : WordLocW width)
+theorem getLocals_insert {width : Nat} [NeZero width] (k : Nat) (v : WordLocW width)
     (locals : Spt (WordLocW width)) :
-    ∀ location, sptMem location (getLocals (sptInsert key value locals)) →
-      sptMem location (getLocals locals) ∨ destWordLoc value = some location := by
-  cases value with
+    sptDomainSet (getLocals (sptInsert k v locals)) ⊆
+      sptDomainSet (getLocals locals) ∪
+        (match destWordLoc v with | none => (∅ : Set Nat) | some n => ({n} : Set Nat)) := by
+  cases v with
   | word w =>
       intro location hmem
       obtain ⟨found, other, hkey⟩ :=
-        (domainGetLocalsLookup location (sptInsert key (.word w) locals)).mp hmem
-      by_cases hsame : found = key
+        (domainGetLocalsLookup location (sptInsert k (.word w) locals)).mp hmem
+      by_cases hsame : found = k
       · rw [hsame, sptLookup_sptInsert_same] at hkey
         simp at hkey
-      · rw [sptLookup_sptInsert_ne key found (.word w) locals hsame] at hkey
+      · rw [sptLookup_sptInsert_ne k found (.word w) locals hsame] at hkey
         exact Or.inl ((domainGetLocalsLookup location locals).mpr ⟨found, other, hkey⟩)
   | loc block offset =>
       intro location hmem
+      simp only [destWordLoc_loc, Set.mem_union, Set.mem_singleton_iff]
       obtain ⟨found, other, hkey⟩ :=
-        (domainGetLocalsLookup location (sptInsert key (.loc block offset) locals)).mp hmem
-      by_cases hsame : found = key
+        (domainGetLocalsLookup location (sptInsert k (.loc block offset) locals)).mp hmem
+      by_cases hsame : found = k
       · rw [hsame, sptLookup_sptInsert_same] at hkey
         have hinj := Option.some.inj hkey
         injection hinj with hblock _
-        exact Or.inr (by rw [hblock]; simp)
-      · rw [sptLookup_sptInsert_ne key found (.loc block offset) locals hsame] at hkey
+        exact Or.inr hblock.symm
+      · rw [sptLookup_sptInsert_ne k found (.loc block offset) locals hsame] at hkey
         exact Or.inl ((domainGetLocalsLookup location locals).mpr ⟨found, other, hkey⟩)
 
 /-- Flapjack-only helper: membership in the filtered `Loc` list of an
@@ -330,14 +341,13 @@ theorem getNumWordlocAlist_thm {width : Nat} [NeZero width] {α : Type} (locatio
 @[hol "cakeml/compiler/backend/proofs/word_elimProofScript.sml"
   "get_num_wordloc_alist_get_locals" (words_as_type_indexed_bitvec)]
 theorem getNumWordlocAlist_get_locals {width : Nat} [NeZero width]
-    (entries : List (Nat × WordLocW width)) :
-    ∀ location, sptMem location (getLocals (sptFromAList entries)) →
-      sptMem location (getNumWordlocAlist entries) := by
+    (e : List (Nat × WordLocW width)) :
+    sptDomainSet (getLocals (sptFromAList e)) ⊆ sptDomainSet (getNumWordlocAlist e) := by
   intro location hmem
-  obtain ⟨key, offset, hkey⟩ := (domainGetLocalsLookup location (sptFromAList entries)).mp hmem
+  obtain ⟨key, offset, hkey⟩ := (domainGetLocalsLookup location (sptFromAList e)).mp hmem
   rw [sptLookup_sptFromAList] at hkey
-  have hentry := sptAListLookup_mem key entries (.loc location offset) hkey
-  exact (getNumWordlocAlist_thm (α := Unit) location () entries).mp
+  have hentry := sptAListLookup_mem key e (.loc location offset) hkey
+  exact (getNumWordlocAlist_thm (α := Unit) location () e).mp
     ⟨offset, List.mem_map.mpr ⟨(key, .loc location offset), hentry, rfl⟩⟩
 
 /-- Exact HOL `get_locals_union_subset` (`word_elimProofScript.sml:193-201`):
@@ -345,23 +355,24 @@ theorem getNumWordlocAlist_get_locals {width : Nat} [NeZero width]
 @[hol "cakeml/compiler/backend/proofs/word_elimProofScript.sml"
   "get_locals_union_subset" (words_as_type_indexed_bitvec)]
 theorem getLocals_union_subset {width : Nat} [NeZero width]
-    (first second : Spt (WordLocW width)) :
-    ∀ location, sptMem location (getLocals (sptUnion first second)) →
-      sptMem location (sptUnion (getLocals first) (getLocals second)) := by
+    (A B : Spt (WordLocW width)) :
+    sptDomainSet (getLocals (sptUnion A B)) ⊆
+      sptDomainSet (sptUnion (getLocals A) (getLocals B)) := by
   intro location hmem
   obtain ⟨key, offset, hkey⟩ :=
-    (domainGetLocalsLookup location (sptUnion first second)).mp hmem
+    (domainGetLocalsLookup location (sptUnion A B)).mp hmem
   rw [sptLookup_sptUnion] at hkey
+  change sptMem location (sptUnion (getLocals A) (getLocals B))
   rw [sptMem_sptUnion]
-  cases hfirst : sptLookup key first with
+  cases hfirst : sptLookup key A with
   | none =>
       rw [hfirst] at hkey
-      exact Or.inr ((domainGetLocalsLookup location second).mpr ⟨key, offset, hkey⟩)
+      exact Or.inr ((domainGetLocalsLookup location B).mpr ⟨key, offset, hkey⟩)
   | some value =>
       rw [hfirst] at hkey
       have hval := Option.some.inj hkey
       rw [hval] at hfirst
-      exact Or.inl ((domainGetLocalsLookup location first).mpr ⟨key, offset, hfirst⟩)
+      exact Or.inl ((domainGetLocalsLookup location A).mpr ⟨key, offset, hfirst⟩)
 
 /-- Exact HOL `get_locals_fromList2_extension`
     (`word_elimProofScript.sml:448-462`): appending one value keeps every

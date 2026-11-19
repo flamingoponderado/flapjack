@@ -46,26 +46,32 @@ theorem getStack_hd_thm {width : Nat} [NeZero width] (stack : List (WordSemStack
     (dr : Nat → Prop) (l0 l : List (Nat × WordLocW width))
     (opt : Option (Nat × Nat × Nat)) (t : List (WordSemStackFrame width))
     (lsz : Option Nat)
-    (premise : (∀ n, sptMem n (getStack stack) → dr n) ∧
+    (premise : sptDomainSet (getStack stack) ⊆ dr ∧
       stack = .stackFrame lsz l l0 opt :: t) :
-    (∀ n, sptMem n (getLocals (sptUnion (sptFromAList l0) (sptFromAList l))) → dr n) ∧
-      ∀ n, sptMem n (getStack t) → dr n := by
+    sptDomainSet (getLocals (sptUnion (sptFromAList l0) (sptFromAList l))) ⊆ dr ∧
+      sptDomainSet (getStack t) ⊆ dr := by
   obtain ⟨hd, shape⟩ := premise
   subst shape
   constructor
-  · intro n hmem
-    have hunion := getLocals_union_subset (sptFromAList l0) (sptFromAList l) n hmem
+  · change ∀ n, sptMem n (getLocals (sptUnion (sptFromAList l0) (sptFromAList l))) → dr n
+    intro n hmem
+    have hunion := getLocals_union_subset (sptFromAList l0) (sptFromAList l) hmem
+    change sptMem n (sptUnion (getLocals (sptFromAList l0)) (getLocals (sptFromAList l))) at hunion
     rcases (sptMem_sptUnion _ _ _).mp hunion with hl0 | hl
-    · apply hd n
+    · have hmemStack : sptMem n (getStack (.stackFrame lsz l l0 opt :: t)) := by
+        simp only [getStack_cons, sptMem_sptUnion]
+        exact Or.inl (Or.inr (getNumWordlocAlist_get_locals l0 hl0))
+      exact hd hmemStack
+    · have hmemStack : sptMem n (getStack (.stackFrame lsz l l0 opt :: t)) := by
+        simp only [getStack_cons, sptMem_sptUnion]
+        exact Or.inl (Or.inl (getNumWordlocAlist_get_locals l hl))
+      exact hd hmemStack
+  · change ∀ n, sptMem n (getStack t) → dr n
+    intro n hmem
+    have hmemStack : sptMem n (getStack (.stackFrame lsz l l0 opt :: t)) := by
       simp only [getStack_cons, sptMem_sptUnion]
-      exact Or.inl (Or.inr (getNumWordlocAlist_get_locals l0 n hl0))
-    · apply hd n
-      simp only [getStack_cons, sptMem_sptUnion]
-      exact Or.inl (Or.inl (getNumWordlocAlist_get_locals l n hl))
-  · intro n hmem
-    apply hd n
-    simp only [getStack_cons, sptMem_sptUnion]
-    exact Or.inr hmem
+      exact Or.inr hmem
+    exact hd hmemStack
 
 /-- Exact HOL `get_stack_CONS` (`word_elimProofScript.sml:241-246`): a single
     frame and the tail are both inside the whole stack's location set. -/
@@ -73,16 +79,20 @@ theorem getStack_hd_thm {width : Nat} [NeZero width] (stack : List (WordSemStack
   (words_as_type_indexed_bitvec)]
 theorem getStack_CONS {width : Nat} [NeZero width] (h : WordSemStackFrame width)
     (t : List (WordSemStackFrame width)) :
-    (∀ n, sptMem n (getStack [h]) → sptMem n (getStack (h :: t))) ∧
-      ∀ n, sptMem n (getStack t) → sptMem n (getStack (h :: t)) := by
+    sptDomainSet (getStack [h]) ⊆ sptDomainSet (getStack (h :: t)) ∧
+      sptDomainSet (getStack t) ⊆ sptDomainSet (getStack (h :: t)) := by
   cases h with
   | stackFrame lsz nonGcCutset gcCutset handler =>
       constructor
-      · intro n hmem
+      · change ∀ n, sptMem n (getStack [.stackFrame lsz nonGcCutset gcCutset handler]) →
+          sptMem n (getStack (.stackFrame lsz nonGcCutset gcCutset handler :: t))
+        intro n hmem
         rw [getStack_cons, getStack_nil, sptUnion_ln_right, sptMem_sptUnion] at hmem
         rw [getStack_cons, sptMem_sptUnion, sptMem_sptUnion]
         exact Or.inl hmem
-      · intro n hmem
+      · change ∀ n, sptMem n (getStack t) →
+          sptMem n (getStack (.stackFrame lsz nonGcCutset gcCutset handler :: t))
+        intro n hmem
         rw [getStack_cons, sptMem_sptUnion, sptMem_sptUnion]
         exact Or.inr hmem
 

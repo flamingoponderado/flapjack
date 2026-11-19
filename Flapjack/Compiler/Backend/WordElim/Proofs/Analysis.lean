@@ -65,13 +65,13 @@ theorem removeWordCode_thm {α : Type} (n : Nat) (reachable : NumSet) (l : List 
   "remove_word_code_MAP_FST_lemma"]
 theorem removeWordCode_MAP_FST_lemma {α : Type}
     (reachable : NumSet) (l : List (Nat × Nat × WordLangProgHOL α)) :
-    (removeWordCode reachable l).map Prod.fst =
-      (l.map Prod.fst).filter (fun key => (sptLookup key reachable).isSome) := by
+    (l.filter (fun x => (sptLookup x.1 reachable).isSome)).map Prod.fst =
+      (l.map Prod.fst).filter (fun x => (sptLookup x reachable).isSome) := by
   induction l with
   | nil => rfl
   | cons head rest ih =>
       obtain ⟨key, arity, prog⟩ := head
-      simp only [removeWordCode, List.filter_cons, List.map_cons] at ih ⊢
+      simp only [List.filter_cons, List.map_cons] at ih ⊢
       split <;> simp [ih]
 
 /-- Exact HOL `remove_word_code_thm_FST` (`word_elimProofScript.sml:510-522`):
