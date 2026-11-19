@@ -242,3 +242,4 @@ val _ = pr_typed "word_ml_inv_cons_snoc_typed" data_to_word_gcProofTheory.word_m
 val _ = pr_typed "toListA_mk_typed" data_to_word_gcProofTheory.toListA_mk;
 val _ = pr_typed "PERM_lookup_toList_lemma_typed" data_to_word_gcProofTheory.PERM_lookup_toList_lemma;
 val _ = pr_typed "get_vars_sing_typed" data_to_word_gcProofTheory.get_vars_sing;
+val _ = pr_typed "adjust_var_not_15_typed" data_to_word_gcProofTheory.adjust_var_not_15;

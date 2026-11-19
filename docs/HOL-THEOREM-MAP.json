@@ -143983,5 +143983,13 @@
   ],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Source comparison with get_vars_sing_typed in data_to_word_gc_fun_const_ok_probe.out and HOL source line 8840: the exact singleton word-state read equivalence, the existential single word location, the read equality and the result-list equality are preserved. The word state uses canonical finite maps and the HOL word uses a positive-width BitVec."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "adjust_var_not_15",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/AdjustVar.lean",
+  "lean_name": "adjustVar_ne_fifteen",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared adjust_var_not_15_typed from data_to_word_gc_fun_const_ok_probe.out with HOL source line 8834: the arbitrary natural-number variable and the inequality between its adjusted slot and 15 are unchanged; adjustVar is the reviewed port of adjust_var."
 }
 ]

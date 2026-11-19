@@ -3209,6 +3209,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.CollectorCombined
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.WordGcCorrect
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.StateRelGc
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GetVarsSingle
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.AdjustVar
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.HeapPointerSizes
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.HeapTraversal
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.SizeValues
