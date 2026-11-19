@@ -145478,5 +145478,14 @@
   "lean_name": "strCmpCons",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared str_cmp_cons_typed: the Bool selector, opb comparison, shared HOL character, both character-list tails, and the iff on string comparison are retained. MlString and HolChar use the reviewed constructor and fixed-byte character carriers."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "find_diff_str_cmp_thm1",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/StringCompare.lean",
+  "lean_name": "findDiffStrCmpThm1",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared find_diff_str_cmp_thm1_typed: the original equal-length and good_dimindex premises, both result witnesses, exact find_diff equality, and iff between fast source string comparison and numeric result comparison are retained. Input word8 bytes map to reviewed HOL character bytes; the result word uses a positive indexed BitVec."
 }
 ]
