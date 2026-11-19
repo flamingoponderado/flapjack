@@ -9,3 +9,4 @@ word_slice_alt_def_typed=∀(h :num) (l :num) (w :α word). word_slice_alt h l w
 bytes_to_word_def_typed=∀(w :α word) (k :num) (bs :word8 list) (be :bool) (a :α word). bytes_to_word k a bs w be = if k = (0 :num) then w else case bs of ([] :word8 list) => w | b::bs' => set_byte a b (bytes_to_word (k − (1 :num)) (a + (1w :α word)) bs' w be) be
 bytes_in_word_def_typed=(bytes_in_word :α word) = (n2w (dimindex (:α) DIV (8 :num)) :α word)
 bytes_to_word_same_typed=∀(bw :num) (k :α word) (b1 :word8 list) (w :α word) (be :bool) (b2 :word8 list). (∀(n :num). n < bw ⇒ n < LENGTH b1 ∧ n < LENGTH b2 ∧ b1❲n❳ = b2❲n❳) ⇒ bytes_to_word bw k b1 w be = bytes_to_word bw k b2 w be
+set_byte_change_a_typed=w2n (a :α word) MOD (dimindex (:α) DIV (8 :num)) = w2n (a' :α word) MOD (dimindex (:α) DIV (8 :num)) ⇒ set_byte a (b :word8) (w :α word) (be :bool) = set_byte a' b w be

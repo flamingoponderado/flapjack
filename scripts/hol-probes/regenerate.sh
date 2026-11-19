@@ -4889,7 +4889,7 @@ run_probe hol_alignment_words_typed_probeScript.sml hol_alignment_words_typed_pr
   "$repo_dir/HOL/src/n-bit/alignmentScript.sml" "$cake_dir/pancake"
 
 run_probe hol_byte_typed_probeScript.sml hol_byte_typed_probe.out \
-  byte_index_def_typed get_byte_def_typed word_to_bytes_def_typed word_to_bytes_aux_def_typed get_byte_set_byte_typed set_byte_def_typed word_of_bytes_def_typed word_slice_alt_def_typed bytes_to_word_def_typed bytes_in_word_def_typed bytes_to_word_same_typed \
+  byte_index_def_typed get_byte_def_typed word_to_bytes_def_typed word_to_bytes_aux_def_typed get_byte_set_byte_typed set_byte_def_typed word_of_bytes_def_typed word_slice_alt_def_typed bytes_to_word_def_typed bytes_in_word_def_typed bytes_to_word_same_typed set_byte_change_a_typed \
   "$repo_dir/HOL/src/n-bit/byteScript.sml" "$cake_dir/pancake"
 
 run_probe hol_finitemap_alist_typed_probeScript.sml hol_finitemap_alist_typed_probe.out \

@@ -144545,5 +144545,14 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Compared write_bytes_same_typed in data_to_word_memory_proof_typed_probe.out with HOL source lines 11746-11763: arbitrary word and byte lists and endianness are retained, along with the original prefix-length bound, both input bounds and in-range element equality. Lean packages the bounds as proof witnesses for getElem; the word width is positive and byte elements remain fixed-width BitVec 8."
+},
+{
+  "hol_path": "HOL/src/n-bit/byteScript.sml",
+  "hol_name": "set_byte_change_a",
+  "lean_path": "Flapjack/Byte/SetByte.lean",
+  "lean_name": "setByte_changeAddress",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared set_byte_change_a_typed in hol_byte_typed_probe.out with HOL source lines 91-97: both address words and the destination share the original arbitrary positive width, the input byte is fixed at 8 bits, and the only premise is equality of their natural byte offsets modulo width DIV 8. The conclusion keeps the same byte, destination and endianness on both sides, including at widths below 8."
 }
 ]
