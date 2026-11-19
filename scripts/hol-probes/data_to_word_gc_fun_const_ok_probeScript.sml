@@ -278,3 +278,4 @@ val cutNameHead = #1 (strip_comb (lhs (rand (concl data_to_word_gcProofTheory.cu
 val {Thy=cutNameThy, Name=cutNameName, Ty=_} = dest_thy_const cutNameHead;
 val _ = (print ("cut_names_adjust_set_insert_ODD_result_type=" ^ cutNameThy ^ "$" ^ cutNameName ^ " : " ); print_type (type_of (lhs (rand (concl data_to_word_gcProofTheory.cut_names_adjust_set_insert_ODD)))); print "\n");
 val _ = pr_typed "has_space_state_rel_typed" data_to_word_gcProofTheory.has_space_state_rel;
+val _ = pr_typed "gc_lemma_gen_typed" data_to_word_gcProofTheory.gc_lemma_gen;
