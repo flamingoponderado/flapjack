@@ -1,7 +1,6 @@
 module
 
 public import Flapjack.Byte.BytesToWord
-public import Mathlib.Tactic
 @[expose] public section
 
 /-! Equality of bounded byte-to-word conversions. -/
