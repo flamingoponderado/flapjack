@@ -80,36 +80,26 @@ private theorem ffi_length_expression {width : Nat} [NeZero width] {C F : Type}
     present, memory, wordShiftHOL, offsetWord, Nat.not_le_of_gt offsetBound,
     theWords, wordOpHOL, wordOp, decoded]
 
-/-- The root and byte-read preparation carried out in the HOL `assign_FFI`
-proof. This factors its successful source evaluation and local-variable reads;
-it is not a separate HOL theorem. -/
-theorem ffi_success_inputs {width : Nat} [NeZero width] {C F : Type}
-    (conf : Config) (l1 l2 : Nat) (source cut resultState : DataSem.State C F)
+/-- Common root, byte-read and target-expression preparation for both
+successful and final FFI outcomes. This factors steps of the HOL assignment
+proof and has no separate HOL declaration. -/
+theorem ffi_reference_inputs {width : Nat} [NeZero width] {C F : Type}
+    (conf : Config) (l1 l2 : Nat) (source : DataSem.State C F)
     (target : WordSemStateFiniteExact width C F) (locs : List (Nat × Nat))
-    (names : NumSet) (args : List Nat) (values : List DataSem.Value)
-    (name : Basis.Pure.MlString.MlString) (result : DataSem.Value)
+    (args : List Nat) (values : List DataSem.Value)
+    (flag1 flag2 : Bool) (first second : Nat) (config bytes : List (BitVec 8))
     (related : stateRel conf l1 l2 source target none locs)
-    (cutRun : DataSem.cutStateOpt (some names) source = some cut)
     (read : DataSem.getVars args source.locals = some values)
-    (run : DataSem.doApp (.ffi name) values cut = .val (result, resultState)) :
-    ∃ (firstVar secondVar : Nat) (firstFlag secondFlag : Bool) (first second : Nat)
-      (config bytes updated : List (BitVec 8)) (ffi : HolFfiState F)
-      (firstWord secondWord : WordLocW width),
+    (valuesEq : values = [.refPtr flag1 first, .refPtr flag2 second])
+    (firstRead : sptLookup first source.refs = some (.byteArray true config))
+    (secondRead : sptLookup second source.refs = some (.byteArray false bytes)) :
+    ∃ (firstVar secondVar : Nat) (firstWord secondWord : WordLocW width),
       args = [firstVar, secondVar] ∧
-      values = [.refPtr firstFlag first, .refPtr secondFlag second] ∧
       WordSemStateFiniteExact.getVars [adjustVar firstVar, adjustVar secondVar] target =
         some [firstWord, secondWord] ∧
-      sptLookup first source.refs = some (.byteArray true config) ∧
-      sptLookup second source.refs = some (.byteArray false bytes) ∧
-      callFFIHOL source.ffi (.extCall name) config bytes = .ret ffi updated ∧
-      updated.length = bytes.length ∧
-      (∃ base, DataSem.doSpace (.ffi name) values cut = some base ∧
-        result = DataSem.unitValue ∧
-        resultState = { DataSem.doStack (.ffi name) values (DataSem.doLimSafe base (.ffi name) values) with
-          refs := sptInsert second (.byteArray false updated) source.refs, ffi := ffi }) ∧
       Memory.memoryRel conf target.be (holThe source.tstamps) source.refs source.space
         target.store target.memory target.mdomain
-        ((.refPtr firstFlag first, firstWord) :: (.refPtr secondFlag second, secondWord) ::
+        ((.refPtr flag1 first, firstWord) :: (.refPtr flag2 second, secondWord) ::
           (joinEnv source.locals (sptToAList (sptInter target.locals (adjustSet source.locals))) ++
            [(theGlobal source.global, holFapply target.store .globals)] ++
            flatStack source.stack target.stack)) ∧
@@ -159,11 +149,6 @@ theorem ffi_success_inputs {width : Nat} [NeZero width] {C F : Type}
             (.op .sub [shiftN .lsr (.load (realAddr conf (adjustVar secondVar)))
               (width - wordShiftAmount width - conf.lenSize), .const wordSemBytesInWord]) =
                 some (.word (BitVec.ofNat width bytes.length)) := by
-  obtain ⟨base, flag1, flag2, first, second, config, bytes, updated, ffi,
-    baseRun, valuesEq, firstRead, secondRead, call, lengthEq, resultEq, resultStateEq⟩ :=
-    doApp_ffi_success name values cut resultState result run
-  have cutEq := cutStateOpt_some_eq names source cut cutRun
-  subst cut
   have argsLength : args.length = 2 := by
     have h := DataSpace.getVars_length args source.locals values read
     simpa [valuesEq] using h.symm
@@ -283,15 +268,107 @@ theorem ffi_success_inputs {width : Nat} [NeZero width] {C F : Type}
                 exact ⟨ffi_length_expression conf _ _ address1 header1 config.length good addrAfter1 dom1 mem1 decoded1.1,
                   addrAfter3, ptrAfter3,
                   ffi_length_expression conf _ _ address2 header2 bytes.length good addrAfter5 dom2 mem2 decoded2.1⟩
-              refine ⟨firstVar, secondVar, flag1, flag2, first, second, config, bytes,
-                updated, ffi, firstWord, secondWord, rfl, valuesEq, ?_, ?_, ?_, ?_, lengthEq, ?_, ?_⟩
+              refine ⟨firstVar, secondVar, firstWord, secondWord, rfl, ?_, ?_⟩
               · simpa using wordRead
-              · simpa using firstRead
-              · simpa using secondRead
-              · simpa using call
-              · exact ⟨base, baseRun, resultEq, resultStateEq⟩
               · exact ⟨roots, w1, w2, address1, address2, header1, header2,
                   loc1, loc2, real1, real2, mem1, mem2, configRead, bytesRead, bound1, bound2,
                   decoded1, decoded2, addrEval1, ptrEval1, afterTemps⟩
+
+/-- The root and byte-read preparation carried out in the HOL `assign_FFI`
+proof. This factors its successful source evaluation and local-variable reads;
+it is not a separate HOL theorem. -/
+theorem ffi_success_inputs {width : Nat} [NeZero width] {C F : Type}
+    (conf : Config) (l1 l2 : Nat) (source cut resultState : DataSem.State C F)
+    (target : WordSemStateFiniteExact width C F) (locs : List (Nat × Nat))
+    (names : NumSet) (args : List Nat) (values : List DataSem.Value)
+    (name : Basis.Pure.MlString.MlString) (result : DataSem.Value)
+    (related : stateRel conf l1 l2 source target none locs)
+    (cutRun : DataSem.cutStateOpt (some names) source = some cut)
+    (read : DataSem.getVars args source.locals = some values)
+    (run : DataSem.doApp (.ffi name) values cut = .val (result, resultState)) :
+    ∃ (firstVar secondVar : Nat) (firstFlag secondFlag : Bool) (first second : Nat)
+      (config bytes updated : List (BitVec 8)) (ffi : HolFfiState F)
+      (firstWord secondWord : WordLocW width),
+      args = [firstVar, secondVar] ∧
+      values = [.refPtr firstFlag first, .refPtr secondFlag second] ∧
+      WordSemStateFiniteExact.getVars [adjustVar firstVar, adjustVar secondVar] target =
+        some [firstWord, secondWord] ∧
+      sptLookup first source.refs = some (.byteArray true config) ∧
+      sptLookup second source.refs = some (.byteArray false bytes) ∧
+      callFFIHOL source.ffi (.extCall name) config bytes = .ret ffi updated ∧
+      updated.length = bytes.length ∧
+      (∃ base, DataSem.doSpace (.ffi name) values cut = some base ∧
+        result = DataSem.unitValue ∧
+        resultState = { DataSem.doStack (.ffi name) values (DataSem.doLimSafe base (.ffi name) values) with
+          refs := sptInsert second (.byteArray false updated) source.refs, ffi := ffi }) ∧
+      Memory.memoryRel conf target.be (holThe source.tstamps) source.refs source.space
+        target.store target.memory target.mdomain
+        ((.refPtr firstFlag first, firstWord) :: (.refPtr secondFlag second, secondWord) ::
+          (joinEnv source.locals (sptToAList (sptInter target.locals (adjustSet source.locals))) ++
+           [(theGlobal source.global, holFapply target.store .globals)] ++
+           flatStack source.stack target.stack)) ∧
+      ∃ (w1 w2 address1 address2 header1 header2 : BitVec width),
+        firstWord = .word w1 ∧ secondWord = .word w2 ∧
+        getRealAddr conf target.store w1 = some address1 ∧
+        getRealAddr conf target.store w2 = some address2 ∧
+        target.memory address1 = .word header1 ∧ target.memory address2 = .word header2 ∧
+        readBytearrayGenericHOL (address1 + StackRemove.bytesInWord width) config.length
+          (memLoadByteAuxExact target.memory target.mdomain target.be) = some config ∧
+        readBytearrayGenericHOL (address2 + StackRemove.bytesInWord width) bytes.length
+          (memLoadByteAuxExact target.memory target.mdomain target.be) = some bytes ∧
+        (if width = 32 then
+          config.length + 4 < 2 ^ (width - 3) ∧
+          header1 >>> (width - conf.lenSize - 2) = BitVec.ofNat width (config.length + 4)
+        else
+          config.length + 8 < 2 ^ (width - 3) ∧
+          header1 >>> (width - conf.lenSize - 3) = BitVec.ofNat width (config.length + 8)) ∧
+        (if width = 32 then
+          bytes.length + 4 < 2 ^ (width - 3) ∧
+          header2 >>> (width - conf.lenSize - 2) = BitVec.ofNat width (bytes.length + 4)
+        else
+          bytes.length + 8 < 2 ^ (width - 3) ∧
+          header2 >>> (width - conf.lenSize - 3) = BitVec.ofNat width (bytes.length + 8)) ∧
+        (let decoded := (header1 >>> (width - wordShiftAmount width - conf.lenSize)) - wordSemBytesInWord
+         decoded = BitVec.ofNat width config.length ∧ decoded.toNat = config.length) ∧
+        (let decoded := (header2 >>> (width - wordShiftAmount width - conf.lenSize)) - wordSemBytesInWord
+         decoded = BitVec.ofNat width bytes.length ∧ decoded.toNat = bytes.length) ∧
+        WordSemStateFiniteExact.wordExp target (realAddr conf (adjustVar firstVar)) = some (.word address1) ∧
+        WordSemStateFiniteExact.wordExp target
+          (.op .add [realAddr conf (adjustVar firstVar), .const wordSemBytesInWord]) =
+            some (.word (address1 + wordSemBytesInWord)) ∧
+        ∀ (temp1 temp3 temp5 : WordLocW width),
+          let after1 := { target with locals := sptInsert 1 temp1 target.locals }
+          let after3 := { target with locals := sptInsert 3 temp3 after1.locals }
+          let after5 := { target with locals := sptInsert 5 temp5 after3.locals }
+          WordSemStateFiniteExact.wordExp after1
+            (.op .sub [shiftN .lsr (.load (realAddr conf (adjustVar firstVar)))
+              (width - wordShiftAmount width - conf.lenSize), .const wordSemBytesInWord]) =
+                some (.word (BitVec.ofNat width config.length)) ∧
+          WordSemStateFiniteExact.wordExp after3 (realAddr conf (adjustVar secondVar)) =
+            some (.word address2) ∧
+          WordSemStateFiniteExact.wordExp after3
+            (.op .add [realAddr conf (adjustVar secondVar), .const wordSemBytesInWord]) =
+              some (.word (address2 + wordSemBytesInWord)) ∧
+          WordSemStateFiniteExact.wordExp after5
+            (.op .sub [shiftN .lsr (.load (realAddr conf (adjustVar secondVar)))
+              (width - wordShiftAmount width - conf.lenSize), .const wordSemBytesInWord]) =
+                some (.word (BitVec.ofNat width bytes.length)) := by
+  obtain ⟨base, flag1, flag2, first, second, config, bytes, updated, ffi,
+    baseRun, valuesEq, firstRead, secondRead, call, lengthEq, resultEq, resultStateEq⟩ :=
+    doApp_ffi_success name values cut resultState result run
+  have cutEq := cutStateOpt_some_eq names source cut cutRun
+  have firstLookup : sptLookup first source.refs = some (.byteArray true config) := by
+    simpa [cutEq] using firstRead
+  have secondLookup : sptLookup second source.refs = some (.byteArray false bytes) := by
+    simpa [cutEq] using secondRead
+  have sourceCall : callFFIHOL source.ffi (.extCall name) config bytes = .ret ffi updated := by
+    simpa [cutEq] using call
+  obtain ⟨firstVar, secondVar, firstWord, secondWord, argsShape, wordRead, common⟩ :=
+    ffi_reference_inputs conf l1 l2 source target locs args values flag1 flag2 first second config bytes
+      related read valuesEq firstLookup secondLookup
+  refine ⟨firstVar, secondVar, flag1, flag2, first, second, config, bytes, updated, ffi,
+    firstWord, secondWord, argsShape, valuesEq, wordRead, firstLookup, secondLookup, sourceCall,
+    lengthEq, ?_, common⟩
+  exact ⟨base, baseRun, resultEq, by simpa [cutEq] using resultStateEq⟩
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Assign

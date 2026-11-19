@@ -144678,5 +144678,16 @@
   "words_as_type_indexed_bitvec": true,
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "Compared assign_FFI_typed with HOL source lines 1765-1777 and 16246-16484: the existential FFI operation condition, all original assignment-goal premises, existential target evaluation and both outcome implications agree. The target state uses canonical finite maps and positive-width words. The evaluator inherits reals_as_rational_cuts through instruction semantics; see SOUNDNESS.md item 8."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "assign_FFI_final",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/FfiFinal.lean",
+  "lean_name": "assignFfi_final",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared assign_FFI_final_typed with HOL source lines 16485-16493: the complete state relation, names, cut, source reads, termination depth and final-FFI abort premises are retained, as are the existential target evaluation, stack bound, non-space result, unchanged FFI and identical final event. The target state uses canonical finite maps and positive-width words. The evaluator inherits reals_as_rational_cuts through instruction semantics; see SOUNDNESS.md item 8."
 }
 ]

@@ -53,7 +53,7 @@ private theorem evaluate_seq_assign {width : Nat} [NeZero width] {C F : Type}
 /-- Four successful assignments can be followed by a continuation without
 changing their intermediate state. This is the sequencing step used by the
 HOL FFI assignment proof. -/
-private theorem evaluate_four_assign_append {width : Nat} [NeZero width] {C F : Type}
+theorem evaluate_four_assign_append {width : Nat} [NeZero width] {C F : Type}
     (state result : WordSemStateFiniteExact width C F)
     (e1 e2 e3 e4 : WordLangExpHOL (BitVec width))
     (tail : WordLangProgHOL (BitVec width))
