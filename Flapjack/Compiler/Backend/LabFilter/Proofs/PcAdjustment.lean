@@ -13,8 +13,9 @@ private theorem adjustPcZero {width : Nat} [NeZero width] (code : LabProgHOL wid
     adjustPc 0 code = 0 := by rw [adjustPc.eq_def]; simp
 
 /-- Flapjack one-position consequence of the literal PC-adjustment definition;
-no separate original HOL declaration. -/
-private theorem adjustPcSucc {width : Nat} [NeZero width] (pc : Nat)
+no separate original HOL declaration. Exposed so the lab_to_target
+`all_pc_adjust_pc` port can reuse the step law. -/
+theorem adjustPcSucc {width : Nat} [NeZero width] (pc : Nat)
     (code : LabProgHOL width) :
     (∀ bytes len, asmFetchAux pc code = some (.asm (.asmi (.inst .skip)) bytes len) →
       adjustPc (pc + 1) code = adjustPc pc code) ∧
