@@ -34,6 +34,9 @@ scripts/hol-probes/regenerate.sh` using the pinned source revisions.
 `IMP_read_bytearray_GENLIST`, including its arbitrary element type and its
 independent address-word dimension.
 
+`misc_typed_probe.out` captures the polymorphic `read_bytearray_def` and
+`read_bytearray_LENGTH` from the pinned CakeML misc theory.
+
 `data_to_word_cut_envs_wf_replay_probe.out` captures the inferred types of
 `cut_envs_wf` and `cut_env_lookup` by replaying their original statements and
 proofs against the pinned word semantics theory. Regenerate with

@@ -89,6 +89,7 @@ val _ = emit "UNCURRY_eq_pair_typed" "UNCURRY_eq_pair";
 val _ = emit "word_list_def_typed" "word_list_def";
 val _ = emit "word_list_exists_def_typed" "word_list_exists_def";
 val _ = emit "read_bytearray_def_typed" "read_bytearray_def";
+val _ = emit "read_bytearray_LENGTH_typed" "read_bytearray_LENGTH";
 val _ = emit "fun2set_disjoint_union_typed" "fun2set_disjoint_union";
 val _ = emit "UPDATE_LIST_def_typed" "UPDATE_LIST_def";
 val _ = emit "APPLY_UPDATE_LIST_ALOOKUP_typed" "APPLY_UPDATE_LIST_ALOOKUP";

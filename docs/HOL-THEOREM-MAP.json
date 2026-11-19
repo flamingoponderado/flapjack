@@ -144648,5 +144648,14 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Compared IMP_read_bytearray_GENLIST_typed with HOL source lines 423-439: the arbitrary result type is independent of the positive address-word dimension, and the exact length equality, bounded pointwise successful reads and complete read result are retained. Lean packages the list index bound as a proof witness, which is implied by the original length equality."
+},
+{
+  "hol_path": "cakeml/misc/miscScript.sml",
+  "hol_name": "read_bytearray_LENGTH",
+  "lean_path": "Flapjack/Pancake/Semantics/LoopSem.lean",
+  "lean_name": "readBytearrayGenericHOL_length",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared read_bytearray_LENGTH_typed with miscScript.sml lines 124-130: the arbitrary result element type is independent of the positive address-word dimension, and the original successful-read premise and length equality are retained. This replaces the previous word-valued specialization."
 }
 ]
