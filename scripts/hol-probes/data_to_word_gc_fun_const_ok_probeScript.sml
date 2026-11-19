@@ -250,3 +250,4 @@ val _ = pr_typed "join_env_locals_insert_odd_typed" data_to_word_gcProofTheory.j
 val _ = pr_typed "join_env_locals_insert_dest_odd_typed" data_to_word_gcProofTheory.join_env_locals_insert_dest_odd;
 val _ = pr_typed "inter_insert_ODD_adjust_set_alt_typed" data_to_word_gcProofTheory.inter_insert_ODD_adjust_set_alt;
 val _ = pr_typed "get_vars_termdep_typed" data_to_word_gcProofTheory.get_vars_termdep;
+val _ = pr_typed "inter_delete_ODD_adjust_set_alt_typed" data_to_word_gcProofTheory.inter_delete_ODD_adjust_set_alt;
