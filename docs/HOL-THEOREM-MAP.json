@@ -143757,7 +143757,7 @@
     "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Positions.lean",
     "lean_name": "findIndexInRange",
     "statement_status": "reviewed_exact",
-    "reviewer": "typed HOL source comparison (lab_to_target_proof_local_typed_probe.out, find_index_in_range_typed): source3084-3093. `forall n. find_index s l n = SOME x ==> x < n + LENGTH l /\\ x >= n`; the capture keeps s : alpha, l : alpha list, x : num free and binds n. find_index is the tagged Flapjack.Misc.findIndex, DecidableEq alpha is the lawful rendering of HOL's total equality on the element type, LENGTH is List.length and >= is <=. One premise, conjunction conclusion preserved."
+    "reviewer": "typed HOL source comparison (lab_to_target_proof_local_typed_probe.out, find_index_in_range_typed): source3084-3093. `forall n. find_index s l n = SOME x ==> x < n + LENGTH l /\\ x >= n`; the capture keeps s : alpha, l : alpha list, x : num free and binds n. find_index is the tagged Flapjack.Misc.findIndex, DecidableEq alpha is the lawful rendering of HOL's total equality on the element type, LENGTH is List.length, and the second conjunct is stated as `x >= n`, the same term as HOL's `x >= n`. One premise, conjunction conclusion preserved."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
@@ -143765,7 +143765,7 @@
     "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Positions.lean",
     "lean_name": "findIndexInRange0",
     "statement_status": "reviewed_exact",
-    "reviewer": "typed HOL source comparison (lab_to_target_proof_local_typed_probe.out, find_index_in_range0_typed): source3095-3099. `find_index s l 0 = SOME x ==> x < LENGTH l /\\ x >= 0`; the capture keeps s, l, x free. Same renderings as find_index_in_range, one premise, and the conclusion keeps the vacuous 0 <= x conjunct (HOL derives it from find_index_in_range at n = 0)."
+    "reviewer": "typed HOL source comparison (lab_to_target_proof_local_typed_probe.out, find_index_in_range0_typed): source3095-3099. `find_index s l 0 = SOME x ==> x < LENGTH l /\\ x >= 0`; the capture keeps s, l, x free. Same renderings as find_index_in_range, one premise, and the conclusion is stated as `x >= 0`, keeping the vacuous conjunct that HOL derives from find_index_in_range at n = 0."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
@@ -143837,6 +143837,6 @@
     "lean_path": "Flapjack/Compiler/Backend/LabToTarget/MmioShmem.lean",
     "lean_name": "filter_mmioPcsMinIndex",
     "statement_status": "reviewed_exact",
-    "reviewer": "typed HOL source comparison (lab_to_target_proof_typed_probe.out, FILTER_mmio_pcs_min_index_typed): source6678-6700. `EVERY (fun x. exists op. x = SharedMem op) l ==> mmio_pcs_min_index (FILTER (fun x. exists s. x = ExtCall s) ffis ++ l) = SOME (LENGTH (FILTER (fun x. exists s. x = ExtCall s) ffis))`; the capture keeps l and ffis as ffiname lists. EVERY is the Prop form forall x IN l, one premise; the FILTER test is the Boolean constructor test isExtCall, documented beside it as Flapjack infrastructure naming HOL's exists-ExtCall predicate; mmio_pcs_min_index is the tagged mmioPcsMinIndex, whose proof goes through the tagged mmioPcsMinIndex_eq_some and the existing boundary machinery. No word or finite-map carrier."
+    "reviewer": "typed HOL source comparison (lab_to_target_proof_typed_probe.out, FILTER_mmio_pcs_min_index_typed): source6678-6700. `EVERY (fun x. exists op. x = SharedMem op) l ==> mmio_pcs_min_index (FILTER (fun x. exists s. x = ExtCall s) ffis ++ l) = SOME (LENGTH (FILTER (fun x. exists s. x = ExtCall s) ffis))`; the capture keeps l and ffis as ffiname lists. EVERY is the Prop form forall x IN l, one premise. The FILTER predicate is stated inline as `fun x => by classical exact decide (exists s, x = HolFfiName.extCall s)`, matching HOL's `fun x. exists s. x = ExtCall s`; the proof rewrites it to the Boolean constructor test isExtCall, documented beside it as Flapjack infrastructure naming that exists-ExtCall predicate. mmio_pcs_min_index is the tagged mmioPcsMinIndex, whose proof goes through the tagged mmioPcsMinIndex_eq_some and the existing boundary machinery. No word or finite-map carrier."
   }
 ]

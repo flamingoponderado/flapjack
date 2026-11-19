@@ -95,7 +95,7 @@ def getJumpOffset {regImmWidth : Nat} {width : Nat} [NeZero regImmWidth] [NeZero
 a first-match index lies in `[n, n + LENGTH l)`. -/
 @[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "find_index_in_range"]
 theorem findIndexInRange {α : Type} [DecidableEq α] (s : α) (l : List α) (x : Nat) :
-    ∀ n, findIndex s l n = some x → x < n + l.length ∧ n ≤ x := by
+    ∀ n, findIndex s l n = some x → x < n + l.length ∧ x ≥ n := by
   intro n
   induction l generalizing n with
   | nil =>
@@ -119,7 +119,7 @@ theorem findIndexInRange {α : Type} [DecidableEq α] (s : α) (l : List α) (x 
 the zero-offset case of `find_index_in_range`. -/
 @[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "find_index_in_range0"]
 theorem findIndexInRange0 {α : Type} [DecidableEq α] (s : α) (l : List α) (x : Nat)
-    (h : findIndex s l 0 = some x) : x < l.length ∧ 0 ≤ x := by
+    (h : findIndex s l 0 = some x) : x < l.length ∧ x ≥ 0 := by
   have hrange := findIndexInRange s l x 0 h
   simpa using hrange
 

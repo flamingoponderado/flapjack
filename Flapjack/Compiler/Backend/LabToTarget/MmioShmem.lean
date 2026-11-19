@@ -100,13 +100,32 @@ def isExtCall : HolFfiName → Bool
 /-- Exact HOL `FILTER_mmio_pcs_min_index` (`lab_to_targetProofScript.sml:6678-6700`):
 filtering the FFI names to the external calls and appending a shared-memory-only
 suffix puts the MMIO boundary at the filtered length. HOL's `FILTER` predicate
-`fun x. exists s. x = ExtCall s` is the Boolean constructor test `isExtCall`. -/
+`fun x. exists s. x = ExtCall s` is stated inline; the proof rewrites it to the
+Boolean constructor test `isExtCall`. -/
 @[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
   "FILTER_mmio_pcs_min_index"]
 theorem filter_mmioPcsMinIndex (l ffis : List HolFfiName)
     (hl : ∀ x ∈ l, ∃ op, x = HolFfiName.sharedMem op) :
-    mmioPcsMinIndex ((ffis.filter isExtCall) ++ l) =
-      some (ffis.filter isExtCall).length := by
+    mmioPcsMinIndex ((ffis.filter (fun x => by
+        classical exact decide (∃ s, x = HolFfiName.extCall s))) ++ l) =
+      some (ffis.filter (fun x => by
+        classical exact decide (∃ s, x = HolFfiName.extCall s))).length := by
+  have hfilter : ffis.filter (fun x => by
+        classical exact decide (∃ s, x = HolFfiName.extCall s))
+      = ffis.filter isExtCall := by
+    apply List.filter_congr
+    intro x _
+    classical
+    cases x with
+    | extCall name =>
+        simp only [isExtCall]
+        exact decide_eq_true_eq.mpr ⟨name, rfl⟩
+    | sharedMem op =>
+        simp only [isExtCall]
+        exact decide_eq_false_iff_not.mpr (by
+          rintro ⟨s, hs⟩
+          cases hs)
+  rw [hfilter]
   apply mmioPcsMinIndex_eq_some
   refine ⟨by simp, ?_, ?_⟩
   · intro j hj
