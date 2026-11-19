@@ -144133,5 +144133,29 @@
   ],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Source comparison with memory_rel_insert_typed in data_to_word_gc_fun_const_ok_probe.out and HOL source lines 8692-8703: the full original memory relation premise has the represented pair prepended to the joined roots, and the full conclusion inserts that pair at the source and adjusted target names with all other roots preserved. The standalone HOL store uses the canonical finite-support map, and word values use the shared positive width."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/FromListSnoc.lean",
+  "statement_status": "reviewed_exact",
+  "hol_name": "FOLDL_LENGTH_LEMMA",
+  "lean_name": "foldl_length_lemma",
+  "reviewer": "Source comparison with FOLDL_LENGTH_LEMMA_typed in data_to_word_gc_fun_const_ok_probe.out and HOL source lines 256-276: the fold-result equality premise and final counter q = LENGTH xs * d + k are preserved for an arbitrary payload type, without extra assumptions."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/FromListSnoc.lean",
+  "statement_status": "reviewed_exact",
+  "hol_name": "fromList_SNOC",
+  "lean_name": "fromList_snoc",
+  "reviewer": "Source comparison with fromList_SNOC_typed in data_to_word_gc_fun_const_ok_probe.out and HOL source lines 256-276: the sequential tree result after SNOC, rendered as list append, and insertion at the original list length are preserved for an arbitrary payload type, without extra assumptions."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/FromListSnoc.lean",
+  "statement_status": "reviewed_exact",
+  "hol_name": "fromList2_SNOC",
+  "lean_name": "fromList2_snoc",
+  "reviewer": "Source comparison with fromList2_SNOC_typed in data_to_word_gc_fun_const_ok_probe.out and HOL source lines 256-276: the even-key tree result after SNOC, rendered as list append, and insertion at twice the original list length are preserved for an arbitrary payload type, without extra assumptions."
 }
 ]

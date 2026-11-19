@@ -3213,6 +3213,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.AdjustVar
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.MemoryRelation
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.TerminateLimit
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.OddInter
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.FromListSnoc
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.JoinEnvLocals
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.HeapPointerSizes
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.HeapTraversal

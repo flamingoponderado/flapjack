@@ -256,3 +256,6 @@ val _ = pr_typed "get_vars_1_IMP_typed" data_to_word_gcProofTheory.get_vars_1_IM
 val _ = pr_typed "get_vars_2_IMP_typed" data_to_word_gcProofTheory.get_vars_2_IMP;
 val _ = pr_typed "get_vars_3_IMP_typed" data_to_word_gcProofTheory.get_vars_3_IMP;
 val _ = pr_typed "memory_rel_insert_typed" data_to_word_gcProofTheory.memory_rel_insert;
+val _ = pr_typed "FOLDL_LENGTH_LEMMA_typed" data_to_word_gcProofTheory.FOLDL_LENGTH_LEMMA;
+val _ = pr_typed "fromList_SNOC_typed" data_to_word_gcProofTheory.fromList_SNOC;
+val _ = pr_typed "fromList2_SNOC_typed" data_to_word_gcProofTheory.fromList2_SNOC;
