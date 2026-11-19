@@ -6,6 +6,7 @@ public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.CutOdd
 public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ByteArrayWrite
 public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Space
 public import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.Const
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Unit
 public import Flapjack.FfiBridge
 
 @[expose] public section
@@ -235,5 +236,79 @@ theorem ffi_success_setup_call {width : Nat} [NeZero width] {C F : Type}
     have stackRel := stateRel_doStack conf l1 l2 (DataSem.doLimSafe base (.ffi name) values)
       { target with locals := wordCut } locs (.ffi name) values limRel
     exact ⟨base, baseRun, resultEq, resultStateEq, stackRel⟩
+
+/-- The successful FFI call re-establishes the complete data-to-word state
+relation before the final unit assignment. This is the post-call relation
+assembled in the HOL FFI assignment proof, not a separate HOL declaration. -/
+theorem ffi_success_postState {width : Nat} [NeZero width] {C F : Type}
+    (conf : Config) (l1 l2 : Nat) (source cut resultState : DataSem.State C F)
+    (target : WordSemStateFiniteExact width C F) (locs : List (Nat × Nat))
+    (names : NumSet) (args : List Nat) (values : List DataSem.Value)
+    (name : Basis.Pure.MlString.MlString) (result : DataSem.Value)
+    (related : stateRel conf l1 l2 source target none locs)
+    (cutRun : DataSem.cutStateOpt (some names) source = some cut)
+    (read : DataSem.getVars args source.locals = some values)
+    (run : DataSem.doApp (.ffi name) values cut = .val (result, resultState)) :
+    ∃ (firstVar secondVar : Nat) (config bytes : List (BitVec 8)) (address1 : BitVec width)
+      (wordCut : Spt (WordLocW width)) (ffi : HolFfiState F)
+      (address2 : BitVec width) (updated : List (BitVec 8)),
+      args = [firstVar, secondVar] ∧
+      let empty := name == Basis.Pure.MlString.ofString ""
+      let ptr1 := address1 + wordSemBytesInWord
+      let len1 := BitVec.ofNat width config.length
+      let ptr2 := if empty then 0 else address2 + wordSemBytesInWord
+      let len2 := if empty then 0 else BitVec.ofNat width bytes.length
+      let setupState := { target with locals := (sptInsert 7 (.word len2) (sptInsert 5 (.word ptr2) (sptInsert 3 (.word len1) (sptInsert 1 (.word ptr1) target.locals)))) }
+      let post := { target with locals := wordCut, fpRegs := HolFiniteMapExact.empty, ffi := ffi, memory := (if empty then target.memory else writeBytearrayExact ptr2 updated target.memory target.mdomain target.be) }
+      WordSemStateFiniteExact.evaluate (wordListSeq [
+        .assign 1 (.op .add [realAddr conf (adjustVar firstVar), .const wordSemBytesInWord]),
+        .assign 3 (.op .sub [shiftN .lsr (.load (realAddr conf (adjustVar firstVar)))
+          (width - wordShiftAmount width - conf.lenSize), .const wordSemBytesInWord]),
+        .assign 5 (if empty then .const 0 else
+          .op .add [realAddr conf (adjustVar secondVar), .const wordSemBytesInWord]),
+        .assign 7 (if empty then .const 0 else
+          .op .sub [shiftN .lsr (.load (realAddr conf (adjustVar secondVar)))
+            (width - wordShiftAmount width - conf.lenSize), .const wordSemBytesInWord])]) target =
+        (none, setupState) ∧
+      WordSemStateFiniteExact.evaluate (.ffi name 1 3 5 7 (adjustSets names)) setupState = (none, post) ∧
+      result = DataSem.unitValue ∧
+      stateRel conf l1 l2 resultState post none locs ∧
+      ∀ dest, WordSemStateFiniteExact.evaluate (.assign (adjustVar dest) (.const 2)) post =
+          (none, WordSemStateFiniteExact.setVar (adjustVar dest) (.word 2) post) ∧
+        stateRel conf l1 l2 (DataSem.setVar dest result resultState)
+          (WordSemStateFiniteExact.setVar (adjustVar dest) (.word 2) post) none locs := by
+  classical
+  obtain ⟨firstVar, secondVar, first, second, config, bytes, updated, ffi, address1, address2, wordCut,
+    argsEq, firstRead, secondRead, call, lengthEq, configRead, bytesRead, setupRun, wordCutRun,
+    cutWordRelated, callRun, postMemory, base, baseRun, resultEq, resultStateEq, preparedRel⟩ :=
+    ffi_success_setup_call conf l1 l2 source cut resultState target locs names args values name result
+      related cutRun read run
+  have cutEq := cutStateOpt_some_eq names source cut cutRun
+  simp [DataSem.doSpace, DataLang.opSpaceReset] at baseRun
+  subst base
+  let post := { target with locals := wordCut, fpRegs := HolFiniteMapExact.empty, ffi := ffi, memory := (if name == Basis.Pure.MlString.ofString "" then target.memory else writeBytearrayExact (address2 + wordSemBytesInWord) updated target.memory target.mdomain target.be) }
+  have postRelated : stateRel conf l1 l2 resultState post none locs := by
+    rw [resultStateEq]
+    rcases preparedRel with ⟨hffi, hclock, hhandler, hgc, hcode, horacle, hgood, hshift,
+      htstamp, hglobal, hzero, hpresent, hstack, hlocs, hacc, hmax, hsizes, hlocals, hlim, hmem⟩
+    refine ⟨rfl, hclock, hhandler, hgc, hcode, horacle, hgood, hshift, htstamp, hglobal,
+      hzero, hpresent, hstack, hlocs, hacc, hmax, hsizes, hlocals, hlim, ?_⟩
+    simpa [post, DataSem.doStack, DataSem.doLimSafe, cutEq] using postMemory
+  refine ⟨firstVar, secondVar, config, bytes, address1, wordCut, ffi, address2, updated,
+    argsEq, setupRun, callRun, resultEq, ?_, ?_⟩
+  · by_cases emptyName : name = Basis.Pure.MlString.ofString "" <;>
+      simpa [post, emptyName] using postRelated
+  · intro dest
+    constructor
+    · simp [WordSemStateFiniteExact.evaluate, WordSemStateFiniteExact.wordExp]
+    · have good := postRelated.2.2.2.2.2.2.1
+      have memory := postRelated.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2
+      have unitRoot := Memory.memoryRel_unit conf post.be (holThe resultState.tstamps) resultState.refs
+        resultState.space post.store post.memory post.mdomain _ ⟨memory, good⟩
+      rw [resultEq]
+      have finalRel := stateRel_insertRoot conf l1 l2 resultState post locs dest DataSem.unitValue (.word 2)
+        postRelated (by simpa using unitRoot)
+      by_cases emptyName : name = Basis.Pure.MlString.ofString "" <;>
+        simpa [post, emptyName] using finalRel
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Assign
