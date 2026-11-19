@@ -306,6 +306,9 @@ in
   \\ rfs [GSYM SUB_PLUS]
   )
 end;
+val _ = emit "bignum_alt_thm_typed" data_to_word_memoryProofTheory.bignum_alt_thm;
+val _ = emit "IMP_memory_rel_bignum_alt_typed" data_to_word_memoryProofTheory.IMP_memory_rel_bignum_alt;
+val _ = emit "memory_rel_RefByte_content_typed" data_to_word_memoryProofTheory.memory_rel_RefByte_content;
 val _ = emit "memory_rel_Word64_alt_typed" data_to_word_memoryProofTheory.memory_rel_Word64_alt;
 val _ = emit "word64_alt_thm_typed" data_to_word_memoryProofTheory.word64_alt_thm;
 val _ = emit "heap_store_rel_v_inv_typed" data_to_word_memoryProofTheory.heap_store_rel_v_inv;

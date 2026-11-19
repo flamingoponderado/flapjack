@@ -145179,5 +145179,14 @@
   "fmap_as_finite_support_relation": ["st"],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Source comparison with memory_rel_Word64_alt_typed: the complete memory relation, good_dimindex, exact Word64 representation, space bound and successful header encoding imply the original existential next-free address, current heap and memory, with both store lookups, successful word-list store and complete updated memory relation and pointer. The store is the canonical finite-support map, the value is fixed at 64 bits and all target words use the same positive BitVec width."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "bignum_alt_thm",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/BignumProof.lean",
+  "lean_name": "bignumAlt",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared bignum_alt_thm_typed: the full abstract invariant, equal stack and root prefix lengths, non-small integer premise, exact Bignum data-cell equality with arbitrary tag and payload, and payload-space bound imply an existential successful store and the complete resulting abstract invariant with the original pointer and state updates. HOL words share one positive BitVec width."
 }
 ]
