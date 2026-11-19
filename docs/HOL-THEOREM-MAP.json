@@ -145496,5 +145496,15 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Compared find_diff_str_cmp_thm2_typed: both Abbrev length equalities, original dimensional bounds and good_dimindex, both result witnesses, minimum-length prefixes, find_diff equality and ordinary string/numeric comparison iff are retained. Word8 inputs map to the reviewed fixed-byte character carrier and results use the positive indexed word."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "memory_rel_str_cmp",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/StringCompareMemory.lean",
+  "lean_name": "memoryRelStrCmp",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": ["st"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared memory_rel_str_cmp_typed: both ordered related references and lookups, good_dimindex, both address witnesses, original independent unused existential types beta and gamma, concrete comparison result, and source/numeric comparison iff are retained. HOL type inhabitance is represented by separate Nonempty binders; st uses the canonical finite-support map and the shared word carrier uses positive indexed BitVec."
 }
 ]
