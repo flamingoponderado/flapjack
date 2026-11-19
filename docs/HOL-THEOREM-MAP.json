@@ -143991,5 +143991,17 @@
   "lean_name": "adjustVar_ne_fifteen",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared adjust_var_not_15_typed from data_to_word_gc_fun_const_ok_probe.out with HOL source line 8834: the arbitrary natural-number variable and the inequality between its adjusted slot and 15 are unchanged; adjustVar is the reviewed port of adjust_var."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "memory_rel_Temp",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/MemoryTemp.lean",
+  "lean_name": "memoryRel_temp",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "st"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source comparison with memory_rel_Temp_typed from data_to_word_gc_fun_const_ok_probe.out and HOL source lines 8827-8831: the two full memory relations are equivalent after the finite-map update at Temp i; i is the fixed five-bit word, and w, store, memory and roots retain their shared word width. The store uses the canonical finite-support finite map and HOL words use positive-width BitVecs."
 }
 ]
