@@ -492,6 +492,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Thunk
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Values.Timestamps
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.ValueInv
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.ValueInv.HeapStoreRel
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.ValueInv.Submap
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.ValueInv.HeapExtend
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.ValueInv.Reference
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.ValueInv.Restriction

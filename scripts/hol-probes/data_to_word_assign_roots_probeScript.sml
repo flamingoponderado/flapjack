@@ -118,6 +118,61 @@ in
     simp_tac std_ss [heap_store_rel_def,isSomeDataElement_def] \\ metis_tac [])
 end;
 val _ = emit "heap_store_rel_lemma_typed" heap_store_rel_lemma_replay;
+(* Replay the source-local submap proofs; TRY accommodates an already-simplified final disjunction. *)
+val v_inv_SUBMAP_lemma_replay = let
+  open preamble helperLib dataSemTheory wordSemTheory data_to_wordTheory
+    gc_sharedTheory gc_combinedTheory data_to_word_memoryProofTheory finite_mapTheory
+in
+  Q.prove (`  ∀ck w refs x f tf heap.
+    v_inv conf w refs (x,f,tf,heap) ⇒
+      f ⊑ f1 ∧
+      tf ⊑ tf1 ∧
+      heap_store_rel heap heap1 ⇒
+        v_inv_ck ck conf w refs (x,f1,tf1,heap1)`,
+  completeInduct_on `ck` \\ gvs []
+  \\ rpt gen_tac \\ rpt disch_tac
+  \\ simp [Once v_inv_ck_cases]
+  \\ Cases_on `w` \\ gvs [v_inv_def]
+  >- (
+    Cases_on `small_int (:α) i` \\ gvs []
+    \\ gvs [Bignum_def] \\ pairarg_tac \\ gvs []
+    \\ drule_all heap_store_rel_lemma_replay \\ gvs [])
+  >- (
+    gvs [Word64Rep_def]
+    \\ IF_CASES_TAC \\ gvs []
+    \\ drule_all heap_store_rel_lemma_replay \\ gvs [])
+  >- (
+    Cases_on `l = []` \\ gvs [BlockRep_def]
+    \\ qexists `xs` \\ gvs []
+    \\ reverse $ rw []
+    >- (drule_all heap_store_rel_lemma_replay \\ gvs [])
+    >- gvs [FLOOKUP_DEF, SUBMAP_DEF]
+    \\ gvs [LIST_REL_EL_EQN] \\ rw []
+    \\ last_x_assum $ qspec_then `ck - 1` mp_tac \\ gvs []
+    \\ last_x_assum $ drule_then strip_assume_tac \\ gvs []
+    \\ disch_then drule \\ gvs [])
+  >- gvs [SUBMAP_DEF]
+  >- (
+    disj1_tac \\ gvs [ThunkBlock_def]
+    \\ drule_all heap_store_rel_lemma_replay \\ rw []
+    \\ gvs [FLOOKUP_DEF, SUBMAP_DEF, heap_store_rel_def, ThunkBlock_def]
+    \\ rw []
+    \\ last_x_assum $ qspec_then `ck - 1` mp_tac \\ gvs []
+    \\ disch_then drule \\ gvs [])
+  \\ TRY disj2_tac \\ gvs [] \\ rw []
+  \\ last_x_assum $ qspec_then `ck - 1` mp_tac \\ gvs []
+  \\ disch_then drule \\ gvs [])
+end;
+val v_inv_SUBMAP_replay = let
+  open preamble helperLib dataSemTheory data_to_word_memoryProofTheory finite_mapTheory
+in
+  Q.prove (`!w x. f SUBMAP f1 /\ tf SUBMAP tf1 /\
+    heap_store_rel heap heap1 /\ v_inv conf w refs (x,f,tf,heap) ==>
+    v_inv conf w refs (x,f1,tf1,heap1)`,
+    metis_tac [v_inv_eq, v_inv_SUBMAP_lemma_replay])
+end;
+val _ = emit "v_inv_SUBMAP_lemma_typed" v_inv_SUBMAP_lemma_replay;
+val _ = emit "v_inv_SUBMAP_typed" v_inv_SUBMAP_replay;
 (* Replay the original local functional list-relation theorem. *)
 val EVERY2_f_EQ_replay = let open preamble in
   Q.prove (`!rs ws f. EVERY2 (\v w. f v = w) rs ws <=> MAP f rs = ws`,
