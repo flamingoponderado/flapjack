@@ -144349,5 +144349,19 @@
   "words_as_type_indexed_bitvec": true,
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "Compared the Raise case with data_compile_correct_typed and HOL proof lines 834-843: the original premises and every result and space-failure conclusion are retained. The proof derives target variable reads, exception jump, location suffix and all-destinations post-jump relations; full theorem assembly remains unported. Target maps and words use reviewed representations, and the evaluator inherits the reals_as_rational_cuts real-model assumption in docs/SOUNDNESS.md item 8."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_wordProofScript.sml",
+  "hol_name": "data_compile_correct",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Correct/If.lean",
+  "lean_name": "dataCompileCorrect_if",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the If case with data_compile_correct_typed, data_evaluate_ind_typed and HOL proof lines 909-932: the original premises and every result and space-failure conclusion are retained, with precisely the two branch-conditioned induction hypotheses. The induction abbreviation packages the full original correctness proposition for each branch and source configuration. Full theorem assembly remains unported. Target maps and words use reviewed representations; the evaluator inherits the reals_as_rational_cuts assumption in docs/SOUNDNESS.md item 8."
 }
 ]

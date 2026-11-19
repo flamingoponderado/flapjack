@@ -271,3 +271,4 @@ val _ = pr_typed "lookup_RefByte_location_typed" data_to_word_gcProofTheory.look
 val _ = pr_typed "word_ml_inv_get_vars_IMP_typed" data_to_word_gcProofTheory.word_ml_inv_get_vars_IMP;
 val _ = pr_typed "word_ml_inv_get_var_IMP_typed" data_to_word_gcProofTheory.word_ml_inv_get_var_IMP;
 val _ = pr_typed "word_ml_inv_get_var_IMP_lemma_typed" data_to_word_gcProofTheory.word_ml_inv_get_var_IMP_lemma;
+val _ = pr_typed "data_evaluate_ind_typed" dataSemTheory.evaluate_ind;

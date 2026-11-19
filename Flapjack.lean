@@ -360,6 +360,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.Skip
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.Tick
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.Return
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.Raise
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.If
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.Move
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.LocMerge
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.DecStack
