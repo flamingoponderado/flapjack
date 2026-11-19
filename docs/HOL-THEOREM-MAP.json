@@ -144321,5 +144321,19 @@
   "words_as_type_indexed_bitvec": true,
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "Compared the Tick case with data_compile_correct_typed and HOL proof lines 743-751: the original premises and every result and space-failure conclusion are retained. The proof covers clock-zero timeout and clock decrement; full theorem assembly remains unported. Target maps and words use reviewed representations, and the evaluator inherits the reals_as_rational_cuts real-model assumption in docs/SOUNDNESS.md item 8."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_wordProofScript.sml",
+  "hol_name": "data_compile_correct",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Correct/Return.lean",
+  "lean_name": "dataCompileCorrect_return",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the Return case with data_compile_correct_typed and HOL proof lines 845-868: the original premises and every result and space-failure conclusion are retained. The proof derives target reads and the complete post-flush state relation, including returned roots and stack bounds; full theorem assembly remains unported. Target maps and words use reviewed representations, and the evaluator inherits the reals_as_rational_cuts real-model assumption in docs/SOUNDNESS.md item 8."
 }
 ]
