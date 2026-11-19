@@ -144429,5 +144429,18 @@
     "W2._w2"
   ],
   "reviewer": "Source comparison with gc_lemma_gen_typed in data_to_word_gc_fun_const_ok_probe.out and HOL source lines 7559-7662: all four original premises, seven ordered existential witnesses, collector/decode/pop and store equalities, full quantified failure bound, and post-collection state relation are retained. The gc_lemma_existential_inhabitants qualifier retains the two independent unused inhabited HOL types; st and the word state use canonical finite maps and words share the positive width."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "alloc_lemma_gen",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/AllocLemma.lean",
+  "lean_name": "allocLemma_gen",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared alloc_lemma_gen_typed and its zero HOL hypotheses in data_to_word_gc_fun_const_ok_probe.out with source lines 7753-7776: the full related-state, source-cut and allocation-result premises and both original conditional conclusions are preserved, including the universally quantified failure bound and all success-state equalities. The target state uses canonical finite-support maps and the word, result and target state share the original positive width."
 }
 ]
