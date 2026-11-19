@@ -4,6 +4,7 @@ public import Flapjack.Compiler.Backend.Semantics.BvlSem.EvaluateClock
 public import Flapjack.Compiler.Backend.Semantics.BvlSem.EvaluateHOL
 public import Flapjack.Compiler.Backend.Semantics.BvlProps.ApplyClock
 public import Flapjack.Misc.ClockWeightInduction
+public import Flapjack.SemanticPrimitivesProps.ResultMap
 
 @[expose] public section
 
@@ -623,5 +624,65 @@ theorem decClock_zero {α C F : Type} (_n : α)
     (s : Flapjack.Compiler.Backend.BvlSem.State C F) : decClock 0 s = s := by
   cases s
   simp [decClock]
+
+/-- One decrement after an increment of a nonzero amount. -/
+@[hol "cakeml/compiler/backend/semantics/bvlPropsScript.sml" "dec_clock_1_inc_clock"
+  (fmap_as_finite_support := [refs])]
+theorem decClock_one_incClock {C F : Type} (x : Nat)
+    (s : Flapjack.Compiler.Backend.BvlSem.State C F) (nonzero : x ≠ 0) :
+    decClock 1 (incClock x s) = incClock (x - 1) s := by
+  cases s
+  simp only [decClock, incClock] at *
+  congr 1
+  omega
+
+/-- One decrement commutes with an increment when the clock is nonzero. -/
+@[hol "cakeml/compiler/backend/semantics/bvlPropsScript.sml" "dec_clock_1_inc_clock2"
+  (fmap_as_finite_support := [refs])]
+theorem decClock_one_incClock_comm {C F : Type} (x : Nat)
+    (s : Flapjack.Compiler.Backend.BvlSem.State C F) (nonzero : s.clock ≠ 0) :
+    decClock 1 (incClock x s) = incClock x (decClock 1 s) := by
+  cases s
+  simp only [decClock, incClock] at *
+  congr 1
+  omega
+
+/-- A decrement that does not exhaust the clock commutes with an increment. -/
+@[hol "cakeml/compiler/backend/semantics/bvlPropsScript.sml" "dec_clock_inc_clock"
+  (fmap_as_finite_support := [refs])]
+theorem decClock_incClock {C F : Type} (n x : Nat)
+    (s : Flapjack.Compiler.Backend.BvlSem.State C F) (enough : ¬ s.clock < n) :
+    decClock n (incClock x s) = incClock x (decClock n s) := by
+  cases s
+  simp only [decClock, incClock] at *
+  congr 1
+  omega
+
+/-- Flapjack helper comparing the clock-replacement result with HOL's
+`map_result` form of clock increment.  It has no separate HOL declaration. -/
+theorem setClockResult_eq_mapResult {C F : Type} (x : Nat) (y : State C F)
+    (result : Result (BvlSem.Value × State C F) BvlSem.Value) :
+    setClockResult (y.clock + x) result =
+      Flapjack.SemanticPrimitivesProps.mapResult
+        (fun (v, s) => (v, { s with clock := x + y.clock })) id result := by
+  cases result with
+  | err error =>
+    cases error <;> rfl
+  | val pair =>
+    obtain ⟨value, next⟩ := pair
+    simp [setClockResult, Flapjack.SemanticPrimitivesProps.mapResult, Nat.add_comm]
+
+/-- Incrementing the clock before applying a primitive increments the result
+clock, as HOL's `map_result` statement says. -/
+@[hol "cakeml/compiler/backend/semantics/bvlPropsScript.sml" "do_app_inc_clock"
+  (fmap_as_finite_support := [refs])]
+theorem doApp_incClock {C F : Type} (op : ClosLang.Op) (vs : List BvlSem.Value) (x : Nat)
+    (y : Flapjack.Compiler.Backend.BvlSem.State C F) :
+    doApp op vs (incClock x y) =
+      Flapjack.SemanticPrimitivesProps.mapResult
+        (fun (v, s) => (v, { s with clock := x + y.clock })) id (doApp op vs y) := by
+  have hinc : incClock x y = { y with clock := y.clock + x } := by simp [incClock]
+  rw [hinc, doApp_setClock]
+  exact setClockResult_eq_mapResult x y (doApp op vs y)
 
 end Flapjack.Compiler.Backend.BvlProps
