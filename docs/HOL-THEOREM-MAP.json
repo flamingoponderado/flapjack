@@ -143839,4 +143839,13 @@
     "statement_status": "reviewed_exact",
     "reviewer": "typed HOL source comparison (lab_to_target_proof_typed_probe.out, FILTER_mmio_pcs_min_index_typed): source6678-6700. `EVERY (fun x. exists op. x = SharedMem op) l ==> mmio_pcs_min_index (FILTER (fun x. exists s. x = ExtCall s) ffis ++ l) = SOME (LENGTH (FILTER (fun x. exists s. x = ExtCall s) ffis))`; the capture keeps l and ffis as ffiname lists. EVERY is the Prop form forall x IN l, one premise. The FILTER predicate is stated inline as `fun x => by classical exact decide (exists s, x = HolFfiName.extCall s)`, matching HOL's `fun x. exists s. x = ExtCall s`; the proof rewrites it to the Boolean constructor test isExtCall, documented beside it as Flapjack infrastructure naming that exists-ExtCall predicate. mmio_pcs_min_index is the tagged mmioPcsMinIndex, whose proof goes through the tagged mmioPcsMinIndex_eq_some and the existing boundary machinery. No word or finite-map carrier."
   }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "FILTER_NOT_MEM_Mapped",
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/ShmemNames.lean",
+    "lean_name": "filter_notMemMapped",
+    "statement_status": "reviewed_exact",
+    "reviewer": "typed HOL source comparison (lab_to_target_proof_local_typed_probe.out, FILTER_NOT_MEM_Mapped_typed): source9745-9749. `~MEM \"MappedRead\" (FILTER (\\x. x <> \"MappedRead\" /\\ x <> \"MappedWrite\") (l : string list)) /\\ ~MEM \"MappedWrite\" (FILTER (\\x. x <> \"MappedRead\" /\\ x <> \"MappedWrite\") l)`; the capture keeps l free as a `string list`. HOL `string` is `char list`, rendered as `List HolChar`; the `\"MappedRead\"`/`\"MappedWrite\"` string literals are `MlString.explode (ofString ...)`, the exact character-code list of HOL's `strlit`. MEM is membership and the FILTER predicate is stated inline as HOL writes it; there is no premise, and both conjuncts keep HOL's orientation. No word or finite-map carrier."
+  }
 ]
