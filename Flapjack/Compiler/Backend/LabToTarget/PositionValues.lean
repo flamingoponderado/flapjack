@@ -46,6 +46,17 @@ theorem secPosVal_tooBig {width : Nat} [NeZero width] (i pos : Nat)
       apply ih
       omega
 
+/-- Exact HOL `sec_pos_val_acc` (`lab_to_targetProofScript.sml:6451-6455`):
+the script's second copy of the position bound, with the source's binder names
+`l n i` rather than `i pos lines`. -/
+@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
+  "sec_pos_val_acc" (words_as_type_indexed_bitvec)]
+theorem secPosValAcc {width : Nat} [NeZero width]
+    (l : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
+      (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))) (n i : Nat) :
+    lenNoLab l ≤ i → secPosVal i n l = none :=
+  secPosVal_tooBig i n l
+
 @[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
   "EVERY_is_Label_sec_pos_val" (words_as_type_indexed_bitvec)]
 theorem everyIsLabel_secPosVal {width : Nat} [NeZero width] (n pos : Nat)

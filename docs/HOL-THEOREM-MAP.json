@@ -143783,4 +143783,41 @@
     "statement_status": "reviewed_exact",
     "reviewer": "typed HOL source comparison (lab_to_target_proof_typed_probe.out, not_Sh_Ext_typed): source7447-7450. `(forall s. x <> SharedMem s) <=> (exists s. x = ExtCall s)`; the capture keeps x : ffiname free with s : shmem_op on the left and s : mlstring on the right. Both quantifiers stay separate binders; no premise and no word carrier."
   }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "EVERY_is_Label_add_nop",
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/AddNopProps.lean",
+    "lean_name": "everyIsLabel_addNop_eq",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (lab_to_target_proof_typed_probe.out, EVERY_is_Label_add_nop_typed): source3280-3284. `forall nop ls. EVERY is_Label ls ==> add_nop nop ls = ls`; the capture keeps nop : word8 list and ls : alpha line list. EVERY is the Prop form forall line IN ls, isLabelHOL line = true, the same rendering as the sibling EVERY_is_Label_add_nop_preserved port; add_nop is the tagged addNop. One premise, conclusion unchanged; the only carrier translation is HOL's type-indexed word to BitVec width."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "sec_pos_val_acc",
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/PositionValues.lean",
+    "lean_name": "secPosValAcc",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (lab_to_target_proof_local_typed_probe.out, sec_pos_val_acc_typed): source6451-6455. `forall l n i. len_no_lab l <= i ==> sec_pos_val i n l = NONE`; the capture spells len_no_lab out as LENGTH (FILTER (not o is_Label) l) and binds l, n, i in that order. len_no_lab is the tagged lenNoLab, sec_pos_val the tagged secPosVal; one premise. This is the script's second copy of the same proposition as sec_pos_val_too_big (different binder names/order), and the Lean declaration is a separate tagged statement proved from the earlier port."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "get_labels_upd_lab_len",
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/CodeSimilar/LabelUpdates.lean",
+    "lean_name": "getLabels_updLabLen",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (lab_to_target_proof_typed_probe.out, get_labels_upd_lab_len_typed): source5181-5184. `get_labels (upd_lab_len pos code) = get_labels code`; the capture keeps pos : num and code : alpha sec list. get_labels is the tagged getLabels, upd_lab_len the tagged updLabLen; HOL derives the equality from code_similar_get_labels, code_similar_upd_lab_len and code_similar_refl, and the Lean proof does the same through the tagged codeSimilar_updLabLen, codeSimilar_refl and codeSimilar_labels. No premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "sec_labels_ok_filter_skip",
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/FilterSkipSafety.lean",
+    "lean_name": "secLabelsOk_filterSkip",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (lab_to_target_proof_typed_probe.out, sec_labels_ok_filter_skip_typed): source3601-3612. `forall code. EVERY sec_labels_ok (filter_skip code) <=> EVERY sec_labels_ok code`; the capture keeps code : alpha sec list. EVERY is the Prop form forall sec IN code, secLabelsOk sec, filter_skip is the tagged filterSkip and sec_labels_ok the tagged secLabelsOk; HOL's Boolean <=> becomes <-> of the two Prop forms. The per-section step uses the Flapjack helper secLabelOk_of_notSkip_false (a not_skip-removed line is not a label, which HOL discharges by EVAL_TAC), documented beside it as infrastructure with no separate HOL declaration."
+  }
 ]
