@@ -1,5 +1,6 @@
 module
 
+public import Flapjack.Compiler.Backend.Semantics.DataSem.State
 public import Flapjack.Compiler.Backend.Semantics.WordSem.Accessors
 public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.StateConst
 
@@ -76,4 +77,21 @@ theorem getVars_three_imp {width : Nat} [NeZero width] {C F : Type}
     cases c : WordSemStateFiniteExact.getVar x3 s <;>
     simp_all [WordSemStateFiniteExact.getVars]
 
+/-- Successful source-environment reads of a cons split into their two reads. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "get_vars_SOME_IFF_data"]
+theorem getVars_some_iff_data {α : Type} (t : Spt α) (x : Nat) (xs : List Nat) (y : α) (ys : List α) :
+    (DataSem.getVars [] t = some [] ↔ True) ∧
+    (DataSem.getVars (x :: xs) t = some (y :: ys) ↔
+      DataSem.getVar x t = some y ∧ DataSem.getVars xs t = some ys) := by
+  simp only [DataSem.getVars]
+  cases h : DataSem.getVar x t <;> cases h2 : DataSem.getVars xs t <;> simp_all
+/-- Successful source-environment reads have exactly the corresponding list shape. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "get_vars_SOME_IFF_data_eq"]
+theorem getVars_some_iff_data_eq {α : Type} (t : Spt α) (x : Nat) (xs : List Nat) (z : List α) :
+    (DataSem.getVars [] t = some z ↔ z = []) ∧
+    (DataSem.getVars (x :: xs) t = some z ↔
+      ∃ y ys, z = y :: ys ∧ DataSem.getVar x t = some y ∧ DataSem.getVars xs t = some ys) := by
+  cases z <;> simp [DataSem.getVars]
+  all_goals cases h : DataSem.getVar x t <;> cases h2 : DataSem.getVars xs t <;> simp_all
+  exact ⟨fun ⟨a, b⟩ => ⟨a.symm, b.symm⟩, fun ⟨a, b⟩ => ⟨a.symm, b.symm⟩⟩
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

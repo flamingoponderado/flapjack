@@ -260,3 +260,5 @@ val _ = pr_typed "FOLDL_LENGTH_LEMMA_typed" data_to_word_gcProofTheory.FOLDL_LEN
 val _ = pr_typed "fromList_SNOC_typed" data_to_word_gcProofTheory.fromList_SNOC;
 val _ = pr_typed "fromList2_SNOC_typed" data_to_word_gcProofTheory.fromList2_SNOC;
 val _ = pr_typed "state_rel_IMP_Number_arg_typed" data_to_word_gcProofTheory.state_rel_IMP_Number_arg;
+val _ = pr_typed "get_vars_SOME_IFF_data_typed" data_to_word_gcProofTheory.get_vars_SOME_IFF_data;
+val _ = pr_typed "get_vars_SOME_IFF_data_eq_typed" data_to_word_gcProofTheory.get_vars_SOME_IFF_data_eq;
