@@ -147,4 +147,26 @@ theorem shiftEqBytesInWord {width : Nat} [NeZero width] (w : BitVec width) :
     apply BitVec.eq_of_toNat_eq
     simp [BitVec.toNat_shiftLeft, Nat.shiftLeft_eq, wordShiftAmount, bytesInWord]
 
+/-- HOL `LIST_REL_lemma` (`word_bignumProofScript.sml:668`): a pointwise
+relation implication over members of both lists lifts to `LIST_REL`. HOL's `P`
+and `Q` are Boolean relations, rendered here as `= true`, and HOL's
+`LIST_REL` is `List.Forall₂`. -/
+@[hol "cakeml/compiler/backend/proofs/word_bignumProofScript.sml" "LIST_REL_lemma"]
+theorem listRelLemma {α β : Type} (P Q : α → β → Bool) (xs : List α) (ys : List β)
+    (h : ∀ x y, (x ∈ xs ∧ y ∈ ys) → P x y = true → Q x y = true) :
+    List.Forall₂ (fun x y => P x y = true) xs ys →
+      List.Forall₂ (fun x y => Q x y = true) xs ys := by
+  induction xs generalizing ys with
+  | nil =>
+    intro hrel
+    cases hrel
+    exact .nil
+  | cons head tail ih =>
+    intro hrel
+    cases hrel with
+    | cons hP htail =>
+      refine .cons (h head _ ⟨List.mem_cons_self, List.mem_cons_self⟩ hP) (ih _ ?_ htail)
+      intro a b hab hp
+      exact h a b ⟨List.mem_cons_of_mem _ hab.1, List.mem_cons_of_mem _ hab.2⟩ hp
+
 end Flapjack.Compiler.Backend.WordBignum
