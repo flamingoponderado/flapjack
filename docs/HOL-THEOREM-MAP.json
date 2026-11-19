@@ -145139,5 +145139,34 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "Source comparison against evaluate_Seq_Seq_typed: HOL binds p1 p2 p3 t1 in that order and states evaluate (Seq p1 (Seq p2 p3),t1) = evaluate (Seq (Seq p1 p2) p3,t1). Lean keeps the same binders and both sides, with the program over BitVec width and independent C and F parameters for the state's other two type arguments. The proof expands the rebound Seq clause (fix_clock_evaluate applied, as HOL does with its rebound evaluate_def) and splits on the evaluate p1 and evaluate p2 results; HOL's induction over p1 is not needed because the clause only plumbs those results. Inherits the reviewed reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8) through the evaluator's inst clause; the lemma is a dependent, not itself qualified."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "word_list_APPEND",
+    "hol_line": 499,
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/HeapLemmas.lean",
+    "lean_name": "wordListAppendWordBignum",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison against word_list_APPEND_typed: HOL binds xs ys a in that order and states word_list a (xs ++ ys) = word_list a xs * word_list (a + n2w (LENGTH xs) * bytes_in_word) ys. Lean keeps the same binders, the same star, and HOL's product order (BitVec.ofNat width xs.length * bytesInWord width); bytesInWord is the reviewed width-indexed bytes_in_word (width / 8). The fact is the same as the tagged stack_removeProof port, and the proof is that lemma plus commutativity of word multiplication, so the commuted product order of that port does not leak into this statement."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "list_update_def",
+    "hol_line": 527,
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/HeapLemmas.lean",
+    "lean_name": "listUpdateSpt",
+    "statement_status": "reviewed_total_function_inhabitants",
+    "total_function_inhabitants": ["α"],
+    "reviewer": "Source comparison against list_update_def_typed: the three source clauses in order are list_update [] ys t = t, list_update (x::xs) (y::ys) t = insert x y (list_update xs ys t), and list_update (x::xs) [] t = insert x ARB (list_update xs [] t). Lean keeps that clause order, the key list and payload list, and the sptree insert on the reviewed Spt carrier; the unspecified ARB payload is the shared opaque holArb, so the only added binder is the carrier's Nonempty instance, recorded by total_function_inhabitants."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "domain_list_update",
+    "hol_line": 575,
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/HeapLemmas.lean",
+    "lean_name": "domainListUpdate",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison against domain_list_update_typed: HOL binds xs ys x t in that order and states x IN domain (list_update xs ys t) <=> MEM x xs \/ x IN domain t. Lean keeps those binders and both sides; HOL's domain membership is the reviewed sptMem on the Spt carrier and MEM is list membership. The signature carries the carrier's Nonempty instance only because listUpdateSpt needs it for ARB; it does not appear in the statement's terms, and this declaration does not itself use a total-function rendering, so total_function_inhabitants is not claimed here."
   }
 ]
