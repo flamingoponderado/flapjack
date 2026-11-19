@@ -23708,6 +23708,23 @@
   "reviewer": "Compared stack_rel_simp_typed: both full relation equivalences preserve the existential ordinary and exception frame structure, including all three handler components. HOL words use positive-width BitVecs."
 },
 {
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "join_env_EQ_ZIP",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/JoinZip.lean", "lean_name": "joinEnv_eq_zip",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec", "words_as_type_indexed_bitvec": true, "total_function_inhabitants": ["β"],
+  "reviewer": "Compared join_env_EQ_ZIP_typed: retains all three premises and exact zipped join equality over independent environment payload β and word width. Nonempty β solely renders HOL THE in joinEnv; HOL words use positive-width BitVecs."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "LENGTH_MAP_SND_join_env_IMP",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/JoinZip.lean", "lean_name": "length_filter_snd_joinEnv_imp",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec", "words_as_type_indexed_bitvec": true, "total_function_inhabitants": ["β"],
+  "reviewer": "Compared LENGTH_MAP_SND_join_env_IMP_typed: full list relation, valid keys and length premise imply equality of both filtered word counts; independent β solely uses Nonempty for HOL THE, and HOL words use positive-width BitVecs."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "lemma1",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/JoinZip.lean", "lean_name": "lemma1",
+  "statement_status": "reviewed_exact", "reviewer": "Compared lemma1_typed: independent y, x, and result types, the original conjunction order, and the complete two-argument congruence conclusion."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "cut_env_IMP_MEM",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CutEnvProperties.lean", "lean_name": "cutEnv_imp_mem",
   "statement_status": "reviewed_exact", "reviewer": "Compared cut_env_IMP_MEM_typed: successful source cut makes an arbitrary key present exactly when it is present in the requested set."

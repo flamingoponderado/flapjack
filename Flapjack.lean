@@ -291,6 +291,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.OptionLe
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Limits
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Mask
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.StackRel
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.JoinZip
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.CodeRelation
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.CodeOracleRelation
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.StateRelation
