@@ -38,7 +38,7 @@ private theorem getByte_distinct {width : Nat} [NeZero width] (a b : BitVec widt
         BitVec.getLsbD_of_ge byte _ (by omega)]
 
 /-- Distinct in-range addresses select distinct byte slots (Flapjack helper). -/
-private theorem indexDistinct {width : Nat} [NeZero width] (j i : Nat) (be : Bool)
+theorem indexDistinct {width : Nat} [NeZero width] (j i : Nat) (be : Bool)
     (good : goodDimindex width) (jbound : j < width / 8) (ibound : i < width / 8) (hne : i ≠ j) :
     byteIndex (BitVec.ofNat width i) be ≠ byteIndex (BitVec.ofNat width j) be := by
   have ib : i < 2 ^ width := by rcases good with hw | hw <;> subst width <;> norm_num at ibound ⊢ <;> omega

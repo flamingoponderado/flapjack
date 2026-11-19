@@ -53,16 +53,6 @@ theorem setByte_commute {width : Nat} [NeZero width] (a b : BitVec width)
     simp [ina, notB]
   · by_cases inb : byteIndex b be ≤ j ∧ j < byteIndex b be + 8 <;> simp [ina, inb]
 
-/-- In-range byte positions select different lanes. -/
-private theorem indexDistinct {width : Nat} [NeZero width] (j i : Nat) (be : Bool)
-    (good : goodDimindex width) (jbound : j < width / 8) (ibound : i < width / 8) (hne : i ≠ j) :
-    byteIndex (BitVec.ofNat width i) be ≠ byteIndex (BitVec.ofNat width j) be := by
-  have ib : i < 2 ^ width := by rcases good with hw | hw <;> subst width <;> norm_num at ibound ⊢ <;> omega
-  have jb : j < 2 ^ width := by rcases good with hw | hw <;> subst width <;> norm_num at jbound ⊢ <;> omega
-  simp only [byteIndex, BitVec.toNat_ofNat, Nat.mod_eq_of_lt ib, Nat.mod_eq_of_lt jb,
-    Nat.mod_eq_of_lt ibound, Nat.mod_eq_of_lt jbound]
-  split <;> omega
-
 /-- Updating one byte of a bounded packed group agrees with writing that byte
 into its corresponding lane of the packed word. -/
 theorem bytesToWord_setByte_aux {width : Nat} [NeZero width] (count start : Nat)
