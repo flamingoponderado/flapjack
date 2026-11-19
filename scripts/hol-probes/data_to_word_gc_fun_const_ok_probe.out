@@ -189,3 +189,4 @@ data_evaluate_ind_typed=∀(P :dataLang$prog # (γ, 'ffi) dataSem$state -> bool)
 cut_names_adjust_set_insert_ODD_typed=ODD (n :num) ⇒ cut_names (adjust_set (the_names :β sptree$num_map)) (insert n (w :α) (s :α sptree$num_map) :α sptree$num_map) = cut_names (adjust_set the_names) s
 alloc_locals_insert_1_typed=alloc (k :α word) (adjust_sets (names :δ sptree$num_map)) ((t :(α, β, γ) wordSem$state) with locals := (insert (1 :num) (w :α word_loc) t.locals :α word_loc sptree$num_map)) = alloc k (adjust_sets names) t
 cut_names_adjust_set_insert_ODD_result_type=wordSem$cut_names : :α sptree$num_map option
+has_space_state_rel_typed=has_space (Word (alloc_size (k :num) :α word)) (r :(α, γ, 'ffi) wordSem$state) = SOME T ∧ (state_rel (c :data_to_word$config) (l1 :num) (l2 :num) (s :(γ, 'ffi) dataSem$state) r (NONE :(v # α word_loc) list option) (locs :(num # num) list) :bool) ⇒ (state_rel c l1 l2 (s with space := k) r (NONE :(v # α word_loc) list option) locs :bool)

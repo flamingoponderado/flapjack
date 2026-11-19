@@ -144398,5 +144398,18 @@
   ],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Source comparison with alloc_locals_insert_1_typed and HOL source lines 7976-7987: equality holds for the full allocation result and final state after insertion of any word location at key one; name-set payload and compiler/FFI state types remain independent. The word state uses canonical finite maps and a shared positive width."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "has_space_state_rel",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/HasSpace.lean",
+  "lean_name": "hasSpace_stateRel",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared has_space_state_rel_typed in data_to_word_gc_fun_const_ok_probe.out with HOL source lines 7664-7684: a successful check of Word (alloc_size k) and the complete input state relation imply the complete state relation with source space set to k, with no added assumptions. Source and target state parameters match, target finite maps use canonical support, and all words share the positive width."
 }
 ]
