@@ -155,6 +155,94 @@ theorem Corr_move_pre {width : Nat} [NeZero width]
     (b = true → Corr code s f p) ↔ Corr code s f (b && p) := by
   cases b <;> simp [Corr]
 
+/-! ### Boolean guards for the `Corr` rules
+
+HOL's `Corr` guard is a `bool` built from the Boolean `eval_exp_pre`,
+`eval_ri_pre` and `FDOM` tests. Lean's `evalExpPre`/`evalRiPre` are
+propositions, so the guards are stated with `decide`; these Flapjack-only
+instances make those propositions decidable. -/
+
+/-- Flapjack-only decision procedure for the mini-language expression
+precondition, mirroring the tagged `evalExpPre` clauses. -/
+noncomputable instance evalExpPreDecidable {width : Nat} [NeZero width] (s : MiniState width) :
+    ∀ x : WordLangExpHOL (BitVec width), Decidable (evalExpPre s x)
+  | .const _ => isTrue trivial
+  | .var v => decidable_of_iff (s.regs.lookup v ≠ none) (by simp [evalExpPre])
+  | .op _ [x, y] => by
+      haveI := evalExpPreDecidable s x
+      haveI := evalExpPreDecidable s y
+      exact decidable_of_iff (evalExpPre s x ∧ evalExpPre s y) (by simp [evalExpPre])
+  | .shift _ x1 x2 => by
+      haveI := evalExpPreDecidable s x1
+      haveI := evalExpPreDecidable s x2
+      exact decidable_of_iff
+        (evalExpPre s x1 ∧ evalExpPre s x2 ∧ (evalExp s x2).toNat < 32)
+        (by simp [evalExpPre])
+  | .lookup _ => isFalse (by simp [evalExpPre])
+  | .load _ => isFalse (by simp [evalExpPre])
+  | .op _ [] => isFalse (by simp [evalExpPre])
+  | .op _ [_] => isFalse (by simp [evalExpPre])
+  | .op _ (_ :: _ :: _ :: _) => isFalse (by simp [evalExpPre])
+
+/-- Flapjack-only decision procedure for the mini-language register-or-immediate
+precondition, mirroring the tagged `evalRiPre` clauses. -/
+noncomputable instance evalRiPreDecidable {width : Nat} [NeZero width] (s : MiniState width) :
+    ∀ ri : WordRegImm (BitVec width), Decidable (evalRiPre s ri)
+  | .reg r => evalExpPreDecidable s (.var r)
+  | .imm _ => isTrue trivial
+
+/-- HOL `Corr_Assign`: an assignment evaluates to the written state when its
+expression precondition holds. HOL's Boolean guard is the decided proposition. -/
+@[hol "cakeml/compiler/backend/proofs/word_bignumProofScript.sml" "Corr_Assign"
+  (fmap_as_finite_support := [regs]) (words_as_type_indexed_bitvec)]
+theorem Corr_Assign {width : Nat} [NeZero width] (n : Nat)
+    (x : WordLangExpHOL (BitVec width)) (s : MiniState width) :
+    Corr (.assign n x) s (.inr (regWrite n (some (evalExp s x)) s))
+      (decide (evalExpPre s x)) := by
+  intro h
+  exact Eval.assign none s x n (of_decide_eq_true h)
+
+/-- HOL `Corr_Load`: loading a register from an array evaluates to the written
+state when the index register is live and the index is in bounds. -/
+@[hol "cakeml/compiler/backend/proofs/word_bignumProofScript.sml" "Corr_Load"
+  (fmap_as_finite_support := [regs]) (words_as_type_indexed_bitvec)]
+theorem Corr_Load {width : Nat} [NeZero width] (r i : Nat) (a : Address)
+    (s : MiniState width) :
+    Corr (.load r i a) s
+      (.inr (regWrite r (some (holEl (holFapply s.regs i).toNat (s.arrays a))) s))
+      (decide (i ∈ s.regs.dom ∧ (holFapply s.regs i).toNat < (s.arrays a).length)) := by
+  intro h
+  rw [decide_eq_true_eq] at h
+  obtain ⟨hdom, hbound⟩ := h
+  cases hl : s.regs.lookup i with
+  | none => exact absurd hl hdom
+  | some w =>
+    rw [holFapply_of_lookup hl] at hbound ⊢
+    exact Eval.load none s r i a w hl hbound
+
+/-- HOL `Corr_Store`: storing a register into the out array evaluates to the
+written state when both registers are live and the index is in bounds. -/
+@[hol "cakeml/compiler/backend/proofs/word_bignumProofScript.sml" "Corr_Store"
+  (fmap_as_finite_support := [regs]) (words_as_type_indexed_bitvec)]
+theorem Corr_Store {width : Nat} [NeZero width] (r i : Nat) (s : MiniState width) :
+    Corr (.store r i) s
+      (.inr (arrayWrite .out
+        ((s.arrays .out).set (holFapply s.regs i).toNat (holFapply s.regs r)) s))
+      (decide (r ∈ s.regs.dom ∧ i ∈ s.regs.dom ∧
+        (holFapply s.regs i).toNat < (s.arrays .out).length)) := by
+  intro h
+  rw [decide_eq_true_eq] at h
+  obtain ⟨hdomR, hdomI, hbound⟩ := h
+  cases hl : s.regs.lookup i with
+  | none => exact absurd hl hdomI
+  | some w =>
+    cases hr : s.regs.lookup r with
+    | none => exact absurd hr hdomR
+    | some wr =>
+      rw [holFapply_of_lookup hl] at hbound ⊢
+      rw [holFapply_of_lookup hr]
+      exact Eval.store none s r i w wr hl hr hbound
+
 /-- HOL `loop_app_EQ` (`word_bignumProofScript.sml:1864`): the two shapes in
 which `loop_app` returns a state with a true guard, one for each side of the
 body result. -/
