@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.Semantics.BvlSem.Measure
+public import Mathlib.Data.List.Basic
 
 @[expose] public section
 
@@ -42,5 +43,19 @@ decreasing_by
   all_goals simp only [expsWeight, expWeight]
   all_goals try (have := BvlSem.expWeight_pos y)
   all_goals omega
+
+private theorem bVarBound_cons_iff (P : Nat) (x : Bvl.Exp) (xs : List Bvl.Exp) :
+    bVarBound P (x :: xs) ↔ bVarBound P [x] ∧ bVarBound P xs := by
+  cases xs with
+  | nil => simp [bVarBound]
+  | cons y ys => simp [bVarBound]
+
+/-- The recursive variable-bound predicate is the list-wide singleton form. -/
+@[hol "cakeml/compiler/backend/semantics/bvlPropsScript.sml" "bVarBound_EVERY"]
+theorem bVarBound_every (P : Nat) (ls : List Bvl.Exp) :
+    bVarBound P ls ↔ ls.Forall (fun e => bVarBound P [e]) := by
+  induction ls with
+  | nil => simp [bVarBound]
+  | cons x xs ih => rw [bVarBound_cons_iff, List.forall_cons, ih]
 
 end Flapjack.Compiler.Backend.BvlProps
