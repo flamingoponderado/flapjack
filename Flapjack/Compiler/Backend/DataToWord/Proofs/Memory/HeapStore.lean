@@ -36,6 +36,15 @@ noncomputable def heapStoreUnusedAlt {α β : Type} (offset length : Nat)
 def heapStoreRel {α β : Type} (heap heap2 : List (HeapElement α β)) : Prop :=
   ∀ ptr, isSomeDataElement (heapLookup ptr heap) → heapLookup ptr heap2 = heapLookup ptr heap
 
+/-- A preserved data-cell lookup retains its exact element. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "heap_store_rel_lemma"]
+theorem heapStoreRel_data {α β : Type} (h1 h2 : List (HeapElement α β))
+    (n : Nat) (ys : List (HeapAddress α)) (l : Nat) (d : β) :
+    heapStoreRel h1 h2 ∧ heapLookup n h1 = some (.dataElement ys l d) →
+      heapLookup n h2 = some (.dataElement ys l d) := by
+  rintro ⟨rel, found⟩
+  rw [rel n ⟨ys, l, d, found⟩, found]
+
 /-- A successful store leaves lookups before its target unchanged; this
 supports the original unused-region allocation theorem. -/
 private theorem heapStore_lookup_before {α β : Type} (heap : List (HeapElement α β))

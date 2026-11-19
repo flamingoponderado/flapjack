@@ -109,6 +109,15 @@ val _ = emit "maxout_bits_bit_typed" data_to_word_memoryProofTheory.maxout_bits_
 val _ = emit "maxout_bits_IMP_typed" data_to_word_memoryProofTheory.maxout_bits_IMP;
 val _ = emit "get_lowerbits_ptrbits_typed" data_to_word_memoryProofTheory.get_lowerbits_ptrbits;
 val _ = emit "make_cons_ptr_thm_typed" data_to_word_memoryProofTheory.make_cons_ptr_thm;
+(* Replay the local exact data-lookup consequence of heap_store_rel. *)
+val heap_store_rel_lemma_replay = let
+  open preamble helperLib gc_sharedTheory data_to_word_memoryProofTheory
+in
+  Q.prove (`heap_store_rel h1 h2 /\ (heap_lookup n h1 = SOME (DataElement ys l d)) ==>
+    (heap_lookup n h2 = SOME (DataElement ys l d))`,
+    simp_tac std_ss [heap_store_rel_def,isSomeDataElement_def] \\ metis_tac [])
+end;
+val _ = emit "heap_store_rel_lemma_typed" heap_store_rel_lemma_replay;
 (* Replay the original local functional list-relation theorem. *)
 val EVERY2_f_EQ_replay = let open preamble in
   Q.prove (`!rs ws f. EVERY2 (\v w. f v = w) rs ws <=> MAP f rs = ws`,
@@ -297,6 +306,7 @@ in
   \\ rfs [GSYM SUB_PLUS]
   )
 end;
+val _ = emit "heap_store_rel_v_inv_typed" data_to_word_memoryProofTheory.heap_store_rel_v_inv;
 val _ = emit "memory_rel_Cons1_typed" data_to_word_memoryProofTheory.memory_rel_Cons1;
 val _ = emit "store_list_thm_typed" data_to_word_memoryProofTheory.store_list_thm;
 val _ = emit "heap_store_unused_alt_IMP_length_typed" data_to_word_memoryProofTheory.heap_store_unused_alt_IMP_length;

@@ -145142,5 +145142,23 @@
   ],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Source comparison: memory_rel_Cons1 and its typed capture retain the full input memory relation, equal field lengths, nonempty values, successful header encoding, space bound and good_dimindex. The existential free/current addresses and memory retain both store lookups, successful word-list store and full post memory relation with NextFree updated and constructor pointer. The store uses the canonical finite-support map and HOL words share one positive BitVec width."
+} ,
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "heap_store_rel_lemma",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/HeapStore.lean",
+  "lean_name": "heapStoreRel_data",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed replay of the local HOL proof: independently typed heap elements, preservation relation and a data-element lookup imply the identical lookup in the second heap."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "heap_store_rel_v_inv",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/ValueInv/HeapStoreRel.lean",
+  "lean_name": "heapStoreRel_valueInv",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_parameters": ["f", "tf"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source comparison with the typed HOL theorem: the heap-store relation and full value invariant imply the same invariant over the second heap, retaining the value, address, reference tree, and independently quantified reference and timestamp maps. Both maps use the canonical finite-support carrier, and HOL words use positive-width BitVec."
 }
 ]
