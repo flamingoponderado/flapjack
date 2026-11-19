@@ -145591,5 +145591,13 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Compared cut_envs_lookup_0_typed: the independently polymorphic name-tree payload, both cut and environment-list equations, location lookup premise and both lookup conclusions agree with HOL; the word carrier uses the named positive-width translation."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "cut_envs_inter",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/CutEnvDomain.lean",
+  "lean_name": "cutEnvs_inter",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared cut_envs_inter_typed: independently polymorphic source and target tree payloads, both successful cut equations, and the exact intersection of fromAList (toAList first) with the adjusted source cut agree with HOL. The printed isEmpty is HOL equality to LN."
 }
 ]

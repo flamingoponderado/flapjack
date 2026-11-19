@@ -24,4 +24,29 @@ theorem in_adjustVar_lemma {α β : Type} (names : NumSet) (source cut : Spt α)
   | none => simp [found] at targetLookup
   | some value => exact (sptMem_iff_lookup _ _).mpr ⟨value, found⟩
 
+/-- The reserved-location cut is disjoint from adjusted source variables. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml" "cut_envs_inter"]
+theorem cutEnvs_inter {α β : Type} (names : NumSet) (target first second : Spt β)
+    (source cut : Spt α)
+    (premises : wordSemCutEnvs (adjustSets names) target = some (first, second) ∧
+      DataSem.cutEnv names source = some cut) :
+    sptInter (sptFromAList (sptToAList first)) (adjustSet cut) = .ln := by
+  have run := premises.1
+  by_cases h1 : LoopSemStateFiniteExact.sptSubsetLive (adjustSets names).1 target <;>
+    by_cases h2 : LoopSemStateFiniteExact.sptSubsetLive (adjustSets names).2 target <;>
+    simp [wordSemCutEnvs, wordSemCutNames, h1, h2] at run
+  obtain ⟨firstEq, _⟩ := run
+  apply (sptEqThm _ _ ⟨sptWfInter _ _, by simp [sptWf]⟩).2
+  intro key
+  rw [sptLookup_sptInterCases, sptLookup_sptFromAList_sptToAList, ← firstEq,
+    sptLookup_sptInterCases]
+  by_cases zero : key = 0
+  · subst key
+    have absent : sptLookup 0 (adjustSet cut) = none := by
+      cases found : sptLookup 0 (adjustSet cut) with
+      | none => rfl
+      | some value => exact (not_zero_adjustSet cut ((sptMem_iff_lookup _ _).mpr ⟨value, found⟩)).elim
+    simp [absent, sptLookup]
+  · simp [adjustSets, sptLookup, zero]
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Assign
