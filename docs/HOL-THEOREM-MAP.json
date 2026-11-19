@@ -145528,5 +145528,16 @@
   "words_as_type_indexed_bitvec": true,
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "Compared evaluate_AssignCmp_typed: full evaluation equality, all input cases including the original self-referential fallback, numeric comparison and encoded boolean state update are retained. The exact word-state maps and positive word carrier use the named translations; the evaluator inherits the documented real-model assumption."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "evaluate_StringCmpMin",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/StringCmpLoop.lean",
+  "lean_name": "evaluateStringCmpMin",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared original local evaluate_StringCmpMin and its typed proof replay: the full evaluator equality, continuation, source locals, both word lookup cases, minimum assignment and original self-referential fallback are preserved. The exact state maps and positive-width word use named translations; the evaluator inherits the documented real-model assumption."
 }
 ]

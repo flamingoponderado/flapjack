@@ -191,4 +191,45 @@ theorem evaluateAssignCmp {width : Nat} [NeZero width] {C F : Type} (dest : Nat)
               WordSemStateFiniteExact.wordExp,numCmp,compare,compareOfLessAndEq, BitVec.lt_def, hxy, hyx, heq]
           all_goals first | omega | rfl
 
+/-- The generated minimum selection leaves the continuation with the smaller word.
+The fallback retains the original evaluator expression. The evaluator inherits
+the real-model assumption in `docs/SOUNDNESS.md` item 8. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml" "evaluate_StringCmpMin"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem evaluateStringCmpMin {width : Nat} [NeZero width] {C F : Type} (p : WordLangProgHOL (BitVec width))
+    (t1 : WordSemStateFiniteExact width C F) (l : Spt (WordLocW width)) :
+    WordSemStateFiniteExact.evaluate
+      (.seq (.assign 9 (.var 5)) (.seq (.ite .lower 7 (.reg 5) (.assign 9 (.var 7)) .skip) p)) {t1 with locals := l} =
+    match sptLookup 5 l, sptLookup 7 l with
+    | some (.word w1), some (.word w2) =>
+        WordSemStateFiniteExact.evaluate p {t1 with locals := sptInsert 9 (.word (BitVec.ofNat width (min w1.toNat w2.toNat))) l}
+    | _, _ => WordSemStateFiniteExact.evaluate
+        (.seq (.assign 9 (.var 5)) (.seq (.ite .lower 7 (.reg 5) (.assign 9 (.var 7)) .skip) p)) {t1 with locals := l} := by
+  cases h5 : sptLookup 5 l with
+  | none => simp
+  | some w1 =>
+    cases w1 with
+    | loc a b => simp
+    | word w1 =>
+      cases h7 : sptLookup 7 l with
+      | none => simp
+      | some w2 =>
+        cases w2 with
+        | loc a b => simp
+        | word w2 =>
+          by_cases hlt : w2.toNat < w1.toNat
+          · simp [WordSemStateFiniteExact.evaluate, WordSemStateFiniteExact.fixClock,
+              WordSemStateFiniteExact.wordExp, WordSemStateFiniteExact.getVar,
+              WordSemStateFiniteExact.getVarImm, WordSemStateFiniteExact.setVar,
+              wordSemWordCmp, Compiler.Encoders.Asm.wordCmpHOL, h5, h7,
+              sptLookup_sptInsert_ne, sptInsert_insert_shadow, BitVec.lt_def, hlt,
+              Nat.min_eq_right (Nat.le_of_lt hlt)]
+          · have hle : w1.toNat ≤ w2.toNat := by omega
+            simp [WordSemStateFiniteExact.evaluate, WordSemStateFiniteExact.fixClock,
+              WordSemStateFiniteExact.wordExp, WordSemStateFiniteExact.getVar,
+              WordSemStateFiniteExact.getVarImm, WordSemStateFiniteExact.setVar,
+              wordSemWordCmp, Compiler.Encoders.Asm.wordCmpHOL, h5, h7,
+              sptLookup_sptInsert_ne, BitVec.lt_def, hlt,
+              Nat.min_eq_left hle]
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Assign

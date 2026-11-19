@@ -555,3 +555,28 @@ val _ = emit "find_diff_str_cmp_thm2_typed" data_to_word_memoryProofTheory.find_
 val _ = emit "memory_rel_str_cmp_typed" data_to_word_memoryProofTheory.memory_rel_str_cmp;
 val _ = emit "evaluate_StringCmpLoop_typed" data_to_word_assignProofTheory.evaluate_StringCmpLoop;
 val _ = emit "evaluate_AssignCmp_typed" data_to_word_assignProofTheory.evaluate_AssignCmp;
+
+(* Replay the original local theorem, including its fallback cases. *)
+val evaluate_StringCmpMin_replay = let
+  open preamble helperLib data_to_word_bignumProofTheory wordLangTheory wordSemTheory sptreeTheory asmTheory
+in
+  Q.prove (`
+  wordSem$evaluate (Seq (Assign 9 (Var 5))
+                (Seq (If Lower 7 (Reg 5) (Assign 9 (Var 7)) Skip) p),
+            t1 with locals := l) =
+  case (sptree$lookup 5 l, sptree$lookup 7 l) of
+  | (SOME (Word w1), SOME (Word w2)) =>
+      wordSem$evaluate (p,t1 with locals := sptree$insert 9 (Word (n2w (MIN (w2n w1) (w2n w2)))) l)
+  | _ =>
+      wordSem$evaluate (Seq (Assign 9 (Var 5))
+                    (Seq (If Lower 7 (Reg 5) (Assign 9 (Var 7)) Skip) p),
+                t1 with locals := l)`,
+  Cases_on ‘sptree$lookup 5 l’ \\gvs [] \\Cases_on ‘x’ \\gvs []
+  \\Cases_on ‘sptree$lookup 7 l’ \\gvs [] \\Cases_on ‘x’ \\gvs []
+  \\gvs [eq_eval,WORD_LO,MIN_DEF]
+  \\simp [Once insert_insert]
+  \\Cases_on ‘w2n c = w2n c'’ >- fs [] \\simp []
+  \\Cases_on ‘w2n c < w2n c'’ \\simp []
+  \\‘w2n c' < w2n c’ by decide_tac \\gvs [])
+end;
+val _ = emit "evaluate_StringCmpMin_typed" evaluate_StringCmpMin_replay;
