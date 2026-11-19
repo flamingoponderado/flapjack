@@ -145169,5 +145169,15 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Compared word64_alt_thm_typed: the full abstract invariant, equal prefix lengths, exact Word64Rep data-cell equality and payload-space bound imply an existential heap with the successful store and complete post-invariant, retaining the source pointer, stack, allocation boundary and space arithmetic. The payload is fixed at 64 bits and HOL target words share one positive BitVec width."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "memory_rel_Word64_alt",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/Word64Memory.lean",
+  "lean_name": "memoryRel_word64Alt",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": ["st"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source comparison with memory_rel_Word64_alt_typed: the complete memory relation, good_dimindex, exact Word64 representation, space bound and successful header encoding imply the original existential next-free address, current heap and memory, with both store lookups, successful word-list store and complete updated memory relation and pointer. The store is the canonical finite-support map, the value is fixed at 64 bits and all target words use the same positive BitVec width."
 }
 ]

@@ -37,22 +37,23 @@ private theorem starSwapFirst {α : Type} (p q r : (α → Prop) → Prop) :
     SetSep.star p (SetSep.star q r) = SetSep.star q (SetSep.star p r) := by
   rw [SetSep.starAssoc, SetSep.starComm p q, ← SetSep.starAssoc]
 
-/-- Store a constructor into free space while preserving the separated heap frame.
-This is Flapjack infrastructure for the original constructor memory proof. -/
+/-- Store a represented heap element into free space while preserving the
+separated heap frame. This Flapjack helper is used by the constructor and
+Word64 memory-allocation proofs. -/
 theorem wordHeapAlloc {width : Nat} [NeZero width] (c : DataToWord.Config)
     (curr : BitVec width) (pre post : ValueHeap width) (free : Nat)
-    (tag : Nat) (rs : List (HeapAddress (WordLocW width))) (ws : List (WordLocW width))
-    (hd : BitVec width) (frame : ((BitVec width × WordLocW width) → Prop) → Prop)
+    (element : HeapElement (WordLocW width) (HeapTag × List (WordLocW width)))
+    (ws : List (WordLocW width)) (hd : BitVec width) (frame : ((BitVec width × WordLocW width) → Prop) → Prop)
     (m : BitVec width → WordLocW width) (dm : BitVec width → Bool)
-    (fits : ws.length + 1 ≤ free) (mapped : rs.map (wordAddr c) = ws)
-    (encoded : encodeHeader c (4 * tag) ws.length = some hd)
-    (configBound : c.lenSize + 5 < width) (good : goodDimindex width)
+    (fits : ws.length + 1 ≤ free) (size : elLength element = ws.length + 1)
+    (cell : wordEl (curr + StackRemove.bytesInWord width * BitVec.ofNat width (heapLength pre)) element c =
+      Misc.wordList (curr + StackRemove.bytesInWord width * BitVec.ofNat width (heapLength pre)) (.word hd :: ws))
     (old : SetSep.star (wordHeap curr (pre ++ heapExpand free ++ post) c) frame
       (SetSep.fun2Set (m, fun x => dm x = true))) :
     ∃ m1, storeList (curr + StackRemove.bytesInWord width * BitVec.ofNat width (heapLength pre))
         (.word hd :: ws) m dm = some m1 ∧
       SetSep.star (wordHeap curr
-        (pre ++ [blockRep tag rs] ++ heapExpand (free - (ws.length + 1)) ++ post) c) frame
+        (pre ++ [element] ++ heapExpand (free - (ws.length + 1)) ++ post) c) frame
         (SetSep.fun2Set (m1, fun x => dm x = true)) := by
   let a := curr + StackRemove.bytesInWord width * BitVec.ofNat width (heapLength pre)
   let k := ws.length + 1
@@ -76,13 +77,10 @@ theorem wordHeapAlloc {width : Nat} [NeZero width] (c : DataToWord.Config)
     simpa [a, k, other] using old1
   obtain ⟨m1, run, new1⟩ := storeListThm (.word hd :: ws) a other m dm storePremise
   refine ⟨m1, run, ?_⟩
-  have cell := wordElBlockEq c a tag rs ws hd mapped encoded configBound good
   simp only [other] at new1
   rw [starSwapFirst] at new1
   repeat rw [SetSep.starAssoc] at new1
-  have size : rs.length = ws.length := by have h := congrArg List.length mapped; simpa using h
-  have cellLength : elLength (blockRep (β := WordLocW width) tag rs) = k := by
-    simp [blockRep, elLength, size, k]
+  have cellLength : elLength element = k := by simpa [k] using size
   have endAddr : (a + StackRemove.bytesInWord width * BitVec.ofNat width k) +
       StackRemove.bytesInWord width * BitVec.ofNat width rem =
       a + StackRemove.bytesInWord width * BitVec.ofNat width free := by
@@ -92,8 +90,8 @@ theorem wordHeapAlloc {width : Nat} [NeZero width] (c : DataToWord.Config)
       _ = a + StackRemove.bytesInWord width * (BitVec.ofNat width k + BitVec.ofNat width rem) := by rw [BitVec.mul_add]
       _ = _ := by rw [← BitVec.ofNat_add, splitLen]
   simp only [List.append_assoc, wordHeapAppend, List.singleton_append, wordHeap]
-  have suffixLen : heapLength (blockRep (β := WordLocW width) tag rs :: heapExpand rem) = free := by
-    change elLength (blockRep (β := WordLocW width) tag rs) + heapLength (heapExpand rem : ValueHeap width) = free
+  have suffixLen : heapLength (element :: heapExpand rem) = free := by
+    change elLength element + heapLength (heapExpand rem : ValueHeap width) = free
     rw [cellLength, heapLength_heapExpand, splitLen]
   rw [cellLength, suffixLen, wordHeap_heapExpand, cell]
   repeat rw [SetSep.starAssoc]

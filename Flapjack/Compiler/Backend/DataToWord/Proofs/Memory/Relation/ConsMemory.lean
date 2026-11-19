@@ -65,8 +65,9 @@ theorem memoryRel_cons1 {width : Nat} [NeZero width] (c : DataToWord.Config) (be
   have heapSepOld : SetSep.star (wordHeap curr (pre ++ heapExpand (sp0 + sp1) ++ post) c)
       (wordHeap other (heapExpand limit) c) (SetSep.fun2Set (m, fun x => dm x = true)) := by
     simpa [heapOld] using heapSep
-  obtain ⟨m1, run, heapSepNew⟩ := wordHeapAlloc c curr pre post (sp0 + sp1) tag rs ws hd
-    (wordHeap other (heapExpand limit) c) m dm (by omega) mapped encoded (by omega) good heapSepOld
+  obtain ⟨m1, run, heapSepNew⟩ := wordHeapAlloc c curr pre post (sp0 + sp1) (blockRep tag rs) ws hd
+    (wordHeap other (heapExpand limit) c) m dm (by omega) elen
+    (wordElBlockEq c _ tag rs ws hd mapped encoded (by omega) good) heapSepOld
   have nLen : heapLength heap2 = heapLength heap :=
     heapStoreUnusedAlt_imp_length a (sp0 + sp1) (blockRep tag rs) heap heap2 stored
   let free := curr + StackRemove.bytesInWord width * BitVec.ofNat width a
