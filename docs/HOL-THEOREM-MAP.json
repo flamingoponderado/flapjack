@@ -145362,5 +145362,14 @@
   "lean_name": "readFun2Set",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared read_fun2set_typed: the independent key and value carriers, arbitrary separated frame, functional heap and domain are retained, as are the value equality and domain membership conclusions."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "xor_words_word_list",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/XorWordList.lean",
+  "lean_name": "xorWordsWordList",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared xor_words_word_list_typed: the successful XOR, good dimension, original word-count bound and complete disjoint source/destination/frame assertion imply an existential final memory with the same full post-assertion and successful word_xor_bytes run. The unused be binder retains its independently quantified HOL type; the source, destination and memory words share the positive indexed width."
 }
 ]
