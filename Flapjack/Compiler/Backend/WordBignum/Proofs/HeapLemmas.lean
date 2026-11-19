@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Compiler.Backend.StackRemove.Proofs.StackHeap
 public import Flapjack.Compiler.Backend.WordBignum.Proofs.EvaluateLemmas
+public import Flapjack.Pancake.Semantics.LoopSemStateExact
 
 @[expose] public section
 
@@ -74,5 +75,54 @@ theorem domainListUpdate {α : Type} [Nonempty α]
       · simp only [listUpdateSpt]
         rw [sptMem_iff_lookup, sptLookup_sptInsert_ne head x _ _ h, ← sptMem_iff_lookup, ih]
         simp [h]
+
+/-- HOL `list_update_alist_insert` (`word_bignumProofScript.sml:533`): with equal
+list lengths the `ARB`-completing update is HOL's `alist_insert`, the tagged
+`sptAlistInsert` rendering of the sptree library function. -/
+@[hol "cakeml/compiler/backend/proofs/word_bignumProofScript.sml" "list_update_alist_insert"]
+theorem listUpdateSpt_alistInsert {α : Type} [Nonempty α]
+    (xs : List Nat) (ys : List α) (t : Spt α) :
+    xs.length = ys.length →
+      listUpdateSpt xs ys t = LoopSemStateFiniteExact.sptAlistInsert xs ys t := by
+  induction xs generalizing ys t with
+  | nil =>
+    cases ys with
+    | nil =>
+      intro _
+      rfl
+    | cons value values =>
+      intro h
+      simp at h
+  | cons head tail ih =>
+    cases ys with
+    | nil =>
+      intro h
+      simp at h
+    | cons value values =>
+      intro h
+      simp only [listUpdateSpt, LoopSemStateFiniteExact.sptAlistInsert]
+      have hlen : tail.length = values.length := by
+        simp at h
+        exact h
+      rw [ih values t hlen]
+
+/-- HOL `lookup_list_update_ADD_2` (`word_bignumProofScript.sml:641`): inserting
+the shifted keys `n + 2` leaves the key `0` untouched. -/
+@[hol "cakeml/compiler/backend/proofs/word_bignumProofScript.sml" "lookup_list_update_ADD_2"]
+theorem lookupListUpdateAdd2 {α : Type} [Nonempty α]
+    (saveRegs : List Nat) (ws : List α) (l : Spt α) :
+    sptLookup 0 (listUpdateSpt (saveRegs.map (· + 2)) ws l) = sptLookup 0 l := by
+  induction saveRegs generalizing ws l with
+  | nil => rfl
+  | cons head tail ih =>
+    cases ws with
+    | nil =>
+      simp only [List.map_cons, listUpdateSpt]
+      rw [sptLookup_sptInsert_ne (head + 2) 0 _ _ (by omega)]
+      exact ih [] l
+    | cons value values =>
+      simp only [List.map_cons, listUpdateSpt]
+      rw [sptLookup_sptInsert_ne (head + 2) 0 _ _ (by omega)]
+      exact ih values l
 
 end Flapjack.Compiler.Backend.WordBignum

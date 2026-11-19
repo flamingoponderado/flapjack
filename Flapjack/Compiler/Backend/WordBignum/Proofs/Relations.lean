@@ -154,4 +154,28 @@ theorem Corr_move_pre {width : Nat} [NeZero width]
     (b = true → Corr code s f p) ↔ Corr code s f (b && p) := by
   cases b <;> simp [Corr]
 
+/-- HOL `loop_app_EQ` (`word_bignumProofScript.sml:1864`): the two shapes in
+which `loop_app` returns a state with a true guard, one for each side of the
+body result. -/
+@[hol "cakeml/compiler/backend/proofs/word_bignumProofScript.sml" "loop_app_EQ"
+  (fmap_as_finite_support := [regs]) (words_as_type_indexed_bitvec)]
+theorem loopApp_EQ {width : Nat} [NeZero width] {γ : Type}
+    (f : γ → Sum (MiniState width) (MiniState width)) (g : γ → Bool) (x : γ)
+    (t : MiniState width) :
+    (loopApp f g x = (.inr t, true) ↔ f x = .inr t ∧ g x = true) ∧
+      (loopApp f g x = (.inl t, true) ↔
+        ∃ x' : MiniState width,
+          f x = .inl x' ∧ decClock x' = t ∧ g x = true ∧ x'.clock ≠ 0) := by
+  cases hf : f x with
+  | inl s =>
+    simp only [loopApp, hf]
+    constructor
+    · simp
+    · simp
+  | inr s' =>
+    simp only [loopApp, hf]
+    constructor
+    · simp
+    · simp
+
 end Flapjack.Compiler.Backend.WordBignum

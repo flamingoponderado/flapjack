@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Compiler.Backend.Semantics.WordSem.EvaluateInd
 public import Flapjack.Compiler.Backend.WordBignum.Proofs.StateRel
+public import Flapjack.Compiler.Backend.WordBignum.Helpers
 
 @[expose] public section
 
@@ -51,5 +52,32 @@ theorem evaluate_seqSeq {width : Nat} [NeZero width] {C F : Type}
         cases res2 <;> simp_all
     | some r =>
       simp
+
+/-- HOL `evaluate_SeqTemp` (`word_bignumProofScript.sml:454`): when the
+`SeqTemp` source register is a live temporary register, the sequence evaluates
+as the body with that register copied into the destination; otherwise the
+statement is the trivial rewrite-to-itself that HOL writes. HOL's guard
+`Temp (n2w r) IN FDOM t.store` is rendered as the store lookup being defined,
+and `t.store ' Temp (n2w r)` as the reviewed `holFapply`. -/
+@[hol "cakeml/compiler/backend/proofs/word_bignumProofScript.sml" "evaluate_SeqTemp"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem evaluate_seqTemp {width : Nat} [NeZero width] {C F : Type}
+    (i r : Nat) (p : WordLangProgHOL (BitVec width)) (t : WordSemStateFiniteExact width C F) :
+    WordSemStateFiniteExact.evaluate (seqTemp i r p) t =
+      if t.store.lookup (.temp (BitVec.ofNat 5 r)) ≠ none then
+        WordSemStateFiniteExact.evaluate p
+          (WordSemStateFiniteExact.setVar i
+            (holFapply t.store (.temp (BitVec.ofNat 5 r))) t)
+      else WordSemStateFiniteExact.evaluate (seqTemp i r p) t := by
+  unfold seqTemp
+  have hseq := (WordSemStateFiniteExact.evaluate_def_rebound (width := width) (C := C)
+    (F := F)).2.2.2.2.2.2.2.2.2.2.2.2.1
+  have hasg := (WordSemStateFiniteExact.evaluate_def_rebound (width := width) (C := C)
+    (F := F)).2.2.2.2.2.1
+  rw [hseq, hasg]
+  simp only [WordSemStateFiniteExact.wordExp, WordSemStateFiniteExact.getStore]
+  cases hl : t.store.lookup (.temp (BitVec.ofNat 5 r)) with
+  | none => simp
+  | some v => simp [holFapply_of_lookup hl]
 
 end Flapjack.Compiler.Backend.WordBignum
