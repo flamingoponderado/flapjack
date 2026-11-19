@@ -339,4 +339,5 @@ val _ = emit_exported "STAR_ASSOC_typed" "STAR_ASSOC";
 val _ = emit_exported "STAR_COMM_typed" "STAR_COMM";
 val _ = emit_exported "fun2set_def_typed" "fun2set_def";
 val _ = emit_exported "fun2set_thm_typed" "fun2set_thm";
+val _ = emit_exported "read_fun2set_typed" "read_fun2set";
 val _ = emit_exported "write_fun2set_typed" "write_fun2set";

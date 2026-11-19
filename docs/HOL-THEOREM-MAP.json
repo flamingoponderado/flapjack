@@ -145354,5 +145354,13 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Compared the typed public theorem: successful byte XOR and good dimension imply XOR of both zero-initialized packed buffers produces the packed result with the second buffer size."
+},
+{
+  "hol_path": "HOL/examples/machine-code/hoare-triple/set_sepScript.sml",
+  "hol_name": "read_fun2set",
+  "lean_path": "Flapjack/Misc/SetSep/Read.lean",
+  "lean_name": "readFun2Set",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared read_fun2set_typed: the independent key and value carriers, arbitrary separated frame, functional heap and domain are retained, as are the value equality and domain membership conclusions."
 }
 ]
