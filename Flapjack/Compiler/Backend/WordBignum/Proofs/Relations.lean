@@ -11,6 +11,8 @@ installed-code well-formedness predicate, ported from
 namespace Flapjack.Compiler.Backend.WordBignum
 
 open Flapjack
+open Flapjack.Misc.Multiword
+open Flapjack.Compiler.Encoders.Asm
 
 namespace RelationsWitness
 
@@ -266,5 +268,123 @@ theorem loopApp_EQ {width : Nat} [NeZero width] {γ : Type}
     constructor
     · simp
     · simp
+
+/-- Flapjack-only decision procedure for the tagged single-word division
+precondition, so HOL's Boolean `single_div_pre` guard can be written with
+`decide`. -/
+instance singleDivPreDecidable {w2 w0 w9 : Nat} [NeZero w2] [NeZero w0] [NeZero w9]
+    (r2 : BitVec w2) (r0 : BitVec w0) (r9 : BitVec w9) : Decidable (singleDivPre r2 r0 r9) :=
+  decidable_of_iff (r9 ≠ 0 ∧ (r2.toNat * 2 ^ w9 + r0.toNat) / r9.toNat < 2 ^ w9) Iff.rfl
+
+/-- HOL `Corr_Add`: the carry-word addition evaluates to the two written
+registers when the third register is live, both operands are well formed, the
+carry operand is zero or one, and the destinations differ. -/
+@[hol "cakeml/compiler/backend/proofs/word_bignumProofScript.sml" "Corr_Add"
+  (fmap_as_finite_support := [regs]) (words_as_type_indexed_bitvec)]
+theorem Corr_Add {width : Nat} [NeZero width]
+    (n1 n2 n3 : Nat) (ri1 ri2 : WordRegImm (BitVec width)) (s : MiniState width) :
+    Corr (.add n1 n2 n3 ri1 ri2) s
+      (.inr (regWrite n1
+        (some (singleAddWord (holFapply s.regs n3) (evalRi s ri1) (evalRi s ri2)).1)
+        (regWrite n2
+          (some (singleAddWord (holFapply s.regs n3) (evalRi s ri1) (evalRi s ri2)).2) s)))
+      (decide (n3 ∈ s.regs.dom ∧ evalRiPre s ri1 ∧ evalRiPre s ri2 ∧
+        (evalRi s ri2 ≠ 0 → evalRi s ri2 = 1) ∧ n1 ≠ n2)) := by
+  intro h
+  rw [decide_eq_true_eq] at h
+  obtain ⟨hreg, h4, h5, hcarry, hdistinct⟩ := h
+  cases hadd : singleAddWord (holFapply s.regs n3) (evalRi s ri1) (evalRi s ri2) with
+  | mk r1 r2 =>
+    exact Eval.add n1 n2 n3 ri1 ri2 none s r1 r2 hreg h4 h5 hcarry hdistinct hadd
+
+/-- HOL `Corr_Sub`: the carry-word subtraction evaluates to the two written
+registers under the same side conditions as the addition. -/
+@[hol "cakeml/compiler/backend/proofs/word_bignumProofScript.sml" "Corr_Sub"
+  (fmap_as_finite_support := [regs]) (words_as_type_indexed_bitvec)]
+theorem Corr_Sub {width : Nat} [NeZero width]
+    (n1 n2 n3 : Nat) (ri1 ri2 : WordRegImm (BitVec width)) (s : MiniState width) :
+    Corr (.sub n1 n2 n3 ri1 ri2) s
+      (.inr (regWrite n1
+        (some (singleSubWord (holFapply s.regs n3) (evalRi s ri1) (evalRi s ri2)).1)
+        (regWrite n2
+          (some (singleSubWord (holFapply s.regs n3) (evalRi s ri1) (evalRi s ri2)).2) s)))
+      (decide (n3 ∈ s.regs.dom ∧ evalRiPre s ri1 ∧ evalRiPre s ri2 ∧
+        (evalRi s ri2 ≠ 0 → evalRi s ri2 = 1) ∧ n1 ≠ n2)) := by
+  intro h
+  rw [decide_eq_true_eq] at h
+  obtain ⟨hreg, h4, h5, hcarry, hdistinct⟩ := h
+  cases hsub : singleSubWord (holFapply s.regs n3) (evalRi s ri1) (evalRi s ri2) with
+  | mk r1 r2 =>
+    exact Eval.sub n1 n2 n3 ri1 ri2 none s r1 r2 hreg h4 h5 hcarry hdistinct hsub
+
+/-- HOL `Corr_Mul`: the long multiplication evaluates to the two written
+registers when both source registers are live and the destinations differ. -/
+@[hol "cakeml/compiler/backend/proofs/word_bignumProofScript.sml" "Corr_Mul"
+  (fmap_as_finite_support := [regs]) (words_as_type_indexed_bitvec)]
+theorem Corr_Mul {width : Nat} [NeZero width]
+    (n1 n2 n3 n4 : Nat) (s : MiniState width) :
+    Corr (.mul n1 n2 n3 n4) s
+      (.inr (regWrite n1
+        (some (singleMul (holFapply s.regs n3) (holFapply s.regs n4) 0).1)
+        (regWrite n2
+          (some (singleMul (holFapply s.regs n3) (holFapply s.regs n4) 0).2) s)))
+      (decide (n3 ∈ s.regs.dom ∧ n4 ∈ s.regs.dom ∧ n1 ≠ n2)) := by
+  intro h
+  rw [decide_eq_true_eq] at h
+  obtain ⟨h3, h4, hdistinct⟩ := h
+  exact Eval.mul n1 n2 n3 n4 none s h3 h4 hdistinct
+
+/-- HOL `Corr_Div`: the long division evaluates to the two written registers
+when the three source registers are live, the destinations differ and the
+single-word division precondition holds. -/
+@[hol "cakeml/compiler/backend/proofs/word_bignumProofScript.sml" "Corr_Div"
+  (fmap_as_finite_support := [regs]) (words_as_type_indexed_bitvec)]
+theorem Corr_Div {width : Nat} [NeZero width]
+    (n1 n2 n3 n4 n5 : Nat) (s : MiniState width) :
+    Corr (.div n1 n2 n3 n4 n5) s
+      (.inr (regWrite n1
+        (some (singleDiv (holFapply s.regs n3) (holFapply s.regs n4) (holFapply s.regs n5)).1)
+        (regWrite n2
+          (some (singleDiv (holFapply s.regs n3) (holFapply s.regs n4) (holFapply s.regs n5)).2)
+          s)))
+      (decide (n3 ∈ s.regs.dom ∧ n4 ∈ s.regs.dom ∧ n5 ∈ s.regs.dom ∧ n1 ≠ n2 ∧
+        singleDivPre (holFapply s.regs n3) (holFapply s.regs n4) (holFapply s.regs n5))) := by
+  intro h
+  rw [decide_eq_true_eq] at h
+  obtain ⟨h3, h4, h5, hdistinct, hpre⟩ := h
+  exact Eval.div n1 n2 n3 n4 n5 none s h3 h4 h5 hdistinct hpre
+
+/-- HOL `Corr_If`: a conditional evaluates the branch chosen by the word
+comparison, with the matching branch's guard conjoined to the comparison
+side conditions. HOL's Boolean guard is a `&&` of the two decided propositions
+and the chosen branch's Boolean guard, since that guard is itself a `Bool`. -/
+@[hol "cakeml/compiler/backend/proofs/word_bignumProofScript.sml" "Corr_If"
+  (fmap_as_finite_support := [regs]) (words_as_type_indexed_bitvec)]
+theorem Corr_If {width : Nat} [NeZero width]
+    (p1 : Mini (BitVec width)) (s : MiniState width)
+    (f1 : Sum (MiniState width) (MiniState width)) (q1 : Bool)
+    (p2 : Mini (BitVec width)) (f2 : Sum (MiniState width) (MiniState width)) (q2 : Bool)
+    (c : Cmp) (r : Nat) (ri : WordRegImm (BitVec width)) :
+    Corr p1 s f1 q1 → Corr p2 s f2 q2 →
+      Corr (.ite c r ri p1 p2) s
+        (if wordCmpHOL c (evalExp s (.var r)) (evalRi s ri) then f1 else f2)
+        (decide (r ∈ s.regs.dom) && decide (evalRiPre s ri) &&
+          if wordCmpHOL c (evalExp s (.var r)) (evalRi s ri) then q1 else q2) := by
+  intro h1 h2 h
+  rw [Bool.and_eq_true, Bool.and_eq_true] at h
+  obtain ⟨⟨hdom, hpre⟩, hq⟩ := h
+  have hreg : s.regs.lookup r ≠ none := by
+    simpa [HolFiniteMapExact.dom] using of_decide_eq_true hdom
+  have hri : evalRiPre s ri := of_decide_eq_true hpre
+  cases hcmp : wordCmpHOL c (evalExp s (.var r)) (evalRi s ri) with
+  | true =>
+    have hq' : q1 = true := by simpa [hcmp] using hq
+    exact Eval.ite none s c r ri p1 p2 f1 hreg hri ((if_pos hcmp).symm ▸ (h1 hq'))
+  | false =>
+    have hq' : q2 = true := by simpa [hcmp] using hq
+    have hne : ¬ (wordCmpHOL c (evalExp s (.var r)) (evalRi s ri) = true) := by
+      rw [hcmp]
+      simp
+    exact Eval.ite none s c r ri p1 p2 f2 hreg hri ((if_neg hne).symm ▸ (h2 hq'))
 
 end Flapjack.Compiler.Backend.WordBignum
