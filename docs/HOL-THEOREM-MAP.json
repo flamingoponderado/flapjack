@@ -145127,5 +145127,17 @@
     "fmap_as_finite_support": ["regs"],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "Source comparison against Eval_NONE_IMP_typed: HOL binds s1 c s2 p in that order and states Eval NONE s1 c s2 ==> Eval (SOME p) s1 c s2. Lean keeps the same binders and the same single implication premise, with the sum result carrier Sum (MiniState width) (MiniState width) and the mini program over BitVec width. The proof generalizes the recursion target to the NONE option and inducts over the derivation, replaying HOL's qsuff_tac generalization and ho_match_mp_tac eval_ind."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "evaluate_Seq_Seq",
+    "hol_line": 345,
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/EvaluateLemmas.lean",
+    "lean_name": "evaluate_seqSeq",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": ["fpRegs", "store"],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Source comparison against evaluate_Seq_Seq_typed: HOL binds p1 p2 p3 t1 in that order and states evaluate (Seq p1 (Seq p2 p3),t1) = evaluate (Seq (Seq p1 p2) p3,t1). Lean keeps the same binders and both sides, with the program over BitVec width and independent C and F parameters for the state's other two type arguments. The proof expands the rebound Seq clause (fix_clock_evaluate applied, as HOL does with its rebound evaluate_def) and splits on the evaluate p1 and evaluate p2 results; HOL's induction over p1 is not needed because the clause only plumbs those results. Inherits the reviewed reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8) through the evaluator's inst clause; the lemma is a dependent, not itself qualified."
   }
 ]
