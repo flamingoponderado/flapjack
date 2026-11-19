@@ -1389,18 +1389,103 @@ PROP_DEF_KIND_RE = re.compile(
 )
 
 
+_BINDER_NAME_RE = re.compile(r"[A-Za-z_][A-Za-z0-9_'.]*")
+_SHADOWED_PLACEHOLDER = "\u00abshadowed\u00bb"
+
+
+def _binder_group_name_and_type(group: str) -> tuple[list[str], str] | None:
+    """Split one bracketed `(names : type)` binder group.
+
+    Returns the names bound by the group and the written type annotation, with
+    any default value removed and an empty string when the group carries no
+    annotation.  Only the annotation is carrier evidence: a name that happens to
+    spell a carrier declares a variable of the annotated type, it does not
+    mention that carrier.
+    """
+    pairs = {"(": ")", "{": "}", "[": "]"}
+    if len(group) < 2:
+        return None
+    opening = group[0]
+    if opening not in pairs or group[-1] != pairs[opening]:
+        return None
+    inner = group[1:-1]
+    split = _split_top_level(inner, (":=", ":"))
+    if split is None:
+        names_text, type_text = inner, ""
+    else:
+        names_text, type_text = split
+        default = _split_top_level(type_text, (":=",))
+        if default is not None:
+            type_text = default[0]
+    names = [match.group(0) for match in _BINDER_NAME_RE.finditer(names_text)]
+    return names, type_text.strip()
+
+
+def _declaration_parameter_names(masked: str, assignment: int) -> list[str]:
+    """Names bound by a `def`'s own parameter binders before `:=`.
+
+    A leading universal binder's annotation is not carrier evidence when the
+    carrier name is one of those parameters, or the declaration's own name: the
+    parameter or the recursive definition shadows it.
+    """
+    header = masked[:assignment]
+    kind = PROP_DEF_KIND_RE.search(header)
+    if kind is None:
+        return []
+    rest = header[kind.end():]
+    name = re.match(r"\s*[A-Za-z_][A-Za-z0-9_'.]*", rest)
+    if name is None:
+        return []
+    names: list[str] = [name.group(0)]
+    rest = rest[name.end():]
+    cursor = 0
+    length = len(rest)
+    while cursor < length:
+        char = rest[cursor]
+        if char not in "({[":
+            cursor += 1
+            continue
+        closing = {"(": ")", "{": "}", "[": "]"}[char]
+        depth = 0
+        start = cursor
+        while cursor < length:
+            current = rest[cursor]
+            if current in "({[":
+                depth += 1
+            elif current in ")}]":
+                depth -= 1
+                if depth == 0:
+                    cursor += 1
+                    break
+            cursor += 1
+        if depth != 0:
+            break
+        parsed = _binder_group_name_and_type(rest[start:cursor])
+        if parsed is not None:
+            names.extend(parsed[0])
+    return names
+
+
 def prop_def_leading_forall_binders(source: str) -> str | None:
-    """Binder types of the leading `∀ (…)` group after `:=` in a `: Prop` def.
+    """Type annotations of the leading `∀ (…)` group after `:=` in a `: Prop` def.
 
     A predicate definition whose universal quantifiers live in its body names
     the finite-map carrier in those binder types, not in its header.  This
-    returns only that leading quantifier group, so a carrier mentioned in a
-    comment, in a string literal, in a discarded `let` or anywhere later cannot
-    select an owner.  It returns None (fail closed) unless the declaration is a
-    `def` whose written header ends in `: Prop` and whose body starts with a
-    parenthesized `∀` binder group; comments and string literals are masked
-    before the scan.  This is a syntactic convenience for carrier
-    disambiguation, not evidence of HOL correspondence.
+    returns only those type annotations, so a carrier mentioned in a comment, in
+    a string literal, in a discarded `let` or anywhere later cannot select an
+    owner.  Each binder group is split into its bound names and its annotation;
+    only the annotation is returned.  A name that is shadowed by the `def`'s own
+    parameters or by a preceding or current universal binder, or by the
+    declaration's own name, is replaced by a placeholder, so
+    `∀ (Carrier : Nat)` and
+    `∀ (Carrier : Type) (t1 : Carrier)` contribute no carrier evidence: in the
+    first the carrier is only a numeric variable's name, in the second it is a
+    freshly quantified type rather than the imported structure.  It returns None
+    (fail closed) unless the declaration is a `def` whose written header ends in
+    `: Prop` and whose body starts with a parenthesized `∀` binder group; it
+    also returns None when no group carries a type annotation.  Comments and
+    string literals are masked before the scan.  This is a syntactic convenience
+    for carrier disambiguation, not evidence of HOL correspondence.
     """
     masked = _predicate_domain_code_only(source)
     if masked is None:
@@ -1448,7 +1533,27 @@ def prop_def_leading_forall_binders(source: str) -> str | None:
         cursor += 1
     if cursor >= length or body[cursor] != ",":
         return None
-    return " ".join(groups)
+    shadowed = set(_declaration_parameter_names(masked, assignment))
+    evidence: list[str] = []
+    for group in groups:
+        parsed = _binder_group_name_and_type(group)
+        if parsed is None:
+            return None
+        names, annotation = parsed
+        shadowed.update(names)
+        if not annotation:
+            continue
+        for shadowed_name in sorted(shadowed, key=len, reverse=True):
+            annotation = re.sub(
+                rf"(?<![A-Za-z0-9_'.]){re.escape(shadowed_name)}(?![A-Za-z0-9_'.])",
+                _SHADOWED_PLACEHOLDER,
+                annotation,
+            )
+        evidence.append(annotation)
+    combined = " ".join(evidence)
+    if not combined.strip():
+        return None
+    return combined
 
 
 TO_FUNCTION_RE = re.compile(r"\bto([A-Z][A-Za-z0-9_']*)")
