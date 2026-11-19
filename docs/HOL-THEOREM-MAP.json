@@ -145244,5 +145244,15 @@
   "fmap_as_finite_support_relation": ["st"],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Source comparison with memory_rel_RefByte_content_typed: the complete input memory relation, fresh sparse-tree key, all byte-length bounds, length equality and good dimension imply the original existential free/current addresses and memory, both store lookups, packed byte store and complete post-memory relation with the inserted reference and updated NextFree. The store uses canonical finite support, bytes remain fixed eight-bit words, and all target words share one positive BitVec width."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "memory_rel_do_build",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/BuildMemory.lean",
+  "lean_name": "memoryRel_doBuild",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": ["st"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared the complete theorem and memory_rel_do_build_typed with the HOL source: both successful build equations, space and lookup premises, universally quantified mapped context, good dimension, and existential final memory with the exact updated relation and list store are retained. The independent shadowed HOL v : beta binder is preserved as _shadowed : beta, separate from the returned source value. The store is the canonical finite-support map and target words share one positive BitVec width."
 }
 ]
