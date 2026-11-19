@@ -587,3 +587,4 @@ val _ = emit "env_to_list_domain_typed" data_to_word_assignProofTheory.env_to_li
 val _ = emit "IN_adjust_var_lemma_typed" data_to_word_assignProofTheory.IN_adjust_var_lemma;
 val _ = emit "cut_envs_lookup_0_typed" data_to_word_assignProofTheory.cut_envs_lookup_0;
 val _ = emit "cut_envs_inter_typed" data_to_word_assignProofTheory.cut_envs_inter;
+val _ = emit "inter_union_distrib_typed" data_to_word_assignProofTheory.inter_union_distrib;

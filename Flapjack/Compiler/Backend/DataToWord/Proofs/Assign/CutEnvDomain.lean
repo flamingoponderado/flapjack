@@ -24,6 +24,15 @@ theorem in_adjustVar_lemma {α β : Type} (names : NumSet) (source cut : Spt α)
   | none => simp [found] at targetLookup
   | some value => exact (sptMem_iff_lookup _ _).mpr ⟨value, found⟩
 
+/-- Intersecting a union distributes over its two left-biased operands. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml" "inter_union_distrib"]
+theorem inter_union_distrib {α β : Type} (x y : Spt α) (z : Spt β) :
+    sptInter (sptUnion x y) z = sptUnion (sptInter x z) (sptInter y z) := by
+  apply (sptEqThm _ _ ⟨sptWfInter _ _, sptWfUnion _ _ ⟨sptWfInter _ _, sptWfInter _ _⟩⟩).2
+  intro key
+  simp only [sptLookup_sptInterCases, sptLookup_sptUnion]
+  cases sptLookup key x <;> cases sptLookup key y <;> cases sptLookup key z <;> rfl
+
 /-- The reserved-location cut is disjoint from adjusted source variables. -/
 @[hol "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml" "cut_envs_inter"]
 theorem cutEnvs_inter {α β : Type} (names : NumSet) (target first second : Spt β)

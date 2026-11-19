@@ -145599,5 +145599,13 @@
   "lean_name": "cutEnvs_inter",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared cut_envs_inter_typed: independently polymorphic source and target tree payloads, both successful cut equations, and the exact intersection of fromAList (toAList first) with the adjusted source cut agree with HOL. The printed isEmpty is HOL equality to LN."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "inter_union_distrib",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/CutEnvDomain.lean",
+  "lean_name": "inter_union_distrib",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared inter_union_distrib_typed: both union inputs share a polymorphic sparse-tree payload, the intersection input has an independent payload, and the original structural equality and operation order are preserved."
 }
 ]
