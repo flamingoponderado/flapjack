@@ -293,6 +293,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Mask
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.StackRel
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.JoinZip
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.ToListA
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.PermLookup
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.CodeRelation
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.CodeOracleRelation
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.StateRelation

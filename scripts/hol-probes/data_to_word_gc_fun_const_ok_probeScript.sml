@@ -240,3 +240,4 @@ val _ = pr_typed "LENGTH_MAP_SND_join_env_IMP_typed" data_to_word_gcProofTheory.
 val _ = pr_typed "lemma1_typed" data_to_word_gcProofTheory.lemma1;
 val _ = pr_typed "word_ml_inv_cons_snoc_typed" data_to_word_gcProofTheory.word_ml_inv_cons_snoc;
 val _ = pr_typed "toListA_mk_typed" data_to_word_gcProofTheory.toListA_mk;
+val _ = pr_typed "PERM_lookup_toList_lemma_typed" data_to_word_gcProofTheory.PERM_lookup_toList_lemma;

@@ -23736,6 +23736,12 @@
   "statement_status": "reviewed_exact", "reviewer": "Compared toListA_mk_typed: both conjuncts preserve accumulator traversal for smart BN and BS constructors, for arbitrary common payload type."
 },
 {
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "PERM_lookup_toList_lemma",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/PermLookup.lean", "lean_name": "perm_lookup_toList",
+  "statement_status": "reviewed_total_function_inhabitants", "total_function_inhabitants": ["β"],
+  "reviewer": "Compared PERM_lookup_toList_lemma_typed: full lookup-presence and distinct-key premises imply the complete permutation of decoded filtered values with tree enumeration. The two payload types are independent; Nonempty β solely renders HOL THE."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "cut_env_IMP_MEM",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CutEnvProperties.lean", "lean_name": "cutEnv_imp_mem",
   "statement_status": "reviewed_exact", "reviewer": "Compared cut_env_IMP_MEM_typed: successful source cut makes an arbitrary key present exactly when it is present in the requested set."
