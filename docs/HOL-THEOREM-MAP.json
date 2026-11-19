@@ -144615,7 +144615,7 @@
       "regs"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "Source comparison: all eleven clauses in HOL's order - Const, Var, Op Add/Sub/And/Or/Xor over exactly two arguments, and Shift Lsl/Asr/Lsr/Ror with w2n of the second operand. HOL's remaining patterns fall to ARB; Lean's catch-all returns holArb. HOL word_and/word_or/word_xor/word_ror and the four shifts are rendered by the BitVec operations with the same Nat shift amount."
+    "reviewer": "Source comparison: all eleven clauses in HOL's order - Const, Var, Op Add/Sub/And/Or/Xor over exactly two arguments, and Shift Lsl/Asr/Lsr/Ror with w2n of the second operand. The Var clause is HOL's FAPPLY `s.regs ' v`, rendered with the reviewed holFapply on the canonical finite-map carrier; the module's bitVecNonempty instance supplies the word carrier's inhabitant, so no Nonempty binder appears in any tagged signature and total_function_inhabitants does not apply. HOL's remaining patterns fall to ARB; Lean's catch-all returns holArb. HOL word_and/word_or/word_xor/word_ror and the four shifts are rendered by the BitVec operations with the same Nat shift amount."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
@@ -144735,7 +144735,7 @@
       "regs"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "Source comparison: all seventeen source rules are present in HOL's order - Skip, Continue, Delete, Assign, Seq, If, Load, Store, Swap, Add, Sub, Mul, Div, Loop, Rec, LoopBody-return and LoopBody-continue. Each source rule's conjunction of premises becomes that many constructor arguments, which is the same rule; every guard, the INL/INR result side, the recursion target, the clock test and the copy_vars success are preserved. Add/Sub use single_add_word/single_sub_word, Mul/Div single_mul/single_div with single_div_pre, and If uses word_cmp, all at the state's single word dimension."
+    "reviewer": "Source comparison: all seventeen source rules are present in HOL's order - Skip, Continue, Delete, Assign, Seq, If, Load, Store, Swap, Add, Sub, Mul, Div, Loop, Rec, LoopBody-return and LoopBody-continue. Each source rule's conjunction of premises becomes that many constructor arguments, which is the same rule; every guard, the INL/INR result side, the recursion target, the clock test and the copy_vars success are preserved. The Add/Sub/Mul/Div rules read registers with HOL's FAPPLY `s.regs ' n`, rendered with the reviewed holFapply; Add/Sub use single_add_word/single_sub_word, Mul/Div single_mul/single_div with single_div_pre, and If uses word_cmp, all at the state's single word dimension."
   }
 ,
   {
@@ -144814,7 +144814,7 @@
       "regs"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "Source comparison: two clauses - writing n with the current value when n is in the domain, and deleting n when it is not. Lean keeps both directions, the domain test as a defined-lookup test, and writes the current value as the carrier's lookup. HOL's FDOM of the register finite map is stated on the canonical carrier as the set of keys with a defined lookup (`HolFiniteMapExact.dom`), and FLOOKUP results are the carrier's Option lookups."
+    "reviewer": "Source comparison: two clauses - writing n with the current value (HOL's `SOME (s.regs ' n)`) when n is in the domain, and deleting n when it is not. Lean keeps both directions, states the domain test as membership in the canonical key set, and renders the current value with the reviewed holFapply."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
@@ -144826,7 +144826,7 @@
       "regs"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "Source comparison: state equality is exactly clock equality, register-domain equality, equal register values on the domain, and equal array contents, in HOL's conjunct order. Lean states the domain equality as an equality of the canonical key sets and the value agreement as Option lookup equality. HOL's FDOM of the register finite map is stated on the canonical carrier as the set of keys with a defined lookup (`HolFiniteMapExact.dom`), and FLOOKUP results are the carrier's Option lookups."
+    "reviewer": "Source comparison: state equality is exactly clock equality, register-domain equality, equal register values on the domain (HOL's `s0.regs ' n = s1.regs ' n`), and equal array contents, in HOL's conjunct order. Lean states the domain equality as an equality of the canonical key sets and the value agreement with the reviewed holFapply."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
@@ -144874,7 +144874,7 @@
       "regs"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "Source comparison: the four source conjuncts - the lookup after a NONE write is the empty map's lookup at a matching key and the old lookup otherwise, the lookup after a SOME write is the new value at a matching key, FDOM after a NONE write is the old domain with n deleted, and FDOM after a SOME write is the old domain with n inserted. Lean keeps all four; the empty map's lookup is the carrier's absent lookup and the domains are canonical key sets. HOL's FDOM of the register finite map is stated on the canonical carrier as the set of keys with a defined lookup (`HolFiniteMapExact.dom`), and FLOOKUP results are the carrier's Option lookups."
+    "reviewer": "Source comparison: the four source conjuncts - FAPPLY after a NONE write is the empty map's FAPPLY at a matching key and the old FAPPLY otherwise, FAPPLY after a SOME write is the new value at a matching key, FDOM after a NONE write is the old domain with n deleted, and FDOM after a SOME write is the old domain with n inserted. Lean keeps all four, renders both FAPPLY columns with the reviewed holFapply, and states the domains as canonical key sets."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
@@ -144922,7 +144922,7 @@
       "regs"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "Source comparison: a defined lookup reads back its value. Lean states HOL's FLOOKUP value as the carrier lookup with the arbitrary word as the absent-value fallback, which the premise makes irrelevant."
+    "reviewer": "Source comparison: FLOOKUP s.regs n = SOME v implies HOL's FAPPLY `s.regs ' n = v`. Lean keeps the premise as a canonical lookup and states the conclusion with the reviewed holFapply, discharging it through holFapply_of_lookup."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
@@ -144970,7 +144970,7 @@
       "regs"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "Source comparison: a successful copy leaves a register that is not saved unchanged, under the source's non-membership, bound and EVERY premises. Lean keeps all three premises, the literal bound 25 standing for max_var_name, and the conclusion as lookup equality."
+    "reviewer": "Source comparison: a successful copy leaves a register that is not saved unchanged, under the source's non-membership, bound and EVERY premises. Lean keeps all three premises, the literal bound 25 standing for max_var_name, and states HOL's FAPPLY equality with the reviewed holFapply on both sides."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
@@ -144995,5 +144995,75 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "Source comparison: dec_clock s = clock_write (s.clock - 1) s; Lean keeps both sides and the truncated subtraction."
+  }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "code_subset_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/CodeSubset.lean",
+    "lean_name": "codeSubset",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: code_subset (n1,cs1) (n2,cs2) holds when every value the first alist maps a key to is also mapped by the second. Lean keeps the two pair arguments, both components, and the pointwise implication, with the same key and value quantifiers. HOL's ALOOKUP uses total equality on the key type; the Lean association-list lookup `holAlookup` needs a DecidableEq instance, which is the only added binder."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "code_subset_refl",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/CodeSubset.lean",
+    "lean_name": "codeSubset_refl",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: code_subset c1 c1. The source script declares this name twice (line 368 and line 2281, the second a duplicate of the same fact); the Lean theorem carries the first declaration's line and proves the same reflexive statement."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "code_subset_trans",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/CodeSubset.lean",
+    "lean_name": "codeSubset_trans",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: code_subset c1 c2 and code_subset c2 c3 imply code_subset c1 c3. Lean keeps the three pair arguments and both premises."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "loop_app_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/Relations.lean",
+    "lean_name": "loopApp",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: the source case split on f x - an INL state is decremented and paired with g x /\\ s.clock <> 0, an INR value passes through with g x. Lean keeps both branches, the INL/INR sides, the clock test and the independent result type."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "tick_before_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/Relations.lean",
+    "lean_name": "tickBefore",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: at clock zero the state and F are returned, otherwise f runs on delete_vars vs (dec_clock s). Lean keeps the guard, both results and the same body call."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "Corr_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/Relations.lean",
+    "lean_name": "Corr",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: Corr prog s s1 p holds exactly when the guard p implies Eval NONE s prog s1. Lean keeps the four arguments in source order, the NONE recursion target and the guard implication."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "good_code_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/Relations.lean",
+    "lean_name": "goodCode",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: every entry (prog,n,p2) of the installed-code list compiles from some accumulator cs1 to exactly p2 with labels l2' and temporaries i2, and the resulting accumulator extends cs3. Lean keeps the MEM test, the four existentials, the compile call at n 2 1 and the code_subset conclusion."
   }
 ]

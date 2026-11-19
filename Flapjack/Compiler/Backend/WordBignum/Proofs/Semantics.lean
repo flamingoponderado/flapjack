@@ -6,6 +6,7 @@ public import Flapjack.Misc.Multiword.SingleWord
 public import Flapjack.FiniteMap.Exact
 public import Flapjack.Misc.ListEl
 public import Flapjack.HolArb
+public import Flapjack.Misc.FiniteMapApply
 public import Flapjack.Compiler.Encoders.Asm
 public import Mathlib.Logic.Function.Basic
 
@@ -18,6 +19,11 @@ namespace Flapjack.Compiler.Backend.WordBignum
 open Flapjack
 open Flapjack.Misc.Multiword
 open Flapjack.Compiler.Encoders.Asm
+
+/-- Every word carrier has an inhabitant. This Flapjack-only instance exists so
+the reviewed `holFapply` rendering of HOL's total `FAPPLY` can be used at word
+types; it adds no hypothesis to any tagged statement. -/
+instance bitVecNonempty {width : Nat} : Nonempty (BitVec width) := ⟨0⟩
 
 /-- The mini-language state: the register finite map, the three array contents
 and the clock. -/
@@ -67,7 +73,7 @@ word, as in HOL's total definition. -/
 noncomputable def evalExp {width : Nat} [NeZero width] (s : MiniState width) :
     WordLangExpHOL (BitVec width) → BitVec width
   | .const w => w
-  | .var v => (s.regs.lookup v).getD (holArb (BitVec width))
+  | .var v => holFapply s.regs v
   | .op .add [x1, x2] => evalExp s x1 + evalExp s x2
   | .op .sub [x1, x2] => evalExp s x1 - evalExp s x2
   | .op .and [x1, x2] => evalExp s x1 &&& evalExp s x2
@@ -198,7 +204,7 @@ inductive Eval {width : Nat} [NeZero width] :
       (hreg : s.regs.lookup n3 ≠ none) (h4 : evalRiPre s n4) (h5 : evalRiPre s n5)
       (hcarry : evalRi s n5 ≠ 0 → evalRi s n5 = 1)
       (hdistinct : n1 ≠ n2)
-      (hadd : singleAddWord ((s.regs.lookup n3).getD (holArb (BitVec width)))
+      (hadd : singleAddWord (holFapply s.regs n3)
         (evalRi s n4) (evalRi s n5) = (r1, r2)) :
       Eval r s (.add n1 n2 n3 n4 n5) (.inr (regWrite n1 (some r1) (regWrite n2 (some r2) s)))
   | sub (n1 n2 n3 : Nat) (n4 n5 : WordRegImm (BitVec width))
@@ -206,33 +212,33 @@ inductive Eval {width : Nat} [NeZero width] :
       (hreg : s.regs.lookup n3 ≠ none) (h4 : evalRiPre s n4) (h5 : evalRiPre s n5)
       (hcarry : evalRi s n5 ≠ 0 → evalRi s n5 = 1)
       (hdistinct : n1 ≠ n2)
-      (hsub : singleSubWord ((s.regs.lookup n3).getD (holArb (BitVec width)))
+      (hsub : singleSubWord (holFapply s.regs n3)
         (evalRi s n4) (evalRi s n5) = (r1, r2)) :
       Eval r s (.sub n1 n2 n3 n4 n5) (.inr (regWrite n1 (some r1) (regWrite n2 (some r2) s)))
   | mul (n1 n2 n3 n4 : Nat) (r : Option (Mini (BitVec width))) (s : MiniState width)
       (h3 : s.regs.lookup n3 ≠ none) (h4 : s.regs.lookup n4 ≠ none) (hdistinct : n1 ≠ n2) :
       Eval r s (.mul n1 n2 n3 n4)
         (.inr (regWrite n1
-          (some (singleMul ((s.regs.lookup n3).getD (holArb (BitVec width)))
-            ((s.regs.lookup n4).getD (holArb (BitVec width))) 0).1)
+          (some (singleMul (holFapply s.regs n3)
+            (holFapply s.regs n4) 0).1)
           (regWrite n2
-            (some (singleMul ((s.regs.lookup n3).getD (holArb (BitVec width)))
-              ((s.regs.lookup n4).getD (holArb (BitVec width))) 0).2) s)))
+            (some (singleMul (holFapply s.regs n3)
+              (holFapply s.regs n4) 0).2) s)))
   | div (n1 n2 n3 n4 n5 : Nat) (r : Option (Mini (BitVec width))) (s : MiniState width)
       (h3 : s.regs.lookup n3 ≠ none) (h4 : s.regs.lookup n4 ≠ none)
       (h5 : s.regs.lookup n5 ≠ none) (hdistinct : n1 ≠ n2)
-      (hpre : singleDivPre ((s.regs.lookup n3).getD (holArb (BitVec width)))
-        ((s.regs.lookup n4).getD (holArb (BitVec width)))
-        ((s.regs.lookup n5).getD (holArb (BitVec width)))) :
+      (hpre : singleDivPre (holFapply s.regs n3)
+        (holFapply s.regs n4)
+        (holFapply s.regs n5)) :
       Eval r s (.div n1 n2 n3 n4 n5)
         (.inr (regWrite n1
-          (some (singleDiv ((s.regs.lookup n3).getD (holArb (BitVec width)))
-            ((s.regs.lookup n4).getD (holArb (BitVec width)))
-            ((s.regs.lookup n5).getD (holArb (BitVec width)))).1)
+          (some (singleDiv (holFapply s.regs n3)
+            (holFapply s.regs n4)
+            (holFapply s.regs n5)).1)
           (regWrite n2
-            (some (singleDiv ((s.regs.lookup n3).getD (holArb (BitVec width)))
-              ((s.regs.lookup n4).getD (holArb (BitVec width)))
-              ((s.regs.lookup n5).getD (holArb (BitVec width)))).2) s)))
+            (some (singleDiv (holFapply s.regs n3)
+              (holFapply s.regs n4)
+              (holFapply s.regs n5)).2) s)))
   | loop (r : Option (Mini (BitVec width))) (s1 : MiniState width) (p : Mini (BitVec width))
       (vs : List Nat) (s2 : MiniState width) (rec : Bool)
       (h : Eval (if rec then some p else none) (deleteVars vs (decClock s1))

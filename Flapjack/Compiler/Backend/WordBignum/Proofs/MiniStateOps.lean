@@ -33,6 +33,11 @@ theorem HolFiniteMapExact.ext_of_lookup {α β : Type} {m n : HolFiniteMapExact 
       have hp : fs₁ = fs₂ := Subsingleton.elim _ _
       rw [hp]
 
+/-- Flapjack helper: HOL `FAPPLY` is determined by the canonical lookup. -/
+theorem holFapply_congr {α β : Type} [Nonempty β] {f g : HolFiniteMapExact α β} {x : α}
+    (h : f.lookup x = g.lookup x) : holFapply f x = holFapply g x := by
+  simp only [holFapply, h]
+
 /-- Flapjack helper: domain subtraction removes exactly the given key. -/
 theorem HolFiniteMapExact.dom_eraseEq {α β : Type} [DecidableEq α]
     (map : HolFiniteMapExact α β) (key : α) :
@@ -108,18 +113,22 @@ leaves the state unchanged. -/
 @[hol "cakeml/compiler/backend/proofs/word_bignumProofScript.sml" "reg_write_cancel"
   (fmap_as_finite_support := [regs]) (words_as_type_indexed_bitvec)]
 theorem regWrite_cancel {width : Nat} [NeZero width] (n : Nat) (s : MiniState width) :
-    (s.regs.lookup n ≠ none → regWrite n (s.regs.lookup n) s = s) ∧
-      (s.regs.lookup n = none → regWrite n none s = s) := by
+    (n ∈ s.regs.dom → regWrite n (some (holFapply s.regs n)) s = s) ∧
+      (n ∉ s.regs.dom → regWrite n none s = s) := by
   constructor
   · intro h
-    cases hv : s.regs.lookup n with
-    | none => exact absurd hv h
+    have hv : s.regs.lookup n ≠ none := by
+      simpa [HolFiniteMapExact.dom] using h
+    cases hlookup : s.regs.lookup n with
+    | none => exact absurd hlookup hv
     | some w =>
-      simp only [regWrite]
-      rw [HolFiniteMapExact.updateEq_eq_self hv]
+      simp only [regWrite, holFapply, hlookup]
+      rw [HolFiniteMapExact.updateEq_eq_self hlookup]
   · intro h
+    have hnone : s.regs.lookup n = none := by
+      simpa [HolFiniteMapExact.dom] using h
     simp only [regWrite]
-    rw [HolFiniteMapExact.eraseEq_eq_self h]
+    rw [HolFiniteMapExact.eraseEq_eq_self hnone]
 
 /-- Two mini-language states are equal exactly when their clocks, register
 domains, register values on the domain, and array contents agree. -/
@@ -127,7 +136,7 @@ domains, register values on the domain, and array contents agree. -/
   (fmap_as_finite_support := [regs]) (words_as_type_indexed_bitvec)]
 theorem stateEqLemma {width : Nat} [NeZero width] (s0 s1 : MiniState width) :
     s0 = s1 ↔ s0.clock = s1.clock ∧ s0.regs.dom = s1.regs.dom ∧
-      (∀ n, n ∈ s0.regs.dom → s0.regs.lookup n = s1.regs.lookup n) ∧
+      (∀ n, n ∈ s0.regs.dom → holFapply s0.regs n = holFapply s1.regs n) ∧
       (∀ n, s0.arrays n = s1.arrays n) := by
   constructor
   · intro h
@@ -144,7 +153,20 @@ theorem stateEqLemma {width : Nat} [NeZero width] (s0 s1 : MiniState width) :
         have hk1 : s1.regs.lookup k = none := by
           simpa [HolFiniteMapExact.dom] using hkdom1
         rw [hk, hk1]
-      · exact hval k (by simpa [HolFiniteMapExact.dom] using hk)
+      · have hkdom : k ∈ s0.regs.dom := by
+          simpa [HolFiniteMapExact.dom] using hk
+        have hvalues := hval k hkdom
+        have hk1dom : k ∈ s1.regs.dom := hdom ▸ hkdom
+        have hk1 : s1.regs.lookup k ≠ none := by
+          simpa [HolFiniteMapExact.dom] using hk1dom
+        cases h0 : s0.regs.lookup k with
+        | none => exact absurd h0 hk
+        | some v =>
+          cases h1 : s1.regs.lookup k with
+          | none => exact absurd h1 hk1
+          | some w =>
+            simp only [holFapply, h0, h1] at hvalues ⊢
+            rw [hvalues]
     have harrays' : s0.arrays = s1.arrays := funext harrays
     cases s0 with
     | mk regs0 arrays0 clock0 =>
@@ -184,21 +206,25 @@ theorem regWrite_simp {width : Nat} [NeZero width] (n : Nat) (w : BitVec width)
   (fmap_as_finite_support := [regs]) (words_as_type_indexed_bitvec)]
 theorem regWrite_simp_alt {width : Nat} [NeZero width] (n m : Nat) (w : BitVec width)
     (s : MiniState width) :
-    (regWrite n none s).regs.lookup m =
-        (if n = m then (none : Option (BitVec width)) else s.regs.lookup m) ∧
-      (regWrite n (some w) s).regs.lookup m =
-        (if n = m then some w else s.regs.lookup m) ∧
+    holFapply (regWrite n none s).regs m =
+        (if n = m then
+          holFapply (HolFiniteMapExact.empty : HolFiniteMapExact Nat (BitVec width)) m
+        else holFapply s.regs m) ∧
+      holFapply (regWrite n (some w) s).regs m =
+        (if n = m then w else holFapply s.regs m) ∧
       (regWrite n none s).regs.dom = s.regs.dom \ {n} ∧
       (regWrite n (some w) s).regs.dom = insert n s.regs.dom := by
   refine ⟨?_, ?_, ?_, ?_⟩
-  · simp only [regWrite, HolFiniteMapExact.eraseEq, FDOMSUB_HOL]
+  · simp only [regWrite, HolFiniteMapExact.eraseEq, FDOMSUB_HOL, holFapply]
     by_cases h : n = m
     · simp [h]
-    · simp [h, Ne.symm h]
-  · simp only [regWrite, HolFiniteMapExact.updateEq, FUPDATE_HOL]
+    · have hm : ¬ m = n := fun hm => h hm.symm
+      simp [h, hm]
+  · simp only [regWrite, HolFiniteMapExact.updateEq, FUPDATE_HOL, holFapply]
     by_cases h : n = m
     · simp [h]
-    · simp [h, Ne.symm h]
+    · have hm : ¬ m = n := fun hm => h hm.symm
+      simp [h, hm]
   · simp only [regWrite, HolFiniteMapExact.dom_eraseEq]
   · simp only [regWrite, HolFiniteMapExact.dom_updateEq]
 
@@ -259,10 +285,9 @@ theorem regReadLemma1 {width : Nat} [NeZero width] (v : BitVec width) (n : Nat)
   (fmap_as_finite_support := [regs]) (words_as_type_indexed_bitvec)]
 theorem regReadLemma2 {width : Nat} [NeZero width] (v : BitVec width) (n : Nat)
     (s : MiniState width) :
-    s.regs.lookup n = some v → (s.regs.lookup n).getD (holArb (BitVec width)) = v := by
+    s.regs.lookup n = some v → holFapply s.regs n = v := by
   intro h
-  rw [h]
-  rfl
+  rw [holFapply_of_lookup h]
 
 /-- Reading an array returns its contents. -/
 @[hol "cakeml/compiler/backend/proofs/word_bignumProofScript.sml" "array_read_lemma"
@@ -315,7 +340,7 @@ theorem copyVars_ignore {width : Nat} [NeZero width]
     (source : HolFiniteMapExact Nat (BitVec width)) (saveRegs : List Nat)
     (s2 s3 : MiniState width) (a : Nat) :
     copyVars saveRegs source s2 = some s3 → a ∉ saveRegs → a < 25 →
-      (∀ n ∈ saveRegs, n < 25) → s3.regs.lookup a = s2.regs.lookup a := by
+      (∀ n ∈ saveRegs, n < 25) → holFapply s3.regs a = holFapply s2.regs a := by
   induction saveRegs generalizing s2 s3 with
   | nil =>
     intro h _ _ _
@@ -337,7 +362,9 @@ theorem copyVars_ignore {width : Nat} [NeZero width]
       have hreg : (regWrite n (some x) s2).regs.lookup a = s2.regs.lookup a := by
         simp only [regWrite, HolFiniteMapExact.updateEq, FUPDATE_HOL]
         simp [hne]
-      rw [hlookup, hreg]
+      have hreg' : holFapply (regWrite n (some x) s2).regs a = holFapply s2.regs a :=
+        holFapply_congr hreg
+      exact hlookup.trans hreg'
 
 /-- A successful register copy supplies the values of every saved register in
 the source map. -/
