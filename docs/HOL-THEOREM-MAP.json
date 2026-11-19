@@ -145443,5 +145443,14 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Compared the source and word_str_cmp_loop_def_typed: address/memory width and both result-word widths remain independent. Zero clock, length termination, both original byte-load failures, matching-byte recursion, and the independently widened or truncated differing bytes match the original."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "word_str_cmp_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/StringCompare.lean",
+  "lean_name": "wordStrCmp",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared word_str_cmp_def_typed: the source word width is shared by both addresses, memory, header lengths and results. The original domain and word tests, shifts, length-mode branches, minimum and full dimword loop clock are retained."
 }
 ]

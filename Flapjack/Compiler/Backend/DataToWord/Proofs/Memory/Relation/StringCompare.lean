@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Compiler.Backend.Semantics.WordSem.CallHelpers
 public import Flapjack.Compiler.Backend.Semantics.WordSem
+public import Flapjack.Compiler.Backend.WordGcFunctions
 
 @[expose] public section
 
@@ -29,5 +30,26 @@ def wordStrCmpLoop {width : Nat} {resultWidth1 : Nat} {resultWidth2 : Nat}
           | some b2 =>
             if b1 = b2 then wordStrCmpLoop (a1 + 1) (a2 + 1) r1 r2 (len - 1) dm m be ck
             else some (BitVec.ofNat resultWidth1 b1.toNat, BitVec.ofNat resultWidth2 b2.toNat)
+
+/-- Compare the two length headers before walking their byte payloads. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "word_str_cmp_def"
+  (words_as_type_indexed_bitvec)]
+noncomputable def wordStrCmp {width : Nat} [NeZero width]
+    (b : Bool) (a1 a2 : BitVec width) (dm : BitVec width → Bool)
+    (m : BitVec width → WordLocW width) (be : Bool) (c : DataToWord.Config) :
+    Option (BitVec width × BitVec width) :=
+  let k := width - c.lenSize - Flapjack.wordShiftAmount width
+  if dm a1 && dm a2 && wordSemIsWordLoc (m a1) && wordSemIsWordLoc (m a2) then
+    let l1 := wordSemTheWord (m a1) >>> k
+    let l2 := wordSemTheWord (m a2) >>> k
+    if b then
+      if l1 ≠ l2 then some (l1, l2)
+      else wordStrCmpLoop (a1 + wordSemBytesInWord) (a2 + wordSemBytesInWord)
+        l1 l1 l1 dm m be (2 ^ width)
+    else
+      let len := BitVec.ofNat width (min l1.toNat l2.toNat)
+      wordStrCmpLoop (a1 + wordSemBytesInWord) (a2 + wordSemBytesInWord)
+        l1 l2 len dm m be (2 ^ width)
+  else none
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
