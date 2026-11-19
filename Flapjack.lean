@@ -3158,8 +3158,10 @@ import Flapjack.Pancake.Proofs.WordConvs.InstSelectExp
 import Flapjack.Pancake.Proofs.WordConvs.InstSelectExpCodeLabels
 import Flapjack.Pancake.Proofs.WordConvs.InstSelectProgram
 import Flapjack.Pancake.Proofs.WordConvs.ThreeToTwo
+import Flapjack.Pancake.Proofs.WordConvs.ThreeToTwoCodeLabels
 import Flapjack.Pancake.Proofs.WordConvs.Unreach
 import Flapjack.Pancake.Proofs.WordConvs.UnreachLabels
+import Flapjack.Pancake.Proofs.WordConvs.UnreachCodeLabels
 import Flapjack.Pancake.Proofs.WordConvs.WordSimpInstructions
 import Flapjack.Pancake.Proofs.WordConvs.WordSimpLabels.Sequence
 import Flapjack.Pancake.Proofs.WordConvs.WordSimpLabels.PushOut

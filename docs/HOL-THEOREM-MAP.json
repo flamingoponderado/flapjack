@@ -143934,4 +143934,63 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "typed HOL source comparison (word_convs_proof_typed_probe.out, loop_setup_get_code_labels_typed): source1058-1061. `(loop_setup (names : sptree$num_set) (exit_names : sptree$num_set) (ssa : num sptree$num_map) (na : num) : alpha prog # num sptree$num_map # num) = ((setup_prog : alpha prog),(ssa' : num sptree$num_map),(na' : num)) ==> word_get_code_labels setup_prog = (emptyset : num -> bool)`; the capture keeps names, exit_names, ssa, na and binds setup_prog, ssa', na'. HOL num_set is Spt Unit, num_map is Spt Nat; loop_setup is the tagged loopSetup and word_get_code_labels is getCodeLabelsHOL. The producer equality is the single premise. Only HOL's type-indexed word becomes BitVec width."
   }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_get_code_labels_dest_Seq_Move",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/UnreachCodeLabels.lean",
+    "lean_name": "getCodeLabels_destSeqMove",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (word_convs_proof_typed_probe.out, word_get_code_labels_dest_Seq_Move_typed): source2302-2305. `forall (p : alpha prog). dest_Seq_Move p = SOME ((x : num),(y : (num # num) list),(z : alpha prog)) ==> word_get_code_labels z = word_get_code_labels p`; the capture keeps x, y, z free and binds p, in that order, matching Lean's `(x : Nat) (y : List (Nat \u00d7 Nat)) (z : ...) (p : ...)` binders. HOL's tuple pattern (x,y,z) is written as three separate Lean binders, not one tuple variable. dest_Seq_Move is the tagged destSeqMove and word_get_code_labels is the tagged getCodeLabelsHOL. The producer equality is the single premise. Only HOL's type-indexed word becomes BitVec width."
+  }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_get_code_labels_SimpSeq",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/UnreachCodeLabels.lean",
+    "lean_name": "getCodeLabels_simpSeq",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (word_convs_proof_typed_probe.out, word_get_code_labels_SimpSeq_typed): source2311-2314. `word_get_code_labels (SimpSeq (p : alpha prog) (q : alpha prog)) SUBSET word_get_code_labels p UNION word_get_code_labels q`; the capture keeps both free program variables p and q, in that order, matching Lean's `(p q : ...)`. SimpSeq is the tagged simpSeq and word_get_code_labels is the tagged getCodeLabelsHOL; HOL's SUBSET/UNION are Lean's subset/union on Set Nat. No premise. Only HOL's type-indexed word becomes BitVec width."
+  }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_get_code_labels_Seq_assoc_right",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/UnreachCodeLabels.lean",
+    "lean_name": "getCodeLabels_seqAssocRight",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (word_convs_proof_typed_probe.out, word_get_code_labels_Seq_assoc_right_typed): source2322-2325. `forall (ps : alpha prog) (qs : alpha prog). word_get_code_labels (Seq_assoc_right ps qs) SUBSET word_get_code_labels ps UNION word_get_code_labels qs`; the capture binds ps then qs, matching Lean's `(ps qs : ...)`. Seq_assoc_right is the tagged seqAssocRight and word_get_code_labels is the tagged getCodeLabelsHOL; SUBSET/UNION are Lean's subset/union. No premise. Only HOL's type-indexed word becomes BitVec width."
+  }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_get_code_labels_remove_unreach",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/UnreachCodeLabels.lean",
+    "lean_name": "getCodeLabels_removeUnreach",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (word_convs_proof_typed_probe.out, word_get_code_labels_remove_unreach_typed): source2351-2354. `word_get_code_labels (remove_unreach (ps : alpha prog)) SUBSET word_get_code_labels ps`; the capture keeps the free program variable ps, matching Lean's `(ps : ...)`. remove_unreach is the tagged removeUnreach and word_get_code_labels is the tagged getCodeLabelsHOL; SUBSET is Lean's subset. No premise. Only HOL's type-indexed word becomes BitVec width."
+  }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_get_code_labels_three_to_two_reg_prog",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/ThreeToTwoCodeLabels.lean",
+    "lean_name": "getCodeLabels_threeToTwoRegProg",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (word_convs_proof_typed_probe.out, word_get_code_labels_three_to_two_reg_prog_typed): source2279-2283. `forall (ps : alpha prog). word_get_code_labels (three_to_two_reg_prog (b : bool) ps) = word_get_code_labels ps`; the capture keeps the free flag b and binds ps, matching Lean's `(b : Bool) (ps : ...)` binder order. three_to_two_reg_prog is the tagged threeToTwoRegProg and word_get_code_labels is the tagged getCodeLabelsHOL. No premise. Only HOL's type-indexed word becomes BitVec width."
+  }
+,
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/UnreachCodeLabels.lean",
+    "lean_name": "subset_of_destSeqMove",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only consequence of getCodeLabels_destSeqMove, used to close the SimpSeq move-merge branch of word_get_code_labels_SimpSeq. HOL proves that branch inline in word_get_code_labels_SimpSeq; no separately named HOL declaration with this subset premise exists."
+  }
 ]

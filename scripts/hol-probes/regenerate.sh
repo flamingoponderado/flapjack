@@ -11512,6 +11512,15 @@ run_probe word_convs_proof_typed_probeScript.sml word_convs_proof_typed_probe.ou
   word_good_handlers_fake_moves_typed word_good_handlers_ssa_cc_trans_typed \
   word_good_handlers_full_ssa_cc_trans_typed word_good_handlers_word_to_word_incr_helper_typed \
   loop_setup_good_handlers_typed fake_seq_good_handlers_typed ssa_reconcile_good_handlers_typed \
+  word_get_code_labels_dest_Seq_Move_typed word_get_code_labels_SimpSeq_typed \
+  word_get_code_labels_Seq_assoc_right_typed word_get_code_labels_remove_unreach_typed \
+  word_get_code_labels_three_to_two_reg_prog_typed word_get_code_labels_const_fp_loop_typed \
+  word_get_code_labels_try_if_hoist2_typed word_get_code_labels_simp_duplicate_if_typed \
+  word_get_code_labels_push_out_if_typed word_get_code_labels_word_simp_typed \
+  word_get_code_labels_ssa_cc_trans_typed \
+  word_get_code_labels_full_ssa_cc_trans_typed \
+  word_good_code_labels_word_to_word_incr_helper_typed \
+  word_good_code_labels_word_to_word_incr_typed word_good_code_labels_word_to_word_typed \
   const_fp_loop_Seq_typed \
   "$cake_dir/compiler/backend/proofs/wordConvsProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"

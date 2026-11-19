@@ -454,6 +454,21 @@ val _ = capture "word_good_handlers_word_to_word_incr_helper_typed" "word_good_h
 val _ = capture "loop_setup_good_handlers_typed" "loop_setup_good_handlers";
 val _ = capture "fake_seq_good_handlers_typed" "fake_seq_good_handlers";
 val _ = capture "ssa_reconcile_good_handlers_typed" "ssa_reconcile_good_handlers";
+val _ = capture "word_get_code_labels_dest_Seq_Move_typed" "word_get_code_labels_dest_Seq_Move";
+val _ = capture "word_get_code_labels_SimpSeq_typed" "word_get_code_labels_SimpSeq";
+val _ = capture "word_get_code_labels_Seq_assoc_right_typed" "word_get_code_labels_Seq_assoc_right";
+val _ = capture "word_get_code_labels_remove_unreach_typed" "word_get_code_labels_remove_unreach";
+val _ = capture "word_get_code_labels_three_to_two_reg_prog_typed" "word_get_code_labels_three_to_two_reg_prog";
+val _ = capture "word_get_code_labels_const_fp_loop_typed" "word_get_code_labels_const_fp_loop";
+val _ = capture "word_get_code_labels_try_if_hoist2_typed" "word_get_code_labels_try_if_hoist2";
+val _ = capture "word_get_code_labels_simp_duplicate_if_typed" "word_get_code_labels_simp_duplicate_if";
+val _ = capture "word_get_code_labels_push_out_if_typed" "word_get_code_labels_push_out_if";
+val _ = capture "word_get_code_labels_word_simp_typed" "word_get_code_labels_word_simp";
+val _ = capture "word_get_code_labels_ssa_cc_trans_typed" "word_get_code_labels_ssa_cc_trans";
+val _ = capture "word_get_code_labels_full_ssa_cc_trans_typed" "word_get_code_labels_full_ssa_cc_trans";
+val _ = capture "word_good_code_labels_word_to_word_incr_helper_typed" "word_good_code_labels_word_to_word_incr_helper";
+val _ = capture "word_good_code_labels_word_to_word_incr_typed" "word_good_code_labels_word_to_word_incr";
+val _ = capture "word_good_code_labels_word_to_word_typed" "word_good_code_labels_word_to_word";
 
 (* Derived local theorem: const_fp_loop_Seq is the conjunction of the
    const_fp_loop definition clauses that mention Seq, filtered and
