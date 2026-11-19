@@ -232,13 +232,15 @@ theorem stateRel_cutStateOpt_setVar {width : Nat} [NeZero width] {C F : Type}
     simpa [DataSem.setVar] using result
 
 /-- A successful optional source cut and argument read can be matched by a
-target cut and argument read while retaining both state relations. The HOL
-tag is pending review of the state relation and its compiler dependencies. -/
+target cut and argument read while retaining both complete state relations. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml" "state_rel_cut_state_opt_SOME"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem stateRel_cutStateOpt_some {width : Nat} [NeZero width] {C F : Type}
-    (conf : Config) (l1 l2 : Nat) (source : DataSem.State C F)
+    (conf : Flapjack.Compiler.Backend.DataToWord.Config) (l1 l2 : Nat)
+    (source : Flapjack.Compiler.Backend.DataSem.State C F)
     (target : WordSemStateFiniteExact width C F) (locs : List (Nat × Nat))
-    (args : List Nat) (values : List DataSem.Value) (names : NumSet)
-    (cut : DataSem.State C F)
+    (args : List Nat) (values : List Flapjack.Compiler.Backend.DataSem.Value) (names : NumSet)
+    (cut : Flapjack.Compiler.Backend.DataSem.State C F)
     (premises : stateRel conf l1 l2 source target none locs ∧
       DataSem.getVars args source.locals = some values ∧
       DataSem.cutStateOpt (some names) source = some cut) :
