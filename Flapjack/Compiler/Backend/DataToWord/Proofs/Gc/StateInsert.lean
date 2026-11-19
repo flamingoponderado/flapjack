@@ -1,8 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.StateRelation
-public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.InterInsert
-public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.AdjustedSet
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.OddInter
 
 @[expose] public section
 
@@ -35,10 +34,8 @@ private theorem stateRel_insertOdd {width : Nat} [NeZero width] {C F : Type} (co
     simp only [adjustVar]
     omega
   have hi : sptInter (sptInsert key x t.locals) (adjustSet s.locals) =
-      sptInter t.locals (adjustSet s.locals) := by
-    rw [inter_insert]
-    have absent := lookup_odd_adjustSet key s.locals odd
-    simp [sptDomain, absent]
+      sptInter t.locals (adjustSet s.locals) :=
+    inter_insertOdd_adjustSet key x t.locals s.locals odd
   simp only [stateRel, h0, hadj, hi]
 
 @[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "state_rel_insert_1"

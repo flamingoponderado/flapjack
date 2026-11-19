@@ -144012,5 +144012,13 @@
   "statement_status": "reviewed_word_dimension_as_width",
   "word_dimension_as_width": "width",
   "reviewer": "Source comparison with MustTerminate_limit_NOT_0_typed in data_to_word_gc_fun_const_ok_probe.out and HOL source lines 8821-8824: for each HOL word type the original termination limit is nonzero. The word-free type dimension is represented by the explicit positive Nat width, using the reviewed wordSemMustTerminateLimit definition."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "inter_insert_ODD_adjust_set_alt",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/OddInter.lean",
+  "lean_name": "inter_insertOdd_adjustSet",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Source comparison with inter_insert_ODD_adjust_set_alt_typed in data_to_word_gc_fun_const_ok_probe.out and HOL source lines 8778-8785: the odd-key premise, both Spt maps with independent payload types, insertion value and complete intersection equality are preserved. HOL ODD is rendered as remainder one modulo two."
 }
 ]

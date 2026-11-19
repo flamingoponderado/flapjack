@@ -159,3 +159,7 @@ get_vars_sing_typed=(get_vars [(n :num)] (t :(α, β, γ) wordSem$state) :α wor
 adjust_var_not_15_typed=adjust_var (a2 :num) ≠ (15 :num)
 memory_rel_Temp_typed=memory_rel (c :data_to_word$config) (be :bool) (ts :num) (refs :v ref sptree$num_map) (sp :num) (st :store_name |-> α word_loc)⟨Temp (i :word5) ↦ (w :α word_loc)⟩ (m :α word -> α word_loc) (dm :α word -> bool) (vars :(v # α word_loc) list) ⇔ memory_rel c be ts refs sp st m dm vars
 MustTerminate_limit_NOT_0_typed=MustTerminate_limit (:α) ≠ (0 :num)
+join_env_locals_def_typed=∀(sl :α sptree$num_map) (tl :β sptree$num_map). join_env_locals sl tl = join_env sl (toAList (inter tl (adjust_set sl)))
+join_env_locals_insert_odd_typed=ODD (n :num) ⇒ join_env_locals (sl :α sptree$num_map) (insert n (v :β) (ls :β sptree$num_map) :β sptree$num_map) = join_env_locals sl ls
+join_env_locals_insert_dest_odd_typed=ODD (n :num) ⇒ join_env_locals (sl :α sptree$num_map) (insert (adjust_var (dest :num)) (w :β) (insert n (v :β) (ls :β sptree$num_map) :β sptree$num_map) :β sptree$num_map) = join_env_locals sl (insert (adjust_var dest) w ls :β sptree$num_map)
+inter_insert_ODD_adjust_set_alt_typed=∀(k :num). ODD k ⇒ inter (insert k (v :α) (s :α sptree$num_map) :α sptree$num_map) (adjust_set (t :β sptree$num_map)) = inter s (adjust_set t)

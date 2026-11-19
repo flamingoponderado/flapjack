@@ -245,3 +245,7 @@ val _ = pr_typed "get_vars_sing_typed" data_to_word_gcProofTheory.get_vars_sing;
 val _ = pr_typed "adjust_var_not_15_typed" data_to_word_gcProofTheory.adjust_var_not_15;
 val _ = pr_typed "memory_rel_Temp_typed" data_to_word_gcProofTheory.memory_rel_Temp;
 val _ = pr_typed "MustTerminate_limit_NOT_0_typed" data_to_word_gcProofTheory.MustTerminate_limit_NOT_0;
+val _ = pr_typed "join_env_locals_def_typed" data_to_word_gcProofTheory.join_env_locals_def;
+val _ = pr_typed "join_env_locals_insert_odd_typed" data_to_word_gcProofTheory.join_env_locals_insert_odd;
+val _ = pr_typed "join_env_locals_insert_dest_odd_typed" data_to_word_gcProofTheory.join_env_locals_insert_dest_odd;
+val _ = pr_typed "inter_insert_ODD_adjust_set_alt_typed" data_to_word_gcProofTheory.inter_insert_ODD_adjust_set_alt;
