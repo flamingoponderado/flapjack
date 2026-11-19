@@ -94,4 +94,23 @@ theorem getVars_some_iff_data_eq {α : Type} (t : Spt α) (x : Nat) (xs : List N
   cases z <;> simp [DataSem.getVars]
   all_goals cases h : DataSem.getVar x t <;> cases h2 : DataSem.getVars xs t <;> simp_all
   exact ⟨fun ⟨a, b⟩ => ⟨a.symm, b.symm⟩, fun ⟨a, b⟩ => ⟨a.symm, b.symm⟩⟩
+/-- Successful word-state reads of a cons split into their two reads. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "get_vars_SOME_IFF"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem getVars_some_iff {width : Nat} [NeZero width] {C F : Type} (t : WordSemStateFiniteExact width C F) (x : Nat) (xs : List Nat) (y : WordLocW width) (ys : List (WordLocW width)) :
+    (WordSemStateFiniteExact.getVars [] t = some [] ↔ True) ∧
+    (WordSemStateFiniteExact.getVars (x :: xs) t = some (y :: ys) ↔
+      WordSemStateFiniteExact.getVar x t = some y ∧ WordSemStateFiniteExact.getVars xs t = some ys) := by
+  simp only [WordSemStateFiniteExact.getVars]
+  cases h : WordSemStateFiniteExact.getVar x t <;> cases h2 : WordSemStateFiniteExact.getVars xs t <;> simp_all
+/-- Successful word-state reads have exactly the corresponding list shape. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "get_vars_SOME_IFF_eq"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem getVars_some_iff_eq {width : Nat} [NeZero width] {C F : Type} (t : WordSemStateFiniteExact width C F) (x : Nat) (xs : List Nat) (z : List (WordLocW width)) :
+    (WordSemStateFiniteExact.getVars [] t = some z ↔ z = []) ∧
+    (WordSemStateFiniteExact.getVars (x :: xs) t = some z ↔
+      ∃ y ys, z = y :: ys ∧ WordSemStateFiniteExact.getVar x t = some y ∧ WordSemStateFiniteExact.getVars xs t = some ys) := by
+  cases z <;> simp [WordSemStateFiniteExact.getVars]
+  all_goals cases h : WordSemStateFiniteExact.getVar x t <;> cases h2 : WordSemStateFiniteExact.getVars xs t <;> simp_all
+  exact ⟨fun ⟨a, b⟩ => ⟨a.symm, b.symm⟩, fun ⟨a, b⟩ => ⟨a.symm, b.symm⟩⟩
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

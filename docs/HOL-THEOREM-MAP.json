@@ -144186,5 +144186,31 @@
   "lean_name": "getVars_some_iff_data_eq",
   "statement_status": "reviewed_exact",
   "reviewer": "Source comparison with get_vars_SOME_IFF_data_eq_typed in data_to_word_gc_fun_const_ok_probe.out and HOL source lines 8604-8621: both conjuncts, the arbitrary sparse-tree value carrier, the list-shape equality and all lookup conditions are preserved without additional hypotheses."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "get_vars_SOME_IFF",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/GetVars.lean",
+  "lean_name": "getVars_some_iff",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source comparison with get_vars_SOME_IFF_typed in data_to_word_gc_fun_const_ok_probe.out and HOL source lines 8623-8640: both conjuncts, list-shape equality and lookup conditions are preserved with no additional hypotheses. The state keeps independent compiler and FFI parameters, canonical finite maps and the shared positive word width."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "get_vars_SOME_IFF_eq",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/GetVars.lean",
+  "lean_name": "getVars_some_iff_eq",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source comparison with get_vars_SOME_IFF_eq_typed in data_to_word_gc_fun_const_ok_probe.out and HOL source lines 8623-8640: both conjuncts, list-shape equality and lookup conditions are preserved with no additional hypotheses. The state keeps independent compiler and FFI parameters, canonical finite maps and the shared positive word width."
 }
 ]

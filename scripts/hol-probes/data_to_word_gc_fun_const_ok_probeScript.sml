@@ -262,3 +262,5 @@ val _ = pr_typed "fromList2_SNOC_typed" data_to_word_gcProofTheory.fromList2_SNO
 val _ = pr_typed "state_rel_IMP_Number_arg_typed" data_to_word_gcProofTheory.state_rel_IMP_Number_arg;
 val _ = pr_typed "get_vars_SOME_IFF_data_typed" data_to_word_gcProofTheory.get_vars_SOME_IFF_data;
 val _ = pr_typed "get_vars_SOME_IFF_data_eq_typed" data_to_word_gcProofTheory.get_vars_SOME_IFF_data_eq;
+val _ = pr_typed "get_vars_SOME_IFF_typed" data_to_word_gcProofTheory.get_vars_SOME_IFF;
+val _ = pr_typed "get_vars_SOME_IFF_eq_typed" data_to_word_gcProofTheory.get_vars_SOME_IFF_eq;
