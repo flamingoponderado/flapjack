@@ -9,21 +9,10 @@ public import Batteries.Data.List.Basic
 
 /-! Simplification facts for the bignum mini-language state operations, ported
 from `cakeml/compiler/backend/proofs/word_bignumProofScript.sml`. HOL's `FDOM`
-of a finite map is stated here as the set of keys with a defined lookup on the
-canonical carrier. -/
+of a finite map is the set of keys with a defined lookup on the canonical
+carrier (`Flapjack.HolFiniteMapExact.dom`, declared with its decidable
+membership instance in `Flapjack/FiniteMap/DomExact.lean`). -/
 namespace Flapjack
-
-/-- HOL `FDOM` for the canonical finite-map carrier: the keys with a defined
-value. Flapjack helper mirroring the HOL library domain function. -/
-def HolFiniteMapExact.dom {α β : Type} (map : HolFiniteMapExact α β) : Set α :=
-  { key | map.lookup key ≠ none }
-
-/-- Flapjack helper: domain membership is decidable from the value type's
-`DecidableEq`, so HOL's `IN FDOM` guards can be written literally inside an
-`if`. -/
-instance HolFiniteMapExact.decidableMemDom {α β : Type} [DecidableEq β]
-    (map : HolFiniteMapExact α β) (key : α) : Decidable (key ∈ map.dom) :=
-  decidable_of_iff (map.lookup key ≠ none) Iff.rfl
 
 /-- Flapjack helper: two canonical finite maps with the same lookup are equal.
 This module's own form of `HolFiniteMapExact.ext`, renamed to avoid the
@@ -313,10 +302,10 @@ theorem clockReadLemma {width : Nat} [NeZero width] (s : MiniState width) (l : N
   intro h
   exact h
 
-/-- Copying registers leaves the clock and arrays untouched. -/
-@[hol "cakeml/compiler/backend/proofs/word_bignumProofScript.sml" "copy_vars_const"
-  (fmap_as_finite_support := [regs]) (words_as_type_indexed_bitvec)]
-theorem copyVars_const {width : Nat} [NeZero width]
+/-- Copying registers leaves the clock and arrays untouched, for an arbitrary
+source register map. Flapjack-only generalisation of HOL `copy_vars_const`; the
+tagged `copyVars_const` below states the source's own `s1.regs` form. -/
+theorem copyVars_const_source {width : Nat} [NeZero width]
     (source : HolFiniteMapExact Nat (BitVec width)) (saveRegs : List Nat)
     (s2 s3 : MiniState width) :
     copyVars saveRegs source s2 = some s3 → s3.clock = s2.clock ∧ s3.arrays = s2.arrays := by
@@ -340,32 +329,45 @@ theorem copyVars_const {width : Nat} [NeZero width]
       · rw [ha]
         simp only [regWrite]
 
-/-- Copying registers does not disturb a register that is not saved. -/
+/-- HOL `copy_vars_const`: copying the saved registers of `s1` into `s2` leaves
+the clock and the arrays untouched. -/
+@[hol "cakeml/compiler/backend/proofs/word_bignumProofScript.sml" "copy_vars_const"
+  (fmap_as_finite_support := [regs]) (words_as_type_indexed_bitvec)]
+theorem copyVars_const {width : Nat} [NeZero width] (s1 : MiniState width)
+    (saveRegs : List Nat) (s2 s3 : MiniState width) :
+    copyVars saveRegs s1.regs s2 = some s3 → s3.clock = s2.clock ∧ s3.arrays = s2.arrays :=
+  copyVars_const_source s1.regs saveRegs s2 s3
+
+/-- HOL `copy_vars_ignore`: copying registers does not disturb a register that
+is not saved.  HOL's four conjuncts are ONE conjunction premise, and its
+binder order is `save_regs regs s2 s3`. -/
 @[hol "cakeml/compiler/backend/proofs/word_bignumProofScript.sml" "copy_vars_ignore"
   (fmap_as_finite_support := [regs]) (words_as_type_indexed_bitvec)]
-theorem copyVars_ignore {width : Nat} [NeZero width]
-    (source : HolFiniteMapExact Nat (BitVec width)) (saveRegs : List Nat)
-    (s2 s3 : MiniState width) (a : Nat) :
-    copyVars saveRegs source s2 = some s3 → a ∉ saveRegs → a < 25 →
-      (∀ n ∈ saveRegs, n < 25) → holFapply s3.regs a = holFapply s2.regs a := by
+theorem copyVars_ignore {width : Nat} [NeZero width] (a : Nat) (saveRegs : List Nat)
+    (regs : HolFiniteMapExact Nat (BitVec width)) (s2 s3 : MiniState width) :
+    copyVars saveRegs regs s2 = some s3 ∧ a ∉ saveRegs ∧ a < 25 ∧
+        (∀ n ∈ saveRegs, n < 25) →
+      holFapply s3.regs a = holFapply s2.regs a := by
   induction saveRegs generalizing s2 s3 with
   | nil =>
-    intro h _ _ _
-    simp only [copyVars, Option.some.injEq] at h
-    subst h
+    intro h
+    obtain ⟨hcopy, _, _, _⟩ := h
+    simp only [copyVars, Option.some.injEq] at hcopy
+    subst hcopy
     rfl
   | cons n ns ih =>
-    intro h hnot hbound hall
+    intro h
+    obtain ⟨hcopy, hnot, hbound, hall⟩ := h
     simp only [List.mem_cons, not_or] at hnot
     obtain ⟨hne, hnot⟩ := hnot
     have hnbound : n < 25 := hall n (by simp)
     have hall' : ∀ m ∈ ns, m < 25 := fun m hm => hall m (by simp [hm])
-    simp only [copyVars] at h
-    cases hsource : source.lookup n with
-    | none => simp [hsource] at h
+    simp only [copyVars] at hcopy
+    cases hsource : regs.lookup n with
+    | none => simp [hsource] at hcopy
     | some x =>
-      simp only [hsource] at h
-      have hlookup := ih (regWrite n (some x) s2) s3 h hnot hbound hall'
+      simp only [hsource] at hcopy
+      have hlookup := ih (regWrite n (some x) s2) s3 ⟨hcopy, hnot, hbound, hall'⟩
       have hreg : (regWrite n (some x) s2).regs.lookup a = s2.regs.lookup a := by
         simp only [regWrite, HolFiniteMapExact.updateEq, FUPDATE_HOL]
         simp [hne]
@@ -374,10 +376,10 @@ theorem copyVars_ignore {width : Nat} [NeZero width]
       exact hlookup.trans hreg'
 
 /-- A successful register copy supplies the values of every saved register in
-the source map. -/
-@[hol "cakeml/compiler/backend/proofs/word_bignumProofScript.sml" "copy_vars_IMP"
-  (fmap_as_finite_support := [regs]) (words_as_type_indexed_bitvec)]
-theorem copyVars_IMP {width : Nat} [NeZero width]
+the source map, for an arbitrary source register map. Flapjack-only
+generalisation of HOL `copy_vars_IMP`; the tagged `copyVars_IMP` below states
+the source's own `s1.regs` form. -/
+theorem copyVars_IMP_source {width : Nat} [NeZero width]
     (source : HolFiniteMapExact Nat (BitVec width)) (saveRegs : List Nat)
     (s2 s3 : MiniState width) :
     copyVars saveRegs source s2 = some s3 →
@@ -396,6 +398,17 @@ theorem copyVars_IMP {width : Nat} [NeZero width]
       simp only [hsource] at h
       obtain ⟨vals, hvals⟩ := ih (regWrite n (some x) s2) s3 h
       exact ⟨x :: vals, List.Forall₂.cons hsource hvals⟩
+
+/-- HOL `copy_vars_IMP`: a successful copy of the saved registers of `s1`
+supplies the values of every saved register in `s1.regs`. -/
+@[hol "cakeml/compiler/backend/proofs/word_bignumProofScript.sml" "copy_vars_IMP"
+  (fmap_as_finite_support := [regs]) (words_as_type_indexed_bitvec)]
+theorem copyVars_IMP {width : Nat} [NeZero width] (s1 : MiniState width)
+    (saveRegs : List Nat) (s2 s3 : MiniState width) :
+    copyVars saveRegs s1.regs s2 = some s3 →
+      ∃ vals : List (BitVec width),
+        List.Forall₂ (fun n v => s1.regs.lookup n = some v) saveRegs vals :=
+  copyVars_IMP_source s1.regs saveRegs s2 s3
 
 /-- Decrementing the clock is overwriting it with the decremented value. -/
 @[hol "cakeml/compiler/backend/proofs/word_bignumProofScript.sml" "dec_clock_thm"

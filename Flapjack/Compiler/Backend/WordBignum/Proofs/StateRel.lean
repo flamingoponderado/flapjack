@@ -75,23 +75,19 @@ def codeRel {α : Type} {width : Nat} [NeZero width]
           sptLookup n code = some (1, .seq p2 (.return 0 [0])) ∧
           codeSubset cs2 cs
 
-set_option linter.unusedVariables false in
 /-- The division-code assumption: for any well-formed division call the compiled
-`DivCode` body returns the quotient and remainder. HOL binds the state and
-argument quantifiers inside the definition body (`div_code_assum code <=>
-!(t1:state) n l ... . ...`); Lean states the same quantifiers as a Pi type so
-that the finite-map carrier `WordSemStateFiniteExact` is named in the
-signature, as the `fmap_as_finite_support` qualifier requires, and `stateRel`
-spells HOL's conjunct as its eta-expansion `∀ t1 ..., divCodeAssum code t1 ...`.
+`DivCode` body returns the quotient and remainder.  HOL writes this as a
+Boolean proposition whose body universally quantifies the state and argument
+variables (`div_code_assum code <=> !(t1:state) n l ... . ...`); the Lean
+definition keeps that shape, with the universals inside the `Prop` body.
 The post-state is bound by a `let` because Lean's parser does not accept a
 multi-field record update as a deeply nested argument. -/
 @[hol "cakeml/compiler/backend/proofs/word_bignumProofScript.sml" "div_code_assum_def"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 def divCodeAssum {width : Nat} [NeZero width] {C F : Type}
-    (code : Spt (Nat × WordLangProgHOL (BitVec width))) :
-    ∀ (t1 : WordSemStateFiniteExact width C F) (n l i0 i1 i2 i3 i4 : Nat)
-      (w3 w4 w5 : BitVec width) (retVal : WordLocW width), Prop :=
-  fun t1 n l i0 i1 i2 i3 i4 w3 w4 w5 retVal =>
+    (code : Spt (Nat × WordLangProgHOL (BitVec width))) : Prop :=
+  ∀ (t1 : WordSemStateFiniteExact width C F) (n l i0 i1 i2 i3 i4 : Nat)
+      (w3 w4 w5 : BitVec width) (retVal : WordLocW width),
     0 < i0 ∧ 0 < i1 ∧ 0 < i2 ∧ 0 < i3 ∧ 0 < i4 ∧
       [i0, i1, i2, i3, i4].Nodup ∧
       t1.code = code ∧ t1.termdep ≠ 0 ∧ WordSemStateFiniteExact.getVar 0 t1 = some retVal ∧
@@ -133,10 +129,8 @@ def arrayRel {payload : Nat} {address : Nat} [NeZero payload] [NeZero address]
 /-- The source's state relation between a mini-language state and a `wordSem`
 state: matching clocks, the array representation, the register file in the
 temporary registers, the code and division assumptions, and the untouched
-`wordSem` fields of the original state. HOL's `div_code_assum (:'ffi) (:'c)
-t.code` conjunct is written as its eta-expansion `∀ t1 ..., divCodeAssum t.code
-t1 ...` because the Lean definition is Pi-typed (see `divCodeAssum`); the two
-forms are definitionally the same proposition. -/
+`wordSem` fields of the original state.  HOL's `div_code_assum (:'ffi) (:'c)
+t.code` conjunct is kept directly, as `divCodeAssum t.code`. -/
 @[hol "cakeml/compiler/backend/proofs/word_bignumProofScript.sml" "state_rel_def"
   (fmap_as_finite_support_relation := [MiniState.regs, WordSemStateFiniteExact.store])
   (words_as_type_indexed_bitvec)]
@@ -151,9 +145,7 @@ def stateRel {width : Nat} [NeZero width] {β : Type} {C F : Type}
     (∀ (a : Nat) (v : BitVec width), s.regs.lookup a = some v →
       a < 25 ∧ t.store.lookup (.temp (BitVec.ofNat 5 a)) = some (.word v)) ∧
     codeRel cs t.code ∧
-    (∀ (t1 : WordSemStateFiniteExact width C F) (n l i0 i1 i2 i3 i4 : Nat)
-        (w3 w4 w5 : BitVec width) (retVal : WordLocW width),
-      divCodeAssum t.code t1 n l i0 i1 i2 i3 i4 w3 w4 w5 retVal) ∧
+    divCodeAssum (C := C) (F := F) t.code ∧
     t.termdep ≠ 0 ∧
     t0.gcFun = t.gcFun ∧ t0.handler = t.handler ∧ t0.termdep = t.termdep ∧
     t0.code = t.code ∧ t0.be = t.be ∧ t0.ffi = t.ffi ∧

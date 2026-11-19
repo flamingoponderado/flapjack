@@ -317,6 +317,10 @@ val _ = emit_exported "evaluate_mc_iop_typed" "word_bignumProof" "evaluate_mc_io
 val _ = emit_exported "compile_NIL_IMP_typed" "word_bignumProof" "compile_NIL_IMP";
 
 (* ---- local theorems parsed from the source ---- *)
+(* The source declares `Overload max_var_name[local] = ``25n``` at line 244;
+   reinstate it so the local statements parse with 25 rather than a free
+   `max_var_name`. *)
+val _ = Parse.temp_overload_on ("max_var_name", ``25n``);
 val _ = capture "state_rel_delete_vars_282_typed" "state_rel_delete_vars";
 val _ = capture_at "state_rel_delete_vars_293_typed" "state_rel_delete_vars" 293;
 val _ = capture "env_to_list_insert_0_LN_typed" "env_to_list_insert_0_LN";
@@ -342,6 +346,7 @@ val _ = capture "Corr_STRENGTHEN_TERM_typed" "Corr_STRENGTHEN_TERM";
 val _ = capture "Corr_move_pre_typed" "Corr_move_pre";
 val _ = capture "mc_fac_corr_typed" "mc_fac_corr";
 val _ = capture "code_subset_refl_typed" "code_subset_refl";
+val _ = capture_at "code_subset_refl_2281_typed" "code_subset_refl" 2281;
 val _ = capture "code_subset_trans_typed" "code_subset_trans";
 val _ = capture "compile_IMP_code_subset_typed" "compile_IMP_code_subset";
 val _ = capture "has_compiled_lemma_typed" "has_compiled_lemma";

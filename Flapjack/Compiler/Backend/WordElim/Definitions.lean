@@ -73,9 +73,11 @@ def analyseWordCode {α β : Type} :
   | (name, _, prog) :: rest => sptInsert name (findWordRef prog) (analyseWordCode rest)
 
 /-- Exact HOL `remove_word_code_def` (`word_elimScript.sml:55-57`): keep the
-    entries whose label is reachable. -/
+    entries whose label is reachable.  HOL's `reachable` payload type `β` is
+    independent of the code's payload `α` and is never inspected, so it stays
+    a separate type parameter here. -/
 @[hol "cakeml/compiler/backend/word_elimScript.sml" "remove_word_code_def"]
-def removeWordCode {α : Type} (reachable : NumSet) (code : List (Nat × α)) :
+def removeWordCode {α β : Type} (reachable : Spt β) (code : List (Nat × α)) :
     List (Nat × α) :=
   code.filter (fun entry => (sptLookup entry.1 reachable).isSome)
 

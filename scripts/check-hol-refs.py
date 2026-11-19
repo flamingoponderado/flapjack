@@ -1383,6 +1383,22 @@ def tagged_declaration_source(lines: list[str], attribute_start: int) -> str:
     return signature + "\n" + "\n".join(body)
 
 
+def header_result_is_prop(header: str) -> bool:
+    """True when a tagged declaration's written header ends in `: Prop`.
+
+    A predicate definition whose universal quantifiers live in its body names
+    the finite-map carrier there, not in the header. For those declarations the
+    `fmap_as_finite_support` carrier disambiguation reads the whole declaration
+    instead of only the signature; every other declaration still resolves its
+    carrier from the signature. This is a syntactic convenience, not evidence
+    of HOL correspondence.
+    """
+    text = header.strip()
+    if text.endswith(":="):
+        text = text[:-2].strip()
+    return bool(re.search(r":\s*Prop\s*$", text))
+
+
 TO_FUNCTION_RE = re.compile(r"\bto([A-Z][A-Za-z0-9_']*)")
 OF_FUNCTION_RE = re.compile(r"\bof([A-Z][A-Za-z0-9_']*)")
 FMAP_WITNESS_RE = re.compile(
@@ -6733,12 +6749,17 @@ def main(argv: list[str]) -> int:
                     for error in list_as_array_errors(lines, list_fields, rel)
                 )
             if fmap_fields:
-                errors.extend(
-                    f"{where}: {error}"
-                    for error in fmap_as_finite_support_errors(
-                        lines, fmap_fields, rel, tagged_declaration_text(lines, number)
-                    )
+                fmap_header = tagged_declaration_text(lines, number)
+                fmap_errors = fmap_as_finite_support_errors(
+                    lines, fmap_fields, rel, fmap_header
                 )
+                if fmap_errors and header_result_is_prop(fmap_header):
+                    # A predicate definition binds its universals in the body, so
+                    # the owning carrier is named there rather than in the header.
+                    fmap_errors = fmap_as_finite_support_errors(
+                        lines, fmap_fields, rel, tagged_declaration_source(lines, number)
+                    )
+                errors.extend(f"{where}: {error}" for error in fmap_errors)
             if fmap_parameters:
                 if fmap_fields or fmap_result or fmap_relation or fmap_equalities:
                     errors.append(

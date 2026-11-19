@@ -36,12 +36,13 @@ theorem codeSubset_refl_again {α β γ : Type} [DecidableEq β] (cs : α × Lis
     codeSubset cs cs :=
   codeSubset_refl cs
 
-/-- Code inclusion is transitive. -/
+/-- Code inclusion is transitive. HOL's premise is one conjunction, kept as a
+single hypothesis. -/
 @[hol "cakeml/compiler/backend/proofs/word_bignumProofScript.sml" "code_subset_trans"]
 theorem codeSubset_trans {α β γ δ ε : Type} [DecidableEq β]
     (c1 : α × List (β × γ)) (c2 : δ × List (β × γ)) (c3 : ε × List (β × γ))
-    (h12 : codeSubset c1 c2) (h23 : codeSubset c2 c3) : codeSubset c1 c3 := by
-  intro n v h
-  exact h23 n v (h12 n v h)
+    (h : codeSubset c1 c2 ∧ codeSubset c2 c3) : codeSubset c1 c3 := by
+  intro n v hv
+  exact h.2 n v (h.1 n v hv)
 
 end Flapjack.Compiler.Backend.WordBignum

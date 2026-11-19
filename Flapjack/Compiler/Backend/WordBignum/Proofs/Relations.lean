@@ -169,7 +169,9 @@ precondition, mirroring the tagged `evalExpPre` clauses. -/
 noncomputable instance evalExpPreDecidable {width : Nat} [NeZero width] (s : MiniState width) :
     ∀ x : WordLangExpHOL (BitVec width), Decidable (evalExpPre s x)
   | .const _ => isTrue trivial
-  | .var v => decidable_of_iff (s.regs.lookup v ≠ none) (by simp [evalExpPre])
+  | .var v =>
+      decidable_of_iff (s.regs.lookup v ≠ none)
+        (by simp [evalExpPre, HolFiniteMapExact.dom])
   | .op _ [x, y] => by
       haveI := evalExpPreDecidable s x
       haveI := evalExpPreDecidable s y
@@ -315,7 +317,7 @@ theorem Corr_Sub {width : Nat} [NeZero width]
   obtain ⟨hreg, h4, h5, hcarry, hdistinct⟩ := h
   cases hsub : singleSubWord (holFapply s.regs n3) (evalRi s ri1) (evalRi s ri2) with
   | mk r1 r2 =>
-    exact Eval.sub n1 n2 n3 ri1 ri2 none s r1 r2 hreg h4 h5 hcarry hdistinct hsub
+    exact Eval.sub none s n1 n2 n3 ri1 ri2 r1 r2 hreg h4 h5 hcarry hdistinct hsub
 
 /-- HOL `Corr_Mul`: the long multiplication evaluates to the two written
 registers when both source registers are live and the destinations differ. -/
@@ -332,7 +334,7 @@ theorem Corr_Mul {width : Nat} [NeZero width]
   intro h
   rw [decide_eq_true_eq] at h
   obtain ⟨h3, h4, hdistinct⟩ := h
-  exact Eval.mul n1 n2 n3 n4 none s h3 h4 hdistinct
+  exact Eval.mul none s n1 n2 n3 n4 h3 h4 hdistinct
 
 /-- HOL `Corr_Div`: the long division evaluates to the two written registers
 when the three source registers are live, the destinations differ and the
@@ -352,7 +354,7 @@ theorem Corr_Div {width : Nat} [NeZero width]
   intro h
   rw [decide_eq_true_eq] at h
   obtain ⟨h3, h4, h5, hdistinct, hpre⟩ := h
-  exact Eval.div n1 n2 n3 n4 n5 none s h3 h4 h5 hdistinct hpre
+  exact Eval.div none s n1 n2 n3 n4 n5 h3 h4 h5 hdistinct hpre
 
 /-- HOL `Corr_If`: a conditional evaluates the branch chosen by the word
 comparison, with the matching branch's guard conjoined to the comparison
@@ -376,8 +378,7 @@ theorem Corr_If {width : Nat} [NeZero width]
   obtain ⟨h1, h2⟩ := hpq
   rw [Bool.and_eq_true, Bool.and_eq_true] at h
   obtain ⟨hdom, hpre, hq⟩ := h
-  have hreg : s.regs.lookup r ≠ none := by
-    simpa [HolFiniteMapExact.dom] using of_decide_eq_true hdom
+  have hreg : r ∈ s.regs.dom := of_decide_eq_true hdom
   have hri : evalRiPre s ri := of_decide_eq_true hpre
   cases hcmp : wordCmpHOL c (evalExp s (.var r)) (evalRi s ri) with
   | true =>

@@ -4,6 +4,7 @@ public import Flapjack.Compiler.Backend.WordBignum.Helpers
 public import Flapjack.Compiler.Backend.WordBignum.Mini
 public import Flapjack.Misc.Multiword.SingleWord
 public import Flapjack.FiniteMap.Exact
+public import Flapjack.FiniteMap.DomExact
 public import Flapjack.Misc.ListEl
 public import Flapjack.HolArb
 public import Flapjack.Misc.FiniteMapApply
@@ -91,7 +92,7 @@ noncomputable def evalExp {width : Nat} [NeZero width] (s : MiniState width) :
 noncomputable def evalExpPre {width : Nat} [NeZero width] (s : MiniState width) :
     WordLangExpHOL (BitVec width) → Prop
   | .const _ => True
-  | .var v => s.regs.lookup v ≠ none
+  | .var v => v ∈ s.regs.dom
   | .op _ [x, y] => evalExpPre s x ∧ evalExpPre s y
   | .shift _ x1 x2 => evalExpPre s x1 ∧ evalExpPre s x2 ∧ (evalExp s x2).toNat < 32
   | _ => False
@@ -184,7 +185,7 @@ inductive Eval {width : Nat} [NeZero width] :
   | ite (rec : Option (Mini (BitVec width))) (s1 : MiniState width)
       (c : Cmp) (r : Nat) (ri : WordRegImm (BitVec width))
       (p1 p2 : Mini (BitVec width)) (s2 : Sum (MiniState width) (MiniState width))
-      (hreg : s1.regs.lookup r ≠ none) (hri : evalRiPre s1 ri)
+      (hreg : r ∈ s1.regs.dom) (hri : evalRiPre s1 ri)
       (h : Eval rec s1
         (if wordCmpHOL c (evalExp s1 (.var r)) (evalRi s1 ri) then p1 else p2) s2) :
       Eval rec s1 (.ite c r ri p1 p2) s2
@@ -201,22 +202,22 @@ inductive Eval {width : Nat} [NeZero width] :
       Eval r s .swap (.inr (arrayWrite .in1 (s.arrays .in2) (arrayWrite .in2 (s.arrays .in1) s)))
   | add (n1 n2 n3 : Nat) (n4 n5 : WordRegImm (BitVec width))
       (r : Option (Mini (BitVec width))) (s : MiniState width) (r1 r2 : BitVec width)
-      (hreg : s.regs.lookup n3 ≠ none) (h4 : evalRiPre s n4) (h5 : evalRiPre s n5)
+      (hreg : n3 ∈ s.regs.dom) (h4 : evalRiPre s n4) (h5 : evalRiPre s n5)
       (hcarry : evalRi s n5 ≠ 0 → evalRi s n5 = 1)
       (hdistinct : n1 ≠ n2)
       (hadd : singleAddWord (holFapply s.regs n3)
         (evalRi s n4) (evalRi s n5) = (r1, r2)) :
       Eval r s (.add n1 n2 n3 n4 n5) (.inr (regWrite n1 (some r1) (regWrite n2 (some r2) s)))
-  | sub (n1 n2 n3 : Nat) (n4 n5 : WordRegImm (BitVec width))
-      (r : Option (Mini (BitVec width))) (s : MiniState width) (r1 r2 : BitVec width)
-      (hreg : s.regs.lookup n3 ≠ none) (h4 : evalRiPre s n4) (h5 : evalRiPre s n5)
+  | sub (r : Option (Mini (BitVec width))) (s : MiniState width)
+      (n1 n2 n3 : Nat) (n4 n5 : WordRegImm (BitVec width)) (r1 r2 : BitVec width)
+      (hreg : n3 ∈ s.regs.dom) (h4 : evalRiPre s n4) (h5 : evalRiPre s n5)
       (hcarry : evalRi s n5 ≠ 0 → evalRi s n5 = 1)
       (hdistinct : n1 ≠ n2)
       (hsub : singleSubWord (holFapply s.regs n3)
         (evalRi s n4) (evalRi s n5) = (r1, r2)) :
       Eval r s (.sub n1 n2 n3 n4 n5) (.inr (regWrite n1 (some r1) (regWrite n2 (some r2) s)))
-  | mul (n1 n2 n3 n4 : Nat) (r : Option (Mini (BitVec width))) (s : MiniState width)
-      (h3 : s.regs.lookup n3 ≠ none) (h4 : s.regs.lookup n4 ≠ none) (hdistinct : n1 ≠ n2) :
+  | mul (r : Option (Mini (BitVec width))) (s : MiniState width) (n1 n2 n3 n4 : Nat)
+      (h3 : n3 ∈ s.regs.dom) (h4 : n4 ∈ s.regs.dom) (hdistinct : n1 ≠ n2) :
       Eval r s (.mul n1 n2 n3 n4)
         (.inr (regWrite n1
           (some (singleMul (holFapply s.regs n3)
@@ -224,9 +225,9 @@ inductive Eval {width : Nat} [NeZero width] :
           (regWrite n2
             (some (singleMul (holFapply s.regs n3)
               (holFapply s.regs n4) 0).2) s)))
-  | div (n1 n2 n3 n4 n5 : Nat) (r : Option (Mini (BitVec width))) (s : MiniState width)
-      (h3 : s.regs.lookup n3 ≠ none) (h4 : s.regs.lookup n4 ≠ none)
-      (h5 : s.regs.lookup n5 ≠ none) (hdistinct : n1 ≠ n2)
+  | div (r : Option (Mini (BitVec width))) (s : MiniState width) (n1 n2 n3 n4 n5 : Nat)
+      (h3 : n3 ∈ s.regs.dom) (h4 : n4 ∈ s.regs.dom)
+      (h5 : n5 ∈ s.regs.dom) (hdistinct : n1 ≠ n2)
       (hpre : singleDivPre (holFapply s.regs n3)
         (holFapply s.regs n4)
         (holFapply s.regs n5)) :
@@ -287,12 +288,12 @@ theorem Eval_NONE_IMP {width : Nat} [NeZero width] :
   | swap r s => exact Eval.swap (some p) s
   | add n1 n2 n3 n4 n5 r s r1 r2 hreg h4 h5 hcarry hdistinct hadd =>
     exact Eval.add n1 n2 n3 n4 n5 (some p) s r1 r2 hreg h4 h5 hcarry hdistinct hadd
-  | sub n1 n2 n3 n4 n5 r s r1 r2 hreg h4 h5 hcarry hdistinct hsub =>
-    exact Eval.sub n1 n2 n3 n4 n5 (some p) s r1 r2 hreg h4 h5 hcarry hdistinct hsub
-  | mul n1 n2 n3 n4 r s h3 h4 hdistinct =>
-    exact Eval.mul n1 n2 n3 n4 (some p) s h3 h4 hdistinct
-  | div n1 n2 n3 n4 n5 r s h3 h4 h5 hdistinct hpre =>
-    exact Eval.div n1 n2 n3 n4 n5 (some p) s h3 h4 h5 hdistinct hpre
+  | sub r s n1 n2 n3 n4 n5 r1 r2 hreg h4 h5 hcarry hdistinct hsub =>
+    exact Eval.sub (some p) s n1 n2 n3 n4 n5 r1 r2 hreg h4 h5 hcarry hdistinct hsub
+  | mul r s n1 n2 n3 n4 h3 h4 hdistinct =>
+    exact Eval.mul (some p) s n1 n2 n3 n4 h3 h4 hdistinct
+  | div r s n1 n2 n3 n4 n5 h3 h4 h5 hdistinct hpre =>
+    exact Eval.div (some p) s n1 n2 n3 n4 n5 h3 h4 h5 hdistinct hpre
   | loop r s1 body vs s2 rec h hclock =>
     exact Eval.loop (some p) s1 body vs s2 rec h hclock
   | recurse s1 saveRegs vs body s2 s3 h hcopy hclock =>
