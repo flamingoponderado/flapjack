@@ -145047,5 +145047,29 @@
   "lean_name": "heapStoreUnusedAlt_genStateOk",
   "statement_status": "reviewed_exact",
   "reviewer": "Source comparison: Replayed the local HOL proof with types: successful unused allocation and the original generation-state invariant imply the invariant after advancing the allocation boundary by the element length, preserving the reference boundary and generic heap carriers."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "isSomeDataElement_heap_lookup_lemma1",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/HeapStore.lean",
+  "lean_name": "isSomeData_lookup_unused",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Source comparison with the typed replay of the original local HOL proof: Data-element lookup after an unused head holds exactly when the offset exceeds its payload size and the adjusted tail lookup succeeds. Both heap-element type parameters remain independent."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "isSomeDataElement_heap_lookup_lemma2",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/HeapStore.lean",
+  "lean_name": "isSomeData_lookup_expand",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Source comparison with the typed replay of the original local HOL proof: Data-element lookup through an unused expansion holds exactly at or after its length and agrees with the shifted tail lookup. Both heap-element type parameters remain independent."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "isSomeDataElement_heap_lookup_lemma3",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/HeapStore.lean",
+  "lean_name": "isSomeData_lookup_cons",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Source comparison with the typed replay of the original local HOL proof: A nonzero lookup in a nonempty heap is a data element exactly when the offset is at least the head length and the shifted tail lookup is a data element. Both heap-element type parameters remain independent."
 }
 ]

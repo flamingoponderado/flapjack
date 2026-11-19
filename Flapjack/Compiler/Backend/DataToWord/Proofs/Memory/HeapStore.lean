@@ -134,6 +134,41 @@ theorem heapStoreUnusedAlt_genStateOk {α β : Type} (offset length : Nat)
         exact ⟨left, right2, split2, restriction⟩
       · simp at run
 
+/-- An unused cell contributes no data lookup within its extent. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "isSomeDataElement_heap_lookup_lemma1"]
+theorem isSomeData_lookup_unused {α β : Type} (n k : Nat) (xs : List (HeapElement α β)) :
+    isSomeDataElement (heapLookup n (.unused k :: xs)) ↔
+      k < n ∧ isSomeDataElement (heapLookup (n - (k + 1)) xs) := by
+  by_cases zero : n = 0
+  · simp [zero, heapLookup, isSomeDataElement]
+  · by_cases inside : n < k + 1
+    · have bound : ¬ k < n := by omega
+      simp [heapLookup, elLength, zero, inside, bound, isSomeDataElement]
+    · have bound : k < n := by omega
+      simp [heapLookup, elLength, zero, inside, bound]
+
+/-- Data lookups after an unused expansion begin at its end. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "isSomeDataElement_heap_lookup_lemma2"]
+theorem isSomeData_lookup_expand {α β : Type} (n k : Nat) (xs : List (HeapElement α β)) :
+    isSomeDataElement (heapLookup n (heapExpand k ++ xs)) ↔
+      k ≤ n ∧ isSomeDataElement (heapLookup (n - k) xs) := by
+  by_cases empty : k = 0
+  · simp [heapExpand, empty]
+  · have len : k - 1 + 1 = k := by omega
+    simp [heapExpand, empty, isSomeData_lookup_unused, len, show k - 1 < n ↔ k ≤ n by omega]
+
+/-- A nonzero lookup in a nonempty heap moves past its head. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "isSomeDataElement_heap_lookup_lemma3"]
+theorem isSomeData_lookup_cons {α β : Type} (n : Nat) (x : HeapElement α β)
+    (xs : List (HeapElement α β)) (nonzero : n ≠ 0) :
+    isSomeDataElement (heapLookup n (x :: xs)) ↔
+      elLength x ≤ n ∧ isSomeDataElement (heapLookup (n - elLength x) xs) := by
+  by_cases inside : n < elLength x
+  · have notBound : ¬ elLength x ≤ n := by omega
+    simp [heapLookup, nonzero, inside, notBound, isSomeDataElement]
+  · have bound : elLength x ≤ n := by omega
+    simp [heapLookup, nonzero, inside, bound]
+
 /-- Storing at a heap-pre boundary replaces exactly the next element and
 reports whether its allocated length matches the replacement. -/
 @[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "heap_store_lemma"]

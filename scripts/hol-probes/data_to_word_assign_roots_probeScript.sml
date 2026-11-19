@@ -109,6 +109,32 @@ val _ = emit "maxout_bits_bit_typed" data_to_word_memoryProofTheory.maxout_bits_
 val _ = emit "maxout_bits_IMP_typed" data_to_word_memoryProofTheory.maxout_bits_IMP;
 val _ = emit "get_lowerbits_ptrbits_typed" data_to_word_memoryProofTheory.get_lowerbits_ptrbits;
 val _ = emit "make_cons_ptr_thm_typed" data_to_word_memoryProofTheory.make_cons_ptr_thm;
+(* Replay the three local data-lookup lemmas used by the allocation proof. *)
+val (lookup_unused_replay, lookup_expand_replay, lookup_cons_replay) = let
+  open preamble helperLib gc_sharedTheory
+  val lemma1 = Q.prove (`isSomeDataElement (heap_lookup n (Unused k :: xs)) <=>
+    k < n /\ isSomeDataElement (heap_lookup (n-(k+1)) xs)`,
+    srw_tac [] [heap_lookup_def,isSomeDataElement_def,el_length_def,NOT_LESS]
+    THEN1 (DISJ1_TAC \\ DECIDE_TAC)
+    \\ `k < n` by DECIDE_TAC \\ full_simp_tac std_ss [])
+  val lemma2 = Q.prove (`isSomeDataElement (heap_lookup n (heap_expand k ++ xs)) <=>
+    k <= n /\ isSomeDataElement (heap_lookup (n-k) xs)`,
+    srw_tac [] [heap_expand_def,lemma1]
+    \\ imp_res_tac (DECIDE ``sp <> 0 ==> (sp - 1 + 1 = sp:num)``)
+    \\ full_simp_tac std_ss []
+    \\ Cases_on `isSomeDataElement (heap_lookup (n - k) xs)`
+    \\ full_simp_tac std_ss [] \\ DECIDE_TAC)
+  val lemma3 = Q.prove (`n <> 0 ==>
+    (isSomeDataElement (heap_lookup n (x::xs)) <=>
+     el_length x <= n /\ isSomeDataElement (heap_lookup (n - el_length x) xs))`,
+    srw_tac [] [heap_expand_def,heap_lookup_def,isSomeDataElement_def]
+    \\ Cases_on `n < el_length x` THEN srw_tac [] []
+    THEN1 (DISJ1_TAC \\ DECIDE_TAC)
+    \\ `el_length x <= n` by DECIDE_TAC \\ full_simp_tac std_ss [])
+in (lemma1, lemma2, lemma3) end;
+val _ = emit "isSomeDataElement_heap_lookup_lemma1_typed" lookup_unused_replay;
+val _ = emit "isSomeDataElement_heap_lookup_lemma2_typed" lookup_expand_replay;
+val _ = emit "isSomeDataElement_heap_lookup_lemma3_typed" lookup_cons_replay;
 (* Replay the original local heap_split_heap_store proof: local HOL theorems
    are not exported by data_to_word_memoryProofTheory. *)
 val heap_split_heap_store_replay = let
