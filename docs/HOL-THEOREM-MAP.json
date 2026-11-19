@@ -145071,5 +145071,13 @@
   "lean_name": "isSomeData_lookup_cons",
   "statement_status": "reviewed_exact",
   "reviewer": "Source comparison with the typed replay of the original local HOL proof: A nonzero lookup in a nonempty heap is a data element exactly when the offset is at least the head length and the shifted tail lookup is a data element. Both heap-element type parameters remain independent."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "heap_store_unused_alt_thm",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/HeapStore.lean",
+  "lean_name": "heapStoreUnusedAlt_shape",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Source comparison with the typed replay of the local HOL proof: the split, successful allocation and resulting unused-space invariant imply an existential preceding heap with the same four original decomposition, length and replacement conclusions. Both generic heap-element carriers remain independent."
 }
 ]

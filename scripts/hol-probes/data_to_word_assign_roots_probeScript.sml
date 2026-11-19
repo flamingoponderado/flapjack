@@ -135,6 +135,34 @@ in (lemma1, lemma2, lemma3) end;
 val _ = emit "isSomeDataElement_heap_lookup_lemma1_typed" lookup_unused_replay;
 val _ = emit "isSomeDataElement_heap_lookup_lemma2_typed" lookup_expand_replay;
 val _ = emit "isSomeDataElement_heap_lookup_lemma3_typed" lookup_cons_replay;
+(* Replay the original local allocation-shape theorem. *)
+val heap_store_unused_alt_thm_replay = let
+  open preamble helperLib gc_sharedTheory data_to_word_memoryProofTheory
+in
+  Q.prove (`!a n heap h1 h2 heap2 x.
+    heap_split (a + n) heap = SOME (h1,h2) /\
+    heap_store_unused_alt a n x heap = (heap2,T) /\
+    unused_space_inv (a + el_length x) (n - el_length x) heap2 ==>
+    ?h0. h1 = h0 ++ [Unused (n-1)] /\
+         heap = h1 ++ h2 /\ heap_length h0 = a /\
+         heap2 = h0 ++ [x] ++ heap_expand (n - el_length x) ++ h2`,
+    fs [heap_store_unused_alt_def] \\ rw []
+    \\ fs [unused_space_inv_def]
+    \\ imp_res_tac gc_sharedTheory.heap_split_heap_length
+    \\ fs [] \\ rveq \\ fs []
+    \\ fs [heap_lookup_APPEND]
+    \\ `0 < n` by (Cases_on `x` \\ fs [el_length_def])
+    \\ fs [] \\ old_drule heap_lookup_SPLIT
+    \\ strip_tac \\ rveq \\ fs []
+    \\ `hb = []` by
+      (fs [heap_length_APPEND]
+       \\ fs [heap_length_def,el_length_def]
+       \\ Cases_on `hb` \\ fs [])
+    \\ rveq \\ fs []
+    \\ full_simp_tac std_ss [GSYM APPEND_ASSOC,APPEND]
+    \\ fs [heap_store_lemma])
+end;
+val _ = emit "heap_store_unused_alt_thm_typed" heap_store_unused_alt_thm_replay;
 (* Replay the original local heap_split_heap_store proof: local HOL theorems
    are not exported by data_to_word_memoryProofTheory. *)
 val heap_split_heap_store_replay = let
