@@ -585,3 +585,4 @@ val _ = emit "word_exp_real_addr_typed" data_to_word_assignProofTheory.word_exp_
 val _ = emit "word_exp_real_addr_2_typed" data_to_word_assignProofTheory.word_exp_real_addr_2;
 val _ = emit "env_to_list_domain_typed" data_to_word_assignProofTheory.env_to_list_domain;
 val _ = emit "IN_adjust_var_lemma_typed" data_to_word_assignProofTheory.IN_adjust_var_lemma;
+val _ = emit "cut_envs_lookup_0_typed" data_to_word_assignProofTheory.cut_envs_lookup_0;
