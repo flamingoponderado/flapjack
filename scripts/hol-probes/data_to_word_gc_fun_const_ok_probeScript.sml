@@ -255,3 +255,4 @@ val _ = pr_typed "inter_insert_ODD_adjust_set_typed" data_to_word_gcProofTheory.
 val _ = pr_typed "get_vars_1_IMP_typed" data_to_word_gcProofTheory.get_vars_1_IMP;
 val _ = pr_typed "get_vars_2_IMP_typed" data_to_word_gcProofTheory.get_vars_2_IMP;
 val _ = pr_typed "get_vars_3_IMP_typed" data_to_word_gcProofTheory.get_vars_3_IMP;
+val _ = pr_typed "memory_rel_insert_typed" data_to_word_gcProofTheory.memory_rel_insert;

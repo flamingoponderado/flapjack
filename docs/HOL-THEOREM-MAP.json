@@ -143995,7 +143995,7 @@
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "memory_rel_Temp",
-  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/MemoryTemp.lean",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/MemoryRelation.lean",
   "lean_name": "memoryRel_temp",
   "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
   "fmap_as_finite_support_relation": [
@@ -144121,5 +144121,17 @@
   "hol_name": "get_vars_3_IMP",
   "lean_name": "getVars_three_imp",
   "reviewer": "Source comparison with get_vars_3_IMP_typed in data_to_word_gc_fun_const_ok_probe.out and HOL source lines 8744-8765: the successful 3-element word-variable read implies each corresponding individual lookup in order, with no additional premises. The word state retains independent compiler and FFI parameters and uses canonical finite maps and the positive-width word translation."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "memory_rel_insert",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/MemoryRelation.lean",
+  "lean_name": "memoryRel_insert",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "st"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source comparison with memory_rel_insert_typed in data_to_word_gc_fun_const_ok_probe.out and HOL source lines 8692-8703: the full original memory relation premise has the represented pair prepended to the joined roots, and the full conclusion inserts that pair at the source and adjusted target names with all other roots preserved. The standalone HOL store uses the canonical finite-support map, and word values use the shared positive width."
 }
 ]

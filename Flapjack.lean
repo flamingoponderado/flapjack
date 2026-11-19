@@ -3210,7 +3210,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.WordGcCorrect
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.StateRelGc
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GetVars
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.AdjustVar
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.MemoryTemp
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.MemoryRelation
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.TerminateLimit
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.OddInter
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.JoinEnvLocals
