@@ -144860,5 +144860,23 @@
   "lean_name": "leastNotInDomain",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared least_notin_domain_typed with HOL: for a sparse tree with arbitrary payload, Nat.find chooses the least natural outside its domain and that key is outside the domain. The generalized leastUnusedRef implementation and its minimality theorem give the same LEAST selection."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "byte_aligned_bytes_in_word",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/WordStrideAlignment.lean",
+  "lean_name": "byteAlignedBytesInWord",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared byte_aligned_bytes_in_word_typed with HOL: good_dimindex is the sole premise and bytes_in_word is byte aligned for that same word width. HOL words use positive-width BitVec."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "byte_align_mult_bytes_in_word",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/WordStrideAlignment.lean",
+  "lean_name": "byteAlignMultBytesInWord",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared byte_align_mult_bytes_in_word_typed with HOL: good_dimindex implies byte alignment for both w * bytes_in_word and bytes_in_word * w at the same arbitrary word. HOL words use positive-width BitVec."
 }
 ]

@@ -97,3 +97,5 @@ val _ = emit "build_part_words_def_typed" data_to_word_memoryProofTheory.build_p
 val _ = emit "build_words_def_typed" data_to_word_memoryProofTheory.build_words_def;
 val _ = emit "do_part_SOME_IMP_SOME_typed" data_to_word_memoryProofTheory.do_part_SOME_IMP_SOME;
 val _ = emit "least_notin_domain_typed" data_to_word_memoryProofTheory.least_notin_domain;
+val _ = emit "byte_aligned_bytes_in_word_typed" data_to_word_memoryProofTheory.byte_aligned_bytes_in_word;
+val _ = emit "byte_align_mult_bytes_in_word_typed" data_to_word_memoryProofTheory.byte_align_mult_bytes_in_word;

@@ -15,7 +15,8 @@ implication, location validity, list-store append, constant-store evaluator and
 constant-build timestamp preservation, bignum sizing, and constant-part
 length and location prerequisites, constructor-pointer and proof-side
 constant-builder definitions,
-single-part timestamp preservation and the least unused sparse-tree key,
+single-part timestamp preservation, the least unused sparse-tree key, and
+word-stride alignment,
 with inferred types.
 It also evaluates zero and nonzero SmallLsr expressions for output parity. Regenerate
 with `HOL_PROBE_ONLY=data_to_word_assign_roots_probeScript.sml scripts/hol-probes/regenerate.sh`

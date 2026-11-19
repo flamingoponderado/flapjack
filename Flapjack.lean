@@ -355,6 +355,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.NumberSize
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ConstPartsGoodLoc
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.BuildWords
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.BuildFacts
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.WordStrideAlignment
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.WordMlInvLookup
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.WordMlInvGetVars
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.Roots
