@@ -144878,5 +144878,41 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Compared byte_align_mult_bytes_in_word_typed with HOL: good_dimindex implies byte alignment for both w * bytes_in_word and bytes_in_word * w at the same arbitrary word. HOL words use positive-width BitVec."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "word_and_lsr_0",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/PointerAdd.lean",
+  "lean_name": "wordAndLslZero",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared word_and_lsr_0_typed with HOL: the arbitrary bit cutoff and both same-width words are retained; the high-bit zero premise implies the original bitwise-and-zero result. HOL words use positive-width BitVec."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "byte_aligned_IMP_shift",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/PointerAdd.lean",
+  "lean_name": "byteAligned_imp_shift",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared byte_aligned_IMP_shift_typed with HOL: the same alignment and good_dimindex premises yield an existential word shifted by the architecture word_shift. HOL words use positive-width BitVec."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "make_ptr_add",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/PointerAdd.lean",
+  "lean_name": "makePtr_add",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared make_ptr_add_typed with HOL: alignment, good_dimindex and the shift-length bound imply the full pointer equality, retaining independent polymorphic tag and length types. HOL words use positive-width BitVec."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "make_cons_ptr_add",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/PointerAdd.lean",
+  "lean_name": "makeConsPtr_add",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared make_cons_ptr_add_typed with HOL: the same alignment, good_dimindex and shift-length premises imply the constructor pointer equality with the original low-bit term. HOL words use positive-width BitVec."
 }
 ]

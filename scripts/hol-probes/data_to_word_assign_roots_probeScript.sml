@@ -99,3 +99,7 @@ val _ = emit "do_part_SOME_IMP_SOME_typed" data_to_word_memoryProofTheory.do_par
 val _ = emit "least_notin_domain_typed" data_to_word_memoryProofTheory.least_notin_domain;
 val _ = emit "byte_aligned_bytes_in_word_typed" data_to_word_memoryProofTheory.byte_aligned_bytes_in_word;
 val _ = emit "byte_align_mult_bytes_in_word_typed" data_to_word_memoryProofTheory.byte_align_mult_bytes_in_word;
+val _ = emit "word_and_lsr_0_typed" data_to_word_memoryProofTheory.word_and_lsr_0;
+val _ = emit "byte_aligned_IMP_shift_typed" data_to_word_memoryProofTheory.byte_aligned_IMP_shift;
+val _ = emit "make_cons_ptr_add_typed" data_to_word_memoryProofTheory.make_cons_ptr_add;
+val _ = emit "make_ptr_add_typed" data_to_word_memoryProofTheory.make_ptr_add;

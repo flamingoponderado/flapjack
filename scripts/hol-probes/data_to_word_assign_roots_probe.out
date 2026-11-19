@@ -83,3 +83,7 @@ do_part_SOME_IMP_SOME_typed=(do_part (map0 :num -> v) (h :const_part) (refs :α 
 least_notin_domain_typed=(LEAST(ptr :num). ptr ∉ (domain (refs :α sptree$num_map) :num -> bool)) ∉ (domain refs :num -> bool)
 byte_aligned_bytes_in_word_typed=good_dimindex (:α) ⇒ byte_aligned (bytes_in_word :α word)
 byte_align_mult_bytes_in_word_typed=good_dimindex (:α) ⇒ byte_aligned ((w :α word) * (bytes_in_word :α word)) ∧ byte_aligned ((bytes_in_word :α word) * w)
+word_and_lsr_0_typed=(∀(i :num). (k :num) ≤ i ∧ i < dimindex (:α) ⇒ ¬(((w :α word) ' i) :bool)) ⇒ w && (n :α word) ≪ k = (0w :α word)
+byte_aligned_IMP_shift_typed=byte_aligned (w :α word) ∧ good_dimindex (:α) ⇒ ∃(v :α word). w = v ≪ (shift (:α) :num)
+make_cons_ptr_add_typed=byte_aligned (n :α word) ∧ good_dimindex (:α) ∧ (shift (:α) :num) ≤ shift_length (c :data_to_word$config) ⇒ make_cons_ptr c n (tag :num) (len :num) = Word (n ≪ (shift_length c − (shift (:α) :num)) + get_lowerbits c (Word (ptr_bits c tag len :α word)))
+make_ptr_add_typed=byte_aligned (n :α word) ∧ good_dimindex (:α) ∧ (shift (:α) :num) ≤ shift_length (c :data_to_word$config) ⇒ make_ptr c n (tag :β) (len :γ) = Word (n ≪ (shift_length c − (shift (:α) :num)) + (1w :α word))
