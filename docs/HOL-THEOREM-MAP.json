@@ -144628,5 +144628,15 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Compared write_bytearray_append_typed with HOL source lines 16239-16258: both byte lists, original memory and domain, endianness, word address, universal successful-load premise and exact tail-before-prefix write equality are retained."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "memory_rel_write_bytearray",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/ByteArrayWrite.lean",
+  "lean_name": "memoryRel_writeBytearray",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": ["store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared memory_rel_write_bytearray_typed with the original theorem and its local induction at lines 16260-16299: the full memory relation, byte-array lookup with false flag, equal lengths, simple-address lookup and good_dimindex premises are retained. The conclusion retains the exact sptree reference update, tail-first byte-array memory write, all state parameters and the unchanged root list. The store is the canonical finite-support map and the source word dimension is shared and positive."
 }
 ]
