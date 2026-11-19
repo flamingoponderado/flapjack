@@ -79,3 +79,5 @@ val _ = emit "assign_BoolTest_typed" data_to_word_assignProofTheory.assign_BoolT
 val _ = emit "assign_Label_typed" data_to_word_assignProofTheory.assign_Label;
 val _ = emit "assign_FFI_typed" data_to_word_assignProofTheory.assign_FFI;
 val _ = emit "assign_FFI_final_typed" data_to_word_assignProofTheory.assign_FFI_final;
+val _ = emit "getWords_acc_typed" data_to_word_assignProofTheory.getWords_acc;
+val _ = emit "getWords_thm_typed" data_to_word_assignProofTheory.getWords_thm;
