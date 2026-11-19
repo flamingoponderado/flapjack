@@ -145424,5 +145424,15 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Compared LENGTH_write_bytes_typed: HOL binder order is retained for the arbitrary positive-width destination words, fixed word8 bytes and endian flag, and the result is the exact equality of packed and input word-list lengths."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "memory_rel_xor_bytes",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/ByteXorCorrect.lean",
+  "lean_name": "memoryRelXorBytes",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": ["st"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared the typed HOL memory_rel_xor_bytes: both reference lookups, XOR success, good_dimindex, both returned addresses and source header, concrete XOR execution, and the complete updated memory relation are retained. The store is the canonical finite-support map; the shared source word type is positive-width BitVec, with fixed word8 byte lists."
 }
 ]
