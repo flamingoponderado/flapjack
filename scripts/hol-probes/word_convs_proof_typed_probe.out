@@ -100,6 +100,8 @@ loop_setup_wf_cutsets_typed=(loop_setup (names :sptree$num_set) (exit_names :spt
 ssa_cc_trans_wf_cutsets_typed=∀(prog :α prog) (ssa :num sptree$num_map) (na :num) (lt :(num sptree$num_map # sptree$num_set # sptree$num_set) list). (let ((prog' :α prog),(ssa' :num sptree$num_map),(na' :num)) = ssa_cc_trans prog ssa na lt in wf_cutsets prog')
 ssa_reconcile_wf_cutsets_typed=wf_cutsets (ssa_reconcile (cur_ssa :num sptree$num_map) (tgt_ssa :num sptree$num_map) (ns :β sptree$num_map) :α prog)
 extract_labels_SmartSeq_typed=extract_labels (SmartSeq (p1 :α prog) (p2 :α prog)) = extract_labels (Seq p1 p2)
+word_get_code_labels_SmartSeq_typed=word_get_code_labels (SmartSeq (p :α prog) (q :α prog)) = word_get_code_labels p ∪ word_get_code_labels q
+flat_exp_conventions_ShareInst_typed=flat_exp_conventions (ShareInst (op :memop) (v :num) (exp :α exp)) ⇔ (∃(v :num) (c :α word). exp = Op Add [(Var v :α exp); (Const c :α exp)]) ∨ ∃(v :num). exp = (Var v :α exp)
 every_inst_Seq_assoc_right_lemma_typed=∀(p1 :α prog) (p2 :α prog). every_inst (P :α inst -> bool) p1 ∧ every_inst P p2 ⇒ every_inst P (Seq_assoc_right p1 p2)
 every_inst_SimpSeq_typed=every_inst (P :α inst -> bool) (p1 :α prog) ∧ every_inst P (p2 :α prog) ⇒ every_inst P (SimpSeq p1 p2)
 flat_exp_conventions_Seq_assoc_right_lemma_typed=∀(p1 :α prog) (p2 :α prog). flat_exp_conventions p1 ∧ flat_exp_conventions p2 ⇒ flat_exp_conventions (Seq_assoc_right p1 p2)

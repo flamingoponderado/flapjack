@@ -143858,4 +143858,23 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "typed HOL source comparison (lab_to_target_proof_typed_probe.out, all_pc_adjust_pc_typed): source10729-10789. `forall (code : alpha sec list) (p : num). p < num_pcs (filter_skip code) ==> exists (k : num). adjust_pc k code = p`; the capture keeps code and p, binds k. num_pcs is the tagged numPcs, filter_skip is the tagged filterSkip and adjust_pc is the tagged adjustPc (lab_filter counterpart). Binder order code, p, one premise; the conclusion is the existential. Only HOL's type-indexed word becomes BitVec width."
   }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_get_code_labels_SmartSeq",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/SmartSeqLabels.lean",
+    "lean_name": "getCodeLabels_smartSeqHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (word_convs_proof_typed_probe.out, word_get_code_labels_SmartSeq_typed): source631-635. `word_get_code_labels (SmartSeq (p : alpha prog) (q : alpha prog)) = word_get_code_labels p UNION word_get_code_labels q`; the capture keeps p and q in order and the conclusion is an equality of code-label sets. word_get_code_labels is the tagged getCodeLabelsHOL and SmartSeq is the tagged smartSeqHOL; HOL's UNION is Lean Set.union. Only HOL's type-indexed word becomes BitVec width. No premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "flat_exp_conventions_ShareInst",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/FlatExpShareInst.lean",
+    "lean_name": "flatExpConventions_shareInst",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (word_convs_proof_typed_probe.out, flat_exp_conventions_ShareInst_typed): source1390-1393. `flat_exp_conventions (ShareInst (op : memop) (v : num) (exp : alpha exp)) <=> (exists (v : num) (c : alpha word). exp = Op Add [Var v; Const c]) \\/ (exists (v : num). exp = Var v)`; the capture keeps op, v, exp and binds the inner v and c. flat_exp_conventions is the tagged flatExpConventions, so HOL's Boolean equivalence is `= true <->`, ShareInst/Op Add/Var/Const are the WordLangProgHOL constructors, and the existential over the word constant c becomes BitVec width. Only HOL's type-indexed word becomes BitVec width. No premise."
+  }
 ]
