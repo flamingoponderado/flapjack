@@ -17,7 +17,7 @@ length and location prerequisites, constructor-pointer and proof-side
 constant-builder definitions,
 single-part timestamp preservation, the least unused sparse-tree key, and
 word-stride alignment, pointer addition, pointer-tag bit bounds, and
-constant-builder correspondence, and single-part and list relocation
+constant-builder correspondence, empty-constructor memory relation, and single-part and list relocation
 theorems, with inferred types.
 It also evaluates zero and nonzero SmallLsr expressions for output parity. Regenerate
 with `HOL_PROBE_ONLY=data_to_word_assign_roots_probeScript.sml scripts/hol-probes/regenerate.sh`

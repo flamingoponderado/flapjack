@@ -144995,5 +144995,17 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Compared parts_to_words_add_typed with HOL: the arbitrary list, sparse memories and index retain the original successful lowering, alignment, width, shift and pointwise memory premises, with the same existential relocated result and mapped outputs. HOL words use positive-width BitVec."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "memory_rel_Cons_empty",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/Unit.lean",
+  "lean_name": "memoryRel_consEmpty",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source comparison: memory_rel_Cons_empty and memory_rel_Cons_empty_typed: the full memory relation, tag below dimword divided by 16, and good_dimindex imply the same relation with the empty block and its BlockNil word prepended. The store uses canonical finite support and HOL words use positive-width BitVec."
 }
 ]
