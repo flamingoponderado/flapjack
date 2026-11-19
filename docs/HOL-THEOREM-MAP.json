@@ -144157,5 +144157,18 @@
   "hol_name": "fromList2_SNOC",
   "lean_name": "fromList2_snoc",
   "reviewer": "Source comparison with fromList2_SNOC_typed in data_to_word_gc_fun_const_ok_probe.out and HOL source lines 256-276: the even-key tree result after SNOC, rendered as list append, and insertion at twice the original list length are preserved for an arbitrary payload type, without extra assumptions."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "state_rel_IMP_Number_arg",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/StateRelNumberArg.lean",
+  "lean_name": "stateRel_imp_numberArg",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source comparison with state_rel_IMP_Number_arg_typed in data_to_word_gc_fun_const_ok_probe.out and HOL source lines 8705-8725: the full state relation for call environments, numeric bound and length equality imply the full state relation after appending the encoded numeric argument. The source and target state retain independent compiler and FFI parameters; the target state uses canonical finite maps and a common positive word width."
 }
 ]
