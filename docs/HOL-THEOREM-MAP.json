@@ -144307,5 +144307,19 @@
   ],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Source comparison with word_ml_inv_get_var_IMP_lemma_typed in data_to_word_gc_fun_const_ok_probe.out and HOL lines 439-451: the full root invariant and both successful corresponding local reads imply the invariant with exactly that pair prepended. The target state retains independent compiler and FFI parameters, canonical finite maps and the shared positive word width."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_wordProofScript.sml",
+  "hol_name": "data_compile_correct",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Correct/Tick.lean",
+  "lean_name": "dataCompileCorrect_tick",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the Tick case with data_compile_correct_typed and HOL proof lines 743-751: the original premises and every result and space-failure conclusion are retained. The proof covers clock-zero timeout and clock decrement; full theorem assembly remains unported. Target maps and words use reviewed representations, and the evaluator inherits the reals_as_rational_cuts real-model assumption in docs/SOUNDNESS.md item 8."
 }
 ]
