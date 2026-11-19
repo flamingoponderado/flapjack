@@ -157,6 +157,7 @@ import Flapjack.Compiler.Backend.WordToStack.ProductionBitmapWritePair
 import Flapjack.Compiler.Backend.WordToStack.ProductionBitmapConsumption
 import Flapjack.Compiler.Backend.WordElim.Definitions
 import Flapjack.Compiler.Backend.WordElim.Proofs.Definitions
+import Flapjack.Compiler.Backend.WordElim.Proofs.Analysis
 import Flapjack.RiscV.CorrectnessEncoding.ShiftRorImmediate
 import Flapjack.RiscV.CorrectnessEncoding.RorExecution
 import Flapjack.RiscV.CorrectnessEncoding.RorStep
