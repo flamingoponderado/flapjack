@@ -1,8 +1,10 @@
 module
 public import Flapjack.Misc.GoodDimindex
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ByteUpdate
+public import Flapjack.SemanticPrimitivesHOL.Thunk
 public import Flapjack.Compiler.Backend.Semantics.WordSem.CallHelpers
 public import Flapjack.Compiler.Backend.Semantics.WordSem.Accessors
-open Flapjack Flapjack.Compiler.Backend
+open Flapjack Flapjack.Compiler.Backend Flapjack.HolByte
 
 @[expose] public section
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
@@ -55,5 +57,37 @@ def xorWords {width : Nat} [NeZero width] : List (BitVec width) → List (BitVec
   | [], ys => some ys
   | _ :: _, [] => none
   | x :: xs, y :: ys => (xorWords xs ys).map (fun rest => (x ^^^ y) :: rest)
+
+
+/-- XOR commutes with inserting corresponding bytes into the same lane. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "word_xor_set_byte"
+  (words_as_type_indexed_bitvec)]
+theorem wordXorSetByte {width : Nat} [NeZero width] (a : BitVec width) (h1 h2 : BitVec 8)
+    (w1 w2 : BitVec width) (be : Bool) :
+    setByte a h1 w1 be ^^^ setByte a h2 w2 be = setByte a (h1 ^^^ h2) (w1 ^^^ w2) be := by
+  apply BitVec.eq_of_getLsbD_eq
+  intro i hi
+  simp only [BitVec.getLsbD_xor, setByte_bit _ _ _ _ _ hi]
+  split <;> simp
+
+/-- Successful byte XOR has the original length bounds. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "xor_bytes_length"]
+theorem xorBytesLength (xs ys zs : List (BitVec 8)) (h : Flapjack.SemanticPrimitivesHOL.xorBytes xs ys = some zs) :
+    xs.length ≤ zs.length ∧ zs.length = ys.length := by
+  induction xs generalizing ys zs with
+  | nil => simp [Flapjack.SemanticPrimitivesHOL.xorBytes] at h; subst zs; simp
+  | cons x xs ih =>
+    cases ys with
+    | nil => simp [Flapjack.SemanticPrimitivesHOL.xorBytes] at h
+    | cons y ys =>
+      simp only [Flapjack.SemanticPrimitivesHOL.xorBytes] at h
+      cases recEq : Flapjack.SemanticPrimitivesHOL.xorBytes xs ys with
+      | none => simp [recEq] at h
+      | some rest =>
+        simp [recEq] at h
+        subst zs
+        have result := ih ys rest recEq
+        simp only [List.length_cons] at *
+        omega
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

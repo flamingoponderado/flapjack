@@ -145300,5 +145300,22 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Typed HOL comparison preserves all three list cases, word XOR, option failure and the unused suffix, with one shared positive BitVec word width."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "word_xor_set_byte",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/XorWords.lean",
+  "lean_name": "wordXorSetByte",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "The typed HOL equation is unconditional and uses fixed word8 inputs with one shared positive target word width. XOR distributes over inserting corresponding bytes into the same lane."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "xor_bytes_length",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/XorWords.lean",
+  "lean_name": "xorBytesLength",
+  "statement_status": "reviewed_exact",
+  "reviewer": "The typed HOL theorem quantifies three fixed word8 lists and retains the successful xor_bytes premise and both length conclusions."
 }
 ]
