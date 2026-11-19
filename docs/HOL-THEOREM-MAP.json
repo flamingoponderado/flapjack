@@ -145160,5 +145160,14 @@
   "fmap_as_finite_support_parameters": ["f", "tf"],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Source comparison with the typed HOL theorem: the heap-store relation and full value invariant imply the same invariant over the second heap, retaining the value, address, reference tree, and independently quantified reference and timestamp maps. Both maps use the canonical finite-support carrier, and HOL words use positive-width BitVec."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "word64_alt_thm",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/Word64Proof.lean",
+  "lean_name": "word64Alt",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared word64_alt_thm_typed: the full abstract invariant, equal prefix lengths, exact Word64Rep data-cell equality and payload-space bound imply an existential heap with the successful store and complete post-invariant, retaining the source pointer, stack, allocation boundary and space arithmetic. The payload is fixed at 64 bits and HOL target words share one positive BitVec width."
 }
 ]
