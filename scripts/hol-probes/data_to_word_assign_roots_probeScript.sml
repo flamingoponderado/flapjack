@@ -549,3 +549,4 @@ val (_,_,(find_diff_functional,_),_) = Defn.build_eqns `
 fun emitTerm label tm = (print (label ^ "="); print_term tm; print "\n");
 val _ = emitTerm "find_diff_functional_typed" find_diff_functional;
 val _ = emit "word_str_loop_thm_typed" data_to_word_memoryProofTheory.word_str_loop_thm;
+val _ = emit "str_cmp_cons_typed" data_to_word_memoryProofTheory.str_cmp_cons;

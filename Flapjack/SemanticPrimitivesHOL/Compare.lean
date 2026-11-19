@@ -33,6 +33,13 @@ private def compareBytes : List HolChar → List HolChar → Ordering
     | .eq => compareBytes xs ys
     | order => order
 
+/-- A shared leading byte is invisible to the executable lexicographic
+comparison. This implementation-specific step supports the HOL string proof;
+the HOL proof uses its indexed comparison helper instead. -/
+@[simp] theorem compareBytes_cons_self (x : HolChar) (xs ys : List HolChar) :
+    compareBytes (x :: xs) (x :: ys) = compareBytes xs ys := by
+  simp [compareBytes]
+
 @[hol "cakeml/semantics/semanticPrimitivesScript.sml" "str_cmp_def"]
 def strCmp (fast : Bool) (op : Opb) (a b : MlString) : Bool :=
   let a := a.explode

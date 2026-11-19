@@ -4,6 +4,7 @@ public import Flapjack.Compiler.Backend.Semantics.WordSem.CallHelpers
 public import Flapjack.Compiler.Backend.Semantics.WordSem
 public import Flapjack.Compiler.Backend.WordGcFunctions
 public import Flapjack.HolArb
+public import Flapjack.SemanticPrimitivesHOL.Compare
 
 @[expose] public section
 
@@ -142,5 +143,13 @@ theorem wordStrLoopThm {width : Nat} {resultWidth1 : Nat} {resultWidth2 : Nat}
                 ← BitVec.add_assoc, BitVec.add_sub_cancel]
             simpa only [lenPred] using recurse
           · rfl
+
+/-- Removing a shared leading byte preserves string comparison. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "str_cmp_cons"]
+theorem strCmpCons (b : Bool) (cmp : Flapjack.Opb)
+    (x : Flapjack.Basis.Pure.MlString.HolChar) (xs ys : List Flapjack.Basis.Pure.MlString.HolChar) :
+    Flapjack.SemanticPrimitivesHOL.strCmp b cmp (.implode (x :: xs)) (.implode (x :: ys)) = true ↔
+      Flapjack.SemanticPrimitivesHOL.strCmp b cmp (.implode xs) (.implode ys) = true := by
+  cases b <;> by_cases h : xs.length = ys.length <;> simp [Flapjack.SemanticPrimitivesHOL.strCmp, Flapjack.Basis.Pure.MlString.MlString.explode, compare, compareOfLessAndEq, h]
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

@@ -145470,5 +145470,13 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Compared word_str_loop_thm_typed: the address/memory width and both result-word widths remain independent; both bounded byte-load premises, length and clock bounds, and the original equality to the first difference of the taken prefixes are retained."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "str_cmp_cons",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/StringCompare.lean",
+  "lean_name": "strCmpCons",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared str_cmp_cons_typed: the Bool selector, opb comparison, shared HOL character, both character-list tails, and the iff on string comparison are retained. MlString and HolChar use the reviewed constructor and fixed-byte character carriers."
 }
 ]
