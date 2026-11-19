@@ -163,4 +163,16 @@ theorem stateRel_zero_getVars {width : Nat} [NeZero width] {C F : Type}
   refine ⟨words, ?_, length⟩
   simp [WordSemStateFiniteExact.getVars, WordSemStateFiniteExact.getVar, zero, read]
 
+
+/-- Updating AllocSize leaves the complete data-to-word state relation unchanged. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "state_rel_set_store_AllocSize"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem stateRel_setStore_allocSize {width : Nat} [NeZero width] {C F : Type}
+    (conf : Config) (l1 l2 : Nat) (s : Flapjack.Compiler.Backend.DataSem.State C F) (t : WordSemStateFiniteExact width C F)
+    (v : Option (List (Flapjack.Compiler.Backend.DataSem.Value × WordLocW width))) (locs : List (Nat × Nat)) (w : BitVec width) :
+    stateRel conf l1 l2 s (WordSemStateFiniteExact.setStore .allocSize (.word w) t) v locs =
+      stateRel conf l1 l2 s t v locs := by
+  simp [stateRel, WordSemStateFiniteExact.setStore, codeOracleRel, Memory.memoryRel,
+    Memory.heapInMemoryStore, HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, holFapply]
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

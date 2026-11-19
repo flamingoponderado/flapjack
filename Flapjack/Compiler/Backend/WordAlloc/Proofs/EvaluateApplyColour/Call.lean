@@ -470,7 +470,7 @@ theorem evaluateApplyColour_Call {width : Nat} [NeZero width] {C F : Type}
   have hgvC : WordSemStateFiniteExact.getVars (args.map f) cst = some xv :=
     strongLocalsRelGetVars args xv f _ st cst ⟨hr, hargs, hgv⟩
   have hbadC : wordSemBadDestArgs dest (args.map f) = wordSemBadDestArgs dest args := by
-    simp [wordSemBadDestArgs]
+    cases dest <;> cases args <;> rfl
   by_cases hbad : wordSemBadDestArgs dest args = true
   · apply applyColourPost_self
     intro he
