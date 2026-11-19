@@ -12,7 +12,8 @@ and global, label, Boolean-negation, Boolean-test and FFI assignment correctness
 including the final-event case, plus the word-prefix accumulator and
 reconstruction theorems, conditional word adjustment, constant-store
 implication, location validity, list-store append, constant-store evaluator and
-constant-build timestamp preservation and bignum sizing,
+constant-build timestamp preservation, bignum sizing, and constant-part
+length and location prerequisites,
 with inferred types.
 It also evaluates zero and nonzero SmallLsr expressions for output parity. Regenerate
 with `HOL_PROBE_ONLY=data_to_word_assign_roots_probeScript.sml scripts/hol-probes/regenerate.sh`

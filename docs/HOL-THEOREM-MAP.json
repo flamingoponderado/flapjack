@@ -144781,5 +144781,32 @@
   "fmap_as_finite_support": ["fpRegs", "store"],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Compared the typed source parse of local parts_to_words_NONE at HOL lines 16779-16829: arbitrary parts, offset, sparse memory, index, target and source states and heap parameters retain the original failure, good dimension, heap-in-memory and limits hypotheses and the existential unsafe-part conclusion. The word-state finite maps and positive-width words use the recorded representations; the local source parse is not a replay of the HOL proof."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "LESS_EQ_num_size",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/NumberSize.lean",
+  "lean_name": "length_n2mw_le_numSize",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared LESS_EQ_num_size_typed with HOL: for arbitrary m and n, good_dimindex and n ≤ m imply one plus the n2mw word-list length is bounded by num_size m. The word carrier is the positive-width BitVec translation."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "part_to_words_LENGTH",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/NumberSize.lean",
+  "lean_name": "partWords_length",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared part_to_words_LENGTH_typed with HOL: arbitrary configuration, sparse memory, constant part, offset and both output components are retained, as are the successful lowering and good dimension premises and the bound by part_space_req. HOL words use positive-width BitVec."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "const_parts_to_words_LENGTH",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/NumberSize.lean",
+  "lean_name": "constPartsWords_length",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared const_parts_to_words_LENGTH_typed with HOL: successful lowering of an arbitrary list and good_dimindex imply that the output list length is bounded by the sum of the original part_space_req values. HOL words use positive-width BitVec."
 }
 ]

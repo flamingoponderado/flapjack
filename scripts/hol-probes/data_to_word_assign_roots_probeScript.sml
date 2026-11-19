@@ -88,3 +88,7 @@ val _ = emit "store_list_APPEND_typed" data_to_word_assignProofTheory.store_list
 val _ = emit "evaluate_StoreAnyConsts_typed" data_to_word_assignProofTheory.evaluate_StoreAnyConsts;
 val _ = emit "do_build_const_IMP_SOME_typed" data_to_word_assignProofTheory.do_build_const_IMP_SOME;
 val _ = emit "bignum_size_typed" data_to_word_assignProofTheory.bignum_size;
+val _ = emit "LESS_EQ_num_size_typed" data_to_word_memoryProofTheory.LESS_EQ_num_size;
+val _ = emit "part_to_words_LENGTH_typed" data_to_word_memoryProofTheory.part_to_words_LENGTH;
+val _ = emit "const_parts_to_words_LENGTH_typed" data_to_word_memoryProofTheory.const_parts_to_words_LENGTH;
+val _ = emit "const_parts_to_words_good_loc_typed" data_to_word_memoryProofTheory.const_parts_to_words_good_loc;
