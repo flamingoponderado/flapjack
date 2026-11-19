@@ -144791,4 +144791,209 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "Source comparison: syntax_ok (LoopBody body) is syntax_ok_aux body and every other program shape is syntax_ok_aux p, matching both source clauses. The source's bool-valued definition is stated as a proposition."
   }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "array_write_cancel",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/MiniStateOps.lean",
+    "lean_name": "arrayWrite_cancel",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: array_write n (s.arrays n) s = s. Lean keeps the same array index and contents; the function update with the current value is the identity."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "reg_write_cancel",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/MiniStateOps.lean",
+    "lean_name": "regWrite_cancel",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: two clauses - writing n with the current value when n is in the domain, and deleting n when it is not. Lean keeps both directions, the domain test as a defined-lookup test, and writes the current value as the carrier's lookup. HOL's FDOM of the register finite map is stated on the canonical carrier as the set of keys with a defined lookup (`HolFiniteMapExact.dom`), and FLOOKUP results are the carrier's Option lookups."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "state_eq_lemma",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/MiniStateOps.lean",
+    "lean_name": "stateEqLemma",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: state equality is exactly clock equality, register-domain equality, equal register values on the domain, and equal array contents, in HOL's conjunct order. Lean states the domain equality as an equality of the canonical key sets and the value agreement as Option lookup equality. HOL's FDOM of the register finite map is stated on the canonical carrier as the set of keys with a defined lookup (`HolFiniteMapExact.dom`), and FLOOKUP results are the carrier's Option lookups."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "clock_write_simp",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/MiniStateOps.lean",
+    "lean_name": "clockWrite_simp",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: clock_write leaves regs and arrays and sets clock to the given value; Lean keeps the three conjuncts in source order."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "dec_clock_write_simp",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/MiniStateOps.lean",
+    "lean_name": "decClock_write_simp",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: dec_clock leaves regs and arrays and sets clock to s.clock - 1; Lean keeps the three conjuncts in source order."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "reg_write_simp",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/MiniStateOps.lean",
+    "lean_name": "regWrite_simp",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: the erased and updated register maps for the NONE and SOME cases, plus that arrays and clock are untouched for a generic value. Lean keeps the four conjuncts and both register clauses."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "reg_write_simp_alt",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/MiniStateOps.lean",
+    "lean_name": "regWrite_simp_alt",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: the four source conjuncts - the lookup after a NONE write is the empty map's lookup at a matching key and the old lookup otherwise, the lookup after a SOME write is the new value at a matching key, FDOM after a NONE write is the old domain with n deleted, and FDOM after a SOME write is the old domain with n inserted. Lean keeps all four; the empty map's lookup is the carrier's absent lookup and the domains are canonical key sets. HOL's FDOM of the register finite map is stated on the canonical carrier as the set of keys with a defined lookup (`HolFiniteMapExact.dom`), and FLOOKUP results are the carrier's Option lookups."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "array_write_simp",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/MiniStateOps.lean",
+    "lean_name": "arrayWrite_simp",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: array_write leaves regs and clock and updates only arrays at n; Lean keeps the three conjuncts with the same function update."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "delete_vars_simp",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/MiniStateOps.lean",
+    "lean_name": "deleteVars_simp",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: deleting a register list leaves the clock and arrays untouched, makes the lookup of a listed register absent, and removes listed registers from the domain while keeping the others. Lean keeps the four conjuncts, the MEM tests and the recursion. HOL's FDOM of the register finite map is stated on the canonical carrier as the set of keys with a defined lookup (`HolFiniteMapExact.dom`), and FLOOKUP results are the carrier's Option lookups."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "reg_read_lemma1",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/MiniStateOps.lean",
+    "lean_name": "regReadLemma1",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: a defined lookup implies domain membership, stated as the iff with True. Lean keeps the implication and the iff conclusion; the domain test is the canonical defined-lookup test."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "reg_read_lemma2",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/MiniStateOps.lean",
+    "lean_name": "regReadLemma2",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: a defined lookup reads back its value. Lean states HOL's FLOOKUP value as the carrier lookup with the arbitrary word as the absent-value fallback, which the premise makes irrelevant."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "array_read_lemma",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/MiniStateOps.lean",
+    "lean_name": "arrayReadLemma",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: reading an array returns its contents; Lean keeps the identical premise and conclusion."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "clock_read_lemma",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/MiniStateOps.lean",
+    "lean_name": "clockReadLemma",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: reading the clock returns its value; Lean keeps the identical premise and conclusion."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "copy_vars_const",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/MiniStateOps.lean",
+    "lean_name": "copyVars_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: a successful register copy leaves the target's clock and arrays unchanged. Lean keeps both conjuncts and the induction over the saved-register list."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "copy_vars_ignore",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/MiniStateOps.lean",
+    "lean_name": "copyVars_ignore",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: a successful copy leaves a register that is not saved unchanged, under the source's non-membership, bound and EVERY premises. Lean keeps all three premises, the literal bound 25 standing for max_var_name, and the conclusion as lookup equality."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "copy_vars_IMP",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/MiniStateOps.lean",
+    "lean_name": "copyVars_IMP",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: a successful copy supplies a value list pointwise related to the saved registers by FLOOKUP s1.regs n = SOME v. Lean states HOL's EVERY2 as List.Forall\u2082 with the same pointwise relation, and keeps the existential over the value list."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_bignumProofScript.sml",
+    "hol_name": "dec_clock_thm",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Proofs/MiniStateOps.lean",
+    "lean_name": "decClock_thm",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: dec_clock s = clock_write (s.clock - 1) s; Lean keeps both sides and the truncated subtraction."
+  }
 ]
