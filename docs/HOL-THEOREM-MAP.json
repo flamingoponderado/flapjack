@@ -143970,5 +143970,18 @@
     "W2._w2"
   ],
   "reviewer": "Independent typed HOL source comparison (data_to_word_gc_fun_const_ok_probe.out, state_rel_gc_gen_typed; source lines 7342-7363): both premises, all seven existential witnesses and complete collector, decode, store, conditional size-bound and final state-relation conclusions match. The three independent unused HOL witness types are retained by hol_existential_inhabitants with separate Nonempty instances; their existential witnesses are unused. The HOL store and word-state finite maps and positive-width words use their respective reviewed translations."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "get_vars_sing",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/GetVarsSingle.lean",
+  "lean_name": "getVars_sing",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source comparison with get_vars_sing_typed in data_to_word_gc_fun_const_ok_probe.out and HOL source line 8840: the exact singleton word-state read equivalence, the existential single word location, the read equality and the result-list equality are preserved. The word state uses canonical finite maps and the HOL word uses a positive-width BitVec."
 }
 ]
