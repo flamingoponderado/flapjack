@@ -46,9 +46,9 @@ theorem bcStackRefInv_byteUpdate {width : Nat} [NeZero width] (conf : Config) (n
       · obtain ⟨cell, cellFound⟩ := domainF n domain
         exact ⟨cell, by simpa [sptLookup_sptInsert_ne ptr n _ refs same] using cellFound⟩
     · intro n domain
-      rw [allTimestamps_replaceByteArray refs (.refPtr bit ptr :: stack) ptr flag flag before after found]
+      rw [allTimestamps_safeInsertByteArray refs (.refPtr bit ptr :: stack) ptr flag after (Or.inr ⟨flag, before, found⟩)]
       exact timestamps n domain
-    · rw [allValues_replaceByteArray refs (.refPtr bit ptr :: stack) ptr flag flag before after found]
+    · rw [allValues_safeInsertByteArray refs (.refPtr bit ptr :: stack) ptr flag after (Or.inr ⟨flag, before, found⟩)]
       exact unique
     · apply stackInv.imp
       intro value address related
@@ -57,7 +57,7 @@ theorem bcStackRefInv_byteUpdate {width : Nat} [NeZero width] (conf : Config) (n
       apply bcRefInv_byteUpdate conf refs f tf pre post be flag before after ptr n sameLength found ptrMap injF
       apply refsInv n
       constructor
-      · rw [← reachableRefs_replaceByteArray refs (.refPtr bit ptr :: stack) ptr flag flag before after found]
+      · rw [← reachableRefs_safeInsertByteArray refs (.refPtr bit ptr :: stack) ptr flag after (Or.inr ⟨flag, before, found⟩)]
         exact reachDomain.1
       · exact reachDomain.2
   · obtain ⟨_, _, _, thunkFound, _⟩ := thunk
