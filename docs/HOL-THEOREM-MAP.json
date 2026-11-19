@@ -145461,5 +145461,14 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Compared find_diff_def_typed: the input-word width and both result-word widths are independent, and both original equations match. HOL Defn.build_eqns replay find_diff_functional_typed shows both omitted unequal-length patterns use ARB at the result-pair type, represented by the shared holArb."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "word_str_loop_thm",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/StringCompare.lean",
+  "lean_name": "wordStrLoopThm",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared word_str_loop_thm_typed: the address/memory width and both result-word widths remain independent; both bounded byte-load premises, length and clock bounds, and the original equality to the first difference of the taken prefixes are retained."
 }
 ]
