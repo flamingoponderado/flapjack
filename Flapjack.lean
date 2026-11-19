@@ -379,6 +379,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.MemCopyCorrect
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.StringCmpLoop
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.RealAddress
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.EnvToList
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.CutEnvDomain
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.FreeSpace
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.StoreListThm
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.StoreList
