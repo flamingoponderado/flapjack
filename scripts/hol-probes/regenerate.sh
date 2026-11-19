@@ -4889,7 +4889,7 @@ run_probe hol_alignment_words_typed_probeScript.sml hol_alignment_words_typed_pr
   "$repo_dir/HOL/src/n-bit/alignmentScript.sml" "$cake_dir/pancake"
 
 run_probe hol_byte_typed_probeScript.sml hol_byte_typed_probe.out \
-  byte_index_def_typed get_byte_def_typed word_to_bytes_def_typed word_to_bytes_aux_def_typed get_byte_set_byte_typed set_byte_def_typed word_of_bytes_def_typed word_slice_alt_def_typed bytes_to_word_def_typed bytes_in_word_def_typed \
+  byte_index_def_typed get_byte_def_typed word_to_bytes_def_typed word_to_bytes_aux_def_typed get_byte_set_byte_typed set_byte_def_typed word_of_bytes_def_typed word_slice_alt_def_typed bytes_to_word_def_typed bytes_in_word_def_typed bytes_to_word_same_typed \
   "$repo_dir/HOL/src/n-bit/byteScript.sml" "$cake_dir/pancake"
 
 run_probe hol_finitemap_alist_typed_probeScript.sml hol_finitemap_alist_typed_probe.out \
@@ -10458,7 +10458,7 @@ run_probe data_to_word_memory_proof_typed_probeScript.sml data_to_word_memory_pr
   gen_start_ok_def_typed gen_state_ok_def_typed gc_kind_inv_def_typed RefBlock_def_typed Word64Rep_def_typed Word64Rep_DataElement_typed get_refs_def_typed ref_edge_def_typed \
   reachable_refs_def_typed v_all_ts_def_typed find_ref_def_typed all_ts_def_typed be_ok_def_typed v_all_vs_def_typed all_vs_def_typed blocks_unique_def_typed \
   Bignum_def_typed ref_ptr_annot_def_typed Bytes_def_typed blocks_unique_Thunk_typed blocks_unique_Thunk2_typed blocks_unique_Word64_typed memory_rel_Number_bignum_header_typed memory_rel_Thunk_IMP_typed \
-  memory_rel_Thunk_inlined_typed \
+  memory_rel_Thunk_inlined_typed write_bytes_APPEND_typed write_bytes_same_typed \
   "$cake_dir/compiler/backend/proofs/data_to_word_memoryProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
 

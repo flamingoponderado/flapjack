@@ -144518,5 +144518,32 @@
   ],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Compared alloc_fail_typed and its zero HOL hypotheses in data_to_word_gc_fun_const_ok_probe.out with source lines 8051-8057: the original good-dimension, state-relation, source-cut and all-ones allocation premises and both FFI/stack and unconditional NotEnoughSpace conclusions are retained. The target state uses canonical finite-support maps and positive-width words."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "write_bytes_APPEND",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/WriteBytes.lean",
+  "lean_name": "writeBytes_append",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared write_bytes_APPEND_typed in data_to_word_memory_proof_typed_probe.out with HOL source lines 10167-10173: arbitrary word lists, byte list and endianness are retained, as are the exact byte drop count and equality. HOL words use positive-width BitVec and bytes remain fixed-width BitVec 8."
+},
+{
+  "hol_path": "HOL/src/n-bit/byteScript.sml",
+  "hol_name": "bytes_to_word_same",
+  "lean_path": "Flapjack/Byte/BytesToWordSame.lean",
+  "lean_name": "bytesToWord_same",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared bytes_to_word_same_typed in hol_byte_typed_probe.out with HOL source lines 421-440: count, word address, both byte lists, initial word, endianness and all bounded element comparisons are retained. Lean packages the two original bounds as proof witnesses for in-range getElem comparisons; this is equivalent to the HOL conjunction. Word width is positive and byte elements remain fixed-width BitVec 8."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "write_bytes_same",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/WriteBytesSame.lean",
+  "lean_name": "writeBytes_same",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared write_bytes_same_typed in data_to_word_memory_proof_typed_probe.out with HOL source lines 11746-11763: arbitrary word and byte lists and endianness are retained, along with the original prefix-length bound, both input bounds and in-range element equality. Lean packages the bounds as proof witnesses for getElem; the word width is positive and byte elements remain fixed-width BitVec 8."
 }
 ]

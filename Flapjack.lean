@@ -517,6 +517,9 @@ import Flapjack.CakeParser.FromSexp.Control.Canonical
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Depth.BlockPointer
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.WordEquality.List
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BytePacking
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.WriteBytes
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.WriteBytesSame
+import Flapjack.Byte.BytesToWordSame
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ByteUpdate
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ByteUpdateRefs
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ArrayUpdateRefs

@@ -16,3 +16,4 @@ val _ = show_thm "word_of_bytes_def_typed=" byteTheory.word_of_bytes_def;
 val _ = show_thm "word_slice_alt_def_typed=" byteTheory.word_slice_alt_def;
 val _ = show_thm "bytes_to_word_def_typed=" byteTheory.bytes_to_word_def;
 val _ = show_thm "bytes_in_word_def_typed=" byteTheory.bytes_in_word_def;
+val _ = show_thm "bytes_to_word_same_typed=" byteTheory.bytes_to_word_same;

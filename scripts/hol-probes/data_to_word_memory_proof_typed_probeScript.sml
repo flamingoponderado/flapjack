@@ -256,3 +256,5 @@ val _ = emit "blocks_unique_Word64_typed" "blocks_unique_Word64";
 val _ = emit "memory_rel_Number_bignum_header_typed" "memory_rel_Number_bignum_header";
 val _ = emit "memory_rel_Thunk_IMP_typed" "memory_rel_Thunk_IMP";
 val _ = emit "memory_rel_Thunk_inlined_typed" "memory_rel_Thunk_inlined";
+val _ = emit "write_bytes_APPEND_typed" "write_bytes_APPEND";
+val _ = emit "write_bytes_same_typed" "write_bytes_same";
