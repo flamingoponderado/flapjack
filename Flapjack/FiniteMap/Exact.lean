@@ -138,6 +138,15 @@ namespace HolFiniteMapExact
     (entries : List (α × β)) (key : α) :
     (updateListEq map entries).lookup key = FUPDATE_LIST_HOL map.lookup entries key := rfl
 
+/-- Flapjack infrastructure: the lookup view of the canonical finite-support
+map, used by representation witnesses. -/
+def toBroadlookup {α β : Type} (map : HolFiniteMapExact α β) : α → Option β := map.lookup
+
+/-- Flapjack infrastructure: rebuild the canonical finite-support map from a
+lookup function and its finite support. -/
+def ofBroadlookup {α β : Type} (lookup : α → Option β)
+    (finiteSupport : ∃ keys : List α, ∀ key, lookup key ≠ none → key ∈ keys) :
+    HolFiniteMapExact α β := ⟨lookup, finiteSupport⟩
 
 end HolFiniteMapExact
 end Flapjack
