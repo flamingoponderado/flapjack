@@ -275,6 +275,24 @@ elab "#emit_hol_ref_export" : command => do
   let mut known : Std.HashMap Name Bool := {}
   let mut nestedKnown : Std.HashMap Name (Bool × Bool) := {}
   for (name, ref) in HolRef.all env do
+    let gcTarget := `Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.stateRel_gcGen
+    let gcRef : HolRef := {
+      path := "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+      name := "state_rel_gc_gen",
+      fmapAsFiniteSupportRelation := #[("", "st"), ("WordSemStateFiniteExact", "fpRegs"),
+        ("WordSemStateFiniteExact", "store")],
+      wordsAsTypeIndexedBitvec := true,
+      holExistentialInhabitants := #["T2._t2", "W1._w1", "W2._w2"] }
+    if name == gcTarget || (ref.path == gcRef.path && ref.name == gcRef.name) ||
+        !ref.holExistentialInhabitants.isEmpty then
+      unless name == gcTarget && ref == gcRef do
+        throwError "invalid existential inhabitance reference or target: {name}"
+      match env.find? name with
+      | some (.thmInfo info) =>
+        let problems ← liftTermElabM <| stateRelGcTelescopeProblems info.type
+        unless problems.isEmpty do
+          throwError "invalid existential inhabitance theorem {name}: {problems}"
+      | _ => throwError "existential inhabitance target must be a theorem: {name}"
     if ref.path == "cakeml/compiler/inference/inferPropsScript.sml" &&
         (ref.name == "infer_subst_submap" || ref.name == "subst_infer_subst_swap") &&
         ref.fmapAsFiniteSupportConjunctUniversals.isEmpty then
@@ -472,6 +490,9 @@ elab "#emit_hol_ref_export" : command => do
         if !ref.totalFunctionInhabitants.isEmpty then
           qualifiers := qualifiers ++
             [("total_function_inhabitants", toJson ref.totalFunctionInhabitants)]
+        if !ref.holExistentialInhabitants.isEmpty then
+          qualifiers := qualifiers ++
+            [("hol_existential_inhabitants", toJson ref.holExistentialInhabitants)]
         let mut fields : List (String × Json) := [
           ("lean_name", toJson name.toString),
           ("hol_path", toJson ref.path),

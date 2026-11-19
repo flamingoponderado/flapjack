@@ -7,6 +7,7 @@ public meta import Flapjack.HolRef.TmcUniversalBinder
 public meta import Flapjack.HolRef.TmcCallBlockDeclaration
 public meta import Flapjack.HolRef.UnificationTuple
 public meta import Flapjack.HolRef.GeneraliseMapAudit
+public meta import Flapjack.HolRef.StateRelGcInhabitantsAudit
 
 public meta section
 
@@ -332,6 +333,9 @@ structure HolRef where
       other instance, hypothesis, or statement change, and source review must
       confirm the instance is used only through those renderings. -/
   totalFunctionInhabitants : Array String := #[]
+  /-- Independent HOL type variables used only as unused existential witness
+      types. This is restricted to the reviewed garbage-collection theorem. -/
+  holExistentialInhabitants : Array String := #[]
   deriving Inhabited, Repr, BEq
 
 open Lean Meta
@@ -370,6 +374,7 @@ syntax "(" "word_dimensions_as_widths" ":=" "[" ident,* "]" ")" : holQualifier
 syntax "(" "reals_as_rational_cuts" ")" : holQualifier
 syntax "(" "nested_list_rel_as_mutual" ":=" "[" ident,+ "]" ")" : holQualifier
 syntax "(" "total_function_inhabitants" ":=" "[" ident,+ "]" ")" : holQualifier
+syntax "(" "hol_existential_inhabitants" ":=" "[" ident,+ "]" ")" : holQualifier
 syntax (name := hol) "hol " str str (num)? holQualifier* : attr
 
 private def checkedHolRef (path name : String) (line? : Option Nat := none)
@@ -651,6 +656,9 @@ private def parseHolQualifier (stx : Syntax) : CoreM (String × Array String × 
   | `(holQualifier| (total_function_inhabitants := [$binders:ident,*])) =>
       pure ("total_function_inhabitants", binders.getElems.map
         (fun binder => binder.getId.eraseMacroScopes.toString), false, #[])
+  | `(holQualifier| (hol_existential_inhabitants := [$binders:ident,*])) =>
+      pure ("hol_existential_inhabitants", binders.getElems.map
+        (fun binder => binder.getId.eraseMacroScopes.toString), false, #[])
   | _ => throwError "@[hol]: malformed qualifier"
 
 private def parseHolRefAttribute (stx : Syntax) : CoreM HolRef := do
@@ -687,6 +695,7 @@ private def parseHolRefAttribute (stx : Syntax) : CoreM HolRef := do
     let mut realsAsRationalCuts : Bool := false
     let mut nestedListRelAsMutual : Array String := #[]
     let mut totalFunctionInhabitants : Array String := #[]
+    let mut holExistentialInhabitants : Array String := #[]
     for qualifier in qualifiers do
       let (kind, fields, isResult, pairs) ← parseHolQualifier qualifier
       if kind == "list_as_array" then listAsArray := listAsArray ++ fields
@@ -763,6 +772,10 @@ private def parseHolRefAttribute (stx : Syntax) : CoreM HolRef := do
         nestedListRelAsMutual := nestedListRelAsMutual ++ fields
       else if kind == "total_function_inhabitants" then
         totalFunctionInhabitants := totalFunctionInhabitants ++ fields
+      else if kind == "hol_existential_inhabitants" then
+        if !holExistentialInhabitants.isEmpty then
+          throwError "@[hol]: hol_existential_inhabitants may appear only once"
+        holExistentialInhabitants := fields
       else fmapAsFiniteSupport := fmapAsFiniteSupport ++ fields
     if seenGeneraliseMapQualifier then
       unless qualifiers.size == 1 && generaliseMapQualifier == #["subst", "component_2"] &&
@@ -791,7 +804,16 @@ private def parseHolRefAttribute (stx : Syntax) : CoreM HolRef := do
       predicateDomain universalMaps totalFunctionInhabitants
     let ref := { ref with fmapAsFiniteSupportParameterTupleResult := generaliseMapQualifier }
     let ref := { ref with fmapAsFiniteSupportParameterTupleObservations := generaliseLengthQualifier }
-    pure { ref with fmapAsFiniteSupportConjunctUniversals := conjunctUniversals }
+    let ref := { ref with fmapAsFiniteSupportConjunctUniversals := conjunctUniversals }
+    if !holExistentialInhabitants.isEmpty then
+      unless path == "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" &&
+          name == "state_rel_gc_gen" && line?.isNone && qualifiers.size == 3 &&
+          holExistentialInhabitants == #["T2._t2", "W1._w1", "W2._w2"] &&
+          ref.fmapAsFiniteSupportRelation == #[("", "st"),
+            ("WordSemStateFiniteExact", "fpRegs"), ("WordSemStateFiniteExact", "store")] &&
+          ref.wordsAsTypeIndexedBitvec do
+        throwError "@[hol]: existential inhabitance qualifier requires its reviewed reference and exact qualifiers"
+    pure { ref with holExistentialInhabitants }
   match stx with
   | `(attr| hol $path:str $name:str $line:num $qualifiers:holQualifier*) =>
       parse path.getString name.getString (some line.getNat) qualifiers
@@ -1200,6 +1222,23 @@ initialize holRefAttribute : ParametricAttribute HolRef ← do
     descr := "original HOL4 declaration (file path and declaration name) ported by this Lean declaration"
     getParam := fun _ stx => parseHolRefAttribute stx
     afterSet := fun decl ref => do
+      let gcPath := "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml"
+      let gcTarget := `Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.stateRel_gcGen
+      if decl == gcTarget && (ref.path != gcPath || ref.name != "state_rel_gc_gen" ||
+          ref.holExistentialInhabitants != #["T2._t2", "W1._w1", "W2._w2"]) then
+        logError m!"{decl}: this theorem requires its exact HOL reference and existential qualifier"
+      if ref.path == gcPath && ref.name == "state_rel_gc_gen" &&
+          ref.holExistentialInhabitants.isEmpty then
+        logError m!"{decl}: state_rel_gc_gen requires its existential inhabitance qualifier"
+      if !ref.holExistentialInhabitants.isEmpty then
+        unless decl == gcTarget do
+          logError m!"{decl}: existential inhabitance qualifier has the wrong declaration"
+        match (← getEnv).find? decl with
+        | some info =>
+          let problems ← (stateRelGcTelescopeProblems info.type).run'
+          for problem in problems do
+            logError m!"{decl}: (hol_existential_inhabitants) {problem}"
+        | none => logError m!"{decl}: missing existential inhabitance declaration"
       let submap : HolRef := {
         path := "cakeml/compiler/inference/inferPropsScript.sml", name := "infer_subst_submap",
         fmapAsFiniteSupportConjunctUniversals := #["type_s1", "type_s2", "list_s1", "list_s2"] }
@@ -1387,6 +1426,8 @@ private def HolRef.qualifierSuffix (ref : HolRef) : String :=
   let inhabitantList := String.intercalate ", " ref.totalFunctionInhabitants.toList
   let totalFunctionInhabitants := if ref.totalFunctionInhabitants.isEmpty then "" else
     s!" (total_function_inhabitants := [{inhabitantList}])"
+  let existentialInhabitants := if ref.holExistentialInhabitants.isEmpty then "" else
+    s!" (hol_existential_inhabitants := [{String.intercalate ", " ref.holExistentialInhabitants.toList}])"
   observations ++ listAsArray ++ namesAsString ++ namesAsStringBoundary ++
     fmapAsFiniteSupport ++ fmapAsFiniteSupportResult ++ fmapAsFiniteSupportFunction ++
     fmapAsFiniteSupportTuple ++ fmapAsFiniteSupportHeterogeneousFunction ++
@@ -1395,12 +1436,31 @@ private def HolRef.qualifierSuffix (ref : HolRef) : String :=
     fmapAsFiniteSupportExistentials ++ fmapAsFiniteSupportRelation ++
     fmapAsFiniteSupportEqualities ++ fmapAsFiniteSupportEquality ++
     wordsAsTypeIndexedBitvec ++ wordDimensionAsWidth ++ wordDimensionsAsWidths ++
-    realsAsRationalCuts ++ totalFunctionInhabitants ++ nested
+    realsAsRationalCuts ++ totalFunctionInhabitants ++ nested ++ existentialInhabitants
 
 /-! Parser regressions for the original syntax, each qualifier alone, and both
 qualifiers together. These elaborate temporary syntax values only; they do not
 add test declarations to the HOL-reference inventory. -/
 run_cmd do
+  let gcSyntax ← `(attr| hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "state_rel_gc_gen"
+    (fmap_as_finite_support_relation := [st, WordSemStateFiniteExact.fpRegs, WordSemStateFiniteExact.store])
+    (words_as_type_indexed_bitvec)
+    (hol_existential_inhabitants := [T2._t2, W1._w1, W2._w2]))
+  let gcRef ← Lean.Elab.Command.liftCoreM (parseHolRefAttribute gcSyntax)
+  unless gcRef.holExistentialInhabitants == #["T2._t2", "W1._w1", "W2._w2"] &&
+      gcRef.qualifierSuffix.endsWith
+        " (hol_existential_inhabitants := [T2._t2, W1._w1, W2._w2])" do
+    throwError "@[hol] existential inhabitance syntax regression"
+  let badGcSyntax ← `(attr| hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "state_rel_gc_gen"
+    (fmap_as_finite_support_relation := [st, WordSemStateFiniteExact.fpRegs, WordSemStateFiniteExact.store])
+    (words_as_type_indexed_bitvec)
+    (hol_existential_inhabitants := [T2._t2, W1._w1, W1._w2]))
+  let badGcRejected ← Lean.Elab.Command.liftCoreM do
+    try
+      let _ ← parseHolRefAttribute badGcSyntax
+      pure false
+    catch _ => pure true
+  unless badGcRejected do throwError "@[hol] existential inhabitance accepted altered types"
   let predicateSyntax ← `(attr| hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "eval_sim_def"
     (fmap_as_finite_support_parameter_predicate_domain := [code1, rel]))
   let predicateRef ← Lean.Elab.Command.liftCoreM (parseHolRefAttribute predicateSyntax)

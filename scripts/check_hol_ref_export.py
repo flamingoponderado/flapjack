@@ -83,6 +83,7 @@ ALLOWED_QUALIFIERS = {
     "reals_as_rational_cuts",
     "nested_list_rel_as_mutual",
     "total_function_inhabitants",
+    "hol_existential_inhabitants",
 }
 BOOLEAN_QUALIFIERS = {
     "fmap_as_finite_support_result", "fmap_as_finite_support_equalities",
@@ -232,6 +233,7 @@ def manifest_qualifiers(record: dict[str, Any]) -> dict[str, Any]:
         "word_dimensions_as_widths",
         "nested_list_rel_as_mutual",
         "total_function_inhabitants",
+        "hol_existential_inhabitants",
     ):
         if record.get(key, ()):
             qualifiers[key] = list(record[key])
@@ -418,6 +420,12 @@ def check_records(
                 qualifiers.get("total_function_inhabitants", [])):
             raise ValueError(
                 f"{record['lean_path']}:{record['lean_name']}: total-function inhabitant "
+                "qualifier differs from elaborated @[hol] exporter"
+            )
+        if (exported_qualifiers.get("hol_existential_inhabitants", []) !=
+                qualifiers.get("hol_existential_inhabitants", [])):
+            raise ValueError(
+                f"{record['lean_path']}:{record['lean_name']}: existential inhabitant "
                 "qualifier differs from elaborated @[hol] exporter"
             )
         if (exported_qualifiers.get("reals_as_rational_cuts", False)

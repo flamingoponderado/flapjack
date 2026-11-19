@@ -97,6 +97,7 @@ OPTIONAL_FIELDS: frozenset[str] = frozenset(
         "word_dimension_as_width",
         "word_dimensions_as_widths",
         "total_function_inhabitants",
+        "hol_existential_inhabitants",
         "hol_line",
     }
 )

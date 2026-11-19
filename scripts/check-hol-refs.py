@@ -385,6 +385,9 @@ REALS_AS_RATIONAL_CUTS_RE = re.compile(
 TOTAL_FUNCTION_INHABITANTS_RE = re.compile(
     r'\(\s*total_function_inhabitants\s*:=\s*\[([^]]*)\]\s*\)'
 )
+HOL_EXISTENTIAL_INHABITANTS_RE = re.compile(
+    r'\(\s*hol_existential_inhabitants\s*:=\s*\[([^]]*)\]\s*\)'
+)
 # The reviewed renderings of HOL's total functions on bad input.  HOL returns
 # an unspecified value for `EL`/`HD`/`THE`/`LAST`/`ALOOKUP`/`LINV`/`ARB`; Lean
 # takes it from a `Nonempty`/`Inhabited` instance on the element type.
@@ -611,7 +614,8 @@ def hol_attribute_sites(lines: list[str], *, include_fmap_existentials: bool = F
                         include_generalise_map: bool = False,
                         include_generalise_length: bool = False,
                         include_infer_subst_submap: bool = False,
-                        include_total_function_inhabitants: bool = False):
+                        include_total_function_inhabitants: bool = False,
+                        include_hol_existential_inhabitants: bool = False):
     """Yield HOL attributes, including attributes split across Lean lines."""
     comment_depth = 0
     start: int | None = None
@@ -768,6 +772,16 @@ def hol_attribute_sites(lines: list[str], *, include_fmap_existentials: bool = F
                                   for field in match.group(1).split(",") if field.strip())
                     if len(matches) > 1:
                         names += ("",)  # Repeated qualifiers fail closed.
+                    site += (names,)
+                if include_hol_existential_inhabitants:
+                    matches = list(HOL_EXISTENTIAL_INHABITANTS_RE.finditer(attribute))
+                    occurrences = attribute.count("hol_existential_inhabitants")
+                    if occurrences == 0:
+                        names = ()
+                    elif occurrences != 1 or len(matches) != 1:
+                        names = ("",)
+                    else:
+                        names = tuple(field.strip() for field in matches[0].group(1).split(","))
                     site += (names,)
                 yield site
         start = None
@@ -6492,7 +6506,7 @@ def main(argv: list[str]) -> int:
              fmap_function_positions, fmap_heterogeneous_function_positions, reals_cuts,
              fmap_equality, result_observations, dimension_widths, fmap_tuple, nested_list_rel,
              predicate_domain, fmap_universals, generalise_map, generalise_length,
-             infer_subst_submap, total_function_inhabitants) in hol_attribute_sites(
+             infer_subst_submap, total_function_inhabitants, hol_existential_inhabitants) in hol_attribute_sites(
                 lines, include_fmap_existentials=True,
                 include_word_dimension_width=True,
                 include_fmap_function=True,
@@ -6509,8 +6523,26 @@ def main(argv: list[str]) -> int:
                 include_generalise_length=True,
                 include_infer_subst_submap=True,
                 include_total_function_inhabitants=True,
+                include_hol_existential_inhabitants=True,
              ):
             where = f"{rel}:{number}"
+            gc_ref = (hol_path, hol_name) == (
+                "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "state_rel_gc_gen")
+            if gc_ref or hol_existential_inhabitants:
+                expected = ("T2._t2", "W1._w1", "W2._w2")
+                if not (gc_ref and hol_line is None and hol_existential_inhabitants == expected and
+                        rel == "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/StateRelGc.lean" and
+                        find_lean_decl(lines, number - 1) == "stateRel_gcGen" and
+                        fmap_relation == (("st", ""), ("WordSemStateFiniteExact", "fpRegs"),
+                                          ("WordSemStateFiniteExact", "store")) and
+                        words_bitvec and not (list_fields or names_fields or boundary_fields or
+                            fmap_fields or fmap_result or fmap_equalities or fmap_parameters or
+                            fmap_existentials or dimension_width or fmap_function_positions or
+                            fmap_heterogeneous_function_positions or reals_cuts or fmap_equality or
+                            result_observations or dimension_widths or fmap_tuple or nested_list_rel or
+                            predicate_domain or fmap_universals or generalise_map or generalise_length or
+                            infer_subst_submap or total_function_inhabitants)):
+                    errors.append(f"{where}: invalid existential inhabitance target or qualifiers")
             walkstar_ref = (hol_path, hol_name) == (
                 "cakeml/compiler/inference/inferPropsScript.sml", "subst_infer_subst_swap")
             submap_ref = (hol_path, hol_name) == (

@@ -23331,7 +23331,7 @@
   "fmap_as_finite_support": ["fpRegs", "store"],
   "words_as_type_indexed_bitvec": true,
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared evaluate_mk_loc_EQ_typed: any normal-result word evaluation preserves the mk_loc of jump_exc, with the program, state and resulting location at the same word type. Target finite maps and positive-width words use the reviewed representations. The proof inherits the rational-cut real representation through evaluate_stack_swap."
+  "reviewer": "Compared evaluate_mk_loc_EQ_typed: any normal-result word evaluation preserves the mk_loc of jump_exc, with the program, state and resulting location at the same word type. Target finite maps and positive-width words use the reviewed representations. The proof inherits the rational-cut real representation through evaluate_stack_swap. Source comparison records the inherited reals_as_rational_cuts assumption."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
@@ -23342,7 +23342,7 @@
   "fmap_as_finite_support": ["fpRegs", "store"],
   "words_as_type_indexed_bitvec": true,
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared mk_loc_eq_push_env_exc_Exception_typed: an exception result from evaluation after pushing the specified handler and entering the call preserves the prior jump_exc location. Both exception values and the handler program use the target word type. Target finite maps and positive-width words use the reviewed representations; the proof inherits rational-cut reals through evaluate_stack_swap."
+  "reviewer": "Compared mk_loc_eq_push_env_exc_Exception_typed: an exception result from evaluation after pushing the specified handler and entering the call preserves the prior jump_exc location. Both exception values and the handler program use the target word type. Target finite maps and positive-width words use the reviewed representations; the proof inherits rational-cut reals through evaluate_stack_swap. Source comparison records the inherited reals_as_rational_cuts assumption."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
@@ -23353,7 +23353,7 @@
   "fmap_as_finite_support": ["fpRegs", "store"],
   "words_as_type_indexed_bitvec": true,
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared evaluate_IMP_domain_EQ_typed: the original Result evaluation and successful pop imply equality of the restored local domain with the union of both saved domains. Result label and value list retain their distinct HOL types; the handler is arbitrary. Target finite maps and positive-width words use the reviewed representations; the proof inherits rational-cut reals through evaluate_stack_swap."
+  "reviewer": "Compared evaluate_IMP_domain_EQ_typed: the original Result evaluation and successful pop imply equality of the restored local domain with the union of both saved domains. Result label and value list retain their distinct HOL types; the handler is arbitrary. Target finite maps and positive-width words use the reviewed representations; the proof inherits rational-cut reals through evaluate_stack_swap. Source comparison records the inherited reals_as_rational_cuts assumption."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
@@ -23364,7 +23364,7 @@
   "fmap_as_finite_support": ["fpRegs", "store"],
   "words_as_type_indexed_bitvec": true,
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared evaluate_IMP_domain_EQ_Exc_typed: an exception result after pushing the specified handler implies that the resulting local domain is the union of both saved domains. Both exception payloads and the handler program share the target word type. Target finite maps and positive-width words use the reviewed representations; the proof inherits rational-cut reals through evaluate_stack_swap."
+  "reviewer": "Compared evaluate_IMP_domain_EQ_Exc_typed: an exception result after pushing the specified handler implies that the resulting local domain is the union of both saved domains. Both exception payloads and the handler program share the target word type. Target finite maps and positive-width words use the reviewed representations; the proof inherits rational-cut reals through evaluate_stack_swap. Source comparison records the inherited reals_as_rational_cuts assumption."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
@@ -23463,7 +23463,7 @@
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/EvaluateMkLoc.lean", "lean_name": "evaluate_jumpExc_none_iff",
   "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec", "fmap_as_finite_support": ["fpRegs", "store"], "words_as_type_indexed_bitvec": true,
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared eval_NONE_IMP_jump_exc_NONE_EQ_typed: normal evaluation implies the full equivalence of unwind failure before and after evaluation. The proof inherits rational-cut reals through evaluate_stack_swap."
+  "reviewer": "Compared eval_NONE_IMP_jump_exc_NONE_EQ_typed: normal evaluation implies the full equivalence of unwind failure before and after evaluation. The proof inherits rational-cut reals through evaluate_stack_swap. Source comparison records the inherited reals_as_rational_cuts assumption."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "jump_exc_push_env_SOME",
@@ -23478,7 +23478,7 @@
   "lean_name": "evaluate_pushEnv_raise_stackLength",
   "statement_status": "reviewed_exact",
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared eval_push_env_T_Raise_IMP_stack_length_typed: the original raise result after call entry with a pushed handler implies equal original and result stack lengths. The proof inherits rational-cut reals through dataProps evaluate_stack_swap."
+  "reviewer": "Compared eval_push_env_T_Raise_IMP_stack_length_typed: the original raise result after call entry with a pushed handler implies equal original and result stack lengths. The proof inherits rational-cut reals through dataProps evaluate_stack_swap. Source comparison records the inherited reals_as_rational_cuts assumption."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
@@ -23489,7 +23489,7 @@
   "fmap_as_finite_support": ["fpRegs", "store"],
   "words_as_type_indexed_bitvec": true,
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared eval_push_env_SOME_exc_IMP_s_key_eq_typed: the original exception result after pushed-handler call entry implies both stack-key relation and handler equality. The arbitrary handler tuple, both exception values and all state carriers remain. The proof inherits rational-cut reals through evaluate_stack_swap."
+  "reviewer": "Compared eval_push_env_SOME_exc_IMP_s_key_eq_typed: the original exception result after pushed-handler call entry implies both stack-key relation and handler equality. The arbitrary handler tuple, both exception values and all state carriers remain. The proof inherits rational-cut reals through evaluate_stack_swap. Source comparison records the inherited reals_as_rational_cuts assumption."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
@@ -23498,7 +23498,7 @@
   "lean_name": "evaluate_raise_stackShorter",
   "statement_status": "reviewed_exact",
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared eval_exc_stack_shorter_typed: an original raise result after call entry and a non-handler push implies the resulting stack is strictly shorter than the original. The proof inherits rational-cut reals through dataProps evaluate_stack_swap."
+  "reviewer": "Compared eval_exc_stack_shorter_typed: an original raise result after call entry and a non-handler push implies the resulting stack is strictly shorter than the original. The proof inherits rational-cut reals through dataProps evaluate_stack_swap. Source comparison records the inherited reals_as_rational_cuts assumption."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "NOT_1_domain",
@@ -23651,7 +23651,7 @@
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "word_gc_fun_APPEND_IMP",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CollectorFilter.lean", "lean_name": "wordGcFun_append_imp",
   "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec", "fmap_as_finite_support_relation": ["store", "store'"], "words_as_type_indexed_bitvec": true,
-  "reviewer": "Compared word_gc_fun_APPEND_IMP_typed: successful collection of an appended root list gives an output split with the original two lengths. Both store maps use the canonical finite-support representation and HOL words use positive-width BitVecs."
+  "reviewer": "Compared word_gc_fun_APPEND_IMP_typed: successful collection of an appended root list gives an output split with the original two lengths. Both store maps use the canonical finite-support representation and HOL words use positive-width BitVecs. Source comparison records the canonical map representation."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "IMP_loc_merge_APPEND",
@@ -23693,13 +23693,13 @@
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "join_env_NIL",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/StackRel.lean", "lean_name": "joinEnv_nil",
   "statement_status": "reviewed_total_function_inhabitants", "total_function_inhabitants": ["α"],
-  "reviewer": "Compared join_env_NIL_typed: empty input produces an empty result, with independent environment and payload types. Nonempty α solely represents HOL THE as in joinEnv."
+  "reviewer": "Compared join_env_NIL_typed: empty input produces an empty result, with independent environment and payload types. Nonempty α solely represents HOL THE as in joinEnv. Source comparison records the total_function_inhabitants rendering of HOL THE."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "join_env_CONS",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/StackRel.lean", "lean_name": "joinEnv_cons",
   "statement_status": "reviewed_total_function_inhabitants", "total_function_inhabitants": ["α"],
-  "reviewer": "Compared join_env_CONS_typed: the full conditional cons equation and HOL THE value, with independent environment and payload types. Nonempty α solely represents HOL THE as in joinEnv."
+  "reviewer": "Compared join_env_CONS_typed: the full conditional cons equation and HOL THE value, with independent environment and payload types. Nonempty α solely represents HOL THE as in joinEnv. Source comparison records the total_function_inhabitants rendering of HOL THE."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "stack_rel_simp",
@@ -23711,13 +23711,13 @@
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "join_env_EQ_ZIP",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/JoinZip.lean", "lean_name": "joinEnv_eq_zip",
   "statement_status": "reviewed_words_as_type_indexed_bitvec", "words_as_type_indexed_bitvec": true, "total_function_inhabitants": ["β"],
-  "reviewer": "Compared join_env_EQ_ZIP_typed: retains all three premises and exact zipped join equality over independent environment payload β and word width. Nonempty β solely renders HOL THE in joinEnv; HOL words use positive-width BitVecs."
+  "reviewer": "Compared join_env_EQ_ZIP_typed: retains all three premises and exact zipped join equality over independent environment payload β and word width. Nonempty β solely renders HOL THE in joinEnv; HOL words use positive-width BitVecs. Source comparison records the total_function_inhabitants rendering of HOL THE."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "LENGTH_MAP_SND_join_env_IMP",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/JoinZip.lean", "lean_name": "length_filter_snd_joinEnv_imp",
   "statement_status": "reviewed_words_as_type_indexed_bitvec", "words_as_type_indexed_bitvec": true, "total_function_inhabitants": ["β"],
-  "reviewer": "Compared LENGTH_MAP_SND_join_env_IMP_typed: full list relation, valid keys and length premise imply equality of both filtered word counts; independent β solely uses Nonempty for HOL THE, and HOL words use positive-width BitVecs."
+  "reviewer": "Compared LENGTH_MAP_SND_join_env_IMP_typed: full list relation, valid keys and length premise imply equality of both filtered word counts; independent β solely uses Nonempty for HOL THE, and HOL words use positive-width BitVecs. Source comparison records the total_function_inhabitants rendering of HOL THE."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "lemma1",
@@ -23739,7 +23739,7 @@
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "PERM_lookup_toList_lemma",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/PermLookup.lean", "lean_name": "perm_lookup_toList",
   "statement_status": "reviewed_total_function_inhabitants", "total_function_inhabitants": ["β"],
-  "reviewer": "Compared PERM_lookup_toList_lemma_typed: full lookup-presence and distinct-key premises imply the complete permutation of decoded filtered values with tree enumeration. The two payload types are independent; Nonempty β solely renders HOL THE."
+  "reviewer": "Compared PERM_lookup_toList_lemma_typed: full lookup-presence and distinct-key premises imply the complete permutation of decoded filtered values with tree enumeration. The two payload types are independent; Nonempty β solely renders HOL THE. Source comparison records the total_function_inhabitants rendering of HOL THE."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "cut_env_IMP_MEM",
@@ -143951,5 +143951,24 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "typed HOL source comparison (word_to_stack_small_lemmas_typed_probe.out, evaluate_wStackStore_wReg1_new_typed): source4577-4606; free-variable order ac k f f' s t lens r c x r' kont LENGTH_t_stack t_stack_space retained, with k, f, f', x and r' bound separately; HOL's single conjunction premise wReg1 r (k,f,f') = (x,r') ∧ EVEN r ∧ r < 2*f' + 2*k ∧ (∃t'. evaluate (kont,t) = (NONE,set_var r' c t') ∧ state_rel … ∧ LENGTH t'.stack = LENGTH_t_stack ∧ t'.stack_space = t_stack_space) is one hypothesis in HOL's order; the existential run of Seq kont (wStackStore x Skip), the full postrelation and the same stack-length/space equalities retained. wReg1/wStackStore use the reviewed native renderings; EVEN is Lean's Even. Canonical five finite-map fields and positive width translation as qualified; evaluator closure inherits reals_as_rational_cuts without numerical FP claim."
-  }
+  },
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "state_rel_gc_gen",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/StateRelGc.lean",
+  "lean_name": "stateRel_gcGen",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "st",
+    "WordSemStateFiniteExact.fpRegs",
+    "WordSemStateFiniteExact.store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "hol_existential_inhabitants": [
+    "T2._t2",
+    "W1._w1",
+    "W2._w2"
+  ],
+  "reviewer": "Independent typed HOL source comparison (data_to_word_gc_fun_const_ok_probe.out, state_rel_gc_gen_typed; source lines 7342-7363): both premises, all seven existential witnesses and complete collector, decode, store, conditional size-bound and final state-relation conclusions match. The three independent unused HOL witness types are retained by hol_existential_inhabitants with separate Nonempty instances; their existential witnesses are unused. The HOL store and word-state finite maps and positive-width words use their respective reviewed translations."
+}
 ]
