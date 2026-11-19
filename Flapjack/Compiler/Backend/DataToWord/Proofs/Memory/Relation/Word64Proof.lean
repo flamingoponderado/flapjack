@@ -25,7 +25,7 @@ theorem word64Alt {width : Nat} [NeZero width] (conf : Flapjack.Compiler.Backend
     unfold word64Rep at rep
     split at rep <;> cases rep <;> rfl
   have fits : len + 1 ≤ sp := by omega
-  obtain ⟨heap2, stored, lookup, popped⟩ := absMlInv_allocateLeaf conf ws stack refs rs roots heap
+  obtain ⟨heap2, stored, lookup, _rel, popped⟩ := absMlInv_allocateLeaf conf ws stack refs rs roots heap
     be a sp sp1 gens limit ts len .word64Tag xs inv lengths (by simp [isMutTag]) fits
   refine ⟨heap2, ?_, ?_⟩
   · simpa [rep] using stored

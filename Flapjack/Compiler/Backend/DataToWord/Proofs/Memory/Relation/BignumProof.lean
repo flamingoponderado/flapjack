@@ -34,7 +34,7 @@ theorem bignumAlt {width : Nat} [NeZero width] (conf : Flapjack.Compiler.Backend
     obtain ⟨sign, payload, _, rfl, _⟩ := shape
     simp [isMutTag]
   have fits : len + 1 ≤ sp := by omega
-  obtain ⟨heap2, stored, lookup, popped⟩ := absMlInv_allocateLeaf conf ws stack refs rs roots heap
+  obtain ⟨heap2, stored, lookup, _rel, popped⟩ := absMlInv_allocateLeaf conf ws stack refs rs roots heap
     be a sp sp1 gens limit ts len tag xs inv lengths immutable fits
   refine ⟨heap2, ?_, ?_⟩
   · simpa [rep] using stored

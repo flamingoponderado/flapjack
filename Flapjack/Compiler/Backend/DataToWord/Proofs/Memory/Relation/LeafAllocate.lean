@@ -18,6 +18,7 @@ theorem absMlInv_allocateLeaf {width : Nat} [NeZero width] (conf : Config)
     (lengths : ws.length = rs.length) (immutable : ¬ isMutTag tag) (fits : len + 1 ≤ sp) :
     ∃ heap2, heapStoreUnusedAlt a (sp + sp1) (.dataElement [] len (tag, xs)) heap = (heap2, true) ∧
       heapLookup a heap2 = some (.dataElement [] len (tag, xs)) ∧
+      heapStoreRel heap heap2 ∧
       absMlInv conf stack refs (roots, heap2, be, a + len + 1, sp - len - 1, sp1, gens) limit ts := by
   obtain ⟨heap2, stored, unused2, lookup, rel, roots2, heapValid⟩ :=
     heapStoreUnusedAlt_leaf_valid a (sp + sp1) len limit (tag, xs) (.word 0) heap (rs ++ roots)
@@ -51,6 +52,6 @@ theorem absMlInv_allocateLeaf {width : Nat} [NeZero width] (conf : Config)
   have stack2 := bcStackRefInv_heapStoreRel conf ts (ws ++ stack) refs (rs ++ roots) heap heap2 be rel inv.2.2.2.2
   have inv2 : absMlInv conf (ws ++ stack) refs (rs ++ roots, heap2, be, a + len + 1, sp - len - 1, sp1, gens) limit ts :=
     ⟨oldRoots, heapValid, gcResult, unusedResult, stack2⟩
-  exact ⟨heap2, stored, lookup,
+  exact ⟨heap2, stored, lookup, rel,
     popThm conf ws stack refs rs roots heap2 be (a + len + 1) (sp - len - 1) sp1 gens limit ts ⟨inv2, lengths⟩⟩
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

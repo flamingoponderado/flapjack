@@ -145209,5 +145209,30 @@
   "fmap_as_finite_support_parameters": ["f", "f1", "tf", "tf1"],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Source comparison with the typed replay of the original local HOL proof: independently quantified reference and timestamp finite maps extend by SUBMAP, existing data-cell lookups are preserved, and the full value invariant transfers unchanged to the extended maps and heap. All four maps use canonical finite support and HOL words use one shared positive BitVec width."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "all_ts_cons_no_block",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Values/Timestamps.lean",
+  "lean_name": "allTimestamps_consNoBlock",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Source comparison with all_ts_cons_no_block_typed: arbitrary references, stack and non-block value retain the exact equality of the timestamp sets before and after prepending that value."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "blocks_unique_new_byte_alt",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/ByteUpdateRefs.lean",
+  "lean_name": "blocksUnique_newByte",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Source comparison with blocks_unique_new_byte_alt_typed: arbitrary references, stack, byte-array contents, flags and index retain the original block-uniqueness implication after reference insertion and prepending the new reference."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "new_byte_alt_thm",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/FreshByteProof.lean",
+  "lean_name": "newByteAlt",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source comparison with new_byte_alt_thm_typed: the full abstract invariant, abbreviated payload-length equality, sparse-tree freshness and space premise imply an existential successful Bytes store and complete post-invariant, including the arbitrary reference bit and flag, inserted byte array, pointer and original allocation arithmetic. Bytes use fixed eight-bit words and target words use one shared positive BitVec width."
 }
 ]

@@ -120,4 +120,14 @@ theorem blocksUnique_insertByteArray (next : Nat) (refs : Spt (BvlSem.Ref Value)
     ⟨allValues_insertByteArray_subset refs _ ptr flag bytes _ h.1, h.2.1,
       allValues_insertByteArray_subset refs _ ptr flag bytes _ h.2.2.1, h.2.2.2⟩
 
+/-- A freshly inserted byte array and its reference preserve block uniqueness. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "blocks_unique_new_byte_alt"]
+theorem blocksUnique_newByte (next : Nat) (refs : Spt (BvlSem.Ref Value)) (stack : List Value)
+    (ptr : Nat) (flag bit : Bool) (bytes : List (BitVec 8)) :
+    blocksUnique next (allValues refs stack) →
+      blocksUnique next (allValues (sptInsert ptr (.byteArray flag bytes) refs) (.refPtr bit ptr :: stack)) := by
+  intro unique
+  apply blocksUnique_insertByteArray next refs bit ptr stack flag bytes
+  simpa [blocksUnique, allValues, valueListValues] using unique
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
