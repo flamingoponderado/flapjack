@@ -144469,5 +144469,28 @@
   "words_as_type_indexed_bitvec": true,
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "Compared the complete MakeSpace case with data_compile_correct_typed and HOL proof lines 753-833: the original hypotheses and all result, stack-bound and space-failure conclusions are retained. Both allocation results and both settings of call_empty_ffi are covered using the original allocation and silent-FFI lemmas. Full theorem assembly remains open. The target state uses canonical finite-support maps and positive-width words; the evaluator inherits the reals_as_rational_cuts assumption in docs/SOUNDNESS.md item 8."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "alloc_size_dimword",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/AllocDimword.lean",
+  "lean_name": "allocSize_dimword",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared alloc_size_dimword_typed and its zero HOL hypotheses in data_to_word_gc_fun_const_ok_probe.out with source lines 8037-8041: under exactly good_dimindex, allocation of dimword equals the all-ones word. HOL dimword is 2 raised to the positive width represented by BitVec; no additional premises or width specialization are introduced."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "evaluate_GiveUp",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/GiveUp.lean",
+  "lean_name": "evaluateGiveUp",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_GiveUp_typed and its zero HOL hypotheses in data_to_word_gc_fun_const_ok_probe.out with source lines 7990-8012: the sole state relation premise, existential real evaluator result, NotEnoughSpace result and both FFI equalities are retained. The proof applies the original allocation lemma with the empty cut and alloc_size_dimword. The target state uses canonical finite-support maps and positive-width words; its evaluator inherits the reals_as_rational_cuts assumption documented in docs/SOUNDNESS.md item 8."
 }
 ]

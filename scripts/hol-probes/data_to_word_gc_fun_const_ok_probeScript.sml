@@ -283,3 +283,7 @@ val _ = pr_hyps "alloc_lemma_gen_hypotheses" data_to_word_gcProofTheory.alloc_le
 val _ = pr_typed "alloc_lemma_gen_typed" data_to_word_gcProofTheory.alloc_lemma_gen;
 val _ = pr_hyps "alloc_lemma_hypotheses" data_to_word_gcProofTheory.alloc_lemma;
 val _ = pr_typed "alloc_lemma_typed" data_to_word_gcProofTheory.alloc_lemma;
+val _ = pr_hyps "alloc_size_dimword_hypotheses" data_to_word_gcProofTheory.alloc_size_dimword;
+val _ = pr_typed "alloc_size_dimword_typed" data_to_word_gcProofTheory.alloc_size_dimword;
+val _ = pr_hyps "evaluate_GiveUp_hypotheses" data_to_word_gcProofTheory.evaluate_GiveUp;
+val _ = pr_typed "evaluate_GiveUp_typed" data_to_word_gcProofTheory.evaluate_GiveUp;
