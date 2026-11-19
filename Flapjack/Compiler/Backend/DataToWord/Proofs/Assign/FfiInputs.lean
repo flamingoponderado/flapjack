@@ -135,15 +135,26 @@ theorem ffi_success_inputs {width : Nat} [NeZero width] {C F : Type}
         (let decoded := (header2 >>> (width - wordShiftAmount width - conf.lenSize)) - wordSemBytesInWord
          decoded = BitVec.ofNat width bytes.length ∧ decoded.toNat = bytes.length) ∧
         WordSemStateFiniteExact.wordExp target (realAddr conf (adjustVar firstVar)) = some (.word address1) ∧
-        WordSemStateFiniteExact.wordExp target (realAddr conf (adjustVar secondVar)) = some (.word address2) ∧
         WordSemStateFiniteExact.wordExp target
-          (.op .sub [shiftN .lsr (.load (realAddr conf (adjustVar firstVar)))
-            (width - wordShiftAmount width - conf.lenSize), .const wordSemBytesInWord]) =
-              some (.word (BitVec.ofNat width config.length)) ∧
-        WordSemStateFiniteExact.wordExp target
-          (.op .sub [shiftN .lsr (.load (realAddr conf (adjustVar secondVar)))
-            (width - wordShiftAmount width - conf.lenSize), .const wordSemBytesInWord]) =
-              some (.word (BitVec.ofNat width bytes.length)) := by
+          (.op .add [realAddr conf (adjustVar firstVar), .const wordSemBytesInWord]) =
+            some (.word (address1 + wordSemBytesInWord)) ∧
+        ∀ (temp1 temp3 temp5 : WordLocW width),
+          let after1 := { target with locals := sptInsert 1 temp1 target.locals }
+          let after3 := { target with locals := sptInsert 3 temp3 after1.locals }
+          let after5 := { target with locals := sptInsert 5 temp5 after3.locals }
+          WordSemStateFiniteExact.wordExp after1
+            (.op .sub [shiftN .lsr (.load (realAddr conf (adjustVar firstVar)))
+              (width - wordShiftAmount width - conf.lenSize), .const wordSemBytesInWord]) =
+                some (.word (BitVec.ofNat width config.length)) ∧
+          WordSemStateFiniteExact.wordExp after3 (realAddr conf (adjustVar secondVar)) =
+            some (.word address2) ∧
+          WordSemStateFiniteExact.wordExp after3
+            (.op .add [realAddr conf (adjustVar secondVar), .const wordSemBytesInWord]) =
+              some (.word (address2 + wordSemBytesInWord)) ∧
+          WordSemStateFiniteExact.wordExp after5
+            (.op .sub [shiftN .lsr (.load (realAddr conf (adjustVar secondVar)))
+              (width - wordShiftAmount width - conf.lenSize), .const wordSemBytesInWord]) =
+                some (.word (BitVec.ofNat width bytes.length)) := by
   obtain ⟨base, flag1, flag2, first, second, config, bytes, updated, ffi,
     baseRun, valuesEq, firstRead, secondRead, call, lengthEq, resultEq, resultStateEq⟩ :=
     doApp_ffi_success name values cut resultState result run
@@ -213,14 +224,61 @@ theorem ffi_success_inputs {width : Nat} [NeZero width] {C F : Type}
               have shiftBound := related.2.2.2.2.2.2.2.1
               have addrEval1 := Bignum.getRealAddr_lemma conf (adjustVar firstVar) target w1 address1
                 ⟨shiftBound, good, firstVarRead, real1⟩
-              have addrEval2 := Bignum.getRealAddr_lemma conf (adjustVar secondVar) target w2 address2
-                ⟨shiftBound, good, secondVarRead, real2⟩
+              have ptrEval1 : WordSemStateFiniteExact.wordExp target
+                  (.op .add [realAddr conf (adjustVar firstVar), .const wordSemBytesInWord]) =
+                    some (.word (address1 + wordSemBytesInWord)) := by
+                simp [WordSemStateFiniteExact.wordExp, addrEval1, theWords, wordOpHOL, wordOp]
               have decoded1 := ffi_header_length conf header1 config.length good bound1
               have decoded2 := ffi_header_length conf header2 bytes.length good bound2
-              have lengthEval1 := ffi_length_expression conf target (adjustVar firstVar) address1 header1
-                config.length good addrEval1 dom1 mem1 decoded1.1
-              have lengthEval2 := ffi_length_expression conf target (adjustVar secondVar) address2 header2
-                bytes.length good addrEval2 dom2 mem2 decoded2.1
+              have afterTemps : ∀ (temp1 temp3 temp5 : WordLocW width),
+                  let after1 := { target with locals := sptInsert 1 temp1 target.locals }
+                  let after3 := { target with locals := sptInsert 3 temp3 after1.locals }
+                  let after5 := { target with locals := sptInsert 5 temp5 after3.locals }
+                  WordSemStateFiniteExact.wordExp after1
+                    (.op .sub [shiftN .lsr (.load (realAddr conf (adjustVar firstVar)))
+                      (width - wordShiftAmount width - conf.lenSize), .const wordSemBytesInWord]) =
+                        some (.word (BitVec.ofNat width config.length)) ∧
+                  WordSemStateFiniteExact.wordExp after3 (realAddr conf (adjustVar secondVar)) =
+                    some (.word address2) ∧
+                  WordSemStateFiniteExact.wordExp after3
+                    (.op .add [realAddr conf (adjustVar secondVar), .const wordSemBytesInWord]) =
+                      some (.word (address2 + wordSemBytesInWord)) ∧
+                  WordSemStateFiniteExact.wordExp after5
+                    (.op .sub [shiftN .lsr (.load (realAddr conf (adjustVar secondVar)))
+                      (width - wordShiftAmount width - conf.lenSize), .const wordSemBytesInWord]) =
+                        some (.word (BitVec.ofNat width bytes.length)) := by
+                intro temp1 temp3 temp5
+                have ne1 (n : Nat) : adjustVar n ≠ 1 := by simp [adjustVar]
+                have ne3 (n : Nat) : adjustVar n ≠ 3 := by simp [adjustVar]
+                have ne5 (n : Nat) : adjustVar n ≠ 5 := by simp [adjustVar]; omega
+                have readAfter1 : WordSemStateFiniteExact.getVar (adjustVar firstVar)
+                    { target with locals := sptInsert 1 temp1 target.locals } = some (.word w1) := by
+                  simpa [WordSemStateFiniteExact.getVar, sptLookup_sptInsert_ne, ne1] using firstVarRead
+                have readAfter3 : WordSemStateFiniteExact.getVar (adjustVar secondVar)
+                    { target with locals := sptInsert 3 temp3 (sptInsert 1 temp1 target.locals) } =
+                      some (.word w2) := by
+                  simpa [WordSemStateFiniteExact.getVar, sptLookup_sptInsert_ne, ne1, ne3] using secondVarRead
+                have readAfter5 : WordSemStateFiniteExact.getVar (adjustVar secondVar)
+                    { target with locals := sptInsert 5 temp5 (sptInsert 3 temp3 (sptInsert 1 temp1 target.locals)) } =
+                      some (.word w2) := by
+                  simpa [WordSemStateFiniteExact.getVar, sptLookup_sptInsert_ne, ne1, ne3, ne5] using secondVarRead
+                have addrAfter1 := Bignum.getRealAddr_lemma conf (adjustVar firstVar)
+                  { target with locals := sptInsert 1 temp1 target.locals } w1 address1
+                  ⟨shiftBound, good, readAfter1, real1⟩
+                have addrAfter3 := Bignum.getRealAddr_lemma conf (adjustVar secondVar)
+                  { target with locals := sptInsert 3 temp3 (sptInsert 1 temp1 target.locals) } w2 address2
+                  ⟨shiftBound, good, readAfter3, real2⟩
+                have addrAfter5 := Bignum.getRealAddr_lemma conf (adjustVar secondVar)
+                  { target with locals := sptInsert 5 temp5 (sptInsert 3 temp3 (sptInsert 1 temp1 target.locals)) } w2 address2
+                  ⟨shiftBound, good, readAfter5, real2⟩
+                have ptrAfter3 : WordSemStateFiniteExact.wordExp
+                    { target with locals := sptInsert 3 temp3 (sptInsert 1 temp1 target.locals) }
+                    (.op .add [realAddr conf (adjustVar secondVar), .const wordSemBytesInWord]) =
+                      some (.word (address2 + wordSemBytesInWord)) := by
+                  simp [WordSemStateFiniteExact.wordExp, addrAfter3, theWords, wordOpHOL, wordOp]
+                exact ⟨ffi_length_expression conf _ _ address1 header1 config.length good addrAfter1 dom1 mem1 decoded1.1,
+                  addrAfter3, ptrAfter3,
+                  ffi_length_expression conf _ _ address2 header2 bytes.length good addrAfter5 dom2 mem2 decoded2.1⟩
               refine ⟨firstVar, secondVar, flag1, flag2, first, second, config, bytes,
                 updated, ffi, firstWord, secondWord, rfl, valuesEq, ?_, ?_, ?_, ?_, lengthEq, ?_⟩
               · simpa using wordRead
@@ -229,6 +287,6 @@ theorem ffi_success_inputs {width : Nat} [NeZero width] {C F : Type}
               · simpa using call
               · exact ⟨roots, w1, w2, address1, address2, header1, header2,
                   loc1, loc2, real1, real2, mem1, mem2, configRead, bytesRead, bound1, bound2,
-                  decoded1, decoded2, addrEval1, addrEval2, lengthEval1, lengthEval2⟩
+                  decoded1, decoded2, addrEval1, ptrEval1, afterTemps⟩
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Assign
