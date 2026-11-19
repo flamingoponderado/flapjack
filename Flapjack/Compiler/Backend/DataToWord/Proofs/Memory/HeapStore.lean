@@ -171,6 +171,45 @@ theorem isSomeData_lookup_cons {α β : Type} (n : Nat) (x : HeapElement α β)
   · have bound : elLength x ≤ n := by omega
     simp [heapLookup, nonzero, inside, bound]
 
+/-- Successful generic replacement preserves total heap length. This helper
+supports the original unused-space allocation length theorem. -/
+private theorem heapStore_length {α β : Type} (heap : List (HeapElement α β))
+    (offset : Nat) (replacement heap2 : List (HeapElement α β))
+    (run : heapStore offset replacement heap = (heap2, true)) :
+    heapLength heap2 = heapLength heap := by
+  induction heap generalizing offset heap2 with
+  | nil => simp [heapStore] at run
+  | cons head tail ih =>
+    by_cases zero : offset = 0
+    · subst offset
+      simp [heapStore] at run
+      obtain ⟨rfl, equal⟩ := run
+      simp only [heapLength_append]
+      change heapLength replacement + heapLength tail = elLength head + heapLength tail
+      rw [equal]
+    · by_cases inside : offset < elLength head
+      · simp [heapStore, zero, inside] at run
+      · simp only [heapStore, zero, inside, ↓reduceIte] at run
+        cases h : heapStore (offset - elLength head) replacement tail with
+        | mk rest flag =>
+          simp [h] at run
+          obtain ⟨rfl, rfl⟩ := run
+          have same := ih _ _ h
+          change elLength head + heapLength rest = elLength head + heapLength tail
+          rw [same]
+
+/-- A successful unused-region allocation preserves the heap length. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "heap_store_unused_alt_IMP_length"]
+theorem heapStoreUnusedAlt_imp_length {α β : Type} (a sp : Nat) (x : HeapElement α β)
+    (heap heap2 : List (HeapElement α β)) :
+    heapStoreUnusedAlt a sp x heap = (heap2, true) → heapLength heap2 = heapLength heap := by
+  classical
+  intro run
+  unfold heapStoreUnusedAlt at run
+  split at run
+  · exact heapStore_length heap a _ heap2 run
+  · simp at run
+
 /-- Storing at a heap-pre boundary replaces exactly the next element and
 reports whether its allocated length matches the replacement. -/
 @[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "heap_store_lemma"]

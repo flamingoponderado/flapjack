@@ -145096,5 +145096,22 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Compared cons_thm_alt_typed: the original abstract invariant, field-count bound and nonempty fields imply existential field roots, remaining roots and allocated heap with the same split, lengths, successful store and complete resulting abstract invariant. The two BlockRep length expressions retain independently polymorphic payload types beta and gamma, while the heap payload and all words use the shared HOL word width translated to positive-width BitVec."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "store_list_thm",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/StoreListThm.lean",
+  "lean_name": "storeListThm",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared store_list_thm_typed: an arbitrary list, address, separation frame, memory and domain retain the original existential word-list assertion premise and existential successful store with the full framed word-list conclusion. Domain membership uses the corresponding Bool predicate and HOL words use positive-width BitVec."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "heap_store_unused_alt_IMP_length",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/HeapStore.lean",
+  "lean_name": "heapStoreUnusedAlt_imp_length",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared heap_store_unused_alt_IMP_length_typed: the original successful unused-region store alone implies equal total heap lengths; both generic heap-element carriers remain independent."
 }
 ]
