@@ -350,6 +350,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.StoreConsts
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.StoreAnyConsts
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.BuildTimestamp
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.BignumSize
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.PartsToWordsNone
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.WordMlInvLookup
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.WordMlInvGetVars
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.Roots

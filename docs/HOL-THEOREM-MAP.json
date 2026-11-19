@@ -144771,5 +144771,15 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Compared bignum_size_typed with the HOL source: good_dimindex remains the sole premise, the bignum size selects 64-bit architecture exactly when the word width is 64, and the conclusion uses the length of the magnitude's word digits plus one. HOL words use the positive-width BitVec translation."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "parts_to_words_NONE",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/PartsToWordsNone.lean",
+  "lean_name": "partsToWords_none",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared the typed source parse of local parts_to_words_NONE at HOL lines 16779-16829: arbitrary parts, offset, sparse memory, index, target and source states and heap parameters retain the original failure, good dimension, heap-in-memory and limits hypotheses and the existential unsafe-part conclusion. The word-state finite maps and positive-width words use the recorded representations; the local source parse is not a replay of the HOL proof."
 }
 ]
