@@ -3180,6 +3180,7 @@ import Flapjack.Pancake.Proofs.WordConvs.NotCreatedTail
 import Flapjack.Pancake.Proofs.WordConvs.GoodHandlersPasses
 import Flapjack.Pancake.Proofs.WordConvs.GoodHandlersSSA
 import Flapjack.Pancake.Proofs.WordConvs.GoodHandlersTail
+import Flapjack.Pancake.Proofs.WordConvs.WordToWordCodeLabels
 import Flapjack.Pancake.Proofs.WordConvs.UnreachPreAlloc
 import Flapjack.Compiler.Backend.WordRemove
 import Flapjack.Compiler.Backend.WordRemove.Production

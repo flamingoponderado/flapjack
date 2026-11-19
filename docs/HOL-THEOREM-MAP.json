@@ -144155,4 +144155,70 @@
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only projection corollary of loop_setup_get_code_labels for the setup program, so the loop case does not need to name the producer equality; HOL applies loop_setup_get_code_labels with drule."
   }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_good_code_labels_word_to_word_incr_helper",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordToWordCodeLabels.lean",
+    "lean_name": "goodCodeLabels_wordToWord_incrHelper",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (word_convs_proof_typed_probe.out, word_good_code_labels_word_to_word_incr_helper_typed): source3037-3056. `forall (oracles : num sptree$num_map option list). LENGTH (progs : (num # num # alpha prog) list) = LENGTH oracles ==> word_good_code_labels progs (elabs : num -> bool) ==> word_good_code_labels (MAP (full_compile_single (tra : bool) (reg_count1 : num) (ralg : num) (asm_c : alpha asm_config)) (ZIP (progs,oracles))) elabs`; the capture keeps progs, elabs, tra, reg_count1, ralg, asm_c free and binds oracles, matching Lean's binder order. word_good_code_labels is the tagged goodCodeLabelsHOL (num -> bool rendered as Set Nat), full_compile_single the tagged fullCompileSingle, ZIP/MAP List.zip/List.map, LENGTH List.length. The length equation is ONE premise and the source safety predicate the second. num sptree$num_map is the reviewed Spt Nat carrier. Only HOL's type-indexed word becomes BitVec width."
+  }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_good_code_labels_word_to_word_incr",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordToWordCodeLabels.lean",
+    "lean_name": "goodCodeLabels_wordToWord_incr",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (word_convs_proof_typed_probe.out, word_good_code_labels_word_to_word_incr_typed): source3085-3093. `word_good_code_labels (progs : (num # num # alpha prog) list) (elabs : num -> bool) ==> word_good_code_labels (MAP (lambda (p : num # num # alpha prog). full_compile_single (tra : bool) (reg_count1 : num) (ralg : num) (asm_c : alpha asm_config) (p,(NONE : num sptree$num_map option))) progs) elabs`; the capture keeps progs, elabs, tra, reg_count1, ralg, asm_c free, matching Lean's binder order. HOL's lambda is written inline as `fun p => fullCompileSingle tra regCount1 ralg asmC (p, none)`, not eta-reduced. The source safety predicate is the single premise. Only HOL's type-indexed word becomes BitVec width."
+  }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_good_code_labels_word_to_word",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordToWordCodeLabels.lean",
+    "lean_name": "goodCodeLabels_wordToWord",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "typed HOL source comparison (word_convs_proof_typed_probe.out, word_good_code_labels_word_to_word_typed): source3095-3102. `word_good_code_labels (progs : (num # num # alpha prog) list) (elabs : num -> bool) ==> word_good_code_labels (SND (compile (wc : config) (ac : alpha asm_config) progs)) elabs`; the capture keeps progs, elabs, wc, ac free, matching Lean's binder order. SND is the `.2` projection and compile is the tagged compile (whose register count is HOL's truncated num subtraction). The source safety predicate is the single premise. Only HOL's type-indexed word becomes BitVec width."
+  }
+,
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordToWordCodeLabels.lean",
+    "lean_name": "getCodeLabels_fullCompileSingle",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack infrastructure: HOL's per-element step of word_good_code_labels_word_to_word_incr_helper. The whole compile_single chain followed by remove_must_terminate keeps only source code labels; HOL derives this inline in the helper's subset argument."
+  }
+,
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordToWordCodeLabels.lean",
+    "lean_name": "sUnion_labels_compileSingle",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only union monotonicity for the same per-element step: every compiled row's label set is contained in its source row's, so the union over the output list sits inside the union over the input list. HOL derives this inline with SUBSET_DEF/MEM_MAP/MEM_ZIP."
+  }
+,
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordToWordCodeLabels.lean",
+    "lean_name": "names_compileSingle_eq",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only name-preservation fact for the same step: full_compile_single keeps the owner number, so the output owner list is the input owner list. HOL derives this inline in the same subset argument."
+  }
+,
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordToWordCodeLabels.lean",
+    "lean_name": "zip_none_map",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only list identity: zipping a list with its own all-NONE oracle list is the same as pairing each element with NONE. HOL uses ZIP_MAP/MAP_MAP_o/o_DEF inline."
+  }
 ]
