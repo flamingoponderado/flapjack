@@ -144590,5 +144590,15 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Compared decode_length_make_byte_header_typed and HOL source lines 10417-10423: the shared positive word dimension, good_dimindex and both length bounds are retained, as are the two inequalities and arbitrary configuration, flag and byte length. The local HOL shift_def aliases backend_common word_shift_def, represented by wordShiftAmount."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "heap_in_memory_store_UpdateByte",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/ByteHeapUpdate.lean",
+  "lean_name": "heapInMemoryStore_updateByte",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": ["store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared heap_in_memory_store_UpdateByte_typed with HOL source lines 11786-11796: the entire heap/store relation, heap decomposition, in-range byte index, address equation, current-heap lookup, memory read and good_dimindex premises are retained, as is the complete updated heap/store relation with aligned-address functional memory update. The byte is fixed at 8 bits; the heap, store, memory addresses and values share HOL's positive word dimension. The store is the canonical finite-support map."
 }
 ]

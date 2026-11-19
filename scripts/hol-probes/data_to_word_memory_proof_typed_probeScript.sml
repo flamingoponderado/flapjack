@@ -262,3 +262,4 @@ val _ = emit "w2n_add_byte_align_lemma_typed" "w2n_add_byte_align_lemma";
 val _ = emit "get_byte_byte_align_typed" "get_byte_byte_align";
 val _ = emit "get_byte_eq_typed" "get_byte_eq";
 val _ = emit "decode_length_make_byte_header_typed" "decode_length_make_byte_header";
+val _ = emit "heap_in_memory_store_UpdateByte_typed" "heap_in_memory_store_UpdateByte";
