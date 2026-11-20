@@ -1238,6 +1238,32 @@ def assignFpUop {width : Nat} [NeZero width] (operation : FpUop) (conf : Config)
     (_secn l dest : Nat) (_names : Option NumSet) (source : Nat) : WordLangProgHOL (BitVec width) × Nat :=
   if !conf.hasFpOps then (giveUp, l) else (fpResult conf dest [source] (fpUopInst operation) 1, l)
 
+/-- Expose the unary floating-point sequence for the assignment correctness proof.
+This is a definitional unfolding of `assignFpUop`, not a separate HOL result. -/
+theorem assignFpUop_expansion {width : Nat} [NeZero width] (operation : FpUop) (conf : Config)
+    (secn l dest : Nat) (names : Option NumSet) (source : Nat) :
+    assignFpUop operation conf secn l dest names source =
+      (if !conf.hasFpOps then (giveUp, l) else
+        (match encodeHeader (width := width) conf 3 (if width = 64 then 1 else 2) with
+        | none => (giveUp, l)
+        | some header =>
+          (if width = 64 then
+            wordListSeq [
+              .assign 3 (.load (.op .add [realAddr conf (adjustVar source), .const wordSemBytesInWord])),
+              .inst (.fp (.fpMovFromReg 0 3 3)), .inst (.fp (fpUopInst operation)),
+              .inst (.fp (.fpMovToReg 3 5 1)), writeWord64 conf header dest 3]
+           else
+            wordListSeq [
+              .assign 15 (realAddr conf (adjustVar source)),
+              .assign 11 (.load (.op .add [.var 15, .const wordSemBytesInWord])),
+              .assign 13 (.load (.op .add [.var 15, .const (2 * wordSemBytesInWord)])),
+              .inst (.fp (.fpMovFromReg 0 13 11)), .inst (.fp (fpUopInst operation)),
+              .inst (.fp (.fpMovToReg 5 3 1)), writeWord64On32 conf header dest 5 3], l))) := by
+  by_cases hw : width = 64 <;>
+    simp [assignFpUop, fpResult, fpLoads, fpOperand, hw]
+  all_goals split <;> simp_all
+  all_goals split <;> simp_all
+
 /-- Compile a floating-point ternary operation and allocate its result. -/
 @[hol "cakeml/compiler/backend/data_to_wordScript.sml" "assign_FP_top_def"
   (words_as_type_indexed_bitvec)]
