@@ -100,9 +100,9 @@ theorem evaluate_io_events_mono {C F : Type} (expressions : List Bvi.Exp)
 theorem evaluate_add_to_clock_io_events_mono {C F : Type} (expressions : List Bvi.Exp)
     (env : List Value) (state : Flapjack.Compiler.Backend.BviSem.BviState C F)
     (extra : Nat) :
-    (evaluate expressions env state).2.ffi.ioEvents <+:
-      (evaluate expressions env (incClock extra state)).2.ffi.ioEvents := by
+    (evaluateTuple (expressions, env, state)).2.ffi.ioEvents <+:
+      (evaluateTuple (expressions, env, incClock extra state)).2.ffi.ioEvents := by
   have growth := evaluate_addClock_ioEvents_prefix expressions env state extra
-  simpa [incClock] using growth
+  simpa [evaluateTuple, incClock] using growth
 
 end Flapjack.Compiler.Backend.BviProps
