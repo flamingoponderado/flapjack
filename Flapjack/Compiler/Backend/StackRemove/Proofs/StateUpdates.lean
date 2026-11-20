@@ -81,4 +81,68 @@ theorem stateRelSetFpVar {width : Nat} [NeZero width] {C F : Type}
   simp only [stateRelHOL, StackSemStateOps.setFpVar]
   exact ⟨h0, h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, congrArg (fun map => map.updateEq (register, value)) h11, h12, h13, h14, h15, h16, h17, h18, h19, h20, h21, h22, h23, h24, h25⟩
 
+/-- Canonical roundtrip for the imported actual state carrier; representation
+infrastructure rather than an assumption about any update run. -/
+theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {C F : Type} :
+    (∀ (state : StackSemStateBroad width C F) (h : state.FiniteSupport),
+      (StackSemStateBroad.ofBroad state h).toBroad = state) ∧
+    (∀ state : StackSemStateFiniteExact width C F,
+      StackSemStateBroad.ofBroad state.toBroad state.toBroad_finiteSupport = state) :=
+  StackSemStateSupport.holFmapAsFiniteSupportWitness
+
+/-- Flapjack helper: two finite-support maps with the same lookup are equal,
+because the support field is a proposition. Has no separate HOL original. -/
+private theorem holFmapExactExt {α β : Type} {left right : HolFiniteMapExact α β}
+    (h : ∀ k, left.lookup k = right.lookup k) : left = right := by
+  obtain ⟨lleft, pleft⟩ := left
+  obtain ⟨lright, pright⟩ := right
+  have hfun : lleft = lright := funext h
+  subst hfun
+  rfl
+
+/-- HOL `with_same_clock` (`stack_removeProofScript.sml`): rewriting the clock
+with its own value leaves the state unchanged. -/
+@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "with_same_clock"
+  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem withSameClock {width : Nat} [NeZero width] {C F : Type}
+    (x : StackSemStateFiniteExact width C F) : { x with clock := x.clock } = x := rfl
+
+/-- HOL `set_var_set_var` (`stack_removeProofScript.sml`): a second assignment
+to the same register overwrites the first. -/
+@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "set_var_set_var"
+  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem setVarSetVar {width : Nat} [NeZero width] {C F : Type} (x : Nat)
+    (y z : WordLocW width) (w : StackSemStateFiniteExact width C F) :
+    StackSemStateOps.setVar x y (StackSemStateOps.setVar x z w) =
+      StackSemStateOps.setVar x y w := by
+  have hregs : (w.regs.updateEq (x, z)).updateEq (x, y) = w.regs.updateEq (x, y) := by
+    apply holFmapExactExt
+    intro key
+    by_cases h : key = x
+    · simp [HolFiniteMapExact.updateEq, FUPDATE_HOL, h]
+    · simp [HolFiniteMapExact.updateEq, FUPDATE_HOL, h]
+  simp only [StackSemStateOps.setVar]
+  rw [hregs]
+
+/-- HOL `get_var_set_var_same` (`stack_removeProofScript.sml`): reading the
+register just assigned yields the assigned value. -/
+@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "get_var_set_var_same"
+  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem getVarSetVarSame {width : Nat} [NeZero width] {C F : Type} (x : Nat)
+    (y : WordLocW width) (z : StackSemStateFiniteExact width C F) :
+    StackSemStateOps.getVar x (StackSemStateOps.setVar x y z) = some y := by
+  simp [StackSemStateOps.getVar, StackSemStateOps.setVar, HolFiniteMapExact.updateEq,
+    FUPDATE_HOL]
+
+/-- HOL `get_var_set_var` (`stack_removeProofScript.sml`): reading a register
+after an assignment selects the new value exactly when the registers agree. -/
+@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "get_var_set_var"
+  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem getVarSetVar {width : Nat} [NeZero width] {C F : Type} (x x' : Nat)
+    (y : WordLocW width) (z : StackSemStateFiniteExact width C F) :
+    StackSemStateOps.getVar x (StackSemStateOps.setVar x' y z) =
+      if x = x' then some y else StackSemStateOps.getVar x z := by
+  simp [StackSemStateOps.getVar, StackSemStateOps.setVar, HolFiniteMapExact.updateEq,
+    FUPDATE_HOL]
+
 end Flapjack.Compiler.Backend.StackRemove.StateUpdates
