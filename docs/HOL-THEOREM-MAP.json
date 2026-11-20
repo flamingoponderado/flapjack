@@ -145712,5 +145712,16 @@
   "statement_status": "reviewed_exact",
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "Compared do_app_Ref_typed: the independent source-state parameters, input values, space-consumption match, type-error case, least-unused reference, inserted value array, and safe-for-space and stack-maximum updates agree with HOL. The full source evaluator inherits the documented real-model assumption."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "evaluate_StoreEach",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/StoreEach.lean",
+  "lean_name": "evaluate_storeEach",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_StoreEach_typed and the original zero-offset specialization: the quantified word list, register list, state, register, address and memory, all three premises, and exact evaluator result agree. The target state uses canonical finite maps and positive-width words; the evaluator inherits the documented real-model assumption."
 }
 ]
