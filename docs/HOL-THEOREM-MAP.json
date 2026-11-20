@@ -146017,6 +146017,24 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "get_vars_delete_lemma",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/GetVars.lean",
+  "lean_name": "getVarsDelete",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared get_vars_delete_lemma_typed: arbitrary word-state fields, four independent word-location values, all input name lists, the original four ordered sparse-tree insertions, and both complete get_vars results agree. State fields use canonical finite maps and words use positive type-indexed widths."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "INTRO_IS_SOME",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/GetVars.lean",
+  "lean_name": "introIsSome",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared INTRO_IS_SOME_typed: the independently polymorphic option is present iff it equals SOME of an existentially quantified value."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
   "hol_name": "assign_EqualConst",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/EqualConst.lean",
   "lean_name": "assignEqualConst_correct",
