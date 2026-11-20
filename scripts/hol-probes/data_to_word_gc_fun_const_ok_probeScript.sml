@@ -287,6 +287,25 @@ val _ = pr_hyps "AllocVar_thm_nary_hypotheses" data_to_word_gcProofTheory.AllocV
 val _ = pr_typed "AllocVar_thm_nary_typed" data_to_word_gcProofTheory.AllocVar_thm_nary;
 val _ = pr_typed "cut_names_insert_1_insert_1_typed" data_to_word_gcProofTheory.cut_names_insert_1_insert_1;
 val _ = pr_typed "cut_env_insert_1_typed" data_to_word_gcProofTheory.cut_env_insert_1;
+
+(* Replay the source-local alloc_with_locals_1_3 theorem and its original proof. *)
+val alloc_with_locals_1_3_replay = let
+  open preamble data_to_wordTheory data_to_word_gcProofTheory wordSemTheory sptreeTheory
+in
+  Q.prove (`alloc k (adjust_sets names)
+      (t with locals := insert 1 w1 (insert 3 w2 t.locals)) =
+    alloc k (adjust_sets names) t`,
+    gvs [wordSemTheory.alloc_def]
+    \\ rpt AP_THM_TAC \\ AP_TERM_TAC
+    \\ gvs [adjust_sets_def,wordSemTheory.cut_envs_def]
+    \\ gvs [cut_names_adjust_set_insert_ODD]
+    \\ gvs [wordSemTheory.cut_names_def]
+    \\ rpt AP_THM_TAC \\ AP_TERM_TAC
+    \\ rw [] \\ gvs [lookup_inter_alt]
+    \\ rw [] \\ gvs [lookup_insert])
+end;
+val _ = pr_hyps "alloc_with_locals_1_3_hypotheses" alloc_with_locals_1_3_replay;
+val _ = pr_typed "alloc_with_locals_1_3_local_typed" alloc_with_locals_1_3_replay;
 val _ = pr_hyps "alloc_lemma_hypotheses" data_to_word_gcProofTheory.alloc_lemma;
 val _ = pr_typed "alloc_lemma_typed" data_to_word_gcProofTheory.alloc_lemma;
 val _ = pr_hyps "alloc_size_dimword_hypotheses" data_to_word_gcProofTheory.alloc_size_dimword;

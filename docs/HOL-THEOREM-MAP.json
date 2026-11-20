@@ -144445,6 +144445,19 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "alloc_with_locals_1_3",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/AllocLocals.lean",
+  "lean_name": "alloc_with_locals_one_three",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared the typed source-local proof replay alloc_with_locals_1_3_local_typed and its zero hypotheses: both local insertions, the arbitrary adjusted-set payload, and the full allocation result agree. The word state uses canonical finite maps and a shared positive word width."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "alloc_locals_insert_1",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/AllocLocals.lean",
   "lean_name": "alloc_locals_insert_one",
