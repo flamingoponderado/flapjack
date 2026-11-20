@@ -10,9 +10,16 @@ namespace Flapjack.Compiler.Backend.BviProps
 open Flapjack.Compiler.Backend.BviSem
 open Flapjack.Compiler.Backend.BvlSem (Value)
 
+/-- Canonical BVI reference-map state representation roundtrip. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : BviStateBroad C F, (BviState.ofBroad s).toBroad = s) ∧
+      (∀ s : BviState C F, BviState.ofBroad s.toBroad = s) :=
+  BviSem.holFmapAsFiniteSupportWitness
+
 /-- Replace the compiler and map the configuration of every oracle entry,
-leaving the runtime state unchanged. Untagged pending review of the BVI
-state and evaluator carriers against HOL. -/
+leaving the runtime state unchanged. -/
+@[hol "cakeml/compiler/backend/semantics/bviPropsScript.sml" "adj_orac_def"
+  (fmap_as_finite_support := [refs])]
 def adjustOracle {C D F : Type} (compiler : Compiler D) (f : C → D)
     (state : BviState C F) : BviState D F :=
   ⟨state.refs, state.clock, state.global, compiler,
