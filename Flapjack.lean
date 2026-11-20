@@ -1825,6 +1825,9 @@ import Flapjack.Compiler.Backend.Semantics.ClosProps.FnAnnotations
 import Flapjack.Compiler.Backend.Semantics.ClosProps.InstallConst
 import Flapjack.Compiler.Backend.Semantics.ClosProps.NoMtiSyntactic
 import Flapjack.Compiler.Backend.Semantics.ClosProps.StateClock
+import Flapjack.Compiler.Backend.Semantics.ClosProps.InitialState
+import Flapjack.Compiler.Backend.Semantics.ClosProps.ListPairLemmas
+import Flapjack.Compiler.Backend.Semantics.ClosProps.ResultRelation
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Thunk
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Force
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Equality

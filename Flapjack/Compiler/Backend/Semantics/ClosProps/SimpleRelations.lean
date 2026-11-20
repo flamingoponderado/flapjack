@@ -80,4 +80,12 @@ def simpleStateRel {C D F : Type} (vr : Value → Value → Prop)
   (∀ s t xs ys, sr s t ∧ List.Forall₂ (optionRel vr) xs ys →
     sr { s with globals := xs } { t with globals := ys })
 
+/-- Closure recognition is exactly the two closure constructors. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "isClos_cases"]
+theorem isClos_cases (x : Value) :
+    isClos x ↔
+      (∃ loc args env arity body, x = .closure loc args env arity body) ∨
+        ∃ loc args env funs index, x = .recclosure loc args env funs index := by
+  cases x <;> simp [isClos]
+
 end Flapjack.Compiler.Backend.ClosProps
