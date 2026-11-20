@@ -145869,6 +145869,15 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "IMP_encode_header_NOT_NONE",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/WordOp64.lean",
+  "lean_name": "encodeHeader32NotNone",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared IMP_encode_header_NOT_NONE_typed: the same generic positive word width must equal 32, len_size must be greater than one, and 30 minus len_size must be greater than one; the conclusion is exactly that the tag-3 length-2 header is not NONE."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
   "hol_name": "assign_WordShiftW8",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/WordShift8.lean",
   "lean_name": "assignWordShift8_correct",
