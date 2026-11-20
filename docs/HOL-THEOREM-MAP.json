@@ -145939,6 +145939,17 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "assign_Less",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/Less.lean",
+  "lean_name": "assignLess_correct",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared assign_Less_typed: the operation equality, source and target state relation, names condition, source cut and argument lookup, termination depth and successful source application are retained. The target evaluation existential includes the original out-of-space obligations and successful state relation and result. Target state fields use canonical finite maps and words use positive type-indexed widths. The evaluator inherits the reals_as_rational_cuts assumption."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
   "hol_name": "assign_EqualConst",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/EqualConst.lean",
   "lean_name": "assignEqualConst_correct",

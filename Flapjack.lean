@@ -408,6 +408,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.Compare1
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.CompareCode
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.CompareResult
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.ComparisonSetup
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.Less
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.RealAddrInsert
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.EqualStack
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.WordOp8
