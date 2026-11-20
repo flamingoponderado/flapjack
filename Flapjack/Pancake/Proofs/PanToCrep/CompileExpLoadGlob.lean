@@ -494,9 +494,14 @@ end CompileExpLoadGlobWitnesses
     capture binds `ct e s t es sh ad` and gives ONE four-conjunct premise
     (compile equation, `state_rel`, `code_rel`, `locals_rel`), right-associated;
     `es`/`sh` are free binders, not existentials, and `ad` is HOL's `word5`.
-    The conclusion renders HOL's `FLAT (MAP exps es)` literally. The three
-    state premises are retained because HOL's statement has them, although the
-    structural fact `compileExpExactHOLW_noLoadGlob` does not need them. -/
+    The capture types `ct` at `α context`, `s`/`t` at `(α, β)`, but `e` at
+    `γ panLang$exp` and `es` at `γ crepLang$exp list`, so the expression word
+    type is independent of the context/state type; the statement binds
+    `{width}` for `ct`, `s`, `t` and an independent `{expWidth}` for `e`, `es`
+    and `crepExpsHOL`. The conclusion renders HOL's `FLAT (MAP exps es)`
+    literally. The three state premises are retained because HOL's statement
+    has them, although the structural fact `compileExpExactHOLW_noLoadGlob`
+    does not need them. -/
 @[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "compile_exp_not_mem_load_glob"
   (fmap_as_finite_support_relation := [PanSemStateFiniteExact.locals,
     PanSemStateFiniteExact.globals, PanSemStateFiniteExact.code,
@@ -504,10 +509,11 @@ end CompileExpLoadGlobWitnesses
     CrepSemHOLState.globals, CrepSemHOLState.code,
     PanToCrepContextExact.vars, PanToCrepContextExact.funcs,
     PanToCrepContextExact.eids]) (words_as_type_indexed_bitvec)]
-theorem compileExpNotMemLoadGlobHOL {width : Nat} {σ : Type} [NeZero width] :
-    ∀ (ct : PanToCrepContextExact width) (e : ExpHOL width)
+theorem compileExpNotMemLoadGlobHOL {width expWidth : Nat} {σ : Type} [NeZero width]
+    [NeZero expWidth] :
+    ∀ (ct : PanToCrepContextExact width) (e : ExpHOL expWidth)
       (s : PanSemStateFiniteExact width σ) (t : CrepSemHOLState width σ)
-      (es : List (CrepExpHOL width)) (sh : ShapeHOL) (ad : BitVec 5),
+      (es : List (CrepExpHOL expWidth)) (sh : ShapeHOL) (ad : BitVec 5),
       compileExpExactHOLW ct e = (es, sh) ∧
         panToCrepStateRelFiniteExact s t ∧
         codeRelExactHOLW ct s.code t.code ∧
