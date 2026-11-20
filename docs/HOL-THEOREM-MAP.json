@@ -145869,6 +145869,16 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "sane_locals_size_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/EqualStack.lean",
+  "lean_name": "saneLocalsSize",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared sane_locals_size_def_typed: for an arbitrary word state, the local size equals either the Equal or Equal1 sparse-tree stack-size lookup. The state uses the canonical finite-map and positive-width word carriers."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
   "hol_name": "option_map_mult_suc",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/EqualStack.lean",
   "lean_name": "optionMap_mul_succ",

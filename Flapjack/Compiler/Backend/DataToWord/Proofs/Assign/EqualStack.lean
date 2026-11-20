@@ -8,6 +8,24 @@ namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Assign
 open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Backend.DataToWord
 open Flapjack.Compiler.Backend.BackendProps
 
+namespace EqualStackWitness
+/-- Canonical finite-map roundtrip for the target word state. -/
+theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {C F : Type} :
+    (∀ (state : WordSemStateBroad width C F) (h : state.FiniteSupport),
+      (WordSemStateBroad.ofBroad state h).toBroad = state) ∧
+    (∀ state : WordSemStateFiniteExact width C F,
+      WordSemStateBroad.ofBroad state.toBroad state.toBroad_finiteSupport = state) :=
+  WordSemStateExact.holFmapAsFiniteSupportWitness
+end EqualStackWitness
+
+/-- The current local-space bound is one of the two equality stub bounds. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml" "sane_locals_size_def"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+def saneLocalsSize {width : Nat} [NeZero width] {C F : Type}
+    (state : WordSemStateFiniteExact width C F) : Prop :=
+  state.localsSize = sptLookup equalLocation state.stackSize ∨
+    state.localsSize = sptLookup equal1Location state.stackSize
+
 /-- Equality-helper stack bounds are monotone in the comparison depth. -/
 @[hol "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml" "eq_code_stack_max_le_mono"]
 theorem eqCodeStackMax_le_mono (a b : Nat) (sizes : Spt Nat) (h : a ≤ b) :
