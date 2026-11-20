@@ -715,6 +715,8 @@ in
 end;
 val _ = emit "heap_store_unused_thm_typed" heap_store_unused_thm_replay;
 
+val _ = emit "get_vars_adjust_var_typed" data_to_word_assignProofTheory.get_vars_adjust_var;
+val _ = emit "get_vars_with_store_typed" data_to_word_assignProofTheory.get_vars_with_store;
 val _ = emit "memory_rel_Ref_typed" data_to_word_memoryProofTheory.memory_rel_Ref;
 val _ = emit "new_ref_thm_typed" data_to_word_memoryProofTheory.new_ref_thm;
 val _ = emit "heap_store_unused_heap_lookup_typed" data_to_word_memoryProofTheory.heap_store_unused_heap_lookup;

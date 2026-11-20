@@ -145041,6 +145041,26 @@
   "reviewer": "Source comparison: The typed HOL theorem and Lean statement retain independent heap carriers, successful allocation and an index strictly before its target, concluding equality of the corresponding heap lookups."
 },
 {
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "get_vars_adjust_var",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/RefRead.lean",
+  "lean_name": "getVarsAdjustVar",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source comparison with get_vars_adjust_var_typed: for any odd key, replacing the specified locals by its insertion leaves reads of all adjusted variables unchanged. The state uses canonical finite maps and a positive indexed word width."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "get_vars_with_store",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/RefRead.lean",
+  "lean_name": "getVarsWithStore",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": ["replacement", "WordSemStateFiniteExact.fpRegs", "WordSemStateFiniteExact.store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source comparison with get_vars_with_store_typed: all variable reads are unchanged after explicitly retaining locals and replacing the store with an arbitrary finite map. The replacement and state maps use canonical finite support; words share the source positive width."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
   "hol_name": "heap_store_unused_IMP_length",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/HeapStore.lean",
