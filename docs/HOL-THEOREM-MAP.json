@@ -145651,5 +145651,25 @@
   "words_as_type_indexed_bitvec": true,
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "Compared assign_ElemAt_typed with the HOL theorem and proof: the existential operation case, all assignment premises, existential target evaluation, insufficient-space obligations and successful state relation agree for both blocks and value-array references. The target state uses canonical finite maps and positive-width words; the evaluator inherits the documented real-model assumption."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "memory_rel_El",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/BlockStack.lean",
+  "lean_name": "memoryRel_elIndex",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": ["store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared memory_rel_El_typed: the related block and numeric index, dimension and index bounds, existential pointer and index words and offsets, domain fact and extended memory relation agree. The list bound justifies Lean indexing; store is the canonical finite-support map and words share the positive HOL dimension."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "memory_rel_Deref",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/RefArrayElement.lean",
+  "lean_name": "memoryRel_derefIndex",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": ["store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared memory_rel_Deref_typed: the related reference and numeric index, value-array lookup, dimension and index bounds, existential pointer and index words and offsets, domain fact and extended memory relation agree. The list bound justifies Lean indexing; store is the canonical finite-support map and words share the positive HOL dimension."
 }
 ]

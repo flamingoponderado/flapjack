@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Store
 public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BitLemmas
+public import Flapjack.Compiler.Backend.DataToWord.Numbers
 
 @[expose] public section
 
@@ -85,6 +86,21 @@ theorem getRealOffset_thm {width : Nat} [NeZero width] (index : Nat) :
   intro good
   rcases good with h | h <;> subst width <;>
     simp [getRealOffset, StackRemove.bytesInWord, BitVec.ofNat_mul] <;> bv_omega
+
+/-- Apply the HOL offset theorem to the tagged encoding of a natural index.
+This factors a calculation used by the block and reference memory proofs. -/
+theorem getRealOffset_smallnum {width : Nat} [NeZero width] (index : Nat)
+    (good : goodDimindex width) :
+    getRealOffset (smallnum (Int.ofNat index) : BitVec width) =
+      some (StackRemove.bytesInWord width + BitVec.ofNat width index * StackRemove.bytesInWord width) := by
+  have nonneg : ¬ (Int.ofNat index < 0) := by
+    rw [Int.ofNat_eq_natCast]
+    exact Int.not_lt_of_ge (Int.natCast_nonneg index)
+  have encoded : (smallnum (Int.ofNat index) : BitVec width) = BitVec.ofNat width (4 * index) := by
+    simp only [smallnum, nonneg, ↓reduceIte]
+    congr 1
+  rw [encoded]
+  exact getRealOffset_thm index good
 
 /-- Pointer tag bits vanish when shifted past the complete pointer field. -/
 @[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "get_lowerbits_LSL_shift_length"
