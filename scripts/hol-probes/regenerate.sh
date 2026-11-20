@@ -485,6 +485,10 @@ run_probe clos_sem_evaluate_probeScript.sml clos_sem_evaluate_probe.out \
   evaluate_typed evaluate_clock_typed fix_clock_evaluate_typed variable missing conditional conditional_invalid empty_application raise_handle zero_tick call_closure dest_bad_ref_type dest_not_thunk_type dest_is_thunk_type dest_thunk_typed store_thunk_typed update_thunk_typed value_to_list_typed list_to_value_typed bool_value_typed closure_equality_typed value_to_bytes_typed value_to_words_typed do_install_typed do_install_type \
   "$cake_dir/compiler/backend/semantics/closSemScript.sml" "$cake_dir/compiler/backend/semantics"
 
+run_probe clos_sem_clock_typed_probeScript.sml clos_sem_clock_typed_probe.out \
+  LESS_EQ_dec_clock_typed fix_clock_IMP_typed evaluate_app_NIL_typed do_app_const_typed evaluate_clock_help_typed \
+  "$cake_dir/compiler/backend/semantics/closSemScript.sml" "$cake_dir/compiler/backend/semantics"
+
 run_probe cake_flat_sem_thunk_probeScript.sml cake_flat_sem_thunk_probe.out \
   thunk_type thunk_dest thunk_update thunk_bad valid_thunk ref_flag bad_index ordinary_ref nonlocation update_value update_nested \
   "$cake_dir/compiler/backend/semantics/flatSemScript.sml" "$cake_dir/compiler/backend/semantics"

@@ -9,6 +9,14 @@ public import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyClock
 namespace Flapjack.Compiler.Backend.ClosSem
 open Flapjack.SemanticPrimitivesHOL
 
+namespace EvaluateClockCore
+/-- The closure state uses the canonical finite-map representation. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : StateBroad C F, (State.ofBroad s).toBroad = s) ∧
+      (∀ s : State C F, State.ofBroad s.toBroad = s) :=
+  ClosSem.holFmapAsFiniteSupportWitness
+end EvaluateClockCore
+
 /-- Clamping an evaluation result bounds its clock by the input clock. -/
 theorem fixClock_clock_le {C F : Type} (state : State C F) (result : EvalResult C F) :
     (fixClock state result).2.clock ≤ state.clock := by
@@ -486,5 +494,46 @@ theorem fixClock_evaluate {C F : Type} (expressions : List ClosLang.Exp)
   | mk result next =>
     simp only [run] at bound
     simp [fixClock, Nat.min_eq_right bound]
+
+/-- HOL `fix_clock_IMP`: the clamp bounds the output clock by the input clock. -/
+@[hol "cakeml/compiler/backend/semantics/closSemScript.sml" "fix_clock_IMP"
+  (fmap_as_finite_support := [refs, code])]
+theorem fixClock_IMP {C F D G R : Type} (s : State C F) (x : R × State D G) (res : R)
+    (s1 : State D G) (run : fixClock s x = (res, s1)) : s1.clock ≤ s.clock := by
+  cases x with
+  | mk r t =>
+    simp only [fixClock, Prod.mk.injEq] at run
+    obtain ⟨_, rfl⟩ := run
+    exact Nat.min_le_left _ _
+
+/-- HOL `LESS_EQ_dec_clock`: a clock bounded by a dec-clocked state's clock is
+bounded by the original clock. -/
+@[hol "cakeml/compiler/backend/semantics/closSemScript.sml" "LESS_EQ_dec_clock"
+  (fmap_as_finite_support := [refs, code])]
+theorem lessEqDecClock {C F D G : Type} (r : State C F) (n : Nat) (s : State D G)
+    (h : r.clock ≤ (decClock n s).clock) : r.clock ≤ s.clock := by
+  simp only [decClock] at h
+  omega
+
+/-- HOL `evaluate_clock_help`: evaluation and application never increase the
+clock. -/
+@[hol "cakeml/compiler/backend/semantics/closSemScript.sml" "evaluate_clock_help"
+  (fmap_as_finite_support := [refs, code])]
+theorem evaluateClockHelp {C F : Type} :
+    (∀ (tup : List ClosLang.Exp × List Value × State C F) (vs : Result (List Value) Value)
+      (s2 : State C F),
+      evaluate tup.1 tup.2.1 tup.2.2 = (vs, s2) → s2.clock ≤ tup.2.2.clock) ∧
+    (∀ (loc_opt : Option Nat) (f : Value) (args : List Value) (s1 : State C F)
+      (vs : Result (List Value) Value) (s2 : State C F),
+      evaluateApp loc_opt f args s1 = (vs, s2) → s2.clock ≤ s1.clock) := by
+  constructor
+  · intro tup vs s2 run
+    have bound := evaluate_clock_le tup.1 tup.2.1 tup.2.2
+    simp only [run] at bound
+    exact bound
+  · intro loc_opt f args s1 vs s2 run
+    have bound := evaluateApp_clock_le loc_opt f args s1
+    simp only [run] at bound
+    exact bound
 
 end Flapjack.Compiler.Backend.ClosSem

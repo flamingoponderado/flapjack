@@ -196,4 +196,23 @@ theorem doInstall_nonType_parts {C F : Type} (values : List Value) (state final 
                   simp only [Prod.mk.injEq] at run
                   exact (notType run.1.symm).elim
 
+/-- HOL `do_install_clock`: a successful installation consumes one clock unit
+and needs a positive clock. -/
+@[hol "cakeml/compiler/backend/semantics/closSemScript.sml" "do_install_clock"
+  (fmap_as_finite_support := [refs, code])]
+theorem doInstall_clock {C F : Type} (values : List Value) (state : State C F)
+    (expressions : List ClosLang.Exp) (next : State C F)
+    (run : doInstall values state = (.val expressions, next)) :
+    0 < state.clock ∧ next.clock = state.clock - 1 :=
+  doInstall_success_clock values state next expressions run
+
+/-- HOL `do_install_clock_less_eq`: installation never increases the clock. -/
+@[hol "cakeml/compiler/backend/semantics/closSemScript.sml" "do_install_clock_less_eq"
+  (fmap_as_finite_support := [refs, code])]
+theorem doInstall_clock_less_eq {C F : Type} (values : List Value) (state : State C F)
+    (result : Result (List ClosLang.Exp) Value) (next : State C F)
+    (run : doInstall values state = (result, next)) :
+    next.clock ≤ state.clock :=
+  doInstall_clock_le values state next result run
+
 end Flapjack.Compiler.Backend.ClosSem
