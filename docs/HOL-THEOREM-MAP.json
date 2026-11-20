@@ -115575,7 +115575,7 @@
       "store"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "Source comparison: memory_rel_bounds_check_typed and its zero HOL hypotheses: the complete numeric memory relation, small_int condition for the natural bound and good_dimindex imply both original equivalences for unsigned strict and non-strict comparison after rotate-right by two. The store uses the canonical finite-support map; all words, memory and domain share the positive HOL width."
+    "reviewer": "Source comparison: memory_rel_bounds_check_typed and its zero HOL hypotheses: the complete numeric memory relation, small_int condition for the natural bound and good_dimindex imply both original equivalences for unsigned strict and non-strict comparison after rotate-right by two. HOL combines these three premises in one conjunction; Lean presents them as successive arguments. The store uses the canonical finite-support map; all words, memory and domain share the positive HOL width."
   },
 {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/Number.lean",
