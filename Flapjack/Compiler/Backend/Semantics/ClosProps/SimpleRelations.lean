@@ -17,6 +17,14 @@ def isClos : Value → Prop
   | .closure .. | .recclosure .. => True
   | _ => False
 
+/-- Recognize closure values under the source's `is_closure` spelling, which
+repeats the same three clauses as its own definition. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "is_closure_def"]
+def isClosureValue : Value → Prop
+  | .closure .. => True
+  | .recclosure .. => True
+  | _ => False
+
 /-- A simple value relation preserves scalar payloads and block structure,
 and relates a target closure only to a source closure. -/
 @[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "simple_val_rel_def"]
