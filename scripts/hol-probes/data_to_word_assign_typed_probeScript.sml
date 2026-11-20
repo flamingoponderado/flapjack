@@ -454,4 +454,7 @@ val _ = emit_exported "assign_Cons_typed" "assign_Cons";
 val _ = print ("assign_Build_hypotheses=" ^
   Int.toString (length (hyp assign_Build)) ^ "\n");
 val _ = emit_exported "assign_Build_typed" "assign_Build";
+val _ = print ("assign_WordTest_hypotheses=" ^
+  Int.toString (length (hyp assign_WordTest)) ^ "\n");
+val _ = emit_exported "assign_WordTest_typed" "assign_WordTest";
 val _ = capture "parts_to_words_NONE_typed" "parts_to_words_NONE";
