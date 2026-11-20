@@ -269,4 +269,7 @@ val _ = emit "write_bytearray_append_typed" "write_bytearray_append";
 val _ = print ("memory_rel_Cons_alt_hypotheses=" ^
   Int.toString (length (hyp memory_rel_Cons_alt)) ^ "\n");
 val _ = emit "memory_rel_Cons_alt_typed" "memory_rel_Cons_alt";
+val _ = print ("BlockNil_and_lemma_hypotheses=" ^
+  Int.toString (length (hyp BlockNil_and_lemma)) ^ "\n");
+val _ = emit "BlockNil_and_lemma_typed" "BlockNil_and_lemma";
 val _ = emit "memory_rel_write_bytearray_typed" "memory_rel_write_bytearray";

@@ -560,6 +560,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.StackPermute
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.StackOperations
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.SmallNumber
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Unit
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BlockNil
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Bool
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.RefEquality
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.CodePointer

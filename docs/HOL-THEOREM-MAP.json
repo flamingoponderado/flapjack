@@ -115438,6 +115438,15 @@
     "reviewer": "Source comparison: IMP_memory_rel_Number and its typed data_to_word_memory_repr capture. The good_dimindex, small_int and full memory_rel premises imply the original relation with the Number and encoded Word prepended. store is the canonical finite-support representation of the HOL finite map; memory, domain, stored words and result use the shared positive HOL width. The word address mask is proved for both widths admitted by good_dimindex."
   },
 {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/BlockNil.lean",
+    "lean_name": "blockNil_and_lemma",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "BlockNil_and_lemma",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Compared BlockNil_and_lemma_typed with zero HOL hypotheses: the original good_dimindex antecedent and complete word equality retain the shared positive machine width and an arbitrary word-valued tag. Both admitted machine widths are kernel checked."
+  },
+{
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/Unit.lean",
     "lean_name": "consThm_empty",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
