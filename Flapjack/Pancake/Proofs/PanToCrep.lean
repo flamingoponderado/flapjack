@@ -1,6 +1,7 @@
 module
 
-public import Flapjack.FiniteMap
+public import Flapjack.Misc.ListEl
+public import Flapjack.Pancake.Semantics.LoopProps.NestedSeqSyntaxExact
 public import Flapjack.HolRef
 public import Flapjack.PanBst
 public import Flapjack.PanEmptyLocals
@@ -1113,6 +1114,132 @@ theorem firstCompileToCrepAllDistinctExact {width : Nat} [NeZero width]
     ((show List (Flapjack.Pancake.PanLang.MlS × List Nat × CrepProgHOL width) from
         compileToCrepExactHOLW declarations).map Prod.fst).Nodup := by
   simpa [compileToCrepExactHOLW, List.map_map, Function.comp_def] using hdistinct
+
+/-! `ALOOKUP`/`EL` infrastructure for the `compile_to_crep` lemmas below. These
+    are Flapjack list lemmas, not standalone HOL theorem ports. -/
+
+private theorem holAlookup_map_snd {α β γ : Type} [DecidableEq α] (g : β → γ) :
+    ∀ (entries : List (α × β)) (key : α),
+      holAlookup (entries.map (fun entry => (entry.1, g entry.2))) key =
+        (holAlookup entries key).map g
+  | [], _ => rfl
+  | (k, v) :: t, q => by
+      simp only [List.map_cons, holAlookup]
+      by_cases hk : k = q
+      · simp only [hk, if_true, Option.map_some]
+      · simp only [hk, if_false]
+        exact holAlookup_map_snd g t q
+
+private theorem holAlookup_snd_eq_of_mem_name {α β : Type} [DecidableEq α] :
+    ∀ (entries : List (α × β)) (key : α) (value : β) (entry : α × β),
+      holAlookup entries key = some value →
+      (entries.map Prod.fst).Nodup →
+      entry ∈ entries → entry.1 = key → entry.2 = value
+  | [], _, _, _, hlookup, _, hmem, _ => by simp at hmem
+  | (k, v) :: t, key, value, entry, hlookup, hdistinct, hmem, hname => by
+      simp only [List.map_cons, List.nodup_cons] at hdistinct
+      simp only [holAlookup] at hlookup
+      rcases List.mem_cons.mp hmem with hentry | hentry
+      · subst hentry
+        simp only at hname
+        by_cases hk : k = key
+        · have hv : v = value :=
+            Option.some.inj (by simpa only [hk, if_true] using hlookup)
+          subst hname
+          exact hv
+        · exact absurd hname hk
+      · by_cases hk : k = key
+        · exfalso
+          exact hdistinct.1 (List.mem_map.mpr ⟨entry, hentry, hname.trans hk.symm⟩)
+        · simp only [hk, if_false] at hlookup
+          exact holAlookup_snd_eq_of_mem_name t key value entry hlookup hdistinct.2 hentry hname
+
+/-- Exact port of HOL `alookup_compile_prog_code`
+    (`pan_to_crepProofScript.sml:4575-4583`). The typed capture gives
+    `ALL_DISTINCT (MAP FST (functions pan_code)) ∧
+     ALOOKUP (functions pan_code) start = SOME ([],prog,rshape) ⇒
+     ALOOKUP (compile_to_crep pan_code) start =
+     SOME ([], comp_func (make_funcs (functions pan_code))
+                  (get_eids_from_decls pan_code) [] prog)`,
+    with `pan_code` and `start` free. The single conjunctive premise is kept as
+    ONE hypothesis. `compile_to_crep` is the tagged `compileToCrepExactHOLW`,
+    which maps `functionsHOL` entries, so the lookup moves through the map;
+    `ALOOKUP` is `holAlookup`, `MAP FST` is `List.map Prod.fst` with
+    `ALL_DISTINCT` as `Nodup`, and `make_funcs`/`get_eids_from_decls`/
+    `comp_func` are the tagged `makeFuncsExactHOL`/`getEidsFromDeclsHOL`/
+    `compFuncExactHOLW`. `crep_vars []` is the empty slot list. -/
+@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "alookup_compile_prog_code"
+  (words_as_type_indexed_bitvec)]
+theorem alookupCompileProgCodeHOL {width : Nat} [NeZero width]
+    (panCode : List (Flapjack.Pancake.PanLang.DeclHOL width))
+    (start : Flapjack.Pancake.PanLang.MlS)
+    (prog : Flapjack.Pancake.PanLang.ProgHOL width)
+    (rshape : Flapjack.Pancake.PanLang.ShapeHOL)
+    (h : List.Nodup ((Flapjack.Pancake.PanLang.functionsHOL panCode).map Prod.fst) ∧
+      holAlookup (Flapjack.Pancake.PanLang.functionsHOL panCode) start =
+        some ([], prog, rshape)) :
+    holAlookup (compileToCrepExactHOLW panCode) start =
+      some ([], compFuncExactHOLW
+        (makeFuncsExactHOL (Flapjack.Pancake.PanLang.functionsHOL panCode))
+        (getEidsFromDeclsHOL panCode) [] prog) := by
+  obtain ⟨hdistinct, hlookup⟩ := h
+  have hmap := holAlookup_map_snd
+    (g := fun rest => (crepVarsHOL rest.1,
+      compFuncExactHOLW
+        (makeFuncsExactHOL (Flapjack.Pancake.PanLang.functionsHOL panCode))
+        (getEidsFromDeclsHOL panCode) rest.1 rest.2.1))
+    (Flapjack.Pancake.PanLang.functionsHOL panCode) start
+  simp only [compileToCrepExactHOLW] at *
+  rw [hmap, hlookup]
+  simp only [Option.map_some]
+  simp [crepVarsHOL]
+
+/-- Exact port of HOL `el_compile_prog_el_prog_eq`
+    (`pan_to_crepProofScript.sml:4589-4597`). The typed capture gives
+    `∀prog n start cprog p rshape.
+     EL n (compile_to_crep prog) = (start,[],cprog) ∧
+     ALL_DISTINCT (MAP FST (functions prog)) ∧ n < LENGTH(functions prog) ∧
+     ALOOKUP (functions prog) start = SOME ([],p,rshape) ⇒
+     EL n (functions prog) = (start,[],p,rshape)`,
+    with the four conjuncts kept as ONE hypothesis. Both `EL` occurrences are
+    rendered as the indexed access `[n]?`, which is HOL's in-range `EL`; the
+    premise `n < LENGTH (functions prog)` bounds the index and
+    `compile_to_crep` preserves the length, so no out-of-range `ARB` value is
+    involved. `compile_to_crep` is the tagged `compileToCrepExactHOLW`, which
+    maps `functionsHOL prog`, so the indexed entry is the mapped entry. Name
+    uniqueness from `ALL_DISTINCT (MAP FST ...)` plus the `ALOOKUP` value pins
+    that entry. -/
+@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "el_compile_prog_el_prog_eq"
+  (words_as_type_indexed_bitvec)]
+theorem elCompileProgElProgEqHOL {width : Nat} [NeZero width]
+    (prog : List (Flapjack.Pancake.PanLang.DeclHOL width)) (n : Nat)
+    (start : Flapjack.Pancake.PanLang.MlS) (cprog : CrepProgHOL width)
+    (p : Flapjack.Pancake.PanLang.ProgHOL width)
+    (rshape : Flapjack.Pancake.PanLang.ShapeHOL)
+    (h : (compileToCrepExactHOLW prog)[n]? = some (start, [], cprog) ∧
+      List.Nodup ((Flapjack.Pancake.PanLang.functionsHOL prog).map Prod.fst) ∧
+      n < (Flapjack.Pancake.PanLang.functionsHOL prog).length ∧
+      holAlookup (Flapjack.Pancake.PanLang.functionsHOL prog) start =
+        some ([], p, rshape)) :
+    (Flapjack.Pancake.PanLang.functionsHOL prog)[n]? =
+      some (start, [], p, rshape) := by
+  obtain ⟨hel, hdistinct, hn, hlookup⟩ := h
+  have hexpand : compileToCrepExactHOLW prog =
+      (Flapjack.Pancake.PanLang.functionsHOL prog).map
+        (fun entry => (entry.1, crepVarsHOL entry.2.1,
+          compFuncExactHOLW (makeFuncsExactHOL (Flapjack.Pancake.PanLang.functionsHOL prog))
+            (getEidsFromDeclsHOL prog) entry.2.1 entry.2.2.1)) := by
+    simp only [compileToCrepExactHOLW]
+  rw [hexpand, List.getElem?_map] at hel
+  obtain ⟨entry, hentry?, hentry⟩ := Option.map_eq_some_iff.mp hel
+  have hmem : entry ∈ Flapjack.Pancake.PanLang.functionsHOL prog :=
+    List.mem_of_getElem? hentry?
+  have hname : entry.1 = start := congrArg Prod.fst hentry
+  have hvalue := holAlookup_snd_eq_of_mem_name
+    (Flapjack.Pancake.PanLang.functionsHOL prog) start ([], p, rshape) entry
+    hlookup hdistinct hmem hname
+  rw [hentry?]
+  exact congrArg some (Prod.ext hname hvalue)
 
 /-! Flapjack-specific finite-map support: reversing an association list before
     `FUPDATE_LIST` makes the first source occurrence win, exactly like
