@@ -23517,12 +23517,12 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "cut_names_adjust_set_insert_1",
-  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CutOdd.lean", "lean_name": "cutNames_adjustSet_insert_one",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CutNamesOdd.lean", "lean_name": "cutNames_adjustSet_insert_one",
   "statement_status": "reviewed_exact", "reviewer": "Compared cut_names_adjust_set_insert_1_typed: inserting any value at key one preserves the adjusted wordSem$cut_names result, with independent name-tree and environment payload types. The HOL result is an optional sparse tree; HOL spt and Lean Spt correspond constructor-for-constructor."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "cut_names_adjust_set_insert_3",
-  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CutOdd.lean", "lean_name": "cutNames_adjustSet_insert_three",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CutNamesOdd.lean", "lean_name": "cutNames_adjustSet_insert_three",
   "statement_status": "reviewed_exact", "reviewer": "Compared cut_names_adjust_set_insert_3_typed: inserting any value at key three preserves the adjusted wordSem$cut_names result, with independent name-tree and environment payload types. The HOL result is an optional sparse tree; HOL spt and Lean Spt correspond constructor-for-constructor."
 },
 {
@@ -144438,7 +144438,7 @@
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "cut_names_adjust_set_insert_ODD",
-  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CutOdd.lean",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CutNamesOdd.lean",
   "lean_name": "cutNames_adjustSet_insertOdd",
   "statement_status": "reviewed_exact",
   "reviewer": "Source comparison with cut_names_adjust_set_insert_ODD_typed and cut_names_adjust_set_insert_ODD_result_type in data_to_word_gc_fun_const_ok_probe.out and HOL source lines 7933-7946: the oddness premise and equality of option-valued wordSem cuts retain independent name-set and environment payload types. The separate result-type capture disambiguates the printed insert annotation from the cut result."
@@ -146068,6 +146068,22 @@
   "fmap_as_finite_support": ["fpRegs", "store"],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Compared IMP_memcopy_typed: independently typed source and target states, the complete memory relation and separation assertion, bounds, lookups and exact real-address evaluation are retained. The original existential final memory and copied words, memcopy result, word-list separation, copied length and full final zipped-root relation are all preserved. Target state fields use canonical finite maps and words use positive type-indexed widths."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "cut_envs_adjust_sets_insert_ODD",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/CutEnvsOdd.lean",
+  "lean_name": "cutEnvs_adjustSets_insertOdd",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared cut_envs_adjust_sets_insert_ODD_typed: the names and environment sparse-tree value types are independent, and an odd inserted key leaves the complete paired cut result unchanged."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "IN_domain_adjust_set_IMP",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/CutEnvsOdd.lean",
+  "lean_name": "inDomainAdjustSetImp",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared IN_domain_adjust_set_IMP_typed: an arbitrary sparse-tree payload type is retained and membership in the adjusted domain implies an original-domain name with exactly the adjusted key."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
