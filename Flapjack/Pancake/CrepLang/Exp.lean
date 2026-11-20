@@ -137,6 +137,47 @@ theorem crepExpVarsHOLList_eq_flatMap {width : Nat} [NeZero width]
   | nil => rfl
   | cons expression expressions ih => simp [crepExpVarsHOLList, ih]
 
+mutual
+  /-- Exact-carrier port of HOL `crepLang$exps_def`
+  (`cakeml/pancake/crepLangScript.sml:193-206`) for the exact `CrepExpHOL`
+  syntax carrier: every leaf constructor maps to its singleton, the three load
+  forms recurse into their address, `LoadGlob` is a leaf, and the operator forms
+  flatten their argument lists while `Cmp`/`Shift` concatenate both sides. It
+  agrees with the production width-indexed `crepExpsW` under the `crepExpToHOL`
+  codec. -/
+  @[hol "cakeml/pancake/crepLangScript.sml" "exps_def"
+    (words_as_type_indexed_bitvec)]
+  def crepExpsHOL {width : Nat} [NeZero width] :
+      CrepExpHOL width → List (CrepExpHOL width)
+    | expression@(.const _) => [expression]
+    | expression@(.var _) => [expression]
+    | .load address | .load32 address | .loadByte address => crepExpsHOL address
+    | expression@(.loadGlob _) => [expression]
+    | .op _ expressions | .crepOp _ expressions => crepExpsHOLList expressions
+    | .cmp _ left right | .shift _ left right =>
+        crepExpsHOL left ++ crepExpsHOL right
+    | .baseAddr => [.baseAddr]
+    | .topAddr => [.topAddr]
+
+  /-- Flapjack-only list recursion helper for the exact `exps` port; HOL writes
+  this step inline as `FLAT (MAP exps es)` and has no separately named list
+  helper declaration. -/
+  def crepExpsHOLList {width : Nat} [NeZero width] :
+      List (CrepExpHOL width) → List (CrepExpHOL width)
+    | [] => []
+    | expression :: expressions =>
+        crepExpsHOL expression ++ crepExpsHOLList expressions
+end
+
+/-- Flapjack-only recursion bridge between the helper and `List.flatMap`; no
+separate HOL declaration. -/
+theorem crepExpsHOLList_eq_flatMap {width : Nat} [NeZero width]
+    (expressions : List (CrepExpHOL width)) :
+    crepExpsHOLList expressions = expressions.flatMap crepExpsHOL := by
+  induction expressions with
+  | nil => rfl
+  | cons expression expressions ih => simp [crepExpsHOLList, ih]
+
 
 /-- Production/exact agreement for the `var_cexp` family: the width-indexed
 production `crepExpVarsW` computes the same variable list as the exact
