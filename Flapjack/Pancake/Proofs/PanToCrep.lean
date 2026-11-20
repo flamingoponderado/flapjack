@@ -1194,6 +1194,33 @@ theorem alookupCompileProgCodeHOL {width : Nat} [NeZero width]
   simp only [Option.map_some]
   simp [crepVarsHOL]
 
+/-- Local inhabitation for the `holEl` rendering: HOL types are always
+    inhabited, while `holEl` needs a `Nonempty` instance for its unspecified
+    out-of-range value. Each carrier below has a constructor, so the instance
+    is discharged by construction and no statement hypothesis is added; no type
+    binder is involved either, so `total_function_inhabitants` does not apply. -/
+local instance : Nonempty Flapjack.Basis.Pure.MlString.MlString :=
+  ⟨Flapjack.Basis.Pure.MlString.ofString ""⟩
+
+local instance : Nonempty Flapjack.Pancake.PanLang.ShapeHOL :=
+  ⟨Flapjack.Pancake.PanLang.ShapeHOL.one⟩
+
+local instance {width : Nat} [NeZero width] : Nonempty (CrepProgHOL width) :=
+  ⟨CrepProgHOL.skip⟩
+
+local instance {width : Nat} [NeZero width] :
+    Nonempty (Flapjack.Pancake.PanLang.ProgHOL width) :=
+  ⟨Flapjack.Pancake.PanLang.ProgHOL.skip⟩
+
+/-- `holEl` through a list map, at an in-range index (Flapjack list
+    infrastructure for the `EL` rendering below). -/
+private theorem holEl_map {α β : Type} [Nonempty α] [Nonempty β]
+    (f : α → β) (n : Nat) (entries : List α) (hn : n < entries.length) :
+    holEl n (entries.map f) = f (holEl n entries) := by
+  rw [holEl_eq_getElem n (entries.map f) (by simpa using hn)]
+  rw [holEl_eq_getElem n entries hn]
+  simp only [List.getElem_map]
+
 /-- Exact port of HOL `el_compile_prog_el_prog_eq`
     (`pan_to_crepProofScript.sml:4589-4597`). The typed capture gives
     `∀prog n start cprog p rshape.
@@ -1202,13 +1229,13 @@ theorem alookupCompileProgCodeHOL {width : Nat} [NeZero width]
      ALOOKUP (functions prog) start = SOME ([],p,rshape) ⇒
      EL n (functions prog) = (start,[],p,rshape)`,
     with the four conjuncts kept as ONE hypothesis. Both `EL` occurrences are
-    rendered as the indexed access `[n]?`, which is HOL's in-range `EL`; the
-    premise `n < LENGTH (functions prog)` bounds the index and
-    `compile_to_crep` preserves the length, so no out-of-range `ARB` value is
-    involved. `compile_to_crep` is the tagged `compileToCrepExactHOLW`, which
+    the reviewed total `holEl` rendering, so neither is turned into an Option
+    result. `compile_to_crep` is the tagged `compileToCrepExactHOLW`, which
     maps `functionsHOL prog`, so the indexed entry is the mapped entry. Name
     uniqueness from `ALL_DISTINCT (MAP FST ...)` plus the `ALOOKUP` value pins
-    that entry. -/
+    that entry. The `Nonempty` instances `holEl` needs are discharged from the
+    concrete carriers' constructors in this file, so no binder is added and no
+    `total_function_inhabitants` qualifier applies. -/
 @[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "el_compile_prog_el_prog_eq"
   (words_as_type_indexed_bitvec)]
 theorem elCompileProgElProgEqHOL {width : Nat} [NeZero width]
@@ -1216,13 +1243,12 @@ theorem elCompileProgElProgEqHOL {width : Nat} [NeZero width]
     (start : Flapjack.Pancake.PanLang.MlS) (cprog : CrepProgHOL width)
     (p : Flapjack.Pancake.PanLang.ProgHOL width)
     (rshape : Flapjack.Pancake.PanLang.ShapeHOL)
-    (h : (compileToCrepExactHOLW prog)[n]? = some (start, [], cprog) ∧
+    (h : holEl n (compileToCrepExactHOLW prog) = (start, [], cprog) ∧
       List.Nodup ((Flapjack.Pancake.PanLang.functionsHOL prog).map Prod.fst) ∧
       n < (Flapjack.Pancake.PanLang.functionsHOL prog).length ∧
       holAlookup (Flapjack.Pancake.PanLang.functionsHOL prog) start =
         some ([], p, rshape)) :
-    (Flapjack.Pancake.PanLang.functionsHOL prog)[n]? =
-      some (start, [], p, rshape) := by
+    holEl n (Flapjack.Pancake.PanLang.functionsHOL prog) = (start, [], p, rshape) := by
   obtain ⟨hel, hdistinct, hn, hlookup⟩ := h
   have hexpand : compileToCrepExactHOLW prog =
       (Flapjack.Pancake.PanLang.functionsHOL prog).map
@@ -1230,16 +1256,30 @@ theorem elCompileProgElProgEqHOL {width : Nat} [NeZero width]
           compFuncExactHOLW (makeFuncsExactHOL (Flapjack.Pancake.PanLang.functionsHOL prog))
             (getEidsFromDeclsHOL prog) entry.2.1 entry.2.2.1)) := by
     simp only [compileToCrepExactHOLW]
-  rw [hexpand, List.getElem?_map] at hel
-  obtain ⟨entry, hentry?, hentry⟩ := Option.map_eq_some_iff.mp hel
-  have hmem : entry ∈ Flapjack.Pancake.PanLang.functionsHOL prog :=
-    List.mem_of_getElem? hentry?
-  have hname : entry.1 = start := congrArg Prod.fst hentry
+  have hlen : n < (compileToCrepExactHOLW prog).length := by
+    rw [hexpand]
+    simpa using hn
+  have hprem : (fun entry => (entry.1, crepVarsHOL entry.2.1,
+      compFuncExactHOLW (makeFuncsExactHOL (Flapjack.Pancake.PanLang.functionsHOL prog))
+        (getEidsFromDeclsHOL prog) entry.2.1 entry.2.2.1))
+      (holEl n (Flapjack.Pancake.PanLang.functionsHOL prog)) = (start, [], cprog) := by
+    rw [hexpand] at hel
+    rw [holEl_map
+      (f := fun entry => (entry.1, crepVarsHOL entry.2.1,
+        compFuncExactHOLW (makeFuncsExactHOL (Flapjack.Pancake.PanLang.functionsHOL prog))
+          (getEidsFromDeclsHOL prog) entry.2.1 entry.2.2.1)) n
+      (Flapjack.Pancake.PanLang.functionsHOL prog) hn] at hel
+    exact hel
+  have hmem : holEl n (Flapjack.Pancake.PanLang.functionsHOL prog) ∈
+      Flapjack.Pancake.PanLang.functionsHOL prog := by
+    rw [holEl_eq_getElem n (Flapjack.Pancake.PanLang.functionsHOL prog) hn]
+    exact List.getElem_mem hn
+  have hname : (holEl n (Flapjack.Pancake.PanLang.functionsHOL prog)).1 = start :=
+    congrArg Prod.fst hprem
   have hvalue := holAlookup_snd_eq_of_mem_name
-    (Flapjack.Pancake.PanLang.functionsHOL prog) start ([], p, rshape) entry
-    hlookup hdistinct hmem hname
-  rw [hentry?]
-  exact congrArg some (Prod.ext hname hvalue)
+    (Flapjack.Pancake.PanLang.functionsHOL prog) start ([], p, rshape)
+    (holEl n (Flapjack.Pancake.PanLang.functionsHOL prog)) hlookup hdistinct hmem hname
+  exact Prod.ext hname hvalue
 
 /-! Flapjack-specific finite-map support: reversing an association list before
     `FUPDATE_LIST` makes the first source occurrence win, exactly like

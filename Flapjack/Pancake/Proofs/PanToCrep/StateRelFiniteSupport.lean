@@ -806,7 +806,7 @@ theorem panToCrepLocalRelLeZipUpdatePreservedFiniteExact {width ctxtWidth : Nat}
     (ct : PanToCrepContextExact ctxtWidth)
     (sourceLocals : HolFiniteMapExact MlS (ValueHOL width))
     (targetLocals : HolFiniteMapExact Nat (HolWordLab width))
-    (x : MlS) (v v' : ValueHOL width) (sh : ShapeHOL) (ns : List Nat)
+    (x : MlS) (v : ValueHOL width) (sh : ShapeHOL) (ns : List Nat) (v' : ValueHOL width)
     (h : panToCrepLocalsRelFiniteExact ct sourceLocals targetLocals ∧
       sourceLocals.lookup x = some v ∧
       ct.vars.lookup x = some (sh, ns) ∧
