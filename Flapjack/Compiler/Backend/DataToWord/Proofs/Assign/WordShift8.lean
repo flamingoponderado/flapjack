@@ -77,12 +77,24 @@ private theorem byteShiftRun {width : Nat} [NeZero width] {C F : Type}
     · interval_cases amount <;>
         simp [assignWordShiftW8, WordSemStateFiniteExact.evaluate, WordSemStateFiniteExact.wordExp,
           shiftN, wordShiftHOL, found, shift8Lookup]
-      all_goals (congr 2; bv_decide)
+      all_goals
+        congr 2
+        apply BitVec.eq_of_getLsbD_eq
+        intro j hj
+        simp only [BitVec.getLsbD_ushiftRight, BitVec.getLsbD_shiftLeft,
+          BitVec.getLsbD_setWidth, BitVec.getLsbD_sshiftRight]
+        interval_cases j <;> simp_all [BitVec.msb_eq_getMsbD_zero]
     · have hn8 : 8 ≤ amount := by omega
       simp [assignWordShiftW8, WordSemStateFiniteExact.evaluate, WordSemStateFiniteExact.wordExp,
         shiftN, wordShiftHOL, found, shift8Lookup, Nat.min_eq_right hn8,
         BitVec.shiftLeft_eq_zero hn8, BitVec.ushiftRight_eq_zero hn8, byteAsrSat byte amount hn8]
-      all_goals (congr 2; bv_decide)
+      all_goals
+        congr 2
+        apply BitVec.eq_of_getLsbD_eq
+        intro j hj
+        simp only [BitVec.getLsbD_ushiftRight, BitVec.getLsbD_shiftLeft,
+          BitVec.getLsbD_setWidth, BitVec.getLsbD_sshiftRight]
+        interval_cases j <;> simp_all [BitVec.msb_eq_getMsbD_zero]
   | ror =>
     simp only [WordSemStateFiniteExact.getVar] at found
     have shiftEq : byte.rotateRight amount = byte.rotateRight (amount % 8) :=
@@ -95,7 +107,13 @@ private theorem byteShiftRun {width : Nat} [NeZero width] {C F : Type}
       simp [-BitVec.rotateRight_mod_eq_rotateRight, assignWordShiftW8, WordSemStateFiniteExact.evaluate, WordSemStateFiniteExact.wordExp,
         WordSemStateFiniteExact.getVar, shiftN, shiftVar, wordShiftHOL, wordOpHOL, wordOp,
         theWords, found, hmod, OrOp.or]
-    all_goals (congr 2; bv_decide)
+    all_goals
+        congr 2
+        apply BitVec.eq_of_getLsbD_eq
+        intro j hj
+        simp only [BitVec.getLsbD_ushiftRight, BitVec.getLsbD_shiftLeft,
+          BitVec.getLsbD_setWidth, BitVec.getLsbD_rotateRight, BitVec.getLsbD_or]
+        interval_cases j <;> simp_all
 
 /-- A Word8 shift satisfies the complete HOL assignment simulation. -/
 @[hol "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml" "assign_WordShiftW8"

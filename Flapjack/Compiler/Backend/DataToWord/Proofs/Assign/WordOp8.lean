@@ -72,7 +72,22 @@ private theorem byteOpRun {width : Nat} [NeZero width] {C F : Type}
   rcases good with h | h <;> subst width <;> cases op <;>
     simp [assignWordOpW8, lookupWordOp, WordSemStateFiniteExact.evaluate, WordSemStateFiniteExact.wordExp,
       wordShiftHOL, wordOpHOL, wordOp, theWords, AndOp.and, OrOp.or, found1, found2, ClosSem.applyWordOp]
-  all_goals (congr 2; bv_decide)
+  all_goals
+    congr 2
+    first
+    | apply BitVec.eq_of_toNat_eq
+      have ha := a.isLt
+      have hb := b.isLt
+      simp only [BitVec.toNat_ushiftRight, BitVec.toNat_shiftLeft, BitVec.toNat_add,
+        BitVec.toNat_sub, BitVec.toNat_setWidth, Nat.shiftLeft_eq]
+      norm_num at *
+      omega
+    | apply BitVec.eq_of_getLsbD_eq
+      intro j hj
+      simp only [BitVec.getLsbD_shiftLeft, BitVec.getLsbD_setWidth,
+        BitVec.getLsbD_and, BitVec.getLsbD_or, BitVec.getLsbD_xor]
+      interval_cases j <;> simp_all
+
 /-- A Word8 binary operation satisfies the complete HOL assignment simulation. -/
 @[hol "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml" "assign_WordOpW8"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
