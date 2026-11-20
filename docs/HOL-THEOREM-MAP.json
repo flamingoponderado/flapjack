@@ -145607,5 +145607,16 @@
   "lean_name": "inter_union_distrib",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared inter_union_distrib_typed: both union inputs share a polymorphic sparse-tree payload, the intersection input has an independent payload, and the original structural equality and operation order are preserved."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "assign_StringCmp",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/StringCmpCorrect.lean",
+  "lean_name": "assignStringCmp_correct",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared assign_StringCmp_typed and the original proof: the existential operation case, all six assignment premises, existential target evaluation, insufficient-space obligations and successful state relation agree. Both fast and non-fast string comparison modes are proved. The target state uses canonical finite maps and positive-width words; the evaluator inherits the documented real-model assumption."
 }
 ]
