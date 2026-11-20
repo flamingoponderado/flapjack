@@ -145815,6 +145815,18 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "assign_FP_bop",
+  "hol_line": 14321,
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/FpBop.lean",
+  "lean_name": "assignFpBop_correct",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Source comparison with assign_FP_bop_typed: the existential operation equality, all generic assignment premises, existential target evaluation, insufficient-space obligations and complete successful state relation agree. Both width branches preserve operand and Word64 layout order, including aliased operands; the target state uses canonical finite maps and positive-width words. The evaluator inherits the reals_as_rational_cuts assumption."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
   "hol_name": "assign_FP_uop",
   "hol_line": 14467,
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/FpUop.lean",
