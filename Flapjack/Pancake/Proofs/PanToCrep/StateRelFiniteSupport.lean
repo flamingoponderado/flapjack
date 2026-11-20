@@ -6,6 +6,7 @@ public import Flapjack.Pancake.PanToCrep.ContextExact
 public import Flapjack.Pancake.Semantics.PanProps
 public import Flapjack.Pancake.Semantics.PanProps.EvaluateResultInvariant
 public import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
+public import Flapjack.Pancake.Semantics.PanCommonProps.FiniteMapExact
 public import Flapjack.Pancake.Semantics.ShMemBytesBridge
 
 @[expose] public section
@@ -781,6 +782,89 @@ theorem localsRelExtendNewVarHOL {width ctxtWidth : Nat} [NeZero width]
       rw [hfun, opt_mmap_disj_zip_flookup ns t.lookup slots (flattenHOL v) hdisj
         (by rw [hlen, hflen])]
       simpa [FLOOKUP] using hmm
+
+/-- Exact port of HOL `local_rel_le_zip_update_preserved`
+    (`pan_to_crepProofScript.sml:2263-2285`): with ONE conjunctive premise
+    `locals_rel ct l l' ∧ FLOOKUP l x = SOME v ∧
+     FLOOKUP ct.vars x = SOME (sh,ns) ∧ shape_of v = shape_of v' ∧
+     ALL_DISTINCT ns`, replacing the source local `x` by `v'` and updating the
+    target slots `ns` with `flatten v'` preserves `locals_rel`. The typed
+    capture `local_rel_le_zip_update_preserved_typed` leaves `ct`, `l`, `l'`,
+    `x`, `v`, `sh`, `ns`, `v'` free in that order, so the statement binds them
+    in HOL's order with the conjunction as one hypothesis. `|+` on the source
+    is `update` (the FUPDATE port used by the neighbouring
+    `locals_rel_extend_new_var`), `|++ ZIP` is `updateListEq (zip)`,
+    `FLOOKUP` is `.lookup`, `shape_of`/`flatten` are `shapeOfHOLExact`/
+    `flattenHOL` and `ALL_DISTINCT` is `Nodup`. The relation qualifier names the
+    context `vars` field and the two standalone locals maps. -/
+@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "local_rel_le_zip_update_preserved"
+  (fmap_as_finite_support_relation :=
+    [PanToCrepContextExact.vars, sourceLocals, targetLocals])
+  (words_as_type_indexed_bitvec)]
+theorem panToCrepLocalRelLeZipUpdatePreservedFiniteExact {width ctxtWidth : Nat}
+    [NeZero width] [NeZero ctxtWidth]
+    (ct : PanToCrepContextExact ctxtWidth)
+    (sourceLocals : HolFiniteMapExact MlS (ValueHOL width))
+    (targetLocals : HolFiniteMapExact Nat (HolWordLab width))
+    (x : MlS) (v v' : ValueHOL width) (sh : ShapeHOL) (ns : List Nat)
+    (h : panToCrepLocalsRelFiniteExact ct sourceLocals targetLocals ∧
+      sourceLocals.lookup x = some v ∧
+      ct.vars.lookup x = some (sh, ns) ∧
+      shapeOfHOLExact v = shapeOfHOLExact v' ∧
+      ns.Nodup) :
+    panToCrepLocalsRelFiniteExact ct (sourceLocals.update (x, v'))
+      (targetLocals.updateListEq (ns.zip (flattenHOL v'))) := by
+  obtain ⟨hrel, hlx, hvars, hshape, hnodup⟩ := h
+  obtain ⟨hno, hmax, hlk⟩ := hrel
+  obtain ⟨slotsX, wordsX, hvX, hmmX, hflX, hwfX⟩ := hlk x v hlx
+  have hpairX : (shapeOfHOLExact v, slotsX) = (sh, ns) :=
+    Option.some.inj (hvX.symm.trans hvars)
+  have hshX : shapeOfHOLExact v = sh := (Prod.ext_iff.mp hpairX).1
+  have hnsX : ns = slotsX := (Prod.ext_iff.mp hpairX).2.symm
+  subst hnsX
+  have hlenV : ns.length = (flattenHOL v).length := by
+    rw [hflX]
+    exact list_mapM_length targetLocals.lookup ns wordsX hmmX
+  have hflenV := flattenHOL_length_eq_sizeOfShapeHOL v hwfX
+  have hlenV' : ns.length = (flattenHOL v').length := by
+    have hw := flattenHOL_length_eq_sizeOfShapeHOL v' (by
+      rw [← hshape]
+      exact hwfX)
+    have hs : Flapjack.Pancake.PanLang.sizeOfShapeHOL (shapeOfHOLExact v') =
+        Flapjack.Pancake.PanLang.sizeOfShapeHOL (shapeOfHOLExact v) := by
+      rw [← hshape]
+    omega
+  have hsrc : ∀ k, (sourceLocals.update (x, v')).lookup k =
+      if k = x then some v' else sourceLocals.lookup k := by
+    intro k
+    by_cases hk : k = x
+    · simp [HolFiniteMapExact.lookup_update, FUPDATE, hk]
+    · have hk2 : ¬ x = k := fun hh => hk hh.symm
+      simp [HolFiniteMapExact.lookup_update, FUPDATE, hk, hk2]
+  refine ⟨hno, hmax, ?_⟩
+  intro name value hlook
+  rw [hsrc] at hlook
+  by_cases hk : name = x
+  · rw [if_pos hk] at hlook
+    simp only [Option.some.injEq] at hlook
+    subst hlook
+    subst hk
+    refine ⟨ns, flattenHOL v', ?_, ?_, rfl, ?_⟩
+    · rw [hvars, ← hshX, hshape]
+    · exact optMmapSomeEqZipFlookupExactHOL ns targetLocals (flattenHOL v')
+        ⟨hnodup, hlenV'⟩
+    · rw [← hshape]
+      exact hwfX
+  · rw [if_neg hk] at hlook
+    obtain ⟨slots, words, hv, hmm, hfl, hwfk⟩ := hlk name value hlook
+    refine ⟨slots, words, hv, ?_, hfl, hwfk⟩
+    have hdisj : ListDisjoint ns slots := by
+      intro y hy hy'
+      exact hk (hno.2 name x (shapeOfHOLExact value) sh slots ns hv hvars
+        ⟨y, hy', hy⟩)
+    rw [optMmapDisjZipFlookupExactHOL ns targetLocals slots (flattenHOL v')
+      ⟨(distinctListsHol_eq_true_iff_listDisjoint ns slots).mpr hdisj, hlenV'⟩]
+    exact hmm
 
 /-- Exact port of HOL `ctxt_max_el_leq`
     (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:1493-1503`):
