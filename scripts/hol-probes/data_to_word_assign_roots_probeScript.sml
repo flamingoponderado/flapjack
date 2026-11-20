@@ -780,6 +780,7 @@ val _ = emit "assign_Update_typed" data_to_word_assignProofTheory.assign_Update;
 val _ = emit "assign_Ref_typed" data_to_word_assignProofTheory.assign_Ref;
 val _ = emit "assign_FP_uop_typed" data_to_word_assignProofTheory.assign_FP_uop;
 val _ = emit "assign_FP_bop_typed" data_to_word_assignProofTheory.assign_FP_bop;
+val _ = emit "assign_FP_top_typed" data_to_word_assignProofTheory.assign_FP_top;
 val _ = emit "evaluate_WriteWord64_typed" data_to_word_assignProofTheory.evaluate_WriteWord64;
 val _ = emit "evaluate_WriteWord64_on_32_typed" data_to_word_assignProofTheory.evaluate_WriteWord64_on_32;
 val _ = emit "do_app_Ref_typed" data_to_word_assignProofTheory.do_app_Ref;
