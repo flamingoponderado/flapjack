@@ -171,4 +171,26 @@ theorem simpleStateRel_update_globals {C D F : Type} (vr : Value → Value → P
   obtain ⟨rel, related, globals⟩ := h
   exact rel.2.2.2.2.2.2.2.2.2 s t xs ys ⟨related, globals⟩
 
+/-- A target reference lookup is matched by the related source state. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "simple_state_rel_FLOOKUP_refs_IMP"
+  (fmap_as_finite_support := [refs, code])]
+theorem simpleStateRel_lookup_refs {C D F : Type} (vr : Value → Value → Prop)
+    (sr : State C F → State D F → Prop) (s : State C F) (t : State D F)
+    (p : Nat) (x : Option (Ref Value))
+    (h : simpleStateRel vr sr ∧ sr s t ∧ t.refs.lookup p = x) :
+    (match x with
+     | none => s.refs.lookup p = none
+     | some (.valueArray vs) =>
+       ∃ xs, s.refs.lookup p = some (.valueArray xs) ∧ List.Forall₂ vr xs vs
+     | some (.byteArray bs) => s.refs.lookup p = some (.byteArray bs)
+     | some (.thunk m w) => ∃ v, s.refs.lookup p = some (.thunk m v) ∧ vr v w) := by
+  obtain ⟨rel, related, target⟩ := h
+  cases x with
+  | none => exact rel.1 s t p ⟨target, related⟩
+  | some ref =>
+    cases ref with
+    | valueArray vs => exact rel.2.2.1 vs t s p ⟨target, related⟩
+    | byteArray bs => exact rel.2.1 bs t s p ⟨target, related⟩
+    | thunk m w => exact rel.2.2.2.1 m w t s p ⟨target, related⟩
+
 end Flapjack.Compiler.Backend.ClosProps
