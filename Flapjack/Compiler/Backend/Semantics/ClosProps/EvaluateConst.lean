@@ -560,7 +560,7 @@ private theorem evaluateConst_both {C F : Type} :
 @[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "evaluate_const"
   (fmap_as_finite_support := [refs, code])]
 theorem evaluateConst {C F : Type} (expressions : List ClosLang.Exp) (env : List ClosSem.Value)
-    (state next : State C F) (result : Result (List ClosSem.Value) ClosSem.Value)
+    (state : State C F) (result : Result (List ClosSem.Value) ClosSem.Value) (next : State C F)
     (run : evaluate expressions env state = (result, next)) : next.maxApp = state.maxApp :=
   evaluateConst_both.1 expressions env state next result run
 
@@ -568,8 +568,8 @@ theorem evaluateConst {C F : Type} (expressions : List ClosLang.Exp) (env : List
 @[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "evaluate_app_const"
   (fmap_as_finite_support := [refs, code])]
 theorem evaluateAppConst {C F : Type} (location : Option Nat) (function : ClosSem.Value)
-    (args : List ClosSem.Value) (state next : State C F)
-    (result : Result (List ClosSem.Value) ClosSem.Value)
+    (args : List ClosSem.Value) (state : State C F)
+    (result : Result (List ClosSem.Value) ClosSem.Value) (next : State C F)
     (run : evaluateApp location function args state = (result, next)) :
     next.maxApp = state.maxApp :=
   evaluateConst_both.2 location function args state next result run

@@ -53,14 +53,17 @@ noncomputable def cloAddPartialArgs (args : List Value) : Value → Value
 @[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "is_closure_add_partial_args_nil"]
 theorem isClosureValue_cloAddPartialArgs_nil (v : Value) (closed : isClosureValue v) :
     cloAddPartialArgs [] v = v := by
-  cases v <;> simp_all [cloAddPartialArgs, isClosureValue]
+  cases v
+  all_goals simp_all [cloAddPartialArgs, isClosureValue]
 
 /-- A successful partial application returns a closure value. -/
 @[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "dest_closure_partial_is_closure"]
 theorem destClosure_partial_isClosure (maxApp : Nat) (l : Option Nat) (v : Value)
     (vs : List Value) (v' : Value)
     (run : destClosure maxApp l v vs = some (.partialApp v')) : isClosureValue v' := by
-  cases v <;> simp only [destClosure] at run <;> try contradiction
+  cases v
+  all_goals simp only [destClosure] at run
+  all_goals try contradiction
   case closure location supplied env arity body =>
     split at run
     · split at run
@@ -85,7 +88,8 @@ theorem destClosure_partial_isClosure (maxApp : Nat) (l : Option Nat) (v : Value
 theorem destClosure_isClosure (maxApp : Nat) (lopt : Option Nat) (f : Value)
     (vs : List Value) (r : AppKind)
     (run : destClosure maxApp lopt f vs = some r) : isClosureValue f := by
-  cases f <;> simp_all [destClosure, isClosureValue]
+  cases f
+  all_goals simp_all [destClosure, isClosureValue]
 
 /-- A full application consumes arguments, so its remainder is shorter. -/
 @[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "dest_closure_rest_length"]
@@ -102,7 +106,9 @@ theorem destClosure_full_maxapp (maxApp : Nat) (c : Value) (vs : List Value)
     (h : destClosure maxApp none c vs = some (.fullApp b env r) ∧ r ≠ []) :
     vs.length ≤ maxApp := by
   obtain ⟨run, _⟩ := h
-  cases c <;> simp only [destClosure] at run <;> try contradiction
+  cases c
+  all_goals simp only [destClosure] at run
+  all_goals try contradiction
   case closure location supplied env0 arity body =>
     split at run
     · rename_i valid
@@ -130,7 +136,8 @@ theorem destClosure_none_append {α : Type} (maxApp : Nat) (_l : α) (f : Value)
     (args1 args2 : List Value)
     (run : destClosure maxApp none f args2 = none) :
     destClosure maxApp none f (args1 ++ args2) = none := by
-  cases f <;> simp only [destClosure] at run ⊢
+  cases f
+  all_goals simp only [destClosure] at run ⊢
   case closure location supplied env arity body =>
     have hfalse : (checkLoc maxApp none location arity args2.length supplied.length &&
         decide (supplied.length < arity)) = false := by
@@ -191,7 +198,8 @@ theorem destClosure_none_append2 {α : Type} (maxApp : Nat) (_l : α) (f : Value
       destClosure maxApp none f (args1 ++ args2) = none) :
     destClosure maxApp none f args2 = none := by
   obtain ⟨bound, run⟩ := h
-  cases f <;> simp only [destClosure] at run ⊢
+  cases f
+  all_goals simp only [destClosure] at run ⊢
   case closure location supplied env arity body =>
     have hfalse : (checkLoc maxApp none location arity (args1 ++ args2).length
         supplied.length && decide (supplied.length < arity)) = false := by
@@ -261,7 +269,9 @@ theorem destClosure_partial_eq (maxApp : Nat) (requested : Option Nat) (v : Valu
     (args : List Value) (c' : Value)
     (run : destClosure maxApp requested v args = some (.partialApp c')) :
     c' = cloAddPartialArgs args v := by
-  cases v <;> simp only [destClosure] at run <;> try contradiction
+  cases v
+  all_goals simp only [destClosure] at run
+  all_goals try contradiction
   case closure loc supplied env arity body =>
     split at run
     · split at run
@@ -290,7 +300,9 @@ theorem stagePartialApp (c : Value) (maxApp : Nat) (v : Value) (rest used : List
       destClosure maxApp none v (rest ++ used) = some (.partialApp (cloAddPartialArgs rest c))) :
     destClosure maxApp none c rest = some (.partialApp (cloAddPartialArgs rest c)) := by
   obtain ⟨hc, run⟩ := h
-  cases v <;> simp only [destClosure] at run <;> try contradiction
+  cases v
+  all_goals simp only [destClosure] at run
+  all_goals try contradiction
   case closure loc supplied env arity body =>
     split at run
     · rename_i valid
@@ -376,7 +388,9 @@ theorem destClosure_full_addargs (maxApp : Nat) (c : Value) (vs : List Value)
       more.length + vs.length ≤ maxApp) :
     destClosure maxApp none c (more ++ vs) = some (.fullApp b env (more ++ r)) := by
   obtain ⟨run, bound⟩ := h
-  cases c <;> simp only [destClosure] at run <;> try contradiction
+  cases c
+  all_goals simp only [destClosure] at run
+  all_goals try contradiction
   case closure loc supplied cenv arity body =>
     split at run
     · rename_i valid
@@ -455,7 +469,9 @@ theorem destClosure_partial_twice (maxApp : Nat) (f : Value) (args1 args2 : List
       destClosure maxApp none f args2 = some (.partialApp cl)) :
     destClosure maxApp none cl args1 = res := by
   obtain ⟨bound, run1, run2⟩ := h
-  cases f <;> simp only [destClosure] at run1 run2 <;> try contradiction
+  cases f
+  all_goals simp only [destClosure] at run1 run2
+  all_goals try contradiction
   case closure loc supplied env arity body =>
     simp only [List.length_append] at run1 run2
     split at run2
@@ -624,7 +640,9 @@ theorem destClosure_partial_split (maxApp : Nat) (v1 : Value) (vs : List Value) 
     ∃ v3, destClosure maxApp none v1 (vs.drop n) = some (.partialApp v3) ∧
       v2 = cloAddPartialArgs (vs.take n) v3 := by
   obtain ⟨run, hn⟩ := h
-  cases v1 <;> simp only [destClosure] at run <;> try contradiction
+  cases v1
+  all_goals simp only [destClosure] at run
+  all_goals try contradiction
   case closure loc supplied env arity body =>
     split at run
     · rename_i valid
@@ -705,7 +723,9 @@ theorem destClosure_none_full_to_partial (maxApp : Nat) (v : Value) (l1 l2 : Lis
     ∃ cl, destClosure maxApp none v l2 = some (.partialApp cl) ∧
       destClosure maxApp none cl l1 = some (.fullApp b env []) := by
   obtain ⟨run, hne⟩ := h
-  cases v <;> simp only [destClosure] at run <;> try contradiction
+  cases v
+  all_goals simp only [destClosure] at run
+  all_goals try contradiction
   case closure loc supplied env0 arity body =>
     split at run
     · rename_i valid
@@ -860,7 +880,9 @@ theorem destClosure_full_split_prime (maxApp : Nat) (loc : Option Nat) (v : Valu
     (vs : List Value) (e : ClosLang.Exp) (env rest : List Value)
     (run : destClosure maxApp loc v vs = some (.fullApp e env rest)) :
     ∃ used, vs = rest ++ used ∧ destClosure maxApp loc v used = some (.fullApp e env []) := by
-  cases v <;> simp only [destClosure] at run <;> try contradiction
+  cases v
+  all_goals simp only [destClosure] at run
+  all_goals try contradiction
   case closure loc0 supplied env0 arity body =>
     split at run
     · rename_i valid

@@ -667,7 +667,8 @@ theorem setClockResult_eq_mapResult {C F : Type} (x : Nat) (y : State C F)
         (fun (v, s) => (v, { s with clock := x + y.clock })) id result := by
   cases result with
   | err error =>
-    cases error <;> rfl
+    cases error
+    all_goals rfl
   | val pair =>
     obtain ⟨value, next⟩ := pair
     simp [setClockResult, Flapjack.SemanticPrimitivesProps.mapResult, Nat.add_comm]

@@ -20,11 +20,15 @@ open Flapjack.Compiler.Backend.BvlSem
 /-- The Boolean tag is injective. -/
 @[hol "cakeml/compiler/backend/semantics/bvlPropsScript.sml" "bool_to_tag_11"]
 theorem boolToTag_eq_iff (b1 b2 : Bool) : boolToTag b1 = boolToTag b2 ↔ b1 = b2 := by
-  cases b1 <;> cases b2 <;> simp [boolToTag, trueTag, falseTag]
+  cases b1
+  all_goals cases b2
+  all_goals simp [boolToTag, trueTag, falseTag]
 
 /-- The Boolean value encoding is injective. -/
 @[hol "cakeml/compiler/backend/semantics/bvlPropsScript.sml" "Boolv_11"]
 theorem boolValue_eq_iff (b1 b2 : Bool) : boolValue b1 = boolValue b2 ↔ b1 = b2 := by
-  cases b1 <;> cases b2 <;> simp [boolValue, boolToTag, trueTag, falseTag]
+  cases b1
+  all_goals cases b2
+  all_goals simp [boolValue, boolToTag, trueTag, falseTag]
 
 end Flapjack.Compiler.Backend.BvlProps

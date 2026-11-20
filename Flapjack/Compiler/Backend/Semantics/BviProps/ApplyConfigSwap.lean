@@ -144,7 +144,9 @@ theorem doAppFallback_frame_growth {C D F G : Type} (op : ClosLang.Op) (args : L
         exact doAppAux_delegates_not_global operation args source aux
       rw [toBvl_runtimeFrame]
       cases original : BvlSem.doApp op args (toBvl source) with
-      | err error => cases error <;> simp [original] at run
+      | err error =>
+        cases error
+        all_goals simp [original] at run
       | val pair =>
         obtain ⟨v, t⟩ := pair
         simp [original] at run

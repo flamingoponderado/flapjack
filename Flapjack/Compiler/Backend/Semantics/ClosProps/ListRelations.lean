@@ -145,7 +145,8 @@ theorem simpleValRel_list (x x₁ : Value) (xs : List Value) (vr : Value → Val
 /-- A closure value never decodes as a list. -/
 @[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "isClos_IMP_v_to_list_NONE"]
 theorem isClos_valueToList_none (x : Value) (closed : isClos x) : valueToList x = none := by
-  cases x <;> simp_all [isClos, valueToList]
+  cases x
+  all_goals simp_all [isClos, valueToList]
 
 /-- A related target that decodes as a list yields a related source list. -/
 @[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "v_to_list_SOME"]

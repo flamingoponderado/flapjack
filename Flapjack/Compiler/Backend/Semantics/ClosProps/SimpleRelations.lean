@@ -95,7 +95,8 @@ theorem isClos_cases (x : Value) :
     isClos x ↔
       (∃ loc args env arity body, x = .closure loc args env arity body) ∨
         ∃ loc args env funs index, x = .recclosure loc args env funs index := by
-  cases x <;> simp [isClos]
+  cases x
+  all_goals simp [isClos]
 
 /-- The simple state relation keeps the FFI state identical. -/
 @[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "simple_state_rel_ffi"
