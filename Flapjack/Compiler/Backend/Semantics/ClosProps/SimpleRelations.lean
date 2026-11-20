@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.Semantics.ClosSem.State
+public import Flapjack.FiniteMap.DomExact
 public import Flapjack.Misc.ListEl
 public import Flapjack.Misc.Option.Rel
 public import Mathlib.Data.List.Forall2
@@ -110,10 +111,12 @@ theorem simpleStateRel_ffi {C D F : Type} (vr : Value → Value → Prop)
   (fmap_as_finite_support := [refs, code])]
 theorem simpleStateRel_fdom {C D F : Type} (vr : Value → Value → Prop)
     (sr : State C F → State D F → Prop) (s : State C F) (t : State D F)
-    (h : simpleStateRel vr sr ∧ sr s t) :
-    ∀ ptr, s.refs.lookup ptr ≠ none ↔ t.refs.lookup ptr ≠ none := by
+    (h : simpleStateRel vr sr ∧ sr s t) : s.refs.dom = t.refs.dom := by
   obtain ⟨rel, related⟩ := h
-  exact (rel.2.2.2.2.1 s t related).2.1
+  have pointwise := (rel.2.2.2.2.1 s t related).2.1
+  ext ptr
+  simp only [HolFiniteMapExact.dom]
+  exact pointwise ptr
 
 /-- The simple state relation is preserved by a matching FFI-state update. -/
 @[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "simple_state_rel_update_ffi"

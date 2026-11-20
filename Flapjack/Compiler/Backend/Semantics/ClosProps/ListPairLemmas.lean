@@ -21,7 +21,7 @@ theorem revnil {α : Type} (l : List α) : ([] : List α) = l.reverse ↔ l = []
 /-- Pointwise list relation with a list itself is the universal reflexive
 condition. -/
 @[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "LIST_REL_REFL_EVERY"]
-theorem listRel_refl_every {α : Type} (R : α → α → Prop) (l : List α) :
+theorem listRel_refl_every {α : Type} (l : List α) (R : α → α → Prop) :
     List.Forall₂ R l l ↔ ∀ x ∈ l, R x x := by
   induction l with
   | nil => simp

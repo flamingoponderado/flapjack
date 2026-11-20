@@ -3,6 +3,7 @@ module
 public import Flapjack.Misc.LookupVars
 public import Flapjack.Misc.ListEl
 public import Flapjack.HolRef
+public import Flapjack.Compiler.Backend.Semantics.ClosSem
 
 @[expose] public section
 
@@ -64,10 +65,13 @@ theorem lookupVars_some_length {α : Type} (vs : List Nat) (env xs : List α)
         subst run
         simp [ih values valuesRun]
 
+/-- The source value type is inhabited, so HOL's unspecified `EL` past the
+end of a list has a Lean instance to draw on. -/
+local instance lookupVarsValueInhabited : Nonempty Value := ⟨Value.number 0⟩
+
 /-- A successful indexed lookup returns the selected entries in order. -/
-@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "lookup_vars_MEM"
-  (total_function_inhabitants := [α])]
-theorem lookupVars_mem {α : Type} [Nonempty α] (ys : List Nat) (env2 x : List α) (n : Nat)
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "lookup_vars_MEM"]
+theorem lookupVars_mem (ys : List Nat) (env2 x : List Value) (n : Nat)
     (h : lookupVars ys env2 = some x ∧ n < ys.length) :
     Flapjack.holEl n ys < env2.length ∧
       Flapjack.holEl n x = Flapjack.holEl (Flapjack.holEl n ys) env2 := by

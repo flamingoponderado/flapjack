@@ -77,14 +77,19 @@ theorem decClock_withClock {C F : Type} (n : Nat) (s : State C F) (y : Nat) :
     { decClock n s with clock := y } = { s with clock := y } := by
   simp [decClock]
 
-/-- Simultaneous reference and FFI updates equal the nested updates in either
-order. -/
-@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "refs_ffi_lemma"
-  (fmap_as_finite_support := [refs, code])]
+/-- Flapjack-side variant of HOL's `refs_ffi_lemma`: simultaneous reference and
+FFI updates equal the nested updates in either order.
+
+The HOL statement is
+`(s : (γ, 'ffi) state) with <|refs := (refs' : num |-> v ref); ffi := (ffi' : α ffi_state)|>
+ = s with <|ffi := ffi'; refs := refs'|>`: the `ffi` field is assigned a state
+of a *different* FFI type `α`, which a Lean structure update cannot express
+(the FFI type parameter is fixed by the structure's type). This lemma is
+therefore the same-type specialisation and carries no `@[hol]` tag. -/
 theorem refs_ffi_lemma {C F : Type} (s : State C F)
     (refs' : HolFiniteMapExact Nat (Ref Value)) (ffi' : HolFfiState F) :
     { s with refs := refs', ffi := ffi' } =
-      { { s with refs := refs' } with ffi := ffi' } := by
+      { s with ffi := ffi', refs := refs' } := by
   rfl
 
 end Flapjack.Compiler.Backend.ClosProps

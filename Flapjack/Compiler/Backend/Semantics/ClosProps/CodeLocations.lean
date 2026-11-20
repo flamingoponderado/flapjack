@@ -80,17 +80,26 @@ theorem codeLocations_map {α : Type} (xs : List α) (f : α → Exp) :
 second components equals the traversal of the mapped list. -/
 @[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "BIGUNION_MAP_code_locs_SND_SND"]
 theorem bigunion_map_codeLocations_snd_snd {α β : Type} (xs : List (α × β × Exp)) :
-    ⋃₀ ((fun x : α × β × Exp => {n | n ∈ codeLocations [Prod.snd (Prod.snd x)]}) ''
-        {x | x ∈ xs}) =
-      {n | n ∈ codeLocations (xs.map (fun x => Prod.snd (Prod.snd x)))} := by
+    ⋃₀ {s | s ∈ xs.map ((fun l => {n | n ∈ l}) ∘ codeLocations ∘
+        (fun x => [Prod.snd (Prod.snd x)]))} =
+      {n | n ∈ codeLocations (xs.map (Prod.snd ∘ Prod.snd))} := by
   induction xs with
   | nil => simp [codeLocations]
   | cons x xs ih =>
-    rw [List.map_cons, codeLocations_cons]
-    simp only [List.mem_cons, Set.ofPred_or, Set.ofPred_eq_eq_singleton]
-    simp only [Set.image_union, Set.image_singleton, Set.sUnion_union, Set.sUnion_singleton]
-    rw [ih]
+    have split :
+        ⋃₀ {s | s ∈ ((fun l => {n | n ∈ l}) ∘ codeLocations ∘
+              (fun x => [Prod.snd (Prod.snd x)])) x ::
+            xs.map ((fun l => {n | n ∈ l}) ∘ codeLocations ∘
+              (fun x => [Prod.snd (Prod.snd x)]))} =
+          ((fun l => {n | n ∈ l}) ∘ codeLocations ∘
+            (fun x => [Prod.snd (Prod.snd x)])) x ∪
+          ⋃₀ {s | s ∈ xs.map ((fun l => {n | n ∈ l}) ∘ codeLocations ∘
+            (fun x => [Prod.snd (Prod.snd x)]))} := by
+      ext n
+      simp only [Set.mem_sUnion, Set.mem_union, List.mem_cons]
+      aesop
+    rw [List.map_cons, split, ih]
     ext n
-    simp
+    simp [codeLocations]
 
 end Flapjack.Compiler.Backend.ClosProps

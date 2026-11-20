@@ -120,11 +120,12 @@ collections. -/
 @[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "app_call_dests_map"]
 theorem appCallDests_map {α : Type} (ls : List α) (opt : Option Bool) (f : α → Exp) :
     appCallDests opt (ls.map f) =
-      ⋃₀ ((fun x => appCallDests opt [f x]) '' {x | x ∈ ls}) := by
+      ⋃₀ {s | s ∈ ls.map (fun x => appCallDests opt [f x])} := by
   induction ls with
   | nil => simp [appCallDests]
   | cons x xs ih =>
     rw [List.map_cons, appCallDests_cons, ih]
-    simp
+    ext n
+    simp [List.mem_cons, Set.mem_sUnion, Set.mem_union]
 
 end Flapjack.Compiler.Backend.ClosProps
