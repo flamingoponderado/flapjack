@@ -52,7 +52,7 @@ private theorem bVarBound_cons_iff (P : Nat) (x : Bvl.Exp) (xs : List Bvl.Exp) :
 
 /-- The recursive variable-bound predicate is the list-wide singleton form. -/
 @[hol "cakeml/compiler/backend/semantics/bvlPropsScript.sml" "bVarBound_EVERY"]
-theorem bVarBound_every (P : Nat) (ls : List Bvl.Exp) :
+theorem bVarBound_every (ls : List Bvl.Exp) (P : Nat) :
     bVarBound P ls ↔ ls.Forall (fun e => bVarBound P [e]) := by
   induction ls with
   | nil => simp [bVarBound]
