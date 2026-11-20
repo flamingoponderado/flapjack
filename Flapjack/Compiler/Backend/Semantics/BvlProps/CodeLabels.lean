@@ -39,4 +39,12 @@ theorem getCodeLabelsList_eq (es : List Bvl.Exp) :
     ext label
     simp [getCodeLabelsList, ih]
 
+/-- Adding ticks does not change the referenced code labels. -/
+@[hol "cakeml/compiler/backend/semantics/bvlPropsScript.sml" "mk_tick_code_labels"]
+theorem mkTick_codeLabels (n : Nat) (x : Bvl.Exp) :
+    getCodeLabels (Bvl.mkTick n x) = getCodeLabels x := by
+  induction n with
+  | zero => rfl
+  | succ n ih => simp [Bvl.mkTick, getCodeLabels, ih]
+
 end Flapjack.Compiler.Backend.BvlProps

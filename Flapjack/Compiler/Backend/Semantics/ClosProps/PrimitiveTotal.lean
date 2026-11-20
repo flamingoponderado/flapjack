@@ -166,4 +166,17 @@ theorem simpleValRelDoApp {C D F : Type} (vr : Value → Value → Prop)
           cases eq
           exact ⟨value2, state2, vrRel, srRel, rfl⟩
 
+/-- Primitive dispatch on an argument list splits at the head, as the source
+states it: either the list is empty or it has a head and a tail. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "do_app_split_list"
+  (fmap_as_finite_support := [refs, code])]
+theorem doApp_split_list {C F : Type} (op : ClosLang.Op) (vs : List Value) (s : State C F)
+    (res : Flapjack.SemanticPrimitivesHOL.Result (Value × State C F) Value) :
+    doApp op vs s = res ↔
+      (vs = [] ∧ doApp op [] s = res) ∨
+        ∃ (v : Value) (vs1 : List Value), vs = v :: vs1 ∧ doApp op (v :: vs1) s = res := by
+  cases vs with
+  | nil => simp
+  | cons v vs1 => simp
+
 end Flapjack.Compiler.Backend.ClosProps.PrimitiveTotal

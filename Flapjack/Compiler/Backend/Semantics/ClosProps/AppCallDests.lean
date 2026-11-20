@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.ClosLang.Syntax
 import Mathlib.Data.Set.Basic
+import Mathlib.Data.Set.Lattice
 import Lean.Elab.Tactic.Omega
 
 /-! Source closure application and call destinations. -/
@@ -59,5 +60,72 @@ theorem appCallDests_append (opt : Option Bool) (xs ys : List Exp) :
       simp only [List.cons_append] at ih
       rw [ih]
       simp [Set.union_assoc]
+
+/-- Destination collection over a cons cell splits at the head. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "app_call_dests_cons"]
+theorem appCallDests_cons (y : List Exp) (x : Exp) (opt : Option Bool) :
+    appCallDests opt (x :: y) = appCallDests opt [x] ∪ appCallDests opt y := by
+  cases y with
+  | nil => simp [appCallDests]
+  | cons y' ys => simp [appCallDests]
+
+/-- Destination collection over a cons cell splits at the head for the
+`any_dests` overload. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "any_dest_cons"]
+theorem anyDests_cons (y : List Exp) (x : Exp) :
+    appCallDests none (x :: y) = appCallDests none [x] ∪ appCallDests none y :=
+  appCallDests_cons y x none
+
+/-- Destination collection over a cons cell splits at the head for the
+`call_dests` overload. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "call_dest_cons"]
+theorem callDests_cons (y : List Exp) (x : Exp) :
+    appCallDests (some true) (x :: y) =
+      appCallDests (some true) [x] ∪ appCallDests (some true) y :=
+  appCallDests_cons y x (some true)
+
+/-- Destination collection over a cons cell splits at the head for the
+`app_dests` overload. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "app_dest_cons"]
+theorem appDests_cons (y : List Exp) (x : Exp) :
+    appCallDests (some false) (x :: y) =
+      appCallDests (some false) [x] ∪ appCallDests (some false) y :=
+  appCallDests_cons y x (some false)
+
+/-- Destination collection distributes over append for the `any_dests`
+overload. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "any_dest_append"]
+theorem anyDests_append (l1 l2 : List Exp) :
+    appCallDests none (l1 ++ l2) = appCallDests none l1 ∪ appCallDests none l2 :=
+  appCallDests_append none l1 l2
+
+/-- Destination collection distributes over append for the `call_dests`
+overload. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "call_dest_append"]
+theorem callDests_append (l1 l2 : List Exp) :
+    appCallDests (some true) (l1 ++ l2) =
+      appCallDests (some true) l1 ∪ appCallDests (some true) l2 :=
+  appCallDests_append (some true) l1 l2
+
+/-- Destination collection distributes over append for the `app_dests`
+overload. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "app_dest_append"]
+theorem appDests_append (l1 l2 : List Exp) :
+    appCallDests (some false) (l1 ++ l2) =
+      appCallDests (some false) l1 ∪ appCallDests (some false) l2 :=
+  appCallDests_append (some false) l1 l2
+
+/-- Destination collection over a mapped list unions the per-element
+collections. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "app_call_dests_map"]
+theorem appCallDests_map {α : Type} (ls : List α) (opt : Option Bool) (f : α → Exp) :
+    appCallDests opt (ls.map f) =
+      ⋃₀ {s | s ∈ ls.map (fun x => appCallDests opt [f x])} := by
+  induction ls with
+  | nil => simp [appCallDests]
+  | cons x xs ih =>
+    rw [List.map_cons, appCallDests_cons, ih]
+    ext n
+    simp [List.mem_cons, Set.mem_sUnion, Set.mem_union]
 
 end Flapjack.Compiler.Backend.ClosProps

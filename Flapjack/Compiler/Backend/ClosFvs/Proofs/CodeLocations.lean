@@ -43,7 +43,10 @@ theorem removeFuns_codeLocations (fns : List (Nat × Exp)) (count captured : Nat
   | cons pair fns => cases pair with
     | mk arity body => simp [removeFuns, codeLocationsFuns, removeSing_codeLocations body, removeFuns_codeLocations fns]
 termination_by sizeOf fns
-decreasing_by all_goals subst_vars; simp_wf <;> omega
+decreasing_by
+  all_goals subst_vars
+  all_goals simp_wf
+  all_goals omega
 end
 /-- The original list-shaped removal satisfies the HOL invariant. -/
 @[hol "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml" "code_locs_remove_fvs"]

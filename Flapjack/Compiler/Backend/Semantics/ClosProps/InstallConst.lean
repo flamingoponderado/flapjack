@@ -11,11 +11,18 @@ namespace Flapjack.Compiler.Backend.ClosProps
 open Flapjack.Compiler.Backend.ClosSem
 open Flapjack.SemanticPrimitivesHOL
 
+/-- Closure states use the canonical finite-map codec. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : StateBroad C F, (State.ofBroad s).toBroad = s) ∧
+      (∀ s : State C F, State.ofBroad s.toBroad = s) :=
+  ClosSem.holFmapAsFiniteSupportWitness
+
 /-- Installing code preserves the closure arity bound and FFI state, even if
-the installation returns an error. This source-shaped candidate remains
-untagged while the installation evaluator and state carrier await HOL review. -/
-theorem doInstall_const {C F : Type} (values : List ClosSem.Value) (state next : State C F)
-    (result : Result (List ClosLang.Exp) ClosSem.Value)
+installation returns an error. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "do_install_const"
+  (fmap_as_finite_support := [refs, code])]
+theorem doInstall_const {C F : Type} (values : List ClosSem.Value) (state : State C F)
+    (result : Result (List ClosLang.Exp) ClosSem.Value) (next : State C F)
     (run : doInstall values state = (result, next)) :
     next.maxApp = state.maxApp ∧ next.ffi = state.ffi := by
   unfold doInstall at run
@@ -25,6 +32,70 @@ theorem doInstall_const {C F : Type} (values : List ClosSem.Value) (state next :
   all_goals
     rcases run with ⟨_, rfl⟩
     exact ⟨rfl, rfl⟩
+
+/-- A type-error installation leaves the state unchanged. -/
+private theorem doInstall_typeError_state {C F : Type} (vs : List ClosSem.Value)
+    (s t : State C F) (run : doInstall vs s = (.err (.abort .typeError), t)) : t = s := by
+  classical
+  unfold doInstall at run
+  repeat' first | split at run | simp_all
+
+/-- A successful installation commutes with adding clock to both states. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "do_install_add_to_clock"
+  (fmap_as_finite_support := [refs, code])]
+theorem doInstall_addToClock {C F : Type} (vs : List ClosSem.Value) (s : State C F)
+    (e : List ClosLang.Exp) (s' : State C F) (extra : Nat)
+    (run : doInstall vs s = (.val e, s')) :
+    doInstall vs { s with clock := s.clock + extra } =
+      (.val e, { s' with clock := s'.clock + extra }) := by
+  classical
+  obtain ⟨positive, clockEq⟩ := doInstall_success_clock vs s s' e run
+  unfold doInstall at run ⊢
+  repeat' first | split at run | simp_all
+  all_goals repeat' split
+  all_goals simp_all
+  all_goals try rw [← run.2]
+  all_goals try simp_all
+  all_goals try omega
+
+/-- A type-error installation commutes with adding clock to both states. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "do_install_type_error_add_to_clock"
+  (fmap_as_finite_support := [refs, code])]
+theorem doInstall_typeError_addToClock {C F : Type} (vs : List ClosSem.Value) (s : State C F)
+    (t : State C F) (extra : Nat)
+    (run : doInstall vs s = (.err (.abort .typeError), t)) :
+    doInstall vs { s with clock := s.clock + extra } =
+      (.err (.abort .typeError), { t with clock := t.clock + extra }) := by
+  classical
+  have stateEq : t = s := doInstall_typeError_state vs s t run
+  subst stateEq
+  unfold doInstall at run ⊢
+  repeat' first | split at run | simp_all
+  all_goals repeat' split
+  all_goals simp_all
+  all_goals try assumption
+
+/-- Installation never returns a raised value. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "do_install_not_Rraise"
+  (fmap_as_finite_support := [refs, code])]
+theorem doInstall_not_Rraise {C F : Type} (vs : List ClosSem.Value) (s t : State C F)
+    (res : Result (List ClosLang.Exp) ClosSem.Value) (r : ClosSem.Value)
+    (run : doInstall vs s = (res, t)) : res ≠ .err (.raise r) := by
+  classical
+  intro isRaise
+  unfold doInstall at run
+  repeat' first | split at run | simp_all
+
+/-- Installation never returns an FFI error. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "do_install_not_Rffi_error"
+  (fmap_as_finite_support := [refs, code])]
+theorem doInstall_not_Rffi_error {C F : Type} (vs : List ClosSem.Value) (s t : State C F)
+    (res : Result (List ClosLang.Exp) ClosSem.Value) (f : HolFinalEvent)
+    (run : doInstall vs s = (res, t)) : res ≠ .err (.abort (.ffiError f)) := by
+  classical
+  intro isFfi
+  unfold doInstall at run
+  repeat' first | split at run | simp_all
 
 /-- Successful global primitives preserve the arity bound. -/
 private theorem applyGlobal_maxApp {C F : Type} (op : ClosLang.GlobOp) (args : List ClosSem.Value)
@@ -155,7 +226,7 @@ theorem evaluate_install_const_step {C F : Type} (trace : BackendCommon.Tra)
       dsimp only
       cases installRun : doInstall values.reverse next with
       | mk installed last =>
-        have installConst := doInstall_const values.reverse next last installed installRun
+        have installConst := doInstall_const values.reverse next installed last installRun
         cases installed with
         | err error => exact installConst.1.trans argsIH
         | val program =>

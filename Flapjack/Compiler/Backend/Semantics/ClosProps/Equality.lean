@@ -137,4 +137,17 @@ theorem simpleValRel_doEq (vr : Value → Value → Prop) (simple : simpleValRel
   · intro y₁ y₂ x₁ x₂ ⟨first, second⟩
     exact doEqList_related vr simple x₁ x₂ y₁ y₂ first second
 
+/-- Boolean values are equal exactly when their flags agree. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "Boolv_11"]
+theorem boolValue_eq (b1 b2 : Bool) : boolValue b1 = boolValue b2 ↔ (b1 ↔ b2) := by
+  cases b1 with
+  | false =>
+    cases b2 with
+    | false => simp [boolValue]
+    | true => simp [boolValue, BackendCommon.trueTag, BackendCommon.falseTag]
+  | true =>
+    cases b2 with
+    | false => simp [boolValue, BackendCommon.trueTag, BackendCommon.falseTag]
+    | true => simp [boolValue]
+
 end Flapjack.Compiler.Backend.ClosProps

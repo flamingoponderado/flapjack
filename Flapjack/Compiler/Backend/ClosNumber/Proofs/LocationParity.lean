@@ -137,7 +137,10 @@ private theorem evenFuns (fs : List (Nat × Exp)) (n : Nat) (hn : n % 2 = 0) :
         simpa [renumberFuns, hb, hs, codeLocationsFuns, List.forall_mem_append, or_imp, forall_and] using
           And.intro h2.1 (And.intro h1.2 h2.2)
 termination_by sizeOf fs
-decreasing_by all_goals subst_vars; simp_wf <;> omega
+decreasing_by
+  all_goals subst_vars
+  all_goals simp_wf
+  all_goals omega
 end
 
 /-- Numbering from an even location yields an even next location and assigns
