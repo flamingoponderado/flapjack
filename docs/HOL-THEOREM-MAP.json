@@ -147754,5 +147754,41 @@
   "words_as_type_indexed_bitvec": true,
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "Typed HOL source comparison against Compare_code_thm_typed: the full memory relation, domain, memory and store equalities, immediate-bit implication, shift bound, code and three register lookups, dimword clock bound and length/dimension conditions are retained. The existential clock and stack maximum, target result and exact updated state, and original option stack bound are unchanged. The target state fields and the independent store use canonical finite maps; words use positive type-indexed BitVecs. The evaluator inherits the reals_as_rational_cuts assumption."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "word_cmp_Less_word_cmp_res",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/CompareResult.lean",
+  "lean_name": "wordCmpLessResult",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Typed HOL source comparison against word_cmp_Less_word_cmp_res_typed: independent integers, good_dimindex premise and Less result 1 iff i < j are retained. Boolean truth and negation are rendered by equality to true and false; the word carrier uses positive type-indexed BitVec."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "word_cmp_NotLess_word_cmp_res",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/CompareResult.lean",
+  "lean_name": "wordCmpNotLessResult",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Typed HOL source comparison against word_cmp_NotLess_word_cmp_res_typed: independent integers, good_dimindex premise and NotLess 1 result iff i ≤ j are retained. Boolean truth and negation are rendered by equality to true and false; the word carrier uses positive type-indexed BitVec."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "word_cmp_not_NotLess_word_cmp_res",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/CompareResult.lean",
+  "lean_name": "wordCmpNotNotLessResult",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Typed HOL source comparison against word_cmp_not_NotLess_word_cmp_res_typed: independent integers, good_dimindex premise and negated NotLess 1 result iff j < i are retained. Boolean truth and negation are rendered by equality to true and false; the word carrier uses positive type-indexed BitVec."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "not_word_cmp_Less_word_cmp_res",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/CompareResult.lean",
+  "lean_name": "notWordCmpLessResult",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Typed HOL source comparison against not_word_cmp_Less_word_cmp_res_typed: independent integers, good_dimindex premise and negated Less result 1 iff j ≤ i are retained. Boolean truth and negation are rendered by equality to true and false; the word carrier uses positive type-indexed BitVec."
 }
 ]
