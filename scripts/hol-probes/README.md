@@ -24,6 +24,7 @@ byte-dereference, byte-update, array-update, fixed-index and dynamic element-rea
 the full reference-allocation assignment theorem, source expansion, end-of-region unused-heap allocator,
 its full allocation invariant, heap decomposition, length, generation-state and lookup-preservation theorems,
 fresh-reference block uniqueness and complete abstract and concrete allocation invariants, scratch-register and store-independent variable reads, generated list-store evaluation,
+the 64-bit and 32-bit word-allocation evaluator statements,
 and allocation-failure stack accounting,
 and evaluates zero
 and nonzero SmallLsr expressions for output parity. Regenerate
