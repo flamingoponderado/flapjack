@@ -75,6 +75,28 @@ theorem doInstall_typeError_addToClock {C F : Type} (vs : List ClosSem.Value) (s
   all_goals simp_all
   all_goals try assumption
 
+/-- Installation never returns a raised value. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "do_install_not_Rraise"
+  (fmap_as_finite_support := [refs, code])]
+theorem doInstall_not_Rraise {C F : Type} (vs : List ClosSem.Value) (s t : State C F)
+    (res : Result (List ClosLang.Exp) ClosSem.Value) (r : ClosSem.Value)
+    (run : doInstall vs s = (res, t)) : res ≠ .err (.raise r) := by
+  classical
+  intro isRaise
+  unfold doInstall at run
+  repeat' first | split at run | simp_all
+
+/-- Installation never returns an FFI error. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "do_install_not_Rffi_error"
+  (fmap_as_finite_support := [refs, code])]
+theorem doInstall_not_Rffi_error {C F : Type} (vs : List ClosSem.Value) (s t : State C F)
+    (res : Result (List ClosLang.Exp) ClosSem.Value) (f : HolFinalEvent)
+    (run : doInstall vs s = (res, t)) : res ≠ .err (.abort (.ffiError f)) := by
+  classical
+  intro isFfi
+  unfold doInstall at run
+  repeat' first | split at run | simp_all
+
 /-- Successful global primitives preserve the arity bound. -/
 private theorem applyGlobal_maxApp {C F : Type} (op : ClosLang.GlobOp) (args : List ClosSem.Value)
     (state next : State C F) (value : ClosSem.Value)
