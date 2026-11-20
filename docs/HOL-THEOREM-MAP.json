@@ -23901,6 +23901,17 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "evaluate_Maxout_bits_code",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/MaxoutBits.lean",
+  "lean_name": "evaluateMaxoutBitsCode",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Source comparison with evaluate_Maxout_bits_code_typed and zero HOL hypotheses: the distinct registers, three original dimension bounds, source-register lookup, initial dest assignment and exact final evaluation agree. The target state uses canonical finite-support maps and positive-width words; the evaluator inherits reals_as_rational_cuts, documented in SOUNDNESS item 8."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
   "hol_name": "INT_EQ_NUM_LEMMA",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/Integer.lean",
   "lean_name": "int_eq_nat_iff",
