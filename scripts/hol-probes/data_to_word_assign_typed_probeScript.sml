@@ -442,4 +442,7 @@ val _ = emit_exported "INT_EQ_NUM_LEMMA_typed" "INT_EQ_NUM_LEMMA";
 val _ = print ("evaluate_Maxout_bits_code_hypotheses=" ^
   Int.toString (length (hyp evaluate_Maxout_bits_code)) ^ "\n");
 val _ = emit_exported "evaluate_Maxout_bits_code_typed" "evaluate_Maxout_bits_code";
+val _ = print ("Make_ptr_bits_thm_hypotheses=" ^
+  Int.toString (length (hyp Make_ptr_bits_thm)) ^ "\n");
+val _ = emit_exported "Make_ptr_bits_thm_typed" "Make_ptr_bits_thm";
 val _ = capture "parts_to_words_NONE_typed" "parts_to_words_NONE";

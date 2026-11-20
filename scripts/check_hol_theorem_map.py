@@ -1253,7 +1253,7 @@ def tagged_declarations(
              predicate_domain, fmap_universals, generalise_map, generalise_length,
              infer_subst_submap, total_function_inhabitants, hol_existential_inhabitants,
              gc_lemma_existential_inhabitants, new_ref_existential_inhabitants,
-             write_word64_existential_inhabitants, cons_alt_existential_inhabitants) in HOL_ATTRIBUTE_SITES(
+             write_word64_existential_inhabitants, hol_unused_existential_inhabitants) in HOL_ATTRIBUTE_SITES(
                  lines, include_fmap_existentials=True,
                  include_word_dimension_width=True,
                  include_fmap_function=True,
@@ -1274,7 +1274,7 @@ def tagged_declarations(
                  include_gc_lemma_existential_inhabitants=True,
                  include_new_ref_existential_inhabitants=True,
                  include_write_word64_existential_inhabitants=True,
-                 include_cons_alt_existential_inhabitants=True,
+                 include_hol_unused_existential_inhabitants=True,
              ):
             lean_name = FIND_LEAN_DECL(lines, line - 1)
             key = (rel, lean_name)
@@ -1290,7 +1290,7 @@ def tagged_declarations(
                      predicate_domain, fmap_universals, generalise_map, generalise_length,
                      infer_subst_submap, total_function_inhabitants, hol_existential_inhabitants,
                      gc_lemma_existential_inhabitants, new_ref_existential_inhabitants,
-                     write_word64_existential_inhabitants, cons_alt_existential_inhabitants)
+                     write_word64_existential_inhabitants, hol_unused_existential_inhabitants)
             if key in tagged and tagged[key] != value:
                 raise ValueError(f"conflicting @[hol] references for {rel}:{lean_name}")
             tagged[key] = value
@@ -1309,7 +1309,7 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
         fmap_equality, result_observations, dimension_widths, fmap_tuple, nested_list_rel,
         predicate_domain, fmap_universals, generalise_map, generalise_length, infer_subst_submap,
         total_function_inhabitants, hol_existential_inhabitants, gc_lemma_existential_inhabitants,
-        new_ref_existential_inhabitants, write_word64_existential_inhabitants, cons_alt_existential_inhabitants,
+        new_ref_existential_inhabitants, write_word64_existential_inhabitants, hol_unused_existential_inhabitants,
     ) in tagged.items():
         entry = {
             "hol_path": hol_path,
@@ -1382,8 +1382,8 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
             entry["new_ref_existential_inhabitants"] = list(new_ref_existential_inhabitants)
         if write_word64_existential_inhabitants:
             entry["write_word64_existential_inhabitants"] = list(write_word64_existential_inhabitants)
-        if cons_alt_existential_inhabitants:
-            entry["cons_alt_existential_inhabitants"] = list(cons_alt_existential_inhabitants)
+        if hol_unused_existential_inhabitants:
+            entry["hol_unused_existential_inhabitants"] = list(hol_unused_existential_inhabitants)
         inventory[(lean_path, lean_name)] = entry
 
     for lean_path, lean_name in proof_theorem_declarations(root):
@@ -1787,7 +1787,7 @@ def validate_inventory(
         gc_lemma_existential_inhabitants = tag[28] if tag is not None and len(tag) > 28 else ()
         new_ref_existential_inhabitants = tag[29] if tag is not None and len(tag) > 29 else ()
         write_word64_existential_inhabitants = tag[30] if tag is not None and len(tag) > 30 else ()
-        cons_alt_existential_inhabitants = tag[31] if tag is not None and len(tag) > 31 else ()
+        hol_unused_existential_inhabitants = tag[31] if tag is not None and len(tag) > 31 else ()
         predicate_status = "reviewed_fmap_as_finite_support_parameter_predicate_domain"
         if tuple(record.get("fmap_as_finite_support_parameter_predicate_domain", ())) != predicate_domain:
             errors.append(f"{key[0]}:{key[1]}: predicate-domain binders do not match @[hol] tag")
@@ -2159,18 +2159,24 @@ def validate_inventory(
             if not isinstance(reviewer, str) or any(word not in reviewer.lower() for word in
                     ("source", "write_word64_existential_inhabitants")):
                 errors.append(f"{key[0]}:{key[1]}: Word64 inhabitance needs a source comparison note")
-        if tuple(record.get("cons_alt_existential_inhabitants", ())) != cons_alt_existential_inhabitants:
-            errors.append(f"{key[0]}:{key[1]}: constructor-memory existential inhabitants differ from @[hol] tag")
-        if cons_alt_existential_inhabitants:
-            site = ("cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml", "memory_rel_Cons_alt",
-                    "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/ConsAltWritten.lean", "memoryRel_consAlt")
-            if ((hol_path, hol_name, key[0], key[1]) != site or
-                    cons_alt_existential_inhabitants != ("β._unused",) or
-                    status != "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec"):
-                errors.append(f"{key[0]}:{key[1]}: invalid constructor-memory inhabitance site or status")
+        if tuple(record.get("hol_unused_existential_inhabitants", ())) != hol_unused_existential_inhabitants:
+            errors.append(f"{key[0]}:{key[1]}: unused existential inhabitants differ from @[hol] tag")
+        if hol_unused_existential_inhabitants:
+            sites = {
+                ("cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml", "memory_rel_Cons_alt",
+                 "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/ConsAltWritten.lean", "memoryRel_consAlt"):
+                    "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+                ("cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml", "Make_ptr_bits_thm",
+                 "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/MakePtrBits.lean", "makePtrBits_correct"):
+                    "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+            }
+            if (sites.get((hol_path, hol_name, key[0], key[1])) != status or
+                    hol_unused_existential_inhabitants != ("β._unused",) or
+                    status not in sites.values()):
+                errors.append(f"{key[0]}:{key[1]}: invalid unused-witness inhabitance site or status")
             if not isinstance(reviewer, str) or any(word not in reviewer.lower() for word in
-                    ("source", "cons_alt_existential_inhabitants")):
-                errors.append(f"{key[0]}:{key[1]}: constructor-memory inhabitance needs a source comparison note")
+                    ("source", "hol_unused_existential_inhabitants")):
+                errors.append(f"{key[0]}:{key[1]}: unused-witness inhabitance needs a source comparison note")
         if record.get("inherits_reals_as_rational_cuts", False):
             if reals_cuts:
                 errors.append(

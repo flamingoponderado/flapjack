@@ -46,7 +46,7 @@ private theorem storeList_same {width : Nat} [NeZero width]
 /-- The constructor relation after the complete word list has been written. -/
 @[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "memory_rel_Cons_alt"
   (fmap_as_finite_support_relation := [st]) (words_as_type_indexed_bitvec)
-  (cons_alt_existential_inhabitants := [β._unused])]
+  (hol_unused_existential_inhabitants := [β._unused])]
 theorem memoryRel_consAlt {width : Nat} [NeZero width] {β : Type} [Nonempty β]
     (conf : Flapjack.Compiler.Backend.DataToWord.Config) (be : Bool) (ts : Nat)
     (refs : Spt (Flapjack.Compiler.Backend.BvlSem.Ref Flapjack.Compiler.Backend.DataSem.Value))

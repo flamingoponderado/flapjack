@@ -87,7 +87,7 @@ ALLOWED_QUALIFIERS = {
     "gc_lemma_existential_inhabitants",
     "new_ref_existential_inhabitants",
     "write_word64_existential_inhabitants",
-    "cons_alt_existential_inhabitants",
+    "hol_unused_existential_inhabitants",
 }
 BOOLEAN_QUALIFIERS = {
     "fmap_as_finite_support_result", "fmap_as_finite_support_equalities",
@@ -242,7 +242,7 @@ def manifest_qualifiers(record: dict[str, Any]) -> dict[str, Any]:
         "gc_lemma_existential_inhabitants",
         "new_ref_existential_inhabitants",
         "write_word64_existential_inhabitants",
-        "cons_alt_existential_inhabitants",
+        "hol_unused_existential_inhabitants",
     ):
         if record.get(key, ()):
             qualifiers[key] = list(record[key])
@@ -455,10 +455,10 @@ def check_records(
                 f"{record['lean_path']}:{record['lean_name']}: Word64 existential inhabitant "
                 "qualifier differs from elaborated @[hol] exporter"
             )
-        if (exported_qualifiers.get("cons_alt_existential_inhabitants", []) !=
-                qualifiers.get("cons_alt_existential_inhabitants", [])):
+        if (exported_qualifiers.get("hol_unused_existential_inhabitants", []) !=
+                qualifiers.get("hol_unused_existential_inhabitants", [])):
             raise ValueError(
-                f"{record['lean_path']}:{record['lean_name']}: constructor-memory existential inhabitant "
+                f"{record['lean_path']}:{record['lean_name']}: unused existential inhabitant "
                 "qualifier differs from elaborated @[hol] exporter"
             )
         if (exported_qualifiers.get("reals_as_rational_cuts", False)

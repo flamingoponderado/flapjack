@@ -1,5 +1,6 @@
 import Flapjack.HolRef.StateRelGcInhabitantsAudit
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ConsAltWritten
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.MakePtrBits
 
 open Lean Meta Flapjack
 
@@ -18,7 +19,8 @@ private theorem extraInstance {β γ : Type} [Nonempty β] [Nonempty γ] : ∃ (
 run_meta do
   for (name, expected) in #[(``good, true), (``used, false), (``wrongName, false),
       (``extraInstance, false),
-      (``Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.memoryRel_consAlt, true)] do
+      (``Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.memoryRel_consAlt, true),
+      (``Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.makePtrBits_correct, true)] do
     let info ← getConstInfo name
     let problems ← unusedExistentialInhabitantProblems info.type #[(`β, `_unused)]
     unless problems.isEmpty == expected do

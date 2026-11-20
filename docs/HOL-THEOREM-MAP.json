@@ -23901,6 +23901,18 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "Make_ptr_bits_thm",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/MakePtrBits.lean",
+  "lean_name": "makePtrBits_correct",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "hol_unused_existential_inhabitants": ["β._unused"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Source comparison with Make_ptr_bits_thm_typed and zero HOL hypotheses: all twelve premises, the independent unused witness and exact final evaluation and constructor pointer are retained. hol_unused_existential_inhabitants records the independently inhabited HOL witness type. The target state uses canonical finite-support maps and positive-width words; the evaluator inherits reals_as_rational_cuts, documented in SOUNDNESS item 8."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
   "hol_name": "evaluate_Maxout_bits_code",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/MaxoutBits.lean",
   "lean_name": "evaluateMaxoutBitsCode",
@@ -145358,8 +145370,8 @@
   "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
   "fmap_as_finite_support_relation": ["st"],
   "words_as_type_indexed_bitvec": true,
-  "cons_alt_existential_inhabitants": ["β._unused"],
-  "reviewer": "Source comparison with memory_rel_Cons_alt_typed and zero HOL hypotheses: all six original premises, the free/current/unused existential witnesses, and the separated-word-list implication to the complete memory relation agree. cons_alt_existential_inhabitants retains the independent inhabited HOL type of the unused witness. The standalone store map uses the canonical finite-support representation and words share the positive width."
+  "hol_unused_existential_inhabitants": ["β._unused"],
+  "reviewer": "Source comparison with memory_rel_Cons_alt_typed and zero HOL hypotheses: all six original premises, the free/current/unused existential witnesses, and the separated-word-list implication to the complete memory relation agree. hol_unused_existential_inhabitants retains the independent inhabited HOL type of the unused witness. The standalone store map uses the canonical finite-support representation and words share the positive width."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
