@@ -17,3 +17,4 @@ val _ = show_thm "sorted_tl_typed" sortingTheory.SORTED_TL;
 val _ = show_thm "part_def_typed" sortingTheory.PART_DEF;
 val _ = show_thm "parts_have_prop_typed" sortingTheory.PARTs_HAVE_PROP;
 val _ = show_thm "partition_def_typed" sortingTheory.PARTITION_DEF;
+val _ = show_thm "sorts_def_typed" sortingTheory.SORTS_DEF;

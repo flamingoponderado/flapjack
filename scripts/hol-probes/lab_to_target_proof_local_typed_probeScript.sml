@@ -395,3 +395,10 @@ val _ = capture "upd_pc_with_pc_typed" "upd_pc_with_pc";
 val _ = capture "word_cmp_lemma_typed" "word_cmp_lemma";
 val _ = capture "write_bytearray_NOT_Loc_typed" "write_bytearray_NOT_Loc";
 val _ = capture "zero_labs_acc_of_eq_zero_labs_of_typed" "zero_labs_acc_of_eq_zero_labs_of";
+
+(* Script-level `[local]` lemmas (task 234). *)
+val _ = capture "pos_val_MOD_0_lemma_typed" "pos_val_MOD_0_lemma";
+val _ = capture "find_index_in_range_typed" "find_index_in_range";
+val _ = capture "find_index_in_range0_typed" "find_index_in_range0";
+val _ = capture "EXP_IMP_ZERO_LT_typed" "EXP_IMP_ZERO_LT";
+val _ = capture "FILTER_NOT_MEM_Mapped_typed" "FILTER_NOT_MEM_Mapped";

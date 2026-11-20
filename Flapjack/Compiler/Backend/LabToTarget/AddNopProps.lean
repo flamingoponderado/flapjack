@@ -107,4 +107,18 @@ theorem everyIsLabel_addNop {width : Nat} [NeZero width]
   induction acc with
   | nil => simp [addNop]
   | cons x xs ih => cases x <;> simp_all [addNop,isLabelHOL]
+
+/-- Exact HOL `EVERY_is_Label_add_nop` (`lab_to_targetProofScript.sml:3280-3284`):
+a list of labels is unchanged by nop insertion. -/
+@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "EVERY_is_Label_add_nop"
+  (words_as_type_indexed_bitvec)]
+theorem everyIsLabel_addNop_eq {width : Nat} [NeZero width]
+    (nop : List (BitVec 8)) (ls : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
+      (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))) :
+    (∀ line ∈ ls, isLabelHOL line = true) → addNop nop ls = ls := by
+  induction ls with
+  | nil => simp [addNop]
+  | cons x xs ih =>
+      intro h
+      cases x <;> simp_all [addNop,isLabelHOL]
 end Flapjack.Compiler.Backend.LabToTarget

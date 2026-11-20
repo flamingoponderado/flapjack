@@ -334,4 +334,65 @@ theorem hasIoName_findIndex {width : Nat} [NeZero width] :
   obtain ⟨index, hf, -, -⟩ := findIndex_mem _ _ 0 (mem_findFfiNames_of_hasIoName s l h)
   exact ⟨_, hf⟩
 
+
+/-- Flapjack infrastructure for `has_io_name_EXISTS`: the I/O-name test of one
+section is the existential over its lines or the rest of the code. HOL proves
+the same equation inline in the induction. -/
+private theorem hasIoName_section {width : Nat} [NeZero width] (name : MlString)
+    (k : Nat)
+    (lines : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
+      (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))
+    (rest : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
+      (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) :
+    hasIoName name (⟨k, lines⟩ :: rest) ↔
+      (∃ x ∈ lines, (match x with
+        | .labAsm (.callFFI i) _ _ _ => i = name
+        | _ => False)) ∨ hasIoName name rest := by
+  induction lines generalizing rest with
+  | nil => simp [hasIoName]
+  | cons y ys ih =>
+      rw [hasIoName.eq_def]
+      simp only []
+      rw [ih]
+      simp only [List.mem_cons]
+      constructor
+      · rintro (h | h)
+        · rcases h with ⟨x, hx, hp⟩ | h
+          · exact Or.inl ⟨x, Or.inr hx, hp⟩
+          · exact Or.inr h
+        · exact Or.inl ⟨y, Or.inl rfl, h⟩
+      · rintro (⟨x, hx, hp⟩ | h)
+        · rcases hx with rfl | hx
+          · exact Or.inr hp
+          · exact Or.inl (Or.inl ⟨x, hx, hp⟩)
+        · exact Or.inl (Or.inr h)
+
+/-- Exact HOL `has_io_name_EXISTS` (`lab_to_targetProofScript.sml:3110-3120`):
+the I/O-name test is existential over the flattened section lines, keeping only
+`CallFFI` instructions. HOL `EXISTS` is the Prop form over list membership. -/
+@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "has_io_name_EXISTS"
+  (words_as_type_indexed_bitvec)]
+theorem hasIoName_exists {width : Nat} [NeZero width] (name : MlString)
+    (ls : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
+      (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) :
+    hasIoName name ls ↔ ∃ x ∈ (ls.map Section.lines).flatten,
+      (match x with
+        | .labAsm (.callFFI i) _ _ _ => i = name
+        | _ => False) := by
+  induction ls with
+  | nil => simp [hasIoName]
+  | cons sec rest ih =>
+      rcases sec with ⟨k, lines⟩
+      rw [hasIoName_section, ih]
+      constructor
+      · rintro (h | h)
+        · obtain ⟨x, hx, hp⟩ := h
+          exact ⟨x, List.mem_append.mpr (Or.inl hx), hp⟩
+        · obtain ⟨x, hx, hp⟩ := h
+          exact ⟨x, List.mem_append.mpr (Or.inr hx), hp⟩
+      · rintro ⟨x, hx, hp⟩
+        rcases List.mem_append.mp hx with hx | hx
+        · exact Or.inl ⟨x, hx, hp⟩
+        · exact Or.inr ⟨x, hx, hp⟩
+
 end Flapjack.Compiler.Backend.LabToTarget

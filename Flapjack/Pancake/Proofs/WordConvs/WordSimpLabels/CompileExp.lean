@@ -25,4 +25,18 @@ theorem extractLabelsCompileExp {width : Nat} [NeZero width]
       (labelsRel_trans (labelsRelSimpDuplicateIf (constFp (seqAssoc .skip program)))
         (labelsRelPushOutIf (simpDuplicateIf (constFp (seqAssoc .skip program))))))
 
+/-- Original code-label containment of the complete `compile_exp` pass: the
+output keeps only source labels, through all four native stages. -/
+@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
+  "word_get_code_labels_word_simp" (words_as_type_indexed_bitvec)]
+theorem getCodeLabels_compileExp {width : Nat} [NeZero width]
+    (program : WordLangProgHOL (BitVec width)) :
+    getCodeLabelsHOL (compileExp program) ⊆ getCodeLabelsHOL program := by
+  unfold compileExp
+  refine (getCodeLabels_pushOutIf _).trans ?_
+  refine (getCodeLabels_simpDuplicateIf _).trans ?_
+  refine (getCodeLabels_constFp _).trans ?_
+  rw [getCodeLabels_seqAssoc .skip program]
+  simp [getCodeLabelsHOL, Set.empty_union]
+
 end Flapjack.WordConvs.WordSimpLabels

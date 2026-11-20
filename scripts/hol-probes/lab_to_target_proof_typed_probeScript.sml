@@ -364,3 +364,14 @@ val _ = emit "find_ffi_names_ALL_DISTINCT_typed" "find_ffi_names_ALL_DISTINCT";
 val _ = emit "read_ffi_bytearrays_with_next_interfer_typed" "read_ffi_bytearrays_with_next_interfer";
 val _ = emit "read_ffi_bytearrays_shift_interfer_typed" "read_ffi_bytearrays_shift_interfer";
 val _ = emit "read_ffi_bytearrays_ffi_interfer_typed" "read_ffi_bytearrays_ffi_interfer";
+
+(* Script-level exported lemmas (task 234). *)
+val _ = emit "has_io_name_EXISTS_typed" "has_io_name_EXISTS";
+val _ = emit "EVERY_is_Label_add_nop_typed" "EVERY_is_Label_add_nop";
+val _ = emit "sec_labels_ok_filter_skip_typed" "sec_labels_ok_filter_skip";
+val _ = emit "get_labels_upd_lab_len_typed" "get_labels_upd_lab_len";
+val _ = emit "sec_pos_val_acc_typed" "sec_pos_val_acc";
+val _ = emit "FILTER_mmio_pcs_min_index_typed" "FILTER_mmio_pcs_min_index";
+val _ = emit "Sh_not_Ext_typed" "Sh_not_Ext";
+val _ = emit "not_Sh_Ext_typed" "not_Sh_Ext";
+val _ = emit "all_pc_adjust_pc_typed" "all_pc_adjust_pc";

@@ -345,3 +345,12 @@ find_ffi_names_ALL_DISTINCT_typed=∀(code :α sec list). ALL_DISTINCT (find_ffi
 read_ffi_bytearrays_with_next_interfer_typed=read_ffi_bytearrays ((mc :(β, α, γ) machine_config) with next_interfer := (foo :num -> α -> α)) = read_ffi_bytearrays mc
 read_ffi_bytearrays_shift_interfer_typed=read_ffi_bytearrays (shift_interfer (x :num) (y :(β, α, γ) machine_config)) = read_ffi_bytearrays y
 read_ffi_bytearrays_ffi_interfer_typed=read_ffi_bytearrays ((mc :(β, α, γ) machine_config) with ffi_interfer := (ffi :num -> num # word8 list # α -> α)) = read_ffi_bytearrays mc
+has_io_name_EXISTS_typed=∀(name :mlstring) (ls :α sec list). has_io_name name ls ⇔ EXISTS (λ(x :α line). case x of (Label v10 v11 v12 :α line) => F | Asm v13 v14 v15 => F | LabAsm (Jump v29 :α asm_with_lab) v17 v18 v19 => F | LabAsm (JumpCmp v30 v31 v32 v33 :α asm_with_lab) v17 v18 v19 => F | LabAsm (Call v34 :α asm_with_lab) v17 v18 v19 => F | LabAsm (LocValue v35 v36 :α asm_with_lab) v17 v18 v19 => F | LabAsm (CallFFI i :α asm_with_lab) v17 v18 v19 => i = name | LabAsm (Install :α asm_with_lab) v17 v18 v19 => F | LabAsm (Halt :α asm_with_lab) v17 v18 v19 => F) (FLAT (MAP (Section_lines :α sec -> α line list) ls))
+EVERY_is_Label_add_nop_typed=∀(nop :word8 list) (ls :α line list). EVERY (is_Label :α line -> bool) ls ⇒ add_nop nop ls = ls
+sec_labels_ok_filter_skip_typed=∀(code :α sec list). EVERY (sec_labels_ok :α sec -> bool) (filter_skip code) ⇔ EVERY (sec_labels_ok :α sec -> bool) code
+get_labels_upd_lab_len_typed=get_labels (upd_lab_len (pos :num) (code :α sec list)) = get_labels code
+sec_pos_val_acc_typed=∀(l :α line list) (n :num) (i :num). LENGTH (FILTER ($¬ ∘ (is_Label :α line -> bool)) l) ≤ i ⇒ sec_pos_val i n l = (NONE :num option)
+FILTER_mmio_pcs_min_index_typed=EVERY (λ(x :ffiname). ∃(op :shmem_op). x = SharedMem op) (l :ffiname list) ⇒ mmio_pcs_min_index (FILTER (λ(x :ffiname). ∃(s :mlstring). x = ExtCall s) (ffis :ffiname list) ++ l) = SOME (LENGTH (FILTER (λ(x :ffiname). ∃(s :mlstring). x = ExtCall s) ffis))
+Sh_not_Ext_typed=(∃(s :shmem_op). (x :ffiname) = SharedMem s) ⇔ ∀(s :mlstring). x ≠ ExtCall s
+not_Sh_Ext_typed=(∀(s :shmem_op). (x :ffiname) ≠ SharedMem s) ⇔ ∃(s :mlstring). x = ExtCall s
+all_pc_adjust_pc_typed=∀(code :α sec list) (p :num). p < num_pcs (filter_skip code) ⇒ ∃(k :num). adjust_pc k code = p

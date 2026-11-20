@@ -125,4 +125,20 @@ def getShmemInfo {width : Nat} [NeZero width]
   | ⟨k, .asm _ bytes _ :: xs⟩ :: rest =>
       getShmemInfo (⟨k, xs⟩ :: rest) (pos + bytes.length) ffiNames shmemInfo
 
+/-- Exact HOL `Sh_not_Ext` (`lab_to_targetProofScript.sml:7441-7444`): a
+shared-memory FFI name is never an external-call name. -/
+@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "Sh_not_Ext"]
+theorem shNotExt (x : HolFfiName) :
+    (∃ s : HolShmemOp, x = HolFfiName.sharedMem s) ↔
+      ∀ s : MlString, x ≠ HolFfiName.extCall s := by
+  cases x <;> simp
+
+/-- Exact HOL `not_Sh_Ext` (`lab_to_targetProofScript.sml:7447-7450`): the
+complementary form, a non-shared FFI name is an external call. -/
+@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "not_Sh_Ext"]
+theorem notShExt (x : HolFfiName) :
+    (∀ s : HolShmemOp, x ≠ HolFfiName.sharedMem s) ↔
+      ∃ s : MlString, x = HolFfiName.extCall s := by
+  cases x <;> simp
+
 end Flapjack.Compiler.Backend.LabToTarget

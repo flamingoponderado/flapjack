@@ -208,4 +208,28 @@ theorem everyVar_isPhyVar_totalColour {width : Nat} [NeZero width]
   rw [totalColourAlt]
   simp [Function.comp_apply, isPhyVar]
 
+/-- Exact HOL `apply_colour_exp_I` (`word_allocProofScript.sml:3479-3488`):
+colouring an expression by the identity leaves it unchanged. HOL's `I` is
+Lean's `id`; the word carrier is the reviewed positive-width `BitVec`. -/
+@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "apply_colour_exp_I"
+  (words_as_type_indexed_bitvec)]
+theorem applyColourExpI {width : Nat} [NeZero width]
+    (exp : WordLangExpHOL (BitVec width)) :
+    applyColourExp id exp = exp := by
+  induction exp using applyColourExpCore.induct with
+  | case1 n => simp only [applyColourExp, applyColourExpCore, id_eq]
+  | case2 e ih =>
+      simp only [applyColourExp] at ih ⊢
+      simp only [applyColourExpCore, ih]
+  | case3 op es ih =>
+      simp only [applyColourExp] at ih ⊢
+      simp only [applyColourExpCore]
+      rw [List.map_congr_left ih]
+      simp
+  | case4 sh e n ihe ihn =>
+      simp only [applyColourExp] at ihe ihn ⊢
+      simp only [applyColourExpCore, ihe, ihn]
+  | case5 v => simp only [applyColourExp, applyColourExpCore]
+  | case6 name => simp only [applyColourExp, applyColourExpCore]
+
 end Flapjack.WordAlloc

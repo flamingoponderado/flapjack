@@ -199,6 +199,24 @@ theorem isSomeOptionMap {α β : Type} (f : α → β) :
   funext o
   cases o <;> rfl
 
+/-- HOL `OPTION_MAP2` (`optionTheory`): `OPTION_MAP2 f (SOME x) (SOME y) =
+SOME (f x y)`, otherwise `NONE`. Untagged Flapjack rendering: the HOL source is
+outside `cakeml/`, and the tree otherwise carries only the `num`
+specializations `wordSemOptionAdd` and `wordSemOptionMax`. -/
+def optionMap2 {α β γ : Type} (f : α → β → γ) : Option α → Option β → Option γ
+  | some x, some y => some (f x y)
+  | _, _ => none
+
+/-- Exact HOL `IS_SOME_OPTION_MAP2_EQ` (`word_to_stackProofScript.sml:5439-5443`):
+`OPTION_MAP2` is defined exactly when both arguments are. The typed capture
+(`f :β -> γ -> α`, `A :β option`, `B :γ option`) fixes the binder order
+`f`, `A`, `B`; HOL's single `⇔` conclusion carries its `∧` on the right, so
+there is no premise to group. -/
+@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "IS_SOME_OPTION_MAP2_EQ"]
+theorem isSomeOptionMap2Eq {α β γ : Type} (f : β → γ → α) (A : Option β) (B : Option γ) :
+    (optionMap2 f A B).isSome ↔ A.isSome ∧ B.isSome := by
+  cases A <;> cases B <;> simp [optionMap2]
+
 /-- Exact HOL `DROP_SUB` (`word_to_stackProofScript.sml:5446-5452`): a suffix of a
 prefix is the front part of the suffix. Binders follow the typed capture
 (`a`, `ls`, `b`) and HOL's single conjunction premise `a ≤ LENGTH ls ∧ b ≤ a`
@@ -309,5 +327,53 @@ theorem evenDiv2Props (a b : Nat) (h : a % 2 = 0 ∧ b % 2 = 0) :
     exact hne (by omega)
   · intro hne hdiv
     exact hne (by omega)
+
+/-- Canonical WordSem codec re-export for the tagged state carrier's finite-map
+fields (`fpRegs`, `store`); no separate HOL original. -/
+theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {C F : Type} :
+    (∀ (state : WordSemStateBroad width C F) (h : state.FiniteSupport),
+        (WordSemStateBroad.ofBroad state h).toBroad = state) ∧
+    (∀ state : WordSemStateFiniteExact width C F,
+        WordSemStateBroad.ofBroad state.toBroad state.toBroad_finiteSupport = state) :=
+  WordSemEnvSupport.holFmapAsFiniteSupportWitness
+
+/-- Exact HOL `with_same_locals` (`word_to_stackProofScript.sml:3127`): rewriting
+`locals` with its own value leaves the wordSem state unchanged. The typed
+capture (`(s :(α, β, γ) state) with locals := s.locals = s`) has a single state
+binder and an identity statement. The carrier `WordSemStateFiniteExact width C F`
+carries `[NeZero width]` and mentions `BitVec width` in its `memory` field, so the
+standard type-indexed word translation applies; its `fpRegs` and `store` fields
+are the reviewed `HolFiniteMapExact` translation, so the finite-map qualifier
+names them, while `locals` is an `Spt` (sptree) and is not named. -/
+@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "with_same_locals"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem withSameLocalsWordSem {width : Nat} [NeZero width] {C F : Type}
+    (s : WordSemStateFiniteExact width C F) :
+    ({ s with locals := s.locals } : WordSemStateFiniteExact width C F) = s := by
+  rfl
+
+/-- Exact HOL `map_var_def` (`word_to_stackProofScript.sml:4054-4062`): renaming
+the variables of an expression. The typed capture
+(`map_var_def_typed`) states the six source equations; Lean's constructor order
+(`const`, `var`, `lookup`, `load`, `op`, `shift`) differs from HOL's clause order
+(`Var`, `Load`, `Op`, `Shift`, `Const`, `Lookup`) but the equation set is the
+same. The value type is the reviewed `exp` carrier's `α` parameter, exactly as
+in that carrier's own reviewed row, so no width-indexed carrier occurs in this
+definition's signature. The `op` clause recurses through `List.map`, so the
+definition uses a `sizeOf` measure rather than structural recursion. -/
+@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "map_var_def"]
+def mapVar {α : Type} (f : Nat → Nat) : WordLangExpHOL α → WordLangExpHOL α
+  | .const c => .const c
+  | .var n => .var (f n)
+  | .lookup s => .lookup s
+  | .load e => .load (mapVar f e)
+  | .op wop ls => .op wop (ls.map (mapVar f))
+  | .shift sh e1 e2 => .shift sh (mapVar f e1) (mapVar f e2)
+termination_by e => sizeOf e
+decreasing_by
+  all_goals simp_wf
+  · have h := List.sizeOf_lt_of_mem (by assumption)
+    omega
+  all_goals omega
 
 end Flapjack.WordToStackProofs

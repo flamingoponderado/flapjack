@@ -102,4 +102,14 @@ theorem sortLength {α : Type} : ∀ (R : α → α → Bool) (l : List α), (so
   intro R l
   exact ((holPerm_iff _ _).mp (sortPerm R l)).length_eq.symm
 
+/-- Exact HOL `sort_SORTS` (`mllistScript.sml:325-329`):
+`(transitive R /\ total R) ==> SORTS sort R`, from `sort_PERM` and
+`sort_SORTED`. -/
+@[hol "cakeml/basis/pure/mllistScript.sml" "sort_SORTS"]
+theorem sortSorts {α : Type} (R : α → α → Bool) :
+    holTransitive (fun a b => R a b = true) ∧ holTotal (fun a b => R a b = true) →
+    holSorts sort R := by
+  intro h l
+  exact ⟨sortPerm R l, sortSorted R l h⟩
+
 end Flapjack.Basis.Pure.MlList

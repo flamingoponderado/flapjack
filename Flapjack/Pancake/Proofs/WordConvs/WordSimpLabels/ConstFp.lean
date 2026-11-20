@@ -57,4 +57,28 @@ theorem extractLabelsConstFp {width : Nat} [NeZero width]
     labelsRel (extractLabels program) (extractLabels (constFp program)) :=
   labelsRelOfSublist (constFpLoopLabelsSublist program .ln)
 
+/-- Original code-label containment of the constant-folding loop: the returned
+program keeps only labels of its input, for arbitrary knowledge tree. -/
+@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
+  "word_get_code_labels_const_fp_loop" (words_as_type_indexed_bitvec)]
+theorem getCodeLabels_constFpLoop {width : Nat} [NeZero width]
+    (program : WordLangProgHOL (BitVec width)) (cs : Spt (BitVec width)) :
+    getCodeLabelsHOL (constFpLoop program cs).1 ⊆ getCodeLabelsHOL program := by
+  fun_induction constFpLoop program cs <;>
+    simp_all [getCodeLabelsHOL, getCodeLabels_smartSeqHOL, getCodeLabels_dropConsts]
+  all_goals
+    first
+      | exact Set.Subset.trans (by assumption) Set.subset_union_left
+      | exact Set.Subset.trans (by assumption) Set.subset_union_right
+      | exact ⟨Set.Subset.trans (by assumption) Set.subset_union_left,
+               Set.Subset.trans (by assumption) Set.subset_union_right⟩
+
+/-- Flapjack-only consequence of `getCodeLabels_constFpLoop` for the wrapper:
+HOL inlines `const_fp_def` and applies `word_get_code_labels_const_fp_loop`;
+there is no separately named HOL declaration with this statement. -/
+theorem getCodeLabels_constFp {width : Nat} [NeZero width]
+    (program : WordLangProgHOL (BitVec width)) :
+    getCodeLabelsHOL (constFp program) ⊆ getCodeLabelsHOL program :=
+  getCodeLabels_constFpLoop program .ln
+
 end Flapjack.WordConvs.WordSimpLabels

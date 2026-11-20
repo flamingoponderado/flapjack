@@ -105,3 +105,42 @@ val _ = show "evaluate_wStackStore_wReg1_new_typed" ``∀ac k f f' s t lens r c 
     evaluate(Seq kont (wStackStore x Skip),t) = (NONE,t') ∧
     state_rel ac k f f' (set_var r c s) t' lens 0 ∧
     LENGTH t'.stack = LENGTH_t_stack ∧ t'.stack_space = t_stack_space``;
+val _ = show "map_var_def_typed" ``∀(f :num -> num) (n :num) (e :'a exp) (b :binop)
+    (ls :'a exp list) (sh :shift) (e1 :'a exp) (e2 :'a exp) (c :'a word) (v :store_name).
+    map_var f (Var n) = Var (f n) ∧
+    map_var f (Load e) = Load (map_var f e) ∧
+    map_var f (Op b ls) = Op b (MAP (map_var f) ls) ∧
+    map_var f (Shift sh e1 e2) = Shift sh (map_var f e1) (map_var f e2) ∧
+    map_var f (Const c) = Const c ∧
+    map_var f (Lookup v) = Lookup v``;
+val _ = show "make_init_def_typed" ``∀(ac :'a asm_config) (k :num)
+    (t :('a,'c,'ffi) stackSem$state) code coracle.
+    make_init ac k t code coracle =
+    <| locals  := insert 0 (Loc 1 0) LN
+     ; fp_regs := t.fp_regs
+     ; store   := t.store \\ Handler
+     ; stack   := []
+     ; memory  := t.memory
+     ; mdomain := t.mdomain
+     ; sh_mdomain := t.sh_mdomain
+     ; permute := K I
+     ; gc_fun  := t.gc_fun
+     ; handler := 0
+     ; clock   := t.clock
+     ; code    := code
+     ; data_buffer := t.data_buffer
+     ; code_buffer := t.code_buffer
+     ; compile := (λ(bm0,cfg) progs.
+      let (progs,fs,bm) = word_to_stack$compile_word_to_stack ac F k progs (Nil, bm0) in
+      OPTION_MAP (λ(bytes,cfg). (bytes,append (FST bm),(SND bm,cfg)))
+        (t.compile cfg progs))
+     ; compile_oracle := coracle
+     ; be      := t.be
+     ; ffi     := t.ffi
+     ; termdep := 0
+     ; stack_limit := LENGTH t.stack
+     ; stack_max   := stack_size([]:'a stack_frame list)
+     ; stack_size  := mapi (λn (arg_count,prog).
+         FST (SND (compile_prog ac F prog arg_count k (Nil,0)))) code
+     ; locals_size := SOME 0|>``;
+val _ = show "SORTS_SORT_key_val_compare_typed" ``SORTS sort key_val_compare``;

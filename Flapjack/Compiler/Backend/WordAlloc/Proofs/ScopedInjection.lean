@@ -64,4 +64,49 @@ theorem injImageDiffSingle {α β : Type} (f : α → β) (s : α → Prop) (n :
     intro hy
     exact hne (h x n (Or.inl hx) (Or.inr rfl) (hxy.trans hy))
 
+/-- Exact HOL `SUBSET_OF_INSERT` (`word_allocProofScript.sml:27-30`): a set is
+included in itself with one extra element inserted. HOL sets are predicates. -/
+@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "SUBSET_OF_INSERT"]
+theorem subsetOfInsert {α : Type} (s : α → Prop) (x : α) :
+    ∀ y, s y → y = x ∨ s y := by
+  intro y hy
+  exact Or.inr hy
+
+/-- Exact HOL `INJ_ALL_DISTINCT_MAP` (`word_allocProofScript.sml:79-84`): a
+mapping with distinct image is injective on the list's element set. -/
+@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "INJ_ALL_DISTINCT_MAP"]
+theorem injAllDistinctMap {α β : Type} (f : α → β) :
+    ∀ ls : List α, (ls.map f).Nodup →
+      ∀ x y, x ∈ ls → y ∈ ls → f x = f y → x = y := by
+  intro ls
+  induction ls with
+  | nil =>
+      intro _ x y hx _ _
+      simp at hx
+  | cons a as ih =>
+      intro hnd x y hx hy he
+      simp only [List.map_cons, List.nodup_cons] at hnd
+      by_cases hxa : x = a
+      · subst x
+        by_cases hya : y = a
+        · subst y
+          rfl
+        · have hyas : y ∈ as := by
+            rcases List.mem_cons.mp hy with h | h
+            · exact absurd h hya
+            · exact h
+          exact absurd (he ▸ List.mem_map.mpr ⟨y, hyas, rfl⟩) hnd.1
+      · have hxas : x ∈ as := by
+          rcases List.mem_cons.mp hx with h | h
+          · exact absurd h hxa
+          · exact h
+        by_cases hya : y = a
+        · subst y
+          exact absurd (he.symm ▸ List.mem_map.mpr ⟨x, hxas, rfl⟩) hnd.1
+        · have hyas : y ∈ as := by
+            rcases List.mem_cons.mp hy with h | h
+            · exact absurd h hya
+            · exact h
+          exact ih hnd.2 x y hxas hyas he
+
 end Flapjack.WordAlloc

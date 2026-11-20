@@ -139,3 +139,21 @@ wf_numset_list_delete_eq_typed=∀(ls :num list) (t :α sptree$num_map) (live :�
 with_same_locals_typed=(st :(α, β, γ) state) with locals := st.locals = st
 with_same_store_typed=(st :(α, β, γ) state) with store := st.store = st
 word_alloc_full_inst_ok_less_lem_typed=∀(f :num -> num) (prog :α prog) (c :α asm_config). full_inst_ok_less c prog ∧ EVERY (λ((x :num),(y :num)). f x ≠ f y) (get_forced c prog ([] :(num # num) list)) ⇒ full_inst_ok_less c (apply_colour f prog)
+SUBSET_OF_INSERT_typed=∀(s :α -> bool) (x :α). s ⊆ x INSERT s
+LET_FORALL_ELIM_prime_typed=LET (f :α -> bool) (v :α) ⇔ $! (S ($==> ∘ $= v) f)
+INJ_ALL_DISTINCT_MAP_typed=∀(ls :α list). ALL_DISTINCT (MAP (f :α -> β) ls) ⇒ INJ f (set ls) 𝕌(:β)
+LASTN_LENGTH2_typed=LASTN (LENGTH (xs :α list) + (1 :num)) ((x :α)::xs) = x::xs
+toAList_not_empty_typed=(domain (t :α sptree$num_map) :num -> bool) ≠ (∅ :num -> bool) ⇒ toAList t ≠ ([] :(num # α) list)
+PAIR_CASE_PAIR_MAP_typed=(pair_CASE (((f :δ -> β) ## (g :ε -> γ)) (e :δ # ε)) (h :β -> γ -> α) :α) = case e of (x,y) => h (f x) (g y)
+MEM_ZIP_weak_typed=LENGTH (l1 :α list) = LENGTH (l2 :β list) ∧ MEM ((x1 :α),(x2 :β)) (ZIP (l1,l2)) ⇒ MEM x1 l1 ∧ MEM x2 l2
+apply_colour_exp_I_typed=apply_colour_exp (I :num -> num) (exp :α exp) = exp
+get_var_ignore_typed=∀(ls :num list) (a :α word_loc list). get_var (x :num) (cst :(α, β, γ) state) = SOME (y :α word_loc) ∧ ¬MEM x ls ∧ LENGTH ls = LENGTH a ⇒ get_var x (set_vars ls a cst) = SOME y
+PAIR_ZIP_MEM_typed=LENGTH (c :α list) = LENGTH (d :β list) ∧ MEM ((a :α),(b :β)) (ZIP (c,d)) ⇒ MEM a c ∧ MEM b d
+ALOOKUP_ZIP_MEM_typed=LENGTH (a :α list) = LENGTH (b :β list) ∧ ALOOKUP (ZIP (a,b)) (x :α) = SOME (y :β) ⇒ MEM x a ∧ MEM y b
+ALOOKUP_ALL_DISTINCT_REMAP_typed=∀(ls :α list) (x :β list) (f :α -> γ) (y :β) (n :num). LENGTH ls = LENGTH x ∧ ALL_DISTINCT (MAP f ls) ∧ n < LENGTH ls ∧ ALOOKUP (ZIP (ls,x)) ls❲n❳ = SOME y ⇒ ALOOKUP (ZIP (MAP f ls,x)) (f ls❲n❳) = SOME y
+get_var_set_vars_notin_typed=¬MEM (v :num) (ls :num list) ∧ LENGTH ls = LENGTH (vs :α word_loc list) ⇒ get_var v (set_vars ls vs (st :(α, β, γ) state)) = get_var v st
+get_vars_NOT_MEM_typed=¬MEM (h :num) (xs :num list) ⇒ get_vars xs ((cs :(α, β, γ) state) with locals := insert h (h' :α word_loc) (ys :α word_loc sptree$num_map)) = get_vars xs (cs with locals := ys)
+get_vars_eq_alist_insert_typed=∀(regs :num list) (l :α word_loc list). ALL_DISTINCT regs ∧ LENGTH regs = LENGTH l ∧ (∀(x :num). MEM x regs ⇒ lookup x (st :(α, β, γ) state).locals = lookup x (alist_insert regs l (rest :α word_loc sptree$num_map))) ⇒ get_vars regs st = SOME l
+ssa_reconcile_distinct_lemma_typed=∀(f :num -> α) (g :num -> α) (ns :β sptree$num_map). INJ f (domain ns :num -> bool) 𝕌(:α) ⇒ ALL_DISTINCT (MAP (FST :α # α -> α) (FILTER (λ((a :α),(b :α)). a ≠ b) (MAP (λ(v :num). (f v,g v)) (MAP (FST :num # β -> num) (toAList ns)))))
+ssa_reconcile_filtered_in_dom_typed=∀(v :num). MEM v (FILTER (λ(v :num). case lookup v (cur_ssa :num sptree$num_map) of (NONE :num option) => F | SOME cv => option_lookup (tgt_ssa :num sptree$num_map) v ≠ cv) (MAP (FST :num # α -> num) (toAList (ns :α sptree$num_map)))) ⇒ v ∈ (domain ns :num -> bool) ∧ ∃(cv :num). lookup v cur_ssa = SOME cv ∧ option_lookup tgt_ssa v ≠ cv ∧ THE (lookup v cur_ssa) = cv
+ssa_cut_inter_lemma_typed=(domain (ssa' :α sptree$num_map) :num -> bool) ∩ (domain (union (x1 :β sptree$num_map) (x2 :β sptree$num_map)) :num -> bool) = (domain x1 :num -> bool) ∪ (domain x2 :num -> bool) ⇒ (xx :num) ∈ (domain (union x1 x2) :num -> bool) ⇒ xx ∈ (domain ssa' :num -> bool)

@@ -86,3 +86,8 @@ upd_pc_with_pc_typed=upd_pc (s1 :α asm_state).pc s1 = s1
 word_cmp_lemma_typed=(state_rel ((mc_conf :(α, β, γ) machine_config),(code2 :α sec list),(labs :num sptree$num_map sptree$num_map),(p :α word)) (s1 :(α, config, δ) labSem$state) (t1 :α asm_state) (ms1 :β) :bool) ∧ (word_cmp (cmp :cmp) (read_reg (rr :num) s1 :α word_loc) (reg_imm (ri :α reg_imm) s1 :α word_loc) :bool option) = SOME (x :bool) ⇒ (x ⇔ (word_cmp cmp (read_reg rr t1 :α word) (reg_imm ri t1 :α word) :bool))
 write_bytearray_NOT_Loc_typed=∀(xs :word8 list) (c1 :α word) (s1 :(α, β, γ) labSem$state) (a :α word) (c :α word). (s1.mem a :α word_loc) = Word c ⇒ write_bytearray c1 xs s1.mem s1.mem_domain s1.be a ≠ (Loc (n :num) (n0 :num) :α word_loc)
 zero_labs_acc_of_eq_zero_labs_of_typed=(domain (zero_labs_acc_of (l :α asm_with_lab) (acc :sptree$num_set)) :num -> bool) = IMAGE (FST :num # num -> num) (restrict_zero (labs_of l)) ∪ (domain acc :num -> bool)
+pos_val_MOD_0_lemma_typed=(0 :num) MOD (2 :num) ** (mc_conf :(α, β, γ) machine_config).target.config.code_alignment = (0 :num)
+find_index_in_range_typed=∀(n :num). find_index (s :α) (l :α list) n = SOME (x :num) ⇒ x < n + LENGTH l ∧ x ≥ n
+find_index_in_range0_typed=find_index (s :α) (l :α list) (0 :num) = SOME (x :num) ⇒ x < LENGTH l ∧ x ≥ (0 :num)
+EXP_IMP_ZERO_LT_typed=(2 :num) ** (y :num) = (x :num) ⇒ (0 :num) < x
+FILTER_NOT_MEM_Mapped_typed=¬MEM "MappedRead" (FILTER (λ(x :string). x ≠ "MappedRead" ∧ x ≠ "MappedWrite") (l :string list)) ∧ ¬MEM "MappedWrite" (FILTER (λ(x :string). x ≠ "MappedRead" ∧ x ≠ "MappedWrite") l)

@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.Semantics.WordSem.Env
+public import Flapjack.Basis.Pure.MlList.SortPerm
 public import Lean.Elab.Tactic.Omega
 
 @[expose] public section
@@ -34,5 +35,23 @@ theorem totalKeyValCompare {width : Nat} [NeZero width]
   rcases x with ⟨a, x⟩
   rcases y with ⟨b, y⟩
   cases x <;> cases y <;> simp [wordSemKeyValCompare, BitVec.sle] <;> omega
+
+/-- Exact HOL `SORTS_SORT_key_val_compare`
+(`word_to_stackProofScript.sml:1251-1257`): the CakeML list sort sorts by the
+key/value comparator. HOL derives it from `sort_SORTS` and the comparator's
+transitivity and totality. -/
+@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "SORTS_SORT_key_val_compare"
+  (words_as_type_indexed_bitvec)]
+theorem sortsSortKeyValCompare {width : Nat} [NeZero width] :
+    holSorts
+      (Basis.Pure.MlList.sort :
+        (Nat × WordLocW width → Nat × WordLocW width → Bool) →
+          List (Nat × WordLocW width) → List (Nat × WordLocW width))
+      wordSemKeyValCompare := by
+  refine Basis.Pure.MlList.sortSorts (α := Nat × WordLocW width) wordSemKeyValCompare ⟨?_, ?_⟩
+  · intro x y z h
+    exact transitiveKeyValCompare x y z h.1 h.2
+  · intro x y
+    exact totalKeyValCompare x y
 
 end Flapjack.Compiler.Backend.WordToStack

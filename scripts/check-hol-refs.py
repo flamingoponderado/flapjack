@@ -1439,6 +1439,179 @@ def tagged_declaration_source(lines: list[str], attribute_start: int) -> str:
     return signature + "\n" + "\n".join(body)
 
 
+PROP_DEF_KIND_RE = re.compile(
+    r"(?m)^[ \t]*(?:(?:private|protected|noncomputable|partial|unsafe)\s+)*"
+    r"(def|theorem|lemma|abbrev|instance|structure|inductive|opaque|class|axiom|constant)\b"
+)
+
+
+_BINDER_NAME_RE = re.compile(r"[A-Za-z_][A-Za-z0-9_'.]*")
+_SHADOWED_PLACEHOLDER = "\u00abshadowed\u00bb"
+
+
+def _binder_group_name_and_type(group: str) -> tuple[list[str], str] | None:
+    """Split one bracketed `(names : type)` binder group.
+
+    Returns the names bound by the group and the written type annotation, with
+    any default value removed and an empty string when the group carries no
+    annotation.  Only the annotation is carrier evidence: a name that happens to
+    spell a carrier declares a variable of the annotated type, it does not
+    mention that carrier.
+    """
+    pairs = {"(": ")", "{": "}", "[": "]"}
+    if len(group) < 2:
+        return None
+    opening = group[0]
+    if opening not in pairs or group[-1] != pairs[opening]:
+        return None
+    inner = group[1:-1]
+    split = _split_top_level(inner, (":=", ":"))
+    if split is None:
+        names_text, type_text = inner, ""
+    else:
+        names_text, type_text = split
+        default = _split_top_level(type_text, (":=",))
+        if default is not None:
+            type_text = default[0]
+    names = [match.group(0) for match in _BINDER_NAME_RE.finditer(names_text)]
+    return names, type_text.strip()
+
+
+def _declaration_parameter_names(masked: str, assignment: int) -> list[str]:
+    """Names bound by a `def`'s own parameter binders before `:=`.
+
+    A leading universal binder's annotation is not carrier evidence when the
+    carrier name is one of those parameters, or the declaration's own name: the
+    parameter or the recursive definition shadows it.
+    """
+    header = masked[:assignment]
+    kind = PROP_DEF_KIND_RE.search(header)
+    if kind is None:
+        return []
+    rest = header[kind.end():]
+    name = re.match(r"\s*[A-Za-z_][A-Za-z0-9_'.]*", rest)
+    if name is None:
+        return []
+    names: list[str] = [name.group(0)]
+    rest = rest[name.end():]
+    cursor = 0
+    length = len(rest)
+    while cursor < length:
+        char = rest[cursor]
+        if char not in "({[":
+            cursor += 1
+            continue
+        closing = {"(": ")", "{": "}", "[": "]"}[char]
+        depth = 0
+        start = cursor
+        while cursor < length:
+            current = rest[cursor]
+            if current in "({[":
+                depth += 1
+            elif current in ")}]":
+                depth -= 1
+                if depth == 0:
+                    cursor += 1
+                    break
+            cursor += 1
+        if depth != 0:
+            break
+        parsed = _binder_group_name_and_type(rest[start:cursor])
+        if parsed is not None:
+            names.extend(parsed[0])
+    return names
+
+
+def prop_def_leading_forall_binders(source: str) -> str | None:
+    """Type annotations of the leading `∀ (…)` group after `:=` in a `: Prop` def.
+
+    A predicate definition whose universal quantifiers live in its body names
+    the finite-map carrier in those binder types, not in its header.  This
+    returns only those type annotations, so a carrier mentioned in a comment, in
+    a string literal, in a discarded `let` or anywhere later cannot select an
+    owner.  Each binder group is split into its bound names and its annotation;
+    only the annotation is returned.  A name that is shadowed by the `def`'s own
+    parameters or by a preceding or current universal binder, or by the
+    declaration's own name, is replaced by a placeholder, so
+    `∀ (Carrier : Nat)` and
+    `∀ (Carrier : Type) (t1 : Carrier)` contribute no carrier evidence: in the
+    first the carrier is only a numeric variable's name, in the second it is a
+    freshly quantified type rather than the imported structure.  It returns None
+    (fail closed) unless the declaration is a `def` whose written header ends in
+    `: Prop` and whose body starts with a parenthesized `∀` binder group; it
+    also returns None when no group carries a type annotation.  Comments and
+    string literals are masked before the scan.  This is a syntactic convenience
+    for carrier disambiguation, not evidence of HOL correspondence.
+    """
+    masked = _predicate_domain_code_only(source)
+    if masked is None:
+        return None
+    kind = PROP_DEF_KIND_RE.search(masked)
+    if kind is None or kind.group(1) != "def":
+        return None
+    assignment = top_level_assignment_offset(masked)
+    if assignment is None:
+        return None
+    if not re.search(r":\s*Prop\s*$", masked[:assignment].rstrip()):
+        return None
+    body = masked[assignment + 2:]
+    cursor = 0
+    length = len(body)
+    while cursor < length and body[cursor].isspace():
+        cursor += 1
+    if cursor >= length or body[cursor] != "∀":
+        return None
+    cursor += 1
+    groups: list[str] = []
+    while True:
+        while cursor < length and body[cursor].isspace():
+            cursor += 1
+        if cursor >= length or body[cursor] != "(":
+            break
+        depth = 0
+        start = cursor
+        while cursor < length:
+            char = body[cursor]
+            if char == "(":
+                depth += 1
+            elif char == ")":
+                depth -= 1
+                if depth == 0:
+                    cursor += 1
+                    break
+            cursor += 1
+        if depth != 0:
+            return None
+        groups.append(body[start:cursor])
+    if not groups:
+        return None
+    while cursor < length and body[cursor].isspace():
+        cursor += 1
+    if cursor >= length or body[cursor] != ",":
+        return None
+    shadowed = set(_declaration_parameter_names(masked, assignment))
+    evidence: list[str] = []
+    for group in groups:
+        parsed = _binder_group_name_and_type(group)
+        if parsed is None:
+            return None
+        names, annotation = parsed
+        shadowed.update(names)
+        if not annotation:
+            continue
+        for shadowed_name in sorted(shadowed, key=len, reverse=True):
+            annotation = re.sub(
+                rf"(?<![A-Za-z0-9_'.]){re.escape(shadowed_name)}(?![A-Za-z0-9_'.])",
+                _SHADOWED_PLACEHOLDER,
+                annotation,
+            )
+        evidence.append(annotation)
+    combined = " ".join(evidence)
+    if not combined.strip():
+        return None
+    return combined
+
+
 TO_FUNCTION_RE = re.compile(r"\bto([A-Z][A-Za-z0-9_']*)")
 OF_FUNCTION_RE = re.compile(r"\bof([A-Z][A-Za-z0-9_']*)")
 FMAP_WITNESS_RE = re.compile(
@@ -5266,7 +5439,8 @@ def words_as_type_indexed_bitvec_errors(
         ]
     stripped = strip_lean_comments(declaration_text)
     decl_start = re.search(
-        r"(?:^|\s)(?:def|theorem|lemma|abbrev|instance|structure)\s", stripped
+        r"(?:^|\s)(?:def|theorem|lemma|abbrev|instance|structure|inductive|class|opaque|axiom|constant)\s",
+        stripped,
     )
     if decl_start is not None:
         stripped = stripped[decl_start.start():]
@@ -6360,7 +6534,8 @@ def unify_eq_tunify_observer_errors(
         "331efe1727a5de511f488d542f3d1f050a274b65546ce4dda73798b85d5a72eb",
         "fcb7f9153d66286914d779f19f3c9bf0d30e6bfa620ef9b2450e7d27f466fd92",
         "115bb978f7540adfb0bdc6d1ff4b149d7be4978693fe57dd7468a8876f3d85e2",
-        "b46cfdc77d4409ccf87d51d8cd45ca22e898c6ea3093cdb581ee126011369c48",
+        # Additive toBroadlookup/ofBroadlookup codec helpers in Exact.lean (d99c534c2a).
+        "880da125e9b682faa11dc4dd80b48ae9335a30a87688ff3b1df95ba1027b6038",
         "3246bd4b3ff013f4069727a1084ea14da0b2f60d3c078c7cde3b3af71beaeb71",
         "2c3c4932071098ed1654e8e47240d80c6fcb2892c4e68d54f94b297a1a86df66",
         "c38021b15ea5ead81bc06f983e162af23d6ee34fa6e15492d958ccdbba340d30",
@@ -6922,12 +7097,23 @@ def main(argv: list[str]) -> int:
                     for error in list_as_array_errors(lines, list_fields, rel)
                 )
             if fmap_fields:
-                errors.extend(
-                    f"{where}: {error}"
-                    for error in fmap_as_finite_support_errors(
-                        lines, fmap_fields, rel, tagged_declaration_text(lines, number)
-                    )
+                fmap_header = tagged_declaration_text(lines, number)
+                fmap_errors = fmap_as_finite_support_errors(
+                    lines, fmap_fields, rel, fmap_header
                 )
+                if fmap_errors:
+                    # A `: Prop` predicate definition binds its universals in the
+                    # body; only their leading binder types may disambiguate the
+                    # carrier (comments, strings, discarded lets and later
+                    # mentions are masked out and cannot select an owner).
+                    leading = prop_def_leading_forall_binders(
+                        tagged_declaration_source(lines, number)
+                    )
+                    if leading is not None:
+                        fmap_errors = fmap_as_finite_support_errors(
+                            lines, fmap_fields, rel, leading
+                        )
+                errors.extend(f"{where}: {error}" for error in fmap_errors)
             if fmap_parameters:
                 if fmap_fields or fmap_result or fmap_relation or fmap_equalities:
                     errors.append(

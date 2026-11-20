@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar
 public import Flapjack.Compiler.Backend.LabToTarget.SecondPass
+public import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.LabelSets
 
 @[expose] public section
 
@@ -121,5 +122,18 @@ theorem linesUpdLabLen_similar {width : Nat} [NeZero width]
     LinesRel lineSimilar (linesUpdLabLen pos lines aux).1 (aux.reverse ++ lines) := by
   apply (listSimilarNormal _ _).mpr
   exact normalUpdated lines pos aux
+
+/-- Exact HOL `get_labels_upd_lab_len` (`lab_to_targetProofScript.sml:5181-5184`):
+recomputing label lengths leaves the extracted label set unchanged. -/
+@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "get_labels_upd_lab_len"
+  (words_as_type_indexed_bitvec)]
+theorem getLabels_updLabLen {width : Nat} [NeZero width] (pos : Nat)
+    (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
+      (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) :
+    Flapjack.Compiler.Backend.LabProps.LabelSets.getLabels (updLabLen pos code) =
+      Flapjack.Compiler.Backend.LabProps.LabelSets.getLabels code := by
+  have hrel : codeSimilar (updLabLen pos code) code :=
+    (codeSimilar_updLabLen code pos code).mpr (codeSimilar_refl code)
+  exact codeSimilar_labels _ _ hrel
 
 end Flapjack.Compiler.Backend.LabToTarget

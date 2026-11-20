@@ -4990,5 +4990,247 @@ class L3RiscvStepNopDeclarationsTest(unittest.TestCase):
         self.assertNotIn("MISPICK_NOP", found)
 
 
+class PropDefLeadingBinderTest(unittest.TestCase):
+    """The narrow `: Prop` def carrier route for fmap_as_finite_support."""
+
+    def test_accepts_genuine_leading_binder(self):
+        source = "\n".join([
+            '@[hol "cakeml/x.sml" "foo_def"]',
+            "def foo {width : Nat} (code : Spt Nat) : Prop :=",
+            "  ∀ (t1 : State width) (n : Nat),",
+            "    t1.code = code",
+        ])
+        binder = CHECKER["prop_def_leading_forall_binders"](source)
+        self.assertIsNotNone(binder)
+        self.assertIn("State", binder)
+
+    def test_noncomputable_def_is_accepted(self):
+        source = "\n".join([
+            "noncomputable def foo (code : Spt Nat) : Prop :=",
+            "  ∀ (t1 : State width), t1.code = code",
+        ])
+        binder = CHECKER["prop_def_leading_forall_binders"](source)
+        self.assertIsNotNone(binder)
+        self.assertIn("State", binder)
+
+    def test_comment_only_mention_fails(self):
+        source = "\n".join([
+            "def foo (code : Spt Nat) : Prop :=",
+            "  -- State width",
+            "  ∀ (n : Nat), True",
+        ])
+        binder = CHECKER["prop_def_leading_forall_binders"](source)
+        self.assertIsNotNone(binder)
+        self.assertNotIn("State", binder)
+
+    def test_comment_inside_binder_group_fails(self):
+        source = "\n".join([
+            "def foo (code : Spt Nat) : Prop :=",
+            "  ∀ (n : Nat), -- State width",
+            "    True",
+        ])
+        binder = CHECKER["prop_def_leading_forall_binders"](source)
+        self.assertIsNotNone(binder)
+        self.assertNotIn("State", binder)
+
+    def test_string_mention_fails(self):
+        source = "\n".join([
+            "def foo (code : Spt Nat) : Prop :=",
+            '  ∀ (n : Nat), "State width" = ""',
+        ])
+        binder = CHECKER["prop_def_leading_forall_binders"](source)
+        self.assertIsNotNone(binder)
+        self.assertNotIn("State", binder)
+
+    def test_discarded_let_fails(self):
+        source = "\n".join([
+            "def foo (code : Spt Nat) : Prop :=",
+            "  let _ : Option (State width) := none",
+            "  ∀ (n : Nat), True",
+        ])
+        self.assertIsNone(CHECKER["prop_def_leading_forall_binders"](source))
+
+    def test_non_def_declaration_kind_fails(self):
+        for kind in ("theorem", "lemma", "abbrev", "instance"):
+            source = "\n".join([
+                f"{kind} foo {{width : Nat}} (code : Spt Nat) : Prop :=",
+                "  ∀ (t1 : State width), t1.code = code",
+            ])
+            self.assertIsNone(
+                CHECKER["prop_def_leading_forall_binders"](source), kind
+            )
+
+    def test_non_prop_result_fails(self):
+        source = "\n".join([
+            "def foo (code : Spt Nat) : Nat :=",
+            "  ∀ (t1 : State width), 0",
+        ])
+        self.assertIsNone(CHECKER["prop_def_leading_forall_binders"](source))
+
+    def test_binder_without_parentheses_fails(self):
+        source = "\n".join([
+            "def foo (code : Spt Nat) : Prop :=",
+            "  ∀ t1 n, True",
+        ])
+        self.assertIsNone(CHECKER["prop_def_leading_forall_binders"](source))
+
+    def test_genuine_binder_resolves_the_owner(self):
+        lines = [
+            "structure State where",
+            "  regs : HolFiniteMapExact MlS (ValueHOL width)",
+            "",
+            "structure Broad where",
+            "  clock : Nat",
+            "",
+            "theorem holFmapAsFiniteSupportWitness {width : Nat} :",
+            "    (∀ s : State width, ofExact (toExact s) = s) :=",
+            "  fun _ => rfl",
+        ]
+        errors = CHECKER["fmap_as_finite_support_errors"](
+            lines, ("regs",), "Example.lean", "(t1 : State width)"
+        )
+        self.assertEqual(errors, [])
+
+    def test_wrong_owner_fails(self):
+        lines = [
+            "structure State where",
+            "  regs : HolFiniteMapExact MlS (ValueHOL width)",
+            "structure Wrong where",
+            "  regs : Nat -> Option Nat",
+            "",
+            "theorem holFmapAsFiniteSupportWitness {width : Nat} :",
+            "    (∀ s : State width, ofExact (toExact s) = s) :=",
+            "  fun _ => rfl",
+        ]
+        errors = CHECKER["fmap_as_finite_support_errors"](
+            lines, ("regs",), "Example.lean", "(t1 : Wrong width)"
+        )
+        self.assertTrue(
+            any("approved HolFiniteMapExact carrier" in error for error in errors)
+        )
+
+    def test_ambiguous_local_owners_fail(self):
+        lines = [
+            "structure State where",
+            "  regs : HolFiniteMapExact MlS (ValueHOL width)",
+            "structure Shadow where",
+            "  regs : HolFiniteMapExact MlS (ValueHOL width)",
+            "",
+            "theorem holFmapAsFiniteSupportWitness {width : Nat} :",
+            "    (∀ s : State width, ofExact (toExact s) = s) :=",
+            "  fun _ => rfl",
+        ]
+        errors = CHECKER["fmap_as_finite_support_errors"](
+            lines, ("regs",), "Example.lean", "(t1 : Other width)"
+        )
+        self.assertTrue(
+            any("not resolved to one carrier structure" in error for error in errors)
+        )
+
+    def test_binder_name_is_not_carrier_evidence(self):
+        source = "\n".join([
+            "def foo (code : Spt Nat) : Prop :=",
+            "  ∀ (State : Nat), True",
+        ])
+        binder = CHECKER["prop_def_leading_forall_binders"](source)
+        self.assertEqual(binder, "Nat")
+
+    def test_binder_shadowed_by_quantified_type_fails(self):
+        source = "\n".join([
+            "def foo (code : Spt Nat) : Prop :=",
+            "  ∀ (State : Type) (t1 : State), True",
+        ])
+        binder = CHECKER["prop_def_leading_forall_binders"](source)
+        self.assertIsNotNone(binder)
+        self.assertNotIn("State", binder)
+
+    def test_carrier_shadowed_by_parameter_fails(self):
+        source = "\n".join([
+            "def foo (State : Nat) : Prop :=",
+            "  ∀ (t1 : State), True",
+        ])
+        binder = CHECKER["prop_def_leading_forall_binders"](source)
+        self.assertIsNotNone(binder)
+        self.assertNotIn("State", binder)
+
+    def test_genuine_binder_keeps_its_annotation(self):
+        source = "\n".join([
+            "def divCodeAssum {width : Nat} [NeZero width] {C F : Type}",
+            "    (code : Spt Nat) : Prop :=",
+            "  ∀ (t1 : WordSemStateFiniteExact width C F) (n : Nat),",
+            "    True",
+        ])
+        binder = CHECKER["prop_def_leading_forall_binders"](source)
+        self.assertIsNotNone(binder)
+        self.assertIn("WordSemStateFiniteExact", binder)
+        self.assertIn("Nat", binder)
+
+    MODULE = "\n".join([
+        "structure WordSemStateFiniteExact where",
+        "  fpRegs : HolFiniteMapExact Nat Nat",
+        "  store : HolFiniteMapExact Nat Nat",
+        "",
+        "structure WordSemStateBroad where",
+        "  clock : Nat",
+        "",
+        "theorem holFmapAsFiniteSupportWitness :",
+        "    (∀ s : WordSemStateFiniteExact, ofExact (toExact s) = s) :=",
+        "  fun _ => rfl",
+    ])
+
+    def run_main(self, hol_name, declaration):
+        main = CHECKER["main"]
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "cakeml/pancake").mkdir(parents=True)
+            (root / "cakeml/x.sml").write_text(
+                f"Definition {hol_name}_def: {hol_name} = T End\n"
+            )
+            lean = root / "Fixture.lean"
+            lean.write_text(
+                self.MODULE + "\n\n"
+                + f'@[hol "cakeml/x.sml" "{hol_name}_def" '
+                '(fmap_as_finite_support := [fpRegs, store])]\n'
+                + declaration + "\n"
+            )
+            output = io.StringIO()
+            with patch.dict(main.__globals__, {
+                "ROOT": root,
+                "lean_files": lambda: [lean],
+                "reachable_modules": lambda: {"Fixture"},
+                "reals_rendering_names": lambda _: set(),
+            }), contextlib.redirect_stderr(output), contextlib.redirect_stdout(output):
+                code = main([])
+            return code, output.getvalue()
+
+    def test_main_rejects_binder_name_as_carrier_evidence(self):
+        code, output = self.run_main(
+            "bad_binder_name",
+            "def badBinderName (code : Spt Nat) : Prop :=\n"
+            "  ∀ (WordSemStateFiniteExact : Nat), True",
+        )
+        self.assertEqual(code, 1)
+        self.assertIn("not resolved to one carrier structure", output)
+
+    def test_main_rejects_carrier_shadowed_by_quantified_type(self):
+        code, output = self.run_main(
+            "bad_shadowed",
+            "def badShadowed (code : Spt Nat) : Prop :=\n"
+            "  ∀ (WordSemStateFiniteExact : Type)"
+            " (t1 : WordSemStateFiniteExact), True",
+        )
+        self.assertEqual(code, 1)
+        self.assertIn("not resolved to one carrier structure", output)
+
+    def test_main_accepts_genuine_leading_carrier_binder(self):
+        code, output = self.run_main(
+            "good_binder",
+            "def goodBinder (code : Spt Nat) : Prop :=\n"
+            "  ∀ (t1 : WordSemStateFiniteExact) (n : Nat),"
+            " t1.fpRegs.finiteSupport",
+        )
+        self.assertEqual(code, 0, output)
+
+
 if __name__ == "__main__":
     unittest.main()
