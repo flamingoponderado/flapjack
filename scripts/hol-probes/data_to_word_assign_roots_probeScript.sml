@@ -28,6 +28,7 @@ val _ = emit "memory_rel_Deref_typed" data_to_word_memoryProofTheory.memory_rel_
 val _ = emit "memory_rel_El_typed" data_to_word_memoryProofTheory.memory_rel_El;
 val _ = emit "memory_rel_Update_typed" data_to_word_memoryProofTheory.memory_rel_Update;
 val _ = emit "get_real_addr_lemma_typed" data_to_word_bignumProofTheory.get_real_addr_lemma;
+val _ = emit "word_exp_set_var_ShiftVar_lemma_typed" data_to_word_bignumProofTheory.word_exp_set_var_ShiftVar_lemma;
 val _ = emit "memcopy_def_typed" data_to_word_assignProofTheory.memcopy_def;
 val _ = emit "MemCopy_thm_typed" data_to_word_assignProofTheory.MemCopy_thm;
 val _ = emit "memory_rel_IMP_free_space_typed" data_to_word_assignProofTheory.memory_rel_IMP_free_space;

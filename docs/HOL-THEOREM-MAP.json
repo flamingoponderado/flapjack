@@ -145849,6 +145849,16 @@
   "reviewer": "Compared w2w_select_id_typed: extract bits 63..0 of an arbitrary word64 into the independently quantified word type of dimension 64, then convert to word64 to recover the input."
 },
 {
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_bignumProofScript.sml",
+  "hol_name": "word_exp_set_var_ShiftVar_lemma",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Bignum/ShiftVar.lean",
+  "lean_name": "wordExpShiftVar",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared the typed HOL equation: lookup of a word returns the original shift by an arbitrary natural amount for all four operators; both missing and location lookups retain the original expression as HOL FAIL is the identity. The target state uses canonical finite maps and positive-width words."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
   "hol_name": "w2w_w2w_64",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/FpCmp.lean",
