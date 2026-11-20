@@ -133,6 +133,140 @@ private theorem restoredCuts {width : Nat} [NeZero width] (names : WordLangCutse
     rw [sptLookup_sptFromAList]
     exact (wordSemEnvToListLookupEquiv second p entries permute run).1 key
 
+/-- Restore a saved call frame and its stack maximum. This factors the HOL proof and has no separate HOL declaration. -/
+private theorem callReturnSetup {width : Nat} [NeZero width] {C F : Type}
+    (base : WordSemStateFiniteExact width C F) (first second : Spt (WordLocW width))
+    (entries : List (Nat × WordLocW width)) (permute : Nat → Nat → Nat)
+    (inputs : List (WordLocW width)) (clock : Nat) (peak : Option Nat)
+    (envEq : wordSemEnvToList second base.permute = (entries, permute))
+    (firstEq : sptFromAList (sptToAList first) = first)
+    (secondEq : sptFromAList entries = second)
+    (entry : WordSemStateFiniteExact width C F)
+    (entryEq : entry = WordSemStateFiniteExact.callEnv inputs (sptLookup stringCmpLoopLocation base.stackSize)
+      (WordSemStateFiniteExact.pushEnv (first,second) none base))
+    (bound : peak ≠ entry.stackMax → peak = Option.map₂ max entry.stackMax
+      (Option.map₂ (· + ·) (wordSemStackSize entry.stack) (sptLookup stringCmpLoopLocation entry.stackSize))) :
+    let returned := {entry with clock := clock, stackMax := peak, locals := .ln, localsSize := some 0}
+    let restored := {returned with locals := sptUnion (sptFromAList entries) (sptFromAList (sptToAList first)), stack := base.stack, localsSize := base.localsSize}
+    WordSemStateFiniteExact.popEnv returned = some restored ∧
+      sptDomainEqUnion restored.locals first second ∧ peak = entry.stackMax := by
+  subst entry
+  let entry := WordSemStateFiniteExact.callEnv inputs (sptLookup stringCmpLoopLocation base.stackSize)
+    (WordSemStateFiniteExact.pushEnv (first,second) none base)
+  let returned := {entry with clock := clock, stackMax := peak, locals := .ln, localsSize := some 0}
+  let restored := {returned with locals := sptUnion (sptFromAList entries) (sptFromAList (sptToAList first)), stack := base.stack, localsSize := base.localsSize}
+  change WordSemStateFiniteExact.popEnv returned = some restored ∧
+    sptDomainEqUnion restored.locals first second ∧ peak = entry.stackMax
+  refine ⟨?_, ?_, ?_⟩
+  · simp only [returned, restored, entry, WordSemStateFiniteExact.callEnv,
+      WordSemStateFiniteExact.pushEnv, WordSemStateFiniteExact.popEnv, envEq]
+  · intro key
+    change sptMem key (sptUnion (sptFromAList entries) (sptFromAList (sptToAList first))) ↔ _
+    rw [secondEq, firstEq, sptMem_sptUnion]
+    exact or_comm
+  · by_contra ne
+    have eq := bound ne
+    have stable := maxStable (WordSemStateFiniteExact.pushEnv (first,second) none base).stackMax
+      (wordSemStackSize (WordSemStateFiniteExact.pushEnv (first,second) none base).stack)
+      (sptLookup stringCmpLoopLocation base.stackSize)
+    have sizeEq : entry.stackSize = base.stackSize := by
+      simp [entry, WordSemStateFiniteExact.callEnv, WordSemStateFiniteExact.pushEnv, envEq]
+    have cancel : Option.map₂ max entry.stackMax
+        (Option.map₂ (· + ·) (wordSemStackSize entry.stack)
+          (sptLookup stringCmpLoopLocation entry.stackSize)) = entry.stackMax := by
+      rw [sizeEq]
+      simpa [entry, WordSemStateFiniteExact.callEnv] using stable
+    exact ne (eq.trans cancel)
+
+/-- Preserve the state relation when a byte-comparison call accounts for its stack. This factors the HOL proof and has no separate HOL declaration. -/
+private theorem callStackRelation {width : Nat} [NeZero width] {C F : Type}
+    (conf : Config) (l1 l2 : Nat) (cut : DataSem.State C F)
+    (target base : WordSemStateFiniteExact width C F) (wordCut first second : Spt (WordLocW width))
+    (locs : List (Nat × Nat)) (fast : Bool) (cmp : Flapjack.Opb) (values : List DataSem.Value)
+    (baseStack : base.stack = target.stack) (baseSize : base.localsSize = target.localsSize)
+    (baseFrames : base.stackSize = target.stackSize) (baseMax : base.stackMax = target.stackMax)
+    (related : stateRel conf l1 l2 cut {target with locals := wordCut} none locs) :
+    stateRel conf l1 l2 (DataSem.doStack (.memOp (.stringCmp fast cmp)) values
+      (DataSem.doLimSafe cut (.memOp (.stringCmp fast cmp)) values))
+      {target with locals := wordCut, stackMax :=
+        (WordSemStateFiniteExact.callEnv [] (sptLookup stringCmpLoopLocation base.stackSize)
+          (WordSemStateFiniteExact.pushEnv (first,second) none base)).stackMax} none locs := by
+  let sourceNext := DataSem.doStack (.memOp (.stringCmp fast cmp)) values
+    (DataSem.doLimSafe cut (.memOp (.stringCmp fast cmp)) values)
+  let pushed := WordSemStateFiniteExact.pushEnv (first,second) none base
+  let entry := WordSemStateFiniteExact.callEnv [] (sptLookup stringCmpLoopLocation base.stackSize) pushed
+  change stateRel conf l1 l2 sourceNext {target with locals := wordCut, stackMax := entry.stackMax} none locs
+  have sourceStackEq := stackRel_sizeOfStack related.2.2.2.2.2.2.2.2.2.2.2.2.1
+  have frameSizes := related.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.1
+  have localSizes := related.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.1
+  have oldMax := related.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.1
+  have pushedStack : wordSemStackSize pushed.stack =
+      Option.map₂ (· + ·) (wordSemStackSize target.stack) target.localsSize := by
+    cases h : wordSemEnvToList second base.permute with
+    | mk entries permute =>
+      simp only [pushed, WordSemStateFiniteExact.pushEnv, h, wordSemStackSize,
+        List.foldr_cons, wordSemStackSizeFrame, baseSize, baseStack]
+      change wordSemOptionAdd target.localsSize (wordSemStackSize target.stack) =
+        Option.map₂ (· + ·) (wordSemStackSize target.stack) target.localsSize
+      cases target.localsSize <;> cases wordSemStackSize target.stack <;>
+        simp [wordSemOptionAdd, Nat.add_comm]
+  have optMax (x y : Option Nat) : wordSemOptionMax x y = Option.map₂ max x y := by
+    cases x <;> cases y <;> rfl
+  have optAdd (x y : Option Nat) : wordSemOptionAdd x y = Option.map₂ (· + ·) x y := by
+    cases x <;> cases y <;> rfl
+  have targetMaxEq : entry.stackMax =
+      Option.map₂ max (Option.map₂ max target.stackMax (wordSemStackSize pushed.stack))
+        (Option.map₂ (· + ·) (wordSemStackSize pushed.stack)
+          (sptLookup stringCmpLoopLocation target.stackSize)) := by
+    cases h : wordSemEnvToList second base.permute with
+    | mk entries permute =>
+      simp only [entry, WordSemStateFiniteExact.callEnv, pushed, WordSemStateFiniteExact.pushEnv, h,
+        baseFrames, baseMax, optMax, optAdd]
+  have sourceMaxEq : sourceNext.stackMax = Option.map₂ max cut.stackMax
+      (Option.map₂ (· + ·) (sptLookup stringCmpLoopLocation target.stackSize)
+        (Option.map₂ (· + ·) (wordSemStackSize target.stack) target.localsSize)) := by
+    simp only [sourceNext, DataSem.doStack, DataSem.doLimSafe, DataSem.stackConsumed]
+    rw [frameSizes, localSizes, sourceStackEq]
+  have sourceMaxBound : optionLe entry.stackMax sourceNext.stackMax := by
+    rw [targetMaxEq, pushedStack, sourceMaxEq]
+    exact optionBound target.stackMax _ _ cut.stackMax oldMax
+  have usageBound : optionLe
+      (Option.map₂ (· + ·) (wordSemStackSize target.stack) target.localsSize) entry.stackMax := by
+    rw [targetMaxEq, pushedStack, optionLe_max_right, optionLe_max_right]
+    exact Or.inl (Or.inr (optionLe_refl _))
+  have preRel : stateRel conf l1 l2 sourceNext {target with locals := wordCut} none locs :=
+    stateRel_doStack conf l1 l2 _ _ locs _ _ (stateRel_doLimSafe conf l1 l2 cut _ locs _ _ related)
+  rcases preRel with ⟨a, b, c, d, e, f, g, h, i, j, k, m, n, o, _, _, p, q, r, s⟩
+  exact ⟨a, b, c, d, e, f, g, h, i, j, k, m, n, o, usageBound, sourceMaxBound, p, q, r, s⟩
+
+/-- Evaluate a returning direct call from its established guards, callee result and restored frame. This factors the original proof and has no separate HOL declaration. -/
+private theorem evalDirectReturningCall {width : Nat} [NeZero width] {C F : Type}
+    (s returned restored : WordSemStateFiniteExact width C F) (names : WordLangCutsetsHOL)
+    (first second : Spt (WordLocW width)) (n l location : Nat) (regs : List Nat)
+    (values : List (WordLocW width)) (body : WordLangProgHOL (BitVec width)) (r1 r2 : WordLocW width)
+    (args : WordSemStateFiniteExact.getVars regs s = some values)
+    (code : sptLookup location s.code = some (values.length + 1, body))
+    (cut : wordSemCutEnvs names s.locals = some (first, second))
+    (live : ¬ sptDomainEmpty names.1) (clock : s.clock ≠ 0)
+    (run : WordSemStateFiniteExact.evaluate body
+      (WordSemStateFiniteExact.callEnv (.loc n l :: values) (sptLookup location s.stackSize)
+        (WordSemStateFiniteExact.pushEnv (first, second) none (WordSemStateFiniteExact.decClock s))) =
+      (some (.result (.loc n l) [r1,r2]), returned))
+    (pop : WordSemStateFiniteExact.popEnv returned = some restored)
+    (domain : sptDomainEqUnion restored.locals first second) :
+    WordSemStateFiniteExact.evaluate
+      (.call (some ([5,7], names, .skip, n, l)) (some location) regs none) s =
+      (none, WordSemStateFiniteExact.setVars [5,7] [r1,r2] restored) := by
+  rw [WordSemStateFiniteExact.evaluate]
+  simp only [args, wordSemBadDestArgs, Bool.false_eq_true, if_false, wordSemAddRetLoc,
+    wordSemFindCode, code, List.length_cons, if_true, live, not_false_eq_true,
+    List.nodup_cons, List.mem_cons, List.mem_nil_iff, cut, clock]
+  simp
+  rw [WordSemStateFiniteExact.fix_clock_evaluate, run]
+  simp only [List.length_cons, List.length_nil, not_true_eq_false, false_or, if_false]
+  rw [pop]
+  simp [domain, WordSemStateFiniteExact.evaluate]
+
 /-- String comparison satisfies the complete original assignment simulation.
 The word evaluator inherits the real-model assumption in `docs/SOUNDNESS.md` item 8. -/
 @[hol "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml" "assign_StringCmp"
@@ -360,74 +494,14 @@ theorem assignStringCmp_correct {width : Nat} [NeZero width] {C F : Type}
                     have envInitial : wordSemEnvToList cutSecond initial.permute = (entries, permutation) := by
                       change wordSemEnvToList cutSecond target.permute = (entries, permutation)
                       exact envEq
-                    have popRun : WordSemStateFiniteExact.popEnv returned = some restored := by
-                      simp only [returned, restored, callEntry, WordSemStateFiniteExact.callEnv,
-                        WordSemStateFiniteExact.pushEnv, WordSemStateFiniteExact.decClock,
-                        WordSemStateFiniteExact.popEnv, envInitial]
-                    have domEq : sptDomainEqUnion restored.locals cutFirst cutSecond := by
-                      intro key
-                      change sptMem key (sptUnion (sptFromAList entries) (sptFromAList (sptToAList cutFirst))) ↔ _
-                      rw [secondRestored, firstRestored, sptMem_sptUnion]
-                      exact or_comm
-                    have fixedMax : returnedMax = callEntry.stackMax := by
-                      by_contra ne
-                      have eq := maxBound ne
-                      have stable := maxStable
-                        (WordSemStateFiniteExact.pushEnv (cutFirst, cutSecond) none (WordSemStateFiniteExact.decClock initial)).stackMax
-                        (wordSemStackSize (WordSemStateFiniteExact.pushEnv (cutFirst, cutSecond) none (WordSemStateFiniteExact.decClock initial)).stack)
-                        (sptLookup stringCmpLoopLocation target.stackSize)
-                      have sizeEq : callEntry.stackSize = target.stackSize := by
-                        simp [callEntry, WordSemStateFiniteExact.callEnv, WordSemStateFiniteExact.pushEnv,
-                          WordSemStateFiniteExact.decClock, initial, t9, t13, t11, t7, t5, t3, t1,
-                          WordSemStateFiniteExact.setVar, envEq]
-                      have cancel : Option.map₂ max callEntry.stackMax
-                          (Option.map₂ (· + ·) (wordSemStackSize callEntry.stack)
-                            (sptLookup stringCmpLoopLocation callEntry.stackSize)) = callEntry.stackMax := by
-                        rw [sizeEq]
-                        simpa [callEntry, WordSemStateFiniteExact.callEnv] using stable
-                      exact ne (eq.trans cancel)
-                    have sourceStackEq := stackRel_sizeOfStack relCutWord.2.2.2.2.2.2.2.2.2.2.2.2.1
-                    have frameSizes := relCutWord.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.1
-                    have localSizes := relCutWord.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.1
-                    have oldMax := relCutWord.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.1
-                    let pushed := WordSemStateFiniteExact.pushEnv (cutFirst, cutSecond) none (WordSemStateFiniteExact.decClock initial)
-                    have pushedStack : wordSemStackSize pushed.stack =
-                        Option.map₂ (· + ·) (wordSemStackSize target.stack) target.localsSize := by
-                      simp only [pushed, WordSemStateFiniteExact.pushEnv, WordSemStateFiniteExact.decClock,
-                        envInitial, wordSemStackSize, List.foldr_cons, wordSemStackSizeFrame]
-                      change wordSemOptionAdd target.localsSize (wordSemStackSize target.stack) =
-                        Option.map₂ (· + ·) (wordSemStackSize target.stack) target.localsSize
-                      cases target.localsSize <;> cases wordSemStackSize target.stack <;>
-                        simp [wordSemOptionAdd, Nat.add_comm]
-                    have targetMaxEq : callEntry.stackMax =
-                        Option.map₂ max (Option.map₂ max target.stackMax (wordSemStackSize pushed.stack))
-                          (Option.map₂ (· + ·) (wordSemStackSize pushed.stack)
-                            (sptLookup stringCmpLoopLocation target.stackSize)) := by
-                      simp only [callEntry, WordSemStateFiniteExact.callEnv]
-                      change wordSemOptionMax (wordSemOptionMax target.stackMax (wordSemStackSize pushed.stack))
-                        (wordSemOptionAdd (wordSemStackSize pushed.stack) (sptLookup stringCmpLoopLocation target.stackSize)) = _
-                      cases target.stackMax <;> cases wordSemStackSize pushed.stack <;>
-                        cases sptLookup stringCmpLoopLocation target.stackSize <;>
-                        rfl
-                    have sourceMaxEq : sourceNext.stackMax = Option.map₂ max cut.stackMax
-                        (Option.map₂ (· + ·) (sptLookup stringCmpLoopLocation target.stackSize)
-                          (Option.map₂ (· + ·) (wordSemStackSize target.stack) target.localsSize)) := by
-                      simp only [sourceNext, DataSem.doStack, DataSem.doLimSafe, DataSem.stackConsumed]
-                      rw [frameSizes, localSizes, sourceStackEq]
-                    have sourceMaxBound : optionLe callEntry.stackMax sourceNext.stackMax := by
-                      rw [targetMaxEq, pushedStack, sourceMaxEq]
-                      exact optionBound target.stackMax _ _ cut.stackMax oldMax
-                    have usageBound : optionLe
-                        (Option.map₂ (· + ·) (wordSemStackSize target.stack) target.localsSize) callEntry.stackMax := by
-                      rw [targetMaxEq, pushedStack, optionLe_max_right, optionLe_max_right]
-                      exact Or.inl (Or.inr (optionLe_refl _))
-                    have preRel : stateRel conf l1 l2 sourceNext {target with locals := wordCut} none locs :=
-                      stateRel_doStack conf l1 l2 _ _ locs _ _
-                        (stateRel_doLimSafe conf l1 l2 cut _ locs _ _ relCutWord)
+                    have ⟨popRun, domEq, fixedMax⟩ := callReturnSetup
+                      (WordSemStateFiniteExact.decClock initial) cutFirst cutSecond entries permutation _
+                      returnedClock returnedMax envInitial firstRestored secondRestored callEntry (by rfl) maxBound
                     have increasedRel : stateRel conf l1 l2 sourceNext
                         {target with locals := wordCut, stackMax := callEntry.stackMax} none locs := by
-                      rcases preRel with ⟨a, b, c, d, e, f, g, h, i, j, k, m, n, o, _, _, p, q, r, s⟩
-                      exact ⟨a, b, c, d, e, f, g, h, i, j, k, m, n, o, usageBound, sourceMaxBound, p, q, r, s⟩
+                      exact callStackRelation conf l1 l2 cut target (WordSemStateFiniteExact.decClock initial)
+                        wordCut cutFirst cutSecond locs false cmp [.refPtr b1 p1, .refPtr b2 p2]
+                        rfl rfl rfl rfl relCutWord
                     have normalized : {restored with clock := target.clock, termdep := target.termdep, permute := target.permute} =
                         {target with locals := wordCut, stackMax := callEntry.stackMax} := by
                       simp only [restored, returned, fixedMax, callEntry, WordSemStateFiniteExact.callEnv,
@@ -495,30 +569,18 @@ theorem assignStringCmp_correct {width : Nat} [NeZero width] {C F : Type}
                       intro empty
                       have absent := empty 0
                       exact absent ((sptMem_iff_lookup 0 _).mpr ⟨(), rfl⟩)
-                    have codeInitial : sptLookup stringCmpLoopLocation initial.code = some (6, stringCmpLoopCode) := by
-                      change sptLookup stringCmpLoopLocation target.code = _
-                      exact codeLookup
-                    have sizeInitial : initial.stackSize = target.stackSize := rfl
                     have callEval : WordSemStateFiniteExact.evaluate
                         (.call (some ([5,7], adjustSets names, .skip, n, l)) (some stringCmpLoopLocation)
                           [11,13,9,5,7] none) initial =
                         (none, WordSemStateFiniteExact.setVars [5,7] [.word r1,.word r2] restored) := by
-                      rw [WordSemStateFiniteExact.evaluate]
-                      simp only [argsAt, wordSemBadDestArgs, Bool.false_eq_true, if_false,
-                        wordSemAddRetLoc, wordSemFindCode, List.length_cons, List.length_nil,
-                        namesNonempty, not_false_eq_true, List.nodup_cons,
-                        List.mem_cons, List.mem_nil_iff, not_false_eq_true, cutAt, neClock]
-                      simp [codeInitial, sizeInitial]
-                      rw [WordSemStateFiniteExact.fix_clock_evaluate]
-                      change WordSemStateFiniteExact.evaluate stringCmpLoopCode callEntry =
-                        (some (.result (.loc n l) [.word r1, .word r2]), returned) at loopEval
-                      dsimp only [callEntry] at loopEval
-                      simp only [BitVec.toNat_ushiftRight] at loopEval
-                      rw [loopEval]
-                      simp only [List.length_cons, List.length_nil, 
-                        not_true_eq_false, false_or, if_false]
-                      rw [popRun]
-                      simp [domEq, WordSemStateFiniteExact.evaluate]
+                      refine evalDirectReturningCall initial returned restored (adjustSets names) cutFirst cutSecond n l
+                        stringCmpLoopLocation [11,13,9,5,7] _ stringCmpLoopCode (.word r1) (.word r2)
+                        argsAt ?_ cutAt namesNonempty neClock ?_ popRun domEq
+                      · change sptLookup stringCmpLoopLocation target.code = _
+                        simpa using codeLookup
+                      · change WordSemStateFiniteExact.evaluate stringCmpLoopCode callEntry =
+                          (some (.result (.loc n l) [.word r1, .word r2]), returned) at loopEval
+                        exact loopEval
                     have varsEq : WordSemStateFiniteExact.setVars [5,7] [.word r1,.word r2] restored =
                         WordSemStateFiniteExact.setVar 7 (.word r2) (WordSemStateFiniteExact.setVar 5 (.word r1) restored) := by
                       simp only [WordSemStateFiniteExact.setVars, LoopSemStateFiniteExact.sptAlistInsert,
@@ -666,74 +728,14 @@ theorem assignStringCmp_correct {width : Nat} [NeZero width] {C F : Type}
                       have envInitial : wordSemEnvToList cutSecond initial.permute = (entries, permutation) := by
                         change wordSemEnvToList cutSecond target.permute = (entries, permutation)
                         exact envEq
-                      have popRun : WordSemStateFiniteExact.popEnv returned = some restored := by
-                        simp only [returned, restored, callEntry, WordSemStateFiniteExact.callEnv,
-                          WordSemStateFiniteExact.pushEnv, WordSemStateFiniteExact.decClock,
-                          WordSemStateFiniteExact.popEnv, envInitial]
-                      have domEq : sptDomainEqUnion restored.locals cutFirst cutSecond := by
-                        intro key
-                        change sptMem key (sptUnion (sptFromAList entries) (sptFromAList (sptToAList cutFirst))) ↔ _
-                        rw [secondRestored, firstRestored, sptMem_sptUnion]
-                        exact or_comm
-                      have fixedMax : returnedMax = callEntry.stackMax := by
-                        by_contra ne
-                        have eq := maxBound ne
-                        have stable := maxStable
-                          (WordSemStateFiniteExact.pushEnv (cutFirst, cutSecond) none (WordSemStateFiniteExact.decClock initial)).stackMax
-                          (wordSemStackSize (WordSemStateFiniteExact.pushEnv (cutFirst, cutSecond) none (WordSemStateFiniteExact.decClock initial)).stack)
-                          (sptLookup stringCmpLoopLocation target.stackSize)
-                        have sizeEq : callEntry.stackSize = target.stackSize := by
-                          simp [callEntry, WordSemStateFiniteExact.callEnv, WordSemStateFiniteExact.pushEnv,
-                            WordSemStateFiniteExact.decClock, initial, t13, t11, t7, t5, t3, t1,
-                            WordSemStateFiniteExact.setVar, envEq]
-                        have cancel : Option.map₂ max callEntry.stackMax
-                            (Option.map₂ (· + ·) (wordSemStackSize callEntry.stack)
-                              (sptLookup stringCmpLoopLocation callEntry.stackSize)) = callEntry.stackMax := by
-                          rw [sizeEq]
-                          simpa [callEntry, WordSemStateFiniteExact.callEnv] using stable
-                        exact ne (eq.trans cancel)
-                      have sourceStackEq := stackRel_sizeOfStack relCutWord.2.2.2.2.2.2.2.2.2.2.2.2.1
-                      have frameSizes := relCutWord.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.1
-                      have localSizes := relCutWord.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.1
-                      have oldMax := relCutWord.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.1
-                      let pushed := WordSemStateFiniteExact.pushEnv (cutFirst, cutSecond) none (WordSemStateFiniteExact.decClock initial)
-                      have pushedStack : wordSemStackSize pushed.stack =
-                          Option.map₂ (· + ·) (wordSemStackSize target.stack) target.localsSize := by
-                        simp only [pushed, WordSemStateFiniteExact.pushEnv, WordSemStateFiniteExact.decClock,
-                          envInitial, wordSemStackSize, List.foldr_cons, wordSemStackSizeFrame]
-                        change wordSemOptionAdd target.localsSize (wordSemStackSize target.stack) =
-                          Option.map₂ (· + ·) (wordSemStackSize target.stack) target.localsSize
-                        cases target.localsSize <;> cases wordSemStackSize target.stack <;>
-                          simp [wordSemOptionAdd, Nat.add_comm]
-                      have targetMaxEq : callEntry.stackMax =
-                          Option.map₂ max (Option.map₂ max target.stackMax (wordSemStackSize pushed.stack))
-                            (Option.map₂ (· + ·) (wordSemStackSize pushed.stack)
-                              (sptLookup stringCmpLoopLocation target.stackSize)) := by
-                        simp only [callEntry, WordSemStateFiniteExact.callEnv]
-                        change wordSemOptionMax (wordSemOptionMax target.stackMax (wordSemStackSize pushed.stack))
-                          (wordSemOptionAdd (wordSemStackSize pushed.stack) (sptLookup stringCmpLoopLocation target.stackSize)) = _
-                        cases target.stackMax <;> cases wordSemStackSize pushed.stack <;>
-                          cases sptLookup stringCmpLoopLocation target.stackSize <;>
-                          rfl
-                      have sourceMaxEq : sourceNext.stackMax = Option.map₂ max cut.stackMax
-                          (Option.map₂ (· + ·) (sptLookup stringCmpLoopLocation target.stackSize)
-                            (Option.map₂ (· + ·) (wordSemStackSize target.stack) target.localsSize)) := by
-                        simp only [sourceNext, DataSem.doStack, DataSem.doLimSafe, DataSem.stackConsumed]
-                        rw [frameSizes, localSizes, sourceStackEq]
-                      have sourceMaxBound : optionLe callEntry.stackMax sourceNext.stackMax := by
-                        rw [targetMaxEq, pushedStack, sourceMaxEq]
-                        exact optionBound target.stackMax _ _ cut.stackMax oldMax
-                      have usageBound : optionLe
-                          (Option.map₂ (· + ·) (wordSemStackSize target.stack) target.localsSize) callEntry.stackMax := by
-                        rw [targetMaxEq, pushedStack, optionLe_max_right, optionLe_max_right]
-                        exact Or.inl (Or.inr (optionLe_refl _))
-                      have preRel : stateRel conf l1 l2 sourceNext {target with locals := wordCut} none locs :=
-                        stateRel_doStack conf l1 l2 _ _ locs _ _
-                          (stateRel_doLimSafe conf l1 l2 cut _ locs _ _ relCutWord)
+                      have ⟨popRun, domEq, fixedMax⟩ := callReturnSetup
+                        (WordSemStateFiniteExact.decClock initial) cutFirst cutSecond entries permutation _
+                        returnedClock returnedMax envInitial firstRestored secondRestored callEntry (by rfl) maxBound
                       have increasedRel : stateRel conf l1 l2 sourceNext
                           {target with locals := wordCut, stackMax := callEntry.stackMax} none locs := by
-                        rcases preRel with ⟨a, b, c, d, e, f, g, h, i, j, k, m, n, o, _, _, p, q, r, s⟩
-                        exact ⟨a, b, c, d, e, f, g, h, i, j, k, m, n, o, usageBound, sourceMaxBound, p, q, r, s⟩
+                        exact callStackRelation conf l1 l2 cut target (WordSemStateFiniteExact.decClock initial)
+                          wordCut cutFirst cutSecond locs true cmp [.refPtr b1 p1, .refPtr b2 p2]
+                          rfl rfl rfl rfl relCutWord
                       have normalized : {restored with clock := target.clock, termdep := target.termdep, permute := target.permute} =
                           {target with locals := wordCut, stackMax := callEntry.stackMax} := by
                         simp only [restored, returned, fixedMax, callEntry, WordSemStateFiniteExact.callEnv,
@@ -819,28 +821,18 @@ theorem assignStringCmp_correct {width : Nat} [NeZero width] {C F : Type}
                           intro empty
                           have absent := empty 0
                           exact absent ((sptMem_iff_lookup 0 _).mpr ⟨(), rfl⟩)
-                        have codeInitial : sptLookup stringCmpLoopLocation initial.code = some (6, stringCmpLoopCode) := by
-                          change sptLookup stringCmpLoopLocation target.code = _
-                          exact codeLookup
-                        have sizeInitial : initial.stackSize = target.stackSize := rfl
                         have callEval : WordSemStateFiniteExact.evaluate
                             (.call (some ([5,7], adjustSets names, .skip, n, l)) (some stringCmpLoopLocation)
                               [11,13,7,7,7] none) initial =
                             (none, WordSemStateFiniteExact.setVars [5,7] [.word r1,.word r2] restored) := by
-                          rw [WordSemStateFiniteExact.evaluate]
-                          simp only [argsAt, wordSemBadDestArgs, Bool.false_eq_true, if_false,
-                            wordSemAddRetLoc, wordSemFindCode, List.length_cons, List.length_nil,
-                            namesNonempty, not_false_eq_true, List.nodup_cons,
-                            List.mem_cons, List.mem_nil_iff, not_false_eq_true, cutAt, neClock]
-                          simp [codeInitial, sizeInitial]
-                          rw [WordSemStateFiniteExact.fix_clock_evaluate]
-                          change WordSemStateFiniteExact.evaluate stringCmpLoopCode callEntry =
-                            (some (.result (.loc n l) [.word r1, .word r2]), returned) at loopEval
-                          rw [loopEval]
-                          simp only [List.length_cons, List.length_nil, 
-                            not_true_eq_false, false_or, if_false]
-                          rw [popRun]
-                          simp [domEq, WordSemStateFiniteExact.evaluate]
+                          refine evalDirectReturningCall initial returned restored (adjustSets names) cutFirst cutSecond n l
+                            stringCmpLoopLocation [11,13,7,7,7] _ stringCmpLoopCode (.word r1) (.word r2)
+                            argsAt ?_ cutAt namesNonempty neClock ?_ popRun domEq
+                          · change sptLookup stringCmpLoopLocation target.code = _
+                            simpa using codeLookup
+                          · change WordSemStateFiniteExact.evaluate stringCmpLoopCode callEntry =
+                              (some (.result (.loc n l) [.word r1, .word r2]), returned) at loopEval
+                            exact loopEval
                         have varsEq : WordSemStateFiniteExact.setVars [5,7] [.word r1,.word r2] restored =
                             WordSemStateFiniteExact.setVar 7 (.word r2) (WordSemStateFiniteExact.setVar 5 (.word r1) restored) := by
                           simp only [WordSemStateFiniteExact.setVars, LoopSemStateFiniteExact.sptAlistInsert,
