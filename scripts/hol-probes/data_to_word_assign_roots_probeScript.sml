@@ -785,6 +785,7 @@ val _ = emit "assign_FP_top_typed" data_to_word_assignProofTheory.assign_FP_top;
 val _ = emit "assign_FP_cmp_typed" data_to_word_assignProofTheory.assign_FP_cmp;
 val _ = emit "assign_WordShiftW64_typed" data_to_word_assignProofTheory.assign_WordShiftW64;
 val _ = emit "assign_WordShiftW8_typed" data_to_word_assignProofTheory.assign_WordShiftW8;
+val _ = emit "assign_WordOpW8_typed" data_to_word_assignProofTheory.assign_WordOpW8;
 val _ = emit "assign_WordOpW64_typed" data_to_word_assignProofTheory.assign_WordOpW64;
 val _ = emit "evaluate_WordOp64_on_32_typed" data_to_word_assignProofTheory.evaluate_WordOp64_on_32;
 val _ = emit "IMP_encode_header_NOT_NONE_typed" data_to_word_assignProofTheory.IMP_encode_header_NOT_NONE;

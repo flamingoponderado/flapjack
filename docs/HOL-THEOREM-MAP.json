@@ -145869,6 +145869,17 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "assign_WordOpW8",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/WordOp8.lean",
+  "lean_name": "assignWordOp8_correct",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared assign_WordOpW8_typed: the existential Word8 binary operation, generic assignment premises, existential target evaluation, insufficient-space obligations, and complete successful state relation agree. Both target widths preserve all five operations, including wrapping arithmetic and aliased operands. The target state uses canonical finite maps and positive-width words; its general evaluator inherits the rational-cut real model."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
   "hol_name": "assign_WordOpW64",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/WordOp64.lean",
   "lean_name": "assignWordOp_correct",

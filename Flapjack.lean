@@ -393,6 +393,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.FpBop
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.FpTop
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.FpCmp
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.WordShift64
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.WordOp8
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.WordOp64
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.WordShift8
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.GiveUp
