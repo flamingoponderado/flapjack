@@ -234,7 +234,7 @@ def fromListCode {width : Nat} [NeZero width] (conf : Config) : WordLangProgHOL 
     .ite .equal 2 (.imm 0)
       (wordListSeq [.assign 6 (.op .add [.var 6, .const 2]), .return 0 [6]])
       (wordListSeq [
-        .ite .test 2 (.imm 1) .skip giveUp,
+        bignumHalt 2,
         .assign 1 (.var 2), allocVar conf limit (sptListInsert [0, 1, 2] .ln),
         .assign 1 (.lookup .nextFree),
         .assign 5 (.op .or [shiftN .lsl (.var 2) (width - conf.lenSize - 2), .const 3, .var 6]),
@@ -277,7 +277,7 @@ def refByteCode {width : Nat} [NeZero width] (conf : Config) : WordLangProgHOL (
         (.seq (.inst (.mem .store8 4 (.addr 1 (BitVec.ofNat width offset)))) tail)) .skip
     let limit := min (2 ^ conf.lenSize) (2 ^ width / 16)
     wordListSeq [
-      .ite .test 2 (.imm 1) .skip giveUp,
+      bignumHalt 2,
       .assign 1 x, allocVar conf limit (sptListInsert [0, 1, 2] .ln),
       .assign 5 (shiftN .lsr h (wordShiftAmount width)),
       .assign 7 (shiftN .lsl (.var 5) 2), .assign 9 (.lookup .nextFree),

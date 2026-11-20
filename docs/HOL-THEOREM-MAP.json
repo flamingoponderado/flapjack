@@ -146086,6 +146086,26 @@
   "reviewer": "Compared IN_domain_adjust_set_IMP_typed: an arbitrary sparse-tree payload type is retained and membership in the adjusted domain implies an original-domain name with exactly the adjusted key."
 },
 {
+  "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+  "hol_name": "BignumHalt_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
+  "lean_name": "bignumHalt",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared BignumHalt_def_typed: the arbitrary register, test of bit zero by immediate one, skip and GiveUp branches match. The named helper is used by the production assignment and runtime stub paths; words use positive type-indexed widths."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "evaluate_BignumHalt2",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/BignumHalt.lean",
+  "lean_name": "evaluateBignumHalt2",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_BignumHalt2_typed: the original state relation and register lookup imply an existential state, the exact bit-dependent evaluation, both FFI equalities and the original stack bound. State fields use canonical finite maps and words use positive type-indexed widths. The evaluator inherits the reals_as_rational_cuts assumption."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
   "hol_name": "assign_EqualConst",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/EqualConst.lean",
