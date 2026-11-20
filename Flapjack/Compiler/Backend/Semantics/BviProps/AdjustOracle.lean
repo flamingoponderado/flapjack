@@ -104,6 +104,8 @@ theorem doInstall_adjustOracle {C D F R : Type} (compiler : Compiler D) (f : C â
   all_goals grind
 
 /-- Installation can fail only with the source type error. -/
+@[hol "cakeml/compiler/backend/semantics/bviPropsScript.sml" "do_install_Rerr_type"
+  (fmap_as_finite_support := [refs])]
 theorem doInstall_error_is_typeError {C F R : Type} (args : List Value)
     (state : BviState C F) (error : Flapjack.SemanticPrimitivesHOL.ErrorResult R)
     (run : doInstall args state = .err error) : error = .abort .typeError := by

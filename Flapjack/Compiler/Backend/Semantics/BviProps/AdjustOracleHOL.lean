@@ -18,6 +18,7 @@ untagged `adjustOracleOkHOL_iff` relates the two.
 namespace Flapjack.Compiler.Backend.BviProps
 open Flapjack.Compiler.Backend.BviSem
 open Flapjack.Compiler.Backend.BvlSem (Value)
+open Flapjack.SemanticPrimitivesHOL (Result ErrorResult Abort)
 
 namespace AdjustOracleHOLCarrier
 /-- Canonical BVI reference-map state representation roundtrip. -/
@@ -79,5 +80,68 @@ theorem adjustOracle_simps {C D F : Type} (compiler : Compiler D) (f : C → D)
   refine ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, ?_, ?_⟩
   · rfl
   · rfl
+
+/-- Successful installation commutes with oracle adjustment and preserves
+callback agreement. -/
+@[hol "cakeml/compiler/backend/semantics/bviPropsScript.sml" "do_install_adj_orac"
+  (fmap_as_finite_support := [refs])]
+theorem adjustOracle_doInstall {C D F : Type} (args : List Value) (state : BviState C F)
+    (value : Value) (next : BviState C F) (compiler : Compiler D) (f : C → D)
+    (premise : adjustOracleOkHOL compiler f state ∧
+      (doInstall (R := ExnOrRet) args state = .val (value, next))) :
+    (doInstall (R := ExnOrRet) args (adjustOracle compiler f state) =
+        .val (value, adjustOracle compiler f next)) ∧ adjustOracleOkHOL compiler f next := by
+  obtain ⟨ok, run⟩ := premise
+  have okProj := (adjustOracleOkHOL_iff compiler f state).1 ok
+  have applied := doInstall_adjustOracle compiler f args state next value okProj run
+  exact ⟨applied.1, (adjustOracleOkHOL_iff compiler f next).2 applied.2⟩
+
+/-- Primitive application commutes with oracle adjustment: successful results
+carry the adjusted state and callback agreement, non-type errors are unchanged. -/
+@[hol "cakeml/compiler/backend/semantics/bviPropsScript.sml" "do_app_adj_orac"
+  (fmap_as_finite_support := [refs])]
+theorem adjustOracle_doApp {C D F : Type} (compiler : Compiler D) (f : C → D)
+    (state : BviState C F) (op : ClosLang.Op) (args : List Value)
+    (ok : adjustOracleOkHOL compiler f state) :
+    (∀ (value : Value) (next : BviState C F), doApp op args state = .val (value, next) →
+      doApp op args (adjustOracle compiler f state) =
+          .val (value, adjustOracle compiler f next) ∧
+        adjustOracleOkHOL compiler f next) ∧
+      (∀ (error : ErrorResult ExnOrRet), doApp op args state = .err error ∧
+          error ≠ .abort .typeError →
+        doApp op args (adjustOracle compiler f state) = .err error) := by
+  have okProj := (adjustOracleOkHOL_iff compiler f state).1 ok
+  constructor
+  · intro value next run
+    have applied := doApp_adjustOracle_success compiler f op args state next value okProj run
+    exact ⟨applied.1, (adjustOracleOkHOL_iff compiler f next).2 applied.2⟩
+  · intro error run
+    obtain ⟨runErr, notType⟩ := run
+    exact doApp_adjustOracle_error compiler f op args state error notType runErr
+
+/-- The disabled pass's initial state adjusts to the downstream initial state. -/
+@[hol "cakeml/compiler/backend/semantics/bviPropsScript.sml" "adj_orac_initial_state"
+  (fmap_as_finite_support := [refs])]
+theorem adjustOracle_initial_state {C D F : Type} (compiler : Compiler D)
+    (ffi : HolFfiState F) (code : Spt (Nat × Bvi.Exp)) (oracle : CompileOracle (C × D))
+    (clock : Nat) :
+    adjustOracle compiler Prod.snd
+        (initialState ffi code oracle (BackendProps.stateCc (fun c p => (c, p)) compiler) clock :
+          BviState (C × D) F) =
+      (initialState ffi code (BackendProps.stateCo (fun c p => (c, p)) oracle) compiler clock :
+        BviState D F) :=
+  adjustOracle_identity_initial ffi code oracle compiler clock
+
+/-- The disabled pass's initial state satisfies callback agreement. -/
+@[hol "cakeml/compiler/backend/semantics/bviPropsScript.sml" "adj_orac_ok_initial_state"
+  (fmap_as_finite_support := [refs])]
+theorem adjustOracleOk_initial_state {C D F : Type} (compiler : Compiler D)
+    (ffi : HolFfiState F) (code : Spt (Nat × Bvi.Exp)) (oracle : CompileOracle (C × D))
+    (clock : Nat) :
+    adjustOracleOkHOL compiler Prod.snd
+      (initialState ffi code oracle (BackendProps.stateCc (fun c p => (c, p)) compiler) clock :
+        BviState (C × D) F) :=
+  (adjustOracleOkHOL_iff compiler Prod.snd _).2
+    (adjustOracleOk_identity_initial ffi code oracle compiler clock)
 
 end Flapjack.Compiler.Backend.BviProps
