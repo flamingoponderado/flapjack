@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.WordShift64
+public import Flapjack.Misc.Multiword
 @[expose] public section
 
 /-! Word64 binary-operation prerequisites for the data-to-word assignment proof. -/
@@ -23,6 +24,38 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {C F : Type} 
 end Op64Witness
 set_option maxRecDepth 8192
 set_option maxHeartbeats 3000000
+
+/-- Recover the high and low words of a two-word natural-number encoding. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml" "mw2n_2_IMP"
+  (words_as_type_indexed_bitvec)]
+theorem mw2n2Imp {width : Nat} [NeZero width] (w1 w2 : BitVec width) (n : Nat)
+    (h : Misc.Multiword.mw2n [w1, w2] = n) :
+    w2 = BitVec.ofNat width (n / (2 ^ width)) ∧ w1 = BitVec.ofNat width n := by
+  subst n
+  simp only [Misc.Multiword.mw2n, Nat.mul_zero, Nat.add_zero]
+  have hp : 0 < 2 ^ width := Nat.two_pow_pos width
+  have hl := w1.isLt
+  constructor
+  · apply BitVec.eq_of_toNat_eq
+    simp [Nat.add_mul_div_left _ _ hp, Nat.div_eq_of_lt hl]
+  · apply BitVec.eq_of_toNat_eq
+    simp [Nat.add_mod, Nat.mod_eq_of_lt hl]
+
+/-- Reconstruct a bounded 64-bit natural from its two extracted 32-bit words. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml" "IMP_mw2n_2"
+  (words_as_type_indexed_bitvec)]
+theorem impMw2n2 {width : Nat} [NeZero width] (n : Nat) (x1 x2 : BitVec width)
+    (h : x2 = holWordExtract 63 32 (BitVec.ofNat 64 n) width ∧
+      x1 = holWordExtract 31 0 (BitVec.ofNat 64 n) width ∧
+      n < 2 ^ 64 ∧ width = 32) : Misc.Multiword.mw2n [x1, x2] = n := by
+  obtain ⟨rfl, rfl, hn, rfl⟩ := h
+  simp only [Misc.Multiword.mw2n, Nat.mul_zero, Nat.add_zero, holWordExtract,
+    BitVec.toNat_ofNat, Nat.shiftRight_eq_div_pow]
+  norm_num at *
+  simp only [Nat.mod_eq_of_lt hn]
+  have hd : n / 4294967296 < 4294967296 := by omega
+  simp only [Nat.mod_eq_of_lt hd]
+  exact Nat.mod_add_div n 4294967296
 
 /-- The HOL 32-bit header conditions make the two-word header encodable. -/
 @[hol "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml" "IMP_encode_header_NOT_NONE"
