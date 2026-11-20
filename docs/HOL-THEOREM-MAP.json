@@ -145869,6 +145869,30 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "option_map_mult_suc",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/EqualStack.lean",
+  "lean_name": "optionMap_mul_succ",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared option_map_mult_suc_typed: the arbitrary natural multiplier and optional natural, successor multiplication, and optional addition agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "eq_code_stack_max_sub1",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/EqualStack.lean",
+  "lean_name": "eqCodeStackMax_sub1",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared eq_code_stack_max_sub1_typed: the nonzero depth premise, original three sparse-tree lookups and optional max and addition, and the depth-minus-one stack bound agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "eq_code_stack_max_le_mono",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/EqualStack.lean",
+  "lean_name": "eqCodeStackMax_le_mono",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared eq_code_stack_max_le_mono_typed: both arbitrary depths and the same sparse-tree size map are retained, with the original ordering premise and option_le conclusion."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
   "hol_name": "assign_WordOpW8",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/WordOp8.lean",
   "lean_name": "assignWordOp8_correct",
