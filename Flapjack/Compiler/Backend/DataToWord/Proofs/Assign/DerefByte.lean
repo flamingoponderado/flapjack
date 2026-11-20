@@ -30,9 +30,9 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {C F : Type} 
   WordSemStateExact.holFmapAsFiniteSupportWitness
 end DerefByteAssignmentWitness
 
-/-- Decode a nonnegative tagged index in the dereference case. This factors an
-intermediate step of the HOL assignment proof. -/
-private theorem derefByteIndexShift {width : Nat} [NeZero width] (i : Int)
+/-- Decode a nonnegative tagged small integer. This factors intermediate
+steps of the HOL byte assignment proofs. -/
+theorem smallnum_nonneg_shift {width : Nat} [NeZero width] (i : Int)
     (good : goodDimindex width) (small : smallInt width i) (nonneg : 0 ≤ i) :
     (smallnum (width := width) i >>> 2) = BitVec.ofNat width i.toNat := by
   rcases good with hw | hw <;> subst width <;>
@@ -177,7 +177,7 @@ theorem assignDerefByte_correct {width : Nat} [NeZero width] {C F : Type}
                   ⟨related.2.2.2.2.2.2.2.1, good, operands.1, real⟩
                 have offsetExp := getRealByteOffset_lemma (adjustVar b) target (smallnum index)
                   ⟨operands.2, good⟩
-                have indexShift := derefByteIndexShift index good small nonneg
+                have indexShift := smallnum_nonneg_shift index good small nonneg
                 rw [indexShift] at offsetExp
                 let ad := address + StackRemove.bytesInWord width + BitVec.ofNat width index.toNat
                 have addressExp : WordSemStateFiniteExact.wordExp target

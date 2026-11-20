@@ -29,7 +29,7 @@ end assignSetGlobal_correctMap
 /-- Replacing the source reference tree and target memory preserves the
 state relation when the original memory relation is re-established. This is
 an intermediate step of the source global-store proof. -/
-private theorem stateRel_replaceMemory {width : Nat} [NeZero width] {C F : Type}
+theorem stateRel_replaceMemory {width : Nat} [NeZero width] {C F : Type}
     (conf : Config) (l1 l2 : Nat) (source : DataSem.State C F)
     (target : WordSemStateFiniteExact width C F) (locs : List (Nat × Nat))
     (refs : Spt (BvlSem.Ref DataSem.Value)) (memory : BitVec width → WordLocW width)
