@@ -126,7 +126,7 @@ theorem destClosure_full_maxapp (maxApp : Nat) (c : Value) (vs : List Value)
 
 /-- Appending arguments cannot turn a failed split into a successful one. -/
 @[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "dest_closure_none_append"]
-theorem destClosure_none_append {α : Type} (_l : α) (maxApp : Nat) (f : Value)
+theorem destClosure_none_append {α : Type} (maxApp : Nat) (_l : α) (f : Value)
     (args1 args2 : List Value)
     (run : destClosure maxApp none f args2 = none) :
     destClosure maxApp none f (args1 ++ args2) = none := by
@@ -185,7 +185,7 @@ theorem destClosure_none_append {α : Type} (_l : α) (maxApp : Nat) (f : Value)
 /-- Within the maximum arity, a failed split of a longer list implies a failed
 split of the shorter tail. -/
 @[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "dest_closure_none_append2"]
-theorem destClosure_none_append2 {α : Type} (_l : α) (maxApp : Nat) (f : Value)
+theorem destClosure_none_append2 {α : Type} (maxApp : Nat) (_l : α) (f : Value)
     (args1 args2 : List Value)
     (h : args1.length + args2.length ≤ maxApp ∧
       destClosure maxApp none f (args1 ++ args2) = none) :
@@ -252,5 +252,33 @@ theorem destClosure_none_append2 {α : Type} (_l : α) (maxApp : Nat) (f : Value
         simp
       rw [hgoal]
       rfl
+
+/-- Flapjack helper for `stage_partial_app`: a successful partial split returns
+exactly the argument-prefixed closure. There is no separate HOL declaration for
+this shape; it is derived here so the source's staging lemma can be proved from
+the list equation alone. -/
+theorem destClosure_partial_eq (maxApp : Nat) (requested : Option Nat) (v : Value)
+    (args : List Value) (c' : Value)
+    (run : destClosure maxApp requested v args = some (.partialApp c')) :
+    c' = cloAddPartialArgs args v := by
+  cases v <;> simp only [destClosure] at run <;> try contradiction
+  case closure loc supplied env arity body =>
+    split at run
+    · split at run
+      · simp only [Option.some.injEq, AppKind.partialApp.injEq] at run
+        simp only [cloAddPartialArgs]
+        exact run.symm
+      · exact absurd run (by simp)
+    · exact absurd run (by simp)
+  case recclosure loc supplied env functions index =>
+    split at run
+    · contradiction
+    · split at run
+      · split at run
+        · simp only [Option.some.injEq, AppKind.partialApp.injEq] at run
+          simp only [cloAddPartialArgs]
+          exact run.symm
+        · exact absurd run (by simp)
+      · exact absurd run (by simp)
 
 end Flapjack.Compiler.Backend.ClosProps
