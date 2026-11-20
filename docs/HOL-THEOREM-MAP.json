@@ -116121,7 +116121,7 @@
     "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
     "fmap_as_finite_support_relation": ["store"],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "Compared memory_rel_Word64_const_test_typed: the full memory relation and good-dimension premises, all four existential witnesses, address and comparison facts, header encoding, and both exact HOL word-extraction payload cases are retained. The standalone store is canonical finite support, the Word64 payload remains fixed at 64 bits, and machine words use a positive type-indexed width."
+    "reviewer": "Compared memory_rel_Word64_const_test_typed: the full memory relation and good-dimension premises, all four existential witnesses, address and comparison facts, header encoding, and both exact HOL word-extraction payload cases are retained. The standalone store is canonical finite support, the Word64 payload remains fixed at 64 bits, and machine words use a positive type-indexed width. The comparison used the typed HOL source."
   },
 {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/NumberConst.lean",
@@ -116131,7 +116131,7 @@
     "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
     "fmap_as_finite_support_relation": ["store"],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "Compared memory_rel_Number_const_test_typed: retain the memory relation and good-dimension premises, the small-constant equivalence, both bignum encoding and pointer-tag failure branches, and the existential real address with exact word-memory comparison. The standalone store uses canonical finite support and the word carrier uses positive type-indexed widths."
+    "reviewer": "Compared memory_rel_Number_const_test_typed: retain the memory relation and good-dimension premises, the small-constant equivalence, both bignum encoding and pointer-tag failure branches, and the existential real address with exact word-memory comparison. The standalone store uses canonical finite support and the word carrier uses positive type-indexed widths. The comparison used the typed HOL source."
   },
 {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/StringConst.lean",
@@ -116141,7 +116141,7 @@
     "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
     "fmap_as_finite_support_relation": ["store"],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "Compared memory_rel_String_const_test_typed: the complete memory relation, byte-array lookup and good-dimension premises; failed encoding inequality; and universally quantified successful encoding with existential address and exact packed word comparison are retained. HOL chars correspond to byte-valued HolChar and mlstring is the reviewed constructor-for-constructor carrier. The standalone store is canonical finite support and machine words use positive type-indexed widths."
+    "reviewer": "Compared memory_rel_String_const_test_typed: the complete memory relation, byte-array lookup and good-dimension premises; failed encoding inequality; and universally quantified successful encoding with existential address and exact packed word comparison are retained. HOL chars correspond to byte-valued HolChar and mlstring is the reviewed constructor-for-constructor carrier. The standalone store is canonical finite support and machine words use positive type-indexed widths. The comparison used the typed HOL source."
   },
 {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/ByteHeaderEquality.lean",
@@ -145924,7 +145924,7 @@
   "fmap_as_finite_support_relation": ["WordSemStateFiniteExact.fpRegs", "WordSemStateFiniteExact.store", "store"],
   "words_as_type_indexed_bitvec": true,
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared Equal_code_thm_typed: the original standalone store, domain, memory, clocks, code and register conditions, exact Equal local-size equality, and remaining dimension premises agree. The existential target result, permutation, full updated state, stack bound and remaining-clock bound are retained. State fields and store use canonical finite maps; words use positive type-indexed widths and the evaluator inherits the rational-cut real model."
+  "reviewer": "Compared Equal_code_thm_typed: the original standalone store, domain, memory, clocks, code and register conditions, exact Equal local-size equality, and remaining dimension premises agree. The existential target result, permutation, full updated state, stack bound and remaining-clock bound are retained. State fields and store use canonical finite maps; words use positive type-indexed widths and the evaluator inherits the rational-cut real model. The evaluator inherits the reals_as_rational_cuts assumption. The comparison used the typed HOL source."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
@@ -145935,7 +145935,7 @@
   "fmap_as_finite_support": ["fpRegs", "store"],
   "words_as_type_indexed_bitvec": true,
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared assign_Equal_typed: operation equality, original state relation, names condition, source cut and argument lookup, termination depth and successful do_app are retained. The target evaluation existential includes both the not-enough-space obligations and the successful state relation and result. Target state fields use canonical finite maps, words use positive type-indexed widths, and the evaluator inherits the rational-cut real model."
+  "reviewer": "Compared assign_Equal_typed: operation equality, original state relation, names condition, source cut and argument lookup, termination depth and successful do_app are retained. The target evaluation existential includes both the not-enough-space obligations and the successful state relation and result. Target state fields use canonical finite maps, words use positive type-indexed widths, and the evaluator inherits the rational-cut real model. The evaluator inherits the reals_as_rational_cuts assumption."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
@@ -145946,7 +145946,7 @@
   "fmap_as_finite_support": ["fpRegs", "store"],
   "words_as_type_indexed_bitvec": true,
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared assign_EqualConst_typed: the existential constant part, complete state relation, names and cut conditions, argument lookup, termination depth and successful source application remain; the target evaluation existential retains both out-of-space obligations and the successful state relation with no result. Target state fields use canonical finite maps and machine words use positive type-indexed widths; the evaluator inherits the rational-cut real model."
+  "reviewer": "Compared assign_EqualConst_typed: the existential constant part, complete state relation, names and cut conditions, argument lookup, termination depth and successful source application remain; the target evaluation existential retains both out-of-space obligations and the successful state relation with no result. Target state fields use canonical finite maps and machine words use positive type-indexed widths; the evaluator inherits the rational-cut real model. The evaluator inherits the reals_as_rational_cuts assumption."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
@@ -145958,7 +145958,7 @@
   "fmap_as_finite_support": ["fpRegs", "store"],
   "words_as_type_indexed_bitvec": true,
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared MemEqList_thm_typed against the specialized HOL declaration: arbitrary target state, words, result and base address retain the same comparison and register premises, existential word-location witness, exact generated program evaluation and conditional locals updates. The target state uses canonical finite maps; words use positive type-indexed widths and the evaluator inherits the rational-cut real model."
+  "reviewer": "Compared MemEqList_thm_typed against the specialized HOL declaration: arbitrary target state, words, result and base address retain the same comparison and register premises, existential word-location witness, exact generated program evaluation and conditional locals updates. The target state uses canonical finite maps; words use positive type-indexed widths and the evaluator inherits the rational-cut real model. The evaluator inherits the reals_as_rational_cuts assumption."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
@@ -145969,7 +145969,7 @@
   "fmap_as_finite_support_relation": ["WordSemStateFiniteExact.fpRegs", "WordSemStateFiniteExact.store", "store1", "store2"],
   "words_as_type_indexed_bitvec": true,
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared Equal_code_lemma_typed: both conjuncts independently quantify their canonical store, domain, memory, clocks, arguments and target state, retaining all original code, register, dimension and sane-local-size premises. Both conclusions retain the existential target evaluation, permutation, complete returned state, optional stack bound and remaining-clock inequality. The target state and both store inputs use canonical finite maps, and words have positive type-indexed widths; the general evaluator inherits the rational-cut real model."
+  "reviewer": "Compared Equal_code_lemma_typed: both conjuncts independently quantify their canonical store, domain, memory, clocks, arguments and target state, retaining all original code, register, dimension and sane-local-size premises. Both conclusions retain the existential target evaluation, permutation, complete returned state, optional stack bound and remaining-clock inequality. The target state and both store inputs use canonical finite maps, and words have positive type-indexed widths; the general evaluator inherits the rational-cut real model. The evaluator inherits the reals_as_rational_cuts assumption. The comparison used the typed HOL source."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
@@ -145980,7 +145980,7 @@
   "fmap_as_finite_support": ["fpRegs", "store"],
   "words_as_type_indexed_bitvec": true,
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared Compare1_code_thm_typed: arbitrary input words, domain, memory and target state retain all code, stack-size, register and clock premises. The existential result preserves the exact returned state, stack bound and clock inequality, including recursive tail calls. The target state uses canonical finite maps and positive-width words; its general evaluator inherits the rational-cut real model."
+  "reviewer": "Compared Compare1_code_thm_typed: arbitrary input words, domain, memory and target state retain all code, stack-size, register and clock premises. The existential result preserves the exact returned state, stack bound and clock inequality, including recursive tail calls. The target state uses canonical finite maps and positive-width words; its general evaluator inherits the rational-cut real model. The evaluator inherits the reals_as_rational_cuts assumption."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
@@ -146035,7 +146035,7 @@
   "fmap_as_finite_support": ["fpRegs", "store"],
   "words_as_type_indexed_bitvec": true,
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared assign_WordOpW8_typed: the existential Word8 binary operation, generic assignment premises, existential target evaluation, insufficient-space obligations, and complete successful state relation agree. Both target widths preserve all five operations, including wrapping arithmetic and aliased operands. The target state uses canonical finite maps and positive-width words; its general evaluator inherits the rational-cut real model."
+  "reviewer": "Compared assign_WordOpW8_typed: the existential Word8 binary operation, generic assignment premises, existential target evaluation, insufficient-space obligations, and complete successful state relation agree. Both target widths preserve all five operations, including wrapping arithmetic and aliased operands. The target state uses canonical finite maps and positive-width words; its general evaluator inherits the rational-cut real model. The evaluator inherits the reals_as_rational_cuts assumption."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
@@ -146046,7 +146046,7 @@
   "fmap_as_finite_support": ["fpRegs", "store"],
   "words_as_type_indexed_bitvec": true,
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared assign_WordOpW64_typed: the existential Word64 binary operation, all generic assignment premises, existential target result, insufficient-space obligations, and complete successful state relation agree. Both word widths preserve all five operations, aliased operands and the original Word64 allocation layout. The target state uses canonical finite maps and positive-width words; its general evaluator inherits the rational-cut real model."
+  "reviewer": "Compared assign_WordOpW64_typed: the existential Word64 binary operation, all generic assignment premises, existential target result, insufficient-space obligations, and complete successful state relation agree. Both word widths preserve all five operations, aliased operands and the original Word64 allocation layout. The target state uses canonical finite maps and positive-width words; its general evaluator inherits the rational-cut real model. The evaluator inherits the reals_as_rational_cuts assumption."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
@@ -146075,7 +146075,7 @@
   "fmap_as_finite_support": ["fpRegs", "store"],
   "words_as_type_indexed_bitvec": true,
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared evaluate_WordOp64_on_32_typed: for an arbitrary target state, locals, operation and two word64 operands, dimension 32 implies existence of the same two arbitrary scratch values and the exact successful evaluation with all eight locals insertions in original order. ClosSem.applyWordOp implements the five HOL opw_lookup operations. The target state uses canonical finite maps and positive-width words; its general evaluator inherits the rational-cut real model."
+  "reviewer": "Compared evaluate_WordOp64_on_32_typed: for an arbitrary target state, locals, operation and two word64 operands, dimension 32 implies existence of the same two arbitrary scratch values and the exact successful evaluation with all eight locals insertions in original order. ClosSem.applyWordOp implements the five HOL opw_lookup operations. The target state uses canonical finite maps and positive-width words; its general evaluator inherits the rational-cut real model. The evaluator inherits the reals_as_rational_cuts assumption."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
@@ -146095,7 +146095,7 @@
   "fmap_as_finite_support": ["fpRegs", "store"],
   "words_as_type_indexed_bitvec": true,
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared assign_WordShiftW8_typed: the existential Word8 shift and amount, generic assignment premises, existential target evaluation, insufficient-space obligations, and full successful state relation agree. Both word widths preserve tagged-byte semantics for arbitrary shift amounts, including arithmetic saturation and modulo rotation. Target state maps use finite support and words use positive-width BitVec; the general evaluator inherits the rational-cut real model."
+  "reviewer": "Compared assign_WordShiftW8_typed: the existential Word8 shift and amount, generic assignment premises, existential target evaluation, insufficient-space obligations, and full successful state relation agree. Both word widths preserve tagged-byte semantics for arbitrary shift amounts, including arithmetic saturation and modulo rotation. Target state maps use finite support and words use positive-width BitVec; the general evaluator inherits the rational-cut real model. The evaluator inherits the reals_as_rational_cuts assumption."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
@@ -146106,7 +146106,7 @@
   "fmap_as_finite_support": ["fpRegs", "store"],
   "words_as_type_indexed_bitvec": true,
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared assign_WordShiftW64_typed: the existential Word64 shift and amount, all generic assignment premises, existential target result, insufficient-space obligations, and complete successful state relation agree. Both width branches preserve arbitrary shift amounts and the original Word64 allocation layout. The target state uses canonical finite maps and positive-width words; its general evaluator inherits the rational-cut real model."
+  "reviewer": "Compared assign_WordShiftW64_typed: the existential Word64 shift and amount, all generic assignment premises, existential target result, insufficient-space obligations, and complete successful state relation agree. Both width branches preserve arbitrary shift amounts and the original Word64 allocation layout. The target state uses canonical finite maps and positive-width words; its general evaluator inherits the rational-cut real model. The evaluator inherits the reals_as_rational_cuts assumption."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
@@ -146117,7 +146117,7 @@
   "fmap_as_finite_support": ["fpRegs", "store"],
   "words_as_type_indexed_bitvec": true,
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared evaluate_WordShift64_on_32_typed: for arbitrary initial locals, target state, shift operation, amount and word64, dimension 32 implies the original evaluator result and all four locals insertions, with the high and low extracted halves in the HOL order. The target state uses canonical finite maps and positive-width words; the general evaluator inherits the rational-cut real model."
+  "reviewer": "Compared evaluate_WordShift64_on_32_typed: for arbitrary initial locals, target state, shift operation, amount and word64, dimension 32 implies the original evaluator result and all four locals insertions, with the high and low extracted halves in the HOL order. The target state uses canonical finite maps and positive-width words; the general evaluator inherits the rational-cut real model. The evaluator inherits the reals_as_rational_cuts assumption."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
