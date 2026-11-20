@@ -23901,6 +23901,19 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "state_rel_IMP_tstamps",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/StateTstamps.lean",
+  "lean_name": "stateRel_imp_tstamps",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared state_rel_IMP_tstamps_typed and its zero HOL hypotheses: the state relation allows arbitrary related values, and the conclusion existentially supplies the source timestamp without additional premises. The target state uses canonical finite-support maps and positive-width words."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
   "hol_name": "state_rel_get_var_Number_IMP_alt",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/NumberVar.lean",
   "lean_name": "stateRel_getVar_number_alt",
