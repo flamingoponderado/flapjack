@@ -792,6 +792,7 @@ val _ = emit "Equal_code_lemma_typed" data_to_word_assignProofTheory.Equal_code_
 val _ = emit "Equal_code_thm_typed" data_to_word_assignProofTheory.Equal_code_thm;
 val _ = emit "assign_Equal_typed" data_to_word_assignProofTheory.assign_Equal;
 val _ = emit "assign_EqualConst_typed" data_to_word_assignProofTheory.assign_EqualConst;
+val _ = emit "Compare_code_thm_typed" data_to_word_assignProofTheory.Compare_code_thm;
 val _ = emit "MemEqList_thm_typed" data_to_word_assignProofTheory.MemEqList_thm;
 val _ = emit "bignum_words_def_typed" data_to_word_memoryProofTheory.bignum_words_def;
 val _ = emit "memory_rel_Number_const_test_typed" data_to_word_memoryProofTheory.memory_rel_Number_const_test;
