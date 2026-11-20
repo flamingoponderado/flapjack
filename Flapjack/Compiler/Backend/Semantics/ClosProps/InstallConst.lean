@@ -33,6 +33,48 @@ theorem doInstall_const {C F : Type} (values : List ClosSem.Value) (state : Stat
     rcases run with ⟨_, rfl⟩
     exact ⟨rfl, rfl⟩
 
+/-- A type-error installation leaves the state unchanged. -/
+private theorem doInstall_typeError_state {C F : Type} (vs : List ClosSem.Value)
+    (s t : State C F) (run : doInstall vs s = (.err (.abort .typeError), t)) : t = s := by
+  classical
+  unfold doInstall at run
+  repeat' first | split at run | simp_all
+
+/-- A successful installation commutes with adding clock to both states. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "do_install_add_to_clock"
+  (fmap_as_finite_support := [refs, code])]
+theorem doInstall_addToClock {C F : Type} (vs : List ClosSem.Value) (s : State C F)
+    (e : List ClosLang.Exp) (s' : State C F) (extra : Nat)
+    (run : doInstall vs s = (.val e, s')) :
+    doInstall vs { s with clock := s.clock + extra } =
+      (.val e, { s' with clock := s'.clock + extra }) := by
+  classical
+  obtain ⟨positive, clockEq⟩ := doInstall_success_clock vs s s' e run
+  unfold doInstall at run ⊢
+  repeat' first | split at run | simp_all
+  all_goals repeat' split
+  all_goals simp_all
+  all_goals try rw [← run.2]
+  all_goals try simp_all
+  all_goals try omega
+
+/-- A type-error installation commutes with adding clock to both states. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "do_install_type_error_add_to_clock"
+  (fmap_as_finite_support := [refs, code])]
+theorem doInstall_typeError_addToClock {C F : Type} (vs : List ClosSem.Value) (s : State C F)
+    (t : State C F) (extra : Nat)
+    (run : doInstall vs s = (.err (.abort .typeError), t)) :
+    doInstall vs { s with clock := s.clock + extra } =
+      (.err (.abort .typeError), { t with clock := t.clock + extra }) := by
+  classical
+  have stateEq : t = s := doInstall_typeError_state vs s t run
+  subst stateEq
+  unfold doInstall at run ⊢
+  repeat' first | split at run | simp_all
+  all_goals repeat' split
+  all_goals simp_all
+  all_goals try assumption
+
 /-- Successful global primitives preserve the arity bound. -/
 private theorem applyGlobal_maxApp {C F : Type} (op : ClosLang.GlobOp) (args : List ClosSem.Value)
     (state next : State C F) (value : ClosSem.Value)
