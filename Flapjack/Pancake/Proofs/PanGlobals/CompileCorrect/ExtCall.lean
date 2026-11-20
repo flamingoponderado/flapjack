@@ -183,7 +183,7 @@ theorem compileCorrect_ExtCall {width : Nat} {σ : Type} [NeZero width]
                                                               have hlen : newBytes.length = l2.toNat :=
                                                                 (Flapjack.Compiler.Backend.StackRemove.callFFILengthHOL target.ffi (.extCall function)
                                                                   bytes1 bytes2 newBytes newFfi hcall).trans
-                                                                  (readBytearrayWordHOL_length a2 l2.toNat
+                                                                  (readBytearrayGenericHOL_length a2 l2.toNat
                                                                     (@panMemLoadByteWord8HOL width _ source.memory
                                                                       source.memaddrs
                                                                       (fun a => Classical.propDecidable (source.memaddrs a))

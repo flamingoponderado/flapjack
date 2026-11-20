@@ -1,6 +1,8 @@
 module
 
 public import Flapjack.Compiler.Backend.Semantics.WordSem.Alloc
+public import Flapjack.Pancake.Semantics.PanSem.DecCallExact
+public import Flapjack.Misc.Sptree
 
 @[expose] public section
 
@@ -70,5 +72,122 @@ theorem decStack_locMerge_encStack {width : Nat} [NeZero width]
     ∃ stack', wordSemDecStack (locMerge (wordSemEncStack stack) roots) stack = some stack' := by
   apply decStack_of_length
   exact length_locMerge _ _
+
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "IMP_loc_merge_APPEND"
+  (words_as_type_indexed_bitvec)]
+theorem locMerge_append_of_length {width : Nat} [NeZero width] (ts qs xs ys : List (WordLocW width))
+    (h : (ts.filter wordSemIsWordLoc).length = qs.length) :
+    locMerge (ts ++ xs) (qs ++ ys) = locMerge ts qs ++ locMerge xs ys := by
+  induction ts generalizing qs with
+  | nil =>
+    cases qs <;> simp_all [locMerge]
+  | cons t ts ih =>
+    cases t with
+    | loc a b =>
+      simp only [List.filter_cons, wordSemIsWordLoc, Bool.false_eq_true, ↓reduceIte] at h
+      simp only [List.cons_append, locMerge]
+      rw [ih qs h]
+    | word w =>
+      cases qs with
+      | nil => simp [wordSemIsWordLoc] at h
+      | cons q qs =>
+        simp only [List.filter_cons, wordSemIsWordLoc, ↓reduceIte, List.length_cons, Nat.succ.injEq] at h
+        simp only [List.cons_append, locMerge]
+        rw [ih qs h]
+
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "TAKE_DROP_loc_merge_APPEND"
+  (words_as_type_indexed_bitvec)]
+theorem take_drop_locMerge_append {width : Nat} [NeZero width] {β : Type} (q : List (β × WordLocW width))
+    (xs ys : List (WordLocW width)) :
+    ((locMerge (q.map Prod.snd) xs ++ ys).take q.length = locMerge (q.map Prod.snd) xs) ∧
+    ((locMerge (q.map Prod.snd) xs ++ ys).drop q.length = ys) := by
+  have h : (locMerge (q.map Prod.snd) xs).length = q.length := by simp [length_locMerge]
+  rw [← h]
+  simp
+
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "loc_merge_NIL"
+  (words_as_type_indexed_bitvec)]
+theorem locMerge_nil {width : Nat} [NeZero width] (xs : List (WordLocW width)) : locMerge xs [] = xs := by
+  induction xs with
+  | nil => rfl
+  | cons x xs ih => cases x <;> simp [locMerge, ih]
+
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "loc_merge_APPEND"
+  (words_as_type_indexed_bitvec)]
+theorem locMerge_append_split {width : Nat} [NeZero width] (xs1 xs2 ys : List (WordLocW width)) :
+    ∃ zs1 zs2, locMerge (xs1 ++ xs2) ys = zs1 ++ zs2 ∧
+      zs1.length = xs1.length ∧ xs2.length = xs2.length ∧ ∃ ts, locMerge xs2 ts = zs2 := by
+  induction xs1 generalizing ys with
+  | nil => exact ⟨[], locMerge xs2 ys, rfl, rfl, rfl, ys, rfl⟩
+  | cons x xs1 ih =>
+    cases x with
+    | loc a b =>
+      obtain ⟨zs1, zs2, eq, len, taut, ts, tail⟩ := ih ys
+      refine ⟨.loc a b :: zs1, zs2, ?_, ?_, taut, ts, tail⟩
+      · simpa [locMerge] using congrArg (List.cons (.loc a b)) eq
+      · simp [len]
+    | word w =>
+      cases ys with
+      | nil =>
+        refine ⟨.word w :: xs1, xs2, ?_, rfl, rfl, [], locMerge_nil xs2⟩
+        simp [locMerge]
+      | cons y ys =>
+        obtain ⟨zs1, zs2, eq, len, taut, ts, tail⟩ := ih ys
+        refine ⟨y :: zs1, zs2, ?_, ?_, taut, ts, tail⟩
+        · simpa [locMerge] using congrArg (List.cons y) eq
+        · simp [len]
+
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "EVERY2_loc_merge"
+  (words_as_type_indexed_bitvec)]
+theorem every2_locMerge {width : Nat} [NeZero width] (xs ys : List (WordLocW width)) :
+    ListRel (fun x y => (wordSemIsWordLoc y = true → wordSemIsWordLoc x = true) ∧
+      (wordSemIsWordLoc x = false → x = y)) xs (locMerge xs ys) := by
+  have reflRel : ∀ zs : List (WordLocW width), ListRel (fun x y => (wordSemIsWordLoc y = true → wordSemIsWordLoc x = true) ∧ (wordSemIsWordLoc x = false → x = y)) zs zs := by
+    intro zs
+    induction zs with
+    | nil => exact .nil
+    | cons z zs ih => exact .cons ⟨fun h => h, fun _ => rfl⟩ ih
+  induction xs generalizing ys with
+  | nil => exact .nil
+  | cons x xs ih =>
+    cases x with
+    | loc a b =>
+      simp only [locMerge]
+      exact .cons ⟨by simp [wordSemIsWordLoc], fun _ => rfl⟩ (ih ys)
+    | word w =>
+      cases ys with
+      | nil =>
+        rw [locMerge_nil]
+        exact .cons ⟨fun _ => rfl, by simp [wordSemIsWordLoc]⟩ (reflRel xs)
+      | cons y ys =>
+        simp only [locMerge]
+        exact .cons ⟨fun _ => rfl, by simp [wordSemIsWordLoc]⟩ (ih ys)
+
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "ALOOKUP_ZIP"
+  (words_as_type_indexed_bitvec)]
+theorem alookup_zip {width : Nat} [NeZero width] (l : List (Nat × WordLocW width))
+    (zs : List (WordLocW width)) (q r : Nat)
+    (premises : sptAListLookup 0 l = some (.loc q r) ∧
+      ListRel (fun x y => (wordSemIsWordLoc y = true → wordSemIsWordLoc x = true) ∧
+        (wordSemIsWordLoc x = false → x = y)) (l.map Prod.snd) zs) :
+    sptAListLookup 0 (List.zip (l.map Prod.fst) zs) = some (.loc q r) := by
+  induction l generalizing zs with
+  | nil => simp [sptAListLookup] at premises
+  | cons pair l ih =>
+    rcases pair with ⟨n, value⟩
+    simp only [List.map_cons] at premises ⊢
+    cases zs with
+    | nil => cases premises.2
+    | cons z zs =>
+      cases premises.2 with
+      | cons head tail =>
+        by_cases h : n = 0
+        · subst n
+          simp [sptAListLookup] at premises ⊢
+          cases premises.1
+          have eq := head.2 rfl
+          simpa using eq.symm
+        · simp [sptAListLookup, Ne.symm h] at premises ⊢
+          exact ih zs ⟨premises.1, tail⟩
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

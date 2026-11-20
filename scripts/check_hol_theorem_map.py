@@ -1240,7 +1240,7 @@ def tagged_declarations(
             value = ("cakeml/compiler/inference/inferScript.sml", "generalise_def",
                      (), (), (), (), False, (), False, False, (), (), None, (), (),
                      False, False, (), (), (), (), (), (), ("subst", "component_2"), (), (),
-                     ())
+                     (), (), (), (), ())
             for _, lean_name in command_sites:
                 tagged[(rel, lean_name)] = value
         for (line, hol_path, hol_name, _hol_line, list_fields,
@@ -1251,7 +1251,9 @@ def tagged_declarations(
              fmap_heterogeneous_function_positions, reals_cuts,
              fmap_equality, result_observations, dimension_widths, fmap_tuple, nested_list_rel,
              predicate_domain, fmap_universals, generalise_map, generalise_length,
-             infer_subst_submap, total_function_inhabitants) in HOL_ATTRIBUTE_SITES(
+             infer_subst_submap, total_function_inhabitants, hol_existential_inhabitants,
+             gc_lemma_existential_inhabitants, new_ref_existential_inhabitants,
+             write_word64_existential_inhabitants) in HOL_ATTRIBUTE_SITES(
                  lines, include_fmap_existentials=True,
                  include_word_dimension_width=True,
                  include_fmap_function=True,
@@ -1268,6 +1270,10 @@ def tagged_declarations(
                  include_generalise_length=True,
                  include_infer_subst_submap=True,
                  include_total_function_inhabitants=True,
+                 include_hol_existential_inhabitants=True,
+                 include_gc_lemma_existential_inhabitants=True,
+                 include_new_ref_existential_inhabitants=True,
+                 include_write_word64_existential_inhabitants=True,
              ):
             lean_name = FIND_LEAN_DECL(lines, line - 1)
             key = (rel, lean_name)
@@ -1281,7 +1287,9 @@ def tagged_declarations(
                      fmap_heterogeneous_function_positions, reals_cuts, fmap_equality,
                      result_observations, dimension_widths, fmap_tuple, nested_list_rel,
                      predicate_domain, fmap_universals, generalise_map, generalise_length,
-                     infer_subst_submap, total_function_inhabitants)
+                     infer_subst_submap, total_function_inhabitants, hol_existential_inhabitants,
+                     gc_lemma_existential_inhabitants, new_ref_existential_inhabitants,
+                     write_word64_existential_inhabitants)
             if key in tagged and tagged[key] != value:
                 raise ValueError(f"conflicting @[hol] references for {rel}:{lean_name}")
             tagged[key] = value
@@ -1299,7 +1307,8 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
         fmap_function_positions, fmap_heterogeneous_function_positions, reals_cuts,
         fmap_equality, result_observations, dimension_widths, fmap_tuple, nested_list_rel,
         predicate_domain, fmap_universals, generalise_map, generalise_length, infer_subst_submap,
-        total_function_inhabitants,
+        total_function_inhabitants, hol_existential_inhabitants, gc_lemma_existential_inhabitants,
+        new_ref_existential_inhabitants, write_word64_existential_inhabitants,
     ) in tagged.items():
         entry = {
             "hol_path": hol_path,
@@ -1364,6 +1373,14 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
             entry["fmap_as_finite_support_equality"] = True
         if total_function_inhabitants:
             entry["total_function_inhabitants"] = list(total_function_inhabitants)
+        if hol_existential_inhabitants:
+            entry["hol_existential_inhabitants"] = list(hol_existential_inhabitants)
+        if gc_lemma_existential_inhabitants:
+            entry["gc_lemma_existential_inhabitants"] = list(gc_lemma_existential_inhabitants)
+        if new_ref_existential_inhabitants:
+            entry["new_ref_existential_inhabitants"] = list(new_ref_existential_inhabitants)
+        if write_word64_existential_inhabitants:
+            entry["write_word64_existential_inhabitants"] = list(write_word64_existential_inhabitants)
         inventory[(lean_path, lean_name)] = entry
 
     for lean_path, lean_name in proof_theorem_declarations(root):
@@ -1763,6 +1780,10 @@ def validate_inventory(
                          ("BviState.refs", "ordinaryMap", "wrapMap", "auxMap", "workMap", "refs")))):
                 errors.append(f"{key[0]}:{key[1]}: TMC universal map review must name its source and maps")
         total_function_inhabitants = tag[26] if tag is not None and len(tag) > 26 else ()
+        hol_existential_inhabitants = tag[27] if tag is not None and len(tag) > 27 else ()
+        gc_lemma_existential_inhabitants = tag[28] if tag is not None and len(tag) > 28 else ()
+        new_ref_existential_inhabitants = tag[29] if tag is not None and len(tag) > 29 else ()
+        write_word64_existential_inhabitants = tag[30] if tag is not None and len(tag) > 30 else ()
         predicate_status = "reviewed_fmap_as_finite_support_parameter_predicate_domain"
         if tuple(record.get("fmap_as_finite_support_parameter_predicate_domain", ())) != predicate_domain:
             errors.append(f"{key[0]}:{key[1]}: predicate-domain binders do not match @[hol] tag")
@@ -2085,6 +2106,55 @@ def validate_inventory(
             errors.append(
                 f"{key[0]}:{key[1]}: reviewed_total_function_inhabitants needs a matching @[hol] qualifier"
             )
+        if tuple(record.get("hol_existential_inhabitants", ())) != hol_existential_inhabitants:
+            errors.append(f"{key[0]}:{key[1]}: existential inhabitants differ from @[hol] tag")
+        if hol_existential_inhabitants:
+            site = ("cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "state_rel_gc_gen",
+                    "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/StateRelGc.lean", "stateRel_gcGen")
+            if ((hol_path, hol_name, key[0], key[1]) != site or
+                    hol_existential_inhabitants != ("T2._t2", "W1._w1", "W2._w2") or
+                    status != "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec"):
+                errors.append(f"{key[0]}:{key[1]}: invalid existential inhabitance site or status")
+            if not isinstance(reviewer, str) or any(word not in reviewer.lower() for word in
+                    ("source", "hol_existential_inhabitants")):
+                errors.append(f"{key[0]}:{key[1]}: existential inhabitance needs a source comparison note")
+        if tuple(record.get("gc_lemma_existential_inhabitants", ())) != gc_lemma_existential_inhabitants:
+            errors.append(f"{key[0]}:{key[1]}: GC lemma existential inhabitants differ from @[hol] tag")
+        if gc_lemma_existential_inhabitants:
+            site = ("cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "gc_lemma_gen",
+                    "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/GcLemma.lean", "gcLemma_gen")
+            if ((hol_path, hol_name, key[0], key[1]) != site or
+                    gc_lemma_existential_inhabitants != ("W1._w1", "W2._w2") or
+                    status != "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec"):
+                errors.append(f"{key[0]}:{key[1]}: invalid GC lemma existential inhabitance site or status")
+            if not isinstance(reviewer, str) or any(word not in reviewer.lower() for word in
+                    ("source", "gc_lemma_existential_inhabitants")):
+                errors.append(f"{key[0]}:{key[1]}: GC lemma inhabitance needs a source comparison note")
+        if tuple(record.get("new_ref_existential_inhabitants", ())) != new_ref_existential_inhabitants:
+            errors.append(f"{key[0]}:{key[1]}: fresh-reference existential inhabitants differ from @[hol] tag")
+        if new_ref_existential_inhabitants:
+            site = ("cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml", "new_ref_thm",
+                    "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/FreshRefProof.lean", "newRef")
+            if ((hol_path, hol_name, key[0], key[1]) != site or
+                    new_ref_existential_inhabitants != ("β._p",) or
+                    status != "reviewed_words_as_type_indexed_bitvec"):
+                errors.append(f"{key[0]}:{key[1]}: invalid fresh-reference existential inhabitance site or status")
+            if not isinstance(reviewer, str) or any(word not in reviewer.lower() for word in
+                    ("source", "new_ref_existential_inhabitants")):
+                errors.append(f"{key[0]}:{key[1]}: fresh-reference inhabitance needs a source comparison note")
+        if tuple(record.get("write_word64_existential_inhabitants", ())) != write_word64_existential_inhabitants:
+            errors.append(f"{key[0]}:{key[1]}: Word64 existential inhabitants differ from @[hol] tag")
+        if write_word64_existential_inhabitants:
+            sites = {"evaluate_WriteWord64": "evaluateWriteWord64",
+                     "evaluate_WriteWord64_on_32": "evaluateWriteWord64On32"}
+            if (hol_path != "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml" or
+                    key != ("Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/WriteWord64.lean", sites.get(hol_name)) or
+                    write_word64_existential_inhabitants != ("β._unused",) or
+                    status != "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec"):
+                errors.append(f"{key[0]}:{key[1]}: invalid Word64 existential inhabitance site or status")
+            if not isinstance(reviewer, str) or any(word not in reviewer.lower() for word in
+                    ("source", "write_word64_existential_inhabitants")):
+                errors.append(f"{key[0]}:{key[1]}: Word64 inhabitance needs a source comparison note")
         if record.get("inherits_reals_as_rational_cuts", False):
             if reals_cuts:
                 errors.append(

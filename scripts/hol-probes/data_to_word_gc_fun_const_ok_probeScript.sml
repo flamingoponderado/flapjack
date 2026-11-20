@@ -145,3 +145,147 @@ val _ = pr_typed "cut_names_adjust_set_insert_1_typed" data_to_word_gcProofTheor
 val _ = pr_typed "cut_names_adjust_set_insert_3_typed" data_to_word_gcProofTheory.cut_names_adjust_set_insert_3;
 val _ = pr_typed "case_EQ_SOME_IFF_typed" data_to_word_gcProofTheory.case_EQ_SOME_IFF;
 val _ = pr_typed "state_rel_set_store_AllocSize_typed" data_to_word_gcProofTheory.state_rel_set_store_AllocSize;
+val _ = pr_typed "inter_insert_typed" data_to_word_gcProofTheory.inter_insert;
+val _ = pr_typed "lookup_0_adjust_set_typed" data_to_word_gcProofTheory.lookup_0_adjust_set;
+val _ = pr_typed "lookup_1_adjust_set_typed" data_to_word_gcProofTheory.lookup_1_adjust_set;
+val _ = pr_typed "lookup_3_adjust_set_typed" data_to_word_gcProofTheory.lookup_3_adjust_set;
+val _ = pr_typed "lookup_5_adjust_set_typed" data_to_word_gcProofTheory.lookup_5_adjust_set;
+val _ = pr_typed "lookup_ODD_adjust_set_typed" data_to_word_gcProofTheory.lookup_ODD_adjust_set;
+val _ = pr_typed "wf_adjust_set_typed" data_to_word_gcProofTheory.wf_adjust_set;
+val _ = pr_typed "lookup_adjust_set_typed" data_to_word_gcProofTheory.lookup_adjust_set;
+val _ = pr_typed "adjust_set_inter_typed" data_to_word_gcProofTheory.adjust_set_inter;
+val _ = pr_typed "state_rel_insert_1_typed" data_to_word_gcProofTheory.state_rel_insert_1;
+val _ = pr_typed "state_rel_insert_3_typed" data_to_word_gcProofTheory.state_rel_insert_3;
+val _ = pr_typed "state_rel_insert_7_typed" data_to_word_gcProofTheory.state_rel_insert_7;
+val _ = pr_typed "state_rel_insert_3_1_typed" data_to_word_gcProofTheory.state_rel_insert_3_1;
+val _ = pr_typed "state_rel_inc_clock_typed" data_to_word_gcProofTheory.state_rel_inc_clock;
+val _ = pr_typed "word_gc_move_IMP_isWord_typed" data_to_word_gcProofTheory.word_gc_move_IMP_isWord;
+val _ = pr_typed "word_gen_gc_move_IMP_isWord_typed" data_to_word_gcProofTheory.word_gen_gc_move_IMP_isWord;
+val _ = pr_typed "word_gen_gc_partial_move_IMP_isWord_typed" data_to_word_gcProofTheory.word_gen_gc_partial_move_IMP_isWord;
+
+(* Replay the local HOL theorem, which is not exported by the theory. *)
+open word_gcFunctionsTheory wordSemTheory;
+val word_gc_move_roots_IMP_FILTER0_replay = Q.prove(
+  `∀ws i pa old m dm ws2 i2 pa2 m2 c2 c.
+    word_gc_move_roots c (ws,i,pa,old,m,dm) = (ws2,i2,pa2,m2,c2) ∧
+    EVERY loc_ok ws ⇒
+    word_gc_move_roots c (FILTER isWord ws,i,pa,old,m,dm) =
+                         (FILTER isWord ws2,i2,pa2,m2,c2)`,
+  Induct \\ full_simp_tac(srw_ss())[word_gc_move_roots_def]
+  \\ Cases \\ full_simp_tac(srw_ss())[]
+  \\ srw_tac[][] \\ full_simp_tac(srw_ss())[word_gc_move_roots_def]
+  THEN1
+   (srw_tac[][] \\ full_simp_tac(srw_ss())[LET_DEF]
+    \\ imp_res_tac word_gc_move_IMP_isWord
+    \\ rpt (pairarg_tac \\ fs []) \\ fs [] \\ rveq
+    \\ res_tac \\ fs [])
+  \\ fs [isWord_def,word_gc_move_def,LET_DEF]
+  \\ rpt (pairarg_tac \\ fs []) \\ fs [] \\ rveq
+  \\ res_tac \\ fs [isWord_def]);
+val _ = pr_typed "word_gc_move_roots_IMP_FILTER0_replay_typed" word_gc_move_roots_IMP_FILTER0_replay;
+
+(* Replay the local generational theorem. *)
+val word_gen_gc_move_roots_IMP_FILTER0_replay = Q.prove(
+  `∀ws i pa ib pb old m dm ws2 i2 pa2 ib2 pb2 m2 c2 c.
+    word_gen_gc_move_roots c (ws,i,pa,ib,pb,old,m,dm) =
+                             (ws2,i2,pa2,ib2,pb2,m2,c2) ∧
+    EVERY loc_ok ws ⇒
+    word_gen_gc_move_roots c (FILTER isWord ws,i,pa,ib,pb,old,m,dm) =
+                             (FILTER isWord ws2,i2,pa2,ib2,pb2,m2,c2)`,
+  Induct \\ full_simp_tac(srw_ss())[word_gen_gc_move_roots_def]
+  \\ Cases \\ full_simp_tac(srw_ss())[]
+  \\ srw_tac[][] \\ full_simp_tac(srw_ss())[word_gen_gc_move_roots_def]
+  THEN1
+   (srw_tac[][] \\ full_simp_tac(srw_ss())[LET_DEF]
+    \\ imp_res_tac word_gen_gc_move_IMP_isWord
+    \\ rpt (pairarg_tac \\ fs []) \\ fs [] \\ rveq
+    \\ res_tac \\ fs [])
+  \\ fs [isWord_def,word_gen_gc_move_def,LET_DEF]
+  \\ rpt (pairarg_tac \\ fs []) \\ fs [] \\ rveq
+  \\ res_tac \\ fs [isWord_def]);
+val _ = pr_typed "word_gen_gc_move_roots_IMP_FILTER0_replay_typed" word_gen_gc_move_roots_IMP_FILTER0_replay;
+
+(* Replay the first of two declarations with this HOL name. *)
+val word_gen_gc_partial_move_roots_IMP_FILTER_first_replay = Q.prove(
+  `∀ws i pa ib pb old m dm ws2 i2 pa2 ib2 pb2 m2 c2 c.
+    word_gen_gc_partial_move_roots c (ws,i,pa,old,m,dm,gs,rs) =
+                                     (ws2,i2,pa2,m2,c2) ∧
+    EVERY loc_ok ws ⇒
+    word_gen_gc_partial_move_roots c (FILTER isWord ws,i,pa,old,m,dm,gs,rs) =
+                                     (FILTER isWord ws2,i2,pa2,m2,c2)`,
+  Induct \\ full_simp_tac(srw_ss())[word_gen_gc_partial_move_roots_def]
+  \\ Cases \\ full_simp_tac(srw_ss())[]
+  \\ srw_tac[][] \\ full_simp_tac(srw_ss())[word_gen_gc_partial_move_roots_def]
+  THEN1
+   (srw_tac[][] \\ full_simp_tac(srw_ss())[LET_DEF]
+    \\ imp_res_tac word_gen_gc_partial_move_IMP_isWord
+    \\ rpt (pairarg_tac \\ fs []) \\ fs [] \\ rveq
+    \\ res_tac \\ fs [])
+  \\ fs [isWord_def,word_gen_gc_partial_move_def,LET_DEF]
+  \\ rpt (pairarg_tac \\ fs []) \\ fs [] \\ rveq
+  \\ res_tac \\ fs [isWord_def]);
+val _ = pr_typed "word_gen_gc_partial_move_roots_IMP_FILTER_first_replay_typed" word_gen_gc_partial_move_roots_IMP_FILTER_first_replay;
+val _ = pr_typed "word_gc_fun_APPEND_IMP_typed" data_to_word_gcProofTheory.word_gc_fun_APPEND_IMP;
+val _ = pr_typed "IMP_loc_merge_APPEND_typed" data_to_word_gcProofTheory.IMP_loc_merge_APPEND;
+val _ = pr_typed "TAKE_DROP_loc_merge_APPEND_typed" data_to_word_gcProofTheory.TAKE_DROP_loc_merge_APPEND;
+val _ = pr_typed "loc_merge_NIL_typed" data_to_word_gcProofTheory.loc_merge_NIL;
+val _ = pr_typed "loc_merge_APPEND_typed" data_to_word_gcProofTheory.loc_merge_APPEND;
+val _ = pr_typed "EVERY2_loc_merge_typed" data_to_word_gcProofTheory.EVERY2_loc_merge;
+val _ = pr_typed "ALOOKUP_ZIP_typed" data_to_word_gcProofTheory.ALOOKUP_ZIP;
+val _ = pr_typed "join_env_NIL_typed" data_to_word_gcProofTheory.join_env_NIL;
+val _ = pr_typed "join_env_CONS_typed" data_to_word_gcProofTheory.join_env_CONS;
+val _ = pr_typed "stack_rel_simp_typed" data_to_word_gcProofTheory.stack_rel_simp;
+val _ = pr_typed "join_env_EQ_ZIP_typed" data_to_word_gcProofTheory.join_env_EQ_ZIP;
+val _ = pr_typed "LENGTH_MAP_SND_join_env_IMP_typed" data_to_word_gcProofTheory.LENGTH_MAP_SND_join_env_IMP;
+val _ = pr_typed "lemma1_typed" data_to_word_gcProofTheory.lemma1;
+val _ = pr_typed "word_ml_inv_cons_snoc_typed" data_to_word_gcProofTheory.word_ml_inv_cons_snoc;
+val _ = pr_typed "toListA_mk_typed" data_to_word_gcProofTheory.toListA_mk;
+val _ = pr_typed "PERM_lookup_toList_lemma_typed" data_to_word_gcProofTheory.PERM_lookup_toList_lemma;
+val _ = pr_typed "get_vars_sing_typed" data_to_word_gcProofTheory.get_vars_sing;
+val _ = pr_typed "adjust_var_not_15_typed" data_to_word_gcProofTheory.adjust_var_not_15;
+val _ = pr_typed "memory_rel_Temp_typed" data_to_word_gcProofTheory.memory_rel_Temp;
+val _ = pr_typed "MustTerminate_limit_NOT_0_typed" data_to_word_gcProofTheory.MustTerminate_limit_NOT_0;
+val _ = pr_typed "join_env_locals_def_typed" data_to_word_gcProofTheory.join_env_locals_def;
+val _ = pr_typed "join_env_locals_insert_odd_typed" data_to_word_gcProofTheory.join_env_locals_insert_odd;
+val _ = pr_typed "join_env_locals_insert_dest_odd_typed" data_to_word_gcProofTheory.join_env_locals_insert_dest_odd;
+val _ = pr_typed "inter_insert_ODD_adjust_set_alt_typed" data_to_word_gcProofTheory.inter_insert_ODD_adjust_set_alt;
+val _ = pr_typed "get_vars_termdep_typed" data_to_word_gcProofTheory.get_vars_termdep;
+val _ = pr_typed "inter_delete_ODD_adjust_set_alt_typed" data_to_word_gcProofTheory.inter_delete_ODD_adjust_set_alt;
+val _ = pr_typed "inter_insert_ODD_adjust_set_typed" data_to_word_gcProofTheory.inter_insert_ODD_adjust_set;
+val _ = pr_typed "get_vars_1_IMP_typed" data_to_word_gcProofTheory.get_vars_1_IMP;
+val _ = pr_typed "get_vars_2_IMP_typed" data_to_word_gcProofTheory.get_vars_2_IMP;
+val _ = pr_typed "get_vars_3_IMP_typed" data_to_word_gcProofTheory.get_vars_3_IMP;
+val _ = pr_typed "memory_rel_insert_typed" data_to_word_gcProofTheory.memory_rel_insert;
+val _ = pr_typed "FOLDL_LENGTH_LEMMA_typed" data_to_word_gcProofTheory.FOLDL_LENGTH_LEMMA;
+val _ = pr_typed "fromList_SNOC_typed" data_to_word_gcProofTheory.fromList_SNOC;
+val _ = pr_typed "fromList2_SNOC_typed" data_to_word_gcProofTheory.fromList2_SNOC;
+val _ = pr_typed "state_rel_IMP_Number_arg_typed" data_to_word_gcProofTheory.state_rel_IMP_Number_arg;
+val _ = pr_typed "get_vars_SOME_IFF_data_typed" data_to_word_gcProofTheory.get_vars_SOME_IFF_data;
+val _ = pr_typed "get_vars_SOME_IFF_data_eq_typed" data_to_word_gcProofTheory.get_vars_SOME_IFF_data_eq;
+val _ = pr_typed "get_vars_SOME_IFF_typed" data_to_word_gcProofTheory.get_vars_SOME_IFF;
+val _ = pr_typed "get_vars_SOME_IFF_eq_typed" data_to_word_gcProofTheory.get_vars_SOME_IFF_eq;
+val _ = pr_typed "memory_rel_get_vars_IMP_lemma_typed" data_to_word_gcProofTheory.memory_rel_get_vars_IMP_lemma;
+val _ = pr_typed "memory_rel_get_vars_IMP_typed" data_to_word_gcProofTheory.memory_rel_get_vars_IMP;
+val _ = pr_typed "memory_rel_get_var_IMP_typed" data_to_word_gcProofTheory.memory_rel_get_var_IMP;
+val _ = pr_typed "lookup_RefByte_location_typed" data_to_word_gcProofTheory.lookup_RefByte_location;
+val _ = pr_typed "word_ml_inv_get_vars_IMP_typed" data_to_word_gcProofTheory.word_ml_inv_get_vars_IMP;
+val _ = pr_typed "word_ml_inv_get_var_IMP_typed" data_to_word_gcProofTheory.word_ml_inv_get_var_IMP;
+val _ = pr_typed "word_ml_inv_get_var_IMP_lemma_typed" data_to_word_gcProofTheory.word_ml_inv_get_var_IMP_lemma;
+val _ = pr_typed "data_evaluate_ind_typed" dataSemTheory.evaluate_ind;
+val _ = pr_typed "cut_names_adjust_set_insert_ODD_typed" data_to_word_gcProofTheory.cut_names_adjust_set_insert_ODD;
+val _ = pr_typed "alloc_locals_insert_1_typed" data_to_word_gcProofTheory.alloc_locals_insert_1;
+val cutNameHead = #1 (strip_comb (lhs (rand (concl data_to_word_gcProofTheory.cut_names_adjust_set_insert_ODD))));
+val {Thy=cutNameThy, Name=cutNameName, Ty=_} = dest_thy_const cutNameHead;
+val _ = (print ("cut_names_adjust_set_insert_ODD_result_type=" ^ cutNameThy ^ "$" ^ cutNameName ^ " : " ); print_type (type_of (lhs (rand (concl data_to_word_gcProofTheory.cut_names_adjust_set_insert_ODD)))); print "\n");
+val _ = pr_typed "has_space_state_rel_typed" data_to_word_gcProofTheory.has_space_state_rel;
+val _ = pr_typed "gc_lemma_gen_typed" data_to_word_gcProofTheory.gc_lemma_gen;
+val _ = pr_hyps "alloc_lemma_gen_hypotheses" data_to_word_gcProofTheory.alloc_lemma_gen;
+val _ = pr_typed "alloc_lemma_gen_typed" data_to_word_gcProofTheory.alloc_lemma_gen;
+val _ = pr_hyps "alloc_lemma_hypotheses" data_to_word_gcProofTheory.alloc_lemma;
+val _ = pr_typed "alloc_lemma_typed" data_to_word_gcProofTheory.alloc_lemma;
+val _ = pr_hyps "alloc_size_dimword_hypotheses" data_to_word_gcProofTheory.alloc_size_dimword;
+val _ = pr_typed "alloc_size_dimword_typed" data_to_word_gcProofTheory.alloc_size_dimword;
+val _ = pr_hyps "evaluate_GiveUp_hypotheses" data_to_word_gcProofTheory.evaluate_GiveUp;
+val _ = pr_typed "evaluate_GiveUp_typed" data_to_word_gcProofTheory.evaluate_GiveUp;
+val _ = pr_hyps "alloc_fail_hypotheses" data_to_word_gcProofTheory.alloc_fail;
+val _ = pr_typed "alloc_fail_typed" data_to_word_gcProofTheory.alloc_fail;

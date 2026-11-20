@@ -39,7 +39,7 @@ example (mc : MachineConfig 8 Nat Nat) (ffi : HolFfiState Nat) :
       some (.ffiApp 0 [] 7 17,
         { (emptyExternal mc) with ffiInterfer := holShiftSeq 1 (emptyExternal mc).ffiInterfer }, ffi) := by
   simp [findNextInterference, emptyExternal, fixture, Misc.findIndex, holEl, holHd,
-    sptAListLookup, readFfiBytearraysHOL, readFfiBytearrayHOL, readBytearrayWordHOL,
+    sptAListLookup, readFfiBytearraysHOL, readFfiBytearrayHOL, readBytearrayWordHOL, readBytearrayGenericHOL,
     callFFIHOL, applyOracleHOL]
 
 example (mc : MachineConfig 8 Nat Nat) (ffi : HolFfiState Nat) :

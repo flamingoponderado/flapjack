@@ -1,6 +1,7 @@
 import Flapjack.HolRef.GeneraliseLengthAudit
 import Flapjack.HolRef.InferSubstSubmapAudit
 import Flapjack.HolRef.TypeSubstWalkstarAudit
+import Flapjack.HolRef.JoinEnvLocalsAudit
 import Flapjack.Compiler.Backend.StackProps.EvaluateMono
 import Flapjack.Compiler.Backend.StackProps.EvaluateNeutral
 import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.Nonrecursive
@@ -275,6 +276,65 @@ elab "#emit_hol_ref_export" : command => do
   let mut known : Std.HashMap Name Bool := {}
   let mut nestedKnown : Std.HashMap Name (Bool × Bool) := {}
   for (name, ref) in HolRef.all env do
+    let joinTargets := #[
+      (`Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.joinEnvLocals, "join_env_locals_def"),
+      (`Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.joinEnvLocals_insertOdd, "join_env_locals_insert_odd"),
+      (`Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.joinEnvLocals_insertDestOdd,
+        "join_env_locals_insert_dest_odd")]
+    let joinPath := "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml"
+    let expectedJoin := joinTargets.find? (fun entry => entry.1 == name)
+    if expectedJoin.isSome || (ref.path == joinPath && joinTargets.any (fun entry => entry.2 == ref.name)) then
+      let some (_, holName) := expectedJoin
+        | throwError "unexpected joined-local HOL target: {name}"
+      let expectedRef : HolRef := {
+        path := joinPath, name := holName,
+        totalFunctionInhabitants := #["α"] }
+      unless ref == expectedRef do throwError "invalid joined-local HOL metadata: {name}"
+      let problems ← liftTermElabM <| joinEnvLocalsBundleProblems name
+      unless problems.isEmpty do throwError "invalid joined-local declaration {name}: {problems}"
+    let directJoinTargets := #[
+      (`Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.joinEnv_nil, "join_env_NIL", "α", false),
+      (`Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.joinEnv_eq_zip, "join_env_EQ_ZIP", "β", true),
+      (`Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.length_filter_snd_joinEnv_imp,
+        "LENGTH_MAP_SND_join_env_IMP", "β", true)]
+    let directJoin := directJoinTargets.find? (fun entry => entry.1 == name)
+    if directJoin.isSome || (ref.path == joinPath && directJoinTargets.any (fun entry => entry.2.1 == ref.name)) then
+      let some (_, holName, binder, words) := directJoin
+        | throwError "unexpected direct joinEnv HOL target: {name}"
+      let expectedRef : HolRef := {
+        path := joinPath, name := holName, wordsAsTypeIndexedBitvec := words,
+        totalFunctionInhabitants := #[binder] }
+      unless ref == expectedRef do throwError "invalid direct joinEnv HOL metadata: {name}"
+      let problems ← liftTermElabM <| joinEnvDirectProblems name
+      unless problems.isEmpty do throwError "invalid direct joinEnv declaration {name}: {problems}"
+    let gcTarget := `Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.stateRel_gcGen
+    let gcRef : HolRef := {
+      path := "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+      name := "state_rel_gc_gen",
+      fmapAsFiniteSupportRelation := #[("", "st"), ("WordSemStateFiniteExact", "fpRegs"),
+        ("WordSemStateFiniteExact", "store")],
+      wordsAsTypeIndexedBitvec := true,
+      holExistentialInhabitants := #["T2._t2", "W1._w1", "W2._w2"] }
+    let gcLemmaTarget := `Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.gcLemma_gen
+    let gcLemmaRef : HolRef := {
+      path := "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+      name := "gc_lemma_gen",
+      fmapAsFiniteSupportRelation := #[("", "st"), ("WordSemStateFiniteExact", "fpRegs"),
+        ("WordSemStateFiniteExact", "store")],
+      wordsAsTypeIndexedBitvec := true,
+      gcLemmaExistentialInhabitants := #["W1._w1", "W2._w2"] }
+    if name == gcTarget || (ref.path == gcRef.path && ref.name == gcRef.name) ||
+        name == gcLemmaTarget || (ref.path == gcLemmaRef.path && ref.name == gcLemmaRef.name) ||
+        !ref.holExistentialInhabitants.isEmpty || !ref.gcLemmaExistentialInhabitants.isEmpty then
+      unless (name == gcTarget && ref == gcRef) || (name == gcLemmaTarget && ref == gcLemmaRef) do
+        throwError "invalid existential inhabitance reference or target: {name}"
+      match env.find? name with
+      | some (.thmInfo info) =>
+        let problems ← liftTermElabM <| if name == gcTarget then stateRelGcTelescopeProblems info.type
+          else gcLemmaGenTelescopeProblems info.type
+        unless problems.isEmpty do
+          throwError "invalid existential inhabitance theorem {name}: {problems}"
+      | _ => throwError "existential inhabitance target must be a theorem: {name}"
     if ref.path == "cakeml/compiler/inference/inferPropsScript.sml" &&
         (ref.name == "infer_subst_submap" || ref.name == "subst_infer_subst_swap") &&
         ref.fmapAsFiniteSupportConjunctUniversals.isEmpty then
@@ -472,6 +532,18 @@ elab "#emit_hol_ref_export" : command => do
         if !ref.totalFunctionInhabitants.isEmpty then
           qualifiers := qualifiers ++
             [("total_function_inhabitants", toJson ref.totalFunctionInhabitants)]
+        if !ref.holExistentialInhabitants.isEmpty then
+          qualifiers := qualifiers ++
+            [("hol_existential_inhabitants", toJson ref.holExistentialInhabitants)]
+        if !ref.gcLemmaExistentialInhabitants.isEmpty then
+          qualifiers := qualifiers ++
+            [("gc_lemma_existential_inhabitants", toJson ref.gcLemmaExistentialInhabitants)]
+        if !ref.newRefExistentialInhabitants.isEmpty then
+          qualifiers := qualifiers ++
+            [("new_ref_existential_inhabitants", toJson ref.newRefExistentialInhabitants)]
+        if !ref.writeWord64ExistentialInhabitants.isEmpty then
+          qualifiers := qualifiers ++
+            [("write_word64_existential_inhabitants", toJson ref.writeWord64ExistentialInhabitants)]
         let mut fields : List (String × Json) := [
           ("lean_name", toJson name.toString),
           ("hol_path", toJson ref.path),

@@ -1,4 +1,5 @@
 load "preamble";
+load "helperLib";
 load "data_to_word_gcProofTheory";
 load "data_to_word_memoryProofTheory";
 load "data_to_word_assignProofTheory";
@@ -23,7 +24,11 @@ val _ = emit "word_ml_inv_num_typed" data_to_word_memoryProofTheory.word_ml_inv_
 val _ = emit "word_ml_inv_neg_num_typed" data_to_word_memoryProofTheory.word_ml_inv_neg_num;
 val _ = emit "word_ml_inv_zero_typed" data_to_word_memoryProofTheory.word_ml_inv_zero;
 val _ = emit "memory_rel_Deref_prime_typed" data_to_word_memoryProofTheory.memory_rel_Deref';
+val _ = emit "memory_rel_Deref_typed" data_to_word_memoryProofTheory.memory_rel_Deref;
+val _ = emit "memory_rel_El_typed" data_to_word_memoryProofTheory.memory_rel_El;
+val _ = emit "memory_rel_Update_typed" data_to_word_memoryProofTheory.memory_rel_Update;
 val _ = emit "get_real_addr_lemma_typed" data_to_word_bignumProofTheory.get_real_addr_lemma;
+val _ = emit "word_exp_set_var_ShiftVar_lemma_typed" data_to_word_bignumProofTheory.word_exp_set_var_ShiftVar_lemma;
 val _ = emit "memcopy_def_typed" data_to_word_assignProofTheory.memcopy_def;
 val _ = emit "MemCopy_thm_typed" data_to_word_assignProofTheory.MemCopy_thm;
 val _ = emit "memory_rel_IMP_free_space_typed" data_to_word_assignProofTheory.memory_rel_IMP_free_space;
@@ -77,3 +82,767 @@ val _ = emit "assign_SetGlobal_typed" data_to_word_assignProofTheory.assign_SetG
 val _ = emit "assign_BoolNot_typed" data_to_word_assignProofTheory.assign_BoolNot;
 val _ = emit "assign_BoolTest_typed" data_to_word_assignProofTheory.assign_BoolTest;
 val _ = emit "assign_Label_typed" data_to_word_assignProofTheory.assign_Label;
+val _ = emit "assign_FFI_typed" data_to_word_assignProofTheory.assign_FFI;
+val _ = emit "assign_FFI_final_typed" data_to_word_assignProofTheory.assign_FFI_final;
+val _ = emit "getWords_acc_typed" data_to_word_assignProofTheory.getWords_acc;
+val _ = emit "getWords_thm_typed" data_to_word_assignProofTheory.getWords_thm;
+val _ = emit "word_cond_add_def_typed" data_to_word_memoryProofTheory.word_cond_add_def;
+val _ = emit "store_list_word_cond_add_IMP_typed" data_to_word_assignProofTheory.store_list_word_cond_add_IMP;
+val _ = emit "good_loc_def_typed" data_to_word_memoryProofTheory.good_loc_def;
+val _ = emit "store_list_APPEND_typed" data_to_word_assignProofTheory.store_list_APPEND;
+val _ = emit "evaluate_StoreAnyConsts_typed" data_to_word_assignProofTheory.evaluate_StoreAnyConsts;
+val _ = emit "do_build_const_IMP_SOME_typed" data_to_word_assignProofTheory.do_build_const_IMP_SOME;
+val _ = emit "bignum_size_typed" data_to_word_assignProofTheory.bignum_size;
+val _ = emit "LESS_EQ_num_size_typed" data_to_word_memoryProofTheory.LESS_EQ_num_size;
+val _ = emit "part_to_words_LENGTH_typed" data_to_word_memoryProofTheory.part_to_words_LENGTH;
+val _ = emit "const_parts_to_words_LENGTH_typed" data_to_word_memoryProofTheory.const_parts_to_words_LENGTH;
+val _ = emit "const_parts_to_words_good_loc_typed" data_to_word_memoryProofTheory.const_parts_to_words_good_loc;
+val _ = emit "make_cons_ptr_def_typed" data_to_wordTheory.make_cons_ptr_def;
+val _ = emit "build_part_words_def_typed" data_to_word_memoryProofTheory.build_part_words_def;
+val _ = emit "build_words_def_typed" data_to_word_memoryProofTheory.build_words_def;
+val _ = emit "do_part_SOME_IMP_SOME_typed" data_to_word_memoryProofTheory.do_part_SOME_IMP_SOME;
+val _ = emit "least_notin_domain_typed" data_to_word_memoryProofTheory.least_notin_domain;
+val _ = emit "byte_aligned_bytes_in_word_typed" data_to_word_memoryProofTheory.byte_aligned_bytes_in_word;
+val _ = emit "byte_align_mult_bytes_in_word_typed" data_to_word_memoryProofTheory.byte_align_mult_bytes_in_word;
+val _ = emit "word_and_lsr_0_typed" data_to_word_memoryProofTheory.word_and_lsr_0;
+val _ = emit "byte_aligned_IMP_shift_typed" data_to_word_memoryProofTheory.byte_aligned_IMP_shift;
+val _ = emit "make_cons_ptr_add_typed" data_to_word_memoryProofTheory.make_cons_ptr_add;
+val _ = emit "make_ptr_add_typed" data_to_word_memoryProofTheory.make_ptr_add;
+val _ = emit "all_ones_bit_typed" data_to_word_memoryProofTheory.all_ones_bit;
+val _ = emit "maxout_bits_bit_typed" data_to_word_memoryProofTheory.maxout_bits_bit;
+val _ = emit "maxout_bits_IMP_typed" data_to_word_memoryProofTheory.maxout_bits_IMP;
+val _ = emit "get_lowerbits_ptrbits_typed" data_to_word_memoryProofTheory.get_lowerbits_ptrbits;
+val _ = emit "make_cons_ptr_thm_typed" data_to_word_memoryProofTheory.make_cons_ptr_thm;
+(* Replay the local exact data-lookup consequence of heap_store_rel. *)
+val heap_store_rel_lemma_replay = let
+  open preamble helperLib gc_sharedTheory data_to_word_memoryProofTheory
+in
+  Q.prove (`heap_store_rel h1 h2 /\ (heap_lookup n h1 = SOME (DataElement ys l d)) ==>
+    (heap_lookup n h2 = SOME (DataElement ys l d))`,
+    simp_tac std_ss [heap_store_rel_def,isSomeDataElement_def] \\ metis_tac [])
+end;
+val _ = emit "heap_store_rel_lemma_typed" heap_store_rel_lemma_replay;
+(* Replay the source-local submap proofs; TRY accommodates an already-simplified final disjunction. *)
+val v_inv_SUBMAP_lemma_replay = let
+  open preamble helperLib dataSemTheory wordSemTheory data_to_wordTheory
+    gc_sharedTheory gc_combinedTheory data_to_word_memoryProofTheory finite_mapTheory
+in
+  Q.prove (`  ∀ck w refs x f tf heap.
+    v_inv conf w refs (x,f,tf,heap) ⇒
+      f ⊑ f1 ∧
+      tf ⊑ tf1 ∧
+      heap_store_rel heap heap1 ⇒
+        v_inv_ck ck conf w refs (x,f1,tf1,heap1)`,
+  completeInduct_on `ck` \\ gvs []
+  \\ rpt gen_tac \\ rpt disch_tac
+  \\ simp [Once v_inv_ck_cases]
+  \\ Cases_on `w` \\ gvs [v_inv_def]
+  >- (
+    Cases_on `small_int (:α) i` \\ gvs []
+    \\ gvs [Bignum_def] \\ pairarg_tac \\ gvs []
+    \\ drule_all heap_store_rel_lemma_replay \\ gvs [])
+  >- (
+    gvs [Word64Rep_def]
+    \\ IF_CASES_TAC \\ gvs []
+    \\ drule_all heap_store_rel_lemma_replay \\ gvs [])
+  >- (
+    Cases_on `l = []` \\ gvs [BlockRep_def]
+    \\ qexists `xs` \\ gvs []
+    \\ reverse $ rw []
+    >- (drule_all heap_store_rel_lemma_replay \\ gvs [])
+    >- gvs [FLOOKUP_DEF, SUBMAP_DEF]
+    \\ gvs [LIST_REL_EL_EQN] \\ rw []
+    \\ last_x_assum $ qspec_then `ck - 1` mp_tac \\ gvs []
+    \\ last_x_assum $ drule_then strip_assume_tac \\ gvs []
+    \\ disch_then drule \\ gvs [])
+  >- gvs [SUBMAP_DEF]
+  >- (
+    disj1_tac \\ gvs [ThunkBlock_def]
+    \\ drule_all heap_store_rel_lemma_replay \\ rw []
+    \\ gvs [FLOOKUP_DEF, SUBMAP_DEF, heap_store_rel_def, ThunkBlock_def]
+    \\ rw []
+    \\ last_x_assum $ qspec_then `ck - 1` mp_tac \\ gvs []
+    \\ disch_then drule \\ gvs [])
+  \\ TRY disj2_tac \\ gvs [] \\ rw []
+  \\ last_x_assum $ qspec_then `ck - 1` mp_tac \\ gvs []
+  \\ disch_then drule \\ gvs [])
+end;
+val v_inv_SUBMAP_replay = let
+  open preamble helperLib dataSemTheory data_to_word_memoryProofTheory finite_mapTheory
+in
+  Q.prove (`!w x. f SUBMAP f1 /\ tf SUBMAP tf1 /\
+    heap_store_rel heap heap1 /\ v_inv conf w refs (x,f,tf,heap) ==>
+    v_inv conf w refs (x,f1,tf1,heap1)`,
+    metis_tac [v_inv_eq, v_inv_SUBMAP_lemma_replay])
+end;
+val _ = emit "v_inv_SUBMAP_lemma_typed" v_inv_SUBMAP_lemma_replay;
+val _ = emit "v_inv_SUBMAP_typed" v_inv_SUBMAP_replay;
+(* Replay the original local functional list-relation theorem. *)
+val EVERY2_f_EQ_replay = let open preamble in
+  Q.prove (`!rs ws f. EVERY2 (\v w. f v = w) rs ws <=> MAP f rs = ws`,
+    Induct \\ fs [] \\ rw [] \\ eq_tac \\ rw [] \\ fs [])
+end;
+val _ = emit "EVERY2_f_EQ_typed" EVERY2_f_EQ_replay;
+(* Replay the local header decoding theorem with its local power bounds. *)
+val encode_header_IMP_replay = let
+  open preamble helperLib wordsTheory alignmentTheory data_to_wordTheory word_gcFunctionsTheory data_to_word_memoryProofTheory
+  val good_dimindex_def = miscTheory.good_dimindex_def
+  val _ = temp_delsimps ["NORMEQ_CONV", "lift_disj_eq", "lift_imp_disj"]
+  val _ = diminish_srw_ss ["ABBREV"]
+  val _ = set_trace "BasicProvers.var_eq_old" 1
+  val LESS_EXO_SUB = Q.prove (`n < 2 ** (k - m) ==> n < 2n ** k`,
+  rw [] \\ match_mp_tac LESS_LESS_EQ_TRANS
+  \\ asm_exists_tac \\ fs []
+  )
+  val LESS_EXO_SUB_ALT = Q.prove (`m <= k ==> n < 2 ** (k - m) ==> n * 2 ** m < 2n ** k`,
+  rw [] \\ match_mp_tac LESS_LESS_EQ_TRANS
+  \\ qexists_tac `2 ** (k - m) * 2 ** m`
+  \\ fs [GSYM EXP_ADD]
+  )
+  val less_pow_dimindex_sub_imp = Q.prove (`n < 2 ** (dimindex (:'a) - k) ==> n < dimword (:'a)`,
+  fs [dimword_def] \\ metis_tac [LESS_EXO_SUB]
+  )
+  val encode_header_IMP = Q.prove (`encode_header c tag len = SOME (hd:'a word) /\
+    c.len_size + 5 < dimindex (:'a) /\ good_dimindex (:'a) ==>
+    len < 2 ** (dimindex (:'a) - 4) /\
+    decode_length c hd = n2w len`,
+  fs [encode_header_def] \\ rw [make_header_def] \\ fs [decode_length_def]
+  \\ `3w >>> (dimindex (:α) − c.len_size) = 0w:'a word` by
+      (match_mp_tac n2w_lsr_eq_0
+       \\ fs [good_dimindex_def,dimword_def]
+       \\ fs [DIV_EQ_X]
+       \\ match_mp_tac LESS_LESS_EQ_TRANS
+       \\ qexists_tac `2 ** 2`
+       \\ strip_tac \\ TRY (EVAL_TAC \\ NO_TAC)
+       \\ simp_tac std_ss [EXP_BASE_LE_IFF] \\ fs [])
+  \\ `n2w tag << 2 ⋙ (dimindex (:α) - c.len_size) = 0w:'a word` by
+      (fs [WORD_MUL_LSL,word_mul_n2w]
+       \\ match_mp_tac n2w_lsr_eq_0
+       \\ rpt strip_tac \\ TRY (match_mp_tac LESS_DIV_EQ_ZERO)
+       \\ `2 ** (dimindex (:α) − c.len_size) =
+           2n ** 2 * 2 ** (dimindex (:α) − (c.len_size + 2))` by
+              (full_simp_tac std_ss [GSYM EXP_ADD] \\ fs []) \\ fs []
+       \\ `4 * tag = tag * 2 ** 2` by fs []
+       \\ asm_rewrite_tac [dimword_def]
+       \\ match_mp_tac (MP_CANON LESS_EXO_SUB_ALT)
+       \\ full_simp_tac std_ss [SUB_PLUS |> ONCE_REWRITE_RULE [ADD_COMM]]
+       \\ imp_res_tac LESS_EXO_SUB \\ fs [])
+  \\ fs [] \\ match_mp_tac lsl_lsr
+  \\ imp_res_tac less_pow_dimindex_sub_imp \\ fs []
+  \\ `dimword (:'a) = 2 ** c.len_size * 2 ** (dimindex (:α) − c.len_size)`
+        suffices_by fs []
+  \\ fs [GSYM EXP_ADD,dimword_def]
+  )
+in encode_header_IMP end;
+val _ = emit "encode_header_IMP_typed" encode_header_IMP_replay;
+(* Replay the three local data-lookup lemmas used by the allocation proof. *)
+val (lookup_unused_replay, lookup_expand_replay, lookup_cons_replay) = let
+  open preamble helperLib gc_sharedTheory
+  val lemma1 = Q.prove (`isSomeDataElement (heap_lookup n (Unused k :: xs)) <=>
+    k < n /\ isSomeDataElement (heap_lookup (n-(k+1)) xs)`,
+    srw_tac [] [heap_lookup_def,isSomeDataElement_def,el_length_def,NOT_LESS]
+    THEN1 (DISJ1_TAC \\ DECIDE_TAC)
+    \\ `k < n` by DECIDE_TAC \\ full_simp_tac std_ss [])
+  val lemma2 = Q.prove (`isSomeDataElement (heap_lookup n (heap_expand k ++ xs)) <=>
+    k <= n /\ isSomeDataElement (heap_lookup (n-k) xs)`,
+    srw_tac [] [heap_expand_def,lemma1]
+    \\ imp_res_tac (DECIDE ``sp <> 0 ==> (sp - 1 + 1 = sp:num)``)
+    \\ full_simp_tac std_ss []
+    \\ Cases_on `isSomeDataElement (heap_lookup (n - k) xs)`
+    \\ full_simp_tac std_ss [] \\ DECIDE_TAC)
+  val lemma3 = Q.prove (`n <> 0 ==>
+    (isSomeDataElement (heap_lookup n (x::xs)) <=>
+     el_length x <= n /\ isSomeDataElement (heap_lookup (n - el_length x) xs))`,
+    srw_tac [] [heap_expand_def,heap_lookup_def,isSomeDataElement_def]
+    \\ Cases_on `n < el_length x` THEN srw_tac [] []
+    THEN1 (DISJ1_TAC \\ DECIDE_TAC)
+    \\ `el_length x <= n` by DECIDE_TAC \\ full_simp_tac std_ss [])
+in (lemma1, lemma2, lemma3) end;
+val _ = emit "isSomeDataElement_heap_lookup_lemma1_typed" lookup_unused_replay;
+val _ = emit "isSomeDataElement_heap_lookup_lemma2_typed" lookup_expand_replay;
+val _ = emit "isSomeDataElement_heap_lookup_lemma3_typed" lookup_cons_replay;
+
+(* Replay the full local end-of-region allocation proof. *)
+val IMP_heap_store_unused_replay = let
+  open preamble helperLib gc_sharedTheory data_to_word_memoryProofTheory
+  val isSomeDataElement_heap_lookup_lemma1 = lookup_unused_replay
+  val isSomeDataElement_heap_lookup_lemma2 = lookup_expand_replay
+  val isSomeDataElement_heap_lookup_lemma3 = lookup_cons_replay
+in
+  Q.prove (`unused_space_inv a sp (heap:('a,'b) heap_element list) /\
+    el_length x <= sp ==>
+    ?heap2. (heap_store_unused a sp x heap = (heap2,T)) /\
+            unused_space_inv a (sp - el_length x) heap2 /\
+            (heap_lookup (a + sp - el_length x) heap2 = SOME x) /\
+            ~isSomeDataElement (heap_lookup (a + sp - el_length x) heap) /\
+            (heap_length heap2 = heap_length heap) /\
+            (~isForwardPointer x ==>
+             (FILTER isForwardPointer heap2 = FILTER isForwardPointer heap)) /\
+            (!xs l d.
+               MEM (DataElement xs l d) heap2 <=>
+                 (x = DataElement xs l d) \/
+                 MEM (DataElement xs l d) heap) /\
+            (isDataElement x ==>
+             ({a | isSomeDataElement (heap_lookup a heap2)} =
+               a + sp - el_length x
+                 INSERT {a | isSomeDataElement (heap_lookup a heap)})) /\
+            heap_store_rel heap heap2`,
+  rpt strip_tac \\ asm_simp_tac std_ss [heap_store_unused_def,heap_store_rel_def]
+  \\ `sp <> 0` by (Cases_on `x` \\ full_simp_tac std_ss [el_length_def] \\ DECIDE_TAC)
+  \\ full_simp_tac std_ss [unused_space_inv_def]
+  \\ imp_res_tac heap_lookup_SPLIT \\ full_simp_tac std_ss []
+  \\ full_simp_tac std_ss [heap_store_lemma]
+  \\ strip_tac THEN1
+   (full_simp_tac (srw_ss()) [heap_length_def,SUM_APPEND,el_length_def]
+    \\ full_simp_tac std_ss [GSYM heap_length_def,heap_length_heap_expand]
+    \\ DECIDE_TAC)
+  \\ strip_tac THEN1
+   (rpt strip_tac \\ full_simp_tac std_ss
+      [heap_expand_def,APPEND,GSYM APPEND_ASSOC,heap_lookup_PREFIX])
+  \\ strip_tac THEN1
+   (fs [heap_length_APPEND,el_length_def,heap_length_heap_expand])
+  \\ strip_tac THEN1
+   (full_simp_tac std_ss [GSYM APPEND_ASSOC,data_up_to_APPEND])
+  \\ strip_tac THEN1
+   (full_simp_tac std_ss [GSYM APPEND_ASSOC,APPEND]
+    \\ full_simp_tac std_ss [APPEND_ASSOC]
+    \\ `heap_length ha + sp - el_length x =
+        heap_length (ha ++ heap_expand (sp - el_length x))` by
+     (full_simp_tac std_ss [heap_length_APPEND,heap_length_heap_expand] \\ DECIDE_TAC)
+    \\ full_simp_tac std_ss [heap_lookup_PREFIX])
+  \\ strip_tac THEN1
+   (`~(heap_length ha + sp - el_length x < heap_length ha)` by DECIDE_TAC
+    \\ imp_res_tac NOT_LESS_IMP_heap_lookup
+    \\ full_simp_tac std_ss []
+    \\ `heap_length ha + sp - el_length x - heap_length ha =
+        sp - el_length x` by DECIDE_TAC \\ full_simp_tac std_ss []
+    \\ simp_tac std_ss [heap_lookup_def]
+    \\ srw_tac [] [isSomeDataElement_def,el_length_def]
+    \\ reverse (full_simp_tac std_ss [])
+    \\ Cases_on `x` \\ full_simp_tac std_ss [el_length_def]
+    \\ `F` by DECIDE_TAC)
+  \\ strip_tac THEN1
+   (full_simp_tac (srw_ss()) [heap_length_APPEND,heap_length_heap_expand,
+      heap_length_def,el_length_def] \\ DECIDE_TAC)
+  \\ strip_tac THEN1
+   (full_simp_tac std_ss [rich_listTheory.FILTER_APPEND,FILTER,isForwardPointer_def,APPEND_NIL]
+    \\ srw_tac [] [heap_expand_def,isForwardPointer_def])
+  \\ strip_tac THEN1
+   (full_simp_tac (srw_ss()) [MEM_APPEND,MEM,heap_expand_def]
+    \\ Cases_on `sp <= el_length x` \\ full_simp_tac (srw_ss()) []
+    \\ metis_tac [])
+  \\ strip_tac THEN1
+   (rpt strip_tac \\ full_simp_tac (srw_ss()) [EXTENSION]
+    \\ strip_tac \\ Q.ABBREV_TAC `y = x'` \\ POP_ASSUM (K ALL_TAC)
+    \\ Cases_on `y = heap_length ha + sp - el_length x`
+    \\ full_simp_tac std_ss [] THEN1
+     (once_rewrite_tac [GSYM APPEND_ASSOC] \\ simp_tac std_ss [APPEND]
+      \\ `(heap_length ha + sp - el_length x) =
+          heap_length (ha ++ heap_expand (sp - el_length x))` by
+       (full_simp_tac std_ss [heap_length_APPEND,heap_length_heap_expand]
+        \\ DECIDE_TAC)
+      \\ full_simp_tac std_ss [heap_lookup_PREFIX]
+      \\ full_simp_tac (srw_ss()) [isDataElement_def,isSomeDataElement_def])
+    \\ Cases_on `y < heap_length ha`
+    THEN1 (full_simp_tac std_ss [LESS_IMP_heap_lookup,GSYM APPEND_ASSOC])
+    \\ imp_res_tac NOT_LESS_IMP_heap_lookup
+    \\ full_simp_tac std_ss [GSYM APPEND_ASSOC]
+    \\ full_simp_tac std_ss [isSomeDataElement_heap_lookup_lemma1,
+         isSomeDataElement_heap_lookup_lemma2]
+    \\ `0 < el_length x` by
+         (Cases_on `x` \\ full_simp_tac std_ss [el_length_def] \\ DECIDE_TAC)
+    \\ reverse (Cases_on `sp <= el_length x + (y - heap_length ha)`)
+    \\ full_simp_tac std_ss []
+    THEN1 (CCONTR_TAC \\ full_simp_tac std_ss [] \\ DECIDE_TAC)
+    \\ `0 < y - heap_length ha` by DECIDE_TAC
+    \\ full_simp_tac std_ss []
+    \\ `y - heap_length ha - (sp - el_length x) <> 0` by DECIDE_TAC
+    \\ full_simp_tac std_ss [APPEND,isSomeDataElement_heap_lookup_lemma3]
+    \\ reverse (Cases_on `el_length x <= y - heap_length ha - (sp - el_length x)`)
+    \\ full_simp_tac std_ss []
+    THEN1 (CCONTR_TAC \\ full_simp_tac std_ss [] \\ DECIDE_TAC)
+    \\ `sp < 1 + (y - heap_length ha)` by DECIDE_TAC
+    \\ full_simp_tac std_ss [SUB_SUB]
+    \\ imp_res_tac (DECIDE ``sp <> 0 ==> (sp - 1 + 1 = sp:num)``)
+    \\ full_simp_tac std_ss []
+    \\ imp_res_tac (DECIDE  ``n <= sp ==> (y - m + n - sp - n = y - m - sp:num)``)
+    \\ full_simp_tac std_ss [])
+  \\ rpt strip_tac
+  \\ full_simp_tac std_ss [isSomeDataElement_def]
+  \\ Cases_on `ptr < heap_length ha`
+  THEN1 (imp_res_tac LESS_IMP_heap_lookup \\ full_simp_tac std_ss [GSYM APPEND_ASSOC])
+  \\ imp_res_tac NOT_LESS_IMP_heap_lookup \\ full_simp_tac std_ss [GSYM APPEND_ASSOC]
+  \\ POP_ASSUM (K ALL_TAC) \\ qpat_x_assum `xxx = SOME yyy` MP_TAC
+  \\ simp_tac std_ss [Once heap_lookup_def] \\ srw_tac [] []
+  \\ `~(ptr - heap_length ha < heap_length (heap_expand (sp - el_length x) ++ [x]))` by
+   (full_simp_tac (srw_ss()) [heap_length_APPEND,heap_length_heap_expand,
+      el_length_def,heap_length_def] \\ DECIDE_TAC)
+  \\ imp_res_tac NOT_LESS_IMP_heap_lookup \\ POP_ASSUM (K ALL_TAC)
+  \\ POP_ASSUM (fn th => once_rewrite_tac [th])
+  \\ `heap_length (heap_expand (sp - el_length x) ++ [x]) = sp` by
+   (full_simp_tac (srw_ss()) [heap_length_APPEND,heap_length_heap_expand,
+      el_length_def,heap_length_def] \\ DECIDE_TAC)
+  \\ `el_length (Unused (sp - 1)) = sp` by
+   (full_simp_tac (srw_ss()) [heap_length_APPEND,heap_length_heap_expand,
+      el_length_def,heap_length_def] \\ DECIDE_TAC)
+  \\ full_simp_tac std_ss [] \\ fs[])
+end;
+val _ = emit "IMP_heap_store_unused_typed" IMP_heap_store_unused_replay;
+
+(* Replay the full local HOL allocation-existence proof. *)
+val IMP_heap_store_unused_alt_replay = let
+  open preamble helperLib gc_sharedTheory data_to_word_memoryProofTheory
+  val isSomeDataElement_heap_lookup_lemma1 = lookup_unused_replay
+  val isSomeDataElement_heap_lookup_lemma2 = lookup_expand_replay
+  val isSomeDataElement_heap_lookup_lemma3 = lookup_cons_replay
+in
+  Q.prove (`unused_space_inv a sp (heap:('a,'b) heap_element list) /\
+    el_length x <= sp ==>
+    ?heap2. (heap_store_unused_alt a sp x heap = (heap2,T)) /\
+            (isDataElement x ==>
+               unused_space_inv (a + el_length x) (sp - el_length x) heap2) /\
+            (heap_lookup a heap2 = SOME x) /\
+            ~isSomeDataElement (heap_lookup a heap) /\
+            (heap_length heap2 = heap_length heap) /\
+            (~isForwardPointer x ==>
+             (FILTER isForwardPointer heap2 = FILTER isForwardPointer heap)) /\
+            (!xs l d.
+               MEM (DataElement xs l d) heap2 <=>
+                 (x = DataElement xs l d) \/
+                 MEM (DataElement xs l d) heap) /\
+            (isDataElement x ==>
+             ({a | isSomeDataElement (heap_lookup a heap2)} =
+               a INSERT {a | isSomeDataElement (heap_lookup a heap)})) /\
+            heap_store_rel heap heap2` ,
+  rpt strip_tac \\ asm_simp_tac std_ss [heap_store_unused_alt_def,heap_store_rel_def]
+  \\ `sp <> 0` by (Cases_on `x` \\ full_simp_tac std_ss [el_length_def] \\ DECIDE_TAC)
+  \\ full_simp_tac std_ss [unused_space_inv_def]
+  \\ imp_res_tac heap_lookup_SPLIT \\ full_simp_tac std_ss []
+  \\ full_simp_tac std_ss [heap_store_lemma]
+  \\ strip_tac THEN1
+   (full_simp_tac (srw_ss()) [heap_length_def,SUM_APPEND,el_length_def]
+    \\ full_simp_tac std_ss [GSYM heap_length_def,heap_length_heap_expand]
+    \\ DECIDE_TAC)
+  \\ strip_tac THEN1
+   (rpt strip_tac
+    \\ full_simp_tac std_ss [APPEND_ASSOC,heap_expand_def]
+    \\ `ha ++ [x] ++ [Unused (sp − el_length x − 1)] ++ hb =
+        ha ++ [x] ++ Unused (sp − el_length x − 1)::hb` by
+          fs [APPEND] \\ pop_assum (fn th => fs [th])
+    \\ `el_length x + heap_length ha = heap_length (ha ++ [x])` by
+          (fs [heap_length_def,SUM_APPEND] \\ NO_TAC)
+    \\ pop_assum (fn th => fs [th]) \\ fs [heap_lookup_PREFIX]
+    \\ qabbrev_tac `hh = ha ++ [x]`
+    \\ full_simp_tac std_ss [data_up_to_APPEND,GSYM APPEND_ASSOC]
+    \\ unabbrev_all_tac \\ fs []
+    \\ fs [heap_length_APPEND,el_length_def,heap_length_heap_expand]
+    \\ fs [heap_length_def,el_length_def] \\ rw [el_length_def])
+  \\ strip_tac THEN1
+   (full_simp_tac std_ss [GSYM APPEND_ASSOC,APPEND]
+    \\ full_simp_tac std_ss [APPEND_ASSOC]
+    \\ `heap_length ha + sp - el_length x =
+        heap_length (ha ++ heap_expand (sp - el_length x))` by
+     (full_simp_tac std_ss [heap_length_APPEND,heap_length_heap_expand] \\ DECIDE_TAC)
+    \\ full_simp_tac std_ss [heap_lookup_PREFIX])
+  \\ strip_tac THEN1 (fs [isSomeDataElement_def])
+  \\ strip_tac THEN1
+   (full_simp_tac (srw_ss()) [heap_length_APPEND,heap_length_heap_expand,
+      heap_length_def,el_length_def] \\ DECIDE_TAC)
+  \\ strip_tac THEN1
+   (full_simp_tac std_ss [rich_listTheory.FILTER_APPEND,FILTER,isForwardPointer_def,APPEND_NIL]
+    \\ srw_tac [] [heap_expand_def,isForwardPointer_def])
+  \\ strip_tac THEN1
+   (full_simp_tac (srw_ss()) [MEM_APPEND,MEM,heap_expand_def]
+    \\ Cases_on `sp <= el_length x` \\ full_simp_tac (srw_ss()) []
+    \\ metis_tac [])
+  \\ strip_tac THEN1
+   (rpt strip_tac \\ full_simp_tac (srw_ss()) [EXTENSION]
+    \\ strip_tac \\ Q.ABBREV_TAC `y = x'` \\ POP_ASSUM (K ALL_TAC)
+    \\ Cases_on `y = heap_length ha`
+    \\ full_simp_tac std_ss [] THEN1
+     (full_simp_tac std_ss [GSYM APPEND_ASSOC,APPEND,heap_lookup_PREFIX]
+      \\ full_simp_tac (srw_ss()) [isDataElement_def,isSomeDataElement_def])
+    \\ Cases_on `y < heap_length ha`
+    THEN1 (full_simp_tac std_ss [LESS_IMP_heap_lookup,GSYM APPEND_ASSOC])
+    \\ imp_res_tac NOT_LESS_IMP_heap_lookup
+    \\ full_simp_tac std_ss [GSYM APPEND_ASSOC]
+    \\ full_simp_tac std_ss [isSomeDataElement_heap_lookup_lemma1,
+         isSomeDataElement_heap_lookup_lemma2]
+    \\ `0 < el_length x` by
+         (Cases_on `x` \\ full_simp_tac std_ss [el_length_def] \\ DECIDE_TAC)
+    \\ fs [heap_lookup_def,APPEND,heap_expand_def]
+    \\ IF_CASES_TAC \\ fs []
+    THEN1 fs [isSomeDataElement_def]
+    \\ Cases_on `sp = el_length x` \\ fs []
+    \\ fs [heap_lookup_def,el_length_def]
+    \\ rw [] \\ fs [isSomeDataElement_def])
+  \\ rpt strip_tac
+  \\ full_simp_tac std_ss [isSomeDataElement_def]
+  \\ Cases_on `ptr < heap_length ha`
+  THEN1 (imp_res_tac LESS_IMP_heap_lookup \\ full_simp_tac std_ss [GSYM APPEND_ASSOC])
+  \\ `0 < el_length x` by (Cases_on `x` \\ EVAL_TAC \\ fs [])
+  \\ imp_res_tac NOT_LESS_IMP_heap_lookup \\ full_simp_tac std_ss [GSYM APPEND_ASSOC]
+  \\ POP_ASSUM (K ALL_TAC) \\ qpat_x_assum `xxx = SOME yyy` MP_TAC
+  \\ simp_tac std_ss [Once heap_lookup_def] \\ srw_tac [] []
+  \\ fs [el_length_def]
+  \\ fs [heap_expand_def] \\ rw []
+  \\ fs [heap_lookup_def] \\ rw []
+  \\ fs [el_length_def]
+  \\ imp_res_tac LESS_EQUAL_ANTISYM \\ fs []
+  \\ rveq \\ fs []
+  \\ rfs [GSYM SUB_PLUS]
+  )
+end;
+val _ = emit "bignum_alt_thm_typed" data_to_word_memoryProofTheory.bignum_alt_thm;
+val _ = emit "IMP_memory_rel_bignum_alt_typed" data_to_word_memoryProofTheory.IMP_memory_rel_bignum_alt;
+val _ = emit "all_ts_cons_no_block_typed" data_to_word_memoryProofTheory.all_ts_cons_no_block;
+val _ = emit "blocks_unique_new_byte_alt_typed" data_to_word_memoryProofTheory.blocks_unique_new_byte_alt;
+val _ = emit "new_byte_alt_thm_typed" data_to_word_memoryProofTheory.new_byte_alt_thm;
+val _ = emit "memory_rel_do_build_typed" data_to_word_memoryProofTheory.memory_rel_do_build;
+val _ = emit "memory_rel_do_build_const_typed" data_to_word_memoryProofTheory.memory_rel_do_build_const;
+val _ = emit "read_word_def_typed" data_to_word_memoryProofTheory.read_word_def;
+val _ = emit "word_xor_bytes_def_typed" data_to_word_memoryProofTheory.word_xor_bytes_def;
+val _ = emit "make_zeros_def_typed" data_to_word_memoryProofTheory.make_zeros_def;
+val _ = emit "xor_words_def_typed" data_to_word_memoryProofTheory.xor_words_def;
+val _ = emit "word_xor_set_byte_typed" data_to_word_memoryProofTheory.word_xor_set_byte;
+val _ = emit "xor_bytes_length_typed" data_to_word_memoryProofTheory.xor_bytes_length;
+val _ = emit "xor_bytes_xor_words_typed" data_to_word_memoryProofTheory.xor_bytes_xor_words;
+val _ = emit "xor_words_word_list_typed" data_to_word_memoryProofTheory.xor_words_word_list;
+val _ = emit "xor_words_word_list_alias_typed" data_to_word_memoryProofTheory.xor_words_word_list_alias;
+val _ = emit "xor_bytes_word_list_typed" data_to_word_memoryProofTheory.xor_bytes_word_list;
+val _ = emit "xor_bytes_word_list_alias_typed" data_to_word_memoryProofTheory.xor_bytes_word_list_alias;
+val _ = emit "LENGTH_write_bytes_typed" data_to_word_memoryProofTheory.LENGTH_write_bytes;
+val _ = emit "el_length_Bytes_typed" data_to_word_memoryProofTheory.el_length_Bytes;
+val _ = emit "blocks_unique_insert_ByteArray2_typed" data_to_word_memoryProofTheory.blocks_unique_insert_ByteArray2;
+val _ = emit "memory_rel_xor_bytes_typed" data_to_word_memoryProofTheory.memory_rel_xor_bytes;
+
+(* Replay source-local XOR lemmas before comparing their inferred types. *)
+val xor_bytes_bytes_to_word_replay = let
+  open preamble helperLib byteTheory wordsTheory data_to_wordTheory
+    data_to_word_memoryProofTheory semanticPrimitivesTheory
+in
+  Q.prove (`∀k vals1 vals2 res_vals a.
+    xor_bytes vals1 vals2 = SOME res_vals ⇒
+    bytes_to_word k a vals1 0w be ⊕ bytes_to_word k a vals2 0w be =
+      bytes_to_word k a res_vals 0w be`,
+    Induct \\ gvs [] \\ once_rewrite_tac [bytes_to_word_def] \\ simp []
+    \\ Cases \\ Cases_on ‘vals2’ \\ simp [semanticPrimitivesTheory.xor_bytes_def]
+    \\ simp [CaseEq"option",PULL_EXISTS] \\ rpt strip_tac
+    \\ last_x_assum old_drule \\ disch_then $ rewrite_tac o single o GSYM
+    \\ gvs [word_xor_set_byte])
+end;
+val _ = emit "xor_bytes_bytes_to_word_typed" xor_bytes_bytes_to_word_replay;
+val xor_bytes_drop_replay = let
+  open preamble helperLib semanticPrimitivesTheory
+in
+  Q.prove (`∀n xs ys zs. xor_bytes xs ys = SOME zs ⇒
+    xor_bytes (DROP n xs) (DROP n ys) = SOME (DROP n zs)`,
+    Induct_on ‘xs’ \\ Cases_on ‘ys’ \\ gvs [semanticPrimitivesTheory.xor_bytes_def]
+    \\ Cases_on ‘n’ \\ gvs [] \\ gvs [semanticPrimitivesTheory.xor_bytes_def,CaseEq"option"]
+    \\ rw [] \\ gvs [])
+end;
+val _ = emit "xor_bytes_drop_typed" xor_bytes_drop_replay;
+
+(* Replay the source-local general packed-word XOR theorem. *)
+val xor_bytes_xor_words_local_replay = let
+  open preamble helperLib byteTheory wordsTheory data_to_wordTheory
+    data_to_word_memoryProofTheory semanticPrimitivesTheory miscTheory
+in
+  Q.prove (`∀zs1 zs2 vals1 vals2 res_vals.
+    xor_bytes vals1 vals2 = SOME res_vals ∧ misc$good_dimindex (:'a) ∧
+    EVERY (λw. w = 0w) zs1 ∧ EVERY (λw. w = 0w) zs2 ∧
+    LENGTH zs1 = LENGTH vals1 DIV (dimindex (:α) DIV 8) + 1 ∧
+    LENGTH zs2 = LENGTH vals2 DIV (dimindex (:α) DIV 8) + 1 ⇒
+    xor_words (write_bytes vals1 zs1 be)
+              (write_bytes vals2 zs2 be) =
+    SOME (write_bytes res_vals zs2 be : 'a word list)`,
+  Cases_on ‘good_dimindex (:'a)’ \\ fs []
+  \\ Induct_on ‘zs1’ \\ Cases_on ‘zs2’ \\ gvs []
+  \\ rpt strip_tac \\ gvs [ADD1]
+  \\ gvs [write_bytes_def,xor_words_def,CaseEq"option"]
+  \\ irule_at Any xor_bytes_bytes_to_word_replay
+  \\ simp []
+  \\ old_drule xor_bytes_drop_replay
+  \\ disch_then $ qspec_then ‘dimindex (:α) DIV 8’ assume_tac
+  \\ Cases_on ‘LENGTH vals1 < (dimindex (:α) DIV 8)’
+  >- (gvs [LESS_DIV_EQ_ZERO]
+      \\ ‘DROP (dimindex (:α) DIV 8) vals1 = []’ by
+           (irule DROP_LENGTH_TOO_LONG \\ gvs [])
+      \\ gvs [write_bytes_def,xor_words_def,semanticPrimitivesTheory.xor_bytes_def])
+  \\ gvs [NOT_LESS]
+  \\ last_x_assum irule \\ gvs []
+  \\ ‘dimindex (:α) DIV 8 ≤ LENGTH vals2’ by
+    (imp_res_tac xor_bytes_length \\ decide_tac)
+  \\ imp_res_tac LESS_EQ_LENGTH \\ gvs []
+  \\ DEP_REWRITE_TAC [ADD_DIV_EQ]
+  \\ gvs [miscTheory.good_dimindex_def])
+end;
+val _ = emit "xor_bytes_xor_words_local_typed" xor_bytes_xor_words_local_replay;
+
+
+val _ = emit "memory_rel_RefByte_content_typed" data_to_word_memoryProofTheory.memory_rel_RefByte_content;
+val _ = emit "memory_rel_Word64_alt_typed" data_to_word_memoryProofTheory.memory_rel_Word64_alt;
+val _ = emit "word64_alt_thm_typed" data_to_word_memoryProofTheory.word64_alt_thm;
+val _ = emit "heap_store_rel_v_inv_typed" data_to_word_memoryProofTheory.heap_store_rel_v_inv;
+val _ = emit "memory_rel_Cons1_typed" data_to_word_memoryProofTheory.memory_rel_Cons1;
+val _ = emit "store_list_thm_typed" data_to_word_memoryProofTheory.store_list_thm;
+val _ = emit "heap_store_unused_alt_IMP_length_typed" data_to_word_memoryProofTheory.heap_store_unused_alt_IMP_length;
+val _ = emit "cons_thm_alt_typed" data_to_word_memoryProofTheory.cons_thm_alt;
+val _ = emit "IMP_heap_store_unused_alt_typed" IMP_heap_store_unused_alt_replay;
+(* Replay the original local allocation-shape theorem. *)
+val heap_store_unused_alt_thm_replay = let
+  open preamble helperLib gc_sharedTheory data_to_word_memoryProofTheory
+in
+  Q.prove (`!a n heap h1 h2 heap2 x.
+    heap_split (a + n) heap = SOME (h1,h2) /\
+    heap_store_unused_alt a n x heap = (heap2,T) /\
+    unused_space_inv (a + el_length x) (n - el_length x) heap2 ==>
+    ?h0. h1 = h0 ++ [Unused (n-1)] /\
+         heap = h1 ++ h2 /\ heap_length h0 = a /\
+         heap2 = h0 ++ [x] ++ heap_expand (n - el_length x) ++ h2`,
+    fs [heap_store_unused_alt_def] \\ rw []
+    \\ fs [unused_space_inv_def]
+    \\ imp_res_tac gc_sharedTheory.heap_split_heap_length
+    \\ fs [] \\ rveq \\ fs []
+    \\ fs [heap_lookup_APPEND]
+    \\ `0 < n` by (Cases_on `x` \\ fs [el_length_def])
+    \\ fs [] \\ old_drule heap_lookup_SPLIT
+    \\ strip_tac \\ rveq \\ fs []
+    \\ `hb = []` by
+      (fs [heap_length_APPEND]
+       \\ fs [heap_length_def,el_length_def]
+       \\ Cases_on `hb` \\ fs [])
+    \\ rveq \\ fs []
+    \\ full_simp_tac std_ss [GSYM APPEND_ASSOC,APPEND]
+    \\ fs [heap_store_lemma])
+end;
+val _ = emit "heap_store_unused_alt_thm_typed" heap_store_unused_alt_thm_replay;
+(* Replay the original local heap_split_heap_store proof: local HOL theorems
+   are not exported by data_to_word_memoryProofTheory. *)
+val heap_split_heap_store_replay = let
+  open preamble helperLib gc_sharedTheory data_to_word_memoryProofTheory
+in
+  Q.prove (`!heap e h1 h2 a y heap2.
+      heap_split e heap = SOME (h1,h2) /\
+      heap_store a y heap = (heap2,T) /\ e <= a ==>
+      ?h3. heap_split e heap2 = SOME (h1,h3)`,
+    Induct \\ fs [heap_split_def,heap_store_def]
+    \\ rpt gen_tac
+    \\ IF_CASES_TAC \\ fs []
+    \\ TOP_CASE_TAC \\ fs []
+    \\ TOP_CASE_TAC \\ fs []
+    \\ strip_tac \\ rveq
+    \\ Cases_on `a=0` \\ fs []
+    \\ Cases_on `a < el_length h` \\ fs []
+    \\ pairarg_tac \\ fs [] \\ rveq \\ fs []
+    \\ res_tac \\ rfs []
+    \\ fs [heap_split_def])
+end;
+val _ = emit "heap_split_heap_store_typed" heap_split_heap_store_replay;
+(* Replay the dependent original local generation-state theorem. *)
+val heap_store_unused_alt_gen_state_ok_replay = let
+  open preamble helperLib gc_sharedTheory data_to_word_memoryProofTheory
+  val heap_split_heap_store = heap_split_heap_store_replay
+in
+  Q.prove (`heap_store_unused_alt a k x heap = (heap2,T) /\
+    gen_state_ok a (a + k) heap gens ==>
+    gen_state_ok (a + el_length x) (a + k) heap2 gens`,
+    Cases_on `gens` \\ fs [gen_state_ok_def]
+    \\ fs [EVERY_MEM] \\ rw [] \\ res_tac \\ fs []
+    \\ fs [gen_start_ok_def]
+    \\ rw [] \\ CCONTR_TAC \\ fs []
+    \\ fs [GSYM NOT_LESS] \\ fs [NOT_LESS]
+    \\ fs [heap_store_unused_alt_def]
+    \\ every_case_tac \\ fs []
+    \\ fs [GSYM IMP_DISJ_THM]
+    \\ imp_res_tac heap_split_heap_store \\ fs []
+    \\ rveq \\ fs [] \\ res_tac \\ fs [])
+end;
+val _ = emit "heap_store_unused_alt_gen_state_ok_typed" heap_store_unused_alt_gen_state_ok_replay;
+
+val _ = emit "heap_store_unused_alt_heap_lookup_typed" data_to_word_memoryProofTheory.heap_store_unused_alt_heap_lookup;
+val _ = emit "heap_store_unused_alt_def_typed" data_to_word_memoryProofTheory.heap_store_unused_alt_def;
+
+(* Replay HOL's local end-of-region generation invariant. *)
+val heap_store_unused_gen_state_ok_replay = let
+  open preamble helperLib gc_sharedTheory data_to_word_memoryProofTheory
+  val heap_split_heap_store = heap_split_heap_store_replay
+in
+  Q.prove (`heap_store_unused a k x heap = (heap2,T) /\
+    gen_state_ok a (a + k) heap gens ==>
+    gen_state_ok a (a + k - el_length x) heap2 gens`,
+  Cases_on `gens` \\ fs [gen_state_ok_def]
+  \\ fs [EVERY_MEM] \\ rw [] \\ res_tac \\ fs []
+  \\ fs [gen_start_ok_def]
+  \\ rw [] \\ CCONTR_TAC \\ fs []
+  \\ fs [GSYM NOT_LESS] \\ fs [NOT_LESS]
+  \\ fs [heap_store_unused_def]
+  \\ every_case_tac \\ fs []
+  \\ fs [GSYM IMP_DISJ_THM]
+  \\ imp_res_tac heap_split_heap_store \\ fs []
+  \\ rveq \\ fs [] \\ res_tac \\ fs [])
+end;
+val _ = emit "heap_store_unused_gen_state_ok_typed" heap_store_unused_gen_state_ok_replay;
+val _ = emit "heap_store_unused_IMP_length_typed" data_to_word_memoryProofTheory.heap_store_unused_IMP_length;
+val _ = emit "blocks_unique_new_ref_typed" data_to_word_memoryProofTheory.blocks_unique_new_ref;
+
+
+(* Replay the end-of-region allocation decomposition. *)
+val heap_store_unused_thm_replay = let
+  open preamble helperLib gc_sharedTheory data_to_word_memoryProofTheory
+in
+  Q.prove (`!a n heap h1 h2 heap2 x.
+      heap_split (a + n) heap = SOME (h1,h2) /\
+      heap_store_unused a n x heap = (heap2,T) /\
+      unused_space_inv a (n − el_length x) heap2 ==>
+      ?h0. h1 = h0 ++ [Unused (n-1)] /\
+           heap = h1 ++ h2 /\ heap_length h0 = a /\
+           heap2 = h0 ++ heap_expand (n − el_length x) ++ [x] ++ h2`,
+  fs [heap_store_unused_def] \\ rw []
+  \\ fs [unused_space_inv_def]
+  \\ imp_res_tac gc_sharedTheory.heap_split_heap_length
+  \\ fs [] \\ rveq \\ fs []
+  \\ fs [heap_lookup_APPEND]
+  \\ `0 < n` by (Cases_on `x` \\ fs [el_length_def])
+  \\ fs [] \\ old_drule heap_lookup_SPLIT
+  \\ strip_tac \\ rveq \\ fs []
+  \\ `hb = []` by
+   (fs [heap_length_APPEND]
+    \\ fs [heap_length_def,el_length_def]
+    \\ Cases_on `hb` \\ fs [])
+  \\ rveq \\ fs []
+  \\ full_simp_tac std_ss [GSYM APPEND_ASSOC,APPEND]
+  \\ fs [heap_store_lemma])
+end;
+val _ = emit "heap_store_unused_thm_typed" heap_store_unused_thm_replay;
+
+val _ = emit "get_vars_adjust_var_typed" data_to_word_assignProofTheory.get_vars_adjust_var;
+val _ = emit "get_vars_with_store_typed" data_to_word_assignProofTheory.get_vars_with_store;
+val _ = emit "memory_rel_Ref_typed" data_to_word_memoryProofTheory.memory_rel_Ref;
+val _ = emit "new_ref_thm_typed" data_to_word_memoryProofTheory.new_ref_thm;
+val _ = emit "heap_store_unused_heap_lookup_typed" data_to_word_memoryProofTheory.heap_store_unused_heap_lookup;
+val _ = emit "heap_store_unused_def_typed" data_to_word_memoryProofTheory.heap_store_unused_def;
+val _ = emit "heap_store_rel_def_typed" data_to_word_memoryProofTheory.heap_store_rel_def;
+val _ = emit "memory_rel_Cons_empty_typed" data_to_word_memoryProofTheory.memory_rel_Cons_empty;
+val _ = emit "parts_to_words_add_typed" data_to_word_memoryProofTheory.parts_to_words_add;
+val _ = emit "part_to_words_add_typed" data_to_word_memoryProofTheory.part_to_words_add;
+val _ = emit "part_to_words_IMP_build_words_typed" data_to_word_memoryProofTheory.part_to_words_IMP_build_words;
+val _ = emit "parts_to_words_IMP_build_words_typed" data_to_word_memoryProofTheory.parts_to_words_IMP_build_words;
+
+val _ = emit "word_str_cmp_loop_def_typed" data_to_word_memoryProofTheory.word_str_cmp_loop_def;
+val _ = emit "word_str_cmp_def_typed" data_to_word_memoryProofTheory.word_str_cmp_def;
+val _ = emit "find_diff_def_typed" data_to_word_memoryProofTheory.find_diff_def;
+(* Replay the same equations through HOL's definition compiler, to expose the
+   completion of unequal-length patterns that the exported equations omit. *)
+val (_,_,(find_diff_functional,_),_) = Defn.build_eqns `
+ (find_diff_probe [] [] (r1 : α word) (r2 : β word) = (r1,r2)) ∧
+ (find_diff_probe ((x : γ word)::xs) (y::ys) r1 r2 =
+   if x = y then find_diff_probe xs ys r1 r2 else (w2w x,w2w y))`;
+fun emitTerm label tm = (print (label ^ "="); print_term tm; print "\n");
+val _ = emitTerm "find_diff_functional_typed" find_diff_functional;
+val _ = emit "word_str_loop_thm_typed" data_to_word_memoryProofTheory.word_str_loop_thm;
+val _ = emit "str_cmp_cons_typed" data_to_word_memoryProofTheory.str_cmp_cons;
+val _ = emit "find_diff_str_cmp_thm1_typed" data_to_word_memoryProofTheory.find_diff_str_cmp_thm1;
+val _ = emit "find_diff_str_cmp_thm2_typed" data_to_word_memoryProofTheory.find_diff_str_cmp_thm2;
+val _ = emit "memory_rel_str_cmp_typed" data_to_word_memoryProofTheory.memory_rel_str_cmp;
+val _ = emit "evaluate_StringCmpLoop_typed" data_to_word_assignProofTheory.evaluate_StringCmpLoop;
+val _ = emit "evaluate_AssignCmp_typed" data_to_word_assignProofTheory.evaluate_AssignCmp;
+
+(* Replay the original local theorem, including its fallback cases. *)
+val evaluate_StringCmpMin_replay = let
+  open preamble helperLib data_to_word_bignumProofTheory wordLangTheory wordSemTheory sptreeTheory asmTheory
+in
+  Q.prove (`
+  wordSem$evaluate (Seq (Assign 9 (Var 5))
+                (Seq (If Lower 7 (Reg 5) (Assign 9 (Var 7)) Skip) p),
+            t1 with locals := l) =
+  case (sptree$lookup 5 l, sptree$lookup 7 l) of
+  | (SOME (Word w1), SOME (Word w2)) =>
+      wordSem$evaluate (p,t1 with locals := sptree$insert 9 (Word (n2w (MIN (w2n w1) (w2n w2)))) l)
+  | _ =>
+      wordSem$evaluate (Seq (Assign 9 (Var 5))
+                    (Seq (If Lower 7 (Reg 5) (Assign 9 (Var 7)) Skip) p),
+                t1 with locals := l)`,
+  Cases_on ‘sptree$lookup 5 l’ \\gvs [] \\Cases_on ‘x’ \\gvs []
+  \\Cases_on ‘sptree$lookup 7 l’ \\gvs [] \\Cases_on ‘x’ \\gvs []
+  \\gvs [eq_eval,WORD_LO,MIN_DEF]
+  \\simp [Once insert_insert]
+  \\Cases_on ‘w2n c = w2n c'’ >- fs [] \\simp []
+  \\Cases_on ‘w2n c < w2n c'’ \\simp []
+  \\‘w2n c' < w2n c’ by decide_tac \\gvs [])
+end;
+val _ = emit "evaluate_StringCmpMin_typed" evaluate_StringCmpMin_replay;
+val _ = emit "assign_StringCmp_typed" data_to_word_assignProofTheory.assign_StringCmp;
+val _ = emit "assign_DerefByte_typed" data_to_word_assignProofTheory.assign_DerefByte;
+val _ = emit "assign_UpdateByte_typed" data_to_word_assignProofTheory.assign_UpdateByte;
+val _ = emit "assign_ElemAt_typed" data_to_word_assignProofTheory.assign_ElemAt;
+val _ = emit "assign_El_typed" data_to_word_assignProofTheory.assign_El;
+val _ = emit "assign_Update_typed" data_to_word_assignProofTheory.assign_Update;
+val _ = emit "assign_Ref_typed" data_to_word_assignProofTheory.assign_Ref;
+val _ = emit "assign_FP_uop_typed" data_to_word_assignProofTheory.assign_FP_uop;
+val _ = emit "assign_FP_bop_typed" data_to_word_assignProofTheory.assign_FP_bop;
+val _ = emit "assign_FP_top_typed" data_to_word_assignProofTheory.assign_FP_top;
+val _ = emit "assign_FP_cmp_typed" data_to_word_assignProofTheory.assign_FP_cmp;
+val _ = emit "assign_WordShiftW64_typed" data_to_word_assignProofTheory.assign_WordShiftW64;
+val _ = emit "assign_WordShiftW8_typed" data_to_word_assignProofTheory.assign_WordShiftW8;
+val _ = emit "Compare1_code_thm_typed" data_to_word_assignProofTheory.Compare1_code_thm;
+val _ = emit "word_exp_insert_typed" data_to_word_assignProofTheory.word_exp_insert;
+val _ = emit "sane_locals_size_def_typed" data_to_word_assignProofTheory.sane_locals_size_def;
+val _ = emit "Equal_code_lemma_typed" data_to_word_assignProofTheory.Equal_code_lemma;
+val _ = emit "Equal_code_thm_typed" data_to_word_assignProofTheory.Equal_code_thm;
+val _ = emit "assign_Equal_typed" data_to_word_assignProofTheory.assign_Equal;
+val _ = emit "assign_EqualConst_typed" data_to_word_assignProofTheory.assign_EqualConst;
+val _ = emit "Compare_code_thm_typed" data_to_word_assignProofTheory.Compare_code_thm;
+val _ = emit "MemEqList_thm_typed" data_to_word_assignProofTheory.MemEqList_thm;
+val _ = emit "bignum_words_def_typed" data_to_word_memoryProofTheory.bignum_words_def;
+val _ = emit "memory_rel_Number_const_test_typed" data_to_word_memoryProofTheory.memory_rel_Number_const_test;
+val _ = emit "memory_rel_Word64_const_test_typed" data_to_word_memoryProofTheory.memory_rel_Word64_const_test;
+val _ = emit "memory_rel_String_const_test_typed" data_to_word_memoryProofTheory.memory_rel_String_const_test;
+val _ = emit "make_byte_header_eq_typed" data_to_word_memoryProofTheory.make_byte_header_eq;
+val _ = emit "option_map_mult_suc_typed" data_to_word_assignProofTheory.option_map_mult_suc;
+val _ = emit "eq_code_stack_max_sub1_typed" data_to_word_assignProofTheory.eq_code_stack_max_sub1;
+val _ = emit "eq_code_stack_max_le_mono_typed" data_to_word_assignProofTheory.eq_code_stack_max_le_mono;
+val _ = emit "assign_WordOpW8_typed" data_to_word_assignProofTheory.assign_WordOpW8;
+val _ = emit "assign_WordOpW64_typed" data_to_word_assignProofTheory.assign_WordOpW64;
+val _ = emit "evaluate_WordOp64_on_32_typed" data_to_word_assignProofTheory.evaluate_WordOp64_on_32;
+val _ = emit "IMP_encode_header_NOT_NONE_typed" data_to_word_assignProofTheory.IMP_encode_header_NOT_NONE;
+val _ = emit "mw2n_2_IMP_typed" data_to_word_assignProofTheory.mw2n_2_IMP;
+val _ = emit "IMP_mw2n_2_typed" data_to_word_assignProofTheory.IMP_mw2n_2;
+val _ = emit "evaluate_WordShift64_on_32_typed" data_to_word_assignProofTheory.evaluate_WordShift64_on_32;
+val _ = emit "word1_cases_typed" data_to_word_assignProofTheory.word1_cases;
+val _ = emit "w2w_w2w_64_typed" data_to_word_assignProofTheory.w2w_w2w_64;
+val _ = emit "extract_append_id_typed" data_to_word_assignProofTheory.extract_append_id;
+val _ = emit "w2w_select_id_typed" data_to_word_assignProofTheory.w2w_select_id;
+
+(* Replay the source-local fp_greater theorem at its original statement and proof. *)
+val fp_greater_local_replay = let
+  open preamble helperLib wordsTheory machine_ieeeTheory binary_ieeeTheory
+in
+  Q.prove (`fp64_greaterThan a b = fp64_lessThan b a /\
+    fp64_greaterEqual a b = fp64_lessEqual b a`,
+    fs [machine_ieeeTheory.fp64_greaterEqual_def,
+        machine_ieeeTheory.fp64_lessEqual_def,
+        binary_ieeeTheory.float_greater_equal_def,
+        binary_ieeeTheory.float_less_equal_def,
+        machine_ieeeTheory.fp64_greaterThan_def,
+        machine_ieeeTheory.fp64_lessThan_def,
+        binary_ieeeTheory.float_greater_than_def,
+        binary_ieeeTheory.float_less_than_def,
+        binary_ieeeTheory.float_compare_def]
+    \\ every_case_tac \\ fs [] \\ rveq \\ fs []
+    \\ metis_tac [realTheory.REAL_LT_ANTISYM, realTheory.REAL_LT_TOTAL, data_to_word_assignProofTheory.word1_cases])
+end;
+val _ = emit "fp_greater_local_typed" fp_greater_local_replay;
+
+val _ = emit "evaluate_WriteWord64_typed" data_to_word_assignProofTheory.evaluate_WriteWord64;
+val _ = emit "evaluate_WriteWord64_on_32_typed" data_to_word_assignProofTheory.evaluate_WriteWord64_on_32;
+val _ = emit "do_app_Ref_typed" data_to_word_assignProofTheory.do_app_Ref;
+val _ = emit "evaluate_StoreEach_typed" data_to_word_assignProofTheory.evaluate_StoreEach;
+val _ = emit "evaluate_GiveUp2_typed" data_to_word_assignProofTheory.evaluate_GiveUp2;
+val _ = emit "word_exp_real_addr_typed" data_to_word_assignProofTheory.word_exp_real_addr;
+val _ = emit "word_exp_real_addr_2_typed" data_to_word_assignProofTheory.word_exp_real_addr_2;
+val _ = emit "env_to_list_domain_typed" data_to_word_assignProofTheory.env_to_list_domain;
+val _ = emit "IN_adjust_var_lemma_typed" data_to_word_assignProofTheory.IN_adjust_var_lemma;
+val _ = emit "cut_envs_lookup_0_typed" data_to_word_assignProofTheory.cut_envs_lookup_0;
+val _ = emit "cut_envs_inter_typed" data_to_word_assignProofTheory.cut_envs_inter;
+val _ = emit "inter_union_distrib_typed" data_to_word_assignProofTheory.inter_union_distrib;

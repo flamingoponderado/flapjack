@@ -167,7 +167,7 @@ theorem compCorrectFFI {width : Nat} [NeZero width] {C F : Type}
                         subst result
                         subst postSource
                         have returnedLength := callFFILengthHOL source.ffi (.extCall name) config bytes newBytes newFfi call
-                        have readLength := readBytearrayWordHOL_length address2 length2.toNat
+                        have readLength := readBytearrayGenericHOL_length address2 length2.toNat
                           (memLoadByteAuxExact source.memory source.mdomain source.be) bytes read2
                         have writeRead : readBytearrayWordHOL address2 newBytes.length
                             (memLoadByteAuxExact source.memory source.mdomain source.be) = some bytes := by

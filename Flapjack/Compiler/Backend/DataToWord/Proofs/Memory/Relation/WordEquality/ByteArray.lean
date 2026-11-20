@@ -72,14 +72,6 @@ theorem byteHeaderLengthInjective {width : Nat} [NeZero width] (conf : DataToWor
       rw [first, second]
   omega
 
-/-- Packing preserves the number of payload words. -/
-private theorem packedLength {width : Nat} [NeZero width] (be : Bool)
-    (words : List (BitVec width)) (bytes : List (BitVec 8)) :
-    (DataToWord.writeBytes bytes words be).length = words.length := by
-  induction words generalizing bytes with
-  | nil => rfl
-  | cons x xs ih => simp [DataToWord.writeBytes, ih]
-
 /-- Comparing two separated packed payloads returns one exactly when their
     byte sequences agree. This is Flapjack infrastructure for the original
     reference-equality simulation. -/
@@ -104,8 +96,8 @@ theorem byteArrayWordEqualityLoop {width : Nat} [NeZero width] (be : Bool)
       (bytes1 = bytes2 ↔ result = 1) := by
   let xs := DataToWord.writeBytes bytes1 words be
   let ys := DataToWord.writeBytes bytes2 words be
-  have xsLength : xs.length = words.length := packedLength be words bytes1
-  have ysLength : ys.length = words.length := packedLength be words bytes2
+  have xsLength : xs.length = words.length := writeBytes_wordCount words bytes1 be
+  have ysLength : ys.length = words.length := writeBytes_wordCount words bytes2 be
   have lengths : xs.length = ys.length := xsLength.trans ysLength.symm
   have packed : (xs = ys ↔ bytes1 = bytes2) := writeBytesInj be good words bytes1 bytes2 ⟨sameLength, capacity, wordCount⟩
   have magnitude : (mw2n xs = mw2n ys ↔ bytes1 = bytes2) := (mw2nInj xs ys lengths).trans packed

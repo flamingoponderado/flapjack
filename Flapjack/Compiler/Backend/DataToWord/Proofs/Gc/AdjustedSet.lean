@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Compiler.Backend.DataToWord.Variables
 public import Flapjack.Misc.Sptree.ToAList
+public import Flapjack.Misc.Sptree.Wf
 public import Mathlib.Tactic
 
 @[expose] public section
@@ -9,6 +10,7 @@ public import Mathlib.Tactic
 /-! Lookup properties of the data-to-word live-set translation. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
 open Flapjack
+open Classical
 
 /-- The adjusted live-set lookup records whether the source name exists,
 independently of the source map's payload type. This helper generalizes the
@@ -92,5 +94,86 @@ theorem not_three_adjustSet {α : Type} (names : Spt α) : ¬ sptDomain (adjustS
 @[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "NOT_5_domain"]
 theorem not_five_adjustSet {α : Type} (names : Spt α) : ¬ sptDomain (adjustSet names) 5 :=
   oddNotAdjusted names 5 rfl
+
+
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "lookup_0_adjust_set"]
+theorem lookup_zero_adjustSet {α : Type} (names : Spt α) :
+    sptLookup 0 (adjustSet names) = none := by
+  have absent : ¬ sptDomain (adjustSet names) 0 := by
+    intro member
+    obtain ⟨n, eq, _⟩ := (adjustSet_domain names 0).mp member
+    simp only [adjustVar] at eq
+    omega
+  cases h : sptLookup 0 (adjustSet names) <;> simp_all [sptDomain]
+
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "lookup_1_adjust_set"]
+theorem lookup_one_adjustSet {α : Type} (names : Spt α) :
+    sptLookup 1 (adjustSet names) = none := by
+  have absent := not_one_adjustSet names
+  cases h : sptLookup 1 (adjustSet names) <;> simp_all [sptDomain]
+
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "lookup_3_adjust_set"]
+theorem lookup_three_adjustSet {α : Type} (names : Spt α) :
+    sptLookup 3 (adjustSet names) = none := by
+  have absent := not_three_adjustSet names
+  cases h : sptLookup 3 (adjustSet names) <;> simp_all [sptDomain]
+
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "lookup_5_adjust_set"]
+theorem lookup_five_adjustSet {α : Type} (names : Spt α) :
+    sptLookup 5 (adjustSet names) = none := by
+  have absent := not_five_adjustSet names
+  cases h : sptLookup 5 (adjustSet names) <;> simp_all [sptDomain]
+
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "lookup_ODD_adjust_set"]
+theorem lookup_odd_adjustSet {α : Type} (n : Nat) (names : Spt α)
+    (odd : n % 2 = 1) : sptLookup n (adjustSet names) = none := by
+  have absent := oddNotAdjusted names n odd
+  cases h : sptLookup n (adjustSet names) <;> simp_all [sptDomain]
+
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "wf_adjust_set"]
+theorem wf_adjustSet {α : Type} (names : Spt α) : sptWf (adjustSet names) = true := by
+  exact sptWfFromAList _
+
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "lookup_adjust_set"]
+theorem lookup_adjustSet {α : Type} (n : Nat) (names : Spt α) :
+    sptLookup n (adjustSet names) =
+      if n % 2 = 1 ∨ n = 0 then none else
+      if sptDomain names ((n - 2) / 2) then some () else none := by
+  have domain : sptDomain (adjustSet names) n ↔
+      n % 2 = 0 ∧ n ≠ 0 ∧ sptDomain names ((n - 2) / 2) := by
+    rw [adjustSet_domain]
+    constructor
+    · rintro ⟨k, hk, hmem⟩
+      simp only [adjustVar] at hk
+      have hd : (n - 2) / 2 = k := by omega
+      refine ⟨by omega, by omega, ?_⟩
+      simpa [hd] using hmem
+    · rintro ⟨heven, hnonzero, hmem⟩
+      refine ⟨(n - 2) / 2, ?_, hmem⟩
+      simp only [adjustVar]
+      omega
+  cases h : sptLookup n (adjustSet names) with
+  | none =>
+    have absent : ¬ sptDomain (adjustSet names) n := by simp [sptDomain, h]
+    have absent2 := mt domain.mpr absent
+    split <;> simp_all
+  | some value =>
+    have present : sptDomain (adjustSet names) n := by simp [sptDomain, h]
+    have ⟨heven, hn, hm⟩ := domain.mp present
+    have notodd : ¬ (n % 2 = 1 ∨ n = 0) := by omega
+    cases value
+    simp [notodd, hm]
+
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "adjust_set_inter"]
+theorem adjustSet_inter {α β : Type} (t1 : Spt α) (t2 : Spt β) :
+    adjustSet (sptInter t1 t2) = sptInter (adjustSet t1) (adjustSet t2) := by
+  apply (sptEqThm _ _ ⟨wf_adjustSet _, sptWfInter _ _⟩).2
+  intro n
+  rw [lookup_adjustSet, sptLookup_sptInterCases, lookup_adjustSet, lookup_adjustSet]
+  by_cases h : n % 2 = 1 ∨ n = 0
+  · simp [h]
+  · simp only [h, if_false, sptDomain_sptInter]
+    by_cases h1 : sptDomain t1 ((n - 2) / 2) <;>
+      by_cases h2 : sptDomain t2 ((n - 2) / 2) <;> simp [h1, h2]
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

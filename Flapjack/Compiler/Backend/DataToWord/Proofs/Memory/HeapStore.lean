@@ -1,6 +1,8 @@
 module
 
 public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ArrayUpdateValue
+public import Flapjack.Compiler.Backend.GcShared.Slice
+public import Flapjack.Compiler.Backend.GenGc.Proofs.HeapLookup
 
 @[expose] public section
 
@@ -20,6 +22,265 @@ def heapStore {α β : Type} (offset : Nat) (replacement : List (HeapElement α 
       else let (rest, success) := heapStore (offset - elLength head) replacement tail
         (head :: rest, success)
 
+/-- Replace an unused region, placing the new element at its end. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "heap_store_unused_def"]
+noncomputable def heapStoreUnused {α β : Type} (offset length : Nat)
+    (element : HeapElement α β) (heap : List (HeapElement α β)) : List (HeapElement α β) × Bool := by
+  classical
+  exact if heapLookup offset heap = some (.unused (length - 1)) ∧ elLength element ≤ length then
+    heapStore offset (heapExpand (length - elLength element) ++ [element]) heap
+  else (heap, false)
+
+/-- Replace an unused region, placing the new element at its beginning. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "heap_store_unused_alt_def"]
+noncomputable def heapStoreUnusedAlt {α β : Type} (offset length : Nat)
+    (element : HeapElement α β) (heap : List (HeapElement α β)) : List (HeapElement α β) × Bool := by
+  classical
+  exact if heapLookup offset heap = some (.unused (length - 1)) ∧ elLength element ≤ length then
+    heapStore offset ([element] ++ heapExpand (length - elLength element)) heap
+  else (heap, false)
+
+/-- Existing data elements are preserved at their original heap offsets. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "heap_store_rel_def"]
+def heapStoreRel {α β : Type} (heap heap2 : List (HeapElement α β)) : Prop :=
+  ∀ ptr, isSomeDataElement (heapLookup ptr heap) → heapLookup ptr heap2 = heapLookup ptr heap
+
+/-- A preserved data-cell lookup retains its exact element. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "heap_store_rel_lemma"]
+theorem heapStoreRel_data {α β : Type} (h1 h2 : List (HeapElement α β))
+    (n : Nat) (ys : List (HeapAddress α)) (l : Nat) (d : β) :
+    heapStoreRel h1 h2 ∧ heapLookup n h1 = some (.dataElement ys l d) →
+      heapLookup n h2 = some (.dataElement ys l d) := by
+  rintro ⟨rel, found⟩
+  rw [rel n ⟨ys, l, d, found⟩, found]
+
+/-- A successful store leaves lookups before its target unchanged; this
+supports the original unused-region allocation theorem. -/
+private theorem heapStore_lookup_before {α β : Type} (heap : List (HeapElement α β))
+    (offset n : Nat) (replacement heap2 : List (HeapElement α β))
+    (run : heapStore offset replacement heap = (heap2, true)) (before : n < offset) :
+    heapLookup n heap = heapLookup n heap2 := by
+  induction heap generalizing offset n heap2 with
+  | nil => simp [heapStore] at run
+  | cons head tail ih =>
+    have positive : 0 < offset := by omega
+    simp only [heapStore, show ¬ offset = 0 by omega, ↓reduceIte] at run
+    by_cases inside : offset < elLength head
+    · simp [inside] at run
+    · simp only [inside, ↓reduceIte] at run
+      cases h : heapStore (offset - elLength head) replacement tail with
+      | mk rest flag =>
+        simp [h] at run
+        obtain ⟨rfl, flagEq⟩ := run
+        subst flag
+        by_cases zero : n = 0
+        · simp [heapLookup, zero]
+        · by_cases nInside : n < elLength head
+          · simp [heapLookup, zero, nInside]
+          · simp only [heapLookup, zero, ↓reduceIte, nInside]
+            apply ih (offset - elLength head) (n - elLength head) rest h
+            omega
+
+/-- An end-of-region allocation preserves lookups before the region. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "heap_store_unused_heap_lookup"]
+theorem heapStoreUnused_lookup {α β : Type} (heap heap2 : List (HeapElement α β))
+    (offset length : Nat) (element : HeapElement α β) (n : Nat) :
+    heapStoreUnused offset length element heap = (heap2, true) ∧ n < offset →
+    heapLookup n heap = heapLookup n heap2 := by
+  classical
+  rintro ⟨run, before⟩
+  unfold heapStoreUnused at run
+  split at run
+  · exact heapStore_lookup_before heap offset n _ heap2 run before
+  · simp at run
+
+/-- Allocating unused space preserves lookups strictly before the allocation. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "heap_store_unused_alt_heap_lookup"]
+theorem heapStoreUnusedAlt_lookup {α β : Type} (heap heap2 : List (HeapElement α β))
+    (offset length : Nat) (element : HeapElement α β) (n : Nat) :
+    heapStoreUnusedAlt offset length element heap = (heap2, true) ∧ n < offset →
+    heapLookup n heap = heapLookup n heap2 := by
+  classical
+  rintro ⟨run, before⟩
+  unfold heapStoreUnusedAlt at run
+  split at run
+  · exact heapStore_lookup_before heap offset n _ heap2 run before
+  · simp at run
+
+/-- A successful store at or after a split preserves the split prefix. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "heap_split_heap_store"]
+theorem heapSplit_heapStore {α β : Type} (heap : List (HeapElement α β))
+    (position : Nat) (left right : List (HeapElement α β)) (offset : Nat)
+    (replacement heap2 : List (HeapElement α β)) :
+    heapSplit position heap = some (left, right) ∧
+      heapStore offset replacement heap = (heap2, true) ∧ position ≤ offset →
+    ∃ right2, heapSplit position heap2 = some (left, right2) := by
+  induction heap generalizing position left right offset heap2 with
+  | nil => simp [heapStore]
+  | cons head tail ih =>
+    rintro ⟨split, store, order⟩
+    by_cases zero : position = 0
+    · subst position
+      simp [heapSplit] at split
+      obtain ⟨rfl, rfl⟩ := split
+      cases heap2 <;> simp [heapSplit]
+    · by_cases inside : position < elLength head
+      · simp [heapSplit, zero, inside] at split
+      · cases hs : heapSplit (position - elLength head) tail with
+        | none => simp [heapSplit, zero, inside, hs] at split
+        | some pair =>
+          obtain ⟨first, second⟩ := pair
+          simp [heapSplit, zero, inside, hs] at split
+          obtain ⟨rfl, rfl⟩ := split
+          have offsetPos : offset ≠ 0 := by omega
+          have offsetOutside : ¬ offset < elLength head := by omega
+          simp only [heapStore, offsetPos, offsetOutside, ↓reduceIte] at store
+          cases ht : heapStore (offset - elLength head) replacement tail with
+          | mk rest flag =>
+            simp [ht] at store
+            obtain ⟨rfl, rfl⟩ := store
+            obtain ⟨right2, split2⟩ := ih _ _ _ _ _ ⟨hs, ht, by omega⟩
+            exact ⟨right2, by simp [heapSplit, zero, inside, split2]⟩
+
+/-- Allocating unused space preserves the generation-start invariant. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "heap_store_unused_alt_gen_state_ok"]
+theorem heapStoreUnusedAlt_genStateOk {α β : Type} (offset length : Nat)
+    (element : HeapElement α β) (heap heap2 : List (HeapElement α β)) (gens : GcCombined.GenState) :
+    heapStoreUnusedAlt offset length element heap = (heap2, true) ∧
+      genStateOk offset (offset + length) heap gens →
+    genStateOk (offset + elLength element) (offset + length) heap2 gens := by
+  classical
+  rintro ⟨run, valid⟩
+  cases gens with
+  | genState count starts =>
+    obtain ⟨bounds, startsOk⟩ := valid
+    constructor
+    · intro start member
+      have := bounds start member
+      omega
+    · intro start member
+      obtain ⟨left, right, split, restriction⟩ := startsOk start member
+      have order := bounds start member
+      unfold heapStoreUnusedAlt at run
+      split at run
+      · obtain ⟨right2, split2⟩ := heapSplit_heapStore heap start left right offset _ heap2 ⟨split, run, order⟩
+        exact ⟨left, right2, split2, restriction⟩
+      · simp at run
+
+/-- End-of-region allocation preserves generation starts and shrinks the upper bound. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "heap_store_unused_gen_state_ok"]
+theorem heapStoreUnused_genStateOk {α β : Type} (offset length : Nat)
+    (element : HeapElement α β) (heap heap2 : List (HeapElement α β)) (gens : GcCombined.GenState) :
+    heapStoreUnused offset length element heap = (heap2, true) ∧
+      genStateOk offset (offset + length) heap gens →
+    genStateOk offset (offset + length - elLength element) heap2 gens := by
+  classical
+  rintro ⟨run, valid⟩
+  cases gens with
+  | genState count starts =>
+    obtain ⟨bounds, startsOk⟩ := valid
+    constructor
+    · intro start member
+      exact bounds start member
+    · intro start member
+      obtain ⟨left, right, split, restriction⟩ := startsOk start member
+      have order := bounds start member
+      unfold heapStoreUnused at run
+      split at run
+      · obtain ⟨right2, split2⟩ := heapSplit_heapStore heap start left right offset _ heap2 ⟨split, run, order⟩
+        refine ⟨left, right2, split2, ?_⟩
+        intro xs len data ptr value condition
+        rcases restriction xs len data ptr value condition with below | above
+        · exact Or.inl below
+        · exact Or.inr (by omega)
+      · simp at run
+
+/-- An unused cell contributes no data lookup within its extent. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "isSomeDataElement_heap_lookup_lemma1"]
+theorem isSomeData_lookup_unused {α β : Type} (n k : Nat) (xs : List (HeapElement α β)) :
+    isSomeDataElement (heapLookup n (.unused k :: xs)) ↔
+      k < n ∧ isSomeDataElement (heapLookup (n - (k + 1)) xs) := by
+  by_cases zero : n = 0
+  · simp [zero, heapLookup, isSomeDataElement]
+  · by_cases inside : n < k + 1
+    · have bound : ¬ k < n := by omega
+      simp [heapLookup, elLength, zero, inside, bound, isSomeDataElement]
+    · have bound : k < n := by omega
+      simp [heapLookup, elLength, zero, inside, bound]
+
+/-- Data lookups after an unused expansion begin at its end. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "isSomeDataElement_heap_lookup_lemma2"]
+theorem isSomeData_lookup_expand {α β : Type} (n k : Nat) (xs : List (HeapElement α β)) :
+    isSomeDataElement (heapLookup n (heapExpand k ++ xs)) ↔
+      k ≤ n ∧ isSomeDataElement (heapLookup (n - k) xs) := by
+  by_cases empty : k = 0
+  · simp [heapExpand, empty]
+  · have len : k - 1 + 1 = k := by omega
+    simp [heapExpand, empty, isSomeData_lookup_unused, len, show k - 1 < n ↔ k ≤ n by omega]
+
+/-- A nonzero lookup in a nonempty heap moves past its head. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "isSomeDataElement_heap_lookup_lemma3"]
+theorem isSomeData_lookup_cons {α β : Type} (n : Nat) (x : HeapElement α β)
+    (xs : List (HeapElement α β)) (nonzero : n ≠ 0) :
+    isSomeDataElement (heapLookup n (x :: xs)) ↔
+      elLength x ≤ n ∧ isSomeDataElement (heapLookup (n - elLength x) xs) := by
+  by_cases inside : n < elLength x
+  · have notBound : ¬ elLength x ≤ n := by omega
+    simp [heapLookup, nonzero, inside, notBound, isSomeDataElement]
+  · have bound : elLength x ≤ n := by omega
+    simp [heapLookup, nonzero, inside, bound]
+
+/-- Successful generic replacement preserves total heap length. This helper
+supports the original unused-space allocation length theorem. -/
+private theorem heapStore_length {α β : Type} (heap : List (HeapElement α β))
+    (offset : Nat) (replacement heap2 : List (HeapElement α β))
+    (run : heapStore offset replacement heap = (heap2, true)) :
+    heapLength heap2 = heapLength heap := by
+  induction heap generalizing offset heap2 with
+  | nil => simp [heapStore] at run
+  | cons head tail ih =>
+    by_cases zero : offset = 0
+    · subst offset
+      simp [heapStore] at run
+      obtain ⟨rfl, equal⟩ := run
+      simp only [heapLength_append]
+      change heapLength replacement + heapLength tail = elLength head + heapLength tail
+      rw [equal]
+    · by_cases inside : offset < elLength head
+      · simp [heapStore, zero, inside] at run
+      · simp only [heapStore, zero, inside, ↓reduceIte] at run
+        cases h : heapStore (offset - elLength head) replacement tail with
+        | mk rest flag =>
+          simp [h] at run
+          obtain ⟨rfl, rfl⟩ := run
+          have same := ih _ _ h
+          change elLength head + heapLength rest = elLength head + heapLength tail
+          rw [same]
+
+/-- A successful unused-region allocation preserves the heap length. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "heap_store_unused_alt_IMP_length"]
+theorem heapStoreUnusedAlt_imp_length {α β : Type} (a sp : Nat) (x : HeapElement α β)
+    (heap heap2 : List (HeapElement α β)) :
+    heapStoreUnusedAlt a sp x heap = (heap2, true) → heapLength heap2 = heapLength heap := by
+  classical
+  intro run
+  unfold heapStoreUnusedAlt at run
+  split at run
+  · exact heapStore_length heap a _ heap2 run
+  · simp at run
+
+/-- A successful end-of-region allocation preserves the heap length. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "heap_store_unused_IMP_length"]
+theorem heapStoreUnused_imp_length {α β : Type} (a sp : Nat) (x : HeapElement α β)
+    (heap heap2 : List (HeapElement α β)) :
+    heapStoreUnused a sp x heap = (heap2, true) → heapLength heap2 = heapLength heap := by
+  classical
+  intro run
+  unfold heapStoreUnused at run
+  split at run
+  · exact heapStore_length heap a _ heap2 run
+  · simp at run
+
 /-- Storing at a heap-pre boundary replaces exactly the next element and
 reports whether its allocated length matches the replacement. -/
 @[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "heap_store_lemma"]
@@ -37,6 +298,98 @@ theorem heapStore_atPrefix {α β : Type} (pre replacement : List (HeapElement �
     simp only [heapStore, show ¬ elLength head + heapLength tail = 0 by omega, ↓reduceIte,
       show ¬ elLength head + heapLength tail < elLength head by omega, Nat.add_sub_cancel_left, ih]
     rfl
+
+/-- A successful allocation ending at an existing split replaces its unused cell. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "heap_store_unused_alt_thm"]
+theorem heapStoreUnusedAlt_shape {α β : Type} (offset length : Nat)
+    (heap first second heap2 : List (HeapElement α β)) (element : HeapElement α β) :
+    heapSplit (offset + length) heap = some (first, second) ∧
+      heapStoreUnusedAlt offset length element heap = (heap2, true) ∧
+      unusedSpaceInv (offset + elLength element) (length - elLength element) heap2 →
+    ∃ before, first = before ++ [.unused (length - 1)] ∧
+      heap = first ++ second ∧ heapLength before = offset ∧
+      heap2 = before ++ [element] ++ heapExpand (length - elLength element) ++ second := by
+  classical
+  rintro ⟨split, store, unused⟩
+  obtain ⟨firstLen, _, whole⟩ := Flapjack.Compiler.Backend.heapSplit_heapLength heap first second (offset + length) split
+  have positive : 0 < elLength element := by cases element <;> simp [elLength]
+  unfold heapStoreUnusedAlt at store
+  split at store
+  next condition =>
+    obtain ⟨found, fits⟩ := condition
+    have lengthPos : 0 < length := by omega
+    have lookupFirst : heapLookup offset first = some (.unused (length - 1)) := by
+      rw [← whole, Flapjack.Compiler.Backend.GenGc.heapLookup_append] at found
+      simpa [firstLen, show offset < offset + length by omega] using found
+    obtain ⟨before, after, firstEq, offsetEq⟩ := heapLookup_split first offset _ lookupFirst
+    have afterLen : heapLength after = 0 := by
+      have hlen : heapLength (.unused (length - 1) :: after) =
+          (length - 1 + 1) + heapLength after := rfl
+      rw [firstEq, heapLength_append, hlen] at firstLen
+      omega
+    have afterNil : after = [] := by
+      cases after with
+      | nil => rfl
+      | cons h t =>
+        have hp : 0 < elLength h := by cases h <;> simp [elLength]
+        change elLength h + heapLength t = 0 at afterLen
+        omega
+    subst after
+    refine ⟨before, ?_, whole.symm, offsetEq.symm, ?_⟩
+    · simpa using firstEq
+    · rw [← whole, firstEq] at store
+      rw [offsetEq] at store
+      simp only [List.append_assoc, List.singleton_append] at store
+      rw [heapStore_atPrefix] at store
+      have eq := congrArg Prod.fst store
+      simpa [List.append_assoc] using eq.symm
+  next => simp at store
+
+/-- An end-of-region allocation at a split replaces its unused cell. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "heap_store_unused_thm"]
+theorem heapStoreUnused_shape {α β : Type} (offset length : Nat)
+    (heap first second heap2 : List (HeapElement α β)) (element : HeapElement α β) :
+    heapSplit (offset + length) heap = some (first, second) ∧
+      heapStoreUnused offset length element heap = (heap2, true) ∧
+      unusedSpaceInv offset (length - elLength element) heap2 →
+    ∃ before, first = before ++ [.unused (length - 1)] ∧
+      heap = first ++ second ∧ heapLength before = offset ∧
+      heap2 = before ++ heapExpand (length - elLength element) ++ [element] ++ second := by
+  classical
+  rintro ⟨split, store, unused⟩
+  obtain ⟨firstLen, _, whole⟩ := Flapjack.Compiler.Backend.heapSplit_heapLength heap first second (offset + length) split
+  have positive : 0 < elLength element := by cases element <;> simp [elLength]
+  unfold heapStoreUnused at store
+  split at store
+  next condition =>
+    obtain ⟨found, fits⟩ := condition
+    have lengthPos : 0 < length := by omega
+    have lookupFirst : heapLookup offset first = some (.unused (length - 1)) := by
+      rw [← whole, Flapjack.Compiler.Backend.GenGc.heapLookup_append] at found
+      simpa [firstLen, show offset < offset + length by omega] using found
+    obtain ⟨before, after, firstEq, offsetEq⟩ := heapLookup_split first offset _ lookupFirst
+    have afterLen : heapLength after = 0 := by
+      have hlen : heapLength (.unused (length - 1) :: after) =
+          (length - 1 + 1) + heapLength after := rfl
+      rw [firstEq, heapLength_append, hlen] at firstLen
+      omega
+    have afterNil : after = [] := by
+      cases after with
+      | nil => rfl
+      | cons h t =>
+        have hp : 0 < elLength h := by cases h <;> simp [elLength]
+        change elLength h + heapLength t = 0 at afterLen
+        omega
+    subst after
+    refine ⟨before, ?_, whole.symm, offsetEq.symm, ?_⟩
+    · simpa using firstEq
+    · rw [← whole, firstEq] at store
+      rw [offsetEq] at store
+      simp only [List.append_assoc, List.singleton_append] at store
+      rw [heapStore_atPrefix] at store
+      have eq := congrArg Prod.fst store
+      simpa [List.append_assoc] using eq.symm
+  next => simp at store
 
 /-- Equal-sized reference blocks can be replaced at their heap-pre boundary. -/
 @[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "heap_store_RefBlock_thm"]

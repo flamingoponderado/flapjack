@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ValueArray
 public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BlockStack
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Number
 
 @[expose] public section
 
@@ -226,5 +227,49 @@ theorem memoryRel_deref {width : Nat} [NeZero width] (conf : Config) (bigEndian 
     · refine ⟨heap, limit, a, sp, sp1, gens, heapMem, ?_, limitBound, spaceBound⟩
       refine ⟨child :: .pointer ptr (.word 0) :: rest, extended, ?_⟩
       exact .cons memChild.symm (.cons parentAddr restAddresses)
+
+/-- A related array and in-bounds numeric index yield the encoded offset and
+extend the memory relation with the selected value. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "memory_rel_Deref"
+  (fmap_as_finite_support_relation := [store]) (words_as_type_indexed_bitvec)]
+theorem memoryRel_derefIndex {width : Nat} [NeZero width] (conf : Config) (bigEndian : Bool)
+    (next : Nat) (refs : Spt (BvlSem.Ref DataSem.Value)) (space : Nat)
+    (store : HolFiniteMapExact WordStoreHOL (WordLocW width))
+    (memory : BitVec width → WordLocW width) (domain : BitVec width → Bool)
+    (bit : Bool) (ref : Nat) (values : List DataSem.Value) (location indexLoc : WordLocW width)
+    (vars : List (DataSem.Value × WordLocW width)) (index : Nat)
+    (h : memoryRel conf bigEndian next refs space store memory domain
+      ((.refPtr bit ref, location) :: (.number (Int.ofNat index), indexLoc) :: vars) ∧
+      sptLookup ref refs = some (.valueArray values) ∧ goodDimindex width ∧ index < values.length) :
+    ∃ ptrWord indexWord addr offset : BitVec width,
+      location = .word ptrWord ∧ indexLoc = .word indexWord ∧
+      getRealAddr conf store ptrWord = some addr ∧ getRealOffset indexWord = some offset ∧
+      domain (addr + offset) = true ∧
+      memoryRel conf bigEndian next refs space store memory domain
+        ((values[index]'h.2.2.2, memory (addr + offset)) ::
+          (.refPtr bit ref, location) :: (.number (Int.ofNat index), indexLoc) :: vars) := by
+  obtain ⟨related, found, good, bound⟩ := h
+  obtain ⟨_, _, _, _, _, _, _, _, _, _, _, _, lengthBound⟩ :=
+    memoryRel_valueArrayImp conf bigEndian next refs space store memory domain bit ref values location
+      ((.number (Int.ofNat index), indexLoc) :: vars) ⟨related, found, good⟩
+  have small : smallInt width (Int.ofNat index) := by
+    rcases good with hw | hw <;> subst width <;> simp [smallInt] at lengthBound ⊢ <;> omega
+  have tail := memoryRel_tail conf bigEndian next refs space store memory domain (.refPtr bit ref, location)
+    ((.number (Int.ofNat index), indexLoc) :: vars) related
+  have indexEq := memoryRel_numberImp conf bigEndian next refs space store memory domain (Int.ofNat index)
+    indexLoc vars ⟨good, small, tail⟩
+  obtain ⟨w, addr, locEq, real, inside, extended⟩ :=
+    memoryRel_deref conf bigEndian next refs space store memory domain bit ref values location
+      ((.number (Int.ofNat index), indexLoc) :: vars) index ⟨related, found, good, bound⟩
+  let offset : BitVec width := StackRemove.bytesInWord width + BitVec.ofNat width index * StackRemove.bytesInWord width
+  have offsetEq : getRealOffset (smallnum (Int.ofNat index) : BitVec width) = some offset :=
+    getRealOffset_smallnum index good
+  have addressEq : addr + offset = addr + StackRemove.bytesInWord width +
+      StackRemove.bytesInWord width * BitVec.ofNat width index := by
+    dsimp [offset]
+    rw [BitVec.mul_comm, ← BitVec.add_assoc]
+  refine ⟨w, smallnum (Int.ofNat index), addr, offset, locEq, indexEq, real, offsetEq, ?_, ?_⟩
+  · simpa only [addressEq] using inside
+  · simpa only [addressEq] using extended
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

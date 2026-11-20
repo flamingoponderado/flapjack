@@ -67,6 +67,16 @@ def makePtr {α β : Type} {width : Nat} [NeZero width] (conf : Config) (offset 
     (_tag : α) (_length : β) : WordLocW width :=
   .word ((offset <<< (shiftLength conf - wordShiftAmount width)) ||| 1)
 
+/-- Construct the source's tagged constructor pointer. This definition is used
+by the memory-correctness builder, while `partWords` retains the compiler's
+separately specified offset-plus-bits expression. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "make_cons_ptr_def"
+  (words_as_type_indexed_bitvec)]
+def makeConsPtr {width : Nat} [NeZero width] (conf : Config) (offset : BitVec width)
+    (tag len : Nat) : WordLocW width :=
+  .word ((offset <<< (shiftLength conf - wordShiftAmount width)) ||| 1 |||
+    getLowerBits conf (.word (ptrBits conf tag len)))
+
 /-- Lower a closure constant part against the preceding constant memory. -/
 @[hol "cakeml/compiler/backend/data_to_wordScript.sml" "part_to_words_def"
   (words_as_type_indexed_bitvec)]

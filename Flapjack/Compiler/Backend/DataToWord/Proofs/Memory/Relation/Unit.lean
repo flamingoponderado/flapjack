@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.StackOperations
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BitLemmas
 
 @[expose] public section
 
@@ -100,5 +101,28 @@ theorem memoryRel_unit {width : Nat} [NeZero width] (conf : Config) (bigEndian :
   rintro ⟨⟨heap, limit, a, sp, sp1, gens, heapMem, wordInv, bound, spaceBound⟩, good⟩
   exact ⟨heap, limit, a, sp, sp1, gens, heapMem,
     wordMlInv_unit heap bigEndian a sp sp1 gens limit next conf refs vars ⟨wordInv, good⟩, bound, spaceBound⟩
+
+/-- An encodable nullary constructor can be prepended to the memory relation. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "memory_rel_Cons_empty"
+  (fmap_as_finite_support_relation := [store]) (words_as_type_indexed_bitvec)]
+theorem memoryRel_consEmpty {width : Nat} [NeZero width] (conf : Config) (bigEndian : Bool)
+    (next : Nat) (refs : Spt (BvlSem.Ref Flapjack.Compiler.Backend.DataSem.Value))
+    (space : Nat) (store : HolFiniteMapExact WordStoreHOL (WordLocW width))
+    (memory : BitVec width → WordLocW width) (domain : BitVec width → Bool)
+    (vars : List (Flapjack.Compiler.Backend.DataSem.Value × WordLocW width)) (tag : Nat) :
+    memoryRel conf bigEndian next refs space store memory domain vars ∧
+      tag < 2 ^ width / 16 ∧ goodDimindex width →
+    memoryRel conf bigEndian next refs space store memory domain
+      ((.block 0 tag [], .word (blockNil tag)) :: vars) := by
+  rintro ⟨⟨heap, limit, a, sp, sp1, gens, heapMem, ⟨roots, inv, addresses⟩, bound, spaceBound⟩, tagBound, good⟩
+  refine ⟨heap, limit, a, sp, sp1, gens, heapMem, ?_, bound, spaceBound⟩
+  refine ⟨.data (.word (blockNil tag)) :: roots, ?_, ?_⟩
+  · exact consThm_empty conf (vars.map Prod.fst) refs roots heap bigEndian a sp sp1 gens limit next tag ⟨inv, tagBound⟩
+  · apply List.Forall₂.cons
+    · have low : (blockNil (width := width) tag).getLsbD 0 = false := by
+        rcases good with h | h <;> subst width <;> rw [bitLowToNat] <;> simp [blockNil]
+      change WordLocW.word (blockNil tag &&& ~~~(1 : BitVec width)) = WordLocW.word (blockNil tag)
+      rw [bitAndNotOneEq _ low]
+    · exact addresses
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

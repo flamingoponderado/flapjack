@@ -56,6 +56,7 @@ UNCURRY_eq_pair_typed=UNCURRY (f :β -> γ -> α) (v :β # γ) = (z :α) ⇔ ∃
 word_list_def_typed=(∀(a :α word). word_list a ([] :β list) = (emp :(α word # β -> bool) -> bool)) ∧ ∀(a :α word) (x :β) (xs :β list). word_list a (x::xs) = (one (a,x) :(α word # β -> bool) -> bool) * word_list (a + (bytes_in_word :α word)) xs
 word_list_exists_def_typed=∀(a :α word) (n :num). (word_list_exists a n :(α word # β -> bool) -> bool) = SEP_EXISTS(xs :β list). word_list a xs * (cond (LENGTH xs = n) :(α word # β -> bool) -> bool)
 read_bytearray_def_typed=(∀(a :β word) (get_byte :β word -> α option). read_bytearray a (0 :num) get_byte = SOME ([] :α list)) ∧ ∀(a :β word) (n :num) (get_byte :β word -> α option). read_bytearray a (SUC n) get_byte = case get_byte a of (NONE :α option) => (NONE :α list option) | SOME b => case read_bytearray (a + (1w :β word)) n get_byte of (NONE :α list option) => (NONE :α list option) | SOME bs => SOME (b::bs)
+read_bytearray_LENGTH_typed=∀(n :num) (a :α word) (f :α word -> β option) (x :β list). read_bytearray a n f = SOME x ⇒ LENGTH x = n
 fun2set_disjoint_union_typed=DISJOINT (d1 :α -> bool) (d2 :α -> bool) ∧ (p :(α # β -> bool) -> bool) (fun2set ((m :α -> β),d1)) ∧ (q :(α # β -> bool) -> bool) (fun2set (m,d2)) ⇒ (p * q) (fun2set (m,d1 ∪ d2))
 UPDATE_LIST_def_typed=($=++ :(α -> β) -> (α # β) list -> α -> β) = FOLDL (flip (UNCURRY (UPDATE :α -> β -> (α -> β) -> α -> β)))
 APPLY_UPDATE_LIST_ALOOKUP_typed=∀(ls :(α # β) list) (f :α -> β) (x :α). (f =++ ls) x = case ALOOKUP (REVERSE ls) x of (NONE :β option) => f x | SOME y => y

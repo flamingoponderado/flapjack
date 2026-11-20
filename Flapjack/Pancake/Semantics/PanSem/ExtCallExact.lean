@@ -102,13 +102,14 @@ theorem readBytearrayHOL_eq_word8_projection {width : Nat} [NeZero width]
   induction length generalizing address with
   | zero => rfl
   | succ length ih =>
-      simp only [readBytearrayHOL, readBytearrayWordHOL]
+      simp only [readBytearrayWordHOL] at ih
+      simp only [readBytearrayHOL, readBytearrayWordHOL, readBytearrayGenericHOL]
       cases hByte : getByte address with
       | none => simp
       | some byte =>
           simp only [Option.map_some]
           rw [ih]
-          cases hRest : readBytearrayWordHOL (address + 1) length getByte <;>
+          cases hRest : readBytearrayGenericHOL (address + 1) length getByte <;>
             simp
 
 /-- End-to-end reader bridge for Pan memory: the UInt8 `ExtCall` adapter reads

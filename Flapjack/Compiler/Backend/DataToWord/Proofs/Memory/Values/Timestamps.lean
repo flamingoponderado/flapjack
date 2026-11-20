@@ -98,4 +98,26 @@ theorem mem_allTimestamps (value : Value) (ts : Nat) (stack : List Value) (refs 
   · obtain ⟨root, inStack, timestamp⟩ := valueTimestamp_origin stack value ts member h.2
     exact ⟨root, Or.inr inStack, timestamp⟩
 
+/-- A non-block stack value contributes no timestamps. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "all_ts_cons_no_block"]
+theorem allTimestamps_consNoBlock (refs : Spt (BvlSem.Ref Value)) (stack : List Value) (value : Value)
+    (nonblock : ∀ ts tag xs, value ≠ .block ts tag xs) :
+    allTimestamps refs (value :: stack) = allTimestamps refs stack := by
+  have noTimes : valueTimestamps value = [] := by
+    cases value <;> simp_all [valueTimestamps]
+  funext stamp
+  apply propext
+  constructor
+  · rintro ⟨v, source, timestamp⟩
+    rcases source with fromRef | inStack
+    · exact ⟨v, Or.inl fromRef, timestamp⟩
+    · rcases List.mem_cons.mp inStack with same | rest
+      · subst v
+        simp [noTimes] at timestamp
+      · exact ⟨v, Or.inr rest, timestamp⟩
+  · rintro ⟨v, source, timestamp⟩
+    rcases source with fromRef | inStack
+    · exact ⟨v, Or.inl fromRef, timestamp⟩
+    · exact ⟨v, Or.inr (List.mem_cons_of_mem _ inStack), timestamp⟩
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

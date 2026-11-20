@@ -80,17 +80,18 @@ theorem unusedSpaceInv_allocateData {α β : Type} (pre post : List (HeapElement
     (free - (len + 1)) allData
   simpa [heapLength_append, heapLength, elLength, List.append_assoc] using result
 
-/-- Allocating an immutable constructor from the available region preserves
-the collector invariant. The allocation fits in `sp`, so the reference
-boundary stays fixed even for a generational collector. -/
-theorem gcKindInv_allocateBlock {α β : Type} (conf : Config)
+/-- Allocating an immutable data cell before the reference boundary preserves
+collector bookkeeping. This Flapjack helper serves constructor and Word64
+allocation in HOL's memory-invariant proofs. -/
+theorem gcKindInv_allocateData {α β : Type} (conf : Config)
     (pre post : List (HeapElement α (HeapTag × List β))) (addresses : List (HeapAddress α))
-    (sp sp1 tag : Nat) (gens : GenState) (enough : addresses.length + 1 ≤ sp)
+    (words : List β) (tag : HeapTag) (sp sp1 len : Nat) (gens : GenState)
+    (immutable : ¬ isMutTag tag) (enough : len + 1 ≤ sp)
     (valid : gcKindInv conf (heapLength pre) sp sp1 gens (pre ++ heapExpand (sp + sp1) ++ post)) :
-    gcKindInv conf (heapLength pre + (addresses.length + 1)) (sp - (addresses.length + 1)) sp1 gens
-      (pre ++ [blockRep tag addresses] ++ heapExpand (sp + sp1 - (addresses.length + 1)) ++ post) := by
+    gcKindInv conf (heapLength pre + (len + 1)) (sp - (len + 1)) sp1 gens
+      (pre ++ [.dataElement addresses len (tag, words)] ++ heapExpand (sp + sp1 - (len + 1)) ++ post) := by
   have boundary : heapLength pre + sp + sp1 =
-      (heapLength pre + (addresses.length + 1)) + (sp - (addresses.length + 1)) + sp1 := by omega
+      (heapLength pre + (len + 1)) + (sp - (len + 1)) + sp1 := by omega
   cases kind : conf.gcKind with
   | none => simpa [gcKindInv, kind] using valid
   | simple => simpa [gcKindInv, kind] using valid
@@ -108,16 +109,16 @@ theorem gcKindInv_allocateBlock {α β : Type} (conf : Config)
         simpa [List.append_assoc] using knownSplit
       exact Option.some.inj same
     obtain ⟨rfl, rfl⟩ := splitEq
-    let newPrefix := pre ++ [blockRep tag addresses] ++ heapExpand (sp + sp1 - (addresses.length + 1))
+    let newPrefix := pre ++ [(.dataElement addresses len (tag, words) : HeapElement α (HeapTag × List β))] ++ heapExpand (sp + sp1 - (len + 1))
     have newIndex : heapLength newPrefix = heapLength pre + sp + sp1 := by
       simp only [newPrefix, heapLength_append, heapLength_heapExpand]
-      have one : heapLength [blockRep (β := β) tag addresses] = addresses.length + 1 := by
-        simp [heapLength, blockRep, elLength]
+      have one : heapLength [(.dataElement addresses len (tag, words) : HeapElement α (HeapTag × List β))] = len + 1 := by
+        simp [heapLength, elLength]
       rw [one]
       omega
     have newGens := genStateOk_allocateSuffix pre (heapExpand (sp + sp1) ++ post)
-      ([blockRep tag addresses] ++ heapExpand (sp + sp1 - (addresses.length + 1)) ++ post)
-      (heapLength pre + sp + sp1) (addresses.length + 1) gens (by simpa [List.append_assoc] using oldGens)
+      ([(.dataElement addresses len (tag, words) : HeapElement α (HeapTag × List β))] ++ heapExpand (sp + sp1 - (len + 1)) ++ post)
+      (heapLength pre + sp + sp1) (len + 1) gens (by simpa [List.append_assoc] using oldGens)
     refine ⟨?_, newPrefix, post, ?_, ?_, refs⟩
     · simpa [boundary, List.append_assoc] using newGens
     · rw [← boundary, ← newIndex]
@@ -127,8 +128,8 @@ theorem gcKindInv_allocateBlock {α β : Type} (conf : Config)
       rcases member with (fromPre | same) | fromFree
       · exact noRefs element (List.mem_append_left _ fromPre)
       · subst element
-        simp [isRef, isMutTag, blockRep]
-      · by_cases zero : sp + sp1 - (addresses.length + 1) = 0
+        simpa [isRef] using immutable
+      · by_cases zero : sp + sp1 - (len + 1) = 0
         · simp [heapExpand, zero] at fromFree
         · simp [heapExpand, zero] at fromFree
           subst element
@@ -239,7 +240,11 @@ theorem absMlInv_allocateBlock {width : Nat} [NeZero width] (conf : Config)
   have heapResult := heapOk_allocateBlock pre post (addresses ++ roots) addresses (sp + sp1) tag limit
     (.word (ptrBits conf tag addresses.length)) (by omega) rootsValid heapValid
     (by intro address member; exact List.mem_append_left _ member)
-  have gcResult := gcKindInv_allocateBlock conf pre post addresses sp sp1 tag gens enough gcValid
+  have gcResult : gcKindInv conf (heapLength pre + (addresses.length + 1))
+      (sp - (addresses.length + 1)) sp1 gens
+      (pre ++ [blockRep tag addresses] ++ heapExpand (sp + sp1 - (addresses.length + 1)) ++ post) := by
+    simpa [blockRep] using gcKindInv_allocateData conf pre post addresses ([] : List (WordLocW width))
+      (.blockTag tag) sp sp1 addresses.length gens (by simp [isMutTag]) enough gcValid
   have unusedResult := unusedSpaceInv_allocateData pre post addresses addresses.length (sp + sp1) (.blockTag tag, []) preData
   have remainingEq : (sp + sp1) - (addresses.length + 1) = (sp - (addresses.length + 1)) + sp1 := by omega
   have positive : sp + sp1 ≠ 0 := by omega

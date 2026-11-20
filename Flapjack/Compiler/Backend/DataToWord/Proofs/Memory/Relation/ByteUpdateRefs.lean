@@ -34,11 +34,12 @@ theorem allValues_insertByteArray_subset (refs : Spt (BvlSem.Ref Value)) (stack 
       exact Or.inr (Or.inr (Or.inl ⟨index, tag, finalised, left, child, right, lookup, nested⟩))
   · exact Or.inr (Or.inr (Or.inr stackMember))
 
-/-- Replacing an existing byte array preserves all reachable values because
-neither its old nor its new byte payload contains references or values. -/
-theorem allValues_replaceByteArray (refs : Spt (BvlSem.Ref Value)) (stack : List Value)
-    (ptr : Nat) (oldFlag newFlag : Bool) (oldBytes newBytes : List (BitVec 8))
-    (found : sptLookup ptr refs = some (.byteArray oldFlag oldBytes)) :
+/-- Inserting a byte array at an absent or byte-array key preserves all reachable
+values because byte payloads contain no references or values. -/
+theorem allValues_safeInsertByteArray (refs : Spt (BvlSem.Ref Value)) (stack : List Value)
+    (ptr : Nat) (newFlag : Bool) (newBytes : List (BitVec 8))
+    (safe : sptLookup ptr refs = none ∨ ∃ oldFlag oldBytes,
+      sptLookup ptr refs = some (.byteArray oldFlag oldBytes)) :
     allValues (sptInsert ptr (.byteArray newFlag newBytes) refs) stack = allValues refs stack := by
   funext value
   apply propext
@@ -49,61 +50,64 @@ theorem allValues_replaceByteArray (refs : Spt (BvlSem.Ref Value)) (stack : List
       ⟨index, tag, finalised, left, child, right, lookup, nested⟩ | stackMember
     · by_cases same : index = ptr
       · subst index
-        rw [found] at lookup
-        cases lookup
+        rcases safe with absent | ⟨oldFlag, oldBytes, found⟩ <;> simp_all
       · exact Or.inl ⟨index, values, by rw [sptLookup_sptInsert_ne ptr index _ refs same]; exact lookup, nested⟩
     · by_cases same : index = ptr
       · subst index
-        rw [found] at lookup
-        cases lookup
+        rcases safe with absent | ⟨oldFlag, oldBytes, found⟩ <;> simp_all
       · exact Or.inr (Or.inl ⟨index, mode, child, by rw [sptLookup_sptInsert_ne ptr index _ refs same]; exact lookup, nested⟩)
     · by_cases same : index = ptr
       · subst index
-        rw [found] at lookup
-        cases lookup
+        rcases safe with absent | ⟨oldFlag, oldBytes, found⟩ <;> simp_all
       · exact Or.inr (Or.inr (Or.inl ⟨index, tag, finalised, left, child, right,
           by rw [sptLookup_sptInsert_ne ptr index _ refs same]; exact lookup, nested⟩))
     · exact Or.inr (Or.inr (Or.inr stackMember))
 
-/-- Replacing a byte payload does not alter any reference edge. -/
-theorem refEdge_replaceByteArray (refs : Spt (BvlSem.Ref Value)) (ptr : Nat)
-    (oldFlag newFlag : Bool) (oldBytes newBytes : List (BitVec 8))
-    (found : sptLookup ptr refs = some (.byteArray oldFlag oldBytes)) :
+/-- Inserting at an absent or byte-array key does not alter reference edges. -/
+theorem refEdge_safeInsertByteArray (refs : Spt (BvlSem.Ref Value)) (ptr : Nat)
+    (newFlag : Bool) (newBytes : List (BitVec 8))
+    (safe : sptLookup ptr refs = none ∨ ∃ oldFlag oldBytes,
+      sptLookup ptr refs = some (.byteArray oldFlag oldBytes)) :
     refEdge (sptInsert ptr (.byteArray newFlag newBytes) refs) = refEdge refs := by
   funext index target
   by_cases same : index = ptr
   · subst index
-    simp [refEdge, sptLookup_sptInsert_same, found]
+    rcases safe with absent | ⟨oldFlag, oldBytes, found⟩ <;>
+      simp [refEdge, sptLookup_sptInsert_same, *]
   · simp [refEdge, sptLookup_sptInsert_ne ptr index _ refs same]
 
-/-- All reference reachability paths are unchanged by a byte payload update. -/
-theorem reachableRefs_replaceByteArray (refs : Spt (BvlSem.Ref Value)) (roots : List Value) (ptr : Nat)
-    (oldFlag newFlag : Bool) (oldBytes newBytes : List (BitVec 8))
-    (found : sptLookup ptr refs = some (.byteArray oldFlag oldBytes)) :
+/-- Reference reachability paths are unchanged by a safe byte-array insertion. -/
+theorem reachableRefs_safeInsertByteArray (refs : Spt (BvlSem.Ref Value)) (roots : List Value) (ptr : Nat)
+    (newFlag : Bool) (newBytes : List (BitVec 8))
+    (safe : sptLookup ptr refs = none ∨ ∃ oldFlag oldBytes,
+      sptLookup ptr refs = some (.byteArray oldFlag oldBytes)) :
     reachableRefs roots (sptInsert ptr (.byteArray newFlag newBytes) refs) = reachableRefs roots refs := by
   funext target
   unfold reachableRefs
-  rw [refEdge_replaceByteArray refs ptr oldFlag newFlag oldBytes newBytes found]
+  rw [refEdge_safeInsertByteArray refs ptr newFlag newBytes safe]
 
-/-- The directly stored values are unchanged when only a byte payload changes. -/
-theorem findRef_replaceByteArray (refs : Spt (BvlSem.Ref Value)) (ptr index : Nat) (value : Value)
-    (oldFlag newFlag : Bool) (oldBytes newBytes : List (BitVec 8))
-    (found : sptLookup ptr refs = some (.byteArray oldFlag oldBytes)) :
+/-- The directly stored values are unchanged by a safe byte-array insertion. -/
+theorem findRef_safeInsertByteArray (refs : Spt (BvlSem.Ref Value)) (ptr index : Nat) (value : Value)
+    (newFlag : Bool) (newBytes : List (BitVec 8))
+    (safe : sptLookup ptr refs = none ∨ ∃ oldFlag oldBytes,
+      sptLookup ptr refs = some (.byteArray oldFlag oldBytes)) :
     (∃ cell, sptLookup index (sptInsert ptr (.byteArray newFlag newBytes) refs) = some cell ∧ findRef cell value) ↔
       (∃ cell, sptLookup index refs = some cell ∧ findRef cell value) := by
   by_cases same : index = ptr
   · subst index
-    simp [sptLookup_sptInsert_same, found, findRef]
+    rcases safe with absent | ⟨oldFlag, oldBytes, found⟩ <;>
+      simp [sptLookup_sptInsert_same, findRef, *]
   · simp only [sptLookup_sptInsert_ne ptr index _ refs same]
 
-/-- A byte payload update leaves the set of all referenced timestamps intact. -/
-theorem allTimestamps_replaceByteArray (refs : Spt (BvlSem.Ref Value)) (stack : List Value) (ptr : Nat)
-    (oldFlag newFlag : Bool) (oldBytes newBytes : List (BitVec 8))
-    (found : sptLookup ptr refs = some (.byteArray oldFlag oldBytes)) :
+/-- A safe byte-array insertion leaves the set of referenced timestamps intact. -/
+theorem allTimestamps_safeInsertByteArray (refs : Spt (BvlSem.Ref Value)) (stack : List Value) (ptr : Nat)
+    (newFlag : Bool) (newBytes : List (BitVec 8))
+    (safe : sptLookup ptr refs = none ∨ ∃ oldFlag oldBytes,
+      sptLookup ptr refs = some (.byteArray oldFlag oldBytes)) :
     allTimestamps (sptInsert ptr (.byteArray newFlag newBytes) refs) stack = allTimestamps refs stack := by
   funext stamp
   apply propext
-  simp only [allTimestamps, findRef_replaceByteArray refs ptr _ _ oldFlag newFlag oldBytes newBytes found]
+  simp only [allTimestamps, findRef_safeInsertByteArray refs ptr _ _ newFlag newBytes safe]
 
 /-- Replacing a reference cell by a byte array preserves block uniqueness. -/
 @[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "blocks_unique_insert_ByteArray"]
@@ -115,5 +119,15 @@ theorem blocksUnique_insertByteArray (next : Nat) (refs : Spt (BvlSem.Ref Value)
   exact unique stamp tag1 xs1 tag2 xs2
     ⟨allValues_insertByteArray_subset refs _ ptr flag bytes _ h.1, h.2.1,
       allValues_insertByteArray_subset refs _ ptr flag bytes _ h.2.2.1, h.2.2.2⟩
+
+/-- A freshly inserted byte array and its reference preserve block uniqueness. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "blocks_unique_new_byte_alt"]
+theorem blocksUnique_newByte (next : Nat) (refs : Spt (BvlSem.Ref Value)) (stack : List Value)
+    (ptr : Nat) (flag bit : Bool) (bytes : List (BitVec 8)) :
+    blocksUnique next (allValues refs stack) →
+      blocksUnique next (allValues (sptInsert ptr (.byteArray flag bytes) refs) (.refPtr bit ptr :: stack)) := by
+  intro unique
+  apply blocksUnique_insertByteArray next refs bit ptr stack flag bytes
+  simpa [blocksUnique, allValues, valueListValues] using unique
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

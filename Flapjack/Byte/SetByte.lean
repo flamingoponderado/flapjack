@@ -16,4 +16,15 @@ def setByte {width : Nat} [NeZero width] (address : BitVec width)
   (wordSliceAlt width (index + 8) word ||| (byte.setWidth width <<< index)) |||
     wordSliceAlt index 0 word
 
+/-- Addresses with the same byte-lane offset produce the same byte update. -/
+@[hol "HOL/src/n-bit/byteScript.sml" "set_byte_change_a"
+  (words_as_type_indexed_bitvec)]
+theorem setByte_changeAddress {width : Nat} [NeZero width]
+    (address address' : BitVec width) (byte : BitVec 8) (word : BitVec width)
+    (bigEndian : Bool) :
+    address.toNat % (width / 8) = address'.toNat % (width / 8) →
+      setByte address byte word bigEndian = setByte address' byte word bigEndian := by
+  intro same
+  simp [setByte, byteIndex, same]
+
 end Flapjack.HolByte

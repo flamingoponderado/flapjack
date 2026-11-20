@@ -39,7 +39,7 @@ private theorem readArray_mono {width : Nat} [NeZero width]
     (h : readBytearrayWordHOL address length source = some bytes) :
     readBytearrayWordHOL address length target = some bytes := by
   induction length generalizing address bytes with
-  | zero => simpa [readBytearrayWordHOL] using h
+  | zero => simpa [readBytearrayWordHOL, readBytearrayGenericHOL] using h
   | succ length ih =>
       change (source address).bind (fun byte =>
         (readBytearrayWordHOL (address + 1) length source).bind
@@ -51,7 +51,7 @@ private theorem readArray_mono {width : Nat} [NeZero width]
       | none => simp only [hb, Option.bind_none, reduceCtorEq] at h
       | some byte =>
           rw [hbyte address byte hb]
-          cases hr : readBytearrayWordHOL (address + 1) length source with
+          cases hr : readBytearrayGenericHOL (address + 1) length source with
           | none => simp only [hb, hr, Option.bind_some, Option.bind_none, reduceCtorEq] at h
           | some rest =>
               rw [ih (address + 1) rest hr]

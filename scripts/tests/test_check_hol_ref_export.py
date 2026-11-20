@@ -496,6 +496,7 @@ class HolRefExportTest(unittest.TestCase):
                     "import Flapjack.HolRef.GeneraliseLengthAudit\n"
                     "import Flapjack.HolRef.InferSubstSubmapAudit\n"
                     "import Flapjack.HolRef.TypeSubstWalkstarAudit\n"
+                    "import Flapjack.HolRef.JoinEnvLocalsAudit\n"
                     "import Flapjack.C\nopen Lean Elab Command Flapjack\n#emit_hol_ref_export\n")
         batches = MODULE.export_batches(umbrella, exporter, count=2)
         self.assertEqual(len(batches), 2)
@@ -505,12 +506,14 @@ class HolRefExportTest(unittest.TestCase):
         self.assertTrue(all("import Flapjack.HolRef.GeneraliseLengthAudit\n" in batch for batch in batches))
         self.assertTrue(all("import Flapjack.HolRef.InferSubstSubmapAudit\n" in batch for batch in batches))
         self.assertTrue(all("import Flapjack.HolRef.TypeSubstWalkstarAudit\n" in batch for batch in batches))
+        self.assertTrue(all("import Flapjack.HolRef.JoinEnvLocalsAudit\n" in batch for batch in batches))
 
     def test_batches_reject_non_import_umbrella(self):
         exporter = ("import Flapjack\nimport Flapjack.Test.NestedRelationAudit\n"
                     "import Flapjack.HolRef.GeneraliseLengthAudit\n"
                     "import Flapjack.HolRef.InferSubstSubmapAudit\n"
                     "import Flapjack.HolRef.TypeSubstWalkstarAudit\n"
+                    "import Flapjack.HolRef.JoinEnvLocalsAudit\n"
                     "open Lean Elab Command Flapjack\n")
         with self.assertRaisesRegex(ValueError, "import-only"):
             MODULE.export_batches("import Flapjack.A\ndef extra := 1\n", exporter)
@@ -532,6 +535,15 @@ class HolRefExportTest(unittest.TestCase):
         exporter = ("import Flapjack\nimport Flapjack.Test.NestedRelationAudit\n"
                     "import Flapjack.HolRef.GeneraliseLengthAudit\n"
                     "import Flapjack.HolRef.InferSubstSubmapAudit\n"
+                    "open Lean Elab Command Flapjack\n")
+        with self.assertRaisesRegex(ValueError, "shared audit modules"):
+            MODULE.export_batches("import Flapjack.A\n", exporter)
+
+    def test_batches_require_join_env_locals_audit(self):
+        exporter = ("import Flapjack\nimport Flapjack.Test.NestedRelationAudit\n"
+                    "import Flapjack.HolRef.GeneraliseLengthAudit\n"
+                    "import Flapjack.HolRef.InferSubstSubmapAudit\n"
+                    "import Flapjack.HolRef.TypeSubstWalkstarAudit\n"
                     "open Lean Elab Command Flapjack\n")
         with self.assertRaisesRegex(ValueError, "shared audit modules"):
             MODULE.export_batches("import Flapjack.A\n", exporter)
