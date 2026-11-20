@@ -115,4 +115,60 @@ theorem simpleStateRel_fdom {C D F : Type} (vr : Value → Value → Prop)
   obtain ⟨rel, related⟩ := h
   exact (rel.2.2.2.2.1 s t related).2.1
 
+/-- The simple state relation is preserved by a matching FFI-state update. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "simple_state_rel_update_ffi"
+  (fmap_as_finite_support := [refs, code])]
+theorem simpleStateRel_update_ffi {C D F : Type} (vr : Value → Value → Prop)
+    (sr : State C F → State D F → Prop) (s : State C F) (t : State D F)
+    (f : HolFfiState F) (h : simpleStateRel vr sr ∧ sr s t) :
+    sr { s with ffi := f } { t with ffi := f } := by
+  obtain ⟨rel, related⟩ := h
+  exact rel.2.2.2.2.2.1 f s t related
+
+/-- The simple state relation is preserved by equal byte-array updates. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "simple_state_rel_update_bytes"
+  (fmap_as_finite_support := [refs, code])]
+theorem simpleStateRel_update_bytes {C D F : Type} (vr : Value → Value → Prop)
+    (sr : State C F → State D F → Prop) (s : State C F) (t : State D F)
+    (ptr : Nat) (bytes : List (BitVec 8)) (h : simpleStateRel vr sr ∧ sr s t) :
+    sr { s with refs := s.refs.updateEq (ptr, .byteArray bytes) }
+      { t with refs := t.refs.updateEq (ptr, .byteArray bytes) } := by
+  obtain ⟨rel, related⟩ := h
+  exact rel.2.2.2.2.2.2.1 bytes s t ptr related
+
+/-- The simple state relation is preserved by related value-array updates. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "simple_state_rel_update_values"
+  (fmap_as_finite_support := [refs, code])]
+theorem simpleStateRel_update_values {C D F : Type} (vr : Value → Value → Prop)
+    (sr : State C F → State D F → Prop) (s : State C F) (t : State D F)
+    (xs ys : List Value) (ptr : Nat)
+    (h : simpleStateRel vr sr ∧ sr s t ∧ List.Forall₂ vr xs ys) :
+    sr { s with refs := s.refs.updateEq (ptr, .valueArray xs) }
+      { t with refs := t.refs.updateEq (ptr, .valueArray ys) } := by
+  obtain ⟨rel, related, fields⟩ := h
+  exact rel.2.2.2.2.2.2.2.1 s t ptr xs ys ⟨related, fields⟩
+
+/-- The simple state relation is preserved by related thunk updates. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "simple_state_rel_update_thunks"
+  (fmap_as_finite_support := [refs, code])]
+theorem simpleStateRel_update_thunks {C D F : Type} (vr : Value → Value → Prop)
+    (sr : State C F → State D F → Prop) (s : State C F) (t : State D F)
+    (v w : Value) (ptr : Nat) (mode : Flapjack.AstHOL.ThunkMode)
+    (h : simpleStateRel vr sr ∧ sr s t ∧ vr v w) :
+    sr { s with refs := s.refs.updateEq (ptr, .thunk mode v) }
+      { t with refs := t.refs.updateEq (ptr, .thunk mode w) } := by
+  obtain ⟨rel, related, values⟩ := h
+  exact rel.2.2.2.2.2.2.2.2.1 s t ptr mode v w ⟨related, values⟩
+
+/-- The simple state relation is preserved by related global-list updates. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "simple_state_rel_update_globals"
+  (fmap_as_finite_support := [refs, code])]
+theorem simpleStateRel_update_globals {C D F : Type} (vr : Value → Value → Prop)
+    (sr : State C F → State D F → Prop) (s : State C F) (t : State D F)
+    (xs ys : List (Option Value))
+    (h : simpleStateRel vr sr ∧ sr s t ∧ List.Forall₂ (optionRel vr) xs ys) :
+    sr { s with globals := xs } { t with globals := ys } := by
+  obtain ⟨rel, related, globals⟩ := h
+  exact rel.2.2.2.2.2.2.2.2.2 s t xs ys ⟨related, globals⟩
+
 end Flapjack.Compiler.Backend.ClosProps
