@@ -3,6 +3,7 @@ module
 public meta import Lean
 public meta import Lean.Util.CollectAxioms
 public meta import Flapjack.HolRef
+public meta import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.JoinZip
 
 public meta section
 
@@ -11,6 +12,31 @@ public meta section
 necessary; this audit is not a cross-prover equivalence proof. -/
 namespace Flapjack
 open Lean Meta
+
+open Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
+
+/-- Independent expected type for the direct join-env empty-list theorem. -/
+private def expectedJoinEnvNil : Prop :=
+  ∀ {α β : Type} [Nonempty α] (s : Spt α), joinEnv s ([] : List (Nat × β)) = []
+
+/-- Independent expected type for the joined environment zip theorem. -/
+private def expectedJoinEnvZip : Prop :=
+  ∀ {width : Nat} [NeZero width] {β : Type} [Nonempty β]
+    (vs : List (Nat × WordLocW width)) (s : Spt β) (zs : List (WordLocW width)),
+    ((∀ p ∈ vs, p.1 ≠ 0 ∧ p.1 % 2 = 0) ∧ (joinEnv s vs).length = zs.length ∧
+      ListRel (fun x y => (wordSemIsWordLoc x = wordSemIsWordLoc y) ∧
+        (wordSemIsWordLoc x = false → x = y)) ((joinEnv s vs).map Prod.snd) zs) →
+    joinEnv s (List.zip (vs.map Prod.fst) (locMerge (vs.map Prod.snd) (zs.filter wordSemIsWordLoc))) =
+      List.zip ((joinEnv s vs).map Prod.fst) zs
+
+/-- Independent expected type for the joined environment length theorem. -/
+private def expectedJoinEnvLength : Prop :=
+  ∀ {width : Nat} [NeZero width] {β : Type} [Nonempty β]
+    (vs : List (Nat × WordLocW width)) (zs : List (WordLocW width)) (s : Spt β),
+    (ListRel (fun x y => (wordSemIsWordLoc x = wordSemIsWordLoc y) ∧
+        (wordSemIsWordLoc x = false → x = y)) ((joinEnv s vs).map Prod.snd) zs ∧
+      (∀ p ∈ vs, p.1 ≠ 0 ∧ p.1 % 2 = 0) ∧ (joinEnv s vs).length = zs.length) →
+    ((vs.map Prod.snd).filter wordSemIsWordLoc).length = (zs.filter wordSemIsWordLoc).length
 
 private def gcNamespace : Name := `Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
 private def joinEnvName : Name := `Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.joinEnv
@@ -132,6 +158,48 @@ def joinEnvLocalsBundleProblems (target : Name) : MetaM (Array String) := do
     for axiomName in ← Lean.collectAxioms name do
       unless #[`propext, `Classical.choice, `Quot.sound].contains axiomName do
         problems := problems.push s!"{name} depends on unexpected axiom {axiomName}"
+  return problems
+
+/-- Compare a direct join-env statement against its independent complete type. -/
+def joinEnvDirectTypeProblems (target : Name) (type : Expr) : MetaM (Array String) := do
+  let expected := if target == gcNamespace ++ `joinEnv_nil then ``expectedJoinEnvNil
+    else if target == gcNamespace ++ `joinEnv_eq_zip then ``expectedJoinEnvZip
+    else if target == gcNamespace ++ `length_filter_snd_joinEnv_imp then ``expectedJoinEnvLength
+    else Name.anonymous
+  if expected == Name.anonymous then return #["unexpected direct joinEnv target"]
+  let some (.defnInfo spec) := (← getEnv).find? expected | return #["missing independent expected type"]
+  if ← isDefEq type spec.value then return #[]
+  return #["direct joinEnv theorem type differs from the complete audited statement"]
+
+/-- Audit direct join-env uses against independently written complete theorem types. -/
+def joinEnvDirectProblems (target : Name) : MetaM (Array String) := do
+  let nil := gcNamespace ++ `joinEnv_nil
+  let zip := gcNamespace ++ `joinEnv_eq_zip
+  let length := gcNamespace ++ `length_filter_snd_joinEnv_imp
+  unless #[nil, zip, length].contains target do return #["unexpected direct joinEnv target"]
+  let env ← getEnv
+  let producerRef : HolRef := {
+    path := "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", name := "join_env_def",
+    totalFunctionInhabitants := #["α"] }
+  unless HolRef.get? env joinEnvName == some producerRef do
+    return #["joinEnv must retain its reviewed HOL THE reference"]
+  let producerOwner := match env.getModuleIdxFor? joinEnvName with
+    | some idx => env.header.moduleNames[idx.toNat]!
+    | none => env.mainModule
+  unless producerOwner == gcNamespace ++ `StackRel do
+    return #["joinEnv has the wrong defining module"]
+  let some (.thmInfo info) := env.find? target | return #["direct joinEnv target must be a theorem"]
+  let typeProblems ← joinEnvDirectTypeProblems target info.type
+  unless typeProblems.isEmpty do return typeProblems
+  let mut problems := #[]
+  let owner := match env.getModuleIdxFor? target with
+    | some idx => env.header.moduleNames[idx.toNat]!
+    | none => env.mainModule
+  let expectedOwner := gcNamespace ++ (if target == nil then `StackRel else `JoinZip)
+  unless owner == expectedOwner do problems := problems.push "direct joinEnv theorem has the wrong owner"
+  for axiomName in ← Lean.collectAxioms target do
+    unless #[`propext, `Classical.choice, `Quot.sound].contains axiomName do
+      problems := problems.push s!"{target} depends on unexpected axiom {axiomName}"
   return problems
 
 end Flapjack

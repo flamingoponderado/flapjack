@@ -5083,6 +5083,25 @@ def reals_as_rational_cuts_errors(declaration_source: str, qualified: bool,
     return []
 
 
+def matches_inhabitance_baseline(signature: str, entry: dict) -> bool:
+    """Pin a legacy exception to its original signature and instance binders."""
+    code = strip_lean_comments(signature)
+    assignment = top_level_assignment_offset(code)
+    instances = sorted(TOTAL_FUNCTION_INSTANCE_RE.findall(code[:assignment] if assignment is not None else code))
+    return bool(instances and instances == entry.get("instances") and
+                hashlib.sha256(signature.encode()).hexdigest() == entry.get("signature_sha256"))
+
+
+def unqualified_inhabitants_errors(signature: str, qualified: bool) -> list[str]:
+    """Reject unrecorded HOL-type inhabitance assumptions on tagged declarations."""
+    code = strip_lean_comments(signature)
+    assignment = top_level_assignment_offset(code)
+    instances = TOTAL_FUNCTION_INSTANCE_RE.findall(code[:assignment] if assignment is not None else code)
+    if instances and not qualified:
+        return ["Nonempty/Inhabited instance requires a reviewed inhabitant qualifier"]
+    return []
+
+
 def total_function_inhabitants_errors(signature: str, declaration_source: str,
                                       listed: tuple[str, ...],
                                       transitive_rendering: str | None = None) -> list[str]:
@@ -5093,6 +5112,9 @@ def total_function_inhabitants_errors(signature: str, declaration_source: str,
     change, and source review must confirm the instance is used only through
     those renderings."""
     signature_code = strip_lean_comments(signature)
+    assignment = top_level_assignment_offset(signature_code)
+    if assignment is not None:
+        signature_code = signature_code[:assignment]
     if not listed or "" in listed:
         return ["total_function_inhabitants requires distinct type binders"]
     duplicates = sorted({name for name in listed if listed.count(name) > 1})
@@ -5126,9 +5148,16 @@ def total_function_inhabitants_errors(signature: str, declaration_source: str,
                 f"the signature binds a Nonempty/Inhabited instance for {name}, which "
                 "total_function_inhabitants does not list")
     source_code = strip_lean_comments(declaration_source)
-    if not any(identifier_token_occurs(source_code, name)
+    # A theorem proof may mention anything; only its signature is evidence that
+    # a total rendering occurs in its HOL statement. Definitions use their body.
+    if re.search(r"\b(?:theorem|lemma)\b", signature_code):
+        assignment = top_level_assignment_offset(signature_code)
+        rendering_code = signature_code[:assignment] if assignment is not None else signature_code
+    else:
+        rendering_code = source_code
+    if not any(identifier_token_occurs(rendering_code, name)
                for name in TOTAL_FUNCTION_RENDERING_NAMES) and not (
-            transitive_rendering and identifier_token_occurs(source_code, transitive_rendering)):
+            transitive_rendering and identifier_token_occurs(rendering_code, transitive_rendering)):
         errors.append(
             "total_function_inhabitants requires the declaration's own source to use a "
             "reviewed total-function rendering ("
@@ -5144,6 +5173,14 @@ def join_env_locals_transitive_rendering(hol_path: str, hol_name: str, lean_path
     wrapper body, and the full theorem statements; this identifies a source site
     and does not by itself establish semantic correspondence.
     """
+    direct = {
+        ("join_env_NIL", "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/StackRel.lean", "joinEnv_nil", ("α",)),
+        ("join_env_EQ_ZIP", "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/JoinZip.lean", "joinEnv_eq_zip", ("β",)),
+        ("LENGTH_MAP_SND_join_env_IMP", "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/JoinZip.lean", "length_filter_snd_joinEnv_imp", ("β",)),
+    }
+    if (hol_path == "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" and
+            (hol_name, lean_path, lean_name, listed) in direct):
+        return "joinEnv"
     if (hol_path != "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" or
             lean_path != "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/JoinEnvLocals.lean" or
             listed != ("α",)):
@@ -6754,6 +6791,18 @@ def main(argv: list[str]) -> int:
         errors.extend(f"guarded unifier preflight: {error}" for error in
                       unify_eq_tunify_preflight(ROOT, observation_records))
     reals_names = reals_rendering_names(ROOT)
+    baseline_path = ROOT / "scripts/hol-unqualified-inhabitants-baseline.json"
+    baseline_data = json.loads(baseline_path.read_text()) if baseline_path.is_file() else {}
+    baseline_entries = baseline_data.get("entries", [])
+    proof_only_entries = baseline_data.get("proof_only_renderings_pending_classification", [])
+    proof_only = {(e["path"], e["declaration"], e["hol_path"], e["hol_name"]): e for e in proof_only_entries}
+    if len(proof_only) != len(proof_only_entries):
+        errors.append("duplicate proof-only rendering baseline entry")
+    used_proof_only: set[tuple[str, str, str, str]] = set()
+    baseline = {(e["path"], e["declaration"], e["hol_path"], e["hol_name"]): e for e in baseline_entries}
+    if len(baseline) != len(baseline_entries):
+        errors.append("duplicate unqualified inhabitance baseline entry")
+    used_baseline: set[tuple[str, str, str, str]] = set()
     for lean_path in files:
         rel = lean_path.relative_to(ROOT).as_posix()
         lines = lean_path.read_text(encoding="utf-8").splitlines()
@@ -7064,19 +7113,32 @@ def main(argv: list[str]) -> int:
                 else:
                     errors.extend(f"{where}: {error}" for error in fmap_result_observation_errors(
                         lines, module, declaration_source, result_observations, observation_records))
+            inhabitant_signature = tagged_declaration_text(lines, number)
+            inhabitant_qualified = bool(total_function_inhabitants or hol_existential_inhabitants or
+                gc_lemma_existential_inhabitants or new_ref_existential_inhabitants or
+                write_word64_existential_inhabitants or fmap_existentials)
+            legacy_key = (rel, find_lean_decl(lines, number - 1), hol_path, hol_name)
+            legacy_accepted = False
+            if not inhabitant_qualified and legacy_key in baseline:
+                entry = baseline[legacy_key]
+                if matches_inhabitance_baseline(inhabitant_signature, entry):
+                    used_baseline.add(legacy_key)
+                    legacy_accepted = True
+            errors.extend(f"{where}: {error}" for error in unqualified_inhabitants_errors(
+                inhabitant_signature, inhabitant_qualified or legacy_accepted))
             if total_function_inhabitants:
                 transitive = join_env_locals_transitive_rendering(
                     hol_path, hol_name, rel, find_lean_decl(lines, number - 1),
                     total_function_inhabitants)
-                errors.extend(
-                    f"{where}: {error}"
-                    for error in total_function_inhabitants_errors(
-                        tagged_declaration_text(lines, number),
-                        tagged_declaration_source(lines, number),
-                        total_function_inhabitants,
-                        transitive,
-                    )
-                )
+                total_errors = total_function_inhabitants_errors(
+                    inhabitant_signature, tagged_declaration_source(lines, number),
+                    total_function_inhabitants, transitive)
+                if (legacy_key in proof_only and len(total_errors) == 1 and
+                        "requires the declaration's own source to use" in total_errors[0] and
+                        matches_inhabitance_baseline(inhabitant_signature, proof_only[legacy_key])):
+                    used_proof_only.add(legacy_key)
+                    total_errors = []
+                errors.extend(f"{where}: {error}" for error in total_errors)
             errors.extend(
                 f"{where}: {error}"
                 for error in reals_as_rational_cuts_errors(
@@ -7278,6 +7340,11 @@ def main(argv: list[str]) -> int:
                 continue
             mapped_name = f"{hol_name}:{hol_line}" if hol_line is not None else hol_name
             mapping.append((where, lean_decl, hol_path, mapped_name))
+
+    for legacy_key in sorted(proof_only.keys() - used_proof_only):
+        errors.append(f"stale or changed proof-only rendering baseline entry: {legacy_key}")
+    for legacy_key in sorted(baseline.keys() - used_baseline):
+        errors.append(f"stale or changed unqualified inhabitance baseline entry: {legacy_key}")
 
     if want_mapping:
         for row in mapping:

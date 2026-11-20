@@ -27,10 +27,7 @@ theorem joinEnv_eq_zip {width : Nat} [NeZero width] {β : Type} [Nonempty β]
     have hn : n ≠ 0 ∧ n % 2 = 0 := h.1 (n,v) (by simp)
     have ht : ∀ p ∈ vs, p.1 ≠ 0 ∧ p.1 % 2 = 0 := by
       intro p hp; exact h.1 p (by simp [hp])
-    have hjoin : joinEnv s ((n, v) :: vs) =
-        if n ≠ 0 ∧ n % 2 = 0 then (holThe (sptLookup ((n - 2) / 2) s), v) :: joinEnv s vs
-        else joinEnv s vs := joinEnv_cons s n v vs
-    rw [hjoin, if_pos hn] at h
+    rw [joinEnv_cons, if_pos hn] at h
     simp only [List.length_cons, List.map_cons] at h
     cases zs with
     | nil => simp at h
@@ -74,10 +71,7 @@ theorem length_filter_snd_joinEnv_imp {width : Nat} [NeZero width] {β : Type} [
     have hn : n ≠ 0 ∧ n % 2 = 0 := h.2.1 (n,v) (by simp)
     have ht : ∀ p ∈ vs, p.1 ≠ 0 ∧ p.1 % 2 = 0 := by
       intro p hp; exact h.2.1 p (by simp [hp])
-    have hjoin : joinEnv s ((n, v) :: vs) =
-        if n ≠ 0 ∧ n % 2 = 0 then (holThe (sptLookup ((n - 2) / 2) s), v) :: joinEnv s vs
-        else joinEnv s vs := joinEnv_cons s n v vs
-    rw [hjoin, if_pos hn] at h
+    rw [joinEnv_cons, if_pos hn] at h
     simp only [List.length_cons, List.map_cons] at h
     cases zs with
     | nil => cases h.1

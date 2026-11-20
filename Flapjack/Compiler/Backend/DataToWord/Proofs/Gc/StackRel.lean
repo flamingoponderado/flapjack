@@ -120,8 +120,6 @@ theorem stackRel_sizeOfStack {width : Nat} [NeZero width]
   (total_function_inhabitants := [α])]
 theorem joinEnv_nil {α β : Type} [Nonempty α] (s : Spt α) :
     joinEnv s ([] : List (Nat × β)) = [] := by
-  change (([] : List (Nat × β)).filter (fun pair => pair.1 ≠ 0 ∧ pair.1 % 2 = 0)).map
-      (fun (name, value) => (holThe (sptLookup ((name - 2) / 2) s), value)) = []
   rfl
 
 @[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "join_env_CONS"

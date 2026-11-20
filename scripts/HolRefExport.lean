@@ -292,6 +292,21 @@ elab "#emit_hol_ref_export" : command => do
       unless ref == expectedRef do throwError "invalid joined-local HOL metadata: {name}"
       let problems ← liftTermElabM <| joinEnvLocalsBundleProblems name
       unless problems.isEmpty do throwError "invalid joined-local declaration {name}: {problems}"
+    let directJoinTargets := #[
+      (`Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.joinEnv_nil, "join_env_NIL", "α", false),
+      (`Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.joinEnv_eq_zip, "join_env_EQ_ZIP", "β", true),
+      (`Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.length_filter_snd_joinEnv_imp,
+        "LENGTH_MAP_SND_join_env_IMP", "β", true)]
+    let directJoin := directJoinTargets.find? (fun entry => entry.1 == name)
+    if directJoin.isSome || (ref.path == joinPath && directJoinTargets.any (fun entry => entry.2.1 == ref.name)) then
+      let some (_, holName, binder, words) := directJoin
+        | throwError "unexpected direct joinEnv HOL target: {name}"
+      let expectedRef : HolRef := {
+        path := joinPath, name := holName, wordsAsTypeIndexedBitvec := words,
+        totalFunctionInhabitants := #[binder] }
+      unless ref == expectedRef do throwError "invalid direct joinEnv HOL metadata: {name}"
+      let problems ← liftTermElabM <| joinEnvDirectProblems name
+      unless problems.isEmpty do throwError "invalid direct joinEnv declaration {name}: {problems}"
     let gcTarget := `Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.stateRel_gcGen
     let gcRef : HolRef := {
       path := "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",

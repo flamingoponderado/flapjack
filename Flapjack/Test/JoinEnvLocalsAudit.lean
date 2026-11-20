@@ -57,3 +57,18 @@ run_meta do
         let conditional ← mkForallFVars (args.push extra) result
         if (← joinEnvLocalsTheoremProblems conditional destination).isEmpty then
           throwError "joined-local audit accepted an added premise"
+
+run_meta do
+  for target in #[``joinEnv_nil, ``joinEnv_eq_zip, ``length_filter_snd_joinEnv_imp] do
+    let problems ← joinEnvDirectProblems target
+    unless problems.isEmpty do throwError "direct joinEnv audit rejected {target}: {problems}"
+    let info ← getConstInfo target
+    let altered := changeBinder info.type 0 fun n _ b => (n, mkConst ``True, b)
+    if (← joinEnvDirectTypeProblems target altered).isEmpty then
+      throwError "direct joinEnv audit accepted a changed binder"
+    forallTelescope info.type fun args _ => do
+      let weakened ← mkForallFVars args (mkConst ``True)
+      if (← joinEnvDirectTypeProblems target weakened).isEmpty then
+        throwError "direct joinEnv audit accepted a weakened conclusion"
+  if (← joinEnvDirectProblems ``joinEnv).isEmpty then
+    throwError "direct joinEnv audit accepted the producer as a theorem target"

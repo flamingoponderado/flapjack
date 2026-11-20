@@ -931,7 +931,12 @@ rendering of HOL `THE`; the independent payload type `β` has no instance.
 The source checker restricts this exception to those three declarations, and
 the elaborated exporter checks the producer metadata, complete wrapper body,
 theorem binders, premises and conclusions. The manifest note must explain the
-transitive rendering. These checks do not replace comparison with typed HOL.
+transitive rendering. Three additional GC theorems, `joinEnv_nil`,
+`joinEnv_eq_zip`, and `length_filter_snd_joinEnv_imp`, use `joinEnv` directly
+in their signatures; their exception is restricted to those declarations and
+the exporter checks their complete independently written types and producer
+metadata. Proof-body mentions do not justify this qualifier. These checks do
+not replace comparison with typed HOL.
 
 **Qualify unused HOL existential types.** The narrow
 `hol_existential_inhabitants := [T2._t2, W1._w1, W2._w2]` qualifier applies
