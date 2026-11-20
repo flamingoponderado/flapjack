@@ -174,57 +174,75 @@ theorem valueToList_none (vr : Value → Value → Prop) (simple : simpleValRel 
 
 /-- Every element of an encoded list satisfying `P` makes the encoding satisfy
 `P`, given the source's block/list correspondence. -/
-private theorem listToValue_all_of_all (P : Value → Bool)
-    (every : ∀ (t : Nat) (l : List Value), P (.block t l) = l.all P)
-    (l : List Value) (hl : l.all P = true) : P (listToValue l) = true := by
+private theorem listToValue_all_of_all (P : Value → Prop)
+    (every : ∀ (t : Nat) (l : List Value), P (.block t l) ↔ ∀ e ∈ l, P e)
+    (l : List Value) (hl : ∀ e ∈ l, P e) : P (listToValue l) := by
+  revert hl
   induction l with
   | nil =>
+    intro hl
     rw [show listToValue [] = .block BackendCommon.nilTag [] from rfl]
-    rw [every BackendCommon.nilTag []]
-    rfl
-  | cons first rest ih =>
-    rw [show listToValue (first :: rest) =
-      .block BackendCommon.consTag [first, listToValue rest] from rfl]
-    rw [every BackendCommon.consTag [first, listToValue rest]]
-    simp only [List.all_cons, List.all_nil, Bool.and_true, Bool.and_eq_true] at hl ⊢
-    exact ⟨hl.1, ih hl.2⟩
+    exact (every BackendCommon.nilTag []).mpr (by simp)
+  | cons =>
+    intro hl
+    rename_i x xs ih
+    rw [show listToValue (x :: xs) =
+      .block BackendCommon.consTag [x, listToValue xs] from rfl]
+    exact (every BackendCommon.consTag [x, listToValue xs]).mpr (by
+      intro entry member
+      rcases List.mem_cons.mp member with same | hmem
+      · rw [same]
+        exact hl x (by simp)
+      · simp only [List.mem_singleton] at hmem
+        rw [hmem]
+        exact ih (by
+          intro other otherMem
+          exact hl other (by simp [otherMem])))
 
 /-- An encoded list satisfying `P` has every element satisfying `P`, given the
 source's block/list correspondence. -/
-private theorem all_of_listToValue_all (P : Value → Bool)
-    (every : ∀ (t : Nat) (l : List Value), P (.block t l) = l.all P)
-    (l : List Value) (h : P (listToValue l) = true) : l.all P = true := by
+private theorem all_of_listToValue_all (P : Value → Prop)
+    (every : ∀ (t : Nat) (l : List Value), P (.block t l) ↔ ∀ e ∈ l, P e)
+    (l : List Value) (h : P (listToValue l)) : ∀ e ∈ l, P e := by
+  revert h
   induction l with
-  | nil => rfl
-  | cons first rest ih =>
-    have hstep : P (listToValue (first :: rest)) = ([first, listToValue rest].all P) := by
-      rw [show listToValue (first :: rest) =
-        .block BackendCommon.consTag [first, listToValue rest] from rfl]
-      exact every BackendCommon.consTag [first, listToValue rest]
-    rw [hstep] at h
-    simp only [List.all_cons, List.all_nil, Bool.and_true, Bool.and_eq_true] at h ⊢
-    exact ⟨h.1, ih h.2⟩
+  | nil =>
+    intro h entry member
+    simp at member
+  | cons =>
+    intro h entry member
+    rename_i x xs ih
+    have hblock : P (.block BackendCommon.consTag [x, listToValue xs]) := by
+      simpa [show listToValue (x :: xs) =
+        .block BackendCommon.consTag [x, listToValue xs] from rfl] using h
+    have hall := (every BackendCommon.consTag [x, listToValue xs]).mp hblock
+    rcases List.mem_cons.mp member with same | hmem
+    · rw [same]
+      exact hall x (by simp)
+    · exact ih (hall (listToValue xs) (by simp)) entry hmem
 
 /-- Appending two decoded lists keeps the predicate when both encodings and
 the block/list correspondence satisfy it. -/
 @[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "list_to_v_EVERY_APPEND"]
-theorem listToValue_EVERY_APPEND (x y : Value) (xs ys : List Value) (P : Value → Bool)
+theorem listToValue_EVERY_APPEND (x y : Value) (xs ys : List Value) (P : Value → Prop)
     (h : valueToList x = some xs ∧ valueToList y = some ys ∧
-      (∀ (t : Nat) (l : List Value), P (.block t l) = l.all P) ∧
-      P x = true ∧ P y = true) :
-    P (listToValue (xs ++ ys)) = true := by
+      (∀ (t : Nat) (l : List Value), P (.block t l) ↔ ∀ e ∈ l, P e) ∧
+      P x ∧ P y) :
+    P (listToValue (xs ++ ys)) := by
   obtain ⟨decodeX, decodeY, every, px, py⟩ := h
   have hx : listToValue xs = x := listToValue_valueToList x xs decodeX
   have hy : listToValue ys = y := listToValue_valueToList y ys decodeY
-  have hallX : xs.all P = true := all_of_listToValue_all P every xs (by
+  have hallX : ∀ e ∈ xs, P e := all_of_listToValue_all P every xs (by
     rw [hx]
     exact px)
-  have hallY : ys.all P = true := all_of_listToValue_all P every ys (by
+  have hallY : ∀ e ∈ ys, P e := all_of_listToValue_all P every ys (by
     rw [hy]
     exact py)
-  have hall : (xs ++ ys).all P = true := by
-    simp only [List.all_append, Bool.and_eq_true]
-    exact ⟨hallX, hallY⟩
+  have hall : ∀ e ∈ xs ++ ys, P e := by
+    intro entry member
+    rcases List.mem_append.mp member with hmem | hmem
+    · exact hallX entry hmem
+    · exact hallY entry hmem
   exact listToValue_all_of_all P every (xs ++ ys) hall
 
 end Flapjack.Compiler.Backend.ClosProps
