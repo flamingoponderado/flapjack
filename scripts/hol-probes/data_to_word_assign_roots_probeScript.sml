@@ -803,6 +803,14 @@ val _ = emit "dimword_LESS_MustTerminate_limit_typed" data_to_word_assignProofTh
 val _ = emit "assign_Less_typed" data_to_word_assignProofTheory.assign_Less;
 val _ = emit "assign_LessEq_typed" data_to_word_assignProofTheory.assign_LessEq;
 val _ = emit "word_exp_set_var_ShiftVar_typed" data_to_word_assignProofTheory.word_exp_set_var_ShiftVar;
+
+(* Replay the source-local MIN_SUB theorem with the original proof. *)
+val min_sub_local_replay = let
+  open preamble
+in
+  Q.prove (`MIN a b - c = MIN (a - c) (b - c)`, rw [MIN_DEF])
+end;
+val _ = emit "MIN_SUB_local_typed" min_sub_local_replay;
 val _ = emit "MemEqList_thm_typed" data_to_word_assignProofTheory.MemEqList_thm;
 val _ = emit "bignum_words_def_typed" data_to_word_memoryProofTheory.bignum_words_def;
 val _ = emit "memory_rel_Number_const_test_typed" data_to_word_memoryProofTheory.memory_rel_Number_const_test;

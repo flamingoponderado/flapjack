@@ -145971,6 +145971,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "MIN_SUB",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/EqualStack.lean",
+  "lean_name": "minSub",
+  "statement_status": "reviewed_exact",
+  "reviewer": "The source-local MIN_SUB theorem has the same natural-number minimum and truncated subtraction on both sides; MIN_SUB_local_typed replays its original statement and proof with inferred HOL num types."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
   "hol_name": "assign_EqualConst",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/EqualConst.lean",
   "lean_name": "assignEqualConst_correct",
