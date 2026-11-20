@@ -813,6 +813,7 @@ end;
 val _ = emit "MIN_SUB_local_typed" min_sub_local_replay;
 val _ = emit "assign_IMP_typed" data_to_word_assignProofTheory.IMP;
 val _ = emit "word_exp_real_addr_some_value_typed" data_to_word_assignProofTheory.word_exp_real_addr_some_value;
+val _ = emit "memory_rel_write_typed" data_to_word_memoryProofTheory.memory_rel_write;
 val _ = emit "MemEqList_thm_typed" data_to_word_assignProofTheory.MemEqList_thm;
 val _ = emit "bignum_words_def_typed" data_to_word_memoryProofTheory.bignum_words_def;
 val _ = emit "memory_rel_Number_const_test_typed" data_to_word_memoryProofTheory.memory_rel_Number_const_test;

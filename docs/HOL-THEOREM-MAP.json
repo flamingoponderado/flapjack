@@ -145996,6 +145996,16 @@
   "reviewer": "Compared word_exp_real_addr_some_value_typed: the original heap lookup, register lookup, good dimension and shift bounds imply an existential word-valued evaluation of real_addr. State fields use canonical finite maps and words use positive type-indexed widths."
 },
 {
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "memory_rel_write",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/UnusedWrite.lean",
+  "lean_name": "memoryRel_write",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": ["store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared the HOL source and memory_rel_write_typed: the sole premise is the complete memory relation; the conclusion supplies NextFree and, for each index less than the original space, domain membership and the complete memory relation after updating that address with an arbitrary word location. The store is the canonical finite map and words use positive type-indexed widths."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
   "hol_name": "assign_EqualConst",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/EqualConst.lean",
