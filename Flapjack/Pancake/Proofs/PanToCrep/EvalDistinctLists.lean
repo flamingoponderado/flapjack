@@ -146,4 +146,29 @@ theorem optMmapEvalDistinctListsNotAffectHOL {width : Nat} [NeZero width] {σ : 
   intro es s _ ws vs nvals ⟨heval, hlen, hdist⟩
   rw [optMmapEvalDistinctListsNotAffectPrimeHOL es s ws vs nvals ⟨hlen, hdist⟩, heval]
 
+/-- Exact port of HOL `update_locals_not_vars_eval_mmap`
+    (`pan_to_crepProofScript.sml:4082-4090`): under the ONE premise
+    `∀n e. MEM e es ∧ MEM n (var_cexp e) ⇒ n ≠ x`, replacing the local `x`
+    leaves `OPT_MMAP (eval ·) es` unchanged. The typed capture
+    `update_locals_not_vars_eval_mmap_typed` leaves `es`, `x`, `t` and `v` free
+    in that order, with the inner conjunction premise kept as one hypothesis
+    inside the quantifier. `eval` is the tagged `evalCrepSemHOLExp`,
+    `var_cexp` is `crepExpVarsHOL`, `OPT_MMAP` is `List.mapM`, and `|+` is the
+    equality-based `updateEq` on the finite-support locals. -/
+@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "update_locals_not_vars_eval_mmap"
+  (fmap_as_finite_support := [locals, globals, code])
+  (words_as_type_indexed_bitvec)]
+theorem updateLocalsNotVarsEvalMmapHOL {width : Nat} [NeZero width] {σ : Type} :
+    ∀ (es : List (CrepExpHOL width)) (x : Nat) (t : CrepSemHOLState width σ)
+      [DecidablePred t.memaddrs] (v : HolWordLab width),
+      (∀ (n : Nat) (e : CrepExpHOL width), e ∈ es ∧ n ∈ crepExpVarsHOL e → n ≠ x) →
+      es.mapM (evalCrepSemHOLExp { t with locals := t.locals.updateEq (x, v) }) =
+        es.mapM (evalCrepSemHOLExp t) := by
+  intro es x t _ v h
+  apply mapM_congr_mem
+  intro e he
+  apply evalCrepSemHOLExp_updateLocals_eq_of_not_vars
+  intro hmem
+  exact (h x e ⟨he, hmem⟩) rfl
+
 end Flapjack

@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Compiler.Backend.Semantics.BviProps.ApplyCode
 public import Flapjack.Compiler.Backend.Semantics.BviSem.EvaluateClockFull
+public import Flapjack.Compiler.Backend.Semantics.BviSem.EvaluateList
 public import Flapjack.Misc.ClockWeightInduction
 
 @[expose] public section
@@ -286,5 +287,23 @@ theorem evaluate_global_mono {C F : Type} (expressions : List Bvi.Exp) (env : Li
   have preserved : s.global.isSome = true → t.global.isSome = true := by
     simpa [run, stateGrowth] using growth.2
   exact preserved present
+
+namespace EvaluateGrowthCarrier
+/-- Canonical BVI reference-map state representation roundtrip. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : BviSem.BviStateBroad C F, (BviSem.BviState.ofBroad s).toBroad = s) ∧
+      (∀ s : BviSem.BviState C F, BviSem.BviState.ofBroad s.toBroad = s) :=
+  BviSem.holFmapAsFiniteSupportWitness
+end EvaluateGrowthCarrier
+
+/-- Evaluation only extends the code tree. -/
+@[hol "cakeml/compiler/backend/semantics/bviPropsScript.sml" "evaluate_code_mono"
+  (fmap_as_finite_support := [refs])]
+theorem evaluateCodeMonoHOL {C F : Type} (expressions : List Bvi.Exp) (env : List Value)
+    (state : BviSem.BviState C F) (result : BviResult) (next : BviSem.BviState C F)
+    (run : evaluateTuple (expressions, env, state) = (result, next)) :
+    sptSubspt state.code next.code := by
+  rw [evaluateTuple] at run
+  exact evaluate_code_mono expressions env state next result run
 
 end Flapjack.Compiler.Backend.BviProps

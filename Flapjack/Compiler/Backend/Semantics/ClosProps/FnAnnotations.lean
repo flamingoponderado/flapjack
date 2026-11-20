@@ -101,4 +101,20 @@ theorem fnVarsSomeFuns_eq_map (fs : List (Nat × ClosLang.Exp)) :
     obtain ⟨arity, body⟩ := f
     simp [fnVarsSomeFuns, everyFnVarsSome, ih]
 
+/-- The function-location predicate splits over list concatenation. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "every_Fn_SOME_APPEND"]
+theorem everyFnLocationSome_append (l1 l2 : List ClosLang.Exp) :
+    everyFnLocationSome (l1 ++ l2) ↔ everyFnLocationSome l1 ∧ everyFnLocationSome l2 := by
+  induction l1 with
+  | nil => simp [everyFnLocationSome]
+  | cons e es ih => simp [everyFnLocationSome, ih, and_assoc]
+
+/-- The captured-variable-annotation predicate splits over list concatenation. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "every_Fn_vs_SOME_APPEND"]
+theorem everyFnVarsSome_append (l1 l2 : List ClosLang.Exp) :
+    everyFnVarsSome (l1 ++ l2) ↔ everyFnVarsSome l1 ∧ everyFnVarsSome l2 := by
+  induction l1 with
+  | nil => simp [everyFnVarsSome]
+  | cons e es ih => simp [everyFnVarsSome, ih, and_assoc]
+
 end Flapjack.Compiler.Backend.ClosProps
