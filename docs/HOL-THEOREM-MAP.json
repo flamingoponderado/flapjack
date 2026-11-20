@@ -116114,6 +116114,16 @@
     "reviewer": "Compared bignum_words_def_typed: signed i2mw produces the sign and payload at the same word width, encode_header receives tag 7 or 3 and payload length, and the exact option result prepends the header. This proof-side HOL definition uses positive type-indexed words."
   },
 {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/Word64Const.lean",
+    "lean_name": "memoryRel_word64ConstTest",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "memory_rel_Word64_const_test",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": ["store"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Compared memory_rel_Word64_const_test_typed: the full memory relation and good-dimension premises, all four existential witnesses, address and comparison facts, header encoding, and both exact HOL word-extraction payload cases are retained. The standalone store is canonical finite support, the Word64 payload remains fixed at 64 bits, and machine words use a positive type-indexed width."
+  },
+{
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/WordMemoryEquality.lean",
     "lean_name": "wordMemEqThm",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
