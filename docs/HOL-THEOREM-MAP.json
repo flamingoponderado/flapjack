@@ -145891,6 +145891,18 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "MemEqList_thm",
+  "hol_line": 12206,
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/MemEqList.lean",
+  "lean_name": "memEqList_correct",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared MemEqList_thm_typed against the specialized HOL declaration: arbitrary target state, words, result and base address retain the same comparison and register premises, existential word-location witness, exact generated program evaluation and conditional locals updates. The target state uses canonical finite maps; words use positive type-indexed widths and the evaluator inherits the rational-cut real model."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
   "hol_name": "Equal_code_lemma",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/EqualCode.lean",
   "lean_name": "equalCodeLemma",
