@@ -445,4 +445,7 @@ val _ = emit_exported "evaluate_Maxout_bits_code_typed" "evaluate_Maxout_bits_co
 val _ = print ("Make_ptr_bits_thm_hypotheses=" ^
   Int.toString (length (hyp Make_ptr_bits_thm)) ^ "\n");
 val _ = emit_exported "Make_ptr_bits_thm_typed" "Make_ptr_bits_thm";
+val _ = print ("assign_ConsExtend_hypotheses=" ^
+  Int.toString (length (hyp assign_ConsExtend)) ^ "\n");
+val _ = emit_exported "assign_ConsExtend_typed" "assign_ConsExtend";
 val _ = capture "parts_to_words_NONE_typed" "parts_to_words_NONE";
