@@ -1564,6 +1564,7 @@ import Flapjack.Compiler.Backend.Semantics.BviProps.EvaluateLength
 import Flapjack.Compiler.Backend.Semantics.BviProps.EvaluateList
 import Flapjack.Compiler.Backend.Semantics.BviProps.ApplyClockEvents
 import Flapjack.Compiler.Backend.Semantics.BviProps.ApplyAux
+import Flapjack.Compiler.Backend.Semantics.BviProps.ApplyConfigSwap
 import Flapjack.Compiler.Backend.Semantics.BviProps.ApplyFields
 import Flapjack.Compiler.Backend.Semantics.BviProps.EvaluateClockShiftCases
 import Flapjack.Compiler.Backend.Semantics.BviProps.EvaluateClockShift
