@@ -146106,6 +146106,22 @@
   "reviewer": "Compared evaluate_BignumHalt2_typed: the original state relation and register lookup imply an existential state, the exact bit-dependent evaluation, both FFI equalities and the original stack bound. State fields use canonical finite maps and words use positive type-indexed widths. The evaluator inherits the reals_as_rational_cuts assumption."
 },
 {
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "cut_names_insert_1_insert_1",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CutInsertOne.lean",
+  "lean_name": "cutNamesInsertOne",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared cut_names_insert_1_insert_1_typed: the sparse-tree payloads are independently polymorphic; the complete option-valued cut after both insertions equals the original cut mapped by the value insertion."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "cut_env_insert_1",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CutInsertOne.lean",
+  "lean_name": "cutEnvInsertOne",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared cut_env_insert_1_typed: independent sparse-tree payload types, both adjusted cutsets and complete failure-or-inserted-result option are unchanged."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
   "hol_name": "assign_EqualConst",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/EqualConst.lean",
