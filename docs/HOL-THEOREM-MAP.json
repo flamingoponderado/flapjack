@@ -145869,6 +145869,17 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "assign_WordShiftW64",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/WordShift64.lean",
+  "lean_name": "assignWordShift_correct",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared assign_WordShiftW64_typed: the existential Word64 shift and amount, all generic assignment premises, existential target result, insufficient-space obligations, and complete successful state relation agree. Both width branches preserve arbitrary shift amounts and the original Word64 allocation layout. The target state uses canonical finite maps and positive-width words; its general evaluator inherits the rational-cut real model."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
   "hol_name": "evaluate_WordShift64_on_32",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/WordShift64.lean",
   "lean_name": "evaluateWordShift64On32",

@@ -1,6 +1,8 @@
 module
 
-public import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.WriteWord64
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.FpCommon
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Word64
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Space
 public import Flapjack.Compiler.Backend.DataToWord.Proofs.Bignum.ShiftVar
 @[expose] public section
 
@@ -8,7 +10,12 @@ public import Flapjack.Compiler.Backend.DataToWord.Proofs.Bignum.ShiftVar
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Assign
 open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Backend.DataToWord
 open Flapjack.SemanticPrimitivesProps
+open Flapjack.Compiler.Backend.DataToWord.Proofs
 open Flapjack.Compiler.Backend.DataToWord.Proofs.Bignum
+open Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
+open Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
+open Flapjack.Compiler.Backend.BackendProps
+open Flapjack.SemanticPrimitivesHOL
 set_option maxRecDepth 8192
 set_option maxHeartbeats 3000000
 
@@ -289,5 +296,351 @@ theorem evaluateWordShift64On32 {width : Nat} [NeZero width] {C F : Type} (sh : 
         sptLookup_sptInsert_same, sptLookup_sptInsert_ne, shiftLookup, hn, high, low,
         OrOp.or, rorLowBig v (n % 64) ⟨hn32, hmod⟩, rorHighBig v (n % 64) ⟨hn32, hmod⟩,
         BitVec.rotateRight_mod_eq_rotateRight]
+
+private theorem shiftSource {C F : Type} (sh : Shift) (amount : Nat) (values : List DataSem.Value)
+    (source resultState : DataSem.State C F) (result : DataSem.Value)
+    (run : DataSem.doApp (.wordOp (.wordShift .w64 sh amount)) values source = .val (result, resultState)) :
+    ∃ word next, values = [.word64 word] ∧ DataSem.consumeSpace 3 source = some next ∧
+      result = .word64 (shift64Lookup sh word amount) ∧
+      resultState = DataSem.doStack (.wordOp (.wordShift .w64 sh amount)) values
+        (DataSem.doLimSafe next (.wordOp (.wordShift .w64 sh amount)) values) := by
+  cases h : DataSem.consumeSpace 3 source with
+  | none =>
+    simp [DataSem.doApp, DataSem.doSpace, DataLang.opSpaceReset, DataSpace.opSpaceReq, h] at run
+  | some next =>
+    cases values with
+    | nil => simp [DataSem.doApp, DataSem.doSpace, DataLang.opSpaceReset, DataSpace.opSpaceReq,
+        h, DataSem.doAppAux, DataSem.applyNonFfi, DataSem.doWordApp, DataSem.doWordAppIntegral] at run
+    | cons value rest =>
+      cases rest with
+      | cons x xs => simp [DataSem.doApp, DataSem.doSpace, DataLang.opSpaceReset, DataSpace.opSpaceReq,
+          h, DataSem.doAppAux, DataSem.applyNonFfi, DataSem.doWordApp, DataSem.doWordAppIntegral] at run
+      | nil =>
+        cases value <;> simp_all [DataSem.doApp, DataSem.doSpace, DataLang.opSpaceReset, DataSpace.opSpaceReq,
+          DataSem.doAppAux, DataSem.applyNonFfi, DataSem.doWordApp, DataSem.doWordAppIntegral]
+
+
+private theorem shiftHeaderOfSafe {width : Nat} [NeZero width] {C F : Type}
+    (conf : DataToWord.Config) (source : DataSem.State C F)
+    (target : WordSemStateFiniteExact width C F) (l1 l2 : Nat) (locs : List (Nat × Nat))
+    (sh : Shift) (amount : Nat) (values : List DataSem.Value)
+    (related : stateRel conf l1 l2 source target none locs)
+    (safe : DataSem.limSafe source.limits (.wordOp (.wordShift .w64 sh amount)) values) :
+    ∃ hd, encodeHeader (width := width) conf 3 (if width = 64 then 1 else 2) = some hd := by
+  have good := related.2.2.2.2.2.2.1
+  have limits := related.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.1
+  have mem := related.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2
+  obtain ⟨heap, limit, a, sp, sp1, gens, heapMem, _⟩ := mem
+  have lenPos : 0 < conf.lenSize := by
+    have h := heapMem.2.2.2.1
+    omega
+  have lenBound : conf.lenSize + 7 < width := heapMem.2.2.2.2.1
+  have limitEq : source.limits.lengthLimit = conf.lenSize := limits.2.1
+  rcases good with h | h <;> subst width
+  · have safeLen : 1 < conf.lenSize := by
+      simp [DataSem.limSafe, limitEq] at safe
+      exact safe
+    have countBound : 2 < 2 ^ conf.lenSize := by
+      have h : 2 ^ 2 ≤ 2 ^ conf.lenSize := Nat.pow_le_pow_right (by decide) (by omega)
+      omega
+    refine ⟨makeHeader conf (BitVec.ofNat 32 3) 2, ?_⟩
+    simp [encodeHeader, countBound, show 3 < 2 ^ (32 - conf.lenSize - 2) by
+      have h : 2 ^ 3 ≤ 2 ^ (32 - conf.lenSize - 2) := Nat.pow_le_pow_right (by decide) (by omega)
+      omega]
+  · have countBound : 1 < 2 ^ conf.lenSize := by
+      have h : 2 ^ 1 ≤ 2 ^ conf.lenSize := Nat.pow_le_pow_right (by decide) (by omega)
+      omega
+    refine ⟨makeHeader conf (BitVec.ofNat 64 3) 1, ?_⟩
+    simp [encodeHeader, countBound, show 3 < 2 ^ (64 - conf.lenSize - 2) by
+      have h : 2 ^ 3 ≤ 2 ^ (64 - conf.lenSize - 2) := Nat.pow_le_pow_right (by decide) (by omega)
+      omega]
+
+private theorem shiftPrefix64 {C F : Type} (conf : Config) (sh : Shift) (amount arg : Nat)
+    (target : WordSemStateFiniteExact 64 C F) (addr : BitVec 64) (word : BitVec 64)
+    (real : target.wordExp (realAddr conf (adjustVar arg)) = some (.word addr))
+    (domain : target.mdomain (addr + wordSemBytesInWord) = true)
+    (load : target.memory (addr + wordSemBytesInWord) = .word word) :
+    WordSemStateFiniteExact.evaluate (wordListSeq [
+      .assign 3 (.load (.op .add [realAddr conf (adjustVar arg), .const wordSemBytesInWord])),
+      .assign 3 (shiftVar sh 3 amount)]) target =
+      (none, target.setVar 3 (.word (shiftLookup sh word amount))) := by
+  simp [wordListSeq, WordSemStateFiniteExact.evaluate, WordSemStateFiniteExact.wordExp,
+    WordSemStateFiniteExact.memLoad, WordSemStateFiniteExact.setVar,
+    WordSemStateFiniteExact.fixClock, wordExpShiftVar, wordOpHOL, wordOp, theWords,
+    real, domain, load, sptLookup_sptInsert_same, sptInsert_insert_shadow]
+
+private theorem shiftPrefix32 {C F : Type} (conf : Config) (sh : Shift) (amount arg : Nat)
+    (target : WordSemStateFiniteExact 32 C F) (addr : BitVec 32) (word : BitVec 64)
+    (real : target.wordExp (realAddr conf (adjustVar arg)) = some (.word addr))
+    (domain1 : target.mdomain (addr + wordSemBytesInWord) = true)
+    (domain2 : target.mdomain (addr + 2 * wordSemBytesInWord) = true)
+    (load1 : target.memory (addr + wordSemBytesInWord) = .word ((word >>> (32 : Nat)).setWidth 32))
+    (load2 : target.memory (addr + 2 * wordSemBytesInWord) = .word (word.setWidth 32)) :
+    WordSemStateFiniteExact.evaluate (wordListSeq [
+      .assign 15 (realAddr conf (adjustVar arg)),
+      .assign 11 (.load (.op .add [.var 15, .const wordSemBytesInWord])),
+      .assign 13 (.load (.op .add [.var 15, .const (2 * wordSemBytesInWord)])),
+      wordShift64On32 sh amount]) target =
+      (none, (target.setVar 15 (.word addr)).setVar 11 (.word ((word >>> (32 : Nat)).setWidth 32))
+        |>.setVar 13 (.word (word.setWidth 32))
+        |>.setVar 33 (.word ((shiftLookup sh word amount).setWidth 32))
+        |>.setVar 31 (.word (((shiftLookup sh word amount) >>> (32 : Nat)).setWidth 32))) := by
+  simp only [BitVec.ofNat_eq_ofNat] at domain2 load2
+  let mid := ((target.setVar 15 (.word addr)).setVar 11 (.word ((word >>> (32 : Nat)).setWidth 32))).setVar 13 (.word (word.setWidth 32))
+  have loads : WordSemStateFiniteExact.evaluate (wordListSeq [
+      .assign 15 (realAddr conf (adjustVar arg)),
+      .assign 11 (.load (.op .add [.var 15, .const wordSemBytesInWord])),
+      .assign 13 (.load (.op .add [.var 15, .const (2 * wordSemBytesInWord)]))]) target = (none, mid) := by
+    simp [wordListSeq, WordSemStateFiniteExact.evaluate, WordSemStateFiniteExact.wordExp,
+      WordSemStateFiniteExact.memLoad, WordSemStateFiniteExact.getVar,
+      WordSemStateFiniteExact.setVar, WordSemStateFiniteExact.fixClock,
+      wordOpHOL, wordOp, theWords, real, domain1, domain2, load1, load2,
+      sptLookup_sptInsert_same, sptLookup_sptInsert_ne, mid]
+  have shiftRun := evaluateWordShift64On32 sh amount word (target.setVar 15 (.word addr))
+    (target.setVar 15 (.word addr)).locals rfl
+  have high (v : BitVec 64) : holWordExtract 63 32 v 32 = (v >>> (32 : Nat)).setWidth 32 := by
+    apply BitVec.eq_of_toNat_eq
+    simp [holWordExtract, BitVec.toNat_setWidth]
+  have low (v : BitVec 64) : holWordExtract 31 0 v 32 = v.setWidth 32 := by
+    apply BitVec.eq_of_toNat_eq
+    simp [holWordExtract, BitVec.toNat_setWidth]
+  have joined := evalListAppend [
+      .assign 15 (realAddr conf (adjustVar arg)),
+      .assign 11 (.load (.op .add [.var 15, .const wordSemBytesInWord])),
+      .assign 13 (.load (.op .add [.var 15, .const (2 * wordSemBytesInWord)]))]
+      (wordShift64On32 sh amount) target mid loads
+  rw [show WordSemStateFiniteExact.evaluate (wordShift64On32 sh amount) mid = _ by
+    simpa [mid, WordSemStateFiniteExact.setVar, high, low] using shiftRun] at joined
+  simpa [WordSemStateFiniteExact.setVar] using joined
+
+/-- A Word64 shift satisfies the complete data-to-word assignment simulation. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml" "assign_WordShiftW64"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem assignWordShift_correct {width : Nat} [NeZero width] {C F : Type}
+    (conf : Flapjack.Compiler.Backend.DataToWord.Config) (n l l1 l2 dest : Nat) (op : Flapjack.Compiler.Backend.ClosLang.Op)
+    (args : List Nat) (names : Option NumSet)
+    (source cut resultState : Flapjack.Compiler.Backend.DataSem.State C F) (target : WordSemStateFiniteExact width C F)
+    (locs : List (Nat × Nat)) (values : List Flapjack.Compiler.Backend.DataSem.Value) (result : Flapjack.Compiler.Backend.DataSem.Value)
+    (opIs : ∃ sh amount, op = .wordOp (.wordShift .w64 sh amount)) (related : stateRel conf l1 l2 source target none locs)
+    (validNames : DataLang.opRequiresNames op ≠ names.isNone)
+    (cutEq : DataSem.cutStateOpt names source = some cut)
+    (argsEq : DataSem.getVars args source.locals = some values) (_depth : target.termdep > 1)
+    (run : DataSem.doApp op values cut = .val (result, resultState)) :
+    ∃ q r, WordSemStateFiniteExact.evaluate (compileAssign conf n l dest op args names).1 target = (q,r) ∧
+      (q = some .notEnoughSpace → r.ffi = target.ffi ∧ optionLe r.stackMax resultState.stackMax ∧
+        (conf.gcKind ≠ .none → resultState.safeForSpace = false)) ∧
+      (q ≠ some .notEnoughSpace → stateRel conf l1 l2 (DataSem.setVar dest result resultState) r none locs ∧ q = none) := by
+  obtain ⟨sh, amount, rfl⟩ := opIs
+  cases names with
+  | some names => simp [DataLang.opRequiresNames, DataLang.opSpaceReset] at validNames
+  | none =>
+    have cutIsSource : cut = source := by simpa [DataSem.cutStateOpt] using cutEq.symm
+    subst cut
+    obtain ⟨word, next, valuesEq, spaceEq, resultEq, stateEq⟩ := shiftSource sh amount values source resultState result run
+    subst values
+    subst result
+    subst resultState
+    have shiftEq : shiftLookup sh word amount = shift64Lookup sh word amount := by
+      cases sh <;> rfl
+    have argLen := DataSpace.getVars_length args source.locals [.word64 word] argsEq
+    cases args with
+    | nil => simp at argLen
+    | cons arg rest =>
+      cases rest with
+      | cons x xs => simp at argLen
+      | nil =>
+        have nextEq : next = { source with space := source.space - 3 } := by
+          unfold DataSem.consumeSpace at spaceEq
+          split at spaceEq <;> simp_all
+        subst next
+        have nextRel : stateRel conf l1 l2
+            (DataSem.doStack (.wordOp (.wordShift .w64 sh amount)) [.word64 word]
+              (DataSem.doLimSafe source (.wordOp (.wordShift .w64 sh amount)) [.word64 word])) target none locs :=
+          stateRel_doStack conf l1 l2 _ target locs _ _
+            (stateRel_doLimSafe conf l1 l2 source target locs _ _ related)
+        have lenEq : (if width < 64 then 2 else 1) = (if width = 64 then 1 else 2) := by
+          rcases related.2.2.2.2.2.2.1 with h | h <;> subst width <;> decide
+        cases header : encodeHeader (width := width) conf 3 (if width = 64 then 1 else 2) with
+        | some hd =>
+          obtain ⟨words, getWords, lengthEq⟩ :=
+            stateRel_getVars conf l1 l2 source target locs [arg] [.word64 word] related argsEq
+          cases words with
+          | nil => simp at lengthEq
+          | cons loc rest =>
+            cases rest with
+            | cons x xs => simp at lengthEq
+            | nil =>
+              let envs := [(theGlobal source.global, holFapply target.store .globals)] ++
+                flatStack source.stack target.stack
+              let locals := joinEnv source.locals (sptToAList (sptInter target.locals (adjustSet source.locals)))
+              have roots := memoryRel_getVars conf target.be (holThe source.tstamps) source source.space
+                target.store target.memory target.mdomain target envs [arg] [.word64 word] [loc] (by
+                  refine ⟨?_, argsEq, getWords⟩
+                  simpa [envs] using related.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2)
+              have good := related.2.2.2.2.2.2.1
+              obtain ⟨index, addr, originalHeader, locEq, realAddrEq, domainHeader, headerWord,
+                bit3, bit4, bit2, domainFirst, payload⟩ :=
+                  memoryRel_word64Imp conf target.be (holThe source.tstamps) source.refs source.space
+                    target.store target.memory target.mdomain word loc (locals ++ envs)
+                    ⟨by simpa [locals, envs, List.append_assoc] using roots, good⟩
+              have locRead : WordSemStateFiniteExact.getVar (adjustVar arg) target = some loc := by
+                cases found : WordSemStateFiniteExact.getVar (adjustVar arg) target <;>
+                  simp_all [WordSemStateFiniteExact.getVars]
+              have pointerRead : WordSemStateFiniteExact.getVar (adjustVar arg) target =
+                  some (.word (getAddr conf index (.word 0))) := by simpa [locEq] using locRead
+              have realEval := Bignum.getRealAddr_lemma conf (adjustVar arg) target
+                (getAddr conf index (.word 0)) addr
+                ⟨related.2.2.2.2.2.2.2.1, good, pointerRead, realAddrEq⟩
+              have spaceEnough : 3 ≤ source.space := by
+                unfold DataSem.consumeSpace at spaceEq
+                split at spaceEq <;> simp_all
+              rcases good with width32 | width64
+              · subst width
+                simp only [show 32 < 64 by decide, ↓reduceIte] at payload
+                obtain ⟨payloadHigh, domainSecond, payloadLow, decoded, originalHeaderEq⟩ := payload
+                let resultWord := shiftLookup sh word amount
+                let pre := WordSemStateFiniteExact.setVar 31 (.word ((resultWord >>> (32 : Nat)).setWidth 32))
+                  (WordSemStateFiniteExact.setVar 33 (.word (resultWord.setWidth 32))
+                    (WordSemStateFiniteExact.setVar 13 (.word (word.setWidth 32))
+                      (WordSemStateFiniteExact.setVar 11 (.word ((word >>> (32 : Nat)).setWidth 32))
+                        (WordSemStateFiniteExact.setVar 15 (.word addr) target))))
+                have prefixEval := shiftPrefix32 conf sh amount arg target addr word realEval
+                  (by simpa [StackRemove.bytesInWord, wordSemBytesInWord] using domainFirst)
+                  (by simpa [StackRemove.bytesInWord, wordSemBytesInWord] using domainSecond)
+                  (by simpa [StackRemove.bytesInWord, wordSemBytesInWord] using payloadHigh)
+                  (by simpa [StackRemove.bytesInWord, wordSemBytesInWord] using payloadLow)
+                have preHeap : memoryRel conf target.be (holThe source.tstamps) source.refs source.space
+                    pre.store pre.memory pre.mdomain (joinEnvLocals source.locals pre.locals ++ envs) := by
+                  simpa [pre, WordSemStateFiniteExact.setVar,
+                    joinEnvLocals_insertOdd, inter_insertOdd_adjustSet, envs, joinEnvLocals] using
+                      related.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2
+                have preLow : pre.getVar 33 = some (.word (resultWord.setWidth 32)) := by
+                  simp [pre, WordSemStateFiniteExact.getVar, WordSemStateFiniteExact.setVar,
+                    sptLookup_sptInsert_same, sptLookup_sptInsert_ne]
+                have preHigh : pre.getVar 31 = some (.word ((resultWord >>> (32 : Nat)).setWidth 32)) := by
+                  simp [pre, WordSemStateFiniteExact.getVar, WordSemStateFiniteExact.setVar,
+                    sptLookup_sptInsert_same]
+                have prePresent : ∀ k, (sptLookup k source.locals).isSome →
+                    (sptLookup (adjustVar k) pre.locals).isSome := by
+                  intro k present
+                  have odd31 : adjustVar k ≠ 31 := by simp [adjustVar]; omega
+                  have odd33 : adjustVar k ≠ 33 := by simp [adjustVar]; omega
+                  have odd11 : adjustVar k ≠ 11 := by simp [adjustVar]; omega
+                  have odd13 : adjustVar k ≠ 13 := by simp [adjustVar]; omega
+                  have odd15 : adjustVar k ≠ 15 := by simp [adjustVar]; omega
+                  obtain ⟨_, _, _, _, _, _, _, _, _, _, _, presentOld, _⟩ := related
+                  simpa [pre, WordSemStateFiniteExact.setVar,
+                    sptLookup_sptInsert_ne _ _ _ _ odd31, sptLookup_sptInsert_ne _ _ _ _ odd33,
+                    sptLookup_sptInsert_ne _ _ _ _ odd11, sptLookup_sptInsert_ne _ _ _ _ odd13,
+                    sptLookup_sptInsert_ne _ _ _ _ odd15] using presentOld k present
+                have writeRun := evaluateWriteWord64On32 (β := PUnit) conf target.be (holThe source.tstamps)
+                  source.space source.refs pre source.locals envs 33 31 dest resultWord hd
+                  preHeap preLow preHigh related.2.2.2.2.2.2.2.1 (by decide) (by decide) (by omega) rfl
+                  (by simpa using header) prePresent
+                obtain ⟨nf, memory, locals1, unused, writeEval, writeHeap, localsPreserved,
+                  destPresent, zeroEq⟩ := writeRun
+                have finalHeap : memoryRel conf target.be (holThe source.tstamps) source.refs
+                    (source.space - 3) (target.store.update (.nextFree, nf)) memory target.mdomain
+                    (joinEnvLocals (sptInsert dest (.word64 resultWord) source.locals) locals1 ++ envs) := by
+                  simpa [pre, WordSemStateFiniteExact.setVar] using writeHeap
+                let nextSource := DataSem.doStack (.wordOp (.wordShift .w64 sh amount)) [.word64 word]
+                  (DataSem.doLimSafe source (.wordOp (.wordShift .w64 sh amount)) [.word64 word])
+                have finalRel := stateRelNextFreeResult conf l1 l2 dest (source.space - 3)
+                  nextSource target locs (.word64 resultWord) nf memory locals1 pre.fpRegs nextRel
+                  (by simpa [nextSource, DataSem.doStack, DataSem.doLimSafe] using localsPreserved)
+                  destPresent
+                  (by simpa [pre, WordSemStateFiniteExact.setVar,
+                    sptLookup_sptInsert_ne] using zeroEq)
+                  (by simpa [nextSource, DataSem.doStack, DataSem.doLimSafe, envs] using finalHeap)
+                have header32 : encodeHeader (width := 32) conf 3 2 = some hd := by simpa using header
+                have seqRun := evalListAppend [
+                  .assign 15 (realAddr conf (adjustVar arg)),
+                  .assign 11 (.load (.op .add [.var 15, .const wordSemBytesInWord])),
+                  .assign 13 (.load (.op .add [.var 15, .const (2 * wordSemBytesInWord)])),
+                  wordShift64On32 sh amount] (writeWord64On32 conf hd dest 33 31) target pre
+                  (by simpa [pre, resultWord] using prefixEval)
+                rw [writeEval] at seqRun
+                refine ⟨none, {pre with store := pre.store.update (.nextFree, nf), memory := memory, locals := locals1}, ?_, ?_, ?_⟩
+                · simpa [compileAssign, arg1, assignWordShiftW64, loadWord64, header32] using seqRun
+                · simp
+                · intro _
+                  refine ⟨?_, rfl⟩
+                  simpa [nextSource, resultWord, shiftEq, pre, DataSem.doStack, DataSem.doLimSafe,
+                    WordSemStateFiniteExact.setVar] using finalRel
+              · subst width
+                simp only [show ¬ 64 < 64 by decide, ↓reduceIte] at payload
+                obtain ⟨payloadWord, decoded, originalHeaderEq⟩ := payload
+                let resultWord := shiftLookup sh word amount
+                let pre := WordSemStateFiniteExact.setVar 3 (.word resultWord) target
+                have prefixEval := shiftPrefix64 conf sh amount arg target addr word realEval
+                  (by simpa [StackRemove.bytesInWord, wordSemBytesInWord] using domainFirst)
+                  (by simpa [StackRemove.bytesInWord, wordSemBytesInWord] using payloadWord)
+                have preHeap : memoryRel conf target.be (holThe source.tstamps) source.refs source.space
+                    pre.store pre.memory pre.mdomain (joinEnvLocals source.locals pre.locals ++ envs) := by
+                  simpa [pre, WordSemStateFiniteExact.setVar,
+                    joinEnvLocals_insertOdd, inter_insertOdd_adjustSet, envs, joinEnvLocals] using
+                      related.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2
+                have preRead : pre.getVar 3 = some (.word resultWord) := by
+                  simp [pre, WordSemStateFiniteExact.getVar, WordSemStateFiniteExact.setVar,
+                    sptLookup_sptInsert_same]
+                have prePresent : ∀ k, (sptLookup k source.locals).isSome →
+                    (sptLookup (adjustVar k) pre.locals).isSome := by
+                  intro k present
+                  have odd : adjustVar k ≠ 3 := by simp [adjustVar]
+                  obtain ⟨_, _, _, _, _, _, _, _, _, _, _, presentOld, _⟩ := related
+                  simpa [pre, WordSemStateFiniteExact.setVar,
+                    sptLookup_sptInsert_ne _ _ _ _ odd] using presentOld k present
+                have writeRun := evaluateWriteWord64 (β := PUnit) conf target.be (holThe source.tstamps)
+                  source.space source.refs pre source.locals envs 3 dest resultWord hd
+                  preHeap preRead related.2.2.2.2.2.2.2.1 (by decide) (by omega) rfl
+                  (by simpa using header) prePresent
+                obtain ⟨nf, memory, locals1, unused, writeEval, writeHeap, localsPreserved,
+                  destPresent, zeroEq⟩ := writeRun
+                have smallerHeap : memoryRel conf target.be (holThe source.tstamps) source.refs
+                    (source.space - 3) (target.store.update (.nextFree, nf)) memory target.mdomain
+                    (joinEnvLocals (sptInsert dest (.word64 resultWord) source.locals) locals1 ++ envs) := by
+                  apply memoryRel_lessSpace conf target.be (holThe source.tstamps) source.refs
+                    (source.space - 2) (source.space - 3) _ _ _ _
+                  refine ⟨?_, by omega⟩
+                  simpa [pre, WordSemStateFiniteExact.setVar] using writeHeap
+                let nextSource := DataSem.doStack (.wordOp (.wordShift .w64 sh amount)) [.word64 word]
+                  (DataSem.doLimSafe source (.wordOp (.wordShift .w64 sh amount)) [.word64 word])
+                have finalRel := stateRelNextFreeResult conf l1 l2 dest (source.space - 3)
+                  nextSource target locs (.word64 resultWord) nf memory locals1 pre.fpRegs nextRel
+                  (by simpa [nextSource, DataSem.doStack, DataSem.doLimSafe] using localsPreserved)
+                  destPresent
+                  (by simpa [pre, WordSemStateFiniteExact.setVar,
+                    sptLookup_sptInsert_ne] using zeroEq)
+                  (by simpa [nextSource, DataSem.doStack, DataSem.doLimSafe, envs] using smallerHeap)
+                have header64 : encodeHeader (width := 64) conf 3 1 = some hd := by simpa using header
+                have seqRun := evalListAppend [
+                  .assign 3 (.load (.op .add [realAddr conf (adjustVar arg), .const wordSemBytesInWord])),
+                  .assign 3 (shiftVar sh 3 amount)] (writeWord64 conf hd dest 3) target pre
+                  (by simpa [pre, resultWord] using prefixEval)
+                rw [writeEval] at seqRun
+                refine ⟨none, {pre with store := pre.store.update (.nextFree, nf), memory := memory, locals := locals1}, ?_, ?_, ?_⟩
+                · simpa [compileAssign, arg1, assignWordShiftW64, loadWord64, header64] using seqRun
+                · simp
+                · intro _
+                  refine ⟨?_, rfl⟩
+                  simpa [nextSource, resultWord, shiftEq, pre, DataSem.doStack, DataSem.doLimSafe,
+                    WordSemStateFiniteExact.setVar] using finalRel
+        | none =>
+          obtain ⟨out, outEval, outFfi, targetFfi, outMax⟩ := evaluateGiveUp2 conf l1 l2 source target locs related
+          have noSafe : ¬ DataSem.limSafe source.limits (.wordOp (.wordShift .w64 sh amount)) [.word64 word] := by
+            intro safe
+            obtain ⟨hd, encoded⟩ := shiftHeaderOfSafe conf source target l1 l2 locs sh amount [.word64 word] related safe
+            rw [header] at encoded
+            contradiction
+          refine ⟨some .notEnoughSpace, out, ?_, ?_, ?_⟩
+          · simpa [compileAssign, arg1, assignWordShiftW64, lenEq, header] using outEval
+          · intro _
+            refine ⟨outFfi.trans targetFfi.symm, ?_, ?_⟩
+            · have targetBound := nextRel.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.1
+              apply BackendProps.optionLe_trans _ _ _ ⟨outMax, ?_⟩
+              simpa [DataSem.doStack, DataSem.doLimSafe] using targetBound
+            · intro _
+              simp [DataSem.doStack, DataSem.doLimSafe, noSafe]
+          · simp
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Assign
