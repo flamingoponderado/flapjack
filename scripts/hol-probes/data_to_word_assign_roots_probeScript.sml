@@ -819,6 +819,7 @@ val _ = emit "get_vars_delete_lemma_typed" data_to_word_assignProofTheory.get_va
 val _ = emit "INTRO_IS_SOME_typed" data_to_word_assignProofTheory.INTRO_IS_SOME;
 val _ = emit "STAR_fun2set_IMP_SEP_T_typed" data_to_word_assignProofTheory.STAR_fun2set_IMP_SEP_T;
 val _ = emit "IMP_memcopy_lemma_typed" data_to_word_assignProofTheory.IMP_memcopy_lemma;
+val _ = emit "IMP_memcopy_typed" data_to_word_assignProofTheory.IMP_memcopy;
 val _ = emit "SEP_T_def_typed" set_sepTheory.SEP_T_def;
 val _ = emit "MemEqList_thm_typed" data_to_word_assignProofTheory.MemEqList_thm;
 val _ = emit "bignum_words_def_typed" data_to_word_memoryProofTheory.bignum_words_def;
