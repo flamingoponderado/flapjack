@@ -145303,6 +145303,16 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "memory_rel_Ref",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/RefMemory.lean",
+  "lean_name": "memoryRel_ref",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": ["st"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source comparison with memory_rel_Ref_typed: the full memory relation, equal input lengths, header encoding, fresh key, space and dimension premises imply the same existential heap-boundary words and memory, store-list operation, both store updates and complete resulting memory relation. The store is the canonical finite-support map; target words and the independent zero-valued pointer-tag word use separately quantified positive BitVec widths."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
   "hol_name": "memory_rel_RefByte_content",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/ByteMemory.lean",
   "lean_name": "memoryRel_freshByte",

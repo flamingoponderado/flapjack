@@ -97,4 +97,68 @@ theorem wordHeapAlloc {width : Nat} [NeZero width] (c : DataToWord.Config)
   repeat rw [SetSep.starAssoc]
   simpa [a, k, rem] using new1
 
+/-- Reference blocks have the concrete header and field words used by HOL `memory_rel_Ref`. -/
+theorem wordElRefEq {width : Nat} [NeZero width] (c : DataToWord.Config)
+    (addr : BitVec width) (rs : List (HeapAddress (WordLocW width)))
+    (ws : List (WordLocW width)) (hd : BitVec width)
+    (mapped : rs.map (wordAddr c) = ws)
+    (encoded : encodeHeader c 2 ws.length = some hd)
+    (configBound : c.lenSize + 5 < width) (good : goodDimindex width) :
+    wordEl addr (refBlock rs) c = Misc.wordList addr (.word hd :: ws) := by
+  have size : rs.length = ws.length := by have h := congrArg List.length mapped; simpa using h
+  have header : makeHeader c (2 : BitVec width) rs.length = hd := by
+    have h := encoded
+    simp only [encodeHeader] at h
+    split at h
+    · have eq := Option.some.inj h
+      simpa [size] using eq
+    · simp at h
+  have decoded := encodeHeaderImp c 2 ws.length hd encoded configBound good
+  funext heap
+  apply propext
+  simp only [wordEl, refBlock, wordPayload, List.isEmpty_nil, Bool.true_and]
+  rw [header, mapped]
+  simp [decoded.1, decoded.2, StackRemove.WordListExists.starCond]
+
+/-- Splitting free space preserves the concrete heap assertion, as used by HOL `memory_rel_Ref`. -/
+theorem wordHeapExpandSplit {width : Nat} [NeZero width] (c : DataToWord.Config)
+    (curr : BitVec width) (pre post : ValueHeap width) (left right : Nat) :
+    wordHeap curr (pre ++ heapExpand (left + right) ++ post) c =
+      wordHeap curr (pre ++ heapExpand left ++ heapExpand right ++ post) c := by
+  simp only [List.append_assoc, wordHeapAppend, heapLength_heapExpand, wordHeap_heapExpand]
+  rw [StackRemove.Proofs.WordListMemory.wordListExistsAdd]
+  simp [SetSep.starAssoc, BitVec.ofNat_add, BitVec.mul_add, BitVec.add_assoc]
+
+/-- Store into the end of free space while retaining the separated heap frame, as used by HOL `memory_rel_Ref`. -/
+theorem wordHeapAllocEnd {width : Nat} [NeZero width] (c : DataToWord.Config)
+    (curr : BitVec width) (pre post : ValueHeap width) (free : Nat)
+    (element : HeapElement (WordLocW width) (HeapTag × List (WordLocW width)))
+    (ws : List (WordLocW width)) (hd : BitVec width) (frame : ((BitVec width × WordLocW width) → Prop) → Prop)
+    (m : BitVec width → WordLocW width) (dm : BitVec width → Bool)
+    (fits : ws.length + 1 ≤ free) (size : elLength element = ws.length + 1)
+    (cell : ∀ (addr : BitVec width), wordEl addr element c = Misc.wordList addr (.word hd :: ws))
+    (old : SetSep.star (wordHeap curr (pre ++ heapExpand free ++ post) c) frame
+      (SetSep.fun2Set (m, fun x => dm x = true))) :
+    ∃ m1, storeList (curr + StackRemove.bytesInWord width * BitVec.ofNat width
+        (heapLength pre + free - (ws.length + 1))) (.word hd :: ws) m dm = some m1 ∧
+      SetSep.star (wordHeap curr
+        (pre ++ heapExpand (free - (ws.length + 1)) ++ [element] ++ post) c) frame
+        (SetSep.fun2Set (m1, fun x => dm x = true)) := by
+  let rem := free - (ws.length + 1)
+  have sum : rem + (ws.length + 1) = free := by dsimp [rem]; omega
+  have old2 : SetSep.star (wordHeap curr ((pre ++ heapExpand rem) ++ heapExpand (ws.length + 1) ++ post) c) frame
+      (SetSep.fun2Set (m, fun x => dm x = true)) := by
+    have expanded := wordHeapExpandSplit c curr pre post rem (ws.length + 1)
+    rw [sum] at expanded
+    rw [← expanded]
+    simpa [List.append_assoc] using old
+  obtain ⟨m1, stored, after⟩ := wordHeapAlloc c curr (pre ++ heapExpand rem) post (ws.length + 1)
+    element ws hd frame m dm (by omega) size (cell _) old2
+  refine ⟨m1, ?_, ?_⟩
+  · have addr : heapLength (pre ++ heapExpand rem) = heapLength pre + free - (ws.length + 1) := by
+      simp [heapLength_append, heapLength_heapExpand, rem]
+      omega
+    simpa [addr] using stored
+  · simpa [List.append_assoc, heapExpand, rem] using after
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
