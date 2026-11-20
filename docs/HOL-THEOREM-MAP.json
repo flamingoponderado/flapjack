@@ -145640,5 +145640,16 @@
   "words_as_type_indexed_bitvec": true,
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "Compared assign_UpdateByte_typed with the HOL theorem and proof: the operation equality, all assignment premises, existential target evaluation, insufficient-space obligations and successful state relation agree. The target state uses canonical finite maps and positive-width words; the evaluator inherits the documented real-model assumption."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "assign_ElemAt",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/ElemAt.lean",
+  "lean_name": "assignElemAt_correct",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared assign_ElemAt_typed with the HOL theorem and proof: the existential operation case, all assignment premises, existential target evaluation, insufficient-space obligations and successful state relation agree for both blocks and value-array references. The target state uses canonical finite maps and positive-width words; the evaluator inherits the documented real-model assumption."
 }
 ]
