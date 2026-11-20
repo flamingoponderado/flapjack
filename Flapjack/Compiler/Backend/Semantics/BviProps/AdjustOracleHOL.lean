@@ -37,8 +37,7 @@ def adjustOracleOkHOL {C D F : Type} (compiler : Compiler D) (f : C → D)
     (state : BviState C F) : Prop :=
   ∀ (n : Nat) (x : C) (y : List (Nat × Nat × Bvi.Exp)),
     state.compileOracle n = (x, y) →
-      (state.compile x y).map (fun (bytes, data, config) => (bytes, data, f config)) =
-        compiler (f x) y
+      Option.map (Prod.map id (Prod.map id f)) (state.compile x y) = compiler (f x) y
 
 /-- A target state is the source state with its callback adjusted, provided
 the callbacks agree at every oracle entry. -/
@@ -48,6 +47,13 @@ def adjustOracleRel {C D F : Type} (compiler : Compiler D) (f : C → D)
     (source : BviState C F) (target : BviState D F) : Prop :=
   adjustOracleOkHOL compiler f source ∧ target = adjustOracle compiler f source
 
+/-- Flapjack helper: `Prod.map` written with projections. -/
+theorem prodMap_eq {α β γ δ : Type} (f : α → γ) (g : β → δ) :
+    Prod.map f g = fun x => (f x.1, g x.2) := by
+  funext x
+  cases x
+  rfl
+
 /-- Flapjack helper: the source-shaped callback agreement is the projection
 form used by the untagged adjustment lemmas. -/
 theorem adjustOracleOkHOL_iff {C D F : Type} (compiler : Compiler D) (f : C → D)
@@ -55,12 +61,13 @@ theorem adjustOracleOkHOL_iff {C D F : Type} (compiler : Compiler D) (f : C → 
     adjustOracleOkHOL compiler f state ↔ adjustOracleOk compiler f state := by
   constructor
   · intro ok n
-    exact ok n (state.compileOracle n).1 (state.compileOracle n).2 rfl
+    have applied := ok n (state.compileOracle n).1 (state.compileOracle n).2 rfl
+    simpa [adjustOracleOk, prodMap_eq] using applied
   · intro ok n x y found
     simp only [adjustOracleOk] at ok
     have applied := ok n
     simp only [found] at applied
-    simpa using applied
+    simpa [prodMap_eq] using applied
 
 /-- The adjusted state keeps every runtime field, commutes with clock changes
 and preserves callback agreement. -/
@@ -128,9 +135,9 @@ theorem adjustOracle_initial_state {C D F : Type} (compiler : Compiler D)
     (ffi : HolFfiState F) (code : Spt (Nat × Bvi.Exp)) (oracle : CompileOracle (C × D))
     (clock : Nat) :
     adjustOracle compiler Prod.snd
-        (initialState ffi code oracle (BackendProps.stateCc (fun c p => (c, p)) compiler) clock :
+        (initialState ffi code oracle (BackendProps.stateCc (Function.curry id) compiler) clock :
           BviState (C × D) F) =
-      (initialState ffi code (BackendProps.stateCo (fun c p => (c, p)) oracle) compiler clock :
+      (initialState ffi code (BackendProps.stateCo (Function.curry id) oracle) compiler clock :
         BviState D F) :=
   adjustOracle_identity_initial ffi code oracle compiler clock
 
@@ -141,7 +148,7 @@ theorem adjustOracleOk_initial_state {C D F : Type} (compiler : Compiler D)
     (ffi : HolFfiState F) (code : Spt (Nat × Bvi.Exp)) (oracle : CompileOracle (C × D))
     (clock : Nat) :
     adjustOracleOkHOL compiler Prod.snd
-      (initialState ffi code oracle (BackendProps.stateCc (fun c p => (c, p)) compiler) clock :
+      (initialState ffi code oracle (BackendProps.stateCc (Function.curry id) compiler) clock :
         BviState (C × D) F) :=
   (adjustOracleOkHOL_iff compiler Prod.snd _).2
     (adjustOracleOk_identity_initial ffi code oracle compiler clock)
@@ -173,17 +180,17 @@ theorem evaluate_CURRY_I {C D F : Type} (expressions : List Bvi.Exp) (env : List
     (compiler : Compiler D) (clock : Nat) (result : BviResult)
     (state : BviState (C × D) F)
     (premise : evaluateTuple (expressions, env,
-        (initialState ffi code oracle (BackendProps.stateCc (fun c p => (c, p)) compiler) clock :
+        (initialState ffi code oracle (BackendProps.stateCc (Function.curry id) compiler) clock :
           BviState (C × D) F)) = (result, state) ∧
       result ≠ .err (.abort .typeError)) :
     ∃ next : BviState D F,
       evaluateTuple (expressions, env,
-        (initialState ffi code (BackendProps.stateCo (fun c p => (c, p)) oracle) compiler clock :
+        (initialState ffi code (BackendProps.stateCo (Function.curry id) oracle) compiler clock :
           BviState D F)) = (result, next) ∧ next.ffi = state.ffi := by
   obtain ⟨run, notType⟩ := premise
   have ok := adjustOracleOk_initial_state compiler ffi code oracle clock
   have applied := evaluate_adj_orac expressions env
-    (initialState ffi code oracle (BackendProps.stateCc (fun c p => (c, p)) compiler) clock)
+    (initialState ffi code oracle (BackendProps.stateCc (Function.curry id) compiler) clock)
     result state compiler Prod.snd ⟨run, notType, ok⟩
   refine ⟨adjustOracle compiler Prod.snd state, ?_, ?_⟩
   · rw [← adjustOracle_initial_state]

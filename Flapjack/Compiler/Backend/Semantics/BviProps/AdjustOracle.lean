@@ -22,8 +22,13 @@ leaving the runtime state unchanged. -/
   (fmap_as_finite_support := [refs])]
 def adjustOracle {C D F : Type} (compiler : Compiler D) (f : C → D)
     (state : BviState C F) : BviState D F :=
-  ⟨state.refs, state.clock, state.global, compiler,
-    fun n => (f (state.compileOracle n).1, (state.compileOracle n).2), state.code, state.ffi⟩
+  { refs := state.refs, clock := state.clock, global := state.global, code := state.code,
+    ffi := state.ffi, compile := compiler,
+    compileOracle := Prod.map f id ∘ state.compileOracle }
+
+/-- Flapjack helper: the pair-mapped oracle written pointwise. -/
+theorem prodMapOracle_eq {C D : Type} (f : C → D) (oracle : CompileOracle C) :
+    Prod.map f id ∘ oracle = fun n => (f (oracle n).1, (oracle n).2) := rfl
 
 /-- The original and adjusted callbacks agree at every oracle entry. -/
 def adjustOracleOk {C D F : Type} (compiler : Compiler D) (f : C → D)
@@ -98,7 +103,7 @@ theorem doInstall_adjustOracle {C D F R : Type} (compiler : Compiler D) (f : C �
   all_goals repeat' split at run
   all_goals simp_all
   all_goals have okZero := ok 0
-  all_goals simp_all [adjustOracleOk, adjustOracle, doInstall]
+  all_goals simp_all [adjustOracleOk, adjustOracle, doInstall, prodMapOracle_eq]
   all_goals rcases run with ⟨rfl, rfl⟩
   all_goals simp_all
   all_goals grind
