@@ -146051,6 +146051,16 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "IMP_memcopy_lemma",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/MemCopy/Element.lean",
+  "lean_name": "impMemcopyLemma",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared IMP_memcopy_lemma_typed: source and target state payload types are independently quantified; the full memory relation, block index and paired-list length bounds, dimension, register lookup and real-address evaluation imply the exact extended paired roots and domain membership. Target state fields use canonical finite maps and words use positive type-indexed widths."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
   "hol_name": "assign_EqualConst",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/EqualConst.lean",
   "lean_name": "assignEqualConst_correct",
