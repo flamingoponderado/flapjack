@@ -25,6 +25,38 @@ theorem holFmapAsFiniteSupportWitness {C F : Type} :
   BviSem.holFmapAsFiniteSupportWitness
 end ListCarrier
 
+/-- Flapjack helper comparing the catch-all result case with HOL's explicit
+    `Rerr` arm. It has no separate HOL declaration: HOL writes the error arms
+    out inline in `evaluate_CONS`, `evaluate_APPEND` and `evaluate_SNOC`. -/
+private theorem evalTupleCaseEq {C F : Type} (run : EvalResult C F)
+    (head : List Value → BviState C F → EvalResult C F) :
+    (match run with
+      | (.val values, n) => head values n
+      | other => other) =
+    (match run with
+      | (.val values, n) => head values n
+      | (.err e, s1) => (.err e, s1)) := by
+  obtain ⟨result, next⟩ := run
+  cases result with
+  | err error => rfl
+  | val values => rfl
+
+/-- Flapjack helper for the two-level case in `evaluate_CONS`: the two heads
+    agree pointwise, so the catch-all and explicit-arm forms coincide. -/
+private theorem evalTupleCaseEqHeads {C F : Type} (run : EvalResult C F)
+    (headL headR : List Value → BviState C F → EvalResult C F)
+    (hhead : ∀ values n, headL values n = headR values n) :
+    (match run with
+      | (.val values, n) => headL values n
+      | other => other) =
+    (match run with
+      | (.val values, n) => headR values n
+      | (.err e, s1) => (.err e, s1)) := by
+  obtain ⟨result, next⟩ := run
+  cases result with
+  | err error => rfl
+  | val values => exact hhead values next
+
 /-- Evaluate a nonempty list by evaluating its head then its tail. -/
 @[hol "cakeml/compiler/backend/semantics/bviPropsScript.sml" "evaluate_CONS"
   (fmap_as_finite_support := [refs])]
@@ -35,9 +67,13 @@ theorem evaluateCons {C F : Type} (expression : Bvi.Exp) (expressions : List Bvi
       | (.val values, next) =>
         match evaluateTuple (expressions, env, next) with
         | (.val tail, last) => (.val (@Flapjack.holHd Value ⟨unitValue⟩ values :: tail), last)
-        | other => other
-      | other => other :=
-  BviSem.evaluateCons expression expressions env state
+        | (.err e, s1) => (.err e, s1)
+      | (.err e, s2) => (.err e, s2) := by
+  rw [BviSem.evaluateCons]
+  refine evalTupleCaseEqHeads (evaluateTuple ([expression], env, state)) _ _ ?_
+  intro values n
+  exact evalTupleCaseEq (evaluateTuple (expressions, env, n)) (fun t l =>
+    (.val (@Flapjack.holHd Value ⟨unitValue⟩ values :: t), l))
 
 /-- Evaluate an append by evaluating the two lists in order. -/
 @[hol "cakeml/compiler/backend/semantics/bviPropsScript.sml" "evaluate_APPEND"
@@ -49,9 +85,13 @@ theorem evaluateAppend {C F : Type} (first : List Bvi.Exp) (env : List Value)
       | (.val values, next) =>
         match evaluateTuple (second, env, next) with
         | (.val tail, last) => (.val (values ++ tail), last)
-        | other => other
-      | other => other :=
-  BviSem.evaluateAppend first env state second
+        | (.err e, s1) => (.err e, s1)
+      | (.err e, s2) => (.err e, s2) := by
+  rw [BviSem.evaluateAppend]
+  refine evalTupleCaseEqHeads (evaluateTuple (first, env, state)) _ _ ?_
+  intro values n
+  exact evalTupleCaseEq (evaluateTuple (second, env, n)) (fun tail last =>
+    (.val (values ++ tail), last))
 
 /-- Evaluate a list with one expression appended at the end. -/
 @[hol "cakeml/compiler/backend/semantics/bviPropsScript.sml" "evaluate_SNOC"
@@ -63,9 +103,13 @@ theorem evaluateSnoc {C F : Type} (expressions : List Bvi.Exp) (env : List Value
       | (.val values, next) =>
         match evaluateTuple ([expression], env, next) with
         | (.val tail, last) => (.val (values ++ tail), last)
-        | other => other
-      | other => other :=
-  BviSem.evaluateSnoc expressions env state expression
+        | (.err e, s1) => (.err e, s1)
+      | (.err e, s2) => (.err e, s2) := by
+  rw [BviSem.evaluateSnoc]
+  refine evalTupleCaseEqHeads (evaluateTuple (expressions, env, state)) _ _ ?_
+  intro values n
+  exact evalTupleCaseEq (evaluateTuple ([expression], env, n)) (fun tail last =>
+    (.val (values ++ tail), last))
 
 /-- A dropped prefix splits into its head and the rest of the drop. -/
 @[hol "cakeml/compiler/backend/semantics/bviPropsScript.sml" "take_drop_lem"
