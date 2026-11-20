@@ -414,6 +414,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.StoreUnused
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.GetVars
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.Separation
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.MemCopy.Element
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.MemCopy.Loop
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.ShiftVar
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.RealAddrInsert
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.EqualStack
