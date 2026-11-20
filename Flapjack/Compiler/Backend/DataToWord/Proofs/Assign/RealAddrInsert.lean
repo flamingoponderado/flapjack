@@ -6,6 +6,8 @@ public import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.EqualStack
 /-! Real-address expression preservation for comparison-code correctness. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Assign
 open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Backend.DataToWord
+open Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
+open Flapjack.Compiler.Backend.DataToWord.Proofs.Bignum
 set_option maxRecDepth 8192
 namespace RealAddrInsertWitness
 /-- Canonical finite-map roundtrip for the target word state. -/
@@ -32,4 +34,27 @@ theorem wordExp_realAddr_insert {width : Nat} [NeZero width] {C F : Type} (conf 
     simp only [realAddr] <;> split_ifs <;>
     simp [WordSemStateFiniteExact.wordExp, WordSemStateFiniteExact.getVar,
       WordSemStateFiniteExact.getStore, sptLookup_sptInsert_ne, *]
+/-- Disjunction is equivalent to the corresponding implication. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml" "IMP"]
+theorem orIffNotImp (b1 b2 : Prop) : (b1 ∨ b2) ↔ (¬b1 → b2) := by
+  classical
+  tauto
+
+/-- A real-address expression evaluates when the heap base and input are words. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml" "word_exp_real_addr_some_value"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem wordExpRealAddrSomeValue {width : Nat} [NeZero width] {C F : Type} (conf : Config)
+    (s : WordSemStateFiniteExact width C F) (a : Nat) (curr ww : BitVec width)
+    (heap : s.store.lookup .currHeap = some (.word curr))
+    (read : s.getVar a = some (.word ww)) (good : goodDimindex width)
+    (bound : shiftLength conf < width) : ∃ wx,
+      s.wordExp (realAddr conf a) = some (.word wx) := by
+  cases h : getRealAddr conf s.store ww with
+  | none =>
+    simp only [getRealAddr, heap] at h
+    split at h <;> simp_all
+    split at h <;> simp_all
+  | some address =>
+    exact ⟨address, getRealAddr_lemma conf a s ww address ⟨bound, good, read, h⟩⟩
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Assign

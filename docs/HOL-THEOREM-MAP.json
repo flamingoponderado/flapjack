@@ -145979,6 +145979,24 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "IMP",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/RealAddrInsert.lean",
+  "lean_name": "orIffNotImp",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared assign_IMP_typed: the original Boolean disjunction and implication equivalence are translated as propositions, with both variables unconstrained and no hypotheses."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "word_exp_real_addr_some_value",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/RealAddrInsert.lean",
+  "lean_name": "wordExpRealAddrSomeValue",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared word_exp_real_addr_some_value_typed: the original heap lookup, register lookup, good dimension and shift bounds imply an existential word-valued evaluation of real_addr. State fields use canonical finite maps and words use positive type-indexed widths."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
   "hol_name": "assign_EqualConst",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/EqualConst.lean",
   "lean_name": "assignEqualConst_correct",
