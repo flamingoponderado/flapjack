@@ -1,6 +1,8 @@
 module
 
 public import Flapjack.Compiler.Backend.Semantics.BviProps.AdjustOracle
+public import Flapjack.Compiler.Backend.Semantics.BviProps.AdjustOracleEval
+public import Flapjack.Compiler.Backend.Semantics.BviSem.EvaluateList
 public import Flapjack.HolRef
 
 @[expose] public section
@@ -143,5 +145,49 @@ theorem adjustOracleOk_initial_state {C D F : Type} (compiler : Compiler D)
         BviState (C × D) F) :=
   (adjustOracleOkHOL_iff compiler Prod.snd _).2
     (adjustOracleOk_identity_initial ffi code oracle compiler clock)
+
+/-- Evaluation whose result is not a type error commutes with oracle
+adjustment and preserves callback agreement. -/
+@[hol "cakeml/compiler/backend/semantics/bviPropsScript.sml" "evaluate_adj_orac"
+  (fmap_as_finite_support := [refs])]
+theorem evaluate_adj_orac {C D F : Type} (expressions : List Bvi.Exp) (env : List Value)
+    (state : BviState C F) (result : BviResult) (next : BviState C F)
+    (compiler : Compiler D) (f : C → D)
+    (premise : evaluateTuple (expressions, env, state) = (result, next) ∧
+      result ≠ .err (.abort .typeError) ∧ adjustOracleOkHOL compiler f state) :
+    evaluateTuple (expressions, env, adjustOracle compiler f state) =
+        (result, adjustOracle compiler f next) ∧ adjustOracleOkHOL compiler f next := by
+  obtain ⟨run, notType, ok⟩ := premise
+  have okProj := (adjustOracleOkHOL_iff compiler f state).1 ok
+  rw [evaluateTuple] at run ⊢
+  have applied := evaluate_adjustOracle compiler f expressions env state next result run
+    notType okProj
+  exact ⟨applied.1, (adjustOracleOkHOL_iff compiler f next).2 applied.2⟩
+
+/-- Evaluation of the disabled pass's initial state agrees with the downstream
+initial state up to the oracle adjustment, keeping the FFI state. -/
+@[hol "cakeml/compiler/backend/semantics/bviPropsScript.sml" "evaluate_CURRY_I"
+  (fmap_as_finite_support := [refs])]
+theorem evaluate_CURRY_I {C D F : Type} (expressions : List Bvi.Exp) (env : List Value)
+    (ffi : HolFfiState F) (code : Spt (Nat × Bvi.Exp)) (oracle : CompileOracle (C × D))
+    (compiler : Compiler D) (clock : Nat) (result : BviResult)
+    (state : BviState (C × D) F)
+    (premise : evaluateTuple (expressions, env,
+        (initialState ffi code oracle (BackendProps.stateCc (fun c p => (c, p)) compiler) clock :
+          BviState (C × D) F)) = (result, state) ∧
+      result ≠ .err (.abort .typeError)) :
+    ∃ next : BviState D F,
+      evaluateTuple (expressions, env,
+        (initialState ffi code (BackendProps.stateCo (fun c p => (c, p)) oracle) compiler clock :
+          BviState D F)) = (result, next) ∧ next.ffi = state.ffi := by
+  obtain ⟨run, notType⟩ := premise
+  have ok := adjustOracleOk_initial_state compiler ffi code oracle clock
+  have applied := evaluate_adj_orac expressions env
+    (initialState ffi code oracle (BackendProps.stateCc (fun c p => (c, p)) compiler) clock)
+    result state compiler Prod.snd ⟨run, notType, ok⟩
+  refine ⟨adjustOracle compiler Prod.snd state, ?_, ?_⟩
+  · rw [← adjustOracle_initial_state]
+    exact applied.1
+  · exact (adjustOracle_simps compiler Prod.snd state 0 0).2.2.2.2.1
 
 end Flapjack.Compiler.Backend.BviProps
