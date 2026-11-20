@@ -396,6 +396,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.WordShift64
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.EqualCode
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.Equal
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.MemEqList
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.EqualConst
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.Compare1
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.RealAddrInsert
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.EqualStack

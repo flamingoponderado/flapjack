@@ -145939,6 +145939,17 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "assign_EqualConst",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/EqualConst.lean",
+  "lean_name": "assignEqualConst_correct",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared assign_EqualConst_typed: the existential constant part, complete state relation, names and cut conditions, argument lookup, termination depth and successful source application remain; the target evaluation existential retains both out-of-space obligations and the successful state relation with no result. Target state fields use canonical finite maps and machine words use positive type-indexed widths; the evaluator inherits the rational-cut real model."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
   "hol_name": "MemEqList_thm",
   "hol_line": 12206,
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/MemEqList.lean",
