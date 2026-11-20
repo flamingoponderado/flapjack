@@ -88,4 +88,23 @@ theorem isClos_cases (x : Value) :
         ∃ loc args env funs index, x = .recclosure loc args env funs index := by
   cases x <;> simp [isClos]
 
+/-- The simple state relation keeps the FFI state identical. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "simple_state_rel_ffi"
+  (fmap_as_finite_support := [refs, code])]
+theorem simpleStateRel_ffi {C D F : Type} (vr : Value → Value → Prop)
+    (sr : State C F → State D F → Prop) (s : State C F) (t : State D F)
+    (h : simpleStateRel vr sr ∧ sr s t) : s.ffi = t.ffi := by
+  obtain ⟨rel, related⟩ := h
+  exact (rel.2.2.2.2.1 s t related).1
+
+/-- The simple state relation keeps the reference-map domains equal. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "simple_state_rel_fdom"
+  (fmap_as_finite_support := [refs, code])]
+theorem simpleStateRel_fdom {C D F : Type} (vr : Value → Value → Prop)
+    (sr : State C F → State D F → Prop) (s : State C F) (t : State D F)
+    (h : simpleStateRel vr sr ∧ sr s t) :
+    ∀ ptr, s.refs.lookup ptr ≠ none ↔ t.refs.lookup ptr ≠ none := by
+  obtain ⟨rel, related⟩ := h
+  exact (rel.2.2.2.2.1 s t related).2.1
+
 end Flapjack.Compiler.Backend.ClosProps

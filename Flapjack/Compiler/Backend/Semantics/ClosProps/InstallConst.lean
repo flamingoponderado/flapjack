@@ -11,11 +11,18 @@ namespace Flapjack.Compiler.Backend.ClosProps
 open Flapjack.Compiler.Backend.ClosSem
 open Flapjack.SemanticPrimitivesHOL
 
+/-- Closure states use the canonical finite-map codec. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : StateBroad C F, (State.ofBroad s).toBroad = s) ∧
+      (∀ s : State C F, State.ofBroad s.toBroad = s) :=
+  ClosSem.holFmapAsFiniteSupportWitness
+
 /-- Installing code preserves the closure arity bound and FFI state, even if
-the installation returns an error. This source-shaped candidate remains
-untagged while the installation evaluator and state carrier await HOL review. -/
-theorem doInstall_const {C F : Type} (values : List ClosSem.Value) (state next : State C F)
-    (result : Result (List ClosLang.Exp) ClosSem.Value)
+installation returns an error. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "do_install_const"
+  (fmap_as_finite_support := [refs, code])]
+theorem doInstall_const {C F : Type} (values : List ClosSem.Value) (state : State C F)
+    (result : Result (List ClosLang.Exp) ClosSem.Value) (next : State C F)
     (run : doInstall values state = (result, next)) :
     next.maxApp = state.maxApp ∧ next.ffi = state.ffi := by
   unfold doInstall at run
@@ -155,7 +162,7 @@ theorem evaluate_install_const_step {C F : Type} (trace : BackendCommon.Tra)
       dsimp only
       cases installRun : doInstall values.reverse next with
       | mk installed last =>
-        have installConst := doInstall_const values.reverse next last installed installRun
+        have installConst := doInstall_const values.reverse next installed last installRun
         cases installed with
         | err error => exact installConst.1.trans argsIH
         | val program =>

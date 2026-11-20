@@ -62,4 +62,29 @@ theorem clockLemmas {C F : Type} :
   cases s
   rfl
 
+/-- Rewriting the clock leaves the FFI state unchanged. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "with_clock_ffi"
+  (fmap_as_finite_support := [refs, code])]
+theorem withClock_ffi {C F : Type} (s : State C F) (k : Nat) :
+    ({ s with clock := k } : State C F).ffi = s.ffi := by
+  simp
+
+/-- Decrementing the clock and then rewriting it is the same as rewriting the
+original clock to that value. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "dec_clock_with_clock"
+  (fmap_as_finite_support := [refs, code])]
+theorem decClock_withClock {C F : Type} (n : Nat) (s : State C F) (y : Nat) :
+    { decClock n s with clock := y } = { s with clock := y } := by
+  simp [decClock]
+
+/-- Simultaneous reference and FFI updates equal the nested updates in either
+order. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "refs_ffi_lemma"
+  (fmap_as_finite_support := [refs, code])]
+theorem refs_ffi_lemma {C F : Type} (s : State C F)
+    (refs' : HolFiniteMapExact Nat (Ref Value)) (ffi' : HolFfiState F) :
+    { s with refs := refs', ffi := ffi' } =
+      { { s with refs := refs' } with ffi := ffi' } := by
+  rfl
+
 end Flapjack.Compiler.Backend.ClosProps
