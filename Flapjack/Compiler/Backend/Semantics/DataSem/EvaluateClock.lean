@@ -20,6 +20,13 @@ theorem fixClock_imp {C F D G R : Type} (state : State C F) (result : R × State
     obtain ⟨_, rfl⟩ := fixed
     exact Nat.min_le_left _ _
 
+/-- Decrementing the clock preserves a clock bound. -/
+@[hol "cakeml/compiler/backend/semantics/dataSemScript.sml" "LESS_EQ_dec_clock"]
+theorem lessEqDecClock {C F D G : Type} (r : State C F) (s : State D G)
+    (run : r.clock ≤ (decClock s).clock) : r.clock ≤ s.clock := by
+  simp only [decClock] at run
+  omega
+
 /-- A successful local-environment cut preserves the clock. -/
 theorem cutStateOpt_clock {C F : Type} (live : Option NumSet) (state next : State C F)
     (run : cutStateOpt live state = some next) : next.clock = state.clock :=

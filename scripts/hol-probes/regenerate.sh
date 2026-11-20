@@ -489,6 +489,14 @@ run_probe clos_sem_clock_typed_probeScript.sml clos_sem_clock_typed_probe.out \
   LESS_EQ_dec_clock_typed fix_clock_IMP_typed evaluate_app_NIL_typed do_app_const_typed evaluate_clock_help_typed \
   "$cake_dir/compiler/backend/semantics/closSemScript.sml" "$cake_dir/compiler/backend/semantics"
 
+run_probe bvl_sem_clock_typed_probeScript.sml bvl_sem_clock_typed_probe.out \
+  bvl_do_int_app_eq_some_typed bvl_fix_clock_IMP_typed bvl_do_app_Ref_typed bvl_do_app_Cons_typed \
+  "$cake_dir/compiler/backend/semantics/bvlSemScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe data_sem_clock_typed_probeScript.sml data_sem_clock_typed_probe.out \
+  data_fix_clock_IMP_typed data_LESS_EQ_dec_clock_typed \
+  "$cake_dir/compiler/backend/semantics/dataSemScript.sml" "$cake_dir/compiler/backend/semantics"
+
 run_probe cake_flat_sem_thunk_probeScript.sml cake_flat_sem_thunk_probe.out \
   thunk_type thunk_dest thunk_update thunk_bad valid_thunk ref_flag bad_index ordinary_ref nonlocation update_value update_nested \
   "$cake_dir/compiler/backend/semantics/flatSemScript.sml" "$cake_dir/compiler/backend/semantics"

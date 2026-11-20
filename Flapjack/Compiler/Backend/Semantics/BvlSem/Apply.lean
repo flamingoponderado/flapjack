@@ -92,4 +92,25 @@ noncomputable def doApp {C F : Type} (op : ClosLang.Op) (args : List Value)
           .val (unitValue, { s with refs := s.refs.updateEq (ptr, .thunk mode value) })
         | _ => fail
     | _, _ => fail
+
+/-- Reference allocation in BVL `do_app`, as the source states it: the fresh
+index is the least unused reference. -/
+@[hol "cakeml/compiler/backend/semantics/bvlSemScript.sml" "bvl_do_app_Ref"
+  (fmap_as_finite_support := [refs])]
+theorem doApp_memOp_ref {C F : Type} (vs : List Value)
+    (s : Flapjack.Compiler.Backend.BvlSem.State C F) :
+    doApp (.memOp .ref) vs s =
+      .val (.refPtr true (leastUnusedRef s.refs),
+        { s with refs := s.refs.updateEq (leastUnusedRef s.refs, .valueArray vs) }) := by
+  simp [doApp, applyMemory]
+
+/-- Block construction in BVL `do_app` returns the block unchanged in the
+same state. -/
+@[hol "cakeml/compiler/backend/semantics/bvlSemScript.sml" "bvl_do_app_Cons"
+  (fmap_as_finite_support := [refs])]
+theorem doApp_blockOp_cons {C F : Type} (tag : Nat) (vs : List Value)
+    (s : Flapjack.Compiler.Backend.BvlSem.State C F) :
+    doApp (.blockOp (.cons tag)) vs s = .val (.block tag vs, s) := by
+  simp [doApp, applyBlock]
+
 end Flapjack.Compiler.Backend.BvlSem

@@ -877,6 +877,7 @@ import Flapjack.Compiler.Backend.Semantics.ClosSem.Measure
 import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
 import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
 import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyClock
+import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyConst
 import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateClock
 import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateClockSource
 import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateClockShift
