@@ -1,0 +1,18 @@
+initial_state_simp_typed=(initial_state (f :β ffi_state) (c :(num # bvi$exp) sptree$num_map) (co :num -> α # (num # num # bvi$exp) list) (cc :α -> (num # num # bvi$exp) list -> (word8 list # word64 list # α) option) (k :num) :(α, β) state).code = c ∧ (initial_state f c co cc k :(α, β) state).ffi = f ∧ (initial_state f c co cc k :(α, β) state).clock = k ∧ (initial_state f c co cc k :(α, β) state).compile = cc ∧ (initial_state f c co cc k :(α, β) state).compile_oracle = co ∧ (initial_state f c co cc k :(α, β) state).refs = (FEMPTY :num |-> v ref) ∧ (initial_state f c co cc k :(α, β) state).global = (NONE :num option)
+initial_state_with_simp_typed=(initial_state (f :β ffi_state) (c :(num # bvi$exp) sptree$num_map) (co :num -> α # (num # num # bvi$exp) list) (cc :α -> (num # num # bvi$exp) list -> (word8 list # word64 list # α) option) (k :num) :(α, β) state) with clock := (k1 :num) = (initial_state f c co cc k1 :(α, β) state) ∧ (initial_state f c co cc k :(α, β) state) with code := (c1 :(num # bvi$exp) sptree$num_map) = (initial_state f c1 co cc k :(α, β) state)
+inc_clock_refs_typed=(inc_clock (n :num) (s :(α, β) state)).refs = s.refs
+inc_clock_code_typed=(inc_clock (n :num) (s :(α, β) state)).code = s.code
+inc_clock_global_typed=(inc_clock (n :num) (s :(α, β) state)).global = s.global
+inc_clock_ffi_typed=(inc_clock (n :num) (s :(β, α) state)).ffi = s.ffi
+inc_clock_clock_typed=(inc_clock (n :num) (s :(α, β) state)).clock = s.clock + n
+dec_clock_global_typed=(dec_clock (n :num) (s :(α, β) state)).global = s.global
+dec_clock_ffi_typed=(dec_clock (n :num) (s :(β, α) state)).ffi = s.ffi
+dec_clock_refs_typed=(dec_clock (n :num) (s :(α, β) state)).refs = s.refs
+dec_clock_with_code_typed=dec_clock (n :num) ((s :(α, β) state) with code := (c :(num # bvi$exp) sptree$num_map)) = dec_clock n s with code := c
+dec_clock_code_typed=(dec_clock (n :num) (s :(α, β) state)).code = s.code
+dec_clock0_typed=∀(n :α) (s :(γ, 'ffi) state). dec_clock (0 :num) s = s
+inc_clock_eq_0_typed=(inc_clock (extra :num) (s :(α, β) state)).clock = (0 :num) ⇔ s.clock = (0 :num) ∧ extra = (0 :num)
+dec_clock_1_inc_clock_typed=(x :num) ≠ (0 :num) ⇒ dec_clock (1 :num) (inc_clock x (s :(α, β) state)) = inc_clock (x − (1 :num)) s
+dec_clock_1_inc_clock2_typed=(s :(α, β) state).clock ≠ (0 :num) ⇒ dec_clock (1 :num) (inc_clock (x :num) s) = inc_clock x (dec_clock (1 :num) s)
+dec_clock_inc_clock_typed=¬((s :(α, β) state).clock < (n :num)) ⇒ dec_clock n (inc_clock (x :num) s) = inc_clock x (dec_clock n s)
+take_drop_lem_typed=∀(skip :num) (env :α list). skip < LENGTH env ∧ skip + SUC (n :num) ≤ LENGTH env ∧ DROP skip env ≠ ([] :α list) ⇒ env❲skip❳::TAKE n (DROP ((1 :num) + skip) env) = TAKE (n + (1 :num)) (DROP skip env)

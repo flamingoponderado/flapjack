@@ -10795,6 +10795,13 @@ run_probe bvl_props_typed_probeScript.sml bvl_props_typed_probe.out \
   "$cake_dir/compiler/backend/semantics/bvlPropsScript.sml" \
   "$cake_dir/compiler/backend/semantics"
 
+run_probe bvi_props_typed_probeScript.sml bvi_props_typed_probe.out \
+  initial_state_simp_typed initial_state_with_simp_typed inc_clock_refs_typed inc_clock_code_typed inc_clock_global_typed inc_clock_ffi_typed inc_clock_clock_typed \
+  dec_clock_global_typed dec_clock_ffi_typed dec_clock_refs_typed dec_clock_with_code_typed dec_clock_code_typed dec_clock0_typed inc_clock_eq_0_typed \
+  dec_clock_1_inc_clock_typed dec_clock_1_inc_clock2_typed dec_clock_inc_clock_typed take_drop_lem_typed \
+  "$cake_dir/compiler/backend/semantics/bviPropsScript.sml" \
+  "$cake_dir/compiler/backend/semantics"
+
 run_probe pan_common_props_typed_probeScript.sml pan_common_props_typed_probe.out \
   MAP3_MAP2_typed MAX_LIST_add_not_mem_typed MAX_LIST_i_genlist_typed all_distinct_drop_typed all_distinct_el_fst_same_eq_typed all_distinct_take_typed all_distinct_take_frop_disjoint_typed disjoint_drop_take_sum_typed \
   disjoint_not_mem_el_typed disjoint_take_drop_sum_typed distinct_lists_append_typed distinct_lists_append_intro_typed distinct_lists_append_right_elim_typed distinct_lists_commutes_typed distinct_lists_cons_typed distinct_lists_eq_disjoint_typed \
