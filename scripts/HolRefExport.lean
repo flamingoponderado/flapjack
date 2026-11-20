@@ -544,6 +544,9 @@ elab "#emit_hol_ref_export" : command => do
         if !ref.writeWord64ExistentialInhabitants.isEmpty then
           qualifiers := qualifiers ++
             [("write_word64_existential_inhabitants", toJson ref.writeWord64ExistentialInhabitants)]
+        if !ref.consAltExistentialInhabitants.isEmpty then
+          qualifiers := qualifiers ++
+            [("cons_alt_existential_inhabitants", toJson ref.consAltExistentialInhabitants)]
         let mut fields : List (String × Json) := [
           ("lean_name", toJson name.toString),
           ("hol_path", toJson ref.path),

@@ -266,4 +266,7 @@ val _ = emit "heap_in_memory_store_UpdateByte_typed" "heap_in_memory_store_Updat
 val _ = emit "memory_rel_ByteArray_IMP_typed" "memory_rel_ByteArray_IMP";
 val _ = emit "write_bytearray_isWord_typed" "write_bytearray_isWord";
 val _ = emit "write_bytearray_append_typed" "write_bytearray_append";
+val _ = print ("memory_rel_Cons_alt_hypotheses=" ^
+  Int.toString (length (hyp memory_rel_Cons_alt)) ^ "\n");
+val _ = emit "memory_rel_Cons_alt_typed" "memory_rel_Cons_alt";
 val _ = emit "memory_rel_write_bytearray_typed" "memory_rel_write_bytearray";

@@ -985,6 +985,17 @@ elaborated audit checks that β occurs only in its instance and unused witness.
 These checks do not establish HOL correspondence: independently review each
 typed HOL statement and proof, including the order of the 32-bit payload words.
 
+**Qualify constructor allocation's unused HOL witness.** The narrow
+`cons_alt_existential_inhabitants := [β._unused]` qualifier is reserved for
+`memoryRel_consAlt`, the counterpart of `memory_rel_Cons_alt`. It retains the
+independent inhabited HOL type of the unused existential witness using one
+`Nonempty β` instance. Combine it with the standalone finite-map relation
+qualifier for `st` and the positive-word qualifier. The source checker pins the
+complete theorem telescope, the elaborated audit checks that β occurs only in
+its instance and unused witness, and the manifest records the exact qualifier.
+These checks do not prove HOL correspondence: independently compare the typed
+source and the complete conditional memory-relation conclusion.
+
 **Port the executable path, too.** As HOL definitions are ported, make the
 compiler that `flapjack-compile` actually runs call the reviewed `@[hol]`
 definitions. A tagged proof-only duplicate beside a different production
