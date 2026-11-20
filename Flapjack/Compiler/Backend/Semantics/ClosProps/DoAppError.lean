@@ -97,4 +97,83 @@ theorem doApp_ffiError_imp {C F : Type} (op : ClosLang.Op) (args : List ClosSem.
   | label index => simp [ClosSem.doApp] at run
   | install => simp [ClosSem.doApp] at run
 
+/-- An abort error is an abort error. -/
+private theorem abort_of_err {C F : Type} (error : ErrorResult ClosSem.Value) (reason : Abort)
+    (run : (.err (.abort reason) : Result (ClosSem.Value × ClosSem.State C F) ClosSem.Value) =
+      .err error) :
+    ∃ a : Abort, error = .abort a := by
+  injection run with same
+  exact ⟨reason, same.symm⟩
+
+/-- Every primitive failure other than the equality block test is an abort. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "do_app_err"
+  (fmap_as_finite_support := [refs, code])]
+theorem doApp_err {C F : Type} (op : ClosLang.Op) (args : List ClosSem.Value)
+    (state : ClosSem.State C F) (error : ErrorResult ClosSem.Value)
+    (run : ClosSem.doApp op args state = .err error)
+    (notEqual : op ≠ .blockOp .equal) :
+    ∃ a : Abort, error = .abort a := by
+  cases op with
+  | blockOp operation =>
+    by_cases isEqual : operation = .equal
+    · rw [isEqual] at notEqual
+      exact absurd rfl notEqual
+    · cases h : applyBlock operation args state with
+      | none =>
+        exact abort_of_err (C := C) (F := F) error .typeError
+          (by simpa [ClosSem.doApp, h] using run)
+      | some pair =>
+        obtain ⟨value, next⟩ := pair
+        simp [ClosSem.doApp, h] at run
+  | globOp operation =>
+    cases h : applyGlobal operation args state with
+    | none =>
+      exact abort_of_err (C := C) (F := F) error .typeError
+        (by simpa [ClosSem.doApp, h] using run)
+    | some pair =>
+      obtain ⟨value, next⟩ := pair
+      simp [ClosSem.doApp, h] at run
+  | memOp operation =>
+    cases h : applyMemory operation args state with
+    | none =>
+      exact abort_of_err (C := C) (F := F) error .typeError
+        (by simpa [ClosSem.doApp, h] using run)
+    | some pair =>
+      obtain ⟨value, next⟩ := pair
+      simp [ClosSem.doApp, h] at run
+  | intOp operation =>
+    cases h : applyNumeric (.intOp operation) args state with
+    | none =>
+      exact abort_of_err (C := C) (F := F) error .typeError
+        (by simpa [ClosSem.doApp, h] using run)
+    | some pair =>
+      obtain ⟨value, next⟩ := pair
+      simp [ClosSem.doApp, h] at run
+  | wordOp operation =>
+    cases h : applyNumeric (.wordOp operation) args state with
+    | none =>
+      exact abort_of_err (C := C) (F := F) error .typeError
+        (by simpa [ClosSem.doApp, h] using run)
+    | some pair =>
+      obtain ⟨value, next⟩ := pair
+      simp [ClosSem.doApp, h] at run
+  | ffi name =>
+    unfold ClosSem.doApp at run
+    repeat' split at run
+    all_goals
+      try exact abort_of_err (C := C) (F := F) error _ run
+    all_goals simp_all
+  | thunkOp operation =>
+    unfold ClosSem.doApp at run
+    repeat' split at run
+    all_goals
+      try exact abort_of_err (C := C) (F := F) error _ run
+    all_goals simp_all
+  | label index =>
+    exact abort_of_err (C := C) (F := F) error .typeError
+      (by simpa [ClosSem.doApp] using run)
+  | install =>
+    exact abort_of_err (C := C) (F := F) error .typeError
+      (by simpa [ClosSem.doApp] using run)
+
 end Flapjack.Compiler.Backend.ClosProps
