@@ -144502,6 +144502,20 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "AllocVar_thm_nary",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/AllocVarNary.lean",
+  "lean_name": "allocVar_nary",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared AllocVar_thm_nary_typed and zero HOL hypotheses: all seven premises, the failure bound expressed using size_of_heap_args over the cut locals, and the full successful state relation and target preservation equalities match. The proof specializes AllocVar_thm_gen and uses the original argument-root permutation. The target state uses canonical finite-support maps and the word and target share the positive width; the evaluator inherits reals_as_rational_cuts, documented in SOUNDNESS item 8."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "AllocVar_thm_gen",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/AllocVar.lean",
   "lean_name": "allocVar_gen",
