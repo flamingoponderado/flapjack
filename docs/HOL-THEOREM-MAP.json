@@ -116521,6 +116521,14 @@
   },
 {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/ArrayUpdateRefs.lean",
+    "lean_name": "blocksUnique_newRef",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "blocks_unique_new_ref",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: the typed HOL theorem and Lean statement retain the original stack prefix, pointer with true flag, inserted value array, sparse reference tree and both block-uniqueness predicates."
+  },
+{
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/ArrayUpdateRefs.lean",
     "lean_name": "blocksUnique_updateRef1",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
     "hol_name": "blocks_unique_update_ref1",
@@ -145031,6 +145039,22 @@
   "lean_name": "heapStoreUnused_lookup",
   "statement_status": "reviewed_exact",
   "reviewer": "Source comparison: The typed HOL theorem and Lean statement retain independent heap carriers, successful allocation and an index strictly before its target, concluding equality of the corresponding heap lookups."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "heap_store_unused_IMP_length",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/HeapStore.lean",
+  "lean_name": "heapStoreUnused_imp_length",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Source comparison: the typed HOL theorem and Lean statement retain both independent heap carriers and state that a successful end-of-region allocation preserves heap length."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "heap_store_unused_gen_state_ok",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/HeapStore.lean",
+  "lean_name": "heapStoreUnused_genStateOk",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Source comparison with the typed local HOL proof replay: successful allocation and the original generation invariant imply the invariant over the new heap with unchanged lower bound and upper bound reduced by the allocated element length. Both heap carriers remain independent."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",

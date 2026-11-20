@@ -167,6 +167,34 @@ theorem heapStoreUnusedAlt_genStateOk {α β : Type} (offset length : Nat)
         exact ⟨left, right2, split2, restriction⟩
       · simp at run
 
+/-- End-of-region allocation preserves generation starts and shrinks the upper bound. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "heap_store_unused_gen_state_ok"]
+theorem heapStoreUnused_genStateOk {α β : Type} (offset length : Nat)
+    (element : HeapElement α β) (heap heap2 : List (HeapElement α β)) (gens : GcCombined.GenState) :
+    heapStoreUnused offset length element heap = (heap2, true) ∧
+      genStateOk offset (offset + length) heap gens →
+    genStateOk offset (offset + length - elLength element) heap2 gens := by
+  classical
+  rintro ⟨run, valid⟩
+  cases gens with
+  | genState count starts =>
+    obtain ⟨bounds, startsOk⟩ := valid
+    constructor
+    · intro start member
+      exact bounds start member
+    · intro start member
+      obtain ⟨left, right, split, restriction⟩ := startsOk start member
+      have order := bounds start member
+      unfold heapStoreUnused at run
+      split at run
+      · obtain ⟨right2, split2⟩ := heapSplit_heapStore heap start left right offset _ heap2 ⟨split, run, order⟩
+        refine ⟨left, right2, split2, ?_⟩
+        intro xs len data ptr value condition
+        rcases restriction xs len data ptr value condition with below | above
+        · exact Or.inl below
+        · exact Or.inr (by omega)
+      · simp at run
+
 /-- An unused cell contributes no data lookup within its extent. -/
 @[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "isSomeDataElement_heap_lookup_lemma1"]
 theorem isSomeData_lookup_unused {α β : Type} (n k : Nat) (xs : List (HeapElement α β)) :
@@ -237,6 +265,18 @@ theorem heapStoreUnusedAlt_imp_length {α β : Type} (a sp : Nat) (x : HeapEleme
   classical
   intro run
   unfold heapStoreUnusedAlt at run
+  split at run
+  · exact heapStore_length heap a _ heap2 run
+  · simp at run
+
+/-- A successful end-of-region allocation preserves the heap length. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "heap_store_unused_IMP_length"]
+theorem heapStoreUnused_imp_length {α β : Type} (a sp : Nat) (x : HeapElement α β)
+    (heap heap2 : List (HeapElement α β)) :
+    heapStoreUnused a sp x heap = (heap2, true) → heapLength heap2 = heapLength heap := by
+  classical
+  intro run
+  unfold heapStoreUnused at run
   split at run
   · exact heapStore_length heap a _ heap2 run
   · simp at run

@@ -661,6 +661,30 @@ val _ = emit "heap_store_unused_alt_gen_state_ok_typed" heap_store_unused_alt_ge
 
 val _ = emit "heap_store_unused_alt_heap_lookup_typed" data_to_word_memoryProofTheory.heap_store_unused_alt_heap_lookup;
 val _ = emit "heap_store_unused_alt_def_typed" data_to_word_memoryProofTheory.heap_store_unused_alt_def;
+
+(* Replay HOL's local end-of-region generation invariant. *)
+val heap_store_unused_gen_state_ok_replay = let
+  open preamble helperLib gc_sharedTheory data_to_word_memoryProofTheory
+  val heap_split_heap_store = heap_split_heap_store_replay
+in
+  Q.prove (`heap_store_unused a k x heap = (heap2,T) /\
+    gen_state_ok a (a + k) heap gens ==>
+    gen_state_ok a (a + k - el_length x) heap2 gens`,
+  Cases_on `gens` \\ fs [gen_state_ok_def]
+  \\ fs [EVERY_MEM] \\ rw [] \\ res_tac \\ fs []
+  \\ fs [gen_start_ok_def]
+  \\ rw [] \\ CCONTR_TAC \\ fs []
+  \\ fs [GSYM NOT_LESS] \\ fs [NOT_LESS]
+  \\ fs [heap_store_unused_def]
+  \\ every_case_tac \\ fs []
+  \\ fs [GSYM IMP_DISJ_THM]
+  \\ imp_res_tac heap_split_heap_store \\ fs []
+  \\ rveq \\ fs [] \\ res_tac \\ fs [])
+end;
+val _ = emit "heap_store_unused_gen_state_ok_typed" heap_store_unused_gen_state_ok_replay;
+val _ = emit "heap_store_unused_IMP_length_typed" data_to_word_memoryProofTheory.heap_store_unused_IMP_length;
+val _ = emit "blocks_unique_new_ref_typed" data_to_word_memoryProofTheory.blocks_unique_new_ref;
+
 val _ = emit "heap_store_unused_heap_lookup_typed" data_to_word_memoryProofTheory.heap_store_unused_heap_lookup;
 val _ = emit "heap_store_unused_def_typed" data_to_word_memoryProofTheory.heap_store_unused_def;
 val _ = emit "heap_store_rel_def_typed" data_to_word_memoryProofTheory.heap_store_rel_def;
