@@ -436,4 +436,7 @@ val _ = emit_exported "state_rel_get_var_Number_IMP_alt_typed" "state_rel_get_va
 val _ = print ("state_rel_IMP_tstamps_hypotheses=" ^
   Int.toString (length (hyp state_rel_IMP_tstamps)) ^ "\n");
 val _ = emit_exported "state_rel_IMP_tstamps_typed" "state_rel_IMP_tstamps";
+val _ = print ("INT_EQ_NUM_LEMMA_hypotheses=" ^
+  Int.toString (length (hyp INT_EQ_NUM_LEMMA)) ^ "\n");
+val _ = emit_exported "INT_EQ_NUM_LEMMA_typed" "INT_EQ_NUM_LEMMA";
 val _ = capture "parts_to_words_NONE_typed" "parts_to_words_NONE";

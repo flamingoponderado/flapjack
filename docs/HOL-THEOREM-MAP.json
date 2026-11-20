@@ -23901,6 +23901,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "INT_EQ_NUM_LEMMA",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/Integer.lean",
+  "lean_name": "int_eq_nat_iff",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared INT_EQ_NUM_LEMMA_typed and its zero HOL hypotheses: for an arbitrary integer, nonnegativity is equivalent to equality with the integer embedding of an existential natural."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
   "hol_name": "state_rel_IMP_tstamps",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/StateTstamps.lean",
   "lean_name": "stateRel_imp_tstamps",

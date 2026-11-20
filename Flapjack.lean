@@ -3361,6 +3361,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.AllocVar
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.AllocVarNary
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.NumberVar
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.StateTstamps
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.Integer
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.AdjustVar
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.MemoryRelation
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.TerminateLimit
