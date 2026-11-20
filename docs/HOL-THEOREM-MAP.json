@@ -145869,6 +145869,16 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "word_exp_insert",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/RealAddrInsert.lean",
+  "lean_name": "wordExp_realAddr_insert",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared word_exp_insert_typed: both implications, register inequalities, two local insertions in original order, and real-address expression equalities are retained. Finset membership in the displayed two-element set expresses the same HOL condition. The state uses the canonical finite-map and positive-width word carriers."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
   "hol_name": "sane_locals_size_def",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/EqualStack.lean",
   "lean_name": "saneLocalsSize",
