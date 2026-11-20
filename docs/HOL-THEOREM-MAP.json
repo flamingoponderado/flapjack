@@ -145692,5 +145692,16 @@
   "fmap_as_finite_support_relation": ["store"],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Compared memory_rel_Update_typed: the related value, reference and numeric index, value-array lookup, dimension and index bounds, existential pointer and index words and offsets, domain fact, updated array and word memory, and complete updated memory relation agree. Store is the canonical finite-support map and words share the positive HOL dimension."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "assign_Update",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/Update.lean",
+  "lean_name": "assignUpdate_correct",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared assign_Update_typed with the HOL theorem and proof: the operation equality, all assignment premises, existential target evaluation, insufficient-space obligations and successful state relation agree. The target state uses canonical finite maps and positive-width words; the evaluator inherits the documented real-model assumption."
 }
 ]
