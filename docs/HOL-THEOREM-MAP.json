@@ -145961,6 +145961,16 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "word_exp_set_var_ShiftVar",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/ShiftVar.lean",
+  "lean_name": "wordExpSetVarShiftVar",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared word_exp_set_var_ShiftVar_typed: the target evaluator reads the just-inserted word and returns the original four natural-amount shift results under OPTION_MAP Word. The target state fields use canonical finite maps and words use positive type-indexed widths."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
   "hol_name": "assign_EqualConst",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/EqualConst.lean",
   "lean_name": "assignEqualConst_correct",
