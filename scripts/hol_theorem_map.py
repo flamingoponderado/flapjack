@@ -98,6 +98,8 @@ OPTIONAL_FIELDS: frozenset[str] = frozenset(
         "word_dimensions_as_widths",
         "total_function_inhabitants",
         "hol_existential_inhabitants",
+        "gc_lemma_existential_inhabitants",
+        "new_ref_existential_inhabitants",
         "hol_line",
     }
 )

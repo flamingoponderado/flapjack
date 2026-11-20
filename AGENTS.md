@@ -960,6 +960,15 @@ qualifiers, and record the same ordered witness list and source comparison in
 the theorem map. The audits do not establish correspondence of the remaining
 conclusion: review the complete typed HOL statement and proof independently.
 
+**Qualify fresh-reference allocation's unused HOL witness.** The narrow
+`new_ref_existential_inhabitants := [β._p]` qualifier is reserved for `newRef`,
+the counterpart of `new_ref_thm`. Its independent HOL witness type is inhabited;
+Lean retains the unused witness and one `Nonempty β` instance. Use the word
+qualifier and record both qualifiers in the theorem map. The source gate pins
+the complete theorem header and the elaborated audit checks that the carrier
+occurs only in its instance and unused existential. These checks do not prove
+HOL correspondence: independently review the typed HOL statement and proof.
+
 **Port the executable path, too.** As HOL definitions are ported, make the
 compiler that `flapjack-compile` actually runs call the reviewed `@[hol]`
 definitions. A tagged proof-only duplicate beside a different production

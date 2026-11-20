@@ -145293,6 +145293,16 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "new_ref_thm",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/FreshRefProof.lean",
+  "lean_name": "newRef",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "new_ref_existential_inhabitants": ["β._p"],
+  "reviewer": "Source comparison with new_ref_thm_typed: the complete abstract invariant, fresh sparse-tree key and space bound imply the original root split and length, successful end-of-region RefBlock allocation and complete resulting invariant with the same reference pointer and allocation arithmetic. The new_ref_existential_inhabitants qualifier records HOL's independent inhabited unused existential type; the shared HOL word type is translated to positive-width BitVec."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
   "hol_name": "memory_rel_RefByte_content",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/ByteMemory.lean",
   "lean_name": "memoryRel_freshByte",
@@ -145572,7 +145582,7 @@
   "fmap_as_finite_support": ["fpRegs", "store"],
   "words_as_type_indexed_bitvec": true,
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared evaluate_StringCmpLoop_typed: all loop result, memory, domain, endianness, clock, word dimension, code lookup and six register premises are retained. The original existential clock and stack maximum, exact evaluator result and updated state, and conditional stack bound are preserved. The state maps and positive word width use the named translations; the evaluator inherits the real-model assumption in docs/SOUNDNESS.md item 8."
+  "reviewer": "Compared evaluate_StringCmpLoop_typed: all loop result, memory, domain, endianness, clock, word dimension, code lookup and six register premises are retained. The original existential clock and stack maximum, exact evaluator result and updated state, and conditional stack bound are preserved. The state maps and positive word width use the named translations; the evaluator inherits the real-model assumption in docs/SOUNDNESS.md item 8. It inherits the reals_as_rational_cuts assumption."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
@@ -145583,7 +145593,7 @@
   "fmap_as_finite_support": ["fpRegs", "store"],
   "words_as_type_indexed_bitvec": true,
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared evaluate_AssignCmp_typed: full evaluation equality, all input cases including the original self-referential fallback, numeric comparison and encoded boolean state update are retained. The exact word-state maps and positive word carrier use the named translations; the evaluator inherits the documented real-model assumption."
+  "reviewer": "Compared evaluate_AssignCmp_typed: full evaluation equality, all input cases including the original self-referential fallback, numeric comparison and encoded boolean state update are retained. The exact word-state maps and positive word carrier use the named translations; the evaluator inherits the documented real-model assumption. It inherits the reals_as_rational_cuts assumption."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
@@ -145594,7 +145604,7 @@
   "fmap_as_finite_support": ["fpRegs", "store"],
   "words_as_type_indexed_bitvec": true,
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared original local evaluate_StringCmpMin and its typed proof replay: the full evaluator equality, continuation, source locals, both word lookup cases, minimum assignment and original self-referential fallback are preserved. The exact state maps and positive-width word use named translations; the evaluator inherits the documented real-model assumption."
+  "reviewer": "Compared original local evaluate_StringCmpMin and its typed proof replay: the full evaluator equality, continuation, source locals, both word lookup cases, minimum assignment and original self-referential fallback are preserved. The exact state maps and positive-width word use named translations; the evaluator inherits the documented real-model assumption. It inherits the reals_as_rational_cuts assumption."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
@@ -145673,7 +145683,7 @@
   "fmap_as_finite_support": ["fpRegs", "store"],
   "words_as_type_indexed_bitvec": true,
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared assign_StringCmp_typed and the original proof: the existential operation case, all six assignment premises, existential target evaluation, insufficient-space obligations and successful state relation agree. Both fast and non-fast string comparison modes are proved. The target state uses canonical finite maps and positive-width words; the evaluator inherits the documented real-model assumption."
+  "reviewer": "Compared assign_StringCmp_typed and the original proof: the existential operation case, all six assignment premises, existential target evaluation, insufficient-space obligations and successful state relation agree. Both fast and non-fast string comparison modes are proved. The target state uses canonical finite maps and positive-width words; the evaluator inherits the documented real-model assumption. It inherits the reals_as_rational_cuts assumption."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
@@ -145684,7 +145694,7 @@
   "fmap_as_finite_support": ["fpRegs", "store"],
   "words_as_type_indexed_bitvec": true,
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared assign_DerefByte_typed with the HOL theorem and proof: the operation equality, all assignment premises, existential target evaluation, insufficient-space obligations and successful state relation agree. The target state uses canonical finite maps and positive-width words; the evaluator inherits the documented real-model assumption."
+  "reviewer": "Compared assign_DerefByte_typed with the HOL theorem and proof: the operation equality, all assignment premises, existential target evaluation, insufficient-space obligations and successful state relation agree. The target state uses canonical finite maps and positive-width words; the evaluator inherits the documented real-model assumption. It inherits the reals_as_rational_cuts assumption."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
@@ -145695,7 +145705,7 @@
   "fmap_as_finite_support": ["fpRegs", "store"],
   "words_as_type_indexed_bitvec": true,
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared assign_UpdateByte_typed with the HOL theorem and proof: the operation equality, all assignment premises, existential target evaluation, insufficient-space obligations and successful state relation agree. The target state uses canonical finite maps and positive-width words; the evaluator inherits the documented real-model assumption."
+  "reviewer": "Compared assign_UpdateByte_typed with the HOL theorem and proof: the operation equality, all assignment premises, existential target evaluation, insufficient-space obligations and successful state relation agree. The target state uses canonical finite maps and positive-width words; the evaluator inherits the documented real-model assumption. It inherits the reals_as_rational_cuts assumption."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
@@ -145706,7 +145716,7 @@
   "fmap_as_finite_support": ["fpRegs", "store"],
   "words_as_type_indexed_bitvec": true,
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared assign_ElemAt_typed with the HOL theorem and proof: the existential operation case, all assignment premises, existential target evaluation, insufficient-space obligations and successful state relation agree for both blocks and value-array references. The target state uses canonical finite maps and positive-width words; the evaluator inherits the documented real-model assumption."
+  "reviewer": "Compared assign_ElemAt_typed with the HOL theorem and proof: the existential operation case, all assignment premises, existential target evaluation, insufficient-space obligations and successful state relation agree for both blocks and value-array references. The target state uses canonical finite maps and positive-width words; the evaluator inherits the documented real-model assumption. It inherits the reals_as_rational_cuts assumption."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
@@ -145716,7 +145726,7 @@
   "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
   "fmap_as_finite_support_relation": ["store"],
   "words_as_type_indexed_bitvec": true,
-  "reviewer": "Compared memory_rel_El_typed: the related block and numeric index, dimension and index bounds, existential pointer and index words and offsets, domain fact and extended memory relation agree. The list bound justifies Lean indexing; store is the canonical finite-support map and words share the positive HOL dimension."
+  "reviewer": "Source comparison: Compared memory_rel_El_typed: the related block and numeric index, dimension and index bounds, existential pointer and index words and offsets, domain fact and extended memory relation agree. The list bound justifies Lean indexing; store is the canonical finite-support map and words share the positive HOL dimension."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
@@ -145726,7 +145736,7 @@
   "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
   "fmap_as_finite_support_relation": ["store"],
   "words_as_type_indexed_bitvec": true,
-  "reviewer": "Compared memory_rel_Deref_typed: the related reference and numeric index, value-array lookup, dimension and index bounds, existential pointer and index words and offsets, domain fact and extended memory relation agree. The list bound justifies Lean indexing; store is the canonical finite-support map and words share the positive HOL dimension."
+  "reviewer": "Source comparison: Compared memory_rel_Deref_typed: the related reference and numeric index, value-array lookup, dimension and index bounds, existential pointer and index words and offsets, domain fact and extended memory relation agree. The list bound justifies Lean indexing; store is the canonical finite-support map and words share the positive HOL dimension."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
@@ -145737,7 +145747,7 @@
   "fmap_as_finite_support": ["fpRegs", "store"],
   "words_as_type_indexed_bitvec": true,
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared assign_El_typed with the HOL theorem and proof: the operation equality, all assignment premises, existential target evaluation, insufficient-space obligations and successful state relation agree for both blocks and value-array references. The target state uses canonical finite maps and positive-width words; the evaluator inherits the documented real-model assumption."
+  "reviewer": "Compared assign_El_typed with the HOL theorem and proof: the operation equality, all assignment premises, existential target evaluation, insufficient-space obligations and successful state relation agree for both blocks and value-array references. The target state uses canonical finite maps and positive-width words; the evaluator inherits the documented real-model assumption. It inherits the reals_as_rational_cuts assumption."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
@@ -145747,7 +145757,7 @@
   "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
   "fmap_as_finite_support_relation": ["store"],
   "words_as_type_indexed_bitvec": true,
-  "reviewer": "Compared memory_rel_Update_typed: the related value, reference and numeric index, value-array lookup, dimension and index bounds, existential pointer and index words and offsets, domain fact, updated array and word memory, and complete updated memory relation agree. Store is the canonical finite-support map and words share the positive HOL dimension."
+  "reviewer": "Source comparison: Compared memory_rel_Update_typed: the related value, reference and numeric index, value-array lookup, dimension and index bounds, existential pointer and index words and offsets, domain fact, updated array and word memory, and complete updated memory relation agree. Store is the canonical finite-support map and words share the positive HOL dimension."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
@@ -145758,7 +145768,7 @@
   "fmap_as_finite_support": ["fpRegs", "store"],
   "words_as_type_indexed_bitvec": true,
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared assign_Update_typed with the HOL theorem and proof: the operation equality, all assignment premises, existential target evaluation, insufficient-space obligations and successful state relation agree. The target state uses canonical finite maps and positive-width words; the evaluator inherits the documented real-model assumption."
+  "reviewer": "Compared assign_Update_typed with the HOL theorem and proof: the operation equality, all assignment premises, existential target evaluation, insufficient-space obligations and successful state relation agree. The target state uses canonical finite maps and positive-width words; the evaluator inherits the documented real-model assumption. It inherits the reals_as_rational_cuts assumption."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
@@ -145767,7 +145777,7 @@
   "lean_name": "doApp_ref",
   "statement_status": "reviewed_exact",
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared do_app_Ref_typed: the independent source-state parameters, input values, space-consumption match, type-error case, least-unused reference, inserted value array, and safe-for-space and stack-maximum updates agree with HOL. The full source evaluator inherits the documented real-model assumption."
+  "reviewer": "Compared do_app_Ref_typed: the independent source-state parameters, input values, space-consumption match, type-error case, least-unused reference, inserted value array, and safe-for-space and stack-maximum updates agree with HOL. The full source evaluator inherits the documented real-model assumption. It inherits the reals_as_rational_cuts assumption."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
@@ -145778,7 +145788,7 @@
   "fmap_as_finite_support": ["fpRegs", "store"],
   "words_as_type_indexed_bitvec": true,
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared evaluate_StoreEach_typed and the original zero-offset specialization: the quantified word list, register list, state, register, address and memory, all three premises, and exact evaluator result agree. The target state uses canonical finite maps and positive-width words; the evaluator inherits the documented real-model assumption."
+  "reviewer": "Compared evaluate_StoreEach_typed and the original zero-offset specialization: the quantified word list, register list, state, register, address and memory, all three premises, and exact evaluator result agree. The target state uses canonical finite maps and positive-width words; the evaluator inherits the documented real-model assumption. It inherits the reals_as_rational_cuts assumption."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
@@ -145789,6 +145799,6 @@
   "fmap_as_finite_support": ["fpRegs", "store"],
   "words_as_type_indexed_bitvec": true,
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared evaluate_GiveUp2_typed: the state relation premise, existential result, NotEnoughSpace evaluation, both FFI equalities and target stack-maximum bound agree. The target state uses canonical finite maps and positive-width words; the evaluator inherits the documented real-model assumption."
+  "reviewer": "Compared evaluate_GiveUp2_typed: the state relation premise, existential result, NotEnoughSpace evaluation, both FFI equalities and target stack-maximum bound agree. The target state uses canonical finite maps and positive-width words; the evaluator inherits the documented real-model assumption. It inherits the reals_as_rational_cuts assumption."
 }
 ]

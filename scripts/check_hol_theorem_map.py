@@ -1252,7 +1252,7 @@ def tagged_declarations(
              fmap_equality, result_observations, dimension_widths, fmap_tuple, nested_list_rel,
              predicate_domain, fmap_universals, generalise_map, generalise_length,
              infer_subst_submap, total_function_inhabitants, hol_existential_inhabitants,
-             gc_lemma_existential_inhabitants) in HOL_ATTRIBUTE_SITES(
+             gc_lemma_existential_inhabitants, new_ref_existential_inhabitants) in HOL_ATTRIBUTE_SITES(
                  lines, include_fmap_existentials=True,
                  include_word_dimension_width=True,
                  include_fmap_function=True,
@@ -1271,6 +1271,7 @@ def tagged_declarations(
                  include_total_function_inhabitants=True,
                  include_hol_existential_inhabitants=True,
                  include_gc_lemma_existential_inhabitants=True,
+                 include_new_ref_existential_inhabitants=True,
              ):
             lean_name = FIND_LEAN_DECL(lines, line - 1)
             key = (rel, lean_name)
@@ -1285,7 +1286,7 @@ def tagged_declarations(
                      result_observations, dimension_widths, fmap_tuple, nested_list_rel,
                      predicate_domain, fmap_universals, generalise_map, generalise_length,
                      infer_subst_submap, total_function_inhabitants, hol_existential_inhabitants,
-                     gc_lemma_existential_inhabitants)
+                     gc_lemma_existential_inhabitants, new_ref_existential_inhabitants)
             if key in tagged and tagged[key] != value:
                 raise ValueError(f"conflicting @[hol] references for {rel}:{lean_name}")
             tagged[key] = value
@@ -1304,6 +1305,7 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
         fmap_equality, result_observations, dimension_widths, fmap_tuple, nested_list_rel,
         predicate_domain, fmap_universals, generalise_map, generalise_length, infer_subst_submap,
         total_function_inhabitants, hol_existential_inhabitants, gc_lemma_existential_inhabitants,
+        new_ref_existential_inhabitants,
     ) in tagged.items():
         entry = {
             "hol_path": hol_path,
@@ -1372,6 +1374,8 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
             entry["hol_existential_inhabitants"] = list(hol_existential_inhabitants)
         if gc_lemma_existential_inhabitants:
             entry["gc_lemma_existential_inhabitants"] = list(gc_lemma_existential_inhabitants)
+        if new_ref_existential_inhabitants:
+            entry["new_ref_existential_inhabitants"] = list(new_ref_existential_inhabitants)
         inventory[(lean_path, lean_name)] = entry
 
     for lean_path, lean_name in proof_theorem_declarations(root):
@@ -1773,6 +1777,7 @@ def validate_inventory(
         total_function_inhabitants = tag[26] if tag is not None and len(tag) > 26 else ()
         hol_existential_inhabitants = tag[27] if tag is not None and len(tag) > 27 else ()
         gc_lemma_existential_inhabitants = tag[28] if tag is not None and len(tag) > 28 else ()
+        new_ref_existential_inhabitants = tag[29] if tag is not None and len(tag) > 29 else ()
         predicate_status = "reviewed_fmap_as_finite_support_parameter_predicate_domain"
         if tuple(record.get("fmap_as_finite_support_parameter_predicate_domain", ())) != predicate_domain:
             errors.append(f"{key[0]}:{key[1]}: predicate-domain binders do not match @[hol] tag")
@@ -2119,6 +2124,18 @@ def validate_inventory(
             if not isinstance(reviewer, str) or any(word not in reviewer.lower() for word in
                     ("source", "gc_lemma_existential_inhabitants")):
                 errors.append(f"{key[0]}:{key[1]}: GC lemma inhabitance needs a source comparison note")
+        if tuple(record.get("new_ref_existential_inhabitants", ())) != new_ref_existential_inhabitants:
+            errors.append(f"{key[0]}:{key[1]}: fresh-reference existential inhabitants differ from @[hol] tag")
+        if new_ref_existential_inhabitants:
+            site = ("cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml", "new_ref_thm",
+                    "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/FreshRefProof.lean", "newRef")
+            if ((hol_path, hol_name, key[0], key[1]) != site or
+                    new_ref_existential_inhabitants != ("β._p",) or
+                    status != "reviewed_words_as_type_indexed_bitvec"):
+                errors.append(f"{key[0]}:{key[1]}: invalid fresh-reference existential inhabitance site or status")
+            if not isinstance(reviewer, str) or any(word not in reviewer.lower() for word in
+                    ("source", "new_ref_existential_inhabitants")):
+                errors.append(f"{key[0]}:{key[1]}: fresh-reference inhabitance needs a source comparison note")
         if record.get("inherits_reals_as_rational_cuts", False):
             if reals_cuts:
                 errors.append(

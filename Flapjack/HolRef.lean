@@ -337,6 +337,8 @@ structure HolRef where
       types. This is restricted to the reviewed garbage-collection theorem. -/
   holExistentialInhabitants : Array String := #[]
   gcLemmaExistentialInhabitants : Array String := #[]
+  /-- Independent inhabited witness type of HOL `new_ref_thm`. -/
+  newRefExistentialInhabitants : Array String := #[]
   deriving Inhabited, Repr, BEq
 
 open Lean Meta
@@ -377,6 +379,7 @@ syntax "(" "nested_list_rel_as_mutual" ":=" "[" ident,+ "]" ")" : holQualifier
 syntax "(" "total_function_inhabitants" ":=" "[" ident,+ "]" ")" : holQualifier
 syntax "(" "hol_existential_inhabitants" ":=" "[" ident,+ "]" ")" : holQualifier
 syntax "(" "gc_lemma_existential_inhabitants" ":=" "[" ident,+ "]" ")" : holQualifier
+syntax "(" "new_ref_existential_inhabitants" ":=" "[" ident,+ "]" ")" : holQualifier
 syntax (name := hol) "hol " str str (num)? holQualifier* : attr
 
 private def checkedHolRef (path name : String) (line? : Option Nat := none)
@@ -664,6 +667,9 @@ private def parseHolQualifier (stx : Syntax) : CoreM (String × Array String × 
   | `(holQualifier| (gc_lemma_existential_inhabitants := [$binders:ident,*])) =>
       pure ("gc_lemma_existential_inhabitants", binders.getElems.map
         (fun binder => binder.getId.eraseMacroScopes.toString), false, #[])
+  | `(holQualifier| (new_ref_existential_inhabitants := [$binders:ident,*])) =>
+      pure ("new_ref_existential_inhabitants", binders.getElems.map
+        (fun binder => binder.getId.eraseMacroScopes.toString), false, #[])
   | _ => throwError "@[hol]: malformed qualifier"
 
 private def parseHolRefAttribute (stx : Syntax) : CoreM HolRef := do
@@ -702,6 +708,7 @@ private def parseHolRefAttribute (stx : Syntax) : CoreM HolRef := do
     let mut totalFunctionInhabitants : Array String := #[]
     let mut holExistentialInhabitants : Array String := #[]
     let mut gcLemmaExistentialInhabitants : Array String := #[]
+    let mut newRefExistentialInhabitants : Array String := #[]
     for qualifier in qualifiers do
       let (kind, fields, isResult, pairs) ← parseHolQualifier qualifier
       if kind == "list_as_array" then listAsArray := listAsArray ++ fields
@@ -786,6 +793,10 @@ private def parseHolRefAttribute (stx : Syntax) : CoreM HolRef := do
         if !gcLemmaExistentialInhabitants.isEmpty then
           throwError "@[hol]: gc_lemma_existential_inhabitants may appear only once"
         gcLemmaExistentialInhabitants := fields
+      else if kind == "new_ref_existential_inhabitants" then
+        if !newRefExistentialInhabitants.isEmpty then
+          throwError "@[hol]: new_ref_existential_inhabitants may appear only once"
+        newRefExistentialInhabitants := fields
       else fmapAsFiniteSupport := fmapAsFiniteSupport ++ fields
     if seenGeneraliseMapQualifier then
       unless qualifiers.size == 1 && generaliseMapQualifier == #["subst", "component_2"] &&
@@ -831,7 +842,12 @@ private def parseHolRefAttribute (stx : Syntax) : CoreM HolRef := do
             ("WordSemStateFiniteExact", "fpRegs"), ("WordSemStateFiniteExact", "store")] &&
           ref.wordsAsTypeIndexedBitvec do
         throwError "@[hol]: GC lemma inhabitance qualifier requires its reviewed reference and exact qualifiers"
-    pure { ref with holExistentialInhabitants, gcLemmaExistentialInhabitants }
+    if !newRefExistentialInhabitants.isEmpty then
+      unless path == "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" &&
+          name == "new_ref_thm" && line?.isNone && qualifiers.size == 2 &&
+          newRefExistentialInhabitants == #["β._p"] && ref.wordsAsTypeIndexedBitvec do
+        throwError "@[hol]: fresh reference inhabitance qualifier requires its reviewed reference and exact qualifiers"
+    pure { ref with holExistentialInhabitants, gcLemmaExistentialInhabitants, newRefExistentialInhabitants }
   match stx with
   | `(attr| hol $path:str $name:str $line:num $qualifiers:holQualifier*) =>
       parse path.getString name.getString (some line.getNat) qualifiers
@@ -1273,6 +1289,22 @@ initialize holRefAttribute : ParametricAttribute HolRef ← do
           for problem in problems do
             logError m!"{decl}: (gc_lemma_existential_inhabitants) {problem}"
         | none => logError m!"{decl}: missing GC lemma inhabitance declaration"
+      let newRefTarget := `Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.newRef
+      let memoryPath := "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml"
+      if decl == newRefTarget && (ref.path != memoryPath || ref.name != "new_ref_thm" ||
+          ref.newRefExistentialInhabitants != #["β._p"]) then
+        logError m!"{decl}: this theorem requires its exact HOL reference and fresh-reference existential qualifier"
+      if ref.path == memoryPath && ref.name == "new_ref_thm" && ref.newRefExistentialInhabitants.isEmpty then
+        logError m!"{decl}: new_ref_thm requires its existential inhabitance qualifier"
+      if !ref.newRefExistentialInhabitants.isEmpty then
+        unless decl == newRefTarget do
+          logError m!"{decl}: fresh-reference inhabitance qualifier has the wrong declaration"
+        match (← getEnv).find? decl with
+        | some info =>
+          let problems ← (unusedExistentialInhabitantProblems info.type #[(`β, `_p)]).run'
+          for problem in problems do
+            logError m!"{decl}: (new_ref_existential_inhabitants) {problem}"
+        | none => logError m!"{decl}: missing fresh-reference inhabitance declaration"
       let submap : HolRef := {
         path := "cakeml/compiler/inference/inferPropsScript.sml", name := "infer_subst_submap",
         fmapAsFiniteSupportConjunctUniversals := #["type_s1", "type_s2", "list_s1", "list_s2"] }
@@ -1464,6 +1496,8 @@ private def HolRef.qualifierSuffix (ref : HolRef) : String :=
     s!" (hol_existential_inhabitants := [{String.intercalate ", " ref.holExistentialInhabitants.toList}])"
   let gcLemmaInhabitants := if ref.gcLemmaExistentialInhabitants.isEmpty then "" else
     s!" (gc_lemma_existential_inhabitants := [{String.intercalate ", " ref.gcLemmaExistentialInhabitants.toList}])"
+  let newRefInhabitants := if ref.newRefExistentialInhabitants.isEmpty then "" else
+    s!" (new_ref_existential_inhabitants := [{String.intercalate ", " ref.newRefExistentialInhabitants.toList}])"
   observations ++ listAsArray ++ namesAsString ++ namesAsStringBoundary ++
     fmapAsFiniteSupport ++ fmapAsFiniteSupportResult ++ fmapAsFiniteSupportFunction ++
     fmapAsFiniteSupportTuple ++ fmapAsFiniteSupportHeterogeneousFunction ++
@@ -1472,7 +1506,7 @@ private def HolRef.qualifierSuffix (ref : HolRef) : String :=
     fmapAsFiniteSupportExistentials ++ fmapAsFiniteSupportRelation ++
     fmapAsFiniteSupportEqualities ++ fmapAsFiniteSupportEquality ++
     wordsAsTypeIndexedBitvec ++ wordDimensionAsWidth ++ wordDimensionsAsWidths ++
-    realsAsRationalCuts ++ totalFunctionInhabitants ++ nested ++ existentialInhabitants ++ gcLemmaInhabitants
+    realsAsRationalCuts ++ totalFunctionInhabitants ++ nested ++ existentialInhabitants ++ gcLemmaInhabitants ++ newRefInhabitants
 
 /-! Parser regressions for the original syntax, each qualifier alone, and both
 qualifiers together. These elaborate temporary syntax values only; they do not

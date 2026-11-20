@@ -23,7 +23,7 @@ It also captures dynamic-index block, value-array read and update memory lemmas,
 byte-dereference, byte-update, array-update, fixed-index and dynamic element-read assignment goals,
 the source reference-allocation expansion, end-of-region unused-heap allocator,
 its full allocation invariant, heap decomposition, length, generation-state and lookup-preservation theorems,
-fresh-reference block uniqueness, generated list-store evaluation,
+fresh-reference block uniqueness and complete abstract allocation invariant, generated list-store evaluation,
 and allocation-failure stack accounting,
 and evaluates zero
 and nonzero SmallLsr expressions for output parity. Regenerate

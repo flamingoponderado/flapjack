@@ -391,6 +391,9 @@ HOL_EXISTENTIAL_INHABITANTS_RE = re.compile(
 GC_LEMMA_EXISTENTIAL_INHABITANTS_RE = re.compile(
     r'\(\s*gc_lemma_existential_inhabitants\s*:=\s*\[([^]]*)\]\s*\)'
 )
+NEW_REF_EXISTENTIAL_INHABITANTS_RE = re.compile(
+    r'\(\s*new_ref_existential_inhabitants\s*:=\s*\[([^]]*)\]\s*\)'
+)
 # The reviewed renderings of HOL's total functions on bad input.  HOL returns
 # an unspecified value for `EL`/`HD`/`THE`/`LAST`/`ALOOKUP`/`LINV`/`ARB`; Lean
 # takes it from a `Nonempty`/`Inhabited` instance on the element type.
@@ -619,7 +622,8 @@ def hol_attribute_sites(lines: list[str], *, include_fmap_existentials: bool = F
                         include_infer_subst_submap: bool = False,
                         include_total_function_inhabitants: bool = False,
                         include_hol_existential_inhabitants: bool = False,
-                        include_gc_lemma_existential_inhabitants: bool = False):
+                        include_gc_lemma_existential_inhabitants: bool = False,
+                        include_new_ref_existential_inhabitants: bool = False):
     """Yield HOL attributes, including attributes split across Lean lines."""
     comment_depth = 0
     start: int | None = None
@@ -790,6 +794,16 @@ def hol_attribute_sites(lines: list[str], *, include_fmap_existentials: bool = F
                 if include_gc_lemma_existential_inhabitants:
                     matches = list(GC_LEMMA_EXISTENTIAL_INHABITANTS_RE.finditer(attribute))
                     occurrences = attribute.count("gc_lemma_existential_inhabitants")
+                    if occurrences == 0:
+                        names = ()
+                    elif occurrences != 1 or len(matches) != 1:
+                        names = ("",)
+                    else:
+                        names = tuple(field.strip() for field in matches[0].group(1).split(","))
+                    site += (names,)
+                if include_new_ref_existential_inhabitants:
+                    matches = list(NEW_REF_EXISTENTIAL_INHABITANTS_RE.finditer(attribute))
+                    occurrences = attribute.count("new_ref_existential_inhabitants")
                     if occurrences == 0:
                         names = ()
                     elif occurrences != 1 or len(matches) != 1:
@@ -5634,6 +5648,21 @@ def word_dimension_as_width_errors(declaration_text: str, declaration: str,
         )
     return errors
 
+def new_ref_existential_header_errors(source: str) -> list[str]:
+    """Pin the complete new_ref_thm telescope; inhabitance is the sole addition."""
+    source = strip_lean_comments(source)
+    if re.search(r"(?m)^\s*(?:variable|variables|include|omit)\b", source):
+        return ["new_ref_thm must have self-contained binders"]
+    matches = list(re.finditer(r"\btheorem\s+newRef\b(.*?):=\s*by\b", source, re.S))
+    if len(matches) != 1:
+        return ["new_ref_thm must have one direct theorem header"]
+    header = " ".join(matches[0].group(1).split())
+    digest = hashlib.sha256(header.encode()).hexdigest()
+    if digest != "c196216381c43a019d37b367e892b9fe0b92e1c455d98e5d5edee6cd343a9924":
+        return ["new_ref_thm telescope differs from the reviewed HOL statement and inhabitance translation"]
+    return []
+
+
 def word_dimensions_as_widths_errors(declaration_text: str, declaration: str,
                                      width_names: tuple[str, ...]) -> list[str]:
     """Two independent word-free dimensions; never merge or fix either width."""
@@ -6551,7 +6580,7 @@ def main(argv: list[str]) -> int:
              fmap_equality, result_observations, dimension_widths, fmap_tuple, nested_list_rel,
              predicate_domain, fmap_universals, generalise_map, generalise_length,
              infer_subst_submap, total_function_inhabitants, hol_existential_inhabitants,
-             gc_lemma_existential_inhabitants) in hol_attribute_sites(
+             gc_lemma_existential_inhabitants, new_ref_existential_inhabitants) in hol_attribute_sites(
                 lines, include_fmap_existentials=True,
                 include_word_dimension_width=True,
                 include_fmap_function=True,
@@ -6570,6 +6599,7 @@ def main(argv: list[str]) -> int:
                 include_total_function_inhabitants=True,
                 include_hol_existential_inhabitants=True,
                 include_gc_lemma_existential_inhabitants=True,
+                include_new_ref_existential_inhabitants=True,
              ):
             where = f"{rel}:{number}"
             gc_ref = (hol_path, hol_name) == (
@@ -6596,6 +6626,23 @@ def main(argv: list[str]) -> int:
                             predicate_domain or fmap_universals or generalise_map or generalise_length or
                             infer_subst_submap or total_function_inhabitants)):
                     errors.append(f"{where}: invalid existential inhabitance target or qualifiers")
+            new_ref_site = (hol_path, hol_name) == (
+                "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml", "new_ref_thm")
+            if new_ref_site or new_ref_existential_inhabitants:
+                if not (new_ref_site and new_ref_existential_inhabitants == ("β._p",) and
+                        (rel, find_lean_decl(lines, number - 1)) ==
+                        ("Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/FreshRefProof.lean", "newRef") and
+                        hol_line is None and words_bitvec and not (
+                            list_fields or names_fields or boundary_fields or fmap_fields or fmap_result or
+                            fmap_relation or fmap_equalities or fmap_parameters or fmap_existentials or
+                            dimension_width or fmap_function_positions or fmap_heterogeneous_function_positions or
+                            reals_cuts or fmap_equality or result_observations or dimension_widths or fmap_tuple or
+                            nested_list_rel or predicate_domain or fmap_universals or generalise_map or
+                            generalise_length or infer_subst_submap or total_function_inhabitants or
+                            hol_existential_inhabitants or gc_lemma_existential_inhabitants)):
+                    errors.append(f"{where}: invalid fresh-reference existential inhabitance target or qualifiers")
+            if new_ref_existential_inhabitants:
+                errors.extend(f"{where}: {error}" for error in new_ref_existential_header_errors("\n".join(lines)))
             walkstar_ref = (hol_path, hol_name) == (
                 "cakeml/compiler/inference/inferPropsScript.sml", "subst_infer_subst_swap")
             submap_ref = (hol_path, hol_name) == (

@@ -523,6 +523,9 @@ elab "#emit_hol_ref_export" : command => do
         if !ref.gcLemmaExistentialInhabitants.isEmpty then
           qualifiers := qualifiers ++
             [("gc_lemma_existential_inhabitants", toJson ref.gcLemmaExistentialInhabitants)]
+        if !ref.newRefExistentialInhabitants.isEmpty then
+          qualifiers := qualifiers ++
+            [("new_ref_existential_inhabitants", toJson ref.newRefExistentialInhabitants)]
         let mut fields : List (String × Json) := [
           ("lean_name", toJson name.toString),
           ("hol_path", toJson ref.path),
