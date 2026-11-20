@@ -1356,7 +1356,7 @@
     {"bytes": 2464, "out": "pan_to_crep_local_typed_probe.out", "rows": 8, "sha256": "f9d925c8af12b387e3fb6dfa680c947d4ef647a02c350e0f899ea6f2d443fb74"},
     {"bytes": 766, "out": "pan_to_crep_primed_typed_probe.out", "rows": 2, "sha256": "b0768830cae74867a915a4224a1f37fafad77fcf3f57656cda66b2b3612ce62f"},
     {"bytes": 435, "out": "pan_to_crep_program_validity_probe.out", "rows": 1, "sha256": "4055500f24f18535c41dee80a3595e85a9f75f49eba6f7a712cd78df41ceefe8"},
-    {"bytes": 23485, "out": "pan_to_crep_proof_typed_probe.out", "rows": 56, "sha256": "3556dea42933da4b0a1dca756c1867773e47feb528d8a9f90e351335fbd51b82"},
+    {"bytes": 27201, "out": "pan_to_crep_proof_typed_probe.out", "rows": 68, "sha256": "e251b2b108aad33703d4f4370760bc5f26d312d2ec0b53b77c28318b5ef2e129"},
     {"bytes": 705, "out": "pan_to_crep_ret_inst2_probe.out", "rows": 7, "sha256": "45ccf2032cc1545e90e6ff2b0c948a78896c10478ba41783d3b5a053344a56f9"},
     {"bytes": 295, "out": "pan_to_crep_slc_tlc_probe.out", "rows": 10, "sha256": "c3ff76e4a35b9c4782043fb2556dbe03565c65baa552673530ffae2590b013cd"},
     {"bytes": 251, "out": "pan_to_crep_state_rel_carrier_probe.out", "rows": 6, "sha256": "d824a765fcab77cb2ffd58283740edfd9e6e43d48f0e4b2941f0c05185de330c"},

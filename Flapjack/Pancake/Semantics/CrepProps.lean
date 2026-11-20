@@ -1,6 +1,6 @@
 module
 
-public import Flapjack.HolRef
+public import Flapjack.Misc.ListEl
 public import Flapjack.FiniteMap
 public import Flapjack.Pancake.CrepLang
 public import Flapjack.Pancake.CrepLang.Exp
@@ -34,6 +34,21 @@ def cexpHeadsSimp : List (List (CrepExp α)) → Option (List (CrepExp α))
   | expressions =>
       if expressions.any List.isEmpty then none
       else some (expressions.map (fun expression => expression.headD (.var 0)))
+
+/-- Exact port of HOL `crepProps$cexp_heads_simp_def`
+    (`cakeml/pancake/semantics/crepPropsScript.sml:11`):
+    `cexp_heads_simp es = if MEM [] es then NONE else SOME (MAP HD es)`.
+    The element type is free and independent, as in HOL. `MEM [] es` is list
+    membership (`DecidableEq α` is Lean's encoding of HOL `=`), and HOL's
+    total `HD` is the reviewed `holHd` rendering, whose per-type `[Nonempty α]`
+    instance is listed as `total_function_inhabitants`. The `MEM []` guard
+    makes HOL's `HD [] = ARB` clause unreachable, but the rendering keeps
+    HOL's shape. -/
+@[hol "cakeml/pancake/semantics/crepPropsScript.sml" "cexp_heads_simp_def"
+  (total_function_inhabitants := [α])]
+noncomputable def cexpHeadsSimpHOL {α : Type} [DecidableEq α] [Nonempty α] :
+    List (List α) → Option (List α)
+  | es => if ([] : List α) ∈ es then none else some (es.map holHd)
 
 mutual
 /-- Faithful port of Cake `crepProps$every_exp` from

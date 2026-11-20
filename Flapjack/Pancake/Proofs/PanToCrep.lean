@@ -280,8 +280,42 @@ theorem mapSomeMemLemma {α β : Type} (f : α → Option β)
   obtain ⟨y, hfy, hy⟩ := mapFlattenMemSomeSupport f xs ys zs z h hzs hz
   exact ⟨0, y, hfy, hy⟩
 
-/-! HOL `shape_of_alt` and `cexp_heads_eq` remain to be ported with their
-    original word-label and polymorphic list carriers, respectively. -/
+/-- Exact port of HOL `pan_to_crepProof$shape_of_alt`
+    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:1906`):
+    `∀x. shape_of (Val x) = One`. The typed capture `shape_of_alt_typed`
+    gives `∀(x :α word_lab). shape_of (Val x) = One`, so the word-label
+    payload is quantified at HOL's `'a word_lab` and ignored by
+    `shapeOfHOLExact`. HOL states the same fact in `panPropsScript.sml` as
+    `shape_of_val`; this is the `pan_to_crepProof` occurrence, so it gets its
+    own tag. -/
+@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "shape_of_alt"
+  (words_as_type_indexed_bitvec)]
+theorem shapeOfHOLExact_val_alt {width : Nat} [NeZero width] (x : HolWordLab width) :
+    shapeOfHOLExact (.val x : ValueHOL width) =
+      Flapjack.Pancake.PanLang.ShapeHOL.one :=
+  shapeOfHOLExact_val x
+
+/-- HOL `cexp_heads_eq` (`pan_to_crepProofScript.sml:104`): the recursive
+    `cexp_heads` agrees with the `MEM []`-guarded `MAP HD` version. The
+    typed capture `cexp_heads_eq_typed` gives
+    `∀(es :α list list). cexp_heads es = cexp_heads_simp es`, with the element
+    type free and independent, so the Lean statement quantifies
+    `es : List (List α)` at its own type parameter. `cexp_heads_simp` is the
+    tagged `cexpHeadsSimpHOL` rendering, and `DecidableEq α` encodes HOL
+    equality for the `MEM []` guard. -/
+@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "cexp_heads_eq"]
+theorem cexpHeads_eq_cexpHeadsSimpHOL {α : Type} [DecidableEq α] [Nonempty α]
+    (es : List (List α)) :
+    cexpHeads es = cexpHeadsSimpHOL es := by
+  induction es with
+  | nil => simp [cexpHeads, cexpHeadsSimpHOL]
+  | cons expressions rest ih =>
+      cases expressions with
+      | nil => simp [cexpHeads, cexpHeadsSimpHOL]
+      | cons head tail =>
+          by_cases hmem : ([] : List α) ∈ rest
+          · simp [cexpHeads, cexpHeadsSimpHOL, ih, hmem]
+          · simp [cexpHeads, cexpHeadsSimpHOL, ih, hmem, holHd]
 
 /-- HOL `MAX_LIST_APPEND`: the maximum of an appended list is the maximum
     of the two constituent maxima. -/
@@ -297,9 +331,55 @@ theorem maxListNotMemHol (x : Nat) (values : List Nat)
     (h : x > maxList values) : x ∉ values :=
   maxList_not_mem x values h
 
-/-! HOL `flookup_res_var_thm_quant` remains to be ported over a finite-map
-    carrier. The former raw-function statement admitted infinite maps and
-    required Boolean equality instances. -/
+/-- Exact port of HOL `pan_to_crepProof$flookup_res_var_thm_quant`
+    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:4227`). The typed
+    capture `flookup_res_var_thm_quant_typed` gives
+    `∀(l :α |-> β) (m :α) (v :β option) (n :α).
+      FLOOKUP (res_var l (m,v)) n = if n = m then v else FLOOKUP l n`,
+    so all four binders are quantified in that order. `res_var` is the panSem
+    finite-map operation `resVarHOLFinite` (`res_var_def`), `FLOOKUP` is the
+    finite-support `.lookup`, and the quantified map `l` is the bare
+    finite-support relation entry. `DecidableEq α` is Lean's encoding of HOL
+    `=`, as in the sibling `flookup_res_var_thm` port. -/
+@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "flookup_res_var_thm_quant"
+  (fmap_as_finite_support_relation := [l])]
+theorem flookupResVarThmQuantHOL [DecidableEq α] (l : HolFiniteMapExact α β)
+    (m : α) (v : Option β) (n : α) :
+    (PanSemStateFiniteExact.resVarHOLFinite l (m, v)).lookup n =
+      if n = m then v else l.lookup n := by
+  rw [PanSemStateFiniteExact.holFmapAsFiniteSupportResultWitness_resVarHOLFinite]
+  cases v with
+  | none => simp only [FDOMSUB_HOL]
+  | some value => simp only [FUPDATE_HOL]
+
+/-- Exact port of HOL `pan_to_crepProof$res_var_commutes'`
+    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:4094`). The typed
+    capture `res_var_commutes_prime_typed` gives
+    `(n :α) ≠ (h :α) ⇒
+      res_var (res_var (lc :α |-> β) (h,(v :β option))) (n,(v' :β option)) =
+      res_var (res_var lc (n,v')) (h,v)`,
+    with `n`, `h`, `lc`, `v`, `v'` free in that order and ONE inequality
+    premise. `res_var` is `resVarHOLFinite` and the equality is proved at
+    lookup level, as HOL's `fmap_eq_flookup` proof does. -/
+@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "res_var_commutes'"
+  (fmap_as_finite_support_relation := [lc])]
+theorem resVarCommutesHOL [DecidableEq α] (n h : α) (lc : HolFiniteMapExact α β)
+    (v v' : Option β) (hne : n ≠ h) :
+    PanSemStateFiniteExact.resVarHOLFinite
+        (PanSemStateFiniteExact.resVarHOLFinite lc (h, v)) (n, v') =
+      PanSemStateFiniteExact.resVarHOLFinite
+        (PanSemStateFiniteExact.resVarHOLFinite lc (n, v')) (h, v) := by
+  apply HolFiniteMapExact.ext
+  funext key
+  simp only [flookupResVarThmQuantHOL]
+  by_cases hkn : key = n
+  · by_cases hkh : key = h
+    · exfalso
+      exact absurd (hkn.symm.trans hkh) hne
+    · simp only [if_pos hkn, if_neg hkh]
+  · by_cases hkh : key = h
+    · simp only [if_neg hkn, if_pos hkh]
+    · simp only [if_neg hkn, if_neg hkh]
 
 /-! The `mem_comp_field` proof helper over the faithful HOL carriers. -/
 private theorem compFieldHOL_mem_of_index_lt {width : Nat} [NeZero width]
