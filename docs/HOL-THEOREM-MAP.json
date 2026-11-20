@@ -145832,6 +145832,33 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "extract_append_id",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/FpCmp.lean",
+  "lean_name": "extractAppendId",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared extract_append_id_typed: extract bits 63..32 and 31..0 of an arbitrary word64 into one shared generic word carrier constrained to dimension 32, concatenate high then low into word64, and recover the original. BitVec append followed by setWidth models the HOL fixed-result-width concatenation."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "w2w_select_id",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/FpCmp.lean",
+  "lean_name": "w2wSelectId",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared w2w_select_id_typed: extract bits 63..0 of an arbitrary word64 into the independently quantified word type of dimension 64, then convert to word64 to recover the input."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "w2w_w2w_64",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/FpCmp.lean",
+  "lean_name": "w2wW2w64",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared w2w_w2w_64_typed: for an arbitrary word64, conversion through the independently quantified HOL word type with dimension 64 and conversion back preserves the value. Lean setWidth implements both word conversions and the explicit width equality is unchanged."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
   "hol_name": "assign_FP_cmp",
   "hol_line": 14057,
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/FpCmp.lean",

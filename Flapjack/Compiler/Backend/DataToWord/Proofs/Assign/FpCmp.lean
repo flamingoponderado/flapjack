@@ -18,6 +18,44 @@ open Flapjack.SemanticPrimitivesHOL
 @[hol "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml" "word1_cases"]
 theorem word1Cases (w : BitVec 1) : w = 0 ∨ w = 1 := by bv_decide
 
+/-- A 64-bit word survives conversion through a word of equal width. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml" "w2w_w2w_64"
+  (words_as_type_indexed_bitvec)]
+theorem w2wW2w64 {width : Nat} [NeZero width] (w : BitVec 64) (h : width = 64) :
+    (w.setWidth width : BitVec width).setWidth 64 = w := by
+  subst width
+  simp
+
+/-- Fixed-result-width concatenation for the extraction theorem; this specialized
+helper has no separate HOL declaration. -/
+def concat64 {width : Nat} (high low : BitVec width) : BitVec 64 :=
+  (high ++ low).setWidth 64
+
+/-- The two 32-bit slices reassemble the original 64-bit word. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml" "extract_append_id"
+  (words_as_type_indexed_bitvec)]
+theorem extractAppendId {width : Nat} [NeZero width] (w : BitVec 64) (h : width = 32) :
+    concat64 (holWordExtract 63 32 w width : BitVec width) (holWordExtract 31 0 w width) = w := by
+  subst width
+  have high : holWordExtract 63 32 w 32 = (w >>> (32 : Nat)).setWidth 32 := by
+    apply BitVec.eq_of_toNat_eq
+    simp [holWordExtract, BitVec.toNat_setWidth]
+  have low : holWordExtract 31 0 w 32 = w.setWidth 32 := by
+    apply BitVec.eq_of_toNat_eq
+    simp [holWordExtract, BitVec.toNat_setWidth]
+  rw [high, low]
+  simp only [concat64]
+  bv_decide
+
+/-- Extracting all 64 bits and converting back preserves the word. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml" "w2w_select_id"
+  (words_as_type_indexed_bitvec)]
+theorem w2wSelectId {width : Nat} [NeZero width] (w : BitVec 64) (h : width = 64) :
+    (holWordExtract 63 0 w width : BitVec width).setWidth 64 = w := by
+  subst width
+  apply BitVec.eq_of_toNat_eq
+  simp [holWordExtract, Nat.mod_eq_of_lt w.isLt]
+
 /-- Comparison symmetry on finite rational values, used by the local HOL theorem. -/
 private theorem ratGreaterSwap (a b : Rat) :
     ((if a < b then HolFloatCompare.lt else if a = b then .eq else .gt) == .gt) =

@@ -783,6 +783,9 @@ val _ = emit "assign_FP_bop_typed" data_to_word_assignProofTheory.assign_FP_bop;
 val _ = emit "assign_FP_top_typed" data_to_word_assignProofTheory.assign_FP_top;
 val _ = emit "assign_FP_cmp_typed" data_to_word_assignProofTheory.assign_FP_cmp;
 val _ = emit "word1_cases_typed" data_to_word_assignProofTheory.word1_cases;
+val _ = emit "w2w_w2w_64_typed" data_to_word_assignProofTheory.w2w_w2w_64;
+val _ = emit "extract_append_id_typed" data_to_word_assignProofTheory.extract_append_id;
+val _ = emit "w2w_select_id_typed" data_to_word_assignProofTheory.w2w_select_id;
 
 (* Replay the source-local fp_greater theorem at its original statement and proof. *)
 val fp_greater_local_replay = let
