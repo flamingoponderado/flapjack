@@ -44,6 +44,14 @@ val _ = emit "evaluate_CONS_typed" "evaluate_CONS";
 val _ = emit "evaluate_SNOC_typed" "evaluate_SNOC";
 val _ = emit "evaluate_APPEND_typed" "evaluate_APPEND";
 
+(* Group 4a: primitive-application clock and I/O-event lemmas. *)
+val _ = emit "do_app_change_clock_typed" "do_app_change_clock";
+val _ = emit "do_app_change_clock_err_typed" "do_app_change_clock_err";
+val _ = emit "evaluate_add_clock_typed" "evaluate_add_clock";
+val _ = emit "do_app_io_events_mono_typed" "do_app_io_events_mono";
+val _ = emit "evaluate_io_events_mono_typed" "evaluate_io_events_mono";
+val _ = emit "evaluate_add_to_clock_io_events_mono_typed" "evaluate_add_to_clock_io_events_mono";
+
 (* `[local]` theorems are not exported by the theory; parse their pinned
    source statements, expanding `^x` splices to the term bound by
    `val x = ``...``;`. *)
