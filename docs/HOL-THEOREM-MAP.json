@@ -145869,6 +145869,17 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "Equal_code_thm",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/EqualCode.lean",
+  "lean_name": "equalCode_correct",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": ["WordSemStateFiniteExact.fpRegs", "WordSemStateFiniteExact.store", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared Equal_code_thm_typed: the original standalone store, domain, memory, clocks, code and register conditions, exact Equal local-size equality, and remaining dimension premises agree. The existential target result, permutation, full updated state, stack bound and remaining-clock bound are retained. State fields and store use canonical finite maps; words use positive type-indexed widths and the evaluator inherits the rational-cut real model."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
   "hol_name": "Equal_code_lemma",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/EqualCode.lean",
   "lean_name": "equalCodeLemma",

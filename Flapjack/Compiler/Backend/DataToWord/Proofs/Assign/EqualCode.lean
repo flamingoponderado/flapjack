@@ -1596,4 +1596,33 @@ theorem equalCodeLemma {width : Nat} [NeZero width] {C F : Type} :
     exact (aux limit).1 conf store domain memory clock v1 v2 t loc1 loc2 res remaining remainingClock h
   · intro conf store domain memory limit clock count a1 a2 t loc1 loc2 res remaining remainingClock h
     exact (aux limit).2 conf store domain memory clock count a1 a2 t loc1 loc2 res remaining remainingClock h
+
+/-- The equality stub implements word equality with its declared local-size bound. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml" "Equal_code_thm"
+  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs, WordSemStateFiniteExact.store, store])
+  (words_as_type_indexed_bitvec)]
+theorem equalCode_correct {width : Nat} [NeZero width] {C F : Type}
+    (conf : Config) (store : HolFiniteMapExact WordStoreHOL (WordLocW width))
+    (domain : BitVec width → Bool) (memory : BitVec width → WordLocW width)
+    (limit clock : Nat) (v1 v2 : BitVec width) (t : WordSemStateFiniteExact width C F)
+    (loc1 loc2 : Nat) (res : BitVec width) (remaining remainingClock : Nat)
+    (h : wordEq conf store domain memory limit clock v1 v2 = some (res, remaining, remainingClock) ∧
+      domain = t.mdomain ∧ memory = t.memory ∧ store = t.store ∧ limit ≤ t.clock ∧ shiftLength conf < width ∧
+      t.localsSize = sptLookup equalLocation t.stackSize ∧
+      sptLookup equalLocation t.code = some (3, equalCode conf) ∧
+      sptLookup equal1Location t.code = some (4, equal1Code) ∧
+      sptLookup compare1Location t.code = some (4, compare1Code) ∧
+      t.getVar 0 = some (.loc loc1 loc2) ∧ t.getVar 2 = some (.word v1) ∧ t.getVar 4 = some (.word v2) ∧
+      conf.lenSize ≠ 0 ∧ conf.lenSize < width ∧ goodDimindex width) :
+    ∃ ck newP smx, WordSemStateFiniteExact.evaluate (equalCode conf) t =
+      (some (.result (.loc loc1 loc2) [.word res]),
+        {t with clock := ck, locals := .ln, localsSize := some 0, permute := newP, stackMax := smx}) ∧
+      optionLe smx (Option.map₂ max t.stackMax
+        (Option.map₂ (· + ·) (wordSemStackSize t.stack) (DataSem.eqCodeStackMax (clock + 1) t.stackSize))) ∧
+      remaining ≤ ck := by
+  obtain ⟨run, dom, mem, storeEq, time, shift, size, code, code1, codeCmp, r0, r2, r4,
+    lenNe, lenLt, good⟩ := h
+  exact (equalCodeLemma (C := C) (F := F)).1 conf store domain memory limit clock v1 v2 t loc1 loc2
+    res remaining remainingClock ⟨run, dom, mem, storeEq, time, shift, code, code1, codeCmp,
+      r0, r2, r4, lenNe, lenLt, Or.inl size, good⟩
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Assign
