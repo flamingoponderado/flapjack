@@ -790,6 +790,7 @@ val _ = emit "word_exp_insert_typed" data_to_word_assignProofTheory.word_exp_ins
 val _ = emit "sane_locals_size_def_typed" data_to_word_assignProofTheory.sane_locals_size_def;
 val _ = emit "Equal_code_lemma_typed" data_to_word_assignProofTheory.Equal_code_lemma;
 val _ = emit "Equal_code_thm_typed" data_to_word_assignProofTheory.Equal_code_thm;
+val _ = emit "assign_Equal_typed" data_to_word_assignProofTheory.assign_Equal;
 val _ = emit "option_map_mult_suc_typed" data_to_word_assignProofTheory.option_map_mult_suc;
 val _ = emit "eq_code_stack_max_sub1_typed" data_to_word_assignProofTheory.eq_code_stack_max_sub1;
 val _ = emit "eq_code_stack_max_le_mono_typed" data_to_word_assignProofTheory.eq_code_stack_max_le_mono;
