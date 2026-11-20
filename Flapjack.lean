@@ -377,6 +377,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.Const
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.BoolNot
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.BoolTest
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.BoundsCheckByte
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.BoundsCheckArray
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.WordTest
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.LessSmallConst
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.BoolLookup
