@@ -145723,5 +145723,16 @@
   "words_as_type_indexed_bitvec": true,
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "Compared evaluate_StoreEach_typed and the original zero-offset specialization: the quantified word list, register list, state, register, address and memory, all three premises, and exact evaluator result agree. The target state uses canonical finite maps and positive-width words; the evaluator inherits the documented real-model assumption."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "evaluate_GiveUp2",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/GiveUp.lean",
+  "lean_name": "evaluateGiveUp2",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_GiveUp2_typed: the state relation premise, existential result, NotEnoughSpace evaluation, both FFI equalities and target stack-maximum bound agree. The target state uses canonical finite maps and positive-width words; the evaluator inherits the documented real-model assumption."
 }
 ]

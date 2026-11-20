@@ -385,6 +385,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.El
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.Update
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.RefSource
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.StoreEach
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.GiveUp
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.RealAddress
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.EnvToList
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.CutEnvDomain
