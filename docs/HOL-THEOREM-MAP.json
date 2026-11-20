@@ -145869,6 +145869,17 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "Compare1_code_thm",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/Compare1.lean",
+  "lean_name": "compare1Code_correct",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared Compare1_code_thm_typed: arbitrary input words, domain, memory and target state retain all code, stack-size, register and clock premises. The existential result preserves the exact returned state, stack bound and clock inequality, including recursive tail calls. The target state uses canonical finite maps and positive-width words; its general evaluator inherits the rational-cut real model."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
   "hol_name": "word_exp_insert",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/RealAddrInsert.lean",
   "lean_name": "wordExp_realAddr_insert",
