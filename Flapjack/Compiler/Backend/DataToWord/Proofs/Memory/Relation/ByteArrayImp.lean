@@ -131,11 +131,10 @@ private theorem headerShift {width : Nat} [NeZero width] (conf : DataToWord.Conf
     have zero : (len + 2 ^ (if width = 32 then 2 else 3)).testBit i = false := Nat.testBit_lt_two_pow (by omega)
     rw [BitVec.getLsbD_of_ge _ _ high, zero]
 
-/-- HOL's unused existential `l` has an independent type; `Nonempty β`
-records the nonemptiness of HOL types while retaining that quantifier. -/
+/-- The unused HOL existential `l` is omitted; it does not occur in the conclusion. -/
 @[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "memory_rel_ByteArray_IMP"
   (fmap_as_finite_support_relation := [store]) (words_as_type_indexed_bitvec)]
-theorem memoryRel_byteArrayImp {width : Nat} [NeZero width] {β : Type} [Nonempty β]
+theorem memoryRel_byteArrayImp {width : Nat} [NeZero width]
     (conf : DataToWord.Config) (be : Bool) (next : Nat)
     (refs : Spt (BvlSem.Ref DataSem.Value)) (space : Nat)
     (store : HolFiniteMapExact WordStoreHOL (WordLocW width)) (memory : BitVec width → WordLocW width)
@@ -143,7 +142,7 @@ theorem memoryRel_byteArrayImp {width : Nat} [NeZero width] {β : Type} [Nonempt
     (location : WordLocW width) (vars : List (DataSem.Value × WordLocW width)) :
     memoryRel conf be next refs space store memory domain ((.refPtr bit ptr, location) :: vars) ∧
     sptLookup ptr refs = some (.byteArray flag bytes) ∧ goodDimindex width →
-    ∃ w address header, ∃ (_ : β), location = .word w ∧ w.getLsbD 0 = true ∧
+    ∃ w address header, location = .word w ∧ w.getLsbD 0 = true ∧
       makeByteHeader conf flag bytes.length = header ∧
       header.getLsbD 3 = false ∧ (header.getLsbD 4 = true ↔ flag = false) ∧ header.getLsbD 2 = true ∧
       getRealSimpleAddr conf store w = some address ∧ getRealAddr conf store w = some address ∧
@@ -170,7 +169,7 @@ theorem memoryRel_byteArrayImp {width : Nat} [NeZero width] {β : Type} [Nonempt
   have addressEq : address2 = address := Option.some.inj (real2.symm.trans real)
   subst address2
   have bits := byteHeaderBits conf bytes.length flag good config
-  refine ⟨w, address, makeByteHeader conf flag bytes.length, Classical.choice ‹Nonempty β›,
+  refine ⟨w, address, makeByteHeader conf flag bytes.length,
     locEq, bit0, rfl, bits.1, ?_, bits.2, simple, real, mem, member, reads, ?_, ?_⟩
   · rcases good with hw | hw <;> subst width
     · have h : ¬ (4 : Nat) ≥ 32 - 2 - conf.lenSize := by omega

@@ -190,14 +190,14 @@ theorem ffi_reference_inputs {width : Nat} [NeZero width] {C F : Type}
               have good := related.2.2.2.2.2.2.1
               have firstLookup : sptLookup first source.refs = some (.byteArray true config) := by simpa using firstRead
               have secondLookup : sptLookup second source.refs = some (.byteArray false bytes) := by simpa using secondRead
-              obtain ⟨w1, address1, header1, _, loc1, _, _, _, _, _, _, real1, mem1, dom1, reads1, _, bound1⟩ :=
-                Memory.memoryRel_byteArrayImp (β := Unit) conf target.be (holThe source.tstamps)
+              obtain ⟨w1, address1, header1, loc1, _, _, _, _, _, _, real1, mem1, dom1, reads1, _, bound1⟩ :=
+                Memory.memoryRel_byteArrayImp conf target.be (holThe source.tstamps)
                   source.refs source.space target.store target.memory target.mdomain flag1 true first config
                   firstWord _ ⟨roots, firstLookup, good⟩
               have tailRoots := Memory.memoryRel_tl conf target.be (holThe source.tstamps)
                 source.refs source.space target.store target.memory target.mdomain _ _ roots
-              obtain ⟨w2, address2, header2, _, loc2, _, _, _, _, _, _, real2, mem2, dom2, reads2, _, bound2⟩ :=
-                Memory.memoryRel_byteArrayImp (β := Unit) conf target.be (holThe source.tstamps)
+              obtain ⟨w2, address2, header2, loc2, _, _, _, _, _, _, real2, mem2, dom2, reads2, _, bound2⟩ :=
+                Memory.memoryRel_byteArrayImp conf target.be (holThe source.tstamps)
                   source.refs source.space target.store target.memory target.mdomain flag2 false second bytes
                   secondWord _ ⟨tailRoots, secondLookup, good⟩
               have configRead := imp_readBytearray_genList config config.length

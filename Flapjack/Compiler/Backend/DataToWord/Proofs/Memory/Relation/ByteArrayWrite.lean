@@ -65,9 +65,9 @@ theorem memoryRel_writeBytearray {width : Nat} [NeZero width] (conf : DataToWord
       | nil => simp at equal
       | append_singleton old oldByte =>
         have lengths : bytes.length = old.length := by simpa using equal
-        have info := memoryRel_byteArrayImp (β := Unit) conf be next refs space store memory domain bit false ptr (old ++ [oldByte] ++ rest)
+        have info := memoryRel_byteArrayImp conf be next refs space store memory domain bit false ptr (old ++ [oldByte] ++ rest)
           (.word w) vars ⟨related, by simpa [List.append_assoc] using found, good⟩
-        obtain ⟨w0, a0, header, _, loc, _, _, _, _, _, simple, _, _, _, loads, updates, _⟩ := info
+        obtain ⟨w0, a0, header, loc, _, _, _, _, _, simple, _, _, _, loads, updates, _⟩ := info
         have wEq : w0 = w := by simpa using (WordLocW.word.inj loc).symm
         subst w0
         have aEq : a0 = address := Option.some.inj (simple.symm.trans real)

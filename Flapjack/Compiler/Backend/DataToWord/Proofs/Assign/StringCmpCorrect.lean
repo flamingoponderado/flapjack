@@ -364,8 +364,8 @@ theorem assignStringCmp_correct {width : Nat} [NeZero width] {C F : Type}
                 refine ⟨?_, argsEq, getWord⟩
                 simpa [envs] using related.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2)
             have good := related.2.2.2.2.2.2.1
-            obtain ⟨w1, adr1, w2, adr2, _, _, r1, r2, rfl, rfl, real1, real2, wordCmp, comparison⟩ :=
-              memoryRelStrCmp (β := Unit) (γ := Unit) conf target.be (holThe source.tstamps)
+            obtain ⟨w1, adr1, w2, adr2, r1, r2, rfl, rfl, real1, real2, wordCmp, comparison⟩ :=
+              memoryRelStrCmp conf target.be (holThe source.tstamps)
                 source.refs source.space target.store target.memory target.mdomain b1 b2 p1 p2 v1 v2
                 (joinEnv source.locals (sptToAList (sptInter target.locals (adjustSet source.locals))) ++ envs)
                 leftFlag rightFlag leftBytes rightBytes fast cmp (by simpa using roots) leftLookup rightLookup good

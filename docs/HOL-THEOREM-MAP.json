@@ -144666,7 +144666,7 @@
   "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
   "fmap_as_finite_support_relation": ["store"],
   "words_as_type_indexed_bitvec": true,
-  "reviewer": "Compared memory_rel_ByteArray_IMP_typed with HOL source lines 11988-12013: the original memory relation, reference lookup and good_dimindex premises, all four existentials, header bits, both real addresses, memory and domain facts, universal byte loads and byte updates, and both width-specific header conclusions are retained. The unused existential l has its own independent HOL type beta, represented by Lean beta with Nonempty beta because HOL types are nonempty. The store is the canonical finite-support map and all source words share one positive width."
+  "reviewer": "Compared memory_rel_ByteArray_IMP_typed with HOL source lines 11988-12013: the original memory relation, reference lookup and good_dimindex premises, the three used existentials, header bits, both real addresses, memory and domain facts, universal byte loads and byte updates, and both width-specific header conclusions are retained. The unused existential l has its own independent HOL type and is omitted. The store is the canonical finite-support map and all source words share one positive width. The unused HOL existential witness l is omitted; the typed source confirms it does not occur in the conclusion."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
@@ -145649,7 +145649,7 @@
   "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
   "fmap_as_finite_support_relation": ["st"],
   "words_as_type_indexed_bitvec": true,
-  "reviewer": "Compared memory_rel_str_cmp_typed: both ordered related references and lookups, good_dimindex, both address witnesses, original independent unused existential types beta and gamma, concrete comparison result, and source/numeric comparison iff are retained. HOL type inhabitance is represented by separate Nonempty binders; st uses the canonical finite-support map and the shared word carrier uses positive indexed BitVec."
+  "reviewer": "Compared memory_rel_str_cmp_typed: both ordered related references and lookups, good_dimindex, both address witnesses, concrete comparison result, and source/numeric comparison iff are retained. The two independent unused HOL existentials are omitted; st uses the canonical finite-support map and the shared word carrier uses positive indexed BitVec. The unused HOL existential witnesses x1 and m1 are omitted; the typed source confirms they do not occur in the conclusion."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",

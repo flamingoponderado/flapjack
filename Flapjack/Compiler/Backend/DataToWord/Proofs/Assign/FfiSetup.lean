@@ -216,8 +216,8 @@ theorem ffi_success_setup_call {width : Nat} [NeZero width] {C F : Type}
       source.space target.store target.memory target.mdomain _ roots
     have tailRoots := Memory.memoryRel_tl conf target.be (holThe source.tstamps) source.refs
       0 target.store target.memory target.mdomain _ _ zeroRoots
-    obtain ⟨w, address, header, _, loc, _, _, _, _, _, simple, real, _, _, _, _, _⟩ :=
-      Memory.memoryRel_byteArrayImp (β := Unit) conf target.be (holThe source.tstamps)
+    obtain ⟨w, address, header, loc, _, _, _, _, _, simple, real, _, _, _, _, _⟩ :=
+      Memory.memoryRel_byteArrayImp conf target.be (holThe source.tstamps)
         source.refs 0 target.store target.memory target.mdomain flag2 false second bytes
         secondWord _ ⟨tailRoots, secondRead, good⟩
     have wEq : w = w2 := WordLocW.word.inj (loc.symm.trans loc2)
