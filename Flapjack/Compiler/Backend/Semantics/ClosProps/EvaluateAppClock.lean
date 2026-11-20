@@ -226,13 +226,13 @@ theorem evaluateApp_rw {C F : Type} (args : List ClosSem.Value) (loc_opt : Optio
     (f : ClosSem.Value) (state : ClosSem.State C F) (h : args ≠ []) :
     ClosSem.evaluateApp loc_opt f args state =
       match ClosSem.destClosure state.maxApp loc_opt f args with
-      | none => ClosSem.typeError state
+      | none => (.err (.abort .typeError), state)
       | some (.partialApp v) =>
-        if state.clock < args.length then ClosSem.timeoutError { state with clock := 0 }
+        if state.clock < args.length then (.err (.abort .timeoutError), { state with clock := 0 })
         else (.val [v], ClosSem.decClock args.length state)
       | some (.fullApp exp env restArgs) =>
         if state.clock < args.length - restArgs.length then
-          ClosSem.timeoutError { state with clock := 0 }
+          (.err (.abort .timeoutError), { state with clock := 0 })
         else
           match ClosSem.evaluate [exp] env
               (ClosSem.decClock (args.length - restArgs.length) state) with
@@ -244,15 +244,15 @@ theorem evaluateApp_rw {C F : Type} (args : List ClosSem.Value) (loc_opt : Optio
     simp only [ClosSem.evaluateApp]
     split
     · rename_i heq
-      simp only [heq]
+      simp only [heq, ClosSem.typeError]
     · rename_i v heq
       split
-      · simp only [heq]
+      · simp only [heq, ClosSem.timeoutError]
       · simp only [heq]
     · rename_i exp env restArgs heq
       split
       · rename_i hclock
-        simp only [heq]
+        simp only [heq, ClosSem.timeoutError]
         rw [if_pos hclock]
       · rename_i hclock
         simp only [heq]
