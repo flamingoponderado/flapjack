@@ -342,4 +342,69 @@ theorem notMemContextAssignedMemGtHOL {width : Nat} [NeZero width] :
   · exact hnot v sh ns hl hx
   · omega
 
+/-- Exact port of HOL `rewritten_context_unassigned`
+    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:1457-1490`). The typed
+    capture `rewritten_context_unassigned_typed`
+    (`scripts/hol-probes/pan_to_crep_proof_typed_probe.out:59`) binds
+    `p nctxt v ctxt ns nvars sh sh'` and gives ONE seven-conjunct premise in
+    HOL's order: the record update `nctxt = ctxt with <|vars := ctxt.vars |+
+    (v,sh,nvars); vmax := ctxt.vmax + size_of_shape sh|>`, the old lookup, the
+    two `no_overlap` facts, the two `ctxt_max` facts, and
+    `distinct_lists nvars ns`; the conclusion is
+    `distinct_lists ns (assigned_free_vars (compile nctxt p))`. The update is
+    `HolFiniteMapExact.update`, `compile` is `compileProgExactHOLW`,
+    `assigned_free_vars` is `crepAssignedFreeVarsHOL`, `no_overlap` is
+    `noOverlapFiniteExact`, `ctxt_max` is `ctxtMaxFiniteExact` and
+    `distinct_lists` is the Boolean `distinctListsHol`. -/
+@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "rewritten_context_unassigned"
+  (fmap_as_finite_support_relation := [PanToCrepContextExact.vars])
+  (words_as_type_indexed_bitvec)]
+theorem rewrittenContextUnassignedHOL {width : Nat} [NeZero width] :
+    ∀ (p : ProgHOL width) (nctxt : PanToCrepContextExact width) (v : MlS)
+      (ctxt : PanToCrepContextExact width) (ns nvars : List Nat) (sh sh' : ShapeHOL),
+      nctxt = ({ ctxt with
+          vars := ctxt.vars.update (v, (sh, nvars)),
+          vmax := ctxt.vmax + sizeOfShapeHOL sh } : PanToCrepContextExact width) ∧
+        ctxt.vars.lookup v = some (sh', ns) ∧
+        noOverlapFiniteExact ctxt.vars ∧
+        ctxtMaxFiniteExact ctxt.vmax ctxt.vars ∧
+        noOverlapFiniteExact nctxt.vars ∧
+        ctxtMaxFiniteExact nctxt.vmax nctxt.vars ∧
+        distinctListsHol nvars ns = true →
+      distinctListsHol ns (crepAssignedFreeVarsHOL (compileProgExactHOLW nctxt p)) = true := by
+  rintro p nctxt v ctxt ns nvars sh sh'
+    ⟨hnctxt, hlookup, hnoctxt, hmaxctxt, -, hmaxn, hdistinct⟩
+  rw [distinctListsHol, List.all_eq_true]
+  intro x hx
+  rw [decide_eq_true_eq]
+  intro hxafv
+  have hvarsN : nctxt.vars = ctxt.vars.update (v, (sh, nvars)) := by
+    rw [hnctxt]
+  have hle : x ≤ nctxt.vmax := by
+    have hxle : x ≤ ctxt.vmax := hmaxctxt.2 v sh' ns hlookup x hx
+    have hvmax : nctxt.vmax = ctxt.vmax + sizeOfShapeHOL sh := by
+      rw [hnctxt]
+    omega
+  have hnot : ∀ v' sh0 ns0, nctxt.vars.lookup v' = some (sh0, ns0) → x ∉ ns0 := by
+    intro v' sh0 ns0 hv' hx0
+    rw [hvarsN, HolFiniteMapExact.lookup_update, FUPDATE] at hv'
+    by_cases hveq : v' = v
+    · subst hveq
+      rw [if_pos (beq_iff_eq.mpr rfl)] at hv'
+      simp only [Option.some.injEq, Prod.mk.injEq] at hv'
+      have hmem : x ∈ nvars := by
+        rw [hv'.2]
+        exact hx0
+      rw [distinctListsHol, List.all_eq_true] at hdistinct
+      exact absurd hx (decide_eq_true_eq.mp (hdistinct x hmem))
+    · have hbeq : (v == v') = false :=
+        beq_eq_false_iff_ne.mpr (fun h => hveq h.symm)
+      rw [if_neg (by
+        rw [hbeq]
+        exact Bool.false_ne_true)] at hv'
+      obtain ⟨-, hkeys⟩ := hnoctxt
+      have hkey : v = v' := hkeys v v' sh' sh0 ns ns0 hlookup hv' ⟨x, hx, hx0⟩
+      exact hveq hkey.symm
+  exact notMemContextAssignedMemGtHOL nctxt p x ⟨hmaxn, hnot, hle⟩ hxafv
+
 end Flapjack
