@@ -145869,6 +145869,17 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "assign_WordShiftW8",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/WordShift8.lean",
+  "lean_name": "assignWordShift8_correct",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared assign_WordShiftW8_typed: the existential Word8 shift and amount, generic assignment premises, existential target evaluation, insufficient-space obligations, and full successful state relation agree. Both word widths preserve tagged-byte semantics for arbitrary shift amounts, including arithmetic saturation and modulo rotation. Target state maps use finite support and words use positive-width BitVec; the general evaluator inherits the rational-cut real model."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
   "hol_name": "assign_WordShiftW64",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/WordShift64.lean",
   "lean_name": "assignWordShift_correct",
