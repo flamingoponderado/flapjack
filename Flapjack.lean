@@ -1580,6 +1580,7 @@ import Flapjack.Compiler.Backend.BviInline.Proofs.CodeLabels
 import Flapjack.Compiler.Backend.BviTailrec.Proofs.CodeLabels
 import Flapjack.Compiler.Backend.BviLet.Proofs.CodeLabels
 import Flapjack.Compiler.Backend.Semantics.BviProps.EvaluateGrowth
+import Flapjack.Compiler.Backend.Semantics.BviProps.SemanticsCurry
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.BuildOk
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.ApplyOk
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.GlobalOk

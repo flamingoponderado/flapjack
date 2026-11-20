@@ -197,4 +197,23 @@ theorem evaluate_CURRY_I {C D F : Type} (expressions : List Bvi.Exp) (env : List
     exact applied.1
   · exact (adjustOracle_simps compiler Prod.snd state 0 0).2.2.2.2.1
 
+/-- Evaluation whose result is not a type error agrees with the adjusted
+state evaluation, and the source relation is preserved. -/
+@[hol "cakeml/compiler/backend/semantics/bviPropsScript.sml" "evaluate_adj_orac_rel"
+  (fmap_as_finite_support := [refs])]
+theorem evaluate_adj_orac_rel {C D F : Type} (expressions : List Bvi.Exp)
+    (env : List Value) (state : BviState C F) (result : BviResult)
+    (next : BviState C F) (compiler : Compiler D) (f : C → D) (target : BviState D F)
+    (premise : evaluateTuple (expressions, env, state) = (result, next) ∧
+      result ≠ .err (.abort .typeError) ∧ adjustOracleRel compiler f state target) :
+    ∃ last : BviState D F,
+      evaluateTuple (expressions, env, target) = (result, last) ∧
+        adjustOracleRel compiler f next last := by
+  obtain ⟨run, notType, rel⟩ := premise
+  obtain ⟨ok, same⟩ := rel
+  subst same
+  have applied := evaluate_adj_orac expressions env state result next compiler f
+    ⟨run, notType, ok⟩
+  exact ⟨adjustOracle compiler f next, applied.1, applied.2, rfl⟩
+
 end Flapjack.Compiler.Backend.BviProps
