@@ -14,6 +14,17 @@ open Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
 open Flapjack.Compiler.Backend.BackendProps
 open Flapjack.SemanticPrimitivesHOL
 
+/-- Reassemble the two Word64 halves used by the floating-point assignment proofs.
+This is supporting bit-vector infrastructure. -/
+theorem word64HalvesAppend (v : BitVec 64) :
+    (v >>> (32 : Nat)).setWidth 32 ++ v.setWidth 32 = v := by
+  apply BitVec.eq_of_getLsbD_eq
+  intro i hi
+  rw [BitVec.getLsbD_append (x := (v >>> (32 : Nat)).setWidth 32) (y := v.setWidth 32)]
+  simp [BitVec.getLsbD_setWidth, BitVec.getLsbD_ushiftRight]
+  split <;> simp_all
+  all_goals omega
+
 /-- Reassemble the state relation from the Word64 evaluator outcome; this supports the FP assignment proofs. -/
 theorem stateRelNextFreeResult {width : Nat} [NeZero width] {C F : Type}
     (conf : Config) (l1 l2 dest space : Nat) (source : DataSem.State C F)

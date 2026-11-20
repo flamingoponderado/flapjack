@@ -140,7 +140,10 @@ theorem evaluateWordOp64On32 {width : Nat} [NeZero width] {C F : Type} (op : Bac
   have low (v : BitVec 64) : holWordExtract 31 0 v 32 = v.setWidth 32 := by
     apply BitVec.eq_of_toNat_eq
     simp [holWordExtract, BitVec.toNat_setWidth]
-  have andOnes (v : BitVec 32) : v &&& (4294967295 : BitVec 32) = v := by bv_decide
+  have andOnes (v : BitVec 32) : v &&& (4294967295 : BitVec 32) = v := by
+    apply BitVec.eq_of_getLsbD_eq
+    intro i hi
+    interval_cases i <;> simp_all
   simp only [BitVec.ofNat_eq_ofNat] at andOnes
   cases op with
   | andw | orw | xor =>
@@ -179,7 +182,10 @@ theorem evaluateWordOp64On32 {width : Nat} [NeZero width] {C F : Type} (op : Bac
       ClosSem.applyWordOp, high, low, carry1, carry2, sptInsert_insert_shadow,
       sptInsert_swap 29 31 _ _ _ (by decide), sptInsert_swap 29 33 _ _ _ (by decide),
       sptInsert_swap 29 27 _ _ _ (by decide), sptInsert_swap 27 33 _ _ _ (by decide)]
-    have xorOnes (v : BitVec 32) : (4294967295 : BitVec 32) ^^^ v = ~~~v := by bv_decide
+    have xorOnes (v : BitVec 32) : (4294967295 : BitVec 32) ^^^ v = ~~~v := by
+      apply BitVec.eq_of_getLsbD_eq
+      intro i hi
+      interval_cases i <;> simp_all
     have lo := subLow a b
     have hi := subHigh a b
     simp only [BitVec.ofNat_eq_ofNat] at xorOnes lo hi
@@ -264,7 +270,10 @@ private theorem wordOpPrefix64 {C F : Type} (conf : Config) (op : BackendCommon.
       .load (.op .add [realAddr conf (adjustVar arg1), .const wordSemBytesInWord]),
       .load (.op .add [realAddr conf (adjustVar arg2), .const wordSemBytesInWord])])) target =
         (none, target.setVar 3 (.word (ClosSem.applyWordOp op w1 w2))) := by
-  have ones (v : BitVec 64) : v &&& (18446744073709551615 : BitVec 64) = v := by bv_decide
+  have ones (v : BitVec 64) : v &&& (18446744073709551615 : BitVec 64) = v := by
+    apply BitVec.eq_of_getLsbD_eq
+    intro i hi
+    interval_cases i <;> simp_all
   simp only [BitVec.ofNat_eq_ofNat] at ones
   cases op <;>
     simp [WordSemStateFiniteExact.evaluate, WordSemStateFiniteExact.wordExp,

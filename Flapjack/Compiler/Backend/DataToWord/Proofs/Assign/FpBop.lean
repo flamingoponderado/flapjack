@@ -155,7 +155,7 @@ private theorem fpBopPrefix32 {C F : Type} (conf : Config) (fpb : FpBop)
                     (WordSemStateFiniteExact.setVar 11 (.word ((w1 >>> (32 : Nat)).setWidth 32))
                       (WordSemStateFiniteExact.setVar 17 (.word addr2)
                         (WordSemStateFiniteExact.setVar 15 (.word addr1) target))))))))))) := by
-  have combineExact (v : BitVec 64) : (v >>> (32 : Nat)).setWidth 32 ++ v.setWidth 32 = v := by bv_decide
+  have combineExact (v : BitVec 64) : (v >>> (32 : Nat)).setWidth 32 ++ v.setWidth 32 = v := word64HalvesAppend v
   have extractLow (v : BitVec 64) : holWordExtract 31 0 v 32 = v.setWidth 32 := by
     apply BitVec.eq_of_toNat_eq
     simp [holWordExtract, BitVec.toNat_setWidth]

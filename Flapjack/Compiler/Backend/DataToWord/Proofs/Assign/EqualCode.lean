@@ -71,12 +71,31 @@ private theorem tagMask_eq_slice {width : Nat} [NeZero width] (conf : Config)
 private theorem headerBits {width : Nat} [NeZero width] (w : BitVec width) (good : goodDimindex width) :
     ((w &&& (4 : BitVec width)) = 0 ↔ w.getLsbD 2 = false) ∧
     ((w &&& (24 : BitVec width)) = 16 ↔ (w.getLsbD 3 = false ∧ w.getLsbD 4 = true)) := by
-  rcases good with h | h <;> subst width <;> constructor <;> bv_decide
+  rcases good with h | h <;> subst width <;> constructor
+  all_goals
+    constructor
+    · intro h
+      first
+      | have k := congrArg (fun x : BitVec _ => x.getLsbD 2) h
+        simpa using k
+      | have h3 := congrArg (fun x : BitVec _ => x.getLsbD 3) h
+        have h4 := congrArg (fun x : BitVec _ => x.getLsbD 4) h
+        exact ⟨by simpa using h3, by simpa using h4⟩
+    · intro h
+      apply BitVec.eq_of_getLsbD_eq
+      intro i hi
+      interval_cases i <;> simp_all
 
 /-- Flapjack proof infrastructure for the equality-code simulation; no separate HOL declaration. -/
 private theorem shiftBytes {width : Nat} [NeZero width] (w : BitVec width) (good : goodDimindex width) :
     (w <<< wordShiftAmount width) = StackRemove.bytesInWord width * w := by
-  rcases good with h | h <;> subst width <;> simp [wordShiftAmount, StackRemove.bytesInWord] <;> bv_decide
+  rcases good with h | h
+  · subst width
+    have hp : BitVec.twoPow 32 2 = (4 : BitVec 32) := by decide
+    simpa [wordShiftAmount, StackRemove.bytesInWord, hp] using (BitVec.twoPow_mul_eq_shiftLeft w 2).symm
+  · subst width
+    have hp : BitVec.twoPow 64 3 = (8 : BitVec 64) := by decide
+    simpa [wordShiftAmount, StackRemove.bytesInWord, hp] using (BitVec.twoPow_mul_eq_shiftLeft w 3).symm
 
 /-- Flapjack proof infrastructure for the equality-code simulation; no separate HOL declaration. -/
 private theorem compareStackBound (a b e total : Option Nat) (h : optionLe e total) :

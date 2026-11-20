@@ -130,7 +130,7 @@ private theorem fpUopPrefix32 {C F : Type} (conf : Config) (fpu : FpUop)
                 (WordSemStateFiniteExact.setVar 13 (.word (word.setWidth 32))
                   (WordSemStateFiniteExact.setVar 11 (.word ((word >>> (32 : Nat)).setWidth 32))
                     (WordSemStateFiniteExact.setVar 15 (.word addr) target))))))) := by
-  have combine : (((word >>> (32 : Nat)).setWidth 32 ++ word.setWidth 32).setWidth 64) = word := by bv_decide
+  have combine : (((word >>> (32 : Nat)).setWidth 32 ++ word.setWidth 32).setWidth 64) = word := by simpa using word64HalvesAppend word
   have combineExact : (word >>> (32 : Nat)).setWidth 32 ++ word.setWidth 32 = word := by simpa using combine
   have extractLow (v : BitVec 64) : holWordExtract 31 0 v 32 = v.setWidth 32 := by
     apply BitVec.eq_of_toNat_eq

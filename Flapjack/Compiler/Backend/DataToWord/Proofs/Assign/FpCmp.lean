@@ -16,7 +16,11 @@ open Flapjack.SemanticPrimitivesHOL
 
 /-- Every HOL one-bit word is zero or one. -/
 @[hol "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml" "word1_cases"]
-theorem word1Cases (w : BitVec 1) : w = 0 ∨ w = 1 := by bv_decide
+theorem word1Cases (w : BitVec 1) : w = 0 ∨ w = 1 := by
+  have bound := w.isLt
+  interval_cases h : w.toNat
+  · left; apply BitVec.eq_of_toNat_eq; simpa using h
+  · right; apply BitVec.eq_of_toNat_eq; simpa using h
 
 /-- A 64-bit word survives conversion through a word of equal width. -/
 @[hol "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml" "w2w_w2w_64"
@@ -44,8 +48,7 @@ theorem extractAppendId {width : Nat} [NeZero width] (w : BitVec 64) (h : width 
     apply BitVec.eq_of_toNat_eq
     simp [holWordExtract, BitVec.toNat_setWidth]
   rw [high, low]
-  simp only [concat64]
-  bv_decide
+  simpa [concat64] using word64HalvesAppend w
 
 /-- Extracting all 64 bits and converting back preserves the word. -/
 @[hol "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml" "w2w_select_id"
@@ -196,7 +199,7 @@ private theorem fpCmpPrefix32 {C F : Type} (conf : Config) (cmp : FpCmp)
                   (WordSemStateFiniteExact.setVar 11 (.word ((w1 >>> (32 : Nat)).setWidth 32))
                     (WordSemStateFiniteExact.setVar 17 (.word addr2)
                       (WordSemStateFiniteExact.setVar 15 (.word addr1) target)))))))))) := by
-  have combineExact (v : BitVec 64) : (v >>> (32 : Nat)).setWidth 32 ++ v.setWidth 32 = v := by bv_decide
+  have combineExact (v : BitVec 64) : (v >>> (32 : Nat)).setWidth 32 ++ v.setWidth 32 = v := word64HalvesAppend v
   simp only [WordSemStateFiniteExact.setVar] at real2
   simp only [BitVec.ofNat_eq_ofNat] at domain12 domain22 load12 load22
   cases cmp <;>
