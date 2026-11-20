@@ -685,6 +685,36 @@ val _ = emit "heap_store_unused_gen_state_ok_typed" heap_store_unused_gen_state_
 val _ = emit "heap_store_unused_IMP_length_typed" data_to_word_memoryProofTheory.heap_store_unused_IMP_length;
 val _ = emit "blocks_unique_new_ref_typed" data_to_word_memoryProofTheory.blocks_unique_new_ref;
 
+
+(* Replay the end-of-region allocation decomposition. *)
+val heap_store_unused_thm_replay = let
+  open preamble helperLib gc_sharedTheory data_to_word_memoryProofTheory
+in
+  Q.prove (`!a n heap h1 h2 heap2 x.
+      heap_split (a + n) heap = SOME (h1,h2) /\
+      heap_store_unused a n x heap = (heap2,T) /\
+      unused_space_inv a (n − el_length x) heap2 ==>
+      ?h0. h1 = h0 ++ [Unused (n-1)] /\
+           heap = h1 ++ h2 /\ heap_length h0 = a /\
+           heap2 = h0 ++ heap_expand (n − el_length x) ++ [x] ++ h2`,
+  fs [heap_store_unused_def] \\ rw []
+  \\ fs [unused_space_inv_def]
+  \\ imp_res_tac gc_sharedTheory.heap_split_heap_length
+  \\ fs [] \\ rveq \\ fs []
+  \\ fs [heap_lookup_APPEND]
+  \\ `0 < n` by (Cases_on `x` \\ fs [el_length_def])
+  \\ fs [] \\ old_drule heap_lookup_SPLIT
+  \\ strip_tac \\ rveq \\ fs []
+  \\ `hb = []` by
+   (fs [heap_length_APPEND]
+    \\ fs [heap_length_def,el_length_def]
+    \\ Cases_on `hb` \\ fs [])
+  \\ rveq \\ fs []
+  \\ full_simp_tac std_ss [GSYM APPEND_ASSOC,APPEND]
+  \\ fs [heap_store_lemma])
+end;
+val _ = emit "heap_store_unused_thm_typed" heap_store_unused_thm_replay;
+
 val _ = emit "heap_store_unused_heap_lookup_typed" data_to_word_memoryProofTheory.heap_store_unused_heap_lookup;
 val _ = emit "heap_store_unused_def_typed" data_to_word_memoryProofTheory.heap_store_unused_def;
 val _ = emit "heap_store_rel_def_typed" data_to_word_memoryProofTheory.heap_store_rel_def;

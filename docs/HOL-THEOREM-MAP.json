@@ -145122,6 +145122,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "heap_store_unused_thm",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/HeapStore.lean",
+  "lean_name": "heapStoreUnused_shape",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Source comparison with the typed local HOL proof replay: a split, successful end-of-region allocation and resulting unused-space invariant imply the same preceding heap, four decomposition and length conclusions, and end-placement replacement. Both generic heap carriers remain independent."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
   "hol_name": "IMP_heap_store_unused_alt",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/HeapAllocate.lean",
   "lean_name": "heapStoreUnusedAlt_exists",
