@@ -144502,6 +144502,20 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "AllocVar_thm_gen",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/AllocVar.lean",
+  "lean_name": "allocVar_gen",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared AllocVar_thm_gen_typed and its zero HOL hypotheses with the full source theorem: all five premises, the failure case with its universally quantified heap bound and the complete success state and preservation equalities are retained. The proof handles both silent-FFI settings, the fast path and the oversized sentinel. The target state uses canonical finite-support maps and the word, result and target state share the original positive width. The evaluator dependency closure inherits reals_as_rational_cuts, documented in SOUNDNESS item 8."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "alloc_lemma_gen",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/AllocLemma.lean",
   "lean_name": "allocLemma_gen",
