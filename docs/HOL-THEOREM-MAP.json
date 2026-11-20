@@ -146007,6 +146007,16 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "memory_rel_store_list_to_unused",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/StoreUnused.lean",
+  "lean_name": "memoryRel_storeListToUnused",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": ["store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared the HOL source and memory_rel_store_list_to_unused_typed: the original full memory relation, successful list store, NextFree lookup, and length bound imply the full memory relation on the returned memory. The store is the canonical finite map, the sparse-tree references are unchanged, and words use positive type-indexed widths."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
   "hol_name": "assign_EqualConst",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/EqualConst.lean",
   "lean_name": "assignEqualConst_correct",

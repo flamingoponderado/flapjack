@@ -410,6 +410,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.CompareResult
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.ComparisonSetup
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.Less
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.UnusedWrite
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.StoreUnused
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.ShiftVar
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.RealAddrInsert
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.EqualStack
