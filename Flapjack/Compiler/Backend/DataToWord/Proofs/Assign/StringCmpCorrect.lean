@@ -505,7 +505,7 @@ theorem assignStringCmp_correct {width : Nat} [NeZero width] {C F : Type}
                     have normalized : {restored with clock := target.clock, termdep := target.termdep, permute := target.permute} =
                         {target with locals := wordCut, stackMax := callEntry.stackMax} := by
                       simp only [restored, returned, fixedMax, callEntry, WordSemStateFiniteExact.callEnv,
-                        WordSemStateFiniteExact.pushEnv, WordSemStateFiniteExact.decClock, 
+                        WordSemStateFiniteExact.pushEnv, WordSemStateFiniteExact.decClock,
                         initial, t9, t13, t11, t7, t5, t3, t1, WordSemStateFiniteExact.setVar,
                         secondRestored, firstRestored, ← cutUnion]
                     let afterReturn := {restored with clock := target.clock, termdep := target.termdep}
@@ -739,7 +739,7 @@ theorem assignStringCmp_correct {width : Nat} [NeZero width] {C F : Type}
                       have normalized : {restored with clock := target.clock, termdep := target.termdep, permute := target.permute} =
                           {target with locals := wordCut, stackMax := callEntry.stackMax} := by
                         simp only [restored, returned, fixedMax, callEntry, WordSemStateFiniteExact.callEnv,
-                          WordSemStateFiniteExact.pushEnv, WordSemStateFiniteExact.decClock, 
+                          WordSemStateFiniteExact.pushEnv, WordSemStateFiniteExact.decClock,
                           initial, t13, t11, t7, t5, t3, t1, WordSemStateFiniteExact.setVar,
                           secondRestored, firstRestored, ← cutUnion]
                       let afterReturn := {restored with clock := target.clock, termdep := target.termdep}

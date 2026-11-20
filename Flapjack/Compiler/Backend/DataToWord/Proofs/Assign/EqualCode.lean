@@ -1289,7 +1289,7 @@ theorem equalCodeLemma {width : Nat} [NeZero width] {C F : Type} :
                     simp [saved, sptLookup_sptInterCases, sptListInsert, sptLookup_sptInsert_ne,
                       sptLookup_sptInsert_same,  base4]
                   have saved6 : sptLookup 6 saved = some (.word a2) := by
-                    simp [saved, sptLookup_sptInterCases, sptListInsert, 
+                    simp [saved, sptLookup_sptInterCases, sptListInsert,
                       sptLookup_sptInsert_same,  base6]
                   have domainEq : sptDomainEqUnion restored.locals saved (.ln : Spt (WordLocW width)) := by
                     intro key
@@ -1320,11 +1320,11 @@ theorem equalCodeLemma {width : Nat} [NeZero width] {C F : Type} :
                       namesNonempty, headEvalExpanded,    WordSemStateFiniteExact.setVars,
                       WordSemStateFiniteExact.setVar, WordSemStateFiniteExact.fixClock]
                     rw [headEvalExpanded]
-                    simp [  clockNotLt,   
+                    simp [  clockNotLt,
                       ]
                     rw [if_neg clockNotLt]
                     rw [popExpanded]
-                    simp [domainEq,  
+                    simp [domainEq,
                       LoopSemStateFiniteExact.sptAlistInsert]
                   have zeroRaw : (count == BitVec.ofNat width 0) = false := by
                     apply beq_eq_false_iff_ne.mpr

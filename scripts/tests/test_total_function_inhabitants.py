@@ -36,6 +36,23 @@ class TotalFunctionInhabitantsCheckerTest(unittest.TestCase):
         self.assertFalse(check("theorem t {α : Type} [Nonempty α] : True := by trivial", True))
         self.assertFalse(check("theorem t {α : Type} : True := by trivial", False))
 
+    def test_map_existential_qualifier_does_not_cover_inhabitance(self):
+        main = REFS["main"]
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "cakeml/pancake").mkdir(parents=True)
+            (root / "cakeml/pancake/fixtureScript.sml").write_text("Theorem th: T Proof simp[] QED\n")
+            lean = root / "Fixture.lean"
+            lean.write_text('@[hol "cakeml/pancake/fixtureScript.sml" "th" '
+                            '(fmap_as_finite_support_existentials := [out])]\n'
+                            'theorem t {α : Type} [Nonempty α] : True := by trivial\n')
+            out = io.StringIO()
+            with patch.dict(main.__globals__, {"ROOT": root, "lean_files": lambda: [lean],
+                    "reachable_modules": lambda: {"Fixture"}, "reals_rendering_names": lambda _: set()}), \
+                    contextlib.redirect_stderr(out), contextlib.redirect_stdout(out):
+                self.assertEqual(main([]), 1)
+            self.assertIn("Nonempty/Inhabited instance requires", out.getvalue())
+
     def test_legacy_baseline_pins_instance_and_complete_signature(self):
         check = REFS["matches_inhabitance_baseline"]
         signature = "theorem t {α : Type} [Nonempty α] : True :="

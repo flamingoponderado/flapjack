@@ -168,7 +168,7 @@ def joinEnvDirectTypeProblems (target : Name) (type : Expr) : MetaM (Array Strin
     else Name.anonymous
   if expected == Name.anonymous then return #["unexpected direct joinEnv target"]
   let some (.defnInfo spec) := (← getEnv).find? expected | return #["missing independent expected type"]
-  if ← isDefEq type spec.value then return #[]
+  if ← withReducible (isDefEq type spec.value) then return #[]
   return #["direct joinEnv theorem type differs from the complete audited statement"]
 
 /-- Audit direct join-env uses against independently written complete theorem types. -/

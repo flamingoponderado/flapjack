@@ -7116,7 +7116,7 @@ def main(argv: list[str]) -> int:
             inhabitant_signature = tagged_declaration_text(lines, number)
             inhabitant_qualified = bool(total_function_inhabitants or hol_existential_inhabitants or
                 gc_lemma_existential_inhabitants or new_ref_existential_inhabitants or
-                write_word64_existential_inhabitants or fmap_existentials)
+                write_word64_existential_inhabitants)
             legacy_key = (rel, find_lean_decl(lines, number - 1), hol_path, hol_name)
             legacy_accepted = False
             if not inhabitant_qualified and legacy_key in baseline:
