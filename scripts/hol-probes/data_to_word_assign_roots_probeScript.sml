@@ -589,6 +589,7 @@ val _ = emit "assign_UpdateByte_typed" data_to_word_assignProofTheory.assign_Upd
 val _ = emit "assign_ElemAt_typed" data_to_word_assignProofTheory.assign_ElemAt;
 val _ = emit "assign_El_typed" data_to_word_assignProofTheory.assign_El;
 val _ = emit "assign_Update_typed" data_to_word_assignProofTheory.assign_Update;
+val _ = emit "do_app_Ref_typed" data_to_word_assignProofTheory.do_app_Ref;
 val _ = emit "word_exp_real_addr_typed" data_to_word_assignProofTheory.word_exp_real_addr;
 val _ = emit "word_exp_real_addr_2_typed" data_to_word_assignProofTheory.word_exp_real_addr_2;
 val _ = emit "env_to_list_domain_typed" data_to_word_assignProofTheory.env_to_list_domain;
