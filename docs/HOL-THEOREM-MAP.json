@@ -23900,6 +23900,19 @@
   "reviewer": "Compared state_rel_0_get_vars_IMP_typed: the NONE state relation and source list lookup imply a target lookup beginning with location zero followed by the adjusted locals, with identical length equality. Target finite-map fields and positive-width words use the reviewed representations."
 },
 {
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "state_rel_get_var_Number_IMP_alt",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/NumberVar.lean",
+  "lean_name": "stateRel_getVar_number_alt",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared state_rel_get_var_Number_IMP_alt_typed and zero HOL hypotheses: the original state relation, source number read and target read at 2*k+2 yield a word location whose low bit is set exactly when the integer is not small. The target state uses canonical finite-support maps and positive-width words."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "state_rel_get_var_IMP",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/StateRelation.lean",

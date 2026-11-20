@@ -51,7 +51,8 @@ scripts/hol-probes/regenerate.sh` using the pinned source revisions.
 
 `data_to_word_assign_typed_probe.out` also captures
 `IMP_read_bytearray_GENLIST`, including its arbitrary element type and its
-independent address-word dimension. It parses the original local statement of
+independent address-word dimension, and the typed statement and hypothesis
+count of `state_rel_get_var_Number_IMP_alt`. It parses the original local statement of
 `parts_to_words_NONE` with inferred types; this capture does not replay its
 HOL proof.
 

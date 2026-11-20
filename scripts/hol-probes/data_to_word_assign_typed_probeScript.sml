@@ -430,4 +430,7 @@ fun capture_val_quote label name =
 val _ = emit_exported "size_of_seen_SUBSET_typed" "size_of_seen_SUBSET";
 val _ = emit_exported "size_of_seen_Block_typed" "size_of_seen_Block";
 val _ = emit_exported "IMP_read_bytearray_GENLIST_typed" "IMP_read_bytearray_GENLIST";
+val _ = print ("state_rel_get_var_Number_IMP_alt_hypotheses=" ^
+  Int.toString (length (hyp state_rel_get_var_Number_IMP_alt)) ^ "\n");
+val _ = emit_exported "state_rel_get_var_Number_IMP_alt_typed" "state_rel_get_var_Number_IMP_alt";
 val _ = capture "parts_to_words_NONE_typed" "parts_to_words_NONE";
