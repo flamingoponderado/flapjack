@@ -230,7 +230,10 @@ private theorem lowOrZero {width : Nat} (x y : BitVec width)
   | 0 => simp [h.1, h.2]
   | j + 1 => simp [Nat.testBit_succ]
 
-private theorem signedLessEq {width : Nat} (left right : BitVec width) (good : goodDimindex width) :
+/-- For the two source-supported word widths, the assembler's signed comparison
+agrees with `BitVec.slt`. This factors the signed-comparison reasoning used by
+the HOL assignment proofs; it is not a standalone HOL declaration. -/
+theorem signedLessEq {width : Nat} (left right : BitVec width) (good : goodDimindex width) :
     Compiler.Encoders.Asm.holAsmSignedLess left right = left.slt right := by
   rcases good with h | h <;> subst width
   all_goals have bl := left.isLt

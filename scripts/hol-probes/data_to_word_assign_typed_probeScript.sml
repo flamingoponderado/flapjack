@@ -457,4 +457,10 @@ val _ = emit_exported "assign_Build_typed" "assign_Build";
 val _ = print ("assign_WordTest_hypotheses=" ^
   Int.toString (length (hyp assign_WordTest)) ^ "\n");
 val _ = emit_exported "assign_WordTest_typed" "assign_WordTest";
+val _ = print ("assign_LessConstSmall_hypotheses=" ^
+  Int.toString (length (hyp assign_LessConstSmall)) ^ "\n");
+val _ = emit_exported "assign_LessConstSmall_typed" "assign_LessConstSmall";
+val _ = print ("assign_LessSmallConst_hypotheses=" ^
+  Int.toString (length (hyp assign_LessSmallConst)) ^ "\n");
+val _ = emit_exported "assign_LessSmallConst_typed" "assign_LessSmallConst";
 val _ = capture "parts_to_words_NONE_typed" "parts_to_words_NONE";

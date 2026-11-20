@@ -23901,6 +23901,26 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "assign_LessConstSmall",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/LessSmallConst.lean",
+  "lean_name": "assignLessConstSmallEquation",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared assign_LessConstSmall_typed and zero HOL hypotheses: the compiler equation retains the configuration, labels, destination, natural immediate, arbitrary argument list and name set; the singleton branch emits the signed comparison and original boolean constants, while other arities emit skip. Words use the shared positive-width BitVec representation."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "assign_LessSmallConst",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/LessSmallConst.lean",
+  "lean_name": "assignLessSmallConst_correct",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared assign_LessSmallConst_typed and its zero HOL hypotheses: the existential natural constant, full state relation, name condition, source cut and argument lookup, termination-depth bound, successful source operation, existential target evaluation and both original result implications are retained. Target finite-map fields and positive-width words use the reviewed representations; the evaluator inherits reals_as_rational_cuts, documented in SOUNDNESS item 8."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
   "hol_name": "assign_WordTest",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/WordTest.lean",
   "lean_name": "assignWordTest_correct",
