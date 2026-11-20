@@ -196,4 +196,43 @@ theorem simpleStateRel_lookup_refs {C D F : Type} (vr : Value → Value → Prop
     | byteArray bs => exact rel.2.1 bs t s p ⟨target, related⟩
     | thunk m w => exact rel.2.2.2.1 m w t s p ⟨target, related⟩
 
+/-- A Boolean value relates only to itself under a simple value relation. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "simple_val_rel_Boolv"]
+theorem simpleValRel_Boolv (vr : Value → Value → Prop) (b : Bool) (v1 : Value)
+    (simple : simpleValRel vr) :
+    (vr (boolValue b) v1 → v1 = boolValue b) ∧
+      (vr v1 (boolValue b) → v1 = boolValue b) := by
+  constructor
+  · intro h
+    cases v1 with
+    | number n =>
+      exact absurd ((simple.1 (boolValue b) n).mp h) (by simp [boolValue])
+    | block n p =>
+      obtain ⟨xs, eq, rel⟩ := (simple.2.1 (boolValue b) p n).mp h
+      have inj := eq
+      simp only [boolValue, Value.block.injEq] at inj
+      obtain ⟨hn, hx⟩ := inj
+      cases hx
+      have hp : p = [] := List.forall₂_nil_left_iff.mp rel
+      cases hp
+      simp [boolValue, hn]
+    | word64 w =>
+      exact absurd ((simple.2.2.1 (boolValue b) w).mp h) (by simp [boolValue])
+    | byteVector bs =>
+      exact absurd ((simple.2.2.2.1 (boolValue b) bs).mp h) (by simp [boolValue])
+    | refPtr bb p =>
+      exact absurd ((simple.2.2.2.2.1 (boolValue b) p bb).mp h) (by simp [boolValue])
+    | closure loc args env arity body =>
+      exact absurd (simple.2.2.2.2.2.1 body arity env args loc (boolValue b) h)
+        (by simp [boolValue, isClos])
+    | recclosure loc args env funs index =>
+      exact absurd (simple.2.2.2.2.2.2 index funs env args loc (boolValue b) h)
+        (by simp [boolValue, isClos])
+  · intro h
+    obtain ⟨xs, eq, rel⟩ :=
+      (simple.2.1 v1 [] (if b then BackendCommon.trueTag else BackendCommon.falseTag)).mp h
+    have hx : xs = [] := List.forall₂_nil_right_iff.mp rel
+    cases hx
+    simpa [boolValue] using eq
+
 end Flapjack.Compiler.Backend.ClosProps
