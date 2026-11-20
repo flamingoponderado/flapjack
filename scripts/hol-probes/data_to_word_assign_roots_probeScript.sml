@@ -796,6 +796,7 @@ val _ = emit "bignum_words_def_typed" data_to_word_memoryProofTheory.bignum_word
 val _ = emit "memory_rel_Number_const_test_typed" data_to_word_memoryProofTheory.memory_rel_Number_const_test;
 val _ = emit "memory_rel_Word64_const_test_typed" data_to_word_memoryProofTheory.memory_rel_Word64_const_test;
 val _ = emit "memory_rel_String_const_test_typed" data_to_word_memoryProofTheory.memory_rel_String_const_test;
+val _ = emit "make_byte_header_eq_typed" data_to_word_memoryProofTheory.make_byte_header_eq;
 val _ = emit "option_map_mult_suc_typed" data_to_word_assignProofTheory.option_map_mult_suc;
 val _ = emit "eq_code_stack_max_sub1_typed" data_to_word_assignProofTheory.eq_code_stack_max_sub1;
 val _ = emit "eq_code_stack_max_le_mono_typed" data_to_word_assignProofTheory.eq_code_stack_max_le_mono;

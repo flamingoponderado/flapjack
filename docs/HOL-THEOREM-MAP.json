@@ -116134,6 +116134,15 @@
     "reviewer": "Compared memory_rel_Number_const_test_typed: retain the memory relation and good-dimension premises, the small-constant equivalence, both bignum encoding and pointer-tag failure branches, and the existential real address with exact word-memory comparison. The standalone store uses canonical finite support and the word carrier uses positive type-indexed widths."
   },
 {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/ByteHeaderEquality.lean",
+    "lean_name": "makeByteHeader_eq",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "make_byte_header_eq",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Compared make_byte_header_eq_typed: the two independent byte lengths, both bounds for each, good dimension, original shift constraint, and header equality iff byte-length equality all match. Machine words use positive type-indexed widths."
+  },
+{
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/WordMemoryEquality.lean",
     "lean_name": "wordMemEqThm",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
