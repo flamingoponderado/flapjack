@@ -36,6 +36,14 @@ val _ = emit "dec_clock_code_typed" "dec_clock_code";
 val _ = emit "dec_clock0_typed" "dec_clock0";
 val _ = emit "inc_clock_eq_0_typed" "inc_clock_eq_0";
 
+(* Group 3: evaluate-shape lemmas. *)
+val _ = emit "evaluate_LENGTH_typed" "evaluate_LENGTH";
+val _ = emit "evaluate_IMP_LENGTH_typed" "evaluate_IMP_LENGTH";
+val _ = emit "evaluate_SING_IMP_typed" "evaluate_SING_IMP";
+val _ = emit "evaluate_CONS_typed" "evaluate_CONS";
+val _ = emit "evaluate_SNOC_typed" "evaluate_SNOC";
+val _ = emit "evaluate_APPEND_typed" "evaluate_APPEND";
+
 (* `[local]` theorems are not exported by the theory; parse their pinned
    source statements, expanding `^x` splices to the term bound by
    `val x = ``...``;`. *)
