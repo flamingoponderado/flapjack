@@ -147790,5 +147790,35 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Typed HOL source comparison against not_word_cmp_Less_word_cmp_res_typed: independent integers, good_dimindex premise and negated Less result 1 iff j ≤ i are retained. Boolean truth and negation are rendered by equality to true and false; the word carrier uses positive type-indexed BitVec."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/ComparisonSetup.lean",
+  "hol_name": "IMP_spt_eq",
+  "lean_name": "impSptEq",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Typed HOL source comparison against IMP_spt_eq_typed: the two sparse trees have one shared independent element type; both well-formedness conditions, universal lookup equality and tree equality conclusion are unchanged."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/ComparisonSetup.lean",
+  "hol_name": "env_to_list_cut_env_IMP",
+  "lean_name": "envToListCutEnvImp",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Typed HOL source comparison against env_to_list_cut_env_IMP_typed: retains both ordered environment-list and cut-environment premises and fromAList equality conclusion. The HOL environment word type and state word type are independently quantified and remain separate Lean widths. The state fpRegs/store use canonical finite maps and both word carriers use positive-width BitVec."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/ComparisonSetup.lean",
+  "hol_name": "dimword_LESS_MustTerminate_limit",
+  "lean_name": "dimwordLessMustTerminateLimit",
+  "statement_status": "reviewed_word_dimension_as_width",
+  "word_dimension_as_width": "width",
+  "reviewer": "Typed HOL source comparison against dimword_LESS_MustTerminate_limit_typed: good_dimindex is the sole premise, and the conclusion is dimword < MustTerminate_limit − 1. The HOL type is used only through its dimension; word_dimension_as_width names width as the positive dimension."
 }
 ]
