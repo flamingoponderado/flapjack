@@ -125,8 +125,8 @@ theorem doApp_inc_clock {C F : Type} (op : ClosLang.Op) (args : List Value)
 @[hol "cakeml/compiler/backend/semantics/bviPropsScript.sml" "evaluate_inv_clock"
   (fmap_as_finite_support := [refs])]
 theorem evaluateInvClockHOL {C F : Type} (expressions : List Bvi.Exp) (env : List Value)
-    (state next : Flapjack.Compiler.Backend.BviSem.BviState C F) (result : BviResult)
-    (clock : Nat)
+    (state : Flapjack.Compiler.Backend.BviSem.BviState C F) (result : BviResult)
+    (next : Flapjack.Compiler.Backend.BviSem.BviState C F) (clock : Nat)
     (run : evaluateTuple (expressions, env, state) = (result, next) ∧
       result ≠ .err (.abort .timeoutError)) :
     evaluateTuple (expressions, env, incClock clock state) = (result, incClock clock next) :=
@@ -181,8 +181,8 @@ theorem evaluateGlobalMonoLemmaHOL {C F : Type} (expressions : List Bvi.Exp)
 @[hol "cakeml/compiler/backend/semantics/bviPropsScript.sml" "evaluate_global_mono"
   (fmap_as_finite_support := [refs])]
 theorem evaluateGlobalMonoHOL {C F : Type} (expressions : List Bvi.Exp)
-    (env : List Value) (state next : Flapjack.Compiler.Backend.BviSem.BviState C F)
-    (result : BviResult)
+    (env : List Value) (state : Flapjack.Compiler.Backend.BviSem.BviState C F)
+    (result : BviResult) (next : Flapjack.Compiler.Backend.BviSem.BviState C F)
     (run : evaluateTuple (expressions, env, state) = (result, next))
     (present : state.global.isSome = true) : next.global.isSome = true := by
   have preserved := evaluateGlobalMonoLemmaHOL expressions env state present

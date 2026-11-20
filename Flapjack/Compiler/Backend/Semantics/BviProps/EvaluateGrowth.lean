@@ -300,7 +300,7 @@ end EvaluateGrowthCarrier
 @[hol "cakeml/compiler/backend/semantics/bviPropsScript.sml" "evaluate_code_mono"
   (fmap_as_finite_support := [refs])]
 theorem evaluateCodeMonoHOL {C F : Type} (expressions : List Bvi.Exp) (env : List Value)
-    (state next : BviSem.BviState C F) (result : BviResult)
+    (state : BviSem.BviState C F) (result : BviResult) (next : BviSem.BviState C F)
     (run : evaluateTuple (expressions, env, state) = (result, next)) :
     sptSubspt state.code next.code := by
   rw [evaluateTuple] at run

@@ -57,8 +57,8 @@ theorem doAppAux_ioEvents_prefix {C F : Type} (op : ClosLang.Op) (args : List Va
 theorem doAppAux_with_clock {C F : Type} (op : ClosLang.Op) (args : List Value)
     (state : Flapjack.Compiler.Backend.BviSem.BviState C F) (clock : Nat) :
     doAppAux op args { state with clock := clock } =
-      (doAppAux op args state).map (fun inner =>
-        inner.map fun (value, next) => (value, { next with clock := clock })) := by
+      Option.map (Option.map (fun (x, y) => (x, { y with clock := clock })))
+        (doAppAux op args state) := by
   simpa [setClockAux] using doAppAux_setClock op args state clock
 
 /-- A handled BVI primitive result extends the I/O-event trace. -/
