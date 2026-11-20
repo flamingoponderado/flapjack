@@ -151,9 +151,9 @@ theorem assignUpdateByte_correct {width : Nat} [NeZero width] {C F : Type}
                         simpa [envs] using related.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2)
                     have good := related.2.2.2.2.2.2.1
                     let locals := joinEnv source.locals (sptToAList (sptInter target.locals (adjustSet source.locals)))
-                    obtain ⟨w, address, header, wordEq, low, headerEq, _, _, _, _, real,
+                    obtain ⟨w, address, header, _, wordEq, low, headerEq, _, _, _, _, real,
                       _, _, reads, updates, sizeBound⟩ :=
-                      memoryRel_byteArrayImp conf target.be (holThe source.tstamps) source.refs
+                      memoryRel_byteArrayImp (β := Unit) conf target.be (holThe source.tstamps) source.refs
                         source.space target.store target.memory target.mdomain bit flag ptr bytes word1
                         ((.number index, word2) :: (.number value, word3) :: locals ++ envs)
                         ⟨by simpa [locals] using roots, found, good⟩

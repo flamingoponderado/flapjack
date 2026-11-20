@@ -5916,6 +5916,20 @@ def cons_alt_existential_header_errors(source: str) -> list[str]:
     return []
 
 
+def byte_array_existential_header_errors(source: str) -> list[str]:
+    """Pin the byte-array theorem and its independent HOL witness translation."""
+    source = strip_lean_comments(source)
+    if re.search(r"(?m)^\s*(?:variable|variables|include|omit)\b", source):
+        return ["byte-array theorem must have self-contained binders"]
+    matches = list(re.finditer(r"\btheorem\s+memoryRel_byteArrayImp\b(.*?):=\s*by\b", source, re.S))
+    if len(matches) != 1:
+        return ["byte-array theorem must have one direct theorem header"]
+    digest = hashlib.sha256(" ".join(matches[0].group(1).split()).encode()).hexdigest()
+    if digest != "a6c86c54178759325a36da578ab07ea3d855d26e631a3cd73539d0840ec03502":
+        return ["byte-array telescope differs from the reviewed HOL statement and inhabitance translation"]
+    return []
+
+
 def make_ptr_existential_header_errors(source: str) -> list[str]:
     """Pin the full pointer-code theorem and its sole witness translation."""
     source = strip_lean_comments(source)
@@ -6969,14 +6983,19 @@ def main(argv: list[str]) -> int:
                 "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml", "memory_rel_Cons_alt")
             make_ptr_ref = (hol_path, hol_name) == (
                 "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml", "Make_ptr_bits_thm")
-            if cons_alt_ref or make_ptr_ref or hol_unused_existential_inhabitants:
+            byte_array_ref = (hol_path, hol_name) == (
+                "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml", "memory_rel_ByteArray_IMP")
+            if cons_alt_ref or make_ptr_ref or byte_array_ref or hol_unused_existential_inhabitants:
                 cons_alt_site = (cons_alt_ref and (rel, find_lean_decl(lines, number - 1)) ==
                     ("Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/ConsAltWritten.lean", "memoryRel_consAlt") and
                     fmap_relation == (("st", ""),) and not fmap_fields)
                 make_ptr_site = (make_ptr_ref and (rel, find_lean_decl(lines, number - 1)) ==
                     ("Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/MakePtrBits.lean", "makePtrBits_correct") and
                     fmap_fields == ("fpRegs", "store") and not fmap_relation)
-                if not ((cons_alt_site or make_ptr_site) and hol_unused_existential_inhabitants == ("β._unused",) and
+                byte_array_site = (byte_array_ref and (rel, find_lean_decl(lines, number - 1)) ==
+                    ("Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/ByteArrayImp.lean", "memoryRel_byteArrayImp") and
+                    fmap_relation == (("store", ""),) and not fmap_fields)
+                if not ((cons_alt_site or make_ptr_site or byte_array_site) and hol_unused_existential_inhabitants == ("β._unused",) and
                         hol_line is None and words_bitvec and not (
                             list_fields or names_fields or boundary_fields or fmap_result or
                             fmap_equalities or fmap_parameters or fmap_existentials or dimension_width or
@@ -6991,6 +7010,8 @@ def main(argv: list[str]) -> int:
                     errors.extend(f"{where}: {error}" for error in cons_alt_existential_header_errors("\n".join(lines)))
                 if make_ptr_ref:
                     errors.extend(f"{where}: {error}" for error in make_ptr_existential_header_errors("\n".join(lines)))
+                if byte_array_ref:
+                    errors.extend(f"{where}: {error}" for error in byte_array_existential_header_errors("\n".join(lines)))
             walkstar_ref = (hol_path, hol_name) == (
                 "cakeml/compiler/inference/inferPropsScript.sml", "subst_infer_subst_swap")
             submap_ref = (hol_path, hol_name) == (

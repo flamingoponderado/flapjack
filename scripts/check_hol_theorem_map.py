@@ -2166,6 +2166,9 @@ def validate_inventory(
                 ("cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml", "memory_rel_Cons_alt",
                  "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/ConsAltWritten.lean", "memoryRel_consAlt"):
                     "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+                ("cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml", "memory_rel_ByteArray_IMP",
+                 "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/ByteArrayImp.lean", "memoryRel_byteArrayImp"):
+                    "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
                 ("cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml", "Make_ptr_bits_thm",
                  "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/MakePtrBits.lean", "makePtrBits_correct"):
                     "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",

@@ -1,6 +1,7 @@
 import Flapjack.HolRef.StateRelGcInhabitantsAudit
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ConsAltWritten
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.MakePtrBits
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ByteArrayImp
 
 open Lean Meta Flapjack
 
@@ -20,6 +21,7 @@ run_meta do
   for (name, expected) in #[(``good, true), (``used, false), (``wrongName, false),
       (``extraInstance, false),
       (``Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.memoryRel_consAlt, true),
+      (``Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.memoryRel_byteArrayImp, true),
       (``Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.makePtrBits_correct, true)] do
     let info ← getConstInfo name
     let problems ← unusedExistentialInhabitantProblems info.type #[(`β, `_unused)]

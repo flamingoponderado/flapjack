@@ -144858,7 +144858,8 @@
   "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
   "fmap_as_finite_support_relation": ["store"],
   "words_as_type_indexed_bitvec": true,
-  "reviewer": "Compared memory_rel_ByteArray_IMP_typed with HOL source lines 11988-12013: the original memory relation, reference lookup and good_dimindex premises, the three used existentials, header bits, both real addresses, memory and domain facts, universal byte loads and byte updates, and both width-specific header conclusions are retained. The unused existential l has its own independent HOL type and is omitted. The store is the canonical finite-support map and all source words share one positive width. The unused HOL existential witness l is omitted; the typed source confirms it does not occur in the conclusion."
+  "hol_unused_existential_inhabitants": ["β._unused"],
+  "reviewer": "Source comparison with memory_rel_ByteArray_IMP_typed: the original memory relation, reference lookup and good_dimindex premises, all four existentials, header bits, both real addresses, memory and domain facts, universal byte loads and byte updates, and both width-specific header conclusions are retained. hol_unused_existential_inhabitants records the independent inhabited HOL type β of the unused witness. The store is the canonical finite-support map and all source words share one positive width."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
