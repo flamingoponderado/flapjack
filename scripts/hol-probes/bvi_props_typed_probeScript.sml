@@ -52,6 +52,18 @@ val _ = emit "do_app_io_events_mono_typed" "do_app_io_events_mono";
 val _ = emit "evaluate_io_events_mono_typed" "evaluate_io_events_mono";
 val _ = emit "evaluate_add_to_clock_io_events_mono_typed" "evaluate_add_to_clock_io_events_mono";
 
+(* Group 4b: primitive-application code, oracle, error and clock lemmas. *)
+val _ = emit "evaluate_inv_clock_typed" "evaluate_inv_clock";
+val _ = emit "do_app_code_typed" "do_app_code";
+val _ = emit "do_app_oracle_typed" "do_app_oracle";
+val _ = emit "evaluate_global_mono_typed" "evaluate_global_mono";
+val _ = emit "do_app_err_typed" "do_app_err";
+val _ = emit "do_app_aux_const_typed" "do_app_aux_const";
+val _ = emit "do_app_with_code_typed" "do_app_with_code";
+val _ = emit "do_app_with_code_err_typed" "do_app_with_code_err";
+val _ = emit "do_app_aux_with_clock_typed" "do_app_aux_with_clock";
+val _ = emit "do_app_aux_io_events_mono_typed" "do_app_aux_io_events_mono";
+
 (* `[local]` theorems are not exported by the theory; parse their pinned
    source statements, expanding `^x` splices to the term bound by
    `val x = ``...``;`. *)
@@ -224,6 +236,9 @@ fun capture label name =
   let val tm = Parse.Term [QUOTE (strip_antiquote (statement_of name))]
   in (print (label ^ "="); print_term tm; print "\n") end;
 
+val _ = capture "do_app_inv_clock_typed" "do_app_inv_clock";
+val _ = capture "do_app_inc_clock_IMP_typed" "do_app_inc_clock_IMP";
+val _ = capture "evaluate_global_mono_lemma_typed" "evaluate_global_mono_lemma";
 val _ = capture "dec_clock_1_inc_clock_typed" "dec_clock_1_inc_clock";
 val _ = capture "dec_clock_1_inc_clock2_typed" "dec_clock_1_inc_clock2";
 val _ = capture "dec_clock_inc_clock_typed" "dec_clock_inc_clock";
