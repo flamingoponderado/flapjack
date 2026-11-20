@@ -777,6 +777,7 @@ val _ = emit "assign_UpdateByte_typed" data_to_word_assignProofTheory.assign_Upd
 val _ = emit "assign_ElemAt_typed" data_to_word_assignProofTheory.assign_ElemAt;
 val _ = emit "assign_El_typed" data_to_word_assignProofTheory.assign_El;
 val _ = emit "assign_Update_typed" data_to_word_assignProofTheory.assign_Update;
+val _ = emit "assign_Ref_typed" data_to_word_assignProofTheory.assign_Ref;
 val _ = emit "do_app_Ref_typed" data_to_word_assignProofTheory.do_app_Ref;
 val _ = emit "evaluate_StoreEach_typed" data_to_word_assignProofTheory.evaluate_StoreEach;
 val _ = emit "evaluate_GiveUp2_typed" data_to_word_assignProofTheory.evaluate_GiveUp2;

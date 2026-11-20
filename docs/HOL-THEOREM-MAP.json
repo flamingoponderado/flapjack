@@ -145791,6 +145791,17 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "assign_Ref",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/Ref.lean",
+  "lean_name": "assignRef_correct",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Source comparison: Compared assign_Ref_typed with the HOL theorem and proof: the operation equality, assignment premises, existential target evaluation, insufficient-space obligations and successful state relation agree. The target state uses canonical finite maps and positive-width words. The evaluator inherits the reals_as_rational_cuts assumption."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
   "hol_name": "assign_Update",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/Update.lean",
   "lean_name": "assignUpdate_correct",
