@@ -146034,6 +146034,22 @@
   "reviewer": "Compared INTRO_IS_SOME_typed: the independently polymorphic option is present iff it equals SOME of an existentially quantified value."
 },
 {
+  "hol_path": "HOL/examples/machine-code/hoare-triple/set_sepScript.sml",
+  "hol_name": "SEP_T_def",
+  "lean_path": "Flapjack/Misc/SetSep/Top.lean",
+  "lean_name": "sepT",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared SEP_T_def_typed: the always-true predicate is polymorphic in its entire input type, not restricted to a set."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "STAR_fun2set_IMP_SEP_T",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/Separation.lean",
+  "lean_name": "starFun2SetImpSepT",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared STAR_fun2set_IMP_SEP_T_typed: the two separation predicates, heap key and value carriers remain independently polymorphic, and the original star/fun2set premise implies the same star with SEP_T."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
   "hol_name": "assign_EqualConst",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/EqualConst.lean",
