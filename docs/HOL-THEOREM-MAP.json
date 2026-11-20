@@ -145815,6 +145815,23 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "word1_cases",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/FpCmp.lean",
+  "lean_name": "word1Cases",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Source comparison with word1_cases_typed: every fixed one-bit word is either zero or one, with the original universally quantified word and both alternatives."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "fp_greater",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/FpCmp.lean",
+  "lean_name": "fpGreater",
+  "statement_status": "reviewed_reals_as_rational_cuts",
+  "reals_as_rational_cuts": true,
+  "reviewer": "Source comparison with fp_greater_local_typed and the replayed source proof: both fixed word64 arguments and both greater/less equalities with reversed operands agree. The binary64 real rendering is recorded explicitly by reals_as_rational_cuts; agreement with HOL real semantics remains the documented assumption in docs/SOUNDNESS.md item 8."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
   "hol_name": "assign_FP_top",
   "hol_line": 14159,
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/FpTop.lean",

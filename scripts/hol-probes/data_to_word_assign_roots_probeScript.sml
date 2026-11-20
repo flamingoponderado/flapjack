@@ -781,6 +781,29 @@ val _ = emit "assign_Ref_typed" data_to_word_assignProofTheory.assign_Ref;
 val _ = emit "assign_FP_uop_typed" data_to_word_assignProofTheory.assign_FP_uop;
 val _ = emit "assign_FP_bop_typed" data_to_word_assignProofTheory.assign_FP_bop;
 val _ = emit "assign_FP_top_typed" data_to_word_assignProofTheory.assign_FP_top;
+val _ = emit "assign_FP_cmp_typed" data_to_word_assignProofTheory.assign_FP_cmp;
+val _ = emit "word1_cases_typed" data_to_word_assignProofTheory.word1_cases;
+
+(* Replay the source-local fp_greater theorem at its original statement and proof. *)
+val fp_greater_local_replay = let
+  open preamble helperLib wordsTheory machine_ieeeTheory binary_ieeeTheory
+in
+  Q.prove (`fp64_greaterThan a b = fp64_lessThan b a /\
+    fp64_greaterEqual a b = fp64_lessEqual b a`,
+    fs [machine_ieeeTheory.fp64_greaterEqual_def,
+        machine_ieeeTheory.fp64_lessEqual_def,
+        binary_ieeeTheory.float_greater_equal_def,
+        binary_ieeeTheory.float_less_equal_def,
+        machine_ieeeTheory.fp64_greaterThan_def,
+        machine_ieeeTheory.fp64_lessThan_def,
+        binary_ieeeTheory.float_greater_than_def,
+        binary_ieeeTheory.float_less_than_def,
+        binary_ieeeTheory.float_compare_def]
+    \\ every_case_tac \\ fs [] \\ rveq \\ fs []
+    \\ metis_tac [realTheory.REAL_LT_ANTISYM, realTheory.REAL_LT_TOTAL, data_to_word_assignProofTheory.word1_cases])
+end;
+val _ = emit "fp_greater_local_typed" fp_greater_local_replay;
+
 val _ = emit "evaluate_WriteWord64_typed" data_to_word_assignProofTheory.evaluate_WriteWord64;
 val _ = emit "evaluate_WriteWord64_on_32_typed" data_to_word_assignProofTheory.evaluate_WriteWord64_on_32;
 val _ = emit "do_app_Ref_typed" data_to_word_assignProofTheory.do_app_Ref;
