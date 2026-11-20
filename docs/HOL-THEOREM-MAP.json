@@ -145869,6 +145869,17 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "Equal_code_lemma",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/EqualCode.lean",
+  "lean_name": "equalCodeLemma",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": ["WordSemStateFiniteExact.fpRegs", "WordSemStateFiniteExact.store", "store1", "store2"],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared Equal_code_lemma_typed: both conjuncts independently quantify their canonical store, domain, memory, clocks, arguments and target state, retaining all original code, register, dimension and sane-local-size premises. Both conclusions retain the existential target evaluation, permutation, complete returned state, optional stack bound and remaining-clock inequality. The target state and both store inputs use canonical finite maps, and words have positive type-indexed widths; the general evaluator inherits the rational-cut real model."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
   "hol_name": "Compare1_code_thm",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/Compare1.lean",
   "lean_name": "compare1Code_correct",
