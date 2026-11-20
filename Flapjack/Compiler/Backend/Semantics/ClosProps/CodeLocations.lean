@@ -61,4 +61,18 @@ theorem codeLocations_append (left right : List Exp) :
   | nil => simp [codeLocations]
   | cons first rest ih => simp [codeLocations, ih, List.append_assoc]
 
+/-- The traversal of a cons cell is the singleton traversal followed by the tail. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "code_locs_cons"]
+theorem codeLocations_cons (x : Exp) (xs : List Exp) :
+    codeLocations (x :: xs) = codeLocations [x] ++ codeLocations xs := by
+  simp [codeLocations]
+
+/-- Traversing a mapped expression list flattens the per-element traversals. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "code_locs_map"]
+theorem codeLocations_map {α : Type} (xs : List α) (f : α → Exp) :
+    codeLocations (xs.map f) = (xs.map (fun x => codeLocations [f x])).flatten := by
+  induction xs with
+  | nil => simp [codeLocations]
+  | cons x xs ih => simp [codeLocations, ih]
+
 end Flapjack.Compiler.Backend.ClosProps

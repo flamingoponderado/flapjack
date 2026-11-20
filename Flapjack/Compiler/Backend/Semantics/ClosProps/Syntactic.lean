@@ -91,4 +91,36 @@ theorem fnVarsNoneFuns_eq_map (fs : List (Nat × ClosLang.Exp)) :
     obtain ⟨arity, body⟩ := f
     simp [fnVarsNoneFuns, everyFnVarsNone, ih]
 
+/-- The application predicate holds exactly for some element's singleton form. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "contains_App_SOME_EXISTS"]
+theorem containsAppSome_exists (ls : List ClosLang.Exp) (maxApp : Nat) :
+    containsAppSome maxApp ls ↔ ∃ x ∈ ls, containsAppSome maxApp [x] := by
+  induction ls with
+  | nil => simp [containsAppSome]
+  | cons e es ih => simp [containsAppSome, ih]
+
+/-- The absent-annotation predicate splits over list concatenation. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "every_Fn_vs_NONE_APPEND"]
+theorem everyFnVarsNone_append (l1 l2 : List ClosLang.Exp) :
+    everyFnVarsNone (l1 ++ l2) ↔ everyFnVarsNone l1 ∧ everyFnVarsNone l2 := by
+  induction l1 with
+  | nil => simp [everyFnVarsNone]
+  | cons e es ih => simp [everyFnVarsNone, ih, and_assoc]
+
+/-- The absent-annotation predicate holds for any prefix of the list. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "IMP_every_Fn_vs_NONE_TAKE"]
+theorem everyFnVarsNone_take (ls : List ClosLang.Exp) (n : Nat) :
+    everyFnVarsNone ls → everyFnVarsNone (ls.take n) := by
+  induction ls generalizing n with
+  | nil =>
+    intro _
+    simp [everyFnVarsNone]
+  | cons e es ih =>
+    intro h
+    cases n with
+    | zero => simp [everyFnVarsNone]
+    | succ n =>
+      simp only [List.take_succ_cons, everyFnVarsNone] at h ⊢
+      exact ⟨h.1, ih n h.2⟩
+
 end Flapjack.Compiler.Backend.ClosProps
