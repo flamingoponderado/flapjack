@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Compiler.Backend.Semantics.BviProps.ApplyAux
 public import Flapjack.Compiler.Backend.Semantics.BviProps.EvaluateGrowth
+public import Flapjack.SemanticPrimitivesProps.ResultMap
 public import Flapjack.HolRef
 
 @[expose] public section
@@ -97,6 +98,28 @@ theorem doApp_oracle {C F : Type} (op : ClosLang.Op)
           simp only [fallback] at runEq
           cases runEq
           simp [fromBvl]
+
+/-- Adding clock allowance commutes with primitive application, mapping the
+returned state's clock as in the source. -/
+@[hol "cakeml/compiler/backend/semantics/bviPropsScript.sml" "do_app_inc_clock"
+  (fmap_as_finite_support := [refs])]
+theorem doApp_inc_clock {C F : Type} (op : ClosLang.Op) (args : List Value)
+    (clock : Nat) (state : Flapjack.Compiler.Backend.BviSem.BviState C F) :
+    doApp op args (incClock clock state) =
+      SemanticPrimitivesProps.mapResult (fun (value, next) =>
+        (value, { next with clock := clock + state.clock })) id (doApp op args state) := by
+  cases run : doApp op args state with
+  | val pair =>
+    obtain ⟨value, next⟩ := pair
+    have sameClock := BviSem.doApp_clock op args state next value run
+    have shifted := doApp_incClock op args state next value clock run
+    rw [shifted]
+    simp only [SemanticPrimitivesProps.mapResult, incClock]
+    rw [sameClock]
+    simp [Nat.add_comm]
+  | err error =>
+    rw [doApp_incClock_error op args state error clock run]
+    simp only [SemanticPrimitivesProps.mapResult, SemanticPrimitivesProps.mapErrorResult_id]
 
 /-- Non-timeout evaluation is stable under an added clock allowance. -/
 @[hol "cakeml/compiler/backend/semantics/bviPropsScript.sml" "evaluate_inv_clock"

@@ -10803,7 +10803,7 @@ run_probe bvi_props_typed_probeScript.sml bvi_props_typed_probe.out \
   do_app_change_clock_typed do_app_change_clock_err_typed evaluate_add_clock_typed do_app_io_events_mono_typed evaluate_io_events_mono_typed evaluate_add_to_clock_io_events_mono_typed \
   evaluate_inv_clock_typed do_app_code_typed do_app_oracle_typed evaluate_global_mono_typed do_app_err_typed do_app_aux_const_typed \
   do_app_with_code_typed do_app_with_code_err_typed do_app_aux_with_clock_typed do_app_aux_io_events_mono_typed \
-  do_app_inv_clock_typed do_app_inc_clock_IMP_typed evaluate_global_mono_lemma_typed \
+  do_app_inv_clock_typed do_app_inc_clock_IMP_typed do_app_inc_clock_typed evaluate_global_mono_lemma_typed \
   dec_clock_1_inc_clock_typed dec_clock_1_inc_clock2_typed dec_clock_inc_clock_typed take_drop_lem_typed \
   "$cake_dir/compiler/backend/semantics/bviPropsScript.sml" \
   "$cake_dir/compiler/backend/semantics"

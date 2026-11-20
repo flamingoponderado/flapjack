@@ -242,6 +242,7 @@ fun capture label name =
 
 val _ = capture "do_app_inv_clock_typed" "do_app_inv_clock";
 val _ = capture "do_app_inc_clock_IMP_typed" "do_app_inc_clock_IMP";
+val _ = capture "do_app_inc_clock_typed" "do_app_inc_clock";
 val _ = capture "evaluate_global_mono_lemma_typed" "evaluate_global_mono_lemma";
 val _ = capture "dec_clock_1_inc_clock_typed" "dec_clock_1_inc_clock";
 val _ = capture "dec_clock_1_inc_clock2_typed" "dec_clock_1_inc_clock2";
