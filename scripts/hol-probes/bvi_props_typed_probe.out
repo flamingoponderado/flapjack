@@ -12,6 +12,10 @@ dec_clock_with_code_typed=dec_clock (n :num) ((s :(α, β) state) with code := (
 dec_clock_code_typed=(dec_clock (n :num) (s :(α, β) state)).code = s.code
 dec_clock0_typed=∀(n :α) (s :(γ, 'ffi) state). dec_clock (0 :num) s = s
 inc_clock_eq_0_typed=(inc_clock (extra :num) (s :(α, β) state)).clock = (0 :num) ⇔ s.clock = (0 :num) ∧ extra = (0 :num)
+inc_clock_ADD_typed=inc_clock (n :num) (inc_clock (m :num) (s :(α, β) state)) = inc_clock (n + m) s
+dec_clock_inv_clock_typed=¬((t1 :(α, β) state).clock < (ticks :num) + (1 :num)) ⇒ dec_clock (ticks + (1 :num)) (inc_clock (c :num) t1) = inc_clock c (dec_clock (ticks + (1 :num)) t1)
+dec_clock_inv_clock1_typed=(t1 :(α, β) state).clock ≠ (0 :num) ⇒ dec_clock (1 :num) (inc_clock (c :num) t1) = inc_clock c (dec_clock (1 :num) t1)
+evaluate_code_mono_typed=∀(xs :bvi$exp list) (env :v list) (s1 :(α, β) state) (vs :(v list, exn_or_ret) result) (s2 :(α, β) state). (evaluate (xs,env,s1) :(v list, exn_or_ret) result # (α, β) state) = (vs,s2) ⇒ subspt s1.code s2.code
 evaluate_LENGTH_typed=∀(xs :bvi$exp list) (s :v list) (env :(α, β) state). case (evaluate (xs,s,env) :(v list, exn_or_ret) result # (α, β) state) of ((Rval res :(v list, exn_or_ret) result),s1) => LENGTH xs = LENGTH res | ((Rerr v7 :(v list, exn_or_ret) result),s1) => T
 evaluate_IMP_LENGTH_typed=(evaluate ((xs :bvi$exp list),(s :v list),(env :(α, β) state)) :(v list, exn_or_ret) result # (α, β) state) = ((Rval (res :v list) :(v list, exn_or_ret) result),(s1 :(α, β) state)) ⇒ LENGTH xs = LENGTH res
 evaluate_SING_IMP_typed=(evaluate ([(x :bvi$exp)],(env :v list),(s1 :(α, β) state)) :(v list, exn_or_ret) result # (α, β) state) = ((Rval (vs :v list) :(v list, exn_or_ret) result),(s2 :(α, β) state)) ⇒ ∃(w :v). vs = [w]

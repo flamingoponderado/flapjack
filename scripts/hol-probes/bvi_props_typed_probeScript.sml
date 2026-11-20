@@ -35,6 +35,10 @@ val _ = emit "dec_clock_with_code_typed" "dec_clock_with_code";
 val _ = emit "dec_clock_code_typed" "dec_clock_code";
 val _ = emit "dec_clock0_typed" "dec_clock0";
 val _ = emit "inc_clock_eq_0_typed" "inc_clock_eq_0";
+val _ = emit "inc_clock_ADD_typed" "inc_clock_ADD";
+val _ = emit "dec_clock_inv_clock_typed" "dec_clock_inv_clock";
+val _ = emit "dec_clock_inv_clock1_typed" "dec_clock_inv_clock1";
+val _ = emit "evaluate_code_mono_typed" "evaluate_code_mono";
 
 (* Group 3: evaluate-shape lemmas. *)
 val _ = emit "evaluate_LENGTH_typed" "evaluate_LENGTH";
