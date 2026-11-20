@@ -1821,6 +1821,7 @@ import Flapjack.Compiler.Backend.Semantics.ClosProps.EvaluateAppend
 import Flapjack.Compiler.Backend.Semantics.ClosProps.EvaluateAppClock
 import Flapjack.Compiler.Backend.Semantics.ClosProps.DoAppError
 import Flapjack.Compiler.Backend.Semantics.ClosProps.DoAppClock
+import Flapjack.Compiler.Backend.Semantics.ClosProps.EvaluateConst
 import Flapjack.Compiler.Backend.Semantics.ClosProps.EqualitySym
 import Flapjack.Compiler.Backend.Semantics.ClosProps.NoMti
 import Flapjack.Compiler.Backend.Semantics.ClosProps.Syntactic
