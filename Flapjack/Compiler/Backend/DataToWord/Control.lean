@@ -1231,6 +1231,37 @@ def assignFpBop {width : Nat} [NeZero width] (operation : FpBop) (conf : Config)
     (_secn l dest : Nat) (_names : Option NumSet) (left right : Nat) : WordLangProgHOL (BitVec width) × Nat :=
   if !conf.hasFpOps then (giveUp, l) else (fpResult conf dest [left, right] (fpBopInst operation) 0, l)
 
+/-- Expose the binary floating-point sequence for the assignment correctness proof.
+This is a definitional unfolding of `assignFpBop`, not a separate HOL result. -/
+theorem assignFpBop_expansion {width : Nat} [NeZero width] (operation : FpBop) (conf : Config)
+    (secn l dest : Nat) (names : Option NumSet) (left right : Nat) :
+    assignFpBop operation conf secn l dest names left right =
+      (if !conf.hasFpOps then (giveUp, l) else
+        (match encodeHeader (width := width) conf 3 (if width = 64 then 1 else 2) with
+        | none => (giveUp, l)
+        | some header =>
+          (if width = 64 then
+            wordListSeq [
+              .assign 3 (.load (.op .add [realAddr conf (adjustVar left), .const wordSemBytesInWord])),
+              .assign 5 (.load (.op .add [realAddr conf (adjustVar right), .const wordSemBytesInWord])),
+              .inst (.fp (.fpMovFromReg 0 3 3)), .inst (.fp (.fpMovFromReg 1 5 5)),
+              .inst (.fp (fpBopInst operation)), .inst (.fp (.fpMovToReg 3 5 0)),
+              writeWord64 conf header dest 3]
+           else
+            wordListSeq [
+              .assign 15 (realAddr conf (adjustVar left)), .assign 17 (realAddr conf (adjustVar right)),
+              .assign 11 (.load (.op .add [.var 15, .const wordSemBytesInWord])),
+              .assign 13 (.load (.op .add [.var 15, .const (2 * wordSemBytesInWord)])),
+              .assign 21 (.load (.op .add [.var 17, .const wordSemBytesInWord])),
+              .assign 23 (.load (.op .add [.var 17, .const (2 * wordSemBytesInWord)])),
+              .inst (.fp (.fpMovFromReg 0 13 11)), .inst (.fp (.fpMovFromReg 1 23 21)),
+              .inst (.fp (fpBopInst operation)), .inst (.fp (.fpMovToReg 5 3 0)),
+              writeWord64On32 conf header dest 5 3], l))) := by
+  by_cases hw : width = 64 <;>
+    simp [assignFpBop, fpResult, fpLoads, fpOperand, hw]
+  all_goals split <;> simp_all
+  all_goals split <;> simp_all
+
 /-- Compile a floating-point unary operation and allocate its result. -/
 @[hol "cakeml/compiler/backend/data_to_wordScript.sml" "assign_FP_uop_def"
   (words_as_type_indexed_bitvec)]
