@@ -448,4 +448,7 @@ val _ = emit_exported "Make_ptr_bits_thm_typed" "Make_ptr_bits_thm";
 val _ = print ("assign_ConsExtend_hypotheses=" ^
   Int.toString (length (hyp assign_ConsExtend)) ^ "\n");
 val _ = emit_exported "assign_ConsExtend_typed" "assign_ConsExtend";
+val _ = print ("assign_Cons_hypotheses=" ^
+  Int.toString (length (hyp assign_Cons)) ^ "\n");
+val _ = emit_exported "assign_Cons_typed" "assign_Cons";
 val _ = capture "parts_to_words_NONE_typed" "parts_to_words_NONE";
