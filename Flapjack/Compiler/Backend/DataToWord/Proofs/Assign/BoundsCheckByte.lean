@@ -66,6 +66,30 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {C F : Type} 
   WordSemStateExact.holFmapAsFiniteSupportWitness
 end BoundsByteAssignmentWitness
 
+/-- Compiler equation for a byte-array bounds check. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml" "assign_BoundsCheckByte" 11369
+  (words_as_type_indexed_bitvec)]
+theorem assignBoundsCheckByteEquation {width : Nat} [NeZero width]
+    (conf : Flapjack.Compiler.Backend.DataToWord.Config) (sec l dest : Nat)
+    (args : List Nat) (names : Option NumSet) (leq : Bool) :
+    (compileAssign conf sec l dest (.memOp (.boundsCheckByte leq)) args names :
+      WordLangProgHOL (BitVec width) × Nat) =
+      match args with
+      | [base, index] =>
+          (wordListSeq [
+            .assign 1 (.op .sub [shiftN .lsr (.load (realAddr conf (adjustVar base)))
+              (width - conf.lenSize - (if width = 32 then 2 else 3)),
+              .const wordSemBytesInWord]),
+            .assign 3 (shiftVar .ror (adjustVar index) 2),
+            if leq then setBool (adjustVar dest) .notLower 1 (.reg 3)
+              else setBool (adjustVar dest) .lower 3 (.reg 1)], l)
+      | _ => (.skip, l) := by
+  cases args with
+  | nil => rfl
+  | cons x xs => cases xs with
+    | nil => rfl
+    | cons y ys => cases ys <;> rfl
+
 /-- Byte-array bounds checks satisfy the original assignment simulation.
 The evaluator inherits the real-model assumption in `docs/SOUNDNESS.md` item 8. -/
 @[hol "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml" "assign_BoundsCheckByte" 11388

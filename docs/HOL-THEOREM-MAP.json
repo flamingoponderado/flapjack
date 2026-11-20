@@ -23911,6 +23911,16 @@
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
   "hol_name": "assign_BoundsCheckByte",
+  "hol_line": 11369,
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/BoundsCheckByte.lean",
+  "lean_name": "assignBoundsCheckByteEquation",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared the original source equation and source-parsed assign_BoundsCheckByte_equation_typed capture. The compiler arguments, singleton and non-pair skip cases, two assignments, byte-header shift and subtraction, rotated index, strictness-dependent comparisons and encoded Boolean results are retained. The source case patterns for non-pair argument lengths are grouped into the wildcard branch. Positive-width words use the reviewed BitVec representation."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "assign_BoundsCheckByte",
   "hol_line": 11388,
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/BoundsCheckByte.lean",
   "lean_name": "assignBoundsCheckByte_correct",
