@@ -6,6 +6,10 @@ import Flapjack.Test.UnificationTuplePublicImportAudit
 import Flapjack.Test.UnificationTupleAllImportAudit
 import Flapjack.Test.GeneraliseMapAudit
 import Flapjack.Test.GeneraliseLengthAudit
+import Flapjack.Test.StateRelGcInhabitantsAudit
+import Flapjack.Test.FreshRefInhabitantsAudit
+import Flapjack.Test.Word64InhabitantsAudit
+import Flapjack.Test.JoinEnvLocalsAudit
 import Flapjack.Test.InferSubstSubmapAudit
 import Flapjack.Test.TypeSubstWalkstarAudit
 import Flapjack.Test.UnifyEqTunifyAudit

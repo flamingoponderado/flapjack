@@ -924,6 +924,67 @@ instance, hypothesis, or statement change, and source review must confirm the
 instance is used only through those renderings. `check_hol_ref_export.py`
 compares the manifest field with the elaborated attribute in both directions.
 
+The only approved transitive use is the `joinEnvLocals` definition and its
+two odd-insertion theorems in the data-to-word GC counterpart. Their one
+`Nonempty α` instance flows through `joinEnvLocals` to the reviewed `joinEnv`
+rendering of HOL `THE`; the independent payload type `β` has no instance.
+The source checker restricts this exception to those three declarations, and
+the elaborated exporter checks the producer metadata, complete wrapper body,
+theorem binders, premises and conclusions. The manifest note must explain the
+transitive rendering. Three additional GC theorems, `joinEnv_nil`,
+`joinEnv_eq_zip`, and `length_filter_snd_joinEnv_imp`, use `joinEnv` directly
+in their signatures; their exception is restricted to those declarations and
+the exporter checks their complete independently written types and producer
+metadata. Proof-body mentions do not justify this qualifier. These checks do
+not replace comparison with typed HOL.
+
+**Qualify unused HOL existential types.** The narrow
+`hol_existential_inhabitants := [T2._t2, W1._w1, W2._w2]` qualifier applies
+only to `stateRel_gcGen` for HOL `state_rel_gc_gen`. HOL's three independent
+type variables have nonempty domains, whereas Lean requires one `Nonempty`
+instance per independent type to construct the unused witnesses. The named
+existentials must each have exactly their own named type and occur only as
+unused witnesses. The audit checks the outer binder count and names, exact
+original premises, instances, and all seven existential domains; source review
+must also check the complete conclusion. This qualifier must accompany the reviewed finite-map
+relation and word qualifiers and the manifest records the exact ordered list
+and a source comparison note naming this qualifier. Keep the combined map/word
+review status. The elaborated audit and export check enforce the metadata and
+witness restrictions; neither proves that the rest of the statement matches
+HOL. Independently compare the complete typed HOL theorem before review.
+
+**Qualify generalized collection's unused HOL witnesses.** The distinct
+`gc_lemma_existential_inhabitants := [W1._w1, W2._w2]` qualifier is reserved
+for `gcLemma_gen`, the counterpart of `gc_lemma_gen`. It records the two
+independent, inhabited HOL types used only for unused existential witnesses.
+The theorem must retain both witnesses and one canonical `Nonempty` instance
+for each type, with no other occurrences or added inhabitance assumptions.
+Its dedicated telescope audit checks the original four premises and all seven
+existential domains. Use it with the exact finite-map relation and word
+qualifiers, and record the same ordered witness list and source comparison in
+the theorem map. The audits do not establish correspondence of the remaining
+conclusion: review the complete typed HOL statement and proof independently.
+
+**Qualify fresh-reference allocation's unused HOL witness.** The narrow
+`new_ref_existential_inhabitants := [β._p]` qualifier is reserved for `newRef`,
+the counterpart of `new_ref_thm`. Its independent HOL witness type is inhabited;
+Lean retains the unused witness and one `Nonempty β` instance. Use the word
+qualifier and record both qualifiers in the theorem map. The source gate pins
+the complete theorem header and the elaborated audit checks that the carrier
+occurs only in its instance and unused existential. These checks do not prove
+HOL correspondence: independently review the typed HOL statement and proof.
+
+**Qualify Word64 evaluator unused HOL witnesses.** The narrow
+`write_word64_existential_inhabitants := [β._unused]` qualifier is reserved
+for `evaluateWriteWord64` and `evaluateWriteWord64On32`, the counterparts of
+`evaluate_WriteWord64` and `evaluate_WriteWord64_on_32`. Each retains HOL's
+independent unused existential witness and one `Nonempty β` instance. Combine
+it with the target state's finite-map and word qualifiers and record all three
+in the theorem map. The source gate pins each complete theorem header; the
+elaborated audit checks that β occurs only in its instance and unused witness.
+These checks do not establish HOL correspondence: independently review each
+typed HOL statement and proof, including the order of the 32-bit payload words.
+
 **Port the executable path, too.** As HOL definitions are ported, make the
 compiler that `flapjack-compile` actually runs call the reviewed `@[hol]`
 definitions. A tagged proof-only duplicate beside a different production

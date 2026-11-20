@@ -141,6 +141,71 @@ private theorem filter_locMerge_of_rootRel {width : Nat} [NeZero width]
           simp only [locMerge, List.filter_cons, wordSemIsWordLoc, ↓reduceIte]
           rw [ih results tail]
 
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "word_gc_move_roots_IMP_FILTER0"
+  (words_as_type_indexed_bitvec)]
+theorem wordGcMoveRoots_imp_filter0 {width : Nat} [NeZero width] (conf : Config) (roots moved : List (WordLocW width))
+    (i pa old i2 pa2 : BitVec width) (memory memory2 : BitVec width → WordLocW width)
+    (domain : BitVec width → Bool) (ok : Bool)
+    (premises : wordGcMoveRoots conf (roots, i, pa, old, memory, domain) = (moved, i2, pa2, memory2, ok) ∧
+      roots.all locOk = true) :
+    wordGcMoveRoots conf (roots.filter wordSemIsWordLoc, i, pa, old, memory, domain) =
+      (moved.filter wordSemIsWordLoc, i2, pa2, memory2, ok) := by
+  obtain ⟨run, valid⟩ := premises
+  generalize hr : wordGcMoveRoots conf (roots.filter wordSemIsWordLoc, i, pa, old, memory, domain) = res
+  rcases res with ⟨ys, i3, pa3, m3, ok3⟩
+  have hm := wordGcMoveRoots_filter_eq conf roots valid i pa old memory domain
+  rw [run, hr] at hm
+  simp only [Prod.mk.injEq] at hm
+  obtain ⟨rfl, rfl, rfl, rfl, rfl⟩ := hm
+  have rel := wordGcMoveRoots_rootRel conf (roots.filter wordSemIsWordLoc) i pa old memory domain
+  rw [hr] at rel
+  simp only at rel
+  rw [filter_locMerge_of_rootRel roots ys rel]
+
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "word_gen_gc_move_roots_IMP_FILTER0"
+  (words_as_type_indexed_bitvec)]
+theorem wordGenGcMoveRoots_imp_filter0 {width : Nat} [NeZero width] (conf : Config) (roots moved : List (WordLocW width))
+    (i pa ib pb old i2 pa2 ib2 pb2 : BitVec width) (memory memory2 : BitVec width → WordLocW width)
+    (domain : BitVec width → Bool) (ok : Bool)
+    (premises : wordGenGcMoveRoots conf (roots, i, pa, ib, pb, old, memory, domain) = (moved, i2, pa2, ib2, pb2, memory2, ok) ∧
+      roots.all locOk = true) :
+    wordGenGcMoveRoots conf (roots.filter wordSemIsWordLoc, i, pa, ib, pb, old, memory, domain) =
+      (moved.filter wordSemIsWordLoc, i2, pa2, ib2, pb2, memory2, ok) := by
+  obtain ⟨run, valid⟩ := premises
+  generalize hr : wordGenGcMoveRoots conf (roots.filter wordSemIsWordLoc, i, pa, ib, pb, old, memory, domain) = res
+  rcases res with ⟨ys, i3, pa3, ib3, pb3, m3, ok3⟩
+  have hm := wordGenGcMoveRoots_filter_eq conf roots valid i pa ib pb old memory domain
+  rw [run, hr] at hm
+  simp only [Prod.mk.injEq] at hm
+  obtain ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩ := hm
+  have rel := wordGenGcMoveRoots_rootRel conf (roots.filter wordSemIsWordLoc) i pa ib pb old memory domain
+  rw [hr] at rel
+  simp only at rel
+  rw [filter_locMerge_of_rootRel roots ys rel]
+
+/-- The original first declaration quantifies four unused values independently. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "word_gen_gc_partial_move_roots_IMP_FILTER" 6211
+  (words_as_type_indexed_bitvec)]
+theorem wordGenGcPartialMoveRoots_imp_filter_first {width : Nat} [NeZero width] {B G D E : Type} (conf : Config)
+    (roots moved : List (WordLocW width)) (i pa old i2 pa2 gs rs : BitVec width)
+    (_ib : B) (_pb : G) (_ib2 : D) (_pb2 : E)
+    (memory memory2 : BitVec width → WordLocW width) (domain : BitVec width → Bool) (ok : Bool)
+    (premises : wordGenGcPartialMoveRoots conf (roots, i, pa, old, memory, domain, gs, rs) = (moved, i2, pa2, memory2, ok) ∧
+      roots.all locOk = true) :
+    wordGenGcPartialMoveRoots conf (roots.filter wordSemIsWordLoc, i, pa, old, memory, domain, gs, rs) =
+      (moved.filter wordSemIsWordLoc, i2, pa2, memory2, ok) := by
+  obtain ⟨run, valid⟩ := premises
+  generalize hr : wordGenGcPartialMoveRoots conf (roots.filter wordSemIsWordLoc, i, pa, old, memory, domain, gs, rs) = res
+  rcases res with ⟨ys, i3, pa3, m3, ok3⟩
+  have hm := wordGenGcPartialMoveRoots_filter_eq conf roots valid i pa old memory domain gs rs
+  rw [run, hr] at hm
+  simp only [Prod.mk.injEq] at hm
+  obtain ⟨rfl, rfl, rfl, rfl, rfl⟩ := hm
+  have rel := wordGenGcPartialMoveRoots_rootRel conf (roots.filter wordSemIsWordLoc) i pa old memory domain gs rs
+  rw [hr] at rel
+  simp only at rel
+  rw [filter_locMerge_of_rootRel roots ys rel]
+
 open Classical in
 @[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "word_gc_fun_IMP_FILTER"
   (fmap_as_finite_support_relation := [store, store']) (words_as_type_indexed_bitvec)]
@@ -161,5 +226,23 @@ theorem wordGcFun_imp_filter {width : Nat} [NeZero width] (conf : Config)
   have related := word_gc_IMP_EVERY2 filteredRun
   rw [rootsEq, filter_locMerge_of_rootRel roots filteredRoots related]
   exact filteredRun
+
+/-- A successful collector traversal splits its output at the input boundary. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "word_gc_fun_APPEND_IMP"
+  (fmap_as_finite_support_relation := [store, store']) (words_as_type_indexed_bitvec)]
+theorem wordGcFun_append_imp {width : Nat} [NeZero width]
+    (c : Flapjack.Compiler.Backend.DataToWord.Config) (xs ys zs : List (WordLocW width))
+    (m m1 : BitVec width → WordLocW width) (dm : BitVec width → Bool)
+    (store : HolFiniteMapExact WordStoreHOL (WordLocW width))
+    (store' : HolFiniteMapExact WordStoreHOL (WordLocW width))
+    (h : wordGcFun c (xs ++ ys, m, dm, store) = some (zs, m1, store')) :
+    ∃ zs1 zs2, zs = zs1 ++ zs2 ∧ xs.length = zs1.length ∧ ys.length = zs2.length := by
+  have len := word_gc_fun_LENGTH h
+  refine ⟨zs.take xs.length, zs.drop xs.length, ?_, ?_, ?_⟩
+  · exact (List.take_append_drop _ _).symm
+  · simp only [List.length_take, List.length_append] at *
+    omega
+  · simp only [List.length_drop, List.length_append] at *
+    omega
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

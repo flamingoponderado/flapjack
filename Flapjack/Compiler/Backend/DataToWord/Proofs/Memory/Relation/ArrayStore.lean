@@ -189,4 +189,54 @@ theorem memoryRel_updateRef {width : Nat} [NeZero width] (conf : DataToWord.Conf
   exact ⟨ptrWord, addr, rootEq, real, by simpa [BitVec.mul_comm] using inDomain,
     by simpa [BitVec.mul_comm] using updated⟩
 
+/-- A related value and indexed array reference permit the corresponding
+word store and preserve the full updated memory relation. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "memory_rel_Update"
+  (fmap_as_finite_support_relation := [store]) (words_as_type_indexed_bitvec)]
+theorem memoryRel_updateIndex {width : Nat} [NeZero width] (conf : Config) (be : Bool) (next : Nat)
+    (refs : Spt (BvlSem.Ref DataSem.Value)) (space : Nat)
+    (store : HolFiniteMapExact WordStoreHOL (WordLocW width)) (memory : BitVec width → WordLocW width)
+    (domain : BitVec width → Bool) (value : DataSem.Value) (word : WordLocW width)
+    (bit : Bool) (ptr : Nat) (root indexLoc : WordLocW width)
+    (vars : List (DataSem.Value × WordLocW width)) (old : List DataSem.Value) (index : Nat)
+    (valid : memoryRel conf be next refs space store memory domain
+      ((value, word) :: (.refPtr bit ptr, root) :: (.number (Int.ofNat index), indexLoc) :: vars) ∧
+      sptLookup ptr refs = some (.valueArray old) ∧ goodDimindex width ∧ index < old.length) :
+    ∃ ptrWord indexWord addr offset : BitVec width,
+      root = .word ptrWord ∧ indexLoc = .word indexWord ∧
+      getRealAddr conf store ptrWord = some addr ∧ getRealOffset indexWord = some offset ∧
+      domain (addr + offset) = true ∧
+      memoryRel conf be next (sptInsert ptr (.valueArray (old.set index value)) refs) space store
+        (fun key => if key = addr + offset then word else memory key) domain
+        ((value, word) :: (.refPtr bit ptr, root) :: (.number (Int.ofNat index), indexLoc) :: vars) := by
+  obtain ⟨related, found, good, bound⟩ := valid
+  have reordered : memoryRel conf be next refs space store memory domain
+      ((.refPtr bit ptr, root) :: (.number (Int.ofNat index), indexLoc) :: (value, word) :: vars) := by
+    apply memoryRel_rearrange conf be next refs space store memory domain _ _ ?_ related
+    intro pair member
+    simp only [List.mem_cons] at member ⊢
+    tauto
+  obtain ⟨_, _, _, _, _, _, _, _, _, _, _, _, lengthBound⟩ :=
+    memoryRel_valueArrayImp conf be next refs space store memory domain bit ptr old root
+      ((.number (Int.ofNat index), indexLoc) :: (value, word) :: vars) ⟨reordered, found, good⟩
+  have small : smallInt width (Int.ofNat index) := by
+    rcases good with hw | hw <;> subst width <;> simp [smallInt] at lengthBound ⊢ <;> omega
+  have tail := memoryRel_tail conf be next refs space store memory domain (.refPtr bit ptr, root)
+    ((.number (Int.ofNat index), indexLoc) :: (value, word) :: vars) reordered
+  have indexEq := memoryRel_numberImp conf be next refs space store memory domain (Int.ofNat index)
+    indexLoc ((value, word) :: vars) ⟨good, small, tail⟩
+  obtain ⟨ptrWord, addr, rootEq, real, inside, updated⟩ :=
+    memoryRel_updateRef conf be next refs space store memory domain value word bit ptr root
+      ((.number (Int.ofNat index), indexLoc) :: vars) old index ⟨related, found, good, bound⟩
+  let offset : BitVec width := StackRemove.bytesInWord width + BitVec.ofNat width index * StackRemove.bytesInWord width
+  have offsetEq : getRealOffset (smallnum (Int.ofNat index) : BitVec width) = some offset :=
+    getRealOffset_smallnum index good
+  have addressEq : addr + offset = addr + StackRemove.bytesInWord width +
+      StackRemove.bytesInWord width * BitVec.ofNat width index := by
+    dsimp [offset]
+    rw [BitVec.mul_comm, ← BitVec.add_assoc]
+  refine ⟨ptrWord, smallnum (Int.ofNat index), addr, offset, rootEq, indexEq, real, offsetEq, ?_, ?_⟩
+  · simpa only [addressEq] using inside
+  · simpa only [addressEq] using updated
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

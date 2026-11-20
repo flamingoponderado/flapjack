@@ -64,5 +64,15 @@ theorem wordMemEqThm {aw : Nat} {vw : Nat} [NeZero aw] [NeZero vw] (xs ys : List
         simp [wordMemEq, inDomain, contents, recursive]
       · simp [wordMemEq, inDomain, contents, eq]
 
+/-- Encode the header and magnitude words used to compare a bignum constant. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "bignum_words_def"
+  (words_as_type_indexed_bitvec)]
+def bignumWords {width : Nat} [NeZero width]
+    (conf : Flapjack.Compiler.Backend.DataToWord.Config) (value : Int) : Option (List (BitVec width)) :=
+  let (sign, payload) := Misc.Multiword.i2mw (width := width) value
+  match DataToWord.encodeHeader conf (if sign then 7 else 3) payload.length with
+  | none => none
+  | some header => some (header :: payload)
+
 end
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

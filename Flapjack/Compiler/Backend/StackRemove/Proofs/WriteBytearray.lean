@@ -92,12 +92,12 @@ theorem writeBytearrayIgnore {width : Nat} [NeZero width]
   | nil => rfl
   | cons byte bytes ih =>
     cases loaded : memLoadByteAuxExact source sourceDomain bigEndian address with
-    | none => simp [readBytearrayWordHOL,loaded] at original
+    | none => simp [readBytearrayWordHOL, readBytearrayGenericHOL,loaded] at original
     | some first =>
       cases readTail : readBytearrayWordHOL (address + 1) bytes.length
           (memLoadByteAuxExact source sourceDomain bigEndian) with
       | none =>
-        simp only [List.length_cons,readBytearrayWordHOL,loaded,readTail] at original
+        simp only [List.length_cons,readBytearrayWordHOL, readBytearrayGenericHOL,loaded,readTail] at original
         simp at original
       | some rest =>
         have inside := loadDomain source sourceDomain bigEndian address first loaded
@@ -137,12 +137,12 @@ theorem writeBytearrayEq {width : Nat} [NeZero width]
   | nil => exact original.2.2.2
   | cons byte bytes ih =>
     cases loaded : memLoadByteAuxExact source sourceDomain bigEndian address with
-    | none => simp [readBytearrayWordHOL,loaded] at original
+    | none => simp [readBytearrayWordHOL, readBytearrayGenericHOL,loaded] at original
     | some first =>
       cases readTail : readBytearrayWordHOL (address + 1) bytes.length
           (memLoadByteAuxExact source sourceDomain bigEndian) with
       | none =>
-        simp only [List.length_cons,readBytearrayWordHOL,loaded,readTail] at original
+        simp only [List.length_cons,readBytearrayWordHOL, readBytearrayGenericHOL,loaded,readTail] at original
         simp at original
       | some rest =>
         have inside := loadDomain source sourceDomain bigEndian address first loaded

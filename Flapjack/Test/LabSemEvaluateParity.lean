@@ -1245,7 +1245,7 @@ example (s : Flapjack.Compiler.Backend.LabSem.State 64 Nat Nat) :
     match evaluate start with
     | (.error,t) => t=start
     | _ => False := by
-  simp +decide [evaluate, asmFetch, asmFetchAux, locToPc, readBytearrayWordHOL, memLoadByteAuxExact]
+  simp +decide [evaluate, asmFetch, asmFetchAux, locToPc, readBytearrayWordHOL, readBytearrayGenericHOL, memLoadByteAuxExact]
     <;> decide +kernel
 
 -- lab_eval_ffi_return_missing
@@ -1270,7 +1270,7 @@ example (s : Flapjack.Compiler.Backend.LabSem.State 64 Nat Nat) :
     match evaluate start with
     | (.error,t) => t=start
     | _ => False := by
-  simp +decide [evaluate, asmFetch, asmFetchAux, locToPc, readBytearrayWordHOL]
+  simp +decide [evaluate, asmFetch, asmFetchAux, locToPc, readBytearrayWordHOL, readBytearrayGenericHOL]
     <;> decide +kernel
 
 -- lab_eval_ffi_identity
@@ -1302,7 +1302,7 @@ example (s : Flapjack.Compiler.Backend.LabSem.State 64 Nat Nat) :
     match evaluate start with
     | (.halt .success,t) => t.pc=1 ∧ t.clock=1 ∧ t.ffi.ffiState=11 ∧ t.regs 1=.word 40 ∧ t.regs 2=.word 8 ∧ t.fpRegs 2=102 ∧ t.ioRegs 0 (.extCall (Flapjack.Basis.Pure.MlString.MlString.implode [113])) 1=some 41 ∧ t.ioFpRegs 0 2=1102 ∧ t.memory 8=.word 52 ∧ t.ffi.ioEvents=[{ name := .extCall (Flapjack.Basis.Pure.MlString.MlString.implode [113]), configuration := [52], bytes := [52].zip [52] }]
     | _ => False := by
-  simp +decide [evaluate, asmFetch, asmFetchAux, locToPc, callFFIHOL, initialHolFfiState, getRegValue, getByteHOL8, byteIndexHOL, readBytearrayWordHOL, memLoadByteAuxExact, writeBytearrayExact]
+  simp +decide [evaluate, asmFetch, asmFetchAux, locToPc, callFFIHOL, initialHolFfiState, getRegValue, getByteHOL8, byteIndexHOL, readBytearrayWordHOL, readBytearrayGenericHOL, memLoadByteAuxExact, writeBytearrayExact]
     <;> decide +kernel
 
 -- lab_eval_ffi_final
@@ -1334,7 +1334,7 @@ example (s : Flapjack.Compiler.Backend.LabSem.State 64 Nat Nat) :
     match evaluate start with
     | (.halt (.ffiOutcome event),t) => t=start ∧ event.name=.extCall (Flapjack.Basis.Pure.MlString.MlString.implode [113]) ∧ event.configuration=[52] ∧ event.bytes=[52] ∧ event.outcome=.diverged
     | _ => False := by
-  simp +decide [evaluate, asmFetch, asmFetchAux, locToPc, callFFIHOL, initialHolFfiState, getByteHOL8, byteIndexHOL, readBytearrayWordHOL, memLoadByteAuxExact]
+  simp +decide [evaluate, asmFetch, asmFetchAux, locToPc, callFFIHOL, initialHolFfiState, getByteHOL8, byteIndexHOL, readBytearrayWordHOL, readBytearrayGenericHOL, memLoadByteAuxExact]
     <;> decide +kernel
 
 -- lab_eval_ffi_badlength
@@ -1366,7 +1366,7 @@ example (s : Flapjack.Compiler.Backend.LabSem.State 64 Nat Nat) :
     match evaluate start with
     | (.halt (.ffiOutcome event),t) => t=start ∧ event.name=.extCall (Flapjack.Basis.Pure.MlString.MlString.implode [113]) ∧ event.configuration=[52] ∧ event.bytes=[52] ∧ event.outcome=.failed
     | _ => False := by
-  simp +decide [evaluate, asmFetch, asmFetchAux, locToPc, callFFIHOL, initialHolFfiState, getByteHOL8, byteIndexHOL, readBytearrayWordHOL, memLoadByteAuxExact]
+  simp +decide [evaluate, asmFetch, asmFetchAux, locToPc, callFFIHOL, initialHolFfiState, getByteHOL8, byteIndexHOL, readBytearrayWordHOL, readBytearrayGenericHOL, memLoadByteAuxExact]
     <;> decide +kernel
 
 -- lab_eval_install_good

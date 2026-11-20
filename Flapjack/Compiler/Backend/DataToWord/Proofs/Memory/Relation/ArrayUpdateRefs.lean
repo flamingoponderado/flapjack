@@ -51,6 +51,17 @@ theorem blocksUnique_updateRef (next : Nat) (refs : Spt (BvlSem.Ref Value))
     ⟨allValues_insertValueArray_subset refs values _ ptr _ h.1, h.2.1,
       allValues_insertValueArray_subset refs values _ ptr _ h.2.2.1, h.2.2.2⟩
 
+/-- Allocating a reference to values already on the stack preserves uniqueness. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "blocks_unique_new_ref"]
+theorem blocksUnique_newRef (next : Nat) (refs : Spt (BvlSem.Ref Value))
+    (values stack : List Value) (ptr : Nat) :
+    blocksUnique next (allValues refs (values ++ stack)) →
+      blocksUnique next (allValues (sptInsert ptr (.valueArray values) refs)
+        (values ++ .refPtr true ptr :: stack)) := by
+  intro unique
+  apply blocksUnique_updateRef next refs values true ptr stack
+  simpa [blocksUnique, allValues, valueListValues, valueListValues_append] using unique
+
 /-- A single array element can be replaced without introducing new traversed
 values if the replacement is already a stack root. -/
 theorem allValues_insertValueArray_set_subset (refs : Spt (BvlSem.Ref Value))

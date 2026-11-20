@@ -228,7 +228,7 @@ theorem compileCorrect_callFFI {width : Nat} [NeZero width] {S Q : Type} {F : Ty
   | ret newFfi newBytes =>
     rw [hcall] at hev
     have hlenb : newBytes.length = len2.toNat :=
-      (StackRemove.callFFILengthHOL _ _ _ _ _ _ hcall).trans (readBytearrayWordHOL_length _ _ _ _ hrd2)
+      (StackRemove.callFFILengthHOL _ _ _ _ _ _ hcall).trans (readBytearrayGenericHOL_length _ _ _ _ hrd2)
     have hrd2' : readBytearrayWordHOL start2 newBytes.length
         (memLoadByteAuxExact s1.memory s1.memDomain s1.be) = some bytes2 := by
       rw [hlenb]; exact hrd2

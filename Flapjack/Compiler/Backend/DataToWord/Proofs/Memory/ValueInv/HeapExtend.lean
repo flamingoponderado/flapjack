@@ -10,46 +10,57 @@ public import Flapjack.Compiler.Backend.GcShared.HeapSimilarity
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
 open Flapjack Flapjack.Compiler.Backend.DataSem
 
-/-- Existing value representations survive adding heap cells and timestamp
-mappings, provided existing successful lookups remain unchanged. This is
-Flapjack infrastructure for constructor allocation. -/
-theorem clockValueInv_heapExtend {width : Nat} [NeZero width] (ck : Nat)
+/-- Extending both finite maps and preserving old data cells preserves each
+clocked value relation. This helper supplies HOL's `v_inv_SUBMAP` proof. -/
+theorem clockValueInv_mapHeapExtend {width : Nat} [NeZero width] (ck : Nat)
     (conf : Config) (refs : Spt (BvlSem.Ref Value))
-    (f tf tf' : HolFiniteMapExact Nat Nat) (heap heap' : ValueHeap width)
-    (timestamps : ∀ n ptr, tf.lookup n = some ptr → tf'.lookup n = some ptr)
-    (cells : ∀ ptr cell, isDataElement cell → heapLookup ptr heap = some cell → heapLookup ptr heap' = some cell) :
+    (f f1 tf tf1 : HolFiniteMapExact Nat Nat) (heap heap1 : ValueHeap width)
+    (references : ∀ n ptr, f.lookup n = some ptr → f1.lookup n = some ptr)
+    (timestamps : ∀ n ptr, tf.lookup n = some ptr → tf1.lookup n = some ptr)
+    (cells : ∀ ptr cell, isDataElement cell → heapLookup ptr heap = some cell → heapLookup ptr heap1 = some cell) :
     ∀ (value : Value) (address : HeapAddress (WordLocW width)),
       ClockValueInv ck conf value refs (address, f, tf, heap) →
-      ClockValueInv ck conf value refs (address, f, tf', heap') := by
+      ClockValueInv ck conf value refs (address, f1, tf1, heap1) := by
+  have domainExtend (n : Nat) (domain : ∃ ptr, f.lookup n = some ptr) : ∃ ptr, f1.lookup n = some ptr := by
+    obtain ⟨ptr, found⟩ := domain
+    exact ⟨ptr, references n ptr found⟩
+  have applyEq (n : Nat) (domain : ∃ ptr, f.lookup n = some ptr) : holFapply f1 n = holFapply f n := by
+    obtain ⟨ptr, found⟩ := domain
+    rw [holFapply_of_lookup (references n ptr found), holFapply_of_lookup found]
   induction ck using Nat.strongRecOn with
   | ind ck ih =>
     intro value address related
     cases related with
-    | numberSmall _ _ i _ _ _ _ small => exact .numberSmall ck conf i refs f tf' heap' small
-    | numberBig _ _ i ptr _ _ _ _ large found => exact .numberBig ck conf i ptr refs f tf' heap' large (cells ptr _ (by simp [isDataElement, bignumRep]) found)
-    | word64 _ _ word ptr _ _ _ _ found => exact .word64 ck conf word ptr refs f tf' heap' (cells ptr _ (by simp [isDataElement, word64Rep]; split <;> simp) found)
-    | codePtr _ _ n _ _ _ _ => exact .codePtr ck conf n refs f tf' heap'
+    | numberSmall _ _ i _ _ _ _ small => exact .numberSmall ck conf i refs f1 tf1 heap1 small
+    | numberBig _ _ i ptr _ _ _ _ large found => exact .numberBig ck conf i ptr refs f1 tf1 heap1 large (cells ptr _ (by simp [isDataElement, bignumRep]) found)
+    | word64 _ _ word ptr _ _ _ _ found => exact .word64 ck conf word ptr refs f1 tf1 heap1 (cells ptr _ (by simp [isDataElement, word64Rep]; split <;> simp) found)
+    | codePtr _ _ n _ _ _ _ => exact .codePtr ck conf n refs f1 tf1 heap1
     | refPtr bit _ _ n _ _ _ _ domain notThunk notMut =>
-      exact .refPtr bit ck conf n refs f tf' heap' domain notThunk notMut
+      simpa only [applyEq n domain] using ClockValueInv.refPtr bit ck conf n refs f1 tf1 heap1 (domainExtend n domain) notThunk notMut
     | refPtrThunk _ _ mode n body x _ _ _ _ found evaluated domain cell recursive =>
-      refine .refPtrThunk ck conf mode n body x refs f tf' heap' found evaluated domain (cells _ _ (by simp [isDataElement, thunkBlock]) cell) ?_
-      intro positive
-      exact ih (ck - 1) (by omega) body x (recursive positive)
+      have cell1 : heapLookup (holFapply f1 n) heap1 = some (thunkBlock mode x) := by
+        rw [applyEq n domain]
+        exact cells _ _ (by simp [isDataElement, thunkBlock]) cell
+      have result : ClockValueInv ck conf (.refPtr false n) refs
+          (.pointer (holFapply f1 n) (.word 0), f1, tf1, heap1) := by
+        refine .refPtrThunk ck conf mode n body x refs f1 tf1 heap1 found evaluated (domainExtend n domain) cell1 ?_
+        intro positive
+        exact ih (ck - 1) (by omega) body x (recursive positive)
+      simpa only [applyEq n domain] using result
     | refPtrThunkInlined _ _ n body x _ _ _ _ found notThunk recursive =>
-      refine .refPtrThunkInlined ck conf n body address refs f tf' heap' found notThunk ?_
+      refine .refPtrThunkInlined ck conf n body address refs f1 tf1 heap1 found notThunk ?_
       intro positive
       exact ih (ck - 1) (by omega) body address (recursive positive)
     | blockNil _ _ stamp tag values _ _ _ _ empty bound zero =>
-      exact .blockNil ck conf stamp tag values refs f tf' heap' empty bound zero
+      exact .blockNil ck conf stamp tag values refs f1 tf1 heap1 empty bound zero
     | blockCons _ _ stamp tag ptr values xs _ _ _ _ nonempty recursive timestamp cell =>
-      refine .blockCons ck conf stamp tag ptr values xs refs f tf' heap' nonempty ?_
+      refine .blockCons ck conf stamp tag ptr values xs refs f1 tf1 heap1 nonempty ?_
         (timestamps stamp ptr timestamp) (cells ptr _ (by simp [isDataElement, blockRep]) cell)
       intro positive
       apply (clockValueListInv_iff _ _ _ _ _ _ _ _).mpr
       apply List.Forall₂.imp _ ((clockValueListInv_iff _ _ _ _ _ _ _ _).mp (recursive positive))
       intro child x childInv
       exact ih (ck - 1) (by omega) child x childInv
-
 /-- Heap and timestamp-map extension preserves the unbounded value relation. -/
 theorem valueInv_heapExtend {width : Nat} [NeZero width] (conf : Config)
     (refs : Spt (BvlSem.Ref Value)) (f tf tf' : HolFiniteMapExact Nat Nat) (heap heap' : ValueHeap width)
@@ -59,7 +70,8 @@ theorem valueInv_heapExtend {width : Nat} [NeZero width] (conf : Config)
     (related : valueInv conf value refs (address, f, tf, heap)) :
     valueInv conf value refs (address, f, tf', heap') := by
   intro ck
-  exact clockValueInv_heapExtend ck conf refs f tf tf' heap heap' timestamps cells value address (related ck)
+  exact clockValueInv_mapHeapExtend ck conf refs f f tf tf' heap heap'
+    (by intros; assumption) timestamps cells value address (related ck)
 
 /-- Replacing an unused region by an equally sized allocation preserves every
 old data-cell lookup. Interior offsets of the old unused region have no cell. -/

@@ -46,23 +46,38 @@ private theorem cutNames_insert_notMem {α β : Type} (names : Spt α) (env : Sp
     simp [live, notLive]
 
 /-- An odd temporary does not change a cut using adjusted source names. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "cut_names_adjust_set_insert_ODD"]
+theorem cutNames_adjustSet_insertOdd {α β : Type} (names : Spt α) (env : Spt β)
+    (n : Nat) (value : β) (odd : n % 2 = 1) :
+    wordSemCutNames (adjustSet names) (sptInsert n value env) =
+      wordSemCutNames (adjustSet names) env := by
+  apply cutNames_insert_notMem
+  intro member
+  obtain ⟨k, eq, _⟩ := (adjustSet_domain names n).mp member
+  simp [adjustVar] at eq
+  omega
+
+/-- Both component cuts are unchanged by an odd temporary. This supports the
+allocation theorem, which observes the pair before the cuts are joined. -/
+theorem cutEnvs_adjustSets_insertOdd {α β : Type} (names : Spt α) (env : Spt β)
+    (n : Nat) (value : β) (odd : n % 2 = 1) :
+    wordSemCutEnvs (adjustSets names) (sptInsert n value env) =
+      wordSemCutEnvs (adjustSets names) env := by
+  have notZero : ¬ sptMem n (.ls () : NumSet) := by
+    intro member
+    obtain ⟨v, found⟩ := (sptMem_iff_lookup n (.ls ())).mp member
+    cases n <;> simp_all
+  simp only [wordSemCutEnvs, adjustSets]
+  rw [cutNames_insert_notMem (.ls ()) env n value notZero,
+    cutNames_adjustSet_insertOdd names env n value odd]
+
+/-- An odd temporary does not change a cut using adjusted source names. -/
 @[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "cut_env_adjust_sets_insert_ODD"]
 theorem cutEnv_adjustSets_insertOdd {α β : Type} (names : Spt α) (env : Spt β)
     (n : Nat) (value : β) (odd : n % 2 = 1) :
     wordSemCutEnv (adjustSets names) (sptInsert n value env) =
       wordSemCutEnv (adjustSets names) env := by
-  have notZero : ¬ sptMem n (.ls () : NumSet) := by
-    intro member
-    obtain ⟨v, found⟩ := (sptMem_iff_lookup n (.ls ())).mp member
-    cases n <;> simp_all
-  have notAdjusted : ¬ sptMem n (adjustSet names) := by
-    intro member
-    obtain ⟨k, eq, _⟩ := (adjustSet_domain names n).mp member
-    simp [adjustVar] at eq
-    omega
-  simp only [wordSemCutEnv, wordSemCutEnvs, adjustSets]
-  rw [cutNames_insert_notMem (.ls ()) env n value notZero,
-    cutNames_insert_notMem (adjustSet names) env n value notAdjusted]
+  simp only [wordSemCutEnv, cutEnvs_adjustSets_insertOdd names env n value odd]
 
 /-- Inserting key one does not change the adjusted cut. -/
 @[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "cut_names_adjust_set_insert_1"]

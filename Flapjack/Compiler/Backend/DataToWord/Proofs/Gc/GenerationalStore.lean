@@ -5,6 +5,7 @@ public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.FullStore
 public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.GcConfig
 public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.DoPartial
 public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.WordStrideAlignment
 public import Flapjack.Compiler.Backend.GenGcPartial.Proofs.Similarity
 
 @[expose] public section
@@ -45,32 +46,14 @@ theorem newTrig_le_space {width : Nat} [NeZero width] (space alloc : BitVec widt
         omega
       · simp [newTrig, allocLeGen, small, aligned]
 
-/-- In a supported machine dimension, byte alignment means divisibility by
-the number of bytes per word. -/
-theorem byteAligned_iff_divisible {width : Nat} [NeZero width] (word : BitVec width)
-    (good : goodDimindex width) : holByteAligned word = true ↔ word.toNat % (width / 8) = 0 := by
-  rcases good with rfl | rfl
-  · simpa [holByteAligned, show holLOG2 4 = 2 from holLOG_UNIQUE 2 4 2 ⟨by decide, by decide⟩] using
-      holAligned_iff 2 word
-  · simpa [holByteAligned, show holLOG2 8 = 3 from holLOG_UNIQUE 2 8 3 ⟨by decide, by decide⟩] using
-      holAligned_iff 3 word
-
-/-- A word-sized multiple is byte aligned in either supported dimension. -/
-theorem byteAligned_wordMultiple {width : Nat} [NeZero width] (word : BitVec width)
-    (good : goodDimindex width) : holByteAligned (wordSemBytesInWord * word) = true := by
-  rw [byteAligned_iff_divisible _ good]
-  rcases good with rfl | rfl <;>
-    norm_num [BitVec.toNat_mul, wordSemBytesInWord, BitVec.toNat_ofNat, Nat.mod_mod_of_dvd,
-      Nat.mul_mod]
-
 /-- Every configured generation size is a whole number of machine words. -/
 theorem genSize_byteAligned {width : Nat} [NeZero width] (limits : List Nat)
     (good : goodDimindex width) : holByteAligned (getGenSize limits : BitVec width) = true := by
   cases limits with
-  | nil => exact byteAligned_wordMultiple (-1) good
+  | nil => exact (byteAlignMultBytesInWord (-1) good).2
   | cons size rest =>
     simp only [getGenSize]
-    split <;> exact byteAligned_wordMultiple _ good
+    split <;> exact (byteAlignMultBytesInWord _ good).2
 
 /-- A byte-aligned available space yields a byte-aligned trigger offset. -/
 theorem newTrig_byteAligned {width : Nat} [NeZero width] (space alloc : BitVec width) (limits : List Nat)
@@ -116,7 +99,7 @@ theorem newTrig_wordCount {width : Nat} [NeZero width] (n : Nat) (alloc : BitVec
     (limits : List Nat) (good : goodDimindex width) :
     ∃ k, newTrig (wordSemBytesInWord * BitVec.ofNat width n) alloc limits =
       wordSemBytesInWord * BitVec.ofNat width k ∧ k ≤ n := by
-  apply newTrig_boundedWords _ alloc limits n good (byteAligned_wordMultiple _ good)
+  apply newTrig_boundedWords _ alloc limits n good (byteAlignMultBytesInWord _ good).2
   rcases good with rfl | rfl <;>
     norm_num [wordSemBytesInWord, BitVec.toNat_mul, BitVec.toNat_ofNat] <;> omega
 

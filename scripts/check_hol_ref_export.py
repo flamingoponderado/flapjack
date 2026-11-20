@@ -83,6 +83,10 @@ ALLOWED_QUALIFIERS = {
     "reals_as_rational_cuts",
     "nested_list_rel_as_mutual",
     "total_function_inhabitants",
+    "hol_existential_inhabitants",
+    "gc_lemma_existential_inhabitants",
+    "new_ref_existential_inhabitants",
+    "write_word64_existential_inhabitants",
 }
 BOOLEAN_QUALIFIERS = {
     "fmap_as_finite_support_result", "fmap_as_finite_support_equalities",
@@ -147,7 +151,8 @@ def export_batches(umbrella: str, exporter: str, count: int = EXPORT_BATCH_COUNT
 
     direct = imports(header)
     shared = ("Flapjack.Test.NestedRelationAudit", "Flapjack.HolRef.GeneraliseLengthAudit",
-              "Flapjack.HolRef.InferSubstSubmapAudit", "Flapjack.HolRef.TypeSubstWalkstarAudit")
+              "Flapjack.HolRef.InferSubstSubmapAudit", "Flapjack.HolRef.TypeSubstWalkstarAudit",
+              "Flapjack.HolRef.JoinEnvLocalsAudit")
     if direct.count("Flapjack") != 1 or any(direct.count(name) != 1 for name in shared):
         raise ValueError("HOL exporter must import the umbrella and shared audit modules")
     all_imports = list(dict.fromkeys(
@@ -232,6 +237,10 @@ def manifest_qualifiers(record: dict[str, Any]) -> dict[str, Any]:
         "word_dimensions_as_widths",
         "nested_list_rel_as_mutual",
         "total_function_inhabitants",
+        "hol_existential_inhabitants",
+        "gc_lemma_existential_inhabitants",
+        "new_ref_existential_inhabitants",
+        "write_word64_existential_inhabitants",
     ):
         if record.get(key, ()):
             qualifiers[key] = list(record[key])
@@ -418,6 +427,30 @@ def check_records(
                 qualifiers.get("total_function_inhabitants", [])):
             raise ValueError(
                 f"{record['lean_path']}:{record['lean_name']}: total-function inhabitant "
+                "qualifier differs from elaborated @[hol] exporter"
+            )
+        if (exported_qualifiers.get("hol_existential_inhabitants", []) !=
+                qualifiers.get("hol_existential_inhabitants", [])):
+            raise ValueError(
+                f"{record['lean_path']}:{record['lean_name']}: existential inhabitant "
+                "qualifier differs from elaborated @[hol] exporter"
+            )
+        if (exported_qualifiers.get("gc_lemma_existential_inhabitants", []) !=
+                qualifiers.get("gc_lemma_existential_inhabitants", [])):
+            raise ValueError(
+                f"{record['lean_path']}:{record['lean_name']}: GC lemma existential inhabitant "
+                "qualifier differs from elaborated @[hol] exporter"
+            )
+        if (exported_qualifiers.get("new_ref_existential_inhabitants", []) !=
+                qualifiers.get("new_ref_existential_inhabitants", [])):
+            raise ValueError(
+                f"{record['lean_path']}:{record['lean_name']}: fresh-reference existential inhabitant "
+                "qualifier differs from elaborated @[hol] exporter"
+            )
+        if (exported_qualifiers.get("write_word64_existential_inhabitants", []) !=
+                qualifiers.get("write_word64_existential_inhabitants", [])):
+            raise ValueError(
+                f"{record['lean_path']}:{record['lean_name']}: Word64 existential inhabitant "
                 "qualifier differs from elaborated @[hol] exporter"
             )
         if (exported_qualifiers.get("reals_as_rational_cuts", False)

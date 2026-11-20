@@ -72,23 +72,25 @@ theorem readBytearray_stateRel {width : Nat} [NeZero width] {S Q F : Type}
         (fun a => if mc.progAddresses a then some (t1.mem a) else none) = some x := by
   intro n
   induction n with
-  | zero => rintro a x ⟨-, h⟩; simpa [readBytearrayWordHOL] using h
+  | zero => rintro a x ⟨-, h⟩; simpa [readBytearrayWordHOL, readBytearrayGenericHOL] using h
   | succ n ih =>
     rintro a x ⟨hrel, h⟩
     obtain ⟨-, c2, c3, -, -, -, -, -, -, -, -, -, -, -, -, -, -, -, -, -, -, -, -, -, -, -, -,
       -, -, -, c31, -⟩ := id hrel
-    rw [readBytearrayWordHOL] at h ⊢
+    rw [readBytearrayWordHOL, readBytearrayGenericHOL] at h ⊢
     cases hb : memLoadByteAuxExact s1.memory s1.memDomain s1.be a with
     | none => simp [hb] at h
     | some b =>
-    cases hr : readBytearrayWordHOL (a + 1) n
+    cases hr : readBytearrayGenericHOL (a + 1) n
         (memLoadByteAuxExact s1.memory s1.memDomain s1.be) with
     | none => rw [hb, hr] at h; simp at h
     | some rest =>
     rw [hb, hr] at h
     simp only [Option.bind_eq_bind, Option.bind_some, Option.pure_def, Option.some.injEq] at h
     subst h
-    rw [ih (a + 1) rest ⟨hrel, hr⟩]
+    have targetTail := ih (a + 1) rest ⟨hrel, hr⟩
+    simp only [readBytearrayWordHOL] at targetTail
+    rw [targetTail]
     simp only [memLoadByteAuxExact, riscvByteAlignHOL_eq c2] at hb
     cases hv : s1.memory (holByteAlign a) with
     | loc _ _ => simp [hv] at hb
@@ -127,11 +129,11 @@ theorem asmWriteBytearray_outside {width : Nat} [NeZero width]
   | nil => intro _ _ _ _ _; rfl
   | cons b bs ih =>
     intro c1 x h a ha
-    rw [List.length_cons, readBytearrayWordHOL] at h
+    rw [List.length_cons, readBytearrayWordHOL, readBytearrayGenericHOL] at h
     cases hb : memLoadByteAuxExact memory dom be c1 with
     | none => rw [hb] at h; simp at h
     | some b0 =>
-    cases hr : readBytearrayWordHOL (c1 + 1) bs.length (memLoadByteAuxExact memory dom be) with
+    cases hr : readBytearrayGenericHOL (c1 + 1) bs.length (memLoadByteAuxExact memory dom be) with
     | none => rw [hb, hr] at h; simp at h
     | some rest =>
     have hne : a ≠ c1 := by
@@ -210,11 +212,11 @@ theorem callFFI_bytearray_lemma {width : Nat} [NeZero width] {mw : Nat} [NeZero 
   | nil => rintro c1 x ⟨-, -, -, -, -, -, h⟩; exact h
   | cons b bs ih =>
     rintro c1 x ⟨had, hg, htd, hsd, hbe, hrd, hv⟩
-    rw [List.length_cons, readBytearrayWordHOL] at hrd
+    rw [List.length_cons, readBytearrayWordHOL, readBytearrayGenericHOL] at hrd
     cases hb : memLoadByteAuxExact s1.memory s1.memDomain s1.be c1 with
     | none => rw [hb] at hrd; simp at hrd
     | some b0 =>
-    cases hr : readBytearrayWordHOL (c1 + 1) bs.length
+    cases hr : readBytearrayGenericHOL (c1 + 1) bs.length
         (memLoadByteAuxExact s1.memory s1.memDomain s1.be) with
     | none => rw [hb, hr] at hrd; simp at hrd
     | some rest =>

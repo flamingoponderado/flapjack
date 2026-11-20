@@ -385,6 +385,18 @@ REALS_AS_RATIONAL_CUTS_RE = re.compile(
 TOTAL_FUNCTION_INHABITANTS_RE = re.compile(
     r'\(\s*total_function_inhabitants\s*:=\s*\[([^]]*)\]\s*\)'
 )
+HOL_EXISTENTIAL_INHABITANTS_RE = re.compile(
+    r'\(\s*hol_existential_inhabitants\s*:=\s*\[([^]]*)\]\s*\)'
+)
+GC_LEMMA_EXISTENTIAL_INHABITANTS_RE = re.compile(
+    r'\(\s*gc_lemma_existential_inhabitants\s*:=\s*\[([^]]*)\]\s*\)'
+)
+NEW_REF_EXISTENTIAL_INHABITANTS_RE = re.compile(
+    r'\(\s*new_ref_existential_inhabitants\s*:=\s*\[([^]]*)\]\s*\)'
+)
+WRITE_WORD64_EXISTENTIAL_INHABITANTS_RE = re.compile(
+    r'\(\s*write_word64_existential_inhabitants\s*:=\s*\[([^]]*)\]\s*\)'
+)
 # The reviewed renderings of HOL's total functions on bad input.  HOL returns
 # an unspecified value for `EL`/`HD`/`THE`/`LAST`/`ALOOKUP`/`LINV`/`ARB`; Lean
 # takes it from a `Nonempty`/`Inhabited` instance on the element type.
@@ -611,7 +623,11 @@ def hol_attribute_sites(lines: list[str], *, include_fmap_existentials: bool = F
                         include_generalise_map: bool = False,
                         include_generalise_length: bool = False,
                         include_infer_subst_submap: bool = False,
-                        include_total_function_inhabitants: bool = False):
+                        include_total_function_inhabitants: bool = False,
+                        include_hol_existential_inhabitants: bool = False,
+                        include_gc_lemma_existential_inhabitants: bool = False,
+                        include_new_ref_existential_inhabitants: bool = False,
+                        include_write_word64_existential_inhabitants: bool = False):
     """Yield HOL attributes, including attributes split across Lean lines."""
     comment_depth = 0
     start: int | None = None
@@ -768,6 +784,46 @@ def hol_attribute_sites(lines: list[str], *, include_fmap_existentials: bool = F
                                   for field in match.group(1).split(",") if field.strip())
                     if len(matches) > 1:
                         names += ("",)  # Repeated qualifiers fail closed.
+                    site += (names,)
+                if include_hol_existential_inhabitants:
+                    matches = list(HOL_EXISTENTIAL_INHABITANTS_RE.finditer(attribute))
+                    occurrences = attribute.count("hol_existential_inhabitants")
+                    if occurrences == 0:
+                        names = ()
+                    elif occurrences != 1 or len(matches) != 1:
+                        names = ("",)
+                    else:
+                        names = tuple(field.strip() for field in matches[0].group(1).split(","))
+                    site += (names,)
+                if include_gc_lemma_existential_inhabitants:
+                    matches = list(GC_LEMMA_EXISTENTIAL_INHABITANTS_RE.finditer(attribute))
+                    occurrences = attribute.count("gc_lemma_existential_inhabitants")
+                    if occurrences == 0:
+                        names = ()
+                    elif occurrences != 1 or len(matches) != 1:
+                        names = ("",)
+                    else:
+                        names = tuple(field.strip() for field in matches[0].group(1).split(","))
+                    site += (names,)
+                if include_new_ref_existential_inhabitants:
+                    matches = list(NEW_REF_EXISTENTIAL_INHABITANTS_RE.finditer(attribute))
+                    occurrences = attribute.count("new_ref_existential_inhabitants")
+                    if occurrences == 0:
+                        names = ()
+                    elif occurrences != 1 or len(matches) != 1:
+                        names = ("",)
+                    else:
+                        names = tuple(field.strip() for field in matches[0].group(1).split(","))
+                    site += (names,)
+                if include_write_word64_existential_inhabitants:
+                    matches = list(WRITE_WORD64_EXISTENTIAL_INHABITANTS_RE.finditer(attribute))
+                    occurrences = attribute.count("write_word64_existential_inhabitants")
+                    if occurrences == 0:
+                        names = ()
+                    elif occurrences != 1 or len(matches) != 1:
+                        names = ("",)
+                    else:
+                        names = tuple(field.strip() for field in matches[0].group(1).split(","))
                     site += (names,)
                 yield site
         start = None
@@ -1854,7 +1910,7 @@ def parameter_has_hol_finite_map_binder(declaration_text: str, name: str) -> boo
 
 def fmap_as_finite_support_relation_errors(
     lines: list[str], entries: tuple[tuple[str, str], ...], module: str,
-    declaration_text: str = "",
+    declaration_text: str = "", *, audited_gc_store: bool = False,
 ) -> list[str]:
     """Validate a multi-carrier finite-map relation qualifier.
 
@@ -1872,6 +1928,7 @@ def fmap_as_finite_support_relation_errors(
     `fmap_as_finite_support` gate and does not relax it.
     """
     errors: list[str] = []
+    audited_gc_header = ""
     # The multi-owner qualifier is for relations, not state-valued conversions.
     # Theorems and lemmas are proposition-valued by Lean construction. For a
     # definition or abbreviation, require a visibly Prop-valued result; this
@@ -1901,6 +1958,8 @@ def fmap_as_finite_support_relation_errors(
             assignment = top_level_assignment_offset(declaration_text)
             if assignment is not None:
                 declaration_text = declaration_text[:assignment]
+            if audited_gc_store:
+                audited_gc_header = declaration_text
             # A `:=` in an unparenthesized let/have expression belongs to the
             # expression, not necessarily the declaration. Without a Lean
             # parser its extent and resulting type cannot be determined here.
@@ -1942,6 +2001,12 @@ def fmap_as_finite_support_relation_errors(
                 f"fmap_as_finite_support_relation bare entry `{name}` must be a "
                 "plain finite-map parameter name"
             )
+        elif audited_gc_store and name == "st":
+            # The two GC lemmas have a separately audited existential store.
+            # Their exact site, metadata, carrier and existential telescope are
+            # checked by the qualifier and elaborated-export gates.
+            if not re.search(r"∃[\s\S]*?\(st\s*:\s*HolFiniteMapExact\b", audited_gc_header):
+                errors.append("the audited GC store must be an existential HolFiniteMapExact")
         elif re.search(
             r"(?:∃!?\s*(?:\([^()]*\)\s*)*|\bExists\s*\(?\s*fun\s*)\(?\s*"
             + re.escape(name) + r"\s*:\s*HolFiniteMapExact\b", declaration_text
@@ -5018,8 +5083,28 @@ def reals_as_rational_cuts_errors(declaration_source: str, qualified: bool,
     return []
 
 
+def matches_inhabitance_baseline(signature: str, entry: dict) -> bool:
+    """Pin a legacy exception to its original signature and instance binders."""
+    code = strip_lean_comments(signature)
+    assignment = top_level_assignment_offset(code)
+    instances = sorted(TOTAL_FUNCTION_INSTANCE_RE.findall(code[:assignment] if assignment is not None else code))
+    return bool(instances and instances == entry.get("instances") and
+                hashlib.sha256(signature.encode()).hexdigest() == entry.get("signature_sha256"))
+
+
+def unqualified_inhabitants_errors(signature: str, qualified: bool) -> list[str]:
+    """Reject unrecorded HOL-type inhabitance assumptions on tagged declarations."""
+    code = strip_lean_comments(signature)
+    assignment = top_level_assignment_offset(code)
+    instances = TOTAL_FUNCTION_INSTANCE_RE.findall(code[:assignment] if assignment is not None else code)
+    if instances and not qualified:
+        return ["Nonempty/Inhabited instance requires a reviewed inhabitant qualifier"]
+    return []
+
+
 def total_function_inhabitants_errors(signature: str, declaration_source: str,
-                                      listed: tuple[str, ...]) -> list[str]:
+                                      listed: tuple[str, ...],
+                                      transitive_rendering: str | None = None) -> list[str]:
     """`(total_function_inhabitants := [...])` records that each listed type
     binder's single `Nonempty`/`Inhabited` instance exists only to render a HOL
     total function's unspecified value on bad input.  The qualifier records only
@@ -5027,6 +5112,9 @@ def total_function_inhabitants_errors(signature: str, declaration_source: str,
     change, and source review must confirm the instance is used only through
     those renderings."""
     signature_code = strip_lean_comments(signature)
+    assignment = top_level_assignment_offset(signature_code)
+    if assignment is not None:
+        signature_code = signature_code[:assignment]
     if not listed or "" in listed:
         return ["total_function_inhabitants requires distinct type binders"]
     duplicates = sorted({name for name in listed if listed.count(name) > 1})
@@ -5060,13 +5148,48 @@ def total_function_inhabitants_errors(signature: str, declaration_source: str,
                 f"the signature binds a Nonempty/Inhabited instance for {name}, which "
                 "total_function_inhabitants does not list")
     source_code = strip_lean_comments(declaration_source)
-    if not any(identifier_token_occurs(source_code, name)
-               for name in TOTAL_FUNCTION_RENDERING_NAMES):
+    # A theorem proof may mention anything; only its signature is evidence that
+    # a total rendering occurs in its HOL statement. Definitions use their body.
+    if re.search(r"\b(?:theorem|lemma)\b", signature_code):
+        assignment = top_level_assignment_offset(signature_code)
+        rendering_code = signature_code[:assignment] if assignment is not None else signature_code
+    else:
+        rendering_code = source_code
+    if not any(identifier_token_occurs(rendering_code, name)
+               for name in TOTAL_FUNCTION_RENDERING_NAMES) and not (
+            transitive_rendering and identifier_token_occurs(rendering_code, transitive_rendering)):
         errors.append(
             "total_function_inhabitants requires the declaration's own source to use a "
             "reviewed total-function rendering ("
             + ", ".join(TOTAL_FUNCTION_RENDERING_NAMES) + ")")
     return errors
+
+
+def join_env_locals_transitive_rendering(hol_path: str, hol_name: str, lean_path: str,
+                                         lean_name: str, listed: tuple[str, ...]) -> str | None:
+    """Only these reviewed GC declarations may inherit joinEnv's HOL THE instance.
+
+    The elaborated exporter separately checks the producer metadata, complete
+    wrapper body, and the full theorem statements; this identifies a source site
+    and does not by itself establish semantic correspondence.
+    """
+    direct = {
+        ("join_env_NIL", "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/StackRel.lean", "joinEnv_nil", ("α",)),
+        ("join_env_EQ_ZIP", "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/JoinZip.lean", "joinEnv_eq_zip", ("β",)),
+        ("LENGTH_MAP_SND_join_env_IMP", "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/JoinZip.lean", "length_filter_snd_joinEnv_imp", ("β",)),
+    }
+    if (hol_path == "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" and
+            (hol_name, lean_path, lean_name, listed) in direct):
+        return "joinEnv"
+    if (hol_path != "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" or
+            lean_path != "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/JoinEnvLocals.lean" or
+            listed != ("α",)):
+        return None
+    return {
+        ("join_env_locals_def", "joinEnvLocals"): "joinEnv",
+        ("join_env_locals_insert_odd", "joinEnvLocals_insertOdd"): "joinEnvLocals",
+        ("join_env_locals_insert_dest_odd", "joinEnvLocals_insertDestOdd"): "joinEnvLocals",
+    }.get((hol_name, lean_name))
 
 
 def _qualified_word_owner_names(module: str, name: str, root: str) -> set[str]:
@@ -5749,6 +5872,39 @@ def word_dimension_as_width_errors(declaration_text: str, declaration: str,
             "words_as_type_indexed_bitvec for a signature carrying words"
         )
     return errors
+
+def new_ref_existential_header_errors(source: str) -> list[str]:
+    """Pin the complete new_ref_thm telescope; inhabitance is the sole addition."""
+    source = strip_lean_comments(source)
+    if re.search(r"(?m)^\s*(?:variable|variables|include|omit)\b", source):
+        return ["new_ref_thm must have self-contained binders"]
+    matches = list(re.finditer(r"\btheorem\s+newRef\b(.*?):=\s*by\b", source, re.S))
+    if len(matches) != 1:
+        return ["new_ref_thm must have one direct theorem header"]
+    header = " ".join(matches[0].group(1).split())
+    digest = hashlib.sha256(header.encode()).hexdigest()
+    if digest != "c196216381c43a019d37b367e892b9fe0b92e1c455d98e5d5edee6cd343a9924":
+        return ["new_ref_thm telescope differs from the reviewed HOL statement and inhabitance translation"]
+    return []
+
+
+def word64_existential_header_errors(source: str, declaration: str) -> list[str]:
+    """Pin the complete typed HOL telescope and its sole witness translation."""
+    source = strip_lean_comments(source)
+    if re.search(r"(?m)^\s*(?:variable|variables|include|omit)\b", source):
+        return ["Word64 evaluator must have self-contained binders"]
+    matches = list(re.finditer(r"\btheorem\s+" + re.escape(declaration) + r"\b(.*?):=\s*by\b", source, re.S))
+    if len(matches) != 1:
+        return ["Word64 evaluator must have one direct theorem header"]
+    digest = hashlib.sha256(" ".join(matches[0].group(1).split()).encode()).hexdigest()
+    expected = {
+        "evaluateWriteWord64": "8ae1f5de96fce1a7c278da5ea9107f6708e4604c84be4540315fee351d7cc87d",
+        "evaluateWriteWord64On32": "188e67a3aaa19a4febcc7f6aa6cd9331c78bacdfb3ff22446c92ac59c05cecd4",
+    }
+    if digest != expected.get(declaration):
+        return ["Word64 evaluator telescope differs from the reviewed HOL statement and inhabitance translation"]
+    return []
+
 
 def word_dimensions_as_widths_errors(declaration_text: str, declaration: str,
                                      width_names: tuple[str, ...]) -> list[str]:
@@ -6635,6 +6791,18 @@ def main(argv: list[str]) -> int:
         errors.extend(f"guarded unifier preflight: {error}" for error in
                       unify_eq_tunify_preflight(ROOT, observation_records))
     reals_names = reals_rendering_names(ROOT)
+    baseline_path = ROOT / "scripts/hol-unqualified-inhabitants-baseline.json"
+    baseline_data = json.loads(baseline_path.read_text()) if baseline_path.is_file() else {}
+    baseline_entries = baseline_data.get("entries", [])
+    proof_only_entries = baseline_data.get("proof_only_renderings_pending_classification", [])
+    proof_only = {(e["path"], e["declaration"], e["hol_path"], e["hol_name"]): e for e in proof_only_entries}
+    if len(proof_only) != len(proof_only_entries):
+        errors.append("duplicate proof-only rendering baseline entry")
+    used_proof_only: set[tuple[str, str, str, str]] = set()
+    baseline = {(e["path"], e["declaration"], e["hol_path"], e["hol_name"]): e for e in baseline_entries}
+    if len(baseline) != len(baseline_entries):
+        errors.append("duplicate unqualified inhabitance baseline entry")
+    used_baseline: set[tuple[str, str, str, str]] = set()
     for lean_path in files:
         rel = lean_path.relative_to(ROOT).as_posix()
         lines = lean_path.read_text(encoding="utf-8").splitlines()
@@ -6667,7 +6835,9 @@ def main(argv: list[str]) -> int:
              fmap_function_positions, fmap_heterogeneous_function_positions, reals_cuts,
              fmap_equality, result_observations, dimension_widths, fmap_tuple, nested_list_rel,
              predicate_domain, fmap_universals, generalise_map, generalise_length,
-             infer_subst_submap, total_function_inhabitants) in hol_attribute_sites(
+             infer_subst_submap, total_function_inhabitants, hol_existential_inhabitants,
+             gc_lemma_existential_inhabitants, new_ref_existential_inhabitants,
+             write_word64_existential_inhabitants) in hol_attribute_sites(
                 lines, include_fmap_existentials=True,
                 include_word_dimension_width=True,
                 include_fmap_function=True,
@@ -6684,8 +6854,74 @@ def main(argv: list[str]) -> int:
                 include_generalise_length=True,
                 include_infer_subst_submap=True,
                 include_total_function_inhabitants=True,
+                include_hol_existential_inhabitants=True,
+                include_gc_lemma_existential_inhabitants=True,
+                include_new_ref_existential_inhabitants=True,
+                include_write_word64_existential_inhabitants=True,
              ):
             where = f"{rel}:{number}"
+            gc_ref = (hol_path, hol_name) == (
+                "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "state_rel_gc_gen")
+            gc_lemma_ref = (hol_path, hol_name) == (
+                "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "gc_lemma_gen")
+            if gc_ref or gc_lemma_ref or hol_existential_inhabitants or gc_lemma_existential_inhabitants:
+                old_site = (gc_ref and hol_existential_inhabitants == ("T2._t2", "W1._w1", "W2._w2") and
+                            not gc_lemma_existential_inhabitants and
+                            (rel, find_lean_decl(lines, number - 1)) ==
+                            ("Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/StateRelGc.lean", "stateRel_gcGen"))
+                new_site = (gc_lemma_ref and gc_lemma_existential_inhabitants == ("W1._w1", "W2._w2") and
+                            not hol_existential_inhabitants and
+                            (rel, find_lean_decl(lines, number - 1)) ==
+                            ("Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/GcLemma.lean", "gcLemma_gen"))
+                if not ((old_site or new_site) and hol_line is None and
+                        fmap_relation == (("st", ""), ("WordSemStateFiniteExact", "fpRegs"),
+                                          ("WordSemStateFiniteExact", "store")) and
+                        words_bitvec and not (list_fields or names_fields or boundary_fields or
+                            fmap_fields or fmap_result or fmap_equalities or fmap_parameters or
+                            fmap_existentials or dimension_width or fmap_function_positions or
+                            fmap_heterogeneous_function_positions or reals_cuts or fmap_equality or
+                            result_observations or dimension_widths or fmap_tuple or nested_list_rel or
+                            predicate_domain or fmap_universals or generalise_map or generalise_length or
+                            infer_subst_submap or total_function_inhabitants)):
+                    errors.append(f"{where}: invalid existential inhabitance target or qualifiers")
+            new_ref_site = (hol_path, hol_name) == (
+                "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml", "new_ref_thm")
+            if new_ref_site or new_ref_existential_inhabitants:
+                if not (new_ref_site and new_ref_existential_inhabitants == ("β._p",) and
+                        (rel, find_lean_decl(lines, number - 1)) ==
+                        ("Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/FreshRefProof.lean", "newRef") and
+                        hol_line is None and words_bitvec and not (
+                            list_fields or names_fields or boundary_fields or fmap_fields or fmap_result or
+                            fmap_relation or fmap_equalities or fmap_parameters or fmap_existentials or
+                            dimension_width or fmap_function_positions or fmap_heterogeneous_function_positions or
+                            reals_cuts or fmap_equality or result_observations or dimension_widths or fmap_tuple or
+                            nested_list_rel or predicate_domain or fmap_universals or generalise_map or
+                            generalise_length or infer_subst_submap or total_function_inhabitants or
+                            hol_existential_inhabitants or gc_lemma_existential_inhabitants)):
+                    errors.append(f"{where}: invalid fresh-reference existential inhabitance target or qualifiers")
+            if new_ref_existential_inhabitants:
+                errors.extend(f"{where}: {error}" for error in new_ref_existential_header_errors("\n".join(lines)))
+            word64_sites = {
+                "evaluate_WriteWord64": "evaluateWriteWord64",
+                "evaluate_WriteWord64_on_32": "evaluateWriteWord64On32",
+            }
+            word64_path = "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml"
+            word64_ref = hol_path == word64_path and hol_name in word64_sites
+            if word64_ref or write_word64_existential_inhabitants:
+                if not (word64_ref and write_word64_existential_inhabitants == ("β._unused",) and
+                        (rel, find_lean_decl(lines, number - 1)) ==
+                        ("Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/WriteWord64.lean", word64_sites.get(hol_name)) and
+                        hol_line is None and words_bitvec and fmap_fields == ("fpRegs", "store") and not (
+                            list_fields or names_fields or boundary_fields or fmap_result or fmap_relation or
+                            fmap_equalities or fmap_parameters or fmap_existentials or dimension_width or
+                            fmap_function_positions or fmap_heterogeneous_function_positions or reals_cuts or
+                            fmap_equality or result_observations or dimension_widths or fmap_tuple or nested_list_rel or
+                            predicate_domain or fmap_universals or generalise_map or generalise_length or
+                            infer_subst_submap or total_function_inhabitants or hol_existential_inhabitants or
+                            gc_lemma_existential_inhabitants or new_ref_existential_inhabitants)):
+                    errors.append(f"{where}: invalid Word64 existential inhabitance target or qualifiers")
+                if word64_ref:
+                    errors.extend(f"{where}: {error}" for error in word64_existential_header_errors("\n".join(lines), word64_sites[hol_name]))
             walkstar_ref = (hol_path, hol_name) == (
                 "cakeml/compiler/inference/inferPropsScript.sml", "subst_infer_subst_swap")
             submap_ref = (hol_path, hol_name) == (
@@ -6877,15 +7113,32 @@ def main(argv: list[str]) -> int:
                 else:
                     errors.extend(f"{where}: {error}" for error in fmap_result_observation_errors(
                         lines, module, declaration_source, result_observations, observation_records))
+            inhabitant_signature = tagged_declaration_text(lines, number)
+            inhabitant_qualified = bool(total_function_inhabitants or hol_existential_inhabitants or
+                gc_lemma_existential_inhabitants or new_ref_existential_inhabitants or
+                write_word64_existential_inhabitants)
+            legacy_key = (rel, find_lean_decl(lines, number - 1), hol_path, hol_name)
+            legacy_accepted = False
+            if not inhabitant_qualified and legacy_key in baseline:
+                entry = baseline[legacy_key]
+                if matches_inhabitance_baseline(inhabitant_signature, entry):
+                    used_baseline.add(legacy_key)
+                    legacy_accepted = True
+            errors.extend(f"{where}: {error}" for error in unqualified_inhabitants_errors(
+                inhabitant_signature, inhabitant_qualified or legacy_accepted))
             if total_function_inhabitants:
-                errors.extend(
-                    f"{where}: {error}"
-                    for error in total_function_inhabitants_errors(
-                        tagged_declaration_text(lines, number),
-                        tagged_declaration_source(lines, number),
-                        total_function_inhabitants,
-                    )
-                )
+                transitive = join_env_locals_transitive_rendering(
+                    hol_path, hol_name, rel, find_lean_decl(lines, number - 1),
+                    total_function_inhabitants)
+                total_errors = total_function_inhabitants_errors(
+                    inhabitant_signature, tagged_declaration_source(lines, number),
+                    total_function_inhabitants, transitive)
+                if (legacy_key in proof_only and len(total_errors) == 1 and
+                        "requires the declaration's own source to use" in total_errors[0] and
+                        matches_inhabitance_baseline(inhabitant_signature, proof_only[legacy_key])):
+                    used_proof_only.add(legacy_key)
+                    total_errors = []
+                errors.extend(f"{where}: {error}" for error in total_errors)
             errors.extend(
                 f"{where}: {error}"
                 for error in reals_as_rational_cuts_errors(
@@ -6993,7 +7246,8 @@ def main(argv: list[str]) -> int:
                 errors.extend(
                     f"{where}: {error}"
                     for error in fmap_as_finite_support_relation_errors(
-                        lines, fmap_relation, rel, tagged_declaration_text(lines, number)
+                        lines, fmap_relation, rel, tagged_declaration_text(lines, number),
+                        audited_gc_store=gc_ref or gc_lemma_ref,
                     )
                 )
             if fmap_equalities:
@@ -7086,6 +7340,11 @@ def main(argv: list[str]) -> int:
                 continue
             mapped_name = f"{hol_name}:{hol_line}" if hol_line is not None else hol_name
             mapping.append((where, lean_decl, hol_path, mapped_name))
+
+    for legacy_key in sorted(proof_only.keys() - used_proof_only):
+        errors.append(f"stale or changed proof-only rendering baseline entry: {legacy_key}")
+    for legacy_key in sorted(baseline.keys() - used_baseline):
+        errors.append(f"stale or changed unqualified inhabitance baseline entry: {legacy_key}")
 
     if want_mapping:
         for row in mapping:

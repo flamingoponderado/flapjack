@@ -52,4 +52,21 @@ theorem wordMlInv_lookup {width : Nat} [NeZero width]
   · exact Or.inl (Or.inr inJoin)
   · exact Or.inr inXs
 
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "word_ml_inv_cons_snoc"
+  (words_as_type_indexed_bitvec)]
+theorem wordMlInv_cons_snoc {width : Nat} [NeZero width] (heap : ValueHeap width) (be : Bool)
+    (a sp sp1 : Nat) (gens : Flapjack.Compiler.Backend.GcCombined.GenState) (limit ts : Nat) (c : Config)
+    (refs : Spt (Flapjack.Compiler.Backend.BvlSem.Ref Flapjack.Compiler.Backend.DataSem.Value))
+    (x : Flapjack.Compiler.Backend.DataSem.Value × WordLocW width)
+    (xs : List (Flapjack.Compiler.Backend.DataSem.Value × WordLocW width))
+    (h : wordMlInv (heap, be, a, sp, sp1, gens) limit ts c refs (x :: xs)) :
+    wordMlInv (heap, be, a, sp, sp1, gens) limit ts c refs (xs ++ [x]) := by
+  apply wordMlInv_rearrange heap be a sp sp1 gens limit ts c refs (x :: xs) (xs ++ [x])
+  · intro pair hp
+    simp only [List.mem_append, List.mem_cons, List.not_mem_nil, or_false] at hp ⊢
+    rcases hp with hp | rfl
+    · exact Or.inr hp
+    · exact Or.inl rfl
+  · exact h
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

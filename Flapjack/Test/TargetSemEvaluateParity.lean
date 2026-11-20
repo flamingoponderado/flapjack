@@ -91,14 +91,14 @@ def emptyExternal (mc : MachineConfig 8 Nat Nat) : MachineConfig 8 Nat Nat :=
 example (mc : MachineConfig 8 Nat Nat) (ffi : HolFfiState Nat) :
     evaluateTargetHOL (emptyExternal mc) ffi 1 7 = (.timeOut, 17, ffi) := by
   simp [evaluateTargetHOL, emptyExternal, fixture, Misc.findIndex, holEl, holHd,
-    sptAListLookup, readFfiBytearraysHOL, readFfiBytearrayHOL, readBytearrayWordHOL,
+    sptAListLookup, readFfiBytearraysHOL, readFfiBytearrayHOL, readBytearrayWordHOL, readBytearrayGenericHOL,
     callFFIHOL, applyOracleHOL]
 
 -- Original HOL te_empty_external_shift=T.
 example (mc : MachineConfig 8 Nat Nat) (ffi : HolFfiState Nat) :
     evaluateTargetHOL (emptyExternal mc) ffi 2 7 = (.timeOut, 28, ffi) := by
   simp [evaluateTargetHOL, emptyExternal, fixture, Misc.findIndex, holEl, holHd,
-    sptAListLookup, readFfiBytearraysHOL, readFfiBytearrayHOL, readBytearrayWordHOL,
+    sptAListLookup, readFfiBytearraysHOL, readFfiBytearrayHOL, readBytearrayWordHOL, readBytearrayGenericHOL,
     callFFIHOL, applyOracleHOL, holShiftSeq]
 
 
