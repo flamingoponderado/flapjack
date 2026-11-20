@@ -381,6 +381,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.StringCmpCorrect
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.DerefByte
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.UpdateByte
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.ElemAt
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.El
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.RealAddress
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.EnvToList
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.CutEnvDomain
