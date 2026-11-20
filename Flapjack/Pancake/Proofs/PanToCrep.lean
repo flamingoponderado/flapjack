@@ -303,8 +303,14 @@ theorem shapeOfHOLExact_val_alt {width : Nat} [NeZero width] (x : HolWordLab wid
     type free and independent, so the Lean statement quantifies
     `es : List (List α)` at its own type parameter. `cexp_heads_simp` is the
     tagged `cexpHeadsSimpHOL` rendering, and `DecidableEq α` encodes HOL
-    equality for the `MEM []` guard. -/
-@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "cexp_heads_eq"]
+    equality for the `MEM []` guard.
+
+    This theorem states HOL `cexp_heads_eq`, but its `[Nonempty α]` instance
+    reaches `holHd` only through the tagged `cexpHeadsSimpHOL` definition, and
+    the `total_function_inhabitants` checker does not yet accept that route
+    (its only transitive route is the hard-wired `joinEnv` list in
+    `scripts/check-hol-refs.py`). It is therefore left untagged; re-tagging
+    waits on a maintainer decision to extend that route. -/
 theorem cexpHeads_eq_cexpHeadsSimpHOL {α : Type} [DecidableEq α] [Nonempty α]
     (es : List (List α)) :
     cexpHeads es = cexpHeadsSimpHOL es := by
