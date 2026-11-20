@@ -145018,6 +145018,22 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "heap_store_unused_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/HeapStore.lean",
+  "lean_name": "heapStoreUnused",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Source comparison: The typed HOL definition and Lean body retain independent heap carriers, the unused lookup and size test, end-of-region allocation order, store call and failure result."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "heap_store_unused_heap_lookup",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/HeapStore.lean",
+  "lean_name": "heapStoreUnused_lookup",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Source comparison: The typed HOL theorem and Lean statement retain independent heap carriers, successful allocation and an index strictly before its target, concluding equality of the corresponding heap lookups."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
   "hol_name": "heap_store_rel_def",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/HeapStore.lean",
   "lean_name": "heapStoreRel",

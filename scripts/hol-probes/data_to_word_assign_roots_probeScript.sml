@@ -533,6 +533,8 @@ val _ = emit "heap_store_unused_alt_gen_state_ok_typed" heap_store_unused_alt_ge
 
 val _ = emit "heap_store_unused_alt_heap_lookup_typed" data_to_word_memoryProofTheory.heap_store_unused_alt_heap_lookup;
 val _ = emit "heap_store_unused_alt_def_typed" data_to_word_memoryProofTheory.heap_store_unused_alt_def;
+val _ = emit "heap_store_unused_heap_lookup_typed" data_to_word_memoryProofTheory.heap_store_unused_heap_lookup;
+val _ = emit "heap_store_unused_def_typed" data_to_word_memoryProofTheory.heap_store_unused_def;
 val _ = emit "heap_store_rel_def_typed" data_to_word_memoryProofTheory.heap_store_rel_def;
 val _ = emit "memory_rel_Cons_empty_typed" data_to_word_memoryProofTheory.memory_rel_Cons_empty;
 val _ = emit "parts_to_words_add_typed" data_to_word_memoryProofTheory.parts_to_words_add;

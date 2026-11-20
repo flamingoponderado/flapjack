@@ -22,6 +22,15 @@ def heapStore {α β : Type} (offset : Nat) (replacement : List (HeapElement α 
       else let (rest, success) := heapStore (offset - elLength head) replacement tail
         (head :: rest, success)
 
+/-- Replace an unused region, placing the new element at its end. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "heap_store_unused_def"]
+noncomputable def heapStoreUnused {α β : Type} (offset length : Nat)
+    (element : HeapElement α β) (heap : List (HeapElement α β)) : List (HeapElement α β) × Bool := by
+  classical
+  exact if heapLookup offset heap = some (.unused (length - 1)) ∧ elLength element ≤ length then
+    heapStore offset (heapExpand (length - elLength element) ++ [element]) heap
+  else (heap, false)
+
 /-- Replace an unused region, placing the new element at its beginning. -/
 @[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "heap_store_unused_alt_def"]
 noncomputable def heapStoreUnusedAlt {α β : Type} (offset length : Nat)
@@ -71,6 +80,19 @@ private theorem heapStore_lookup_before {α β : Type} (heap : List (HeapElement
           · simp only [heapLookup, zero, ↓reduceIte, nInside]
             apply ih (offset - elLength head) (n - elLength head) rest h
             omega
+
+/-- An end-of-region allocation preserves lookups before the region. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "heap_store_unused_heap_lookup"]
+theorem heapStoreUnused_lookup {α β : Type} (heap heap2 : List (HeapElement α β))
+    (offset length : Nat) (element : HeapElement α β) (n : Nat) :
+    heapStoreUnused offset length element heap = (heap2, true) ∧ n < offset →
+    heapLookup n heap = heapLookup n heap2 := by
+  classical
+  rintro ⟨run, before⟩
+  unfold heapStoreUnused at run
+  split at run
+  · exact heapStore_lookup_before heap offset n _ heap2 run before
+  · simp at run
 
 /-- Allocating unused space preserves lookups strictly before the allocation. -/
 @[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "heap_store_unused_alt_heap_lookup"]
