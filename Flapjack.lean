@@ -557,6 +557,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Space
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Number
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.NumberCompare
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BoundsCheck
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.NumberArithmetic
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ByteBitwise
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Restriction

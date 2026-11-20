@@ -272,4 +272,7 @@ val _ = emit "memory_rel_Cons_alt_typed" "memory_rel_Cons_alt";
 val _ = print ("BlockNil_and_lemma_hypotheses=" ^
   Int.toString (length (hyp BlockNil_and_lemma)) ^ "\n");
 val _ = emit "BlockNil_and_lemma_typed" "BlockNil_and_lemma";
+val _ = print ("memory_rel_bounds_check_hypotheses=" ^
+  Int.toString (length (hyp memory_rel_bounds_check)) ^ "\n");
+val _ = emit "memory_rel_bounds_check_typed" "memory_rel_bounds_check";
 val _ = emit "memory_rel_write_bytearray_typed" "memory_rel_write_bytearray";

@@ -46,7 +46,7 @@ of `write_bytes_APPEND`, `write_bytes_same`, `w2n_add_byte_align_lemma`,
 `heap_in_memory_store_UpdateByte`, `memory_rel_ByteArray_IMP`,
 `write_bytearray_isWord`, `write_bytearray_append`, and
 `memory_rel_write_bytearray`, and the typed statement and hypothesis count of
-`memory_rel_Cons_alt` and `BlockNil_and_lemma` from the original memory proof.
+`memory_rel_Cons_alt`, `BlockNil_and_lemma`, and `memory_rel_bounds_check` from the original memory proof.
 Regenerate it with `HOL_PROBE_ONLY=data_to_word_memory_proof_typed_probeScript.sml
 scripts/hol-probes/regenerate.sh` using the pinned source revisions.
 
