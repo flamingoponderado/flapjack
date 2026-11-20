@@ -145869,6 +145869,17 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "evaluate_WordOp64_on_32",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/WordOp64.lean",
+  "lean_name": "evaluateWordOp64On32",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_WordOp64_on_32_typed: for an arbitrary target state, locals, operation and two word64 operands, dimension 32 implies existence of the same two arbitrary scratch values and the exact successful evaluation with all eight locals insertions in original order. ClosSem.applyWordOp implements the five HOL opw_lookup operations. The target state uses canonical finite maps and positive-width words; its general evaluator inherits the rational-cut real model."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
   "hol_name": "IMP_encode_header_NOT_NONE",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/WordOp64.lean",
   "lean_name": "encodeHeader32NotNone",
