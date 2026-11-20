@@ -142,4 +142,32 @@ theorem simpleValRel_list (x x₁ : Value) (xs : List Value) (vr : Value → Val
     have fields : List.Forall₂ vr xs₁ xs := by simpa [left] using observed
     exact ⟨xs₁, (valueRel_listToValue vr xs _ simple).mpr ⟨xs₁, rfl, fields⟩, rfl⟩
 
+/-- A closure value never decodes as a list. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "isClos_IMP_v_to_list_NONE"]
+theorem isClos_valueToList_none (x : Value) (closed : isClos x) : valueToList x = none := by
+  cases x <;> simp_all [isClos, valueToList]
+
+/-- A related target that decodes as a list yields a related source list. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "v_to_list_SOME"]
+theorem valueToList_some (y : Value) (ys : List Value) (x : Value)
+    (vr : Value → Value → Prop) (simple : simpleValRel vr)
+    (h : vr x y ∧ valueToList y = some ys) :
+    ∃ xs, List.Forall₂ vr xs ys ∧ valueToList x = some xs := by
+  obtain ⟨related, targetSome⟩ := h
+  have observed := valueToList_related vr simple x y related
+  rw [targetSome] at observed
+  cases left : valueToList x with
+  | none => simp only [left] at observed
+  | some xs =>
+    simp only [left] at observed
+    exact ⟨xs, observed, rfl⟩
+
+/-- A related target that fails to decode forces the source to fail too, stated
+with the original's explicit quantifiers. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "v_to_list_NONE"]
+theorem valueToList_none (y : Value) (x : Value) (vr : Value → Value → Prop)
+    (simple : simpleValRel vr) (h : vr x y ∧ valueToList y = none) :
+    valueToList x = none :=
+  valueRel_list_none x y vr ⟨simple, h.1, h.2⟩
+
 end Flapjack.Compiler.Backend.ClosProps
