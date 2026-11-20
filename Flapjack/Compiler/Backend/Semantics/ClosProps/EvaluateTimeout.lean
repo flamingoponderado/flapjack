@@ -177,10 +177,10 @@ private theorem evaluate_install_timeout {C F : Type} (trace : BackendCommon.Tra
 @[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "evaluate_timeout_clocks0"
   (fmap_as_finite_support := [refs, code])]
 theorem evaluateTimeoutClocks0 {C F : Type} :
-    (∀ (expressions : List ClosLang.Exp) (env : List ClosSem.Value)
-      (state : ClosSem.State C F) (next : ClosSem.State C F),
-      ClosSem.evaluate expressions env state = (.err (.abort .timeoutError), next) →
-      next.clock = 0) ∧
+    (∀ (v : List ClosLang.Exp × List ClosSem.Value × ClosSem.State C F)
+      (s : ClosSem.State C F),
+      ClosSem.evaluate v.1 v.2.1 v.2.2 = (.err (.abort .timeoutError), s) →
+      s.clock = 0) ∧
     (∀ (locopt : Option Nat) (function : ClosSem.Value) (args : List ClosSem.Value)
       (state : ClosSem.State C F) (next : ClosSem.State C F),
       ClosSem.evaluateApp locopt function args state = (.err (.abort .timeoutError), next) →
@@ -586,9 +586,8 @@ theorem evaluateTimeoutClocks0 {C F : Type} :
                             arguments functionNext = (.err (.abort .timeoutError), next) at run
                           exact appBound location _ arguments functionNext next (by omega) run
   constructor
-  · intro expressions env state next run
-    exact (all state.clock).2 (ClosSem.expsWeight expressions) expressions env state next rfl rfl
-      run
+  · intro v s run
+    exact (all v.2.2.clock).2 (ClosSem.expsWeight v.1) v.1 v.2.1 v.2.2 s rfl rfl run
   · intro locopt function args state next run
     exact (all state.clock).1 locopt function args state next rfl run
 
