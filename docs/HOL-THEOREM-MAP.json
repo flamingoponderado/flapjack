@@ -145106,6 +145106,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "IMP_heap_store_unused",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/HeapAllocate.lean",
+  "lean_name": "heapStoreUnused_exists",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Source comparison with typed replay of the original local HOL proof: the unused-space and size premises imply an existential heap with all nine allocation, unused-space, lookup, length, forwarding, membership, data-location set and preservation conclusions. The HOL set is a predicate on natural-number addresses and both generic heap carriers remain independent."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
   "hol_name": "cons_thm_alt",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/ConsAlt.lean",
   "lean_name": "consThm_alt",

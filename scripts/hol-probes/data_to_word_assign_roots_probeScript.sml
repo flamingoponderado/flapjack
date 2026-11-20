@@ -260,6 +260,134 @@ in (lemma1, lemma2, lemma3) end;
 val _ = emit "isSomeDataElement_heap_lookup_lemma1_typed" lookup_unused_replay;
 val _ = emit "isSomeDataElement_heap_lookup_lemma2_typed" lookup_expand_replay;
 val _ = emit "isSomeDataElement_heap_lookup_lemma3_typed" lookup_cons_replay;
+
+(* Replay the full local end-of-region allocation proof. *)
+val IMP_heap_store_unused_replay = let
+  open preamble helperLib gc_sharedTheory data_to_word_memoryProofTheory
+  val isSomeDataElement_heap_lookup_lemma1 = lookup_unused_replay
+  val isSomeDataElement_heap_lookup_lemma2 = lookup_expand_replay
+  val isSomeDataElement_heap_lookup_lemma3 = lookup_cons_replay
+in
+  Q.prove (`unused_space_inv a sp (heap:('a,'b) heap_element list) /\
+    el_length x <= sp ==>
+    ?heap2. (heap_store_unused a sp x heap = (heap2,T)) /\
+            unused_space_inv a (sp - el_length x) heap2 /\
+            (heap_lookup (a + sp - el_length x) heap2 = SOME x) /\
+            ~isSomeDataElement (heap_lookup (a + sp - el_length x) heap) /\
+            (heap_length heap2 = heap_length heap) /\
+            (~isForwardPointer x ==>
+             (FILTER isForwardPointer heap2 = FILTER isForwardPointer heap)) /\
+            (!xs l d.
+               MEM (DataElement xs l d) heap2 <=>
+                 (x = DataElement xs l d) \/
+                 MEM (DataElement xs l d) heap) /\
+            (isDataElement x ==>
+             ({a | isSomeDataElement (heap_lookup a heap2)} =
+               a + sp - el_length x
+                 INSERT {a | isSomeDataElement (heap_lookup a heap)})) /\
+            heap_store_rel heap heap2`,
+  rpt strip_tac \\ asm_simp_tac std_ss [heap_store_unused_def,heap_store_rel_def]
+  \\ `sp <> 0` by (Cases_on `x` \\ full_simp_tac std_ss [el_length_def] \\ DECIDE_TAC)
+  \\ full_simp_tac std_ss [unused_space_inv_def]
+  \\ imp_res_tac heap_lookup_SPLIT \\ full_simp_tac std_ss []
+  \\ full_simp_tac std_ss [heap_store_lemma]
+  \\ strip_tac THEN1
+   (full_simp_tac (srw_ss()) [heap_length_def,SUM_APPEND,el_length_def]
+    \\ full_simp_tac std_ss [GSYM heap_length_def,heap_length_heap_expand]
+    \\ DECIDE_TAC)
+  \\ strip_tac THEN1
+   (rpt strip_tac \\ full_simp_tac std_ss
+      [heap_expand_def,APPEND,GSYM APPEND_ASSOC,heap_lookup_PREFIX])
+  \\ strip_tac THEN1
+   (fs [heap_length_APPEND,el_length_def,heap_length_heap_expand])
+  \\ strip_tac THEN1
+   (full_simp_tac std_ss [GSYM APPEND_ASSOC,data_up_to_APPEND])
+  \\ strip_tac THEN1
+   (full_simp_tac std_ss [GSYM APPEND_ASSOC,APPEND]
+    \\ full_simp_tac std_ss [APPEND_ASSOC]
+    \\ `heap_length ha + sp - el_length x =
+        heap_length (ha ++ heap_expand (sp - el_length x))` by
+     (full_simp_tac std_ss [heap_length_APPEND,heap_length_heap_expand] \\ DECIDE_TAC)
+    \\ full_simp_tac std_ss [heap_lookup_PREFIX])
+  \\ strip_tac THEN1
+   (`~(heap_length ha + sp - el_length x < heap_length ha)` by DECIDE_TAC
+    \\ imp_res_tac NOT_LESS_IMP_heap_lookup
+    \\ full_simp_tac std_ss []
+    \\ `heap_length ha + sp - el_length x - heap_length ha =
+        sp - el_length x` by DECIDE_TAC \\ full_simp_tac std_ss []
+    \\ simp_tac std_ss [heap_lookup_def]
+    \\ srw_tac [] [isSomeDataElement_def,el_length_def]
+    \\ reverse (full_simp_tac std_ss [])
+    \\ Cases_on `x` \\ full_simp_tac std_ss [el_length_def]
+    \\ `F` by DECIDE_TAC)
+  \\ strip_tac THEN1
+   (full_simp_tac (srw_ss()) [heap_length_APPEND,heap_length_heap_expand,
+      heap_length_def,el_length_def] \\ DECIDE_TAC)
+  \\ strip_tac THEN1
+   (full_simp_tac std_ss [rich_listTheory.FILTER_APPEND,FILTER,isForwardPointer_def,APPEND_NIL]
+    \\ srw_tac [] [heap_expand_def,isForwardPointer_def])
+  \\ strip_tac THEN1
+   (full_simp_tac (srw_ss()) [MEM_APPEND,MEM,heap_expand_def]
+    \\ Cases_on `sp <= el_length x` \\ full_simp_tac (srw_ss()) []
+    \\ metis_tac [])
+  \\ strip_tac THEN1
+   (rpt strip_tac \\ full_simp_tac (srw_ss()) [EXTENSION]
+    \\ strip_tac \\ Q.ABBREV_TAC `y = x'` \\ POP_ASSUM (K ALL_TAC)
+    \\ Cases_on `y = heap_length ha + sp - el_length x`
+    \\ full_simp_tac std_ss [] THEN1
+     (once_rewrite_tac [GSYM APPEND_ASSOC] \\ simp_tac std_ss [APPEND]
+      \\ `(heap_length ha + sp - el_length x) =
+          heap_length (ha ++ heap_expand (sp - el_length x))` by
+       (full_simp_tac std_ss [heap_length_APPEND,heap_length_heap_expand]
+        \\ DECIDE_TAC)
+      \\ full_simp_tac std_ss [heap_lookup_PREFIX]
+      \\ full_simp_tac (srw_ss()) [isDataElement_def,isSomeDataElement_def])
+    \\ Cases_on `y < heap_length ha`
+    THEN1 (full_simp_tac std_ss [LESS_IMP_heap_lookup,GSYM APPEND_ASSOC])
+    \\ imp_res_tac NOT_LESS_IMP_heap_lookup
+    \\ full_simp_tac std_ss [GSYM APPEND_ASSOC]
+    \\ full_simp_tac std_ss [isSomeDataElement_heap_lookup_lemma1,
+         isSomeDataElement_heap_lookup_lemma2]
+    \\ `0 < el_length x` by
+         (Cases_on `x` \\ full_simp_tac std_ss [el_length_def] \\ DECIDE_TAC)
+    \\ reverse (Cases_on `sp <= el_length x + (y - heap_length ha)`)
+    \\ full_simp_tac std_ss []
+    THEN1 (CCONTR_TAC \\ full_simp_tac std_ss [] \\ DECIDE_TAC)
+    \\ `0 < y - heap_length ha` by DECIDE_TAC
+    \\ full_simp_tac std_ss []
+    \\ `y - heap_length ha - (sp - el_length x) <> 0` by DECIDE_TAC
+    \\ full_simp_tac std_ss [APPEND,isSomeDataElement_heap_lookup_lemma3]
+    \\ reverse (Cases_on `el_length x <= y - heap_length ha - (sp - el_length x)`)
+    \\ full_simp_tac std_ss []
+    THEN1 (CCONTR_TAC \\ full_simp_tac std_ss [] \\ DECIDE_TAC)
+    \\ `sp < 1 + (y - heap_length ha)` by DECIDE_TAC
+    \\ full_simp_tac std_ss [SUB_SUB]
+    \\ imp_res_tac (DECIDE ``sp <> 0 ==> (sp - 1 + 1 = sp:num)``)
+    \\ full_simp_tac std_ss []
+    \\ imp_res_tac (DECIDE  ``n <= sp ==> (y - m + n - sp - n = y - m - sp:num)``)
+    \\ full_simp_tac std_ss [])
+  \\ rpt strip_tac
+  \\ full_simp_tac std_ss [isSomeDataElement_def]
+  \\ Cases_on `ptr < heap_length ha`
+  THEN1 (imp_res_tac LESS_IMP_heap_lookup \\ full_simp_tac std_ss [GSYM APPEND_ASSOC])
+  \\ imp_res_tac NOT_LESS_IMP_heap_lookup \\ full_simp_tac std_ss [GSYM APPEND_ASSOC]
+  \\ POP_ASSUM (K ALL_TAC) \\ qpat_x_assum `xxx = SOME yyy` MP_TAC
+  \\ simp_tac std_ss [Once heap_lookup_def] \\ srw_tac [] []
+  \\ `~(ptr - heap_length ha < heap_length (heap_expand (sp - el_length x) ++ [x]))` by
+   (full_simp_tac (srw_ss()) [heap_length_APPEND,heap_length_heap_expand,
+      el_length_def,heap_length_def] \\ DECIDE_TAC)
+  \\ imp_res_tac NOT_LESS_IMP_heap_lookup \\ POP_ASSUM (K ALL_TAC)
+  \\ POP_ASSUM (fn th => once_rewrite_tac [th])
+  \\ `heap_length (heap_expand (sp - el_length x) ++ [x]) = sp` by
+   (full_simp_tac (srw_ss()) [heap_length_APPEND,heap_length_heap_expand,
+      el_length_def,heap_length_def] \\ DECIDE_TAC)
+  \\ `el_length (Unused (sp - 1)) = sp` by
+   (full_simp_tac (srw_ss()) [heap_length_APPEND,heap_length_heap_expand,
+      el_length_def,heap_length_def] \\ DECIDE_TAC)
+  \\ full_simp_tac std_ss [] \\ fs[])
+end;
+val _ = emit "IMP_heap_store_unused_typed" IMP_heap_store_unused_replay;
+
 (* Replay the full local HOL allocation-existence proof. *)
 val IMP_heap_store_unused_alt_replay = let
   open preamble helperLib gc_sharedTheory data_to_word_memoryProofTheory
