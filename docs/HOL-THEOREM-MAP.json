@@ -131739,12 +131739,21 @@
   },
 {
     "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "Maxout_bits_code_def",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
+    "lean_name": "maxoutBitsCode",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison with Maxout_bits_code_def_typed: both comparison and assignment branches use the original allOnes slice and argument order. Positive-width BitVec represents the HOL word; makePtrBitsCode now executes this definition."
+  },
+{
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
     "hol_name": "Make_ptr_bits_code_def",
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
     "lean_name": "makePtrBitsCode",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "Independent comparison with Make_ptr_bits_code_def_typed and Maxout_bits_code_def_typed: the initial assignment and both ordered maxout branches agree. allOnes_eq_inlined proves the inlined mask equals the original word slice, including out-of-range positions. Positive-width BitVec represents the single HOL word width. This is the executed compiler helper."
+    "reviewer": "Independent comparison with Make_ptr_bits_code_def_typed: the initial assignment and both ordered calls of the source-shaped maxoutBitsCode agree. allOnes_eq_inlined proves the original word slice equals the former arithmetic mask, including out-of-range positions. Positive-width BitVec represents the single HOL word width. This is the executed compiler helper."
   },
 {
     "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",

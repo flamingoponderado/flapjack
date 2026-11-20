@@ -327,20 +327,26 @@ private def fpResult {width : Nat} [NeZero width] (conf : Config) (dest : Nat)
 def tagMask {width : Nat} (conf : Config) : BitVec width :=
   BitVec.ofNat width (((2 ^ (width - conf.lenSize) - 1) / 4) * 4)
 
+/-- Emit a bounded pointer field, saturating it to ones when the input is large. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "Maxout_bits_code_def"
+  (words_as_type_indexed_bitvec)]
+def maxoutBitsCode {width : Nat} [NeZero width] (bits shift dest src : Nat) :
+    WordLangProgHOL (BitVec width) :=
+  let max := 2 ^ bits - 1
+  .ite .lower src (.imm (BitVec.ofNat width max))
+    (.assign dest (.op .or [.var dest, shiftN .lsl (.var src) shift]))
+    (.assign dest (.op .or [.var dest, .const (allOnes (shift + bits) shift)]))
+
 /-- Construct the pointer fields used by the allocation code. -/
 @[hol "cakeml/compiler/backend/data_to_wordScript.sml" "Make_ptr_bits_code_def"
   (words_as_type_indexed_bitvec)]
 def makePtrBitsCode {width : Nat} [NeZero width] (conf : Config) (tag len dest : Nat) :
     WordLangProgHOL (BitVec width) :=
-  let maxout (bits shift src : Nat) : WordLangProgHOL (BitVec width) :=
-    let max := 2 ^ bits - 1
-    .ite .lower src (.imm (BitVec.ofNat width max))
-      (.assign dest (.op .or [.var dest, shiftN .lsl (.var src) shift]))
-      (.assign dest (.op .or [.var dest, .const (BitVec.ofNat width (max * 2 ^ shift))]))
   wordListSeq [
     .assign dest (.op .or [.const 1, shiftN .lsl (.op .sub [.lookup .nextFree, .lookup .currHeap])
       (shiftLength conf - wordShiftAmount width)]),
-    maxout conf.tagBits (1 + conf.lenBits) tag, maxout conf.lenBits 1 len]
+    maxoutBitsCode conf.tagBits (1 + conf.lenBits) dest tag,
+    maxoutBitsCode conf.lenBits 1 dest len]
 
 /-- Construct the variable-allocation sequence used for reference arrays. -/
 @[hol "cakeml/compiler/backend/data_to_wordScript.sml" "AllocVar_def"
