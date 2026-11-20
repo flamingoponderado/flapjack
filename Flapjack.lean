@@ -392,6 +392,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.FpUop
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.FpBop
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.FpTop
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.FpCmp
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.WordShift64
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.GiveUp
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.RealAddress
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.EnvToList

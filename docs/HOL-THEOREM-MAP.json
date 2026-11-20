@@ -145869,6 +145869,17 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "evaluate_WordShift64_on_32",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/WordShift64.lean",
+  "lean_name": "evaluateWordShift64On32",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_WordShift64_on_32_typed: for arbitrary initial locals, target state, shift operation, amount and word64, dimension 32 implies the original evaluator result and all four locals insertions, with the high and low extracted halves in the HOL order. The target state uses canonical finite maps and positive-width words; the general evaluator inherits the rational-cut real model."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
   "hol_name": "assign_FP_cmp",
   "hol_line": 14057,
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/FpCmp.lean",
