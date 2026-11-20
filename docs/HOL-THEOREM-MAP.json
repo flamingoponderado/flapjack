@@ -145880,6 +145880,17 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "assign_Equal",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/Equal.lean",
+  "lean_name": "assignEqual_correct",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared assign_Equal_typed: operation equality, original state relation, names condition, source cut and argument lookup, termination depth and successful do_app are retained. The target evaluation existential includes both the not-enough-space obligations and the successful state relation and result. Target state fields use canonical finite maps, words use positive type-indexed widths, and the evaluator inherits the rational-cut real model."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
   "hol_name": "Equal_code_lemma",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/EqualCode.lean",
   "lean_name": "equalCodeLemma",
