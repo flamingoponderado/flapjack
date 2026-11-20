@@ -394,6 +394,9 @@ GC_LEMMA_EXISTENTIAL_INHABITANTS_RE = re.compile(
 NEW_REF_EXISTENTIAL_INHABITANTS_RE = re.compile(
     r'\(\s*new_ref_existential_inhabitants\s*:=\s*\[([^]]*)\]\s*\)'
 )
+WRITE_WORD64_EXISTENTIAL_INHABITANTS_RE = re.compile(
+    r'\(\s*write_word64_existential_inhabitants\s*:=\s*\[([^]]*)\]\s*\)'
+)
 # The reviewed renderings of HOL's total functions on bad input.  HOL returns
 # an unspecified value for `EL`/`HD`/`THE`/`LAST`/`ALOOKUP`/`LINV`/`ARB`; Lean
 # takes it from a `Nonempty`/`Inhabited` instance on the element type.
@@ -623,7 +626,8 @@ def hol_attribute_sites(lines: list[str], *, include_fmap_existentials: bool = F
                         include_total_function_inhabitants: bool = False,
                         include_hol_existential_inhabitants: bool = False,
                         include_gc_lemma_existential_inhabitants: bool = False,
-                        include_new_ref_existential_inhabitants: bool = False):
+                        include_new_ref_existential_inhabitants: bool = False,
+                        include_write_word64_existential_inhabitants: bool = False):
     """Yield HOL attributes, including attributes split across Lean lines."""
     comment_depth = 0
     start: int | None = None
@@ -804,6 +808,16 @@ def hol_attribute_sites(lines: list[str], *, include_fmap_existentials: bool = F
                 if include_new_ref_existential_inhabitants:
                     matches = list(NEW_REF_EXISTENTIAL_INHABITANTS_RE.finditer(attribute))
                     occurrences = attribute.count("new_ref_existential_inhabitants")
+                    if occurrences == 0:
+                        names = ()
+                    elif occurrences != 1 or len(matches) != 1:
+                        names = ("",)
+                    else:
+                        names = tuple(field.strip() for field in matches[0].group(1).split(","))
+                    site += (names,)
+                if include_write_word64_existential_inhabitants:
+                    matches = list(WRITE_WORD64_EXISTENTIAL_INHABITANTS_RE.finditer(attribute))
+                    occurrences = attribute.count("write_word64_existential_inhabitants")
                     if occurrences == 0:
                         names = ()
                     elif occurrences != 1 or len(matches) != 1:
@@ -5663,6 +5677,24 @@ def new_ref_existential_header_errors(source: str) -> list[str]:
     return []
 
 
+def word64_existential_header_errors(source: str, declaration: str) -> list[str]:
+    """Pin the complete typed HOL telescope and its sole witness translation."""
+    source = strip_lean_comments(source)
+    if re.search(r"(?m)^\s*(?:variable|variables|include|omit)\b", source):
+        return ["Word64 evaluator must have self-contained binders"]
+    matches = list(re.finditer(r"\btheorem\s+" + re.escape(declaration) + r"\b(.*?):=\s*by\b", source, re.S))
+    if len(matches) != 1:
+        return ["Word64 evaluator must have one direct theorem header"]
+    digest = hashlib.sha256(" ".join(matches[0].group(1).split()).encode()).hexdigest()
+    expected = {
+        "evaluateWriteWord64": "8ae1f5de96fce1a7c278da5ea9107f6708e4604c84be4540315fee351d7cc87d",
+        "evaluateWriteWord64On32": "188e67a3aaa19a4febcc7f6aa6cd9331c78bacdfb3ff22446c92ac59c05cecd4",
+    }
+    if digest != expected.get(declaration):
+        return ["Word64 evaluator telescope differs from the reviewed HOL statement and inhabitance translation"]
+    return []
+
+
 def word_dimensions_as_widths_errors(declaration_text: str, declaration: str,
                                      width_names: tuple[str, ...]) -> list[str]:
     """Two independent word-free dimensions; never merge or fix either width."""
@@ -6580,7 +6612,8 @@ def main(argv: list[str]) -> int:
              fmap_equality, result_observations, dimension_widths, fmap_tuple, nested_list_rel,
              predicate_domain, fmap_universals, generalise_map, generalise_length,
              infer_subst_submap, total_function_inhabitants, hol_existential_inhabitants,
-             gc_lemma_existential_inhabitants, new_ref_existential_inhabitants) in hol_attribute_sites(
+             gc_lemma_existential_inhabitants, new_ref_existential_inhabitants,
+             write_word64_existential_inhabitants) in hol_attribute_sites(
                 lines, include_fmap_existentials=True,
                 include_word_dimension_width=True,
                 include_fmap_function=True,
@@ -6600,6 +6633,7 @@ def main(argv: list[str]) -> int:
                 include_hol_existential_inhabitants=True,
                 include_gc_lemma_existential_inhabitants=True,
                 include_new_ref_existential_inhabitants=True,
+                include_write_word64_existential_inhabitants=True,
              ):
             where = f"{rel}:{number}"
             gc_ref = (hol_path, hol_name) == (
@@ -6643,6 +6677,27 @@ def main(argv: list[str]) -> int:
                     errors.append(f"{where}: invalid fresh-reference existential inhabitance target or qualifiers")
             if new_ref_existential_inhabitants:
                 errors.extend(f"{where}: {error}" for error in new_ref_existential_header_errors("\n".join(lines)))
+            word64_sites = {
+                "evaluate_WriteWord64": "evaluateWriteWord64",
+                "evaluate_WriteWord64_on_32": "evaluateWriteWord64On32",
+            }
+            word64_path = "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml"
+            word64_ref = hol_path == word64_path and hol_name in word64_sites
+            if word64_ref or write_word64_existential_inhabitants:
+                if not (word64_ref and write_word64_existential_inhabitants == ("β._unused",) and
+                        (rel, find_lean_decl(lines, number - 1)) ==
+                        ("Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/WriteWord64.lean", word64_sites.get(hol_name)) and
+                        hol_line is None and words_bitvec and fmap_fields == ("fpRegs", "store") and not (
+                            list_fields or names_fields or boundary_fields or fmap_result or fmap_relation or
+                            fmap_equalities or fmap_parameters or fmap_existentials or dimension_width or
+                            fmap_function_positions or fmap_heterogeneous_function_positions or reals_cuts or
+                            fmap_equality or result_observations or dimension_widths or fmap_tuple or nested_list_rel or
+                            predicate_domain or fmap_universals or generalise_map or generalise_length or
+                            infer_subst_submap or total_function_inhabitants or hol_existential_inhabitants or
+                            gc_lemma_existential_inhabitants or new_ref_existential_inhabitants)):
+                    errors.append(f"{where}: invalid Word64 existential inhabitance target or qualifiers")
+                if word64_ref:
+                    errors.extend(f"{where}: {error}" for error in word64_existential_header_errors("\n".join(lines), word64_sites[hol_name]))
             walkstar_ref = (hol_path, hol_name) == (
                 "cakeml/compiler/inference/inferPropsScript.sml", "subst_infer_subst_swap")
             submap_ref = (hol_path, hol_name) == (

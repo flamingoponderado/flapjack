@@ -145791,6 +145791,30 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "evaluate_WriteWord64",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/WriteWord64.lean",
+  "lean_name": "evaluateWriteWord64",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "write_word64_existential_inhabitants": ["β._unused"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Source comparison with evaluate_WriteWord64_typed: all premises, the existential target evaluation, complete memory relation and local preservation conclusions agree. write_word64_existential_inhabitants records HOL's independent inhabited unused witness type; the target state uses canonical finite maps and positive-width words. The evaluator inherits the reals_as_rational_cuts assumption."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "evaluate_WriteWord64_on_32",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/WriteWord64.lean",
+  "lean_name": "evaluateWriteWord64On32",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "write_word64_existential_inhabitants": ["β._unused"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Source comparison with evaluate_WriteWord64_on_32_typed: all premises, the existential target evaluation, complete memory relation and local preservation conclusions agree. src1 is the low word, src2 is the high word, and the memory layout is header/high/low. write_word64_existential_inhabitants records HOL's independent inhabited unused witness type; the target state uses canonical finite maps and positive-width words. The evaluator inherits the reals_as_rational_cuts assumption."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
   "hol_name": "assign_Ref",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/Ref.lean",
   "lean_name": "assignRef_correct",

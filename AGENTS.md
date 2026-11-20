@@ -969,6 +969,17 @@ the complete theorem header and the elaborated audit checks that the carrier
 occurs only in its instance and unused existential. These checks do not prove
 HOL correspondence: independently review the typed HOL statement and proof.
 
+**Qualify Word64 evaluator unused HOL witnesses.** The narrow
+`write_word64_existential_inhabitants := [β._unused]` qualifier is reserved
+for `evaluateWriteWord64` and `evaluateWriteWord64On32`, the counterparts of
+`evaluate_WriteWord64` and `evaluate_WriteWord64_on_32`. Each retains HOL's
+independent unused existential witness and one `Nonempty β` instance. Combine
+it with the target state's finite-map and word qualifiers and record all three
+in the theorem map. The source gate pins each complete theorem header; the
+elaborated audit checks that β occurs only in its instance and unused witness.
+These checks do not establish HOL correspondence: independently review each
+typed HOL statement and proof, including the order of the 32-bit payload words.
+
 **Port the executable path, too.** As HOL definitions are ported, make the
 compiler that `flapjack-compile` actually runs call the reviewed `@[hol]`
 definitions. A tagged proof-only duplicate beside a different production

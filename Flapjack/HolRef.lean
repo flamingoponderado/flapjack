@@ -339,6 +339,8 @@ structure HolRef where
   gcLemmaExistentialInhabitants : Array String := #[]
   /-- Independent inhabited witness type of HOL `new_ref_thm`. -/
   newRefExistentialInhabitants : Array String := #[]
+  /-- Independent inhabited witness type of the Word64 allocation evaluators. -/
+  writeWord64ExistentialInhabitants : Array String := #[]
   deriving Inhabited, Repr, BEq
 
 open Lean Meta
@@ -380,6 +382,7 @@ syntax "(" "total_function_inhabitants" ":=" "[" ident,+ "]" ")" : holQualifier
 syntax "(" "hol_existential_inhabitants" ":=" "[" ident,+ "]" ")" : holQualifier
 syntax "(" "gc_lemma_existential_inhabitants" ":=" "[" ident,+ "]" ")" : holQualifier
 syntax "(" "new_ref_existential_inhabitants" ":=" "[" ident,+ "]" ")" : holQualifier
+syntax "(" "write_word64_existential_inhabitants" ":=" "[" ident,+ "]" ")" : holQualifier
 syntax (name := hol) "hol " str str (num)? holQualifier* : attr
 
 private def checkedHolRef (path name : String) (line? : Option Nat := none)
@@ -670,6 +673,9 @@ private def parseHolQualifier (stx : Syntax) : CoreM (String × Array String × 
   | `(holQualifier| (new_ref_existential_inhabitants := [$binders:ident,*])) =>
       pure ("new_ref_existential_inhabitants", binders.getElems.map
         (fun binder => binder.getId.eraseMacroScopes.toString), false, #[])
+  | `(holQualifier| (write_word64_existential_inhabitants := [$binders:ident,*])) =>
+      pure ("write_word64_existential_inhabitants", binders.getElems.map
+        (fun binder => binder.getId.eraseMacroScopes.toString), false, #[])
   | _ => throwError "@[hol]: malformed qualifier"
 
 private def parseHolRefAttribute (stx : Syntax) : CoreM HolRef := do
@@ -709,6 +715,7 @@ private def parseHolRefAttribute (stx : Syntax) : CoreM HolRef := do
     let mut holExistentialInhabitants : Array String := #[]
     let mut gcLemmaExistentialInhabitants : Array String := #[]
     let mut newRefExistentialInhabitants : Array String := #[]
+    let mut writeWord64ExistentialInhabitants : Array String := #[]
     for qualifier in qualifiers do
       let (kind, fields, isResult, pairs) ← parseHolQualifier qualifier
       if kind == "list_as_array" then listAsArray := listAsArray ++ fields
@@ -797,6 +804,10 @@ private def parseHolRefAttribute (stx : Syntax) : CoreM HolRef := do
         if !newRefExistentialInhabitants.isEmpty then
           throwError "@[hol]: new_ref_existential_inhabitants may appear only once"
         newRefExistentialInhabitants := fields
+      else if kind == "write_word64_existential_inhabitants" then
+        if !writeWord64ExistentialInhabitants.isEmpty then
+          throwError "@[hol]: write_word64_existential_inhabitants may appear only once"
+        writeWord64ExistentialInhabitants := fields
       else fmapAsFiniteSupport := fmapAsFiniteSupport ++ fields
     if seenGeneraliseMapQualifier then
       unless qualifiers.size == 1 && generaliseMapQualifier == #["subst", "component_2"] &&
@@ -847,7 +858,14 @@ private def parseHolRefAttribute (stx : Syntax) : CoreM HolRef := do
           name == "new_ref_thm" && line?.isNone && qualifiers.size == 2 &&
           newRefExistentialInhabitants == #["β._p"] && ref.wordsAsTypeIndexedBitvec do
         throwError "@[hol]: fresh reference inhabitance qualifier requires its reviewed reference and exact qualifiers"
-    pure { ref with holExistentialInhabitants, gcLemmaExistentialInhabitants, newRefExistentialInhabitants }
+    if !writeWord64ExistentialInhabitants.isEmpty then
+      unless path == "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml" &&
+          (name == "evaluate_WriteWord64" || name == "evaluate_WriteWord64_on_32") &&
+          line?.isNone && qualifiers.size == 3 &&
+          writeWord64ExistentialInhabitants == #["β._unused"] &&
+          ref.fmapAsFiniteSupport == #["fpRegs", "store"] && ref.wordsAsTypeIndexedBitvec do
+        throwError "@[hol]: Word64 witness qualifier requires its reviewed reference and exact qualifiers"
+    pure { ref with holExistentialInhabitants, gcLemmaExistentialInhabitants, newRefExistentialInhabitants, writeWord64ExistentialInhabitants }
   match stx with
   | `(attr| hol $path:str $name:str $line:num $qualifiers:holQualifier*) =>
       parse path.getString name.getString (some line.getNat) qualifiers
@@ -1305,6 +1323,24 @@ initialize holRefAttribute : ParametricAttribute HolRef ← do
           for problem in problems do
             logError m!"{decl}: (new_ref_existential_inhabitants) {problem}"
         | none => logError m!"{decl}: missing fresh-reference inhabitance declaration"
+      let word64Path := "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml"
+      let word64Target := `Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.evaluateWriteWord64
+      let word64On32Target := `Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.evaluateWriteWord64On32
+      let word64Ref := ref.path == word64Path && ref.name == "evaluate_WriteWord64"
+      let word64On32Ref := ref.path == word64Path && ref.name == "evaluate_WriteWord64_on_32"
+      if (decl == word64Target && !word64Ref) || (decl == word64On32Target && !word64On32Ref) then
+        logError m!"{decl}: Word64 evaluator requires its exact HOL reference"
+      if (word64Ref || word64On32Ref) && ref.writeWord64ExistentialInhabitants != #["β._unused"] then
+        logError m!"{decl}: Word64 evaluator requires its existential inhabitance qualifier"
+      if !ref.writeWord64ExistentialInhabitants.isEmpty then
+        unless (decl == word64Target && word64Ref) || (decl == word64On32Target && word64On32Ref) do
+          logError m!"{decl}: Word64 witness qualifier has the wrong declaration"
+        match (← getEnv).find? decl with
+        | some info =>
+          let problems ← (unusedExistentialInhabitantProblems info.type #[(`β, `_unused)]).run'
+          for problem in problems do
+            logError m!"{decl}: (write_word64_existential_inhabitants) {problem}"
+        | none => logError m!"{decl}: missing Word64 witness declaration"
       let submap : HolRef := {
         path := "cakeml/compiler/inference/inferPropsScript.sml", name := "infer_subst_submap",
         fmapAsFiniteSupportConjunctUniversals := #["type_s1", "type_s2", "list_s1", "list_s2"] }
@@ -1498,6 +1534,8 @@ private def HolRef.qualifierSuffix (ref : HolRef) : String :=
     s!" (gc_lemma_existential_inhabitants := [{String.intercalate ", " ref.gcLemmaExistentialInhabitants.toList}])"
   let newRefInhabitants := if ref.newRefExistentialInhabitants.isEmpty then "" else
     s!" (new_ref_existential_inhabitants := [{String.intercalate ", " ref.newRefExistentialInhabitants.toList}])"
+  let word64Inhabitants := if ref.writeWord64ExistentialInhabitants.isEmpty then "" else
+    s!" (write_word64_existential_inhabitants := [{String.intercalate ", " ref.writeWord64ExistentialInhabitants.toList}])"
   observations ++ listAsArray ++ namesAsString ++ namesAsStringBoundary ++
     fmapAsFiniteSupport ++ fmapAsFiniteSupportResult ++ fmapAsFiniteSupportFunction ++
     fmapAsFiniteSupportTuple ++ fmapAsFiniteSupportHeterogeneousFunction ++
@@ -1506,7 +1544,7 @@ private def HolRef.qualifierSuffix (ref : HolRef) : String :=
     fmapAsFiniteSupportExistentials ++ fmapAsFiniteSupportRelation ++
     fmapAsFiniteSupportEqualities ++ fmapAsFiniteSupportEquality ++
     wordsAsTypeIndexedBitvec ++ wordDimensionAsWidth ++ wordDimensionsAsWidths ++
-    realsAsRationalCuts ++ totalFunctionInhabitants ++ nested ++ existentialInhabitants ++ gcLemmaInhabitants ++ newRefInhabitants
+    realsAsRationalCuts ++ totalFunctionInhabitants ++ nested ++ existentialInhabitants ++ gcLemmaInhabitants ++ newRefInhabitants ++ word64Inhabitants
 
 /-! Parser regressions for the original syntax, each qualifier alone, and both
 qualifiers together. These elaborate temporary syntax values only; they do not

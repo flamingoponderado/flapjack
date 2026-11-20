@@ -1240,7 +1240,7 @@ def tagged_declarations(
             value = ("cakeml/compiler/inference/inferScript.sml", "generalise_def",
                      (), (), (), (), False, (), False, False, (), (), None, (), (),
                      False, False, (), (), (), (), (), (), ("subst", "component_2"), (), (),
-                     (), (), ())
+                     (), (), (), (), ())
             for _, lean_name in command_sites:
                 tagged[(rel, lean_name)] = value
         for (line, hol_path, hol_name, _hol_line, list_fields,
@@ -1252,7 +1252,8 @@ def tagged_declarations(
              fmap_equality, result_observations, dimension_widths, fmap_tuple, nested_list_rel,
              predicate_domain, fmap_universals, generalise_map, generalise_length,
              infer_subst_submap, total_function_inhabitants, hol_existential_inhabitants,
-             gc_lemma_existential_inhabitants, new_ref_existential_inhabitants) in HOL_ATTRIBUTE_SITES(
+             gc_lemma_existential_inhabitants, new_ref_existential_inhabitants,
+             write_word64_existential_inhabitants) in HOL_ATTRIBUTE_SITES(
                  lines, include_fmap_existentials=True,
                  include_word_dimension_width=True,
                  include_fmap_function=True,
@@ -1272,6 +1273,7 @@ def tagged_declarations(
                  include_hol_existential_inhabitants=True,
                  include_gc_lemma_existential_inhabitants=True,
                  include_new_ref_existential_inhabitants=True,
+                 include_write_word64_existential_inhabitants=True,
              ):
             lean_name = FIND_LEAN_DECL(lines, line - 1)
             key = (rel, lean_name)
@@ -1286,7 +1288,8 @@ def tagged_declarations(
                      result_observations, dimension_widths, fmap_tuple, nested_list_rel,
                      predicate_domain, fmap_universals, generalise_map, generalise_length,
                      infer_subst_submap, total_function_inhabitants, hol_existential_inhabitants,
-                     gc_lemma_existential_inhabitants, new_ref_existential_inhabitants)
+                     gc_lemma_existential_inhabitants, new_ref_existential_inhabitants,
+                     write_word64_existential_inhabitants)
             if key in tagged and tagged[key] != value:
                 raise ValueError(f"conflicting @[hol] references for {rel}:{lean_name}")
             tagged[key] = value
@@ -1305,7 +1308,7 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
         fmap_equality, result_observations, dimension_widths, fmap_tuple, nested_list_rel,
         predicate_domain, fmap_universals, generalise_map, generalise_length, infer_subst_submap,
         total_function_inhabitants, hol_existential_inhabitants, gc_lemma_existential_inhabitants,
-        new_ref_existential_inhabitants,
+        new_ref_existential_inhabitants, write_word64_existential_inhabitants,
     ) in tagged.items():
         entry = {
             "hol_path": hol_path,
@@ -1376,6 +1379,8 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
             entry["gc_lemma_existential_inhabitants"] = list(gc_lemma_existential_inhabitants)
         if new_ref_existential_inhabitants:
             entry["new_ref_existential_inhabitants"] = list(new_ref_existential_inhabitants)
+        if write_word64_existential_inhabitants:
+            entry["write_word64_existential_inhabitants"] = list(write_word64_existential_inhabitants)
         inventory[(lean_path, lean_name)] = entry
 
     for lean_path, lean_name in proof_theorem_declarations(root):
@@ -1778,6 +1783,7 @@ def validate_inventory(
         hol_existential_inhabitants = tag[27] if tag is not None and len(tag) > 27 else ()
         gc_lemma_existential_inhabitants = tag[28] if tag is not None and len(tag) > 28 else ()
         new_ref_existential_inhabitants = tag[29] if tag is not None and len(tag) > 29 else ()
+        write_word64_existential_inhabitants = tag[30] if tag is not None and len(tag) > 30 else ()
         predicate_status = "reviewed_fmap_as_finite_support_parameter_predicate_domain"
         if tuple(record.get("fmap_as_finite_support_parameter_predicate_domain", ())) != predicate_domain:
             errors.append(f"{key[0]}:{key[1]}: predicate-domain binders do not match @[hol] tag")
@@ -2136,6 +2142,19 @@ def validate_inventory(
             if not isinstance(reviewer, str) or any(word not in reviewer.lower() for word in
                     ("source", "new_ref_existential_inhabitants")):
                 errors.append(f"{key[0]}:{key[1]}: fresh-reference inhabitance needs a source comparison note")
+        if tuple(record.get("write_word64_existential_inhabitants", ())) != write_word64_existential_inhabitants:
+            errors.append(f"{key[0]}:{key[1]}: Word64 existential inhabitants differ from @[hol] tag")
+        if write_word64_existential_inhabitants:
+            sites = {"evaluate_WriteWord64": "evaluateWriteWord64",
+                     "evaluate_WriteWord64_on_32": "evaluateWriteWord64On32"}
+            if (hol_path != "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml" or
+                    key != ("Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/WriteWord64.lean", sites.get(hol_name)) or
+                    write_word64_existential_inhabitants != ("β._unused",) or
+                    status != "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec"):
+                errors.append(f"{key[0]}:{key[1]}: invalid Word64 existential inhabitance site or status")
+            if not isinstance(reviewer, str) or any(word not in reviewer.lower() for word in
+                    ("source", "write_word64_existential_inhabitants")):
+                errors.append(f"{key[0]}:{key[1]}: Word64 inhabitance needs a source comparison note")
         if record.get("inherits_reals_as_rational_cuts", False):
             if reals_cuts:
                 errors.append(
