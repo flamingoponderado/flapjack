@@ -158,6 +158,21 @@ theorem compileShapeNoName {α : Type} :
   rw [← h]
   exact compileShapeNNoName ctxt 0 sh
 
+/-- Exact HOL `compile_shape_n_eq_rev[local]`
+(`pan_structsProofScript.sml:385-388`): the reverse orientation of
+`compile_shape_n_eq` at offset zero, so `compile_shape` is
+`compile_shape_n` with the whole context.  The typed capture
+`compile_shape_n_eq_rev_typed` (`pancake_pan_structs_proof_typed_probe.out`)
+quantifies `sh` explicitly and leaves `sctxt` free, so the binder order is
+`sh` then `sctxt`. -/
+@[hol "cakeml/pancake/proofs/pan_structsProofScript.sml" "compile_shape_n_eq_rev"]
+theorem compileShapeNEqRev {α : Type} (sh : ShapeHOL)
+    (sctxt : List (MlS × List (α × ShapeHOL))) :
+    compileShapeExact sctxt sh = compileShapeNHOL sctxt 0 sh := by
+  have h := compileShapeNEq sctxt 0 sh
+  rw [List.drop_zero] at h
+  exact h.symm
+
 
 /-- The struct-context lookup is the association-list lookup. Flapjack
 infrastructure; no HOL original. -/

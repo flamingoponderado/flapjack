@@ -11462,6 +11462,8 @@ run_probe pancake_crep_to_loop_proof_typed_probeScript.sml \
 run_probe pancake_pan_structs_proof_typed_probeScript.sml \
   pancake_pan_structs_proof_typed_probe.out \
   ALOOKUP_eq_afindi_typed old_exp_shapes_eq_typed compile_exps_eq_map_typed eval_upd_code_eq2_typed shape_of_convert_v_rev_typed \
+  res_var_FMAP_MAP2_typed wf_shape_struct_infos_ok_helper_typed compile_shape_n_eq_rev_typed \
+  convert_res_eq_case_typed convert_res_eq_NONE_typed mem_load_rec1_typed mem_load_rec_typed \
   "$cake_dir/pancake/proofs/pan_structsProofScript.sml" \
   "$cake_dir/pancake/proofs"
 run_probe pancake_pan_simp_proof_typed_probeScript.sml \

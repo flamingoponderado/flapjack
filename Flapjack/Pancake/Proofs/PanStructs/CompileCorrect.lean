@@ -97,6 +97,50 @@ theorem convertResHOL_eqCase1 {width : Nat} [NeZero width]
   | none => rfl
   | some result => cases result <;> rfl
 
+/-- Exact port of HOL `convert_res_eq_case[local]`
+    (`cakeml/pancake/proofs/pan_structsProofScript.sml:1021-1022`), the
+    `convert_res_def`-expanded form of `convert_res_eq_case1`.  The typed
+    capture `convert_res_eq_case_typed`
+    (`pancake_pan_structs_proof_typed_probe.out`) shows HOL's compiled case
+    with one arm per `result` constructor in datatype order, the default arms
+    returning the same constructor and the three converting arms recursing
+    through `convert_v`.  The only difference from HOL is the already-reviewed
+    exact `result` carrier, so no qualifier applies. -/
+@[hol "cakeml/pancake/proofs/pan_structsProofScript.sml" "convert_res_eq_case"]
+theorem convertResHOL_eqCase {width : Nat} [NeZero width]
+    (res : Option (PanSemResultExact width)) :
+    convertResHOL res =
+      (match res with
+        | none => none
+        | some .error => some .error
+        | some .timeOut => some .timeOut
+        | some .break => some .break
+        | some .continue => some .continue
+        | some (.returned value) => some (.returned (convertV value))
+        | some (.exception exceptionId value) =>
+            some (.exception exceptionId (convertV value))
+        | some (.finalFfi event) => some (.finalFfi event)) := by
+  cases res with
+  | none => rfl
+  | some result =>
+    cases result
+    all_goals rfl
+
+/-- Exact port of HOL `convert_res_eq_NONE[local]`
+    (`cakeml/pancake/proofs/pan_structsProofScript.sml:1024-1026`): the
+    converting result map preserves and reflects `NONE`.  The typed capture
+    `convert_res_eq_NONE_typed` (`pancake_pan_structs_proof_typed_probe.out`)
+    states the HOL equivalence `convert_res res = NONE <=> res = NONE`. -/
+@[hol "cakeml/pancake/proofs/pan_structsProofScript.sml" "convert_res_eq_NONE"]
+theorem convertResHOL_eqNone {width : Nat} [NeZero width]
+    (res : Option (PanSemResultExact width)) :
+    convertResHOL res = none ↔ res = none := by
+  cases res with
+  | none => rfl
+  | some result =>
+    cases result
+    all_goals simp [convertResHOL]
+
 /-- Exact port of HOL `is_cont_res_def`
     (`cakeml/pancake/proofs/pan_structsProofScript.sml:992-997`):
     `is_cont_res NONE = T`, `is_cont_res (SOME Break) = T`,

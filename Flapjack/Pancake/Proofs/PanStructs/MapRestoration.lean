@@ -30,6 +30,39 @@ theorem resVarFmapMap2Rev {α β γ : Type} (fmap : HolFiniteMapExact α β)
       simp
     · simp [hk]
 
+/-- Exact original restoration/map2 commutation in HOL's orientation
+(`pan_structsProofScript.sml:806-814`): mapping the restored map agrees with
+restoring the mapped map whenever the two callbacks agree on the present value.
+The typed capture `res_var_FMAP_MAP2_typed`
+(`pancake_pan_structs_proof_typed_probe.out`) quantifies only `y` (inside the
+premise) and leaves `x`, `f`, `nm`, `g`, `fmap` free in that order. -/
+@[hol "cakeml/pancake/proofs/pan_structsProofScript.sml" "res_var_FMAP_MAP2"
+  (fmap_as_finite_support_relation := [fmap])]
+theorem resVarFmapMap2 {α β γ : Type} (x : Option β) (f : α × β → γ) (nm : α)
+    (g : β → γ) (fmap : HolFiniteMapExact α β) :
+    (∀ y, x = some y → f (nm, y) = g y) →
+    @HolFiniteMapExact.resVarEq α γ (Classical.typeDecidableEq α)
+        (fmap.map2 f) (nm, x.map g) =
+      (@HolFiniteMapExact.resVarEq α β (Classical.typeDecidableEq α) fmap (nm, x)).map2 f := by
+  classical
+  intro hg
+  apply HolFiniteMapExact.ext
+  funext key
+  cases x with
+  | none =>
+    simp only [HolFiniteMapExact.map2, HolFiniteMapExact.resVarEq, HolFiniteMapExact.eraseEq,
+      FDOMSUB_HOL, Option.map_none]
+    by_cases hk : key = nm
+    · simp [hk]
+    · simp [hk]
+  | some value =>
+    simp only [HolFiniteMapExact.map2, HolFiniteMapExact.resVarEq, HolFiniteMapExact.updateEq,
+      FUPDATE_HOL, Option.map_some]
+    by_cases hk : key = nm
+    · subst key
+      simp [hg value rfl]
+    · simp [hk]
+
 /-- The complement-singleton restriction is HOL DOMSUB at lookup level.
 This spelling renders DRESTRICT fmap (COMPL {k}) with the exact unconditional
 lookup `if query = k then NONE else FLOOKUP fmap query`; it introduces no
