@@ -456,5 +456,57 @@ val _ = emit_exported "option_le_max_dest_typed" "option_le_max_dest";
 val _ = print ("option_map_max_comm_hypotheses=" ^
   Int.toString (length (hyp (DB.fetch "data_to_word_bignumProof" "option_map_max_comm"))) ^ "\n");
 val _ = emit_exported "option_map_max_comm_typed" "option_map_max_comm";
+val _ = print ("MustTerminate_limit_eq_hypotheses=" ^
+  Int.toString (length (hyp (DB.fetch "data_to_word_bignumProof" "MustTerminate_limit_eq"))) ^ "\n");
+val _ = emit_exported "MustTerminate_limit_eq_typed" "MustTerminate_limit_eq";
+val _ = print ("memory_rel_lookup_hypotheses=" ^
+  Int.toString (length (hyp (DB.fetch "data_to_word_bignumProof" "memory_rel_lookup"))) ^ "\n");
+val _ = emit_exported "memory_rel_lookup_typed" "memory_rel_lookup";
+val _ = print ("state_rel_set_store_Temp_hypotheses=" ^
+  Int.toString (length (hyp (DB.fetch "data_to_word_bignumProof" "state_rel_set_store_Temp"))) ^ "\n");
+val _ = emit_exported "state_rel_set_store_Temp_typed" "state_rel_set_store_Temp";
+val _ = print ("state_rel_IMP_num_size_limit_hypotheses=" ^
+  Int.toString (length (hyp (DB.fetch "data_to_word_bignumProof" "state_rel_IMP_num_size_limit"))) ^ "\n");
+val _ = emit_exported "state_rel_IMP_num_size_limit_typed" "state_rel_IMP_num_size_limit";
+val _ = print ("MustTerminate_limit_SUB_2_hypotheses=" ^
+  Int.toString (length (hyp (DB.fetch "data_to_word_bignumProof" "MustTerminate_limit_SUB_2"))) ^ "\n");
+val _ = emit_exported "MustTerminate_limit_SUB_2_typed" "MustTerminate_limit_SUB_2";
+val _ = print ("cut_env_fromList_sing_hypotheses=" ^
+  Int.toString (length (hyp (DB.fetch "data_to_word_bignumProof" "cut_env_fromList_sing"))) ^ "\n");
+val _ = emit_exported "cut_env_fromList_sing_typed" "cut_env_fromList_sing";
+val _ = print ("single_div_pre_IMP_single_div_full_hypotheses=" ^
+  Int.toString (length (hyp (DB.fetch "data_to_word_bignumProof" "single_div_pre_IMP_single_div_full"))) ^ "\n");
+val _ = emit_exported "single_div_pre_IMP_single_div_full_typed" "single_div_pre_IMP_single_div_full";
+val _ = print ("IMP_LESS_MustTerminate_limit_hypotheses=" ^
+  Int.toString (length (hyp (DB.fetch "data_to_word_bignumProof" "IMP_LESS_MustTerminate_limit"))) ^ "\n");
+val _ = emit_exported "IMP_LESS_MustTerminate_limit_typed" "IMP_LESS_MustTerminate_limit";
+val _ = print ("TWO_LESS_MustTerminate_limit_hypotheses=" ^
+  Int.toString (length (hyp (DB.fetch "data_to_word_bignumProof" "TWO_LESS_MustTerminate_limit"))) ^ "\n");
+val _ = emit_exported "TWO_LESS_MustTerminate_limit_typed" "TWO_LESS_MustTerminate_limit";
+val _ = print ("Arith_location_def_hypotheses=" ^
+  Int.toString (length (hyp (DB.fetch "data_to_word_bignumProof" "Arith_location_def"))) ^ "\n");
+val _ = emit_exported "Arith_location_def_typed" "Arith_location_def";
+val _ = print ("push_env_code_hypotheses=" ^
+  Int.toString (length (hyp (DB.fetch "data_to_word_bignumProof" "push_env_code"))) ^ "\n");
+val _ = emit_exported "push_env_code_typed" "push_env_code";
+val _ = print ("Arith_code_def_hypotheses=" ^
+  Int.toString (length (hyp (DB.fetch "data_to_word_bignumProof" "Arith_code_def"))) ^ "\n");
+val _ = emit_exported "Arith_code_def_typed" "Arith_code_def";
+val _ = print ("lookup_Arith_location_hypotheses=" ^
+  Int.toString (length (hyp (DB.fetch "data_to_word_bignumProof" "lookup_Arith_location"))) ^ "\n");
+val _ = emit_exported "lookup_Arith_location_typed" "lookup_Arith_location";
+val _ = print ("push_env_insert_0_hypotheses=" ^
+  Int.toString (length (hyp (DB.fetch "data_to_word_bignumProof" "push_env_insert_0"))) ^ "\n");
+val _ = emit_exported "push_env_insert_0_typed" "push_env_insert_0";
+val _ = print ("mc_header_i2mw_eq_0w_hypotheses=" ^
+  Int.toString (length (hyp (DB.fetch "data_to_word_bignumProof" "mc_header_i2mw_eq_0w"))) ^ "\n");
+val _ = emit_exported "mc_header_i2mw_eq_0w_typed" "mc_header_i2mw_eq_0w";
+val _ = print ("word_list_IMP_store_list_hypotheses=" ^
+  Int.toString (length (hyp (DB.fetch "data_to_word_bignumProof" "word_list_IMP_store_list"))) ^ "\n");
+val _ = emit_exported "word_list_IMP_store_list_typed" "word_list_IMP_store_list";
+val _ = print ("word_list_store_list_hypotheses=" ^
+  Int.toString (length (hyp (DB.fetch "data_to_word_bignumProof" "word_list_store_list"))) ^ "\n");
+val _ = emit_exported "word_list_store_list_typed" "word_list_store_list";
+val _ = emit_exported "int_op_def_typed" "int_op_def";
 val _ = capture "if_eq_b2w_typed" "if_eq_b2w";
 val _ = capture "b2n_not_typed" "b2n_not";

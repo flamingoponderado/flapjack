@@ -19,5 +19,40 @@ option_le_max_dest_hypotheses=0
 option_le_max_dest_typed=option_le (a :num option) (b :num option) ⇒ OPTION_MAP2 MAX a b = b
 option_map_max_comm_hypotheses=0
 option_map_max_comm_typed=OPTION_MAP2 MAX (a :num option) (b :num option) = OPTION_MAP2 MAX b a
+MustTerminate_limit_eq_hypotheses=0
+MustTerminate_limit_eq_typed=good_dimindex (:α) ⇒ ∃(k :num). MustTerminate_limit (:α) = (10 :num) * dimword (:α) * dimword (:α) + (10 :num) * dimword (:α) + (100 :num) + k
+memory_rel_lookup_hypotheses=0
+memory_rel_lookup_typed=memory_rel (c :data_to_word$config) (be :bool) (ts :num) (refs :v ref sptree$num_map) (s :num) (st :store_name |-> α word_loc) (m :α word -> α word_loc) (dm :α word -> bool) (join_env (l1 :v sptree$num_map) (toAList (inter (l2 :α word_loc sptree$num_map) (adjust_set l1))) ++ (xs :(v # α word_loc) list)) ∧ (lookup (n :num) l1 :v option) = SOME (x :v) ∧ (lookup (adjust_var n) l2 :α word_loc option) = SOME (w :α word_loc) ⇒ memory_rel c be ts refs s st m dm ((x,w)::(join_env l1 (toAList (inter l2 (adjust_set l1))) ++ xs))
+state_rel_set_store_Temp_hypotheses=0
+state_rel_set_store_Temp_typed=(state_rel (c :data_to_word$config) (l1 :num) (l2 :num) (s :(α, β) dataSem$state) (set_store (Temp (tmp :word5)) (w :γ word_loc) (t :(γ, α, β) wordSem$state)) (vs :(v # γ word_loc) list option) (locs :(num # num) list) :bool) ⇔ (state_rel c l1 l2 s t vs locs :bool)
+state_rel_IMP_num_size_limit_hypotheses=0
+state_rel_IMP_num_size_limit_typed=(state_rel (c :data_to_word$config) (l1 :num) (l2 :num) (s :(γ, 'ffi) dataSem$state) (t :(α, γ, 'ffi) wordSem$state) (NONE :(v # α word_loc) list option) (locs :(num # num) list) :bool) ∧ (get_var (k :num) s.locals :v option) = SOME (Number (i :int) :v) ⇒ LENGTH (SND (i2mw i :bool # α word list)) < dimword (:α) DIV (16 :num)
+MustTerminate_limit_SUB_2_hypotheses=0
+MustTerminate_limit_SUB_2_typed=good_dimindex (:α) ⇒ dimword (:α) ≤ MustTerminate_limit (:α) − (2 :num)
+cut_env_fromList_sing_hypotheses=0
+cut_env_fromList_sing_typed=cut_env (fromList [()] :sptree$num_set) (insert (0 :num) (Loc (l1 :num) (l2 :num) :α word_loc) (LN :α word_loc sptree$num_map) :α word_loc sptree$num_map) = SOME (insert (0 :num) (Loc l1 l2 :α word_loc) (LN :α word_loc sptree$num_map) :α word_loc sptree$num_map)
+single_div_pre_IMP_single_div_full_hypotheses=0
+single_div_pre_IMP_single_div_full_typed=single_div_pre (x1 :α word) (x2 :α word) (y :α word) ⇒ single_div x1 x2 y = single_div_full x1 x2 y
+IMP_LESS_MustTerminate_limit_hypotheses=0
+IMP_LESS_MustTerminate_limit_typed=(i :num) < dimword (:α) ⇒ i < MustTerminate_limit (:α) − (1 :num)
+TWO_LESS_MustTerminate_limit_hypotheses=0
+TWO_LESS_MustTerminate_limit_typed=(2 :num) < MustTerminate_limit (:α) ∧ ¬(MustTerminate_limit (:α) ≤ (1 :num))
+Arith_location_def_hypotheses=0
+Arith_location_def_typed=∀(index :num). Arith_location index = if index = (0 :num) then Add_location else if index = (1 :num) then Sub_location else if index = (4 :num) then Mul_location else if index = (5 :num) then Div_location else if index = (6 :num) then Mod_location else (ARB :num)
+push_env_code_hypotheses=0
+push_env_code_typed=(push_env (y :α word_loc sptree$num_map # α word_loc sptree$num_map) (NONE :(num # α wordLang$prog # num # num) option) (t :(α, β, γ) wordSem$state)).code = t.code
+Arith_code_def_hypotheses=0
+Arith_code_def_typed=∀(index :num). (Arith_code index :α wordLang$prog) = Seq (Assign (6 :num) (Const (n2w ((4 :num) * index) :α word) :α wordLang$exp) :α wordLang$prog) (Call (NONE :(num list # (sptree$num_set # sptree$num_set) # α wordLang$prog # num # num) option) (SOME AnyArith_location) [(0 :num); (2 :num); (4 :num); (6 :num)] (NONE :(num # α wordLang$prog # num # num) option) :α wordLang$prog)
+lookup_Arith_location_hypotheses=0
+lookup_Arith_location_typed=(state_rel (c :data_to_word$config) (l1 :num) (l2 :num) (x :(α, β) dataSem$state) (t :(γ, α, β) wordSem$state) (NONE :(v # γ word_loc) list option) (locs :(num # num) list) :bool) ∧ (int_op (index :num) (i1 :int) (i2 :int) :int option) = SOME (r :int) ⇒ (lookup (Arith_location index) t.code :(num # γ wordLang$prog) option) = SOME ((3 :num),(Arith_code index :γ wordLang$prog))
+push_env_insert_0_hypotheses=0
+push_env_insert_0_typed=push_env ((insert (0 :num) (x :α word_loc) (LN :α word_loc sptree$num_map) :α word_loc sptree$num_map),(LN :α word_loc sptree$num_map)) (NONE :(num # α wordLang$prog # num # num) option) (t :(α, β, γ) wordSem$state) = t with <|stack := StackFrame t.locals_size [((0 :num),x)] ([] :(num # α word_loc) list) (NONE :(num # num # num) option)::t.stack; stack_max := OPTION_MAP2 MAX t.stack_max (stack_size (StackFrame t.locals_size [((0 :num),x)] ([] :(num # α word_loc) list) (NONE :(num # num # num) option)::t.stack) :num option); permute := (λ(n :num). t.permute (n + (1 :num)))|>
+mc_header_i2mw_eq_0w_hypotheses=0
+mc_header_i2mw_eq_0w_typed=(2 :num) * LENGTH (SND (i2mw (i :int) :bool # α word list)) + (1 :num) < dimword (:α) ⇒ (mc_header (i2mw i :bool # α word list) = (0w :α word) ⇔ i = (0 :int))
+word_list_IMP_store_list_hypotheses=0
+word_list_IMP_store_list_typed=∀(xs :α word_loc list) (a :α word) (frame :(α word # α word_loc -> bool) -> bool) (m :α word -> α word_loc) (dm :α word -> bool). (word_list a xs * frame) (fun2set (m,dm)) ⇒ store_list a xs m dm = SOME m
+word_list_store_list_hypotheses=0
+word_list_store_list_typed=∀(xs :α word_loc list) (a :α word) (frame :(α word # α word_loc -> bool) -> bool) (m :α word -> α word_loc) (dm :α word -> bool). (word_list a xs * frame) (fun2set (m,dm)) ⇒ ∃(m2 :α word -> α word_loc). store_list a (REPLICATE (LENGTH xs) (Word (0w :α word))) m dm = SOME m2 ∧ (word_list a (REPLICATE (LENGTH xs) (Word (0w :α word))) * frame) (fun2set (m2,dm))
+int_op_def_typed=∀(op_index :num) (i :int) (j :int). (int_op op_index i j :int option) = if op_index = (0 :num) then SOME (i + j) else if op_index = (1 :num) then SOME (i − j) else if op_index = (4 :num) then SOME (i * j) else if op_index = (5 :num) ∧ j ≠ (0 :int) then SOME (i / j) else if op_index = (6 :num) ∧ j ≠ (0 :int) then SOME (i % j) else (NONE :int option)
 if_eq_b2w_typed=(if (b :bool) then (1w :α word) else (0w :α word)) = (b2w b :α word)
 b2n_not_typed=(if (c :bool) then (0 :num) else (1 :num)) = b2n (¬c)

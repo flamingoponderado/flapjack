@@ -23909,6 +23909,140 @@
   "reviewer": "Compared assign_LessConstSmall_typed and zero HOL hypotheses: the compiler equation retains the configuration, labels, destination, natural immediate, arbitrary argument list and name set; the singleton branch emits the signed comparison and original boolean constants, while other arities emit skip. Words use the shared positive-width BitVec representation."
 },
 {
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_bignumProofScript.sml",
+  "hol_name": "MustTerminate_limit_eq",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Bignum/MustTerminate.lean",
+  "lean_name": "mustTerminateLimit_eq",
+  "statement_status": "reviewed_word_dimension_as_width",
+  "word_dimension_as_width": "width",
+  "reviewer": "Source comparison: data_to_word_bignum_typed_probe.out MustTerminate_limit_eq_typed (zero hypotheses): good_dimindex implies there is k with MustTerminate_limit(:alpha) = 10 * dimword * dimword + 10 * dimword + 100 + k. The dimension is used numerically: Lean binds explicit positive width, writes dimword as 2 ^ width and uses the reviewed wordSemMustTerminateLimit."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_bignumProofScript.sml",
+  "hol_name": "MustTerminate_limit_SUB_2",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Bignum/MustTerminate.lean",
+  "lean_name": "mustTerminateLimit_sub_2",
+  "statement_status": "reviewed_word_dimension_as_width",
+  "word_dimension_as_width": "width",
+  "reviewer": "Source comparison: data_to_word_bignum_typed_probe.out MustTerminate_limit_SUB_2_typed (zero hypotheses): good_dimindex implies dimword <= MustTerminate_limit - 2 with natural subtraction; Lean uses 2 ^ width and wordSemMustTerminateLimit width."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_bignumProofScript.sml",
+  "hol_name": "IMP_LESS_MustTerminate_limit",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Bignum/MustTerminate.lean",
+  "lean_name": "imp_less_mustTerminateLimit",
+  "statement_status": "reviewed_word_dimension_as_width",
+  "word_dimension_as_width": "width",
+  "reviewer": "Source comparison: data_to_word_bignum_typed_probe.out IMP_LESS_MustTerminate_limit_typed (zero hypotheses): for num i, i < dimword implies i < MustTerminate_limit - 1; no good_dimindex premise in HOL or Lean; Lean binds the explicit positive width and writes dimword as 2 ^ width."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_bignumProofScript.sml",
+  "hol_name": "TWO_LESS_MustTerminate_limit",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Bignum/MustTerminate.lean",
+  "lean_name": "two_less_mustTerminateLimit",
+  "statement_status": "reviewed_word_dimension_as_width",
+  "word_dimension_as_width": "width",
+  "reviewer": "Source comparison: data_to_word_bignum_typed_probe.out TWO_LESS_MustTerminate_limit_typed (zero hypotheses): 2 < MustTerminate_limit and not MustTerminate_limit <= 1, for every dimension; Lean states the same conjunction at the explicit positive width."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_bignumProofScript.sml",
+  "hol_name": "push_env_code",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Bignum/Env.lean",
+  "lean_name": "pushEnv_code",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source comparison: data_to_word_bignum_typed_probe.out push_env_code_typed (zero hypotheses): for any pair of word-location trees y and NONE handler, (push_env y NONE t).code = t.code; Lean uses the reviewed pushEnv with the same argument order."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_bignumProofScript.sml",
+  "hol_name": "push_env_insert_0",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Bignum/Env.lean",
+  "lean_name": "pushEnv_insert_0",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source comparison: data_to_word_bignum_typed_probe.out push_env_insert_0_typed (zero hypotheses): push_env (insert 0 x LN, LN) NONE t equals t with stack := StackFrame t.locals_size [(0,x)] [] NONE :: t.stack, stack_max := OPTION_MAP2 MAX t.stack_max (stack_size of that stack), and permute := \\n. t.permute (n + 1). Lean writes the same record update using wordSemOptionMax and wordSemStackSize."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_bignumProofScript.sml",
+  "hol_name": "cut_env_fromList_sing",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Bignum/Env.lean",
+  "lean_name": "cutEnv_fromList_sing",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source comparison: data_to_word_bignum_typed_probe.out cut_env_fromList_sing_typed (zero hypotheses): the dataSem cut_env of the single-name set fromList [()] applied to insert 0 (Loc l1 l2) LN over alpha word_loc values is SOME of the same tree. Lean uses DataSem.cutEnv, sptFromList and sptInsert at WordLocW width."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_bignumProofScript.sml",
+  "hol_name": "int_op_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Bignum/Arith.lean",
+  "lean_name": "intOp",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Source comparison: data_to_word_bignum_typed_probe.out int_op_def_typed: for num op_index and integers i, j, the nested conditional selects SOME (i + j), SOME (i - j), SOME (i * j), SOME (i / j) when op_index = 5 and j <> 0, SOME (i % j) when op_index = 6 and j <> 0, else NONE. HOL integer / and % are floor division and its remainder, rendered as Int.fdiv and Int.fmod as in the reviewed clos_op int_op_def rendering."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_bignumProofScript.sml",
+  "hol_name": "Arith_location_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Bignum/Arith.lean",
+  "lean_name": "arithLocation",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Source comparison: data_to_word_bignum_typed_probe.out Arith_location_def_typed: indices 0, 1, 4, 5, 6 map to Add_location, Sub_location, Mul_location, Div_location and Mod_location, and any other index to ARB :num; Lean uses the reviewed location constants and Flapjack.holArb Nat for ARB."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_bignumProofScript.sml",
+  "hol_name": "Arith_code_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Bignum/Arith.lean",
+  "lean_name": "arithCode",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source comparison: data_to_word_bignum_typed_probe.out Arith_code_def_typed: Seq (Assign 6 (Const (n2w (4 * index)))) (Call NONE (SOME AnyArith_location) [0; 2; 4; 6] NONE) at alpha wordLang programs; Lean has the same constructors with BitVec.ofNat width (4 * index)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_bignumProofScript.sml",
+  "hol_name": "lookup_Arith_location",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Bignum/Arith.lean",
+  "lean_name": "lookup_arithLocation",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source comparison: data_to_word_bignum_typed_probe.out lookup_Arith_location_typed (zero hypotheses): state_rel with NONE roots and int_op index i1 i2 = SOME r imply lookup (Arith_location index) t.code = SOME (3, Arith_code index). Lean keeps both premises in one conjunction."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_bignumProofScript.sml",
+  "hol_name": "memory_rel_lookup",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Bignum/StateRel.lean",
+  "lean_name": "memoryRel_lookup",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "st"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source comparison: data_to_word_bignum_typed_probe.out memory_rel_lookup_typed (zero hypotheses): memory_rel over join_env l1 (toAList (inter l2 (adjust_set l1))) ++ xs, with lookup n l1 = SOME x and lookup (adjust_var n) l2 = SOME w, implies memory_rel with (x, w) consed onto the same list. The store st uses the canonical finite-support map; all words share the positive width."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_bignumProofScript.sml",
+  "hol_name": "state_rel_set_store_Temp",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Bignum/StateRel.lean",
+  "lean_name": "stateRel_setStore_temp",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source comparison: data_to_word_bignum_typed_probe.out state_rel_set_store_Temp_typed (zero hypotheses): for tmp : word5 and arbitrary roots vs, state_rel on set_store (Temp tmp) w t is equivalent to state_rel on t; Lean uses the reviewed setStore and BitVec 5 for word5."
+},
+{
   "hol_path": "HOL/examples/machine-code/multiword/multiwordScript.sml",
   "hol_name": "mw_op",
   "lean_path": "Flapjack/Misc/Multiword.lean",

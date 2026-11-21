@@ -4,6 +4,8 @@ public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.StateRelation
 public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Rearrange
 public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.SmallNumber
 public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Values
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.MemoryRelation
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.WordMlInvLookup
 
 @[expose] public section
 
@@ -34,7 +36,9 @@ theorem heapLookup_unused_bignum {width : Nat} [NeZero width] {α : Type} (a k :
   · subst zero
     simp [bignumRep]
   · by_cases small : a < k + 1
-    · simp [zero, small]
+    · have notLe : ¬ k + 1 ≤ a := by omega
+      simp only [zero, small, notLe, if_false, if_true, false_and, iff_false]
+      simp
     · simp [zero, small]
       omega
 
@@ -58,4 +62,35 @@ theorem stateRel_number_smallInt {width : Nat} [NeZero width] {C F : Type}
     mem
   simpa using impMemoryRel_number c t.be (holThe s.tstamps) s.refs s.space t.store t.memory t.mdomain _ i
     ⟨good, small, rest⟩
+/-- A related source local can be added as a root beside the joined environment. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_bignumProofScript.sml" "memory_rel_lookup"
+  (fmap_as_finite_support_relation := [st]) (words_as_type_indexed_bitvec)]
+theorem memoryRel_lookup {width : Nat} [NeZero width] (c : Config) (be : Bool) (ts : Nat)
+    (refs : Spt (BvlSem.Ref Flapjack.Compiler.Backend.DataSem.Value)) (s : Nat)
+    (st : HolFiniteMapExact WordStoreHOL (WordLocW width))
+    (m : BitVec width → WordLocW width) (dm : BitVec width → Bool)
+    (l1 : Spt Flapjack.Compiler.Backend.DataSem.Value) (l2 : Spt (WordLocW width))
+    (xs : List (Flapjack.Compiler.Backend.DataSem.Value × WordLocW width)) (n : Nat)
+    (x : Flapjack.Compiler.Backend.DataSem.Value) (w : WordLocW width) :
+    memoryRel c be ts refs s st m dm (joinEnv l1 (sptToAList (sptInter l2 (adjustSet l1))) ++ xs) ∧
+      sptLookup n l1 = some x ∧ sptLookup (adjustVar n) l2 = some w →
+    memoryRel c be ts refs s st m dm ((x, w) :: (joinEnv l1 (sptToAList (sptInter l2 (adjustSet l1))) ++ xs)) := by
+  rintro ⟨⟨heap, limit, a, sp, sp1, gens, heapMem, inv, bound, space⟩, found, foundW⟩
+  refine ⟨heap, limit, a, sp, sp1, gens, heapMem, ?_, bound, space⟩
+  have h := wordMlInv_lookup heap be a sp sp1 gens limit ts c refs [] xs l1 l2 n x w
+    ⟨by simpa using inv, found, foundW⟩
+  simpa using h
+
+/-- Writing a temporary store entry does not affect the state relation. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_bignumProofScript.sml" "state_rel_set_store_Temp"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem stateRel_setStore_temp {width : Nat} [NeZero width] {C F : Type}
+    (c : Flapjack.Compiler.Backend.DataToWord.Config) (l1 l2 : Nat)
+    (s : Flapjack.Compiler.Backend.DataSem.State C F) (tmp : BitVec 5) (w : WordLocW width)
+    (t : WordSemStateFiniteExact width C F)
+    (vs : Option (List (Flapjack.Compiler.Backend.DataSem.Value × WordLocW width)))
+    (locs : List (Nat × Nat)) :
+    stateRel c l1 l2 s (t.setStore (.temp tmp) w) vs locs ↔ stateRel c l1 l2 s t vs locs := by
+  simp [stateRel, WordSemStateFiniteExact.setStore, memoryRel_temp, codeOracleRel, limitsInv,
+    HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, holFapply]
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Bignum
