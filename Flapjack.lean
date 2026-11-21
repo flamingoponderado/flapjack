@@ -449,6 +449,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.Less
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.UnusedWrite
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.StoreUnused
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.GetVars
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.BasicLemmas
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.Separation
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.MemCopy.Element
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.MemCopy.Loop

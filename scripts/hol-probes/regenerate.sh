@@ -12320,7 +12320,7 @@ run_probe source_let_proof_local_typed_probeScript.sml source_let_proof_local_ty
   "$cake_dir/compiler/backend/proofs"
 
 run_probe data_to_word_assign_typed_probeScript.sml data_to_word_assign_typed_probe.out \
-  size_of_seen_SUBSET_typed size_of_seen_Block_typed IMP_read_bytearray_GENLIST_typed parts_to_words_NONE_typed \
+  size_of_seen_SUBSET_typed size_of_seen_Block_typed IMP_read_bytearray_GENLIST_typed parts_to_words_NONE_typed LENGTH_EQ_4_typed \
   "$cake_dir/compiler/backend/proofs/data_to_word_assignProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
 
@@ -12652,6 +12652,8 @@ run_probe word_elim_port_typed_probeScript.sml word_elim_port_typed_probe.out \
 run_probe bvi_tmc_proof_local_typed_probeScript.sml bvi_tmc_proof_local_typed_probe.out \
   more_free_names_typed env_rel_el_typed \
   "$cake_dir/compiler/backend/proofs/bvi_tmcProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+
   "$cake_dir/compiler/backend/proofs"
 
 run_probe backend_proof_more_typed_probeScript.sml backend_proof_more_typed_probe.out \
