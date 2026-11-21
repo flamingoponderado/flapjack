@@ -176,4 +176,30 @@ theorem adjustSet_inter {α β : Type} (t1 : Spt α) (t2 : Spt β) :
     by_cases h1 : sptDomain t1 ((n - 2) / 2) <;>
       by_cases h2 : sptDomain t2 ((n - 2) / 2) <;> simp [h1, h2]
 
+/-- Exact HOL `lookup_adjust_var_adjust_set_NONE`
+(`data_to_word_gcProofScript.sml:400-407`); the typed capture shows an
+arbitrary source payload type. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml"
+  "lookup_adjust_var_adjust_set_NONE"]
+theorem lookup_adjust_var_adjust_set_NONE {α : Type} {n : Nat} {s : Spt α} :
+    sptLookup (adjustVar n) (adjustSet s) = none ↔ sptLookup n s = none := by
+  rw [lookup_adjustSet_map]
+  cases sptLookup n s <;> simp
+
+/-- Exact HOL `lookup_adjust_var_adjust_set_SOME_UNIT`
+(`data_to_word_gcProofScript.sml:409-417`). -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml"
+  "lookup_adjust_var_adjust_set_SOME_UNIT"]
+theorem lookup_adjust_var_adjust_set_SOME_UNIT {α : Type} {n : Nat} {s : Spt α} :
+    sptLookup (adjustVar n) (adjustSet s) = some () ↔ (sptLookup n s).isSome = true := by
+  rw [lookup_adjustSet_map]
+  cases sptLookup n s <;> simp
+
+/-- Exact HOL `IS_SOME_lookup_domain` (`data_to_word_gcProofScript.sml:518-522`);
+HOL `k ∈ domain m` is `sptDomain m k`. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "IS_SOME_lookup_domain"]
+theorem IS_SOME_lookup_domain {α : Type} {k : Nat} {m : Spt α} :
+    (sptLookup k m).isSome = true ↔ sptDomain m k :=
+  Iff.rfl
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

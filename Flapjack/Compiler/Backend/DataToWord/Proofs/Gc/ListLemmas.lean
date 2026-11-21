@@ -147,4 +147,34 @@ theorem ZIP_ID {α β : Type} :
   | nil => rfl
   | cons p xs ih => simp [ih]
 
+/-- Exact HOL `unit_opt_eq` (`data_to_word_gcProofScript.sml:367-371`); the HOL
+free variables are universally quantified. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "unit_opt_eq"]
+theorem unit_opt_eq {x y : Option Unit} :
+    x = y ↔ (x.isSome = true ↔ y.isSome = true) := by
+  cases x <;> cases y <;> simp
+
+/-- Exact HOL `none_opt_eq` (`data_to_word_gcProofScript.sml:394-398`); the two
+options have independent payload types, as in the typed capture. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "none_opt_eq"]
+theorem none_opt_eq {α β : Type} {x : Option α} {y : Option β} :
+    (x = none ↔ y = none) ↔ (x.isSome = true ↔ y.isSome = true) := by
+  cases x <;> cases y <;> simp
+
+/-- Exact HOL `unit_some_eq_IS_SOME` (`data_to_word_gcProofScript.sml:512-516`). -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "unit_some_eq_IS_SOME"]
+theorem unit_some_eq_IS_SOME : ∀ x : Option Unit, x = some () ↔ x.isSome = true := by
+  intro x
+  cases x <;> simp
+
+/-- Exact HOL `LESS_EQ_IMP_APPEND` (`data_to_word_gcProofScript.sml:770-776`). -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "LESS_EQ_IMP_APPEND"]
+theorem LESS_EQ_IMP_APPEND {α : Type} :
+    ∀ (n : Nat) (xs : List α), n ≤ xs.length →
+      ∃ ys zs : List α, xs = ys ++ zs ∧ ys.length = n := by
+  intro n xs h
+  refine ⟨xs.take n, xs.drop n, (List.take_append_drop _ _).symm, ?_⟩
+  simp only [List.length_take]
+  omega
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
