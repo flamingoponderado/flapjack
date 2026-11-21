@@ -603,6 +603,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.ConsInvariant
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.RefUpdate
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.MutBlockInsert
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.FinaliseCons
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.MutCons
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.CellUpdate
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.ByteUpdateInv
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.WordArith
