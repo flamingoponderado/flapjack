@@ -732,4 +732,109 @@ theorem fupdateFlookupZipElimExactHOL {α β : Type} [DecidableEq α]
       (zs.zip as)) x
   rw [FLOOKUP_FUPDATE_LIST_HOL_congr _ _ (zs.zip as) x hkey]
 
+/-- Function-level congruence of the `|++` fold: maps that agree outside the
+    updated keys fold to the same map. -/
+theorem FUPDATE_LIST_HOL_congr_not_mem [DecidableEq α] (f g : FiniteMap α β)
+    (entries : List (α × β))
+    (h : ∀ key, key ∉ entries.map Prod.fst → f key = g key) :
+    FUPDATE_LIST_HOL f entries = FUPDATE_LIST_HOL g entries := by
+  induction entries generalizing f g with
+  | nil =>
+      funext key
+      exact h key (by simp)
+  | cons entry rest ih =>
+      obtain ⟨k, v⟩ := entry
+      rw [FUPDATE_LIST_HOL_cons, FUPDATE_LIST_HOL_cons]
+      apply ih
+      intro key hkey
+      show FLOOKUP (FUPDATE_HOL f (k, v)) key = FLOOKUP (FUPDATE_HOL g (k, v)) key
+      simp only [FLOOKUP_FUPDATE_HOL]
+      by_cases hke : key = k
+      · rw [if_pos hke, if_pos hke]
+      · rw [if_neg hke, if_neg hke]
+        exact h key (by simp [hkey, hke])
+
+/-- Canonical standalone-map witness for the exact `fm_multi_update`
+    parameter. -/
+theorem holFmapAsFiniteSupportParamWitness_fmMultiUpdateExactHOL_fm
+    {α β : Type} (fm : HolFiniteMapExact α β) :
+    holFiniteMapofBroad (holFiniteMaptoBroadlookup fm) fm.finiteSupport = fm := by
+  cases fm
+  rfl
+
+/-- Exact port of HOL `pan_commonProps$fm_multi_update`
+    (`pan_commonPropsScript.sml:345-358`).  The typed capture gives
+    `∀(xs :α list) (ys :β list) (a :α) (b :β) (c :α) (d :β) (fm :α |-> β).
+    ¬MEM a xs ∧ ¬MEM c xs ∧ a ≠ c ∧ LENGTH xs = LENGTH ys ⇒
+    fm |++ ((a,b)::(c,d)::ZIP (xs,ys)) |++ ((a,b)::ZIP (xs,ys)) =
+    fm |++ ((a,b)::(c,d)::ZIP (xs,ys))`.  `|++` is `updateListEq`, ZIP is
+    `List.zip`, and the map is a bare parameter entry.  HOL does not require the
+    key list to be distinct, and the Lean proof keeps that generality: the
+    second update list repeats only entries the first list already establishes,
+    so re-folding it is the identity. -/
+@[hol "cakeml/pancake/semantics/pan_commonPropsScript.sml" "fm_multi_update"
+  (fmap_as_finite_support_parameters := [fm])]
+theorem fmMultiUpdateExactHOL {α β : Type} [DecidableEq α]
+    (xs : List α) (ys : List β) (a : α) (b : β) (c : α) (d : β)
+    (fm : HolFiniteMapExact α β)
+    (h : a ∉ xs ∧ c ∉ xs ∧ a ≠ c ∧ xs.length = ys.length) :
+    (fm.updateListEq ((a, b) :: (c, d) :: xs.zip ys)).updateListEq
+        ((a, b) :: xs.zip ys) =
+      fm.updateListEq ((a, b) :: (c, d) :: xs.zip ys) := by
+  obtain ⟨ha, hc, hac, hlen⟩ := h
+  have hZfst : (xs.zip ys).map Prod.fst = xs := by
+    rw [List.map_fst_zip (by omega)]
+  have haZ : a ∉ (xs.zip ys).map Prod.fst := by
+    rw [hZfst]
+    exact ha
+  have hcZ : c ∉ (xs.zip ys).map Prod.fst := by
+    rw [hZfst]
+    exact hc
+  have hM0a : FLOOKUP (FUPDATE_HOL (FUPDATE_HOL fm.lookup (a, b)) (c, d)) a = some b := by
+    show FUPDATE_HOL (FUPDATE_HOL fm.lookup (a, b)) (c, d) a = some b
+    simp [FUPDATE_HOL, hac]
+  have hMa : FLOOKUP
+      (FUPDATE_LIST_HOL (FUPDATE_HOL (FUPDATE_HOL fm.lookup (a, b)) (c, d))
+        (xs.zip ys)) a = some b := by
+    rw [FLOOKUP_FUPDATE_LIST_HOL_not_mem _ (xs.zip ys) a haZ]
+    exact hM0a
+  have hMself := FUPDATE_HOL_eq_self_of_lookup_some
+    (FUPDATE_LIST_HOL (FUPDATE_HOL (FUPDATE_HOL fm.lookup (a, b)) (c, d)) (xs.zip ys))
+    a b hMa
+  apply HolFiniteMapExact.ext
+  show FUPDATE_LIST_HOL (FUPDATE_LIST_HOL fm.lookup ((a, b) :: (c, d) :: xs.zip ys))
+      ((a, b) :: xs.zip ys) =
+    FUPDATE_LIST_HOL fm.lookup ((a, b) :: (c, d) :: xs.zip ys)
+  calc
+    FUPDATE_LIST_HOL (FUPDATE_LIST_HOL fm.lookup ((a, b) :: (c, d) :: xs.zip ys))
+        ((a, b) :: xs.zip ys)
+        = FUPDATE_LIST_HOL fm.lookup
+            (((a, b) :: (c, d) :: xs.zip ys) ++ ((a, b) :: xs.zip ys)) :=
+          (FUPDATE_LIST_HOL_append fm.lookup _ _).symm
+    _ = FUPDATE_LIST_HOL fm.lookup
+          ((a, b) :: (c, d) :: (xs.zip ys ++ (a, b) :: xs.zip ys)) := by
+          rw [List.cons_append, List.cons_append]
+    _ = FUPDATE_LIST_HOL (FUPDATE_HOL (FUPDATE_HOL fm.lookup (a, b)) (c, d))
+          (xs.zip ys ++ (a, b) :: xs.zip ys) := by
+          rw [FUPDATE_LIST_HOL_cons, FUPDATE_LIST_HOL_cons]
+    _ = FUPDATE_LIST_HOL
+          (FUPDATE_LIST_HOL (FUPDATE_HOL (FUPDATE_HOL fm.lookup (a, b)) (c, d))
+            (xs.zip ys)) ((a, b) :: xs.zip ys) :=
+          FUPDATE_LIST_HOL_append _ _ _
+    _ = FUPDATE_LIST_HOL
+          (FUPDATE_HOL (FUPDATE_LIST_HOL (FUPDATE_HOL (FUPDATE_HOL fm.lookup (a, b)) (c, d))
+            (xs.zip ys)) (a, b)) (xs.zip ys) := by
+          rw [FUPDATE_LIST_HOL_cons]
+    _ = FUPDATE_LIST_HOL
+          (FUPDATE_LIST_HOL (FUPDATE_HOL (FUPDATE_HOL fm.lookup (a, b)) (c, d))
+            (xs.zip ys)) (xs.zip ys) := by
+          rw [hMself]
+    _ = FUPDATE_LIST_HOL (FUPDATE_HOL (FUPDATE_HOL fm.lookup (a, b)) (c, d))
+          (xs.zip ys) := by
+          apply FUPDATE_LIST_HOL_congr_not_mem
+          intro key hkey
+          exact FLOOKUP_FUPDATE_LIST_HOL_not_mem _ (xs.zip ys) key hkey
+    _ = FUPDATE_LIST_HOL fm.lookup ((a, b) :: (c, d) :: xs.zip ys) := by
+          rw [FUPDATE_LIST_HOL_cons, FUPDATE_LIST_HOL_cons]
+
 end Flapjack
