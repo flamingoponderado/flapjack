@@ -916,6 +916,11 @@ import Flapjack.Compiler.Backend.WordBignum.Proofs.CompileThmCases
 import Flapjack.Compiler.Backend.WordBignum.Proofs.CompileThm
 import Flapjack.Compiler.Backend.WordBignum.Proofs.CorrSupport
 import Flapjack.Compiler.Backend.WordBignum.Proofs.CorrTactic
+import Flapjack.Compiler.Backend.WordBignum.Proofs.Corr.Compare
+import Flapjack.Compiler.Backend.WordBignum.Proofs.Corr.Div
+import Flapjack.Compiler.Backend.WordBignum.Proofs.Corr.AddSub
+import Flapjack.Compiler.Backend.WordBignum.Proofs.Corr.Mul
+import Flapjack.Compiler.Backend.WordBignum.Proofs.Corr.Iop
 import Flapjack.Compiler.Backend.WordBignum.Generate
 import Flapjack.Compiler.Backend.ClosLang.Syntax
 import Flapjack.Compiler.Backend.ClosLang.GeneratedSize

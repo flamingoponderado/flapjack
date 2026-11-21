@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Compiler.Backend.WordBignum.Proofs.Relations
 public import Flapjack.Compiler.Backend.WordBignum.Proofs.MiniStateOps
+public import Flapjack.Compiler.Backend.WordBignum.Proofs.MultiwordLemmas
 
 @[expose] public section
 
@@ -246,6 +247,20 @@ theorem deleteVars_lookup (vs : List Nat) (s : MiniState width) (k : Nat) :
   | cons v vs ih =>
     simp only [deleteVars, lookup_regDelete, ih, List.mem_cons]
     by_cases h : k = v <;> simp [h]
+theorem holFapply_deleteVars (vs : List Nat) (s : MiniState width) (k : Nat) :
+    holFapply (deleteVars vs s).regs k =
+      if k ∈ vs then holFapplyOutside (BitVec width) else holFapply s.regs k := by
+  by_cases h : k ∈ vs
+  · rw [if_pos h]; simp [holFapply, deleteVars_lookup, h]
+  · rw [if_neg h]; exact holFapply_congr (by rw [deleteVars_lookup, if_neg h])
+
+theorem holFapply_regDelete (n k : Nat) (s : MiniState width) :
+    holFapply (regWrite n none s).regs k =
+      if k = n then holFapplyOutside (BitVec width) else holFapply s.regs k := by
+  by_cases h : k = n
+  · rw [if_pos h]; simp [holFapply, lookup_regDelete, h]
+  · rw [if_neg h]; exact holFapply_congr (by rw [lookup_regDelete, if_neg h])
+
 theorem holFapply_eq_of_regs {a b : MiniState width} (h : a.regs = b.regs) (k : Nat) :
     holFapply a.regs k = holFapply b.regs k := by rw [h]
 
@@ -253,6 +268,100 @@ theorem lookup_of_dom {s : MiniState width} {k : Nat} (h : k ∈ s.regs.dom) :
     s.regs.lookup k = some (holFapply s.regs k) := by
   obtain ⟨v, hv⟩ := Option.ne_none_iff_exists'.mp h
   rw [hv, holFapply_of_lookup hv]
+
+/-- The carry word of `single_add_word` is `0` or `1` (as a generalised result). -/
+theorem singleAddWord_carry_of_eq {a b c : BitVec width} {r : BitVec width × BitVec width}
+    (h : singleAddWord a b c = r) : r.2 ≠ 0 → r.2 = 1 := by
+  subst h
+  simp only [singleAddWord, singleAdd]
+  generalize decide (2 ^ width ≤ _) = d
+  cases d <;> simp [b2w, b2n]
+
+/-- The borrow word of `single_sub_word` is `0` or `1` (as a generalised result). -/
+theorem singleSubWord_carry_of_eq {a b c : BitVec width} {r : BitVec width × BitVec width}
+    (h : singleSubWord a b c = r) : r.2 ≠ 0 → r.2 = 1 := by
+  subst h
+  simp only [singleSubWord, singleSub, singleAdd]
+  generalize decide (2 ^ width ≤ _) = d
+  cases d <;> simp [b2w, b2n]
+
+/-! The preconditions that HOL's `true_pres` shows to be trivially true, as
+rewrite rules for the symbolic execution (HOL's derive_corr_thm uses
+`fs [true_pres]`). -/
+
+theorem mcSingleMulPre_eq_true (x) : @mcSingleMulPre width _ x = True := by
+  obtain ⟨a, b, c⟩ := x
+  exact eq_true (true_pres a b c 0 0 0 0 0 0 0 0 [] []).1
+
+theorem mcMulBySingle2Pre_eq_true (x) : @mcMulBySingle2Pre width _ x = True := by
+  obtain ⟨a, b, c⟩ := x
+  exact eq_true (true_pres 0 0 0 0 0 a b c 0 0 0 [] []).2.1
+
+theorem mcCmp3Pre_eq_true (x) : @mcCmp3Pre width _ x = True := by
+  obtain ⟨a, b, c, d, e, f⟩ := x
+  exact eq_true (true_pres 0 a b c 0 0 0 0 d e f [] []).2.2.1
+
+theorem mcCmpMul2Pre_eq_true (x) : @mcCmpMul2Pre width _ x = True := by
+  obtain ⟨a, b, c, d, e, f⟩ := x
+  exact eq_true (true_pres 0 0 0 0 0 a b c d e f [] []).2.2.2.1
+
+theorem mcCmp2Pre_eq_true (x) : @mcCmp2Pre width _ x = True := by
+  obtain ⟨a, b, c, d⟩ := x
+  exact eq_true (true_pres a 0 b 0 0 0 0 0 0 c d [] []).2.2.2.2.1
+
+theorem mcAdjCmpPre_eq_true (x) : @mcAdjCmpPre width _ x = True := by
+  obtain ⟨a, b, c⟩ := x
+  exact eq_true (true_pres a 0 0 b 0 0 0 c 0 0 0 [] []).2.2.2.2.2.1
+
+theorem mcIdivModHeaderPre_eq_true (x) : @mcIdivModHeaderPre width _ x = True := by
+  obtain ⟨a, b⟩ := x
+  exact eq_true (true_pres 0 0 0 0 0 a 0 0 0 0 b [] []).2.2.2.2.2.2.1
+
+theorem mcIadd1Pre_eq_true (x) : @mcIadd1Pre width _ x = True := by
+  obtain ⟨a, b, xs, ys⟩ := x
+  exact eq_true (true_pres 0 a b 0 0 0 0 0 0 0 0 xs ys).2.2.2.2.2.2.2.1
+
+theorem mcIadd2Pre_eq_true (x) : @mcIadd2Pre width _ x = True := by
+  obtain ⟨a, b, c, d, xs, ys⟩ := x
+  exact eq_true (true_pres 0 a b c d 0 0 0 0 0 0 xs ys).2.2.2.2.2.2.2.2.1
+
+theorem mcIadd3Pre_eq_true (x) : @mcIadd3Pre width _ x = True := by
+  obtain ⟨a, xs, ys⟩ := x
+  exact eq_true (true_pres 0 a 0 0 0 0 0 0 0 0 0 xs ys).2.2.2.2.2.2.2.2.2.1
+
+theorem mcIsubFlipPre_eq_true (x) : @mcIsubFlipPre width _ x = True := by
+  obtain ⟨a, b⟩ := x
+  exact eq_true (true_pres 0 a b 0 0 0 0 0 0 0 0 [] []).2.2.2.2.2.2.2.2.2.2.1
+
+theorem mcImul1Pre_eq_true (x) : @mcImul1Pre width _ x = True := by
+  obtain ⟨a, b⟩ := x
+  exact eq_true (true_pres 0 0 0 0 0 0 0 0 0 a b [] []).2.2.2.2.2.2.2.2.2.2.2.1
+
+theorem mcSub1Pre_eq_true (x : BitVec width) : mcSub1Pre x = True :=
+  eq_true (true_pres 0 0 0 0 0 x 0 0 0 0 0 [] []).2.2.2.2.2.2.2.2.2.2.2.2.1
+
+omit [NeZero width] in
+/-- wordLang's `Xor [x; Sub [0w; 1w]]` (the to_deep form of HOL's `~x`) is `~~~x`. -/
+theorem xor_zero_sub_one (x : BitVec width) : x ^^^ (0 - 1) = ~~~x := by
+  simp [BitVec.neg_one_eq_allOnes]
+
+omit [NeZero width] in
+/-- A small shift-amount literal satisfies `eval_exp_pre`'s bound. -/
+theorem ofNat_toNat_lt_32 (n : Nat) (h : n < 32) : (BitVec.ofNat width n).toNat < 32 :=
+  Nat.lt_of_le_of_lt (Nat.mod_le _ _) h
+
+/-- The shift amount `1w` of the generated programs' `ShiftN _ _ 1`. -/
+theorem toNat_one_eq : (1 : BitVec width).toNat = 1 := by
+  have : 2 ≤ 2 ^ width := by
+    have := NeZero.ne width
+    calc 2 = 2 ^ 1 := rfl
+      _ ≤ 2 ^ width := Nat.pow_le_pow_right (by decide) (by omega)
+  show 1 % 2 ^ width = 1
+  exact Nat.mod_eq_of_lt (by omega)
+
+omit [NeZero width] in
+/-- The `Test` comparison's `AndOp.and` is `&&&`. -/
+theorem andOp_and_eq (a b : BitVec width) : AndOp.and a b = a &&& b := rfl
 
 /-- Increment the clock: the state a `Continue` leaves before `loop_app`
 decrements it. -/

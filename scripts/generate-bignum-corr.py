@@ -21,6 +21,10 @@ CAPTURE = ROOT / "scripts/hol-probes/bignum_code_defs_probe.out"
 OUT_DIR = ROOT / "Flapjack/Compiler/Backend/WordBignum/Proofs/Corr"
 HOL_PATH = "cakeml/compiler/backend/proofs/word_bignumProofScript.sml"
 
+# HOL saves mc_iop_corr_thm at the derive_corr_thm call (line 2226); the script
+# re-binds it later with `val mc_iop_corr_thm = fetch "-" "mc_iop_corr_thm"`.
+DUPLICATE_LINES = {"mc_iop_corr_thm": 2226}
+
 ARRAYS = {"In1": ".in1", "In2": ".in2", "Out": ".out"}
 
 
@@ -216,7 +220,7 @@ def callee_step(callee, infos):
     if info["kind"] == "tuple":
         pat = ", ".join(f"o{i}" for i in range(len(info["outs"])))
         return (f"((refine ev_seq_corr ({lemma} (width := width) _) ?_ ?_ <;> try corr_side); (try corr_simp); "
-                f"generalize_app {func} as res; obtain ⟨{pat}⟩ := res)")
+                f"generalize_app {func} as res; obtain ⟨{pat}⟩ := res; (try dsimp only at *))")
     fname = re.search(r"\b(mc_[a-z0-9_]+) ", info_single_func(info)).group(1)
     return (f"((refine ev_seq_corr ({lemma} (width := width) _) ?_ ?_ <;> try corr_side); (try corr_simp); "
             f"generalize_app {camel(fname)} as res)")
@@ -275,7 +279,8 @@ def emit_theorem(name, info, code_rhs, infos):
                  f"  (try split_ifs at hpre ⊢) <;> (try dsimp only at hpre ⊢) <;> {exec_tac}\n")
     doc = (f"/-- HOL `{name}`, saved by `derive_corr_thm` for `{code}`: the deep\n"
            f"program computes the shallow `{code[:-len('_code')]}`. -/\n")
-    tag = (f"@[hol \"{HOL_PATH}\" \"{name}\"\n"
+    line = f" {DUPLICATE_LINES[name]}" if name in DUPLICATE_LINES else ""
+    tag = (f"@[hol \"{HOL_PATH}\" \"{name}\"{line}\n"
            f"  (fmap_as_finite_support := [regs]) (words_as_type_indexed_bitvec)]\n")
     return doc + tag + stmt + proof
 
@@ -301,6 +306,8 @@ module
 
 set_option linter.unusedSimpArgs false
 set_option linter.unusedVariables false
+set_option linter.unusedTactic false
+set_option linter.unnecessarySeqFocus false
 set_option maxHeartbeats 4000000
 
 namespace Flapjack.Compiler.Backend.WordBignum
