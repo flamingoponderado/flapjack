@@ -59,4 +59,9 @@ theorem eqCodeStackMax_sub1 (l : Nat) (sizes : Spt Nat) (h : l ≠ 0) :
 theorem optionMap_mul_succ (n : Nat) (m : Option Nat) :
     m.map ((n+1) * ·) = Option.map₂ (· + ·) m (m.map (n * ·)) := by
   cases m <;> simp [Nat.succ_mul, Nat.add_comm]
+/-- Subtraction distributes over the minimum of natural numbers. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml" "MIN_SUB"]
+theorem minSub (a b c : Nat) : min a b - c = min (a - c) (b - c) := by
+  omega
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Assign

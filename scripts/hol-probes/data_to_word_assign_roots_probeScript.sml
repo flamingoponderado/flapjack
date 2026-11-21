@@ -793,6 +793,38 @@ val _ = emit "Equal_code_thm_typed" data_to_word_assignProofTheory.Equal_code_th
 val _ = emit "assign_Equal_typed" data_to_word_assignProofTheory.assign_Equal;
 val _ = emit "assign_EqualConst_typed" data_to_word_assignProofTheory.assign_EqualConst;
 val _ = emit "Compare_code_thm_typed" data_to_word_assignProofTheory.Compare_code_thm;
+val _ = emit "word_cmp_Less_word_cmp_res_typed" data_to_word_assignProofTheory.word_cmp_Less_word_cmp_res;
+val _ = emit "word_cmp_NotLess_word_cmp_res_typed" data_to_word_assignProofTheory.word_cmp_NotLess_word_cmp_res;
+val _ = emit "word_cmp_not_NotLess_word_cmp_res_typed" data_to_word_assignProofTheory.word_cmp_not_NotLess_word_cmp_res;
+val _ = emit "not_word_cmp_Less_word_cmp_res_typed" data_to_word_assignProofTheory.not_word_cmp_Less_word_cmp_res;
+val _ = emit "IMP_spt_eq_typed" data_to_word_assignProofTheory.IMP_spt_eq;
+val _ = emit "env_to_list_cut_env_IMP_typed" data_to_word_assignProofTheory.env_to_list_cut_env_IMP;
+val _ = emit "dimword_LESS_MustTerminate_limit_typed" data_to_word_assignProofTheory.dimword_LESS_MustTerminate_limit;
+val _ = emit "assign_Less_typed" data_to_word_assignProofTheory.assign_Less;
+val _ = emit "assign_LessEq_typed" data_to_word_assignProofTheory.assign_LessEq;
+val _ = emit "word_exp_set_var_ShiftVar_typed" data_to_word_assignProofTheory.word_exp_set_var_ShiftVar;
+
+(* Replay the source-local MIN_SUB theorem with the original proof. *)
+val min_sub_local_replay = let
+  open preamble
+in
+  Q.prove (`MIN a b - c = MIN (a - c) (b - c)`, rw [MIN_DEF])
+end;
+val _ = emit "MIN_SUB_local_typed" min_sub_local_replay;
+val _ = emit "assign_IMP_typed" data_to_word_assignProofTheory.IMP;
+val _ = emit "word_exp_real_addr_some_value_typed" data_to_word_assignProofTheory.word_exp_real_addr_some_value;
+val _ = emit "memory_rel_write_typed" data_to_word_memoryProofTheory.memory_rel_write;
+val _ = emit "memory_rel_store_list_to_unused_typed" data_to_word_assignProofTheory.memory_rel_store_list_to_unused;
+val _ = emit "get_vars_delete_lemma_typed" data_to_word_assignProofTheory.get_vars_delete_lemma;
+val _ = emit "INTRO_IS_SOME_typed" data_to_word_assignProofTheory.INTRO_IS_SOME;
+val _ = emit "STAR_fun2set_IMP_SEP_T_typed" data_to_word_assignProofTheory.STAR_fun2set_IMP_SEP_T;
+val _ = emit "IMP_memcopy_lemma_typed" data_to_word_assignProofTheory.IMP_memcopy_lemma;
+val _ = emit "IMP_memcopy_typed" data_to_word_assignProofTheory.IMP_memcopy;
+val _ = emit "cut_envs_adjust_sets_insert_ODD_typed" data_to_word_assignProofTheory.cut_envs_adjust_sets_insert_ODD;
+val _ = emit "IN_domain_adjust_set_IMP_typed" data_to_word_assignProofTheory.IN_domain_adjust_set_IMP;
+val _ = emit "BignumHalt_def_typed" data_to_wordTheory.BignumHalt_def;
+val _ = emit "evaluate_BignumHalt2_typed" data_to_word_assignProofTheory.evaluate_BignumHalt2;
+val _ = emit "SEP_T_def_typed" set_sepTheory.SEP_T_def;
 val _ = emit "MemEqList_thm_typed" data_to_word_assignProofTheory.MemEqList_thm;
 val _ = emit "bignum_words_def_typed" data_to_word_memoryProofTheory.bignum_words_def;
 val _ = emit "memory_rel_Number_const_test_typed" data_to_word_memoryProofTheory.memory_rel_Number_const_test;
