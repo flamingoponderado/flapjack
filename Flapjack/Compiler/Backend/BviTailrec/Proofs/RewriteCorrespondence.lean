@@ -329,11 +329,11 @@ private theorem headD_eq_holHd {α : Type} [Nonempty α] (d : α) (l : List α)
 
 /-- HOL `rewrite_PMATCH`: the recursive rewrite's case equation, with the outer
 `pmatch` on the expression in source order (`Var`, `If`, `Let`, `Tick`,
-`Force`, then the trailing `_` arm). HOL's `HD` is the reviewed `holHd`; the
-scan is a singleton, so its empty clause is unreachable and the source's
-`LAST1` is `List.getLast?` as in the reviewed clause bodies. The trailing `_`
-arm is `sourceDispatch`, the named rendering of the same
-`check_op`/`opbinargs` case. -/
+`Force`, then the trailing `_` arm written literally as HOL's
+`check_op`/`opbinargs` case). HOL's `HD` is the reviewed `holHd`; the scan is a
+singleton, so its empty clause is unreachable. HOL's `LAST1` is rendered by
+`List.getLast?`, `MAP (FST o SND)` by `Prod.fst ∘ Prod.snd`, and `FST c` by
+`c.1`. -/
 @[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "rewrite_PMATCH"]
 theorem rewriteSource_PMATCH (loc next : Nat) (opr : AssocOp) (acc : Nat)
     (ts : List ValueType) (expr : Exp) :
@@ -350,15 +350,21 @@ theorem rewriteSource_PMATCH (loc next : Nat) (opr : AssocOp) (acc : Nat)
          (r2 || r3, .ifThenElse x1 z2 z3)
        | .let xs x =>
          let ys := scanExpr ts loc xs
-         let tt := ys.map fun (_, ty, _, _) => ty
-         let tr := match ys.getLast? with | some (cs, _, _, _) => cs | none => ts
+         let tt := ys.map (Prod.fst ∘ Prod.snd)
+         let tr := match ys.getLast? with | none => ts | some c => c.1
          let (r, y) := rewriteSource loc next opr (acc + xs.length) (tt ++ tr) x
          (r, .let xs y)
        | .tick x =>
          let (r, y) := rewriteSource loc next opr acc ts x
          (r, .tick y)
        | .force l v => (false, .force l v)
-       | e => sourceDispatch loc next opr acc ts e) := by
+       | e =>
+         match checkOp ts opr loc e with
+         | none => (false, applyOp opr (.var acc) e)
+         | some expr2 =>
+           match opBinArgs opr expr2 with
+           | none => (false, applyOp opr (.var acc) expr2)
+           | some (xs, f) => (true, pushCall next opr acc xs (argsFrom f))) := by
   cases expr with
   | var n =>
     conv =>
@@ -376,10 +382,16 @@ theorem rewriteSource_PMATCH (loc next : Nat) (opr : AssocOp) (acc : Nat)
     conv =>
       enter [1]
       rw [rewriteSource.eq_def]
+    dsimp only
+    cases (scanExpr ts loc xs).getLast? with
+    | none => rfl
+    | some c => rfl
   | raise x =>
     conv =>
       enter [1]
       rw [rewriteSource.eq_def]
+    dsimp only
+    simp only [sourceDispatch]
   | tick x =>
     conv =>
       enter [1]
@@ -388,6 +400,8 @@ theorem rewriteSource_PMATCH (loc next : Nat) (opr : AssocOp) (acc : Nat)
     conv =>
       enter [1]
       rw [rewriteSource.eq_def]
+    dsimp only
+    simp only [sourceDispatch]
   | force l v =>
     conv =>
       enter [1]
@@ -396,14 +410,20 @@ theorem rewriteSource_PMATCH (loc next : Nat) (opr : AssocOp) (acc : Nat)
     conv =>
       enter [1]
       rw [rewriteSource.eq_def]
+    dsimp only
+    simp only [sourceDispatch]
   | letCall v28 v29 v30 v31 v32 =>
     conv =>
       enter [1]
       rw [rewriteSource.eq_def]
+    dsimp only
+    simp only [sourceDispatch]
   | «return» xs =>
     conv =>
       enter [1]
       rw [rewriteSource.eq_def]
+    dsimp only
+    simp only [sourceDispatch]
 
 /-- An operation with a false accumulator guard or a failed candidate check
 is rewritten to the explicit accumulator fallback. -/
