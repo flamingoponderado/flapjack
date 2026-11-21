@@ -62,4 +62,17 @@ theorem locCheckSubset {width : Nat} [NeZero width]
   · exact Or.inl ⟨zero, (extension label.1 member).1⟩
   · exact Or.inr ⟨key, program, (sptSubsptLookup source target).1 extension key program lookup, labels⟩
 
+/-- Label inclusion in the location check is preserved by native sptree
+extension of the code. As in HOL, the program and the code trees have
+independent word widths (`'a` and `'b`). -/
+@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "get_labels_loc_check_subspt"
+  (words_as_type_indexed_bitvec)]
+theorem getLabelsLocCheckSubspt {width : Nat} [NeZero width] {codeWidth : Nat} [NeZero codeWidth]
+    (p : HolProg width) (c1 c2 : Spt (HolProg codeWidth))
+    (h : (∀ label, StackSem.getLabelsExact p label → StackSem.locCheckExact c1 label) ∧
+      sptSubspt c1 c2) :
+    ∀ label, StackSem.getLabelsExact p label → StackSem.locCheckExact c2 label := by
+  intro label member
+  exact locCheckSubset c1 c2 h.2 label (h.1 label member)
+
 end Flapjack.WordToStackProofs.LocationLabels

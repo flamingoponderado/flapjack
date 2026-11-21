@@ -448,3 +448,4 @@ val _ = capture "word_Call_NONE_not_Break_Continue_typed" "word_Call_NONE_not_Br
 val _ = capture "word_gc_empty_frame_typed" "word_gc_empty_frame";
 val _ = capture "word_stack_dec_stack_shape_typed" "word_stack_dec_stack_shape";
 val _ = capture "word_stack_dec_stack_sorted_typed" "word_stack_dec_stack_sorted";
+val _ = capture "get_labels_loc_check_subspt_typed" "get_labels_loc_check_subspt";

@@ -87,4 +87,14 @@ theorem insert_insert_3_1 {α : Type} {x y : α} {t : Spt α} :
     sptInsert 3 x (sptInsert 1 y t) = sptInsert 1 y (sptInsert 3 x t) :=
   sptInsert_swap 3 1 x y t (by decide)
 
+/-! `word_exp_rw` (`data_to_word_gcProofScript.sml:8061-8070`) has no Lean
+counterpart. It is a `LIST_CONJ` of `word_exp_def`, `word_op_def`,
+`word_sh_def`, `get_var_def`, `get_var_imm_def`, `the_words_def`,
+`get_store_def` and `sptree$lookup_insert`, and the conjunction instantiates
+`lookup_insert` at the same type variable `'a` that is the word dimension of
+`'a word` (its typed capture binds `v : 'a` and `t : 'a num_map`). The Lean
+dimension is a `Nat` width, not a type, so no Lean payload type stands for that
+`'a`, and a version with an independent payload type would be a different
+statement. Later proofs unfold the individual reviewed definitions instead. -/
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

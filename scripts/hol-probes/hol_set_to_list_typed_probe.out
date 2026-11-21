@@ -1,0 +1,5 @@
+choice_def_typed=∀(s :α -> bool). s ≠ (∅ :α -> bool) ⇒ CHOICE s ∈ s
+rest_def_typed=∀(s :α -> bool). REST s = s DELETE CHOICE s
+set_to_list_thm_typed=FINITE (s :α -> bool) ⇒ SET_TO_LIST s = if s = (∅ :α -> bool) then ([] :α list) else CHOICE s::SET_TO_LIST (REST s)
+set_to_list_in_mem_typed=∀(s :α -> bool). FINITE s ⇒ ∀(x :α). x ∈ s ⇔ MEM x (SET_TO_LIST s)
+mem_set_to_list_typed=∀(s :α -> bool). FINITE s ⇒ ∀(x :α). MEM x (SET_TO_LIST s) ⇔ x ∈ s
