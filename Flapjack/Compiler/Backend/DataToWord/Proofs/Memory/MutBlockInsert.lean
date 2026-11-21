@@ -38,7 +38,7 @@ theorem clockValueInv_refsTransfer {width : Nat} [NeZero width] (ck : Nat)
       ∀ mode body, sptLookup n refs' ≠ some (.thunk mode body))
     (muts : ∀ n, f.lookup n ≠ none → ∀ tag fin left body right,
       sptLookup n refs' = some (.mutBlock tag fin left body right) →
-      ∃ fin', sptLookup n refs = some (.mutBlock tag fin' left body right))
+      ∃ fin' body', sptLookup n refs = some (.mutBlock tag fin' left body' right))
     (dest : ∀ value, destThunk value refs = .notThunk → destThunk value refs' = .notThunk) :
     ∀ (value : Value) (tf : HolFiniteMapExact Nat Nat) (heap : ValueHeap width)
       (x : HeapAddress (WordLocW width)),
@@ -58,8 +58,8 @@ theorem clockValueInv_refsTransfer {width : Nat} [NeZero width] (ck : Nat)
       rw [← annot n defined]
       apply ClockValueInv.refPtr bit ck conf n _ f tf heap domain (noThunks n defined notThunk)
       intro tag fin left body right lookup
-      obtain ⟨fin', old⟩ := muts n defined tag fin left body right lookup
-      exact notMut tag fin' left body right old
+      obtain ⟨fin', body', old⟩ := muts n defined tag fin left body right lookup
+      exact notMut tag fin' left body' right old
     | refPtrThunk _ _ mode n body addr _ _ _ _ found evaluated domain cell recursive =>
       refine .refPtrThunk ck conf mode n body addr _ f tf heap (thunks n mode body found)
         (fun h => dest body (evaluated h)) domain cell ?_
@@ -116,7 +116,7 @@ theorem valueInv_insertMutBlock_lemma {width : Nat} [NeZero width]
     have ne : n ≠ ptr := by rintro rfl; simp [absent] at found
     rw [sptLookup_sptInsert_ne ptr n _ refs ne]; exact found
   · intro n h notThunk mode body; rw [same n h]; exact notThunk mode body
-  · intro n h tag' fin' left body right lookup; rw [same n h] at lookup; exact ⟨fin', lookup⟩
+  · intro n h tag' fin' left body right lookup; rw [same n h] at lookup; exact ⟨fin', body, lookup⟩
   · intro value notThunk
     cases value with
     | refPtr bit index =>
@@ -172,8 +172,8 @@ theorem valueInv_mutBlockFin_lemma {width : Nat} [NeZero width]
     · subst n
       simp only [sptLookup_sptInsert_same, Option.some.injEq, BvlSem.Ref.mutBlock.injEq] at lookup
       obtain ⟨rfl, rfl, rfl, rfl, rfl⟩ := lookup
-      exact ⟨fin1, old⟩
-    · rw [sptLookup_sptInsert_ne ptr n _ refs eq] at lookup; exact ⟨fin', lookup⟩
+      exact ⟨fin1, cv, old⟩
+    · rw [sptLookup_sptInsert_ne ptr n _ refs eq] at lookup; exact ⟨fin', body, lookup⟩
   · intro value notThunk
     cases value with
     | refPtr bit index =>
