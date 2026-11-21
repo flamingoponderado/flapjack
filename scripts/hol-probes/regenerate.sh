@@ -12649,10 +12649,6 @@ run_probe bvi_tmc_proof_local_typed_probeScript.sml bvi_tmc_proof_local_typed_pr
   "$cake_dir/compiler/backend/proofs/bvi_tmcProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
 
-  "$cake_dir/compiler/backend/proofs"
-
-  "$cake_dir/compiler/backend/proofs"
-
 run_probe backend_proof_more_typed_probeScript.sml backend_proof_more_typed_probe.out \
   backend_proof_more_probe_begin backend_proof_more_probe_end \
   "$cake_dir/compiler/backend/proofs/backendProofScript.sml" \
