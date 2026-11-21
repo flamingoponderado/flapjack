@@ -12320,12 +12320,13 @@ run_probe source_let_proof_local_typed_probeScript.sml source_let_proof_local_ty
   "$cake_dir/compiler/backend/proofs"
 
 run_probe data_to_word_assign_typed_probeScript.sml data_to_word_assign_typed_probe.out \
-  size_of_seen_SUBSET_typed size_of_seen_Block_typed IMP_read_bytearray_GENLIST_typed parts_to_words_NONE_typed LENGTH_EQ_4_typed \
+  size_of_seen_SUBSET_typed size_of_seen_Block_typed IMP_read_bytearray_GENLIST_typed parts_to_words_NONE_typed state_rel_IMP_test_zero_typed \
   "$cake_dir/compiler/backend/proofs/data_to_word_assignProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
 
 run_probe data_to_word_bignum_typed_probeScript.sml data_to_word_bignum_typed_probe.out \
   mw_op_constructors i2mw_small_int_IMP_0_typed get_iop_def_typed lt_dimindex_MOD_dimword_typed \
+  LongDiv1_thm_prime_typed eval_Call_Arith_typed \
   "$cake_dir/compiler/backend/proofs/data_to_word_bignumProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
 
