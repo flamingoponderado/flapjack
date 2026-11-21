@@ -102,6 +102,39 @@ theorem scanExpr_length (ctx : List ValueType) (loc : Nat) (xs : List Exp) :
     (scanExpr ctx loc xs).length = xs.length := by
   rw [scanExpr_list, scanList_length]
 
+/-- HOL `scan_expr_not_nil`: the singleton scan is never the empty list. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "scan_expr_not_nil"]
+theorem scanExpr_not_nil (x : Exp) (ts : List ValueType) (loc : Nat) :
+    scanExpr ts loc [x] ≠ [] := by
+  rw [scanExpr_single]
+  simp
+
+/-- HOL `LENGTH_scan_expr`: the source-shaped list scan preserves the input
+length. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "LENGTH_scan_expr"]
+theorem scanExpr_length_hol (ts : List ValueType) (loc : Nat) (xs : List Exp) :
+    (scanExpr ts loc xs).length = xs.length := scanExpr_length ts loc xs
+
+/-- HOL `scan_expr_SING`: the singleton list of the head of a singleton scan is
+that scan. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "scan_expr_SING"]
+theorem scanExpr_SING (x : Exp) (ts : List ValueType) (loc : Nat) :
+    [@Flapjack.holHd (List ValueType × ValueType × Bool × Option AssocOp)
+        ⟨([], .any, false, none)⟩ (scanExpr ts loc [x])] = scanExpr ts loc [x] := by
+  rw [scanExpr_single]
+  simp [Flapjack.holHd]
+
+/-- HOL `scan_expr_HD_SING`: the head of a singleton scan is `y` exactly when
+the scan is the singleton list of `y`. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "scan_expr_HD_SING"]
+theorem scanExpr_HD_SING (x : Exp) (ts : List ValueType) (loc : Nat)
+    (y : List ValueType × ValueType × Bool × Option AssocOp) :
+    @Flapjack.holHd (List ValueType × ValueType × Bool × Option AssocOp)
+        ⟨([], .any, false, none)⟩ (scanExpr ts loc [x]) = y ↔
+      scanExpr ts loc [x] = [y] := by
+  rw [scanExpr_single]
+  simp [Flapjack.holHd]
+
 mutual
 /-- A single scan preserves the length of the inferred context. -/
 theorem scanSing_context_length (ctx : List ValueType) (loc : Nat) (e : Exp) :
@@ -403,6 +436,71 @@ def checkExpOriginal (loc arity : Nat) (e : Exp) : Option AssocOp :=
 theorem checkExpOriginal_eq (loc arity : Nat) (e : Exp) :
     checkExpOriginal loc arity e = checkExpSingle loc arity e := by
   simp [checkExpOriginal, checkExpSingle, scanExpr_single]
+
+/-- Boolean equality on the source type abstraction agrees with equality; the
+datatype carries `BEq` without `LawfulBEq`, so this is checked by cases. -/
+private theorem valueType_beq_true (a b : ValueType) : (a == b) = true ↔ a = b := by
+  cases a
+  all_goals
+    cases b
+    all_goals decide
+
+/-- Boolean inequality on the source type abstraction agrees with inequality. -/
+private theorem valueType_bne_true (a b : ValueType) : (a != b) = true ↔ a ≠ b := by
+  cases a
+  all_goals
+    cases b
+    all_goals decide
+
+/-- HOL `check_exp_eq`: the source decision, restated with the singleton scan
+and the singleton recursion test. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "check_exp_eq"]
+theorem checkExp_eq (loc arity : Nat) (exp : Exp) :
+    checkExpOriginal loc arity exp =
+      (if !hasRecSing loc exp then none else
+        let context := List.replicate arity .any
+        match scanSing context loc exp with
+        | (_, ty, _, opr) =>
+          match opr with
+          | none => none
+          | some op => if ty != opType op then none else some op) := by
+  rw [checkExpOriginal_eq, checkExpSingle]
+  simp only [hasRec1, hasRec_sing_eq]
+  generalize hs : scanSing (List.replicate arity .any) loc exp = s
+  obtain ⟨ts, ty, r, opr⟩ : List ValueType × ValueType × Bool × Option AssocOp := s
+  cases opr with
+  | none => simp
+  | some o =>
+    cases ty
+    all_goals
+      cases o
+      all_goals simp [opType, valueType_beq_true, valueType_bne_true]
+
+/-- HOL `check_exp_SOME_simp`: the source decision returns `SOME op` exactly
+when the expression recurses into `loc` and its singleton scan reports `op`
+with the operation's type. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "check_exp_SOME_simp"]
+theorem checkExp_SOME_simp (loc arity : Nat) (expr : Exp) (op : AssocOp) :
+    checkExpOriginal loc arity expr = some op ↔
+      ∃ (ts : List ValueType) (ty : ValueType) (r : Bool),
+        hasRec1 loc expr = true ∧
+          scanExpr (List.replicate arity .any) loc [expr] = [(ts, ty, r, some op)] ∧
+          ty = opType op := by
+  simp only [checkExpOriginal, scanExpr_single]
+  by_cases h : hasRec1 loc expr = true
+  · simp only [h, Bool.not_true]
+    generalize hs : scanSing (List.replicate arity .any) loc expr = s
+    obtain ⟨ts, ty, r, opr⟩ : List ValueType × ValueType × Bool × Option AssocOp := s
+    cases opr with
+    | none => simp
+    | some o =>
+      cases ty
+      all_goals
+        cases op
+        all_goals
+          cases o
+          all_goals simp [opType, valueType_beq_true]
+  · simp [h]
 
 /-- The executed decision computes the source-shaped single-expression
 decision for every fuel value. -/
