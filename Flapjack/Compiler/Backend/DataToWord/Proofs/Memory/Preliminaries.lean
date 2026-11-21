@@ -281,15 +281,10 @@ theorem length_addrMap {α : Type} :
   intro xs f
   exact (addrMap_length xs f).symm
 
-/-- `Nonempty α` makes the heap-address carrier inhabited for `holEl`. -/
-local instance heapAddressNonempty {α : Type} [Nonempty α] : Nonempty (HeapAddress α) :=
-  ⟨.data (Classical.choice ‹Nonempty α›)⟩
-
-/-- Statement of HOL `EL_ADDR_MAP` (`data_to_word_memoryProofScript.sml`).
-Untagged: `holEl` at `HeapAddress α` takes its inhabitant from a local
-instance derived from `Nonempty α`, a transitive use of the
-`total_function_inhabitants` rendering that is not yet an approved exception
-(see AGENTS.md). Tag it once that route is approved. -/
+/-- HOL `EL_ADDR_MAP`. `holEl` at `HeapAddress α` takes its inhabitant from
+the global `heapAddressNonempty` instance derived from `[Nonempty α]`. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "EL_ADDR_MAP"
+  (total_function_inhabitants := [α])]
 theorem el_addrMap {α : Type} [Nonempty α] :
     ∀ (xs : List (HeapAddress α)) (n : Nat) (f : Nat → Nat),
       n < xs.length → holEl n (addrMap f xs) = addrApply f (holEl n xs) := by
