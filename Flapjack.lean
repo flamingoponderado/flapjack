@@ -317,6 +317,8 @@ import Flapjack.Compiler.Backend.BackendProof.OracleGlobals
 import Flapjack.Compiler.Backend.BackendProof.FullMakeInitSemantics2
 import Flapjack.Compiler.Backend.BackendProof.BvlToBviSemantics2
 import Flapjack.Compiler.Backend.BackendProof.StateOracle
+import Flapjack.Compiler.Backend.BackendProof.EvalOracle
+import Flapjack.Compiler.Backend.BackendProof.SafeForSpace
 import Flapjack.Compiler.Backend.DataToWord.Proofs.OptionLe
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Limits
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Mask
