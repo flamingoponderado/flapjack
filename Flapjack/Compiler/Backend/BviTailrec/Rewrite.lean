@@ -24,6 +24,15 @@ def argsFrom : Exp → Option (Nat × Nat × List Exp × Option Exp)
   | .call ticks (some dest) args handler => some (ticks, dest, args, handler)
   | _ => none
 
+/-- HOL `args_from_PMATCH`: the definition's case equation; the source's `as`
+is the argument list and `hdl` the handler, both bound as separate binders. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "args_from_PMATCH"]
+theorem argsFrom_PMATCH (expr : Exp) :
+    argsFrom expr =
+      (match expr with
+       | .call t (some d) args hdl => some (t, d, args, hdl)
+       | _ => none) := rfl
+
 /-- Construct the accumulator worker call from extracted call data. -/
 @[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "push_call_def"]
 def pushCall {α : Type} (next : Nat) (op : AssocOp) (acc : Nat) (value : Exp) :

@@ -41,6 +41,16 @@ def fromOp : ClosLang.Op → AssocOp
   | .blockOp .listAppend => .append
   | _ => .noop
 
+/-- HOL `from_op_PMATCH`: the definition's case equation over `closLang$op`. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "from_op_PMATCH"]
+theorem fromOp_PMATCH (op : ClosLang.Op) :
+    fromOp op =
+      (match op with
+       | .intOp .add => .plus
+       | .intOp .mult => .times
+       | .blockOp .listAppend => .append
+       | _ => .noop) := rfl
+
 /-- Convert a source accumulator operator into its BVI operation. -/
 @[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "to_op_def"]
 def toOp : AssocOp → ClosLang.Op
@@ -55,14 +65,43 @@ private def small (i : Int) : Bool := -268435457 ≤ i && i ≤ 268435457
 def isConst : ClosLang.Op → Bool
   | .intOp (.const i) => small i
   | _ => false
+/-- HOL `is_const_PMATCH`: the definition's case equation, with HOL's
+`small_enough_int` as the reviewed Boolean `small` of the definition. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "is_const_PMATCH"]
+theorem isConst_PMATCH (op : ClosLang.Op) :
+    isConst op =
+      (match op with
+       | .intOp (.const i) => small i
+       | _ => false) := rfl
 @[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "is_arith_def"]
 def isArith : ClosLang.Op → Bool
   | .intOp .add | .intOp .sub | .intOp .mult => true
   | _ => false
+/-- HOL `is_arith_PMATCH`: the definition's case equation, one arm per source
+`pmatch` alternative. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "is_arith_PMATCH"]
+theorem isArith_PMATCH (op : ClosLang.Op) :
+    isArith op =
+      (match op with
+       | .intOp .add => true
+       | .intOp .sub => true
+       | .intOp .mult => true
+       | _ => false) := rfl
 @[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "is_rel_def"]
 def isRel : ClosLang.Op → Bool
   | .intOp .less | .intOp .lessEq | .intOp .greater | .intOp .greaterEq => true
   | _ => false
+/-- HOL `is_rel_PMATCH`: the definition's case equation, one arm per source
+`pmatch` alternative. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "is_rel_PMATCH"]
+theorem isRel_PMATCH (op : ClosLang.Op) :
+    isRel op =
+      (match op with
+       | .intOp .less => true
+       | .intOp .lessEq => true
+       | .intOp .greater => true
+       | .intOp .greaterEq => true
+       | _ => false) := rfl
 /-- Operand type required by each source primitive. -/
 @[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "arg_ty_def"]
 def argType : ClosLang.Op → ValueType
@@ -77,11 +116,43 @@ def decideType : ValueType → ValueType → ValueType
   | .int, .int => .int
   | .list, .list => .list
   | _, _ => .any
+/-- HOL `decide_ty_PMATCH`: the definition's case equation over the pair of
+types, as the source states it. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "decide_ty_PMATCH"]
+theorem decideType_PMATCH (ty1 ty2 : ValueType) :
+    decideType ty1 ty2 =
+      (match (ty1, ty2) with
+       | (.int, .int) => .int
+       | (.list, .list) => .list
+       | _ => .any) := by
+  cases ty1 with
+  | int =>
+    cases ty2 with
+    | int => rfl
+    | list => rfl
+    | any => rfl
+  | list =>
+    cases ty2 with
+    | int => rfl
+    | list => rfl
+    | any => rfl
+  | any =>
+    cases ty2 with
+    | int => rfl
+    | list => rfl
+    | any => rfl
 /-- The variable index of an expression, when it is a variable. -/
 @[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "index_of_def"]
 def indexOf : Exp → Option Nat
   | .var n => some n
   | _ => none
+/-- HOL `index_of_PMATCH`: the definition's case equation. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "index_of_PMATCH"]
+theorem indexOf_PMATCH (expr : Exp) :
+    indexOf expr =
+      (match expr with
+       | .var i => some i
+       | _ => none) := rfl
 
 /-- Refine the indexed context entry only when it is present and unknown. -/
 @[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "try_update_def"]
@@ -146,6 +217,14 @@ def opEq : AssocOp → Exp → Bool
 def getBinArgs : Exp → Option (Exp × Exp)
   | .op _ [x, y] => some (x, y)
   | _ => none
+/-- HOL `get_bin_args_PMATCH`: the definition's case equation, matching exactly
+two operands. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "get_bin_args_PMATCH"]
+theorem getBinArgs_PMATCH (expr : Exp) :
+    getBinArgs expr =
+      (match expr with
+       | .op _ [e1, e2] => some (e1, e2)
+       | _ => none) := rfl
 
 /-- Extract two operands only when the operation matches the accumulator. -/
 @[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "opbinargs_def"]

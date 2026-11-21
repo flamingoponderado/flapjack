@@ -17,6 +17,35 @@ def isRec (name : Nat) : Exp → Bool
   | .call _ (some dest) _ none => dest == name
   | _ => false
 
+/-- HOL `is_rec_PMATCH`: the definition's case equation, with HOL's option
+binder `d` compared by the Boolean `==` of the definition. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "is_rec_PMATCH"]
+theorem isRec_PMATCH (name : Nat) (expr : Exp) :
+    isRec name expr =
+      (match expr with
+       | .call _ d _ none => d == some name
+       | _ => false) := by
+  cases expr with
+  | var n => rfl
+  | ifThenElse c t e => rfl
+  | «let» es b => rfl
+  | raise e => rfl
+  | tick e => rfl
+  | force n m => rfl
+  | op o args => rfl
+  | letCall n m k es b => rfl
+  | «return» es => rfl
+  | call ticks dest args handler =>
+    cases dest with
+    | none =>
+      cases handler with
+      | none => rfl
+      | some h => rfl
+    | some d =>
+      cases handler with
+      | none => rfl
+      | some h => rfl
+
 /-- Fuel-bounded traversal of the source `has_rec_sing` predicate. Unlike a
 general recursion detector it intentionally examines only the positions that
 can be rewritten by this optimization. -/
