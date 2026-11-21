@@ -54,7 +54,7 @@ scripts/hol-probes/regenerate.sh` using the pinned source revisions.
 `IMP_read_bytearray_GENLIST`, including its arbitrary element type and its
 independent address-word dimension, and the typed statement and hypothesis
 counts of `state_rel_get_var_Number_IMP_alt`, `state_rel_IMP_tstamps`, `INT_EQ_NUM_LEMMA`, `evaluate_Maxout_bits_code`, `Make_ptr_bits_thm`, `assign_ConsExtend`, `assign_Cons`, `assign_Build`, `assign_WordTest`,
-`assign_LessConstSmall`, `assign_LessSmallConst`, and the rebound correctness theorem
+`assign_LessConstSmall`, `assign_LessSmallConst`, `assign_LengthBlock`, and the rebound correctness theorem
 `assign_BoundsCheckByte`, `assign_BoundsCheckArray`, and `assign_BoundsCheckBlock`. It also parses the earlier rebound compiler equation
 `assign_BoundsCheckByte`, `assign_BoundsCheckArray`, `assign_BoundsCheckBlock`, and the original local statement of
 `parts_to_words_NONE` with inferred types; this capture does not replay its
