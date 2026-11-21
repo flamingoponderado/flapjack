@@ -5888,11 +5888,23 @@ def word_dimension_as_width_errors(declaration_text: str, declaration: str,
         errors.append(
             f"word_dimension_as_width `{width_name}` must retain its own `[NeZero {width_name}]` binder"
         )
-    if WORD_CARRIER_TOKEN_RE.search(signature):
-        errors.append(
-            "word_dimension_as_width is only for word-free signatures; use "
-            "words_as_type_indexed_bitvec for a signature carrying words"
-        )
+    # HOL fixed-width word types (`word8`, `word64`, ...) render as a bare
+    # `BitVec <positive decimal literal>`; those are admitted beside the
+    # numeric-only dimension. Any other word carrier (an identifier, arithmetic
+    # or parenthesised width, a word abbreviation, or `BitVec 0`) is the
+    # type-indexed translation and needs words_as_type_indexed_bitvec. The
+    # check cannot tell a HOL fixed-width word from a specialised `'a word`;
+    # source review must confirm that from the typed capture.
+    for match in WORD_CARRIER_TOKEN_RE.finditer(signature):
+        literal = re.match(r"BitVec[ \t]+([1-9][0-9]*)(?![A-Za-z0-9_'.])",
+                           signature[match.start():])
+        if match.group(0) != "BitVec" or literal is None:
+            errors.append(
+                "word_dimension_as_width admits only fixed-width word carriers "
+                "`BitVec <positive literal>`; use words_as_type_indexed_bitvec "
+                "for a signature carrying type-indexed words"
+            )
+            break
     return errors
 
 def new_ref_existential_header_errors(source: str) -> list[str]:

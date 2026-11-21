@@ -653,8 +653,34 @@ def lookupCodeHOLFiniteExact
         self.assertTrue(any("explicit `(width : Nat)` binder" in error
                             for error in check(wrong_binder, "example", "width")))
         word_carrier = "def example (width : Nat) [NeZero width] : BitVec width := 0"
-        self.assertTrue(any("word-free signatures" in error
+        self.assertTrue(any("fixed-width word carriers" in error
                             for error in check(word_carrier, "example", "width")))
+
+    def test_word_dimension_as_width_admits_only_literal_bitvec_carriers(self):
+        check = CHECKER["word_dimension_as_width_errors"]
+        header = "theorem example (width : Nat) [NeZero width] "
+        for accepted in ["(w : BitVec 8) : goodDimindex width → P width w := by",
+                         "(w : BitVec 64) (b : BitVec 8) : Q width w b := by"]:
+            self.assertEqual(check(header + accepted, "example", "width"), [], accepted)
+        for rejected in ["(w : BitVec 0) : P width w := by",
+                         "(w : BitVec width) : P width w := by",
+                         "(w : BitVec (width + 1)) : P width w := by",
+                         "(w : BitVec (8)) : P width w := by",
+                         "(w : BitVec n) : P width w := by",
+                         "(w : RiscV.Word 8) : P width w := by",
+                         "(w : BitVec 8) (v : BitVec width) : P width w v := by"]:
+            self.assertTrue(any("fixed-width word carriers" in error
+                                for error in check(header + rejected, "example", "width")),
+                            rejected)
+        missing = "theorem example (width : Nat) (w : BitVec 8) : P width w := by"
+        self.assertTrue(any("retain its own `[NeZero width]`" in error
+                            for error in check(missing, "example", "width")))
+
+    def test_word_dimension_as_width_binder_never_a_bitvec_width(self):
+        check = CHECKER["word_dimension_as_width_errors"]
+        smuggled = ("theorem example (width : Nat) [NeZero width] (w : BitVec 8)"
+                    " (x : BitVec width) : P w x := by")
+        self.assertTrue(check(smuggled, "example", "width"))
 
     def test_reals_as_rational_cuts_site_flag(self):
         sites = list(SITES([
