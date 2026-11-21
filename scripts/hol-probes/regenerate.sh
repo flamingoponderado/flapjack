@@ -12617,7 +12617,10 @@ run_probe word_bignum_proof_typed_probeScript.sml word_bignum_proof_typed_probe.
   state_eq_lemma_typed clock_write_simp_typed dec_clock_write_simp_typed \
   reg_write_simp_typed array_write_simp_typed delete_vars_simp_typed \
   reg_read_lemma1_typed reg_read_lemma2_typed array_read_lemma_typed clock_read_lemma_typed \
-  i2mw_NOT_NIL_typed mw_ok_SND_i2mw_typed \
+  i2mw_NOT_NIL_typed mw_ok_SND_i2mw_typed single_add_word_imp_0_1_typed \
+  mini_size_def_typed address_size_def_typed wordLang_exp_size_def_typed \
+  asm_reg_imm_size_def_typed asm_cmp_size_def_typed asm_binop_size_def_typed \
+  ast_shift_size_def_typed stackLang_store_name_size_def_typed \
   "$cake_dir/compiler/backend/proofs/word_bignumProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
 
