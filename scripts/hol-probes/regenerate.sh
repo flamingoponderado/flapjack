@@ -12737,6 +12737,11 @@ run_probe bignum_code_defs_probeScript.sml bignum_code_defs_probe.out \
   mc_sub_loop2_corr_thm mc_sub_loop_corr_thm mc_top_two_corr_thm \
   "$cake_dir/compiler/backend/proofs/word_bignumProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
+run_probe data_to_word_proof_lab2_typed_probeScript.sml data_to_word_proof_lab2_typed_probe.out \
+  data_to_word_proof_lab2_probe_begin data_to_word_proof_lab2_probe_end \
+  "$cake_dir/compiler/backend/proofs/data_to_wordProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+
 run_probe data_to_word_proof_lab_typed_probeScript.sml data_to_word_proof_lab_typed_probe.out \
   state_rel_with_locals_sfs_typed extract_labels_MemEqList_typed \
   extract_labels_StoreEach_typed extract_labels_StoreAnyConsts_typed \

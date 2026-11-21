@@ -330,6 +330,18 @@ import Flapjack.Compiler.Backend.BackendProof.EvalOracle
 import Flapjack.Compiler.Backend.BackendProof.SafeForSpace
 import Flapjack.Compiler.Backend.BackendProof.WordConf
 import Flapjack.Compiler.Backend.BackendProof.CakeOracEqs
+import Flapjack.Compiler.Backend.BackendProof.PerfCalls
+import Flapjack.Compiler.Backend.BackendProof.LabelsOk
+import Flapjack.Compiler.Backend.BackendProof.ImpSafeForSpace
+import Flapjack.Compiler.Backend.BackendProof.AddEvalState
+import Flapjack.Compiler.Backend.BackendProof.LabLabels
+import Flapjack.Compiler.Backend.BackendProof.FlatSemantics
+import Flapjack.Compiler.Backend.BackendProof.OracleMonotonic
+import Flapjack.Compiler.Backend.BackendProof.BviNames
+import Flapjack.Compiler.Backend.BackendProof.SyntaxOracle
+import Flapjack.Compiler.Backend.BackendProof.CompileCorrect
+import Flapjack.Compiler.Backend.BackendProof.BagDistinct
+import Flapjack.Compiler.Backend.BackendProof.NameDistinct
 import Flapjack.Compiler.Backend.Backend.ToTarget
 import Flapjack.Compiler.Backend.DataToWord.Proofs.OptionLe
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Limits
@@ -582,6 +594,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.ThunkBits
 import Flapjack.Compiler.Backend.DataToWord.Proofs.ValueLoc
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Labels
 import Flapjack.Compiler.Backend.DataToWord.Proofs.NoShareInst
+import Flapjack.Compiler.Backend.DataToWord.Proofs.LabPres
 import Flapjack.Compiler.Backend.DataToWord.Proofs.NoInst
 import Flapjack.Compiler.Backend.DataToWord.Proofs.StateRelLocals
 import Flapjack.Compiler.Backend.DataToWord.Proofs.CompilePart

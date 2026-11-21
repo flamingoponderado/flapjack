@@ -124,7 +124,7 @@ def assignCmp {width : Nat} [NeZero width] (dest : Nat) (cmp : Opb) (v1 v2 : Nat
   | .geq => setBool dest .notLower v1 (.reg v2)
 
 /-- Adapt a source destination to the word-register convention. -/
-private def boolResult {width : Nat} [NeZero width] (dest : Nat) (cmp : Cmp) (r : Nat)
+def boolResult {width : Nat} [NeZero width] (dest : Nat) (cmp : Cmp) (r : Nat)
     (other : WordRegImm (BitVec width)) : WordLangProgHOL (BitVec width) :=
   setBool (adjustVar dest) cmp r other
 
@@ -323,14 +323,14 @@ def fpTopInst : FpTop → WordLangFp
   | .fma => .fpFma 0 1 2
 
 /-- Operand layout for the floating-point lowering sequences. -/
-private def fpOperand (source position : Nat) : Nat × Nat × Nat × Nat × Nat × Nat :=
+def fpOperand (source position : Nat) : Nat × Nat × Nat × Nat × Nat × Nat :=
   match position with
   | 0 => (source, 3, 15, 11, 13, 0)
   | 1 => (source, 5, 17, 21, 23, 1)
   | _ => (source, 7, 19, 31, 33, 2)
 
 /-- Load floating-point operands in the order used by the source compiler. -/
-private def fpLoads {width : Nat} [NeZero width] (conf : Config) (sources : List Nat) :
+def fpLoads {width : Nat} [NeZero width] (conf : Config) (sources : List Nat) :
     List (WordLangProgHOL (BitVec width)) :=
   let operands := sources.zipIdx |>.map fun (source, position) => fpOperand source position
   let bytes := (wordSemBytesInWord : BitVec width)
@@ -346,7 +346,7 @@ private def fpLoads {width : Nat} [NeZero width] (conf : Config) (sources : List
     (operands.map fun (_, _, _, low, high, fp) => .inst (.fp (.fpMovFromReg fp high low)))
 
 /-- Emit a floating-point result allocation after its instruction. -/
-private def fpResult {width : Nat} [NeZero width] (conf : Config) (dest : Nat)
+def fpResult {width : Nat} [NeZero width] (conf : Config) (dest : Nat)
     (sources : List Nat) (operation : WordLangFp) (resultFp : Nat) : WordLangProgHOL (BitVec width) :=
   let words := if width = 64 then 1 else 2
   match encodeHeader (width := width) conf 3 words with
@@ -1383,7 +1383,7 @@ theorem assignFpTop_expansion {width : Nat} [NeZero width] (operation : FpTop) (
   all_goals split <;> simp_all
 
 /-- Common emitted sequence for integer addition and subtraction. -/
-private def assignAddSub {width : Nat} [NeZero width] (subtract : Bool) (secn l dest : Nat)
+def assignAddSub {width : Nat} [NeZero width] (subtract : Bool) (secn l dest : Nat)
     (names : Option NumSet) (first second : Nat) : WordLangProgHOL (BitVec width) × Nat :=
   let cutsets := adjustSets (names.getD .ln)
   let instr := if subtract then WordLangArith.subOverflow 1 (adjustVar first) (adjustVar second) 3
