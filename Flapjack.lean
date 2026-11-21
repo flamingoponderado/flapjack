@@ -492,6 +492,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Bignum.WordBits
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Bignum.LongDiv
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Bignum.EvalRewrites
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Bignum.Replicate
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Bignum.NumSize
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.WordMlInvInsert
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.MkLoc
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.Skip
