@@ -161,6 +161,14 @@ import Flapjack.Compiler.Backend.WordElim.Proofs.Analysis
 import Flapjack.Compiler.Backend.WordElim.Proofs.Locations
 import Flapjack.Compiler.Backend.WordElim.Proofs.Stacks
 import Flapjack.Compiler.Backend.WordElim.Proofs.StateRel
+import Flapjack.Compiler.Backend.WordElim.Proofs.Removal.Frame
+import Flapjack.Compiler.Backend.WordElim.Proofs.Removal.LeafLocs
+import Flapjack.Compiler.Backend.WordElim.Proofs.Removal.Basic
+import Flapjack.Compiler.Backend.WordElim.Proofs.Removal.Leaf
+import Flapjack.Compiler.Backend.WordElim.Proofs.Removal.Control
+import Flapjack.Compiler.Backend.WordElim.Proofs.Removal.CallSupport
+import Flapjack.Compiler.Backend.WordElim.Proofs.Removal.Call
+import Flapjack.Compiler.Backend.WordElim.Proofs.Removal
 import Flapjack.Compiler.Backend.WordElim.Proofs.ConstWrites
 import Flapjack.Compiler.Backend.WordElim.Proofs.Vars
 import Flapjack.Compiler.Backend.WordElim.Proofs.Memory
