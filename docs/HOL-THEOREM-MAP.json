@@ -149935,5 +149935,44 @@
  "statement_status": "reviewed_words_as_type_indexed_bitvec",
  "words_as_type_indexed_bitvec": true,
  "reviewer": "Source comparison against FST_compile_part_typed: FST (compile_part a b : num # num # 'a prog) = FST b for every config a and data part b. Positive-width BitVec represents the result program's word dimension."
+},
+{
+ "hol_path": "cakeml/compiler/backend/proofs/data_to_wordProofScript.sml",
+ "hol_name": "state_rel_pop_env_set_vars_IMP",
+ "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/PopEnvSetVars.lean",
+ "lean_name": "stateRel_popEnv_setVars",
+ "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+ "fmap_as_finite_support": [
+  "fpRegs",
+  "store"
+ ],
+ "words_as_type_indexed_bitvec": true,
+ "reviewer": "Source comparison against state_rel_pop_env_set_vars_IMP_typed (data_to_word_proof_call_typed_probe; local theorem, source lines 256-291): premises state_rel c q l s1 t1 (SOME (ZIP (as,ws))) locs, LENGTH as = LENGTH ws, LENGTH ns = LENGTH as, ALL_DISTINCT ns (List.Nodup) and pop_env s1 = SOME s2, as one conjunction; conclusion: exists t2 l8 l9 ll with pop_env t1 = SOME t2, locs = (l8,l9)::ll and state_rel c l8 l9 (set_vars ns as s2) (set_vars (MAP adjust_var ns) ws t2) NONE ll. ZIP on equal-length lists is List.zip. Data and word states share the compiler and FFI types. Target maps/words use the reviewed canonical representations with the local roundtrip witness."
+},
+{
+ "hol_path": "cakeml/compiler/backend/proofs/data_to_wordProofScript.sml",
+ "hol_name": "state_rel_cut_env_IMP_cut_env",
+ "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/CutEnv.lean",
+ "lean_name": "stateRel_cutEnv_imp_cutEnv",
+ "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+ "fmap_as_finite_support": [
+  "fpRegs",
+  "store"
+ ],
+ "words_as_type_indexed_bitvec": true,
+ "reviewer": "Source comparison against state_rel_cut_env_IMP_cut_env_typed (the exported GEN_ALL/SRULE specialization of state_rel_cut_state_opt_SOME at args = []): binders in the captured order t s locs l2 l1 kept_names c env; premise state_rel c l1 l2 s t NONE locs and dataSem cut_env kept_names s.locals = SOME env; conclusion exists y with wordSem cut_env (adjust_sets kept_names) t.locals = SOME y, state_rel of s with locals := env against t, and against t with locals := y. Target maps/words use the reviewed canonical representations with the local roundtrip witness."
+},
+{
+ "hol_path": "cakeml/compiler/backend/proofs/data_to_wordProofScript.sml",
+ "hol_name": "state_rel_get_var_RefPtr_Loc",
+ "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/GetVarLoc.lean",
+ "lean_name": "stateRel_getVar_refPtr_loc",
+ "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+ "fmap_as_finite_support": [
+  "fpRegs",
+  "store"
+ ],
+ "words_as_type_indexed_bitvec": true,
+ "reviewer": "Source comparison against state_rel_get_var_RefPtr_Loc_typed (local theorem, source lines 136-169): for arbitrary result option v1, the conjunction state_rel c l1 l2 s t v1 locs, dataSem get_var n s.locals = SOME (RefPtr b p) and wordSem get_var (adjust_var n) t = SOME (Loc n1 n2) implies n2 = 0. The Lean proof reads the related root through word_ml_inv_lookup as in HOL and observes that word_addr only produces zero-offset locations. Target maps/words use the reviewed canonical representations with the local roundtrip witness."
 }
 ]

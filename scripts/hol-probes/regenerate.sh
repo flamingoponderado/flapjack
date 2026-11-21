@@ -12689,3 +12689,9 @@ run_probe data_to_word_proof_lab_typed_probeScript.sml data_to_word_proof_lab_ty
   bounds_lem_typed max_heap_limit_has_fp_ops_typed FST_compile_part_typed \
   "$cake_dir/compiler/backend/proofs/data_to_wordProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+
+run_probe data_to_word_proof_call_typed_probeScript.sml data_to_word_proof_call_typed_probe.out \
+  state_rel_cut_env_IMP_cut_env_typed state_rel_get_var_RefPtr_Loc_typed \
+  state_rel_pop_env_set_vars_IMP_typed \
+  "$cake_dir/compiler/backend/proofs/data_to_wordProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
