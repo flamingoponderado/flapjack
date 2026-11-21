@@ -698,6 +698,7 @@ import Flapjack.Misc.Multiword.Mc.Correct.IDiv
 import Flapjack.Misc.Multiword.Mc.Correct.Iop
 import Flapjack.Misc.Multiword.Length
 import Flapjack.Misc.Multiword.SingleWord
+import Flapjack.Misc.Multiword.SingleDivFull
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.WordEquality.Word64
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.WordEquality.Number
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.WordEquality.Block
