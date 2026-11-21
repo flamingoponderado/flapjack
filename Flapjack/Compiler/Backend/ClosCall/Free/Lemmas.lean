@@ -16,12 +16,11 @@ here: `free` and `freeList` both abbreviate `ClosKnown.freeHOL`, whose clauses
 are exactly HOL's `free_list` clauses, so the second conjunct is definitional. -/
 @[hol "cakeml/compiler/backend/clos_callScript.sml" "free_sing_eq"]
 theorem free_sing_eq :
-    (∀ expression, free [expression] =
-      ([(freeSing expression).1], (freeSing expression).2)) ∧
+    (∀ expression, free [expression] = (fun (e, vs) => ([e], vs)) (freeSing expression)) ∧
     (∀ es, free es = freeList es) := by
   constructor
   · intro expression
-    simp [free, freeSing, freeHOL, mkUnion_empty_right]
+    simp [free, freeHOL, mkUnion_empty_right]
   · intro es
     rfl
 
