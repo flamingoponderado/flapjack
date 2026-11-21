@@ -23910,6 +23910,17 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "assign_Length",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/Length.lean",
+  "lean_name": "assignLength_correct",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared assign_Length_typed and its zero HOL hypotheses: the exact operation, state relation, names condition, source cut and argument lookup, termination-depth bound, successful source operation, existential target evaluation, and both original result implications are retained. HOL combines the state and operation premises in one conjunction while Lean takes them as successive arguments. Target finite-map fields and positive-width words use the reviewed representations; the evaluator inherits reals_as_rational_cuts, documented in SOUNDNESS item 8."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
   "hol_name": "assign_LengthBlock",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/LengthBlock.lean",
   "lean_name": "assignLengthBlock_correct",
