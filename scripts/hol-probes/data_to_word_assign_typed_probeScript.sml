@@ -700,3 +700,6 @@ val _ = cap "do_app_AllocThunk_typed" "do_app_AllocThunk";
 
 (* Batch A8: assign_FinaliseCons. *)
 val _ = cap "assign_FinaliseCons_typed" "assign_FinaliseCons";
+
+(* Batch A9: assign_MutCons. *)
+val _ = cap "assign_MutCons_typed" "assign_MutCons";
