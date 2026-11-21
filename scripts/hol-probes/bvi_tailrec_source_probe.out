@@ -38,3 +38,6 @@ decide_ty_PMATCH_typed=∀(ty1 :v_ty) (ty2 :v_ty). decide_ty ty1 ty2 = PMATCH (t
 index_of_PMATCH_typed=∀(expr :exp). index_of expr = PMATCH expr [PMATCH_ROW (λ(i :num). (Var i :exp)) (λ(i :num). T) (λ(i :num). SOME i); PMATCH_ROW (λ(_0 :exp). _0) (λ(_0 :exp). T) (λ(_0 :exp). (NONE :num option))]
 get_bin_args_PMATCH_typed=∀(op :exp). get_bin_args op = PMATCH op [PMATCH_ROW (λ((_0 :op),(e1 :exp),(e2 :exp)). (Op _0 [e1; e2] :exp)) (λ((_0 :op),(e1 :exp),(e2 :exp)). T) (λ((_0 :op),(e1 :exp),(e2 :exp)). SOME (e1,e2)); PMATCH_ROW (λ(_0 :exp). _0) (λ(_0 :exp). T) (λ(_0 :exp). (NONE :(exp # exp) option))]
 args_from_PMATCH_typed=∀(expr :exp). args_from expr = PMATCH expr [PMATCH_ROW (λ((t :num),(d :num),(as :exp list),(hdl :exp option)). (Call t (SOME d) as hdl :exp)) (λ((t :num),(d :num),(as :exp list),(hdl :exp option)). T) (λ((t :num),(d :num),(as :exp list),(hdl :exp option)). SOME (t,d,as,hdl)); PMATCH_ROW (λ(_0 :exp). _0) (λ(_0 :exp). T) (λ(_0 :exp). (NONE :(num # num # exp list # exp option) option))]
+MEM_exp_size_imp_typed=∀(xs :exp list) (a :exp). MEM a xs ⇒ exp_size a < exp2_size xs
+exp_size_get_bin_args_typed=∀(x :exp) (x1 :exp) (x2 :exp). get_bin_args x = SOME (x1,x2) ⇒ exp_size x1 + exp_size x2 < exp_size x
+op_eq_to_op_typed=∀(iop :assoc_op) (op :op) (xs :exp list). op_eq iop (Op op xs :exp) ⇔ op = to_op iop ∧ iop ≠ Noop

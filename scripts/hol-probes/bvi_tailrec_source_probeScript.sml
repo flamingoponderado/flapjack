@@ -59,3 +59,6 @@ val _ = show "decide_ty_PMATCH_typed" bvi_tailrecTheory.decide_ty_PMATCH;
 val _ = show "index_of_PMATCH_typed" bvi_tailrecTheory.index_of_PMATCH;
 val _ = show "get_bin_args_PMATCH_typed" bvi_tailrecTheory.get_bin_args_PMATCH;
 val _ = show "args_from_PMATCH_typed" bvi_tailrecTheory.args_from_PMATCH;
+val _ = show "MEM_exp_size_imp_typed" bvi_tailrecTheory.MEM_exp_size_imp;
+val _ = show "exp_size_get_bin_args_typed" bvi_tailrecTheory.exp_size_get_bin_args;
+val _ = show "op_eq_to_op_typed" bvi_tailrecTheory.op_eq_to_op;

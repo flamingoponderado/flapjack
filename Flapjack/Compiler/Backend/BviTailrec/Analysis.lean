@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.BviTailrec
+public import Flapjack.Compiler.Backend.Bvi.GeneratedSize
 
 @[expose] public section
 
@@ -225,6 +226,78 @@ theorem getBinArgs_PMATCH (expr : Exp) :
       (match expr with
        | .op _ [e1, e2] => some (e1, e2)
        | _ => none) := rfl
+
+/-- HOL `MEM_exp_size_imp`: a member of an expression list is smaller than the
+list's generated size. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "MEM_exp_size_imp"]
+theorem MEM_exp_size_imp :
+    ∀ (xs : List Exp) (a : Exp), a ∈ xs → expSizeHOL a < expListSizeHOL xs := by
+  intro xs
+  induction xs with
+  | nil =>
+    intro a h
+    simp at h
+  | cons x rest ih =>
+    intro a h
+    rcases List.mem_cons.mp h with rfl | h
+    · simp only [expListSizeHOL]
+      omega
+    · have := ih a h
+      simp only [expListSizeHOL]
+      omega
+
+/-- HOL `exp_size_get_bin_args`: the two operands extracted by `get_bin_args`
+are together smaller than the whole expression. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "exp_size_get_bin_args"]
+theorem exp_size_get_bin_args :
+    ∀ (expr x1 x2 : Exp), getBinArgs expr = some (x1, x2) →
+      expSizeHOL x1 + expSizeHOL x2 < expSizeHOL expr := by
+  intro expr
+  cases expr with
+  | var n =>
+    intro x1 x2 h
+    simp [getBinArgs] at h
+  | ifThenElse c t e =>
+    intro x1 x2 h
+    simp [getBinArgs] at h
+  | «let» es b =>
+    intro x1 x2 h
+    simp [getBinArgs] at h
+  | raise e =>
+    intro x1 x2 h
+    simp [getBinArgs] at h
+  | tick e =>
+    intro x1 x2 h
+    simp [getBinArgs] at h
+  | call ticks dest args handler =>
+    intro x1 x2 h
+    simp [getBinArgs] at h
+  | force n m =>
+    intro x1 x2 h
+    simp [getBinArgs] at h
+  | letCall n m k es b =>
+    intro x1 x2 h
+    simp [getBinArgs] at h
+  | «return» es =>
+    intro x1 x2 h
+    simp [getBinArgs] at h
+  | op o args =>
+    intro x1 x2 h
+    cases args with
+    | nil => simp [getBinArgs] at h
+    | cons a args =>
+      cases args with
+      | nil => simp [getBinArgs] at h
+      | cons b args =>
+        cases args with
+        | nil =>
+          simp only [getBinArgs, Option.some.injEq, Prod.mk.injEq] at h
+          obtain ⟨h1, h2⟩ := h
+          subst h1
+          subst h2
+          simp only [expSizeHOL, expListSizeHOL]
+          omega
+        | cons c rest => simp [getBinArgs] at h
 
 /-- Extract two operands only when the operation matches the accumulator. -/
 @[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "opbinargs_def"]
