@@ -54,7 +54,9 @@ scripts/hol-probes/regenerate.sh` using the pinned source revisions.
 `IMP_read_bytearray_GENLIST`, including its arbitrary element type and its
 independent address-word dimension, and the typed statement and hypothesis
 counts of `state_rel_get_var_Number_IMP_alt`, `state_rel_IMP_tstamps`, `INT_EQ_NUM_LEMMA`, `evaluate_Maxout_bits_code`, `Make_ptr_bits_thm`, `assign_ConsExtend`, `assign_Cons`, `assign_Build`, `assign_WordTest`,
-`assign_LessConstSmall`, and `assign_LessSmallConst`. It parses the original local statement of
+`assign_LessConstSmall`, `assign_LessSmallConst`, `assign_LengthBlock`, `assign_Length`, `assign_LengthByte`, `word_bit_lsr_dimindex_1`, `state_rel_Number_IMP`, `option_le_add_comm`, `IN_adjust_set_IN`, `state_rel_upd_safe_pkheap`, `state_rel_ignore_safe_for_space`, `state_rel_peak_heap_length`, the arithmetic helpers from `opt_map_plus_zero_id` through `w2n_mul_less` (including the local `word_bit_0_sub_lemma`, parsed from source), and the rebound correctness theorem
+`assign_BoundsCheckByte`, `assign_BoundsCheckArray`, and `assign_BoundsCheckBlock`. It also parses the earlier rebound compiler equation
+`assign_BoundsCheckByte`, `assign_BoundsCheckArray`, `assign_BoundsCheckBlock`, and the original local statement of
 `parts_to_words_NONE` with inferred types; this capture does not replay its
 HOL proof.
 
@@ -818,6 +820,12 @@ exported global-invariant equation and replay its original simplifier derivation
 `bignum_word_probe.out` captures the 23 original generated bignum stubs at the fixed CakeML location for 64-bit words. `scripts/generate-bignum-word-snapshot.py` renders a reference snapshot from this capture, and the word-oracle generator also produces an exhaustive matching test. The executed mini compiler is checked against that oracle; the original shallow-to-deep generator and its correctness theorem remain unported. Regenerate the probe using the pinned CakeML and HOL submodules before regenerating either Lean artifact.
 
 `bignum_compile_exp_probe.out` records the inferred HOL expression-translation type and binary, invalid-arity, lookup, and shift cases. `Flapjack.Test.WordBignumCompileExpParity` replays those cases. Regenerate with `HOL_PROBE_ONLY=bignum_compile_exp_probeScript.sml scripts/hol-probes/regenerate.sh`; this is regression evidence and does not establish generator equivalence.
+
+`data_to_word_bignum_typed_probe.out` records typed statements of reviewed `data_to_word_bignumProofScript.sml` rows (exported theorems from the theory DB, `[local]` theorems parsed from the pinned source) and the constructors of multiword's `mw_op`. Regenerate with `HOL_PROBE_ONLY=data_to_word_bignum_typed_probeScript.sml scripts/hol-probes/regenerate.sh`; it does not replay HOL proofs.
+
+`data_to_word_gc_port_typed_probe.out` records typed statements of the `data_to_word_gcProofScript.sml` declarations that had no reviewed Lean row when the bottom-up port of that script resumed, labelled `gcport_<name>_typed` (exported theorems and definitions from the theory DB, `[local]` theorems parsed from the pinned source). Regenerate with `HOL_PROBE_ONLY=data_to_word_gc_port_typed_probeScript.sml scripts/hol-probes/regenerate.sh`; it does not replay HOL proofs.
+
+`multiword_typed_probe.out` records the typed statement of every exported theorem and definition of the HOL `multiword` and `mc_multiword` theories (`HOL/examples/machine-code/multiword`), labelled `<theory>_<name>_typed`, for the bottom-up port beneath `Flapjack/Misc/Multiword`. `[local]` theorems are not exported and need separate source-parsed captures. Regenerate with `HOL_PROBE_ONLY=multiword_typed_probeScript.sml scripts/hol-probes/regenerate.sh`; it does not replay HOL proofs.
 
 `bignum_helpers_probe.out` records the source-inferred helper types and register, immediate, complement, load, save, index and division-call observations. `Flapjack.Test.WordBignumHelpersParity` replays the results. Regenerate with `HOL_PROBE_ONLY=bignum_helpers_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
@@ -11088,3 +11096,11 @@ four-argument dispatch, word comparison, string comparison, and byte-array,
 array and block bounds-check equations, and general equality and integer
 ordering, block length, tag-length and tag equality equations. Concrete equality, ordering, tail-call, returning-call,
 and bad-header cases are in `cake_word_array_probe.out`.
+
+`data_to_word_memory_more_typed_probe.out` records typed statements of the
+`data_to_word_memoryProofScript.sml` declarations ported on the
+`cakeml-memproof` branch (exported theorems and definitions from the theory DB,
+`[local]` theorems parsed from the pinned source), between the static
+`dtw_memory_more_begin`/`dtw_memory_more_end` markers. Regenerate with
+`HOL_PROBE_ONLY=data_to_word_memory_more_typed_probeScript.sml scripts/hol-probes/regenerate.sh`;
+it does not replay HOL proofs.
