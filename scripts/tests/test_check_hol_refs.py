@@ -2517,23 +2517,40 @@ class DataToWordAssignDeclarationsTest(unittest.TestCase):
 
 
 class WordBignumGeneratedDeclarationTest(unittest.TestCase):
-    def test_pinned_generated_name_and_line(self):
+    def test_pinned_generated_names_and_lines(self):
         path = CHECKER["ROOT"] / CHECKER["WORD_BIGNUM_SCRIPT"]
         source = path.read_text()
-        parse = CHECKER["word_bignum_mc_iop_declaration"]
-        self.assertEqual(parse(path, source), ("mc_iop_code_def", 412))
+        parse = CHECKER["word_bignum_to_deep_declarations"]
+        declarations = parse(path, source)
+        self.assertEqual(len(declarations), 64)
+        self.assertEqual(len({name for name, _line in declarations}), 64)
+        self.assertIn(("mc_iop_code_def", 412), declarations)
+        self.assertIn(("mc_isub_flip_code_def", 412), declarations)
+        self.assertIn(("mc_cmp_code_def", 407), declarations)
+        self.assertIn(("mc_add_loop1_code_def", 410), declarations)
+        self.assertIn(("mc_use_fac_code_def", 422), declarations)
         self.assertIsNone(REF_ERROR(path, "mc_iop_code_def", 412, {}))
+        self.assertIsNone(REF_ERROR(path, "mc_single_mul_code_def", None, {}))
         self.assertIn("not at line", REF_ERROR(path, "mc_iop_code_def", 413, {}))
-        self.assertIn("declares no", REF_ERROR(path, "mc_iadd_code_def", None, {}))
+        self.assertIn("declares no", REF_ERROR(path, "mc_iop_corr_code_def", None, {}))
+
+    def test_table_matches_capture(self):
+        capture = CHECKER["ROOT"] / "scripts/hol-probes/bignum_code_defs_probe.out"
+        captured = {line.split("=", 1)[0] for line in capture.read_text().splitlines()}
+        table = {constant + "_def"
+                 for constants in CHECKER["WORD_BIGNUM_TO_DEEP_CODE_CONSTANTS"].values()
+                 for constant in constants}
+        self.assertEqual(table, captured)
 
     def test_rejects_changed_source_wrong_path_and_hidden_invocation(self):
         path = CHECKER["ROOT"] / CHECKER["WORD_BIGNUM_SCRIPT"]
         source = path.read_text()
-        parse = CHECKER["word_bignum_mc_iop_declaration"]
-        self.assertIsNone(parse(Path("elsewhere/word_bignumScript.sml"), source))
-        self.assertIsNone(parse(path, source + "\n"))
-        hidden = source.replace("val def = mc_iop_def |> to_deep", " " * len("val def = mc_iop_def |> to_deep"))
-        self.assertIsNone(parse(path, source, hidden))
+        parse = CHECKER["word_bignum_to_deep_declarations"]
+        self.assertEqual(parse(Path("elsewhere/word_bignumScript.sml"), source), [])
+        self.assertEqual(parse(path, source + "\n"), [])
+        call = "val def = mc_iop_def |> to_deep"
+        hidden = source.replace(call, " " * len(call))
+        self.assertEqual(parse(path, source, hidden), [])
 
 
 class McMultiwordTailrecDeclarationsTest(unittest.TestCase):

@@ -12647,3 +12647,23 @@ run_probe word_bignum_corr_typed_probeScript.sml word_bignum_corr_typed_probe.ou
   word_bignum_corr_probe_begin word_bignum_corr_probe_end \
   "$cake_dir/compiler/backend/proofs/word_bignumProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+
+run_probe bignum_code_defs_probeScript.sml bignum_code_defs_probe.out \
+  mc_add1_call_code_def mc_add1_code_def mc_add_code_def mc_add_loop1_code_def \
+  mc_add_loop2_code_def mc_add_loop_code_def mc_adj_cmp_code_def mc_adjust_aux_code_def \
+  mc_calc_d_code_def mc_cmp2_code_def mc_cmp3_code_def mc_cmp_code_def \
+  mc_cmp_mul2_code_def mc_compare_code_def mc_copy_down_code_def mc_copy_over_code_def \
+  mc_div0_code_def mc_div1_code_def mc_div2_code_def mc_div3_code_def \
+  mc_div_adjust_code_def mc_div_code_def mc_div_guess_code_def mc_div_loop_code_def \
+  mc_div_r1_code_def mc_div_sub1_code_def mc_div_sub_aux1_code_def \
+  mc_div_sub_aux_code_def mc_div_sub_call_code_def mc_div_sub_code_def \
+  mc_div_sub_loop_code_def mc_div_test_code_def mc_fac_code_def mc_fac_final_code_def \
+  mc_fac_init_code_def mc_fix_code_def mc_iadd1_code_def mc_iadd2_code_def \
+  mc_iadd3_code_def mc_iadd_code_def mc_idiv0_code_def mc_idiv_code_def \
+  mc_idiv_mod_header_code_def mc_imul1_code_def mc_imul_code_def mc_iop_code_def \
+  mc_isub_flip_code_def mc_mul_by_single2_code_def mc_mul_by_single_code_def \
+  mc_mul_code_def mc_mul_pass_code_def mc_mul_zero_code_def mc_simple_div1_code_def \
+  mc_simple_div_code_def mc_single_div_code_def mc_single_mul_add_code_def \
+  mc_single_mul_code_def mc_sub1_code_def mc_sub_code_def mc_sub_loop1_code_def \
+  mc_sub_loop2_code_def mc_sub_loop_code_def mc_top_two_code_def mc_use_fac_code_def \
+  "$cake_dir/compiler/backend/word_bignumScript.sml" "$cake_dir/compiler/backend"
