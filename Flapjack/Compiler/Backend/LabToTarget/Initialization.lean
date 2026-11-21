@@ -3,12 +3,34 @@ module
 public import Flapjack.Compiler.Backend.LabSem.State
 public import Flapjack.Compiler.Encoders.AsmSem.State
 public import Flapjack.Compiler.Backend.Semantics.TargetProps.RegisterOracles
+public import Flapjack.Byte.SetByte
 
 @[expose] public section
 
 namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack Flapjack.Compiler.Backend.LabSem
 open Flapjack.Compiler.Backend.Semantics.TargetProps
+
+/-- Write a list of bytes, from the given address upwards, into the zero
+word using the reviewed `set_byte` port. -/
+@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "set_bytes_def"
+  (words_as_type_indexed_bitvec)]
+def setBytes {width : Nat} [NeZero width] (a : BitVec width) (be : Bool) :
+    List (BitVec 8) → BitVec width
+  | [] => 0#width
+  | b :: bs => HolByte.setByte a b (setBytes (a + 1#width) be bs) be
+
+/-- Assemble the word at an address from its four (32-bit) or eight
+(otherwise) bytes in the byte memory. -/
+@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "make_word_def"
+  (words_as_type_indexed_bitvec)]
+def makeWord {width : Nat} [NeZero width] (be : Bool) (m : BitVec width → BitVec 8)
+    (a : BitVec width) : WordLocW width :=
+  if width = 32 then
+    .word (setBytes a be [m a, m (a + 1#width), m (a + 2#width), m (a + 3#width)])
+  else
+    .word (setBytes a be [m a, m (a + 1#width), m (a + 2#width), m (a + 3#width),
+      m (a + 4#width), m (a + 5#width), m (a + 6#width), m (a + 7#width)])
 
 /-- Full original proof-layer initializer. Compiler configuration remains
 independent of target state, projection and FFI host. All 23 state fields and

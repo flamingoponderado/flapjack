@@ -10460,12 +10460,13 @@ the earlier stack_alloc probes did not capture (task 175). Regenerate with
 scripts/hol-probes/regenerate.sh`.
 
 `lab_to_target_proof_local_typed_probe.out` captures the typed statements of
-the 88 reviewed `lab_to_targetProofScript.sml` rows that the earlier
+the 90 reviewed `lab_to_targetProofScript.sml` rows that the earlier
 lab_to_target probes did not capture (task 175): 82 `[local]` theorems parsed
 from the pinned source, one `val ... = Q.prove(...) |> GSYM` theorem captured
 through its symmetric statement, and four `Overload` abbreviations captured
 with `print_without_macros` so the expansion rather than the overload name is
-printed. `semantics_compile_lemma` is derived in the source from
+printed, plus the exported `set_bytes_def` and `make_word_def` definitions
+fetched from the theory DB. `semantics_compile_lemma` is derived in the source from
 `semantics_compile_lemma'`; the probe rebuilds that statement at term level
 (fifteen-conjunct antecedent implying `implements' T ...`). Statements that
 splice an SML antiquotation (`val s1 = ``s1:('a,lab_to_target$config,'ffi)
@@ -10478,8 +10479,8 @@ HOL_PROBE_ONLY=lab_to_target_proof_local_typed_probeScript.sml
 scripts/hol-probes/regenerate.sh`.
 
 `stack_to_lab_proof_local_typed_probe.out` (30 rows),
-`word_alloc_proof_local_typed_probe.out` (141 rows) and
-`word_to_stack_proof_local_typed_probe.out` (154 rows) capture the typed
+`word_alloc_proof_local_typed_probe.out` (142 rows) and
+`word_to_stack_proof_local_typed_probe.out` (155 rows) capture the typed
 statements of the reviewed `stack_to_labProofScript.sml`, `word_allocProofScript.sml`
 and `word_to_stackProofScript.sml` rows that the earlier probes did not cover
 (task 178). Exported theorems and definitions are fetched from the theory DB;
@@ -10494,7 +10495,7 @@ HOL_PROBE_ONLY=<probe>Script.sml scripts/hol-probes/regenerate.sh`.
 
 `crep_arith_proof_local_typed_probe.out` (11 rows),
 `stack_names_proof_local_typed_probe.out` (6 rows) and
-`stack_remove_proof_local_typed_probe.out` (39 rows) capture the typed
+`stack_remove_proof_local_typed_probe.out` (50 rows) capture the typed
 statements of the reviewed `crep_arithProofScript.sml`, `stack_namesProofScript.sml`
 and `stack_removeProofScript.sml` rows that the earlier probes did not cover
 (task 179). Exported theorems are fetched from the theory DB; `[local]` theorems
@@ -11094,3 +11095,12 @@ four-argument dispatch, word comparison, string comparison, and byte-array,
 array and block bounds-check equations, and general equality and integer
 ordering, block length, tag-length and tag equality equations. Concrete equality, ordering, tail-call, returning-call,
 and bad-header cases are in `cake_word_array_probe.out`.
+
+`bvi_tmc_proof_local_typed_probe.out` records the typed statements of the
+remaining `bvi_tmcProofScript.sml` rows: the `free_names` lemmas, the
+`compile_each_intro`/`compile_each_untouched`/`compile_each_touched` label
+lemmas and the `v_to_bytes_eq`/`v_to_words_eq` decoders (all `[local]`,
+parsed from the pinned source), and the exported `is_block_op_cons_def` and
+`env_rel_el`. Regenerate with `CAKEML=<cakeml tree>
+HOL_PROBE_ONLY=bvi_tmc_proof_local_typed_probeScript.sml
+scripts/hol-probes/regenerate.sh`; it does not replay HOL proofs.

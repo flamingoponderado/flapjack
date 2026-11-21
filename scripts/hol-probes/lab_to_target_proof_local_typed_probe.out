@@ -91,3 +91,5 @@ find_index_in_range_typed=∀(n :num). find_index (s :α) (l :α list) n = SOME 
 find_index_in_range0_typed=find_index (s :α) (l :α list) (0 :num) = SOME (x :num) ⇒ x < LENGTH l ∧ x ≥ (0 :num)
 EXP_IMP_ZERO_LT_typed=(2 :num) ** (y :num) = (x :num) ⇒ (0 :num) < x
 FILTER_NOT_MEM_Mapped_typed=¬MEM "MappedRead" (FILTER (λ(x :string). x ≠ "MappedRead" ∧ x ≠ "MappedWrite") (l :string list)) ∧ ¬MEM "MappedWrite" (FILTER (λ(x :string). x ≠ "MappedRead" ∧ x ≠ "MappedWrite") l)
+set_bytes_def_typed=(∀(a :α word) (be :bool). set_bytes a be ([] :word8 list) = (0w :α word)) ∧ ∀(a :α word) (be :bool) (b :word8) (bs :word8 list). set_bytes a be (b::bs) = set_byte a b (set_bytes (a + (1w :α word)) be bs) be
+make_word_def_typed=∀(be :bool) (m :α word -> word8) (a :α word). make_word be m a = if dimindex (:α) = (32 :num) then Word (set_bytes a be [m a; m (a + (1w :α word)); m (a + (2w :α word)); m (a + (3w :α word))]) else Word (set_bytes a be [m a; m (a + (1w :α word)); m (a + (2w :α word)); m (a + (3w :α word)); m (a + (4w :α word)); m (a + (5w :α word)); m (a + (6w :α word)); m (a + (7w :α word))])
