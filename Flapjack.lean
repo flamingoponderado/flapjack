@@ -270,6 +270,9 @@ import Flapjack.Misc.Sptree.AlistInsertReverse
 import Flapjack.Misc.Address
 import Flapjack.Misc.ClockWeightInduction
 import Flapjack.Misc.RichList
+import Flapjack.Misc.Sum
+import Flapjack.Misc.Tailrec
+import Flapjack.Misc.While
 import Flapjack.Misc.Bag
 import Flapjack.Misc.Fun2SetUnion
 import Flapjack.Misc.UpdateList
@@ -628,6 +631,7 @@ import Flapjack.Misc.Multiword.DivRange
 import Flapjack.Misc.Multiword.DivAux
 import Flapjack.Misc.Multiword.Div
 import Flapjack.Misc.Multiword.DivMod
+import Flapjack.Misc.Multiword.Mc.Basics
 import Flapjack.Misc.Multiword.Length
 import Flapjack.Misc.Multiword.SingleWord
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.WordEquality.Word64
@@ -3461,6 +3465,11 @@ import Flapjack.Compiler.Backend.WordGcFunctions.Roots
 import Flapjack.Compiler.Backend.WordGcFunctions.HasFpOps
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.InitStoreOk
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.WordLemmas
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.ListLemmas
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.VarLemmas
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.BitLemmas
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.AbsMlInv
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.AllocStore
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GcFunOk
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GcFunConstOk
 import Flapjack.Compiler.Backend.WordSimp.Proofs.GcWordConst

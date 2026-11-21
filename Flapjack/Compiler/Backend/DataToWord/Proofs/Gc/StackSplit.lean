@@ -1,5 +1,6 @@
 module
 
+public import Flapjack.Misc.RichList
 public import Flapjack.Compiler.Backend.Semantics.WordSem.Env
 public import Mathlib.Data.List.Forall2
 
@@ -54,5 +55,15 @@ theorem lastn_imp_append {α : Type} (xs : List α) (n : Nat) (ys : List α)
     exact (butlastn_append_lastn n xs).symm
   · rw [← suffix]
     simp [wordSemLastN, Nat.min_eq_left bound]
+
+/-- Exact HOL `LASTN_ADD1` (`data_to_word_gcProofScript.sml:4836-4838`); the
+HOL free variables `x` and `xs` are universally quantified and `LASTN` is the
+reviewed `holLastn`. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "LASTN_ADD1"]
+theorem LASTN_ADD1 {α : Type} {x : α} {xs : List α} :
+    holLastn (xs.length + 1) (x :: xs) = x :: xs := by
+  simp only [holLastn, List.reverse_cons]
+  rw [List.take_of_length_le (by simp), List.reverse_append]
+  simp
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

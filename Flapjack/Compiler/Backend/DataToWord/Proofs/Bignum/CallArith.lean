@@ -1,6 +1,6 @@
 module
 
-public import Flapjack.Compiler.Backend.DataToWord.CallTree
+public import Flapjack.Compiler.Backend.DataToWord.StructureLe
 public import Flapjack.Compiler.Backend.DataToWord.Variables
 public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.SizeValues
 public import Flapjack.Compiler.Backend.Semantics.WordSem.EnvListSupport
