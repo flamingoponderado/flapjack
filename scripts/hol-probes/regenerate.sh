@@ -12737,3 +12737,8 @@ run_probe data_to_word_proof_call_typed_probeScript.sml data_to_word_proof_call_
   state_rel_pop_env_set_vars_IMP_typed \
   "$cake_dir/compiler/backend/proofs/data_to_wordProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+
+run_probe data_to_word_proof_ext_typed_probeScript.sml data_to_word_proof_ext_typed_probe.out \
+  state_rel_ext_def_typed state_rel_ext_with_clock_typed \
+  "$cake_dir/compiler/backend/proofs/data_to_wordProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"

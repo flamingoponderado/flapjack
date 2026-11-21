@@ -515,6 +515,9 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.CallTail
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.CallReturn
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.CallHandler
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.Call
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.ForceLemmas
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.Force
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.Assembly
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.LocMerge
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.DecStack
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.StackRoots
@@ -583,6 +586,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.CompilePart
 import Flapjack.Compiler.Backend.DataToWord.Proofs.PopEnvSetVars
 import Flapjack.Compiler.Backend.DataToWord.Proofs.CutEnv
 import Flapjack.Compiler.Backend.DataToWord.Proofs.GetVarLoc
+import Flapjack.Compiler.Backend.DataToWord.Proofs.StateRelExt
 import Flapjack.Compiler.Backend.DataToWord.Proofs.JumpExc
 import Flapjack.Compiler.Backend.Semantics.NatListBounded
 import Flapjack.Compiler.Backend.Semantics.DataProps.ResourceCall
