@@ -50,7 +50,10 @@ of `write_bytes_APPEND`, `write_bytes_same`, `w2n_add_byte_align_lemma`,
 Regenerate it with `HOL_PROBE_ONLY=data_to_word_memory_proof_typed_probeScript.sml
 scripts/hol-probes/regenerate.sh` using the pinned source revisions.
 
-`data_to_word_assign_typed_probe.out` also captures
+`data_to_word_assign_typed_probe.out` also captures the remaining small
+lemmas of the script (`get_vars_SING` through `LENGTH_EQ_4`; exported ones from
+the theory DB, `[local]` ones parsed from the source, `ADD4DIV4`/`ADD8DIV8`
+rebuilt by their source rule from `ADD_DIV_ADD_DIV`), and
 `IMP_read_bytearray_GENLIST`, including its arbitrary element type and its
 independent address-word dimension, and the typed statement and hypothesis
 counts of `state_rel_get_var_Number_IMP_alt`, `state_rel_IMP_tstamps`, `INT_EQ_NUM_LEMMA`, `evaluate_Maxout_bits_code`, `Make_ptr_bits_thm`, `assign_ConsExtend`, `assign_Cons`, `assign_Build`, `assign_WordTest`,
@@ -827,7 +830,11 @@ exported global-invariant equation and replay its original simplifier derivation
 
 `word_elim_port_typed_probe.out` records typed statements of the `word_elimProofScript.sml` declarations that had no reviewed Lean row when the port of that script resumed, labelled `weport_<name>_typed` (exported theorems and definitions from the theory DB). Regenerate with `HOL_PROBE_ONLY=word_elim_port_typed_probeScript.sml scripts/hol-probes/regenerate.sh`; it does not replay HOL proofs.
 
+`hol_set_to_list_typed_probe.out` records the typed statements of HOL pred_set `CHOICE_DEF`/`REST_DEF` and list `SET_TO_LIST_THM`, `SET_TO_LIST_IN_MEM` and `MEM_SET_TO_LIST` for the `SET_TO_LIST` rendering in `Flapjack/Misc/PredSetChoice.lean` and `Flapjack/Misc/SetToList.lean`. Regenerate with `HOL_PROBE_ONLY=hol_set_to_list_typed_probeScript.sml scripts/hol-probes/regenerate.sh`; it does not replay HOL proofs.
+
 `multiword_typed_probe.out` records the typed statement of every exported theorem and definition of the HOL `multiword` and `mc_multiword` theories (`HOL/examples/machine-code/multiword`), labelled `<theory>_<name>_typed`, for the bottom-up port beneath `Flapjack/Misc/Multiword`. `[local]` theorems are not exported and need separate source-parsed captures. Regenerate with `HOL_PROBE_ONLY=multiword_typed_probeScript.sml scripts/hol-probes/regenerate.sh`; it does not replay HOL proofs.
+
+`mc_multiword_local_typed_probe.out` records source-parsed typed statements of `[local]` theorems of `mc_multiwordScript.sml` (currently `mc_full_cmp_eq`), parsed from the pinned HOL source in the context of the built `mc_multiword` theory, labelled `mc_multiword_<name>_typed`. Regenerate with `HOL_PROBE_ONLY=mc_multiword_local_typed_probeScript.sml scripts/hol-probes/regenerate.sh`; it does not replay HOL proofs.
 
 `bignum_helpers_probe.out` records the source-inferred helper types and register, immediate, complement, load, save, index and division-call observations. `Flapjack.Test.WordBignumHelpersParity` replays the results. Regenerate with `HOL_PROBE_ONLY=bignum_helpers_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
@@ -11118,6 +11125,7 @@ HOL_PROBE_ONLY=bvi_tmc_proof_local_typed_probeScript.sml
 scripts/hol-probes/regenerate.sh`; it does not replay HOL proofs.
 
 
+
 `backend_proof_more_typed_probe.out` captures, with `show_types`, every
 declaration of `compiler/backend/proofs/backendProofScript.sml` in source order
 for the counterparts under `Flapjack/Compiler/Backend/BackendProof/`, plus the
@@ -11154,3 +11162,13 @@ the statement shape only), `word_to_wordProofScript.sml` (the derived `[local]`
 (`FMAP_REL_def`). Regenerate each with `CAKEML=<cakeml tree>
 HOL_PROBE_ONLY=<probe>Script.sml scripts/hol-probes/regenerate.sh`; none replays a
 HOL proof.
+
+`data_to_word_proof_lab_typed_probe.out` records the typed statements of the
+data_to_wordProof label, `no_share_inst`, `every_inst (inst_ok_less ac)` and
+small configuration lemmas (`state_rel_with_locals_sfs`, the `extract_labels_*`
+lemmas, `labels_rel_emp`, the `*_no_share_inst` and `*_no_inst` lemmas,
+`MAP_FST_ZIP`, `bounds_lem`, `max_heap_limit_has_fp_ops`, `FST_compile_part`).
+Exported theorems come from the theory DB; `[local]` ones are parsed from the
+pinned source text in the loaded theory context. Regenerate with
+`CAKEML=<cakeml tree> HOL_PROBE_ONLY=data_to_word_proof_lab_typed_probeScript.sml
+scripts/hol-probes/regenerate.sh`; no HOL proof is replayed.

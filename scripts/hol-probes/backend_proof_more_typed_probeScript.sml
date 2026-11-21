@@ -944,4 +944,25 @@ val _ = emit "keep_progs_def_typed" (DB.fetch "backend" "keep_progs_def");
 val _ = print ("compile_inc_progs_def_hypotheses=" ^
   Int.toString (length (hyp (DB.fetch "backend" "compile_inc_progs_def"))) ^ "\n");
 val _ = emit "compile_inc_progs_def_typed" (DB.fetch "backend" "compile_inc_progs_def");
+val _ = print ("backend_to_word_0_def_hypotheses=" ^
+  Int.toString (length (hyp (DB.fetch "backend" "to_word_0_def"))) ^ "\n");
+val _ = emit "backend_to_word_0_def_typed" (DB.fetch "backend" "to_word_0_def");
+val _ = print ("backend_to_word_def_hypotheses=" ^
+  Int.toString (length (hyp (DB.fetch "backend" "to_word_def"))) ^ "\n");
+val _ = emit "backend_to_word_def_typed" (DB.fetch "backend" "to_word_def");
+val _ = print ("backend_to_word_thm_hypotheses=" ^
+  Int.toString (length (hyp (DB.fetch "backend" "to_word_thm"))) ^ "\n");
+val _ = emit "backend_to_word_thm_typed" (DB.fetch "backend" "to_word_thm");
+val _ = print ("backend_to_stack_def_hypotheses=" ^
+  Int.toString (length (hyp (DB.fetch "backend" "to_stack_def"))) ^ "\n");
+val _ = emit "backend_to_stack_def_typed" (DB.fetch "backend" "to_stack_def");
+val _ = print ("backend_to_lab_def_hypotheses=" ^
+  Int.toString (length (hyp (DB.fetch "backend" "to_lab_def"))) ^ "\n");
+val _ = emit "backend_to_lab_def_typed" (DB.fetch "backend" "to_lab_def");
+val _ = print ("backend_to_target_def_hypotheses=" ^
+  Int.toString (length (hyp (DB.fetch "backend" "to_target_def"))) ^ "\n");
+val _ = emit "backend_to_target_def_typed" (DB.fetch "backend" "to_target_def");
+val _ = print ("backend_compile_eq_to_target_hypotheses=" ^
+  Int.toString (length (hyp (DB.fetch "backend" "compile_eq_to_target"))) ^ "\n");
+val _ = emit "backend_compile_eq_to_target_typed" (DB.fetch "backend" "compile_eq_to_target");
 val _ = print "backend_proof_more_probe_end=1\n";
