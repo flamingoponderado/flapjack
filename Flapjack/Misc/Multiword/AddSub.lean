@@ -287,7 +287,7 @@ theorem mwAddv_thm {width : Nat} [NeZero width] :
       simp only [mw2n, ih ys d len]
       rw [Nat.mul_add, Nat.mul_add]; omega
 
-private theorem mwOk_addv {width : Nat} [NeZero width] :
+theorem mwOk_addv {width : Nat} [NeZero width] :
     ∀ (xs ys : List (BitVec width)) (c : Bool), mwOk xs → mwOk ys → mwOk (mwAddv xs ys c) := by
   intro xs
   induction xs with
@@ -356,7 +356,7 @@ private theorem mw2n_append_replicate {width : Nat} [NeZero width] (ys : List (B
     | succ m ih => simp only [List.replicate_succ, mw2n, hz, ih, Nat.mul_zero]
   rw [gen n _ (by simp), Nat.mul_zero, Nat.add_zero]
 
-private theorem mwSubv_thm {width : Nat} [NeZero width] (xs ys : List (BitVec width))
+theorem mwSubv_thm {width : Nat} [NeZero width] (xs ys : List (BitVec width))
     (le : mw2n ys ≤ mw2n xs) (len : ys.length ≤ xs.length) :
     mw2n (mwSubv xs ys) = mw2n xs - mw2n ys := by
   simp only [mwSubv]
