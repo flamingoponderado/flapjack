@@ -172,6 +172,39 @@ theorem noInstall_call_ret' {n : List Nat} {names : WordLangCutsetsHOL}
     (hni : noInstallSubprogsHOL (.call (some (n, names, r, l1, l2)) dest args h) = true) :
     noInstallSubprogsHOL r = true := noInstall_call_ret hni
 
+/-- Emptying the stack adds no location. -/
+theorem locsWithin_stackNil (s : WordSemStateFiniteExact width C F) (m : Option Nat) :
+    LocsWithin { s with stack := [], stackMax := m } s := by
+  intro n hn
+  rw [sptMem_findLocState] at hn ⊢
+  rcases hn with h | h | h | h
+  · exact Or.inl h
+  · exact Or.inr (Or.inl h)
+  · simp [getStack] at h
+  · exact Or.inr (Or.inr (Or.inr h))
+
+omit [NeZero width] in
+/-- The `Call` clause of `find_word_ref`. -/
+theorem findWordRef_call
+    (ret : Option (List Nat × WordLangCutsetsHOL × WordLangProgHOL (BitVec width) × Nat × Nat))
+    (dest : Option Nat) (args : List Nat)
+    (handler : Option (Nat × WordLangProgHOL (BitVec width) × Nat × Nat)) :
+    findWordRef (.call ret dest args handler) =
+      sptUnion
+        (match dest with
+         | none => .ln
+         | some n => sptInsert n () .ln)
+        (sptUnion
+          (match ret with
+           | none => .ln
+           | some (_, _, retHandler, label, _) =>
+               sptInsert label () (findWordRef retHandler))
+          (match handler with
+           | none => .ln
+           | some (_, exceptionHandler, _, _) => findWordRef exceptionHandler)) := by
+  rcases ret with _ | ⟨_, _, _, _, _⟩ <;> rcases dest with _ | _ <;>
+    rcases handler with _ | ⟨_, _, _, _⟩ <;> rfl
+
 end CallSupport
 
 end Flapjack.Compiler.Backend.WordElim
