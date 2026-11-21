@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Compiler.Backend.GenGcPartial.Proofs.Accumulator
 public import Flapjack.Compiler.Backend.GcShared.ForwardPtr
+public import Flapjack.Compiler.Backend.GenGcPartial.Proofs.Similarity
 
 @[expose] public section
 
@@ -199,5 +200,239 @@ theorem partialMoveData_okBefore {α β : Type} (conf : GenGcPartial.Config β) 
     | unused len => rw [GenGcPartial.gcMoveData] at ok; simp [heap, bounded] at ok
     | forwardPointer ptr value len => rw [GenGcPartial.gcMoveData] at ok; simp [heap, bounded] at ok
     | dataElement roots len payload => exact False.elim (notData roots len payload rfl)
+
+/-- Moving a root from any accumulators factors through empty accumulators.
+Flapjack proof infrastructure derived from `GenGcPartial.gcMove_accumulate`; no HOL
+counterpart. -/
+private theorem partialMove_anyAccumulators {α β : Type} (conf : GenGcPartial.Config β)
+    (s : GcState α β) (x : HeapAddress α) (left right : List (HeapElement α β)) :
+    GenGcPartial.gcMove conf { s with h2 := left, r4 := right } x =
+      let (y0, t0) := GenGcPartial.gcMove conf { s with h2 := [], r4 := [] } x
+      (y0, { t0 with h2 := left ++ t0.h2, r4 := t0.r4 ++ right }) := by
+  have h := GenGcPartial.gcMove_accumulate conf { s with h2 := [], r4 := [] } x left right
+  simp only [List.append_nil, List.nil_append] at h
+  exact h
+
+/-- Moving a root list from any accumulators factors through empty
+accumulators. Flapjack proof infrastructure; no HOL counterpart. -/
+private theorem partialMoveList_anyAccumulators {α β : Type} (conf : GenGcPartial.Config β)
+    (s : GcState α β) (x : List (HeapAddress α)) (left right : List (HeapElement α β)) :
+    GenGcPartial.gcMoveList conf { s with h2 := left, r4 := right } x =
+      let (y0, t0) := GenGcPartial.gcMoveList conf { s with h2 := [], r4 := [] } x
+      (y0, { t0 with h2 := left ++ t0.h2, r4 := t0.r4 ++ right }) := by
+  have h := GenGcPartial.gcMoveList_accumulate conf { s with h2 := [], r4 := [] } x left right
+  simp only [List.append_nil, List.nil_append] at h
+  exact h
+
+/-- Exact HOL `gc_partial_move_with_NIL_LEMMA` (`data_to_word_gcProofScript.sml:2917-2933`).
+The typed capture shows four unused universally quantified binders `y t h2 r4`
+of independent types; they are retained. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "gc_partial_move_with_NIL_LEMMA"]
+theorem partialMove_withNilLemma {α β γ δ ε ζ : Type} {conf : GenGcPartial.Config β} :
+    ∀ (x : HeapAddress α) (s : GcState α β) (_y : γ) (_t : δ) (_h2 : ε) (_r4 : ζ)
+      (y1 : HeapAddress α) (t1 : GcState α β),
+      GenGcPartial.gcMove conf s x = (y1, t1) ∧ t1.ok = true →
+        ∃ x1 x2 : List (HeapElement α β),
+          t1.h2 = s.h2 ++ x1 ∧ t1.r4 = x2 ++ s.r4 ∧
+          GenGcPartial.gcMove conf { s with h2 := [], r4 := [] } x =
+            (y1, { t1 with h2 := x1, r4 := x2 }) := by
+  intro x s _ _ _ _ y1 t1 ⟨run, _⟩
+  have h := partialMove_anyAccumulators conf s x s.h2 s.r4
+  have hs : ({ s with h2 := s.h2, r4 := s.r4 } : GcState α β) = s := rfl
+  rw [hs, run] at h
+  generalize GenGcPartial.gcMove conf { s with h2 := [], r4 := [] } x = m at h ⊢
+  obtain ⟨y0, t0⟩ := m
+  simp only [Prod.mk.injEq] at h
+  obtain ⟨rfl, rfl⟩ := h
+  exact ⟨t0.h2, t0.r4, rfl, rfl, rfl⟩
+
+/-- Exact HOL `gc_partial_move_ok_irr` (`data_to_word_gcProofScript.sml:2780-2790`). -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "gc_partial_move_ok_irr"]
+theorem partialMove_okIrr {α β : Type} {conf : GenGcPartial.Config β} :
+    ∀ (x : HeapAddress α) (s : GcState α β) (y1 y2 : HeapAddress α) (t1 t2 : GcState α β)
+      (h2 r4 : List (HeapElement α β)),
+      GenGcPartial.gcMove conf s x = (y1, t1) ∧
+          GenGcPartial.gcMove conf { s with h2 := h2, r4 := r4 } x = (y2, t2) →
+        y1 = y2 ∧ ∃ x1 x2 : List (HeapElement α β), t2 = { t1 with h2 := x1, r4 := x2 } := by
+  intro x s y1 y2 t1 t2 h2 r4 ⟨run1, run2⟩
+  have e1 := partialMove_anyAccumulators conf s x s.h2 s.r4
+  have e2 := partialMove_anyAccumulators conf s x h2 r4
+  have hs : ({ s with h2 := s.h2, r4 := s.r4 } : GcState α β) = s := rfl
+  rw [hs, run1] at e1
+  rw [run2] at e2
+  generalize GenGcPartial.gcMove conf { s with h2 := [], r4 := [] } x = m at e1 e2
+  obtain ⟨y0, t0⟩ := m
+  simp only [Prod.mk.injEq] at e1 e2
+  obtain ⟨rfl, rfl⟩ := e1
+  obtain ⟨rfl, rfl⟩ := e2
+  exact ⟨rfl, h2 ++ t0.h2, t0.r4 ++ r4, rfl⟩
+
+/-- Exact HOL `gc_partial_move_list_ok_irr` (`data_to_word_gcProofScript.sml:2835-2859`). -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "gc_partial_move_list_ok_irr"]
+theorem partialMoveList_okIrr {α β : Type} {conf : GenGcPartial.Config β} :
+    ∀ (x : List (HeapAddress α)) (s : GcState α β) (y1 y2 : List (HeapAddress α))
+      (t1 t2 : GcState α β) (h2 r4 : List (HeapElement α β)),
+      GenGcPartial.gcMoveList conf s x = (y1, t1) ∧ t1.ok = true ∧
+          GenGcPartial.gcMoveList conf { s with h2 := h2, r4 := r4 } x = (y2, t2) →
+        t2.ok = true := by
+  intro x s y1 y2 t1 t2 h2 r4 ⟨run1, ok, run2⟩
+  have e1 := partialMoveList_anyAccumulators conf s x s.h2 s.r4
+  have e2 := partialMoveList_anyAccumulators conf s x h2 r4
+  have hs : ({ s with h2 := s.h2, r4 := s.r4 } : GcState α β) = s := rfl
+  rw [hs, run1] at e1
+  rw [run2] at e2
+  generalize GenGcPartial.gcMoveList conf { s with h2 := [], r4 := [] } x = m at e1 e2
+  obtain ⟨y0, t0⟩ := m
+  simp only [Prod.mk.injEq] at e1 e2
+  obtain ⟨rfl, rfl⟩ := e1
+  obtain ⟨rfl, rfl⟩ := e2
+  exact ok
+
+/-- Exact HOL `gc_partial_move_list_ok_irr'` (`data_to_word_gcProofScript.sml:2861-2873`). -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "gc_partial_move_list_ok_irr'"]
+theorem partialMoveList_okIrr' {α β : Type} {conf : GenGcPartial.Config β} :
+    ∀ (x : List (HeapAddress α)) (s : GcState α β) (y1 y2 : List (HeapAddress α))
+      (t1 t2 : GcState α β) (h2 r4 : List (HeapElement α β)),
+      GenGcPartial.gcMoveList conf s x = (y1, t1) ∧
+          GenGcPartial.gcMoveList conf { s with h2 := h2, r4 := r4 } x = (y2, t2) →
+        y1 = y2 ∧ ∃ x1 x2 : List (HeapElement α β), t2 = { t1 with h2 := x1, r4 := x2 } := by
+  intro x s y1 y2 t1 t2 h2 r4 ⟨run1, run2⟩
+  have e1 := partialMoveList_anyAccumulators conf s x s.h2 s.r4
+  have e2 := partialMoveList_anyAccumulators conf s x h2 r4
+  have hs : ({ s with h2 := s.h2, r4 := s.r4 } : GcState α β) = s := rfl
+  rw [hs, run1] at e1
+  rw [run2] at e2
+  generalize GenGcPartial.gcMoveList conf { s with h2 := [], r4 := [] } x = m at e1 e2
+  obtain ⟨y0, t0⟩ := m
+  simp only [Prod.mk.injEq] at e1 e2
+  obtain ⟨rfl, rfl⟩ := e1
+  obtain ⟨rfl, rfl⟩ := e2
+  exact ⟨rfl, h2 ++ t0.h2, t0.r4 ++ r4, rfl⟩
+
+/-- Exact HOL `gc_partial_move_ref_list_ok_irr` (`data_to_word_gcProofScript.sml:2875-2900`). -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "gc_partial_move_ref_list_ok_irr"]
+theorem partialMoveRefList_okIrr {α β γ : Type} {conf : GenGcPartial.Config γ} :
+    ∀ (x : List (HeapElement α β)) (s : GcState α γ) (y1 y2 : List (HeapElement α β))
+      (t1 t2 : GcState α γ) (h2 r4 : List (HeapElement α γ)),
+      GenGcPartial.gcMoveRefList conf s x = (y1, t1) ∧ t1.ok = true ∧
+          GenGcPartial.gcMoveRefList conf { s with h2 := h2, r4 := r4 } x = (y2, t2) →
+        t2.ok = true := by
+  intro x s y1 y2 t1 t2 h2 r4 ⟨run1, ok, run2⟩
+  have e1 := GenGcPartial.gcMoveRefList_accumulate conf { s with h2 := [], r4 := [] } x s.h2 s.r4
+  have e2 := GenGcPartial.gcMoveRefList_accumulate conf { s with h2 := [], r4 := [] } x h2 r4
+  simp only [List.append_nil, List.nil_append] at e1 e2
+  have hs : ({ s with h2 := s.h2, r4 := s.r4 } : GcState α γ) = s := rfl
+  rw [hs, run1] at e1
+  rw [run2] at e2
+  generalize GenGcPartial.gcMoveRefList conf { s with h2 := [], r4 := [] } x = m at e1 e2
+  obtain ⟨y0, t0⟩ := m
+  simp only [Prod.mk.injEq] at e1 e2
+  obtain ⟨rfl, rfl⟩ := e1
+  obtain ⟨rfl, rfl⟩ := e2
+  exact ok
+
+/-- A partial root move only changes the `h2`, `n`, `a`, `heap` and `ok`
+fields. Flapjack proof infrastructure; no HOL counterpart. -/
+private theorem partialMove_frame {α β : Type} (conf : GenGcPartial.Config β)
+    (s : GcState α β) (x : HeapAddress α) :
+    (GenGcPartial.gcMove conf s x).2.old = s.old ∧ (GenGcPartial.gcMove conf s x).2.h1 = s.h1 ∧
+      (GenGcPartial.gcMove conf s x).2.r1 = s.r1 ∧ (GenGcPartial.gcMove conf s x).2.r2 = s.r2 ∧
+      (GenGcPartial.gcMove conf s x).2.r3 = s.r3 ∧ (GenGcPartial.gcMove conf s x).2.r4 = s.r4 := by
+  cases x with
+  | data d => exact ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+  | pointer ptr d =>
+    by_cases outside : ptr < conf.genStart ∨ conf.refsStart ≤ ptr
+    · simp [GenGcPartial.gcMove, outside]
+    · cases h : heapLookup ptr s.heap with
+      | none => simp [GenGcPartial.gcMove, outside, h]
+      | some element => cases element <;> simp [GenGcPartial.gcMove, outside, h]
+
+/-- The partial root-list traversal preserves the same fields. Flapjack proof
+infrastructure; no HOL counterpart. -/
+private theorem partialMoveList_frame {α β : Type} (conf : GenGcPartial.Config β)
+    (s : GcState α β) (xs : List (HeapAddress α)) :
+    (GenGcPartial.gcMoveList conf s xs).2.old = s.old ∧
+      (GenGcPartial.gcMoveList conf s xs).2.h1 = s.h1 ∧
+      (GenGcPartial.gcMoveList conf s xs).2.r1 = s.r1 ∧
+      (GenGcPartial.gcMoveList conf s xs).2.r2 = s.r2 ∧
+      (GenGcPartial.gcMoveList conf s xs).2.r3 = s.r3 ∧
+      (GenGcPartial.gcMoveList conf s xs).2.r4 = s.r4 := by
+  induction xs generalizing s with
+  | nil => exact ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+  | cons x xs ih =>
+    obtain ⟨a1, a2, a3, a4, a5, a6⟩ := partialMove_frame conf s x
+    obtain ⟨b1, b2, b3, b4, b5, b6⟩ := ih (GenGcPartial.gcMove conf s x).2
+    simp only [GenGcPartial.gcMoveList]
+    exact ⟨b1.trans a1, b2.trans a2, b3.trans a3, b4.trans a4, b5.trans a5, b6.trans a6⟩
+
+/-- Lookups in similar heaps find data elements at the same offsets. Flapjack
+proof infrastructure; no HOL counterpart. -/
+private theorem similar_isSomeDataElement {α β σ : Type} (conf : σ)
+    (xs ys : List (HeapElement α β)) (related : List.Forall₂ (GenGcPartial.similarData conf) xs ys) :
+    ∀ ptr, isSomeDataElement (heapLookup ptr xs) → isSomeDataElement (heapLookup ptr ys) := by
+  induction related with
+  | nil => intro ptr h; exact h
+  | @cons x y xs ys head tail ih =>
+    intro ptr h
+    have hlen : elLength x = elLength y := by
+      cases x <;> cases y <;> simp_all [GenGcPartial.similarData, elLength]
+    simp only [heapLookup, hlen] at h ⊢
+    by_cases h0 : ptr = 0
+    · simp only [h0, if_true] at h ⊢
+      obtain ⟨xs1, len, data, hx⟩ := h
+      cases hx
+      cases y <;> simp_all [GenGcPartial.similarData, isSomeDataElement]
+    · simp only [h0, if_false] at h ⊢
+      by_cases hl : ptr < elLength y
+      · simp only [hl, if_true] at h
+        obtain ⟨_, _, _, h⟩ := h
+        cases h
+      · simp only [hl, if_false] at h ⊢
+        exact ih _ h
+
+/-- Exact HOL `gc_move_ref_list_IMP` (`data_to_word_gcProofScript.sml:3496-3527`,
+a `[local]` theorem about the partial collector's reference traversal). -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "gc_move_ref_list_IMP"]
+theorem partialMoveRefList_imp {α β γ : Type} :
+    ∀ (conf : GenGcPartial.Config α) (state : GcState β α) (refs : List (HeapElement β γ))
+      (state1 : GcState β α) (refs1 : List (HeapElement β γ)),
+      GenGcPartial.gcMoveRefList conf state refs = (refs1, state1) →
+        state1.old = state.old ∧ state1.h1 = state.h1 ∧ state1.r1 = state.r1 ∧
+          state1.r2 = state.r2 ∧ state1.r3 = state.r3 ∧ state1.r4 = state.r4 ∧
+          heapLength refs = heapLength refs1 ∧
+          ∀ ptr, isSomeDataElement (heapLookup ptr refs) →
+            isSomeDataElement (heapLookup ptr refs1) := by
+  intro conf state refs state1 refs1 run
+  have similar := GenGcPartial.gcMoveRefList_similar conf refs refs1 state state1 run
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, (GenGcPartial.similarData_lengths conf refs refs1 similar).1,
+    similar_isSomeDataElement conf refs refs1 similar⟩ <;>
+  · clear similar
+    induction refs generalizing state refs1 state1 with
+    | nil =>
+      simp only [GenGcPartial.gcMoveRefList, Prod.mk.injEq] at run
+      obtain ⟨_, rfl⟩ := run
+      rfl
+    | cons head tail ih =>
+      cases head with
+      | unused len =>
+        simp only [GenGcPartial.gcMoveRefList, Prod.mk.injEq] at run
+        obtain ⟨_, rfl⟩ := run
+        rfl
+      | forwardPointer ptr value len =>
+        simp only [GenGcPartial.gcMoveRefList, Prod.mk.injEq] at run
+        obtain ⟨_, rfl⟩ := run
+        rfl
+      | dataElement pointers len payload =>
+        simp only [GenGcPartial.gcMoveRefList] at run
+        generalize hl : GenGcPartial.gcMoveList conf state pointers = r1 at run
+        obtain ⟨pointers1, mid⟩ := r1
+        generalize hr : GenGcPartial.gcMoveRefList conf mid tail = r2 at run
+        obtain ⟨tail1, fin⟩ := r2
+        simp only [Prod.mk.injEq] at run
+        obtain ⟨_, rfl⟩ := run
+        have fr := partialMoveList_frame conf state pointers
+        rw [hl] at fr
+        have := ih mid fin tail1 hr
+        simp_all
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

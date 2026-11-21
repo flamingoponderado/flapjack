@@ -1,5 +1,6 @@
 module
 
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateAddClock
 public import Flapjack.Compiler.Backend.Semantics.DataSem.State
 public import Flapjack.Compiler.Backend.Semantics.WordSem.Accessors
 public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.StateLaws
@@ -74,5 +75,29 @@ theorem gcIncClock_incClock {width : Nat} [NeZero width] {C F : Type}
     (n m : Nat) (state : WordSemStateFiniteExact width C F) :
     gcIncClock n (gcIncClock m state) = gcIncClock (n + m) state :=
   WordSemStateFiniteExact.incClock_incClock n m state
+
+/-- Exact HOL `evaluate_IMP_inc_clock` (`data_to_word_gcProofScript.sml:7686-7692`); HOL free
+variables are universally quantified. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "evaluate_IMP_inc_clock"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem evaluate_IMP_inc_clock {width : Nat} [NeZero width] {C F : Type}
+    {q : WordLangProgHOL (BitVec width)} {t t1 : WordSemStateFiniteExact width C F} {ck : Nat} :
+    WordSemStateFiniteExact.evaluate q t = (none, t1) →
+      WordSemStateFiniteExact.evaluate q (gcIncClock ck t) = (none, gcIncClock ck t1) := by
+  intro h
+  exact WordSemStateFiniteExact.evaluate_add_clock ck q t none t1 ⟨h, by simp⟩
+
+/-- Exact HOL `evaluate_IMP_inc_clock_Ex` (`data_to_word_gcProofScript.sml:7694-7700`); HOL free
+variables are universally quantified. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "evaluate_IMP_inc_clock_Ex"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem evaluate_IMP_inc_clock_Ex {width : Nat} [NeZero width] {C F : Type}
+    {q : WordLangProgHOL (BitVec width)} {t t1 : WordSemStateFiniteExact width C F}
+    {x y : WordLocW width} {ck : Nat} :
+    WordSemStateFiniteExact.evaluate q t = (some (.exception x y), t1) →
+      WordSemStateFiniteExact.evaluate q (gcIncClock ck t) =
+        (some (.exception x y), gcIncClock ck t1) := by
+  intro h
+  exact WordSemStateFiniteExact.evaluate_add_clock ck q t _ t1 ⟨h, by simp⟩
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

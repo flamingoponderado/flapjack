@@ -78,4 +78,36 @@ theorem codeOracleRel_afterWordGc
   exact ⟨hcode, hdata, code ▸ hcodePos, codeEnd ▸ hcodeEnd,
     bitmap ▸ hbitmapPos, bitmapEnd ▸ hbitmapEnd, hcompile, horacle, hstubs⟩
 
+namespace codeOracleRelNextFreeMap
+/-- Canonical lookup and support roundtrip for `code_oracle_rel_NextFree`'s store. -/
+theorem holFmapAsFiniteSupportParamWitness_code_oracle_rel_NextFree_ts
+    {width : Nat} [NeZero width]
+    (ts : HolFiniteMapExact WordStoreHOL (WordLocW width)) (key : WordStoreHOL) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad ts)).lookup key = ts.lookup key ∧
+      (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad ts)).finiteSupport = ts.finiteSupport ∧
+      FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad ts) = ts := ⟨rfl, rfl, rfl⟩
+end codeOracleRelNextFreeMap
+
+/-- Exact HOL `code_oracle_rel_NextFree` (`data_to_word_gcProofScript.sml:4483-4488`):
+updating `NextFree` does not affect the oracle relation. HOL `ts |+ (NextFree,x)`
+is `ts.updateEq (.nextFree, x)`; the HOL free variables are universally
+quantified, with the five word widths independent as in the typed capture. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "code_oracle_rel_NextFree"
+  (fmap_as_finite_support_parameters := [ts]) (words_as_type_indexed_bitvec)]
+theorem code_oracle_rel_NextFree
+    {storeWidth : Nat} {compilerWidth : Nat} {oracleWidth : Nat}
+    {codeElemWidth : Nat} {dataElemWidth : Nat}
+    [NeZero storeWidth] [NeZero compilerWidth] [NeZero oracleWidth]
+    [NeZero codeElemWidth] [NeZero dataElemWidth] {C OracleKey OracleConfig : Type}
+    {c : Config} {scc : DataSem.Compiler C}
+    {sco : OracleKey → OracleConfig × List (Nat × Nat × DataLang.Prog)}
+    {ts : HolFiniteMapExact WordStoreHOL (WordLocW storeWidth)} {x : WordLocW storeWidth}
+    {tcc : C → List (Nat × Nat × WordLangProgHOL (BitVec compilerWidth)) →
+      Option (List (BitVec 8) × List (BitVec compilerWidth) × C)}
+    {tco : OracleKey → OracleConfig × List (Nat × Nat × WordLangProgHOL (BitVec oracleWidth))}
+    {cb : WordSemBuffer storeWidth codeElemWidth} {db : WordSemBuffer storeWidth dataElemWidth} :
+    codeOracleRel c scc sco (ts.updateEq (.nextFree, x)) tcc tco cb db ↔
+      codeOracleRel c scc sco ts tcc tco cb db := by
+  simp [codeOracleRel, HolFiniteMapExact.updateEq, FUPDATE_HOL]
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

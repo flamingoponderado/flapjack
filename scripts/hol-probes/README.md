@@ -823,6 +823,10 @@ exported global-invariant equation and replay its original simplifier derivation
 
 `data_to_word_bignum_typed_probe.out` records typed statements of reviewed `data_to_word_bignumProofScript.sml` rows (exported theorems from the theory DB, `[local]` theorems parsed from the pinned source) and the constructors of multiword's `mw_op`. Regenerate with `HOL_PROBE_ONLY=data_to_word_bignum_typed_probeScript.sml scripts/hol-probes/regenerate.sh`; it does not replay HOL proofs.
 
+`data_to_word_gc_port_typed_probe.out` records typed statements of the `data_to_word_gcProofScript.sml` declarations that had no reviewed Lean row when the bottom-up port of that script resumed, labelled `gcport_<name>_typed` (exported theorems and definitions from the theory DB, `[local]` theorems parsed from the pinned source). Regenerate with `HOL_PROBE_ONLY=data_to_word_gc_port_typed_probeScript.sml scripts/hol-probes/regenerate.sh`; it does not replay HOL proofs.
+
+`word_elim_port_typed_probe.out` records typed statements of the `word_elimProofScript.sml` declarations that had no reviewed Lean row when the port of that script resumed, labelled `weport_<name>_typed` (exported theorems and definitions from the theory DB). Regenerate with `HOL_PROBE_ONLY=word_elim_port_typed_probeScript.sml scripts/hol-probes/regenerate.sh`; it does not replay HOL proofs.
+
 `multiword_typed_probe.out` records the typed statement of every exported theorem and definition of the HOL `multiword` and `mc_multiword` theories (`HOL/examples/machine-code/multiword`), labelled `<theory>_<name>_typed`, for the bottom-up port beneath `Flapjack/Misc/Multiword`. `[local]` theorems are not exported and need separate source-parsed captures. Regenerate with `HOL_PROBE_ONLY=multiword_typed_probeScript.sml scripts/hol-probes/regenerate.sh`; it does not replay HOL proofs.
 
 `bignum_helpers_probe.out` records the source-inferred helper types and register, immediate, complement, load, save, index and division-call observations. `Flapjack.Test.WordBignumHelpersParity` replays the results. Regenerate with `HOL_PROBE_ONLY=bignum_helpers_probeScript.sml scripts/hol-probes/regenerate.sh`.
@@ -11094,3 +11098,11 @@ four-argument dispatch, word comparison, string comparison, and byte-array,
 array and block bounds-check equations, and general equality and integer
 ordering, block length, tag-length and tag equality equations. Concrete equality, ordering, tail-call, returning-call,
 and bad-header cases are in `cake_word_array_probe.out`.
+
+`data_to_word_memory_more_typed_probe.out` records typed statements of the
+`data_to_word_memoryProofScript.sml` declarations ported on the
+`cakeml-memproof` branch (exported theorems and definitions from the theory DB,
+`[local]` theorems parsed from the pinned source), between the static
+`dtw_memory_more_begin`/`dtw_memory_more_end` markers. Regenerate with
+`HOL_PROBE_ONLY=data_to_word_memory_more_typed_probeScript.sml scripts/hol-probes/regenerate.sh`;
+it does not replay HOL proofs.

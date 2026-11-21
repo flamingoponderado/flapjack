@@ -1,5 +1,7 @@
 module
 
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.SizeValues
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.CutLocals
 public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.AllocFail
 public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.CutInsertOne
 public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.AllocLocals
@@ -421,4 +423,44 @@ theorem allocVar_gen {width : Nat} [NeZero width] {C F : Type}
         simp only [allocRun, facts.2] at run
         obtain ⟨rfl, rfl⟩ := run
         exact ⟨fun _ => ⟨failFacts.1, failFacts.2, by simp [fits]⟩, by simp⟩
+/-- Exact HOL `AllocVar_thm` (`data_to_word_gcProofScript.sml:8461-8498`): the
+heap-size bound of the failure case is stated through `size_of_heap` of the cut
+state. The evaluator inherits the real-model assumption in `docs/SOUNDNESS.md`
+item 8. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "AllocVar_thm"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem allocVar_thm {width : Nat} [NeZero width] {C F : Type} {c : Config} {l1 l2 : Nat}
+    {s : DataSem.State C F} {t : WordSemStateFiniteExact width C F} {locs : List (Nat × Nat)}
+    {names : NumSet} {x : Spt DataSem.Value} {w : BitVec width} {limit : Nat}
+    {q : Option (WordSemResult width)} {r : WordSemStateFiniteExact width C F} :
+    stateRel c l1 l2 s t none locs ∧ DataSem.cutEnv names s.locals = some x ∧
+        t.getVar 1 = some (.word w) ∧
+        WordSemStateFiniteExact.evaluate (allocVar c limit names) t = (q, r) ∧
+        limit < 2 ^ width / 8 →
+      (q = some .notEnoughSpace → r.ffi = s.ffi ∧ optionLe r.stackMax s.stackMax ∧
+          (c.gcKind ≠ .none ∧ w.toNat / 4 < limit ∧ DataSem.noThunksInRefs s.refs →
+            s.limits.heapLimit < DataSem.sizeOfHeap (cutLocals names s) + w.toNat / 4 + 1)) ∧
+      (q ≠ some .notEnoughSpace → w.toNat / 4 < limit ∧
+          stateRel c l1 l2 { s with locals := x, space := w.toNat / 4 + 1 } r none locs ∧
+          r.store.lookup (.temp 29) = t.store.lookup (.temp 29) ∧
+          r.code = t.code ∧ r.codeBuffer = t.codeBuffer ∧
+          r.dataBuffer = t.dataBuffer ∧ r.compileOracle = t.compileOracle ∧ q = none) := by
+  rintro ⟨related, cutEq, read, run, limitBound⟩
+  have gen := allocVar_gen c l1 l2 s t r locs names x w limit q related cutEq read run limitBound
+  refine ⟨?_, gen.2⟩
+  intro hq
+  obtain ⟨h1, h2, h3⟩ := gen.1 hq
+  refine ⟨h1, h2, ?_⟩
+  intro pre
+  generalize hsz : DataSem.sizeOfValues s.limits
+    (sptToList x ++ s.stack.flatMap DataSem.extractStack ++ [theGlobal s.global]) s.refs .ln = res
+  obtain ⟨n, refs, visited⟩ := res
+  have bound := h3 pre (sptToList x ++ s.stack.flatMap DataSem.extractStack ++ [theGlobal s.global])
+    [] n refs visited ⟨by simp, by simp, hsz⟩
+  have heq : DataSem.sizeOfHeap (cutLocals names s) = n := by
+    simp only [DataSem.sizeOfHeap, cutLocals, cutEq, DataSem.stackToValues]
+    rw [sizeOfValues_global, hsz]
+  omega
+
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

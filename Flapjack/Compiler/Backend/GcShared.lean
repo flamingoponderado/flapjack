@@ -36,6 +36,14 @@ inductive HeapAddress (α : Type) : Type where
   | data (addr : α)
   deriving Repr
 
+/-- Every `heap_address` constructor carries an `α`, so the address type is
+inhabited exactly when `α` is. Flapjack infrastructure: it lets a reviewed
+total-function rendering such as `holEl` at `HeapAddress α` take its
+inhabitant from the `Nonempty α` binder recorded by
+`total_function_inhabitants`. -/
+instance heapAddressNonempty {α : Type} [Nonempty α] : Nonempty (HeapAddress α) :=
+  ⟨.data (Classical.choice ‹Nonempty α›)⟩
+
 /-- Exact Lean rendering of the HOL `heap_element` datatype
 `Unused num | ForwardPointer num 'a num | DataElement (('a heap_address) list) num 'b`. -/
 @[hol "cakeml/compiler/backend/gc/gc_sharedScript.sml" "heap_element"]
