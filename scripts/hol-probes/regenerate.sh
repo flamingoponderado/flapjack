@@ -12686,12 +12686,10 @@ run_probe clos_ticks_fmap_rel_typed_probeScript.sml clos_ticks_fmap_rel_typed_pr
   FMAP_REL_def_typed \
   "$cake_dir/compiler/backend/proofs/clos_ticksProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
-  "$cake_dir/compiler/backend/proofs"
 
 run_probe hol_set_to_list_typed_probeScript.sml hol_set_to_list_typed_probe.out \
   choice_def_typed rest_def_typed set_to_list_thm_typed set_to_list_in_mem_typed mem_set_to_list_typed \
   "$repo_dir/HOL/src/list/src/listScript.sml" "$cake_dir/pancake"
-  "$cake_dir/compiler/backend/proofs"
 
 run_probe word_bignum_corr_typed_probeScript.sml word_bignum_corr_typed_probe.out \
   word_bignum_corr_probe_begin word_bignum_corr_probe_end \
@@ -12717,3 +12715,14 @@ run_probe bignum_code_defs_probeScript.sml bignum_code_defs_probe.out \
   mc_single_mul_code_def mc_sub1_code_def mc_sub_code_def mc_sub_loop1_code_def \
   mc_sub_loop2_code_def mc_sub_loop_code_def mc_top_two_code_def mc_use_fac_code_def \
   "$cake_dir/compiler/backend/word_bignumScript.sml" "$cake_dir/compiler/backend"
+
+run_probe data_to_word_proof_lab_typed_probeScript.sml data_to_word_proof_lab_typed_probe.out \
+  state_rel_with_locals_sfs_typed extract_labels_MemEqList_typed \
+  extract_labels_StoreEach_typed extract_labels_StoreAnyConsts_typed \
+  extract_labels_WordOp64_on_32_typed extract_labels_WordShift64_on_32_typed \
+  labels_rel_emp_typed list_Seq_no_share_inst_typed StoreEach_no_share_inst_typed \
+  MemEqList_no_share_inst_typed StoreAnyConsts_no_share_inst_typed MAP_FST_ZIP_typed \
+  StoreEach_no_inst_typed MemEqList_no_inst_typed StoreAnyConsts_no_inst_typed \
+  bounds_lem_typed max_heap_limit_has_fp_ops_typed FST_compile_part_typed \
+  "$cake_dir/compiler/backend/proofs/data_to_wordProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
