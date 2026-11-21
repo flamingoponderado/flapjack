@@ -1,0 +1,12 @@
+load "bvl_inlineTheory";
+open HolKernel Parse boolLib bossLib;
+val _ = Globals.linewidth := 1000000;
+val _ = set_trace "Unicode" 0;
+val _ = (print "is_small_eq_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl bvl_inlineTheory.is_small_eq); print "\n");
+val _ = (print "must_inline_eq_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl bvl_inlineTheory.must_inline_eq); print "\n");
+val _ = (print "tick_inline_all_eq_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl bvl_inlineTheory.tick_inline_all_eq); print "\n");
+val _ = (print "LENGTH_tick_inline_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl bvl_inlineTheory.LENGTH_tick_inline); print "\n");
+val _ = (print "HD_tick_inline_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl bvl_inlineTheory.HD_tick_inline); print "\n");
+val _ = (print "LENGTH_remove_ticks_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl bvl_inlineTheory.LENGTH_remove_ticks); print "\n");
+val _ = (print "remove_ticks_SING_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl bvl_inlineTheory.remove_ticks_SING); print "\n");
+val _ = (print "let_op_sing_eq_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl bvl_inlineTheory.let_op_sing_eq); print "\n");

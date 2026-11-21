@@ -1,0 +1,6 @@
+collect_args_size_typed=!(max_app :num) (num_args :num) (e :exp) (num_args' :num) (e' :exp). (num_args',e') = collect_args max_app num_args e ==> num_args' + exp_size e' <= num_args + exp_size e
+collect_args_more_typed=!(max_app :num) (num_args :num) (e :exp) (num_args' :num) (e' :exp). (num_args',e') = collect_args max_app num_args e ==> num_args <= num_args'
+collect_args_zero_typed=!(max_app :num) (num_args :num) (e :exp) (e' :exp). collect_args max_app num_args e = ((0 :num),e') ==> num_args = (0 :num)
+exp3_size_append_typed=!(es1 :exp list) (es2 :exp list). exp3_size (es1 ++ es2) = exp3_size es1 + exp3_size es2
+collect_apps_more_typed=!(max_app :num) (args :exp list) (e :exp) (args' :exp list) (e' :exp). (args',e') = collect_apps max_app args e ==> LENGTH args <= LENGTH args'
+collect_apps_size_typed=!(max_app :num) (args :exp list) (e :exp) (args' :exp list) (e' :exp). (args',e') = collect_apps max_app args e ==> list_size exp_size args' + exp_size e' <= list_size exp_size args + exp_size e

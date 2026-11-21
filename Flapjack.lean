@@ -1008,6 +1008,7 @@ import Flapjack.Compiler.Backend.ClosMti.Proofs.Total
 import Flapjack.Compiler.Backend.ClosMti.Proofs.ValueRelSimps
 import Flapjack.Compiler.Backend.ClosMti.Proofs.CollectArgs
 import Flapjack.Compiler.Backend.ClosMti.Proofs.CollectApps
+import Flapjack.Compiler.Backend.ClosMti.Proofs.Sizes
 import Flapjack.Compiler.Backend.ClosMti.Proofs.Applications
 import Flapjack.Compiler.Backend.ClosMti.Proofs.Install
 import Flapjack.Compiler.Backend.ClosMti.Proofs.EvaluateCases

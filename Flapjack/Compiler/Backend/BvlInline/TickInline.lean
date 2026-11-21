@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Misc.Option.MapM
 public import Flapjack.Compiler.Backend.BvlInline.Proofs.TraversalTotal
+public import Flapjack.Misc.ListEl
 public import Aesop
 
 @[expose] public section
@@ -89,5 +90,22 @@ theorem inlineExpBounded_eq (fuel : Nat) (code : Spt (Nat × Exp)) (expression :
     obtain ⟨result, run⟩ := inlineExpFuel_succeeds _ code expression bound
     have correct := inlineExpFuel_eq _ code expression result run
     simp [inlineExpBounded, first, run, correct]
+
+/-- Call inlining preserves the number of expressions. -/
+@[hol "cakeml/compiler/backend/bvl_inlineScript.sml" "LENGTH_tick_inline"]
+theorem LENGTH_tick_inline {A : Type} (code : Spt (A × Exp)) (xs : List Exp) :
+    (tickInline code xs).length = xs.length := by
+  induction xs with
+  | nil => simp [tickInline, tickInlineList]
+  | cons x rest ih =>
+    have ih' : (tickInlineList code rest).length = rest.length := by
+      simpa [tickInline] using ih
+    simp only [tickInline, tickInlineList, List.length_cons, ih']
+
+/-- The inlined singleton is exactly a singleton list. -/
+@[hol "cakeml/compiler/backend/bvl_inlineScript.sml" "HD_tick_inline"]
+theorem HD_tick_inline {A : Type} (code : Spt (A × Exp)) (x : Exp) :
+    [@holHd Exp ⟨.var 0⟩ (tickInline code [x])] = tickInline code [x] := by
+  simp [tickInline, tickInlineList, holHd]
 
 end Flapjack.Compiler.Backend.BvlInline

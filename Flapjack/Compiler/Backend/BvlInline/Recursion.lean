@@ -56,4 +56,13 @@ theorem isRecList_eq_any (name : Nat) (xs : List Exp) :
   | nil => simp [isRecList]
   | cons x xs ih => simp [isRecList, ih]
 
+/-- Inlining eligibility with the singleton recursion test. -/
+@[hol "cakeml/compiler/backend/bvl_inlineScript.sml" "must_inline_eq"]
+theorem must_inline_eq (name limit : Nat) (e : Exp) :
+    mustInline name limit e = (isSmall limit e && !isRecSing name e) := by
+  rw [mustInline, isRecSing_equivalence.1 e name]
+  cases h : isSmall limit e with
+  | true => simp
+  | false => simp
+
 end Flapjack.Compiler.Backend.BvlInline

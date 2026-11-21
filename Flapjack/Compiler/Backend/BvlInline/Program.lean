@@ -25,4 +25,20 @@ def tickCompileProg (limit : Nat) (cache : Spt (Nat × Exp))
     (program : List (Nat × Nat × Exp)) : Spt (Nat × Exp) × List (Nat × Nat × Exp) :=
   tickInlineAll limit cache program []
 
+/-- The original program-level inlining equations, with the singleton
+inlining used for each body. -/
+@[hol "cakeml/compiler/backend/bvl_inlineScript.sml" "tick_inline_all_eq"]
+theorem tick_inline_all_eq (limit : Nat) (cache : Spt (Nat × Exp))
+    (aux : List (Nat × Nat × Exp)) :
+    tickInlineAll limit cache [] aux = (cache, aux.reverse) ∧
+    (∀ xs n e1 arity,
+      tickInlineAll limit cache ((n, arity, e1) :: xs) aux =
+        (let e2 := tickInlineSing cache e1
+         let cache2 := if mustInline n limit e2 then sptInsert n (arity, e2) cache else cache
+         tickInlineAll limit cache2 xs ((n, arity, e2) :: aux))) := by
+  constructor
+  · rfl
+  · intro xs n e1 arity
+    rfl
+
 end Flapjack.Compiler.Backend.BvlInline

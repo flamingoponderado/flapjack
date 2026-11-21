@@ -3,6 +3,7 @@ module
 public import Flapjack.Misc.Option.MapM
 public import Flapjack.Compiler.Backend.BvlInline.Proofs.TraversalTotal
 public import Flapjack.Compiler.Backend.Semantics.BvlSem.Measure
+public import Flapjack.Misc.ListEl
 public import Flapjack.HolRef
 public import Aesop
 
@@ -81,5 +82,22 @@ theorem removeTicksBounded_eq (fuel : Nat) (expression : Bvl.Exp) :
     obtain ⟨result, run⟩ := removeTicksFuel_succeeds _ expression bound
     have correct := removeTicksFuel_eq _ expression result run
     simp [removeTicksBounded, first, run, correct]
+
+/-- Tick removal preserves the number of expressions. -/
+@[hol "cakeml/compiler/backend/bvl_inlineScript.sml" "LENGTH_remove_ticks"]
+theorem LENGTH_remove_ticks (xs : List Bvl.Exp) :
+    (removeTicks xs).length = xs.length := by
+  induction xs with
+  | nil => simp [removeTicks, removeTicksList]
+  | cons x rest ih =>
+    have ih' : (removeTicksList rest).length = rest.length := by
+      simpa [removeTicks] using ih
+    simp only [removeTicks, removeTicksList, List.length_cons, ih']
+
+/-- The tick-free singleton is exactly a singleton list. -/
+@[hol "cakeml/compiler/backend/bvl_inlineScript.sml" "remove_ticks_SING"]
+theorem remove_ticks_SING (r : Bvl.Exp) :
+    [@holHd Bvl.Exp ⟨.var 0⟩ (removeTicks [r])] = removeTicks [r] := by
+  simp [removeTicks, removeTicksList, holHd]
 
 end Flapjack.Compiler.Backend.BvlInline

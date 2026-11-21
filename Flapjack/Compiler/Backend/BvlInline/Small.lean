@@ -77,4 +77,10 @@ theorem isSmallSing_equivalence :
 @[hol "cakeml/compiler/backend/bvl_inlineScript.sml" "is_small_def"]
 def isSmall (limit : Nat) (e : Exp) : Bool := isSmallSing limit e != 0
 
+/-- The size test in terms of the original list-shaped budget traversal. -/
+@[hol "cakeml/compiler/backend/bvl_inlineScript.sml" "is_small_eq"]
+theorem is_small_eq (limit : Nat) (e : Exp) :
+    isSmall limit e = (isSmallSing limit e != 0) := by
+  rfl
+
 end Flapjack.Compiler.Backend.BvlInline
