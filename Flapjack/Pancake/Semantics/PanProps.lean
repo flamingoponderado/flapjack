@@ -1614,7 +1614,9 @@ def localisedProgHOL {width : Nat} [NeZero width] :
     tagged `OPT_MMAP_MEM_IMP`); the statement is fully polymorphic, so there is
     no carrier side condition. HOL states the two premises as one conjunction,
     so they are one conjunction here too (the typed capture
-    `opt_mmap_eq_some_helper_typed` is the comparison). -/
+    `opt_mmap_eq_some_helper_typed` is the comparison). The same statement is
+    declared again as `pan_simpProof$opt_mmap_eq_some_helper`
+    (`pan_simpProofScript.sml:394`); this port covers both occurrences. -/
 @[hol "cakeml/pancake/semantics/panPropsScript.sml" "opt_mmap_eq_some_helper" 1575]
 theorem optMmapEqSomeHelper {α β : Type} (f g : α → Option β) :
     ∀ (xs : List α) (zs : List β),

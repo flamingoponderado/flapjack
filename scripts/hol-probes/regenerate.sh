@@ -11467,6 +11467,7 @@ run_probe pancake_pan_structs_proof_typed_probeScript.sml \
 run_probe pancake_pan_simp_proof_typed_probeScript.sml \
   pancake_pan_simp_proof_typed_probe.out \
   compile_correct_typed state_rel_intro_typed OPT_MMAP_NONE_typed OPT_MMAP_NONE_prime_typed \
+  state_rel_upd_inv_typed OPT_MMAP_eval_some_eq_typed compile_prog_distinct_params_typed \
   "$cake_dir/pancake/proofs/pan_simpProofScript.sml" \
   "$cake_dir/pancake/proofs"
 run_probe pancake_pan_to_word_proof_typed_probeScript.sml \

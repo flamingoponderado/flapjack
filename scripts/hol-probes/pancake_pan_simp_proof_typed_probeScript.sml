@@ -2,7 +2,7 @@
    The theory is built in a private copy of the pinned CakeML tree
    (commit 857f0d98d); see scripts/hol-probes/README.md for the build
    recipe and the CAKEML load path.
-   28 names: 28 exported (fetched from the theory DB), 0 local
+   31 names: 31 exported (fetched from the theory DB), 2 local
    statements parsed literally from the pinned source text (typed source
    evidence, not a replay), 0 derived local theorems captured through
    their base statement, 0 datatypes.
@@ -258,3 +258,6 @@ val _ = emit_exported "state_rel_imp_semantics_decls_typed" "state_rel_imp_seman
 val _ = emit_exported "state_rel_intro_typed" "state_rel_intro";
 val _ = emit_exported "OPT_MMAP_NONE_typed" "OPT_MMAP_NONE";
 val _ = emit_exported "OPT_MMAP_NONE_prime_typed" "OPT_MMAP_NONE'";
+val _ = capture "state_rel_upd_inv_typed" "state_rel_upd_inv";
+val _ = capture "OPT_MMAP_eval_some_eq_typed" "OPT_MMAP_eval_some_eq";
+val _ = emit_exported "compile_prog_distinct_params_typed" "compile_prog_distinct_params";

@@ -1925,6 +1925,25 @@ theorem firstCompileProgAllDistinctHOL {width : Nat} [NeZero width]
   simp only [List.map_map]
   exact hnames
 
+/-- Exact HOL `pan_simpProof$compile_prog_distinct_params`
+(`pan_simpProofScript.sml:1064`): `pan_simp` rewrites only function bodies and
+keeps every parameter list, so distinctness of each function's parameters is
+preserved.  The typed capture `compile_prog_distinct_params_typed`
+(`pancake_pan_simp_proof_typed_probe.out`) shows HOL's three-tuple pattern
+lambda with the body paired with its shape, which Lean projects as `entry.2.1`;
+`EVERY` is the membership form. -/
+@[hol "cakeml/pancake/proofs/pan_simpProofScript.sml" "compile_prog_distinct_params"
+  (words_as_type_indexed_bitvec)]
+theorem compileProgDistinctParamsHOL {width : Nat} [NeZero width]
+    (declarations : List (DeclHOL width)) :
+    (∀ entry ∈ Flapjack.Pancake.PanLang.functionsHOL declarations, entry.2.1.Nodup) →
+      ∀ entry ∈ Flapjack.Pancake.PanLang.functionsHOL (panSimpDeclsHOL declarations),
+        entry.2.1.Nodup := by
+  rw [functionsHOL_panSimpDeclsHOL_eq]
+  intro h entry hentry
+  obtain ⟨orig, horig, rfl⟩ := List.mem_map.mp hentry
+  simpa using h orig horig
+
 /-- Exact HOL `pan_simpProof$decs_stcnames_compile_prog`
 (`pan_simpProofScript.sml:1334-1341`):
 `!ctxt pan_code. decs_stcnames ctxt (compile_prog pan_code) =
