@@ -622,6 +622,12 @@ import Flapjack.Misc.Multiword.DivAux
 import Flapjack.Misc.Multiword.Div
 import Flapjack.Misc.Multiword.DivMod
 import Flapjack.Misc.Multiword.Mc.Basics
+import Flapjack.Misc.Multiword.Mc.Correct.Compare
+import Flapjack.Misc.Multiword.Mc.Correct.Add
+import Flapjack.Misc.Multiword.Mc.Correct.Sub
+import Flapjack.Misc.Multiword.Mc.Correct.Iadd
+import Flapjack.Misc.Multiword.Mc.Correct.Mul
+import Flapjack.Misc.Multiword.Mc.Correct.DivSimple
 import Flapjack.Misc.Multiword.Length
 import Flapjack.Misc.Multiword.SingleWord
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.WordEquality.Word64
