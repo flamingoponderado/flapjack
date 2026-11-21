@@ -9,6 +9,7 @@ public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Rearra
 public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Number
 public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.NumberCompare
 public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.SmallNumber
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.RefArrayLemmas
 
 @[expose] public section
 
@@ -38,7 +39,7 @@ theorem evaluate_loadWord64 {width : Nat} [NeZero width] {C F : Type} (c : Confi
     (h : memoryRel c be ts refs sp t.store t.memory t.mdomain ((.word64 w, v) :: vars) ∧
       shiftLength c < width ∧ width = 64 ∧ WordSemStateFiniteExact.getVar src t = some v) :
     WordSemStateFiniteExact.evaluate (loadWord64 c dest src) t =
-      (none, WordSemStateFiniteExact.setVar dest (.word (w.setWidth width)) t) := by
+      (none, WordSemStateFiniteExact.setVar dest (.word (w.setWidth width : BitVec width)) t) := by
   obtain ⟨rel, shift, w64, hv⟩ := h
   have good : goodDimindex width := Or.inr w64
   obtain ⟨ptr, address, header, hloc, haddr, -, -, -, -, -, hdom, rest⟩ :=
@@ -152,5 +153,44 @@ theorem stateRel_imp_test_zero {width : Nat} [NeZero width] {C F : Type}
   constructor
   · intro hz; subst hz; exact (iff.mp rfl).symm
   · intro hn; subst hn; exact (iff.mpr rfl).symm
+
+/-- Dropping `k` cons cells of a list value decodes to the dropped list.
+HOL `THE` is the reviewed `holThe`, inhabited at data values by the data
+semantics' global `Nonempty` instance. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml" "v_to_list_block_drop"]
+theorem valueToList_blockDrop (k : Nat) (v : Flapjack.Compiler.Backend.DataSem.Value)
+    (l : List Flapjack.Compiler.Backend.DataSem.Value)
+    (h : DataSem.valueToList v = some l ∧ k < l.length) :
+    DataSem.valueToList (holThe (blockDrop k v)) = some (l.drop k) := by
+  induction k generalizing v l with
+  | zero => simpa [blockDrop, holThe] using h.1
+  | succ k ih =>
+    obtain ⟨hv, hk⟩ := h
+    cases l with
+    | nil => simp at hk
+    | cons x xs =>
+      match v, hv with
+      | .block ts tag [head, tail], hv =>
+        unfold DataSem.valueToList at hv
+        split at hv
+        · cases htail : DataSem.valueToList tail with
+          | none => simp [htail] at hv
+          | some ys =>
+            simp only [htail, Option.map_some, Option.some.injEq, List.cons.injEq] at hv
+            obtain ⟨-, rfl⟩ := hv
+            simp only [blockDrop, List.drop_succ_cons]
+            exact ih tail ys ⟨htail, by simpa using hk⟩
+        · simp at hv
+      | .block ts tag [], hv =>
+        unfold DataSem.valueToList at hv
+        split at hv <;> simp at hv
+      | .block ts tag (a :: b :: c :: rest), hv =>
+        unfold DataSem.valueToList at hv; simp at hv
+      | .block ts tag [a], hv =>
+        unfold DataSem.valueToList at hv; simp at hv
+      | .number _, hv => simp [DataSem.valueToList] at hv
+      | .word64 _, hv => simp [DataSem.valueToList] at hv
+      | .codePtr _, hv => simp [DataSem.valueToList] at hv
+      | .refPtr _ _, hv => simp [DataSem.valueToList] at hv
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Assign
