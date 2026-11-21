@@ -127,4 +127,18 @@ theorem cakeOrac_succ2 {width : Nat} [NeZero width] {α β : Type}
   simp only [cakeOrac, id, (compileIncProgs_srcEnv asmConf _ (src i)).1,
     (compileIncProgs_srcEnv asmConf _ (src i)).2]
 
+/-- Exact HOL `cake_orac_cfg_f_eq_I` (`backendProofScript.sml:3040-3044`).
+HOL `(f ## I)` is `Prod.map f id`; `asm_conf`, `c` and `syntax` (`syntaxOrac`) are free in HOL
+and explicit here. -/
+@[hol "cakeml/compiler/backend/proofs/backendProofScript.sml" "cake_orac_cfg_f_eq_I"
+  (words_as_type_indexed_bitvec)]
+theorem cakeOrac_cfgF_eq_I {width : Nat} [NeZero width] {α γ : Type}
+    (asmConf : AsmConfigExact width) (c : Flapjack.Compiler.Backend.Backend.Config)
+    (syntaxOrac : Nat → (Nat × Nat) × List AstHOL.Dec) :
+    ∀ (f : Flapjack.Compiler.Backend.Backend.Config → α) (g : BackendProgs width → γ),
+      cakeOrac asmConf c syntaxOrac f g = Prod.map f id ∘ cakeOrac asmConf c syntaxOrac id g := by
+  intro f g
+  funext i
+  rfl
+
 end Flapjack.Compiler.Backend.BackendProof

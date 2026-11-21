@@ -361,4 +361,6 @@ backend_to_target_def_hypotheses=0
 backend_to_target_def_typed=∀(asm_conf :α asm_config) (c :config) (p :dec list). to_target asm_conf c p = (let ((bm :α word list),(c :config),(p :α sec list),(names :mlstring sptree$num_map)) = to_lab asm_conf c p in attach_bitmaps names c bm (compile asm_conf c.lab_conf p :(word8 list # lab_to_target$config) option))
 backend_compile_eq_to_target_hypotheses=0
 backend_compile_eq_to_target_typed=(compile :α asm_config -> config -> dec list -> (word8 list # α word list # config) option) = (to_target :α asm_config -> config -> dec list -> (word8 list # α word list # config) option)
+compile_inc_progs_for_eval_def_hypotheses=0
+compile_inc_progs_for_eval_def_typed=∀(asm_conf :α asm_config) (x :(num # num) # config # dec list). compile_inc_progs_for_eval asm_conf x = (let ((env_id :num # num),(c' :config),(decs :dec list)) = x; ((c'' :config),(ps :α backend_progs)) = compile_inc_progs T asm_conf c' (env_id,decs) in OPTION_MAP (λ((bs :word8 list),(ws :α word list)). (c'',bs,MAP (upper_w2w :α word -> word64) ws)) ps.target_prog)
 backend_proof_more_probe_end=1

@@ -12678,7 +12678,6 @@ run_probe clos_ticks_fmap_rel_typed_probeScript.sml clos_ticks_fmap_rel_typed_pr
   FMAP_REL_def_typed \
   "$cake_dir/compiler/backend/proofs/clos_ticksProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
-  "$cake_dir/compiler/backend/proofs"
 
 run_probe hol_set_to_list_typed_probeScript.sml hol_set_to_list_typed_probe.out \
   choice_def_typed rest_def_typed set_to_list_thm_typed set_to_list_in_mem_typed mem_set_to_list_typed \

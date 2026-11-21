@@ -965,4 +965,7 @@ val _ = emit "backend_to_target_def_typed" (DB.fetch "backend" "to_target_def");
 val _ = print ("backend_compile_eq_to_target_hypotheses=" ^
   Int.toString (length (hyp (DB.fetch "backend" "compile_eq_to_target"))) ^ "\n");
 val _ = emit "backend_compile_eq_to_target_typed" (DB.fetch "backend" "compile_eq_to_target");
+val _ = print ("compile_inc_progs_for_eval_def_hypotheses=" ^
+  Int.toString (length (hyp (DB.fetch "backend" "compile_inc_progs_for_eval_def"))) ^ "\n");
+val _ = emit "compile_inc_progs_for_eval_def_typed" (DB.fetch "backend" "compile_inc_progs_for_eval_def");
 val _ = print "backend_proof_more_probe_end=1\n";

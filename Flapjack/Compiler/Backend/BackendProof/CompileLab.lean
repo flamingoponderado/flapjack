@@ -4,6 +4,7 @@ public import Flapjack.HolRef
 public import Flapjack.Compiler.Backend.LabToTarget.Compile
 public import Flapjack.Compiler.Backend.LabToTarget.FindFfiNamesEvery
 public import Flapjack.Compiler.Backend.LabToTarget.MmioShmem
+public import Flapjack.Compiler.Backend.LabToTarget.OuterLabelDomain
 
 @[expose] public section
 
@@ -104,5 +105,20 @@ theorem compileLabIMPMmioPcsMinIndex {width : Nat} [NeZero width]
       exact hall
     · rw [hnone hc]
       exact findFfiNamesEvery secList _ rfl
+
+/-- Exact HOL `compile_lab_domain_labels` (`backendProofScript.sml:1421-1430`).
+HOL `domain` is the reviewed `sptDomain`, `IMAGE FST` is `Prod.fst ''`. -/
+@[hol "cakeml/compiler/backend/proofs/backendProofScript.sml" "compile_lab_domain_labels"
+  (words_as_type_indexed_bitvec)]
+theorem compileLab_domainLabels {width : Nat} [NeZero width] (asmConf : AsmConfigExact width)
+    (c : LabToTarget.Config)
+    (prog : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
+      (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))))
+    (b : List (BitVec 8)) (c' : LabToTarget.Config) :
+    compileLab asmConf c prog = some (b, c') →
+      sptDomain c'.labels = Prod.fst '' LabProps.LabelSets.getCodeLabels prog ∪ sptDomain c.labels := by
+  intro h
+  obtain ⟨ffis, -, secs', l1, -, hr, -, rfl⟩ := compileLab_some prog h
+  exact removeLabels_domain _ _ _ _ _ _ _ _ hr
 
 end Flapjack.Compiler.Backend.BackendProof
