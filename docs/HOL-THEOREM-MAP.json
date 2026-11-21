@@ -23910,6 +23910,41 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "word_bit_lsr_dimindex_1",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/Div.lean",
+  "lean_name": "wordBit_lsr_dimindex_1",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared word_bit_lsr_dimindex_1_typed (zero hypotheses): bit 0 of the logical right shift of an alpha word by dimindex(:alpha) - 1 is equivalent to its most significant bit. Lean states the same equivalence for BitVec width with getLsbD 0 and msb; [NeZero width] renders HOL's positive dimindex."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "state_rel_Number_IMP",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/NumberVar.lean",
+  "lean_name": "stateRel_numberImp",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared state_rel_Number_IMP_typed (zero hypotheses): the state relation with NONE extra roots, the source get_var Number premise and the target locals lookup at adjust_var a1 are retained as separate premises; the existential word, the bit-0/small_int equivalence, and the implication from clear sign and tag bits to non-negativity and n2w (4 * Num i1) are the same, with Int.toNat for Num. Target finite-map fields and positive-width words use the reviewed representations."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "option_le_add_comm",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/Div.lean",
+  "lean_name": "optionLe_add_comm",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared option_le_add_comm_typed (zero hypotheses): for num options a, b, c, option_le of OPTION_MAP2 $+ a b against c implies the same for b a. Lean uses wordSemOptionAdd, the existing rendering of OPTION_MAP2 $+ on num, and optionLe."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "IN_adjust_set_IN",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/Div.lean",
+  "lean_name": "in_adjustSet_in",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared IN_adjust_set_IN_typed (zero hypotheses): for y : num and x : alpha num_map, membership of y in domain (adjust_set x) implies (y - 2) DIV 2 in domain x. Lean quantifies the same payload type and uses sptDomain with truncated natural subtraction and division."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
   "hol_name": "assign_LengthByte",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/LengthByte.lean",
   "lean_name": "assignLengthByte_correct",

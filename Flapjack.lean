@@ -379,6 +379,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.BoolTest
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.BoundsCheckByte
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.BoundsCheckArray
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.BoundsCheckBlock
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.Div
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.Length
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.LengthBlock
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.LengthByte

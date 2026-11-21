@@ -463,6 +463,18 @@ val _ = emit_exported "assign_LessConstSmall_typed" "assign_LessConstSmall";
 val _ = print ("assign_LessSmallConst_hypotheses=" ^
   Int.toString (length (hyp assign_LessSmallConst)) ^ "\n");
 val _ = emit_exported "assign_LessSmallConst_typed" "assign_LessSmallConst";
+val _ = print ("word_bit_lsr_dimindex_1_hypotheses=" ^
+  Int.toString (length (hyp word_bit_lsr_dimindex_1)) ^ "\n");
+val _ = emit_exported "word_bit_lsr_dimindex_1_typed" "word_bit_lsr_dimindex_1";
+val _ = print ("state_rel_Number_IMP_hypotheses=" ^
+  Int.toString (length (hyp state_rel_Number_IMP)) ^ "\n");
+val _ = emit_exported "state_rel_Number_IMP_typed" "state_rel_Number_IMP";
+val _ = print ("option_le_add_comm_hypotheses=" ^
+  Int.toString (length (hyp option_le_add_comm)) ^ "\n");
+val _ = emit_exported "option_le_add_comm_typed" "option_le_add_comm";
+val _ = print ("IN_adjust_set_IN_hypotheses=" ^
+  Int.toString (length (hyp IN_adjust_set_IN)) ^ "\n");
+val _ = emit_exported "IN_adjust_set_IN_typed" "IN_adjust_set_IN";
 val _ = print ("assign_LengthByte_hypotheses=" ^
   Int.toString (length (hyp assign_LengthByte)) ^ "\n");
 val _ = emit_exported "assign_LengthByte_typed" "assign_LengthByte";
