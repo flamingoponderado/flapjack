@@ -101,6 +101,7 @@ OPTIONAL_FIELDS: frozenset[str] = frozenset(
         "gc_lemma_existential_inhabitants",
         "new_ref_existential_inhabitants",
         "write_word64_existential_inhabitants",
+        "hol_unused_existential_inhabitants",
         "hol_line",
     }
 )

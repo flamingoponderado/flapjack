@@ -9,6 +9,7 @@ import Flapjack.Test.GeneraliseLengthAudit
 import Flapjack.Test.StateRelGcInhabitantsAudit
 import Flapjack.Test.FreshRefInhabitantsAudit
 import Flapjack.Test.Word64InhabitantsAudit
+import Flapjack.Test.ConsAltInhabitantsAudit
 import Flapjack.Test.JoinEnvLocalsAudit
 import Flapjack.Test.InferSubstSubmapAudit
 import Flapjack.Test.TypeSubstWalkstarAudit

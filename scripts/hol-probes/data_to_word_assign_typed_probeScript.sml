@@ -430,4 +430,22 @@ fun capture_val_quote label name =
 val _ = emit_exported "size_of_seen_SUBSET_typed" "size_of_seen_SUBSET";
 val _ = emit_exported "size_of_seen_Block_typed" "size_of_seen_Block";
 val _ = emit_exported "IMP_read_bytearray_GENLIST_typed" "IMP_read_bytearray_GENLIST";
+val _ = print ("state_rel_get_var_Number_IMP_alt_hypotheses=" ^
+  Int.toString (length (hyp state_rel_get_var_Number_IMP_alt)) ^ "\n");
+val _ = emit_exported "state_rel_get_var_Number_IMP_alt_typed" "state_rel_get_var_Number_IMP_alt";
+val _ = print ("state_rel_IMP_tstamps_hypotheses=" ^
+  Int.toString (length (hyp state_rel_IMP_tstamps)) ^ "\n");
+val _ = emit_exported "state_rel_IMP_tstamps_typed" "state_rel_IMP_tstamps";
+val _ = print ("INT_EQ_NUM_LEMMA_hypotheses=" ^
+  Int.toString (length (hyp INT_EQ_NUM_LEMMA)) ^ "\n");
+val _ = emit_exported "INT_EQ_NUM_LEMMA_typed" "INT_EQ_NUM_LEMMA";
+val _ = print ("evaluate_Maxout_bits_code_hypotheses=" ^
+  Int.toString (length (hyp evaluate_Maxout_bits_code)) ^ "\n");
+val _ = emit_exported "evaluate_Maxout_bits_code_typed" "evaluate_Maxout_bits_code";
+val _ = print ("Make_ptr_bits_thm_hypotheses=" ^
+  Int.toString (length (hyp Make_ptr_bits_thm)) ^ "\n");
+val _ = emit_exported "Make_ptr_bits_thm_typed" "Make_ptr_bits_thm";
+val _ = print ("assign_ConsExtend_hypotheses=" ^
+  Int.toString (length (hyp assign_ConsExtend)) ^ "\n");
+val _ = emit_exported "assign_ConsExtend_typed" "assign_ConsExtend";
 val _ = capture "parts_to_words_NONE_typed" "parts_to_words_NONE";

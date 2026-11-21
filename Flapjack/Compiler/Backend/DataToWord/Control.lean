@@ -84,6 +84,12 @@ def silentFfi {width : Nat} [NeZero width] (conf : Config) (n : Nat) (names : Wo
 def giveUp {width : Nat} [NeZero width] : WordLangProgHOL (BitVec width) :=
   .seq (.assign 1 (.const (-1))) (.alloc 1 (adjustSets (.ln : NumSet)))
 
+/-- Stop with an allocation failure when a tagged integer is a bignum. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "BignumHalt_def"
+  (words_as_type_indexed_bitvec)]
+def bignumHalt {width : Nat} [NeZero width] (reg : Nat) : WordLangProgHOL (BitVec width) :=
+  .ite .test reg (.imm 1) .skip giveUp
+
 /-- Construct a word-language heap address from a tagged pointer, following
 the original three branches for the architecture and pointer layout. -/
 @[hol "cakeml/compiler/backend/data_to_wordScript.sml" "real_addr_def"
@@ -321,20 +327,26 @@ private def fpResult {width : Nat} [NeZero width] (conf : Config) (dest : Nat)
 def tagMask {width : Nat} (conf : Config) : BitVec width :=
   BitVec.ofNat width (((2 ^ (width - conf.lenSize) - 1) / 4) * 4)
 
+/-- Emit a bounded pointer field, saturating it to ones when the input is large. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "Maxout_bits_code_def"
+  (words_as_type_indexed_bitvec)]
+def maxoutBitsCode {width : Nat} [NeZero width] (bits shift dest src : Nat) :
+    WordLangProgHOL (BitVec width) :=
+  let max := 2 ^ bits - 1
+  .ite .lower src (.imm (BitVec.ofNat width max))
+    (.assign dest (.op .or [.var dest, shiftN .lsl (.var src) shift]))
+    (.assign dest (.op .or [.var dest, .const (allOnes (shift + bits) shift)]))
+
 /-- Construct the pointer fields used by the allocation code. -/
 @[hol "cakeml/compiler/backend/data_to_wordScript.sml" "Make_ptr_bits_code_def"
   (words_as_type_indexed_bitvec)]
 def makePtrBitsCode {width : Nat} [NeZero width] (conf : Config) (tag len dest : Nat) :
     WordLangProgHOL (BitVec width) :=
-  let maxout (bits shift src : Nat) : WordLangProgHOL (BitVec width) :=
-    let max := 2 ^ bits - 1
-    .ite .lower src (.imm (BitVec.ofNat width max))
-      (.assign dest (.op .or [.var dest, shiftN .lsl (.var src) shift]))
-      (.assign dest (.op .or [.var dest, .const (BitVec.ofNat width (max * 2 ^ shift))]))
   wordListSeq [
     .assign dest (.op .or [.const 1, shiftN .lsl (.op .sub [.lookup .nextFree, .lookup .currHeap])
       (shiftLength conf - wordShiftAmount width)]),
-    maxout conf.tagBits (1 + conf.lenBits) tag, maxout conf.lenBits 1 len]
+    maxoutBitsCode conf.tagBits (1 + conf.lenBits) dest tag,
+    maxoutBitsCode conf.lenBits 1 dest len]
 
 /-- Construct the variable-allocation sequence used for reference arrays. -/
 @[hol "cakeml/compiler/backend/data_to_wordScript.sml" "AllocVar_def"
@@ -935,7 +947,7 @@ def assignConsExtend {width : Nat} [NeZero width] (conf : Config) (secn l dest :
           let limit := min (2 ^ conf.lenSize) (2 ^ width / 16)
           let total := adjustVar total
           (wordListSeq [
-            .ite .test total (.imm 1) .skip giveUp,
+            bignumHalt total,
             .assign 1 (.var total), allocVar conf limit (sptListInsert args names),
             .assign 1 (.lookup .nextFree),
             .assign 5 (.op .or [shiftN .lsl (.var total) (width - conf.lenSize - 2), .const header]),
@@ -997,7 +1009,7 @@ def assignRefArray {width : Nat} [NeZero width] (conf : Config) (secn l dest : N
   let names := names.getD .ln
   let limit := min (2 ^ conf.lenSize) (2 ^ width / 16)
   (wordListSeq [
-    .ite .test (adjustVar first) (.imm 1) .skip giveUp,
+    bignumHalt (adjustVar first),
     .move 0 [(1, adjustVar first)],
     allocVar conf limit (sptListInsert [first, second] names),
     .mustTerminate (.call (some ([adjustVar dest], adjustSets names, .skip, secn, l))
@@ -1099,9 +1111,8 @@ def assignInstall {width : Nat} [NeZero width] (_conf : Config) (secn l dest : N
   let data := adjustVar data
   let codeLen := adjustVar codeLen
   let dataLen := adjustVar dataLen
-  let halt (r : Nat) := WordLangProgHOL.ite .test r (.imm 1) .skip giveUp
   (wordListSeq [
-    halt codeLen, halt dataLen,
+    bignumHalt codeLen, bignumHalt dataLen,
     .assign 1 (.lookup .bitmapBuffer),
     .assign 3 (.op .sub [.lookup .bitmapBufferEnd, .var 1]),
     .assign 5 (shiftVar .lsr dataLen 2),

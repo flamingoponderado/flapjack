@@ -23517,12 +23517,12 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "cut_names_adjust_set_insert_1",
-  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CutOdd.lean", "lean_name": "cutNames_adjustSet_insert_one",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CutNamesOdd.lean", "lean_name": "cutNames_adjustSet_insert_one",
   "statement_status": "reviewed_exact", "reviewer": "Compared cut_names_adjust_set_insert_1_typed: inserting any value at key one preserves the adjusted wordSem$cut_names result, with independent name-tree and environment payload types. The HOL result is an optional sparse tree; HOL spt and Lean Spt correspond constructor-for-constructor."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml", "hol_name": "cut_names_adjust_set_insert_3",
-  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CutOdd.lean", "lean_name": "cutNames_adjustSet_insert_three",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CutNamesOdd.lean", "lean_name": "cutNames_adjustSet_insert_three",
   "statement_status": "reviewed_exact", "reviewer": "Compared cut_names_adjust_set_insert_3_typed: inserting any value at key three preserves the adjusted wordSem$cut_names result, with independent name-tree and environment payload types. The HOL result is an optional sparse tree; HOL spt and Lean Spt correspond constructor-for-constructor."
 },
 {
@@ -23898,6 +23898,74 @@
   "fmap_as_finite_support": ["fpRegs", "store"],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Compared state_rel_0_get_vars_IMP_typed: the NONE state relation and source list lookup imply a target lookup beginning with location zero followed by the adjusted locals, with identical length equality. Target finite-map fields and positive-width words use the reviewed representations."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "assign_ConsExtend",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/ConsExtend.lean",
+  "lean_name": "assignConsExtend_correct",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared assign_ConsExtend_typed and its zero HOL hypotheses: the constructor condition, original state relation, live-name condition, successful cut and source operation, termination-depth bound, existential target evaluation and both original result implications are retained. Target finite-map fields and positive-width words use the reviewed representations; the evaluator inherits reals_as_rational_cuts, documented in SOUNDNESS item 8."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "Make_ptr_bits_thm",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/MakePtrBits.lean",
+  "lean_name": "makePtrBits_correct",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "hol_unused_existential_inhabitants": ["β._unused"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Source comparison with Make_ptr_bits_thm_typed and zero HOL hypotheses: all twelve premises, the independent unused witness and exact final evaluation and constructor pointer are retained. hol_unused_existential_inhabitants records the independently inhabited HOL witness type. The target state uses canonical finite-support maps and positive-width words; the evaluator inherits reals_as_rational_cuts, documented in SOUNDNESS item 8."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "evaluate_Maxout_bits_code",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/MaxoutBits.lean",
+  "lean_name": "evaluateMaxoutBitsCode",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Source comparison with evaluate_Maxout_bits_code_typed and zero HOL hypotheses: the distinct registers, three original dimension bounds, source-register lookup, initial dest assignment and exact final evaluation agree. The target state uses canonical finite-support maps and positive-width words; the evaluator inherits reals_as_rational_cuts, documented in SOUNDNESS item 8."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "INT_EQ_NUM_LEMMA",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/Integer.lean",
+  "lean_name": "int_eq_nat_iff",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared INT_EQ_NUM_LEMMA_typed and its zero HOL hypotheses: for an arbitrary integer, nonnegativity is equivalent to equality with the integer embedding of an existential natural."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "state_rel_IMP_tstamps",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/StateTstamps.lean",
+  "lean_name": "stateRel_imp_tstamps",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared state_rel_IMP_tstamps_typed and its zero HOL hypotheses: the state relation allows arbitrary related values, and the conclusion existentially supplies the source timestamp without additional premises. The target state uses canonical finite-support maps and positive-width words."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "state_rel_get_var_Number_IMP_alt",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/NumberVar.lean",
+  "lean_name": "stateRel_getVar_number_alt",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared state_rel_get_var_Number_IMP_alt_typed and zero HOL hypotheses: the original state relation, source number read and target read at 2*k+2 yield a word location whose low bit is set exactly when the integer is not small. The target state uses canonical finite-support maps and positive-width words."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
@@ -131705,12 +131773,21 @@
   },
 {
     "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "Maxout_bits_code_def",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
+    "lean_name": "maxoutBitsCode",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison with Maxout_bits_code_def_typed: both comparison and assignment branches use the original allOnes slice and argument order. Positive-width BitVec represents the HOL word; makePtrBitsCode now executes this definition."
+  },
+{
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
     "hol_name": "Make_ptr_bits_code_def",
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
     "lean_name": "makePtrBitsCode",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "Independent comparison with Make_ptr_bits_code_def_typed and Maxout_bits_code_def_typed: the initial assignment and both ordered maxout branches agree. allOnes_eq_inlined proves the inlined mask equals the original word slice, including out-of-range positions. Positive-width BitVec represents the single HOL word width. This is the executed compiler helper."
+    "reviewer": "Independent comparison with Make_ptr_bits_code_def_typed: the initial assignment and both ordered calls of the source-shaped maxoutBitsCode agree. allOnes_eq_inlined proves the original word slice equals the former arithmetic mask, including out-of-range positions. Positive-width BitVec represents the single HOL word width. This is the executed compiler helper."
   },
 {
     "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
@@ -144438,10 +144515,23 @@
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "cut_names_adjust_set_insert_ODD",
-  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CutOdd.lean",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CutNamesOdd.lean",
   "lean_name": "cutNames_adjustSet_insertOdd",
   "statement_status": "reviewed_exact",
   "reviewer": "Source comparison with cut_names_adjust_set_insert_ODD_typed and cut_names_adjust_set_insert_ODD_result_type in data_to_word_gc_fun_const_ok_probe.out and HOL source lines 7933-7946: the oddness premise and equality of option-valued wordSem cuts retain independent name-set and environment payload types. The separate result-type capture disambiguates the printed insert annotation from the cut result."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "alloc_with_locals_1_3",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/AllocLocals.lean",
+  "lean_name": "alloc_with_locals_one_three",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared the typed source-local proof replay alloc_with_locals_1_3_local_typed and its zero hypotheses: both local insertions, the arbitrary adjusted-set payload, and the full allocation result agree. The word state uses canonical finite maps and a shared positive word width."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
@@ -144486,6 +144576,34 @@
     "W2._w2"
   ],
   "reviewer": "Source comparison with gc_lemma_gen_typed in data_to_word_gc_fun_const_ok_probe.out and HOL source lines 7559-7662: all four original premises, seven ordered existential witnesses, collector/decode/pop and store equalities, full quantified failure bound, and post-collection state relation are retained. The gc_lemma_existential_inhabitants qualifier retains the two independent unused inhabited HOL types; st and the word state use canonical finite maps and words share the positive width."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "AllocVar_thm_nary",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/AllocVarNary.lean",
+  "lean_name": "allocVar_nary",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared AllocVar_thm_nary_typed and zero HOL hypotheses: all seven premises, the failure bound expressed using size_of_heap_args over the cut locals, and the full successful state relation and target preservation equalities match. The proof specializes AllocVar_thm_gen and uses the original argument-root permutation. The target state uses canonical finite-support maps and the word and target share the positive width; the evaluator inherits reals_as_rational_cuts, documented in SOUNDNESS item 8."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "AllocVar_thm_gen",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/AllocVar.lean",
+  "lean_name": "allocVar_gen",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared AllocVar_thm_gen_typed and its zero HOL hypotheses with the full source theorem: all five premises, the failure case with its universally quantified heap bound and the complete success state and preservation equalities are retained. The proof handles both silent-FFI settings, the fast path and the oversized sentinel. The target state uses canonical finite-support maps and the word, result and target state share the original positive width. The evaluator dependency closure inherits reals_as_rational_cuts, documented in SOUNDNESS item 8."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
@@ -145257,6 +145375,17 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "memory_rel_Cons_alt",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/ConsAltWritten.lean",
+  "lean_name": "memoryRel_consAlt",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": ["st"],
+  "words_as_type_indexed_bitvec": true,
+  "hol_unused_existential_inhabitants": ["β._unused"],
+  "reviewer": "Source comparison with memory_rel_Cons_alt_typed and zero HOL hypotheses: all six original premises, the free/current/unused existential witnesses, and the separated-word-list implication to the complete memory relation agree. hol_unused_existential_inhabitants retains the independent inhabited HOL type of the unused witness. The standalone store map uses the canonical finite-support representation and words share the positive width."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
   "hol_name": "memory_rel_Cons1",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/ConsMemory.lean",
   "lean_name": "memoryRel_cons1",
@@ -145936,6 +146065,190 @@
   "words_as_type_indexed_bitvec": true,
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "Compared assign_Equal_typed: operation equality, original state relation, names condition, source cut and argument lookup, termination depth and successful do_app are retained. The target evaluation existential includes both the not-enough-space obligations and the successful state relation and result. Target state fields use canonical finite maps, words use positive type-indexed widths, and the evaluator inherits the rational-cut real model. The evaluator inherits the reals_as_rational_cuts assumption."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "assign_Less",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/Less.lean",
+  "lean_name": "assignLess_correct",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared assign_Less_typed: the operation equality, source and target state relation, names condition, source cut and argument lookup, termination depth and successful source application are retained. The target evaluation existential includes the original out-of-space obligations and successful state relation and result. Target state fields use canonical finite maps and words use positive type-indexed widths. The evaluator inherits the reals_as_rational_cuts assumption."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "assign_LessEq",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/Less.lean",
+  "lean_name": "assignLessEq_correct",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared assign_LessEq_typed: the operation equality, source and target state relation, names condition, source cut and argument lookup, termination depth and successful source application are retained. The target evaluation existential includes the original out-of-space obligations and successful state relation and result. Target state fields use canonical finite maps and words use positive type-indexed widths. The evaluator inherits the reals_as_rational_cuts assumption."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "word_exp_set_var_ShiftVar",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/ShiftVar.lean",
+  "lean_name": "wordExpSetVarShiftVar",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared word_exp_set_var_ShiftVar_typed: the target evaluator reads the just-inserted word and returns the original four natural-amount shift results under OPTION_MAP Word. The target state fields use canonical finite maps and words use positive type-indexed widths."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "MIN_SUB",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/EqualStack.lean",
+  "lean_name": "minSub",
+  "statement_status": "reviewed_exact",
+  "reviewer": "The source-local MIN_SUB theorem has the same natural-number minimum and truncated subtraction on both sides; MIN_SUB_local_typed replays its original statement and proof with inferred HOL num types."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "IMP",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/RealAddrInsert.lean",
+  "lean_name": "orIffNotImp",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared assign_IMP_typed: the original Boolean disjunction and implication equivalence are translated as propositions, with both variables unconstrained and no hypotheses."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "word_exp_real_addr_some_value",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/RealAddrInsert.lean",
+  "lean_name": "wordExpRealAddrSomeValue",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared word_exp_real_addr_some_value_typed: the original heap lookup, register lookup, good dimension and shift bounds imply an existential word-valued evaluation of real_addr. State fields use canonical finite maps and words use positive type-indexed widths."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "memory_rel_write",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/UnusedWrite.lean",
+  "lean_name": "memoryRel_write",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": ["store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared the HOL source and memory_rel_write_typed: the sole premise is the complete memory relation; the conclusion supplies NextFree and, for each index less than the original space, domain membership and the complete memory relation after updating that address with an arbitrary word location. The store is the canonical finite map and words use positive type-indexed widths."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "memory_rel_store_list_to_unused",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/StoreUnused.lean",
+  "lean_name": "memoryRel_storeListToUnused",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": ["store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared the HOL source and memory_rel_store_list_to_unused_typed: the original full memory relation, successful list store, NextFree lookup, and length bound imply the full memory relation on the returned memory. The store is the canonical finite map, the sparse-tree references are unchanged, and words use positive type-indexed widths."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "get_vars_delete_lemma",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/GetVars.lean",
+  "lean_name": "getVarsDelete",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared get_vars_delete_lemma_typed: arbitrary word-state fields, four independent word-location values, all input name lists, the original four ordered sparse-tree insertions, and both complete get_vars results agree. State fields use canonical finite maps and words use positive type-indexed widths."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "INTRO_IS_SOME",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/GetVars.lean",
+  "lean_name": "introIsSome",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared INTRO_IS_SOME_typed: the independently polymorphic option is present iff it equals SOME of an existentially quantified value."
+},
+{
+  "hol_path": "HOL/examples/machine-code/hoare-triple/set_sepScript.sml",
+  "hol_name": "SEP_T_def",
+  "lean_path": "Flapjack/Misc/SetSep/Top.lean",
+  "lean_name": "sepT",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared SEP_T_def_typed: the always-true predicate is polymorphic in its entire input type, not restricted to a set."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "STAR_fun2set_IMP_SEP_T",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/Separation.lean",
+  "lean_name": "starFun2SetImpSepT",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared STAR_fun2set_IMP_SEP_T_typed: the two separation predicates, heap key and value carriers remain independently polymorphic, and the original star/fun2set premise implies the same star with SEP_T."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "IMP_memcopy_lemma",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/MemCopy/Element.lean",
+  "lean_name": "impMemcopyLemma",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared IMP_memcopy_lemma_typed: source and target state payload types are independently quantified; the full memory relation, block index and paired-list length bounds, dimension, register lookup and real-address evaluation imply the exact extended paired roots and domain membership. Target state fields use canonical finite maps and words use positive type-indexed widths."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "IMP_memcopy",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/MemCopy/Loop.lean",
+  "lean_name": "impMemcopy",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared IMP_memcopy_typed: independently typed source and target states, the complete memory relation and separation assertion, bounds, lookups and exact real-address evaluation are retained. The original existential final memory and copied words, memcopy result, word-list separation, copied length and full final zipped-root relation are all preserved. Target state fields use canonical finite maps and words use positive type-indexed widths."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "cut_envs_adjust_sets_insert_ODD",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/CutEnvsOdd.lean",
+  "lean_name": "cutEnvs_adjustSets_insertOdd",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared cut_envs_adjust_sets_insert_ODD_typed: the names and environment sparse-tree value types are independent, and an odd inserted key leaves the complete paired cut result unchanged."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "IN_domain_adjust_set_IMP",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/CutEnvsOdd.lean",
+  "lean_name": "inDomainAdjustSetImp",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared IN_domain_adjust_set_IMP_typed: an arbitrary sparse-tree payload type is retained and membership in the adjusted domain implies an original-domain name with exactly the adjusted key."
+},
+{
+  "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+  "hol_name": "BignumHalt_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
+  "lean_name": "bignumHalt",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared BignumHalt_def_typed: the arbitrary register, test of bit zero by immediate one, skip and GiveUp branches match. The named helper is used by the production assignment and runtime stub paths; words use positive type-indexed widths."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "evaluate_BignumHalt2",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/BignumHalt.lean",
+  "lean_name": "evaluateBignumHalt2",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_BignumHalt2_typed: the original state relation and register lookup imply an existential state, the exact bit-dependent evaluation, both FFI equalities and the original stack bound. State fields use canonical finite maps and words use positive type-indexed widths. The evaluator inherits the reals_as_rational_cuts assumption."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "cut_names_insert_1_insert_1",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CutInsertOne.lean",
+  "lean_name": "cutNamesInsertOne",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared cut_names_insert_1_insert_1_typed: the sparse-tree payloads are independently polymorphic; the complete option-valued cut after both insertions equals the original cut mapped by the value insertion."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "cut_env_insert_1",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CutInsertOne.lean",
+  "lean_name": "cutEnvInsertOne",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared cut_env_insert_1_typed: independent sparse-tree payload types, both adjusted cutsets and complete failure-or-inserted-result option are unchanged."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
@@ -147740,6 +148053,88 @@
 {"hol_path": "cakeml/compiler/backend/proofs/word_elimProofScript.sml", "hol_name": "get_vars_get_locals", "lean_path": "Flapjack/Compiler/Backend/WordElim/Proofs/Vars.lean", "lean_name": "getVars_get_locals", "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec", "fmap_as_finite_support": ["fpRegs", "store"], "words_as_type_indexed_bitvec": true, "reviewer": "Source comparison against get_vars_get_locals_typed: HOL binds args, s, x, n and n1 in that order and states ONE conjunction premise get_vars args s = SOME x /\\ MEM (Loc n n1) x, concluding n IN domain (get_locals s.locals). Lean keeps that binder order and the single premise, with MEM (Loc n n1) x as (.loc n n1) \u2208 x and IN domain as sptMem. The fmap qualifier covers the WordSemStateFiniteExact fpRegs/store fields with the same-module witness."},
 {"hol_path": "cakeml/compiler/backend/proofs/word_elimProofScript.sml", "hol_name": "get_locals_fromList2", "lean_path": "Flapjack/Compiler/Backend/WordElim/Proofs/Vars.lean", "lean_name": "getLocals_fromList2", "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec", "fmap_as_finite_support": ["fpRegs", "store"], "words_as_type_indexed_bitvec": true, "reviewer": "Source comparison against get_locals_fromList2_typed: HOL binds args, s, x and t in that order and states ONE conjunction premise get_vars args s = SOME x /\\ x <> [] /\\ t = fromList2 x, concluding domain (get_locals t) SUBSET domain (get_locals s.locals). Lean keeps that binder order, the three conjuncts in HOL's order as a single premise, fromList2 as sptFromList2 and the subset literally with sptDomainSet. The fmap qualifier covers the fpRegs/store fields."},
 {"hol_path": "cakeml/compiler/backend/proofs/word_elimProofScript.sml", "hol_name": "get_locals_fromList2_FRONT", "lean_path": "Flapjack/Compiler/Backend/WordElim/Proofs/Vars.lean", "lean_name": "getLocals_fromList2_FRONT", "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec", "fmap_as_finite_support": ["fpRegs", "store"], "words_as_type_indexed_bitvec": true, "reviewer": "Source comparison against get_locals_fromList2_FRONT_typed: HOL binds args, s, x, xf and t in that order and states ONE conjunction premise get_vars args s = SOME x /\\ x <> [] /\\ xf = FRONT x /\\ t = fromList2 xf, concluding domain (get_locals t) SUBSET domain (get_locals s.locals). Lean keeps that binder order, the four conjuncts in HOL's order as a single premise, FRONT as List.dropLast, fromList2 as sptFromList2 and the subset literally with sptDomainSet. The fmap qualifier covers the fpRegs/store fields."},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "Compare_code_thm",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/CompareCode.lean",
+  "lean_name": "compareCode_correct",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "WordSemStateFiniteExact.fpRegs",
+    "WordSemStateFiniteExact.store",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Typed HOL source comparison against Compare_code_thm_typed: the full memory relation, domain, memory and store equalities, immediate-bit implication, shift bound, code and three register lookups, dimword clock bound and length/dimension conditions are retained. The existential clock and stack maximum, target result and exact updated state, and original option stack bound are unchanged. The target state fields and the independent store use canonical finite maps; words use positive type-indexed BitVecs. The evaluator inherits the reals_as_rational_cuts assumption."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "word_cmp_Less_word_cmp_res",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/CompareResult.lean",
+  "lean_name": "wordCmpLessResult",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Typed HOL source comparison against word_cmp_Less_word_cmp_res_typed: independent integers, good_dimindex premise and Less result 1 iff i < j are retained. Boolean truth and negation are rendered by equality to true and false; the word carrier uses positive type-indexed BitVec."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "word_cmp_NotLess_word_cmp_res",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/CompareResult.lean",
+  "lean_name": "wordCmpNotLessResult",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Typed HOL source comparison against word_cmp_NotLess_word_cmp_res_typed: independent integers, good_dimindex premise and NotLess 1 result iff i ≤ j are retained. Boolean truth and negation are rendered by equality to true and false; the word carrier uses positive type-indexed BitVec."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "word_cmp_not_NotLess_word_cmp_res",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/CompareResult.lean",
+  "lean_name": "wordCmpNotNotLessResult",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Typed HOL source comparison against word_cmp_not_NotLess_word_cmp_res_typed: independent integers, good_dimindex premise and negated NotLess 1 result iff j < i are retained. Boolean truth and negation are rendered by equality to true and false; the word carrier uses positive type-indexed BitVec."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "not_word_cmp_Less_word_cmp_res",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/CompareResult.lean",
+  "lean_name": "notWordCmpLessResult",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Typed HOL source comparison against not_word_cmp_Less_word_cmp_res_typed: independent integers, good_dimindex premise and negated Less result 1 iff j ≤ i are retained. Boolean truth and negation are rendered by equality to true and false; the word carrier uses positive type-indexed BitVec."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/ComparisonSetup.lean",
+  "hol_name": "IMP_spt_eq",
+  "lean_name": "impSptEq",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Typed HOL source comparison against IMP_spt_eq_typed: the two sparse trees have one shared independent element type; both well-formedness conditions, universal lookup equality and tree equality conclusion are unchanged."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/ComparisonSetup.lean",
+  "hol_name": "env_to_list_cut_env_IMP",
+  "lean_name": "envToListCutEnvImp",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Typed HOL source comparison against env_to_list_cut_env_IMP_typed: retains both ordered environment-list and cut-environment premises and fromAList equality conclusion. The HOL environment word type and state word type are independently quantified and remain separate Lean widths. The state fpRegs/store use canonical finite maps and both word carriers use positive-width BitVec."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/ComparisonSetup.lean",
+  "hol_name": "dimword_LESS_MustTerminate_limit",
+  "lean_name": "dimwordLessMustTerminateLimit",
+  "statement_status": "reviewed_word_dimension_as_width",
+  "word_dimension_as_width": "width",
+  "reviewer": "Typed HOL source comparison against dimword_LESS_MustTerminate_limit_typed: good_dimindex is the sole premise, and the conclusion is dimword < MustTerminate_limit − 1. The HOL type is used only through its dimension; word_dimension_as_width names width as the positive dimension."
+}
+,
 {"hol_path": "cakeml/compiler/backend/proofs/word_elimProofScript.sml", "hol_name": "FINITE_mdom_mem", "lean_path": "Flapjack/Compiler/Backend/WordElim/Proofs/Memory.lean", "lean_name": "finiteMdomMem", "statement_status": "reviewed_exact", "reviewer": "Source comparison against FINITE_mdom_mem_typed: HOL quantifies mdom : \u03b1 -> bool explicitly and leaves mem : \u03b1 -> \u03b2 free (the typed capture annotates the free variable inline), stating FINITE mdom => FINITE {mem x | x in mdom}. Lean binds mdom first and the free mem after it, as for the free lsz of get_stack_hd_thm, at independent {\u03b1 \u03b2 : Type}; HOL FINITE is Set.Finite (as in the reviewed FINITE_vars row) and HOL's set comprehension is the reviewed Set.image rendering, Set.image mem mdom. No word, state or finite-map carrier appears, so no representation qualifier applies."},
 {"hol_path": "cakeml/compiler/backend/semantics/bvlPropsScript.sml", "hol_name": "with_same_code", "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlProps/EvaluateClockShift.lean", "lean_name": "withSameCode", "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"], "reviewer": "Source comparison against with_same_code_typed: HOL binds the state s, with independent compiler and FFI type parameters, and states s with code := s.code = s. Lean states the same record update over Flapjack.Compiler.Backend.BvlSem.State at HOL's binder, with code the sparse tree field and the canonical HolFiniteMapExact refs field covered by the same-module witness. No premise, no extra instance."},
 {"hol_path": "cakeml/compiler/backend/semantics/bvlPropsScript.sml", "hol_name": "with_same_clock", "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlProps/EvaluateClockShift.lean", "lean_name": "withSameClock", "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"], "reviewer": "Source comparison against with_same_clock_typed: HOL binds the state st, with independent compiler and FFI type parameters, and states st with clock := st.clock = st. Lean states the same record update over Flapjack.Compiler.Backend.BvlSem.State at HOL's binder, with the canonical refs field covered by the same-module witness. No premise, no extra instance."},
