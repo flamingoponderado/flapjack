@@ -674,4 +674,7 @@ val _ = emit_exported "memory_rel_MutCons_typed" "memory_rel_MutCons";
 val _ = capture "v_inv_MutCons_step_typed" "v_inv_MutCons_step";
 val _ = capture "mutcons_thm_alt_typed" "mutcons_thm_alt";
 val _ = capture "mutcons_thm_typed" "mutcons_thm";
+val _ = emit_exported "memory_rel_UpdateCons_typed" "memory_rel_UpdateCons";
+val _ = capture "v_inv_BlockRep_upd_lemma_typed" "v_inv_BlockRep_upd_lemma";
+val _ = capture "update_mutblock_thm_typed" "update_mutblock_thm";
 val _ = print "dtw_memory_more_end=1\n";
