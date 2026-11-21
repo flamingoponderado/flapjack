@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.HolRef
+public import Flapjack.Misc.ListEl
 public import Flapjack.Pancake.PanLang.Decl
 public import Flapjack.Pancake.Semantics.CrepSem.HOLState
 public import Flapjack.Pancake.Semantics.PanSem.MemLoadHOL
@@ -292,14 +293,23 @@ theorem memLoadFlatRelHOLExact {width : Nat} {σ : Type} [NeZero width]
   rw [htake]
   simpa [memLoadCrepSemHOL, memLoadFlatTargetHOL] using hread
 
+/-- Flapjack infrastructure: the exact word-lab carrier is inhabited (every HOL
+    type is), so the total `holEl` rendering applies to `flattenHOL` lists. -/
+instance holWordLabNonempty {width : Nat} [NeZero width] : Nonempty (HolWordLab width) :=
+  ⟨HolWordLab.word (BitVec.ofNat width 0)⟩
+
 /- Exact-carrier port of HOL `mem_loads_flat_rel`
    (`cakeml/pancake/semantics/crepPropsScript.sml:61-99`).  The three conjuncts
    keep HOL's own shape: the single-shape and shapes-level strided reads (each
    over Pan `mem_load`/`mem_loads` with explicit domain and memory equal to the
-   Crep state's fields) and the vacuous `mem_load_flds` clause.  HOL's
-   `n < LENGTH (flatten v)` implication is the named hypothesis `hn`, which the
-   `getElem` bound needs.  The positive BitVec dimension and the finite-support
-   target maps are recorded by the two representation qualifiers. -/
+   Crep state's fields) and the vacuous `mem_load_flds` clause.  Each strided
+   read has ONE conjoined premise (`mem_load ... = SOME v ∧ is_wf_shape_nil sh`,
+   `mem_loads ... = SOME v ∧ EVERY is_wf_shape_nil shs`), `EVERY is_wf_shape_nil
+   shs` is `∀ sh ∈ shapes, isWfShapeExactHOL ([] : StructContextExact) sh = true`,
+   and HOL's `n < LENGTH (...) ⇒ ... SOME (EL n (...))` is an ordinary premise
+   plus the total `holEl` rendering of `EL`.  The positive BitVec dimension and
+   the finite-support target maps are recorded by the two representation
+   qualifiers. -/
 @[hol "cakeml/pancake/semantics/crepPropsScript.sml" "mem_loads_flat_rel"
   (fmap_as_finite_support := [locals, globals, code])
   (words_as_type_indexed_bitvec)]
@@ -307,38 +317,50 @@ theorem memLoadsFlatRelHOLExact {width : Nat} {σ : Type} [NeZero width] :
     (∀ (sh : ShapeHOL) (adr : BitVec width) (dm : BitVec width → Prop) [DecidablePred dm]
       (m : BitVec width → HolWordLab width) (context : StructContextHOLM)
       (v : ValueHOL width),
-      memLoadHOLExact sh adr dm m context = some v →
-      isWfShapeExactHOL ([] : StructContextExact) sh = true →
-      ∀ (s : CrepSemHOLState width σ) [DecidablePred s.memaddrs] (n : Nat)
-        (hn : n < (flattenHOL v).length),
-        dm = s.memaddrs → m = s.memory →
+      memLoadHOLExact sh adr dm m context = some v ∧
+        isWfShapeExactHOL ([] : StructContextExact) sh = true →
+      ∀ (s : CrepSemHOLState width σ) [DecidablePred s.memaddrs] (n : Nat),
+        n < (flattenHOL v).length → dm = s.memaddrs → m = s.memory →
         memLoadCrepSemHOL (adr + bytesInWordHOL width * BitVec.ofNat width n) s =
-          some ((flattenHOL v)[n]'hn)) ∧
+          some (holEl n (flattenHOL v))) ∧
     (∀ (shapes : List ShapeHOL) (adr : BitVec width) (dm : BitVec width → Prop)
       [DecidablePred dm] (m : BitVec width → HolWordLab width)
       (context : StructContextHOLM) (values : List (ValueHOL width)),
-      memLoadsHOLExact shapes adr dm m context = some values →
-      isWfShapesExactHOL ([] : StructContextExact) shapes = true →
-      ∀ (s : CrepSemHOLState width σ) [DecidablePred s.memaddrs] (n : Nat)
-        (hn : n < ((values.map flattenHOL).flatten).length),
-        dm = s.memaddrs → m = s.memory →
+      memLoadsHOLExact shapes adr dm m context = some values ∧
+        (∀ sh ∈ shapes, isWfShapeExactHOL ([] : StructContextExact) sh = true) →
+      ∀ (s : CrepSemHOLState width σ) [DecidablePred s.memaddrs] (n : Nat),
+        n < ((values.map flattenHOL).flatten).length → dm = s.memaddrs → m = s.memory →
         memLoadCrepSemHOL (adr + bytesInWordHOL width * BitVec.ofNat width n) s =
-          some (((values.map flattenHOL).flatten)[n]'hn)) ∧
+          some (holEl n ((values.map flattenHOL).flatten))) ∧
     (∀ (flds : List (MlStringHOLM × ShapeHOL)) (adr : BitVec width)
       (dm : BitVec width → Prop) [DecidablePred dm]
       (m : BitVec width → HolWordLab width) (context : StructContextHOLM)
       (vs : List (MlStringHOLM × ValueHOL width)),
       memLoadFldsHOLExact flds adr dm m context = some vs → True) := by
   refine ⟨?_, ?_, ?_⟩
-  · intro sh adr dm inst m context v hload hwf s inst2 n hn hdm hmem
+  · intro sh adr dm inst m context v h s inst2 n hn hdm hmem
+    obtain ⟨hload, hwf⟩ := h
     subst hdm hmem
     have hread := memLoadHOLExact_flatRead_mutual s.memaddrs s.memory sh adr context
       hwf v hload n hn
+    rw [holEl_eq_getElem n (flattenHOL v) hn]
     simpa [memLoadCrepSemHOL, memLoadFlatTargetHOL] using hread
-  · intro shapes adr dm inst m context values hload hwf s inst2 n hn hdm hmem
+  · intro shapes adr dm inst m context values h s inst2 n hn hdm hmem
+    obtain ⟨hload, hwf⟩ := h
+    have hall : ∀ (shapes : List ShapeHOL),
+        isWfShapesExactHOL ([] : StructContextExact) shapes =
+          shapes.all (fun sh => isWfShapeExactHOL ([] : StructContextExact) sh) := by
+      intro shapes
+      induction shapes with
+      | nil => rfl
+      | cons sh rest ih => simp [isWfShapesExactHOL, ih]
+    have hwfList : isWfShapesExactHOL ([] : StructContextExact) shapes = true := by
+      rw [hall shapes]
+      exact List.all_eq_true.mpr hwf
     subst hdm hmem
     have hread := memLoadsHOLExact_flatRead_shapes s.memaddrs s.memory shapes adr context
-      hwf values hload n hn
+      hwfList values hload n hn
+    rw [holEl_eq_getElem n ((values.map flattenHOL).flatten) hn]
     simpa [memLoadCrepSemHOL, memLoadFlatTargetHOL] using hread
   · intro flds adr dm inst m context vs hload
     trivial
