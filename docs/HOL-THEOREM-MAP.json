@@ -150095,5 +150095,19 @@
  "words_as_type_indexed_bitvec": true,
  "inherits_reals_as_rational_cuts": true,
  "reviewer": "Compared the Call case with data_compile_correct_typed, the Call clause of data_evaluate_ind_typed (data_to_word_gc_fun_const_ok_probe) and HOL proof lines 934-1152: all original premises and the complete result, stack-bound and space-failure conclusions are retained, with precisely the three Call induction hypotheses (handler body after a raising callee, returning-call callee with push_env (IS_SOME handler), tail-call callee); HOL's auxiliary tuple variables v2/v5/v1/v3/v6/v10/v are bound as the corresponding tuple patterns and equalities. The proof covers the tail call, returning calls with and without a handler, timeouts, returned values via state_rel_pop_env_set_vars_IMP, raised exceptions (to the caller or the handler) and out-of-space callees and handlers. Full theorem assembly remains unported (Assign and Force cases). Target maps/words use reviewed representations; the evaluator inherits the reals_as_rational_cuts assumption in docs/SOUNDNESS.md item 8."
+},
+{
+ "hol_path": "cakeml/compiler/backend/proofs/data_to_wordProofScript.sml",
+ "hol_name": "data_compile_correct",
+ "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Correct/Force.lean",
+ "lean_name": "dataCompileCorrect_force",
+ "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+ "fmap_as_finite_support": [
+  "fpRegs",
+  "store"
+ ],
+ "words_as_type_indexed_bitvec": true,
+ "inherits_reals_as_rational_cuts": true,
+ "reviewer": "Compared the Force case with data_compile_correct_typed, the Force clause of data_evaluate_ind_typed (data_to_word_gc_fun_const_ok_probe) and HOL proof lines 391-742: all original premises and the complete result, stack-bound and space-failure conclusions are retained, with precisely the two Force induction hypotheses (forcing call of a NotEvaluated thunk with ret = SOME (dest,names) after cut_env and push_env env F, and with ret = NONE); HOL's auxiliary tuple variables v3/v6/v1 are bound as tuple patterns and equalities. The proof covers inlined evaluated values (code locations and untagged words), inlined pointers, evaluated thunk blocks and forcing calls (tail and returning, including timeouts, returned values, exceptions and out-of-space callees), using memory_rel_Thunk_inlined, memory_rel_Thunk_IMP, word_test_lemma1/2 and state_rel_call_env_push. Full theorem assembly remains unported (Assign case). Target maps/words use reviewed representations; the evaluator inherits the reals_as_rational_cuts assumption in docs/SOUNDNESS.md item 8."
 }
 ]

@@ -503,6 +503,8 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.CallTail
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.CallReturn
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.CallHandler
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.Call
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.ForceLemmas
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.Force
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.LocMerge
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.DecStack
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.StackRoots
