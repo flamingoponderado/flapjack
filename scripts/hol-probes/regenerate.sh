@@ -12634,3 +12634,28 @@ run_probe bvi_tmc_proof_local_typed_probeScript.sml bvi_tmc_proof_local_typed_pr
   more_free_names_typed env_rel_el_typed \
   "$cake_dir/compiler/backend/proofs/bvi_tmcProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_rawcall_proof_local_typed_probeScript.sml stack_rawcall_proof_local_typed_probe.out \
+  state_rel_thm_typed with_stack_space_typed \
+  "$cake_dir/compiler/backend/proofs/stack_rawcallProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+
+run_probe word_convs_proof_helper_typed_probeScript.sml word_convs_proof_helper_typed_probe.out \
+  MEM_extract_labels_Seq_assoc_right_lemma_typed helper_typed \
+  "$cake_dir/compiler/backend/proofs/wordConvsProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_word_code_rel_p_typed_probeScript.sml word_to_word_code_rel_p_typed_probe.out \
+  code_rel_not_created_subprogs_typed code_rel_P_typed \
+  "$cake_dir/compiler/backend/proofs/word_to_wordProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+
+run_probe word_depth_call_some_typed_probeScript.sml word_depth_call_some_typed_probe.out \
+  max_depth_Call_SOME_typed \
+  "$cake_dir/compiler/backend/proofs/word_depthProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+
+run_probe clos_ticks_fmap_rel_typed_probeScript.sml clos_ticks_fmap_rel_typed_probe.out \
+  FMAP_REL_def_typed \
+  "$cake_dir/compiler/backend/proofs/clos_ticksProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"

@@ -11104,3 +11104,18 @@ parsed from the pinned source), and the exported `is_block_op_cons_def` and
 `env_rel_el`. Regenerate with `CAKEML=<cakeml tree>
 HOL_PROBE_ONLY=bvi_tmc_proof_local_typed_probeScript.sml
 scripts/hol-probes/regenerate.sh`; it does not replay HOL proofs.
+
+`stack_rawcall_proof_local_typed_probe.out`, `word_convs_proof_helper_typed_probe.out`,
+`word_to_word_code_rel_p_typed_probe.out`, `word_depth_call_some_typed_probe.out` and
+`clos_ticks_fmap_rel_typed_probe.out` record the typed statements of the remaining
+rows of `stack_rawcallProofScript.sml` (`state_rel_thm`, rebuilt from the exported
+`state_rel_def` by the source `SIMP_RULE`, and the `[local]` `with_stack_space`),
+`wordConvsProofScript.sml` (the derived `[local]` `helper`: the parsed source statement
+of `MEM_extract_labels_Seq_assoc_right_lemma` rewritten by the source
+`REWRITE_RULE [Once (GSYM CONTRAPOS_THM)]` on an unproved `mk_thm` copy, which records
+the statement shape only), `word_to_wordProofScript.sml` (the derived `[local]`
+`code_rel_P`, rebuilt as `Q.GEN \`P\` code_rel_not_created_subprogs`),
+`word_depthProofScript.sml` (`max_depth_Call_SOME`) and `clos_ticksProofScript.sml`
+(`FMAP_REL_def`). Regenerate each with `CAKEML=<cakeml tree>
+HOL_PROBE_ONLY=<probe>Script.sml scripts/hol-probes/regenerate.sh`; none replays a
+HOL proof.
