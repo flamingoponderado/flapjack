@@ -37,7 +37,7 @@ theorem destResultLoc_none (n : Nat) : ¬ destResultLoc (width := width) none n 
 /-- Case `Skip` of HOL `word_removal_lemma` (`Resume word_removal_lemma[Skip]`). -/
 @[hol "cakeml/compiler/backend/proofs/word_elimProofScript.sml" "word_removal_lemma"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
-theorem word_removal_lemma_Skip :
+theorem word_removal_lemma_Skip {width : Nat} [NeZero width] {C F : Type} :
     ∀ (state : WordSemStateFiniteExact width C F), WordRemovalGoal .skip state := by
   intro state
   refine removal_leaf _ _ rfl fun res s1 hev herr hg => ?_
@@ -48,7 +48,7 @@ theorem word_removal_lemma_Skip :
 /-- Case `Alloc` of HOL `word_removal_lemma` (`Resume word_removal_lemma[Alloc]`). -/
 @[hol "cakeml/compiler/backend/proofs/word_elimProofScript.sml" "word_removal_lemma"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
-theorem word_removal_lemma_Alloc :
+theorem word_removal_lemma_Alloc {width : Nat} [NeZero width] {C F : Type} :
     ∀ (n : Nat) (names : WordLangCutsetsHOL) (state : WordSemStateFiniteExact width C F),
       WordRemovalGoal (.alloc n names) state := by
   intro n names state
@@ -64,7 +64,7 @@ theorem word_removal_lemma_Alloc :
     (`Resume word_removal_lemma[StoreConsts]`). -/
 @[hol "cakeml/compiler/backend/proofs/word_elimProofScript.sml" "word_removal_lemma"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
-theorem word_removal_lemma_StoreConsts :
+theorem word_removal_lemma_StoreConsts {width : Nat} [NeZero width] {C F : Type} :
     ∀ (t1 t2 addr offset : Nat) (words : List (Bool × BitVec width))
       (state : WordSemStateFiniteExact width C F),
       WordRemovalGoal (.storeConsts t1 t2 addr offset words) state := by
@@ -86,7 +86,7 @@ theorem word_removal_lemma_StoreConsts :
 /-- Case `Move` of HOL `word_removal_lemma` (`Resume word_removal_lemma[Move]`). -/
 @[hol "cakeml/compiler/backend/proofs/word_elimProofScript.sml" "word_removal_lemma"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
-theorem word_removal_lemma_Move :
+theorem word_removal_lemma_Move {width : Nat} [NeZero width] {C F : Type} :
     ∀ (pri : Nat) (moves : List (Nat × Nat)) (state : WordSemStateFiniteExact width C F),
       WordRemovalGoal (.move pri moves) state := by
   intro pri moves state
@@ -104,7 +104,7 @@ theorem word_removal_lemma_Move :
 /-- Case `Inst` of HOL `word_removal_lemma` (`Resume word_removal_lemma[Inst]`). -/
 @[hol "cakeml/compiler/backend/proofs/word_elimProofScript.sml" "word_removal_lemma"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
-theorem word_removal_lemma_Inst :
+theorem word_removal_lemma_Inst {width : Nat} [NeZero width] {C F : Type} :
     ∀ (i : WordLangInst (BitVec width)) (state : WordSemStateFiniteExact width C F),
       WordRemovalGoal (.inst i) state := by
   intro i state
@@ -119,7 +119,7 @@ theorem word_removal_lemma_Inst :
 /-- Case `Assign` of HOL `word_removal_lemma` (`Resume word_removal_lemma[Assign]`). -/
 @[hol "cakeml/compiler/backend/proofs/word_elimProofScript.sml" "word_removal_lemma"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
-theorem word_removal_lemma_Assign :
+theorem word_removal_lemma_Assign {width : Nat} [NeZero width] {C F : Type} :
     ∀ (v : Nat) (exp : WordLangExpHOL (BitVec width)) (state : WordSemStateFiniteExact width C F),
       WordRemovalGoal (.assign v exp) state := by
   intro v exp state
@@ -134,7 +134,7 @@ theorem word_removal_lemma_Assign :
 /-- Case `Get` of HOL `word_removal_lemma` (`Resume word_removal_lemma[Get]`). -/
 @[hol "cakeml/compiler/backend/proofs/word_elimProofScript.sml" "word_removal_lemma"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
-theorem word_removal_lemma_Get :
+theorem word_removal_lemma_Get {width : Nat} [NeZero width] {C F : Type} :
     ∀ (v : Nat) (name : WordStoreHOL) (state : WordSemStateFiniteExact width C F),
       WordRemovalGoal (.get v name) state := by
   intro v name state
@@ -150,7 +150,7 @@ theorem word_removal_lemma_Get :
 /-- Case `Set` of HOL `word_removal_lemma` (`Resume word_removal_lemma[Set]`). -/
 @[hol "cakeml/compiler/backend/proofs/word_elimProofScript.sml" "word_removal_lemma"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
-theorem word_removal_lemma_Set :
+theorem word_removal_lemma_Set {width : Nat} [NeZero width] {C F : Type} :
     ∀ (v : WordStoreHOL) (exp : WordLangExpHOL (BitVec width))
       (state : WordSemStateFiniteExact width C F),
       WordRemovalGoal (.set v exp) state := by
@@ -169,7 +169,7 @@ theorem word_removal_lemma_Set :
     (`Resume word_removal_lemma[OpCurrHeap]`). -/
 @[hol "cakeml/compiler/backend/proofs/word_elimProofScript.sml" "word_removal_lemma"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
-theorem word_removal_lemma_OpCurrHeap :
+theorem word_removal_lemma_OpCurrHeap {width : Nat} [NeZero width] {C F : Type} :
     ∀ (b : BinOp) (dst src : Nat) (state : WordSemStateFiniteExact width C F),
       WordRemovalGoal (.opCurrHeap b dst src) state := by
   intro b dst src state
@@ -184,7 +184,7 @@ theorem word_removal_lemma_OpCurrHeap :
 /-- Case `Store` of HOL `word_removal_lemma` (`Resume word_removal_lemma[Store]`). -/
 @[hol "cakeml/compiler/backend/proofs/word_elimProofScript.sml" "word_removal_lemma"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
-theorem word_removal_lemma_Store :
+theorem word_removal_lemma_Store {width : Nat} [NeZero width] {C F : Type} :
     ∀ (exp : WordLangExpHOL (BitVec width)) (v : Nat) (state : WordSemStateFiniteExact width C F),
       WordRemovalGoal (.store exp v) state := by
   intro exp v state
@@ -201,7 +201,7 @@ theorem word_removal_lemma_Store :
 /-- Case `Tick` of HOL `word_removal_lemma` (`Resume word_removal_lemma[Tick]`). -/
 @[hol "cakeml/compiler/backend/proofs/word_elimProofScript.sml" "word_removal_lemma"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
-theorem word_removal_lemma_Tick :
+theorem word_removal_lemma_Tick {width : Nat} [NeZero width] {C F : Type} :
     ∀ (state : WordSemStateFiniteExact width C F), WordRemovalGoal .tick state := by
   intro state
   refine removal_leaf _ _ rfl fun res s1 hev herr hg => ?_
@@ -213,7 +213,7 @@ theorem word_removal_lemma_Tick :
 /-- Case `Return` of HOL `word_removal_lemma` (`Resume word_removal_lemma[Return]`). -/
 @[hol "cakeml/compiler/backend/proofs/word_elimProofScript.sml" "word_removal_lemma"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
-theorem word_removal_lemma_Return :
+theorem word_removal_lemma_Return {width : Nat} [NeZero width] {C F : Type} :
     ∀ (n : Nat) (ms : List Nat) (state : WordSemStateFiniteExact width C F),
       WordRemovalGoal (.return n ms) state := by
   intro n ms state
@@ -231,7 +231,7 @@ theorem word_removal_lemma_Return :
 /-- Case `Raise` of HOL `word_removal_lemma` (`Resume word_removal_lemma[Raise]`). -/
 @[hol "cakeml/compiler/backend/proofs/word_elimProofScript.sml" "word_removal_lemma"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
-theorem word_removal_lemma_Raise :
+theorem word_removal_lemma_Raise {width : Nat} [NeZero width] {C F : Type} :
     ∀ (n : Nat) (state : WordSemStateFiniteExact width C F),
       WordRemovalGoal (.raise n) state := by
   intro n state
@@ -256,7 +256,7 @@ theorem word_removal_lemma_Raise :
 /-- Case `Break` of HOL `word_removal_lemma`. -/
 @[hol "cakeml/compiler/backend/proofs/word_elimProofScript.sml" "word_removal_lemma"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
-theorem word_removal_lemma_Break :
+theorem word_removal_lemma_Break {width : Nat} [NeZero width] {C F : Type} :
     ∀ (k : Nat) (state : WordSemStateFiniteExact width C F), WordRemovalGoal (.break k) state := by
   intro k state
   refine removal_leaf _ _ rfl fun res s1 hev herr hg => ?_
@@ -267,7 +267,7 @@ theorem word_removal_lemma_Break :
 /-- Case `Continue` of HOL `word_removal_lemma`. -/
 @[hol "cakeml/compiler/backend/proofs/word_elimProofScript.sml" "word_removal_lemma"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
-theorem word_removal_lemma_Continue :
+theorem word_removal_lemma_Continue {width : Nat} [NeZero width] {C F : Type} :
     ∀ (k : Nat) (state : WordSemStateFiniteExact width C F),
       WordRemovalGoal (.continue k) state := by
   intro k state
@@ -280,7 +280,7 @@ theorem word_removal_lemma_Continue :
     (`Resume word_removal_lemma[CodeBufferWrite]`). -/
 @[hol "cakeml/compiler/backend/proofs/word_elimProofScript.sml" "word_removal_lemma"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
-theorem word_removal_lemma_CodeBufferWrite :
+theorem word_removal_lemma_CodeBufferWrite {width : Nat} [NeZero width] {C F : Type} :
     ∀ (r1 r2 : Nat) (state : WordSemStateFiniteExact width C F),
       WordRemovalGoal (.codeBufferWrite r1 r2) state := by
   intro r1 r2 state
@@ -295,7 +295,7 @@ theorem word_removal_lemma_CodeBufferWrite :
     (`Resume word_removal_lemma[DataBufferWrite]`). -/
 @[hol "cakeml/compiler/backend/proofs/word_elimProofScript.sml" "word_removal_lemma"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
-theorem word_removal_lemma_DataBufferWrite :
+theorem word_removal_lemma_DataBufferWrite {width : Nat} [NeZero width] {C F : Type} :
     ∀ (r1 r2 : Nat) (state : WordSemStateFiniteExact width C F),
       WordRemovalGoal (.dataBufferWrite r1 r2) state := by
   intro r1 r2 state
@@ -309,7 +309,7 @@ theorem word_removal_lemma_DataBufferWrite :
 /-- Case `FFI` of HOL `word_removal_lemma` (`Resume word_removal_lemma[FFI]`). -/
 @[hol "cakeml/compiler/backend/proofs/word_elimProofScript.sml" "word_removal_lemma"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
-theorem word_removal_lemma_FFI :
+theorem word_removal_lemma_FFI {width : Nat} [NeZero width] {C F : Type} :
     ∀ (ffiIndex : Basis.Pure.MlString.MlString) (ptr1 len1 ptr2 len2 : Nat)
       (names : WordLangCutsetsHOL) (state : WordSemStateFiniteExact width C F),
       WordRemovalGoal (.ffi ffiIndex ptr1 len1 ptr2 len2 names) state := by
@@ -334,7 +334,7 @@ theorem word_removal_lemma_FFI :
 /-- Case `ShareInst` of HOL `word_removal_lemma` (`Resume word_removal_lemma[ShareInst]`). -/
 @[hol "cakeml/compiler/backend/proofs/word_elimProofScript.sml" "word_removal_lemma"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
-theorem word_removal_lemma_ShareInst :
+theorem word_removal_lemma_ShareInst {width : Nat} [NeZero width] {C F : Type} :
     ∀ (op : WordMemOp) (v : Nat) (exp : WordLangExpHOL (BitVec width))
       (state : WordSemStateFiniteExact width C F),
       WordRemovalGoal (.shareInst op v exp) state := by
@@ -367,7 +367,7 @@ theorem codeRel_mem {reachable : NumSet} {c d : Spt (Nat × WordLangProgHOL (Bit
 /-- Case `LocValue` of HOL `word_removal_lemma` (`Resume word_removal_lemma[LocValue]`). -/
 @[hol "cakeml/compiler/backend/proofs/word_elimProofScript.sml" "word_removal_lemma"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
-theorem word_removal_lemma_LocValue :
+theorem word_removal_lemma_LocValue {width : Nat} [NeZero width] {C F : Type} :
     ∀ (r l1 : Nat) (state : WordSemStateFiniteExact width C F),
       WordRemovalGoal (.locValue r l1) state := by
   intro r l1 state result new_state reachable removed ⟨hev, herr, hrel, _, _, _, _, hfwr, _⟩
@@ -394,7 +394,7 @@ theorem word_removal_lemma_LocValue :
     `no_install` excludes it. -/
 @[hol "cakeml/compiler/backend/proofs/word_elimProofScript.sml" "word_removal_lemma"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
-theorem word_removal_lemma_Install :
+theorem word_removal_lemma_Install {width : Nat} [NeZero width] {C F : Type} :
     ∀ (ptr len dptr dlen : Nat) (names : WordLangCutsetsHOL)
       (state : WordSemStateFiniteExact width C F),
       WordRemovalGoal (.install ptr len dptr dlen names) state := by

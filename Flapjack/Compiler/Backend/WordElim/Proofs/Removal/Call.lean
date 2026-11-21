@@ -34,7 +34,7 @@ variable {width : Nat} [NeZero width] {C F : Type}
 /-- Case `Call` of HOL `word_removal_lemma` (`Resume word_removal_lemma[Call]`). -/
 @[hol "cakeml/compiler/backend/proofs/word_elimProofScript.sml" "word_removal_lemma"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
-theorem word_removal_lemma_Call :
+theorem word_removal_lemma_Call {width : Nat} [NeZero width] {C F : Type} :
     ∀ (ret : Option (List Nat × WordLangCutsetsHOL × WordLangProgHOL (BitVec width) × Nat × Nat))
       (dest : Option Nat) (args : List Nat)
       (handler : Option (Nat × WordLangProgHOL (BitVec width) × Nat × Nat))
