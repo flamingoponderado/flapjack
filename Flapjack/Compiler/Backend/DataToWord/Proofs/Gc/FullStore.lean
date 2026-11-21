@@ -227,4 +227,14 @@ theorem simpleGc_store_correct_word_global {width : Nat} [NeZero width] (conf : 
   · simpa [globalEq] using concrete
   · simp [HolFiniteMapExact.lookup_updateListEq, FUPDATE_LIST_HOL, FUPDATE_HOL, globalEq]
 
+/-- Exact HOL `gen_starts_in_store_IMP_SOME_Word`
+(`data_to_word_gcProofScript.sml:3804-3809`); the HOL free variables are
+universally quantified. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml"
+  "gen_starts_in_store_IMP_SOME_Word" (words_as_type_indexed_bitvec)]
+theorem genStartsInStore_imp_someWord {width : Nat} [NeZero width] {c : Config}
+    {gens : GcCombined.GenState} {x : Option (WordLocW width)} :
+    genStartsInStore c gens x → ∃ w : BitVec width, x = some (.word w) :=
+  genStartsInStoreImp c gens x
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

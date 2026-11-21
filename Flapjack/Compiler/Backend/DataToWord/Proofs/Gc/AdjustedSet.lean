@@ -202,4 +202,13 @@ theorem IS_SOME_lookup_domain {α : Type} {k : Nat} {m : Spt α} :
     (sptLookup k m).isSome = true ↔ sptDomain m k :=
   Iff.rfl
 
+/-- Exact HOL `is_some_lookup_union` (`data_to_word_gcProofScript.sml:4880-4886`,
+a `[local]` theorem); `union` is the reviewed `sptUnion`. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "is_some_lookup_union"]
+theorem is_some_lookup_union {α : Type} {n : Nat} {t1 t2 : Spt α} :
+    (sptLookup n (sptUnion t1 t2)).isSome = true ↔
+      (sptLookup n t1).isSome = true ∨ (sptLookup n t2).isSome = true := by
+  rw [sptLookup_sptUnion]
+  cases sptLookup n t1 <;> simp
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

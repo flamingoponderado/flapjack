@@ -152,4 +152,12 @@ theorem stackRel_simp {width : Nat} [NeZero width] (i : Option Nat)
       subst size
       rfl
 
+/-- Exact HOL `flat_NIL` (`data_to_word_gcProofScript.sml:4563-4567`); the HOL
+free variable `xs` is universally quantified. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "flat_NIL"
+  (words_as_type_indexed_bitvec)]
+theorem flatStack_nil {width : Nat} [NeZero width] {xs : List (WordSemStackFrame width)} :
+    flatStack ([] : List DataSem.Stack) xs = [] := by
+  cases xs <;> simp [flatStack]
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

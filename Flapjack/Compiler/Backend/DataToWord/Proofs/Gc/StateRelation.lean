@@ -175,4 +175,13 @@ theorem stateRel_setStore_allocSize {width : Nat} [NeZero width] {C F : Type}
   simp [stateRel, WordSemStateFiniteExact.setStore, codeOracleRel, Memory.memoryRel,
     Memory.heapInMemoryStore, HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, holFapply]
 
+/-- Exact HOL `blocks_unique_empty` (`data_to_word_gcProofScript.sml:4600-4606`,
+a `[local]` theorem): no value lies in the empty heap and stack. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "blocks_unique_empty"]
+theorem blocksUnique_empty {v : Nat} :
+    Memory.blocksUnique v (Memory.allValues Spt.ln []) := by
+  intro stamp tag1 xs1 tag2 xs2 ⟨h, _⟩
+  exfalso
+  simp [Memory.allValues, sptLookup, Memory.valueListValues] at h
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

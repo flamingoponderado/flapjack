@@ -177,4 +177,20 @@ theorem LESS_EQ_IMP_APPEND {α : Type} :
   simp only [List.length_take]
   omega
 
+/-- Exact HOL `LIST_REL_EQ_MAP` (`data_to_word_gcProofScript.sml:1196-1200`). -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "LIST_REL_EQ_MAP"]
+theorem LIST_REL_EQ_MAP {α β : Type} :
+    ∀ (vs : List α) (ws : List β) (f : α → β),
+      List.Forall₂ (fun v w => f v = w) vs ws ↔ ws = vs.map f := by
+  intro vs
+  induction vs with
+  | nil => intro ws f; cases ws <;> simp
+  | cons v vs ih =>
+    intro ws f
+    cases ws with
+    | nil => simp
+    | cons w ws =>
+      rw [List.forall₂_cons, ih ws f, List.map_cons, List.cons.injEq]
+      exact ⟨fun ⟨h1, h2⟩ => ⟨h1.symm, h2⟩, fun ⟨h1, h2⟩ => ⟨h1.symm, h2⟩⟩
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
