@@ -617,6 +617,7 @@ import Flapjack.Misc.Multiword.DivTest
 import Flapjack.Misc.Multiword.DivRange
 import Flapjack.Misc.Multiword.DivAux
 import Flapjack.Misc.Multiword.Div
+import Flapjack.Misc.Multiword.DivMod
 import Flapjack.Misc.Multiword.Length
 import Flapjack.Misc.Multiword.SingleWord
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.WordEquality.Word64
