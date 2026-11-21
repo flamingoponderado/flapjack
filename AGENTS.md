@@ -895,12 +895,12 @@ manifest records `"reals_as_rational_cuts": true`. The manifest note must
 name the qualifier and SOUNDNESS item 8, and it can never be `reviewed_exact`.
 
 **Qualify total-function inhabitant instances.** HOL's total functions `EL`,
-`HD`, `THE`, `LAST`, `ALOOKUP`, `LINV`, `ARB`, `OUTL` and `OUTR` return an
-unspecified value on bad input, so their HOL statements need no inhabitancy
-premise. The Lean
+`HD`, `THE`, `LAST`, `ALOOKUP`, `LINV`, `ARB`, `OUTL`, `OUTR` and the
+specified `CHOICE` return an unspecified value on bad input (`CHOICE {}`), so
+their HOL statements need no inhabitancy premise. The Lean
 renderings (`holEl`, `holHd`, `holLast`, `holThe`, `holLinv`, `holArb`,
 `holHdNil`, `holFapply`, `holFapplyOutside`, `holOutl`, `holOutr`,
-`holOutlInr`, `holOutrInl`) instead take a `[Nonempty _]` or
+`holOutlInr`, `holOutrInl`, `holChoice`) instead take a `[Nonempty _]` or
 `[Inhabited _]` instance on the element type. Record that rendering with
 `(total_function_inhabitants := [α, β, ...])`, naming the declaration's type
 binders whose single instance exists only for it:
@@ -925,6 +925,11 @@ only that the instance renders HOL's unspecified value; it authorises no other
 instance, hypothesis, or statement change, and source review must confirm the
 instance is used only through those renderings. `check_hol_ref_export.py`
 compares the manifest field with the elaborated attribute in both directions.
+
+HOL `SET_TO_LIST`'s rendering `holSetToList` also counts as a rendering for
+this check: its `Nonempty` instance on the element type flows only to
+`holChoice` and `holArb` in its body. `holRest` (HOL `REST`) is not listed; it
+uses `holChoice` directly and carries the qualifier through that use.
 
 The step-function tail recursion renderings `holShortTailrec` and
 `holShortTailrecPre` (HOL `SHORT_TAILREC`/`SHORT_TAILREC_PRE`) count as

@@ -118,6 +118,20 @@ class GcPredicateInheritanceTest(unittest.TestCase):
         self.assertTrue(self.const_check(
             predicate=PREDICATE.replace("[NeZero width]", "[NeZero 0]")))
 
+    def test_accepts_word_elim_gc_no_new_locs(self):
+        reference = ("cakeml/compiler/backend/proofs/word_elimProofScript.sml", "gc_no_new_locs_def")
+        tag = TAG.replace("cakeml/compiler/backend/semantics/wordPropsScript.sml",
+                          reference[0]).replace('"gc_fun_ok_def"', '"gc_no_new_locs_def"')
+        self.assertEqual(self.check(tag=tag, reference=reference), [])
+        self.assertTrue(self.check(tag=tag, reference=reference,
+                                   positions=("argument_3", "result_3")))
+        self.assertTrue(self.check(tag=tag, reference=reference, predicate=(
+            "def gcOk {width : Nat} [NeZero width] (f : WordSemGcFun width) "
+            "(s : List Nat) : Prop := True")))
+        other = ("cakeml/compiler/backend/proofs/word_elimProofScript.sml", "word_state_rel_def")
+        self.assertTrue(self.check(tag=tag.replace('"gc_no_new_locs_def"', '"word_state_rel_def"'),
+                                   reference=other))
+
     def test_rejects_other_word_simp_predicates(self):
         other = ("cakeml/compiler/backend/proofs/word_simpProofScript.sml", "gc_fun_sf_gc_consts")
         tag = CONST_TAG.replace('"gc_fun_const_ok_def"', '"gc_fun_sf_gc_consts"')
