@@ -7,6 +7,8 @@ public import Flapjack.Compiler.Backend.Semantics.WordSem.CallHelpers
 public import Flapjack.Compiler.Backend.StackRemove.Proofs.StackHeapWrites
 public import Flapjack.Compiler.Backend.StackRemove.Proofs.StackHeap
 public import Mathlib.Tactic.Set
+public import Flapjack.Pancake.Semantics.LoopProps.AccVars
+public import Flapjack.Compiler.Backend.Semantics.WordSem.EnvListSupport
 
 @[expose] public section
 
@@ -358,7 +360,7 @@ theorem evaluate_return_loc {t : WordSemStateFiniteExact width C F} {n l : Nat}
 through `Return 0 [0]`, and the frame is popped. -/
 theorem evaluate_loopCall {t1 t2' : WordSemStateFiniteExact width C F} {i y n l : Nat}
     {p1' p9 : WordLangProgHOL (BitVec width)} {retVal : WordLocW width}
-    (hi : 0 < i) (hret : WordSemStateFiniteExact.getVar 0 t1 = some retVal)
+    (_hi : 0 < i) (hret : WordSemStateFiniteExact.getVar 0 t1 = some retVal)
     (hlook : sptLookup y t1.code = some (1, .seq p1' (.return 0 [0])))
     (hclock : t1.clock ≠ 0)
     (hbody : WordSemStateFiniteExact.evaluate (.seq p1' (.return 0 [0]))
@@ -384,7 +386,7 @@ theorem evaluate_loopCall {t1 t2' : WordSemStateFiniteExact width C F} {i y n l 
   simp only [WordSemStateFiniteExact.getVars, wordSemBadDestArgs, Bool.false_eq_true, if_false,
     wordSemAddRetLoc, wordSemFindCode, hlook, List.length_singleton, if_true]
   rw [if_neg hdom, hcut]
-  simp only [hclock, if_false, dite_false]
+  simp only [hclock, if_false]
   rw [hbody, evaluate_return_loc hret2]
   simp only [ne_eq, not_true_eq_false, List.length_singleton, or_self, if_false]
   have hpop : WordSemStateFiniteExact.popEnv (WordSemStateFiniteExact.flushState false t2') =
@@ -398,7 +400,7 @@ theorem evaluate_loopCall {t1 t2' : WordSemStateFiniteExact width C F} {i y n l 
   simp only
   have hunion : sptUnion (sptFromAList ([] : List (Nat × WordLocW width)))
       (sptFromAList [(0, retVal)]) = .ls retVal := by
-    simp [sptFromAList, sptUnion, sptInsert]
+    simp [sptFromAList, sptUnion]
   rw [hunion]
   have hdeq : sptDomainEqUnion (Spt.ls retVal) (Spt.ls retVal) (Spt.ln : Spt (WordLocW width)) := by
     intro k
@@ -412,5 +414,94 @@ theorem getVar_zero_loopFrame (t : WordSemStateFiniteExact width C F) {i n l : N
   show sptLookup 0 (sptInsert i (.loc n l) (.ls retVal)) = some retVal
   rw [sptLookup_sptInsert_ne i 0 _ _ (by omega)]
   rfl
+
+theorem forall₂_imp_mem {α γ : Type} {R S : α → γ → Prop} :
+    ∀ {xs : List α} {ys : List γ}, List.Forall₂ R xs ys →
+      (∀ x y, x ∈ xs → R x y → S x y) → List.Forall₂ S xs ys
+  | [], [], .nil, _ => .nil
+  | _ :: _, _ :: _, .cons hr hrest, h =>
+    .cons (h _ _ List.mem_cons_self hr)
+      (forall₂_imp_mem hrest (fun x y hx => h x y (List.mem_cons_of_mem _ hx)))
+
+/-- The saved registers are readable at their shifted locals after
+`list_update`. -/
+theorem listUpdate_lookup_saved {L : Spt (WordLocW width)} :
+    ∀ {save : List Nat} {vals : List (BitVec width)} {P : Nat → BitVec width → Prop},
+      List.Forall₂ P save vals → save.Nodup →
+      List.Forall₂ (fun n v => sptLookup (n + 2)
+        (listUpdateSpt (save.map (fun n => n + 2)) (vals.map WordLocW.word) L) = some (.word v))
+        save vals
+  | [], [], _, .nil, _ => .nil
+  | h :: save, v :: vals, P, .cons _ hrest, hnd => by
+    have ih := listUpdate_lookup_saved (L := L) hrest (List.nodup_cons.mp hnd).2
+    refine .cons ?_ ?_
+    · simp [listUpdateSpt, sptLookup_sptInsert_same]
+    · refine forall₂_imp_mem ih ?_
+      intro n w hmem hl
+      simp only [List.map_cons, listUpdateSpt]
+      rw [sptLookup_sptInsert_ne _ _ _ _ (by
+        intro he
+        have : n = h := by omega
+        exact (List.nodup_cons.mp hnd).1 (this ▸ hmem))]
+      exact hl
+
+theorem cutNames_ls {l : Spt (WordLocW width)} {v : WordLocW width}
+    (h : sptLookup 0 l = some v) :
+    wordSemCutNames (Spt.ls ()) l = some (.ls v) := by
+  have hcut := cutEnvs_loop h
+  simp only [wordSemCutEnvs] at hcut
+  cases hc : wordSemCutNames (Spt.ls ()) l with
+  | none => simp [hc] at hcut
+  | some e => rw [hc] at hcut; cases hcl : wordSemCutNames (Spt.ln : Spt Unit) l <;> simp_all
+
+/-- Restoring the saved registers into the temporaries matches HOL's
+`copy_vars` on the register file. -/
+theorem copyVars_listStore_rel :
+    ∀ (save : List Nat) (regs : HolFiniteMapExact Nat (BitVec width)) (s2 s3 : MiniState width)
+      (vals : List (BitVec width)) (st : HolFiniteMapExact WordStoreHOL (WordLocW width)),
+      copyVars save regs s2 = some s3 →
+      List.Forall₂ (fun n v => regs.lookup n = some v) save vals → save.Nodup →
+      (∀ n ∈ save, n < 25) →
+      (∀ a v, s2.regs.lookup a = some v →
+        a < 25 ∧ st.lookup (.temp (BitVec.ofNat 5 a)) = some (.word v)) →
+      ∀ a v, s3.regs.lookup a = some v →
+        a < 25 ∧ (listStore save (vals.map WordLocW.word) st).lookup
+          (.temp (BitVec.ofNat 5 a)) = some (.word v)
+  | [], regs, s2, s3, vals, st, hcopy, hrel, _, _, hst => by
+    cases hrel
+    simp only [copyVars, Option.some.injEq] at hcopy
+    subst hcopy
+    exact hst
+  | h :: rest, regs, s2, s3, vals, st, hcopy, hrel, hnd, hlt, hst => by
+    cases hrel with
+    | cons hv hrest =>
+      rename_i v vs
+      simp only [copyVars, hv] at hcopy
+      have hh : h < 25 := hlt h List.mem_cons_self
+      have hlt' : ∀ n ∈ rest, n < 25 := fun n hn => hlt n (List.mem_cons_of_mem _ hn)
+      have hnotin : h ∉ rest := (List.nodup_cons.mp hnd).1
+      have ih := copyVars_listStore_rel rest regs (regWrite h (some v) s2) s3 vs
+        (st.updateEq (.temp (BitVec.ofNat 5 h), .word v)) hcopy hrest (List.nodup_cons.mp hnd).2
+        hlt' (by
+          intro a w hw
+          change FUPDATE_HOL s2.regs.lookup (h, v) a = some w at hw
+          simp only [FUPDATE_HOL] at hw
+          by_cases hah : a = h
+          · subst hah
+            simp only [if_true, Option.some.injEq] at hw
+            subst hw
+            exact ⟨hh, by simp [HolFiniteMapExact.updateEq, FUPDATE_HOL]⟩
+          · rw [if_neg hah] at hw
+            obtain ⟨ha25, hl⟩ := hst a w hw
+            refine ⟨ha25, ?_⟩
+            change FUPDATE_HOL st.lookup (_, _) _ = _
+            simp only [FUPDATE_HOL]
+            rw [if_neg (fun he => hah (temp_ofNat_inj (by omega) (by omega) he))]
+            exact hl)
+      intro a w hw
+      obtain ⟨ha25, hl⟩ := ih a w hw
+      refine ⟨ha25, ?_⟩
+      rw [listStore_FUPDATE rest st (vs.map WordLocW.word) h v ⟨hnotin, hh, hlt'⟩] at hl
+      simpa [listStore, holHd] using hl
 
 end Flapjack.Compiler.Backend.WordBignum.CompileThmSupport

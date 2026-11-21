@@ -341,9 +341,9 @@ theorem case_ite (t0 : WordSemStateFiniteExact width C F)
         rw [evaluate_seqTemp_live hvr, evaluate_seqTemp_live (t := t4) hv2]
         apply evaluate_seq_ite (x := .word (holFapply s1.regs r))
           (y := .word (holFapply s1.regs r2))
-        · simp only [t5, t4, WordSemStateFiniteExact.getVar, WordSemStateFiniteExact.setVar]
+        · simp only [t4, WordSemStateFiniteExact.getVar, WordSemStateFiniteExact.setVar]
           rw [sptLookup_sptInsert_ne _ _ _ _ (by omega), sptLookup_sptInsert_same]
-        · simp [t5, WordSemStateFiniteExact.getVarImm, WordSemStateFiniteExact.getVar,
+        · simp [WordSemStateFiniteExact.getVarImm, WordSemStateFiniteExact.getVar,
             WordSemStateFiniteExact.setVar, sptLookup_sptInsert_same]
         · rfl
       refine ⟨t5, ib + 2, by omega, ?_, hrel, ?_, rfl, rfl, hi1.symm⟩
@@ -362,7 +362,7 @@ theorem case_ite (t0 : WordSemStateFiniteExact width C F)
             (.seq (if wordCmpHOL c (holFapply s1.regs r) w then a' else b') p9) t5 := by
         rw [evaluate_seqTemp_live hvr]
         apply evaluate_seq_ite (x := .word (holFapply s1.regs r)) (y := .word w)
-        · simp [t5, WordSemStateFiniteExact.getVar, WordSemStateFiniteExact.setVar,
+        · simp [WordSemStateFiniteExact.getVar, WordSemStateFiniteExact.setVar,
             sptLookup_sptInsert_same]
         · rfl
         · rfl
@@ -705,7 +705,7 @@ theorem getVar_zero_callEnv (t : WordSemStateFiniteExact width C F) (v : WordLoc
     (ss : Option Nat) :
     WordSemStateFiniteExact.getVar 0 (WordSemStateFiniteExact.callEnv [v] ss t) = some v := by
   simp [WordSemStateFiniteExact.getVar, WordSemStateFiniteExact.callEnv, sptFromList2,
-    sptInsert, sptLookup]
+    sptLookup]
 
 theorem stateRel_callEnv_decClock {s : MiniState width} {t t0 : WordSemStateFiniteExact width C F}
     {cs : β × List (CodeEntry width)} {frame : ((BitVec width × WordLocW width) → Prop) → Prop}
@@ -823,7 +823,7 @@ theorem case_loop (t0 : WordSemStateFiniteExact width C F)
       subst h4
       refine ⟨index, h1.symm, h3.symm, ?_⟩
       rw [← hasCompiled_eq_HOL]
-      simp [hasCompiled, install, List.lookup]
+      simp [hasCompiled, install]
   obtain ⟨p1', l1', i1', cs', cs1', hcomp', hsub', hlook⟩ :=
     has_compiled_lemma s1 t1 cs2 t0 frame p cs1 y ⟨hrel, hcomp, hsub⟩
   have hclock1 : t1.clock ≠ 0 := by rw [← hrel.1]; exact hclock
@@ -978,5 +978,271 @@ theorem case_load (t0 : WordSemStateFiniteExact width C F)
   · rw [getVar_setStore, getVar_zero_setVar (by omega), getVar_zero_setVar hi]
     exact hret
   · exact stateRel_write r _ hsyn'.1 (show stateRel s _ cs2 t0 frame from hrel)
+
+/-- A framed singleton heap write. -/
+theorem frame_write {a : BitVec width} {old new : WordLocW width}
+    {g : ((BitVec width × WordLocW width) → Prop) → Prop}
+    {m : BitVec width → WordLocW width} {dm : BitVec width → Bool}
+    (h : SetSep.star (SetSep.one (a, old)) g (SetSep.fun2Set (m, fun x => dm x = true))) :
+    SetSep.star (SetSep.one (a, new)) g
+      (SetSep.fun2Set ((fun x => if x = a then new else m x), fun x => dm x = true)) := by
+  rw [SetSep.starComm]
+  have := SetSep.writeFun2Set new a old g m _ h
+  convert this using 4
+  split_ifs <;> rfl
+
+/-- Writing one element of the out array preserves the array relation. -/
+theorem arrayRel_write_out {arr : Address → List (BitVec width)} {m : BitVec width → WordLocW width}
+    {dm : BitVec width → Bool} {frame : ((BitVec width × WordLocW width) → Prop) → Prop}
+    {v1 v2 v3 : Option (WordLocW width)} {a3 : BitVec width}
+    (h : arrayRel arr v1 v2 v3 m dm frame) (h3 : v3 = some (.word a3))
+    (k : Nat) (hk : k < (arr .out).length) (wr : BitVec width) :
+    arrayRel (Function.update arr .out ((arr .out).set k wr)) v1 v2 v3
+      (fun x => if x = a3 + Compiler.Backend.StackRemove.bytesInWord width * BitVec.ofNat width k
+        then .word wr else m x) dm frame := by
+  obtain ⟨a1, a2, a3', rest1, rest2, h1, h2, h3', s1, s2, s3⟩ := h
+  rw [h3] at h3'
+  simp only [Option.some.injEq, WordLocW.word.injEq] at h3'
+  subst h3'
+  have hk' : k < ((arr .out).map WordLocW.word).length := by simpa using hk
+  obtain ⟨F, hold, hnew⟩ := Compiler.Backend.StackRemove.StackHeapWrites.wordListSlotSurgery
+    a3 ((arr .out).map WordLocW.word) k hk'
+  have hset : ((Function.update arr Address.out ((arr .out).set k wr)) .out).map WordLocW.word =
+      ((arr .out).map WordLocW.word).set k (.word wr) := by
+    simp [Function.update, List.map_set]
+  have hupd : ∀ a, a ≠ Address.out → Function.update arr Address.out ((arr .out).set k wr) a = arr a :=
+    fun a ha => by simp [Function.update, ha]
+  refine ⟨a1, a2, a3, rest1, rest2, h1, h2, h3, ?_, ?_, ?_⟩
+  · rw [hupd .in1 (by decide), hset, hnew]
+    rw [hold] at s1
+    rw [SetSep.starComm (Misc.wordList a1 _), ← SetSep.starAssoc, ← SetSep.starAssoc] at s1 ⊢
+    exact frame_write s1
+  · rw [hupd .in2 (by decide), hset, hnew]
+    rw [hold] at s2
+    rw [SetSep.starComm (Misc.wordList a2 _), ← SetSep.starAssoc, ← SetSep.starAssoc] at s2 ⊢
+    exact frame_write s2
+  · rw [hset, hnew]
+    rw [hold] at s3
+    rw [← SetSep.starAssoc] at s3 ⊢
+    exact frame_write s3
+
+/-- `Store` case. -/
+theorem case_store (t0 : WordSemStateFiniteExact width C F)
+    (frame : ((BitVec width × WordLocW width) → Prop) → Prop)
+    (rec : Option (Mini (BitVec width))) (s : MiniState width) (r i' : Nat) (w wr : BitVec width)
+    (h : s.regs.lookup i' = some w ∧ s.regs.lookup r = some wr ∧
+      w.toNat < (s.arrays .out).length) :
+    CompileGoal t0 frame β rec s (.store r i')
+      (.inr (arrayWrite .out ((s.arrays .out).set w.toNat wr) s)) := by
+  rintro n l i cs p1 l1 i1 cs1 cs2 t1 retVal p9 ⟨hc, hrel, hi, hsyn, -, -, -, hret, hgood⟩
+  rw [compile_store] at hc
+  cases hc
+  have hsyn' : r < 25 ∧ i' < 25 := by simpa [syntaxOk, syntaxOkAux] using hsyn
+  obtain ⟨hlk, hlr, hbound⟩ := h
+  have hw := (hrel.2.2.1 i' w hlk).2
+  have hwr := (hrel.2.2.1 r wr hlr).2
+  obtain ⟨base, hb, hm, hdm⟩ := arrayRel_read hrel.2.1 .out w.toNat hbound
+  have hbase : t1.store.lookup (arrayBase .out) = some (.word base) := hb
+  let addr := base + Compiler.Backend.StackRemove.bytesInWord width * BitVec.ofNat width w.toNat
+  let ta := WordSemStateFiniteExact.setVar i (.word wr) t1
+  let tb := WordSemStateFiniteExact.setVar (i + 1) (.word addr) ta
+  have hseq : seqIndex (i + 1) i' .out (.store (.var (i + 1)) i) =
+      .seq (.assign (i + 1) (.op .add [.lookup (arrayBase .out),
+        .shift .lsl (.lookup (.temp (BitVec.ofNat 5 i')))
+          (.const (BitVec.ofNat width (wordShiftAmount width)))]))
+        (.store (.var (i + 1)) i) := rfl
+  have hev : WordSemStateFiniteExact.evaluate (seqTemp i r (seqIndex (i + 1) i' .out
+      (.store (.var (i + 1)) i))) t1 =
+      (none, { tb with memory := fun x => if x = addr then .word wr else tb.memory x }) := by
+    refine ev_seqTemp hwr ?_
+    rw [hseq]
+    refine ev_seq (ev_assign (wordExp_index hgood (by rw [store_setVar]; exact hbase)
+      (by rw [store_setVar]; exact hw))) ?_
+    rw [evaluate_store, wordExp_var, getVar_setVar_same,
+      getVar_setVar_ne _ _ (show i + 1 ≠ i by omega), getVar_setVar_same]
+    have hd : t1.mdomain addr = true := hdm
+    simp [addr] at hd
+    simp [WordSemStateFiniteExact.memStore, WordSemStateFiniteExact.setVar, hd, tb, ta, addr]
+  refine goal_of_none hev (by omega) rfl ?_ ?_ rfl
+  · show WordSemStateFiniteExact.getVar 0 tb = some retVal
+    simp only [tb, ta]
+    rw [getVar_zero_setVar (by omega), getVar_zero_setVar hi]
+    exact hret
+  · have ha0 := hrel.2.1
+    obtain ⟨hc', ha, hr, rest⟩ := hrel
+    obtain ⟨a1, a2, a3, rest1, rest2, h1, h2, h3, _⟩ := ha
+    have hb3 : a3 = base := by
+      have : t1.store.lookup tempOut = some (.word base) := hb
+      rw [h3] at this
+      simpa using this
+    subst hb3
+    exact ⟨hc', arrayRel_write_out ha0 h3 w.toNat hbound wr,
+      fun a v hv => hr a v hv, rest⟩
+
+/-- `Rec` case: the saved registers are loaded into locals, the loop body is
+called, and on return the saved registers are written back. -/
+theorem case_recurse (t0 : WordSemStateFiniteExact width C F)
+    (frame : ((BitVec width × WordLocW width) → Prop) → Prop)
+    (s1 : MiniState width) (save vs : List Nat) (p : Mini (BitVec width))
+    (s2 s3 : MiniState width)
+    (hcopy : copyVars save s1.regs s2 = some s3) (hclock : s1.clock ≠ 0)
+    (ih : CompileGoal t0 frame β (some p) (deleteVars vs (decClock s1)) (.loopBody p) (.inr s2)) :
+    CompileGoal t0 frame β (some p) s1 (.recurse save vs) (.inr s3) := by
+  rintro n l i cs p1 l1 i1 cs1 cs2 t1 retVal p9 ⟨hc, hrel, hi, hsyn, hsub, hrec, -, hret, hgood⟩
+  rw [compile_recurse] at hc
+  simp only [Prod.mk.injEq] at hc
+  obtain ⟨hp1, -, hi1, -⟩ := hc
+  subst hp1 hi1
+  have hsyn' : (∀ n ∈ save, n < 25) ∧ save.Nodup := by simpa [syntaxOk, syntaxOkAux] using hsyn
+  obtain ⟨vals, hvals⟩ := copyVars_IMP s1 save s2 s3 hcopy
+  obtain ⟨l', i', cs', p1', l1', i1', cs1', hcomp', hi', hsynP, hsub', hlook⟩ := hrec p rfl
+  -- After loading the saved registers.
+  let keys := save.map (fun n => n + 2)
+  let tL := { t1 with locals := listUpdateSpt keys (vals.map WordLocW.word) t1.locals }
+  have hload := evaluate_LoadRegs s1 cs2 t0 frame
+    (.call (some ([1], (.ls (), sptListInsert keys .ln), saveRegs save, n, l)) (some n) [] none)
+    save vals t1 ⟨hrel, hsyn'.1, hsyn'.2, hvals⟩
+  have hret0 : sptLookup 0 tL.locals = some retVal := by
+    show sptLookup 0 (listUpdateSpt keys (vals.map WordLocW.word) t1.locals) = some retVal
+    rw [lookupListUpdateAdd2]
+    exact hret
+  have hsaved := listUpdate_lookup_saved (L := t1.locals) hvals hsyn'.2
+  -- The cut environments.
+  let e2 := sptInter tL.locals (sptListInsert keys .ln)
+  have hcut : wordSemCutEnvs (.ls (), sptListInsert keys .ln) tL.locals = some (.ls retVal, e2) := by
+    have hsubl : LoopSemStateFiniteExact.sptSubsetLive (sptListInsert keys .ln) tL.locals := by
+      intro k hk
+      rw [sptMem_sptListInsert_iff] at hk
+      rcases hk with hk | hk
+      · show sptMem k (listUpdateSpt keys (vals.map WordLocW.word) t1.locals)
+        rw [domainListUpdate]
+        exact Or.inl hk
+      · simp [sptMem, sptDomain, sptLookup] at hk
+    rw [wordSemCutEnvs, cutNames_ls hret0]
+    simp only [wordSemCutNames, if_pos hsubl]
+    rfl
+  obtain ⟨lst, perm', hlst⟩ : ∃ lst perm', wordSemEnvToList e2 tL.permute = (lst, perm') :=
+    ⟨_, _, rfl⟩
+  have hequiv := wordSemEnvToListLookupEquiv e2 tL.permute lst perm' hlst
+  have hclock1 : t1.clock ≠ 0 := by rw [← hrel.1]; exact hclock
+  let t5 := WordSemStateFiniteExact.callEnv [.loc n l] (sptLookup n tL.stackSize)
+    (WordSemStateFiniteExact.pushEnv (.ls retVal, e2) none (WordSemStateFiniteExact.decClock tL))
+  have hrel5 : stateRel (deleteVars vs (decClock s1)) t5 cs2 t0 frame :=
+    stateRel_delete_vars vs _ _ _ _ _ (stateRel_loopEntry _ _ _ (show stateRel s1 tL cs2 t0 frame from hrel))
+  obtain ⟨t2', res, hres, hres2, -, hst, hretv, hrel2, hcode2⟩ :=
+    ih n l' i' cs' p1' l1' i1' cs1' cs2 t5 (.loc n l) (.return 0 [0])
+      ⟨by rw [compile_loopBody]; exact hcomp', hrel5, hi', by simpa [syntaxOk] using hsynP,
+        hsub', fun body hb => by
+          simp only [Option.some.injEq] at hb
+          subst hb
+          exact ⟨l', i', cs', p1', l1', i1', cs1', hcomp', hi', hsynP, hsub', hlook⟩,
+        fun _ _ => ⟨rfl, hlook⟩, getVar_zero_callEnv _ _ _, hgood⟩
+  -- The restored locals after the call returns.
+  let L := sptUnion (sptFromAList lst) (sptFromAList [(0, retVal)])
+  let s1' : WordSemStateFiniteExact width C F :=
+    { WordSemStateFiniteExact.flushState false t2' with
+      locals := L, stack := t1.stack, localsSize := t1.localsSize }
+  let t7 := WordSemStateFiniteExact.setVars [1] [.loc n l] s1'
+  have hkeyL : ∀ k, sptLookup k L =
+      match sptLookup k e2 with
+      | some v => some v
+      | none => sptAListLookup k [(0, retVal)] := by
+    intro k
+    simp only [L, sptLookup_sptUnion, sptLookup_sptFromAList, hequiv.1]
+    cases sptLookup k e2 <;> rfl
+  have he2 : ∀ k, sptLookup k e2 =
+      if k ∈ keys then sptLookup k tL.locals else none := by
+    intro k
+    simp only [e2, sptLookup_sptInterCases]
+    by_cases hk : k ∈ keys
+    · have hm : sptMem k (sptListInsert keys .ln) := (sptMem_sptListInsert_iff _ _ _).mpr (Or.inl hk)
+      obtain ⟨u, hu⟩ := (sptDomain_iff_lookup _ _).mp hm
+      rw [hu, if_pos hk]
+      cases sptLookup k tL.locals <;> rfl
+    · have hm : ¬ sptMem k (sptListInsert keys .ln) := by
+        rw [sptMem_sptListInsert_iff]
+        simp [hk, sptMem, sptDomain, sptLookup]
+      have hu : sptLookup k (sptListInsert keys .ln) = none := by
+        simpa [sptMem, sptDomain] using hm
+      rw [hu, if_neg hk]
+      cases sptLookup k tL.locals <;> rfl
+  have hsaved7 : List.Forall₂ (fun n v => sptLookup (n + 2) t7.locals = some (.word v)) save vals := by
+    refine forall₂_imp_mem hsaved ?_
+    intro m v hm hl
+    show sptLookup (m + 2) (LoopSemStateFiniteExact.sptAlistInsert [1] [.loc n l] L) = _
+    simp only [LoopSemStateFiniteExact.sptAlistInsert]
+    rw [sptLookup_sptInsert_ne _ _ _ _ (by omega), hkeyL, he2,
+      if_pos (List.mem_map.mpr ⟨m, hm, rfl⟩)]
+    show (match sptLookup (m + 2) (listUpdateSpt keys (vals.map WordLocW.word) t1.locals) with
+      | some v => some v | none => _) = _
+    rw [hl]
+  have hsr := evaluate_SaveRegs save t7 vals ⟨hsaved7, hsyn'.2, hsyn'.1⟩
+  -- The whole call.
+  have hcall : WordSemStateFiniteExact.evaluate
+      (.call (some ([1], (.ls (), sptListInsert keys .ln), saveRegs save, n, l)) (some n) [] none) tL =
+      (none, { t7 with store := listStore save (vals.map WordLocW.word) t7.store }) := by
+    rw [evaluate_call]
+    have hdom : ¬ (sptDomainEmpty (Spt.ls ()) ∨ ¬ [1].Nodup) := by
+      simp only [List.nodup_cons, List.not_mem_nil, not_false_eq_true, List.nodup_nil, and_self,
+        not_true_eq_false, or_false]
+      intro h
+      exact h 0 (by simp [sptMem, sptDomain, sptLookup])
+    have hlook' : sptLookup n tL.code = some (1, .seq p1' (.return 0 [0])) := hlook
+    simp only [WordSemStateFiniteExact.getVars, wordSemBadDestArgs, Bool.false_eq_true, if_false,
+      wordSemAddRetLoc, wordSemFindCode, hlook', List.length_singleton, if_true]
+    rw [if_neg hdom, hcut]
+    have hclockL : tL.clock ≠ 0 := hclock1
+    simp only [hclockL, if_false]
+    rw [hres.trans hres2, evaluate_return_loc hretv]
+    simp only [ne_eq, not_true_eq_false, List.length_singleton, or_self, if_false]
+    have hpop : WordSemStateFiniteExact.popEnv (WordSemStateFiniteExact.flushState false t2') =
+        some s1' := by
+      simp only [WordSemStateFiniteExact.popEnv, WordSemStateFiniteExact.flushState, hst, t5,
+        WordSemStateFiniteExact.callEnv, WordSemStateFiniteExact.pushEnv, sptToAList_ls, hlst,
+        WordSemStateFiniteExact.decClock, s1', L, tL]
+    rw [hpop]
+    have hdeq : sptDomainEqUnion s1'.locals (Spt.ls retVal) e2 := by
+      intro k
+      show sptMem k L ↔ _
+      simp only [sptMem, sptDomain, hkeyL]
+      cases hk : sptLookup k e2 with
+      | some v => simp
+      | none =>
+        by_cases hk0 : k = 0
+        · subst hk0; simp [sptAListLookup, sptLookup]
+        · simp [sptAListLookup, sptLookup, hk0]
+    simp only [if_pos hdeq]
+    exact hsr
+  refine ⟨{ t7 with store := listStore save (vals.map WordLocW.word) t7.store }, _, rfl, ?_, hi,
+    rfl, ?_, ?_, ?_⟩
+  · rw [evaluate_seq, hload]
+    show (match WordSemStateFiniteExact.evaluate _ tL with
+      | (res, s1) => match res with | none => _ | _ => (res, s1)) = _
+    rw [hcall]
+  · show sptLookup 0 (LoopSemStateFiniteExact.sptAlistInsert [1] [.loc n l] L) = some retVal
+    simp only [LoopSemStateFiniteExact.sptAlistInsert]
+    rw [sptLookup_sptInsert_ne _ _ _ _ (by omega), hkeyL, he2]
+    have h0 : (0 : Nat) ∉ keys := by simp [keys]
+    rw [if_neg h0]
+    simp [sptAListLookup]
+  · have hc3 := copyVars_const s1 save s2 s3 hcopy
+    obtain ⟨hcl, ha, hr, rest⟩ := hrel2
+    have hign := FLOOKUP_list_store_ignore save (vals.map WordLocW.word) t2'.store hsyn'.1
+    refine ⟨by rw [hc3.1]; exact hcl, ?_, ?_, ?_⟩
+    · show arrayRel s3.arrays ((listStore save _ t2'.store).lookup tempIn1)
+        ((listStore save _ t2'.store).lookup tempIn2) ((listStore save _ t2'.store).lookup tempOut)
+        t2'.memory t2'.mdomain frame
+      rw [hign.1, hign.2.1, hign.2.2.1, hc3.2]
+      exact ha
+    · exact copyVars_listStore_rel save s1.regs s2 s3 vals t2'.store hcopy hvals hsyn'.2 hsyn'.1 hr
+    · obtain ⟨hcode, hdiv, htd, h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, h13, h14⟩ := rest
+      refine ⟨hcode, hdiv, htd, h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, ?_, ?_⟩
+      · show (listStore save _ t2'.store).lookup tempOut = _
+        rw [hign.2.2.1]; exact h13
+      · intro k hk
+        show (listStore save _ t2'.store).lookup k = _
+        rw [hign.2.2.2 k hk]; exact h14 k hk
+  · show t2'.code = t1.code
+    exact hcode2
 
 end Flapjack.Compiler.Backend.WordBignum.CompileThmSupport

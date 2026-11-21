@@ -12642,3 +12642,8 @@ run_probe word_elim_port_typed_probeScript.sml word_elim_port_typed_probe.out \
   weport_get_store_def_typed weport_word_removal_thm_typed \
   "$cake_dir/compiler/backend/proofs/word_elimProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+
+run_probe word_bignum_corr_typed_probeScript.sml word_bignum_corr_typed_probe.out \
+  word_bignum_corr_probe_begin word_bignum_corr_probe_end \
+  "$cake_dir/compiler/backend/proofs/word_bignumProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
