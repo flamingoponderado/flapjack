@@ -104,7 +104,14 @@ def smartOpFlip (op : Op) (x y : Exp) : Op × Exp × Exp :=
     | some n, .intOp .sub => (Op.intOp .add, y, const (-n))
     | _, _ => (op, x, y)
 
-/-- The operand orientation written as HOL's case expression. -/
+/-- The operand orientation written as HOL's case expression. HOL tests the
+operation with `MEM op [IntOp Add; IntOp Mult]` and `op = IntOp Sub`; this file
+cannot render those as `∈`/`=`, because `ClosLang.Op` gets its `DecidableEq`
+instance only in `ConfigDecidableEq`, which imports the whole `Backend` and so
+would be circular here. The reviewed `Op` datatype does derive `LawfulBEq`, and
+`smartOpFlip` itself matches `op` structurally rather than testing equality, so
+the statement uses the executable `.elem` and `==` tests for HOL's two
+conditions. -/
 @[hol "cakeml/compiler/backend/bvl_constScript.sml" "SmartOp_flip_pmatch"]
 theorem smartOpFlip_pmatch (op : Op) (x1 x2 : Exp) :
     smartOpFlip op x1 x2 =
