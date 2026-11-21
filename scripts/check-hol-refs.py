@@ -6089,6 +6089,73 @@ def word_bignum_to_deep_declarations(
     return result
 
 
+WORD_BIGNUM_PROOF_SCRIPT = "cakeml/compiler/backend/proofs/word_bignumProofScript.sml"
+WORD_BIGNUM_PROOF_SCRIPT_SHA256 = (
+    "591b418886ea1f711bc118ec4bc62ef05919d9e6b6ffdb2e8660e1cbd1c06233")
+# The to_deep calls of the pinned word_bignumScript that run before its
+# `Theorem all_code_defs = REWRITE_RULE [] (!code_defs)`; their code
+# constants are exactly the conjuncts of all_code_defs.
+WORD_BIGNUM_ALL_CODE_DEFS_CALLS = (
+    "mc_cmp", "mc_compare", "mc_idiv", "mc_iadd", "mc_imul", "mc_iop")
+WORD_BIGNUM_DERIVE_CORR_CALL = (
+    "val const_def = time (first (not o time (can derive_corr_thm)))\n"
+    "                     (all_code_defs |> CONJUNCTS |> rev)\n"
+    "                handle HOL_ERR _ => TRUTH;\n")
+
+
+def word_bignum_corr_declarations(
+    path: Path, source: str, live_source: str | None = None,
+    word_bignum_source: str | None = None,
+) -> list[tuple[str, int]]:
+    """Identify the NAME_corr_thm theorems that derive_corr_thm saves.
+
+    The byte-pinned word_bignumProofScript's local `derive_corr_thm` saves
+    `name ^ "_corr_thm"` (in both of its branches) for the code constant of
+    its argument, and the live top-level `val const_def = ...` call applies it
+    to every conjunct of word_bignum's all_code_defs. Those conjuncts are the
+    code constants of the to_deep calls that the byte-pinned word_bignumScript
+    runs before `Theorem all_code_defs` (WORD_BIGNUM_ALL_CODE_DEFS_CALLS, a
+    subset of WORD_BIGNUM_TO_DEEP_CODE_CONSTANTS). Each name is recorded at the
+    call's line; any change to either source, the helper, or the call gives
+    nothing. This records provenance only, not the generated statements.
+    """
+    if path.parts[-len(Path(WORD_BIGNUM_PROOF_SCRIPT).parts):] != Path(
+            WORD_BIGNUM_PROOF_SCRIPT).parts:
+        return []
+    if hashlib.sha256(source.encode()).hexdigest() != WORD_BIGNUM_PROOF_SCRIPT_SHA256:
+        return []
+    live = source if live_source is None else live_source
+    if word_bignum_source is None:
+        bignum_path = path.parents[1] / "word_bignumScript.sml"
+        if not bignum_path.is_file():
+            return []
+        word_bignum_source = bignum_path.read_text(encoding="utf-8", errors="replace")
+    if hashlib.sha256(word_bignum_source.encode()).hexdigest() != WORD_BIGNUM_SCRIPT_SHA256:
+        return []
+    all_code_defs = word_bignum_source.find("\nTheorem all_code_defs =\n  REWRITE_RULE [] (!code_defs)\n")
+    if all_code_defs < 0:
+        return []
+    for function in WORD_BIGNUM_TO_DEEP_CODE_CONSTANTS:
+        call = word_bignum_source.find(f"\nval def = {function}_def |> to_deep\n")
+        if call < 0 or (call < all_code_defs) != (function in WORD_BIGNUM_ALL_CODE_DEFS_CALLS):
+            return []
+    helper = re.search(
+        r"^fun derive_corr_thm const_def = let\n.*?^  end;\n", live, re.S | re.M)
+    if helper is None or helper.group(0).count(
+            'val _ = save_thm(name ^ "_corr_thm", raw_th)') != 2:
+        return []
+    if re.search(r'save_thm\(name \^ "_corr_thm"', live[helper.end():]):
+        return []
+    calls = [m.start() for m in re.finditer(re.escape(WORD_BIGNUM_DERIVE_CORR_CALL), source)]
+    if len(calls) != 1 or live[calls[0]:calls[0] + len(WORD_BIGNUM_DERIVE_CORR_CALL)] != \
+            WORD_BIGNUM_DERIVE_CORR_CALL or calls[0] < helper.end():
+        return []
+    line = source.count("\n", 0, calls[0]) + 1
+    return [(constant[: -len("_code")] + "_corr_thm", line)
+            for function in WORD_BIGNUM_ALL_CODE_DEFS_CALLS
+            for constant in WORD_BIGNUM_TO_DEEP_CODE_CONSTANTS[function]]
+
+
 MC_MULTIWORD_SCRIPT = "HOL/examples/machine-code/multiword/mc_multiwordScript.sml"
 MC_MULTIWORD_SCRIPT_SHA256 = "4e57e8b65f9365c8acae6b95ffda5cabe792acf8f37d681a2ae9323ce0418149"
 
@@ -6299,6 +6366,9 @@ def hol_declaration_lines(
                 path, raw_text, source_text):
             names.setdefault(name, []).append(number)
         for name, number in word_bignum_to_deep_declarations(
+                path, raw_text, source_text):
+            names.setdefault(name, []).append(number)
+        for name, number in word_bignum_corr_declarations(
                 path, raw_text, source_text):
             names.setdefault(name, []).append(number)
         # `val NAME = fetch "-" "NAME";` re-binds the theorem the factory
