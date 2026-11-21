@@ -139,6 +139,39 @@ def smallLsr {width : Nat} [NeZero width] (value : WordLangExpHOL (BitVec width)
     (amount : Nat) : WordLangExpHOL (BitVec width) :=
   if amount = 0 then value else shiftN .lsr value amount
 
+/-- Replicate the byte held (shifted) in register `n` across the whole word.
+The production `RefByte` stub uses this definition. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "MakeBytes_def"
+  (words_as_type_indexed_bitvec)]
+def makeBytes {width : Nat} [NeZero width] (n : Nat) : WordLangProgHOL (BitVec width) :=
+  wordListSeq [.assign n (shiftN .lsr (.var n) 2),
+    .assign n (.op .or [.var n, shiftN .lsl (.var n) 8]),
+    .assign n (.op .or [.var n, shiftN .lsl (.var n) 16]),
+    if width = 32 then .skip else .assign n (.op .or [.var n, shiftN .lsl (.var n) 32])]
+
+/-- Store the byte of register `b` at `a + offset` unless `n` equals `offset`,
+then continue with `p`. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "WriteLastByte_aux_def"
+  (words_as_type_indexed_bitvec)]
+def writeLastByteAux {width : Nat} [NeZero width] (offset : BitVec width) (a b n : Nat)
+    (p : WordLangProgHOL (BitVec width)) : WordLangProgHOL (BitVec width) :=
+  .ite .equal n (.imm offset) .skip (.seq (.inst (.mem .store8 b (.addr a offset))) p)
+
+/-- Write the bytes of the last word of a byte array below the end offset.
+The production `RefByte` stub uses this definition. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "WriteLastBytes_def"
+  (words_as_type_indexed_bitvec)]
+def writeLastBytes {width : Nat} [NeZero width] (a b n : Nat) : WordLangProgHOL (BitVec width) :=
+  writeLastByteAux (0 : BitVec width) a b n (
+    writeLastByteAux 1 a b n (
+      writeLastByteAux 2 a b n (
+        writeLastByteAux 3 a b n (
+          if width = 32 then .skip else
+          writeLastByteAux 4 a b n (
+            writeLastByteAux 5 a b n (
+              writeLastByteAux 6 a b n (
+                writeLastByteAux 7 a b n .skip)))))))
+
 /-- Construct a variable shift with the original rotate and saturation rules. -/
 @[hol "cakeml/compiler/backend/data_to_wordScript.sml" "ShiftVar_def"
   (words_as_type_indexed_bitvec)]
