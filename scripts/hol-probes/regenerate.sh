@@ -12652,6 +12652,10 @@ run_probe word_elim_port_typed_probeScript.sml word_elim_port_typed_probe.out \
   "$cake_dir/compiler/backend/proofs/word_elimProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
 
+run_probe hol_set_to_list_typed_probeScript.sml hol_set_to_list_typed_probe.out \
+  choice_def_typed rest_def_typed set_to_list_thm_typed set_to_list_in_mem_typed mem_set_to_list_typed \
+  "$repo_dir/HOL/src/list/src/listScript.sml" "$cake_dir/pancake"
+
 run_probe bvi_tmc_proof_local_typed_probeScript.sml bvi_tmc_proof_local_typed_probe.out \
   more_free_names_typed env_rel_el_typed \
   "$cake_dir/compiler/backend/proofs/bvi_tmcProofScript.sml" \
