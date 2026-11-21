@@ -3514,6 +3514,7 @@ import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectTickAnnot
 import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectReturnRaise
 import Flapjack.Pancake.Proofs.PanStructs.EvaluateStructsCodeInvariant
 import Flapjack.Pancake.Proofs.PanStructs.EvalCodeInvariance
+import Flapjack.Pancake.Proofs.PanStructs.StructInfosOkHelper
 import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectSeqIf
 import Flapjack.Pancake.Proofs.PanStructs.FlattenConversion
 import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectStoreWords
@@ -3913,6 +3914,7 @@ import Flapjack.PanLocalised
 import Flapjack.Pancake.Proofs.PanSimp.StateRel
 import Flapjack.Pancake.Proofs.PanSimp.CompileEvalCorrect
 import Flapjack.Pancake.Proofs.PanSimp.DistinctParams
+import Flapjack.Pancake.Proofs.PanSimp.ElCompileProg
 import Flapjack.Pancake.Proofs.PanSimp.RetToTailCorrect
 import Flapjack.PanSimpLocalised
 import Flapjack.Pancake.PanStructs
