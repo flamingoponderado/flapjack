@@ -23909,6 +23909,122 @@
   "reviewer": "Compared assign_LessConstSmall_typed and zero HOL hypotheses: the compiler equation retains the configuration, labels, destination, natural immediate, arbitrary argument list and name set; the singleton branch emits the signed comparison and original boolean constants, while other arities emit skip. Words use the shared positive-width BitVec representation."
 },
 {
+  "hol_path": "HOL/examples/machine-code/multiword/multiwordScript.sml",
+  "hol_name": "mw_op",
+  "lean_path": "Flapjack/Misc/Multiword.lean",
+  "lean_name": "MwOp",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Source comparison: Datatype mw_op (multiwordScript.sml:3378) is Add | Sub | Mul | Div | Mod | Lt | Eq | Dec; data_to_word_bignum_typed_probe.out mw_op_constructors lists the same eight nullary constructors in order, matching MwOp."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_bignumProofScript.sml",
+  "hol_name": "i2mw_small_int_IMP_0",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Bignum/Multiword.lean",
+  "lean_name": "i2mw_smallInt_imp_0",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source comparison: data_to_word_bignum_typed_probe.out i2mw_small_int_IMP_0_typed (zero hypotheses). Both single-digit exclusions over alpha words, small_int and good_dimindex imply v = 0; Lean keeps the same conjunction at BitVec width."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_bignumProofScript.sml",
+  "hol_name": "SND_i2mw_NIL",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Bignum/Multiword.lean",
+  "lean_name": "snd_i2mw_nil",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source comparison: data_to_word_bignum_typed_probe.out SND_i2mw_NIL_typed (zero hypotheses): SND (i2mw i) = [] at alpha word lists iff i = 0; Lean uses .2 of i2mw at BitVec width."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_bignumProofScript.sml",
+  "hol_name": "get_iop_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Bignum/Multiword.lean",
+  "lean_name": "getIop",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Source comparison: data_to_word_bignum_typed_probe.out get_iop_def_typed: the num index maps 0, 1, 4, 5 to Add, Sub, Mul, Div and every other index to Mod, with the same nested conditional order; Lean returns MwOp."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_bignumProofScript.sml",
+  "hol_name": "word_cmp_Test_1",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Bignum/WordBits.lean",
+  "lean_name": "wordCmp_test_1",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source comparison: data_to_word_bignum_typed_probe.out word_cmp_Test_1_typed (zero hypotheses): word_cmp Test w 1w iff not word_bit 0 w; Lean uses the reviewed wordCmpHOL rendering of asm word_cmp."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_bignumProofScript.sml",
+  "hol_name": "word_bit_if_1_0",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Bignum/WordBits.lean",
+  "lean_name": "wordBit_if_1_0",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source comparison: data_to_word_bignum_typed_probe.out word_bit_if_1_0_typed (zero hypotheses): bit 0 of (if b then 1w else 0w) iff b."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_bignumProofScript.sml",
+  "hol_name": "get_sign_word_lemma",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Bignum/WordBits.lean",
+  "lean_name": "getSignWord_lemma",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source comparison: data_to_word_bignum_typed_probe.out get_sign_word_lemma_typed (zero hypotheses): good_dimindex implies 1w && (x >>> 4) = if word_bit 4 x then 1w else 0w, with the shift binding tighter than the mask in both languages and a natural shift amount."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_bignumProofScript.sml",
+  "hol_name": "if_eq_b2w",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Bignum/WordBits.lean",
+  "lean_name": "if_eq_b2w",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source comparison: the [local] statement parsed from source in data_to_word_bignum_typed_probe.out if_eq_b2w_typed: (if b then 1w else 0w) = b2w b at alpha words; Lean uses the reviewed multiword b2w."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_bignumProofScript.sml",
+  "hol_name": "b2n_not",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Bignum/WordBits.lean",
+  "lean_name": "b2n_not",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Source comparison: the [local] statement parsed from source in data_to_word_bignum_typed_probe.out b2n_not_typed: (if c then 0 else 1) = b2n (~c) over num; Lean uses the reviewed b2n with Boolean negation."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_bignumProofScript.sml",
+  "hol_name": "option_le_max_dest",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Bignum/StackMax.lean",
+  "lean_name": "optionLe_maxDest",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Source comparison: data_to_word_bignum_typed_probe.out option_le_max_dest_typed (zero hypotheses): for num options, option_le a b implies OPTION_MAP2 MAX a b = b; Lean uses wordSemOptionMax, the existing rendering of OPTION_MAP2 MAX on num."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_bignumProofScript.sml",
+  "hol_name": "option_map_max_comm",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Bignum/StackMax.lean",
+  "lean_name": "optionMap_maxComm",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Source comparison: data_to_word_bignum_typed_probe.out option_map_max_comm_typed (zero hypotheses): OPTION_MAP2 MAX a b = OPTION_MAP2 MAX b a for num options, via wordSemOptionMax."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_bignumProofScript.sml",
+  "hol_name": "heap_lookup_Unused_Bignum",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Bignum/StateRel.lean",
+  "lean_name": "heapLookup_unused_bignum",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source comparison: data_to_word_bignum_typed_probe.out heap_lookup_Unused_Bignum_typed (zero hypotheses): over (alpha, tag # beta word_loc list) heap elements, heap_lookup a (Unused k :: hb) = SOME (Bignum j) iff k + 1 <= a and the lookup at a - (k + 1) in hb is SOME (Bignum j). Lean keeps the address type alpha independent and uses BitVec width for the beta word."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_bignumProofScript.sml",
+  "hol_name": "state_rel_Number_small_int",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Bignum/StateRel.lean",
+  "lean_name": "stateRel_number_smallInt",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source comparison: data_to_word_bignum_typed_probe.out state_rel_Number_small_int_typed (zero hypotheses): state_rel with one extra root x and small_int i imply state_rel with the single root (Number i, Word (Smallnum i)). Target finite-map fields and words use the reviewed representations."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
   "hol_name": "state_rel_upd_safe_pkheap",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/Add.lean",

@@ -821,6 +821,8 @@ exported global-invariant equation and replay its original simplifier derivation
 
 `bignum_compile_exp_probe.out` records the inferred HOL expression-translation type and binary, invalid-arity, lookup, and shift cases. `Flapjack.Test.WordBignumCompileExpParity` replays those cases. Regenerate with `HOL_PROBE_ONLY=bignum_compile_exp_probeScript.sml scripts/hol-probes/regenerate.sh`; this is regression evidence and does not establish generator equivalence.
 
+`data_to_word_bignum_typed_probe.out` records typed statements of reviewed `data_to_word_bignumProofScript.sml` rows (exported theorems from the theory DB, `[local]` theorems parsed from the pinned source) and the constructors of multiword's `mw_op`. Regenerate with `HOL_PROBE_ONLY=data_to_word_bignum_typed_probeScript.sml scripts/hol-probes/regenerate.sh`; it does not replay HOL proofs.
+
 `bignum_helpers_probe.out` records the source-inferred helper types and register, immediate, complement, load, save, index and division-call observations. `Flapjack.Test.WordBignumHelpersParity` replays the results. Regenerate with `HOL_PROBE_ONLY=bignum_helpers_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
 `bignum_compile_probe.out` records the inferred mini-compiler and cache types and examples for every mini-language constructor, including fresh and reused loop code. `Flapjack.Test.WordBignumCompileParity` replays those results. Regenerate with `HOL_PROBE_ONLY=bignum_compile_probeScript.sml scripts/hol-probes/regenerate.sh`. These examples do not establish general HOL correspondence.

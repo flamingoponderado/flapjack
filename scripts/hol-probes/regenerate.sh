@@ -12320,6 +12320,11 @@ run_probe data_to_word_assign_typed_probeScript.sml data_to_word_assign_typed_pr
   "$cake_dir/compiler/backend/proofs/data_to_word_assignProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
 
+run_probe data_to_word_bignum_typed_probeScript.sml data_to_word_bignum_typed_probe.out \
+  mw_op_constructors i2mw_small_int_IMP_0_typed get_iop_def_typed b2n_not_typed \
+  "$cake_dir/compiler/backend/proofs/data_to_word_bignumProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+
 run_probe data_to_word_cut_envs_wf_replay_probeScript.sml data_to_word_cut_envs_wf_replay_probe.out \
   cut_envs_wf_replay_typed cut_env_lookup_replay_typed \
   "$cake_dir/compiler/backend/proofs/data_to_word_assignProofScript.sml" \

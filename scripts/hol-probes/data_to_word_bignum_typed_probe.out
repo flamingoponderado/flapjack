@@ -1,0 +1,23 @@
+mw_op_constructors=Add::mw_op; Sub::mw_op; Mul::mw_op; Div::mw_op; Mod::mw_op; Lt::mw_op; Eq::mw_op; Dec::mw_op
+i2mw_small_int_IMP_0_hypotheses=0
+i2mw_small_int_IMP_0_typed=(∀(v1 :α word). (i2mw (v :int) :bool # α word list) ≠ (F,[v1])) ∧ (∀(v1 :α word). (i2mw v :bool # α word list) ≠ (T,[v1])) ∧ small_int (:α) v ∧ good_dimindex (:α) ⇒ v = (0 :int)
+state_rel_Number_small_int_hypotheses=0
+state_rel_Number_small_int_typed=(state_rel (c :data_to_word$config) (r1 :num) (r2 :num) (s :(β, γ) dataSem$state) (t :(α, β, γ) wordSem$state) (SOME [(x :v # α word_loc)]) (locs :(num # num) list) :bool) ∧ small_int (:α) (i :int) ⇒ (state_rel c r1 r2 s t (SOME [((Number i :v),Word (Smallnum i :α word))]) locs :bool)
+heap_lookup_Unused_Bignum_hypotheses=0
+heap_lookup_Unused_Bignum_typed=heap_lookup (a :num) ((Unused (k :num) :(α, tag # β word_loc list) heap_element)::(hb :(α, tag # β word_loc list) heap_element list)) = SOME (Bignum (j :int) :(α, tag # β word_loc list) heap_element) ⇔ k + (1 :num) ≤ a ∧ heap_lookup (a − (k + (1 :num))) hb = SOME (Bignum j :(α, tag # β word_loc list) heap_element)
+SND_i2mw_NIL_hypotheses=0
+SND_i2mw_NIL_typed=SND (i2mw (i :int) :bool # α word list) = ([] :α word list) ⇔ i = (0 :int)
+word_cmp_Test_1_hypotheses=0
+word_cmp_Test_1_typed=(word_cmp Test (w :α word) (1w :α word) :bool) ⇔ ¬word_bit (0 :num) w
+word_bit_if_1_0_hypotheses=0
+word_bit_if_1_0_typed=word_bit (0 :num) (if (b :bool) then (1w :α word) else (0w :α word)) ⇔ b
+get_iop_def_hypotheses=0
+get_iop_def_typed=∀(n :num). get_iop n = if n = (0 :num) then Add else if n = (1 :num) then Sub else if n = (4 :num) then Mul else if n = (5 :num) then Div else Mod
+get_sign_word_lemma_hypotheses=0
+get_sign_word_lemma_typed=good_dimindex (:α) ⇒ (1w :α word) && (x :α word) ⋙ (4 :num) = if word_bit (4 :num) x then (1w :α word) else (0w :α word)
+option_le_max_dest_hypotheses=0
+option_le_max_dest_typed=option_le (a :num option) (b :num option) ⇒ OPTION_MAP2 MAX a b = b
+option_map_max_comm_hypotheses=0
+option_map_max_comm_typed=OPTION_MAP2 MAX (a :num option) (b :num option) = OPTION_MAP2 MAX b a
+if_eq_b2w_typed=(if (b :bool) then (1w :α word) else (0w :α word)) = (b2w b :α word)
+b2n_not_typed=(if (c :bool) then (0 :num) else (1 :num)) = b2n (¬c)
