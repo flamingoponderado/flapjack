@@ -18,18 +18,42 @@ private def argsOrZero (xs : List Bvi.Exp) : List Bvi.Exp := if xs.isEmpty then 
 /-- Location of the list-length stub. -/
 @[hol "cakeml/compiler/backend/bvl_to_bviScript.sml" "ListLength_location_def"]
 def listLengthLocation : Nat := initGlobalsLocation + 1
+
+/-- The evaluated location of the list-length stub. -/
+@[hol "cakeml/compiler/backend/bvl_to_bviScript.sml" "ListLength_location_eq"]
+theorem listLengthLocation_eq : listLengthLocation = 65 := rfl
+
 /-- Location of the byte-list conversion stub. -/
 @[hol "cakeml/compiler/backend/bvl_to_bviScript.sml" "FromListByte_location_def"]
 def fromListByteLocation : Nat := listLengthLocation + 1
+
+/-- The evaluated location of the byte-list conversion stub. -/
+@[hol "cakeml/compiler/backend/bvl_to_bviScript.sml" "FromListByte_location_eq"]
+theorem fromListByteLocation_eq : fromListByteLocation = 66 := rfl
+
 /-- Location of the byte-array to list stub. -/
 @[hol "cakeml/compiler/backend/bvl_to_bviScript.sml" "ToListByte_location_def"]
 def toListByteLocation : Nat := fromListByteLocation + 1
+
+/-- The evaluated location of the byte-array to list stub. -/
+@[hol "cakeml/compiler/backend/bvl_to_bviScript.sml" "ToListByte_location_eq"]
+theorem toListByteLocation_eq : toListByteLocation = 67 := rfl
+
 /-- Location of the combined list-length stub. -/
 @[hol "cakeml/compiler/backend/bvl_to_bviScript.sml" "SumListLength_location_def"]
 def sumListLengthLocation : Nat := toListByteLocation + 1
+
+/-- The evaluated location of the combined list-length stub. -/
+@[hol "cakeml/compiler/backend/bvl_to_bviScript.sml" "SumListLength_location_eq"]
+theorem sumListLengthLocation_eq : sumListLengthLocation = 68 := rfl
+
 /-- Location of the byte-concatenation stub. -/
 @[hol "cakeml/compiler/backend/bvl_to_bviScript.sml" "ConcatByte_location_def"]
 def concatByteLocation : Nat := sumListLengthLocation + 1
+
+/-- The evaluated location of the byte-concatenation stub. -/
+@[hol "cakeml/compiler/backend/bvl_to_bviScript.sml" "ConcatByte_location_eq"]
+theorem concatByteLocation_eq : concatByteLocation = 69 := rfl
 private def listLength (x : Bvi.Exp) : Bvi.Exp := .call 0 (some listLengthLocation) [x, zero] none
 
 /-- Lower an operation and its already compiled operands, retaining the

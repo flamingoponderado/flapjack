@@ -192,6 +192,12 @@ def isVar : Exp → Bool
   | .var _ _ => true
   | _ => false
 
+/-- The `is_Var` matcher written as HOL's case expression. -/
+@[hol "cakeml/compiler/backend/clos_opScript.sml" "is_Var_pmatch"]
+theorem isVar_pmatch (x : Exp) :
+    isVar x = match x with | .var _ _ => true | _ => false := by
+  cases x <;> simp [isVar]
+
 /-- Lift two expressions before constructing a pure equality test. -/
 @[hol "cakeml/compiler/backend/clos_opScript.sml" "eq_any_def"]
 def eqAny (x y : Exp) : Option Exp :=
