@@ -3,6 +3,7 @@ module
 public import Flapjack.Compiler.Backend.FlatToClos.Op
 public import Flapjack.Compiler.Backend.ClosInterp.Interpreter
 public import Flapjack.Compiler.Backend.ClosInterp.Optimise
+public import Flapjack.Misc.ListEl
 
 @[expose] public section
 
@@ -95,6 +96,23 @@ theorem compile_not_nil (m : List (Option MlString)) (head : FlatLang.Exp)
     (tail : List FlatLang.Exp) :
     compile m (head :: tail) ≠ [] := by
   simp [compile, compileExps_eq_map]
+
+/-- The compiled singleton is exactly a singleton list. -/
+@[hol "cakeml/compiler/backend/flat_to_closScript.sml" "HD_compile"]
+theorem HD_compile (m : List (Option MlString)) (x : FlatLang.Exp) :
+    [@holHd ClosLang.Exp ⟨.var .none 0⟩ (compile m [x])] = compile m [x] := by
+  have length := length_compile m [x]
+  simp only [List.length_cons, List.length_nil] at length
+  cases h : compile m [x] with
+  | nil =>
+    rw [h] at length
+    simp at length
+  | cons head tail =>
+    rw [h] at length
+    simp only [List.length_cons] at length
+    cases tail with
+    | nil => simp [holHd]
+    | cons y ys => simp at length
 
 /-- Compile each top-level flat declaration in an empty environment. -/
 @[hol "cakeml/compiler/backend/flat_to_closScript.sml" "compile_decs_def"]
