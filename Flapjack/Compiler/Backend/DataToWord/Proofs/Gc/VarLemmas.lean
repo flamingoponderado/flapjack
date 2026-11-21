@@ -70,4 +70,21 @@ theorem pushEnv_termdep {width : Nat} [NeZero width] {C F : Type}
   | none => rfl
   | some x => obtain ⟨_, _, _, _⟩ := x; rfl
 
+/-- Exact HOL `get_var_set_var_thm` (`data_to_word_gcProofScript.sml:8072-8076`);
+the HOL free variables are universally quantified. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "get_var_set_var_thm"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem getVar_setVar_thm {width : Nat} [NeZero width] {C F : Type} {n m : Nat}
+    {x : WordLocW width} {y : WordSemStateFiniteExact width C F} :
+    WordSemStateFiniteExact.getVar n (WordSemStateFiniteExact.setVar m x y) =
+      if n = m then some x else WordSemStateFiniteExact.getVar n y :=
+  WordSemStateFiniteExact.getVarSetVar n m x y
+
+/-- Exact HOL `insert_insert_3_1` (`data_to_word_gcProofScript.sml:8017-8021`);
+the HOL free variables are universally quantified. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "insert_insert_3_1"]
+theorem insert_insert_3_1 {α : Type} {x y : α} {t : Spt α} :
+    sptInsert 3 x (sptInsert 1 y t) = sptInsert 1 y (sptInsert 3 x t) :=
+  sptInsert_swap 3 1 x y t (by decide)
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

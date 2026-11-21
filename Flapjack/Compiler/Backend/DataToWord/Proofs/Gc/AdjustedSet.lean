@@ -211,4 +211,14 @@ theorem is_some_lookup_union {α : Type} {n : Nat} {t1 t2 : Spt α} :
   rw [sptLookup_sptUnion]
   cases sptLookup n t1 <;> simp
 
+/-- Exact HOL `domain_adjust_set_EVEN` (`data_to_word_gcProofScript.sml:8122-8128`); HOL `EVEN k` is `k % 2 = 0`; HOL free
+variables are universally quantified. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "domain_adjust_set_EVEN"]
+theorem domain_adjust_set_EVEN {α : Type} {k : Nat} {s : Spt α} :
+    sptDomain (adjustSet s) k → k % 2 = 0 := by
+  intro h
+  obtain ⟨n, rfl, _⟩ := (adjustSet_domain s k).mp h
+  simp only [adjustVar]
+  omega
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

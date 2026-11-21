@@ -538,3 +538,4 @@ val _ = emit_exported "gcport_state_rel_with_clock_0_typed" "state_rel_with_cloc
 val _ = emit_exported "gcport_word_heap_non_empty_limit_typed" "word_heap_non_empty_limit";
 val _ = emit_exported "gcport_small_int_0_typed" "small_int_0";
 val _ = emit_exported "gcport_state_rel_imp_clock_typed" "state_rel_imp_clock";
+val _ = emit "gcport_word_bits_def_typed" wordsTheory.word_bits_def;

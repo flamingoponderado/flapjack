@@ -1,26 +1,37 @@
 module
 
+public import Flapjack.Compiler.Backend.DataToWord.Numbers
+public import Flapjack.Compiler.Backend.BackendCommon
+public import Flapjack.Compiler.Backend.WordGcFunctions
+public import Flapjack.Misc.Bit
+public import Flapjack.Misc.GoodDimindex
 public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.WordLemmas
 public import Flapjack.Compiler.Backend.DataToWord.Header
 public import Flapjack.Compiler.Backend.Semantics.WordSem.Accessors
+public import Flapjack.Compiler.Backend.StackAlloc.Proofs.WordLemmas
 
 @[expose] public section
 
 /-! Word and pointer bit lemmas of `data_to_word_gcProofScript.sml`
-(lines 556-725). HOL `w ' i` is `BitVec.getLsbD`, `<<`/`>>>` are `<<<`/`>>>`,
+(lines 556-737). HOL `w ' i` is `BitVec.getLsbD`, `<<`/`>>>` are `<<<`/`>>>`,
 `&&`/`||` are `&&&`/`|||` (HOL `||` is right associative, so `a || b || c` is
 `a ||| (b ||| c)`), `n2w` is `BitVec.ofNat`, `ODD n` is `n % 2 = 1`,
-`word_slice` (`(h '' l) w`) is the reviewed `holWordSlice`.
+`word_slice` (`(h '' l) w`) is the reviewed `holWordSlice` and `word_bits`
+(`(h -- l) w`) is the reviewed `gcWordBits h l`.
 `is_fwd_ptr` is `wordSemIsFwdPtr`, `get_lowerbits` is `getLowerBits`, and
 `shift_length`/`small_shift_length` are `shiftLength`/`smallShiftLength`. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
 
 open Flapjack Flapjack.Compiler.Backend.DataToWord
+open Flapjack.Compiler.Backend.WordGcFunctions Flapjack.Compiler.Backend.StackAlloc
 
 /-- A numeric `BitVec` literal has the `BitVec.ofNat` value. Flapjack proof
 infrastructure; no HOL counterpart. -/
 private theorem toNat_lit {width c : Nat} :
     (OfNat.ofNat c : BitVec width).toNat = c % 2 ^ width := rfl
+
+/-- The `BitVec` literal zero is `0#width`. Flapjack proof infrastructure. -/
+private theorem lit_zero {width : Nat} : (0 : BitVec width) = 0#width := rfl
 
 /-- Exact HOL `one_and_or_1` (`data_to_word_gcProofScript.sml:556-560`). -/
 @[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "one_and_or_1"
@@ -220,5 +231,241 @@ theorem word_slice_2_3_eq_0 {width : Nat} [NeZero width] {n : Nat} :
         (Nat.pow_le_pow_right (by decide) h))
     simp [BitVec.getLsbD_ofNat, this]
   · simp [h]
+
+/-- Exact HOL `select_shift_out` (`data_to_word_gcProofScript.sml:603-607`); the
+HOL free variables are universally quantified. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "select_shift_out"
+  (words_as_type_indexed_bitvec)]
+theorem select_shift_out {width : Nat} [NeZero width] {n m : Nat} {w v : BitVec width} :
+    n ≠ 0 ∧ n ≤ m → gcWordBits (n - 1) 0 (w ||| v <<< m) = gcWordBits (n - 1) 0 w := by
+  rintro ⟨hn, hm⟩
+  rw [← gcWordBitsLow_eq_gcWordBits, ← gcWordBitsLow_eq_gcWordBits]
+  have e : n - 1 + 1 = n := by omega
+  simp only [gcWordBitsLow, e]
+  congr 1
+  rw [BitVec.toNat_or, ← Nat.and_two_pow_sub_one_eq_mod, ← Nat.and_two_pow_sub_one_eq_mod,
+    Nat.and_or_distrib_right]
+  have hz : (v <<< m).toNat &&& (2 ^ n - 1) = 0 := by
+    apply Nat.eq_of_testBit_eq
+    intro j
+    simp only [Nat.testBit_and, Nat.testBit_two_pow_sub_one, Nat.zero_testBit,
+      BitVec.toNat_shiftLeft, Nat.testBit_mod_two_pow, Nat.testBit_shiftLeft]
+    by_cases hj : j < n
+    · simp [show ¬ (m ≤ j) by omega]
+    · simp [hj]
+  rw [hz, Nat.or_zero]
+
+/-- `get_lowerbits` only has bits below `small_shift_length`. Flapjack proof
+infrastructure; no HOL counterpart. -/
+private theorem getLowerBits_toNat_lt {width : Nat} [NeZero width] (conf : Config)
+    (a : WordLocW width) : (getLowerBits conf a).toNat < 2 ^ smallShiftLength conf := by
+  have hs : 1 ≤ smallShiftLength conf := by simp only [smallShiftLength]; omega
+  cases a with
+  | word v =>
+    simp only [getLowerBits, BitVec.toNat_or, BitVec.toNat_setWidth]
+    apply Nat.or_lt_two_pow
+    · exact Nat.lt_of_le_of_lt (Nat.mod_le _ _) (BitVec.isLt _)
+    · exact Nat.lt_of_le_of_lt (Nat.mod_le _ _)
+        (Nat.lt_of_lt_of_le (by decide) (Nat.pow_le_pow_right (by decide) hs))
+  | loc _ _ =>
+    simp only [getLowerBits]
+    exact Nat.lt_of_le_of_lt (Nat.mod_le _ _)
+      (Nat.lt_of_lt_of_le (by decide) (Nat.pow_le_pow_right (by decide) hs))
+
+/-- Exact HOL `select_get_lowerbits` (`data_to_word_gcProofScript.sml:677-687`). -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "select_get_lowerbits"
+  (words_as_type_indexed_bitvec)]
+theorem select_get_lowerbits {width : Nat} [NeZero width] {conf : Config} {a : WordLocW width} :
+    gcWordBits (shiftLength conf - 1) 0 (getLowerBits conf a) = getLowerBits conf a ∧
+      gcWordBits (smallShiftLength conf - 1) 0 (getLowerBits conf a) = getLowerBits conf a := by
+  rw [← gcWordBitsLow_eq_gcWordBits, ← gcWordBitsLow_eq_gcWordBits]
+  have hlt := getLowerBits_toNat_lt conf a
+  have hs : 1 ≤ smallShiftLength conf := by simp only [smallShiftLength]; omega
+  have hle : smallShiftLength conf ≤ shiftLength conf := by
+    simp only [smallShiftLength, shiftLength]; omega
+  constructor
+  · simp only [gcWordBitsLow]
+    rw [show shiftLength conf - 1 + 1 = shiftLength conf by omega,
+      Nat.mod_eq_of_lt (Nat.lt_of_lt_of_le hlt (Nat.pow_le_pow_right (by decide) hle)),
+      BitVec.ofNat_toNat, BitVec.setWidth_eq]
+  · simp only [gcWordBitsLow]
+    rw [show smallShiftLength conf - 1 + 1 = smallShiftLength conf by omega,
+      Nat.mod_eq_of_lt hlt, BitVec.ofNat_toNat, BitVec.setWidth_eq]
+
+/-- Exact HOL `word_bits_eq_slice_shift` (`data_to_word_gcProofScript.sml:698-704`). -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "word_bits_eq_slice_shift"
+  (words_as_type_indexed_bitvec)]
+theorem word_bits_eq_slice_shift {width : Nat} [NeZero width] {k n : Nat} {w : BitVec width} :
+    gcWordBits k n w = holWordSlice k n w >>> n := by
+  apply BitVec.eq_of_getLsbD_eq
+  intro i hi
+  simp only [gcWordBits, holWordSlice, BitVec.getLsbD_ushiftRight, getLsbD_holFcpWord,
+    BitVec.getLsbD_ofNat, Nat.testBit_mod_two_pow, Nat.testBit_div_two_pow, hi, decide_true,
+    Bool.true_and]
+  by_cases h1 : n + i < width
+  · by_cases h2 : n + i ≤ k
+    · simp [h1, show i < k + 1 - n by omega, show n + i ≤ min k (width - 1) by omega,
+        Nat.add_comm i n, BitVec.testBit_toNat]
+    · simp [h1, show ¬ i < k + 1 - n by omega, show ¬ n + i ≤ min k (width - 1) by omega]
+  · simp only [h1, decide_false, Bool.false_and]
+    rw [Nat.testBit_lt_two_pow
+      (Nat.lt_of_lt_of_le w.isLt (Nat.pow_le_pow_right (by decide) (by omega)))]
+    simp
+
+/-- Exact HOL `can_select_def` (`data_to_word_gcProofScript.sml:727-729`). -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "can_select_def"
+  (words_as_type_indexed_bitvec)]
+def canSelect {width : Nat} [NeZero width] (k n : Nat) (w : BitVec width) : Prop :=
+  gcWordBits (k - 1) n (w <<< n) = w
+
+/-- Exact HOL `read_length_lemma` (`data_to_word_gcProofScript.sml:731-737`);
+HOL `||` is right associative, so the or-chain associates to the right. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "read_length_lemma"
+  (words_as_type_indexed_bitvec)]
+theorem read_length_lemma {width : Nat} [NeZero width] {n k : Nat} {h : BitVec width} :
+    canSelect (n + 2) 2 (BitVec.ofNat width k) →
+      gcWordBits (n + 1) 2
+          (h <<< (2 + n) ||| (BitVec.ofNat width k <<< (2 : Nat) ||| (3 : BitVec width))) =
+        BitVec.ofNat width k := by
+  intro hc
+  simp only [canSelect, show n + 2 - 1 = n + 1 by omega] at hc
+  rw [word_bits_eq_slice_shift, word_slice_or, word_slice_or,
+    show 2 + n = n + 1 + 1 by omega, word_slice_lsl_eq_0, word_slice_2_3_eq_0, lit_zero,
+    BitVec.zero_or, BitVec.or_zero, ← word_bits_eq_slice_shift, hc]
+
+/-- Exact HOL `small_int_0` (`data_to_word_gcProofScript.sml:8592-8596`); HOL free
+variables are universally quantified. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "small_int_0"
+  (word_dimension_as_width := width)]
+theorem small_int_0 (width : Nat) [NeZero width] : goodDimindex width → smallInt width 0 := by
+  rintro (rfl | rfl) <;> (simp only [smallInt]; decide)
+
+/-- Exact HOL `shift_lsl` (`data_to_word_gcProofScript.sml:8023-8028`); HOL `shift (:α)` is `wordShiftAmount width`; HOL free
+variables are universally quantified. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "shift_lsl"
+  (words_as_type_indexed_bitvec)]
+theorem shift_lsl {width : Nat} [NeZero width] {w : BitVec width} :
+    goodDimindex width → w <<< wordShiftAmount width = w * wordSemBytesInWord := by
+  rintro (rfl | rfl)
+  · simp only [wordShiftAmount, wordSemBytesInWord, if_true]
+    rw [BitVec.shiftLeft_eq_mul_twoPow]
+    rfl
+  · simp only [wordShiftAmount, wordSemBytesInWord, show ¬ (64 = 32) by decide, if_false]
+    rw [BitVec.shiftLeft_eq_mul_twoPow]
+    rfl
+
+/-- Exact HOL `byte_aligned_IMP_bytes_in_word` (`data_to_word_gcProofScript.sml:3979-3988`); HOL free
+variables are universally quantified. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "byte_aligned_IMP_bytes_in_word"
+  (words_as_type_indexed_bitvec)]
+theorem byte_aligned_IMP_bytes_in_word {width : Nat} [NeZero width] {w : BitVec width} :
+    holByteAligned w = true ∧ goodDimindex width →
+      ∃ v : BitVec width, w = wordSemBytesInWord * v := by
+  rintro ⟨aligned, good⟩
+  simp only [holByteAligned, holAligned, decide_eq_true_eq, holAlign_eq_div] at aligned
+  have hlt := w.isLt
+  rcases good with rfl | rfl
+  · rw [show holLOG2 (32 / 8) = 2 from by rw [holLOG2_eq_log2 (by decide)]; decide] at aligned
+    have := congrArg BitVec.toNat aligned
+    simp only [BitVec.toNat_ofNat] at this
+    refine ⟨BitVec.ofNat 32 (w.toNat / 4), ?_⟩
+    apply BitVec.eq_of_toNat_eq
+    simp only [wordSemBytesInWord, BitVec.toNat_mul, BitVec.toNat_ofNat]
+    omega
+  · rw [show holLOG2 (64 / 8) = 3 from by rw [holLOG2_eq_log2 (by decide)]; decide] at aligned
+    have := congrArg BitVec.toNat aligned
+    simp only [BitVec.toNat_ofNat] at this
+    refine ⟨BitVec.ofNat 64 (w.toNat / 8), ?_⟩
+    apply BitVec.eq_of_toNat_eq
+    simp only [wordSemBytesInWord, BitVec.toNat_mul, BitVec.toNat_ofNat]
+    omega
+
+/-- Exact HOL `MULT_bytes_in_word_LESS_EQ_IMP` (`data_to_word_gcProofScript.sml:3990-4016`); HOL free
+variables are universally quantified. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "MULT_bytes_in_word_LESS_EQ_IMP"
+  (words_as_type_indexed_bitvec)]
+theorem MULT_bytes_in_word_LESS_EQ_IMP {width : Nat} [NeZero width] {k : BitVec width} {n : Nat} :
+    (k * wordSemBytesInWord).toNat ≤ (wordSemBytesInWord * BitVec.ofNat width n).toNat ∧
+        goodDimindex width →
+      ∃ l, k * wordSemBytesInWord = BitVec.ofNat width l * wordSemBytesInWord ∧ l ≤ n := by
+  rintro ⟨hle, good⟩
+  have hk := k.isLt
+  rcases good with rfl | rfl
+  · simp only [wordSemBytesInWord, BitVec.toNat_mul, BitVec.toNat_ofNat] at hle
+    refine ⟨(k.toNat * 4 % 2 ^ 32) / 4, ?_, ?_⟩
+    · apply BitVec.eq_of_toNat_eq
+      simp only [wordSemBytesInWord, BitVec.toNat_mul, BitVec.toNat_ofNat]
+      omega
+    · omega
+  · simp only [wordSemBytesInWord, BitVec.toNat_mul, BitVec.toNat_ofNat] at hle
+    refine ⟨(k.toNat * 8 % 2 ^ 64) / 8, ?_, ?_⟩
+    · apply BitVec.eq_of_toNat_eq
+      simp only [wordSemBytesInWord, BitVec.toNat_mul, BitVec.toNat_ofNat]
+      omega
+    · omega
+
+/-- Exact HOL `new_trig_ok` (`data_to_word_gcProofScript.sml:3970-3977`), a `[local]` theorem; HOL `<=+` is unsigned `BitVec` `≤`; HOL free
+variables are universally quantified. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "new_trig_ok"
+  (words_as_type_indexed_bitvec)]
+theorem new_trig_ok {width : Nat} [NeZero width] {a : BitVec width} {n : Nat} {x : List Nat} :
+    a ≤ wordSemBytesInWord * BitVec.ofNat width n ∧ goodDimindex width →
+      a ≤ WordGcFunctions.newTrig (wordSemBytesInWord * BitVec.ofNat width n) a x := by
+  rintro ⟨hle, _⟩
+  rw [BitVec.le_def] at hle
+  simp only [WordGcFunctions.newTrig]
+  split
+  · rw [BitVec.le_def, BitVec.toNat_ofNat, Nat.mod_eq_of_lt
+      (Nat.lt_of_le_of_lt (Nat.min_le_left _ _) (BitVec.isLt _))]
+    omega
+  · split
+    · omega
+    · split
+      · exact BitVec.le_refl a
+      · rw [BitVec.ofNat_toNat, BitVec.setWidth_eq, BitVec.le_def]
+        exact hle
+
+/-- Exact HOL `new_trig_LESS_EQ` (`data_to_word_gcProofScript.sml:4018-4037`), a `[local]` theorem; HOL free
+variables are universally quantified. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "new_trig_LESS_EQ"
+  (words_as_type_indexed_bitvec)]
+theorem new_trig_LESS_EQ {width : Nat} [NeZero width] {n : Nat} {a22 : BitVec width}
+    {a33 : List Nat} :
+    goodDimindex width →
+      ∃ k, WordGcFunctions.newTrig (wordSemBytesInWord * BitVec.ofNat width n) a22 a33 =
+        wordSemBytesInWord * BitVec.ofNat width k ∧ k ≤ n := by
+  intro good
+  have self : BitVec.ofNat width (wordSemBytesInWord * BitVec.ofNat width n : BitVec width).toNat =
+      wordSemBytesInWord * BitVec.ofNat width n := by
+    rw [BitVec.ofNat_toNat, BitVec.setWidth_eq]
+  have genMul : ∃ k' : BitVec width, (getGenSize a33 : BitVec width) = k' * wordSemBytesInWord := by
+    cases a33 with
+    | nil => exact ⟨-1, BitVec.mul_comm _ _⟩
+    | cons y ys =>
+      simp only [getGenSize]
+      split
+      · exact ⟨BitVec.ofNat width y, BitVec.mul_comm _ _⟩
+      · exact ⟨-1, BitVec.mul_comm _ _⟩
+  simp only [WordGcFunctions.newTrig]
+  split
+  · by_cases hmin : (wordSemBytesInWord * BitVec.ofNat width n : BitVec width).toNat ≤
+        (getGenSize a33 : BitVec width).toNat
+    · rw [Nat.min_eq_left hmin, self]
+      exact ⟨n, rfl, Nat.le_refl n⟩
+    · rw [Nat.min_eq_right (by omega)]
+      obtain ⟨k', hk'⟩ := genMul
+      rw [hk'] at hmin ⊢
+      obtain ⟨l, hl, hln⟩ := MULT_bytes_in_word_LESS_EQ_IMP (k := k') (n := n) ⟨by omega, good⟩
+      refine ⟨l, ?_, hln⟩
+      rw [BitVec.ofNat_toNat, BitVec.setWidth_eq, hl, BitVec.mul_comm]
+  · split
+    · exact ⟨n, self, Nat.le_refl n⟩
+    · split
+      · rename_i _ notLt aligned
+        obtain ⟨v, rfl⟩ := byte_aligned_IMP_bytes_in_word ⟨aligned, good⟩
+        obtain ⟨l, hl, hln⟩ := MULT_bytes_in_word_LESS_EQ_IMP (k := v) (n := n)
+          ⟨by rw [BitVec.mul_comm]; omega, good⟩
+        exact ⟨l, by rw [BitVec.mul_comm, hl, BitVec.mul_comm], hln⟩
+      · exact ⟨n, self, Nat.le_refl n⟩
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

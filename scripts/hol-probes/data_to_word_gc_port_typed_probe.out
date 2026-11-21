@@ -112,3 +112,4 @@ gcport_state_rel_with_clock_0_typed=(state_rel (c :data_to_word$config) (r1 :num
 gcport_word_heap_non_empty_limit_typed=(limit :num) ≠ (0 :num) ⇒ word_heap (other :α word) (heap_expand limit :(β word_loc, tag # β word_loc list) heap_element list) (c :data_to_word$config) = SEP_EXISTS(w1 :β word_loc). (one (other,w1) :(α word # β word_loc -> bool) -> bool) * word_heap (other + (bytes_in_word :α word)) (heap_expand (limit − (1 :num)) :(β word_loc, tag # β word_loc list) heap_element list) c
 gcport_small_int_0_typed=good_dimindex (:α) ⇒ small_int (:α) (0 :int)
 gcport_state_rel_imp_clock_typed=(state_rel (c :data_to_word$config) (l1 :num) (l2 :num) (s :(α, β) dataSem$state) (t :(γ, α, β) wordSem$state) (NONE :(v # γ word_loc) list option) (locs :(num # num) list) :bool) ⇒ s.clock = t.clock
+gcport_word_bits_def_typed=∀(h :num) (l :num). ((h -- l) :α word -> α word) = (λ(w :α word). (FCP(i :num). i + l ≤ MIN h (dimindex (:α) − (1 :num)) ∧ ((w ' (i + l)) :bool)))

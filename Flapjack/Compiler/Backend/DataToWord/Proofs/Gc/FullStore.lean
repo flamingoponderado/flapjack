@@ -237,4 +237,16 @@ theorem genStartsInStore_imp_someWord {width : Nat} [NeZero width] {c : Config}
     genStartsInStore c gens x → ∃ w : BitVec width, x = some (.word w) :=
   genStartsInStoreImp c gens x
 
+/-- Exact HOL `glob_real_inv` (`data_to_word_gcProofScript.sml:3811-3817`); HOL free
+variables are universally quantified. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "glob_real_inv"
+  (words_as_type_indexed_bitvec)]
+theorem glob_real_inv {width : Nat} [NeZero width] {c : Config} {other : BitVec width}
+    {w : WordLocW width} :
+    Memory.globRealInv c other (some w) (some (WordGcFunctions.globReal c other w)) ↔
+      wordSemIsWordLoc w = true := by
+  cases w with
+  | word v => simp [Memory.globRealInv, WordGcFunctions.globReal, wordSemIsWordLoc]
+  | loc a b => simp [Memory.globRealInv, WordGcFunctions.globReal, wordSemIsWordLoc]
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
