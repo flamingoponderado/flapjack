@@ -401,14 +401,17 @@ WRITE_WORD64_EXISTENTIAL_INHABITANTS_RE = re.compile(
     r'\(\s*write_word64_existential_inhabitants\s*:=\s*\[([^]]*)\]\s*\)'
 )
 # The reviewed renderings of HOL's total functions on bad input.  HOL returns
-# an unspecified value for `EL`/`HD`/`THE`/`LAST`/`ALOOKUP`/`LINV`/`ARB`/`OUTL`/`OUTR`; Lean
-# takes it from a `Nonempty`/`Inhabited` instance on the element type.
+# an unspecified value for `EL`/`HD`/`THE`/`LAST`/`ALOOKUP`/`LINV`/`ARB`/`OUTL`/`OUTR`
+# and for `CHOICE {}`; Lean takes it from a `Nonempty`/`Inhabited` instance on
+# the element type.
 TOTAL_FUNCTION_RENDERING_NAMES = (
     "holEl", "holHd", "holLast", "holThe", "holLinv", "holArb",
     "holHdNil", "holFapply", "holFapplyOutside",
     "holOutl", "holOutr", "holOutlInr", "holOutrInl",
     # Step-function tail recursion: its instances flow only to holOutl/holOutr.
     "holShortTailrec", "holShortTailrecPre",
+    # HOL CHOICE; SET_TO_LIST's instance flows only to holChoice and holArb.
+    "holChoice", "holSetToList",
 )
 TOTAL_FUNCTION_INSTANCE_RE = re.compile(r"\[\s*(?:Nonempty|Inhabited)\s+([^\]]+)\]")
 # A binder group of type variables, for example `{α β : Type}` or `(α : Type u)`.
@@ -3185,13 +3188,15 @@ def reviewed_gc_function_alias(module: str, root: str) -> str | None:
 
 
 # The only HOL predicates over the reviewed `gc_fun_type` alias that may inherit
-# its argument_4/result_3 slots: wordProps `gc_fun_ok_def` and word_simpProof
-# `gc_fun_const_ok_def` (word_simpProofScript.sml:135-139), both unary
+# its argument_4/result_3 slots: wordProps `gc_fun_ok_def`, word_simpProof
+# `gc_fun_const_ok_def` (word_simpProofScript.sml:135-139) and word_elimProof
+# `gc_no_new_locs_def` (word_elimProofScript.sml:366-373), all unary
 # predicates `f : 'a gc_fun_type -> bool`. Each was source-reviewed separately;
 # any further predicate needs its own review and an entry here.
 GC_FUNCTION_PREDICATE_REFERENCES = frozenset({
     ("cakeml/compiler/backend/semantics/wordPropsScript.sml", "gc_fun_ok_def"),
     ("cakeml/compiler/backend/proofs/word_simpProofScript.sml", "gc_fun_const_ok_def"),
+    ("cakeml/compiler/backend/proofs/word_elimProofScript.sml", "gc_no_new_locs_def"),
 })
 
 

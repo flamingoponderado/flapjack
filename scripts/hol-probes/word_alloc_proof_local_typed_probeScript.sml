@@ -453,3 +453,4 @@ val _ = capture "get_vars_eq_alist_insert_typed" "get_vars_eq_alist_insert";
 val _ = capture "ssa_reconcile_distinct_lemma_typed" "ssa_reconcile_distinct_lemma";
 val _ = capture "ssa_reconcile_filtered_in_dom_typed" "ssa_reconcile_filtered_in_dom";
 val _ = capture "ssa_cut_inter_lemma_typed" "ssa_cut_inter_lemma";
+val _ = emit_exported "hide_def_typed" "hide_def";
