@@ -109,4 +109,25 @@ def compileOp : Op → Op
   | .blockOp (.constant c) => compileConst c
   | op => op
 
+/-- HOL `compile_op_pmatch`: the operator translation as the source's `pmatch`,
+row for row and in the same order (`Cons`, `ConsExtend`, `TagEq`, `TagLenEq`,
+`FromList`, `LengthByteVec`, `DerefByteVec`, `SetGlobal`, `Global`, `Constant`,
+then the catch-all). -/
+@[hol "cakeml/compiler/backend/clos_to_bvlScript.sml" "compile_op_pmatch"]
+theorem compileOp_PMATCH (op : Op) :
+    compileOp op =
+      (match op with
+       | .blockOp (.cons tag) => .blockOp (.cons (closTagShift tag))
+       | .blockOp (.consExtend tag) => .blockOp (.consExtend (closTagShift tag))
+       | .blockOp (.tagEq tag) => .blockOp (.tagEq (closTagShift tag))
+       | .blockOp (.tagLenEq tag a) => .blockOp (.tagLenEq (closTagShift tag) a)
+       | .blockOp (.fromList tag) => .blockOp (.fromList (closTagShift tag))
+       | .memOp .lengthByteVec => .memOp .lengthByte
+       | .memOp .derefByteVec => .memOp .derefByte
+       | .globOp (.setGlobal n) => .globOp (.setGlobal (n + numAddedGlobals))
+       | .globOp (.global n) => .globOp (.global (n + numAddedGlobals))
+       | .blockOp (.constant c) => compileConst c
+       | other => other) := by
+  rw [compileOp.eq_def]
+
 end Flapjack.Compiler.Backend.ClosToBvl
