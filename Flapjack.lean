@@ -589,6 +589,8 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.CellUpdate
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.ByteUpdateInv
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.WordArith
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.RefArrayLemmas
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.NumberEl
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BignumImp
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Heap
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Store
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Abstract
