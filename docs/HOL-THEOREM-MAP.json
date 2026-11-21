@@ -23910,6 +23910,144 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "opt_map_plus_zero_id",
+  "hol_line": 9723,
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/Add.lean",
+  "lean_name": "optMapPlusZeroId",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared opt_map_plus_zero_id_typed (zero hypotheses): for every num option n, OPTION_MAP2 $+ (SOME 0) n = n. Lean uses wordSemOptionAdd, the existing rendering of OPTION_MAP2 $+ on num."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "small_num_small_int",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/Add.lean",
+  "lean_name": "smallNum_smallInt",
+  "statement_status": "reviewed_word_dimension_as_width",
+  "word_dimension_as_width": "width",
+  "reviewer": "Source comparison: compared small_num_small_int_typed (zero hypotheses): good_dimindex implies the function equality small_num (dimindex = 64) = small_int. The dimension is used only numerically; Lean binds an explicit positive width, passes decide (width = 64) for the Boolean flag, and states the same equality of integer predicates."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "memory_rel_small_int",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/Add.lean",
+  "lean_name": "memoryRel_smallInt",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "st"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source comparison: compared memory_rel_small_int_typed (zero hypotheses): the complete memory relation with head (Number i, Word w), word_bit 0 w and good_dimindex imply not small_int i. HOL's single conjunction is a Lean conjunction; the store st uses the canonical finite-support map and all words share the positive width."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "small_int_Smallnum_add",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/Add.lean",
+  "lean_name": "smallInt_smallnum_add",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared small_int_Smallnum_add_typed (zero hypotheses): good_dimindex and small_int (i1 + i2) imply Smallnum i1 + Smallnum i2 = Smallnum (i1 + i2) at the alpha word type; Lean uses BitVec width with the same premises and conclusion."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "small_int_INT_MIN_MAX",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/Add.lean",
+  "lean_name": "smallInt_intMinMax",
+  "statement_status": "reviewed_word_dimension_as_width",
+  "word_dimension_as_width": "width",
+  "reviewer": "Source comparison: compared small_int_INT_MIN_MAX_typed (zero hypotheses): good_dimindex and small_int i imply INT_MIN(:alpha) <= 4 * i <= INT_MAX(:alpha), with integer_word's integer-valued INT_MIN and INT_MAX. The dimension is used numerically; Lean writes these bounds out as -2^(width-1) and 2^(width-1) - 1 at the explicit positive width."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "small_int_w2i_Smallnum_add",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/Add.lean",
+  "lean_name": "smallInt_toInt_smallnum_add",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared small_int_w2i_Smallnum_add_typed (zero hypotheses): the four small/good premises imply w2i (Smallnum i1 + Smallnum i2) = w2i (Smallnum i1) + w2i (Smallnum i2); Lean renders w2i as BitVec.toInt at the same width."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "state_rel_IMP_arch_64_bit",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/Add.lean",
+  "lean_name": "stateRel_arch64Bit",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared state_rel_IMP_arch_64_bit_typed (zero hypotheses): for an arbitrary extra-roots option xs, the state relation implies s.limits.arch_64_bit <=> dimindex (:alpha) = 64. Lean states the Boolean equivalence with the explicit positive width; target finite-map fields and words use the reviewed representations."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "cut_state_opt_twice",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/Add.lean",
+  "lean_name": "cutStateOpt_twice",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared cut_state_opt_twice_typed (zero hypotheses): for generic dataSem state type parameters, cut_state_opt names_opt s = SOME x implies cut_state_opt names_opt x = SOME x. Lean uses DataSem.cutStateOpt over DataSem.State C F."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "cut_state_opt_extra_const",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/Add.lean",
+  "lean_name": "cutStateOpt_extraConst",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared cut_state_opt_extra_const_typed (zero hypotheses): a successful cut_state_opt preserves stack_frame_sizes and locals_size, in the same orientation s = x."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "small_int_Smallnum_sub",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/Sub.lean",
+  "lean_name": "smallInt_smallnum_sub",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared small_int_Smallnum_sub_typed (zero hypotheses): good_dimindex and small_int (i1 - i2) imply Smallnum i1 - Smallnum i2 = Smallnum (i1 - i2) at the alpha word type; Lean uses BitVec width with the same premises and conclusion."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "small_int_w2i_Smallnum_sub",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/Sub.lean",
+  "lean_name": "smallInt_toInt_smallnum_sub",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared small_int_w2i_Smallnum_sub_typed (zero hypotheses): the four small/good premises imply w2i of the word difference is the difference of w2i values; Lean renders w2i as BitVec.toInt at the same width."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "word_bit_0_sub_lemma",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/Sub.lean",
+  "lean_name": "wordBit0_sub_lemma",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared the source-parsed local statement word_bit_0_sub_lemma_typed: for all alpha words w1, w2 with clear bit 0, bit 0 of w1 + -1w * w2 is clear. Lean quantifies BitVec width words and keeps the literal w1 + -1 * w2 form with getLsbD 0."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "cut_state_opt_IMP_ffi",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/Mult.lean",
+  "lean_name": "cutStateOpt_ffi",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared cut_state_opt_IMP_ffi_typed (zero hypotheses): a successful cut_state_opt names_opt s = SOME x implies x.ffi = s.ffi, for generic state parameters."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "quad_times_div_half_double",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/Mult.lean",
+  "lean_name": "quadTimesDivHalfDouble",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared quad_times_div_half_double_typed (zero hypotheses): (4 * j) DIV 2 = 2 * j over num; Lean uses natural division."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "w2n_mul_less",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/Mult.lean",
+  "lean_name": "w2n_mul_less",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared w2n_mul_less_typed (zero hypotheses): for all alpha words w, w', w2n w * w2n w' < (dimword (:alpha))^2. Lean uses toNat and (2 ^ width) ^ 2 at the same positive width."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
   "hol_name": "word_bit_lsr_dimindex_1",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/Div.lean",
   "lean_name": "wordBit_lsr_dimindex_1",

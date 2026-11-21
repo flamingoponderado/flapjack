@@ -23,6 +23,35 @@ assign_LessConstSmall_hypotheses=0
 assign_LessConstSmall_typed=(assign (c :data_to_word$config) (secn :num) (l :num) (dest :num) (IntOp (LessConstSmall (i :num))) (args :num list) (names :sptree$num_set option) :α wordLang$prog # num) = case args of ([] :num list) => ((Skip :α wordLang$prog),l) | [v1] => ((If Less (adjust_var v1) (Imm (n2w ((4 :num) * i) :α word)) (Assign (adjust_var dest) TRUE_CONST :α wordLang$prog) (Assign (adjust_var dest) FALSE_CONST :α wordLang$prog) :α wordLang$prog),l) | v1::v7::v8 => ((Skip :α wordLang$prog),l)
 assign_LessSmallConst_hypotheses=0
 assign_LessSmallConst_typed=(∃(i :num). (op :closLang$op) = IntOp (LessConstSmall i)) ⇒ (state_rel (c :data_to_word$config) (l1 :num) (l2 :num) (s :(γ, 'ffi) dataSem$state) (t :(α, γ, 'ffi) wordSem$state) (NONE :(v # α word_loc) list option) (locs :(num # num) list) :bool) ∧ (op_requires_names op ⇎ (names_opt :sptree$num_set option) = (NONE :sptree$num_set option)) ∧ cut_state_opt names_opt s = SOME (x :(γ, 'ffi) dataSem$state) ∧ (get_vars (args :num list) s.locals :v list option) = SOME (vals :v list) ∧ t.termdep > (1 :num) ∧ (do_app op vals x :(v # (γ, 'ffi) dataSem$state, v) semanticPrimitives$result) = (Rval ((v :v),(s2 :(γ, 'ffi) dataSem$state)) :(v # (γ, 'ffi) dataSem$state, v) semanticPrimitives$result) ⇒ ∃(q :α result option) (r :(α, γ, 'ffi) wordSem$state). (evaluate (FST (assign c (n :num) (l :num) (dest :num) op args names_opt :α wordLang$prog # num),t) :α result option # (α, γ, 'ffi) wordSem$state) = (q,r) ∧ (q = SOME (NotEnoughSpace :α result) ⇒ r.ffi = t.ffi ∧ option_le r.stack_max s2.stack_max ∧ (c.gc_kind ≠ None ⇒ ¬s2.safe_for_space)) ∧ (q ≠ SOME (NotEnoughSpace :α result) ⇒ (state_rel c l1 l2 (set_var dest v s2) r (NONE :(v # α word_loc) list option) locs :bool) ∧ q = (NONE :α result option))
+opt_map_plus_zero_id_hypotheses=0
+opt_map_plus_zero_id_typed=∀(n :num option). OPTION_MAP2 $+ (SOME (0 :num)) n = n
+small_num_small_int_hypotheses=0
+small_num_small_int_typed=good_dimindex (:α) ⇒ small_num (dimindex (:α) = (64 :num)) = small_int (:α)
+memory_rel_small_int_hypotheses=0
+memory_rel_small_int_typed=memory_rel (c :data_to_word$config) (be :bool) (ts :num) (refs :v ref sptree$num_map) (sp :num) (st :store_name |-> α word_loc) (m :α word -> α word_loc) (dm :α word -> bool) (((Number (i :int) :v),Word (w :α word))::(vars :(v # α word_loc) list)) ∧ word_bit (0 :num) w ∧ good_dimindex (:α) ⇒ ¬small_int (:α) i
+small_int_Smallnum_add_hypotheses=0
+small_int_Smallnum_add_typed=good_dimindex (:α) ∧ small_int (:α) ((i1 :int) + (i2 :int)) ⇒ (Smallnum i1 :α word) + (Smallnum i2 :α word) = (Smallnum (i1 + i2) :α word)
+small_int_INT_MIN_MAX_hypotheses=0
+small_int_INT_MIN_MAX_typed=good_dimindex (:α) ∧ small_int (:α) (i :int) ⇒ (INT_MIN (:α) :int) ≤ (4 :int) * i ∧ (4 :int) * i ≤ (INT_MAX (:α) :int)
+small_int_w2i_Smallnum_add_hypotheses=0
+small_int_w2i_Smallnum_add_typed=good_dimindex (:α) ∧ small_int (:α) ((i1 :int) + (i2 :int)) ∧ small_int (:α) i1 ∧ small_int (:α) i2 ⇒ w2i ((Smallnum i1 :α word) + (Smallnum i2 :α word)) = w2i (Smallnum i1 :α word) + w2i (Smallnum i2 :α word)
+state_rel_IMP_arch_64_bit_hypotheses=0
+state_rel_IMP_arch_64_bit_typed=(state_rel (c :data_to_word$config) (l1 :num) (l2 :num) (s :(γ, 'ffi) dataSem$state) (t :(α, γ, 'ffi) wordSem$state) (xs :(v # α word_loc) list option) (locs :(num # num) list) :bool) ⇒ (s.limits.arch_64_bit ⇔ dimindex (:α) = (64 :num))
+cut_state_opt_twice_hypotheses=0
+cut_state_opt_twice_typed=cut_state_opt (names_opt :sptree$num_set option) (s :(α, β) dataSem$state) = SOME (x :(α, β) dataSem$state) ⇒ cut_state_opt names_opt x = SOME x
+cut_state_opt_extra_const_hypotheses=0
+cut_state_opt_extra_const_typed=cut_state_opt (names_opt :sptree$num_set option) (s :(α, β) dataSem$state) = SOME (x :(α, β) dataSem$state) ⇒ s.stack_frame_sizes = x.stack_frame_sizes ∧ s.locals_size = x.locals_size
+small_int_Smallnum_sub_hypotheses=0
+small_int_Smallnum_sub_typed=good_dimindex (:α) ∧ small_int (:α) ((i1 :int) − (i2 :int)) ⇒ (Smallnum i1 :α word) − (Smallnum i2 :α word) = (Smallnum (i1 − i2) :α word)
+small_int_w2i_Smallnum_sub_hypotheses=0
+small_int_w2i_Smallnum_sub_typed=good_dimindex (:α) ∧ small_int (:α) ((i1 :int) − (i2 :int)) ∧ small_int (:α) i1 ∧ small_int (:α) i2 ⇒ w2i ((Smallnum i1 :α word) − (Smallnum i2 :α word)) = w2i (Smallnum i1 :α word) − w2i (Smallnum i2 :α word)
+cut_state_opt_IMP_ffi_hypotheses=0
+cut_state_opt_IMP_ffi_typed=cut_state_opt (names_opt :sptree$num_set option) (s :(α, β) dataSem$state) = SOME (x :(α, β) dataSem$state) ⇒ x.ffi = s.ffi
+quad_times_div_half_double_hypotheses=0
+quad_times_div_half_double_typed=(4 :num) * (j :num) DIV (2 :num) = (2 :num) * j
+w2n_mul_less_hypotheses=0
+w2n_mul_less_typed=∀(w :α word) (w' :α word). w2n w * w2n w' < (dimword (:α))²
+word_bit_0_sub_lemma_typed=∀(w1 :α word) (w2 :α word). ¬word_bit (0 :num) w1 ∧ ¬word_bit (0 :num) w2 ⇒ ¬word_bit (0 :num) (w1 + -(1w :α word) * w2)
 word_bit_lsr_dimindex_1_hypotheses=0
 word_bit_lsr_dimindex_1_typed=word_bit (0 :num) ((w1 :α word) ⋙ (dimindex (:α) − (1 :num))) ⇔ word_msb w1
 state_rel_Number_IMP_hypotheses=0
