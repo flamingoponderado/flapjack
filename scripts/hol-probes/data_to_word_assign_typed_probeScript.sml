@@ -463,6 +463,9 @@ val _ = emit_exported "assign_LessConstSmall_typed" "assign_LessConstSmall";
 val _ = print ("assign_LessSmallConst_hypotheses=" ^
   Int.toString (length (hyp assign_LessSmallConst)) ^ "\n");
 val _ = emit_exported "assign_LessSmallConst_typed" "assign_LessSmallConst";
+val _ = print ("assign_LengthByte_hypotheses=" ^
+  Int.toString (length (hyp assign_LengthByte)) ^ "\n");
+val _ = emit_exported "assign_LengthByte_typed" "assign_LengthByte";
 val _ = print ("assign_Length_hypotheses=" ^
   Int.toString (length (hyp assign_Length)) ^ "\n");
 val _ = emit_exported "assign_Length_typed" "assign_Length";
