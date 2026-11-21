@@ -4,6 +4,8 @@ public import Flapjack.Compiler.Backend.WordElim.Proofs.Analysis
 public import Flapjack.Misc.Sptree.UnionAlgebra
 public import Flapjack.Misc.Sptree.FromList2
 public import Mathlib.Data.Set.Defs
+public import Mathlib.Data.Set.Finite.Basic
+public import Flapjack.Compiler.Backend.Semantics.WordSem
 
 @[expose] public section
 
@@ -441,5 +443,194 @@ theorem getLocals_inter_subset {width : Nat} [NeZero width] {β : Type}
           refine (domainGetLocalsLookup location a).mpr ⟨key, offset, ?_⟩
           rw [hleft]
           exact congrArg some hkey
+
+namespace WordElimLocationsSupport
+/-- Canonical finite-map roundtrip for the word-semantics state. -/
+theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {C : Type} {F : Type} :
+    (∀ (state : WordSemStateBroad width C F) (h : state.FiniteSupport),
+        (WordSemStateBroad.ofBroad state h).toBroad = state) ∧
+    (∀ state : WordSemStateFiniteExact width C F,
+        WordSemStateBroad.ofBroad state.toBroad state.toBroad_finiteSupport = state) :=
+  WordSemStateExact.holFmapAsFiniteSupportWitness
+end WordElimLocationsSupport
+
+/-- The location collection over a finite set of word locations: a block is
+collected exactly when the set holds a `Loc` with that block. Flapjack proof
+infrastructure for `get_store`/`get_memory`. -/
+theorem sptMem_collect_setToList {width : Nat} [NeZero width] (s : Set (WordLocW width))
+    (hs : s.Finite) (n : Nat) :
+    sptMem n (((holSetToList s).filterMap destWordLoc).foldl
+      (fun acc loc => sptInsert loc () acc) .ln) ↔ ∃ n1, WordLocW.loc n n1 ∈ s := by
+  rw [sptMem_foldl_sptInsert]
+  simp only [sptMem_ln, or_false, List.mem_filterMap, destWordLoc_eq_some_iff]
+  constructor
+  · rintro ⟨value, hmem, offset, rfl⟩
+    exact ⟨offset, (mem_holSetToList s hs _).mp hmem⟩
+  · rintro ⟨offset, hmem⟩
+    exact ⟨_, (mem_holSetToList s hs _).mpr hmem, offset, rfl⟩
+
+/-- Every set of fixed-width words is finite. Flapjack proof infrastructure. -/
+theorem bitVec_set_finite {width : Nat} (s : Set (BitVec width)) : s.Finite := by
+  have inj : Set.InjOn BitVec.toNat s := fun a _ b _ h => BitVec.eq_of_toNat_eq h
+  apply Set.Finite.of_finite_image _ inj
+  exact (Set.finite_lt_nat (2 ^ width)).subset (by rintro _ ⟨a, _, rfl⟩; exact a.isLt)
+
+/-- The range of a finite-support map is finite. Flapjack proof infrastructure. -/
+theorem range_finite {width : Nat} [NeZero width]
+    (st : HolFiniteMapExact WordStoreHOL (WordLocW width)) :
+    {y : WordLocW width | ∃ x, st.lookup x = some y}.Finite := by
+  obtain ⟨keys, hkeys⟩ := st.finiteSupport
+  apply Set.Finite.subset (keys.filterMap st.lookup).finite_toSet
+  rintro y ⟨x, hx⟩
+  exact List.mem_filterMap.mpr ⟨x, hkeys x (by simp [hx]), hx⟩
+
+/-- Exact HOL `domain_get_store` (`word_elimProofScript.sml:138-147`). -/
+@[hol "cakeml/compiler/backend/proofs/word_elimProofScript.sml" "domain_get_store"
+  (fmap_as_finite_support_parameters := [store]) (words_as_type_indexed_bitvec)]
+theorem domain_get_store {width : Nat} [NeZero width] :
+    ∀ (n : Nat) (store : HolFiniteMapExact WordStoreHOL (WordLocW width)),
+      n ∈ sptDomainSet (getStore store) ↔ ∃ k n1, store.lookup k = some (.loc n n1) := by
+  intro n store
+  show sptMem n (getStore store) ↔ _
+  simp only [getStore]
+  rw [sptMem_collect_setToList _ (range_finite store)]
+  simp only [Set.mem_ofPred_eq]
+  constructor
+  · rintro ⟨n1, k, hk⟩; exact ⟨k, n1, hk⟩
+  · rintro ⟨k, n1, hk⟩; exact ⟨n1, k, hk⟩
+
+/-- Canonical lookup and support roundtrip for `domain_get_store`'s store. -/
+theorem holFmapAsFiniteSupportParamWitness_domain_get_store_store {width : Nat} [NeZero width]
+    (store : HolFiniteMapExact WordStoreHOL (WordLocW width)) (key : WordStoreHOL) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad store)).lookup key = store.lookup key ∧
+      (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad store)).finiteSupport =
+        store.finiteSupport ∧
+      FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad store) = store := ⟨rfl, rfl, rfl⟩
+
+/-- Canonical lookup and support roundtrip for `get_store_update`'s store. -/
+theorem holFmapAsFiniteSupportParamWitness_get_store_update_store {width : Nat} [NeZero width]
+    (store : HolFiniteMapExact WordStoreHOL (WordLocW width)) (key : WordStoreHOL) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad store)).lookup key = store.lookup key ∧
+      (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad store)).finiteSupport =
+        store.finiteSupport ∧
+      FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad store) = store := ⟨rfl, rfl, rfl⟩
+
+/-- Exact HOL `get_store_update` (`word_elimProofScript.sml:149-158`); HOL
+`store |+ (k,v)` is `store.updateEq (k, v)`. -/
+@[hol "cakeml/compiler/backend/proofs/word_elimProofScript.sml" "get_store_update"
+  (fmap_as_finite_support_parameters := [store]) (words_as_type_indexed_bitvec)]
+theorem get_store_update {width : Nat} [NeZero width] :
+    ∀ (store : HolFiniteMapExact WordStoreHOL (WordLocW width)) (k : WordStoreHOL)
+      (v : WordLocW width),
+      sptDomainSet (getStore (store.updateEq (k, v))) ⊆
+        sptDomainSet (getStore store) ∪
+          (match destWordLoc v with
+           | none => (∅ : Set Nat)
+           | some n => {n}) := by
+  intro store k v n hn
+  obtain ⟨k', n1, hk'⟩ := (domain_get_store n _).mp hn
+  simp only [HolFiniteMapExact.updateEq, FUPDATE_HOL] at hk'
+  by_cases hkk : k' = k
+  · simp only [hkk, if_true, Option.some.injEq] at hk'
+    subst hk'
+    exact Or.inr (by simp)
+  · simp only [hkk, if_false] at hk'
+    exact Or.inl ((domain_get_store n store).mpr ⟨k', n1, hk'⟩)
+
+/-- Exact HOL `domain_get_memory` (`word_elimProofScript.sml:307-320`); HOL
+`k ∈ mdom` is `mdom k = true`. -/
+@[hol "cakeml/compiler/backend/proofs/word_elimProofScript.sml" "domain_get_memory"
+  (words_as_type_indexed_bitvec)]
+theorem domain_get_memory {width : Nat} [NeZero width] :
+    ∀ (mem : BitVec width → WordLocW width) (mdom : BitVec width → Bool) (n : Nat),
+      n ∈ sptDomainSet (getMemory mem mdom) ↔ ∃ k n1, mdom k = true ∧ mem k = .loc n n1 := by
+  intro mem mdom n
+  show sptMem n (getMemory mem mdom) ↔ _
+  simp only [getMemory]
+  rw [sptMem_collect_setToList _ ((bitVec_set_finite {a | mdom a = true}).image mem)]
+  simp only [Set.mem_image, Set.mem_ofPred_eq]
+  constructor
+  · rintro ⟨n1, k, hk, hm⟩; exact ⟨k, n1, hk, hm⟩
+  · rintro ⟨k, n1, hk, hm⟩; exact ⟨n1, k, hk, hm⟩
+
+/-- Exact HOL `get_memory_update` (`word_elimProofScript.sml:322-333`); HOL
+`(k =+ v) memory` is the pointwise `fun a => if k = a then v else memory a`. -/
+@[hol "cakeml/compiler/backend/proofs/word_elimProofScript.sml" "get_memory_update"
+  (words_as_type_indexed_bitvec)]
+theorem get_memory_update {width : Nat} [NeZero width] :
+    ∀ (k : BitVec width) (v : WordLocW width) (memory : BitVec width → WordLocW width)
+      (mdomain : BitVec width → Bool),
+      sptDomainSet (getMemory (fun a => if k = a then v else memory a) mdomain) ⊆
+        sptDomainSet (getMemory memory mdomain) ∪
+          (match destWordLoc v with
+           | none => (∅ : Set Nat)
+           | some n => {n}) := by
+  intro k v memory mdomain n hn
+  obtain ⟨k', n1, hdom, hk'⟩ := (domain_get_memory _ _ n).mp hn
+  by_cases hkk : k = k'
+  · subst hkk
+    rw [if_pos rfl] at hk'
+    subst hk'
+    exact Or.inr (by simp)
+  · rw [if_neg hkk] at hk'
+    exact Or.inl ((domain_get_memory memory mdomain n).mpr ⟨k', n1, hdom, hk'⟩)
+
+/-- Exact HOL `domain_find_loc_state` (`word_elimProofScript.sml:344-350`); HOL
+`∪` associates to the left. -/
+@[hol "cakeml/compiler/backend/proofs/word_elimProofScript.sml" "domain_find_loc_state"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem domain_find_loc_state {width : Nat} [NeZero width] {C F : Type} :
+    ∀ s : WordSemStateFiniteExact width C F,
+      sptDomainSet (findLocState s) =
+        sptDomainSet (getLocals s.locals) ∪ sptDomainSet (getStore s.store) ∪
+          sptDomainSet (getStack s.stack) ∪ sptDomainSet (getMemory s.memory s.mdomain) := by
+  intro s
+  ext n
+  change sptMem n (findLocState s) ↔
+    ((sptMem n (getLocals s.locals) ∨ sptMem n (getStore s.store)) ∨
+      sptMem n (getStack s.stack)) ∨ sptMem n (getMemory s.memory s.mdomain)
+  simp only [findLocState, sptMem_sptUnion]
+  tauto
+
+/-- Exact HOL `get_memory_write_bytearray_lemma` (`word_elimProofScript.sml:477-492`);
+`reachable`'s payload type is independent, as in the typed capture. -/
+@[hol "cakeml/compiler/backend/proofs/word_elimProofScript.sml"
+  "get_memory_write_bytearray_lemma" (words_as_type_indexed_bitvec)]
+theorem get_memory_write_bytearray_lemma {width : Nat} [NeZero width] {β : Type} :
+    ∀ (mem : BitVec width → WordLocW width) (mdom : BitVec width → Bool) (reachable : Spt β)
+      (c : BitVec width) (r : List (BitVec 8)) (be : Bool),
+      sptDomainSet (getMemory mem mdom) ⊆ sptDomainSet reachable →
+        sptDomainSet (getMemory (writeBytearrayExact c r mem mdom be) mdom) ⊆
+          sptDomainSet reachable := by
+  intro mem mdom reachable c r be h
+  induction r generalizing c with
+  | nil => exact h
+  | cons b bs ih =>
+    simp only [writeBytearrayExact]
+    generalize hW : writeBytearrayExact (c + 1) bs mem mdom be = W
+    have hWsub : sptDomainSet (getMemory W mdom) ⊆ sptDomainSet reachable := hW ▸ ih (c + 1)
+    simp only [memStoreByteAuxExact]
+    cases hv : W (riscvByteAlignHOL c) with
+    | loc _ _ => exact h
+    | word v =>
+      cases hd : mdom (riscvByteAlignHOL c) with
+      | false => exact h
+      | true =>
+        simp only [if_true]
+        intro n hn
+        have hupd := get_memory_update (riscvByteAlignHOL c)
+          (.word (setByteHOL8 c b v be)) W mdom
+        have hfun : (fun a => if a = riscvByteAlignHOL c then
+            WordLocW.word (setByteHOL8 c b v be) else W a) =
+            (fun a => if riscvByteAlignHOL c = a then
+              WordLocW.word (setByteHOL8 c b v be) else W a) := by
+          funext a
+          by_cases ha : a = riscvByteAlignHOL c
+          · simp [ha]
+          · simp [ha, Ne.symm ha]
+        rw [hfun] at hn
+        rcases hupd hn with h1 | h1
+        · exact hWsub h1
+        · simp [destWordLoc] at h1
 
 end Flapjack.Compiler.Backend.WordElim

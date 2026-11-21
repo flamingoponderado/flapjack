@@ -312,6 +312,11 @@ import Flapjack.Compiler.Backend.Backend.IncProgs
 import Flapjack.Compiler.Backend.BackendProof.CakeOrac
 import Flapjack.Compiler.Backend.BackendProof.FromConfEx
 import Flapjack.Compiler.Backend.BackendProof.CakeOracConfigEqs
+import Flapjack.Compiler.Backend.BackendProof.CakeOracNames
+import Flapjack.Compiler.Backend.BackendProof.OracleGlobals
+import Flapjack.Compiler.Backend.BackendProof.FullMakeInitSemantics2
+import Flapjack.Compiler.Backend.BackendProof.BvlToBviSemantics2
+import Flapjack.Compiler.Backend.BackendProof.StateOracle
 import Flapjack.Compiler.Backend.DataToWord.Proofs.OptionLe
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Limits
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Mask
@@ -587,6 +592,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.ConsInvariant
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.RefUpdate
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.MutBlockInsert
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.CellUpdate
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.ByteUpdateInv
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Heap
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Store
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Abstract
@@ -4795,6 +4801,8 @@ import Flapjack.Compiler.Backend.WordCopy.Proofs.Inst
 import Flapjack.Compiler.Backend.WordCopy.Proofs.Correct
 import Flapjack.Misc.Logroot
 import Flapjack.Misc.PredSet
+import Flapjack.Misc.PredSetChoice
+import Flapjack.Misc.SetToList
 import Flapjack.Misc.Bit
 import Flapjack.Misc.Alignment
 import Flapjack.Misc.Alignment.Production
