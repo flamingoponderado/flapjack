@@ -12621,7 +12621,10 @@ run_probe word_bignum_proof_typed_probeScript.sml word_bignum_proof_typed_probe.
   state_eq_lemma_typed clock_write_simp_typed dec_clock_write_simp_typed \
   reg_write_simp_typed array_write_simp_typed delete_vars_simp_typed \
   reg_read_lemma1_typed reg_read_lemma2_typed array_read_lemma_typed clock_read_lemma_typed \
-  i2mw_NOT_NIL_typed mw_ok_SND_i2mw_typed \
+  i2mw_NOT_NIL_typed mw_ok_SND_i2mw_typed single_add_word_imp_0_1_typed \
+  mini_size_def_typed address_size_def_typed wordLang_exp_size_def_typed \
+  asm_reg_imm_size_def_typed asm_cmp_size_def_typed asm_binop_size_def_typed \
+  ast_shift_size_def_typed stackLang_store_name_size_def_typed \
   "$cake_dir/compiler/backend/proofs/word_bignumProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
 
@@ -12688,3 +12691,29 @@ run_probe clos_ticks_fmap_rel_typed_probeScript.sml clos_ticks_fmap_rel_typed_pr
 run_probe hol_set_to_list_typed_probeScript.sml hol_set_to_list_typed_probe.out \
   choice_def_typed rest_def_typed set_to_list_thm_typed set_to_list_in_mem_typed mem_set_to_list_typed \
   "$repo_dir/HOL/src/list/src/listScript.sml" "$cake_dir/pancake"
+  "$cake_dir/compiler/backend/proofs"
+
+run_probe word_bignum_corr_typed_probeScript.sml word_bignum_corr_typed_probe.out \
+  word_bignum_corr_probe_begin word_bignum_corr_probe_end \
+  "$cake_dir/compiler/backend/proofs/word_bignumProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+
+run_probe bignum_code_defs_probeScript.sml bignum_code_defs_probe.out \
+  mc_add1_call_code_def mc_add1_code_def mc_add_code_def mc_add_loop1_code_def \
+  mc_add_loop2_code_def mc_add_loop_code_def mc_adj_cmp_code_def mc_adjust_aux_code_def \
+  mc_calc_d_code_def mc_cmp2_code_def mc_cmp3_code_def mc_cmp_code_def \
+  mc_cmp_mul2_code_def mc_compare_code_def mc_copy_down_code_def mc_copy_over_code_def \
+  mc_div0_code_def mc_div1_code_def mc_div2_code_def mc_div3_code_def \
+  mc_div_adjust_code_def mc_div_code_def mc_div_guess_code_def mc_div_loop_code_def \
+  mc_div_r1_code_def mc_div_sub1_code_def mc_div_sub_aux1_code_def \
+  mc_div_sub_aux_code_def mc_div_sub_call_code_def mc_div_sub_code_def \
+  mc_div_sub_loop_code_def mc_div_test_code_def mc_fac_code_def mc_fac_final_code_def \
+  mc_fac_init_code_def mc_fix_code_def mc_iadd1_code_def mc_iadd2_code_def \
+  mc_iadd3_code_def mc_iadd_code_def mc_idiv0_code_def mc_idiv_code_def \
+  mc_idiv_mod_header_code_def mc_imul1_code_def mc_imul_code_def mc_iop_code_def \
+  mc_isub_flip_code_def mc_mul_by_single2_code_def mc_mul_by_single_code_def \
+  mc_mul_code_def mc_mul_pass_code_def mc_mul_zero_code_def mc_simple_div1_code_def \
+  mc_simple_div_code_def mc_single_div_code_def mc_single_mul_add_code_def \
+  mc_single_mul_code_def mc_sub1_code_def mc_sub_code_def mc_sub_loop1_code_def \
+  mc_sub_loop2_code_def mc_sub_loop_code_def mc_top_two_code_def mc_use_fac_code_def \
+  "$cake_dir/compiler/backend/word_bignumScript.sml" "$cake_dir/compiler/backend"

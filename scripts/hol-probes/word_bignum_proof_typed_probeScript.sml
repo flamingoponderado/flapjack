@@ -387,3 +387,14 @@ val _ = capture "array_read_lemma_typed" "array_read_lemma";
 val _ = capture "clock_read_lemma_typed" "clock_read_lemma";
 val _ = capture "i2mw_NOT_NIL_typed" "i2mw_NOT_NIL";
 val _ = capture "mw_ok_SND_i2mw_typed" "mw_ok_SND_i2mw";
+val _ = capture "single_add_word_imp_0_1_typed" "single_add_word_imp_0_1";
+
+(* ---- generated size functions used by compile_LESS_mini_size ---- *)
+val _ = emit_exported "mini_size_def_typed" "word_bignum" "mini_size_def";
+val _ = emit_exported "address_size_def_typed" "word_bignum" "address_size_def";
+val _ = emit_exported "wordLang_exp_size_def_typed" "wordLang" "exp_size_def";
+val _ = emit_exported "asm_reg_imm_size_def_typed" "asm" "reg_imm_size_def";
+val _ = emit_exported "asm_cmp_size_def_typed" "asm" "cmp_size_def";
+val _ = emit_exported "asm_binop_size_def_typed" "asm" "binop_size_def";
+val _ = emit_exported "ast_shift_size_def_typed" "ast" "shift_size_def";
+val _ = emit_exported "stackLang_store_name_size_def_typed" "stackLang" "store_name_size_def";
