@@ -26,6 +26,15 @@ private theorem bind_eq_range {α : Type} (n : Nat) (xs : List α) :
   | nil => simp [bind]
   | cons x xs ih => simp [bind, ih, List.range', Nat.add_comm, Nat.add_left_comm]
 
+/-- HOL `bind_size`: binding never changes the argument count. -/
+@[hol "cakeml/compiler/backend/bvi_tmcScript.sml" "bind_size"]
+theorem bind_length {α : Type} (args : List α) (n : Nat) (vs : List Nat) (n' : Nat)
+    (run : bind n args = (vs, n')) : args.length = vs.length := by
+  have pairs : (vs, n') = (List.range' n args.length, n + args.length) := by
+    rw [← run, bind_eq_range]
+  have vsEq : vs = List.range' n args.length := congrArg Prod.fst pairs
+  rw [vsEq, List.length_range']
+
 /-- Convert a direct self-call into its binding skeleton. -/
 @[hol "cakeml/compiler/backend/bvi_tmcScript.sml" "call_to_cb_def"]
 def callToBlockSource (loc ticks : Nat) (dest : Option Nat) (args : List Exp)
