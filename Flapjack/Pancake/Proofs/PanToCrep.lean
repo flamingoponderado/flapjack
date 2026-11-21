@@ -1,6 +1,7 @@
 module
 
-public import Flapjack.FiniteMap
+public import Flapjack.Misc.ListEl
+public import Flapjack.Pancake.Semantics.LoopProps.NestedSeqSyntaxExact
 public import Flapjack.HolRef
 public import Flapjack.PanBst
 public import Flapjack.PanEmptyLocals
@@ -280,8 +281,48 @@ theorem mapSomeMemLemma {α β : Type} (f : α → Option β)
   obtain ⟨y, hfy, hy⟩ := mapFlattenMemSomeSupport f xs ys zs z h hzs hz
   exact ⟨0, y, hfy, hy⟩
 
-/-! HOL `shape_of_alt` and `cexp_heads_eq` remain to be ported with their
-    original word-label and polymorphic list carriers, respectively. -/
+/-- Exact port of HOL `pan_to_crepProof$shape_of_alt`
+    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:1906`):
+    `∀x. shape_of (Val x) = One`. The typed capture `shape_of_alt_typed`
+    gives `∀(x :α word_lab). shape_of (Val x) = One`, so the word-label
+    payload is quantified at HOL's `'a word_lab` and ignored by
+    `shapeOfHOLExact`. HOL states the same fact in `panPropsScript.sml` as
+    `shape_of_val`; this is the `pan_to_crepProof` occurrence, so it gets its
+    own tag. -/
+@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "shape_of_alt"
+  (words_as_type_indexed_bitvec)]
+theorem shapeOfHOLExact_val_alt {width : Nat} [NeZero width] (x : HolWordLab width) :
+    shapeOfHOLExact (.val x : ValueHOL width) =
+      Flapjack.Pancake.PanLang.ShapeHOL.one :=
+  shapeOfHOLExact_val x
+
+/-- HOL `cexp_heads_eq` (`pan_to_crepProofScript.sml:104`): the recursive
+    `cexp_heads` agrees with the `MEM []`-guarded `MAP HD` version. The
+    typed capture `cexp_heads_eq_typed` gives
+    `∀(es :α list list). cexp_heads es = cexp_heads_simp es`, with the element
+    type free and independent, so the Lean statement quantifies
+    `es : List (List α)` at its own type parameter. `cexp_heads_simp` is the
+    tagged `cexpHeadsSimpHOL` rendering, and `DecidableEq α` encodes HOL
+    equality for the `MEM []` guard.
+
+    This theorem states HOL `cexp_heads_eq`, but its `[Nonempty α]` instance
+    reaches `holHd` only through the tagged `cexpHeadsSimpHOL` definition, and
+    the `total_function_inhabitants` checker does not yet accept that route
+    (its only transitive route is the hard-wired `joinEnv` list in
+    `scripts/check-hol-refs.py`). It is therefore left untagged; re-tagging
+    waits on a maintainer decision to extend that route. -/
+theorem cexpHeads_eq_cexpHeadsSimpHOL {α : Type} [DecidableEq α] [Nonempty α]
+    (es : List (List α)) :
+    cexpHeads es = cexpHeadsSimpHOL es := by
+  induction es with
+  | nil => simp [cexpHeads, cexpHeadsSimpHOL]
+  | cons expressions rest ih =>
+      cases expressions with
+      | nil => simp [cexpHeads, cexpHeadsSimpHOL]
+      | cons head tail =>
+          by_cases hmem : ([] : List α) ∈ rest
+          · simp [cexpHeads, cexpHeadsSimpHOL, ih, hmem]
+          · simp [cexpHeads, cexpHeadsSimpHOL, ih, hmem, holHd]
 
 /-- HOL `MAX_LIST_APPEND`: the maximum of an appended list is the maximum
     of the two constituent maxima. -/
@@ -297,9 +338,55 @@ theorem maxListNotMemHol (x : Nat) (values : List Nat)
     (h : x > maxList values) : x ∉ values :=
   maxList_not_mem x values h
 
-/-! HOL `flookup_res_var_thm_quant` remains to be ported over a finite-map
-    carrier. The former raw-function statement admitted infinite maps and
-    required Boolean equality instances. -/
+/-- Exact port of HOL `pan_to_crepProof$flookup_res_var_thm_quant`
+    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:4227`). The typed
+    capture `flookup_res_var_thm_quant_typed` gives
+    `∀(l :α |-> β) (m :α) (v :β option) (n :α).
+      FLOOKUP (res_var l (m,v)) n = if n = m then v else FLOOKUP l n`,
+    so all four binders are quantified in that order. `res_var` is the panSem
+    finite-map operation `resVarHOLFinite` (`res_var_def`), `FLOOKUP` is the
+    finite-support `.lookup`, and the quantified map `l` is the bare
+    finite-support relation entry. `DecidableEq α` is Lean's encoding of HOL
+    `=`, as in the sibling `flookup_res_var_thm` port. -/
+@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "flookup_res_var_thm_quant"
+  (fmap_as_finite_support_relation := [l])]
+theorem flookupResVarThmQuantHOL [DecidableEq α] (l : HolFiniteMapExact α β)
+    (m : α) (v : Option β) (n : α) :
+    (PanSemStateFiniteExact.resVarHOLFinite l (m, v)).lookup n =
+      if n = m then v else l.lookup n := by
+  rw [PanSemStateFiniteExact.holFmapAsFiniteSupportResultWitness_resVarHOLFinite]
+  cases v with
+  | none => simp only [FDOMSUB_HOL]
+  | some value => simp only [FUPDATE_HOL]
+
+/-- Exact port of HOL `pan_to_crepProof$res_var_commutes'`
+    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:4094`). The typed
+    capture `res_var_commutes_prime_typed` gives
+    `(n :α) ≠ (h :α) ⇒
+      res_var (res_var (lc :α |-> β) (h,(v :β option))) (n,(v' :β option)) =
+      res_var (res_var lc (n,v')) (h,v)`,
+    with `n`, `h`, `lc`, `v`, `v'` free in that order and ONE inequality
+    premise. `res_var` is `resVarHOLFinite` and the equality is proved at
+    lookup level, as HOL's `fmap_eq_flookup` proof does. -/
+@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "res_var_commutes'"
+  (fmap_as_finite_support_relation := [lc])]
+theorem resVarCommutesHOL [DecidableEq α] (n h : α) (lc : HolFiniteMapExact α β)
+    (v v' : Option β) (hne : n ≠ h) :
+    PanSemStateFiniteExact.resVarHOLFinite
+        (PanSemStateFiniteExact.resVarHOLFinite lc (h, v)) (n, v') =
+      PanSemStateFiniteExact.resVarHOLFinite
+        (PanSemStateFiniteExact.resVarHOLFinite lc (n, v')) (h, v) := by
+  apply HolFiniteMapExact.ext
+  funext key
+  simp only [flookupResVarThmQuantHOL]
+  by_cases hkn : key = n
+  · by_cases hkh : key = h
+    · exfalso
+      exact absurd (hkn.symm.trans hkh) hne
+    · simp only [if_pos hkn, if_neg hkh]
+  · by_cases hkh : key = h
+    · simp only [if_neg hkn, if_pos hkh]
+    · simp only [if_neg hkn, if_neg hkh]
 
 /-! The `mem_comp_field` proof helper over the faithful HOL carriers. -/
 private theorem compFieldHOL_mem_of_index_lt {width : Nat} [NeZero width]
@@ -1033,6 +1120,172 @@ theorem firstCompileToCrepAllDistinctExact {width : Nat} [NeZero width]
     ((show List (Flapjack.Pancake.PanLang.MlS × List Nat × CrepProgHOL width) from
         compileToCrepExactHOLW declarations).map Prod.fst).Nodup := by
   simpa [compileToCrepExactHOLW, List.map_map, Function.comp_def] using hdistinct
+
+/-! `ALOOKUP`/`EL` infrastructure for the `compile_to_crep` lemmas below. These
+    are Flapjack list lemmas, not standalone HOL theorem ports. -/
+
+private theorem holAlookup_map_snd {α β γ : Type} [DecidableEq α] (g : β → γ) :
+    ∀ (entries : List (α × β)) (key : α),
+      holAlookup (entries.map (fun entry => (entry.1, g entry.2))) key =
+        (holAlookup entries key).map g
+  | [], _ => rfl
+  | (k, v) :: t, q => by
+      simp only [List.map_cons, holAlookup]
+      by_cases hk : k = q
+      · simp only [hk, if_true, Option.map_some]
+      · simp only [hk, if_false]
+        exact holAlookup_map_snd g t q
+
+private theorem holAlookup_snd_eq_of_mem_name {α β : Type} [DecidableEq α] :
+    ∀ (entries : List (α × β)) (key : α) (value : β) (entry : α × β),
+      holAlookup entries key = some value →
+      (entries.map Prod.fst).Nodup →
+      entry ∈ entries → entry.1 = key → entry.2 = value
+  | [], _, _, _, hlookup, _, hmem, _ => by simp at hmem
+  | (k, v) :: t, key, value, entry, hlookup, hdistinct, hmem, hname => by
+      simp only [List.map_cons, List.nodup_cons] at hdistinct
+      simp only [holAlookup] at hlookup
+      rcases List.mem_cons.mp hmem with hentry | hentry
+      · subst hentry
+        simp only at hname
+        by_cases hk : k = key
+        · have hv : v = value :=
+            Option.some.inj (by simpa only [hk, if_true] using hlookup)
+          subst hname
+          exact hv
+        · exact absurd hname hk
+      · by_cases hk : k = key
+        · exfalso
+          exact hdistinct.1 (List.mem_map.mpr ⟨entry, hentry, hname.trans hk.symm⟩)
+        · simp only [hk, if_false] at hlookup
+          exact holAlookup_snd_eq_of_mem_name t key value entry hlookup hdistinct.2 hentry hname
+
+/-- Exact port of HOL `alookup_compile_prog_code`
+    (`pan_to_crepProofScript.sml:4575-4583`). The typed capture gives
+    `ALL_DISTINCT (MAP FST (functions pan_code)) ∧
+     ALOOKUP (functions pan_code) start = SOME ([],prog,rshape) ⇒
+     ALOOKUP (compile_to_crep pan_code) start =
+     SOME ([], comp_func (make_funcs (functions pan_code))
+                  (get_eids_from_decls pan_code) [] prog)`,
+    with `pan_code` and `start` free. The single conjunctive premise is kept as
+    ONE hypothesis. `compile_to_crep` is the tagged `compileToCrepExactHOLW`,
+    which maps `functionsHOL` entries, so the lookup moves through the map;
+    `ALOOKUP` is `holAlookup`, `MAP FST` is `List.map Prod.fst` with
+    `ALL_DISTINCT` as `Nodup`, and `make_funcs`/`get_eids_from_decls`/
+    `comp_func` are the tagged `makeFuncsExactHOL`/`getEidsFromDeclsHOL`/
+    `compFuncExactHOLW`. `crep_vars []` is the empty slot list. -/
+@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "alookup_compile_prog_code"
+  (words_as_type_indexed_bitvec)]
+theorem alookupCompileProgCodeHOL {width : Nat} [NeZero width]
+    (panCode : List (Flapjack.Pancake.PanLang.DeclHOL width))
+    (start : Flapjack.Pancake.PanLang.MlS)
+    (prog : Flapjack.Pancake.PanLang.ProgHOL width)
+    (rshape : Flapjack.Pancake.PanLang.ShapeHOL)
+    (h : List.Nodup ((Flapjack.Pancake.PanLang.functionsHOL panCode).map Prod.fst) ∧
+      holAlookup (Flapjack.Pancake.PanLang.functionsHOL panCode) start =
+        some ([], prog, rshape)) :
+    holAlookup (compileToCrepExactHOLW panCode) start =
+      some ([], compFuncExactHOLW
+        (makeFuncsExactHOL (Flapjack.Pancake.PanLang.functionsHOL panCode))
+        (getEidsFromDeclsHOL panCode) [] prog) := by
+  obtain ⟨hdistinct, hlookup⟩ := h
+  have hmap := holAlookup_map_snd
+    (g := fun rest => (crepVarsHOL rest.1,
+      compFuncExactHOLW
+        (makeFuncsExactHOL (Flapjack.Pancake.PanLang.functionsHOL panCode))
+        (getEidsFromDeclsHOL panCode) rest.1 rest.2.1))
+    (Flapjack.Pancake.PanLang.functionsHOL panCode) start
+  simp only [compileToCrepExactHOLW] at *
+  rw [hmap, hlookup]
+  simp only [Option.map_some]
+  simp [crepVarsHOL]
+
+/-- Local inhabitation for the `holEl` rendering: HOL types are always
+    inhabited, while `holEl` needs a `Nonempty` instance for its unspecified
+    out-of-range value. Each carrier below has a constructor, so the instance
+    is discharged by construction and no statement hypothesis is added; no type
+    binder is involved either, so `total_function_inhabitants` does not apply. -/
+local instance : Nonempty Flapjack.Basis.Pure.MlString.MlString :=
+  ⟨Flapjack.Basis.Pure.MlString.ofString ""⟩
+
+local instance : Nonempty Flapjack.Pancake.PanLang.ShapeHOL :=
+  ⟨Flapjack.Pancake.PanLang.ShapeHOL.one⟩
+
+local instance {width : Nat} [NeZero width] : Nonempty (CrepProgHOL width) :=
+  ⟨CrepProgHOL.skip⟩
+
+local instance {width : Nat} [NeZero width] :
+    Nonempty (Flapjack.Pancake.PanLang.ProgHOL width) :=
+  ⟨Flapjack.Pancake.PanLang.ProgHOL.skip⟩
+
+/-- `holEl` through a list map, at an in-range index (Flapjack list
+    infrastructure for the `EL` rendering below). -/
+private theorem holEl_map {α β : Type} [Nonempty α] [Nonempty β]
+    (f : α → β) (n : Nat) (entries : List α) (hn : n < entries.length) :
+    holEl n (entries.map f) = f (holEl n entries) := by
+  rw [holEl_eq_getElem n (entries.map f) (by simpa using hn)]
+  rw [holEl_eq_getElem n entries hn]
+  simp only [List.getElem_map]
+
+/-- Exact port of HOL `el_compile_prog_el_prog_eq`
+    (`pan_to_crepProofScript.sml:4589-4597`). The typed capture gives
+    `∀prog n start cprog p rshape.
+     EL n (compile_to_crep prog) = (start,[],cprog) ∧
+     ALL_DISTINCT (MAP FST (functions prog)) ∧ n < LENGTH(functions prog) ∧
+     ALOOKUP (functions prog) start = SOME ([],p,rshape) ⇒
+     EL n (functions prog) = (start,[],p,rshape)`,
+    with the four conjuncts kept as ONE hypothesis. Both `EL` occurrences are
+    the reviewed total `holEl` rendering, so neither is turned into an Option
+    result. `compile_to_crep` is the tagged `compileToCrepExactHOLW`, which
+    maps `functionsHOL prog`, so the indexed entry is the mapped entry. Name
+    uniqueness from `ALL_DISTINCT (MAP FST ...)` plus the `ALOOKUP` value pins
+    that entry. The `Nonempty` instances `holEl` needs are discharged from the
+    concrete carriers' constructors in this file, so no binder is added and no
+    `total_function_inhabitants` qualifier applies. -/
+@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "el_compile_prog_el_prog_eq"
+  (words_as_type_indexed_bitvec)]
+theorem elCompileProgElProgEqHOL {width : Nat} [NeZero width]
+    (prog : List (Flapjack.Pancake.PanLang.DeclHOL width)) (n : Nat)
+    (start : Flapjack.Pancake.PanLang.MlS) (cprog : CrepProgHOL width)
+    (p : Flapjack.Pancake.PanLang.ProgHOL width)
+    (rshape : Flapjack.Pancake.PanLang.ShapeHOL)
+    (h : holEl n (compileToCrepExactHOLW prog) = (start, [], cprog) ∧
+      List.Nodup ((Flapjack.Pancake.PanLang.functionsHOL prog).map Prod.fst) ∧
+      n < (Flapjack.Pancake.PanLang.functionsHOL prog).length ∧
+      holAlookup (Flapjack.Pancake.PanLang.functionsHOL prog) start =
+        some ([], p, rshape)) :
+    holEl n (Flapjack.Pancake.PanLang.functionsHOL prog) = (start, [], p, rshape) := by
+  obtain ⟨hel, hdistinct, hn, hlookup⟩ := h
+  have hexpand : compileToCrepExactHOLW prog =
+      (Flapjack.Pancake.PanLang.functionsHOL prog).map
+        (fun entry => (entry.1, crepVarsHOL entry.2.1,
+          compFuncExactHOLW (makeFuncsExactHOL (Flapjack.Pancake.PanLang.functionsHOL prog))
+            (getEidsFromDeclsHOL prog) entry.2.1 entry.2.2.1)) := by
+    simp only [compileToCrepExactHOLW]
+  have hlen : n < (compileToCrepExactHOLW prog).length := by
+    rw [hexpand]
+    simpa using hn
+  have hprem : (fun entry => (entry.1, crepVarsHOL entry.2.1,
+      compFuncExactHOLW (makeFuncsExactHOL (Flapjack.Pancake.PanLang.functionsHOL prog))
+        (getEidsFromDeclsHOL prog) entry.2.1 entry.2.2.1))
+      (holEl n (Flapjack.Pancake.PanLang.functionsHOL prog)) = (start, [], cprog) := by
+    rw [hexpand] at hel
+    rw [holEl_map
+      (f := fun entry => (entry.1, crepVarsHOL entry.2.1,
+        compFuncExactHOLW (makeFuncsExactHOL (Flapjack.Pancake.PanLang.functionsHOL prog))
+          (getEidsFromDeclsHOL prog) entry.2.1 entry.2.2.1)) n
+      (Flapjack.Pancake.PanLang.functionsHOL prog) hn] at hel
+    exact hel
+  have hmem : holEl n (Flapjack.Pancake.PanLang.functionsHOL prog) ∈
+      Flapjack.Pancake.PanLang.functionsHOL prog := by
+    rw [holEl_eq_getElem n (Flapjack.Pancake.PanLang.functionsHOL prog) hn]
+    exact List.getElem_mem hn
+  have hname : (holEl n (Flapjack.Pancake.PanLang.functionsHOL prog)).1 = start :=
+    congrArg Prod.fst hprem
+  have hvalue := holAlookup_snd_eq_of_mem_name
+    (Flapjack.Pancake.PanLang.functionsHOL prog) start ([], p, rshape)
+    (holEl n (Flapjack.Pancake.PanLang.functionsHOL prog)) hlookup hdistinct hmem hname
+  exact Prod.ext hname hvalue
 
 /-! Flapjack-specific finite-map support: reversing an association list before
     `FUPDATE_LIST` makes the first source occurrence win, exactly like

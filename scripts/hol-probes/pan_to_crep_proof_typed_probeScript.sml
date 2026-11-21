@@ -87,3 +87,18 @@ val _ = emit "state_rel_imp_semantics_typed" "state_rel_imp_semantics";
 val _ = emit "eval_map_var_cexp_present_ctxt_typed" "eval_map_var_cexp_present_ctxt";
 val _ = emit "eval_var_cexp_present_ctxt_typed" "eval_var_cexp_present_ctxt";
 val _ = emit "call_preserve_state_code_locals_rel_typed" "call_preserve_state_code_locals_rel";
+
+(* Task 237 Part B: the remaining pan_to_crepProof declarations. *)
+val _ = emit "cexp_heads_eq_typed" "cexp_heads_eq";
+val _ = emit "MEM_compile_exp_vmax_typed" "MEM_compile_exp_vmax";
+val _ = emit "rewritten_context_unassigned_typed" "rewritten_context_unassigned";
+val _ = emit "shape_of_alt_typed" "shape_of_alt";
+val _ = emit "compile_exp_not_mem_load_glob_typed" "compile_exp_not_mem_load_glob";
+val _ = emit "local_rel_le_zip_update_preserved_typed" "local_rel_le_zip_update_preserved";
+val _ = emit "genlist_vmax_distinct_lists_compiled_exps_typed"
+  "genlist_vmax_distinct_lists_compiled_exps";
+val _ = emit "update_locals_not_vars_eval_mmap_typed" "update_locals_not_vars_eval_mmap";
+val _ = emit "res_var_commutes_prime_typed" "res_var_commutes'";
+val _ = emit "flookup_res_var_thm_quant_typed" "flookup_res_var_thm_quant";
+val _ = emit "alookup_compile_prog_code_typed" "alookup_compile_prog_code";
+val _ = emit "el_compile_prog_el_prog_eq_typed" "el_compile_prog_el_prog_eq";

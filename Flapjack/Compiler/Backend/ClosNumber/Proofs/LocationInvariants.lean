@@ -54,7 +54,10 @@ theorem renumberFuns_locations (functions : List (Nat × Exp)) (start : Nat) :
     | mk arity body =>
       simp [renumberFuns, fnLocationSomeFuns, renumber_locations body, renumberFuns_locations rest]
 termination_by sizeOf functions
-decreasing_by all_goals subst_vars; simp_wf <;> omega
+decreasing_by
+  all_goals subst_vars
+  all_goals simp_wf
+  all_goals omega
 
 end
 
@@ -149,7 +152,10 @@ theorem renumberFuns_start_le (functions : List (Nat × Exp)) (start : Nat) :
       have b := renumberFuns_start_le rest (renumber start body).1
       omega
 termination_by sizeOf functions
-decreasing_by all_goals subst_vars; simp_wf <;> omega
+decreasing_by
+  all_goals subst_vars
+  all_goals simp_wf
+  all_goals omega
 
 end
 

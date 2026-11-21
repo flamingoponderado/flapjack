@@ -10,13 +10,25 @@ namespace Flapjack.Compiler.Backend.BviProps
 open Flapjack.Compiler.Backend.BviSem
 open Flapjack.Compiler.Backend.BvlSem (Value)
 
+/-- Canonical BVI reference-map state representation roundtrip. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : BviStateBroad C F, (BviState.ofBroad s).toBroad = s) ∧
+      (∀ s : BviState C F, BviState.ofBroad s.toBroad = s) :=
+  BviSem.holFmapAsFiniteSupportWitness
+
 /-- Replace the compiler and map the configuration of every oracle entry,
-leaving the runtime state unchanged. Untagged pending review of the BVI
-state and evaluator carriers against HOL. -/
+leaving the runtime state unchanged. -/
+@[hol "cakeml/compiler/backend/semantics/bviPropsScript.sml" "adj_orac_def"
+  (fmap_as_finite_support := [refs])]
 def adjustOracle {C D F : Type} (compiler : Compiler D) (f : C → D)
     (state : BviState C F) : BviState D F :=
-  ⟨state.refs, state.clock, state.global, compiler,
-    fun n => (f (state.compileOracle n).1, (state.compileOracle n).2), state.code, state.ffi⟩
+  { refs := state.refs, clock := state.clock, global := state.global, code := state.code,
+    ffi := state.ffi, compile := compiler,
+    compileOracle := Prod.map f id ∘ state.compileOracle }
+
+/-- Flapjack helper: the pair-mapped oracle written pointwise. -/
+theorem prodMapOracle_eq {C D : Type} (f : C → D) (oracle : CompileOracle C) :
+    Prod.map f id ∘ oracle = fun n => (f (oracle n).1, (oracle n).2) := rfl
 
 /-- The original and adjusted callbacks agree at every oracle entry. -/
 def adjustOracleOk {C D F : Type} (compiler : Compiler D) (f : C → D)
@@ -91,12 +103,14 @@ theorem doInstall_adjustOracle {C D F R : Type} (compiler : Compiler D) (f : C �
   all_goals repeat' split at run
   all_goals simp_all
   all_goals have okZero := ok 0
-  all_goals simp_all [adjustOracleOk, adjustOracle, doInstall]
+  all_goals simp_all [adjustOracleOk, adjustOracle, doInstall, prodMapOracle_eq]
   all_goals rcases run with ⟨rfl, rfl⟩
   all_goals simp_all
   all_goals grind
 
 /-- Installation can fail only with the source type error. -/
+@[hol "cakeml/compiler/backend/semantics/bviPropsScript.sml" "do_install_Rerr_type"
+  (fmap_as_finite_support := [refs])]
 theorem doInstall_error_is_typeError {C F R : Type} (args : List Value)
     (state : BviState C F) (error : Flapjack.SemanticPrimitivesHOL.ErrorResult R)
     (run : doInstall args state = .err error) : error = .abort .typeError := by

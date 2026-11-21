@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.Semantics.BvlProps.ApplyRefs
+public import Flapjack.FiniteMap.DomExact
 public import Flapjack.Compiler.Backend.Semantics.BvlSem.EvaluateClock
 public import Flapjack.Compiler.Backend.Semantics.BvlSem.EvaluateHOL
 public import Flapjack.Misc.ClockWeightInduction
@@ -195,5 +196,14 @@ theorem evaluateRefsSubset {C F : Type} (expressions : List Bvl.Exp) (env : List
   have preserved := evaluate_refs_mono expressions env state
   change evaluate expressions env state = (result, next) at run
   simpa [run, refsSubset] using preserved
+
+/-- Every evaluation preserves the source reference domain. -/
+@[hol "cakeml/compiler/backend/semantics/bvlPropsScript.sml" "evaluate_refs_SUBSET_lemma"
+  (fmap_as_finite_support := [refs])]
+theorem evaluateRefsSubsetLemma {C F : Type} (xs : List Bvl.Exp) (env : List Value)
+    (s : Flapjack.Compiler.Backend.BvlSem.State C F) :
+    s.refs.dom ⊆ (evaluateTuple (xs, env, s)).2.refs.dom := by
+  intro key member
+  exact evaluate_refs_mono xs env s key member
 
 end Flapjack.Compiler.Backend.BvlProps

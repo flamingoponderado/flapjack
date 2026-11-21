@@ -44,7 +44,10 @@ private theorem renumberFuns_obeysMaxApp (functions : List (Nat × Exp)) (start 
     cases first with
     | mk arity body => simp [renumberFuns, obeysMaxAppFuns, renumber_obeysMaxApp body, renumberFuns_obeysMaxApp rest]
 termination_by sizeOf functions
-decreasing_by all_goals subst_vars; simp_wf <;> omega
+decreasing_by
+  all_goals subst_vars
+  all_goals simp_wf
+  all_goals omega
 end
 
 /-- Numbering preserves the application arity bounds in lists and expressions. -/

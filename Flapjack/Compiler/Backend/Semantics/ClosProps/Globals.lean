@@ -104,4 +104,43 @@ theorem setGlobalsEmptyEsgcFree (expression : ClosLang.Exp) :
     (motive3 := fun es => elistGlobals es = emptyGlobalBag → esgcFreeList es) <;>
     simp_all [setGlobals, elistGlobals, esgcFree, esgcFreeList, FlatProps.unionGlobalBag_eq_empty]
 
+/-- Global-bag union is commutative. Flapjack infrastructure for the reverse
+lemma; HOL states this law in its bag theory rather than in this script. -/
+private theorem unionGlobalBag_comm (left right : GlobalBag) :
+    unionGlobalBag left right = unionGlobalBag right left := by
+  funext key
+  simp only [unionGlobalBag, Flapjack.bagUnion]
+  omega
+
+/-- An expression list has an empty global bag exactly when every member's
+bag is empty. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "elglobals_EQ_EMPTY"]
+theorem elistGlobals_eq_empty (l : List ClosLang.Exp) :
+    elistGlobals l = emptyGlobalBag ↔ ∀ e ∈ l, setGlobals e = emptyGlobalBag := by
+  induction l with
+  | nil => simp [elistGlobals]
+  | cons e es ih =>
+    simp [elistGlobals, FlatProps.unionGlobalBag_eq_empty, ih]
+
+/-- The expression-list bag is the source's right fold over the mapped
+per-expression bags. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "elist_globals_FOLDR"]
+theorem elistGlobals_foldr (es : List ClosLang.Exp) :
+    elistGlobals es =
+      List.foldr unionGlobalBag emptyGlobalBag (es.map setGlobals) := by
+  induction es with
+  | nil => simp [elistGlobals]
+  | cons e es ih => simp [elistGlobals, ih]
+
+/-- Reversing an expression list does not change its global bag. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "elist_globals_reverse"]
+theorem elistGlobals_reverse (ls : List ClosLang.Exp) :
+    elistGlobals ls.reverse = elistGlobals ls := by
+  induction ls with
+  | nil => simp [elistGlobals]
+  | cons x xs ih =>
+    rw [List.reverse_cons, elistGlobals_append, ih]
+    simp only [elistGlobals, Flapjack.bagUnion_empty_right]
+    exact (unionGlobalBag_comm (setGlobals x) (elistGlobals xs)).symm
+
 end Flapjack.Compiler.Backend.ClosProps
