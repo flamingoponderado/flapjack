@@ -24,11 +24,24 @@ def bool (b : Bool) : Exp := .op (.blockOp (.cons (if b then 1 else 0))) []
 def simple : Exp → Option Int
   | .op (.intOp (.const n)) [] => some n
   | _ => none
+
+/-- The `dest_simple` matcher written as HOL's case expression. -/
+@[hol "cakeml/compiler/backend/bvl_constScript.sml" "dest_simple_pmatch"]
+theorem simple_pmatch (op : Exp) :
+    simple op = match op with | .op (.intOp (.const i)) [] => some i | _ => none := rfl
+
 /-- Recognize a binary operation whose second operand is an integer constant. -/
 @[hol "cakeml/compiler/backend/bvl_constScript.sml" "case_op_const_def"]
 def opConst : Exp → Option (Op × Exp × Int)
   | .op op [x, .op (.intOp (.const n)) []] => some (op, x, n)
   | _ => none
+
+/-- The `case_op_const` matcher written as HOL's case expression. -/
+@[hol "cakeml/compiler/backend/bvl_constScript.sml" "case_op_const_pmatch"]
+theorem opConst_pmatch (exp : Exp) :
+    opConst exp = match exp with
+      | .op op [x, .op (.intOp (.const n)) []] => some (op, x, n)
+      | _ => none := rfl
 private def add (x y : Exp) : Exp := .op (.intOp .add) [x, y]
 private def sub (x y : Exp) : Exp := .op (.intOp .sub) [x, y]
 private def mul (x y : Exp) : Exp := .op (.intOp .mult) [x, y]
@@ -144,6 +157,23 @@ def smartOp (op : Op) : List Exp → Exp
   | [x] => smartOp1 op x
   | xs => .op op xs
 
+/-- The `SmartOp` dispatch written as HOL's case expression. -/
+@[hol "cakeml/compiler/backend/bvl_constScript.sml" "SmartOp_pmatch"]
+theorem smartOp_pmatch (op : Op) (xs : List Exp) :
+    smartOp op xs = match xs with
+      | [x1, x2] => smartOp2 (smartOpFlip op x1 x2)
+      | [x] => smartOp1 op x
+      | _ => .op op xs := by
+  cases xs with
+  | nil => rfl
+  | cons x1 rest =>
+    cases rest with
+    | nil => rfl
+    | cons x2 rest' =>
+      cases rest' with
+      | nil => rfl
+      | cons x3 rest'' => rfl
+
 private def extract (e : Exp) (restLength : Nat) : Option Exp :=
   match e with
   | .var n => some (.var (n + restLength + 1))
@@ -165,6 +195,14 @@ def deleteVar : Exp → Exp
 
 /-- The variable case of the executable alias deletion. -/
 theorem deleteVar_var (n : Nat) : deleteVar (.var n) = .op (.intOp (.const 0)) [] := rfl
+
+/-- The alias deletion written as HOL's case expression. -/
+@[hol "cakeml/compiler/backend/bvl_constScript.sml" "delete_var_pmatch"]
+theorem deleteVar_pmatch (op : Exp) :
+    deleteVar op = match op with
+      | .var _ => .op (.intOp (.const 0)) []
+      | x => x := by
+  cases op <;> rfl
 
 /-- Apply constant propagation with explicit recursion fuel. -/
 def compileFuel : Nat → List (Option Exp) → Exp → Option Exp
