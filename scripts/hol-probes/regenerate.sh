@@ -12719,7 +12719,23 @@ run_probe bignum_code_defs_probeScript.sml bignum_code_defs_probe.out \
   mc_simple_div_code_def mc_single_div_code_def mc_single_mul_add_code_def \
   mc_single_mul_code_def mc_sub1_code_def mc_sub_code_def mc_sub_loop1_code_def \
   mc_sub_loop2_code_def mc_sub_loop_code_def mc_top_two_code_def mc_use_fac_code_def \
-  "$cake_dir/compiler/backend/word_bignumScript.sml" "$cake_dir/compiler/backend"
+    mc_add1_call_corr_thm mc_add1_corr_thm mc_add_corr_thm mc_add_loop1_corr_thm \
+  mc_add_loop2_corr_thm mc_add_loop_corr_thm mc_adj_cmp_corr_thm mc_adjust_aux_corr_thm \
+  mc_calc_d_corr_thm mc_cmp2_corr_thm mc_cmp3_corr_thm mc_cmp_corr_thm \
+  mc_cmp_mul2_corr_thm mc_compare_corr_thm mc_copy_down_corr_thm mc_copy_over_corr_thm \
+  mc_div0_corr_thm mc_div1_corr_thm mc_div2_corr_thm mc_div3_corr_thm \
+  mc_div_adjust_corr_thm mc_div_corr_thm mc_div_guess_corr_thm mc_div_loop_corr_thm \
+  mc_div_r1_corr_thm mc_div_sub1_corr_thm mc_div_sub_aux1_corr_thm \
+  mc_div_sub_aux_corr_thm mc_div_sub_call_corr_thm mc_div_sub_corr_thm \
+  mc_div_sub_loop_corr_thm mc_div_test_corr_thm mc_fix_corr_thm mc_iadd1_corr_thm \
+  mc_iadd2_corr_thm mc_iadd3_corr_thm mc_iadd_corr_thm mc_idiv0_corr_thm mc_idiv_corr_thm \
+  mc_idiv_mod_header_corr_thm mc_imul1_corr_thm mc_imul_corr_thm mc_iop_corr_thm \
+  mc_isub_flip_corr_thm mc_mul_by_single2_corr_thm mc_mul_by_single_corr_thm \
+  mc_mul_corr_thm mc_mul_pass_corr_thm mc_mul_zero_corr_thm mc_simple_div1_corr_thm \
+  mc_simple_div_corr_thm mc_single_div_corr_thm mc_single_mul_add_corr_thm \
+  mc_single_mul_corr_thm mc_sub1_corr_thm mc_sub_corr_thm mc_sub_loop1_corr_thm \
+  mc_sub_loop2_corr_thm mc_sub_loop_corr_thm mc_top_two_corr_thm \
+  "$cake_dir/compiler/backend/proofs/word_bignumProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe data_to_word_proof_lab_typed_probeScript.sml data_to_word_proof_lab_typed_probe.out \
   state_rel_with_locals_sfs_typed extract_labels_MemEqList_typed \

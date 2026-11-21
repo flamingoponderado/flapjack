@@ -2562,7 +2562,8 @@ class WordBignumGeneratedDeclarationTest(unittest.TestCase):
 
     def test_table_matches_capture(self):
         capture = CHECKER["ROOT"] / "scripts/hol-probes/bignum_code_defs_probe.out"
-        captured = {line.split("=", 1)[0] for line in capture.read_text().splitlines()}
+        captured = {line.split("=", 1)[0] for line in capture.read_text().splitlines()
+                    if line.split("=", 1)[0].endswith("_code_def")}
         table = {constant + "_def"
                  for constants in CHECKER["WORD_BIGNUM_TO_DEEP_CODE_CONSTANTS"].values()
                  for constant in constants}
@@ -2577,6 +2578,50 @@ class WordBignumGeneratedDeclarationTest(unittest.TestCase):
         call = "val def = mc_iop_def |> to_deep"
         hidden = source.replace(call, " " * len(call))
         self.assertEqual(parse(path, source, hidden), [])
+
+
+class WordBignumCorrDeclarationTest(unittest.TestCase):
+    def setUp(self):
+        self.path = CHECKER["ROOT"] / CHECKER["WORD_BIGNUM_PROOF_SCRIPT"]
+        self.source = self.path.read_text()
+        self.bignum = (CHECKER["ROOT"] / CHECKER["WORD_BIGNUM_SCRIPT"]).read_text()
+        self.parse = CHECKER["word_bignum_corr_declarations"]
+
+    def test_pinned_generated_names_and_line(self):
+        declarations = self.parse(self.path, self.source)
+        self.assertEqual(len(declarations), 60)
+        self.assertEqual({line for _name, line in declarations}, {2226})
+        names = {name for name, _line in declarations}
+        self.assertEqual(len(names), 60)
+        self.assertIn("mc_iop_corr_thm", names)
+        self.assertIn("mc_single_mul_corr_thm", names)
+        self.assertNotIn("mc_fac_corr_thm", names)
+        self.assertNotIn("mc_use_fac_corr_thm", names)
+        self.assertIsNone(REF_ERROR(self.path, "mc_cmp_corr_thm", None, {}))
+        self.assertIsNone(REF_ERROR(self.path, "mc_iop_corr_thm", 2226, {}))
+        self.assertIn("multiple lines", REF_ERROR(self.path, "mc_iop_corr_thm", None, {}))
+        self.assertIn("declares no", REF_ERROR(self.path, "mc_fac_corr_thm", None, {}))
+        self.assertIn("declares no", REF_ERROR(self.path, "mc_fac_init_corr_thm", None, {}))
+
+    def test_names_match_capture(self):
+        capture = CHECKER["ROOT"] / "scripts/hol-probes/bignum_code_defs_probe.out"
+        captured = {line.split("=", 1)[0] for line in capture.read_text().splitlines()
+                    if line.split("=", 1)[0].endswith("_corr_thm")}
+        names = {name for name, _line in self.parse(self.path, self.source)}
+        self.assertEqual(names, captured)
+
+    def test_rejects_changed_sources_wrong_path_and_hidden_calls(self):
+        parse = self.parse
+        self.assertEqual(parse(Path("elsewhere/word_bignumProofScript.sml"), self.source), [])
+        self.assertEqual(parse(self.path, self.source + "\n"), [])
+        self.assertEqual(parse(self.path, self.source, None, self.bignum + "\n"), [])
+        self.assertEqual(len(parse(self.path, self.source, None, self.bignum)), 60)
+        call = CHECKER["WORD_BIGNUM_DERIVE_CORR_CALL"]
+        hidden = self.source.replace(call, "".join(c if c == "\n" else " " for c in call))
+        self.assertEqual(parse(self.path, self.source, hidden), [])
+        save = 'val _ = save_thm(name ^ "_corr_thm", raw_th)'
+        hidden = self.source.replace(save, " " * len(save), 1)
+        self.assertEqual(parse(self.path, self.source, hidden), [])
 
 
 class McMultiwordTailrecDeclarationsTest(unittest.TestCase):
