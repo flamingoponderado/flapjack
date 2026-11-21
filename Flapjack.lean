@@ -298,6 +298,11 @@ import Flapjack.Compiler.Backend.BackendProof.ConfigOk
 import Flapjack.Compiler.Backend.BackendProof.ConfigTuple
 import Flapjack.Compiler.Backend.BackendProof.ReadLimits
 import Flapjack.Compiler.Backend.BackendProof.StackFrameSizes
+import Flapjack.Compiler.Backend.BackendProof.ConfigUpdates
+import Flapjack.Compiler.Backend.BackendProof.NoMti
+import Flapjack.Compiler.Backend.BackendProof.CompileCommonSyntax
+import Flapjack.Compiler.Backend.BackendProof.CakeOracConfig
+import Flapjack.Compiler.Backend.Backend.SetOracle
 import Flapjack.Compiler.Backend.DataToWord.Proofs.OptionLe
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Limits
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Mask

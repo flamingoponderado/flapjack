@@ -11094,3 +11094,25 @@ four-argument dispatch, word comparison, string comparison, and byte-array,
 array and block bounds-check equations, and general equality and integer
 ordering, block length, tag-length and tag equality equations. Concrete equality, ordering, tail-call, returning-call,
 and bad-header cases are in `cake_word_array_probe.out`.
+
+`backend_proof_more_typed_probe.out` captures, with `show_types`, every
+declaration of `compiler/backend/proofs/backendProofScript.sml` in source order
+for the counterparts under `Flapjack/Compiler/Backend/BackendProof/`, plus the
+prerequisite definitions `backend$set_oracle_def`, `compile_def`,
+`from_data_def` ... `from_source_def`, `compile_eq_from_source`, the
+`backend_progs` record, `empty_progs_def`, `keep_progs_def` and
+`compile_inc_progs_def`, `data_to_word$compile_def`/`compile_0_def`,
+`bvl_to_bvi$bvl_to_bvi_compile_inc_all_def` and `mlstring$empty_ffi_def`:
+exported theorems and definitions are fetched from the theory DB together with
+their hypothesis counts, and `[local]` theorems are parsed from the pinned
+source text with SML antiquotation splices expanded. The commented-out
+`MAP_compile_distinct_setglobals`, the derived local rewrites
+`compile_inc_progs_defs`, `SND_flat_to_clos_inc_compile` and
+`compile_correct_no_eval`, and the locals `cake_orac_extended_wf`,
+`cake_orac_eq_get_oracle` and `step_invs_cake_orac` (whose source parse needs
+the script's own proof-time context) are not captured. It needs
+`backendProofTheory`, which is built in the standard oracle tree
+`/var/tmp/flapjack-cakeml-oracle` (CakeML pin 857f0d98d, HOL submodule
+a390cbab); regenerate with `CAKEML=/var/tmp/flapjack-cakeml-oracle
+HOL4=<pinned HOL tree> HOL_PROBE_ONLY=backend_proof_more_typed_probeScript.sml
+scripts/hol-probes/regenerate.sh`. Statement evidence for source review only.

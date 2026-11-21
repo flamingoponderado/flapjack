@@ -12625,3 +12625,8 @@ run_probe multiword_typed_probeScript.sml multiword_typed_probe.out \
   multiword_probe_begin multiword_probe_end \
   "$hol_dir/examples/machine-code/multiword/mc_multiwordScript.sml" \
   "$hol_dir/examples/machine-code/multiword"
+
+run_probe backend_proof_more_typed_probeScript.sml backend_proof_more_typed_probe.out \
+  backend_proof_more_probe_begin backend_proof_more_probe_end \
+  "$cake_dir/compiler/backend/proofs/backendProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
