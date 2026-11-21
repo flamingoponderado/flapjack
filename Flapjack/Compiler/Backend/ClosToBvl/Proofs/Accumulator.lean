@@ -176,6 +176,36 @@ theorem compileExpList_length (maxApp : Nat) (expressions : List ClosLang.Exp) (
           rw [tail] at length
           simpa [compileExpListHOL, first, tail] using congrArg Nat.succ length
 
+/-- HOL `pair_lem1`: applying a pair-destructuring function is applying it
+to the pair's components. -/
+@[hol "cakeml/compiler/backend/clos_to_bvlScript.sml" "pair_lem1"]
+theorem pairLambda {α β γ : Type} (f : α → β → γ) (x : α × β) :
+    (fun (a, b) => f a b) x = f x.1 x.2 := by
+  cases x
+  rfl
+
+/-- HOL `pair_lem2`: a pair equals a point exactly when its components do. -/
+@[hol "cakeml/compiler/backend/clos_to_bvlScript.sml" "pair_lem2"]
+theorem pairEq {α β : Type} (x : α) (y : β) (z : α × β) :
+    (x, y) = z ↔ x = z.1 ∧ y = z.2 := by
+  cases z
+  simp
+
+/-- HOL `build_aux_APPEND1`: appending one entry advances the location by two
+and prepends that entry's generated location. -/
+@[hol "cakeml/compiler/backend/clos_to_bvlScript.sml" "build_aux_APPEND1"]
+theorem buildAux_append1 (xs : List (Nat × Bvl.Exp)) (x : Nat × Bvl.Exp) (n : Nat)
+    (aux : Aux) :
+    buildAux n (xs ++ [x]) aux =
+      (let (next, result) := buildAux n xs aux
+       (next + 2, (next, x) :: result)) := by
+  induction xs generalizing n aux with
+  | nil => rfl
+  | cons entry rest ih =>
+    obtain ⟨arity, body⟩ := entry
+    simp only [List.cons_append, buildAux]
+    exact ih (n + 2) ((n, arity, body) :: aux)
+
 /-- The original list compiler emits one expression per input and retains its
 initial accumulator as a suffix of the output accumulator. -/
 @[hol "cakeml/compiler/backend/clos_to_bvlScript.sml" "compile_exps_acc"]
