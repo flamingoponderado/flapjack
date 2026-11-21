@@ -333,6 +333,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.PermLookup
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.CodeRelation
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.CodeOracleRelation
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.StateRelation
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.StateRelInit
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.StateInsert
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.MoveIsWord
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.CutState
