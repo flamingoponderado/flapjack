@@ -532,4 +532,5 @@ val _ = print ("structure_le_IMP_option_le_hypotheses=" ^
   Int.toString (length (hyp (DB.fetch "data_to_word_bignumProof" "structure_le_IMP_option_le"))) ^ "\n");
 val _ = emit_exported "structure_le_IMP_option_le_typed" "structure_le_IMP_option_le";
 val _ = emit "structure_le_def_typed" (DB.fetch "data_to_word" "structure_le_def");
+val _ = emit_exported "bignum_digits_LENGTH_n2mw_typed" "bignum_digits_LENGTH_n2mw";
 val _ = capture "lt_dimindex_MOD_dimword_typed" "lt_dimindex_MOD_dimword";

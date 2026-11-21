@@ -843,6 +843,8 @@ exported global-invariant equation and replay its original simplifier derivation
 
 `multiword_typed_probe.out` records the typed statement of every exported theorem and definition of the HOL `multiword` and `mc_multiword` theories (`HOL/examples/machine-code/multiword`), labelled `<theory>_<name>_typed`, for the bottom-up port beneath `Flapjack/Misc/Multiword`. `[local]` theorems are not exported and need separate source-parsed captures. Regenerate with `HOL_PROBE_ONLY=multiword_typed_probeScript.sml scripts/hol-probes/regenerate.sh`; it does not replay HOL proofs.
 
+`mc_multiword_local_typed_probe.out` records source-parsed typed statements of `[local]` theorems of `mc_multiwordScript.sml` (currently `mc_full_cmp_eq`), parsed from the pinned HOL source in the context of the built `mc_multiword` theory, labelled `mc_multiword_<name>_typed`. Regenerate with `HOL_PROBE_ONLY=mc_multiword_local_typed_probeScript.sml scripts/hol-probes/regenerate.sh`; it does not replay HOL proofs.
+
 `bignum_helpers_probe.out` records the source-inferred helper types and register, immediate, complement, load, save, index and division-call observations. `Flapjack.Test.WordBignumHelpersParity` replays the results. Regenerate with `HOL_PROBE_ONLY=bignum_helpers_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
 `bignum_compile_probe.out` records the inferred mini-compiler and cache types and examples for every mini-language constructor, including fresh and reused loop code. `Flapjack.Test.WordBignumCompileParity` replays those results. Regenerate with `HOL_PROBE_ONLY=bignum_compile_probeScript.sml scripts/hol-probes/regenerate.sh`. These examples do not establish general HOL correspondence.
@@ -11169,3 +11171,13 @@ the statement shape only), `word_to_wordProofScript.sml` (the derived `[local]`
 (`FMAP_REL_def`). Regenerate each with `CAKEML=<cakeml tree>
 HOL_PROBE_ONLY=<probe>Script.sml scripts/hol-probes/regenerate.sh`; none replays a
 HOL proof.
+
+`data_to_word_proof_lab_typed_probe.out` records the typed statements of the
+data_to_wordProof label, `no_share_inst`, `every_inst (inst_ok_less ac)` and
+small configuration lemmas (`state_rel_with_locals_sfs`, the `extract_labels_*`
+lemmas, `labels_rel_emp`, the `*_no_share_inst` and `*_no_inst` lemmas,
+`MAP_FST_ZIP`, `bounds_lem`, `max_heap_limit_has_fp_ops`, `FST_compile_part`).
+Exported theorems come from the theory DB; `[local]` ones are parsed from the
+pinned source text in the loaded theory context. Regenerate with
+`CAKEML=<cakeml tree> HOL_PROBE_ONLY=data_to_word_proof_lab_typed_probeScript.sml
+scripts/hol-probes/regenerate.sh`; no HOL proof is replayed.
