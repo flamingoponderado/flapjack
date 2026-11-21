@@ -1,0 +1,14 @@
+more_free_names_typed=free_names (n :num) (name :num) ⇒ free_names (n + bvl_to_bvi_namespaces) name
+is_free_name_typed=free_names (n :num) (name :num) ⇒ n ≠ name
+EVERY_free_names_SUCSUC_typed=∀(xs :(num # α) list). EVERY (free_names (n :num) ∘ (FST :num # α -> num)) xs ⇒ EVERY (free_names (n + bvl_to_bvi_namespaces) ∘ (FST :num # α -> num)) xs
+EVERY_free_names_thm_typed=EVERY (free_names (next :num) ∘ (FST :num # α -> num)) (prog :(num # α) list) ∧ lookup (loc :num) (fromAList prog) = SOME (x :α) ⇒ free_names next loc
+free_names_mult_F_typed=free_names (n :num) (n + (k :num) * bvl_to_bvi_namespaces) ⇔ F
+free_names_refl_F_typed=free_names (n :num) n ⇔ F
+free_names_succ_F_typed=free_names (n :num) (n + (bvl_to_bvi_namespaces + (k :num) * bvl_to_bvi_namespaces)) ⇔ F
+compile_each_intro_typed=∀(xs :(num # num # bvi$exp) list) (n :num) (ys :(num # num # bvi$exp) list) (n1 :num) (name :num). ¬MEM name (MAP (FST :num # num # bvi$exp -> num) xs) ∧ free_names n name ∧ compile_each n xs = (n1,ys) ⇒ ¬MEM name (MAP (FST :num # num # bvi$exp -> num) ys) ∧ free_names n1 name
+compile_each_untouched_typed=∀(next :num) (prog :(num # num # bvi$exp) list) (prog2 :(num # num # bvi$exp) list) (loc :num) (exp :bvi$exp) (arity :num). free_names next loc ∧ lookup loc (fromAList prog) = SOME (arity,exp) ∧ (compile_exp loc next arity exp :(bvi$exp # bvi$exp) option) = (NONE :(bvi$exp # bvi$exp) option) ∧ compile_each next prog = ((next1 :num),prog2) ⇒ lookup loc (fromAList prog2) = SOME (arity,exp)
+compile_each_touched_typed=∀(next :num) (prog :(num # num # bvi$exp) list) (prog2 :(num # num # bvi$exp) list) (loc :num) (exp :bvi$exp) (arity :num). ALL_DISTINCT (MAP (FST :num # num # bvi$exp -> num) prog) ∧ EVERY (free_names next ∘ (FST :num # num # bvi$exp -> num)) prog ∧ free_names next loc ∧ lookup loc (fromAList prog) = SOME (arity,exp) ∧ (∃(w :bvi$exp # bvi$exp). (compile_exp loc next arity exp :(bvi$exp # bvi$exp) option) = SOME w) ∧ compile_each next prog = ((next1 :num),prog2) ⇒ ∃(k :num). ∀(wrap :bvi$exp) (work :bvi$exp). (compile_exp loc (next + bvl_to_bvi_namespaces * k) arity exp :(bvi$exp # bvi$exp) option) = SOME (wrap,work) ⇒ lookup loc (fromAList prog2) = SOME (arity,wrap) ∧ lookup (next + bvl_to_bvi_namespaces * k) (fromAList prog2) = SOME (arity + (2 :num),work)
+v_to_bytes_eq_typed=v_to_bytes (lv :v) = SOME (bytes :word8 list) ⇔ v_to_list lv = SOME (MAP (Number ∘ $& ∘ (w2n :word8 -> num)) bytes)
+v_to_words_eq_typed=v_to_words (lv :v) = SOME (ws :word64 list) ⇔ v_to_list lv = SOME (MAP Word64 ws)
+is_block_op_cons_def_typed=∀(op :closLang$op). is_block_op_cons op ⇔ ∃(block_tag :num). op = BlockOp (Cons block_tag :block_op)
+env_rel_el_typed=∀(opt :bool) (f :num |-> num) (env1 :v list) (env2 :v list) (n :num). env_rel opt f env1 env2 ∧ n < LENGTH env1 ⇒ v_rel f env1❲n❳ env2❲n❳

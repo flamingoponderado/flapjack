@@ -508,6 +508,145 @@ theorem compileEachSource_codeRel (next last : Nat) (code output : List (Nat × 
       exact ⟨BviTailrec.sptFromAList_lookup_of_mem output loc (arity, wrapper) outputUnique main,
         BviTailrec.sptFromAList_lookup_of_mem output workerLoc (arity + 2, worker) outputUnique aux⟩
 
+/-- Compilation never introduces an absent free name, and that name stays
+free at the resulting worker counter. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "compile_each_intro"]
+theorem compileEach_intro :
+    ∀ (xs : List (Nat × Nat × Bvi.Exp)) (n : Nat) (ys : List (Nat × Nat × Bvi.Exp)) (n1 name : Nat),
+      name ∉ xs.map Prod.fst ∧ freeNames n name ∧ compileEachSource n xs = (n1, ys) →
+      name ∉ ys.map Prod.fst ∧ freeNames n1 name := by
+  intro xs n ys n1 name ⟨absent, free, run⟩
+  have avoid := compileEachSource_avoids_free n name xs free absent
+  rw [run] at avoid
+  obtain ⟨steps, advance⟩ := compileEachSource_next_mono n n1 xs ys run
+  refine ⟨avoid, ?_⟩
+  rw [advance]
+  exact freeNames_advance n name steps free
+
+/-- A function rejected by the transformation keeps its original entry. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "compile_each_untouched"]
+theorem compileEach_untouched {next1 : Nat} :
+    ∀ (next : Nat) (prog prog2 : List (Nat × Nat × Bvi.Exp)) (loc : Nat) (exp : Bvi.Exp) (arity : Nat),
+      freeNames next loc ∧ sptLookup loc (sptFromAList prog) = some (arity, exp) ∧
+        compileExpSource loc next arity exp = none ∧
+        compileEachSource next prog = (next1, prog2) →
+      sptLookup loc (sptFromAList prog2) = some (arity, exp) := by
+  intro next prog
+  induction prog generalizing next next1 with
+  | nil => intro prog2 loc exp arity ⟨_, lookup, _⟩; simp [sptLookup_sptFromAList, sptAListLookup] at lookup
+  | cons entry rest ih =>
+    intro prog2 loc exp arity ⟨free, lookup, rejected, run⟩
+    obtain ⟨head, headArity, headExp⟩ := entry
+    by_cases same : loc = head
+    · subst head
+      simp only [sptLookup_sptFromAList, sptAListLookup, ↓reduceIte, Option.some.injEq,
+        Prod.mk.injEq] at lookup
+      obtain ⟨rfl, rfl⟩ := lookup
+      cases tail : compileEachSource next rest with
+      | mk last out =>
+        simp only [compileEachSource, rejected, tail, Prod.mk.injEq] at run
+        obtain ⟨rfl, rfl⟩ := run
+        simp [sptLookup_sptFromAList, sptAListLookup]
+    · have lookupTail : sptLookup loc (sptFromAList rest) = some (arity, exp) := by
+        simpa [sptLookup_sptFromAList, sptAListLookup, same] using lookup
+      cases headCompiled : compileExpSource head next headArity headExp with
+      | none =>
+        cases tail : compileEachSource next rest with
+        | mk last out =>
+          simp only [compileEachSource, headCompiled, tail, Prod.mk.injEq] at run
+          obtain ⟨rfl, rfl⟩ := run
+          have h := ih (next1 := last) next out loc exp arity ⟨free, lookupTail, rejected, tail⟩
+          simpa [sptLookup_sptFromAList, sptAListLookup, same] using h
+      | some pair =>
+        obtain ⟨wrapper, worker⟩ := pair
+        cases tail : compileEachSource (next + Flapjack.bvlToBviNamespaces) rest with
+        | mk last out =>
+          simp only [compileEachSource, headCompiled, tail, Prod.mk.injEq] at run
+          obtain ⟨rfl, rfl⟩ := run
+          have freeNext : freeNames (next + Flapjack.bvlToBviNamespaces) loc := by
+            simpa using freeNames_advance next loc 1 free
+          have nextNe : loc ≠ next := (freeNames_ne_current next loc free).symm
+          have h := ih (next1 := last) (next + Flapjack.bvlToBviNamespaces) out loc exp arity
+            ⟨freeNext, lookupTail, compileExp_next_addr loc next arity exp rejected, tail⟩
+          simpa [sptLookup_sptFromAList, sptAListLookup, same, nextNe] using h
+
+/-- A selected input entry has its wrapper and its worker, at some later
+namespace stride, among the compiled entries. -/
+private theorem compileEachSource_touched_mem (code : List (Nat × Nat × Bvi.Exp)) (next loc arity : Nat)
+    (exp : Bvi.Exp) (member : (loc, arity, exp) ∈ code)
+    (selected : ∃ w, compileExpSource loc next arity exp = some w) :
+    ∃ k, ∀ wrap work,
+      compileExpSource loc (next + Flapjack.bvlToBviNamespaces * k) arity exp = some (wrap, work) →
+      (loc, arity, wrap) ∈ (compileEachSource next code).2 ∧
+      (next + Flapjack.bvlToBviNamespaces * k, arity + 2, work) ∈ (compileEachSource next code).2 := by
+  induction code generalizing next with
+  | nil => simp at member
+  | cons entry rest ih =>
+    obtain ⟨headLoc, headArity, headExp⟩ := entry
+    simp only [List.mem_cons] at member
+    cases compiled : compileExpSource headLoc next headArity headExp with
+    | none =>
+      cases tail : compileEachSource next rest with
+      | mk last output =>
+        rcases member with same | other
+        · cases same
+          obtain ⟨w, hw⟩ := selected
+          rw [compiled] at hw
+          contradiction
+        · obtain ⟨k, entries⟩ := ih next other selected
+          simp only [tail] at entries
+          refine ⟨k, fun wrap work run => ?_⟩
+          simp only [compileEachSource, compiled, tail]
+          exact ⟨List.mem_cons_of_mem _ (entries wrap work run).1,
+            List.mem_cons_of_mem _ (entries wrap work run).2⟩
+    | some pair =>
+      obtain ⟨headWrapper, headWorker⟩ := pair
+      cases tail : compileEachSource (next + Flapjack.bvlToBviNamespaces) rest with
+      | mk last output =>
+        rcases member with same | other
+        · cases same
+          refine ⟨0, fun wrap work run => ?_⟩
+          simp only [Nat.mul_zero, Nat.add_zero, compiled, Option.some.injEq, Prod.mk.injEq] at run
+          obtain ⟨rfl, rfl⟩ := run
+          simp [compileEachSource, compiled, tail]
+        · obtain ⟨w, hw⟩ := selected
+          obtain ⟨w', hw'⟩ := compileExp_some_irrel loc next arity exp w hw
+            (next + Flapjack.bvlToBviNamespaces)
+          obtain ⟨k, entries⟩ := ih (next + Flapjack.bvlToBviNamespaces) other ⟨w', hw'⟩
+          simp only [tail] at entries
+          refine ⟨k + 1, fun wrap work run => ?_⟩
+          have shift : next + Flapjack.bvlToBviNamespaces * (k + 1) =
+              next + Flapjack.bvlToBviNamespaces + Flapjack.bvlToBviNamespaces * k := by
+            rw [Nat.mul_add, Nat.mul_one]; omega
+          rw [shift] at run ⊢
+          simp only [compileEachSource, compiled, tail]
+          exact ⟨List.mem_cons_of_mem _ (List.mem_cons_of_mem _ (entries wrap work run).1),
+            List.mem_cons_of_mem _ (List.mem_cons_of_mem _ (entries wrap work run).2)⟩
+
+/-- A function selected by the transformation is replaced by its wrapper,
+with its worker installed at an allocated namespace location. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "compile_each_touched"]
+theorem compileEach_touched {next1 : Nat} :
+    ∀ (next : Nat) (prog prog2 : List (Nat × Nat × Bvi.Exp)) (loc : Nat) (exp : Bvi.Exp) (arity : Nat),
+      (prog.map Prod.fst).Nodup ∧ (∀ entry ∈ prog, freeNames next entry.1) ∧
+        freeNames next loc ∧ sptLookup loc (sptFromAList prog) = some (arity, exp) ∧
+        (∃ w, compileExpSource loc next arity exp = some w) ∧
+        compileEachSource next prog = (next1, prog2) →
+      ∃ k, ∀ wrap work,
+        compileExpSource loc (next + Flapjack.bvlToBviNamespaces * k) arity exp = some (wrap, work) →
+        sptLookup loc (sptFromAList prog2) = some (arity, wrap) ∧
+        sptLookup (next + Flapjack.bvlToBviNamespaces * k) (sptFromAList prog2) = some (arity + 2, work) := by
+  intro next prog prog2 loc exp arity ⟨unique, free, _, lookup, selected, run⟩
+  have member : (loc, arity, exp) ∈ prog :=
+    sptAListLookup_mem loc prog (arity, exp) (by simpa [sptLookup_sptFromAList] using lookup)
+  have outUnique := (compileEachSource_distinct_and_free next next1 prog prog2 run unique free).1
+  obtain ⟨k, entries⟩ := compileEachSource_touched_mem prog next loc arity exp member selected
+  rw [run] at entries
+  refine ⟨k, fun wrap work compiled => ?_⟩
+  obtain ⟨wrapMem, workMem⟩ := entries wrap work compiled
+  exact ⟨BviTailrec.sptFromAList_lookup_of_mem prog2 loc (arity, wrap) outUnique wrapMem,
+    BviTailrec.sptFromAList_lookup_of_mem prog2 _ (arity + 2, work) outUnique workMem⟩
+
 private theorem mem_fromAList_iff {α : Type} (entries : List (Nat × α)) (key : Nat) :
     sptMem key (sptFromAList entries) ↔ key ∈ entries.map Prod.fst := by
   induction entries with
