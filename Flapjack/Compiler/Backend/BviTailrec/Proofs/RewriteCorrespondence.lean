@@ -319,6 +319,92 @@ def rewriteSource (loc next : Nat) (op : AssocOp) (acc : Nat)
   | e => sourceDispatch loc next op acc ctx e
 termination_by e => sizeOf e
 
+/-- The nonempty scan's `headD` default is unreachable, so it agrees with the
+reviewed `holHd` rendering of HOL's `HD`. -/
+private theorem headD_eq_holHd {α : Type} [Nonempty α] (d : α) (l : List α)
+    (h : l ≠ []) : l.headD d = Flapjack.holHd l := by
+  cases l with
+  | nil => exact absurd rfl h
+  | cons x xs => rfl
+
+/-- HOL `rewrite_PMATCH`: the recursive rewrite's case equation, with the outer
+`pmatch` on the expression in source order (`Var`, `If`, `Let`, `Tick`,
+`Force`, then the trailing `_` arm). HOL's `HD` is the reviewed `holHd`; the
+scan is a singleton, so its empty clause is unreachable and the source's
+`LAST1` is `List.getLast?` as in the reviewed clause bodies. The trailing `_`
+arm is `sourceDispatch`, the named rendering of the same
+`check_op`/`opbinargs` case. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "rewrite_PMATCH"]
+theorem rewriteSource_PMATCH (loc next : Nat) (opr : AssocOp) (acc : Nat)
+    (ts : List ValueType) (expr : Exp) :
+    rewriteSource loc next opr acc ts expr =
+      (match expr with
+       | .var n => (false, .var n)
+       | .ifThenElse x1 x2 x3 =>
+         let t1 := (@Flapjack.holHd (List ValueType × ValueType × Bool × Option AssocOp)
+             ⟨([], .any, false, none)⟩ (scanExpr ts loc [x1])).1
+         let (r2, y2) := rewriteSource loc next opr acc t1 x2
+         let (r3, y3) := rewriteSource loc next opr acc t1 x3
+         let z2 := if r2 then y2 else applyOp opr (.var acc) x2
+         let z3 := if r3 then y3 else applyOp opr (.var acc) x3
+         (r2 || r3, .ifThenElse x1 z2 z3)
+       | .let xs x =>
+         let ys := scanExpr ts loc xs
+         let tt := ys.map fun (_, ty, _, _) => ty
+         let tr := match ys.getLast? with | some (cs, _, _, _) => cs | none => ts
+         let (r, y) := rewriteSource loc next opr (acc + xs.length) (tt ++ tr) x
+         (r, .let xs y)
+       | .tick x =>
+         let (r, y) := rewriteSource loc next opr acc ts x
+         (r, .tick y)
+       | .force l v => (false, .force l v)
+       | e => sourceDispatch loc next opr acc ts e) := by
+  cases expr with
+  | var n =>
+    conv =>
+      enter [1]
+      rw [rewriteSource.eq_def]
+  | ifThenElse x1 x2 x3 =>
+    conv =>
+      enter [1]
+      rw [rewriteSource.eq_def]
+    dsimp only
+    rw [@headD_eq_holHd (List ValueType × ValueType × Bool × Option AssocOp)
+      ⟨([], .any, false, none)⟩ (ts, .any, false, none) (scanExpr ts loc [x1])
+      (scanExpr_not_nil x1 ts loc)]
+  | «let» xs x =>
+    conv =>
+      enter [1]
+      rw [rewriteSource.eq_def]
+  | raise x =>
+    conv =>
+      enter [1]
+      rw [rewriteSource.eq_def]
+  | tick x =>
+    conv =>
+      enter [1]
+      rw [rewriteSource.eq_def]
+  | call ticks dest args handler =>
+    conv =>
+      enter [1]
+      rw [rewriteSource.eq_def]
+  | force l v =>
+    conv =>
+      enter [1]
+      rw [rewriteSource.eq_def]
+  | op actual args =>
+    conv =>
+      enter [1]
+      rw [rewriteSource.eq_def]
+  | letCall v28 v29 v30 v31 v32 =>
+    conv =>
+      enter [1]
+      rw [rewriteSource.eq_def]
+  | «return» xs =>
+    conv =>
+      enter [1]
+      rw [rewriteSource.eq_def]
+
 /-- An operation with a false accumulator guard or a failed candidate check
 is rewritten to the explicit accumulator fallback. -/
 theorem rewriteSource_op_fallback (ctx : List ValueType) (loc next acc : Nat)
