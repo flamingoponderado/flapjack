@@ -510,3 +510,26 @@ val _ = emit_exported "word_list_store_list_typed" "word_list_store_list";
 val _ = emit_exported "int_op_def_typed" "int_op_def";
 val _ = capture "if_eq_b2w_typed" "if_eq_b2w";
 val _ = capture "b2n_not_typed" "b2n_not";
+val _ = print ("MAP_FST_EQ_IMP_IS_SOME_ALOOKUP_hypotheses=" ^
+  Int.toString (length (hyp (DB.fetch "data_to_word_bignumProof" "MAP_FST_EQ_IMP_IS_SOME_ALOOKUP"))) ^ "\n");
+val _ = emit_exported "MAP_FST_EQ_IMP_IS_SOME_ALOOKUP_typed" "MAP_FST_EQ_IMP_IS_SOME_ALOOKUP";
+val _ = print ("domain_adjust_sets_hypotheses=" ^
+  Int.toString (length (hyp (DB.fetch "data_to_word_bignumProof" "domain_adjust_sets"))) ^ "\n");
+val _ = emit_exported "domain_adjust_sets_typed" "domain_adjust_sets";
+val _ = print ("env_to_list_domain_eq_hypotheses=" ^
+  Int.toString (length (hyp (DB.fetch "data_to_word_bignumProof" "env_to_list_domain_eq"))) ^ "\n");
+val _ = emit_exported "env_to_list_domain_eq_typed" "env_to_list_domain_eq";
+val _ = print ("size_of_LE_append_hypotheses=" ^
+  Int.toString (length (hyp (DB.fetch "data_to_word_bignumProof" "size_of_LE_append"))) ^ "\n");
+val _ = emit_exported "size_of_LE_append_typed" "size_of_LE_append";
+val _ = print ("size_of_heap_LE_args_hypotheses=" ^
+  Int.toString (length (hyp (DB.fetch "data_to_word_bignumProof" "size_of_heap_LE_args"))) ^ "\n");
+val _ = emit_exported "size_of_heap_LE_args_typed" "size_of_heap_LE_args";
+val _ = print ("EVERY_IMP_ALOOKUP_hypotheses=" ^
+  Int.toString (length (hyp (DB.fetch "data_to_word_bignumProof" "EVERY_IMP_ALOOKUP"))) ^ "\n");
+val _ = emit_exported "EVERY_IMP_ALOOKUP_typed" "EVERY_IMP_ALOOKUP";
+val _ = print ("structure_le_IMP_option_le_hypotheses=" ^
+  Int.toString (length (hyp (DB.fetch "data_to_word_bignumProof" "structure_le_IMP_option_le"))) ^ "\n");
+val _ = emit_exported "structure_le_IMP_option_le_typed" "structure_le_IMP_option_le";
+val _ = emit "structure_le_def_typed" (DB.fetch "data_to_word" "structure_le_def");
+val _ = capture "lt_dimindex_MOD_dimword_typed" "lt_dimindex_MOD_dimword";
