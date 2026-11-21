@@ -54,7 +54,10 @@ theorem fromOp_PMATCH (op : ClosLang.Op) :
        | _ => .noop) := rfl
 
 /-- HOL `from_op_thm`: the evaluated `from_op` equations, one per source
-`closLang$op` constructor, in the source's constructor order. -/
+`closLang$op` constructor, in the source's constructor order. HOL writes the
+`IntOp` and `BlockOp` arms as equality if-chains (`a = Add`, `b = ListAppend`);
+`IntOp` and `BlockOp` carry only `BEq` here (no `DecidableEq`), so the reviewed
+rendering of that equality is `==`, as in `opEq_toOp`. -/
 @[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "from_op_thm"]
 theorem fromOp_thm (a : Nat) (s : Basis.Pure.MlString.MlString) (i : ClosLang.IntOp)
     (w : ClosLang.WordOp) (b : ClosLang.BlockOp) (g : ClosLang.GlobOp)
@@ -71,8 +74,10 @@ theorem fromOp_thm (a : Nat) (s : Basis.Pure.MlString.MlString) (i : ClosLang.In
       fromOp .install = .noop ∧
       fromOp (.thunkOp t) = .noop := by
   refine ⟨rfl, rfl, ?_, rfl, ?_, rfl, rfl, rfl, rfl⟩
-  · cases i <;> rfl
-  · cases b <;> rfl
+  · cases i
+    all_goals rfl
+  · cases b
+    all_goals rfl
 
 /-- Convert a source accumulator operator into its BVI operation. -/
 @[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "to_op_def"]
@@ -152,12 +157,19 @@ theorem argType_PMATCH (op : ClosLang.Op) :
        | .blockOp .listAppend => .list
        | _ => .any) := by
   cases op with
-  | intOp i => cases i <;> rfl
-  | blockOp b => cases b <;> rfl
+  | intOp i =>
+    cases i
+    all_goals rfl
+  | blockOp b =>
+    cases b
+    all_goals rfl
   | _ => rfl
 
 /-- HOL `op_ty_def`: the result type of an accumulator operation, one clause
-per source constructor pattern in source order. -/
+per source constructor pattern in source order. HOL uses `op_ty` only in
+`bvi_tailrecProofScript.sml` (43 mentions), never in the executable pass: the
+running scan derives result types from `fromOp` and `opType`, so this is a
+proof-side helper with no production call site to route through it. -/
 @[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "op_ty_def"]
 def opTy : ClosLang.Op → ValueType
   | .intOp .add => .int
@@ -191,7 +203,9 @@ theorem opTy_PMATCH (op : ClosLang.Op) :
        | .intOp (.const i) => if small i then .int else .any
        | _ => .any) := by
   cases op with
-  | intOp i => cases i <;> rfl
+  | intOp i =>
+    cases i
+    all_goals rfl
   | blockOp b =>
     cases b with
     | cons tag =>
