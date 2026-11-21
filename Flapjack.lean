@@ -467,6 +467,8 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.BasicLemmas
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.SmallStateLemmas
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.SmallWordLemmas
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.MemoryLemmas
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.DoAppLemmas
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.FinaliseCons
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.Separation
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.MemCopy.Element
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.MemCopy.Loop
