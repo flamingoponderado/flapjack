@@ -5214,6 +5214,23 @@ def join_env_locals_transitive_rendering(hol_path: str, hol_name: str, lean_path
     }.get((hol_name, lean_name))
 
 
+def _word_free_owner(owner: tuple[str, str, dict[str, str]]) -> bool:
+    """True when an owning declaration cannot be a width-indexed word carrier.
+
+    Its header binds no `Nat` width and no `NeZero`, and neither the header nor
+    any payload names `BitVec` or a reviewed word alias. Such an owner can
+    never supply word-carrier evidence for `words_as_type_indexed_bitvec`.
+    A payload naming another carrier only at a literal width (for example
+    `AsmConfigExact 64`) still counts as word-free: a fixed width is not
+    type-indexed evidence either.
+    """
+    _module, header, payloads = owner
+    text = header + "\n" + "\n".join(payloads.values())
+    return (NAT_WIDTH_BINDER_RE.search(header) is None
+            and not identifier_token_occurs(text, "NeZero")
+            and not re.search(r"\b(?:BitVec|" + _WORD_CARRIER_ALTERNATION + r")\b", text))
+
+
 def _qualified_word_owner_names(module: str, name: str, root: str) -> set[str]:
     """Read declaration namespaces, rather than infer them from file paths.
 
@@ -5627,6 +5644,13 @@ def words_as_type_indexed_bitvec_errors(
                 if len(selected) == 1:
                     owners_by_name[name] = selected
                     all_owners_by_name[name] = selected
+        # A leaf whose every owner is word-free (no Nat width, NeZero or word
+        # payload, e.g. FlatLang.Exp, Bvl.Exp and Bvi.Exp) can never supply
+        # carrier evidence, so its ambiguity is irrelevant here. Any owner that
+        # could be width-indexed keeps the strict single-owner rule.
+        for name in [name for name, owners in owners_by_name.items()
+                     if len(owners) > 1 and all(_word_free_owner(owner) for owner in owners)]:
+            del owners_by_name[name]
         ambiguous = [
             name for name, owners in owners_by_name.items() if len(owners) != 1
         ]

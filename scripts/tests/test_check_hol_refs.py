@@ -3819,6 +3819,46 @@ class QualifiedWordsCarrierResolutionTest(unittest.TestCase):
         errors = self._run(local_shadow=True)
         self.assertTrue(any("ambiguous same-named owners" in e for e in errors), errors)
 
+    def _run_with_syntax(self, second_exp):
+        """A word carrier beside two same-leaf `Exp` syntax types."""
+        carrier = ("namespace Flapjack.Source\n"
+                   "structure State (width : Nat) [NeZero width] where\n"
+                   "  word : BitVec width\nend Flapjack.Source\n")
+        first = "namespace Flapjack.FlatLang\ninductive Exp where\n  | lit (n : Nat)\nend Flapjack.FlatLang\n"
+        declaration = ("def checkCarrier {width : Nat} [NeZero width]\n"
+                       "    (state : Flapjack.Source.State width) (a : Flapjack.FlatLang.Exp)\n"
+                       "    (b : Flapjack.Bvl.Exp) : Nat := width")
+        consumer = ("import Flapjack.Carriers.A\nimport Flapjack.Carriers.B\n"
+                    "import Flapjack.Carriers.C\n" + declaration + "\n")
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            for module, text in [("Flapjack/Carriers/A.lean", carrier),
+                                 ("Flapjack/Carriers/B.lean", first),
+                                 ("Flapjack/Carriers/C.lean", second_exp),
+                                 ("Flapjack/Consumer.lean", consumer)]:
+                path = root / module
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text(text, encoding="utf-8")
+            return CHECKER["words_as_type_indexed_bitvec_errors"](
+                declaration, "checkCarrier", module="Flapjack.Consumer",
+                root=str(root), lines=consumer.splitlines())
+
+    def test_word_free_same_leaf_owners_do_not_block_carrier(self):
+        second = "namespace Flapjack.Bvl\ninductive Exp where\n  | var (n : Nat)\nend Flapjack.Bvl\n"
+        self.assertEqual(self._run_with_syntax(second), [])
+
+    def test_word_bearing_same_leaf_owner_remains_ambiguous(self):
+        for payload in ("(w : BitVec 64)", "(w : RiscV.Word 64)"):
+            with self.subTest(payload=payload):
+                second = ("namespace Flapjack.Bvl\ninductive Exp where\n"
+                          f"  | word {payload}\nend Flapjack.Bvl\n")
+                errors = self._run_with_syntax(second)
+                self.assertTrue(any("ambiguous same-named owners" in e for e in errors), errors)
+        second = ("namespace Flapjack.Bvl\ninductive Exp (width : Nat) [NeZero width] where\n"
+                  "  | var (n : Nat)\nend Flapjack.Bvl\n")
+        errors = self._run_with_syntax(second)
+        self.assertTrue(any("ambiguous same-named owners" in e for e in errors), errors)
+
 
 class RealCrepPropsWordCarrierResolutionTest(unittest.TestCase):
     """The real CrepProps imports must resolve the exact state carrier."""
