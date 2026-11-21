@@ -1,0 +1,14 @@
+load "clos_annotateTheory";
+open HolKernel Parse boolLib bossLib;
+val _ = Globals.linewidth := 1000000;
+val _ = set_trace "Unicode" 0;
+val _ = (print "alt_free_LENGTH_LEMMA_typed="; Lib.with_flag (Globals.show_types,true) print_term ``!(xs :closLang$exp list). case clos_annotate$alt_free xs of (ys,s1) => (LENGTH xs = LENGTH ys)``; print "\n");
+val _ = (print "alt_free_LENGTH_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_annotateTheory.alt_free_LENGTH); print "\n");
+val _ = (print "alt_free_SING_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_annotateTheory.alt_free_SING); print "\n");
+val _ = (print "LENGTH_FST_alt_free_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_annotateTheory.LENGTH_FST_alt_free); print "\n");
+val _ = (print "HD_FST_alt_free_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_annotateTheory.HD_FST_alt_free); print "\n");
+val _ = (print "alt_free_CONS_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_annotateTheory.alt_free_CONS); print "\n");
+val _ = (print "shift_LENGTH_LEMMA_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_annotateTheory.shift_LENGTH_LEMMA); print "\n");
+val _ = (print "shift_SING_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_annotateTheory.shift_SING); print "\n");
+val _ = (print "shift_CONS_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_annotateTheory.shift_CONS); print "\n");
+val _ = (print "HD_shift_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_annotateTheory.HD_shift); print "\n");

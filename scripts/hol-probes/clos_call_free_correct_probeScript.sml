@@ -11,3 +11,12 @@ val closed_cases = EVAL ``(clos_call$closed (closLang$Fn «f» (SOME 4) NONE 2 (
 val _ = (print "closed_cases="; print_term (rhs (concl closed_cases)); print "\n");
 val group_cases = EVAL ``(EVERY2 (λ(n,_) p. clos_call$closed (closLang$Fn «» NONE NONE n p)) [(1,closLang$Var None 0);(2,closLang$Var None 1)] [closLang$Var None 0;closLang$Var None 1], EVERY2 (λ(n,_) p. clos_call$closed (closLang$Fn «» NONE NONE n p)) [(1,closLang$Var None 0);(2,closLang$Var None 1)] [closLang$Var None 0;closLang$Var None 2], EVERY2 (λ(n,_) p. clos_call$closed (closLang$Fn «» NONE NONE n p)) [(1,closLang$Var None 0);(2,closLang$Var None 1)] [closLang$Var None 0])``;
 val _ = (print "group_cases="; print_term (rhs (concl group_cases)); print "\n");
+val _ = (print "free_sing_def_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callTheory.free_sing_def); print "\n");
+val _ = (print "free_sing_eq_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callTheory.free_sing_eq); print "\n");
+val _ = (print "free_LENGTH_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callTheory.free_LENGTH); print "\n");
+val _ = (print "free_SING_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callTheory.free_SING); print "\n");
+val _ = (print "LENGTH_FST_free_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callTheory.LENGTH_FST_free); print "\n");
+val _ = (print "HD_FST_free_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callTheory.HD_FST_free); print "\n");
+val _ = (print "free_CONS_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callTheory.free_CONS); print "\n");
+val _ = (print "EL_MEM_LEMMA_typed="; Lib.with_flag (Globals.show_types,true) print_term ``!(xs :'a list) (i :num) (x :'a). i < LENGTH xs /\ (x = EL i xs) ==> MEM x xs``; print "\n");
+val _ = (print "compile_nil_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callTheory.compile_nil); print "\n");

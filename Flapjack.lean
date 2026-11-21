@@ -1030,6 +1030,7 @@ import Flapjack.Compiler.Backend.ClosCall.Proofs.SyntaxOk
 import Flapjack.Compiler.Backend.ClosCall.Stubs
 import Flapjack.Compiler.Backend.ClosCall.InsertEach
 import Flapjack.Compiler.Backend.ClosCall.Free
+import Flapjack.Compiler.Backend.ClosCall.Free.Lemmas
 import Flapjack.Compiler.Backend.ClosCall.Calls
 import Flapjack.Compiler.Backend.ClosCall.Compile
 import Flapjack.Compiler.Backend.ClosCall.Proofs.TotalCorrespondence
@@ -1570,7 +1571,9 @@ import Flapjack.Test.BviEvaluateParity
 import Flapjack.Compiler.Backend.DbVars
 import Flapjack.Compiler.Backend.DbVars.Proofs.Lookup
 import Flapjack.Compiler.Backend.ClosAnnotate.Free
+import Flapjack.Compiler.Backend.ClosAnnotate.Free.Length
 import Flapjack.Compiler.Backend.ClosAnnotate.Shift
+import Flapjack.Compiler.Backend.ClosAnnotate.Shift.Length
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.FreeVariables
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.FreeVariables.Original
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.ShiftedEnv
