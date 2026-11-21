@@ -3,6 +3,7 @@ module
 public import Flapjack.Compiler.Backend.BviTmc.Proofs.PureCorrespondence
 public import Flapjack.Compiler.Backend.BackendCommon.SmallInt
 public import Flapjack.Compiler.Backend.BviTmc.Proofs.ExtractTotal
+public import Flapjack.Compiler.Backend.Bvi.GeneratedSize
 
 @[expose] public section
 
@@ -95,6 +96,221 @@ def extractListSource (n loc tag : Nat) : List Exp → Option ExtractResult
 termination_by xs => listBudget xs
 decreasing_by all_goals simp [listBudget] <;> omega
 end
+
+/-- The HOL expression-list size of the empty list. -/
+private theorem expListSizeHOL_nil : expListSizeHOL ([] : List Exp) = 0 := rfl
+
+/-- The HOL expression-list size of a cons. -/
+private theorem expListSizeHOL_cons (x : Exp) (xs : List Exp) :
+    expListSizeHOL (x :: xs) = 1 + (expSizeHOL x + expListSizeHOL xs) := by
+  rw [expListSizeHOL.eq_def]
+
+/-- Prepending the same expression preserves the size order of two lists. -/
+private theorem expListSizeHOL_cons_le (x : Exp) (xs ys : List Exp)
+    (bound : expListSizeHOL xs ≤ expListSizeHOL ys) :
+    expListSizeHOL (x :: xs) ≤ expListSizeHOL (x :: ys) := by
+  rw [expListSizeHOL_cons, expListSizeHOL_cons]
+  omega
+
+/-- Concatenating binding lists adds their sizes. -/
+private theorem expListSizeHOL_append (xs ys : List Exp) :
+    expListSizeHOL (xs ++ ys) = expListSizeHOL xs + expListSizeHOL ys := by
+  induction xs with
+  | nil => simp [expListSizeHOL_nil]
+  | cons x xs ih =>
+    rw [List.cons_append, expListSizeHOL_cons, expListSizeHOL_cons, ih]
+    omega
+
+/-- A successful call-block conversion keeps the call's argument list. -/
+private theorem callToBlockSource_bindings (loc ticks : Nat) (dest : Option Nat)
+    (args : List Exp) (handler : Option Exp) (bs : List Exp) (cb : CallBlock)
+    (run : callToBlockSource loc ticks dest args handler = some (bs, cb)) : bs = args := by
+  unfold callToBlockSource at run
+  split at run
+  · obtain ⟨rfl, rfl⟩ := run.symm
+    rfl
+  · simp at run
+
+/-- A pure single expression extracts to a singleton, which is at most one
+larger than its size. -/
+private theorem pureExp_size (n : Nat) (e : Exp) (bs : List Exp)
+    (sum : Sum (List Nat) CallBlock)
+    (run : (if pureExp n e then some ([e], Sum.inl [0]) else none) = some (bs, sum)) :
+    expListSizeHOL bs ≤ expSizeHOL e + 1 := by
+  split at run
+  · have bsEq : bs = [e] := (Prod.mk.inj (Option.some.inj run.symm)).1
+    rw [bsEq, expListSizeHOL_cons, expListSizeHOL_nil]
+    omega
+  · simp at run
+
+mutual
+/-- A successful single-expression extraction yields bindings no larger than
+the source expression plus one. -/
+private theorem extractOne_size (n loc tag : Nat) (e : Exp) (bs : List Exp)
+    (sum : Sum (List Nat) CallBlock)
+    (run : extractOneSource n loc tag e = some (bs, sum)) :
+    expListSizeHOL bs ≤ expSizeHOL e + 1 := by
+  cases e with
+  | call ticks dest args handler =>
+    simp only [extractOneSource] at run
+    cases h : callToBlockSource loc ticks dest args handler with
+    | none => simp [h] at run
+    | some pair =>
+      obtain ⟨bs', cb⟩ := pair
+      simp only [h, Option.map_some] at run
+      have bsEq : bs = args := by
+        have pairEq := Option.some.inj run.symm
+        exact (Prod.mk.inj pairEq).1.trans
+          (callToBlockSource_bindings loc ticks dest args handler bs' cb h)
+      rw [bsEq]
+      rw [expSizeHOL.eq_def]
+      dsimp only
+      simp only [expOptionSizeHOL.eq_def, Flapjack.optionSizeHOL]
+      omega
+  | op actual args =>
+    cases actual with
+    | blockOp block =>
+      cases block with
+      | cons childTag =>
+        simp only [extractOneSource] at run
+        cases h : extractListSource n loc childTag args with
+        | none => simp [h] at run
+        | some result =>
+          obtain ⟨bindings, kind⟩ := result
+          cases kind with
+          | inr cb =>
+            simp only [h] at run
+            have bsEq : bs = bindings := (Prod.mk.inj (Option.some.inj run.symm)).1
+            rw [bsEq]
+            have bound := extractList_size n loc childTag args bindings (.inr cb) h
+            rw [expSizeHOL.eq_def]
+            dsimp only
+            omega
+          | inl indices =>
+            simp only [h] at run
+            split at run
+            · have bsEq : bs = [.op (.blockOp (.cons childTag)) args] :=
+                (Prod.mk.inj (Option.some.inj run.symm)).1
+              rw [bsEq, expListSizeHOL_cons, expListSizeHOL_nil]
+              rw [expSizeHOL.eq_def]
+              dsimp only
+              omega
+            · simp at run
+      | _ =>
+        simp only [extractOneSource] at run
+        exact pureExp_size n _ bs sum run
+    | _ =>
+      simp only [extractOneSource] at run
+      exact pureExp_size n _ bs sum run
+  | _ =>
+    simp only [extractOneSource] at run
+    exact pureExp_size n _ bs sum run
+termination_by expBudget e
+decreasing_by
+  all_goals simp_wf
+  all_goals simp_all [expBudget]
+  all_goals omega
+
+/-- A successful list extraction yields bindings no larger than the input. -/
+private theorem extractList_size (n loc tag : Nat) (args : List Exp) (bs : List Exp)
+    (sum : Sum (List Nat) CallBlock)
+    (run : extractListSource n loc tag args = some (bs, sum)) :
+    expListSizeHOL bs ≤ expListSizeHOL args := by
+  cases args with
+  | nil =>
+    simp only [extractListSource] at run
+    have bsEq : bs = [] := (Prod.mk.inj (Option.some.inj run.symm)).1
+    rw [bsEq, expListSizeHOL_nil]
+    omega
+  | cons x xs =>
+    cases xs with
+    | nil =>
+      simp only [extractListSource] at run
+      rw [expListSizeHOL_cons, expListSizeHOL_nil]
+      have bound := extractOne_size n loc tag x bs sum run
+      omega
+    | cons y ys =>
+      simp only [extractListSource] at run
+      cases tail : extractListSource n loc tag (y :: ys) with
+      | none => simp [tail] at run
+      | some result =>
+        obtain ⟨bs2, kind2⟩ := result
+        cases kind2 with
+        | inr cb =>
+          simp only [tail] at run
+          cases shifted : shiftBlock 1 cb with
+          | rCall ticks cargs => simp [shifted] at run
+          | callBlock t left child right =>
+            simp only [shifted] at run
+            have bsEq : bs = x :: bs2 := (Prod.mk.inj (Option.some.inj run.symm)).1
+            rw [bsEq]
+            have bound := extractList_size n loc tag (y :: ys) bs2 (.inr cb) tail
+            exact expListSizeHOL_cons_le x bs2 (y :: ys) bound
+        | inl indices =>
+          simp only [tail] at run
+          cases first : extractOneSource n loc tag x with
+          | none => simp [first] at run
+          | some result1 =>
+            obtain ⟨bs1, kind1⟩ := result1
+            cases kind1 with
+            | inr cb1 =>
+              cases cb1 with
+              | rCall ticks cargs => simp [first] at run
+              | callBlock t left child right =>
+                simp only [first] at run
+                cases left with
+                | nil =>
+                  cases right with
+                  | nil =>
+                    dsimp only at run
+                    have bsEq : bs = bs1 ++ bs2 := (Prod.mk.inj (Option.some.inj run.symm)).1
+                    rw [bsEq]
+                    have bound2 := extractList_size n loc tag (y :: ys) bs2 (.inl indices) tail
+                    have bound1 : expListSizeHOL bs1 ≤ expSizeHOL x + 1 :=
+                      extractOne_size n loc tag x bs1 (.inr (.callBlock t [] child [])) first
+                    rw [expListSizeHOL_append]
+                    rw [expListSizeHOL_cons]
+                    omega
+                  | cons r rs => simp at run
+                | cons l ls => simp at run
+            | inl vs1 =>
+              simp only [first] at run
+              split at run
+              · have bsEq : bs = bs1 ++ bs2 := (Prod.mk.inj (Option.some.inj run.symm)).1
+                rw [bsEq]
+                have bound2 := extractList_size n loc tag (y :: ys) bs2 (.inl indices) tail
+                have bound1 := extractOne_size n loc tag x bs1 (.inl vs1) first
+                rw [expListSizeHOL_append]
+                rw [expListSizeHOL_cons]
+                omega
+              · simp at run
+termination_by listBudget args
+decreasing_by
+  all_goals simp_wf
+  all_goals simp_all [listBudget]
+  all_goals omega
+end
+
+/-- HOL `bvi_to_cb_aux_size_lemma`: extracted bindings are no larger than the
+source expression (plus one for a single expression). -/
+@[hol "cakeml/compiler/backend/bvi_tmcScript.sml" "bvi_to_cb_aux_size_lemma"]
+theorem extract_size_lemma :
+    (∀ (n loc tag : Nat) (exp : Exp) (bs : List Exp) (sum : Sum (List Nat) CallBlock),
+      extractOneSource n loc tag exp = some (bs, sum) →
+        expListSizeHOL bs ≤ expSizeHOL exp + 1) ∧
+    (∀ (n loc tag : Nat) (args : List Exp) (bs : List Exp) (sum : Sum (List Nat) CallBlock),
+      extractListSource n loc tag args = some (bs, sum) →
+        expListSizeHOL bs ≤ expListSizeHOL args) :=
+  ⟨fun n loc tag exp bs sum run => extractOne_size n loc tag exp bs sum run,
+    fun n loc tag args bs sum run => extractList_size n loc tag args bs sum run⟩
+
+/-- HOL `bvi_to_cb_aux_size`: the list conjunct of the size lemma. -/
+@[hol "cakeml/compiler/backend/bvi_tmcScript.sml" "bvi_to_cb_aux_size"]
+theorem extractList_size_lemma (n loc tag : Nat) (args : List Exp) (bs : List Exp)
+    (sum : Sum (List Nat) CallBlock)
+    (run : extractListSource n loc tag args = some (bs, sum)) :
+    expListSizeHOL bs ≤ expListSizeHOL args :=
+  extractList_size n loc tag args bs sum run
 
 mutual
 /-- Every successful single-expression traversal returns the source result. -/
@@ -237,5 +453,50 @@ theorem toBlockFuel_eq_source (fuel n loc : Nat) (expression : Exp) :
       | _ => rfl
     | _ => rfl
   | _ => rfl
+
+/-- HOL `bvi_to_cb_size`: block extraction shrinks the expression size. -/
+@[hol "cakeml/compiler/backend/bvi_tmcScript.sml" "bvi_to_cb_size"]
+theorem toBlock_size (n loc : Nat) (x : Exp) (bs : List Exp) (cb : CallBlock)
+    (run : toBlockSource n loc x = some (bs, cb)) : expListSizeHOL bs < expSizeHOL x := by
+  cases x with
+  | call ticks dest args handler =>
+    simp only [toBlockSource] at run
+    cases h : callToBlockSource loc ticks dest args handler with
+    | none => simp [h] at run
+    | some pair =>
+      obtain ⟨bs', cb'⟩ := pair
+      simp only [h] at run
+      have bsEq : bs = args := by
+        have pairEq := Option.some.inj run.symm
+        exact (Prod.mk.inj pairEq).1.trans
+          (callToBlockSource_bindings loc ticks dest args handler bs' cb' h)
+      rw [bsEq]
+      rw [expSizeHOL.eq_def]
+      dsimp only
+      simp only [expOptionSizeHOL.eq_def, Flapjack.optionSizeHOL]
+      omega
+  | op actual args =>
+    cases actual with
+    | blockOp block =>
+      cases block with
+      | cons childTag =>
+        simp only [toBlockSource] at run
+        cases h : extractListSource n loc childTag args with
+        | none => simp [h] at run
+        | some result =>
+          obtain ⟨bindings, kind⟩ := result
+          cases kind with
+          | inr cb' =>
+            simp only [h] at run
+            have bsEq : bs = bindings := (Prod.mk.inj (Option.some.inj run.symm)).1
+            rw [bsEq]
+            have bound := extractList_size n loc childTag args bindings (.inr cb') h
+            rw [expSizeHOL.eq_def]
+            dsimp only
+            omega
+          | inl indices => simp [h] at run
+      | _ => simp [toBlockSource] at run
+    | _ => simp [toBlockSource] at run
+  | _ => simp [toBlockSource] at run
 
 end Flapjack.Compiler.Backend.BviTmc
