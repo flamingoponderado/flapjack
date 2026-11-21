@@ -282,7 +282,7 @@ run_probe() {
 }
 
 run_probe flat_to_clos_helpers_probeScript.sml flat_to_clos_helpers_probe.out \
-  dest_pat_typed compile_lit_typed arg1_typed arg2_typed join_strings_typed dest_nop_typed dest_constant_typed dest_constants_typed smart_cons_typed dest_pat_numeric smart_cons_fold length_compile_typed compile_not_nil_typed \
+  dest_pat_typed compile_lit_typed arg1_typed arg2_typed join_strings_typed dest_nop_typed dest_constant_typed dest_constants_typed smart_cons_typed dest_pat_numeric smart_cons_fold length_compile_typed compile_not_nil_typed dest_pat_pmatch_typed dest_pat_thm_typed arg1_pmatch_typed arg2_pmatch_typed dest_nop_thm_typed dest_Constant_pmatch_typed HD_compile_typed \
   "$cake_dir/compiler/backend/flat_to_closScript.sml" "$cake_dir/compiler/backend"
 
 run_probe backend_fp_config_probeScript.sml backend_fp_config_probe.out \

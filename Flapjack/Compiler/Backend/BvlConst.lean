@@ -104,6 +104,26 @@ def smartOpFlip (op : Op) (x y : Exp) : Op × Exp × Exp :=
     | some n, .intOp .sub => (Op.intOp .add, y, const (-n))
     | _, _ => (op, x, y)
 
+/-- The operand orientation written as HOL's case expression. -/
+@[hol "cakeml/compiler/backend/bvl_constScript.sml" "SmartOp_flip_pmatch"]
+theorem smartOpFlip_pmatch (op : Op) (x1 x2 : Exp) :
+    smartOpFlip op x1 x2 =
+      match simple x1 with
+      | some i =>
+          if [Op.intOp .add, Op.intOp .mult].elem op then (op, x2, x1)
+          else if op == Op.intOp .sub then
+            (Op.intOp .add, x2, .op (.intOp (.const (-i))) [])
+          else (op, x1, x2)
+      | none => (op, x1, x2) := by
+  cases h : simple x1 with
+  | none => simp [smartOpFlip, h]
+  | some i =>
+    cases op with
+    | intOp io =>
+      cases io
+      all_goals simp [smartOpFlip, h, const]
+    | _ => simp [smartOpFlip, h]
+
 /-- Apply the source binary operation rewrites to an already-oriented tuple. -/
 @[hol "cakeml/compiler/backend/bvl_constScript.sml" "SmartOp2_def"]
 def smartOp2 (input : Op × Exp × Exp) : Exp :=
