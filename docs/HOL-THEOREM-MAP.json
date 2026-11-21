@@ -149771,5 +149771,169 @@
 ,{"hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml", "hol_name": "helper", "lean_path": "Flapjack/Pancake/Proofs/WordConvs/UnreachLabels.lean", "lean_name": "memExtractLabelsSeqAssocRight_contrapos", "statement_status": "reviewed_words_as_type_indexed_bitvec", "words_as_type_indexed_bitvec": true, "reviewer": "Source comparison: Compared helper_typed (word_convs_proof_helper_typed_probe; the source derives it at lines 2491-2492 as MEM_extract_labels_Seq_assoc_right_lemma |> REWRITE_RULE [Once (GSYM CONTRAPOS_THM)], and the probe applies the same rewrite to the parsed source statement without replaying the proof): for all p1 p2 : 'a prog and x : num # num, ~(MEM x (extract_labels p1) \\/ MEM x (extract_labels p2)) ==> ~MEM x (extract_labels (Seq_assoc_right p1 p2)). Lean keeps the three universal binders, the negated disjunction premise and negated membership conclusion over the reviewed extractLabels/seqAssocRight ports."}
 ,{"hol_path": "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml", "hol_name": "code_rel_P", "lean_path": "Flapjack/Compiler/Backend/WordToWord/Proofs/Syntactic.lean", "lean_name": "code_rel_P", "statement_status": "reviewed_words_as_type_indexed_bitvec", "words_as_type_indexed_bitvec": true, "reviewer": "Source comparison: Compared code_rel_P_typed (word_to_word_code_rel_p_typed_probe; the source derives it at line 1082 as Q.GEN `P` code_rel_not_created_subprogs, rebuilt the same way in the probe): !P. find_code op args c1 sz = SOME v /\\ code_rel c1 c2 /\\ not_created_subprogs P (FST (SND v)) /\\ find_code op args c2 sz = SOME v' ==> not_created_subprogs P (FST (SND v')), with the remaining variables free. Lean binds op args c1 sz v c2 v' explicitly (as for the reviewed code_rel_not_created_subprogs) and P by an inner universal; independent types kept (args word_loc width locWidth, prog width, sz : gamma num_map); HOL bool predicates as Bool = true."}
 ,{"hol_path": "cakeml/compiler/backend/proofs/word_depthProofScript.sml", "hol_name": "max_depth_Call_SOME", "lean_path": "Flapjack/Compiler/Backend/WordDepthProof/CallGraph.lean", "lean_name": "maxDepthCallSOME", "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec", "fmap_as_finite_support": ["fpRegs", "store"], "words_as_type_indexed_bitvec": true, "inherits_reals_as_rational_cuts": true, "reviewer": "Source comparison: Compared max_depth_Call_SOME_typed (word_depth_call_some_typed_probe, source lines 808-855): evaluate (Call (SOME (n1,n2,Skip,n3,n4)) (SOME dest) args NONE, s) = (res,s1) /\\ res <> SOME Error /\\ subspt funs s.code ==> option_le s1.stack_max (OPTION_MAP2 MAX s.stack_max (OPTION_MAP2 $+ s.locals_size (OPTION_MAP2 $+ (stack_size s.stack) (max_depth s.stack_size (full_call_graph dest funs))))). Lean binds the free variables n1 n2 n3 n4 dest args s res s1 funs explicitly with the same types (num list, cutset pair, nums, 'a state, 'a result option, (num # 'a prog) num_map), keeps the Skip return handler and NONE exception handler, the three premises and the nested OPTION_MAP2 bound over the reviewed optionLe/optionMap2/maxDepth/fullCallGraph/wordSemStackSize ports, like the reviewed max_depth_Call_NONE row. inherits_reals_as_rational_cuts: the wordSem evaluate closure reaches the reals_as_rational_cuts-qualified IEEE renderings (SOUNDNESS item 8), inherited as for max_depth_Call_NONE."}
-,{"hol_path": "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml", "hol_name": "FMAP_REL_def", "lean_path": "Flapjack/Compiler/Backend/ClosTicks/Proofs/Relations.lean", "lean_name": "fmapRel", "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["first", "second"], "reviewer": "Source comparison: Compared FMAP_REL_def_typed (clos_ticks_fmap_rel_typed_probe, source lines 119-124): FMAP_REL r f1 f2 <=> FDOM f1 = FDOM f2 /\\ !k v. FLOOKUP f1 k = SOME v ==> ?v2. FLOOKUP f2 k = SOME v2 /\\ r v v2, with r : 'a -> 'b -> bool and f1 : 'c |-> 'a, f2 : 'c |-> 'b. Lean keeps the three independent types, renders the domain equality pointwise (lookup <> none in both directions), and keeps the lookup clause; both maps use the canonical finite-support parameter translation with same-module witnesses. This is the same rendering as the reviewed clos_letop FMAP_REL_def."}
+,{"hol_path": "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml", "hol_name": "FMAP_REL_def", "lean_path": "Flapjack/Compiler/Backend/ClosTicks/Proofs/Relations.lean", "lean_name": "fmapRel", "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["first", "second"], "reviewer": "Source comparison: Compared FMAP_REL_def_typed (clos_ticks_fmap_rel_typed_probe, source lines 119-124): FMAP_REL r f1 f2 <=> FDOM f1 = FDOM f2 /\\ !k v. FLOOKUP f1 k = SOME v ==> ?v2. FLOOKUP f2 k = SOME v2 /\\ r v v2, with r : 'a -> 'b -> bool and f1 : 'c |-> 'a, f2 : 'c |-> 'b. Lean keeps the three independent types, renders the domain equality pointwise (lookup <> none in both directions), and keeps the lookup clause; both maps use the canonical finite-support parameter translation with same-module witnesses. This is the same rendering as the reviewed clos_letop FMAP_REL_def."},
+{
+ "hol_path": "cakeml/compiler/backend/proofs/data_to_wordProofScript.sml",
+ "hol_name": "state_rel_with_locals_sfs",
+ "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/StateRelLocals.lean",
+ "lean_name": "stateRel_withLocalsSfs",
+ "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+ "fmap_as_finite_support": [
+  "fpRegs",
+  "store"
+ ],
+ "words_as_type_indexed_bitvec": true,
+ "reviewer": "Source comparison against state_rel_with_locals_sfs_typed (data_to_word_proof_lab_typed_probe, source lines 37-43): the full state relation at an arbitrary result list option and locs, on a source state updated with locals l and safe_for_space m, is equivalent to the relation on the state updated with locals l alone. Data and word states share the compiler and FFI types as in HOL. Target finite maps and words use the reviewed canonical representations with the local roundtrip witness."
+},
+{
+ "hol_path": "cakeml/compiler/backend/proofs/data_to_wordProofScript.sml",
+ "hol_name": "extract_labels_MemEqList",
+ "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Labels.lean",
+ "lean_name": "extractLabels_memEqList",
+ "statement_status": "reviewed_words_as_type_indexed_bitvec",
+ "words_as_type_indexed_bitvec": true,
+ "reviewer": "Source comparison against extract_labels_MemEqList_typed: for every word offset a and word list x, extract_labels (MemEqList a x) = []. Lean uses the reviewed wordConvs extractLabels and data_to_word memEqList; positive-width BitVec represents the HOL word dimension."
+},
+{
+ "hol_path": "cakeml/compiler/backend/proofs/data_to_wordProofScript.sml",
+ "hol_name": "extract_labels_StoreEach",
+ "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Labels.lean",
+ "lean_name": "extractLabels_storeEach",
+ "statement_status": "reviewed_words_as_type_indexed_bitvec",
+ "words_as_type_indexed_bitvec": true,
+ "reviewer": "Source comparison against extract_labels_StoreEach_typed: for all xs : num list, a : num, d : word, extract_labels (StoreEach a xs d) = [], binders in HOL order. Positive-width BitVec represents the HOL word dimension."
+},
+{
+ "hol_path": "cakeml/compiler/backend/proofs/data_to_wordProofScript.sml",
+ "hol_name": "extract_labels_StoreAnyConsts",
+ "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Labels.lean",
+ "lean_name": "extractLabels_storeAnyConsts",
+ "statement_status": "reviewed_words_as_type_indexed_bitvec",
+ "words_as_type_indexed_bitvec": true,
+ "reviewer": "Source comparison against extract_labels_StoreAnyConsts_typed: for all registers r1 r2 r3, (bool # word_loc) list ws and pair w, extract_labels (StoreAnyConsts r1 r2 r3 ws w) = []. Build.Value is the reviewed bool x word_loc carrier; positive-width BitVec represents the HOL word dimension."
+},
+{
+ "hol_path": "cakeml/compiler/backend/proofs/data_to_wordProofScript.sml",
+ "hol_name": "extract_labels_WordOp64_on_32",
+ "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Labels.lean",
+ "lean_name": "extractLabels_wordOp64On32",
+ "statement_status": "reviewed_words_as_type_indexed_bitvec",
+ "words_as_type_indexed_bitvec": true,
+ "reviewer": "Source comparison against the local theorem's typed replay extract_labels_WordOp64_on_32_typed: for every opw f, extract_labels (WordOp64_on_32 f : 'a prog) = []. Positive-width BitVec represents the result program's word dimension."
+},
+{
+ "hol_path": "cakeml/compiler/backend/proofs/data_to_wordProofScript.sml",
+ "hol_name": "extract_labels_WordShift64_on_32",
+ "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Labels.lean",
+ "lean_name": "extractLabels_wordShift64On32",
+ "statement_status": "reviewed_words_as_type_indexed_bitvec",
+ "words_as_type_indexed_bitvec": true,
+ "reviewer": "Source comparison against the local theorem's typed replay extract_labels_WordShift64_on_32_typed: for every ast shift f and num g, extract_labels (WordShift64_on_32 f g : 'a prog) = []. Positive-width BitVec represents the result program's word dimension."
+},
+{
+ "hol_path": "cakeml/compiler/backend/proofs/data_to_wordProofScript.sml",
+ "hol_name": "labels_rel_emp",
+ "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Labels.lean",
+ "lean_name": "labelsRel_emp",
+ "statement_status": "reviewed_exact",
+ "reviewer": "Source comparison against the local theorem's typed replay labels_rel_emp_typed: for any element type, labels_rel [] ls implies ls = []. Lean uses the reviewed wordConvs labelsRel at an arbitrary type."
+},
+{
+ "hol_path": "cakeml/compiler/backend/proofs/data_to_wordProofScript.sml",
+ "hol_name": "list_Seq_no_share_inst",
+ "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/NoShareInst.lean",
+ "lean_name": "listSeq_noShareInst",
+ "statement_status": "reviewed_words_as_type_indexed_bitvec",
+ "words_as_type_indexed_bitvec": true,
+ "reviewer": "Source comparison against list_Seq_no_share_inst_typed: for every program list xs, no_share_inst (list_Seq xs) <=> EVERY no_share_inst xs. The Bool-valued reviewed noShareInstSubprogsHOL and List.all render the boolean predicate and EVERY; positive-width BitVec represents the word dimension."
+},
+{
+ "hol_path": "cakeml/compiler/backend/proofs/data_to_wordProofScript.sml",
+ "hol_name": "StoreEach_no_share_inst",
+ "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/NoShareInst.lean",
+ "lean_name": "storeEach_noShareInst",
+ "statement_status": "reviewed_words_as_type_indexed_bitvec",
+ "words_as_type_indexed_bitvec": true,
+ "reviewer": "Source comparison against StoreEach_no_share_inst_typed: for all v : num, xs : num list and offset : word, no_share_inst (StoreEach v xs offset) holds. Positive-width BitVec represents the word dimension."
+},
+{
+ "hol_path": "cakeml/compiler/backend/proofs/data_to_wordProofScript.sml",
+ "hol_name": "MemEqList_no_share_inst",
+ "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/NoShareInst.lean",
+ "lean_name": "memEqList_noShareInst",
+ "statement_status": "reviewed_words_as_type_indexed_bitvec",
+ "words_as_type_indexed_bitvec": true,
+ "reviewer": "Source comparison against MemEqList_no_share_inst_typed: for all word a and word list xs, no_share_inst (MemEqList a xs) holds. Positive-width BitVec represents the word dimension."
+},
+{
+ "hol_path": "cakeml/compiler/backend/proofs/data_to_wordProofScript.sml",
+ "hol_name": "StoreAnyConsts_no_share_inst",
+ "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/NoShareInst.lean",
+ "lean_name": "storeAnyConsts_noShareInst",
+ "statement_status": "reviewed_words_as_type_indexed_bitvec",
+ "words_as_type_indexed_bitvec": true,
+ "reviewer": "Source comparison against StoreAnyConsts_no_share_inst_typed: for all r1 r2 r3, (bool # word_loc) list vs and pair v, no_share_inst (StoreAnyConsts r1 r2 r3 vs v) holds. Positive-width BitVec represents the word dimension."
+},
+{
+ "hol_path": "cakeml/compiler/backend/proofs/data_to_wordProofScript.sml",
+ "hol_name": "MAP_FST_ZIP",
+ "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/NoShareInst.lean",
+ "lean_name": "map_fst_zip",
+ "statement_status": "reviewed_exact",
+ "reviewer": "Source comparison against the local theorem's typed replay MAP_FST_ZIP_typed: for independent element types, MAP FST (ZIP (xs,ys)) = TAKE (LENGTH ys) xs for arbitrary (possibly different-length) lists. HOL's ZIP truncates (the original proof is plain induction with ZIP_def) and TAKE of an over-long count returns the list, matching List.zip and List.take."
+},
+{
+ "hol_path": "cakeml/compiler/backend/proofs/data_to_wordProofScript.sml",
+ "hol_name": "StoreEach_no_inst",
+ "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/NoInst.lean",
+ "lean_name": "storeEach_noInst",
+ "statement_status": "reviewed_words_as_type_indexed_bitvec",
+ "words_as_type_indexed_bitvec": true,
+ "reviewer": "Source comparison against the local theorem's typed replay StoreEach_no_inst_typed: with free ac : 'a asm_config, for all a, ls, off, every_inst (inst_ok_less ac) (StoreEach a ls off). Lean uses reviewed everyInst and instOkLessExact over AsmConfigExact through HolInst.ofWordLangInst, as in the reviewed pan_to_word every_inst_ok_less ports; positive-width BitVec represents the word dimension."
+},
+{
+ "hol_path": "cakeml/compiler/backend/proofs/data_to_wordProofScript.sml",
+ "hol_name": "MemEqList_no_inst",
+ "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/NoInst.lean",
+ "lean_name": "memEqList_noInst",
+ "statement_status": "reviewed_words_as_type_indexed_bitvec",
+ "words_as_type_indexed_bitvec": true,
+ "reviewer": "Source comparison against MemEqList_no_inst_typed: with free ac, for all a x, every_inst (inst_ok_less ac) (MemEqList a x). Same reviewed everyInst/instOkLessExact rendering; positive-width BitVec represents the word dimension."
+},
+{
+ "hol_path": "cakeml/compiler/backend/proofs/data_to_wordProofScript.sml",
+ "hol_name": "StoreAnyConsts_no_inst",
+ "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/NoInst.lean",
+ "lean_name": "storeAnyConsts_noInst",
+ "statement_status": "reviewed_words_as_type_indexed_bitvec",
+ "words_as_type_indexed_bitvec": true,
+ "reviewer": "Source comparison against StoreAnyConsts_no_inst_typed: with free ac, for all r1 r2 r3 ws w, every_inst (inst_ok_less ac) (StoreAnyConsts r1 r2 r3 ws w). Same reviewed everyInst/instOkLessExact rendering; positive-width BitVec represents the word dimension."
+},
+{
+ "hol_path": "cakeml/compiler/backend/proofs/data_to_wordProofScript.sml",
+ "hol_name": "bounds_lem",
+ "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/NoInst.lean",
+ "lean_name": "bounds_lem",
+ "statement_status": "reviewed_words_as_type_indexed_bitvec",
+ "words_as_type_indexed_bitvec": true,
+ "reviewer": "Source comparison against bounds_lem_typed: the single conjunctive premise (dimindex = 32 or 64) and w one of -3w..7w (HOL -nw is word negation of n2w n, Lean -n at the same width) implies -8w <= w and w <= 8w. HOL word <= is the signed word_le, rendered by BitVec.sle. Positive-width BitVec represents the word dimension; the proof uses kernel decide only."
+},
+{
+ "hol_path": "cakeml/compiler/backend/proofs/data_to_wordProofScript.sml",
+ "hol_name": "max_heap_limit_has_fp_ops",
+ "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/CompilePart.lean",
+ "lean_name": "maxHeapLimit_hasFpOps",
+ "statement_status": "reviewed_word_dimension_as_width",
+ "word_dimension_as_width": "width",
+ "reviewer": "Source comparison against max_heap_limit_has_fp_ops_typed: max_heap_limit (:'a) (conf with has_fp_ops := b) = max_heap_limit (:'a) conf. HOL's statement has only the type dimension and the reviewed maxHeapLimit uses it numerically, so the explicit positive width binder records the word_dimension_as_width translation; no other change."
+},
+{
+ "hol_path": "cakeml/compiler/backend/proofs/data_to_wordProofScript.sml",
+ "hol_name": "FST_compile_part",
+ "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/CompilePart.lean",
+ "lean_name": "fst_compilePart",
+ "statement_status": "reviewed_words_as_type_indexed_bitvec",
+ "words_as_type_indexed_bitvec": true,
+ "reviewer": "Source comparison against FST_compile_part_typed: FST (compile_part a b : num # num # 'a prog) = FST b for every config a and data part b. Positive-width BitVec represents the result program's word dimension."
+}
 ]

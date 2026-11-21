@@ -11154,3 +11154,13 @@ the statement shape only), `word_to_wordProofScript.sml` (the derived `[local]`
 (`FMAP_REL_def`). Regenerate each with `CAKEML=<cakeml tree>
 HOL_PROBE_ONLY=<probe>Script.sml scripts/hol-probes/regenerate.sh`; none replays a
 HOL proof.
+
+`data_to_word_proof_lab_typed_probe.out` records the typed statements of the
+data_to_wordProof label, `no_share_inst`, `every_inst (inst_ok_less ac)` and
+small configuration lemmas (`state_rel_with_locals_sfs`, the `extract_labels_*`
+lemmas, `labels_rel_emp`, the `*_no_share_inst` and `*_no_inst` lemmas,
+`MAP_FST_ZIP`, `bounds_lem`, `max_heap_limit_has_fp_ops`, `FST_compile_part`).
+Exported theorems come from the theory DB; `[local]` ones are parsed from the
+pinned source text in the loaded theory context. Regenerate with
+`CAKEML=<cakeml tree> HOL_PROBE_ONLY=data_to_word_proof_lab_typed_probeScript.sml
+scripts/hol-probes/regenerate.sh`; no HOL proof is replayed.

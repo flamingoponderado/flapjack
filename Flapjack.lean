@@ -547,6 +547,11 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.JoinEnv
 import Flapjack.Compiler.Backend.DataToWord.Proofs.WordTest
 import Flapjack.Compiler.Backend.DataToWord.Proofs.ThunkBits
 import Flapjack.Compiler.Backend.DataToWord.Proofs.ValueLoc
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Labels
+import Flapjack.Compiler.Backend.DataToWord.Proofs.NoShareInst
+import Flapjack.Compiler.Backend.DataToWord.Proofs.NoInst
+import Flapjack.Compiler.Backend.DataToWord.Proofs.StateRelLocals
+import Flapjack.Compiler.Backend.DataToWord.Proofs.CompilePart
 import Flapjack.Compiler.Backend.DataToWord.Proofs.JumpExc
 import Flapjack.Compiler.Backend.Semantics.NatListBounded
 import Flapjack.Compiler.Backend.Semantics.DataProps.ResourceCall
