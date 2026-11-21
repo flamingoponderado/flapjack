@@ -566,6 +566,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.ConsAllocation
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Values.TimestampSets
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Values.AllValues
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.ConsInvariant
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.RefUpdate
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Heap
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Store
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Abstract
