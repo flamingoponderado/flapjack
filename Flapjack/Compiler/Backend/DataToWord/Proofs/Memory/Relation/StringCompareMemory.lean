@@ -29,10 +29,10 @@ theorem memoryRelStrCmp {width : Nat} [NeZero width]
          (.implode (vals2.map (fun x => BitVec.ofNat 8 x.toNat))) = true ↔
        numCmp cmp r1.toNat r2.toNat = true) := by
   have tailRel := memoryRel_tl c be ts refs sp st m dm (.refPtr bl1 p1,v1) ((.refPtr bl2 p2,v2)::vars) rel
-  obtain ⟨w1, a1, header1, loc1, bit1, hd1, _, _, _, simple1, real1, mem1, dom1, reads1, updates1, bounds1⟩ :=
-    memoryRel_byteArrayImp c be ts refs sp st m dm bl1 fl1 p1 vals1 v1 ((.refPtr bl2 p2,v2)::vars) ⟨rel, found1, good⟩
-  obtain ⟨w2, a2, header2, loc2, bit2, hd2, _, _, _, simple2, real2, mem2, dom2, reads2, updates2, bounds2⟩ :=
-    memoryRel_byteArrayImp c be ts refs sp st m dm bl2 fl2 p2 vals2 v2 vars ⟨tailRel, found2, good⟩
+  obtain ⟨w1, a1, header1, _, loc1, bit1, hd1, _, _, _, simple1, real1, mem1, dom1, reads1, updates1, bounds1⟩ :=
+    memoryRel_byteArrayImp (β := Unit) c be ts refs sp st m dm bl1 fl1 p1 vals1 v1 ((.refPtr bl2 p2,v2)::vars) ⟨rel, found1, good⟩
+  obtain ⟨w2, a2, header2, _, loc2, bit2, hd2, _, _, _, simple2, real2, mem2, dom2, reads2, updates2, bounds2⟩ :=
+    memoryRel_byteArrayImp (β := Unit) c be ts refs sp st m dm bl2 fl2 p2 vals2 v2 vars ⟨tailRel, found2, good⟩
   subst header1
   subst header2
   have shift1 : (makeByteHeader c fl1 vals1.length : BitVec width) >>> (width - c.lenSize - wordShiftAmount width) =

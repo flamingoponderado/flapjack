@@ -23901,6 +23901,59 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "assign_LessConstSmall",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/LessSmallConst.lean",
+  "lean_name": "assignLessConstSmallEquation",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared assign_LessConstSmall_typed and zero HOL hypotheses: the compiler equation retains the configuration, labels, destination, natural immediate, arbitrary argument list and name set; the singleton branch emits the signed comparison and original boolean constants, while other arities emit skip. Words use the shared positive-width BitVec representation."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "assign_LessSmallConst",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/LessSmallConst.lean",
+  "lean_name": "assignLessSmallConst_correct",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared assign_LessSmallConst_typed and its zero HOL hypotheses: the existential natural constant, full state relation, name condition, source cut and argument lookup, termination-depth bound, successful source operation, existential target evaluation and both original result implications are retained. Target finite-map fields and positive-width words use the reviewed representations; the evaluator inherits reals_as_rational_cuts, documented in SOUNDNESS item 8."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "assign_WordTest",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/WordTest.lean",
+  "lean_name": "assignWordTest_correct",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared assign_WordTest_typed and its zero HOL hypotheses: the existential word size and test, full state relation, name condition, source cut and argument lookup, termination-depth bound, successful source operation, existential target evaluation and both original result implications are retained. Target finite-map fields and positive-width words use the reviewed representations; the evaluator inherits reals_as_rational_cuts, documented in SOUNDNESS item 8."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "assign_Build",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/Build.lean",
+  "lean_name": "assignBuild_correct",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared assign_Build_typed and its zero HOL hypotheses: the constructor condition, full state relation, name condition, source cut and argument lookup, termination-depth bound, successful source operation, existential target evaluation and both original result implications are retained. Target finite-map fields and positive-width words use the reviewed representations; the evaluator inherits reals_as_rational_cuts, documented in SOUNDNESS item 8."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "assign_Cons",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/Cons.lean",
+  "lean_name": "assignCons_correct",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": ["fpRegs", "store"],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared assign_Cons_typed and its zero HOL hypotheses: the constructor condition, full state relation, name condition, source cut and argument lookup, termination-depth bound, successful source operation, existential target evaluation and both original result implications are retained. Target finite-map fields and positive-width words use the reviewed representations; the evaluator inherits reals_as_rational_cuts, documented in SOUNDNESS item 8."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
   "hol_name": "assign_ConsExtend",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/ConsExtend.lean",
   "lean_name": "assignConsExtend_correct",
@@ -115438,6 +115491,15 @@
     "reviewer": "Source comparison: IMP_memory_rel_Number and its typed data_to_word_memory_repr capture. The good_dimindex, small_int and full memory_rel premises imply the original relation with the Number and encoded Word prepended. store is the canonical finite-support representation of the HOL finite map; memory, domain, stored words and result use the shared positive HOL width. The word address mask is proved for both widths admitted by good_dimindex."
   },
 {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/BlockNil.lean",
+    "lean_name": "blockNil_and_lemma",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "BlockNil_and_lemma",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Compared BlockNil_and_lemma_typed with zero HOL hypotheses: the original good_dimindex antecedent and complete word equality retain the shared positive machine width and an arbitrary word-valued tag. Both admitted machine widths are kernel checked."
+  },
+{
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/Unit.lean",
     "lean_name": "consThm_empty",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
@@ -115502,6 +115564,18 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "Source comparison: memory_rel_Boolv and its typed data_to_word_memory_repr capture. The original relation and good_dimindex are preserved, as are the two conditional requirements selecting Word 18 for true and Word 2 for false. Lean states the HOL Boolean conditions as equality to true or false. store uses the canonical finite-support map; memory, domain and word locations share the positive HOL word width."
+  },
+{
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/BoundsCheck.lean",
+    "lean_name": "memoryRel_boundsCheck",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "memory_rel_bounds_check",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: memory_rel_bounds_check_typed and its zero HOL hypotheses: the complete numeric memory relation, small_int condition for the natural bound and good_dimindex imply both original equivalences for unsigned strict and non-strict comparison after rotate-right by two. HOL combines these three premises in one conjunction; Lean presents them as successive arguments. The store uses the canonical finite-support map; all words, memory and domain share the positive HOL width."
   },
 {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/Number.lean",
@@ -144784,7 +144858,8 @@
   "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
   "fmap_as_finite_support_relation": ["store"],
   "words_as_type_indexed_bitvec": true,
-  "reviewer": "Compared memory_rel_ByteArray_IMP_typed with HOL source lines 11988-12013: the original memory relation, reference lookup and good_dimindex premises, the three used existentials, header bits, both real addresses, memory and domain facts, universal byte loads and byte updates, and both width-specific header conclusions are retained. The unused existential l has its own independent HOL type and is omitted. The store is the canonical finite-support map and all source words share one positive width. The unused HOL existential witness l is omitted; the typed source confirms it does not occur in the conclusion."
+  "hol_unused_existential_inhabitants": ["β._unused"],
+  "reviewer": "Source comparison with memory_rel_ByteArray_IMP_typed: the original memory relation, reference lookup and good_dimindex premises, all four existentials, header bits, both real addresses, memory and domain facts, universal byte loads and byte updates, and both width-specific header conclusions are retained. hol_unused_existential_inhabitants records the independent inhabited HOL type β of the unused witness. The store is the canonical finite-support map and all source words share one positive width."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",

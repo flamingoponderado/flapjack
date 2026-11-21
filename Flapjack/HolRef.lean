@@ -881,7 +881,9 @@ private def parseHolRefAttribute (stx : Syntax) : CoreM HolRef := do
         name == "memory_rel_Cons_alt" && ref.fmapAsFiniteSupportRelation == #[("", "st")]
       let makePtr := path == "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml" &&
         name == "Make_ptr_bits_thm" && ref.fmapAsFiniteSupport == #["fpRegs", "store"]
-      unless (consAlt || makePtr) && line?.isNone && qualifiers.size == 3 &&
+      let byteArray := path == "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" &&
+        name == "memory_rel_ByteArray_IMP" && ref.fmapAsFiniteSupportRelation == #[("", "store")]
+      unless (consAlt || makePtr || byteArray) && line?.isNone && qualifiers.size == 3 &&
           holUnusedExistentialInhabitants == #["β._unused"] && ref.wordsAsTypeIndexedBitvec do
         throwError "@[hol]: unused witness qualifier requires a reviewed reference and its exact qualifiers"
     pure { ref with holExistentialInhabitants, gcLemmaExistentialInhabitants, newRefExistentialInhabitants, writeWord64ExistentialInhabitants, holUnusedExistentialInhabitants }
@@ -1364,11 +1366,15 @@ initialize holRefAttribute : ParametricAttribute HolRef ← do
       let consAltRef := ref.path == memoryPath && ref.name == "memory_rel_Cons_alt"
       let makePtrTarget := `Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.makePtrBits_correct
       let makePtrRef := ref.path == word64Path && ref.name == "Make_ptr_bits_thm"
+      let byteArrayTarget := `Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.memoryRel_byteArrayImp
+      let byteArrayRef := ref.path == memoryPath && ref.name == "memory_rel_ByteArray_IMP"
       if (decl == consAltTarget && !consAltRef) || (decl == makePtrTarget && !makePtrRef) ||
-          ((consAltRef || makePtrRef) && ref.holUnusedExistentialInhabitants != #["β._unused"]) then
+          (decl == byteArrayTarget && !byteArrayRef) ||
+          ((consAltRef || makePtrRef || byteArrayRef) && ref.holUnusedExistentialInhabitants != #["β._unused"]) then
         logError m!"{decl}: theorem requires its exact HOL reference and unused-witness qualifier"
       if !ref.holUnusedExistentialInhabitants.isEmpty then
-        unless (decl == consAltTarget && consAltRef) || (decl == makePtrTarget && makePtrRef) do
+        unless (decl == consAltTarget && consAltRef) || (decl == makePtrTarget && makePtrRef) ||
+            (decl == byteArrayTarget && byteArrayRef) do
           logError m!"{decl}: unused-witness qualifier has the wrong declaration"
         match (← getEnv).find? decl with
         | some info =>
@@ -1609,6 +1615,21 @@ run_cmd do
   let makePtrRef ← Lean.Elab.Command.liftCoreM (parseHolRefAttribute makePtrSyntax)
   unless makePtrRef.holUnusedExistentialInhabitants == #["β._unused"] do
     throwError "@[hol] pointer-code existential inhabitance syntax regression"
+  let byteArraySyntax ← `(attr| hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "memory_rel_ByteArray_IMP"
+    (fmap_as_finite_support_relation := [store]) (words_as_type_indexed_bitvec)
+    (hol_unused_existential_inhabitants := [β._unused]))
+  let byteArrayRef ← Lean.Elab.Command.liftCoreM (parseHolRefAttribute byteArraySyntax)
+  unless byteArrayRef.holUnusedExistentialInhabitants == #["β._unused"] do
+    throwError "@[hol] byte-array existential inhabitance syntax regression"
+  let badByteArraySyntax ← `(attr| hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "memory_rel_ByteArray_IMP"
+    (fmap_as_finite_support_relation := [store]) (words_as_type_indexed_bitvec)
+    (hol_unused_existential_inhabitants := [β.other]))
+  let badByteArrayRejected ← Lean.Elab.Command.liftCoreM do
+    try
+      let _ ← parseHolRefAttribute badByteArraySyntax
+      pure false
+    catch _ => pure true
+  unless badByteArrayRejected do throwError "@[hol] accepted altered byte-array witness"
 
 run_cmd do
   let gcSyntax ← `(attr| hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "state_rel_gc_gen"

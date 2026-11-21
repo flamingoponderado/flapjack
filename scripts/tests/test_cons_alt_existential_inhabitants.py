@@ -41,6 +41,31 @@ class ConsAltExistentialInhabitantsTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             EXPORT["check_records"]([manifest], [exported])
 
+    def test_byte_array_header_rejects_witness_and_statement_changes(self):
+        source = (ROOT / "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/ByteArrayImp.lean").read_text()
+        check = REFS["byte_array_existential_header_errors"]
+        self.assertEqual(check(source), [])
+        self.assertTrue(check(source.replace("[Nonempty β]", "[Nonempty β] (extra : False)")))
+        self.assertTrue(check(source.replace("(_unused : β)", "(_unused : Unit)")))
+        self.assertTrue(check(source.replace("i < bytes.length", "i ≤ bytes.length")))
+        self.assertTrue(check(source.replace("namespace Flapjack", "variable (extra : False)\nnamespace Flapjack", 1)))
+
+    def test_byte_array_manifest_requires_exact_site(self):
+        hol = "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml"
+        lean = "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/ByteArrayImp.lean"
+        tag = (hol, "memory_rel_ByteArray_IMP", (), (), (), (), False, (("store", ""),), (), True, (), (),
+               None, (), (), False, False, (), (), (), (), (), (), (), (), (), (), (), (), (), (), ("β._unused",))
+        record = {"hol_path": hol, "hol_name": "memory_rel_ByteArray_IMP", "lean_path": lean,
+                  "lean_name": "memoryRel_byteArrayImp",
+                  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+                  "fmap_as_finite_support_relation": ["store"], "words_as_type_indexed_bitvec": True,
+                  "hol_unused_existential_inhabitants": ["β._unused"],
+                  "reviewer": "Source comparison of hol_unused_existential_inhabitants and words."}
+        tagged = {(lean, "memoryRel_byteArrayImp"): tag}
+        self.assertEqual(MAP["validate_inventory"]([record], set(), tagged, set()), [])
+        record["lean_name"] = "wrongSite"
+        self.assertTrue(MAP["validate_inventory"]([record], set(), tagged, set()))
+
     def test_pointer_header_rejects_extra_premises_and_changed_conclusions(self):
         source = (ROOT / "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/MakePtrBits.lean").read_text()
         check = REFS["make_ptr_existential_header_errors"]
