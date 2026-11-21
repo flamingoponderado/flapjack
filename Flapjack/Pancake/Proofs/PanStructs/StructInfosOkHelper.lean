@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Pancake.Proofs.PanStructs
 public import Flapjack.Misc.ListEl
+public import Flapjack.Pancake.Semantics.LoopProps.NestedSeqSyntaxExact
 
 @[expose] public section
 
@@ -38,6 +39,23 @@ private theorem isWfShapesExactHOL_mem {α : Type} (context : List (MlS × α)) 
     · exact hall.1
     · exact ih hall.2 sh hmem
 
+/-- Bridge from the reviewed HOL `ALOOKUP` rendering `holAlookup` to the
+`BEq`-based `List.lookup` used by the `afindi` list lemmas in this counterpart
+module. Flapjack list infrastructure; no separate HOL declaration. -/
+private theorem holAlookup_eq_lookup {α β : Type} [DecidableEq α] [BEq α]
+    [LawfulBEq α] (entries : List (α × β)) (key : α) :
+    holAlookup entries key = List.lookup key entries := by
+  induction entries with
+  | nil => rfl
+  | cons entry entries ih =>
+    obtain ⟨first, second⟩ := entry
+    rw [holAlookup, List.lookup_cons]
+    by_cases h : first = key
+    · subst h
+      simp
+    · have hb : (key == first) = false := beq_eq_false_iff_ne.mpr (fun he => h he.symm)
+      simp [h, hb, ih]
+
 /-- Exact port of HOL `wf_shape_struct_infos_ok_helper[local]`
 (`pan_structsProofScript.sml:441-470`). The typed capture
 `wf_shape_struct_infos_ok_helper_typed`
@@ -48,13 +66,15 @@ private theorem isWfShapesExactHOL_mem {α : Type} (context : List (MlS × α)) 
      ∀sh. MEM sh (MAP SND info.fields) ⇒
        is_wf_shape (DROP (i + n + 1) ctxt) sh`,
 with the two conjuncts as ONE premise and the binder order `n ctxt nm info`.
-`ALOOKUP` is `List.lookup`, `struct_infos_ok` is `structInfosOkHOLExact`,
-`LENGTH` is `.length`, `EL` is the reviewed total `holEl` and `is_wf_shape` is
-`isWfShapeExactHOL`. -/
+`ALOOKUP` is the reviewed `holAlookup` (bridged to the `BEq`-based
+`List.lookup` only inside the proof, because the `afindi` list lemmas of this
+counterpart are stated over `List.lookup`), `struct_infos_ok` is
+`structInfosOkHOLExact`, `LENGTH` is `.length`, `EL` is the reviewed total
+`holEl` and `is_wf_shape` is `isWfShapeExactHOL`. -/
 @[hol "cakeml/pancake/proofs/pan_structsProofScript.sml" "wf_shape_struct_infos_ok_helper"]
 theorem wfShapeStructInfosOkHelper (n : Nat) (ctxt : StructContextExact) (nm : MlS)
     (info : StructInfoHOLExact)
-    (h : List.lookup nm (ctxt.drop n) = some info ∧ structInfosOkHOLExact ctxt) :
+    (h : holAlookup (ctxt.drop n) nm = some info ∧ structInfosOkHOLExact ctxt) :
     ∃ i : Nat,
       afindi nm (ctxt.drop n) = some i ∧
       i + n < ctxt.length ∧
@@ -62,7 +82,10 @@ theorem wfShapeStructInfosOkHelper (n : Nat) (ctxt : StructContextExact) (nm : M
       afindi nm ctxt = some (i + n) ∧
       ∀ sh, sh ∈ info.fields.map Prod.snd →
         isWfShapeExactHOL (ctxt.drop (i + n + 1)) sh = true := by
-  obtain ⟨hlookup, hok⟩ := h
+  obtain ⟨hlookupHol, hok⟩ := h
+  have hlookup : List.lookup nm (ctxt.drop n) = some info := by
+    rw [← holAlookup_eq_lookup]
+    exact hlookupHol
   rw [structInfosOkHOLExact] at hok
   rcases hok with ⟨hfields, hkeys, hshapes, hsizes⟩
   have hafindiExists : ∃ i : Nat, afindi nm (ctxt.drop n) = some i ∧
