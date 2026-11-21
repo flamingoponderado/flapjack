@@ -1,0 +1,18 @@
+state_rel_with_locals_sfs_typed=(state_rel (c :data_to_word$config) (l1 :num) (l2 :num) ((x :(α, β) dataSem$state) with <|locals := (l :v sptree$num_map); safe_for_space := (m :bool)|>) (r :(γ, α, β) wordSem$state) (t :(v # γ word_loc) list option) (locs :(num # num) list) :bool) ⇔ (state_rel c l1 l2 (x with locals := l) r t locs :bool)
+extract_labels_MemEqList_typed=∀(a :α word) (x :α word list). extract_labels (MemEqList a x) = ([] :(num # num) list)
+extract_labels_StoreEach_typed=∀(xs :num list) (a :num) (d :α word). extract_labels (StoreEach a xs d) = ([] :(num # num) list)
+extract_labels_StoreAnyConsts_typed=∀(r1 :num) (r2 :num) (r3 :num) (ws :(bool # α word_loc) list) (w :bool # α word_loc). extract_labels (StoreAnyConsts r1 r2 r3 ws w) = ([] :(num # num) list)
+extract_labels_WordOp64_on_32_typed=extract_labels (WordOp64_on_32 (f :opw) :α prog) = ([] :(num # num) list)
+extract_labels_WordShift64_on_32_typed=extract_labels (WordShift64_on_32 (f :ast$shift) (g :num) :α prog) = ([] :(num # num) list)
+labels_rel_emp_typed=labels_rel ([] :α list) (ls :α list) ⇒ ls = ([] :α list)
+list_Seq_no_share_inst_typed=∀(xs :α prog list). no_share_inst (list_Seq xs) ⇔ EVERY (no_share_inst :α prog -> bool) xs
+StoreEach_no_share_inst_typed=∀(v :num) (xs :num list) (offset :α word). no_share_inst (StoreEach v xs offset)
+MemEqList_no_share_inst_typed=∀(a :α word) (xs :α word list). no_share_inst (MemEqList a xs)
+StoreAnyConsts_no_share_inst_typed=∀(r1 :num) (r2 :num) (r3 :num) (vs :(bool # α word_loc) list) (v :bool # α word_loc). no_share_inst (StoreAnyConsts r1 r2 r3 vs v)
+MAP_FST_ZIP_typed=∀(xs :α list) (ys :β list). MAP (FST :α # β -> α) (ZIP (xs,ys)) = TAKE (LENGTH ys) xs
+StoreEach_no_inst_typed=∀(a :num) (ls :num list) (off :α word). every_inst (inst_ok_less (ac :α asm_config)) (StoreEach a ls off)
+MemEqList_no_inst_typed=∀(a :α word) (x :α word list). every_inst (inst_ok_less (ac :α asm_config)) (MemEqList a x)
+StoreAnyConsts_no_inst_typed=∀(r1 :num) (r2 :num) (r3 :num) (ws :(bool # α word_loc) list) (w :bool # α word_loc). every_inst (inst_ok_less (ac :α asm_config)) (StoreAnyConsts r1 r2 r3 ws w)
+bounds_lem_typed=(dimindex (:α) = (32 :num) ∨ dimindex (:α) = (64 :num)) ∧ ((w :α word) = -(3w :α word) ∨ w = -(2w :α word) ∨ w = -(1w :α word) ∨ w = (0w :α word) ∨ w = (1w :α word) ∨ w = (2w :α word) ∨ w = (3w :α word) ∨ w = (4w :α word) ∨ w = (5w :α word) ∨ w = (6w :α word) ∨ w = (7w :α word)) ⇒ -(8w :α word) ≤ w ∧ w ≤ (8w :α word)
+max_heap_limit_has_fp_ops_typed=max_heap_limit (:α) ((conf :data_to_word$config) with has_fp_ops := (b :bool)) = max_heap_limit (:α) conf
+FST_compile_part_typed=FST (compile_part (a :data_to_word$config) (b :num # num # dataLang$prog) :num # num # α prog) = FST b

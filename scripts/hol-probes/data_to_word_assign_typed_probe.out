@@ -82,3 +82,34 @@ assign_BoundsCheckByte_equation_typed=(assign (c :data_to_word$config) (secn :nu
 assign_BoundsCheckByte_hypotheses=0
 assign_BoundsCheckByte_typed=(∃(leq :bool). (op :closLang$op) = MemOp (BoundsCheckByte leq)) ⇒ (state_rel (c :data_to_word$config) (l1 :num) (l2 :num) (s :(γ, 'ffi) dataSem$state) (t :(α, γ, 'ffi) wordSem$state) (NONE :(v # α word_loc) list option) (locs :(num # num) list) :bool) ∧ (op_requires_names op ⇎ (names_opt :sptree$num_set option) = (NONE :sptree$num_set option)) ∧ cut_state_opt names_opt s = SOME (x :(γ, 'ffi) dataSem$state) ∧ (get_vars (args :num list) s.locals :v list option) = SOME (vals :v list) ∧ t.termdep > (1 :num) ∧ (do_app op vals x :(v # (γ, 'ffi) dataSem$state, v) semanticPrimitives$result) = (Rval ((v :v),(s2 :(γ, 'ffi) dataSem$state)) :(v # (γ, 'ffi) dataSem$state, v) semanticPrimitives$result) ⇒ ∃(q :α result option) (r :(α, γ, 'ffi) wordSem$state). (evaluate (FST (assign c (n :num) (l :num) (dest :num) op args names_opt :α wordLang$prog # num),t) :α result option # (α, γ, 'ffi) wordSem$state) = (q,r) ∧ (q = SOME (NotEnoughSpace :α result) ⇒ r.ffi = t.ffi ∧ option_le r.stack_max s2.stack_max ∧ (c.gc_kind ≠ None ⇒ ¬s2.safe_for_space)) ∧ (q ≠ SOME (NotEnoughSpace :α result) ⇒ (state_rel c l1 l2 (set_var dest v s2) r (NONE :(v # α word_loc) list option) locs :bool) ∧ q = (NONE :α result option))
 parts_to_words_NONE_typed=∀(parts :const_part list) (off :α word) (m :(bool # α word_loc) sptree$num_map) (aa :num) (t :(α, γ, 'ffi) wordSem$state) (s :(γ, 'ffi) dataSem$state). parts_to_words (c :data_to_word$config) m aa parts off = (NONE :((bool # α word_loc) # (bool # α word_loc) list) option) ∧ good_dimindex (:α) ∧ heap_in_memory_store (heap :(α word_loc, tag # α word_loc list) heap_element list) (a :num) (sp :num) (sp1 :num) (gens :gen_state) c t.store t.memory t.mdomain (limit :num) ⇒ limits_inv s.limits (FLOOKUP t.store HeapLength) t.stack_limit c.len_size c.has_fp_ops c.has_fp_tern ⇒ EXISTS ($¬ ∘ lim_safe_part s.limits) parts
+get_vars_SING_typed=(get_vars (args :num list) (s :α sptree$num_map) :α list option) = SOME [(w :α)] ⇒ ∃(y :num). args = [y]
+push_if_typed=(∀(f :α -> β) (x :α) (y :α) (b :bool). (if b then f x else f y) = f (if b then x else y)) ∧ ∀(f :γ -> δ) (h :γ -> δ) (x :γ) (b :bool). (if b then f x else h x) = ((if b then f else h) x :δ)
+split_if_typed=(if (b :bool) then (f :β -> α) (x :β) else (h :β -> α) (y :β)) = ((if b then f else h) (if b then x else y) :α)
+cut_env_IMP_domain_typed=cut_names (x :β sptree$num_map) (y :α sptree$num_map) = SOME (t :α sptree$num_map) ⇒ (domain t :num -> bool) = (domain x :num -> bool)
+domain_list_insert_thm_typed=∀(l :num list) (names :sptree$num_set). (domain (list_insert l names) :num -> bool) = set l ∪ (domain names :num -> bool)
+word_less_lemma1_typed=(v2 :α word) < (v1 :α word) ⇔ ¬(v1 ≤ v2)
+get_vars_2_imp_typed=(get_vars [(x1 :num); (x2 :num)] (s :(α, β, γ) wordSem$state) :α word_loc list option) = SOME [(y1 :α word_loc); (y2 :α word_loc)] ⇒ (get_var x1 s :α word_loc option) = SOME y1 ∧ (get_var x2 s :α word_loc option) = SOME y2
+get_vars_1_imp_typed=(get_vars [(x1 :num)] (s :(α, β, γ) wordSem$state) :α word_loc list option) = SOME [(y1 :α word_loc)] ⇒ (get_var x1 s :α word_loc option) = SOME y1
+LESS_DIV_16_IMP_typed=(n :num) < (k :num) DIV (16 :num) ⇒ (16 :num) * n + (2 :num) < k
+encode_header_IMP_BIT0_typed=(encode_header (c :data_to_word$config) (tag :num) (l :num) :α word option) = SOME (w :α word) ⇒ ((w ' (0 :num)) :bool)
+lookup_IMP_insert_EQ_typed=∀(t :α sptree$num_map) (x :num) (y :α). (lookup x t :α option) = SOME y ⇒ (insert x y t :α sptree$num_map) = t
+set_vars_sing_typed=set_vars [(n :num)] [(w :α word_loc)] (t :(α, β, γ) wordSem$state) = set_var n w t
+NONNEG_INT_typed=(0 :int) ≤ (i :int) ⇒ ∃(j :num). i = ((&j) :int)
+BIT_X_1_typed=BIT (i :num) (1 :num) ⇔ i = (0 :num)
+minus_2_word_and_id_typed=¬(((w :α word) ' (0 :num)) :bool) ⇒ -(2w :α word) && w = w
+FOUR_MUL_LSL_typed=(n2w ((4 :num) * (i :num)) :α word) ≪ (k :num) = (n2w i :α word) ≪ (k + (2 :num))
+EXISTS_NOT_IN_spt_DOMAIN_typed=∃(x :num). x ∉ (domain (refs :α sptree$num_map) :num -> bool)
+LEAST_NOTIN_spt_DOMAIN_typed=∀(refs :α sptree$num_map). (LEAST(x :num). x ∉ (domain refs :num -> bool)) ∉ (domain refs :num -> bool)
+option_le_add_indv_typed=option_le (OPTION_MAP2 $+ (n :num option) (m :num option)) (r :num option) ⇒ option_le n r ∧ option_le m r
+option_le_add_drop_right_typed=option_le (x :num option) (y :num option) ⇒ option_le x (OPTION_MAP2 $+ (z :num option) y)
+byte_aligned_bytes_in_word_typed=good_dimindex (:α) ⇒ byte_aligned ((w :α word) * (bytes_in_word :α word)) ∧ byte_aligned ((bytes_in_word :α word) * w)
+is_env_def_typed=∀(st :stack). is_env st ⇔ ∃(n :num option) (vs :v sptree$num_map). st = (Env n vs :stack)
+ADD4DIV4_typed=((i :num) + (4 :num)) DIV (4 :num) = i DIV (4 :num) + (1 :num)
+ADD8DIV8_typed=((i :num) + (8 :num)) DIV (8 :num) = i DIV (8 :num) + (1 :num)
+EXP_LEMMA1_typed=(4 :num) * (n :num) * (2 :num) ** (k :num) = n * (2 :num) ** (k + (2 :num))
+Num_ABS_AND_typed=Num (ABS ((&(n :num)) :int)) = n ∧ Num (ABS (-((&n) :int))) = n
+word_bit_test_0_typed=(1w :α word) && (w :α word) = (0w :α word) ⇔ ¬word_bit (0 :num) w
+MAP_Number_11_w2n_word8_typed=∀(ns :word8 list) (ns' :word8 list). MAP (Number ∘ $& ∘ (w2n :word8 -> num)) ns = MAP (Number ∘ $& ∘ (w2n :word8 -> num)) ns' ⇔ ns = ns'
+MAP_Word64_11_typed=∀(ns :word64 list) (ns' :word64 list). MAP Word64 ns = MAP Word64 ns' ⇔ ns = ns'
+v_to_list_EQ_SOME_NIL_typed=v_to_list (hv1 :v) = SOME ([] :v list) ⇔ ∃(ts :num). hv1 = (Block ts (0 :num) ([] :v list) :v)
+LENGTH_EQ_4_typed=(LENGTH (xs :α list) = (4 :num) ⇔ ∃(a1 :α) (a2 :α) (a3 :α) (a4 :α). xs = [a1; a2; a3; a4]) ∧ ((4 :num) = LENGTH xs ⇔ ∃(a1 :α) (a2 :α) (a3 :α) (a4 :α). xs = [a1; a2; a3; a4])

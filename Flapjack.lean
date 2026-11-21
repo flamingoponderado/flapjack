@@ -318,6 +318,11 @@ import Flapjack.Compiler.Backend.BackendProof.OracleGlobals
 import Flapjack.Compiler.Backend.BackendProof.FullMakeInitSemantics2
 import Flapjack.Compiler.Backend.BackendProof.BvlToBviSemantics2
 import Flapjack.Compiler.Backend.BackendProof.StateOracle
+import Flapjack.Compiler.Backend.BackendProof.EvalOracle
+import Flapjack.Compiler.Backend.BackendProof.SafeForSpace
+import Flapjack.Compiler.Backend.BackendProof.WordConf
+import Flapjack.Compiler.Backend.BackendProof.CakeOracEqs
+import Flapjack.Compiler.Backend.Backend.ToTarget
 import Flapjack.Compiler.Backend.DataToWord.Proofs.OptionLe
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Limits
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Mask
@@ -449,6 +454,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.Less
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.UnusedWrite
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.StoreUnused
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.GetVars
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.BasicLemmas
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.Separation
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.MemCopy.Element
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.MemCopy.Loop
@@ -553,6 +559,11 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.JoinEnv
 import Flapjack.Compiler.Backend.DataToWord.Proofs.WordTest
 import Flapjack.Compiler.Backend.DataToWord.Proofs.ThunkBits
 import Flapjack.Compiler.Backend.DataToWord.Proofs.ValueLoc
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Labels
+import Flapjack.Compiler.Backend.DataToWord.Proofs.NoShareInst
+import Flapjack.Compiler.Backend.DataToWord.Proofs.NoInst
+import Flapjack.Compiler.Backend.DataToWord.Proofs.StateRelLocals
+import Flapjack.Compiler.Backend.DataToWord.Proofs.CompilePart
 import Flapjack.Compiler.Backend.DataToWord.Proofs.JumpExc
 import Flapjack.Compiler.Backend.Semantics.NatListBounded
 import Flapjack.Compiler.Backend.Semantics.DataProps.ResourceCall
@@ -594,6 +605,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.MutBlockInsert
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.CellUpdate
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.ByteUpdateInv
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.WordArith
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.RefArrayLemmas
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Heap
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Store
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Abstract
@@ -896,6 +908,13 @@ import Flapjack.Compiler.Backend.WordBignum.Proofs.EvaluateLemmas
 import Flapjack.Compiler.Backend.WordBignum.Proofs.HeapLemmas
 import Flapjack.Compiler.Backend.WordBignum.Proofs.MultiwordLemmas
 import Flapjack.Compiler.Backend.WordBignum.Proofs.FiniteMapLemmas
+import Flapjack.Compiler.Backend.WordBignum.Proofs.WordSemClauses
+import Flapjack.Compiler.Backend.WordBignum.Proofs.CallFrame
+import Flapjack.Compiler.Backend.WordBignum.Proofs.CompileLemmas
+import Flapjack.Compiler.Backend.WordBignum.Proofs.CompileCode
+import Flapjack.Compiler.Backend.WordBignum.Proofs.CompileThmSupport
+import Flapjack.Compiler.Backend.WordBignum.Proofs.CompileThmCases
+import Flapjack.Compiler.Backend.WordBignum.Proofs.CompileThm
 import Flapjack.Compiler.Backend.WordBignum.Generate
 import Flapjack.Compiler.Backend.ClosLang.Syntax
 import Flapjack.Compiler.Backend.ClosLang.GeneratedSize

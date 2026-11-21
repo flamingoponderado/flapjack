@@ -50,7 +50,10 @@ of `write_bytes_APPEND`, `write_bytes_same`, `w2n_add_byte_align_lemma`,
 Regenerate it with `HOL_PROBE_ONLY=data_to_word_memory_proof_typed_probeScript.sml
 scripts/hol-probes/regenerate.sh` using the pinned source revisions.
 
-`data_to_word_assign_typed_probe.out` also captures
+`data_to_word_assign_typed_probe.out` also captures the remaining small
+lemmas of the script (`get_vars_SING` through `LENGTH_EQ_4`; exported ones from
+the theory DB, `[local]` ones parsed from the source, `ADD4DIV4`/`ADD8DIV8`
+rebuilt by their source rule from `ADD_DIV_ADD_DIV`), and
 `IMP_read_bytearray_GENLIST`, including its arbitrary element type and its
 independent address-word dimension, and the typed statement and hypothesis
 counts of `state_rel_get_var_Number_IMP_alt`, `state_rel_IMP_tstamps`, `INT_EQ_NUM_LEMMA`, `evaluate_Maxout_bits_code`, `Make_ptr_bits_thm`, `assign_ConsExtend`, `assign_Cons`, `assign_Build`, `assign_WordTest`,
@@ -11159,3 +11162,13 @@ the statement shape only), `word_to_wordProofScript.sml` (the derived `[local]`
 (`FMAP_REL_def`). Regenerate each with `CAKEML=<cakeml tree>
 HOL_PROBE_ONLY=<probe>Script.sml scripts/hol-probes/regenerate.sh`; none replays a
 HOL proof.
+
+`data_to_word_proof_lab_typed_probe.out` records the typed statements of the
+data_to_wordProof label, `no_share_inst`, `every_inst (inst_ok_less ac)` and
+small configuration lemmas (`state_rel_with_locals_sfs`, the `extract_labels_*`
+lemmas, `labels_rel_emp`, the `*_no_share_inst` and `*_no_inst` lemmas,
+`MAP_FST_ZIP`, `bounds_lem`, `max_heap_limit_has_fp_ops`, `FST_compile_part`).
+Exported theorems come from the theory DB; `[local]` ones are parsed from the
+pinned source text in the loaded theory context. Regenerate with
+`CAKEML=<cakeml tree> HOL_PROBE_ONLY=data_to_word_proof_lab_typed_probeScript.sml
+scripts/hol-probes/regenerate.sh`; no HOL proof is replayed.
