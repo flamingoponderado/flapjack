@@ -29,6 +29,16 @@ class TotalFunctionInhabitantsCheckerTest(unittest.TestCase):
             names,
         )
 
+    def test_choice_and_set_to_list_are_reviewed_renderings(self):
+        rest = ("noncomputable def holRest {α : Type} [Nonempty α] (s : Set α) : Set α := "
+                "s \\ {holChoice s}")
+        self.assertEqual(self.errors(rest, rest, ("α",)), [])
+        mem = ("theorem mem {α : Type} [Nonempty α] : ∀ s : Set α, s.Finite → "
+               "∀ x, x ∈ holSetToList s ↔ x ∈ s := mem_holSetToList")
+        self.assertEqual(self.errors(mem, mem, ("α",)), [])
+        unlisted = ("theorem r {α : Type} [Nonempty α] (s : Set α) : holRest s ⊆ s := sub")
+        self.assertTrue(self.errors(unlisted, unlisted, ("α",)))
+
     def test_unqualified_instances_are_rejected(self):
         check = REFS["unqualified_inhabitants_errors"]
         self.assertTrue(check("theorem t {α : Type} [Nonempty α] : True := by trivial", False))

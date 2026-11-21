@@ -549,3 +549,43 @@ val _ = print ("assign_BoundsCheckByte_hypotheses=" ^
   Int.toString (length (hyp assign_BoundsCheckByte)) ^ "\n");
 val _ = emit_exported "assign_BoundsCheckByte_typed" "assign_BoundsCheckByte";
 val _ = capture "parts_to_words_NONE_typed" "parts_to_words_NONE";
+(* Sweep batch A: remaining small lemmas of data_to_word_assignProof. Exported
+   theorems from the theory DB, [local] ones parsed from the pinned source;
+   ADD4DIV4/ADD8DIV8 rebuilt by the source's rule from ADD_DIV_ADD_DIV. *)
+fun cap label name =
+  case DB.lookup {Thy="data_to_word_assignProof",Name=name} of
+    SOME (th,_) => emit label th
+  | NONE => capture label name;
+val _ = cap "get_vars_SING_typed" "get_vars_SING";
+val _ = cap "push_if_typed" "push_if";
+val _ = cap "split_if_typed" "split_if";
+val _ = cap "cut_env_IMP_domain_typed" "cut_env_IMP_domain";
+val _ = cap "domain_list_insert_thm_typed" "domain_list_insert_thm";
+val _ = cap "word_less_lemma1_typed" "word_less_lemma1";
+val _ = cap "get_vars_2_imp_typed" "get_vars_2_imp";
+val _ = cap "get_vars_1_imp_typed" "get_vars_1_imp";
+val _ = cap "LESS_DIV_16_IMP_typed" "LESS_DIV_16_IMP";
+val _ = cap "encode_header_IMP_BIT0_typed" "encode_header_IMP_BIT0";
+val _ = cap "lookup_IMP_insert_EQ_typed" "lookup_IMP_insert_EQ";
+val _ = cap "set_vars_sing_typed" "set_vars_sing";
+val _ = cap "NONNEG_INT_typed" "NONNEG_INT";
+val _ = cap "BIT_X_1_typed" "BIT_X_1";
+val _ = cap "minus_2_word_and_id_typed" "minus_2_word_and_id";
+val _ = cap "FOUR_MUL_LSL_typed" "FOUR_MUL_LSL";
+val _ = cap "EXISTS_NOT_IN_spt_DOMAIN_typed" "EXISTS_NOT_IN_spt_DOMAIN";
+val _ = cap "LEAST_NOTIN_spt_DOMAIN_typed" "LEAST_NOTIN_spt_DOMAIN";
+val _ = cap "option_le_add_indv_typed" "option_le_add_indv";
+val _ = cap "option_le_add_drop_right_typed" "option_le_add_drop_right";
+val _ = cap "byte_aligned_bytes_in_word_typed" "byte_aligned_bytes_in_word";
+val _ = cap "is_env_def_typed" "is_env_def";
+val _ = emit "ADD4DIV4_typed" (arithmeticTheory.ADD_DIV_ADD_DIV |> Q.SPEC `4` |> SIMP_RULE std_ss []
+  |> Q.SPEC `1` |> SIMP_RULE std_ss[] |> Q.SPEC `i` |> PURE_ONCE_REWRITE_RULE [ADD_SYM]);
+val _ = emit "ADD8DIV8_typed" (arithmeticTheory.ADD_DIV_ADD_DIV |> Q.SPEC `8` |> SIMP_RULE std_ss []
+  |> Q.SPEC `1` |> SIMP_RULE std_ss[] |> Q.SPEC `i` |> PURE_ONCE_REWRITE_RULE [ADD_SYM]);
+val _ = cap "EXP_LEMMA1_typed" "EXP_LEMMA1";
+val _ = cap "Num_ABS_AND_typed" "Num_ABS_AND";
+val _ = cap "word_bit_test_0_typed" "word_bit_test_0";
+val _ = cap "MAP_Number_11_w2n_word8_typed" "MAP_Number_11_w2n_word8";
+val _ = cap "MAP_Word64_11_typed" "MAP_Word64_11";
+val _ = cap "v_to_list_EQ_SOME_NIL_typed" "v_to_list_EQ_SOME_NIL";
+val _ = cap "LENGTH_EQ_4_typed" "LENGTH_EQ_4";

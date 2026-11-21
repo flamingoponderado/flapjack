@@ -3,6 +3,7 @@ module
 public import Flapjack.Misc.Multiword.Mc.Iop
 public import Flapjack.Misc.Multiword.DivMod
 public import Flapjack.Misc.Multiword.DivLemmas
+public import Mathlib.Data.Nat.Bitwise
 
 @[expose] public section
 
@@ -100,5 +101,53 @@ def mcDivMax {width : Nat} [NeZero width] (xs ys zs : List (BitVec width)) : Nat
 noncomputable def mwiDivmodAlt {width : Nat} [NeZero width] {w2 : Nat} [NeZero w2]
     (w : BitVec w2) (s_xs t_ys : Bool × List (BitVec width)) : Bool × List (BitVec width) :=
   if w = 0 then mwiDiv s_xs t_ys else mwiMod s_xs t_ys
+
+/-- The top bit is set exactly when doubling and halving loses it. -/
+@[hol "HOL/examples/machine-code/multiword/mc_multiwordScript.sml" "word_msb_double_lsr_1"
+  (words_as_type_indexed_bitvec)]
+theorem word_msb_double_lsr_1 {width : Nat} [NeZero width] {w : BitVec width} :
+    w.msb = true ↔ w ≠ (w + w) >>> 1 := by
+  have pos := Nat.pos_of_ne_zero (NeZero.ne width)
+  have hw : 2 ^ width = 2 * 2 ^ (width - 1) := by
+    rw [← Nat.pow_succ']; congr 1; omega
+  have hlt := w.isLt
+  have key : ((w + w) >>> 1).toNat =
+      if w.toNat < 2 ^ (width - 1) then w.toNat else w.toNat - 2 ^ (width - 1) := by
+    rw [BitVec.toNat_ushiftRight, BitVec.toNat_add, Nat.shiftRight_eq_div_pow, pow_one]
+    split
+    · rw [Nat.mod_eq_of_lt (by omega)]; omega
+    · rw [Nat.mod_eq_sub_mod (by omega), Nat.mod_eq_of_lt (by omega)]; omega
+  rw [BitVec.msb_eq_decide, decide_eq_true_iff, Ne, ← BitVec.toNat_inj, key]
+  constructor
+  · intro h; split <;> omega
+  · intro h; split at h <;> omega
+
+/-- Setting a clear low bit by exclusive or adds one. -/
+@[hol "HOL/examples/machine-code/multiword/mc_multiwordScript.sml" "xor_one_add_one"
+  (words_as_type_indexed_bitvec)]
+theorem xor_one_add_one {width : Nat} [NeZero width] {w : BitVec width} :
+    ¬ w.getLsbD 0 = true → w ^^^ 1 = w + 1 := by
+  intro h
+  have h1 : (1 : Nat) < 2 ^ width := Nat.one_lt_two_pow (NeZero.ne width)
+  have ev : w.toNat % 2 = 0 := by
+    rw [BitVec.getLsbD, Nat.testBit_zero] at h
+    simp at h; omega
+  have dvd : 2 ∣ 2 ^ width := dvd_pow_self 2 (NeZero.ne width)
+  have hlt := w.isLt
+  have small : w.toNat + 1 < 2 ^ width := by
+    obtain ⟨k, hk⟩ := dvd; omega
+  apply BitVec.eq_of_toNat_eq
+  rw [BitVec.toNat_xor, BitVec.toNat_add]
+  have one : (1 : BitVec width).toNat = 1 := by simp [Nat.mod_eq_of_lt h1]
+  rw [one, Nat.xor_one_of_even (Nat.even_iff.mpr ev), Nat.mod_eq_of_lt small]
+
+/-- Adding one to a word with a clear low bit is undone by exclusive or. -/
+@[hol "HOL/examples/machine-code/multiword/mc_multiwordScript.sml" "add_one_xor_one"
+  (words_as_type_indexed_bitvec)]
+theorem add_one_xor_one {width : Nat} [NeZero width] {w : BitVec width} :
+    ¬ w.getLsbD 0 = true → (w + 1) ^^^ 1 = w := by
+  intro h
+  rw [← xor_one_add_one h]
+  rw [BitVec.xor_assoc, BitVec.xor_self, BitVec.xor_zero]
 
 end Flapjack.Misc.Multiword
