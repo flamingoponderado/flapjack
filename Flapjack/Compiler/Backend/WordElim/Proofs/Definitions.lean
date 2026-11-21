@@ -4,6 +4,8 @@ public import Flapjack.Compiler.Backend.WordElim.Definitions
 public import Flapjack.Compiler.Backend.FlatElim.Proofs.Reachability
 public import Flapjack.Compiler.Backend.Semantics.WordSem.Alloc
 public import Flapjack.Compiler.Backend.Semantics.WordSem.Accessors
+public import Flapjack.Misc.SetToList
+public import Flapjack.FiniteMap.BroadCodec
 
 @[expose] public section
 
@@ -19,21 +21,42 @@ relations `code_rel`, `code_closed`, `gc_no_new_locs`, `word_state_rel`.
 The state is the tagged `WordSemStateFiniteExact`, so every word_loc map is a
 `Spt (WordLocW width)` and every memory is `BitVec width → WordLocW width`.
 
-**Open rendering decision.** HOL's `get_store` enumerates `SET_TO_LIST (FRANGE
-st)` and `get_memory` enumerates `SET_TO_LIST (IMAGE mem mdom)`.  HOL's
-`SET_TO_LIST` is choice-based and its order is unspecified; the repository has
-no reviewed rendering of it, and `spt` insertion is order-sensitive in tree
-shape.  The two definitions below therefore enumerate the finite support /
-memory domain in a canonical order, which preserves the *domain* (the only
-observation used by every theorem of this script) but not the tree shape.
-They are consequently UNTAGGED, as are `find_loc_state` and `word_state_rel`,
-which call them.  A faithful port needs the `SET_TO_LIST` rendering decision.
+HOL's `get_store` enumerates `SET_TO_LIST (FRANGE st)` and `get_memory`
+enumerates `SET_TO_LIST (IMAGE mem mdom)`; both use the reviewed
+`holSetToList` (`Flapjack/Misc/SetToList.lean`), whose element order is the
+one determined by HOL's `CHOICE`. `FRANGE st` is the set of looked-up values
+`{y | ∃ x, st.lookup x = some y}`, `IMAGE mem mdom` is `Set.image` over
+`{a | mdom a = true}`, and `MAP THE (FILTER IS_SOME (MAP f l))` is
+`List.filterMap f l`. `get_locals`/`get_stack` collections are inserted into
+`LN` left to right with `FOLDL`, as in HOL.
 -/
 
 namespace Flapjack.Compiler.Backend.WordElim
 
 open WordSemAllocSupport WordSemStateFiniteExact
 open Flapjack.Compiler.Backend.FlatElim
+
+/-- HOL types are inhabited; `SET_TO_LIST` over word locations takes its
+unspecified values from this instance. Flapjack infrastructure. -/
+instance wordElimWordLocNonempty {width : Nat} [NeZero width] : Nonempty (WordLocW width) :=
+  ⟨.loc 0 0⟩
+
+namespace WordElimDefinitionsSupport
+/-- Canonical finite-map roundtrip for the word-semantics state. -/
+theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {C : Type} {F : Type} :
+    (∀ (state : WordSemStateBroad width C F) (h : state.FiniteSupport),
+        (WordSemStateBroad.ofBroad state h).toBroad = state) ∧
+    (∀ state : WordSemStateFiniteExact width C F,
+        WordSemStateBroad.ofBroad state.toBroad state.toBroad_finiteSupport = state) :=
+  WordSemStateExact.holFmapAsFiniteSupportWitness
+
+/-- Canonical lookup and support roundtrip for `get_store`'s store. -/
+theorem holFmapAsFiniteSupportParamWitness_getStore_st {width : Nat} [NeZero width]
+    (st : HolFiniteMapExact WordStoreHOL (WordLocW width)) (key : WordStoreHOL) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad st)).lookup key = st.lookup key ∧
+      (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad st)).finiteSupport = st.finiteSupport ∧
+      FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad st) = st := ⟨rfl, rfl, rfl⟩
+end WordElimDefinitionsSupport
 
 /-! ## Locations in the state -/
 
@@ -75,21 +98,15 @@ def getLocals {width : Nat} [NeZero width] : Spt (WordLocW width) → NumSet
       | some location => sptInsert location () both
       | none => both
 
-/-- HOL `get_store_def` (`word_elimProofScript.sml:130-135`): collect the `Loc`
-    blocks in the store range.  UNTAGGED: HOL enumerates `SET_TO_LIST (FRANGE
-    st)`, whose order is unspecified, while this definition folds over the
-    finite support keys; the domain agrees, the tree shape need not (see the
-    module note). -/
+/-- Exact HOL `get_store_def` (`word_elimProofScript.sml:130-135`): collect
+    the `Loc` blocks in the store range, in `SET_TO_LIST (FRANGE st)` order. -/
+@[hol "cakeml/compiler/backend/proofs/word_elimProofScript.sml" "get_store_def"
+  (fmap_as_finite_support_parameters := [st]) (words_as_type_indexed_bitvec)]
 noncomputable def getStore {width : Nat} [NeZero width]
-    (store : HolFiniteMapExact WordStoreHOL (WordLocW width)) : NumSet :=
-  let keys := Classical.choose store.finiteSupport
-  keys.foldl (fun accumulator key =>
-    match store.lookup key with
-    | none => accumulator
-    | some value =>
-        match destWordLoc value with
-        | some location => sptInsert location () accumulator
-        | none => accumulator) .ln
+    (st : HolFiniteMapExact WordStoreHOL (WordLocW width)) : NumSet :=
+  let locSet := holSetToList {y : WordLocW width | ∃ x, st.lookup x = some y}
+  let locList := locSet.filterMap destWordLoc
+  locList.foldl (fun acc loc => sptInsert loc () acc) .ln
 
 /-- Exact HOL `get_num_wordloc_alist_def` (`word_elimProofScript.sml:160-164`):
     collect the `Loc` blocks in an association list's values.  HOL's `MAP THE
@@ -114,22 +131,20 @@ def getStack {width : Nat} [NeZero width] :
         (sptUnion (getNumWordlocAlist nonGcCutset) (getNumWordlocAlist gcCutset))
         (getStack rest)
 
-/-- HOL `get_memory_def` (`word_elimProofScript.sml:289-295`): collect the
-    `Loc` blocks of the memory image of `mdomain`.  UNTAGGED for the same
-    `SET_TO_LIST` reason as `getStore`; the enumeration is over the (finite)
-    memory domain in a canonical order. -/
+/-- Exact HOL `get_memory_def` (`word_elimProofScript.sml:289-295`): collect
+    the `Loc` blocks of the memory image of `mdom`, in
+    `SET_TO_LIST (IMAGE mem mdom)` order. -/
+@[hol "cakeml/compiler/backend/proofs/word_elimProofScript.sml" "get_memory_def" (words_as_type_indexed_bitvec)]
 noncomputable def getMemory {width : Nat} [NeZero width]
-    (memory : BitVec width → WordLocW width) (mdomain : BitVec width → Bool) : NumSet :=
-  let addresses := (List.range (2 ^ width)).map (fun index => BitVec.ofNat width index)
-  let locations := (addresses.filter (fun address => mdomain address)).map memory
-  locations.foldl (fun accumulator value =>
-    match destWordLoc value with
-    | some location => sptInsert location () accumulator
-    | none => accumulator) .ln
+    (mem : BitVec width → WordLocW width) (mdom : BitVec width → Bool) : NumSet :=
+  let locSet := holSetToList (mem '' {a | mdom a = true})
+  let locList := locSet.filterMap destWordLoc
+  locList.foldl (fun acc loc => sptInsert loc () acc) .ln
 
-/-- HOL `find_loc_state_def` (`word_elimProofScript.sml:335-342`): the union of
-    the four location sets.  UNTAGGED because it calls the untagged `getStore`
-    and `getMemory` (see the module note). -/
+/-- Exact HOL `find_loc_state_def` (`word_elimProofScript.sml:335-342`): the
+    union of the four location sets. -/
+@[hol "cakeml/compiler/backend/proofs/word_elimProofScript.sml" "find_loc_state_def"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 noncomputable def findLocState {width : Nat} [NeZero width] {C : Type} {F : Type}
     (state : WordSemStateFiniteExact width C F) : NumSet :=
   let locals := getLocals state.locals
@@ -160,17 +175,20 @@ def codeClosed {α β γ : Type} (reachable : Spt γ)
       ∀ n m, sptMem n reachable ∧ isReachable (analyseWordCode code1) n m →
         sptMem m reachable
 
-/-- HOL `gc_no_new_locs_def` (`word_elimProofScript.sml:366-373`): the garbage
-    collector never adds locations.  UNTAGGED because it calls the untagged
-    `getStore`/`getMemory` (see the module note). -/
-def gcNoNewLocs {width : Nat} [NeZero width] (gc : WordSemGcFun width) : Prop :=
+/-- Exact HOL `gc_no_new_locs_def` (`word_elimProofScript.sml:366-373`): the
+    garbage collector never adds locations. The eight quantifiers keep HOL's
+    order, and `domain A ⊆ domain B` is stated pointwise over `sptMem`. -/
+@[hol "cakeml/compiler/backend/proofs/word_elimProofScript.sml" "gc_no_new_locs_def"
+  (fmap_as_finite_support_function := [argument_4, result_3])
+  (words_as_type_indexed_bitvec)]
+noncomputable def gcNoNewLocs {width : Nat} [NeZero width] (f : WordSemGcFun width) : Prop :=
   ∀ (stack : List (WordSemStackFrame width))
     (memory : BitVec width → WordLocW width) (mdomain : BitVec width → Bool)
     (store : HolFiniteMapExact WordStoreHOL (WordLocW width))
     (roots : List (WordLocW width)) (memory1 : BitVec width → WordLocW width)
     (store1 : HolFiniteMapExact WordStoreHOL (WordLocW width))
     (stack1 : List (WordSemStackFrame width)),
-    gc (wordSemEncStack stack, memory, mdomain, store) = some (roots, memory1, store1) ∧
+    f (wordSemEncStack stack, memory, mdomain, store) = some (roots, memory1, store1) ∧
       wordSemDecStack roots stack = some stack1 →
         (∀ n, sptMem n (getStack stack1) → sptMem n (getStack stack)) ∧
           (∀ n, sptMem n (getMemory memory1 mdomain) → sptMem n (getMemory memory mdomain)) ∧
@@ -179,10 +197,11 @@ def gcNoNewLocs {width : Nat} [NeZero width] (gc : WordSemGcFun width) : Prop :=
 /-- HOL `word_state_rel_def` (`word_elimProofScript.sml:375-403`): the original
     state `t` and the removed state `s` agree on every field, agree on the
     reachable code, and every location of `t` is reachable.  HOL names its two
-    state parameters `t` and `s` in that order, which this definition keeps.
-    UNTAGGED because it calls the untagged `find_loc_state` (see the module
-    note). -/
-def wordStateRel {width : Nat} [NeZero width] {C : Type} {F : Type}
+    state parameters `t` and `s` in that order, which this definition keeps;
+    `domain A ⊆ domain B` is stated pointwise over `sptMem`. -/
+@[hol "cakeml/compiler/backend/proofs/word_elimProofScript.sml" "word_state_rel_def"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+noncomputable def wordStateRel {width : Nat} [NeZero width] {C : Type} {F : Type}
     (reachable : NumSet)
     (t s : WordSemStateFiniteExact width C F) : Prop :=
   s.locals = t.locals ∧
