@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Misc.ListEl
+public import Flapjack.Misc.Option
 public import Flapjack.FiniteMap
 public import Flapjack.Pancake.CrepLang
 public import Flapjack.Pancake.CrepLang.Exp
@@ -2508,5 +2509,84 @@ theorem evaluateCodeInvariantHOL {width : Nat} [NeZero width] {σ : Type} :
       evalCrepSemHOLProgExact t p = (res, st) → st.code = t.code := by
   intro p t res st h
   exact codeInvariantInduct (p, t) res st h
+
+/-- Exact port of HOL `crepProps$evaluate_seq_assign_load_globals`
+    (`crepPropsScript.sml:707-713`): `!ns t a. ALL_DISTINCT ns /\
+    w2n a + LENGTH ns <= 32 /\ (!n. MEM n ns ==> FLOOKUP t.locals n <> NONE) /\
+    (!n. MEM n (GENLIST (λx. a + n2w x) (LENGTH ns)) ==> FLOOKUP t.globals n <> NONE) ==>
+    evaluate (nested_seq (MAP2 Assign ns (load_globals a (LENGTH ns))), t) =
+    (NONE, t with locals := t.locals |++
+      ZIP (ns, MAP (λn. THE (FLOOKUP t.globals n))
+        (GENLIST (λx. a + n2w x) (LENGTH ns))))`.
+    `evaluate` is the tagged `evalCrepSemHOLProgExact`, `nested_seq` is
+    `crepNestedSeqHOL`, `load_globals` is `loadGlobalsHOL`, `MAP2` is
+    `List.zipWith`, `THE` is `holThe` over the exact word-lab carrier, `|++` is
+    `updateListEq`, `ALL_DISTINCT` is `Nodup`, `w2n` is `toNat`, and `GENLIST f n`
+    is `(List.range n).map f` with `n2w` the `BitVec.ofNat 5` cast. -/
+@[hol "cakeml/pancake/semantics/crepPropsScript.sml" "evaluate_seq_assign_load_globals"
+  (fmap_as_finite_support := [locals, globals, code])
+  (words_as_type_indexed_bitvec)]
+theorem evaluateSeqAssignLoadGlobalsHOL {width : Nat} [NeZero width] {σ : Type} :
+    ∀ (ns : List Nat) (t : CrepSemHOLState width σ) (a : BitVec 5),
+      ns.Nodup ∧ a.toNat + ns.length ≤ 32 ∧
+      (∀ n, n ∈ ns → t.locals.lookup n ≠ none) ∧
+      (∀ n, n ∈ (List.range ns.length).map (fun x => a + BitVec.ofNat 5 x) →
+        t.globals.lookup n ≠ none) →
+      evalCrepSemHOLProgExact t
+          (crepNestedSeqHOL (List.zipWith .assign ns (loadGlobalsHOL a ns.length))) =
+        (none, { t with
+          locals := t.locals.updateListEq
+            (ns.zip (((List.range ns.length).map (fun x => a + BitVec.ofNat 5 x)).map
+              (fun n => holThe (t.globals.lookup n)))) }) := by
+  intro ns
+  induction ns with
+  | nil =>
+      intro t a _
+      simp only [List.length_nil, List.range_zero, List.map_nil, loadGlobalsHOL,
+        List.zipWith_nil_left, crepNestedSeqHOL, List.zip_nil_right]
+      rw [evalCrepSemHOLProgExact_skip]
+      congr 1
+  | cons h ns ih =>
+      intro t a ⟨hnd, hbound, hloc, hglob⟩
+      obtain ⟨hnn, hndTail⟩ := List.nodup_cons.mp hnd
+      simp only [List.length_cons] at hbound hglob
+      have haddr : (List.range (ns.length + 1)).map (fun x => a + BitVec.ofNat 5 x) =
+          a :: (List.range ns.length).map (fun x => (a + 1) + BitVec.ofNat 5 x) :=
+        genlistAddrs_succ a ns.length
+      have hglobA : t.globals.lookup a ≠ none := by
+        apply hglob
+        rw [haddr]
+        simp
+      obtain ⟨w, hw⟩ := Option.ne_none_iff_exists'.mp hglobA
+      obtain ⟨old, hold⟩ := Option.ne_none_iff_exists'.mp
+        (hloc h (by simp))
+      have hglobTail : ∀ n, n ∈ (List.range ns.length).map
+          (fun x => (a + 1) + BitVec.ofNat 5 x) → t.globals.lookup n ≠ none := by
+        intro n hn
+        apply hglob
+        rw [haddr]
+        exact List.mem_cons_of_mem a hn
+      have hlocTail : ∀ m, m ∈ ns → (t.locals.updateEq (h, w)).lookup m ≠ none := by
+        intro m hm
+        have hmn : m ≠ h := fun heq => hnn (heq ▸ hm)
+        rw [lookup_updateEq_ne t.locals h w m hmn]
+        exact hloc m (List.mem_cons_of_mem h hm)
+      have hb : (a + 1).toNat + ns.length ≤ 32 := by
+        have h1 : (1 : BitVec 5).toNat = 1 := rfl
+        rw [BitVec.toNat_add, h1]
+        omega
+      have hrhs : ((List.range (ns.length + 1)).map (fun x => a + BitVec.ofNat 5 x)).map
+            (fun n => holThe (t.globals.lookup n)) =
+          w :: ((List.range ns.length).map (fun x => (a + 1) + BitVec.ofNat 5 x)).map
+            (fun n => holThe (t.globals.lookup n)) := by
+        rw [haddr, List.map_cons, hw]
+        simp only [holThe]
+      simp only [List.length_cons, loadGlobalsHOL, List.zipWith_cons_cons, crepNestedSeqHOL]
+      rw [evalCrepSemHOLProgExact_seq_holShape, evalCrepSemHOLProgExact_assign_holShape]
+      simp only [evalCrepSemHOLExp, hw, hold]
+      rw [if_pos trivial]
+      rw [hrhs, List.zip_cons_cons, updateListEq_cons']
+      rw [ih { t with locals := t.locals.updateEq (h, w) } (a + 1)
+        ⟨hndTail, hb, hlocTail, hglobTail⟩]
 
 end Flapjack

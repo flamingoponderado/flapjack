@@ -34,3 +34,5 @@ val _ = show "set_mem_op_FLOOKUP_locals_typed" set_mem_op_FLOOKUP_locals;
 val _ = show "eval_exps_not_load_global_eq_typed" eval_exps_not_load_global_eq;
 val _ = show "mem_loads_flat_rel_typed" mem_loads_flat_rel;
 val _ = show "unassigned_vars_evaluate_same_typed" unassigned_vars_evaluate_same;
+val _ = show_vars "evaluate_seq_assign_load_globals_vars" evaluate_seq_assign_load_globals;
+val _ = show "evaluate_seq_assign_load_globals_typed" evaluate_seq_assign_load_globals;

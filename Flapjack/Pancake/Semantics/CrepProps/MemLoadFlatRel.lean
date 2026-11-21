@@ -293,10 +293,8 @@ theorem memLoadFlatRelHOLExact {width : Nat} {σ : Type} [NeZero width]
   rw [htake]
   simpa [memLoadCrepSemHOL, memLoadFlatTargetHOL] using hread
 
-/-- Flapjack infrastructure: the exact word-lab carrier is inhabited (every HOL
-    type is), so the total `holEl` rendering applies to `flattenHOL` lists. -/
-instance holWordLabNonempty {width : Nat} [NeZero width] : Nonempty (HolWordLab width) :=
-  ⟨HolWordLab.word (BitVec.ofNat width 0)⟩
+/-- The `holEl` rendering below uses the shared `holWordLabNonempty` instance
+    declared beside `HolWordLab` in `PanSem.lean`. -/
 
 /- Exact-carrier port of HOL `mem_loads_flat_rel`
    (`cakeml/pancake/semantics/crepPropsScript.sml:61-99`).  The three conjuncts
