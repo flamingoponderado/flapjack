@@ -2,6 +2,8 @@ module
 
 public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GenerationalList
 public import Flapjack.Compiler.Backend.StackRemove.Proofs.WordListExists
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.HeapExpand
+public import Flapjack.Compiler.Backend.Semantics.WordSem.CallHelpers
 
 @[expose] public section
 
@@ -205,5 +207,27 @@ theorem wordHeap_imp_limit {width : Nat} [NeZero width]
   obtain ⟨xs, assertion, length⟩ := wordHeap_eq_wordList heap curr frame memory domain conf separated
   rw [length]
   exact wordList_imp_limit curr xs frame memory domain assertion good
+
+/-- Exact HOL `word_heap_non_empty_limit` (`data_to_word_gcProofScript.sml:8572-8590`):
+a nonempty expanded heap splits off its first word. HOL `SEP_EXISTS`, `one`
+and `*` are `SetSep.sepExists`, `SetSep.one` and `SetSep.star`; the address
+width and the stored word width are independent, as in the typed capture. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "word_heap_non_empty_limit"
+  (words_as_type_indexed_bitvec)]
+theorem wordHeap_nonEmptyLimit {addressWidth : Nat} {valueWidth : Nat}
+    [NeZero addressWidth] [NeZero valueWidth] {limit : Nat} {other : BitVec addressWidth}
+    {c : Config} :
+    limit ≠ 0 →
+      wordHeap other (heapExpand limit : List (HeapElement (WordLocW valueWidth)
+          (HeapTag × List (WordLocW valueWidth)))) c =
+        SetSep.sepExists (fun w1 : WordLocW valueWidth =>
+          SetSep.star (SetSep.one (other, w1))
+            (wordHeap (other + (wordSemBytesInWord : BitVec addressWidth))
+              (heapExpand (limit - 1) : List (HeapElement (WordLocW valueWidth)
+                (HeapTag × List (WordLocW valueWidth)))) c)) := by
+  intro h
+  obtain ⟨n, rfl⟩ : ∃ n, limit = n + 1 := ⟨limit - 1, by omega⟩
+  rw [wordHeap_heapExpand, wordHeap_heapExpand, Nat.add_sub_cancel]
+  exact (wordListExistsThm other n).2
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

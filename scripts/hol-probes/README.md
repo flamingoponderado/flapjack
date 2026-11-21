@@ -823,6 +823,10 @@ exported global-invariant equation and replay its original simplifier derivation
 
 `data_to_word_bignum_typed_probe.out` records typed statements of reviewed `data_to_word_bignumProofScript.sml` rows (exported theorems from the theory DB, `[local]` theorems parsed from the pinned source) and the constructors of multiword's `mw_op`. Regenerate with `HOL_PROBE_ONLY=data_to_word_bignum_typed_probeScript.sml scripts/hol-probes/regenerate.sh`; it does not replay HOL proofs.
 
+`data_to_word_gc_port_typed_probe.out` records typed statements of the `data_to_word_gcProofScript.sml` declarations that had no reviewed Lean row when the bottom-up port of that script resumed, labelled `gcport_<name>_typed` (exported theorems and definitions from the theory DB, `[local]` theorems parsed from the pinned source). Regenerate with `HOL_PROBE_ONLY=data_to_word_gc_port_typed_probeScript.sml scripts/hol-probes/regenerate.sh`; it does not replay HOL proofs.
+
+`word_elim_port_typed_probe.out` records typed statements of the `word_elimProofScript.sml` declarations that had no reviewed Lean row when the port of that script resumed, labelled `weport_<name>_typed` (exported theorems and definitions from the theory DB). Regenerate with `HOL_PROBE_ONLY=word_elim_port_typed_probeScript.sml scripts/hol-probes/regenerate.sh`; it does not replay HOL proofs.
+
 `multiword_typed_probe.out` records the typed statement of every exported theorem and definition of the HOL `multiword` and `mc_multiword` theories (`HOL/examples/machine-code/multiword`), labelled `<theory>_<name>_typed`, for the bottom-up port beneath `Flapjack/Misc/Multiword`. `[local]` theorems are not exported and need separate source-parsed captures. Regenerate with `HOL_PROBE_ONLY=multiword_typed_probeScript.sml scripts/hol-probes/regenerate.sh`; it does not replay HOL proofs.
 
 `bignum_helpers_probe.out` records the source-inferred helper types and register, immediate, complement, load, save, index and division-call observations. `Flapjack.Test.WordBignumHelpersParity` replays the results. Regenerate with `HOL_PROBE_ONLY=bignum_helpers_probeScript.sml scripts/hol-probes/regenerate.sh`.
@@ -11096,6 +11100,14 @@ array and block bounds-check equations, and general equality and integer
 ordering, block length, tag-length and tag equality equations. Concrete equality, ordering, tail-call, returning-call,
 and bad-header cases are in `cake_word_array_probe.out`.
 
+`data_to_word_memory_more_typed_probe.out` records typed statements of the
+`data_to_word_memoryProofScript.sml` declarations ported on the
+`cakeml-memproof` branch (exported theorems and definitions from the theory DB,
+`[local]` theorems parsed from the pinned source), between the static
+`dtw_memory_more_begin`/`dtw_memory_more_end` markers. Regenerate with
+`HOL_PROBE_ONLY=data_to_word_memory_more_typed_probeScript.sml scripts/hol-probes/regenerate.sh`;
+it does not replay HOL proofs.
+
 `bvi_tmc_proof_local_typed_probe.out` records the typed statements of the
 remaining `bvi_tmcProofScript.sml` rows: the `free_names` lemmas, the
 `compile_each_intro`/`compile_each_untouched`/`compile_each_touched` label
@@ -11104,6 +11116,28 @@ parsed from the pinned source), and the exported `is_block_op_cons_def` and
 `env_rel_el`. Regenerate with `CAKEML=<cakeml tree>
 HOL_PROBE_ONLY=bvi_tmc_proof_local_typed_probeScript.sml
 scripts/hol-probes/regenerate.sh`; it does not replay HOL proofs.
+
+`backend_proof_more_typed_probe.out` captures, with `show_types`, every
+declaration of `compiler/backend/proofs/backendProofScript.sml` in source order
+for the counterparts under `Flapjack/Compiler/Backend/BackendProof/`, plus the
+prerequisite definitions `backend$set_oracle_def`, `compile_def`,
+`from_data_def` ... `from_source_def`, `compile_eq_from_source`, the
+`backend_progs` record, `empty_progs_def`, `keep_progs_def` and
+`compile_inc_progs_def`, `data_to_word$compile_def`/`compile_0_def`,
+`bvl_to_bvi$bvl_to_bvi_compile_inc_all_def` and `mlstring$empty_ffi_def`:
+exported theorems and definitions are fetched from the theory DB together with
+their hypothesis counts, and `[local]` theorems are parsed from the pinned
+source text with SML antiquotation splices expanded. The commented-out
+`MAP_compile_distinct_setglobals`, the derived local rewrites
+`compile_inc_progs_defs`, `SND_flat_to_clos_inc_compile` and
+`compile_correct_no_eval`, and the locals `cake_orac_extended_wf`,
+`cake_orac_eq_get_oracle` and `step_invs_cake_orac` (whose source parse needs
+the script's own proof-time context) are not captured. It needs
+`backendProofTheory`, which is built in the standard oracle tree
+`/var/tmp/flapjack-cakeml-oracle` (CakeML pin 857f0d98d, HOL submodule
+a390cbab); regenerate with `CAKEML=/var/tmp/flapjack-cakeml-oracle
+HOL4=<pinned HOL tree> HOL_PROBE_ONLY=backend_proof_more_typed_probeScript.sml
+scripts/hol-probes/regenerate.sh`. Statement evidence for source review only.
 
 `stack_rawcall_proof_local_typed_probe.out`, `word_convs_proof_helper_typed_probe.out`,
 `word_to_word_code_rel_p_typed_probe.out`, `word_depth_call_some_typed_probe.out` and

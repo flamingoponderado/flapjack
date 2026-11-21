@@ -176,4 +176,49 @@ theorem adjustSet_inter {α β : Type} (t1 : Spt α) (t2 : Spt β) :
     by_cases h1 : sptDomain t1 ((n - 2) / 2) <;>
       by_cases h2 : sptDomain t2 ((n - 2) / 2) <;> simp [h1, h2]
 
+/-- Exact HOL `lookup_adjust_var_adjust_set_NONE`
+(`data_to_word_gcProofScript.sml:400-407`); the typed capture shows an
+arbitrary source payload type. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml"
+  "lookup_adjust_var_adjust_set_NONE"]
+theorem lookup_adjust_var_adjust_set_NONE {α : Type} {n : Nat} {s : Spt α} :
+    sptLookup (adjustVar n) (adjustSet s) = none ↔ sptLookup n s = none := by
+  rw [lookup_adjustSet_map]
+  cases sptLookup n s <;> simp
+
+/-- Exact HOL `lookup_adjust_var_adjust_set_SOME_UNIT`
+(`data_to_word_gcProofScript.sml:409-417`). -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml"
+  "lookup_adjust_var_adjust_set_SOME_UNIT"]
+theorem lookup_adjust_var_adjust_set_SOME_UNIT {α : Type} {n : Nat} {s : Spt α} :
+    sptLookup (adjustVar n) (adjustSet s) = some () ↔ (sptLookup n s).isSome = true := by
+  rw [lookup_adjustSet_map]
+  cases sptLookup n s <;> simp
+
+/-- Exact HOL `IS_SOME_lookup_domain` (`data_to_word_gcProofScript.sml:518-522`);
+HOL `k ∈ domain m` is `sptDomain m k`. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "IS_SOME_lookup_domain"]
+theorem IS_SOME_lookup_domain {α : Type} {k : Nat} {m : Spt α} :
+    (sptLookup k m).isSome = true ↔ sptDomain m k :=
+  Iff.rfl
+
+/-- Exact HOL `is_some_lookup_union` (`data_to_word_gcProofScript.sml:4880-4886`,
+a `[local]` theorem); `union` is the reviewed `sptUnion`. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "is_some_lookup_union"]
+theorem is_some_lookup_union {α : Type} {n : Nat} {t1 t2 : Spt α} :
+    (sptLookup n (sptUnion t1 t2)).isSome = true ↔
+      (sptLookup n t1).isSome = true ∨ (sptLookup n t2).isSome = true := by
+  rw [sptLookup_sptUnion]
+  cases sptLookup n t1 <;> simp
+
+/-- Exact HOL `domain_adjust_set_EVEN` (`data_to_word_gcProofScript.sml:8122-8128`); HOL `EVEN k` is `k % 2 = 0`; HOL free
+variables are universally quantified. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "domain_adjust_set_EVEN"]
+theorem domain_adjust_set_EVEN {α : Type} {k : Nat} {s : Spt α} :
+    sptDomain (adjustSet s) k → k % 2 = 0 := by
+  intro h
+  obtain ⟨n, rfl, _⟩ := (adjustSet_domain s k).mp h
+  simp only [adjustVar]
+  omega
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

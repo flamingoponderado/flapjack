@@ -401,11 +401,39 @@ theorem good_dimindex_byte_aligned_eq {width : Nat} [NeZero width] {w : BitVec w
     simp at this ⊢
     omega
 
-/-- HOL `word_bits h l w` (`(h -- l) w`): bits `l .. MIN h (dimindex - 1)` of `w`,
-shifted down to position 0. Flapjack infrastructure (HOL `wordsTheory`, outside
-`cakeml/`); `gcWordBits h 0 = gcWordBitsLow h`. -/
-def gcWordBits {width : Nat} (h l : Nat) (w : BitVec width) : BitVec width :=
+/-- Exact HOL `word_bits_def` (`wordsScript.sml:243-246`):
+`(h -- l) w = FCP i. i + l ≤ MIN h (dimindex (:'a) - 1) ∧ w ' (i + l)`, the bits
+`l .. MIN h (dimindex - 1)` of `w` shifted down to position 0. Bit `i` of
+`(w2n w DIV 2 ^ l) MOD 2 ^ (h + 1 - l)` is `i + l ≤ h ∧ w ' (i + l)` (false when
+`h < l`), and bits at or above the width are absent from `w2n w`, so the two
+agree for all `h` and `l` (`getLsbD_gcWordBits`). `gcWordBits h 0` is the
+executable `gcWordBitsLow h` (`gcWordBitsLow_eq_gcWordBits`). -/
+@[hol "HOL/src/n-bit/wordsScript.sml" "word_bits_def" (words_as_type_indexed_bitvec)]
+def gcWordBits {width : Nat} [NeZero width] (h l : Nat) (w : BitVec width) : BitVec width :=
   BitVec.ofNat width ((w.toNat / 2 ^ l) % 2 ^ (h + 1 - l))
+
+/-- The bits of `gcWordBits h l w` are exactly HOL's `word_bits_def` bits.
+Flapjack infrastructure supporting the `word_bits_def` rendering. -/
+theorem getLsbD_gcWordBits {width : Nat} [NeZero width] (h l : Nat) (w : BitVec width)
+    (i : Nat) :
+    (gcWordBits h l w).getLsbD i =
+      (decide (i < width) && decide (i + l ≤ min h (width - 1)) && w.getLsbD (i + l)) := by
+  simp only [gcWordBits, BitVec.getLsbD_ofNat, Nat.testBit_mod_two_pow, Nat.testBit_div_two_pow,
+    BitVec.testBit_toNat]
+  by_cases hi : i < width
+  · by_cases hw : i + l < width
+    · by_cases hh : i + l ≤ h
+      · simp [hi, show i < h + 1 - l by omega, show i + l ≤ min h (width - 1) by omega]
+      · simp [hi, show ¬ i < h + 1 - l by omega, show ¬ i + l ≤ min h (width - 1) by omega]
+    · have hz : w.getLsbD (i + l) = false := BitVec.getLsbD_of_ge w (i + l) (by omega)
+      simp [hz]
+  · simp [hi]
+
+/-- The executable low-bit selector is `word_bits h 0`. Flapjack
+infrastructure relating the production helper to the tagged rendering. -/
+theorem gcWordBitsLow_eq_gcWordBits {width : Nat} [NeZero width] (h : Nat) (w : BitVec width) :
+    gcWordBitsLow h w = gcWordBits h 0 w := by
+  simp [gcWordBitsLow, gcWordBits]
 
 /-- Exact HOL `select_eq_select_0` (`stack_allocProofScript.sml:282-286`):
 `k <= n ==> (n -- k) w = (n - k -- 0) (w >>> k)`. -/

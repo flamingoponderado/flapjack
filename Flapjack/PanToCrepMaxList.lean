@@ -30,6 +30,8 @@ and `cakeml/pancake/semantics/pan_commonPropsScript.sml`:
 
 namespace Flapjack
 
+/-- HOL `rich_list$MAX_LIST_def`: the maximum of a `num` list, `0` for the empty list. -/
+@[hol "HOL/src/list/src/rich_listScript.sml" "MAX_LIST_def"]
 def maxList : List Nat → Nat
   | [] => 0
   | value :: values => max value (maxList values)
