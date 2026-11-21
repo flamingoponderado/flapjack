@@ -87,6 +87,12 @@ theorem mw2i_i2mw {width : Nat} [NeZero width] (i : Int) : mw2i (i2mw i : Bool Ã
     rw [Int.negSucc_eq]
     simp
 
+/-- Operation selectors of the multiword arithmetic library. -/
+@[hol "HOL/examples/machine-code/multiword/multiwordScript.sml" "mw_op"]
+inductive MwOp where
+  | add | sub | mul | div | mod | lt | eq | dec
+  deriving DecidableEq, Repr
+
 /-- HOL's boolean-to-natural embedding. -/
 @[hol "HOL/examples/machine-code/multiword/multiwordScript.sml" "b2n_def"]
 def b2n : Bool â†’ Nat

@@ -463,4 +463,89 @@ val _ = emit_exported "assign_LessConstSmall_typed" "assign_LessConstSmall";
 val _ = print ("assign_LessSmallConst_hypotheses=" ^
   Int.toString (length (hyp assign_LessSmallConst)) ^ "\n");
 val _ = emit_exported "assign_LessSmallConst_typed" "assign_LessSmallConst";
+val _ = print ("state_rel_upd_safe_pkheap_hypotheses=" ^
+  Int.toString (length (hyp state_rel_upd_safe_pkheap)) ^ "\n");
+val _ = emit_exported "state_rel_upd_safe_pkheap_typed" "state_rel_upd_safe_pkheap";
+val _ = print ("state_rel_ignore_safe_for_space_hypotheses=" ^
+  Int.toString (length (hyp state_rel_ignore_safe_for_space)) ^ "\n");
+val _ = emit_exported "state_rel_ignore_safe_for_space_typed" "state_rel_ignore_safe_for_space";
+val _ = print ("state_rel_peak_heap_length_hypotheses=" ^
+  Int.toString (length (hyp state_rel_peak_heap_length)) ^ "\n");
+val _ = emit_exported "state_rel_peak_heap_length_typed" "state_rel_peak_heap_length";
+val _ = print ("opt_map_plus_zero_id_hypotheses=" ^
+  Int.toString (length (hyp opt_map_plus_zero_id)) ^ "\n");
+val _ = emit_exported "opt_map_plus_zero_id_typed" "opt_map_plus_zero_id";
+val _ = print ("small_num_small_int_hypotheses=" ^
+  Int.toString (length (hyp small_num_small_int)) ^ "\n");
+val _ = emit_exported "small_num_small_int_typed" "small_num_small_int";
+val _ = print ("memory_rel_small_int_hypotheses=" ^
+  Int.toString (length (hyp memory_rel_small_int)) ^ "\n");
+val _ = emit_exported "memory_rel_small_int_typed" "memory_rel_small_int";
+val _ = print ("small_int_Smallnum_add_hypotheses=" ^
+  Int.toString (length (hyp small_int_Smallnum_add)) ^ "\n");
+val _ = emit_exported "small_int_Smallnum_add_typed" "small_int_Smallnum_add";
+val _ = print ("small_int_INT_MIN_MAX_hypotheses=" ^
+  Int.toString (length (hyp small_int_INT_MIN_MAX)) ^ "\n");
+val _ = emit_exported "small_int_INT_MIN_MAX_typed" "small_int_INT_MIN_MAX";
+val _ = print ("small_int_w2i_Smallnum_add_hypotheses=" ^
+  Int.toString (length (hyp small_int_w2i_Smallnum_add)) ^ "\n");
+val _ = emit_exported "small_int_w2i_Smallnum_add_typed" "small_int_w2i_Smallnum_add";
+val _ = print ("state_rel_IMP_arch_64_bit_hypotheses=" ^
+  Int.toString (length (hyp state_rel_IMP_arch_64_bit)) ^ "\n");
+val _ = emit_exported "state_rel_IMP_arch_64_bit_typed" "state_rel_IMP_arch_64_bit";
+val _ = print ("cut_state_opt_twice_hypotheses=" ^
+  Int.toString (length (hyp cut_state_opt_twice)) ^ "\n");
+val _ = emit_exported "cut_state_opt_twice_typed" "cut_state_opt_twice";
+val _ = print ("cut_state_opt_extra_const_hypotheses=" ^
+  Int.toString (length (hyp cut_state_opt_extra_const)) ^ "\n");
+val _ = emit_exported "cut_state_opt_extra_const_typed" "cut_state_opt_extra_const";
+val _ = print ("small_int_Smallnum_sub_hypotheses=" ^
+  Int.toString (length (hyp small_int_Smallnum_sub)) ^ "\n");
+val _ = emit_exported "small_int_Smallnum_sub_typed" "small_int_Smallnum_sub";
+val _ = print ("small_int_w2i_Smallnum_sub_hypotheses=" ^
+  Int.toString (length (hyp small_int_w2i_Smallnum_sub)) ^ "\n");
+val _ = emit_exported "small_int_w2i_Smallnum_sub_typed" "small_int_w2i_Smallnum_sub";
+val _ = print ("cut_state_opt_IMP_ffi_hypotheses=" ^
+  Int.toString (length (hyp cut_state_opt_IMP_ffi)) ^ "\n");
+val _ = emit_exported "cut_state_opt_IMP_ffi_typed" "cut_state_opt_IMP_ffi";
+val _ = print ("quad_times_div_half_double_hypotheses=" ^
+  Int.toString (length (hyp quad_times_div_half_double)) ^ "\n");
+val _ = emit_exported "quad_times_div_half_double_typed" "quad_times_div_half_double";
+val _ = print ("w2n_mul_less_hypotheses=" ^
+  Int.toString (length (hyp w2n_mul_less)) ^ "\n");
+val _ = emit_exported "w2n_mul_less_typed" "w2n_mul_less";
+val _ = capture "word_bit_0_sub_lemma_typed" "word_bit_0_sub_lemma";
+val _ = print ("word_bit_lsr_dimindex_1_hypotheses=" ^
+  Int.toString (length (hyp word_bit_lsr_dimindex_1)) ^ "\n");
+val _ = emit_exported "word_bit_lsr_dimindex_1_typed" "word_bit_lsr_dimindex_1";
+val _ = print ("state_rel_Number_IMP_hypotheses=" ^
+  Int.toString (length (hyp state_rel_Number_IMP)) ^ "\n");
+val _ = emit_exported "state_rel_Number_IMP_typed" "state_rel_Number_IMP";
+val _ = print ("option_le_add_comm_hypotheses=" ^
+  Int.toString (length (hyp option_le_add_comm)) ^ "\n");
+val _ = emit_exported "option_le_add_comm_typed" "option_le_add_comm";
+val _ = print ("IN_adjust_set_IN_hypotheses=" ^
+  Int.toString (length (hyp IN_adjust_set_IN)) ^ "\n");
+val _ = emit_exported "IN_adjust_set_IN_typed" "IN_adjust_set_IN";
+val _ = print ("assign_LengthByte_hypotheses=" ^
+  Int.toString (length (hyp assign_LengthByte)) ^ "\n");
+val _ = emit_exported "assign_LengthByte_typed" "assign_LengthByte";
+val _ = print ("assign_Length_hypotheses=" ^
+  Int.toString (length (hyp assign_Length)) ^ "\n");
+val _ = emit_exported "assign_Length_typed" "assign_Length";
+val _ = print ("assign_LengthBlock_hypotheses=" ^
+  Int.toString (length (hyp assign_LengthBlock)) ^ "\n");
+val _ = emit_exported "assign_LengthBlock_typed" "assign_LengthBlock";
+val _ = capture "assign_BoundsCheckBlock_equation_typed" "assign_BoundsCheckBlock";
+val _ = print ("assign_BoundsCheckBlock_hypotheses=" ^
+  Int.toString (length (hyp assign_BoundsCheckBlock)) ^ "\n");
+val _ = emit_exported "assign_BoundsCheckBlock_typed" "assign_BoundsCheckBlock";
+val _ = capture "assign_BoundsCheckArray_equation_typed" "assign_BoundsCheckArray";
+val _ = print ("assign_BoundsCheckArray_hypotheses=" ^
+  Int.toString (length (hyp assign_BoundsCheckArray)) ^ "\n");
+val _ = emit_exported "assign_BoundsCheckArray_typed" "assign_BoundsCheckArray";
+val _ = capture "assign_BoundsCheckByte_equation_typed" "assign_BoundsCheckByte";
+val _ = print ("assign_BoundsCheckByte_hypotheses=" ^
+  Int.toString (length (hyp assign_BoundsCheckByte)) ^ "\n");
+val _ = emit_exported "assign_BoundsCheckByte_typed" "assign_BoundsCheckByte";
 val _ = capture "parts_to_words_NONE_typed" "parts_to_words_NONE";

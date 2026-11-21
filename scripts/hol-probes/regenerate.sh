@@ -12320,6 +12320,11 @@ run_probe data_to_word_assign_typed_probeScript.sml data_to_word_assign_typed_pr
   "$cake_dir/compiler/backend/proofs/data_to_word_assignProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
 
+run_probe data_to_word_bignum_typed_probeScript.sml data_to_word_bignum_typed_probe.out \
+  mw_op_constructors i2mw_small_int_IMP_0_typed get_iop_def_typed lt_dimindex_MOD_dimword_typed \
+  "$cake_dir/compiler/backend/proofs/data_to_word_bignumProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+
 run_probe data_to_word_cut_envs_wf_replay_probeScript.sml data_to_word_cut_envs_wf_replay_probe.out \
   cut_envs_wf_replay_typed cut_env_lookup_replay_typed \
   "$cake_dir/compiler/backend/proofs/data_to_word_assignProofScript.sml" \
@@ -12615,3 +12620,8 @@ run_probe word_bignum_proof_typed_probeScript.sml word_bignum_proof_typed_probe.
   i2mw_NOT_NIL_typed mw_ok_SND_i2mw_typed \
   "$cake_dir/compiler/backend/proofs/word_bignumProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+
+run_probe multiword_typed_probeScript.sml multiword_typed_probe.out \
+  multiword_probe_begin multiword_probe_end \
+  "$hol_dir/examples/machine-code/multiword/mc_multiwordScript.sml" \
+  "$hol_dir/examples/machine-code/multiword"
