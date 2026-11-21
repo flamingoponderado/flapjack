@@ -160,6 +160,7 @@ import Flapjack.Compiler.Backend.WordElim.Proofs.Definitions
 import Flapjack.Compiler.Backend.WordElim.Proofs.Analysis
 import Flapjack.Compiler.Backend.WordElim.Proofs.Locations
 import Flapjack.Compiler.Backend.WordElim.Proofs.Stacks
+import Flapjack.Compiler.Backend.WordElim.Proofs.StateRel
 import Flapjack.Compiler.Backend.WordElim.Proofs.ConstWrites
 import Flapjack.Compiler.Backend.WordElim.Proofs.Vars
 import Flapjack.Compiler.Backend.WordElim.Proofs.Memory
@@ -3499,6 +3500,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.VarLemmas
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.BitLemmas
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.AbsMlInv
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.AllocStore
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.WordGcFunLemma
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GcFunOk
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GcFunConstOk
 import Flapjack.Compiler.Backend.WordSimp.Proofs.GcWordConst
