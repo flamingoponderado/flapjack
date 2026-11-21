@@ -107,7 +107,7 @@ theorem singleMulAdd_thm {width : Nat} [NeZero width] :
   cases c1 <;> cases c2 <;> simp only [b2n, Nat.mul_one, Nat.mul_zero, Nat.add_zero] at a1 a2 scaled ⊢ <;>
     omega
 
-private theorem mwMulPass_thm {width : Nat} [NeZero width] (x : BitVec width) :
+theorem mwMulPass_thm {width : Nat} [NeZero width] (x : BitVec width) :
     ∀ (ys zs : List (BitVec width)) (k : BitVec width), ys.length = zs.length →
       mw2n (mwMulPass x ys zs k) = x.toNat * mw2n ys + mw2n zs + k.toNat ∧
         (mwMulPass x ys zs k).length = ys.length + 1 := by
