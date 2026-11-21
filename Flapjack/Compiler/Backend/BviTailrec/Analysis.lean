@@ -130,6 +130,57 @@ theorem isRel_PMATCH (op : ClosLang.Op) :
        | .intOp .greater => true
        | .intOp .greaterEq => true
        | _ => false) := rfl
+
+/-- HOL `is_op_thms`: the source's Boolean facts about `is_arith` and `is_rel`
+on `BlockOp` constructors and on `BlockOp ListAppend`. HOL states them as
+Boolean formulas, where `/\` binds tighter than `<=>`; the Lean rendering keeps
+that shape with Boolean `&&` and Boolean equality. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "is_op_thms"]
+theorem isOpThms :
+    isArith (.blockOp (.cons 0)) = false ∧
+      isArith (.blockOp .listAppend) = false ∧
+      isRel (.blockOp (.cons 0)) = false ∧
+      isRel (.blockOp .listAppend) = false ∧
+      (∀ op : ClosLang.Op, (op != .blockOp .listAppend && isArith op) = isArith op) ∧
+      (∀ op : ClosLang.Op,
+        (op != .blockOp .listAppend && !isArith op && isRel op) = isRel op) ∧
+      (∀ op : ClosLang.Op,
+        (!isArith op && !isRel op && (op == .blockOp (.cons 0))) =
+          (op == .blockOp (.cons 0))) ∧
+      (∀ op : ClosLang.Op,
+        (op != .blockOp .listAppend && (op == .blockOp (.cons 0))) =
+          (op == .blockOp (.cons 0))) := by
+  refine ⟨rfl, rfl, rfl, rfl, ?_, ?_, ?_, ?_⟩
+  · intro op
+    cases op with
+    | blockOp b =>
+      cases b
+      all_goals simp [isArith]
+    | _ => simp [isArith]
+  · intro op
+    cases op with
+    | intOp i =>
+      cases i
+      all_goals simp [isArith, isRel]
+    | blockOp b =>
+      cases b
+      all_goals simp [isArith, isRel]
+    | _ => simp [isArith, isRel]
+  · intro op
+    cases op with
+    | intOp i =>
+      cases i
+      all_goals simp [isArith, isRel]
+    | blockOp b =>
+      cases b
+      all_goals simp [isArith, isRel]
+    | _ => simp [isArith, isRel]
+  · intro op
+    cases op with
+    | blockOp b =>
+      cases b
+      all_goals simp
+    | _ => simp
 /-- Operand type required by each source primitive. -/
 @[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "arg_ty_def"]
 def argType : ClosLang.Op → ValueType
@@ -326,6 +377,52 @@ def opEq : AssocOp → Exp → Bool
   | .times, .op (.intOp .mult) _ => true
   | .append, .op (.blockOp .listAppend) _ => true
   | _, _ => false
+
+/-- HOL `op_eq_PMATCH`: the definition's case equation, with the outer `pmatch`
+on the expression and the inner `pmatch` on the accumulator operator, in source
+order; the source's unused `xs` binding is the wildcard here. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "op_eq_PMATCH"]
+theorem opEq_PMATCH (a : AssocOp) (expr : Exp) :
+    opEq a expr =
+      (match expr with
+       | .op op _ =>
+         (match a with
+          | .plus => op == .intOp .add
+          | .times => op == .intOp .mult
+          | .append => op == .blockOp .listAppend
+          | _ => false)
+       | _ => false) := by
+  cases a with
+  | plus =>
+    cases expr with
+    | op op _ =>
+      cases op with
+      | intOp i =>
+        cases i
+        all_goals simp [opEq]
+      | _ => simp [opEq]
+    | _ => simp [opEq]
+  | times =>
+    cases expr with
+    | op op _ =>
+      cases op with
+      | intOp i =>
+        cases i
+        all_goals simp [opEq]
+      | _ => simp [opEq]
+    | _ => simp [opEq]
+  | append =>
+    cases expr with
+    | op op _ =>
+      cases op with
+      | blockOp b =>
+        cases b
+        all_goals simp [opEq]
+      | _ => simp [opEq]
+    | _ => simp [opEq]
+  | noop =>
+    cases expr with
+    | _ => simp [opEq]
 
 /-- Extract precisely two operands from a BVI operation. -/
 @[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "get_bin_args_def"]
