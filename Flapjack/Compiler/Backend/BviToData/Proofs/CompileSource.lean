@@ -90,4 +90,33 @@ theorem compileSing_source_eq :
       | nil => simpa [compileList] using agrees
       | cons y ys => simpa using agrees
 
+/-- The source compiler assigns one result name per input expression. -/
+@[hol "cakeml/compiler/backend/bvi_to_dataScript.sml" "compile_LENGTH_lemma"]
+theorem compile_LENGTH_lemma (n : Nat) (env : List Nat) (tail : Bool) (live : List Nat)
+    (xs : List Bvi.Exp) :
+    (compileSource n env tail live xs).2.1.length = xs.length :=
+  compileSource_length n env tail live xs
+
+/-- The source compiler never decreases its fresh-name counter. -/
+@[hol "cakeml/compiler/backend/bvi_to_dataScript.sml" "compile_LESS_EQ_lemma"]
+theorem compile_LESS_EQ_lemma (n : Nat) (env : List Nat) (tail : Bool) (live : List Nat)
+    (xs : List Bvi.Exp) :
+    n ≤ (compileSource n env tail live xs).2.2 :=
+  compileSource_counter n env tail live xs
+
+/-- Compiling a singleton produces exactly one result name. -/
+@[hol "cakeml/compiler/backend/bvi_to_dataScript.sml" "compile_SING_IMP"]
+theorem compile_SING_IMP (n : Nat) (env : List Nat) (tail : Bool) (live : List Nat)
+    (x : Bvi.Exp) (c : DataLang.Prog) (vs : List Nat) (newVar : Nat)
+    (run : compileSource n env tail live [x] = (c, vs, newVar)) : ∃ t, vs = [t] := by
+  have length := compileSource_length n env tail live [x]
+  rw [run] at length
+  simp only [List.length_cons, List.length_nil] at length
+  cases vs with
+  | nil => simp at length
+  | cons t rest =>
+    cases rest with
+    | nil => exact ⟨t, rfl⟩
+    | cons u rest => simp at length
+
 end Flapjack.Compiler.Backend.BviToData

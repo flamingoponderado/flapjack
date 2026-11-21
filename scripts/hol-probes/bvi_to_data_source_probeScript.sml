@@ -1,0 +1,11 @@
+load "bvi_to_dataTheory";
+open HolKernel Parse boolLib bossLib;
+val _ = Globals.linewidth := 1000000;
+val _ = set_trace "Unicode" 0;
+val _ = (print "op_space_reset_pmatch_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl bvi_to_dataTheory.op_space_reset_pmatch); print "\n");
+val _ = (print "op_requires_names_eqn_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl bvi_to_dataTheory.op_requires_names_eqn); print "\n");
+val _ = (print "op_requires_names_pmatch_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl bvi_to_dataTheory.op_requires_names_pmatch); print "\n");
+val _ = (print "compile_LESS_EQ_lemma_typed="; Lib.with_flag (Globals.show_types,true) print_term ``!(n :num) (env :num list) (tail :bool) (live :num list) (xs :bvi$exp list). n <= SND (SND (bvi_to_data$compile n env tail live xs))``; print "\n");
+val _ = (print "compile_LENGTH_lemma_typed="; Lib.with_flag (Globals.show_types,true) print_term ``!(n :num) (env :num list) (tail :bool) (live :num list) (xs :bvi$exp list). LENGTH (FST (SND (bvi_to_data$compile n env tail live xs))) = LENGTH xs``; print "\n");
+val _ = (print "compile_SING_IMP_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl bvi_to_dataTheory.compile_SING_IMP); print "\n");
+val _ = (print "compile_exp_eq_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl bvi_to_dataTheory.compile_exp_eq); print "\n");

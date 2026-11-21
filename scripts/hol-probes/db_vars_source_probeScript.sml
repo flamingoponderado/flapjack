@@ -1,0 +1,12 @@
+load "db_varsTheory";
+open HolKernel Parse boolLib bossLib;
+val _ = Globals.linewidth := 1000000;
+val _ = set_trace "Unicode" 0;
+val _ = (print "mk_Union_Empty_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl db_varsTheory.mk_Union_Empty); print "\n");
+val _ = (print "FOLDR_mk_Union_UNZIP_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl db_varsTheory.FOLDR_mk_Union_UNZIP); print "\n");
+val _ = (print "wf_db_to_set_acc_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl db_varsTheory.wf_db_to_set_acc); print "\n");
+val _ = (print "wf_db_to_set_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl db_varsTheory.wf_db_to_set); print "\n");
+val _ = (print "has_var_list_mk_Union_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl db_varsTheory.has_var_list_mk_Union); print "\n");
+val _ = (print "lookup_db_to_set_Shift_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl db_varsTheory.lookup_db_to_set_Shift); print "\n");
+val _ = (print "has_var_FOLDL_Union_typed="; Lib.with_flag (Globals.show_types,true) print_term ``!(vs :num list) (n :num) (s :db_var_set). has_var n (FOLDL (\(s1 :db_var_set) (v :num). Union (Var v) s1) s vs) <=> ((MEM n vs) \/ has_var n s)``; print "\n");
+val _ = (print "ALL_DISTINCT_vars_to_list_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl db_varsTheory.ALL_DISTINCT_vars_to_list); print "\n");

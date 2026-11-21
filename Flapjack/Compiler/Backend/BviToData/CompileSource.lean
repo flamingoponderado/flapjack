@@ -227,4 +227,14 @@ def compileProg (program : List (Nat × Nat × Bvi.Exp)) :
     List (Nat × Nat × DataLang.Prog) :=
   program.map compilePart
 
+/-- Compiling one expression uses the singleton rewrite before optimizing. -/
+@[hol "cakeml/compiler/backend/bvi_to_dataScript.sml" "compile_exp_eq"]
+theorem compile_exp_eq (argc : Nat) (exp : Bvi.Exp) :
+    compileExp argc exp =
+      optimise (compileSing argc (List.range argc) true [] exp).1 := by
+  have same : (compileSource argc (List.range argc) true [] [exp]).1 =
+      (compileSing argc (List.range argc) true [] exp).1 := by
+    rw [compileSource_agrees]
+  rw [compileExp, same]
+
 end Flapjack.Compiler.Backend.BviToData

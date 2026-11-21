@@ -1571,6 +1571,7 @@ import Flapjack.Test.BviApplyParity
 import Flapjack.Test.BviEvaluateParity
 import Flapjack.Compiler.Backend.DbVars
 import Flapjack.Compiler.Backend.DbVars.Proofs.Lookup
+import Flapjack.Compiler.Backend.DbVars.Proofs.Source
 import Flapjack.Compiler.Backend.ClosAnnotate.Free
 import Flapjack.Compiler.Backend.ClosAnnotate.Free.Length
 import Flapjack.Compiler.Backend.ClosAnnotate.Shift
@@ -1783,6 +1784,7 @@ import Flapjack.Compiler.Backend.Semantics.DataSem.Evaluate
 import Flapjack.Compiler.Backend.Semantics.DataSem.Semantics
 import Flapjack.Compiler.Backend.DataSpace.Requirements
 import Flapjack.Compiler.Backend.BviToData.Assign
+import Flapjack.Compiler.Backend.BviToData.OpSpaceReset
 import Flapjack.Compiler.Backend.BviToData.Compile
 import Flapjack.Compiler.Backend.BviToData.Proofs.Total
 import Flapjack.Compiler.Backend.BviToData.Proofs.Value
