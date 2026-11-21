@@ -17,10 +17,12 @@ def isRec (name : Nat) : Exp → Bool
   | .call _ (some dest) _ none => dest == name
   | _ => false
 
-/-- HOL `is_rec_PMATCH`: the definition's case equation, with HOL's option
-binder `d` compared by the Boolean `==` of the definition. -/
+/-- HOL `is_rec_PMATCH`: the definition's case equation. HOL binds `expr` and
+leaves `name` free; the source compares the option binder `d` with the Boolean
+equality `d = SOME name`, which is rendered here as `==` because the reviewed
+`isRec` definition itself compares with the Boolean `==` (`dest == name`). -/
 @[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "is_rec_PMATCH"]
-theorem isRec_PMATCH (name : Nat) (expr : Exp) :
+theorem isRec_PMATCH (expr : Exp) (name : Nat) :
     isRec name expr =
       (match expr with
        | .call _ d _ none => d == some name
