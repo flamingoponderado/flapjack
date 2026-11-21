@@ -3757,6 +3757,7 @@ run_probe pan_common_props_exact_map_probeScript.sml pan_common_props_exact_map_
   opt_mmap_flookup_update_typed update_eq_zip_map_flookup_typed flookup_fupdate_zip_not_mem_typed domsub_commutes_fupdate_typed \
   fm_multi_update_typed fm_empty_zip_flookup_el_typed all_distinct_flookup_all_distinct_typed no_overlap_flookup_distinct_typed \
   not_mem_fst_zip_flookup_empty_typed fupdate_flookup_zip_elim_typed fm_zip_append_take_drop_typed map_some_the_map_typed fm_update_diff_vars_typed \
+  fm_update_diff_vars_vars \
   "$cake_dir/pancake/semantics/pan_commonPropsScript.sml" \
   "$cake_dir/pancake/semantics"
 

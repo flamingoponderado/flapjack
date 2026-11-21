@@ -11,3 +11,4 @@ fupdate_flookup_zip_elim_typed=∀(xs :α list) (ys :β list) (zs :α list) (as 
 fm_zip_append_take_drop_typed=∀(xs :α list) (ys :β list) (zs :β list) (f :α |-> β). ALL_DISTINCT xs ∧ LENGTH xs = LENGTH (ys ++ zs) ⇒ f |++ ZIP (xs,ys ++ zs) = f |++ ZIP (TAKE (LENGTH ys) xs,ys) |++ ZIP (DROP (LENGTH ys) xs,zs)
 map_some_the_map_typed=∀(xs :α list) (ys :β list) (f :α -> β option). MAP f xs = MAP (SOME :β -> β option) ys ⇒ MAP (λ(n :α). THE (f n)) xs = ys
 fm_update_diff_vars_typed=(a :α) ≠ (b :α) ⇒ (fm :α |-> β)⟨b ↦ (b'' :β); a ↦ (a' :β); b ↦ (b' :β); a ↦ a'⟩ = fm⟨b ↦ b''; a ↦ a'⟩
+fm_update_diff_vars_vars=b'',b',a',fm,b,a

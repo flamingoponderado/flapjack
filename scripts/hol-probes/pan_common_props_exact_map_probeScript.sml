@@ -27,3 +27,7 @@ val _ = show "fupdate_flookup_zip_elim_typed" fupdate_flookup_zip_elim;
 val _ = show "fm_zip_append_take_drop_typed" fm_zip_append_take_drop;
 val _ = show "map_some_the_map_typed" map_some_the_map;
 val _ = show "fm_update_diff_vars_typed" fm_update_diff_vars;
+val _ = (print "fm_update_diff_vars_vars=";
+  print (String.concatWith "," (map (fn t => fst (dest_var t))
+    (Term.free_varsl [concl fm_update_diff_vars])));
+  print "\n");

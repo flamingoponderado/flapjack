@@ -2,6 +2,8 @@ module
 
 public import Flapjack.Pancake.Semantics.PanCommonProps
 public import Flapjack.Pancake.Semantics.CrepSem.HOLState
+public import Flapjack.Misc.Option
+public import Flapjack.Misc.ListEl
 
 @[expose] public section
 
@@ -282,17 +284,17 @@ theorem holFmapAsFiniteSupportParamWitness_optMmapFlookupUpdateExactHOL_fm
     (`pan_commonPropsScript.sml:156-161`).  The typed capture gives
     `OPT_MMAP (FLOOKUP (fm :β |-> α)) (xs :β list) = SOME (ys :α list) ∧
     ¬MEM (x :β) xs ⇒ OPT_MMAP (FLOOKUP fm⟨x ↦ (y :α)⟩) xs = SOME ys`.
-    `|+` is `updateEq`, `OPT_MMAP` is `List.mapM`, `FLOOKUP` is `.lookup`, and
-    the map is a bare parameter entry. -/
+    `|+` is `updateEq`, `OPT_MMAP` is `List.mapM` applied to the partially
+    applied lookup `fm.lookup` / `(fm.updateEq (x, y)).lookup`, and the map is a
+    bare parameter entry. -/
 @[hol "cakeml/pancake/semantics/pan_commonPropsScript.sml" "opt_mmap_flookup_update"
   (fmap_as_finite_support_parameters := [fm])]
 theorem optMmapFlookupUpdateExactHOL {α β : Type} [DecidableEq β]
     (fm : HolFiniteMapExact β α) (xs : List β) (ys : List α) (x : β) (y : α)
-    (h : xs.mapM (fun key => fm.lookup key) = some ys ∧ x ∉ xs) :
-    xs.mapM (fun key => (fm.updateEq (x, y)).lookup key) = some ys := by
+    (h : xs.mapM fm.lookup = some ys ∧ x ∉ xs) :
+    xs.mapM (fm.updateEq (x, y)).lookup = some ys := by
   obtain ⟨hm, hx⟩ := h
-  have hcongr : xs.map (fun key => (fm.updateEq (x, y)).lookup key) =
-      xs.map (fun key => fm.lookup key) := by
+  have hcongr : xs.map (fm.updateEq (x, y)).lookup = xs.map fm.lookup := by
     apply List.map_congr_left
     intro key hkey
     have hne : key ≠ x := fun he => hx (by simpa [he] using hkey)
@@ -478,5 +480,256 @@ theorem notMemFstZipFlookupEmptyExactHOL {α β : Type} [DecidableEq α]
   · rfl
   · rw [List.map_fst_zip (by omega)]
     exact hmem
+
+/-- HOL-equality `|++` splits over list concatenation. -/
+theorem FUPDATE_LIST_HOL_append [DecidableEq α] (f : FiniteMap α β)
+    (l1 l2 : List (α × β)) :
+    FUPDATE_LIST_HOL f (l1 ++ l2) = FUPDATE_LIST_HOL (FUPDATE_LIST_HOL f l1) l2 := by
+  induction l1 generalizing f with
+  | nil => rfl
+  | cons entry rest ih =>
+      rw [List.cons_append, FUPDATE_LIST_HOL_cons, FUPDATE_LIST_HOL_cons, ih]
+
+/-- Updating a key with the value it already binds leaves the map unchanged
+    (HOL equality). -/
+theorem FUPDATE_HOL_eq_self_of_lookup_some [DecidableEq α] (f : FiniteMap α β)
+    (x : α) (v : β) (h : FLOOKUP f x = some v) : FUPDATE_HOL f (x, v) = f := by
+  funext key
+  by_cases hk : key = x
+  · subst hk
+    simp only [FUPDATE_HOL, if_true]
+    exact h.symm
+  · simp only [FUPDATE_HOL]
+    rw [if_neg hk]
+
+/-- Pointwise congruence of the `|++` fold: maps that agree at one key fold to
+    maps that agree at that key. -/
+theorem FLOOKUP_FUPDATE_LIST_HOL_congr [DecidableEq α] (f g : FiniteMap α β)
+    (entries : List (α × β)) (key : α) (h : FLOOKUP f key = FLOOKUP g key) :
+    FLOOKUP (FUPDATE_LIST_HOL f entries) key =
+      FLOOKUP (FUPDATE_LIST_HOL g entries) key := by
+  induction entries generalizing f g with
+  | nil => exact h
+  | cons entry rest ih =>
+      obtain ⟨k, v⟩ := entry
+      rw [FUPDATE_LIST_HOL_cons, FUPDATE_LIST_HOL_cons]
+      apply ih
+      simp only [FLOOKUP_FUPDATE_HOL]
+      by_cases hk : key = k
+      · rw [if_pos hk, if_pos hk]
+      · rw [if_neg hk, if_neg hk]
+        exact h
+
+/-- Nested-zip lookup over a list of updates from an arbitrary base map: the
+    value at `xs❲n❳` is the pair `(ys❲n❳, zs❲n❳)`. -/
+theorem FLOOKUP_FUPDATE_LIST_HOL_zip_zip [DecidableEq α] {β γ : Type}
+    (f : FiniteMap α (β × γ)) (xs : List α) (ys : List β) (zs : List γ)
+    (hdistinct : xs.Nodup) (hlen1 : xs.length = ys.length)
+    (hlen2 : ys.length = zs.length) (n : Nat) (hn : n < xs.length) :
+    FLOOKUP (FUPDATE_LIST_HOL f (xs.zip (ys.zip zs))) (xs[n]'hn) =
+      some (ys[n]'(by
+            rw [← hlen1]
+            exact hn),
+        zs[n]'(by
+            rw [← hlen2]
+            rw [← hlen1]
+            exact hn)) := by
+  induction xs generalizing f ys zs n with
+  | nil => simp at hn
+  | cons a xs ih =>
+      cases ys with
+      | nil => simp at hlen1
+      | cons b ys =>
+          cases zs with
+          | nil => simp at hlen2
+          | cons c zs =>
+              rw [List.nodup_cons] at hdistinct
+              obtain ⟨ha, hdistinctTail⟩ := hdistinct
+              have hlen1' : xs.length = ys.length := by simpa using hlen1
+              have hlen2' : ys.length = zs.length := by simpa using hlen2
+              cases n with
+              | zero =>
+                  simp only [List.getElem_cons_zero, List.zip_cons_cons,
+                    FUPDATE_LIST_HOL_cons]
+                  rw [FLOOKUP_FUPDATE_LIST_HOL_not_mem]
+                  · simp
+                  · rw [List.map_fst_zip (by
+                        rw [List.length_zip]
+                        omega)]
+                    exact ha
+              | succ k =>
+                  have hk : k < xs.length := by
+                    simp only [List.length_cons] at hn
+                    omega
+                  simp only [List.getElem_cons_succ, List.zip_cons_cons,
+                    FUPDATE_LIST_HOL_cons]
+                  exact ih (FUPDATE_HOL f (a, (b, c))) ys zs hdistinctTail hlen1'
+                    hlen2' k hk
+
+/-- Canonical standalone-map witness for the exact
+    `fm_zip_append_take_drop` parameter. -/
+theorem holFmapAsFiniteSupportParamWitness_fmZipAppendTakeDropExactHOL_f
+    {α β : Type} (f : HolFiniteMapExact α β) :
+    holFiniteMapofBroad (holFiniteMaptoBroadlookup f) f.finiteSupport = f := by
+  cases f
+  rfl
+
+/-- Exact port of HOL `pan_commonProps$fm_zip_append_take_drop`
+    (`pan_commonPropsScript.sml:595-601`).  The typed capture gives
+    `∀(xs :α list) (ys :β list) (zs :β list) (f :α |-> β). ALL_DISTINCT xs ∧
+    LENGTH xs = LENGTH (ys ++ zs) ⇒ f |++ ZIP (xs,ys ++ zs) =
+    f |++ ZIP (TAKE (LENGTH ys) xs,ys) |++ ZIP (DROP (LENGTH ys) xs,zs)`.
+    `f |++` is `updateListEq`, TAKE/DROP are `List.take`/`List.drop`, and the
+    map is a bare parameter entry.  HOL's `ALL_DISTINCT xs` is kept as a premise
+    although the split identity does not need it. -/
+@[hol "cakeml/pancake/semantics/pan_commonPropsScript.sml" "fm_zip_append_take_drop"
+  (fmap_as_finite_support_parameters := [f])]
+theorem fmZipAppendTakeDropExactHOL {α β : Type} [DecidableEq α]
+    (xs : List α) (ys zs : List β) (f : HolFiniteMapExact α β)
+    (h : xs.Nodup ∧ xs.length = (ys ++ zs).length) :
+    f.updateListEq (xs.zip (ys ++ zs)) =
+      (f.updateListEq ((xs.take ys.length).zip ys)).updateListEq
+        ((xs.drop ys.length).zip zs) := by
+  obtain ⟨_, hlen⟩ := h
+  apply HolFiniteMapExact.ext
+  show FUPDATE_LIST_HOL f.lookup (xs.zip (ys ++ zs)) =
+    FUPDATE_LIST_HOL (FUPDATE_LIST_HOL f.lookup ((xs.take ys.length).zip ys))
+      ((xs.drop ys.length).zip zs)
+  have hlenTake : (xs.take ys.length).length = ys.length := by
+    rw [List.length_take]
+    have hle : ys.length ≤ xs.length := by
+      rw [hlen]
+      simp
+    omega
+  rw [← FUPDATE_LIST_HOL_append, ← List.zip_append hlenTake, List.take_append_drop]
+
+/-- Canonical standalone-map witness for the exact
+    `fm_update_diff_vars` parameter. -/
+theorem holFmapAsFiniteSupportParamWitness_fmUpdateDiffVarsExactHOL_fm
+    {α β : Type} (fm : HolFiniteMapExact α β) :
+    holFiniteMapofBroad (holFiniteMaptoBroadlookup fm) fm.finiteSupport = fm := by
+  cases fm
+  rfl
+
+/-- Exact port of HOL `pan_commonProps$fm_update_diff_vars`
+    (`pan_commonPropsScript.sml:780-796`).  The typed capture gives
+    `(a :α) ≠ (b :α) ⇒ (fm :α |-> β)⟨b ↦ (b'' :β); a ↦ (a' :β);
+    b ↦ (b' :β); a ↦ a'⟩ = fm⟨b ↦ b''; a ↦ a'⟩`.  HOL's nested `|+` is the
+    chained `updateEq`, and the map is a bare parameter entry.  The binders
+    follow the captured free-variable order (`fm_update_diff_vars_vars=`
+    `b'',b',a',fm,b,a`). -/
+@[hol "cakeml/pancake/semantics/pan_commonPropsScript.sml" "fm_update_diff_vars"
+  (fmap_as_finite_support_parameters := [fm])]
+theorem fmUpdateDiffVarsExactHOL {α β : Type} [DecidableEq α]
+    (b'' : β) (b' : β) (a' : β) (fm : HolFiniteMapExact α β) (b : α) (a : α)
+    (h : a ≠ b) :
+    (((fm.updateEq (a, a')).updateEq (b, b')).updateEq (a, a')).updateEq (b, b'') =
+      (fm.updateEq (a, a')).updateEq (b, b'') := by
+  apply HolFiniteMapExact.ext
+  show FUPDATE_HOL (FUPDATE_HOL (FUPDATE_HOL (FUPDATE_HOL fm.lookup (a, a'))
+      (b, b')) (a, a')) (b, b'') =
+    FUPDATE_HOL (FUPDATE_HOL fm.lookup (a, a')) (b, b'')
+  funext key
+  by_cases hka : key = a
+  · subst hka
+    simp [FUPDATE_HOL, h]
+  · by_cases hkb : key = b
+    · subst hkb
+      simp [FUPDATE_HOL]
+    · simp [FUPDATE_HOL, hka, hkb]
+
+/-- Exact port of HOL `pan_commonProps$map_some_the_map`
+    (`pan_commonPropsScript.sml:615-622`).  The typed capture gives
+    `∀(xs :α list) (ys :β list) (f :α -> β option). MAP f xs =
+    MAP (SOME :β -> β option) ys ⇒ MAP (λ(n :α). THE (f n)) xs = ys`.  THE is
+    the reviewed `holThe`, whose `Nonempty β` instance records that every HOL
+    type is inhabited (`total_function_inhabitants`); MAP is `List.map` and
+    SOME is `some`. -/
+@[hol "cakeml/pancake/semantics/pan_commonPropsScript.sml" "map_some_the_map"
+  (total_function_inhabitants := [β])]
+theorem mapSomeTheMapExactHOL {α β : Type} [Nonempty β]
+    (xs : List α) (ys : List β) (f : α → Option β)
+    (h : xs.map f = ys.map some) : xs.map (fun n => holThe (f n)) = ys := by
+  induction xs generalizing ys with
+  | nil =>
+      cases ys with
+      | nil => rfl
+      | cons y ys => simp at h
+  | cons x xs ih =>
+      cases ys with
+      | nil => simp at h
+      | cons y ys =>
+          simp only [List.map_cons, List.cons.injEq] at h
+          obtain ⟨hx, htail⟩ := h
+          simp only [List.map_cons, List.cons.injEq]
+          refine ⟨?_, ih ys htail⟩
+          rw [hx]
+          rfl
+
+/-- Exact statement of HOL `pan_commonProps$fm_empty_zip_flookup_el`
+    (`pan_commonPropsScript.sml:479-508`), over the canonical carrier but
+    deliberately untagged: HOL's `FEMPTY` is the constant
+    `HolFiniteMapExact.empty`, which no reviewed qualifier covers.  The typed
+    capture gives `∀(xs :α list) (ys :β list) (zs :γ list) (n :num) (x :α).
+    ALL_DISTINCT xs ∧ LENGTH xs = LENGTH ys ∧ LENGTH ys = LENGTH zs ∧
+    n < LENGTH xs ∧ xs❲n❳ = x ⇒ FLOOKUP ((FEMPTY :α |-> β # γ) |++
+    ZIP (xs,ZIP (ys,zs))) x = SOME (ys❲n❳,zs❲n❳)`.  `|++` is `updateListEq`
+    and `FLOOKUP` is `.lookup`; the premise and conclusion `EL` are the reviewed
+    total `holEl` (hence `Nonempty α`), as for the other premise-internal EL
+    renderings. -/
+theorem fmEmptyZipFlookupElExactHOL {α β γ : Type} [DecidableEq α] [Nonempty α]
+    [Nonempty β] [Nonempty γ]
+    (xs : List α) (ys : List β) (zs : List γ) (n : Nat) (x : α)
+    (h : xs.Nodup ∧ xs.length = ys.length ∧ ys.length = zs.length ∧
+      n < xs.length ∧ holEl n xs = x) :
+    ((HolFiniteMapExact.empty : HolFiniteMapExact α (β × γ)).updateListEq
+        (xs.zip (ys.zip zs))).lookup x =
+      some (holEl n ys, holEl n zs) := by
+  obtain ⟨hd, h1, h2, hn, hx⟩ := h
+  show FLOOKUP (FUPDATE_LIST_HOL
+    (HolFiniteMapExact.empty : HolFiniteMapExact α (β × γ)).lookup
+    (xs.zip (ys.zip zs))) x = some (holEl n ys, holEl n zs)
+  rw [holEl_eq_getElem n xs hn] at hx
+  rw [← hx]
+  rw [holEl_eq_getElem n ys (by
+        rw [← h1]
+        exact hn),
+    holEl_eq_getElem n zs (by
+        rw [← h2]
+        rw [← h1]
+        exact hn)]
+  exact FLOOKUP_FUPDATE_LIST_HOL_zip_zip
+    (HolFiniteMapExact.empty : HolFiniteMapExact α (β × γ)).lookup xs ys zs hd h1 h2 n hn
+
+/-- Exact statement of HOL `pan_commonProps$fupdate_flookup_zip_elim`
+    (`pan_commonPropsScript.sml:546-573`), over the canonical carrier but
+    deliberately untagged because both sides use the constant
+    `HolFiniteMapExact.empty`, which no reviewed qualifier covers.  The typed
+    capture gives `∀(xs :α list) (ys :β list) (zs :α list) (as :β list)
+    (x :α). FLOOKUP ((FEMPTY :α |-> β) |++ ZIP (xs,ys)) x = NONE ∧
+    LENGTH zs = LENGTH as ∧ LENGTH xs = LENGTH ys ∧ ALL_DISTINCT xs ⇒
+    FLOOKUP ((FEMPTY :α |-> β) |++ ZIP (xs,ys) |++ ZIP (zs,as)) x =
+    FLOOKUP ((FEMPTY :α |-> β) |++ ZIP (zs,as)) x`.  `|++` is `updateListEq`
+    and `FLOOKUP` is `.lookup`. -/
+theorem fupdateFlookupZipElimExactHOL {α β : Type} [DecidableEq α]
+    (xs : List α) (ys : List β) (zs : List α) (as : List β) (x : α)
+    (h : ((HolFiniteMapExact.empty : HolFiniteMapExact α β).updateListEq
+        (xs.zip ys)).lookup x = none ∧
+      zs.length = as.length ∧ xs.length = ys.length ∧ xs.Nodup) :
+    (((HolFiniteMapExact.empty : HolFiniteMapExact α β).updateListEq
+        (xs.zip ys)).updateListEq (zs.zip as)).lookup x =
+      ((HolFiniteMapExact.empty : HolFiniteMapExact α β).updateListEq
+        (zs.zip as)).lookup x := by
+  obtain ⟨hbase, _, _, _⟩ := h
+  have hkey : FLOOKUP (FUPDATE_LIST_HOL
+      (HolFiniteMapExact.empty : HolFiniteMapExact α β).lookup (xs.zip ys)) x =
+      FLOOKUP (HolFiniteMapExact.empty : HolFiniteMapExact α β).lookup x := by
+    simpa [FLOOKUP, HolFiniteMapExact.empty] using hbase
+  show FLOOKUP (FUPDATE_LIST_HOL
+      (FUPDATE_LIST_HOL (HolFiniteMapExact.empty : HolFiniteMapExact α β).lookup
+        (xs.zip ys)) (zs.zip as)) x =
+    FLOOKUP (FUPDATE_LIST_HOL (HolFiniteMapExact.empty : HolFiniteMapExact α β).lookup
+      (zs.zip as)) x
+  rw [FLOOKUP_FUPDATE_LIST_HOL_congr _ _ (zs.zip as) x hkey]
 
 end Flapjack
