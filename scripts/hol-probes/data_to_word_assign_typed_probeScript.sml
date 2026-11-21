@@ -463,6 +463,7 @@ val _ = emit_exported "assign_LessConstSmall_typed" "assign_LessConstSmall";
 val _ = print ("assign_LessSmallConst_hypotheses=" ^
   Int.toString (length (hyp assign_LessSmallConst)) ^ "\n");
 val _ = emit_exported "assign_LessSmallConst_typed" "assign_LessSmallConst";
+val _ = capture "assign_BoundsCheckBlock_equation_typed" "assign_BoundsCheckBlock";
 val _ = print ("assign_BoundsCheckBlock_hypotheses=" ^
   Int.toString (length (hyp assign_BoundsCheckBlock)) ^ "\n");
 val _ = emit_exported "assign_BoundsCheckBlock_typed" "assign_BoundsCheckBlock";

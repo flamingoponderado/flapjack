@@ -54,6 +54,28 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {C F : Type} 
   WordSemStateExact.holFmapAsFiniteSupportWitness
 end BoundsBlockAssignmentWitness
 
+/-- Compiler equation for a block bounds check. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml" "assign_BoundsCheckBlock" 11195
+  (words_as_type_indexed_bitvec)]
+theorem assignBoundsCheckBlockEquation {width : Nat} [NeZero width]
+    (conf : Flapjack.Compiler.Backend.DataToWord.Config) (sec l dest : Nat)
+    (args : List Nat) (names : Option NumSet) :
+    (compileAssign conf sec l dest (.blockOp .boundsCheckBlock) args names :
+      WordLangProgHOL (BitVec width) × Nat) =
+      match args with
+      | [base, index] =>
+          (wordListSeq [
+            .ite .test (adjustVar base) (.imm 1) (.assign 1 (.const 0))
+              (.assign 1 (shiftN .lsr (.load (realAddr conf (adjustVar base))) (width - conf.lenSize))),
+            .assign 3 (shiftVar .ror (adjustVar index) 2),
+            setBool (adjustVar dest) .lower 3 (.reg 1)], l)
+      | _ => (.skip, l) := by
+  cases args with
+  | nil => rfl
+  | cons x xs => cases xs with
+    | nil => rfl
+    | cons y ys => cases ys <;> rfl
+
 /-- Block bounds checks satisfy the original assignment simulation.
 The evaluator inherits the real-model assumption in `docs/SOUNDNESS.md` item 8. -/
 @[hol "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml" "assign_BoundsCheckBlock" 11214
