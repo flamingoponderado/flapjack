@@ -193,6 +193,17 @@ theorem compileProgExps_eq (maxApp : Nat) (prog : List (Nat × Nat × ClosLang.E
     compileProgExpsHOL maxApp prog = compileProgHOL maxApp prog := by
   simp [compileProgExpsHOL, compileProgHOL, compileExps_eq_list]
 
+/-- The original program conversion written with the total expression-list
+conversion, exactly as HOL's `compile_prog_eq` states it. -/
+@[hol "cakeml/compiler/backend/clos_to_bvlScript.sml" "compile_prog_eq"]
+theorem compileProg_eq (maxApp : Nat) (prog : List (Nat × Nat × ClosLang.Exp)) :
+    compileProgExpsHOL maxApp prog =
+      let (newExps, aux) := compileExpListHOL maxApp (prog.map (Prod.snd ∘ Prod.snd)) []
+      (prog.zip newExps).map
+        (fun ((loc, args, _), exp) => (loc + numStubs maxApp, args, exp)) ++ aux := by
+  rw [compileProgExps_eq]
+  rfl
+
 /-- The production program converter returns the original program result. -/
 theorem compileProg_checked_eq_original (maxApp : Nat) (prog : List (Nat × Nat × ClosLang.Exp)) :
     compileProg? maxApp prog = some (compileProgExpsHOL maxApp prog) := by
