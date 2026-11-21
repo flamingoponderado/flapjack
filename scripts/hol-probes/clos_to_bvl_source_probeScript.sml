@@ -52,3 +52,24 @@ val _ = show "build_aux_MOVE_typed" clos_to_bvlTheory.build_aux_MOVE;
 val _ = show "compile_exps_acc_typed" clos_to_bvlTheory.compile_exps_acc;
 val _ = show "compile_exps_LENGTH_typed" clos_to_bvlTheory.compile_exps_LENGTH;
 val _ = show "compile_inc_def_typed" clos_to_bvlTheory.compile_inc_def;
+
+val _ = show "partial_app_tag_neq_closure_tag_typed" clos_to_bvlTheory.partial_app_tag_neq_closure_tag;
+val _ = show "clos_tag_shift_nil_tag_typed" clos_to_bvlTheory.clos_tag_shift_nil_tag;
+val _ = show "clos_tag_shift_cons_tag_typed" clos_to_bvlTheory.clos_tag_shift_cons_tag;
+val _ = show "clos_tag_shift_inj_typed" clos_to_bvlTheory.clos_tag_shift_inj;
+val _ = show "compile_op_pmatch_typed" clos_to_bvlTheory.compile_op_pmatch;
+val _ = show "build_aux_APPEND1_typed" clos_to_bvlTheory.build_aux_APPEND1;
+val _ = show "compile_prog_eq_typed" clos_to_bvlTheory.compile_prog_eq;
+val _ = show "compile_exps_CONS_typed" clos_to_bvlTheory.compile_exps_CONS;
+val _ = show "compile_exps_SNOC_typed" clos_to_bvlTheory.compile_exps_SNOC;
+val _ = show "code_split_NULL_typed" clos_to_bvlTheory.code_split_NULL;
+val _ = show "code_split_LENGTH_typed" clos_to_bvlTheory.code_split_LENGTH;
+val _ = show "make_name_alist_eq_typed" clos_to_bvlTheory.make_name_alist_eq;
+
+(* Local lemmas are not exported by the theory; replay their source statements. *)
+val _ = print "pair_lem1_typed=";
+val _ = print_term ``!f x. (\(a,b). f a b) x = f (FST x) (SND x)``;
+val _ = print "\n";
+val _ = print "pair_lem2_typed=";
+val _ = print_term ``!x y z. (x,y) = z ⇔ x = FST z ∧ y = SND z``;
+val _ = print "\n";
