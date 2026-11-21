@@ -3764,6 +3764,12 @@ run_probe pan_common_props_exact_map_probeScript.sml pan_common_props_exact_map_
 # The crepProps assigned_vars / var_cexp probe observes the nested_decs append,
 # stores emptiness, and load_shape EXACT lemmas
 # (crepPropsScript.sml:390, :400, :429, :439, :215).
+run_probe crep_props_res_var_probeScript.sml crep_props_res_var_probe.out \
+  res_var_commutes_typed flookup_res_var_distinct_eq_typed flookup_res_var_distinct_typed flookup_res_var_zip_distinct_typed update_locals_not_vars_eval_eq_pp_typed \
+  res_var_commutes_vars \
+  "$cake_dir/pancake/semantics/crepPropsScript.sml" \
+  "$cake_dir/pancake/semantics"
+
 run_probe crep_props_assigned_vars_probeScript.sml crep_props_assigned_vars_probe.out \
   avnda vels \
   "$cake_dir/pancake/semantics/crepPropsScript.sml" \

@@ -1042,6 +1042,89 @@ theorem flookupResVarThmHOL [DecidableEq α] (l : HolFiniteMapExact α β)
     rw [FLOOKUP_FUPDATE_HOL]
     rfl
 
+/-- Exact port of HOL `crepProps$res_var_commutes`
+    (`cakeml/pancake/semantics/crepPropsScript.sml:234-241`): updating the
+    locals map from `lc'` at two distinct names commutes.  The typed capture
+    gives `(n :α) ≠ (h :α) ⇒ res_var (res_var (lc :α |-> β)
+    (h,FLOOKUP (lc' :α |-> β) h)) (n,FLOOKUP lc' n) = res_var (res_var lc
+    (n,FLOOKUP lc' n)) (h,FLOOKUP lc' h)`.  `res_var` is the reviewed
+    `HolFiniteMapExact.resVarEq`, `FLOOKUP` is `.lookup`, and both maps are
+    bare finite-support entries; the binders follow HOL's captured
+    free-variable order `lc',lc,h,n` (label `res_var_commutes_vars`). -/
+@[hol "cakeml/pancake/semantics/crepPropsScript.sml" "res_var_commutes"
+  (fmap_as_finite_support_relation := [lc', lc])]
+theorem resVarCommutesCrepPropsHOL {α β : Type} [DecidableEq α]
+    (lc' : HolFiniteMapExact α β) (lc : HolFiniteMapExact α β) (h : α) (n : α)
+    (hne : n ≠ h) :
+    (HolFiniteMapExact.resVarEq (HolFiniteMapExact.resVarEq lc (h, lc'.lookup h))
+        (n, lc'.lookup n)) =
+      HolFiniteMapExact.resVarEq (HolFiniteMapExact.resVarEq lc (n, lc'.lookup n))
+        (h, lc'.lookup h) := by
+  apply HolFiniteMapExact.ext
+  funext key
+  rw [flookupResVarThmHOL (HolFiniteMapExact.resVarEq lc (h, lc'.lookup h)) n key
+      (lc'.lookup n),
+    flookupResVarThmHOL lc h key (lc'.lookup h),
+    flookupResVarThmHOL (HolFiniteMapExact.resVarEq lc (n, lc'.lookup n)) h key
+      (lc'.lookup h),
+    flookupResVarThmHOL lc n key (lc'.lookup n)]
+  by_cases hkn : key = n
+  · subst hkn
+    simp [hne]
+  · by_cases hkh : key = h
+    · subst hkh
+      simp [Ne.symm hne]
+    · simp [hkn, hkh]
+
+/-- Exact port of HOL `crepProps$flookup_res_var_distinct_eq`
+    (`cakeml/pancake/semantics/crepPropsScript.sml:763-771`): folding `res_var`
+    over a list of pairs whose keys omit `x` leaves the lookup at `x`
+    unchanged.  The typed capture gives `∀(xs :(α # β option) list) (x :α)
+    (fm :α |-> β). ¬MEM x (MAP (FST :α # β option -> α) xs) ⇒
+    FLOOKUP (FOLDL (res_var :(α |-> β) -> α # β option -> (α |-> β)) fm xs) x =
+    FLOOKUP fm x`.  `res_var` is `HolFiniteMapExact.resVarEq`, `FOLDL` is
+    `List.foldl`, and `fm` is a bare finite-support entry. -/
+@[hol "cakeml/pancake/semantics/crepPropsScript.sml" "flookup_res_var_distinct_eq"
+  (fmap_as_finite_support_relation := [fm])]
+theorem flookupResVarDistinctEqHOL {α β : Type} [DecidableEq α]
+    (xs : List (α × Option β)) (x : α) (fm : HolFiniteMapExact α β)
+    (h : x ∉ xs.map Prod.fst) :
+    (xs.foldl (fun current entry => HolFiniteMapExact.resVarEq current entry)
+        fm).lookup x = fm.lookup x := by
+  induction xs generalizing fm with
+  | nil => rfl
+  | cons entry rest ih =>
+      obtain ⟨k, v⟩ := entry
+      simp only [List.map_cons, List.mem_cons, not_or] at h
+      simp only [List.foldl_cons]
+      rw [ih (HolFiniteMapExact.resVarEq fm (k, v)) h.2]
+      exact flookupResVarDiffEqHOL fm k x v h.1
+
+/-- Exact port of HOL `crepProps$update_locals_not_vars_eval_eq''`
+    (`cakeml/pancake/semantics/crepPropsScript.sml:203-211`): replacing the
+    `locals` map with one updated at a name outside `var_cexp e` preserves the
+    exact evaluation result.  The typed capture gives
+    `∀(s :(α, β) state) (e :α crepLang$exp) (v :γ) (n :num)
+    (w :α word_lab) (locals :num |-> α word_lab). ¬MEM n (var_cexp e) ⇒
+    eval (s with locals := locals⟨n ↦ w⟩) e = eval (s with locals := locals) e`.
+    The unused `v` binder keeps HOL's fresh type variable `γ`; `⟨n ↦ w⟩` is
+    `updateEq` and the state/expression carriers are the width-indexed exact
+    ones. -/
+@[hol "cakeml/pancake/semantics/crepPropsScript.sml" "update_locals_not_vars_eval_eq''"
+  (fmap_as_finite_support := [locals, globals, code])
+  (words_as_type_indexed_bitvec)]
+theorem updateLocalsNotVarsEvalEq''CrepHOL {width : Nat} [NeZero width] {σ : Type}
+    {γ : Type}
+    (state : CrepSemHOLState width σ) (expression : CrepExpHOL width) (_v : γ)
+    (name : Nat) (word : HolWordLab width)
+    (locals : HolFiniteMapExact Nat (HolWordLab width))
+    (hfresh : name ∉ crepExpVarsHOL expression) :
+    evalCrepSemHOLExp { state with locals := locals.updateEq (name, word) }
+        expression =
+      evalCrepSemHOLExp { state with locals := locals } expression := by
+  exact updateLocalsNotVarsEvalEq'CrepHOL { state with locals := locals } expression
+    _v name word hfresh
+
 /-- Exact HOL `opt_mmap_eval_upd_clock_eq` (`crepPropsScript.sml:875`): mapping
 the exact expression evaluator (after a clock update by `clock + state.clock`)
 over a list of expressions equals mapping the original evaluator. The
@@ -1190,6 +1273,66 @@ theorem flookupResVarDistinctZipEqHOL {α β : Type} [DecidableEq α] :
       have hxk : x ≠ k := hx.1
       cases y <;> simp [HolFiniteMapExact.resVarEq, HolFiniteMapExact.lookup_eraseEq,
         HolFiniteMapExact.lookup_updateEq, FDOMSUB_HOL, FUPDATE_HOL, hxk]
+
+/-- Exact port of HOL `crepProps$flookup_res_var_distinct`
+    (`cakeml/pancake/semantics/crepPropsScript.sml:796-812`): mapping the
+    `res_var`-folded lookup over a key list disjoint from the folded keys
+    equals mapping the original lookup.  The typed capture gives
+    `∀(ys :α list) (xs :α list) (zs :β option list) (fm :α |-> β).
+    distinct_lists xs ys ∧ LENGTH xs = LENGTH zs ⇒
+    MAP (FLOOKUP (FOLDL (res_var :(α |-> β) -> α # β option -> (α |-> β)) fm
+    (ZIP (xs,zs)))) ys = MAP (FLOOKUP fm) ys`.  HOL's Boolean `distinct_lists`
+    is the tagged `distinctListsHol`, `MAP` is `List.map`, `ZIP` is
+    `List.zip`, and `fm` is a bare finite-support entry. -/
+@[hol "cakeml/pancake/semantics/crepPropsScript.sml" "flookup_res_var_distinct"
+  (fmap_as_finite_support_relation := [fm])]
+theorem flookupResVarDistinctHOL {α β : Type} [DecidableEq α]
+    (ys : List α) (xs : List α) (zs : List (Option β)) (fm : HolFiniteMapExact α β)
+    (h : distinctListsHol xs ys = true ∧ xs.length = zs.length) :
+    ys.map (fun k =>
+        ((xs.zip zs).foldl (fun current entry => HolFiniteMapExact.resVarEq current entry)
+          fm).lookup k) = ys.map (fun k => fm.lookup k) := by
+  obtain ⟨hdisj, hlen⟩ := h
+  apply List.map_congr_left
+  intro k hk
+  have hdisj' : ListDisjoint xs ys :=
+    (distinctListsHol_eq_true_iff_listDisjoint xs ys).mp hdisj
+  have hkxs : k ∉ xs := fun hkx => hdisj' k hkx hk
+  exact flookupResVarDistinctZipEqHOL xs zs fm k ⟨hlen, hkxs⟩
+
+/-- Exact port of HOL `crepProps$flookup_res_var_zip_distinct`
+    (`cakeml/pancake/semantics/crepPropsScript.sml:820-830`): the same map
+    equality when the folded map starts from `fm |++ ZIP (xs,as)`.  The typed
+    capture gives `∀(ys :α list) (xs :α list) (as :β list)
+    (cs :β option list) (fm :α |-> β). distinct_lists xs ys ∧
+    LENGTH xs = LENGTH as ∧ LENGTH xs = LENGTH cs ⇒
+    MAP (FLOOKUP (FOLDL (res_var :(α |-> β) -> α # β option -> (α |-> β))
+    (fm |++ ZIP (xs,as)) (ZIP (xs,cs)))) ys = MAP (FLOOKUP fm) ys`.  `|++` is
+    `updateListEq`, `res_var` is `HolFiniteMapExact.resVarEq`, and `fm` is a
+    bare finite-support entry. -/
+@[hol "cakeml/pancake/semantics/crepPropsScript.sml" "flookup_res_var_zip_distinct"
+  (fmap_as_finite_support_relation := [fm])]
+theorem flookupResVarZipDistinctHOL {α β : Type} [DecidableEq α]
+    (ys : List α) (xs : List α) (as : List β) (cs : List (Option β))
+    (fm : HolFiniteMapExact α β)
+    (h : distinctListsHol xs ys = true ∧ xs.length = as.length ∧
+      xs.length = cs.length) :
+    ys.map (fun k =>
+        ((xs.zip cs).foldl (fun current entry => HolFiniteMapExact.resVarEq current entry)
+          (fm.updateListEq (xs.zip as))).lookup k) = ys.map (fun k => fm.lookup k) := by
+  obtain ⟨hdisj, hlenAs, hlenCs⟩ := h
+  apply List.map_congr_left
+  intro k hk
+  have hdisj' : ListDisjoint xs ys :=
+    (distinctListsHol_eq_true_iff_listDisjoint xs ys).mp hdisj
+  have hkxs : k ∉ xs := fun hkx => hdisj' k hkx hk
+  rw [flookupResVarDistinctZipEqHOL xs cs (fm.updateListEq (xs.zip as)) k
+    ⟨hlenCs, hkxs⟩]
+  show FLOOKUP (FUPDATE_LIST_HOL fm.lookup (xs.zip as)) k = FLOOKUP fm.lookup k
+  have hkzip : k ∉ (xs.zip as).map Prod.fst := by
+    rw [List.map_fst_zip (by omega)]
+    exact hkxs
+  exact FLOOKUP_FUPDATE_LIST_HOL_not_mem fm.lookup (xs.zip as) k hkzip
 
 private abbrev crepUnassignedFreeVarsMotive {width : Nat} [NeZero width] {σ : Type}
     (x : CrepProgHOL width × CrepSemHOLState width σ) : Prop :=

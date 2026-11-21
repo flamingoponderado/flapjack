@@ -1,0 +1,6 @@
+res_var_commutes_typed=(n :α) ≠ (h :α) ⇒ res_var (res_var (lc :α |-> β) (h,FLOOKUP (lc' :α |-> β) h)) (n,FLOOKUP lc' n) = res_var (res_var lc (n,FLOOKUP lc' n)) (h,FLOOKUP lc' h)
+flookup_res_var_distinct_eq_typed=∀(xs :(α # β option) list) (x :α) (fm :α |-> β). ¬MEM x (MAP (FST :α # β option -> α) xs) ⇒ FLOOKUP (FOLDL (res_var :(α |-> β) -> α # β option -> (α |-> β)) fm xs) x = FLOOKUP fm x
+flookup_res_var_distinct_typed=∀(ys :α list) (xs :α list) (zs :β option list) (fm :α |-> β). distinct_lists xs ys ∧ LENGTH xs = LENGTH zs ⇒ MAP (FLOOKUP (FOLDL (res_var :(α |-> β) -> α # β option -> (α |-> β)) fm (ZIP (xs,zs)))) ys = MAP (FLOOKUP fm) ys
+flookup_res_var_zip_distinct_typed=∀(ys :α list) (xs :α list) (as :β list) (cs :β option list) (fm :α |-> β). distinct_lists xs ys ∧ LENGTH xs = LENGTH as ∧ LENGTH xs = LENGTH cs ⇒ MAP (FLOOKUP (FOLDL (res_var :(α |-> β) -> α # β option -> (α |-> β)) (fm |++ ZIP (xs,as)) (ZIP (xs,cs)))) ys = MAP (FLOOKUP fm) ys
+update_locals_not_vars_eval_eq_pp_typed=∀(s :(α, β) state) (e :α crepLang$exp) (v :γ) (n :num) (w :α word_lab) (locals :num |-> α word_lab). ¬MEM n (var_cexp e) ⇒ (eval (s with locals := locals⟨n ↦ w⟩) e :α word_lab option) = (eval (s with locals := locals) e :α word_lab option)
+res_var_commutes_vars=lc',lc,h,n
