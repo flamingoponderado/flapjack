@@ -11172,3 +11172,12 @@ Exported theorems come from the theory DB; `[local]` ones are parsed from the
 pinned source text in the loaded theory context. Regenerate with
 `CAKEML=<cakeml tree> HOL_PROBE_ONLY=data_to_word_proof_lab_typed_probeScript.sml
 scripts/hol-probes/regenerate.sh`; no HOL proof is replayed.
+
+`data_to_word_proof_call_typed_probe.out` records the typed statements of the
+data_to_wordProof state-relation lemmas used by the `Call` case of
+`data_compile_correct`: the exported derived `state_rel_cut_env_IMP_cut_env`
+(captured from the theory DB) and the `[local]` `state_rel_get_var_RefPtr_Loc`
+and `state_rel_pop_env_set_vars_IMP` (parsed from the pinned source text).
+Regenerate with `CAKEML=<cakeml tree>
+HOL_PROBE_ONLY=data_to_word_proof_call_typed_probeScript.sml
+scripts/hol-probes/regenerate.sh`; no HOL proof is replayed.
