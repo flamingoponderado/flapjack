@@ -312,6 +312,11 @@ import Flapjack.Compiler.Backend.Backend.IncProgs
 import Flapjack.Compiler.Backend.BackendProof.CakeOrac
 import Flapjack.Compiler.Backend.BackendProof.FromConfEx
 import Flapjack.Compiler.Backend.BackendProof.CakeOracConfigEqs
+import Flapjack.Compiler.Backend.BackendProof.CakeOracNames
+import Flapjack.Compiler.Backend.BackendProof.OracleGlobals
+import Flapjack.Compiler.Backend.BackendProof.FullMakeInitSemantics2
+import Flapjack.Compiler.Backend.BackendProof.BvlToBviSemantics2
+import Flapjack.Compiler.Backend.BackendProof.StateOracle
 import Flapjack.Compiler.Backend.DataToWord.Proofs.OptionLe
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Limits
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Mask
