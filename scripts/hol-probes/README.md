@@ -74,7 +74,7 @@ heap-size lemmas `size_of_app_Number` through
 Batch A6 appends `STOP_def`, `evaluate_MakeBytes`, `state_rel_get_var_Number_IMP`
 and the compiler definitions `MakeBytes_def`, `WriteLastByte_aux_def` and
 `WriteLastBytes_def` (from the data_to_word theory DB). Batch A7 appends the
-dataSem `do_app` lemmas of the script.
+dataSem `do_app` lemmas of the script. Batch A8 appends `assign_FinaliseCons`.
 
 `misc_typed_probe.out` captures the polymorphic `read_bytearray_def` and
 `read_bytearray_LENGTH` from the pinned CakeML misc theory.

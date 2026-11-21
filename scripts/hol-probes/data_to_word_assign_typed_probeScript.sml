@@ -697,3 +697,6 @@ val _ = cap "configGC_size_of_heap_LE_typed" "configGC_size_of_heap_LE";
 val _ = cap "do_app_FromList_stack_max_typed" "do_app_FromList_stack_max";
 val _ = cap "do_app_FromList_eq_typed" "do_app_FromList_eq";
 val _ = cap "do_app_AllocThunk_typed" "do_app_AllocThunk";
+
+(* Batch A8: assign_FinaliseCons. *)
+val _ = cap "assign_FinaliseCons_typed" "assign_FinaliseCons";
