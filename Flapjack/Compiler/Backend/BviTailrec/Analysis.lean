@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Compiler.Backend.BviTailrec
 public import Flapjack.Compiler.Backend.Bvi.GeneratedSize
+public import Flapjack.Compiler.Backend.BackendCommon.ConstructorTags
 
 @[expose] public section
 
@@ -51,6 +52,27 @@ theorem fromOp_PMATCH (op : ClosLang.Op) :
        | .intOp .mult => .times
        | .blockOp .listAppend => .append
        | _ => .noop) := rfl
+
+/-- HOL `from_op_thm`: the evaluated `from_op` equations, one per source
+`closLang$op` constructor, in the source's constructor order. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "from_op_thm"]
+theorem fromOp_thm (a : Nat) (s : Basis.Pure.MlString.MlString) (i : ClosLang.IntOp)
+    (w : ClosLang.WordOp) (b : ClosLang.BlockOp) (g : ClosLang.GlobOp)
+    (m : ClosLang.MemOp) (t : AstHOL.ThunkOp) :
+    fromOp (.label a) = .noop ∧
+      fromOp (.ffi s) = .noop ∧
+      fromOp (.intOp i) =
+        (if i == .add then .plus else if i == .mult then .times else .noop) ∧
+      fromOp (.wordOp w) = .noop ∧
+      fromOp (.blockOp b) =
+        (if b == .listAppend then .append else .noop) ∧
+      fromOp (.globOp g) = .noop ∧
+      fromOp (.memOp m) = .noop ∧
+      fromOp .install = .noop ∧
+      fromOp (.thunkOp t) = .noop := by
+  refine ⟨rfl, rfl, ?_, rfl, ?_, rfl, rfl, rfl, rfl⟩
+  · cases i <;> rfl
+  · cases b <;> rfl
 
 /-- Convert a source accumulator operator into its BVI operation. -/
 @[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "to_op_def"]
@@ -111,6 +133,84 @@ def argType : ClosLang.Op → ValueType
   | .intOp .less | .intOp .lessEq | .intOp .greater | .intOp .greaterEq => .int
   | .blockOp .listAppend => .list
   | _ => .any
+/-- HOL `arg_ty_PMATCH`: the definition's case equation, one arm per source
+`pmatch` alternative in source order. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "arg_ty_PMATCH"]
+theorem argType_PMATCH (op : ClosLang.Op) :
+    argType op =
+      (match op with
+       | .intOp .add => .int
+       | .intOp .sub => .int
+       | .intOp .mult => .int
+       | .intOp .div => .int
+       | .intOp .mod => .int
+       | .intOp .lessEq => .int
+       | .intOp .less => .int
+       | .intOp .greater => .int
+       | .intOp .greaterEq => .int
+       | .intOp (.const i) => if small i then .int else .any
+       | .blockOp .listAppend => .list
+       | _ => .any) := by
+  cases op with
+  | intOp i => cases i <;> rfl
+  | blockOp b => cases b <;> rfl
+  | _ => rfl
+
+/-- HOL `op_ty_def`: the result type of an accumulator operation, one clause
+per source constructor pattern in source order. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "op_ty_def"]
+def opTy : ClosLang.Op → ValueType
+  | .intOp .add => .int
+  | .intOp .sub => .int
+  | .intOp .mult => .int
+  | .intOp .div => .int
+  | .intOp .mod => .int
+  | .blockOp .listAppend => .list
+  | .blockOp (.cons tag) =>
+    if tag = Flapjack.Compiler.Backend.BackendCommon.nilTag ∨
+        tag = Flapjack.Compiler.Backend.BackendCommon.consTag then .list else .any
+  | .intOp (.const i) => if small i then .int else .any
+  | _ => .any
+/-- HOL `op_ty_PMATCH`: the definition's case equation, one arm per source
+`pmatch` alternative in source order (the `Cons` arm tests `cons_tag` first,
+as the source does). -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "op_ty_PMATCH"]
+theorem opTy_PMATCH (op : ClosLang.Op) :
+    opTy op =
+      (match op with
+       | .intOp .add => .int
+       | .intOp .sub => .int
+       | .intOp .mult => .int
+       | .intOp .div => .int
+       | .intOp .mod => .int
+       | .blockOp .listAppend => .list
+       | .blockOp (.cons tag) =>
+         if tag = Flapjack.Compiler.Backend.BackendCommon.consTag ∨
+             tag = Flapjack.Compiler.Backend.BackendCommon.nilTag then .list
+         else .any
+       | .intOp (.const i) => if small i then .int else .any
+       | _ => .any) := by
+  cases op with
+  | intOp i => cases i <;> rfl
+  | blockOp b =>
+    cases b with
+    | cons tag =>
+      show (if tag = Flapjack.Compiler.Backend.BackendCommon.nilTag ∨
+              tag = Flapjack.Compiler.Backend.BackendCommon.consTag then ValueType.list
+            else ValueType.any) =
+          (if tag = Flapjack.Compiler.Backend.BackendCommon.consTag ∨
+              tag = Flapjack.Compiler.Backend.BackendCommon.nilTag then ValueType.list
+            else ValueType.any)
+      by_cases hc : tag = Flapjack.Compiler.Backend.BackendCommon.consTag
+      · subst hc
+        simp
+      · by_cases hn : tag = Flapjack.Compiler.Backend.BackendCommon.nilTag
+        · subst hn
+          simp
+        · simp [hc, hn]
+    | _ => rfl
+  | _ => rfl
+
 /-- Keep a specific type only when both branches agree on it. -/
 @[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "decide_ty_def"]
 def decideType : ValueType → ValueType → ValueType
