@@ -132,6 +132,16 @@ theorem memExtractLabelsSeqAssocRight {width : Nat} [NeZero width]
     label ∈ extractLabels first ∨ label ∈ extractLabels second :=
   extractLabelsSeqAssocRight first second label member
 
+/-- HOL's derived `helper`: the contrapositive of
+`MEM_extract_labels_Seq_assoc_right_lemma`, obtained in HOL by
+`REWRITE_RULE [Once (GSYM CONTRAPOS_THM)]`. -/
+@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "helper"
+  (words_as_type_indexed_bitvec)]
+theorem memExtractLabelsSeqAssocRight_contrapos {width : Nat} [NeZero width] :
+    ∀ (p1 p2 : WordLangProgHOL (BitVec width)) (x : Nat × Nat),
+      ¬(x ∈ extractLabels p1 ∨ x ∈ extractLabels p2) → x ∉ extractLabels (seqAssocRight p1 p2) :=
+  fun p1 p2 x absent member => absent (memExtractLabelsSeqAssocRight p1 p2 x member)
+
 /-- Original whole-label-list distinctness implication for native right association. -/
 @[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "ALL_DISTINCT_extract_labels_Seq_assoc_right_lemma"
   (words_as_type_indexed_bitvec)]

@@ -128,6 +128,33 @@ theorem holFmapAsFiniteSupportWitness {C F : Type} :
   ClosSem.holFmapAsFiniteSupportWitness
 end StatePort
 
+namespace FmapRelCodec
+/-- Canonical finite-map lookup projection (Flapjack representation infrastructure). -/
+def maptoBroadlookup {K V : Type} (map : HolFiniteMapExact K V) : K → Option V := map.lookup
+/-- Canonical finite-map reconstruction (Flapjack representation infrastructure). -/
+def mapofBroad {K V : Type} (lookup : K → Option V)
+    (support : ∃ keys : List K, ∀ key, lookup key ≠ none → key ∈ keys) : HolFiniteMapExact K V :=
+  ⟨lookup, support⟩
+end FmapRelCodec
+open FmapRelCodec
+
+/-- The first finite-map parameter has a canonical lookup roundtrip. -/
+theorem holFmapAsFiniteSupportParamWitness_fmapRel_first {K A : Type} (first : HolFiniteMapExact K A) :
+    mapofBroad (maptoBroadlookup first) first.finiteSupport = first := by cases first; rfl
+
+/-- The second finite-map parameter has a canonical lookup roundtrip. -/
+theorem holFmapAsFiniteSupportParamWitness_fmapRel_second {K B : Type} (second : HolFiniteMapExact K B) :
+    mapofBroad (maptoBroadlookup second) second.finiteSupport = second := by cases second; rfl
+
+/-- Maps have equal domains and related entries at each source key (HOL's
+domain equality rendered pointwise). -/
+@[hol "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml" "FMAP_REL_def"
+  (fmap_as_finite_support_parameters := [first, second])]
+def fmapRel {K A B : Type} (r : A → B → Prop) (first : HolFiniteMapExact K A)
+    (second : HolFiniteMapExact K B) : Prop :=
+  (∀ k, first.lookup k ≠ none ↔ second.lookup k ≠ none) ∧
+    ∀ k v, first.lookup k = some v → ∃ w, second.lookup k = some w ∧ r v w
+
 /-- States related across tick removal. -/
 @[hol "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml" "state_rel_def"
   (fmap_as_finite_support := [refs, code])]

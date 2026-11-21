@@ -134,6 +134,23 @@ theorem code_rel_not_created_subprogs {width : Nat} [NeZero width] {locWidth : N
     subst this
     exact entry loc' ar e hl hP ar' e' hl'
 
+/-- HOL `code_rel_P` (`word_to_wordProofScript.sml:1082`), the source's
+    `Q.GEN \`P\` code_rel_not_created_subprogs`: the predicate is universally
+    quantified, the remaining free variables are explicit. -/
+@[hol "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml" "code_rel_P"
+  (words_as_type_indexed_bitvec)]
+theorem code_rel_P {width : Nat} [NeZero width] {locWidth : Nat} [NeZero locWidth]
+    {γ : Type} (op : Option Nat) (args : List (WordLocW locWidth))
+    (c1 : Spt (Nat × WordLangProgHOL (BitVec width))) (sz : Spt γ)
+    (v : List (WordLocW locWidth) × WordLangProgHOL (BitVec width) × Option γ)
+    (c2 : Spt (Nat × WordLangProgHOL (BitVec width)))
+    (v' : List (WordLocW locWidth) × WordLangProgHOL (BitVec width) × Option γ) :
+    ∀ P : WordLangProgHOL (BitVec width) → Bool,
+      wordSemFindCode op args c1 sz = some v ∧ codeRel c1 c2 ∧
+        notCreatedSubprogsHOL P v.2.1 = true ∧ wordSemFindCode op args c2 sz = some v' →
+      notCreatedSubprogsHOL P v'.2.1 = true :=
+  fun P => code_rel_not_created_subprogs P op args c1 sz v c2 v'
+
 /-- HOL `code_rel_no_alloc` (`word_to_wordProofScript.sml:1084-1085`, `[local]`): the
     `no_alloc` instance of `code_rel_not_created_subprogs`. -/
 @[hol "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml" "code_rel_no_alloc"
