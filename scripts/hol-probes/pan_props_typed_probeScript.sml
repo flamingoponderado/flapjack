@@ -115,3 +115,5 @@ val _ = emit "semantics_wrapper_eq_typed" "semantics_wrapper_eq";
 val _ = emit "evaluate_add_clock_or_timeout_typed" "evaluate_add_clock_or_timeout";
 val _ = emit "evaluate_io_events_mono_typed" "evaluate_io_events_mono";
 val _ = emit "evaluate_global_shape_invariant_typed" "evaluate_global_shape_invariant";
+val _ = emit "opt_mmap_eval_upd_clock_eq1_typed" "opt_mmap_eval_upd_clock_eq1";
+val _ = emit "eval_some_var_exp_local_lookup_typed" "eval_some_var_exp_local_lookup";
