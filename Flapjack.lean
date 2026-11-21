@@ -610,6 +610,7 @@ import Flapjack.Misc.Multiword.AddSub
 import Flapjack.Misc.Multiword.Mul
 import Flapjack.Misc.Multiword.Shift
 import Flapjack.Misc.Multiword.CompareSigned
+import Flapjack.Misc.Multiword.DivLemmas
 import Flapjack.Misc.Multiword.Length
 import Flapjack.Misc.Multiword.SingleWord
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.WordEquality.Word64
