@@ -12326,6 +12326,7 @@ run_probe data_to_word_assign_typed_probeScript.sml data_to_word_assign_typed_pr
 
 run_probe data_to_word_bignum_typed_probeScript.sml data_to_word_bignum_typed_probe.out \
   mw_op_constructors i2mw_small_int_IMP_0_typed get_iop_def_typed lt_dimindex_MOD_dimword_typed \
+  LongDiv1_thm_prime_typed eval_Call_Arith_typed \
   "$cake_dir/compiler/backend/proofs/data_to_word_bignumProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
 
@@ -12728,5 +12729,16 @@ run_probe data_to_word_proof_lab_typed_probeScript.sml data_to_word_proof_lab_ty
   MemEqList_no_share_inst_typed StoreAnyConsts_no_share_inst_typed MAP_FST_ZIP_typed \
   StoreEach_no_inst_typed MemEqList_no_inst_typed StoreAnyConsts_no_inst_typed \
   bounds_lem_typed max_heap_limit_has_fp_ops_typed FST_compile_part_typed \
+  "$cake_dir/compiler/backend/proofs/data_to_wordProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+
+run_probe data_to_word_proof_call_typed_probeScript.sml data_to_word_proof_call_typed_probe.out \
+  state_rel_cut_env_IMP_cut_env_typed state_rel_get_var_RefPtr_Loc_typed \
+  state_rel_pop_env_set_vars_IMP_typed \
+  "$cake_dir/compiler/backend/proofs/data_to_wordProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+
+run_probe data_to_word_proof_ext_typed_probeScript.sml data_to_word_proof_ext_typed_probe.out \
+  state_rel_ext_def_typed state_rel_ext_with_clock_typed \
   "$cake_dir/compiler/backend/proofs/data_to_wordProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
