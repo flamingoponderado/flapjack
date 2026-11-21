@@ -196,7 +196,8 @@ def isVar : Exp → Bool
 @[hol "cakeml/compiler/backend/clos_opScript.sml" "is_Var_pmatch"]
 theorem isVar_pmatch (x : Exp) :
     isVar x = match x with | .var _ _ => true | _ => false := by
-  cases x <;> simp [isVar]
+  cases x
+  all_goals simp [isVar]
 
 /-- Lift two expressions before constructing a pure equality test. -/
 @[hol "cakeml/compiler/backend/clos_opScript.sml" "eq_any_def"]

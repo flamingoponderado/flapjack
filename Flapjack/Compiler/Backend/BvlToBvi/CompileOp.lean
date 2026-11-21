@@ -158,18 +158,35 @@ theorem compileOp_pmatch (op : ClosLang.Op) (xs : List Bvi.Exp) :
       | _ => .op op xs := by
   cases op with
   | intOp i =>
-    cases i <;> simp [compileOp] <;> cases xs <;> simp_all
+    cases i
+    all_goals simp [compileOp]
+    all_goals cases xs
+    all_goals simp_all
   | globOp g =>
-    cases g <;> simp [compileOp] <;> cases xs <;> simp_all
+    cases g
+    all_goals simp [compileOp]
+    all_goals cases xs
+    all_goals simp_all
   | blockOp b =>
-    cases b <;> simp [compileOp, argsOrZero, listLength, zero] <;> cases xs <;> simp_all
+    cases b
+    all_goals simp [compileOp, argsOrZero, listLength, zero]
+    all_goals cases xs
+    all_goals simp_all
   | memOp m =>
     cases m with
     | copyByte b =>
-      cases b <;> simp [compileOp, zero] <;> cases xs <;> simp_all
-    | _ => simp [compileOp, argsOrZero, listLength, zero] <;> cases xs <;> simp_all
+      cases b
+      all_goals simp [compileOp, zero]
+      all_goals cases xs
+      all_goals simp_all
+    | _ =>
+      simp [compileOp, argsOrZero, listLength, zero]
+      all_goals cases xs
+      all_goals simp_all
   | install =>
-    simp [compileOp, listLength, zero] <;> cases xs <;> simp_all
+    simp [compileOp, listLength, zero]
+    all_goals cases xs
+    all_goals simp_all
   | label l => simp [compileOp]
   | _ => simp [compileOp]
 

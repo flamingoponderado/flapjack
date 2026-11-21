@@ -31,6 +31,26 @@ theorem compile_list_equations (env : List (Option Exp)) (x y : Exp) (xs : List 
       compile env (x :: y :: xs) = compile env [x] ++ compile env (y :: xs) := by
   simp [compile, compileList]
 
+/-- The traversal preserves the number of expressions. -/
+@[hol "cakeml/compiler/backend/bvl_constScript.sml" "compile_length"]
+theorem compile_length (env : List (Option Exp)) (xs : List Exp) :
+    (compile env xs).length = xs.length := by
+  induction xs with
+  | nil => simp [compile, compileList]
+  | cons x xs ih => simp [compile, compileList, ih]
+
+/-- The traversal of a singleton is a singleton list. -/
+@[hol "cakeml/compiler/backend/bvl_constScript.sml" "compile_HD_SING"]
+theorem compile_HD_SING (env : List (Option Exp)) (x : Exp) :
+    [Flapjack.holHd (compile env [x])] = compile env [x] := by
+  have h := compile_length env [x]
+  cases hc : compile env [x] with
+  | nil => simp [hc] at h
+  | cons y ys =>
+    cases ys with
+    | nil => simp [Flapjack.holHd]
+    | cons z zs => simp [hc] at h
+
 open Classical in
 /-- Constructor clauses of the original list recursion. These equations are
 comparison evidence for `compile_def`, not a separate HOL declaration. -/

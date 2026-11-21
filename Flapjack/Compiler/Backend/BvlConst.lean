@@ -202,7 +202,8 @@ theorem deleteVar_pmatch (op : Exp) :
     deleteVar op = match op with
       | .var _ => .op (.intOp (.const 0)) []
       | x => x := by
-  cases op <;> rfl
+  cases op
+  all_goals rfl
 
 /-- Apply constant propagation with explicit recursion fuel. -/
 def compileFuel : Nat → List (Option Exp) → Exp → Option Exp

@@ -19,7 +19,8 @@ def destLet : Bvl.Exp → List Bvl.Exp × Bvl.Exp
 @[hol "cakeml/compiler/backend/bvl_to_bviScript.sml" "destLet_pmatch"]
 theorem destLet_pmatch (exp : Bvl.Exp) :
     destLet exp = match exp with | .let xs b => (xs, b) | _ => ([], .var 0) := by
-  cases exp <;> simp [destLet]
+  cases exp
+  all_goals simp [destLet]
 
 /-- Use the small-integer operation inside the original inclusive bound. -/
 @[hol "cakeml/compiler/backend/bvl_to_bviScript.sml" "compile_int_def"]
