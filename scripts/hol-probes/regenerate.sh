@@ -3766,7 +3766,7 @@ run_probe pan_common_props_exact_map_probeScript.sml pan_common_props_exact_map_
 # (crepPropsScript.sml:390, :400, :429, :439, :215).
 run_probe crep_props_res_var_probeScript.sml crep_props_res_var_probe.out \
   res_var_commutes_typed flookup_res_var_distinct_eq_typed flookup_res_var_distinct_typed flookup_res_var_zip_distinct_typed update_locals_not_vars_eval_eq_pp_typed \
-  res_var_commutes_vars load_glob_not_mem_load_vars set_mem_op_FLOOKUP_locals_vars eval_exps_not_load_global_eq_vars load_glob_not_mem_load_typed set_mem_op_FLOOKUP_locals_typed eval_exps_not_load_global_eq_typed mem_loads_flat_rel_typed \
+  res_var_commutes_vars load_glob_not_mem_load_vars set_mem_op_FLOOKUP_locals_vars eval_exps_not_load_global_eq_vars load_glob_not_mem_load_typed set_mem_op_FLOOKUP_locals_typed eval_exps_not_load_global_eq_typed mem_loads_flat_rel_typed unassigned_vars_evaluate_same_typed \
   "$cake_dir/pancake/semantics/crepPropsScript.sml" \
   "$cake_dir/pancake/semantics"
 

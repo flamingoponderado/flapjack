@@ -1168,8 +1168,7 @@ theorem resVarCommutesCrepPropsHOL {α β : Type} [DecidableEq α]
 theorem flookupResVarDistinctEqHOL {α β : Type} [DecidableEq α]
     (xs : List (α × Option β)) (x : α) (fm : HolFiniteMapExact α β)
     (h : x ∉ xs.map Prod.fst) :
-    (xs.foldl (fun current entry => HolFiniteMapExact.resVarEq current entry)
-        fm).lookup x = fm.lookup x := by
+    (xs.foldl HolFiniteMapExact.resVarEq fm).lookup x = fm.lookup x := by
   induction xs generalizing fm with
   | nil => rfl
   | cons entry rest ih =>
@@ -1368,9 +1367,7 @@ theorem flookupResVarDistinctZipEqHOL {α β : Type} [DecidableEq α] :
 theorem flookupResVarDistinctHOL {α β : Type} [DecidableEq α]
     (ys : List α) (xs : List α) (zs : List (Option β)) (fm : HolFiniteMapExact α β)
     (h : distinctListsHol xs ys = true ∧ xs.length = zs.length) :
-    ys.map (fun k =>
-        ((xs.zip zs).foldl (fun current entry => HolFiniteMapExact.resVarEq current entry)
-          fm).lookup k) = ys.map (fun k => fm.lookup k) := by
+    ys.map ((xs.zip zs).foldl HolFiniteMapExact.resVarEq fm).lookup = ys.map fm.lookup := by
   obtain ⟨hdisj, hlen⟩ := h
   apply List.map_congr_left
   intro k hk
@@ -1396,9 +1393,8 @@ theorem flookupResVarZipDistinctHOL {α β : Type} [DecidableEq α]
     (fm : HolFiniteMapExact α β)
     (h : distinctListsHol xs ys = true ∧ xs.length = as.length ∧
       xs.length = cs.length) :
-    ys.map (fun k =>
-        ((xs.zip cs).foldl (fun current entry => HolFiniteMapExact.resVarEq current entry)
-          (fm.updateListEq (xs.zip as))).lookup k) = ys.map (fun k => fm.lookup k) := by
+    ys.map ((xs.zip cs).foldl HolFiniteMapExact.resVarEq
+        (fm.updateListEq (xs.zip as))).lookup = ys.map fm.lookup := by
   obtain ⟨hdisj, hlenAs, hlenCs⟩ := h
   apply List.map_congr_left
   intro k hk
@@ -1813,6 +1809,29 @@ theorem crepUnassignedFreeVarsEvaluateSameHOL {width : Nat} [NeZero width] {σ :
       t.locals.lookup n = s.locals.lookup n := by
   intro p s res t n k ⟨h, hres, hn⟩
   exact crepUnassignedFreeVarsEvaluateSameInduct (p, s) res t n k h hres hn
+
+/-- Exact port of HOL `crepProps$unassigned_vars_evaluate_same`
+    (`cakeml/pancake/semantics/crepPropsScript.sml:380-388`): the same
+    locals-preservation statement as
+    `crepProps$unassigned_free_vars_evaluate_same`, proved in HOL as the one-line
+    corollary `metis_tac[assigned_free_vars_IMP_assigned_vars,
+    unassigned_free_vars_evaluate_same]`.  Binder order follows HOL's explicit
+    `!p s res t n k`; `evaluate` is `evalCrepSemHOLProgExact`,
+    `assigned_free_vars` is `crepAssignedFreeVarsHOL` and `FLOOKUP` is
+    `.lookup`. -/
+@[hol "cakeml/pancake/semantics/crepPropsScript.sml" "unassigned_vars_evaluate_same"
+  (fmap_as_finite_support := [locals, globals, code])
+  (words_as_type_indexed_bitvec)]
+theorem crepUnassignedVarsEvaluateSameHOL {width : Nat} [NeZero width] {σ : Type}
+    (p : CrepProgHOL width) (s : CrepSemHOLState width σ)
+    (res : Option (CrepResultHOLExact width)) (t : CrepSemHOLState width σ)
+    (n k : Nat)
+    (h : evalCrepSemHOLProgExact s p = (res, t) ∧
+      (res = none ∨ res = some (.continue k) ∨ res = some (.break k)) ∧
+      n ∉ crepAssignedFreeVarsHOL p) :
+    t.locals.lookup n = s.locals.lookup n := by
+  obtain ⟨hstep, hres, hfree⟩ := h
+  exact crepUnassignedFreeVarsEvaluateSameHOL p s res t n k ⟨hstep, hres, hfree⟩
 
 private theorem updateListEq_cons' {α β : Type} [DecidableEq α]
     (m : HolFiniteMapExact α β) (e : α × β) (l : List (α × β)) :
