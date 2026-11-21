@@ -3450,6 +3450,8 @@ import Flapjack.Compiler.Backend.WordGcFunctions.Roots
 import Flapjack.Compiler.Backend.WordGcFunctions.HasFpOps
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.InitStoreOk
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.WordLemmas
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.ListLemmas
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.VarLemmas
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GcFunOk
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GcFunConstOk
 import Flapjack.Compiler.Backend.WordSimp.Proofs.GcWordConst

@@ -12625,3 +12625,8 @@ run_probe multiword_typed_probeScript.sml multiword_typed_probe.out \
   multiword_probe_begin multiword_probe_end \
   "$hol_dir/examples/machine-code/multiword/mc_multiwordScript.sml" \
   "$hol_dir/examples/machine-code/multiword"
+
+run_probe data_to_word_gc_port_typed_probeScript.sml data_to_word_gc_port_typed_probe.out \
+  gcport_LESS_EQ_IMP_APPEND_ALT_typed gcport_state_rel_imp_clock_typed \
+  "$cake_dir/compiler/backend/proofs/data_to_word_gcProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
