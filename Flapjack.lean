@@ -487,6 +487,10 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.Raise
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.If
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.Seq
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.Move
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.CallTail
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.CallReturn
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.CallHandler
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.Call
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.LocMerge
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.DecStack
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.StackRoots

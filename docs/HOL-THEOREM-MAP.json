@@ -149974,5 +149974,19 @@
  ],
  "words_as_type_indexed_bitvec": true,
  "reviewer": "Source comparison against state_rel_get_var_RefPtr_Loc_typed (local theorem, source lines 136-169): for arbitrary result option v1, the conjunction state_rel c l1 l2 s t v1 locs, dataSem get_var n s.locals = SOME (RefPtr b p) and wordSem get_var (adjust_var n) t = SOME (Loc n1 n2) implies n2 = 0. The Lean proof reads the related root through word_ml_inv_lookup as in HOL and observes that word_addr only produces zero-offset locations. Target maps/words use the reviewed canonical representations with the local roundtrip witness."
+},
+{
+ "hol_path": "cakeml/compiler/backend/proofs/data_to_wordProofScript.sml",
+ "hol_name": "data_compile_correct",
+ "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Correct/Call.lean",
+ "lean_name": "dataCompileCorrect_call",
+ "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+ "fmap_as_finite_support": [
+  "fpRegs",
+  "store"
+ ],
+ "words_as_type_indexed_bitvec": true,
+ "inherits_reals_as_rational_cuts": true,
+ "reviewer": "Compared the Call case with data_compile_correct_typed, the Call clause of data_evaluate_ind_typed (data_to_word_gc_fun_const_ok_probe) and HOL proof lines 934-1152: all original premises and the complete result, stack-bound and space-failure conclusions are retained, with precisely the three Call induction hypotheses (handler body after a raising callee, returning-call callee with push_env (IS_SOME handler), tail-call callee); HOL's auxiliary tuple variables v2/v5/v1/v3/v6/v10/v are bound as the corresponding tuple patterns and equalities. The proof covers the tail call, returning calls with and without a handler, timeouts, returned values via state_rel_pop_env_set_vars_IMP, raised exceptions (to the caller or the handler) and out-of-space callees and handlers. Full theorem assembly remains unported (Assign and Force cases). Target maps/words use reviewed representations; the evaluator inherits the reals_as_rational_cuts assumption in docs/SOUNDNESS.md item 8."
 }
 ]
