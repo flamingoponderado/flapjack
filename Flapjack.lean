@@ -861,6 +861,8 @@ import Flapjack.Compiler.Backend.WordBignum.Proofs.WordSemClauses
 import Flapjack.Compiler.Backend.WordBignum.Proofs.CallFrame
 import Flapjack.Compiler.Backend.WordBignum.Proofs.CompileLemmas
 import Flapjack.Compiler.Backend.WordBignum.Proofs.CompileCode
+import Flapjack.Compiler.Backend.WordBignum.Proofs.CompileThmSupport
+import Flapjack.Compiler.Backend.WordBignum.Proofs.CompileThmCases
 import Flapjack.Compiler.Backend.WordBignum.Generate
 import Flapjack.Compiler.Backend.ClosLang.Syntax
 import Flapjack.Compiler.Backend.ClosLang.GeneratedSize
