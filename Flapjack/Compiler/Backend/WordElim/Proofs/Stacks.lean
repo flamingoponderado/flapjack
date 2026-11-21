@@ -1,5 +1,7 @@
 module
 
+public import Flapjack.Misc.Sptree.ToAList
+public import Flapjack.Compiler.Backend.Semantics.WordSem.EnvListSupport
 public import Flapjack.Compiler.Backend.WordElim.Proofs.Locations
 public import Flapjack.Compiler.Backend.Semantics.WordSem.Env
 
@@ -323,5 +325,48 @@ theorem pushEnv_def2 {width : Nat} [NeZero width] {C : Type} {F : Type}
   | some entry =>
       obtain ⟨w, h, l1, l2⟩ := entry
       rfl
+
+/-- Exact HOL `stack_list_rearrange_lemma` (`word_elimProofScript.sml:494-507`):
+pushing a frame cut from the locals adds no location outside `dr`. HOL sets
+`num -> bool` are `Set Nat`, `domain` is `sptDomainSet`, `sort key_val_compare`
+is `Basis.Pure.MlList.sort wordSemKeyValCompare` and `list_rearrange` is
+`wordSemListRearrange`. HOL's free `n` (the first cut set, of an independent
+payload type) is universally quantified. -/
+@[hol "cakeml/compiler/backend/proofs/word_elimProofScript.sml" "stack_list_rearrange_lemma"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem stack_list_rearrange_lemma {width : Nat} [NeZero width] {C F : Type} {δ ε : Type}
+    {n : Spt ε} :
+    ∀ (s : WordSemStateFiniteExact width C F) (dr : Set Nat) (locs : Spt δ)
+      (opt : Option (Nat × Nat × Nat)) (lsz : Option Nat),
+      sptDomainSet (getLocals s.locals) ⊆ dr ∧ sptDomainSet (getStack s.stack) ⊆ dr →
+        sptDomainSet (getStack (.stackFrame lsz (sptToAList (sptInter s.locals n))
+          (wordSemListRearrange (s.permute 0)
+            (Basis.Pure.MlList.sort wordSemKeyValCompare (sptToAList (sptInter s.locals locs))))
+          opt :: s.stack)) ⊆ dr := by
+  rintro s dr locs opt lsz ⟨hloc, hstack⟩
+  -- every Loc in a cut of the locals is a location of the locals
+  have cutLoc : ∀ {γ : Type} (b : Spt γ) (location offset : Nat) (key : Nat),
+      (key, WordLocW.loc location offset) ∈ sptToAList (sptInter s.locals b) →
+        location ∈ dr := by
+    intro γ b location offset key hmem
+    rw [sptMemToAList, sptLookup_sptInterCases] at hmem
+    apply hloc
+    show sptMem location (getLocals s.locals)
+    rw [domainGetLocalsLookup]
+    refine ⟨key, offset, ?_⟩
+    cases h1 : sptLookup key s.locals <;> cases h2 : sptLookup key b <;> simp_all
+  intro location hmem
+  change sptMem location _ at hmem
+  rw [getStack_cons, sptMem_sptUnion, sptMem_sptUnion] at hmem
+  rcases hmem with (h | h) | h
+  · obtain ⟨offset, hoff⟩ := (getNumWordlocAlist_thm (α := Unit) location () _).mpr h
+    obtain ⟨⟨key, value⟩, hentry, rfl⟩ := List.mem_map.mp hoff
+    exact cutLoc n location offset key hentry
+  · obtain ⟨offset, hoff⟩ := (getNumWordlocAlist_thm (α := Unit) location () _).mpr h
+    obtain ⟨⟨key, value⟩, hentry, rfl⟩ := List.mem_map.mp hoff
+    rw [wordSemListRearrange_mem_iff, wordSemSort_mem_iff] at hentry
+    exact cutLoc locs location offset key hentry
+  · exact hstack h
+
 
 end Flapjack.Compiler.Backend.WordElim
