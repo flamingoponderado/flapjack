@@ -402,3 +402,5 @@ val _ = capture "find_index_in_range_typed" "find_index_in_range";
 val _ = capture "find_index_in_range0_typed" "find_index_in_range0";
 val _ = capture "EXP_IMP_ZERO_LT_typed" "EXP_IMP_ZERO_LT";
 val _ = capture "FILTER_NOT_MEM_Mapped_typed" "FILTER_NOT_MEM_Mapped";
+val _ = emit_exported "set_bytes_def_typed" "set_bytes_def";
+val _ = emit_exported "make_word_def_typed" "make_word_def";

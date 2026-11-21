@@ -1,0 +1,1 @@
+FMAP_REL_def_typed=∀(r :α -> β -> bool) (f1 :γ |-> α) (f2 :γ |-> β). FMAP_REL r f1 f2 ⇔ FDOM f1 = FDOM f2 ∧ ∀(k :γ) (v :α). FLOOKUP f1 k = SOME v ⇒ ∃(v2 :β). FLOOKUP f2 k = SOME v2 ∧ r v v2

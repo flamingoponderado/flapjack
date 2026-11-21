@@ -12,7 +12,7 @@ public import Flapjack.Misc.ListEl
 
 Counterpart of the `[local]` list and product lemmas that
 `cakeml/compiler/backend/proofs/word_allocProofScript.sml` shares between its
-allocation and SSA sections (`:51-54`, `:815-818`, `:830-833`, `:853-860`,
+allocation and SSA sections (`:51-54`, `:57-59`, `:815-818`, `:830-833`, `:853-860`,
 `:6212-6255`). HOL's `LET`/`$!`/`S` combinators, `LASTN`, `pair_CASE`/`##`,
 `EL` and `ALOOKUP` are the reviewed `Prod.casesOn`/`Prod.map`,
 `wordSemLastN`, `holEl` and `holAlookup` renderings.
@@ -32,6 +32,11 @@ theorem letForallElim {α : Type} (f : α → Prop) (v : α) :
     exact hf
   · intro h
     exact h v rfl
+
+/-- Exact HOL `hide_def` (`word_allocProofScript.sml:57-59`): the identity
+    marker HOL uses to keep a conclusion folded during proofs. -/
+@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "hide_def"]
+def hide {α : Type} (x : α) : α := x
 
 /-- Exact HOL `LASTN_LENGTH2` (`word_allocProofScript.sml:815-818`): taking
     the last `LENGTH xs + 1` elements of `x :: xs` keeps the whole list. -/

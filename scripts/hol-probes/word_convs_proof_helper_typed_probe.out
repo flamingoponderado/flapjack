@@ -1,0 +1,2 @@
+MEM_extract_labels_Seq_assoc_right_lemma_typed=∀(p1 :α prog) (p2 :α prog) (x :num # num). MEM x (extract_labels (Seq_assoc_right p1 p2)) ⇒ MEM x (extract_labels p1) ∨ MEM x (extract_labels p2)
+helper_typed=∀(p1 :α prog) (p2 :α prog) (x :num # num). ¬(MEM x (extract_labels p1) ∨ MEM x (extract_labels p2)) ⇒ ¬MEM x (extract_labels (Seq_assoc_right p1 p2))

@@ -338,6 +338,19 @@ theorem listRel_valueRel_word (words : List (BitVec 64)) (values : List Value)
       congr 1
       exact ih _ tail
 
+/-- Byte decoding succeeds exactly on the list of the bytes' numbers. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "v_to_bytes_eq"]
+theorem vToBytes_eq (lv : Value) (bytes : List (BitVec 8)) :
+    valueToBytes lv = some bytes ↔
+      valueToList lv = some (bytes.map (fun b => Value.number (Int.ofNat b.toNat))) := by
+  simpa using valueToBytes_eq_some lv bytes
+
+/-- Word decoding succeeds exactly on the list of the 64-bit word values. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "v_to_words_eq"]
+theorem vToWords_eq (lv : Value) (ws : List (BitVec 64)) :
+    valueToWords lv = some ws ↔ valueToList lv = some (ws.map Value.word64) :=
+  valueToWords_eq_some lv ws
+
 theorem holFmapAsFiniteSupportParamWitness_valueToBytes_rel_f (f : HolFiniteMapExact Nat Nat) :
     mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
 
@@ -384,6 +397,18 @@ theorem envRel_el (opt : Bool) (f : HolFiniteMapExact Nat Nat) (source target : 
   rw [holEl_eq_getElem index source bound, holEl_eq_getElem index (front ++ extras) targetBound]
   have entry := (List.forall₂_iff_get.mp entries).2 index bound frontBound
   simpa [List.getElem_append_left, frontBound] using entry
+
+theorem holFmapAsFiniteSupportParamWitness_envRelEl_f (f : HolFiniteMapExact Nat Nat) :
+    mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
+
+/-- HOL's later `env_rel_el`, whose typed statement is identical to
+`env_rel_el_v_rel` (ported as `envRel_el`). -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "env_rel_el"
+  (fmap_as_finite_support_parameters := [f])]
+theorem envRelEl (opt : Bool) (f : HolFiniteMapExact Nat Nat) (env1 env2 : List Value) (n : Nat)
+    (h : envRel opt f env1 env2 ∧ n < env1.length) :
+    valueRel f (holEl n env1) (holEl n env2) :=
+  envRel_el opt f env1 env2 n h
 
 /-- Reversing both lists preserves and reflects their pointwise relation. -/
 @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "list_rel_reverse"]
