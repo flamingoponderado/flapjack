@@ -113,4 +113,13 @@ theorem stackRemoveCallArgs {width : Nat} [NeZero width] {jump : Bool}
   · simp [callArgs, haltInst]
   · exact callArgs_comp jump off k b (h b (List.mem_map.mpr ⟨(a, b), hab, rfl⟩))
 
+/-- The stack-pointer shift sequences keep the fixed argument registers. As
+in HOL, `upshift` and `downshift` are taken at independent word widths. -/
+@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "upshift_downshift_call_args"
+  (words_as_type_indexed_bitvec)]
+theorem upshiftDownshiftCallArgs {width : Nat} [NeZero width] {downWidth : Nat} [NeZero downWidth] :
+    ∀ n n0 : Nat, callArgs (upshift n n0 : HolProg width) 1 2 3 4 0 ∧
+      callArgs (downshift n n0 : HolProg downWidth) 1 2 3 4 0 :=
+  fun n n0 => ⟨callArgs_upshift n n0, callArgs_downshift n n0⟩
+
 end Flapjack.Compiler.Backend.StackRemove.Proofs.CallArgs

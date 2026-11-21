@@ -37,3 +37,14 @@ write_bytearray_EQ_typed=∀(new_bytes :word8 list) (a :α word) (m1 :α word ->
 write_bytearray_IGNORE_typed=∀(new_bytes :word8 list) (a :α word) (x :word8 list) (xx :α word). (d1 :α word -> bool) ⊆ (d :α word -> bool) ∧ read_bytearray a (LENGTH new_bytes) (mem_load_byte_aux (m1 :α word -> α word_loc) d1 (be :bool)) = SOME x ∧ xx ∉ d1 ⇒ write_bytearray a new_bytes (m :α word -> α word_loc) d be xx = m xx
 write_bytearray_IGNORE_non_aligned_typed=∀(new_bytes :word8 list) (a :α word). (∀(x :α word). (b :α word) ≠ byte_align x) ⇒ write_bytearray a new_bytes (m :α word -> α word_loc) (d :α word -> bool) (be :bool) b = m b
 write_bytearray_lemma_typed=∀(new_bytes :word8 list) (a :α word) (m1 :α word -> α word_loc) (d1 :α word -> bool) (be :bool) (x :word8 list) (p :(α word # α word_loc -> bool) -> bool) (m :α word -> α word_loc) (d :α word -> bool). (memory m1 d1 * p) (fun2set (m,d)) ∧ read_bytearray a (LENGTH new_bytes) (mem_load_byte_aux m1 d1 be) = SOME x ⇒ (memory (write_bytearray a new_bytes m1 d1 be) d1 * p) (fun2set (write_bytearray a new_bytes m d be,d))
+LESS_LENGTH_IMP_APPEND_typed=∀(xs :α list) (n :num). n < LENGTH xs ⇒ ∃(ys :α list) (zs :α list). xs = ys ++ zs ∧ LENGTH ys = n
+with_same_clock_typed=∀(x :(α, γ, 'ffi) stackSem$state). x with clock := x.clock = x
+set_var_set_var_typed=set_var (x :num) (y :α word_loc) (set_var x (z :α word_loc) (w :(α, β, γ) stackSem$state)) = set_var x y w
+get_var_set_var_same_typed=(get_var (x :num) (set_var x (y :α word_loc) (z :(α, β, γ) stackSem$state)) :α word_loc option) = SOME y
+get_var_set_var_typed=(get_var (x :num) (set_var (x' :num) (y :α word_loc) (z :(α, β, γ) stackSem$state)) :α word_loc option) = if x = x' then SOME y else (get_var x z :α word_loc option)
+byte_aligned_bytes_in_word_MULT_typed=good_dimindex (:α) ⇒ byte_aligned ((bytes_in_word :α word) * (w :α word))
+sub_rewrite_typed=(ptr :num) ≤ (ptr' :num) ⇒ -(1w :α word) * (n2w ptr :α word) + (n2w ptr' :α word) = (n2w (ptr' − ptr) :α word)
+div_rewrite_typed=(n :num) ≤ (x :num) ∧ (1 :num) < n ⇒ x DIV n ≠ (0 :num)
+push_if_typed=(if (b :bool) then (f :β -> α) (x :β) else f (y :β)) = f (if b then x else y) ∧ (if b then f x else (g :β -> α) x) = ((if b then f else g) x :α)
+FST_prog_comp_typed=FST (prog_comp (jump :bool) (off :β word # β word) (k :num) (pp :α # β stackLang$prog) :α # β stackLang$prog) = FST pp
+upshift_downshift_call_args_typed=∀(n :num) (n0 :num). call_args (upshift n n0 :α stackLang$prog) (1 :num) (2 :num) (3 :num) (4 :num) (0 :num) ∧ call_args (downshift n n0 :β stackLang$prog) (1 :num) (2 :num) (3 :num) (4 :num) (0 :num)
