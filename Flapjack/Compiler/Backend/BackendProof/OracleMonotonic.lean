@@ -5,6 +5,8 @@ public import Flapjack.Compiler.Backend.BackendProof.CakeOrac
 
 @[expose] public section
 
+set_option autoImplicit false
+
 /-! backendProofScript.sml 1589-1662 and 1791-1839: generic introduction rules
 for `oracle_monotonic`, and their instances for `cake_orac`. -/
 namespace Flapjack.Compiler.Backend.BackendProof

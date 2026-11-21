@@ -207,7 +207,7 @@ theorem configs_nn3_modNamespaces {width : Nat} [NeZero width] (asmConf : AsmCon
 /-- Flapjack helper: the fresh-name counters left by a successful compilation
 are the outputs of the whole-program tail-recursion and tail-modulo-cons
 passes started at `bvl_num_stubs + 2` and `bvl_num_stubs + 3`. -/
-private theorem compile_nextNames {width : Nat} [NeZero width]
+theorem compile_nextNames {width : Nat} [NeZero width]
     (asmConf : AsmConfigExact width) (c : Flapjack.Compiler.Backend.Backend.Config)
     (prog : List AstHOL.Dec) (b : List (BitVec 8)) (bm : List (BitVec width))
     (c' : Flapjack.Compiler.Backend.Backend.Config)

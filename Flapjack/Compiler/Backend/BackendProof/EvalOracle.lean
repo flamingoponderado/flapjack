@@ -6,6 +6,8 @@ public import Flapjack.Misc.PredSet
 
 @[expose] public section
 
+set_option autoImplicit false
+
 /-! backendProofScript.sml 2880-2908: helper facts for the evaluation-oracle
 part of the top-level correctness proof. -/
 namespace Flapjack.Compiler.Backend.BackendProof

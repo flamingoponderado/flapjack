@@ -8,6 +8,8 @@ public import Flapjack.Misc.Option
 
 @[expose] public section
 
+set_option autoImplicit false
+
 /-! backendProofScript.sml 353-484: configuration facts used to show that the
 incremental compiler oracle `cake_orac` preserves the static parts of the
 backend configuration: the closure optimizer keeps its static settings and

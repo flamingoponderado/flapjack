@@ -7,6 +7,8 @@ public import Mathlib.Tactic.ByContra
 
 @[expose] public section
 
+set_option autoImplicit false
+
 /-! backendProofScript.sml 1094-1118: `BAG_IMAGE SUC` preserves distinctness
 of bags of numbers. -/
 namespace Flapjack.Compiler.Backend.BackendProof

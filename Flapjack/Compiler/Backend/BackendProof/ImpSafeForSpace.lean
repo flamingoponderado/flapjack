@@ -14,6 +14,8 @@ public import Flapjack.Misc.Sorting
 
 @[expose] public section
 
+set_option autoImplicit false
+
 /-! backendProofScript.sml 2813-2869: `IMP_is_safe_for_space`, the space-safety
 of the data program under the stack frame sizes of a successful compilation
 implies `is_safe_for_space`. -/

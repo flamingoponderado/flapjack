@@ -7,6 +7,8 @@ public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.WholeNames
 
 @[expose] public section
 
+set_option autoImplicit false
+
 /-! backendProofScript.sml 1481-1497: the function names produced by the
 staged pipeline up to data language are distinct and above the data stubs. -/
 namespace Flapjack.Compiler.Backend.BackendProof

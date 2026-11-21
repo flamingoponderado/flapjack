@@ -16,6 +16,8 @@ public import Flapjack.Compiler.Backend.BackendCommon.UpperW2w
 
 @[expose] public section
 
+set_option autoImplicit false
+
 /-! backendScript.sml 536-604: the per-pass program record kept by the
 incremental compiler and the incremental compiler `compile_inc_progs` used to
 build the evaluation oracle. -/

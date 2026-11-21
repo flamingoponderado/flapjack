@@ -4,6 +4,8 @@ public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.SyntaxOracle
 
 @[expose] public section
 
+set_option autoImplicit false
+
 /-! backendProofScript.sml 2279-2284: the closure-to-BVL syntax-oracle
 precondition ignores the output configuration's `start` field. -/
 namespace Flapjack.Compiler.Backend.BackendProof

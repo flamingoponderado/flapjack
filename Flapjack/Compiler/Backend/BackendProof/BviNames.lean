@@ -14,6 +14,8 @@ public import Flapjack.Compiler.Backend.BackendProps.OracleMonotonic
 
 @[expose] public section
 
+set_option autoImplicit false
+
 /-! backendProofScript.sml 1666-1702 and 1752-1789: function-name facts for
 the BVL-to-BVI passes (namespace avoidance, inlining keeps names). -/
 namespace Flapjack.Compiler.Backend.BackendProof

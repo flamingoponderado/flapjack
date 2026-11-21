@@ -6,6 +6,8 @@ public import Flapjack.Misc.PredSet
 
 @[expose] public section
 
+set_option autoImplicit false
+
 /-! backendProofScript.sml 2910-2928 and 3050-3059: installing the optional
 evaluation compiler instance in the initial source state, and its
 well-formedness condition. -/

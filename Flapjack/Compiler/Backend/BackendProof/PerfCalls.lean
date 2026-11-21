@@ -4,6 +4,8 @@ public import Flapjack.Compiler.Backend.Backend.ToTarget
 
 @[expose] public section
 
+set_option autoImplicit false
+
 /-! backendProofScript.sml 1531-1561: the staged pipeline `to_bvi`, `to_data`
 and `to_word` keeps the stack configuration's `perf_calls` flag. -/
 namespace Flapjack.Compiler.Backend.BackendProof

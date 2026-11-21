@@ -7,6 +7,8 @@ public import Flapjack.Compiler.Backend.BackendProof.CakeOrac
 
 @[expose] public section
 
+set_option autoImplicit false
+
 /-! backendProofScript.sml 1007-1092: the oracles derived from `cake_orac`
 are state oracles of the incremental passes, and `state_co` factors through
 the per-entry `state_co_fun`. -/

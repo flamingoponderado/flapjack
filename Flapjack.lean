@@ -333,6 +333,7 @@ import Flapjack.Compiler.Backend.BackendProof.BviNames
 import Flapjack.Compiler.Backend.BackendProof.SyntaxOracle
 import Flapjack.Compiler.Backend.BackendProof.CompileCorrect
 import Flapjack.Compiler.Backend.BackendProof.BagDistinct
+import Flapjack.Compiler.Backend.BackendProof.NameDistinct
 import Flapjack.Compiler.Backend.Backend.ToTarget
 import Flapjack.Compiler.Backend.DataToWord.Proofs.OptionLe
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Limits
@@ -572,6 +573,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.ThunkBits
 import Flapjack.Compiler.Backend.DataToWord.Proofs.ValueLoc
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Labels
 import Flapjack.Compiler.Backend.DataToWord.Proofs.NoShareInst
+import Flapjack.Compiler.Backend.DataToWord.Proofs.LabPres
 import Flapjack.Compiler.Backend.DataToWord.Proofs.NoInst
 import Flapjack.Compiler.Backend.DataToWord.Proofs.StateRelLocals
 import Flapjack.Compiler.Backend.DataToWord.Proofs.CompilePart

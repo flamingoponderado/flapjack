@@ -8,6 +8,8 @@ public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.NoMat
 
 @[expose] public section
 
+set_option autoImplicit false
+
 /-! backendProofScript.sml 3401-3417: the flat-to-closure step of the top-level
 correctness proof, instantiated at the `cake_orac` flat-program oracle. -/
 namespace Flapjack.Compiler.Backend.BackendProof

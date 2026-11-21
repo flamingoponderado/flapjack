@@ -6,6 +6,8 @@ public import Flapjack.Compiler.Backend.BackendProps.StateCompiler
 
 @[expose] public section
 
+set_option autoImplicit false
+
 /-! backendProofScript.sml 317-351 and 487-628: the incremental compiler
 oracle `cake_orac`, built from the configurations `cake_configs` threaded by
 `compile_inc_progs`, and its unfolding equations. -/

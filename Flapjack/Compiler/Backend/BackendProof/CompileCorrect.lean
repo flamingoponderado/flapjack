@@ -6,6 +6,8 @@ public import Mathlib.Data.Set.Basic
 
 @[expose] public section
 
+set_option autoImplicit false
+
 /-! backendProofScript.sml 4451-4457: facts used by the top-level correctness
 theorems. -/
 namespace Flapjack.Compiler.Backend.BackendProof

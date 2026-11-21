@@ -8,6 +8,8 @@ public import Flapjack.Compiler.Backend.LabToTarget.OuterLabelDomain
 
 @[expose] public section
 
+set_option autoImplicit false
+
 /-! backendProofScript.sml: the two `lab_to_target$compile_lab` output facts
 used by the Pancake top-level correctness theorem
 (`pan_to_targetProof$pan_to_target_compile_semantics`). -/

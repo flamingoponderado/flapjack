@@ -8,6 +8,8 @@ public import Flapjack.Compiler.Backend.StackToLab.Compile
 
 @[expose] public section
 
+set_option autoImplicit false
+
 /-! backendProofScript.sml 1309-1335 and 1469-1479: the first components of the
 code labels of well-labelled lab code are exactly its section numbers, and the
 section numbers of `stack_to_lab$compile` output are the program names and
