@@ -150109,5 +150109,31 @@
  "words_as_type_indexed_bitvec": true,
  "inherits_reals_as_rational_cuts": true,
  "reviewer": "Compared the Force case with data_compile_correct_typed, the Force clause of data_evaluate_ind_typed (data_to_word_gc_fun_const_ok_probe) and HOL proof lines 391-742: all original premises and the complete result, stack-bound and space-failure conclusions are retained, with precisely the two Force induction hypotheses (forcing call of a NotEvaluated thunk with ret = SOME (dest,names) after cut_env and push_env env F, and with ret = NONE); HOL's auxiliary tuple variables v3/v6/v1 are bound as tuple patterns and equalities. The proof covers inlined evaluated values (code locations and untagged words), inlined pointers, evaluated thunk blocks and forcing calls (tail and returning, including timeouts, returned values, exceptions and out-of-space callees), using memory_rel_Thunk_inlined, memory_rel_Thunk_IMP, word_test_lemma1/2 and state_rel_call_env_push. Full theorem assembly remains unported (Assign case). Target maps/words use reviewed representations; the evaluator inherits the reals_as_rational_cuts assumption in docs/SOUNDNESS.md item 8."
+},
+{
+ "hol_path": "cakeml/compiler/backend/proofs/data_to_wordProofScript.sml",
+ "hol_name": "state_rel_ext_def",
+ "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/StateRelExt.lean",
+ "lean_name": "stateRelExt",
+ "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+ "fmap_as_finite_support": [
+  "fpRegs",
+  "store"
+ ],
+ "words_as_type_indexed_bitvec": true,
+ "reviewer": "Source comparison against state_rel_ext_def_typed (data_to_word_proof_ext_typed_probe, source lines 1190-1206): state_rel_ext c l1 l2 s u <=> exists t : (gamma,alpha,beta) wordSem$state and l : (num # gamma prog) num_map with state_rel c l1 l2 s t NONE [], domain t.code = domain l (sptDomain equality), t.termdep > 1, exists tt kk aa co (bool, num, num, gamma asm_config) with u.compile_oracle = (I ## MAP (\\p. full_compile_single tt kk aa co (p,NONE))) o t.compile_oracle (Prod.map id (List.map ..) composed, as in the reviewed compile_word_to_word_thm) and t.compile = \\conf progs. u.compile conf (MAP .. progs), every t.code entry n v has some t' k' a' c' col with lookup n l = SOME (SND (full_compile_single t' k' a' c' ((n,v),col))), and u = t with code := l; termdep := 0; compile := u.compile; compile_oracle := u.compile_oracle. Data and word states share the compiler and FFI types; the word state uses canonical finite maps and positive-width words."
+},
+{
+ "hol_path": "cakeml/compiler/backend/proofs/data_to_wordProofScript.sml",
+ "hol_name": "state_rel_ext_with_clock",
+ "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/StateRelExt.lean",
+ "lean_name": "stateRelExt_withClock",
+ "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+ "fmap_as_finite_support": [
+  "fpRegs",
+  "store"
+ ],
+ "words_as_type_indexed_bitvec": true,
+ "reviewer": "Source comparison against the local theorem's typed replay state_rel_ext_with_clock_typed (source lines 1291-1303): state_rel_ext a b c s1 s2 implies state_rel_ext a b c (s1 with clock := k) (s2 with clock := k) for a free k : num. The word state uses canonical finite maps and positive-width words."
 }
 ]

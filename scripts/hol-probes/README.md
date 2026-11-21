@@ -11181,3 +11181,9 @@ and `state_rel_pop_env_set_vars_IMP` (parsed from the pinned source text).
 Regenerate with `CAKEML=<cakeml tree>
 HOL_PROBE_ONLY=data_to_word_proof_call_typed_probeScript.sml
 scripts/hol-probes/regenerate.sh`; no HOL proof is replayed.
+
+`data_to_word_proof_ext_typed_probe.out` records the typed statements of the
+data_to_wordProof `state_rel_ext_def` (theory DB) and the `[local]`
+`state_rel_ext_with_clock` (parsed from the pinned source text). Regenerate with
+`CAKEML=<cakeml tree> HOL_PROBE_ONLY=data_to_word_proof_ext_typed_probeScript.sml
+scripts/hol-probes/regenerate.sh`; no HOL proof is replayed.
