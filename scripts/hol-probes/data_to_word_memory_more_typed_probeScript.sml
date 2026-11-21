@@ -552,4 +552,12 @@ val _ = capture "reachable_refs_MutCons_lemma_typed" "reachable_refs_MutCons_lem
 val _ = capture "reachable_refs_MutCons_typed" "reachable_refs_MutCons";
 val _ = capture "take_el_drop_typed" "take_el_drop";
 val _ = capture "dest_thunk_insert_fresh_typed" "dest_thunk_insert_fresh";
+val _ = emit_exported "heap_store_ThunkBlock_thm_typed" "heap_store_ThunkBlock_thm";
+val _ = capture "heap_lookup_ThunkBlock_lemma_typed" "heap_lookup_ThunkBlock_lemma";
+val _ = capture "heap_store_ThunkBlock_typed" "heap_store_ThunkBlock";
+val _ = emit_exported "INJ_NEQ_typed" "INJ_NEQ";
+val _ = capture "heap_lookup_heap_split_typed" "heap_lookup_heap_split";
+val _ = emit_exported "heap_store_heap_lookup_typed" "heap_store_heap_lookup";
+val _ = capture "data_up_to_alt_typed" "data_up_to_alt";
+val _ = emit_exported "data_up_to_heap_store_typed" "data_up_to_heap_store";
 val _ = print "dtw_memory_more_end=1\n";
