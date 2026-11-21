@@ -1,0 +1,13 @@
+opt_mmap_flookup_update_typed=OPT_MMAP (FLOOKUP (fm :β |-> α)) (xs :β list) = SOME (ys :α list) ∧ ¬MEM (x :β) xs ⇒ OPT_MMAP (FLOOKUP fm⟨x ↦ (y :α)⟩) xs = SOME ys
+update_eq_zip_map_flookup_typed=∀(xs :α list) (f :α |-> β) (n :num) (m :β). n < LENGTH xs ⇒ FLOOKUP (f |++ ZIP (xs,MAP (λ(x :α). m) xs)) xs❲n❳ = SOME m
+flookup_fupdate_zip_not_mem_typed=∀(xs :α list) (ys :β list) (f :α |-> β) (n :α). LENGTH xs = LENGTH ys ∧ ¬MEM n xs ⇒ FLOOKUP (f |++ ZIP (xs,ys)) n = FLOOKUP f n
+domsub_commutes_fupdate_typed=∀(xs :α list) (ys :β list) (fm :α |-> β) (x :α). ¬MEM x xs ∧ LENGTH xs = LENGTH ys ⇒ (fm |++ ZIP (xs,ys)) \\ x = fm \\ x |++ ZIP (xs,ys)
+fm_multi_update_typed=∀(xs :α list) (ys :β list) (a :α) (b :β) (c :α) (d :β) (fm :α |-> β). ¬MEM a xs ∧ ¬MEM c xs ∧ a ≠ c ∧ LENGTH xs = LENGTH ys ⇒ fm |++ ((a,b)::(c,d)::ZIP (xs,ys)) |++ ((a,b)::ZIP (xs,ys)) = fm |++ ((a,b)::(c,d)::ZIP (xs,ys))
+fm_empty_zip_flookup_el_typed=∀(xs :α list) (ys :β list) (zs :γ list) (n :num) (x :α). ALL_DISTINCT xs ∧ LENGTH xs = LENGTH ys ∧ LENGTH ys = LENGTH zs ∧ n < LENGTH xs ∧ xs❲n❳ = x ⇒ FLOOKUP ((FEMPTY :α |-> β # γ) |++ ZIP (xs,ZIP (ys,zs))) x = SOME (ys❲n❳,zs❲n❳)
+all_distinct_flookup_all_distinct_typed=no_overlap (fm :α |-> β # γ list) ∧ FLOOKUP fm (x :α) = SOME ((y :β),(zs :γ list)) ⇒ ALL_DISTINCT zs
+no_overlap_flookup_distinct_typed=no_overlap (fm :α |-> β # γ list) ∧ (x :α) ≠ (y :α) ∧ FLOOKUP fm x = SOME ((a :β),(xs :γ list)) ∧ FLOOKUP fm y = SOME ((b :β),(ys :γ list)) ⇒ distinct_lists xs ys
+not_mem_fst_zip_flookup_empty_typed=∀(xs :α list) (ys :β list) (x :α). ¬MEM x xs ∧ ALL_DISTINCT xs ∧ LENGTH xs = LENGTH ys ⇒ FLOOKUP ((FEMPTY :α |-> β) |++ ZIP (xs,ys)) x = (NONE :β option)
+fupdate_flookup_zip_elim_typed=∀(xs :α list) (ys :β list) (zs :α list) (as :β list) (x :α). FLOOKUP ((FEMPTY :α |-> β) |++ ZIP (xs,ys)) x = (NONE :β option) ∧ LENGTH zs = LENGTH as ∧ LENGTH xs = LENGTH ys ∧ ALL_DISTINCT xs ⇒ FLOOKUP ((FEMPTY :α |-> β) |++ ZIP (xs,ys) |++ ZIP (zs,as)) x = FLOOKUP ((FEMPTY :α |-> β) |++ ZIP (zs,as)) x
+fm_zip_append_take_drop_typed=∀(xs :α list) (ys :β list) (zs :β list) (f :α |-> β). ALL_DISTINCT xs ∧ LENGTH xs = LENGTH (ys ++ zs) ⇒ f |++ ZIP (xs,ys ++ zs) = f |++ ZIP (TAKE (LENGTH ys) xs,ys) |++ ZIP (DROP (LENGTH ys) xs,zs)
+map_some_the_map_typed=∀(xs :α list) (ys :β list) (f :α -> β option). MAP f xs = MAP (SOME :β -> β option) ys ⇒ MAP (λ(n :α). THE (f n)) xs = ys
+fm_update_diff_vars_typed=(a :α) ≠ (b :α) ⇒ (fm :α |-> β)⟨b ↦ (b'' :β); a ↦ (a' :β); b ↦ (b' :β); a ↦ a'⟩ = fm⟨b ↦ b''; a ↦ a'⟩
