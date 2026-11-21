@@ -232,4 +232,95 @@ theorem word_removal_lemma_If :
 
 end ControlCases
 
+section LoopCase
+variable {width : Nat} [NeZero width] {C F : Type}
+
+theorem destResultLoc_exitLoop (r : Option (WordSemResult width)) (n : Nat)
+    (h : destResultLoc (wordSemExitLoop r) n) : destResultLoc r n := by
+  rcases r with _ | ⟨_ | _ | _ | _ | _ | _ | _ | _⟩ <;> exact h
+
+theorem cutState_code {names : WordLangCutsetsHOL} {s v : WordSemStateFiniteExact width C F}
+    (h : cutState names s = some v) : v.code = s.code ∧ v.gcFun = s.gcFun := by
+  obtain ⟨l, rfl⟩ := cutStateConst _ _ _ h
+  exact ⟨rfl, rfl⟩
+
+/-- Case `Loop` of HOL `word_removal_lemma` (`Resume word_removal_lemma[Loop]`). -/
+@[hol "cakeml/compiler/backend/proofs/word_elimProofScript.sml" "word_removal_lemma"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem word_removal_lemma_Loop :
+    ∀ (names : WordLangNumSetHOL) (c : WordLangProgHOL (BitVec width))
+      (exitNames : WordLangNumSetHOL) (s : WordSemStateFiniteExact width C F),
+      (∀ v res s1, cutState (names, .ln) s = some v ∧ (res, s1) = evaluate c v ∧
+          wordSemContLoop res = true ∧ s1.clock ≠ 0 →
+        WordRemovalGoal (wordSemSTOP (.loop names c exitNames)) (decClock s1)) ∧
+      (∀ v, cutState (names, .ln) s = some v → WordRemovalGoal c v) →
+      WordRemovalGoal (.loop names c exitNames) s := by
+  intro names c exitNames s ⟨ihStep, ihBody⟩ result new_state reachable t
+    ⟨hev, herr, hrel, hg, hni, hnic, hnict, hfwr, hcc⟩
+  obtain ⟨code, hc⟩ := wordStateRel_exists_withCode hrel
+  have ht := (evaluate_def_rebound (width := width) (C := C) (F := F)).2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.1
+  rw [ht] at hev
+  rw [ht]
+  have hnib := noInstall_loop hni
+  rcases hcs : cutState (names, .ln) s with _ | v
+  · simp only [hcs] at hev
+    cases hev
+    exact absurd rfl herr
+  simp only [hcs] at hev
+  have hct : cutState (names, .ln) t = some { v with code := code } := by
+    rw [hc, cutState_withCode, hcs]; rfl
+  rw [hct]
+  simp only
+  obtain ⟨hvcode, hvgc⟩ := cutState_code hcs
+  have hrelv : wordStateRel reachable v { v with code := code } := by
+    subst hc
+    exact wordStateRel_withCode_within hrel hvcode (cutState_locsWithin _ _ _ hcs)
+  have htcode : t.code = code := by rw [hc]
+  rcases h1 : evaluate c v with ⟨r1, s1⟩
+  rw [h1] at hev
+  have hr1 : r1 ≠ some .error := by
+    rintro rfl
+    simp [wordSemContLoop, wordSemExitLoop] at hev
+    exact herr hev.1.symm
+  obtain ⟨t1, ht1, hrel1, hloc1⟩ := ihBody v hcs r1 s1 reachable { v with code := code }
+    ⟨h1, hr1, hrelv, hvgc ▸ hg, hnib, hvcode ▸ hnic, htcode ▸ hnict, hfwr, hvcode ▸ hcc⟩
+  rw [ht1]
+  simp only
+  have hs1code : s1.code = s.code := (code_of_evaluate h1 hnib (hvcode ▸ hnic)).trans hvcode
+  have ht1code : t1.code = code := code_of_evaluate ht1 hnib (htcode ▸ hnict)
+  have hs1gc : s1.gcFun = s.gcFun := (gcFun_of_evaluate h1).trans hvgc
+  rw [wordStateRel_clock hrel1]
+  by_cases hcl : wordSemContLoop r1 = true
+  · simp only [hcl, if_true] at hev ⊢
+    by_cases hz : s1.clock = 0
+    · simp only [hz, if_true] at hev ⊢
+      cases hev
+      exact ⟨_, rfl, wordStateRel_flushState hrel1 true, fun n hn => hn.elim⟩
+    · simp only [hz, if_false] at hev ⊢
+      exact ihStep v r1 s1 ⟨hcs, h1.symm, hcl, hz⟩ result new_state reachable (decClock t1)
+        ⟨hev, herr, wordStateRel_decClock hrel1, hs1gc ▸ hg, hni, hs1code ▸ hnic,
+          (show (decClock t1).code = t.code from ht1code.trans htcode.symm) ▸ hnict,
+          hfwr, hs1code ▸ hcc⟩
+  · simp only [hcl, Bool.false_eq_true, if_false] at hev ⊢
+    split at hev
+    · rename_i hb
+      split at hev
+      · cases hev; exact absurd rfl herr
+      · rename_i s2 hce
+        obtain ⟨hr, hn⟩ := Prod.mk.inj hev
+        subst hr hn
+        obtain ⟨c1, hc1⟩ := wordStateRel_exists_withCode hrel1
+        have hce' : cutState (exitNames, .ln) t1 = some { s2 with code := c1 } := by
+          rw [hc1, cutState_withCode, hce]; rfl
+        simp only [hce']
+        refine ⟨_, rfl, ?_, fun n hn => hn.elim⟩
+        have hrel1' := hrel1
+        rw [hc1] at hrel1'
+        exact wordStateRel_withCode_within hrel1' (cutState_code hce).1
+          (cutState_locsWithin _ _ _ hce)
+    · cases hev
+      exact ⟨t1, rfl, hrel1, fun n hn => hloc1 (destResultLoc_exitLoop r1 n hn)⟩
+
+end LoopCase
+
 end Flapjack.Compiler.Backend.WordElim
