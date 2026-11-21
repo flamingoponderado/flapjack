@@ -834,7 +834,13 @@ and exclusivity, but cannot verify that HOL actually has the dimension argument
 or uses it only numerically. Source review must check both points, compare the
 entire equation and its operator associativity, and record the comparison in
 the manifest. The qualifier permits no changed hypotheses or behavior and does
-not itself prove cross-language equivalence.
+not itself prove cross-language equivalence. The signature may also carry HOL
+fixed-width words (`word8`, `word64`, ...) as bare `BitVec <positive decimal
+literal>` carriers; any other word carrier, including one at the dimension
+binder's width, still requires `words_as_type_indexed_bitvec`. The checker
+cannot tell a HOL fixed-width word from a specialised `'a word`, so source
+review must confirm from the typed capture that each literal width is a HOL
+fixed-width type and record that in the manifest note.
 
 **Qualify two independent word-free dimensions.** Use
 `(word_dimensions_as_widths := [t, w])` for a dimension-only real definition
