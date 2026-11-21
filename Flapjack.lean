@@ -560,6 +560,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.Limits
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Representation
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Preliminaries
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.EvaluatedThunk
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.GcRefinement
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Heap
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Store
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Abstract
