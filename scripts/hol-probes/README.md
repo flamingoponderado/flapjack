@@ -61,7 +61,16 @@ counts of `state_rel_get_var_Number_IMP_alt`, `state_rel_IMP_tstamps`, `INT_EQ_N
 `assign_BoundsCheckByte`, `assign_BoundsCheckArray`, and `assign_BoundsCheckBlock`. It also parses the earlier rebound compiler equation
 `assign_BoundsCheckByte`, `assign_BoundsCheckArray`, `assign_BoundsCheckBlock`, and the original local statement of
 `parts_to_words_NONE` with inferred types; this capture does not replay its
-HOL proof.
+HOL proof. Batch A2 appends the small lemmas from `Word64Rep_inj` through
+`all_ones_and_ptr_bits_tag_0` and the `w2w_upper_def` definition. The
+`[local]` `lookup_2_call_env` is parsed with its `call_env` qualified as
+`wordSem$call_env`, the constant its source proof unfolds; the probe's final
+grammar would otherwise resolve the bare name to dataSem's. Batch A3 appends
+the call/push lifting lemmas, `get_var_to_word_exp`, `word_exp_set` and
+`state_rel_push_env_loc`. Batch A4 appends `option_le_stackmax_bridge`, the
+heap-size lemmas `size_of_app_Number` through
+`size_of_heap_FOLDR_delete_Number_LE`, `evaluate_LoadWord64`,
+`memory_rel_ignore_buffers`, `memory_rel_get_num` and `state_rel_IMP_test_zero`.
 
 `misc_typed_probe.out` captures the polymorphic `read_bytearray_def` and
 `read_bytearray_LENGTH` from the pinned CakeML misc theory.
@@ -11171,4 +11180,13 @@ lemmas, `labels_rel_emp`, the `*_no_share_inst` and `*_no_inst` lemmas,
 Exported theorems come from the theory DB; `[local]` ones are parsed from the
 pinned source text in the loaded theory context. Regenerate with
 `CAKEML=<cakeml tree> HOL_PROBE_ONLY=data_to_word_proof_lab_typed_probeScript.sml
+scripts/hol-probes/regenerate.sh`; no HOL proof is replayed.
+
+`data_to_word_proof_call_typed_probe.out` records the typed statements of the
+data_to_wordProof state-relation lemmas used by the `Call` case of
+`data_compile_correct`: the exported derived `state_rel_cut_env_IMP_cut_env`
+(captured from the theory DB) and the `[local]` `state_rel_get_var_RefPtr_Loc`
+and `state_rel_pop_env_set_vars_IMP` (parsed from the pinned source text).
+Regenerate with `CAKEML=<cakeml tree>
+HOL_PROBE_ONLY=data_to_word_proof_call_typed_probeScript.sml
 scripts/hol-probes/regenerate.sh`; no HOL proof is replayed.
