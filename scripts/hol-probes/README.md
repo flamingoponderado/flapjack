@@ -827,6 +827,8 @@ exported global-invariant equation and replay its original simplifier derivation
 
 `word_elim_port_typed_probe.out` records typed statements of the `word_elimProofScript.sml` declarations that had no reviewed Lean row when the port of that script resumed, labelled `weport_<name>_typed` (exported theorems and definitions from the theory DB). Regenerate with `HOL_PROBE_ONLY=word_elim_port_typed_probeScript.sml scripts/hol-probes/regenerate.sh`; it does not replay HOL proofs.
 
+`hol_set_to_list_typed_probe.out` records the typed statements of HOL pred_set `CHOICE_DEF`/`REST_DEF` and list `SET_TO_LIST_THM`, `SET_TO_LIST_IN_MEM` and `MEM_SET_TO_LIST` for the `SET_TO_LIST` rendering in `Flapjack/Misc/PredSetChoice.lean` and `Flapjack/Misc/SetToList.lean`. Regenerate with `HOL_PROBE_ONLY=hol_set_to_list_typed_probeScript.sml scripts/hol-probes/regenerate.sh`; it does not replay HOL proofs.
+
 `multiword_typed_probe.out` records the typed statement of every exported theorem and definition of the HOL `multiword` and `mc_multiword` theories (`HOL/examples/machine-code/multiword`), labelled `<theory>_<name>_typed`, for the bottom-up port beneath `Flapjack/Misc/Multiword`. `[local]` theorems are not exported and need separate source-parsed captures. Regenerate with `HOL_PROBE_ONLY=multiword_typed_probeScript.sml scripts/hol-probes/regenerate.sh`; it does not replay HOL proofs.
 
 `bignum_helpers_probe.out` records the source-inferred helper types and register, immediate, complement, load, save, index and division-call observations. `Flapjack.Test.WordBignumHelpersParity` replays the results. Regenerate with `HOL_PROBE_ONLY=bignum_helpers_probeScript.sml scripts/hol-probes/regenerate.sh`.
@@ -10464,12 +10466,13 @@ the earlier stack_alloc probes did not capture (task 175). Regenerate with
 scripts/hol-probes/regenerate.sh`.
 
 `lab_to_target_proof_local_typed_probe.out` captures the typed statements of
-the 88 reviewed `lab_to_targetProofScript.sml` rows that the earlier
+the 90 reviewed `lab_to_targetProofScript.sml` rows that the earlier
 lab_to_target probes did not capture (task 175): 82 `[local]` theorems parsed
 from the pinned source, one `val ... = Q.prove(...) |> GSYM` theorem captured
 through its symmetric statement, and four `Overload` abbreviations captured
 with `print_without_macros` so the expansion rather than the overload name is
-printed. `semantics_compile_lemma` is derived in the source from
+printed, plus the exported `set_bytes_def` and `make_word_def` definitions
+fetched from the theory DB. `semantics_compile_lemma` is derived in the source from
 `semantics_compile_lemma'`; the probe rebuilds that statement at term level
 (fifteen-conjunct antecedent implying `implements' T ...`). Statements that
 splice an SML antiquotation (`val s1 = ``s1:('a,lab_to_target$config,'ffi)
@@ -10482,8 +10485,8 @@ HOL_PROBE_ONLY=lab_to_target_proof_local_typed_probeScript.sml
 scripts/hol-probes/regenerate.sh`.
 
 `stack_to_lab_proof_local_typed_probe.out` (30 rows),
-`word_alloc_proof_local_typed_probe.out` (141 rows) and
-`word_to_stack_proof_local_typed_probe.out` (154 rows) capture the typed
+`word_alloc_proof_local_typed_probe.out` (142 rows) and
+`word_to_stack_proof_local_typed_probe.out` (155 rows) capture the typed
 statements of the reviewed `stack_to_labProofScript.sml`, `word_allocProofScript.sml`
 and `word_to_stackProofScript.sml` rows that the earlier probes did not cover
 (task 178). Exported theorems and definitions are fetched from the theory DB;
@@ -10498,7 +10501,7 @@ HOL_PROBE_ONLY=<probe>Script.sml scripts/hol-probes/regenerate.sh`.
 
 `crep_arith_proof_local_typed_probe.out` (11 rows),
 `stack_names_proof_local_typed_probe.out` (6 rows) and
-`stack_remove_proof_local_typed_probe.out` (39 rows) capture the typed
+`stack_remove_proof_local_typed_probe.out` (50 rows) capture the typed
 statements of the reviewed `crep_arithProofScript.sml`, `stack_namesProofScript.sml`
 and `stack_removeProofScript.sml` rows that the earlier probes did not cover
 (task 179). Exported theorems are fetched from the theory DB; `[local]` theorems
@@ -11107,6 +11110,17 @@ and bad-header cases are in `cake_word_array_probe.out`.
 `HOL_PROBE_ONLY=data_to_word_memory_more_typed_probeScript.sml scripts/hol-probes/regenerate.sh`;
 it does not replay HOL proofs.
 
+`bvi_tmc_proof_local_typed_probe.out` records the typed statements of the
+remaining `bvi_tmcProofScript.sml` rows: the `free_names` lemmas, the
+`compile_each_intro`/`compile_each_untouched`/`compile_each_touched` label
+lemmas and the `v_to_bytes_eq`/`v_to_words_eq` decoders (all `[local]`,
+parsed from the pinned source), and the exported `is_block_op_cons_def` and
+`env_rel_el`. Regenerate with `CAKEML=<cakeml tree>
+HOL_PROBE_ONLY=bvi_tmc_proof_local_typed_probeScript.sml
+scripts/hol-probes/regenerate.sh`; it does not replay HOL proofs.
+
+
+
 `backend_proof_more_typed_probe.out` captures, with `show_types`, every
 declaration of `compiler/backend/proofs/backendProofScript.sml` in source order
 for the counterparts under `Flapjack/Compiler/Backend/BackendProof/`, plus the
@@ -11128,3 +11142,18 @@ the script's own proof-time context) are not captured. It needs
 a390cbab); regenerate with `CAKEML=/var/tmp/flapjack-cakeml-oracle
 HOL4=<pinned HOL tree> HOL_PROBE_ONLY=backend_proof_more_typed_probeScript.sml
 scripts/hol-probes/regenerate.sh`. Statement evidence for source review only.
+
+`stack_rawcall_proof_local_typed_probe.out`, `word_convs_proof_helper_typed_probe.out`,
+`word_to_word_code_rel_p_typed_probe.out`, `word_depth_call_some_typed_probe.out` and
+`clos_ticks_fmap_rel_typed_probe.out` record the typed statements of the remaining
+rows of `stack_rawcallProofScript.sml` (`state_rel_thm`, rebuilt from the exported
+`state_rel_def` by the source `SIMP_RULE`, and the `[local]` `with_stack_space`),
+`wordConvsProofScript.sml` (the derived `[local]` `helper`: the parsed source statement
+of `MEM_extract_labels_Seq_assoc_right_lemma` rewritten by the source
+`REWRITE_RULE [Once (GSYM CONTRAPOS_THM)]` on an unproved `mk_thm` copy, which records
+the statement shape only), `word_to_wordProofScript.sml` (the derived `[local]`
+`code_rel_P`, rebuilt as `Q.GEN \`P\` code_rel_not_created_subprogs`),
+`word_depthProofScript.sml` (`max_depth_Call_SOME`) and `clos_ticksProofScript.sml`
+(`FMAP_REL_def`). Regenerate each with `CAKEML=<cakeml tree>
+HOL_PROBE_ONLY=<probe>Script.sml scripts/hol-probes/regenerate.sh`; none replays a
+HOL proof.

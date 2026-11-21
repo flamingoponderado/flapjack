@@ -160,6 +160,7 @@ import Flapjack.Compiler.Backend.WordElim.Proofs.Definitions
 import Flapjack.Compiler.Backend.WordElim.Proofs.Analysis
 import Flapjack.Compiler.Backend.WordElim.Proofs.Locations
 import Flapjack.Compiler.Backend.WordElim.Proofs.Stacks
+import Flapjack.Compiler.Backend.WordElim.Proofs.StateRel
 import Flapjack.Compiler.Backend.WordElim.Proofs.ConstWrites
 import Flapjack.Compiler.Backend.WordElim.Proofs.Vars
 import Flapjack.Compiler.Backend.WordElim.Proofs.Memory
@@ -594,6 +595,10 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Values.TimestampSets
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Values.AllValues
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.ConsInvariant
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.RefUpdate
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.MutBlockInsert
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.CellUpdate
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.ByteUpdateInv
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.WordArith
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Heap
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Store
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Abstract
@@ -655,6 +660,12 @@ import Flapjack.Misc.Multiword.DivAux
 import Flapjack.Misc.Multiword.Div
 import Flapjack.Misc.Multiword.DivMod
 import Flapjack.Misc.Multiword.Mc.Basics
+import Flapjack.Misc.Multiword.Mc.Correct.Compare
+import Flapjack.Misc.Multiword.Mc.Correct.Add
+import Flapjack.Misc.Multiword.Mc.Correct.Sub
+import Flapjack.Misc.Multiword.Mc.Correct.Iadd
+import Flapjack.Misc.Multiword.Mc.Correct.Mul
+import Flapjack.Misc.Multiword.Mc.Correct.DivSimple
 import Flapjack.Misc.Multiword.Length
 import Flapjack.Misc.Multiword.SingleWord
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.WordEquality.Word64
@@ -2552,6 +2563,7 @@ import Flapjack.Compiler.Backend.StackRemove.Proofs.ShiftSimulation
 import Flapjack.Compiler.Backend.StackRemove.Proofs.StackHeap
 import Flapjack.Compiler.Backend.StackRemove.Proofs.StackHeapWrites
 import Flapjack.Compiler.Backend.StackRemove.Proofs.WordAddressArithmetic
+import Flapjack.Compiler.Backend.StackRemove.Proofs.Preliminaries
 import Flapjack.Compiler.Backend.StackRemove.Proofs.StateUpdates
 import Flapjack.Compiler.Backend.StackRemove.Proofs.MemoryReads
 import Flapjack.Compiler.Backend.StackRemove.Proofs.MemoryLoads
@@ -3493,6 +3505,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.VarLemmas
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.BitLemmas
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.AbsMlInv
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.AllocStore
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.WordGcFunLemma
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GcFunOk
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GcFunConstOk
 import Flapjack.Compiler.Backend.WordSimp.Proofs.GcWordConst
@@ -4795,6 +4808,8 @@ import Flapjack.Compiler.Backend.WordCopy.Proofs.Inst
 import Flapjack.Compiler.Backend.WordCopy.Proofs.Correct
 import Flapjack.Misc.Logroot
 import Flapjack.Misc.PredSet
+import Flapjack.Misc.PredSetChoice
+import Flapjack.Misc.SetToList
 import Flapjack.Misc.Bit
 import Flapjack.Misc.Alignment
 import Flapjack.Misc.Alignment.Production
