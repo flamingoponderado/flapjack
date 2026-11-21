@@ -4757,6 +4757,8 @@ import Flapjack.Compiler.Backend.WordCopy.Proofs.Inst
 import Flapjack.Compiler.Backend.WordCopy.Proofs.Correct
 import Flapjack.Misc.Logroot
 import Flapjack.Misc.PredSet
+import Flapjack.Misc.PredSetChoice
+import Flapjack.Misc.SetToList
 import Flapjack.Misc.Bit
 import Flapjack.Misc.Alignment
 import Flapjack.Misc.Alignment.Production

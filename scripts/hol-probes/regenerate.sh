@@ -12635,3 +12635,7 @@ run_probe word_elim_port_typed_probeScript.sml word_elim_port_typed_probe.out \
   weport_get_store_def_typed weport_word_removal_thm_typed \
   "$cake_dir/compiler/backend/proofs/word_elimProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+
+run_probe hol_set_to_list_typed_probeScript.sml hol_set_to_list_typed_probe.out \
+  choice_def_typed rest_def_typed set_to_list_thm_typed set_to_list_in_mem_typed mem_set_to_list_typed \
+  "$repo_dir/HOL/src/list/src/listScript.sml" "$cake_dir/pancake"
