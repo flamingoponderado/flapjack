@@ -237,7 +237,10 @@ structure HolRef where
       `reviewed_fmap_as_finite_support_result_observations` status. This records
       only that existing canonical map translation; it permits no changed
       evaluator, carrier, quantifiers, premises or conclusions. Other
-      representation qualifiers cannot be combined with this narrow qualifier.
+      representation qualifiers cannot be combined with this narrow qualifier,
+      except `words_as_type_indexed_bitvec` under the combined status
+      `reviewed_fmap_as_finite_support_result_observations_words_as_type_indexed_bitvec`,
+      where both qualifiers' checks still apply.
       The syntactic checker does not prove cross-language equivalence; source
       review must compare the complete observer, not infer it from the producer. -/
   fmapAsFiniteSupportResultObservations : Array String := #[]
@@ -544,7 +547,8 @@ private def checkedHolRef (path name : String) (line? : Option Nat := none)
         fmapAsFiniteSupportParameters.contains ((p.splitOn ".").getLast!)) then
       throwError "@[hol]: parameter names must not shadow observed producers"
   if !fmapAsFiniteSupportResultObservations.isEmpty &&
-      (!listAsArray.isEmpty || !namesAsString.isEmpty || wordsAsTypeIndexedBitvec ||
+      (!listAsArray.isEmpty || !namesAsString.isEmpty ||
+       (wordsAsTypeIndexedBitvec && fmapAsFiniteSupportParameterObservations) ||
        wordDimensionAsWidth.isSome || realsAsRationalCuts || !fmapAsFiniteSupport.isEmpty || fmapAsFiniteSupportResult ||
        !fmapAsFiniteSupportFunction.isEmpty || !fmapAsFiniteSupportHeterogeneousFunction.isEmpty ||
        (!fmapAsFiniteSupportParameters.isEmpty && !fmapAsFiniteSupportParameterObservations) || !fmapAsFiniteSupportExistentials.isEmpty ||
@@ -2286,6 +2290,39 @@ run_cmd do
   let missingWidth ← widthProblemsOf (← `((u : Unit) → (m : Nat) → BitVec m → True))
   unless missingWidth.any hasNeZero do
     throwError "undischarged nested width was accepted: {missingWidth}"
+
+/-! Result observations may combine with the word translation only under the
+combined reviewed status; a third representation qualifier stays rejected. -/
+run_cmd do
+  let observationWordsSyntax ← `(attr| hol "cakeml/compiler/backend/proofs/backendProofScript.sml" "flat_semantics"
+    (fmap_as_finite_support_result_observations := [Flapjack.HolFiniteMapExact.holEmpty])
+    (words_as_type_indexed_bitvec))
+  let observationWordsRef ← Lean.Elab.Command.liftCoreM (parseHolRefAttribute observationWordsSyntax)
+  unless observationWordsRef.fmapAsFiniteSupportResultObservations ==
+        #["Flapjack.HolFiniteMapExact.holEmpty"] &&
+      observationWordsRef.wordsAsTypeIndexedBitvec do
+    throwError "@[hol] result observations with word translation syntax regression"
+  let observationWordsRealsSyntax ← `(attr| hol "cakeml/compiler/backend/proofs/backendProofScript.sml" "flat_semantics"
+    (fmap_as_finite_support_result_observations := [Flapjack.HolFiniteMapExact.holEmpty])
+    (words_as_type_indexed_bitvec) (reals_as_rational_cuts))
+  let observationWordsRealsRejected ← Lean.Elab.Command.liftCoreM do
+    try
+      let _ ← parseHolRefAttribute observationWordsRealsSyntax
+      pure false
+    catch _ => pure true
+  unless observationWordsRealsRejected do
+    throwError "@[hol] result observations with words must reject a third representation qualifier"
+  let parameterObservationWordsSyntax ← `(attr| hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "chain_exps_semantics"
+    (fmap_as_finite_support_parameter_observations :=
+      (map_parameters := [code]) (map_producers := [Flapjack.HolFiniteMapExact.alistToFmap]))
+    (words_as_type_indexed_bitvec))
+  let parameterObservationWordsRejected ← Lean.Elab.Command.liftCoreM do
+    try
+      let _ ← parseHolRefAttribute parameterObservationWordsSyntax
+      pure false
+    catch _ => pure true
+  unless parameterObservationWordsRejected do
+    throwError "@[hol] combined parameter observations must reject word translation"
 
 /-- The HOL cross-reference attached to `declName`, if any. -/
 def HolRef.get? (env : Environment) (declName : Name) : Option HolRef :=

@@ -7277,8 +7277,12 @@ def main(argv: list[str]) -> int:
                 if combined and (FMAP_AS_FINITE_SUPPORT_PARAMS_RE.search(declaration_source) or
                                  FMAP_RESULT_OBSERVATIONS_RE.search(declaration_source)):
                     errors.append(f"{where}: combined parameter observations cannot mix with standalone qualifiers")
+                # Words may join only the standalone observation qualifier
+                # (status ..._result_observations_words_as_type_indexed_bitvec);
+                # the word checks below still apply to the whole signature.
                 if (list_fields or names_fields or fmap_fields or fmap_result or fmap_relation or
-                    fmap_equalities or words_bitvec or (fmap_parameters and not combined) or fmap_existentials or
+                    fmap_equalities or (words_bitvec and combined) or (fmap_parameters and not combined) or
+                    fmap_existentials or
                     dimension_width or dimension_widths or fmap_function_positions or fmap_heterogeneous_function_positions or
                     reals_cuts or fmap_equality):
                     errors.append(f"{where}: result observations cannot combine with other representation qualifiers")
