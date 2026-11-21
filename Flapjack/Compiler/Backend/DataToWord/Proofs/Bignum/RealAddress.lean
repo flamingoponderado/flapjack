@@ -62,4 +62,11 @@ theorem getRealAddr_lemma {width : Nat} [NeZero width] {C F : Type}
             WordSemStateFiniteExact.getStore, theWords, wordOpHOL, wordOp, wordShiftHOL, read, currEq,
             shiftMod, kMod, Nat.not_le_of_gt shiftBound, Nat.not_le_of_gt kBound, addr]
 
+/-- An index below the word width is unchanged modulo the word modulus. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_bignumProofScript.sml" "lt_dimindex_MOD_dimword"
+  (word_dimension_as_width := width)]
+theorem lt_dimindex_MOD_dimword (width : Nat) [NeZero width] {n : Nat} :
+    n < width → n % 2 ^ width = n :=
+  fun h => Nat.mod_eq_of_lt (Nat.lt_trans h Nat.lt_two_pow_self)
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Bignum

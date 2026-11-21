@@ -2536,6 +2536,31 @@ class WordBignumGeneratedDeclarationTest(unittest.TestCase):
         self.assertIsNone(parse(path, source, hidden))
 
 
+class McMultiwordTailrecDeclarationsTest(unittest.TestCase):
+    def test_generated_names_and_line(self):
+        path = CHECKER["ROOT"] / CHECKER["MC_MULTIWORD_SCRIPT"]
+        source = path.read_text()
+        parse = CHECKER["mc_multiword_tailrec_declarations"]
+        declarations = parse(path, source)
+        for name in ("mc_cmp", "mc_cmp_pre", "mc_cmp_def", "mc_cmp_pre_def"):
+            self.assertIn((name, 98), declarations)
+        self.assertEqual(len(declarations), 4 * source.count('tailrec_define "'))
+        self.assertIsNone(REF_ERROR(path, "mc_cmp_pre_def", None, {}))
+        self.assertIn("declares no", REF_ERROR(path, "mc_cmp_post_def", None, {}))
+
+    def test_rejects_changed_source_wrong_path_and_commented_call(self):
+        path = CHECKER["ROOT"] / CHECKER["MC_MULTIWORD_SCRIPT"]
+        source = path.read_text()
+        parse = CHECKER["mc_multiword_tailrec_declarations"]
+        self.assertEqual(parse(Path("elsewhere/mc_multiwordScript.sml"), source), [])
+        self.assertEqual(parse(path, source + "\n"), [])
+        call = 'tailrec_define "mc_cmp"'
+        hidden = source.replace(call, " " * len(call), 1)
+        names = [name for name, _line in parse(path, source, hidden)]
+        self.assertNotIn("mc_cmp_def", names)
+        self.assertIn("mc_compare_def", names)
+
+
 class SmlCommentDeclarationsTest(unittest.TestCase):
     """SML comments nest and string literals are not comment starts."""
 

@@ -895,10 +895,12 @@ manifest records `"reals_as_rational_cuts": true`. The manifest note must
 name the qualifier and SOUNDNESS item 8, and it can never be `reviewed_exact`.
 
 **Qualify total-function inhabitant instances.** HOL's total functions `EL`,
-`HD`, `THE`, `LAST`, `ALOOKUP`, `LINV` and `ARB` return an unspecified value on
-bad input, so their HOL statements need no inhabitancy premise. The Lean
+`HD`, `THE`, `LAST`, `ALOOKUP`, `LINV`, `ARB`, `OUTL` and `OUTR` return an
+unspecified value on bad input, so their HOL statements need no inhabitancy
+premise. The Lean
 renderings (`holEl`, `holHd`, `holLast`, `holThe`, `holLinv`, `holArb`,
-`holHdNil`, `holFapply`, `holFapplyOutside`) instead take a `[Nonempty _]` or
+`holHdNil`, `holFapply`, `holFapplyOutside`, `holOutl`, `holOutr`,
+`holOutlInr`, `holOutrInl`) instead take a `[Nonempty _]` or
 `[Inhabited _]` instance on the element type. Record that rendering with
 `(total_function_inhabitants := [α, β, ...])`, naming the declaration's type
 binders whose single instance exists only for it:
@@ -924,7 +926,23 @@ instance, hypothesis, or statement change, and source review must confirm the
 instance is used only through those renderings. `check_hol_ref_export.py`
 compares the manifest field with the elaborated attribute in both directions.
 
-The only approved transitive use is the `joinEnvLocals` definition and its
+The step-function tail recursion renderings `holShortTailrec` and
+`holShortTailrecPre` (HOL `SHORT_TAILREC`/`SHORT_TAILREC_PRE`) count as
+renderings for this check: their `Nonempty` instances flow only to the
+`holOutl`/`holOutr` projections in their bodies. `holShortTailrecPre`
+justifies an instance on the recursion's state type only, and
+`holShortTailrec` on its state and result types; the checker cannot see which
+binder each use justifies, so source review must confirm that the listed
+binders are exactly those types.
+
+A listed binder's instance may also reach a reviewed rendering through a
+global, untagged `Nonempty` instance of a datatype built from that binder (for
+example `Nonempty α → Nonempty (HeapAddress α)` when every constructor carries
+an `α`); the manifest note must name that instance. Local instances are not
+allowed for this.
+
+Apart from the tail-recursion renderings and derived instances above, the only
+other approved transitive use is the `joinEnvLocals` definition and its
 two odd-insertion theorems in the data-to-word GC counterpart. Their one
 `Nonempty α` instance flows through `joinEnvLocals` to the reviewed `joinEnv`
 rendering of HOL `THE`; the independent payload type `β` has no instance.
