@@ -49,4 +49,47 @@ Flapjack proof infrastructure. -/
 theorem holIntMod_spec (i j : Int) (h : j ≠ 0) : holIntMod i j = i - holIntDiv i j * j :=
   Classical.choose_spec holIntModExists i j h
 
+/-- HOL division of naturals by a positive divisor (Flapjack proof infrastructure). -/
+theorem holIntDiv_ofNat_ofNat (a b : Nat) (hb : 0 < b) :
+    holIntDiv (a : Int) (b : Int) = ((a / b : Nat) : Int) := by
+  rw [holIntDiv_spec _ _ (by omega)]
+  simp only [holIntDivBody]
+  rw [if_pos (by omega), if_pos (by omega)]
+  simp
+
+/-- HOL division of a nonpositive dividend by a positive divisor rounds down
+(Flapjack proof infrastructure). -/
+theorem holIntDiv_neg_ofNat (a b : Nat) (hb : 0 < b) :
+    holIntDiv (-(a : Int)) (b : Int) =
+      -((a / b : Nat) : Int) + if a % b = 0 then 0 else -1 := by
+  rw [holIntDiv_spec _ _ (by omega)]
+  simp only [holIntDivBody]
+  rw [if_pos (by omega)]
+  by_cases a0 : a = 0
+  · subst a0; simp
+  · rw [if_neg (by omega)]
+    simp [Int.toNat_natCast]
+
+/-- HOL division of a nonnegative dividend by a negative divisor rounds down
+(Flapjack proof infrastructure). -/
+theorem holIntDiv_ofNat_neg (a b : Nat) (hb : 0 < b) :
+    holIntDiv (a : Int) (-(b : Int)) =
+      -((a / b : Nat) : Int) + if a % b = 0 then 0 else -1 := by
+  rw [holIntDiv_spec _ _ (by omega)]
+  simp only [holIntDivBody]
+  rw [if_neg (by omega), if_pos (by omega)]
+  simp [Int.toNat_natCast]
+
+/-- HOL division of a nonpositive dividend by a negative divisor
+(Flapjack proof infrastructure). -/
+theorem holIntDiv_neg_neg (a b : Nat) (hb : 0 < b) :
+    holIntDiv (-(a : Int)) (-(b : Int)) = ((a / b : Nat) : Int) := by
+  rw [holIntDiv_spec _ _ (by omega)]
+  simp only [holIntDivBody]
+  rw [if_neg (by omega)]
+  by_cases a0 : a = 0
+  · subst a0; simp
+  · rw [if_neg (by omega)]
+    simp [Int.toNat_natCast]
+
 end Flapjack

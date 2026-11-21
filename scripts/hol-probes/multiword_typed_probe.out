@@ -495,4 +495,20 @@ mc_multiword_word_msb_double_lsr_1_typed=word_msb (w :α word) ⇔ w ≠ (w + w)
 mc_multiword_xor_one_add_one_typed=¬(w :α word) ' (0 :num) ⇒ w ⊕ (1w :α word) = w + (1w :α word)
 rich_list_LASTN_def_typed=∀(n :num) (xs :α list). LASTN n xs = REVERSE (TAKE n (REVERSE xs))
 rich_list_BUTLASTN_def_typed=∀(n :num) (xs :α list). BUTLASTN n xs = REVERSE (DROP n (REVERSE xs))
+While_WHILE_typed=∀(P :α -> bool) (g :α -> α) (x :α). WHILE P g x = if P x then WHILE P g (g x) else x
+tailrec_TAILREC_PRE_def_typed=∀(f1 :α -> α) (guard :α -> bool) (precondition :α -> bool) (x :α). TAILREC_PRE f1 guard precondition x ⇔ (∀(k :num). (∀(m :num). m < k ⇒ guard (FUNPOW f1 m x)) ⇒ precondition (FUNPOW f1 k x)) ∧ ∃(n :num). ¬guard (FUNPOW f1 n x)
+tailrec_TAILREC_def_typed=∀(f1 :α -> α) (f2 :α -> β) (g :α -> bool) (x :α). (TAILREC f1 f2 g x :β) = f2 (WHILE g f1 x)
+tailrec_SHORT_TAILREC_def_typed=∀(f :α -> (α + β) # bool). SHORT_TAILREC f = (TAILREC ((OUTL :α + β -> α) ∘ (FST :(α + β) # bool -> α + β) ∘ f) ((OUTR :α + β -> β) ∘ (FST :(α + β) # bool -> α + β) ∘ f) ((ISL :α + β -> bool) ∘ (FST :(α + β) # bool -> α + β) ∘ f) :α -> β)
+tailrec_SHORT_TAILREC_PRE_def_typed=∀(f :α -> (α + β) # bool). SHORT_TAILREC_PRE f = TAILREC_PRE ((OUTL :α + β -> α) ∘ (FST :(α + β) # bool -> α + β) ∘ f) ((ISL :α + β -> bool) ∘ (FST :(α + β) # bool -> α + β) ∘ f) ((SND :(α + β) # bool -> bool) ∘ f)
+tailrec_TAILREC_PRE_THM_typed=∀(f1 :α -> α) (g :α -> bool) (p :α -> bool) (x :α). TAILREC_PRE f1 g p x ⇔ p x ∧ (g x ⇒ TAILREC_PRE f1 g p (f1 x))
+tailrec_TAILREC_PRE_INDUCT_typed=∀(P :α -> bool). (∀(x :α). TAILREC_PRE (f1 :α -> α) (g :α -> bool) (p :α -> bool) x ∧ p x ∧ g x ∧ P (f1 x) ⇒ P x) ∧ (∀(x :α). TAILREC_PRE f1 g p x ∧ p x ∧ ¬g x ⇒ P x) ⇒ ∀(x :α). TAILREC_PRE f1 g p x ⇒ P x
+tailrec_TAILREC_THM_typed=∀(f1 :α -> α) (f2 :α -> β) (g :α -> bool) (x :α). (TAILREC f1 f2 g x :β) = if g x then (TAILREC f1 f2 g (f1 x) :β) else f2 x
+tailrec_TAILREC_PRE_IMP_typed=∀(step :α -> α) (guard :α -> bool) (side :α -> bool). (∃(R :α -> α -> bool). WF R ∧ ∀(x :α). guard x ⇒ R (step x) x) ∧ (∀(x :α). side x) ⇒ ∀(x :α). TAILREC_PRE step guard side x ⇔ T
+tailrec_TAILREC_EQ_THM_typed=(f1 :α -> α) = (f1' :α -> α) ∧ (f2 :α -> β) = (f2' :α -> β) ∧ (g :α -> bool) = (g' :α -> bool) ∧ (s :α -> bool) = (s' :α -> bool) ⇒ (TAILREC f1 f2 g :α -> β) = (TAILREC f1' f2' g' :α -> β) ∧ TAILREC_PRE f1 g s = TAILREC_PRE f1' g' s'
+tailrec_SHORT_TAILREC_THM_typed=∀(f :α -> (α + β) # bool) (x :α). SHORT_TAILREC f x = (if ISL (FST (f x)) then SHORT_TAILREC f (OUTL (FST (f x))) else OUTR (FST (f x))) ∧ (SHORT_TAILREC_PRE f x ⇔ SND (f x) ∧ (ISL (FST (f x)) ⇒ SHORT_TAILREC_PRE f (OUTL (FST (f x)))))
+tailrec_SHORT_TAILREC_PRE_INDUCT_typed=∀(P :α -> bool). (∀(x :α). SHORT_TAILREC_PRE (f :α -> (α + β) # bool) x ∧ SND (f x) ∧ (∀(y :α). FST (f x) = (INL y :α + β) ⇒ P y) ⇒ P x) ⇒ ∀(x :α). SHORT_TAILREC_PRE f x ⇒ P x
+tailrec_SHORT_TAILREC_SIM_typed=∀(f :α -> (α + β) # bool) (g :γ -> (γ + δ) # bool) (R :α -> γ -> bool) (P :β -> δ -> bool). (∀(x :α) (s :γ) (q :α + β) (r :ε). R x s ∧ f x = (q,T) ⇒ (∀(y :α). q = (INL y :α + β) ⇒ ∃(y1 :γ). g s = ((INL y1 :γ + δ),T) ∧ R y y1) ∧ ∀(y :β). q = (INR y :α + β) ⇒ ∃(y1 :δ). g s = ((INR y1 :γ + δ),T) ∧ P y y1) ⇒ ∀(x :α). SHORT_TAILREC_PRE f x ⇒ ∀(s :γ). R x s ⇒ P (SHORT_TAILREC f x) (SHORT_TAILREC g s) ∧ SHORT_TAILREC_PRE g s
+sum_ISL_typed=(∀(x :α). ISL (INL x :α + β) ⇔ T) ∧ ∀(y :β). ISL (INR y :α + β) ⇔ F
+sum_OUTL_typed=∀(x :α). OUTL (INL x :α + β) = x
+sum_OUTR_typed=∀(x :β). OUTR (INR x :α + β) = x
 multiword_probe_end=1

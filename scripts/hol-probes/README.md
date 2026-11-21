@@ -11100,3 +11100,11 @@ four-argument dispatch, word comparison, string comparison, and byte-array,
 array and block bounds-check equations, and general equality and integer
 ordering, block length, tag-length and tag equality equations. Concrete equality, ordering, tail-call, returning-call,
 and bad-header cases are in `cake_word_array_probe.out`.
+
+`data_to_word_memory_more_typed_probe.out` records typed statements of the
+`data_to_word_memoryProofScript.sml` declarations ported on the
+`cakeml-memproof` branch (exported theorems and definitions from the theory DB,
+`[local]` theorems parsed from the pinned source), between the static
+`dtw_memory_more_begin`/`dtw_memory_more_end` markers. Regenerate with
+`HOL_PROBE_ONLY=data_to_word_memory_more_typed_probeScript.sml scripts/hol-probes/regenerate.sh`;
+it does not replay HOL proofs.
