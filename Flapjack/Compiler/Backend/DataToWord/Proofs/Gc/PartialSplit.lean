@@ -202,4 +202,67 @@ theorem partialGcMoveList_heapSplit {α β : Type} (roots : List (HeapAddress α
     have finalEq := ih stateMid rootsMid stateEnd changed tailRun midSegment
     simpa only [changedLen] using finalEq
 
+/-- Exact HOL `heap_segment_IMP_split` (`data_to_word_gcProofScript.sml:3882-3894`);
+the HOL free variables are universally quantified. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "heap_segment_IMP_split"]
+theorem heapSegment_imp_split {α β : Type} {m n : Nat} {heap x1 x2 x3 : List (HeapElement α β)} :
+    heapSegment (m, n) heap = some (x1, x2, x3) →
+      heapSplit m heap = some (x1, x2 ++ x3) ∧ heapSplit n heap = some (x1 ++ x2, x3) := by
+  intro segment
+  obtain ⟨rfl, hm, hn, _⟩ := heapSegment_imp heap m n x1 x2 x3 segment
+  subst hm hn
+  refine ⟨?_, heapSplit_append (x1 ++ x2) x3⟩
+  rw [List.append_assoc]
+  exact heapSplit_append x1 (x2 ++ x3)
+
+/-- Exact HOL `heap_split_IMP_heap_length` (`data_to_word_gcProofScript.sml:3896-3904`). -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "heap_split_IMP_heap_length"]
+theorem heapSplit_imp_heapLength {α β : Type} :
+    ∀ (heap : List (HeapElement α β)) (n : Nat) (h1 h2 : List (HeapElement α β)),
+      heapSplit n heap = some (h1, h2) → heapLength h1 = n :=
+  fun heap n h1 h2 split => (heapSplit_heapLength heap h1 h2 n split).1
+
+/-- Exact HOL `heap_split_APPEND_EQ` (`data_to_word_gcProofScript.sml:3906-3914`). -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "heap_split_APPEND_EQ"]
+theorem heapSplit_append_eq {α β : Type} :
+    ∀ (h1 h2 : List (HeapElement α β)) (a : Nat),
+      heapSplit a (h1 ++ h2) = some (h1, h2) ↔ a = heapLength h1 := by
+  intro h1 h2 a
+  constructor
+  · intro split
+    exact (heapSplit_imp_heapLength (h1 ++ h2) a h1 h2 split).symm
+  · rintro rfl
+    exact heapSplit_append h1 h2
+
+/-- Exact HOL `heap_split_IMP_APPEND` (`data_to_word_gcProofScript.sml:3916-3921`). -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "heap_split_IMP_APPEND"]
+theorem heapSplit_imp_append {α β : Type} :
+    ∀ (heap : List (HeapElement α β)) (n : Nat) (h1 h2 : List (HeapElement α β)),
+      heapSplit n heap = some (h1, h2) → heap = h1 ++ h2 :=
+  fun heap n h1 h2 split => (heapSplit_heapLength heap h1 h2 n split).2.2.symm
+
+/-- Exact HOL `heap_length_nil` (`data_to_word_gcProofScript.sml:3923-3927`); the
+HOL free variable `m` is universally quantified. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "heap_length_nil"]
+theorem heapLength_nil {α β : Type} {m : List (HeapElement α β)} :
+    heapLength m = 0 ↔ m = [] := by
+  cases m with
+  | nil => simp [heapLength]
+  | cons x xs =>
+    have : 0 < elLength x := by cases x <;> simp [elLength]
+    simp only [heapLength, List.map_cons, List.sum_cons, reduceCtorEq, iff_false]
+    omega
+
+/-- Exact HOL `heap_length_LENGTH` (`data_to_word_gcProofScript.sml:3529-3534`);
+the HOL free variable `x` is universally quantified. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "heap_length_LENGTH"]
+theorem heapLength_length {α β : Type} {x : List (HeapElement α β)} :
+    x.length ≤ heapLength x := by
+  induction x with
+  | nil => simp [heapLength]
+  | cons y ys ih =>
+    have : 1 ≤ elLength y := by cases y <;> simp [elLength]
+    simp only [heapLength, List.map_cons, List.sum_cons, List.length_cons] at ih ⊢
+    omega
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

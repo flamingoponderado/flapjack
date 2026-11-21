@@ -175,4 +175,78 @@ theorem stateRel_setStore_allocSize {width : Nat} [NeZero width] {C F : Type}
   simp [stateRel, WordSemStateFiniteExact.setStore, codeOracleRel, Memory.memoryRel,
     Memory.heapInMemoryStore, HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, holFapply]
 
+/-- Exact HOL `blocks_unique_empty` (`data_to_word_gcProofScript.sml:4600-4606`,
+a `[local]` theorem): no value lies in the empty heap and stack. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "blocks_unique_empty"]
+theorem blocksUnique_empty {v : Nat} :
+    Memory.blocksUnique v (Memory.allValues Spt.ln []) := by
+  intro stamp tag1 xs1 tag2 xs2 ⟨h, _⟩
+  exfalso
+  simp [Memory.allValues, sptLookup, Memory.valueListValues] at h
+
+/-- Exact HOL `state_rel_imp_clock` (`data_to_word_gcProofScript.sml:8598-8602`); HOL free
+variables are universally quantified. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "state_rel_imp_clock"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem state_rel_imp_clock {width : Nat} [NeZero width] {C F : Type} {c : Config}
+    {l1 l2 : Nat} {s : DataSem.State C F} {t : WordSemStateFiniteExact width C F}
+    {locs : List (Nat × Nat)} :
+    stateRel c l1 l2 s t none locs → s.clock = t.clock :=
+  fun h => h.2.1.symm
+
+/-- Exact HOL `state_rel_with_clock_0` (`data_to_word_gcProofScript.sml:8564-8570`); HOL free
+variables are universally quantified. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "state_rel_with_clock_0"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem state_rel_with_clock_0 {width : Nat} [NeZero width] {C F : Type} {c : Config}
+    {r1 r2 : Nat} {s : DataSem.State C F} {t : WordSemStateFiniteExact width C F}
+    {x : Option (List (Flapjack.Compiler.Backend.DataSem.Value × WordLocW width))}
+    {locs : List (Nat × Nat)} :
+    stateRel c r1 r2 s t x locs → stateRel c r1 r2 { s with space := 0 } t x locs := by
+  intro h
+  obtain ⟨h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, h13, h14, h15, h16, h17, h18, h19,
+    heap, limit, a, sp, sp1, gens, m1, m2, m3, _⟩ := h
+  exact ⟨h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, h13, h14, h15, h16, h17, h18, h19,
+    heap, limit, a, sp, sp1, gens, m1, m2, m3, Nat.zero_le _⟩
+
+/-- Exact HOL `state_rel_def` (`data_to_word_gcProofScript.sml:4541-4542`): the original relation with `memory_rel` unfolded; HOL free
+variables are universally quantified. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "state_rel_def"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem state_rel_def {width : Nat} [NeZero width] {C F : Type} :
+    ∀ (c : Config) (l1 l2 : Nat) (s : DataSem.State C F)
+      (t : WordSemStateFiniteExact width C F)
+      (v1 : Option (List (Flapjack.Compiler.Backend.DataSem.Value × WordLocW width)))
+      (locs : List (Nat × Nat)),
+      stateRel c l1 l2 s t v1 locs ↔
+        t.ffi = s.ffi ∧
+        t.clock = s.clock ∧
+        t.handler = s.handler ∧
+        t.gcFun = WordGcFunctions.wordGcFun c ∧
+        codeRel c s.code t.code ∧
+        codeOracleRel c s.compile s.compileOracle t.store t.compile
+          t.compileOracle t.codeBuffer t.dataBuffer ∧
+        goodDimindex width ∧ shiftLength c < width ∧ s.tstamps.isSome ∧
+        (∀ key ∈ [WordStore.globals], (t.store.lookup key).isSome) ∧
+        (v1 = none → sptLookup 0 t.locals = some (.loc l1 l2)) ∧
+        (∀ n, (sptLookup n s.locals).isSome →
+          (sptLookup (adjustVar n) t.locals).isSome) ∧
+        List.Forall₂ stackRel s.stack t.stack ∧
+        List.Forall₂ containsLoc t.stack locs ∧
+        optionLe (Option.map₂ (· + ·) (wordSemStackSize t.stack) t.localsSize) t.stackMax ∧
+        optionLe t.stackMax s.stackMax ∧
+        t.stackSize = s.stackFrameSizes ∧
+        t.localsSize = s.localsSize ∧
+        limitsInv s.limits (t.store.lookup .heapLength) t.stackLimit
+          c.lenSize c.hasFpOps c.hasFpTern ∧
+        ∃ heap limit a sp sp1 gens,
+          Memory.heapInMemoryStore heap a sp sp1 gens c t.store t.memory t.mdomain limit ∧
+          Memory.wordMlInv (heap, t.be, a, sp, sp1, gens) limit (holThe s.tstamps) c s.refs
+            (v1.getD [] ++
+              joinEnv s.locals (sptToAList (sptInter t.locals (adjustSet s.locals))) ++
+              [(theGlobal s.global, holFapply t.store .globals)] ++
+              flatStack s.stack t.stack) ∧
+          (limit + 3) * (width / 8) + 1 < 2 ^ width ∧ s.space ≤ sp :=
+  fun _ _ _ _ _ _ _ => Iff.rfl
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
