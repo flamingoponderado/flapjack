@@ -38,6 +38,7 @@ theorem op_space_reset_pmatch (op : Op) :
   | install => rfl
   | thunkOp t => rfl
 
+set_option linter.unusedVariables false in
 /-- The live-name requirement in its original fully enumerated case form. -/
 @[hol "cakeml/compiler/backend/bvi_to_dataScript.sml" "op_requires_names_eqn"]
 theorem op_requires_names_eqn (op : Op) :
@@ -59,7 +60,7 @@ theorem op_requires_names_eqn (op : Op) :
         | .memOp .derefByte => false
         | .memOp .updateByte => false
         | .memOp .concatByteVec => false
-        | .memOp (.copyByte _) => true
+        | .memOp (.copyByte new_flag) => true
         | .memOp .fromListByte => false
         | .memOp .toListByte => false
         | .memOp .lengthByteVec => false
@@ -87,6 +88,7 @@ theorem op_requires_names_eqn (op : Op) :
   | install => rfl
   | thunkOp t => rfl
 
+set_option linter.unusedVariables false in
 /-- The same requirement with HOL's `pmatch` rows; the eliminated form is the
 fully enumerated `op_requires_names_eqn`. -/
 @[hol "cakeml/compiler/backend/bvi_to_dataScript.sml" "op_requires_names_pmatch"]
@@ -95,7 +97,7 @@ theorem op_requires_names_pmatch (op : Op) :
       (DataLang.opSpaceReset op || (match op with
         | .ffi _ => true
         | .install => true
-        | .memOp (.copyByte _) => true
+        | .memOp (.copyByte new_flag) => true
         | .memOp .xorByte => true
         | .memOp (.stringCmp _ _) => true
         | _ => false)) := by
