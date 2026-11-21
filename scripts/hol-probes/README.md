@@ -46,14 +46,15 @@ of `write_bytes_APPEND`, `write_bytes_same`, `w2n_add_byte_align_lemma`,
 `heap_in_memory_store_UpdateByte`, `memory_rel_ByteArray_IMP`,
 `write_bytearray_isWord`, `write_bytearray_append`, and
 `memory_rel_write_bytearray`, and the typed statement and hypothesis count of
-`memory_rel_Cons_alt` from the original memory proof.
+`memory_rel_Cons_alt`, `BlockNil_and_lemma`, and `memory_rel_bounds_check` from the original memory proof.
 Regenerate it with `HOL_PROBE_ONLY=data_to_word_memory_proof_typed_probeScript.sml
 scripts/hol-probes/regenerate.sh` using the pinned source revisions.
 
 `data_to_word_assign_typed_probe.out` also captures
 `IMP_read_bytearray_GENLIST`, including its arbitrary element type and its
 independent address-word dimension, and the typed statement and hypothesis
-counts of `state_rel_get_var_Number_IMP_alt`, `state_rel_IMP_tstamps`, `INT_EQ_NUM_LEMMA`, `evaluate_Maxout_bits_code`, `Make_ptr_bits_thm`, and `assign_ConsExtend`. It parses the original local statement of
+counts of `state_rel_get_var_Number_IMP_alt`, `state_rel_IMP_tstamps`, `INT_EQ_NUM_LEMMA`, `evaluate_Maxout_bits_code`, `Make_ptr_bits_thm`, `assign_ConsExtend`, `assign_Cons`, `assign_Build`, `assign_WordTest`,
+`assign_LessConstSmall`, and `assign_LessSmallConst`. It parses the original local statement of
 `parts_to_words_NONE` with inferred types; this capture does not replay its
 HOL proof.
 

@@ -448,4 +448,19 @@ val _ = emit_exported "Make_ptr_bits_thm_typed" "Make_ptr_bits_thm";
 val _ = print ("assign_ConsExtend_hypotheses=" ^
   Int.toString (length (hyp assign_ConsExtend)) ^ "\n");
 val _ = emit_exported "assign_ConsExtend_typed" "assign_ConsExtend";
+val _ = print ("assign_Cons_hypotheses=" ^
+  Int.toString (length (hyp assign_Cons)) ^ "\n");
+val _ = emit_exported "assign_Cons_typed" "assign_Cons";
+val _ = print ("assign_Build_hypotheses=" ^
+  Int.toString (length (hyp assign_Build)) ^ "\n");
+val _ = emit_exported "assign_Build_typed" "assign_Build";
+val _ = print ("assign_WordTest_hypotheses=" ^
+  Int.toString (length (hyp assign_WordTest)) ^ "\n");
+val _ = emit_exported "assign_WordTest_typed" "assign_WordTest";
+val _ = print ("assign_LessConstSmall_hypotheses=" ^
+  Int.toString (length (hyp assign_LessConstSmall)) ^ "\n");
+val _ = emit_exported "assign_LessConstSmall_typed" "assign_LessConstSmall";
+val _ = print ("assign_LessSmallConst_hypotheses=" ^
+  Int.toString (length (hyp assign_LessSmallConst)) ^ "\n");
+val _ = emit_exported "assign_LessSmallConst_typed" "assign_LessSmallConst";
 val _ = capture "parts_to_words_NONE_typed" "parts_to_words_NONE";

@@ -987,13 +987,14 @@ typed HOL statement and proof, including the order of the 32-bit payload words.
 
 **Qualify reviewed unused HOL witnesses.** The narrow
 `hol_unused_existential_inhabitants := [β._unused]` qualifier applies only to
-`memoryRel_consAlt` (`memory_rel_Cons_alt`) and `makePtrBits_correct`
-(`Make_ptr_bits_thm`). Each retains the independent inhabited HOL type of its
-unused existential witness using one `Nonempty β` instance. The former combines
-it with the standalone finite-map relation qualifier for `st`; the latter uses
-the target state's `fpRegs`/`store` qualifier. Both use the positive-word
-qualifier. The source checker pins each complete theorem telescope, the
-elaborated audit checks that β occurs only in its instance and unused witness,
+`memoryRel_consAlt` (`memory_rel_Cons_alt`), `makePtrBits_correct`
+(`Make_ptr_bits_thm`), and `memoryRel_byteArrayImp` (`memory_rel_ByteArray_IMP`).
+Each retains the independent inhabited HOL type of its unused existential witness
+using one `Nonempty β` instance. The first and third use the standalone finite-map
+relation qualifier for `st` and `store`, respectively; the pointer theorem uses
+the target state's `fpRegs`/`store` qualifier. All use the positive-word
+qualifier. The source checker pins each complete theorem telescope, the elaborated
+audit checks that β occurs only in its instance and unused witness,
 and the manifest records the exact qualifier. These checks do not prove HOL
 correspondence: independently compare each complete typed source statement.
 

@@ -376,6 +376,8 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.Offset
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.Const
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.BoolNot
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.BoolTest
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.WordTest
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.LessSmallConst
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.BoolLookup
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.JumpExc
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.Label
@@ -435,6 +437,8 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.StoreList
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.GetVarsCutEnv
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.ConsExtendExpand
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.ConsExtend
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.Cons
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.Build
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Bignum.RealAddress
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Bignum.ShiftVar
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.WordMlInvInsert
@@ -554,6 +558,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Space
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Number
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.NumberCompare
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BoundsCheck
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.NumberArithmetic
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ByteBitwise
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Restriction
@@ -561,6 +566,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.StackPermute
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.StackOperations
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.SmallNumber
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Unit
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BlockNil
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Bool
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.RefEquality
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.CodePointer
