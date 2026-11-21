@@ -292,7 +292,11 @@ decreasing_by
 end
 
 /-- HOL `bvi_to_cb_aux_size_lemma`: extracted bindings are no larger than the
-source expression (plus one for a single expression). -/
+source expression (plus one for a single expression). HOL's `list_size exp_size`
+is `expListSizeHOL`: it is generated in the same mutual block as `expSizeHOL`
+in `Flapjack/Compiler/Backend/Bvi/GeneratedSize.lean`, and its clauses
+(`expListSizeHOL.eq_def`: `[] ↦ 0`, `h :: t ↦ 1 + (expSizeHOL h +
+ expListSizeHOL t)`) are exactly HOL's `list_size` clauses. -/
 @[hol "cakeml/compiler/backend/bvi_tmcScript.sml" "bvi_to_cb_aux_size_lemma"]
 theorem extract_size_lemma :
     (∀ (n loc tag : Nat) (exp : Exp) (bs : List Exp) (sum : Sum (List Nat) CallBlock),
@@ -304,7 +308,10 @@ theorem extract_size_lemma :
   ⟨fun n loc tag exp bs sum run => extractOne_size n loc tag exp bs sum run,
     fun n loc tag args bs sum run => extractList_size n loc tag args bs sum run⟩
 
-/-- HOL `bvi_to_cb_aux_size`: the list conjunct of the size lemma. -/
+/-- HOL `bvi_to_cb_aux_size`: the list conjunct of the size lemma. HOL's
+`list_size exp_size` is `expListSizeHOL`, whose clauses
+(`expListSizeHOL.eq_def`) are exactly HOL's `list_size` clauses on the
+`expSizeHOL` element measure. -/
 @[hol "cakeml/compiler/backend/bvi_tmcScript.sml" "bvi_to_cb_aux_size"]
 theorem extractList_size_lemma (n loc tag : Nat) (args : List Exp) (bs : List Exp)
     (sum : Sum (List Nat) CallBlock)
@@ -454,7 +461,9 @@ theorem toBlockFuel_eq_source (fuel n loc : Nat) (expression : Exp) :
     | _ => rfl
   | _ => rfl
 
-/-- HOL `bvi_to_cb_size`: block extraction shrinks the expression size. -/
+/-- HOL `bvi_to_cb_size`: block extraction shrinks the expression size. HOL's
+`list_size exp_size` is `expListSizeHOL` (same clauses as
+`expListSizeHOL.eq_def`) and `exp_size` is `expSizeHOL`. -/
 @[hol "cakeml/compiler/backend/bvi_tmcScript.sml" "bvi_to_cb_size"]
 theorem toBlock_size (n loc : Nat) (x : Exp) (bs : List Exp) (cb : CallBlock)
     (run : toBlockSource n loc x = some (bs, cb)) : expListSizeHOL bs < expSizeHOL x := by
