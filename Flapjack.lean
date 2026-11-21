@@ -561,6 +561,14 @@ import Flapjack.Compiler.Backend.Semantics.DataProps.StateUpdates
 import Flapjack.Compiler.Backend.Semantics.DataSem.ControlClock
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.Limits
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Representation
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Preliminaries
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.EvaluatedThunk
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.GcRefinement
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.DataRefsSplit
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.ConsAllocation
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Values.TimestampSets
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Values.AllValues
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.ConsInvariant
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Heap
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Store
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Abstract
@@ -3458,6 +3466,9 @@ import Flapjack.Compiler.Backend.WordGcFunctions.Roots
 import Flapjack.Compiler.Backend.WordGcFunctions.HasFpOps
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.InitStoreOk
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.WordLemmas
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.ListLemmas
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.VarLemmas
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.BitLemmas
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GcFunOk
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GcFunConstOk
 import Flapjack.Compiler.Backend.WordSimp.Proofs.GcWordConst
