@@ -165,6 +165,128 @@ theorem memLoadNamedAfindi {width : Nat} [NeZero width] (madd : BitVec width →
           rw [memLoadNamedAfindi madd memry nm x rest k hk h']
           simp
 
+/-- HOL's `mem_load (Named nm)` clause scans the context with
+`dropWhile (λ(n,i). ~(n = nm)) stcs`; `memLoadHOLExact` performs that scan by
+structural recursion over the context.  This theorem states HOL's literal
+`case dropWhile … of` equation for that clause, which the recursion satisfies.
+Flapjack infrastructure used to state `mem_load_rec1`; no HOL declaration. -/
+private theorem memLoadNamedDropWhileHOL {width : Nat} [NeZero width] (nm : MlS)
+    (address : BitVec width) (domain : BitVec width → Prop) [DecidablePred domain]
+    (memory : BitVec width → HolWordLab width) (context : StructContextHOLM) :
+    memLoadHOLExact (.named nm) address domain memory context =
+      (match context.dropWhile (fun (n, _i) => !decide (n = nm)) with
+       | [] => none
+       | (nm', info) :: rest =>
+           match memLoadFldsHOLExact info.fields address domain memory rest with
+           | some fields => some (.nStruct nm' fields)
+           | none => none) := by
+  induction context with
+  | nil =>
+    simp [memLoadHOLExact]
+  | cons entry rest ih =>
+    obtain ⟨candidate, info⟩ := entry
+    rw [memLoadHOLExact, List.dropWhile_cons]
+    by_cases h : candidate = nm
+    · simp [h]
+      rfl
+    · simp [h, ih]
+
+/-- Exact HOL `mem_load_rec1[local]` (`pan_structsProofScript.sml:558-559`):
+the first conjunct of `mem_load_def` at the fixed context `stcs`, i.e. `mem_load`
+is the literal `case sh of` over the three shapes, with the `Named` clause
+scanning the context by `dropWhile`.  The bound `sh m dm addr` keep HOL's order
+and the free `stcs` follows them. -/
+@[hol "cakeml/pancake/proofs/pan_structsProofScript.sml" "mem_load_rec1"
+  (words_as_type_indexed_bitvec)]
+theorem memLoadRec1HOL {width : Nat} [NeZero width] (shape : ShapeHOL)
+    (memory : BitVec width → HolWordLab width) (domain : BitVec width → Prop)
+    [DecidablePred domain] (address : BitVec width) (context : StructContextHOLM) :
+    memLoadHOLExact shape address domain memory context =
+      (match shape with
+       | .one => if domain address then some (.val (memory address)) else none
+       | .comb shapes =>
+           match memLoadsHOLExact shapes address domain memory context with
+           | some values => some (.rStruct values)
+           | none => none
+       | .named name =>
+           match context.dropWhile (fun (n, _i) => !decide (n = name)) with
+           | [] => none
+           | (nm', info) :: rest =>
+               match memLoadFldsHOLExact info.fields address domain memory rest with
+               | some fields => some (.nStruct nm' fields)
+               | none => none) := by
+  cases shape with
+  | one => rw [memLoadHOLExact]
+  | comb shapes =>
+    rw [memLoadHOLExact]
+    rfl
+  | named name => exact memLoadNamedDropWhileHOL name address domain memory context
+
+/-- Exact HOL `mem_load_rec[local]` (`pan_structsProofScript.sml:561-564`): the
+three shape-specialised recursive clauses of `mem_load_def` conjoined, each still
+written as HOL's literal `case <shape> of` over the three shapes.  The bound
+`m dm addr` keep HOL's order inside each conjunct; the free `shs nm stcs` follow.
+-/
+@[hol "cakeml/pancake/proofs/pan_structsProofScript.sml" "mem_load_rec"
+  (words_as_type_indexed_bitvec)]
+theorem memLoadRecHOL {width : Nat} [NeZero width] (shs : List ShapeHOL) (nm : MlS)
+    (context : StructContextHOLM) :
+    (∀ (memory : BitVec width → HolWordLab width) (domain : BitVec width → Prop)
+        [DecidablePred domain] (address : BitVec width),
+      memLoadHOLExact .one address domain memory context =
+        (match ShapeHOL.one with
+         | .one => if domain address then some (.val (memory address)) else none
+         | .comb shapes =>
+             match memLoadsHOLExact shapes address domain memory context with
+             | some values => some (.rStruct values)
+             | none => none
+         | .named name =>
+             match context.dropWhile (fun (n, _i) => !decide (n = name)) with
+             | [] => none
+             | (nm', info) :: rest =>
+                 match memLoadFldsHOLExact info.fields address domain memory rest with
+                 | some fields => some (.nStruct nm' fields)
+                 | none => none)) ∧
+    (∀ (memory : BitVec width → HolWordLab width) (domain : BitVec width → Prop)
+        [DecidablePred domain] (address : BitVec width),
+      memLoadHOLExact (.comb shs) address domain memory context =
+        (match ShapeHOL.comb shs with
+         | .one => if domain address then some (.val (memory address)) else none
+         | .comb shapes =>
+             match memLoadsHOLExact shapes address domain memory context with
+             | some values => some (.rStruct values)
+             | none => none
+         | .named name =>
+             match context.dropWhile (fun (n, _i) => !decide (n = name)) with
+             | [] => none
+             | (nm', info) :: rest =>
+                 match memLoadFldsHOLExact info.fields address domain memory rest with
+                 | some fields => some (.nStruct nm' fields)
+                 | none => none)) ∧
+    ∀ (memory : BitVec width → HolWordLab width) (domain : BitVec width → Prop)
+        [DecidablePred domain] (address : BitVec width),
+      memLoadHOLExact (.named nm) address domain memory context =
+        (match ShapeHOL.named nm with
+         | .one => if domain address then some (.val (memory address)) else none
+         | .comb shapes =>
+             match memLoadsHOLExact shapes address domain memory context with
+             | some values => some (.rStruct values)
+             | none => none
+         | .named name =>
+             match context.dropWhile (fun (n, _i) => !decide (n = name)) with
+             | [] => none
+             | (nm', info) :: rest =>
+                 match memLoadFldsHOLExact info.fields address domain memory rest with
+                 | some fields => some (.nStruct nm' fields)
+                 | none => none) := by
+  refine ⟨?_, ?_, ?_⟩
+  · intro memory domain inst address
+    exact memLoadRec1HOL .one memory domain address context
+  · intro memory domain inst address
+    exact memLoadRec1HOL (.comb shs) memory domain address context
+  · intro memory domain inst address
+    exact memLoadRec1HOL (.named nm) memory domain address context
+
 /-- Field validity of zipped names and values is validity of the values.
 Flapjack infrastructure; no HOL original. -/
 theorem fieldsFldsOkHOLExact_zip {width : Nat} [NeZero width] (ctx : StructContextExact) :
