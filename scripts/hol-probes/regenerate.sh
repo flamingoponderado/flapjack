@@ -12626,6 +12626,11 @@ run_probe multiword_typed_probeScript.sml multiword_typed_probe.out \
   "$hol_dir/examples/machine-code/multiword/mc_multiwordScript.sml" \
   "$hol_dir/examples/machine-code/multiword"
 
+run_probe mc_multiword_local_typed_probeScript.sml mc_multiword_local_typed_probe.out \
+  mc_multiword_local_begin mc_multiword_mc_full_cmp_eq_typed mc_multiword_local_end \
+  "$hol_dir/examples/machine-code/multiword/mc_multiwordScript.sml" \
+  "$hol_dir/examples/machine-code/multiword"
+
 run_probe data_to_word_memory_more_typed_probeScript.sml data_to_word_memory_more_typed_probe.out \
   dtw_memory_more_begin dtw_memory_more_end \
   "$cake_dir/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "$cake_dir/compiler/backend/proofs"

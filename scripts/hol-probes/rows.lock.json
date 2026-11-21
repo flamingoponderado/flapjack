@@ -1038,6 +1038,7 @@
     {"bytes": 3269, "out": "match_cake_bvi_probe.out", "rows": 1, "sha256": "823d3e15f98ec5df40bf20604eb3acd19d69ab582331a0f952b1f0fe8af1bc85"},
     {"bytes": 5178, "out": "match_cake_data_probe.out", "rows": 1, "sha256": "f2395539ef973d01e0509f675234faca6857a2c66244c6611d2fb1b1d3545429"},
     {"bytes": 12426, "out": "match_cake_word_probe.out", "rows": 1, "sha256": "36a019dc8d47eaea81711fb6019cc6bc6cb41879643ac3916fdeea28c63e2af1"},
+    {"bytes": 889, "out": "mc_multiword_local_typed_probe.out", "rows": 3, "sha256": "1f4015febc58f4b58ad6ab8aece3e67bb4973b8b9c30f5c5adf9863b46f58f6e"},
     {"bytes": 791, "out": "mips_config_names_typed_probe.out", "rows": 1, "sha256": "c8047a33f11273d3141c7673d99569aa7059570205b1630c4b367fc47673013b"},
     {"bytes": 142, "out": "misc_app_list_probe.out", "rows": 6, "sha256": "fb4a280f0acd4ecd2b73b61d927fe830afcd31f0b24c963da8ea273d640455a8"},
     {"bytes": 55, "out": "misc_asm_write_bytearray_probe.out", "rows": 4, "sha256": "7d52f82bcd1d6224d7c237c70ff3904239ff20500d83a6c22595d6729966f8e7"},
