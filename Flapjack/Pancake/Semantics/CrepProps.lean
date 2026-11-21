@@ -853,6 +853,85 @@ theorem crepShMemStoreHOL_flookup_locals {width : Nat} [NeZero width] {σ : Type
   all_goals
     rfl
 
+/-- Exact port of HOL `set_mem_op_FLOOKUP_locals`
+    (`crepPropsScript.sml:319-330`) over the exact finite-support
+    `CrepSemHOLState` carrier and the exact `crepShMemOpExactHOL` port of
+    `sh_mem_op`: a shared-memory operation at a name distinct from the queried
+    local, with a `NONE`/`Continue`/`Break` result, leaves that local lookup
+    unchanged.  HOL's `op r ad s` are `operator name address state`; the
+    binders follow HOL's captured free-variable order
+    `k,n,t,res,s,ad,r,op` (label `set_mem_op_FLOOKUP_locals_vars`).  HOL's
+    `'a word` addresses are the type-indexed `BitVec width` with the
+    `[NeZero width]` discharge, recorded by the combined
+    `(fmap_as_finite_support := [locals, globals, code])`
+    `(words_as_type_indexed_bitvec)` qualifiers; the same-module forwarding
+    witness is `holFmapAsFiniteSupportWitness` above. -/
+@[hol "cakeml/pancake/semantics/crepPropsScript.sml" "set_mem_op_FLOOKUP_locals"
+  (fmap_as_finite_support := [locals, globals, code])
+  (words_as_type_indexed_bitvec)]
+theorem crepShMemOpHOL_flookup_locals {width : Nat} [NeZero width] {σ : Type}
+    (label : Nat) (key : Nat) (target : CrepSemHOLState width σ)
+    (res : Option (CrepResultHOLExact width)) (state : CrepSemHOLState width σ)
+    [DecidablePred state.shMemaddrs] (address : BitVec width) (name : Nat)
+    (operator : WordMemOp)
+    (hstep : crepShMemOpExactHOL operator name address state = (res, target))
+    (hne : name ≠ key)
+    (hres : res = none ∨ res = some (.continue label) ∨ res = some (.break label)) :
+    target.locals.lookup key = state.locals.lookup key := by
+  unfold crepShMemOpExactHOL at hstep
+  cases operator with
+  | load =>
+      exact crepShMemLoadHOL_flookup_locals name address 0 state res target key label
+        hstep (Ne.symm hne) hres
+  | store =>
+      exact crepShMemStoreHOL_flookup_locals name address 0 state res target key hstep
+  | load8 =>
+      exact crepShMemLoadHOL_flookup_locals name address 1 state res target key label
+        hstep (Ne.symm hne) hres
+  | store8 =>
+      exact crepShMemStoreHOL_flookup_locals name address 1 state res target key hstep
+  | load16 =>
+      exact crepShMemLoadHOL_flookup_locals name address 2 state res target key label
+        hstep (Ne.symm hne) hres
+  | store16 =>
+      exact crepShMemStoreHOL_flookup_locals name address 2 state res target key hstep
+  | load32 =>
+      exact crepShMemLoadHOL_flookup_locals name address 4 state res target key label
+        hstep (Ne.symm hne) hres
+  | store32 =>
+      exact crepShMemStoreHOL_flookup_locals name address 4 state res target key hstep
+
+/-- Exact port of HOL `load_glob_not_mem_load`
+    (`crepPropsScript.sml:688-695`): a global load absent from an expression's
+    expression list stays absent from every expression produced by
+    `load_shape`.  The typed capture gives `∀(i :num) (a :α word)
+    (h :α crepLang$exp) (ad :word5). ¬MEM (LoadGlob ad :α crepLang$exp)
+    (exps h) ⇒ ¬MEM (LoadGlob ad :α crepLang$exp) (FLAT (MAP (exps :α
+    crepLang$exp -> α crepLang$exp list) (load_shape a i h)))`.  `load_shape` is
+    `loadShapeBytesHOLW`, `exps` is the tagged `crepExpsHOL`, `FLAT (MAP ...)`
+    is `(·.map ·).flatten`, and HOL's fixed `word5` global-load index is
+    `BitVec 5`; the type-indexed `'a word` address is `BitVec width` under
+    `[NeZero width]`. -/
+@[hol "cakeml/pancake/semantics/crepPropsScript.sml" "load_glob_not_mem_load"
+  (words_as_type_indexed_bitvec)]
+theorem loadGlobNotMemLoadHOL {width : Nat} [NeZero width]
+    (i : Nat) (address : BitVec width) (expression : CrepExpHOL width)
+    (ad : BitVec 5)
+    (hnot : CrepExpHOL.loadGlob ad ∉ crepExpsHOL expression) :
+    CrepExpHOL.loadGlob ad ∉
+      ((loadShapeBytesHOLW address i expression).map crepExpsHOL).flatten := by
+  induction i generalizing address with
+  | zero => simp [loadShapeBytesHOLW]
+  | succ i ih =>
+      rw [loadShapeBytesHOLW]
+      simp only [List.map_cons, List.flatten_cons, List.mem_append, not_or]
+      refine ⟨?_, ih _⟩
+      split
+      · rename_i hz
+        simpa [crepExpsHOL] using hnot
+      · rename_i hz
+        simp [crepExpsHOL, hnot]
+
 /-- Exact port of HOL `eval_upd_clock_eq` (`crepPropsScript.sml:858-872`):
 the exact `crepSem$eval` expression evaluator never reads the state `clock`
 field, so replacing it is invisible. Quantifier order follows HOL's `t, e, ck`. -/
