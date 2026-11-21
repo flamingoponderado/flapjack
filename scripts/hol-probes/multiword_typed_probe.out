@@ -493,4 +493,6 @@ mc_multiword_single_div_pre_def_typed=∀(r2 :β word) (r0 :γ word) (r9 :α wor
 mc_multiword_single_sub_word_def_typed=∀(w1 :α word) (w2 :α word) (c :α word). single_sub_word w1 w2 c = (let ((z :α word),(c :bool)) = single_sub w1 w2 (c ≠ (0w :α word)) in (z,(b2w c :α word)))
 mc_multiword_word_msb_double_lsr_1_typed=word_msb (w :α word) ⇔ w ≠ (w + w) ⋙ (1 :num)
 mc_multiword_xor_one_add_one_typed=¬(w :α word) ' (0 :num) ⇒ w ⊕ (1w :α word) = w + (1w :α word)
+rich_list_LASTN_def_typed=∀(n :num) (xs :α list). LASTN n xs = REVERSE (TAKE n (REVERSE xs))
+rich_list_BUTLASTN_def_typed=∀(n :num) (xs :α list). BUTLASTN n xs = REVERSE (DROP n (REVERSE xs))
 multiword_probe_end=1

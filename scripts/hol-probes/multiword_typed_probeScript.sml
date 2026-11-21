@@ -507,4 +507,6 @@ val _ = emit "mc_multiword_single_div_pre_def_typed" (DB.fetch "mc_multiword" "s
 val _ = emit "mc_multiword_single_sub_word_def_typed" (DB.fetch "mc_multiword" "single_sub_word_def");
 val _ = emit "mc_multiword_word_msb_double_lsr_1_typed" (DB.fetch "mc_multiword" "word_msb_double_lsr_1");
 val _ = emit "mc_multiword_xor_one_add_one_typed" (DB.fetch "mc_multiword" "xor_one_add_one");
+val _ = emit "rich_list_LASTN_def_typed" (DB.fetch "rich_list" "LASTN_def");
+val _ = emit "rich_list_BUTLASTN_def_typed" (DB.fetch "rich_list" "BUTLASTN_def");
 val _ = print "multiword_probe_end=1\n";
