@@ -1070,7 +1070,7 @@
     {"bytes": 456, "out": "monad_list_primitives_probe.out", "rows": 25, "sha256": "564bd5d118f7cd0746d109b86fc758358e2a313a34352b2638a56a1d4a9dbc62"},
     {"bytes": 6155, "out": "mti_cake_bvi_probe.out", "rows": 1, "sha256": "b80b55fa0a3599a7d58ceb4f1ed2f24fef23ab750ea9ec6347937cb43f3b3d10"},
     {"bytes": 3012, "out": "mti_ops_word_probe.out", "rows": 1, "sha256": "6a93d748641621876430d32d20c44bfe48ab3b9aba4aa710345a87332944ec36"},
-    {"bytes": 287540, "out": "multiword_typed_probe.out", "rows": 498, "sha256": "212948de74204606b9760c1b6014f994e81878fb2a08014af66216415fc929af"},
+    {"bytes": 291023, "out": "multiword_typed_probe.out", "rows": 514, "sha256": "0c1d20029fc092f9cac8c2f81b593f81eebaef9ea702da271a5700659edc5326"},
     {"bytes": 609, "out": "namespace_carrier_probe.out", "rows": 5, "sha256": "f9a102f5a220866a4776ae35fdff947b3146c4720ff9b722ea58748023b35536"},
     {"bytes": 3950, "out": "namespace_ops_probe.out", "rows": 20, "sha256": "cdf59eb20766aeb29adc2ba65eb741852b511324d1bf0156c4d41d603ebc5ba5"},
     {"bytes": 2894, "out": "namespace_props_typed_probe.out", "rows": 15, "sha256": "f75c36b23a476b97747c3d15d94478a9c0d767d4889cd52cdfd875a9da61c7ed"},
