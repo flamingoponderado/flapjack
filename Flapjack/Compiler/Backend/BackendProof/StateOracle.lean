@@ -3,6 +3,7 @@ module
 public import Flapjack.Compiler.Backend.BackendProof.CakeOracConfigEqs
 public import Flapjack.Compiler.Backend.BackendProof.ConfigTuple
 public import Flapjack.Compiler.Backend.BackendProps.OracleMonotonic
+public import Flapjack.Compiler.Backend.BackendProof.CakeOrac
 
 @[expose] public section
 
@@ -183,5 +184,58 @@ theorem isStateOracle_cakeOracToComp {width : Nat} [NeZero width]
   rcases hG : gInc gc gp with ⟨gc', z⟩
   simp only [hG] at this
   exact (this hfn.symm).symm
+
+/-- Exact HOL `is_state_oracle_tailrec_cake_orac` (`backendProofScript.sml:1704-1725`).
+`bvl_to_bvi_compile_inc` is `BvlToBvi.compileIncSource`, `bvl_inline_compile_inc`
+is `BvlInline.compileInc`, `bvi_tailrec_compile_prog` is
+`BviTailrec.compileProgSource`; HOL's `syntax` is `syntaxOrac`. -/
+@[hol "cakeml/compiler/backend/proofs/backendProofScript.sml" "is_state_oracle_tailrec_cake_orac"
+  (words_as_type_indexed_bitvec)]
+theorem isStateOracle_tailrec_cakeOrac {width : Nat} [NeZero width]
+    (asmConf : AsmConfigExact width) (c : Flapjack.Compiler.Backend.Backend.Config)
+    (prog : List AstHOL.Dec) (b : List (BitVec 8)) (bm : List (BitVec width))
+    (c' : Flapjack.Compiler.Backend.Backend.Config)
+    (syntaxOrac : Nat → (Nat × Nat) × List AstHOL.Dec) :
+    BackendDefs.compile asmConf c prog = some (b, bm, c') →
+    isStateOracle (BviTailrec.compileProgSource c.bvlConf.doTailrec)
+      (stateCo BvlToBvi.compileIncSource
+        (stateCo (BvlInline.compileInc c.bvlConf.inlineSizeLimit c.bvlConf.splitMainAtSeq
+            c.bvlConf.expCut)
+          (cakeOrac asmConf c' syntaxOrac configTuple2 (fun ps => ps.bvlProg)))) := by
+  intro h n
+  obtain ⟨-, -, -, -, -, -, h7, h8, h9, h10, -, -, -, -⟩ :=
+    cakeOrac_configEqs asmConf c prog b bm c' syntaxOrac n h
+  have h8' := Bool.eq_iff_iff.mpr h8
+  have h10' := Bool.eq_iff_iff.mpr h10
+  simp only [stateCo, cakeOrac_eq_pair, configTuple2]
+  rw [← h7, ← h8', ← h9, ← h10']
+  rfl
+
+/-- Exact HOL `is_state_oracle_tmc_cake_orac` (`backendProofScript.sml:1727-1750`).
+Names as in `is_state_oracle_tailrec_cake_orac`; `bvi_tmc_compile_prog` is
+`BviTmc.compileProgSource`. -/
+@[hol "cakeml/compiler/backend/proofs/backendProofScript.sml" "is_state_oracle_tmc_cake_orac"
+  (words_as_type_indexed_bitvec)]
+theorem isStateOracle_tmc_cakeOrac {width : Nat} [NeZero width]
+    (asmConf : AsmConfigExact width) (c : Flapjack.Compiler.Backend.Backend.Config)
+    (prog : List AstHOL.Dec) (b : List (BitVec 8)) (bm : List (BitVec width))
+    (c' : Flapjack.Compiler.Backend.Backend.Config)
+    (syntaxOrac : Nat → (Nat × Nat) × List AstHOL.Dec) :
+    BackendDefs.compile asmConf c prog = some (b, bm, c') →
+    isStateOracle (BviTmc.compileProgSource c.bvlConf.doTmc)
+      (stateCo (BviTailrec.compileProgSource c.bvlConf.doTailrec)
+        (stateCo BvlToBvi.compileIncSource
+          (stateCo (BvlInline.compileInc c.bvlConf.inlineSizeLimit c.bvlConf.splitMainAtSeq
+              c.bvlConf.expCut)
+            (cakeOrac asmConf c' syntaxOrac configTuple2 (fun ps => ps.bvlProg))))) := by
+  intro h n
+  obtain ⟨-, -, -, -, -, -, h7, h8, h9, h10, h11, -, -, -⟩ :=
+    cakeOrac_configEqs asmConf c prog b bm c' syntaxOrac n h
+  have h8' := Bool.eq_iff_iff.mpr h8
+  have h10' := Bool.eq_iff_iff.mpr h10
+  have h11' := Bool.eq_iff_iff.mpr h11
+  simp only [stateCo, cakeOrac_eq_pair, configTuple2]
+  rw [← h7, ← h8', ← h9, ← h10', ← h11']
+  rfl
 
 end Flapjack.Compiler.Backend.BackendProof

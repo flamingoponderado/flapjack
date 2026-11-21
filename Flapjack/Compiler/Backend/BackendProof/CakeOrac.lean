@@ -36,6 +36,18 @@ noncomputable def cakeOrac {width : Nat} [NeZero width] {α β : Type}
   let (_, progs) := compileIncProgs true asmConf c (source i)
   (f c, g progs)
 
+/-- `cake_orac` as an explicit pair (Flapjack infrastructure; avoids reducing
+the incremental compiler while unfolding the destructuring `let`). -/
+theorem cakeOrac_eq_pair {width : Nat} [NeZero width] {A B : Type}
+    (asmConf : AsmConfigExact width) (c' : Flapjack.Compiler.Backend.Backend.Config)
+    (src : Nat → (Nat × Nat) × List AstHOL.Dec)
+    (g : Flapjack.Compiler.Backend.Backend.Config → A) (h : BackendProgs width → B) (i : Nat) :
+    cakeOrac asmConf c' src g h i =
+      (g (cakeConfigs asmConf c' src i),
+        h (compileIncProgs true asmConf (cakeConfigs asmConf c' src i) (src i)).2) := by
+  rcases hp : compileIncProgs true asmConf (cakeConfigs asmConf c' src i) (src i) with ⟨a, b⟩
+  simp only [cakeOrac, hp]
+
 /-- Exact HOL `cake_configs_eq` (`backendProofScript.sml:341-351`). The captured
 statement ends with `∀(i :γ). f (cake_configs asm_conf c' src x) = f c`: the
 quantifier ranges over an independent type variable and is unused, HOL types

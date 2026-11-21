@@ -329,6 +329,10 @@ import Flapjack.Compiler.Backend.BackendProof.AddEvalState
 import Flapjack.Compiler.Backend.BackendProof.LabLabels
 import Flapjack.Compiler.Backend.BackendProof.FlatSemantics
 import Flapjack.Compiler.Backend.BackendProof.OracleMonotonic
+import Flapjack.Compiler.Backend.BackendProof.BviNames
+import Flapjack.Compiler.Backend.BackendProof.SyntaxOracle
+import Flapjack.Compiler.Backend.BackendProof.CompileCorrect
+import Flapjack.Compiler.Backend.BackendProof.BagDistinct
 import Flapjack.Compiler.Backend.Backend.ToTarget
 import Flapjack.Compiler.Backend.DataToWord.Proofs.OptionLe
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Limits

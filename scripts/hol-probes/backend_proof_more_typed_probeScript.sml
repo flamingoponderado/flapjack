@@ -968,4 +968,7 @@ val _ = emit "backend_compile_eq_to_target_typed" (DB.fetch "backend" "compile_e
 val _ = print ("compile_inc_progs_for_eval_def_hypotheses=" ^
   Int.toString (length (hyp (DB.fetch "backend" "compile_inc_progs_for_eval_def"))) ^ "\n");
 val _ = emit "compile_inc_progs_for_eval_def_typed" (DB.fetch "backend" "compile_inc_progs_for_eval_def");
+val _ = emit "SND_flat_to_clos_inc_compile_typed"
+  (REWRITE_CONV [flat_to_closTheory.inc_compile_decs_def]
+    ``SND (flat_to_clos$inc_compile_decs p)``);
 val _ = print "backend_proof_more_probe_end=1\n";

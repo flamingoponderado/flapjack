@@ -363,4 +363,5 @@ backend_compile_eq_to_target_hypotheses=0
 backend_compile_eq_to_target_typed=(compile :α asm_config -> config -> dec list -> (word8 list # α word list # config) option) = (to_target :α asm_config -> config -> dec list -> (word8 list # α word list # config) option)
 compile_inc_progs_for_eval_def_hypotheses=0
 compile_inc_progs_for_eval_def_typed=∀(asm_conf :α asm_config) (x :(num # num) # config # dec list). compile_inc_progs_for_eval asm_conf x = (let ((env_id :num # num),(c' :config),(decs :dec list)) = x; ((c'' :config),(ps :α backend_progs)) = compile_inc_progs T asm_conf c' (env_id,decs) in OPTION_MAP (λ((bs :word8 list),(ws :α word list)). (c'',bs,MAP (upper_w2w :α word -> word64) ws)) ps.target_prog)
+SND_flat_to_clos_inc_compile_typed=SND (inc_compile_decs (p :flatLang$exp list) :closLang$exp list # α list) = SND (let (xs :closLang$exp list) = (compile_decs p :closLang$exp list) ++ (compile_decs [(Con None (NONE :(num # num option) option) ([] :flatLang$exp list) :flatLang$exp)] :closLang$exp list) in (insert_interp xs,([] :α list)))
 backend_proof_more_probe_end=1

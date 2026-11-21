@@ -158,4 +158,37 @@ theorem oracleMonotonic_cakeOrac_to_I {width : Nat} [NeZero width] {α β γ : T
   intro h
   exact oracleMonotonic_subset _ _ _ _ _ _ R ⟨le_rfl, fun _ => le_rfl⟩ h
 
+/-- Exact HOL `cake_orac_monotonic_bounded_state` (`backendProofScript.sml:1819-1839`).
+HOL's free `St`, `c'`, `asm_conf`, `syntax` (`syntaxOrac`), `f`, `cfg_f` and
+`p_f` are explicit; `T` is `true`. -/
+@[hol "cakeml/compiler/backend/proofs/backendProofScript.sml" "cake_orac_monotonic_bounded_state"
+  (words_as_type_indexed_bitvec)]
+theorem cakeOrac_monotonicBoundedState {width : Nat} [NeZero width] {β γ : Type}
+    (St : Set Nat) (c' : Flapjack.Compiler.Backend.Backend.Config)
+    (asmConf : AsmConfigExact width) (syntaxOrac : Nat → (Nat × Nat) × List AstHOL.Dec)
+    (f : β × γ → Set Nat) (cfgF : Flapjack.Compiler.Backend.Backend.Config → β)
+    (pF : BackendProgs width → γ) :
+    ∀ nF : Flapjack.Compiler.Backend.Backend.Config → Nat,
+      (∀ x, x ∈ St → x < nF c') ∧
+      (∀ (i : Nat) (c2 : Flapjack.Compiler.Backend.Backend.Config) (ps : BackendProgs width),
+        let c1 := cakeConfigs asmConf c' syntaxOrac i
+        compileIncProgs true asmConf c1 (syntaxOrac i) = (c2, ps) →
+          nF c1 ≤ nF c2 ∧ ∀ x, x ∈ f (cfgF c1, pF ps) → nF c1 ≤ x ∧ x < nF c2) →
+      oracleMonotonic f (· < ·) St (cakeOrac asmConf c' syntaxOrac cfgF pF) := by
+  intro nF ⟨h0, hs⟩
+  apply oracleMonotonic_cakeOrac_to_I
+  refine oracleMonotonic_boundedState St _ _ (nF ∘ Prod.fst) ⟨?_, ?_⟩
+  · intro x hx
+    simp only [Function.comp_apply, cakeOrac_eq_pair, id]
+    exact h0 x hx
+  · intro i
+    rcases hr : compileIncProgs true asmConf (cakeConfigs asmConf c' syntaxOrac i) (syntaxOrac i)
+      with ⟨c2, ps⟩
+    have h := hs i c2 ps hr
+    have hnext : cakeConfigs asmConf c' syntaxOrac (i + 1) = c2 := by
+      show (compileIncProgs true asmConf (cakeConfigs asmConf c' syntaxOrac i) (syntaxOrac i)).1 = c2
+      rw [hr]
+    simp only [Function.comp_apply, cakeOrac_eq_pair, id, hnext, hr]
+    exact ⟨h.1, fun x hx => h.2 x hx⟩
+
 end Flapjack.Compiler.Backend.BackendProof
