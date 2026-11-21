@@ -304,6 +304,74 @@ theorem exp_size_get_bin_args :
 def opBinArgs (assoc : AssocOp) (e : Exp) : Option (Exp × Exp) :=
   if opEq assoc e then getBinArgs e else none
 
+/-- HOL `op_eq_to_op`: an accumulator operation matches an expression exactly
+when the expression's operation is its BVI image and the accumulator is not
+`Noop`. HOL's Boolean `⇔` and `∧` are the Boolean equation and `&&`. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "op_eq_to_op"]
+theorem opEq_toOp (iop : AssocOp) (op : ClosLang.Op) (xs : List Exp) :
+    opEq iop (.op op xs) = (op == toOp iop && iop != .noop) := by
+  cases iop with
+  | plus =>
+    cases op with
+    | label n => rfl
+    | ffi s => rfl
+    | wordOp w => rfl
+    | globOp g => rfl
+    | memOp m => rfl
+    | install => rfl
+    | thunkOp t => rfl
+    | intOp i =>
+      cases i
+      all_goals rfl
+    | blockOp b =>
+      cases b
+      all_goals rfl
+  | times =>
+    cases op with
+    | label n => rfl
+    | ffi s => rfl
+    | wordOp w => rfl
+    | globOp g => rfl
+    | memOp m => rfl
+    | install => rfl
+    | thunkOp t => rfl
+    | intOp i =>
+      cases i
+      all_goals rfl
+    | blockOp b =>
+      cases b
+      all_goals rfl
+  | append =>
+    cases op with
+    | label n => rfl
+    | ffi s => rfl
+    | wordOp w => rfl
+    | globOp g => rfl
+    | memOp m => rfl
+    | install => rfl
+    | thunkOp t => rfl
+    | intOp i =>
+      cases i
+      all_goals rfl
+    | blockOp b =>
+      cases b
+      all_goals rfl
+  | noop =>
+    cases op with
+    | label n => rfl
+    | ffi s => rfl
+    | wordOp w => rfl
+    | globOp g => rfl
+    | memOp m => rfl
+    | install => rfl
+    | thunkOp t => rfl
+    | intOp i =>
+      cases i
+      all_goals rfl
+    | blockOp b =>
+      cases b
+      all_goals rfl
+
 /-- Construct the BVI expression for an accumulator operation. -/
 @[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "apply_op_def"]
 def applyOp (assoc : AssocOp) (x y : Exp) : Exp := .op (toOp assoc) [x, y]
