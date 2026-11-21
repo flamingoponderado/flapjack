@@ -14,12 +14,24 @@ open ClosLang
 @[hol "cakeml/compiler/backend/bvi_to_dataScript.sml" "op_space_reset_pmatch"]
 theorem op_space_reset_pmatch (op : Op) :
     DataLang.opSpaceReset op = (match op with
-      | .intOp .add | .intOp .sub | .intOp .mult | .intOp .div | .intOp .mod
-      | .intOp .less | .intOp .lessEq | .intOp .greater | .intOp .greaterEq
-      | .blockOp .equal | .blockOp .listAppend | .blockOp (.fromList _)
-      | .blockOp (.consExtend _) | .memOp .refArray | .memOp (.refByte _) => true
-      | .memOp (.copyByte flag) => flag
-      | .memOp .configGC | .ffi _ => true
+      | .intOp .add => true
+      | .intOp .sub => true
+      | .intOp .mult => true
+      | .intOp .div => true
+      | .intOp .mod => true
+      | .intOp .less => true
+      | .intOp .lessEq => true
+      | .intOp .greater => true
+      | .intOp .greaterEq => true
+      | .blockOp .equal => true
+      | .blockOp .listAppend => true
+      | .blockOp (.fromList _) => true
+      | .blockOp (.consExtend _) => true
+      | .memOp .refArray => true
+      | .memOp (.refByte _) => true
+      | .memOp (.copyByte new_flag) => new_flag
+      | .memOp .configGC => true
+      | .ffi _ => true
       | _ => false) := by
   cases op with
   | intOp i =>

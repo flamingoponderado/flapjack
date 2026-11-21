@@ -167,8 +167,64 @@ def smartOp2 (input : Op × Exp × Exp) : Exp :=
       | none => .op op [x, y]
   | _ => .op op [x, y]
 
+/-- The binary rewrite dispatch written as HOL's case expression. HOL's
+statement inlines the local `mk_add_const`/`mk_add`/`mk_sub`/`mk_mul` lets;
+this file renders those helpers as the private definitions the executed
+`smartOp2` uses, so the case expression below is the definition body. -/
+@[hol "cakeml/compiler/backend/bvl_constScript.sml" "SmartOp2_pmatch"]
+theorem SmartOp2_pmatch (op : Op) (x1 x2 : Exp) :
+    smartOp2 (op, x1, x2) = (match op with
+      | .intOp .add => mkAdd x1 x2
+      | .intOp .sub => mkSub x1 x2
+      | .intOp .mult => mkMul x1 x2
+      | .intOp .div => match simple x1, simple x2 with
+          | some a, some b => if a == 0 then .op op [x1, x2] else const (Int.fdiv b a)
+          | _, _ => .op op [x1, x2]
+      | .intOp .mod => match simple x1, simple x2 with
+          | some a, some b => if a == 0 then .op op [x1, x2] else const (Int.fmod b a)
+          | _, _ => .op op [x1, x2]
+      | .intOp .less => match simple x1, simple x2 with
+          | some a, some b => bool (b < a)
+          | _, _ => .op op [x1, x2]
+      | .intOp .lessEq => match simple x1, simple x2 with
+          | some a, some b => bool (b ≤ a)
+          | _, _ => .op op [x1, x2]
+      | .intOp .greater => match simple x1, simple x2 with
+          | some a, some b => bool (b > a)
+          | _, _ => .op op [x1, x2]
+      | .intOp .greaterEq => match simple x1, simple x2 with
+          | some a, some b => bool (b ≥ a)
+          | _, _ => .op op [x1, x2]
+      | .blockOp .equal => match simple x1, simple x2 with
+          | some a, some b => bool (b == a)
+          | some a, none => .op (.blockOp (.equalConst (.int a))) [x2]
+          | none, some b => .op (.blockOp (.equalConst (.int b))) [x1]
+          | _, _ => .op op [x1, x2]
+      | .memOp .el => match simple x1 with
+          | some n => if n < 0 then .op op [x1, x2] else .op (.blockOp (.elemAt n.toNat)) [x2]
+          | none => .op op [x1, x2]
+      | _ => .op op [x1, x2]) := by
+  rfl
+
 private def smart2 (op : Op) (x y : Exp) : Exp :=
   smartOp2 (smartOpFlip op x y)
+
+/-- Recognize an integer constant-equality operation. HOL's `SmartOp1` calls
+this recognition; the Lean `smartOp1` matches the same operation shape inline,
+so this definition is the source-shaped rendering rather than a second
+executable path. -/
+@[hol "cakeml/compiler/backend/bvl_constScript.sml" "dest_EqualInt_def"]
+def destEqualInt : Op → Option Int
+  | .blockOp (.equalConst (.int i)) => some i
+  | _ => none
+
+/-- The constant-equality recognition written as HOL's case expression. -/
+@[hol "cakeml/compiler/backend/bvl_constScript.sml" "dest_EqualInt_pmatch"]
+theorem dest_EqualInt_pmatch (x : Op) :
+    destEqualInt x = (match x with
+      | .blockOp (.equalConst (.int i)) => some i
+      | _ => none) := by
+  rfl
 
 /-- Apply the source's unary constant-equality rewrite. -/
 @[hol "cakeml/compiler/backend/bvl_constScript.sml" "SmartOp1_def"]
