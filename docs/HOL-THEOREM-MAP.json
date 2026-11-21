@@ -23910,6 +23910,45 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "state_rel_upd_safe_pkheap",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/Add.lean",
+  "lean_name": "stateRel_updSafePkheap",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source comparison: compared state_rel_upd_safe_pkheap_typed (zero hypotheses): for all c, l1, l2, s, lcl, hpk, r and locs, state_rel with NONE extra roots on s with locals lcl, space 0 and stack_max NONE is equivalent to the same relation on s additionally updated with safe_for_space F and peak_heap_length hpk. Lean keeps the universal binders and both record updates field for field."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "state_rel_ignore_safe_for_space",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/Add.lean",
+  "lean_name": "stateRel_ignoreSafeForSpace",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source comparison: compared state_rel_ignore_safe_for_space_typed (zero hypotheses): for an arbitrary extra-roots option t, state_rel on x with locals l, space s and safe_for_space m is equivalent to the relation on x with only locals and space updated."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
+  "hol_name": "state_rel_peak_heap_length",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/Add.lean",
+  "lean_name": "stateRel_peakHeapLength",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source comparison: compared state_rel_peak_heap_length_typed (zero hypotheses): for an arbitrary extra-roots option t, state_rel on x with locals l, space s and peak_heap_length m is equivalent to the relation on x with only locals and space updated."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
   "hol_name": "opt_map_plus_zero_id",
   "hol_line": 9723,
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/Add.lean",

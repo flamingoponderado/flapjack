@@ -463,6 +463,15 @@ val _ = emit_exported "assign_LessConstSmall_typed" "assign_LessConstSmall";
 val _ = print ("assign_LessSmallConst_hypotheses=" ^
   Int.toString (length (hyp assign_LessSmallConst)) ^ "\n");
 val _ = emit_exported "assign_LessSmallConst_typed" "assign_LessSmallConst";
+val _ = print ("state_rel_upd_safe_pkheap_hypotheses=" ^
+  Int.toString (length (hyp state_rel_upd_safe_pkheap)) ^ "\n");
+val _ = emit_exported "state_rel_upd_safe_pkheap_typed" "state_rel_upd_safe_pkheap";
+val _ = print ("state_rel_ignore_safe_for_space_hypotheses=" ^
+  Int.toString (length (hyp state_rel_ignore_safe_for_space)) ^ "\n");
+val _ = emit_exported "state_rel_ignore_safe_for_space_typed" "state_rel_ignore_safe_for_space";
+val _ = print ("state_rel_peak_heap_length_hypotheses=" ^
+  Int.toString (length (hyp state_rel_peak_heap_length)) ^ "\n");
+val _ = emit_exported "state_rel_peak_heap_length_typed" "state_rel_peak_heap_length";
 val _ = print ("opt_map_plus_zero_id_hypotheses=" ^
   Int.toString (length (hyp opt_map_plus_zero_id)) ^ "\n");
 val _ = emit_exported "opt_map_plus_zero_id_typed" "opt_map_plus_zero_id";

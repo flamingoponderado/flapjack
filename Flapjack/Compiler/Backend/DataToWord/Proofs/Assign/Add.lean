@@ -54,6 +54,47 @@ theorem memoryRel_smallInt {width : Nat} [NeZero width] (c : Config) (be : Bool)
   rw [smallnum_lowBit good i] at bit
   contradiction
 
+/-- The state relation ignores the safe-for-space flag and peak heap length. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml" "state_rel_upd_safe_pkheap"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem stateRel_updSafePkheap {width : Nat} [NeZero width] {C F : Type} :
+    ∀ (c : Flapjack.Compiler.Backend.DataToWord.Config) (l1 l2 : Nat)
+      (s : Flapjack.Compiler.Backend.DataSem.State C F)
+      (lcl : Spt Flapjack.Compiler.Backend.DataSem.Value) (hpk : Nat)
+      (r : WordSemStateFiniteExact width C F) (locs : List (Nat × Nat)),
+      stateRel c l1 l2 { s with locals := lcl, space := 0, stackMax := none } r none locs ↔
+        stateRel c l1 l2
+          { s with locals := lcl, stackMax := none, space := 0, safeForSpace := false,
+                   peakHeapLength := hpk } r none locs := by
+  intro c l1 l2 s lcl hpk r locs
+  exact Iff.rfl
+
+/-- The state relation ignores the safe-for-space flag. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml" "state_rel_ignore_safe_for_space"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem stateRel_ignoreSafeForSpace {width : Nat} [NeZero width] {C F : Type}
+    (c : Flapjack.Compiler.Backend.DataToWord.Config) (l1 l2 : Nat)
+    (x : Flapjack.Compiler.Backend.DataSem.State C F) (l : Spt Flapjack.Compiler.Backend.DataSem.Value)
+    (s : Nat) (m : Bool) (r : WordSemStateFiniteExact width C F)
+    (t : Option (List (Flapjack.Compiler.Backend.DataSem.Value × WordLocW width)))
+    (locs : List (Nat × Nat)) :
+    stateRel c l1 l2 { x with locals := l, space := s, safeForSpace := m } r t locs ↔
+      stateRel c l1 l2 { x with locals := l, space := s } r t locs :=
+  Iff.rfl
+
+/-- The state relation ignores the peak heap length. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml" "state_rel_peak_heap_length"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem stateRel_peakHeapLength {width : Nat} [NeZero width] {C F : Type}
+    (c : Flapjack.Compiler.Backend.DataToWord.Config) (l1 l2 : Nat)
+    (x : Flapjack.Compiler.Backend.DataSem.State C F) (l : Spt Flapjack.Compiler.Backend.DataSem.Value)
+    (s m : Nat) (r : WordSemStateFiniteExact width C F)
+    (t : Option (List (Flapjack.Compiler.Backend.DataSem.Value × WordLocW width)))
+    (locs : List (Nat × Nat)) :
+    stateRel c l1 l2 { x with locals := l, space := s, peakHeapLength := m } r t locs ↔
+      stateRel c l1 l2 { x with locals := l, space := s } r t locs :=
+  Iff.rfl
+
 /-- Immediate encodings add as their integers when the sum is small. -/
 @[hol "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml" "small_int_Smallnum_add"
   (words_as_type_indexed_bitvec)]
