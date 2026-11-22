@@ -708,3 +708,28 @@ val _ = cap "assign_MutCons_typed" "assign_MutCons";
 val _ = cap "assign_UpdateCons_typed" "assign_UpdateCons";
 val _ = cap "assign_WordFromWord_typed" "assign_WordFromWord";
 val _ = cap "assign_ConfigGC_typed" "assign_ConfigGC";
+
+(* Batch B1 (flapjack-assign2): block tag and length tests. *)
+val _ = print ("assign_TagEq_hypotheses=" ^
+  Int.toString (length (hyp assign_TagEq)) ^ "\n");
+val _ = emit_exported "assign_TagEq_typed" "assign_TagEq";
+val _ = print ("assign_TagLenEq_hypotheses=" ^
+  Int.toString (length (hyp assign_TagLenEq)) ^ "\n");
+val _ = emit_exported "assign_TagLenEq_typed" "assign_TagLenEq";
+val _ = print ("assign_LenEq_hypotheses=" ^
+  Int.toString (length (hyp assign_LenEq)) ^ "\n");
+val _ = emit_exported "assign_LenEq_typed" "assign_LenEq";
+
+(* Batch B2 (flapjack-assign2): WordToInt and its bignum writers. *)
+val _ = print ("assign_WordToInt_hypotheses=" ^
+  Int.toString (length (hyp assign_WordToInt)) ^ "\n");
+val _ = emit_exported "assign_WordToInt_typed" "assign_WordToInt";
+val _ = cap "evaluate_WriteWord64_bignum_typed" "evaluate_WriteWord64_bignum";
+val _ = cap "evaluate_WriteWord32_bignum_typed" "evaluate_WriteWord32_bignum";
+val _ = cap "evaluate_WriteWord64_on_32_num_typed" "evaluate_WriteWord64_on_32_num";
+
+(* Batch B3 (flapjack-assign2): binary AllocVar instance for RefArray. *)
+val _ = cap "AllocVar_thm_binary_typed" "AllocVar_thm_binary";
+
+(* Batch A12: assign_UpdateThunk. *)
+val _ = cap "assign_UpdateThunk_typed" "assign_UpdateThunk";
