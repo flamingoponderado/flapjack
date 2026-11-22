@@ -720,4 +720,5 @@ val _ = emit_exported "copy_list_def_typed" "copy_list_def";
 val _ = emit_exported "copy_list_thm_typed" "copy_list_thm";
 val _ = emit_exported "memory_rel_IMP_word_list_exists_typed" "memory_rel_IMP_word_list_exists";
 val _ = emit_exported "memory_rel_FromList_typed" "memory_rel_FromList";
+val _ = emit_exported "word_list_AND_word_list_exists_IMP_typed" "word_list_AND_word_list_exists_IMP";
 val _ = print "dtw_memory_more_end=1\n";

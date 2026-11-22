@@ -657,6 +657,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.AllocThunk
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.ByteCopy
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.RefByte
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.FromList
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.WordListExists
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.CellUpdate
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.ByteUpdateInv
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.WordArith
