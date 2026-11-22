@@ -344,6 +344,7 @@ import Flapjack.Compiler.Backend.BackendProof.CompileCorrect
 import Flapjack.Compiler.Backend.BackendProof.BagDistinct
 import Flapjack.Compiler.Backend.BackendProof.NameDistinct
 import Flapjack.Compiler.Backend.BackendProof.LabOracle
+import Flapjack.Compiler.Backend.BackendProof.MonotonicLabels
 import Flapjack.Compiler.Backend.BackendProof.SourceSemantics
 import Flapjack.Compiler.Backend.BackendProof.NoShareMem
 import Flapjack.Compiler.Backend.BackendProof.FromTupleCc
