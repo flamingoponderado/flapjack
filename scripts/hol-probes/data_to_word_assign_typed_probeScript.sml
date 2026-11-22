@@ -731,6 +731,9 @@ val _ = cap "evaluate_WriteWord64_on_32_num_typed" "evaluate_WriteWord64_on_32_n
 (* Batch B3 (flapjack-assign2): binary AllocVar instance for RefArray. *)
 val _ = cap "AllocVar_thm_binary_typed" "AllocVar_thm_binary";
 
+(* Batch A12: assign_UpdateThunk. *)
+val _ = cap "assign_UpdateThunk_typed" "assign_UpdateThunk";
+
 (* Batch C1 (flapjack-assign2c): RefByte and FromList stubs. *)
 val _ = emit "set_byte_sort_typed" (DB.fetch "data_to_word_memoryProof" "set_byte_sort");
 val _ = emit "last_bytes_simp_typed" (DB.fetch "data_to_word_memoryProof" "last_bytes_simp");
