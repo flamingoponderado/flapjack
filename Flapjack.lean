@@ -496,6 +496,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.ConfigGC
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.UpdateThunk
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.AllocThunk
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.XorLoop
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.AppendLenLoop
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.DoAppSafety
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.XorByte
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.DomainUnion
