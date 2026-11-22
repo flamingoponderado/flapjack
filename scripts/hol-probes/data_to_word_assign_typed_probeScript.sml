@@ -769,3 +769,6 @@ fun foldr1_ f (x::xs) = foldr f x xs | foldr1_ f [] = raise Fail "empty";
 val imp_assign_th = imp_assign_matches |> map (#1 o #2)
   |> foldr1_ (fn (x, y) => MATCH_MP join_lemma_th (CONJ x y));
 val _ = emit "imp_assign_typed" imp_assign_th;
+
+(* Batch B4 (flapjack-assign2): integer-to-Word64 conversion. *)
+val _ = cap "assign_WordFromInt_typed" "assign_WordFromInt";
