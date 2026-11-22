@@ -2897,6 +2897,71 @@ class FmapResultObservationInventoryTest(unittest.TestCase):
         self.assertTrue(any("result observations require matching reviewed" in e for e in errors), errors)
         self.assertFalse(any("producers do not match" in e for e in errors), errors)
 
+    WORDS_STATUS = "reviewed_fmap_as_finite_support_result_observations_words_as_type_indexed_bitvec"
+
+    def words_fixture(self, **changes):
+        record, tags = self.fixture()
+        record.update(statement_status=self.WORDS_STATUS, words_as_type_indexed_bitvec=True,
+                      reviewer="Source comparison of the observer and producer toFmap at positive width.")
+        record.update(changes)
+        key = next(iter(tags))
+        tag = list(tags[key])
+        tag[9] = True
+        tags[key] = tuple(tag)
+        return record, tags, key
+
+    def test_accepts_observations_with_words_under_combined_status(self):
+        record, tags, _ = self.words_fixture()
+        self.assertEqual([], MAP["validate_inventory"]([record], set(), tags, set()))
+
+    def test_both_qualifiers_reject_single_statuses(self):
+        for status in ("reviewed_fmap_as_finite_support_result_observations",
+                       "reviewed_words_as_type_indexed_bitvec", "reviewed_exact"):
+            record, tags, _ = self.words_fixture(statement_status=status)
+            errors = MAP["validate_inventory"]([record], set(), tags, set())
+            self.assertTrue(errors, status)
+
+    def test_combined_status_requires_both_qualifiers(self):
+        record, tags, key = self.words_fixture()
+        no_words = dict(record)
+        del no_words["words_as_type_indexed_bitvec"]
+        tag = list(tags[key])
+        tag[9] = False
+        errors = MAP["validate_inventory"]([no_words], set(), {key: tuple(tag)}, set())
+        self.assertTrue(any("needs both" in e for e in errors), errors)
+        no_observations = dict(record, fmap_as_finite_support_result_observations=[])
+        tag = list(tags[key])
+        tag[17] = ()
+        errors = MAP["validate_inventory"]([no_observations], set(), {key: tuple(tag)}, set())
+        self.assertTrue(any("needs both" in e for e in errors), errors)
+
+    def test_combined_status_rejects_third_qualifier(self):
+        record, tags, key = self.words_fixture(reals_as_rational_cuts=True,
+            reviewer="Source comparison of toFmap, reals_as_rational_cuts, SOUNDNESS item 8.")
+        tag = list(tags[key])
+        tag[15] = True
+        errors = MAP["validate_inventory"]([record], set(), {key: tuple(tag)}, set())
+        self.assertTrue(any("cannot combine" in e for e in errors), errors)
+        record, tags, key = self.words_fixture(fmap_as_finite_support_parameters=["code"])
+        tag = list(tags[key])
+        tag[10] = ("code",)
+        errors = MAP["validate_inventory"]([record], set(), {key: tuple(tag)}, set())
+        self.assertTrue(errors)
+        record, tags, key = self.words_fixture(
+            statement_status="reviewed_fmap_as_finite_support_parameter_observations",
+            fmap_as_finite_support_parameters=["code"],
+            reviewer="Source comparison of code and toFmap.")
+        tag = list(tags[key])
+        tag[10] = ("code",)
+        errors = MAP["validate_inventory"]([record], set(), {key: tuple(tag)}, set())
+        self.assertTrue(errors)
+
+    def test_combined_status_review_names_source_and_producers(self):
+        for reviewer in ("Source comparison of the observer only.", "Compared toFmap."):
+            record, tags, _ = self.words_fixture(reviewer=reviewer)
+            errors = MAP["validate_inventory"]([record], set(), tags, set())
+            self.assertTrue(any("review must name" in e for e in errors), (reviewer, errors))
+
 
 class FmapResultObservationCombinationTest(unittest.TestCase):
     def test_other_representation_qualifier_rejected(self):

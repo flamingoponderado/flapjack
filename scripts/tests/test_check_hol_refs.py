@@ -3890,6 +3890,46 @@ class QualifiedWordsCarrierResolutionTest(unittest.TestCase):
         errors = self._run(local_shadow=True)
         self.assertTrue(any("ambiguous same-named owners" in e for e in errors), errors)
 
+    def _run_with_syntax(self, second_exp):
+        """A word carrier beside two same-leaf `Exp` syntax types."""
+        carrier = ("namespace Flapjack.Source\n"
+                   "structure State (width : Nat) [NeZero width] where\n"
+                   "  word : BitVec width\nend Flapjack.Source\n")
+        first = "namespace Flapjack.FlatLang\ninductive Exp where\n  | lit (n : Nat)\nend Flapjack.FlatLang\n"
+        declaration = ("def checkCarrier {width : Nat} [NeZero width]\n"
+                       "    (state : Flapjack.Source.State width) (a : Flapjack.FlatLang.Exp)\n"
+                       "    (b : Flapjack.Bvl.Exp) : Nat := width")
+        consumer = ("import Flapjack.Carriers.A\nimport Flapjack.Carriers.B\n"
+                    "import Flapjack.Carriers.C\n" + declaration + "\n")
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            for module, text in [("Flapjack/Carriers/A.lean", carrier),
+                                 ("Flapjack/Carriers/B.lean", first),
+                                 ("Flapjack/Carriers/C.lean", second_exp),
+                                 ("Flapjack/Consumer.lean", consumer)]:
+                path = root / module
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text(text, encoding="utf-8")
+            return CHECKER["words_as_type_indexed_bitvec_errors"](
+                declaration, "checkCarrier", module="Flapjack.Consumer",
+                root=str(root), lines=consumer.splitlines())
+
+    def test_word_free_same_leaf_owners_do_not_block_carrier(self):
+        second = "namespace Flapjack.Bvl\ninductive Exp where\n  | var (n : Nat)\nend Flapjack.Bvl\n"
+        self.assertEqual(self._run_with_syntax(second), [])
+
+    def test_word_bearing_same_leaf_owner_remains_ambiguous(self):
+        for payload in ("(w : BitVec 64)", "(w : RiscV.Word 64)"):
+            with self.subTest(payload=payload):
+                second = ("namespace Flapjack.Bvl\ninductive Exp where\n"
+                          f"  | word {payload}\nend Flapjack.Bvl\n")
+                errors = self._run_with_syntax(second)
+                self.assertTrue(any("ambiguous same-named owners" in e for e in errors), errors)
+        second = ("namespace Flapjack.Bvl\ninductive Exp (width : Nat) [NeZero width] where\n"
+                  "  | var (n : Nat)\nend Flapjack.Bvl\n")
+        errors = self._run_with_syntax(second)
+        self.assertTrue(any("ambiguous same-named owners" in e for e in errors), errors)
+
 
 class RealCrepPropsWordCarrierResolutionTest(unittest.TestCase):
     """The real CrepProps imports must resolve the exact state carrier."""
@@ -5347,3 +5387,112 @@ class PropDefLeadingBinderTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class FmapResultObservationWordsIntegrationTest(unittest.TestCase):
+    """Result observations combine with the word translation; both checks remain."""
+
+    PRODUCER = "Flapjack.HolFiniteMapExact.holEmpty"
+    GOOD = ("theorem observer {width : Nat} [NeZero width] (w : BitVec width) :\n"
+            "    (Flapjack.HolFiniteMapExact.holEmpty : HolFiniteMapExact Nat Nat).lookup w.toNat = none := by\n"
+            "  rfl\n")
+
+    def run_main(self, qualifiers, declaration=None):
+        main = CHECKER["main"]
+        real_root = CHECKER["ROOT"]
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "cakeml/pancake").mkdir(parents=True)
+            (root / "cakeml/x.sml").write_text("Theorem obs: T\nProof simp[]\nQED\n")
+            (root / "docs").mkdir()
+            (root / "docs/HOL-THEOREM-MAP.json").write_text(
+                (real_root / "docs/HOL-THEOREM-MAP.json").read_text())
+            # Imported carriers (AsmConfigExact, HolFfiState) resolve from the real tree.
+            (root / "Flapjack").symlink_to(real_root / "Flapjack")
+            lean = root / "Fixture.lean"
+            lean.write_text(
+                "module\n\npublic import Flapjack.FiniteMap.EmptyExact\n"
+                "public import Flapjack.Compiler.Encoders.Asm\npublic import Flapjack.FfiHOL\n\n"
+                f'@[hol "cakeml/x.sml" "obs" {qualifiers}]\n' + (declaration or self.GOOD))
+            output = io.StringIO()
+            with patch.dict(main.__globals__, {
+                "ROOT": root, "lean_files": lambda: [lean],
+                "reachable_modules": lambda: {"Fixture"},
+                "reals_rendering_names": lambda _: set(),
+            }), contextlib.redirect_stderr(output), contextlib.redirect_stdout(output):
+                status = main([])
+            return status, output.getvalue()
+
+    def observations(self, producer=None):
+        return f"(fmap_as_finite_support_result_observations := [{producer or self.PRODUCER}])"
+
+    def test_accepts_observations_with_words(self):
+        status, output = self.run_main(self.observations() + " (words_as_type_indexed_bitvec)")
+        self.assertEqual(0, status, output)
+
+    def test_word_obligations_remain(self):
+        unbound = self.GOOD.replace(" [NeZero width]", "")
+        status, output = self.run_main(self.observations() + " (words_as_type_indexed_bitvec)", unbound)
+        self.assertNotEqual(0, status, output)
+        self.assertIn("NeZero", output)
+        restated = self.GOOD.replace("(w : BitVec width)", "(w : BitVec width) (h : 0 < width)")
+        status, output = self.run_main(self.observations() + " (words_as_type_indexed_bitvec)", restated)
+        self.assertNotEqual(0, status, output)
+
+    CARRIERS = ("theorem observer {width : Nat}{ne} {F : Type{universe}}\n"
+                "    (asmConf : Flapjack.Compiler.Encoders.Asm.AsmConfigExact width) (ffi : HolFfiState F) :\n"
+                "    (Flapjack.HolFiniteMapExact.holEmpty : HolFiniteMapExact Nat Nat).lookup 0 = none := by\n"
+                "  rfl\n")
+
+    def carriers(self, ne=" [NeZero width]", universe=""):
+        return self.CARRIERS.replace("{ne}", ne).replace("{universe}", universe)
+
+    def test_width_carrier_and_ffi_obligations_remain(self):
+        qualifiers = self.observations() + " (words_as_type_indexed_bitvec)"
+        status, output = self.run_main(qualifiers, self.carriers())
+        self.assertEqual(0, status, output)
+        # A carrier such as AsmConfigExact v without [NeZero v] cannot
+        # elaborate (its own header requires the instance), and the elaborated
+        # widthProblems audit in Flapjack/HolRef.lean still runs on the type.
+        status, output = self.run_main(qualifiers, self.carriers(universe=" 1"))
+        self.assertNotEqual(0, status, output)
+        self.assertIn("words_as_type_indexed_bitvec", output)
+
+    def test_swapped_producer_still_rejected(self):
+        # Listing a different reviewed producer than the one the signature uses
+        # still fails the existing usage rule under the combination.
+        status, output = self.run_main(
+            self.observations("Flapjack.HolFiniteMapExact.alistToFmap") + " (words_as_type_indexed_bitvec)")
+        self.assertNotEqual(0, status, output)
+        self.assertIn("unused", output)
+
+    def test_observation_obligations_remain(self):
+        unused = ("theorem observer {width : Nat} [NeZero width] (w : BitVec width) :\n"
+                  "    w = w := rfl\n")
+        status, output = self.run_main(self.observations() + " (words_as_type_indexed_bitvec)", unused)
+        self.assertNotEqual(0, status, output)
+        self.assertIn("unused", output)
+        status, output = self.run_main(
+            self.observations("Flapjack.HolFiniteMapExact.missing") + " (words_as_type_indexed_bitvec)")
+        self.assertNotEqual(0, status, output)
+
+    def test_rejects_third_representation_qualifier(self):
+        for third in ("(reals_as_rational_cuts)", "(fmap_as_finite_support_parameters := [m])",
+                      "(fmap_as_finite_support_result)"):
+            with self.subTest(third=third):
+                status, output = self.run_main(
+                    self.observations() + " (words_as_type_indexed_bitvec) " + third)
+                self.assertNotEqual(0, status, output)
+                self.assertIn("cannot combine", output)
+
+    def test_rejects_combined_parameter_observations_with_words(self):
+        qualifiers = ("(fmap_as_finite_support_parameter_observations := (map_parameters := [m]) "
+                      f"(map_producers := [{self.PRODUCER}])) (words_as_type_indexed_bitvec)")
+        declaration = ("theorem observer {width : Nat} [NeZero width] (w : BitVec width)\n"
+                       "    (m : HolFiniteMapExact Nat Nat) :\n"
+                       "    (Flapjack.HolFiniteMapExact.holEmpty : HolFiniteMapExact Nat Nat).lookup w.toNat"
+                       " = m.lookup 0 := by\n"
+                       "  sorry\n")
+        status, output = self.run_main(qualifiers, declaration)
+        self.assertNotEqual(0, status, output)
+        self.assertIn("cannot combine", output)
