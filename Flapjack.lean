@@ -482,6 +482,8 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.MemoryLemmas
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.DoAppLemmas
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.FinaliseCons
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.MutCons
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.UpdateCons
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.WordFromWord
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.Separation
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.MemCopy.Element
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.MemCopy.Loop
