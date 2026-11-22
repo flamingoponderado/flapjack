@@ -18,3 +18,9 @@ fun cap label name = emit label (DB.fetch "data_to_word_assignProof" name);
 
 val _ = cap "evaluate_BignumHalt_typed" "evaluate_BignumHalt";
 val _ = cap "do_app_safe_for_space_allowed_op_typed" "do_app_safe_for_space_allowed_op";
+val _ = cap "InstallCode_code_thm_typed" "InstallCode_code_thm";
+val _ = cap "InstallData_code_thm_typed" "InstallData_code_thm";
+val _ = cap "assign_Install_typed" "assign_Install";
+val _ = cap "CopyByteAdd_thm_typed" "CopyByteAdd_thm";
+val _ = cap "CopyByteSub_thm_typed" "CopyByteSub_thm";
+val _ = cap "assign_CopyByte_typed" "assign_CopyByte";

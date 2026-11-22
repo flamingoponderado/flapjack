@@ -12766,5 +12766,7 @@ run_probe data_to_word_proof_ext_typed_probeScript.sml data_to_word_proof_ext_ty
 
 run_probe data_to_word_assign_install_typed_probeScript.sml data_to_word_assign_install_typed_probe.out \
   evaluate_BignumHalt_typed do_app_safe_for_space_allowed_op_typed \
+  InstallCode_code_thm_typed InstallData_code_thm_typed assign_Install_typed \
+  CopyByteAdd_thm_typed CopyByteSub_thm_typed assign_CopyByte_typed \
   "$cake_dir/compiler/backend/proofs/data_to_word_assignProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
