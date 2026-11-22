@@ -41,4 +41,21 @@ theorem lookup_alistToFmap_tail {α β : Type} (entry : α × β)
   classical
   simp [alistToFmap, FUPDATE_LIST_HOL, List.foldl_append, FUPDATE_HOL, different]
 
+/-- A successful lookup in `alistToFmap` identifies an association listed in the
+    source list. Flapjack local support for HOL `ALOOKUP_MEM` (`alistScript.sml`),
+    which has no Lean counterpart in this module; it has no tag of its own. -/
+theorem lookup_alistToFmap_mem {α β : Type} (entries : List (α × β)) (key : α)
+    (value : β) (found : (alistToFmap entries).lookup key = some value) :
+    (key, value) ∈ entries := by
+  induction entries with
+  | nil => simp [alistToFmap] at found
+  | cons entry rest ih =>
+      by_cases same : key = entry.1
+      · rw [same] at found ⊢
+        rw [lookup_alistToFmap_head entry rest] at found
+        have equal : value = entry.2 := (Option.some.inj found).symm
+        exact List.mem_cons.mpr (Or.inl (by rw [equal]))
+      · rw [lookup_alistToFmap_tail entry rest key same] at found
+        exact List.mem_cons_of_mem _ (ih found)
+
 end Flapjack.HolFiniteMapExact
