@@ -749,3 +749,23 @@ val _ = cap "evaluate_AppendMainLoop_code_alt_typed" "evaluate_AppendMainLoop_co
 val _ = cap "evaluate_AppendLenLoop_code_typed" "evaluate_AppendLenLoop_code";
 val _ = cap "assign_ListAppend_typed" "assign_ListAppend";
 val _ = cap "assign_thm_typed" "assign_thm";
+
+(* Batch A16: join_lemma (local, METIS_PROVE of the quoted source term) and
+   imp_assign (local: the source folds every `_ ==> assign_thm_goal` theorem of
+   the theory with join_lemma; recomputed here over the exported assign_*
+   theorems, goal taken from assign_thm's conclusion). *)
+val join_lemma_th = METIS_PROVE [] “(b1 ⇒ x) ∧ (b2 ⇒ x) ⇒ (b1 ∨ b2 ⇒ x)”;
+val _ = emit "join_lemma_typed" join_lemma_th;
+val assign_goal_tm = concl (DB.fetch "data_to_word_assignProof" "assign_thm");
+val imp_assign_matches =
+  DB.thms "data_to_word_assignProof"
+  |> List.filter (fn (_, th) =>
+       is_imp (concl th) andalso
+       can (match_term assign_goal_tm) (snd (dest_imp (concl th))))
+  |> map (fn (n, th) => (("data_to_word_assignProof", n), (th, ())));
+val _ = print ("imp_assign_names=" ^
+  String.concatWith " " (map (fn ((_, n), _) => n) imp_assign_matches) ^ "\n");
+fun foldr1_ f (x::xs) = foldr f x xs | foldr1_ f [] = raise Fail "empty";
+val imp_assign_th = imp_assign_matches |> map (#1 o #2)
+  |> foldr1_ (fn (x, y) => MATCH_MP join_lemma_th (CONJ x y));
+val _ = emit "imp_assign_typed" imp_assign_th;
