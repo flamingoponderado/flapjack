@@ -444,6 +444,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.TagEq
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.LenEq
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.TagLenEq
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.WriteBignum
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.WriteLastBytes
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.WordToInt
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.WordFromInt
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.AllocVarBinary
@@ -685,6 +686,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.AllocThunk
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.ByteCopy
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.RefByte
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.FromList
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.LastBytesSimp
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.CellUpdate
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.ByteUpdateInv
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.WordArith
@@ -794,6 +796,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.WriteBytesSam
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ByteAlignment
 import Flapjack.Byte.BytesToWordSame
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ByteUpdate
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.SetByteSort
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ByteUpdateRefs
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ArrayUpdateRefs
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ArrayUpdateValue

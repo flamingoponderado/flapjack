@@ -710,6 +710,7 @@ val _ = cap "assign_WordFromWord_typed" "assign_WordFromWord";
 val _ = cap "assign_ConfigGC_typed" "assign_ConfigGC";
 
 
+
 (* Batch B1 (flapjack-assign2): block tag and length tests. *)
 val _ = print ("assign_TagEq_hypotheses=" ^
   Int.toString (length (hyp assign_TagEq)) ^ "\n");
@@ -762,3 +763,14 @@ val _ = cap "assign_ConfigGC_typed" "assign_ConfigGC";
 
 (* Batch B4 (flapjack-assign2): integer-to-Word64 conversion. *)
 val _ = cap "assign_WordFromInt_typed" "assign_WordFromInt";
+
+
+(* Batch C1 (flapjack-assign2c): RefByte and FromList stubs. *)
+val _ = emit "set_byte_sort_typed" (DB.fetch "data_to_word_memoryProof" "set_byte_sort");
+val _ = emit "last_bytes_simp_typed" (DB.fetch "data_to_word_memoryProof" "last_bytes_simp");
+val _ = emit_exported "evaluate_WriteLastBytes_typed" "evaluate_WriteLastBytes";
+val _ = emit_exported "RefByte_thm_typed" "RefByte_thm";
+val _ = emit_exported "FromList1_code_thm_typed" "FromList1_code_thm";
+val _ = emit_exported "FromList_thm_typed" "FromList_thm";
+val _ = emit_exported "assign_FromList_typed" "assign_FromList";
+val _ = emit_exported "assign_RefByte_typed" "assign_RefByte";
