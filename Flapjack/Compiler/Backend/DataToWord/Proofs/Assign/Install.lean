@@ -333,6 +333,35 @@ private theorem installEvalLower {width : Nat} [NeZero width] {C F : Type}
     wordSemWordCmp, Compiler.Encoders.Asm.wordCmpHOL]
   by_cases h : a < b <;> simp [h]
 
+/-- Evaluate a returning stub call from its established premises, as in the
+HOL proof's direct evaluation of the call. -/
+private theorem installDirectCall {width : Nat} [NeZero width] {C F : Type}
+    (s returned restored : WordSemStateFiniteExact width C F) (names : WordLangCutsetsHOL)
+    (first second : Spt (WordLocW width)) (n l d loc : Nat) (argNames : List Nat)
+    (xs : List (WordLocW width)) (prog : WordLangProgHOL (BitVec width)) (res : WordLocW width)
+    (args : s.getVars argNames = some xs)
+    (code : sptLookup loc s.code = some (xs.length + 1, prog))
+    (cut : wordSemCutEnvs names s.locals = some (first, second))
+    (live : ¬ sptDomainEmpty names.1) (clock : s.clock ≠ 0)
+    (run : WordSemStateFiniteExact.evaluate prog
+      (WordSemStateFiniteExact.callEnv (.loc n l :: xs) (sptLookup loc s.stackSize)
+        (WordSemStateFiniteExact.pushEnv (first, second) none (WordSemStateFiniteExact.decClock s))) =
+      (some (.result (.loc n l) [res]), returned))
+    (pop : WordSemStateFiniteExact.popEnv returned = some restored)
+    (domain : sptDomainEqUnion restored.locals first second) :
+    WordSemStateFiniteExact.evaluate
+      (.call (some ([d], names, .skip, n, l)) (some loc) argNames none) s =
+      (none, WordSemStateFiniteExact.setVars [d] [res] restored) := by
+  rw [WordSemStateFiniteExact.evaluate]
+  simp only [args, wordSemBadDestArgs, Bool.false_eq_true, if_false, wordSemAddRetLoc,
+    wordSemFindCode, code, List.length_cons, live, not_false_eq_true,
+    List.nodup_cons, List.mem_nil_iff, cut, clock]
+  simp
+  rw [WordSemStateFiniteExact.fix_clock_evaluate, run]
+  simp only [List.length_cons, List.length_nil, not_true_eq_false, false_or, if_false]
+  rw [pop]
+  simp [domain, WordSemStateFiniteExact.evaluate]
+
 /-- A sequence whose first command finishes normally without changing the
 state continues with the second command. -/
 private theorem installSeqSame {width : Nat} [NeZero width] {C F : Type}
@@ -534,6 +563,97 @@ theorem assignInstall_correct {width : Nat} [NeZero width] {C F : Type}
     rw [installSeqSame _ _ _ (by rw [lowerC]; simp [WordSemStateFiniteExact.evaluate]; rfl)]
     have codeSpace : q1.length ≤ target.codeBuffer.spaceLeft :=
       installCodeSpace good q1.length csl small3 cLow
+    have codeMembership :
+        (installLocation, 3, installCode (width := width) ()) ∈ stubs (width := width) conf ∧
+        (installCodeLocation, 4, installCodeStub conf) ∈ stubs (width := width) conf ∧
+        (installDataLocation, 4, installDataStub conf) ∈ stubs (width := width) conf := by
+      simp [stubs, fixedStubs?, compileConfiguredStub?, compileStub?,
+        fromListLocation, fromList1Location, refByteLocation, refArrayLocation,
+        replicateLocation, anyArithLocation, addLocation, subLocation, mulLocation,
+        divLocation, modLocation, compare1Location, compareLocation, equal1Location,
+        equalLocation, longDiv1Location, longDivLocation, memCopyLocation,
+        byteCopyLocation, byteCopyAddLocation, byteCopySubLocation, byteCopyNewLocation,
+        installLocation, installCodeLocation, installDataLocation, dummyLocation,
+        appendLocation, appendMainLoopLocation, appendLenLoopLocation, xorLoopLocation,
+        unusedLocation, stringCmpLoopLocation, wordNumStubs, stackNumStubs]
+    have codeI : sptLookup installLocation target.code = some (3, installCode conf) :=
+      related.2.2.2.2.1.2.1 _ codeMembership.1
+    have codeIC : sptLookup installCodeLocation target.code = some (4, installCodeStub conf) :=
+      related.2.2.2.2.1.2.1 _ codeMembership.2.1
+    have codeID : sptLookup installDataLocation target.code = some (4, installDataStub conf) :=
+      related.2.2.2.2.1.2.1 _ codeMembership.2.2
+    have sourceEq : cut = { source with locals := cut.locals } := by
+      rw [cutStateOpt_some_eq names source cut cutEq]
+    have oracleSame : cut.compileOracle = source.compileOracle := by rw [sourceEq]
+    have compileSame : cut.compile = source.compile := by rw [sourceEq]
+    let progs := (k, entry) :: rest
+    have targetOracle0 : target.compileOracle 0 = (cfg, progs.map (compilePart (width := width) conf)) := by
+      simp only [oracleRel, ← oracleSame, oracle0, progs]
+    have targetNext : (target.compileOracle 1).1 = cfg' := by
+      simp only [oracleRel, ← oracleSame]
+      rw [← oracle1]
+    have targetCompile : target.compile cfg (progs.map (compilePart (width := width) conf)) =
+        some (q1, q2.map w2wUpper, cfg') := by
+      have h := compileOk
+      rw [compileSame, compileRel] at h
+      simp only at h
+      cases hc : target.compile cfg (progs.map (compilePart (width := width) conf)) with
+      | none => rw [hc] at h; simp at h
+      | some triple =>
+        obtain ⟨b, ws, c'⟩ := triple
+        rw [hc] at h
+        simp at h
+        obtain ⟨rfl, rfl, rfl⟩ := h
+        rw [w2wUpper_upperW2w ws good]
+    obtain ⟨cutFirst, cutSecond, cutPair, cutUnion⟩ :=
+      cutEnv_imp_cutEnvs (adjustSets names) target.locals wordCut cutWord
+    let t10 := t9
+    let initial := { t10 with clock := wordSemMustTerminateLimit width, termdep := t10.termdep - 1 }
+    let cpos := target.codeBuffer.position
+    let e0 := WordSemStateFiniteExact.callEnv [.loc n l, w1, w2, .word cpos]
+      (sptLookup installCodeLocation target.stackSize)
+      (WordSemStateFiniteExact.pushEnv (cutFirst, cutSecond) none (WordSemStateFiniteExact.decClock initial))
+    have limitBig : 2 * 2 ^ width + 1 ≤ wordSemMustTerminateLimit width := by
+      unfold wordSemMustTerminateLimit
+      dsimp only
+      have pos : 1 ≤ 2 ^ width * 2 ^ width := Nat.mul_pos (Nat.two_pow_pos _) (Nat.two_pow_pos _)
+      refine Nat.le_trans ?_ (Nat.le_add_right _ _)
+      refine Nat.le_trans ?_ (Nat.le_add_right _ _)
+      exact Nat.add_le_add_left pos _
+    have len1Small : q1.length < 2 ^ width := by
+      unfold smallInt at small3
+      simp only [Int.ofNat_eq_natCast] at small3
+      have : 2 ^ width / 8 ≤ 2 ^ width := Nat.div_le_self _ _
+      omega
+    have len2Small : q2.length < 2 ^ width := by
+      unfold smallInt at small4
+      simp only [Int.ofNat_eq_natCast] at small4
+      have : 2 ^ width / 8 ≤ 2 ^ width := Nat.div_le_self _ _
+      omega
+    obtain ⟨ck, stubRun⟩ := installStubsRun conf e0 hv1 hv2 q1 q2 w1 w2
+      ((.number (Int.ofNat q1.length), .word (smallnum (Int.ofNat q1.length))) ::
+        (.number (Int.ofNat q2.length), .word (smallnum (Int.ofNat q2.length))) :: stackVars)
+      source.space (holThe source.tstamps) source.refs n l k cfg cfg'
+      (compilePart (width := width) conf (k, entry)).2 (rest.map (compilePart (width := width) conf))
+      roots
+      codeIC codeID codeI
+      storeBB storeCB cbEmpty
+      dbEmpty bytes wordsOk codeSpace
+      dataSpace
+      (by
+        show q1.length + q2.length + 2 ≤ wordSemMustTerminateLimit width - 1
+        omega)
+      (by simp [e0, WordSemStateFiniteExact.callEnv, WordSemStateFiniteExact.getVar,
+            WordToStackProofs.fromList2Lookup])
+      (by simp [e0, WordSemStateFiniteExact.callEnv, WordSemStateFiniteExact.getVar,
+            WordToStackProofs.fromList2Lookup])
+      (by simp [e0, WordSemStateFiniteExact.callEnv, WordSemStateFiniteExact.getVar,
+            WordToStackProofs.fromList2Lookup])
+      (by simp [e0, cpos, WordSemStateFiniteExact.callEnv, WordSemStateFiniteExact.getVar,
+            WordToStackProofs.fromList2Lookup]; rfl)
+      targetOracle0
+      targetCompile
+      targetNext good
     sorry
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Assign
