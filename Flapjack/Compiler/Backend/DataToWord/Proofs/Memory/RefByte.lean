@@ -61,7 +61,7 @@ theorem setByte_wordOfByte {width : Nat} [NeZero width] (a : BitVec width) (w : 
 @[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "w2w_word_of_byte_w2w"
   (words_as_type_indexed_bitvec)]
 theorem setWidth_wordOfByte_setWidth {width : Nat} [NeZero width] (w : BitVec 8) :
-    goodDimindex width → (wordOfByte (w.setWidth width)).setWidth 8 = w := by
+    goodDimindex width → ((wordOfByte (w.setWidth width) : BitVec width)).setWidth 8 = w := by
   intro good
   have h8 : 8 ≤ width := by rcases good with h | h <;> omega
   apply BitVec.eq_of_getLsbD_eq
@@ -90,8 +90,8 @@ theorem bytesToWord_replicate_wordOfByte {width : Nat} [NeZero width] (good : go
   (words_as_type_indexed_bitvec)]
 theorem writeBytes_replicate {width : Nat} [NeZero width] (w : BitVec 8) (be : Bool) :
     ∀ (n m : Nat), goodDimindex width →
-      writeBytes (List.replicate m w) (List.replicate n (wordOfByte (w.setWidth width))) be =
-        List.replicate n (wordOfByte (w.setWidth width)) := by
+      writeBytes (List.replicate m w) (List.replicate n (wordOfByte (w.setWidth width) : BitVec width)) be =
+        List.replicate n (wordOfByte (w.setWidth width) : BitVec width) := by
   intro n
   induction n with
   | zero => intro m _; simp [writeBytes]
@@ -256,7 +256,7 @@ independent word type, rendered at the separately quantified positive width
 `tagWidth`, as in the reviewed `memory_rel_Ref`. -/
 @[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "memory_rel_RefByte_alt"
   (fmap_as_finite_support_relation := [st]) (words_as_type_indexed_bitvec)]
-theorem memoryRel_refByteAlt {width tagWidth : Nat} [NeZero width] [NeZero tagWidth]
+theorem memoryRel_refByteAlt {width : Nat} {tagWidth : Nat} [NeZero width] [NeZero tagWidth]
     (c : DataToWord.Config) (be : Bool) (ts : Nat)
     (refs : Spt (BvlSem.Ref Flapjack.Compiler.Backend.DataSem.Value)) (sp : Nat)
     (st : HolFiniteMapExact WordStoreHOL (WordLocW width)) (m : BitVec width → WordLocW width)
