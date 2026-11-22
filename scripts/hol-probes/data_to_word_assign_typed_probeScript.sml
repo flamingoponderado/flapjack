@@ -700,3 +700,14 @@ val _ = cap "do_app_AllocThunk_typed" "do_app_AllocThunk";
 
 (* Batch A8: assign_FinaliseCons. *)
 val _ = cap "assign_FinaliseCons_typed" "assign_FinaliseCons";
+
+(* Batch B1 (flapjack-assign2): block tag and length tests. *)
+val _ = print ("assign_TagEq_hypotheses=" ^
+  Int.toString (length (hyp assign_TagEq)) ^ "\n");
+val _ = emit_exported "assign_TagEq_typed" "assign_TagEq";
+val _ = print ("assign_TagLenEq_hypotheses=" ^
+  Int.toString (length (hyp assign_TagLenEq)) ^ "\n");
+val _ = emit_exported "assign_TagLenEq_typed" "assign_TagLenEq";
+val _ = print ("assign_LenEq_hypotheses=" ^
+  Int.toString (length (hyp assign_LenEq)) ^ "\n");
+val _ = emit_exported "assign_LenEq_typed" "assign_LenEq";

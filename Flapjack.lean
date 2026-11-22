@@ -434,6 +434,9 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.Mult
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.Sub
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.Length
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.LengthBlock
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.TagEq
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.LenEq
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.TagLenEq
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.LengthByte
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.WordTest
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.LessSmallConst
