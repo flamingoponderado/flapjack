@@ -730,3 +730,6 @@ val _ = cap "evaluate_WriteWord64_on_32_num_typed" "evaluate_WriteWord64_on_32_n
 
 (* Batch B3 (flapjack-assign2): binary AllocVar instance for RefArray. *)
 val _ = cap "AllocVar_thm_binary_typed" "AllocVar_thm_binary";
+
+(* Batch A12: assign_UpdateThunk. *)
+val _ = cap "assign_UpdateThunk_typed" "assign_UpdateThunk";
