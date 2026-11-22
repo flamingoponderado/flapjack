@@ -4,6 +4,7 @@ public import Flapjack.Compiler.Backend.BackendProof.CakeOrac
 public import Flapjack.Compiler.Backend.BackendProof.AddEvalState
 public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.OracleStep
 public import Flapjack.Compiler.Backend.SourceEval.Proofs.OracleRecording
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.GetOracleProps
 
 @[expose] public section
 
@@ -27,22 +28,25 @@ private theorem compileIncProgs_sourceConf {width : Nat} [NeZero width]
   obtain ⟨e, d⟩ := p
   rfl
 
-/-- Exact HOL `step_invs_cake_orac` (`backendProofScript.sml:3127-3154`,
-`[local]`). HOL `I` is `id`; the inner quantifier's `st` (a value, shadowing the
-oracle state) is `stV`. The decoder payload type `β` carries the `Nonempty`
-instance that renders HOL's `THE` inside the reviewed `src_orac_step_invs`. -/
-@[hol "cakeml/compiler/backend/proofs/backendProofScript.sml" "step_invs_cake_orac"
-  (total_function_inhabitants := [β]) (words_as_type_indexed_bitvec)]
+/-- Untagged statement of HOL `step_invs_cake_orac`
+(`backendProofScript.sml:3127-3154`, `[local]`; capture
+`step_invs_cake_orac_typed`). HOL `I` is `id`; the inner quantifier's `st` (a
+value, shadowing the oracle state) is `stV`. Pending tag: the decoder payload
+type `β` needs the `Nonempty β` instance required by the reviewed
+`src_orac_step_invs` (whose own `total_function_inhabitants` qualifier renders
+HOL's `THE`). The inhabitant qualifier only accepts a rendering named in the
+theorem's own signature, so this transitive use through `srcOracStepInvs` has
+no reviewed qualifier yet; the statement is otherwise source-shaped. -/
 theorem stepInvs_cakeOrac {width : Nat} [NeZero width] {β : Type} [Nonempty β]
     (st : EvalOracleState)
     (f : Flapjack.Compiler.Backend.Backend.Config × BackendProgs width →
-      (Nat × Nat) × Value × List Dec)
+      (Nat × Nat) × Flapjack.SemanticPrimitivesHOL.Value × List Dec)
     (asmConf : AsmConfigExact width) (c' : Flapjack.Compiler.Backend.Backend.Config)
     (syn : Nat → (Nat × Nat) × List Dec)
-    (decf : Value → Option (SourceToFlat.Config × β)) :
+    (decf : Flapjack.SemanticPrimitivesHOL.Value → Option (SourceToFlat.Config × β)) :
     st.oracle = f ∘ cakeOrac asmConf c' syn id id →
     (∀ (x : Flapjack.Compiler.Backend.Backend.Config × BackendProgs width) (k : Nat)
-        (envId : Nat × Nat) (stV : Value) (decs : List Dec),
+        (envId : Nat × Nat) (stV : Flapjack.SemanticPrimitivesHOL.Value) (decs : List Dec),
       x = cakeOrac asmConf c' syn id id k →
       f x = (envId, stV, decs) →
       decs = x.2.sourceProg ∧ envId = x.2.envId ∧
@@ -122,5 +126,96 @@ theorem cakeOrac_extendedWf {width : Nat} [NeZero width]
       simp [ht] at hres
       rw [← hres]
   · simp at hres
+
+/-- A successful evaluation-compiler call on an encoded configuration
+returns the encoding of the next `compile_inc_progs` configuration
+(Flapjack helper shared by the two oracle lemmas below). -/
+private theorem mkCompilerFunFromCi_step {width : Nat} [NeZero width]
+    (asmConf : AsmConfigExact width) (c' : Flapjack.Compiler.Backend.Backend.Config)
+    (ci : CompilerInstance Flapjack.Compiler.Backend.Backend.Config)
+    (hwf : optEvalConfigWf asmConf c' (some ci))
+    (C : Flapjack.Compiler.Backend.Backend.Config) (e : Nat × Nat) (d : List Dec)
+    (result : Value × List (BitVec 8) × List (BitVec 64))
+    (hres : mkCompilerFunFromCi ci (e, ci.configV C, d) = some result) :
+    result.1 = ci.configV (compileIncProgs true asmConf C (e, d)).1 := by
+  have hwf' := hwf
+  obtain ⟨hfun, -, -⟩ := hwf'
+  unfold mkCompilerFunFromCi at hres
+  simp only at hres
+  rw [configWf_absConc asmConf c' ci ci.configDom _ hwf] at hres
+  split_ifs at hres with hdom
+  · rw [hfun] at hres
+    unfold compileIncProgsForEval at hres
+    simp only [Option.bind_eq_bind, Option.bind_some] at hres
+    rcases hc : compileIncProgs true asmConf C (e, d) with ⟨c'', ps⟩
+    rw [hc] at hres
+    simp only
+    cases ht : ps.targetProg with
+    | none => simp [ht] at hres
+    | some t =>
+      obtain ⟨bs, ws⟩ := t
+      simp [ht] at hres
+      rw [← hres]
+  · simp at hres
+
+/-- Exact HOL `cake_orac_eq_get_oracle` (`backendProofScript.sml:3081-3125`,
+`[local]`). HOL `I ## SND` is `Prod.map id Prod.snd`, `I` is `id`, `K concrete_v`
+is the constant predicate of the reviewed `oracle_semantics_prog`; HOL's free
+`syntax` (a Lean keyword) is `syn` and the case split on `r` is a match. -/
+@[hol "cakeml/compiler/backend/proofs/backendProofScript.sml" "cake_orac_eq_get_oracle"
+  (words_as_type_indexed_bitvec)]
+theorem cakeOrac_eq_getOracle {width : Nat} [NeZero width] {σ : Type}
+    (s : State σ) (env : SemEnv Value) (prog : List Dec) (asmConf : AsmConfigExact width)
+    (c' : Flapjack.Compiler.Backend.Backend.Config)
+    (ci : CompilerInstance Flapjack.Compiler.Backend.Backend.Config)
+    (syn : Nat → (Nat × Nat) × List Dec) (s' : State σ) :
+    ¬ SemanticsHOL.semanticsProg s env prog .fail ∧ optEvalConfigWf asmConf c' (some ci) ∧
+      NamespaceHOL.nsAll (fun _ value => concreteValue value = true) env.v ∧ s.refs = [] ∧
+      s.evalState = some (mkInitEvalState ci) ∧
+      (∀ i r, getOracle ci s env prog i = some r → syn i = Prod.map id Prod.snd r) ∧
+      s' = s →
+    ∀ (i : Nat) (r : (Nat × Nat) × Value × List Dec)
+      (x : Flapjack.Compiler.Backend.Backend.Config × (Nat × Nat) × List Dec),
+      getOracle ci s' env prog i = some r ∧
+        cakeOrac asmConf c' syn id (fun ps => (ps.envId, ps.sourceProg)) i = x →
+      match r with
+      | (id', cfgV, ds) => ∃ cfg, cfgV = ci.configV cfg ∧ x = (cfg, id', ds) := by
+  rintro ⟨noFail, hwf, concrete, refs, initEval, hsyn, rfl⟩
+  have props := get_oracle_props env s' ci prog ⟨concrete, refs, initEval, noFail⟩
+  have horac : ∀ i, cakeOrac asmConf c' syn id (fun ps => (ps.envId, ps.sourceProg)) i =
+      (cakeConfigs asmConf c' syn i, (syn i).1, (syn i).2) := by
+    intro i
+    rw [cakeOrac_eq_pair, (compileIncProgs_srcEnv asmConf _ (syn i)).1,
+      (compileIncProgs_srcEnv asmConf _ (syn i)).2]
+    rfl
+  intro i
+  induction i with
+  | zero =>
+    rintro ⟨e, v, d⟩ x ⟨hr, rfl⟩
+    have hv := props.1 _ hr
+    have hs := hsyn 0 _ hr
+    refine ⟨c', ?_, ?_⟩
+    · rw [← hwf.2.2]; exact hv
+    · rw [horac, hs]; rfl
+  | succ n ih =>
+    rintro ⟨e, v, d⟩ x ⟨hr, rfl⟩
+    obtain ⟨r0, x0, hr0, hcomp, hv⟩ := props.2 n _ hr
+    obtain ⟨e0, v0, d0⟩ := r0
+    obtain ⟨cfg0, hv0, hx0⟩ := ih (e0, v0, d0) _ ⟨hr0, rfl⟩
+    rw [horac] at hx0
+    simp only [Prod.mk.injEq] at hx0
+    obtain ⟨hcfg, he0, hd0⟩ := hx0
+    rw [hv0] at hcomp
+    have hstep := mkCompilerFunFromCi_step asmConf c' ci hwf cfg0 e0 d0 x0 hcomp
+    have hs := hsyn (n + 1) _ hr
+    refine ⟨cakeConfigs asmConf c' syn (n + 1), ?_, ?_⟩
+    · simp only at hv
+      rw [hv, hstep]
+      show ci.configV (compileIncProgs true asmConf cfg0 (e0, d0)).1 =
+        ci.configV (compileIncProgs true asmConf (cakeConfigs asmConf c' syn n) (syn n)).1
+      rw [← hcfg]
+      congr 3
+      exact Prod.ext he0.symm hd0.symm
+    · rw [horac, hs]; rfl
 
 end Flapjack.Compiler.Backend.BackendProof
