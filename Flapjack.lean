@@ -496,6 +496,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.WordOp64
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.WordShift8
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.GiveUp
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.BignumHalt
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.Install
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.RealAddress
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.EnvToList
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.CutEnvDomain
