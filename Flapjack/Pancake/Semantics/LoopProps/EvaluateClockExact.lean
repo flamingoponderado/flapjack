@@ -105,18 +105,16 @@ theorem cutRes_add_clock (live : NumSet) (r : Option (LoopResultExact width))
         simp only [hz', if_false, decClock, Prod.mk.injEq, true_and]
         cases s1; simp only [LoopSemStateFiniteExact.mk.injEq, true_and, and_true] at hs1 hz ⊢; omega
 
-/-- Exact HOL `cut_res_add_clock` (`loopPropsScript.sml:969-977`):
-    `cut_res l (res,s) = (q,r) /\ q <> SOME TimeOut ==>
-     cut_res l (res,s with clock := ck + s.clock) =
-       (q,r with clock := ck + r.clock)`.
-    The binders follow the captured free-variable order
-    (`cut_res_add_clock_vars=ck,r,q,s,res,l`) and keep HOL's `ck + clock`
-    addition order.  The internal `cutRes_add_clock` above states the same
-    fact with the commuted `clock + ck` order and with the conjunction split
-    into two hypotheses, so this tagged form is its `Nat.add_comm` restatement;
-    the exact-carrier qualifiers match the other clock lemmas in this module. -/
-@[hol "cakeml/pancake/semantics/loopPropsScript.sml" "cut_res_add_clock"
-  (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
+/-- Restatement of the internal `cutRes_add_clock` with HOL's `ck + clock`
+    addition order and a single conjunction hypothesis. NOT tagged as a HOL
+    port: HOL `cut_res_add_clock` (`loopPropsScript.sml:969`) quantifies
+    independent type variables — the live-set `l : δ num_map`, the result
+    `res/q : α result option`, and the state `s/r : (β, γ) state` — whereas
+    this Lean statement fixes δ := Unit (`live : NumSet`) and identifies the
+    result width α with the state width β, inherited from the reviewed
+    executable `cutRes`. A faithful port needs `cutRes` generalized over an
+    independent result word type and live-set value type; that generalization
+    is a maintainer item, and the executable `cutRes` is left unchanged. -/
 theorem cutResAddClockHOL (ck : Nat) (r : LoopSemStateFiniteExact width F)
     (q : Option (LoopResultExact width)) (s : LoopSemStateFiniteExact width F)
     (res : Option (LoopResultExact width)) (live : NumSet)
