@@ -525,6 +525,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Bignum.NumSize
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Bignum.AnyHeader
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Bignum.CodeRel
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Bignum.DivCodeAssum
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Bignum.AnyArith.Headers
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.WordMlInvInsert
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.MkLoc
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.Skip
