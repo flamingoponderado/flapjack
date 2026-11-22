@@ -480,7 +480,7 @@
     {"bytes": 4141, "out": "data_space_code_labels_probe.out", "rows": 15, "sha256": "312d46097a53b35013453ec95ed5c5d0457b80324117d4a9c3a87ff496e2e176"},
     {"bytes": 3945, "out": "data_space_compile_probe.out", "rows": 3, "sha256": "7f492b1ffef8c506d16ebb8d5f09ba440f9cf2b6599b0ceb7b8aba195dea3e54"},
     {"bytes": 4277, "out": "data_space_req_probe.out", "rows": 3, "sha256": "d7c02972a99f4d3e5069b70eeaf5371a0ddb0484b8752397b4a150f8908bb0af"},
-    {"bytes": 889, "out": "data_to_word_assign_install_typed_probe.out", "rows": 2, "sha256": "802d7413c723a9c65de968925fe55689a2b0ee452240ee34d85b6ec9049f2b65"},
+    {"bytes": 9745, "out": "data_to_word_assign_install_typed_probe.out", "rows": 8, "sha256": "6cb22f47cce1a2908e44c52206605d8a8687789627e9c0b7214803336beccd47"},
     {"bytes": 190091, "out": "data_to_word_assign_roots_probe.out", "rows": 254, "sha256": "251fdc545c15c1e5e0199ccd40dbd9080c4ebf82223f0983e1eabb721dfdcf34"},
     {"bytes": 276489, "out": "data_to_word_assign_typed_probe.out", "rows": 232, "sha256": "5b526123cdbcd6f6ce56b4f1a8bd99b019402b1e46f62a303e8be2b94f77d0b6"},
     {"bytes": 55970, "out": "data_to_word_bignum_typed_probe.out", "rows": 90, "sha256": "31933eb95f660ed478a65f4621386995d67fd4536fa9d91b907cae07e10b831b"},
