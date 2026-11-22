@@ -11,6 +11,7 @@ public import Flapjack.Compiler.Backend.BackendProps
 public import Flapjack.Compiler.Backend.WordDepth
 public import Flapjack.Misc.MiscThe
 public import Flapjack.Misc.SptreeLookup
+public import Flapjack.Misc.Sptree.MkWf
 public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.ToListA
 public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.StateRelation
 public import Flapjack.Misc.Sptree.ToAList
@@ -703,5 +704,48 @@ theorem sizeOfHeap_foldr_delete_number_le {C F : Type} (ks : List Nat)
           · rw [hi] at hl; exact ⟨i, (Option.some.inj hl).symm⟩
       obtain ⟨i, rfl⟩ := hv
       exact sizeOfHeap_delete_number_le k { state with locals := ks.foldr sptDelete L } i hl
+
+/-- HOL's identity marker `STOP`, used to block rewriting in the append-loop
+proofs. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml" "STOP_def"]
+def stop {α : Type} (x : α) : α := x
+
+/-- Cutting to fewer names, dropping at most two number-valued locals, cannot
+increase the heap size. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml" "configGC_size_of_heap_LE"]
+theorem configGC_sizeOfHeap_le {C F C' F' : Type} (ns : NumSet) (s x : DataSem.State C F)
+    (k1 k2 : Nat) (i1 i2 : Int) (state : DataSem.State C' F')
+    (h : DataSem.cutStateOpt (some (sptInsert k2 () (sptInsert k1 () ns))) s = some x ∧
+      sptLookup k1 x.locals = some (.number i1) ∧ sptLookup k2 x.locals = some (.number i2) ∧
+      state.refs = s.refs ∧ state.limits = s.limits ∧ state.stack = s.stack ∧
+      state.global = s.global) :
+    DataSem.sizeOfHeap { state with locals := sptMkWf (sptInter s.locals ns) } ≤
+      DataSem.sizeOfHeap { state with locals := x.locals } := by
+  obtain ⟨hcut, h1, h2, -⟩ := h
+  simp only [DataSem.cutStateOpt, DataSem.cutState, DataSem.cutEnv] at hcut
+  split at hcut
+  · simp only [Option.map_some, Option.some.injEq] at hcut
+    subst hcut
+    let extras := [k1, k2].filter (fun a => sptLookup a ns = none)
+    have eq : extras.foldr sptDelete
+        (sptMkWf (sptInter s.locals (sptInsert k2 () (sptInsert k1 () ns)))) =
+        sptMkWf (sptInter s.locals ns) := by
+      apply (sptEqThm _ _ ⟨wf_foldr_delete _ _ (sptWf_mkWf _), sptWf_mkWf _⟩).2
+      intro n
+      rw [lookup_foldr_delete, sptLookup_mkWf, sptLookup_mkWf, sptLookup_sptInterCases,
+        sptLookup_sptInterCases]
+      by_cases hn1 : n = k1 <;> by_cases hn2 : n = k2 <;>
+        simp_all [extras, sptLookup_sptInsert] <;>
+        (cases hns : sptLookup n ns <;> simp_all)
+    rw [← eq]
+    apply sizeOfHeap_foldr_delete_number_le
+    refine ⟨sptWf_mkWf _, ?_⟩
+    intro k hk
+    simp only [extras, List.mem_filter, List.mem_cons, List.not_mem_nil, or_false,
+      decide_eq_true_eq] at hk
+    rcases hk with ⟨rfl | rfl, -⟩
+    · exact Or.inr ⟨i1, h1⟩
+    · exact Or.inr ⟨i2, h2⟩
+  · simp at hcut
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Assign

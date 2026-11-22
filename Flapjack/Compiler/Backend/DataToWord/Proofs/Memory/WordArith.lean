@@ -108,12 +108,11 @@ theorem max_add' (a b c : Nat) : max a b + c = max (a + c) (b + c) := by omega
 @[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "MAX_SUB"]
 theorem max_sub' (a b c : Nat) : max a b - c = max (a - c) (b - c) := by omega
 
-/-- Statement of HOL `small_int_w2n` (`good_dimindex (:α) ⇒ small_int (:α)
-(&w2n (w : word8))`). Untagged: its HOL dimension `(:α)` is used only
-numerically while the byte is the fixed-width `word8`, and neither
-`word_dimension_as_width` (word-free signatures only) nor
-`words_as_type_indexed_bitvec` (type-indexed words only) admits that
-combination yet. Tag it once a qualifier route exists. -/
+/-- HOL `small_int_w2n` (`good_dimindex (:α) ⇒ small_int (:α)
+(&w2n (w : word8))`). The dimension `(:α)` is used only numerically and is
+the explicit `width`; the HOL fixed-width `word8` is `BitVec 8`. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "small_int_w2n"
+  (word_dimension_as_width := width)]
 theorem smallInt_w2n (width : Nat) [NeZero width] (w : BitVec 8) :
     goodDimindex width → smallInt width (w.toNat : Int) := by
   intro good

@@ -6,6 +6,8 @@ public import Flapjack.Compiler.Backend.BackendProps.StateCompiler
 
 @[expose] public section
 
+set_option autoImplicit false
+
 /-! backendProofScript.sml 317-351 and 487-628: the incremental compiler
 oracle `cake_orac`, built from the configurations `cake_configs` threaded by
 `compile_inc_progs`, and its unfolding equations. -/
@@ -35,6 +37,18 @@ noncomputable def cakeOrac {width : Nat} [NeZero width] {α β : Type}
   let c := cakeConfigs asmConf c source i
   let (_, progs) := compileIncProgs true asmConf c (source i)
   (f c, g progs)
+
+/-- `cake_orac` as an explicit pair (Flapjack infrastructure; avoids reducing
+the incremental compiler while unfolding the destructuring `let`). -/
+theorem cakeOrac_eq_pair {width : Nat} [NeZero width] {A B : Type}
+    (asmConf : AsmConfigExact width) (c' : Flapjack.Compiler.Backend.Backend.Config)
+    (src : Nat → (Nat × Nat) × List AstHOL.Dec)
+    (g : Flapjack.Compiler.Backend.Backend.Config → A) (h : BackendProgs width → B) (i : Nat) :
+    cakeOrac asmConf c' src g h i =
+      (g (cakeConfigs asmConf c' src i),
+        h (compileIncProgs true asmConf (cakeConfigs asmConf c' src i) (src i)).2) := by
+  rcases hp : compileIncProgs true asmConf (cakeConfigs asmConf c' src i) (src i) with ⟨a, b⟩
+  simp only [cakeOrac, hp]
 
 /-- Exact HOL `cake_configs_eq` (`backendProofScript.sml:341-351`). The captured
 statement ends with `∀(i :γ). f (cake_configs asm_conf c' src x) = f c`: the
@@ -126,5 +140,19 @@ theorem cakeOrac_succ2 {width : Nat} [NeZero width] {α β : Type}
   rw [cakeOrac_succ]
   simp only [cakeOrac, id, (compileIncProgs_srcEnv asmConf _ (src i)).1,
     (compileIncProgs_srcEnv asmConf _ (src i)).2]
+
+/-- Exact HOL `cake_orac_cfg_f_eq_I` (`backendProofScript.sml:3040-3044`).
+HOL `(f ## I)` is `Prod.map f id`; `asm_conf`, `c` and `syntax` (`syntaxOrac`) are free in HOL
+and explicit here. -/
+@[hol "cakeml/compiler/backend/proofs/backendProofScript.sml" "cake_orac_cfg_f_eq_I"
+  (words_as_type_indexed_bitvec)]
+theorem cakeOrac_cfgF_eq_I {width : Nat} [NeZero width] {α γ : Type}
+    (asmConf : AsmConfigExact width) (c : Flapjack.Compiler.Backend.Backend.Config)
+    (syntaxOrac : Nat → (Nat × Nat) × List AstHOL.Dec) :
+    ∀ (f : Flapjack.Compiler.Backend.Backend.Config → α) (g : BackendProgs width → γ),
+      cakeOrac asmConf c syntaxOrac f g = Prod.map f id ∘ cakeOrac asmConf c syntaxOrac id g := by
+  intro f g
+  funext i
+  rfl
 
 end Flapjack.Compiler.Backend.BackendProof

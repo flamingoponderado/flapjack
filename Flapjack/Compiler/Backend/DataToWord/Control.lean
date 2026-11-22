@@ -124,7 +124,7 @@ def assignCmp {width : Nat} [NeZero width] (dest : Nat) (cmp : Opb) (v1 v2 : Nat
   | .geq => setBool dest .notLower v1 (.reg v2)
 
 /-- Adapt a source destination to the word-register convention. -/
-private def boolResult {width : Nat} [NeZero width] (dest : Nat) (cmp : Cmp) (r : Nat)
+def boolResult {width : Nat} [NeZero width] (dest : Nat) (cmp : Cmp) (r : Nat)
     (other : WordRegImm (BitVec width)) : WordLangProgHOL (BitVec width) :=
   setBool (adjustVar dest) cmp r other
 
@@ -138,6 +138,39 @@ def shiftN {width : Nat} (op : Shift) (e : WordLangExpHOL (BitVec width)) (n : N
 def smallLsr {width : Nat} [NeZero width] (value : WordLangExpHOL (BitVec width))
     (amount : Nat) : WordLangExpHOL (BitVec width) :=
   if amount = 0 then value else shiftN .lsr value amount
+
+/-- Replicate the byte held (shifted) in register `n` across the whole word.
+The production `RefByte` stub uses this definition. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "MakeBytes_def"
+  (words_as_type_indexed_bitvec)]
+def makeBytes {width : Nat} [NeZero width] (n : Nat) : WordLangProgHOL (BitVec width) :=
+  wordListSeq [.assign n (shiftN .lsr (.var n) 2),
+    .assign n (.op .or [.var n, shiftN .lsl (.var n) 8]),
+    .assign n (.op .or [.var n, shiftN .lsl (.var n) 16]),
+    if width = 32 then .skip else .assign n (.op .or [.var n, shiftN .lsl (.var n) 32])]
+
+/-- Store the byte of register `b` at `a + offset` unless `n` equals `offset`,
+then continue with `p`. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "WriteLastByte_aux_def"
+  (words_as_type_indexed_bitvec)]
+def writeLastByteAux {width : Nat} [NeZero width] (offset : BitVec width) (a b n : Nat)
+    (p : WordLangProgHOL (BitVec width)) : WordLangProgHOL (BitVec width) :=
+  .ite .equal n (.imm offset) .skip (.seq (.inst (.mem .store8 b (.addr a offset))) p)
+
+/-- Write the bytes of the last word of a byte array below the end offset.
+The production `RefByte` stub uses this definition. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "WriteLastBytes_def"
+  (words_as_type_indexed_bitvec)]
+def writeLastBytes {width : Nat} [NeZero width] (a b n : Nat) : WordLangProgHOL (BitVec width) :=
+  writeLastByteAux (0 : BitVec width) a b n (
+    writeLastByteAux 1 a b n (
+      writeLastByteAux 2 a b n (
+        writeLastByteAux 3 a b n (
+          if width = 32 then .skip else
+          writeLastByteAux 4 a b n (
+            writeLastByteAux 5 a b n (
+              writeLastByteAux 6 a b n (
+                writeLastByteAux 7 a b n .skip)))))))
 
 /-- Construct a variable shift with the original rotate and saturation rules. -/
 @[hol "cakeml/compiler/backend/data_to_wordScript.sml" "ShiftVar_def"
@@ -290,14 +323,14 @@ def fpTopInst : FpTop → WordLangFp
   | .fma => .fpFma 0 1 2
 
 /-- Operand layout for the floating-point lowering sequences. -/
-private def fpOperand (source position : Nat) : Nat × Nat × Nat × Nat × Nat × Nat :=
+def fpOperand (source position : Nat) : Nat × Nat × Nat × Nat × Nat × Nat :=
   match position with
   | 0 => (source, 3, 15, 11, 13, 0)
   | 1 => (source, 5, 17, 21, 23, 1)
   | _ => (source, 7, 19, 31, 33, 2)
 
 /-- Load floating-point operands in the order used by the source compiler. -/
-private def fpLoads {width : Nat} [NeZero width] (conf : Config) (sources : List Nat) :
+def fpLoads {width : Nat} [NeZero width] (conf : Config) (sources : List Nat) :
     List (WordLangProgHOL (BitVec width)) :=
   let operands := sources.zipIdx |>.map fun (source, position) => fpOperand source position
   let bytes := (wordSemBytesInWord : BitVec width)
@@ -313,7 +346,7 @@ private def fpLoads {width : Nat} [NeZero width] (conf : Config) (sources : List
     (operands.map fun (_, _, _, low, high, fp) => .inst (.fp (.fpMovFromReg fp high low)))
 
 /-- Emit a floating-point result allocation after its instruction. -/
-private def fpResult {width : Nat} [NeZero width] (conf : Config) (dest : Nat)
+def fpResult {width : Nat} [NeZero width] (conf : Config) (dest : Nat)
     (sources : List Nat) (operation : WordLangFp) (resultFp : Nat) : WordLangProgHOL (BitVec width) :=
   let words := if width = 64 then 1 else 2
   match encodeHeader (width := width) conf 3 words with
@@ -1350,7 +1383,7 @@ theorem assignFpTop_expansion {width : Nat} [NeZero width] (operation : FpTop) (
   all_goals split <;> simp_all
 
 /-- Common emitted sequence for integer addition and subtraction. -/
-private def assignAddSub {width : Nat} [NeZero width] (subtract : Bool) (secn l dest : Nat)
+def assignAddSub {width : Nat} [NeZero width] (subtract : Bool) (secn l dest : Nat)
     (names : Option NumSet) (first second : Nat) : WordLangProgHOL (BitVec width) × Nat :=
   let cutsets := adjustSets (names.getD .ln)
   let instr := if subtract then WordLangArith.subOverflow 1 (adjustVar first) (adjustVar second) 3
