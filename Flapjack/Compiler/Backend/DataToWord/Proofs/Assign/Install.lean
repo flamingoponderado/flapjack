@@ -333,6 +333,24 @@ private theorem installEvalLower {width : Nat} [NeZero width] {C F : Type}
     wordSemWordCmp, Compiler.Encoders.Asm.wordCmpHOL]
   by_cases h : a < b <;> simp [h]
 
+/-- Reconstruct both cut environments after saving a call frame (as in the
+equality case); local proof infrastructure for `assign_Install`. -/
+private theorem installRestoredCuts {width : Nat} [NeZero width] (names : WordLangCutsetsHOL)
+    (env first second : Spt (WordLocW width)) (p permute : Nat → Nat → Nat)
+    (entries : List (Nat × WordLocW width))
+    (cut : wordSemCutEnvs names env = some (first, second))
+    (run : wordSemEnvToList second p = (entries, permute)) :
+    sptFromAList (sptToAList first) = first ∧ sptFromAList entries = second := by
+  have wf := cutEnvs_wf names env first second cut
+  constructor
+  · apply (sptEqThm _ _ ⟨sptWfFromAList _, wf.1⟩).2
+    intro key
+    exact sptLookup_sptFromAList_sptToAList key first
+  · apply (sptEqThm _ _ ⟨sptWfFromAList _, wf.2⟩).2
+    intro key
+    rw [sptLookup_sptFromAList]
+    exact (wordSemEnvToListLookupEquiv second p entries permute run).1 key
+
 /-- Evaluate a returning stub call from its established premises, as in the
 HOL proof's direct evaluation of the call. -/
 private theorem installDirectCall {width : Nat} [NeZero width] {C F : Type}
@@ -378,6 +396,140 @@ private theorem installSeqStop {width : Nat} [NeZero width] {C F : Type}
   refine ⟨(WordSemStateFiniteExact.fixClock s (some x, s1)).2, ?_, rfl⟩
   simp [WordSemStateFiniteExact.evaluate, h]
   rfl
+
+/-- Option `mapM` over locations that are kept as first components returns
+exactly those locations; local infrastructure for the stub-label bound. -/
+private theorem installMapMFst {R : Type} (g : Nat → Option (Nat × R)) (hg : ∀ loc r, g loc = some r → r.1 = loc) :
+    ∀ (xs : List Nat) (r : List (Nat × R)), xs.mapM g = some r → r.map Prod.fst = xs := by
+  intro xs
+  induction xs with
+  | nil => intro r h; simp at h; subst h; rfl
+  | cons x xs ih =>
+    intro r h
+    simp only [List.mapM_cons] at h
+    cases hf : g x with
+    | none => simp [hf] at h
+    | some a =>
+      cases hr : xs.mapM g with
+      | none => simp [hf, hr] at h
+      | some rs =>
+        simp [hf, hr] at h
+        subst h
+        simp [ih rs hr, hg x a hf]
+
+/-- The generated bignum stubs use locations below `data_num_stubs` (32-bit). -/
+private theorem installBignumLabels32 :
+    ((WordBignum.generatedBignumStubs 32 bignumLocation).map Prod.fst).all (· < dataNumStubs) = true := by
+  decide +kernel
+
+/-- The generated bignum stubs use locations below `data_num_stubs` (64-bit). -/
+private theorem installBignumLabels64 :
+    ((WordBignum.generatedBignumStubs 64 bignumLocation).map Prod.fst).all (· < dataNumStubs) = true := by
+  decide +kernel
+
+/-- Every stub location is below `data_num_stubs`, as HOL's proof shows by
+evaluating `stubs_def` and `generated_bignum_stubs_eq`. -/
+private theorem installStubsLabels {width : Nat} [NeZero width] (conf : Config) (good : goodDimindex width) :
+    ∀ e ∈ stubs (width := width) conf, e.1 < dataNumStubs := by
+  intro e mem
+  simp only [stubs, List.mem_append] at mem
+  rcases mem with fixed | gen
+  · obtain ⟨r, hr⟩ := fixedStubs_succeeds (width := width) conf
+    have labels := installMapMFst _ (by
+      intro loc r h
+      simp only [Option.bind_eq_bind] at h
+      cases hc : compileConfiguredStub? (width := width) conf loc <;> simp [hc] at h; subst h; rfl) _ r hr
+    simp only [hr, Option.get_some] at fixed
+    have : e.1 ∈ r.map Prod.fst := List.mem_map_of_mem fixed
+    rw [labels] at this
+    simp [fromListLocation, fromList1Location, refByteLocation, refArrayLocation,
+      replicateLocation, anyArithLocation, addLocation, subLocation, mulLocation,
+      divLocation, modLocation, compare1Location, compareLocation, equal1Location,
+      equalLocation, longDiv1Location, longDivLocation, memCopyLocation,
+      byteCopyLocation, byteCopyAddLocation, byteCopySubLocation, byteCopyNewLocation,
+      installLocation, installCodeLocation, installDataLocation, dummyLocation,
+      appendLocation, appendMainLoopLocation, appendLenLoopLocation, xorLoopLocation,
+      unusedLocation, stringCmpLoopLocation, wordNumStubs, stackNumStubs, dataNumStubs] at this ⊢
+    omega
+  · rcases good with rfl | rfl
+    · have all : ((WordBignum.generatedBignumStubs 32 bignumLocation).map Prod.fst).all
+          (· < dataNumStubs) = true := installBignumLabels32
+      simp only [List.all_eq_true, List.mem_map, decide_eq_true_eq] at all
+      exact all _ ⟨e, gen, rfl⟩
+    · have all : ((WordBignum.generatedBignumStubs 64 bignumLocation).map Prod.fst).all
+          (· < dataNumStubs) = true := installBignumLabels64
+      simp only [List.all_eq_true, List.mem_map, decide_eq_true_eq] at all
+      exact all _ ⟨e, gen, rfl⟩
+
+/-- Association-list lookup commutes with compiling each entry. -/
+private theorem installAlookupCompile {width : Nat} [NeZero width] (conf : Config) (key : Nat) :
+    ∀ progs : List (Nat × Nat × DataLang.Prog),
+      sptAListLookup key (progs.map (compilePart (width := width) conf)) =
+        (sptAListLookup key progs).map fun entry => (entry.1 + 1, (compileControl conf key 2 entry.2).1)
+  | [] => rfl
+  | (name, arity, body) :: rest => by
+    by_cases h : key = name
+    · subst h; simp [sptAListLookup, compilePart]
+    · simp [sptAListLookup, compilePart, h, installAlookupCompile conf key rest]
+
+/-- Installing fresh compiled code preserves the code relation, as in the
+`code_rel` part of HOL's `assign_Install` proof. -/
+private theorem installCodeRel {width : Nat} [NeZero width] (conf : Config)
+    (source : Spt (Nat × DataLang.Prog)) (target : Spt (Nat × WordLangProgHOL (BitVec width)))
+    (progs : List (Nat × Nat × DataLang.Prog)) (good : goodDimindex width)
+    (related : codeRel conf source target) (fresh : ∀ entry ∈ progs, dataNumStubs ≤ entry.1) :
+    codeRel conf (sptUnion source (sptFromAList progs))
+      (sptUnion target (sptFromAList (progs.map (compilePart (width := width) conf)))) := by
+  obtain ⟨dom, stubIn, compiled⟩ := related
+  have keyMem (k : Nat) : (sptAListLookup k progs).isSome ↔ k ∈ progs.map Prod.fst := by
+    induction progs with
+    | nil => simp [sptAListLookup]
+    | cons e rest ih =>
+      obtain ⟨name, entry⟩ := e
+      by_cases h : k = name
+      · subst h; simp [sptAListLookup]
+      · simp [sptAListLookup, h, ih (fun e m => fresh e (List.mem_cons_of_mem _ m))]
+  refine ⟨?_, ?_, ?_⟩
+  · funext label
+    rw [sptDomain_sptUnion, sptDomain_sptUnion, dom]
+    have e1 : sptDomain (sptFromAList (progs.map (compilePart (width := width) conf))) label ↔
+        sptDomain (sptFromAList progs) label := by
+      simp only [sptDomain, sptLookup_sptFromAList, installAlookupCompile, Option.isSome_map]
+    apply propext
+    simp only []
+    rw [e1]
+    tauto
+  · intro entry mem
+    rw [sptLookup_sptUnion, stubIn entry mem]
+  · intro label arity body look
+    rw [sptLookup_sptUnion] at look ⊢
+    cases hs : sptLookup label source with
+    | some v =>
+      rw [hs] at look
+      cases look
+      rw [compiled label arity body hs]
+    | none =>
+      rw [hs] at look
+      simp only at look
+      rw [sptLookup_sptFromAList] at look
+      have inProgs : label ∈ progs.map Prod.fst := (keyMem label).mp (by rw [look]; rfl)
+      obtain ⟨e, eMem, rfl⟩ := List.mem_map.mp inProgs
+      have big := fresh e eMem
+      have notStub : ¬ e.1 ∈ (stubs (width := width) conf).map Prod.fst := by
+        intro m
+        obtain ⟨st, stMem, stEq⟩ := List.mem_map.mp m
+        have := installStubsLabels conf good st stMem
+        omega
+      have targetNone : sptLookup e.1 target = none := by
+        have hd := congrFun dom e.1
+        simp only [sptDomain, hs, Option.isSome_none, Bool.false_eq_true, false_or, notStub] at hd
+        cases ht : sptLookup e.1 target with
+        | none => rfl
+        | some _ => simp [ht] at hd
+      rw [targetNone]
+      simp only
+      rw [sptLookup_sptFromAList, installAlookupCompile, look]
+      rfl
 
 /-- Installation satisfies the complete HOL assignment simulation. The word
 evaluator inherits the real-model assumption in `docs/SOUNDNESS.md` item 8. -/
@@ -654,6 +806,93 @@ theorem assignInstall_correct {width : Nat} [NeZero width] {C F : Type}
       targetOracle0
       targetCompile
       targetNext good
+    cases envEq : wordSemEnvToList cutSecond initial.permute with
+    | mk entries permute =>
+    obtain ⟨firstRestored, secondRestored⟩ :=
+      installRestoredCuts (adjustSets names) target.locals cutFirst cutSecond initial.permute permute
+        entries cutPair envEq
+    let newStore := (target.store.updateEq (.bitmapBuffer, .word (target.dataBuffer.position +
+        wordSemBytesInWord * BitVec.ofNat width q2.length))).updateEq
+      (.codeBuffer, .word (target.codeBuffer.position + BitVec.ofNat width q1.length))
+    let newCb : WordSemBuffer width 8 := ⟨target.codeBuffer.position + BitVec.ofNat width q1.length,
+      [], target.codeBuffer.spaceLeft - q1.length⟩
+    let newDb : WordSemBuffer width width := ⟨target.dataBuffer.position +
+      wordSemBytesInWord * BitVec.ofNat width q2.length, [], target.dataBuffer.spaceLeft - q2.length⟩
+    let newCode := sptUnion target.code (sptFromAList (progs.map (compilePart (width := width) conf)))
+    let returned : WordSemStateFiniteExact width C F := { e0 with
+      locals := .ln
+      localsSize := some 0
+      clock := ck
+      store := newStore
+      codeBuffer := newCb
+      dataBuffer := newDb
+      code := newCode
+      fpRegs := HolFiniteMapExact.empty
+      compileOracle := holShiftSeq 1 target.compileOracle
+      stackMax := none
+      stackSize := .ln }
+    have stubRun' : WordSemStateFiniteExact.evaluate (installCodeStub conf) e0 =
+        (some (.result (.loc n l) [.loc k 0]), returned) := stubRun
+    let restored := { returned with
+      locals := sptUnion (sptFromAList entries) (sptFromAList (sptToAList cutFirst))
+      stack := target.stack
+      localsSize := target.localsSize }
+    have popRun : WordSemStateFiniteExact.popEnv returned = some restored := by
+      simp only [returned, restored, e0, WordSemStateFiniteExact.callEnv,
+        WordSemStateFiniteExact.pushEnv, WordSemStateFiniteExact.popEnv,
+        WordSemStateFiniteExact.decClock, initial, envEq]
+      rfl
+    have domain : sptDomainEqUnion restored.locals cutFirst cutSecond := by
+      intro key
+      change sptMem key (sptUnion (sptFromAList entries) (sptFromAList (sptToAList cutFirst))) ↔ _
+      rw [secondRestored, firstRestored, sptMem_sptUnion]
+      exact or_comm
+    have cutAt : wordSemCutEnvs (adjustSets names) initial.locals = some (cutFirst, cutSecond) := by
+      simpa [initial, t10, t9, t8, t7, t6, t5, t3, t1, WordSemStateFiniteExact.setVar,
+        cutEnvs_adjustSets_insertOdd] using cutPair
+    have evens : adjustVar v1 ≠ 1 ∧ adjustVar v1 ≠ 3 ∧ adjustVar v1 ≠ 5 ∧ adjustVar v2 ≠ 1 ∧
+        adjustVar v2 ≠ 3 ∧ adjustVar v2 ≠ 5 := by simp [adjustVar]; omega
+    have r1' := reads.1
+    have r2' := reads.2.1
+    simp only [WordSemStateFiniteExact.getVar] at r1' r2'
+    have argsAt : initial.getVars [adjustVar v1, adjustVar v2, 1] = some [w1, w2, .word cpos] := by
+      simp [initial, t10, t9, t8, t7, t6, t5, t3, t1, WordSemStateFiniteExact.setVar,
+        WordSemStateFiniteExact.getVars, WordSemStateFiniteExact.getVar, installLookupInsert, evens,
+        r1', r2', cpos]
+    have namesNonempty : ¬sptDomainEmpty (adjustSets names).1 := by
+      intro empty
+      have absent := empty 0
+      exact absent ((sptMem_iff_lookup 0 _).mpr ⟨(), rfl⟩)
+    have neClock : initial.clock ≠ 0 := by
+      change wordSemMustTerminateLimit width ≠ 0
+      omega
+    have callRun := installDirectCall initial returned restored (adjustSets names) cutFirst cutSecond
+      n l (adjustVar dest) installCodeLocation [adjustVar v1, adjustVar v2, 1] [w1, w2, .word cpos]
+      (installCodeStub conf) (.loc k 0) argsAt codeIC cutAt namesNonempty neClock stubRun' popRun domain
+    let after := { restored with clock := target.clock, termdep := target.termdep }
+    have varsEq : WordSemStateFiniteExact.setVars [adjustVar dest] [.loc k 0] restored =
+        restored.setVar (adjustVar dest) (.loc k 0) := by
+      simp [WordSemStateFiniteExact.setVars, LoopSemStateFiniteExact.sptAlistInsert,
+        WordSemStateFiniteExact.setVar]
+    have termNe : t10.termdep ≠ 0 := by
+      change target.termdep ≠ 0
+      omega
+    have wrapped : WordSemStateFiniteExact.evaluate
+        (.mustTerminate (.call (some ([adjustVar dest], adjustSets names, .skip, n, l))
+          (some installCodeLocation) [adjustVar v1, adjustVar v2, 1] none)) t10 =
+        (none, after.setVar (adjustVar dest) (.loc k 0)) := by
+      rw [WordSemStateFiniteExact.evaluate]
+      simp only [termNe]
+      change (match WordSemStateFiniteExact.evaluate
+        (.call (some ([adjustVar dest], adjustSets names, .skip, n, l))
+          (some installCodeLocation) [adjustVar v1, adjustVar v2, 1] none) initial with
+        | (res, s1) => match res with
+          | some .timeOut => (some (WordSemResult.error : WordSemResult width), t10)
+          | _ => (res, {s1 with clock := t10.clock, termdep := t10.termdep})) = _
+      rw [callRun, varsEq]
+      simp [after, WordSemStateFiniteExact.setVar, t10, t9, t8, t7, t6, t5, t3, t1]
+    refine ⟨none, after.setVar (adjustVar dest) (.loc k 0), ?_, by simp, fun _ => ⟨?_, rfl⟩⟩
+    · simpa using wrapped
     sorry
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Assign
