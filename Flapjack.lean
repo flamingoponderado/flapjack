@@ -442,6 +442,8 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.WriteBignum
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.WriteLastBytes
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.FromList
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.WordToInt
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.WordFromInt
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.RefArray
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.AllocVarBinary
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.LengthByte
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.WordTest
