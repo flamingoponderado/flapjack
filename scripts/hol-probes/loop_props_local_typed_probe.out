@@ -35,3 +35,9 @@ lookup_set_vars_not_MEM_typed=¬MEM (n :num) (xs :num list) ⇒ lookup n (set_va
 cut_res_add_clock_typed=cut_res (l :δ sptree$num_map) ((res :α result option),(s :(β, γ) state)) = ((q :α result option),(r :(β, γ) state)) ∧ q ≠ SOME (TimeOut :α result) ⇒ cut_res l (res,s with clock := (ck :num) + s.clock) = (q,r with clock := ck + r.clock)
 get_vars_clock_typed=∀(vs :num list) (s :(α, β) state) (c :num). (get_vars vs (s with clock := c) :α word_loc list option) = (get_vars vs s :α word_loc list option)
 get_var_imm_add_clk_eq_typed=get_var_imm (ri :α reg_imm) ((s :(α, β) state) with clock := (ck :num)) = get_var_imm ri s
+evaluate_Loop_body_same_typed=(∀(s :(α, β) state). (evaluate ((body :α prog),s) :α result option # (α, β) state) = (evaluate ((body' :α prog),s) :α result option # (α, β) state)) ⇒ ∀(s :(α, β) state). (evaluate ((Loop (l1 :sptree$num_set) body (l2 :sptree$num_set) :α prog),s) :α result option # (α, β) state) = (evaluate ((Loop l1 body' l2 :α prog),s) :α result option # (α, β) state)
+lookup_set_vars_vars=s,ys,xs,n
+lookup_set_vars_not_MEM_vars=s,ys,xs,n
+cut_res_add_clock_vars=ck,r,q,s,res,l
+get_var_imm_add_clk_eq_vars=s,ck,ri
+evaluate_Loop_body_same_vars=l2,l1,body',body

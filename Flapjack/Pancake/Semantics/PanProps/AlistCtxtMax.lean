@@ -33,22 +33,23 @@ open Flapjack.Pancake.PanLang (ShapeHOL sizeOfShapeHOL withShapeHOL)
     `ALL_DISTINCT ns /\ LENGTH ns = size_of_shape (Comb sh) /\
      LENGTH vs = LENGTH sh ==>
      no_overlap (alist_to_fmap (ZIP (vs, ZIP (sh, with_shape sh ns))))`.
-    HOL's three conjuncts are one premise, and the binders `ns`, `sh`, `vs`
-    keep HOL's free-variable order.  The first `no_overlap` conjunct reads the
-    `ALL_DISTINCT` component through the tagged `allDistinctWithShapeHOL`; the
-    second reads the disjointness through the tagged
-    `allDistinctMemZipDisjointWithShapeHOL`.  Membership of a looked-up
+    HOL's three conjuncts are one premise, and the binders `vs`, `sh`, `ns`
+    follow the captured free-variable order
+    (`all_distinct_alist_no_overlap_vars=vs,sh,ns`).  The first `no_overlap`
+    conjunct reads the `ALL_DISTINCT` component through the tagged
+    `allDistinctWithShapeHOL`; the second reads the disjointness through the
+    tagged `allDistinctMemZipDisjointWithShapeHOL`.  Membership of a looked-up
     association is HOL's `ALOOKUP_MEM` step, rendered by the untagged
     `HolFiniteMapExact.lookup_alistToFmap_mem`. -/
 @[hol "cakeml/pancake/semantics/panPropsScript.sml" "all_distinct_alist_no_overlap"
   (fmap_as_finite_support_result_observations := [Flapjack.HolFiniteMapExact.alistToFmap])]
 theorem allDistinctAlistNoOverlapHOL {α : Type} :
-    ∀ (ns : List Nat) (sh : List ShapeHOL) (vs : List α),
+    ∀ (vs : List α) (sh : List ShapeHOL) (ns : List Nat),
       ns.Nodup ∧ ns.length = sizeOfShapeHOL (.comb sh) ∧ vs.length = sh.length →
       noOverlapHOL
         (Flapjack.HolFiniteMapExact.alistToFmap
           (vs.zip (sh.zip (withShapeHOL sh ns)))) := by
-  intro ns sh vs h
+  intro vs sh ns h
   obtain ⟨hnd, hsize, hlen⟩ := h
   refine ⟨?_, ?_⟩
   · intro x a xs hlook
@@ -81,18 +82,19 @@ theorem allDistinctAlistNoOverlapHOL {α : Type} :
     `ALL_DISTINCT ns /\ LENGTH ns = size_of_shape (Comb sh) /\
      LENGTH vs = LENGTH sh ==>
      ctxt_max (MAX_LIST ns) (alist_to_fmap (ZIP (vs, ZIP (sh, with_shape sh ns))))`.
-    Same binders, premise and carriers as `all_distinct_alist_no_overlap`;
+    Same captured free-variable order (`all_distinct_alist_ctxt_max_vars=`
+    `vs,sh,ns`), premise and carriers as `all_distinct_alist_no_overlap`;
     `MAX_LIST` is `maxList` and the bound is read through the tagged
     `elMemWithShapeHOL` and `maxList_ge_of_mem`. -/
 @[hol "cakeml/pancake/semantics/panPropsScript.sml" "all_distinct_alist_ctxt_max"
   (fmap_as_finite_support_result_observations := [Flapjack.HolFiniteMapExact.alistToFmap])]
 theorem allDistinctAlistCtxtMaxHOL {α : Type} :
-    ∀ (ns : List Nat) (sh : List ShapeHOL) (vs : List α),
+    ∀ (vs : List α) (sh : List ShapeHOL) (ns : List Nat),
       ns.Nodup ∧ ns.length = sizeOfShapeHOL (.comb sh) ∧ vs.length = sh.length →
       ctxtMaxHOL (maxList ns)
         (Flapjack.HolFiniteMapExact.alistToFmap
           (vs.zip (sh.zip (withShapeHOL sh ns)))) := by
-  intro ns sh vs h
+  intro vs sh ns h
   obtain ⟨hnd, hsize, _hlen⟩ := h
   refine ⟨Nat.zero_le _, ?_⟩
   intro v a xs hlook x hx

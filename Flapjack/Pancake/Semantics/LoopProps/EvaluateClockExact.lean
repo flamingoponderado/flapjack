@@ -109,16 +109,17 @@ theorem cutRes_add_clock (live : NumSet) (r : Option (LoopResultExact width))
     `cut_res l (res,s) = (q,r) /\ q <> SOME TimeOut ==>
      cut_res l (res,s with clock := ck + s.clock) =
        (q,r with clock := ck + r.clock)`.
-    The binders `l`, `res`, `s`, `q`, `r`, `ck` and the `ck + clock` addition
-    order are HOL's own.  The internal `cutRes_add_clock` above states the same
+    The binders follow the captured free-variable order
+    (`cut_res_add_clock_vars=ck,r,q,s,res,l`) and keep HOL's `ck + clock`
+    addition order.  The internal `cutRes_add_clock` above states the same
     fact with the commuted `clock + ck` order and with the conjunction split
     into two hypotheses, so this tagged form is its `Nat.add_comm` restatement;
     the exact-carrier qualifiers match the other clock lemmas in this module. -/
 @[hol "cakeml/pancake/semantics/loopPropsScript.sml" "cut_res_add_clock"
   (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
-theorem cutResAddClockHOL (live : NumSet) (res : Option (LoopResultExact width))
-    (s : LoopSemStateFiniteExact width F) (q : Option (LoopResultExact width))
-    (r : LoopSemStateFiniteExact width F) (ck : Nat)
+theorem cutResAddClockHOL (ck : Nat) (r : LoopSemStateFiniteExact width F)
+    (q : Option (LoopResultExact width)) (s : LoopSemStateFiniteExact width F)
+    (res : Option (LoopResultExact width)) (live : NumSet)
     (h : cutRes live (res, s) = (q, r) ∧ q ≠ some .timeOut) :
     cutRes live (res, { s with clock := ck + s.clock }) =
       (q, { r with clock := ck + r.clock }) := by
@@ -129,13 +130,14 @@ theorem cutResAddClockHOL (live : NumSet) (res : Option (LoopResultExact width))
 
 /-- Exact HOL `get_var_imm_add_clk_eq` (`loopPropsScript.sml:251-255`):
     `get_var_imm ri (s with clock := ck) = get_var_imm ri s`.  The binders
-    `ri`, `s`, `ck` follow the source; `get_var_imm` is the tagged `getVarImm`
+    follow the captured free-variable order (`get_var_imm_add_clk_eq_vars=`
+    `s,ck,ri`); `get_var_imm` is the tagged `getVarImm`
     over the exact `locals` `num_map`, which the clock update does not touch. -/
 @[hol "cakeml/pancake/semantics/loopPropsScript.sml" "get_var_imm_add_clk_eq"
   (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
 theorem getVarImm_add_clock_eq {width : Nat} [NeZero width] {F : Type}
-    (operand : RegImm (BitVec width))
-    (state : LoopSemStateFiniteExact width F) (ck : Nat) :
+    (state : LoopSemStateFiniteExact width F) (ck : Nat)
+    (operand : RegImm (BitVec width)) :
     getVarImm operand { state with clock := ck } = getVarImm operand state := by
   cases operand with
   | reg name => rfl

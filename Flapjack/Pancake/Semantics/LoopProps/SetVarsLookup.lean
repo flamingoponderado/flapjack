@@ -80,8 +80,9 @@ theorem memOfHolAlookupZip {β : Type} :
        case ALOOKUP (ZIP (xs,ys)) n of
        | NONE => lookup n s.locals
        | SOME v => SOME v`.
-    The free variables are ordered `n`, `xs`, `ys`, `s` by their left-to-right
-    occurrence in the source. `lookup` is `sptLookup` on the exact `num_map`
+    The binders follow the captured free-variable order
+    (`lookup_set_vars_vars=s,ys,xs,n`): state, values, names, then `n`.
+    `lookup` is `sptLookup` on the exact `num_map`
     `locals`, `ALOOKUP` is `holAlookup`, `ZIP` is `List.zip`, `set_vars` is the
     tagged `setVars`, and `s` is the exact `LoopSemStateFiniteExact` carrier
     whose `globals` `|->` field and positive word width are recorded by the two
@@ -89,8 +90,8 @@ theorem memOfHolAlookupZip {β : Type} :
 @[hol "cakeml/pancake/semantics/loopPropsScript.sml" "lookup_set_vars"
   (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
 theorem lookupSetVarsHOL {width : Nat} [NeZero width] {F : Type}
-    (n : Nat) (names : List Nat) (values : List (WordLocW width))
-    (state : LoopSemStateFiniteExact width F) :
+    (state : LoopSemStateFiniteExact width F) (values : List (WordLocW width))
+    (names : List Nat) (n : Nat) :
     sptLookup n (setVars names values state).locals =
       match holAlookup (names.zip values) n with
       | none => sptLookup n state.locals
@@ -114,14 +115,14 @@ theorem lookupSetVarsHOL {width : Nat} [NeZero width] {F : Type}
 /-- Exact port of HOL `loopProps$lookup_set_vars_not_MEM`
     (`cakeml/pancake/semantics/loopPropsScript.sml:310-317`):
     `~MEM n xs ⇒ lookup n (set_vars xs ys s).locals = lookup n s.locals`.
-    Same free-variable order and carriers as `lookup_set_vars`; the conclusion
-    follows from the tagged `lookupSetVarsHOL` and the untagged membership
-    helper `memOfHolAlookupZip`. -/
+    Same captured free-variable order and carriers as `lookup_set_vars`; the
+    conclusion follows from the tagged `lookupSetVarsHOL` and the untagged
+    membership helper `memOfHolAlookupZip`. -/
 @[hol "cakeml/pancake/semantics/loopPropsScript.sml" "lookup_set_vars_not_MEM"
   (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
 theorem lookupSetVarsNotMemHOL {width : Nat} [NeZero width] {F : Type}
-    (n : Nat) (names : List Nat) (values : List (WordLocW width))
-    (state : LoopSemStateFiniteExact width F) :
+    (state : LoopSemStateFiniteExact width F) (values : List (WordLocW width))
+    (names : List Nat) (n : Nat) :
     n ∉ names → sptLookup n (setVars names values state).locals = sptLookup n state.locals := by
   intro hn
   rw [lookupSetVarsHOL]
