@@ -365,3 +365,5 @@ val _ = emit_exported "nested_seq_pure_evaluation_typed" "nested_seq_pure_evalua
 val _ = emit_exported "survives_def_typed" "survives_def";
 val _ = emit_exported "survives_nested_seq_intro_typed" "survives_nested_seq_intro";
 val _ = emit_exported "unassigned_vars_evaluate_same_typed" "unassigned_vars_evaluate_same";
+val _ = emit_exported "lookup_set_vars_typed" "lookup_set_vars";
+val _ = emit_exported "lookup_set_vars_not_MEM_typed" "lookup_set_vars_not_MEM";
