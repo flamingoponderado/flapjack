@@ -971,4 +971,46 @@ val _ = emit "compile_inc_progs_for_eval_def_typed" (DB.fetch "backend" "compile
 val _ = emit "SND_flat_to_clos_inc_compile_typed"
   (REWRITE_CONV [flat_to_closTheory.inc_compile_decs_def]
     ``SND (flat_to_clos$inc_compile_decs p)``);
+val _ = emit "compile_inc_progs_defs_typed"
+  (LIST_CONJ [backendTheory.compile_inc_progs_def,
+    prove (``keep_progs T = I``, simp [backendTheory.keep_progs_def, FUN_EQ_THM])]);
+val _ = print ("backend_from_data_tuple_cc_def_hypotheses=" ^
+  Int.toString (length (hyp (DB.fetch "backendProof" "backend_from_data_tuple_cc_def"))) ^ "\n");
+val _ = emit_exported "backend_from_data_tuple_cc_def_typed" "backend_from_data_tuple_cc_def";
+val _ = print ("backend_from_flat_tuple_cc_def_hypotheses=" ^
+  Int.toString (length (hyp (DB.fetch "backendProof" "backend_from_flat_tuple_cc_def"))) ^ "\n");
+val _ = emit_exported "backend_from_flat_tuple_cc_def_typed" "backend_from_flat_tuple_cc_def";
+val _ = print ("backend_from_flat_tuple_cc_eq_compile_inc_progs_hypotheses=" ^
+  Int.toString (length (hyp (DB.fetch "backendProof" "backend_from_flat_tuple_cc_eq_compile_inc_progs"))) ^ "\n");
+val _ = emit_exported "backend_from_flat_tuple_cc_eq_compile_inc_progs_typed" "backend_from_flat_tuple_cc_eq_compile_inc_progs";
+val _ = capture "source_to_source_semantics_prog_equiv_typed" "source_to_source_semantics_prog_equiv";
+val _ = capture "source_to_source_semantics_prog_intro_typed" "source_to_source_semantics_prog_intro";
+val _ = capture "eval_oracle_semantics_prog_intro_typed" "eval_oracle_semantics_prog_intro";
+val _ = capture "source_to_source_semantics_prog_oracle_intro_typed" "source_to_source_semantics_prog_oracle_intro";
+val _ = capture "cake_orac_extended_wf_typed" "cake_orac_extended_wf";
+(* `id` is a bound variable in the source statement; a later theory in the
+   probe's load path declares a constant `id`, so hide it for this parse. *)
+val _ = print ("cake_orac_eq_get_oracle_id_constants=" ^
+  Int.toString (length (Term.decls "id")) ^ "\n");
+val _ = Parse.hide "id";
+val _ = capture "cake_orac_eq_get_oracle_typed" "cake_orac_eq_get_oracle";
+val _ = Parse.reveal "id";
+val _ = capture "step_invs_cake_orac_typed" "step_invs_cake_orac";
+val _ = print ("source_eval_to_flat_semantics_hypotheses=" ^
+  Int.toString (length (hyp (DB.fetch "backendProof" "source_eval_to_flat_semantics"))) ^ "\n");
+val _ = emit_exported "source_eval_to_flat_semantics_typed" "source_eval_to_flat_semantics";
+val _ = print ("pad_code_no_share_mem_inst_hypotheses=" ^
+  Int.toString (length (hyp (DB.fetch "backendProof" "pad_code_no_share_mem_inst"))) ^ "\n");
+val _ = emit_exported "pad_code_no_share_mem_inst_typed" "pad_code_no_share_mem_inst";
+val _ = emit_exported "enc_sec_list_no_share_mem_inst_typed" "enc_sec_list_no_share_mem_inst";
+val _ = emit_exported "enc_secs_again_no_share_mem_inst_typed" "enc_secs_again_no_share_mem_inst";
+val _ = emit_exported "upd_lab_len_no_share_mem_inst_typed" "upd_lab_len_no_share_mem_inst";
+val _ = emit_exported "remove_labels_loop_no_share_mem_inst_typed" "remove_labels_loop_no_share_mem_inst";
+val _ = emit_exported "compile_lab_no_share_mem_IMP_mmio_pcs_min_index_typed" "compile_lab_no_share_mem_IMP_mmio_pcs_min_index";
+val _ = emit_exported "cake_orac_clos_syntax_oracle_ok_typed" "cake_orac_clos_syntax_oracle_ok";
+val _ = emit_exported "compile_correct'_typed" "compile_correct'";
+val _ = emit_exported "compile_correct_typed" "compile_correct";
+val _ = emit_exported "compile_correct_is_safe_for_space_typed" "compile_correct_is_safe_for_space";
+val _ = emit_exported "the_EvalDecs_def_typed" "the_EvalDecs_def";
+val _ = emit_exported "compile_correct_eval_typed" "compile_correct_eval";
 val _ = print "backend_proof_more_probe_end=1\n";
