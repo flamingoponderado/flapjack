@@ -83,10 +83,7 @@ theorem esgcFree_naivePatternMatch_hol (trace : Tra) (todo : List (FlatLang.Pat 
   induction todo using naivePatternMatch.induct trace with
   | case1 => simpa [naivePatternMatch] using esgcFree_mkBool trace true
   | case2 value rest ih | case3 value rest _ ih =>
-    simp only [naivePatternMatch]
-    apply ih
-    intro pattern expression member
-    exact safe pattern expression (by simp [member])
+    grind [naivePatternMatch]
   | case4 value rest literal ih =>
     have valueSafe := safe (.plit literal) value (by simp)
     have restSafe : ∀ pattern expression, (pattern, expression) ∈ rest → esgcFree expression := by
@@ -117,13 +114,7 @@ theorem esgcFree_naivePatternMatch_hol (trace : Tra) (todo : List (FlatLang.Pat 
       · exact safe pattern expression (by simp [member])
     · exact esgcFree_mkBool trace false
   | case7 value rest pattern name ih =>
-    simp only [naivePatternMatch]
-    apply ih
-    intro pattern' expression member
-    simp only [List.mem_cons, Prod.mk.injEq] at member
-    rcases member with ⟨_, rfl⟩ | member
-    · exact safe (.pas pattern name) expression (by simp)
-    · exact safe pattern' expression (by simp [member])
+    grind [naivePatternMatch]
   | case8 value rest pattern ih =>
     have valueSafe := safe (.pref pattern) value (by simp)
     simp only [naivePatternMatch]
@@ -263,10 +254,7 @@ theorem setGlobals_naivePatternMatch (t : Tra) (xs : List (FlatLang.Pat × FlatL
   induction xs using naivePatternMatch.induct t with
   | case1 => simpa [naivePatternMatch] using setGlobals_mkBool t true
   | case2 value rest ih | case3 value rest _ ih =>
-    simp only [naivePatternMatch]
-    apply ih
-    intro pattern expression member
-    exact todoSafe pattern expression (by simp [member])
+    grind [naivePatternMatch]
   | case4 value rest literal ih =>
     have valueSafe := todoSafe (.plit literal) value (by simp)
     have restSafe : ∀ pattern expression, (pattern, expression) ∈ rest → setGlobals expression = emptyGlobalBag := by
@@ -297,13 +285,7 @@ theorem setGlobals_naivePatternMatch (t : Tra) (xs : List (FlatLang.Pat × FlatL
       · exact todoSafe pattern expression (by simp [member])
     · exact setGlobals_mkBool t false
   | case7 value rest pattern name ih =>
-    simp only [naivePatternMatch]
-    apply ih
-    intro pattern' expression member
-    simp only [List.mem_cons, Prod.mk.injEq] at member
-    rcases member with ⟨_, rfl⟩ | member
-    · exact todoSafe (.pas pattern name) expression (by simp)
-    · exact todoSafe pattern' expression (by simp [member])
+    grind [naivePatternMatch]
   | case8 value rest pattern ih =>
     have valueSafe := todoSafe (.pref pattern) value (by simp)
     simp only [naivePatternMatch]
@@ -383,17 +365,9 @@ theorem setGlobals_compilePatBindings (t : Tra) (i : Nat)
     intro _
     simp [compilePatBindings]
   | case2 i key expression rest ih =>
-    intro safe
-    rw [compilePatBindings]
-    apply ih
-    intro p k e member
-    exact safe p k e (by simp [member])
+    grind [compilePatBindings]
   | case3 i key expression rest lit ih =>
-    intro safe
-    rw [compilePatBindings]
-    apply ih
-    intro p k e member
-    exact safe p k e (by simp [member])
+    grind [compilePatBindings]
   | case4 i key expression rest name used continuation compiled ih =>
     intro safe
     have valueSafe := safe (.pvar name) key expression (by simp)
