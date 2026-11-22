@@ -5090,6 +5090,7 @@ import Flapjack.Pancake.Proofs.PanToTarget.X64NativeSourceCorrect
 import Flapjack.Pancake.Proofs.PanToTarget.X64NativeCLICorrect
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.LoadBignum
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Bignum.EqEval
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.Mod
 /-!
 # Flapjack in Lean
 
