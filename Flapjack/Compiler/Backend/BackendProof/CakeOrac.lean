@@ -78,6 +78,61 @@ theorem cakeConfigs_eq {width : Nat} [NeZero width] {α : Type}
 @[hol "cakeml/compiler/backend/proofs/backendProofScript.sml" "keep_progs_T"]
 theorem keepProgs_true {α : Type} : (keepProgs true : List α → List α) = id := rfl
 
+/-- Exact HOL `compile_inc_progs_defs` (`backendProofScript.sml:493-494`,
+`[local]`): `LIST_CONJ [compile_inc_progs_def, keep_progs_T]`. The first
+conjunct restates the reviewed `compile_inc_progs_def` equation body for body;
+the second is `keep_progs_T`. HOL's single type variable `'a` is the word
+index in the first conjunct and the list element type in the second; Lean
+keeps the positive width and the element type `α` as separate universally
+quantified binders. -/
+@[hol "cakeml/compiler/backend/proofs/backendProofScript.sml" "compile_inc_progs_defs"
+  (words_as_type_indexed_bitvec)]
+theorem compileIncProgs_defs {width : Nat} [NeZero width] {α : Type} :
+    (∀ (k : Bool) (asmConf : AsmConfigExact width) (c : Flapjack.Compiler.Backend.Backend.Config)
+        (pTup : (Nat × Nat) × List AstHOL.Dec),
+      compileIncProgs k asmConf c pTup =
+      let (envId, p) := pTup
+      let ps : BackendProgs width := { emptyProgs with envId := envId, sourceProg := p }
+      let p := SourceToSource.compile p
+      let (c', p) := SourceToFlat.incCompile envId c.sourceConf p
+      let ps := { ps with flatProg := keepProgs k p }
+      let c := { c with sourceConf := c' }
+      let p : List ClosLang.Exp × List (Nat × Nat × ClosLang.Exp) := FlatToClos.incCompileDecs p
+      let ps := { ps with closProg := Prod.map (keepProgs k) (keepProgs k) p }
+      let (c', p) := ClosToBvl.closToBvlCompileInc c.closConf p
+      let c := { c with closConf := c' }
+      let ps := { ps with bvlProg := keepProgs k p }
+      let (c', p) := BvlToBvi.bvlToBviCompileIncAll c.bvlConf p
+      let c := { c with bvlConf := c' }
+      let ps := { ps with bviProg := keepProgs k p }
+      let p := BviToData.compileProg p
+      let ps := { ps with dataProg := keepProgs k p }
+      let dc := ensureFpConfOk asmConf c.dataConf
+      let p : List (Nat × Nat × WordLangProgHOL (BitVec width)) := p.map (DataToWord.compilePart dc)
+      let regCount1 := asmConf.regCount - (5 + asmConf.avoidRegs.length)
+      let p := p.map fun p => WordToWord.fullCompileSingle asmConf.twoRegArith regCount1
+        c.wordToWordConf.regAlg asmConf (p, none)
+      let ps := { ps with wordProg := keepProgs k p }
+      let bm0 := c.wordConf.bitmapsLength
+      let (p, _fs, bm) := WordToStack.Native.compileWordToStackNative asmConf c.stackConf.perfCalls
+        regCount1 p (.nil, bm0)
+      let curBm := appListAppend bm.1
+      let c := { c with wordConf := { c.wordConf with bitmapsLength := bm.2 } }
+      let ps := { ps with stackProg := keepProgs k p, curBm := curBm }
+      let regCount2 := asmConf.regCount - (3 + asmConf.avoidRegs.length)
+      let p := StackToLab.compileNoStubs c.stackConf.regNames c.stackConf.jump asmConf.addrOffset
+        regCount2 p
+      let ps := { ps with labProg := keepProgs k p }
+      let target := LabToTarget.compile asmConf c.labConf p
+      let ps := { ps with targetProg := target.map fun (bytes, _) => (bytes, curBm) }
+      let c := { c with labConf :=
+        (match target with
+          | none => id
+          | some (_, c') => fun _ => c') c.labConf }
+      (c, ps)) ∧
+    (keepProgs true : List α → List α) = id :=
+  ⟨fun _ _ _ _ => rfl, rfl⟩
+
 /-- Exact HOL `cake_orac_0` (`backendProofScript.sml:591-596`). -/
 @[hol "cakeml/compiler/backend/proofs/backendProofScript.sml" "cake_orac_0"
   (words_as_type_indexed_bitvec)]

@@ -971,4 +971,17 @@ val _ = emit "compile_inc_progs_for_eval_def_typed" (DB.fetch "backend" "compile
 val _ = emit "SND_flat_to_clos_inc_compile_typed"
   (REWRITE_CONV [flat_to_closTheory.inc_compile_decs_def]
     ``SND (flat_to_clos$inc_compile_decs p)``);
+val _ = emit "compile_inc_progs_defs_typed"
+  (LIST_CONJ [backendTheory.compile_inc_progs_def,
+    prove (``keep_progs T = I``, simp [backendTheory.keep_progs_def, FUN_EQ_THM])]);
+val _ = capture "cake_orac_extended_wf_typed" "cake_orac_extended_wf";
+(* `id` is a bound variable in the source statement; a later theory in the
+   probe's load path declares a constant `id`, so hide it for this parse. *)
+val _ = print ("cake_orac_eq_get_oracle_id_constants=" ^
+  Int.toString (length (Term.decls "id")) ^ "\n");
+val _ = Parse.hide "id";
+val _ = capture "cake_orac_eq_get_oracle_typed" "cake_orac_eq_get_oracle";
+val _ = Parse.reveal "id";
+val _ = capture "step_invs_cake_orac_typed" "step_invs_cake_orac";
+val _ = emit_exported "compile_correct'_typed" "compile_correct'";
 val _ = print "backend_proof_more_probe_end=1\n";

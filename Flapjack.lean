@@ -344,6 +344,10 @@ import Flapjack.Compiler.Backend.BackendProof.CompileCorrect
 import Flapjack.Compiler.Backend.BackendProof.BagDistinct
 import Flapjack.Compiler.Backend.BackendProof.NameDistinct
 import Flapjack.Compiler.Backend.BackendProof.LabOracle
+import Flapjack.Compiler.Backend.BackendProof.SourceSemantics
+import Flapjack.Compiler.Backend.BackendProof.NoShareMem
+import Flapjack.Compiler.Backend.BackendProof.FromTupleCc
+import Flapjack.Compiler.Backend.BackendProof.SourceOracle
 import Flapjack.Compiler.Backend.Backend.ToTarget
 import Flapjack.Compiler.Backend.DataToWord.Proofs.OptionLe
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Limits

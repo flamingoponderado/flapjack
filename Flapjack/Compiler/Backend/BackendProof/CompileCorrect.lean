@@ -3,6 +3,7 @@ module
 public import Flapjack.SemanticsProps.Clock
 public import Flapjack.SemanticsProps.Determinism
 public import Mathlib.Data.Set.Basic
+public import Flapjack.HolArb
 
 @[expose] public section
 
@@ -26,5 +27,20 @@ theorem semanticsProg_sing {σ : Type} (s : State σ) (env : SemEnv Value) (prog
   · have hy' : y = x := hy
     subst hy'
     exact hx
+
+/-- `EvalDecsState` is inhabited (Flapjack infrastructure for HOL's
+unspecified `the_EvalDecs` completion below; no correctness content). -/
+instance : Nonempty EvalDecsState :=
+  ⟨{ compiler := fun _ => none, compilerState := .litv (.intLit 0),
+     envIdCounter := (0, 0, 0), decodeDecs := fun _ => none }⟩
+
+/-- Exact HOL `the_EvalDecs_def` (`backendProofScript.sml:4482-4484`): the
+single clause `the_EvalDecs (EvalDecs x) = x`. HOL leaves the `EvalOracle`
+case unspecified; as for the reviewed `the_Litv_*` selectors it is the shared
+unspecified value `Flapjack.holArb`. -/
+@[hol "cakeml/compiler/backend/proofs/backendProofScript.sml" "the_EvalDecs_def"]
+noncomputable def theEvalDecs : EvalState → EvalDecsState
+  | .evalDecs x => x
+  | _ => Flapjack.holArb EvalDecsState
 
 end Flapjack.Compiler.Backend.BackendProof
