@@ -116,10 +116,10 @@ and `s1` occur nowhere in the statement and are omitted. -/
 @[hol "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml" "InstallCode_code_thm"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem installCode_correct {width : Nat} [NeZero width] {C F : Type}
-    (t : WordSemStateFiniteExact width C F) (c : Config) (hv1 : DataSem.Value)
+    (t : WordSemStateFiniteExact width C F) (c : Config) (hv1 : Flapjack.Compiler.Backend.DataSem.Value)
     (q1 : List (BitVec 8)) (a1 a2 retVal bptr : WordLocW width)
-    (vars : List (DataSem.Value × WordLocW width)) (sp : Nat)
-    (refs : Spt (BvlSem.Ref DataSem.Value)) (ts : Nat)
+    (vars : List (Flapjack.Compiler.Backend.DataSem.Value × WordLocW width)) (sp : Nat)
+    (refs : Spt (BvlSem.Ref Flapjack.Compiler.Backend.DataSem.Value)) (ts : Nat)
     (h : memoryRel c t.be ts refs sp t.store t.memory t.mdomain ((hv1, a1) :: vars) ∧
       sptLookup installCodeLocation t.code = some (4, installCodeStub c) ∧
       sptLookup installDataLocation t.code = some (4, installDataStub c) ∧
@@ -127,7 +127,8 @@ theorem installCode_correct {width : Nat} [NeZero width] {C F : Type}
       DataSem.valueToBytes hv1 = some q1 ∧
       q1.length ≤ t.codeBuffer.spaceLeft ∧ q1.length < t.clock ∧
       t.getVar 0 = some retVal ∧ t.getVar 2 = some a1 ∧ t.getVar 4 = some a2 ∧
-      t.getVar 6 = some (.word (t.codeBuffer.position + BitVec.ofNat width t.codeBuffer.buffer.length)) ∧
+      t.getVar 6 = some (.word (t.codeBuffer.position + BitVec.ofNat width t.codeBuffer.buffer.length :
+        BitVec width)) ∧
       goodDimindex width) :
     ∃ (lsz smx : Option Nat),
       WordSemStateFiniteExact.evaluate (installCodeStub c) t =
@@ -293,10 +294,10 @@ and tail-calls the installation stub. HOL's universally quantified `v1` and
 @[hol "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml" "InstallData_code_thm"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem installData_correct {width : Nat} [NeZero width] {C F : Type}
-    (t : WordSemStateFiniteExact width C F) (c : Config) (hv2 : DataSem.Value)
+    (t : WordSemStateFiniteExact width C F) (c : Config) (hv2 : Flapjack.Compiler.Backend.DataSem.Value)
     (q2 : List (BitVec 64)) (a1 a2 retVal : WordLocW width)
-    (vars : List (DataSem.Value × WordLocW width)) (sp : Nat)
-    (refs : Spt (BvlSem.Ref DataSem.Value)) (ts : Nat)
+    (vars : List (Flapjack.Compiler.Backend.DataSem.Value × WordLocW width)) (sp : Nat)
+    (refs : Spt (BvlSem.Ref Flapjack.Compiler.Backend.DataSem.Value)) (ts : Nat)
     (h : memoryRel c t.be ts refs sp t.store t.memory t.mdomain ((hv2, a2) :: vars) ∧
       sptLookup installDataLocation t.code = some (4, installDataStub c) ∧
       sptLookup installLocation t.code = some (3, installCode c) ∧
@@ -304,7 +305,7 @@ theorem installData_correct {width : Nat} [NeZero width] {C F : Type}
       q2.length ≤ t.dataBuffer.spaceLeft ∧ q2.length < t.clock ∧
       t.getVar 0 = some retVal ∧
       t.getVar 2 = some (.word (t.dataBuffer.position +
-        wordSemBytesInWord * BitVec.ofNat width t.dataBuffer.buffer.length)) ∧
+        wordSemBytesInWord * BitVec.ofNat width t.dataBuffer.buffer.length : BitVec width)) ∧
       t.getVar 4 = some a2 ∧ t.getVar 6 = some a1 ∧
       goodDimindex width) :
     ∃ (smx lsz : Option Nat),

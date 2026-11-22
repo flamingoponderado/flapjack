@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.BignumHalt
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.InstallStubs
 public import Flapjack.Compiler.Backend.Semantics.DataProps.AppWithLocals
 
 @[expose] public section
