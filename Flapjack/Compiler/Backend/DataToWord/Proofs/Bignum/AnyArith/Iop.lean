@@ -71,7 +71,10 @@ theorem iop_call_step {width : Nat} [NeZero width] {C F : Type}
       t2.stack = (bignumCallState t9 (.loc l1 l2)).stack ∧
       WordBignum.stateRel (iopFinal i j iop (List.replicate n 0) zs1 (t9.clock - 1) l2') t2
         (xx4, xx5) (bignumCallState t9 (.loc l1 l2)) frame ∧
-      t2.code = t9.code := by
+      t2.code = t9.code ∧
+      WordSemStateFiniteExact.evaluate (.seq xx1 (.return 0 [0])) (bignumCallState t9 (.loc l1 l2)) =
+        (some (.result (.loc anyArithLocation 3) [.loc anyArithLocation 3]),
+          WordSemStateFiniteExact.flushState false t2) := by
   set t3 := bignumCallState t9 (.loc l1 l2) with ht3
   have c3 : t3.clock = t9.clock - 1 := rfl
   have hc0 : t9.clock ≠ 0 := by omega
@@ -97,12 +100,12 @@ theorem iop_call_step {width : Nat} [NeZero width] {C F : Type}
     WordBignum.evaluate_mc_iop i j 2 frame (List.replicate n 0) t3 (.loc anyArithLocation 3)
       bignumLocation t3.clock iop xx1 xx2 xx3 (xx4, xx5) rel3 hdiv hcomp g0 hh2 hh1
       (by simpa [c3] using hmax) (by simpa using hlen) hw (by simpa using hzs) hlt heq hdec good
-  refine ⟨t2, zs1, l2', ?_, by simpa using hlen2, hstack, hrel2, hcode2⟩
   have hret : WordSemStateFiniteExact.evaluate (.seq xx1 (.return 0 [0])) t3 =
       (some (.result (.loc anyArithLocation 3) [.loc anyArithLocation 3]),
         WordSemStateFiniteExact.flushState false t2) := by
     rw [hrun, evaluate_return]
     simp [hg0, WordSemStateFiniteExact.getVars]
+  refine ⟨t2, zs1, l2', ?_, by simpa using hlen2, hstack, hrel2, hcode2, hret⟩
   exact call_bignum hloc hcode hc0 hret (by simpa [WordSemStateFiniteExact.flushState] using hstack)
     rest
 

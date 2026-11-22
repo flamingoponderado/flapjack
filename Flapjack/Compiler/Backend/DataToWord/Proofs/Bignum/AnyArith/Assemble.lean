@@ -20,8 +20,6 @@ step of `AnyArith_thm`). -/
 theorem stackMax_after {width : Nat} [NeZero width] {C F : Type}
     {t9 F2 : WordSemStateFiniteExact width C F} {ret : WordLocW width}
     {P : WordLangProgHOL (BitVec width)} {res : Option (WordSemResult width)}
-    (h : BackendProps.optionLe (Option.map₂ (· + ·) (wordSemStackSize t9.stack) t9.localsSize)
-      t9.stackMax)
     (hev : WordSemStateFiniteExact.evaluate P (bignumCallState t9 ret) = (res, F2)) :
     BackendProps.optionLe (Option.map₂ (· + ·) (wordSemStackSize t9.stack) (some 0)) F2.stackMax := by
   have sm := WordSemStateFiniteExact.evaluate_stack_max _ _ _ _ hev
