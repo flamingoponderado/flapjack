@@ -64,15 +64,11 @@ theorem knownOpLocations (op : ClosLang.Op) (args : List ValApprox)
         | none => exact ⟨by simp [valApproxLocations], globals⟩
         | some value => exact ⟨by simpa [h] using globals index value h, globals⟩
       | cons x xs =>
-        simp only [knownOpHOL, Prod.mk.injEq] at known
-        rcases known with ⟨rfl, rfl⟩
-        exact ⟨by simp [valApproxLocations], globals⟩
+        grind [knownOpHOL, valApproxLocations]
     | setGlobal index =>
       cases args with
       | nil =>
-        simp only [knownOpHOL, Prod.mk.injEq] at known
-        rcases known with ⟨rfl, rfl⟩
-        exact ⟨by simp [valApproxLocations], globals⟩
+        grind [knownOpHOL, valApproxLocations]
       | cons x xs =>
         have xSafe := safe x (by simp)
         simp only [knownOpHOL, Prod.mk.injEq] at known
@@ -84,19 +80,13 @@ theorem knownOpLocations (op : ClosLang.Op) (args : List ValApprox)
           | none => exact xSafe
           | some old => exact valApproxLocationsMerge old x ⟨globals index old h, xSafe⟩
     | _ =>
-      simp only [knownOpHOL, Prod.mk.injEq] at known
-      rcases known with ⟨rfl, rfl⟩
-      exact ⟨by simp [valApproxLocations], globals⟩
+      grind [knownOpHOL, valApproxLocations]
   | blockOp op =>
     cases op with
     | cons tag =>
-      simp only [knownOpHOL, Prod.mk.injEq] at known
-      rcases known with ⟨rfl, rfl⟩
-      exact ⟨by simpa [valApproxLocations] using safe, globals⟩
+      grind [knownOpHOL, valApproxLocations]
     | _ =>
-      simp only [knownOpHOL, Prod.mk.injEq] at known
-      rcases known with ⟨rfl, rfl⟩
-      exact ⟨by simp [valApproxLocations], globals⟩
+      grind [knownOpHOL, valApproxLocations]
   | intOp op =>
     cases op <;> simp only [knownOpHOL, Prod.mk.injEq] at known <;>
       rcases known with ⟨rfl, rfl⟩ <;> exact ⟨by simp [valApproxLocations], globals⟩
@@ -105,9 +95,7 @@ theorem knownOpLocations (op : ClosLang.Op) (args : List ValApprox)
     | el =>
       cases args with
       | nil =>
-        simp only [knownOpHOL, Prod.mk.injEq] at known
-        rcases known with ⟨rfl, rfl⟩
-        exact ⟨by simp [valApproxLocations], globals⟩
+        grind [knownOpHOL, valApproxLocations]
       | cons x xs =>
         cases xs with
         | nil =>
@@ -126,13 +114,9 @@ theorem knownOpLocations (op : ClosLang.Op) (args : List ValApprox)
             cases x <;> cases y <;> simp only [knownOpHOL, Prod.mk.injEq] at known <;>
               rcases known with ⟨rfl, rfl⟩ <;> exact ⟨by simp [valApproxLocations], globals⟩
     | _ =>
-      simp only [knownOpHOL, Prod.mk.injEq] at known
-      rcases known with ⟨rfl, rfl⟩
-      exact ⟨by simp [valApproxLocations], globals⟩
+      grind [knownOpHOL, valApproxLocations]
   | _ =>
-    simp only [knownOpHOL, Prod.mk.injEq] at known
-    rcases known with ⟨rfl, rfl⟩
-    exact ⟨by simp [valApproxLocations], globals⟩
+    grind [knownOpHOL, valApproxLocations]
 
 
 /-- The inlining decision only extracts bodies with present function locations. -/

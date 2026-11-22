@@ -74,15 +74,11 @@ theorem knownOpNoLabels (op : ClosLang.Op) (args : List ValApprox)
         | none => exact ⟨by simp [valApproxNoLabels], globals⟩
         | some value => exact ⟨by simpa [h] using globals index value h, globals⟩
       | cons x xs =>
-        simp only [knownOpHOL, Prod.mk.injEq] at known
-        rcases known with ⟨rfl, rfl⟩
-        exact ⟨by simp [valApproxNoLabels], globals⟩
+        grind [knownOpHOL, valApproxNoLabels]
     | setGlobal index =>
       cases args with
       | nil =>
-        simp only [knownOpHOL, Prod.mk.injEq] at known
-        rcases known with ⟨rfl, rfl⟩
-        exact ⟨by simp [valApproxNoLabels], globals⟩
+        grind [knownOpHOL, valApproxNoLabels]
       | cons x xs =>
         have xSafe := safe x (by simp)
         simp only [knownOpHOL, Prod.mk.injEq] at known
@@ -94,19 +90,13 @@ theorem knownOpNoLabels (op : ClosLang.Op) (args : List ValApprox)
           | none => exact xSafe
           | some old => exact valApproxNoLabelsMerge old x ⟨globals index old h, xSafe⟩
     | _ =>
-      simp only [knownOpHOL, Prod.mk.injEq] at known
-      rcases known with ⟨rfl, rfl⟩
-      exact ⟨by simp [valApproxNoLabels], globals⟩
+      grind [knownOpHOL, valApproxNoLabels]
   | blockOp op =>
     cases op with
     | cons tag =>
-      simp only [knownOpHOL, Prod.mk.injEq] at known
-      rcases known with ⟨rfl, rfl⟩
-      exact ⟨by simpa [valApproxNoLabels] using safe, globals⟩
+      grind [knownOpHOL, valApproxNoLabels]
     | _ =>
-      simp only [knownOpHOL, Prod.mk.injEq] at known
-      rcases known with ⟨rfl, rfl⟩
-      exact ⟨by simp [valApproxNoLabels], globals⟩
+      grind [knownOpHOL, valApproxNoLabels]
   | intOp op =>
     cases op <;> simp only [knownOpHOL, Prod.mk.injEq] at known <;>
       rcases known with ⟨rfl, rfl⟩ <;> exact ⟨by simp [valApproxNoLabels], globals⟩
@@ -115,9 +105,7 @@ theorem knownOpNoLabels (op : ClosLang.Op) (args : List ValApprox)
     | el =>
       cases args with
       | nil =>
-        simp only [knownOpHOL, Prod.mk.injEq] at known
-        rcases known with ⟨rfl, rfl⟩
-        exact ⟨by simp [valApproxNoLabels], globals⟩
+        grind [knownOpHOL, valApproxNoLabels]
       | cons x xs =>
         cases xs with
         | nil =>
@@ -136,13 +124,9 @@ theorem knownOpNoLabels (op : ClosLang.Op) (args : List ValApprox)
             cases x <;> cases y <;> simp only [knownOpHOL, Prod.mk.injEq] at known <;>
               rcases known with ⟨rfl, rfl⟩ <;> exact ⟨by simp [valApproxNoLabels], globals⟩
     | _ =>
-      simp only [knownOpHOL, Prod.mk.injEq] at known
-      rcases known with ⟨rfl, rfl⟩
-      exact ⟨by simp [valApproxNoLabels], globals⟩
+      grind [knownOpHOL, valApproxNoLabels]
   | _ =>
-    simp only [knownOpHOL, Prod.mk.injEq] at known
-    rcases known with ⟨rfl, rfl⟩
-    exact ⟨by simp [valApproxNoLabels], globals⟩
+    grind [knownOpHOL, valApproxNoLabels]
 
 
 /-- A body selected from a label-free approximation is label-free. -/
