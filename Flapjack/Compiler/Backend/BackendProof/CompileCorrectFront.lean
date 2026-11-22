@@ -1,5 +1,8 @@
 import Flapjack.Compiler.Backend.BackendProof.CompileCorrectPrereqs
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.NoMat
+import Flapjack.Compiler.Backend.BackendProof.FromConfEx
+import Flapjack.Compiler.Backend.BackendProof.CakeOracEqs
+import Flapjack.Compiler.Backend.ClosToBvl.Proofs.WholeSemantics
 
 set_option autoImplicit false
 
@@ -92,5 +95,90 @@ theorem compileCorrectPrime_sourceToClos {width : Nat} [NeZero width] {F : Type}
     exact hnf hsem
   rw [hflat ⟨hnfFlat, hmax, SourceToFlat.noMat_compileTotal _ _⟩]
   rfl
+
+/-- `from_bvi` keeps the closure, BVL, data and stack configurations (the
+`from_EXS` chain `from_bvi_conf_EX` ... `from_lab_conf_EX`). -/
+theorem fromBvi_confs {width : Nat} [NeZero width] (asmConf : AsmConfigExact width)
+    (c : Flapjack.Compiler.Backend.Backend.Config) (names : Spt Basis.Pure.MlString.MlString)
+    (p : List (Nat × Nat × Bvi.Exp)) (b : List (BitVec 8)) (bm : List (BitVec width))
+    (c' : Flapjack.Compiler.Backend.Backend.Config)
+    (h : fromBvi asmConf c names p = some (b, bm, c')) :
+    c'.closConf = c.closConf ∧ c'.bvlConf = c.bvlConf ∧ c'.dataConf = c.dataConf ∧
+      c'.stackConf = c.stackConf ∧ c'.sourceConf = c.sourceConf := by
+  obtain ⟨p1, h1⟩ := fromBvi_confEx asmConf c names p _ h
+  obtain ⟨wcu, p2, h2⟩ := fromData_confEx asmConf c names p1 _ h1
+  obtain ⟨wc, p3, bm3, h3⟩ := fromWord_confEx asmConf _ names p2 _ h2
+  obtain ⟨p4, h4⟩ := fromStack_confEx asmConf _ names p3 bm3 _ h3
+  obtain ⟨lc, rfl⟩ := fromLab_confEx asmConf _ names p4 bm3 b bm c' h4
+  exact ⟨rfl, rfl, rfl, rfl, rfl⟩
+
+/-- The source-to-closure unfolding of `compile` (`compile_eq_from_source`,
+`from_source_def`, `from_flat_def`, `from_clos_def`). -/
+theorem compile_fromBvl {width : Nat} [NeZero width] (asmConf : AsmConfigExact width)
+    (c : Flapjack.Compiler.Backend.Backend.Config) (prog : List AstHOL.Dec) :
+    BackendDefs.compile asmConf c prog =
+      let cs := { c with sourceConf :=
+        (SourceToFlat.compileTotal c.sourceConf (SourceToSource.compile prog)).1 }
+      let r := ClosToBvl.compileSource c.closConf
+        (FlatToClos.compileProg
+          (SourceToFlat.compileTotal c.sourceConf (SourceToSource.compile prog)).2)
+      fromBvl asmConf { cs with closConf := r.1 } r.2.2 r.2.1 := by
+  rw [compile_eq_fromSource]
+  rfl
+
+/-- The closure-to-BVL block of HOL `compile_correct'`
+(`backendProofScript.sml:3614-3650`): `clos_to_bvlProof$compile_semantics`
+at the `cake_orac` closure oracle (`cake_orac_eqs`), with its syntactic oracle
+premise from `cake_orac_clos_syntax_oracle_ok` (hypothesis). -/
+theorem compileCorrectPrime_closToBvl {width : Nat} [NeZero width] {F : Type}
+    (hclos : CakeOracClosSyntaxOracleOkStmt width)
+    (asmConf : AsmConfigExact width) (c : Flapjack.Compiler.Backend.Backend.Config)
+    (prog : List AstHOL.Dec) (bytes : List (BitVec 8)) (bitmaps : List (BitVec width))
+    (c' : Flapjack.Compiler.Backend.Backend.Config) (ffi : HolFfiState F)
+    (syn : Nat → (Nat × Nat) × List AstHOL.Dec)
+    (hcomp : BackendDefs.compile asmConf c prog = some (bytes, bitmaps, c'))
+    (hok : backendConfigOk asmConf c)
+    (cc : BvlSem.Compiler (Spt (Nat × Bvl.Exp) × Nat × Nat × Nat × Spt (Nat × Bvi.Exp) × Nat ×
+      LabToTarget.Config)) :
+    let es := FlatToClos.compileProg
+      (SourceToFlat.compileTotal Flapjack.Compiler.Backend.Backend.primSrcConfig
+        (SourceToSource.compile prog)).2
+    let r := ClosToBvl.compileSource c.closConf es
+    ClosSem.semantics ffi c.closConf.maxApp HolFiniteMapExact.holEmpty
+        (pureCo FlatToClos.incCompileDecs ∘
+          cakeOrac asmConf c' syn (Prod.snd ∘ configTuple1) (fun ps => ps.flatProg))
+        (ClosToBvl.compileCommonInc c.closConf
+          (pureCc (ClosToBvl.compileInc c.closConf.maxApp) cc)) es ≠ .fail →
+    BvlSem.semantics ffi (sptFromAList r.2.1)
+        (cakeOrac asmConf c' syn configTuple2 (fun ps => ps.bvlProg)) cc r.1.start =
+      ClosSem.semantics ffi c.closConf.maxApp HolFiniteMapExact.holEmpty
+        (pureCo FlatToClos.incCompileDecs ∘
+          cakeOrac asmConf c' syn (Prod.snd ∘ configTuple1) (fun ps => ps.flatProg))
+        (ClosToBvl.compileCommonInc c.closConf
+          (pureCc (ClosToBvl.compileInc c.closConf.maxApp) cc)) es := by
+  intro es r hnf
+  have hsrcConf : c.sourceConf = Flapjack.Compiler.Backend.Backend.primSrcConfig := hok.1
+  have hmax : 0 < c.closConf.maxApp := hok.2.1
+  have eqs := cakeOrac_eqs (β := Nat × Spt ClosKnown.ValApprox × NumSet × _) asmConf c' syn
+    (Prod.snd ∘ configTuple1) c prog bytes bitmaps c.closConf c.bvlConf
+    (Prod.snd ∘ configTuple1) c.dataConf false 0 0 (Prod.snd ∘ configTuple1)
+    c.stackConf.regNames false 0 (0, 0) (Prod.snd ∘ configTuple1)
+  have hco := eqs.2.1
+  have hbvl := eqs.2.2.1 ⟨hcomp, rfl⟩
+  rw [hco] at hnf ⊢
+  -- the final closure configuration is the compiled one with a new start
+  have hfin : ∃ st, c'.closConf = { r.1 with start := st } := by
+    have h := hcomp
+    rw [compile_fromBvl] at h
+    simp only at h
+    rw [hsrcConf] at h
+    obtain ⟨st, bvlcu, names, p, hb⟩ := fromBvl_confEx asmConf _ _ _ _ h
+    exact ⟨st, (fromBvi_confs asmConf _ names p bytes bitmaps c' hb).1⟩
+  have hsyn := hclos asmConf c prog bytes bitmaps c' c.closConf r.1 es r.2 syn
+    ⟨hcomp, rfl, hfin, rfl, by simp [es, Backend.toClos, Backend.toFlat, hsrcConf], hmax, hsrcConf⟩
+  have hsem := ClosToBvl.compile_semantics ffi c.closConf r.1
+    (cakeOrac asmConf c' syn (Prod.snd ∘ configTuple1) (fun ps => ps.closProg)) cc es r.2.1 r.2.2
+    ⟨hnf, rfl, hsyn⟩
+  rw [← hsem, hbvl]
 
 end Flapjack.Compiler.Backend.BackendProof.Draft
