@@ -28,15 +28,17 @@ private theorem compileIncProgs_sourceConf {width : Nat} [NeZero width]
   obtain ⟨e, d⟩ := p
   rfl
 
-/-- Untagged statement of HOL `step_invs_cake_orac`
-(`backendProofScript.sml:3127-3154`, `[local]`; capture
-`step_invs_cake_orac_typed`). HOL `I` is `id`; the inner quantifier's `st` (a
-value, shadowing the oracle state) is `stV`. Pending tag: the decoder payload
-type `β` needs the `Nonempty β` instance required by the reviewed
-`src_orac_step_invs` (whose own `total_function_inhabitants` qualifier renders
-HOL's `THE`). The inhabitant qualifier only accepts a rendering named in the
-theorem's own signature, so this transitive use through `srcOracStepInvs` has
-no reviewed qualifier yet; the statement is otherwise source-shaped. -/
+/-- HOL `step_invs_cake_orac` (`backendProofScript.sml:3127-3154`, `[local]`;
+capture `step_invs_cake_orac_typed`). HOL `I` is `id`; the inner quantifier's
+`st` (a value, shadowing the oracle state) is `stV`. HOL's free decoder payload
+type `'b` is `β`; its single `Nonempty β` instance exists only because the
+conclusion is the reviewed `srcOracStepInvs` (tagged
+`total_function_inhabitants := [C]`) at `C := β`, whose body renders HOL `THE`
+on the decoder result by `holThe`. This transitive rendering is the narrow
+allow-listed exception for this theorem in `check-hol-refs.py` and the
+`StepInvsCakeOracAudit` export audit. -/
+@[hol "cakeml/compiler/backend/proofs/backendProofScript.sml" "step_invs_cake_orac"
+  (words_as_type_indexed_bitvec) (total_function_inhabitants := [β])]
 theorem stepInvs_cakeOrac {width : Nat} [NeZero width] {β : Type} [Nonempty β]
     (st : EvalOracleState)
     (f : Flapjack.Compiler.Backend.Backend.Config × BackendProgs width →
@@ -50,7 +52,7 @@ theorem stepInvs_cakeOrac {width : Nat} [NeZero width] {β : Type} [Nonempty β]
       x = cakeOrac asmConf c' syn id id k →
       f x = (envId, stV, decs) →
       decs = x.2.sourceProg ∧ envId = x.2.envId ∧
-        ∃ dSt : SourceToFlat.Config × β, decf stV = some dSt ∧ dSt.1 = x.1.sourceConf) →
+        ∃ dSt, decf stV = some dSt ∧ dSt.1 = x.1.sourceConf) →
     SourceToFlat.OracleInvariant.srcOracStepInvs (some decf) SourceToSource.compile
       (some (.evalOracle st)) := by
   intro hor H

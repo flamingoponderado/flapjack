@@ -220,6 +220,64 @@ class TotalFunctionInhabitantsCheckerTest(unittest.TestCase):
             self.assertIsNone(route(source, hol, root + file, name, ("wrong",)))
             self.assertIsNone(route(source, hol, root + file, name + "Other", (binder,)))
 
+    step_invs = (
+        "@[hol \"cakeml/compiler/backend/proofs/backendProofScript.sml\" \"step_invs_cake_orac\"\n"
+        "  (words_as_type_indexed_bitvec) (total_function_inhabitants := [β])]\n"
+        "theorem stepInvs_cakeOrac {width : Nat} [NeZero width] {β : Type} [Nonempty β]\n"
+        "    (st : EvalOracleState) (asmConf : AsmConfigExact width)\n"
+        "    (decf : Flapjack.SemanticPrimitivesHOL.Value → Option (SourceToFlat.Config × β)) :\n"
+        "    st.oracle = f →\n"
+        "    (∀ x stV, ∃ dSt, decf stV = some dSt ∧ dSt.1 = x) →\n"
+        "    SourceToFlat.OracleInvariant.srcOracStepInvs (some decf) SourceToSource.compile\n"
+        "      (some (.evalOracle st)) := by\n"
+        "  exact holThe proof\n")
+    step_invs_site = ("cakeml/compiler/backend/proofs/backendProofScript.sml", "step_invs_cake_orac",
+                      "Flapjack/Compiler/Backend/BackendProof/SourceOracle.lean", "stepInvs_cakeOrac")
+
+    def step_invs_errors(self, text):
+        route = REFS["step_invs_cake_orac_transitive_rendering"](*self.step_invs_site, ("β",))
+        return (REFS["step_invs_cake_orac_signature_errors"](text) +
+                REFS["total_function_inhabitants_errors"](text, text, ("β",), route))
+
+    def test_step_invs_cake_orac_exception_accepts_the_reviewed_shape(self):
+        self.assertEqual(REFS["step_invs_cake_orac_transitive_rendering"](
+            *self.step_invs_site, ("β",)), "srcOracStepInvs")
+        self.assertEqual(self.step_invs_errors(self.step_invs), [])
+
+    def test_step_invs_cake_orac_rejects_extra_beta_occurrence(self):
+        extra = self.step_invs.replace("(st : EvalOracleState)", "(st : EvalOracleState) (b : β)")
+        self.assertTrue(REFS["step_invs_cake_orac_signature_errors"](extra))
+        typed = self.step_invs.replace("∃ dSt,", "∃ dSt : SourceToFlat.Config × β,")
+        self.assertTrue(REFS["step_invs_cake_orac_signature_errors"](typed))
+
+    def test_step_invs_cake_orac_rejects_second_instance(self):
+        second = self.step_invs.replace("[Nonempty β]", "[Nonempty β] [Inhabited β]")
+        self.assertTrue(self.step_invs_errors(second))
+        other = self.step_invs.replace("[Nonempty β]", "[Nonempty β] {γ : Type} [Nonempty γ]")
+        self.assertTrue(self.step_invs_errors(other))
+
+    def test_step_invs_cake_orac_rejects_instance_on_another_binder(self):
+        moved = self.step_invs.replace("[Nonempty β]", "{γ : Type} [Nonempty γ]")
+        self.assertTrue(self.step_invs_errors(moved))
+        route = REFS["step_invs_cake_orac_transitive_rendering"]
+        self.assertIsNone(route(*self.step_invs_site, ("γ",)))
+
+    def test_step_invs_cake_orac_exception_is_not_extended(self):
+        route = REFS["step_invs_cake_orac_transitive_rendering"]
+        path, hol, lean, name = self.step_invs_site
+        self.assertIsNone(route(path, "source_eval_to_flat_semantics", lean, name, ("β",)))
+        self.assertIsNone(route(path, hol, lean, "otherTheorem", ("β",)))
+        self.assertIsNone(route(path, hol, "Flapjack/Other.lean", name, ("β",)))
+        self.assertIsNone(route("cakeml/other.sml", hol, lean, name, ("β",)))
+        # Without the allow-listed route, mentioning srcOracStepInvs is not a rendering.
+        self.assertTrue(REFS["total_function_inhabitants_errors"](
+            self.step_invs.replace("holThe proof", "trivial"),
+            self.step_invs.replace("holThe proof", "trivial"), ("β",), None))
+        # A proof-body mention of holThe never justifies the qualifier.
+        renamed = self.step_invs.replace("srcOracStepInvs", "otherInvs")
+        self.assertTrue(REFS["total_function_inhabitants_errors"](
+            renamed, renamed, ("β",), "srcOracStepInvs"))
+
     def test_theorem_proof_mentions_do_not_justify_a_qualifier(self):
         check = REFS["total_function_inhabitants_errors"]
         signature = "theorem t {α : Type} [Nonempty α] : True :="

@@ -2,6 +2,7 @@ import Flapjack.HolRef.GeneraliseLengthAudit
 import Flapjack.HolRef.InferSubstSubmapAudit
 import Flapjack.HolRef.TypeSubstWalkstarAudit
 import Flapjack.HolRef.JoinEnvLocalsAudit
+import Flapjack.HolRef.StepInvsCakeOracAudit
 import Flapjack.Compiler.Backend.StackProps.EvaluateMono
 import Flapjack.Compiler.Backend.StackProps.EvaluateNeutral
 import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.Nonrecursive
@@ -307,6 +308,16 @@ elab "#emit_hol_ref_export" : command => do
       unless ref == expectedRef do throwError "invalid direct joinEnv HOL metadata: {name}"
       let problems ← liftTermElabM <| joinEnvDirectProblems name
       unless problems.isEmpty do throwError "invalid direct joinEnv declaration {name}: {problems}"
+    let stepInvsTarget := `Flapjack.Compiler.Backend.BackendProof.stepInvs_cakeOrac
+    let stepInvsPath := "cakeml/compiler/backend/proofs/backendProofScript.sml"
+    if name == stepInvsTarget || (ref.path == stepInvsPath && ref.name == "step_invs_cake_orac") then
+      let expectedRef : HolRef := {
+        path := stepInvsPath, name := "step_invs_cake_orac", wordsAsTypeIndexedBitvec := true,
+        totalFunctionInhabitants := #["β"] }
+      unless name == stepInvsTarget && ref == expectedRef do
+        throwError "invalid step_invs_cake_orac HOL metadata: {name}"
+      let problems ← liftTermElabM <| stepInvsCakeOracProblems name
+      unless problems.isEmpty do throwError "invalid step_invs_cake_orac declaration {name}: {problems}"
     let gcTarget := `Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.stateRel_gcGen
     let gcRef : HolRef := {
       path := "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",

@@ -153,7 +153,7 @@ def export_batches(umbrella: str, exporter: str, count: int = EXPORT_BATCH_COUNT
     direct = imports(header)
     shared = ("Flapjack.Test.NestedRelationAudit", "Flapjack.HolRef.GeneraliseLengthAudit",
               "Flapjack.HolRef.InferSubstSubmapAudit", "Flapjack.HolRef.TypeSubstWalkstarAudit",
-              "Flapjack.HolRef.JoinEnvLocalsAudit")
+              "Flapjack.HolRef.JoinEnvLocalsAudit", "Flapjack.HolRef.StepInvsCakeOracAudit")
     if direct.count("Flapjack") != 1 or any(direct.count(name) != 1 for name in shared):
         raise ValueError("HOL exporter must import the umbrella and shared audit modules")
     all_imports = list(dict.fromkeys(

@@ -5214,6 +5214,69 @@ def join_env_locals_transitive_rendering(hol_path: str, hol_name: str, lean_path
     }.get((hol_name, lean_name))
 
 
+STEP_INVS_CAKE_ORAC_SITE = (
+    "cakeml/compiler/backend/proofs/backendProofScript.sml", "step_invs_cake_orac",
+    "Flapjack/Compiler/Backend/BackendProof/SourceOracle.lean", "stepInvs_cakeOrac", ("β",))
+
+STEP_INVS_CAKE_ORAC_DECODER_RE = re.compile(
+    r"\(\s*decf\s*:\s*(?:Flapjack\.SemanticPrimitivesHOL\.)?Value\s*→\s*Option\s*"
+    r"\(\s*SourceToFlat\.Config\s*×\s*β\s*\)\s*\)")
+
+
+def step_invs_cake_orac_transitive_rendering(hol_path: str, hol_name: str, lean_path: str,
+                                             lean_name: str, listed: tuple[str, ...]) -> str | None:
+    """Only backendProof `step_invs_cake_orac` may inherit `srcOracStepInvs`'s HOL THE instance.
+
+    Its conclusion is the reviewed `srcOracStepInvs` (tagged
+    `total_function_inhabitants := [C]`), instantiated at the decoder payload
+    type `β`. The elaborated exporter separately checks the producer metadata
+    and the complete theorem statement; this identifies the single allowed
+    source site and does not by itself establish semantic correspondence.
+    """
+    if (hol_path, hol_name, lean_path, lean_name, listed) == STEP_INVS_CAKE_ORAC_SITE:
+        return "srcOracStepInvs"
+    return None
+
+
+def step_invs_cake_orac_signature_errors(signature: str) -> list[str]:
+    """`β` may occur only in its type binder, its single `Nonempty` instance,
+    and the decoder `decf : Value → Option (SourceToFlat.Config × β)`, which
+    the conclusion passes to `srcOracStepInvs`."""
+    code = strip_lean_comments(signature)
+    assignment = top_level_assignment_offset(code)
+    if assignment is not None:
+        code = code[:assignment]
+    errors: list[str] = []
+    keyword = re.search(r"\btheorem\s+stepInvs_cakeOrac\b", code)
+    if keyword is None:
+        return ["step_invs_cake_orac exception requires the theorem stepInvs_cakeOrac"]
+    code = code[keyword.end():]
+    patterns = [
+        ("type binder {β : Type}", re.compile(r"\{\s*β\s*:\s*Type\s*\}")),
+        ("instance [Nonempty β]", re.compile(r"\[\s*Nonempty\s+β\s*\]")),
+        ("decoder binder decf : Value → Option (SourceToFlat.Config × β)",
+         STEP_INVS_CAKE_ORAC_DECODER_RE),
+    ]
+    rest = code
+    for label, pattern in patterns:
+        found = pattern.findall(rest)
+        if len(found) != 1:
+            errors.append(f"step_invs_cake_orac exception requires exactly one {label}")
+        rest = pattern.sub(" ", rest)
+    instances = [name.strip() for name in TOTAL_FUNCTION_INSTANCE_RE.findall(code)]
+    if instances != ["β"]:
+        errors.append("step_invs_cake_orac exception requires exactly one "
+                      "Nonempty/Inhabited instance, on β")
+    if identifier_token_occurs(rest, "β"):
+        errors.append("step_invs_cake_orac exception: β may occur only in its binder, its "
+                      "Nonempty instance and the decoder type")
+    if not re.search(r"\bSourceToFlat\.OracleInvariant\.srcOracStepInvs\s*\(\s*some\s+decf\s*\)",
+                     rest):
+        errors.append("step_invs_cake_orac exception requires the conclusion "
+                      "SourceToFlat.OracleInvariant.srcOracStepInvs (some decf)")
+    return errors
+
+
 def _word_free_owner(owner: tuple[str, str, dict[str, str]]) -> bool:
     """True when an owning declaration cannot be a width-indexed word carrier.
 
@@ -7419,6 +7482,13 @@ def main(argv: list[str]) -> int:
                 transitive = join_env_locals_transitive_rendering(
                     hol_path, hol_name, rel, find_lean_decl(lines, number - 1),
                     total_function_inhabitants)
+                step_invs_transitive = step_invs_cake_orac_transitive_rendering(
+                    hol_path, hol_name, rel, find_lean_decl(lines, number - 1),
+                    total_function_inhabitants)
+                if step_invs_transitive is not None:
+                    transitive = step_invs_transitive
+                    errors.extend(f"{where}: {error}" for error in
+                                  step_invs_cake_orac_signature_errors(inhabitant_signature))
                 total_errors = total_function_inhabitants_errors(
                     inhabitant_signature, tagged_declaration_source(lines, number),
                     total_function_inhabitants, transitive)

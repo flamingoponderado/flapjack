@@ -990,6 +990,19 @@ the exporter checks their complete independently written types and producer
 metadata. Proof-body mentions do not justify this qualifier. These checks do
 not replace comparison with typed HOL.
 
+The backendProof theorem `stepInvs_cakeOrac` (HOL `step_invs_cake_orac`) is
+the only other approved transitive use. Its conclusion is the reviewed
+`srcOracStepInvs` (itself `total_function_inhabitants := [C]`, rendering HOL
+`THE` by `holThe`) at the decoder payload type, so its single `Nonempty β`
+instance flows only through that producer. The source checker restricts the
+exception to this one declaration and requires `β` to occur only in its type
+binder, that instance, and the decoder binder `decf : Value → Option
+(SourceToFlat.Config × β)`. The elaborated exporter checks the producer's HOL
+metadata, the theorem's binders and instances, and its complete independently
+written type. The manifest note must name the `srcOracStepInvs` → `holThe`
+path and the decoder binder. Proof-body mentions do not justify this
+qualifier, and these checks do not replace comparison with typed HOL.
+
 **Qualify unused HOL existential types.** The narrow
 `hol_existential_inhabitants := [T2._t2, W1._w1, W2._w2]` qualifier applies
 only to `stateRel_gcGen` for HOL `state_rel_gc_gen`. HOL's three independent
