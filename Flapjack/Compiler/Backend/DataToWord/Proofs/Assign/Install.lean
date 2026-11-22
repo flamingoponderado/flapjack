@@ -3,6 +3,11 @@ module
 public import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.BignumHalt
 public import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.InstallStubs
 public import Flapjack.Compiler.Backend.Semantics.DataProps.AppWithLocals
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.Equal
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.GiveUp
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.MemoryLemmas
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.SmallStateLemmas
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.CodePointer
 
 @[expose] public section
 
@@ -12,6 +17,8 @@ namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Assign
 open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Backend.DataToWord
 open Flapjack.Compiler.Backend.DataToWord.Proofs.Gc Flapjack.Compiler.Backend.BackendProps
 open Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
+set_option maxRecDepth 8192
+set_option maxHeartbeats 3000000
 
 namespace InstallWitness
 /-- Canonical finite-map roundtrip for the target word state. -/
@@ -284,5 +291,117 @@ private theorem installStubsRun {width : Nat} [NeZero width] {C F : Type}
   refine ⟨RR.clock, ?_⟩
   simp only [wordSemBadFunReturn, Bool.false_eq_true, if_false]
   simp [RR, e2, e1, cpos, dpos, cbEmpty, dbEmpty]
+
+/-- A sequence whose first command finishes normally without changing the
+state continues with the second command. -/
+private theorem installSeqSame {width : Nat} [NeZero width] {C F : Type}
+    (s : WordSemStateFiniteExact width C F) (c1 c2 : WordLangProgHOL (BitVec width))
+    (h : WordSemStateFiniteExact.evaluate c1 s = (none, s)) :
+    WordSemStateFiniteExact.evaluate (.seq c1 c2) s = WordSemStateFiniteExact.evaluate c2 s := by
+  simp [WordSemStateFiniteExact.evaluate, h, WordSemStateFiniteExact.fixClock]
+
+/-- A sequence whose first command stops returns that result. -/
+private theorem installSeqStop {width : Nat} [NeZero width] {C F : Type}
+    (s s1 : WordSemStateFiniteExact width C F) (c1 c2 : WordLangProgHOL (BitVec width))
+    (x : WordSemResult width) (h : WordSemStateFiniteExact.evaluate c1 s = (some x, s1)) :
+    ∃ s2, WordSemStateFiniteExact.evaluate (.seq c1 c2) s = (some x, s2) ∧ s2.ffi = s1.ffi := by
+  refine ⟨(WordSemStateFiniteExact.fixClock s (some x, s1)).2, ?_, rfl⟩
+  simp [WordSemStateFiniteExact.evaluate, h]
+  rfl
+
+/-- Installation satisfies the complete HOL assignment simulation. The word
+evaluator inherits the real-model assumption in `docs/SOUNDNESS.md` item 8. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml" "assign_Install"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem assignInstall_correct {width : Nat} [NeZero width] {C F : Type}
+    (conf : Flapjack.Compiler.Backend.DataToWord.Config) (n l l1 l2 dest : Nat)
+    (op : Flapjack.Compiler.Backend.ClosLang.Op)
+    (args : List Nat) (names : Option NumSet)
+    (source cut resultState : Flapjack.Compiler.Backend.DataSem.State C F)
+    (target : WordSemStateFiniteExact width C F) (locs : List (Nat × Nat))
+    (values : List Flapjack.Compiler.Backend.DataSem.Value) (result : Flapjack.Compiler.Backend.DataSem.Value)
+    (opIs : op = .install)
+    (related : stateRel conf l1 l2 source target none locs)
+    (validNames : DataLang.opRequiresNames op ≠ names.isNone)
+    (cutEq : DataSem.cutStateOpt names source = some cut)
+    (argsEq : DataSem.getVars args source.locals = some values)
+    (depth : target.termdep > 1)
+    (run : DataSem.doApp op values cut = .val (result, resultState)) :
+    ∃ q r,
+      WordSemStateFiniteExact.evaluate (compileAssign conf n l dest op args names).1 target = (q, r) ∧
+      (q = some .notEnoughSpace → r.ffi = target.ffi ∧ optionLe r.stackMax resultState.stackMax ∧
+        (conf.gcKind ≠ .none → resultState.safeForSpace = false)) ∧
+      (q ≠ some .notEnoughSpace →
+        stateRel conf l1 l2 (DataSem.setVar dest result resultState) r none locs ∧ q = none) := by
+  subst op
+  cases names with
+  | none => simp [DataLang.opRequiresNames] at validNames
+  | some names =>
+    obtain ⟨wordCut, words, cutWord, getWord, lens1, lens2, relCut, relCutWord⟩ :=
+      stateRel_cutStateOpt_some conf l1 l2 source target locs args values names cut ⟨related, argsEq, cutEq⟩
+    obtain ⟨hv1, hv2, q1, q2, cfg, k, entry, rest, cfg', rfl, bytes, wordsOk, oracle0, compileOk, oracle1,
+      rfl, rfl⟩ := installSource values cut resultState result run
+    obtain ⟨v1, v2, v3, v4, rfl⟩ : ∃ v1 v2 v3 v4, args = [v1, v2, v3, v4] := by
+      rcases args with _ | ⟨a, _ | ⟨b, _ | ⟨c, _ | ⟨d, _ | ⟨e, tail⟩⟩⟩⟩⟩ <;> simp at lens1
+      exact ⟨a, b, c, d, rfl⟩
+    obtain ⟨w1, w2, w3, w4, rfl⟩ : ∃ w1 w2 w3 w4, words = [w1, w2, w3, w4] := by
+      rcases words with _ | ⟨a, _ | ⟨b, _ | ⟨c, _ | ⟨d, _ | ⟨e, tail⟩⟩⟩⟩⟩ <;> simp at lens2
+      exact ⟨a, b, c, d, rfl⟩
+    have reads : target.getVar (adjustVar v1) = some w1 ∧ target.getVar (adjustVar v2) = some w2 ∧
+        target.getVar (adjustVar v3) = some w3 ∧ target.getVar (adjustVar v4) = some w4 := by
+      simp only [List.map, WordSemStateFiniteExact.getVars] at getWord
+      revert getWord
+      cases h1 : target.getVar (adjustVar v1) <;> cases h2 : target.getVar (adjustVar v2) <;>
+        cases h3 : target.getVar (adjustVar v3) <;> cases h4 : target.getVar (adjustVar v4) <;> simp
+    let envs := [(theGlobal source.global, holFapply target.store .globals)] ++
+      flatStack source.stack target.stack
+    let stackVars := joinEnv source.locals (sptToAList (sptInter target.locals (adjustSet source.locals))) ++ envs
+    have roots := memoryRel_getVars conf target.be (holThe source.tstamps) source source.space
+      target.store target.memory target.mdomain target envs [v1, v2, v3, v4] _ [w1, w2, w3, w4] (by
+        refine ⟨?_, argsEq, getWord⟩
+        simpa [envs] using related.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2)
+    simp only [List.zip_cons_cons, List.zip_nil_right, List.cons_append, List.nil_append] at roots
+    have good := related.2.2.2.2.2.2.1
+    obtain ⟨x3, rfl, x3Bit⟩ := memoryRel_anyNumberImp conf target.be (holThe source.tstamps) source.refs
+      source.space target.store target.memory target.mdomain _ w3 _
+      ⟨good, memoryRel_tl _ _ _ _ _ _ _ _ _ _ (memoryRel_tl _ _ _ _ _ _ _ _ _ _ roots)⟩
+    obtain ⟨x4, rfl, x4Bit⟩ := memoryRel_anyNumberImp conf target.be (holThe source.tstamps) source.refs
+      source.space target.store target.memory target.mdomain _ w4 _
+      ⟨good, memoryRel_tl _ _ _ _ _ _ _ _ _ _ (memoryRel_tl _ _ _ _ _ _ _ _ _ _
+        (memoryRel_tl _ _ _ _ _ _ _ _ _ _ roots))⟩
+    simp only [compileAssign, arg4, assignInstall, wordListSeq]
+    by_cases b3 : x3.getLsbD 0 = true
+    · obtain ⟨r, giveRun, rffi, tffi, -⟩ := evaluateGiveUp2 conf l1 l2 source target locs related
+      have h1 : WordSemStateFiniteExact.evaluate (bignumHalt (adjustVar v3)) target =
+          (some .notEnoughSpace, r) := by
+        unfold bignumHalt
+        rw [installEvalTestOne target _ x3 _ _ reads.2.2.1, b3, if_pos rfl]
+        exact giveRun
+      obtain ⟨s2, run2, ffi2⟩ := installSeqStop _ _ _ _ _ h1
+      exact ⟨_, _, run2, fun _ => ⟨by rw [ffi2, rffi, tffi], by simp [optionLe], fun _ => trivial⟩,
+        fun h => (h rfl).elim⟩
+    have h3 : WordSemStateFiniteExact.evaluate (bignumHalt (adjustVar v3)) target = (none, target) := by
+      unfold bignumHalt
+      rw [installEvalTestOne target _ x3 _ _ reads.2.2.1, if_neg b3]
+      simp [WordSemStateFiniteExact.evaluate]
+    rw [installSeqSame _ _ _ h3]
+    by_cases b4 : x4.getLsbD 0 = true
+    · obtain ⟨r, giveRun, rffi, tffi, -⟩ := evaluateGiveUp2 conf l1 l2 source target locs related
+      have h1 : WordSemStateFiniteExact.evaluate (bignumHalt (adjustVar v4)) target =
+          (some .notEnoughSpace, r) := by
+        unfold bignumHalt
+        rw [installEvalTestOne target _ x4 _ _ reads.2.2.2, b4, if_pos rfl]
+        exact giveRun
+      obtain ⟨s2, run2, ffi2⟩ := installSeqStop _ _ _ _ _ h1
+      exact ⟨_, _, run2, fun _ => ⟨by rw [ffi2, rffi, tffi], by simp [optionLe], fun _ => trivial⟩,
+        fun h => (h rfl).elim⟩
+    have h4 : WordSemStateFiniteExact.evaluate (bignumHalt (adjustVar v4)) target = (none, target) := by
+      unfold bignumHalt
+      rw [installEvalTestOne target _ x4 _ _ reads.2.2.2, if_neg b4]
+      simp [WordSemStateFiniteExact.evaluate]
+    rw [installSeqSame _ _ _ h4]
+    have small3 : smallInt width (Int.ofNat q1.length) := by simpa [b3] using x3Bit
+    have small4 : smallInt width (Int.ofNat q2.length) := by simpa [b4] using x4Bit
+    sorry
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Assign
