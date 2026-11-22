@@ -3,6 +3,7 @@ module
 public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ByteArrayImp
 public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Rearrange
 public import Flapjack.SemanticPrimitivesHOL.Array
+public import Flapjack.Misc.Sptree.InsertUnchanged
 
 @[expose] public section
 
@@ -195,7 +196,7 @@ decreasing_by
 def minus (m n : Nat) : Nat := m - n
 
 /-- Exact HOL `list_copy_bwd_def` (the stored definition, written with `minus`). -/
-@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "list_copy_bwd_def"]
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "list_copy_bwd_def" 15580]
 def listCopyBwd {α : Type} (n xp : Nat) (xs : List α) (yp : Nat) (ys : List α) : Option (List α) :=
   if h : n ≤ xp + 1 ∧ xp < xs.length ∧ n ≤ yp + 1 ∧ yp < ys.length then
     if h0 : n = 0 then some ys else
@@ -215,7 +216,7 @@ termination_by n
 decreasing_by omega
 
 /-- Exact HOL `list_copy_bwd_alias_def` (the stored definition, written with `minus`). -/
-@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "list_copy_bwd_alias_def"]
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "list_copy_bwd_alias_def" 15600]
 def listCopyBwdAlias {α : Type} (n xp yp : Nat) (ys : List α) : Option (List α) :=
   if h : n ≤ xp + 1 ∧ xp < ys.length ∧ n ≤ yp + 1 ∧ yp < ys.length then
     if h0 : n = 0 then some ys else
@@ -793,4 +794,685 @@ theorem wordCopyFwd_sim {width : Nat} [NeZero width] (good : goodDimindex width)
       ld0, ld 1 (by omega), ld 2 (by omega), ld 3 (by omega), Option.bind_some, s1', s2, s3, s4,
       nsub, byteAddr_add]
     exact s5
+/-- Simulation of `list_copy_fwd_alias` by `word_copy_fwd` against an abstract
+store/load interface. Flapjack infrastructure for `word_copy_fwd_alias_thm`. -/
+theorem wordCopyFwdAlias_sim {width : Nat} [NeZero width] (good : goodDimindex width) (be : Bool)
+    (dm : BitVec width → Bool) (A0 B0 : BitVec width)
+    (R : List (BitVec 8) → (BitVec width → WordLocW width) → Prop)
+    (load : ∀ ys m i (h : i < ys.length), R ys m →
+      memLoadByteAuxExact m dm be (A0 + BitVec.ofNat width i) = some ys[i])
+    (store : ∀ ys m j v, R ys m → j < ys.length →
+      ∃ m1, memStoreByteAuxExact m dm be (B0 + BitVec.ofNat width j) v = some m1 ∧ R (ys.set j v) m1) :
+    ∀ n xp yp ys ys1 m, R ys m → listCopyFwdAlias n xp yp ys = some ys1 → n < 2 ^ width →
+      ∃ m1, wordCopyFwd be (BitVec.ofNat width n) (A0 + BitVec.ofNat width xp)
+        (B0 + BitVec.ofNat width yp) m dm = some m1 ∧ R ys1 m1 := by
+  have big := goodDimindex_pow good
+  intro n
+  induction n using Nat.strongRecOn with
+  | ind n ih =>
+    intro xp yp ys ys1 m rel copied bound
+    rw [listCopyFwdAlias] at copied
+    split at copied
+    case isFalse => cases copied
+    rename_i hb
+    have hx := hb.1
+    have hy := hb.2
+    have ld : ∀ k (h : xp + k < ys.length), memLoadByteAuxExact m dm be
+        (A0 + BitVec.ofNat width (xp + k)) = some ys[xp + k] := fun k h => load ys m (xp + k) h rel
+    have st : ∀ zs m' k v, R zs m' → yp + k < zs.length → ∃ m1, memStoreByteAuxExact m' dm be
+        (B0 + BitVec.ofNat width (yp + k)) v = some m1 ∧ R (zs.set (yp + k) v) m1 :=
+      fun zs m' k v r h => store zs m' (yp + k) v r h
+    have n4 := ofNat_lt_ofNat_iff (n := n) (k := 4) bound (show 4 < 2 ^ width by omega)
+    have n2 := ofNat_lt_ofNat_iff (n := n) (k := 2) bound (show 2 < 2 ^ width by omega)
+    have e0 := ofNat_eq_ofNat_iff (n := n) (k := 0) bound (show 0 < 2 ^ width by omega)
+    have e2 := ofNat_eq_ofNat_iff (n := n) (k := 2) bound (show 2 < 2 ^ width by omega)
+    rw [wordCopyFwd, dif_neg (by omega)]
+    by_cases h0 : n = 0
+    · subst n
+      simp only [dite_true] at copied
+      cases copied
+      refine ⟨m, ?_, rel⟩
+      simp only [show BitVec.ofNat width 0 < 4#width from n4.mpr (by omega),
+        show BitVec.ofNat width 0 < 2#width from n2.mpr (by omega), dite_true, if_true]
+    simp only [h0, dite_false] at copied
+    have ld0 : memLoadByteAuxExact m dm be (A0 + BitVec.ofNat width xp) = some ys[xp] :=
+      load ys m xp (by omega) rel
+    by_cases h1 : n = 1
+    · subst n
+      simp only [dite_true] at copied
+      cases copied
+      obtain ⟨m1, s1, r1⟩ := store ys m yp ys[xp] rel (by omega)
+      refine ⟨m1, ?_, r1⟩
+      simp only [show BitVec.ofNat width 1 < 4#width from n4.mpr (by omega),
+        show BitVec.ofNat width 1 < 2#width from n2.mpr (by omega), dite_true, if_true,
+        show ¬ BitVec.ofNat width 1 = 0#width from fun h => absurd (e0.mp h) (by omega), if_false,
+        ld0, Option.bind_some, s1]
+    simp only [h1, dite_false] at copied
+    by_cases h2 : n = 2
+    · subst n
+      simp only [dite_true, Function.comp_apply] at copied
+      cases copied
+      obtain ⟨m1, s1, r1⟩ := st ys m 0 ys[xp + 0] rel (by omega)
+      obtain ⟨m2, s2, r2⟩ := st _ m1 1 ys[xp + 1] r1 (by simp; omega)
+      refine ⟨m2, ?_, r2⟩
+      have s1' : memStoreByteAuxExact m dm be (B0 + BitVec.ofNat width yp) ys[xp] = some m1 := by
+        simpa using s1
+      simp only [show BitVec.ofNat width 2 < 4#width from n4.mpr (by omega),
+        show ¬ BitVec.ofNat width 2 < 2#width from fun h => absurd (n2.mp h) (by omega), dite_true, if_false,
+        if_true,
+        ld0, ld 1 (by omega), Option.bind_some, s1', s2, byteAddr_add]
+    simp only [h2, dite_false] at copied
+    by_cases h3 : n = 3
+    · subst n
+      simp only [dite_true, Function.comp_apply] at copied
+      cases copied
+      obtain ⟨m1, s1, r1⟩ := st ys m 0 ys[xp + 0] rel (by omega)
+      obtain ⟨m2, s2, r2⟩ := st _ m1 1 ys[xp + 1] r1 (by simp; omega)
+      obtain ⟨m3, s3, r3⟩ := st _ m2 2 ys[xp + 2] r2 (by simp; omega)
+      refine ⟨m3, ?_, r3⟩
+      have s1' : memStoreByteAuxExact m dm be (B0 + BitVec.ofNat width yp) ys[xp] = some m1 := by
+        simpa using s1
+      simp only [show BitVec.ofNat width 3 < 4#width from n4.mpr (by omega),
+        show ¬ BitVec.ofNat width 3 < 2#width from fun h => absurd (n2.mp h) (by omega), dite_true, if_false,
+        show ¬ BitVec.ofNat width 3 = 2#width from fun h => absurd (e2.mp h) (by omega),
+        ld0, ld 1 (by omega), ld 2 (by omega), Option.bind_some, s1', s2, s3, byteAddr_add]
+    simp only [h3, dite_false, Function.comp_apply] at copied
+    obtain ⟨m1, s1, r1⟩ := st ys m 0 ys[xp + 0] rel (by omega)
+    obtain ⟨m2, s2, r2⟩ := st _ m1 1 ys[xp + 1] r1 (by simp; omega)
+    obtain ⟨m3, s3, r3⟩ := st _ m2 2 ys[xp + 2] r2 (by simp; omega)
+    obtain ⟨m4, s4, r4⟩ := st _ m3 3 ys[xp + 3] r3 (by simp; omega)
+    obtain ⟨m5, s5, r5⟩ := ih (n - 4) (by omega) (xp + 4) (yp + 4) _ ys1 m4 r4 copied (by omega)
+    refine ⟨m5, ?_, r5⟩
+    have s1' : memStoreByteAuxExact m dm be (B0 + BitVec.ofNat width yp) ys[xp] = some m1 := by
+      simpa using s1
+    have nsub : BitVec.ofNat width n - 4#width = BitVec.ofNat width (n - 4) := by
+      have := byteAddr_sub (0 : BitVec width) n 4 (by omega)
+      simpa using this
+    simp only [show ¬ BitVec.ofNat width n < 4#width from fun h => absurd (n4.mp h) (by omega), dite_false,
+      ld0, ld 1 (by omega), ld 2 (by omega), ld 3 (by omega), Option.bind_some, s1', s2, s3, s4,
+      nsub, byteAddr_add]
+    exact s5
+
+/-- Exact HOL `word_copy_bwd_0` (a `[local]` theorem). -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "word_copy_bwd_0"
+  (words_as_type_indexed_bitvec)]
+theorem wordCopyBwd_zero {width : Nat} [NeZero width] (be : Bool) (a1 a2 : BitVec width)
+    (m : BitVec width → WordLocW width) (dm : BitVec width → Bool) :
+    goodDimindex width → wordCopyBwd be 0#width a1 a2 m dm = some m := by
+  intro good
+  have big := goodDimindex_pow good
+  rw [wordCopyBwd, dif_neg (by omega)]
+  have n4 := ofNat_lt_ofNat_iff (n := 0) (k := 4) (width := width) (by omega) (show 4 < 2 ^ width by omega)
+  have n2 := ofNat_lt_ofNat_iff (n := 0) (k := 2) (width := width) (by omega) (show 2 < 2 ^ width by omega)
+  simp only [show BitVec.ofNat width 0 < 4#width from n4.mpr (by omega),
+    show BitVec.ofNat width 0 < 2#width from n2.mpr (by omega), dite_true, if_true]
+
+/-- Simulation of `list_copy_bwd` by `word_copy_bwd` against an abstract
+store/load interface. Flapjack infrastructure for `word_copy_bwd_thm`. -/
+theorem wordCopyBwd_sim {width : Nat} [NeZero width] (good : goodDimindex width) (be : Bool)
+    (dm : BitVec width → Bool) (A0 B0 : BitVec width) (xs : List (BitVec 8))
+    (R : List (BitVec 8) → (BitVec width → WordLocW width) → Prop)
+    (load : ∀ ys m i (h : i < xs.length), R ys m →
+      memLoadByteAuxExact m dm be (A0 + BitVec.ofNat width i) = some xs[i])
+    (store : ∀ ys m j v, R ys m → j < ys.length →
+      ∃ m1, memStoreByteAuxExact m dm be (B0 + BitVec.ofNat width j) v = some m1 ∧ R (ys.set j v) m1) :
+    ∀ n xp yp ys ys1 m, R ys m → listCopyBwd n xp xs yp ys = some ys1 → n < 2 ^ width →
+      ∃ m1, wordCopyBwd be (BitVec.ofNat width n) (A0 + BitVec.ofNat width xp)
+        (B0 + BitVec.ofNat width yp) m dm = some m1 ∧ R ys1 m1 := by
+  have big := goodDimindex_pow good
+  intro n
+  induction n using Nat.strongRecOn with
+  | ind n ih =>
+    intro xp yp ys ys1 m rel copied bound
+    rw [listCopyBwd] at copied
+    split at copied
+    case isFalse => cases copied
+    rename_i hb
+    obtain ⟨hnx, hx, hny, hy⟩ := hb
+    have ld : ∀ k (h : k ≤ xp), memLoadByteAuxExact m dm be
+        (A0 + BitVec.ofNat width xp - BitVec.ofNat width k) = some (xs[minus xp k]'(by unfold minus; omega)) := by
+      intro k h
+      rw [byteAddr_sub _ _ _ h]
+      exact load ys m (xp - k) (by omega) rel
+    have st : ∀ zs m' k v, R zs m' → k ≤ yp → yp < zs.length → ∃ m1, memStoreByteAuxExact m' dm be
+        (B0 + BitVec.ofNat width yp - BitVec.ofNat width k) v = some m1 ∧ R (zs.set (minus yp k) v) m1 := by
+      intro zs m' k v r h h'
+      rw [byteAddr_sub _ _ _ h]
+      exact store zs m' (yp - k) v r (by omega)
+    have n4 := ofNat_lt_ofNat_iff (n := n) (k := 4) bound (show 4 < 2 ^ width by omega)
+    have n2 := ofNat_lt_ofNat_iff (n := n) (k := 2) bound (show 2 < 2 ^ width by omega)
+    have e0 := ofNat_eq_ofNat_iff (n := n) (k := 0) bound (show 0 < 2 ^ width by omega)
+    have e2 := ofNat_eq_ofNat_iff (n := n) (k := 2) bound (show 2 < 2 ^ width by omega)
+    by_cases h0 : n = 0
+    · subst n
+      simp only [dite_true] at copied
+      cases copied
+      exact ⟨m, wordCopyBwd_zero be _ _ m dm good, rel⟩
+    rw [wordCopyBwd, dif_neg (by omega)]
+    simp only [h0, dite_false] at copied
+    have ld0 : memLoadByteAuxExact m dm be (A0 + BitVec.ofNat width xp) = some xs[xp] :=
+      load ys m xp (by omega) rel
+    by_cases h1 : n = 1
+    · subst n
+      simp only [dite_true] at copied
+      cases copied
+      obtain ⟨m1, s1, r1⟩ := store ys m yp xs[xp] rel (by omega)
+      refine ⟨m1, ?_, r1⟩
+      simp only [show BitVec.ofNat width 1 < 4#width from n4.mpr (by omega),
+        show BitVec.ofNat width 1 < 2#width from n2.mpr (by omega), dite_true, if_true,
+        show ¬ BitVec.ofNat width 1 = 0#width from fun h => absurd (e0.mp h) (by omega), if_false,
+        ld0, Option.bind_some, s1]
+    simp only [h1, dite_false] at copied
+    have yl : ∀ zs : List (BitVec 8), zs.length = ys.length → yp < zs.length := fun zs h => by omega
+    by_cases h2 : n = 2
+    · subst n
+      simp only [dite_true, Function.comp_apply] at copied
+      cases copied
+      obtain ⟨m1, s1, r1⟩ := st ys m 0 (xs[minus xp 0]'(by unfold minus; omega)) rel (by omega) (by omega)
+      obtain ⟨m2, s2, r2⟩ := st _ m1 1 (xs[minus xp 1]'(by unfold minus; omega)) r1 (by omega) (yl _ (by simp))
+      refine ⟨m2, ?_, r2⟩
+      have s1' : memStoreByteAuxExact m dm be (B0 + BitVec.ofNat width yp) xs[xp] = some m1 := by
+        simpa [minus] using s1
+      simp only [show BitVec.ofNat width 2 < 4#width from n4.mpr (by omega),
+        show ¬ BitVec.ofNat width 2 < 2#width from fun h => absurd (n2.mp h) (by omega), dite_true, if_false,
+        if_true, ld0, ld 1 (by omega), Option.bind_some, s1', s2]
+    simp only [h2, dite_false] at copied
+    by_cases h3 : n = 3
+    · subst n
+      simp only [dite_true, Function.comp_apply] at copied
+      cases copied
+      obtain ⟨m1, s1, r1⟩ := st ys m 0 (xs[minus xp 0]'(by unfold minus; omega)) rel (by omega) (by omega)
+      obtain ⟨m2, s2, r2⟩ := st _ m1 1 (xs[minus xp 1]'(by unfold minus; omega)) r1 (by omega) (yl _ (by simp))
+      obtain ⟨m3, s3, r3⟩ := st _ m2 2 (xs[minus xp 2]'(by unfold minus; omega)) r2 (by omega) (yl _ (by simp))
+      refine ⟨m3, ?_, r3⟩
+      have s1' : memStoreByteAuxExact m dm be (B0 + BitVec.ofNat width yp) xs[xp] = some m1 := by
+        simpa [minus] using s1
+      simp only [show BitVec.ofNat width 3 < 4#width from n4.mpr (by omega),
+        show ¬ BitVec.ofNat width 3 < 2#width from fun h => absurd (n2.mp h) (by omega), dite_true, if_false,
+        show ¬ BitVec.ofNat width 3 = 2#width from fun h => absurd (e2.mp h) (by omega),
+        ld0, ld 1 (by omega), ld 2 (by omega), Option.bind_some, s1', s2, s3]
+    simp only [h3, dite_false, Function.comp_apply] at copied
+    obtain ⟨m1, s1, r1⟩ := st ys m 0 (xs[minus xp 0]'(by unfold minus; omega)) rel (by omega) (by omega)
+    obtain ⟨m2, s2, r2⟩ := st _ m1 1 (xs[minus xp 1]'(by unfold minus; omega)) r1 (by omega) (yl _ (by simp))
+    obtain ⟨m3, s3, r3⟩ := st _ m2 2 (xs[minus xp 2]'(by unfold minus; omega)) r2 (by omega) (yl _ (by simp))
+    obtain ⟨m4, s4, r4⟩ := st _ m3 3 (xs[minus xp 3]'(by unfold minus; omega)) r3 (by omega) (yl _ (by simp))
+    obtain ⟨m5, s5, r5⟩ := ih (n - 4) (by omega) (minus xp 4) (minus yp 4) _ ys1 m4 r4 copied (by omega)
+    refine ⟨m5, ?_, r5⟩
+    have s1' : memStoreByteAuxExact m dm be (B0 + BitVec.ofNat width yp) xs[xp] = some m1 := by
+      simpa [minus] using s1
+    have nsub : BitVec.ofNat width n - 4#width = BitVec.ofNat width (n - 4) := by
+      have := byteAddr_sub (0 : BitVec width) n 4 (by omega)
+      simpa using this
+    have rest : wordCopyBwd be (BitVec.ofNat width n - 4#width) (A0 + BitVec.ofNat width xp - 4#width)
+        (B0 + BitVec.ofNat width yp - 4#width) m4 dm = some m5 := by
+      rw [nsub]
+      by_cases h4 : n = 4
+      · subst n
+        rw [wordCopyBwd_zero be _ _ m4 dm good] at s5 ⊢
+        exact s5
+      · rw [byteAddr_sub _ _ _ (by omega), byteAddr_sub _ _ _ (by omega)]
+        exact s5
+    simp only [show ¬ BitVec.ofNat width n < 4#width from fun h => absurd (n4.mp h) (by omega), dite_false,
+      ld0, ld 1 (by omega), ld 2 (by omega), ld 3 (by omega), Option.bind_some, s1', s2, s3, s4]
+    exact rest
+/-- Simulation of `list_copy_bwd_alias` by `word_copy_bwd` against an abstract
+store/load interface. Flapjack infrastructure for `word_copy_bwd_alias_thm`. -/
+theorem wordCopyBwdAlias_sim {width : Nat} [NeZero width] (good : goodDimindex width) (be : Bool)
+    (dm : BitVec width → Bool) (A0 B0 : BitVec width)
+    (R : List (BitVec 8) → (BitVec width → WordLocW width) → Prop)
+    (load : ∀ ys m i (h : i < ys.length), R ys m →
+      memLoadByteAuxExact m dm be (A0 + BitVec.ofNat width i) = some ys[i])
+    (store : ∀ ys m j v, R ys m → j < ys.length →
+      ∃ m1, memStoreByteAuxExact m dm be (B0 + BitVec.ofNat width j) v = some m1 ∧ R (ys.set j v) m1) :
+    ∀ n xp yp ys ys1 m, R ys m → listCopyBwdAlias n xp yp ys = some ys1 → n < 2 ^ width →
+      ∃ m1, wordCopyBwd be (BitVec.ofNat width n) (A0 + BitVec.ofNat width xp)
+        (B0 + BitVec.ofNat width yp) m dm = some m1 ∧ R ys1 m1 := by
+  have big := goodDimindex_pow good
+  intro n
+  induction n using Nat.strongRecOn with
+  | ind n ih =>
+    intro xp yp ys ys1 m rel copied bound
+    rw [listCopyBwdAlias] at copied
+    split at copied
+    case isFalse => cases copied
+    rename_i hb
+    obtain ⟨hnx, hx, hny, hy⟩ := hb
+    have ld : ∀ k (h : k ≤ xp), memLoadByteAuxExact m dm be
+        (A0 + BitVec.ofNat width xp - BitVec.ofNat width k) = some (ys[minus xp k]'(by unfold minus; omega)) := by
+      intro k h
+      rw [byteAddr_sub _ _ _ h]
+      exact load ys m (xp - k) (by omega) rel
+    have st : ∀ zs m' k v, R zs m' → k ≤ yp → yp < zs.length → ∃ m1, memStoreByteAuxExact m' dm be
+        (B0 + BitVec.ofNat width yp - BitVec.ofNat width k) v = some m1 ∧ R (zs.set (minus yp k) v) m1 := by
+      intro zs m' k v r h h'
+      rw [byteAddr_sub _ _ _ h]
+      exact store zs m' (yp - k) v r (by omega)
+    have n4 := ofNat_lt_ofNat_iff (n := n) (k := 4) bound (show 4 < 2 ^ width by omega)
+    have n2 := ofNat_lt_ofNat_iff (n := n) (k := 2) bound (show 2 < 2 ^ width by omega)
+    have e0 := ofNat_eq_ofNat_iff (n := n) (k := 0) bound (show 0 < 2 ^ width by omega)
+    have e2 := ofNat_eq_ofNat_iff (n := n) (k := 2) bound (show 2 < 2 ^ width by omega)
+    by_cases h0 : n = 0
+    · subst n
+      simp only [dite_true] at copied
+      cases copied
+      exact ⟨m, wordCopyBwd_zero be _ _ m dm good, rel⟩
+    rw [wordCopyBwd, dif_neg (by omega)]
+    simp only [h0, dite_false] at copied
+    have ld0 : memLoadByteAuxExact m dm be (A0 + BitVec.ofNat width xp) = some ys[xp] :=
+      load ys m xp (by omega) rel
+    by_cases h1 : n = 1
+    · subst n
+      simp only [dite_true] at copied
+      cases copied
+      obtain ⟨m1, s1, r1⟩ := store ys m yp ys[xp] rel (by omega)
+      refine ⟨m1, ?_, r1⟩
+      simp only [show BitVec.ofNat width 1 < 4#width from n4.mpr (by omega),
+        show BitVec.ofNat width 1 < 2#width from n2.mpr (by omega), dite_true, if_true,
+        show ¬ BitVec.ofNat width 1 = 0#width from fun h => absurd (e0.mp h) (by omega), if_false,
+        ld0, Option.bind_some, s1]
+    simp only [h1, dite_false] at copied
+    have yl : ∀ zs : List (BitVec 8), zs.length = ys.length → yp < zs.length := fun zs h => by omega
+    by_cases h2 : n = 2
+    · subst n
+      simp only [dite_true, Function.comp_apply] at copied
+      cases copied
+      obtain ⟨m1, s1, r1⟩ := st ys m 0 (ys[minus xp 0]'(by unfold minus; omega)) rel (by omega) (by omega)
+      obtain ⟨m2, s2, r2⟩ := st _ m1 1 (ys[minus xp 1]'(by unfold minus; omega)) r1 (by omega) (yl _ (by simp))
+      refine ⟨m2, ?_, r2⟩
+      have s1' : memStoreByteAuxExact m dm be (B0 + BitVec.ofNat width yp) ys[xp] = some m1 := by
+        simpa [minus] using s1
+      simp only [show BitVec.ofNat width 2 < 4#width from n4.mpr (by omega),
+        show ¬ BitVec.ofNat width 2 < 2#width from fun h => absurd (n2.mp h) (by omega), dite_true, if_false,
+        if_true, ld0, ld 1 (by omega), Option.bind_some, s1', s2]
+    simp only [h2, dite_false] at copied
+    by_cases h3 : n = 3
+    · subst n
+      simp only [dite_true, Function.comp_apply] at copied
+      cases copied
+      obtain ⟨m1, s1, r1⟩ := st ys m 0 (ys[minus xp 0]'(by unfold minus; omega)) rel (by omega) (by omega)
+      obtain ⟨m2, s2, r2⟩ := st _ m1 1 (ys[minus xp 1]'(by unfold minus; omega)) r1 (by omega) (yl _ (by simp))
+      obtain ⟨m3, s3, r3⟩ := st _ m2 2 (ys[minus xp 2]'(by unfold minus; omega)) r2 (by omega) (yl _ (by simp))
+      refine ⟨m3, ?_, r3⟩
+      have s1' : memStoreByteAuxExact m dm be (B0 + BitVec.ofNat width yp) ys[xp] = some m1 := by
+        simpa [minus] using s1
+      simp only [show BitVec.ofNat width 3 < 4#width from n4.mpr (by omega),
+        show ¬ BitVec.ofNat width 3 < 2#width from fun h => absurd (n2.mp h) (by omega), dite_true, if_false,
+        show ¬ BitVec.ofNat width 3 = 2#width from fun h => absurd (e2.mp h) (by omega),
+        ld0, ld 1 (by omega), ld 2 (by omega), Option.bind_some, s1', s2, s3]
+    simp only [h3, dite_false, Function.comp_apply] at copied
+    obtain ⟨m1, s1, r1⟩ := st ys m 0 (ys[minus xp 0]'(by unfold minus; omega)) rel (by omega) (by omega)
+    obtain ⟨m2, s2, r2⟩ := st _ m1 1 (ys[minus xp 1]'(by unfold minus; omega)) r1 (by omega) (yl _ (by simp))
+    obtain ⟨m3, s3, r3⟩ := st _ m2 2 (ys[minus xp 2]'(by unfold minus; omega)) r2 (by omega) (yl _ (by simp))
+    obtain ⟨m4, s4, r4⟩ := st _ m3 3 (ys[minus xp 3]'(by unfold minus; omega)) r3 (by omega) (yl _ (by simp))
+    obtain ⟨m5, s5, r5⟩ := ih (n - 4) (by omega) (minus xp 4) (minus yp 4) _ ys1 m4 r4 copied (by omega)
+    refine ⟨m5, ?_, r5⟩
+    have s1' : memStoreByteAuxExact m dm be (B0 + BitVec.ofNat width yp) ys[xp] = some m1 := by
+      simpa [minus] using s1
+    have nsub : BitVec.ofNat width n - 4#width = BitVec.ofNat width (n - 4) := by
+      have := byteAddr_sub (0 : BitVec width) n 4 (by omega)
+      simpa using this
+    have rest : wordCopyBwd be (BitVec.ofNat width n - 4#width) (A0 + BitVec.ofNat width xp - 4#width)
+        (B0 + BitVec.ofNat width yp - 4#width) m4 dm = some m5 := by
+      rw [nsub]
+      by_cases h4 : n = 4
+      · subst n
+        rw [wordCopyBwd_zero be _ _ m4 dm good] at s5 ⊢
+        exact s5
+      · rw [byteAddr_sub _ _ _ (by omega), byteAddr_sub _ _ _ (by omega)]
+        exact s5
+    simp only [show ¬ BitVec.ofNat width n < 4#width from fun h => absurd (n4.mp h) (by omega), dite_false,
+      ld0, ld 1 (by omega), ld 2 (by omega), ld 3 (by omega), Option.bind_some, s1', s2, s3, s4]
+    exact rest
+
+/-- Reading facts for a related byte array. Flapjack infrastructure for the
+`word_copy_*_thm` theorems. -/
+theorem memoryRel_byteArrayRead {width : Nat} [NeZero width]
+    (c : DataToWord.Config) (be : Bool) (ts : Nat)
+    (refs : Spt (BvlSem.Ref Flapjack.Compiler.Backend.DataSem.Value)) (sp : Nat)
+    (st : HolFiniteMapExact WordStoreHOL (WordLocW width)) (m : BitVec width → WordLocW width)
+    (dm : BitVec width → Bool) (bl : Bool) (p : Nat) (v : WordLocW width)
+    (vars : List (Flapjack.Compiler.Backend.DataSem.Value × WordLocW width)) (fl : Bool)
+    (bs : List (BitVec 8))
+    (related : memoryRel c be ts refs sp st m dm ((.refPtr bl p, v) :: vars))
+    (found : sptLookup p refs = some (.byteArray fl bs)) (good : goodDimindex width) :
+    ∃ w a, v = .word w ∧ getRealAddr c st w = some a ∧ bs.length < 2 ^ width ∧
+      ∀ i (h : i < bs.length), memLoadByteAuxExact m dm be
+        (a + StackRemove.bytesInWord width + BitVec.ofNat width i) = some bs[i] := by
+  obtain ⟨w, a, _, _, loc, _, _, _, _, _, _, real, _, _, reads, _, len⟩ :=
+    memoryRel_byteArrayImp (β := Unit) c be ts refs sp st m dm bl fl p bs v vars ⟨related, found, good⟩
+  refine ⟨w, a, loc, real, ?_, reads⟩
+  have pw : 2 ^ (width - 3) ≤ 2 ^ width := Nat.pow_le_pow_right (by decide) (by omega)
+  split at len <;> omega
+
+/-- Storing a byte of the related byte array at the head of the roots.
+Flapjack infrastructure for the `word_copy_*_thm` theorems. -/
+theorem memoryRel_byteArrayStoreHead {width : Nat} [NeZero width]
+    (c : DataToWord.Config) (be : Bool) (ts : Nat)
+    (refs : Spt (BvlSem.Ref Flapjack.Compiler.Backend.DataSem.Value)) (sp : Nat)
+    (st : HolFiniteMapExact WordStoreHOL (WordLocW width)) (m : BitVec width → WordLocW width)
+    (dm : BitVec width → Bool) (bl : Bool) (p : Nat) (w a : BitVec width)
+    (vars : List (Flapjack.Compiler.Backend.DataSem.Value × WordLocW width)) (fl : Bool)
+    (ys : List (BitVec 8)) (j : Nat) (b : BitVec 8)
+    (related : memoryRel c be ts (sptInsert p (.byteArray fl ys) refs) sp st m dm ((.refPtr bl p, .word w) :: vars))
+    (good : goodDimindex width) (real : getRealAddr c st w = some a) (bound : j < ys.length) :
+    ∃ m1, memStoreByteAuxExact m dm be (a + StackRemove.bytesInWord width + BitVec.ofNat width j) b = some m1 ∧
+      memoryRel c be ts (sptInsert p (.byteArray fl (ys.set j b)) refs) sp st m1 dm ((.refPtr bl p, .word w) :: vars) := by
+  obtain ⟨m1, s, r⟩ := memoryRel_byteArrayImpStore c be ts _ sp st m dm bl p w vars fl ys a j b
+    ⟨related, sptLookup_sptInsert_same p _ refs, good, real, bound⟩
+  rw [sptInsert_insert_shadow] at r
+  exact ⟨m1, s, r⟩
+
+/-- Exact HOL `word_copy_fwd_thm`. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "word_copy_fwd_thm"
+  (fmap_as_finite_support_relation := [st]) (words_as_type_indexed_bitvec)]
+theorem wordCopyFwd_thm {width : Nat} [NeZero width]
+    (c : DataToWord.Config) (be : Bool) (ts : Nat) (p2 : Nat) (fl_ys : Bool)
+    (refs : Spt (BvlSem.Ref Flapjack.Compiler.Backend.DataSem.Value)) (sp : Nat)
+    (st : HolFiniteMapExact WordStoreHOL (WordLocW width)) (dm : BitVec width → Bool)
+    (bl1 : Bool) (p1 : Nat) (v1 : WordLocW width) (bl2 : Bool) (v2 : WordLocW width)
+    (vars : List (Flapjack.Compiler.Backend.DataSem.Value × WordLocW width)) (fl_xs : Bool)
+    (xs : List (BitVec 8)) :
+    ∀ (n xp yp : Nat) (ys ys1 : List (BitVec 8)) (m : BitVec width → WordLocW width),
+      memoryRel c be ts (sptInsert p2 (.byteArray fl_ys ys) refs) sp st m dm
+        ((.refPtr bl1 p1, v1) :: (.refPtr bl2 p2, v2) :: vars) ∧
+      sptLookup p1 refs = some (.byteArray fl_xs xs) ∧
+      listCopyFwd n xp xs yp ys = some ys1 ∧ goodDimindex width ∧ n < 2 ^ width ∧ p1 ≠ p2 →
+      ∃ (w1 w2 a1 a2 : BitVec width) (m1 : BitVec width → WordLocW width),
+        v1 = .word w1 ∧ v2 = .word w2 ∧ getRealAddr c st w1 = some a1 ∧ getRealAddr c st w2 = some a2 ∧
+        wordCopyFwd be (BitVec.ofNat width n) (a1 + StackRemove.bytesInWord width + BitVec.ofNat width xp)
+          (a2 + StackRemove.bytesInWord width + BitVec.ofNat width yp) m dm = some m1 ∧
+        memoryRel c be ts (sptInsert p2 (.byteArray fl_ys ys1) refs) sp st m1 dm
+          ((.refPtr bl1 p1, v1) :: (.refPtr bl2 p2, v2) :: vars) := by
+  rintro n xp yp ys ys1 m ⟨rel, found, copied, good, bound, ne⟩
+  have found' : ∀ zs, sptLookup p1 (sptInsert p2 (.byteArray fl_ys zs) refs) = some (.byteArray fl_xs xs) :=
+    fun zs => (sptLookup_sptInsert_ne p2 p1 _ refs ne).trans found
+  obtain ⟨w1, a1, hv1, real1, _, _⟩ :=
+    memoryRel_byteArrayRead c be ts _ sp st m dm bl1 p1 v1 _ fl_xs xs rel (found' ys) good
+  obtain ⟨w2, a2, hv2, real2, _, _⟩ :=
+    memoryRel_byteArrayRead c be ts _ sp st m dm bl2 p2 v2 _ fl_ys ys (memoryRel_swap _ _ _ _ _ _ _ _ _ _ _ rel)
+      (sptLookup_sptInsert_same p2 _ refs) good
+  subst hv1 hv2
+  obtain ⟨m1, hc, hr⟩ := wordCopyFwd_sim good be dm (a1 + StackRemove.bytesInWord width)
+    (a2 + StackRemove.bytesInWord width) xs
+    (fun zs mm => memoryRel c be ts (sptInsert p2 (.byteArray fl_ys zs) refs) sp st mm dm
+      ((.refPtr bl1 p1, .word w1) :: (.refPtr bl2 p2, .word w2) :: vars))
+    (by
+      intro zs mm i h r
+      obtain ⟨w', a', hv, real', _, loads⟩ :=
+        memoryRel_byteArrayRead c be ts _ sp st mm dm bl1 p1 _ _ fl_xs xs r (found' zs) good
+      cases hv
+      cases real'.symm.trans real1
+      exact loads i h)
+    (by
+      intro zs mm j v r hj
+      obtain ⟨m', s, r'⟩ := memoryRel_byteArrayStoreHead c be ts refs sp st mm dm bl2 p2 w2 a2 _ fl_ys zs j v
+        (memoryRel_swap _ _ _ _ _ _ _ _ _ _ _ r) good real2 hj
+      exact ⟨m', s, memoryRel_swap _ _ _ _ _ _ _ _ _ _ _ r'⟩)
+    n xp yp ys ys1 m rel copied bound
+  exact ⟨w1, w2, a1, a2, m1, rfl, rfl, real1, real2, hc, hr⟩
+
+/-- Exact HOL `word_copy_fwd_alias_thm`. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "word_copy_fwd_alias_thm"
+  (fmap_as_finite_support_relation := [st]) (words_as_type_indexed_bitvec)]
+theorem wordCopyFwdAlias_thm {width : Nat} [NeZero width]
+    (c : DataToWord.Config) (be : Bool) (ts : Nat) (p2 : Nat) (fl_ys : Bool)
+    (refs : Spt (BvlSem.Ref Flapjack.Compiler.Backend.DataSem.Value)) (sp : Nat)
+    (st : HolFiniteMapExact WordStoreHOL (WordLocW width)) (dm : BitVec width → Bool)
+    (bl : Bool) (v2 : WordLocW width)
+    (vars : List (Flapjack.Compiler.Backend.DataSem.Value × WordLocW width)) :
+    ∀ (n xp yp : Nat) (ys ys1 : List (BitVec 8)) (m : BitVec width → WordLocW width),
+      memoryRel c be ts (sptInsert p2 (.byteArray fl_ys ys) refs) sp st m dm
+        ((.refPtr bl p2, v2) :: vars) ∧
+      listCopyFwdAlias n xp yp ys = some ys1 ∧ goodDimindex width ∧ n < 2 ^ width →
+      ∃ (w2 a2 : BitVec width) (m1 : BitVec width → WordLocW width),
+        v2 = .word w2 ∧ getRealAddr c st w2 = some a2 ∧
+        wordCopyFwd be (BitVec.ofNat width n) (a2 + StackRemove.bytesInWord width + BitVec.ofNat width xp)
+          (a2 + StackRemove.bytesInWord width + BitVec.ofNat width yp) m dm = some m1 ∧
+        memoryRel c be ts (sptInsert p2 (.byteArray fl_ys ys1) refs) sp st m1 dm
+          ((.refPtr bl p2, v2) :: vars) := by
+  rintro n xp yp ys ys1 m ⟨rel, copied, good, bound⟩
+  obtain ⟨w2, a2, hv2, real2, _, _⟩ :=
+    memoryRel_byteArrayRead c be ts _ sp st m dm bl p2 v2 _ fl_ys ys rel
+      (sptLookup_sptInsert_same p2 _ refs) good
+  subst hv2
+  obtain ⟨m1, hc, hr⟩ := wordCopyFwdAlias_sim good be dm (a2 + StackRemove.bytesInWord width)
+    (a2 + StackRemove.bytesInWord width)
+    (fun zs mm => memoryRel c be ts (sptInsert p2 (.byteArray fl_ys zs) refs) sp st mm dm
+      ((.refPtr bl p2, .word w2) :: vars))
+    (by
+      intro zs mm i h r
+      obtain ⟨w', a', hv, real', _, loads⟩ :=
+        memoryRel_byteArrayRead c be ts _ sp st mm dm bl p2 _ _ fl_ys zs r (sptLookup_sptInsert_same p2 _ refs) good
+      cases hv
+      cases real'.symm.trans real2
+      exact loads i h)
+    (fun zs mm j v r hj => memoryRel_byteArrayStoreHead c be ts refs sp st mm dm bl p2 w2 a2 _ fl_ys zs j v
+        r good real2 hj)
+    n xp yp ys ys1 m rel copied bound
+  exact ⟨w2, a2, m1, rfl, real2, hc, hr⟩
+
+/-- Exact HOL `word_copy_bwd_thm`. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "word_copy_bwd_thm"
+  (fmap_as_finite_support_relation := [st]) (words_as_type_indexed_bitvec)]
+theorem wordCopyBwd_thm {width : Nat} [NeZero width]
+    (c : DataToWord.Config) (be : Bool) (ts : Nat) (p2 : Nat) (fl_ys : Bool)
+    (refs : Spt (BvlSem.Ref Flapjack.Compiler.Backend.DataSem.Value)) (sp : Nat)
+    (st : HolFiniteMapExact WordStoreHOL (WordLocW width)) (dm : BitVec width → Bool)
+    (bl1 : Bool) (p1 : Nat) (v1 : WordLocW width) (bl2 : Bool) (v2 : WordLocW width)
+    (vars : List (Flapjack.Compiler.Backend.DataSem.Value × WordLocW width)) (fl_xs : Bool)
+    (xs : List (BitVec 8)) :
+    ∀ (n xp yp : Nat) (ys ys1 : List (BitVec 8)) (m : BitVec width → WordLocW width),
+      memoryRel c be ts (sptInsert p2 (.byteArray fl_ys ys) refs) sp st m dm
+        ((.refPtr bl1 p1, v1) :: (.refPtr bl2 p2, v2) :: vars) ∧
+      sptLookup p1 refs = some (.byteArray fl_xs xs) ∧
+      listCopyBwd n xp xs yp ys = some ys1 ∧ goodDimindex width ∧ n < 2 ^ width ∧ p1 ≠ p2 →
+      ∃ (w1 w2 a1 a2 : BitVec width) (m1 : BitVec width → WordLocW width),
+        v1 = .word w1 ∧ v2 = .word w2 ∧ getRealAddr c st w1 = some a1 ∧ getRealAddr c st w2 = some a2 ∧
+        wordCopyBwd be (BitVec.ofNat width n) (a1 + StackRemove.bytesInWord width + BitVec.ofNat width xp)
+          (a2 + StackRemove.bytesInWord width + BitVec.ofNat width yp) m dm = some m1 ∧
+        memoryRel c be ts (sptInsert p2 (.byteArray fl_ys ys1) refs) sp st m1 dm
+          ((.refPtr bl1 p1, v1) :: (.refPtr bl2 p2, v2) :: vars) := by
+  rintro n xp yp ys ys1 m ⟨rel, found, copied, good, bound, ne⟩
+  have found' : ∀ zs, sptLookup p1 (sptInsert p2 (.byteArray fl_ys zs) refs) = some (.byteArray fl_xs xs) :=
+    fun zs => (sptLookup_sptInsert_ne p2 p1 _ refs ne).trans found
+  obtain ⟨w1, a1, hv1, real1, _, _⟩ :=
+    memoryRel_byteArrayRead c be ts _ sp st m dm bl1 p1 v1 _ fl_xs xs rel (found' ys) good
+  obtain ⟨w2, a2, hv2, real2, _, _⟩ :=
+    memoryRel_byteArrayRead c be ts _ sp st m dm bl2 p2 v2 _ fl_ys ys (memoryRel_swap _ _ _ _ _ _ _ _ _ _ _ rel)
+      (sptLookup_sptInsert_same p2 _ refs) good
+  subst hv1 hv2
+  obtain ⟨m1, hc, hr⟩ := wordCopyBwd_sim good be dm (a1 + StackRemove.bytesInWord width)
+    (a2 + StackRemove.bytesInWord width) xs
+    (fun zs mm => memoryRel c be ts (sptInsert p2 (.byteArray fl_ys zs) refs) sp st mm dm
+      ((.refPtr bl1 p1, .word w1) :: (.refPtr bl2 p2, .word w2) :: vars))
+    (by
+      intro zs mm i h r
+      obtain ⟨w', a', hv, real', _, loads⟩ :=
+        memoryRel_byteArrayRead c be ts _ sp st mm dm bl1 p1 _ _ fl_xs xs r (found' zs) good
+      cases hv
+      cases real'.symm.trans real1
+      exact loads i h)
+    (by
+      intro zs mm j v r hj
+      obtain ⟨m', s, r'⟩ := memoryRel_byteArrayStoreHead c be ts refs sp st mm dm bl2 p2 w2 a2 _ fl_ys zs j v
+        (memoryRel_swap _ _ _ _ _ _ _ _ _ _ _ r) good real2 hj
+      exact ⟨m', s, memoryRel_swap _ _ _ _ _ _ _ _ _ _ _ r'⟩)
+    n xp yp ys ys1 m rel copied bound
+  exact ⟨w1, w2, a1, a2, m1, rfl, rfl, real1, real2, hc, hr⟩
+
+
+/-- Exact HOL `word_copy_bwd_alias_thm`. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "word_copy_bwd_alias_thm"
+  (fmap_as_finite_support_relation := [st]) (words_as_type_indexed_bitvec)]
+theorem wordCopyBwdAlias_thm {width : Nat} [NeZero width]
+    (c : DataToWord.Config) (be : Bool) (ts : Nat) (p2 : Nat) (fl_ys : Bool)
+    (refs : Spt (BvlSem.Ref Flapjack.Compiler.Backend.DataSem.Value)) (sp : Nat)
+    (st : HolFiniteMapExact WordStoreHOL (WordLocW width)) (dm : BitVec width → Bool)
+    (bl : Bool) (v2 : WordLocW width)
+    (vars : List (Flapjack.Compiler.Backend.DataSem.Value × WordLocW width)) :
+    ∀ (n xp yp : Nat) (ys ys1 : List (BitVec 8)) (m : BitVec width → WordLocW width),
+      memoryRel c be ts (sptInsert p2 (.byteArray fl_ys ys) refs) sp st m dm
+        ((.refPtr bl p2, v2) :: vars) ∧
+      listCopyBwdAlias n xp yp ys = some ys1 ∧ goodDimindex width ∧ n < 2 ^ width →
+      ∃ (w2 a2 : BitVec width) (m1 : BitVec width → WordLocW width),
+        v2 = .word w2 ∧ getRealAddr c st w2 = some a2 ∧
+        wordCopyBwd be (BitVec.ofNat width n) (a2 + StackRemove.bytesInWord width + BitVec.ofNat width xp)
+          (a2 + StackRemove.bytesInWord width + BitVec.ofNat width yp) m dm = some m1 ∧
+        memoryRel c be ts (sptInsert p2 (.byteArray fl_ys ys1) refs) sp st m1 dm
+          ((.refPtr bl p2, v2) :: vars) := by
+  rintro n xp yp ys ys1 m ⟨rel, copied, good, bound⟩
+  obtain ⟨w2, a2, hv2, real2, _, _⟩ :=
+    memoryRel_byteArrayRead c be ts _ sp st m dm bl p2 v2 _ fl_ys ys rel
+      (sptLookup_sptInsert_same p2 _ refs) good
+  subst hv2
+  obtain ⟨m1, hc, hr⟩ := wordCopyBwdAlias_sim good be dm (a2 + StackRemove.bytesInWord width)
+    (a2 + StackRemove.bytesInWord width)
+    (fun zs mm => memoryRel c be ts (sptInsert p2 (.byteArray fl_ys zs) refs) sp st mm dm
+      ((.refPtr bl p2, .word w2) :: vars))
+    (by
+      intro zs mm i h r
+      obtain ⟨w', a', hv, real', _, loads⟩ :=
+        memoryRel_byteArrayRead c be ts _ sp st mm dm bl p2 _ _ fl_ys zs r (sptLookup_sptInsert_same p2 _ refs) good
+      cases hv
+      cases real'.symm.trans real2
+      exact loads i h)
+    (fun zs mm j v r hj => memoryRel_byteArrayStoreHead c be ts refs sp st mm dm bl p2 w2 a2 _ fl_ys zs j v
+        r good real2 hj)
+    n xp yp ys ys1 m rel copied bound
+  exact ⟨w2, a2, m1, rfl, real2, hc, hr⟩
+
+/-- Unsigned comparison of in-range numerals. Flapjack infrastructure. -/
+theorem ofNat_le_ofNat_iff {width : Nat} {n k : Nat} (hn : n < 2 ^ width) (hk : k < 2 ^ width) :
+    BitVec.ofNat width n ≤ BitVec.ofNat width k ↔ n ≤ k := by
+  simp [BitVec.le_def, Nat.mod_eq_of_lt hn, Nat.mod_eq_of_lt hk]
+
+/-- Exact HOL `word_copy_array_thm`. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "word_copy_array_thm"
+  (fmap_as_finite_support_relation := [st]) (words_as_type_indexed_bitvec)]
+theorem wordCopyArray_thm {width : Nat} [NeZero width]
+    (c : DataToWord.Config) (be : Bool) (ts : Nat)
+    (refs : Spt (BvlSem.Ref Flapjack.Compiler.Backend.DataSem.Value)) (sp : Nat)
+    (st : HolFiniteMapExact WordStoreHOL (WordLocW width)) (dm : BitVec width → Bool)
+    (bl1 : Bool) (p1 : Nat) (v1 : WordLocW width) (bl2 : Bool) (p2 : Nat) (v2 : WordLocW width)
+    (vars : List (Flapjack.Compiler.Backend.DataSem.Value × WordLocW width)) (fl_xs fl_ys : Bool) :
+    ∀ (n xp yp : Nat) (xs ys ys1 : List (BitVec 8)) (m : BitVec width → WordLocW width),
+      memoryRel c be ts refs sp st m dm ((.refPtr bl1 p1, v1) :: (.refPtr bl2 p2, v2) :: vars) ∧
+      sptLookup p1 refs = some (.byteArray fl_xs xs) ∧
+      sptLookup p2 refs = some (.byteArray fl_ys ys) ∧
+      copyArray (xs, (xp : Int)) (n : Int) (some (ys, (yp : Int))) = some ys1 ∧
+      goodDimindex width ∧ p1 ≠ p2 →
+      ∃ (w1 w2 a1 a2 : BitVec width) (m1 : BitVec width → WordLocW width),
+        v1 = .word w1 ∧ v2 = .word w2 ∧ getRealAddr c st w1 = some a1 ∧ getRealAddr c st w2 = some a2 ∧
+        wordCopyArray be (BitVec.ofNat width n) (a1 + StackRemove.bytesInWord width) (BitVec.ofNat width xp)
+          (a2 + StackRemove.bytesInWord width) (BitVec.ofNat width yp) m dm = some m1 ∧
+        memoryRel c be ts (sptInsert p2 (.byteArray fl_ys ys1) refs) sp st m1 dm
+          ((.refPtr bl1 p1, v1) :: (.refPtr bl2 p2, v2) :: vars) := by
+  rintro n xp yp xs ys ys1 m ⟨rel, found1, found2, copied, good, ne⟩
+  obtain ⟨hx, hy, -⟩ := copyArray_some_eq xs ys ys1 xp yp n copied
+  have list := listCopy_thm xs ys xp yp n ys1 copied
+  have rel' : memoryRel c be ts (sptInsert p2 (.byteArray fl_ys ys) refs) sp st m dm
+      ((.refPtr bl1 p1, v1) :: (.refPtr bl2 p2, v2) :: vars) := by
+    rw [sptInsertUnchanged refs p2 _ found2]; exact rel
+  obtain ⟨w1, a1, hv1, real1, len1, _⟩ :=
+    memoryRel_byteArrayRead c be ts _ sp st m dm bl1 p1 v1 _ fl_xs xs rel found1 good
+  obtain ⟨w2, a2, hv2, real2, len2, _⟩ :=
+    memoryRel_byteArrayRead c be ts _ sp st m dm bl2 p2 v2 _ fl_ys ys (memoryRel_swap _ _ _ _ _ _ _ _ _ _ _ rel)
+      found2 good
+  have cmp := ofNat_le_ofNat_iff (width := width) (n := yp) (k := xp) (by omega) (by omega)
+  unfold listCopy at list
+  unfold wordCopyArray
+  split at list
+  · rename_i hc
+    by_cases hle : yp ≤ xp
+    · simp only [cmp, hle, if_true]
+      obtain ⟨w1', w2', a1', a2', m1, e1, e2, r1, r2, hc', hr⟩ :=
+        wordCopyFwd_thm c be ts p2 fl_ys refs sp st dm bl1 p1 v1 bl2 v2 vars fl_xs xs n xp yp ys ys1 m
+          ⟨rel', found1, list, good, by omega, ne⟩
+      subst hv1 hv2
+      cases e1; cases e2
+      cases r1.symm.trans real1; cases r2.symm.trans real2
+      exact ⟨w1, w2, a1, a2, m1, rfl, rfl, real1, real2, hc', hr⟩
+    · simp only [cmp, hle, if_false]
+      have hn : n = 0 := by omega
+      subst hn
+      rw [listCopyFwd] at list
+      simp only [dif_pos (show xp + 0 ≤ xs.length ∧ yp + 0 ≤ ys.length by omega), dite_true] at list
+      cases list
+      refine ⟨w1, w2, a1, a2, m, hv1, hv2, real1, real2, ?_, rel'⟩
+      exact wordCopyBwd_zero be _ _ m dm good
+  · rename_i hc
+    have hle : ¬ yp ≤ xp := by omega
+    simp only [cmp, hle, if_false]
+    obtain ⟨w1', w2', a1', a2', m1, e1, e2, r1, r2, hc', hr⟩ :=
+      wordCopyBwd_thm c be ts p2 fl_ys refs sp st dm bl1 p1 v1 bl2 v2 vars fl_xs xs n (xp + n - 1) (yp + n - 1)
+        ys ys1 m ⟨rel', found1, list, good, by omega, ne⟩
+    subst hv1 hv2
+    cases e1; cases e2
+    cases r1.symm.trans real1; cases r2.symm.trans real2
+    refine ⟨w1, w2, a1, a2, m1, rfl, rfl, real1, real2, ?_, hr⟩
+    rw [byteAddr_add, byteAddr_add, byteAddr_sub _ _ _ (by omega), byteAddr_sub _ _ _ (by omega)]
+    exact hc'
+
+/-- Exact HOL `word_copy_array_alias_thm`. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "word_copy_array_alias_thm"
+  (fmap_as_finite_support_relation := [st]) (words_as_type_indexed_bitvec)]
+theorem wordCopyArrayAlias_thm {width : Nat} [NeZero width]
+    (c : DataToWord.Config) (be : Bool) (ts : Nat)
+    (refs : Spt (BvlSem.Ref Flapjack.Compiler.Backend.DataSem.Value)) (sp : Nat)
+    (st : HolFiniteMapExact WordStoreHOL (WordLocW width)) (dm : BitVec width → Bool)
+    (bl : Bool) (p2 : Nat) (v2 : WordLocW width)
+    (vars : List (Flapjack.Compiler.Backend.DataSem.Value × WordLocW width)) (fl_ys : Bool) :
+    ∀ (n xp yp : Nat) (ys ys1 : List (BitVec 8)) (m : BitVec width → WordLocW width),
+      memoryRel c be ts refs sp st m dm ((.refPtr bl p2, v2) :: vars) ∧
+      sptLookup p2 refs = some (.byteArray fl_ys ys) ∧
+      copyArray (ys, (xp : Int)) (n : Int) (some (ys, (yp : Int))) = some ys1 ∧
+      goodDimindex width →
+      ∃ (w2 a2 : BitVec width) (m1 : BitVec width → WordLocW width),
+        v2 = .word w2 ∧ getRealAddr c st w2 = some a2 ∧
+        wordCopyArray be (BitVec.ofNat width n) (a2 + StackRemove.bytesInWord width) (BitVec.ofNat width xp)
+          (a2 + StackRemove.bytesInWord width) (BitVec.ofNat width yp) m dm = some m1 ∧
+        memoryRel c be ts (sptInsert p2 (.byteArray fl_ys ys1) refs) sp st m1 dm
+          ((.refPtr bl p2, v2) :: vars) := by
+  rintro n xp yp ys ys1 m ⟨rel, found2, copied, good⟩
+  obtain ⟨hx, hy, -⟩ := copyArray_some_eq ys ys ys1 xp yp n copied
+  have list := listCopyAlias_thm ys xp yp n ys1 copied
+  have rel' : memoryRel c be ts (sptInsert p2 (.byteArray fl_ys ys) refs) sp st m dm
+      ((.refPtr bl p2, v2) :: vars) := by
+    rw [sptInsertUnchanged refs p2 _ found2]; exact rel
+  obtain ⟨w2, a2, hv2, real2, len2, _⟩ :=
+    memoryRel_byteArrayRead c be ts _ sp st m dm bl p2 v2 _ fl_ys ys rel found2 good
+  have cmp := ofNat_le_ofNat_iff (width := width) (n := yp) (k := xp) (by omega) (by omega)
+  unfold listCopyAlias at list
+  unfold wordCopyArray
+  split at list
+  · rename_i hc
+    by_cases hle : yp ≤ xp
+    · simp only [cmp, hle, if_true]
+      obtain ⟨w2', a2', m1, e2, r2, hc', hr⟩ :=
+        wordCopyFwdAlias_thm c be ts p2 fl_ys refs sp st dm bl v2 vars n xp yp ys ys1 m
+          ⟨rel', list, good, by omega⟩
+      subst hv2
+      cases e2
+      cases r2.symm.trans real2
+      exact ⟨w2, a2, m1, rfl, real2, hc', hr⟩
+    · simp only [cmp, hle, if_false]
+      have hn : n = 0 := by omega
+      subst hn
+      rw [listCopyFwdAlias] at list
+      simp only [dif_pos (show xp + 0 ≤ ys.length ∧ yp + 0 ≤ ys.length by omega), dite_true] at list
+      cases list
+      refine ⟨w2, a2, m, hv2, real2, ?_, rel'⟩
+      exact wordCopyBwd_zero be _ _ m dm good
+  · rename_i hc
+    have hle : ¬ yp ≤ xp := by omega
+    simp only [cmp, hle, if_false]
+    obtain ⟨w2', a2', m1, e2, r2, hc', hr⟩ :=
+      wordCopyBwdAlias_thm c be ts p2 fl_ys refs sp st dm bl v2 vars n (xp + n - 1) (yp + n - 1)
+        ys ys1 m ⟨rel', list, good, by omega⟩
+    subst hv2
+    cases e2
+    cases r2.symm.trans real2
+    refine ⟨w2, a2, m1, rfl, real2, ?_, hr⟩
+    rw [byteAddr_add, byteAddr_add, byteAddr_sub _ _ _ (by omega), byteAddr_sub _ _ _ (by omega)]
+    exact hc'
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
