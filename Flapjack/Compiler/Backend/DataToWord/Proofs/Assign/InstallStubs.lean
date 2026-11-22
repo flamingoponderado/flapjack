@@ -9,6 +9,8 @@ public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Number
 public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Rearrange
 public import Flapjack.Compiler.Backend.Semantics.DataSem.Conversions
 public import Flapjack.Compiler.Backend.DataToWord.Stubs
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Word64
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.SmallWordLemmas
 public import Flapjack.Compiler.Backend.WordToStack.Proofs.CallLocalRecovery
 
 @[expose] public section
@@ -277,6 +279,193 @@ theorem installCode_correct {width : Nat} [NeZero width] {C F : Type}
         simp [WordSemStateFiniteExact.callEnv, WordSemStateFiniteExact.decClock,
           WordSemStateFiniteExact.setVar, List.append_assoc, Nat.sub_sub, Nat.add_comm, Nat.add_left_comm,
           BitVec.ofNat_add, BitVec.add_assoc]
+      subst pq
+      obtain ⟨res, s⟩ := p
+      by_cases h : wordSemBadFunReturn res = true
+      · simp only [h, if_true]
+        simp [wordSemBadFunReturn]
+      · simp only [h, if_false, Bool.false_eq_true]
+    · rfl
+
+/-- The data-installation loop copies the decoded words into the data buffer
+and tail-calls the installation stub. HOL's universally quantified `v1` and
+`s1` occur nowhere in the statement and are omitted. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml" "InstallData_code_thm"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem installData_correct {width : Nat} [NeZero width] {C F : Type}
+    (t : WordSemStateFiniteExact width C F) (c : Config) (hv2 : DataSem.Value)
+    (q2 : List (BitVec 64)) (a1 a2 retVal : WordLocW width)
+    (vars : List (DataSem.Value × WordLocW width)) (sp : Nat)
+    (refs : Spt (BvlSem.Ref DataSem.Value)) (ts : Nat)
+    (h : memoryRel c t.be ts refs sp t.store t.memory t.mdomain ((hv2, a2) :: vars) ∧
+      sptLookup installDataLocation t.code = some (4, installDataStub c) ∧
+      sptLookup installLocation t.code = some (3, installCode c) ∧
+      DataSem.valueToWords hv2 = some q2 ∧
+      q2.length ≤ t.dataBuffer.spaceLeft ∧ q2.length < t.clock ∧
+      t.getVar 0 = some retVal ∧
+      t.getVar 2 = some (.word (t.dataBuffer.position +
+        wordSemBytesInWord * BitVec.ofNat width t.dataBuffer.buffer.length)) ∧
+      t.getVar 4 = some a2 ∧ t.getVar 6 = some a1 ∧
+      goodDimindex width) :
+    ∃ (smx lsz : Option Nat),
+      WordSemStateFiniteExact.evaluate (installDataStub c) t =
+        match WordSemStateFiniteExact.evaluate (installCode c)
+          { t with
+            locals := sptFromList2 [retVal,
+              .word (t.dataBuffer.position +
+                wordSemBytesInWord * BitVec.ofNat width t.dataBuffer.buffer.length +
+                wordSemBytesInWord * BitVec.ofNat width q2.length), a1]
+            clock := t.clock - q2.length - 1
+            dataBuffer := { t.dataBuffer with
+              buffer := t.dataBuffer.buffer ++ q2.map w2wUpper
+              spaceLeft := t.dataBuffer.spaceLeft - q2.length }
+            localsSize := lsz
+            stackMax := smx } with
+        | (res, s) => if wordSemBadFunReturn res then (some .error, s) else (res, s) := by
+  induction q2 generalizing t hv2 a2 with
+  | nil =>
+    obtain ⟨rel, dataL, installL, words, space, clock, r0, r2, r4, r6, good⟩ := h
+    have list : DataSem.valueToList hv2 = some [] := by
+      simpa using (DataSem.valueToWords_eq_some hv2 []).mp words
+    obtain ⟨ts0, rfl⟩ := DataSem.valueToList_nil_iff.mp list
+    obtain ⟨w, rfl, hw⟩ := memoryRel_blockImp c t.be ts refs sp t.store t.memory t.mdomain ts0 _ [] a2 vars
+      ⟨rel, good⟩
+    simp only [if_true] at hw
+    obtain ⟨_, low, _, _⟩ := hw
+    unfold installDataStub
+    rw [evalTestOne t 4 w _ _ r4, low, if_neg (by simp)]
+    have r0' := r0
+    have r2' := r2
+    have r6' := r6
+    simp only [WordSemStateFiniteExact.getVar] at r0' r2' r6'
+    rw [tailCall _ installLocation [0, 2, 6]
+      [retVal, .word (t.dataBuffer.position +
+        wordSemBytesInWord * BitVec.ofNat width t.dataBuffer.buffer.length), a1] _
+      (by simp [WordSemStateFiniteExact.getVars, WordSemStateFiniteExact.getVar, r0', r2', r6'])
+      (by simpa using installL)
+      (by simp at clock; omega)]
+    refine ⟨wordSemOptionMax t.stackMax (wordSemOptionAdd (wordSemStackSize t.stack)
+        (sptLookup installLocation t.stackSize)), sptLookup installLocation t.stackSize, ?_⟩
+    simp [WordSemStateFiniteExact.callEnv, WordSemStateFiniteExact.decClock]
+  | cons v q2 ih =>
+    obtain ⟨rel, dataL, installL, words, space, clock, r0, r2, r4, r6, good⟩ := h
+    have list := (DataSem.valueToWords_eq_some hv2 _).mp words
+    obtain ⟨ts1, tag, tl, rfl, tlList⟩ : ∃ ts1 tag tl, hv2 = .block ts1 tag [.word64 v, tl] ∧
+        DataSem.valueToWords tl = some q2 := by
+      rcases hv2 with _ | _ | ⟨ts1, tag, _ | ⟨hd, _ | ⟨tl, _ | ⟨x, xs⟩⟩⟩⟩ <;>
+        simp [DataSem.valueToList] at list
+      obtain ⟨-, tlL, rfl⟩ := list
+      exact ⟨ts1, tag, tl, rfl, (DataSem.valueToWords_eq_some tl q2).mpr tlL⟩
+    have shift : shiftLength c < width := by
+      obtain ⟨_, _, _, _, _, _, heapMem, _⟩ := rel
+      exact heapMem.2.2.2.2.2.1
+    obtain ⟨w, rfl, hw⟩ := memoryRel_blockImp c t.be ts refs sp t.store t.memory t.mdomain ts1 tag _ a2 vars
+      ⟨rel, good⟩
+    simp only [reduceCtorEq, if_false] at hw
+    obtain ⟨addr, -, high, -, -, addrEq, -⟩ := hw
+    obtain ⟨w0, addr0, -, w0Eq, addr0Eq, dom0, rel0⟩ := memoryRel_elAny c t.be ts refs sp t.store t.memory t.mdomain
+      ts1 tag _ (.word w) vars 0 (by simp) ⟨rel, good⟩
+    cases w0Eq
+    rw [addrEq] at addr0Eq
+    cases addr0Eq
+    obtain ⟨w1, addr1, -, w1Eq, addr1Eq, dom1, rel1⟩ := memoryRel_elAny c t.be ts refs sp t.store t.memory t.mdomain
+      ts1 tag _ (.word w) vars 1 (by simp) ⟨rel, good⟩
+    cases w1Eq
+    rw [addrEq] at addr1Eq
+    cases addr1Eq
+    have relTl := memoryRel_tl c t.be ts refs sp t.store t.memory t.mdomain _ _
+      (memoryRel_swap c t.be ts refs sp t.store t.memory t.mdomain _ _ _ rel1)
+    simp only [List.getElem_cons_zero, List.getElem_cons_succ] at rel0 relTl
+    simp only [BitVec.mul_zero, BitVec.add_zero, BitVec.mul_one] at dom0 rel0 dom1 relTl
+    have bytesEq : StackRemove.bytesInWord width = wordSemBytesInWord := rfl
+    rw [bytesEq] at dom0 rel0 dom1 relTl
+    obtain ⟨ptr, address, header, m0, realEq, -, -, -, -, -, domA, hv⟩ :=
+      memoryRel_word64Imp c t.be ts refs sp t.store t.memory t.mdomain v _ _ ⟨rel0, good⟩
+    rw [bytesEq] at domA hv
+    have mA : t.memory (address + wordSemBytesInWord) = .word (w2wUpper v) := by
+      rcases good with hw | hw <;> subst width <;> simp [w2wUpper] at hv ⊢ <;> exact hv.1
+    have r0' := r0
+    have r2' := r2
+    have r6' := r6
+    simp only [WordSemStateFiniteExact.getVar] at r0' r2' r6'
+    simp at space clock
+    unfold installDataStub
+    rw [evalTestOne t 4 w _ _ r4, high, if_pos rfl]
+    simp only [wordListSeq]
+    rw [seqAssign t 3 _ (.word addr) _ (getRealAddr_lemma c 4 t w addr ⟨shift, good, r4, addrEq⟩)]
+    rw [seqAssign _ 4 _ (.word (getAddr c ptr (.word 0))) _ (by
+      simp [WordSemStateFiniteExact.wordExp, WordSemStateFiniteExact.getVar, WordSemStateFiniteExact.setVar,
+        lookupInsert, theWords, wordOpHOL, wordOp, WordSemStateFiniteExact.memLoad, dom0, m0])]
+    rw [seqAssign _ 4 _ (.word address) _ (getRealAddr_lemma c 4 _ (getAddr c ptr (.word 0)) address
+      ⟨shift, good, by simp [WordSemStateFiniteExact.getVar, WordSemStateFiniteExact.setVar, lookupInsert],
+        by simpa [WordSemStateFiniteExact.setVar] using realEq⟩)]
+    rw [seqAssign _ 4 _ (.word (w2wUpper v)) _ (by
+      simp [WordSemStateFiniteExact.wordExp, WordSemStateFiniteExact.getVar, WordSemStateFiniteExact.setVar,
+        lookupInsert, theWords, wordOpHOL, wordOp, WordSemStateFiniteExact.memLoad, domA, mA])]
+    rw [seqDataBufferWrite _ 2 4
+      (t.dataBuffer.position + wordSemBytesInWord * BitVec.ofNat width t.dataBuffer.buffer.length)
+      (w2wUpper v) { t.dataBuffer with
+        buffer := t.dataBuffer.buffer ++ [w2wUpper v], spaceLeft := t.dataBuffer.spaceLeft - 1 } _
+      (by simp [WordSemStateFiniteExact.getVar, WordSemStateFiniteExact.setVar, lookupInsert, r2'])
+      (by simp [WordSemStateFiniteExact.getVar, WordSemStateFiniteExact.setVar, lookupInsert])
+      (by
+        simp only [WordSemStateFiniteExact.setVar, wordSemBufferWrite]
+        exact if_pos ⟨rfl, by omega⟩)]
+    rw [seqAssign _ 2 _ (.word (t.dataBuffer.position +
+        wordSemBytesInWord * BitVec.ofNat width t.dataBuffer.buffer.length + wordSemBytesInWord)) _ (by
+      simp [WordSemStateFiniteExact.wordExp, WordSemStateFiniteExact.getVar, WordSemStateFiniteExact.setVar,
+        lookupInsert, theWords, wordOpHOL, wordOp, r2'])]
+    have twice : addr + 2#width * wordSemBytesInWord = addr + wordSemBytesInWord + wordSemBytesInWord := by
+      rw [BitVec.add_assoc]
+      congr 1
+      rcases good with rfl | rfl <;> rfl
+    rw [seqAssign _ 4 _ (t.memory (addr + wordSemBytesInWord + wordSemBytesInWord)) _ (by
+      simp [WordSemStateFiniteExact.wordExp, WordSemStateFiniteExact.getVar, WordSemStateFiniteExact.setVar,
+        lookupInsert, theWords, wordOpHOL, wordOp, WordSemStateFiniteExact.memLoad]
+      rw [twice]; exact ⟨dom1, rfl⟩)]
+    rw [tailCall _ installDataLocation [0, 2, 4, 6]
+      [retVal, .word (t.dataBuffer.position +
+        wordSemBytesInWord * BitVec.ofNat width t.dataBuffer.buffer.length + wordSemBytesInWord),
+        t.memory (addr + wordSemBytesInWord + wordSemBytesInWord), a1] _
+      (by simp [WordSemStateFiniteExact.getVars, WordSemStateFiniteExact.getVar,
+            WordSemStateFiniteExact.setVar, lookupInsert, r0', r6'])
+      (by simpa [WordSemStateFiniteExact.setVar] using dataL)
+      (by simp [WordSemStateFiniteExact.setVar]; omega)]
+    let m1 := t.memory (addr + wordSemBytesInWord + wordSemBytesInWord)
+    let t88 : WordSemStateFiniteExact width C F := { t with
+      locals := sptFromList2 [retVal, .word (t.dataBuffer.position +
+        wordSemBytesInWord * BitVec.ofNat width t.dataBuffer.buffer.length + wordSemBytesInWord), m1, a1]
+      localsSize := sptLookup installDataLocation t.stackSize
+      stackMax := wordSemOptionMax t.stackMax
+        (wordSemOptionAdd (wordSemStackSize t.stack) (sptLookup installDataLocation t.stackSize))
+      dataBuffer := { t.dataBuffer with
+        buffer := t.dataBuffer.buffer ++ [w2wUpper v], spaceLeft := t.dataBuffer.spaceLeft - 1 }
+      clock := t.clock - 1 }
+    have v2 : t88.dataBuffer.position + wordSemBytesInWord * BitVec.ofNat width t88.dataBuffer.buffer.length =
+        t.dataBuffer.position + wordSemBytesInWord * BitVec.ofNat width t.dataBuffer.buffer.length +
+          wordSemBytesInWord := by
+      simp [t88, BitVec.ofNat_add, BitVec.mul_add, BitVec.add_assoc]
+    obtain ⟨smx, lsz, ihEq⟩ := ih t88 tl m1 ⟨relTl, dataL, installL,
+      tlList, by simp [t88]; omega, by simp [t88]; omega,
+      by simp [t88, WordSemStateFiniteExact.getVar, WordToStackProofs.fromList2Lookup],
+      by rw [v2]; simp [t88, WordSemStateFiniteExact.getVar, WordToStackProofs.fromList2Lookup],
+      by simp [t88, m1, WordSemStateFiniteExact.getVar, WordToStackProofs.fromList2Lookup],
+      by simp [t88, WordSemStateFiniteExact.getVar, WordToStackProofs.fromList2Lookup],
+      good⟩
+    have step : ∀ s, s = t88 → WordSemStateFiniteExact.evaluate (installDataStub c) s = _ :=
+      fun s h => h ▸ ihEq
+    rw [step]
+    · refine ⟨smx, lsz, ?_⟩
+      generalize hp : WordSemStateFiniteExact.evaluate (installCode (width := width) c)
+        (_ : WordSemStateFiniteExact width C F) = p
+      generalize hq : WordSemStateFiniteExact.evaluate (installCode (width := width) c)
+        (_ : WordSemStateFiniteExact width C F) = q
+      have pq : p = q := by
+        rw [← hp, ← hq]
+        congr 1
+        simp [WordSemStateFiniteExact.callEnv, WordSemStateFiniteExact.decClock,
+          WordSemStateFiniteExact.setVar, List.append_assoc, Nat.sub_sub,
+          BitVec.ofNat_add, BitVec.add_assoc, BitVec.mul_add, add_comm]
       subst pq
       obtain ⟨res, s⟩ := p
       by_cases h : wordSemBadFunReturn res = true
