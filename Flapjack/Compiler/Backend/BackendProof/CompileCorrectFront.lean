@@ -3,6 +3,9 @@ import Flapjack.Compiler.Backend.SourceToFlat.Proofs.NoMat
 import Flapjack.Compiler.Backend.BackendProof.FromConfEx
 import Flapjack.Compiler.Backend.BackendProof.CakeOracEqs
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.WholeSemantics
+import Flapjack.Compiler.Backend.BackendProof.BvlToBviSemantics2
+import Flapjack.Compiler.Backend.BackendProof.NameDistinct
+import Flapjack.Compiler.Backend.BackendProof.StateOracle
 
 set_option autoImplicit false
 
@@ -180,5 +183,57 @@ theorem compileCorrectPrime_closToBvl {width : Nat} [NeZero width] {F : Type}
     (cakeOrac asmConf c' syn (Prod.snd ∘ configTuple1) (fun ps => ps.closProg)) cc es r.2.1 r.2.2
     ⟨hnf, rfl, hsyn⟩
   rw [← hsem, hbvl]
+
+/-- The BVL-to-BVI block of HOL `compile_correct'`
+(`backendProofScript.sml:3652-3690`): `bvl_to_bvi_compile_semantics2` at the
+`cake_orac` BVL oracle, then `bvl_to_bvi_orac_eq` (`cake_orac_eqs`). -/
+theorem compileCorrectPrime_bvlToBvi {width : Nat} [NeZero width] {F : Type}
+    (asmConf : AsmConfigExact width) (c : Flapjack.Compiler.Backend.Backend.Config)
+    (prog : List AstHOL.Dec) (bytes : List (BitVec 8)) (bitmaps : List (BitVec width))
+    (c' : Flapjack.Compiler.Backend.Backend.Config) (ffi : HolFfiState F)
+    (syn : Nat → (Nat × Nat) × List AstHOL.Dec)
+    (hcomp : BackendDefs.compile asmConf c prog = some (bytes, bitmaps, c'))
+    (hok : backendConfigOk asmConf c)
+    (cc : BviSem.Compiler (Nat × LabToTarget.Config))
+    (rc : ClosToBvl.Config) (rp : List (Nat × Nat × Bvl.Exp))
+    (rn : Spt Basis.Pure.MlString.MlString)
+    (hr : ClosToBvl.compileSource c.closConf (FlatToClos.compileProg
+      (SourceToFlat.compileTotal Flapjack.Compiler.Backend.Backend.primSrcConfig
+        (SourceToSource.compile prog)).2) = (rc, rp, rn))
+    (s : Nat) (q' : List (Nat × Nat × Bvi.Exp)) (l : Spt (Nat × Bvl.Exp))
+    (bl : Spt (Nat × Bvi.Exp)) (n1 n2 n3 : Nat) (names1 : Spt Basis.Pure.MlString.MlString)
+    (hq : BvlToBvi.compileSource rc.start c.bvlConf rn rp = (s, q', l, bl, n1, n2, n3, names1))
+    (hnf : BvlSem.semantics ffi (sptFromAList rp)
+        (cakeOrac asmConf c' syn configTuple2 (fun ps => ps.bvlProg))
+        (BvlToBvi.Proofs.fullCc c.bvlConf cc) rc.start ≠ .fail) :
+    BviSem.semantics ffi (sptFromAList q')
+        (cakeOrac asmConf c' syn
+          (Prod.snd ∘ Prod.snd ∘ Prod.snd ∘ Prod.snd ∘ Prod.snd ∘ configTuple2)
+          (fun ps => ps.bviProg)) cc s =
+      BvlSem.semantics ffi (sptFromAList rp)
+        (cakeOrac asmConf c' syn configTuple2 (fun ps => ps.bvlProg))
+        (BvlToBvi.Proofs.fullCc c.bvlConf cc) rc.start := by
+  have hsrcConf : c.sourceConf = Flapjack.Compiler.Backend.Backend.primSrcConfig := hok.1
+  have eqs := cakeOrac_eqs (β := Nat) asmConf c' syn (fun _ => 0) c prog bytes bitmaps
+    c.closConf c.bvlConf (fun _ => 0) c.dataConf false 0 0 (fun _ => 0)
+    c.stackConf.regNames false 0 (0, 0) (fun _ => 0)
+  rw [← eqs.2.2.2.1 ⟨hcomp, rfl⟩]
+  have h := hcomp
+  rw [compile_fromBvl] at h
+  simp only [hsrcConf, hr] at h
+  simp only [fromBvl, hq] at h
+  have hbvlConf := (fromBvi_confs asmConf _ _ _ bytes bitmaps c' h).2.1
+  have hco0 : ∃ v, (cakeOrac asmConf c' syn configTuple2 (fun ps => ps.bvlProg) 0).1 =
+      (l, n1, n2, n3, bl, v) := by
+    refine ⟨(c'.wordConf.bitmapsLength, c'.labConf), ?_⟩
+    rw [cakeOrac_zero]
+    simp only [configTuple2, hbvlConf]
+  have hdist := ClosToBvl.compileSource_allDistinct c.closConf _ rc rp rn hr
+  exact bvlToBvi_compileSemantics2 rc.start c.bvlConf rn rp s q' l bl n1 n2 n3
+    names1 (cakeOrac asmConf c' syn configTuple2 (fun ps => ps.bvlProg)) ffi cc
+    ⟨hq, hco0, fun n => cakeOrac_bvl_allDistinct asmConf c prog bytes bitmaps c' syn
+        configTuple2 n hcomp, hdist,
+      isStateOracle_tailrec_cakeOrac asmConf c prog bytes bitmaps c' syn hcomp,
+      isStateOracle_tmc_cakeOrac asmConf c prog bytes bitmaps c' syn hcomp⟩ hnf
 
 end Flapjack.Compiler.Backend.BackendProof.Draft
