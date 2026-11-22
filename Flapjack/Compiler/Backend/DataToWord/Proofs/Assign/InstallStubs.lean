@@ -35,7 +35,7 @@ end InstallStubsWitness
 
 /-- Branch on the low bit of a word variable, as the installation loops do;
 local proof infrastructure for the HOL loop proofs. -/
-private theorem evalTestOne {width : Nat} [NeZero width] {C F : Type}
+theorem installEvalTestOne {width : Nat} [NeZero width] {C F : Type}
     (s : WordSemStateFiniteExact width C F) (r : Nat) (w : BitVec width)
     (c1 c2 : WordLangProgHOL (BitVec width)) (read : s.getVar r = some (.word w)) :
     WordSemStateFiniteExact.evaluate (.ite .test r (.imm 1) c1 c2) s =
@@ -51,14 +51,14 @@ private theorem evalTestOne {width : Nat} [NeZero width] {C F : Type}
   cases w.getLsbD 0 <;> simp
 
 /-- Lookup after insertion, by cases on the key. -/
-private theorem lookupInsert {α : Type} (k k' : Nat) (v : α) (tree : Spt α) :
+theorem installLookupInsert {α : Type} (k k' : Nat) (v : α) (tree : Spt α) :
     sptLookup k (sptInsert k' v tree) = if k = k' then some v else sptLookup k tree := by
   by_cases h : k = k'
   · subst h; simp [sptLookup_sptInsert_same]
   · simp [h, sptLookup_sptInsert_ne k' k v tree h]
 
 /-- Execute an assignment before its continuation. -/
-private theorem seqAssign {width : Nat} [NeZero width] {C F : Type}
+theorem installSeqAssign {width : Nat} [NeZero width] {C F : Type}
     (s : WordSemStateFiniteExact width C F) (key : Nat) (expr : WordLangExpHOL (BitVec width))
     (v : WordLocW width) (tail : WordLangProgHOL (BitVec width))
     (read : s.wordExp expr = some v) :
@@ -68,7 +68,7 @@ private theorem seqAssign {width : Nat} [NeZero width] {C F : Type}
     WordSemStateFiniteExact.setVar]
 
 /-- Write the code buffer before a continuation. -/
-private theorem seqCodeBufferWrite {width : Nat} [NeZero width] {C F : Type}
+theorem installSeqCodeBufferWrite {width : Nat} [NeZero width] {C F : Type}
     (s : WordSemStateFiniteExact width C F) (r1 r2 : Nat) (w1 w2 : BitVec width)
     (cb : WordSemBuffer width 8) (tail : WordLangProgHOL (BitVec width))
     (h1 : s.getVar r1 = some (.word w1)) (h2 : s.getVar r2 = some (.word w2))
@@ -78,7 +78,7 @@ private theorem seqCodeBufferWrite {width : Nat} [NeZero width] {C F : Type}
   simp [WordSemStateFiniteExact.evaluate, h1, h2, hw, WordSemStateFiniteExact.fixClock]
 
 /-- Write the data buffer before a continuation. -/
-private theorem seqDataBufferWrite {width : Nat} [NeZero width] {C F : Type}
+theorem installSeqDataBufferWrite {width : Nat} [NeZero width] {C F : Type}
     (s : WordSemStateFiniteExact width C F) (r1 r2 : Nat) (w1 w2 : BitVec width)
     (db : WordSemBuffer width width) (tail : WordLangProgHOL (BitVec width))
     (h1 : s.getVar r1 = some (.word w1)) (h2 : s.getVar r2 = some (.word w2))
@@ -89,7 +89,7 @@ private theorem seqDataBufferWrite {width : Nat} [NeZero width] {C F : Type}
 
 /-- The byte stored as a small number is recovered by the loop's shift and
 truncation. -/
-private theorem smallnumByte {width : Nat} [NeZero width] (b : BitVec 8) (good : goodDimindex width) :
+theorem installSmallnumByte {width : Nat} [NeZero width] (b : BitVec 8) (good : goodDimindex width) :
     ((smallnum (Int.ofNat b.toNat) : BitVec width) >>> (2 : Nat)).setWidth 8 = b := by
   have hb : b.toNat < 256 := b.isLt
   unfold smallnum
@@ -98,7 +98,7 @@ private theorem smallnumByte {width : Nat} [NeZero width] (b : BitVec 8) (good :
   rcases good with rfl | rfl <;> simp <;> omega
 
 /-- A tail call to a known stub. -/
-private theorem tailCall {width : Nat} [NeZero width] {C F : Type}
+theorem installTailCall {width : Nat} [NeZero width] {C F : Type}
     (s : WordSemStateFiniteExact width C F) (loc : Nat) (args : List Nat)
     (xs : List (WordLocW width)) (prog : WordLangProgHOL (BitVec width))
     (read : s.getVars args = some xs) (code : sptLookup loc s.code = some (xs.length, prog))
@@ -154,12 +154,12 @@ theorem installCode_correct {width : Nat} [NeZero width] {C F : Type}
     simp only [if_true] at hw
     obtain ⟨_, low, _, _⟩ := hw
     unfold installCodeStub
-    rw [evalTestOne t 2 w _ _ r2, low, if_neg (by simp)]
-    rw [seqAssign t 2 _ bptr _ (by simp [WordSemStateFiniteExact.wordExp, WordSemStateFiniteExact.getStore, bitmap])]
-    rw [tailCall _ installDataLocation [0, 2, 4, 6]
+    rw [installEvalTestOne t 2 w _ _ r2, low, if_neg (by simp)]
+    rw [installSeqAssign t 2 _ bptr _ (by simp [WordSemStateFiniteExact.wordExp, WordSemStateFiniteExact.getStore, bitmap])]
+    rw [installTailCall _ installDataLocation [0, 2, 4, 6]
       [retVal, bptr, a2, .word (t.codeBuffer.position + BitVec.ofNat width t.codeBuffer.buffer.length)] _
       (by simp_all [WordSemStateFiniteExact.getVars, WordSemStateFiniteExact.getVar,
-            WordSemStateFiniteExact.setVar, lookupInsert])
+            WordSemStateFiniteExact.setVar, installLookupInsert])
       (by simpa [WordSemStateFiniteExact.setVar] using dataL)
       (by simp [WordSemStateFiniteExact.setVar]; omega)]
     refine ⟨sptLookup installDataLocation t.stackSize,
@@ -205,47 +205,47 @@ theorem installCode_correct {width : Nat} [NeZero width] {C F : Type}
     have bytesEq : StackRemove.bytesInWord width = wordSemBytesInWord := rfl
     rw [bytesEq] at dom0 m0 dom1 relTl
     unfold installCodeStub
-    rw [evalTestOne t 2 w _ _ r2, high, if_pos rfl]
+    rw [installEvalTestOne t 2 w _ _ r2, high, if_pos rfl]
     simp only [wordListSeq]
-    rw [seqAssign t 3 _ (.word addr) _ (getRealAddr_lemma c 2 t w addr ⟨shift, good, r2, addrEq⟩)]
-    rw [seqAssign _ 2 _ (.word (smallnum (Int.ofNat b.toNat))) _ (by
+    rw [installSeqAssign t 3 _ (.word addr) _ (getRealAddr_lemma c 2 t w addr ⟨shift, good, r2, addrEq⟩)]
+    rw [installSeqAssign _ 2 _ (.word (smallnum (Int.ofNat b.toNat))) _ (by
       simp [WordSemStateFiniteExact.wordExp, WordSemStateFiniteExact.getVar, WordSemStateFiniteExact.setVar,
-        lookupInsert, theWords, wordOpHOL, wordOp, WordSemStateFiniteExact.memLoad, dom0, m0])]
-    rw [seqAssign _ 2 _ (.word ((smallnum (Int.ofNat b.toNat) : BitVec width) >>> (2 : Nat))) _ (by
+        installLookupInsert, theWords, wordOpHOL, wordOp, WordSemStateFiniteExact.memLoad, dom0, m0])]
+    rw [installSeqAssign _ 2 _ (.word ((smallnum (Int.ofNat b.toNat) : BitVec width) >>> (2 : Nat))) _ (by
       rw [wordExpShiftVar]
-      simp [WordSemStateFiniteExact.setVar, lookupInsert, SemanticPrimitivesProps.shiftLookup])]
-    rw [seqCodeBufferWrite _ 6 2 _ _ { t.codeBuffer with
+      simp [WordSemStateFiniteExact.setVar, installLookupInsert, SemanticPrimitivesProps.shiftLookup])]
+    rw [installSeqCodeBufferWrite _ 6 2 _ _ { t.codeBuffer with
         buffer := t.codeBuffer.buffer ++ [b], spaceLeft := t.codeBuffer.spaceLeft - 1 } _
-      (by simpa [WordSemStateFiniteExact.getVar, WordSemStateFiniteExact.setVar, lookupInsert] using r6)
-      (by simp [WordSemStateFiniteExact.getVar, WordSemStateFiniteExact.setVar, lookupInsert]; rfl)
+      (by simpa [WordSemStateFiniteExact.getVar, WordSemStateFiniteExact.setVar, installLookupInsert] using r6)
+      (by simp [WordSemStateFiniteExact.getVar, WordSemStateFiniteExact.setVar, installLookupInsert]; rfl)
       (by
         simp only [WordSemStateFiniteExact.setVar, wordSemBufferWrite]
         simp at space
         simp only [Nat.reduceDiv]
         simp
-        exact ⟨by omega, smallnumByte b good⟩)]
-    rw [seqAssign _ 6 _ (.word (t.codeBuffer.position + BitVec.ofNat width t.codeBuffer.buffer.length + 1)) _ (by
+        exact ⟨by omega, installSmallnumByte b good⟩)]
+    rw [installSeqAssign _ 6 _ (.word (t.codeBuffer.position + BitVec.ofNat width t.codeBuffer.buffer.length + 1)) _ (by
       have r6' := r6
       simp only [WordSemStateFiniteExact.getVar] at r6'
       simp [WordSemStateFiniteExact.wordExp, WordSemStateFiniteExact.getVar, WordSemStateFiniteExact.setVar,
-        lookupInsert, theWords, wordOpHOL, wordOp, r6'])]
+        installLookupInsert, theWords, wordOpHOL, wordOp, r6'])]
     have twice : addr + 2#width * wordSemBytesInWord = addr + wordSemBytesInWord + wordSemBytesInWord := by
       rw [BitVec.add_assoc]
       congr 1
       rcases good with rfl | rfl <;> rfl
-    rw [seqAssign _ 2 _ (t.memory (addr + wordSemBytesInWord + wordSemBytesInWord)) _ (by
+    rw [installSeqAssign _ 2 _ (t.memory (addr + wordSemBytesInWord + wordSemBytesInWord)) _ (by
       simp [WordSemStateFiniteExact.wordExp, WordSemStateFiniteExact.getVar, WordSemStateFiniteExact.setVar,
-        lookupInsert, theWords, wordOpHOL, wordOp, WordSemStateFiniteExact.memLoad]
+        installLookupInsert, theWords, wordOpHOL, wordOp, WordSemStateFiniteExact.memLoad]
       rw [twice]; exact ⟨dom1, rfl⟩)]
     have r0' := r0
     have r4' := r4
     simp only [WordSemStateFiniteExact.getVar] at r0' r4'
     simp at space clock
-    rw [tailCall _ installCodeLocation [0, 2, 4, 6]
+    rw [installTailCall _ installCodeLocation [0, 2, 4, 6]
       [retVal, t.memory (addr + wordSemBytesInWord + wordSemBytesInWord), a2,
         .word (t.codeBuffer.position + BitVec.ofNat width t.codeBuffer.buffer.length + 1)] _
       (by simp [WordSemStateFiniteExact.getVars, WordSemStateFiniteExact.getVar,
-            WordSemStateFiniteExact.setVar, lookupInsert, r0', r4'])
+            WordSemStateFiniteExact.setVar, installLookupInsert, r0', r4'])
       (by simpa [WordSemStateFiniteExact.setVar] using codeL)
       (by simp [WordSemStateFiniteExact.setVar]; omega)]
     let m1 := t.memory (addr + wordSemBytesInWord + wordSemBytesInWord)
@@ -334,12 +334,12 @@ theorem installData_correct {width : Nat} [NeZero width] {C F : Type}
     simp only [if_true] at hw
     obtain ⟨_, low, _, _⟩ := hw
     unfold installDataStub
-    rw [evalTestOne t 4 w _ _ r4, low, if_neg (by simp)]
+    rw [installEvalTestOne t 4 w _ _ r4, low, if_neg (by simp)]
     have r0' := r0
     have r2' := r2
     have r6' := r6
     simp only [WordSemStateFiniteExact.getVar] at r0' r2' r6'
-    rw [tailCall _ installLocation [0, 2, 6]
+    rw [installTailCall _ installLocation [0, 2, 6]
       [retVal, .word (t.dataBuffer.position +
         wordSemBytesInWord * BitVec.ofNat width t.dataBuffer.buffer.length), a1] _
       (by simp [WordSemStateFiniteExact.getVars, WordSemStateFiniteExact.getVar, r0', r2', r6'])
@@ -391,45 +391,45 @@ theorem installData_correct {width : Nat} [NeZero width] {C F : Type}
     simp only [WordSemStateFiniteExact.getVar] at r0' r2' r6'
     simp at space clock
     unfold installDataStub
-    rw [evalTestOne t 4 w _ _ r4, high, if_pos rfl]
+    rw [installEvalTestOne t 4 w _ _ r4, high, if_pos rfl]
     simp only [wordListSeq]
-    rw [seqAssign t 3 _ (.word addr) _ (getRealAddr_lemma c 4 t w addr ⟨shift, good, r4, addrEq⟩)]
-    rw [seqAssign _ 4 _ (.word (getAddr c ptr (.word 0))) _ (by
+    rw [installSeqAssign t 3 _ (.word addr) _ (getRealAddr_lemma c 4 t w addr ⟨shift, good, r4, addrEq⟩)]
+    rw [installSeqAssign _ 4 _ (.word (getAddr c ptr (.word 0))) _ (by
       simp [WordSemStateFiniteExact.wordExp, WordSemStateFiniteExact.getVar, WordSemStateFiniteExact.setVar,
-        lookupInsert, theWords, wordOpHOL, wordOp, WordSemStateFiniteExact.memLoad, dom0, m0])]
-    rw [seqAssign _ 4 _ (.word address) _ (getRealAddr_lemma c 4 _ (getAddr c ptr (.word 0)) address
-      ⟨shift, good, by simp [WordSemStateFiniteExact.getVar, WordSemStateFiniteExact.setVar, lookupInsert],
+        installLookupInsert, theWords, wordOpHOL, wordOp, WordSemStateFiniteExact.memLoad, dom0, m0])]
+    rw [installSeqAssign _ 4 _ (.word address) _ (getRealAddr_lemma c 4 _ (getAddr c ptr (.word 0)) address
+      ⟨shift, good, by simp [WordSemStateFiniteExact.getVar, WordSemStateFiniteExact.setVar, installLookupInsert],
         by simpa [WordSemStateFiniteExact.setVar] using realEq⟩)]
-    rw [seqAssign _ 4 _ (.word (w2wUpper v)) _ (by
+    rw [installSeqAssign _ 4 _ (.word (w2wUpper v)) _ (by
       simp [WordSemStateFiniteExact.wordExp, WordSemStateFiniteExact.getVar, WordSemStateFiniteExact.setVar,
-        lookupInsert, theWords, wordOpHOL, wordOp, WordSemStateFiniteExact.memLoad, domA, mA])]
-    rw [seqDataBufferWrite _ 2 4
+        installLookupInsert, theWords, wordOpHOL, wordOp, WordSemStateFiniteExact.memLoad, domA, mA])]
+    rw [installSeqDataBufferWrite _ 2 4
       (t.dataBuffer.position + wordSemBytesInWord * BitVec.ofNat width t.dataBuffer.buffer.length)
       (w2wUpper v) { t.dataBuffer with
         buffer := t.dataBuffer.buffer ++ [w2wUpper v], spaceLeft := t.dataBuffer.spaceLeft - 1 } _
-      (by simp [WordSemStateFiniteExact.getVar, WordSemStateFiniteExact.setVar, lookupInsert, r2'])
-      (by simp [WordSemStateFiniteExact.getVar, WordSemStateFiniteExact.setVar, lookupInsert])
+      (by simp [WordSemStateFiniteExact.getVar, WordSemStateFiniteExact.setVar, installLookupInsert, r2'])
+      (by simp [WordSemStateFiniteExact.getVar, WordSemStateFiniteExact.setVar, installLookupInsert])
       (by
         simp only [WordSemStateFiniteExact.setVar, wordSemBufferWrite]
         exact if_pos ⟨rfl, by omega⟩)]
-    rw [seqAssign _ 2 _ (.word (t.dataBuffer.position +
+    rw [installSeqAssign _ 2 _ (.word (t.dataBuffer.position +
         wordSemBytesInWord * BitVec.ofNat width t.dataBuffer.buffer.length + wordSemBytesInWord)) _ (by
       simp [WordSemStateFiniteExact.wordExp, WordSemStateFiniteExact.getVar, WordSemStateFiniteExact.setVar,
-        lookupInsert, theWords, wordOpHOL, wordOp, r2'])]
+        installLookupInsert, theWords, wordOpHOL, wordOp, r2'])]
     have twice : addr + 2#width * wordSemBytesInWord = addr + wordSemBytesInWord + wordSemBytesInWord := by
       rw [BitVec.add_assoc]
       congr 1
       rcases good with rfl | rfl <;> rfl
-    rw [seqAssign _ 4 _ (t.memory (addr + wordSemBytesInWord + wordSemBytesInWord)) _ (by
+    rw [installSeqAssign _ 4 _ (t.memory (addr + wordSemBytesInWord + wordSemBytesInWord)) _ (by
       simp [WordSemStateFiniteExact.wordExp, WordSemStateFiniteExact.getVar, WordSemStateFiniteExact.setVar,
-        lookupInsert, theWords, wordOpHOL, wordOp, WordSemStateFiniteExact.memLoad]
+        installLookupInsert, theWords, wordOpHOL, wordOp, WordSemStateFiniteExact.memLoad]
       rw [twice]; exact ⟨dom1, rfl⟩)]
-    rw [tailCall _ installDataLocation [0, 2, 4, 6]
+    rw [installTailCall _ installDataLocation [0, 2, 4, 6]
       [retVal, .word (t.dataBuffer.position +
         wordSemBytesInWord * BitVec.ofNat width t.dataBuffer.buffer.length + wordSemBytesInWord),
         t.memory (addr + wordSemBytesInWord + wordSemBytesInWord), a1] _
       (by simp [WordSemStateFiniteExact.getVars, WordSemStateFiniteExact.getVar,
-            WordSemStateFiniteExact.setVar, lookupInsert, r0', r6'])
+            WordSemStateFiniteExact.setVar, installLookupInsert, r0', r6'])
       (by simpa [WordSemStateFiniteExact.setVar] using dataL)
       (by simp [WordSemStateFiniteExact.setVar]; omega)]
     let m1 := t.memory (addr + wordSemBytesInWord + wordSemBytesInWord)
