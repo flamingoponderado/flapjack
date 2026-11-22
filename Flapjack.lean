@@ -490,6 +490,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.FinaliseCons
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.MutCons
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.UpdateCons
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.WordFromWord
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.ConfigGC
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.Separation
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.MemCopy.Element
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.MemCopy.Loop
@@ -501,6 +502,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.WordOp64
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.WordShift8
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.GiveUp
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.BignumHalt
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.Install
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.RealAddress
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.EnvToList
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.CutEnvDomain
@@ -548,6 +550,10 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.Call
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.ForceLemmas
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.Force
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.Assembly
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.CompileCorrectDraft
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.AssignDraft
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.SemanticsDraft
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.CompileSemanticsDraft
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.LocMerge
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.DecStack
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.StackRoots
