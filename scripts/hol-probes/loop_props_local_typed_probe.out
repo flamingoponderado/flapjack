@@ -41,3 +41,5 @@ lookup_set_vars_not_MEM_vars=s,ys,xs,n
 cut_res_add_clock_vars=ck,r,q,s,res,l
 get_var_imm_add_clk_eq_vars=s,ck,ri
 evaluate_Loop_body_same_vars=l2,l1,body',body
+evaluate_no_Break_Continue_typed=∀(prog :α prog) (s :(α, β) state) (res :α result option) (t :(α, β) state). (evaluate (prog,s) :α result option # (α, β) state) = (res,t) ∧ every_prog (λ(r :α prog). (∀(n :num). r ≠ (Break n :α prog)) ∧ ∀(n :num). r ≠ (Continue n :α prog)) prog ⇒ (∀(n :num). res ≠ SOME (Break n :α result)) ∧ ∀(n :num). res ≠ SOME (Continue n :α result)
+evaluate_no_Break_Continue_vars=

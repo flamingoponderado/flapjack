@@ -979,7 +979,7 @@
     {"bytes": 316, "out": "loop_props_cut_sets_probe.out", "rows": 11, "sha256": "6528af5aa2a183901b7f2e76ea73a3dc09b26198eb43f11dbed708bcccc8a9c2"},
     {"bytes": 178, "out": "loop_props_every_prog_probe.out", "rows": 13, "sha256": "528d25f3ee4728ea4687bb6b57924038874a8ae5235479b43cb354b48383afdd"},
     {"bytes": 158, "out": "loop_props_get_vars_probe.out", "rows": 6, "sha256": "686ecace49033a340822fb9c56023c201464c548a89399bcbb9c8c5fe6c8c992"},
-    {"bytes": 21621, "out": "loop_props_local_typed_probe.out", "rows": 43, "sha256": "0e2124366ded3bdc58259e618ab835493568e7038960f17fee7466ec1f121755"},
+    {"bytes": 22066, "out": "loop_props_local_typed_probe.out", "rows": 45, "sha256": "7e91d57f8b5bbccdb8eb90b8228a94e7375e99fd12fdf2601b15b4884d3404c2"},
     {"bytes": 177, "out": "loop_props_survives_probe.out", "rows": 13, "sha256": "45a73251ed37871a7e62a8c05efad8ec7626ebf3594c455eda63e19302927d1d"},
     {"bytes": 64, "out": "loop_sem_call_env_probe.out", "rows": 3, "sha256": "7cda931496d296c5760168d0b8eba99c83f95b0a0b0090b54c0f783ca847ed9e"},
     {"bytes": 185, "out": "loop_sem_cut_res_probe.out", "rows": 4, "sha256": "8fc1db1142444d224ea43000c14c9dfb9620049b9fba8433a3294aec402f98d3"},

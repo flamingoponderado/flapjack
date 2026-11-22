@@ -387,3 +387,5 @@ val _ = vars_exported "lookup_set_vars_not_MEM_vars" "lookup_set_vars_not_MEM";
 val _ = vars_exported "cut_res_add_clock_vars" "cut_res_add_clock";
 val _ = vars_exported "get_var_imm_add_clk_eq_vars" "get_var_imm_add_clk_eq";
 val _ = vars_exported "evaluate_Loop_body_same_vars" "evaluate_Loop_body_same";
+val _ = emit_exported "evaluate_no_Break_Continue_typed" "evaluate_no_Break_Continue";
+val _ = vars_exported "evaluate_no_Break_Continue_vars" "evaluate_no_Break_Continue";
