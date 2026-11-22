@@ -194,115 +194,6 @@ theorem evaluate_no_Break_Continue {width : Nat} [NeZero width] {F : Type}
     intro p s ih res t h
     obtain ⟨heval, hevery⟩ := h
     cases p with
-    | skip =>
-        rw [evaluate] at heval
-        simp only [Prod.mk.injEq] at heval
-        obtain ⟨rfl, rfl⟩ := heval
-        exact noBC_none
-    | fail =>
-        rw [evaluate] at heval
-        simp only [Prod.mk.injEq] at heval
-        obtain ⟨rfl, rfl⟩ := heval
-        simp [noBC]
-    | assign name value =>
-        rw [evaluate] at heval
-        split at heval
-        all_goals try split at heval
-        all_goals try split at heval
-        all_goals try split at heval
-        all_goals try split at heval
-        all_goals
-          simp only [Prod.mk.injEq] at heval
-          obtain ⟨rfl, rfl⟩ := heval
-          simp [noBC]
-    | primitive lhss pop rhss =>
-        rw [evaluate] at heval
-        split at heval
-        all_goals try split at heval
-        all_goals try split at heval
-        all_goals try split at heval
-        all_goals try split at heval
-        all_goals
-          simp only [Prod.mk.injEq] at heval
-          obtain ⟨rfl, rfl⟩ := heval
-          simp [noBC]
-    | arith op =>
-        rw [evaluate] at heval
-        split at heval
-        all_goals try split at heval
-        all_goals try split at heval
-        all_goals try split at heval
-        all_goals try split at heval
-        all_goals
-          simp only [Prod.mk.injEq] at heval
-          obtain ⟨rfl, rfl⟩ := heval
-          simp [noBC]
-    | store address value =>
-        rw [evaluate] at heval
-        split at heval
-        all_goals try split at heval
-        all_goals try split at heval
-        all_goals try split at heval
-        all_goals try split at heval
-        all_goals
-          simp only [Prod.mk.injEq] at heval
-          obtain ⟨rfl, rfl⟩ := heval
-          simp [noBC]
-    | setGlobal dst exp =>
-        rw [evaluate] at heval
-        split at heval
-        all_goals try split at heval
-        all_goals try split at heval
-        all_goals try split at heval
-        all_goals try split at heval
-        all_goals
-          simp only [Prod.mk.injEq] at heval
-          obtain ⟨rfl, rfl⟩ := heval
-          simp [noBC]
-    | load32 address destination =>
-        rw [evaluate] at heval
-        split at heval
-        all_goals try split at heval
-        all_goals try split at heval
-        all_goals try split at heval
-        all_goals try split at heval
-        all_goals
-          simp only [Prod.mk.injEq] at heval
-          obtain ⟨rfl, rfl⟩ := heval
-          simp [noBC]
-    | loadByte address destination =>
-        rw [evaluate] at heval
-        split at heval
-        all_goals try split at heval
-        all_goals try split at heval
-        all_goals try split at heval
-        all_goals try split at heval
-        all_goals
-          simp only [Prod.mk.injEq] at heval
-          obtain ⟨rfl, rfl⟩ := heval
-          simp [noBC]
-    | store32 address value =>
-        rw [evaluate] at heval
-        split at heval
-        all_goals try split at heval
-        all_goals try split at heval
-        all_goals try split at heval
-        all_goals try split at heval
-        all_goals
-          simp only [Prod.mk.injEq] at heval
-          obtain ⟨rfl, rfl⟩ := heval
-          simp [noBC]
-    | storeByte address value =>
-        rw [evaluate] at heval
-        split at heval
-        all_goals try split at heval
-        all_goals try split at heval
-        all_goals try split at heval
-        all_goals try split at heval
-        all_goals
-          simp only [Prod.mk.injEq] at heval
-          obtain ⟨rfl, rfl⟩ := heval
-          simp [noBC]
     | seq first second =>
         rw [evaluate] at heval
         simp only [everyProgHOL] at hevery
@@ -422,28 +313,6 @@ theorem evaluate_no_Break_Continue {width : Nat} [NeZero width] {F : Type}
         · have hb := cutRes_noBC liveIn (step := (none, s)) noBC_none
           rw [heval] at hb
           exact hb
-    | raise exception =>
-        rw [evaluate] at heval
-        split at heval
-        all_goals try split at heval
-        all_goals try split at heval
-        all_goals try split at heval
-        all_goals try split at heval
-        all_goals
-          simp only [Prod.mk.injEq] at heval
-          obtain ⟨rfl, rfl⟩ := heval
-          simp [noBC]
-    | «return» values =>
-        rw [evaluate] at heval
-        split at heval
-        all_goals try split at heval
-        all_goals try split at heval
-        all_goals try split at heval
-        all_goals try split at heval
-        all_goals
-          simp only [Prod.mk.injEq] at heval
-          obtain ⟨rfl, rfl⟩ := heval
-          simp [noBC]
     | shMem op v ad =>
         rw [evaluate] at heval
         cases hev : eval s ad with
@@ -494,28 +363,6 @@ theorem evaluate_no_Break_Continue {width : Nat} [NeZero width] {F : Type}
                 simp only [Prod.mk.injEq] at heval
                 obtain ⟨rfl, rfl⟩ := heval
                 simp [noBC]
-    | tick =>
-        rw [evaluate] at heval
-        split at heval
-        all_goals try split at heval
-        all_goals try split at heval
-        all_goals try split at heval
-        all_goals try split at heval
-        all_goals
-          simp only [Prod.mk.injEq] at heval
-          obtain ⟨rfl, rfl⟩ := heval
-          simp [noBC]
-    | locValue destination source =>
-        rw [evaluate] at heval
-        split at heval
-        all_goals try split at heval
-        all_goals try split at heval
-        all_goals try split at heval
-        all_goals try split at heval
-        all_goals
-          simp only [Prod.mk.injEq] at heval
-          obtain ⟨rfl, rfl⟩ := heval
-          simp [noBC]
     | call returns target arguments handler =>
         rw [evaluate] at heval
         cases hgv : Flapjack.LoopSemStateFiniteExact.getVars arguments s with
@@ -675,16 +522,15 @@ theorem evaluate_no_Break_Continue {width : Nat} [NeZero width] {F : Type}
                       · have hb := cutRes_noBC live (step := (none, s)) noBC_none
                         rw [heval] at hb
                         exact hb
-    | ffi function configuration configurationLength array arrayLength live =>
+    | _ =>
         rw [evaluate] at heval
-        split at heval
+        try split at heval
         all_goals try split at heval
         all_goals try split at heval
         all_goals try split at heval
         all_goals try split at heval
         all_goals
-          simp only [Prod.mk.injEq] at heval
-          obtain ⟨rfl, rfl⟩ := heval
+          obtain ⟨rfl, rfl⟩ := by simpa only [Prod.mk.injEq] using heval
           simp [noBC]
   exact key prog s res t ⟨heval, hevery⟩
 
