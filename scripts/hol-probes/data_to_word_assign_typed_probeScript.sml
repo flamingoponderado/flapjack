@@ -708,3 +708,6 @@ val _ = cap "assign_MutCons_typed" "assign_MutCons";
 val _ = cap "assign_UpdateCons_typed" "assign_UpdateCons";
 val _ = cap "assign_WordFromWord_typed" "assign_WordFromWord";
 val _ = cap "assign_ConfigGC_typed" "assign_ConfigGC";
+
+(* Batch A12: assign_UpdateThunk. *)
+val _ = cap "assign_UpdateThunk_typed" "assign_UpdateThunk";
