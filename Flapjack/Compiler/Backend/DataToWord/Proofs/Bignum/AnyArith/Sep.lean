@@ -55,4 +55,21 @@ theorem wordList_single {width : Nat} [NeZero width] {β : Type} (a : BitVec wid
     Misc.wordList a [x] = SetSep.one (a, x) := by
   rw [wordList_cons]; exact starEmp_right _
 
+
+theorem star_mono_left {α : Type} {P P' Q : (α → Prop) → Prop} {h : α → Prop}
+    (imp : ∀ u, P u → P' u) (H : SetSep.star P Q h) : SetSep.star P' Q h := by
+  obtain ⟨u, v, sp, pu, qv⟩ := H
+  exact ⟨u, v, sp, imp u pu, qv⟩
+
+/-- A concrete framed word list of the right length is an existential one. -/
+theorem starWordListExists_intro_left {width : Nat} [NeZero width] {β : Type}
+    (a : BitVec width) (xs : List β) (Q : ((BitVec width × β) → Prop) → Prop)
+    (h : (BitVec width × β) → Prop) (H : SetSep.star (Misc.wordList a xs) Q h) :
+    SetSep.star (Misc.wordListExists a xs.length) Q h := by
+  apply star_mono_left _ H
+  intro u hu
+  refine ⟨xs, ?_⟩
+  show SetSep.star (Misc.wordList a xs) (SetSep.cond (xs.length = xs.length)) u
+  exact (StackRemove.WordListExists.starCond _ _ _).2 ⟨hu, rfl⟩
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Bignum.AnyArith
