@@ -17,6 +17,17 @@ fun emit label name =
     NONE => raise Fail (label ^ " is not exported by panProps")
   | SOME (th,_) => show label th;
 
+fun show_vars label th =
+  (print (label ^ "=");
+   print (String.concatWith "," (map (fn t => fst (dest_var t))
+     (Term.free_varsl [concl th])));
+   print "\n");
+
+fun vars label name =
+  case fetch1 name of
+    NONE => raise Fail (label ^ " is not exported by panProps")
+  | SOME (th,_) => show_vars label th;
+
 fun dt_label label name =
   let
     fun try n =
@@ -117,3 +128,7 @@ val _ = emit "evaluate_io_events_mono_typed" "evaluate_io_events_mono";
 val _ = emit "evaluate_global_shape_invariant_typed" "evaluate_global_shape_invariant";
 val _ = emit "opt_mmap_eval_upd_clock_eq1_typed" "opt_mmap_eval_upd_clock_eq1";
 val _ = emit "eval_some_var_exp_local_lookup_typed" "eval_some_var_exp_local_lookup";
+val _ = emit "all_distinct_alist_no_overlap_typed" "all_distinct_alist_no_overlap";
+val _ = emit "all_distinct_alist_ctxt_max_typed" "all_distinct_alist_ctxt_max";
+val _ = vars "all_distinct_alist_no_overlap_vars" "all_distinct_alist_no_overlap";
+val _ = vars "all_distinct_alist_ctxt_max_vars" "all_distinct_alist_ctxt_max";

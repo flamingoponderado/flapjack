@@ -40,10 +40,7 @@ theorem valueRel_eqns_nonGlobal :
     (∀ (v : FlatSem.Value) (id : Nat × Nat) (genv : GlobalEnv) (e : SemEnv Value),
       ValueRel genv (.env e id) v ↔ False) := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
-  · intro v l genv
-    constructor
-    · intro h; cases h; rfl
-    · intro h; cases h; exact .literal genv l
+  · aesop (add safe constructors ValueRel) (add unsafe cases ValueRel)
   · intro vs v genv cn
     constructor
     · intro related
@@ -55,10 +52,7 @@ theorem valueRel_eqns_nonGlobal :
     · rintro (⟨cn', cn'', vs'', rfl, rfl, rel, lookup⟩ | ⟨vs'', rfl, rfl, rel⟩)
       · exact valueRel_constructor genv cn' cn'' vs vs'' rel lookup
       · exact valueRel_tuple genv vs vs'' rel
-  · intro v l genv b
-    constructor
-    · intro h; cases h; rfl
-    · intro h; cases h; exact .location genv l b
+  · aesop (add safe constructors ValueRel) (add unsafe cases ValueRel)
   · intro vs v genv
     constructor
     · intro h
@@ -91,10 +85,7 @@ theorem valueRel_eqns_nonGlobal :
             exact ⟨tail, flat, rfl, hEnv, hValue⟩
     · rintro ⟨tail, flat, rfl, hEnv, hValue⟩
       exact .bind genv x v env tail flat hEnv hValue
-  · intro v id genv e
-    constructor
-    · intro related; cases related
-    · intro impossible; exact impossible.elim
+  · aesop (add safe constructors ValueRel) (add unsafe cases ValueRel)
 
 
 /-- The original local value-relation case equations. HOL separately names

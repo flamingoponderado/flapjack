@@ -198,68 +198,40 @@ theorem destClosure_none_append2 {α : Type} (maxApp : Nat) (_l : α) (f : Value
       destClosure maxApp none f (args1 ++ args2) = none) :
     destClosure maxApp none f args2 = none := by
   obtain ⟨bound, run⟩ := h
-  cases f
-  all_goals simp only [destClosure] at run ⊢
-  case closure location supplied env arity body =>
-    have hfalse : (checkLoc maxApp none location arity (args1 ++ args2).length
-        supplied.length && decide (supplied.length < arity)) = false := by
-      by_contra hne
-      rw [Bool.not_eq_false] at hne
-      rw [hne] at run
-      by_cases h2 : (args1 ++ args2).length + supplied.length < arity
-      · rw [if_pos h2] at run
-        exact absurd run (by simp)
-      · rw [if_neg h2] at run
-        exact absurd run (by simp)
+  cases f with
+  | closure location supplied env arity body =>
     have hcheck : checkLoc maxApp none location arity (args1 ++ args2).length
         supplied.length = true := by
       simp only [checkLoc, decide_eq_true_eq, List.length_append]
       omega
     have hsmall : decide (supplied.length < arity) = false := by
-      rw [Bool.and_eq_false_iff] at hfalse
-      rcases hfalse with h | h
-      · rw [h] at hcheck
-        exact absurd hcheck (by simp)
-      · exact h
-    have hgoal : (checkLoc maxApp none location arity args2.length supplied.length &&
-        decide (supplied.length < arity)) = false := by
-      rw [hsmall]
-      simp
-    rw [hgoal]
-    rfl
-  case recclosure location supplied env functions index =>
+      by_cases hs : supplied.length < arity
+      · simp [destClosure, hs] at run
+        split at run
+        · simp_all
+        · simp_all
+      · simp [hs]
+    simp [destClosure, hsmall]
+  | recclosure location supplied env functions index =>
     cases hfound : functions[index]? with
-    | none => rfl
+    | none =>
+      simp only [destClosure, hfound]
     | some entry =>
       obtain ⟨arity, body⟩ := entry
-      rw [hfound] at run
-      simp only [] at run ⊢
-      have hfalse : (checkLoc maxApp none (location.map (fun loc => 2 * index + loc)) arity
-          (args1 ++ args2).length supplied.length && decide (supplied.length < arity)) = false := by
-        by_contra hne
-        rw [Bool.not_eq_false] at hne
-        rw [hne] at run
-        by_cases h2 : (args1 ++ args2).length + supplied.length < arity
-        · rw [if_pos h2] at run
-          exact absurd run (by simp)
-        · rw [if_neg h2] at run
-          exact absurd run (by simp)
       have hcheck : checkLoc maxApp none (location.map (fun loc => 2 * index + loc)) arity
           (args1 ++ args2).length supplied.length = true := by
         simp only [checkLoc, decide_eq_true_eq, List.length_append]
         omega
       have hsmall : decide (supplied.length < arity) = false := by
-        rw [Bool.and_eq_false_iff] at hfalse
-        rcases hfalse with h | h
-        · rw [h] at hcheck
-          exact absurd hcheck (by simp)
-        · exact h
-      have hgoal : (checkLoc maxApp none (location.map (fun loc => 2 * index + loc)) arity
-          args2.length supplied.length && decide (supplied.length < arity)) = false := by
-        rw [hsmall]
-        simp
-      rw [hgoal]
-      rfl
+        by_cases hs : supplied.length < arity
+        · simp [destClosure, hfound, hs] at run
+          split at run
+          · simp_all
+          · simp_all
+        · simp [hs]
+      simp [destClosure, hfound, hsmall]
+  | _ =>
+    simp only [destClosure] at run ⊢
 
 /-- Flapjack helper for `stage_partial_app`: a successful partial split returns
 exactly the argument-prefixed closure. There is no separate HOL declaration for

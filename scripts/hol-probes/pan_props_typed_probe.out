@@ -84,3 +84,7 @@ evaluate_io_events_mono_typed=∀(exps :α prog) (s1 :(α, β) state) (res :α r
 evaluate_global_shape_invariant_typed=∀(p :α prog) (s :(α, β) state) (res :α result option) (st :(α, β) state) (n :mlstring) (v :α v). evaluate (p,s) = (res,st) ∧ FLOOKUP s.globals n = SOME v ⇒ ∃(v' :α v). FLOOKUP st.globals n = SOME v' ∧ shape_of v' = shape_of v
 opt_mmap_eval_upd_clock_eq1_typed=∀(es :α exp list) (s :(α, β) state) (ck :num). OPT_MMAP (eval (s with clock := ck)) es = OPT_MMAP (eval s) es
 eval_some_var_exp_local_lookup_typed=∀(s :(α, β) state) (e :α exp) (v :α v) (n :mlstring). eval s e = SOME v ∧ MEM n (var_exp e) ⇒ ∃(w :α v). FLOOKUP s.locals n = SOME w
+all_distinct_alist_no_overlap_typed=ALL_DISTINCT (ns :num list) ∧ LENGTH ns = size_of_shape (Comb (sh :shape list)) ∧ LENGTH (vs :α list) = LENGTH sh ⇒ no_overlap (alist_to_fmap (ZIP (vs,ZIP (sh,with_shape sh ns))))
+all_distinct_alist_ctxt_max_typed=ALL_DISTINCT (ns :num list) ∧ LENGTH ns = size_of_shape (Comb (sh :shape list)) ∧ LENGTH (vs :α list) = LENGTH sh ⇒ ctxt_max (MAX_LIST ns) (alist_to_fmap (ZIP (vs,ZIP (sh,with_shape sh ns))))
+all_distinct_alist_no_overlap_vars=vs,sh,ns
+all_distinct_alist_ctxt_max_vars=vs,sh,ns

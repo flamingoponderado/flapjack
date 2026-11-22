@@ -524,64 +524,28 @@ theorem opEq_toOp (iop : AssocOp) (op : ClosLang.Op) (xs : List Exp) :
   cases iop with
   | plus =>
     cases op with
-    | label n => rfl
-    | ffi s => rfl
-    | wordOp w => rfl
-    | globOp g => rfl
-    | memOp m => rfl
-    | install => rfl
-    | thunkOp t => rfl
     | intOp i =>
       cases i
       all_goals rfl
-    | blockOp b =>
-      cases b
-      all_goals rfl
+    | _ => rfl
   | times =>
     cases op with
-    | label n => rfl
-    | ffi s => rfl
-    | wordOp w => rfl
-    | globOp g => rfl
-    | memOp m => rfl
-    | install => rfl
-    | thunkOp t => rfl
     | intOp i =>
       cases i
       all_goals rfl
-    | blockOp b =>
-      cases b
-      all_goals rfl
+    | _ => rfl
   | append =>
     cases op with
-    | label n => rfl
-    | ffi s => rfl
-    | wordOp w => rfl
-    | globOp g => rfl
-    | memOp m => rfl
-    | install => rfl
-    | thunkOp t => rfl
-    | intOp i =>
-      cases i
-      all_goals rfl
     | blockOp b =>
       cases b
       all_goals rfl
+    | _ => rfl
   | noop =>
     cases op with
-    | label n => rfl
-    | ffi s => rfl
-    | wordOp w => rfl
-    | globOp g => rfl
-    | memOp m => rfl
-    | install => rfl
-    | thunkOp t => rfl
     | intOp i =>
       cases i
       all_goals rfl
-    | blockOp b =>
-      cases b
-      all_goals rfl
+    | _ => rfl
 
 /-- Construct the BVI expression for an accumulator operation. -/
 @[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "apply_op_def"]

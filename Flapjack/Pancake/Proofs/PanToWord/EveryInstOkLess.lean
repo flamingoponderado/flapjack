@@ -617,21 +617,14 @@ theorem everyInstOkArithSimpExp {width : Nat} [NeZero width] :
   case case6 | case7 | case8 =>
     rename_i ih
     intro he
-    unfold crepEveryExpHOL at he ⊢
-    exact ⟨(fun op es h => by cases h), ih he.2⟩
+    grind [crepEveryExpHOL]
   case case9 op es1 ih =>
     intro he
-    unfold crepEveryExpHOL at he ⊢
-    have hes := (crepEveryExpListHOL_iff _ _).mp he.2
-    refine ⟨(fun op es h => by cases h), (crepEveryExpListHOL_iff _ _).mpr ?_⟩
-    intro x hx
-    obtain ⟨y, hy, rfl⟩ := List.mem_map.mp hx
-    exact ih y hy (hes y hy)
+    grind [crepEveryExpHOL, crepEveryExpListHOL_iff]
   case case10 | case11 =>
     rename_i ih2 ih1
     intro he
-    unfold crepEveryExpHOL at he ⊢
-    exact ⟨(fun op es h => by cases h), ih2 he.2.1, ih1 he.2.2⟩
+    grind [crepEveryExpHOL]
   case case12 => exact id
 
 /-- Flapjack infrastructure: simplifying a program maps its expression list

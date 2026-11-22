@@ -39,6 +39,17 @@ fun emit_exported label name =
     NONE => raise Fail ("missing export " ^ name)
   | SOME (th,_) => emit label th;
 
+fun show_vars label th =
+  (print (label ^ "=");
+   print (String.concatWith "," (map (fn t => fst (dest_var t))
+     (Term.free_varsl [concl th])));
+   print "\n");
+
+fun vars_exported label name =
+  case DB.lookup {Thy="loopProps",Name=name} of
+    NONE => raise Fail ("missing export " ^ name)
+  | SOME (th,_) => show_vars label th;
+
 val source_cake = case OS.Process.getEnv "CAKEML" of
     SOME p => p
   | NONE => (case OS.Process.getEnv "FLAPJACK_HOL_PROBE_DIR" of
@@ -365,3 +376,16 @@ val _ = emit_exported "nested_seq_pure_evaluation_typed" "nested_seq_pure_evalua
 val _ = emit_exported "survives_def_typed" "survives_def";
 val _ = emit_exported "survives_nested_seq_intro_typed" "survives_nested_seq_intro";
 val _ = emit_exported "unassigned_vars_evaluate_same_typed" "unassigned_vars_evaluate_same";
+val _ = emit_exported "lookup_set_vars_typed" "lookup_set_vars";
+val _ = emit_exported "lookup_set_vars_not_MEM_typed" "lookup_set_vars_not_MEM";
+val _ = emit_exported "cut_res_add_clock_typed" "cut_res_add_clock";
+val _ = emit_exported "get_vars_clock_typed" "get_vars_clock";
+val _ = emit_exported "get_var_imm_add_clk_eq_typed" "get_var_imm_add_clk_eq";
+val _ = emit_exported "evaluate_Loop_body_same_typed" "evaluate_Loop_body_same";
+val _ = vars_exported "lookup_set_vars_vars" "lookup_set_vars";
+val _ = vars_exported "lookup_set_vars_not_MEM_vars" "lookup_set_vars_not_MEM";
+val _ = vars_exported "cut_res_add_clock_vars" "cut_res_add_clock";
+val _ = vars_exported "get_var_imm_add_clk_eq_vars" "get_var_imm_add_clk_eq";
+val _ = vars_exported "evaluate_Loop_body_same_vars" "evaluate_Loop_body_same";
+val _ = emit_exported "evaluate_no_Break_Continue_typed" "evaluate_no_Break_Continue";
+val _ = vars_exported "evaluate_no_Break_Continue_vars" "evaluate_no_Break_Continue";

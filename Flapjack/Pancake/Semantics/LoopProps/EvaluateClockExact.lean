@@ -105,6 +105,56 @@ theorem cutRes_add_clock (live : NumSet) (r : Option (LoopResultExact width))
         simp only [hz', if_false, decClock, Prod.mk.injEq, true_and]
         cases s1; simp only [LoopSemStateFiniteExact.mk.injEq, true_and, and_true] at hs1 hz ⊢; omega
 
+/-- Restatement of the internal `cutRes_add_clock` with HOL's `ck + clock`
+    addition order and a single conjunction hypothesis. NOT tagged as a HOL
+    port: HOL `cut_res_add_clock` (`loopPropsScript.sml:969`) quantifies
+    independent type variables — the live-set `l : δ num_map`, the result
+    `res/q : α result option`, and the state `s/r : (β, γ) state` — whereas
+    this Lean statement fixes δ := Unit (`live : NumSet`) and identifies the
+    result width α with the state width β, inherited from the reviewed
+    executable `cutRes`. A faithful port needs `cutRes` generalized over an
+    independent result word type and live-set value type; that generalization
+    is a maintainer item, and the executable `cutRes` is left unchanged. -/
+theorem cutResAddClockHOL (ck : Nat) (r : LoopSemStateFiniteExact width F)
+    (q : Option (LoopResultExact width)) (s : LoopSemStateFiniteExact width F)
+    (res : Option (LoopResultExact width)) (live : NumSet)
+    (h : cutRes live (res, s) = (q, r) ∧ q ≠ some .timeOut) :
+    cutRes live (res, { s with clock := ck + s.clock }) =
+      (q, { r with clock := ck + r.clock }) := by
+  obtain ⟨heq, hne⟩ := h
+  have := cutRes_add_clock live res s r q ck heq hne
+  rw [Nat.add_comm s.clock ck, Nat.add_comm r.clock ck] at this
+  exact this
+
+/-- Exact HOL `get_var_imm_add_clk_eq` (`loopPropsScript.sml:251-255`):
+    `get_var_imm ri (s with clock := ck) = get_var_imm ri s`.  The binders
+    follow the captured free-variable order (`get_var_imm_add_clk_eq_vars=`
+    `s,ck,ri`); `get_var_imm` is the tagged `getVarImm`
+    over the exact `locals` `num_map`, which the clock update does not touch. -/
+@[hol "cakeml/pancake/semantics/loopPropsScript.sml" "get_var_imm_add_clk_eq"
+  (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
+theorem getVarImm_add_clock_eq {width : Nat} [NeZero width] {F : Type}
+    (state : LoopSemStateFiniteExact width F) (ck : Nat)
+    (operand : RegImm (BitVec width)) :
+    getVarImm operand { state with clock := ck } = getVarImm operand state := by
+  cases operand with
+  | reg name => rfl
+  | imm value => rfl
+
+/-- Exact HOL `get_vars_clock` (`loopPropsScript.sml:979-983`):
+    `∀vs s c. get_vars vs (s with clock := c) = get_vars vs s`.  The binders
+    `vs`, `s`, `c` follow the source; `get_vars` is the tagged `getVars` over
+    the exact `locals` `num_map`, which the clock update does not touch. -/
+@[hol "cakeml/pancake/semantics/loopPropsScript.sml" "get_vars_clock"
+  (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
+theorem getVars_clock (names : List Nat) (state : LoopSemStateFiniteExact width F)
+    (clock : Nat) :
+    getVars names { state with clock := clock } = getVars names state := by
+  induction names with
+  | nil => rfl
+  | cons name names ih =>
+      simp only [getVars, ih]
+
 /-- Exact HOL `evaluate_add_clock_eq` (`loopPropsScript.sml:985-...`):
     `!p t res st ck. evaluate (p,t) = (res,st) /\ res <> SOME TimeOut ==>
       evaluate (p,t with clock := t.clock + ck) = (res,st with clock := st.clock + ck)`. -/

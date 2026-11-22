@@ -37,65 +37,10 @@ theorem doApp_ffiError_imp {C F : Type} (op : ClosLang.Op) (args : List ClosSem.
     ∃ i, op = .ffi i := by
   cases op with
   | ffi name => exact ⟨name, rfl⟩
-  | globOp operation =>
-    cases h : applyGlobal operation args state with
-    | none => simp [ClosSem.doApp, h] at run
-    | some pair => simp [ClosSem.doApp, h] at run
-  | blockOp operation =>
-    cases h : applyBlock operation args state with
-    | none => simp [ClosSem.doApp, h] at run
-    | some pair => simp [ClosSem.doApp, h] at run
-  | memOp operation =>
-    cases h : applyMemory operation args state with
-    | none => simp [ClosSem.doApp, h] at run
-    | some pair => simp [ClosSem.doApp, h] at run
-  | intOp operation =>
-    cases h : applyNumeric (.intOp operation) args state with
-    | none => simp [ClosSem.doApp, h] at run
-    | some pair => simp [ClosSem.doApp, h] at run
-  | wordOp operation =>
-    cases h : applyNumeric (.wordOp operation) args state with
-    | none => simp [ClosSem.doApp, h] at run
-    | some pair => simp [ClosSem.doApp, h] at run
-  | thunkOp operation =>
-    cases operation with
-    | forceThunk => simp [ClosSem.doApp] at run
-    | allocThunk mode =>
-      cases args with
-      | nil => simp [ClosSem.doApp] at run
-      | cons value rest =>
-        cases rest with
-        | nil =>
-          simp only [ClosSem.doApp] at run
-          split at run
-          · exact absurd run (typeError_ne_ffiError event)
-          · simp_all
-        | cons other more => simp [ClosSem.doApp] at run
-    | updateThunk mode =>
-      cases args with
-      | nil => simp [ClosSem.doApp] at run
-      | cons first rest =>
-        cases rest with
-        | nil => simp [ClosSem.doApp] at run
-        | cons second more =>
-          cases first with
-          | refPtr flag index =>
-            cases flag with
-            | false =>
-              simp only [ClosSem.doApp] at run
-              repeat' split at run
-              all_goals first
-                | exact absurd run (typeError_ne_ffiError event)
-                | simp_all
-            | true => simp [ClosSem.doApp] at run
-          | number value => simp [ClosSem.doApp] at run
-          | word64 word => simp [ClosSem.doApp] at run
-          | block tag fields => simp [ClosSem.doApp] at run
-          | byteVector bytes => simp [ClosSem.doApp] at run
-          | closure location supplied env arity body => simp [ClosSem.doApp] at run
-          | recclosure location supplied env functions index => simp [ClosSem.doApp] at run
-  | label index => simp [ClosSem.doApp] at run
-  | install => simp [ClosSem.doApp] at run
+  | _ =>
+    simp only [ClosSem.doApp] at run
+    repeat' split at run
+    all_goals simp_all
 
 /-- An abort error is an abort error. -/
 private theorem abort_of_err {C F : Type} (error : ErrorResult ClosSem.Value) (reason : Abort)
@@ -113,67 +58,10 @@ theorem doApp_err {C F : Type} (op : ClosLang.Op) (args : List ClosSem.Value)
     (run : ClosSem.doApp op args state = .err error)
     (notEqual : op ≠ .blockOp .equal) :
     ∃ a : Abort, error = .abort a := by
-  cases op with
-  | blockOp operation =>
-    by_cases isEqual : operation = .equal
-    · rw [isEqual] at notEqual
-      exact absurd rfl notEqual
-    · cases h : applyBlock operation args state with
-      | none =>
-        exact abort_of_err (C := C) (F := F) error .typeError
-          (by simpa [ClosSem.doApp, h] using run)
-      | some pair =>
-        obtain ⟨value, next⟩ := pair
-        simp [ClosSem.doApp, h] at run
-  | globOp operation =>
-    cases h : applyGlobal operation args state with
-    | none =>
-      exact abort_of_err (C := C) (F := F) error .typeError
-        (by simpa [ClosSem.doApp, h] using run)
-    | some pair =>
-      obtain ⟨value, next⟩ := pair
-      simp [ClosSem.doApp, h] at run
-  | memOp operation =>
-    cases h : applyMemory operation args state with
-    | none =>
-      exact abort_of_err (C := C) (F := F) error .typeError
-        (by simpa [ClosSem.doApp, h] using run)
-    | some pair =>
-      obtain ⟨value, next⟩ := pair
-      simp [ClosSem.doApp, h] at run
-  | intOp operation =>
-    cases h : applyNumeric (.intOp operation) args state with
-    | none =>
-      exact abort_of_err (C := C) (F := F) error .typeError
-        (by simpa [ClosSem.doApp, h] using run)
-    | some pair =>
-      obtain ⟨value, next⟩ := pair
-      simp [ClosSem.doApp, h] at run
-  | wordOp operation =>
-    cases h : applyNumeric (.wordOp operation) args state with
-    | none =>
-      exact abort_of_err (C := C) (F := F) error .typeError
-        (by simpa [ClosSem.doApp, h] using run)
-    | some pair =>
-      obtain ⟨value, next⟩ := pair
-      simp [ClosSem.doApp, h] at run
-  | ffi name =>
-    unfold ClosSem.doApp at run
-    repeat' split at run
-    all_goals
-      try exact abort_of_err (C := C) (F := F) error _ run
-    all_goals simp_all
-  | thunkOp operation =>
-    unfold ClosSem.doApp at run
-    repeat' split at run
-    all_goals
-      try exact abort_of_err (C := C) (F := F) error _ run
-    all_goals simp_all
-  | label index =>
-    exact abort_of_err (C := C) (F := F) error .typeError
-      (by simpa [ClosSem.doApp] using run)
-  | install =>
-    exact abort_of_err (C := C) (F := F) error .typeError
-      (by simpa [ClosSem.doApp] using run)
+  simp only [ClosSem.doApp] at run
+  repeat' split at run
+  all_goals
+    try exact abort_of_err (C := C) (F := F) error _ run
+  all_goals simp_all
 
 end Flapjack.Compiler.Backend.ClosProps

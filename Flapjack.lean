@@ -3877,6 +3877,7 @@ import Flapjack.Pancake.Semantics.PanProps.NamelessExpSimps
 import Flapjack.Pancake.Semantics.PanProps.ListRelFlatten
 import Flapjack.Pancake.Semantics.PanProps.ResVar
 import Flapjack.Pancake.Semantics.PanProps.WithShape
+import Flapjack.Pancake.Semantics.PanProps.AlistCtxtMax
 import Flapjack.Pancake.Semantics.ByteAlignBridge
 import Flapjack.Pancake.Semantics.ShMemBytesBridge
 import Flapjack.Pancake.Semantics.LoopProps
@@ -3889,8 +3890,11 @@ import Flapjack.Pancake.Semantics.LoopSemStateExact.EvaluateCases.StateRebinding
 import Flapjack.Pancake.Semantics.LoopSemStateExact.EvaluateInd
 import Flapjack.Pancake.Semantics.LoopSemStateExact.Semantics
 import Flapjack.Pancake.Semantics.LoopProps.EvaluateClockExact
+import Flapjack.Pancake.Semantics.LoopProps.EvaluateNoBreakContinue
 import Flapjack.Pancake.Semantics.LoopProps.EvaluateIoEventsExact
 import Flapjack.Pancake.Semantics.LoopProps.EvalExact
+import Flapjack.Pancake.Semantics.LoopProps.SetVarsLookup
+import Flapjack.Pancake.Semantics.LoopProps.EvaluateLoopBodySame
 import Flapjack.Pancake.Semantics.LoopProps.EveryProg
 import Flapjack.Pancake.Semantics.LoopProps.NestedSeqExact
 import Flapjack.Pancake.Semantics.LoopProps.UnassignedVarsExact
