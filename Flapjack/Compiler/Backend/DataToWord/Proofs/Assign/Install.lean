@@ -17,6 +17,7 @@ namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Assign
 open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Backend.DataToWord
 open Flapjack.Compiler.Backend.DataToWord.Proofs.Gc Flapjack.Compiler.Backend.BackendProps
 open Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
+open Flapjack.Compiler.Backend.DataToWord.Proofs.Bignum
 set_option maxRecDepth 8192
 set_option maxHeartbeats 3000000
 
@@ -292,6 +293,46 @@ private theorem installStubsRun {width : Nat} [NeZero width] {C F : Type}
   simp only [wordSemBadFunReturn, Bool.false_eq_true, if_false]
   simp [RR, e2, e1, cpos, dpos, cbEmpty, dbEmpty]
 
+/-- The small length immediate shifted right by two is the length. -/
+private theorem installSmallShift {width : Nat} [NeZero width] (good : goodDimindex width) (len : Nat)
+    (small : smallInt width (Int.ofNat len)) :
+    ((smallnum (Int.ofNat len) : BitVec width) >>> (2 : Nat)).toNat = len := by
+  unfold smallnum
+  rw [if_neg (by simp)]
+  unfold smallInt at small
+  rcases good with rfl | rfl <;> simp at small ⊢ <;> omega
+
+/-- A data length that passes the free-space check fits the data buffer. -/
+private theorem installDataSpace {width : Nat} [NeZero width] (good : goodDimindex width) (len sl : Nat)
+    (small : smallInt width (Int.ofNat len))
+    (h : ¬ ((BitVec.ofNat width (width / 8) * BitVec.ofNat width sl) >>> wordShiftAmount width <
+      (smallnum (Int.ofNat len) : BitVec width) >>> (2 : Nat))) : len ≤ sl := by
+  have shifted := installSmallShift good len small
+  rw [BitVec.lt_def, shifted] at h
+  rcases good with rfl | rfl <;> simp [wordShiftAmount] at h <;> omega
+
+/-- A code length that passes the free-space check fits the code buffer. -/
+private theorem installCodeSpace {width : Nat} [NeZero width] (good : goodDimindex width) (len sl : Nat)
+    (small : smallInt width (Int.ofNat len))
+    (h : ¬ (BitVec.ofNat width sl < (smallnum (Int.ofNat len) : BitVec width) >>> (2 : Nat))) :
+    len ≤ sl := by
+  have shifted := installSmallShift good len small
+  rw [BitVec.lt_def, shifted] at h
+  simp at h
+  have := Nat.mod_le sl (2 ^ width)
+  omega
+
+/-- Branch on an unsigned comparison of two word registers. -/
+private theorem installEvalLower {width : Nat} [NeZero width] {C F : Type}
+    (s : WordSemStateFiniteExact width C F) (r r' : Nat) (a b : BitVec width)
+    (c1 c2 : WordLangProgHOL (BitVec width))
+    (ra : s.getVar r = some (.word a)) (rb : s.getVar r' = some (.word b)) :
+    WordSemStateFiniteExact.evaluate (.ite .lower r (.reg r') c1 c2) s =
+      if a < b then WordSemStateFiniteExact.evaluate c1 s else WordSemStateFiniteExact.evaluate c2 s := by
+  simp [WordSemStateFiniteExact.evaluate, ra, rb, WordSemStateFiniteExact.getVarImm,
+    wordSemWordCmp, Compiler.Encoders.Asm.wordCmpHOL]
+  by_cases h : a < b <;> simp [h]
+
 /-- A sequence whose first command finishes normally without changing the
 state continues with the second command. -/
 private theorem installSeqSame {width : Nat} [NeZero width] {C F : Type}
@@ -402,6 +443,97 @@ theorem assignInstall_correct {width : Nat} [NeZero width] {C F : Type}
     rw [installSeqSame _ _ _ h4]
     have small3 : smallInt width (Int.ofNat q1.length) := by simpa [b3] using x3Bit
     have small4 : smallInt width (Int.ofNat q2.length) := by simpa [b4] using x4Bit
+    have x3Eq : x3 = smallnum (Int.ofNat q1.length) := WordLocW.word.inj
+      (memoryRel_numberImp conf target.be (holThe source.tstamps) source.refs source.space target.store
+        target.memory target.mdomain _ _ _ ⟨good, small3,
+          memoryRel_tl _ _ _ _ _ _ _ _ _ _ (memoryRel_tl _ _ _ _ _ _ _ _ _ _ roots)⟩)
+    have x4Eq : x4 = smallnum (Int.ofNat q2.length) := WordLocW.word.inj
+      (memoryRel_numberImp conf target.be (holThe source.tstamps) source.refs source.space target.store
+        target.memory target.mdomain _ _ _ ⟨good, small4,
+          memoryRel_tl _ _ _ _ _ _ _ _ _ _ (memoryRel_tl _ _ _ _ _ _ _ _ _ _
+            (memoryRel_tl _ _ _ _ _ _ _ _ _ _ roots))⟩)
+    subst x3Eq x4Eq
+    obtain ⟨cbEmpty, dbEmpty, storeCB, storeCBE, storeBB, storeBBE, compileRel, oracleRel, oracleBound⟩ :=
+      related.2.2.2.2.2.1
+    have odd1 : adjustVar v4 ≠ 1 ∧ adjustVar v4 ≠ 3 ∧ adjustVar v3 ≠ 1 ∧ adjustVar v3 ≠ 3 ∧
+        adjustVar v3 ≠ 5 := by simp [adjustVar]; omega
+    let dsl := target.dataBuffer.spaceLeft
+    let dbytes := BitVec.ofNat width (width / 8) * BitVec.ofNat width dsl
+    let t1 := target.setVar 1 (.word target.dataBuffer.position)
+    rw [installSeqAssign target 1 _ (.word target.dataBuffer.position) _ (by
+      simp [WordSemStateFiniteExact.wordExp, WordSemStateFiniteExact.getStore, storeBB])]
+    rw [installSeqAssign t1 3 _ (.word dbytes) _ (by
+      simp [t1, dbytes, dsl, WordSemStateFiniteExact.wordExp, WordSemStateFiniteExact.getStore, storeBBE,
+        WordSemStateFiniteExact.getVar, WordSemStateFiniteExact.setVar, installLookupInsert, theWords,
+        wordOpHOL, wordOp])]
+    let t3 := t1.setVar 3 (.word dbytes)
+    let len2 := (smallnum (Int.ofNat q2.length) : BitVec width) >>> (2 : Nat)
+    have r4' := reads.2.2.2
+    simp only [WordSemStateFiniteExact.getVar] at r4'
+    rw [installSeqAssign t3 5 _ (.word len2) _ (by
+      rw [wordExpShiftVar]
+      simp [t3, t1, WordSemStateFiniteExact.setVar, installLookupInsert, odd1, r4',
+        SemanticPrimitivesProps.shiftLookup, len2])]
+    let t5 := t3.setVar 5 (.word len2)
+    let dfree := dbytes >>> wordShiftAmount width
+    rw [installSeqAssign t5 3 _ (.word dfree) _ (by
+      rw [wordExpShiftVar]
+      simp [t5, t3, WordSemStateFiniteExact.setVar, installLookupInsert,
+        SemanticPrimitivesProps.shiftLookup, dfree])]
+    let t6 := t5.setVar 3 (.word dfree)
+    have rel6 : stateRel conf l1 l2 source t6 none locs :=
+      (stateRel_insertOdd conf l1 l2 source t5 none locs 3 _ rfl).mpr
+        ((stateRel_insertOdd conf l1 l2 source t3 none locs 5 _ rfl).mpr
+          ((stateRel_insertOdd conf l1 l2 source t1 none locs 3 _ rfl).mpr
+            ((stateRel_insertOdd conf l1 l2 source target none locs 1 _ rfl).mpr related)))
+    have lowerD := installEvalLower t6 3 5 dfree len2 (giveUp (width := width)) .skip
+      (by simp [t6, WordSemStateFiniteExact.getVar, WordSemStateFiniteExact.setVar, installLookupInsert])
+      (by simp [t6, t5, WordSemStateFiniteExact.getVar, WordSemStateFiniteExact.setVar, installLookupInsert])
+    by_cases dLow : dfree < len2
+    · obtain ⟨r, giveRun, rffi, tffi, -⟩ := evaluateGiveUp2 conf l1 l2 source t6 locs rel6
+      rw [if_pos dLow, giveRun] at lowerD
+      obtain ⟨s2, run2, ffi2⟩ := installSeqStop _ _ _ _ _ lowerD
+      exact ⟨_, _, run2, fun _ => ⟨by rw [ffi2, rffi, ← tffi]; rfl, by simp [optionLe], fun _ => trivial⟩,
+        fun h => (h rfl).elim⟩
+    rw [if_neg dLow] at lowerD
+    rw [installSeqSame _ _ _ (by rw [lowerD]; simp [WordSemStateFiniteExact.evaluate]; rfl)]
+    have dataSpace : q2.length ≤ target.dataBuffer.spaceLeft :=
+      installDataSpace good q2.length dsl small4 dLow
+    let csl := target.codeBuffer.spaceLeft
+    let t7 := t6.setVar 1 (.word target.codeBuffer.position)
+    rw [installSeqAssign t6 1 _ (.word target.codeBuffer.position) _ (by
+      simp [t6, t5, t3, t1, WordSemStateFiniteExact.wordExp, WordSemStateFiniteExact.getStore,
+        WordSemStateFiniteExact.setVar, storeCB])]
+    rw [installSeqAssign t7 3 _ (.word (BitVec.ofNat width csl)) _ (by
+      simp [t7, t6, t5, t3, t1, csl, WordSemStateFiniteExact.wordExp, WordSemStateFiniteExact.getStore,
+        storeCBE, WordSemStateFiniteExact.getVar, WordSemStateFiniteExact.setVar, installLookupInsert,
+        theWords, wordOpHOL, wordOp])]
+    let t8 := t7.setVar 3 (.word (BitVec.ofNat width csl))
+    let len1 := (smallnum (Int.ofNat q1.length) : BitVec width) >>> (2 : Nat)
+    have r3' := reads.2.2.1
+    simp only [WordSemStateFiniteExact.getVar] at r3'
+    rw [installSeqAssign t8 5 _ (.word len1) _ (by
+      rw [wordExpShiftVar]
+      simp [t8, t7, t6, t5, t3, t1, WordSemStateFiniteExact.setVar, installLookupInsert, odd1, r3',
+        SemanticPrimitivesProps.shiftLookup, len1])]
+    let t9 := t8.setVar 5 (.word len1)
+    have rel9 : stateRel conf l1 l2 source t9 none locs :=
+      (stateRel_insertOdd conf l1 l2 source t8 none locs 5 _ rfl).mpr
+        ((stateRel_insertOdd conf l1 l2 source t7 none locs 3 _ rfl).mpr
+          ((stateRel_insertOdd conf l1 l2 source t6 none locs 1 _ rfl).mpr rel6))
+    have lowerC := installEvalLower t9 3 5 (BitVec.ofNat width csl) len1 (giveUp (width := width)) .skip
+      (by simp [t9, t8, WordSemStateFiniteExact.getVar, WordSemStateFiniteExact.setVar, installLookupInsert])
+      (by simp [t9, WordSemStateFiniteExact.getVar, WordSemStateFiniteExact.setVar, installLookupInsert])
+    by_cases cLow : BitVec.ofNat width csl < len1
+    · obtain ⟨r, giveRun, rffi, tffi, -⟩ := evaluateGiveUp2 conf l1 l2 source t9 locs rel9
+      rw [if_pos cLow, giveRun] at lowerC
+      obtain ⟨s2, run2, ffi2⟩ := installSeqStop _ _ _ _ _ lowerC
+      exact ⟨_, _, run2, fun _ => ⟨by rw [ffi2, rffi, ← tffi]; rfl, by simp [optionLe], fun _ => trivial⟩,
+        fun h => (h rfl).elim⟩
+    rw [if_neg cLow] at lowerC
+    rw [installSeqSame _ _ _ (by rw [lowerC]; simp [WordSemStateFiniteExact.evaluate]; rfl)]
+    have codeSpace : q1.length ≤ target.codeBuffer.spaceLeft :=
+      installCodeSpace good q1.length csl small3 cLow
     sorry
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Assign
