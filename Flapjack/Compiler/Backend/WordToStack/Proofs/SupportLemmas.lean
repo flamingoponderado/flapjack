@@ -87,38 +87,9 @@ distinct keys, a successful lookup is exactly membership of the pair. -/
 theorem alookupIffMem {α β : Type} (l : List (α × β)) (q : α) (r : β)
     (hd : (l.map Prod.fst).Nodup) :
     keyLookup l q = some r ↔ (q, r) ∈ l := by
-  classical
   induction l with
   | nil => simp [keyLookup, holAlookup]
-  | cons entry l ih =>
-    rcases entry with ⟨a, b⟩
-    have hdcons : (a :: l.map Prod.fst).Nodup := by simpa using hd
-    have hnot : a ∉ l.map Prod.fst := (List.nodup_cons.mp hdcons).1
-    have hd' : (l.map Prod.fst).Nodup := (List.nodup_cons.mp hdcons).2
-    by_cases hqa : q = a
-    · rw [hqa]
-      have hlook : keyLookup ((a, b) :: l) a = some b := by
-        simp [keyLookup, holAlookup]
-      constructor
-      · intro hlk
-        rw [hlook] at hlk
-        have hrb : b = r := Option.some.inj hlk
-        subst hrb
-        exact List.mem_cons_self ..
-      · intro hmem
-        rcases List.mem_cons.mp hmem with hhead | htail
-        · have hrb : r = b := (Prod.mk.inj hhead).2
-          rw [hlook, hrb]
-        · exact absurd (List.mem_map.mpr ⟨(a, r), htail, rfl⟩) hnot
-    · have haq : a ≠ q := fun h => hqa h.symm
-      simp only [keyLookup, holAlookup, if_neg haq]
-      constructor
-      · intro hlk
-        exact List.mem_cons_of_mem (a, b) ((ih hd').mp hlk)
-      · intro hmem
-        rcases List.mem_cons.mp hmem with hhead | htail
-        · exact absurd (Prod.mk.inj hhead).1 hqa
-        · exact (ih hd').mpr htail
+  | cons entry l ih => grind [keyLookup, holAlookup]
 
 /-- Exact HOL `LAST_add_ret_loc` (`word_to_stackProofScript.sml:3307-3311`): the
 appended return location does not change the last argument. The argument list is
