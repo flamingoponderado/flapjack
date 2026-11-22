@@ -12320,12 +12320,13 @@ run_probe source_let_proof_local_typed_probeScript.sml source_let_proof_local_ty
   "$cake_dir/compiler/backend/proofs"
 
 run_probe data_to_word_assign_typed_probeScript.sml data_to_word_assign_typed_probe.out \
-  size_of_seen_SUBSET_typed size_of_seen_Block_typed IMP_read_bytearray_GENLIST_typed parts_to_words_NONE_typed LENGTH_EQ_4_typed \
+  size_of_seen_SUBSET_typed size_of_seen_Block_typed IMP_read_bytearray_GENLIST_typed parts_to_words_NONE_typed assign_FinaliseCons_typed \
   "$cake_dir/compiler/backend/proofs/data_to_word_assignProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
 
 run_probe data_to_word_bignum_typed_probeScript.sml data_to_word_bignum_typed_probe.out \
   mw_op_constructors i2mw_small_int_IMP_0_typed get_iop_def_typed lt_dimindex_MOD_dimword_typed \
+  LongDiv1_thm_prime_typed eval_Call_Arith_typed \
   "$cake_dir/compiler/backend/proofs/data_to_word_bignumProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
 
@@ -12718,7 +12719,23 @@ run_probe bignum_code_defs_probeScript.sml bignum_code_defs_probe.out \
   mc_simple_div_code_def mc_single_div_code_def mc_single_mul_add_code_def \
   mc_single_mul_code_def mc_sub1_code_def mc_sub_code_def mc_sub_loop1_code_def \
   mc_sub_loop2_code_def mc_sub_loop_code_def mc_top_two_code_def mc_use_fac_code_def \
-  "$cake_dir/compiler/backend/word_bignumScript.sml" "$cake_dir/compiler/backend"
+    mc_add1_call_corr_thm mc_add1_corr_thm mc_add_corr_thm mc_add_loop1_corr_thm \
+  mc_add_loop2_corr_thm mc_add_loop_corr_thm mc_adj_cmp_corr_thm mc_adjust_aux_corr_thm \
+  mc_calc_d_corr_thm mc_cmp2_corr_thm mc_cmp3_corr_thm mc_cmp_corr_thm \
+  mc_cmp_mul2_corr_thm mc_compare_corr_thm mc_copy_down_corr_thm mc_copy_over_corr_thm \
+  mc_div0_corr_thm mc_div1_corr_thm mc_div2_corr_thm mc_div3_corr_thm \
+  mc_div_adjust_corr_thm mc_div_corr_thm mc_div_guess_corr_thm mc_div_loop_corr_thm \
+  mc_div_r1_corr_thm mc_div_sub1_corr_thm mc_div_sub_aux1_corr_thm \
+  mc_div_sub_aux_corr_thm mc_div_sub_call_corr_thm mc_div_sub_corr_thm \
+  mc_div_sub_loop_corr_thm mc_div_test_corr_thm mc_fix_corr_thm mc_iadd1_corr_thm \
+  mc_iadd2_corr_thm mc_iadd3_corr_thm mc_iadd_corr_thm mc_idiv0_corr_thm mc_idiv_corr_thm \
+  mc_idiv_mod_header_corr_thm mc_imul1_corr_thm mc_imul_corr_thm mc_iop_corr_thm \
+  mc_isub_flip_corr_thm mc_mul_by_single2_corr_thm mc_mul_by_single_corr_thm \
+  mc_mul_corr_thm mc_mul_pass_corr_thm mc_mul_zero_corr_thm mc_simple_div1_corr_thm \
+  mc_simple_div_corr_thm mc_single_div_corr_thm mc_single_mul_add_corr_thm \
+  mc_single_mul_corr_thm mc_sub1_corr_thm mc_sub_corr_thm mc_sub_loop1_corr_thm \
+  mc_sub_loop2_corr_thm mc_sub_loop_corr_thm mc_top_two_corr_thm \
+  "$cake_dir/compiler/backend/proofs/word_bignumProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe data_to_word_proof_lab2_typed_probeScript.sml data_to_word_proof_lab2_typed_probe.out \
   data_to_word_proof_lab2_probe_begin data_to_word_proof_lab2_probe_end \
@@ -12733,5 +12750,16 @@ run_probe data_to_word_proof_lab_typed_probeScript.sml data_to_word_proof_lab_ty
   MemEqList_no_share_inst_typed StoreAnyConsts_no_share_inst_typed MAP_FST_ZIP_typed \
   StoreEach_no_inst_typed MemEqList_no_inst_typed StoreAnyConsts_no_inst_typed \
   bounds_lem_typed max_heap_limit_has_fp_ops_typed FST_compile_part_typed \
+  "$cake_dir/compiler/backend/proofs/data_to_wordProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+
+run_probe data_to_word_proof_call_typed_probeScript.sml data_to_word_proof_call_typed_probe.out \
+  state_rel_cut_env_IMP_cut_env_typed state_rel_get_var_RefPtr_Loc_typed \
+  state_rel_pop_env_set_vars_IMP_typed \
+  "$cake_dir/compiler/backend/proofs/data_to_wordProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+
+run_probe data_to_word_proof_ext_typed_probeScript.sml data_to_word_proof_ext_typed_probe.out \
+  state_rel_ext_def_typed state_rel_ext_with_clock_typed \
   "$cake_dir/compiler/backend/proofs/data_to_wordProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"

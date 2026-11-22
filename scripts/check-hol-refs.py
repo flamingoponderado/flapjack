@@ -5214,6 +5214,23 @@ def join_env_locals_transitive_rendering(hol_path: str, hol_name: str, lean_path
     }.get((hol_name, lean_name))
 
 
+def _word_free_owner(owner: tuple[str, str, dict[str, str]]) -> bool:
+    """True when an owning declaration cannot be a width-indexed word carrier.
+
+    Its header binds no `Nat` width and no `NeZero`, and neither the header nor
+    any payload names `BitVec` or a reviewed word alias. Such an owner can
+    never supply word-carrier evidence for `words_as_type_indexed_bitvec`.
+    A payload naming another carrier only at a literal width (for example
+    `AsmConfigExact 64`) still counts as word-free: a fixed width is not
+    type-indexed evidence either.
+    """
+    _module, header, payloads = owner
+    text = header + "\n" + "\n".join(payloads.values())
+    return (NAT_WIDTH_BINDER_RE.search(header) is None
+            and not identifier_token_occurs(text, "NeZero")
+            and not re.search(r"\b(?:BitVec|" + _WORD_CARRIER_ALTERNATION + r")\b", text))
+
+
 def _qualified_word_owner_names(module: str, name: str, root: str) -> set[str]:
     """Read declaration namespaces, rather than infer them from file paths.
 
@@ -5627,6 +5644,13 @@ def words_as_type_indexed_bitvec_errors(
                 if len(selected) == 1:
                     owners_by_name[name] = selected
                     all_owners_by_name[name] = selected
+        # A leaf whose every owner is word-free (no Nat width, NeZero or word
+        # payload, e.g. FlatLang.Exp, Bvl.Exp and Bvi.Exp) can never supply
+        # carrier evidence, so its ambiguity is irrelevant here. Any owner that
+        # could be width-indexed keeps the strict single-owner rule.
+        for name in [name for name, owners in owners_by_name.items()
+                     if len(owners) > 1 and all(_word_free_owner(owner) for owner in owners)]:
+            del owners_by_name[name]
         ambiguous = [
             name for name, owners in owners_by_name.items() if len(owners) != 1
         ]
@@ -5888,11 +5912,23 @@ def word_dimension_as_width_errors(declaration_text: str, declaration: str,
         errors.append(
             f"word_dimension_as_width `{width_name}` must retain its own `[NeZero {width_name}]` binder"
         )
-    if WORD_CARRIER_TOKEN_RE.search(signature):
-        errors.append(
-            "word_dimension_as_width is only for word-free signatures; use "
-            "words_as_type_indexed_bitvec for a signature carrying words"
-        )
+    # HOL fixed-width word types (`word8`, `word64`, ...) render as a bare
+    # `BitVec <positive decimal literal>`; those are admitted beside the
+    # numeric-only dimension. Any other word carrier (an identifier, arithmetic
+    # or parenthesised width, a word abbreviation, or `BitVec 0`) is the
+    # type-indexed translation and needs words_as_type_indexed_bitvec. The
+    # check cannot tell a HOL fixed-width word from a specialised `'a word`;
+    # source review must confirm that from the typed capture.
+    for match in WORD_CARRIER_TOKEN_RE.finditer(signature):
+        literal = re.match(r"BitVec[ \t]+([1-9][0-9]*)(?![A-Za-z0-9_'.])",
+                           signature[match.start():])
+        if match.group(0) != "BitVec" or literal is None:
+            errors.append(
+                "word_dimension_as_width admits only fixed-width word carriers "
+                "`BitVec <positive literal>`; use words_as_type_indexed_bitvec "
+                "for a signature carrying type-indexed words"
+            )
+            break
     return errors
 
 def new_ref_existential_header_errors(source: str) -> list[str]:
@@ -6075,6 +6111,73 @@ def word_bignum_to_deep_declarations(
         line = source.count("\n", 0, matches[0].start()) + 1
         result.extend((constant + "_def", line) for constant in constants)
     return result
+
+
+WORD_BIGNUM_PROOF_SCRIPT = "cakeml/compiler/backend/proofs/word_bignumProofScript.sml"
+WORD_BIGNUM_PROOF_SCRIPT_SHA256 = (
+    "591b418886ea1f711bc118ec4bc62ef05919d9e6b6ffdb2e8660e1cbd1c06233")
+# The to_deep calls of the pinned word_bignumScript that run before its
+# `Theorem all_code_defs = REWRITE_RULE [] (!code_defs)`; their code
+# constants are exactly the conjuncts of all_code_defs.
+WORD_BIGNUM_ALL_CODE_DEFS_CALLS = (
+    "mc_cmp", "mc_compare", "mc_idiv", "mc_iadd", "mc_imul", "mc_iop")
+WORD_BIGNUM_DERIVE_CORR_CALL = (
+    "val const_def = time (first (not o time (can derive_corr_thm)))\n"
+    "                     (all_code_defs |> CONJUNCTS |> rev)\n"
+    "                handle HOL_ERR _ => TRUTH;\n")
+
+
+def word_bignum_corr_declarations(
+    path: Path, source: str, live_source: str | None = None,
+    word_bignum_source: str | None = None,
+) -> list[tuple[str, int]]:
+    """Identify the NAME_corr_thm theorems that derive_corr_thm saves.
+
+    The byte-pinned word_bignumProofScript's local `derive_corr_thm` saves
+    `name ^ "_corr_thm"` (in both of its branches) for the code constant of
+    its argument, and the live top-level `val const_def = ...` call applies it
+    to every conjunct of word_bignum's all_code_defs. Those conjuncts are the
+    code constants of the to_deep calls that the byte-pinned word_bignumScript
+    runs before `Theorem all_code_defs` (WORD_BIGNUM_ALL_CODE_DEFS_CALLS, a
+    subset of WORD_BIGNUM_TO_DEEP_CODE_CONSTANTS). Each name is recorded at the
+    call's line; any change to either source, the helper, or the call gives
+    nothing. This records provenance only, not the generated statements.
+    """
+    if path.parts[-len(Path(WORD_BIGNUM_PROOF_SCRIPT).parts):] != Path(
+            WORD_BIGNUM_PROOF_SCRIPT).parts:
+        return []
+    if hashlib.sha256(source.encode()).hexdigest() != WORD_BIGNUM_PROOF_SCRIPT_SHA256:
+        return []
+    live = source if live_source is None else live_source
+    if word_bignum_source is None:
+        bignum_path = path.parents[1] / "word_bignumScript.sml"
+        if not bignum_path.is_file():
+            return []
+        word_bignum_source = bignum_path.read_text(encoding="utf-8", errors="replace")
+    if hashlib.sha256(word_bignum_source.encode()).hexdigest() != WORD_BIGNUM_SCRIPT_SHA256:
+        return []
+    all_code_defs = word_bignum_source.find("\nTheorem all_code_defs =\n  REWRITE_RULE [] (!code_defs)\n")
+    if all_code_defs < 0:
+        return []
+    for function in WORD_BIGNUM_TO_DEEP_CODE_CONSTANTS:
+        call = word_bignum_source.find(f"\nval def = {function}_def |> to_deep\n")
+        if call < 0 or (call < all_code_defs) != (function in WORD_BIGNUM_ALL_CODE_DEFS_CALLS):
+            return []
+    helper = re.search(
+        r"^fun derive_corr_thm const_def = let\n.*?^  end;\n", live, re.S | re.M)
+    if helper is None or helper.group(0).count(
+            'val _ = save_thm(name ^ "_corr_thm", raw_th)') != 2:
+        return []
+    if re.search(r'save_thm\(name \^ "_corr_thm"', live[helper.end():]):
+        return []
+    calls = [m.start() for m in re.finditer(re.escape(WORD_BIGNUM_DERIVE_CORR_CALL), source)]
+    if len(calls) != 1 or live[calls[0]:calls[0] + len(WORD_BIGNUM_DERIVE_CORR_CALL)] != \
+            WORD_BIGNUM_DERIVE_CORR_CALL or calls[0] < helper.end():
+        return []
+    line = source.count("\n", 0, calls[0]) + 1
+    return [(constant[: -len("_code")] + "_corr_thm", line)
+            for function in WORD_BIGNUM_ALL_CODE_DEFS_CALLS
+            for constant in WORD_BIGNUM_TO_DEEP_CODE_CONSTANTS[function]]
 
 
 MC_MULTIWORD_SCRIPT = "HOL/examples/machine-code/multiword/mc_multiwordScript.sml"
@@ -6287,6 +6390,9 @@ def hol_declaration_lines(
                 path, raw_text, source_text):
             names.setdefault(name, []).append(number)
         for name, number in word_bignum_to_deep_declarations(
+                path, raw_text, source_text):
+            names.setdefault(name, []).append(number)
+        for name, number in word_bignum_corr_declarations(
                 path, raw_text, source_text):
             names.setdefault(name, []).append(number)
         # `val NAME = fetch "-" "NAME";` re-binds the theorem the factory
@@ -7277,8 +7383,12 @@ def main(argv: list[str]) -> int:
                 if combined and (FMAP_AS_FINITE_SUPPORT_PARAMS_RE.search(declaration_source) or
                                  FMAP_RESULT_OBSERVATIONS_RE.search(declaration_source)):
                     errors.append(f"{where}: combined parameter observations cannot mix with standalone qualifiers")
+                # Words may join only the standalone observation qualifier
+                # (status ..._result_observations_words_as_type_indexed_bitvec);
+                # the word checks below still apply to the whole signature.
                 if (list_fields or names_fields or fmap_fields or fmap_result or fmap_relation or
-                    fmap_equalities or words_bitvec or (fmap_parameters and not combined) or fmap_existentials or
+                    fmap_equalities or (words_bitvec and combined) or (fmap_parameters and not combined) or
+                    fmap_existentials or
                     dimension_width or dimension_widths or fmap_function_positions or fmap_heterogeneous_function_positions or
                     reals_cuts or fmap_equality):
                     errors.append(f"{where}: result observations cannot combine with other representation qualifiers")

@@ -589,3 +589,114 @@ val _ = cap "MAP_Number_11_w2n_word8_typed" "MAP_Number_11_w2n_word8";
 val _ = cap "MAP_Word64_11_typed" "MAP_Word64_11";
 val _ = cap "v_to_list_EQ_SOME_NIL_typed" "v_to_list_EQ_SOME_NIL";
 val _ = cap "LENGTH_EQ_4_typed" "LENGTH_EQ_4";
+
+(* Batch A2: further small lemmas of data_to_word_assignProof and the w2w_upper definition. *)
+val _ = cap "Word64Rep_inj_typed" "Word64Rep_inj";
+val _ = cap "get_addr_inj_typed" "get_addr_inj";
+val _ = cap "word_exp_SmallLsr_typed" "word_exp_SmallLsr";
+val _ = cap "w2w_shift_shift_typed" "w2w_shift_shift";
+val _ = cap "size_of_Number_head_typed" "size_of_Number_head";
+val _ = cap "MAP_FST_MAP_compile_part_typed" "MAP_FST_MAP_compile_part";
+val _ = cap "compile_part_loc_IMP_typed" "compile_part_loc_IMP";
+val _ = cap "LENGTH_EQ_5_typed" "LENGTH_EQ_5";
+val _ = cap "IN_domain_adjust_set_inter_typed" "IN_domain_adjust_set_inter";
+val _ = cap "good_dimindex_w2w_byte_typed" "good_dimindex_w2w_byte";
+val _ = cap "set_var_consts_typed" "set_var_consts";
+val _ = cap "get_var_consts_typed" "get_var_consts";
+val _ = cap "not_less_zero_int_eq_typed" "not_less_zero_int_eq";
+val _ = cap "IS_SOME_lookup_typed" "IS_SOME_lookup";
+val _ = cap "OPTION_MAP2_NONE_THM_typed" "OPTION_MAP2_NONE_THM";
+val _ = cap "OPTION_MAP2_NONE_typed" "OPTION_MAP2_NONE";
+val _ = cap "option_le_flip_neg_typed" "option_le_flip_neg";
+val _ = cap "the_F_not_option_le_typed" "the_F_not_option_le";
+val _ = cap "not_the_F_option_le_typed" "not_the_F_option_le";
+val _ = cap "lookup_set_var_typed" "lookup_set_var";
+val _ = cap "TWO_POW_LEMMA_typed" "TWO_POW_LEMMA";
+val _ = cap "w2w_upper_def_typed" "w2w_upper_def";
+val _ = cap "w2w_upper_upper_w2w_typed" "w2w_upper_upper_w2w";
+val _ = cap "cut_names_adjust_set_insert_1_typed" "cut_names_adjust_set_insert_1";
+val _ = cap "cut_names_adjust_set_insert_3_typed" "cut_names_adjust_set_insert_3";
+val _ = cap "cut_names_adjust_set_insert_5_typed" "cut_names_adjust_set_insert_5";
+val _ = cap "push_env_tstamps_typed" "push_env_tstamps";
+val _ = cap "dec_clock_tstamps_typed" "dec_clock_tstamps";
+val _ = cap "cut_state_refs_same_typed" "cut_state_refs_same";
+(* lookup_2_call_env is [local]; its source proof uses
+   wordSemTheory.call_env_def and lookup_fromList2, so at its source position
+   `call_env` is wordSem's. The probe's final grammar resolves the bare name
+   to dataSem's call_env instead, so the source statement is parsed with that
+   one identifier qualified as wordSem$call_env. *)
+fun subst_str (pat, rep) str =
+  let
+    val n = String.size pat
+    fun go i acc =
+      if i + n > String.size str then String.concat (rev (String.extract (str, i, NONE) :: acc))
+      else if String.substring (str, i, n) = pat then go (i + n) (rep :: acc)
+      else go (i + 1) (String.str (String.sub (str, i)) :: acc)
+  in go 0 [] end;
+val _ = let
+    val stmt = subst_str ("call_env", "wordSem$call_env")
+      (strip_antiquote (statement_of "lookup_2_call_env"))
+    val tm = Parse.Term [QUOTE stmt]
+  in (print "lookup_2_call_env_typed="; print_term tm; print "\n") end;
+val _ = cap "toList_delete_split_typed" "toList_delete_split";
+val _ = cap "wf_FOLDR_delete_typed" "wf_FOLDR_delete";
+val _ = cap "lookup_FOLDR_delete_typed" "lookup_FOLDR_delete";
+val _ = cap "v_to_list_block_drop_typed" "v_to_list_block_drop";
+val _ = cap "push_env_store_typed" "push_env_store";
+val _ = cap "cut_env_envs_lookup_lookup_typed" "cut_env_envs_lookup_lookup";
+val _ = cap "cut_envs_domain_IN_typed" "cut_envs_domain_IN";
+val _ = cap "consume_space_stack_max_typed" "consume_space_stack_max";
+val _ = cap "lookup_loc_lemma_typed" "lookup_loc_lemma";
+val _ = cap "LESS_IMP_NOT_BIT_typed" "LESS_IMP_NOT_BIT";
+val _ = cap "Smallnum_alt_typed" "Smallnum_alt";
+val _ = cap "BIT_lemma_typed" "BIT_lemma";
+val _ = cap "BIT_Lemma2_typed" "BIT_Lemma2";
+val _ = cap "MULT_TWO_EXP_LESS_dimword_typed" "MULT_TWO_EXP_LESS_dimword";
+val _ = cap "explode_less_32_typed" "explode_less_32";
+val _ = cap "WordFromInt_DIV_LEMMA_typed" "WordFromInt_DIV_LEMMA";
+val _ = cap "LENGTH_n2mw_1_typed" "LENGTH_n2mw_1";
+val _ = cap "all_ones_get_addr_typed" "all_ones_get_addr";
+val _ = cap "maxout_bits_eq_typed" "maxout_bits_eq";
+val _ = cap "word_or_eq_word_or_split_typed" "word_or_eq_word_or_split";
+val _ = cap "ptr_bits_eq_ptr_bits_typed" "ptr_bits_eq_ptr_bits";
+val _ = cap "maxout_bits_0_typed" "maxout_bits_0";
+val _ = cap "ptr_bits_eq_ptr_bits_len_only_typed" "ptr_bits_eq_ptr_bits_len_only";
+val _ = cap "all_ones_and_1_typed" "all_ones_and_1";
+val _ = cap "all_ones_and_ptr_bits_tag_0_typed" "all_ones_and_ptr_bits_tag_0";
+
+(* Batch A3: call/push lifting, word_exp and push_env_loc lemmas. *)
+val _ = cap "call_env_push_env_dec_clock_lift_typed" "call_env_push_env_dec_clock_lift";
+val _ = cap "call_env_push_env_dec_clock_lift_locals_typed" "call_env_push_env_dec_clock_lift_locals";
+val _ = cap "call_env_push_env_dec_clock_stack_max_typed" "call_env_push_env_dec_clock_stack_max";
+val _ = cap "get_var_to_word_exp_typed" "get_var_to_word_exp";
+val _ = cap "word_exp_set_typed" "word_exp_set";
+val _ = cap "state_rel_push_env_loc_typed" "state_rel_push_env_loc";
+
+(* Batch A4: heap-size, memory-relation and state-relation lemmas. *)
+val _ = cap "option_le_stackmax_bridge_typed" "option_le_stackmax_bridge";
+val _ = cap "size_of_app_Number_typed" "size_of_app_Number";
+val _ = cap "size_of_heap_delete_Number_LE_typed" "size_of_heap_delete_Number_LE";
+val _ = cap "size_of_heap_FOLDR_delete_Number_LE_typed" "size_of_heap_FOLDR_delete_Number_LE";
+val _ = cap "evaluate_LoadWord64_typed" "evaluate_LoadWord64";
+val _ = cap "memory_rel_ignore_buffers_typed" "memory_rel_ignore_buffers";
+val _ = cap "memory_rel_get_num_typed" "memory_rel_get_num";
+val _ = cap "state_rel_IMP_test_zero_typed" "state_rel_IMP_test_zero";
+
+(* Batch A6: STOP_def, evaluate_MakeBytes and state_rel_get_var_Number_IMP,
+   plus the compiler definitions MakeBytes_def, WriteLastByte_aux_def and
+   WriteLastBytes_def from the data_to_word theory. *)
+val _ = cap "STOP_def_typed" "STOP_def";
+val _ = cap "evaluate_MakeBytes_typed" "evaluate_MakeBytes";
+val _ = cap "state_rel_get_var_Number_IMP_typed" "state_rel_get_var_Number_IMP";
+val _ = emit "MakeBytes_def_typed" (DB.fetch "data_to_word" "MakeBytes_def");
+val _ = emit "WriteLastByte_aux_def_typed" (DB.fetch "data_to_word" "WriteLastByte_aux_def");
+val _ = emit "WriteLastBytes_def_typed" (DB.fetch "data_to_word" "WriteLastBytes_def");
+
+(* Batch A7: configGC heap-size bound and data do_app lemmas. *)
+val _ = cap "configGC_size_of_heap_LE_typed" "configGC_size_of_heap_LE";
+val _ = cap "do_app_FromList_stack_max_typed" "do_app_FromList_stack_max";
+val _ = cap "do_app_FromList_eq_typed" "do_app_FromList_eq";
+val _ = cap "do_app_AllocThunk_typed" "do_app_AllocThunk";
+
+(* Batch A8: assign_FinaliseCons. *)
+val _ = cap "assign_FinaliseCons_typed" "assign_FinaliseCons";

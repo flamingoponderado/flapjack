@@ -46,6 +46,18 @@ class HolRefExportTest(unittest.TestCase):
             {"fmap_as_finite_support_result_observations": ["different"]},
         )
 
+    def test_result_observations_with_words_match_export_both_directions(self):
+        status = "reviewed_fmap_as_finite_support_result_observations_words_as_type_indexed_bitvec"
+        observations = {"fmap_as_finite_support_result_observations":
+                        ["Flapjack.HolFiniteMapExact.holEmpty"]}
+        both = {**observations, "words_as_type_indexed_bitvec": True}
+        # Manifest records words, attribute lacks them.
+        self.check_qualifier(status, both, both, observations)
+        # Attribute carries words, manifest lacks them.
+        manifest = [{**self.manifest[0], "statement_status": status, **observations}]
+        with self.assertRaisesRegex(ValueError, "manifest qualifiers differ"):
+            MODULE.check_records(manifest, [{**self.export[0], "qualifiers": both}])
+
     def test_parameter_observations_require_elaborated_combined_marker(self):
         fields = {"fmap_as_finite_support_parameters": ["code"],
                   "fmap_as_finite_support_result_observations": ["Flapjack.Map.make"]}
