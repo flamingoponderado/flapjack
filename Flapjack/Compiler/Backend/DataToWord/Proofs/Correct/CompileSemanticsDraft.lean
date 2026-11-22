@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.SemanticsDraft
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.AssignDraft
 public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.StateRelInit
 public import Flapjack.Compiler.Backend.DataToWord.Proofs.Limits
 public import Flapjack.Compiler.Backend.WordToWord.Proofs.Syntactic
@@ -293,5 +294,11 @@ theorem compileSemantics_of_assign {width : Nat} [NeZero width] {C F : Type}
       (fun b => b = DataSem.semantics t.ffi (sptFromAList prog) co cc DataProps.zeroLimits fs start)
       (WordSemStateFiniteExact.semantics t start)) :=
   compileSemantics_of_compileCorrect (compileCorrectStmt_of_assign assignCase) t c prog x1 cc tcc tco co tt kk aa coo fs start h
+
+/-- `compile_correct` from the statement of `assign_thm`: once `assign_thm`
+is ported, every theorem of this chain follows mechanically. -/
+theorem compileCorrectStmt_of_assignThm {width : Nat} [NeZero width] {C F : Type}
+    (assignThm : AssignThmStmt width C F) : CompileCorrectStmt width C F :=
+  compileCorrectStmt_of_assign (dataCompileCorrect_assign_of_assignThm assignThm)
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.SemanticsDraft

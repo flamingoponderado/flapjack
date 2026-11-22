@@ -537,6 +537,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.ForceLemmas
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.Force
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.Assembly
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.CompileCorrectDraft
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.AssignDraft
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.SemanticsDraft
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.CompileSemanticsDraft
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.LocMerge
