@@ -709,6 +709,7 @@ val _ = cap "assign_UpdateCons_typed" "assign_UpdateCons";
 val _ = cap "assign_WordFromWord_typed" "assign_WordFromWord";
 val _ = cap "assign_ConfigGC_typed" "assign_ConfigGC";
 
+
 (* Batch B1 (flapjack-assign2): block tag and length tests. *)
 val _ = print ("assign_TagEq_hypotheses=" ^
   Int.toString (length (hyp assign_TagEq)) ^ "\n");
@@ -750,3 +751,14 @@ val _ = cap "evaluate_AppendMainLoop_code_alt_typed" "evaluate_AppendMainLoop_co
 val _ = cap "evaluate_AppendLenLoop_code_typed" "evaluate_AppendLenLoop_code";
 val _ = cap "assign_ListAppend_typed" "assign_ListAppend";
 val _ = cap "assign_thm_typed" "assign_thm";
+
+(* Batch A9: assign_MutCons. *)
+val _ = cap "assign_MutCons_typed" "assign_MutCons";
+
+(* Batch A10: assign_UpdateCons, assign_WordFromWord, assign_ConfigGC. *)
+val _ = cap "assign_UpdateCons_typed" "assign_UpdateCons";
+val _ = cap "assign_WordFromWord_typed" "assign_WordFromWord";
+val _ = cap "assign_ConfigGC_typed" "assign_ConfigGC";
+
+(* Batch B4 (flapjack-assign2): integer-to-Word64 conversion. *)
+val _ = cap "assign_WordFromInt_typed" "assign_WordFromInt";
