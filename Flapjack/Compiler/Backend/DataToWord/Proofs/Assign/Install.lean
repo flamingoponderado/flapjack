@@ -893,6 +893,69 @@ theorem assignInstall_correct {width : Nat} [NeZero width] {C F : Type}
       simp [after, WordSemStateFiniteExact.setVar, t10, t9, t8, t7, t6, t5, t3, t1]
     refine ⟨none, after.setVar (adjustVar dest) (.loc k 0), ?_, by simp, fun _ => ⟨?_, rfl⟩⟩
     · simpa using wrapped
-    sorry
+    let T : WordSemStateFiniteExact width C F := { target with
+      locals := wordCut
+      store := newStore
+      codeBuffer := newCb
+      dataBuffer := newDb
+      code := newCode
+      fpRegs := HolFiniteMapExact.empty
+      compileOracle := holShiftSeq 1 target.compileOracle
+      stackMax := none
+      stackSize := .ln
+      permute := permute }
+    have envEq' : wordSemEnvToList cutSecond target.permute = (entries, permute) := envEq
+    have normalized : after = T := by
+      simp only [envEq', after, restored, returned, e0, WordSemStateFiniteExact.callEnv,
+        WordSemStateFiniteExact.pushEnv, WordSemStateFiniteExact.decClock, initial,
+        t10, t9, t8, t7, t6, t5, t3, t1, WordSemStateFiniteExact.setVar, secondRestored, firstRestored,
+        ← cutUnion, T]
+    rw [normalized]
+    have storeLook (key : WordStoreHOL) (h1 : key ≠ .bitmapBuffer) (h2 : key ≠ .codeBuffer) :
+        newStore.lookup key = target.store.lookup key := by
+      simp [newStore, HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, h1, h2]
+    rcases relCutWord with ⟨hffi, hclock, hhandler, hgc, hcode, horacle, hgood, hshift,
+      htstamp, hglobal, hzero, hpresent, hstack, hlocs, hacc, hmax, hsizes, hlocals, hlim, hmem⟩
+    have relT : stateRel conf l1 l2 { cut with
+        stackMax := none
+        stackFrameSizes := .ln
+        safeForSpace := false
+        code := sptUnion cut.code (sptFromAList ((k, entry) :: rest))
+        compileOracle := fun n => cut.compileOracle (n + 1) } T none locs := by
+      refine ⟨hffi, hclock, hhandler, hgc, ?_, ?_, hgood, hshift, htstamp, ?_, hzero, hpresent, hstack,
+        hlocs, by simp [optionLe, T], by simp [optionLe], rfl, hlocals, ?_, ?_⟩
+      · exact installCodeRel conf cut.code target.code progs good hcode
+          (fun e m => by rw [oracleSame] at oracle0; have := oracleBound 0; rw [oracle0] at this; exact this e m)
+      · refine ⟨rfl, rfl, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+        · simp [T, newStore, newCb, HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL]
+        · rw [show T.store = newStore from rfl, storeLook _ (by decide) (by decide), storeCBE]
+          simp only [T, newCb, Option.some.injEq, WordLocW.word.injEq]
+          rw [BitVec.add_assoc, ← BitVec.ofNat_add, Nat.add_sub_cancel' codeSpace]
+        · simp [T, newStore, newDb, HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL]
+        · rw [show T.store = newStore from rfl, storeLook _ (by decide) (by decide), storeBBE]
+          simp only [T, newDb, Option.some.injEq, WordLocW.word.injEq, wordSemBytesInWord]
+          rw [BitVec.add_assoc, ← BitVec.mul_add, ← BitVec.ofNat_add, Nat.add_sub_cancel' dataSpace]
+        · simp only [T]
+          rw [compileSame]
+          exact compileRel
+        · funext m
+          simp only [T, holShiftSeq]
+          rw [oracleRel, ← oracleSame]
+        · intro m e mem
+          rw [oracleSame] at mem
+          exact oracleBound (m + 1) e mem
+      · intro key mem
+        simp only [List.mem_singleton] at mem
+        subst key
+        rw [show T.store = newStore from rfl, storeLook _ (by decide) (by decide)]
+        exact hglobal _ (by simp)
+      · rw [show T.store = newStore from rfl, storeLook _ (by decide) (by decide)]
+        exact hlim
+      · rw [show T.store = newStore from rfl]
+        simp only [newStore]
+        rw [(memoryRel_ignore_buffers conf _ _ _ _ _ _ _ _ _).2, (memoryRel_ignore_buffers conf _ _ _ _ _ _ _ _ _).1]
+        exact hmem
+    exact stateRel_insertRoot conf l1 l2 _ T locs dest (.codePtr k) (.loc k 0) relT
+      (memoryRel_codePtr _ _ _ _ _ _ _ _ k _ relT.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2)
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Assign
