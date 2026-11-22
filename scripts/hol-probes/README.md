@@ -71,6 +71,10 @@ the call/push lifting lemmas, `get_var_to_word_exp`, `word_exp_set` and
 heap-size lemmas `size_of_app_Number` through
 `size_of_heap_FOLDR_delete_Number_LE`, `evaluate_LoadWord64`,
 `memory_rel_ignore_buffers`, `memory_rel_get_num` and `state_rel_IMP_test_zero`.
+Batch A6 appends `STOP_def`, `evaluate_MakeBytes`, `state_rel_get_var_Number_IMP`
+and the compiler definitions `MakeBytes_def`, `WriteLastByte_aux_def` and
+`WriteLastBytes_def` (from the data_to_word theory DB). Batch A7 appends the
+dataSem `do_app` lemmas of the script. Batch A8 appends `assign_FinaliseCons`.
 
 `misc_typed_probe.out` captures the polymorphic `read_bytearray_def` and
 `read_bytearray_LENGTH` from the pinned CakeML misc theory.
@@ -11189,4 +11193,10 @@ data_to_wordProof state-relation lemmas used by the `Call` case of
 and `state_rel_pop_env_set_vars_IMP` (parsed from the pinned source text).
 Regenerate with `CAKEML=<cakeml tree>
 HOL_PROBE_ONLY=data_to_word_proof_call_typed_probeScript.sml
+scripts/hol-probes/regenerate.sh`; no HOL proof is replayed.
+
+`data_to_word_proof_ext_typed_probe.out` records the typed statements of the
+data_to_wordProof `state_rel_ext_def` (theory DB) and the `[local]`
+`state_rel_ext_with_clock` (parsed from the pinned source text). Regenerate with
+`CAKEML=<cakeml tree> HOL_PROBE_ONLY=data_to_word_proof_ext_typed_probeScript.sml
 scripts/hol-probes/regenerate.sh`; no HOL proof is replayed.

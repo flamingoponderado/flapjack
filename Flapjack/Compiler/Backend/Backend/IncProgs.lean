@@ -12,8 +12,11 @@ public import Flapjack.Compiler.Backend.WordToWord.Compile
 public import Flapjack.Compiler.Backend.WordToStack.NativePrograms
 public import Flapjack.Compiler.Backend.StackToLab.Compile
 public import Flapjack.Compiler.Backend.LabToTarget.Compile
+public import Flapjack.Compiler.Backend.BackendCommon.UpperW2w
 
 @[expose] public section
+
+set_option autoImplicit false
 
 /-! backendScript.sml 536-604: the per-pass program record kept by the
 incremental compiler and the incremental compiler `compile_inc_progs` used to
@@ -104,5 +107,19 @@ noncomputable def compileIncProgs {width : Nat} [NeZero width] (k : Bool)
       | none => id
       | some (_, c') => fun _ => c') c.labConf }
   (c, ps)
+
+/-- Exact HOL `backend$compile_inc_progs_for_eval_def`
+(`backendScript.sml:605-611`): the evaluation compiler keeps all programs,
+returns the new configuration with the target bytes, and converts the bitmap
+words with the reviewed `upper_w2w`. -/
+@[hol "cakeml/compiler/backend/backendScript.sml" "compile_inc_progs_for_eval_def"
+  (words_as_type_indexed_bitvec)]
+noncomputable def compileIncProgsForEval {width : Nat} [NeZero width]
+    (asmConf : AsmConfigExact width)
+    (x : (Nat × Nat) × Flapjack.Compiler.Backend.Backend.Config × List AstHOL.Dec) :
+    Option (Flapjack.Compiler.Backend.Backend.Config × List (BitVec 8) × List (BitVec 64)) :=
+  let (envId, c', decs) := x
+  let (c'', ps) := compileIncProgs true asmConf c' (envId, decs)
+  ps.targetProg.map fun (bs, ws) => (c'', bs, ws.map upperW2w)
 
 end Flapjack.Compiler.Backend.BackendDefs

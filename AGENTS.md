@@ -602,11 +602,34 @@ This qualifier records only the canonical representation of those computed
 map results. It does not qualify an observer's own map parameters, authorize
 raw function maps, change any quantifier or hypothesis, or establish the
 observer from producer acceptance. It cannot combine with any other
-representation qualifier. The reference checker validates producer resolution,
+representation qualifier except for the word-translation combination below.
+The reference checker validates producer resolution,
 usage, result carrier, witness and manifest evidence syntactically; the
 elaborated-attribute export checks manifest agreement and Lean checks the
 witness. None establishes cross-language correspondence. Complete source
 review of both the producer and observer remains required.
+
+**Combine result observations and word translation.** When an observer of
+imported computed finite-map results also uses the standard translation of HOL
+`'a word` (directly or through a reviewed width-indexed carrier such as
+`AsmConfigExact width`) and `'ffi ffi_state`, tag it with both
+`(fmap_as_finite_support_result_observations := [Producer, ...])` and
+`(words_as_type_indexed_bitvec)`. The manifest status is
+`reviewed_fmap_as_finite_support_result_observations_words_as_type_indexed_bitvec`;
+both qualifiers are required for it, and a declaration carrying both is
+rejected under either single status. All obligations of both qualifiers
+remain: producer resolution, signature usage, the producer's canonical result
+witness and reviewed manifest row; and the word-carrier, per-dimension
+`[NeZero]` positivity and universe-0 FFI checks on the whole tagged signature.
+The combination admits no third representation qualifier: not the combined
+`fmap_as_finite_support_parameter_observations`, any other finite-map
+qualifier, `reals_as_rational_cuts`, or either word-dimension qualifier.
+`total_function_inhabitants` keeps its general rule, and an inherited real-model
+dependency is still recorded with `inherits_reals_as_rational_cuts`. The
+reviewer note must name the source and every producer and compare the complete
+typed HOL statement, including its word, `asm_config` and FFI carriers. The
+combination authorizes no other statement, carrier or semantic difference, and
+the checkers do not establish HOL correspondence.
 
 **Qualify map parameters and observed map results together.** Use the single
 `(fmap_as_finite_support_parameter_observations :=

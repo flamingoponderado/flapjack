@@ -681,3 +681,22 @@ val _ = cap "evaluate_LoadWord64_typed" "evaluate_LoadWord64";
 val _ = cap "memory_rel_ignore_buffers_typed" "memory_rel_ignore_buffers";
 val _ = cap "memory_rel_get_num_typed" "memory_rel_get_num";
 val _ = cap "state_rel_IMP_test_zero_typed" "state_rel_IMP_test_zero";
+
+(* Batch A6: STOP_def, evaluate_MakeBytes and state_rel_get_var_Number_IMP,
+   plus the compiler definitions MakeBytes_def, WriteLastByte_aux_def and
+   WriteLastBytes_def from the data_to_word theory. *)
+val _ = cap "STOP_def_typed" "STOP_def";
+val _ = cap "evaluate_MakeBytes_typed" "evaluate_MakeBytes";
+val _ = cap "state_rel_get_var_Number_IMP_typed" "state_rel_get_var_Number_IMP";
+val _ = emit "MakeBytes_def_typed" (DB.fetch "data_to_word" "MakeBytes_def");
+val _ = emit "WriteLastByte_aux_def_typed" (DB.fetch "data_to_word" "WriteLastByte_aux_def");
+val _ = emit "WriteLastBytes_def_typed" (DB.fetch "data_to_word" "WriteLastBytes_def");
+
+(* Batch A7: configGC heap-size bound and data do_app lemmas. *)
+val _ = cap "configGC_size_of_heap_LE_typed" "configGC_size_of_heap_LE";
+val _ = cap "do_app_FromList_stack_max_typed" "do_app_FromList_stack_max";
+val _ = cap "do_app_FromList_eq_typed" "do_app_FromList_eq";
+val _ = cap "do_app_AllocThunk_typed" "do_app_AllocThunk";
+
+(* Batch A8: assign_FinaliseCons. *)
+val _ = cap "assign_FinaliseCons_typed" "assign_FinaliseCons";

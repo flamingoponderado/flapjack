@@ -193,4 +193,51 @@ theorem valueToList_blockDrop (k : Nat) (v : Flapjack.Compiler.Backend.DataSem.V
       | .codePtr _, hv => simp [DataSem.valueToList] at hv
       | .refPtr _ _, hv => simp [DataSem.valueToList] at hv
 
+/-- A small natural source number is read from its adjusted target local as
+its immediate encoding. HOL's existential `w` (of an independent type `δ`)
+does not occur in the body; as every HOL type is inhabited it is vacuous, so it
+is omitted and no inhabitedness instance is needed (as for the reviewed
+`memory_rel_El'` and `memory_rel_Number_bignum_header`). -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml" "state_rel_get_var_Number_IMP"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem stateRel_getVar_number_imp {width : Nat} [NeZero width] {C F : Type}
+    (c : Config) (l1 l2 : Nat) (s : Flapjack.Compiler.Backend.DataSem.State C F)
+    (t : WordSemStateFiniteExact width C F)
+    (vs : Option (List (Flapjack.Compiler.Backend.DataSem.Value × WordLocW width)))
+    (locs : List (Nat × Nat)) (i n : Nat)
+    (h : Proofs.Gc.stateRel c l1 l2 s t vs locs ∧
+      DataSem.getVar i s.locals = some (.number (n : Int)) ∧ smallInt width (n : Int)) :
+    WordSemStateFiniteExact.getVar (adjustVar i) t =
+      some (.word (smallnum (n : Int) : BitVec width)) := by
+  obtain ⟨rel, hget, small⟩ := h
+  have good : goodDimindex width := rel.2.2.2.2.2.2.1
+  obtain ⟨word, hword⟩ := Proofs.Gc.stateRel_getVar c l1 l2 s t vs locs i _ rel hget
+  obtain ⟨rest, rel3⟩ := stateRel_memoryRel_lookup c l1 l2 s t vs locs i _ word rel hget hword
+  rw [hword, memoryRel_numberImp c t.be (holThe s.tstamps) s.refs s.space t.store t.memory
+    t.mdomain _ word rest ⟨good, small, rel3⟩]
+
+/-- A two-operand word disjunction. Flapjack rewriting helper. -/
+theorem wordOpHOL_or_two {k : Nat} [NeZero k] (x y : BitVec k) :
+    wordOpHOL .or [x, y] = some (x ||| y) := by
+  change some (x ||| (y ||| 0)) = some (x ||| y)
+  simp
+
+/-- `MakeBytes n` replicates the byte held (shifted) in register `n`. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml" "evaluate_MakeBytes"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem evaluate_makeBytes {width : Nat} [NeZero width] {C F : Type} (n : Nat)
+    (s : WordSemStateFiniteExact width C F) (good : goodDimindex width) :
+    WordSemStateFiniteExact.evaluate (makeBytes n) s =
+      match WordSemStateFiniteExact.getVar n s with
+      | some (.word w) =>
+        (none, WordSemStateFiniteExact.setVar n (.word (wordOfByte (w >>> (2 : Nat) : BitVec width))) s)
+      | _ => (some .error, s) := by
+  rcases good with rfl | rfl <;>
+  · rcases h : WordSemStateFiniteExact.getVar n s with _ | (w | ⟨b, o⟩) <;>
+      simp only [WordSemStateFiniteExact.getVar] at h <;>
+      simp [makeBytes, wordListSeq, shiftN, WordSemStateFiniteExact.evaluate,
+        WordSemStateFiniteExact.wordExp, WordSemStateFiniteExact.fixClock,
+        WordSemStateFiniteExact.setVar, WordSemStateFiniteExact.getVar, theWords, wordOpHOL_or_two,
+        wordShiftHOL, sptLookup_sptInsert_same, sptInsert_insert_shadow, wordOfByte, BitVec.or_comm, h]
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Assign
