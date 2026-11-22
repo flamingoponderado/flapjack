@@ -34,3 +34,4 @@ lookup_set_vars_typed=lookup (n :num) (set_vars (xs :num list) (ys :α word_loc 
 lookup_set_vars_not_MEM_typed=¬MEM (n :num) (xs :num list) ⇒ lookup n (set_vars xs (ys :α word_loc list) (s :(α, β) state)).locals = lookup n s.locals
 cut_res_add_clock_typed=cut_res (l :δ sptree$num_map) ((res :α result option),(s :(β, γ) state)) = ((q :α result option),(r :(β, γ) state)) ∧ q ≠ SOME (TimeOut :α result) ⇒ cut_res l (res,s with clock := (ck :num) + s.clock) = (q,r with clock := ck + r.clock)
 get_vars_clock_typed=∀(vs :num list) (s :(α, β) state) (c :num). (get_vars vs (s with clock := c) :α word_loc list option) = (get_vars vs s :α word_loc list option)
+get_var_imm_add_clk_eq_typed=get_var_imm (ri :α reg_imm) ((s :(α, β) state) with clock := (ck :num)) = get_var_imm ri s

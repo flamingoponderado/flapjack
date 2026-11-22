@@ -369,3 +369,4 @@ val _ = emit_exported "lookup_set_vars_typed" "lookup_set_vars";
 val _ = emit_exported "lookup_set_vars_not_MEM_typed" "lookup_set_vars_not_MEM";
 val _ = emit_exported "cut_res_add_clock_typed" "cut_res_add_clock";
 val _ = emit_exported "get_vars_clock_typed" "get_vars_clock";
+val _ = emit_exported "get_var_imm_add_clk_eq_typed" "get_var_imm_add_clk_eq";

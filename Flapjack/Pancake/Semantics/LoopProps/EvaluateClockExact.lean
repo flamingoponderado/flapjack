@@ -127,6 +127,20 @@ theorem cutResAddClockHOL (live : NumSet) (res : Option (LoopResultExact width))
   rw [Nat.add_comm s.clock ck, Nat.add_comm r.clock ck] at this
   exact this
 
+/-- Exact HOL `get_var_imm_add_clk_eq` (`loopPropsScript.sml:251-255`):
+    `get_var_imm ri (s with clock := ck) = get_var_imm ri s`.  The binders
+    `ri`, `s`, `ck` follow the source; `get_var_imm` is the tagged `getVarImm`
+    over the exact `locals` `num_map`, which the clock update does not touch. -/
+@[hol "cakeml/pancake/semantics/loopPropsScript.sml" "get_var_imm_add_clk_eq"
+  (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
+theorem getVarImm_add_clock_eq {width : Nat} [NeZero width] {F : Type}
+    (operand : RegImm (BitVec width))
+    (state : LoopSemStateFiniteExact width F) (ck : Nat) :
+    getVarImm operand { state with clock := ck } = getVarImm operand state := by
+  cases operand with
+  | reg name => rfl
+  | imm value => rfl
+
 /-- Exact HOL `get_vars_clock` (`loopPropsScript.sml:979-983`):
     `∀vs s c. get_vars vs (s with clock := c) = get_vars vs s`.  The binders
     `vs`, `s`, `c` follow the source; `get_vars` is the tagged `getVars` over
