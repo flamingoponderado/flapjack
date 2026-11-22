@@ -120,4 +120,27 @@ theorem small_neg_bits {width : Nat} [NeZero width] (good : goodDimindex width) 
     simp [BitVec.toNat_shiftLeft, Nat.shiftLeft_eq]
     congr 1; omega
 
+
+theorem header_bits {width : Nat} [NeZero width] (good : goodDimindex width) (s : Bool) :
+    ((BitVec.ofNat width (((if s then 1 else 0 : BitVec width) <<< 2 ||| 3).toNat)) <<< 2 ||| 3) =
+      (15 : BitVec width) ||| (if s then 1 else 0 : BitVec width) <<< (4 : Nat) := by
+  rcases good with h | h <;> subst h <;> cases s <;> decide
+
+theorem shiftAmount_bytes {width : Nat} [NeZero width] (good : goodDimindex width) (x : BitVec width) :
+    x <<< wordShiftAmount width = StackRemove.bytesInWord width * x := by
+  have e : BitVec.twoPow width (wordShiftAmount width) = StackRemove.bytesInWord width := by
+    rcases good with h | h <;> subst h <;> simp only [wordShiftAmount] <;> decide
+  rw [BitVec.shiftLeft_eq_mul_twoPow, BitVec.mul_comm, e]
+
+theorem header_shift1 {width : Nat} [NeZero width] (v : Int)
+    (hlen : 2 * (i2mw v : Bool × List (BitVec width)).2.length + 1 < 2 ^ width) :
+    mcHeader (i2mw v : Bool × List (BitVec width)) >>> (1 : Nat) =
+      BitVec.ofNat width (i2mw v : Bool × List (BitVec width)).2.length := by
+  rw [mcHeader_eq]
+  generalize (i2mw v : Bool × List (BitVec width)).2.length = L at hlen ⊢
+  apply BitVec.eq_of_toNat_eq
+  cases decide (v < 0) <;>
+    simp [BitVec.toNat_ushiftRight, BitVec.toNat_add, Nat.shiftRight_eq_div_pow] <;>
+    rw [Nat.mod_eq_of_lt (by omega)] <;> (try rw [Nat.mod_eq_of_lt (by omega)]) <;> omega
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Bignum.AnyArith
