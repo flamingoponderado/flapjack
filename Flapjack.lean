@@ -332,6 +332,7 @@ import Flapjack.Compiler.Backend.BackendProof.WordConf
 import Flapjack.Compiler.Backend.BackendProof.CakeOracEqs
 import Flapjack.Compiler.Backend.BackendProof.PerfCalls
 import Flapjack.Compiler.Backend.BackendProof.LabelsOk
+import Flapjack.Compiler.Backend.BackendProof.WordLabelsOk
 import Flapjack.Compiler.Backend.BackendProof.ImpSafeForSpace
 import Flapjack.Compiler.Backend.BackendProof.AddEvalState
 import Flapjack.Compiler.Backend.BackendProof.LabLabels
@@ -605,6 +606,8 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.ValueLoc
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Labels
 import Flapjack.Compiler.Backend.DataToWord.Proofs.NoShareInst
 import Flapjack.Compiler.Backend.DataToWord.Proofs.LabPres
+import Flapjack.Compiler.Backend.DataToWord.Proofs.StubFacts
+import Flapjack.Compiler.Backend.DataToWord.Proofs.CompileLabPres
 import Flapjack.Compiler.Backend.DataToWord.Proofs.NoInst
 import Flapjack.Compiler.Backend.DataToWord.Proofs.StateRelLocals
 import Flapjack.Compiler.Backend.DataToWord.Proofs.CompilePart
@@ -951,6 +954,7 @@ import Flapjack.Compiler.Backend.WordBignum.Proofs.Lookup
 import Flapjack.Compiler.Backend.WordBignum.Proofs.CompileTotal
 import Flapjack.Compiler.Backend.WordBignum.Proofs.FuelMonotone
 import Flapjack.Compiler.Backend.WordBignum.Proofs.CompileEquations
+import Flapjack.Compiler.Backend.WordBignum.Proofs.CompileIndices
 import Flapjack.Compiler.Backend.WordBignum.Proofs.Semantics
 import Flapjack.Compiler.Backend.WordBignum.Proofs.WordArith
 import Flapjack.Compiler.Backend.WordBignum.Proofs.Syntax
