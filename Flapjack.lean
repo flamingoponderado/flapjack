@@ -341,6 +341,7 @@ import Flapjack.Compiler.Backend.BackendProof.BviNames
 import Flapjack.Compiler.Backend.BackendProof.SyntaxOracle
 import Flapjack.Compiler.Backend.BackendProof.CompileCorrect
 import Flapjack.Compiler.Backend.BackendProof.CompileCorrectDraft
+import Flapjack.Compiler.Backend.BackendProof.CompileCorrectPrereqs
 import Flapjack.Compiler.Backend.RiscVConfig.CompileCorrectDraft
 import Flapjack.Compiler.Backend.BackendProof.BagDistinct
 import Flapjack.Compiler.Backend.BackendProof.NameDistinct
