@@ -342,6 +342,7 @@ import Flapjack.Compiler.Backend.BackendProof.SyntaxOracle
 import Flapjack.Compiler.Backend.BackendProof.CompileCorrect
 import Flapjack.Compiler.Backend.BackendProof.BagDistinct
 import Flapjack.Compiler.Backend.BackendProof.NameDistinct
+import Flapjack.Compiler.Backend.BackendProof.LabOracle
 import Flapjack.Compiler.Backend.Backend.ToTarget
 import Flapjack.Compiler.Backend.DataToWord.Proofs.OptionLe
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Limits
@@ -492,6 +493,8 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.FinaliseCons
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.MutCons
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.UpdateCons
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.WordFromWord
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.ConfigGC
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.UpdateThunk
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.Separation
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.MemCopy.Element
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.MemCopy.Loop
@@ -503,6 +506,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.WordOp64
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.WordShift8
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.GiveUp
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.BignumHalt
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.Install
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.RealAddress
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.EnvToList
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.CutEnvDomain
@@ -532,6 +536,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Bignum.Replicate
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Bignum.NumSize
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Bignum.AnyHeader
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Bignum.CodeRel
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Bignum.DivCodeAssum
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.WordMlInvInsert
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.MkLoc
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.Skip
@@ -549,6 +554,10 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.Call
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.ForceLemmas
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.Force
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.Assembly
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.CompileCorrectDraft
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.AssignDraft
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.SemanticsDraft
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.CompileSemanticsDraft
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.LocMerge
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.DecStack
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.StackRoots
@@ -661,6 +670,8 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.FinaliseCons
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.MutCons
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.UpdateCons
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.UpdateThunk
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.AllocThunk
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.ByteCopy
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.CellUpdate
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.ByteUpdateInv
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.WordArith
@@ -5095,6 +5106,8 @@ import Flapjack.Pancake.Proofs.PanToTarget.X64InstanceExecutable
 import Flapjack.Pancake.Proofs.PanToTarget.X64Source
 import Flapjack.Pancake.Proofs.PanToTarget.X64NativeSourceCorrect
 import Flapjack.Pancake.Proofs.PanToTarget.X64NativeCLICorrect
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Assign.LoadBignum
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Bignum.EqEval
 /-!
 # Flapjack in Lean
 

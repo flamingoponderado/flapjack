@@ -701,6 +701,14 @@ val _ = cap "do_app_AllocThunk_typed" "do_app_AllocThunk";
 (* Batch A8: assign_FinaliseCons. *)
 val _ = cap "assign_FinaliseCons_typed" "assign_FinaliseCons";
 
+(* Batch A9: assign_MutCons. *)
+val _ = cap "assign_MutCons_typed" "assign_MutCons";
+
+(* Batch A10: assign_UpdateCons, assign_WordFromWord, assign_ConfigGC. *)
+val _ = cap "assign_UpdateCons_typed" "assign_UpdateCons";
+val _ = cap "assign_WordFromWord_typed" "assign_WordFromWord";
+val _ = cap "assign_ConfigGC_typed" "assign_ConfigGC";
+
 (* Batch B1 (flapjack-assign2): block tag and length tests. *)
 val _ = print ("assign_TagEq_hypotheses=" ^
   Int.toString (length (hyp assign_TagEq)) ^ "\n");
@@ -723,13 +731,8 @@ val _ = cap "evaluate_WriteWord64_on_32_num_typed" "evaluate_WriteWord64_on_32_n
 (* Batch B3 (flapjack-assign2): binary AllocVar instance for RefArray. *)
 val _ = cap "AllocVar_thm_binary_typed" "AllocVar_thm_binary";
 
-(* Batch A9: assign_MutCons. *)
-val _ = cap "assign_MutCons_typed" "assign_MutCons";
-
-(* Batch A10: assign_UpdateCons, assign_WordFromWord, assign_ConfigGC. *)
-val _ = cap "assign_UpdateCons_typed" "assign_UpdateCons";
-val _ = cap "assign_WordFromWord_typed" "assign_WordFromWord";
-val _ = cap "assign_ConfigGC_typed" "assign_ConfigGC";
+(* Batch A12: assign_UpdateThunk. *)
+val _ = cap "assign_UpdateThunk_typed" "assign_UpdateThunk";
 
 (* Batch B4 (flapjack-assign2): integer-to-Word64 conversion. *)
 val _ = cap "assign_WordFromInt_typed" "assign_WordFromInt";
