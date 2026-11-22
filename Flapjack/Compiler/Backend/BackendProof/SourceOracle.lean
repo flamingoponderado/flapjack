@@ -165,16 +165,16 @@ is the constant predicate of the reviewed `oracle_semantics_prog`; HOL's free
 @[hol "cakeml/compiler/backend/proofs/backendProofScript.sml" "cake_orac_eq_get_oracle"
   (words_as_type_indexed_bitvec)]
 theorem cakeOrac_eq_getOracle {width : Nat} [NeZero width] {σ : Type}
-    (s : State σ) (env : SemEnv Value) (prog : List Dec) (asmConf : AsmConfigExact width)
+    (s : Flapjack.SemanticPrimitivesHOL.State σ) (env : SemEnv Flapjack.SemanticPrimitivesHOL.Value) (prog : List Dec) (asmConf : AsmConfigExact width)
     (c' : Flapjack.Compiler.Backend.Backend.Config)
     (ci : CompilerInstance Flapjack.Compiler.Backend.Backend.Config)
-    (syn : Nat → (Nat × Nat) × List Dec) (s' : State σ) :
+    (syn : Nat → (Nat × Nat) × List Dec) (s' : Flapjack.SemanticPrimitivesHOL.State σ) :
     ¬ SemanticsHOL.semanticsProg s env prog .fail ∧ optEvalConfigWf asmConf c' (some ci) ∧
       NamespaceHOL.nsAll (fun _ value => concreteValue value = true) env.v ∧ s.refs = [] ∧
       s.evalState = some (mkInitEvalState ci) ∧
       (∀ i r, getOracle ci s env prog i = some r → syn i = Prod.map id Prod.snd r) ∧
       s' = s →
-    ∀ (i : Nat) (r : (Nat × Nat) × Value × List Dec)
+    ∀ (i : Nat) (r : (Nat × Nat) × Flapjack.SemanticPrimitivesHOL.Value × List Dec)
       (x : Flapjack.Compiler.Backend.Backend.Config × (Nat × Nat) × List Dec),
       getOracle ci s' env prog i = some r ∧
         cakeOrac asmConf c' syn id (fun ps => (ps.envId, ps.sourceProg)) i = x →
