@@ -12330,6 +12330,13 @@ run_probe data_to_word_assign_typed_probeScript.sml data_to_word_assign_typed_pr
   "$cake_dir/compiler/backend/proofs/data_to_word_assignProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
 
+run_probe data_to_word_assign_def_extras_typed_probeScript.sml data_to_word_assign_def_extras_typed_probe.out \
+  assign_def_extras_hyps assign_def_extras_conjuncts assign_def_extras_free_vars assign_def_extras_type_vars \
+  assign_def_extras_conjunct_01_LoadWord64_def_typed assign_def_extras_conjunct_18_generated_bignum_stubs_eq_aconv \
+  assign_def_extras_conjunct_28_Make_ptr_bits_code_def_typed \
+  "$cake_dir/compiler/backend/proofs/data_to_word_assignProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+
 run_probe data_to_word_bignum_typed_probeScript.sml data_to_word_bignum_typed_probe.out \
   mw_op_constructors i2mw_small_int_IMP_0_typed get_iop_def_typed lt_dimindex_MOD_dimword_typed \
   LongDiv1_thm_prime_typed eval_Call_Arith_typed \
