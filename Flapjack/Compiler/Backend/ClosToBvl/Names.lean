@@ -130,4 +130,37 @@ def makeNameAlist {α β : Type} (nums : List Nat) (prog : List (α × β × Exp
       if decStart ≤ loc ∧ loc < decStart + decLength then ofString "dec"
       else (sptLookup loc names).getD (ofString "unknown_clos_fun")))
 
+/-- The name table written with HOL's total expression-list name traversal. -/
+@[hol "cakeml/compiler/backend/clos_to_bvlScript.sml" "make_name_alist_eq"]
+theorem makeNameAlist_eq {α β : Type} (nums : List Nat) (prog : List (α × β × Exp))
+    (nstubs decStart decLength : Nat) :
+    makeNameAlist nums prog nstubs decStart decLength =
+      let srcNames := getSrcNamesList (prog.map (Prod.snd ∘ Prod.snd)) .ln
+      sptFromAList (nums.map fun n =>
+        (n, if n < nstubs then
+          if n = nstubs - 1 then ofString "bvl_init"
+          else if n = nstubs - 2 then ofString "bvl_force"
+          else ofString "bvl_stub"
+        else
+          let loc := n - nstubs
+          if decStart ≤ loc ∧ loc < decStart + decLength then ofString "dec"
+          else match sptLookup loc srcNames with
+            | none => ofString "unknown_clos_fun"
+            | some s => s)) := by
+  have hmapList : prog.map (fun (_, _, e) => e) = prog.map (Prod.snd ∘ Prod.snd) := by
+    apply List.map_congr_left
+    intro x _
+    cases x with
+    | mk a bc => cases bc with
+      | mk b e => rfl
+  rw [makeNameAlist, getSrcNames_sing_eq.2]
+  simp only [hmapList]
+  congr 1
+  apply List.map_congr_left
+  intro n _
+  cases h : sptLookup (n - nstubs)
+      (getSrcNamesList (prog.map (Prod.snd ∘ Prod.snd)) Spt.ln) with
+  | none => simp
+  | some s => simp
+
 end Flapjack.Compiler.Backend.ClosToBvl

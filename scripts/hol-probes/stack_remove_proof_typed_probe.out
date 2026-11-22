@@ -79,3 +79,14 @@ word_list_wrap_typed=good_dimindex (:α) ∧ dimword (:α) DIV (dimindex (:α) D
 word_list_rev_def_typed=(∀(a :α word). word_list_rev a ([] :β list) = (emp :(α word # β -> bool) -> bool)) ∧ ∀(a :α word) (x :β) (xs :β list). word_list_rev a (x::xs) = (one (a − (bytes_in_word :α word),x) :(α word # β -> bool) -> bool) * word_list_rev (a − (bytes_in_word :α word)) xs
 word_list_EQ_rev_typed=∀(xs :α list) (a :β word). word_list a xs = word_list_rev (a + (n2w (LENGTH xs) :β word) * (bytes_in_word :β word)) (REVERSE xs)
 word_store_def_typed=∀(base :α word) (store :store_name |-> β word_loc). word_store base store = word_list_rev base (MAP (λ(name :store_name). case FLOOKUP store name of (NONE :β word_loc option) => Word (0w :β word) | SOME x => x) store_list)
+sr_less_length_imp_append_typed=∀(xs :α list) (n :num). n < LENGTH xs ⇒ ∃(ys :α list) (zs :α list). xs = ys ++ zs ∧ LENGTH ys = n
+sr_with_same_clock_typed=∀(x :(α, γ, 'ffi) stackSem$state). x with clock := x.clock = x
+sr_set_var_set_var_typed=set_var (x :num) (y :α word_loc) (set_var x (z :α word_loc) (w :(α, β, γ) stackSem$state)) = set_var x y w
+sr_get_var_set_var_same_typed=(get_var (x :num) (set_var x (y :α word_loc) (z :(α, β, γ) stackSem$state)) :α word_loc option) = SOME y
+sr_get_var_set_var_typed=(get_var (x :num) (set_var (x' :num) (y :α word_loc) (z :(α, β, γ) stackSem$state)) :α word_loc option) = if x = x' then SOME y else (get_var x z :α word_loc option)
+sr_byte_aligned_bytes_in_word_mult_typed=good_dimindex (:α) ⇒ byte_aligned ((bytes_in_word :α word) * (w :α word))
+sr_sub_rewrite_typed=(ptr :num) ≤ (ptr' :num) ⇒ -(1w :α word) * (n2w ptr :α word) + (n2w ptr' :α word) = (n2w (ptr' − ptr) :α word)
+sr_div_rewrite_typed=(n :num) ≤ (x :num) ∧ (1 :num) < n ⇒ x DIV n ≠ (0 :num)
+sr_push_if_typed=(if (b :bool) then (f :β -> α) (x :β) else f (y :β)) = f (if b then x else y) ∧ (if b then f x else (g :β -> α) x) = ((if b then f else g) x :α)
+sr_fst_prog_comp_typed=FST (prog_comp (jump :bool) (off :β word # β word) (k :num) (pp :α # β stackLang$prog) :α # β stackLang$prog) = FST pp
+sr_upshift_downshift_call_args_typed=∀(n :num) (n0 :num). call_args (upshift n n0 :α stackLang$prog) (1 :num) (2 :num) (3 :num) (4 :num) (0 :num) ∧ call_args (downshift n n0 :β stackLang$prog) (1 :num) (2 :num) (3 :num) (4 :num) (0 :num)

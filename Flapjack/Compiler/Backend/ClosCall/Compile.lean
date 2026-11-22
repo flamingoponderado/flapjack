@@ -171,6 +171,24 @@ theorem compile_length (enabled : Bool) (input output : List Exp) (state : State
     have length := calls_length input (.ln, []) output state (by simpa [compile] using run)
     exact length.symm
 
+/-- Compiling an empty program produces an empty program and the initial state.
+HOL prints the empty sparse-tree conclusion as `isEmpty g`; the reviewed
+`sptIsEmpty` is exactly `t = LN` (`Flapjack/Misc/Sptree.lean`), and `NumSet` is
+`Spt Unit`, so the empty-tree literal `g = .ln` states the same fact. -/
+@[hol "cakeml/compiler/backend/clos_callScript.sml" "compile_nil"]
+theorem compile_nil (enabled : Bool) (a : List Exp) (g : NumSet)
+    (b : List (Nat × Nat × Exp)) (run : compile enabled [] = (a, (g, b))) :
+    a = [] ∧ g = .ln ∧ b = [] := by
+  cases enabled with
+  | false =>
+    simp [compile] at run
+    obtain ⟨rfl, rfl, rfl⟩ := run
+    exact ⟨rfl, rfl, rfl⟩
+  | true =>
+    simp [compile, calls, callsSingList] at run
+    obtain ⟨rfl, rfl, rfl⟩ := run
+    exact ⟨rfl, rfl, rfl⟩
+
 /-- Convert one incremental program, discarding its incoming auxiliary payload. -/
 @[hol "cakeml/compiler/backend/clos_callScript.sml" "compile_inc_def"]
 def compileInc {A : Type} (known : NumSet) (program : List Exp × A) :

@@ -34,7 +34,9 @@ def callBlockDepth : CallBlock → Nat
   | .rCall _ _ => 0
   | .callBlock _ _ child _ => callBlockDepth child + 1
 
-private theorem callBlockDepth_shift (cb : CallBlock) (shift : Nat) :
+/-- HOL `call_block_size_shift`: shifting a call block never changes its depth. -/
+@[hol "cakeml/compiler/backend/bvi_tmcScript.sml" "call_block_size_shift"]
+theorem callBlockDepth_shift (cb : CallBlock) (shift : Nat) :
     callBlockDepth (shiftBlock shift cb) = callBlockDepth cb := by
   induction cb with
   | rCall ticks args => rfl
@@ -67,6 +69,22 @@ theorem shiftBlock_add (cb : CallBlock) (first second : Nat) :
         (shiftBlock (first + second) child) (right.map (· + (first + second)))
     simp [ih, List.map_map, Function.comp_def, Nat.add_comm, Nat.add_left_comm]
 
+/-- HOL `shift_vars_zero`: shifting by zero leaves a variable list unchanged. -/
+@[hol "cakeml/compiler/backend/bvi_tmcScript.sml" "shift_vars_zero"]
+theorem shiftVars_zero (ns : List Nat) : shiftVars 0 ns = ns := by
+  simp [shiftVars]
+
+/-- HOL `length_shift_vars`: shifting preserves a variable list's length. -/
+@[hol "cakeml/compiler/backend/bvi_tmcScript.sml" "length_shift_vars"]
+theorem shiftVars_length (l : List Nat) (n : Nat) : (shiftVars n l).length = l.length := by
+  simp [shiftVars]
+
+/-- HOL `shift_vars_dist`: successive variable shifts compose by addition. -/
+@[hol "cakeml/compiler/backend/bvi_tmcScript.sml" "shift_vars_dist"]
+theorem shiftVars_add (l : List Nat) (first second : Nat) :
+    shiftVars first (shiftVars second l) = shiftVars (first + second) l := by
+  simp [shiftVars, List.map_map, Function.comp_def, Nat.add_comm, Nat.add_left_comm]
+
 /-- The original worker auxiliary recurses on a shifted child. -/
 @[hol "cakeml/compiler/backend/bvi_tmcScript.sml" "cb_to_bvi_worker_aux_def"]
 def workerAuxSource : CallBlock → Nat → Nat → Nat → Exp
@@ -98,6 +116,13 @@ theorem workerAux_eq_shift (cb : CallBlock) (shift dest ptr idx : Nat) :
     simp only [List.length_map, shiftBlock_add]
     rw [Nat.add_comm 2 shift]
     rw [ih]
+
+/-- HOL `cb_to_bvi_worker_aux_eq`: the source worker is the accumulator worker
+at shift zero. -/
+@[hol "cakeml/compiler/backend/bvi_tmcScript.sml" "cb_to_bvi_worker_aux_eq"]
+theorem workerAuxSource_eq_alt (cb : CallBlock) (dest ptr idx : Nat) :
+    workerAuxSource cb dest ptr idx = workerAux 0 cb dest ptr idx := by
+  rw [workerAux_eq_shift cb 0 dest ptr idx, shiftBlock_zero]
 
 /-- The original worker-block construction. -/
 @[hol "cakeml/compiler/backend/bvi_tmcScript.sml" "cb_to_bvi_worker_def"]

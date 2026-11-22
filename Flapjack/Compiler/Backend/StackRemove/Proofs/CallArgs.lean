@@ -113,4 +113,32 @@ theorem stackRemoveCallArgs {width : Nat} [NeZero width] {jump : Bool}
   · simp [callArgs, haltInst]
   · exact callArgs_comp jump off k b (h b (List.mem_map.mpr ⟨(a, b), hab, rfl⟩))
 
+/-- HOL `upshift_downshift_call_args`: both address builders satisfy the
+procedure call-argument convention, at their own independent word widths. -/
+@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "upshift_downshift_call_args"]
+theorem upshiftDownshiftCallArgs {w1 : Nat} [NeZero w1] {w2 : Nat} [NeZero w2] (n n0 : Nat) :
+    callArgs (upshift (width := w1) n n0) 1 2 3 4 0 ∧
+      callArgs (downshift (width := w2) n n0) 1 2 3 4 0 := by
+  induction n0 using Nat.strongRecOn with
+  | _ n0 ih =>
+    constructor
+    · by_cases h : n0 ≤ maxStackAlloc
+      · simp [upshift, h, callArgs]
+      · have lt : n0 - maxStackAlloc < n0 := by
+          simp only [maxStackAlloc] at h ⊢
+          omega
+        have step := ih (n0 - maxStackAlloc) lt
+        rw [upshift, if_neg h]
+        rw [callArgs]
+        exact ⟨by simp [callArgs], step.1⟩
+    · by_cases h : n0 ≤ maxStackAlloc
+      · simp [downshift, h, callArgs]
+      · have lt : n0 - maxStackAlloc < n0 := by
+          simp only [maxStackAlloc] at h ⊢
+          omega
+        have step := ih (n0 - maxStackAlloc) lt
+        rw [downshift, if_neg h]
+        rw [callArgs]
+        exact ⟨by simp [callArgs], step.2⟩
+
 end Flapjack.Compiler.Backend.StackRemove.Proofs.CallArgs

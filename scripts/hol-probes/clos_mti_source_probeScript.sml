@@ -1,0 +1,10 @@
+load "clos_mtiTheory";
+open HolKernel Parse boolLib bossLib;
+val _ = Globals.linewidth := 1000000;
+val _ = set_trace "Unicode" 0;
+val _ = (print "collect_args_size_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_mtiTheory.collect_args_size); print "\n");
+val _ = (print "collect_args_more_typed="; Lib.with_flag (Globals.show_types,true) print_term ``!(max_app :num) (num_args :num) (e :closLang$exp) (num_args' :num) (e' :closLang$exp). ((num_args',e') = clos_mti$collect_args max_app num_args e) ==> num_args <= num_args'``; print "\n");
+val _ = (print "collect_args_zero_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_mtiTheory.collect_args_zero); print "\n");
+val _ = (print "exp3_size_append_typed="; Lib.with_flag (Globals.show_types,true) print_term ``!(es1 :closLang$exp list) (es2 :closLang$exp list). (closLang$exp3_size (es1 ++ es2) :num) = (closLang$exp3_size es1 + closLang$exp3_size es2)``; print "\n");
+val _ = (print "collect_apps_more_typed="; Lib.with_flag (Globals.show_types,true) print_term ``!(max_app :num) (args :closLang$exp list) (e :closLang$exp) (args' :closLang$exp list) (e' :closLang$exp). ((args',e') = clos_mti$collect_apps max_app args e) ==> LENGTH args <= LENGTH args'``; print "\n");
+val _ = (print "collect_apps_size_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_mtiTheory.collect_apps_size); print "\n");

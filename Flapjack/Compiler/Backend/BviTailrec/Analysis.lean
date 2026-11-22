@@ -1,6 +1,8 @@
 module
 
 public import Flapjack.Compiler.Backend.BviTailrec
+public import Flapjack.Compiler.Backend.Bvi.GeneratedSize
+public import Flapjack.Compiler.Backend.BackendCommon.ConstructorTags
 
 @[expose] public section
 
@@ -41,6 +43,42 @@ def fromOp : ClosLang.Op → AssocOp
   | .blockOp .listAppend => .append
   | _ => .noop
 
+/-- HOL `from_op_PMATCH`: the definition's case equation over `closLang$op`. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "from_op_PMATCH"]
+theorem fromOp_PMATCH (op : ClosLang.Op) :
+    fromOp op =
+      (match op with
+       | .intOp .add => .plus
+       | .intOp .mult => .times
+       | .blockOp .listAppend => .append
+       | _ => .noop) := rfl
+
+/-- HOL `from_op_thm`: the evaluated `from_op` equations, one per source
+`closLang$op` constructor, in the source's constructor order. HOL writes the
+`IntOp` and `BlockOp` arms as equality if-chains (`a = Add`, `b = ListAppend`);
+`IntOp` and `BlockOp` carry only `BEq` here (no `DecidableEq`), so the reviewed
+rendering of that equality is `==`, as in `opEq_toOp`. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "from_op_thm"]
+theorem fromOp_thm (a : Nat) (s : Basis.Pure.MlString.MlString) (i : ClosLang.IntOp)
+    (w : ClosLang.WordOp) (b : ClosLang.BlockOp) (g : ClosLang.GlobOp)
+    (m : ClosLang.MemOp) (t : AstHOL.ThunkOp) :
+    fromOp (.label a) = .noop ∧
+      fromOp (.ffi s) = .noop ∧
+      fromOp (.intOp i) =
+        (if i == .add then .plus else if i == .mult then .times else .noop) ∧
+      fromOp (.wordOp w) = .noop ∧
+      fromOp (.blockOp b) =
+        (if b == .listAppend then .append else .noop) ∧
+      fromOp (.globOp g) = .noop ∧
+      fromOp (.memOp m) = .noop ∧
+      fromOp .install = .noop ∧
+      fromOp (.thunkOp t) = .noop := by
+  refine ⟨rfl, rfl, ?_, rfl, ?_, rfl, rfl, rfl, rfl⟩
+  · cases i
+    all_goals rfl
+  · cases b
+    all_goals rfl
+
 /-- Convert a source accumulator operator into its BVI operation. -/
 @[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "to_op_def"]
 def toOp : AssocOp → ClosLang.Op
@@ -55,14 +93,94 @@ private def small (i : Int) : Bool := -268435457 ≤ i && i ≤ 268435457
 def isConst : ClosLang.Op → Bool
   | .intOp (.const i) => small i
   | _ => false
+/-- HOL `is_const_PMATCH`: the definition's case equation, with HOL's
+`small_enough_int` as the reviewed Boolean `small` of the definition. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "is_const_PMATCH"]
+theorem isConst_PMATCH (op : ClosLang.Op) :
+    isConst op =
+      (match op with
+       | .intOp (.const i) => small i
+       | _ => false) := rfl
 @[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "is_arith_def"]
 def isArith : ClosLang.Op → Bool
   | .intOp .add | .intOp .sub | .intOp .mult => true
   | _ => false
+/-- HOL `is_arith_PMATCH`: the definition's case equation, one arm per source
+`pmatch` alternative. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "is_arith_PMATCH"]
+theorem isArith_PMATCH (op : ClosLang.Op) :
+    isArith op =
+      (match op with
+       | .intOp .add => true
+       | .intOp .sub => true
+       | .intOp .mult => true
+       | _ => false) := rfl
 @[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "is_rel_def"]
 def isRel : ClosLang.Op → Bool
   | .intOp .less | .intOp .lessEq | .intOp .greater | .intOp .greaterEq => true
   | _ => false
+/-- HOL `is_rel_PMATCH`: the definition's case equation, one arm per source
+`pmatch` alternative. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "is_rel_PMATCH"]
+theorem isRel_PMATCH (op : ClosLang.Op) :
+    isRel op =
+      (match op with
+       | .intOp .less => true
+       | .intOp .lessEq => true
+       | .intOp .greater => true
+       | .intOp .greaterEq => true
+       | _ => false) := rfl
+
+/-- HOL `is_op_thms`: the source's Boolean facts about `is_arith` and `is_rel`
+on `BlockOp` constructors and on `BlockOp ListAppend`. HOL states them as
+Boolean formulas, where `/\` binds tighter than `<=>`; the Lean rendering keeps
+that shape with Boolean `&&` and Boolean equality. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "is_op_thms"]
+theorem isOpThms :
+    isArith (.blockOp (.cons 0)) = false ∧
+      isArith (.blockOp .listAppend) = false ∧
+      isRel (.blockOp (.cons 0)) = false ∧
+      isRel (.blockOp .listAppend) = false ∧
+      (∀ op : ClosLang.Op, (op != .blockOp .listAppend && isArith op) = isArith op) ∧
+      (∀ op : ClosLang.Op,
+        (op != .blockOp .listAppend && !isArith op && isRel op) = isRel op) ∧
+      (∀ op : ClosLang.Op,
+        (!isArith op && !isRel op && (op == .blockOp (.cons 0))) =
+          (op == .blockOp (.cons 0))) ∧
+      (∀ op : ClosLang.Op,
+        (op != .blockOp .listAppend && (op == .blockOp (.cons 0))) =
+          (op == .blockOp (.cons 0))) := by
+  refine ⟨rfl, rfl, rfl, rfl, ?_, ?_, ?_, ?_⟩
+  · intro op
+    cases op with
+    | blockOp b =>
+      cases b
+      all_goals simp [isArith]
+    | _ => simp [isArith]
+  · intro op
+    cases op with
+    | intOp i =>
+      cases i
+      all_goals simp [isArith, isRel]
+    | blockOp b =>
+      cases b
+      all_goals simp [isArith, isRel]
+    | _ => simp [isArith, isRel]
+  · intro op
+    cases op with
+    | intOp i =>
+      cases i
+      all_goals simp [isArith, isRel]
+    | blockOp b =>
+      cases b
+      all_goals simp [isArith, isRel]
+    | _ => simp [isArith, isRel]
+  · intro op
+    cases op with
+    | blockOp b =>
+      cases b
+      all_goals simp
+    | _ => simp
 /-- Operand type required by each source primitive. -/
 @[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "arg_ty_def"]
 def argType : ClosLang.Op → ValueType
@@ -71,17 +189,136 @@ def argType : ClosLang.Op → ValueType
   | .intOp .less | .intOp .lessEq | .intOp .greater | .intOp .greaterEq => .int
   | .blockOp .listAppend => .list
   | _ => .any
+/-- HOL `arg_ty_PMATCH`: the definition's case equation, one arm per source
+`pmatch` alternative in source order. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "arg_ty_PMATCH"]
+theorem argType_PMATCH (op : ClosLang.Op) :
+    argType op =
+      (match op with
+       | .intOp .add => .int
+       | .intOp .sub => .int
+       | .intOp .mult => .int
+       | .intOp .div => .int
+       | .intOp .mod => .int
+       | .intOp .lessEq => .int
+       | .intOp .less => .int
+       | .intOp .greater => .int
+       | .intOp .greaterEq => .int
+       | .intOp (.const i) => if small i then .int else .any
+       | .blockOp .listAppend => .list
+       | _ => .any) := by
+  cases op with
+  | intOp i =>
+    cases i
+    all_goals rfl
+  | blockOp b =>
+    cases b
+    all_goals rfl
+  | _ => rfl
+
+/-- HOL `op_ty_def`: the result type of an accumulator operation, one clause
+per source constructor pattern in source order. HOL uses `op_ty` only in
+`bvi_tailrecProofScript.sml` (43 mentions), never in the executable pass: the
+running scan derives result types from `fromOp` and `opType`, so this is a
+proof-side helper with no production call site to route through it. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "op_ty_def"]
+def opTy : ClosLang.Op → ValueType
+  | .intOp .add => .int
+  | .intOp .sub => .int
+  | .intOp .mult => .int
+  | .intOp .div => .int
+  | .intOp .mod => .int
+  | .blockOp .listAppend => .list
+  | .blockOp (.cons tag) =>
+    if tag = Flapjack.Compiler.Backend.BackendCommon.nilTag ∨
+        tag = Flapjack.Compiler.Backend.BackendCommon.consTag then .list else .any
+  | .intOp (.const i) => if small i then .int else .any
+  | _ => .any
+/-- HOL `op_ty_PMATCH`: the definition's case equation, one arm per source
+`pmatch` alternative in source order (the `Cons` arm tests `cons_tag` first,
+as the source does). -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "op_ty_PMATCH"]
+theorem opTy_PMATCH (op : ClosLang.Op) :
+    opTy op =
+      (match op with
+       | .intOp .add => .int
+       | .intOp .sub => .int
+       | .intOp .mult => .int
+       | .intOp .div => .int
+       | .intOp .mod => .int
+       | .blockOp .listAppend => .list
+       | .blockOp (.cons tag) =>
+         if tag = Flapjack.Compiler.Backend.BackendCommon.consTag ∨
+             tag = Flapjack.Compiler.Backend.BackendCommon.nilTag then .list
+         else .any
+       | .intOp (.const i) => if small i then .int else .any
+       | _ => .any) := by
+  cases op with
+  | intOp i =>
+    cases i
+    all_goals rfl
+  | blockOp b =>
+    cases b with
+    | cons tag =>
+      show (if tag = Flapjack.Compiler.Backend.BackendCommon.nilTag ∨
+              tag = Flapjack.Compiler.Backend.BackendCommon.consTag then ValueType.list
+            else ValueType.any) =
+          (if tag = Flapjack.Compiler.Backend.BackendCommon.consTag ∨
+              tag = Flapjack.Compiler.Backend.BackendCommon.nilTag then ValueType.list
+            else ValueType.any)
+      by_cases hc : tag = Flapjack.Compiler.Backend.BackendCommon.consTag
+      · subst hc
+        simp
+      · by_cases hn : tag = Flapjack.Compiler.Backend.BackendCommon.nilTag
+        · subst hn
+          simp
+        · simp [hc, hn]
+    | _ => rfl
+  | _ => rfl
+
 /-- Keep a specific type only when both branches agree on it. -/
 @[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "decide_ty_def"]
 def decideType : ValueType → ValueType → ValueType
   | .int, .int => .int
   | .list, .list => .list
   | _, _ => .any
+/-- HOL `decide_ty_PMATCH`: the definition's case equation over the pair of
+types, as the source states it. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "decide_ty_PMATCH"]
+theorem decideType_PMATCH (ty1 ty2 : ValueType) :
+    decideType ty1 ty2 =
+      (match (ty1, ty2) with
+       | (.int, .int) => .int
+       | (.list, .list) => .list
+       | _ => .any) := by
+  cases ty1 with
+  | int =>
+    cases ty2 with
+    | int => rfl
+    | list => rfl
+    | any => rfl
+  | list =>
+    cases ty2 with
+    | int => rfl
+    | list => rfl
+    | any => rfl
+  | any =>
+    cases ty2 with
+    | int => rfl
+    | list => rfl
+    | any => rfl
 /-- The variable index of an expression, when it is a variable. -/
 @[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "index_of_def"]
 def indexOf : Exp → Option Nat
   | .var n => some n
   | _ => none
+/-- HOL `index_of_PMATCH`: the definition's case equation. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "index_of_PMATCH"]
+theorem indexOf_PMATCH (expr : Exp) :
+    indexOf expr =
+      (match expr with
+       | .var i => some i
+       | _ => none) := rfl
 
 /-- Refine the indexed context entry only when it is present and unknown. -/
 @[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "try_update_def"]
@@ -141,16 +378,210 @@ def opEq : AssocOp → Exp → Bool
   | .append, .op (.blockOp .listAppend) _ => true
   | _, _ => false
 
+/-- HOL `op_eq_PMATCH`: the definition's case equation, with the outer `pmatch`
+on the expression and the inner `pmatch` on the accumulator operator, in source
+order; the source's unused `xs` binding is the wildcard here. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "op_eq_PMATCH"]
+theorem opEq_PMATCH (a : AssocOp) (expr : Exp) :
+    opEq a expr =
+      (match expr with
+       | .op op _ =>
+         (match a with
+          | .plus => op == .intOp .add
+          | .times => op == .intOp .mult
+          | .append => op == .blockOp .listAppend
+          | _ => false)
+       | _ => false) := by
+  cases a with
+  | plus =>
+    cases expr with
+    | op op _ =>
+      cases op with
+      | intOp i =>
+        cases i
+        all_goals simp [opEq]
+      | _ => simp [opEq]
+    | _ => simp [opEq]
+  | times =>
+    cases expr with
+    | op op _ =>
+      cases op with
+      | intOp i =>
+        cases i
+        all_goals simp [opEq]
+      | _ => simp [opEq]
+    | _ => simp [opEq]
+  | append =>
+    cases expr with
+    | op op _ =>
+      cases op with
+      | blockOp b =>
+        cases b
+        all_goals simp [opEq]
+      | _ => simp [opEq]
+    | _ => simp [opEq]
+  | noop =>
+    cases expr with
+    | _ => simp [opEq]
+
 /-- Extract precisely two operands from a BVI operation. -/
 @[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "get_bin_args_def"]
 def getBinArgs : Exp → Option (Exp × Exp)
   | .op _ [x, y] => some (x, y)
   | _ => none
+/-- HOL `get_bin_args_PMATCH`: the definition's case equation, matching exactly
+two operands. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "get_bin_args_PMATCH"]
+theorem getBinArgs_PMATCH (expr : Exp) :
+    getBinArgs expr =
+      (match expr with
+       | .op _ [e1, e2] => some (e1, e2)
+       | _ => none) := rfl
+
+/-- HOL `MEM_exp_size_imp`: a member of an expression list is smaller than the
+list's generated size. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "MEM_exp_size_imp"]
+theorem MEM_exp_size_imp :
+    ∀ (xs : List Exp) (a : Exp), a ∈ xs → expSizeHOL a < expListSizeHOL xs := by
+  intro xs
+  induction xs with
+  | nil =>
+    intro a h
+    simp at h
+  | cons x rest ih =>
+    intro a h
+    rcases List.mem_cons.mp h with rfl | h
+    · simp only [expListSizeHOL]
+      omega
+    · have := ih a h
+      simp only [expListSizeHOL]
+      omega
+
+/-- HOL `exp_size_get_bin_args`: the two operands extracted by `get_bin_args`
+are together smaller than the whole expression. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "exp_size_get_bin_args"]
+theorem exp_size_get_bin_args :
+    ∀ (expr x1 x2 : Exp), getBinArgs expr = some (x1, x2) →
+      expSizeHOL x1 + expSizeHOL x2 < expSizeHOL expr := by
+  intro expr
+  cases expr with
+  | var n =>
+    intro x1 x2 h
+    simp [getBinArgs] at h
+  | ifThenElse c t e =>
+    intro x1 x2 h
+    simp [getBinArgs] at h
+  | «let» es b =>
+    intro x1 x2 h
+    simp [getBinArgs] at h
+  | raise e =>
+    intro x1 x2 h
+    simp [getBinArgs] at h
+  | tick e =>
+    intro x1 x2 h
+    simp [getBinArgs] at h
+  | call ticks dest args handler =>
+    intro x1 x2 h
+    simp [getBinArgs] at h
+  | force n m =>
+    intro x1 x2 h
+    simp [getBinArgs] at h
+  | letCall n m k es b =>
+    intro x1 x2 h
+    simp [getBinArgs] at h
+  | «return» es =>
+    intro x1 x2 h
+    simp [getBinArgs] at h
+  | op o args =>
+    intro x1 x2 h
+    cases args with
+    | nil => simp [getBinArgs] at h
+    | cons a args =>
+      cases args with
+      | nil => simp [getBinArgs] at h
+      | cons b args =>
+        cases args with
+        | nil =>
+          simp only [getBinArgs, Option.some.injEq, Prod.mk.injEq] at h
+          obtain ⟨h1, h2⟩ := h
+          subst h1
+          subst h2
+          simp only [expSizeHOL, expListSizeHOL]
+          omega
+        | cons c rest => simp [getBinArgs] at h
 
 /-- Extract two operands only when the operation matches the accumulator. -/
 @[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "opbinargs_def"]
 def opBinArgs (assoc : AssocOp) (e : Exp) : Option (Exp × Exp) :=
   if opEq assoc e then getBinArgs e else none
+
+/-- HOL `op_eq_to_op`: an accumulator operation matches an expression exactly
+when the expression's operation is its BVI image and the accumulator is not
+`Noop`. HOL's Boolean `⇔` and `∧` are the Boolean equation and `&&`. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "op_eq_to_op"]
+theorem opEq_toOp (iop : AssocOp) (op : ClosLang.Op) (xs : List Exp) :
+    opEq iop (.op op xs) = (op == toOp iop && iop != .noop) := by
+  cases iop with
+  | plus =>
+    cases op with
+    | label n => rfl
+    | ffi s => rfl
+    | wordOp w => rfl
+    | globOp g => rfl
+    | memOp m => rfl
+    | install => rfl
+    | thunkOp t => rfl
+    | intOp i =>
+      cases i
+      all_goals rfl
+    | blockOp b =>
+      cases b
+      all_goals rfl
+  | times =>
+    cases op with
+    | label n => rfl
+    | ffi s => rfl
+    | wordOp w => rfl
+    | globOp g => rfl
+    | memOp m => rfl
+    | install => rfl
+    | thunkOp t => rfl
+    | intOp i =>
+      cases i
+      all_goals rfl
+    | blockOp b =>
+      cases b
+      all_goals rfl
+  | append =>
+    cases op with
+    | label n => rfl
+    | ffi s => rfl
+    | wordOp w => rfl
+    | globOp g => rfl
+    | memOp m => rfl
+    | install => rfl
+    | thunkOp t => rfl
+    | intOp i =>
+      cases i
+      all_goals rfl
+    | blockOp b =>
+      cases b
+      all_goals rfl
+  | noop =>
+    cases op with
+    | label n => rfl
+    | ffi s => rfl
+    | wordOp w => rfl
+    | globOp g => rfl
+    | memOp m => rfl
+    | install => rfl
+    | thunkOp t => rfl
+    | intOp i =>
+      cases i
+      all_goals rfl
+    | blockOp b =>
+      cases b
+      all_goals rfl
 
 /-- Construct the BVI expression for an accumulator operation. -/
 @[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "apply_op_def"]

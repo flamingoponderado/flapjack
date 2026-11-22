@@ -122,6 +122,40 @@ termination_by xs _ => 2 * sizeOf xs + 1
 decreasing_by all_goals simp_wf <;> omega
 end
 
+/-- The singleton clause of the original list-valued conversion, with the
+empty tail removed. Flapjack helper: HOL reaches it through
+`compile_exp_sing_eq`. -/
+private theorem compileExpsHOL_sing (maxApp : Nat) (x : ClosLang.Exp) (aux : Aux) :
+    compileExpsHOL maxApp [x] aux = compileExpsSingletonHOL maxApp x aux := by
+  simp [compileExpsHOL, List.append_nil]
+
+/-- The two-element recursion step of the original list-valued conversion. -/
+@[hol "cakeml/compiler/backend/clos_to_bvlScript.sml" "compile_exps_CONS"]
+theorem compileExpsHOL_cons (maxApp : Nat) (xs : List ClosLang.Exp) (x : ClosLang.Exp)
+    (aux : Aux) :
+    compileExpsHOL maxApp (x :: xs) aux =
+      let (c1, aux1) := compileExpsHOL maxApp [x] aux
+      let (c2, aux2) := compileExpsHOL maxApp xs aux1
+      (c1 ++ c2, aux2) := by
+  cases xs with
+  | nil => simp [compileExpsHOL_sing, compileExpsHOL]
+  | cons y ys => simp [compileExpsHOL_sing, compileExpsHOL]
+
+/-- The appended-expression equation of the original list-valued conversion. -/
+@[hol "cakeml/compiler/backend/clos_to_bvlScript.sml" "compile_exps_SNOC"]
+theorem compileExpsHOL_snoc (xs : List ClosLang.Exp) (x : ClosLang.Exp) (aux : Aux)
+    (maxApp : Nat) :
+    compileExpsHOL maxApp (xs ++ [x]) aux =
+      let (c1, aux1) := compileExpsHOL maxApp xs aux
+      let (c2, aux2) := compileExpsHOL maxApp [x] aux1
+      (c1 ++ c2, aux2) := by
+  induction xs generalizing aux with
+  | nil => simp [compileExpsHOL]
+  | cons y ys ih =>
+    simp only [List.cons_append]
+    simp only [compileExpsHOL]
+    simp only [ih, compileExpsHOL_sing, List.append_nil, List.append_assoc]
+
 /-- The original labeled program conversion, using its list-valued
 expression compiler and retaining the source's label and auxiliary order. -/
 @[hol "cakeml/compiler/backend/clos_to_bvlScript.sml" "compile_prog_def"]

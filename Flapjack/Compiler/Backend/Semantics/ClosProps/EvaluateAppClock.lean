@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.Semantics.ClosProps.DestClosure
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.EvaluateConst
 public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
 public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateClock
 public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateLength
@@ -270,5 +271,223 @@ theorem evaluateApp_rw {C F : Type} (args : List ClosSem.Value) (loc_opt : Optio
               | nil => rfl
               | cons w more => rfl
           | err error => rfl
+
+/-- Composing clock subtractions. -/
+private theorem decClock_decClock {C F : Type} (first second : Nat) (state : ClosSem.State C F) :
+    ClosSem.decClock first (ClosSem.decClock second state) =
+      ClosSem.decClock (first + second) state := by
+  simp only [ClosSem.decClock]
+  congr 1
+  omega
+
+/-- A successful application returns a singleton value list. -/
+private theorem evaluateApp_singleton {C F : Type} (location : Option Nat)
+    (function : ClosSem.Value) (args : List ClosSem.Value) (state next : ClosSem.State C F)
+    (values : List ClosSem.Value)
+    (run : ClosSem.evaluateApp location function args state = (.val values, next)) :
+    values = [@Flapjack.holHd ClosSem.Value ⟨ClosSem.unitValue⟩ values] := by
+  have len := ClosSem.evaluate_length.2 location function args state next values run
+  cases values with
+  | nil => simp at len
+  | cons value tail =>
+    cases tail with
+    | nil => rfl
+    | cons other more => simp at len
+
+/-- Applying no further arguments after a successful application is the
+identity. -/
+private theorem evaluateApp_nil_append {C F : Type} (function : ClosSem.Value)
+    (args : List ClosSem.Value) (state : ClosSem.State C F) :
+    ClosSem.evaluateApp none function args state =
+      match ClosSem.evaluateApp none function args state with
+      | (.val vs1, s1) =>
+        ClosSem.evaluateApp none
+          (@Flapjack.holHd ClosSem.Value ⟨ClosSem.unitValue⟩ vs1) [] s1
+      | (.err v7, s1) => (.err v7, s1) := by
+  cases run : ClosSem.evaluateApp none function args state with
+  | mk r next =>
+    cases r with
+    | err error => rfl
+    | val values =>
+      have singleton := evaluateApp_singleton none function args state next values run
+      rw [singleton]
+      simp only [ClosSem.evaluateApp]
+      rfl
+
+/-- Appending arguments to a successful application matches applying the whole
+list at once. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "evaluate_app_append"
+  (fmap_as_finite_support := [refs, code])]
+theorem evaluateApp_append {C F : Type} (args2 : List ClosSem.Value) (f : ClosSem.Value)
+    (args1 : List ClosSem.Value) (state : ClosSem.State C F)
+    (h : (args1 ++ args2).length ≤ state.maxApp) :
+    ClosSem.evaluateApp none f (args1 ++ args2) state =
+      match ClosSem.evaluateApp none f args2 state with
+      | (.val vs1, s1) =>
+        ClosSem.evaluateApp none
+          (@Flapjack.holHd ClosSem.Value ⟨ClosSem.unitValue⟩ vs1) args1 s1
+      | (.err v7, s1) => (.err v7, s1) := by
+  have aux : ∀ n : Nat, ∀ (args2 : List ClosSem.Value) (f : ClosSem.Value)
+      (args1 : List ClosSem.Value) (state : ClosSem.State C F),
+      args2.length = n → (args1 ++ args2).length ≤ state.maxApp →
+      ClosSem.evaluateApp none f (args1 ++ args2) state =
+        match ClosSem.evaluateApp none f args2 state with
+        | (.val vs1, s1) =>
+          ClosSem.evaluateApp none
+            (@Flapjack.holHd ClosSem.Value ⟨ClosSem.unitValue⟩ vs1) args1 s1
+        | (.err v7, s1) => (.err v7, s1) := by
+    intro n
+    induction n using Nat.strongRecOn with
+    | ind n ih =>
+      intro args2 f args1 state hlen bound
+      cases args1 with
+      | nil => exact evaluateApp_nil_append f args2 state
+      | cons a args1' =>
+        cases args2 with
+        | nil =>
+          simp only [List.append_nil]
+          have emptyRun : ClosSem.evaluateApp none f [] state =
+              (.val [f], state) := by
+            simp only [ClosSem.evaluateApp]
+          rw [emptyRun]
+          simp only [Flapjack.holHd]
+        | cons b args2' =>
+          have bound' : (a :: args1').length + (b :: args2').length ≤ state.maxApp := by
+            rw [List.length_append] at bound
+            exact bound
+          have lengths : ((a :: args1') ++ (b :: args2')).length =
+              (a :: args1').length + (b :: args2').length := List.length_append
+          have hne1 : (a :: args1') ++ (b :: args2') ≠ [] := by simp
+          have hne2 : b :: args2' ≠ [] := by simp
+          have hne3 : a :: args1' ≠ [] := by simp
+          rw [evaluateApp_rw ((a :: args1') ++ (b :: args2')) none f state hne1]
+          rw [evaluateApp_rw (b :: args2') none f state hne2]
+          cases hD : ClosSem.destClosure state.maxApp none f (b :: args2') with
+          | none =>
+            have hD' := destClosure_none_append (α := Unit) state.maxApp () f
+              (a :: args1') (b :: args2') hD
+            simp only [hD']
+          | some kind =>
+            cases kind with
+            | partialApp cl =>
+              simp only []
+              split
+              · rename_i hD1
+                have hnone := destClosure_none_append2 (α := Unit) state.maxApp () f
+                  (a :: args1') (b :: args2') ⟨bound', hD1⟩
+                rw [hnone] at hD
+                simp at hD
+              · rename_i v hD1
+                have htwice := destClosure_partial_twice state.maxApp f (a :: args1')
+                  (b :: args2') cl (some (.partialApp v)) ⟨bound', hD1, hD⟩
+                by_cases hclock2 : state.clock < (b :: args2').length
+                · rw [if_pos hclock2]
+                  simp only []
+                  rw [if_pos (by omega)]
+                · rw [if_neg hclock2]
+                  simp only []
+                  simp only [Flapjack.holHd]
+                  rw [evaluateApp_rw (a :: args1') none cl
+                    (ClosSem.decClock (b :: args2').length state) hne3]
+                  have hmax : (ClosSem.decClock (b :: args2').length state).maxApp =
+                      state.maxApp := by
+                    simp only [ClosSem.decClock]
+                  simp only [hmax, htwice]
+                  by_cases hclock1 : (ClosSem.decClock (b :: args2').length state).clock <
+                      (a :: args1').length
+                  · rw [if_pos hclock1]
+                    rw [if_pos (by
+                      simp only [ClosSem.decClock] at hclock1
+                      simp only [lengths]
+                      omega)]
+                    rfl
+                  · rw [if_neg hclock1]
+                    rw [if_neg (by
+                      simp only [ClosSem.decClock] at hclock1
+                      simp only [lengths]
+                      omega)]
+                    rw [lengths, decClock_decClock]
+              · rename_i e env rest hD1
+                have htwice := destClosure_partial_twice state.maxApp f (a :: args1')
+                  (b :: args2') cl (some (.fullApp e env rest)) ⟨bound', hD1, hD⟩
+                have hrest := destClosure_rest_length state.maxApp cl (a :: args1') e env
+                  rest htwice
+                by_cases hclock2 : state.clock < (b :: args2').length
+                · rw [if_pos hclock2]
+                  simp only []
+                  rw [if_pos (by omega)]
+                · rw [if_neg hclock2]
+                  simp only []
+                  simp only [Flapjack.holHd]
+                  rw [evaluateApp_rw (a :: args1') none cl
+                    (ClosSem.decClock (b :: args2').length state) hne3]
+                  have hmax : (ClosSem.decClock (b :: args2').length state).maxApp =
+                      state.maxApp := by
+                    simp only [ClosSem.decClock]
+                  simp only [hmax, htwice]
+                  have costEq : ((a :: args1') ++ (b :: args2')).length - rest.length =
+                      ((a :: args1').length - rest.length) + (b :: args2').length := by
+                    rw [lengths]
+                    omega
+                  rw [costEq]
+                  by_cases hclock1 : (ClosSem.decClock (b :: args2').length state).clock <
+                      (a :: args1').length - rest.length
+                  · rw [if_pos hclock1]
+                    rw [if_pos (by
+                      simp only [ClosSem.decClock] at hclock1
+                      omega)]
+                    rfl
+                  · rw [if_neg hclock1]
+                    rw [if_neg (by
+                      simp only [ClosSem.decClock] at hclock1
+                      omega)]
+                    rw [decClock_decClock]
+            | fullApp body env rest2 =>
+              have hadd := destClosure_full_addargs state.maxApp f (b :: args2') body env rest2
+                (a :: args1') ⟨hD, bound'⟩
+              have hrest := destClosure_rest_length state.maxApp f (b :: args2') body env rest2 hD
+              simp only []
+              simp only [hadd]
+              have costEq : ((a :: args1') ++ (b :: args2')).length -
+                  ((a :: args1') ++ rest2).length = (b :: args2').length - rest2.length := by
+                rw [lengths, List.length_append]
+                omega
+              rw [costEq]
+              by_cases hclock : state.clock < (b :: args2').length - rest2.length
+              · simp only [if_pos hclock]
+              · simp only [if_neg hclock]
+                cases run : ClosSem.evaluate [body] env
+                    (ClosSem.decClock ((b :: args2').length - rest2.length) state) with
+                | mk r st =>
+                  cases r with
+                  | err error => rfl
+                  | val values =>
+                    cases values with
+                    | nil =>
+                      exfalso
+                      have singleton := ClosSem.evaluate_length.1 [body] env
+                        (ClosSem.decClock ((b :: args2').length - rest2.length) state)
+                        st [] run
+                      simp at singleton
+                    | cons value tail =>
+                      cases tail with
+                      | nil =>
+                        have bodyMax := evaluateConst [body] env
+                          (ClosSem.decClock ((b :: args2').length - rest2.length) state)
+                          (.val [value]) st run
+                        have startMax : (ClosSem.decClock
+                            ((b :: args2').length - rest2.length) state).maxApp = state.maxApp := by
+                          simp only [ClosSem.decClock]
+                        have hbound : ((a :: args1') ++ rest2).length ≤ st.maxApp := by
+                          rw [bodyMax, startMax, List.length_append]
+                          omega
+                        exact ih rest2.length (by omega) rest2 value (a :: args1') st rfl hbound
+                      | cons other more =>
+                        exfalso
+                        have singleton := ClosSem.evaluate_length.1 [body] env
+                          (ClosSem.decClock ((b :: args2').length - rest2.length) state)
+                          st (value :: other :: more) run
+                        simp at singleton
+  exact aux args2.length args2 f args1 state rfl h
 
 end Flapjack.Compiler.Backend.ClosProps

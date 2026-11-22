@@ -112,3 +112,186 @@ val _ = emit "word_list_wrap_typed" "word_list_wrap";
 val _ = emit "word_list_rev_def_typed" "word_list_rev_def";
 val _ = emit "word_list_EQ_rev_typed" "word_list_EQ_rev";
 val _ = emit "word_store_def_typed" "word_store_def";
+
+(* Generic helper theorems at the head of stack_removeProofScript.sml. The
+   three `[local]` ones are parsed from the pinned source text with
+   `^antiquotation` splices expanded. *)
+val source_cake = case OS.Process.getEnv "CAKEML" of
+    SOME p => p
+  | NONE => (case OS.Process.getEnv "FLAPJACK_HOL_PROBE_DIR" of
+      SOME p => OS.Path.concat (OS.Path.dir (OS.Path.dir p), "cakeml")
+    | NONE => raise Fail "CAKEML or FLAPJACK_HOL_PROBE_DIR is required");
+
+fun source_text_of relpath =
+  let
+    val stream = TextIO.openIn (OS.Path.concat (source_cake, relpath))
+    val text = TextIO.inputAll stream
+    val _ = TextIO.closeIn stream
+  in text end;
+
+val source_text = source_text_of "compiler/backend/proofs/stack_removeProofScript.sml";
+
+val source_lines = String.fields (fn c => c = #"\n") source_text;
+
+fun strip_leading s =
+  Substring.string (Substring.dropl (fn c => c = #" " orelse c = #"\t")
+    (Substring.full s));
+
+fun decl_head line name kw =
+  let
+    val line' = strip_leading line
+  in
+    if not (String.isPrefix kw line') then NONE
+    else
+      let
+        val rest = strip_leading (String.extract (line', String.size kw, NONE))
+      in
+        if String.isPrefix name rest andalso
+           (String.size rest = String.size name orelse
+            let val c = String.sub (rest, String.size name) in
+              not (Char.isAlphaNum c) andalso c <> #"_"
+            end)
+        then SOME rest
+        else NONE
+      end
+  end;
+
+fun statement_of name =
+  let
+    fun scan [] = raise Fail ("missing declaration " ^ name)
+      | scan (l :: rest) =
+          (case decl_head l name "Theorem" of
+             SOME _ => ("Proof", rest)
+           | NONE => scan rest)
+    val (stop, body) = scan source_lines
+    fun take [] = []
+      | take (l :: rest) =
+          if String.isPrefix stop (strip_leading l) then []
+          else l :: take rest
+    val stmt = String.concatWith "\n" (take body)
+  in
+    if String.size stmt = 0 then raise Fail ("empty statement " ^ name)
+    else stmt
+  end;
+
+local
+  fun lead_trim s =
+    Substring.string (Substring.dropl
+      (fn c => c = #" " orelse c = #"\t") (Substring.full s));
+
+  fun tail_trim s =
+    let
+      fun drop [] = []
+        | drop (c :: rest) =
+            if c = #" " orelse c = #"\t" orelse c = #";" then drop rest
+            else c :: rest
+    in String.implode (List.rev (drop (List.rev (String.explode s)))) end;
+
+  fun quoted body =
+    let
+      fun close acc [] = NONE
+        | close acc (#"`" :: #"`" :: _) = SOME (String.implode (List.rev acc))
+        | close acc (#"\226" :: #"\128" :: #"\157" :: _) =
+            SOME (String.implode (List.rev acc))
+        | close acc (c :: rest) = close (c :: acc) rest
+      fun scan [] = NONE
+        | scan (#"`" :: #"`" :: rest) = close [] rest
+        | scan (#"\226" :: #"\128" :: #"\156" :: rest) = close [] rest
+        | scan (_ :: rest) = scan rest
+    in scan (String.explode body) end;
+
+  fun ends_semi s =
+    let
+      fun go [] = false
+        | go (c :: rest) =
+            if c = #" " orelse c = #"\t" then go rest else c = #";"
+    in go (List.rev (String.explode s)) end;
+
+  fun chunk_for lines name =
+    let
+      val pre = "val " ^ name ^ " ="
+      fun scan [] = NONE
+        | scan (l :: rest) =
+            if String.isPrefix pre (lead_trim l) then
+              let
+                fun take acc [] = SOME (String.concatWith "\n" (List.rev acc))
+                  | take acc (m :: ms) =
+                      let val acc' = m :: acc in
+                        if isSome (quoted (String.concatWith "\n" (List.rev acc')))
+                           orelse ends_semi m
+                        then SOME (String.concatWith "\n" (List.rev acc'))
+                        else take acc' ms
+                      end
+              in
+                case take [l] rest of
+                  NONE => NONE
+                | SOME c =>
+                    SOME (String.extract (lead_trim c, String.size pre, NONE))
+              end
+            else scan rest
+    in scan lines end;
+
+  fun type_text body =
+    case quoted body of
+      NONE => NONE
+    | SOME q =>
+        let val q' = lead_trim q in
+          if String.isPrefix ":" q' then
+            SOME (tail_trim (String.extract (q', 1, NONE)))
+          else
+            (case Substring.position ":" (Substring.full q) of
+               (_, rhs) =>
+                 if Substring.isEmpty rhs then NONE
+                 else SOME (tail_trim
+                   (String.extract (Substring.string rhs, 1, NONE))))
+        end;
+
+  fun expansion lines name =
+    case chunk_for lines name of
+      NONE => NONE
+    | SOME body =>
+        if String.isPrefix "mk_var" (lead_trim body) then
+          (case type_text body of
+             SOME ty => SOME ("(" ^ name ^ " : " ^ ty ^ ")")
+           | NONE => NONE)
+        else
+          (case quoted body of
+             SOME q => SOME ("(" ^ q ^ ")")
+           | NONE => NONE);
+in
+  fun strip_antiquote s =
+    let
+      val lines = String.fields (fn c => c = #"\n") source_text
+      fun take_name (cs, acc) =
+        case cs of
+          (c :: rest) =>
+            if Char.isAlphaNum c orelse c = #"_"
+            then take_name (rest, c :: acc)
+            else (String.implode (List.rev acc), cs)
+        | [] => (String.implode (List.rev acc), [])
+      fun go [] acc = String.concat (List.rev acc)
+        | go (#"^" :: rest) acc =
+            let val (name, rest') = take_name (rest, []) in
+              case expansion lines name of
+                SOME e => go rest' (e :: acc)
+              | NONE => go rest (String.str #"^" :: acc)
+            end
+        | go (c :: rest) acc = go rest (String.str c :: acc)
+    in go (String.explode s) [] end;
+end;
+
+fun capture label name =
+  let val tm = Parse.Term [QUOTE (strip_antiquote (statement_of name))]
+  in (print (label ^ "="); print_term tm; print "\n") end;
+
+val _ = emit "sr_less_length_imp_append_typed" "LESS_LENGTH_IMP_APPEND";
+val _ = emit "sr_with_same_clock_typed" "with_same_clock";
+val _ = emit "sr_set_var_set_var_typed" "set_var_set_var";
+val _ = emit "sr_get_var_set_var_same_typed" "get_var_set_var_same";
+val _ = emit "sr_get_var_set_var_typed" "get_var_set_var";
+val _ = capture "sr_byte_aligned_bytes_in_word_mult_typed" "byte_aligned_bytes_in_word_MULT";
+val _ = capture "sr_sub_rewrite_typed" "sub_rewrite";
+val _ = capture "sr_div_rewrite_typed" "div_rewrite";
+val _ = emit "sr_push_if_typed" "push_if";
+val _ = emit "sr_fst_prog_comp_typed" "FST_prog_comp";
+val _ = emit "sr_upshift_downshift_call_args_typed" "upshift_downshift_call_args";

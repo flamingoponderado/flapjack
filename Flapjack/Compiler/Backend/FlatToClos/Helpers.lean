@@ -15,6 +15,11 @@ def destPat {α : Type} : List (FlatLang.Pat × α) → Option (MlString × α)
   | [(.pvar v, h)] => some (v, h)
   | _ => none
 
+/-- The handler-pattern decomposition written as HOL's case expression. -/
+@[hol "cakeml/compiler/backend/flat_to_closScript.sml" "dest_pat_pmatch"]
+theorem destPat_pmatch {α : Type} (rows : List (FlatLang.Pat × α)) :
+    destPat rows = match rows with | [(.pvar v, h)] => some (v, h) | _ => none := rfl
+
 /-- Successful handler selection identifies the original singleton row.
 This inversion is used by Lean's termination proof. -/
 theorem destPat_eq_some {α : Type} (rows : List (FlatLang.Pat × α)) (v : MlString) (h : α)
@@ -30,6 +35,17 @@ theorem destPat_eq_some {α : Type} (rows : List (FlatLang.Pat × α)) (v : MlSt
         cases pat <;> simp [destPat] at found ⊢
         obtain ⟨rfl, rfl⟩ := found
         exact ⟨rfl, rfl⟩
+
+/-- The singleton-row inversion, stated as HOL's equality. -/
+@[hol "cakeml/compiler/backend/flat_to_closScript.sml" "dest_pat_thm"]
+theorem destPat_eq_some_iff {α : Type} (rows : List (FlatLang.Pat × α)) (p1 : MlString)
+    (p2 : α) : destPat rows = some (p1, p2) ↔ rows = [(.pvar p1, p2)] := by
+  constructor
+  · intro found
+    exact destPat_eq_some rows p1 p2 found
+  · intro h
+    rw [h]
+    rfl
 
 /-- Translate each literal to the source's closure-language constant form. -/
 @[hol "cakeml/compiler/backend/flat_to_closScript.sml" "compile_lit_def"]
@@ -47,12 +63,22 @@ def arg1 (xs : List ClosLang.Exp) (f : ClosLang.Exp → ClosLang.Exp) : ClosLang
   | [x] => f x
   | _ => .let .none xs (.var .none 0)
 
+/-- The unary lowering written as HOL's case expression. -/
+@[hol "cakeml/compiler/backend/flat_to_closScript.sml" "arg1_pmatch"]
+theorem arg1_pmatch (xs : List ClosLang.Exp) (f : ClosLang.Exp → ClosLang.Exp) :
+    arg1 xs f = match xs with | [x] => f x | _ => .let .none xs (.var .none 0) := rfl
+
 /-- Apply a binary lowering only at its expected arity. -/
 @[hol "cakeml/compiler/backend/flat_to_closScript.sml" "arg2_def"]
 def arg2 (xs : List ClosLang.Exp) (f : ClosLang.Exp → ClosLang.Exp → ClosLang.Exp) : ClosLang.Exp :=
   match xs with
   | [x, y] => f x y
   | _ => .let .none xs (.var .none 0)
+
+/-- The binary lowering written as HOL's case expression. -/
+@[hol "cakeml/compiler/backend/flat_to_closScript.sml" "arg2_pmatch"]
+theorem arg2_pmatch (xs : List ClosLang.Exp) (f : ClosLang.Exp → ClosLang.Exp → ClosLang.Exp) :
+    arg2 xs f = match xs with | [x, y] => f x y | _ => .let .none xs (.var .none 0) := rfl
 
 /-- Join recursive-function names using the original underscore separator. -/
 @[hol "cakeml/compiler/backend/flat_to_closScript.sml" "join_strings_def"]
@@ -80,6 +106,28 @@ theorem destNop_shape (op : FlatLang.Op) (es : List FlatLang.Exp) (x : FlatLang.
   simp only [destNop] at found
   split at found <;> simp_all
 
+/-- Successful conversion elimination has exactly the two source shapes. -/
+@[hol "cakeml/compiler/backend/flat_to_closScript.sml" "dest_nop_thm"]
+theorem destNop_eq_some_iff (op : FlatLang.Op) (es : List FlatLang.Exp) (x : FlatLang.Exp) :
+    destNop op es = some x ↔
+      (∃ t, op = .src (.fromTo .intT (.wordT .w8)) ∧
+        es = [.app t (.src (.fromTo .charT .intT)) [x]]) ∨
+      (∃ t, op = .src (.fromTo .intT .charT) ∧
+        es = [.app t (.src (.fromTo (.wordT .w8) .intT)) [x]]) := by
+  constructor
+  · intro found
+    exact destNop_shape op es x found
+  · intro h
+    cases h with
+    | inl h1 =>
+      obtain ⟨t, hOp, hEs⟩ := h1
+      rw [hOp, hEs]
+      rfl
+    | inr h2 =>
+      obtain ⟨t, hOp, hEs⟩ := h2
+      rw [hOp, hEs]
+      rfl
+
 /-- A successfully eliminated conversion returns a strict subexpression.
 This is a Flapjack termination fact for the executable compiler. -/
 theorem destNop_size (trace : Tra) (op : FlatLang.Op) (es : List FlatLang.Exp) (x : FlatLang.Exp)
@@ -95,6 +143,15 @@ def destConstant : ClosLang.Exp → Option ClosLang.Const
   | .op _ (.intOp (.const i)) [] => some (.constInt i)
   | .op _ (.blockOp (.cons n)) [] => some (.constCons n [])
   | _ => none
+
+/-- The constant recognition written as HOL's case expression. -/
+@[hol "cakeml/compiler/backend/flat_to_closScript.sml" "dest_Constant_pmatch"]
+theorem destConstant_pmatch (xs : ClosLang.Exp) :
+    destConstant xs = match xs with
+      | .op _ (.blockOp (.constant x)) [] => some x
+      | .op _ (.intOp (.const i)) [] => some (.constInt i)
+      | .op _ (.blockOp (.cons n)) [] => some (.constCons n [])
+      | _ => none := rfl
 
 /-- Collect constants only if every expression in the list is a constant. -/
 @[hol "cakeml/compiler/backend/flat_to_closScript.sml" "dest_Constants_def"]

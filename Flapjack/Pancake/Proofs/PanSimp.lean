@@ -204,6 +204,22 @@ theorem listMapM_eq_none_of_mem_conj {α β : Type} (f : α → Option β) (x : 
     (h : x ∈ xs ∧ f x = none) : xs.mapM f = none :=
   list_mapM_eq_none_of_mem f h.1 h.2
 
+/-- Exact port of HOL `pan_simpProof$opt_mmap_eq_some_helper`
+(`pan_simpProofScript.sml:394`): a successful `OPT_MMAP` under `f` carries over
+to `g` when `g` agrees with `f` on every successful image of a list member.
+The statement is the same as the `panProps` helper of that name; this module
+restates it so the `pan_simpProof` occurrence has its own tagged declaration.
+The typed capture `opt_mmap_eq_some_helper_pan_simp_typed`
+(`pancake_pan_simp_proof_typed_probe.out`) fixes the binder order `xs`, `zs`
+(explicit) and then `f`, `g`, with the element and result types independent and
+HOL's conjunction as one premise. -/
+@[hol "cakeml/pancake/proofs/pan_simpProofScript.sml" "opt_mmap_eq_some_helper"]
+theorem optMmapEqSomeHelperHOL {α β : Type} (xs : List α) (zs : List β)
+    (f g : α → Option β) :
+    (xs.mapM f = some zs ∧ ∀ x, x ∈ xs → ∀ y, f x = some y → g x = some y) →
+      xs.mapM g = some zs :=
+  optMmapEqSomeHelper f g xs zs
+
 /-- Cake's `OPT_MMAP_MEM_IMP`
 (`cakeml/pancake/semantics/panPropsScript.sml:115-123`): every element of a
 successful `OPT_MMAP` image has a preimage in the source list on which `f`

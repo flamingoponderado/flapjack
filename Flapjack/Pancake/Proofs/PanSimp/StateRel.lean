@@ -51,4 +51,17 @@ theorem stateRel_intro {width : Nat} {σ : Type} [NeZero width]
   intro h
   exact ⟨h.1, h.2.2⟩
 
+/-- HOL `pan_simpProof$state_rel_upd_inv` (`pan_simpProofScript.sml:387`): a
+related source state differs from the target only in its code map, so it is
+that target state with some code map substituted. -/
+@[hol "cakeml/pancake/proofs/pan_simpProofScript.sml" "state_rel_upd_inv"
+  (fmap_as_finite_support_relation := [PanSemStateFiniteExact.code, code])
+  (words_as_type_indexed_bitvec)]
+theorem stateRel_upd_inv {width : Nat} {σ : Type} [NeZero width]
+    (s t : PanSemStateFiniteExact width σ)
+    (code : HolFiniteMapExact MlS (List (MlS × ShapeHOL) × ProgHOL width × ShapeHOL)) :
+    stateRel s t code → ∃ s_code, s = { t with code := s_code } := by
+  rintro ⟨hcode, -, -⟩
+  exact ⟨s.code, by rw [hcode]⟩
+
 end Flapjack.PanSimp

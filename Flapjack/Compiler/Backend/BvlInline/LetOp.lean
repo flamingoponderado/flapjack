@@ -72,4 +72,9 @@ theorem letOpOne_equivalence :
   · intro expression; simp [letOp, letOpList]
   · intro expressions; rfl
 
+/-- The optimized singleton is the head of the optimized list. -/
+@[hol "cakeml/compiler/backend/bvl_inlineScript.sml" "let_op_sing_eq"]
+theorem let_op_sing_eq (x : Exp) : letOpSing x = letOpOne x := by
+  simp [letOpSing, letOp, letOpList]
+
 end Flapjack.Compiler.Backend.BvlInline

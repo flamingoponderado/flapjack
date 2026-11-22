@@ -1,0 +1,10 @@
+alt_free_LENGTH_LEMMA_typed=!(xs :exp list). case alt_free xs of (ys,s1) => LENGTH xs = LENGTH ys
+alt_free_LENGTH_typed=!(xs :exp list) (ys :exp list) (l :db_var_set). alt_free xs = (ys,l) ==> LENGTH ys = LENGTH xs
+alt_free_SING_typed=alt_free [(x :exp)] = ((ys :exp list),(l :db_var_set)) ==> ?(y :exp). ys = [y]
+LENGTH_FST_alt_free_typed=LENGTH (FST (alt_free (fns :exp list))) = LENGTH fns
+HD_FST_alt_free_typed=[HD (FST (alt_free [(x1 :exp)]))] = FST (alt_free [x1])
+alt_free_CONS_typed=FST (alt_free ((x :exp)::(xs :exp list))) = HD (FST (alt_free [x]))::FST (alt_free xs)
+shift_LENGTH_LEMMA_typed=!(xs :exp list) (m :num) (l :num) (i :num sptree$num_map). LENGTH (shift xs m l i) = LENGTH xs
+shift_SING_typed=?(y :exp). shift [(x :exp)] (m :num) (l :num) (i :num sptree$num_map) = [y]
+shift_CONS_typed=shift ((x :exp)::(xs :exp list)) (m :num) (l :num) (i :num sptree$num_map) = (let (c1 :exp list) = shift [x] m l i; (c2 :exp list) = shift xs m l i in HD c1::c2)
+HD_shift_typed=LENGTH (shift [(x :exp)] (m :num) (l :num) (i :num sptree$num_map)) = (1 :num) /\ [HD (shift [x] m l i)] = shift [x] m l i

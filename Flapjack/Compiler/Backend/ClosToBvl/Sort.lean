@@ -28,6 +28,25 @@ private theorem splitNonempty {α : Type} (ts xs ys : List α)
   | nil => simpa [codeSplit] using And.intro hx hy
   | cons z zs ih => simpa [codeSplit] using ih (z :: ys) xs (by simp) hx
 
+/-- HOL `code_split_NULL`: a split of two nonempty accumulators is nonempty. -/
+@[hol "cakeml/compiler/backend/clos_to_bvlScript.sml" "code_split_NULL"]
+theorem codeSplit_nonempty {α : Type} (ts1 ts2 ts3 xs ys : List α)
+    (premise : (xs, ys) = codeSplit ts1 ts2 ts3 ∧ ts2 ≠ [] ∧ ts3 ≠ []) :
+    xs ≠ [] ∧ ys ≠ [] := by
+  obtain ⟨run, h2, h3⟩ := premise
+  obtain ⟨xsEq, ysEq⟩ := Prod.mk.inj run
+  rw [xsEq, ysEq]
+  exact splitNonempty ts1 ts2 ts3 h2 h3
+
+/-- HOL `code_split_LENGTH`: splitting preserves the total length. -/
+@[hol "cakeml/compiler/backend/clos_to_bvlScript.sml" "code_split_LENGTH"]
+theorem codeSplit_length {α : Type} (ts1 ts2 ts3 xs ys : List α)
+    (run : (xs, ys) = codeSplit ts1 ts2 ts3) :
+    xs.length + ys.length = ts1.length + ts2.length + ts3.length := by
+  obtain ⟨xsEq, ysEq⟩ := Prod.mk.inj run
+  rw [xsEq, ysEq]
+  exact splitLength ts1 ts2 ts3
+
 /-- Merge sorted code entries; ties choose the right list, as in HOL. -/
 @[hol "cakeml/compiler/backend/clos_to_bvlScript.sml" "code_merge_def"]
 def codeMerge {α : Type} : List (Nat × α) → List (Nat × α) → List (Nat × α)

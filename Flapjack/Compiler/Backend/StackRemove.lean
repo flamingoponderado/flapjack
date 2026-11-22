@@ -266,4 +266,28 @@ theorem callFFILengthHOL {σ : Type u} (state : HolFfiState σ) (name : HolFfiNa
     nextBytes.length = bytes.length :=
   callFFIHOL_ret_length state name configuration bytes nextBytes nextState h
 
+/-- HOL `LESS_LENGTH_IMP_APPEND` (`cakeml/compiler/backend/proofs/stack_removeProofScript.sml`):
+a list longer than `n` splits into a prefix of length `n` and its remainder. -/
+@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "LESS_LENGTH_IMP_APPEND"]
+theorem lessLengthImpAppend {α : Type} (xs : List α) (n : Nat) (bound : n < xs.length) :
+    ∃ ys zs, xs = ys ++ zs ∧ ys.length = n := by
+  refine ⟨xs.take n, xs.drop n, ?_, ?_⟩
+  · exact (List.take_append_drop n xs).symm
+  · rw [List.length_take]
+    omega
+
+/-- HOL `push_if` (`cakeml/compiler/backend/proofs/stack_removeProofScript.sml`):
+a branch selection can be pushed inside or outside a common function. -/
+@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "push_if"]
+theorem pushIf {α β : Type} (b : Bool) (f : β → α) (x : β) (y : β) (g : β → α) :
+    (if b then f x else f y) = f (if b then x else y) ∧
+      (if b then f x else g x) = (if b then f else g) x := by
+  constructor
+  · cases b
+    · rfl
+    · rfl
+  · cases b
+    · rfl
+    · rfl
+
 end Flapjack.Compiler.Backend.StackRemove

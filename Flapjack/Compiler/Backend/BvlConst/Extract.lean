@@ -17,6 +17,15 @@ def extractSource {α : Type} (e : Exp) (suffix : List α) : Option Exp :=
   | .op (.blockOp (.cons t)) [] => some (.op (.blockOp (.cons t)) [])
   | _ => none
 
+/-- The extraction written as HOL's case expression. -/
+@[hol "cakeml/compiler/backend/bvl_constScript.sml" "extract_pmatch"]
+theorem extractSource_pmatch {α : Type} (e : Exp) (suffix : List α) :
+    extractSource e suffix = match e with
+      | .var n => some (.var (n + suffix.length + 1))
+      | .op (.intOp (.const i)) _ => some (.op (.intOp (.const i)) [])
+      | .op (.blockOp (.cons t)) [] => some (.op (.blockOp (.cons t)) [])
+      | _ => none := rfl
+
 /-- The production environment builder uses the original extraction on each
 suffix. This equation is Flapjack correspondence infrastructure. -/
 theorem extractList_cons (x : Exp) (xs : List Exp) :

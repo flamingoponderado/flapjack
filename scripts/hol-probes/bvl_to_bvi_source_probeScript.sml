@@ -11,6 +11,17 @@ fun show label th = if null (hyp th) then
   else raise Fail (label ^ " has hypotheses");
 
 val _ = show "destLet_def_typed" bvl_to_bviTheory.destLet_def;
+val _ = show "destLet_pmatch_typed" bvl_to_bviTheory.destLet_pmatch;
+val _ = show "AllocGlobal_location_eq_typed" bvl_to_bviTheory.AllocGlobal_location_eq;
+val _ = show "CopyGlobals_location_eq_typed" bvl_to_bviTheory.CopyGlobals_location_eq;
+val _ = show "InitGlobals_location_eq_typed" bvl_to_bviTheory.InitGlobals_location_eq;
+val _ = show "ListLength_location_eq_typed" bvl_to_bviTheory.ListLength_location_eq;
+val _ = show "FromListByte_location_eq_typed" bvl_to_bviTheory.FromListByte_location_eq;
+val _ = show "ToListByte_location_eq_typed" bvl_to_bviTheory.ToListByte_location_eq;
+val _ = show "SumListLength_location_eq_typed" bvl_to_bviTheory.SumListLength_location_eq;
+val _ = show "ConcatByte_location_eq_typed" bvl_to_bviTheory.ConcatByte_location_eq;
+val _ = show "compile_op_pmatch_typed" bvl_to_bviTheory.compile_op_pmatch;
+val _ = show "compile_prog_eq_typed" bvl_to_bviTheory.compile_prog_eq;
 val _ = show "compile_int_def_typed" bvl_to_bviTheory.compile_int_def;
 val _ = show "global_count_sing_def_typed" bvl_to_bviTheory.global_count_sing_def;
 val _ = show "compile_op_def_typed" bvl_to_bviTheory.compile_op_def;

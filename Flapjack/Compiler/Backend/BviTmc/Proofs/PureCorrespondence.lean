@@ -34,6 +34,59 @@ private theorem pureExps_eq_all (n : Nat) (xs : List Exp) :
   | nil => simp [pureExps]
   | cons x xs ih => simp [pureExps, ih]
 
+/-- HOL `pure_exps_sing`: the singleton list test is the single-expression
+purity test. -/
+@[hol "cakeml/compiler/backend/bvi_tmcScript.sml" "pure_exps_sing"]
+theorem pureExps_sing (n : Nat) (h : Exp) : pureExps n [h] = pureExp n h := by
+  simp [pureExps]
+
+/-- HOL `pure_exps_cons`: a head and a tail are pure exactly when their
+concatenation is. -/
+@[hol "cakeml/compiler/backend/bvi_tmcScript.sml" "pure_exps_cons"]
+theorem pureExps_cons (n : Nat) (h : Exp) (t : List Exp) :
+    (pureExps n [h] && pureExps n t) = pureExps n (h :: t) := by
+  simp [pureExps]
+
+/-- HOL `pure_exps_eqns`: the source list test written without the auxiliary
+single-expression test, one equation per constructor. -/
+@[hol "cakeml/compiler/backend/bvi_tmcScript.sml" "pure_exps_eqns"]
+theorem pureExps_eqns (n v : Nat) (e1 e2 e3 : Exp) (les : List Exp) (le : Exp)
+    (re te : Exp) (ct : Nat) (cd : Option Nat) (cargs : List Exp) (ch : Option Exp)
+    (fl fw la lb lc : Nat) (largs : List Exp) (lce : Exp) (res : List Exp)
+    (oop : ClosLang.Op) (oargs : List Exp) (x1 x2 : Exp) (xs : List Exp) :
+    pureExps n [] = true ∧
+      pureExps n [.var v] = (v < n) ∧
+      pureExps n [.ifThenElse e1 e2 e3] = false ∧
+      pureExps n [.let les le] = (pureExps n [le] && pureExps n les) ∧
+      pureExps n [.raise re] = false ∧
+      pureExps n [.tick te] = false ∧
+      pureExps n [.call ct cd cargs ch] = false ∧
+      pureExps n [.force fl fw] = false ∧
+      pureExps n [.letCall la lb lc largs lce] = false ∧
+      pureExps n [.return res] = false ∧
+      pureExps n [.op oop oargs] = (pureOp oop oargs && pureExps n oargs) ∧
+      pureExps n (x1 :: x2 :: xs) = (pureExps n [x1] && pureExps n (x2 :: xs)) := by
+  simp [pureExps, pureExp]
+
+/-- HOL `pure_exp_eq`: the single-expression test is the singleton list test. -/
+@[hol "cakeml/compiler/backend/bvi_tmcScript.sml" "pure_exp_eq"]
+theorem pureExp_eq (n : Nat) (e : Exp) : pureExp n e = pureExps n [e] := by
+  cases e
+  all_goals simp [pureExps, pureExp]
+
+/-- Concatenating pure lists is the conjunction of their purity tests. -/
+private theorem pureExps_append_and (n : Nat) (xs ys : List Exp) :
+    pureExps n (xs ++ ys) = (pureExps n xs && pureExps n ys) := by
+  rw [pureExps_eq_all, List.all_append, ← pureExps_eq_all, ← pureExps_eq_all]
+
+/-- HOL `pure_exps_append`: two pure lists concatenate to a pure list. -/
+@[hol "cakeml/compiler/backend/bvi_tmcScript.sml" "pure_exps_append"]
+theorem pureExps_append (n : Nat) (es1 es2 : List Exp)
+    (h : (pureExps n es1 && pureExps n es2) = true) :
+    pureExps n (es1 ++ es2) = true := by
+  rw [pureExps_append_and]
+  exact h
+
 private theorem foldPure_success_eq {α : Type} (xs : List α) (f : α → Option Bool) (g : α → Bool)
     (init result : Bool) (agree : ∀ x value, f x = some value → value = g x)
     (run : xs.foldlM (fun yes x => if yes then f x else pure false) init = some result) :

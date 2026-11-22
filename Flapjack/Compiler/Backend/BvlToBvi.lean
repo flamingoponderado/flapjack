@@ -18,12 +18,24 @@ namespace Flapjack.Compiler.Backend.BvlToBvi
 @[hol "cakeml/compiler/backend/bvl_to_bviScript.sml" "AllocGlobal_location_def"]
 def allocGlobalLocation : Nat := dataNumStubs
 
+/-- The evaluated location of the global-allocation stub. -/
+@[hol "cakeml/compiler/backend/bvl_to_bviScript.sml" "AllocGlobal_location_eq"]
+theorem allocGlobalLocation_eq : allocGlobalLocation = 62 := rfl
+
 /-- HOL `CopyGlobals_location_def`: `CopyGlobals_location = AllocGlobal_location + 1`. -/
 @[hol "cakeml/compiler/backend/bvl_to_bviScript.sml" "CopyGlobals_location_def"]
 def copyGlobalsLocation : Nat := allocGlobalLocation + 1
 
+/-- The evaluated location of the copy-globals stub. -/
+@[hol "cakeml/compiler/backend/bvl_to_bviScript.sml" "CopyGlobals_location_eq"]
+theorem copyGlobalsLocation_eq : copyGlobalsLocation = 63 := rfl
+
 /-- HOL `InitGlobals_location_def`: `InitGlobals_location = CopyGlobals_location + 1`. -/
 @[hol "cakeml/compiler/backend/bvl_to_bviScript.sml" "InitGlobals_location_def"]
 def initGlobalsLocation : Nat := copyGlobalsLocation + 1
+
+/-- The evaluated location of the init-globals stub. -/
+@[hol "cakeml/compiler/backend/bvl_to_bviScript.sml" "InitGlobals_location_eq"]
+theorem initGlobalsLocation_eq : initGlobalsLocation = 64 := rfl
 
 end Flapjack.Compiler.Backend.BvlToBvi

@@ -111,6 +111,13 @@ def PanWordLab.toHolWordLab {width : Nat} [NeZero width] :
     (value : BitVec width) :
     (HolWordLab.word value).toPanWordLab = PanWordLab.word value := rfl
 
+/-- Flapjack infrastructure: the exact word-lab carrier is inhabited (every HOL
+    type is), which is what the total `holThe`/`holEl` renderings need. It is
+    declared once here beside `HolWordLab` so that the exact-carrier port modules
+    share a single instance. -/
+instance holWordLabNonempty {width : Nat} [NeZero width] : Nonempty (HolWordLab width) :=
+  ⟨HolWordLab.word (BitVec.ofNat width 0)⟩
+
 /-- Source-shaped port of HOL `panSem$v` (`panSemScript.sml:22`,
     `v = Val ('a word_lab) | RStruct (v list) | NStruct stcname ((fldname # v) list) End`).
     As with `HolWordLab`, the payload word is width-indexed. The HOL name

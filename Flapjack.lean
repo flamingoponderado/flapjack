@@ -897,6 +897,7 @@ import Flapjack.Compiler.Backend.Semantics.ClosSem.Measure
 import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
 import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
 import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyClock
+import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyConst
 import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateClock
 import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateClockSource
 import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateClockShift
@@ -1013,6 +1014,7 @@ import Flapjack.Compiler.Backend.ClosMti.Proofs.Total
 import Flapjack.Compiler.Backend.ClosMti.Proofs.ValueRelSimps
 import Flapjack.Compiler.Backend.ClosMti.Proofs.CollectArgs
 import Flapjack.Compiler.Backend.ClosMti.Proofs.CollectApps
+import Flapjack.Compiler.Backend.ClosMti.Proofs.Sizes
 import Flapjack.Compiler.Backend.ClosMti.Proofs.Applications
 import Flapjack.Compiler.Backend.ClosMti.Proofs.Install
 import Flapjack.Compiler.Backend.ClosMti.Proofs.EvaluateCases
@@ -1035,6 +1037,7 @@ import Flapjack.Compiler.Backend.ClosCall.Proofs.SyntaxOk
 import Flapjack.Compiler.Backend.ClosCall.Stubs
 import Flapjack.Compiler.Backend.ClosCall.InsertEach
 import Flapjack.Compiler.Backend.ClosCall.Free
+import Flapjack.Compiler.Backend.ClosCall.Free.Lemmas
 import Flapjack.Compiler.Backend.ClosCall.Calls
 import Flapjack.Compiler.Backend.ClosCall.Compile
 import Flapjack.Compiler.Backend.ClosCall.Proofs.TotalCorrespondence
@@ -1574,8 +1577,11 @@ import Flapjack.Test.BviApplyParity
 import Flapjack.Test.BviEvaluateParity
 import Flapjack.Compiler.Backend.DbVars
 import Flapjack.Compiler.Backend.DbVars.Proofs.Lookup
+import Flapjack.Compiler.Backend.DbVars.Proofs.Source
 import Flapjack.Compiler.Backend.ClosAnnotate.Free
+import Flapjack.Compiler.Backend.ClosAnnotate.Free.Length
 import Flapjack.Compiler.Backend.ClosAnnotate.Shift
+import Flapjack.Compiler.Backend.ClosAnnotate.Shift.Length
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.FreeVariables
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.FreeVariables.Original
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.ShiftedEnv
@@ -1784,6 +1790,7 @@ import Flapjack.Compiler.Backend.Semantics.DataSem.Evaluate
 import Flapjack.Compiler.Backend.Semantics.DataSem.Semantics
 import Flapjack.Compiler.Backend.DataSpace.Requirements
 import Flapjack.Compiler.Backend.BviToData.Assign
+import Flapjack.Compiler.Backend.BviToData.OpSpaceReset
 import Flapjack.Compiler.Backend.BviToData.Compile
 import Flapjack.Compiler.Backend.BviToData.Proofs.Total
 import Flapjack.Compiler.Backend.BviToData.Proofs.Value
@@ -1954,6 +1961,7 @@ import Flapjack.Compiler.Backend.Semantics.ClosProps.EvaluateAppClock
 import Flapjack.Compiler.Backend.Semantics.ClosProps.DoAppError
 import Flapjack.Compiler.Backend.Semantics.ClosProps.DoAppClock
 import Flapjack.Compiler.Backend.Semantics.ClosProps.EvaluateConst
+import Flapjack.Compiler.Backend.Semantics.ClosProps.EvaluateTimeout
 import Flapjack.Compiler.Backend.Semantics.ClosProps.EqualitySym
 import Flapjack.Compiler.Backend.Semantics.ClosProps.NoMti
 import Flapjack.Compiler.Backend.Semantics.ClosProps.Syntactic
@@ -2879,6 +2887,7 @@ import Flapjack.Pancake.LoopToWord.Proofs.LabPres
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoveLookups
 import Flapjack.Pancake.LoopToWord.Proofs.LabelHandlers
 import Flapjack.Pancake.WordConvs.PredicateEquations
+import Flapjack.Pancake.WordConvs.PredicateLaws
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsPhysicalStateUpdates
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoves.CorrectLeft
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoves.CorrectRight
@@ -3538,6 +3547,8 @@ import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectAtomic
 import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectTickAnnot
 import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectReturnRaise
 import Flapjack.Pancake.Proofs.PanStructs.EvaluateStructsCodeInvariant
+import Flapjack.Pancake.Proofs.PanStructs.EvalCodeInvariance
+import Flapjack.Pancake.Proofs.PanStructs.StructInfosOkHelper
 import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectSeqIf
 import Flapjack.Pancake.Proofs.PanStructs.FlattenConversion
 import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectStoreWords
@@ -3936,6 +3947,8 @@ import Flapjack.Pancake.Proofs.PanSimp.ProgOfHOL
 import Flapjack.PanLocalised
 import Flapjack.Pancake.Proofs.PanSimp.StateRel
 import Flapjack.Pancake.Proofs.PanSimp.CompileEvalCorrect
+import Flapjack.Pancake.Proofs.PanSimp.DistinctParams
+import Flapjack.Pancake.Proofs.PanSimp.ElCompileProg
 import Flapjack.Pancake.Proofs.PanSimp.RetToTailCorrect
 import Flapjack.PanSimpLocalised
 import Flapjack.Pancake.PanStructs

@@ -2,9 +2,9 @@
    The theory is built in a private copy of the pinned CakeML tree
    (commit 857f0d98d); see scripts/hol-probes/README.md for the build
    recipe and the CAKEML load path.
-   70 names: 49 exported (fetched from the theory DB), 19 local
+   70 names: 50 exported (fetched from the theory DB), 20 local
    statements parsed literally from the pinned source text (typed source
-   evidence, not a replay), 2 derived local theorems captured through
+   evidence, not a replay), 7 derived local theorems captured through
    their base statement, 0 datatypes.
 *)
 load "preamble";
@@ -307,3 +307,34 @@ val _ = capture "eval_upd_code_eq2_typed" "eval_upd_code_eq2";
 val _ = emit_as "mem_load_conversion_inst_typed" (fetch_other ("pan_structsProof","mem_load_conversion"));
 (* shape_of_convert_v_rev: GSYM *)
 val _ = emit_as "shape_of_convert_v_rev_typed" (fetch_other ("pan_structsProof","shape_of_convert_v"));
+
+val _ = emit_exported "res_var_FMAP_MAP2_typed" "res_var_FMAP_MAP2";
+val _ = capture "wf_shape_struct_infos_ok_helper_typed" "wf_shape_struct_infos_ok_helper";
+
+(* compile_shape_n_eq_rev: Q.SPECL [sctxt, 0] |> SIMP_RULE list_ss [] |> GSYM *)
+val _ = emit "compile_shape_n_eq_rev_typed"
+  (Q.SPECL [`sctxt`, `0`] (fetch_other ("pan_structsProof","compile_shape_n_eq"))
+     |> SIMP_RULE list_ss [] |> GSYM);
+
+(* convert_res_eq_case1 is [local]; replay its source proof to obtain the
+   theorem, then apply the source derivation for convert_res_eq_case. *)
+val convert_res_eq_case1_th =
+  TAC_PROOF (([], Parse.Term [QUOTE (strip_antiquote (statement_of "convert_res_eq_case1"))]),
+    every_case_tac >> simp [convert_res_def]);
+val convert_res_eq_case_th = REWRITE_RULE [convert_res_def] convert_res_eq_case1_th;
+val _ = emit "convert_res_eq_case_typed" convert_res_eq_case_th;
+(* convert_res_eq_NONE: SIMP_CONV (srw_ss ()) [convert_res_eq_case,
+   option_case_eq, result_case_eq] ``convert_res res = NONE`` *)
+val _ = emit "convert_res_eq_NONE_typed"
+  (SIMP_CONV (srw_ss ()) [convert_res_eq_case_th, option_case_eq, result_case_eq]
+     ``convert_res res = NONE``);
+
+(* mem_load_rec1: cj 1 mem_load_def |> Q.SPEC `stcs` *)
+val mem_load_rec1_th = cj 1 mem_load_def |> Q.SPEC `stcs`;
+val _ = emit "mem_load_rec1_typed" mem_load_rec1_th;
+(* mem_load_rec: LIST_CONJ of the three specialisations *)
+val _ = emit "mem_load_rec_typed"
+  (LIST_CONJ
+     [mem_load_rec1_th |> Q.SPEC `One`,
+      mem_load_rec1_th |> Q.SPEC `Comb shs`,
+      mem_load_rec1_th |> Q.SPEC `Named nm`]);

@@ -1,0 +1,8 @@
+mk_Union_Empty_typed=mk_Union Empty (A :db_var_set) = A /\ mk_Union A Empty = A
+FOLDR_mk_Union_UNZIP_typed=FOLDR (\((x :'a),(l :db_var_set)) ((ts :'a list),(frees :db_var_set)). (x::ts,mk_Union l frees)) (([] :'a list),(A :db_var_set)) (l :('a # db_var_set) list) = (let ((ts :'a list),(fvs :db_var_set list)) = UNZIP l in (ts,list_mk_Union (fvs ++ [A])))
+wf_db_to_set_acc_typed=!(s :db_var_set) (n :num) (a :sptree$num_set). wf a ==> wf (db_to_set_acc n s a)
+wf_db_to_set_typed=!(db :db_var_set). wf (db_to_set db)
+has_var_list_mk_Union_typed=!(ls :db_var_set list). has_var (n :num) (list_mk_Union ls) <=> EXISTS (has_var n) ls
+lookup_db_to_set_Shift_typed=lookup (n :num) (db_to_set (Shift (k :num) (s :db_var_set))) = lookup (n + k) (db_to_set s)
+has_var_FOLDL_Union_typed=!(vs :num list) (n :num) (s :db_var_set). has_var n (FOLDL (\(s1 :db_var_set) (v :num). Union (Var v) s1) s vs) <=> MEM n vs \/ has_var n s
+ALL_DISTINCT_vars_to_list_typed=ALL_DISTINCT (vars_to_list (d :db_var_set))

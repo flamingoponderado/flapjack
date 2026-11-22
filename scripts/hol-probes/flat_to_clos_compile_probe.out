@@ -1,0 +1,1 @@
+HD_compile_typed=[HD (compile (m :mlstring option list) [(x :exp)])] = compile m [x]

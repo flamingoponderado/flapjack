@@ -81,4 +81,16 @@ def fixClock {C F D G R : Type} (s : State C F) (result : R × State D G) : R ×
 theorem fixClock_clock_le {C F D G R : Type} (s : State C F) (result : R × State D G) :
     (fixClock s result).2.clock ≤ s.clock := Nat.min_le_left _ _
 
+/-- A clamped result's clock never exceeds the incoming state's clock. -/
+@[hol "cakeml/compiler/backend/semantics/bvlSemScript.sml" "fix_clock_IMP"
+  (fmap_as_finite_support := [refs])]
+theorem fixClock_IMP {C F D G R : Type} (s : State C F) (x : R × State D G) (res : R)
+    (s1 : State D G) (run : fixClock s x = (res, s1)) : s1.clock ≤ s.clock := by
+  cases x with
+  | mk a b =>
+    simp only [fixClock, Prod.mk.injEq] at run
+    obtain ⟨-, h⟩ := run
+    rw [← h]
+    exact Nat.min_le_left s.clock b.clock
+
 end Flapjack.Compiler.Backend.BvlSem

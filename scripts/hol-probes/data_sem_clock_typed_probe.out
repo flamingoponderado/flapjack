@@ -1,0 +1,2 @@
+data_fix_clock_IMP_typed=fix_clock (s :(δ, ε) state) (x :α # (β, γ) state) = ((res :α),(s1 :(β, γ) state)) ⇒ s1.clock ≤ s.clock
+data_LESS_EQ_dec_clock_typed=(r :(α, β) state).clock ≤ (dec_clock (s :(γ, δ) state) :(γ, δ) state).clock ⇒ r.clock ≤ s.clock

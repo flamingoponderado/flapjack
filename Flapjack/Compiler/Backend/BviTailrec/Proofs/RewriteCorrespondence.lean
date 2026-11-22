@@ -319,6 +319,250 @@ def rewriteSource (loc next : Nat) (op : AssocOp) (acc : Nat)
   | e => sourceDispatch loc next op acc ctx e
 termination_by e => sizeOf e
 
+/-- The nonempty scan's `headD` default is unreachable, so it agrees with the
+reviewed `holHd` rendering of HOL's `HD`. -/
+private theorem headD_eq_holHd {α : Type} [Nonempty α] (d : α) (l : List α)
+    (h : l ≠ []) : l.headD d = Flapjack.holHd l := by
+  cases l with
+  | nil => exact absurd rfl h
+  | cons x xs => rfl
+
+/-- HOL `rewrite_PMATCH`: the recursive rewrite's case equation, with the outer
+`pmatch` on the expression in source order (`Var`, `If`, `Let`, `Tick`,
+`Force`, then the trailing `_` arm written literally as HOL's
+`check_op`/`opbinargs` case). HOL's `HD` is the reviewed `holHd`; the scan is a
+singleton, so its empty clause is unreachable. HOL's `LAST1` is rendered by
+`List.getLast?`, `MAP (FST o SND)` by `Prod.fst ∘ Prod.snd`, and `FST c` by
+`c.1`. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "rewrite_PMATCH"]
+theorem rewriteSource_PMATCH (loc next : Nat) (opr : AssocOp) (acc : Nat)
+    (ts : List ValueType) (expr : Exp) :
+    rewriteSource loc next opr acc ts expr =
+      (match expr with
+       | .var n => (false, .var n)
+       | .ifThenElse x1 x2 x3 =>
+         let t1 := (@Flapjack.holHd (List ValueType × ValueType × Bool × Option AssocOp)
+             ⟨([], .any, false, none)⟩ (scanExpr ts loc [x1])).1
+         let (r2, y2) := rewriteSource loc next opr acc t1 x2
+         let (r3, y3) := rewriteSource loc next opr acc t1 x3
+         let z2 := if r2 then y2 else applyOp opr (.var acc) x2
+         let z3 := if r3 then y3 else applyOp opr (.var acc) x3
+         (r2 || r3, .ifThenElse x1 z2 z3)
+       | .let xs x =>
+         let ys := scanExpr ts loc xs
+         let tt := ys.map (Prod.fst ∘ Prod.snd)
+         let tr := match ys.getLast? with | none => ts | some c => c.1
+         let (r, y) := rewriteSource loc next opr (acc + xs.length) (tt ++ tr) x
+         (r, .let xs y)
+       | .tick x =>
+         let (r, y) := rewriteSource loc next opr acc ts x
+         (r, .tick y)
+       | .force l v => (false, .force l v)
+       | e =>
+         match checkOp ts opr loc e with
+         | none => (false, applyOp opr (.var acc) e)
+         | some expr2 =>
+           match opBinArgs opr expr2 with
+           | none => (false, applyOp opr (.var acc) expr2)
+           | some (xs, f) => (true, pushCall next opr acc xs (argsFrom f))) := by
+  cases expr with
+  | var n =>
+    conv =>
+      enter [1]
+      rw [rewriteSource.eq_def]
+  | ifThenElse x1 x2 x3 =>
+    conv =>
+      enter [1]
+      rw [rewriteSource.eq_def]
+    dsimp only
+    rw [@headD_eq_holHd (List ValueType × ValueType × Bool × Option AssocOp)
+      ⟨([], .any, false, none)⟩ (ts, .any, false, none) (scanExpr ts loc [x1])
+      (scanExpr_not_nil x1 ts loc)]
+  | «let» xs x =>
+    conv =>
+      enter [1]
+      rw [rewriteSource.eq_def]
+    dsimp only
+    cases (scanExpr ts loc xs).getLast? with
+    | none => rfl
+    | some c => rfl
+  | raise x =>
+    conv =>
+      enter [1]
+      rw [rewriteSource.eq_def]
+    dsimp only
+    simp only [sourceDispatch]
+  | tick x =>
+    conv =>
+      enter [1]
+      rw [rewriteSource.eq_def]
+  | call ticks dest args handler =>
+    conv =>
+      enter [1]
+      rw [rewriteSource.eq_def]
+    dsimp only
+    simp only [sourceDispatch]
+  | force l v =>
+    conv =>
+      enter [1]
+      rw [rewriteSource.eq_def]
+  | op actual args =>
+    conv =>
+      enter [1]
+      rw [rewriteSource.eq_def]
+    dsimp only
+    simp only [sourceDispatch]
+  | letCall v28 v29 v30 v31 v32 =>
+    conv =>
+      enter [1]
+      rw [rewriteSource.eq_def]
+    dsimp only
+    simp only [sourceDispatch]
+  | «return» xs =>
+    conv =>
+      enter [1]
+      rw [rewriteSource.eq_def]
+    dsimp only
+    simp only [sourceDispatch]
+
+/-- HOL `rewrite_eq`: the recursive rewrite's equations with the source list
+scans replaced by the single-expression scan and the list scan, as HOL's
+`SRULE [scan_expr_eq]` does. HOL's `FST (scan_expr_sing ts loc x1)` is the
+singleton scan's first component, `scan_expr_list` is `scanList`, `LAST1` is
+`List.getLast?` with the `NONE` arm first, `MAP (FST o SND)` is
+`Prod.fst ∘ Prod.snd`, `FST c` is `c.1`, and the trailing constructor
+equations are HOL's literal `check_op`/`opbinargs` case. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "rewrite_eq"]
+theorem rewriteSource_eq :
+    (∀ (ts : List ValueType) (opr : AssocOp) (next n loc acc : Nat),
+      rewriteSource loc next opr acc ts (.var n) = (false, .var n)) ∧
+    (∀ (x3 x2 x1 : Exp) (ts : List ValueType) (opr : AssocOp) (next loc acc : Nat),
+      rewriteSource loc next opr acc ts (.ifThenElse x1 x2 x3) =
+        (let t1 := (scanSing ts loc x1).1
+         let (r2, y2) := rewriteSource loc next opr acc t1 x2
+         let (r3, y3) := rewriteSource loc next opr acc t1 x3
+         let z2 := if r2 then y2 else applyOp opr (.var acc) x2
+         let z3 := if r3 then y3 else applyOp opr (.var acc) x3
+         (r2 || r3, .ifThenElse x1 z2 z3))) ∧
+    (∀ (xs : List Exp) (x : Exp) (ts : List ValueType) (opr : AssocOp)
+        (next loc acc : Nat),
+      rewriteSource loc next opr acc ts (.let xs x) =
+        (let ys := scanList ts loc xs
+         let tt := ys.map (Prod.fst ∘ Prod.snd)
+         let tr := match ys.getLast? with | none => ts | some c => c.1
+         let (r, y) := rewriteSource loc next opr (acc + xs.length) (tt ++ tr) x
+         (r, .let xs y))) ∧
+    (∀ (x : Exp) (ts : List ValueType) (opr : AssocOp) (next loc acc : Nat),
+      rewriteSource loc next opr acc ts (.tick x) =
+        (let (r, y) := rewriteSource loc next opr acc ts x
+         (r, .tick y))) ∧
+    (∀ (v : Nat) (ts : List ValueType) (opr : AssocOp) (next loc l acc : Nat),
+      rewriteSource loc next opr acc ts (.force l v) = (false, .force l v)) ∧
+    (∀ (v18 : Exp) (ts : List ValueType) (opr : AssocOp) (next loc acc : Nat),
+      rewriteSource loc next opr acc ts (.raise v18) =
+        (match checkOp ts opr loc (.raise v18) with
+         | none => (false, applyOp opr (.var acc) (.raise v18))
+         | some v1 =>
+           match opBinArgs opr v1 with
+           | none => (false, applyOp opr (.var acc) v1)
+           | some (xs, f) => (true, pushCall next opr acc xs (argsFrom f)))) ∧
+    (∀ (v23 : Option Exp) (v22 : List Exp) (v21 : Option Nat) (v20 : Nat)
+        (ts : List ValueType) (opr : AssocOp) (next loc acc : Nat),
+      rewriteSource loc next opr acc ts (.call v20 v21 v22 v23) =
+        (match checkOp ts opr loc (.call v20 v21 v22 v23) with
+         | none => (false, applyOp opr (.var acc) (.call v20 v21 v22 v23))
+         | some v1 =>
+           match opBinArgs opr v1 with
+           | none => (false, applyOp opr (.var acc) v1)
+           | some (xs, f) => (true, pushCall next opr acc xs (argsFrom f)))) ∧
+    (∀ (v27 : List Exp) (v26 : ClosLang.Op) (ts : List ValueType) (opr : AssocOp)
+        (next loc acc : Nat),
+      rewriteSource loc next opr acc ts (.op v26 v27) =
+        (match checkOp ts opr loc (.op v26 v27) with
+         | none => (false, applyOp opr (.var acc) (.op v26 v27))
+         | some v1 =>
+           match opBinArgs opr v1 with
+           | none => (false, applyOp opr (.var acc) v1)
+           | some (xs, f) => (true, pushCall next opr acc xs (argsFrom f)))) ∧
+    (∀ (v32 : Exp) (v31 : List Exp) (v30 v29 v28 : Nat) (ts : List ValueType)
+        (opr : AssocOp) (next loc acc : Nat),
+      rewriteSource loc next opr acc ts (.letCall v28 v29 v30 v31 v32) =
+        (match checkOp ts opr loc (.letCall v28 v29 v30 v31 v32) with
+         | none => (false, applyOp opr (.var acc) (.letCall v28 v29 v30 v31 v32))
+         | some v1 =>
+           match opBinArgs opr v1 with
+           | none => (false, applyOp opr (.var acc) v1)
+           | some (xs, f) => (true, pushCall next opr acc xs (argsFrom f)))) ∧
+    (∀ (v33 : List Exp) (ts : List ValueType) (opr : AssocOp) (next loc acc : Nat),
+      rewriteSource loc next opr acc ts (.return v33) =
+        (match checkOp ts opr loc (.return v33) with
+         | none => (false, applyOp opr (.var acc) (.return v33))
+         | some v1 =>
+           match opBinArgs opr v1 with
+           | none => (false, applyOp opr (.var acc) v1)
+           | some (xs, f) => (true, pushCall next opr acc xs (argsFrom f)))) := by
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  · intro ts opr next n loc acc
+    conv =>
+      enter [1]
+      rw [rewriteSource.eq_def]
+  · intro x3 x2 x1 ts opr next loc acc
+    conv =>
+      enter [1]
+      rw [rewriteSource.eq_def]
+    dsimp only
+    rw [scanExpr_single ts loc x1]
+    rfl
+  · intro xs x ts opr next loc acc
+    conv =>
+      enter [1]
+      rw [rewriteSource.eq_def]
+    dsimp only
+    rw [scanExpr_list ts loc xs]
+    cases last : (scanList ts loc xs).getLast? with
+    | none => rfl
+    | some c =>
+      obtain ⟨a, b, cc, d⟩ := c
+      rfl
+  · intro x ts opr next loc acc
+    conv =>
+      enter [1]
+      rw [rewriteSource.eq_def]
+  · intro v ts opr next loc l acc
+    conv =>
+      enter [1]
+      rw [rewriteSource.eq_def]
+  · intro v18 ts opr next loc acc
+    conv =>
+      enter [1]
+      rw [rewriteSource.eq_def]
+    dsimp only
+    simp only [sourceDispatch]
+  · intro v23 v22 v21 v20 ts opr next loc acc
+    conv =>
+      enter [1]
+      rw [rewriteSource.eq_def]
+    dsimp only
+    simp only [sourceDispatch]
+  · intro v27 v26 ts opr next loc acc
+    conv =>
+      enter [1]
+      rw [rewriteSource.eq_def]
+    dsimp only
+    simp only [sourceDispatch]
+  · intro v32 v31 v30 v29 v28 ts opr next loc acc
+    conv =>
+      enter [1]
+      rw [rewriteSource.eq_def]
+    dsimp only
+    simp only [sourceDispatch]
+  · intro v33 ts opr next loc acc
+    conv =>
+      enter [1]
+      rw [rewriteSource.eq_def]
+    dsimp only
+    simp only [sourceDispatch]
+
 /-- An operation with a false accumulator guard or a failed candidate check
 is rewritten to the explicit accumulator fallback. -/
 theorem rewriteSource_op_fallback (ctx : List ValueType) (loc next acc : Nat)

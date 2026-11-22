@@ -71,4 +71,20 @@ def compileProgSource (start n : Nat) (programs : List (Nat × Nat × Bvl.Exp)) 
   (initGlobalsLocation,
     stubs (bvlNumStubs + bvlToBviNamespaces * start) count ++ appListAppend code, next)
 
+/-- The program conversion written with the list-shaped allocation count. -/
+@[hol "cakeml/compiler/backend/bvl_to_bviScript.sml" "compile_prog_eq"]
+theorem compileProg_eq (start n : Nat) (prog : List (Nat × Nat × Bvl.Exp)) :
+    compileProgSource start n prog =
+      let k := globalCountList (prog.map (Prod.snd ∘ Prod.snd))
+      let (code, n1) := compileProgramsSource n prog
+      (initGlobalsLocation,
+        stubs (bvlNumStubs + bvlToBviNamespaces * start) k ++ appListAppend code, n1) := by
+  have hmap : prog.map (fun (_, _, body) => body) = prog.map (Prod.snd ∘ Prod.snd) := by
+    apply List.map_congr_left
+    intro x _
+    cases x with
+    | mk a bc => cases bc with
+      | mk b body => rfl
+  simp only [compileProgSource, allocGlobCount_eq_globalCountList, hmap]
+
 end Flapjack.Compiler.Backend.BvlToBvi

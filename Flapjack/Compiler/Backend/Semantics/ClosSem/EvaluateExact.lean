@@ -166,4 +166,11 @@ decreasing_by
   all_goals try omega
 end
 
+/-- HOL `evaluate_app_NIL`: applying no arguments returns the function itself. -/
+@[hol "cakeml/compiler/backend/semantics/closSemScript.sml" "evaluate_app_NIL"
+  (fmap_as_finite_support := [refs, code])]
+theorem evaluateApp_NIL {C F : Type} (loc : Option Nat) (v : Value) (state : State C F) :
+    evaluateApp loc v [] state = (.val [v], state) := by
+  simp only [evaluateApp]
+
 end Flapjack.Compiler.Backend.ClosSem

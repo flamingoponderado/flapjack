@@ -86,3 +86,31 @@ val _ = show "rewrite_worker_def_typed" bvi_tmcTheory.rewrite_worker_def;
 val _ = show "compile_exp_def_typed" bvi_tmcTheory.compile_exp_def;
 val _ = show "compile_each_def_typed" bvi_tmcTheory.compile_each_def;
 val _ = show "compile_prog_def_typed" bvi_tmcTheory.compile_prog_def;
+
+val _ = show "pure_exps_sing_typed" bvi_tmcTheory.pure_exps_sing;
+val _ = show "pure_exps_cons_typed" bvi_tmcTheory.pure_exps_cons;
+val _ = show "pure_exps_eqns_typed" bvi_tmcTheory.pure_exps_eqns;
+val _ = show "pure_exp_eq_typed" bvi_tmcTheory.pure_exp_eq;
+val _ = show "pure_exps_append_typed" bvi_tmcTheory.pure_exps_append;
+val _ = show "bind_size_typed" bvi_tmcTheory.bind_size;
+val _ = show "shift_vars_zero_typed" bvi_tmcTheory.shift_vars_zero;
+val _ = show "length_shift_vars_typed" bvi_tmcTheory.length_shift_vars;
+val _ = show "shift_vars_dist_typed" bvi_tmcTheory.shift_vars_dist;
+
+(* Local lemmas are not exported by the theory; replay their source statements. *)
+val _ = print "bvi_to_cb_aux_size_lemma_typed=";
+val _ = print_term
+  ``(∀n loc tag exp bs sum.
+       bvi_to_cb_aux_sing n loc tag exp = SOME (bs,sum) ⇒
+       list_size exp_size bs ≤ exp_size exp + 1) ∧
+     (∀n loc tag args bs sum.
+       bvi_to_cb_aux n loc tag args = SOME (bs,sum) ⇒
+       list_size exp_size bs ≤ list_size exp_size args)``;
+val _ = print "\n";
+val _ = print "call_block_size_shift_typed=";
+val _ = print_term ``∀x n. cb_size (shift_cb n x) = cb_size x``;
+val _ = print "\n";
+
+val _ = show "bvi_to_cb_aux_size_typed" bvi_tmcTheory.bvi_to_cb_aux_size;
+val _ = show "bvi_to_cb_size_typed" bvi_tmcTheory.bvi_to_cb_size;
+val _ = show "cb_to_bvi_worker_aux_eq_typed" bvi_tmcTheory.cb_to_bvi_worker_aux_eq;
