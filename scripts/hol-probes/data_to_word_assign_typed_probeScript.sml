@@ -15,7 +15,6 @@ val _ = Globals.linewidth := 1000000;
 val _ = show_types := true;
 
 
-
 fun emit label th = (print (label ^ "=");
   app (fn h => (print_term h; print " ==> ")) (hyp th);
   print_term (concl th); print "\n");
@@ -710,7 +709,6 @@ val _ = cap "assign_WordFromWord_typed" "assign_WordFromWord";
 val _ = cap "assign_ConfigGC_typed" "assign_ConfigGC";
 
 
-
 (* Batch B1 (flapjack-assign2): block tag and length tests. *)
 val _ = print ("assign_TagEq_hypotheses=" ^
   Int.toString (length (hyp assign_TagEq)) ^ "\n");
@@ -737,7 +735,6 @@ val _ = cap "AllocVar_thm_binary_typed" "AllocVar_thm_binary";
 val _ = cap "assign_UpdateThunk_typed" "assign_UpdateThunk";
 
 (* Batch A13+: AllocVar_thm_binary, AllocThunk, XorByte, ListAppend, misc, assign_thm. *)
-val _ = cap "AllocVar_thm_binary_typed" "AllocVar_thm_binary";
 val _ = cap "assign_AllocThunk_typed" "assign_AllocThunk";
 val _ = cap "evaluate_XorLoop_typed" "evaluate_XorLoop";
 val _ = cap "assign_XorByte_typed" "assign_XorByte";
@@ -753,13 +750,6 @@ val _ = cap "evaluate_AppendLenLoop_code_typed" "evaluate_AppendLenLoop_code";
 val _ = cap "assign_ListAppend_typed" "assign_ListAppend";
 val _ = cap "assign_thm_typed" "assign_thm";
 
-(* Batch A9: assign_MutCons. *)
-val _ = cap "assign_MutCons_typed" "assign_MutCons";
-
-(* Batch A10: assign_UpdateCons, assign_WordFromWord, assign_ConfigGC. *)
-val _ = cap "assign_UpdateCons_typed" "assign_UpdateCons";
-val _ = cap "assign_WordFromWord_typed" "assign_WordFromWord";
-val _ = cap "assign_ConfigGC_typed" "assign_ConfigGC";
 
 (* Batch B4 (flapjack-assign2): integer-to-Word64 conversion. *)
 val _ = cap "assign_WordFromInt_typed" "assign_WordFromInt";
@@ -768,7 +758,6 @@ val _ = cap "assign_WordFromInt_typed" "assign_WordFromInt";
 (* Batch C1 (flapjack-assign2c): RefByte and FromList stubs. *)
 val _ = emit "set_byte_sort_typed" (DB.fetch "data_to_word_memoryProof" "set_byte_sort");
 val _ = emit "last_bytes_simp_typed" (DB.fetch "data_to_word_memoryProof" "last_bytes_simp");
-val _ = emit_exported "evaluate_WriteLastBytes_typed" "evaluate_WriteLastBytes";
 val _ = emit_exported "RefByte_thm_typed" "RefByte_thm";
 val _ = emit_exported "FromList1_code_thm_typed" "FromList1_code_thm";
 val _ = emit_exported "FromList_thm_typed" "FromList_thm";
