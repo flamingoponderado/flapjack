@@ -733,3 +733,20 @@ val _ = cap "AllocVar_thm_binary_typed" "AllocVar_thm_binary";
 
 (* Batch A12: assign_UpdateThunk. *)
 val _ = cap "assign_UpdateThunk_typed" "assign_UpdateThunk";
+
+(* Batch A13+: AllocVar_thm_binary, AllocThunk, XorByte, ListAppend, misc, assign_thm. *)
+val _ = cap "AllocVar_thm_binary_typed" "AllocVar_thm_binary";
+val _ = cap "assign_AllocThunk_typed" "assign_AllocThunk";
+val _ = cap "evaluate_XorLoop_typed" "evaluate_XorLoop";
+val _ = cap "assign_XorByte_typed" "assign_XorByte";
+val _ = cap "evaluate_WriteLastBytes_typed" "evaluate_WriteLastBytes";
+val _ = cap "do_app_aux_safe_for_space_mono_typed" "do_app_aux_safe_for_space_mono";
+val _ = cap "do_app_FromList_safe_typed" "do_app_FromList_safe";
+val _ = cap "do_app_RefByte_eq_typed" "do_app_RefByte_eq";
+val _ = cap "evaluate_IMP_domain_union_typed" "evaluate_IMP_domain_union";
+val _ = cap "assign_def_extras_typed" "assign_def_extras";
+val _ = cap "evaluate_AppendMainLoop_code_typed" "evaluate_AppendMainLoop_code";
+val _ = cap "evaluate_AppendMainLoop_code_alt_typed" "evaluate_AppendMainLoop_code_alt";
+val _ = cap "evaluate_AppendLenLoop_code_typed" "evaluate_AppendLenLoop_code";
+val _ = cap "assign_ListAppend_typed" "assign_ListAppend";
+val _ = cap "assign_thm_typed" "assign_thm";
