@@ -845,6 +845,7 @@ val _ = emit "word1_cases_typed" data_to_word_assignProofTheory.word1_cases;
 val _ = emit "w2w_w2w_64_typed" data_to_word_assignProofTheory.w2w_w2w_64;
 val _ = emit "extract_append_id_typed" data_to_word_assignProofTheory.extract_append_id;
 val _ = emit "w2w_select_id_typed" data_to_word_assignProofTheory.w2w_select_id;
+val _ = emit "evaluate_LoadBignum_typed" data_to_word_assignProofTheory.evaluate_LoadBignum;
 
 (* Replay the source-local fp_greater theorem at its original statement and proof. *)
 val fp_greater_local_replay = let

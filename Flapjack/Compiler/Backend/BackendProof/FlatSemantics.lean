@@ -26,16 +26,16 @@ theorem snd_flatToClos_incCompile {α : Type} (p : List FlatLang.Exp) :
       (let xs := FlatToClos.compileDecs p ++ FlatToClos.compileDecs [.con .none none []]
        (ClosInterp.insertInterp xs, ([] : List α))).2 := rfl
 
-/-- Statement of HOL `flat_semantics` (`backendProofScript.sml:3401-3417`),
-compared with `flat_semantics_typed`. HOL's free `asm_conf`, `c'`, `syn`, `cc`,
-`ffi`, `ds` and `cconf` are explicit; the compiler state type of `cc` is the
-captured `num # val_approx num_map # num_set # (num # bvl$exp) num_map # num #
-num # num # (num # bvi$exp) num_map # num # lab_to_target$config`, the type of
-`SND (config_tuple1 c')`, and `FEMPTY` is `HolFiniteMapExact.holEmpty`.
-Untagged pending a reviewed qualifier combining
-`fmap_as_finite_support_result_observations` (for `holEmpty`) with
-`words_as_type_indexed_bitvec` (for `asm_conf : 'a asm_config`); AGENTS.md
-currently forbids that combination. -/
+/-- Exact HOL `flat_semantics` (`backendProofScript.sml:3401-3417`). HOL's
+free `asm_conf`, `c'`, `syn`, `cc`, `ffi`, `ds` and `cconf` are explicit; the
+compiler state type of `cc` is the captured `num # val_approx num_map #
+num_set # (num # bvl$exp) num_map # num # num # num # (num # bvi$exp) num_map #
+num # lab_to_target$config`, the type of `SND (config_tuple1 c')`. `FEMPTY` is
+the canonical empty finite map `HolFiniteMapExact.holEmpty`; `'a asm_config`
+is `AsmConfigExact width`. The semantics inherit SOUNDNESS item 8. -/
+@[hol "cakeml/compiler/backend/proofs/backendProofScript.sml" "flat_semantics"
+  (fmap_as_finite_support_result_observations := [Flapjack.HolFiniteMapExact.holEmpty])
+  (words_as_type_indexed_bitvec)]
 theorem flatSemantics {width : Nat} [NeZero width] {F : Type}
     (asmConf : AsmConfigExact width) (c' : Flapjack.Compiler.Backend.Backend.Config)
     (syn : Nat → (Nat × Nat) × List AstHOL.Dec)
