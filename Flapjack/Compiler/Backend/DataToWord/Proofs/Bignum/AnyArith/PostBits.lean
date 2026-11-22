@@ -143,4 +143,9 @@ theorem header_shift1 {width : Nat} [NeZero width] (v : Int)
     simp [BitVec.toNat_ushiftRight, BitVec.toNat_add, Nat.shiftRight_eq_div_pow] <;>
     rw [Nat.mod_eq_of_lt (by omega)] <;> (try rw [Nat.mod_eq_of_lt (by omega)]) <;> omega
 
+
+theorem tag_lt {width : Nat} [NeZero width] (good : goodDimindex width) (s : Bool) :
+    (((if s then 1 else 0 : BitVec width) <<< 2) ||| 3).toNat < 8 := by
+  rcases good with h | h <;> subst h <;> cases s <;> decide
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Bignum.AnyArith
