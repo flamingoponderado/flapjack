@@ -367,3 +367,5 @@ val _ = emit_exported "survives_nested_seq_intro_typed" "survives_nested_seq_int
 val _ = emit_exported "unassigned_vars_evaluate_same_typed" "unassigned_vars_evaluate_same";
 val _ = emit_exported "lookup_set_vars_typed" "lookup_set_vars";
 val _ = emit_exported "lookup_set_vars_not_MEM_typed" "lookup_set_vars_not_MEM";
+val _ = emit_exported "cut_res_add_clock_typed" "cut_res_add_clock";
+val _ = emit_exported "get_vars_clock_typed" "get_vars_clock";

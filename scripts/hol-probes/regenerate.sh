@@ -12078,7 +12078,7 @@ run_probe loop_props_local_typed_probeScript.sml loop_props_local_typed_probe.ou
   locals_touched_eq_eval_eq_typed lookup_alist_insert_any_typed \
   loop_eval_nested_assign_distinct_eq_typed nested_assigns_survives_typed \
   nested_seq_pure_evaluation_typed survives_def_typed survives_nested_seq_intro_typed \
-  unassigned_vars_evaluate_same_typed lookup_set_vars_typed lookup_set_vars_not_MEM_typed \
+  unassigned_vars_evaluate_same_typed lookup_set_vars_typed lookup_set_vars_not_MEM_typed cut_res_add_clock_typed get_vars_clock_typed \
   "$cake_dir/pancake/semantics/loopPropsScript.sml" \
   "$cake_dir/pancake/semantics"
 run_probe word_inst_proof_local_typed_probeScript.sml word_inst_proof_local_typed_probe.out \

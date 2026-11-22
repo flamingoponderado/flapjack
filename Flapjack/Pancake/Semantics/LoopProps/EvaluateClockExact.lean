@@ -105,6 +105,42 @@ theorem cutRes_add_clock (live : NumSet) (r : Option (LoopResultExact width))
         simp only [hz', if_false, decClock, Prod.mk.injEq, true_and]
         cases s1; simp only [LoopSemStateFiniteExact.mk.injEq, true_and, and_true] at hs1 hz ⊢; omega
 
+/-- Exact HOL `cut_res_add_clock` (`loopPropsScript.sml:969-977`):
+    `cut_res l (res,s) = (q,r) /\ q <> SOME TimeOut ==>
+     cut_res l (res,s with clock := ck + s.clock) =
+       (q,r with clock := ck + r.clock)`.
+    The binders `l`, `res`, `s`, `q`, `r`, `ck` and the `ck + clock` addition
+    order are HOL's own.  The internal `cutRes_add_clock` above states the same
+    fact with the commuted `clock + ck` order and with the conjunction split
+    into two hypotheses, so this tagged form is its `Nat.add_comm` restatement;
+    the exact-carrier qualifiers match the other clock lemmas in this module. -/
+@[hol "cakeml/pancake/semantics/loopPropsScript.sml" "cut_res_add_clock"
+  (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
+theorem cutResAddClockHOL (live : NumSet) (res : Option (LoopResultExact width))
+    (s : LoopSemStateFiniteExact width F) (q : Option (LoopResultExact width))
+    (r : LoopSemStateFiniteExact width F) (ck : Nat)
+    (h : cutRes live (res, s) = (q, r) ∧ q ≠ some .timeOut) :
+    cutRes live (res, { s with clock := ck + s.clock }) =
+      (q, { r with clock := ck + r.clock }) := by
+  obtain ⟨heq, hne⟩ := h
+  have := cutRes_add_clock live res s r q ck heq hne
+  rw [Nat.add_comm s.clock ck, Nat.add_comm r.clock ck] at this
+  exact this
+
+/-- Exact HOL `get_vars_clock` (`loopPropsScript.sml:979-983`):
+    `∀vs s c. get_vars vs (s with clock := c) = get_vars vs s`.  The binders
+    `vs`, `s`, `c` follow the source; `get_vars` is the tagged `getVars` over
+    the exact `locals` `num_map`, which the clock update does not touch. -/
+@[hol "cakeml/pancake/semantics/loopPropsScript.sml" "get_vars_clock"
+  (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
+theorem getVars_clock (names : List Nat) (state : LoopSemStateFiniteExact width F)
+    (clock : Nat) :
+    getVars names { state with clock := clock } = getVars names state := by
+  induction names with
+  | nil => rfl
+  | cons name names ih =>
+      simp only [getVars, ih]
+
 /-- Exact HOL `evaluate_add_clock_eq` (`loopPropsScript.sml:985-...`):
     `!p t res st ck. evaluate (p,t) = (res,st) /\ res <> SOME TimeOut ==>
       evaluate (p,t with clock := t.clock + ck) = (res,st with clock := st.clock + ck)`. -/
