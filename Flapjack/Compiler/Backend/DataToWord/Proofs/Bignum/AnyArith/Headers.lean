@@ -103,4 +103,37 @@ theorem headers_step {width : Nat} [NeZero width] {C F : Type} {c : Config} {l1 
           getRealAddr_setStore_temp, store_setVar] at ra
         exact ra
 
+
+/-- Header facts at the state after both header computations. -/
+theorem HeaderFacts.toHeaderState {width : Nat} [NeZero width] {C F : Type} {c : Config}
+    {i j k : Int} {other : Bool} {r : Nat} {s1 : WordSemStateFiniteExact width C F}
+    {a2 a3 b2 b3 b2' b3' : BitVec width} {tmp tmp' : WordLocW width}
+    (hr : adjustVar r ≠ 7)
+    (P : HeaderFacts c k other r s1 a2 a3) :
+    HeaderFacts c k other r (headerState s1 i j b2 b3 b2' b3' tmp tmp') a2 a3 := by
+  obtain ⟨z, sm, bg⟩ := P
+  have nt : ∀ q : BitVec 5, (if other then WordStore.otherHeap else WordStore.nextFree : WordStoreHOL) ≠ .temp q := by
+    intro q h; cases other <;> cases h
+  refine ⟨z, fun h => ?_, fun h => ?_⟩
+  · obtain ⟨e, st⟩ := sm h
+    refine ⟨e, ?_⟩
+    simp only [headerState]
+    rw [lookup_setStore_temp _ _ _ _ nt, lookup_setStore_temp _ _ _ _ nt,
+      lookup_setStore_temp _ _ _ _ nt, store_setVar,
+      lookup_setStore_temp _ _ _ _ nt, lookup_setStore_temp _ _ _ _ nt,
+      lookup_setStore_temp _ _ _ _ nt, store_setVar]
+    exact st
+  · obtain ⟨w, x, gv, ra, ax⟩ := bg h
+    refine ⟨w, x, ?_, ?_, ax⟩
+    · simp only [headerState]
+      rw [getVar_setStore, getVar_setStore, getVar_setStore,
+        getVar_setVar7 _ _ _ hr, getVar_setStore, getVar_setStore, getVar_setStore,
+        getVar_setVar7 _ _ _ hr]
+      exact gv
+    · simp only [headerState]
+      rw [getRealAddr_setStore_temp, getRealAddr_setStore_temp, getRealAddr_setStore_temp,
+        store_setVar, getRealAddr_setStore_temp,
+        getRealAddr_setStore_temp, getRealAddr_setStore_temp, store_setVar]
+      exact ra
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Bignum.AnyArith

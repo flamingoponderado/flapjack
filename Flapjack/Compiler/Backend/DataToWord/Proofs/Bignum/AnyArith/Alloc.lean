@@ -132,7 +132,9 @@ theorem alloc_step {width : Nat} [NeZero width] {C F : Type} {c : Config} {l1 l2
                  space := (Misc.Multiword.i2mw i : Bool × List (BitVec width)).2.length +
                    (Misc.Multiword.i2mw j : Bool × List (BitVec width)).2.length + 2 }
         r none locs ∧
-      r.store.lookup (.temp 29) = some (.word (sizeWord width i j)) ∧ r.code = t.code) := by
+      r.store.lookup (.temp 29) = some (.word (sizeWord width i j)) ∧ r.code = t.code ∧
+      (Misc.Multiword.i2mw i : Bool × List (BitVec width)).2.length +
+        (Misc.Multiword.i2mw j : Bool × List (BitVec width)).2.length + 1 < 2 ^ c.lenSize) := by
   obtain ⟨hi, hj, _⟩ := getVars_three gv
   obtain ⟨hw, _⟩ := sizeWord_toNat rel hi hj
   have lsz := lenSize_bound rel
@@ -162,8 +164,8 @@ theorem alloc_step {width : Nat} [NeZero width] {C F : Type} {c : Config} {l1 l2
     have := bound ⟨gc, by rw [hw]; omega, thunks⟩
     rw [hw] at this
     omega
-  · obtain ⟨_, rel1, t29, code, _, _, _, qn⟩ := av.2 hq
-    refine ⟨qn, ?_, ?_, code⟩
+  · obtain ⟨wlt, rel1, t29, code, _, _, _, qn⟩ := av.2 hq
+    refine ⟨qn, ?_, ?_, code, by rw [hw] at wlt; omega⟩
     · have : (sizeWord width i j).toNat / 4 + 1 =
           (Misc.Multiword.i2mw i : Bool × List (BitVec width)).2.length +
             (Misc.Multiword.i2mw j : Bool × List (BitVec width)).2.length + 2 := by

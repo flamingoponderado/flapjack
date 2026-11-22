@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Compiler.Backend.DataToWord.Proofs.Bignum.AnyArith.Post
 public import Flapjack.Compiler.Backend.DataToWord.Proofs.Bignum.Arith
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.WordMlInvGetVars
 public import Flapjack.Compiler.Backend.DataToWord.Proofs.Bignum.AnyArith.Headers
 public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackMax
 
@@ -89,5 +90,69 @@ theorem opWord {width : Nat} [NeZero width] (good : goodDimindex width) {op : Na
     BitVec.ofNat width (4 * op) >>> (BitVec.ofNat width 2).toNat = intOpRep (getIop op) := by
   rcases good with h | h <;> subst h <;> rcases hop with rfl | rfl | rfl | rfl | rfl <;>
     simp only [getIop, intOpRep] <;> decide
+
+
+/-- An operand's payload sits beside the output array (HOL: the `array_rel`
+cases of `AnyArith_thm`'s `impl_tac`). -/
+theorem operand_arr {width : Nat} [NeZero width] {W Q FR : ((BitVec width × WordLocW width) → Prop) → Prop}
+    {P A a3 : BitVec width} {Pw : List (WordLocW width)} {h : (BitVec width × WordLocW width) → Prop}
+    (H6 : SetSep.star W (SetSep.star (SetSep.one (P, .word a3)) (SetSep.star Q FR)) h)
+    (cs : Pw = [] ∨ (Pw = [.word a3] ∧ A = P) ∨ ∃ R, FR = SetSep.star (Misc.wordList A Pw) R) :
+    ∃ R1, SetSep.star (SetSep.star (Misc.wordList A Pw) W) R1 h := by
+  rcases cs with e | ⟨e, ea⟩ | ⟨R, e⟩
+  · subst e
+    refine ⟨SetSep.star (SetSep.one (P, .word a3)) (SetSep.star Q FR), ?_⟩
+    rw [show Misc.wordList A ([] : List (WordLocW width)) = SetSep.emp from rfl, starEmp_left]
+    exact H6
+  · subst e; subst ea
+    refine ⟨SetSep.star Q FR, ?_⟩
+    rw [wordList_single]
+    rw [show SetSep.star (SetSep.star (SetSep.one (A, WordLocW.word a3)) W) (SetSep.star Q FR) =
+      SetSep.star W (SetSep.star (SetSep.one (A, .word a3)) (SetSep.star Q FR)) by ac_rfl]
+    exact H6
+  · subst e
+    refine ⟨SetSep.star (SetSep.one (P, .word a3)) (SetSep.star Q R), ?_⟩
+    rw [show SetSep.star (SetSep.star (Misc.wordList A Pw) W)
+        (SetSep.star (SetSep.one (P, .word a3)) (SetSep.star Q R)) =
+      SetSep.star W (SetSep.star (SetSep.one (P, .word a3)) (SetSep.star Q
+        (SetSep.star (Misc.wordList A Pw) R))) by ac_rfl]
+    exact H6
+
+/-- Which of the `operand_arr` cases an operand falls into, from its header facts. -/
+theorem operand_side {width : Nat} [NeZero width] {C F : Type} {c : Config}
+    {s9 : WordSemStateFiniteExact width C F} {sd : DataSem.State C F} {L0 : Spt DataSem.Value}
+    {i : Int} {other : Bool}
+    {r : Nat} {A a3 P : BitVec width} {heap ha hb : ValueHeap width} {limit a sp sp1 n k : Nat}
+    {gens : GcCombined.GenState} {curr oth : BitVec width} {ts : Nat}
+    {refs : Spt (BvlSem.Ref DataSem.Value)} {vars : List (DataSem.Value × WordLocW width)}
+    (fac : HeaderFacts c i other r s9 A a3)
+    (hgv : DataSem.getVar r L0 = some (.number i))
+    (wml : wordMlInv (heap, s9.be, a, sp, sp1, gens) limit ts c refs
+      (joinEnv L0 (sptToAList (sptInter s9.locals (adjustSet L0))) ++ vars))
+    (good : goodDimindex width) (hlen : heapLength heap ≤ 2 ^ width / 2 ^ shiftLength c)
+    (hcurr : s9.store.lookup .currHeap = some (.word curr))
+    (hheap : heap = ha ++ .unused (n + k) :: hb)
+    (hpos : s9.store.lookup (if other then .otherHeap else .nextFree) = some (.word P)) :
+    (i2mw i : Bool × List (BitVec width)).2.map WordLocW.word = [] ∨
+      ((i2mw i : Bool × List (BitVec width)).2.map WordLocW.word = [.word a3] ∧ A = P) ∨
+      ∃ R, splitFrame c curr oth ha hb n k limit = SetSep.star
+        (Misc.wordList A ((i2mw i : Bool × List (BitVec width)).2.map WordLocW.word)) R := by
+  obtain ⟨z, sm, bg⟩ := fac
+  by_cases i0 : i = 0
+  · left; subst i0; simp [i2mw, n2mw]
+  by_cases s : smallInt width i
+  · right; left
+    obtain ⟨e, st⟩ := sm ⟨s, i0⟩
+    rw [hpos] at st
+    refine ⟨by rw [e]; rfl, ?_⟩
+    have := Option.some.inj st
+    cases this; rfl
+  · right; right
+    obtain ⟨w, x, gv, ra, ax⟩ := bg s
+    have wml' := wordMlInv_getVar_state (.number i) ts s9 sp1 sp
+      { sd with locals := L0 } refs r limit heap gens vars c s9.be a (.word w)
+      ⟨wml, hgv, gv⟩
+    rw [ax]
+    exact operand_payload wml' s good hlen hcurr ra hheap
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Bignum.AnyArith
