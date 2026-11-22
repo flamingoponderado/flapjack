@@ -1059,6 +1059,7 @@ VALID_STATUSES = {
     "reviewed_fmap_as_finite_support_result",
     "reviewed_fmap_as_finite_support_result_words_as_type_indexed_bitvec",
     "reviewed_fmap_as_finite_support_result_observations",
+    "reviewed_fmap_as_finite_support_result_observations_words_as_type_indexed_bitvec",
     "reviewed_fmap_as_finite_support_parameter_observations",
     "reviewed_fmap_as_finite_support_parameter_predicate_domain",
     "reviewed_fmap_as_finite_support_parameters",
@@ -1857,16 +1858,41 @@ def validate_inventory(
         manifest_observations = tuple(record.get("fmap_as_finite_support_result_observations", ()))
         observation_status = "reviewed_fmap_as_finite_support_result_observations"
         combined_observation_status = "reviewed_fmap_as_finite_support_parameter_observations"
+        # Only the standalone observation qualifier may join the word
+        # translation; both qualifiers' checks still apply.
+        observation_words_status = (
+            "reviewed_fmap_as_finite_support_result_observations_words_as_type_indexed_bitvec"
+        )
         if manifest_observations != result_observations:
             errors.append(f"{key[0]}:{key[1]}: manifest result observation producers do not match @[hol] tag")
-        if bool(result_observations) != (status in {observation_status, combined_observation_status}):
+        if bool(result_observations) != (status in {
+                observation_status, combined_observation_status, observation_words_status}):
             errors.append(f"{key[0]}:{key[1]}: result observations require matching reviewed result-observation status")
+        if result_observations and words_bitvec and status != observation_words_status:
+            errors.append(
+                f"{key[0]}:{key[1]}: fmap_as_finite_support_result_observations combined with "
+                "words_as_type_indexed_bitvec requires the combined review status "
+                f"{observation_words_status}"
+            )
+        if status == observation_words_status and not (
+                result_observations and words_bitvec and not fmap_parameters):
+            errors.append(
+                f"{key[0]}:{key[1]}: {observation_words_status} needs both the "
+                "fmap_as_finite_support_result_observations and words_as_type_indexed_bitvec qualifiers"
+            )
         if result_observations:
             if any(value for index, value in enumerate(tag[2:17], start=2)
-                   if not (status == combined_observation_status and index == 10)):
+                   if not (status == combined_observation_status and index == 10)
+                   and not (status == observation_words_status and index == 9)):
                 errors.append(f"{key[0]}:{key[1]}: result observations cannot combine with other representation qualifiers")
             if not isinstance(reviewer, str) or not reviewer.strip():
                 errors.append(f"{key[0]}:{key[1]}: result observations require source-comparison note")
+        if status == observation_words_status and (
+                not isinstance(reviewer, str) or "source" not in reviewer.lower() or
+                any(name not in reviewer for name in result_observations)):
+            errors.append(
+                f"{key[0]}:{key[1]}: {observation_words_status} review must name the source and every producer"
+            )
         if status == combined_observation_status:
             if not fmap_parameters or not result_observations:
                 errors.append(f"{key[0]}:{key[1]}: combined parameter observations require both lists")
@@ -2333,6 +2359,7 @@ def validate_inventory(
             combined_words_status,
             "reviewed_fmap_as_finite_support_function_words_as_type_indexed_bitvec",
             "reviewed_fmap_as_finite_support_result_words_as_type_indexed_bitvec",
+            "reviewed_fmap_as_finite_support_result_observations_words_as_type_indexed_bitvec",
             combined_heterogeneous_function_words_status,
             combined_relation_words_status,
             combined_parameter_words_status,

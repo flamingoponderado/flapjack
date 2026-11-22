@@ -2,8 +2,11 @@ module
 
 public import Flapjack.Compiler.Backend.BackendProof.CakeOracConfigEqs
 public import Flapjack.Compiler.Backend.BackendProof.ConfigTuple
+public import Flapjack.Misc.PredSet
 
 @[expose] public section
+
+set_option autoImplicit false
 
 /-! backendProofScript.sml 2880-2908: helper facts for the evaluation-oracle
 part of the top-level correctness proof. -/
@@ -18,6 +21,22 @@ theorem fst_snd_eq {α β : Type} (x : α × β) (y : α) (z : β) :
     (x.1 = y ∧ x.2 = z ↔ x = (y, z)) ∧ (x.2 = z ∧ x.1 = y ↔ x = (y, z)) := by
   obtain ⟨a, b⟩ := x
   simp [and_comm]
+
+/-- Exact HOL `PERMUTE_IMP_LINV` (`backendProofScript.sml:2887-2893`, `[local]`).
+`f PERMUTES 𝕌(:α)` (`BIJ f UNIV UNIV`) is `Function.Bijective f`, and `LINV f
+UNIV` is the reviewed `holLinv` on the full set, whose `Nonempty α` instance
+renders HOL `THE` on the unspecified case. -/
+@[hol "cakeml/compiler/backend/proofs/backendProofScript.sml" "PERMUTE_IMP_LINV"
+  (total_function_inhabitants := [α])]
+theorem permute_imp_linv {α : Type} [Nonempty α] (f : α → α) :
+    Function.Bijective f → ∀ x y : α, y = holLinv f (fun _ => True) x ↔ x = f y := by
+  intro hf x y
+  have hinv : ∀ z, f (holLinv f (fun _ => True) z) = z := apply_holLinv_of_surjective hf.2
+  constructor
+  · rintro rfl; exact (hinv x).symm
+  · rintro rfl
+    exact (holLinvDef f (fun _ => True) (fun _ => True)
+      ⟨fun _ _ => trivial, fun _ _ _ he => hf.1 he⟩ y trivial).symm
 
 /-- Exact HOL `state_co_inc_compile_has_flat_comp` (`backendProofScript.sml:2895-2908`):
 under a successful compilation, the incremental source compiler factors into

@@ -266,15 +266,6 @@ def refByteCode {width : Nat} [NeZero width] (conf : Config) : WordLangProgHOL (
     let h := WordLangExpHOL.op .add [shiftN .lsr (.var 2) 2, .const bytes]
     let x := smallLsr h (width - 63)
     let y := shiftN .lsl h (width - wordShiftAmount width - conf.lenSize)
-    let makeBytes := wordListSeq [
-      .assign 4 (shiftN .lsr (.var 4) 2),
-      .assign 4 (.op .or [.var 4, shiftN .lsl (.var 4) 8]),
-      .assign 4 (.op .or [.var 4, shiftN .lsl (.var 4) 16]),
-      if width = 32 then .skip else .assign 4 (.op .or [.var 4, shiftN .lsl (.var 4) 32])]
-    let offsets := if width = 32 then [0, 1, 2, 3] else [0, 1, 2, 3, 4, 5, 6, 7]
-    let writeLast := offsets.foldr (fun offset tail =>
-      WordLangProgHOL.ite .equal 11 (.imm (BitVec.ofNat width offset)) .skip
-        (.seq (.inst (.mem .store8 4 (.addr 1 (BitVec.ofNat width offset)))) tail)) .skip
     let limit := min (2 ^ conf.lenSize) (2 ^ width / 16)
     wordListSeq [
       bignumHalt 2,
@@ -285,10 +276,10 @@ def refByteCode {width : Nat} [NeZero width] (conf : Config) : WordLangProgHOL (
       .set .nextFree (.op .add [.var 1, .const bytes]),
       .assign 3 (.op .or [shiftN .lsl (.op .sub [.var 9, .lookup .currHeap])
         (shiftLength conf - wordShiftAmount width), .const 1]),
-      .assign 5 (.op .or [.op .or [y, .const 7], .var 6]), makeBytes,
+      .assign 5 (.op .or [.op .or [y, .const 7], .var 6]), makeBytes 4,
       .store (.var 9) 5,
       .assign 11 (.op .and [shiftN .lsr (.var 2) 2, .const (bytes - 1)]),
-      .assign 13 (.const 0), .store (.var 1) 13, writeLast,
+      .assign 13 (.const 0), .store (.var 1) 13, writeLastBytes 1 4 11,
       .assign 7 (.op .sub [.var 7, .const 4]),
       .call none (some replicateLocation) [0, 9, 4, 7, 3] none]
 

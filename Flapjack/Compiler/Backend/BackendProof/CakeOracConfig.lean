@@ -8,6 +8,8 @@ public import Flapjack.Misc.Option
 
 @[expose] public section
 
+set_option autoImplicit false
+
 /-! backendProofScript.sml 353-484: configuration facts used to show that the
 incremental compiler oracle `cake_orac` preserves the static parts of the
 backend configuration: the closure optimizer keeps its static settings and
@@ -179,5 +181,39 @@ theorem knownCo_eq_stateCo_inc {α : Type} (kc : Option ClosKnown.Config)
         known_resetSpt (fun _ => .ln) (resetInlineFactor c)
       simp only [knownCo, knownStaticConf, stateCo, knownCompileIncSource, compileInc, pureCo,
         Function.comp_apply, hk]
+
+/-- Exact HOL `known_cc_eq_state_cc_inc` (`backendProofScript.sml:2965-2977`):
+the known-pass compiler adapter is the stateful compiler of the incremental
+known compiler at the static configuration. -/
+@[hol "cakeml/compiler/backend/proofs/backendProofScript.sml" "known_cc_eq_state_cc_inc"]
+theorem knownCc_eq_stateCc_inc {α : Type} (kc : Option ClosKnown.Config)
+    (cc : ClosSem.Compiler α) :
+    knownCc kc cc = stateCc (knownCompileIncSource (knownStaticConf kc)) cc := by
+  funext cfg p
+  cases kc with
+  | none => rfl
+  | some c =>
+      have hk :
+          knownListTotal (resetInlineFactor { resetInlineFactor c with valApproxSpt := .ln }) =
+          knownListTotal (resetInlineFactor c) :=
+        known_resetSpt (fun _ => .ln) (resetInlineFactor c)
+      simp only [knownCc, knownStaticConf, stateCc, knownCompileIncSource, compileInc, pureCc, hk]
+
+/-- Exact HOL `known_compile_inc_retreive_spt` (`backendProofScript.sml:2979-2990`). -/
+@[hol "cakeml/compiler/backend/proofs/backendProofScript.sml" "known_compile_inc_retreive_spt"]
+theorem knownCompileInc_retreiveSpt {α : Type} (kcfg1 kcfg2 : Option ClosKnown.Config)
+    (p p' : List ClosLang.Exp × List α) (spt : Spt ValApprox) :
+    knownCompileIncSource (knownStaticConf kcfg1) (optionValApproxSpt kcfg2) p = (spt, p') ∧
+      (kcfg2.isSome = kcfg1.isSome) →
+    optionValApproxSpt (optionUpdValSpt spt kcfg2) = spt := by
+  rintro ⟨h, hs⟩
+  cases kcfg2 with
+  | some c => rfl
+  | none =>
+      cases kcfg1 with
+      | none =>
+          simp only [knownStaticConf, knownCompileIncSource, Prod.mk.injEq] at h
+          exact h.1
+      | some _ => simp at hs
 
 end Flapjack.Compiler.Backend.BackendProof
