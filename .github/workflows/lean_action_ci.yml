@@ -168,6 +168,7 @@ jobs:
           python3 scripts/generate-cake-word-oracles.py --check
           python3 scripts/generate-bignum-word-snapshot.py --check
           python3 scripts/generate-bignum-mini.py --check
+          python3 scripts/generate-bignum-stubs-eq.py --check
 
       - name: Check both pinned guest builds against exact Pancake output
         run: |

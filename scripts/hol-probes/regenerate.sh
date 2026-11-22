@@ -11082,6 +11082,12 @@ run_probe word_bignum_typed_probeScript.sml word_bignum_typed_probe.out \
   "$cake_dir/compiler/backend/word_bignumScript.sml" \
   "$cake_dir/compiler/backend"
 
+run_probe word_bignum_stubs_eq_typed_probeScript.sml word_bignum_stubs_eq_typed_probe.out \
+  generated_bignum_stubs_eq_hyps generated_bignum_stubs_eq_free_vars generated_bignum_stubs_eq_type_vars \
+  generated_bignum_stubs_eq_untyped generated_bignum_stubs_eq_typed \
+  "$cake_dir/compiler/backend/word_bignumScript.sml" \
+  "$cake_dir/compiler/backend"
+
 run_probe word_inst_typed_probeScript.sml word_inst_typed_probe.out \
   convert_sub_def_typed flatten_exp_def_typed inst_select_def_typed inst_select_exp_def_typed is_const_def_typed is_Lookup_CurrHeap_def_typed op_consts_def_typed optimize_consts_def_typed \
   pull_exp_def_typed pull_ops_def_typed reduce_const_def_typed rm_const_def_typed three_to_two_reg_def_typed three_to_two_reg_prog_def_typed \
