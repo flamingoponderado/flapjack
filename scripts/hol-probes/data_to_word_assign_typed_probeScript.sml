@@ -733,3 +733,6 @@ val _ = cap "assign_ConfigGC_typed" "assign_ConfigGC";
 
 (* Batch B4 (flapjack-assign2): integer-to-Word64 conversion. *)
 val _ = cap "assign_WordFromInt_typed" "assign_WordFromInt";
+
+(* Batch B5 (flapjack-assign2): reference-array allocation. *)
+val _ = cap "assign_RefArray_typed" "assign_RefArray";
