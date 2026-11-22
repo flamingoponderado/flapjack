@@ -461,6 +461,13 @@ def check_records(
                 f"{record['lean_path']}:{record['lean_name']}: unused existential inhabitant "
                 "qualifier differs from elaborated @[hol] exporter"
             )
+        if (exported_qualifiers.get("words_as_type_indexed_bitvec", False)
+                and not qualifiers.get("words_as_type_indexed_bitvec", False)):
+            raise ValueError(
+                f"{record['lean_path']}:{record['lean_name']}: manifest qualifiers differ "
+                "from elaborated @[hol] exporter: the attribute carries "
+                "words_as_type_indexed_bitvec but the manifest record does not"
+            )
         if (exported_qualifiers.get("reals_as_rational_cuts", False)
                 and not qualifiers.get("reals_as_rational_cuts", False)):
             raise ValueError(
