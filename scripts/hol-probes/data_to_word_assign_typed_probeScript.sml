@@ -711,3 +711,11 @@ val _ = emit_exported "assign_TagLenEq_typed" "assign_TagLenEq";
 val _ = print ("assign_LenEq_hypotheses=" ^
   Int.toString (length (hyp assign_LenEq)) ^ "\n");
 val _ = emit_exported "assign_LenEq_typed" "assign_LenEq";
+
+(* Batch B2 (flapjack-assign2): WordToInt and its bignum writers. *)
+val _ = print ("assign_WordToInt_hypotheses=" ^
+  Int.toString (length (hyp assign_WordToInt)) ^ "\n");
+val _ = emit_exported "assign_WordToInt_typed" "assign_WordToInt";
+val _ = cap "evaluate_WriteWord64_bignum_typed" "evaluate_WriteWord64_bignum";
+val _ = cap "evaluate_WriteWord32_bignum_typed" "evaluate_WriteWord32_bignum";
+val _ = cap "evaluate_WriteWord64_on_32_num_typed" "evaluate_WriteWord64_on_32_num";
