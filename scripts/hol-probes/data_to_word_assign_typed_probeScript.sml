@@ -722,3 +722,10 @@ val _ = cap "evaluate_WriteWord64_on_32_num_typed" "evaluate_WriteWord64_on_32_n
 
 (* Batch B3 (flapjack-assign2): binary AllocVar instance for RefArray. *)
 val _ = cap "AllocVar_thm_binary_typed" "AllocVar_thm_binary";
+(* Batch A9: assign_MutCons. *)
+val _ = cap "assign_MutCons_typed" "assign_MutCons";
+
+(* Batch A10: assign_UpdateCons, assign_WordFromWord, assign_ConfigGC. *)
+val _ = cap "assign_UpdateCons_typed" "assign_UpdateCons";
+val _ = cap "assign_WordFromWord_typed" "assign_WordFromWord";
+val _ = cap "assign_ConfigGC_typed" "assign_ConfigGC";
