@@ -65,7 +65,7 @@ theorem stateRel_lessSpace {width : Nat} [NeZero width] {C F : Type}
 /-- The header facts needed by `assign_WordToInt` follow from the source
 limit check. Flapjack proof infrastructure; HOL derives them by contradiction
 from `limits_inv_def` and `encode_header_def`. -/
-private theorem wordToIntHeaders {width : Nat} [NeZero width] {C F : Type}
+theorem wordToIntHeaders {width : Nat} [NeZero width] {C F : Type}
     (conf : DataToWord.Config) (source : DataSem.State C F)
     (target : WordSemStateFiniteExact width C F) (l1 l2 : Nat) (locs : List (Nat × Nat))
     (related : stateRel conf l1 l2 source target none locs) :

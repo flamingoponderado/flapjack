@@ -719,3 +719,6 @@ val _ = emit_exported "assign_WordToInt_typed" "assign_WordToInt";
 val _ = cap "evaluate_WriteWord64_bignum_typed" "evaluate_WriteWord64_bignum";
 val _ = cap "evaluate_WriteWord32_bignum_typed" "evaluate_WriteWord32_bignum";
 val _ = cap "evaluate_WriteWord64_on_32_num_typed" "evaluate_WriteWord64_on_32_num";
+
+(* Batch B3 (flapjack-assign2): binary AllocVar instance for RefArray. *)
+val _ = cap "AllocVar_thm_binary_typed" "AllocVar_thm_binary";
