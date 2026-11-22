@@ -77,11 +77,13 @@ theorem free_CONS (x : Exp) (xs : List Exp) :
   rw [body, head]
   simp [holHd]
 
-/-- A list element at an in-bounds index is a member. -/
+/-- A list element at an in-bounds index is a member.  HOL's two conjuncts
+    `i < LENGTH xs /\ x = EL i xs` are one premise. -/
 @[hol "cakeml/compiler/backend/clos_callScript.sml" "EL_MEM_LEMMA"
   (total_function_inhabitants := [α])]
 theorem EL_MEM_LEMMA {α : Type} [Nonempty α] (xs : List α) (i : Nat) (x : α)
-    (bound : i < xs.length) (eq : x = holEl i xs) : x ∈ xs := by
+    (h : i < xs.length ∧ x = holEl i xs) : x ∈ xs := by
+  obtain ⟨bound, eq⟩ := h
   rw [eq, holEl_eq_getElem i xs bound]
   exact List.get_mem xs ⟨i, bound⟩
 
