@@ -713,4 +713,7 @@ val _ = emit_exported "word_copy_array_def_typed" "word_copy_array_def";
 val _ = capture "word_copy_bwd_0_typed" "word_copy_bwd_0";
 val _ = emit_exported "word_copy_array_thm_typed" "word_copy_array_thm";
 val _ = emit_exported "word_copy_array_alias_thm_typed" "word_copy_array_alias_thm";
+val _ = emit_exported "memory_rel_RefByte_alt_typed" "memory_rel_RefByte_alt";
+val _ = emit_exported "write_bytes_change_extra_typed" "write_bytes_change_extra";
+val _ = emit_exported "last_bytes_bytes_to_word_REPLICATE_typed" "last_bytes_bytes_to_word_REPLICATE";
 val _ = print "dtw_memory_more_end=1\n";
