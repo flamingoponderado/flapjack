@@ -67,11 +67,7 @@ theorem expressionSimulationBelow_ref {C F : Type} (clockBound : Nat) (trace : B
         ([.op (.memOp .ref) targetArgs], aux1) := by
       rw [compileExps_eq_list]
       simp [compileExpListHOL, compileExpHOL, argsCompile, compileOp]
-    have equal := compile.symm.trans wholeCompiled
-    cases equal
-    have argsLoc := everyFnLocationSome_op locations
-    have argsVars := everyFnVarsSome_op varsAnnotated
-    rw [ClosSem.evaluate, ClosSem.fixClock_evaluate] at run
+    closArgsSplit
     cases argsRun : ClosSem.evaluate args sourceEnv s with
     | mk argsResult sMiddle =>
       rw [argsRun] at run
@@ -166,11 +162,7 @@ theorem expressionSimulationBelow_refArray {C F : Type} (clockBound : Nat) (trac
         ([.op (.memOp .refArray) targetArgs], aux1) := by
       rw [compileExps_eq_list]
       simp [compileExpListHOL, compileExpHOL, argsCompile, compileOp]
-    have equal := compile.symm.trans wholeCompiled
-    cases equal
-    have argsLoc := everyFnLocationSome_op locations
-    have argsVars := everyFnVarsSome_op varsAnnotated
-    rw [ClosSem.evaluate, ClosSem.fixClock_evaluate] at run
+    closArgsSplit
     cases argsRun : ClosSem.evaluate args sourceEnv s with
     | mk argsResult sMiddle =>
       rw [argsRun] at run
@@ -277,11 +269,7 @@ theorem expressionSimulationBelow_refByte {C F : Type} (clockBound : Nat) (trace
         ([.op (.memOp (.refByte false)) targetArgs], aux1) := by
       rw [compileExps_eq_list]
       simp [compileExpListHOL, compileExpHOL, argsCompile, compileOp]
-    have equal := compile.symm.trans wholeCompiled
-    cases equal
-    have argsLoc := everyFnLocationSome_op locations
-    have argsVars := everyFnVarsSome_op varsAnnotated
-    rw [ClosSem.evaluate, ClosSem.fixClock_evaluate] at run
+    closArgsSplit
     cases argsRun : ClosSem.evaluate args sourceEnv s with
     | mk argsResult sMiddle =>
       rw [argsRun] at run
@@ -335,11 +323,7 @@ theorem expressionSimulationBelow_refByteTrue {C F : Type} (clockBound : Nat) (t
         ([.op (.memOp (.refByte true)) targetArgs], aux1) := by
       rw [compileExps_eq_list]
       simp [compileExpListHOL, compileExpHOL, argsCompile, compileOp]
-    have equal := compile.symm.trans wholeCompiled
-    cases equal
-    have argsLoc := everyFnLocationSome_op locations
-    have argsVars := everyFnVarsSome_op varsAnnotated
-    rw [ClosSem.evaluate, ClosSem.fixClock_evaluate] at run
+    closArgsSplit
     cases argsRun : ClosSem.evaluate args sourceEnv s with
     | mk argsResult sMiddle =>
       rw [argsRun] at run

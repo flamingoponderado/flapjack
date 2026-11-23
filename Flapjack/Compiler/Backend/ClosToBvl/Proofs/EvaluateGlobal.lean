@@ -63,11 +63,7 @@ theorem expressionSimulationBelow_global {C F : Type} (clockBound : Nat) (trace 
         ([.op (.globOp (.global (index + numAddedGlobals))) targetArgs], aux1) := by
       rw [compileExps_eq_list]
       simp [compileExpListHOL, compileExpHOL, argsCompile, compileOp]
-    have equal := compile.symm.trans wholeCompiled
-    cases equal
-    have argsLoc := everyFnLocationSome_op locations
-    have argsVars := everyFnVarsSome_op varsAnnotated
-    rw [ClosSem.evaluate, ClosSem.fixClock_evaluate] at run
+    closArgsSplit
     cases argsRun : ClosSem.evaluate args sourceEnv s with
     | mk argsResult sMiddle =>
       rw [argsRun] at run
@@ -152,11 +148,7 @@ theorem expressionSimulationBelow_alloc {C F : Type} (clockBound : Nat) (trace :
         ([.op (.globOp .allocGlobal) targetArgs], aux1) := by
       rw [compileExps_eq_list]
       simp [compileExpListHOL, compileExpHOL, argsCompile, compileOp]
-    have equal := compile.symm.trans wholeCompiled
-    cases equal
-    have argsLoc := everyFnLocationSome_op locations
-    have argsVars := everyFnVarsSome_op varsAnnotated
-    rw [ClosSem.evaluate, ClosSem.fixClock_evaluate] at run
+    closArgsSplit
     cases argsRun : ClosSem.evaluate args sourceEnv s with
     | mk argsResult sMiddle =>
       rw [argsRun] at run
@@ -254,11 +246,7 @@ theorem expressionSimulationBelow_setGlobal {C F : Type} (clockBound : Nat) (tra
         ([.op (.globOp (.setGlobal (index + numAddedGlobals))) targetArgs], aux1) := by
       rw [compileExps_eq_list]
       simp [compileExpListHOL, compileExpHOL, argsCompile, compileOp]
-    have equal := compile.symm.trans wholeCompiled
-    cases equal
-    have argsLoc := everyFnLocationSome_op locations
-    have argsVars := everyFnVarsSome_op varsAnnotated
-    rw [ClosSem.evaluate, ClosSem.fixClock_evaluate] at run
+    closArgsSplit
     cases argsRun : ClosSem.evaluate args sourceEnv s with
     | mk argsResult sMiddle =>
       rw [argsRun] at run

@@ -94,11 +94,7 @@ theorem expressionSimulationBelow_ffi {C F : Type} (clockBound : Nat) (trace : B
         ([.op (.ffi name) targetArgs], aux1) := by
       rw [compileExps_eq_list]
       simp [compileExpListHOL, compileExpHOL, argsCompile, compileOp]
-    have equal := compile.symm.trans wholeCompiled
-    cases equal
-    have argsLoc := everyFnLocationSome_op locations
-    have argsVars := everyFnVarsSome_op varsAnnotated
-    rw [ClosSem.evaluate, ClosSem.fixClock_evaluate] at run
+    closArgsSplit
     cases argsRun : ClosSem.evaluate args sourceEnv s with
     | mk argsResult sMiddle =>
       rw [argsRun] at run

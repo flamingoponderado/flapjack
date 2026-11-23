@@ -177,11 +177,7 @@ theorem expressionSimulationBelow_install_succ {C F : Type} (clockBound : Nat)
         ([.call 0 none [.op .install targetArgs]], aux1) := by
       rw [compileExps_eq_list]
       simp [compileExpListHOL, compileExpHOL, argsCompile]
-    have equal := compile.symm.trans wholeCompiled
-    cases equal
-    have argsLoc := everyFnLocationSome_op locations
-    have argsVars := everyFnVarsSome_op varsAnnotated
-    rw [ClosSem.evaluate, ClosSem.fixClock_evaluate] at run
+    closArgsSplit
     cases argsRun : ClosSem.evaluate args sourceEnv s with
     | mk argsResult sArgs =>
       rw [argsRun] at run

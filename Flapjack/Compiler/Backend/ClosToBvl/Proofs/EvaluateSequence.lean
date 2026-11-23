@@ -319,4 +319,21 @@ theorem everyFnVarsSome_call {trace : BackendCommon.Tra} {ticks location : Nat}
   intro h
   simpa [ClosProps.everyFnVarsSome, ClosProps.fnVarsSomeExp] using h
 
+/- Common continuation of the ClosToBvl operator-simulation proofs: split the
+compilation equality `equal`, annotate the argument list with its location and
+variable facts, and rewrite the argument run. Flapjack-specific proof
+infrastructure (no HOL original).
+
+Hygiene is disabled on purpose: the step consumes the conventional local
+hypotheses `compile`, `wholeCompiled`, `locations`, `varsAnnotated`, `run`
+bound by the surrounding case analysis. -/
+set_option hygiene false in
+macro "closArgsSplit" : tactic =>
+  `(tactic| (
+    have equal := compile.symm.trans wholeCompiled
+    cases equal
+    have argsLoc := everyFnLocationSome_op locations
+    have argsVars := everyFnVarsSome_op varsAnnotated
+    rw [ClosSem.evaluate, ClosSem.fixClock_evaluate] at run))
+
 end Flapjack.Compiler.Backend.ClosToBvl
