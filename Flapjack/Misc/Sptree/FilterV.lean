@@ -30,31 +30,11 @@ theorem sptLookupFilterV {α : Type} :
   intro k t f
   induction t generalizing k with
   | ln => simp [sptFilterV, sptLookup]
-  | ls x =>
-      by_cases hk : k = 0 <;> by_cases hf : f x = true <;> simp [sptFilterV, sptLookup, hk, hf]
-  | bn l r ihl ihr =>
-      simp only [sptFilterV, sptLookupMkBN]
-      by_cases hk : k = 0
-      · simp [sptLookup, hk]
-      · simp only [sptLookup, hk, if_false]
-        split
-        · exact ihl _
-        · exact ihr _
+  | ls x => grind [sptFilterV, sptLookup]
+  | bn l r ihl ihr => grind [sptFilterV, sptLookupMkBN, sptLookup]
   | bs l x r ihl ihr =>
       by_cases hf : f x = true
-      · simp only [sptFilterV, hf, if_true, sptLookupMkBS]
-        by_cases hk : k = 0
-        · simp [sptLookup, hk, hf]
-        · simp only [sptLookup, hk, if_false]
-          split
-          · exact ihl _
-          · exact ihr _
-      · simp only [sptFilterV, hf, Bool.false_eq_true, if_false, sptLookupMkBN]
-        by_cases hk : k = 0
-        · simp [sptLookup, hk, hf]
-        · simp only [sptLookup, hk, if_false]
-          split
-          · exact ihl _
-          · exact ihr _
+      · grind [sptFilterV, sptLookupMkBS, sptLookup]
+      · grind [sptFilterV, Bool.false_eq_true, sptLookupMkBN, sptLookup]
 
 end Flapjack
