@@ -23,6 +23,33 @@ def holAlookup {α β : Type} [DecidableEq α] : List (α × β) → α → Opti
   | [], _ => none
   | (x, y) :: t, q => if x = q then some y else holAlookup t q
 
+/-- Flapjack list infrastructure: the `ALOOKUP` value at a present key is the
+second component of the unique entry carrying that key. Shared by the
+`pan_to_crep` and `pan_simp` ports; no separate HOL declaration is claimed. -/
+theorem holAlookup_snd_eq_of_mem_name {α β : Type} [DecidableEq α] :
+    ∀ (entries : List (α × β)) (key : α) (value : β) (entry : α × β),
+      holAlookup entries key = some value →
+      (entries.map Prod.fst).Nodup →
+      entry ∈ entries → entry.1 = key → entry.2 = value
+  | [], _, _, _, hlookup, _, hmem, _ => by simp at hmem
+  | (k, v) :: t, key, value, entry, hlookup, hdistinct, hmem, hname => by
+      simp only [List.map_cons, List.nodup_cons] at hdistinct
+      simp only [holAlookup] at hlookup
+      rcases List.mem_cons.mp hmem with hentry | hentry
+      · subst hentry
+        simp only at hname
+        by_cases hk : k = key
+        · have hv : v = value :=
+            Option.some.inj (by simpa only [hk, if_true] using hlookup)
+          subst hname
+          exact hv
+        · exact absurd hname hk
+      · by_cases hk : k = key
+        · exfalso
+          exact hdistinct.1 (List.mem_map.mpr ⟨entry, hentry, hname.trans hk.symm⟩)
+        · simp only [hk, if_false] at hlookup
+          exact holAlookup_snd_eq_of_mem_name t key value entry hlookup hdistinct.2 hentry hname
+
 variable {width : Nat} [NeZero width]
 
 /-- Exact HOL `survives_nested_seq_intro` (`loopPropsScript.sml:719-723`). -/
