@@ -336,4 +336,18 @@ macro "closArgsSplit" : tactic =>
     have argsVars := everyFnVarsSome_op varsAnnotated
     rw [ClosSem.evaluate, ClosSem.fixClock_evaluate] at run))
 
+/- Close the error branch of a ClosToBvl operator simulation from the
+`errorEq` hypothesis and the type-error flag `noTypeError`. Flapjack-specific
+proof infrastructure (no HOL original).
+
+Hygiene is disabled on purpose: the step consumes the conventional local
+hypotheses `appRun`, `errorEq`, `noTypeError`, `run` of the surrounding case. -/
+set_option hygiene false in
+macro "closAppRunError" : tactic =>
+  `(tactic| (
+    simp [appRun] at run
+    apply False.elim
+    apply noTypeError
+    simpa [errorEq] using run.1.symm))
+
 end Flapjack.Compiler.Backend.ClosToBvl

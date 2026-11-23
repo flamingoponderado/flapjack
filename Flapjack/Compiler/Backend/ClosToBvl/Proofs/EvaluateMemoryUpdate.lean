@@ -108,10 +108,7 @@ theorem expressionSimulationBelow_updateByte {C F : Type} (clockBound : Nat) (tr
         cases appRun : ClosSem.doApp (.memOp .updateByte) values.reverse sMiddle with
         | err error =>
           have errorEq := updateByte_error values.reverse sMiddle error appRun
-          simp [appRun] at run
-          apply False.elim
-          apply noTypeError
-          simpa [errorEq] using run.1.symm
+          closAppRunError
         | val pair =>
           obtain ⟨value, last⟩ := pair
           simp [appRun] at run
@@ -216,10 +213,7 @@ theorem expressionSimulationBelow_updateArray {C F : Type} (clockBound : Nat) (t
         cases appRun : ClosSem.doApp (.memOp .update) values.reverse sMiddle with
         | err error =>
           have errorEq := updateArray_error values.reverse sMiddle error appRun
-          simp [appRun] at run
-          apply False.elim
-          apply noTypeError
-          simpa [errorEq] using run.1.symm
+          closAppRunError
         | val pair =>
           obtain ⟨value, last⟩ := pair
           simp [appRun] at run

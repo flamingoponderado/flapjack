@@ -82,10 +82,7 @@ theorem expressionSimulationBelow_xorByte {C F : Type} (clockBound : Nat) (trace
         cases appRun : ClosSem.doApp (.memOp .xorByte) values.reverse sMiddle with
         | err error =>
           have errorEq := xorByte_error values.reverse sMiddle error appRun
-          simp [appRun] at run
-          apply False.elim
-          apply noTypeError
-          simpa [errorEq] using run.1.symm
+          closAppRunError
         | val pair =>
           obtain ⟨value, last⟩ := pair
           simp [appRun] at run

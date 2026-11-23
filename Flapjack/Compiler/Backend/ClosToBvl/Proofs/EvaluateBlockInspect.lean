@@ -84,10 +84,7 @@ theorem expressionSimulationBelow_inspect {C F : Type} (clockBound : Nat) (trace
         cases appRun : ClosSem.doApp op.op values.reverse sMiddle with
         | err error =>
           have errorEq := blockInspect_error op values.reverse sMiddle error appRun
-          simp [appRun] at run
-          apply False.elim
-          apply noTypeError
-          simpa [errorEq] using run.1.symm
+          closAppRunError
         | val pair =>
           obtain ⟨value, last⟩ := pair
           simp [appRun] at run

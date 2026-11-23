@@ -80,10 +80,7 @@ theorem expressionSimulationBelow_memoryLength {C F : Type} (clockBound : Nat) (
         cases appRun : ClosSem.doApp (.memOp op.op) values.reverse sMiddle with
         | err error =>
           have errorEq := memoryLength_error op values.reverse sMiddle error appRun
-          simp [appRun] at run
-          apply False.elim
-          apply noTypeError
-          simpa [errorEq] using run.1.symm
+          closAppRunError
         | val pair =>
           obtain ⟨value, last⟩ := pair
           simp [appRun] at run

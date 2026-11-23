@@ -80,10 +80,7 @@ theorem expressionSimulationBelow_byteVectorRead {C F : Type} (clockBound : Nat)
         cases appRun : ClosSem.doApp (.memOp op.sourceOp) values.reverse sMiddle with
         | err error =>
           have errorEq := byteVectorRead_error op values.reverse sMiddle error appRun
-          simp [appRun] at run
-          apply False.elim
-          apply noTypeError
-          simpa [errorEq] using run.1.symm
+          closAppRunError
         | val pair =>
           obtain ⟨value, last⟩ := pair
           simp [appRun] at run

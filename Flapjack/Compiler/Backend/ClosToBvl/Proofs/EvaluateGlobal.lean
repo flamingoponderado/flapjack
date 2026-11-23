@@ -81,10 +81,7 @@ theorem expressionSimulationBelow_global {C F : Type} (clockBound : Nat) (trace 
         cases appRun : ClosSem.doApp (.globOp (.global index)) values.reverse sMiddle with
         | err error =>
           have errorEq := global_read_error index values.reverse sMiddle error appRun
-          simp [appRun] at run
-          apply False.elim
-          apply noTypeError
-          simpa [errorEq] using run.1.symm
+          closAppRunError
         | val pair =>
           obtain ⟨value, last⟩ := pair
           simp [appRun] at run
@@ -166,10 +163,7 @@ theorem expressionSimulationBelow_alloc {C F : Type} (clockBound : Nat) (trace :
         cases appRun : ClosSem.doApp (.globOp .allocGlobal) values.reverse sMiddle with
         | err error =>
           have errorEq := global_alloc_error values.reverse sMiddle error appRun
-          simp [appRun] at run
-          apply False.elim
-          apply noTypeError
-          simpa [errorEq] using run.1.symm
+          closAppRunError
         | val pair =>
           obtain ⟨value, last⟩ := pair
           simp [appRun] at run
@@ -264,10 +258,7 @@ theorem expressionSimulationBelow_setGlobal {C F : Type} (clockBound : Nat) (tra
         cases appRun : ClosSem.doApp (.globOp (.setGlobal index)) values.reverse sMiddle with
         | err error =>
           have errorEq := global_set_error index values.reverse sMiddle error appRun
-          simp [appRun] at run
-          apply False.elim
-          apply noTypeError
-          simpa [errorEq] using run.1.symm
+          closAppRunError
         | val pair =>
           obtain ⟨value, last⟩ := pair
           simp [appRun] at run

@@ -91,10 +91,7 @@ theorem expressionSimulationBelow_allocThunk {C F : Type} (clockBound : Nat) (tr
         cases appRun : ClosSem.doApp (.thunkOp (.allocThunk mode)) values.reverse sMiddle with
         | err error =>
           have errorEq := allocThunk_error mode values.reverse sMiddle error appRun
-          simp [appRun] at run
-          apply False.elim
-          apply noTypeError
-          simpa [errorEq] using run.1.symm
+          closAppRunError
         | val pair =>
           obtain ⟨value, last⟩ := pair
           simp [appRun] at run
@@ -184,10 +181,7 @@ theorem expressionSimulationBelow_updateThunk {C F : Type} (clockBound : Nat) (t
         cases appRun : ClosSem.doApp (.thunkOp (.updateThunk mode)) values.reverse sMiddle with
         | err error =>
           have errorEq := updateThunk_error mode values.reverse sMiddle error appRun
-          simp [appRun] at run
-          apply False.elim
-          apply noTypeError
-          simpa [errorEq] using run.1.symm
+          closAppRunError
         | val pair =>
           obtain ⟨value, last⟩ := pair
           simp [appRun] at run

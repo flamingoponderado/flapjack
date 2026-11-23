@@ -81,10 +81,7 @@ theorem expressionSimulationBelow_copyByteNew {C F : Type} (clockBound : Nat) (t
         cases appRun : ClosSem.doApp (.memOp (.copyByte true)) values.reverse sMiddle with
         | err error =>
           have errorEq := copyByteNew_error values.reverse sMiddle error appRun
-          simp [appRun] at run
-          apply False.elim
-          apply noTypeError
-          simpa [errorEq] using run.1.symm
+          closAppRunError
         | val pair =>
           obtain ⟨value, last⟩ := pair
           simp [appRun] at run
@@ -181,10 +178,7 @@ theorem expressionSimulationBelow_copyByteInto {C F : Type} (clockBound : Nat) (
         cases appRun : ClosSem.doApp (.memOp (.copyByte false)) values.reverse sMiddle with
         | err error =>
           have errorEq := copyByteInto_error values.reverse sMiddle error appRun
-          simp [appRun] at run
-          apply False.elim
-          apply noTypeError
-          simpa [errorEq] using run.1.symm
+          closAppRunError
         | val pair =>
           obtain ⟨value, last⟩ := pair
           simp [appRun] at run

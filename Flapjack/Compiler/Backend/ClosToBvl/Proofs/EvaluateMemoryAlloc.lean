@@ -180,10 +180,7 @@ theorem expressionSimulationBelow_refArray {C F : Type} (clockBound : Nat) (trac
         cases appRun : ClosSem.doApp (.memOp .refArray) values.reverse sMiddle with
         | err error =>
           have errorEq := refArray_error values.reverse sMiddle error appRun
-          simp [appRun] at run
-          apply False.elim
-          apply noTypeError
-          simpa [errorEq] using run.1.symm
+          closAppRunError
         | val pair =>
           obtain ⟨value, last⟩ := pair
           simp [appRun] at run
@@ -287,10 +284,7 @@ theorem expressionSimulationBelow_refByte {C F : Type} (clockBound : Nat) (trace
         cases appRun : ClosSem.doApp (.memOp (.refByte false)) values.reverse sMiddle with
         | err error =>
           have errorEq := refByte_error values.reverse sMiddle error appRun
-          simp [appRun] at run
-          apply False.elim
-          apply noTypeError
-          simpa [errorEq] using run.1.symm
+          closAppRunError
         | val pair =>
           obtain ⟨value, last⟩ := pair
           simp [appRun] at run

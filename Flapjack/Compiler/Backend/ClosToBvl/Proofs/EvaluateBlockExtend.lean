@@ -81,10 +81,7 @@ theorem expressionSimulationBelow_extend {C F : Type} (clockBound : Nat) (trace 
         cases appRun : ClosSem.doApp (.blockOp (.consExtend tag)) values.reverse sMiddle with
         | err error =>
           have errorEq := blockOp_error (.consExtend tag) values.reverse sMiddle error appRun
-          simp [appRun] at run
-          apply False.elim
-          apply noTypeError
-          simpa [errorEq] using run.1.symm
+          closAppRunError
         | val pair =>
           obtain ⟨value, last⟩ := pair
           simp [appRun] at run
