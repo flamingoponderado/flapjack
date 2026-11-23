@@ -633,10 +633,7 @@ theorem case_memLoadSpine (op : HolMemop) (r base : Nat) (off : BitVec 64)
     rw [haddr]
     exact readValue_agree _ sz hsz s1 ms st.be hdom st.mem
   have hbm : bytesInMemoryHOL ms.pc (encodeInsn insn) ms.mem s1.memDomain := by
-    have h' := st.bytesTarget
-    rw [henc] at h'
-    rw [← st.pc] at h'
-    exact h'
+    bytesTargetAtPc
   have hq : targetStateRel x64Target s2 (x64Next ms) := by
     rw [hnext]
     refine ⟨?_, ?_, ?_, ?_, ?_⟩
@@ -734,10 +731,7 @@ theorem case_memStoreSpine (op : HolMemop) (r base : Nat) (off : BitVec 64)
       writeMemWord_regs, Flapjack.Compiler.Encoders.AsmSem.readReg, st.be, Bool.false_eq_true,
       if_false]
   have hbm : bytesInMemoryHOL ms.pc (encodeInsn insn) ms.mem s1.memDomain := by
-    have h' := st.bytesTarget
-    rw [henc] at h'
-    rw [← st.pc] at h'
-    exact h'
+    bytesTargetAtPc
   have hq : targetStateRel x64Target s2 (x64Next ms) := by
     rw [hnext]
     refine ⟨?_, ?_, ?_, ?_, ?_⟩
@@ -816,10 +810,7 @@ theorem case_load (r base : Nat) (off : BitVec 64) (s1 s2 : AsmState 64) (ms : X
     movRM_z64_length r base hr hb off hlo hhi
   have hbm : bytesInMemoryHOL ms.pc (encodeInsn (.movRM .z64 r base off)) ms.mem
       s1.memDomain := by
-    have h' := st.bytesTarget
-    rw [henc] at h'
-    rw [← st.pc] at h'
-    exact h'
+    bytesTargetAtPc
   have hdec : decode (fun k => ms.mem (ms.pc + BitVec.ofNat 64 k)) =
       some (.movRM .z64 r base off, (encodeInsn (.movRM .z64 r base off)).length) := by
     have hd := decode_movRM_z64 r base hr hb off hlo hhi
@@ -867,10 +858,7 @@ theorem case_load32 (r base : Nat) (off : BitVec 64) (s1 s2 : AsmState 64) (ms :
     movRM_z32_length r base hr hb off hlo hhi
   have hbm : bytesInMemoryHOL ms.pc (encodeInsn (.movRM .z32 r base off)) ms.mem
       s1.memDomain := by
-    have h' := st.bytesTarget
-    rw [henc] at h'
-    rw [← st.pc] at h'
-    exact h'
+    bytesTargetAtPc
   have hdec : decode (fun k => ms.mem (ms.pc + BitVec.ofNat 64 k)) =
       some (.movRM .z32 r base off, (encodeInsn (.movRM .z32 r base off)).length) := by
     have hd := decode_movRM_z32 r base hr hb off hlo hhi
@@ -917,10 +905,7 @@ theorem case_load16 (r base : Nat) (off : BitVec 64) (s1 s2 : AsmState 64) (ms :
     movzxRM_z16_length r base hr hb off hlo hhi
   have hbm : bytesInMemoryHOL ms.pc (encodeInsn (.movzxRM .z16 .z64 r base off)) ms.mem
       s1.memDomain := by
-    have h' := st.bytesTarget
-    rw [henc] at h'
-    rw [← st.pc] at h'
-    exact h'
+    bytesTargetAtPc
   have hdec : decode (fun k => ms.mem (ms.pc + BitVec.ofNat 64 k)) =
       some (.movzxRM .z16 .z64 r base off,
         (encodeInsn (.movzxRM .z16 .z64 r base off)).length) := by
@@ -968,10 +953,7 @@ theorem case_load8 (r base : Nat) (off : BitVec 64) (s1 s2 : AsmState 64) (ms : 
     movzxRM_z8_length r base hr hb off hlo hhi
   have hbm : bytesInMemoryHOL ms.pc (encodeInsn (.movzxRM (.z8 true) .z64 r base off)) ms.mem
       s1.memDomain := by
-    have h' := st.bytesTarget
-    rw [henc] at h'
-    rw [← st.pc] at h'
-    exact h'
+    bytesTargetAtPc
   have hdec : decode (fun k => ms.mem (ms.pc + BitVec.ofNat 64 k)) =
       some (.movzxRM (.z8 true) .z64 r base off,
         (encodeInsn (.movzxRM (.z8 true) .z64 r base off)).length) := by
@@ -1020,10 +1002,7 @@ theorem case_store (r base : Nat) (off : BitVec 64) (s1 s2 : AsmState 64) (ms : 
     movMR_z64_length r base hr hb off hlo hhi
   have hbm : bytesInMemoryHOL ms.pc (encodeInsn (.movMR .z64 r base off)) ms.mem
       s1.memDomain := by
-    have h' := st.bytesTarget
-    rw [henc] at h'
-    rw [← st.pc] at h'
-    exact h'
+    bytesTargetAtPc
   have hdec : decode (fun k => ms.mem (ms.pc + BitVec.ofNat 64 k)) =
       some (.movMR .z64 r base off, (encodeInsn (.movMR .z64 r base off)).length) := by
     have hd := decode_movMR_z64 r base hr hb off hlo hhi
@@ -1071,10 +1050,7 @@ theorem case_store32 (r base : Nat) (off : BitVec 64) (s1 s2 : AsmState 64) (ms 
     movMR_z32_length r base hr hb off hlo hhi
   have hbm : bytesInMemoryHOL ms.pc (encodeInsn (.movMR .z32 r base off)) ms.mem
       s1.memDomain := by
-    have h' := st.bytesTarget
-    rw [henc] at h'
-    rw [← st.pc] at h'
-    exact h'
+    bytesTargetAtPc
   have hdec : decode (fun k => ms.mem (ms.pc + BitVec.ofNat 64 k)) =
       some (.movMR .z32 r base off, (encodeInsn (.movMR .z32 r base off)).length) := by
     have hd := decode_movMR_z32 r base hr hb off hlo hhi
@@ -1122,10 +1098,7 @@ theorem case_store16 (r base : Nat) (off : BitVec 64) (s1 s2 : AsmState 64) (ms 
     movMR_z16_length r base hr hb off hlo hhi
   have hbm : bytesInMemoryHOL ms.pc (encodeInsn (.movMR .z16 r base off)) ms.mem
       s1.memDomain := by
-    have h' := st.bytesTarget
-    rw [henc] at h'
-    rw [← st.pc] at h'
-    exact h'
+    bytesTargetAtPc
   have hdec : decode (fun k => ms.mem (ms.pc + BitVec.ofNat 64 k)) =
       some (.movMR .z16 r base off, (encodeInsn (.movMR .z16 r base off)).length) := by
     have hd := decode_movMR_z16 r base hr hb off hlo hhi
@@ -1179,10 +1152,7 @@ theorem case_store8 (r base : Nat) (off : BitVec 64) (s1 s2 : AsmState 64) (ms :
   have hbm : bytesInMemoryHOL ms.pc
       (encodeInsn (.movMR (.z8 (if 8 ≤ r ∨ 8 ≤ base then true else 3 < r)) r base off))
       ms.mem s1.memDomain := by
-    have h' := st.bytesTarget
-    rw [henc] at h'
-    rw [← st.pc] at h'
-    exact h'
+    bytesTargetAtPc
   have hdec : decode (fun k => ms.mem (ms.pc + BitVec.ofNat 64 k)) =
       some (.movMR (.z8 (if 8 ≤ r ∨ 8 ≤ base then true else decide (3 < r))) r base off,
         (encodeInsn (.movMR (.z8 (if 8 ≤ r ∨ 8 ≤ base then true else decide (3 < r)))

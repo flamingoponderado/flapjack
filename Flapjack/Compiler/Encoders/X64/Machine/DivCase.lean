@@ -195,4 +195,18 @@ theorem case_longDiv (r1 r2 r3 r4 r5 : Nat) (s1 s2 : AsmState 64) (ms : X64State
       simpa using hstepSafe)
     (by intro k hk1 hk2; omega) hq
 
+/- Transfer the encoded-bytes hypothesis `st.bytesTarget` of the X64 start state
+to the instruction at the target PC. Flapjack-specific proof infrastructure
+(no HOL original).
+
+Hygiene is disabled on purpose: the step consumes the conventional locals `st`
+and `henc` of the surrounding case. -/
+set_option hygiene false in
+macro "bytesTargetAtPc" : tactic =>
+  `(tactic| (
+    have h' := st.bytesTarget
+    rw [henc] at h'
+    rw [← st.pc] at h'
+    exact h'))
+
 end Flapjack.Compiler.Encoders.X64

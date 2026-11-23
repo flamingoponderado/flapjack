@@ -947,10 +947,7 @@ theorem case_fpMov (d1 d2 : Nat) (s1 s2 : AsmState 64) (ms : X64State)
       simp [hlen] at this
   have hbm : bytesInMemoryHOL ms.pc (encodeInsn (.sse (.movsd (d1 % 8) (d2 % 8))))
       ms.mem s1.memDomain := by
-    have h' := st.bytesTarget
-    rw [henc] at h'
-    rw [← st.pc] at h'
-    exact h'
+    bytesTargetAtPc
   have hdec : decode (fun k => ms.mem (ms.pc + BitVec.ofNat 64 k)) =
       some (.sse (.movsd (d1 % 8) (d2 % 8)), 4) := by
     have hd := decode_movsd (d1 % 8) (d2 % 8) (by omega) (by omega)
@@ -1029,10 +1026,7 @@ theorem fpWriteCase (op : HolFp) (insn : X64SSE) (d1 dst : Nat) (L : Nat) (W V :
     CaseGoal (.inst (.fp op)) s1 s2 ms := by
   have st := x64Start _ s1 s2 ms h
   have hbm : bytesInMemoryHOL ms.pc (encodeInsn (.sse insn)) ms.mem s1.memDomain := by
-    have h' := st.bytesTarget
-    rw [henc] at h'
-    rw [← st.pc] at h'
-    exact h'
+    bytesTargetAtPc
   have hnext : x64Next ms = { writeXmm ms dst W with pc := ms.pc + BitVec.ofNat 64 L } := by
     simp only [x64Next, st.failed, Bool.false_eq_true, if_false, hdec, execInsn, hexec]
   have hq : targetStateRel x64Target s2 (x64Next^[0 + 1] ms) := by
@@ -1129,10 +1123,7 @@ theorem case_fpSqrt (d1 d2 : Nat) (s1 s2 : AsmState 64) (ms : X64State)
       simp [hlen] at this
   have hbm : bytesInMemoryHOL ms.pc (encodeInsn (.sse (.sqrtsd (d1 % 8) (d2 % 8))))
       ms.mem s1.memDomain := by
-    have h' := st.bytesTarget
-    rw [henc] at h'
-    rw [← st.pc] at h'
-    exact h'
+    bytesTargetAtPc
   have hdec : decode (fun k => ms.mem (ms.pc + BitVec.ofNat 64 k)) =
       some (.sse (.sqrtsd (d1 % 8) (d2 % 8)), 4) := by
     have hd := decode_sqrtsd (d1 % 8) (d2 % 8) (by omega) (by omega)
@@ -1197,10 +1188,7 @@ theorem case_fpAdd (d l r : Nat) (s1 s2 : AsmState 64) (ms : X64State)
       simp [hlen] at this
   have hbm : bytesInMemoryHOL ms.pc (encodeInsn (.sse (.binSD .sseAdd (d % 8) (r % 8))))
       ms.mem s1.memDomain := by
-    have h' := st.bytesTarget
-    rw [henc] at h'
-    rw [← st.pc] at h'
-    exact h'
+    bytesTargetAtPc
   have hdec : decode (fun k => ms.mem (ms.pc + BitVec.ofNat 64 k)) =
       some (.sse (.binSD .sseAdd (d % 8) (r % 8)), 4) := by
     have hd := decode_binSD .sseAdd (d % 8) (r % 8) (by omega) (by omega)
@@ -1271,10 +1259,7 @@ theorem case_fpSub (d l r : Nat) (s1 s2 : AsmState 64) (ms : X64State)
       simp [hlen] at this
   have hbm : bytesInMemoryHOL ms.pc (encodeInsn (.sse (.binSD .sseSub (d % 8) (r % 8))))
       ms.mem s1.memDomain := by
-    have h' := st.bytesTarget
-    rw [henc] at h'
-    rw [← st.pc] at h'
-    exact h'
+    bytesTargetAtPc
   have hdec : decode (fun k => ms.mem (ms.pc + BitVec.ofNat 64 k)) =
       some (.sse (.binSD .sseSub (d % 8) (r % 8)), 4) := by
     have hd := decode_binSD .sseSub (d % 8) (r % 8) (by omega) (by omega)
@@ -1345,10 +1330,7 @@ theorem case_fpMul (d l r : Nat) (s1 s2 : AsmState 64) (ms : X64State)
       simp [hlen] at this
   have hbm : bytesInMemoryHOL ms.pc (encodeInsn (.sse (.binSD .sseMul (d % 8) (r % 8))))
       ms.mem s1.memDomain := by
-    have h' := st.bytesTarget
-    rw [henc] at h'
-    rw [← st.pc] at h'
-    exact h'
+    bytesTargetAtPc
   have hdec : decode (fun k => ms.mem (ms.pc + BitVec.ofNat 64 k)) =
       some (.sse (.binSD .sseMul (d % 8) (r % 8)), 4) := by
     have hd := decode_binSD .sseMul (d % 8) (r % 8) (by omega) (by omega)
@@ -1419,10 +1401,7 @@ theorem case_fpDiv (d l r : Nat) (s1 s2 : AsmState 64) (ms : X64State)
       simp [hlen] at this
   have hbm : bytesInMemoryHOL ms.pc (encodeInsn (.sse (.binSD .sseDiv (d % 8) (r % 8))))
       ms.mem s1.memDomain := by
-    have h' := st.bytesTarget
-    rw [henc] at h'
-    rw [← st.pc] at h'
-    exact h'
+    bytesTargetAtPc
   have hdec : decode (fun k => ms.mem (ms.pc + BitVec.ofNat 64 k)) =
       some (.sse (.binSD .sseDiv (d % 8) (r % 8)), 4) := by
     have hd := decode_binSD .sseDiv (d % 8) (r % 8) (by omega) (by omega)
@@ -1491,10 +1470,7 @@ theorem case_fpMovFromReg (d r1 r2 : Nat) (s1 s2 : AsmState 64) (ms : X64State)
       simp [hlen] at this
   have hbm : bytesInMemoryHOL ms.pc (encodeInsn (.sse (.movDQ true true (d % 8) (.zr r1))))
       ms.mem s1.memDomain := by
-    have h' := st.bytesTarget
-    rw [henc] at h'
-    rw [← st.pc] at h'
-    exact h'
+    bytesTargetAtPc
   have hdec : decode (fun k => ms.mem (ms.pc + BitVec.ofNat 64 k)) =
       some (.sse (.movDQ true true (d % 8) (.zr r1)), 5) := by
     have hd0 := decode_movDQ true true (d % 8) r1 (by omega) hr1
@@ -1554,10 +1530,7 @@ theorem case_fpMovToReg (r1 r2 d : Nat) (s1 s2 : AsmState 64) (ms : X64State)
       simp [hlen] at this
   have hbm : bytesInMemoryHOL ms.pc (encodeInsn (.sse (.movDQ false true (d % 8) (.zr r1))))
       ms.mem s1.memDomain := by
-    have h' := st.bytesTarget
-    rw [henc] at h'
-    rw [← st.pc] at h'
-    exact h'
+    bytesTargetAtPc
   have hdec : decode (fun k => ms.mem (ms.pc + BitVec.ofNat 64 k)) =
       some (.sse (.movDQ false true (d % 8) (.zr r1)), 5) := by
     have hd0 := decode_movDQ false true (d % 8) r1 (by omega) hr1
@@ -1661,10 +1634,7 @@ theorem case_fpFromInt (d1 d2 : Nat) (s1 s2 : AsmState 64) (ms : X64State)
       simp [hlen] at this
   have hbm : bytesInMemoryHOL ms.pc (encodeInsn (.sse (.cvtdq2pd (d1 % 8) (d2 % 8))))
       ms.mem s1.memDomain := by
-    have h' := st.bytesTarget
-    rw [henc] at h'
-    rw [← st.pc] at h'
-    exact h'
+    bytesTargetAtPc
   have hdec : decode (fun k => ms.mem (ms.pc + BitVec.ofNat 64 k)) =
       some (.sse (.cvtdq2pd (d1 % 8) (d2 % 8)), 4) := by
     have hd := decode_cvtdq2pd (d1 % 8) (d2 % 8) (by omega) (by omega)
@@ -1775,10 +1745,7 @@ theorem case_fpToInt (d1 d2 : Nat) (s1 s2 : AsmState 64) (ms : X64State)
             (encodeInsn (.sse (.cvtpd2dq false (d1 % 8) (d2 % 8))) ++
              encodeInsn (.sse (.pslldq (d1 % 8) 12)) ++
              encodeInsn (.sse (.psrldq (d1 % 8) 12))) ms.mem s1.memDomain := by
-          have h' := st.bytesTarget
-          rw [henc] at h'
-          rw [← st.pc] at h'
-          exact h'
+          bytesTargetAtPc
         obtain ⟨hb0, hb1, hb2⟩ :=
           (fpBytesInMemory_three ms.pc _ _ _ ms.mem s1.memDomain).1 hbmAll
         rw [hlen0] at hb1
@@ -2095,10 +2062,7 @@ theorem fpMaskCase (op : HolFp) (d1 d2 : Nat) (lop : SSELogic) (shift : X64SSE)
   have hbmAll : bytesInMemoryHOL ms.pc
       (encodeInsn (.sse (.pcmpeqq (d1 % 8) (d1 % 8))) ++ encodeInsn (.sse shift) ++
         encodeInsn (.sse (.logicPD lop (d1 % 8) (d2 % 8)))) ms.mem s1.memDomain := by
-    have h' := st.bytesTarget
-    rw [henc] at h'
-    rw [← st.pc] at h'
-    exact h'
+    bytesTargetAtPc
   obtain ⟨hb0, hb1, hb2⟩ := (fpBytesInMemory_three ms.pc _ _ _ ms.mem s1.memDomain).1 hbmAll
   rw [hlen0] at hb1
   rw [hlen0, hlen1] at hb2
