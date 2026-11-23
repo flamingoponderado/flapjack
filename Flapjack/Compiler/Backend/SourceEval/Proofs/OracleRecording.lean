@@ -58,27 +58,8 @@ theorem recordForward_trans (first second third : Option EvalState)
     (premises : recordForward first second ∧ recordForward second third) :
     recordForward first third := by
   rcases premises with ⟨left, right⟩
-  cases first with
-  | none =>
-    cases second with
-    | none => exact right
-    | some s => cases s with
-      | evalDecs _ => exact right
-      | evalOracle _ => cases left
-  | some s =>
-    cases s with
-    | evalDecs s =>
-      cases second with
-      | none => exact right
-      | some t => cases t with
-        | evalDecs _ => exact right
-        | evalOracle _ => cases left
-    | evalOracle s =>
-      obtain ⟨t, rfl, count₁, prefix₁⟩ := left
-      obtain ⟨u, rfl, count₂, prefix₂⟩ := right
-      refine ⟨u, rfl, Nat.le_trans count₁ count₂, ?_⟩
-      intro j hj
-      exact (prefix₂ j ⟨hj.1, by omega⟩).trans (prefix₁ j hj)
+  simp only [recordForward] at left right ⊢
+  grind
 
 @[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "record_forward_trans_sym"]
 theorem recordForward_trans_sym (second third first : Option EvalState)

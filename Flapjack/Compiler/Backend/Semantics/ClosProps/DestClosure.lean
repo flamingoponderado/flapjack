@@ -107,28 +107,7 @@ theorem destClosure_full_maxapp (maxApp : Nat) (c : Value) (vs : List Value)
     vs.length ≤ maxApp := by
   obtain ⟨run, _⟩ := h
   cases c
-  all_goals simp only [destClosure] at run
-  all_goals try contradiction
-  case closure location supplied env0 arity body =>
-    split at run
-    · rename_i valid
-      split at run
-      · simp at run
-      · simp only [Option.some.injEq, AppKind.fullApp.injEq] at run
-        simp only [Bool.and_eq_true, decide_eq_true_eq] at valid
-        simpa [checkLoc] using valid.1
-    · simp at run
-  case recclosure location supplied env0 functions index =>
-    split at run
-    · simp at run
-    · split at run
-      · rename_i valid
-        split at run
-        · simp at run
-        · simp only [Option.some.injEq, AppKind.fullApp.injEq] at run
-          simp only [Bool.and_eq_true, decide_eq_true_eq] at valid
-          simpa [checkLoc] using valid.1
-      · simp at run
+  all_goals grind [destClosure, checkLoc]
 
 /-- Appending arguments cannot turn a failed split into a successful one. -/
 @[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "dest_closure_none_append"]
