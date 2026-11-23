@@ -15,12 +15,7 @@ theorem evaluatePost_allocThunk_error {C F : Type} (s sFinal : ClosSem.State C F
     (f : HolFiniteMapExact Nat Nat) (mode : AstHOL.ThunkMode) (args : List Bvl.Exp)
     (error : ErrorResult ClosSem.Value) (post : evaluatePost s sFinal t targetEnv f (.err error) args) :
     evaluatePost s sFinal t targetEnv f (.err error) [.op (.thunkOp (.allocThunk mode)) args] := by
-  obtain ⟨clock, targetResult, tFinal, fFinal, run, related, state, map, refs, annotations, clocks⟩ := post
-  cases targetResult with
-  | val values => simp [resultRel] at related
-  | err targetError =>
-    refine ⟨clock, .err targetError, tFinal, fFinal, ?_, related, state, map, refs, annotations, clocks⟩
-    rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, run]
+  exact evaluatePostOpError s sFinal t targetEnv f (.thunkOp (.allocThunk mode)) args error post
 
 /-- Successful thunk allocation preserves the expression simulation. -/
 theorem evaluatePost_allocThunk_success {C F : Type} (s sMiddle sLast : ClosSem.State C F)
@@ -123,12 +118,7 @@ theorem evaluatePost_updateThunk_error {C F : Type} (s sFinal : ClosSem.State C 
     (f : HolFiniteMapExact Nat Nat) (mode : AstHOL.ThunkMode) (args : List Bvl.Exp)
     (error : ErrorResult ClosSem.Value) (post : evaluatePost s sFinal t targetEnv f (.err error) args) :
     evaluatePost s sFinal t targetEnv f (.err error) [.op (.thunkOp (.updateThunk mode)) args] := by
-  obtain ⟨clock, targetResult, tFinal, fFinal, run, related, state, map, refs, annotations, clocks⟩ := post
-  cases targetResult with
-  | val values => simp [resultRel] at related
-  | err targetError =>
-    refine ⟨clock, .err targetError, tFinal, fFinal, ?_, related, state, map, refs, annotations, clocks⟩
-    rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, run]
+  exact evaluatePostOpError s sFinal t targetEnv f (.thunkOp (.updateThunk mode)) args error post
 
 /-- Successful thunk updates preserve the expression simulation. -/
 theorem evaluatePost_updateThunk_success {C F : Type} (s sMiddle sLast : ClosSem.State C F)

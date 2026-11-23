@@ -17,12 +17,7 @@ theorem evaluatePost_copyByteNew_error {C F : Type} (s sFinal : ClosSem.State C 
     (error : ErrorResult ClosSem.Value)
     (post : evaluatePost s sFinal t targetEnv f (.err error) args) :
     evaluatePost s sFinal t targetEnv f (.err error) [.op (.memOp (.copyByte true)) args] := by
-  obtain ⟨clock, targetResult, tFinal, fFinal, run, related, state, map, refs, annotations, clocks⟩ := post
-  cases targetResult with
-  | val values => simp [resultRel] at related
-  | err targetError =>
-    refine ⟨clock, .err targetError, tFinal, fFinal, ?_, related, state, map, refs, annotations, clocks⟩
-    rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, run]
+  exact evaluatePostOpError s sFinal t targetEnv f (.memOp (.copyByte true)) args error post
 
 /-- A successful inspection of related argument values preserves the
 simulation postcondition. -/
@@ -113,12 +108,7 @@ theorem evaluatePost_copyByteInto_error {C F : Type} (s sFinal : ClosSem.State C
     (f : HolFiniteMapExact Nat Nat) (args : List Bvl.Exp) (error : ErrorResult ClosSem.Value)
     (post : evaluatePost s sFinal t targetEnv f (.err error) args) :
     evaluatePost s sFinal t targetEnv f (.err error) [.op (.memOp (.copyByte false)) args] := by
-  obtain ⟨clock, targetResult, tFinal, fFinal, run, related, state, map, refs, annotations, clocks⟩ := post
-  cases targetResult with
-  | val values => simp [resultRel] at related
-  | err targetError =>
-    refine ⟨clock, .err targetError, tFinal, fFinal, ?_, related, state, map, refs, annotations, clocks⟩
-    rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, run]
+  exact evaluatePostOpError s sFinal t targetEnv f (.memOp (.copyByte false)) args error post
 
 /-- A successful in-place byte copy preserves the expression simulation. -/
 theorem evaluatePost_copyByteInto_success {C F : Type} (s sMiddle sLast : ClosSem.State C F)

@@ -17,12 +17,8 @@ theorem evaluatePost_global_error {C F : Type} (s sFinal : ClosSem.State C F)
     (error : ErrorResult ClosSem.Value)
     (post : evaluatePost s sFinal t targetEnv f (.err error) args) :
     evaluatePost s sFinal t targetEnv f (.err error) [.op (.globOp (.global (index + numAddedGlobals))) args] := by
-  obtain ⟨clock, targetResult, tFinal, fFinal, run, related, state, map, refs, annotations, clocks⟩ := post
-  cases targetResult with
-  | val values => simp [resultRel] at related
-  | err targetError =>
-    refine ⟨clock, .err targetError, tFinal, fFinal, ?_, related, state, map, refs, annotations, clocks⟩
-    rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, run]
+  exact evaluatePostOpError s sFinal t targetEnv f
+    (.globOp (.global (index + numAddedGlobals))) args error post
 
 /-- A successful inspection of related argument values preserves the
 simulation postcondition. -/
@@ -112,12 +108,7 @@ theorem evaluatePost_alloc_error {C F : Type} (s sFinal : ClosSem.State C F)
     (error : ErrorResult ClosSem.Value)
     (post : evaluatePost s sFinal t targetEnv f (.err error) args) :
     evaluatePost s sFinal t targetEnv f (.err error) [.op (.globOp .allocGlobal) args] := by
-  obtain ⟨clock, targetResult, tFinal, fFinal, run, related, state, map, refs, annotations, clocks⟩ := post
-  cases targetResult with
-  | val values => simp [resultRel] at related
-  | err targetError =>
-    refine ⟨clock, .err targetError, tFinal, fFinal, ?_, related, state, map, refs, annotations, clocks⟩
-    rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, run]
+  exact evaluatePostOpError s sFinal t targetEnv f (.globOp .allocGlobal) args error post
 
 /-- Allocation after successful argument evaluation preserves the simulation
 postcondition and the preexisting reference frame. -/
@@ -212,12 +203,8 @@ theorem evaluatePost_setGlobal_error {C F : Type} (s sFinal : ClosSem.State C F)
     (post : evaluatePost s sFinal t targetEnv f (.err error) args) :
     evaluatePost s sFinal t targetEnv f (.err error)
       [.op (.globOp (.setGlobal (index + numAddedGlobals))) args] := by
-  obtain ⟨clock, targetResult, tFinal, fFinal, run, related, state, map, refs, annotations, clocks⟩ := post
-  cases targetResult with
-  | val values => simp [resultRel] at related
-  | err targetError =>
-    refine ⟨clock, .err targetError, tFinal, fFinal, ?_, related, state, map, refs, annotations, clocks⟩
-    rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, run]
+  exact evaluatePostOpError s sFinal t targetEnv f
+    (.globOp (.setGlobal (index + numAddedGlobals))) args error post
 
 /-- A successful global write preserves the expression simulation. -/
 theorem evaluatePost_setGlobal_success {C F : Type} (s sMiddle sLast : ClosSem.State C F)

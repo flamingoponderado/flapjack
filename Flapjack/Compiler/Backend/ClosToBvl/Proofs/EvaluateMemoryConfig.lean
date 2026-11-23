@@ -17,12 +17,7 @@ theorem evaluatePost_configGC_error {C F : Type} (s sFinal : ClosSem.State C F)
     (error : ErrorResult ClosSem.Value)
     (post : evaluatePost s sFinal t targetEnv f (.err error) args) :
     evaluatePost s sFinal t targetEnv f (.err error) [.op (.memOp .configGC) args] := by
-  obtain ⟨clock, targetResult, tFinal, fFinal, run, related, state, map, refs, annotations, clocks⟩ := post
-  cases targetResult with
-  | val values => simp [resultRel] at related
-  | err targetError =>
-    refine ⟨clock, .err targetError, tFinal, fFinal, ?_, related, state, map, refs, annotations, clocks⟩
-    rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, run]
+  exact evaluatePostOpError s sFinal t targetEnv f (.memOp .configGC) args error post
 
 /-- A successful inspection of related argument values preserves the
 simulation postcondition. -/

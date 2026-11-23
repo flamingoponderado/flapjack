@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateVar
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.EvaluateClock
 public import Flapjack.FiniteMap.SubmapExact
 public import Flapjack.SemanticPrimitivesProps.ResultRelation
 
@@ -100,5 +101,73 @@ theorem evaluate_var_post {C F : Type} (f : HolFiniteMapExact Nat Nat)
     exact lookup
   · intro key value lookup fresh
     exact ⟨lookup, fresh⟩
+
+/-- Flapjack infrastructure (no HOL original): an argument error propagates
+through a compiled BVL operator application. -/
+theorem evaluatePostOpError {C F : Type} (s sFinal : ClosSem.State C F)
+    (t : BvlSem.State C F) (targetEnv : List BvlSem.Value)
+    (f : HolFiniteMapExact Nat Nat) (fn : ClosLang.Op) (args : List Bvl.Exp)
+    (error : ErrorResult ClosSem.Value)
+    (post : evaluatePost s sFinal t targetEnv f (.err error) args) :
+    evaluatePost s sFinal t targetEnv f (.err error) [.op fn args] := by
+  obtain ⟨clock, targetResult, tFinal, fFinal, run, related, state, map, refs,
+    annotations, clocks⟩ := post
+  cases targetResult with
+  | val values => simp [resultRel] at related
+  | err targetError =>
+    refine ⟨clock, .err targetError, tFinal, fFinal, ?_, related, state, map, refs,
+      annotations, clocks⟩
+    rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, run]
+
+/-- Flapjack infrastructure (no HOL original): an argument error propagates
+through a compiled BVL direct call. -/
+theorem evaluatePostCallError {C F : Type} (s sFinal : ClosSem.State C F)
+    (t : BvlSem.State C F) (targetEnv : List BvlSem.Value)
+    (f : HolFiniteMapExact Nat Nat) (ticks location : Nat) (args : List Bvl.Exp)
+    (error : ErrorResult ClosSem.Value)
+    (post : evaluatePost s sFinal t targetEnv f (.err error) args) :
+    evaluatePost s sFinal t targetEnv f (.err error) [.call ticks (some location) args] := by
+  obtain ⟨clock, targetResult, tFinal, fFinal, run, related, state, map, refs,
+    annotations, clocks⟩ := post
+  cases targetResult with
+  | val values => simp [resultRel] at related
+  | err targetError =>
+    refine ⟨clock, .err targetError, tFinal, fFinal, ?_, related, state, map, refs,
+      annotations, clocks⟩
+    rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, run]
+
+/-- Flapjack infrastructure (no HOL original): an error while evaluating the
+condition propagates through the compiled conditional. -/
+theorem evaluatePostIfThenElseError {C F : Type} (s sFinal : ClosSem.State C F)
+    (t : BvlSem.State C F) (targetEnv : List BvlSem.Value)
+    (f : HolFiniteMapExact Nat Nat) (condition yes no : Bvl.Exp)
+    (error : ErrorResult ClosSem.Value)
+    (post : evaluatePost s sFinal t targetEnv f (.err error) [condition]) :
+    evaluatePost s sFinal t targetEnv f (.err error) [.ifThenElse condition yes no] := by
+  obtain ⟨clock, targetResult, tFinal, fFinal, run, related, state, map, refs,
+    annotations, clocks⟩ := post
+  cases targetResult with
+  | val values => simp [resultRel] at related
+  | err targetError =>
+    refine ⟨clock, .err targetError, tFinal, fFinal, ?_, related, state, map, refs,
+      annotations, clocks⟩
+    rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, run]
+
+/-- Flapjack infrastructure (no HOL original): an error while evaluating the
+bound expressions propagates through the compiled `let`. -/
+theorem evaluatePostLetError {C F : Type} (s sFinal : ClosSem.State C F)
+    (t : BvlSem.State C F) (targetEnv : List BvlSem.Value)
+    (f : HolFiniteMapExact Nat Nat) (bindings : List Bvl.Exp) (body : Bvl.Exp)
+    (error : ErrorResult ClosSem.Value)
+    (post : evaluatePost s sFinal t targetEnv f (.err error) bindings) :
+    evaluatePost s sFinal t targetEnv f (.err error) [.let bindings body] := by
+  obtain ⟨clock, targetResult, tFinal, fFinal, run, related, state, map, refs,
+    annotations, clocks⟩ := post
+  cases targetResult with
+  | val values => simp [resultRel] at related
+  | err targetError =>
+    refine ⟨clock, .err targetError, tFinal, fFinal, ?_, related, state, map, refs,
+      annotations, clocks⟩
+    rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, run]
 
 end Flapjack.Compiler.Backend.ClosToBvl

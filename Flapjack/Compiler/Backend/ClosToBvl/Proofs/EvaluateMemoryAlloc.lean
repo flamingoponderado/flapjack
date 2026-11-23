@@ -16,12 +16,7 @@ theorem evaluatePost_ref_error {C F : Type} (s sFinal : ClosSem.State C F)
     (f : HolFiniteMapExact Nat Nat) (args : List Bvl.Exp) (error : ErrorResult ClosSem.Value)
     (post : evaluatePost s sFinal t targetEnv f (.err error) args) :
     evaluatePost s sFinal t targetEnv f (.err error) [.op (.memOp .ref) args] := by
-  obtain ⟨clock, targetResult, tFinal, fFinal, run, related, state, map, refs, annotations, clocks⟩ := post
-  cases targetResult with
-  | val values => simp [resultRel] at related
-  | err targetError =>
-    refine ⟨clock, .err targetError, tFinal, fFinal, ?_, related, state, map, refs, annotations, clocks⟩
-    rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, run]
+  exact evaluatePostOpError s sFinal t targetEnv f (.memOp .ref) args error post
 
 /-- Allocating related argument lists yields related fresh references. -/
 theorem evaluatePost_ref_success {C F : Type} (s sMiddle : ClosSem.State C F)
@@ -107,12 +102,7 @@ theorem evaluatePost_refArray_error {C F : Type} (s sFinal : ClosSem.State C F)
     (f : HolFiniteMapExact Nat Nat) (args : List Bvl.Exp) (error : ErrorResult ClosSem.Value)
     (post : evaluatePost s sFinal t targetEnv f (.err error) args) :
     evaluatePost s sFinal t targetEnv f (.err error) [.op (.memOp .refArray) args] := by
-  obtain ⟨clock, targetResult, tFinal, fFinal, run, related, state, map, refs, annotations, clocks⟩ := post
-  cases targetResult with
-  | val values => simp [resultRel] at related
-  | err targetError =>
-    refine ⟨clock, .err targetError, tFinal, fFinal, ?_, related, state, map, refs, annotations, clocks⟩
-    rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, run]
+  exact evaluatePostOpError s sFinal t targetEnv f (.memOp .refArray) args error post
 
 /-- A successful repeated-array allocation preserves the simulation. -/
 theorem evaluatePost_refArray_success {C F : Type} (s sMiddle sLast : ClosSem.State C F)
@@ -226,12 +216,7 @@ theorem evaluatePost_refByte_error {C F : Type} (s sFinal : ClosSem.State C F)
     (f : HolFiniteMapExact Nat Nat) (args : List Bvl.Exp) (error : ErrorResult ClosSem.Value)
     (post : evaluatePost s sFinal t targetEnv f (.err error) args) :
     evaluatePost s sFinal t targetEnv f (.err error) [.op (.memOp (.refByte false)) args] := by
-  obtain ⟨clock, targetResult, tFinal, fFinal, run, related, state, map, refs, annotations, clocks⟩ := post
-  cases targetResult with
-  | val values => simp [resultRel] at related
-  | err targetError =>
-    refine ⟨clock, .err targetError, tFinal, fFinal, ?_, related, state, map, refs, annotations, clocks⟩
-    rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, run]
+  exact evaluatePostOpError s sFinal t targetEnv f (.memOp (.refByte false)) args error post
 
 /-- A successful mutable-byte allocation preserves the simulation. -/
 theorem evaluatePost_refByte_success {C F : Type} (s sMiddle sLast : ClosSem.State C F)
@@ -347,12 +332,7 @@ theorem evaluatePost_refByteTrue_error {C F : Type} (s sFinal : ClosSem.State C 
     (f : HolFiniteMapExact Nat Nat) (args : List Bvl.Exp) (error : ErrorResult ClosSem.Value)
     (post : evaluatePost s sFinal t targetEnv f (.err error) args) :
     evaluatePost s sFinal t targetEnv f (.err error) [.op (.memOp (.refByte true)) args] := by
-  obtain ⟨clock, targetResult, tFinal, fFinal, run, related, state, map, refs, annotations, clocks⟩ := post
-  cases targetResult with
-  | val values => simp [resultRel] at related
-  | err targetError =>
-    refine ⟨clock, .err targetError, tFinal, fFinal, ?_, related, state, map, refs, annotations, clocks⟩
-    rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, run]
+  exact evaluatePostOpError s sFinal t targetEnv f (.memOp (.refByte true)) args error post
 
 /-- The unsupported source allocation flag always gives a type error after
 successful argument evaluation; argument errors still propagate. -/

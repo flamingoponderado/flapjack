@@ -75,12 +75,7 @@ theorem evaluatePost_constant_error {C F : Type} (s sFinal : ClosSem.State C F)
     (error : ErrorResult ClosSem.Value)
     (post : evaluatePost s sFinal t targetEnv f (.err error) args) :
     evaluatePost s sFinal t targetEnv f (.err error) [.op (compileConst constant) args] := by
-  obtain ⟨clock, targetResult, tFinal, fFinal, run, related, state, map, refs, annotations, clocks⟩ := post
-  cases targetResult with
-  | val values => simp [resultRel] at related
-  | err targetError =>
-    refine ⟨clock, .err targetError, tFinal, fFinal, ?_, related, state, map, refs, annotations, clocks⟩
-    rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, run]
+  exact evaluatePostOpError s sFinal t targetEnv f (compileConst constant) args error post
 
 /-- The constant expression case for arbitrary argument lists. The argument
 induction hypothesis and the relations are the existing simulation candidates,
