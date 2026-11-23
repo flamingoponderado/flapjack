@@ -3,6 +3,8 @@ module
 public import Flapjack.HolRef
 public import Flapjack.Misc.Alignment
 public import Flapjack.RiscV.L3.Support
+public import Lean.Elab.Tactic.Omega
+public import Mathlib.Tactic.NormNum
 
 @[expose] public section
 
@@ -76,5 +78,20 @@ theorem ror (w : BitVec 64) (n : Nat) (h : n < 64) :
     ((w <<< (64 - n)) ||| (w >>> n)) = w.rotateRight n := by
   rw [BitVec.rotateRight_eq_rotateRightAux_of_lt h]
   exact BitVec.or_comm _ _
+
+/-- The literal final SRLI63 extracts the word64 sign bit. Shared by the
+`AddOverflow` and `SubOverflow` arithmetic prerequisites; Flapjack proof
+infrastructure, with no separately named HOL declaration. -/
+theorem shift_msb (x : BitVec 64) :
+    x >>> 63 = (if x.msb then (1 : BitVec 64) else 0) := by
+  apply BitVec.eq_of_toNat_eq
+  have hx := x.isLt
+  have zero : (0 : BitVec 64).toNat = 0 := by decide
+  have one : (1 : BitVec 64).toNat = 1 := by decide
+  simp only [BitVec.toNat_ushiftRight, BitVec.msb_eq_decide]
+  split
+  all_goals simp only [zero, one]
+  all_goals norm_num [Nat.shiftRight_eq_div_pow] at *
+  all_goals omega
 
 end Flapjack.RiscV.TargetProof

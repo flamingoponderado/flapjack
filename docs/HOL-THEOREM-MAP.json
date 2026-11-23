@@ -81084,14 +81084,6 @@
 {
     "hol_path": null,
     "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/SimpProgCorrect/Assembly.lean",
-    "lean_name": "simpProgLookupCodeFinite_eq_HOLFinite",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-only bridge between the evaluator's lookupCodeFiniteHOL and the induction principle's lookupCodeHOLFinite on a finite-support code map (copy of the private ncompile assembly helper); used to discharge the Call IH bridging in simpProgCorrectOfExtCall."
-  },
-{
-    "hol_path": null,
-    "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/CrepArith/SimpProgCorrect/Assign.lean",
     "lean_name": "holFmapAsFiniteSupportWitness",
     "statement_status": "no_hol_reference_pending_classification",

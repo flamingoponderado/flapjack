@@ -16,6 +16,7 @@ public import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrectStoreByte
 public import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrectStoreGlob
 public import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrectExtCall
 public import Flapjack.Pancake.Semantics.CrepSem.EvaluateInd
+public import Flapjack.Pancake.Semantics.CrepProps
 
 @[expose] public section
 
@@ -50,32 +51,6 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {σ : Type} :
   CrepSemHOLState.holFmapAsFiniteSupportWitness
 
 end SimpProgCorrectAssemblySupport
-
-/-- The evaluator's `lookupCodeFiniteHOL` and the induction principle's
-    `lookupCodeHOLFinite` agree on a finite-support code map. -/
-private theorem simpProgLookupCodeFinite_eq_HOLFinite {width : Nat} [NeZero width]
-    (c : HolFiniteMapExact MlString (List Nat × CrepProgHOL width))
-    (f : MlString) (args : List (HolWordLab width)) (len : Nat) :
-    lookupCodeFiniteHOL c f args len = lookupCodeHOLFinite c.lookup f args len := by
-  have h1 := lookupCodeFiniteHOL_lookup c f args len
-  unfold lookupCodeHOLFinite
-  split
-  · rename_i hn
-    rw [hn] at h1
-    cases hF : lookupCodeFiniteHOL c f args len with
-    | none => rfl
-    | some val => rw [hF] at h1; simp at h1
-  · rename_i body cl hs
-    rw [hs] at h1
-    cases hF : lookupCodeFiniteHOL c f args len with
-    | none => rw [hF] at h1; simp at h1
-    | some val =>
-        obtain ⟨b, m⟩ := val
-        rw [hF] at h1
-        simp only [Option.map_some, Option.some.injEq, Prod.mk.injEq] at h1
-        obtain ⟨rfl, hm⟩ := h1
-        congr 2
-        exact holFiniteMapExact_eq_of_lookup_eq hm
 
 /-- Flapjack-only preparation (no HOL declaration, untagged): given the
     `ExtCall` case, every program and state satisfy the `simp_prog_correct`
@@ -130,11 +105,11 @@ theorem simpProgCorrectOfExtCall {width : Nat} [NeZero width] {σ : Type}
       (fun args prog newlocals st eid rts p ⟨h1, h2, h3, h4, h5, h6⟩ =>
         ihh args (prog, newlocals) prog newlocals _ _ st _ eid _ _ _ _ eid p
           (by rw [hfun]; exact h1)
-          (by rw [← simpProgLookupCodeFinite_eq_HOLFinite]; exact h2) rfl
+          (by simpa [← lookupCodeFinite_eq_HOLFinite] using h2) rfl
           (by subst h6; simpa using h3) h4 h5.symm rfl rfl rfl h6 rfl rfl rfl rfl)
       (fun args prog newlocals ⟨h1, h2, h3, h4⟩ =>
         ihb args (prog, newlocals) prog newlocals (by rw [hfun]; exact h1)
-          (by rw [← simpProgLookupCodeFinite_eq_HOLFinite]; exact h2) rfl
+          (by simpa [← lookupCodeFinite_eq_HOLFinite] using h2) rfl
           (by cases caltyp with
               | none => simp
               | some x => obtain ⟨rts, y⟩ := x; simpa using h3) h4)

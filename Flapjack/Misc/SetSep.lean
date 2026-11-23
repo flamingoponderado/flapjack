@@ -147,4 +147,24 @@ theorem writeFun2Set {α β : Type} (newValue : α) (address : β) (oldValue : �
     cases equal
     exact absent newValue member
 
+/-- Two function graphs on the same domain agree exactly when the functions
+agree on that domain. Shared by the Arm8 and Mips32 `Agree` projections;
+Flapjack proof infrastructure, with no separately named HOL declaration. -/
+theorem fun2Set_eq_iff {α β : Type} {f g : α → β} {d : α → Prop} :
+    fun2Set (f, d) = fun2Set (g, d) ↔ ∀ a, d a → f a = g a := by
+  constructor
+  · intro h a ha
+    have hm : fun2Set (f, d) (a, f a) := (fun2SetThm f d a (f a)).2 ⟨rfl, ha⟩
+    rw [h] at hm
+    exact ((fun2SetThm g d a (f a)).1 hm).1.symm
+  · intro h
+    funext ⟨a, b⟩
+    apply propext
+    rw [fun2SetThm, fun2SetThm]
+    constructor
+    · rintro ⟨rfl, ha⟩
+      exact ⟨(h a ha).symm, ha⟩
+    · rintro ⟨rfl, ha⟩
+      exact ⟨h a ha, ha⟩
+
 end Flapjack.SetSep

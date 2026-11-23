@@ -9,17 +9,6 @@ public import Flapjack.Compiler.Backend.BviLet.Proofs.Total
 namespace Flapjack.Compiler.Backend.BviLet
 open Bvi
 
-private theorem memberBudget (xs : List Exp) (e : Exp) (member : e ∈ xs) :
-    expBudget e < listBudget xs := by
-  induction xs with
-  | nil => simp at member
-  | cons x xs ih =>
-    simp only [List.mem_cons] at member
-    simp only [listBudget]
-    rcases member with rfl | member
-    · omega
-    · have := ih member; omega
-
 private theorem mapM_eq_compileList (xs : List Exp) (env : List Nat) (d fuel : Nat)
     (h : ∀ e ∈ xs, compileFuel fuel env d e = some (compileSing env d e)) :
     xs.mapM (compileFuel fuel env d) = some (compileList env d xs) := by
