@@ -38,13 +38,7 @@ theorem simulation_updateThunk {C F : Type} (mode : AstHOL.ThunkMode) (arguments
     cases argsResult with
     | err error => exact simulation_op_error (.thunkOp (.updateThunk mode)) arguments env source middle error argsIH argsRun
     | val values =>
-      intro n res next target n2 ys aux relocate run notTypeError compiled related sourceOk envOk installed handlers global
-      rcases argsCompile : compileListSource n arguments with ⟨argsCode, argsAux, finalName⟩
-      have nilRight : smartAppend argsAux .nil = argsAux := by cases argsAux <;> rfl
-      simp [compileListSource, compileSingSource, argsCompile, nilRight, compileOp] at compiled
-      rcases compiled with ⟨rfl, rfl, rfl⟩
-      have shape : BvlHandle.Proofs.handleOk arguments := by simpa [BvlHandle.Proofs.handleOk] using handlers
-      rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, argsRun] at run
+      bvlArgsSetup using compileOp
       cases reversed : values.reverse with
       | nil =>
         simp [BvlSem.doApp, reversed] at run
