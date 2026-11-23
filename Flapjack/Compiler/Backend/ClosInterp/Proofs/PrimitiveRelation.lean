@@ -282,52 +282,11 @@ theorem doApp_firstGlobal {C F : Type} (op : ClosLang.Op) (args : List ClosSem.V
     (run : ClosSem.doApp op args state = .val (value, next))
     (present : state.globals.head? = some (some installed)) :
     next.globals.head? = some (some installed) := by
-  cases op with
-  | globOp operation =>
-    cases h : ClosSem.applyGlobal operation args state with
-    | none => simp [ClosSem.doApp, h] at run
-    | some pair =>
-      have equal : pair = (value, next) := by simpa [ClosSem.doApp, h] using run
-      subst pair
-      exact applyGlobal_firstGlobal operation args state next value installed present h
-  | blockOp operation =>
-    cases h : ClosSem.applyBlock operation args state with
-    | none => simp [ClosSem.doApp, h] at run
-    | some pair =>
-      have equal : pair = (value, next) := by simpa [ClosSem.doApp, h] using run
-      subst pair
-      rw [applyBlock_globals operation args state next value h]
-      exact present
-  | memOp operation =>
-    cases h : ClosSem.applyMemory operation args state with
-    | none => simp [ClosSem.doApp, h] at run
-    | some pair =>
-      have equal : pair = (value, next) := by simpa [ClosSem.doApp, h] using run
-      subst pair
-      rw [applyMemory_globals operation args state next value h]
-      exact present
-  | intOp operation =>
-    cases h : ClosSem.applyNumeric (.intOp operation) args state with
-    | none => simp [ClosSem.doApp, h] at run
-    | some pair =>
-      have equal : pair = (value, next) := by simpa [ClosSem.doApp, h] using run
-      subst pair
-      rw [applyNumeric_globals (.intOp operation) args state next value h]
-      exact present
-  | wordOp operation =>
-    cases h : ClosSem.applyNumeric (.wordOp operation) args state with
-    | none => simp [ClosSem.doApp, h] at run
-    | some pair =>
-      have equal : pair = (value, next) := by simpa [ClosSem.doApp, h] using run
-      subst pair
-      rw [applyNumeric_globals (.wordOp operation) args state next value h]
-      exact present
-  | ffi | thunkOp =>
+  cases op
+  all_goals
     simp only [ClosSem.doApp] at run
-    repeat' split at run
-    all_goals simp_all
-    all_goals aesop
-  | label | install => simp [ClosSem.doApp] at run
+    grind [applyGlobal_firstGlobal, applyBlock_globals, applyMemory_globals,
+      applyNumeric_globals]
 
 /-- A successful ordinary primitive preserves the interpreter state relation. -/
 theorem doApp_stateRel {C F : Type} (op : ClosLang.Op) (args : List ClosSem.Value)
