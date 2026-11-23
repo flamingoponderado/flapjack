@@ -28,142 +28,70 @@ private theorem getElem_fcp {width : Nat} (P : Nat → Bool) (i : Nat)
     (hi : i < width) : (Flapjack.holFcpWord (width := width) P)[i] = P i := by
   simpa [hi] using Flapjack.getLsbD_holFcpWord (width := width) P i
 
+/-- FLAPJACK-SPECIFIC factoring (no separately named HOL theorem): the six
+conditional-branch encodings decode back to themselves. One proof covers every
+conditional `Branch` constructor; `JAL`/`JALR` have a different immediate width
+and are not covered. -/
+private theorem decode_encode_cond (rs1 rs2 : BitVec 5) (imm : BitVec 12)
+    (b : Branch) (hb : b = .BEQ (rs1, rs2, imm) ∨ b = .BGE (rs1, rs2, imm) ∨
+      b = .BGEU (rs1, rs2, imm) ∨ b = .BLT (rs1, rs2, imm) ∨
+      b = .BLTU (rs1, rs2, imm) ∨ b = .BNE (rs1, rs2, imm)) :
+    Step.DecodeAny (.Word (Encode (.Branch b))) = .Branch b := by
+  rcases hb with rfl | rfl | rfl | rfl | rfl | rfl
+  all_goals
+    simp only [Step.DecodeAny, Encode, SBtype, opc, BitVec.setWidth_eq]
+    simp only [Decode, boolify32, BitVec.getLsbD_append]
+    simp [holWordExtract]
+    refine ⟨by simpa using reconstruct5 rs1, by simpa using reconstruct5 rs2, ?_⟩
+    have test4 (n j : Nat) : (n % 16).testBit j =
+        (decide (j < 4) && n.testBit j) := Nat.testBit_mod_two_pow n 4 j
+    have test6 (n j : Nat) : (n % 64).testBit j =
+        (decide (j < 6) && n.testBit j) := Nat.testBit_mod_two_pow n 6 j
+    simp only [asImm12, BitVec.setWidth_eq]
+    apply BitVec.eq_of_getLsbD_eq_iff.mpr
+    intro i hi
+    simp only [BitVec.getLsbD_append]
+    interval_cases i
+    all_goals simp only [holV2w, getElem_fcp, Flapjack.getLsbD_holFcpWord]
+    all_goals simp
+    all_goals simp only [BitVec.getElem_eq_testBit_toNat, BitVec.toNat_ofNat,
+      test4, test6, Nat.testBit_shiftRight]
+    all_goals simp
+
 
 /-- Actual native composition for every intrinsic register and offset. -/
 theorem decode_encode_beq (rs1 rs2 : BitVec 5) (imm : BitVec 12) :
     Step.DecodeAny (.Word (Encode (.Branch (.BEQ (rs1, rs2, imm))))) =
-      .Branch (.BEQ (rs1, rs2, imm)) := by
-  simp only [Step.DecodeAny, Encode, SBtype, opc, BitVec.setWidth_eq]
-  simp only [Decode, boolify32, BitVec.getLsbD_append]
-  simp [holWordExtract]
-  refine ⟨by simpa using reconstruct5 rs1, by simpa using reconstruct5 rs2, ?_⟩
-  have test4 (n j : Nat) : (n % 16).testBit j =
-      (decide (j < 4) && n.testBit j) := Nat.testBit_mod_two_pow n 4 j
-  have test6 (n j : Nat) : (n % 64).testBit j =
-      (decide (j < 6) && n.testBit j) := Nat.testBit_mod_two_pow n 6 j
-  simp only [asImm12, BitVec.setWidth_eq]
-  apply BitVec.eq_of_getLsbD_eq_iff.mpr
-  intro i hi
-  simp only [BitVec.getLsbD_append]
-  interval_cases i
-  all_goals simp only [holV2w, getElem_fcp, Flapjack.getLsbD_holFcpWord]
-  all_goals simp
-  all_goals simp only [BitVec.getElem_eq_testBit_toNat, BitVec.toNat_ofNat,
-    test4, test6, Nat.testBit_shiftRight]
-  all_goals simp
+      .Branch (.BEQ (rs1, rs2, imm)) :=
+  decode_encode_cond rs1 rs2 imm (.BEQ (rs1, rs2, imm)) (by simp)
 
 /-- Actual native composition for every intrinsic register and offset. -/
 theorem decode_encode_bne (rs1 rs2 : BitVec 5) (imm : BitVec 12) :
     Step.DecodeAny (.Word (Encode (.Branch (.BNE (rs1, rs2, imm))))) =
-      .Branch (.BNE (rs1, rs2, imm)) := by
-  simp only [Step.DecodeAny, Encode, SBtype, opc, BitVec.setWidth_eq]
-  simp only [Decode, boolify32, BitVec.getLsbD_append]
-  simp [holWordExtract]
-  refine ⟨by simpa using reconstruct5 rs1, by simpa using reconstruct5 rs2, ?_⟩
-  have test4 (n j : Nat) : (n % 16).testBit j =
-      (decide (j < 4) && n.testBit j) := Nat.testBit_mod_two_pow n 4 j
-  have test6 (n j : Nat) : (n % 64).testBit j =
-      (decide (j < 6) && n.testBit j) := Nat.testBit_mod_two_pow n 6 j
-  simp only [asImm12, BitVec.setWidth_eq]
-  apply BitVec.eq_of_getLsbD_eq_iff.mpr
-  intro i hi
-  simp only [BitVec.getLsbD_append]
-  interval_cases i
-  all_goals simp only [holV2w, getElem_fcp, Flapjack.getLsbD_holFcpWord]
-  all_goals simp
-  all_goals simp only [BitVec.getElem_eq_testBit_toNat, BitVec.toNat_ofNat,
-    test4, test6, Nat.testBit_shiftRight]
-  all_goals simp
+      .Branch (.BNE (rs1, rs2, imm)) :=
+  decode_encode_cond rs1 rs2 imm (.BNE (rs1, rs2, imm)) (by simp)
 
 /-- Actual native composition for every intrinsic register and offset. -/
 theorem decode_encode_blt (rs1 rs2 : BitVec 5) (imm : BitVec 12) :
     Step.DecodeAny (.Word (Encode (.Branch (.BLT (rs1, rs2, imm))))) =
-      .Branch (.BLT (rs1, rs2, imm)) := by
-  simp only [Step.DecodeAny, Encode, SBtype, opc, BitVec.setWidth_eq]
-  simp only [Decode, boolify32, BitVec.getLsbD_append]
-  simp [holWordExtract]
-  refine ⟨by simpa using reconstruct5 rs1, by simpa using reconstruct5 rs2, ?_⟩
-  have test4 (n j : Nat) : (n % 16).testBit j =
-      (decide (j < 4) && n.testBit j) := Nat.testBit_mod_two_pow n 4 j
-  have test6 (n j : Nat) : (n % 64).testBit j =
-      (decide (j < 6) && n.testBit j) := Nat.testBit_mod_two_pow n 6 j
-  simp only [asImm12, BitVec.setWidth_eq]
-  apply BitVec.eq_of_getLsbD_eq_iff.mpr
-  intro i hi
-  simp only [BitVec.getLsbD_append]
-  interval_cases i
-  all_goals simp only [holV2w, getElem_fcp, Flapjack.getLsbD_holFcpWord]
-  all_goals simp
-  all_goals simp only [BitVec.getElem_eq_testBit_toNat, BitVec.toNat_ofNat,
-    test4, test6, Nat.testBit_shiftRight]
-  all_goals simp
+      .Branch (.BLT (rs1, rs2, imm)) :=
+  decode_encode_cond rs1 rs2 imm (.BLT (rs1, rs2, imm)) (by simp)
 
 /-- Actual native composition for every intrinsic register and offset. -/
 theorem decode_encode_bltu (rs1 rs2 : BitVec 5) (imm : BitVec 12) :
     Step.DecodeAny (.Word (Encode (.Branch (.BLTU (rs1, rs2, imm))))) =
-      .Branch (.BLTU (rs1, rs2, imm)) := by
-  simp only [Step.DecodeAny, Encode, SBtype, opc, BitVec.setWidth_eq]
-  simp only [Decode, boolify32, BitVec.getLsbD_append]
-  simp [holWordExtract]
-  refine ⟨by simpa using reconstruct5 rs1, by simpa using reconstruct5 rs2, ?_⟩
-  have test4 (n j : Nat) : (n % 16).testBit j =
-      (decide (j < 4) && n.testBit j) := Nat.testBit_mod_two_pow n 4 j
-  have test6 (n j : Nat) : (n % 64).testBit j =
-      (decide (j < 6) && n.testBit j) := Nat.testBit_mod_two_pow n 6 j
-  simp only [asImm12, BitVec.setWidth_eq]
-  apply BitVec.eq_of_getLsbD_eq_iff.mpr
-  intro i hi
-  simp only [BitVec.getLsbD_append]
-  interval_cases i
-  all_goals simp only [holV2w, getElem_fcp, Flapjack.getLsbD_holFcpWord]
-  all_goals simp
-  all_goals simp only [BitVec.getElem_eq_testBit_toNat, BitVec.toNat_ofNat,
-    test4, test6, Nat.testBit_shiftRight]
-  all_goals simp
+      .Branch (.BLTU (rs1, rs2, imm)) :=
+  decode_encode_cond rs1 rs2 imm (.BLTU (rs1, rs2, imm)) (by simp)
 
 /-- Actual native composition for every intrinsic register and offset. -/
 theorem decode_encode_bge (rs1 rs2 : BitVec 5) (imm : BitVec 12) :
     Step.DecodeAny (.Word (Encode (.Branch (.BGE (rs1, rs2, imm))))) =
-      .Branch (.BGE (rs1, rs2, imm)) := by
-  simp only [Step.DecodeAny, Encode, SBtype, opc, BitVec.setWidth_eq]
-  simp only [Decode, boolify32, BitVec.getLsbD_append]
-  simp [holWordExtract]
-  refine ⟨by simpa using reconstruct5 rs1, by simpa using reconstruct5 rs2, ?_⟩
-  have test4 (n j : Nat) : (n % 16).testBit j =
-      (decide (j < 4) && n.testBit j) := Nat.testBit_mod_two_pow n 4 j
-  have test6 (n j : Nat) : (n % 64).testBit j =
-      (decide (j < 6) && n.testBit j) := Nat.testBit_mod_two_pow n 6 j
-  simp only [asImm12, BitVec.setWidth_eq]
-  apply BitVec.eq_of_getLsbD_eq_iff.mpr
-  intro i hi
-  simp only [BitVec.getLsbD_append]
-  interval_cases i
-  all_goals simp only [holV2w, getElem_fcp, Flapjack.getLsbD_holFcpWord]
-  all_goals simp
-  all_goals simp only [BitVec.getElem_eq_testBit_toNat, BitVec.toNat_ofNat,
-    test4, test6, Nat.testBit_shiftRight]
-  all_goals simp
+      .Branch (.BGE (rs1, rs2, imm)) :=
+  decode_encode_cond rs1 rs2 imm (.BGE (rs1, rs2, imm)) (by simp)
 
 /-- Actual native composition for every intrinsic register and offset. -/
 theorem decode_encode_bgeu (rs1 rs2 : BitVec 5) (imm : BitVec 12) :
     Step.DecodeAny (.Word (Encode (.Branch (.BGEU (rs1, rs2, imm))))) =
-      .Branch (.BGEU (rs1, rs2, imm)) := by
-  simp only [Step.DecodeAny, Encode, SBtype, opc, BitVec.setWidth_eq]
-  simp only [Decode, boolify32, BitVec.getLsbD_append]
-  simp [holWordExtract]
-  refine ⟨by simpa using reconstruct5 rs1, by simpa using reconstruct5 rs2, ?_⟩
-  have test4 (n j : Nat) : (n % 16).testBit j =
-      (decide (j < 4) && n.testBit j) := Nat.testBit_mod_two_pow n 4 j
-  have test6 (n j : Nat) : (n % 64).testBit j =
-      (decide (j < 6) && n.testBit j) := Nat.testBit_mod_two_pow n 6 j
-  simp only [asImm12, BitVec.setWidth_eq]
-  apply BitVec.eq_of_getLsbD_eq_iff.mpr
-  intro i hi
-  simp only [BitVec.getLsbD_append]
-  interval_cases i
-  all_goals simp only [holV2w, getElem_fcp, Flapjack.getLsbD_holFcpWord]
-  all_goals simp
-  all_goals simp only [BitVec.getElem_eq_testBit_toNat, BitVec.toNat_ofNat,
-    test4, test6, Nat.testBit_shiftRight]
-  all_goals simp
+      .Branch (.BGEU (rs1, rs2, imm)) :=
+  decode_encode_cond rs1 rs2 imm (.BGEU (rs1, rs2, imm)) (by simp)
 end Flapjack.RiscV.L3
