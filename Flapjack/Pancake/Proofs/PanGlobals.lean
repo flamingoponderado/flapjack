@@ -359,66 +359,8 @@ theorem evaluateDeclsHOLFinite_append {width : Nat} {σ : Type} [NeZero width] :
       (ds1 ds2 : List (DeclHOL width)),
       PanSemStateFiniteExact.evaluateDeclsHOLFinite state (ds1 ++ ds2) =
         Option.bind (PanSemStateFiniteExact.evaluateDeclsHOLFinite state ds1)
-          (fun state' => PanSemStateFiniteExact.evaluateDeclsHOLFinite state' ds2) := by
-  intro state _hdec ds1
-  induction ds1 generalizing state with
-  | nil =>
-      intro ds2
-      simp only [List.nil_append, PanSemStateFiniteExact.evaluateDeclsHOLFinite]
-      have hdecEq : _hdec = (fun address => Classical.propDecidable (state.memaddrs address)) :=
-        Subsingleton.elim _ _
-      rw [hdecEq]
-      rfl
-  | cons declaration rest ih =>
-      intro ds2
-      cases declaration with
-      | name name fields =>
-          simpa [List.cons_append, PanSemStateFiniteExact.evaluateDeclsHOLFinite]
-            using ih state ds2
-      | decl shape name expression =>
-          letI : DecidablePred
-              (PanSemStateFiniteExact.emptyLocalsHOLFinite state).memaddrs := by
-            simpa [PanSemStateFiniteExact.emptyLocalsHOLFinite] using _hdec
-          simp only [List.cons_append, PanSemStateFiniteExact.evaluateDeclsHOLFinite]
-          cases heval : PanSemStateFiniteExact.evalHOLFinite
-              (PanSemStateFiniteExact.emptyLocalsHOLFinite state) expression with
-          | none => simp
-          | some value =>
-              by_cases hshape : shapeEqHOL shape (shapeOfHOLExact value)
-              · simp only [if_pos hshape]
-                exact ih (PanSemStateFiniteExact.setGlobalHOLFinite name value state)
-                  (_hdec := _hdec) ds2
-              · simp [hshape]
-      | function declaration =>
-          simp only [List.cons_append, PanSemStateFiniteExact.evaluateDeclsHOLFinite]
-          let condition := declaration.params.all
-              (fun parameter => isWfShapeExactHOL state.structs parameter.2) &&
-            isWfShapeExactHOL state.structs declaration.returnShape
-          by_cases hcondition : condition = true
-          · simp only [condition, hcondition, if_pos]
-            exact ih
-              { state with code := state.code.update (declaration.name,
-                (declaration.params, declaration.body, declaration.returnShape)) }
-              (_hdec := _hdec) ds2
-          · have hconditionFalse : condition = false := by
-              cases hcond : condition with
-              | false => rfl
-              | true => exact False.elim (hcondition hcond)
-            simp [condition, hconditionFalse]
-      | exnDecl exceptionName shape =>
-          simp only [List.cons_append, PanSemStateFiniteExact.evaluateDeclsHOLFinite]
-          let condition := (state.eshapes.lookup exceptionName).isNone &&
-            isWfShapeExactHOL state.structs shape
-          by_cases hcondition : condition = true
-          · simp only [condition, hcondition, if_pos]
-            exact ih
-              { state with eshapes := state.eshapes.update (exceptionName, shape) }
-              (_hdec := _hdec) ds2
-          · have hconditionFalse : condition = false := by
-              cases hcond : condition with
-              | false => rfl
-              | true => exact False.elim (hcondition hcond)
-            simp [condition, hconditionFalse]
+          (fun state' => PanSemStateFiniteExact.evaluateDeclsHOLFinite state' ds2) :=
+  PanSemStateFiniteExact.evaluateDeclsHOLFinite_append
 
 /-- Flapjack-specific: expression evaluation under `emptyLocalsHOLFinite` is
     unchanged when only the `eshapes` field of the source state changes

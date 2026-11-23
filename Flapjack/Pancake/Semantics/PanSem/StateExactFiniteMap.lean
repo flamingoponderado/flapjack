@@ -4696,6 +4696,77 @@ theorem isValidValueSimps2HOLFinite {width : Nat} {σ : Type} [NeZero width]
         lookupKvarHOLFinite kind name state) :=
   ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
 
+section
+open Classical
+
+/-- FLAPJACK-SPECIFIC structural lemma (no `@[hol]` tag, no standalone HOL
+declaration): evaluating a declaration list split at an append is the monadic
+bind of the two halves. Shared by the exact-carrier `evaluate_decls_append`
+ports, which stay tagged in their counterpart modules. -/
+theorem evaluateDeclsHOLFinite_append {width : Nat} {σ : Type} [NeZero width] :
+    ∀ (state : PanSemStateFiniteExact width σ) [_hdec : DecidablePred state.memaddrs]
+      (ds1 ds2 : List (DeclHOL width)),
+      evaluateDeclsHOLFinite state (ds1 ++ ds2) =
+        Option.bind (evaluateDeclsHOLFinite state ds1)
+          (fun state' => evaluateDeclsHOLFinite state' ds2) := by
+  intro state _hdec ds1
+  induction ds1 generalizing state with
+  | nil =>
+      intro ds2
+      simp only [List.nil_append, evaluateDeclsHOLFinite]
+      have hdecEq : _hdec = (fun address => Classical.propDecidable (state.memaddrs address)) :=
+        Subsingleton.elim _ _
+      rw [hdecEq]
+      rfl
+  | cons declaration rest ih =>
+      intro ds2
+      cases declaration with
+      | name name fields =>
+          simpa [List.cons_append, evaluateDeclsHOLFinite] using ih state ds2
+      | decl shape name expression =>
+          letI : DecidablePred (emptyLocalsHOLFinite state).memaddrs := by
+            simpa [emptyLocalsHOLFinite] using _hdec
+          simp only [List.cons_append, evaluateDeclsHOLFinite]
+          cases heval : evalHOLFinite (emptyLocalsHOLFinite state) expression with
+          | none => simp
+          | some value =>
+              by_cases hshape : shapeEqHOL shape (shapeOfHOLExact value)
+              · simp only [if_pos hshape]
+                exact ih (setGlobalHOLFinite name value state) (_hdec := _hdec) ds2
+              · simp [hshape]
+      | function declaration =>
+          simp only [List.cons_append, evaluateDeclsHOLFinite]
+          let condition := declaration.params.all
+              (fun parameter => isWfShapeExactHOL state.structs parameter.2) &&
+            isWfShapeExactHOL state.structs declaration.returnShape
+          by_cases hcondition : condition = true
+          · simp only [condition, hcondition, if_pos]
+            exact ih
+              { state with code := state.code.update (declaration.name,
+                (declaration.params, declaration.body, declaration.returnShape)) }
+              (_hdec := _hdec) ds2
+          · have hconditionFalse : condition = false := by
+              cases hcond : condition with
+              | false => rfl
+              | true => exact False.elim (hcondition hcond)
+            simp [condition, hconditionFalse]
+      | exnDecl exceptionName shape =>
+          simp only [List.cons_append, evaluateDeclsHOLFinite]
+          let condition := (state.eshapes.lookup exceptionName).isNone &&
+            isWfShapeExactHOL state.structs shape
+          by_cases hcondition : condition = true
+          · simp only [condition, hcondition, if_pos]
+            exact ih
+              { state with eshapes := state.eshapes.update (exceptionName, shape) }
+              (_hdec := _hdec) ds2
+          · have hconditionFalse : condition = false := by
+              cases hcond : condition with
+              | false => rfl
+              | true => exact False.elim (hcondition hcond)
+            simp [condition, hconditionFalse]
+
+end
+
 end PanSemStateFiniteExact
 
 end Flapjack
