@@ -98,6 +98,72 @@ private theorem badRelated (oracle : EvalOracleState) (s t : Store Value) (v w :
   · cases hs : destThunk [v] s <;> cases ht : destThunk [w] t <;> simp_all [destRel]
   · rfl
 
+/-- Flapjack factoring of the `aupdate`/`aupdateUnsafe` simulation cases.
+The two branches are identical apart from the bounds-check flag, so the shared
+proof is written once and applied to both constructors. `simp only` keeps the
+flag `(op == .aupdateUnsafe)` unreduced so `safeFlag` can rewrite it to the
+parameter `safe`, which then matches the shared `updateIndexed` run. -/
+private theorem varrayUpdateCase {F : Type} (oracle : EvalOracleState)
+    (s : State F) (refs : Store Value) (ffi : HolFfiState F) (r : Result Value Value)
+    (targetRefs : Store Value)
+    (stores : List.Forall₂ (storeValueRel (ValueRel oracle)) s.refs targetRefs)
+    (xsr ysr : List Value) (reversed : List.Forall₂ (ValueRel oracle) xsr ysr)
+    (op : Op) (opIsUpdate : op = .aupdate ∨ op = .aupdateUnsafe)
+    (safe : Bool) (safeFlag : (op == .aupdateUnsafe) = safe)
+    (run : doApp (s.refs, s.ffi) op xsr = some ((refs, ffi), r)) :
+    ∃ (refs' : Store Value) (r' : Result Value Value) (es : EvalOracleState),
+      es = oracle ∧ doApp (targetRefs, s.ffi) op ysr = some ((refs', ffi), r') ∧
+      List.Forall₂ (storeValueRel (ValueRel es)) refs refs' ∧
+      resultRel (ValueRel es) (ValueRel es) r r' := by
+  rcases opIsUpdate with rfl | rfl
+  all_goals
+    cases reversed with
+    | nil => simp [doApp, doAppNumericCore, doAppBasic] at run
+    | @cons source target rest rest' head tail =>
+      cases tail with
+      | nil => simp [doApp, doAppNumericCore, doAppBasic] at run
+      | @cons index index' rest rest' second tail =>
+        cases tail with
+        | nil => simp [doApp, doAppNumericCore, doAppBasic] at run
+        | @cons value value' rest rest' third tail =>
+          cases tail with
+          | cons _ _ => simp [doApp, doAppNumericCore, doAppBasic] at run
+          | nil =>
+            cases head with
+            | loc flag address =>
+              cases second with
+              | lit lit =>
+                cases lit with
+                | intLit index =>
+                  cases found : storeLookup address s.refs with
+                  | none => simp [doApp, doAppNumericCore, doAppBasic, found] at run
+                  | some entry =>
+                    cases entry with
+                    | varray items =>
+                      obtain ⟨entry', found', related⟩ :=
+                        storeValueRel_lookup stores address (.varray items) found
+                      cases entry' with
+                      | varray items' =>
+                        have itemsRel : List.Forall₂ (ValueRel oracle) items items' := related
+                        have sourceRun :
+                            updateIndexed (s.refs, s.ffi) safe address items index value .varray =
+                            some ((refs, ffi), r) := by
+                          simpa only [doApp, doAppNumericCore, doAppBasic, Option.getD_some,
+                            safeFlag, found] using run
+                        obtain ⟨refs', r', targetRun, targetStores, resultRelated⟩ :=
+                          indexedUpdate_related oracle s.refs targetRefs s.ffi ffi safe address
+                            index items items'
+                            value value' (ValueRel oracle) .varray .varray stores itemsRel third
+                            (fun _ _ h => h) refs r sourceRun
+                        exact ⟨refs', r', oracle, rfl,
+                          by simpa only [doApp, doAppNumericCore, doAppBasic, Option.getD_some,
+                            safeFlag, found'] using targetRun,
+                          targetStores, resultRelated⟩
+                      | _ => simp [storeValueRel] at related
+                    | _ => simp [doApp, doAppNumericCore, doAppBasic, found] at run
+                | _ => simp [doApp, doAppNumericCore, doAppBasic] at run
+              | _ => simp [doApp, doAppNumericCore, doAppBasic] at run
+            | _ => simp [doApp, doAppNumericCore, doAppBasic] at run
 
 /-- Primitive applications preserve related stores and results.
 The unused HOL existential `ref1 :β` is omitted, as the rules allow for a vacuous binder.
@@ -1052,49 +1118,8 @@ theorem doApp_sim {Config F : Type} (s : State F) (op : Op)
             | _ => simp [found] at run
         | _ => simp [doApp, doAppNumericCore, doAppBasic] at run
   | aupdate =>
-    cases reversed with
-    | nil => simp [doApp, doAppNumericCore, doAppBasic] at run
-    | @cons source target rest rest' head tail =>
-      cases tail with
-      | nil => simp [doApp, doAppNumericCore, doAppBasic] at run
-      | @cons index index' rest rest' second tail =>
-        cases tail with
-        | nil => simp [doApp, doAppNumericCore, doAppBasic] at run
-        | @cons value value' rest rest' third tail =>
-          cases tail with
-          | cons _ _ => simp [doApp, doAppNumericCore, doAppBasic] at run
-          | nil =>
-            cases head with
-            | loc flag address =>
-              cases second with
-              | lit lit =>
-                cases lit with
-                | intLit index =>
-                  have safeFlag : (Op.aupdate == Op.aupdateUnsafe) = false := by decide
-                  cases found : storeLookup address s.refs with
-                  | none => simp [doApp, doAppNumericCore, doAppBasic, found] at run
-                  | some entry =>
-                    cases entry with
-                    | varray items =>
-                      obtain ⟨entry', found', related⟩ := storeValueRel_lookup stores address (.varray items) found
-                      cases entry' with
-                      | varray items' =>
-                        have itemsRel : List.Forall₂ (ValueRel oracle) items items' := related
-                        have sourceRun : updateIndexed (s.refs, s.ffi) false address items index value .varray =
-                            some ((refs, ffi), r) := by
-                          simpa [doApp, doAppNumericCore, doAppBasic, safeFlag, found] using run
-                        obtain ⟨refs', r', targetRun, targetStores, resultRelated⟩ :=
-                          indexedUpdate_related oracle s.refs targetRefs s.ffi ffi false address index items items'
-                            value value' (ValueRel oracle) .varray .varray stores itemsRel third
-                            (fun _ _ h => h) refs r sourceRun
-                        exact ⟨refs', r', oracle, rfl,
-                          by simpa [doApp, doAppNumericCore, doAppBasic, safeFlag, found'] using targetRun,
-                          targetStores, resultRelated⟩
-                      | _ => simp [storeValueRel] at related
-                    | _ => simp [doApp, doAppNumericCore, doAppBasic, found] at run
-                | _ => simp [doApp, doAppNumericCore, doAppBasic] at run
-              | _ => simp [doApp, doAppNumericCore, doAppBasic] at run
-            | _ => simp [doApp, doAppNumericCore, doAppBasic] at run
+    exact varrayUpdateCase oracle s refs ffi r targetRefs stores xsr ysr reversed
+      Op.aupdate (Or.inl rfl) false (by decide) run
   | vsubUnsafe =>
     cases reversed with
     | nil => simp [doApp, doAppNumericCore, doAppBasic] at run
@@ -1162,49 +1187,8 @@ theorem doApp_sim {Config F : Type} (s : State F) (op : Op)
             | _ => simp [doApp, doAppNumericCore, doAppBasic] at run
           | _ => simp [doApp, doAppNumericCore, doAppBasic] at run
   | aupdateUnsafe =>
-    cases reversed with
-    | nil => simp [doApp, doAppNumericCore, doAppBasic] at run
-    | @cons source target rest rest' head tail =>
-      cases tail with
-      | nil => simp [doApp, doAppNumericCore, doAppBasic] at run
-      | @cons index index' rest rest' second tail =>
-        cases tail with
-        | nil => simp [doApp, doAppNumericCore, doAppBasic] at run
-        | @cons value value' rest rest' third tail =>
-          cases tail with
-          | cons _ _ => simp [doApp, doAppNumericCore, doAppBasic] at run
-          | nil =>
-            cases head with
-            | loc flag address =>
-              cases second with
-              | lit lit =>
-                cases lit with
-                | intLit index =>
-                  have safeFlag : (Op.aupdateUnsafe == Op.aupdateUnsafe) = true := by decide
-                  cases found : storeLookup address s.refs with
-                  | none => simp [doApp, doAppNumericCore, doAppBasic, found] at run
-                  | some entry =>
-                    cases entry with
-                    | varray items =>
-                      obtain ⟨entry', found', related⟩ := storeValueRel_lookup stores address (.varray items) found
-                      cases entry' with
-                      | varray items' =>
-                        have itemsRel : List.Forall₂ (ValueRel oracle) items items' := related
-                        have sourceRun : updateIndexed (s.refs, s.ffi) true address items index value .varray =
-                            some ((refs, ffi), r) := by
-                          simpa [doApp, doAppNumericCore, doAppBasic, safeFlag, found] using run
-                        obtain ⟨refs', r', targetRun, targetStores, resultRelated⟩ :=
-                          indexedUpdate_related oracle s.refs targetRefs s.ffi ffi true address index items items'
-                            value value' (ValueRel oracle) .varray .varray stores itemsRel third
-                            (fun _ _ h => h) refs r sourceRun
-                        exact ⟨refs', r', oracle, rfl,
-                          by simpa [doApp, doAppNumericCore, doAppBasic, safeFlag, found'] using targetRun,
-                          targetStores, resultRelated⟩
-                      | _ => simp [storeValueRel] at related
-                    | _ => simp [doApp, doAppNumericCore, doAppBasic, found] at run
-                | _ => simp [doApp, doAppNumericCore, doAppBasic] at run
-              | _ => simp [doApp, doAppNumericCore, doAppBasic] at run
-            | _ => simp [doApp, doAppNumericCore, doAppBasic] at run
+    exact varrayUpdateCase oracle s refs ffi r targetRefs stores xsr ysr reversed
+      Op.aupdateUnsafe (Or.inr rfl) true (by decide) run
   | aw8subUnsafe =>
     cases reversed with
     | nil => simp [doApp, doAppNumericCore, doAppBasic] at run
