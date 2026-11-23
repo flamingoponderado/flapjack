@@ -19,6 +19,23 @@ theorem holFmapAsFiniteSupportRelationWitness_WordSemStateFiniteExact
 
 end SemanticInstFPArithWitnesses
 
+/-- Shared proof script for the binary FP opcode cases `FPAdd`, `FPSub`, `FPMul` and
+`FPDiv` (Flapjack proof infrastructure); only the opcode in each statement differs. -/
+local macro "ssa_fp_binop" arg:ident other:ident source:ident target:ident : tactic =>
+  `(tactic| (
+  have same_arg : WordSemStateFiniteExact.getFpVar $arg $source =
+      WordSemStateFiniteExact.getFpVar $arg $target := by
+    simp_all [WordSemStateFiniteExact.getFpVar, Flapjack.WordAlloc.wordStateEqRel]
+  have same_other : WordSemStateFiniteExact.getFpVar $other $source =
+      WordSemStateFiniteExact.getFpVar $other $target := by
+    simp_all [WordSemStateFiniteExact.getFpVar, Flapjack.WordAlloc.wordStateEqRel]
+  refine ⟨($target).permute, ?_⟩
+  cases read_arg : WordSemStateFiniteExact.getFpVar $arg $source
+  all_goals cases read_other : WordSemStateFiniteExact.getFpVar $other $source
+  all_goals simp_all [WordSemStateFiniteExact.evaluate, WordSemStateFiniteExact.inst,
+    WordSemStateFiniteExact.getFpVar, WordSemStateFiniteExact.setFpVar,
+    ssaCcTrans, ssaCcTransInst, Flapjack.WordAlloc.wordStateEqRel]))
+
 /-- Full original native FPSqrt opcode case with all six premises and complete
 Error-exempt source-permutation simulation. Original frame derives all fixed
 binary64 FP reads and the identical native operation and finite-map write.
@@ -67,16 +84,7 @@ theorem ssaCcTransCorrectInstFPAdd {width : Nat} [NeZero width] {C F : Type}
       everyVarHOL (width := width) (fun x => decide (x < next)) (.inst (.fp (.fpAdd dst arg other))) = true ∧
       ssaMapOK next ssa ∧ ltOK tables) :
     ssaSimulation (.inst (.fp (.fpAdd dst arg other))) source target ssa next tables := by
-  have same_arg : WordSemStateFiniteExact.getFpVar arg source = WordSemStateFiniteExact.getFpVar arg target := by
-    simp_all [WordSemStateFiniteExact.getFpVar, Flapjack.WordAlloc.wordStateEqRel]
-  have same_other : WordSemStateFiniteExact.getFpVar other source = WordSemStateFiniteExact.getFpVar other target := by
-    simp_all [WordSemStateFiniteExact.getFpVar, Flapjack.WordAlloc.wordStateEqRel]
-  refine ⟨target.permute, ?_⟩
-  cases read_arg : WordSemStateFiniteExact.getFpVar arg source <;>
-  cases read_other : WordSemStateFiniteExact.getFpVar other source <;>
-    simp_all [WordSemStateFiniteExact.evaluate, WordSemStateFiniteExact.inst,
-      WordSemStateFiniteExact.getFpVar, WordSemStateFiniteExact.setFpVar,
-      ssaCcTrans, ssaCcTransInst, Flapjack.WordAlloc.wordStateEqRel]
+  ssa_fp_binop arg other source target
 
 /-- Full original native FPSub opcode case with all six premises and complete
 Error-exempt source-permutation simulation. Original frame derives all fixed
@@ -98,16 +106,7 @@ theorem ssaCcTransCorrectInstFPSub {width : Nat} [NeZero width] {C F : Type}
       everyVarHOL (width := width) (fun x => decide (x < next)) (.inst (.fp (.fpSub dst arg other))) = true ∧
       ssaMapOK next ssa ∧ ltOK tables) :
     ssaSimulation (.inst (.fp (.fpSub dst arg other))) source target ssa next tables := by
-  have same_arg : WordSemStateFiniteExact.getFpVar arg source = WordSemStateFiniteExact.getFpVar arg target := by
-    simp_all [WordSemStateFiniteExact.getFpVar, Flapjack.WordAlloc.wordStateEqRel]
-  have same_other : WordSemStateFiniteExact.getFpVar other source = WordSemStateFiniteExact.getFpVar other target := by
-    simp_all [WordSemStateFiniteExact.getFpVar, Flapjack.WordAlloc.wordStateEqRel]
-  refine ⟨target.permute, ?_⟩
-  cases read_arg : WordSemStateFiniteExact.getFpVar arg source <;>
-  cases read_other : WordSemStateFiniteExact.getFpVar other source <;>
-    simp_all [WordSemStateFiniteExact.evaluate, WordSemStateFiniteExact.inst,
-      WordSemStateFiniteExact.getFpVar, WordSemStateFiniteExact.setFpVar,
-      ssaCcTrans, ssaCcTransInst, Flapjack.WordAlloc.wordStateEqRel]
+  ssa_fp_binop arg other source target
 
 /-- Full original native FPMul opcode case with all six premises and complete
 Error-exempt source-permutation simulation. Original frame derives all fixed
@@ -129,16 +128,7 @@ theorem ssaCcTransCorrectInstFPMul {width : Nat} [NeZero width] {C F : Type}
       everyVarHOL (width := width) (fun x => decide (x < next)) (.inst (.fp (.fpMul dst arg other))) = true ∧
       ssaMapOK next ssa ∧ ltOK tables) :
     ssaSimulation (.inst (.fp (.fpMul dst arg other))) source target ssa next tables := by
-  have same_arg : WordSemStateFiniteExact.getFpVar arg source = WordSemStateFiniteExact.getFpVar arg target := by
-    simp_all [WordSemStateFiniteExact.getFpVar, Flapjack.WordAlloc.wordStateEqRel]
-  have same_other : WordSemStateFiniteExact.getFpVar other source = WordSemStateFiniteExact.getFpVar other target := by
-    simp_all [WordSemStateFiniteExact.getFpVar, Flapjack.WordAlloc.wordStateEqRel]
-  refine ⟨target.permute, ?_⟩
-  cases read_arg : WordSemStateFiniteExact.getFpVar arg source <;>
-  cases read_other : WordSemStateFiniteExact.getFpVar other source <;>
-    simp_all [WordSemStateFiniteExact.evaluate, WordSemStateFiniteExact.inst,
-      WordSemStateFiniteExact.getFpVar, WordSemStateFiniteExact.setFpVar,
-      ssaCcTrans, ssaCcTransInst, Flapjack.WordAlloc.wordStateEqRel]
+  ssa_fp_binop arg other source target
 
 /-- Full original native FPDiv opcode case with all six premises and complete
 Error-exempt source-permutation simulation. Original frame derives all fixed
@@ -160,16 +150,7 @@ theorem ssaCcTransCorrectInstFPDiv {width : Nat} [NeZero width] {C F : Type}
       everyVarHOL (width := width) (fun x => decide (x < next)) (.inst (.fp (.fpDiv dst arg other))) = true ∧
       ssaMapOK next ssa ∧ ltOK tables) :
     ssaSimulation (.inst (.fp (.fpDiv dst arg other))) source target ssa next tables := by
-  have same_arg : WordSemStateFiniteExact.getFpVar arg source = WordSemStateFiniteExact.getFpVar arg target := by
-    simp_all [WordSemStateFiniteExact.getFpVar, Flapjack.WordAlloc.wordStateEqRel]
-  have same_other : WordSemStateFiniteExact.getFpVar other source = WordSemStateFiniteExact.getFpVar other target := by
-    simp_all [WordSemStateFiniteExact.getFpVar, Flapjack.WordAlloc.wordStateEqRel]
-  refine ⟨target.permute, ?_⟩
-  cases read_arg : WordSemStateFiniteExact.getFpVar arg source <;>
-  cases read_other : WordSemStateFiniteExact.getFpVar other source <;>
-    simp_all [WordSemStateFiniteExact.evaluate, WordSemStateFiniteExact.inst,
-      WordSemStateFiniteExact.getFpVar, WordSemStateFiniteExact.setFpVar,
-      ssaCcTrans, ssaCcTransInst, Flapjack.WordAlloc.wordStateEqRel]
+  ssa_fp_binop arg other source target
 
 /-- Full original native FPFma opcode case with all six premises and complete
 Error-exempt source-permutation simulation. Original frame derives all fixed
