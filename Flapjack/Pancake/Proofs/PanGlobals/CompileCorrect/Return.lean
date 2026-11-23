@@ -48,8 +48,7 @@ theorem compileCorrect_Return {width : Nat} {σ : Type} [NeZero width]
   cases he : @evalHOLExact width σ _ s.toExact
       (fun a => Classical.propDecidable (s.memaddrs a)) expression with
   | none =>
-    simp only [he] at hev
-    exact False.elim (hne (Prod.mk.inj hev).1.symm)
+    exact errorPairImpossible (by simpa only [he] using hev) hne
   | some value =>
     simp only [he] at hev
     by_cases hsize : sizeOfShapeWithContextHOL s.structs (shapeOfHOLExact value) ≤ 32
@@ -64,7 +63,6 @@ theorem compileCorrect_Return {width : Nat} {σ : Type} [NeZero width]
       refine ⟨t.emptyLocalsHOLFinite, ?_, ?_⟩
       · simp only [compileProgExactHOL, evaluateHOLFiniteState_return, het, if_pos hsizeT]
       · exact (PanGlobalsStateRelationLocals.stateRelEmptyLocalsHOL ctxt s t _).1 hrel
-    · simp only [if_neg hsize] at hev
-      exact False.elim (hne (Prod.mk.inj hev).1.symm)
+    · exact errorPairImpossible (by simpa only [if_neg hsize] using hev) hne
 
 end Flapjack.PanGlobalsCompileCorrectReturn

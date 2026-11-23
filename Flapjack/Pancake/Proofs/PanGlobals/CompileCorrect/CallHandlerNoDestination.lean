@@ -120,8 +120,7 @@ theorem compileCorrect_CallHandlerNoDestination {width : Nat} {σ : Type} [NeZer
               refine ⟨{bt with locals := target.locals}, ?_, ?_⟩
               · simp only [hbt, hs, ↓reduceIte]
               · simpa only [hlocals, goodResHOL] using hrestored
-            · simp only [if_neg hs] at hev
-              exact False.elim (hne (Prod.mk.inj hev).1.symm)
+            · exact errorPairImpossible (by simpa only [if_neg hs] using hev) hne
           | exception eid value =>
             obtain ⟨bt, hbt, hr⟩ := hbody _ context (callEntryStateHOLFinite target callee) bs
               ⟨he, hb, by simp⟩
@@ -132,8 +131,7 @@ theorem compileCorrect_CallHandlerNoDestination {width : Nat} {σ : Type} [NeZer
               have heshapes : source.eshapes = target.eshapes := hrel.2.2.2.2.1
               cases hs : source.eshapes.lookup handlerId with
               | none =>
-                simp only [hs] at hev
-                exact False.elim (hne (Prod.mk.inj hev).1.symm)
+                exact errorPairImpossible (by simpa only [hs, ite_true] using hev) hne
               | some handlerShape =>
                 have htsh : target.eshapes.lookup handlerId = some handlerShape := heshapes ▸ hs
                 simp only [hs] at hev
@@ -160,8 +158,7 @@ theorem compileCorrect_CallHandlerNoDestination {width : Nat} {σ : Type} [NeZer
                     (setVarHOLFinite handlerVar value {bt with locals := target.locals}) post
                     ⟨by simpa only [hlocals] using hentry, hev, hne⟩
                   exact ⟨handlerPost, hrun, hpost⟩
-                · simp only [if_neg hv] at hev
-                  exact False.elim (hne (Prod.mk.inj hev).1.symm)
+                · exact errorPairImpossible (by simpa only [if_neg hv, ite_true] using hev) hne
             · simp only [if_neg hid] at hev ⊢
               obtain ⟨rfl, rfl⟩ := Prod.mk.inj hev
               exact ⟨emptyLocalsHOLFinite bt, rfl,

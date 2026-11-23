@@ -138,8 +138,7 @@ theorem compileCorrect_DecCall {width : Nat} {σ : Type} [NeZero width]
               · simp only [hbt, if_pos hs, hct]
               · exact PanGlobalsCompileCorrectResVar.stateRelResVar (goodResHOL cr)
                   context cs ct source target resultName resultName ⟨hrc, hrel⟩
-            · simp only [if_neg hs] at hev
-              exact False.elim (hne (Prod.mk.inj hev).1.symm)
+            · exact errorPairImpossible (by simpa only [if_neg hs] using hev) hne
           | exception eid value | timeOut | finalFfi outcome =>
             obtain ⟨rfl,rfl⟩ := Prod.mk.inj hev
             obtain ⟨bt,hbt,hr⟩ := hbody _ context (callEntryStateHOLFinite target callee) bs ⟨he,hb,by simp⟩

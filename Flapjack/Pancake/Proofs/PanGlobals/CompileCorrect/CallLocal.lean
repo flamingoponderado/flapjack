@@ -119,10 +119,8 @@ theorem compileCorrect_CallLocal {width : Nat} {σ : Type} [NeZero width]
                 refine ⟨setKvarHOLFinite .local name value { bt with locals := target.locals }, ?_, ?_⟩
                 · simp only [hbt,hs,htvalid,↓reduceIte]
                 · simpa only [setKvarHOLFinite,goodResHOL,hrel.2.1 rfl] using hupdate
-              · simp only [if_neg hvalid] at hev
-                exact False.elim (hne (Prod.mk.inj hev).1.symm)
-            · simp only [if_neg hs] at hev
-              exact False.elim (hne (Prod.mk.inj hev).1.symm)
+              · exact errorPairImpossible (by simpa only [if_neg hvalid] using hev) hne
+            · exact errorPairImpossible (by simpa only [if_neg hs] using hev) hne
           | exception eid value | timeOut | finalFfi outcome =>
             obtain ⟨rfl,rfl⟩ := Prod.mk.inj hev
             obtain ⟨bt,hbt,hr⟩ := hbody _ context (callEntryStateHOLFinite target callee) bs ⟨he,hb,by simp⟩

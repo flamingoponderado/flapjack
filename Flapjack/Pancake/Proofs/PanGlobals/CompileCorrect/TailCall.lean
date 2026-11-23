@@ -102,8 +102,7 @@ theorem compileCorrect_CallNone {width : Nat} {σ : Type} [NeZero width]
               obtain ⟨bt,hbt,hr⟩ := hbody (some (.returned value)) context (callEntryStateHOLFinite target callee) bs ⟨he,hb,by simp⟩
               exact ⟨emptyLocalsHOLFinite bt,by simp only [hbt,hs,↓reduceIte],
                 (PanGlobalsStateRelationLocals.stateRelEmptyLocalsHOL context bs bt false).2 hr⟩
-            · simp only [if_neg hs] at hev
-              exact False.elim (hne (Prod.mk.inj hev).1.symm)
+            · exact errorPairImpossible (by simpa only [if_neg hs] using hev) hne
           | exception eid value | timeOut | finalFfi outcome =>
             obtain ⟨rfl,rfl⟩ := Prod.mk.inj hev
             obtain ⟨bt,hbt,hr⟩ := hbody _ context (callEntryStateHOLFinite target callee) bs ⟨he,hb,by simp⟩

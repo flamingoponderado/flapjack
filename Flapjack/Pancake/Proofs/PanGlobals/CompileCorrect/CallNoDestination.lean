@@ -67,13 +67,13 @@ theorem compileCorrect_CallNoDestination {width : Nat} {σ : Type} [NeZero width
   rw [evaluateHOLFiniteState_call] at hev
   rw [hcompile,evaluateHOLFiniteState_call]
   cases ha : evalListHOLFinite source (h := fun a => Classical.propDecidable (source.memaddrs a)) arguments with
-  | none => simp only [ha] at hev; exact False.elim (hne (Prod.mk.inj hev).1.symm)
+  | none => exact errorPairImpossible (by simpa only [ha] using hev) hne
   | some args =>
     simp only [ha] at hev
     have hta := PanGlobalsOptMmapEvalCorrect.optMmapEvalCorrectHOL context source target arguments args ⟨hrel,ha⟩
     simp only [hta]
     cases hl : lookupCodeHOLFinite source.code.lookup function args with
-    | none => simp only [hl] at hev; exact False.elim (hne (Prod.mk.inj hev).1.symm)
+    | none => exact errorPairImpossible (by simpa only [hl] using hev) hne
     | some entry =>
       rcases entry with ⟨body,callee,returnShape⟩
       simp only [hl] at hev
@@ -95,10 +95,10 @@ theorem compileCorrect_CallNoDestination {width : Nat} {σ : Type} [NeZero width
         simp only [hb] at hev
         have hbody := ih args body callee returnShape ⟨ha,hl,hz⟩
         cases br with
-        | none => exact False.elim (hne (Prod.mk.inj hev).1.symm)
+        | none => exact errorPairImpossible hev hne
         | some result =>
           cases result with
-          | «break» | «continue» | error => exact False.elim (hne (Prod.mk.inj hev).1.symm)
+          | «break» | «continue» | error => exact errorPairImpossible hev hne
           | returned value =>
             by_cases hs : shapeEqHOL (shapeOfHOLExact value) returnShape = true
             · simp only [hs,↓reduceIte] at hev
@@ -110,8 +110,7 @@ theorem compileCorrect_CallNoDestination {width : Nat} {σ : Type} [NeZero width
               refine ⟨{bt with locals := target.locals}, ?_, ?_⟩
               · simp only [hbt, hs, ↓reduceIte]
               · simpa only [hlocals, goodResHOL] using hrestored
-            · simp only [if_neg hs] at hev
-              exact False.elim (hne (Prod.mk.inj hev).1.symm)
+            · exact errorPairImpossible (by simpa only [if_neg hs] using hev) hne
           | exception eid value | timeOut | finalFfi outcome =>
             obtain ⟨rfl,rfl⟩ := Prod.mk.inj hev
             obtain ⟨bt,hbt,hr⟩ := hbody _ context (callEntryStateHOLFinite target callee) bs ⟨he,hb,by simp⟩

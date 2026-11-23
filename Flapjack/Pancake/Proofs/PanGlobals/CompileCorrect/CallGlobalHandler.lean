@@ -1415,10 +1415,8 @@ theorem compileCorrect_CallGlobalHandler {width : Nat} {σ : Type} [NeZero width
                   exact returnedFromIH source name function handlerId handlerVar arguments handlerBody ih
                     context target bs args body callee returnShape value hrel ha hl hz hb
                     ((shapeEqHOL_eq_true _ _).mp hs) hv
-                · simp only [if_neg hv] at hev
-                  exact False.elim (hne (Prod.mk.inj hev).1.symm)
-              · simp only [if_neg hs] at hev
-                exact False.elim (hne (Prod.mk.inj hev).1.symm)
+                · exact errorPairImpossible (by simpa only [if_neg hv] using hev) hne
+              · exact errorPairImpossible (by simpa only [if_neg hs] using hev) hne
             | exception eid value =>
               by_cases hid : eid = handlerId
               · subst eid
@@ -1436,8 +1434,7 @@ theorem compileCorrect_CallGlobalHandler {width : Nat} {σ : Type} [NeZero width
                       ih ihHandler context target bs post args body callee returnShape handlerShape shape
                       value address res hrel hcontext ha hl hz hb hs
                       ((shapeEqHOL_eq_true _ _).mp hg.1) hg.2 hev hne
-                  · simp only [if_neg hv] at hev
-                    exact False.elim (hne (Prod.mk.inj hev).1.symm)
+                  · exact errorPairImpossible (by simpa only [if_neg hv, ite_true] using hev) hne
               · simp only [if_neg hid] at hev
                 obtain ⟨rfl, rfl⟩ := Prod.mk.inj hev
                 exact bypassFromIH source name function handlerId handlerVar arguments handlerBody ih

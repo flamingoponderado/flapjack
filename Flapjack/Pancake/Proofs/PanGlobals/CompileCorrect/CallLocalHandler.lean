@@ -129,10 +129,8 @@ theorem compileCorrect_CallLocalHandler {width : Nat} {σ : Type} [NeZero width]
                 refine ⟨setKvarHOLFinite .local name value { bt with locals := target.locals }, ?_, ?_⟩
                 · simp only [hbt,hs,htvalid,↓reduceIte]
                 · simpa only [setKvarHOLFinite,goodResHOL,hrel.2.1 rfl] using hupdate
-              · simp only [if_neg hvalid] at hev
-                exact False.elim (hne (Prod.mk.inj hev).1.symm)
-            · simp only [if_neg hs] at hev
-              exact False.elim (hne (Prod.mk.inj hev).1.symm)
+              · exact errorPairImpossible (by simpa only [if_neg hvalid] using hev) hne
+            · exact errorPairImpossible (by simpa only [if_neg hs] using hev) hne
           | exception eid value =>
             obtain ⟨bt,hbt,hr⟩ := hbody (some (.exception eid value)) context (callEntryStateHOLFinite target callee) bs ⟨he,hb,by simp⟩
             simp only [hbt]
@@ -141,8 +139,7 @@ theorem compileCorrect_CallLocalHandler {width : Nat} {σ : Type} [NeZero width]
               have hesh := hrel.2.2.2.2.1
               cases hshape : source.eshapes.lookup eid with
               | none =>
-                simp only [hshape] at hev
-                exact False.elim (hne (Prod.mk.inj hev).1.symm)
+                exact errorPairImpossible (by simpa only [hshape] using hev) hne
               | some shape =>
                 have htshape : target.eshapes.lookup eid = some shape := hesh ▸ hshape
                 simp only [hshape] at hev
