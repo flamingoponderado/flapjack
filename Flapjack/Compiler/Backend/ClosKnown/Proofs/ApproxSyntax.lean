@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Compiler.Backend.ClosKnown.KnownOp
 public import Flapjack.Compiler.Backend.ClosKnown.Fuel
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.ApproxGeneric
 public import Flapjack.Compiler.Backend.ClosKnown.Inline
 public import Flapjack.Compiler.Backend.Semantics.ClosProps.Globals
 public import Flapjack.Compiler.Backend.Semantics.ClosProps.Syntactic
@@ -28,21 +29,30 @@ decreasing_by all_goals have := List.sizeOf_lt_of_mem ‹_›; simp_wf; omega
 def globalsApproxVarsNone (g : Spt ValApprox) : Prop :=
   ∀ n a, sptLookup n g = some a → valApproxVarsNone a
 
+/-- `valApproxVarsNone` agrees with the parameterised invariant of the four
+source approximation predicates. -/
+private theorem valApproxVarsNone_iff (a : ValApprox) :
+    valApproxVarsNone a ↔ valApproxAll (fun body => everyFnVarsNone [body]) a := by
+  induction a using (measure (fun a : ValApprox => sizeOf a)).wf.induction with
+  | h a ih =>
+    cases a with
+    | clos loc arity body size => simp [valApproxVarsNone, valApproxAll]
+    | tuple tag xs =>
+      simp only [valApproxVarsNone, valApproxAll]
+      exact ⟨fun h v hv => (ih v (sizeOf_lt_of_mem_tuple hv)).mp (h v hv),
+             fun h v hv => (ih v (sizeOf_lt_of_mem_tuple hv)).mpr (h v hv)⟩
+    | _ => simp [valApproxVarsNone, valApproxAll]
+
 /-- Merging two safe approximations preserves closure-body safety. -/
 @[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "val_approx_every_Fn_vs_NONE_merge"]
 theorem valApproxVarsNoneMerge (a b : ValApprox)
     (safe : valApproxVarsNone a ∧ valApproxVarsNone b) : valApproxVarsNone (mergeHOL a b) := by
   obtain ⟨ha, hb⟩ := safe
-  induction a using (measure (fun a : ValApprox => sizeOf a)).wf.induction generalizing b with
-  | h a ih =>
-    cases a <;> cases b <;> simp_all [mergeHOL, valApproxVarsNone]
-    all_goals split <;> simp_all [valApproxVarsNone]
-    rw [mergeListHOL_eq_zip]
-    intro z member
-    obtain ⟨⟨x, y⟩, paired, rfl⟩ := List.mem_map.mp member
-    obtain ⟨hx, hy⟩ := List.of_mem_zip paired
-    have smaller := List.sizeOf_lt_of_mem hx
-    exact ih x (by simp_wf; omega) y (ha x hx) (hb y hy)
+  have h' : valApproxAll (fun body => everyFnVarsNone [body]) a ∧
+      valApproxAll (fun body => everyFnVarsNone [body]) b :=
+    ⟨(valApproxVarsNone_iff a).mp ha, (valApproxVarsNone_iff b).mp hb⟩
+  exact (valApproxVarsNone_iff (mergeHOL a b)).mpr
+    (valApproxAllMerge (fun body => everyFnVarsNone [body]) a b h')
 
 /-- Primitive approximation preserves both value and global safety. -/
 @[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "known_op_every_Fn_vs_NONE"]
@@ -52,87 +62,14 @@ theorem knownOpVarsNone (op : ClosLang.Op) (args : List ValApprox)
       (∀ x ∈ args, valApproxVarsNone x) ∧ globalsApproxVarsNone g0) :
     valApproxVarsNone a ∧ globalsApproxVarsNone g := by
   obtain ⟨known, safe, globals⟩ := h
-  cases op with
-  | globOp op =>
-    cases op with
-    | global index =>
-      cases args with
-      | nil =>
-        simp only [knownOpHOL, Prod.mk.injEq] at known
-        rcases known with ⟨rfl, rfl⟩
-        cases h : sptLookup index g0 with
-        | none => exact ⟨by simp [valApproxVarsNone], globals⟩
-        | some value => exact ⟨by simpa [h] using globals index value h, globals⟩
-      | cons x xs =>
-        simp only [knownOpHOL, Prod.mk.injEq] at known
-        rcases known with ⟨rfl, rfl⟩
-        exact ⟨by simp [valApproxVarsNone], globals⟩
-    | setGlobal index =>
-      cases args with
-      | nil =>
-        simp only [knownOpHOL, Prod.mk.injEq] at known
-        rcases known with ⟨rfl, rfl⟩
-        exact ⟨by simp [valApproxVarsNone], globals⟩
-      | cons x xs =>
-        have xSafe := safe x (by simp)
-        simp only [knownOpHOL, Prod.mk.injEq] at known
-        rcases known with ⟨rfl, rfl⟩
-        constructor
-        · simp [valApproxVarsNone]
-        · apply sptInsert_preservesProperty _ _ _ _ _ globals
-          cases h : sptLookup index g0 with
-          | none => exact xSafe
-          | some old => exact valApproxVarsNoneMerge old x ⟨globals index old h, xSafe⟩
-    | _ =>
-      simp only [knownOpHOL, Prod.mk.injEq] at known
-      rcases known with ⟨rfl, rfl⟩
-      exact ⟨by simp [valApproxVarsNone], globals⟩
-  | blockOp op =>
-    cases op with
-    | cons tag =>
-      simp only [knownOpHOL, Prod.mk.injEq] at known
-      rcases known with ⟨rfl, rfl⟩
-      exact ⟨by simpa [valApproxVarsNone] using safe, globals⟩
-    | _ =>
-      simp only [knownOpHOL, Prod.mk.injEq] at known
-      rcases known with ⟨rfl, rfl⟩
-      exact ⟨by simp [valApproxVarsNone], globals⟩
-  | intOp op =>
-    cases op <;> simp only [knownOpHOL, Prod.mk.injEq] at known <;>
-      rcases known with ⟨rfl, rfl⟩ <;> exact ⟨by simp [valApproxVarsNone], globals⟩
-  | memOp op =>
-    cases op with
-    | el =>
-      cases args with
-      | nil =>
-        simp only [knownOpHOL, Prod.mk.injEq] at known
-        rcases known with ⟨rfl, rfl⟩
-        exact ⟨by simp [valApproxVarsNone], globals⟩
-      | cons x xs =>
-        cases xs with
-        | nil =>
-          cases x <;> simp only [knownOpHOL, Prod.mk.injEq] at known <;>
-            rcases known with ⟨rfl, rfl⟩ <;> exact ⟨by simp [valApproxVarsNone], globals⟩
-        | cons y ys =>
-          cases ys with
-          | nil =>
-            cases x <;> cases y <;> simp only [knownOpHOL, Prod.mk.injEq] at known
-            all_goals try (rcases known with ⟨rfl, rfl⟩; exact ⟨by simp [valApproxVarsNone], globals⟩)
-            split at known <;> simp_all [valApproxVarsNone]
-            all_goals rcases known with ⟨rfl, rfl⟩
-            · exact safe _ (List.getElem_mem ..)
-            · simp [valApproxVarsNone]
-          | cons z zs =>
-            cases x <;> cases y <;> simp only [knownOpHOL, Prod.mk.injEq] at known <;>
-              rcases known with ⟨rfl, rfl⟩ <;> exact ⟨by simp [valApproxVarsNone], globals⟩
-    | _ =>
-      simp only [knownOpHOL, Prod.mk.injEq] at known
-      rcases known with ⟨rfl, rfl⟩
-      exact ⟨by simp [valApproxVarsNone], globals⟩
-  | _ =>
-    simp only [knownOpHOL, Prod.mk.injEq] at known
-    rcases known with ⟨rfl, rfl⟩
-    exact ⟨by simp [valApproxVarsNone], globals⟩
+  have h' : knownOpHOL op args g0 = (a, g) ∧
+      (∀ x ∈ args, valApproxAll (fun body => everyFnVarsNone [body]) x) ∧
+      globalsApproxAll (fun body => everyFnVarsNone [body]) g0 :=
+    ⟨known, fun x hx => (valApproxVarsNone_iff x).mp (safe x hx),
+     fun n v hv => (valApproxVarsNone_iff v).mp (globals n v hv)⟩
+  obtain ⟨ha, hg⟩ := knownOpAll (fun body => everyFnVarsNone [body]) op args g0 a g h'
+  exact ⟨(valApproxVarsNone_iff a).mpr ha,
+    fun n v hv => (valApproxVarsNone_iff v).mpr (hg n v hv)⟩
 
 
 /-- The inlining decision only extracts bodies with absent annotations. -/

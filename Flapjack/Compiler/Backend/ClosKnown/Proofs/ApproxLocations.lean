@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Compiler.Backend.ClosKnown.KnownOp
 public import Flapjack.Compiler.Backend.ClosKnown.Fuel
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.ApproxGeneric
 public import Flapjack.Compiler.Backend.ClosKnown.Inline
 public import Flapjack.Compiler.Backend.Semantics.ClosProps.Globals
 public import Flapjack.Compiler.Backend.Semantics.ClosProps.FnAnnotations
@@ -28,21 +29,30 @@ decreasing_by all_goals have := List.sizeOf_lt_of_mem ‹_›; simp_wf; omega
 def globalsApproxLocations (g : Spt ValApprox) : Prop :=
   ∀ n a, sptLookup n g = some a → valApproxLocations a
 
+/-- `valApproxLocations` agrees with the parameterised invariant of the four
+source approximation predicates. -/
+private theorem valApproxLocations_iff (a : ValApprox) :
+    valApproxLocations a ↔ valApproxAll (fun body => everyFnLocationSome [body]) a := by
+  induction a using (measure (fun a : ValApprox => sizeOf a)).wf.induction with
+  | h a ih =>
+    cases a with
+    | clos loc arity body size => simp [valApproxLocations, valApproxAll]
+    | tuple tag xs =>
+      simp only [valApproxLocations, valApproxAll]
+      exact ⟨fun h v hv => (ih v (sizeOf_lt_of_mem_tuple hv)).mp (h v hv),
+             fun h v hv => (ih v (sizeOf_lt_of_mem_tuple hv)).mpr (h v hv)⟩
+    | _ => simp [valApproxLocations, valApproxAll]
+
 /-- Merging two safe approximations preserves closure-body safety. -/
 @[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "val_approx_every_Fn_SOME_merge"]
 theorem valApproxLocationsMerge (a b : ValApprox)
     (safe : valApproxLocations a ∧ valApproxLocations b) : valApproxLocations (mergeHOL a b) := by
   obtain ⟨ha, hb⟩ := safe
-  induction a using (measure (fun a : ValApprox => sizeOf a)).wf.induction generalizing b with
-  | h a ih =>
-    cases a <;> cases b <;> simp_all [mergeHOL, valApproxLocations]
-    all_goals split <;> simp_all [valApproxLocations]
-    rw [mergeListHOL_eq_zip]
-    intro z member
-    obtain ⟨⟨x, y⟩, paired, rfl⟩ := List.mem_map.mp member
-    obtain ⟨hx, hy⟩ := List.of_mem_zip paired
-    have smaller := List.sizeOf_lt_of_mem hx
-    exact ih x (by simp_wf; omega) y (ha x hx) (hb y hy)
+  have h' : valApproxAll (fun body => everyFnLocationSome [body]) a ∧
+      valApproxAll (fun body => everyFnLocationSome [body]) b :=
+    ⟨(valApproxLocations_iff a).mp ha, (valApproxLocations_iff b).mp hb⟩
+  exact (valApproxLocations_iff (mergeHOL a b)).mpr
+    (valApproxAllMerge (fun body => everyFnLocationSome [body]) a b h')
 
 /-- Primitive approximation preserves both value and global safety. -/
 @[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "known_op_every_Fn_SOME"]
@@ -52,71 +62,14 @@ theorem knownOpLocations (op : ClosLang.Op) (args : List ValApprox)
       (∀ x ∈ args, valApproxLocations x) ∧ globalsApproxLocations g0) :
     valApproxLocations a ∧ globalsApproxLocations g := by
   obtain ⟨known, safe, globals⟩ := h
-  cases op with
-  | globOp op =>
-    cases op with
-    | global index =>
-      cases args with
-      | nil =>
-        simp only [knownOpHOL, Prod.mk.injEq] at known
-        rcases known with ⟨rfl, rfl⟩
-        cases h : sptLookup index g0 with
-        | none => exact ⟨by simp [valApproxLocations], globals⟩
-        | some value => exact ⟨by simpa [h] using globals index value h, globals⟩
-      | cons x xs =>
-        grind [knownOpHOL, valApproxLocations]
-    | setGlobal index =>
-      cases args with
-      | nil =>
-        grind [knownOpHOL, valApproxLocations]
-      | cons x xs =>
-        have xSafe := safe x (by simp)
-        simp only [knownOpHOL, Prod.mk.injEq] at known
-        rcases known with ⟨rfl, rfl⟩
-        constructor
-        · simp [valApproxLocations]
-        · apply sptInsert_preservesProperty _ _ _ _ _ globals
-          cases h : sptLookup index g0 with
-          | none => exact xSafe
-          | some old => exact valApproxLocationsMerge old x ⟨globals index old h, xSafe⟩
-    | _ =>
-      grind [knownOpHOL, valApproxLocations]
-  | blockOp op =>
-    cases op with
-    | cons tag =>
-      grind [knownOpHOL, valApproxLocations]
-    | _ =>
-      grind [knownOpHOL, valApproxLocations]
-  | intOp op =>
-    cases op <;> simp only [knownOpHOL, Prod.mk.injEq] at known <;>
-      rcases known with ⟨rfl, rfl⟩ <;> exact ⟨by simp [valApproxLocations], globals⟩
-  | memOp op =>
-    cases op with
-    | el =>
-      cases args with
-      | nil =>
-        grind [knownOpHOL, valApproxLocations]
-      | cons x xs =>
-        cases xs with
-        | nil =>
-          cases x <;> simp only [knownOpHOL, Prod.mk.injEq] at known <;>
-            rcases known with ⟨rfl, rfl⟩ <;> exact ⟨by simp [valApproxLocations], globals⟩
-        | cons y ys =>
-          cases ys with
-          | nil =>
-            cases x <;> cases y <;> simp only [knownOpHOL, Prod.mk.injEq] at known
-            all_goals try (rcases known with ⟨rfl, rfl⟩; exact ⟨by simp [valApproxLocations], globals⟩)
-            split at known <;> simp_all [valApproxLocations]
-            all_goals rcases known with ⟨rfl, rfl⟩
-            · exact safe _ (List.getElem_mem ..)
-            · simp [valApproxLocations]
-          | cons z zs =>
-            cases x <;> cases y <;> simp only [knownOpHOL, Prod.mk.injEq] at known <;>
-              rcases known with ⟨rfl, rfl⟩ <;> exact ⟨by simp [valApproxLocations], globals⟩
-    | _ =>
-      grind [knownOpHOL, valApproxLocations]
-  | _ =>
-    grind [knownOpHOL, valApproxLocations]
+  have h' : knownOpHOL op args g0 = (a, g) ∧
+      (∀ x ∈ args, valApproxAll (fun body => everyFnLocationSome [body]) x) ∧
+      globalsApproxAll (fun body => everyFnLocationSome [body]) g0 :=
+    ⟨known, fun x hx => (valApproxLocations_iff x).mp (safe x hx),
+     fun n v hv => (valApproxLocations_iff v).mp (globals n v hv)⟩
+  obtain ⟨ha, hg⟩ := knownOpAll (fun body => everyFnLocationSome [body]) op args g0 a g h'
+  exact ⟨(valApproxLocations_iff a).mpr ha,
+    fun n v hv => (valApproxLocations_iff v).mpr (hg n v hv)⟩
 
 
 /-- The inlining decision only extracts bodies with present function locations. -/
