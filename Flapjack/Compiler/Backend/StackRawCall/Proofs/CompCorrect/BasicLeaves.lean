@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.StackRawCall.Proofs.InstructionSimulation
+public import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.AssemblyScript
 
 @[expose] public section
 
@@ -49,14 +50,7 @@ theorem evaluate_code_eq {width : Nat} [NeZero width] {C F : Type}
     (program : HolProg width) (leaf : BasicLeaf program)
     (source : StackSemStateFiniteExact width C F) :
     (StackSemEvaluate.evaluate (program, source)).2.code = source.code := by
-  have transport := evaluate_codeUpdate program leaf source source.code
-  have unchanged : { source with code := source.code } = source := by
-    cases source
-    rfl
-  rw [unchanged] at transport
-  have projected := congrArg (fun outcome : Option (StackSemResult width) ×
-    StackSemStateFiniteExact width C F => outcome.2.code) transport
-  exact projected
+  stackRawCall_codeEq evaluate_codeUpdate program leaf source
 
 /-- Full postrelation and target evaluation derived from actual leaf execution.
 The leaf predicate is infrastructure; each final source case discharges it. -/
@@ -68,17 +62,8 @@ theorem evaluate_stateRel {width : Nat} [NeZero width] {C F : Type}
     (relation : stateRel info source target) :
     ∃ targetState, stateRel info resultState targetState ∧
       StackSemEvaluate.evaluate (program, target) = (result, targetState) := by
-  obtain ⟨code, domain, targetEq, frames, entries⟩ := relation
-  subst target
-  have codeEq := evaluate_code_eq program leaf source
-  rw [execution] at codeEq
-  change resultState.code = source.code at codeEq
-  refine ⟨{ resultState with code := code }, ?_, ?_⟩
-  · refine ⟨code, ?_, rfl, ?_, ?_⟩
-    · simpa only [codeEq] using domain
-    · simpa only [codeEq] using frames
-    · simpa only [codeEq] using entries
-  · rw [evaluate_codeUpdate program leaf, execution]
+  stackRawCall_stateRel evaluate_code_eq evaluate_codeUpdate program leaf source
+    resultState execution relation
 
 /-- Flapjack support assembling the original paired existential conclusion.
 The constructor predicate is discharged by each of the six final HOL cases. -/
@@ -100,25 +85,8 @@ theorem compCorrectBasic {width : Nat} [NeZero width] {C F : Type}
         (result, { targetState with stackSpace := stackSpace }) ∧
       (result ≠ some .timeOut ∧ result ≠ some (.halt (.word (BitVec.ofNat width 2))) →
         stackSpace = targetState.stackSpace)) := by
-  obtain ⟨execution, _, relation⟩ := hypothesis
-  obtain ⟨targetState, postRelation, targetExecution⟩ :=
-    evaluate_stateRel program leaf info source target resultState result execution relation
-  have clockSelf : { target with clock := target.clock + 0 } = target := by
-    cases target
-    simp
-  have stackSelf : { targetState with stackSpace := targetState.stackSpace } = targetState := by
-    cases targetState
-    rfl
-  have compSelf : comp info program = program := by
-    cases leaf <;> rfl
-  have compTopSelf : compTop info program = program := by
-    cases leaf <;> rfl
-  constructor <;>
-    refine ⟨0, targetState, targetState.stackSpace, postRelation, ?_, fun _ => rfl⟩
-  · rw [clockSelf, stackSelf, compTopSelf]
-    exact targetExecution
-  · rw [clockSelf, stackSelf, compSelf]
-    exact targetExecution
+  stackRawCall_compCorrect evaluate_stateRel program leaf info source target
+    resultState result hypothesis
 
 /-- Genuine original Skip case with the original three premises and both
 existential conclusions. Native evaluator retains its inherited real-carrier

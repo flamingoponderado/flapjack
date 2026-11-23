@@ -2238,6 +2238,7 @@ import Flapjack.Compiler.Backend.StackRemove.Proofs.InitReadMemory
 import Flapjack.Compiler.Backend.StackProps.EvaluateAddClockIoEventsMono
 import Flapjack.Compiler.Backend.StackProps.EvaluateIoEventsMono
 import Flapjack.RiscV.L3.Defs.CSRDispatch
+import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.AssemblyScript
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.JumpLower
 import Flapjack.Compiler.Backend.Semantics.TargetSem.InitializationContracts
 import Flapjack.Compiler.Backend.Semantics.TargetSem.Installed
