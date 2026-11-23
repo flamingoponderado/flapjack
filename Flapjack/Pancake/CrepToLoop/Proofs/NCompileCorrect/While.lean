@@ -49,6 +49,25 @@ clause (`evaluate_def`, `loopSemScript.sml`) by the outcome of the entry
 
 variable {width : Nat} [NeZero width] {F : Type}
 
+/-- Shared one-step unfolding of loopSem's `Loop` clause: the continue, break
+and exit cases differ only in their conclusion, which `simp_all` closes from the
+remaining goal. -/
+local macro "loopStepEval" hcv:term:max hbv:term:max xv:term:max : tactic =>
+  `(tactic| (
+    have hc := $hcv
+    have hb := $hbv
+    rw [LoopSemStateFiniteExact.evaluate]
+    split
+    next X1' h =>
+      rw [hc] at h
+      simp only [Prod.mk.injEq, true_and] at h
+      subst h
+      split
+      all_goals rename_i h2
+      all_goals rw [LoopSemStateFiniteExact.fix_clock_evaluate, hb] at h2
+      all_goals simp_all [LoopSemStateFiniteExact.exitLoop]
+    next h => exact absurd hc (h $xv)))
+
 private theorem loop_step_cut_some {L L' : NumSet} {B : HolLoopProg width}
     {X Y : LoopSemStateFiniteExact width F} {r : LoopSemStateFiniteExact.LoopResultExact width}
     (hc : LoopSemStateFiniteExact.cutRes L (none, X) = (some r, Y)) :
@@ -63,30 +82,14 @@ private theorem loop_step_continue {L L' : NumSet} {B : HolLoopProg width}
     (hc : LoopSemStateFiniteExact.cutRes L (none, X) = (none, X1))
     (hb : LoopSemStateFiniteExact.evaluate B X1 = (some (.continue 0), s2)) :
     LoopSemStateFiniteExact.evaluate (.loop L B L') X = LoopSemStateFiniteExact.evaluate (.loop L B L') s2 := by
-  rw [LoopSemStateFiniteExact.evaluate]
-  split
-  next X1' h =>
-    rw [hc] at h
-    simp only [Prod.mk.injEq, true_and] at h
-    subst h
-    split <;> rename_i h2 <;> rw [LoopSemStateFiniteExact.fix_clock_evaluate, hb] at h2 <;>
-      simp_all [LoopSemStateFiniteExact.exitLoop]
-  next h => exact absurd hc (h X1)
+  loopStepEval hc hb X1
 
 private theorem loop_step_break {L L' : NumSet} {B : HolLoopProg width}
     {X X1 s2 : LoopSemStateFiniteExact width F}
     (hc : LoopSemStateFiniteExact.cutRes L (none, X) = (none, X1))
     (hb : LoopSemStateFiniteExact.evaluate B X1 = (some (.break 0), s2)) :
     LoopSemStateFiniteExact.evaluate (.loop L B L') X = LoopSemStateFiniteExact.cutRes L' (none, s2) := by
-  rw [LoopSemStateFiniteExact.evaluate]
-  split
-  next X1' h =>
-    rw [hc] at h
-    simp only [Prod.mk.injEq, true_and] at h
-    subst h
-    split <;> rename_i h2 <;> rw [LoopSemStateFiniteExact.fix_clock_evaluate, hb] at h2 <;>
-      simp_all [LoopSemStateFiniteExact.exitLoop]
-  next h => exact absurd hc (h X1)
+  loopStepEval hc hb X1
 
 private theorem loop_step_exit {L L' : NumSet} {B : HolLoopProg width}
     {X X1 s2 : LoopSemStateFiniteExact width F} {r : LoopSemStateFiniteExact.LoopResultExact width}
@@ -94,15 +97,7 @@ private theorem loop_step_exit {L L' : NumSet} {B : HolLoopProg width}
     (hc : LoopSemStateFiniteExact.cutRes L (none, X) = (none, X1))
     (hb : LoopSemStateFiniteExact.evaluate B X1 = (some r, s2)) :
     LoopSemStateFiniteExact.evaluate (.loop L B L') X = (LoopSemStateFiniteExact.exitLoop (some r), s2) := by
-  rw [LoopSemStateFiniteExact.evaluate]
-  split
-  next X1' h =>
-    rw [hc] at h
-    simp only [Prod.mk.injEq, true_and] at h
-    subst h
-    split <;> rename_i h2 <;> rw [LoopSemStateFiniteExact.fix_clock_evaluate, hb] at h2 <;>
-      simp_all [LoopSemStateFiniteExact.exitLoop]
-  next h => exact absurd hc (h X1)
+  loopStepEval hc hb X1
 
 end LoopStep
 
