@@ -15,15 +15,8 @@ open Flapjack.SemanticPrimitivesHOL (Result)
 /-- Related nonempty value lists have related HOL last elements. -/
 theorem holLast_related (maxApp : Nat) {left right : List Value}
     (related : List.Forall₂ (ValueRel maxApp) left right) (nonempty : left ≠ []) :
-    ValueRel maxApp (@holLast Value ⟨unitValue⟩ left) (@holLast Value ⟨unitValue⟩ right) := by
-  induction related with
-  | nil => exact (nonempty rfl).elim
-  | @cons first nextFirst rest nextRest head tail ih =>
-    cases tail with
-    | nil => simpa [holLast] using head
-    | @cons second nextSecond tail nextTail nextHead restRel =>
-      simp only [holLast]
-      exact ih (by simp)
+    ValueRel maxApp (@holLast Value ⟨unitValue⟩ left) (@holLast Value ⟨unitValue⟩ right) :=
+  Flapjack.holLast_related ⟨unitValue⟩ (ValueRel maxApp) related nonempty
 
 /-- The location marker inserted by incremental numbering evaluates without
 changing the state and is prepended to successful program results. -/
