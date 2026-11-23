@@ -99,10 +99,8 @@ theorem compileCorrect_CallHandlerNoDestination {width : Nat} {σ : Type} [NeZer
       · have htz : target.clock ≠ 0 := hc ▸ hz
         simp only [if_neg hz] at hev
         simp only [if_neg htz]
-        have hd := PanGlobalsStateRelationClock.stateRelDecClockHOL context source target true hrel
-        have he := (PanGlobalsStateRelationLocals.stateRelChangeLocalsHOL context
-          (decClockHOLFinite source) (decClockHOLFinite target) true callee).1 hd
-        change panGlobalsStateRelHOLExact true context (callEntryStateHOLFinite source callee) (callEntryStateHOLFinite target callee) at he
+        have he := PanGlobalsStateRelationLocals.callEntryStateRelHOL context source
+          target callee hrel
         rcases hb : evaluateHOLFiniteState (callEntryStateHOLFinite source callee) body with ⟨br,bs⟩
         simp only [hb] at hev
         have hbody := ih args body callee returnShape ⟨ha,hl,hz⟩

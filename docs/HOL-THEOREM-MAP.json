@@ -92507,6 +92507,14 @@
     "reviewer": "Luna A compared HOL961-966: original state_rel T implies state_rel ls after identical set_var rt retv in source and target; same universal variables, no additional premise. Exact setVarHOLFinite updates only canonical locals; old locals equality follows internally from original relation. Other relation conjuncts definitionally unchanged. Canonical state/context relation witnesses already same module; positive word/Type0 FFI translation, exact MlS keys. Direct compile_correct dependencies at1194/1398/1530 confirmed. Coordinator source review pending."
   },
 {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/StateRelationLocals.lean",
+    "lean_name": "callEntryStateRelHOL",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only composition of stateRelDecClockHOL and stateRelChangeLocalsHOL: decrement both clocks and replace both local maps by the same callee, yielding the named call-entry state relation used by the compile_correct Call cases. No standalone HOL declaration."
+  },
+{
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/UnchangedLocal/Assemble.lean",
     "lean_name": "evaluateUnchangedLocalHOL",
     "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
