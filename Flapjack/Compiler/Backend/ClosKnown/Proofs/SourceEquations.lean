@@ -222,4 +222,23 @@ theorem knownListTotal_fn (c : Config) (name : Basis.Pure.MlString.MlString)
     rcases rest with ⟨a, g1⟩
     cases loc <;> simp [knownListTotal_single, knownExprTotal, hb, knownSourceHead]
 
+/- Common step of the total `knownListTotal` case proofs: apply the head
+hypothesis, destruct the singleton and head equations, and reduce the
+decision with the length and head equations. Flapjack-specific proof
+infrastructure (no HOL original).
+
+Hygiene is disabled on purpose: the step consumes the conventional local
+hypotheses `eq1`, `eq2`, `head`, `decision` bound by the surrounding case
+analysis, so those names must not be renamed. -/
+set_option hygiene false in
+macro "knownTotalStep" : tactic =>
+  `(tactic| (
+    rw [ha] at eq1
+    cases eq1
+    simp [knownListTotal_single, hx] at eq2
+    rcases eq2 with ⟨rfl, rfl⟩
+    simp [knownSourceHead] at head
+    rcases head with ⟨rfl, rfl⟩
+    simp [← len, hd] at decision))
+
 end Flapjack.Compiler.Backend.ClosKnown

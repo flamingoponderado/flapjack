@@ -67,13 +67,7 @@ theorem knownCodeBagAll (c : Config) (xs : List ClosLang.Exp) (env : List ValApp
     intro eas next h
     apply knownCodeBagApp c t loc x xs env g ?_ ?_ iargs eas next h
     · intro ea2 next1 ea1 next2 e1 a1 body ⟨eq1, eq2, head, decision⟩
-      rw [ha] at eq1
-      cases eq1
-      simp [knownListTotal_single, hx] at eq2
-      rcases eq2 with ⟨rfl, rfl⟩
-      simp [knownSourceHead] at head
-      rcases head with ⟨rfl, rfl⟩
-      simp [← len, hd] at decision
+      knownTotalStep
     · intro ea2 next1 eq1
       rw [ha] at eq1
       cases eq1
@@ -86,13 +80,7 @@ theorem knownCodeBagAll (c : Config) (xs : List ClosLang.Exp) (env : List ValApp
     intro eas next h
     apply knownCodeBagApp c t loc x xs env g ?_ ?_ iargs eas next h
     · intro ea2 next1 ea1 next2 e1 a1 body ⟨eq1, eq2, head, decision⟩
-      rw [ha] at eq1
-      cases eq1
-      simp [knownListTotal_single, hx] at eq2
-      rcases eq2 with ⟨rfl, rfl⟩
-      simp [knownSourceHead] at head
-      rcases head with ⟨rfl, rfl⟩
-      simp [← len, hd] at decision
+      knownTotalStep
     · intro ea2 next1 eq1
       rw [ha] at eq1
       cases eq1
@@ -105,13 +93,7 @@ theorem knownCodeBagAll (c : Config) (xs : List ClosLang.Exp) (env : List ValApp
     intro eas next h
     apply knownCodeBagApp c t loc x xs env g ?_ ?_ iargs eas next h
     · intro ea2 next1 ea1 next2 e1 a1 body ⟨eq1, eq2, head, decision⟩
-      rw [ha] at eq1
-      cases eq1
-      simp [knownListTotal_single, hx] at eq2
-      rcases eq2 with ⟨rfl, rfl⟩
-      simp [knownSourceHead] at head
-      rcases head with ⟨rfl, rfl⟩
-      simp [← len, hd] at decision
+      knownTotalStep
       subst body
       exact ibody
     · intro ea2 next1 eq1

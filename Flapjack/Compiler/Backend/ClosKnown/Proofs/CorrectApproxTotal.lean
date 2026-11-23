@@ -75,13 +75,7 @@ theorem knownApproxAll {C F : Type} (c : Config) (xs : List ClosLang.Exp)
     intro eas next vEnv extra s0 res s h
     apply App.knownCorrectApproxApp c t loc x xs env g ?_ ?_ iargs eas next vEnv extra s0 res s h
     · intro ea2 next1 ea1 next2 e1 a1 body ⟨eq1, eq2, head, decision⟩
-      rw [ha] at eq1
-      cases eq1
-      simp [knownListTotal_single, hx] at eq2
-      rcases eq2 with ⟨rfl, rfl⟩
-      simp [knownSourceHead] at head
-      rcases head with ⟨rfl, rfl⟩
-      simp [← len, hd] at decision
+      knownTotalStep
     · intro ea2 next1 eq1
       rw [ha] at eq1
       cases eq1
@@ -94,13 +88,7 @@ theorem knownApproxAll {C F : Type} (c : Config) (xs : List ClosLang.Exp)
     intro eas next vEnv extra s0 res s h
     apply App.knownCorrectApproxApp c t loc x xs env g ?_ ?_ iargs eas next vEnv extra s0 res s h
     · intro ea2 next1 ea1 next2 e1 a1 body ⟨eq1, eq2, head, decision⟩
-      rw [ha] at eq1
-      cases eq1
-      simp [knownListTotal_single, hx] at eq2
-      rcases eq2 with ⟨rfl, rfl⟩
-      simp [knownSourceHead] at head
-      rcases head with ⟨rfl, rfl⟩
-      simp [← len, hd] at decision
+      knownTotalStep
     · intro ea2 next1 eq1
       rw [ha] at eq1
       cases eq1
@@ -113,13 +101,7 @@ theorem knownApproxAll {C F : Type} (c : Config) (xs : List ClosLang.Exp)
     intro eas next vEnv extra s0 res s h
     apply App.knownCorrectApproxApp c t loc x xs env g ?_ ?_ iargs eas next vEnv extra s0 res s h
     · intro ea2 next1 ea1 next2 e1 a1 body ⟨eq1, eq2, head, decision⟩
-      rw [ha] at eq1
-      cases eq1
-      simp [knownListTotal_single, hx] at eq2
-      rcases eq2 with ⟨rfl, rfl⟩
-      simp [knownSourceHead] at head
-      rcases head with ⟨rfl, rfl⟩
-      simp [← len, hd] at decision
+      knownTotalStep
       subst body
       exact ibody
     · intro ea2 next1 eq1
