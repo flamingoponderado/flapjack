@@ -206,6 +206,40 @@ theorem compileCorrect_StoreByte {width : Nat} [NeZero width] {C F : Type}
   · simp only [Prod.mk.injEq] at hEval
     exact absurd hEval.1.symm hNE
 
+/-- Shared proof script for the `Load32` and `LoadByte` cases of HOL `compile_correct`
+(Flapjack proof infrastructure); the two statements differ only in the loop opcode. -/
+local macro "loop_load_case" a:ident v:ident s:ident w:ident : tactic => `(tactic| (
+  rintro res s1 t ctxt retv l ⟨hEval, hNE, hState, hLocals, hRetv, hgd, -, hAcc⟩
+  simp only [LoopSemStateFiniteExact.evaluate] at hEval
+  have hget : ∀ n x, sptLookup n ($s).locals = some x →
+      WordSemStateFiniteExact.getVar (LoopToWord.findVarHOL ctxt n) t = some x :=
+    fun n x h => LoopToWord.localsRelHOLGetVar ctxt ($s).locals t n x ⟨hLocals, h⟩
+  have hState' := hState
+  obtain ⟨len, hm, hmd, hsmd, hclock, hbe, hffi, hcur, hlen, htop, hglob, hcode⟩ := hState'
+  split at hEval
+  · rename_i aw ha
+    split at hEval
+    · rename_i b hb
+      simp only [Prod.mk.injEq] at hEval
+      obtain ⟨hres, hs1⟩ := hEval
+      subst hres
+      subst hs1
+      have hmv : sptMem $v ctxt := hAcc $v (by simp [accVarsHOL, sptMem_sptInsert])
+      obtain ⟨hl, h0⟩ := localsRel_retv_insert ctxt _ _ $v (.word (b.setWidth $w)) retv
+        hLocals hmv hRetv
+      refine ⟨WordSemStateFiniteExact.setVar (LoopToWord.findVarHOL ctxt $v)
+          (.word (b.setWidth $w)) t, none, ?_, ?_, stateRel_setVar _ _ _ _ _ _ hState, rfl,
+          h0, hl, rfl, rfl⟩
+      · simp only [LoopToWord.compHOL]
+        rw [WordSemStateFiniteExact.evaluate]
+        simp [WordSemStateFiniteExact.inst, wordExp_addr_zero t _ _ (hget $a _ ha), hm, hmd,
+          hbe, hb]
+      · simpa [WordSemStateFiniteExact.setVar, LoopSemStateFiniteExact.setVar] using hffi
+    · simp only [Prod.mk.injEq] at hEval
+      exact absurd hEval.1.symm hNE
+  · simp only [Prod.mk.injEq] at hEval
+    exact absurd hEval.1.symm hNE))
+
 /-- Genuine `Load32` case of HOL `compile_correct`
     (`loop_to_wordProofScript.sml:57-97`, resumed at `:917-939`). -/
 @[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "compile_correct"
@@ -228,34 +262,7 @@ theorem compileCorrect_Load32 {width : Nat} [NeZero width] {C F : Type}
         WordSemStateFiniteExact.evaluate (LoopToWord.compHOL ctxt (.load32 a v) l).1 t = (res1, t1) ∧
           t1.ffi = s1.ffi ∧
           resultCase ctxt retv t res s1 res1 t1 := by
-  rintro res s1 t ctxt retv l ⟨hEval, hNE, hState, hLocals, hRetv, hgd, -, hAcc⟩
-  simp only [LoopSemStateFiniteExact.evaluate] at hEval
-  have hget : ∀ n w, sptLookup n s.locals = some w →
-      WordSemStateFiniteExact.getVar (LoopToWord.findVarHOL ctxt n) t = some w :=
-    fun n w h => LoopToWord.localsRelHOLGetVar ctxt s.locals t n w ⟨hLocals, h⟩
-  have hState' := hState
-  obtain ⟨len, hm, hmd, hsmd, hclock, hbe, hffi, hcur, hlen, htop, hglob, hcode⟩ := hState'
-  split at hEval
-  · rename_i aw ha
-    split at hEval
-    · rename_i b hb
-      simp only [Prod.mk.injEq] at hEval
-      obtain ⟨rfl, rfl⟩ := hEval
-      have hmv : sptMem v ctxt := hAcc v (by simp [accVarsHOL, sptMem_sptInsert])
-      obtain ⟨hl, h0⟩ := localsRel_retv_insert ctxt _ _ v (.word (b.setWidth width)) retv
-        hLocals hmv hRetv
-      refine ⟨WordSemStateFiniteExact.setVar (LoopToWord.findVarHOL ctxt v)
-          (.word (b.setWidth width)) t, none, ?_, ?_, stateRel_setVar _ _ _ _ _ _ hState, rfl,
-          h0, hl, rfl, rfl⟩
-      · simp only [LoopToWord.compHOL]
-        rw [WordSemStateFiniteExact.evaluate]
-        simp [WordSemStateFiniteExact.inst, wordExp_addr_zero t _ _ (hget a _ ha), hm, hmd, hbe,
-          hb]
-      · simpa [WordSemStateFiniteExact.setVar, LoopSemStateFiniteExact.setVar] using hffi
-    · simp only [Prod.mk.injEq] at hEval
-      exact absurd hEval.1.symm hNE
-  · simp only [Prod.mk.injEq] at hEval
-    exact absurd hEval.1.symm hNE
+  loop_load_case a v s width
 
 /-- Genuine `LoadByte` case of HOL `compile_correct`
     (`loop_to_wordProofScript.sml:57-97`, resumed at `:941-963`). -/
@@ -279,33 +286,6 @@ theorem compileCorrect_LoadByte {width : Nat} [NeZero width] {C F : Type}
         WordSemStateFiniteExact.evaluate (LoopToWord.compHOL ctxt (.loadByte a v) l).1 t = (res1, t1) ∧
           t1.ffi = s1.ffi ∧
           resultCase ctxt retv t res s1 res1 t1 := by
-  rintro res s1 t ctxt retv l ⟨hEval, hNE, hState, hLocals, hRetv, hgd, -, hAcc⟩
-  simp only [LoopSemStateFiniteExact.evaluate] at hEval
-  have hget : ∀ n w, sptLookup n s.locals = some w →
-      WordSemStateFiniteExact.getVar (LoopToWord.findVarHOL ctxt n) t = some w :=
-    fun n w h => LoopToWord.localsRelHOLGetVar ctxt s.locals t n w ⟨hLocals, h⟩
-  have hState' := hState
-  obtain ⟨len, hm, hmd, hsmd, hclock, hbe, hffi, hcur, hlen, htop, hglob, hcode⟩ := hState'
-  split at hEval
-  · rename_i aw ha
-    split at hEval
-    · rename_i b hb
-      simp only [Prod.mk.injEq] at hEval
-      obtain ⟨rfl, rfl⟩ := hEval
-      have hmv : sptMem v ctxt := hAcc v (by simp [accVarsHOL, sptMem_sptInsert])
-      obtain ⟨hl, h0⟩ := localsRel_retv_insert ctxt _ _ v (.word (b.setWidth width)) retv
-        hLocals hmv hRetv
-      refine ⟨WordSemStateFiniteExact.setVar (LoopToWord.findVarHOL ctxt v)
-          (.word (b.setWidth width)) t, none, ?_, ?_, stateRel_setVar _ _ _ _ _ _ hState, rfl,
-          h0, hl, rfl, rfl⟩
-      · simp only [LoopToWord.compHOL]
-        rw [WordSemStateFiniteExact.evaluate]
-        simp [WordSemStateFiniteExact.inst, wordExp_addr_zero t _ _ (hget a _ ha), hm, hmd, hbe,
-          hb]
-      · simpa [WordSemStateFiniteExact.setVar, LoopSemStateFiniteExact.setVar] using hffi
-    · simp only [Prod.mk.injEq] at hEval
-      exact absurd hEval.1.symm hNE
-  · simp only [Prod.mk.injEq] at hEval
-    exact absurd hEval.1.symm hNE
+  loop_load_case a v s width
 
 end Flapjack
