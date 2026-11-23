@@ -20,6 +20,18 @@ hypotheses on the fetched word.
 
 namespace Flapjack.Compiler.Encoders.Arm8
 
+/-- Shared tactic block for ARMv8 "the word disagrees with the base at bit `b`"
+    side conditions: unfold `op`, assume the mask equality, and contradict it at
+    bit `b` after unfolding the encoding word `d`. -/
+macro "bitMatchesNe" op:Lean.Parser.Tactic.rwRule "at" b:num "using"
+    d:Lean.Parser.Tactic.simpLemma : tactic =>
+  `(tactic| (
+    rw [$op, decide_eq_false_iff_not]
+    intro h
+    have hb := congrArg (fun x : BitVec 32 => x.getLsbD $b) h
+    simp only [$d] at hb
+    simp at hb))
+
 /-- A 32-bit `ofNat` is the width-`n` truncation zero-extended to 32 bits. -/
 theorem ofNat_mod_self32 (x n : Nat) :
     BitVec.ofNat 32 (x % 2 ^ n) = (BitVec.ofNat n x).setWidth 32 := by
@@ -69,11 +81,7 @@ theorem decode_moveWide_word (opB : BitVec 2) (hwB : BitVec 2) (immB : BitVec 16
     simp
     interval_cases i <;> simp
   have c1 : bitMatches (moveWideWord opB hwB immB rdB) 0xFFFFFFFF 0xD503201F = false := by
-    rw [bitMatches, decide_eq_false_iff_not]
-    intro h
-    have hb := congrArg (fun w : BitVec 32 => w.getLsbD 24) h
-    simp only [moveWideWord] at hb
-    simp at hb
+    bitMatchesNe bitMatches at 24 using moveWideWord
   simp only [c1, hK]
   have f1 : part (moveWideWord opB hwB immB rdB) 29 2 = opB.toNat := by
     apply part_eq_of_setWidth
