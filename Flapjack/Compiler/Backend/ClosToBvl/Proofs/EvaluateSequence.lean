@@ -11,6 +11,18 @@ public import Flapjack.Compiler.Backend.Semantics.BvlSem.EvaluateLength
 namespace Flapjack.Compiler.Backend.ClosToBvl
 open Flapjack.SemanticPrimitivesHOL Flapjack.SemanticPrimitivesProps
 
+/-- Proof-side helper: any `evaluate` step keeps the source state's `maxApp`.
+    No separately named HOL original; it is `ClosProps.evaluate_const` applied
+    to the evaluation equation. -/
+theorem maxApp_of_evaluate_const {C F : Type} {expressions : List ClosLang.Exp}
+    {sourceEnv : List ClosSem.Value} {s sMiddle : ClosSem.State C F}
+    {result : Result (List ClosSem.Value) ClosSem.Value}
+    (run : ClosSem.evaluate expressions sourceEnv s = (result, sMiddle)) :
+    sMiddle.maxApp = s.maxApp := by
+  have h := (ClosProps.evaluate_const (C := C) (F := F)).1 expressions sourceEnv s
+  rw [run] at h
+  exact h
+
 /-- Compose a successful singleton simulation with the simulation of a
 nonempty tail. The continuation is the tail induction hypothesis; it receives
 the state and environment relations established by the head. This is
@@ -33,10 +45,7 @@ theorem evaluatePost_cons_success {C F : Type}
     evaluatePost s sFinal t targetEnv f
       (match tailResult with | .val values => .val (sourceValue :: values) | .err error => .err error)
       (targetHead :: targetTail) := by
-  have maxApp : sMiddle.maxApp = s.maxApp := by
-    have h := (ClosProps.evaluate_const (C := C) (F := F)).1 [sourceHead] sourceEnv s
-    rw [headRun] at h
-    exact h
+  have maxApp := maxApp_of_evaluate_const headRun
   obtain ⟨clock1, result1, tMiddle, fMiddle, targetRun1, related1, state1, map1, refs1,
     annotations1, clocks1, code1, env1⟩ :=
       evaluatePost_environment s sMiddle t sourceEnv targetEnv f (.val [sourceValue]) [targetHead]
@@ -206,10 +215,7 @@ theorem evaluate_cons_post_clock {C F : Type}
           apply evaluatePost_cons_success s sMiddle sLast t sourceEnv targetEnv f first targetHead
             value (.val tailValues) targetTail tailNonempty headRun envRelated (headIH _ _ headRun (by simp))
           intro tMiddle fMiddle state env annotations growth
-          have maxApp : sMiddle.maxApp = s.maxApp := by
-            have h := (ClosProps.evaluate_const (C := C) (F := F)).1 [first] sourceEnv s
-            rw [headRun] at h
-            exact h
+          have maxApp := maxApp_of_evaluate_const headRun
           have clock := ClosSem.evaluate_clock_le [first] sourceEnv s
           rw [headRun] at clock
           exact tailIH sMiddle sLast (.val tailValues) tMiddle fMiddle tailRun (by simp) state env annotations growth maxApp (by simpa using clock)
@@ -219,10 +225,7 @@ theorem evaluate_cons_post_clock {C F : Type}
           apply evaluatePost_cons_success s sMiddle sLast t sourceEnv targetEnv f first targetHead
             value (.err error) targetTail tailNonempty headRun envRelated (headIH _ _ headRun (by simp))
           intro tMiddle fMiddle state env annotations growth
-          have maxApp : sMiddle.maxApp = s.maxApp := by
-            have h := (ClosProps.evaluate_const (C := C) (F := F)).1 [first] sourceEnv s
-            rw [headRun] at h
-            exact h
+          have maxApp := maxApp_of_evaluate_const headRun
           have clock := ClosSem.evaluate_clock_le [first] sourceEnv s
           rw [headRun] at clock
           exact tailIH sMiddle sLast (.err error) tMiddle fMiddle tailRun noTypeError state env annotations growth maxApp (by simpa using clock)
@@ -288,5 +291,32 @@ theorem expressionSimulationBelow_lists {C F : Type} (clockBound : Nat)
     cases rest with
     | nil => exact singleton first
     | cons second tail => exact expressionSimulationBelow_cons clockBound first second tail (singleton first) ih
+
+/-- Proof-side helper: the singleton operation list `[.op trace op args]` keeps
+    its argument list's location annotations. No separately named HOL original;
+    it only unfolds `everyFnLocationSome`. -/
+theorem everyFnLocationSome_op {trace : BackendCommon.Tra} {op : ClosLang.Op}
+    {args : List ClosLang.Exp} :
+    ClosProps.everyFnLocationSome [.op trace op args] → ClosProps.everyFnLocationSome args := by
+  intro h
+  simpa [ClosProps.everyFnLocationSome, ClosProps.fnLocationSomeExp] using h
+
+/-- Proof-side helper: as `everyFnLocationSome_op`, for the variable annotations.
+    No separately named HOL original; it only unfolds `everyFnVarsSome`. -/
+theorem everyFnVarsSome_op {trace : BackendCommon.Tra} {op : ClosLang.Op}
+    {args : List ClosLang.Exp} :
+    ClosProps.everyFnVarsSome [.op trace op args] → ClosProps.everyFnVarsSome args := by
+  intro h
+  simpa [ClosProps.everyFnVarsSome, ClosProps.fnVarsSomeExp] using h
+
+/-- Proof-side helper: the singleton call list `[.call trace ticks location args]`
+    keeps its argument list's variable annotations. No separately named HOL
+    original; it only unfolds `everyFnVarsSome`. -/
+theorem everyFnVarsSome_call {trace : BackendCommon.Tra} {ticks location : Nat}
+    {args : List ClosLang.Exp} :
+    ClosProps.everyFnVarsSome [.call trace ticks location args] →
+      ClosProps.everyFnVarsSome args := by
+  intro h
+  simpa [ClosProps.everyFnVarsSome, ClosProps.fnVarsSomeExp] using h
 
 end Flapjack.Compiler.Backend.ClosToBvl

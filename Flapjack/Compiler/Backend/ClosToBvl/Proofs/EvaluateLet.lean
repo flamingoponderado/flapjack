@@ -44,10 +44,7 @@ theorem evaluatePost_let_success {C F : Type}
       codeAnnotations sMiddle → sptSubspt t.code tMiddle.code →
       evaluatePost sMiddle sFinal tMiddle (targetValues ++ targetEnv) fMiddle result [targetBody]) :
     evaluatePost s sFinal t targetEnv f result [.let targetBindings targetBody] := by
-  have maxApp : sMiddle.maxApp = s.maxApp := by
-    have h := (ClosProps.evaluate_const (C := C) (F := F)).1 sourceBindings sourceEnv s
-    rw [bindingRun] at h
-    exact h
+  have maxApp := maxApp_of_evaluate_const bindingRun
   obtain ⟨clock1, targetResult, tMiddle, fMiddle, targetRun1, related1, state1, map1, refs1,
     annotations1, clocks1, code1, env1⟩ :=
       evaluatePost_environment s sMiddle t sourceEnv targetEnv f (.val values) targetBindings envRelated bindingPost
@@ -127,10 +124,7 @@ theorem expressionSimulationBelow_let {C F : Type} (clockBound : Nat) (trace : B
           apply evaluatePost_let_success s sMiddle sFinal t sourceEnv targetEnv f bindings targetBindings targetBody
             values result bindingRun envRelated bindingsPost
           intro targetValues tMiddle fMiddle middleStates middleEnv middleAnnotations growth
-          have maxApp : sMiddle.maxApp = s.maxApp := by
-            have h := (ClosProps.evaluate_const (C := C) (F := F)).1 bindings sourceEnv s
-            rw [bindingRun] at h
-            exact h
+          have maxApp := maxApp_of_evaluate_const bindingRun
           have bodyCompiled' : compileExpsHOL sMiddle.maxApp [body] auxMiddle = ([targetBody], finalAux) := by
             simpa [maxApp] using bodyCompiled
           have middleClock : sMiddle.clock < clockBound := by

@@ -179,10 +179,8 @@ theorem expressionSimulationBelow_install_succ {C F : Type} (clockBound : Nat)
       simp [compileExpListHOL, compileExpHOL, argsCompile]
     have equal := compile.symm.trans wholeCompiled
     cases equal
-    have argsLoc : ClosProps.everyFnLocationSome args := by
-      simpa [ClosProps.everyFnLocationSome, ClosProps.fnLocationSomeExp] using locations
-    have argsVars : ClosProps.everyFnVarsSome args := by
-      simpa [ClosProps.everyFnVarsSome, ClosProps.fnVarsSomeExp] using varsAnnotated
+    have argsLoc := everyFnLocationSome_op locations
+    have argsVars := everyFnVarsSome_op varsAnnotated
     rw [ClosSem.evaluate, ClosSem.fixClock_evaluate] at run
     cases argsRun : ClosSem.evaluate args sourceEnv s with
     | mk argsResult sArgs =>

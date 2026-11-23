@@ -67,10 +67,7 @@ theorem evaluatePost_if_success {C F : Type}
       codeAnnotations sMiddle → sptSubspt t.code tMiddle.code →
       evaluatePost sMiddle sFinal tMiddle targetEnv fMiddle result [if choice then targetYes else targetNo]) :
     evaluatePost s sFinal t targetEnv f result [.ifThenElse targetCondition targetYes targetNo] := by
-  have maxApp : sMiddle.maxApp = s.maxApp := by
-    have h := (ClosProps.evaluate_const (C := C) (F := F)).1 [sourceCondition] sourceEnv s
-    rw [conditionRun] at h
-    exact h
+  have maxApp := maxApp_of_evaluate_const conditionRun
   obtain ⟨clock1, targetResult, tMiddle, fMiddle, targetRun1, related1, state1, map1, refs1,
     annotations1, clocks1, code1, env1⟩ :=
       evaluatePost_environment s sMiddle t sourceEnv targetEnv f (.val [value]) [targetCondition] envRelated conditionPost
@@ -168,10 +165,7 @@ theorem expressionSimulationBelow_if {C F : Type} (clockBound : Nat) (trace : Ba
               apply evaluatePost_if_success s sMiddle sFinal t sourceEnv targetEnv f condition targetCondition targetYes targetNo
                 value choice result conditionRun decoded envRelated conditionPost
               intro tMiddle fMiddle middleStates middleEnv middleAnnotations growth
-              have maxApp : sMiddle.maxApp = s.maxApp := by
-                have h := (ClosProps.evaluate_const (C := C) (F := F)).1 [condition] sourceEnv s
-                rw [conditionRun] at h
-                exact h
+              have maxApp := maxApp_of_evaluate_const conditionRun
               have middleClock : sMiddle.clock < clockBound := by
                 have h := ClosSem.evaluate_clock_le [condition] sourceEnv s
                 rw [conditionRun] at h
