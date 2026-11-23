@@ -94,21 +94,14 @@ theorem freeVars_mapIdx {α : Type} [Nonempty α] (l : List α) (x : Nat)
   induction l generalizing f with
   | nil => simp [freeVars]
   | cons a as ih =>
-    have step := ih (fun i => f (i + 1))
-    rw [List.mapIdx_cons, freeVars, step]
+    simp only [List.mapIdx_cons, freeVars, ih]
     constructor
-    · intro h
-      rcases h with h | ⟨n, hn, h⟩
-      · exact ⟨0, by simp, by simpa [freeVars, freeVar, holEl, holHd] using h⟩
-      · refine ⟨n + 1, by simp [hn], ?_⟩
-        simpa [holEl] using h
+    · rintro (h | ⟨n, hn, h⟩)
+      · exact ⟨0, by simp, by simpa [holEl, holHd] using h⟩
+      · exact ⟨n + 1, Nat.succ_lt_succ hn, by simpa [holEl] using h⟩
     · rintro ⟨n, hn, h⟩
       cases n with
-      | zero => exact Or.inl (by simpa [freeVars, freeVar, holEl, holHd] using h)
-      | succ n =>
-        refine Or.inr ⟨n, ?_, ?_⟩
-        · simp at hn ⊢
-          omega
-        · simpa [holEl] using h
+      | zero => exact Or.inl (by simpa [holEl, holHd] using h)
+      | succ n => exact Or.inr ⟨n, Nat.succ_lt_succ_iff.mp hn, by simpa [holEl] using h⟩
 
 end Flapjack.Compiler.Backend.ClosProps

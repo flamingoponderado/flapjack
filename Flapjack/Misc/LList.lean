@@ -1804,15 +1804,11 @@ theorem llistEvery_thm (P : α → Prop) (h : α) (t : HolLList α) :
     llistEvery P (lnil : HolLList α) ∧
       (llistEvery P (lcons h t) ↔ P h ∧ llistEvery P t) := by
   constructor
-  · rw [llistEvery_iff]
-    intro n x hx
-    simp [lnil] at hx
+  · simp [llistEvery_iff, lnil]
   · rw [llistEvery_iff, llistEvery_iff]
     constructor
     · intro hP
-      refine ⟨hP 0 h (by simp [lcons]), ?_⟩
-      intro n x hx
-      exact hP (n + 1) x (by simp [lcons, hx])
+      exact ⟨hP 0 h (by simp [lcons]), fun n x hx => hP (n + 1) x (by simp [lcons, hx])⟩
     · rintro ⟨hh, ht⟩ n x hx
       cases n with
       | zero =>
@@ -2062,26 +2058,21 @@ theorem lflatten_spec (ll : HolLList (HolLList α)) :
 /-- HOL `fromList_11` (`llistScript.sml:3520-3522`): `fromList` is injective. -/
 @[hol "hol4/src/coalgebras/llistScript.sml" "fromList_11"]
 theorem fromList_inj (l1 l2 : List α) : fromList l1 = fromList l2 ↔ l1 = l2 := by
-  constructor
-  · intro h
-    induction l1 generalizing l2 with
-    | nil =>
-        cases l2 with
-        | nil => rfl
-        | cons b bs =>
-            simp only [fromList] at h
-            exact absurd h.symm (lcons_ne_lnil b (fromList bs))
-    | cons a as ih =>
-        cases l2 with
-        | nil =>
-            simp only [fromList] at h
-            exact absurd h (lcons_ne_lnil a (fromList as))
-        | cons b bs =>
-            simp only [fromList] at h
+  induction l1 generalizing l2 with
+  | nil =>
+      cases l2 with
+      | nil => simp
+      | cons b bs => simp [fromList, Ne.symm (lcons_ne_lnil b (fromList bs))]
+  | cons a as ih =>
+      cases l2 with
+      | nil => simp [fromList, lcons_ne_lnil]
+      | cons b bs =>
+          constructor
+          · intro h
             obtain ⟨hab, htl⟩ := lcons_inj h
-            rw [ih bs htl, hab]
-  · rintro rfl
-    rfl
+            rw [hab, (ih bs).mp htl]
+          · rintro ⟨rfl, rfl⟩
+            rfl
 
 /-- HOL `LAPPEND_fromList` (`llistScript.sml:2206-2208`): appending two finite
     lists is appending their `List` counterparts. -/
