@@ -36,11 +36,7 @@ theorem adjustOracle_evaluate_If {Config F : Type} (compile : List Dec → List 
     cases inner with
     | err error =>
       have pair : (middle, .err error) = (next, result) := by simpa [run] using source
-      have innerSafe : (Result.err error : Result (List Value) Value) ≠ .err (.abort .typeError) := by
-        intro bad
-        apply safe
-        have h := congrArg Prod.snd pair
-        simpa [bad] using h.symm
+      have innerSafe := errNeTypeAbort pair safe
       obtain ⟨middleInserted, replacement⟩ := conditionIH middle (.err error) ⟨run, inserted, innerSafe⟩
       cases pair
       exact ⟨middleInserted, by simp [adjusted, replacement]⟩
@@ -93,11 +89,7 @@ theorem adjustOracle_evaluate_Log {Config F : Type} (compile : List Dec → List
     cases inner with
     | err error =>
       have pair : (middle, .err error) = (next, result) := by simpa [run] using source
-      have innerSafe : (Result.err error : Result (List Value) Value) ≠ .err (.abort .typeError) := by
-        intro bad
-        apply safe
-        have h := congrArg Prod.snd pair
-        simpa [bad] using h.symm
+      have innerSafe := errNeTypeAbort pair safe
       obtain ⟨middleInserted, replacement⟩ := firstIH middle (.err error) ⟨run, inserted, innerSafe⟩
       cases pair
       exact ⟨middleInserted, by simp [adjusted, replacement]⟩
@@ -152,11 +144,7 @@ theorem adjustOracle_evaluate_Con {Config F : Type} (compile : List Dec → List
       cases inner with
       | err error =>
         have pair : (middle, .err error) = (next, result) := by simpa [run] using source
-        have innerSafe : (Result.err error : Result (List Value) Value) ≠ .err (.abort .typeError) := by
-          intro bad
-          apply safe
-          have h := congrArg Prod.snd pair
-          simpa [bad] using h.symm
+        have innerSafe := errNeTypeAbort pair safe
         obtain ⟨middleInserted, replacement⟩ := argsIH check middle (.err error) ⟨run, inserted, innerSafe⟩
         cases pair
         exact ⟨middleInserted, by simp [replacement]⟩

@@ -51,11 +51,7 @@ theorem adjustOracle_evaluate_Dmod {Config F : Type} (compile : List Dec → Lis
     cases inner with
     | err error =>
       have pair : (middle, .err error) = (next, result) := by simpa [evaluateDecs, run] using source
-      have innerSafe : (Result.err error : Result (SemEnv Value) Value) ≠ .err (.abort .typeError) := by
-        intro bad
-        apply safe
-        have h := congrArg Prod.snd pair
-        simpa [bad] using h.symm
+      have innerSafe := errNeTypeAbort pair safe
       obtain ⟨middleInserted, replacement⟩ := ih middle (.err error) ⟨run, inserted, innerSafe⟩
       cases pair
       exact ⟨middleInserted, by simp [evaluateDecs, replacement]⟩
@@ -90,11 +86,7 @@ theorem adjustOracle_evaluate_Dlocal {Config F : Type} (compile : List Dec → L
     cases inner with
     | err error =>
       have pair : (middle, .err error) = (next, result) := by simpa [run] using source
-      have innerSafe : (Result.err error : Result (SemEnv Value) Value) ≠ .err (.abort .typeError) := by
-        intro bad
-        apply safe
-        have h := congrArg Prod.snd pair
-        simpa [bad] using h.symm
+      have innerSafe := errNeTypeAbort pair safe
       obtain ⟨middleInserted, replacement⟩ := localsIH middle (.err error) ⟨run, inserted, innerSafe⟩
       cases pair
       exact ⟨middleInserted, by simp [replacement]⟩
@@ -128,11 +120,7 @@ theorem adjustOracle_evaluate_DecsCons {Config F : Type} (compile : List Dec →
     cases inner with
     | err error =>
       have pair : (middle, .err error) = (next, result) := by simpa [run] using source
-      have innerSafe : (Result.err error : Result (SemEnv Value) Value) ≠ .err (.abort .typeError) := by
-        intro bad
-        apply safe
-        have h := congrArg Prod.snd pair
-        simpa [bad] using h.symm
+      have innerSafe := errNeTypeAbort pair safe
       obtain ⟨middleInserted, replacement⟩ := firstIH middle (.err error) ⟨run, inserted, innerSafe⟩
       cases pair
       exact ⟨middleInserted, by simp [replacement]⟩
