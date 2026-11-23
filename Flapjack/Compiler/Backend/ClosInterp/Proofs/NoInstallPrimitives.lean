@@ -92,17 +92,13 @@ theorem applyBlock_noInstall {C F : Type} (op : ClosLang.BlockOp) (args : List C
 /-- Successful integer primitives return no-install values. -/
 theorem doIntApp_noInstall (op : ClosLang.IntOp) (args : List ClosSem.Value) (value : ClosSem.Value)
     (run : ClosSem.doIntApp op args = some value) : valueNoInstall value = true := by
-  unfold ClosSem.doIntApp at run
-  repeat' split at run
-  all_goals simp_all
+  unfoldSplit ClosSem.doIntApp
   all_goals aesop (add simp [valueNoInstall]) (add safe apply [boolValue_noInstall])
 
 /-- Successful integral word primitives return no-install values. -/
 theorem doWordAppIntegral_noInstall (op : ClosLang.WordOp) (args : List ClosSem.Value) (value : ClosSem.Value)
     (run : ClosSem.doWordAppIntegral op args = some value) : valueNoInstall value = true := by
-  unfold ClosSem.doWordAppIntegral at run
-  repeat' split at run
-  all_goals simp_all
+  unfoldSplit ClosSem.doWordAppIntegral
   all_goals try simp_all only [Option.bind_eq_some_iff, Option.some.injEq]
   all_goals try (solve | aesop (add simp [valueNoInstall]) (add safe apply [boolValue_noInstall]))
 
@@ -110,9 +106,7 @@ theorem doWordAppIntegral_noInstall (op : ClosLang.WordOp) (args : List ClosSem.
 no-install values. -/
 theorem doWordApp_noInstall (op : ClosLang.WordOp) (args : List ClosSem.Value) (value : ClosSem.Value)
     (run : ClosSem.doWordApp op args = some value) : valueNoInstall value = true := by
-  unfold ClosSem.doWordApp at run
-  repeat' split at run
-  all_goals simp_all
+  unfoldSplit ClosSem.doWordApp
   all_goals try (solve | aesop (add simp [valueNoInstall]) (add safe apply [boolValue_noInstall, doWordAppIntegral_noInstall]))
 
 /-- Successful numeric dispatch returns a no-install value. -/
@@ -240,18 +234,14 @@ theorem applyGlobal_noInstall {C F : Type} (op : ClosLang.GlobOp) (args : List C
 theorem applyGlobal_refs {C F : Type} (op : ClosLang.GlobOp) (args : List ClosSem.Value)
     (state next : ClosSem.State C F) (value : ClosSem.Value)
     (run : ClosSem.applyGlobal op args state = some (value, next)) : next.refs = state.refs := by
-  unfold ClosSem.applyGlobal at run
-  repeat' split at run
-  all_goals simp_all
+  unfoldSplit ClosSem.applyGlobal
   all_goals (rcases run with ⟨_, rfl⟩; rfl)
 
 /-- Successful block operations leave the state unchanged. -/
 theorem applyBlock_state {C F : Type} (op : ClosLang.BlockOp) (args : List ClosSem.Value)
     (state next : ClosSem.State C F) (value : ClosSem.Value)
     (run : ClosSem.applyBlock op args state = some (value, next)) : next = state := by
-  unfold ClosSem.applyBlock at run
-  repeat' split at run
-  all_goals simp_all
+  unfoldSplit ClosSem.applyBlock
   all_goals try simp_all only [Option.bind_eq_some_iff, Option.some.injEq, Prod.mk.injEq]
   all_goals aesop
 
@@ -259,9 +249,7 @@ theorem applyBlock_state {C F : Type} (op : ClosLang.BlockOp) (args : List ClosS
 theorem applyNumeric_state {C F : Type} (op : ClosLang.Op) (args : List ClosSem.Value)
     (state next : ClosSem.State C F) (value : ClosSem.Value)
     (run : ClosSem.applyNumeric op args state = some (value, next)) : next = state := by
-  unfold ClosSem.applyNumeric at run
-  repeat' split at run
-  all_goals simp_all
+  unfoldSplit ClosSem.applyNumeric
 
 /-- Successful ordinary primitive applications preserve the no-install
 invariants for their result, globals, and references. -/

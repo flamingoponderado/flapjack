@@ -248,9 +248,7 @@ theorem applyGlobal_firstGlobal {C F : Type} (op : ClosLang.GlobOp) (args : List
 theorem applyBlock_globals {C F : Type} (op : ClosLang.BlockOp) (args : List ClosSem.Value)
     (state next : ClosSem.State C F) (value : ClosSem.Value)
     (run : ClosSem.applyBlock op args state = some (value, next)) : next.globals = state.globals := by
-  unfold ClosSem.applyBlock at run
-  repeat' split at run
-  all_goals simp_all
+  unfoldSplit ClosSem.applyBlock
   all_goals try simp_all only [Option.bind_eq_some_iff, Option.some.injEq, Prod.mk.injEq]
   all_goals aesop
 
@@ -258,17 +256,13 @@ theorem applyBlock_globals {C F : Type} (op : ClosLang.BlockOp) (args : List Clo
 theorem applyNumeric_globals {C F : Type} (op : ClosLang.Op) (args : List ClosSem.Value)
     (state next : ClosSem.State C F) (value : ClosSem.Value)
     (run : ClosSem.applyNumeric op args state = some (value, next)) : next.globals = state.globals := by
-  unfold ClosSem.applyNumeric at run
-  repeat' split at run
-  all_goals simp_all
+  unfoldSplit ClosSem.applyNumeric
 
 /-- Memory primitives do not change globals. -/
 theorem applyMemory_globals {C F : Type} (op : ClosLang.MemOp) (args : List ClosSem.Value)
     (state next : ClosSem.State C F) (value : ClosSem.Value)
     (run : ClosSem.applyMemory op args state = some (value, next)) : next.globals = state.globals := by
-  unfold ClosSem.applyMemory at run
-  repeat' split at run
-  all_goals simp_all
+  unfoldSplit ClosSem.applyMemory
   all_goals try simp_all only [Option.bind_eq_some_iff, Option.some.injEq, Prod.mk.injEq]
   all_goals try (rcases run with ⟨entry, _, h⟩; cases entry <;> simp_all [Option.bind_eq_some_iff])
   all_goals try (rcases h with ⟨entry, _, h⟩; cases entry <;> simp_all [Option.bind_eq_some_iff] <;> aesop)

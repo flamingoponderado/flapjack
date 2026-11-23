@@ -167,9 +167,7 @@ payload type. -/
 theorem doInstall_error_type {C F R : Type} (args : List Value) (state : BviState C F)
     (error : Flapjack.SemanticPrimitivesHOL.ErrorResult R)
     (run : doInstall (R := R) args state = .err error) : error = .abort .typeError := by
-  unfold BviSem.doInstall at run
-  repeat' split at run
-  all_goals simp_all
+  unfoldSplit BviSem.doInstall
   all_goals split at run <;> simp_all
 
 /-- Installation preserves the inlining state relation unless the source

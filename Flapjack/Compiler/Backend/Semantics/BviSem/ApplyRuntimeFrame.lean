@@ -123,9 +123,7 @@ theorem doAppAux_compiler_fields {C F : Type} (op : ClosLang.Op) (args : List Va
     (source next : BviState C F) (value : Value)
     (run : doAppAux op args source = some (some (value, next))) :
     next.compile = source.compile ∧ next.compileOracle = source.compileOracle ∧ next.code = source.code := by
-  unfold doAppAux at run
-  repeat' split at run
-  all_goals simp_all
+  unfoldSplit doAppAux
   all_goals try simp_all only [Option.bind_eq_some_iff, Option.some.injEq, Prod.mk.injEq]
   all_goals aesop
 

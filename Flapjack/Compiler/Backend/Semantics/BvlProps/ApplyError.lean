@@ -21,9 +21,7 @@ end ErrorCarrier
 private theorem installError {C F R : Type} (args : List BvlSem.Value)
     (state : BvlSem.State C F) (error : ErrorResult R)
     (run : doInstall args state = .err error) : error = .abort .typeError := by
-  unfold doInstall at run
-  repeat' split at run
-  all_goals simp_all
+  unfoldSplit doInstall
   all_goals aesop
 
 /-- Primitive errors are type errors or final external-call outcomes. -/

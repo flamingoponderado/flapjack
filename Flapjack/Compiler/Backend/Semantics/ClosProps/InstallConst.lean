@@ -25,9 +25,7 @@ theorem doInstall_const {C F : Type} (values : List ClosSem.Value) (state : Stat
     (result : Result (List ClosLang.Exp) ClosSem.Value) (next : State C F)
     (run : doInstall values state = (result, next)) :
     next.maxApp = state.maxApp ∧ next.ffi = state.ffi := by
-  unfold doInstall at run
-  repeat' split at run
-  all_goals simp_all
+  unfoldSplit doInstall
   all_goals split at run <;> simp_all
   all_goals
     rcases run with ⟨_, rfl⟩
@@ -101,18 +99,14 @@ theorem doInstall_not_Rffi_error {C F : Type} (vs : List ClosSem.Value) (s t : S
 private theorem applyGlobal_maxApp {C F : Type} (op : ClosLang.GlobOp) (args : List ClosSem.Value)
     (state next : State C F) (value : ClosSem.Value)
     (run : applyGlobal op args state = some (value, next)) : next.maxApp = state.maxApp := by
-  unfold applyGlobal at run
-  repeat' split at run
-  all_goals simp_all
+  unfoldSplit applyGlobal
   all_goals aesop
 
 /-- Successful block primitives preserve the arity bound. -/
 private theorem applyBlock_maxApp {C F : Type} (op : ClosLang.BlockOp) (args : List ClosSem.Value)
     (state next : State C F) (value : ClosSem.Value)
     (run : applyBlock op args state = some (value, next)) : next.maxApp = state.maxApp := by
-  unfold applyBlock at run
-  repeat' split at run
-  all_goals simp_all
+  unfoldSplit applyBlock
   all_goals try simp_all only [Option.bind_eq_some_iff, Option.some.injEq, Prod.mk.injEq]
   all_goals aesop
 
@@ -120,18 +114,14 @@ private theorem applyBlock_maxApp {C F : Type} (op : ClosLang.BlockOp) (args : L
 private theorem applyNumeric_maxApp {C F : Type} (op : ClosLang.Op) (args : List ClosSem.Value)
     (state next : State C F) (value : ClosSem.Value)
     (run : applyNumeric op args state = some (value, next)) : next.maxApp = state.maxApp := by
-  unfold applyNumeric at run
-  repeat' split at run
-  all_goals simp_all
+  unfoldSplit applyNumeric
   all_goals aesop
 
 /-- Successful memory primitives preserve the arity bound. -/
 private theorem applyMemory_maxApp {C F : Type} (op : ClosLang.MemOp) (args : List ClosSem.Value)
     (state next : State C F) (value : ClosSem.Value)
     (run : applyMemory op args state = some (value, next)) : next.maxApp = state.maxApp := by
-  unfold applyMemory at run
-  repeat' split at run
-  all_goals simp_all
+  unfoldSplit applyMemory
   all_goals try simp_all only [Option.bind_eq_some_iff, Option.some.injEq, Prod.mk.injEq]
   all_goals try (rcases run with ⟨entry, _, h⟩; cases entry <;> simp_all [Option.bind_eq_some_iff])
   all_goals try (rcases h with ⟨entry, _, h⟩; cases entry <;> simp_all [Option.bind_eq_some_iff] <;> aesop)

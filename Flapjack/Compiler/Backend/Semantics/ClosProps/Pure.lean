@@ -22,18 +22,14 @@ private theorem applyGlobal_pure {C F : Type} (op : ClosLang.GlobOp) (args : Lis
 private theorem applyBlock_pure {C F : Type} (op : ClosLang.BlockOp) (args : List Value)
     (source next : State C F) (value : Value) (run : applyBlock op args source = some (value, next)) :
     next = source := by
-  unfold applyBlock at run
-  repeat' split at run
-  all_goals simp_all
+  unfoldSplit applyBlock
   all_goals try simp_all only [Option.bind_eq_some_iff, Option.some.injEq, Prod.mk.injEq]
   all_goals aesop
 
 private theorem applyNumeric_pure {C F : Type} (op : ClosLang.Op) (args : List Value)
     (source next : State C F) (value : Value) (run : applyNumeric op args source = some (value, next)) :
     next = source := by
-  unfold applyNumeric at run
-  repeat' split at run
-  all_goals simp_all
+  unfoldSplit applyNumeric
   all_goals aesop
 
 /-- Memory operations classified as pure leave the state unchanged. -/

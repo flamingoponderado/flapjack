@@ -13,18 +13,14 @@ open Flapjack.SemanticPrimitivesHOL
 private theorem applyGlobal_codeOracle {C F : Type} (op : ClosLang.GlobOp) (args : List Value)
     (state next : State C F) (value : Value)
     (run : applyGlobal op args state = some (value, next)) : next.code = state.code ∧ next.compileOracle = state.compileOracle := by
-  unfold applyGlobal at run
-  repeat' split at run
-  all_goals simp_all
+  unfoldSplit applyGlobal
   all_goals aesop
 
 /-- Successful block primitives preserve the code and oracle fields. -/
 private theorem applyBlock_codeOracle {C F : Type} (op : ClosLang.BlockOp) (args : List Value)
     (state next : State C F) (value : Value)
     (run : applyBlock op args state = some (value, next)) : next.code = state.code ∧ next.compileOracle = state.compileOracle := by
-  unfold applyBlock at run
-  repeat' split at run
-  all_goals simp_all
+  unfoldSplit applyBlock
   all_goals try simp_all only [Option.bind_eq_some_iff, Option.some.injEq, Prod.mk.injEq]
   all_goals aesop
 
@@ -32,18 +28,14 @@ private theorem applyBlock_codeOracle {C F : Type} (op : ClosLang.BlockOp) (args
 private theorem applyNumeric_codeOracle {C F : Type} (op : ClosLang.Op) (args : List Value)
     (state next : State C F) (value : Value)
     (run : applyNumeric op args state = some (value, next)) : next.code = state.code ∧ next.compileOracle = state.compileOracle := by
-  unfold applyNumeric at run
-  repeat' split at run
-  all_goals simp_all
+  unfoldSplit applyNumeric
   all_goals aesop
 
 /-- Successful memory primitives preserve the code and oracle fields. -/
 private theorem applyMemory_codeOracle {C F : Type} (op : ClosLang.MemOp) (args : List Value)
     (state next : State C F) (value : Value)
     (run : applyMemory op args state = some (value, next)) : next.code = state.code ∧ next.compileOracle = state.compileOracle := by
-  unfold applyMemory at run
-  repeat' split at run
-  all_goals simp_all
+  unfoldSplit applyMemory
   all_goals try simp_all only [Option.bind_eq_some_iff, Option.some.injEq, Prod.mk.injEq]
   all_goals try (rcases run with ⟨entry, _, h⟩; cases entry <;> simp_all [Option.bind_eq_some_iff])
   all_goals try (rcases h with ⟨entry, _, h⟩; cases entry <;> simp_all [Option.bind_eq_some_iff] <;> aesop)

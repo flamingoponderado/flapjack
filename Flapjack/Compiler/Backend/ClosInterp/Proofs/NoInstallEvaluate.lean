@@ -37,18 +37,14 @@ theorem findCode_noInstall (location : Nat) (args output : List ClosSem.Value)
 theorem applyGlobal_code {C F : Type} (op : ClosLang.GlobOp) (args : List ClosSem.Value)
     (state next : ClosSem.State C F) (value : ClosSem.Value)
     (run : ClosSem.applyGlobal op args state = some (value, next)) : next.code = state.code := by
-  unfold ClosSem.applyGlobal at run
-  repeat' split at run
-  all_goals simp_all
+  unfoldSplit ClosSem.applyGlobal
   all_goals (rcases run with ⟨_, rfl⟩; rfl)
 
 /-- Successful memory primitives leave code unchanged. -/
 theorem applyMemory_code {C F : Type} (op : ClosLang.MemOp) (args : List ClosSem.Value)
     (state next : ClosSem.State C F) (value : ClosSem.Value)
     (run : ClosSem.applyMemory op args state = some (value, next)) : next.code = state.code := by
-  unfold ClosSem.applyMemory at run
-  repeat' split at run
-  all_goals simp_all
+  unfoldSplit ClosSem.applyMemory
   all_goals try simp_all only [Option.bind_eq_some_iff, Option.some.injEq, Prod.mk.injEq]
   all_goals try (rcases run with ⟨entry, _, h⟩; cases entry <;> simp_all [Option.bind_eq_some_iff])
   all_goals try (rcases h with ⟨entry, _, h⟩; cases entry <;> simp_all [Option.bind_eq_some_iff] <;> aesop)

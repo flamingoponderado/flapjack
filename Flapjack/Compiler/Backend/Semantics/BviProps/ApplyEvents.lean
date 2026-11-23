@@ -14,9 +14,7 @@ open Flapjack.Compiler.Backend.BviSem
 theorem doInstall_ffi {C F R : Type} (args : List Value)
     (s t : BviState C F) (value : Value)
     (run : doInstall (R := R) args s = .val (value, t)) : t.ffi = s.ffi := by
-  unfold doInstall at run
-  repeat' split at run
-  all_goals simp_all
+  unfoldSplit doInstall
   all_goals repeat' split at run
   all_goals simp_all
   all_goals aesop
@@ -25,9 +23,7 @@ theorem doInstall_ffi {C F R : Type} (args : List Value)
 theorem doAppAux_ffi {C F : Type} (op : ClosLang.Op) (args : List Value)
     (s t : BviState C F) (value : Value)
     (run : doAppAux op args s = some (some (value, t))) : t.ffi = s.ffi := by
-  unfold doAppAux at run
-  repeat' split at run
-  all_goals simp_all
+  unfoldSplit doAppAux
   all_goals try simp_all only [Option.bind_eq_some_iff, Option.some.injEq, Prod.mk.injEq]
   all_goals aesop
 

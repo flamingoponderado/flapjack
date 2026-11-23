@@ -17,18 +17,14 @@ theorem fixClock_clock_le {C F D G R : Type} (state : BviState C F) (result : R 
 theorem doInstall_clock {C F R : Type} (args : List Value)
     (state next : BviState C F) (value : Value)
     (run : doInstall (R := R) args state = .val (value, next)) : next.clock = state.clock := by
-  unfold doInstall at run
-  repeat' split at run
-  all_goals simp_all
+  unfoldSplit doInstall
   all_goals aesop
 
 /-- A handled BVI-specific operation preserves the clock. -/
 theorem doAppAux_clock {C F : Type} (op : ClosLang.Op) (args : List Value)
     (state next : BviState C F) (value : Value)
     (run : doAppAux op args state = some (some (value, next))) : next.clock = state.clock := by
-  unfold doAppAux at run
-  repeat' split at run
-  all_goals simp_all
+  unfoldSplit doAppAux
   all_goals try simp_all only [Option.bind_eq_some_iff, Option.some.injEq, Prod.mk.injEq]
   all_goals aesop
 

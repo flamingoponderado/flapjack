@@ -36,9 +36,7 @@ theorem doInstall_success_details {C F R : Type} (args : List BvlSem.Value)
       next = { state with
         code := sptUnion state.code (sptFromAList (state.compileOracle 0).2)
         compileOracle := fun n => state.compileOracle (n + 1) } := by
-  unfold doInstall at run
-  repeat' split at run
-  all_goals simp_all
+  unfoldSplit doInstall
   all_goals aesop
 
 /-- A successful source installation has a matching target installation and
@@ -117,9 +115,7 @@ theorem doInstall_error_is_typeError {C F R : Type} (args : List BvlSem.Value)
     (state : State C F) (error : ErrorResult R)
     (run : doInstall (R := R) args state = .err error) :
     error = .abort .typeError := by
-  unfold doInstall at run
-  repeat' split at run
-  all_goals simp_all
+  unfoldSplit doInstall
   all_goals split at run <;> simp_all
 
 /-- Primitive simulation for BVL inlining, including dynamic installation.

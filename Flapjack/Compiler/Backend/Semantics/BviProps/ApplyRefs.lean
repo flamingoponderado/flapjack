@@ -16,9 +16,7 @@ theorem doAppAux_refs_mono {C F : Type} (op : ClosLang.Op) (args : List Value)
     (s t : BviState C F) (value : Value)
     (run : doAppAux op args s = some (some (value, t)))
     (key : Nat) (present : s.refs.lookup key ≠ none) : t.refs.lookup key ≠ none := by
-  unfold doAppAux at run
-  repeat' split at run
-  all_goals simp_all
+  unfoldSplit doAppAux
   all_goals try simp_all only [Option.bind_eq_some_iff, Option.some.injEq, Prod.mk.injEq]
   all_goals aesop (config := {warnOnNonterminal := false}) (add safe forward finaliseCons_domain)
   all_goals simp_all [FUPDATE_HOL]
@@ -29,9 +27,7 @@ theorem doInstall_refs_mono {C F R : Type} (args : List Value)
     (s t : BviState C F) (value : Value)
     (run : doInstall (R := R) args s = .val (value, t))
     (key : Nat) (present : s.refs.lookup key ≠ none) : t.refs.lookup key ≠ none := by
-  unfold doInstall at run
-  repeat' split at run
-  all_goals simp_all
+  unfoldSplit doInstall
   all_goals aesop
 
 /-- Flapjack infrastructure: successful BVI primitive application preserves

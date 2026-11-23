@@ -13,9 +13,7 @@ open Flapjack.Compiler.Backend.BvlSem (Value)
 theorem doInstall_error {C F R : Type} (args : List Value) (state : BvlSem.State C F)
     (error : Flapjack.SemanticPrimitivesHOL.ErrorResult R)
     (run : BvlSem.doInstall args state = .err error) : error = .abort .typeError := by
-  unfold BvlSem.doInstall at run
-  repeat' split at run
-  all_goals simp_all
+  unfoldSplit BvlSem.doInstall
   all_goals split at run <;> simp_all
 
 /-- Installation satisfies pass simulation given operand simulation.

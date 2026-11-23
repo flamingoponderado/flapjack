@@ -15,9 +15,7 @@ open Flapjack.SemanticPrimitivesHOL (Result ErrorResult Abort)
 theorem doInstall_not_timeout {C F : Type} (args : List Value) (state : BviState C F) :
     doInstall (R := ExnOrRet) args state ≠ .err (.abort .timeoutError) := by
   intro run
-  unfold doInstall at run
-  repeat' split at run
-  all_goals simp_all
+  unfoldSplit doInstall
   all_goals split at run <;> simp_all
 
 /-- Delegated or BVI-specific primitive application cannot time out. -/

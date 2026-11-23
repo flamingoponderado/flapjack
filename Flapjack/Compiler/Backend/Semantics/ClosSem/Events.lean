@@ -16,18 +16,14 @@ open Flapjack.SemanticPrimitivesHOL
 theorem applyGlobal_ffi {C F : Type} (op : ClosLang.GlobOp) (args : List Value)
     (state next : State C F) (value : Value)
     (run : applyGlobal op args state = some (value, next)) : next.ffi = state.ffi := by
-  unfold applyGlobal at run
-  repeat' split at run
-  all_goals simp_all
+  unfoldSplit applyGlobal
   all_goals aesop
 
 /-- Block primitives leave the FFI state unchanged. -/
 theorem applyBlock_ffi {C F : Type} (op : ClosLang.BlockOp) (args : List Value)
     (state next : State C F) (value : Value)
     (run : applyBlock op args state = some (value, next)) : next.ffi = state.ffi := by
-  unfold applyBlock at run
-  repeat' split at run
-  all_goals simp_all
+  unfoldSplit applyBlock
   all_goals try simp_all only [Option.bind_eq_some_iff, Option.some.injEq, Prod.mk.injEq]
   all_goals aesop
 
@@ -35,18 +31,14 @@ theorem applyBlock_ffi {C F : Type} (op : ClosLang.BlockOp) (args : List Value)
 theorem applyNumeric_ffi {C F : Type} (op : ClosLang.Op) (args : List Value)
     (state next : State C F) (value : Value)
     (run : applyNumeric op args state = some (value, next)) : next.ffi = state.ffi := by
-  unfold applyNumeric at run
-  repeat' split at run
-  all_goals simp_all
+  unfoldSplit applyNumeric
   all_goals aesop
 
 /-- Memory primitives leave the FFI state unchanged. -/
 theorem applyMemory_ffi {C F : Type} (op : ClosLang.MemOp) (args : List Value)
     (state next : State C F) (value : Value)
     (run : applyMemory op args state = some (value, next)) : next.ffi = state.ffi := by
-  unfold applyMemory at run
-  repeat' split at run
-  all_goals simp_all
+  unfoldSplit applyMemory
   all_goals try simp_all only [Option.bind_eq_some_iff, Option.some.injEq, Prod.mk.injEq]
   all_goals try (rcases run with ⟨entry, _, h⟩; cases entry <;> simp_all [Option.bind_eq_some_iff])
   all_goals try (rcases h with ⟨entry, _, h⟩; cases entry <;> simp_all [Option.bind_eq_some_iff] <;> aesop)

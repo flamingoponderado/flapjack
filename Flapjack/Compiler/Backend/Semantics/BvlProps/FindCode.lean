@@ -23,9 +23,7 @@ end FindCarrier
 theorem findCode_args_subset {α : Type} (dest : Option Nat) (args output : List Value)
     (code : Spt (Nat × α)) (body : α) (run : findCode dest args code = some (output, body)) :
     ∀ value ∈ output, value ∈ args := by
-  unfold findCode at run
-  repeat' split at run
-  all_goals simp_all
+  unfoldSplit findCode
   all_goals aesop (add safe List.mem_of_mem_dropLast)
 
 /-- Every property of the supplied arguments holds of the selected ones. -/

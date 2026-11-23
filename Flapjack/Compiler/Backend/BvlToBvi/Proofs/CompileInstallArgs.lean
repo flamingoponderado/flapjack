@@ -46,9 +46,7 @@ theorem install_success_shape {C F R : Type} (byteValue wordValue : Value)
       next = { state with
         code := sptUnion state.code (sptFromAList ((key, arity, body) :: rest))
         compileOracle := fun n => state.compileOracle (n + 1) } := by
-  unfold BvlSem.doInstall at run
-  repeat' split at run
-  all_goals simp_all
+  unfoldSplit BvlSem.doInstall
   all_goals aesop
 
 /-- Encoding byte lists as numeric values is injective. -/

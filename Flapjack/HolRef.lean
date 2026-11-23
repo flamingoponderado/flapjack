@@ -2312,4 +2312,17 @@ open Elab Command in
   for (declName, ref) in HolRef.all env do
     logInfo m!"{declName}  {ref.path}  {ref.name}{ref.line?.map (fun line => s!" :{line}") |>.getD ""}{HolRef.qualifierSuffix ref}"
 
+/- Unfold a definition in the `run` hypothesis, split every match in it, and
+close all resulting branches with `simp_all`. Generic proof support shared by
+the backend semantics proofs (Flapjack-specific; no HOL declaration).
+
+Hygiene is disabled on purpose: the hypothesis is the conventional `run` of
+the surrounding proof. -/
+set_option hygiene false in
+macro "unfoldSplit" f:ident : tactic =>
+  `(tactic| (
+    unfold $f at run
+    repeat' split at run
+    all_goals simp_all))
+
 end Flapjack
