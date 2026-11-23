@@ -97635,6 +97635,14 @@
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel.lean",
+    "lean_name": "compileExpValRelHOL_word_singleton",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific corollary of the tagged compile_exp_val_rel dispatch: a word-valued expression whose compiled list is a singleton evaluates in the target to that word. Factored out of the recurring pc_compile_correct operand steps (Store, Store32, StoreByte, If, While, ShMemLoad, ShMemStore); no standalone HOL declaration, so this is not an additional completed port."
+  },
+{
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel.lean",
     "lean_name": "compFieldHOL_slice",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.81.7.1): private Flapjack-specific helper for the exact `compile_exp_val_rel` RField case. It relates `compFieldHOL index (values.map shapeOfHOLExact) cexp` to the flattened slice `flattenHOL (values[index])` using the flattened sub-expression list, with no standalone HOL declaration."

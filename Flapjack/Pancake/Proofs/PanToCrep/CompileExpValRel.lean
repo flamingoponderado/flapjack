@@ -1954,4 +1954,34 @@ theorem evalMapCompExpFlatEqHOL {width : Nat} {σ : Type} [NeZero width]
               simp only [List.flatMap_cons, hcompile, List.map_append]
               rw [hhead.1, htail]
 
+/-- FLAPJACK-SPECIFIC corollary (no `@[hol]` tag, no standalone HOL
+    declaration): a word-valued expression whose compiled list is a singleton
+evaluates in the target to that word. This is the `compileExpValRelHOL` plus
+singleton-destructuring step that recurs in the `pc_compile_correct` operand
+cases, factored out once; it is derived from the tagged `compile_exp_val_rel`
+port in the same module. -/
+theorem compileExpValRelHOL_word_singleton {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) [hs : DecidablePred state.memaddrs]
+    (context : PanToCrepContextExact width)
+    (targetState : CrepSemHOLState width σ) [ht : DecidablePred targetState.memaddrs]
+    (exp : ExpHOL width) (address : BitVec width)
+    (expressions : List (CrepExpHOL width)) (shape : ShapeHOL)
+    (heval : state.evalHOLFinite exp = some (.val (.word address)))
+    (hstate : panToCrepStateRelFiniteExact state targetState)
+    (hcode : codeRelExactHOLW context state.code targetState.code)
+    (hlocals : panToCrepLocalsRelFiniteExact context state.locals targetState.locals)
+    (hlocalised : localisedExpHOL exp = true)
+    (hcompile : compileExpExactHOLW context exp = (expressions, shape)) :
+    ∃ ce, expressions = [ce] ∧ evalCrepSemHOLExp targetState ce = some (.word address) := by
+  obtain ⟨hmap, _, _, _⟩ :=
+    compileExpValRelHOL state context targetState exp (.val (.word address)) expressions shape
+      heval hstate hcode hlocals hlocalised hcompile
+  simp only [flattenHOL] at hmap
+  cases expressions with
+  | nil => simp at hmap
+  | cons ce rest =>
+    cases rest with
+    | nil => exact ⟨ce, rfl, by simpa using hmap⟩
+    | cons ce2 rest2 => simp at hmap
+
 end Flapjack

@@ -1969,8 +1969,7 @@ theorem pcCompileCorrect_Call {width : Nat} {σ : Type} [NeZero width] :
                      globalsLookupHOL t1 v' = some (flattenHOL v') ∧
                        sizeOfShapeHOL (shapeOfHOLExact v') ≤ 32))
           | some (.finalFfi f) => res1 = some (.finalFfi f) := by
-  intro caltyp fname argexps s ⟨ihHandler, ihBody⟩ res s1 t ctxt
-    ⟨hrun, hres, hstate, hcode, hexcp, hlocals, hloc⟩
+  intro caltyp fname argexps s ⟨ihHandler, ihBody⟩
   have ih : pcCompileCorrectCallIH caltyp fname argexps s := by
     refine ⟨?_, ?_⟩
     · intro values prog newlocals returnShape st eid exn v1 evar p sh hargs hlk hclock hbody
@@ -1984,12 +1983,7 @@ theorem pcCompileCorrect_Call {width : Nat} {σ : Type} [NeZero width] :
     · intro values prog newlocals returnShape hargs hlk hclock
       exact (pcCompileCorrectAt_iff_HOL _ _).mpr <| ihBody values (prog, newlocals, returnShape) prog (newlocals, returnShape)
         newlocals returnShape ⟨hargs, hlk, rfl, rfl, hclock⟩
-  obtain ⟨res1, t1, h1, h2, h3, h4, h5⟩ :=
-    pcCompileCorrectAt_call caltyp fname argexps s ih res s1 t ctxt hrun hres hstate hcode
-      hexcp hlocals hloc
-  refine ⟨res1, t1, h1, h2, h3, h4, ?_⟩
-  rcases res with _ | r
-  · exact h5
-  · cases r <;> exact h5
+  exact (pcCompileCorrectAt_iff_HOL (.call caltyp fname argexps) s).mp
+    (pcCompileCorrectAt_call caltyp fname argexps s ih)
 
 end Flapjack

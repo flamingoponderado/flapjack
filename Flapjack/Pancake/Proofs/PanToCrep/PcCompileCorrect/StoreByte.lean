@@ -70,40 +70,14 @@ theorem pcCompileCorrectAt_storeByte {width : Nat} {σ : Type} [NeZero width]
                               obtain ⟨rfl, rfl⟩ := Prod.mk.inj hrun
                               rcases hcDst : compileExpExactHOLW ctxt destination with
                                 ⟨esDst, shDst⟩
-                              obtain ⟨hmapDst, _, _, _⟩ :=
-                                @compileExpValRelHOL width σ _ state
-                                  (fun address =>
-                                    Classical.propDecidable (state.memaddrs address)) ctxt t
-                                  (fun address =>
-                                    Classical.propDecidable (t.memaddrs address))
-                                  destination (.val (.word address)) esDst shDst hdestination
-                                  hstate hcode hlocals hlocs.1 hcDst
-                              obtain ⟨ceDst, hceDst⟩ : ∃ ce, esDst = [ce] := by
-                                rcases esDst with _ | ⟨ce, _ | ⟨_, _⟩⟩
-                                · simp [flattenHOL] at hmapDst
-                                · exact ⟨ce, rfl⟩
-                                · simp [flattenHOL] at hmapDst
-                              subst hceDst
-                              have hceDstEval : evalCrepSemHOLExp t ceDst = some (.word address) := by
-                                simpa [flattenHOL] using hmapDst
+                              obtain ⟨ceDst, rfl, hceDstEval⟩ :=
+                                compileExpValRelHOL_word_singleton state ctxt t destination address
+                                  esDst shDst hdestination hstate hcode hlocals hlocs.1 hcDst
                               rcases hcSrc : compileExpExactHOLW ctxt source with
                                 ⟨esSrc, shSrc⟩
-                              obtain ⟨hmapSrc, _, _, _⟩ :=
-                                @compileExpValRelHOL width σ _ state
-                                  (fun address =>
-                                    Classical.propDecidable (state.memaddrs address)) ctxt t
-                                  (fun address =>
-                                    Classical.propDecidable (t.memaddrs address))
-                                  source (.val (.word value)) esSrc shSrc hsource
-                                  hstate hcode hlocals hlocs.2 hcSrc
-                              obtain ⟨ceSrc, hceSrc⟩ : ∃ ce, esSrc = [ce] := by
-                                rcases esSrc with _ | ⟨ce, _ | ⟨_, _⟩⟩
-                                · simp [flattenHOL] at hmapSrc
-                                · exact ⟨ce, rfl⟩
-                                · simp [flattenHOL] at hmapSrc
-                              subst hceSrc
-                              have hceSrcEval : evalCrepSemHOLExp t ceSrc = some (.word value) := by
-                                simpa [flattenHOL] using hmapSrc
+                              obtain ⟨ceSrc, rfl, hceSrcEval⟩ :=
+                                compileExpValRelHOL_word_singleton state ctxt t source value
+                                  esSrc shSrc hsource hstate hcode hlocals hlocs.2 hcSrc
                               have hcomp : compileProgExactHOLW ctxt
                                     (.storeByte destination source : ProgHOL width) =
                                   .storeByte ceDst ceSrc := by
@@ -211,13 +185,8 @@ theorem pcCompileCorrect_StoreByte {width : Nat} {σ : Type} [NeZero width] :
                    globalsLookupHOL t1 v' = some (flattenHOL v') ∧
                      sizeOfShapeHOL (shapeOfHOLExact v') ≤ 32))
         | some (.finalFfi f) => res1 = some (.finalFfi f) := by
-  intro destination source s res s1 t ctxt ⟨hrun, hres, hstate, hcode, hexcp, hlocals, hloc⟩
-  obtain ⟨res1, t1, h1, h2, h3, h4, h5⟩ :=
-    pcCompileCorrectAt_storeByte destination source s res s1 t ctxt hrun hres hstate hcode
-      hexcp hlocals hloc
-  refine ⟨res1, t1, h1, h2, h3, h4, ?_⟩
-  rcases res with _ | r
-  · exact h5
-  · cases r <;> exact h5
+  intro destination source s
+  exact (pcCompileCorrectAt_iff_HOL (.storeByte destination source) s).mp
+    (pcCompileCorrectAt_storeByte destination source s)
 
 end Flapjack

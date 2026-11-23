@@ -107,12 +107,8 @@ theorem pcCompileCorrect_Annot {width : Nat} {σ : Type} [NeZero width] :
                    globalsLookupHOL t1 v' = some (flattenHOL v') ∧
                      sizeOfShapeHOL (shapeOfHOLExact v') ≤ 32))
         | some (.finalFfi f) => res1 = some (.finalFfi f) := by
-  intro v0 v1 s res s1 t ctxt ⟨hrun, hres, hstate, hcode, hexcp, hlocals, hloc⟩
-  obtain ⟨res1, t1, h1, h2, h3, h4, h5⟩ :=
-    pcCompileCorrectAt_annot v0 v1 s res s1 t ctxt hrun hres hstate hcode hexcp hlocals hloc
-  refine ⟨res1, t1, h1, h2, h3, h4, ?_⟩
-  rcases res with _ | r
-  · exact h5
-  · cases r <;> exact h5
+  intro v0 v1 s
+  exact (pcCompileCorrectAt_iff_HOL (.annot v0 v1) s).mp
+    (pcCompileCorrectAt_annot v0 v1 s)
 
 end Flapjack

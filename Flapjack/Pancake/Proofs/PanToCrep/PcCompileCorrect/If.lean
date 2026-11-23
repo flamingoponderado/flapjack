@@ -45,19 +45,8 @@ theorem pcCompileCorrectAt_ite {width : Nat} {σ : Type} [NeZero width]
     exact absurd (Prod.mk.inj hrun).1.symm hres
   rename_i w heval
   rcases hc : compileExpExactHOLW ctxt e with ⟨es, sh⟩
-  obtain ⟨hes, _, _, _⟩ :=
-    @compileExpValRelHOL width σ _ source
-      (fun address => Classical.propDecidable (source.memaddrs address)) ctxt t
-      (fun address => Classical.propDecidable (t.memaddrs address))
-      e (.val (.word w)) es sh heval hstate hcode hlocals hlocs.1 hc
-  obtain ⟨ce, hce⟩ : ∃ ce, es = [ce] := by
-    rcases es with _ | ⟨ce, _ | ⟨_, _⟩⟩
-    · simp [flattenHOL] at hes
-    · exact ⟨ce, rfl⟩
-    · simp [flattenHOL] at hes
-  subst hce
-  have hce : @evalCrepSemHOLExp width _ σ t ce = some (.word w) := by
-    simpa [flattenHOL] using hes
+  obtain ⟨ce, rfl, hce⟩ :=
+    compileExpValRelHOL_word_singleton source ctxt t e w es sh heval hstate hcode hlocals hlocs.1 hc
   have hcomp : compileProgExactHOLW ctxt (.ite e c1 c2) =
       .ite ce (compileProgExactHOLW ctxt c1) (compileProgExactHOLW ctxt c2) := by
     simp only [compileProgExactHOLW, compileIfExactHOLW, hc]
@@ -158,14 +147,9 @@ theorem pcCompileCorrect_If {width : Nat} {σ : Type} [NeZero width] :
                    globalsLookupHOL t1 v' = some (flattenHOL v') ∧
                      sizeOfShapeHOL (shapeOfHOLExact v') ≤ 32))
         | some (.finalFfi f) => res1 = some (.finalFfi f) := by
-  intro e c1 c2 s ih res s1 t ctxt ⟨hrun, hres, hstate, hcode, hexcp, hlocals, hloc⟩
-  obtain ⟨res1, t1, h1, h2, h3, h4, h5⟩ :=
-    pcCompileCorrectAt_ite e c1 c2 s
-      (fun w hw => (pcCompileCorrectAt_iff_HOL _ _).mpr (ih _ _ w ⟨hw, rfl, rfl⟩))
-      res s1 t ctxt hrun hres hstate hcode hexcp hlocals hloc
-  refine ⟨res1, t1, h1, h2, h3, h4, ?_⟩
-  rcases res with _ | r
-  · exact h5
-  · cases r <;> exact h5
+  intro e c1 c2 s ih
+  exact (pcCompileCorrectAt_iff_HOL (.ite e c1 c2) s).mp
+    (pcCompileCorrectAt_ite e c1 c2 s
+      (fun w hw => (pcCompileCorrectAt_iff_HOL _ _).mpr (ih _ _ w ⟨hw, rfl, rfl⟩)))
 
 end Flapjack

@@ -149,15 +149,10 @@ theorem pcCompileCorrect_Seq {width : Nat} {σ : Type} [NeZero width] :
                    globalsLookupHOL t1 v' = some (flattenHOL v') ∧
                      sizeOfShapeHOL (shapeOfHOLExact v') ≤ 32))
         | some (.finalFfi f) => res1 = some (.finalFfi f) := by
-  intro c1 c2 s ⟨ihSecond, ihFirst⟩ res s1 t ctxt ⟨hrun, hres, hstate, hcode, hexcp, hlocals, hloc⟩
-  obtain ⟨res1, t1, h1, h2, h3, h4, h5⟩ :=
-    pcCompileCorrectAt_seq c1 c2 s
+  intro c1 c2 s ⟨ihSecond, ihFirst⟩
+  exact (pcCompileCorrectAt_iff_HOL (.seq c1 c2) s).mp
+    (pcCompileCorrectAt_seq c1 c2 s
       (fun r s' hr hn => (pcCompileCorrectAt_iff_HOL _ _).mpr (ihSecond r s' ⟨hr.symm, hn⟩))
-      ((pcCompileCorrectAt_iff_HOL _ _).mpr ihFirst)
-      res s1 t ctxt hrun hres hstate hcode hexcp hlocals hloc
-  refine ⟨res1, t1, h1, h2, h3, h4, ?_⟩
-  rcases res with _ | r
-  · exact h5
-  · cases r <;> exact h5
+      ((pcCompileCorrectAt_iff_HOL _ _).mpr ihFirst))
 
 end Flapjack
