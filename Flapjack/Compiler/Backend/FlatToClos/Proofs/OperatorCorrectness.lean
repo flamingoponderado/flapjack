@@ -1346,39 +1346,39 @@ theorem opByteArrays {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F
     have originalApplied := applied
     rcases vs with _ | ⟨v, _ | ⟨u, _ | ⟨z, zs⟩⟩⟩ <;>
       try simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at applied
-    have wsLen : ws.length = 2 := by simpa using related.length_eq.symm
-    rcases ws with _ | ⟨w, _ | ⟨t, _ | ⟨z, zs⟩⟩⟩ <;> try simp at wsLen
-    simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append] at related
-    cases related with
-    | cons sizeRel tail =>
-      cases tail with
-      | cons byteRel tail =>
-        cases sizeRel <;> try simp at applied
-        case int size =>
-          cases byteRel <;> try simp at applied
-          case word8 byte =>
-            have body := allocByteArray_body_related source targetNext trace db size byte states
-            simp only [compileOp]
-            rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
-            have bodyExact : StateRel sourceNext (ClosSem.evaluate [.ifThenElse trace
-                (.op trace (.intOp .less) [.op trace (.intOp (.const 0)) [], .var trace 1])
-                (.raise trace (.op trace (.blockOp (.cons 3)) []))
-                (.op trace (.memOp (.refByte false)) [.var trace 0, .var trace 1])] (.number byte.toNat :: .number size :: db) targetNext).2 ∧
-                EvalResultRel (Flapjack.EvaluateHOL.listResult result) (ClosSem.evaluate [.ifThenElse trace
-                (.op trace (.intOp .less) [.op trace (.intOp (.const 0)) [], .var trace 1])
-                (.raise trace (.op trace (.blockOp (.cons 3)) []))
-                (.op trace (.memOp (.refByte false)) [.var trace 0, .var trace 1])] (.number byte.toNat :: .number size :: db) targetNext).1 := by
-              cases result <;> simpa [FlatSem.applyResult, originalApplied, Flapjack.EvaluateHOL.listResult] using body
-            cases run : ClosSem.evaluate [.ifThenElse trace
-                (.op trace (.intOp .less) [.op trace (.intOp (.const 0)) [], .var trace 1])
-                (.raise trace (.op trace (.blockOp (.cons 3)) []))
-                (.op trace (.memOp (.refByte false)) [.var trace 0, .var trace 1])] (.number byte.toNat :: .number size :: db) targetNext with
-            | mk out last =>
-              simp only [run] at bodyExact
-              obtain ⟨stateRel, resultRel⟩ := bodyExact
-              refine ⟨out, last, ?_, stateRel, ?_⟩
-              · simpa using run
-              · cases result <;> simp only [Flapjack.EvaluateHOL.listResult] at resultRel ⊢ <;> cases resultRel <;> simp_all [SemanticPrimitivesProps.resultRel, SemanticPrimitivesProps.excRel]
+    rcases forall₂_reverse_pair related with ⟨_, _, rfl, sizeRel, byteRel⟩
+    cases sizeRel <;> try simp at applied
+    case int size =>
+      cases byteRel <;> try simp at applied
+      case word8 byte =>
+        have body := allocByteArray_body_related source targetNext trace db size byte states
+        simp only [compileOp]
+        rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
+        have bodyExact : StateRel sourceNext
+            (ClosSem.evaluate [.ifThenElse trace
+              (.op trace (.intOp .less) [.op trace (.intOp (.const 0)) [], .var trace 1])
+              (.raise trace (.op trace (.blockOp (.cons 3)) []))
+              (.op trace (.memOp (.refByte false)) [.var trace 0, .var trace 1])]
+              (.number byte.toNat :: .number size :: db) targetNext).2 ∧
+            EvalResultRel (Flapjack.EvaluateHOL.listResult result)
+            (ClosSem.evaluate [.ifThenElse trace
+              (.op trace (.intOp .less) [.op trace (.intOp (.const 0)) [], .var trace 1])
+              (.raise trace (.op trace (.blockOp (.cons 3)) []))
+              (.op trace (.memOp (.refByte false)) [.var trace 0, .var trace 1])]
+              (.number byte.toNat :: .number size :: db) targetNext).1 := by
+          cases result <;> simpa [FlatSem.applyResult, originalApplied,
+            Flapjack.EvaluateHOL.listResult] using body
+        cases run : ClosSem.evaluate [.ifThenElse trace
+          (.op trace (.intOp .less) [.op trace (.intOp (.const 0)) [], .var trace 1])
+          (.raise trace (.op trace (.blockOp (.cons 3)) []))
+          (.op trace (.memOp (.refByte false)) [.var trace 0, .var trace 1])]
+          (.number byte.toNat :: .number size :: db) targetNext with
+        | mk out last =>
+          simp only [run] at bodyExact
+          obtain ⟨stateRel, resultRel⟩ := bodyExact
+          refine ⟨out, last, ?_, stateRel, ?_⟩
+          · simpa using run
+          · exact resultRel_of_evalResultRel result resultRel
   case inr.inr.inl =>
     have originalApplied := applied
     rcases vs with _ | ⟨v, _ | ⟨u, _ | ⟨z, zs⟩⟩⟩ <;>
@@ -1416,44 +1416,45 @@ theorem opByteArrays {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F
     have originalApplied := applied
     rcases vs with _ | ⟨v, _ | ⟨u, _ | ⟨z, zs⟩⟩⟩ <;>
       try simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at applied
-    have wsLen : ws.length = 2 := by simpa using related.length_eq.symm
-    rcases ws with _ | ⟨w, _ | ⟨t, _ | ⟨z, zs⟩⟩⟩ <;> try simp at wsLen
-    simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append] at related
-    cases related with
-    | cons ptrRel tail =>
-      cases tail with
-      | cons idxRel tail =>
-        cases ptrRel <;> try simp at applied
-        case loc flag pointer =>
-          cases idxRel <;> try simp at applied
-          case int index =>
-            cases found : storeLookup pointer source.refs with
-            | none => simp [found] at applied
-            | some entry =>
-              cases entry <;> simp [found] at applied
-              case w8array bytes =>
-                have body := checkedByteRead_body_related source targetNext trace db pointer flag bytes index states found
-                have bodyExact : StateRel sourceNext (ClosSem.evaluate [.ifThenElse trace
+    rcases forall₂_reverse_pair related with ⟨_, _, rfl, ptrRel, idxRel⟩
+    cases ptrRel <;> try simp at applied
+    case loc flag pointer =>
+      cases idxRel <;> try simp at applied
+      case int index =>
+        cases found : storeLookup pointer source.refs with
+        | none => simp [found] at applied
+        | some entry =>
+          cases entry <;> simp [found] at applied
+          case w8array bytes =>
+            have body := checkedByteRead_body_related source targetNext trace db pointer flag
+              bytes index states found
+            have bodyExact : StateRel sourceNext
+                (ClosSem.evaluate [.ifThenElse trace
                   (.op trace (.memOp (.boundsCheckByte false)) [.var trace 0, .var trace 1])
                   (.op trace (.memOp .derefByte) [.var trace 0, .var trace 1])
-                  (.raise trace (.op trace (.blockOp (.cons 3)) []))] (.number index :: .refPtr flag pointer :: db) targetNext).2 ∧
-                    EvalResultRel (Flapjack.EvaluateHOL.listResult result) (ClosSem.evaluate [.ifThenElse trace
+                  (.raise trace (.op trace (.blockOp (.cons 3)) []))]
+                  (.number index :: .refPtr flag pointer :: db) targetNext).2 ∧
+                EvalResultRel (Flapjack.EvaluateHOL.listResult result)
+                (ClosSem.evaluate [.ifThenElse trace
                   (.op trace (.memOp (.boundsCheckByte false)) [.var trace 0, .var trace 1])
                   (.op trace (.memOp .derefByte) [.var trace 0, .var trace 1])
-                  (.raise trace (.op trace (.blockOp (.cons 3)) []))] (.number index :: .refPtr flag pointer :: db) targetNext).1 := by
-                  cases result <;> simpa [FlatSem.applyResult, originalApplied, Flapjack.EvaluateHOL.listResult] using body
-                simp only [compileOp]
-                rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
-                cases run : ClosSem.evaluate [.ifThenElse trace
-                  (.op trace (.memOp (.boundsCheckByte false)) [.var trace 0, .var trace 1])
-                  (.op trace (.memOp .derefByte) [.var trace 0, .var trace 1])
-                  (.raise trace (.op trace (.blockOp (.cons 3)) []))] (.number index :: .refPtr flag pointer :: db) targetNext with
-                | mk out last =>
-                  simp only [run] at bodyExact
-                  obtain ⟨stateRel, resultRel⟩ := bodyExact
-                  refine ⟨out, last, ?_, stateRel, ?_⟩
-                  · simpa using run
-                  · cases result <;> simp only [Flapjack.EvaluateHOL.listResult] at resultRel ⊢ <;> cases resultRel <;> simp_all [SemanticPrimitivesProps.resultRel, SemanticPrimitivesProps.excRel]
+                  (.raise trace (.op trace (.blockOp (.cons 3)) []))]
+                  (.number index :: .refPtr flag pointer :: db) targetNext).1 := by
+              cases result <;> simpa [FlatSem.applyResult, originalApplied,
+                Flapjack.EvaluateHOL.listResult] using body
+            simp only [compileOp]
+            rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
+            cases run : ClosSem.evaluate [.ifThenElse trace
+              (.op trace (.memOp (.boundsCheckByte false)) [.var trace 0, .var trace 1])
+              (.op trace (.memOp .derefByte) [.var trace 0, .var trace 1])
+              (.raise trace (.op trace (.blockOp (.cons 3)) []))]
+              (.number index :: .refPtr flag pointer :: db) targetNext with
+            | mk out last =>
+              simp only [run] at bodyExact
+              obtain ⟨stateRel, resultRel⟩ := bodyExact
+              refine ⟨out, last, ?_, stateRel, ?_⟩
+              · simpa using run
+              · exact resultRel_of_evalResultRel result resultRel
   case inr.inr.inr.inr.inl =>
     have originalApplied := applied
     rcases vs with _ | ⟨v, _ | ⟨u, _ | ⟨q, _ | ⟨z, zs⟩⟩⟩⟩ <;>
@@ -1597,44 +1598,45 @@ theorem opArrays {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
     have originalApplied := applied
     rcases vs with _ | ⟨v, _ | ⟨u, _ | ⟨z, zs⟩⟩⟩ <;>
       try simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at applied
-    have wsLen : ws.length = 2 := by simpa using related.length_eq.symm
-    rcases ws with _ | ⟨w, _ | ⟨t, _ | ⟨z, zs⟩⟩⟩ <;> try simp at wsLen
-    simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append] at related
-    cases related with
-    | cons ptrRel tail =>
-      cases tail with
-      | cons idxRel tail =>
-        cases ptrRel <;> try simp at applied
-        case loc flag pointer =>
-          cases idxRel <;> try simp at applied
-          case int index =>
-            cases found : storeLookup pointer source.refs with
-            | none => simp [found] at applied
-            | some entry =>
-              cases entry <;> simp [found] at applied
-              case varray items =>
-                have body := checkedArrayRead_body_related source targetNext trace db pointer flag items index states found
-                have bodyExact : StateRel sourceNext (ClosSem.evaluate [.ifThenElse trace
+    rcases forall₂_reverse_pair related with ⟨_, _, rfl, ptrRel, idxRel⟩
+    cases ptrRel <;> try simp at applied
+    case loc flag pointer =>
+      cases idxRel <;> try simp at applied
+      case int index =>
+        cases found : storeLookup pointer source.refs with
+        | none => simp [found] at applied
+        | some entry =>
+          cases entry <;> simp [found] at applied
+          case varray items =>
+            have body := checkedArrayRead_body_related source targetNext trace db pointer flag
+              items index states found
+            have bodyExact : StateRel sourceNext
+                (ClosSem.evaluate [.ifThenElse trace
                   (.op trace (.memOp .boundsCheckArray) [.var trace 0, .var trace 1])
                   (.op trace (.memOp .el) [.var trace 0, .var trace 1])
-                  (.raise trace (.op trace (.blockOp (.cons 3)) []))] (.number index :: .refPtr flag pointer :: db) targetNext).2 ∧
-                    EvalResultRel (Flapjack.EvaluateHOL.listResult result) (ClosSem.evaluate [.ifThenElse trace
+                  (.raise trace (.op trace (.blockOp (.cons 3)) []))]
+                  (.number index :: .refPtr flag pointer :: db) targetNext).2 ∧
+                EvalResultRel (Flapjack.EvaluateHOL.listResult result)
+                (ClosSem.evaluate [.ifThenElse trace
                   (.op trace (.memOp .boundsCheckArray) [.var trace 0, .var trace 1])
                   (.op trace (.memOp .el) [.var trace 0, .var trace 1])
-                  (.raise trace (.op trace (.blockOp (.cons 3)) []))] (.number index :: .refPtr flag pointer :: db) targetNext).1 := by
-                  cases result <;> simpa [FlatSem.applyResult, originalApplied, Flapjack.EvaluateHOL.listResult] using body
-                simp only [compileOp]
-                rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
-                cases run : ClosSem.evaluate [.ifThenElse trace
-                  (.op trace (.memOp .boundsCheckArray) [.var trace 0, .var trace 1])
-                  (.op trace (.memOp .el) [.var trace 0, .var trace 1])
-                  (.raise trace (.op trace (.blockOp (.cons 3)) []))] (.number index :: .refPtr flag pointer :: db) targetNext with
-                | mk out last =>
-                  simp only [run] at bodyExact
-                  obtain ⟨stateRel, resultRel⟩ := bodyExact
-                  refine ⟨out, last, ?_, stateRel, ?_⟩
-                  · simpa using run
-                  · cases result <;> simp only [Flapjack.EvaluateHOL.listResult] at resultRel ⊢ <;> cases resultRel <;> simp_all [SemanticPrimitivesProps.resultRel, SemanticPrimitivesProps.excRel]
+                  (.raise trace (.op trace (.blockOp (.cons 3)) []))]
+                  (.number index :: .refPtr flag pointer :: db) targetNext).1 := by
+              cases result <;> simpa [FlatSem.applyResult, originalApplied,
+                Flapjack.EvaluateHOL.listResult] using body
+            simp only [compileOp]
+            rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
+            cases run : ClosSem.evaluate [.ifThenElse trace
+              (.op trace (.memOp .boundsCheckArray) [.var trace 0, .var trace 1])
+              (.op trace (.memOp .el) [.var trace 0, .var trace 1])
+              (.raise trace (.op trace (.blockOp (.cons 3)) []))]
+              (.number index :: .refPtr flag pointer :: db) targetNext with
+            | mk out last =>
+              simp only [run] at bodyExact
+              obtain ⟨stateRel, resultRel⟩ := bodyExact
+              refine ⟨out, last, ?_, stateRel, ?_⟩
+              · simpa using run
+              · exact resultRel_of_evalResultRel result resultRel
   case inr.inr.inl =>
     have originalApplied := applied
     rcases vs with _ | ⟨v, _ | ⟨u, _ | ⟨z, zs⟩⟩⟩ <;>
@@ -1672,37 +1674,37 @@ theorem opArrays {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
     have originalApplied := applied
     rcases vs with _ | ⟨v, _ | ⟨u, _ | ⟨z, zs⟩⟩⟩ <;>
       try simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at applied
-    have wsLen : ws.length = 2 := by simpa using related.length_eq.symm
-    rcases ws with _ | ⟨w, _ | ⟨t, _ | ⟨z, zs⟩⟩⟩ <;> try simp at wsLen
-    simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append] at related
-    cases related with
-    | cons sizeRel tail =>
-      cases tail with
-      | cons valRel tail =>
-        cases sizeRel <;> try simp at applied
-        case int size =>
-          have body := allocArray_body_related source targetNext trace db size u w states valRel
-          simp only [compileOp]
-          rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
-          have bodyExact : StateRel sourceNext (ClosSem.evaluate [.ifThenElse trace
-              (.op trace (.intOp .less) [.op trace (.intOp (.const 0)) [], .var trace 1])
-              (.raise trace (.op trace (.blockOp (.cons 3)) []))
-              (.op trace (.memOp .refArray) [.var trace 0, .var trace 1])] (w :: .number size :: db) targetNext).2 ∧
-              EvalResultRel (Flapjack.EvaluateHOL.listResult result) (ClosSem.evaluate [.ifThenElse trace
-              (.op trace (.intOp .less) [.op trace (.intOp (.const 0)) [], .var trace 1])
-              (.raise trace (.op trace (.blockOp (.cons 3)) []))
-              (.op trace (.memOp .refArray) [.var trace 0, .var trace 1])] (w :: .number size :: db) targetNext).1 := by
-            cases result <;> simpa [FlatSem.applyResult, originalApplied, Flapjack.EvaluateHOL.listResult] using body
-          cases run : ClosSem.evaluate [.ifThenElse trace
-              (.op trace (.intOp .less) [.op trace (.intOp (.const 0)) [], .var trace 1])
-              (.raise trace (.op trace (.blockOp (.cons 3)) []))
-              (.op trace (.memOp .refArray) [.var trace 0, .var trace 1])] (w :: .number size :: db) targetNext with
-          | mk out last =>
-            simp only [run] at bodyExact
-            obtain ⟨stateRel, resultRel⟩ := bodyExact
-            refine ⟨out, last, ?_, stateRel, ?_⟩
-            · simpa using run
-            · cases result <;> simp only [Flapjack.EvaluateHOL.listResult] at resultRel ⊢ <;> cases resultRel <;> simp_all [SemanticPrimitivesProps.resultRel, SemanticPrimitivesProps.excRel]
+    rcases forall₂_reverse_pair related with ⟨w, _, rfl, sizeRel, valRel⟩
+    cases sizeRel <;> try simp at applied
+    case int size =>
+      have body := allocArray_body_related source targetNext trace db size u w states valRel
+      simp only [compileOp]
+      rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
+      have bodyExact : StateRel sourceNext
+          (ClosSem.evaluate [.ifThenElse trace
+            (.op trace (.intOp .less) [.op trace (.intOp (.const 0)) [], .var trace 1])
+            (.raise trace (.op trace (.blockOp (.cons 3)) []))
+            (.op trace (.memOp .refArray) [.var trace 0, .var trace 1])]
+            (w :: .number size :: db) targetNext).2 ∧
+          EvalResultRel (Flapjack.EvaluateHOL.listResult result)
+          (ClosSem.evaluate [.ifThenElse trace
+            (.op trace (.intOp .less) [.op trace (.intOp (.const 0)) [], .var trace 1])
+            (.raise trace (.op trace (.blockOp (.cons 3)) []))
+            (.op trace (.memOp .refArray) [.var trace 0, .var trace 1])]
+            (w :: .number size :: db) targetNext).1 := by
+        cases result <;> simpa [FlatSem.applyResult, originalApplied,
+          Flapjack.EvaluateHOL.listResult] using body
+      cases run : ClosSem.evaluate [.ifThenElse trace
+        (.op trace (.intOp .less) [.op trace (.intOp (.const 0)) [], .var trace 1])
+        (.raise trace (.op trace (.blockOp (.cons 3)) []))
+        (.op trace (.memOp .refArray) [.var trace 0, .var trace 1])]
+        (w :: .number size :: db) targetNext with
+      | mk out last =>
+        simp only [run] at bodyExact
+        obtain ⟨stateRel, resultRel⟩ := bodyExact
+        refine ⟨out, last, ?_, stateRel, ?_⟩
+        · simpa using run
+        · exact resultRel_of_evalResultRel result resultRel
   case inr.inr.inr.inr.inr.inr =>
     have originalApplied := applied
     rcases vs with _ | ⟨v, _ | ⟨u, _ | ⟨q, _ | ⟨z, zs⟩⟩⟩⟩ <;>
@@ -2082,34 +2084,30 @@ theorem opArith {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
       obtain ⟨right, rfl⟩ := typed u (by simp)
       simp [FlatSem.flatToValue, SemanticPrimitivesHOL.checkType,
         SemanticPrimitivesHOL.theLitvInt, FlatSem.valueToFlat] at applied
-      have wsLen : ws.length = 2 := by simpa using related.length_eq.symm
-      rcases ws with _ | ⟨w, _ | ⟨t, _ | ⟨z, zs⟩⟩⟩ <;> try simp at wsLen
-      simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append] at related
-      cases related with
-      | cons firstRel tail =>
-        cases tail with
-        | cons secondRel tail =>
-          cases firstRel; cases secondRel
-          all_goals try
-            obtain ⟨rfl, rfl⟩ := applied
-            simp only [compileOp, compileArith]
-            rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
-            simp [ClosSem.doApp, ClosSem.applyNumeric, ClosSem.doIntApp,
-              Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
-            exact ⟨states, ValueRel.int _⟩
-          all_goals
-            by_cases zero : right = 0 <;> simp [zero] at applied
-            all_goals
-              obtain ⟨rfl, rfl⟩ := applied
-              simp only [compileOp, compileArith]
-              rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
-              have flipped : (0 = right) ↔ right = 0 := eq_comm
-              simp [ClosSem.evaluate, ClosSem.headValue, Flapjack.holHd, ClosSem.fixClock, ClosSem.doApp, ClosSem.applyBlock,
-                ClosSem.applyNumeric, ClosSem.doIntApp, ClosSem.doEq, ClosSem.boolValue,
-                ClosSem.asBool, BackendCommon.trueTag, BackendCommon.falseTag, zero, flipped,
-                Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel,
-                SemanticPrimitivesProps.excRel, states]
-              all_goals first | exact ValueRel.con .nil | exact ValueRel.int _
+      rcases forall₂_reverse_pair related with ⟨_, _, rfl, firstRel, secondRel⟩
+      cases firstRel
+      all_goals cases secondRel
+      all_goals try
+        obtain ⟨rfl, rfl⟩ := applied
+        simp only [compileOp, compileArith]
+        rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
+        simp [ClosSem.doApp, ClosSem.applyNumeric, ClosSem.doIntApp,
+          Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
+        exact ⟨states, ValueRel.int _⟩
+      all_goals
+        by_cases zero : right = 0 <;> simp [zero] at applied
+        all_goals
+          obtain ⟨rfl, rfl⟩ := applied
+          simp only [compileOp, compileArith]
+          rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
+          have flipped : (0 = right) ↔ right = 0 := eq_comm
+          simp [ClosSem.evaluate, ClosSem.headValue, Flapjack.holHd,
+            ClosSem.fixClock, ClosSem.doApp, ClosSem.applyBlock,
+            ClosSem.applyNumeric, ClosSem.doIntApp, ClosSem.doEq, ClosSem.boolValue,
+            ClosSem.asBool, BackendCommon.trueTag, BackendCommon.falseTag, zero, flipped,
+            Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel,
+            SemanticPrimitivesProps.excRel, states]
+          all_goals first | exact ValueRel.con .nil | exact ValueRel.int _
   | wordT width =>
     cases width with
     | w8 =>
