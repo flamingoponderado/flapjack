@@ -708,6 +708,26 @@ theorem callContinuationContextHOLExact_stateAddClock {width : Nat} {σ : Type} 
 
 attribute [local simp] PanSemExactEvalContext.withState_state
 
+/-- Reduce the call-clause equation `hHigh` of the clock-shifted run to its
+`split` form, using the argument-evaluation hypothesis `hargs`, the
+code-lookup hypothesis `hlookup` and the clock-positivity hypothesis
+`hclock` (about `clk`, the clock of the unshifted context). -/
+local macro "callClauseHigh" "clock" hclock:ident "at" clk:term "args"
+    hargs:Lean.Parser.Tactic.rwRule "code" hlookup:Lean.Parser.Tactic.rwRule
+    "on" hHigh:ident : tactic =>
+  `(tactic| (
+    rw [evalPanSemRecursiveCallContextHOLExact.eq_def] at $hHigh:ident
+    dsimp only at $hHigh:ident
+    simp only [evalListHOLExact_stateAddClock] at $hHigh:ident
+    rw [$hargs] at $hHigh:ident
+    try simp only [] at $hHigh:ident
+    rw [$hlookup] at $hHigh:ident
+    try simp only [] at $hHigh:ident
+    rw [if_neg (by
+      have hc : $clk ≠ 0 := $hclock
+      omega)] at $hHigh:ident
+    split at $hHigh:ident))
+
 macro "closeLeaf" : tactic => `(tactic|
   (intro extra resultLow resultHigh hLow hHigh) <;>
   (try (cases hLow)) <;>
@@ -1060,16 +1080,7 @@ theorem eval_add_clock_mono_aux
       hlookup hclock entry entryContext postContext hbody fixedContext ih1
     intro extra resultLow resultHigh hLow hHigh
     cases hLow
-    rw [evalPanSemRecursiveCallContextHOLExact.eq_def] at hHigh
-    dsimp only at hHigh
-    simp only [evalListHOLExact_stateAddClock] at hHigh
-    rw [show evalListHOLExact context.state arguments = some values from hargs] at hHigh
-    try simp only [] at hHigh
-    rw [show lookupCodeHOLExact context.state.code function values = some (body, calleeLocals, returnShape) from hlookup] at hHigh
-    try simp only [] at hHigh
-    rw [if_neg (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
-    try simp only [] at hHigh
-    split at hHigh
+    callClauseHigh clock hclock at context.state.clock args hargs code hlookup on hHigh
     · simp at hHigh
     · rename_i rB cB hbodyH
       have hbodyH' : evalPanSemRecursiveCallContextHOLExact body (ctxAddClock entryContext extra) =
@@ -1092,16 +1103,7 @@ theorem eval_add_clock_mono_aux
       hlookup hclock entry entryContext postContext hbody fixedContext ih1
     intro extra resultLow resultHigh hLow hHigh
     cases hLow
-    rw [evalPanSemRecursiveCallContextHOLExact.eq_def] at hHigh
-    dsimp only at hHigh
-    simp only [evalListHOLExact_stateAddClock] at hHigh
-    rw [show evalListHOLExact context.state arguments = some values from hargs] at hHigh
-    try simp only [] at hHigh
-    rw [show lookupCodeHOLExact context.state.code function values = some (body, calleeLocals, returnShape) from hlookup] at hHigh
-    try simp only [] at hHigh
-    rw [if_neg (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
-    try simp only [] at hHigh
-    split at hHigh
+    callClauseHigh clock hclock at context.state.clock args hargs code hlookup on hHigh
     · simp at hHigh
     · rename_i rB cB hbodyH
       have hbodyH' : evalPanSemRecursiveCallContextHOLExact body (ctxAddClock entryContext extra) =
@@ -1124,16 +1126,7 @@ theorem eval_add_clock_mono_aux
       hlookup hclock entry entryContext postContext hbody fixedContext ih1
     intro extra resultLow resultHigh hLow hHigh
     cases hLow
-    rw [evalPanSemRecursiveCallContextHOLExact.eq_def] at hHigh
-    dsimp only at hHigh
-    simp only [evalListHOLExact_stateAddClock] at hHigh
-    rw [show evalListHOLExact context.state arguments = some values from hargs] at hHigh
-    try simp only [] at hHigh
-    rw [show lookupCodeHOLExact context.state.code function values = some (body, calleeLocals, returnShape) from hlookup] at hHigh
-    try simp only [] at hHigh
-    rw [if_neg (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
-    try simp only [] at hHigh
-    split at hHigh
+    callClauseHigh clock hclock at context.state.clock args hargs code hlookup on hHigh
     · simp at hHigh
     · rename_i rB cB hbodyH
       have hbodyH' : evalPanSemRecursiveCallContextHOLExact body (ctxAddClock entryContext extra) =
@@ -1156,16 +1149,7 @@ theorem eval_add_clock_mono_aux
       hlookup hclock entry entryContext postContext value hshape hbody fixedContext ih1
     intro extra resultLow resultHigh hLow hHigh
     cases hLow
-    rw [evalPanSemRecursiveCallContextHOLExact.eq_def] at hHigh
-    dsimp only at hHigh
-    simp only [evalListHOLExact_stateAddClock] at hHigh
-    rw [show evalListHOLExact context.state arguments = some values from hargs] at hHigh
-    try simp only [] at hHigh
-    rw [show lookupCodeHOLExact context.state.code function values = some (body, calleeLocals, returnShape) from hlookup] at hHigh
-    try simp only [] at hHigh
-    rw [if_neg (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
-    try simp only [] at hHigh
-    split at hHigh
+    callClauseHigh clock hclock at context.state.clock args hargs code hlookup on hHigh
     · simp at hHigh
     · rename_i rB cB hbodyH
       have hbodyH' : evalPanSemRecursiveCallContextHOLExact body (ctxAddClock entryContext extra) =
@@ -1202,16 +1186,7 @@ theorem eval_add_clock_mono_aux
       hlookup hclock entry entryContext postContext value hshape snd hbody fixedContext ih1
     intro extra resultLow resultHigh hLow hHigh
     cases hLow
-    rw [evalPanSemRecursiveCallContextHOLExact.eq_def] at hHigh
-    dsimp only at hHigh
-    simp only [evalListHOLExact_stateAddClock] at hHigh
-    rw [show evalListHOLExact context.state arguments = some values from hargs] at hHigh
-    try simp only [] at hHigh
-    rw [show lookupCodeHOLExact context.state.code function values = some (body, calleeLocals, returnShape) from hlookup] at hHigh
-    try simp only [] at hHigh
-    rw [if_neg (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
-    try simp only [] at hHigh
-    split at hHigh
+    callClauseHigh clock hclock at context.state.clock args hargs code hlookup on hHigh
     · simp at hHigh
     · rename_i rB cB hbodyH
       have hbodyH' : evalPanSemRecursiveCallContextHOLExact body (ctxAddClock entryContext extra) =
@@ -1245,16 +1220,7 @@ theorem eval_add_clock_mono_aux
       hlookup hclock entry entryContext postContext value hshape kind name snd hvalid hbody fixedContext ih1
     intro extra resultLow resultHigh hLow hHigh
     cases hLow
-    rw [evalPanSemRecursiveCallContextHOLExact.eq_def] at hHigh
-    dsimp only at hHigh
-    simp only [evalListHOLExact_stateAddClock] at hHigh
-    rw [show evalListHOLExact context.state arguments = some values from hargs] at hHigh
-    try simp only [] at hHigh
-    rw [show lookupCodeHOLExact context.state.code function values = some (body, calleeLocals, returnShape) from hlookup] at hHigh
-    try simp only [] at hHigh
-    rw [if_neg (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
-    try simp only [] at hHigh
-    split at hHigh
+    callClauseHigh clock hclock at context.state.clock args hargs code hlookup on hHigh
     · simp at hHigh
     · rename_i rB cB hbodyH
       have hbodyH' : evalPanSemRecursiveCallContextHOLExact body (ctxAddClock entryContext extra) =
@@ -1289,16 +1255,7 @@ theorem eval_add_clock_mono_aux
       hlookup hclock entry entryContext postContext value hshape kind name snd hvalid hbody fixedContext ih1
     intro extra resultLow resultHigh hLow hHigh
     cases hLow
-    rw [evalPanSemRecursiveCallContextHOLExact.eq_def] at hHigh
-    dsimp only at hHigh
-    simp only [evalListHOLExact_stateAddClock] at hHigh
-    rw [show evalListHOLExact context.state arguments = some values from hargs] at hHigh
-    try simp only [] at hHigh
-    rw [show lookupCodeHOLExact context.state.code function values = some (body, calleeLocals, returnShape) from hlookup] at hHigh
-    try simp only [] at hHigh
-    rw [if_neg (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
-    try simp only [] at hHigh
-    split at hHigh
+    callClauseHigh clock hclock at context.state.clock args hargs code hlookup on hHigh
     · simp at hHigh
     · rename_i rB cB hbodyH
       have hbodyH' : evalPanSemRecursiveCallContextHOLExact body (ctxAddClock entryContext extra) =
@@ -1326,16 +1283,7 @@ theorem eval_add_clock_mono_aux
       hlookup hclock entry entryContext postContext value hshape hbody fixedContext ih1
     intro extra resultLow resultHigh hLow hHigh
     cases hLow
-    rw [evalPanSemRecursiveCallContextHOLExact.eq_def] at hHigh
-    dsimp only at hHigh
-    simp only [evalListHOLExact_stateAddClock] at hHigh
-    rw [show evalListHOLExact context.state arguments = some values from hargs] at hHigh
-    try simp only [] at hHigh
-    rw [show lookupCodeHOLExact context.state.code function values = some (body, calleeLocals, returnShape) from hlookup] at hHigh
-    try simp only [] at hHigh
-    rw [if_neg (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
-    try simp only [] at hHigh
-    split at hHigh
+    callClauseHigh clock hclock at context.state.clock args hargs code hlookup on hHigh
     · simp at hHigh
     · rename_i rB cB hbodyH
       have hbodyH' : evalPanSemRecursiveCallContextHOLExact body (ctxAddClock entryContext extra) =
@@ -1361,16 +1309,7 @@ theorem eval_add_clock_mono_aux
       hlookup hclock entry entryContext postContext exceptionId value hbody fixedContext ih1
     intro extra resultLow resultHigh hLow hHigh
     cases hLow
-    rw [evalPanSemRecursiveCallContextHOLExact.eq_def] at hHigh
-    dsimp only at hHigh
-    simp only [evalListHOLExact_stateAddClock] at hHigh
-    rw [show evalListHOLExact context.state arguments = some values from hargs] at hHigh
-    try simp only [] at hHigh
-    rw [show lookupCodeHOLExact context.state.code function values = some (body, calleeLocals, returnShape) from hlookup] at hHigh
-    try simp only [] at hHigh
-    rw [if_neg (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
-    try simp only [] at hHigh
-    split at hHigh
+    callClauseHigh clock hclock at context.state.clock args hargs code hlookup on hHigh
     · simp at hHigh
     · rename_i rB cB hbodyH
       have hbodyH' : evalPanSemRecursiveCallContextHOLExact body (ctxAddClock entryContext extra) =
@@ -1405,16 +1344,7 @@ theorem eval_add_clock_mono_aux
       hlookup hclock entry entryContext postContext exceptionId value fst hbody fixedContext ih1
     intro extra resultLow resultHigh hLow hHigh
     cases hLow
-    rw [evalPanSemRecursiveCallContextHOLExact.eq_def] at hHigh
-    dsimp only at hHigh
-    simp only [evalListHOLExact_stateAddClock] at hHigh
-    rw [show evalListHOLExact context.state arguments = some values from hargs] at hHigh
-    try simp only [] at hHigh
-    rw [show lookupCodeHOLExact context.state.code function values = some (body, calleeLocals, returnShape) from hlookup] at hHigh
-    try simp only [] at hHigh
-    rw [if_neg (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
-    try simp only [] at hHigh
-    split at hHigh
+    callClauseHigh clock hclock at context.state.clock args hargs code hlookup on hHigh
     · simp at hHigh
     · rename_i rB cB hbodyH
       have hbodyH' : evalPanSemRecursiveCallContextHOLExact body (ctxAddClock entryContext extra) =
@@ -1449,16 +1379,7 @@ theorem eval_add_clock_mono_aux
       hlookup hclock entry entryContext postContext value fst handlerId handlerVar handlerProgram shape
       hshape hend hbody fixedContext handlerState handlerContext ih2 ih1
     intro extra resultLow resultHigh hLow hHigh
-    rw [evalPanSemRecursiveCallContextHOLExact.eq_def] at hHigh
-    dsimp only at hHigh
-    simp only [evalListHOLExact_stateAddClock] at hHigh
-    rw [show evalListHOLExact context.state arguments = some values from hargs] at hHigh
-    try simp only [] at hHigh
-    rw [show lookupCodeHOLExact context.state.code function values = some (body, calleeLocals, returnShape) from hlookup] at hHigh
-    try simp only [] at hHigh
-    rw [if_neg (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
-    try simp only [] at hHigh
-    split at hHigh
+    callClauseHigh clock hclock at context.state.clock args hargs code hlookup on hHigh
     · simp at hHigh
     · rename_i rB cB hbodyH
       have hbodyH' : evalPanSemRecursiveCallContextHOLExact body (ctxAddClock entryContext extra) =
@@ -1490,16 +1411,7 @@ theorem eval_add_clock_mono_aux
       hinv hend hbody fixedContext ih1
     intro extra resultLow resultHigh hLow hHigh
     cases hLow
-    rw [evalPanSemRecursiveCallContextHOLExact.eq_def] at hHigh
-    dsimp only at hHigh
-    simp only [evalListHOLExact_stateAddClock] at hHigh
-    rw [show evalListHOLExact context.state arguments = some values from hargs] at hHigh
-    try simp only [] at hHigh
-    rw [show lookupCodeHOLExact context.state.code function values = some (body, calleeLocals, returnShape) from hlookup] at hHigh
-    try simp only [] at hHigh
-    rw [if_neg (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
-    try simp only [] at hHigh
-    split at hHigh
+    callClauseHigh clock hclock at context.state.clock args hargs code hlookup on hHigh
     · simp at hHigh
     · rename_i rB cB hbodyH
       have hbodyH' : evalPanSemRecursiveCallContextHOLExact body (ctxAddClock entryContext extra) =
@@ -1528,16 +1440,7 @@ theorem eval_add_clock_mono_aux
       hnone hbody fixedContext ih1
     intro extra resultLow resultHigh hLow hHigh
     cases hLow
-    rw [evalPanSemRecursiveCallContextHOLExact.eq_def] at hHigh
-    dsimp only at hHigh
-    simp only [evalListHOLExact_stateAddClock] at hHigh
-    rw [show evalListHOLExact context.state arguments = some values from hargs] at hHigh
-    try simp only [] at hHigh
-    rw [show lookupCodeHOLExact context.state.code function values = some (body, calleeLocals, returnShape) from hlookup] at hHigh
-    try simp only [] at hHigh
-    rw [if_neg (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
-    try simp only [] at hHigh
-    split at hHigh
+    callClauseHigh clock hclock at context.state.clock args hargs code hlookup on hHigh
     · simp at hHigh
     · rename_i rB cB hbodyH
       have hbodyH' : evalPanSemRecursiveCallContextHOLExact body (ctxAddClock entryContext extra) =
@@ -1564,16 +1467,7 @@ theorem eval_add_clock_mono_aux
       hlookup hclock entry entryContext postContext exceptionId value fst handlerId handlerVar handlerProgram hne hbody fixedContext ih1
     intro extra resultLow resultHigh hLow hHigh
     cases hLow
-    rw [evalPanSemRecursiveCallContextHOLExact.eq_def] at hHigh
-    dsimp only at hHigh
-    simp only [evalListHOLExact_stateAddClock] at hHigh
-    rw [show evalListHOLExact context.state arguments = some values from hargs] at hHigh
-    try simp only [] at hHigh
-    rw [show lookupCodeHOLExact context.state.code function values = some (body, calleeLocals, returnShape) from hlookup] at hHigh
-    try simp only [] at hHigh
-    rw [if_neg (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
-    try simp only [] at hHigh
-    split at hHigh
+    callClauseHigh clock hclock at context.state.clock args hargs code hlookup on hHigh
     · simp at hHigh
     · rename_i rB cB hbodyH
       have hbodyH' : evalPanSemRecursiveCallContextHOLExact body (ctxAddClock entryContext extra) =
@@ -1610,16 +1504,7 @@ theorem eval_add_clock_mono_aux
       hlookup hclock entry entryContext postContext other hbrk hcont hret hexc hbody fixedContext ih1
     intro extra resultLow resultHigh hLow hHigh
     cases hLow
-    rw [evalPanSemRecursiveCallContextHOLExact.eq_def] at hHigh
-    dsimp only at hHigh
-    simp only [evalListHOLExact_stateAddClock] at hHigh
-    rw [show evalListHOLExact context.state arguments = some values from hargs] at hHigh
-    try simp only [] at hHigh
-    rw [show lookupCodeHOLExact context.state.code function values = some (body, calleeLocals, returnShape) from hlookup] at hHigh
-    try simp only [] at hHigh
-    rw [if_neg (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
-    try simp only [] at hHigh
-    split at hHigh
+    callClauseHigh clock hclock at context.state.clock args hargs code hlookup on hHigh
     · simp at hHigh
     · rename_i rB cB hbodyH
       have hbodyH' : evalPanSemRecursiveCallContextHOLExact body (ctxAddClock entryContext extra) =
@@ -1747,16 +1632,7 @@ theorem eval_add_clock_mono_aux
       body calleeLocals returnShape hlookup hclock entry entryContext postContext hbody fixedContext ih1
     intro extra resultLow resultHigh hLow hHigh
     cases hLow
-    rw [evalPanSemRecursiveCallContextHOLExact.eq_def] at hHigh
-    dsimp only at hHigh
-    simp only [evalListHOLExact_stateAddClock] at hHigh
-    rw [show evalListHOLExact context.state arguments = some values from hargs] at hHigh
-    try simp only [] at hHigh
-    rw [show lookupCodeHOLExact context.state.code function values = some (body, calleeLocals, returnShape) from hlookup] at hHigh
-    try simp only [] at hHigh
-    rw [if_neg (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
-    try simp only [] at hHigh
-    split at hHigh
+    callClauseHigh clock hclock at context.state.clock args hargs code hlookup on hHigh
     · simp at hHigh
     · rename_i rB cB hbodyH
       have hbodyH' : evalPanSemRecursiveCallContextHOLExact body (ctxAddClock entryContext extra) =
@@ -1780,16 +1656,7 @@ theorem eval_add_clock_mono_aux
       body calleeLocals returnShape hlookup hclock entry entryContext postContext hbody fixedContext ih1
     intro extra resultLow resultHigh hLow hHigh
     cases hLow
-    rw [evalPanSemRecursiveCallContextHOLExact.eq_def] at hHigh
-    dsimp only at hHigh
-    simp only [evalListHOLExact_stateAddClock] at hHigh
-    rw [show evalListHOLExact context.state arguments = some values from hargs] at hHigh
-    try simp only [] at hHigh
-    rw [show lookupCodeHOLExact context.state.code function values = some (body, calleeLocals, returnShape) from hlookup] at hHigh
-    try simp only [] at hHigh
-    rw [if_neg (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
-    try simp only [] at hHigh
-    split at hHigh
+    callClauseHigh clock hclock at context.state.clock args hargs code hlookup on hHigh
     · simp at hHigh
     · rename_i rB cB hbodyH
       have hbodyH' : evalPanSemRecursiveCallContextHOLExact body (ctxAddClock entryContext extra) =
@@ -1813,16 +1680,7 @@ theorem eval_add_clock_mono_aux
       body calleeLocals returnShape hlookup hclock entry entryContext postContext hbody fixedContext ih1
     intro extra resultLow resultHigh hLow hHigh
     cases hLow
-    rw [evalPanSemRecursiveCallContextHOLExact.eq_def] at hHigh
-    dsimp only at hHigh
-    simp only [evalListHOLExact_stateAddClock] at hHigh
-    rw [show evalListHOLExact context.state arguments = some values from hargs] at hHigh
-    try simp only [] at hHigh
-    rw [show lookupCodeHOLExact context.state.code function values = some (body, calleeLocals, returnShape) from hlookup] at hHigh
-    try simp only [] at hHigh
-    rw [if_neg (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
-    try simp only [] at hHigh
-    split at hHigh
+    callClauseHigh clock hclock at context.state.clock args hargs code hlookup on hHigh
     · simp at hHigh
     · rename_i rB cB hbodyH
       have hbodyH' : evalPanSemRecursiveCallContextHOLExact body (ctxAddClock entryContext extra) =
@@ -1847,16 +1705,7 @@ theorem eval_add_clock_mono_aux
       result postContext restored hbody fixedContext continuationContext hcont ih2 ih1
     intro extra resultLow resultHigh hLow hHigh
     cases hLow
-    rw [evalPanSemRecursiveCallContextHOLExact.eq_def] at hHigh
-    dsimp only at hHigh
-    simp only [evalListHOLExact_stateAddClock] at hHigh
-    rw [show evalListHOLExact context.state arguments = some values from hargs] at hHigh
-    try simp only [] at hHigh
-    rw [show lookupCodeHOLExact context.state.code function values = some (body, calleeLocals, returnShape) from hlookup] at hHigh
-    try simp only [] at hHigh
-    rw [if_neg (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
-    try simp only [] at hHigh
-    split at hHigh
+    callClauseHigh clock hclock at context.state.clock args hargs code hlookup on hHigh
     · simp at hHigh
     · rename_i rB cB hbodyH
       have hbodyH' : evalPanSemRecursiveCallContextHOLExact body (ctxAddClock entryContext extra) =
@@ -1906,16 +1755,7 @@ theorem eval_add_clock_mono_aux
       fixedContext ih1
     intro extra resultLow resultHigh hLow hHigh
     cases hLow
-    rw [evalPanSemRecursiveCallContextHOLExact.eq_def] at hHigh
-    dsimp only at hHigh
-    simp only [evalListHOLExact_stateAddClock] at hHigh
-    rw [show evalListHOLExact context.state arguments = some values from hargs] at hHigh
-    try simp only [] at hHigh
-    rw [show lookupCodeHOLExact context.state.code function values = some (body, calleeLocals, returnShape) from hlookup] at hHigh
-    try simp only [] at hHigh
-    rw [if_neg (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
-    try simp only [] at hHigh
-    split at hHigh
+    callClauseHigh clock hclock at context.state.clock args hargs code hlookup on hHigh
     · simp at hHigh
     · rename_i rB cB hbodyH
       have hbodyH' : evalPanSemRecursiveCallContextHOLExact body (ctxAddClock entryContext extra) =
@@ -1941,16 +1781,7 @@ theorem eval_add_clock_mono_aux
       hbrk hcont hret hbody fixedContext ih1
     intro extra resultLow resultHigh hLow hHigh
     cases hLow
-    rw [evalPanSemRecursiveCallContextHOLExact.eq_def] at hHigh
-    dsimp only at hHigh
-    simp only [evalListHOLExact_stateAddClock] at hHigh
-    rw [show evalListHOLExact context.state arguments = some values from hargs] at hHigh
-    try simp only [] at hHigh
-    rw [show lookupCodeHOLExact context.state.code function values = some (body, calleeLocals, returnShape) from hlookup] at hHigh
-    try simp only [] at hHigh
-    rw [if_neg (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
-    try simp only [] at hHigh
-    split at hHigh
+    callClauseHigh clock hclock at context.state.clock args hargs code hlookup on hHigh
     · simp at hHigh
     · rename_i rB cB hbodyH
       have hbodyH' : evalPanSemRecursiveCallContextHOLExact body (ctxAddClock entryContext extra) =
