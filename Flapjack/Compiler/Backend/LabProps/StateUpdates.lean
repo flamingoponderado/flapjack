@@ -101,41 +101,9 @@ theorem arith_upd_consts {width : Nat} [NeZero width] {C F : Type} (a : HolArith
       · split
         · simp [updReg]
         · simp [assertState]
-  case shift op r1 r2 operand =>
-    simp only [arithUpd]
-    split
-    · simp [updReg, assertState]
-    · simp [assertState]
-  case div r1 r2 r3 =>
-    simp only [arithUpd]
-    split
-    · simp [updReg, assertState]
-    · simp [assertState]
-  case addCarry r1 r2 r3 r4 =>
-    simp only [arithUpd]
-    split
-    · simp [updReg]
-    · simp [assertState]
-  case longMul r1 r2 r3 r4 =>
-    simp only [arithUpd]
-    split
-    · simp [updReg]
-    · simp [assertState]
-  case longDiv r1 r2 r3 r4 r5 =>
-    simp only [arithUpd]
-    split
-    · simp [updReg, assertState]
-    · simp [assertState]
-  case addOverflow r1 r2 r3 r4 =>
-    simp only [arithUpd]
-    split
-    · simp [updReg]
-    · simp [assertState]
-  case subOverflow r1 r2 r3 r4 =>
-    simp only [arithUpd]
-    split
-    · simp [updReg]
-    · simp [assertState]
+  all_goals simp only [arithUpd]
+  all_goals try split
+  all_goals simp [updReg, assertState]
 
 /-- Exact HOL `fp_upd_consts` (`labPropsScript.sml:234`): the floating-point
     instruction leaves every state component except the register files and the
@@ -165,55 +133,24 @@ theorem fp_upd_consts {width : Nat} [NeZero width] {C F : Type} (f : HolFp)
     (fpUpd f x).pc = x.pc ∧
     (fpUpd f x).ffi = x.ffi := by
   cases f
-  case fpLess r d1 d2 =>
-    simp [fpUpd, updReg]
-  case fpLessEqual r d1 d2 =>
-    simp [fpUpd, updReg]
-  case fpEqual r d1 d2 =>
-    simp [fpUpd, updReg]
-  case fpMov d1 d2 =>
-    simp [fpUpd, updFpReg]
-  case fpAbs d1 d2 =>
-    simp [fpUpd, updFpReg]
-  case fpNeg d1 d2 =>
-    simp [fpUpd, updFpReg]
-  case fpSqrt d1 d2 =>
-    simp [fpUpd, updFpReg]
-  case fpAdd d1 d2 d3 =>
-    simp [fpUpd, updFpReg]
-  case fpSub d1 d2 d3 =>
-    simp [fpUpd, updFpReg]
-  case fpMul d1 d2 d3 =>
-    simp [fpUpd, updFpReg]
-  case fpDiv d1 d2 d3 =>
-    simp [fpUpd, updFpReg]
-  case fpFma d1 d2 d3 =>
-    simp [fpUpd, updFpReg]
   case fpMovToReg r1 r2 d =>
     simp only [fpUpd]
     split
-    · simp [updReg]
-    · simp [updReg]
+    all_goals simp [updReg]
   case fpMovFromReg d r1 r2 =>
     simp only [fpUpd]
     split
-    · split
-      · simp [updFpReg]
-      · simp [assertState]
-    · split
-      · simp [updFpReg]
-      · simp [assertState]
+    all_goals try split
+    all_goals simp [updFpReg, assertState]
   case fpToInt d1 d2 =>
     simp only [fpUpd]
     split
-    · simp [assertState]
-    · split
-      · simp [updFpReg, assertState]
-      · split
-        · simp [updFpReg, assertState]
-        · simp [updFpReg, assertState]
-  case fpFromInt d1 d2 =>
-    simp [fpUpd, updFpReg]
+    all_goals try split
+    all_goals try split
+    all_goals simp [updFpReg, assertState]
+  all_goals simp only [fpUpd]
+  all_goals try split
+  all_goals simp [updReg, updFpReg]
 
 /-- Exact HOL `read_reg_inc_pc` (`labPropsScript.sml:112`): advancing the
     program counter leaves the register file alone. HOL's `read_reg` is the
