@@ -89,14 +89,6 @@ theorem everyVarConj {width : Nat} [NeZero width] (P : Nat → Bool)
     rw [← listConj ((sptToAList names.1).map Prod.fst),
       ← listConj ((sptToAList names.2).map Prod.fst)]
     simp [Bool.and_assoc, Bool.and_left_comm]
-  have expConj (expression : WordLangExpHOL (BitVec width)) :
-      (everyVarExpHOL P expression && everyVarExpHOL Q expression) =
-        everyVarExpHOL (fun x => P x && Q x) expression :=
-    everyVarExpConj P expression Q
-  have instConj (instruction : WordLangInst (BitVec width)) :
-      (everyVarInstHOL P instruction && everyVarInstHOL Q instruction) =
-        everyVarInstHOL (fun x => P x && Q x) instruction :=
-    everyVarInstConj P instruction Q
   have immConj (immediate : WordRegImm (BitVec width)) :
       (everyVarImmHOL P immediate && everyVarImmHOL Q immediate) =
         everyVarImmHOL (fun x => P x && Q x) immediate := by
@@ -112,21 +104,14 @@ theorem everyVarConj {width : Nat} [NeZero width] (P : Nat → Bool)
       tauto
     | some returns =>
       rcases returns with ⟨values, names, body, label, entry⟩
-      cases handler with
-      | none =>
-        obtain ⟨ihReturns, -⟩ := ih
-        rw [Bool.eq_iff_iff] at ihReturns
-        simp only [Bool.and_eq_true] at ihReturns
-        rw [Bool.eq_iff_iff]
-        simp only [everyVarHOL, ← listConj arguments, ← listConj values,
-          ← nameConj names, Bool.and_eq_true]
-        tauto
-      | some handler =>
-        rcases handler with ⟨value, body, label, entry⟩
-        obtain ⟨ihReturns, ihHandler⟩ := ih
+      obtain ⟨ihReturns, ihHandler⟩ := ih
+      rcases handler with - | ⟨value, body, label, entry⟩
+      all_goals
         dsimp only at ihHandler
-        rw [Bool.eq_iff_iff] at ihReturns ihHandler
-        simp only [Bool.and_eq_true] at ihReturns ihHandler
+        try rw [Bool.eq_iff_iff] at ihReturns
+        try rw [Bool.eq_iff_iff] at ihHandler
+        try simp only [Bool.and_eq_true] at ihReturns
+        try simp only [Bool.and_eq_true] at ihHandler
         rw [Bool.eq_iff_iff]
         simp only [everyVarHOL, ← listConj arguments, ← listConj values,
           ← nameConj names, Bool.and_eq_true]
@@ -134,8 +119,8 @@ theorem everyVarConj {width : Nat} [NeZero width] (P : Nat → Bool)
   all_goals
     rw [Bool.eq_iff_iff] at *
     simp only [Bool.and_eq_true] at *
-    simp only [everyVarHOL, ← listConj, ← nameConj, ← expConj, ← instConj, ← immConj,
-      Bool.and_eq_true]
+    simp only [everyVarHOL, ← listConj, ← nameConj, ← immConj, ← everyVarExpConj,
+      ← everyVarInstConj, Bool.and_eq_true]
     try tauto
 
 end Flapjack.Pancake.WordConvs
