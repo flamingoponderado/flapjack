@@ -87,7 +87,8 @@ private theorem forall₂_reverse_quint {α β : Type} {rel : α → β → Prop
       rel v1 w5 ∧ rel v2 w4 ∧ rel v3 w3 ∧ rel v4 w2 ∧ rel v5 w1 := by
   have length : ws.length = 5 := by simpa using related.length_eq.symm
   obtain ⟨w1, w2, w3, rest, rfl⟩ : ∃ w1 w2 w3 rest, ws = w1 :: w2 :: w3 :: rest := by
-    rcases ws with _ | ⟨w1, _ | ⟨w2, _ | ⟨w3, _ | ⟨z, zs⟩⟩⟩⟩ <;> simp at length
+    rcases ws with _ | ⟨w1, _ | ⟨w2, _ | ⟨w3, _ | ⟨z, zs⟩⟩⟩⟩
+    all_goals simp at length
     exact ⟨w1, w2, w3, z :: zs, rfl⟩
   obtain ⟨w4, w5, rfl⟩ := List.length_eq_two.mp (by simpa using length)
   exact ⟨w1, w2, w3, w4, w5, rfl, by simpa using related⟩
@@ -100,9 +101,10 @@ private theorem resultRel_of_evalResultRel (result : Result FlatSem.Value FlatSe
     (related : EvalResultRel (Flapjack.EvaluateHOL.listResult result) targetResult) :
     SemanticPrimitivesProps.resultRel (List.Forall₂ ValueRel) ValueRel
       (Flapjack.EvaluateHOL.listResult result) targetResult := by
-  cases result <;> simp only [Flapjack.EvaluateHOL.listResult] at related ⊢ <;>
-    cases related <;>
-      simp_all [SemanticPrimitivesProps.resultRel, SemanticPrimitivesProps.excRel]
+  cases result
+  all_goals simp only [Flapjack.EvaluateHOL.listResult] at related ⊢
+  all_goals cases related
+  all_goals simp_all [SemanticPrimitivesProps.resultRel, SemanticPrimitivesProps.excRel]
 
 /-- The original Eval operator case of value-level operator correctness.
 The flat primitive dispatcher handles Eval in the evaluator rather than
@@ -314,15 +316,18 @@ theorem opFfi {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
         rcases forall₂_reverse_pair related with ⟨w2, w1, rfl, relV, relU⟩
         simp only [compileOp]
         rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
-        cases relV <;> simp [FlatSem.doApp, FlatSem.doAppNumeric,
+        cases relV
+        all_goals simp [FlatSem.doApp, FlatSem.doAppNumeric,
           FlatSem.doAppMemory, FlatSem.doAppData] at applied
         case string configuration =>
-          cases relU <;> simp at applied
+          cases relU
+          all_goals simp at applied
           case loc flag pointer =>
             cases found : storeLookup pointer source.refs with
             | none => simp [found] at applied
             | some entry =>
-              cases entry <;> simp [found] at applied
+              cases entry
+              all_goals simp [found] at applied
               case w8array bytes =>
                 have targetFound := lookup_byteArray states found
                 cases call : Flapjack.callFFIHOL source.ffi (.extCall name)
@@ -617,7 +622,8 @@ theorem opRefs {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
               | cons z zs => simp at length
               | nil =>
                 rcases forall₂_reverse_pair related with ⟨w2, w1, rfl, relV, relU⟩
-                cases relV <;> simp [FlatSem.doApp, FlatSem.doAppNumeric,
+                cases relV
+                all_goals simp [FlatSem.doApp, FlatSem.doAppNumeric,
                   FlatSem.doAppMemory] at applied
                 case loc flag pointer =>
                   cases found : source.refs[pointer]? with
@@ -761,9 +767,10 @@ theorem opVectors {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
         | cons z zs => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData] at applied
         | nil =>
           rcases forall₂_reverse_pair related with ⟨w2, w1, rfl, relV, relU⟩
-          cases relV <;> cases relU <;>
-            simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory,
-              FlatSem.doAppData] at applied
+          cases relV
+          all_goals cases relU
+          all_goals simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory,
+            FlatSem.doAppData] at applied
           case vector.int items targetItems itemRel index =>
             by_cases negative : index < 0
             · simp [FlatSem.readIndexed, FlatSem.boundsFailure, negative] at applied
@@ -928,9 +935,10 @@ theorem opString {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
         | cons z zs => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData] at applied
         | nil =>
           rcases forall₂_reverse_pair related with ⟨w2, w1, rfl, relV, relU⟩
-          cases relV <;> cases relU <;>
-            simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory,
-              FlatSem.doAppData] at applied
+          cases relV
+          all_goals cases relU
+          all_goals simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory,
+            FlatSem.doAppData] at applied
           case string.int str index =>
             by_cases negative : index < 0
             · simp [FlatSem.readIndexed, FlatSem.boundsFailure, negative] at applied
@@ -1032,7 +1040,8 @@ theorem opThunk {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
         | cons z zs => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData] at applied
         | nil =>
           rcases forall₂_reverse_pair related with ⟨w2, w1, rfl, relV, relU⟩
-          cases relV <;> simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory,
+          cases relV
+          all_goals simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory,
             FlatSem.doAppData] at applied
           case loc flag pointer =>
             cases flag with
@@ -1102,20 +1111,26 @@ theorem opByteCopy {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
         FlatSem.doAppData, FlatSem.doAppCopy] at applied
     rcases forall₂_reverse_quint related with
       ⟨w5, w4, w3, w2, w1, rfl, strRel, offRel, lenRel, ptrRel, dstRel⟩
-    cases strRel <;> try simp at applied
+    cases strRel
+    all_goals try simp at applied
     case string value =>
-      cases offRel <;> try simp at applied
+      cases offRel
+      all_goals try simp at applied
       case int offset =>
-        cases lenRel <;> try simp at applied
+        cases lenRel
+        all_goals try simp at applied
         case int size =>
-          cases ptrRel <;> try simp at applied
+          cases ptrRel
+          all_goals try simp at applied
           case loc flag pointer =>
-            cases dstRel <;> try simp at applied
+            cases dstRel
+            all_goals try simp at applied
             case int dstOffset =>
               cases found : storeLookup pointer source.refs with
               | none => simp [found] at applied
               | some entry =>
-                cases entry <;> simp [found] at applied
+                cases entry
+                all_goals simp [found] at applied
                 case w8array bytes =>
                   have body := copyStringToByteArray_body_related source targetNext trace db
                     value bytes pointer flag offset size dstOffset states found
@@ -1127,7 +1142,8 @@ theorem opByteCopy {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
                       (ClosSem.evaluate [copyByteAw8 trace] (.number dstOffset ::
                         .refPtr flag pointer :: .number size :: .number offset ::
                         .byteVector value.explode :: db) targetNext).1 := by
-                    cases result <;> simpa [FlatSem.applyResult, originalApplied,
+                    cases result
+                    all_goals simpa [FlatSem.applyResult, originalApplied,
                       Flapjack.EvaluateHOL.listResult] using body
                   simp only [compileOp]
                   rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
@@ -1147,25 +1163,32 @@ theorem opByteCopy {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
         FlatSem.doAppData, FlatSem.doAppCopy] at applied
     rcases forall₂_reverse_quint related with
       ⟨w5, w4, w3, w2, w1, rfl, srcRel, offRel, lenRel, ptrRel, dstRel⟩
-    cases srcRel <;> try simp at applied
+    cases srcRel
+    all_goals try simp at applied
     case loc srcFlag srcPointer =>
-      cases offRel <;> try simp at applied
+      cases offRel
+      all_goals try simp at applied
       case int offset =>
-        cases lenRel <;> try simp at applied
+        cases lenRel
+        all_goals try simp at applied
         case int size =>
-          cases ptrRel <;> try simp at applied
+          cases ptrRel
+          all_goals try simp at applied
           case loc flag pointer =>
-            cases dstRel <;> try simp at applied
+            cases dstRel
+            all_goals try simp at applied
             case int dstOffset =>
               cases found : storeLookup pointer source.refs with
               | none => simp [found] at applied
               | some entry =>
-                cases entry <;> simp [found] at applied
+                cases entry
+                all_goals simp [found] at applied
                 case w8array bytes =>
                   cases srcFound : storeLookup srcPointer source.refs with
                   | none => simp [srcFound] at applied
                   | some srcEntry =>
-                    cases srcEntry <;> simp [srcFound] at applied
+                    cases srcEntry
+                    all_goals simp [srcFound] at applied
                     case w8array srcBytes =>
                         have body := copyByteArrayToByteArray_body_related source targetNext
                           trace db srcBytes bytes srcPointer pointer srcFlag flag offset size
@@ -1178,7 +1201,8 @@ theorem opByteCopy {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
                             (ClosSem.evaluate [copyByteAw8 trace] (.number dstOffset ::
                               .refPtr flag pointer :: .number size :: .number offset ::
                               .refPtr srcFlag srcPointer :: db) targetNext).1 := by
-                          cases result <;> simpa [FlatSem.applyResult, originalApplied,
+                          cases result
+                          all_goals simpa [FlatSem.applyResult, originalApplied,
                             Flapjack.EvaluateHOL.listResult] using body
                         simp only [compileOp]
                         rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
@@ -1197,16 +1221,20 @@ theorem opByteCopy {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
       try simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory,
         FlatSem.doAppData, FlatSem.doAppCopy] at applied
     rcases forall₂_reverse_triple related with ⟨_, _, _, rfl, ptrRel, offRel, lenRel⟩
-    cases ptrRel <;> try simp at applied
+    cases ptrRel
+    all_goals try simp at applied
     case loc flag pointer =>
-      cases offRel <;> try simp at applied
+      cases offRel
+      all_goals try simp at applied
       case int offset =>
-        cases lenRel <;> try simp at applied
+        cases lenRel
+        all_goals try simp at applied
         case int size =>
           cases found : storeLookup pointer source.refs with
           | none => simp [found] at applied
           | some entry =>
-            cases entry <;> simp [found] at applied
+            cases entry
+            all_goals simp [found] at applied
             case w8array bytes =>
                 have body := copyByteArray_body_related source targetNext trace db pointer flag
                   bytes offset size states found
@@ -1217,7 +1245,8 @@ theorem opByteCopy {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
                     (ClosSem.evaluate [copyByteStr trace]
                       (.number size :: .number offset :: .refPtr flag pointer :: db)
                       targetNext).1 := by
-                  cases result <;> simpa [FlatSem.applyResult, originalApplied,
+                  cases result
+                  all_goals simpa [FlatSem.applyResult, originalApplied,
                     Flapjack.EvaluateHOL.listResult] using body
                 clear body
                 simp only [compileOp]
@@ -1232,15 +1261,18 @@ theorem opByteCopy {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
                   · exact resultRel_of_evalResultRel result resultRel
   case inr.inr.inr.inl =>
     have originalApplied := applied
-    rcases vs with _ | ⟨v, _ | ⟨u, _ | ⟨q, _ | ⟨z, zs⟩⟩⟩⟩ <;>
-      try simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory,
-        FlatSem.doAppData, FlatSem.doAppCopy] at applied
+    rcases vs with _ | ⟨v, _ | ⟨u, _ | ⟨q, _ | ⟨z, zs⟩⟩⟩⟩
+    all_goals try simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory,
+      FlatSem.doAppData, FlatSem.doAppCopy] at applied
     rcases forall₂_reverse_triple related with ⟨_, _, _, rfl, strRel, offRel, lenRel⟩
-    cases strRel <;> try simp at applied
+    cases strRel
+    all_goals try simp at applied
     case string value =>
-      cases offRel <;> try simp at applied
+      cases offRel
+      all_goals try simp at applied
       case int offset =>
-        cases lenRel <;> try simp at applied
+        cases lenRel
+        all_goals try simp at applied
         case int size =>
           have body := copyString_body_related source targetNext trace db value offset size states
           have bodyExact : StateRel sourceNext
@@ -1250,7 +1282,8 @@ theorem opByteCopy {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
               (ClosSem.evaluate [copyByteStr trace]
                 (.number size :: .number offset :: .byteVector value.explode :: db)
                 targetNext).1 := by
-            cases result <;> simpa [FlatSem.applyResult, originalApplied,
+            cases result
+            all_goals simpa [FlatSem.applyResult, originalApplied,
               Flapjack.EvaluateHOL.listResult] using body
           clear body
           simp only [compileOp]
@@ -1274,15 +1307,18 @@ theorem opByteCopy {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
         | cons z zs => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, FlatSem.doAppCopy] at applied
         | nil =>
           rcases forall₂_reverse_pair related with ⟨w2, w1, rfl, relV, relU⟩
-          cases relV <;> simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory,
+          cases relV
+          all_goals simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory,
             FlatSem.doAppData, FlatSem.doAppCopy] at applied
           case loc flag pointer =>
-            cases relU <;> try simp at applied
+            cases relU
+            all_goals try simp at applied
             case string value =>
               cases found : storeLookup pointer source.refs with
               | none => simp [found] at applied
               | some entry =>
-                cases entry <;> simp [found] at applied
+                cases entry
+                all_goals simp [found] at applied
                 case w8array bytes =>
                   cases xor : xorBytes value.explode bytes with
                   | none => simp [xor] at applied
@@ -1347,9 +1383,11 @@ theorem opByteArrays {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F
     rcases vs with _ | ⟨v, _ | ⟨u, _ | ⟨z, zs⟩⟩⟩ <;>
       try simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at applied
     rcases forall₂_reverse_pair related with ⟨_, _, rfl, sizeRel, byteRel⟩
-    cases sizeRel <;> try simp at applied
+    cases sizeRel
+    all_goals try simp at applied
     case int size =>
-      cases byteRel <;> try simp at applied
+      cases byteRel
+      all_goals try simp at applied
       case word8 byte =>
         have body := allocByteArray_body_related source targetNext trace db size byte states
         simp only [compileOp]
@@ -1366,7 +1404,8 @@ theorem opByteArrays {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F
               (.raise trace (.op trace (.blockOp (.cons 3)) []))
               (.op trace (.memOp (.refByte false)) [.var trace 0, .var trace 1])]
               (.number byte.toNat :: .number size :: db) targetNext).1 := by
-          cases result <;> simpa [FlatSem.applyResult, originalApplied,
+          cases result
+          all_goals simpa [FlatSem.applyResult, originalApplied,
             Flapjack.EvaluateHOL.listResult] using body
         cases run : ClosSem.evaluate [.ifThenElse trace
           (.op trace (.intOp .less) [.op trace (.intOp (.const 0)) [], .var trace 1])
@@ -1414,17 +1453,20 @@ theorem opByteArrays {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F
                 exact ⟨states, valueRel⟩
   case inr.inr.inr.inl =>
     have originalApplied := applied
-    rcases vs with _ | ⟨v, _ | ⟨u, _ | ⟨z, zs⟩⟩⟩ <;>
-      try simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at applied
+    rcases vs with _ | ⟨v, _ | ⟨u, _ | ⟨z, zs⟩⟩⟩
+    all_goals try simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at applied
     rcases forall₂_reverse_pair related with ⟨_, _, rfl, ptrRel, idxRel⟩
-    cases ptrRel <;> try simp at applied
+    cases ptrRel
+    all_goals try simp at applied
     case loc flag pointer =>
-      cases idxRel <;> try simp at applied
+      cases idxRel
+      all_goals try simp at applied
       case int index =>
         cases found : storeLookup pointer source.refs with
         | none => simp [found] at applied
         | some entry =>
-          cases entry <;> simp [found] at applied
+          cases entry
+          all_goals simp [found] at applied
           case w8array bytes =>
             have body := checkedByteRead_body_related source targetNext trace db pointer flag
               bytes index states found
@@ -1440,7 +1482,8 @@ theorem opByteArrays {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F
                   (.op trace (.memOp .derefByte) [.var trace 0, .var trace 1])
                   (.raise trace (.op trace (.blockOp (.cons 3)) []))]
                   (.number index :: .refPtr flag pointer :: db) targetNext).1 := by
-              cases result <;> simpa [FlatSem.applyResult, originalApplied,
+              cases result
+              all_goals simpa [FlatSem.applyResult, originalApplied,
                 Flapjack.EvaluateHOL.listResult] using body
             simp only [compileOp]
             rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
@@ -1457,19 +1500,23 @@ theorem opByteArrays {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F
               · exact resultRel_of_evalResultRel result resultRel
   case inr.inr.inr.inr.inl =>
     have originalApplied := applied
-    rcases vs with _ | ⟨v, _ | ⟨u, _ | ⟨q, _ | ⟨z, zs⟩⟩⟩⟩ <;>
-      try simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at applied
+    rcases vs with _ | ⟨v, _ | ⟨u, _ | ⟨q, _ | ⟨z, zs⟩⟩⟩⟩
+    all_goals try simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at applied
     rcases forall₂_reverse_triple related with ⟨_, _, _, rfl, ptrRel, idxRel, byteRel⟩
-    cases ptrRel <;> try simp at applied
+    cases ptrRel
+    all_goals try simp at applied
     case loc flag pointer =>
-      cases idxRel <;> try simp at applied
+      cases idxRel
+      all_goals try simp at applied
       case int index =>
-        cases byteRel <;> try simp at applied
+        cases byteRel
+        all_goals try simp at applied
         case word8 byte =>
           cases found : storeLookup pointer source.refs with
           | none => simp [found] at applied
           | some entry =>
-            cases entry <;> simp [found] at applied
+            cases entry
+            all_goals simp [found] at applied
             case w8array bytes =>
               have foundList : source.refs[pointer]? = some (.w8array bytes) := by
                 simpa [storeLookup] using found
@@ -1492,19 +1539,23 @@ theorem opByteArrays {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F
               exact ⟨updated, ValueRel.tuple .nil⟩
   case inr.inr.inr.inr.inr =>
     have originalApplied := applied
-    rcases vs with _ | ⟨v, _ | ⟨u, _ | ⟨q, _ | ⟨z, zs⟩⟩⟩⟩ <;>
-      try simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at applied
+    rcases vs with _ | ⟨v, _ | ⟨u, _ | ⟨q, _ | ⟨z, zs⟩⟩⟩⟩
+    all_goals try simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at applied
     rcases forall₂_reverse_triple related with ⟨_, _, _, rfl, ptrRel, idxRel, byteRel⟩
-    cases ptrRel <;> try simp at applied
+    cases ptrRel
+    all_goals try simp at applied
     case loc flag pointer =>
-      cases idxRel <;> try simp at applied
+      cases idxRel
+      all_goals try simp at applied
       case int index =>
-        cases byteRel <;> try simp at applied
+        cases byteRel
+        all_goals try simp at applied
         case word8 byte =>
           cases found : storeLookup pointer source.refs with
           | none => simp [found] at applied
           | some entry =>
-            cases entry <;> simp [found] at applied
+            cases entry
+            all_goals simp [found] at applied
             case w8array bytes =>
               have foundList : source.refs[pointer]? = some (.w8array bytes) := by
                 simpa [storeLookup] using found
@@ -1524,7 +1575,8 @@ theorem opByteArrays {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F
                     (.raise trace (.op trace (.blockOp (.cons 3)) []))]
                     (.number byte.toNat :: .number index :: .refPtr flag pointer :: db)
                     targetNext).1 := by
-                cases result <;> simpa [FlatSem.applyResult, originalApplied,
+                cases result
+                all_goals simpa [FlatSem.applyResult, originalApplied,
                   Flapjack.EvaluateHOL.listResult] using body
               simp only [compileOp]
               rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
@@ -1596,17 +1648,20 @@ theorem opArrays {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
           exact ⟨states, ValueRel.int _⟩
   case inr.inr.inr.inl =>
     have originalApplied := applied
-    rcases vs with _ | ⟨v, _ | ⟨u, _ | ⟨z, zs⟩⟩⟩ <;>
-      try simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at applied
+    rcases vs with _ | ⟨v, _ | ⟨u, _ | ⟨z, zs⟩⟩⟩
+    all_goals try simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at applied
     rcases forall₂_reverse_pair related with ⟨_, _, rfl, ptrRel, idxRel⟩
-    cases ptrRel <;> try simp at applied
+    cases ptrRel
+    all_goals try simp at applied
     case loc flag pointer =>
-      cases idxRel <;> try simp at applied
+      cases idxRel
+      all_goals try simp at applied
       case int index =>
         cases found : storeLookup pointer source.refs with
         | none => simp [found] at applied
         | some entry =>
-          cases entry <;> simp [found] at applied
+          cases entry
+          all_goals simp [found] at applied
           case varray items =>
             have body := checkedArrayRead_body_related source targetNext trace db pointer flag
               items index states found
@@ -1622,7 +1677,8 @@ theorem opArrays {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
                   (.op trace (.memOp .el) [.var trace 0, .var trace 1])
                   (.raise trace (.op trace (.blockOp (.cons 3)) []))]
                   (.number index :: .refPtr flag pointer :: db) targetNext).1 := by
-              cases result <;> simpa [FlatSem.applyResult, originalApplied,
+              cases result
+              all_goals simpa [FlatSem.applyResult, originalApplied,
                 Flapjack.EvaluateHOL.listResult] using body
             simp only [compileOp]
             rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
@@ -1675,7 +1731,8 @@ theorem opArrays {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
     rcases vs with _ | ⟨v, _ | ⟨u, _ | ⟨z, zs⟩⟩⟩ <;>
       try simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at applied
     rcases forall₂_reverse_pair related with ⟨w, _, rfl, sizeRel, valRel⟩
-    cases sizeRel <;> try simp at applied
+    cases sizeRel
+    all_goals try simp at applied
     case int size =>
       have body := allocArray_body_related source targetNext trace db size u w states valRel
       simp only [compileOp]
@@ -1692,7 +1749,8 @@ theorem opArrays {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
             (.raise trace (.op trace (.blockOp (.cons 3)) []))
             (.op trace (.memOp .refArray) [.var trace 0, .var trace 1])]
             (w :: .number size :: db) targetNext).1 := by
-        cases result <;> simpa [FlatSem.applyResult, originalApplied,
+        cases result
+        all_goals simpa [FlatSem.applyResult, originalApplied,
           Flapjack.EvaluateHOL.listResult] using body
       cases run : ClosSem.evaluate [.ifThenElse trace
         (.op trace (.intOp .less) [.op trace (.intOp (.const 0)) [], .var trace 1])
@@ -1707,17 +1765,20 @@ theorem opArrays {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
         · exact resultRel_of_evalResultRel result resultRel
   case inr.inr.inr.inr.inr.inr =>
     have originalApplied := applied
-    rcases vs with _ | ⟨v, _ | ⟨u, _ | ⟨q, _ | ⟨z, zs⟩⟩⟩⟩ <;>
-      try simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at applied
+    rcases vs with _ | ⟨v, _ | ⟨u, _ | ⟨q, _ | ⟨z, zs⟩⟩⟩⟩
+    all_goals try simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at applied
     rcases forall₂_reverse_triple related with ⟨w, _, _, rfl, ptrRel, idxRel, valRel⟩
-    cases ptrRel <;> try simp at applied
+    cases ptrRel
+    all_goals try simp at applied
     case loc flag pointer =>
-      cases idxRel <;> try simp at applied
+      cases idxRel
+      all_goals try simp at applied
       case int index =>
         cases found : storeLookup pointer source.refs with
         | none => simp [found] at applied
         | some entry =>
-          cases entry <;> simp [found] at applied
+          cases entry
+          all_goals simp [found] at applied
           case varray items =>
             have foundList : source.refs[pointer]? = some (.varray items) := by
               simpa [storeLookup] using found
@@ -1735,7 +1796,8 @@ theorem opArrays {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
                   (.op trace (.memOp .update) [.var trace 0, .var trace 1, .var trace 2])
                   (.raise trace (.op trace (.blockOp (.cons 3)) []))]
                   (w :: .number index :: .refPtr flag pointer :: db) targetNext).1 := by
-              cases result <;> simpa [FlatSem.applyResult, originalApplied,
+              cases result
+              all_goals simpa [FlatSem.applyResult, originalApplied,
                 Flapjack.EvaluateHOL.listResult] using body
             simp only [compileOp]
             rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
@@ -1752,17 +1814,20 @@ theorem opArrays {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
               · exact resultRel_of_evalResultRel result resultRel
   case inr.inr.inr.inr.inr.inl =>
     have originalApplied := applied
-    rcases vs with _ | ⟨v, _ | ⟨u, _ | ⟨q, _ | ⟨z, zs⟩⟩⟩⟩ <;>
-      try simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at applied
+    rcases vs with _ | ⟨v, _ | ⟨u, _ | ⟨q, _ | ⟨z, zs⟩⟩⟩⟩
+    all_goals try simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at applied
     rcases forall₂_reverse_triple related with ⟨w, _, _, rfl, ptrRel, idxRel, valRel⟩
-    cases ptrRel <;> try simp at applied
+    cases ptrRel
+    all_goals try simp at applied
     case loc flag pointer =>
-      cases idxRel <;> try simp at applied
+      cases idxRel
+      all_goals try simp at applied
       case int index =>
         cases found : storeLookup pointer source.refs with
         | none => simp [found] at applied
         | some entry =>
-          cases entry <;> simp [found] at applied
+          cases entry
+          all_goals simp [found] at applied
           case varray items =>
             have foundList : source.refs[pointer]? = some (.varray items) := by
               simpa [storeLookup] using found
@@ -2095,7 +2160,8 @@ theorem opArith {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
           Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
         exact ⟨states, ValueRel.int _⟩
       all_goals
-        by_cases zero : right = 0 <;> simp [zero] at applied
+        by_cases zero : right = 0
+        all_goals simp [zero] at applied
         all_goals
           obtain ⟨rfl, rfl⟩ := applied
           simp only [compileOp, compileArith]
