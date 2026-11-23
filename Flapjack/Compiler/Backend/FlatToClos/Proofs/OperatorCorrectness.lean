@@ -106,6 +106,35 @@ private theorem resultRel_of_evalResultRel (result : Result FlatSem.Value FlatSe
   all_goals cases related
   all_goals simp_all [SemanticPrimitivesProps.resultRel, SemanticPrimitivesProps.excRel]
 
+/-- Flapjack infrastructure (no HOL original): compile the operator, run it on
+the target, and normalise the resulting application, whose result is the
+`listResult` of the original result. -/
+macro "runCompiled" args:Lean.Parser.Tactic.simpLemma,* "using"
+    h:Lean.Parser.Tactic.rwRule : tactic =>
+  `(tactic| (
+    simp only [compileOp]
+    rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, $h]
+    simp [$args,*, Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]))
+
+/-- Flapjack infrastructure (no HOL original): the same for error-carrying
+targets, which also need the exception law. -/
+macro "runCompiledErr" args:Lean.Parser.Tactic.simpLemma,* "using"
+    h:Lean.Parser.Tactic.rwRule : tactic =>
+  `(tactic| (
+    simp only [compileOp]
+    rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, $h]
+    simp [$args,*, Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel,
+      SemanticPrimitivesProps.excRel]))
+
+/-- Flapjack infrastructure (no HOL original): `runCompiled` for arithmetic
+operators, which also need the `compileArith` unfolding. -/
+macro "runCompiledArith" args:Lean.Parser.Tactic.simpLemma,* "using"
+    h:Lean.Parser.Tactic.rwRule : tactic =>
+  `(tactic| (
+    simp only [compileOp, compileArith]
+    rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, $h]
+    simp [$args,*, Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]))
+
 /-- The original Eval operator case of value-level operator correctness.
 The flat primitive dispatcher handles Eval in the evaluator rather than
 `doApp`, so the original successful-application premise is impossible. -/
@@ -436,10 +465,7 @@ theorem opGlobals {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
             rcases forall₂_reverse_singleton related with ⟨w, rfl, valRel⟩
             obtain ⟨targetSlot, updated⟩ :=
               stateRel_initGlobal source targetNext n value w states valRel slot
-            simp only [compileOp]
-            rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
-            simp [ClosSem.doApp, ClosSem.applyGlobal, targetSlot,
-              Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
+            runCompiled ClosSem.doApp, ClosSem.applyGlobal, targetSlot using evaluated
             exact ⟨updated, (vRel_unit _).mpr rfl⟩
 
 /-- Constructor tests and list append satisfy the original operator correctness goal. -/
@@ -490,10 +516,8 @@ theorem opBlocks {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
               obtain ⟨targetRight, targetRightDecoded, rightRel⟩ :=
                 valueToList_related u w right relU rightDecoded
               have resultRel := listToValue_related (List.rel_append leftRel rightRel)
-              simp only [compileOp]
-              rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
-              simp [ClosSem.doApp, ClosSem.applyBlock, targetLeftDecoded, targetRightDecoded,
-                Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
+              runCompiled ClosSem.doApp, ClosSem.applyBlock, targetLeftDecoded,
+                targetRightDecoded using evaluated
               exact ⟨states, resultRel⟩
   all_goals
     cases vs with
@@ -547,10 +571,7 @@ theorem opRefs {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
         obtain ⟨rfl, rfl⟩ := applied
         have index := stateRel_least source targetNext states
         have updated := stateRel_allocRef source targetNext v w states valRel
-        simp only [compileOp]
-        rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
-        simp [ClosSem.doApp, ClosSem.applyMemory, index,
-          Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
+        runCompiled ClosSem.doApp, ClosSem.applyMemory, index using evaluated
         exact ⟨updated, ValueRel.loc true source.refs.length⟩
   case inr.inl =>
     cases vs with
@@ -698,10 +719,7 @@ theorem opVectors {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
         case vector rel =>
           obtain ⟨rfl, rfl⟩ := applied
           have sameLength := rel.length_eq
-          simp only [compileOp]
-          rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
-          simp [ClosSem.doApp, ClosSem.applyBlock, ← sameLength,
-            Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
+          runCompiled ClosSem.doApp, ClosSem.applyBlock, ← sameLength using evaluated
           exact ⟨states, ValueRel.int _⟩
   case inr.inr.inr =>
     cases vs with
@@ -720,10 +738,7 @@ theorem opVectors {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
           obtain ⟨rfl, rfl⟩ := applied
           obtain ⟨targetItems, targetDecoded, itemRel⟩ :=
             valueToList_related v w items valRel decoded
-          simp only [compileOp]
-          rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
-          simp [ClosSem.doApp, ClosSem.applyBlock, targetDecoded,
-            Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
+          runCompiled ClosSem.doApp, ClosSem.applyBlock, targetDecoded using evaluated
           exact ⟨states, ValueRel.vector itemRel⟩
   case inr.inr.inl =>
     cases vs with
@@ -751,10 +766,8 @@ theorem opVectors {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
                 obtain ⟨rfl, rfl⟩ := applied
                 obtain ⟨targetValue, targetElement, valueRel⟩ :=
                   forall₂_lookup itemRel index.toNat value element
-                simp only [compileOp]
-                rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
-                simp [ClosSem.doApp, ClosSem.applyMemory, negative, targetElement,
-                  Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
+                runCompiled ClosSem.doApp, ClosSem.applyMemory, negative,
+                  targetElement using evaluated
                 exact ⟨states, valueRel⟩
   case inr.inl =>
     cases vs with
@@ -777,10 +790,7 @@ theorem opVectors {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
               obtain ⟨rfl, rfl⟩ := applied
               have body := evaluate_checkedVectorRead_outOfBounds targetNext trace db
                 targetItems index (Or.inl negative)
-              simp only [compileOp]
-              rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
-              simp [body, Flapjack.EvaluateHOL.listResult,
-                SemanticPrimitivesProps.resultRel, SemanticPrimitivesProps.excRel]
+              runCompiledErr body using evaluated
               exact ⟨states, ValueRel.con .nil⟩
             · cases element : items[index.toNat]? with
               | none =>
@@ -792,10 +802,7 @@ theorem opVectors {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
                 obtain ⟨rfl, rfl⟩ := applied
                 have body := evaluate_checkedVectorRead_outOfBounds targetNext trace db
                   targetItems index (Or.inr bound)
-                simp only [compileOp]
-                rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
-                simp [body, Flapjack.EvaluateHOL.listResult,
-                  SemanticPrimitivesProps.resultRel, SemanticPrimitivesProps.excRel]
+                runCompiledErr body using evaluated
                 exact ⟨states, ValueRel.con .nil⟩
               | some value =>
                 simp [FlatSem.readIndexed, negative, element] at applied
@@ -804,9 +811,7 @@ theorem opVectors {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
                   forall₂_lookup itemRel index.toNat value element
                 have body := evaluate_checkedVectorRead_inBounds targetNext trace db
                   targetItems index targetValue negative targetElement
-                simp only [compileOp]
-                rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
-                simp [body, Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
+                runCompiled body using evaluated
                 exact ⟨states, valueRel⟩
 
 /-- String construction, observation and indexing satisfy the original operator goal. -/
@@ -844,10 +849,7 @@ theorem opString {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
         case string str =>
           obtain ⟨rfl, rfl⟩ := applied
           have resultRel := listToValue_related (explodedChars_related str.explode)
-          simp only [compileOp]
-          rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
-          simp [ClosSem.doApp, ClosSem.applyMemory,
-            Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
+          runCompiled ClosSem.doApp, ClosSem.applyMemory using evaluated
           exact ⟨states, resultRel⟩
   case inr.inr.inl =>
     cases vs with
@@ -862,10 +864,7 @@ theorem opString {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
           FlatSem.doAppMemory, FlatSem.doAppData] at applied
         case string str =>
           obtain ⟨rfl, rfl⟩ := applied
-          simp only [compileOp]
-          rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
-          simp [ClosSem.doApp, ClosSem.applyMemory,
-            Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
+          runCompiled ClosSem.doApp, ClosSem.applyMemory using evaluated
           exact ⟨states, ValueRel.int _⟩
   case inr.inl =>
     cases vs with
@@ -887,10 +886,7 @@ theorem opString {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
             (by simpa [List.map_map, Function.comp_def] using targetDecoded)
           have resultRel : ValueRel (.litv (.strLit (.implode items))) (.byteVector items) := by
             simpa using (ValueRel.string (.implode items))
-          simp only [compileOp]
-          rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
-          simp [ClosSem.doApp, targetApplied,
-            Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
+          runCompiled ClosSem.doApp, targetApplied using evaluated
           exact ⟨states, resultRel⟩
   case inr.inr.inr.inr =>
     cases vs with
@@ -919,10 +915,7 @@ theorem opString {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
               ClosSem.applyMemory_concatByteVectors targetNext w chunks targetDecoded
             have resultRel : ValueRel (.litv (.strLit str)) (.byteVector chunks.flatten) := by
               simpa [bytesEq] using (ValueRel.string str)
-            simp only [compileOp]
-            rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
-            simp [ClosSem.doApp, targetApplied,
-              Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
+            runCompiled ClosSem.doApp, targetApplied using evaluated
             exact ⟨states, resultRel⟩
   case inr.inr.inr.inl =>
     cases vs with
@@ -945,10 +938,7 @@ theorem opString {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
               obtain ⟨rfl, rfl⟩ := applied
               have body := evaluate_checkedStringRead_outOfBounds targetNext trace db
                 str.explode index (Or.inl negative)
-              simp only [compileOp]
-              rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
-              simp [body, Flapjack.EvaluateHOL.listResult,
-                SemanticPrimitivesProps.resultRel, SemanticPrimitivesProps.excRel]
+              runCompiledErr body using evaluated
               exact ⟨states, ValueRel.con .nil⟩
             · cases element : str.explode[index.toNat]? with
               | none =>
@@ -958,19 +948,14 @@ theorem opString {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
                 obtain ⟨rfl, rfl⟩ := applied
                 have body := evaluate_checkedStringRead_outOfBounds targetNext trace db
                   str.explode index (Or.inr bound)
-                simp only [compileOp]
-                rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
-                simp [body, Flapjack.EvaluateHOL.listResult,
-                  SemanticPrimitivesProps.resultRel, SemanticPrimitivesProps.excRel]
+                runCompiledErr body using evaluated
                 exact ⟨states, ValueRel.con .nil⟩
               | some byte =>
                 simp [FlatSem.readIndexed, negative, element] at applied
                 obtain ⟨rfl, rfl⟩ := applied
                 have body := evaluate_checkedStringRead_inBounds targetNext trace db
                   str.explode index byte negative element
-                simp only [compileOp]
-                rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
-                simp [body, Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
+                runCompiled body using evaluated
                 exact ⟨states, ValueRel.char byte⟩
 
 
@@ -1024,10 +1009,7 @@ theorem opThunk {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
           simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory,
             FlatSem.doAppData, safe] at applied
           obtain ⟨rfl, rfl⟩ := applied
-          simp only [compileOp]
-          rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
-          simp [ClosSem.doApp, ← targetSafe, index, storeAlloc,
-            Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
+          runCompiled ClosSem.doApp, ← targetSafe, index, storeAlloc using evaluated
           exact ⟨updated, ValueRel.loc false source.refs.length⟩
   | updateThunk mode =>
     cases vs with
@@ -1076,10 +1058,7 @@ theorem opThunk {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
                         exact ⟨maxApp, ffi, clock, newStores, globals, values, install⟩
                       simp [safe, storeAssign, found, storeValueSameType] at applied
                       obtain ⟨rfl, rfl⟩ := applied
-                      simp only [compileOp]
-                      rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
-                      simp [ClosSem.doApp, ← targetSafe, targetFound,
-                        Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
+                      runCompiled ClosSem.doApp, ← targetSafe, targetFound using evaluated
                       exact ⟨updated, ValueRel.tuple .nil⟩
 
 /-- The original byte-copy operator case, including overlapping arrays. -/
@@ -1330,10 +1309,8 @@ theorem opByteCopy {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
                       simpa [storeLookup] using found
                     simp [xor, storeAssign, foundList, storeValueSameType] at applied
                     obtain ⟨rfl, rfl⟩ := applied
-                    simp only [compileOp]
-                    rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
-                    simp [ClosSem.doApp, targetUpdate, FlatSem.unitValue, ClosSem.unitValue,
-                      Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
+                    runCompiled ClosSem.doApp, targetUpdate, FlatSem.unitValue,
+                      ClosSem.unitValue using evaluated
                     exact ⟨updatedStates, ValueRel.tuple .nil⟩
 
 /-- The original byte-array operator case, including checked and unchecked bounds. -/
@@ -1373,10 +1350,7 @@ theorem opByteArrays {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F
         case w8array bytes =>
           obtain ⟨rfl, rfl⟩ := applied
           have targetFound := lookup_byteArray states found
-          simp only [compileOp]
-          rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
-          simp [ClosSem.doApp, ClosSem.applyMemory, targetFound,
-            Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
+          runCompiled ClosSem.doApp, ClosSem.applyMemory, targetFound using evaluated
           exact ⟨states, ValueRel.int _⟩
   case inr.inl =>
     have originalApplied := applied
@@ -1446,10 +1420,7 @@ theorem opByteArrays {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F
                     found negative element
                 simp [FlatSem.readIndexed, negative, element] at applied
                 obtain ⟨rfl, rfl⟩ := applied
-                simp only [compileOp]
-                rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
-                simp [ClosSem.doApp, targetRead, Flapjack.EvaluateHOL.listResult,
-                  SemanticPrimitivesProps.resultRel]
+                runCompiled ClosSem.doApp, targetRead using evaluated
                 exact ⟨states, valueRel⟩
   case inr.inr.inr.inl =>
     have originalApplied := applied
@@ -1532,10 +1503,8 @@ theorem opByteArrays {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F
                   foundList nonnegative bound
               simp [FlatSem.doApp, FlatSem.doAppNumeric, flatUpdate] at originalApplied
               obtain ⟨rfl, rfl⟩ := originalApplied
-              simp only [compileOp]
-              rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
-              simp [ClosSem.doApp, targetUpdate, FlatSem.unitValue, ClosSem.unitValue,
-                Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
+              runCompiled ClosSem.doApp, targetUpdate, FlatSem.unitValue,
+                ClosSem.unitValue using evaluated
               exact ⟨updated, ValueRel.tuple .nil⟩
   case inr.inr.inr.inr.inr =>
     have originalApplied := applied
@@ -1620,10 +1589,7 @@ theorem opArrays {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
     obtain ⟨rfl, rfl⟩ := applied
     have index := stateRel_least source targetNext states
     have updated := stateRel_allocArray source targetNext vs ws.reverse states related
-    simp only [compileOp]
-    rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
-    simp [ClosSem.doApp, ClosSem.applyMemory, index, updated,
-      Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
+    runCompiled ClosSem.doApp, ClosSem.applyMemory, index, updated using evaluated
     exact ValueRel.loc true source.refs.length
   case inr.inr.inr.inr.inl =>
     rcases vs with _ | ⟨v, _ | ⟨z, zs⟩⟩ <;>
@@ -1641,10 +1607,8 @@ theorem opArrays {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
           obtain ⟨rfl, rfl⟩ := applied
           obtain ⟨targetItems, targetFound, itemRel⟩ := lookup_array states found
           have sameLength := itemRel.length_eq
-          simp only [compileOp]
-          rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
-          simp [ClosSem.doApp, ClosSem.applyMemory, targetFound, ← sameLength,
-            Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
+          runCompiled ClosSem.doApp, ClosSem.applyMemory, targetFound,
+            ← sameLength using evaluated
           exact ⟨states, ValueRel.int _⟩
   case inr.inr.inr.inl =>
     have originalApplied := applied
@@ -1721,10 +1685,7 @@ theorem opArrays {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
                     found negative element
                 simp [FlatSem.readIndexed, negative, element] at applied
                 obtain ⟨rfl, rfl⟩ := applied
-                simp only [compileOp]
-                rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
-                simp [ClosSem.doApp, targetRead, Flapjack.EvaluateHOL.listResult,
-                  SemanticPrimitivesProps.resultRel]
+                runCompiled ClosSem.doApp, targetRead using evaluated
                 exact ⟨states, valueRel⟩
   case inl =>
     have originalApplied := applied
@@ -1843,10 +1804,8 @@ theorem opArrays {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
                 nonnegative bound valRel
             simp [FlatSem.doApp, FlatSem.doAppNumeric, flatUpdate] at originalApplied
             obtain ⟨rfl, rfl⟩ := originalApplied
-            simp only [compileOp]
-            rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
-            simp [ClosSem.doApp, targetUpdate, FlatSem.unitValue, ClosSem.unitValue,
-              Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
+            runCompiled ClosSem.doApp, targetUpdate, FlatSem.unitValue,
+              ClosSem.unitValue using evaluated
             exact ⟨updated, ValueRel.tuple .nil⟩
 
 /-- The original primitive-test case, including equality and all ordering types. -/
@@ -1890,10 +1849,7 @@ theorem opTest {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
             case int right =>
               simp [FlatSem.doEq, litSameType] at applied
               obtain ⟨rfl, rfl⟩ := applied
-              simp only [compileOp]
-              rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
-              simp [ClosSem.doApp, ClosSem.applyBlock, ClosSem.doEq,
-                Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
+              runCompiled ClosSem.doApp, ClosSem.applyBlock, ClosSem.doEq using evaluated
               exact ⟨states, (vRel_bool _ _).mpr rfl⟩
         case charT =>
           cases firstRel <;> simp [FlatSem.doTest, FlatSem.checkType] at applied
@@ -1906,10 +1862,8 @@ theorem opTest {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
                 simp only [Int.natCast_inj, BitVec.toNat_inj]
               simp [FlatSem.doEq, litSameType] at applied
               obtain ⟨rfl, rfl⟩ := applied
-              simp only [compileOp]
-              rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
-              simp [ClosSem.doApp, ClosSem.applyNumeric, ClosSem.doWordApp, ClosSem.doWordAppIntegral, leftBound, rightBound, eqBytes,
-                Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
+              runCompiled ClosSem.doApp, ClosSem.applyNumeric, ClosSem.doWordApp,
+                ClosSem.doWordAppIntegral, leftBound, rightBound, eqBytes using evaluated
               exact ⟨states, (vRel_bool _ _).mpr rfl⟩
         case strT =>
           cases firstRel <;> simp [FlatSem.doTest, FlatSem.checkType] at applied
@@ -1920,10 +1874,7 @@ theorem opTest {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
                 cases left; cases right; simp [Flapjack.Basis.Pure.MlString.MlString.explode]
               simp [FlatSem.doEq, litSameType] at applied
               obtain ⟨rfl, rfl⟩ := applied
-              simp only [compileOp]
-              rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
-              simp [ClosSem.doApp, ClosSem.applyBlock, ClosSem.doEq, sameBytes,
-                Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
+              runCompiled ClosSem.doApp, ClosSem.applyBlock, ClosSem.doEq, sameBytes using evaluated
               exact ⟨states, (vRel_bool _ _).mpr rfl⟩
         case float64T =>
           cases firstRel <;> simp [FlatSem.doTest, FlatSem.checkType] at applied
@@ -1931,10 +1882,7 @@ theorem opTest {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
             cases secondRel <;> try simp at applied
             case float64 right =>
               obtain ⟨rfl, rfl⟩ := applied
-              simp only [compileOp]
-              rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
-              simp [ClosSem.doApp, ClosSem.applyNumeric, ClosSem.doWordApp,
-                Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
+              runCompiled ClosSem.doApp, ClosSem.applyNumeric, ClosSem.doWordApp using evaluated
               exact ⟨states, (vRel_bool _ _).mpr rfl⟩
         case wordT =>
           rename_i width _ _
@@ -1950,10 +1898,8 @@ theorem opTest {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
                     simp only [Int.natCast_inj, BitVec.toNat_inj]
                   simp [FlatSem.doEq, litSameType] at applied
                   obtain ⟨rfl, rfl⟩ := applied
-                  simp only [compileOp]
-                  rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
-                  simp [ClosSem.doApp, ClosSem.applyNumeric, ClosSem.doWordApp, ClosSem.doWordAppIntegral, leftBound, rightBound, eqBytes,
-                    Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
+                  runCompiled ClosSem.doApp, ClosSem.applyNumeric, ClosSem.doWordApp,
+                    ClosSem.doWordAppIntegral, leftBound, rightBound, eqBytes using evaluated
                   exact ⟨states, (vRel_bool _ _).mpr rfl⟩
           | w64 =>
               cases firstRel <;> simp [FlatSem.doTest, FlatSem.checkType] at applied
@@ -1962,10 +1908,7 @@ theorem opTest {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
                 case word64 right =>
                   simp [FlatSem.doEq, litSameType] at applied
                   obtain ⟨rfl, rfl⟩ := applied
-                  simp only [compileOp]
-                  rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
-                  simp [ClosSem.doApp, ClosSem.applyBlock, ClosSem.doEq,
-                    Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
+                  runCompiled ClosSem.doApp, ClosSem.applyBlock, ClosSem.doEq using evaluated
                   exact ⟨states, (vRel_bool _ _).mpr rfl⟩
         case boolT =>
           cases firstRel <;> simp [FlatSem.doTest, FlatSem.checkType] at applied
@@ -1996,10 +1939,7 @@ theorem opTest {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
             cases secondRel <;> try simp at applied
             case string right =>
               obtain ⟨rfl, rfl⟩ := applied
-              simp only [compileOp]
-              rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
-              simp [ClosSem.doApp, ClosSem.applyMemory,
-                Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
+              runCompiled ClosSem.doApp, ClosSem.applyMemory using evaluated
               exact ⟨states, (vRel_bool _ _).mpr rfl⟩
         case intT =>
           cases firstRel <;> try simp at applied
@@ -2020,11 +1960,8 @@ theorem opTest {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
               obtain ⟨rfl, rfl⟩ := applied
               have leftBound : (left.toNat : Int) < 256 := by have := left.isLt; omega
               have rightBound : (right.toNat : Int) < 256 := by have := right.isLt; omega
-              simp only [compileOp]
-              rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
-              simp [ClosSem.doApp, ClosSem.applyNumeric, ClosSem.doWordApp, ClosSem.doWordAppIntegral,
-                leftBound, rightBound, numCmp_intCmp,
-                Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
+              runCompiled ClosSem.doApp, ClosSem.applyNumeric, ClosSem.doWordApp,
+                ClosSem.doWordAppIntegral, leftBound, rightBound, numCmp_intCmp using evaluated
               exact ⟨states, (vRel_bool _ _).mpr rfl⟩
         case wordT =>
           rename_i width _ _
@@ -2038,11 +1975,8 @@ theorem opTest {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
                   obtain ⟨rfl, rfl⟩ := applied
                   have leftBound : (left.toNat : Int) < 256 := by have := left.isLt; omega
                   have rightBound : (right.toNat : Int) < 256 := by have := right.isLt; omega
-                  simp only [compileOp]
-                  rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
-                  simp [ClosSem.doApp, ClosSem.applyNumeric, ClosSem.doWordApp, ClosSem.doWordAppIntegral,
-                    leftBound, rightBound, numCmp_intCmp,
-                    Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
+                  runCompiled ClosSem.doApp, ClosSem.applyNumeric, ClosSem.doWordApp,
+                    ClosSem.doWordAppIntegral, leftBound, rightBound, numCmp_intCmp using evaluated
                   exact ⟨states, (vRel_bool _ _).mpr rfl⟩
         case float64T =>
           cases firstRel <;> try simp at applied
@@ -2064,10 +1998,7 @@ theorem opTest {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
             cases secondRel <;> try simp at applied
             case string right =>
               obtain ⟨rfl, rfl⟩ := applied
-              simp only [compileOp]
-              rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
-              simp [ClosSem.doApp, ClosSem.applyMemory,
-                Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
+              runCompiled ClosSem.doApp, ClosSem.applyMemory using evaluated
               exact ⟨states, (vRel_bool _ _).mpr rfl⟩
 
 /-- The original arithmetic operator case, including division exceptions and floating point. -/
@@ -2154,10 +2085,7 @@ theorem opArith {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
       all_goals cases secondRel
       all_goals try
         obtain ⟨rfl, rfl⟩ := applied
-        simp only [compileOp, compileArith]
-        rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
-        simp [ClosSem.doApp, ClosSem.applyNumeric, ClosSem.doIntApp,
-          Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
+        runCompiledArith ClosSem.doApp, ClosSem.applyNumeric, ClosSem.doIntApp using evaluated
         exact ⟨states, ValueRel.int _⟩
       all_goals
         by_cases zero : right = 0
@@ -2196,11 +2124,9 @@ theorem opArith {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
         all_goals cases secondRel
         all_goals
           obtain ⟨rfl, rfl⟩ := applied
-          simp only [compileOp, compileArith]
-          rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
-          simp [ClosSem.doApp, ClosSem.applyNumeric, ClosSem.doWordApp,
-            ClosSem.doWordAppIntegral, ClosSem.applyWordOp, ClosSem.intToByte_toNat,
-            Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
+          runCompiledArith ClosSem.doApp, ClosSem.applyNumeric, ClosSem.doWordApp,
+            ClosSem.doWordAppIntegral, ClosSem.applyWordOp,
+            ClosSem.intToByte_toNat using evaluated
           exact ⟨states, ValueRel.word8 _⟩
     | w64 =>
       have typed : ∀ v ∈ vs, ∃ i : BitVec 64, v = .litv (.word64 i) := by
@@ -2222,11 +2148,8 @@ theorem opArith {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
         all_goals cases secondRel
         all_goals
           obtain ⟨rfl, rfl⟩ := applied
-          simp only [compileOp, compileArith]
-          rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
-          simp [ClosSem.doApp, ClosSem.applyNumeric, ClosSem.doWordApp,
-            ClosSem.doWordAppIntegral, ClosSem.applyWordOp,
-            Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
+          runCompiledArith ClosSem.doApp, ClosSem.applyNumeric, ClosSem.doWordApp,
+            ClosSem.doWordAppIntegral, ClosSem.applyWordOp using evaluated
           exact ⟨states, ValueRel.word64 _⟩
   | float64T =>
     have typed : ∀ v ∈ vs, ∃ i : BitVec 64, v = .litv (.float64 i) := by
@@ -2248,10 +2171,8 @@ theorem opArith {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
       cases firstRel
       all_goals cases secondRel
       all_goals
-        simp only [compileOp, compileArith]
-        rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
-        simp [ClosSem.doApp, ClosSem.applyNumeric, ClosSem.doWordApp, fpSemFpBopComp,
-          Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
+        runCompiledArith ClosSem.doApp, ClosSem.applyNumeric, ClosSem.doWordApp,
+          fpSemFpBopComp using evaluated
         exact ⟨states, ValueRel.float64 _⟩
     case abs.cons.nil | neg.cons.nil | sqrt.cons.nil =>
       obtain ⟨value, rfl⟩ := typed v (by simp)
@@ -2261,10 +2182,8 @@ theorem opArith {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
       rcases forall₂_reverse_singleton related with ⟨w, rfl, firstRel⟩
       cases firstRel
       all_goals
-        simp only [compileOp, compileArith]
-        rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
-        simp [ClosSem.doApp, ClosSem.applyNumeric, ClosSem.doWordApp, fpSemFpUopComp,
-          Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
+        runCompiledArith ClosSem.doApp, ClosSem.applyNumeric, ClosSem.doWordApp,
+          fpSemFpUopComp using evaluated
         exact ⟨states, ValueRel.float64 _⟩
     case fma.cons.cons.cons.nil =>
       obtain ⟨a, rfl⟩ := typed v (by simp)
@@ -2277,10 +2196,8 @@ theorem opArith {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
       cases firstRel
       cases secondRel
       cases thirdRel
-      simp only [compileOp, compileArith]
-      rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
-      simp [ClosSem.doApp, ClosSem.applyNumeric, ClosSem.doWordApp, fpSemFpTopComp, fpSemFpfma,
-        Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
+      runCompiledArith ClosSem.doApp, ClosSem.applyNumeric, ClosSem.doWordApp,
+        fpSemFpTopComp, fpSemFpfma using evaluated
       exact ⟨states, ValueRel.float64 _⟩
 
 /-- The original primitive conversion operator case. -/
@@ -2362,10 +2279,8 @@ theorem opFromTo {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
             SemanticPrimitivesHOL.checkType, SemanticPrimitivesHOL.theLitvInt,
             FlatSem.flatToValue, FlatSem.valueToFlat] at originalApplied
           obtain ⟨rfl, rfl⟩ := originalApplied
-          simp only [compileOp]
-          rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
-          simp [ClosSem.doApp, ClosSem.applyNumeric, ClosSem.doWordApp, ClosSem.doWordAppIntegral,
-            Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
+          runCompiled ClosSem.doApp, ClosSem.applyNumeric, ClosSem.doWordApp,
+            ClosSem.doWordAppIntegral using evaluated
           exact ⟨states, ValueRel.word64 _⟩
         | w8 =>
           simp [FlatSem.doApp_conversion_source, SemanticPrimitivesHOL.doConversion,
@@ -2396,9 +2311,7 @@ theorem opFromTo {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
           SemanticPrimitivesHOL.checkType, SemanticPrimitivesHOL.theLitvChar,
           FlatSem.flatToValue, FlatSem.valueToFlat] at originalApplied
         obtain ⟨rfl, rfl⟩ := originalApplied
-        simp only [compileOp]
-        rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
-        simp [ClosSem.evaluate, Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
+        runCompiled ClosSem.evaluate using evaluated
         exact ⟨states, ValueRel.int _⟩
       | wordT width =>
         cases width with
@@ -2407,9 +2320,7 @@ theorem opFromTo {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
             SemanticPrimitivesHOL.checkType, SemanticPrimitivesHOL.theLitvChar,
             FlatSem.flatToValue, FlatSem.valueToFlat, Flapjack.Basis.Pure.MlString.charToWord8] at originalApplied
           obtain ⟨rfl, rfl⟩ := originalApplied
-          simp only [compileOp]
-          rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
-          simp [ClosSem.evaluate, Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
+          runCompiled ClosSem.evaluate using evaluated
           exact ⟨states, ValueRel.word8 _⟩
         | w64 => simp [FlatSem.doApp_conversion_source, SemanticPrimitivesHOL.doConversion] at originalApplied
       | boolT | charT | strT | float64T =>
@@ -2441,9 +2352,7 @@ theorem opFromTo {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
             SemanticPrimitivesHOL.checkType, SemanticPrimitivesHOL.theLitvWord8,
             FlatSem.flatToValue, FlatSem.valueToFlat, Flapjack.Basis.Pure.MlString.word8ToChar] at originalApplied
           obtain ⟨rfl, rfl⟩ := originalApplied
-          simp only [compileOp]
-          rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
-          simp [ClosSem.evaluate, Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
+          runCompiled ClosSem.evaluate using evaluated
           exact ⟨states, ValueRel.char _⟩
         | wordT other => cases other <;> simp [FlatSem.doApp_conversion_source, SemanticPrimitivesHOL.doConversion] at originalApplied
         | boolT | strT | float64T => simp [FlatSem.doApp_conversion_source, SemanticPrimitivesHOL.doConversion] at originalApplied
@@ -2456,19 +2365,15 @@ theorem opFromTo {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
             SemanticPrimitivesHOL.checkType, SemanticPrimitivesHOL.theLitvWord64,
             FlatSem.flatToValue, FlatSem.valueToFlat] at originalApplied
           obtain ⟨rfl, rfl⟩ := originalApplied
-          simp only [compileOp]
-          rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
-          simp [ClosSem.doApp, ClosSem.applyNumeric, ClosSem.doWordApp, ClosSem.doWordAppIntegral,
-            Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
+          runCompiled ClosSem.doApp, ClosSem.applyNumeric, ClosSem.doWordApp,
+            ClosSem.doWordAppIntegral using evaluated
           exact ⟨states, ValueRel.int _⟩
         | float64T =>
           simp [FlatSem.doApp_conversion_source, SemanticPrimitivesHOL.doConversion,
             SemanticPrimitivesHOL.checkType, SemanticPrimitivesHOL.theLitvWord64,
             FlatSem.flatToValue, FlatSem.valueToFlat] at originalApplied
           obtain ⟨rfl, rfl⟩ := originalApplied
-          simp only [compileOp]
-          rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
-          simp [ClosSem.evaluate, Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
+          runCompiled ClosSem.evaluate using evaluated
           exact ⟨states, ValueRel.float64 _⟩
         | wordT other => cases other <;> simp [FlatSem.doApp_conversion_source, SemanticPrimitivesHOL.doConversion] at originalApplied
         | boolT | charT | strT => simp [FlatSem.doApp_conversion_source, SemanticPrimitivesHOL.doConversion] at originalApplied
@@ -2483,9 +2388,7 @@ theorem opFromTo {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
             SemanticPrimitivesHOL.checkType, SemanticPrimitivesHOL.theLitvFloat64,
             FlatSem.flatToValue, FlatSem.valueToFlat] at originalApplied
           obtain ⟨rfl, rfl⟩ := originalApplied
-          simp only [compileOp]
-          rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
-          simp [ClosSem.evaluate, Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
+          runCompiled ClosSem.evaluate using evaluated
           exact ⟨states, ValueRel.word64 _⟩
         | w8 => simp [FlatSem.doApp_conversion_source, SemanticPrimitivesHOL.doConversion] at originalApplied
       | boolT | intT | charT | strT | float64T =>
