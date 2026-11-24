@@ -71,4 +71,62 @@ theorem nsDomMod_nsSing {M N V : Type} [DecidableEq M] (x : N) (y : V) :
   | nil => simp [nsLookupMod]
   | cons mn rest => simp [nsSing, nsLookupMod, List.lookup]
 
+/-- A singleton is sub-related to a singleton exactly when the names match and
+values are related. -/
+private theorem nsSub_nsSing {M N V W : Type} [DecidableEq M] [DecidableEq N]
+    (R : Ident M N → V → W → Prop) (n1 : N) (v1 : V) (n2 : N) (v2 : W) :
+    nsSub R (nsSing n1 v1) (nsSing n2 v2) ↔ n1 = n2 ∧ R (.short n1) v1 v2 := by
+  constructor
+  · intro sub
+    have left : nsLookup (nsSing n1 v1 : Namespace M N V) (.short n1) = some v1 := by
+      rw [nsLookup_nsSing, if_pos rfl]
+    obtain ⟨w, found, rel⟩ := sub.1 (.short n1) v1 left
+    rw [nsLookup_nsSing] at found
+    by_cases same : n1 = n2
+    · have sameId : (.short n1 : Ident M N) = .short n2 := by simp [same]
+      rw [if_pos sameId] at found
+      simp at found
+      refine ⟨same, ?_⟩
+      rw [found]
+      exact rel
+    · have neId : (.short n1 : Ident M N) ≠ .short n2 := by simpa using same
+      rw [if_neg neId] at found
+      simp at found
+  · rintro ⟨same, rel⟩
+    subst same
+    constructor
+    · intro id value found
+      rw [nsLookup_nsSing] at found
+      by_cases sameId : id = .short n1
+      · rw [if_pos sameId] at found
+        simp at found
+        refine ⟨v2, ?_, ?_⟩
+        · rw [nsLookup_nsSing, if_pos sameId]
+        · rw [sameId, ← found]
+          exact rel
+      · rw [if_neg sameId] at found
+        simp at found
+    · intro path absent
+      rw [nsLookupMod_nsSing] at absent
+      by_cases empty : path = []
+      · rw [if_pos empty] at absent
+        simp at absent
+      · rw [if_neg empty] at absent
+        rw [nsLookupMod_nsSing, if_neg empty]
+
+/-- Two singleton namespaces are two-way related exactly when the names match
+and their values are related. -/
+@[hol "cakeml/semantics/proofs/namespacePropsScript.sml" "nsAll2_nsSing"]
+theorem nsAll2_nsSing {M N V W : Type} [DecidableEq M] [DecidableEq N]
+    (R : Ident M N → V → W → Prop) (n1 : N) (v1 : V) (n2 : N) (v2 : W) :
+    nsAll2 R (nsSing n1 v1) (nsSing n2 v2) ↔ n1 = n2 ∧ R (.short n1) v1 v2 := by
+  constructor
+  · intro both
+    obtain ⟨same, rel⟩ := (nsSub_nsSing R n1 v1 n2 v2).1 both.1
+    exact ⟨same, rel⟩
+  · rintro ⟨same, rel⟩
+    subst same
+    exact ⟨(nsSub_nsSing R n1 v1 n1 v2).2 ⟨rfl, rel⟩,
+      (nsSub_nsSing (fun x y z => R x z y) n1 v2 n1 v1).2 ⟨rfl, rel⟩⟩
+
 end Flapjack.NamespaceHOL

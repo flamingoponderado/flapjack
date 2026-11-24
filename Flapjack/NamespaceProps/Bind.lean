@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.NamespaceHOL
+public import Flapjack.NamespaceProps
 
 @[expose] public section
 
@@ -58,5 +59,38 @@ theorem nsLookup_bind_alist {M N V : Type} [DecidableEq M] [DecidableEq N]
   cases k with
   | short name => simp [nsLookup]
   | long mn rest => simp [nsLookup, List.lookup]
+
+/-- An optional binding preserves a namespace-wide predicate when its entry
+satisfies it. -/
+@[hol "cakeml/semantics/proofs/namespacePropsScript.sml" "nsAll_nsOptBind"]
+theorem nsAll_nsOptBind {M N V : Type} [DecidableEq M] [DecidableEq N]
+    (P : Ident M N → V → Prop)
+    (x : Option N) (v : V) (e : Namespace M N V)
+    (premise : (x = none ∨ ∃ n, x = some n ∧ P (.short n) v) ∧ nsAll P e) :
+    nsAll P (nsOptBind x v e) := by
+  obtain ⟨head, all⟩ := premise
+  cases x with
+  | none =>
+    intro id value found
+    simpa [nsOptBind] using all id value found
+  | some n =>
+    have rel : P (.short n) v := by
+      rcases head with h | ⟨n', same, rel⟩
+      · simp at h
+      · simp only [Option.some.injEq] at same
+        subst same
+        exact rel
+    change nsAll P (nsBind n v e)
+    intro id value found
+    by_cases sameId : id = .short n
+    · rw [sameId] at found ⊢
+      change nsLookup (nsBind n v e) (.short n) = some value at found
+      rw [nsLookup_nsBind.1 n v e] at found
+      simp at found
+      rw [← found]
+      exact rel
+    · change nsLookup (nsBind n v e) id = some value at found
+      rw [nsLookup_nsBind.2 id n v e sameId] at found
+      exact all id value found
 
 end Flapjack.NamespaceHOL

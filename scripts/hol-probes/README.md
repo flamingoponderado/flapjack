@@ -190,7 +190,10 @@ binding-domain and two-way-lookup laws (`nsSub_mono`, `nsSub_mono2`,
 `nsAll2_nsLookup2`, `nsAll2_nsLookup_none`) are captured as well. Association-list
 lookup (`nsLookup_alist_to_ns_some`, `nsLookup_alist_to_ns_none`), mapping
 (`nsMap_alist_to_ns`, `nsSub_nsMap`) and folded lifting
-(`nsLookup_FOLDR_nsLift`) are captured too. The captures fix the independent
+(`nsLookup_FOLDR_nsLift`) are captured too. The singleton, optional-binding,
+lift-append and association-list relation laws (`nsAll2_nsSing`, `nsAll_nsOptBind`,
+`nsLookup_nsLift_append`, `nsAll2_alist_to_ns`, `nsAll2_nsBindList`) are also
+captured. The captures fix the independent
 module, name and value carriers and the binder order of each theorem; they are
 typed replays, not cross-language equivalence proofs.
 

@@ -98,4 +98,24 @@ theorem nsAll2_nsLift {M N V W : Type} [DecidableEq M] [DecidableEq N]
       nsAll2 (fun id => R (.long mn id)) e1 e2 := by
   simp only [nsAll2, nsSubLift]
 
+/-- Appending a lifted namespace keeps the other namespace's short lookups and
+shadows only its own leading module for long lookups. -/
+@[hol "cakeml/semantics/proofs/namespacePropsScript.sml" "nsLookup_nsLift_append"]
+theorem nsLookup_nsLift_nsAppend {M N V : Type} [DecidableEq M] [DecidableEq N]
+    (m : M) (ns : Namespace M N V) (ns' : Namespace M N V) (m' : M) (id : Ident M N)
+    (n : N) :
+    nsLookup (nsAppend (nsLift m ns) ns') (.short n) = nsLookup ns' (.short n) ∧
+    nsLookup (nsAppend (nsLift m ns) ns') (.long m' id) =
+      if m = m' then nsLookup ns id else nsLookup ns' (.long m' id) := by
+  cases ns' with
+  | bind values modules =>
+    constructor
+    · simp [nsAppend, nsLift, nsLookup]
+    · by_cases same : m = m'
+      · subst same
+        simp [nsAppend, nsLift, nsLookup]
+      · have ne : m' ≠ m := Ne.symm same
+        have beqFalse : (m' == m) = false := by simpa using ne
+        simp [nsAppend, nsLift, nsLookup, List.lookup, beqFalse, same]
+
 end Flapjack.NamespaceHOL

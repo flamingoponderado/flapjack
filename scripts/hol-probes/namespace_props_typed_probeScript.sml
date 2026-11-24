@@ -104,3 +104,11 @@ val _ = emit "nsLookup_alist_to_ns_none_typed" "nsLookup_alist_to_ns_none";
 val _ = emit "nsMap_alist_to_ns_typed" "nsMap_alist_to_ns";
 val _ = emit "nsSub_nsMap_typed" "nsSub_nsMap";
 val _ = emit "nsLookup_FOLDR_nsLift_typed" "nsLookup_FOLDR_nsLift";
+
+(* Singletons, optional binding, lift-append and association-list relations
+   (task 273). *)
+val _ = emit "nsAll2_nsSing_typed" "nsAll2_nsSing";
+val _ = emit "nsAll_nsOptBind_typed" "nsAll_nsOptBind";
+val _ = emit "nsLookup_nsLift_append_typed" "nsLookup_nsLift_append";
+val _ = emit "nsAll2_alist_to_ns_typed" "nsAll2_alist_to_ns";
+val _ = emit "nsAll2_nsBindList_typed" "nsAll2_nsBindList";
