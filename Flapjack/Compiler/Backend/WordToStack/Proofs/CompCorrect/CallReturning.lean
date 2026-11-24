@@ -1000,6 +1000,7 @@ theorem calleeNotError {width : Nat} [NeZero width] {C F : Type}
     (values : List Nat) (names : WordLangCutsetsHOL)
     (retCode : WordLangProgHOL (BitVec width)) (l1 l2 : Nat)
     (dest : Option Nat) (args : List Nat)
+    {handler : Option (Nat × WordLangProgHOL (BitVec width) × Nat × Nat)}
     (source sourcePost calleePost : WordSemStateFiniteExact width (Nat × C) F)
     (result bodyResult : Option (WordSemResult width))
     (xs args1 : List (WordLocW width)) (prog : WordLangProgHOL (BitVec width))
@@ -1007,11 +1008,11 @@ theorem calleeNotError {width : Nat} [NeZero width] {C F : Type}
     (guards : SourceGuards values names retCode l1 l2 dest args source xs args1 prog ss envs)
     (nonzero : source.clock ≠ 0)
     (execution : WordSemStateFiniteExact.evaluate
-      (.call (some (values, names, retCode, l1, l2)) dest args none) source =
+      (.call (some (values, names, retCode, l1, l2)) dest args handler) source =
       (result, sourcePost)) (notError : result ≠ some .error)
     (bodyRun : WordSemStateFiniteExact.evaluate prog
       (WordSemStateFiniteExact.callEnv args1 ss
-        (WordSemStateFiniteExact.pushEnv envs none (WordSemStateFiniteExact.decClock source))) =
+        (WordSemStateFiniteExact.pushEnv envs handler (WordSemStateFiniteExact.decClock source))) =
       (bodyResult, calleePost)) : bodyResult ≠ some .error := by
   intro error
   rw [error] at bodyRun
