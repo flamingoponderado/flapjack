@@ -112,3 +112,11 @@ val _ = emit "nsAll_nsOptBind_typed" "nsAll_nsOptBind";
 val _ = emit "nsLookup_nsLift_append_typed" "nsLookup_nsLift_append";
 val _ = emit "nsAll2_alist_to_ns_typed" "nsAll2_alist_to_ns";
 val _ = emit "nsAll2_nsBindList_typed" "nsAll2_nsBindList";
+
+(* Association-list relations and lookup-to-module lookup (task 273). *)
+val _ = emit "alist_rel_restr_def_typed" "alist_rel_restr_def";
+val _ = emit "alist_rel_restr_thm_typed" "alist_rel_restr_thm";
+val _ = emit "alistSub_def_typed" "alistSub_def";
+val _ = emit "alistSub_cong_typed" "alistSub_cong";
+val _ = emit "nsLookup_to_nsLookupMod_typed" "nsLookup_to_nsLookupMod";
+val _ = emit "nsDom_alist_to_ns_typed" "nsDom_alist_to_ns";

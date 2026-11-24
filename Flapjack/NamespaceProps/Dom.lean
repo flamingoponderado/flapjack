@@ -1,8 +1,10 @@
 module
 
 public import Flapjack.NamespaceProps
+public import Flapjack.NamespaceProps.AlistLookup
 public import Mathlib.Data.Set.Basic
 public import Mathlib.Data.Set.Insert
+public import Mathlib.Data.Set.Image
 
 @[expose] public section
 
@@ -64,5 +66,49 @@ theorem nsDomMod_alistToNs {M N V : Type} [DecidableEq M] (l : Alist N V) :
   cases path with
   | nil => simp [nsLookupMod]
   | cons mn rest => simp [alistToNs, nsLookupMod]
+
+/-- Flapjack infrastructure: a successful first-match lookup puts the found
+pair in the list. -/
+private theorem mem_of_lookup {K V : Type} [BEq K] [LawfulBEq K]
+    {l : List (K × V)} {k : K} {v : V} (found : l.lookup k = some v) : (k, v) ∈ l := by
+  obtain ⟨l₁, l₂, same, _⟩ :=
+    (List.lookup_eq_some_iff (l := l) (k := k) (b := v)).mp found
+  rw [same]
+  simp
+
+/-- Flapjack infrastructure: a listed key has some first-match lookup result. -/
+private theorem exists_lookup_of_mem {K V : Type} [BEq K] [LawfulBEq K]
+    {l : List (K × V)} {p : K × V} (mem : p ∈ l) : ∃ v, l.lookup p.1 = some v := by
+  induction l with
+  | nil => cases mem
+  | cons q l ih =>
+    rw [List.mem_cons] at mem
+    rcases mem with same | mem
+    · subst same
+      refine ⟨p.2, ?_⟩
+      rw [List.lookup_cons]
+      simp
+    · obtain ⟨v, found⟩ := ih mem
+      by_cases head : p.1 == q.1
+      · exact ⟨q.2, by simp [List.lookup, head]⟩
+      · exact ⟨v, by simp [List.lookup, head, found]⟩
+
+/-- Membership in an association-list namespace domain is exactly the short
+name of a listed entry. -/
+@[hol "cakeml/semantics/proofs/namespacePropsScript.sml" "nsDom_alist_to_ns"]
+theorem nsDom_alistToNs {M N V : Type} [DecidableEq M] [DecidableEq N] (l : Alist N V) :
+    nsDom (alistToNs l) =
+      Set.image (fun p : N × V => (.short p.1 : Ident M N)) {p | p ∈ l} := by
+  funext id
+  apply propext
+  change (∃ v, nsLookup (alistToNs l) id = some v) ↔
+    ∃ p, p ∈ l ∧ (.short p.1 : Ident M N) = id
+  constructor
+  · rintro ⟨v, found⟩
+    obtain ⟨x', same, lookupFound⟩ := (nsLookup_alistToNs_some l id v).mp found
+    exact ⟨(x', v), mem_of_lookup lookupFound, same.symm⟩
+  · rintro ⟨p, mem, same⟩
+    obtain ⟨v, lookupFound⟩ := exists_lookup_of_mem mem
+    exact ⟨v, (nsLookup_alistToNs_some l id v).mpr ⟨p.1, same.symm, lookupFound⟩⟩
 
 end Flapjack.NamespaceHOL

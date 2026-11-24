@@ -193,7 +193,9 @@ lookup (`nsLookup_alist_to_ns_some`, `nsLookup_alist_to_ns_none`), mapping
 (`nsLookup_FOLDR_nsLift`) are captured too. The singleton, optional-binding,
 lift-append and association-list relation laws (`nsAll2_nsSing`, `nsAll_nsOptBind`,
 `nsLookup_nsLift_append`, `nsAll2_alist_to_ns`, `nsAll2_nsBindList`) are also
-captured. The captures fix the independent
+captured. The restricted association-list relation (`alist_rel_restr_def`,
+`alist_rel_restr_thm`, `alistSub_def`, `alistSub_cong`), `nsLookup_to_nsLookupMod`
+and `nsDom_alist_to_ns` are captured too. The captures fix the independent
 module, name and value carriers and the binder order of each theorem; they are
 typed replays, not cross-language equivalence proofs.
 
