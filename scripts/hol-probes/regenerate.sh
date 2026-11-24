@@ -12545,6 +12545,10 @@ run_probe semantic_primitives_props_local_typed_probeScript.sml \
   exc_rel_type_error2_typed exc_rel_refl_typed exc_rel_trans_typed \
   result_rel_Rval_typed result_rel_Rerr1_typed result_rel_Rerr2_typed \
   result_rel_refl_typed result_rel_trans_typed \
+  map_sv_def_typed is_Refv_def_typed sv_every_def_typed \
+  store_v_vs_def_typed store_vs_def_typed map_sv_compose_typed \
+  sv_rel_refl_typed sv_rel_trans_typed with_same_v_typed \
+  unchanged_env_typed with_same_clock_typed Boolv_11_typed \
   "$cake_dir/semantics/proofs/semanticPrimitivesPropsScript.sml" \
   "$cake_dir/semantics/proofs"
 

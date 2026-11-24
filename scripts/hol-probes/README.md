@@ -151,10 +151,15 @@ cross-language equivalence.
 `semanticPrimitivesPropsTheory` theorems `exc_rel_raise1`, `exc_rel_raise2`,
 `exc_rel_type_error1`, `exc_rel_type_error2`, `exc_rel_refl`, `exc_rel_trans`,
 `result_rel_Rval`, `result_rel_Rerr1`, `result_rel_Rerr2`, `result_rel_refl`,
-and `result_rel_trans` with inferred types. These are exported declarations, so
-the capture is a typed replay rather than a local proof replay; it supports
-source review of the independent payload types, the abort identity, and the
-reflexivity/transitivity hypothesis shapes only.
+and `result_rel_trans` with inferred types. It also captures the store-entry
+operations `map_sv_def`, `is_Refv_def`, `sv_every_def`, `store_v_vs_def`,
+`store_vs_def`, `map_sv_compose`, `sv_rel_refl` and `sv_rel_trans`, and the
+opening record and Boolean-value laws `with_same_v`, `unchanged_env`,
+`with_same_clock` and `Boolv_11`. These are exported declarations, so the
+capture is a typed replay rather than a local proof replay; it supports source
+review of the independent payload types, the abort identity, the reflexivity and
+transitivity hypothesis shapes, the store-entry clause order, and the sem_env,
+state and Boolean-value carriers only.
 
 `data_to_word_gc_stack_probe.out` captures the typed original unchanged-pointer set and finiteness theorem, combined forwarding-map definition, and parsed local domain and application statements. These show that configuration and heap payload types are independent; the local parses do not replay their HOL proofs.
 

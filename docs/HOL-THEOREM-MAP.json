@@ -18759,6 +18759,102 @@
     "reviewer": "Compared result_rel_trans_typed in semantic_primitives_props_local_typed_probe.out: both transitive hypotheses are separate hypotheses with their conjunctive premises intact, and the conclusion keeps three independently quantified results with the conjunctive premise split into the two related hypotheses."
   },
 {
+    "hol_path": "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml",
+    "hol_name": "map_sv_def",
+    "lean_path": "Flapjack/SemanticPrimitivesProps/StoreValues.lean",
+    "lean_name": "mapStoreValue",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared map_sv_def_typed in semantic_primitives_props_local_typed_probe.out: the payload map goes from an independent source payload type to an independent target payload type, references and thunks map their payload, the byte-array arm keeps its word8 list, and the value-array arm uses MAP over the same payload list, in HOL's clause order."
+  },
+{
+    "hol_path": "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml",
+    "hol_name": "is_Refv_def",
+    "lean_path": "Flapjack/SemanticPrimitivesProps/StoreValues.lean",
+    "lean_name": "isRefv",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared is_Refv_def_typed in semantic_primitives_props_local_typed_probe.out: only the reference constructor returns T and the other three return F; the HOL bool result is rendered as Bool with the same clause order."
+  },
+{
+    "hol_path": "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml",
+    "hol_name": "sv_every_def",
+    "lean_path": "Flapjack/SemanticPrimitivesProps/StoreValues.lean",
+    "lean_name": "everyStoreValue",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared sv_every_def_typed in semantic_primitives_props_local_typed_probe.out: the reference, thunk and byte-array arms match; as for every_result_def the HOL bool result is rendered as Prop, and the value-array arm's EVERY fold is rendered as membership quantification over the same payload list, in HOL's clause order."
+  },
+{
+    "hol_path": "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml",
+    "hol_name": "store_v_vs_def",
+    "lean_path": "Flapjack/SemanticPrimitivesProps/StoreValues.lean",
+    "lean_name": "storeValueValues",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared store_v_vs_def_typed in semantic_primitives_props_local_typed_probe.out: references and thunks contribute a singleton payload list, value arrays contribute their payload list, and byte arrays contribute the empty list, in HOL's clause order."
+  },
+{
+    "hol_path": "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml",
+    "hol_name": "store_vs_def",
+    "lean_path": "Flapjack/SemanticPrimitivesProps/StoreValues.lean",
+    "lean_name": "storeValues",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared store_vs_def_typed in semantic_primitives_props_local_typed_probe.out: the store-entry list is mapped through the reviewed store_v_vs and concatenated with FLAT, over the same polymorphic payload type."
+  },
+{
+    "hol_path": "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml",
+    "hol_name": "map_sv_compose",
+    "lean_path": "Flapjack/SemanticPrimitivesProps/StoreValues.lean",
+    "lean_name": "mapStoreValue_compose",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared map_sv_compose_typed in semantic_primitives_props_local_typed_probe.out: mapping with f after mapping with g equals mapping once with HOL's composed function f o g, over the same three payload types and the same store entry."
+  },
+{
+    "hol_path": "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml",
+    "hol_name": "sv_rel_refl",
+    "lean_path": "Flapjack/SemanticPrimitivesProps/StoreRelation.lean",
+    "lean_name": "storeValueRel_refl",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared sv_rel_refl_typed in semantic_primitives_props_local_typed_probe.out: one reflexive hypothesis over a single payload type, the quantified store entry in HOL's binder order, and the value-array arm's LIST_REL reflexivity, established by induction over the same payload list."
+  },
+{
+    "hol_path": "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml",
+    "hol_name": "sv_rel_trans",
+    "lean_path": "Flapjack/SemanticPrimitivesProps/StoreRelation.lean",
+    "lean_name": "storeValueRel_trans",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared sv_rel_trans_typed in semantic_primitives_props_local_typed_probe.out: the transitive hypothesis keeps its conjunctive premise as one hypothesis, and the conclusion keeps three independently quantified store entries with the conjunctive premise split into the two related hypotheses; the thunk arm also needs the mode equality to be transitive."
+  },
+{
+    "hol_path": "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml",
+    "hol_name": "with_same_v",
+    "lean_path": "Flapjack/SemanticPrimitivesProps/Basic.lean",
+    "lean_name": "with_same_v",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared with_same_v_typed in semantic_primitives_props_local_typed_probe.out: rewriting an environment's value part with its own value part is the identity over the same polymorphic sem_env carrier."
+  },
+{
+    "hol_path": "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml",
+    "hol_name": "unchanged_env",
+    "lean_path": "Flapjack/SemanticPrimitivesProps/Basic.lean",
+    "lean_name": "unchanged_env",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared unchanged_env_typed in semantic_primitives_props_local_typed_probe.out: rebuilding the environment record from its own v and c fields is the identity over the same polymorphic sem_env carrier."
+  },
+{
+    "hol_path": "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml",
+    "hol_name": "with_same_clock",
+    "lean_path": "Flapjack/SemanticPrimitivesProps/Basic.lean",
+    "lean_name": "with_same_clock",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared with_same_clock_typed in semantic_primitives_props_local_typed_probe.out: rewriting the clock with the state's own clock is the identity; HOL's 'ffi state carrier is the Lean universe-0 State σ with the same clock field."
+  },
+{
+    "hol_path": "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml",
+    "hol_name": "Boolv_11",
+    "lean_path": "Flapjack/SemanticPrimitivesProps/Basic.lean",
+    "lean_name": "boolValue_eq_iff",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared Boolv_11_typed in semantic_primitives_props_local_typed_probe.out: the Boolean value encoding of semanticPrimitives' Boolv is injective; HOL's b1 = b2 on bool prints as b1 ⇔ b2 and Lean states Bool equality over the same boolValue encoding."
+  },
+{
     "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
     "hol_name": "compile_correct",
     "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/CompileCorrectShape.lean",

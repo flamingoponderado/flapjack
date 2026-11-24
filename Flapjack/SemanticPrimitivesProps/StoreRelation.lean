@@ -103,5 +103,47 @@ theorem storeValueRel_lookup_none {A B : Type} {R : A → B → Prop}
   rw [absent] at rel
   cases found : right[index]? <;> simp_all [Flapjack.optionRel]
 
+/-- Two related lists compose their element relation. -/
+private theorem forall₂_trans {α : Type} {R : α → α → Prop}
+    (trans : ∀ x y z, R x y ∧ R y z → R x z)
+    {xs ys zs : List α} (xy : List.Forall₂ R xs ys) (yz : List.Forall₂ R ys zs) :
+    List.Forall₂ R xs zs := by
+  induction xy generalizing zs with
+  | nil =>
+    cases yz
+    exact .nil
+  | cons head _ ih =>
+    cases yz with
+    | cons head' tail' => exact .cons (trans _ _ _ ⟨head, head'⟩) (ih tail')
+
+/-- A reflexive payload relation makes the store-entry relation reflexive. -/
+@[hol "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml" "sv_rel_refl"]
+theorem storeValueRel_refl {A : Type} (R : A → A → Prop) (x : StoreValue A)
+    (refl : ∀ y, R y y) : storeValueRel R x x := by
+  cases x with
+  | refv value => exact refl value
+  | w8array bytes => rfl
+  | varray values =>
+    induction values with
+    | nil => exact .nil
+    | cons head _ ih => exact .cons (refl head) ih
+  | thunk mode value => exact ⟨rfl, refl value⟩
+
+/-- A transitive payload relation makes the store-entry relation transitive. -/
+@[hol "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml" "sv_rel_trans"]
+theorem storeValueRel_trans {A : Type} (R : A → A → Prop)
+    (trans : ∀ x y z, R x y ∧ R y z → R x z) :
+    ∀ x y z : StoreValue A,
+      storeValueRel R x y ∧ storeValueRel R y z → storeValueRel R x z := by
+  intro x y z related
+  obtain ⟨xy, yz⟩ := related
+  cases x
+  all_goals cases y
+  all_goals cases z
+  all_goals first
+    | exact trans _ _ _ ⟨xy, yz⟩
+    | exact forall₂_trans trans xy yz
+    | exact ⟨xy.1.trans yz.1, trans _ _ _ ⟨xy.2, yz.2⟩⟩
+    | simp_all [storeValueRel]
 
 end Flapjack.SemanticPrimitivesProps

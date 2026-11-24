@@ -31,3 +31,17 @@ val _ = emit "result_rel_Rerr1_typed" "result_rel_Rerr1";
 val _ = emit "result_rel_Rerr2_typed" "result_rel_Rerr2";
 val _ = emit "result_rel_refl_typed" "result_rel_refl";
 val _ = emit "result_rel_trans_typed" "result_rel_trans";
+
+(* Store-entry operations and the opening record/Bool laws. *)
+val _ = emit "map_sv_def_typed" "map_sv_def";
+val _ = emit "is_Refv_def_typed" "is_Refv_def";
+val _ = emit "sv_every_def_typed" "sv_every_def";
+val _ = emit "store_v_vs_def_typed" "store_v_vs_def";
+val _ = emit "store_vs_def_typed" "store_vs_def";
+val _ = emit "map_sv_compose_typed" "map_sv_compose";
+val _ = emit "sv_rel_refl_typed" "sv_rel_refl";
+val _ = emit "sv_rel_trans_typed" "sv_rel_trans";
+val _ = emit "with_same_v_typed" "with_same_v";
+val _ = emit "unchanged_env_typed" "unchanged_env";
+val _ = emit "with_same_clock_typed" "with_same_clock";
+val _ = emit "Boolv_11_typed" "Boolv_11";
