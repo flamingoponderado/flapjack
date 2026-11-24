@@ -36,12 +36,7 @@ theorem evaluateFreshLocal_Store {width : Nat} {σ : Type} [NeZero width]
         (.store destination source) = (res, {post with locals := locals}) ∧
       (goodResHOL res = true ∧ res ≠ some .error →
         locals = post.locals.updateEq (name, value)) := by
-  classical
-  have hf : name ∉ varExpHOL destination ∧ name ∉ varExpHOL source := by
-    simpa only [freeVarIdsHOL, List.mem_append, not_or] using h.1
-  have hd := evalFreshUpdate state name value destination hf.1
-  have hs := evalFreshUpdate state name value source hf.2
-  have hev := h.2
+  panGlobalsFreshStoreIntro
   rw [evaluateHOLFiniteState_store] at hev
   refine ⟨post.locals.updateEq (name, value), ?_, fun _ => rfl⟩
   rw [evaluateHOLFiniteState_store, hd, hs]
@@ -66,12 +61,7 @@ theorem evaluateFreshLocal_Store32 {width : Nat} {σ : Type} [NeZero width]
         (.store32 destination source) = (res, {post with locals := locals}) ∧
       (goodResHOL res = true ∧ res ≠ some .error →
         locals = post.locals.updateEq (name, value)) := by
-  classical
-  have hf : name ∉ varExpHOL destination ∧ name ∉ varExpHOL source := by
-    simpa only [freeVarIdsHOL, List.mem_append, not_or] using h.1
-  have hd := evalFreshUpdate state name value destination hf.1
-  have hs := evalFreshUpdate state name value source hf.2
-  have hev := h.2
+  panGlobalsFreshStoreIntro
   rw [evaluateHOLFiniteState_store32] at hev
   refine ⟨post.locals.updateEq (name, value), ?_, fun _ => rfl⟩
   rw [evaluateHOLFiniteState_store32, hd, hs]
@@ -96,12 +86,7 @@ theorem evaluateFreshLocal_StoreByte {width : Nat} {σ : Type} [NeZero width]
         (.storeByte destination source) = (res, {post with locals := locals}) ∧
       (goodResHOL res = true ∧ res ≠ some .error →
         locals = post.locals.updateEq (name, value)) := by
-  classical
-  have hf : name ∉ varExpHOL destination ∧ name ∉ varExpHOL source := by
-    simpa only [freeVarIdsHOL, List.mem_append, not_or] using h.1
-  have hd := evalFreshUpdate state name value destination hf.1
-  have hs := evalFreshUpdate state name value source hf.2
-  have hev := h.2
+  panGlobalsFreshStoreIntro
   rw [evaluateHOLFiniteState_storeByte] at hev
   refine ⟨post.locals.updateEq (name, value), ?_, fun _ => rfl⟩
   rw [evaluateHOLFiniteState_storeByte, hd, hs]
