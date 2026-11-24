@@ -5,8 +5,7 @@ public import Flapjack.HolRef
 
 @[expose] public section
 
-set_option maxHeartbeats 12000000
-set_option maxRecDepth 10000
+set_option maxRecDepth 2000
 
 /-!
 # Mask algebra for the `BitfieldMove@64` shift-immediate forms
@@ -29,7 +28,8 @@ theorem decodeBitMasks_lsr (n : Nat) (hn : n < 64) :
       ((1 : BitVec 1), (BitVec.ofNat 6 63, (BitVec.ofNat 6 n, false))) =
       some (Replicate (holRotate (holPadLeft false 64 (Ones 64)) n),
         Replicate (holPadLeft false 64 (Ones (63 - n + 1)))) := by
-  interval_cases n <;> decide
+  interval_cases n
+  all_goals decide +kernel
 
 /-- The `Lsr`/`Asr` tmask word keeps exactly the low `64 - n` bits. -/
 theorem tmask_lsr_getLsbD (n i : Nat) (hn : n < 64) (hi : i < 64) :
@@ -68,7 +68,8 @@ leaves it unchanged. -/
 theorem wmask_lsr (n : Nat) (hn : n < 64) :
     Replicate (TN := 64) (holRotate (holPadLeft false 64 (Ones 64)) n) =
       BitVec.allOnes 64 := by
-  interval_cases n <;> decide
+  interval_cases n
+  all_goals decide +kernel
 
 /-- `arm8_targetProofScript.sml`'s `lsr`: masking the rotate right by the
 `Lsr` masks is the logical shift right. -/
@@ -138,14 +139,16 @@ theorem decodeBitMasks_lsl (n : Nat) (hn : n < 64) :
       some (Replicate (TN := 64)
           (holRotate (holPadLeft false 64 (Ones ((63 - n) % 64 + 1))) ((64 - n) % 64)),
         BitVec.allOnes 64) := by
-  interval_cases n <;> decide
+  interval_cases n
+  all_goals decide +kernel
 
 /-- The rendered `Lsl` wmask is `arm8LslMask`. -/
 theorem wmask_lsl_eq (n : Nat) (hn : n < 64) :
     Replicate (TN := 64)
         (holRotate (holPadLeft false 64 (Ones ((63 - n) % 64 + 1))) ((64 - n) % 64)) =
       arm8LslMask n := by
-  interval_cases n <;> decide
+  interval_cases n
+  all_goals decide +kernel
 
 /-- `arm8LslMask` keeps exactly the bits at positions `n` and above. -/
 theorem arm8LslMask_getLsbD (n i : Nat) (hn : n < 64) (hi : i < 64) :
@@ -229,7 +232,8 @@ theorem arm8LslMaskIdentity (n : Nat) (x wmask tmask : BitVec 64) (r q : BitVec 
     ((tmask &&& wmask) &&& x.rotateRight r.toNat) = x <<< n := by
   have hq' : q = BitVec.ofNat 6 ((63 - n) % 64) := by
     rw [hq, hr]
-    interval_cases n <;> decide
+    interval_cases n
+    all_goals decide +kernel
   have hrt : r.toNat = (64 - n) % 64 := by rw [hr, BitVec.toNat_ofNat]; norm_num
   rw [hq', hr] at hmasks
   rw [decodeBitMasks_lsl n hn] at hmasks

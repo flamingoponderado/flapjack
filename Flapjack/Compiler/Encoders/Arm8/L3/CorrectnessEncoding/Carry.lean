@@ -4,9 +4,6 @@ public import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Conditional
 
 @[expose] public section
 
-set_option maxHeartbeats 12000000
-set_option maxRecDepth 10000
-
 /-!
 # `AddSubCarry@64`
 

@@ -4,9 +4,6 @@ public import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.ShiftImmedi
 
 @[expose] public section
 
-set_option maxHeartbeats 12000000
-set_option maxRecDepth 10000
-
 /-!
 # `BitfieldMove@64`: the `.lsl`/`.lsr`/`.asr` immediate forms of `shift`
 

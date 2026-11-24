@@ -8,9 +8,6 @@ public import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.LogicalShif
 import all Init.Data.Sum.Basic
 @[expose] public section
 
-set_option maxHeartbeats 12000000
-set_option maxRecDepth 10000
-
 /-!
 # The `binop` immediate `and`/`or` constructors of `encoder_correct arm8TargetL3`
 
