@@ -1028,6 +1028,7 @@ import Flapjack.Compiler.Backend.ClosMti.Proofs.EvaluateRecursiveApplication
 import Flapjack.Compiler.Backend.ClosMti.Proofs.EvaluateAppExpression
 import Flapjack.Compiler.Backend.ClosMti.Proofs.EvaluateMutual
 import Flapjack.Compiler.Backend.ClosMti.Proofs.Semantics
+import Flapjack.Compiler.Backend.ClosMti.Proofs.Traversal
 import Flapjack.Compiler.Backend.ClosMti.Proofs.Syntactic
 import Flapjack.Compiler.Backend.ClosMti.Proofs.NoLabels
 import Flapjack.Compiler.Backend.ClosMti.Proofs.Arity
