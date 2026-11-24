@@ -145,11 +145,7 @@ private theorem adjustOracle_evaluate_Eval {Config F : Type} (ci : CompilerInsta
       have pair : (middle, .err error) = (next, result) := by
         rw [evaluate_eval_args_error state middle env args error argsRun] at source
         exact source
-      have innerSafe : (Result.err error : Result (List Value) Value) ≠ .err (.abort .typeError) := by
-        intro bad
-        apply safe
-        have h := congrArg Prod.snd pair
-        simpa [bad] using h.symm
+      have innerSafe := errNeTypeAbort pair safe
       obtain ⟨middleInserted, adjustedArgs⟩ := argsIH middle (.err error) ⟨argsRun, inserted, innerSafe⟩
       cases pair
       exact ⟨middleInserted, evaluate_eval_args_error _ _ env args error adjustedArgs⟩
@@ -212,11 +208,7 @@ private theorem adjustOracle_evaluate_AppSimple {Config F : Type} (ci : Compiler
     cases inner with
     | err error =>
       have pair : (middle, .err error) = (next, result) := by simpa [argsRun] using source
-      have innerSafe : (Result.err error : Result (List Value) Value) ≠ .err (.abort .typeError) := by
-        intro bad
-        apply safe
-        have h := congrArg Prod.snd pair
-        simpa [bad] using h.symm
+      have innerSafe := errNeTypeAbort pair safe
       obtain ⟨middleInserted, replacement⟩ := argsIH middle (.err error) ⟨argsRun, inserted, innerSafe⟩
       cases pair
       exact ⟨middleInserted, by simp [adjusted, replacement]⟩
@@ -264,11 +256,7 @@ private theorem adjustOracle_evaluate_AppFunction {Config F : Type} (ci : Compil
     cases inner with
     | err error =>
       have pair : (middle, .err error) = (next, result) := by simpa [argsRun] using source
-      have innerSafe : (Result.err error : Result (List Value) Value) ≠ .err (.abort .typeError) := by
-        intro bad
-        apply safe
-        have h := congrArg Prod.snd pair
-        simpa [bad] using h.symm
+      have innerSafe := errNeTypeAbort pair safe
       obtain ⟨middleInserted, replacement⟩ := argsIH middle (.err error) ⟨argsRun, inserted, innerSafe⟩
       cases pair
       exact ⟨middleInserted, by simp [adjusted, replacement]⟩
@@ -322,11 +310,7 @@ private theorem adjustOracle_evaluate_AppForce {Config F : Type} (ci : CompilerI
     cases inner with
     | err error =>
       have pair : (middle, .err error) = (next, result) := by simpa [argsRun] using source
-      have innerSafe : (Result.err error : Result (List Value) Value) ≠ .err (.abort .typeError) := by
-        intro bad
-        apply safe
-        have h := congrArg Prod.snd pair
-        simpa [bad] using h.symm
+      have innerSafe := errNeTypeAbort pair safe
       obtain ⟨middleInserted, replacement⟩ := argsIH middle (.err error) ⟨argsRun, inserted, innerSafe⟩
       cases pair
       exact ⟨middleInserted, by simp [adjusted, replacement]⟩

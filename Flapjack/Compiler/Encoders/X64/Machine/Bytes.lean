@@ -162,83 +162,57 @@ theorem parseRM_rip (r : Nat → BitVec 8) (off a : Nat)
 
 /-! ## Immediate read-back -/
 
+/-- FLAPJACK-SPECIFIC factoring (no HOL original): a 64-bit word whose
+`toInt` lies in the signed `w`-bit range has its low `w` bits sign-extend back
+to itself, for the three immediate widths. -/
+private theorem setWidth_toInt_of_bounds (imm : BitVec 64) (w : Nat)
+    (hw : w = 32 ∨ w = 16 ∨ w = 8)
+    (h1 : -(2^(w-1) : Int) ≤ imm.toInt) (h2 : imm.toInt < 2^(w-1)) :
+    (BitVec.setWidth w imm).toInt = imm.toInt := by
+  rcases hw with rfl | rfl | rfl
+  all_goals
+    rw [BitVec.toInt_setWidth, BitVec.toInt_eq_toNat_bmod]
+    by_cases hpos : 0 ≤ imm.toInt
+    · have hlt : 2 * imm.toNat < 2 ^ 64 := (BitVec.toInt_pos_iff).1 hpos
+      have heq : (imm.toNat : Int) = imm.toInt := (BitVec.toInt_eq_toNat_of_lt hlt).symm
+      rw [heq, Int.bmod_def, Int.bmod_def]
+      norm_num
+      omega
+    · have hge : ¬ (2 * imm.toNat < 2^64) := by
+        intro hc
+        have h : (0:Int) ≤ imm.toInt := by
+          rw [BitVec.toInt_eq_toNat_of_lt hc]
+          exact Int.natCast_nonneg _
+        omega
+      have hcond := BitVec.toInt_eq_toNat_cond imm
+      simp only [hge, if_false] at hcond
+      have heq : (imm.toNat : Int) = imm.toInt + 2^64 := by
+        have h : (↑(2^64) : Int) = 18446744073709551616 := by norm_num
+        omega
+      rw [heq, Int.bmod_def, Int.bmod_def]
+      norm_num
+      omega
+
 /-- A 64-bit word whose `toInt` lies in the signed 32-bit range has its low 32
 bits sign-extend back to itself. -/
 theorem setWidth32_toInt (imm : BitVec 64)
     (h1 : -(2^31 : Int) ≤ imm.toInt) (h2 : imm.toInt < 2^31) :
-    (BitVec.setWidth 32 imm).toInt = imm.toInt := by
-  rw [BitVec.toInt_setWidth, BitVec.toInt_eq_toNat_bmod]
-  by_cases hpos : 0 ≤ imm.toInt
-  · have hlt : 2 * imm.toNat < 2 ^ 64 := (BitVec.toInt_pos_iff).1 hpos
-    have heq : (imm.toNat : Int) = imm.toInt := (BitVec.toInt_eq_toNat_of_lt hlt).symm
-    rw [heq, Int.bmod_def, Int.bmod_def]
-    norm_num
-    omega
-  · have hge : ¬ (2 * imm.toNat < 2^64) := by
-      intro hc
-      have h : (0:Int) ≤ imm.toInt := by
-        rw [BitVec.toInt_eq_toNat_of_lt hc]; exact Int.natCast_nonneg _
-      omega
-    have hcond := BitVec.toInt_eq_toNat_cond imm
-    simp only [hge, if_false] at hcond
-    have heq : (imm.toNat : Int) = imm.toInt + 2^64 := by
-      have h : (↑(2^64) : Int) = 18446744073709551616 := by norm_num
-      omega
-    rw [heq, Int.bmod_def, Int.bmod_def]
-    norm_num
-    omega
+    (BitVec.setWidth 32 imm).toInt = imm.toInt :=
+  setWidth_toInt_of_bounds imm 32 (Or.inl rfl) h1 h2
 
 /-- A 64-bit word whose `toInt` lies in the signed 16-bit range has its low 16
 bits sign-extend back to itself. -/
 theorem setWidth16_toInt (imm : BitVec 64)
     (h1 : -(2^15 : Int) ≤ imm.toInt) (h2 : imm.toInt < 2^15) :
-    (BitVec.setWidth 16 imm).toInt = imm.toInt := by
-  rw [BitVec.toInt_setWidth, BitVec.toInt_eq_toNat_bmod]
-  by_cases hpos : 0 ≤ imm.toInt
-  · have hlt : 2 * imm.toNat < 2 ^ 64 := (BitVec.toInt_pos_iff).1 hpos
-    have heq : (imm.toNat : Int) = imm.toInt := (BitVec.toInt_eq_toNat_of_lt hlt).symm
-    rw [heq, Int.bmod_def, Int.bmod_def]
-    norm_num
-    omega
-  · have hge : ¬ (2 * imm.toNat < 2^64) := by
-      intro hc
-      have h : (0:Int) ≤ imm.toInt := by
-        rw [BitVec.toInt_eq_toNat_of_lt hc]; exact Int.natCast_nonneg _
-      omega
-    have hcond := BitVec.toInt_eq_toNat_cond imm
-    simp only [hge, if_false] at hcond
-    have heq : (imm.toNat : Int) = imm.toInt + 2^64 := by
-      have h : (↑(2^64) : Int) = 18446744073709551616 := by norm_num
-      omega
-    rw [heq, Int.bmod_def, Int.bmod_def]
-    norm_num
-    omega
+    (BitVec.setWidth 16 imm).toInt = imm.toInt :=
+  setWidth_toInt_of_bounds imm 16 (Or.inr (Or.inl rfl)) h1 h2
 
 /-- A 64-bit word whose `toInt` lies in the signed 8-bit range has its low 8
 bits sign-extend back to itself. -/
 theorem setWidth8_toInt (imm : BitVec 64)
     (h1 : -(2^7 : Int) ≤ imm.toInt) (h2 : imm.toInt < 2^7) :
-    (BitVec.setWidth 8 imm).toInt = imm.toInt := by
-  rw [BitVec.toInt_setWidth, BitVec.toInt_eq_toNat_bmod]
-  by_cases hpos : 0 ≤ imm.toInt
-  · have hlt : 2 * imm.toNat < 2 ^ 64 := (BitVec.toInt_pos_iff).1 hpos
-    have heq : (imm.toNat : Int) = imm.toInt := (BitVec.toInt_eq_toNat_of_lt hlt).symm
-    rw [heq, Int.bmod_def, Int.bmod_def]
-    norm_num
-    omega
-  · have hge : ¬ (2 * imm.toNat < 2^64) := by
-      intro hc
-      have h : (0:Int) ≤ imm.toInt := by
-        rw [BitVec.toInt_eq_toNat_of_lt hc]; exact Int.natCast_nonneg _
-      omega
-    have hcond := BitVec.toInt_eq_toNat_cond imm
-    simp only [hge, if_false] at hcond
-    have heq : (imm.toNat : Int) = imm.toInt + 2^64 := by
-      have h : (↑(2^64) : Int) = 18446744073709551616 := by norm_num
-      omega
-    rw [heq, Int.bmod_def, Int.bmod_def]
-    norm_num
-    omega
+    (BitVec.setWidth 8 imm).toInt = imm.toInt :=
+  setWidth_toInt_of_bounds imm 8 (Or.inr (Or.inr rfl)) h1 h2
 
 /-- A byte literal of a word's low eight bits is the word truncated to eight bits. -/
 theorem byte_eq_setWidth8 (disp : BitVec 64) :

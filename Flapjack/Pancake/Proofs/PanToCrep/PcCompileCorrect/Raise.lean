@@ -208,12 +208,8 @@ theorem pcCompileCorrect_Raise {width : Nat} {σ : Type} [NeZero width] :
                    globalsLookupHOL t1 v' = some (flattenHOL v') ∧
                      sizeOfShapeHOL (shapeOfHOLExact v') ≤ 32))
         | some (.finalFfi f) => res1 = some (.finalFfi f) := by
-  intro eid e s res s1 t ctxt ⟨hrun, hres, hstate, hcode, hexcp, hlocals, hloc⟩
-  obtain ⟨res1, t1, h1, h2, h3, h4, h5⟩ :=
-    pcCompileCorrectAt_raise eid e s res s1 t ctxt hrun hres hstate hcode hexcp hlocals hloc
-  refine ⟨res1, t1, h1, h2, h3, h4, ?_⟩
-  rcases res with _ | r
-  · exact h5
-  · cases r <;> exact h5
+  intro eid e s
+  exact (pcCompileCorrectAt_iff_HOL (.raise eid e) s).mp
+    (pcCompileCorrectAt_raise eid e s)
 
 end Flapjack

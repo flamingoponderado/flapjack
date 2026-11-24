@@ -58,8 +58,7 @@ theorem compileCorrect_Dec {width : Nat} {σ : Type} [NeZero width]
   cases hi : @evalHOLExact width σ _ source.toExact
       (fun a => Classical.propDecidable (source.memaddrs a)) initializer with
   | none =>
-    simp only [hi] at hev
-    exact False.elim (hne (Prod.mk.inj hev).1.symm)
+    exact errorPairImpossible (by simpa only [hi] using hev) hne
   | some value =>
     simp only [hi] at hev
     by_cases hs : shapeEqHOL shape (shapeOfHOLExact value) = true
@@ -88,7 +87,6 @@ theorem compileCorrect_Dec {width : Nat} {σ : Type} [NeZero width]
           htinitExact, hs, ite_true, htBody]
       · exact PanGlobalsCompileCorrectResVar.stateRelResVar (goodResHOL bodyRes)
           context bodyPost targetBodyPost source target name name ⟨hpostRel, hrel⟩
-    · simp only [hs, Bool.false_eq_true, ite_false] at hev
-      exact False.elim (hne (Prod.mk.inj hev).1.symm)
+    · exact errorPairImpossible (by simpa only [hs, Bool.false_eq_true, ite_false] using hev) hne
 
 end Flapjack.PanGlobalsCompileCorrectDec

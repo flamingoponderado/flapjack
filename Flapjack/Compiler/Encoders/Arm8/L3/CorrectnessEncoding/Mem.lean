@@ -1228,16 +1228,22 @@ theorem arm8Mem_four_of_bytes (ms : arm8_state) (address : BitVec 64)
     (m (address + BitVec.ofNat 64 2)) (m (address + BitVec.ofNat 64 3))
     h0 (hbytes 1 (by omega)) (hbytes 2 (by omega)) (hbytes 3 (by omega)) hal he0 hel
 
+/-- A register number below 32 and different from 31 is not the five-bit
+scratch encoding 31. Shared by the `X` and `«write'X»` width lemmas; Flapjack
+proof infrastructure, with no separately named HOL declaration. -/
+private theorem ofNat5_ne_31 {n : Nat} (hn : n ≠ 31) (hlt : n < 32) :
+    BitVec.ofNat 5 n ≠ 31#5 := by
+  intro hh
+  have hto := congrArg BitVec.toNat hh
+  rw [BitVec.toNat_ofNat] at hto
+  have h31 : (31#5).toNat = 31 := by decide
+  rw [h31] at hto
+  have hn32 : n % 2 ^ 5 = n := Nat.mod_eq_of_lt (by omega)
+  omega
+
 theorem arm8X32_of_valid (ms : arm8_state) {n : Nat} (hn : n ≠ 31) (hlt : n < 32) :
     X (TN := 32) (BitVec.ofNat 5 n) ms = BitVec.setWidth 32 (ms.REG (BitVec.ofNat 5 n)) := by
-  have hne : BitVec.ofNat 5 n ≠ 31#5 := by
-    intro hh
-    have hto := congrArg BitVec.toNat hh
-    rw [BitVec.toNat_ofNat] at hto
-    have h31 : (31#5).toNat = 31 := by decide
-    rw [h31] at hto
-    have hn32 : n % 2 ^ 5 = n := Nat.mod_eq_of_lt (by omega)
-    omega
+  have hne := ofNat5_ne_31 hn hlt
   simp only [X]
   split
   · exact absurd (by simpa using ‹(BitVec.ofNat 5 n == 31#5) = true›) hne
@@ -1247,14 +1253,7 @@ theorem arm8WriteX32_of_valid (s : arm8_state) (v : BitVec 32) {n : Nat}
     (hn : n ≠ 31) (hlt : n < 32) :
     «write'X» (TN := 32) (v, BitVec.ofNat 5 n) s =
       { s with REG := holUpdate (BitVec.ofNat 5 n) (BitVec.setWidth 64 v) s.REG } := by
-  have hne : BitVec.ofNat 5 n ≠ 31#5 := by
-    intro hh
-    have hto := congrArg BitVec.toNat hh
-    rw [BitVec.toNat_ofNat] at hto
-    have h31 : (31#5).toNat = 31 := by decide
-    rw [h31] at hto
-    have hn32 : n % 2 ^ 5 = n := Nat.mod_eq_of_lt (by omega)
-    omega
+  have hne := ofNat5_ne_31 hn hlt
   have hcond : (!(BitVec.ofNat 5 n == 31#5)) = true := by
     cases hb : (BitVec.ofNat 5 n == 31#5)
     · rfl
@@ -1849,14 +1848,7 @@ theorem arm8Run_loadStoreImmediate_store8 (ms : arm8_state) (offset : BitVec 64)
 
 theorem arm8X8_of_valid (ms : arm8_state) {n : Nat} (hn : n ≠ 31) (hlt : n < 32) :
     X (TN := 8) (BitVec.ofNat 5 n) ms = BitVec.setWidth 8 (ms.REG (BitVec.ofNat 5 n)) := by
-  have hne : BitVec.ofNat 5 n ≠ 31#5 := by
-    intro hh
-    have hto := congrArg BitVec.toNat hh
-    rw [BitVec.toNat_ofNat] at hto
-    have h31 : (31#5).toNat = 31 := by decide
-    rw [h31] at hto
-    have hn32 : n % 2 ^ 5 = n := Nat.mod_eq_of_lt (by omega)
-    omega
+  have hne := ofNat5_ne_31 hn hlt
   simp only [X]
   split
   · exact absurd (by simpa using ‹(BitVec.ofNat 5 n == 31#5) = true›) hne
@@ -2290,14 +2282,7 @@ theorem arm8Run_loadStoreImmediate_store16 (ms : arm8_state) (offset : BitVec 64
 
 theorem arm8X16_of_valid (ms : arm8_state) {n : Nat} (hn : n ≠ 31) (hlt : n < 32) :
     X (TN := 16) (BitVec.ofNat 5 n) ms = BitVec.setWidth 16 (ms.REG (BitVec.ofNat 5 n)) := by
-  have hne : BitVec.ofNat 5 n ≠ 31#5 := by
-    intro hh
-    have hto := congrArg BitVec.toNat hh
-    rw [BitVec.toNat_ofNat] at hto
-    have h31 : (31#5).toNat = 31 := by decide
-    rw [h31] at hto
-    have hn32 : n % 2 ^ 5 = n := Nat.mod_eq_of_lt (by omega)
-    omega
+  have hne := ofNat5_ne_31 hn hlt
   simp only [X]
   split
   · exact absurd (by simpa using ‹(BitVec.ofNat 5 n == 31#5) = true›) hne

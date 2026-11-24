@@ -29,6 +29,39 @@ theorem evaluate_int_pair {C F : Type} (op : ClosLang.IntOp) (x y : Bvl.Exp) (en
       cases h2 : evaluateTuple ([y], env, s1) with
       | mk yr s2 => cases yr <;> (simp [h2]; try rfl)
 
+/-- Shared proof script for the six two-operand integer rearrangements, used by
+`evaluate_add_add_add`, `evaluate_add_add_sub`, `evaluate_add_sub_add`,
+`evaluate_sub_add_add`, `evaluate_sub_add_sub` and `evaluate_sub_sub_add`
+(Flapjack proof infrastructure). -/
+local macro "bvlconst_arith_both" x:ident y:ident env:ident state:ident run:ident : tactic =>
+  `(tactic| (
+  cases hx : evaluateTuple ([$x], $env, $state) with
+  | mk xr s1 =>
+    cases xr with
+    | err error => simpa [evaluate_int_pair, evaluate_intConst, hx] using $run
+    | val values =>
+      obtain ⟨v, hv⟩ := evaluateSing $x $env $state values s1 hx
+      subst hv
+      cases v with
+      | number a =>
+        cases hy : evaluateTuple ([$y], $env, s1) with
+        | mk yr s2 =>
+          cases yr with
+          | err error =>
+            simpa [evaluate_int_pair, evaluate_intConst, hx, hy, Flapjack.holHd,
+              doApp, applyNumeric, doIntApp] using $run
+          | val values =>
+            obtain ⟨v, hv⟩ := evaluateSing $y $env s1 values s2 hy
+            subst hv
+            cases v
+            all_goals rw [← $run]
+            all_goals simp [evaluate_int_pair, evaluate_intConst, hx, hy,
+              Flapjack.holHd, doApp, applyNumeric, doIntApp]
+            all_goals omega
+      | _ =>
+        simp_all [evaluate_int_pair, evaluate_intConst, Flapjack.holHd, doApp,
+          applyNumeric, doIntApp]))
+
 /-- This Flapjack helper derives the corresponding arithmetic rearrangement from a non-type-error evaluation, including all state effects. -/
 theorem evaluate_add_add_add {C F : Type} (x y : Bvl.Exp) (m n : Int)
     (env : List Value) (state final : State C F)
@@ -39,25 +72,7 @@ theorem evaluate_add_add_add {C F : Type} (x y : Bvl.Exp) (m n : Int)
     (notTypeError : result ≠ .err (.abort .typeError)) :
     evaluateTuple ([.op (.intOp .add) [.op (.intOp .add) [x, y],
       .op (.intOp (.const (n + m))) []]], env, state) = (result, final) := by
-  cases hx : evaluateTuple ([x], env, state) with
-  | mk xr s1 =>
-    cases xr with
-    | err error => simpa [evaluate_int_pair, evaluate_intConst, hx] using run
-    | val values =>
-      obtain ⟨v, rfl⟩ := evaluateSing x env state values s1 hx
-      cases v with
-      | number a =>
-        cases hy : evaluateTuple ([y], env, s1) with
-        | mk yr s2 =>
-          cases yr with
-          | err error => simpa [evaluate_int_pair, evaluate_intConst, hx, hy, Flapjack.holHd, doApp, applyNumeric, doIntApp] using run
-          | val values =>
-            obtain ⟨v, rfl⟩ := evaluateSing y env s1 values s2 hy
-            cases v <;> simp [evaluate_int_pair, evaluate_intConst, hx, hy, Flapjack.holHd, doApp, applyNumeric, doIntApp] at run ⊢
-            all_goals simp_all [Int.add_comm, Int.add_left_comm]
-      | _ =>
-        simp [evaluate_int_pair, evaluate_intConst, hx, Flapjack.holHd, doApp, applyNumeric, doIntApp] at run
-        exact False.elim (notTypeError run.1.symm)
+  bvlconst_arith_both x y env state run
 /-- This Flapjack helper derives the corresponding arithmetic rearrangement from a non-type-error evaluation, including all state effects. -/
 theorem evaluate_add_add_sub {C F : Type} (x y : Bvl.Exp) (m n : Int)
     (env : List Value) (state final : State C F)
@@ -68,30 +83,7 @@ theorem evaluate_add_add_sub {C F : Type} (x y : Bvl.Exp) (m n : Int)
     (notTypeError : result ≠ .err (.abort .typeError)) :
     evaluateTuple ([.op (.intOp .sub) [.op (.intOp .sub) [x, y],
       .op (.intOp (.const (n + m))) []]], env, state) = (result, final) := by
-  cases hx : evaluateTuple ([x], env, state) with
-  | mk xr s1 =>
-    cases xr with
-    | err error => simpa [evaluate_int_pair, evaluate_intConst, hx] using run
-    | val values =>
-      obtain ⟨v, rfl⟩ := evaluateSing x env state values s1 hx
-      cases v with
-      | number a =>
-        cases hy : evaluateTuple ([y], env, s1) with
-        | mk yr s2 =>
-          cases yr with
-          | err error => simpa [evaluate_int_pair, evaluate_intConst, hx, hy, Flapjack.holHd, doApp, applyNumeric, doIntApp] using run
-          | val values =>
-            obtain ⟨v, rfl⟩ := evaluateSing y env s1 values s2 hy
-            cases v <;> simp [evaluate_int_pair, evaluate_intConst, hx, hy, Flapjack.holHd, doApp, applyNumeric, doIntApp] at run ⊢
-            all_goals try exact run
-            all_goals constructor
-            all_goals try exact run.2
-            all_goals rw [← run.1]
-            all_goals congr 3
-            all_goals omega
-      | _ =>
-        simp [evaluate_int_pair, evaluate_intConst, hx, Flapjack.holHd, doApp, applyNumeric, doIntApp] at run
-        exact False.elim (notTypeError run.1.symm)
+  bvlconst_arith_both x y env state run
 
 /-- This Flapjack helper derives the corresponding arithmetic rearrangement from a non-type-error evaluation, including all state effects. -/
 theorem evaluate_add_sub_add {C F : Type} (x y : Bvl.Exp) (m n : Int)
@@ -103,30 +95,7 @@ theorem evaluate_add_sub_add {C F : Type} (x y : Bvl.Exp) (m n : Int)
     (notTypeError : result ≠ .err (.abort .typeError)) :
     evaluateTuple ([.op (.intOp .add) [.op (.intOp .sub) [x, y],
       .op (.intOp (.const (n + m))) []]], env, state) = (result, final) := by
-  cases hx : evaluateTuple ([x], env, state) with
-  | mk xr s1 =>
-    cases xr with
-    | err error => simpa [evaluate_int_pair, evaluate_intConst, hx] using run
-    | val values =>
-      obtain ⟨v, rfl⟩ := evaluateSing x env state values s1 hx
-      cases v with
-      | number a =>
-        cases hy : evaluateTuple ([y], env, s1) with
-        | mk yr s2 =>
-          cases yr with
-          | err error => simpa [evaluate_int_pair, evaluate_intConst, hx, hy, Flapjack.holHd, doApp, applyNumeric, doIntApp] using run
-          | val values =>
-            obtain ⟨v, rfl⟩ := evaluateSing y env s1 values s2 hy
-            cases v <;> simp [evaluate_int_pair, evaluate_intConst, hx, hy, Flapjack.holHd, doApp, applyNumeric, doIntApp] at run ⊢
-            all_goals try exact run
-            all_goals constructor
-            all_goals try exact run.2
-            all_goals rw [← run.1]
-            all_goals congr 3
-            all_goals omega
-      | _ =>
-        simp [evaluate_int_pair, evaluate_intConst, hx, Flapjack.holHd, doApp, applyNumeric, doIntApp] at run
-        exact False.elim (notTypeError run.1.symm)
+  bvlconst_arith_both x y env state run
 
 /-- This Flapjack helper derives the corresponding arithmetic rearrangement from a non-type-error evaluation, including all state effects. -/
 theorem evaluate_sub_add_add {C F : Type} (x y : Bvl.Exp) (m n : Int)
@@ -138,30 +107,7 @@ theorem evaluate_sub_add_add {C F : Type} (x y : Bvl.Exp) (m n : Int)
     (notTypeError : result ≠ .err (.abort .typeError)) :
     evaluateTuple ([.op (.intOp .add) [.op (.intOp .sub) [x, y],
       .op (.intOp (.const (n - m))) []]], env, state) = (result, final) := by
-  cases hx : evaluateTuple ([x], env, state) with
-  | mk xr s1 =>
-    cases xr with
-    | err error => simpa [evaluate_int_pair, evaluate_intConst, hx] using run
-    | val values =>
-      obtain ⟨v, rfl⟩ := evaluateSing x env state values s1 hx
-      cases v with
-      | number a =>
-        cases hy : evaluateTuple ([y], env, s1) with
-        | mk yr s2 =>
-          cases yr with
-          | err error => simpa [evaluate_int_pair, evaluate_intConst, hx, hy, Flapjack.holHd, doApp, applyNumeric, doIntApp] using run
-          | val values =>
-            obtain ⟨v, rfl⟩ := evaluateSing y env s1 values s2 hy
-            cases v <;> simp [evaluate_int_pair, evaluate_intConst, hx, hy, Flapjack.holHd, doApp, applyNumeric, doIntApp] at run ⊢
-            all_goals try exact run
-            all_goals constructor
-            all_goals try exact run.2
-            all_goals rw [← run.1]
-            all_goals congr 3
-            all_goals omega
-      | _ =>
-        simp [evaluate_int_pair, evaluate_intConst, hx, Flapjack.holHd, doApp, applyNumeric, doIntApp] at run
-        exact False.elim (notTypeError run.1.symm)
+  bvlconst_arith_both x y env state run
 
 /-- This Flapjack helper derives the corresponding arithmetic rearrangement from a non-type-error evaluation, including all state effects. -/
 theorem evaluate_sub_add_sub {C F : Type} (x y : Bvl.Exp) (m n : Int)
@@ -173,30 +119,7 @@ theorem evaluate_sub_add_sub {C F : Type} (x y : Bvl.Exp) (m n : Int)
     (notTypeError : result ≠ .err (.abort .typeError)) :
     evaluateTuple ([.op (.intOp .sub) [.op (.intOp .add) [x, y],
       .op (.intOp (.const (n - m))) []]], env, state) = (result, final) := by
-  cases hx : evaluateTuple ([x], env, state) with
-  | mk xr s1 =>
-    cases xr with
-    | err error => simpa [evaluate_int_pair, evaluate_intConst, hx] using run
-    | val values =>
-      obtain ⟨v, rfl⟩ := evaluateSing x env state values s1 hx
-      cases v with
-      | number a =>
-        cases hy : evaluateTuple ([y], env, s1) with
-        | mk yr s2 =>
-          cases yr with
-          | err error => simpa [evaluate_int_pair, evaluate_intConst, hx, hy, Flapjack.holHd, doApp, applyNumeric, doIntApp] using run
-          | val values =>
-            obtain ⟨v, rfl⟩ := evaluateSing y env s1 values s2 hy
-            cases v <;> simp [evaluate_int_pair, evaluate_intConst, hx, hy, Flapjack.holHd, doApp, applyNumeric, doIntApp] at run ⊢
-            all_goals try exact run
-            all_goals constructor
-            all_goals try exact run.2
-            all_goals rw [← run.1]
-            all_goals congr 3
-            all_goals omega
-      | _ =>
-        simp [evaluate_int_pair, evaluate_intConst, hx, Flapjack.holHd, doApp, applyNumeric, doIntApp] at run
-        exact False.elim (notTypeError run.1.symm)
+  bvlconst_arith_both x y env state run
 
 /-- This Flapjack helper derives the corresponding arithmetic rearrangement from a non-type-error evaluation, including all state effects. -/
 theorem evaluate_sub_sub_add {C F : Type} (x y : Bvl.Exp) (m n : Int)
@@ -208,30 +131,7 @@ theorem evaluate_sub_sub_add {C F : Type} (x y : Bvl.Exp) (m n : Int)
     (notTypeError : result ≠ .err (.abort .typeError)) :
     evaluateTuple ([.op (.intOp .add) [.op (.intOp .add) [x, y],
       .op (.intOp (.const (n - m))) []]], env, state) = (result, final) := by
-  cases hx : evaluateTuple ([x], env, state) with
-  | mk xr s1 =>
-    cases xr with
-    | err error => simpa [evaluate_int_pair, evaluate_intConst, hx] using run
-    | val values =>
-      obtain ⟨v, rfl⟩ := evaluateSing x env state values s1 hx
-      cases v with
-      | number a =>
-        cases hy : evaluateTuple ([y], env, s1) with
-        | mk yr s2 =>
-          cases yr with
-          | err error => simpa [evaluate_int_pair, evaluate_intConst, hx, hy, Flapjack.holHd, doApp, applyNumeric, doIntApp] using run
-          | val values =>
-            obtain ⟨v, rfl⟩ := evaluateSing y env s1 values s2 hy
-            cases v <;> simp [evaluate_int_pair, evaluate_intConst, hx, hy, Flapjack.holHd, doApp, applyNumeric, doIntApp] at run ⊢
-            all_goals try exact run
-            all_goals constructor
-            all_goals try exact run.2
-            all_goals rw [← run.1]
-            all_goals congr 3
-            all_goals omega
-      | _ =>
-        simp [evaluate_int_pair, evaluate_intConst, hx, Flapjack.holHd, doApp, applyNumeric, doIntApp] at run
-        exact False.elim (notTypeError run.1.symm)
+  bvlconst_arith_both x y env state run
 namespace BothCarrier
 /-- Canonical BVL reference-map state representation roundtrip. -/
 theorem holFmapAsFiniteSupportWitness {C F : Type} :

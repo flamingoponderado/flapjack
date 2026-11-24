@@ -62,22 +62,16 @@ theorem fromNumSetHOL_set {α : Type} (tree : Spt α) :
   ext key
   constructor
   · intro hmem
-    have hkeys : key ∈ (sptToAList tree).map Prod.fst := by
-      simpa [fromNumSetHOL] using hmem
-    have hsome := sptLookup_isSome_sptFromAList_of_mem_fst key
-      (sptToAList tree) hkeys
+    have hsome := sptLookup_isSome_sptFromAList_of_mem_fst key (sptToAList tree)
+      (by simpa [fromNumSetHOL] using hmem)
     rw [sptLookup_sptFromAList_sptToAList] at hsome
     exact hsome
   · intro hmem
-    change sptMem key tree at hmem
-    rw [sptMem_iff_lookup] at hmem
-    obtain ⟨value, hlookup⟩ := hmem
-    have hfold := sptFoldi_lookup_mem tree 0 [] key value hlookup
+    obtain ⟨value, hlookup⟩ := (sptMem_iff_lookup key tree).mp hmem
     have hpair : (key, value) ∈ sptToAList tree := by
-      simpa [sptToAList, sptAcc_eq, lrNext] using hfold
-    have hkeys : key ∈ (sptToAList tree).map Prod.fst := by
-      exact List.mem_map.mpr ⟨(key, value), hpair, rfl⟩
-    simpa [fromNumSetHOL] using hkeys
+      simpa [sptToAList, sptAcc_eq, lrNext] using
+        sptFoldi_lookup_mem tree 0 [] key value hlookup
+    exact List.mem_map.mpr ⟨(key, value), hpair, rfl⟩
 
 /-- Exact HOL `domain_toNumSet`: inserting every list member into an empty
 Spt gives a domain equal to the list's set, including duplicate names. -/

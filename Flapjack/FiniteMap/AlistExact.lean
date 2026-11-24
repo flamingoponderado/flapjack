@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Pancake.Semantics.CrepSem.HOLState
+public import Flapjack.FiniteMap.AlistExact.Lookup
 
 @[expose] public section
 
@@ -40,6 +41,22 @@ theorem lookup_alistToFmap_tail {α β : Type} (entry : α × β)
     (alistToFmap (entry :: entries)).lookup key = (alistToFmap entries).lookup key := by
   classical
   simp [alistToFmap, FUPDATE_LIST_HOL, List.foldl_append, FUPDATE_HOL, different]
+
+/-- Flapjack infrastructure: lookup in the canonical association-list map agrees
+with HOL `ALOOKUP`. Shared by the `clos_call` and `clos_to_bvl` ports; no
+separate HOL declaration is claimed. -/
+theorem alistToFmap_lookup_eq_holALookup {V : Type} (entries : List (Nat × V)) (key : Nat) :
+    (alistToFmap entries).lookup key = holALookup entries key := by
+  induction entries with
+  | nil => simp [alistToFmap, HolFiniteMapExact.empty, holALookup]
+  | cons entry rest ih =>
+    obtain ⟨k, v⟩ := entry
+    by_cases eq : key = k
+    · subst key
+      rw [HolFiniteMapExact.lookup_alistToFmap_head (k, v) rest]
+      simp [holALookup]
+    · rw [HolFiniteMapExact.lookup_alistToFmap_tail (k, v) rest key eq]
+      simpa [holALookup, eq] using ih
 
 /-- A successful lookup in `alistToFmap` identifies an association listed in the
     source list. Flapjack local support for HOL `ALOOKUP_MEM` (`alistScript.sml`),

@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Compiler.Backend.ClosKnown.Fuel
 public import Flapjack.Misc.Sptree.InsertProperty
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.ApproxGeneric
 public import Flapjack.Compiler.Backend.Semantics.ClosProps.Syntactic.LabelsAndArity
 
 @[expose] public section
@@ -37,22 +38,29 @@ theorem valApproxNoLabelsSimp :
 def globalsApproxNoLabels (g : Spt ValApprox) : Prop :=
   ∀ n a, sptLookup n g = some a → valApproxNoLabels a
 
+/-- `valApproxNoLabels` agrees with the parameterised invariant of the four
+source approximation predicates. -/
+private theorem valApproxNoLabels_iff (a : ValApprox) :
+    valApproxNoLabels a ↔ valApproxAll noLabels a := by
+  induction a using (measure (fun a : ValApprox => sizeOf a)).wf.induction with
+  | h a ih =>
+    cases a with
+    | clos loc arity body size => simp [valApproxNoLabels, valApproxAll]
+    | tuple tag xs =>
+      simp only [valApproxNoLabels, valApproxAll]
+      exact ⟨fun h v hv => (ih v (sizeOf_lt_of_mem_tuple hv)).mp (h v hv),
+             fun h v hv => (ih v (sizeOf_lt_of_mem_tuple hv)).mpr (h v hv)⟩
+    | _ => simp [valApproxNoLabels, valApproxAll]
+
 /-- Merging approximations preserves their label-free invariant. -/
 @[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "val_approx_no_Labels_merge"]
 theorem valApproxNoLabelsMerge (a b : ValApprox)
     (safe : valApproxNoLabels a ∧ valApproxNoLabels b) :
     valApproxNoLabels (mergeHOL a b) := by
   obtain ⟨ha, hb⟩ := safe
-  induction a using (measure (fun a : ValApprox => sizeOf a)).wf.induction generalizing b with
-  | h a ih =>
-    cases a <;> cases b <;> simp_all [mergeHOL, valApproxNoLabels]
-    all_goals split <;> simp_all [valApproxNoLabels]
-    rw [mergeListHOL_eq_zip]
-    intro z member
-    obtain ⟨⟨x, y⟩, paired, rfl⟩ := List.mem_map.mp member
-    obtain ⟨hx, hy⟩ := List.of_mem_zip paired
-    have smaller := List.sizeOf_lt_of_mem hx
-    exact ih x (by simp_wf; omega) y (ha x hx) (hb y hy)
+  have h' : valApproxAll noLabels a ∧ valApproxAll noLabels b :=
+    ⟨(valApproxNoLabels_iff a).mp ha, (valApproxNoLabels_iff b).mp hb⟩
+  exact (valApproxNoLabels_iff (mergeHOL a b)).mpr (valApproxAllMerge noLabels a b h')
 
 /-- Primitive approximation preserves label-free value and global approximations. -/
 @[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "known_op_no_Labels"]
@@ -62,87 +70,14 @@ theorem knownOpNoLabels (op : ClosLang.Op) (args : List ValApprox)
       (∀ x ∈ args, valApproxNoLabels x) ∧ globalsApproxNoLabels g0) :
     valApproxNoLabels a ∧ globalsApproxNoLabels g := by
   obtain ⟨known, safe, globals⟩ := h
-  cases op with
-  | globOp op =>
-    cases op with
-    | global index =>
-      cases args with
-      | nil =>
-        simp only [knownOpHOL, Prod.mk.injEq] at known
-        rcases known with ⟨rfl, rfl⟩
-        cases h : sptLookup index g0 with
-        | none => exact ⟨by simp [valApproxNoLabels], globals⟩
-        | some value => exact ⟨by simpa [h] using globals index value h, globals⟩
-      | cons x xs =>
-        simp only [knownOpHOL, Prod.mk.injEq] at known
-        rcases known with ⟨rfl, rfl⟩
-        exact ⟨by simp [valApproxNoLabels], globals⟩
-    | setGlobal index =>
-      cases args with
-      | nil =>
-        simp only [knownOpHOL, Prod.mk.injEq] at known
-        rcases known with ⟨rfl, rfl⟩
-        exact ⟨by simp [valApproxNoLabels], globals⟩
-      | cons x xs =>
-        have xSafe := safe x (by simp)
-        simp only [knownOpHOL, Prod.mk.injEq] at known
-        rcases known with ⟨rfl, rfl⟩
-        constructor
-        · simp [valApproxNoLabels]
-        · apply sptInsert_preservesProperty _ _ _ _ _ globals
-          cases h : sptLookup index g0 with
-          | none => exact xSafe
-          | some old => exact valApproxNoLabelsMerge old x ⟨globals index old h, xSafe⟩
-    | _ =>
-      simp only [knownOpHOL, Prod.mk.injEq] at known
-      rcases known with ⟨rfl, rfl⟩
-      exact ⟨by simp [valApproxNoLabels], globals⟩
-  | blockOp op =>
-    cases op with
-    | cons tag =>
-      simp only [knownOpHOL, Prod.mk.injEq] at known
-      rcases known with ⟨rfl, rfl⟩
-      exact ⟨by simpa [valApproxNoLabels] using safe, globals⟩
-    | _ =>
-      simp only [knownOpHOL, Prod.mk.injEq] at known
-      rcases known with ⟨rfl, rfl⟩
-      exact ⟨by simp [valApproxNoLabels], globals⟩
-  | intOp op =>
-    cases op <;> simp only [knownOpHOL, Prod.mk.injEq] at known <;>
-      rcases known with ⟨rfl, rfl⟩ <;> exact ⟨by simp [valApproxNoLabels], globals⟩
-  | memOp op =>
-    cases op with
-    | el =>
-      cases args with
-      | nil =>
-        simp only [knownOpHOL, Prod.mk.injEq] at known
-        rcases known with ⟨rfl, rfl⟩
-        exact ⟨by simp [valApproxNoLabels], globals⟩
-      | cons x xs =>
-        cases xs with
-        | nil =>
-          cases x <;> simp only [knownOpHOL, Prod.mk.injEq] at known <;>
-            rcases known with ⟨rfl, rfl⟩ <;> exact ⟨by simp [valApproxNoLabels], globals⟩
-        | cons y ys =>
-          cases ys with
-          | nil =>
-            cases x <;> cases y <;> simp only [knownOpHOL, Prod.mk.injEq] at known
-            all_goals try (rcases known with ⟨rfl, rfl⟩; exact ⟨by simp [valApproxNoLabels], globals⟩)
-            split at known <;> simp_all [valApproxNoLabels]
-            all_goals rcases known with ⟨rfl, rfl⟩
-            · exact safe _ (List.getElem_mem ..)
-            · simp [valApproxNoLabels]
-          | cons z zs =>
-            cases x <;> cases y <;> simp only [knownOpHOL, Prod.mk.injEq] at known <;>
-              rcases known with ⟨rfl, rfl⟩ <;> exact ⟨by simp [valApproxNoLabels], globals⟩
-    | _ =>
-      simp only [knownOpHOL, Prod.mk.injEq] at known
-      rcases known with ⟨rfl, rfl⟩
-      exact ⟨by simp [valApproxNoLabels], globals⟩
-  | _ =>
-    simp only [knownOpHOL, Prod.mk.injEq] at known
-    rcases known with ⟨rfl, rfl⟩
-    exact ⟨by simp [valApproxNoLabels], globals⟩
+  have h' : knownOpHOL op args g0 = (a, g) ∧
+      (∀ x ∈ args, valApproxAll noLabels x) ∧
+      globalsApproxAll noLabels g0 :=
+    ⟨known, fun x hx => (valApproxNoLabels_iff x).mp (safe x hx),
+     fun n v hv => (valApproxNoLabels_iff v).mp (globals n v hv)⟩
+  obtain ⟨ha, hg⟩ := knownOpAll noLabels op args g0 a g h'
+  exact ⟨(valApproxNoLabels_iff a).mpr ha,
+    fun n v hv => (valApproxNoLabels_iff v).mpr (hg n v hv)⟩
 
 
 /-- A body selected from a label-free approximation is label-free. -/

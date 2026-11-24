@@ -880,22 +880,12 @@ theorem isWfShapeValueHOLExact_nil_step1 {α : Type} {width : Nat} [NeZero width
           ([] : List (MlS × α))
           (values.map shapeOfHOLExact) = true →
         isWfShapeValuesHOLExact
-          ([] : List (MlS × α)) values = true) with
-  | case1 value => simp only [isWfShapeValueHOLExact.eq_1]
-  | case2 values ih =>
-      simpa [shapeOfHOLExact, Flapjack.Pancake.PanLang.isWfShapeExactHOL,
-        isWfShapeValueHOLExact.eq_2] using
-        ih (by simpa [shapeOfHOLExact, Flapjack.Pancake.PanLang.isWfShapeExactHOL] using hshape)
-  | case3 name fields _ =>
-      simp [shapeOfHOLExact, Flapjack.Pancake.PanLang.isWfShapeExactHOL.eq_3,
-        Flapjack.Pancake.PanLang.structContextLookupHOL] at hshape
-  | case4 => simp only [isWfShapeValuesHOLExact.eq_1]
-  | case5 value values ihValue ihValues =>
-      rename_i hshape'
-      simp only [List.map_cons, Flapjack.Pancake.PanLang.isWfShapesExactHOL.eq_2,
-        Bool.and_eq_true] at hshape'
-      rw [isWfShapeValuesHOLExact.eq_2, Bool.and_eq_true]
-      exact ⟨ihValue hshape'.1, ihValues hshape'.2⟩
+          ([] : List (MlS × α)) values = true)
+  all_goals
+    simp_all [shapeOfHOLExact, Flapjack.Pancake.PanLang.isWfShapeExactHOL,
+      isWfShapeValueHOLExact, isWfShapeValuesHOLExact,
+      Flapjack.Pancake.PanLang.isWfShapesExactHOL,
+      Flapjack.Pancake.PanLang.structContextLookupHOL]
 
 /-- Exact port of HOL `panProps$is_wf_shape_v_nil`
     (`cakeml/pancake/semantics/panPropsScript.sml:56-61`): with the context

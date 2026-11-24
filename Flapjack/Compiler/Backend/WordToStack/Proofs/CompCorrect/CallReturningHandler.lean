@@ -149,29 +149,8 @@ theorem sourceGuardsOfNotErrorWithHandler {width : Nat} [NeZero width] {C F : Ty
       (result, sourcePost)) (notError : result ≠ some .error) :
     ∃ xs args1 prog ss envs,
       CallReturning.SourceGuards values names retCode l1 l2 dest args source xs args1 prog ss envs := by
-  rw [WordSemStateFiniteExact.evaluate] at execution
-  rcases hget : WordSemStateFiniteExact.getVars args source with _ | xs
-  · simp only [hget, Prod.mk.injEq] at execution
-    exact absurd execution.1.symm notError
-  simp only [hget] at execution
-  by_cases hbad : wordSemBadDestArgs dest args = true
-  · simp only [hbad, if_true, Prod.mk.injEq] at execution
-    exact absurd execution.1.symm notError
-  simp only [hbad, Bool.false_eq_true, if_false] at execution
-  rcases hfind : wordSemFindCode dest
-      (wordSemAddRetLoc (some (values, names, retCode, l1, l2)) xs)
-      source.code source.stackSize with _ | ⟨args1, prog, ss⟩
-  · simp only [hfind, Prod.mk.injEq] at execution
-    exact absurd execution.1.symm notError
-  simp only [hfind] at execution
-  by_cases invalid : sptDomainEmpty names.1 ∨ ¬ values.Nodup
-  · simp only [invalid, if_true, Prod.mk.injEq] at execution
-    exact absurd execution.1.symm notError
-  simp only [invalid, if_false] at execution
-  rcases hcut : wordSemCutEnvs names source.locals with _ | envs
-  · simp only [hcut, Prod.mk.injEq] at execution
-    exact absurd execution.1.symm notError
-  exact ⟨xs, args1, prog, ss, envs, hget, hbad, hfind, invalid, hcut⟩
+  exact CallReturning.sourceGuardsOfCall values names retCode l1 l2 dest args handler source
+    sourcePost result execution notError
 
 /-- Removing the exception continuation preserves all returning-call
 conventions. This is Flapjack factoring of the original setup checks, not a

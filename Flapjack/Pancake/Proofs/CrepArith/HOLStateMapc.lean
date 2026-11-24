@@ -63,6 +63,38 @@ abbrev CrepSemHOLState.mapc {width : Nat} [NeZero width] {σ : Type}
     (state : CrepSemHOLState width σ) :
     (state.mapc f).toBitVecEvaluatorState = state.toBitVecEvaluatorState := rfl
 
+/-- Shared proof script for the unary `simp_exp_correct1` cases (`Load`, `Load32`,
+`LoadByte`): the child evaluates successfully, the induction hypothesis transports
+its value, and the constructor reduces identically on both sides
+(Flapjack proof infrastructure). -/
+local macro "crepSimpExpCorrect1Unary" state:term:max address:term:max result:term:max
+    h:term:max ih:term:max : tactic =>
+  `(tactic| (
+    have hAddress : evalCrepSemHOLExp $state $address ≠ none := by
+      intro hNone
+      exact $h (by simp [evalCrepSemHOLExp, hNone])
+    have hAddressEval := $ih $result hAddress
+    simp only [crepSimpExpHOL]
+    simp only [evalCrepSemHOLExp]
+    rw [hAddressEval]))
+
+/-- Shared proof script for the binary `simp_exp_correct1` cases (`Cmp`, `Shift`),
+with both child induction hypotheses (Flapjack proof infrastructure). -/
+local macro "crepSimpExpCorrect1Binary" state:term:max left:term:max right:term:max
+    result:term:max h:term:max ihLeft:term:max ihRight:term:max : tactic =>
+  `(tactic| (
+    have hLeft : evalCrepSemHOLExp $state $left ≠ none := by
+      intro hNone
+      exact $h (by simp [evalCrepSemHOLExp, hNone])
+    have hRight : evalCrepSemHOLExp $state $right ≠ none := by
+      intro hNone
+      exact $h (by simp [evalCrepSemHOLExp, hNone])
+    have hLeftEval := $ihLeft $result hLeft
+    have hRightEval := $ihRight $result hRight
+    simp only [crepSimpExpHOL]
+    simp only [evalCrepSemHOLExp]
+    rw [hLeftEval, hRightEval]))
+
 /-- Var case of HOL `simp_exp_correct1` (`crep_arithProofScript.sml:111`). It
     retains the successful-evaluation premise, polymorphic unused result
     binder, full `Option (word_lab)` result and proof-script-local code-only
@@ -187,14 +219,7 @@ theorem crepSimpExpCorrect1NativeLoadCase
     evalCrepSemHOLExp (CrepSemHOLState.mapc update state)
         (crepSimpExpHOL (.load address)) =
       evalCrepSemHOLExp state (.load address) := by
-  have hAddress : evalCrepSemHOLExp state address ≠ none := by
-    intro hNone
-    apply _h
-    simp [evalCrepSemHOLExp, hNone]
-  have hAddressEval := ih _result hAddress
-  simp only [crepSimpExpHOL]
-  simp only [evalCrepSemHOLExp]
-  rw [hAddressEval]
+  crepSimpExpCorrect1Unary state address _result _h ih
 
 /-- Load32 case of HOL `simp_exp_correct1` (`crep_arithProofScript.sml:111`).
     The recursive premise uses the current state, as in HOL `eval_ind`, and
@@ -218,14 +243,7 @@ theorem crepSimpExpCorrect1NativeLoad32Case
     evalCrepSemHOLExp (CrepSemHOLState.mapc update state)
         (crepSimpExpHOL (.load32 address)) =
       evalCrepSemHOLExp state (.load32 address) := by
-  have hAddress : evalCrepSemHOLExp state address ≠ none := by
-    intro hNone
-    apply _h
-    simp [evalCrepSemHOLExp, hNone]
-  have hAddressEval := ih _result hAddress
-  simp only [crepSimpExpHOL]
-  simp only [evalCrepSemHOLExp]
-  rw [hAddressEval]
+  crepSimpExpCorrect1Unary state address _result _h ih
 
 /-- LoadByte case of HOL `simp_exp_correct1` (`crep_arithProofScript.sml:111`).
     Its recursive premise uses the current state, as in HOL `eval_ind`, and
@@ -249,14 +267,7 @@ theorem crepSimpExpCorrect1NativeLoadByteCase
     evalCrepSemHOLExp (CrepSemHOLState.mapc update state)
         (crepSimpExpHOL (.loadByte address)) =
       evalCrepSemHOLExp state (.loadByte address) := by
-  have hAddress : evalCrepSemHOLExp state address ≠ none := by
-    intro hNone
-    apply _h
-    simp [evalCrepSemHOLExp, hNone]
-  have hAddressEval := ih _result hAddress
-  simp only [crepSimpExpHOL]
-  simp only [evalCrepSemHOLExp]
-  rw [hAddressEval]
+  crepSimpExpCorrect1Unary state address _result _h ih
 
 /-- Cmp case of HOL `simp_exp_correct1` (`crep_arithProofScript.sml:111`).
     Both child induction hypotheses use the current state, as in HOL
@@ -284,19 +295,7 @@ theorem crepSimpExpCorrect1NativeCmpCase
     evalCrepSemHOLExp (CrepSemHOLState.mapc update state)
         (crepSimpExpHOL (.cmp operator left right)) =
       evalCrepSemHOLExp state (.cmp operator left right) := by
-  have hLeft : evalCrepSemHOLExp state left ≠ none := by
-    intro hNone
-    apply _h
-    simp [evalCrepSemHOLExp, hNone]
-  have hRight : evalCrepSemHOLExp state right ≠ none := by
-    intro hNone
-    apply _h
-    simp [evalCrepSemHOLExp, hNone]
-  have hLeftEval := ihLeft _result hLeft
-  have hRightEval := ihRight _result hRight
-  simp only [crepSimpExpHOL]
-  simp only [evalCrepSemHOLExp]
-  rw [hLeftEval, hRightEval]
+  crepSimpExpCorrect1Binary state left right _result _h ihLeft ihRight
 
 /-- Shift case of HOL `simp_exp_correct1` (`crep_arithProofScript.sml:111`).
     Both child induction hypotheses use the current state, as in HOL
@@ -324,19 +323,7 @@ theorem crepSimpExpCorrect1NativeShiftCase
     evalCrepSemHOLExp (CrepSemHOLState.mapc update state)
         (crepSimpExpHOL (.shift operator left right)) =
       evalCrepSemHOLExp state (.shift operator left right) := by
-  have hLeft : evalCrepSemHOLExp state left ≠ none := by
-    intro hNone
-    apply _h
-    simp [evalCrepSemHOLExp, hNone]
-  have hRight : evalCrepSemHOLExp state right ≠ none := by
-    intro hNone
-    apply _h
-    simp [evalCrepSemHOLExp, hNone]
-  have hLeftEval := ihLeft _result hLeft
-  have hRightEval := ihRight _result hRight
-  simp only [crepSimpExpHOL]
-  simp only [evalCrepSemHOLExp]
-  rw [hLeftEval, hRightEval]
+  crepSimpExpCorrect1Binary state left right _result _h ihLeft ihRight
 
 /-- Op case of HOL `simp_exp_correct1` (`crep_arithProofScript.sml:111`), where
     `simp_exp (Op bop exps) = Op bop (MAP simp_exp exps)`
@@ -514,11 +501,7 @@ theorem crepSimpExpCorrect1NativeCrepopCase
               | none =>
                 cases hRightConst : crepDestConstHOL (crepSimpExpHOL right) with
                 | none =>
-                  have hSimplified :
-                      crepSimpExpHOL (.crepOp .mul [left, right]) =
-                        .crepOp .mul [crepSimpExpHOL left, crepSimpExpHOL right] := by
-                    rw [crepSimpExpHOL_mul_eq, hLeftConst, hRightConst]
-                  rw [hSimplified]
+                  rw [crepSimpExpHOL_mul_eq, hLeftConst, hRightConst]
                   simp [evalCrepSemHOLExp, hLeftIH, hRightIH, hLeftEval, hRightEval,
                     crepOpCrepWord]
                 | some rightConst =>
@@ -528,11 +511,7 @@ theorem crepSimpExpCorrect1NativeCrepopCase
                   have hMulConst := crepEval_mul_const
                     (CrepSemHOLState.mapc update state)
                     (crepSimpExpHOL left) leftWord rightConst hLeftMapped
-                  have hSimplified :
-                      crepSimpExpHOL (.crepOp .mul [left, right]) =
-                        crepMulConstHOL (crepSimpExpHOL left) rightConst := by
-                    rw [crepSimpExpHOL_mul_eq, hLeftConst, hRightConst]
-                  rw [hSimplified, hMulConst, hOriginal]
+                  rw [crepSimpExpHOL_mul_eq, hLeftConst, hRightConst, hMulConst, hOriginal]
                   simp [hRightValue]
               | some leftConst =>
                 cases hRightConst : crepDestConstHOL (crepSimpExpHOL right) with
@@ -543,11 +522,7 @@ theorem crepSimpExpCorrect1NativeCrepopCase
                   have hMulConst := crepEval_mul_const
                     (CrepSemHOLState.mapc update state)
                     (crepSimpExpHOL right) rightWord leftConst hRightMapped
-                  have hSimplified :
-                      crepSimpExpHOL (.crepOp .mul [left, right]) =
-                        crepMulConstHOL (crepSimpExpHOL right) leftConst := by
-                    rw [crepSimpExpHOL_mul_eq, hLeftConst, hRightConst]
-                  rw [hSimplified, hMulConst, hOriginal]
+                  rw [crepSimpExpHOL_mul_eq, hLeftConst, hRightConst, hMulConst, hOriginal]
                   simpa [hLeftValue] using (BitVec.mul_comm rightWord leftWord)
                 | some rightConst =>
                   obtain ⟨hLeftConstExp, hLeftValue⟩ :=
@@ -556,11 +531,7 @@ theorem crepSimpExpCorrect1NativeCrepopCase
                   obtain ⟨hRightConstExp, hRightValue⟩ :=
                     crepDestConstHOL_wordEq update state right rightWord rightConst
                       hRightMapped hRightConst
-                  have hSimplified :
-                      crepSimpExpHOL (.crepOp .mul [left, right]) =
-                        CrepExpHOL.const (leftConst * rightConst) := by
-                    rw [crepSimpExpHOL_mul_eq, hLeftConst, hRightConst]
-                  rw [hSimplified]
+                  rw [crepSimpExpHOL_mul_eq, hLeftConst, hRightConst]
                   rw [evalCrepSemHOLExp, hOriginal]
                   simp [hLeftValue, hRightValue]
 

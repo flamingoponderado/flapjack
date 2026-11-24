@@ -10,7 +10,10 @@ public import Lean.Elab.Tactic.Omega
 namespace Flapjack.Compiler.Backend.BviLet
 open Bvi
 
-private theorem memberBudget (xs : List Exp) (e : Exp) (member : e ∈ xs) :
+/-- Every expression of a list has a budget below the list's total. Flapjack
+proof infrastructure shared by `SourceSing` and `SourceAgreement`, with no
+separately named HOL declaration. -/
+theorem memberBudget (xs : List Exp) (e : Exp) (member : e ∈ xs) :
     expBudget e < listBudget xs := by
   induction xs with
   | nil => simp at member

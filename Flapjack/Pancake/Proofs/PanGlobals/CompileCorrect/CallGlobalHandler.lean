@@ -789,21 +789,11 @@ private theorem returnedFromIH {width : Nat} {σ : Type} [NeZero width]
   classical
   have hta := PanGlobalsOptMmapEvalCorrect.optMmapEvalCorrectHOL context source target
     arguments values ⟨hrel, hargs⟩
-  have hlist : ∀ es : List (ExpHOL width),
-      compileExpExactHOLList context es = es.map (compileExpExactHOL context) := by
-    intro es
-    induction es with
-    | nil => simp only [compileExpExactHOLList, List.map_nil]
-    | cons e es hrec => simp only [compileExpExactHOLList, List.map_cons, hrec]
-  rw [← hlist arguments] at hta
+  rw [← compileList_eq_map context] at hta
   have htl := PanGlobalsStateRelationCode.stateRelLookupCodeHOL context source target true
     function values body callee returnShape ⟨hrel, hcode⟩
   have htz : target.clock ≠ 0 := hrel.2.2.2.2.2.1 ▸ hclock
-  have hd := PanGlobalsStateRelationClock.stateRelDecClockHOL context source target true hrel
-  have he := (PanGlobalsStateRelationLocals.stateRelChangeLocalsHOL context
-    (decClockHOLFinite source) (decClockHOLFinite target) true callee).1 hd
-  change panGlobalsStateRelHOLExact true context
-    (callEntryStateHOLFinite source callee) (callEntryStateHOLFinite target callee) at he
+  have he := PanGlobalsStateRelationLocals.callEntryStateRelHOL context source target callee hrel
   obtain ⟨targetPost, ht, hr⟩ := ih values body callee returnShape ⟨hargs, hcode, hclock⟩
     (some (.returned value)) context (callEntryStateHOLFinite target callee) post
     ⟨he, hbody, by simp⟩
@@ -1024,18 +1014,10 @@ private theorem matchedFromIH {width : Nat} {σ : Type} [NeZero width]
       panGlobalsStateRelHOLExact (goodResHOL res) context post targetPost := by
   classical
   have hta := PanGlobalsOptMmapEvalCorrect.optMmapEvalCorrectHOL context source target arguments args ⟨hrel, ha⟩
-  have hlist : ∀ es : List (ExpHOL width), compileExpExactHOLList context es = es.map (compileExpExactHOL context) := by
-    intro es
-    induction es with
-    | nil => simp only [compileExpExactHOLList, List.map_nil]
-    | cons e es hrec => simp only [compileExpExactHOLList, List.map_cons, hrec]
-  rw [← hlist arguments] at hta
+  rw [← compileList_eq_map context] at hta
   have htl := PanGlobalsStateRelationCode.stateRelLookupCodeHOL context source target true function args body callee returnShape ⟨hrel, hl⟩
   have htz : target.clock ≠ 0 := hrel.2.2.2.2.2.1 ▸ hz
-  have hd := PanGlobalsStateRelationClock.stateRelDecClockHOL context source target true hrel
-  have he := (PanGlobalsStateRelationLocals.stateRelChangeLocalsHOL context
-    (decClockHOLFinite source) (decClockHOLFinite target) true callee).1 hd
-  change panGlobalsStateRelHOLExact true context (callEntryStateHOLFinite source callee) (callEntryStateHOLFinite target callee) at he
+  have he := PanGlobalsStateRelationLocals.callEntryStateRelHOL context source target callee hrel
   obtain ⟨bt, hbt, hr⟩ := ih args body callee returnShape ⟨ha, hl, hz⟩
     (some (.exception handlerId value)) context (callEntryStateHOLFinite target callee) calleePost ⟨he, hb, by simp⟩
   have hlocals : source.locals = target.locals := hrel.2.1 rfl
@@ -1227,18 +1209,10 @@ private theorem bypassFromIH {width : Nat} {σ : Type} [NeZero width]
       panGlobalsStateRelHOLExact (goodResHOL (some result)) context (emptyLocalsHOLFinite post) targetPost := by
   classical
   have hta := PanGlobalsOptMmapEvalCorrect.optMmapEvalCorrectHOL context source target arguments args ⟨hrel, ha⟩
-  have hlist : ∀ es : List (ExpHOL width), compileExpExactHOLList context es = es.map (compileExpExactHOL context) := by
-    intro es
-    induction es with
-    | nil => simp only [compileExpExactHOLList, List.map_nil]
-    | cons e es hrec => simp only [compileExpExactHOLList, List.map_cons, hrec]
-  rw [← hlist arguments] at hta
+  rw [← compileList_eq_map context] at hta
   have htl := PanGlobalsStateRelationCode.stateRelLookupCodeHOL context source target true function args body callee returnShape ⟨hrel, hl⟩
   have htz : target.clock ≠ 0 := hrel.2.2.2.2.2.1 ▸ hz
-  have hd := PanGlobalsStateRelationClock.stateRelDecClockHOL context source target true hrel
-  have he := (PanGlobalsStateRelationLocals.stateRelChangeLocalsHOL context
-    (decClockHOLFinite source) (decClockHOLFinite target) true callee).1 hd
-  change panGlobalsStateRelHOLExact true context (callEntryStateHOLFinite source callee) (callEntryStateHOLFinite target callee) at he
+  have he := PanGlobalsStateRelationLocals.callEntryStateRelHOL context source target callee hrel
   have hgood : goodResHOL (some result) = false := by cases result <;> simp_all only [goodResHOL]
   have hne : some result ≠ some (.error : PanSemResultExact width) := by
     cases result <;> simp_all
@@ -1280,12 +1254,7 @@ private theorem zeroClockCorrect {width : Nat} {σ : Type} [NeZero width]
   let call := ProgHOL.call (some (some (.local, rn), some (handlerId, handlerVar,
     .seq ch (.assign .local fn (.const (BitVec.ofNat width 1)))))) function ca
   have hta := PanGlobalsOptMmapEvalCorrect.optMmapEvalCorrectHOL context source target arguments args ⟨hrel, ha⟩
-  have hlist : ∀ es : List (ExpHOL width), compileExpExactHOLList context es = es.map (compileExpExactHOL context) := by
-    intro es
-    induction es with
-    | nil => simp only [compileExpExactHOLList, List.map_nil]
-    | cons e es ih => simp only [compileExpExactHOLList, List.map_cons, ih]
-  rw [← hlist arguments] at hta
+  rw [← compileList_eq_map context] at hta
   have htransport := PanGlobalsCallHandlerArguments.callHandlerArgumentsUnderScratchLocals target handlerVar ch ca initializer (.val (.word (BitVec.ofNat width 0)))
   have hsargs : evalListHOLFinite scratch (h := fun a => Classical.propDecidable (scratch.memaddrs a)) ca = some args := htransport.trans hta
   have htl := PanGlobalsStateRelationCode.stateRelLookupCodeHOL context source target true function args body callee returnShape ⟨hrel, hl⟩
@@ -1446,10 +1415,8 @@ theorem compileCorrect_CallGlobalHandler {width : Nat} {σ : Type} [NeZero width
                   exact returnedFromIH source name function handlerId handlerVar arguments handlerBody ih
                     context target bs args body callee returnShape value hrel ha hl hz hb
                     ((shapeEqHOL_eq_true _ _).mp hs) hv
-                · simp only [if_neg hv] at hev
-                  exact False.elim (hne (Prod.mk.inj hev).1.symm)
-              · simp only [if_neg hs] at hev
-                exact False.elim (hne (Prod.mk.inj hev).1.symm)
+                · exact errorPairImpossible (by simpa only [if_neg hv] using hev) hne
+              · exact errorPairImpossible (by simpa only [if_neg hs] using hev) hne
             | exception eid value =>
               by_cases hid : eid = handlerId
               · subst eid
@@ -1467,8 +1434,7 @@ theorem compileCorrect_CallGlobalHandler {width : Nat} {σ : Type} [NeZero width
                       ih ihHandler context target bs post args body callee returnShape handlerShape shape
                       value address res hrel hcontext ha hl hz hb hs
                       ((shapeEqHOL_eq_true _ _).mp hg.1) hg.2 hev hne
-                  · simp only [if_neg hv] at hev
-                    exact False.elim (hne (Prod.mk.inj hev).1.symm)
+                  · exact errorPairImpossible (by simpa only [if_neg hv, ite_true] using hev) hne
               · simp only [if_neg hid] at hev
                 obtain ⟨rfl, rfl⟩ := Prod.mk.inj hev
                 exact bypassFromIH source name function handlerId handlerVar arguments handlerBody ih

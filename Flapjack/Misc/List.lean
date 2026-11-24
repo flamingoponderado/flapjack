@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.HolRef
+public import Flapjack.Misc.ListEl
 public import Batteries.Data.List.Basic
 
 @[expose] public section
@@ -28,5 +29,19 @@ theorem forall₂_set {α β : Type} (relation : α → β → Prop)
     cases index with
     | zero => simp only [List.set_cons_zero]; exact .cons replacement tail
     | succ n => simp only [List.set_cons_succ]; exact .cons head (ih n)
+
+/-- Flapjack infrastructure (no HOL original): related nonempty lists have
+related HOL last elements, for any relation on the element type. -/
+theorem holLast_related {α : Type} (inst : Nonempty α) (rel : α → α → Prop)
+    {left right : List α} (related : List.Forall₂ rel left right) (nonempty : left ≠ []) :
+    rel (@holLast α inst left) (@holLast α inst right) := by
+  induction related with
+  | nil => exact (nonempty rfl).elim
+  | @cons first nextFirst rest nextRest head tail ih =>
+    cases tail with
+    | nil => simpa [holLast] using head
+    | @cons second nextSecond tail nextTail nextHead restRel =>
+      simp only [holLast]
+      exact ih (by simp)
 
 end Flapjack

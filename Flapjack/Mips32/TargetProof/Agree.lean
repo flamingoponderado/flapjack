@@ -39,19 +39,8 @@ theorem Agree.reg {d : W → Prop} {s t : State} (h : Agree d s t) (r : Fin 32) 
   simp [State.reg, h.gpr]
 
 theorem fun2Set_eq_iff {f g : W → BitVec 8} {d : W → Prop} :
-    SetSep.fun2Set (f, d) = SetSep.fun2Set (g, d) ↔ ∀ a, d a → f a = g a := by
-  constructor
-  · intro h a ha
-    have hm : SetSep.fun2Set (f, d) (a, f a) := (SetSep.fun2SetThm f d a (f a)).2 ⟨rfl, ha⟩
-    rw [h] at hm
-    exact ((SetSep.fun2SetThm g d a (f a)).1 hm).1.symm
-  · intro h
-    funext ⟨a, b⟩
-    apply propext
-    rw [SetSep.fun2SetThm, SetSep.fun2SetThm]
-    constructor
-    · rintro ⟨rfl, ha⟩; exact ⟨(h a ha).symm, ha⟩
-    · rintro ⟨rfl, ha⟩; exact ⟨h a ha, ha⟩
+    SetSep.fun2Set (f, d) = SetSep.fun2Set (g, d) ↔ ∀ a, d a → f a = g a :=
+  SetSep.fun2Set_eq_iff
 
 theorem proj_eq_iff (d : W → Prop) (s t : State) :
     mips32Proj d s = mips32Proj d t ↔ Agree d s t := by

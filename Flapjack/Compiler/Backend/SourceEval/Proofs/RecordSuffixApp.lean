@@ -5,6 +5,18 @@ public import Flapjack.Compiler.Backend.SourceEval.Proofs.RecordSuffixLog
 @[expose] public section
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL Flapjack.EvaluateHOL
+
+/-- Flapjack factoring: an error in the argument list propagates unchanged
+through the application's op dispatch, so the reduced app evaluation is the
+same error at the same state. -/
+private theorem evaluateApp_err {F : Type} (k : Nat) (s : State F) (env : SemEnv Value)
+    (op : Op) (args : List AstHOL.Exp) (short : State F) {X : State F}
+    (equal : evaluate { s with clock := s.clock - k } env args.reverse =
+      (short, .err (.abort .timeoutError)))
+    (forward : recordForward short.evalState X.evalState) :
+    ∃ s'', evaluate { s with clock := s.clock - k } env [.app op args] =
+      (s'', .err (.abort .timeoutError)) ∧ recordForward s''.evalState X.evalState :=
+  ⟨short, by rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, equal], forward⟩
 /-- The full application case of recording-oracle clock suffix. -/
 @[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "evaluate_record_suffix"]
 theorem evaluateRecordSuffix_App {Config F : Type} (ci : CompilerInstance Config) (k : Nat)
@@ -45,9 +57,7 @@ theorem evaluateRecordSuffix_App {Config F : Type} (ci : CompilerInstance Config
       · left
         refine ⟨bound', ?_⟩
         rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, equal]
-      · right
-        refine ⟨short, ?_, forward⟩
-        rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, equal]
+      · exact Or.inr (evaluateApp_err k s env op args short equal forward)
     | val values =>
       simp only [argsRun] at run
       cases opClass : getOpClass op with
@@ -62,9 +72,7 @@ theorem evaluateRecordSuffix_App {Config F : Type} (ci : CompilerInstance Config
             refine ⟨bound', ?_⟩
             rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, equal]
             simp [opClass, app, typeError]
-          · right
-            refine ⟨short, ?_, forward⟩
-            rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, equal]
+          · exact Or.inr (evaluateApp_err k s env op args short equal forward)
         | some output =>
           obtain ⟨⟨refs, ffi⟩, result⟩ := output
           simp only [app] at run
@@ -74,9 +82,7 @@ theorem evaluateRecordSuffix_App {Config F : Type} (ci : CompilerInstance Config
             refine ⟨bound', ?_⟩
             rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, equal]
             simp [opClass, app]
-          · right
-            refine ⟨short, ?_, forward⟩
-            rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, equal]
+          · exact Or.inr (evaluateApp_err k s env op args short equal forward)
       | funApp =>
         rw [opClass] at run
         cases app : doOpApp values.reverse with
@@ -88,9 +94,7 @@ theorem evaluateRecordSuffix_App {Config F : Type} (ci : CompilerInstance Config
             refine ⟨bound', ?_⟩
             rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, equal]
             simp [opClass, app, typeError]
-          · right
-            refine ⟨short, ?_, forward⟩
-            rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, equal]
+          · exact Or.inr (evaluateApp_err k s env op args short equal forward)
         | some pair =>
           obtain ⟨callEnv, body⟩ := pair
           simp only [app] at run
@@ -102,9 +106,7 @@ theorem evaluateRecordSuffix_App {Config F : Type} (ci : CompilerInstance Config
               refine ⟨bound', ?_⟩
               rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, equal]
               simp [opClass, app, zero, timeoutError]
-            · right
-              refine ⟨short, ?_, forward⟩
-              rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, equal]
+            · exact Or.inr (evaluateApp_err k s env op args short equal forward)
           · simp only [zero, ↓reduceIte] at run
             have lastRecorded := (evaluate_is_record_forward ci).1 (decClock middle) callEnv [body] s' res
               ⟨run, by simpa [decClock] using firstRecorded.1⟩
@@ -133,9 +135,8 @@ theorem evaluateRecordSuffix_App {Config F : Type} (ci : CompilerInstance Config
                 refine ⟨{ middle with clock := middle.clock - k }, ?_, by simpa using forward⟩
                 rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, firstEqual]
                 simp [opClass, app, exhausted, timeoutError]
-            · right
-              refine ⟨short, ?_, recordForward_trans _ _ _ ⟨firstForward, forward⟩⟩
-              rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, firstEqual]
+            · exact Or.inr (evaluateApp_err k s env op args short firstEqual
+                (recordForward_trans _ _ _ ⟨firstForward, forward⟩))
       | force =>
         rw [opClass] at run
         cases thunk : destThunk values.reverse middle.refs with
@@ -147,9 +148,7 @@ theorem evaluateRecordSuffix_App {Config F : Type} (ci : CompilerInstance Config
             refine ⟨bound', ?_⟩
             rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, equal]
             simp [opClass, thunk, typeError]
-          · right
-            refine ⟨short, ?_, forward⟩
-            rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, equal]
+          · exact Or.inr (evaluateApp_err k s env op args short equal forward)
         | isThunk mode value =>
           cases mode with
           | evaluated =>
@@ -160,9 +159,7 @@ theorem evaluateRecordSuffix_App {Config F : Type} (ci : CompilerInstance Config
               refine ⟨bound', ?_⟩
               rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, equal]
               simp [opClass, thunk]
-            · right
-              refine ⟨short, ?_, forward⟩
-              rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, equal]
+            · exact Or.inr (evaluateApp_err k s env op args short equal forward)
           | notEvaluated =>
             simp only [thunk] at run
             cases app : doOpApp [value, .conv none []] with
@@ -174,9 +171,7 @@ theorem evaluateRecordSuffix_App {Config F : Type} (ci : CompilerInstance Config
                 refine ⟨bound', ?_⟩
                 rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, equal]
                 simp [opClass, thunk, app, typeError]
-              · right
-                refine ⟨short, ?_, forward⟩
-                rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, equal]
+              · exact Or.inr (evaluateApp_err k s env op args short equal forward)
             | some pair =>
               obtain ⟨callEnv, body⟩ := pair
               simp only [app] at run
@@ -188,9 +183,7 @@ theorem evaluateRecordSuffix_App {Config F : Type} (ci : CompilerInstance Config
                   refine ⟨bound', ?_⟩
                   rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, equal]
                   simp [opClass, thunk, app, zero, timeoutError]
-                · right
-                  refine ⟨short, ?_, forward⟩
-                  rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, equal]
+                · exact Or.inr (evaluateApp_err k s env op args short equal forward)
               · simp only [zero, ↓reduceIte] at run
                 cases callRun : evaluate (decClock middle) callEnv [body] with
                 | mk after result =>
@@ -231,9 +224,8 @@ theorem evaluateRecordSuffix_App {Config F : Type} (ci : CompilerInstance Config
                         refine ⟨{ middle with clock := middle.clock - k }, ?_, by simpa using forward⟩
                         rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, firstEqual]
                         simp [opClass, thunk, app, exhausted, timeoutError]
-                    · right
-                      refine ⟨short, ?_, recordForward_trans _ _ _ ⟨firstForward, forward⟩⟩
-                      rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, firstEqual]
+                    · exact Or.inr (evaluateApp_err k s env op args short firstEqual
+                        (recordForward_trans _ _ _ ⟨firstForward, forward⟩))
                   | val newValues =>
                     simp only [callRun] at run
                     cases updated : updateThunk values.reverse after.refs newValues <;>
@@ -269,9 +261,8 @@ theorem evaluateRecordSuffix_App {Config F : Type} (ci : CompilerInstance Config
                           refine ⟨{ middle with clock := middle.clock - k }, ?_, by simpa using forward⟩
                           rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, firstEqual]
                           simp [opClass, thunk, app, exhausted, timeoutError]
-                      · right
-                        refine ⟨short, ?_, recordForward_trans _ _ _ ⟨firstForward, forward⟩⟩
-                        rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, firstEqual]
+                      · exact Or.inr (evaluateApp_err k s env op args short firstEqual
+                          (recordForward_trans _ _ _ ⟨firstForward, forward⟩))
       | evalOp =>
         rw [opClass, fixClockDoEvalRes] at run
         cases decoded : doEval values.reverse middle.evalState with
@@ -285,9 +276,7 @@ theorem evaluateRecordSuffix_App {Config F : Type} (ci : CompilerInstance Config
             dsimp only
             rw [opClass, fixClockDoEvalRes]
             simp [doEvalRes, decoded]
-          · right
-            refine ⟨short, ?_, forward⟩
-            rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, equal]
+          · exact Or.inr (evaluateApp_err k s env op args short equal forward)
         | some data =>
           obtain ⟨evalEnv, decs, evalState⟩ := data
           simp only [doEvalRes, decoded] at run
@@ -303,9 +292,8 @@ theorem evaluateRecordSuffix_App {Config F : Type} (ci : CompilerInstance Config
               dsimp only
               rw [opClass, fixClockDoEvalRes]
               simp [doEvalRes, decoded, zero, timeoutError]
-            · right
-              refine ⟨short, ?_, recordForward_trans _ _ _ ⟨forward, decodedFacts.2.1⟩⟩
-              rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, equal]
+            · exact Or.inr (evaluateApp_err k s env op args short equal
+                (recordForward_trans _ _ _ ⟨forward, decodedFacts.2.1⟩))
           · simp only [zero, ↓reduceIte, (fixClockEvaluate _ _ [] _).2] at run
             have decIH := evalIH middle (.val values) values { middle with evalState := evalState }
               (.val (evalEnv, decs)) (evalEnv, decs) evalEnv decs
@@ -356,9 +344,8 @@ theorem evaluateRecordSuffix_App {Config F : Type} (ci : CompilerInstance Config
                       dsimp only
                       rw [opClass, fixClockDoEvalRes]
                       simp [doEvalRes, decoded, exhausted, timeoutError]
-                  · right
-                    refine ⟨short, ?_, recordForward_trans _ _ _ ⟨firstForward, forwardMiddle⟩⟩
-                    rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, firstEqual]
+                  · exact Or.inr (evaluateApp_err k s env op args short firstEqual
+                      (recordForward_trans _ _ _ ⟨firstForward, forwardMiddle⟩))
                 | raise value =>
                   simp only [decRun] at run
                   cases run
@@ -400,9 +387,8 @@ theorem evaluateRecordSuffix_App {Config F : Type} (ci : CompilerInstance Config
                       dsimp only
                       rw [opClass, fixClockDoEvalRes]
                       simp [doEvalRes, decoded, exhausted, timeoutError]
-                  · right
-                    refine ⟨short, ?_, resetForward _ (recordForward_trans _ _ _ ⟨firstForward, forwardMiddle⟩)⟩
-                    rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, firstEqual]
+                  · exact Or.inr (evaluateApp_err k s env op args short firstEqual
+                      (resetForward _ (recordForward_trans _ _ _ ⟨firstForward, forwardMiddle⟩)))
               | val newEnv =>
                 simp only [decRun] at run
                 cases declared : declareEnv after.evalState (extendDecEnv newEnv evalEnv) with
@@ -445,9 +431,8 @@ theorem evaluateRecordSuffix_App {Config F : Type} (ci : CompilerInstance Config
                       dsimp only
                       rw [opClass, fixClockDoEvalRes]
                       simp [doEvalRes, decoded, exhausted, timeoutError]
-                  · right
-                    refine ⟨short, ?_, recordForward_trans _ _ _ ⟨firstForward, forwardMiddle⟩⟩
-                    rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, firstEqual]
+                  · exact Or.inr (evaluateApp_err k s env op args short firstEqual
+                      (recordForward_trans _ _ _ ⟨firstForward, forwardMiddle⟩))
                 | some declaration =>
                   obtain ⟨value, finalState⟩ := declaration
                   simp only [declared] at run
@@ -494,7 +479,6 @@ theorem evaluateRecordSuffix_App {Config F : Type} (ci : CompilerInstance Config
                       dsimp only
                       rw [opClass, fixClockDoEvalRes]
                       simp [doEvalRes, decoded, exhausted, timeoutError]
-                  · right
-                    refine ⟨short, ?_, finalForward _ (recordForward_trans _ _ _ ⟨firstForward, forwardMiddle⟩)⟩
-                    rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, firstEqual]
+                  · exact Or.inr (evaluateApp_err k s env op args short firstEqual
+                      (finalForward _ (recordForward_trans _ _ _ ⟨firstForward, forwardMiddle⟩)))
 end Flapjack.Compiler.Backend.SourceEval.Proofs

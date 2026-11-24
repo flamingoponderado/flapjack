@@ -174,19 +174,6 @@ theorem chainExps_semantics {C F : Type} (ffi : HolFfiState F) (maxApp : Nat)
     subst es
     exact chain_semantics_empty ffi maxApp code oracle compiler start
 
-private theorem lookup_alist_eq {V : Type} (entries : List (Nat × V)) (key : Nat) :
-    (HolFiniteMapExact.alistToFmap entries).lookup key = holALookup entries key := by
-  induction entries with
-  | nil => simp [HolFiniteMapExact.alistToFmap, HolFiniteMapExact.empty, holALookup]
-  | cons entry rest ih =>
-    obtain ⟨k, v⟩ := entry
-    by_cases eq : key = k
-    · subst key
-      rw [HolFiniteMapExact.lookup_alistToFmap_head (k, v) rest]
-      simp [holALookup]
-    · rw [HolFiniteMapExact.lookup_alistToFmap_tail (k, v) rest key eq]
-      simpa [holALookup, eq] using ih
-
 /-- Calling the generated chain entry has the original program behavior. -/
 @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "chain_exps_semantics_call"
   (fmap_as_finite_support_parameter_observations :=
@@ -204,7 +191,8 @@ theorem chainExps_semantics_call {C F : Type} (ffi : HolFfiState F) (maxApp : Na
   obtain ⟨body, semanticsEq, lookup⟩ := chainExps_semantics ffi maxApp code oracle compiler es start premises
   let targetCode := (HolFiniteMapExact.alistToFmap (chainExps start es)).union code
   have entry : targetCode.lookup start = some (0, body) := by
-    simp [targetCode, HolFiniteMapExact.lookup_union, lookup_alist_eq, lookup]
+    simp [targetCode, HolFiniteMapExact.lookup_union,
+      HolFiniteMapExact.alistToFmap_lookup_eq_holALookup, lookup]
   have safe : semantics ffi maxApp targetCode oracle compiler [body] ≠ .fail := by
     rw [semanticsEq]
     exact premises.1

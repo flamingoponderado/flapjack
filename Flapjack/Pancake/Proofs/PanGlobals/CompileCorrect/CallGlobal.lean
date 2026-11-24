@@ -139,11 +139,8 @@ theorem compileCorrect_CallGlobal {width : Nat} {σ : Type} [NeZero width]
                          evaluateHOLFiniteState_decCall_fixClockRewrite, hta, htl, if_pos htz]
       · have htz : target.clock ≠ 0 := hc ▸ hz
         simp only [if_neg hz] at hev
-        have hd := PanGlobalsStateRelationClock.stateRelDecClockHOL context source target true hrel
-        have he := (PanGlobalsStateRelationLocals.stateRelChangeLocalsHOL context
-          (decClockHOLFinite source) (decClockHOLFinite target) true callee).1 hd
-        change panGlobalsStateRelHOLExact true context
-          (callEntryStateHOLFinite source callee) (callEntryStateHOLFinite target callee) at he
+        have he := PanGlobalsStateRelationLocals.callEntryStateRelHOL context source target
+          callee hrel
         rcases hb : evaluateHOLFiniteState (callEntryStateHOLFinite source callee) body with ⟨br, bs⟩
         simp only [hb] at hev
         have hbody := ih args body callee returnShape ⟨ha, hl, hz⟩
@@ -204,10 +201,8 @@ theorem compileCorrect_CallGlobal {width : Nat} {σ : Type} [NeZero width]
                       {pair.2 with locals := HolFiniteMapExact.resVarEq pair.2.locals (temporary, target.locals.lookup temporary)})) hstoreRun
                   · simpa only [ghostSource, setKvarHOLFinite, setGlobalHOLFinite, setVarHOLFinite,
                       restore_update, goodResHOL] using hscope
-              · simp only [if_neg hv] at hev
-                exact False.elim (hne (Prod.mk.inj hev).1.symm)
-            · simp only [if_neg hs] at hev
-              exact False.elim (hne (Prod.mk.inj hev).1.symm)
+              · exact errorPairImpossible (by simpa only [if_neg hv] using hev) hne
+            · exact errorPairImpossible (by simpa only [if_neg hs] using hev) hne
           | exception eid value | timeOut | finalFfi outcome =>
             obtain ⟨rfl, rfl⟩ := Prod.mk.inj hev
             obtain ⟨bt, hbt, hr⟩ := hbody _ context (callEntryStateHOLFinite target callee) bs ⟨he, hb, by simp⟩

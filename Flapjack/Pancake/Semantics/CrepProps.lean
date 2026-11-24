@@ -201,27 +201,11 @@ theorem crepAssignedFreeVarsHOL_imp_crepAssignedVarsHOL {width : Nat} [NeZero wi
     (program : CrepProgHOL width) (name : Nat)
     (h : name ∈ crepAssignedFreeVarsHOL program) : name ∈ crepAssignedVarsHOL program := by
   revert h
-  induction program using crepAssignedFreeVarsHOL.induct with
-  | case1 => intro h; simp [crepAssignedFreeVarsHOL] at h
-  | case2 => intro h; simp_all [crepAssignedFreeVarsHOL, crepAssignedVarsHOL]
-  | case3 => intro h; simpa [crepAssignedFreeVarsHOL, crepAssignedVarsHOL] using h
-  | case4 => intro h; simpa [crepAssignedFreeVarsHOL, crepAssignedVarsHOL] using h
-  | case5 =>
-      intro h
-      simp only [crepAssignedFreeVarsHOL, crepAssignedVarsHOL, List.mem_append] at h ⊢
-      rcases h with h | h <;> simp_all
-  | case6 =>
-      intro h
-      simp only [crepAssignedFreeVarsHOL, crepAssignedVarsHOL, List.mem_append] at h ⊢
-      rcases h with h | h <;> simp_all
-  | case7 => intro h; simp_all [crepAssignedFreeVarsHOL, crepAssignedVarsHOL]
-  | case8 =>
-      intro h
-      simp only [crepAssignedFreeVarsHOL, crepAssignedVarsHOL, List.mem_append] at h ⊢
-      rcases h with h | h <;> simp_all
-  | case9 => intro h; simpa [crepAssignedFreeVarsHOL, crepAssignedVarsHOL] using h
-  | case10 => intro h; simpa [crepAssignedFreeVarsHOL, crepAssignedVarsHOL] using h
-  | case11 => intro h; simp [crepAssignedFreeVarsHOL] at h
+  induction program using crepAssignedFreeVarsHOL.induct
+  all_goals
+    intro h
+    simp_all [crepAssignedFreeVarsHOL, crepAssignedVarsHOL, List.mem_append]
+    try grind
 
 /-- Production bridge: transporting the exact HOL theorem across `crepProgToHOL`
     recovers the executable `CrepProg` implication, so the exact-carrier port and

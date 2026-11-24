@@ -421,25 +421,8 @@ theorem getLocals_inter_subset {width : Nat} [NeZero width] {β : Type}
   obtain ⟨key, offset, hkey⟩ :=
     (domainGetLocalsLookup location (sptInter a b)).mp hmem
   rw [sptLookup_sptInterCases] at hkey
-  cases hleft : sptLookup key a with
-  | none =>
-      cases hright : sptLookup key b with
-      | none =>
-          rw [hleft, hright] at hkey
-          simp at hkey
-      | some other =>
-          rw [hleft, hright] at hkey
-          simp at hkey
-  | some value =>
-      cases hright : sptLookup key b with
-      | none =>
-          rw [hleft, hright] at hkey
-          simp at hkey
-      | some other =>
-          rw [hleft, hright] at hkey
-          simp only [Option.some.injEq] at hkey
-          refine (domainGetLocalsLookup location a).mpr ⟨key, offset, ?_⟩
-          rw [hleft]
-          exact congrArg some hkey
+  change sptMem location (getLocals a)
+  rw [domainGetLocalsLookup location a]
+  grind
 
 end Flapjack.Compiler.Backend.WordElim

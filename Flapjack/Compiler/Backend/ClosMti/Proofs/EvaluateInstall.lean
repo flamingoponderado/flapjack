@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Compiler.Backend.ClosMti.Proofs.EvaluateCases
 public import Flapjack.Compiler.Backend.ClosMti.Proofs.Install
+public import Flapjack.Misc.List
 
 @[expose] public section
 
@@ -45,15 +46,8 @@ theorem evaluate_install_eq {C F : Type} (trace : BackendCommon.Tra) (args : Lis
 theorem holLast_related (maxApp : Nat) {left right : List ClosSem.Value}
     (related : List.Forall₂ (ValueRel maxApp) left right) (nonempty : left ≠ []) :
     ValueRel maxApp (@holLast ClosSem.Value ⟨unitValue⟩ left)
-      (@holLast ClosSem.Value ⟨unitValue⟩ right) := by
-  induction related with
-  | nil => exact (nonempty rfl).elim
-  | @cons first nextFirst rest nextRest head tail ih =>
-    cases tail with
-    | nil => simpa [holLast] using head
-    | @cons second nextSecond tail nextTail nextHead restRel =>
-      simp only [holLast]
-      exact ih (by simp)
+      (@holLast ClosSem.Value ⟨unitValue⟩ right) :=
+  Flapjack.holLast_related ⟨unitValue⟩ (ValueRel maxApp) related nonempty
 
 /-- The induction hypothesis for installed programs at a smaller target
 clock. Both environments are empty at the installation boundary. -/

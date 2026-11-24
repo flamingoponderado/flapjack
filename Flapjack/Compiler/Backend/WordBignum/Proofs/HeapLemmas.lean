@@ -63,15 +63,8 @@ theorem domainListUpdate {α : Type} [Nonempty α]
   induction xs generalizing ys t with
   | nil => simp [listUpdateSpt]
   | cons head tail ih =>
-    cases ys with
-    | nil =>
-      by_cases h : x = head
-      · subst h
-        simp [listUpdateSpt, sptMem_iff_lookup, sptLookup_sptInsert_same]
-      · simp only [listUpdateSpt]
-        rw [sptMem_iff_lookup, sptLookup_sptInsert_ne head x _ _ h, ← sptMem_iff_lookup, ih]
-        simp [h]
-    | cons value values =>
+    cases ys
+    all_goals
       by_cases h : x = head
       · subst h
         simp [listUpdateSpt, sptMem_iff_lookup, sptLookup_sptInsert_same]

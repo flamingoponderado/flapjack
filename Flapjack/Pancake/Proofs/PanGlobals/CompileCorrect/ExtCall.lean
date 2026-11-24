@@ -91,8 +91,7 @@ theorem compileCorrect_ExtCall {width : Nat} {σ : Type} [NeZero width]
   cases hc : @evalHOLFinite width σ _ source
       (fun a => Classical.propDecidable (source.memaddrs a)) configuration with
   | none =>
-      simp only [hc] at hev
-      exact False.elim (hne (Prod.mk.inj hev).1.symm)
+      exact errorPairImpossible (by simpa only [hc] using hev) hne
   | some vc =>
       cases vc with
       | val wc =>
@@ -101,8 +100,7 @@ theorem compileCorrect_ExtCall {width : Nat} {σ : Type} [NeZero width]
               cases hcl : @evalHOLFinite width σ _ source
                   (fun a => Classical.propDecidable (source.memaddrs a)) configurationLength with
               | none =>
-                  simp only [hc, hcl] at hev
-                  exact False.elim (hne (Prod.mk.inj hev).1.symm)
+                  exact errorPairImpossible (by simpa only [hc, hcl] using hev) hne
               | some vcl =>
                   cases vcl with
                   | val wcl =>
@@ -111,8 +109,7 @@ theorem compileCorrect_ExtCall {width : Nat} {σ : Type} [NeZero width]
                           cases ha : @evalHOLFinite width σ _ source
                               (fun a => Classical.propDecidable (source.memaddrs a)) array with
                           | none =>
-                              simp only [hc, hcl, ha] at hev
-                              exact False.elim (hne (Prod.mk.inj hev).1.symm)
+                              exact errorPairImpossible (by simpa only [hc, hcl, ha] using hev) hne
                           | some va =>
                               cases va with
                               | val wa =>
@@ -236,17 +233,13 @@ theorem compileCorrect_ExtCall {width : Nat} {σ : Type} [NeZero width]
                                   simp only [hc, hcl, ha] at hev
                                   exact False.elim (hne (Prod.mk.inj hev).1.symm)
                   | rStruct fl =>
-                      simp only [hc, hcl] at hev
-                      exact False.elim (hne (Prod.mk.inj hev).1.symm)
+                      exact errorPairImpossible (by simpa only [hc, hcl] using hev) hne
                   | nStruct nm fl =>
-                      simp only [hc, hcl] at hev
-                      exact False.elim (hne (Prod.mk.inj hev).1.symm)
+                      exact errorPairImpossible (by simpa only [hc, hcl] using hev) hne
       | rStruct fl =>
-          simp only [hc] at hev
-          exact False.elim (hne (Prod.mk.inj hev).1.symm)
+          exact errorPairImpossible (by simpa only [hc] using hev) hne
       | nStruct nm fl =>
-          simp only [hc] at hev
-          exact False.elim (hne (Prod.mk.inj hev).1.symm)
+          exact errorPairImpossible (by simpa only [hc] using hev) hne
 
 end PanGlobalsCompileCorrectExtCall
 

@@ -6,18 +6,6 @@ public import Mathlib.Tactic.NormNum
 @[expose] public section
 namespace Flapjack.RiscV.TargetProof.AddOverflow
 set_option autoImplicit false
-/-- The literal final SRLI63 extracts the word64 sign bit. This is local
-composition infrastructure, with no separately named HOL declaration. -/
-theorem shift_msb (x : BitVec 64) :
-    x >>> 63 = (if x.msb then (1 : BitVec 64) else 0) := by
-  apply BitVec.eq_of_toNat_eq
-  have hx := x.isLt
-  have zero : (0 : BitVec 64).toNat = 0 := by decide
-  have one : (1 : BitVec 64).toNat = 1 := by decide
-  simp only [BitVec.toNat_ushiftRight, BitVec.msb_eq_decide]
-  split <;> simp only [zero, one]
-  all_goals norm_num [Nat.shiftRight_eq_div_pow] at *
-  all_goals omega
 
 /-- HOL signed addition overflow is exactly equal operand signs and a changed
 result sign. No separately named HOL declaration is claimed. -/

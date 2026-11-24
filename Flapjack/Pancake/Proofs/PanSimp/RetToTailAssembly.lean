@@ -145,29 +145,7 @@ private theorem retToTailCorrect_if {width : Nat} {σ : Type} [NeZero width]
     evaluateHOLFiniteState s (retToTailHOL (.ite e c1 c2)) =
       evaluateHOLFiniteState s (.ite e c1 c2) := by
   dsimp only [retToTailCorrectP] at *
-  rw [retToTailHOL.eq_4, evaluateHOLFiniteState_ite, evaluateHOLFiniteState_ite]
-  rw [evaluateHOLFiniteState_ite] at h
-  cases hev : @evalHOLExact width σ _ s.toExact
-      (fun address => Classical.propDecidable (s.memaddrs address)) e with
-  | none => rfl
-  | some v =>
-    rw [hev] at h
-    cases v with
-    | val x =>
-      cases x with
-      | word w =>
-        have hb := ih _ _ w ⟨hev, rfl, rfl⟩
-        dsimp only at h hb ⊢
-        by_cases hw : w = 0
-        · rw [if_pos hw] at h
-          rw [if_pos hw, if_pos hw]
-          rw [if_neg (fun h' => h' hw)] at hb
-          exact hb h
-        · rw [if_neg hw] at h
-          rw [if_neg hw, if_neg hw]
-          rw [if_pos hw] at hb
-          exact hb h
-    | _ => rfl
+  grind [retToTailHOL, evaluateHOLFiniteState_ite, evalHOLFinite, evalHOLExact]
 
 /-- Resume `ret_to_tail_correct[While]`. -/
 private theorem retToTailCorrect_while {width : Nat} {σ : Type} [NeZero width]

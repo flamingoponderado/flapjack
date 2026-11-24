@@ -54,16 +54,13 @@ theorem compileCorrect_If {width : Nat} {σ : Type} [NeZero width]
   cases hi : @evalHOLExact width σ _ source.toExact
       (fun a => Classical.propDecidable (source.memaddrs a)) condition with
   | none =>
-    simp only [hi] at hev
-    exact False.elim (hne (Prod.mk.inj hev).1.symm)
+    exact errorPairImpossible (by simpa only [hi] using hev) hne
   | some value =>
     cases value with
     | rStruct fields =>
-      simp only [hi] at hev
-      exact False.elim (hne (Prod.mk.inj hev).1.symm)
+      exact errorPairImpossible (by simpa only [hi] using hev) hne
     | nStruct name fields =>
-      simp only [hi] at hev
-      exact False.elim (hne (Prod.mk.inj hev).1.symm)
+      exact errorPairImpossible (by simpa only [hi] using hev) hne
     | val payload =>
       cases payload with
       | word word =>

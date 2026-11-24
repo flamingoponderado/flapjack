@@ -703,6 +703,7 @@ import Flapjack.Compiler.Backend.ClosKnownProps.Ticks
 import Flapjack.Compiler.Backend.ClosKnownProps.KnownOp
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.ApproxArity
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.ApproxLabels
+import Flapjack.Compiler.Backend.ClosKnown.Proofs.ApproxGeneric
 import Flapjack.Compiler.Backend.BackendProps.OracleCombinators
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.TraversalLabels
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.CompileLabels
@@ -2237,6 +2238,7 @@ import Flapjack.Compiler.Backend.StackRemove.Proofs.InitReadMemory
 import Flapjack.Compiler.Backend.StackProps.EvaluateAddClockIoEventsMono
 import Flapjack.Compiler.Backend.StackProps.EvaluateIoEventsMono
 import Flapjack.RiscV.L3.Defs.CSRDispatch
+import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.AssemblyScript
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.JumpLower
 import Flapjack.Compiler.Backend.Semantics.TargetSem.InitializationContracts
 import Flapjack.Compiler.Backend.Semantics.TargetSem.Installed

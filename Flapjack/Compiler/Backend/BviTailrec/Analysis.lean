@@ -465,33 +465,6 @@ theorem exp_size_get_bin_args :
       expSizeHOL x1 + expSizeHOL x2 < expSizeHOL expr := by
   intro expr
   cases expr with
-  | var n =>
-    intro x1 x2 h
-    simp [getBinArgs] at h
-  | ifThenElse c t e =>
-    intro x1 x2 h
-    simp [getBinArgs] at h
-  | «let» es b =>
-    intro x1 x2 h
-    simp [getBinArgs] at h
-  | raise e =>
-    intro x1 x2 h
-    simp [getBinArgs] at h
-  | tick e =>
-    intro x1 x2 h
-    simp [getBinArgs] at h
-  | call ticks dest args handler =>
-    intro x1 x2 h
-    simp [getBinArgs] at h
-  | force n m =>
-    intro x1 x2 h
-    simp [getBinArgs] at h
-  | letCall n m k es b =>
-    intro x1 x2 h
-    simp [getBinArgs] at h
-  | «return» es =>
-    intro x1 x2 h
-    simp [getBinArgs] at h
   | op o args =>
     intro x1 x2 h
     cases args with
@@ -503,12 +476,13 @@ theorem exp_size_get_bin_args :
         cases args with
         | nil =>
           simp only [getBinArgs, Option.some.injEq, Prod.mk.injEq] at h
-          obtain ⟨h1, h2⟩ := h
-          subst h1
-          subst h2
+          obtain ⟨rfl, rfl⟩ := h
           simp only [expSizeHOL, expListSizeHOL]
           omega
         | cons c rest => simp [getBinArgs] at h
+  | _ =>
+    intro x1 x2 h
+    simp [getBinArgs] at h
 
 /-- Extract two operands only when the operation matches the accumulator. -/
 @[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "opbinargs_def"]

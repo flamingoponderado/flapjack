@@ -203,31 +203,8 @@ theorem stack_alloc_lab_pres {width : Nat} [NeZero width] :
       (∀ lab ∈ extractLabels (comp n nl p).1,
         lab ∈ extractLabels p ∨ (nl ≤ lab.2 ∧ lab.2 < (comp n nl p).2)) ∧
       nl ≤ (comp n nl p).2
-  | n, nl, .seq a b, aux, ⟨hok, hnd, hnl⟩ => by
-      rw [next_lab_thm] at hnl
-      dsimp only at hnl
-      rw [extractLabels] at hok hnd
-      obtain ⟨ndA, ndB, hdisj⟩ := List.nodup_append.1 hnd
-      rcases ha : comp n nl a with ⟨q1, m1⟩
-      rcases hb : comp n m1 b with ⟨q2, m2⟩
-      have IA := stack_alloc_lab_pres n nl a aux
-        ⟨fun l hl => hok l (List.mem_append.2 (Or.inl hl)), ndA, by omega⟩
-      rw [ha] at IA
-      obtain ⟨okA, ndA', memA, leA⟩ := IA
-      have IB := stack_alloc_lab_pres n m1 b aux
-        ⟨fun l hl => hok l (List.mem_append.2 (Or.inr hl)), ndB, by dsimp only at leA; omega⟩
-      rw [hb] at IB
-      obtain ⟨okB, ndB', memB, leB⟩ := IB
-      simp only [comp, ha, hb]
-      rw [extractLabels, extractLabels]
-      obtain ⟨hn, hm⟩ := pres_append hdisj
-        (fun x hx => by have := extract_labels_next_lab a aux x hx; omega)
-        (fun x hx => by have := extract_labels_next_lab b aux x hx; omega) ndA' ndB' memA memB leA leB
-      refine ⟨fun l hl => ?_, hn, hm, by dsimp only at leA leB ⊢; omega⟩
-      rcases List.mem_append.1 hl with hl | hl
-      · exact okA l hl
-      · exact okB l hl
-  | n, nl, .ite cmp r ri a b, aux, ⟨hok, hnd, hnl⟩ => by
+  | n, nl, .seq a b, aux, ⟨hok, hnd, hnl⟩
+  | n, nl, .ite _ _ _ a b, aux, ⟨hok, hnd, hnl⟩ => by
       rw [next_lab_thm] at hnl
       dsimp only at hnl
       rw [extractLabels] at hok hnd
@@ -254,26 +231,15 @@ theorem stack_alloc_lab_pres {width : Nat} [NeZero width] :
   | n, nl, .loop body, aux, ⟨hok, hnd, hnl⟩ => by
       rw [next_lab_thm] at hnl
       rw [extractLabels] at hok hnd
-      have IB := stack_alloc_lab_pres n nl body aux ⟨hok, hnd, hnl⟩
-      simp only [comp]
-      rw [show extractLabels (.loop (comp n nl body).1) = extractLabels (comp n nl body).1 from by
-          rw [extractLabels],
-        show extractLabels (.loop body) = extractLabels body from by rw [extractLabels]]
-      exact IB
-  | n, nl, .alloc k, aux, ⟨hok, hnd, hnl⟩ => by
+      simpa only [comp, extractLabels] using
+        stack_alloc_lab_pres n nl body aux ⟨hok, hnd, hnl⟩
+  | n, nl, .alloc _, aux, ⟨hok, hnd, hnl⟩
+  | n, nl, .storeConsts _ _ (some _), aux, ⟨hok, hnd, hnl⟩ => by
       rw [next_lab_thm] at hnl
       simp only [comp, extractLabels, List.append_nil, List.mem_singleton, List.nodup_cons,
         List.not_mem_nil, not_false_eq_true, List.nodup_nil, and_self, forall_eq, true_and]
       dsimp only at hnl
       omega
-  | n, nl, .storeConsts t1 t2 (some loc), aux, ⟨hok, hnd, hnl⟩ => by
-      rw [next_lab_thm] at hnl
-      simp only [comp, extractLabels, List.append_nil, List.mem_singleton, List.nodup_cons,
-        List.not_mem_nil, not_false_eq_true, List.nodup_nil, and_self, forall_eq, true_and]
-      dsimp only at hnl
-      omega
-  | n, nl, .call none dest handler, aux, ⟨hok, hnd, hnl⟩ => by
-      simp [comp, extractLabels]
   | n, nl, .call (some (rp, lr, l1, l2)) dest none, aux, ⟨hok, hnd, hnl⟩ => by
       rw [next_lab_thm] at hnl
       dsimp only at hnl
@@ -344,7 +310,7 @@ theorem stack_alloc_lab_pres {width : Nat} [NeZero width] :
         · rcases hm l hl with h | h
           · exact Or.inl (Or.inr (Or.inr h))
           · exact Or.inr ⟨h.1, by omega⟩
-  | n, nl, .storeConsts t1 t2 none, _, _
+  | n, nl, .storeConsts _ _ none, _, _ | n, nl, .call none _ _, _, _
   | n, nl, .skip, _, _ | n, nl, .halt _, _, _ | n, nl, .tick, _, _ | n, nl, .ret _, _, _
   | n, nl, .raise _, _, _ | n, nl, .break _, _, _ | n, nl, .continue _, _, _
   | n, nl, .inst _, _, _ | n, nl, .get _ _, _, _ | n, nl, .set _ _, _, _

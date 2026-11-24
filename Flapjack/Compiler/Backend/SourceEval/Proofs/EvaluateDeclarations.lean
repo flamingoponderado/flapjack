@@ -9,6 +9,19 @@ public import Flapjack.EvaluateHOL.ClockFull
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL Flapjack.EvaluateHOL
 
+/-- Flapjack proof infrastructure: an error result that agrees with a `result`
+known not to be a type abort is itself not a type abort. Shared by the `err`
+branches of the evaluator oracle-adjustment induction; it has no separate HOL
+original. -/
+public theorem errNeTypeAbort {S α β : Type} {middle next : S} {error : ErrorResult β}
+    {result : Result α β} (pair : (middle, .err error) = (next, result))
+    (safe : result ≠ .err (.abort .typeError)) :
+    (Result.err error : Result α β) ≠ .err (.abort .typeError) := by
+  intro bad
+  apply safe
+  have h := congrArg Prod.snd pair
+  simpa [bad] using h.symm
+
 /-- Type-abbreviation declaration case of the source evaluator induction. -/
 @[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "adjust_oracle_evaluate"]
 theorem adjustOracle_evaluate_Dtabbrev {Config F : Type} (compile : List Dec → List Dec)

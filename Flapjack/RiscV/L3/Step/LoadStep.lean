@@ -39,6 +39,32 @@ theorem in32BitMode_false (s : riscv_state)
   rcases hcases (s.c_MCSR s.procID).mcpuid.ArchBase with h | h | h | h <;>
     simp_all
 
+/-- Shared proof script excluding the 32-bit architecture, used by the 64-bit-capable
+loads `dfnLDRaw`, `dfnLWURaw`, `dfnLDNop` and `dfnLWUNop` (Flapjack proof infrastructure). -/
+local macro "load_arch_test" s:ident harch0:ident harch:ident : tactic => `(tactic| (
+  rw [in32BitMode_false $s $harch0 $harch]
+  simp only [Bool.false_eq_true, reduceIte]))
+
+/-- Shared proof script for the raw load equations after the caller unfolds the `dfn'L*`
+definition (and `load_arch_test`); used by the seven `dfnL*Raw` theorems. -/
+local macro "load_raw_rest" rs1:ident offs:ident s:ident hrd:ident hVM:ident : tactic =>
+  `(tactic| (
+  have hv : GPR $rs1 $s + BitVec.signExtend 64 $offs =
+      (if $rs1 = 0 then BitVec.signExtend 64 $offs
+       else ($s).c_gpr ($s).procID $rs1 + BitVec.signExtend 64 $offs) := by
+    by_cases hr1 : $rs1 = 0
+    all_goals simp_all [GPR, gpr]
+  rw [hv, translateAddr_bare _ _ _ $s $hVM]
+  simp only [«write'GPR», «write'gpr»]
+  rw [if_pos (by simpa [beq_iff_eq] using $hrd)]))
+
+/-- Shared proof script for the `rd = 0` load companions after the caller unfolds the
+`dfn'L*` definition (and `load_arch_test`); used by the seven `dfnL*Nop` theorems. -/
+local macro "load_nop_rest" s:ident hrd:ident hVM:ident : tactic => `(tactic| (
+  rw [translateAddr_bare _ _ _ $s $hVM]
+  have hrd' := $hrd
+  simp [«write'GPR», hrd']))
+
 /-- Untagged raw-result convenience equation; the source-expanded port is below. -/
 theorem dfnLDRaw (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
     (harch0 : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 0)
@@ -52,15 +78,8 @@ theorem dfnLDRaw (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
             else s.c_gpr s.procID rs1 + BitVec.signExtend 64 offs) s)
           (s.c_gpr s.procID)) s.c_gpr } := by
   simp only [«dfn'LD»]
-  rw [in32BitMode_false s harch0 harch]
-  simp only [Bool.false_eq_true, reduceIte]
-  have hv : GPR rs1 s + BitVec.signExtend 64 offs =
-      (if rs1 = 0 then BitVec.signExtend 64 offs
-       else s.c_gpr s.procID rs1 + BitVec.signExtend 64 offs) := by
-    by_cases hr1 : rs1 = 0 <;> simp_all [GPR, gpr]
-  rw [hv, translateAddr_bare _ _ _ s hVM]
-  simp only [«write'GPR», «write'gpr»]
-  rw [if_pos (by simpa [beq_iff_eq] using hrd)]
+  load_arch_test s harch0 harch
+  load_raw_rest rs1 offs s hrd hVM
 
 /-- Untagged raw-result convenience equation; the source-expanded port is below. -/
 theorem dfnLWRaw (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
@@ -74,13 +93,7 @@ theorem dfnLWRaw (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
               else s.c_gpr s.procID rs1 + BitVec.signExtend 64 offs) s)))
           (s.c_gpr s.procID)) s.c_gpr } := by
   simp only [«dfn'LW»]
-  have hv : GPR rs1 s + BitVec.signExtend 64 offs =
-      (if rs1 = 0 then BitVec.signExtend 64 offs
-       else s.c_gpr s.procID rs1 + BitVec.signExtend 64 offs) := by
-    by_cases hr1 : rs1 = 0 <;> simp_all [GPR, gpr]
-  rw [hv, translateAddr_bare _ _ _ s hVM]
-  simp only [«write'GPR», «write'gpr»]
-  rw [if_pos (by simpa [beq_iff_eq] using hrd)]
+  load_raw_rest rs1 offs s hrd hVM
 
 /-- Untagged raw-result convenience equation; the source-expanded port is below. -/
 theorem dfnLHRaw (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
@@ -94,13 +107,7 @@ theorem dfnLHRaw (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
               else s.c_gpr s.procID rs1 + BitVec.signExtend 64 offs) s)))
           (s.c_gpr s.procID)) s.c_gpr } := by
   simp only [«dfn'LH»]
-  have hv : GPR rs1 s + BitVec.signExtend 64 offs =
-      (if rs1 = 0 then BitVec.signExtend 64 offs
-       else s.c_gpr s.procID rs1 + BitVec.signExtend 64 offs) := by
-    by_cases hr1 : rs1 = 0 <;> simp_all [GPR, gpr]
-  rw [hv, translateAddr_bare _ _ _ s hVM]
-  simp only [«write'GPR», «write'gpr»]
-  rw [if_pos (by simpa [beq_iff_eq] using hrd)]
+  load_raw_rest rs1 offs s hrd hVM
 
 /-- Untagged raw-result convenience equation; the source-expanded port is below. -/
 theorem dfnLBRaw (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
@@ -112,13 +119,7 @@ theorem dfnLBRaw (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
               else s.c_gpr s.procID rs1 + BitVec.signExtend 64 offs) s)))
           (s.c_gpr s.procID)) s.c_gpr } := by
   simp only [«dfn'LB»]
-  have hv : GPR rs1 s + BitVec.signExtend 64 offs =
-      (if rs1 = 0 then BitVec.signExtend 64 offs
-       else s.c_gpr s.procID rs1 + BitVec.signExtend 64 offs) := by
-    by_cases hr1 : rs1 = 0 <;> simp_all [GPR, gpr]
-  rw [hv, translateAddr_bare _ _ _ s hVM]
-  simp only [«write'GPR», «write'gpr»]
-  rw [if_pos (by simpa [beq_iff_eq] using hrd)]
+  load_raw_rest rs1 offs s hrd hVM
 
 /-- Untagged raw-result convenience equation; the source-expanded port is below. -/
 theorem dfnLWURaw (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
@@ -134,15 +135,8 @@ theorem dfnLWURaw (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
               else s.c_gpr s.procID rs1 + BitVec.signExtend 64 offs) s)))
           (s.c_gpr s.procID)) s.c_gpr } := by
   simp only [«dfn'LWU»]
-  rw [in32BitMode_false s harch0 harch]
-  simp only [Bool.false_eq_true, reduceIte]
-  have hv : GPR rs1 s + BitVec.signExtend 64 offs =
-      (if rs1 = 0 then BitVec.signExtend 64 offs
-       else s.c_gpr s.procID rs1 + BitVec.signExtend 64 offs) := by
-    by_cases hr1 : rs1 = 0 <;> simp_all [GPR, gpr]
-  rw [hv, translateAddr_bare _ _ _ s hVM]
-  simp only [«write'GPR», «write'gpr»]
-  rw [if_pos (by simpa [beq_iff_eq] using hrd)]
+  load_arch_test s harch0 harch
+  load_raw_rest rs1 offs s hrd hVM
 
 /-- Untagged raw-result convenience equation; the source-expanded port is below. -/
 theorem dfnLHURaw (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
@@ -156,13 +150,7 @@ theorem dfnLHURaw (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
               else s.c_gpr s.procID rs1 + BitVec.signExtend 64 offs) s)))
           (s.c_gpr s.procID)) s.c_gpr } := by
   simp only [«dfn'LHU»]
-  have hv : GPR rs1 s + BitVec.signExtend 64 offs =
-      (if rs1 = 0 then BitVec.signExtend 64 offs
-       else s.c_gpr s.procID rs1 + BitVec.signExtend 64 offs) := by
-    by_cases hr1 : rs1 = 0 <;> simp_all [GPR, gpr]
-  rw [hv, translateAddr_bare _ _ _ s hVM]
-  simp only [«write'GPR», «write'gpr»]
-  rw [if_pos (by simpa [beq_iff_eq] using hrd)]
+  load_raw_rest rs1 offs s hrd hVM
 
 @[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "LD_NOP"]
 theorem dfnLDNop (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
@@ -173,34 +161,29 @@ theorem dfnLDNop (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
       else s.c_gpr s.procID rs1 + BitVec.signExtend 64 offs) = true) :
     «dfn'LD» (rd, (rs1, offs)) s = s := by
   simp only [«dfn'LD»]
-  rw [in32BitMode_false s harch0 harch]
-  simp only [Bool.false_eq_true, reduceIte]
-  rw [translateAddr_bare _ _ _ s hVM]
-  simp [«write'GPR», hrd]
+  load_arch_test s harch0 harch
+  load_nop_rest s hrd hVM
 
 @[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "LW_NOP"]
 theorem dfnLWNop (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
     (hrd : rd = 0) (hVM : (s.c_MCSR s.procID).mstatus.VM = 0#5) :
     «dfn'LW» (rd, (rs1, offs)) s = s := by
   simp only [«dfn'LW»]
-  rw [translateAddr_bare _ _ _ s hVM]
-  simp [«write'GPR», hrd]
+  load_nop_rest s hrd hVM
 
 @[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "LH_NOP"]
 theorem dfnLHNop (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
     (hrd : rd = 0) (hVM : (s.c_MCSR s.procID).mstatus.VM = 0#5) :
     «dfn'LH» (rd, (rs1, offs)) s = s := by
   simp only [«dfn'LH»]
-  rw [translateAddr_bare _ _ _ s hVM]
-  simp [«write'GPR», hrd]
+  load_nop_rest s hrd hVM
 
 @[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "LB_NOP"]
 theorem dfnLBNop (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
     (hrd : rd = 0) (hVM : (s.c_MCSR s.procID).mstatus.VM = 0#5) :
     «dfn'LB» (rd, (rs1, offs)) s = s := by
   simp only [«dfn'LB»]
-  rw [translateAddr_bare _ _ _ s hVM]
-  simp [«write'GPR», hrd]
+  load_nop_rest s hrd hVM
 
 @[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "LWU_NOP"]
 theorem dfnLWUNop (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
@@ -209,18 +192,15 @@ theorem dfnLWUNop (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
     (hVM : (s.c_MCSR s.procID).mstatus.VM = 0#5) :
     «dfn'LWU» (rd, (rs1, offs)) s = s := by
   simp only [«dfn'LWU»]
-  rw [in32BitMode_false s harch0 harch]
-  simp only [Bool.false_eq_true, reduceIte]
-  rw [translateAddr_bare _ _ _ s hVM]
-  simp [«write'GPR», hrd]
+  load_arch_test s harch0 harch
+  load_nop_rest s hrd hVM
 
 @[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "LHU_NOP"]
 theorem dfnLHUNop (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
     (hrd : rd = 0) (hVM : (s.c_MCSR s.procID).mstatus.VM = 0#5) :
     «dfn'LHU» (rd, (rs1, offs)) s = s := by
   simp only [«dfn'LHU»]
-  rw [translateAddr_bare _ _ _ s hVM]
-  simp [«write'GPR», hrd]
+  load_nop_rest s hrd hVM
 
 /-- Untagged raw-result convenience equation; the source-expanded port is below. -/
 theorem dfnLBURaw (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
@@ -232,21 +212,14 @@ theorem dfnLBURaw (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
               else s.c_gpr s.procID rs1 + BitVec.signExtend 64 offs) s)))
           (s.c_gpr s.procID)) s.c_gpr } := by
   simp only [«dfn'LBU»]
-  have hv : GPR rs1 s + BitVec.signExtend 64 offs =
-      (if rs1 = 0 then BitVec.signExtend 64 offs
-       else s.c_gpr s.procID rs1 + BitVec.signExtend 64 offs) := by
-    by_cases hr1 : rs1 = 0 <;> simp_all [GPR, gpr]
-  rw [hv, translateAddr_bare _ _ _ s hVM]
-  simp only [«write'GPR», «write'gpr»]
-  rw [if_pos (by simpa [beq_iff_eq] using hrd)]
+  load_raw_rest rs1 offs s hrd hVM
 
 @[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "LBU_NOP"]
 theorem dfnLBUNop (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
     (hrd : rd = 0) (hVM : (s.c_MCSR s.procID).mstatus.VM = 0#5) :
     «dfn'LBU» (rd, (rs1, offs)) s = s := by
   simp only [«dfn'LBU»]
-  rw [translateAddr_bare _ _ _ s hVM]
-  simp [«write'GPR», hrd]
+  load_nop_rest s hrd hVM
 
 @[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "LD"]
 theorem dfnLD (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)

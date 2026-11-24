@@ -166,11 +166,7 @@ theorem adjustOracle_evaluate_Raise {Config F : Type} (compile : List Dec → Li
     cases inner with
     | err error =>
       have pair : (middle, .err error) = (next, result) := by simpa [evaluate, run] using source
-      have innerSafe : (Result.err error : Result (List Value) Value) ≠ .err (.abort .typeError) := by
-        intro bad
-        apply safe
-        have h := congrArg Prod.snd pair
-        simpa [bad] using h.symm
+      have innerSafe := errNeTypeAbort pair safe
       obtain ⟨middleInserted, replacement⟩ := ih middle (.err error) ⟨run, inserted, innerSafe⟩
       cases pair
       exact ⟨middleInserted, by simp [evaluate, replacement]⟩
@@ -210,11 +206,7 @@ theorem adjustOracle_evaluate_Let {Config F : Type} (compile : List Dec → List
     cases inner with
     | err error =>
       have pair : (middle, .err error) = (next, result) := by simpa [run] using source
-      have innerSafe : (Result.err error : Result (List Value) Value) ≠ .err (.abort .typeError) := by
-        intro bad
-        apply safe
-        have h := congrArg Prod.snd pair
-        simpa [bad] using h.symm
+      have innerSafe := errNeTypeAbort pair safe
       obtain ⟨middleInserted, replacement⟩ := boundIH middle (.err error) ⟨run, inserted, innerSafe⟩
       cases pair
       exact ⟨middleInserted, by simp [adjusted, replacement]⟩
@@ -252,11 +244,7 @@ theorem adjustOracle_evaluate_ExpsCons {Config F : Type} (compile : List Dec →
     cases inner with
     | err error =>
       have pair : (middle, .err error) = (next, result) := by simpa [run] using source
-      have innerSafe : (Result.err error : Result (List Value) Value) ≠ .err (.abort .typeError) := by
-        intro bad
-        apply safe
-        have h := congrArg Prod.snd pair
-        simpa [bad] using h.symm
+      have innerSafe := errNeTypeAbort pair safe
       obtain ⟨middleInserted, replacement⟩ := firstIH middle (.err error) ⟨run, inserted, innerSafe⟩
       cases pair
       exact ⟨middleInserted, by simp [adjusted, replacement]⟩

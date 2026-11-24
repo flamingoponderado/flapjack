@@ -107,28 +107,7 @@ theorem destClosure_full_maxapp (maxApp : Nat) (c : Value) (vs : List Value)
     vs.length ≤ maxApp := by
   obtain ⟨run, _⟩ := h
   cases c
-  all_goals simp only [destClosure] at run
-  all_goals try contradiction
-  case closure location supplied env0 arity body =>
-    split at run
-    · rename_i valid
-      split at run
-      · simp at run
-      · simp only [Option.some.injEq, AppKind.fullApp.injEq] at run
-        simp only [Bool.and_eq_true, decide_eq_true_eq] at valid
-        simpa [checkLoc] using valid.1
-    · simp at run
-  case recclosure location supplied env0 functions index =>
-    split at run
-    · simp at run
-    · split at run
-      · rename_i valid
-        split at run
-        · simp at run
-        · simp only [Option.some.injEq, AppKind.fullApp.injEq] at run
-          simp only [Bool.and_eq_true, decide_eq_true_eq] at valid
-          simpa [checkLoc] using valid.1
-      · simp at run
+  all_goals grind [destClosure, checkLoc]
 
 /-- Appending arguments cannot turn a failed split into a successful one. -/
 @[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "dest_closure_none_append"]
@@ -371,27 +350,10 @@ theorem destClosure_full_addargs (maxApp : Nat) (c : Value) (vs : List Value)
       · rename_i hfull
         simp only [Option.some.injEq, AppKind.fullApp.injEq] at run
         obtain ⟨rfl, henv, hrest⟩ := run
-        have hk : arity - supplied.length ≤ vs.length := by omega
-        have htake : (more ++ vs).reverse.take (arity - supplied.length) =
-            vs.reverse.take (arity - supplied.length) := by
-          rw [List.reverse_append]
-          exact List.take_append_of_le_length (by simpa using hk)
-        have hdrop : (more ++ vs).reverse.drop (arity - supplied.length) =
-            vs.reverse.drop (arity - supplied.length) ++ more.reverse := by
-          rw [List.reverse_append]
-          exact List.drop_append_of_le_length (by simpa using hk)
-        have hsmall : supplied.length < arity := by
-          simp only [Bool.and_eq_true, decide_eq_true_eq] at valid
-          exact valid.2
-        have hcheck : checkLoc maxApp none loc arity (more.length + vs.length)
-            supplied.length = true := by
-          simp only [Bool.and_eq_true, decide_eq_true_eq, checkLoc] at valid ⊢
-          omega
-        have hfull' : ¬ (more.length + vs.length + supplied.length < arity) := by omega
-        simp only [destClosure, List.length_append]
-        rw [if_pos (by simp [hcheck, hsmall]), if_neg hfull']
-        rw [htake, hdrop, List.reverse_append]
-        rw [List.reverse_reverse, henv, hrest]
+        simp_all [destClosure, checkLoc, Bool.and_eq_true, decide_eq_true_eq,
+          List.take_append_of_le_length, List.drop_append_of_le_length,
+          List.reverse_append, List.reverse_reverse]
+        omega
     · simp at run
   case recclosure loc supplied cenv functions index =>
     cases hfound : functions[index]? with
@@ -408,27 +370,10 @@ theorem destClosure_full_addargs (maxApp : Nat) (c : Value) (vs : List Value)
         · rename_i hfull
           simp only [Option.some.injEq, AppKind.fullApp.injEq] at run
           obtain ⟨rfl, henv, hrest⟩ := run
-          have hk : arity - supplied.length ≤ vs.length := by omega
-          have htake : (more ++ vs).reverse.take (arity - supplied.length) =
-              vs.reverse.take (arity - supplied.length) := by
-            rw [List.reverse_append]
-            exact List.take_append_of_le_length (by simpa using hk)
-          have hdrop : (more ++ vs).reverse.drop (arity - supplied.length) =
-              vs.reverse.drop (arity - supplied.length) ++ more.reverse := by
-            rw [List.reverse_append]
-            exact List.drop_append_of_le_length (by simpa using hk)
-          have hsmall : supplied.length < arity := by
-            simp only [Bool.and_eq_true, decide_eq_true_eq] at valid
-            exact valid.2
-          have hcheck : checkLoc maxApp none (loc.map (fun loc => 2 * index + loc)) arity
-              (more.length + vs.length) supplied.length = true := by
-            simp only [Bool.and_eq_true, decide_eq_true_eq, checkLoc] at valid ⊢
-            omega
-          have hfull' : ¬ (more.length + vs.length + supplied.length < arity) := by omega
-          simp only [destClosure, hfound, List.length_append]
-          rw [if_pos (by simp [hcheck, hsmall]), if_neg hfull']
-          rw [htake, hdrop, List.reverse_append]
-          rw [List.reverse_reverse, henv, hrest]
+          simp_all [destClosure, checkLoc, Bool.and_eq_true, decide_eq_true_eq,
+            List.take_append_of_le_length, List.drop_append_of_le_length,
+            List.reverse_append, List.reverse_reverse]
+          omega
       · simp at run
 
 /-- Applying the tail of a partial application's arguments directly to the

@@ -326,17 +326,7 @@ theorem doAppCases {C F : Type} (st : State C F) (op : FlatLang.Op)
   case globalVarInit n =>
     by_cases bound : n < st.globals.length
     · rw [Flapjack.holEl_eq_getElem n _ bound, List.getElem?_eq_getElem bound]
-      cases vs with
-      | nil => simp_all [Nat.not_le_of_gt bound]
-      | cons head tail =>
-        cases tail with
-        | cons _ _ => simp_all [Nat.not_le_of_gt bound]
-        | nil =>
-          cases entry : st.globals[n] with
-          | none => simp_all [Nat.not_le_of_gt bound, eq_comm]
-          | some value =>
-            have ne : st.globals[n] ≠ none := by rw [entry]; simp
-            simp_all [Nat.not_le_of_gt bound, eq_comm]
+      grind [Flapjack.holEl_eq_getElem]
     · have absent : st.globals[n]? = none := List.getElem?_eq_none_iff.mpr (by omega)
       simp_all
       omega
@@ -348,33 +338,12 @@ theorem doAppCases {C F : Type} (st : State C F) (op : FlatLang.Op)
     · have absent : st.globals[n]? = none := List.getElem?_eq_none_iff.mpr (by omega)
       simp_all
       omega
-  case id => cases vs with
-    | nil => simp_all
-    | cons head tail => cases tail <;> simp_all [eq_comm]
+  case id =>
+    grind
   case lenEq =>
-    cases vs with
-    | nil => simp_all
-    | cons head tail =>
-      cases tail with
-      | cons _ _ => simp_all
-      | nil =>
-        cases head <;> simp_all [Bool.beq_eq_decide_eq]
-        all_goals aesop
+    grind
   case tagLenEq =>
-    cases vs with
-    | nil => simp_all
-    | cons head tail =>
-      cases tail with
-      | cons _ _ => simp_all
-      | nil =>
-        cases head <;> simp_all
-        case conv opt fields =>
-          cases opt with
-          | none => simp_all
-          | some pair =>
-            cases pair
-            simp_all [Bool.beq_eq_decide_eq]
-            all_goals aesop
+    grind
   case el n =>
     cases n with
     | zero =>
@@ -390,11 +359,7 @@ theorem doAppCases {C F : Type} (st : State C F) (op : FlatLang.Op)
             | nil => simp_all [Flapjack.holHd]
             | cons first rest =>
               simp_all [Flapjack.holHd]
-              constructor
-              · rintro ⟨hs, hv⟩
-                exact ⟨opt, first :: rest, ⟨rfl, rfl⟩, by simp, hs, hv⟩
-              · rintro ⟨_, _, ⟨rfl, rfl⟩, _, hs, hv⟩
-                exact ⟨hs, hv⟩
+              grind [Flapjack.holHd]
           case loc flag p =>
             cases found : storeLookup p st.refs with
             | none => cases flag <;> simp_all
@@ -410,14 +375,7 @@ theorem doAppCases {C F : Type} (st : State C F) (op : FlatLang.Op)
           case conv opt fields =>
             by_cases bound : n + 1 < fields.length
             · rw [List.getElem?_eq_getElem bound]
-              constructor
-              · rintro ⟨value, hvalue, hs, hv⟩
-                cases hvalue
-                exact ⟨opt, fields, ⟨rfl, rfl⟩, bound, hs, by
-                  simpa [@Flapjack.holEl_eq_getElem Value ⟨unitValue⟩ (n + 1) fields bound] using hv⟩
-              · rintro ⟨_, _, ⟨rfl, rfl⟩, _, hs, hv⟩
-                exact ⟨fields[n + 1], rfl, hs, by
-                  simpa [@Flapjack.holEl_eq_getElem Value ⟨unitValue⟩ (n + 1) fields bound] using hv⟩
+              grind [Flapjack.holEl, Flapjack.holEl_eq_getElem]
             · have absent : fields[n + 1]? = none := List.getElem?_eq_none_iff.mpr (by omega)
               simp_all
               omega

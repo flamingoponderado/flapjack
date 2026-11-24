@@ -60,19 +60,8 @@ theorem pcCompileCorrectAt_while {width : Nat} {σ : Type} [NeZero width]
     exact absurd (Prod.mk.inj hrun).1.symm hres
   rename_i w heval
   rcases hc : compileExpExactHOLW ctxt e with ⟨es, sh⟩
-  obtain ⟨hes, _, _, _⟩ :=
-    @compileExpValRelHOL width σ _ source
-      (fun address => Classical.propDecidable (source.memaddrs address)) ctxt t
-      (fun address => Classical.propDecidable (t.memaddrs address))
-      e (.val (.word w)) es sh heval hstate hcode hlocals hlocs.1 hc
-  obtain ⟨ce, hce⟩ : ∃ ce, es = [ce] := by
-    rcases es with _ | ⟨ce, _ | ⟨_, _⟩⟩
-    · simp [flattenHOL] at hes
-    · exact ⟨ce, rfl⟩
-    · simp [flattenHOL] at hes
-  subst hce
-  have hce : @evalCrepSemHOLExp width _ σ t ce = some (.word w) := by
-    simpa [flattenHOL] using hes
+  obtain ⟨ce, rfl, hce⟩ :=
+    compileExpValRelHOL_word_singleton source ctxt t e w es sh heval hstate hcode hlocals hlocs.1 hc
   have hcomp : ∀ ctxt' : PanToCrepContextExact width, ctxt' = ctxt →
       compileProgExactHOLW ctxt' (.while e c) = .while ce (compileProgExactHOLW ctxt' c) := by
     rintro _ rfl
@@ -252,20 +241,14 @@ theorem pcCompileCorrect_While {width : Nat} {σ : Type} [NeZero width] :
                    globalsLookupHOL t1 v' = some (flattenHOL v') ∧
                      sizeOfShapeHOL (shapeOfHOLExact v') ≤ 32))
         | some (.finalFfi f) => res1 = some (.finalFfi f) := by
-  intro e c s ⟨ihCont, ihNone, ihBody⟩ res s1 t ctxt
-    ⟨hrun, hres, hstate, hcode, hexcp, hlocals, hloc⟩
-  obtain ⟨res1, t1, h1, h2, h3, h4, h5⟩ :=
-    pcCompileCorrectAt_while e c s
+  intro e c s ⟨ihCont, ihNone, ihBody⟩
+  exact (pcCompileCorrectAt_iff_HOL (.while e c) s).mp
+    (pcCompileCorrectAt_while e c s
       (fun w s' hv hw hck hb => (pcCompileCorrectAt_iff_HOL _ _).mpr
         (ihCont _ _ w _ s' _ ⟨hv, rfl, rfl, hw, hck, hb.symm, rfl, rfl⟩))
       (fun w s' hv hw hck hb => (pcCompileCorrectAt_iff_HOL _ _).mpr
         (ihNone _ _ w _ s' ⟨hv, rfl, rfl, hw, hck, hb.symm, rfl⟩))
       (fun w hv hw hck => (pcCompileCorrectAt_iff_HOL _ _).mpr
-        (ihBody _ _ w ⟨hv, rfl, rfl, hw, hck⟩))
-      res s1 t ctxt hrun hres hstate hcode hexcp hlocals hloc
-  refine ⟨res1, t1, h1, h2, h3, h4, ?_⟩
-  rcases res with _ | r
-  · exact h5
-  · cases r <;> exact h5
+        (ihBody _ _ w ⟨hv, rfl, rfl, hw, hck⟩)))
 
 end Flapjack

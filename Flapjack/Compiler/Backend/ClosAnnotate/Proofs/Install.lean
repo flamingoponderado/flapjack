@@ -7,6 +7,7 @@ public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.InstallSafety
 public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.StateRelation.Original
 public import Flapjack.Compiler.Backend.Semantics.ClosProps.InstallStep
 public import Flapjack.Compiler.Backend.Semantics.ClosProps.DecodeRelations
+public import Flapjack.Misc.List
 
 @[expose] public section
 
@@ -238,15 +239,8 @@ theorem doInstall_full {C F : Type} (source target : State C F)
 /-- Nonempty related lists have related HOL last elements. -/
 theorem holLast_related {left right : List Value}
     (related : List.Forall₂ ValueRel left right) (nonempty : left ≠ []) :
-    ValueRel (@holLast Value ⟨unitValue⟩ left) (@holLast Value ⟨unitValue⟩ right) := by
-  induction related with
-  | nil => exact (nonempty rfl).elim
-  | @cons first nextFirst rest nextRest head tail ih =>
-    cases tail with
-    | nil => simpa [holLast] using head
-    | @cons second nextSecond tail nextTail nextHead restRel =>
-      simp only [holLast]
-      exact ih (by simp)
+    ValueRel (@holLast Value ⟨unitValue⟩ left) (@holLast Value ⟨unitValue⟩ right) :=
+  Flapjack.holLast_related ⟨unitValue⟩ ValueRel related nonempty
 
 /-- The installed program runs at a smaller clock, with the empty
 environment and the annotated oracle program. -/

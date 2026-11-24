@@ -42,27 +42,8 @@ theorem doApp_code {C F : Type} (op : ClosLang.Op)
   by_cases hinstall : op = .install
   · subst hinstall
     exact (notInstall rfl).elim
-  · simp only [doApp, doAppFallback] at runEq ⊢
-    cases aux : doAppAux op args state with
-    | none => simp [aux] at runEq
-    | some inner =>
-      cases inner with
-      | some pair =>
-        obtain ⟨value', next'⟩ := pair
-        simp only [aux] at runEq
-        cases runEq
-        exact doAppAux_code op args state next value aux
-      | none =>
-        simp only [aux] at runEq
-        cases fallback : BvlSem.doApp op args (toBvl state) with
-        | err error' =>
-          split at runEq
-          all_goals simp_all
-        | val pair =>
-          obtain ⟨value', next'⟩ := pair
-          simp only [fallback] at runEq
-          cases runEq
-          simp [fromBvl]
+  · simp only [doApp, doAppFallback, fromBvl] at runEq ⊢
+    grind [doAppAux_code]
 
 /-- A non-install primitive application leaves the compiler and its oracle
 unchanged. -/

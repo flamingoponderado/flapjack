@@ -91,38 +91,14 @@ theorem pcCompileCorrectAt_shMemStore {width : Nat} {σ : Type} [NeZero width]
                               subst res
                               rcases hcAddress : compileExpExactHOLW ctxt address with
                                 ⟨esAddress, shAddress⟩
-                              obtain ⟨hmapAddress, _, _, _⟩ :=
-                                @compileExpValRelHOL width σ _ s
-                                  (fun key => Classical.propDecidable (s.memaddrs key)) ctxt t
-                                  (fun key => Classical.propDecidable (t.memaddrs key))
-                                  address (.val (.word addr)) esAddress shAddress haddress
-                                  hstate hcode hlocals hlocs.1 hcAddress
-                              obtain ⟨ceAddress, hceAddress⟩ : ∃ ce, esAddress = [ce] := by
-                                rcases esAddress with _ | ⟨ce, _ | ⟨_, _⟩⟩
-                                · simp [flattenHOL] at hmapAddress
-                                · exact ⟨ce, rfl⟩
-                                · simp [flattenHOL] at hmapAddress
-                              subst hceAddress
-                              have hceAddressEval :
-                                  evalCrepSemHOLExp t ceAddress = some (.word addr) := by
-                                simpa [flattenHOL] using hmapAddress
+                              obtain ⟨ceAddress, rfl, hceAddressEval⟩ :=
+                                compileExpValRelHOL_word_singleton s ctxt t address addr esAddress
+                                  shAddress haddress hstate hcode hlocals hlocs.1 hcAddress
                               rcases hcValue : compileExpExactHOLW ctxt value with
                                 ⟨esValue, shValue⟩
-                              obtain ⟨hmapValue, _, _, _⟩ :=
-                                @compileExpValRelHOL width σ _ s
-                                  (fun key => Classical.propDecidable (s.memaddrs key)) ctxt t
-                                  (fun key => Classical.propDecidable (t.memaddrs key))
-                                  value (.val (.word bytes)) esValue shValue hvalue
-                                  hstate hcode hlocals hlocs.2 hcValue
-                              obtain ⟨ceValue, hceValue⟩ : ∃ ce, esValue = [ce] := by
-                                rcases esValue with _ | ⟨ce, _ | ⟨_, _⟩⟩
-                                · simp [flattenHOL] at hmapValue
-                                · exact ⟨ce, rfl⟩
-                                · simp [flattenHOL] at hmapValue
-                              subst hceValue
-                              have hceValueEval :
-                                  evalCrepSemHOLExp t ceValue = some (.word bytes) := by
-                                simpa [flattenHOL] using hmapValue
+                              obtain ⟨ceValue, rfl, hceValueEval⟩ :=
+                                compileExpValRelHOL_word_singleton s ctxt t value bytes esValue
+                                  shValue hvalue hstate hcode hlocals hlocs.2 hcValue
                               let index := (crepExpVarsW (crepExpOfHOL ceAddress)).foldr max 0
                               let temporary := index + 1
                               have hcomp :
@@ -501,14 +477,8 @@ theorem pcCompileCorrect_ShMemStore {width : Nat} {σ : Type} [NeZero width] :
                    globalsLookupHOL t1 v' = some (flattenHOL v') ∧
                      sizeOfShapeHOL (shapeOfHOLExact v') ≤ 32))
         | some (.finalFfi f) => res1 = some (.finalFfi f) := by
-  intro operator address value s res s1 t ctxt
-    ⟨hrun, hres, hstate, hcode, hexcp, hlocals, hloc⟩
-  obtain ⟨res1, t1, h1, h2, h3, h4, h5⟩ :=
-    pcCompileCorrectAt_shMemStore operator address value s res s1 t ctxt
-      hrun hres hstate hcode hexcp hlocals hloc
-  refine ⟨res1, t1, h1, h2, h3, h4, ?_⟩
-  rcases res with _ | r
-  · exact h5
-  · cases r <;> exact h5
+  intro operator address value s
+  exact (pcCompileCorrectAt_iff_HOL (.shMemStore operator address value) s).mp
+    (pcCompileCorrectAt_shMemStore operator address value s)
 
 end Flapjack

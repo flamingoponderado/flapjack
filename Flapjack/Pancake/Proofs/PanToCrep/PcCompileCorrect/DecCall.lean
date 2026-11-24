@@ -586,8 +586,7 @@ theorem pcCompileCorrect_DecCall {width : Nat} {σ : Type} [NeZero width] :
                      globalsLookupHOL t1 v' = some (flattenHOL v') ∧
                        sizeOfShapeHOL (shapeOfHOLExact v') ≤ 32))
           | some (.finalFfi f) => res1 = some (.finalFfi f) := by
-  intro rt shape fname argexps prog1 s ⟨ihCont, ihBody⟩ res s1 t ctxt
-    ⟨hrun, hres, hstate, hcode, hexcp, hlocals, hloc⟩
+  intro rt shape fname argexps prog1 s ⟨ihCont, ihBody⟩
   have ih : pcCompileCorrectDecCallIH rt shape fname argexps prog1 s := by
     refine ⟨?_, ?_⟩
     · intro values prog newlocals returnShape st retv hargs hlk hclock hbody h1 h2
@@ -598,12 +597,7 @@ theorem pcCompileCorrect_DecCall {width : Nat} {σ : Type} [NeZero width] :
     · intro values prog newlocals returnShape hargs hlk hclock
       exact (pcCompileCorrectAt_iff_HOL _ _).mpr <| ihBody values (prog, newlocals, returnShape)
         prog (newlocals, returnShape) newlocals returnShape ⟨hargs, hlk, rfl, rfl, hclock⟩
-  obtain ⟨res1, t1, h1, h2, h3, h4, h5⟩ :=
-    pcCompileCorrectAt_decCall rt shape fname argexps prog1 s ih res s1 t ctxt hrun hres hstate
-      hcode hexcp hlocals hloc
-  refine ⟨res1, t1, h1, h2, h3, h4, ?_⟩
-  rcases res with _ | r
-  · exact h5
-  · cases r <;> exact h5
+  exact (pcCompileCorrectAt_iff_HOL (.decCall rt shape fname argexps prog1) s).mp
+    (pcCompileCorrectAt_decCall rt shape fname argexps prog1 s ih)
 
 end Flapjack

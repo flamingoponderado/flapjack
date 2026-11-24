@@ -389,25 +389,10 @@ theorem mem_ctorKeep {α : Type} (left right : List α) (constructor : α) :
   induction left with
   | nil => simp [ctorKeepHOL]
   | cons first rest ih =>
-    by_cases member : first ∈ right
-    · simp only [ctorKeepHOL, if_pos member, List.mem_cons, ih]
-      constructor
-      · intro h
-        rcases h with equal | both
-        · exact ⟨Or.inl equal, equal ▸ member⟩
-        · exact ⟨Or.inr both.1, both.2⟩
-      · intro ⟨h, inRight⟩
-        rcases h with equal | inRest
-        · exact Or.inl equal
-        · exact Or.inr ⟨inRest, inRight⟩
-    · simp only [ctorKeepHOL, if_neg member, List.mem_cons, ih]
-      constructor
-      · intro ⟨inRest, inRight⟩
-        exact ⟨Or.inr inRest, inRight⟩
-      · intro ⟨h, inRight⟩
-        rcases h with equal | inRest
-        · exact (member (equal ▸ inRight)).elim
-        · exact ⟨inRest, inRight⟩
+    simp only [ctorKeepHOL, List.mem_cons]
+    split
+    · grind
+    · grind
 
 /-- Specializing a row preserves its match against the extracted arguments. -/
 @[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "spec_row_thm"

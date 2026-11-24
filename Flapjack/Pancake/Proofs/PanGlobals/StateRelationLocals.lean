@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Pancake.Proofs.PanGlobals.StateRelationExact
+public import Flapjack.Pancake.Proofs.PanGlobals.StateRelationClock
 
 @[expose] public section
 
@@ -104,5 +105,22 @@ theorem holFmapAsFiniteSupportEqualityWitness_resVarFEMPTYExact {α β : Type} [
     (HolFiniteMapExact.resVarEq (HolFiniteMapExact.empty : HolFiniteMapExact α β) (n, none)).lookup k =
       (HolFiniteMapExact.empty : HolFiniteMapExact α β).lookup k := by
   rw [resVarFEMPTYExact]
+
+/-- The named call-entry state of the finite `Call`/`DecCall` lowering preserves
+the pan-globals relation: decrement both clocks and replace both local maps by
+the same callee. Flapjack-only composition of `stateRelDecClockHOL` and
+`stateRelChangeLocalsHOL`. It has no separate HOL declaration. -/
+theorem callEntryStateRelHOL {width : Nat} {σ : Type} [NeZero width]
+    (context : PanGlobalsContextExact width)
+    (source target : PanSemStateFiniteExact width σ)
+    (callee : HolFiniteMapExact Flapjack.Pancake.PanLang.MlS (ValueHOL width)) :
+    panGlobalsStateRelHOLExact true context source target →
+      panGlobalsStateRelHOLExact true context
+        (PanSemStateFiniteExact.callEntryStateHOLFinite source callee)
+        (PanSemStateFiniteExact.callEntryStateHOLFinite target callee) :=
+  fun hrel => (PanGlobalsStateRelationLocals.stateRelChangeLocalsHOL context
+    (PanSemStateFiniteExact.decClockHOLFinite source)
+    (PanSemStateFiniteExact.decClockHOLFinite target) true callee).1
+    (PanGlobalsStateRelationClock.stateRelDecClockHOL context source target true hrel)
 
 end Flapjack.PanGlobalsStateRelationLocals

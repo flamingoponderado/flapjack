@@ -113,6 +113,13 @@ open Flapjack.Pancake.PanLang (ProgHOL ExpHOL MlS ShapeHOL)
 
 namespace PanSemStateFiniteExact
 
+/-- `(some .error, s') = (res, post)` contradicts `res ≠ some .error`; folds the
+    `simp only [x] at hev` + `False.elim (hne (Prod.mk.inj hev).1.symm)` pattern. -/
+theorem errorPairImpossible {width : Nat} {σ : Type} [NeZero width]
+    {res : Option (PanSemResultExact width)} {post s' : PanSemStateFiniteExact width σ}
+    {α : Prop} (hev : (some .error, s') = (res, post)) (hne : res ≠ some .error) : α :=
+  False.elim (hne (Prod.mk.inj hev).1.symm)
+
 /-- Generic translation: given the broad exact evaluator's result on `program`,
     the finite recursive evaluator returns the same result with the post-state
     rebuilt through the canonical finite-support carrier. -/

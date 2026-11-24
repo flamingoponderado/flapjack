@@ -17,6 +17,26 @@ private def applyNonFfiFields {C F : Type} (op : ClosLang.Op) (values : List Dat
       (applyNonFfi op values state).map (fun (value, next) =>
         (value, { next with stack := stack, localsSize := localsSize, stackMax := mx, peakHeapLength := peak, locals := locals, space := space, handler := handler, clock := clock, stackFrameSizes := frameSizes, compile := compiler }))
 
+/-- Shared case analysis for the `memOp` length fields, which differ only in
+their names. -/
+local macro "applyNonFfiLengthCases" argsv:Lean.Parser.Tactic.elimTarget : tactic =>
+  `(tactic| (
+    intro state stack localsSize mx peak locals space handler clock frameSizes compiler
+    cases $argsv with
+    | nil => simp [applyNonFfi]
+    | cons value rest =>
+      cases rest with
+      | cons extra rest => simp [applyNonFfi]
+      | nil =>
+        cases value with
+        | refPtr bit pointer =>
+          cases lookup : sptLookup pointer state.refs with
+          | none => simp [applyNonFfi, lookup]
+          | some entry =>
+            cases entry
+            all_goals simp [applyNonFfi, lookup]
+        | number _ | word64 _ | block _ _ _ | codePtr _ => simp [applyNonFfi]))
+
 private theorem applyNonFfiFields_int {C F : Type} (op : ClosLang.IntOp) (values : List DataSem.Value) :
     applyNonFfiFields (C := C) (F := F) (.intOp op) values := by
   intro state stack localsSize mx peak locals space handler clock frameSizes compiler
@@ -429,35 +449,11 @@ private theorem applyNonFfiFields_finaliseCons {C F : Type} (values : List DataS
 
 private theorem applyNonFfiFields_length {C F : Type} (values : List DataSem.Value) :
     applyNonFfiFields (C := C) (F := F) (.memOp .length) values := by
-  intro state stack localsSize mx peak locals space handler clock frameSizes compiler
-  cases values with
-  | nil => simp [applyNonFfi]
-  | cons value rest =>
-    cases rest with
-    | cons extra rest => simp [applyNonFfi]
-    | nil =>
-      cases value with
-      | refPtr bit pointer =>
-        cases lookup : sptLookup pointer state.refs with
-        | none => simp [applyNonFfi, lookup]
-        | some entry => cases entry <;> simp [applyNonFfi, lookup]
-      | number _ | word64 _ | block _ _ _ | codePtr _ => simp [applyNonFfi]
+  applyNonFfiLengthCases values
 
 private theorem applyNonFfiFields_lengthByte {C F : Type} (values : List DataSem.Value) :
     applyNonFfiFields (C := C) (F := F) (.memOp .lengthByte) values := by
-  intro state stack localsSize mx peak locals space handler clock frameSizes compiler
-  cases values with
-  | nil => simp [applyNonFfi]
-  | cons value rest =>
-    cases rest with
-    | cons extra rest => simp [applyNonFfi]
-    | nil =>
-      cases value with
-      | refPtr bit pointer =>
-        cases lookup : sptLookup pointer state.refs with
-        | none => simp [applyNonFfi, lookup]
-        | some entry => cases entry <;> simp [applyNonFfi, lookup]
-      | number _ | word64 _ | block _ _ _ | codePtr _ => simp [applyNonFfi]
+  applyNonFfiLengthCases values
 
 private theorem applyNonFfiFields_boundsCheckByte {C F : Type} (loose : Bool) (values : List DataSem.Value) :
     applyNonFfiFields (C := C) (F := F) (.memOp (.boundsCheckByte loose)) values := by

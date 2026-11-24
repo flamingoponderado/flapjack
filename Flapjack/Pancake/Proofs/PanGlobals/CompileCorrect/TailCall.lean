@@ -85,10 +85,8 @@ theorem compileCorrect_CallNone {width : Nat} {σ : Type} [NeZero width]
       · have htz : target.clock ≠ 0 := hc ▸ hz
         simp only [if_neg hz] at hev
         simp only [if_neg htz]
-        have hd := PanGlobalsStateRelationClock.stateRelDecClockHOL context source target true hrel
-        have he := (PanGlobalsStateRelationLocals.stateRelChangeLocalsHOL context
-          (decClockHOLFinite source) (decClockHOLFinite target) true callee).1 hd
-        change panGlobalsStateRelHOLExact true context (callEntryStateHOLFinite source callee) (callEntryStateHOLFinite target callee) at he
+        have he := PanGlobalsStateRelationLocals.callEntryStateRelHOL context source
+          target callee hrel
         rcases hb : evaluateHOLFiniteState (callEntryStateHOLFinite source callee) body with ⟨br,bs⟩
         simp only [hb] at hev
         have hbody := ih args body callee returnShape ⟨ha,hl,hz⟩
@@ -104,8 +102,7 @@ theorem compileCorrect_CallNone {width : Nat} {σ : Type} [NeZero width]
               obtain ⟨bt,hbt,hr⟩ := hbody (some (.returned value)) context (callEntryStateHOLFinite target callee) bs ⟨he,hb,by simp⟩
               exact ⟨emptyLocalsHOLFinite bt,by simp only [hbt,hs,↓reduceIte],
                 (PanGlobalsStateRelationLocals.stateRelEmptyLocalsHOL context bs bt false).2 hr⟩
-            · simp only [if_neg hs] at hev
-              exact False.elim (hne (Prod.mk.inj hev).1.symm)
+            · exact errorPairImpossible (by simpa only [if_neg hs] using hev) hne
           | exception eid value | timeOut | finalFfi outcome =>
             obtain ⟨rfl,rfl⟩ := Prod.mk.inj hev
             obtain ⟨bt,hbt,hr⟩ := hbody _ context (callEntryStateHOLFinite target callee) bs ⟨he,hb,by simp⟩
