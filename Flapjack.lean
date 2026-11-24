@@ -4147,6 +4147,8 @@ import Flapjack.NamespaceProps.Bind
 import Flapjack.NamespaceProps.Sing
 import Flapjack.NamespaceProps.Sub
 import Flapjack.NamespaceProps.Dom
+import Flapjack.NamespaceProps.AlistLookup
+import Flapjack.NamespaceProps.LiftFold
 import Flapjack.TypeSysProps.Constructor
 import Flapjack.TypeSysProps.Abbrev
 import Flapjack.TypeSysProps.Freevars

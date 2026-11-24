@@ -97,3 +97,10 @@ val _ = emit "nsDomMod_nsBind_typed" "nsDomMod_nsBind";
 val _ = emit "nsAll2_nsLookup1_typed" "nsAll2_nsLookup1";
 val _ = emit "nsAll2_nsLookup2_typed" "nsAll2_nsLookup2";
 val _ = emit "nsAll2_nsLookup_none_typed" "nsAll2_nsLookup_none";
+
+(* Association-list lookup, mapping and folded lifting (task 273). *)
+val _ = emit "nsLookup_alist_to_ns_some_typed" "nsLookup_alist_to_ns_some";
+val _ = emit "nsLookup_alist_to_ns_none_typed" "nsLookup_alist_to_ns_none";
+val _ = emit "nsMap_alist_to_ns_typed" "nsMap_alist_to_ns";
+val _ = emit "nsSub_nsMap_typed" "nsSub_nsMap";
+val _ = emit "nsLookup_FOLDR_nsLift_typed" "nsLookup_FOLDR_nsLift";

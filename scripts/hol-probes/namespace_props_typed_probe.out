@@ -58,3 +58,8 @@ nsDomMod_nsBind_typed=∀(x :α) (y :β) (n :(γ, α, β) namespace). nsDomMod (
 nsAll2_nsLookup1_typed=∀(R :(α, β) id -> γ -> δ -> bool) (e1 :(α, β, γ) namespace) (e2 :(α, β, δ) namespace) (n :(α, β) id) (v1 :γ). nsLookup e1 n = SOME v1 ∧ nsAll2 R e1 e2 ⇒ ∃(v2 :δ). nsLookup e2 n = SOME v2 ∧ R n v1 v2
 nsAll2_nsLookup2_typed=∀(R :(α, β) id -> γ -> δ -> bool) (e1 :(α, β, γ) namespace) (e2 :(α, β, δ) namespace) (n :(α, β) id) (v2 :δ). nsLookup e2 n = SOME v2 ∧ nsAll2 R e1 e2 ⇒ ∃(v1 :γ). nsLookup e1 n = SOME v1 ∧ R n v1 v2
 nsAll2_nsLookup_none_typed=∀(R :(α, β) id -> γ -> δ -> bool) (e1 :(α, β, γ) namespace) (e2 :(α, β, δ) namespace) (n :(α, β) id). nsAll2 R e1 e2 ⇒ (nsLookup e1 n = (NONE :γ option) ⇔ nsLookup e2 n = (NONE :δ option))
+nsLookup_alist_to_ns_some_typed=∀(l :(α # β) list) (id :(γ, α) id) (v :β). nsLookup (alist_to_ns l :(γ, α, β) namespace) id = SOME v ⇔ ∃(x' :α). id = (Short x' :(γ, α) id) ∧ ALOOKUP l x' = SOME v
+nsLookup_alist_to_ns_none_typed=∀(l :(α # β) list) (id :(γ, α) id). nsLookup (alist_to_ns l :(γ, α, β) namespace) id = (NONE :β option) ⇔ ∀(x' :α). id = (Short x' :(γ, α) id) ⇒ ALOOKUP l x' = (NONE :β option)
+nsMap_alist_to_ns_typed=∀(f :α -> β) (l :(γ # α) list). nsMap f (alist_to_ns l :(δ, γ, α) namespace) = (alist_to_ns (MAP (λ((k :γ),(v :α)). (k,f v)) l) :(δ, γ, β) namespace)
+nsSub_nsMap_typed=∀(R :(α, β) id -> γ -> γ -> bool) (f :δ -> γ) (n1 :(α, β, δ) namespace) (n2 :(α, β, δ) namespace). nsSub R (nsMap f n1) (nsMap f n2) ⇔ nsSub (λ(id :(α, β) id) (x :δ) (y :δ). R id (f x) (f y)) n1 n2
+nsLookup_FOLDR_nsLift_typed=∀(e :(α, β, γ) namespace) (p :α list) (k :β). nsLookup (FOLDR (nsLift :α -> (α, β, γ) namespace -> (α, β, γ) namespace) e p) (mk_id p k) = nsLookup e (Short k :(α, β) id)

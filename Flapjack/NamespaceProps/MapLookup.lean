@@ -110,4 +110,57 @@ theorem nsAll_nsMap {M N V W : Type} [DecidableEq M] [DecidableEq N]
       subst value
       exact h id v source
 
+/-- Mapping association-list values maps the stored value in every entry. -/
+@[hol "cakeml/semantics/proofs/namespacePropsScript.sml" "nsMap_alist_to_ns"]
+theorem nsMap_alistToNs {M N V W : Type} (f : V → W) (l : Alist N V) :
+    nsMap f (alistToNs (ModuleName := M) l) =
+      alistToNs (ModuleName := M) (l.map fun p => (p.1, f p.2)) := by
+  simp [nsMap, alistToNs]
+
+/-- A sub-relation between mapped namespaces is the sub-relation between the
+original namespaces under the mapped relation. -/
+@[hol "cakeml/semantics/proofs/namespacePropsScript.sml" "nsSub_nsMap"]
+theorem nsSub_nsMap {M N V W : Type} [DecidableEq M] [DecidableEq N]
+    (R : Ident M N → W → W → Prop) (f : V → W) (n1 n2 : Namespace M N V) :
+    nsSub R (nsMap f n1) (nsMap f n2) ↔
+      nsSub (fun id x y => R id (f x) (f y)) n1 n2 := by
+  constructor
+  · intro sub
+    constructor
+    · intro id v1 found
+      have mapped : nsLookup (nsMap f n1) id = some (f v1) := by
+        simp [nsLookup_nsMap, found]
+      obtain ⟨w2, found2, rel⟩ := sub.1 id (f v1) mapped
+      rw [nsLookup_nsMap] at found2
+      cases h2 : nsLookup n2 id with
+      | none => simp [h2] at found2
+      | some v2 =>
+        simp only [h2, Option.map_some, Option.some.injEq] at found2
+        refine ⟨v2, rfl, ?_⟩
+        change R id (f v1) (f v2)
+        rw [found2]
+        exact rel
+    · intro path absent
+      have mapped : nsLookupMod (nsMap f n2) path = none := by
+        simp [nsLookupMod_nsMap, absent]
+      have h := sub.2 path mapped
+      simp [nsLookupMod_nsMap] at h
+      exact h
+  · intro sub
+    constructor
+    · intro id w1 found
+      rw [nsLookup_nsMap] at found
+      cases h1 : nsLookup n1 id with
+      | none => simp [h1] at found
+      | some v1 =>
+        simp only [h1, Option.map_some, Option.some.injEq] at found
+        obtain ⟨v2, found2, rel⟩ := sub.1 id v1 h1
+        refine ⟨f v2, by simp [nsLookup_nsMap, found2], ?_⟩
+        rw [← found]
+        exact rel
+    · intro path absent
+      have h2 : nsLookupMod n2 path = none := by
+        simpa [nsLookupMod_nsMap] using absent
+      simpa [nsLookupMod_nsMap] using sub.2 path h2
+
 end Flapjack.NamespaceHOL

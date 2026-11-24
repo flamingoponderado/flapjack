@@ -11167,6 +11167,8 @@ run_probe namespace_props_typed_probeScript.sml namespace_props_typed_probe.out 
   nsSub_refl_typed nsDomMod_alist_to_ns_typed nsSub_nsBind_typed nsAll2_nsBind_typed nsSub_conj_typed nsAll2_conj_typed \
   nsSub_mono_typed nsSub_mono2_typed nsAll2_mono_typed nsDom_nsBind_typed nsDomMod_nsBind_typed \
   nsAll2_nsLookup1_typed nsAll2_nsLookup2_typed nsAll2_nsLookup_none_typed \
+  nsLookup_alist_to_ns_some_typed nsLookup_alist_to_ns_none_typed nsMap_alist_to_ns_typed \
+  nsSub_nsMap_typed nsLookup_FOLDR_nsLift_typed \
   "$cake_dir/semantics/proofs/namespacePropsScript.sml" \
   "$cake_dir/semantics/proofs"
 
