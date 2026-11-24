@@ -52,7 +52,6 @@ theorem decode_movRR_z8 (hr : Bool) (dst src : Nat) (hd : dst < 16) (hs : src < 
 
 /-! ## Immediate moves -/
 
-set_option maxHeartbeats 8000000 in
 theorem decode_movRI_z32 (dst : Nat) (hd : dst < 16) (imm : BitVec 64)
     (h1 : -(2^31 : Int) ≤ imm.toInt) (h2 : imm.toInt < 2^31) :
     decode (byteListReader (encodeInsn (.movRI .z32 dst imm))) =
@@ -70,7 +69,6 @@ theorem decode_movRI_z32 (dst : Nat) (hd : dst < 16) (imm : BitVec 64)
     simp
     rw [imm32_eImm32_at imm _ _ (by intro j hj; interval_cases j <;> simp) h1 h2]
 
-set_option maxHeartbeats 8000000 in
 theorem decode_movRI_z64 (dst : Nat) (hd : dst < 16) (imm : BitVec 64) :
     decode (byteListReader (encodeInsn (.movRI .z64 dst imm))) =
       some (.movRI .z64 dst imm, 10) := by
