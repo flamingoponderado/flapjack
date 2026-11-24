@@ -2314,7 +2314,7 @@ open Elab Command in
 
 /- Unfold a definition in the `run` hypothesis, split every match in it, and
 close all resulting branches with `simp_all`. Generic proof support shared by
-the backend semantics proofs (Flapjack-specific; no HOL declaration).
+the backend semantics proofs (Flapjack-specific, with no HOL declaration).
 
 Hygiene is disabled on purpose: the hypothesis is the conventional `run` of
 the surrounding proof. -/
