@@ -7,9 +7,6 @@ public import Mathlib.Data.List.GetD
 
 @[expose] public section
 
-set_option maxHeartbeats 4000000
-set_option maxRecDepth 10000
-
 /-!
 # The L3 ARMv8 `const` encoder-correctness case
 

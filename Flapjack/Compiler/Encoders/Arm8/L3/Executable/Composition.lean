@@ -20,9 +20,6 @@ No HOL claim is introduced: each lemma relates two Lean renderings of the same
 lowering and encoding.
 -/
 
-set_option maxRecDepth 10000
-set_option maxHeartbeats 4000000
-
 namespace Flapjack.Compiler.Encoders.Arm8.L3
 
 open Flapjack Compiler.Encoders.Arm8 Compiler.Encoders.Asm Compiler.Encoders.AsmSem

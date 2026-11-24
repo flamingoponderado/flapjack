@@ -10,9 +10,6 @@ public import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.BranchCondi
 import all Init.Data.Sum.Basic
 @[expose] public section
 
-set_option maxHeartbeats 4000000
-set_option maxRecDepth 10000
-
 /-!
 # `JumpCmp`: the flag-setting compare instructions
 

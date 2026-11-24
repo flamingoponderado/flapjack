@@ -5,7 +5,6 @@ public import Flapjack.Compiler.Encoders.AsmProps.EncoderCorrect
 
 @[expose] public section
 
-set_option maxHeartbeats 4000000
 
 /-!
 # From an interference-free run to `encoder_correct arm8TargetL3`

@@ -4,9 +4,6 @@ public import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Branch
 
 @[expose] public section
 
-set_option maxHeartbeats 4000000
-set_option maxRecDepth 10000
-
 /-!
 # The `JumpReg` constructor of `encoder_correct arm8TargetL3`
 

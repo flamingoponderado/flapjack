@@ -4,7 +4,6 @@ public import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Infrastruct
 
 @[expose] public section
 
-set_option maxHeartbeats 4000000
 
 /-!
 # L3 ARMv8 `MoveWide` encode/decode inverses
