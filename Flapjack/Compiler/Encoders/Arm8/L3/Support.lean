@@ -133,4 +133,15 @@ abbrev holBitFieldInsert {m n : Nat} (h l : Nat) (a : BitVec m) (w : BitVec n) :
 abbrev holUpdate {α β : Type} [DecidableEq α] (a : α) (b : β) (f : α → β) : α → β :=
   Flapjack.RiscV.L3.holUpdate a b f
 
+/- Unfold the target-state fields after the Arm8 L3 state-ok hypothesis is split.
+Flapjack helper shared by the encoding correctness cases; the HOL script repeats
+these rewrites inline for each instruction. -/
+set_option hygiene false in
+macro "arm8TargetFields" : tactic =>
+  `(tactic| (
+    rw [arm8TargetL3_stateOk] at hok
+    rw [arm8TargetL3_getPc] at hpc
+    rw [arm8TargetL3_getByte] at hmem
+    rw [arm8TargetL3_getReg] at hreg))
+
 end Flapjack.Compiler.Encoders.Arm8.L3

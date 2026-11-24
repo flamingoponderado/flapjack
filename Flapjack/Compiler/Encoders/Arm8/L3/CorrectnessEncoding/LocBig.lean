@@ -697,10 +697,7 @@ theorem arm8_encoder_correct_loc_big (register : Nat) (offset : BitVec 64)
     CaseGoal (.loc register offset) s1 s2 ms := by
   obtain ⟨hs, hr⟩ := h
   obtain ⟨hok, hpc, hmem, hreg, hfp⟩ := hr
-  rw [arm8TargetL3_stateOk] at hok
-  rw [arm8TargetL3_getPc] at hpc
-  rw [arm8TargetL3_getByte] at hmem
-  rw [arm8TargetL3_getReg] at hreg
+  arm8TargetFields
   change arm8Ok ms = true at hok
   change ms.PC = s1.pc at hpc
   change ∀ a, s1.memDomain a → ms.MEM a = s1.mem a at hmem

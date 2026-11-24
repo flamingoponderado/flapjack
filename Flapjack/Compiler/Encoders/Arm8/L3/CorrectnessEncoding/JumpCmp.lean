@@ -591,10 +591,7 @@ theorem arm8_encoder_correct_jumpCmp_reg (cmp : Cmp) (r t : Nat) (a : BitVec 64)
     CaseGoal (.jumpCmp cmp r (.reg t) a) s1 s2 ms := by
   obtain ⟨hs, hr⟩ := h
   obtain ⟨hok, hpc, hmem, hreg, hfp⟩ := hr
-  rw [arm8TargetL3_stateOk] at hok
-  rw [arm8TargetL3_getPc] at hpc
-  rw [arm8TargetL3_getByte] at hmem
-  rw [arm8TargetL3_getReg] at hreg
+  arm8TargetFields
   change ms.PC = s1.pc at hpc
   change ∀ x, s1.memDomain x → ms.MEM x = s1.mem x at hmem
   change ∀ k, k < arm8ConfigL3.regCount ∧ arm8ConfigL3.avoidRegs.contains k = false →
@@ -1312,10 +1309,7 @@ theorem arm8_encoder_correct_jumpCmp_imm (cmp : Cmp) (r : Nat) (v a : BitVec 64)
     CaseGoal (.jumpCmp cmp r (.imm v) a) s1 s2 ms := by
   obtain ⟨hs, hr⟩ := h
   obtain ⟨hok, hpc, hmem, hreg, hfp⟩ := hr
-  rw [arm8TargetL3_stateOk] at hok
-  rw [arm8TargetL3_getPc] at hpc
-  rw [arm8TargetL3_getByte] at hmem
-  rw [arm8TargetL3_getReg] at hreg
+  arm8TargetFields
   change ms.PC = s1.pc at hpc
   change ∀ x, s1.memDomain x → ms.MEM x = s1.mem x at hmem
   change ∀ k, k < arm8ConfigL3.regCount ∧ arm8ConfigL3.avoidRegs.contains k = false →
