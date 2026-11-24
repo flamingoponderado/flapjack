@@ -32,13 +32,7 @@ theorem knownVarsAll (c : Config) (xs : List ClosLang.Exp) (env : List ValApprox
     have r1 := ix _ _ ⟨h1, parts.1, safe, globalSafe⟩
     have r2 := iy _ _ ⟨h2, parts.2.1, safe, r1.2.2⟩
     have r3 := iz _ _ ⟨h3, parts.2.2, safe, r2.2.2⟩
-    rw [knownListTotal_if, h1] at run
-    dsimp only at run
-    rw [h2] at run
-    dsimp only at run
-    rw [h3] at run
-    simp [knownSourceHead] at run
-    rcases run with ⟨rfl, rfl⟩
+    knownListIfChain
     have merged : valApproxVarsNone (mergeHOL ya za) := valApproxVarsNoneMerge ya za
       ⟨by simpa using r2.2.1, by simpa using r3.2.1⟩
     simp [ClosProps.everyFnVarsNone, ClosProps.fnVarsNoneExp] at r1 r2 r3 ⊢

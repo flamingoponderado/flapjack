@@ -37,13 +37,7 @@ private theorem work (c : Config) (xs : List Exp) (env : List ValApprox)
     have r1 := ix _ _ n h1 parts.1
     have r2 := iy _ _ n h2 parts.2.1
     have r3 := iz _ _ n h3 parts.2.2
-    rw [knownListTotal_if, h1] at run
-    dsimp only at run
-    rw [h2] at run
-    dsimp only at run
-    rw [h3] at run
-    simp [knownSourceHead] at run
-    rcases run with ⟨rfl, rfl⟩
+    knownListIfChain
     simp [fvMax, freeVars, freeVarExp, or_imp, forall_and] at r1 r2 r3 ⊢
     exact ⟨r1, r2, r3⟩
   case case3 =>

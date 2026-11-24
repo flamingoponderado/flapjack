@@ -260,4 +260,17 @@ macro "knownListRun" : tactic =>
     dsimp only at run
     rw [functionRun] at run))
 
+/- Unfold the three-branch inline decision of the total traversal on the
+already-reduced run. Flapjack helper for the per-case traversal proofs. -/
+set_option hygiene false in
+macro "knownListIfChain" : tactic =>
+  `(tactic| (
+    rw [knownListTotal_if, h1] at run
+    dsimp only at run
+    rw [h2] at run
+    dsimp only at run
+    rw [h3] at run
+    simp [knownSourceHead] at run
+    rcases run with ⟨rfl, rfl⟩))
+
 end Flapjack.Compiler.Backend.ClosKnown

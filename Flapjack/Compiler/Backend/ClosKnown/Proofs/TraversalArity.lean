@@ -52,13 +52,7 @@ private theorem work (limit : Nat) (c : Config) (xs : List Exp) (env : List ValA
     have r1 := ix _ _ h1 (by simpa using parts.1) envSafe globalSafe
     have r2 := iy _ _ h2 (by simpa using parts.2.1) envSafe r1.2.2
     have r3 := iz _ _ h3 (by simpa using parts.2.2) envSafe r2.2.2
-    rw [knownListTotal_if, h1] at run
-    dsimp only at run
-    rw [h2] at run
-    dsimp only at run
-    rw [h3] at run
-    simp [knownSourceHead] at run
-    rcases run with ⟨rfl, rfl⟩
+    knownListIfChain
     have merged := valApproxObeysMaxAppMerge limit ya za
       ⟨r2.2.1 ya (by simp), r3.2.1 za (by simp)⟩
     simp [obeysMaxApp] at r1 r2 r3 ⊢

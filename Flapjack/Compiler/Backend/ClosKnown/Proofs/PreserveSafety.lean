@@ -211,13 +211,7 @@ theorem knownPreservesSafetyIf (c : Config) (trace : BackendCommon.Tra)
         subst ea3
         have r3 := thirdIH [(x', a1)] g1 [(y', a2)] g2 ⟨h1.symm, h2.symm⟩ [(z', a3)] g3
           ⟨h3, by simpa using allSafe.2.2, envSafe, r2.2.2.2⟩
-        rw [knownListTotal_if, h1] at run
-        dsimp only at run
-        rw [h2] at run
-        dsimp only at run
-        rw [h3] at run
-        simp [knownSourceHead] at run
-        rcases run with ⟨rfl, rfl⟩
+        knownListIfChain
         refine ⟨?_, ?_, ?_, r3.2.2.2⟩
         · intro i
           have b1 := r1.1 i

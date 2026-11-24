@@ -156,13 +156,7 @@ theorem knownCodeBagIf (c : Config) (trace : BackendCommon.Tra) (x y z : Exp)
         obtain ⟨z', a3, eq3⟩ := knownListTotal_single_result c z env g2 g3 ea3 h3
         subst ea3
         have r3 := thirdIH [(x', a1)] g1 [(y', a2)] g2 ⟨h1.symm, h2.symm⟩ [(z', a3)] g3 h3 label
-        rw [knownListTotal_if, h1] at run
-        dsimp only at run
-        rw [h2] at run
-        dsimp only at run
-        rw [h3] at run
-        simp [knownSourceHead] at run
-        rcases run with ⟨rfl, rfl⟩
+        knownListIfChain
         simp [codeLocations, codeLocationsExp, List.count_append] at r1 r2 r3 ⊢
         omega
 
