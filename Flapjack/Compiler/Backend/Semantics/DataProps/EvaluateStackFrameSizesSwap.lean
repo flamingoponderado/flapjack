@@ -48,10 +48,6 @@ open Flapjack.Compiler.Backend.DataSem
 private theorem frameSwapState_locals {C F : Type} {state other : State C F}
     (h : FrameSwapState state other) : other.locals = state.locals := by rw [h]
 
-/-- The related state agrees on the global pointer. -/
-private theorem frameSwapState_global {C F : Type} {state other : State C F}
-    (h : FrameSwapState state other) : other.global = state.global := by rw [h]
-
 /-- The related state agrees on the handler index. -/
 private theorem frameSwapState_handler {C F : Type} {state other : State C F}
     (h : FrameSwapState state other) : other.handler = state.handler := by rw [h]
@@ -67,30 +63,6 @@ private theorem frameSwapState_clock {C F : Type} {state other : State C F}
 /-- The related state agrees on the code map. -/
 private theorem frameSwapState_code {C F : Type} {state other : State C F}
     (h : FrameSwapState state other) : other.code = state.code := by rw [h]
-
-/-- The related state agrees on the FFI state. -/
-private theorem frameSwapState_ffi {C F : Type} {state other : State C F}
-    (h : FrameSwapState state other) : other.ffi = state.ffi := by rw [h]
-
-/-- The related state agrees on the reserved space. -/
-private theorem frameSwapState_space {C F : Type} {state other : State C F}
-    (h : FrameSwapState state other) : other.space = state.space := by rw [h]
-
-/-- The related state agrees on the timestamp counter. -/
-private theorem frameSwapState_tstamps {C F : Type} {state other : State C F}
-    (h : FrameSwapState state other) : other.tstamps = state.tstamps := by rw [h]
-
-/-- The related state agrees on the limits. -/
-private theorem frameSwapState_limits {C F : Type} {state other : State C F}
-    (h : FrameSwapState state other) : other.limits = state.limits := by rw [h]
-
-/-- The related state agrees on the compiler state. -/
-private theorem frameSwapState_compile {C F : Type} {state other : State C F}
-    (h : FrameSwapState state other) : other.compile = state.compile := by rw [h]
-
-/-- The related state agrees on the compilation oracle. -/
-private theorem frameSwapState_compileOracle {C F : Type} {state other : State C F}
-    (h : FrameSwapState state other) : other.compileOracle = state.compileOracle := by rw [h]
 
 /-- The frame-size swap property for one program and state: evaluating at any
     related state gives the same outcome, with a result state that is related in

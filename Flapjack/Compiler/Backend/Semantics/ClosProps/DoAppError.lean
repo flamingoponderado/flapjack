@@ -21,13 +21,6 @@ theorem holFmapAsFiniteSupportWitness {C F : Type} :
   ClosSem.holFmapAsFiniteSupportWitness
 end DoAppErrorPort
 
-/-- A type error is never an FFI error. -/
-private theorem typeError_ne_ffiError {C F : Type} (event : HolFinalEvent) :
-    (.err (.abort .typeError) : Result (ClosSem.Value × ClosSem.State C F) ClosSem.Value) ≠
-      .err (.abort (.ffiError event)) := by
-  intro h
-  cases h
-
 /-- Only the FFI operation can report an FFI error. -/
 @[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "do_app_ffi_error_IMP"
   (fmap_as_finite_support := [refs, code])]

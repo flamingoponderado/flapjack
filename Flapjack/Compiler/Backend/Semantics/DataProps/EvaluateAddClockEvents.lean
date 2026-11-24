@@ -43,38 +43,6 @@ private theorem evaluate_events_start {C F : Type} (program : DataLang.Prog)
     have mono := evaluate_events_of_result program state res next runEq
     simpa using mono
 
-/-- The run at the extended clock extends the starting events. -/
-private theorem addClockEvents_big {C F : Type} (program : DataLang.Prog) (state : State C F)
-    (extra : Nat) :
-    state.ffi.ioEvents <+:
-      (evaluate program (addClockState state extra)).2.ffi.ioEvents := by
-  cases runEq : evaluate program (addClockState state extra) with
-  | mk res next =>
-    have mono := evaluate_events_of_result program (addClockState state extra) res next runEq
-    simpa using mono
-
-/-- If the small run's final FFI state is the starting one, the extended run's
-    monotonicity suffices. -/
-private theorem addClockEvents_viaStart {C F : Type} (program : DataLang.Prog)
-    (state : State C F) (extra : Nat)
-    (sameFfi : (evaluate program state).2.ffi = state.ffi) :
-    (evaluate program state).2.ffi.ioEvents <+:
-      (evaluate program (addClockState state extra)).2.ffi.ioEvents := by
-  rw [sameFfi]
-  exact addClockEvents_big program state extra
-
-/-- A run that does not time out has exactly the extended run's events. -/
-private theorem addClockEvents_of_not_timeout {C F : Type} (program : DataLang.Prog)
-    (state : State C F) (extra : Nat)
-    (res : Option (Result (List DataSem.Value) DataSem.Value)) (next : State C F)
-    (run : evaluate program state = (res, next))
-    (notTimeout : res ≠ some (.err (.abort .timeoutError))) :
-    (evaluate program state).2.ffi.ioEvents <+:
-      (evaluate program (addClockState state extra)).2.ffi.ioEvents := by
-  have swap := evaluate_add_clock program state res next ⟨run, notTimeout⟩ extra
-  rw [run, swap]
-  exact List.prefix_refl _
-
 /-- A primitive error is unchanged by a clock extension. -/
 private theorem doApp_addClockState_err {C F : Type} (op : ClosLang.Op)
     (values : List DataSem.Value) (state : State C F) (ck : Nat)
@@ -262,18 +230,6 @@ private theorem addClockEvents_seq {C F : Type} (first second : DataLang.Prog)
         rw [swap1]
         simp only [fixClock]
         exact List.prefix_refl _
-
-/-- The result dispatch of a direct force run has the run's own events. -/
-private theorem forceDispatchEvents {C F : Type} (run : EvalResult C F) :
-    (match run.1 with
-      | none => typeError run.2
-      | some value => (some value, run.2)).2.ffi.ioEvents =
-      run.2.ffi.ioEvents := by
-  cases run with
-  | mk res next =>
-    cases res with
-    | none => simp [typeError]
-    | some value => rfl
 
 /-- The result dispatch of a returning force run has the run's own events. -/
 private theorem forceRetDispatchEvents {C F : Type} (dest : Nat) (run : EvalResult C F) :

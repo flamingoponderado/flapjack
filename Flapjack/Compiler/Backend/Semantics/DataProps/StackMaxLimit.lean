@@ -529,17 +529,6 @@ private theorem callEnv_stackMax_le {C F : Type} (args : List Value) (size : Opt
   simp only [DataSem.callEnv, Bool.and_eq_true] at hs ⊢
   exact optionLe_of_decideMap state.limits.stackLimit _ hs.2
 
-/-- Pushing a call frame with a set safety flag keeps the stack maximum within
-    the limit.  Flapjack infrastructure for `evaluate_stack_max_le_stack_limit`;
-    no separate HOL original. -/
-private theorem pushEnv_stackMax_le {C F : Type} (env : Spt Value) (handler : Bool)
-    (state : State C F) (safe : (DataSem.pushEnv env handler state).safeForSpace = true) :
-    BackendProps.optionLe (DataSem.pushEnv env handler state).stackMax
-      (some state.limits.stackLimit) := by
-  have hs := safe
-  simp only [DataSem.pushEnv, Bool.and_eq_true] at hs ⊢
-  exact optionLe_of_decideMap state.limits.stackLimit _ hs.2
-
 /-- Clamp a state's clock, retaining every other field.  Flapjack
     infrastructure for `evaluate_stack_max_le_stack_limit`; no separate HOL
     original. -/
