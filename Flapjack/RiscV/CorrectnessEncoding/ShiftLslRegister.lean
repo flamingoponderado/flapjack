@@ -98,13 +98,7 @@ theorem riscv_encoder_correct_shiftLslRegister (rd rs1 rs2 : Nat) (s1 s2 : AsmSt
     change holThe (NextRISCV ms) = _
     rw [hn]
     rfl
-  rw [source]
-  refine ⟨0, ?_⟩
-  intro env interference
-  have hp := write_post_rel s1 ms rd value bound h.2
-  have projection := interference 0 (writePost ms (BitVec.ofNat 5 rd) value)
-  have transport := (riscv_target_ok.2 (env 0 (writePost ms (BitVec.ofNat 5 rd) value))
-    (writePost ms (BitVec.ofNat 5 rd) value) (updPc (s1.pc + 4) (updReg rd value s1)) projection).1
+  riscvTransportStep
   constructor
   · simpa [asserts, next] using transport.mpr hp
   · simp only [asserts2]
