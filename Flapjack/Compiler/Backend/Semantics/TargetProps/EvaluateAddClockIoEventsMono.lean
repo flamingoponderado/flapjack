@@ -34,8 +34,6 @@ theorem evaluateTargetAddClockIoEventsMono {width : Nat} [NeZero width]
         | (rw [← hlarge]; exact List.prefix_refl _)
         | (rw [← hsmall, ← hlarge]; exact ih _ _ _ _ hkn)
         | (rename_i hguard; rw [if_pos hguard] at hlarge)
-        | (simp_all only [not_not])
-        | cases_type Compiler.Encoders.Asm.HolAddr
         | (simp only [ite_and] at hsmall hlarge)
         | split at hsmall <;> (try simp_all only [↓reduceIte]))
 
