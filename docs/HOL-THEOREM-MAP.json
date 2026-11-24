@@ -654,6 +654,72 @@
   "reviewer": "Compared nsDomMod_nsSing_typed: the module domain is exactly the empty path, with HOL's set rendered as the Lean singleton set over the same module-list carrier."
  },
 {
+  "hol_path": "cakeml/semantics/proofs/namespacePropsScript.sml", "hol_name": "eALL_T",
+  "lean_path": "Flapjack/NamespaceProps/All.lean", "lean_name": "nsAll_true",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared eALL_T_typed: the always-true predicate holds throughout every namespace over the same independent carriers."
+ },
+{
+  "hol_path": "cakeml/semantics/proofs/namespacePropsScript.sml", "hol_name": "nsLookup_nsAll",
+  "lean_path": "Flapjack/NamespaceProps/All.lean", "lean_name": "nsLookup_nsAll",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared nsLookup_nsAll_typed: HOL's conjunctive premise is one hypothesis, and the binders keep HOL's order env, x, P, v."
+ },
+{
+  "hol_path": "cakeml/semantics/proofs/namespacePropsScript.sml", "hol_name": "nsLookup_nsDom",
+  "lean_path": "Flapjack/NamespaceProps/Dom.lean", "lean_name": "nsLookup_nsDom",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared nsLookup_nsDom_typed: HOL's membership x ∈ nsDom n is the Lean membership predicate application nsDom n x, and the right side is the same successful lookup."
+ },
+{
+  "hol_path": "cakeml/semantics/proofs/namespacePropsScript.sml", "hol_name": "nsLift_nsMap",
+  "lean_path": "Flapjack/NamespaceProps/Lift.lean", "lean_name": "nsLift_nsMap",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared nsLift_nsMap_typed: lifting and mapping commute, with independent module, name, source-value and target-value types and HOL's binder order f, n, mn."
+ },
+{
+  "hol_path": "cakeml/semantics/proofs/namespacePropsScript.sml", "hol_name": "nsLookup_Bind_v_some",
+  "lean_path": "Flapjack/NamespaceProps/Bind.lean", "lean_name": "nsLookup_bind_alist",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared nsLookup_Bind_v_some_typed: a bare association-list namespace succeeds exactly at a short name whose ALOOKUP (the reviewed List.lookup carrier) returns the value; HOL's binders v, k, x are kept."
+ },
+{
+  "hol_path": "cakeml/semantics/proofs/namespacePropsScript.sml", "hol_name": "nsSub_refl",
+  "lean_path": "Flapjack/NamespaceProps/Sub.lean", "lean_name": "nsSub_refl",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared nsSub_refl_typed: the pointwise implication premise is one hypothesis, and the conclusion is the original reflexive sub-relation over the same namespace."
+ },
+{
+  "hol_path": "cakeml/semantics/proofs/namespacePropsScript.sml", "hol_name": "nsDomMod_alist_to_ns",
+  "lean_path": "Flapjack/NamespaceProps/Dom.lean", "lean_name": "nsDomMod_alistToNs",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared nsDomMod_alist_to_ns_typed: an association-list namespace has exactly the empty path in its module domain, as the Lean singleton set over the same module-list carrier."
+ },
+{
+  "hol_path": "cakeml/semantics/proofs/namespacePropsScript.sml", "hol_name": "nsSub_nsBind",
+  "lean_path": "Flapjack/NamespaceProps/Sub.lean", "lean_name": "nsSub_nsBind",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared nsSub_nsBind_typed: HOL's conjunctive premise (the head entry relation and the sub-relation) is one hypothesis, the binder order R, x, v1, v2, e1, e2 is kept, and source and target value types stay independent."
+ },
+{
+  "hol_path": "cakeml/semantics/proofs/namespacePropsScript.sml", "hol_name": "nsAll2_nsBind",
+  "lean_path": "Flapjack/NamespaceProps/Sub.lean", "lean_name": "nsAll2_nsBind",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared nsAll2_nsBind_typed: the conjunctive premise is one hypothesis and binding related entries into two-way related namespaces keeps them two-way related, with independent value types."
+ },
+{
+  "hol_path": "cakeml/semantics/proofs/namespacePropsScript.sml", "hol_name": "nsSub_conj",
+  "lean_path": "Flapjack/NamespaceProps/Sub.lean", "lean_name": "nsSub_conj",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared nsSub_conj_typed: a conjunctive relation relates exactly when both relations do, with the same binders P, Q, e1, e2 and independent value types."
+ },
+{
+  "hol_path": "cakeml/semantics/proofs/namespacePropsScript.sml", "hol_name": "nsAll2_conj",
+  "lean_path": "Flapjack/NamespaceProps/Sub.lean", "lean_name": "nsAll2_conj",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared nsAll2_conj_typed: the two-way relation of a conjunctive relation is exactly the conjunction of the two two-way relations, over the same binders and independent value types."
+ },
+{
   "hol_path": "cakeml/semantics/proofs/namespacePropsScript.sml", "hol_name": "nsAll_nsSing",
   "lean_path": "Flapjack/NamespaceProps/All.lean", "lean_name": "nsAllNsSing",
   "statement_status": "reviewed_exact",

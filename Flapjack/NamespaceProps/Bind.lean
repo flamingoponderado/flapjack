@@ -49,4 +49,14 @@ theorem alistToNs_eq_iff {M N V : Type} (l1 l2 : Alist N V) :
     (alistToNs l1 : Namespace M N V) = alistToNs l2 ↔ l1 = l2 := by
   simp [alistToNs]
 
+/-- Looking up in a bare association-list namespace succeeds exactly at a short name
+whose entry is found by association-list lookup. -/
+@[hol "cakeml/semantics/proofs/namespacePropsScript.sml" "nsLookup_Bind_v_some"]
+theorem nsLookup_bind_alist {M N V : Type} [DecidableEq M] [DecidableEq N]
+    (v : Alist N V) (k : Ident M N) (x : V) :
+    nsLookup (.bind v []) k = some x ↔ ∃ y, k = .short y ∧ v.lookup y = some x := by
+  cases k with
+  | short name => simp [nsLookup]
+  | long mn rest => simp [nsLookup, List.lookup]
+
 end Flapjack.NamespaceHOL

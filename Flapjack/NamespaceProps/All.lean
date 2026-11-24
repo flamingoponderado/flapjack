@@ -53,4 +53,18 @@ theorem nsAllAlistToNs {M N V : Type}
         simp [List.lookup, ne] at found
         apply ih (by intro entry member; exact all entry (by simp [member])) found
 
+/-- The always-true predicate holds throughout every namespace. -/
+@[hol "cakeml/semantics/proofs/namespacePropsScript.sml" "eALL_T"]
+theorem nsAll_true {M N V : Type} [DecidableEq M] [DecidableEq N]
+    (e : Namespace M N V) : nsAll (fun (_ : Ident M N) (_ : V) => True) e := by
+  intro id value found
+  trivial
+
+/-- A namespace-wide predicate holds at every successful lookup. -/
+@[hol "cakeml/semantics/proofs/namespacePropsScript.sml" "nsLookup_nsAll"]
+theorem nsLookup_nsAll {M N V : Type} [DecidableEq M] [DecidableEq N]
+    (env : Namespace M N V) (x : Ident M N) (P : Ident M N → V → Prop) (v : V)
+    (premise : nsAll P env ∧ nsLookup env x = some v) : P x v :=
+  premise.1 x v premise.2
+
 end Flapjack.NamespaceHOL

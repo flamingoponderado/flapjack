@@ -22,4 +22,11 @@ theorem nsDomMod_lift_eq {M N V W : Type} [DecidableEq M]
     nsDomMod (nsLift mn left) = nsDomMod (nsLift mn right) := by
   rw [nsDomMod_nsLift, nsDomMod_nsLift, domain]
 
+/-- Mapping and lifting commute for namespaces. -/
+@[hol "cakeml/semantics/proofs/namespacePropsScript.sml" "nsLift_nsMap"]
+theorem nsLift_nsMap {M N V W : Type} (f : V → W) (n : Namespace M N V) (mn : M) :
+    nsLift mn (nsMap f n) = nsMap f (nsLift mn n) := by
+  cases n with | bind vs ms =>
+  simp [nsLift, nsMap]
+
 end Flapjack.NamespaceHOL

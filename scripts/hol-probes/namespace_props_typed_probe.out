@@ -39,3 +39,14 @@ nsMap_nsSing_typed=∀(f :α -> β) (x :γ) (v :α). nsMap f (nsSing x v :(δ, �
 nsLookupMod_nsSing_typed=∀(n1 :α list) (n2 :β) (v :γ). nsLookupMod (nsSing n2 v :(α, β, γ) namespace) n1 = if n1 = ([] :α list) then SOME (nsSing n2 v :(α, β, γ) namespace) else (NONE :(α, β, γ) namespace option)
 nsDom_nsSing_typed=∀(x :α) (y :β). nsDom (nsSing x y :(γ, α, β) namespace) = {(Short x :(γ, α) id)}
 nsDomMod_nsSing_typed=∀(x :α) (y :β). nsDomMod (nsSing x y :(γ, α, β) namespace) = {([] :γ list)}
+eALL_T_typed=∀(e :(α, β, γ) namespace). nsAll (λ(n :(α, β) id) (x :γ). T) e
+nsLookup_nsAll_typed=∀(env :(α, β, γ) namespace) (x :(α, β) id) (P :(α, β) id -> γ -> bool) (v :γ). nsAll P env ∧ nsLookup env x = SOME v ⇒ P x v
+nsLookup_nsDom_typed=∀(x :(α, β) id) (n :(α, β, γ) namespace). x ∈ nsDom n ⇔ ∃(v :γ). nsLookup n x = SOME v
+nsLift_nsMap_typed=∀(f :α -> β) (n :(γ, δ, α) namespace) (mn :γ). nsLift mn (nsMap f n) = nsMap f (nsLift mn n)
+nsLookup_Bind_v_some_typed=nsLookup (Bind (v :(γ # α) list) ([] :(β # (β, γ, α) namespace) list)) (k :(β, γ) id) = SOME (x :α) ⇔ ∃(y :γ). k = (Short y :(β, γ) id) ∧ ALOOKUP v y = SOME x
+nsSub_refl_typed=∀(P :(α, β) id -> γ -> bool) (R :(α, β) id -> γ -> γ -> bool). (∀(n :(α, β) id) (x :γ). P n x ⇒ R n x x) ⇒ ∀(e :(α, β, γ) namespace). nsAll P e ⇒ nsSub R e e
+nsDomMod_alist_to_ns_typed=∀(l :(α # β) list). nsDomMod (alist_to_ns l :(γ, α, β) namespace) = {([] :γ list)}
+nsSub_nsBind_typed=∀(R :(α, β) id -> γ -> δ -> bool) (x :β) (v1 :γ) (v2 :δ) (e1 :(α, β, γ) namespace) (e2 :(α, β, δ) namespace). R (Short x :(α, β) id) v1 v2 ∧ nsSub R e1 e2 ⇒ nsSub R (nsBind x v1 e1) (nsBind x v2 e2)
+nsAll2_nsBind_typed=∀(R :(α, β) id -> γ -> δ -> bool) (x :β) (v1 :γ) (v2 :δ) (e1 :(α, β, γ) namespace) (e2 :(α, β, δ) namespace). R (Short x :(α, β) id) v1 v2 ∧ nsAll2 R e1 e2 ⇒ nsAll2 R (nsBind x v1 e1) (nsBind x v2 e2)
+nsSub_conj_typed=∀(P :(α, β) id -> γ -> δ -> bool) (Q :(α, β) id -> γ -> δ -> bool) (e1 :(α, β, γ) namespace) (e2 :(α, β, δ) namespace). nsSub (λ(id :(α, β) id) (x :γ) (y :δ). P id x y ∧ Q id x y) e1 e2 ⇔ nsSub P e1 e2 ∧ nsSub Q e1 e2
+nsAll2_conj_typed=∀(P :(α, β) id -> γ -> δ -> bool) (Q :(α, β) id -> γ -> δ -> bool) (e1 :(α, β, γ) namespace) (e2 :(α, β, δ) namespace). nsAll2 (λ(id :(α, β) id) (x :γ) (y :δ). P id x y ∧ Q id x y) e1 e2 ⇔ nsAll2 P e1 e2 ∧ nsAll2 Q e1 e2

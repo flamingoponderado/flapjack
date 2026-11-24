@@ -74,3 +74,16 @@ val _ = emit "nsMap_nsSing_typed" "nsMap_nsSing";
 val _ = emit "nsLookupMod_nsSing_typed" "nsLookupMod_nsSing";
 val _ = emit "nsDom_nsSing_typed" "nsDom_nsSing";
 val _ = emit "nsDomMod_nsSing_typed" "nsDomMod_nsSing";
+
+(* Sub-relations, domains and lookup (task 273). *)
+val _ = emit "eALL_T_typed" "eALL_T";
+val _ = emit "nsLookup_nsAll_typed" "nsLookup_nsAll";
+val _ = emit "nsLookup_nsDom_typed" "nsLookup_nsDom";
+val _ = emit "nsLift_nsMap_typed" "nsLift_nsMap";
+val _ = emit "nsLookup_Bind_v_some_typed" "nsLookup_Bind_v_some";
+val _ = emit "nsSub_refl_typed" "nsSub_refl";
+val _ = emit "nsDomMod_alist_to_ns_typed" "nsDomMod_alist_to_ns";
+val _ = emit "nsSub_nsBind_typed" "nsSub_nsBind";
+val _ = emit "nsAll2_nsBind_typed" "nsAll2_nsBind";
+val _ = emit "nsSub_conj_typed" "nsSub_conj";
+val _ = emit "nsAll2_conj_typed" "nsAll2_conj";
