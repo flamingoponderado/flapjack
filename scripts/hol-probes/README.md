@@ -171,6 +171,20 @@ the sem_env, state and Boolean-value carriers, the independent type variables of
 `ctors_of_tdef`, the two independent payload types of the mapped and related
 store-value theorems, and the three lookup premises only.
 
+`namespace_props_typed_probe.out` captures the exported `namespacePropsTheory`
+namespace-operation statements with inferred types, including the identifier
+construction and projection laws (`mk_id_11`, `id_to_mods_mk_id`,
+`id_to_namemods_mk_id`, `mk_id_surj`, `mk_id_thm`), the empty-namespace laws
+(`alist_to_ns_nil`, `nsSub_nsEmpty`, `nsAll_nsEmpty`, `nsAll2_nsEmpty`,
+`nsDom_nsEmpty`, `nsDomMod_nsEmpty`, `nsMap_nsEmpty`, `nsBind_nsEmpty`),
+`nsAll_mono`, the binding and association-list laws (`alist_to_ns_cons`,
+`nsAppend_nsBind`, `nsAppend_alist_to_ns`, `nsBind_11`,
+`nsLookupMod_alist_to_ns`, `alist_to_ns_11`), and the singleton laws
+(`nsAppend_nsSing`, `nsLookup_nsSing`, `nsMap_nsSing`, `nsLookupMod_nsSing`,
+`nsDom_nsSing`, `nsDomMod_nsSing`). The captures fix the independent module,
+name and value carriers and the binder order of each theorem; they are typed
+replays, not cross-language equivalence proofs.
+
 `data_to_word_gc_stack_probe.out` captures the typed original unchanged-pointer set and finiteness theorem, combined forwarding-map definition, and parsed local domain and application statements. These show that configuration and heap payload types are independent; the local parses do not replay their HOL proofs.
 
 The same probe captures the exported `partial_gc_related` theorem with inferred types, including its existential finite map and all heap-relation conclusions.

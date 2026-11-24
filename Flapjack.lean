@@ -4140,6 +4140,11 @@ import Flapjack.Compiler.Inference.Infer.Pattern
 import Flapjack.Compiler.Inference.Infer.ConstraintDiagnostics
 import Flapjack.NamespaceProps.MapLookup
 import Flapjack.NamespaceProps.All
+import Flapjack.NamespaceProps.Ident
+import Flapjack.NamespaceProps.Empty
+import Flapjack.NamespaceProps.Mono
+import Flapjack.NamespaceProps.Bind
+import Flapjack.NamespaceProps.Sing
 import Flapjack.TypeSysProps.Constructor
 import Flapjack.TypeSysProps.Abbrev
 import Flapjack.TypeSysProps.Freevars

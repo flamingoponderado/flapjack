@@ -498,6 +498,162 @@
   "reviewer": "Independent comparison with source and nsAll2_nsAppend_typed confirms both value carriers, the identifier-dependent relation, premise order, and the append conclusion. The proof preserves both lookup directions and the left-biased module-shadowing behavior. Local classical equality adds no theorem premises."
  },
 {
+  "hol_path": "cakeml/semantics/proofs/namespacePropsScript.sml", "hol_name": "mk_id_11",
+  "lean_path": "Flapjack/NamespaceProps/Ident.lean", "lean_name": "mkId_eq",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared mk_id_11_typed: the module-list and name types stay independent, mk_id is injective in both components, and the conjunction keeps HOL's order."
+ },
+{
+  "hol_path": "cakeml/semantics/proofs/namespacePropsScript.sml", "hol_name": "id_to_mods_mk_id",
+  "lean_path": "Flapjack/NamespaceProps/Ident.lean", "lean_name": "idToMods_mkId",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared id_to_mods_mk_id_typed: projecting the module path of a constructed identifier returns the same independent module list."
+ },
+{
+  "hol_path": "cakeml/semantics/proofs/namespacePropsScript.sml", "hol_name": "id_to_namemods_mk_id",
+  "lean_path": "Flapjack/NamespaceProps/Ident.lean", "lean_name": "idToN_mkId",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared id_to_namemods_mk_id_typed: projecting the name of a constructed identifier returns the same independent name."
+ },
+{
+  "hol_path": "cakeml/semantics/proofs/namespacePropsScript.sml", "hol_name": "mk_id_surj",
+  "lean_path": "Flapjack/NamespaceProps/Ident.lean", "lean_name": "mkId_surjective",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared mk_id_surj_typed: every identifier is some mk_id of an independent module list and name."
+ },
+{
+  "hol_path": "cakeml/semantics/proofs/namespacePropsScript.sml", "hol_name": "mk_id_thm",
+  "lean_path": "Flapjack/NamespaceProps/Ident.lean", "lean_name": "mkId_idToMods_idToN",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared mk_id_thm_typed: rebuilding an identifier from its own module path and name is the identity over the same id carrier."
+ },
+{
+  "hol_path": "cakeml/semantics/proofs/namespacePropsScript.sml", "hol_name": "alist_to_ns_nil",
+  "lean_path": "Flapjack/NamespaceProps/Empty.lean", "lean_name": "alistToNs_nil",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared alist_to_ns_nil_typed: the empty association list builds the reviewed empty namespace over the same three carriers."
+ },
+{
+  "hol_path": "cakeml/semantics/proofs/namespacePropsScript.sml", "hol_name": "nsSub_nsEmpty",
+  "lean_path": "Flapjack/NamespaceProps/Empty.lean", "lean_name": "nsSub_nsEmpty",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared nsSub_nsEmpty_typed: the empty namespace is related to every namespace of an independent value type by any three-place relation; the DecidableEq side conditions are those of the reviewed nsLookup and nsLookupMod carriers (ALOOKUP as List.lookup)."
+ },
+{
+  "hol_path": "cakeml/semantics/proofs/namespacePropsScript.sml", "hol_name": "nsAll_nsEmpty",
+  "lean_path": "Flapjack/NamespaceProps/Empty.lean", "lean_name": "nsAll_nsEmpty",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared nsAll_nsEmpty_typed: every predicate holds throughout the empty namespace; the DecidableEq side conditions match the reviewed nsLookup carrier."
+ },
+{
+  "hol_path": "cakeml/semantics/proofs/namespacePropsScript.sml", "hol_name": "nsAll2_nsEmpty",
+  "lean_path": "Flapjack/NamespaceProps/Empty.lean", "lean_name": "nsAll2_nsEmpty",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared nsAll2_nsEmpty_typed: two empty namespaces of independent value types are related by any three-place relation, matching the reviewed nsAll2 definition."
+ },
+{
+  "hol_path": "cakeml/semantics/proofs/namespacePropsScript.sml", "hol_name": "nsDom_nsEmpty",
+  "lean_path": "Flapjack/NamespaceProps/Empty.lean", "lean_name": "nsDom_nsEmpty",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared nsDom_nsEmpty_typed: HOL's empty set is the membership predicate rendered as the Lean empty set over the same independent id carrier."
+ },
+{
+  "hol_path": "cakeml/semantics/proofs/namespacePropsScript.sml", "hol_name": "nsDomMod_nsEmpty",
+  "lean_path": "Flapjack/NamespaceProps/Empty.lean", "lean_name": "nsDomMod_nsEmpty",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared nsDomMod_nsEmpty_typed: the module domain contains exactly the empty path, as the Lean singleton set over the same module-list carrier."
+ },
+{
+  "hol_path": "cakeml/semantics/proofs/namespacePropsScript.sml", "hol_name": "nsMap_nsEmpty",
+  "lean_path": "Flapjack/NamespaceProps/Empty.lean", "lean_name": "nsMap_nsEmpty",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared nsMap_nsEmpty_typed: mapping over the empty namespace keeps it empty, with independent source and target value types."
+ },
+{
+  "hol_path": "cakeml/semantics/proofs/namespacePropsScript.sml", "hol_name": "nsBind_nsEmpty",
+  "lean_path": "Flapjack/NamespaceProps/Empty.lean", "lean_name": "nsBind_nsEmpty",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared nsBind_nsEmpty_typed: binding any name and value into any namespace never yields the empty namespace."
+ },
+{
+  "hol_path": "cakeml/semantics/proofs/namespacePropsScript.sml", "hol_name": "nsAll_mono",
+  "lean_path": "Flapjack/NamespaceProps/Mono.lean", "lean_name": "nsAll_mono",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared nsAll_mono_typed: the pointwise implication premise keeps its single quantified shape and lifts through nsAll over the same identifier and value carriers; DecidableEq matches the reviewed nsLookup carrier."
+ },
+{
+  "hol_path": "cakeml/semantics/proofs/namespacePropsScript.sml", "hol_name": "alist_to_ns_cons",
+  "lean_path": "Flapjack/NamespaceProps/Bind.lean", "lean_name": "alistToNs_cons",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared alist_to_ns_cons_typed: building from a consed association list binds the head entry, over the same independent module, name and value types."
+ },
+{
+  "hol_path": "cakeml/semantics/proofs/namespacePropsScript.sml", "hol_name": "nsAppend_nsBind",
+  "lean_path": "Flapjack/NamespaceProps/Bind.lean", "lean_name": "nsAppend_nsBind",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared nsAppend_nsBind_typed: appending a bound namespace binds the same entry in the appended namespace, in HOL's binder order k, v, e1, e2."
+ },
+{
+  "hol_path": "cakeml/semantics/proofs/namespacePropsScript.sml", "hol_name": "nsAppend_alist_to_ns",
+  "lean_path": "Flapjack/NamespaceProps/Bind.lean", "lean_name": "nsAppend_alistToNs",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared nsAppend_alist_to_ns_typed: appending two association-list namespaces concatenates their lists over the same independent carriers."
+ },
+{
+  "hol_path": "cakeml/semantics/proofs/namespacePropsScript.sml", "hol_name": "nsBind_11",
+  "lean_path": "Flapjack/NamespaceProps/Bind.lean", "lean_name": "nsBind_eq_iff",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared nsBind_11_typed: binding is injective in the name, the value and the namespace, with the three conjuncts in HOL's order and HOL's binder order x, y, n, x', y', n'."
+ },
+{
+  "hol_path": "cakeml/semantics/proofs/namespacePropsScript.sml", "hol_name": "nsLookupMod_alist_to_ns",
+  "lean_path": "Flapjack/NamespaceProps/Bind.lean", "lean_name": "nsLookupMod_alistToNs",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared nsLookupMod_alist_to_ns_typed: a nonempty module path in an association-list namespace is absent; the DecidableEq side condition is that of the reviewed nsLookupMod carrier."
+ },
+{
+  "hol_path": "cakeml/semantics/proofs/namespacePropsScript.sml", "hol_name": "alist_to_ns_11",
+  "lean_path": "Flapjack/NamespaceProps/Bind.lean", "lean_name": "alistToNs_eq_iff",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared alist_to_ns_11_typed: building a namespace from an association list is injective, with the same module, name and value types on both sides."
+ },
+{
+  "hol_path": "cakeml/semantics/proofs/namespacePropsScript.sml", "hol_name": "nsAppend_nsSing",
+  "lean_path": "Flapjack/NamespaceProps/Sing.lean", "lean_name": "nsAppend_nsSing",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared nsAppend_nsSing_typed: appending a singleton namespace is binding the entry into the other namespace."
+ },
+{
+  "hol_path": "cakeml/semantics/proofs/namespacePropsScript.sml", "hol_name": "nsLookup_nsSing",
+  "lean_path": "Flapjack/NamespaceProps/Sing.lean", "lean_name": "nsLookup_nsSing",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared nsLookup_nsSing_typed: looking up in a singleton returns exactly the bound value at the short name and nothing else; DecidableEq matches the reviewed nsLookup carrier and the identifier equality is the reviewed id carrier's."
+ },
+{
+  "hol_path": "cakeml/semantics/proofs/namespacePropsScript.sml", "hol_name": "nsMap_nsSing",
+  "lean_path": "Flapjack/NamespaceProps/Sing.lean", "lean_name": "nsMap_nsSing",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared nsMap_nsSing_typed: mapping a singleton maps its single value, with independent source and target value types."
+ },
+{
+  "hol_path": "cakeml/semantics/proofs/namespacePropsScript.sml", "hol_name": "nsLookupMod_nsSing",
+  "lean_path": "Flapjack/NamespaceProps/Sing.lean", "lean_name": "nsLookupMod_nsSing",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared nsLookupMod_nsSing_typed: a singleton is found only at the empty module path, matching HOL's binder order n1, n2, v; DecidableEq matches the reviewed nsLookupMod carrier."
+ },
+{
+  "hol_path": "cakeml/semantics/proofs/namespacePropsScript.sml", "hol_name": "nsDom_nsSing",
+  "lean_path": "Flapjack/NamespaceProps/Sing.lean", "lean_name": "nsDom_nsSing",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared nsDom_nsSing_typed: the value domain is exactly the singleton short identifier, with HOL's set rendered as the Lean singleton set over the same id carrier."
+ },
+{
+  "hol_path": "cakeml/semantics/proofs/namespacePropsScript.sml", "hol_name": "nsDomMod_nsSing",
+  "lean_path": "Flapjack/NamespaceProps/Sing.lean", "lean_name": "nsDomMod_nsSing",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared nsDomMod_nsSing_typed: the module domain is exactly the empty path, with HOL's set rendered as the Lean singleton set over the same module-list carrier."
+ },
+{
   "hol_path": "cakeml/semantics/proofs/namespacePropsScript.sml", "hol_name": "nsAll_nsSing",
   "lean_path": "Flapjack/NamespaceProps/All.lean", "lean_name": "nsAllNsSing",
   "statement_status": "reviewed_exact",

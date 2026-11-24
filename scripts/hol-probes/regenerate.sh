@@ -11159,6 +11159,10 @@ run_probe semantics_props_typed_probeScript.sml semantics_props_typed_probe.out 
 run_probe namespace_props_typed_probeScript.sml namespace_props_typed_probe.out \
   nsLookup_nsEmpty_typed nsLookupMod_nsEmpty_typed nsLookup_nsLift_typed nsLookupMod_nsLift_typed nsDom_nsLift_typed nsDomMod_nsLift_typed nsDom_nsAppend_equal_typed nsAppend_nsEmpty_typed \
   nsLookup_nsBind_typed nsAppend_assoc_typed nsAppend_to_nsBindList_typed nsAll_nsAppend_typed nsAll_nsBind_typed nsAll_nsSing_typed nsAll2_nsAppend_typed \
+  mk_id_11_typed id_to_mods_mk_id_typed id_to_namemods_mk_id_typed mk_id_surj_typed mk_id_thm_typed \
+  alist_to_ns_nil_typed nsSub_nsEmpty_typed nsAll_nsEmpty_typed nsAll2_nsEmpty_typed nsDom_nsEmpty_typed nsDomMod_nsEmpty_typed nsMap_nsEmpty_typed nsBind_nsEmpty_typed \
+  nsAll_mono_typed alist_to_ns_cons_typed nsAppend_nsBind_typed nsAppend_alist_to_ns_typed nsBind_11_typed nsLookupMod_alist_to_ns_typed alist_to_ns_11_typed \
+  nsAppend_nsSing_typed nsLookup_nsSing_typed nsMap_nsSing_typed nsLookupMod_nsSing_typed nsDom_nsSing_typed nsDomMod_nsSing_typed \
   "$cake_dir/semantics/proofs/namespacePropsScript.sml" \
   "$cake_dir/semantics/proofs"
 
