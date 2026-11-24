@@ -99,13 +99,7 @@ theorem clashTreeColouringOk_ShareStore32 {width : Nat} [NeZero width]
 theorem clashTreeColouringOk_ShareLoad {width : Nat} [NeZero width]
     (v : Nat) (e : WordLangExpHOL (BitVec width)) :
     clashTreeGoal (.shareInst .load v e) := by
-  rintro lt f live flive livein flivein ⟨-, hw, -, hd, hi, hc⟩
-  simp only [getClashTree, reduceCtorEq, false_or, if_false] at hc
-  exact deltaConcl _ f _ _ live flive livein flivein lt hw hd hi hc
-    (fun k => by simpa only [getWrites] using writesSingle v k)
-    (fun hw => by
-      simp only [numsetListDelete, getLive, reduceCtorEq, false_or, if_false]
-      exact insertReadsEqUnion e (sptDelete v live) (sptWfDelete live v hw)) Iff.rfl
+  shareLoadCase v e
 
 /-- Exact HOL ShareInst Load8 case, retaining the full original motive. -/
 @[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
