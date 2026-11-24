@@ -52,3 +52,11 @@ val _ = emit "ctors_of_dec_def_typed" "ctors_of_dec_def";
 val _ = emit "prim_type_cases_typed" "prim_type_cases";
 val _ = emit "nat_to_v_11_typed" "nat_to_v_11";
 val _ = emit "find_recfun_el_typed" "find_recfun_el";
+
+(* Store-value list theorems and concrete-value characterizations. *)
+val _ = emit "EVERY_sv_every_MAP_map_sv_typed" "EVERY_sv_every_MAP_map_sv";
+val _ = emit "EVERY_sv_every_EVERY_store_vs_typed" "EVERY_sv_every_EVERY_store_vs";
+val _ = emit "EVERY_store_vs_intro_typed" "EVERY_store_vs_intro";
+val _ = emit "LIST_REL_store_vs_intro_typed" "LIST_REL_store_vs_intro";
+val _ = emit "concrete_v_list_typed" "concrete_v_list";
+val _ = emit "concrete_v_simps_typed" "concrete_v_simps";

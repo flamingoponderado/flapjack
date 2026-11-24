@@ -26,3 +26,9 @@ ctors_of_dec_def_typed=ctors_of_dec (Dtype (locs :locs) (tds :(mlstring list # m
 prim_type_cases_typed=∀(ty :prim_type). ty = BoolT ∨ ty = IntT ∨ ty = CharT ∨ ty = StrT ∨ ty = WordT W8 ∨ ty = WordT W64 ∨ ty = Float64T
 nat_to_v_11_typed=∀(i :num) (j :num). nat_to_v i = nat_to_v j ⇔ i = j
 find_recfun_el_typed=∀(f :mlstring) (funs :(mlstring # α # β) list) (x :α) (e :β) (n :num). ALL_DISTINCT (MAP (λ((f :mlstring),(x :α),(e :β)). f) funs) ∧ n < LENGTH funs ∧ funs❲n❳ = (f,x,e) ⇒ find_recfun f funs = SOME (x,e)
+EVERY_sv_every_MAP_map_sv_typed=∀(P :α -> bool) (f :β -> α) (ls :β store_v list). EVERY P (MAP f (store_vs ls)) ⇒ EVERY (sv_every P) (MAP (map_sv f) ls)
+EVERY_sv_every_EVERY_store_vs_typed=∀(P :α -> bool) (ls :α store_v list). EVERY (sv_every P) ls ⇔ EVERY P (store_vs ls)
+EVERY_store_vs_intro_typed=∀(P :α -> bool) (ls :α store_v list). EVERY (sv_every P) ls ⇒ EVERY P (store_vs ls)
+LIST_REL_store_vs_intro_typed=∀(P :α -> β -> bool) (l1 :α store_v list) (l2 :β store_v list). LIST_REL (sv_rel P) l1 l2 ⇒ LIST_REL P (store_vs l1) (store_vs l2)
+concrete_v_list_typed=∀(xs :v list). concrete_v_list xs ⇔ EVERY concrete_v xs
+concrete_v_simps_typed=(concrete_v (Litv (l :lit)) ⇔ T) ∧ (concrete_v (Loc (b :bool) (n :num)) ⇔ T) ∧ (concrete_v (Conv (stmp :stamp option) (xs :v list)) ⇔ EVERY concrete_v xs) ∧ (concrete_v (Vectorv xs) ⇔ EVERY concrete_v xs) ∧ (concrete_v (Env (id :v sem_env) (e :num # num)) ⇔ F) ∧ (concrete_v (Closure (e2 :v sem_env) (nm :mlstring) (x :exp)) ⇔ F) ∧ (concrete_v (Recclosure (e3 :v sem_env) (funs :(mlstring # mlstring # exp) list) (nm2 :mlstring)) ⇔ F)

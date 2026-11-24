@@ -10,6 +10,7 @@ import Flapjack.SemanticPrimitivesHOL.Arithmetic
 import Flapjack.SemanticPrimitivesProps.Conversion
 import Flapjack.SemanticPrimitivesProps.Arithmetic
 import Flapjack.SemanticPrimitivesProps.Basic
+import Flapjack.SemanticPrimitivesProps.Concrete
 import Flapjack.SemanticPrimitivesProps.Declarations
 import Flapjack.SemanticPrimitivesProps.StoreValues
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PrimitiveConversion

@@ -12551,6 +12551,9 @@ run_probe semantic_primitives_props_local_typed_probeScript.sml \
   unchanged_env_typed with_same_clock_typed Boolv_11_typed \
   ctors_of_tdef_def_typed ctors_of_dec_def_typed prim_type_cases_typed \
   nat_to_v_11_typed find_recfun_el_typed \
+  EVERY_sv_every_MAP_map_sv_typed EVERY_sv_every_EVERY_store_vs_typed \
+  EVERY_store_vs_intro_typed LIST_REL_store_vs_intro_typed \
+  concrete_v_list_typed concrete_v_simps_typed \
   "$cake_dir/semantics/proofs/semanticPrimitivesPropsScript.sml" \
   "$cake_dir/semantics/proofs"
 

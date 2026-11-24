@@ -18895,6 +18895,54 @@
     "reviewer": "Compared find_recfun_el_typed in semantic_primitives_props_local_typed_probe.out: the binders keep HOL's order f, funs, x, e, n; the three conjunctive premises are separate hypotheses (distinct keys, in-bounds index, listed entry); the result payload types stay independent; and the conclusion is the original find_recfun lookup."
   },
 {
+    "hol_path": "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml",
+    "hol_name": "EVERY_sv_every_MAP_map_sv",
+    "lean_path": "Flapjack/SemanticPrimitivesProps/StoreValues.lean",
+    "lean_name": "everyStoreValue_mapStoreValue",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared EVERY_sv_every_MAP_map_sv_typed in semantic_primitives_props_local_typed_probe.out: the map goes from an independent source payload type to the independent predicate type, the hypothesis quantifies the mapped concatenated values and the conclusion the mapped entries; HOL's bool EVERY folds are rendered as membership quantification (as for every_result_def)."
+  },
+{
+    "hol_path": "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml",
+    "hol_name": "EVERY_sv_every_EVERY_store_vs",
+    "lean_path": "Flapjack/SemanticPrimitivesProps/StoreValues.lean",
+    "lean_name": "everyStoreValue_storeValues",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared EVERY_sv_every_EVERY_store_vs_typed in semantic_primitives_props_local_typed_probe.out: both sides use one payload type, entry-wise sv_every becomes entry-wise everyStoreValue and the store_vs side becomes membership in the concatenated values; the biconditional is preserved."
+  },
+{
+    "hol_path": "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml",
+    "hol_name": "EVERY_store_vs_intro",
+    "lean_path": "Flapjack/SemanticPrimitivesProps/StoreValues.lean",
+    "lean_name": "everyStoreValue_storeValues_intro",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared EVERY_store_vs_intro_typed in semantic_primitives_props_local_typed_probe.out: the single implication direction is kept over one payload type, with the same entry-wise premise and concatenated-values conclusion."
+  },
+{
+    "hol_path": "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml",
+    "hol_name": "LIST_REL_store_vs_intro",
+    "lean_path": "Flapjack/SemanticPrimitivesProps/StoreValues.lean",
+    "lean_name": "forall₂_storeValues",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared LIST_REL_store_vs_intro_typed in semantic_primitives_props_local_typed_probe.out: the relation and both entry lists keep their two independent payload types, LIST_REL is the reviewed Forall₂ relation over storeValueRel, and the conclusion relates the concatenated values of both sides."
+  },
+{
+    "hol_path": "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml",
+    "hol_name": "concrete_v_list",
+    "lean_path": "Flapjack/SemanticPrimitivesProps/Concrete.lean",
+    "lean_name": "concreteValues_eq_all",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared concrete_v_list_typed in semantic_primitives_props_local_typed_probe.out: the mutual list fold concrete_v_list is the reviewed concreteValues, and HOL's bool EVERY fold over the same v list is the Lean List.all Boolean fold, so the Boolean equality is preserved."
+  },
+{
+    "hol_path": "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml",
+    "hol_name": "concrete_v_simps",
+    "lean_path": "Flapjack/SemanticPrimitivesProps/Concrete.lean",
+    "lean_name": "concreteValue_cases",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared concrete_v_simps_typed in semantic_primitives_props_local_typed_probe.out: the same seven conjuncts in HOL's order, with the literal and location cases true, both container cases the Boolean all fold over the same list, and the three closure/environment cases false; binders keep HOL's names and order (id is the sem_env and e the num pair of Env)."
+  },
+{
     "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
     "hol_name": "compile_correct",
     "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/CompileCorrectShape.lean",
