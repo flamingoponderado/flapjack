@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileAllocGlobal
+public import Flapjack.Misc.ProofTactics
 
 @[expose] public section
 

@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Compiler.Backend.Semantics.BviSem.Apply
 public import Flapjack.Compiler.Backend.Semantics.BvlProps.ApplyError
+public import Flapjack.Misc.ProofTactics
 
 @[expose] public section
 

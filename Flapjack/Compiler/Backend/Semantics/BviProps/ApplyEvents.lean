@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Compiler.Backend.Semantics.BviProps.ApplyCode
 public import Flapjack.Compiler.Backend.Semantics.BvlProps.ApplyEvents
+public import Flapjack.Misc.ProofTactics
 
 @[expose] public section
 

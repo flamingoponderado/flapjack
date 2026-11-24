@@ -3,6 +3,7 @@ module
 public import Flapjack.Compiler.Backend.Semantics.ClosSem.Apply
 public import Flapjack.Compiler.Backend.Semantics.ClosSem.Install
 public import Flapjack.FfiHOL
+public import Flapjack.Misc.ProofTactics
 public import Aesop
 
 @[expose] public section

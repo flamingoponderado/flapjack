@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Compiler.Backend.Semantics.BvlSem.Apply
 public import Flapjack.HolRef
+public import Flapjack.Misc.ProofTactics
 public import Aesop
 
 @[expose] public section

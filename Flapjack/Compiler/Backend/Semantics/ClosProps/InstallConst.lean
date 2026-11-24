@@ -3,6 +3,7 @@ module
 public import Flapjack.Compiler.Backend.Semantics.ClosSem.Install
 public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateClock
 public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateClockShift
+public import Flapjack.Misc.ProofTactics
 
 @[expose] public section
 

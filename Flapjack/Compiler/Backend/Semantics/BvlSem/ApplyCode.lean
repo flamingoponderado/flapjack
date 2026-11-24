@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Compiler.Backend.Semantics.BvlSem.ApplyClock
 public import Flapjack.HolRef
+public import Flapjack.Misc.ProofTactics
 
 @[expose] public section
 

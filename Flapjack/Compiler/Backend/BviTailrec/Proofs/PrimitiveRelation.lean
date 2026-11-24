@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.BviTailrec.Proofs.CodeRelation
+public import Flapjack.Misc.ProofTactics
 
 @[expose] public section
 

@@ -3,6 +3,7 @@ module
 public import Flapjack.Compiler.Backend.BvlInline.Proofs.InstallCode
 public import Flapjack.Compiler.Backend.BvlInline.Proofs.InlineApply
 public import Flapjack.Compiler.Backend.Semantics.BvlSem.Apply
+public import Flapjack.Misc.ProofTactics
 
 @[expose] public section
 

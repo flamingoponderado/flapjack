@@ -6,6 +6,7 @@ public import Flapjack.Compiler.Backend.Semantics.BviSem.ApplyRuntimeFrame
 public import Flapjack.Compiler.Backend.Semantics.BvlProps.ApplyCode
 public import Flapjack.Compiler.Backend.WordElim.Proofs.Locations
 public import Flapjack.HolRef
+public import Flapjack.Misc.ProofTactics
 
 @[expose] public section
 

@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.Semantics.BviProps.ApplyGlobal
+public import Flapjack.Misc.ProofTactics
 public import Flapjack.Misc.Sptree.Subspt
 
 @[expose] public section

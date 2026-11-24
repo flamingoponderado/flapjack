@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Compiler.Backend.Semantics.BviSem.ApplyRuntimeFrame
 public import Flapjack.Compiler.Backend.BackendProps.StateCompiler
+public import Flapjack.Misc.ProofTactics
 
 @[expose] public section
 

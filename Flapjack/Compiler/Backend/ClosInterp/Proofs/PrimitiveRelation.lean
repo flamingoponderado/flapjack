@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Compiler.Backend.ClosInterp.Proofs.InsertionCorrect
 public import Flapjack.Misc.Option.Rel
+public import Flapjack.Misc.ProofTactics
 public import Mathlib.Data.List.Forall2
 
 @[expose] public section

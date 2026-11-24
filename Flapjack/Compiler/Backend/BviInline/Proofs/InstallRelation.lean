@@ -3,6 +3,7 @@ module
 public import Flapjack.Compiler.Backend.BviInline.Proofs.StateRelation
 public import Flapjack.Compiler.Backend.BviInline.Proofs.ProgramRelation
 public import Flapjack.Compiler.Backend.BviTailrec.Proofs.PrimitiveRelation
+public import Flapjack.Misc.ProofTactics
 
 @[expose] public section
 

@@ -5,6 +5,7 @@ public import Flapjack.Compiler.Backend.ClosInterp.Proofs.PrimitiveRelation
 public import Flapjack.Compiler.Backend.ClosInterp.Proofs.NoInstallPrimitives
 public import Flapjack.Compiler.Backend.Semantics.ClosProps.GlobalSafety
 public import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyCode
+public import Flapjack.Misc.ProofTactics
 public import Aesop
 
 @[expose] public section

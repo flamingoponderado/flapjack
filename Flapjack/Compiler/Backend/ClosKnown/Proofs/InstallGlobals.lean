@@ -5,6 +5,7 @@ public import Flapjack.Compiler.Backend.ClosKnown.Proofs.Syntax
 public import Flapjack.Compiler.Backend.ClosKnown.Proofs.MappedGlobals
 public import Flapjack.Compiler.Backend.Semantics.ClosProps.GlobalSafety
 public import Flapjack.Compiler.Backend.Semantics.ClosSem.Install
+public import Flapjack.Misc.ProofTactics
 
 @[expose] public section
 

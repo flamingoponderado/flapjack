@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.InstallStateRel
 public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileFfi
+public import Flapjack.Misc.ProofTactics
 
 @[expose] public section
 

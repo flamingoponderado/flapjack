@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Compiler.Backend.Semantics.BviSem.Apply
 public import Flapjack.Compiler.Backend.Semantics.BvlSem.ApplyClock
+public import Flapjack.Misc.ProofTactics
 public import Aesop
 
 @[expose] public section

@@ -3,6 +3,7 @@ module
 public import Flapjack.Compiler.Backend.ClosInterp.Proofs.NoInstallPrimitives
 public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateLength
 public import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyNoRaise
+public import Flapjack.Misc.ProofTactics
 
 @[expose] public section
 

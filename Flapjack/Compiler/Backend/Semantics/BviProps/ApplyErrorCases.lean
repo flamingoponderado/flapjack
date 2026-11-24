@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.Semantics.BviProps.ApplyError
+public import Flapjack.Misc.ProofTactics
 
 @[expose] public section
 

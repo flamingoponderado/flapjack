@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Compiler.Backend.ClosInterp.Proofs.NoInstallValues
 public import Flapjack.Compiler.Backend.ClosInterp.Proofs.PrimitiveRelation
+public import Flapjack.Misc.ProofTactics
 
 @[expose] public section
 

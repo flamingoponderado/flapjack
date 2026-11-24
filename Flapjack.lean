@@ -277,6 +277,7 @@ import Flapjack.Misc.Option.MapM
 import Flapjack.Misc.DivModLemmas
 import Flapjack.Misc.DisjointInter
 import Flapjack.Misc.WordLsImp
+import Flapjack.Misc.ProofTactics
 import Flapjack.RiscV.CorrectnessEncoding.DecodeConst
 import Flapjack.RiscV.CorrectnessEncoding.DecodeBinop
 import Flapjack.RiscV.CorrectnessEncoding.BinopRun

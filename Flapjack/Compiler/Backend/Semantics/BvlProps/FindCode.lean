@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Compiler.Backend.Semantics.BvlSem.Call
 public import Flapjack.HolRef
+public import Flapjack.Misc.ProofTactics
 public import Mathlib.Data.List.Infix
 public import Aesop
 
