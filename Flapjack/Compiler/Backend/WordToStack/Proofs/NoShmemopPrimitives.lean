@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Compiler.Backend.StackProps.ForbiddenOperations
 public import Flapjack.Compiler.Backend.WordToStack.NativeCompile
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopHelpers
 public import Flapjack.Pancake.WordConvs.NotCreated
 
 @[expose] public section
@@ -26,9 +27,7 @@ theorem compNoShmemopSkip {width : Nat} [NeZero width]
     (_guard : noShareInstSubprogsHOL ((.skip) : WordLangProgHOL (BitVec width)) = true)
     (compiled : compNative conf perf (.skip) bs frame = (output,residual)) :
     noShmemop output = true := by
-  have result := congrArg Prod.fst compiled
-  simp only [compNative] at result
-  rw [← result]
+  wordToStackCompiledProg
   rfl
 
 /-- Full original Assign constructor case with all original common inputs. -/
@@ -42,9 +41,7 @@ theorem compNoShmemopAssign {width : Nat} [NeZero width]
     (_guard : noShareInstSubprogsHOL ((.assign name value) : WordLangProgHOL (BitVec width)) = true)
     (compiled : compNative conf perf (.assign name value) bs frame = (output,residual)) :
     noShmemop output = true := by
-  have result := congrArg Prod.fst compiled
-  simp only [compNative] at result
-  rw [← result]
+  wordToStackCompiledProg
   rfl
 
 /-- Full original Store constructor case with all original common inputs. -/
@@ -58,9 +55,7 @@ theorem compNoShmemopStore {width : Nat} [NeZero width]
     (_guard : noShareInstSubprogsHOL ((.store address value) : WordLangProgHOL (BitVec width)) = true)
     (compiled : compNative conf perf (.store address value) bs frame = (output,residual)) :
     noShmemop output = true := by
-  have result := congrArg Prod.fst compiled
-  simp only [compNative] at result
-  rw [← result]
+  wordToStackCompiledProg
   rfl
 
 /-- Full original Raise constructor case with all original common inputs. -/
@@ -74,9 +69,7 @@ theorem compNoShmemopRaise {width : Nat} [NeZero width]
     (_guard : noShareInstSubprogsHOL ((.raise value) : WordLangProgHOL (BitVec width)) = true)
     (compiled : compNative conf perf (.raise value) bs frame = (output,residual)) :
     noShmemop output = true := by
-  have result := congrArg Prod.fst compiled
-  simp only [compNative] at result
-  rw [← result]
+  wordToStackCompiledProg
   rfl
 
 /-- Full original Break constructor case with all original common inputs. -/
@@ -90,9 +83,7 @@ theorem compNoShmemopBreak {width : Nat} [NeZero width]
     (_guard : noShareInstSubprogsHOL ((.break label) : WordLangProgHOL (BitVec width)) = true)
     (compiled : compNative conf perf (.break label) bs frame = (output,residual)) :
     noShmemop output = true := by
-  have result := congrArg Prod.fst compiled
-  simp only [compNative] at result
-  rw [← result]
+  wordToStackCompiledProg
   rfl
 
 /-- Full original Continue constructor case with all original common inputs. -/
@@ -106,9 +97,7 @@ theorem compNoShmemopContinue {width : Nat} [NeZero width]
     (_guard : noShareInstSubprogsHOL ((.continue label) : WordLangProgHOL (BitVec width)) = true)
     (compiled : compNative conf perf (.continue label) bs frame = (output,residual)) :
     noShmemop output = true := by
-  have result := congrArg Prod.fst compiled
-  simp only [compNative] at result
-  rw [← result]
+  wordToStackCompiledProg
   rfl
 
 /-- Full original Tick constructor case with all original common inputs. -/
@@ -121,9 +110,7 @@ theorem compNoShmemopTick {width : Nat} [NeZero width]
     (_guard : noShareInstSubprogsHOL ((.tick) : WordLangProgHOL (BitVec width)) = true)
     (compiled : compNative conf perf (.tick) bs frame = (output,residual)) :
     noShmemop output = true := by
-  have result := congrArg Prod.fst compiled
-  simp only [compNative] at result
-  rw [← result]
+  wordToStackCompiledProg
   rfl
 
 /-- Full original ShareInst constructor case with all original common inputs. -/

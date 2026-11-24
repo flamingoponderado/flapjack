@@ -56,9 +56,7 @@ theorem compNoShmemopInst {width : Nat} [NeZero width]
     (_guard : noShareInstSubprogsHOL (.inst instruction) = true)
     (compiled : compNative conf perf (.inst instruction) bs frame = (output, residual)) :
     noShmemop output = true := by
-  have result := congrArg Prod.fst compiled
-  simp only [compNative] at result
-  rw [← result]
+  wordToStackCompiledProg
   exact wInstNoShmemop (HolInst.ofWordLangInst instruction) frame
 
 end Flapjack.Compiler.Backend.WordToStack.Native

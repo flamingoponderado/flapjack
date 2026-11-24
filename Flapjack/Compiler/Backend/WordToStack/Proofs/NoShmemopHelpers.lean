@@ -11,6 +11,17 @@ namespace Flapjack.Compiler.Backend.WordToStack.Native
 open Flapjack Flapjack.Compiler.Backend.StackLang
 open Flapjack.Compiler.Backend.StackProps
 
+/- Read the compiled program off a `compNative` result: project the program from
+the compiled pair, unfold the compilation and rewrite by it. Flapjack proof
+infrastructure (no HOL original) used by the `NoShmemop*` proofs; hygiene is
+disabled so the local `result` survives. -/
+set_option hygiene false in
+macro "wordToStackCompiledProg" : tactic =>
+  `(tactic| (
+    have result := congrArg Prod.fst compiled
+    simp only [compNative] at result
+    rw [← result]))
+
 /-- Full source move-list preservation, with no frame or scheduler premise. -/
 @[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
   "wMoveAux_no_shmemop_lem" (words_as_type_indexed_bitvec)]

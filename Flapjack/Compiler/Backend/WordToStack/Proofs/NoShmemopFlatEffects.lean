@@ -27,9 +27,7 @@ theorem compNoShmemopMove {width : Nat} [NeZero width]
     (_guard : noShareInstSubprogsHOL ((.move priority moves) : WordLangProgHOL (BitVec width)) = true)
     (compiled : compNative conf perf (.move priority moves) bs frame = (output, residual)) :
     noShmemop output = true := by
-  have result := congrArg Prod.fst compiled
-  simp only [compNative] at result
-  rw [← result]
+  wordToStackCompiledProg
   simp only [wMoveNative, wMoveAuxNoShmemop]
 
 /-- Full original Return case; the no-share guard is retained even where redundant. -/
@@ -43,9 +41,7 @@ theorem compNoShmemopReturn {width : Nat} [NeZero width]
     (_guard : noShareInstSubprogsHOL ((.return label values) : WordLangProgHOL (BitVec width)) = true)
     (compiled : compNative conf perf (.return label values) bs frame = (output, residual)) :
     noShmemop output = true := by
-  have result := congrArg Prod.fst compiled
-  simp only [compNative] at result
-  rw [← result]
+  wordToStackCompiledProg
   simp only [wStackLoadNoShmemop]
   unfold seqStackFreeNative
   split <;> rfl
@@ -61,9 +57,7 @@ theorem compNoShmemopOpCurrHeap {width : Nat} [NeZero width]
     (_guard : noShareInstSubprogsHOL ((.opCurrHeap op dst src) : WordLangProgHOL (BitVec width)) = true)
     (compiled : compNative conf perf (.opCurrHeap op dst src) bs frame = (output, residual)) :
     noShmemop output = true := by
-  have result := congrArg Prod.fst compiled
-  simp only [compNative] at result
-  rw [← result]
+  wordToStackCompiledProg
   simp only [wStackLoadNoShmemop]
   exact wRegWrite1NoShmemop _ dst frame (fun _ => rfl)
 
@@ -98,9 +92,7 @@ theorem compNoShmemopGet {width : Nat} [NeZero width]
     (_guard : noShareInstSubprogsHOL ((.get dst name) : WordLangProgHOL (BitVec width)) = true)
     (compiled : compNative conf perf (.get dst name) bs frame = (output, residual)) :
     noShmemop output = true := by
-  have result := congrArg Prod.fst compiled
-  simp only [compNative] at result
-  rw [← result]
+  wordToStackCompiledProg
   exact wRegWrite1NoShmemop _ dst frame (fun _ => rfl)
 
 /-- Full original Alloc case; the no-share guard is retained even where redundant. -/
@@ -114,9 +106,7 @@ theorem compNoShmemopAlloc {width : Nat} [NeZero width]
     (_guard : noShareInstSubprogsHOL ((.alloc dst live) : WordLangProgHOL (BitVec width)) = true)
     (compiled : compNative conf perf (.alloc dst live) bs frame = (output, residual)) :
     noShmemop output = true := by
-  have result := congrArg Prod.fst compiled
-  simp only [compNative] at result
-  rw [← result]
+  wordToStackCompiledProg
   simp [noShmemop, wLiveNoShmemop]
 
 /-- Full original StoreConsts case; the no-share guard is retained even where redundant. -/
@@ -131,9 +121,7 @@ theorem compNoShmemopStoreConsts {width : Nat} [NeZero width]
     (_guard : noShareInstSubprogsHOL ((.storeConsts src bitmap codeLength dataLength constants) : WordLangProgHOL (BitVec width)) = true)
     (compiled : compNative conf perf (.storeConsts src bitmap codeLength dataLength constants) bs frame = (output, residual)) :
     noShmemop output = true := by
-  have result := congrArg Prod.fst compiled
-  simp only [compNative] at result
-  rw [← result]
+  wordToStackCompiledProg
   rfl
 
 /-- Full original LocValue case; the no-share guard is retained even where redundant. -/
@@ -147,9 +135,7 @@ theorem compNoShmemopLocValue {width : Nat} [NeZero width]
     (_guard : noShareInstSubprogsHOL ((.locValue dst label) : WordLangProgHOL (BitVec width)) = true)
     (compiled : compNative conf perf (.locValue dst label) bs frame = (output, residual)) :
     noShmemop output = true := by
-  have result := congrArg Prod.fst compiled
-  simp only [compNative] at result
-  rw [← result]
+  wordToStackCompiledProg
   exact wRegWrite1NoShmemop _ dst frame (fun _ => rfl)
 
 /-- Full original Install case; the no-share guard is retained even where redundant. -/
@@ -163,9 +149,7 @@ theorem compNoShmemopInstall {width : Nat} [NeZero width]
     (_guard : noShareInstSubprogsHOL ((.install codeBuffer codeLength dataBuffer dataLength live) : WordLangProgHOL (BitVec width)) = true)
     (compiled : compNative conf perf (.install codeBuffer codeLength dataBuffer dataLength live) bs frame = (output, residual)) :
     noShmemop output = true := by
-  have result := congrArg Prod.fst compiled
-  simp only [compNative] at result
-  rw [← result]
+  wordToStackCompiledProg
   simp only [wStackLoadNoShmemop]
   rfl
 
@@ -180,9 +164,7 @@ theorem compNoShmemopCodeBufferWrite {width : Nat} [NeZero width]
     (_guard : noShareInstSubprogsHOL ((.codeBufferWrite addr value) : WordLangProgHOL (BitVec width)) = true)
     (compiled : compNative conf perf (.codeBufferWrite addr value) bs frame = (output, residual)) :
     noShmemop output = true := by
-  have result := congrArg Prod.fst compiled
-  simp only [compNative] at result
-  rw [← result]
+  wordToStackCompiledProg
   simp only [wStackLoadNoShmemop]
   rfl
 
@@ -197,9 +179,7 @@ theorem compNoShmemopDataBufferWrite {width : Nat} [NeZero width]
     (_guard : noShareInstSubprogsHOL ((.dataBufferWrite addr value) : WordLangProgHOL (BitVec width)) = true)
     (compiled : compNative conf perf (.dataBufferWrite addr value) bs frame = (output, residual)) :
     noShmemop output = true := by
-  have result := congrArg Prod.fst compiled
-  simp only [compNative] at result
-  rw [← result]
+  wordToStackCompiledProg
   simp only [wStackLoadNoShmemop]
   rfl
 
@@ -215,9 +195,7 @@ theorem compNoShmemopFFI {width : Nat} [NeZero width]
     (_guard : noShareInstSubprogsHOL ((.ffi name configuration configurationLength array arrayLength live) : WordLangProgHOL (BitVec width)) = true)
     (compiled : compNative conf perf (.ffi name configuration configurationLength array arrayLength live) bs frame = (output, residual)) :
     noShmemop output = true := by
-  have result := congrArg Prod.fst compiled
-  simp only [compNative] at result
-  rw [← result]
+  wordToStackCompiledProg
   rfl
 
 end Flapjack.Compiler.Backend.WordToStack.Native

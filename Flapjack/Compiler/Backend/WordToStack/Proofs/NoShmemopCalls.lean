@@ -28,9 +28,7 @@ theorem compNoShmemopTailCall {width : Nat} [NeZero width]
     (compiled : compNative conf perf (.call none destination args handler) bs frame =
       (output, residual)) :
     noShmemop output = true := by
-  have result := congrArg Prod.fst compiled
-  simp only [compNative] at result
-  rw [← result]
+  wordToStackCompiledProg
   cases destination with
   | some label =>
       simp only [callDestNative, noShmemop, Bool.true_and]
@@ -159,9 +157,7 @@ theorem compNoShmemopReturningCall {width : Nat} [NeZero width]
   have retSafe := ihReturn (wLiveNative live bs frame).2 frame
     (compNative conf perf retCode (wLiveNative live bs frame).2 frame).1
     (compNative conf perf retCode (wLiveNative live bs frame).2 frame).2 retGuard rfl
-  have result := congrArg Prod.fst compiled
-  simp only [compNative] at result
-  rw [← result]
+  wordToStackCompiledProg
   cases perf <;>
     simp [noShmemop, callDestNoShmemop, wLiveNoShmemop, stackArgsNative,
       stackMoveNoShmemop, copyRetNoShmemop, retSafe,
@@ -212,9 +208,7 @@ theorem compNoShmemopHandledCall {width : Nat} [NeZero width]
       (compNative conf perf retCode (wLiveNative live bs frame).2 frame).2 frame).1
     (compNative conf perf handleCode
       (compNative conf perf retCode (wLiveNative live bs frame).2 frame).2 frame).2 guards.2 rfl
-  have result := congrArg Prod.fst compiled
-  simp only [compNative] at result
-  rw [← result]
+  wordToStackCompiledProg
   cases perf <;>
     simp [noShmemop, callDestNoShmemop, wLiveNoShmemop, pushHandlerNoShmemop,
       stackHandlerArgsNoShmemop, popHandlerNoShmemop, copyRetNoShmemop,
