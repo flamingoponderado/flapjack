@@ -43,6 +43,23 @@ theorem holFmapAsFiniteSupportRelationWitness_PanGlobalsContextExact
     PanGlobalsContextExact.ofBroad (PanGlobalsContextExact.toBroad context) = context :=
   PanGlobalsContextExact.holFmapAsFiniteSupportWitness context
 
+/- Close the lookup step of a PanGlobals `compile_correct` call case: destruct the
+code entry, transfer the code lookup through the state relation, project the clock
+component of the relation, and split on the source clock. Flapjack proof
+infrastructure (no HOL original), used by the six `CompileCorrect` call cases;
+the HOL script repeats this step inline. Hygiene is disabled so the conventional
+locals `htl`, `hc` and `hz` survive. -/
+set_option hygiene false in
+macro "panGlobalsCallLookupStep" : tactic =>
+  `(tactic| (
+    rcases entry with ⟨body,callee,returnShape⟩
+    simp only [hl] at hev
+    have htl := PanGlobalsStateRelationCode.stateRelLookupCodeHOL context source target
+      true function args body callee returnShape ⟨hrel,hl⟩
+    simp only [htl]
+    have hc := hrel.2.2.2.2.2.1
+    by_cases hz : source.clock = 0))
+
 /-- HOL's `gen_goal pan_globals$compile` (`pan_globalsProofScript.sml:172-182`)
     for one program and source state; the shared conclusion of every
     `compile_correct` case.  Untagged: HOL's `goal` is an ML value, not a
