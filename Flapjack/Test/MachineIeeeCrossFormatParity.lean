@@ -12,8 +12,6 @@ checks observe the result and Precision only; the captured full underflow flags
 are not claimed kernel-replayed by those projection checks. -/
 namespace Flapjack.Test.MachineIeeeCrossFormatParity
 open Flapjack
-set_option maxRecDepth 200000
-set_option maxHeartbeats 0
 example : (holFp32ToFp64WithFlags 0x7f800000) = (holClearFlags, 0x7ff0000000000000) := by
   decide +kernel
 example : (holFp32ToFp64WithFlags 0xff800000) = (holClearFlags, 0xfff0000000000000) := by

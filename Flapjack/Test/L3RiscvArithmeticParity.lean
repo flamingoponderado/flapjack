@@ -13,8 +13,6 @@ public meta import Flapjack.Test.Fixtures.L3
 132 full ten-field numeric tuples and8 complete symbolic invalid-division state
 equations. Unobserved ARB fields instantiate defaults; no NaN payload is chosen.
 Rational rounding inherits SOUNDNESS item8, not HOL-to-Lean equivalence. -/
-set_option maxRecDepth 200000
-set_option maxHeartbeats 0
 set_option synthInstance.maxSize 2048
 namespace Flapjack.Test.L3RiscvArithmeticParity
 open Flapjack.RiscV.L3 Flapjack

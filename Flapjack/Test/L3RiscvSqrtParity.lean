@@ -10,8 +10,6 @@ public meta import Flapjack.Test.Fixtures.L3
 /-! Complete original square-root state equations; finite rounding and NaN
 choices remain symbolic. Numerical special/trap fixtures are appended from the
 fresh original capture. Rational cuts retain docs/SOUNDNESS.md item 8. -/
-set_option maxRecDepth 200000
-set_option maxHeartbeats 0
 set_option synthInstance.maxSize 2048
 namespace Flapjack.Test.L3RiscvSqrtParity
 open Flapjack.RiscV.L3 Flapjack
