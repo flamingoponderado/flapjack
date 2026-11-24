@@ -19,7 +19,6 @@ def Seq (i : Insn) : Prop :=
   ∀ s : State, (exec s i).pc = s.nextPc ∧ (exec s i).nextPc = s.nextPc + 4 ∧
     (exec s i).trapped = s.trapped
 
-set_option maxHeartbeats 400000 in
 theorem seq_of_sequential (i : Insn) (h : insnSequential i = true) : Seq i := by
   intro s
   cases i <;> simp [insnSequential] at h <;>

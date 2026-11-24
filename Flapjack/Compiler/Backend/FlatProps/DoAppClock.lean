@@ -63,7 +63,6 @@ private theorem updateClock {C F α : Type} (state : State C F) (unsafeOp : Bool
   split
   · exact boundsClock state unsafeOp k
   · cases Flapjack.SemanticPrimitivesHOL.storeAssign address (asStore (items.set index.toNat value)) state.refs <;> rfl
-set_option maxHeartbeats 1200000 in
 /-- Flapjack infrastructure for the full HOL primitive clock-change result. -/
 private theorem memoryClock {C F : Type} (state : State C F) (op : Flapjack.AstHOL.Op) (values : List Value) (k : Nat) :
     doAppMemory { state with clock := k } op values = clockNested k (doAppMemory state op values) := by
@@ -72,7 +71,6 @@ private theorem memoryClock {C F : Type} (state : State C F) (op : Flapjack.AstH
   all_goals try rfl
   all_goals simp only [Option.bind_eq_bind]
   all_goals split <;> rfl
-set_option maxHeartbeats 1200000 in
 /-- Flapjack infrastructure for the full HOL primitive clock-change result. -/
 private theorem dataClock {C F : Type} (state : State C F) (op : Flapjack.AstHOL.Op) (values : List Value) (k : Nat) :
     doAppData { state with clock := k } op values = clockNested k (doAppData state op values) := by
@@ -83,7 +81,6 @@ private theorem dataClock {C F : Type} (state : State C F) (op : Flapjack.AstHOL
   all_goals repeat' split <;> try simp_all
   all_goals simp only [Option.bind]
   all_goals repeat' split <;> try simp_all
-set_option maxHeartbeats 1200000 in
 /-- Flapjack infrastructure for the full HOL primitive clock-change result. -/
 private theorem copyClock {C F : Type} (state : State C F) (op : Flapjack.AstHOL.Op) (values : List Value) (k : Nat) :
     doAppCopy { state with clock := k } op values = clockNested k (doAppCopy state op values) := by
@@ -94,7 +91,6 @@ private theorem copyClock {C F : Type} (state : State C F) (op : Flapjack.AstHOL
   all_goals repeat' split <;> try simp_all
   all_goals simp only [Option.bind]
   all_goals repeat' split <;> try simp_all
-set_option maxHeartbeats 1200000 in
 /-- Flapjack infrastructure for the full HOL primitive clock-change result. -/
 private theorem doAppSetClock {C F : Type} (state : State C F) (op : FlatLang.Op) (values : List Value) (k : Nat) :
     doApp { state with clock := k } op values = clockOption k (doApp state op values) := by

@@ -28,7 +28,6 @@ private theorem bindingEnvOk (tvs : Nat) (bindings : List (MlString × SemanticT
   · simp [nsAll, nsLookup_nsEmpty]
   · simp [nsAll, nsLookup_nsEmpty]
 
-set_option maxHeartbeats 1200000 in
 /-- Canonical declaration and declaration-list typing preserve environment well-formedness. -/
 @[hol "cakeml/compiler/inference/proofs/type_dCanonScript.sml" "type_d_canon_tenv_ok"]
 theorem typeDCanonTenvOk :

@@ -62,7 +62,6 @@ theorem copyWordsForPattern_index_le {width : Nat} [NeZero width]
     exact Nat.le_trans (Nat.le_succ index) (ih h)
   case case4 => contradiction
 
-set_option maxHeartbeats 800000 in
 set_option linter.unusedSimpArgs false in
 /-- HOL `copy_words_def` (`cakeml/compiler/backend/semantics/stackSemScript.sml`):
 the outer bitmap copy over the exact StackSem bitmap/memory carriers.  Reuses the

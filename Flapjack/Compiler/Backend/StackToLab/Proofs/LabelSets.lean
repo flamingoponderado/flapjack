@@ -129,7 +129,7 @@ theorem compileJump_labels {width : Nat} [NeZero width] (target : Nat ⊕ Nat)
     simp
   | inr r => simp [compileJumpHOL, lineGetLabels] at h
 
-set_option maxHeartbeats 1000000 in
+set_option maxHeartbeats 400000 in
 theorem flattenLabelsCore {width : Nat} [NeZero width] :
     ∀ (t : Bool) (p : HolProg width) (n m : Nat) (cs bs : List Nat),
       ∀ ln ∈ appListAppend (flattenHOL t p n m cs bs).1,

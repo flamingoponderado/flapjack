@@ -1654,7 +1654,6 @@ macro "callProjectionCloser" : tactic =>
          toExact_callSetKvarContextHOLFinite])
     | rfl)
 
-set_option maxHeartbeats 1000000 in
 theorem evalPanSemRecursiveCallFiniteContext_call_projection {width : Nat} {σ : Type} [NeZero width]
     (info : Option (Option (VarKind × MlS) × Option (MlS × MlS × ProgHOL width)))
     (function : MlS) (arguments : List (ExpHOL width)) (context : FiniteEvalContext width σ)
@@ -1791,7 +1790,6 @@ theorem evalPanSemRecursiveCallFiniteContext_call_projection {width : Nat} {σ :
                       · simp only [if_neg heq]; callProjectionCloser
                 | finalFfi e => callProjectionCloser
 
-set_option maxHeartbeats 1000000 in
 theorem evalPanSemRecursiveCallFiniteContext_decCall_projection {width : Nat} {σ : Type} [NeZero width]
     (resultName : MlS) (shape : ShapeHOL) (function : MlS) (arguments : List (ExpHOL width))
     (continuation : ProgHOL width) (context : FiniteEvalContext width σ)

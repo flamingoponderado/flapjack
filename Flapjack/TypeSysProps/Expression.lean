@@ -11,7 +11,6 @@ namespace Flapjack.TypeSysProps
 open Flapjack Flapjack.TypeSystemHOL Flapjack.TypeSoundInvariants Flapjack.NamespaceHOL
   Flapjack.Basis.Pure.MlString Flapjack.AstHOL
 
-set_option maxHeartbeats 1200000 in
 /-- Expression, expression-list and function typing preserve the source free-variable bounds. -/
 @[hol "cakeml/semantics/proofs/typeSysPropsScript.sml" "type_e_freevars"]
 theorem typeEFreevars :

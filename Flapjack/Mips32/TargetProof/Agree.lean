@@ -87,19 +87,16 @@ theorem agree_withMem {d : W → Prop} (s : State) {m m' : Mem}
     Agree d { s with mem := m } { s with mem := m' } :=
   ⟨rfl, rfl, rfl, rfl, rfl, rfl, h⟩
 
-set_option maxHeartbeats 400000 in
 /-- An instruction without memory accesses does not look at the memory. -/
 theorem exec_withMem (s : State) (m : Mem) (i : Insn) (hi : touched s i = []) :
     exec { s with mem := m } i = { exec s i with mem := m } := by
   cases i <;> (try simp [touched, wordAt] at hi) <;>
     simp only [exec, State.setReg, State.reg, setHiLo, hilo] <;> (try split_ifs) <;> rfl
 
-set_option maxHeartbeats 400000 in
 theorem exec_mem_nil (s : State) (i : Insn) (hi : touched s i = []) : (exec s i).mem = s.mem := by
   cases i <;> (try simp [touched, wordAt] at hi) <;>
     simp only [exec, State.setReg, State.reg, setHiLo, hilo] <;> (try split_ifs) <;> rfl
 
-set_option maxHeartbeats 1000000 in
 /-- Two states that agree on `d` execute an instruction whose accesses lie in `d` to states
 that agree on `d`. -/
 theorem exec_agree {d : W → Prop} {s t : State} (h : Agree d s t) (i : Insn)
@@ -122,7 +119,6 @@ theorem exec_agree {d : W → Prop} {s t : State} (h : Agree d s t) (i : Insn)
       simp only [Mem.writeWord, Mem.writeHalf, readByte_writeByte]
       (try split_ifs) <;> first | rfl | exact hmem a ha⟩
 
-set_option maxHeartbeats 1000000 in
 /-- An instruction whose accesses lie in `d` changes no byte outside `d`. -/
 theorem exec_frame {d : W → Prop} (s : State) (i : Insn) (hacc : ∀ x ∈ touched s i, d x)
     (y : W) (hy : ¬ d y) : (exec s i).mem.readByte y = s.mem.readByte y := by

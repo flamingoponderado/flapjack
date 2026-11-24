@@ -9,7 +9,7 @@ public import Flapjack.Compiler.Backend.Semantics.TargetSem.Evaluate
 
 namespace Flapjack
 
-set_option maxHeartbeats 1200000 in
+set_option maxHeartbeats 400000 in
 /-- Input event trace is retained as a prefix by every literal target run.
 All machine/FFI/clock inputs are arbitrary, with no extra oracle or validity premise. -/
 @[hol "cakeml/compiler/backend/semantics/targetPropsScript.sml" "evaluate_io_events_mono"

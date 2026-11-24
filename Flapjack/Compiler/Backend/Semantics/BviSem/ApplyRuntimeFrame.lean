@@ -16,7 +16,6 @@ fields. This is Flapjack infrastructure for polymorphic state transfer. -/
 def runtimeFrame {C D F G : Type} (source : BviState C F) (target : BviState D G) : BviState D F :=
   ⟨source.refs, source.clock, source.global, target.compile, target.compileOracle, target.code, source.ffi⟩
 
-set_option maxHeartbeats 1200000 in
 /-- Transfer the handled part of the dispatcher when code domains agree or
 the operation is not a label lookup. This helper has no standalone HOL declaration. -/
 theorem doAppAux_frame {C D F G : Type} (op : ClosLang.Op) (args : List Value)

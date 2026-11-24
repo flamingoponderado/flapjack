@@ -5,8 +5,6 @@ public import Mathlib.Tactic.IntervalCases
 
 @[expose] public section
 
-set_option maxHeartbeats 4000000
-
 /-!
 # L3 ARMv8 byte-walk infrastructure for the encoder-correctness cases
 

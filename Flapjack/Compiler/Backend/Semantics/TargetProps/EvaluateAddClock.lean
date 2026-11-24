@@ -7,7 +7,7 @@ public import Flapjack.Compiler.Backend.Semantics.TargetSem.Evaluate
 
 namespace Flapjack
 
-set_option maxHeartbeats 1200000 in
+set_option maxHeartbeats 400000 in
 /-- Full target evaluator stability after increasing a clock that already
 returned a non-TimeOut result. The only run and side condition are HOL's own. -/
 @[hol "cakeml/compiler/backend/semantics/targetPropsScript.sml" "evaluate_add_clock"
