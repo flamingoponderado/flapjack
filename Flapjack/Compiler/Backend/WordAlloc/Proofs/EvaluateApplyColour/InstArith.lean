@@ -34,15 +34,7 @@ theorem evaluateApplyColour_InstDiv {width : Nat} [NeZero width] {C F : Type}
         strongLocalsRel f (sptDomain (getLive (.inst (.arith (.div dst left right)) : WordLangProgHOL (BitVec width)) live lt))
           st.locals cst.locals →
       applyColourPost f (.inst (.arith (.div dst left right)) : WordLangProgHOL (BitVec width)) live lt st cst := by
-  rintro st cst f live lt ⟨hok, hs, hr⟩
-  apply applyColourPost_self
-  intro he
-  simp only [applyColour, applyColourInst, applyColourInstCore]
-  simp only [colouringOk, getWrites, getWritesInst, getLive, getLiveInst, getLiveInstCore] at hok hr
-  rw [evaluate] at he ⊢
-  rw [evaluate]
-  simp only [inst] at he ⊢
-  split at he
+  applyColourPostIntro
   · rename_i rst hinst
     split at hinst
     · rename_i q w hvars
@@ -80,15 +72,7 @@ theorem evaluateApplyColour_InstAddCarry {width : Nat} [NeZero width] {C F : Typ
       colouringOk f (.inst (.arith (.addCarry a b c d)) : WordLangProgHOL (BitVec width)) live lt ∧ wordStateEqRel st cst ∧
         strongLocalsRel f (sptDomain (getLive (.inst (.arith (.addCarry a b c d)) : WordLangProgHOL (BitVec width)) live lt)) st.locals cst.locals →
       applyColourPost f (.inst (.arith (.addCarry a b c d)) : WordLangProgHOL (BitVec width)) live lt st cst := by
-  rintro st cst f live lt ⟨hok, hs, hr⟩
-  apply applyColourPost_self
-  intro he
-  simp only [applyColour, applyColourInst, applyColourInstCore]
-  simp only [colouringOk, getWrites, getWritesInst, getLive, getLiveInst, getLiveInstCore] at hok hr
-  rw [evaluate] at he ⊢
-  rw [evaluate]
-  simp only [inst] at he ⊢
-  split at he
+  applyColourPostIntro
   · rename_i rst hinst
     split at hinst
     · rename_i w0 w1 w2 hvars
@@ -127,15 +111,7 @@ theorem evaluateApplyColour_InstAddOverflow {width : Nat} [NeZero width] {C F : 
       colouringOk f (.inst (.arith (.addOverflow a b c d)) : WordLangProgHOL (BitVec width)) live lt ∧ wordStateEqRel st cst ∧
         strongLocalsRel f (sptDomain (getLive (.inst (.arith (.addOverflow a b c d)) : WordLangProgHOL (BitVec width)) live lt)) st.locals cst.locals →
       applyColourPost f (.inst (.arith (.addOverflow a b c d)) : WordLangProgHOL (BitVec width)) live lt st cst := by
-  rintro st cst f live lt ⟨hok, hs, hr⟩
-  apply applyColourPost_self
-  intro he
-  simp only [applyColour, applyColourInst, applyColourInstCore]
-  simp only [colouringOk, getWrites, getWritesInst, getLive, getLiveInst, getLiveInstCore] at hok hr
-  rw [evaluate] at he ⊢
-  rw [evaluate]
-  simp only [inst] at he ⊢
-  split at he
+  applyColourPostIntro
   · rename_i rst hinst
     split at hinst
     · rename_i w0 w1 hvars
@@ -174,15 +150,7 @@ theorem evaluateApplyColour_InstSubOverflow {width : Nat} [NeZero width] {C F : 
       colouringOk f (.inst (.arith (.subOverflow a b c d)) : WordLangProgHOL (BitVec width)) live lt ∧ wordStateEqRel st cst ∧
         strongLocalsRel f (sptDomain (getLive (.inst (.arith (.subOverflow a b c d)) : WordLangProgHOL (BitVec width)) live lt)) st.locals cst.locals →
       applyColourPost f (.inst (.arith (.subOverflow a b c d)) : WordLangProgHOL (BitVec width)) live lt st cst := by
-  rintro st cst f live lt ⟨hok, hs, hr⟩
-  apply applyColourPost_self
-  intro he
-  simp only [applyColour, applyColourInst, applyColourInstCore]
-  simp only [colouringOk, getWrites, getWritesInst, getLive, getLiveInst, getLiveInstCore] at hok hr
-  rw [evaluate] at he ⊢
-  rw [evaluate]
-  simp only [inst] at he ⊢
-  split at he
+  applyColourPostIntro
   · rename_i rst hinst
     split at hinst
     · rename_i w0 w1 hvars
@@ -221,15 +189,7 @@ theorem evaluateApplyColour_InstLongMul {width : Nat} [NeZero width] {C F : Type
       colouringOk f (.inst (.arith (.longMul a b c d)) : WordLangProgHOL (BitVec width)) live lt ∧ wordStateEqRel st cst ∧
         strongLocalsRel f (sptDomain (getLive (.inst (.arith (.longMul a b c d)) : WordLangProgHOL (BitVec width)) live lt)) st.locals cst.locals →
       applyColourPost f (.inst (.arith (.longMul a b c d)) : WordLangProgHOL (BitVec width)) live lt st cst := by
-  rintro st cst f live lt ⟨hok, hs, hr⟩
-  apply applyColourPost_self
-  intro he
-  simp only [applyColour, applyColourInst, applyColourInstCore]
-  simp only [colouringOk, getWrites, getWritesInst, getLive, getLiveInst, getLiveInstCore] at hok hr
-  rw [evaluate] at he ⊢
-  rw [evaluate]
-  simp only [inst] at he ⊢
-  split at he
+  applyColourPostIntro
   · rename_i rst hinst
     split at hinst
     · rename_i w0 w1 hvars
@@ -268,15 +228,7 @@ theorem evaluateApplyColour_InstLongDiv {width : Nat} [NeZero width] {C F : Type
       colouringOk f (.inst (.arith (.longDiv a b c d e)) : WordLangProgHOL (BitVec width)) live lt ∧ wordStateEqRel st cst ∧
         strongLocalsRel f (sptDomain (getLive (.inst (.arith (.longDiv a b c d e)) : WordLangProgHOL (BitVec width)) live lt)) st.locals cst.locals →
       applyColourPost f (.inst (.arith (.longDiv a b c d e)) : WordLangProgHOL (BitVec width)) live lt st cst := by
-  rintro st cst f live lt ⟨hok, hs, hr⟩
-  apply applyColourPost_self
-  intro he
-  simp only [applyColour, applyColourInst, applyColourInstCore]
-  simp only [colouringOk, getWrites, getWritesInst, getLive, getLiveInst, getLiveInstCore] at hok hr
-  rw [evaluate] at he ⊢
-  rw [evaluate]
-  simp only [inst] at he ⊢
-  split at he
+  applyColourPostIntro
   · rename_i rst hinst
     split at hinst
     · rename_i w0 w1 w2 hvars

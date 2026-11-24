@@ -638,4 +638,25 @@ theorem evaluateApplyColour_OpCurrHeap {width : Nat} [NeZero width] {C F : Type}
       exact slrMono hr (fun k hk => (sptDomain_ins _ _ _ k).mpr
         (Or.inr ((sptDomain_del _ _ k).mpr ⟨hk.2, hk.1⟩)))
 
+/- Open the post-condition proof of an `applyColour` instruction case: destruct
+the run hypotheses, apply the self-postcondition, and reduce the colouring and
+evaluation at the instruction. Flapjack-specific proof infrastructure (no HOL
+original).
+
+Hygiene is disabled on purpose: the step consumes the conventional locals `st`,
+`cst`, `f`, `live`, `lt`, `hok`, `hs`, `hr`, `he` of the surrounding case. -/
+set_option hygiene false in
+macro "applyColourPostIntro" : tactic =>
+  `(tactic| (
+    rintro st cst f live lt ⟨hok, hs, hr⟩
+    apply applyColourPost_self
+    intro he
+    simp only [applyColour, applyColourInst, applyColourInstCore]
+    simp only [colouringOk, getWrites, getWritesInst, getLive, getLiveInst,
+      getLiveInstCore] at hok hr
+    rw [evaluate] at he ⊢
+    rw [evaluate]
+    simp only [inst] at he ⊢
+    split at he))
+
 end Flapjack.WordAlloc

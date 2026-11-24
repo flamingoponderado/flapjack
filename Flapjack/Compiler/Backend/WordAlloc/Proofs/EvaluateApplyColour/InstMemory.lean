@@ -40,15 +40,7 @@ theorem evaluateApplyColour_InstLoad {width : Nat} [NeZero width] {C F : Type}
       colouringOk f (.inst (.mem .load reg (.addr base offset))) live lt ∧ wordStateEqRel st cst ∧
         strongLocalsRel f (sptDomain (getLive (.inst (.mem .load reg (.addr base offset))) live lt)) st.locals cst.locals →
       applyColourPost f (.inst (.mem .load reg (.addr base offset))) live lt st cst := by
-  rintro st cst f live lt ⟨hok, hs, hr⟩
-  apply applyColourPost_self
-  intro he
-  simp only [applyColour, applyColourInst, applyColourInstCore]
-  simp only [colouringOk, getWrites, getWritesInst, getLive, getLiveInst, getLiveInstCore] at hok hr
-  rw [evaluate] at he ⊢
-  rw [evaluate]
-  simp only [inst] at he ⊢
-  split at he
+  applyColourPostIntro
   · rename_i rst hinst
     split at hinst
     · rename_i addr haddr
@@ -89,15 +81,7 @@ theorem evaluateApplyColour_InstLoad8 {width : Nat} [NeZero width] {C F : Type}
       colouringOk f (.inst (.mem .load8 reg (.addr base offset))) live lt ∧ wordStateEqRel st cst ∧
         strongLocalsRel f (sptDomain (getLive (.inst (.mem .load8 reg (.addr base offset))) live lt)) st.locals cst.locals →
       applyColourPost f (.inst (.mem .load8 reg (.addr base offset))) live lt st cst := by
-  rintro st cst f live lt ⟨hok, hs, hr⟩
-  apply applyColourPost_self
-  intro he
-  simp only [applyColour, applyColourInst, applyColourInstCore]
-  simp only [colouringOk, getWrites, getWritesInst, getLive, getLiveInst, getLiveInstCore] at hok hr
-  rw [evaluate] at he ⊢
-  rw [evaluate]
-  simp only [inst] at he ⊢
-  split at he
+  applyColourPostIntro
   · rename_i rst hinst
     split at hinst
     · rename_i addr haddr
@@ -138,15 +122,7 @@ theorem evaluateApplyColour_InstLoad32 {width : Nat} [NeZero width] {C F : Type}
       colouringOk f (.inst (.mem .load32 reg (.addr base offset))) live lt ∧ wordStateEqRel st cst ∧
         strongLocalsRel f (sptDomain (getLive (.inst (.mem .load32 reg (.addr base offset))) live lt)) st.locals cst.locals →
       applyColourPost f (.inst (.mem .load32 reg (.addr base offset))) live lt st cst := by
-  rintro st cst f live lt ⟨hok, hs, hr⟩
-  apply applyColourPost_self
-  intro he
-  simp only [applyColour, applyColourInst, applyColourInstCore]
-  simp only [colouringOk, getWrites, getWritesInst, getLive, getLiveInst, getLiveInstCore] at hok hr
-  rw [evaluate] at he ⊢
-  rw [evaluate]
-  simp only [inst] at he ⊢
-  split at he
+  applyColourPostIntro
   · rename_i rst hinst
     split at hinst
     · rename_i addr haddr
@@ -223,15 +199,7 @@ theorem evaluateApplyColour_InstStore {width : Nat} [NeZero width] {C F : Type}
       colouringOk f (.inst (.mem .store reg (.addr base offset))) live lt ∧ wordStateEqRel st cst ∧
         strongLocalsRel f (sptDomain (getLive (.inst (.mem .store reg (.addr base offset))) live lt)) st.locals cst.locals →
       applyColourPost f (.inst (.mem .store reg (.addr base offset))) live lt st cst := by
-  rintro st cst f live lt ⟨hok, hs, hr⟩
-  apply applyColourPost_self
-  intro he
-  simp only [applyColour, applyColourInst, applyColourInstCore]
-  simp only [colouringOk, getWrites, getWritesInst, getLive, getLiveInst, getLiveInstCore] at hok hr
-  rw [evaluate] at he ⊢
-  rw [evaluate]
-  simp only [inst] at he ⊢
-  split at he
+  applyColourPostIntro
   · rename_i rst hinst
     split at hinst
     · rename_i addr value haddr hvar
@@ -273,15 +241,7 @@ theorem evaluateApplyColour_InstStore8 {width : Nat} [NeZero width] {C F : Type}
       colouringOk f (.inst (.mem .store8 reg (.addr base offset))) live lt ∧ wordStateEqRel st cst ∧
         strongLocalsRel f (sptDomain (getLive (.inst (.mem .store8 reg (.addr base offset))) live lt)) st.locals cst.locals →
       applyColourPost f (.inst (.mem .store8 reg (.addr base offset))) live lt st cst := by
-  rintro st cst f live lt ⟨hok, hs, hr⟩
-  apply applyColourPost_self
-  intro he
-  simp only [applyColour, applyColourInst, applyColourInstCore]
-  simp only [colouringOk, getWrites, getWritesInst, getLive, getLiveInst, getLiveInstCore] at hok hr
-  rw [evaluate] at he ⊢
-  rw [evaluate]
-  simp only [inst] at he ⊢
-  split at he
+  applyColourPostIntro
   · rename_i rst hinst
     split at hinst
     · rename_i addr value haddr hvar
@@ -326,15 +286,7 @@ theorem evaluateApplyColour_InstStore32 {width : Nat} [NeZero width] {C F : Type
       colouringOk f (.inst (.mem .store32 reg (.addr base offset))) live lt ∧ wordStateEqRel st cst ∧
         strongLocalsRel f (sptDomain (getLive (.inst (.mem .store32 reg (.addr base offset))) live lt)) st.locals cst.locals →
       applyColourPost f (.inst (.mem .store32 reg (.addr base offset))) live lt st cst := by
-  rintro st cst f live lt ⟨hok, hs, hr⟩
-  apply applyColourPost_self
-  intro he
-  simp only [applyColour, applyColourInst, applyColourInstCore]
-  simp only [colouringOk, getWrites, getWritesInst, getLive, getLiveInst, getLiveInstCore] at hok hr
-  rw [evaluate] at he ⊢
-  rw [evaluate]
-  simp only [inst] at he ⊢
-  split at he
+  applyColourPostIntro
   · rename_i rst hinst
     split at hinst
     · rename_i addr value haddr hvar
