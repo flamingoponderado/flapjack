@@ -126,12 +126,7 @@ theorem localEnvBounded_handle {C F : Type} [Nonempty C]
     (each : ∀ pattern rowBody, (pattern, rowBody) ∈ rows → LocalEnvBoundedIH (F := F) interp transform limit rowBody) :
     LocalEnvBoundedIH (F := F) interp transform limit (.handle body rows) := by
   intro genv start finish other source flat baseEnv sourceLocal flatEnv traces trace baseMap gen clockBound localRel envInv tracesLen invariant generation safe
-  let sourceEnv := { baseEnv with v := nsAppend sourceLocal baseEnv.v }
-  let compMap := { baseMap with v := bindLocals traces (flatEnv.v.map Prod.fst) baseMap.v }
-  have bodySafe : ∀ last, EvaluateHOL.evaluate source sourceEnv [body] ≠ (last, .err (.abort .typeError)) := by
-    intro last bad
-    apply safe last
-    rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate source sourceEnv [body] []).1, bad]
+  localEnvOperandSafe bodySafe [body]
   obtain ⟨middleGenv, bodySim, bodyPost⟩ := bodyIH genv start finish other source flat baseEnv sourceLocal flatEnv traces trace baseMap gen
     clockBound localRel envInv tracesLen invariant generation bodySafe
   unfold ExprSim at bodySim
@@ -222,12 +217,7 @@ theorem localEnvBounded_mat {C F : Type} [Nonempty C]
     (each : ∀ pattern rowBody, (pattern, rowBody) ∈ rows → LocalEnvBoundedIH (F := F) interp transform limit rowBody) :
     LocalEnvBoundedIH (F := F) interp transform limit (.mat body rows) := by
   intro genv start finish other source flat baseEnv sourceLocal flatEnv traces trace baseMap gen clockBound localRel envInv tracesLen invariant generation safe
-  let sourceEnv := { baseEnv with v := nsAppend sourceLocal baseEnv.v }
-  let compMap := { baseMap with v := bindLocals traces (flatEnv.v.map Prod.fst) baseMap.v }
-  have bodySafe : ∀ last, EvaluateHOL.evaluate source sourceEnv [body] ≠ (last, .err (.abort .typeError)) := by
-    intro last bad
-    apply safe last
-    rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate source sourceEnv [body] []).1, bad]
+  localEnvOperandSafe bodySafe [body]
   obtain ⟨middleGenv, bodySim, bodyPost⟩ := bodyIH genv start finish other source flat baseEnv sourceLocal flatEnv traces trace baseMap gen
     clockBound localRel envInv tracesLen invariant generation bodySafe
   unfold ExprSim at bodySim

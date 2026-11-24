@@ -73,6 +73,39 @@ def LocalEnvBoundedIH {C F : Type} [Nonempty C]
       { baseEnv with v := nsAppend sourceLocal baseEnv.v } flatEnv trace
       { baseMap with v := bindLocals traces (flatEnv.v.map Prod.fst) baseMap.v } gen expr
 
+/- Safety of a single operand from the safety of its enclosing application, whose
+clocked evaluation reduces to the operand's before any other step. Flapjack
+helper for the bounded local-environment cases; the HOL script repeats this step
+inline for each application form. -/
+set_option hygiene false in
+macro "localEnvOperandSafe" n:ident o:term : tactic =>
+  `(tactic| (
+    let sourceEnv := { baseEnv with v := nsAppend sourceLocal baseEnv.v }
+    let compMap := { baseMap with v := bindLocals traces (flatEnv.v.map Prod.fst) baseMap.v }
+    have $n:ident : ∀ last, EvaluateHOL.evaluate source sourceEnv $o:term ≠
+        (last, .err (.abort .typeError)) := by
+      intro last bad
+      apply safe last
+      rw [EvaluateHOL.evaluate,
+        (EvaluateHOL.fixClockEvaluate source sourceEnv $o:term []).1, bad]))
+
+/- Safety of the operand of a single-argument application, whose clocked
+application evaluation prepends the operand to the operand's reverse evaluation.
+Flapjack helper for the bounded local-environment cases. -/
+set_option hygiene false in
+macro "localEnvBodySafeApp" w:term : tactic =>
+  `(tactic| (
+    let sourceEnv := { baseEnv with v := nsAppend sourceLocal baseEnv.v }
+    let compMap := { baseMap with v := bindLocals traces (flatEnv.v.map Prod.fst) baseMap.v }
+    have bodySafe : ∀ last, EvaluateHOL.evaluate source sourceEnv [body] ≠
+        (last, .err (.abort .typeError)) := by
+      intro last bad
+      apply safe last
+      change EvaluateHOL.evaluate source sourceEnv $w:term = _
+      rw [EvaluateHOL.evaluate]
+      simp only [List.reverse_cons, List.reverse_nil, List.nil_append]
+      rw [(EvaluateHOL.fixClockEvaluate source sourceEnv [body] []).1, bad]))
+
 /-- Constructing a local recursive environment preserves the factored
 source-to-flat value relation for every mutually recursive closure. -/
 theorem localRecEnv_related (genv : GlobalEnv) (baseMap : Environment)
