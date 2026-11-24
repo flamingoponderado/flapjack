@@ -424,4 +424,16 @@ theorem lt_dimindex_MOD_dimword (width : Nat) [NeZero width] {n : Nat} :
     n < width → n % 2 ^ width = n :=
   fun h => Nat.mod_eq_of_lt (Nat.lt_trans h Nat.lt_two_pow_self)
 
+/- Destructure the register hypotheses `h0`, `h1`, `h2`, `h5`, `h6` of the
+`stack_alloc` code theorems into concrete register values. Flapjack helper; the
+HOL script repeats these `option_CASES` steps inline for each case. -/
+set_option hygiene false in
+macro "regValues" : tactic =>
+  `(tactic| (
+    obtain ⟨r0, hr0⟩ := Option.isSome_iff_exists.1 h0
+    obtain ⟨r1, hr1⟩ := Option.isSome_iff_exists.1 h1
+    obtain ⟨r2, hr2⟩ := Option.isSome_iff_exists.1 h2
+    obtain ⟨r5, hr5⟩ := Option.isSome_iff_exists.1 h5
+    obtain ⟨r6, hr6⟩ := Option.isSome_iff_exists.1 h6))
+
 end Flapjack.Compiler.Backend.StackAlloc

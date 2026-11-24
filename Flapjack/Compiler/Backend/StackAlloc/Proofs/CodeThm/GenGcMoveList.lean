@@ -68,11 +68,7 @@ theorem wordGenGcMoveListCode_loop {width : Nat} [NeZero width] {C F : Type} {co
       obtain ⟨rfl, rfl, rfl, rfl, rfl, rfl, -⟩ := hm
       obtain ⟨t0, hrt0⟩ := Option.isSome_iff_exists.1 ht0
       obtain ⟨t1, hrt1⟩ := Option.isSome_iff_exists.1 ht1
-      obtain ⟨r0, hr0⟩ := Option.isSome_iff_exists.1 h0
-      obtain ⟨r1, hr1⟩ := Option.isSome_iff_exists.1 h1
-      obtain ⟨r2, hr2⟩ := Option.isSome_iff_exists.1 h2
-      obtain ⟨r5, hr5⟩ := Option.isSome_iff_exists.1 h5
-      obtain ⟨r6, hr6⟩ := Option.isSome_iff_exists.1 h6
+      regValues
       refine ⟨0, r0, r1, r2, r5, r6, t0, t1, ?_⟩
       rw [genGcMove_skip_store s t0 t1 _ _ hrt0 hrt1 ht2 ht3]
       rw [wordGenGcMoveListCode_eq, evaluate_loop, evaluate_ite, evaluate_break]

@@ -83,11 +83,7 @@ theorem wordGenGcMoveRootsBitmapsCode_run {width : Nat} [NeZero width] {C F : Ty
   · subst h0w
     simp only [if_true, Prod.mk.injEq, decide_eq_true_eq] at hm
     obtain ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩ := hm
-    obtain ⟨r0, hr0⟩ := Option.isSome_iff_exists.1 h0
-    obtain ⟨r1, hr1⟩ := Option.isSome_iff_exists.1 h1
-    obtain ⟨r2, hr2⟩ := Option.isSome_iff_exists.1 h2
-    obtain ⟨r5, hr5⟩ := Option.isSome_iff_exists.1 h5
-    obtain ⟨r6, hr6⟩ := Option.isSome_iff_exists.1 h6
+    regValues
     obtain ⟨r7, hr7⟩ := Option.isSome_iff_exists.1 h7
     have h00 : (AndOp.and (0#width) (0#width) != (0#width)) = false := by
       change (0#width &&& 0#width != 0#width) = false

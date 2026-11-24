@@ -169,11 +169,7 @@ theorem wordGcMoveBitmapCode_run {width : Nat} [NeZero width] {C F : Type} {conf
     simp only [Option.some.injEq, Prod.mk.injEq] at hm'
     obtain ⟨rfl, rfl, rfl, rfl, rfl, -⟩ := hm'
     have hlt : w < 2#width := (lower_2w_eq w hg).2 hlow
-    obtain ⟨r0, hr0⟩ := Option.isSome_iff_exists.1 h0
-    obtain ⟨r1, hr1⟩ := Option.isSome_iff_exists.1 h1
-    obtain ⟨r2, hr2⟩ := Option.isSome_iff_exists.1 h2
-    obtain ⟨r5, hr5⟩ := Option.isSome_iff_exists.1 h5
-    obtain ⟨r6, hr6⟩ := Option.isSome_iff_exists.1 h6
+    regValues
     refine ⟨0, r0, r1, r2, r5, r6, .word w, ?_⟩
     rw [wordGcMoveBitmapCode_eq, evaluate_loop, evaluate_ite, evaluate_break]
     simp only [getVar, HolRegImm.toWordRegImm, Nat.add_zero, h7]
