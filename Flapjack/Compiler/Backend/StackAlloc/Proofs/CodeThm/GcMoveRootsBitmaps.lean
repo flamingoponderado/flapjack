@@ -82,7 +82,7 @@ theorem wordGcMoveRootsBitmapsCode_run {width : Nat} [NeZero width] {C F : Type}
   · subst h0w
     simp only [if_true, Prod.mk.injEq, decide_eq_true_eq] at hm
     obtain ⟨rfl, rfl, rfl, rfl, rfl⟩ := hm
-    regValues
+    stackAllocRegValues
     obtain ⟨r7, hr7⟩ := Option.isSome_iff_exists.1 h7
     have h00 : (AndOp.and (0#width) (0#width) != (0#width)) = false := by
       change (0#width &&& 0#width != 0#width) = false

@@ -64,7 +64,7 @@ theorem wordGenGcPartialMoveListCode_loop {width : Nat} [NeZero width] {C F : Ty
         wordGenGcPartialMoveList_zero] at hm
       simp only [Prod.mk.injEq] at hm
       obtain ⟨rfl, rfl, rfl, rfl, -⟩ := hm
-      regValues
+      stackAllocRegValues
       refine ⟨0, r0, r1, r2, r5, r6, ?_⟩
       rw [wordGenGcPartialMoveListCode_eq, evaluate_loop, evaluate_ite, evaluate_break]
       simp only [getVar, HolRegImm.toWordRegImm, Nat.add_zero, h7]

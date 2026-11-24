@@ -1169,7 +1169,7 @@ theorem evalPanSemRecursiveCallFiniteContext_decCall_return_continuation
 /-- Shared tactic block for the per-constructor projection lemmas below:
     unfold both recursive-call equations, normalize the nonrecursive layer, and
     collapse the `Option.map`/`withState` projections. -/
-macro "projectionSimp" : tactic =>
+local macro "projectionSimp" : tactic =>
   `(tactic| (
     rw [evalPanSemRecursiveCallFiniteContext.eq_def,
       evalPanSemRecursiveCallContextHOLExact.eq_def]

@@ -169,7 +169,7 @@ theorem wordGcMoveBitmapCode_run {width : Nat} [NeZero width] {C F : Type} {conf
     simp only [Option.some.injEq, Prod.mk.injEq] at hm'
     obtain ⟨rfl, rfl, rfl, rfl, rfl, -⟩ := hm'
     have hlt : w < 2#width := (lower_2w_eq w hg).2 hlow
-    regValues
+    stackAllocRegValues
     refine ⟨0, r0, r1, r2, r5, r6, .word w, ?_⟩
     rw [wordGcMoveBitmapCode_eq, evaluate_loop, evaluate_ite, evaluate_break]
     simp only [getVar, HolRegImm.toWordRegImm, Nat.add_zero, h7]

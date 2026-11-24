@@ -176,7 +176,7 @@ theorem wordGcMoveLoopCode_run {width : Nat} [NeZero width] {C F : Type} {conf :
   · subst hp
     simp only [if_true, Prod.mk.injEq] at hm
     obtain ⟨rfl, rfl, rfl, -⟩ := hm
-    regValues
+    stackAllocRegValues
     obtain ⟨r7, hr7⟩ := Option.isSome_iff_exists.1 h7
     refine ⟨0, r0, r1, r2, r5, r6, r7, ?_⟩
     rw [wordGcMoveLoopCode_eq, evaluate_loop, evaluate_ite, evaluate_break]

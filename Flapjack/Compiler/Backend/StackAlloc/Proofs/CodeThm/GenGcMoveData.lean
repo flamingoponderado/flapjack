@@ -163,7 +163,7 @@ theorem wordGenGcMoveDataCode_run {width : Nat} [NeZero width] {C F : Type} {con
     obtain ⟨rfl, rfl, rfl, rfl, rfl, -⟩ := hm
     obtain ⟨t0, hrt0⟩ := Option.isSome_iff_exists.1 ht0
     obtain ⟨t1, hrt1⟩ := Option.isSome_iff_exists.1 ht1
-    regValues
+    stackAllocRegValues
     obtain ⟨r7, hr7⟩ := Option.isSome_iff_exists.1 h7
     refine ⟨0, r0, r1, r2, r5, r6, r7, t0, t1, ?_⟩
     rw [genGcMove_skip_store s t0 t1 _ _ hrt0 hrt1 ht2 ht3]

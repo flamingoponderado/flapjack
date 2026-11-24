@@ -101,7 +101,7 @@ theorem wordGcMoveListCode_loop {width : Nat} [NeZero width] {C F : Type} {conf 
       rw [show BitVec.ofNat width 0 = 0#width from rfl, wordGcMoveList_zero] at hm
       simp only [Prod.mk.injEq] at hm
       obtain ⟨rfl, rfl, rfl, rfl, -⟩ := hm
-      regValues
+      stackAllocRegValues
       refine ⟨0, r0, r1, r2, r5, r6, ?_⟩
       rw [wordGcMoveListCode_eq, evaluate_loop, evaluate_ite, evaluate_break]
       simp only [getVar, HolRegImm.toWordRegImm, Nat.add_zero, h7]

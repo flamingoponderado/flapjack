@@ -428,7 +428,7 @@ theorem lt_dimindex_MOD_dimword (width : Nat) [NeZero width] {n : Nat} :
 `stack_alloc` code theorems into concrete register values. Flapjack helper; the
 HOL script repeats these `option_CASES` steps inline for each case. -/
 set_option hygiene false in
-macro "regValues" : tactic =>
+macro "stackAllocRegValues" : tactic =>
   `(tactic| (
     obtain ⟨r0, hr0⟩ := Option.isSome_iff_exists.1 h0
     obtain ⟨r1, hr1⟩ := Option.isSome_iff_exists.1 h1

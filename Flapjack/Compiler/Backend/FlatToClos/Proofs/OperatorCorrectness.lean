@@ -109,7 +109,7 @@ private theorem resultRel_of_evalResultRel (result : Result FlatSem.Value FlatSe
 /-- Flapjack infrastructure (no HOL original): compile the operator, run it on
 the target, and normalise the resulting application, whose result is the
 `listResult` of the original result. -/
-macro "runCompiled" args:Lean.Parser.Tactic.simpLemma,* "using"
+local macro "runCompiled" args:Lean.Parser.Tactic.simpLemma,* "using"
     h:Lean.Parser.Tactic.rwRule : tactic =>
   `(tactic| (
     simp only [compileOp]
@@ -118,7 +118,7 @@ macro "runCompiled" args:Lean.Parser.Tactic.simpLemma,* "using"
 
 /-- Flapjack infrastructure (no HOL original): the same for error-carrying
 targets, which also need the exception law. -/
-macro "runCompiledErr" args:Lean.Parser.Tactic.simpLemma,* "using"
+local macro "runCompiledErr" args:Lean.Parser.Tactic.simpLemma,* "using"
     h:Lean.Parser.Tactic.rwRule : tactic =>
   `(tactic| (
     simp only [compileOp]
@@ -128,7 +128,7 @@ macro "runCompiledErr" args:Lean.Parser.Tactic.simpLemma,* "using"
 
 /-- Flapjack infrastructure (no HOL original): `runCompiled` for arithmetic
 operators, which also need the `compileArith` unfolding. -/
-macro "runCompiledArith" args:Lean.Parser.Tactic.simpLemma,* "using"
+local macro "runCompiledArith" args:Lean.Parser.Tactic.simpLemma,* "using"
     h:Lean.Parser.Tactic.rwRule : tactic =>
   `(tactic| (
     simp only [compileOp, compileArith]
