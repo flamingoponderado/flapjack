@@ -98,10 +98,7 @@ theorem simulation_ffi {C F : Type} (name : Flapjack.Basis.Pure.MlString.MlStrin
                             | final event =>
                               simp [BvlSem.doApp, reversed, configLookup, bytesLookup, ffiRun] at run
                               rcases run with ⟨rfl, rfl⟩
-                              refine ⟨targetNext, newRelocate, clock, ?_, relatedNext, envEq, refsEq⟩
-                              rw [BviSem.evaluate, BviSem.fixClock_evaluate, targetArgs]
-                              simp only [mapSimulationResult]
-                              rw [← List.map_reverse, reversed]
+                              bviCloseSimulation
                               simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp,
                                 BviSem.toBvl, adjustBv, targetConfig, targetBytes, ← ffiEq, ffiRun]
                         | _ =>

@@ -56,10 +56,7 @@ theorem simulation_arrayLength {C F : Type} (arguments : List Bvl.Exp)
                 obtain ⟨targetNext, newRelocate, clock, targetArgs, relatedNext, envEq, refsEq⟩ :=
                   argsIH n (.val values) middle target finalName argsCode argsAux relocate argsRun (by simp)
                     argsCompile related sourceOk envOk installed shape global
-                refine ⟨targetNext, newRelocate, clock, ?_, relatedNext, envEq, refsEq⟩
-                rw [BviSem.evaluate, BviSem.fixClock_evaluate, targetArgs]
-                simp only [mapSimulationResult]
-                rw [← List.map_reverse, reversed]
+                bviCloseSimulation
                 simp only [List.map_cons, List.map_nil]
                 rw [doArrayLength_target flag ptr fields newRelocate middle targetNext relatedNext lookup]
               | _ =>
@@ -120,10 +117,7 @@ theorem simulation_byteArrayLength {C F : Type} (arguments : List Bvl.Exp)
                 obtain ⟨targetNext, newRelocate, clock, targetArgs, relatedNext, envEq, refsEq⟩ :=
                   argsIH n (.val values) middle target finalName argsCode argsAux relocate argsRun (by simp)
                     argsCompile related sourceOk envOk installed shape global
-                refine ⟨targetNext, newRelocate, clock, ?_, relatedNext, envEq, refsEq⟩
-                rw [BviSem.evaluate, BviSem.fixClock_evaluate, targetArgs]
-                simp only [mapSimulationResult]
-                rw [← List.map_reverse, reversed]
+                bviCloseSimulation
                 simp only [List.map_cons, List.map_nil]
                 rw [doByteArrayLength_target flag mutableRef ptr fields newRelocate middle targetNext relatedNext lookup]
               | _ =>

@@ -67,10 +67,7 @@ theorem simulation_equal {C F : Type} (arguments : List Bvl.Exp)
                 apply (bvOkList_iff _ _).1 preserved.2.1 right
                 have : right ∈ values.reverse := by simp [reversed]
                 simpa using this
-              refine ⟨targetNext, newRelocate, clock, ?_, relatedNext, envEq, refsEq⟩
-              rw [BviSem.evaluate, BviSem.fixClock_evaluate, targetArgs]
-              simp only [mapSimulationResult]
-              rw [← List.map_reverse, reversed]
+              bviCloseSimulation
               simp only [List.map_cons, List.map_nil]
               rw [doEquality_target newRelocate middle targetNext left right result relatedNext leftOk rightOk equal]
 

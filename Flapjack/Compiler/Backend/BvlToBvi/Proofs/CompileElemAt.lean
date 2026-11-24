@@ -65,10 +65,7 @@ theorem simulation_elemAt {C F : Type} (index : Nat) (arguments : List Bvl.Exp)
               obtain ⟨targetNext, newRelocate, clock, targetArgs, relatedNext, envEq, refsEq⟩ :=
                 argsIH n (.val values) middle target finalName argsCode argsAux relocate argsRun (by simp)
                   argsCompile related sourceOk envOk installed shape global
-              refine ⟨targetNext, newRelocate, clock, ?_, relatedNext, envEq, refsEq⟩
-              rw [BviSem.evaluate, BviSem.fixClock_evaluate, targetArgs]
-              simp only [mapSimulationResult]
-              rw [← List.map_reverse, reversed]
+              bviCloseSimulation
               simp only [List.map_cons, List.map_nil]
               rw [doBlockElemAt_target index tag fields value newRelocate targetNext selected]
           | refPtr flag ptr =>
@@ -89,10 +86,7 @@ theorem simulation_elemAt {C F : Type} (index : Nat) (arguments : List Bvl.Exp)
                   obtain ⟨targetNext, newRelocate, clock, targetArgs, relatedNext, envEq, refsEq⟩ :=
                     argsIH n (.val values) middle target finalName argsCode argsAux relocate argsRun (by simp)
                       argsCompile related sourceOk envOk installed shape global
-                  refine ⟨targetNext, newRelocate, clock, ?_, relatedNext, envEq, refsEq⟩
-                  rw [BviSem.evaluate, BviSem.fixClock_evaluate, targetArgs]
-                  simp only [mapSimulationResult]
-                  rw [← List.map_reverse, reversed]
+                  bviCloseSimulation
                   simp only [List.map_cons, List.map_nil]
                   rw [doArrayElemAt_target index flag ptr fields value newRelocate middle targetNext relatedNext lookup selected]
               | _ =>

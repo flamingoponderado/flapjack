@@ -54,10 +54,7 @@ theorem simulation_blockBounds {C F : Type} (arguments : List Bvl.Exp)
                 obtain ⟨targetNext, newRelocate, clock, targetArgs, relatedNext, envEq, refsEq⟩ :=
                   argsIH n (.val values) middle target finalName argsCode argsAux relocate argsRun (by simp)
                     argsCompile related sourceOk envOk installed shape global
-                refine ⟨targetNext, newRelocate, clock, ?_, relatedNext, envEq, refsEq⟩
-                rw [BviSem.evaluate, BviSem.fixClock_evaluate, targetArgs]
-                simp only [mapSimulationResult]
-                rw [← List.map_reverse, reversed]
+                bviCloseSimulation
                 simp only [List.map_cons, List.map_nil]
                 rw [doBlockBounds_target tag fields index newRelocate targetNext]
                 simp
