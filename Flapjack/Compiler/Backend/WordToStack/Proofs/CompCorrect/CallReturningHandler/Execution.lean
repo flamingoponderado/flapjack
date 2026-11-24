@@ -1653,8 +1653,8 @@ theorem returningHandlerCase {width : Nat} [NeZero width] {C F : Type}
   intro k f frame sourcePost target result bs bsPost n nPost compiled lens facts
   obtain ⟨execution,notError,related,conventions,flat,compilation,lengthBound,bitmapBound,
     bitmapPrefix,labels,maximum⟩ := facts
-  obtain ⟨xs,args1,prog,ss,envs,guards⟩ := sourceGuardsOfNotErrorWithHandler values names retCode
-    l1 l2 dest args (some (handlerVar,handlerCode,h1,h2)) source sourcePost result execution notError
+  obtain ⟨xs,args1,prog,ss,envs,guards⟩ := CallReturning.sourceGuardsOfNotError values names retCode
+    l1 l2 dest args source sourcePost result execution notError
   rcases destinationCompile : callDestNative (width := width) dest args (k,f,frame) with ⟨destinationCode,destination⟩
   rcases savedCompile : wLiveNative (width := width) names (bs,n) (k,f,frame) with ⟨savedCode,savedBitmaps,savedIndex⟩
   rcases returnCompile : compNative ac false retCode (savedBitmaps,savedIndex) (k,f,frame) with

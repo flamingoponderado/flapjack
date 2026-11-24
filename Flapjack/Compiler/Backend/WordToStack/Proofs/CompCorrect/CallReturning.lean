@@ -120,14 +120,15 @@ theorem sourceGuardsOfNotError {width : Nat} [NeZero width] {C F : Type}
     (values : List Nat) (names : WordLangCutsetsHOL)
     (retCode : WordLangProgHOL (BitVec width)) (l1 l2 : Nat)
     (dest : Option Nat) (args : List Nat)
+    {handler : Option (Nat × WordLangProgHOL (BitVec width) × Nat × Nat)}
     (source sourcePost : WordSemStateFiniteExact width (Nat × C) F)
     (result : Option (WordSemResult width))
     (execution : WordSemStateFiniteExact.evaluate
-      (.call (some (values, names, retCode, l1, l2)) dest args none) source =
+      (.call (some (values, names, retCode, l1, l2)) dest args handler) source =
       (result, sourcePost)) (notError : result ≠ some .error) :
     ∃ xs args1 prog ss envs,
       SourceGuards values names retCode l1 l2 dest args source xs args1 prog ss envs := by
-  exact sourceGuardsOfCall values names retCode l1 l2 dest args none source sourcePost result
+  exact sourceGuardsOfCall values names retCode l1 l2 dest args handler source sourcePost result
     execution notError
 
 /-- Flapjack factoring of the actual source conventions at the returning-call

@@ -134,24 +134,6 @@ theorem inductionHypothesesOfOriginal {width : Nat} [NeZero width] {C F : Type}
       retCode (l1,l2) l1 l2 envs
       ⟨get,bad,find,rfl,rfl,rfl,rfl,rfl,rfl,rfl,valid,cut,clock⟩
 
-/-- Handler-case source guard elimination from the actual non-error source run.
-The guards precede handler selection in the original evaluator. This is
-Flapjack infrastructure, with no separate HOL declaration or target-run premise. -/
-theorem sourceGuardsOfNotErrorWithHandler {width : Nat} [NeZero width] {C F : Type}
-    (values : List Nat) (names : WordLangCutsetsHOL)
-    (retCode : WordLangProgHOL (BitVec width)) (l1 l2 : Nat)
-    (dest : Option Nat) (args : List Nat)
-    (handler : Option (Nat × WordLangProgHOL (BitVec width) × Nat × Nat))
-    (source sourcePost : WordSemStateFiniteExact width (Nat × C) F)
-    (result : Option (WordSemResult width))
-    (execution : WordSemStateFiniteExact.evaluate
-      (.call (some (values, names, retCode, l1, l2)) dest args handler) source =
-      (result, sourcePost)) (notError : result ≠ some .error) :
-    ∃ xs args1 prog ss envs,
-      CallReturning.SourceGuards values names retCode l1 l2 dest args source xs args1 prog ss envs := by
-  exact CallReturning.sourceGuardsOfCall values names retCode l1 l2 dest args handler source
-    sourcePost result execution notError
-
 /-- Removing the exception continuation preserves all returning-call
 conventions. This is Flapjack factoring of the original setup checks, not a
 new HOL theorem or a strengthened simulation premise. -/
