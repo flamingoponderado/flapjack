@@ -3606,6 +3606,7 @@ theorem sourceCallTerminal {width : Nat} [NeZero width] {C F : Type}
     (values : List Nat) (names : WordLangCutsetsHOL)
     (retCode : WordLangProgHOL (BitVec width)) (l1 l2 : Nat)
     (dest : Option Nat) (args : List Nat)
+    {handler : Option (Nat × WordLangProgHOL (BitVec width) × Nat × Nat)}
     (source sourcePost bodyPost : WordSemStateFiniteExact width (Nat × C) F)
     (result bodyResult : Option (WordSemResult width))
     (xs args1 : List (WordLocW width)) (prog : WordLangProgHOL (BitVec width))
@@ -3613,10 +3614,11 @@ theorem sourceCallTerminal {width : Nat} [NeZero width] {C F : Type}
     (guards : SourceGuards values names retCode l1 l2 dest args source xs args1 prog ss envs)
     (nonzero : source.clock ≠ 0)
     (execution : WordSemStateFiniteExact.evaluate
-      (.call (some (values, names, retCode, l1, l2)) dest args none) source = (result, sourcePost))
+      (.call (some (values, names, retCode, l1, l2)) dest args handler) source =
+      (result, sourcePost))
     (bodyRun : WordSemStateFiniteExact.evaluate prog
       (WordSemStateFiniteExact.callEnv args1 ss
-        (WordSemStateFiniteExact.pushEnv envs none (WordSemStateFiniteExact.decClock source))) =
+        (WordSemStateFiniteExact.pushEnv envs handler (WordSemStateFiniteExact.decClock source))) =
       (bodyResult, bodyPost))
     (terminal : bodyResult = some .timeOut ∨ bodyResult = some .notEnoughSpace ∨
       ∃ event, bodyResult = some (.finalFfi event)) :
@@ -3638,6 +3640,7 @@ theorem bodyTerminalResult {width : Nat} [NeZero width] {C F : Type}
     (values : List Nat) (names : WordLangCutsetsHOL)
     (retCode : WordLangProgHOL (BitVec width)) (l1 l2 : Nat)
     (dest : Option Nat) (args : List Nat)
+    {handler : Option (Nat × WordLangProgHOL (BitVec width) × Nat × Nat)}
     (source sourcePost bodyPost : WordSemStateFiniteExact width (Nat × C) F)
     (result bodyResult : Option (WordSemResult width))
     (targetPost : StackSemStateFiniteExact width C F)
@@ -3647,16 +3650,17 @@ theorem bodyTerminalResult {width : Nat} [NeZero width] {C F : Type}
     (guards : SourceGuards values names retCode l1 l2 dest args source xs args1 prog ss envs)
     (nonzero : source.clock ≠ 0)
     (execution : WordSemStateFiniteExact.evaluate
-      (.call (some (values, names, retCode, l1, l2)) dest args none) source = (result, sourcePost))
+      (.call (some (values, names, retCode, l1, l2)) dest args handler) source =
+      (result, sourcePost))
     (bodyRun : WordSemStateFiniteExact.evaluate prog
       (WordSemStateFiniteExact.callEnv args1 ss
-        (WordSemStateFiniteExact.pushEnv envs none (WordSemStateFiniteExact.decClock source))) =
+        (WordSemStateFiniteExact.pushEnv envs handler (WordSemStateFiniteExact.decClock source))) =
       (bodyResult, bodyPost))
     (terminal : bodyResult = some .timeOut ∨ bodyResult = some .notEnoughSpace ∨
       ∃ event, bodyResult = some (.finalFfi event))
     (bodyConclusion : compCorrectResult ac k calleeSize calleeFrame
       (WordSemStateFiniteExact.callEnv args1 ss
-        (WordSemStateFiniteExact.pushEnv envs none (WordSemStateFiniteExact.decClock source)))
+        (WordSemStateFiniteExact.pushEnv envs handler (WordSemStateFiniteExact.decClock source)))
       bodyPost targetPost bodyResult targetResult (callerFrame :: lens))
     (matching : bodyResult.map compileResult = targetResult) :
     compCorrectResult ac k callerSize callerFrame source sourcePost targetPost result targetResult lens := by

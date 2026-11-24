@@ -439,9 +439,9 @@ theorem terminalHandlerCallFromCallee {width : Nat} [NeZero width] {C F : Type}
   · exact returningHandlerCallTerminalRun moved targetPost l1 l2 h1 h2 extra destination body continuation handlerTarget
       targetResult found movedNonzero calleeRun terminal
   · by_cases matching : bodyResult.map compileResult = targetResult
-    · exact handlerBodyTerminalResult ac k callerSize callerFrame calleeSize calleeFrame values names
-        retCode handlerCode l1 l2 handlerVar h1 h2 dest args source sourcePost bodyPost result bodyResult targetPost targetResult
-        lens xs args1 prog ss envs guards nonzero execution bodyRun
+    · exact CallReturning.bodyTerminalResult ac k callerSize callerFrame calleeSize calleeFrame
+        values names retCode l1 l2 dest args source sourcePost bodyPost result bodyResult targetPost
+        targetResult lens xs args1 prog ss envs guards nonzero execution bodyRun
         (CallReturning.matchingTerminalSource bodyResult targetResult matching terminal) bodyConclusion matching
     · exact handlerBodyMismatchResult ac k callerSize callerFrame calleeSize calleeFrame values names
         retCode handlerCode l1 l2 handlerVar h1 h2 dest args source sourcePost bodyPost result bodyResult initial targetPost
