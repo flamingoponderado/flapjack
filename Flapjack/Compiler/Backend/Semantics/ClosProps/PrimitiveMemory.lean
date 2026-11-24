@@ -38,18 +38,6 @@ theorem relatedRefs {C D F : Type} (vr : Value → Value → Prop)
       obtain ⟨left, source, related⟩ := simple.2.2.2.1 mode value t s ptr ⟨target, states⟩
       simpa [target, source, optionRel, refRel] using related
 
-/-- Updating corresponding list positions preserves their relation. This is
-Flapjack proof infrastructure. -/
-private theorem relatedSet {A B : Type} {r : A → B → Prop} {xs : List A} {ys : List B}
-    (related : List.Forall₂ r xs ys) (index : Nat) (x : A) (y : B) (h : r x y) :
-    List.Forall₂ r (xs.set index x) (ys.set index y) := by
-  induction related generalizing index with
-  | nil => simp
-  | cons head tail ih =>
-    cases index with
-    | zero => exact .cons h tail
-    | succ index => exact .cons head (ih index)
-
 /-- Pointwise-related lists have related optional indexed reads. This is
 Flapjack proof infrastructure. -/
 private theorem relatedLookup {A B : Type} {r : A → B → Prop} {xs : List A} {ys : List B}

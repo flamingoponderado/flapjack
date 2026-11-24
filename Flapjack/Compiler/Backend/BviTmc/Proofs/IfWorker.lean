@@ -10,15 +10,6 @@ public import Flapjack.Compiler.Backend.BviTmc.Proofs.WrapperCases
 namespace Flapjack.Compiler.Backend.BviTmc.IfWorker
 open BviTmc BviSem BvlSem SemanticPrimitivesProps ResultRelation ListSimulation MutableBlockOld
 
-private theorem asBool_related (f : HolFiniteMapExact Nat Nat) (v w : Value)
-    (related : valueRel f v w) : asBool v = asBool w := by
-  cases related with
-  | number i => rfl
-  | word64 w => rfl
-  | codePtr n => rfl
-  | refPtr n m flag mapped => rfl
-  | block tag xs ys fields => cases fields <;> simp [asBool]
-
 /-- Flapjack infrastructure: the worker conclusion of TMC simulation. -/
 def WorkerCore {C F : Type} (work : Bvi.Exp) (env1 env2 : List Value)
     (f : HolFiniteMapExact Nat Nat) (target : BviState C F) (holePtr : Nat)
@@ -94,7 +85,7 @@ theorem evaluate_if_worker {C F : Type} (condition yes no : Bvi.Exp)
         have valuesRelated : valueRel g value value' := by
           simp only [resultRel] at related
           cases related with | cons h _ => exact h
-        have boolEq := asBool_related g value value' valuesRelated
+        have boolEq := IfSimulation.asBool_related g value value' valuesRelated
         rw [BviSem.evaluate, BviSem.fixClock_evaluate, conditionRun] at run
         change (match asBool value with
           | none => (.err (.abort .typeError), middle)

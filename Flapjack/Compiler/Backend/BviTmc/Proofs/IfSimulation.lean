@@ -9,7 +9,9 @@ public import Flapjack.Compiler.Backend.BviTmc.Proofs.WrapperCases
 namespace Flapjack.Compiler.Backend.BviTmc.IfSimulation
 open BviTmc BviSem BvlSem SemanticPrimitivesProps ResultRelation ListSimulation
 
-private theorem asBool_related (f : HolFiniteMapExact Nat Nat) (v w : Value)
+/-- Related values have the same boolean reading. Flapjack proof
+infrastructure shared by the TMC simulation files; no separate HOL original. -/
+theorem asBool_related (f : HolFiniteMapExact Nat Nat) (v w : Value)
     (related : valueRel f v w) : asBool v = asBool w := by
   cases related with
   | number i => rfl

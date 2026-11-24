@@ -70,6 +70,19 @@ theorem simpleValRel_append (xs₁ ys₁ xs₂ ys₂ : List Value) (vr : Value �
   subst ys
   exact (valueRel_listToValue vr (xs₂ ++ ys₂) _ simple).mpr ⟨_, rfl, List.rel_append xsRelated ysRelated⟩
 
+/-- Replacing corresponding list positions preserves the pointwise relation.
+Flapjack proof infrastructure shared by the primitive-operation cases; no
+separate HOL original. -/
+theorem relatedSet {A B : Type} {rel : A → B → Prop} {xs : List A} {ys : List B}
+    (related : List.Forall₂ rel xs ys) (index : Nat) (x : A) (y : B) (h : rel x y) :
+    List.Forall₂ rel (xs.set index x) (ys.set index y) := by
+  induction related generalizing index with
+  | nil => simp
+  | cons head tail ih =>
+    cases index with
+    | zero => exact .cons h tail
+    | succ index => exact .cons head (ih index)
+
 /-- Decoding related values either fails on both sides or returns pointwise
 related lists. This is Lean-side infrastructure for the source list lemmas. -/
 theorem valueToList_related (vr : Value → Value → Prop) (simple : simpleValRel vr)

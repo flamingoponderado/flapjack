@@ -12,19 +12,6 @@ public import Mathlib.Tactic.SplitIfs
 namespace Flapjack.Misc.BalancedMap
 open FiniteMap.Comparison
 
-/-- Constructor constraint derived from the literal invariant. Flapjack proof
-infrastructure, with no separate HOL declaration: it adds no theorem premise. -/
-private theorem zeroSizeTip {κ ν : Type} (cmp : κ → κ → Ordering)
-    (tree : Map κ ν) (hinv : invariant cmp tree) (hzero : size tree = 0) :
-    tree = .tip := by
-  have hs := structureSizeThm cmp tree hinv
-  cases tree with
-  | tip => rfl
-  | bin n key value left right =>
-    change n = 1 + structureSize left + structureSize right at hs
-    change n = 0 at hzero
-    omega
-
 /-- Literal invariant normalization, retaining recursive invariants and key
 order; only cached sizes are rewritten to the sizes of valid children. -/
 private theorem binFacts {κ ν : Type} (cmp : κ → κ → Ordering)

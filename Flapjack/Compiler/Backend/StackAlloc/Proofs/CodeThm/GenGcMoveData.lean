@@ -84,47 +84,6 @@ theorem dataBody_skip {width : Nat} [NeZero width] {C F : Type} (conf : Config)
   · subst k8; simp
   simp [k7, k8]
 
-/-- One data-loop body on a pointer object (header bit 2 clear), for any
-field-moving program `G`: run `G` over its `len` fields. -/
-theorem dataBody_list {width : Nat} [NeZero width] {C F : Type} (conf : Config)
-    (G : HolProg width) (S : StackSemStateFiniteExact width C F) (pb x : BitVec width)
-    (hw2 : 2 < width) (hlen : conf.lenSize ≠ 0)
-    (h8 : S.regs.lookup 8 = some (.word pb)) (hdm : S.mdomain pb = true)
-    (hx : S.memory pb = .word x) (hbit : x.getLsbD 2 = false) :
-    evaluate (.seq (loadInst 7 8)
-      (.ite .test 7 (.imm 4)
-        (.seq (rightShiftInst 7 (width - conf.lenSize)) (.seq (addBytesInWordInst 8) G))
-        (.seq (rightShiftInst 7 (width - conf.lenSize))
-          (.seq (add1Inst 7)
-            (.seq (leftShiftInst 7 (wordShiftAmount width)) (addInst 8 7))))), S) =
-      evaluate (G, setVar 8 (.word (pb + wordSemBytesInWord))
-        (setVar 7 (.word (decodeLength conf x)) S)) := by
-  have hpow : width < 2 ^ width := Nat.lt_two_pow_self
-  have hlm : (width - conf.lenSize) % 2 ^ width = width - conf.lenSize :=
-    Nat.mod_eq_of_lt (Nat.lt_of_le_of_lt (show width - conf.lenSize ≤ width by omega) hpow)
-  have hl_le : ¬ width ≤ width - conf.lenSize := by omega
-  have hdec : x >>> (width - conf.lenSize) = decodeLength conf x := rfl
-  have h4 : (AndOp.and x (4#width) == 0#width) = true := by
-    have : x &&& 4#width = 0#width := (and_four_eq_zero_iff x hw2).2 hbit
-    have ha : AndOp.and x (4#width) = 0#width := this
-    simpa using ha
-  rw [evaluate_seq_none _ _ _ _ (loadInst_eval S 7 8 pb h8 hdm) le_rfl, evaluate_ite]
-  simp [getVar, StackSemStateOps.getVarImm, HolRegImm.toWordRegImm, wordSemWordCmp,
-    wordCmpHOL, evaluate_seq, evaluate_inst, addBytesInWordInst, rightShiftInst,
-    StackSemInst.instHOL, StackSemIntegerInstructions.instInteger, StackSemExpressions.assign,
-    StackSemExpressions.wordExp, setVar, wordOpHOL, wordOp, fixClock,
-    HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, hx, h4, h8, hlm, hl_le,
-    wordShiftHOL, hdec]
-  congr 3
-  apply regs_ext
-  intro k
-  simp only [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL]
-  by_cases k7 : k = 7
-  · subst k7; simp
-  by_cases k8 : k = 8
-  · subst k8; simp
-  simp [k7, k8]
-
 /-- HOL's complete induction on the fuel `k`, with the source hypotheses. -/
 theorem wordGenGcMoveDataCode_run {width : Nat} [NeZero width] {C F : Type} {conf : Config}
     (hsl : shiftLength conf < width) (hws : wordShiftAmount width < width) (hw2 : 2 < width)

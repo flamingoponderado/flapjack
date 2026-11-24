@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.BviTmc.Proofs.StateRelation
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.IfSimulation
 public import Flapjack.Compiler.Backend.BviTmc.Proofs.HoleRelation
 public import Flapjack.Compiler.Backend.BviTmc.Proofs.WordRelation
 public import Flapjack.Compiler.Backend.BviTmc.Proofs.Allocation
@@ -1864,16 +1865,6 @@ theorem doApp_op_rel_tagEq {C F : Type} (f : HolFiniteMapExact Nat Nat) (tag : N
           · intro key item present
             exact present
 
-private theorem asBool_related (f : HolFiniteMapExact Nat Nat) (v w : Value)
-    (related : valueRel f v w) : asBool v = asBool w := by
-  cases related with
-  | number i => rfl
-  | word64 w => rfl
-  | codePtr n => rfl
-  | refPtr n m flag mapped => rfl
-  | block tag xs ys fields =>
-    cases fields <;> simp [asBool]
-
 /-- Boolean negation agrees on related values.
 
 Intended HOL counterpart, pending statement and finite-map carrier source review.
@@ -1898,7 +1889,7 @@ theorem doApp_op_rel_boolNot {C F : Type} (f : HolFiniteMapExact Nat Nat)
       cases valuesRelated with
       | @cons a targetFirst xs ys firstRel tailRel =>
         cases tailRel
-        have same := asBool_related f first targetFirst firstRel
+        have same := IfSimulation.asBool_related f first targetFirst firstRel
         cases decoded : asBool first with
         | none => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyBlock, decoded] at run
         | some boolean =>
@@ -1942,8 +1933,8 @@ theorem doApp_op_rel_boolTest {C F : Type} (f : HolFiniteMapExact Nat Nat) (test
           cases tailRel with
           | @cons a targetSecond xs ys secondRel tailRel =>
             cases tailRel
-            have sameFirst := asBool_related f first targetFirst firstRel
-            have sameSecond := asBool_related f second targetSecond secondRel
+            have sameFirst := IfSimulation.asBool_related f first targetFirst firstRel
+            have sameSecond := IfSimulation.asBool_related f second targetSecond secondRel
             cases decodedFirst : asBool first with
             | none => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyBlock, decodedFirst] at run
             | some firstBool =>
