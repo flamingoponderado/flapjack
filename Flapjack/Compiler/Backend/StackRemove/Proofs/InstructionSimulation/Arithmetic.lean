@@ -7,6 +7,19 @@ public import Flapjack.Compiler.Backend.StackRemove.Proofs.InstructionSimulation
 namespace Flapjack.Compiler.Backend.StackRemove.InstructionSimulation.Arithmetic
 open Flapjack Compiler.Encoders.Asm
 
+/-- Shared tactic tail of the arithmetic instruction cases: rewrite the input
+relation back, split on the recorded execution, then discharge guards and
+ordered destination updates. Flapjack helper; the HOL script repeats this tail
+inline for each constructor case. -/
+local macro "instArithTail" "eq" e:ident "exec" r:ident "post" p:ident : tactic =>
+  `(tactic| (
+    rw [← $e:ident]
+    clear $e:ident
+    repeat' (split at $r:ident)
+    all_goals try contradiction
+    all_goals simp_all
+    all_goals try subst $p:ident))
+
 /-- Flapjack factoring of bounded input-list equality. The individual bounds
 are derived from the original instruction bound in each constructor case;
 there is no separately named HOL theorem claimed for this helper. -/
@@ -56,12 +69,7 @@ theorem stateRelInstDiv {width : Nat} [NeZero width] {C F : Type}
     all_goals subst register; omega)
   simp only [StackSemInst.instHOL, StackSemIntegerInstructions.instInteger,
     Option.join_some] at run ⊢
-  rw [← inputEq]
-  clear inputEq
-  repeat' (split at run)
-  all_goals try contradiction
-  all_goals simp_all
-  all_goals try subst postSource
+  instArithTail eq inputEq exec run post postSource
   all_goals repeat' (first | exact relation |
     (apply StateUpdates.stateRelSetVar; constructor) | omega)
 
@@ -88,12 +96,7 @@ theorem stateRelInstAddCarry {width : Nat} [NeZero width] {C F : Type}
     all_goals subst register; omega)
   simp only [StackSemInst.instHOL, StackSemIntegerInstructions.instInteger,
     Option.join_some] at run ⊢
-  rw [← inputEq]
-  clear inputEq
-  repeat' (split at run)
-  all_goals try contradiction
-  all_goals simp_all
-  all_goals try subst postSource
+  instArithTail eq inputEq exec run post postSource
   all_goals simp_all only [← Nat.not_le]
   all_goals repeat' (first | exact relation |
     (apply StateUpdates.stateRelSetVar; constructor) | omega)
@@ -121,12 +124,7 @@ theorem stateRelInstAddOverflow {width : Nat} [NeZero width] {C F : Type}
     all_goals subst register; omega)
   simp only [StackSemInst.instHOL, StackSemIntegerInstructions.instInteger,
     Option.join_some] at run ⊢
-  rw [← inputEq]
-  clear inputEq
-  repeat' (split at run)
-  all_goals try contradiction
-  all_goals simp_all
-  all_goals try subst postSource
+  instArithTail eq inputEq exec run post postSource
   all_goals repeat' (first | exact relation |
     (apply StateUpdates.stateRelSetVar; constructor) | omega)
 
@@ -153,12 +151,7 @@ theorem stateRelInstSubOverflow {width : Nat} [NeZero width] {C F : Type}
     all_goals subst register; omega)
   simp only [StackSemInst.instHOL, StackSemIntegerInstructions.instInteger,
     Option.join_some] at run ⊢
-  rw [← inputEq]
-  clear inputEq
-  repeat' (split at run)
-  all_goals try contradiction
-  all_goals simp_all
-  all_goals try subst postSource
+  instArithTail eq inputEq exec run post postSource
   all_goals repeat' (first | exact relation |
     (apply StateUpdates.stateRelSetVar; constructor) | omega)
 
@@ -185,12 +178,7 @@ theorem stateRelInstLongMul {width : Nat} [NeZero width] {C F : Type}
     all_goals subst register; omega)
   simp only [StackSemInst.instHOL, StackSemIntegerInstructions.instInteger,
     Option.join_some] at run ⊢
-  rw [← inputEq]
-  clear inputEq
-  repeat' (split at run)
-  all_goals try contradiction
-  all_goals simp_all
-  all_goals try subst postSource
+  instArithTail eq inputEq exec run post postSource
   all_goals repeat' (first | exact relation |
     (apply StateUpdates.stateRelSetVar; constructor) | omega)
 
@@ -217,12 +205,7 @@ theorem stateRelInstLongDiv {width : Nat} [NeZero width] {C F : Type}
     all_goals subst register; omega)
   simp only [StackSemInst.instHOL, StackSemIntegerInstructions.instInteger,
     Option.join_some] at run ⊢
-  rw [← inputEq]
-  clear inputEq
-  repeat' (split at run)
-  all_goals try contradiction
-  all_goals simp_all
-  all_goals try subst postSource
+  instArithTail eq inputEq exec run post postSource
   all_goals repeat' (first | exact relation |
     (apply StateUpdates.stateRelSetVar; constructor) | omega)
 
