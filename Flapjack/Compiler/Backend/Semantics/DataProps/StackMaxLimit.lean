@@ -45,9 +45,9 @@ theorem applyNonFfi_limits {C F : Type} (op : ClosLang.Op) (values : List Value)
     next.limits = state.limits := by
   simp only [applyNonFfi, Option.bind] at run ⊢
   all_goals repeat' (first | split at run | split) <;>
-    simp_all [withFreshTimestamp, checkLim, Option.bind]
-  all_goals try (aesop (config := {warnOnNonterminal := false}))
-  all_goals try (simp_all [withFreshTimestamp, checkLim])
+    simp_all only [withFreshTimestamp, checkLim, Option.bind]
+  all_goals try (simp_all only [withFreshTimestamp, checkLim, Option.bind])
+  all_goals try (simp_all only [withFreshTimestamp, checkLim])
   all_goals try (aesop (add simp [Option.bind_eq_some_iff]))
 
 /-- Successful auxiliary applications do not change the configured limits.
