@@ -12553,7 +12553,7 @@ run_probe semantic_primitives_props_local_typed_probeScript.sml \
   nat_to_v_11_typed find_recfun_el_typed \
   EVERY_sv_every_MAP_map_sv_typed EVERY_sv_every_EVERY_store_vs_typed \
   EVERY_store_vs_intro_typed LIST_REL_store_vs_intro_typed \
-  concrete_v_list_typed concrete_v_simps_typed \
+  concrete_v_list_typed concrete_v_simps_typed do_con_check_build_conv_typed \
   "$cake_dir/semantics/proofs/semanticPrimitivesPropsScript.sml" \
   "$cake_dir/semantics/proofs"
 

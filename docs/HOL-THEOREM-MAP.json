@@ -18943,6 +18943,14 @@
     "reviewer": "Compared concrete_v_simps_typed in semantic_primitives_props_local_typed_probe.out: the same seven conjuncts in HOL's order, with the literal and location cases true, both container cases the Boolean all fold over the same list, and the three closure/environment cases false; binders keep HOL's names and order (id is the sem_env and e the num pair of Env)."
   },
 {
+    "hol_path": "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml",
+    "hol_name": "do_con_check_build_conv",
+    "lean_path": "Flapjack/SemanticPrimitivesProps/Declarations.lean",
+    "lean_name": "doConCheck_buildConv",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared do_con_check_build_conv_typed in semantic_primitives_props_local_typed_probe.out: the binders keep HOL's order tenvC, cn, vs, l; the constructor environment and identifier-option carriers are the reviewed namespace and id carriers, and the conclusion is the original existential build_conv success over the same value list."
+  },
+{
     "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
     "hol_name": "compile_correct",
     "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/CompileCorrectShape.lean",

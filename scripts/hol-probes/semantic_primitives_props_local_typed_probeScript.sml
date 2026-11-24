@@ -60,3 +60,4 @@ val _ = emit "EVERY_store_vs_intro_typed" "EVERY_store_vs_intro";
 val _ = emit "LIST_REL_store_vs_intro_typed" "LIST_REL_store_vs_intro";
 val _ = emit "concrete_v_list_typed" "concrete_v_list";
 val _ = emit "concrete_v_simps_typed" "concrete_v_simps";
+val _ = emit "do_con_check_build_conv_typed" "do_con_check_build_conv";

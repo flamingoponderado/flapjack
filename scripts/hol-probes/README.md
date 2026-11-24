@@ -162,7 +162,8 @@ and the indexed recursive-function lookup `find_recfun_el`. It also captures the
 store-value list theorems `EVERY_sv_every_MAP_map_sv`,
 `EVERY_sv_every_EVERY_store_vs`, `EVERY_store_vs_intro` and
 `LIST_REL_store_vs_intro`, and the concrete-value characterizations
-`concrete_v_list` and `concrete_v_simps`. These are exported declarations, so
+`concrete_v_list` and `concrete_v_simps`, and the constructor build check
+`do_con_check_build_conv`. These are exported declarations, so
 the capture is a typed replay rather than a local proof replay; it supports
 source review of the independent payload types, the abort identity, the
 reflexivity and transitivity hypothesis shapes, the store-entry clause order,
