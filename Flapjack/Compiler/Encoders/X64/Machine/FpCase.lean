@@ -42,6 +42,24 @@ namespace Flapjack.Compiler.Encoders.X64
 
 open Flapjack Compiler.Encoders.Asm Compiler.Encoders.AsmSem Compiler.Encoders.AsmProps
 
+/- The frame fields of the source and target states agree after the encoded
+instruction is written. Flapjack helper for the floating-point cases; the HOL
+script repeats this argument inline for each instruction. -/
+set_option hygiene false in
+local macro "fpFrameFields" : tactic =>
+  `(tactic| (
+    have hs2mem : ∀ a, s2.mem a = s1.mem a := by
+      rw [← st.upd]
+      intro a
+      simp only [asmUpd, instUpd, updPc, fpUpd, updFpReg]
+    have hs2dom : s2.memDomain = s1.memDomain := by
+      rw [← st.upd]
+      simp only [asmUpd, instUpd, updPc, fpUpd, updFpReg]
+    have hs2regs : ∀ x, s2.regs x = s1.regs x := by
+      rw [← st.upd]
+      intro x
+      simp only [asmUpd, instUpd, updPc, fpUpd, updFpReg]))
+
 /-! ## The `comisd` flags and unordered comparisons -/
 
 /-- The `comisd` unordered flag: either operand is NaN. -/
@@ -924,15 +942,7 @@ theorem case_fpMov (d1 d2 : Nat) (s1 s2 : AsmState 64) (ms : X64State)
       (x64Target.config.encode (.inst (.fp (.fpMov d1 d2)))).length := by
     rw [← st.upd]
     simp only [asmUpd, instUpd, updPc]
-  have hs2mem : ∀ a, s2.mem a = s1.mem a := by
-    rw [← st.upd]; intro a
-    simp only [asmUpd, instUpd, updPc, fpUpd, updFpReg]
-  have hs2dom : s2.memDomain = s1.memDomain := by
-    rw [← st.upd]
-    simp only [asmUpd, instUpd, updPc, fpUpd, updFpReg]
-  have hs2regs : ∀ x, s2.regs x = s1.regs x := by
-    rw [← st.upd]; intro x
-    simp only [asmUpd, instUpd, updPc, fpUpd, updFpReg]
+  fpFrameFields
   have hs2fp : ∀ x, s2.fpRegs x = if x = d1 then s1.fpRegs d2 else s1.fpRegs x := by
     intro x
     rw [← st.upd]
@@ -1099,15 +1109,7 @@ theorem case_fpSqrt (d1 d2 : Nat) (s1 s2 : AsmState 64) (ms : X64State)
       (x64Target.config.encode (.inst (.fp (.fpSqrt d1 d2)))).length := by
     rw [← st.upd]
     simp only [asmUpd, instUpd, updPc]
-  have hs2mem : ∀ a, s2.mem a = s1.mem a := by
-    rw [← st.upd]; intro a
-    simp only [asmUpd, instUpd, updPc, fpUpd, updFpReg]
-  have hs2dom : s2.memDomain = s1.memDomain := by
-    rw [← st.upd]
-    simp only [asmUpd, instUpd, updPc, fpUpd, updFpReg]
-  have hs2regs : ∀ x, s2.regs x = s1.regs x := by
-    rw [← st.upd]; intro x
-    simp only [asmUpd, instUpd, updPc, fpUpd, updFpReg]
+  fpFrameFields
   have hs2fp : ∀ x, s2.fpRegs x = if x = d1 then
       holFp64Sqrt .roundTiesToEven (s1.fpRegs d2) else s1.fpRegs x := by
     intro x
@@ -1164,15 +1166,7 @@ theorem case_fpAdd (d l r : Nat) (s1 s2 : AsmState 64) (ms : X64State)
       (x64Target.config.encode (.inst (.fp (.fpAdd d l r)))).length := by
     rw [← st.upd]
     simp only [asmUpd, instUpd, updPc]
-  have hs2mem : ∀ a, s2.mem a = s1.mem a := by
-    rw [← st.upd]; intro a
-    simp only [asmUpd, instUpd, updPc, fpUpd, updFpReg]
-  have hs2dom : s2.memDomain = s1.memDomain := by
-    rw [← st.upd]
-    simp only [asmUpd, instUpd, updPc, fpUpd, updFpReg]
-  have hs2regs : ∀ x, s2.regs x = s1.regs x := by
-    rw [← st.upd]; intro x
-    simp only [asmUpd, instUpd, updPc, fpUpd, updFpReg]
+  fpFrameFields
   have hs2fp : ∀ x, s2.fpRegs x = if x = d then
       holFp64Add .roundTiesToEven (s1.fpRegs l) (s1.fpRegs r) else s1.fpRegs x := by
     intro x
@@ -1235,15 +1229,7 @@ theorem case_fpSub (d l r : Nat) (s1 s2 : AsmState 64) (ms : X64State)
       (x64Target.config.encode (.inst (.fp (.fpSub d l r)))).length := by
     rw [← st.upd]
     simp only [asmUpd, instUpd, updPc]
-  have hs2mem : ∀ a, s2.mem a = s1.mem a := by
-    rw [← st.upd]; intro a
-    simp only [asmUpd, instUpd, updPc, fpUpd, updFpReg]
-  have hs2dom : s2.memDomain = s1.memDomain := by
-    rw [← st.upd]
-    simp only [asmUpd, instUpd, updPc, fpUpd, updFpReg]
-  have hs2regs : ∀ x, s2.regs x = s1.regs x := by
-    rw [← st.upd]; intro x
-    simp only [asmUpd, instUpd, updPc, fpUpd, updFpReg]
+  fpFrameFields
   have hs2fp : ∀ x, s2.fpRegs x = if x = d then
       holFp64Sub .roundTiesToEven (s1.fpRegs l) (s1.fpRegs r) else s1.fpRegs x := by
     intro x
@@ -1306,15 +1292,7 @@ theorem case_fpMul (d l r : Nat) (s1 s2 : AsmState 64) (ms : X64State)
       (x64Target.config.encode (.inst (.fp (.fpMul d l r)))).length := by
     rw [← st.upd]
     simp only [asmUpd, instUpd, updPc]
-  have hs2mem : ∀ a, s2.mem a = s1.mem a := by
-    rw [← st.upd]; intro a
-    simp only [asmUpd, instUpd, updPc, fpUpd, updFpReg]
-  have hs2dom : s2.memDomain = s1.memDomain := by
-    rw [← st.upd]
-    simp only [asmUpd, instUpd, updPc, fpUpd, updFpReg]
-  have hs2regs : ∀ x, s2.regs x = s1.regs x := by
-    rw [← st.upd]; intro x
-    simp only [asmUpd, instUpd, updPc, fpUpd, updFpReg]
+  fpFrameFields
   have hs2fp : ∀ x, s2.fpRegs x = if x = d then
       holFp64Mul .roundTiesToEven (s1.fpRegs l) (s1.fpRegs r) else s1.fpRegs x := by
     intro x
@@ -1377,15 +1355,7 @@ theorem case_fpDiv (d l r : Nat) (s1 s2 : AsmState 64) (ms : X64State)
       (x64Target.config.encode (.inst (.fp (.fpDiv d l r)))).length := by
     rw [← st.upd]
     simp only [asmUpd, instUpd, updPc]
-  have hs2mem : ∀ a, s2.mem a = s1.mem a := by
-    rw [← st.upd]; intro a
-    simp only [asmUpd, instUpd, updPc, fpUpd, updFpReg]
-  have hs2dom : s2.memDomain = s1.memDomain := by
-    rw [← st.upd]
-    simp only [asmUpd, instUpd, updPc, fpUpd, updFpReg]
-  have hs2regs : ∀ x, s2.regs x = s1.regs x := by
-    rw [← st.upd]; intro x
-    simp only [asmUpd, instUpd, updPc, fpUpd, updFpReg]
+  fpFrameFields
   have hs2fp : ∀ x, s2.fpRegs x = if x = d then
       holFp64Div .roundTiesToEven (s1.fpRegs l) (s1.fpRegs r) else s1.fpRegs x := by
     intro x
@@ -1445,15 +1415,7 @@ theorem case_fpMovFromReg (d r1 r2 : Nat) (s1 s2 : AsmState 64) (ms : X64State)
       (x64Target.config.encode (.inst (.fp (.fpMovFromReg d r1 r2)))).length := by
     rw [← st.upd]
     simp only [asmUpd, instUpd, updPc]
-  have hs2mem : ∀ a, s2.mem a = s1.mem a := by
-    rw [← st.upd]; intro a
-    simp only [asmUpd, instUpd, updPc, fpUpd, updFpReg]
-  have hs2dom : s2.memDomain = s1.memDomain := by
-    rw [← st.upd]
-    simp only [asmUpd, instUpd, updPc, fpUpd, updFpReg]
-  have hs2regs : ∀ x, s2.regs x = s1.regs x := by
-    rw [← st.upd]; intro x
-    simp only [asmUpd, instUpd, updPc, fpUpd, updFpReg]
+  fpFrameFields
   have hs2fp : ∀ x, s2.fpRegs x = if x = d then (s1.regs r1).setWidth 64 else s1.fpRegs x := by
     intro x
     rw [← st.upd]
@@ -2277,15 +2239,7 @@ theorem case_fpAbs (d1 d2 : Nat) (s1 s2 : AsmState 64) (ms : X64State)
       (x64Target.config.encode (.inst (.fp (.fpAbs d1 d2)))).length := by
     rw [← st.upd]
     simp only [asmUpd, instUpd, updPc]
-  have hs2mem : ∀ a, s2.mem a = s1.mem a := by
-    rw [← st.upd]; intro a
-    simp only [asmUpd, instUpd, updPc, fpUpd, updFpReg]
-  have hs2dom : s2.memDomain = s1.memDomain := by
-    rw [← st.upd]
-    simp only [asmUpd, instUpd, updPc, fpUpd, updFpReg]
-  have hs2regs : ∀ x, s2.regs x = s1.regs x := by
-    rw [← st.upd]; intro x
-    simp only [asmUpd, instUpd, updPc, fpUpd, updFpReg]
+  fpFrameFields
   have hs2fp : ∀ x, s2.fpRegs x = if x = d1 then
       holFp64Abs (s1.fpRegs d2) else s1.fpRegs x := by
     intro x
@@ -2350,15 +2304,7 @@ theorem case_fpNeg (d1 d2 : Nat) (s1 s2 : AsmState 64) (ms : X64State)
       (x64Target.config.encode (.inst (.fp (.fpNeg d1 d2)))).length := by
     rw [← st.upd]
     simp only [asmUpd, instUpd, updPc]
-  have hs2mem : ∀ a, s2.mem a = s1.mem a := by
-    rw [← st.upd]; intro a
-    simp only [asmUpd, instUpd, updPc, fpUpd, updFpReg]
-  have hs2dom : s2.memDomain = s1.memDomain := by
-    rw [← st.upd]
-    simp only [asmUpd, instUpd, updPc, fpUpd, updFpReg]
-  have hs2regs : ∀ x, s2.regs x = s1.regs x := by
-    rw [← st.upd]; intro x
-    simp only [asmUpd, instUpd, updPc, fpUpd, updFpReg]
+  fpFrameFields
   have hs2fp : ∀ x, s2.fpRegs x = if x = d1 then
       holFp64Negate (s1.fpRegs d2) else s1.fpRegs x := by
     intro x
