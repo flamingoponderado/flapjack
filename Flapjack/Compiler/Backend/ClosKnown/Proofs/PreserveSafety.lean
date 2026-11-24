@@ -259,11 +259,7 @@ theorem knownPreservesSafetyLet (c : Config) (trace : BackendCommon.Tra)
       subst ea2
       have r2 := bodyIH ea1 g1 h1.symm [(bodyExpr, bodyApprox)] g2
         ⟨h2, by simpa using letSafe.2, bodyEnvSafe, r1.2.2.2⟩
-      rw [knownListTotal_let, h1] at run
-      dsimp only at run
-      rw [h2] at run
-      simp [knownSourceHead] at run
-      rcases run with ⟨rfl, rfl⟩
+      knownListStep rule knownListTotal_let hyp h1
       refine ⟨?_, ?_, ?_, r2.2.2.2⟩
       · intro i
         have b1 := r1.1 i
@@ -310,11 +306,7 @@ theorem knownPreservesSafetyHandle (c : Config) (trace : BackendCommon.Tra)
       subst ea2
       have r2 := handlerIH [(e1, a1)] g1 h1.symm [(e2, a2)] g2
         ⟨h2, by simpa using bothSafe.2, newEnvSafe, r1.2.2.2⟩
-      rw [knownListTotal_handle, h1] at run
-      dsimp only at run
-      rw [h2] at run
-      simp [knownSourceHead] at run
-      rcases run with ⟨rfl, rfl⟩
+      knownListStep rule knownListTotal_handle hyp h1
       refine ⟨?_, ?_, ?_, r2.2.2.2⟩
       · intro i
         have b1 := r1.1 i

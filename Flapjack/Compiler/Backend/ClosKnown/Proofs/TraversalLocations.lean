@@ -192,11 +192,7 @@ theorem knownLocationsLet (c : Config) (trace : BackendCommon.Tra) (xs : List Cl
       subst ea2
       have r2 := bodyIH ea1 g1 h1.symm [(bodyExpr, bodyApprox)] g2
         ⟨h2, parts.2, bodyEnvSafe, r1.2.2⟩
-      rw [knownListTotal_let, h1] at run
-      dsimp only at run
-      rw [h2] at run
-      simp [knownSourceHead] at run
-      rcases run with ⟨rfl, rfl⟩
+      knownListStep rule knownListTotal_let hyp h1
       simp [everyFnLocationSome, fnLocationSomeExp] at r2 ⊢
       exact ⟨⟨r2.1, r1.1⟩, r2.2.1, r2.2.2⟩
 
@@ -226,11 +222,7 @@ theorem knownLocationsHandle (c : Config) (trace : BackendCommon.Tra) (body hand
       obtain ⟨e2, a2, eq2⟩ := knownListTotal_single_result c handler (.other :: env) g1 g2 ea2 h2
       subst ea2
       have r2 := handlerIH [(e1, a1)] g1 h1.symm [(e2, a2)] g2 ⟨h2, parts.2, newEnvSafe, r1.2.2⟩
-      rw [knownListTotal_handle, h1] at run
-      dsimp only at run
-      rw [h2] at run
-      simp [knownSourceHead] at run
-      rcases run with ⟨rfl, rfl⟩
+      knownListStep rule knownListTotal_handle hyp h1
       have merged := valApproxLocationsMerge a1 a2 ⟨by simpa using r1.2.1, by simpa using r2.2.1⟩
       simp [everyFnLocationSome, fnLocationSomeExp] at r1 r2 ⊢
       exact ⟨⟨r1.1, r2.1⟩, merged, r2.2.2⟩

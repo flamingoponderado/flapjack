@@ -273,4 +273,17 @@ macro "knownListIfChain" : tactic =>
     simp [knownSourceHead] at run
     rcases run with ⟨rfl, rfl⟩))
 
+/- Unfold the traversal of a `let` or `handle` expression on the already-reduced
+run. Flapjack helper for the per-case traversal proofs; the first rewrite rule is
+the traversal equation and the second the constructor hypothesis. -/
+set_option hygiene false in
+macro "knownListStep" "rule" r:Lean.Parser.Tactic.rwRule "hyp"
+    s:Lean.Parser.Tactic.rwRule : tactic =>
+  `(tactic| (
+    rw [$r:rwRule, $s:rwRule] at run
+    dsimp only at run
+    rw [h2] at run
+    simp [knownSourceHead] at run
+    rcases run with ⟨rfl, rfl⟩))
+
 end Flapjack.Compiler.Backend.ClosKnown
