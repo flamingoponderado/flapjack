@@ -87,3 +87,13 @@ val _ = emit "nsSub_nsBind_typed" "nsSub_nsBind";
 val _ = emit "nsAll2_nsBind_typed" "nsAll2_nsBind";
 val _ = emit "nsSub_conj_typed" "nsSub_conj";
 val _ = emit "nsAll2_conj_typed" "nsAll2_conj";
+
+(* Monotonicity, binding domains and two-way lookup (task 273). *)
+val _ = emit "nsSub_mono_typed" "nsSub_mono";
+val _ = emit "nsSub_mono2_typed" "nsSub_mono2";
+val _ = emit "nsAll2_mono_typed" "nsAll2_mono";
+val _ = emit "nsDom_nsBind_typed" "nsDom_nsBind";
+val _ = emit "nsDomMod_nsBind_typed" "nsDomMod_nsBind";
+val _ = emit "nsAll2_nsLookup1_typed" "nsAll2_nsLookup1";
+val _ = emit "nsAll2_nsLookup2_typed" "nsAll2_nsLookup2";
+val _ = emit "nsAll2_nsLookup_none_typed" "nsAll2_nsLookup_none";

@@ -103,4 +103,46 @@ theorem nsAll2_nsBind {M N V W : Type} [DecidableEq M] [DecidableEq N]
   exact ⟨nsSub_nsBind R x v1 v2 e1 e2 ⟨head, both.1⟩,
     nsSub_nsBind (fun id left right => R id right left) x v2 v1 e2 e1 ⟨head, both.2⟩⟩
 
+/-- A left lookup in a two-way related pair is matched on the right. -/
+@[hol "cakeml/semantics/proofs/namespacePropsScript.sml" "nsAll2_nsLookup1"]
+theorem nsAll2_nsLookup1 {M N V W : Type} [DecidableEq M] [DecidableEq N]
+    (R : Ident M N → V → W → Prop) (e1 : Namespace M N V) (e2 : Namespace M N W)
+    (n : Ident M N) (v1 : V) (premise : nsLookup e1 n = some v1 ∧ nsAll2 R e1 e2) :
+    ∃ v2, nsLookup e2 n = some v2 ∧ R n v1 v2 := by
+  have both := premise.2
+  simp only [nsAll2, nsSub] at both
+  exact both.1.1 n v1 premise.1
+
+/-- A right lookup in a two-way related pair is matched on the left. -/
+@[hol "cakeml/semantics/proofs/namespacePropsScript.sml" "nsAll2_nsLookup2"]
+theorem nsAll2_nsLookup2 {M N V W : Type} [DecidableEq M] [DecidableEq N]
+    (R : Ident M N → V → W → Prop) (e1 : Namespace M N V) (e2 : Namespace M N W)
+    (n : Ident M N) (v2 : W) (premise : nsLookup e2 n = some v2 ∧ nsAll2 R e1 e2) :
+    ∃ v1, nsLookup e1 n = some v1 ∧ R n v1 v2 := by
+  have both := premise.2
+  simp only [nsAll2, nsSub] at both
+  exact both.2.1 n v2 premise.1
+
+/-- Two-way related namespaces agree on which identifiers are absent. -/
+@[hol "cakeml/semantics/proofs/namespacePropsScript.sml" "nsAll2_nsLookup_none"]
+theorem nsAll2_nsLookup_none {M N V W : Type} [DecidableEq M] [DecidableEq N]
+    (R : Ident M N → V → W → Prop) (e1 : Namespace M N V) (e2 : Namespace M N W)
+    (n : Ident M N) (both : nsAll2 R e1 e2) :
+    (nsLookup e1 n = none ↔ nsLookup e2 n = none) := by
+  constructor
+  · intro absent
+    cases other : nsLookup e2 n with
+    | none => rfl
+    | some v2 =>
+      obtain ⟨v1, found, related⟩ := both.2.1 n v2 other
+      rw [found] at absent
+      cases absent
+  · intro absent
+    cases other : nsLookup e1 n with
+    | none => rfl
+    | some v1 =>
+      obtain ⟨v2, found, related⟩ := both.1.1 n v1 other
+      rw [found] at absent
+      cases absent
+
 end Flapjack.NamespaceHOL

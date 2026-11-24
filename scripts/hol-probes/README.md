@@ -184,8 +184,11 @@ construction and projection laws (`mk_id_11`, `id_to_mods_mk_id`,
 `nsDom_nsSing`, `nsDomMod_nsSing`). It also captures the sub-relation laws
 (`nsSub_conj`, `nsSub_refl`, `nsSub_nsBind`, `nsAll2_conj`, `nsAll2_nsBind`), the
 domain statements (`nsLookup_nsDom`, `nsDomMod_alist_to_ns`), `eALL_T`,
-`nsLookup_nsAll`, `nsLift_nsMap` and `nsLookup_Bind_v_some`. The captures fix
-the independent module, name and value carriers and the binder order of each
+`nsLookup_nsAll`, `nsLift_nsMap` and `nsLookup_Bind_v_some`. The monotonicity,
+binding-domain and two-way-lookup laws (`nsSub_mono`, `nsSub_mono2`,
+`nsAll2_mono`, `nsDom_nsBind`, `nsDomMod_nsBind`, `nsAll2_nsLookup1`,
+`nsAll2_nsLookup2`, `nsAll2_nsLookup_none`) are captured as well. The captures
+fix the independent module, name and value carriers and the binder order of each
 theorem; they are typed replays, not cross-language equivalence proofs.
 
 `data_to_word_gc_stack_probe.out` captures the typed original unchanged-pointer set and finiteness theorem, combined forwarding-map definition, and parsed local domain and application statements. These show that configuration and heap payload types are independent; the local parses do not replay their HOL proofs.

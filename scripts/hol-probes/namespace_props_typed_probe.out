@@ -50,3 +50,11 @@ nsSub_nsBind_typed=∀(R :(α, β) id -> γ -> δ -> bool) (x :β) (v1 :γ) (v2 
 nsAll2_nsBind_typed=∀(R :(α, β) id -> γ -> δ -> bool) (x :β) (v1 :γ) (v2 :δ) (e1 :(α, β, γ) namespace) (e2 :(α, β, δ) namespace). R (Short x :(α, β) id) v1 v2 ∧ nsAll2 R e1 e2 ⇒ nsAll2 R (nsBind x v1 e1) (nsBind x v2 e2)
 nsSub_conj_typed=∀(P :(α, β) id -> γ -> δ -> bool) (Q :(α, β) id -> γ -> δ -> bool) (e1 :(α, β, γ) namespace) (e2 :(α, β, δ) namespace). nsSub (λ(id :(α, β) id) (x :γ) (y :δ). P id x y ∧ Q id x y) e1 e2 ⇔ nsSub P e1 e2 ∧ nsSub Q e1 e2
 nsAll2_conj_typed=∀(P :(α, β) id -> γ -> δ -> bool) (Q :(α, β) id -> γ -> δ -> bool) (e1 :(α, β, γ) namespace) (e2 :(α, β, δ) namespace). nsAll2 (λ(id :(α, β) id) (x :γ) (y :δ). P id x y ∧ Q id x y) e1 e2 ⇔ nsAll2 P e1 e2 ∧ nsAll2 Q e1 e2
+nsSub_mono_typed=(∀(x :(α, β) id) (y :γ) (z :δ). (R1 :(α, β) id -> γ -> δ -> bool) x y z ⇒ (R2 :(α, β) id -> γ -> δ -> bool) x y z) ⇒ nsSub R1 (e1 :(α, β, γ) namespace) (e2 :(α, β, δ) namespace) ⇒ nsSub R2 e1 e2
+nsSub_mono2_typed=(∀(x :(α, β) id) (y :γ) (z :δ). nsLookup (e1 :(α, β, γ) namespace) x = SOME y ∧ nsLookup (e2 :(α, β, δ) namespace) x = SOME z ∧ (R1 :(α, β) id -> γ -> δ -> bool) x y z ⇒ (R2 :(α, β) id -> γ -> δ -> bool) x y z) ⇒ nsSub R1 e1 e2 ⇒ nsSub R2 e1 e2
+nsAll2_mono_typed=(∀(x :(α, β) id) (y :γ) (z :δ). (R1 :(α, β) id -> γ -> δ -> bool) x y z ⇒ (R2 :(α, β) id -> γ -> δ -> bool) x y z) ⇒ nsAll2 R1 (e1 :(α, β, γ) namespace) (e2 :(α, β, δ) namespace) ⇒ nsAll2 R2 e1 e2
+nsDom_nsBind_typed=∀(x :α) (y :β) (n :(γ, α, β) namespace). nsDom (nsBind x y n) = (Short x :(γ, α) id) INSERT nsDom n
+nsDomMod_nsBind_typed=∀(x :α) (y :β) (n :(γ, α, β) namespace). nsDomMod (nsBind x y n) = nsDomMod n
+nsAll2_nsLookup1_typed=∀(R :(α, β) id -> γ -> δ -> bool) (e1 :(α, β, γ) namespace) (e2 :(α, β, δ) namespace) (n :(α, β) id) (v1 :γ). nsLookup e1 n = SOME v1 ∧ nsAll2 R e1 e2 ⇒ ∃(v2 :δ). nsLookup e2 n = SOME v2 ∧ R n v1 v2
+nsAll2_nsLookup2_typed=∀(R :(α, β) id -> γ -> δ -> bool) (e1 :(α, β, γ) namespace) (e2 :(α, β, δ) namespace) (n :(α, β) id) (v2 :δ). nsLookup e2 n = SOME v2 ∧ nsAll2 R e1 e2 ⇒ ∃(v1 :γ). nsLookup e1 n = SOME v1 ∧ R n v1 v2
+nsAll2_nsLookup_none_typed=∀(R :(α, β) id -> γ -> δ -> bool) (e1 :(α, β, γ) namespace) (e2 :(α, β, δ) namespace) (n :(α, β) id). nsAll2 R e1 e2 ⇒ (nsLookup e1 n = (NONE :γ option) ⇔ nsLookup e2 n = (NONE :δ option))
