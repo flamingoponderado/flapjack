@@ -110,13 +110,7 @@ theorem wordGenGcPartialMoveBitmapCode_run {width : Nat} [NeZero width] {C F : T
     by_cases k8 : k = 8
     · subst k8; simp [h8]
     simp [k0, k1, k2, k3, k4, k5, k6, k7, k8]
-  have hw0 : w ≠ 0 := fun h => hlow (Or.inl h)
-  have hw1 : w ≠ 1 := fun h => hlow (Or.inr h)
-  have hnlt : ¬ w < 2#width := fun h => hlow ((lower_2w_eq w hg).1 h)
-  have hlt' : (w >>> (1 : Nat)).toNat < n := by
-    rw [← hwn, BitVec.toNat_ushiftRight, Nat.shiftRight_eq_div_pow]
-    have : w.toNat ≠ 0 := fun h => hw0 (BitVec.eq_of_toNat_eq (by simpa using h))
-    omega
+  stackAllocBitmapLowBounds
   simp only [hw0, hw1, if_false] at hm
   cases stack with
   | nil => simp at hm

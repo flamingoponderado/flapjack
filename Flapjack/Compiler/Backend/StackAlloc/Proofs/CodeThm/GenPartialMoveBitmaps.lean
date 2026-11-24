@@ -77,14 +77,7 @@ theorem wordGenGcPartialMoveBitmapsCode_run {width : Nat} [NeZero width] {C F : 
   generalize hdr : s.bitmaps.drop (w - 1).toNat = D at hm
   rcases D with _ | ⟨y, ys⟩
   · simp at hm
-  have hidx : (w - 1).toNat < s.bitmaps.length := by
-    by_contra hc
-    rw [List.drop_eq_nil_of_le (by omega)] at hdr
-    simp at hdr
-  have hy : s.bitmaps[(w - 1).toNat] = y := by
-    rw [List.drop_eq_getElem_cons hidx] at hdr
-    simp only [List.cons.injEq] at hdr
-    exact hdr.1
+  stackAllocBitmapsDropIndex
   simp only at hm
   generalize hbm : wordGenGcPartialMoveBitmap conf (y, stack, i, pa, curr, s.memory,
     s.mdomain, gs, rs) = R at hm
@@ -167,17 +160,7 @@ theorem wordGenGcPartialMoveBitmapsCode_run {width : Nat} [NeZero width] {C F : 
     have hz' : y >>> (width - 1) ≠ 0 := word_msb_IFF_lsr_EQ_0.1 hmsb
     have hlenA := wordGenGcPartialMoveBitmaps_LENGTH hm0
     have hlenB := wordGenGcPartialMoveBitmaps_LENGTH hrec
-    have hwn : w.toNat = (w - 1).toNat + 1 := by
-      have h := BitVec.toNat_add (w - 1) 1
-      rw [BitVec.sub_add_cancel] at h
-      rw [h]
-      have h1 : (1 : BitVec width).toNat = 1 := by
-        simp [Nat.mod_eq_of_lt (show 1 < 2 ^ width by omega)]
-      rw [h1]
-      exact Nat.mod_eq_of_lt (by omega)
-    have hdec : t.bitmaps.length - (w + 1 - 1).toNat < d := by
-      simp only [t, s3, s2, setVar, BitVec.add_sub_cancel]
-      omega
+    stackAllocBitmapsWordBounds
     obtain ⟨ck', r0, r1, r2, r5, r6, r7, r9, hr⟩ := ih _ hdec (w + 1) ws (old ++ hd1) hd3
       st3 i2 pa2 curr i3 pa3 (y >>> (width - 1)) m3 t rfl hrec hblen
       (by simp [t, s3, s2, setVar, hcurr])

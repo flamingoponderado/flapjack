@@ -167,19 +167,7 @@ theorem wordGenGcPartialMoveRootsBitmapsCode_run {width : Nat} [NeZero width] {C
         (8, .word (wordSemBytesInWord *
           BitVec.ofNat width (old ++ [WordLocW.word c] ++ new).length)),
         (9, q9)] }
-  have hslen : s3.stack.length = s.stack.length := by
-    simp only [s3, hst, List.length_append, List.length_cons, List.length_nil] at hlenB ⊢
-    omega
-  have hJ : (width / 8) * (old ++ [WordLocW.word c] ++ new).length < 2 ^ width := by
-    refine Nat.lt_of_le_of_lt (Nat.mul_le_mul_left _ ?_) hbound
-    simp only [hst, List.length_append, List.length_cons, List.length_nil] at hlenB ⊢
-    omega
-  have hjJ : s3.stackSpace + (old ++ [WordLocW.word c] ++ new).length < s3.stack.length := by
-    simp only [s3, s2, setVar, hsp, List.length_append, List.length_cons, List.length_nil]
-    omega
-  have hvJ : s3.stack[s3.stackSpace + (old ++ [WordLocW.word c] ++ new).length]'hjJ = h := by
-    simp only [s3, s2, setVar, hsp]
-    simp
+  stackAllocRootsFrameBounds
   -- the state the next frame starts from
   let t : StackSemStateFiniteExact width C F := setVar 9 h s3
   have hlen8 : (old ++ [WordLocW.word c] ++ new).length = (old ++ WordLocW.word c :: new).length := by

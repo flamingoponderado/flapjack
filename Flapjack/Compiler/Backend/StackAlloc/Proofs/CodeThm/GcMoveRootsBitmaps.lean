@@ -24,6 +24,32 @@ open Flapjack.Compiler.Backend.StackLang Flapjack.Compiler.Encoders.Asm
 open Flapjack.Compiler.Backend.DataToWord Flapjack.Compiler.Backend.WordGcFunctions
 open Flapjack.Compiler.Backend.StackRemove (loadInst storeInst leftShiftInst rightShiftInst)
 
+/- Bounds for the frame pushed by `word_gc_move_roots_bitmaps`: the stack length
+is unchanged, the frame's word count fits in the word width, and the pushed frame
+sits inside the new stack. Flapjack proof infrastructure (no HOL original); the
+HOL script repeats this step inline for each recursion step. Used by
+`GcMoveRootsBitmaps`, `GenGcMoveRootsBitmaps` and `GenPartialMoveRootsBitmaps`,
+which import this module.
+
+Hygiene is disabled on purpose: the macro binds the conventional locals `hslen`,
+`hJ`, `hjJ` and `hvJ` that the rest of the proof refers to. -/
+set_option hygiene false in
+macro "stackAllocRootsFrameBounds" : tactic =>
+  `(tactic| (
+    have hslen : s3.stack.length = s.stack.length := by
+      simp only [s3, hst, List.length_append, List.length_cons, List.length_nil] at hlenB ⊢
+      omega
+    have hJ : (width / 8) * (old ++ [WordLocW.word c] ++ new).length < 2 ^ width := by
+      refine Nat.lt_of_le_of_lt (Nat.mul_le_mul_left _ ?_) hbound
+      simp only [hst, List.length_append, List.length_cons, List.length_nil] at hlenB ⊢
+      omega
+    have hjJ : s3.stackSpace + (old ++ [WordLocW.word c] ++ new).length < s3.stack.length := by
+      simp only [s3, s2, setVar, hsp, List.length_append, List.length_cons, List.length_nil]
+      omega
+    have hvJ : s3.stack[s3.stackSpace + (old ++ [WordLocW.word c] ++ new).length]'hjJ = h := by
+      simp only [s3, s2, setVar, hsp]
+      simp))
+
 theorem moveHOL_eval {width : Nat} [NeZero width] {C F : Type}
     (S : StackSemStateFiniteExact width C F) (dst src : Nat) (x : BitVec width)
     (h : S.regs.lookup src = some (.word x)) :
@@ -169,19 +195,7 @@ theorem wordGcMoveRootsBitmapsCode_run {width : Nat} [NeZero width] {C F : Type}
         (8, .word (wordSemBytesInWord *
           BitVec.ofNat width (old ++ [WordLocW.word c] ++ new).length)),
         (9, q9)] }
-  have hslen : s3.stack.length = s.stack.length := by
-    simp only [s3, hst, List.length_append, List.length_cons, List.length_nil] at hlenB ⊢
-    omega
-  have hJ : (width / 8) * (old ++ [WordLocW.word c] ++ new).length < 2 ^ width := by
-    refine Nat.lt_of_le_of_lt (Nat.mul_le_mul_left _ ?_) hbound
-    simp only [hst, List.length_append, List.length_cons, List.length_nil] at hlenB ⊢
-    omega
-  have hjJ : s3.stackSpace + (old ++ [WordLocW.word c] ++ new).length < s3.stack.length := by
-    simp only [s3, s2, setVar, hsp, List.length_append, List.length_cons, List.length_nil]
-    omega
-  have hvJ : s3.stack[s3.stackSpace + (old ++ [WordLocW.word c] ++ new).length]'hjJ = h := by
-    simp only [s3, s2, setVar, hsp]
-    simp
+  stackAllocRootsFrameBounds
   -- the state the next frame starts from
   let t : StackSemStateFiniteExact width C F := setVar 9 h s3
   have hlen8 : (old ++ [WordLocW.word c] ++ new).length = (old ++ WordLocW.word c :: new).length := by
