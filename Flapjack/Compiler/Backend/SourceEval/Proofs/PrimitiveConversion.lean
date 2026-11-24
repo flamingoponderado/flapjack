@@ -7,7 +7,6 @@ public import Flapjack.Compiler.Backend.SourceEval.Proofs.PrimitiveArithmetic
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs
 open Flapjack.SemanticPrimitivesHOL Flapjack.SemanticPrimitivesProps Flapjack.AstHOL
 
-set_option maxHeartbeats 3000000 in
 /-- A successful conversion transports to related operands and an arbitrary
 state, preserving its result relation. HOL proves this inside the
 `do_app_sim` conversion case; it is not a separate HOL declaration. -/

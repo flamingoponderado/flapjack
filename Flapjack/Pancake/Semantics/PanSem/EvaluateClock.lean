@@ -277,7 +277,6 @@ macro "clockDirect" : tactic => `(tactic|
   | exact Nat.le_trans (callFixedContextHOLFinite_clock_le _ _ _)
       (callEntryStateHOLFinite_clock_le _ _))
 
-set_option maxHeartbeats 4000000 in
 theorem evalPanSemRecursiveCallFiniteContext_clock_le_aux {width : Nat} {σ : Type} [NeZero width]
     (program : ProgHOL width) (context : FiniteEvalContext width σ) :
     ∀ (result : Option (PanSemResultExact width) × FiniteEvalContext width σ),
@@ -1524,7 +1523,6 @@ two tag qualifiers record only the finite-map and word-carrier translations;
 no additional premise, name representation, or output behavior difference is
 hidden by them.
 -/
-set_option maxHeartbeats 2000000 in
 @[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 780
   (fmap_as_finite_support := [locals, globals, code, eshapes])
   (words_as_type_indexed_bitvec)]
@@ -1869,7 +1867,6 @@ restatements, so no arm retains the line-556 `fix_clock` wrapper that line 780
 rewrites away. No extra premise and no result hypothesis is added. The four
 finite-map fields and the positive word width use the same reviewed carriers as
 the tagged clause siblings. -/
-set_option maxHeartbeats 4000000 in
 @[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 780
   (fmap_as_finite_support := [locals, globals, code, eshapes])
   (words_as_type_indexed_bitvec)]

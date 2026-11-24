@@ -1872,8 +1872,6 @@ private theorem evalHOLFinite_emptyLocals_code {width : Nat} {σ : Type} [NeZero
 
 section
 
-set_option maxHeartbeats 4000000
-
 /-- FLAPJACK-SPECIFIC provisional rendering (no `@[hol]` tag): HOL
     `panProps$evaluate_decl_commute` (`panPropsScript.sml:1472-1480`) is a PanProps
     declaration, so its HOL port belongs in the PanProps counterpart module, not
@@ -4483,7 +4481,6 @@ theorem globalsShapes_decCall_arm {width : Nat} {σ : Type} [NeZero width]
 
 section GlobalsShapesInvariant
 
-set_option maxHeartbeats 4000000
 set_option backward.isDefEq.respectTransparency false
 
 /-- HOL `panPropsScript.sml:1183` `evaluate_global_shape_invariant` lifted to the exact

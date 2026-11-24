@@ -34,7 +34,6 @@ theorem checkedOperands_eq (es : EvalOracleState) (typ : PrimType) (xs ys : List
     simp only [same, ih checked.2]
 
 
-set_option maxHeartbeats 3000000 in
 /-- A successful arithmetic application transports to related operands and a
 new state while preserving the result relation. HOL proves this step inside
 `do_app_sim`; it is not a separate HOL declaration. -/

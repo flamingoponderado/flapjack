@@ -6590,7 +6590,6 @@ private theorem evaluateClockSubWhileCondZeroProjection {width : Nat} {σ : Type
   subst hst
   rfl
 
-set_option maxHeartbeats 4000000 in
 /-- Flapjack-specific projection of the recursive `NONE`/`Continue` branches of
     the exact source `While` clause (`panSemScript.sml:630`) through the PanProps
     pair codec: when the body run returns `NONE` or `SOME Continue`, the While
@@ -6658,7 +6657,6 @@ private theorem evaluateHOLFinitePair_while_recOutput {width : Nat} {σ : Type} 
     rw [hFixedEq]
     rfl
 
-set_option maxHeartbeats 4000000 in
 /-- Flapjack-specific projection of the propagating `While` branches (`SOME
     Error`/`SOME Returned`/`SOME Exception`/`SOME FinalFFI`) of the exact source
     `While` clause (`panSemScript.sml:630`) through the PanProps pair codec: the
@@ -6720,7 +6718,6 @@ private theorem evaluateHOLFinitePair_while_propOutput {width : Nat} {σ : Type}
   | exception e v => rfl
   | finalFfi v => rfl
 
-set_option maxHeartbeats 4000000 in
 /-- Flapjack-specific assembled propagating-body branch for the While clock-sub
     proof. It mirrors `evaluateClockSubWhileBreakBodyProjection` for the
     `SOME Error`/`SOME Returned`/`SOME Exception`/`SOME FinalFFI` body results,
@@ -6853,7 +6850,6 @@ private theorem evaluateClockSubWhileOtherBodyProjection {width : Nat} {σ : Typ
   rw [hLowOther]
   simp only [hFixedLow, PanPropsEvalStateFiniteExact.ofPanSemFinite_toPanSemFinite]
 
-set_option maxHeartbeats 4000000 in
 @[hol "cakeml/pancake/semantics/panPropsScript.sml" "evaluate_clock_sub"
   (fmap_as_finite_support := [locals, globals, code, eshapes])
   (words_as_type_indexed_bitvec)]
@@ -7156,7 +7152,6 @@ theorem evaluateClockSubSeqCaseHOLFinite {width : Nat} {σ : Type} [NeZero width
         simpa [middle] using hSecondLow
       simp [hFirstLow', hSecondLow']
 
-set_option maxHeartbeats 4000000 in
 /-- `Dec` case of HOL `evaluate_clock_sub` (`panPropsScript.sml:724-728`).
     `evaluate_ind` supplies exactly one guarded induction hypothesis,
     `P (body, s with locals := s.locals⟨name ↦ value⟩)`
@@ -7427,7 +7422,6 @@ private theorem evaluateHOLFinitePair_ite {width : Nat} {σ : Type} [NeZero widt
           simp only [h]
           rw [PanPropsEvalStateFiniteExact.ofPanSemFinite_toPanSemFinite]
 
-set_option maxHeartbeats 4000000 in
 @[hol "cakeml/pancake/semantics/panPropsScript.sml" "evaluate_clock_sub"
   (fmap_as_finite_support := [locals, globals, code, eshapes])
   (words_as_type_indexed_bitvec)]

@@ -31,8 +31,7 @@ open Flapjack.Compiler.Backend.DataSem
 section
 
 set_option linter.unusedSimpArgs false
-set_option maxRecDepth 4096
-set_option maxHeartbeats 5000000
+set_option maxHeartbeats 1000000
 set_option aesop.warn.nonterminal false
 set_option linter.unusedTactic false
 set_option linter.unreachableTactic false

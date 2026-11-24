@@ -6,8 +6,6 @@ public import Flapjack.Compiler.Encoders.X64.Machine.DecodeReads
 
 namespace Flapjack.Compiler.Encoders.X64
 
-set_option maxHeartbeats 4000000
-
 theorem parseRM_len_pos (r : Nat → BitVec 8) (off : Nat) (rexB : Bool) (p : ParsedRM)
     (h : parseRM r off rexB = some p) : 1 ≤ p.len := by
   unfold parseRM at h

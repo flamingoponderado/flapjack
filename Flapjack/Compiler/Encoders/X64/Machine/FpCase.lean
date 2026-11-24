@@ -1619,7 +1619,6 @@ theorem case_fpFromInt (d1 d2 : Nat) (s1 s2 : AsmState 64) (ms : X64State)
     rfl (by intro a ha; simp [x64Touched] at ha) hW hs2pc hs2mem hs2dom hs2regs hs2fp
 
 
-set_option maxHeartbeats 4000000 in
 /-- The `fpToInt` constructor of `encoder_correct x64Target`: `cvtpd2dq` writes
 the 32-bit conversion into the low word, and the two byte-shifts move it to the
 bottom of the register. -/

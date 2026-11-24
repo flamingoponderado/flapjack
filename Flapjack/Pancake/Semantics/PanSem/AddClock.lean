@@ -755,7 +755,7 @@ theorem callFixedContextHOLExact_state_ffi {width : Nat} {σ : Type} [NeZero wid
   simp only [callFixedContextHOLExact, PanSemExactEvalContext.withState_state, fixClockHOLExact]
 
 
-set_option maxHeartbeats 4000000 in
+set_option maxHeartbeats 400000 in
 theorem eval_add_clock_mono_aux
     {width : Nat} {σ : Type} [NeZero width]
     (program : ProgHOL width) (context : PanSemExactEvalContext width σ) :
