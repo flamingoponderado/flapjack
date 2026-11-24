@@ -100,12 +100,7 @@ theorem filterCorrectInstall {width : Nat} [NeZero width] {C : Type} {F : Type}
     conv at he => lhs; rw [evaluate]
     simp only [hc, ↓reduceIte, hfetch] at he
     simp only [hs, hr0] at he
-    cases he
-    have hrun := allSkipsEvaluate count t1 ⟨hskips, hfailed⟩ 0
-    refine ⟨count, {t1 with pc := t1.pc + count}, ?_, rfl⟩
-    simp only [Nat.add_zero] at hrun
-    rw [hsclock, hrun]
-    conv => lhs; rw [evaluate]
+    labFilterSkipRun
     simp only [htclock, ↓reduceIte, asmFetch, halign, hr0]
   | word start =>
     cases hr1 : t1.regs t1.lenReg with
@@ -114,12 +109,7 @@ theorem filterCorrectInstall {width : Nat} [NeZero width] {C : Type} {F : Type}
       conv at he => lhs; rw [evaluate]
       simp only [hc, ↓reduceIte, hfetch] at he
       simp only [hs, hr0, hr1] at he
-      cases he
-      have hrun := allSkipsEvaluate count t1 ⟨hskips, hfailed⟩ 0
-      refine ⟨count, {t1 with pc := t1.pc + count}, ?_, rfl⟩
-      simp only [Nat.add_zero] at hrun
-      rw [hsclock, hrun]
-      conv => lhs; rw [evaluate]
+      labFilterSkipRun
       simp only [htclock, ↓reduceIte, asmFetch, halign, hr0, hr1]
     | word finish =>
       cases hr2 : t1.regs t1.linkReg with
@@ -128,12 +118,7 @@ theorem filterCorrectInstall {width : Nat} [NeZero width] {C : Type} {F : Type}
         conv at he => lhs; rw [evaluate]
         simp only [hc, ↓reduceIte, hfetch] at he
         simp only [hs, hr0, hr1, hr2] at he
-        cases he
-        have hrun := allSkipsEvaluate count t1 ⟨hskips, hfailed⟩ 0
-        refine ⟨count, {t1 with pc := t1.pc + count}, ?_, rfl⟩
-        simp only [Nat.add_zero] at hrun
-        rw [hsclock, hrun]
-        conv => lhs; rw [evaluate]
+        labFilterSkipRun
         simp only [htclock, ↓reduceIte, asmFetch, halign, hr0, hr1, hr2]
       | loc sectionId labelId =>
         cases hflush : wordSemBufferFlush (outBw := 8) t1.codeBuffer start finish with
@@ -142,12 +127,7 @@ theorem filterCorrectInstall {width : Nat} [NeZero width] {C : Type} {F : Type}
           conv at he => lhs; rw [evaluate]
           simp only [hc, ↓reduceIte, hfetch] at he
           simp only [hs, hr0, hr1, hr2, hflush] at he
-          cases he
-          have hrun := allSkipsEvaluate count t1 ⟨hskips, hfailed⟩ 0
-          refine ⟨count, {t1 with pc := t1.pc + count}, ?_, rfl⟩
-          simp only [Nat.add_zero] at hrun
-          rw [hsclock, hrun]
-          conv => lhs; rw [evaluate]
+          labFilterSkipRun
           simp only [htclock, ↓reduceIte, asmFetch, halign, hr0, hr1, hr2, hflush]
         | some pair =>
           rcases pair with ⟨bytes, buffer⟩
@@ -158,12 +138,7 @@ theorem filterCorrectInstall {width : Nat} [NeZero width] {C : Type} {F : Type}
             conv at he => lhs; rw [evaluate]
             simp only [hc, ↓reduceIte, hfetch] at he
             simp only [hs, hr0, hr1, hr2, hflush, hsourceLoc] at he
-            cases he
-            have hrun := allSkipsEvaluate count t1 ⟨hskips, hfailed⟩ 0
-            refine ⟨count, {t1 with pc := t1.pc + count}, ?_, rfl⟩
-            simp only [Nat.add_zero] at hrun
-            rw [hsclock, hrun]
-            conv => lhs; rw [evaluate]
+            labFilterSkipRun
             simp only [htclock, ↓reduceIte, asmFetch, halign, hr0, hr1, hr2, hflush, htargetLoc]
           | some pc =>
             obtain ⟨originalPc, htargetLoc, hpc⟩ := locToPcEqSome sectionId labelId t1.code pc hsourceLoc
@@ -175,12 +150,7 @@ theorem filterCorrectInstall {width : Nat} [NeZero width] {C : Type} {F : Type}
                 conv at he => lhs; rw [evaluate]
                 simp only [hc, ↓reduceIte, hfetch] at he
                 simp only [hs, hr0, hr1, hr2, hflush, hsourceLoc, ho, hcomp] at he
-                cases he
-                have hrun := allSkipsEvaluate count t1 ⟨hskips, hfailed⟩ 0
-                refine ⟨count, {t1 with pc := t1.pc + count}, ?_, rfl⟩
-                simp only [Nat.add_zero] at hrun
-                rw [hsclock, hrun]
-                conv => lhs; rw [evaluate]
+                labFilterSkipRun
                 simp only [htclock, ↓reduceIte, asmFetch, halign, hcompile, hr0, hr1, hr2, hflush, htargetLoc, ho, hcomp]
               | some pair =>
                 rcases pair with ⟨compiledBytes, nextConfiguration⟩
@@ -191,12 +161,7 @@ theorem filterCorrectInstall {width : Nat} [NeZero width] {C : Type} {F : Type}
                   simp only [hc, ↓reduceIte, hfetch] at he
                   simp only [hs, hr0, hr1, hr2, hflush, hsourceLoc, ho, hcomp] at he
                   simp only [filterSkip] at he
-                  cases he
-                  have hrun := allSkipsEvaluate count t1 ⟨hskips, hfailed⟩ 0
-                  refine ⟨count, {t1 with pc := t1.pc + count}, ?_, rfl⟩
-                  simp only [Nat.add_zero] at hrun
-                  rw [hsclock, hrun]
-                  conv => lhs; rw [evaluate]
+                  labFilterSkipRun
                   simp only [htclock, ↓reduceIte, asmFetch, halign, hcompile, hr0, hr1, hr2, hflush, htargetLoc, ho, hcomp]
                 | cons sect rest =>
                   rcases sect with ⟨installedSection, lines⟩
@@ -262,12 +227,7 @@ theorem filterCorrectInstall {width : Nat} [NeZero width] {C : Type} {F : Type}
                     simp only [filterSkip, holShiftSeq] at he
                     change (if bytes = compiledBytes ∧ (holShiftSeq 1 t1.compileOracle 0).1 = nextConfiguration then _ else _) = _ at he
                     rw [if_neg (by simpa only [holShiftSeq] using hv)] at he
-                    cases he
-                    have hrun := allSkipsEvaluate count t1 ⟨hskips, hfailed⟩ 0
-                    refine ⟨count, {t1 with pc := t1.pc + count}, ?_, rfl⟩
-                    simp only [Nat.add_zero] at hrun
-                    rw [hsclock, hrun]
-                    conv => lhs; rw [evaluate]
+                    labFilterSkipRun
                     simp only [htclock, ↓reduceIte, asmFetch, halign, hcompile, hr0, hr1, hr2, hflush, htargetLoc, ho, hcomp]
                     simp only [holShiftSeq]
                     change (if bytes = compiledBytes ∧ (holShiftSeq 1 t1.compileOracle 0).1 = nextConfiguration then _ else _) = _

@@ -92,12 +92,7 @@ theorem filterCorrectCallFfi {width : Nat} [NeZero width] {C : Type} {F : Type}
     conv at he => lhs; rw [evaluate]
     simp only [hc, ↓reduceIte, hfetch] at he
     simp only [hs, hr0] at he
-    cases he
-    have hrun := allSkipsEvaluate count t1 ⟨hskips, hfailed⟩ 0
-    refine ⟨count, {t1 with pc := t1.pc + count}, ?_, rfl⟩
-    simp only [Nat.add_zero] at hrun
-    rw [hsclock, hrun]
-    conv => lhs; rw [evaluate]
+    labFilterSkipRun
     simp only [htclock, ↓reduceIte, asmFetch, halign, hr0]
   | word length =>
     cases hr1 : t1.regs t1.ptrReg with
@@ -106,12 +101,7 @@ theorem filterCorrectCallFfi {width : Nat} [NeZero width] {C : Type} {F : Type}
       conv at he => lhs; rw [evaluate]
       simp only [hc, ↓reduceIte, hfetch] at he
       simp only [hs, hr0, hr1] at he
-      cases he
-      have hrun := allSkipsEvaluate count t1 ⟨hskips, hfailed⟩ 0
-      refine ⟨count, {t1 with pc := t1.pc + count}, ?_, rfl⟩
-      simp only [Nat.add_zero] at hrun
-      rw [hsclock, hrun]
-      conv => lhs; rw [evaluate]
+      labFilterSkipRun
       simp only [htclock, ↓reduceIte, asmFetch, halign, hr0, hr1]
     | word start =>
       cases hr2 : t1.regs t1.len2Reg with
@@ -120,12 +110,7 @@ theorem filterCorrectCallFfi {width : Nat} [NeZero width] {C : Type} {F : Type}
         conv at he => lhs; rw [evaluate]
         simp only [hc, ↓reduceIte, hfetch] at he
         simp only [hs, hr0, hr1, hr2] at he
-        cases he
-        have hrun := allSkipsEvaluate count t1 ⟨hskips, hfailed⟩ 0
-        refine ⟨count, {t1 with pc := t1.pc + count}, ?_, rfl⟩
-        simp only [Nat.add_zero] at hrun
-        rw [hsclock, hrun]
-        conv => lhs; rw [evaluate]
+        labFilterSkipRun
         simp only [htclock, ↓reduceIte, asmFetch, halign, hr0, hr1, hr2]
       | word length2 =>
         cases hr3 : t1.regs t1.ptr2Reg with
@@ -134,12 +119,7 @@ theorem filterCorrectCallFfi {width : Nat} [NeZero width] {C : Type} {F : Type}
           conv at he => lhs; rw [evaluate]
           simp only [hc, ↓reduceIte, hfetch] at he
           simp only [hs, hr0, hr1, hr2, hr3] at he
-          cases he
-          have hrun := allSkipsEvaluate count t1 ⟨hskips, hfailed⟩ 0
-          refine ⟨count, {t1 with pc := t1.pc + count}, ?_, rfl⟩
-          simp only [Nat.add_zero] at hrun
-          rw [hsclock, hrun]
-          conv => lhs; rw [evaluate]
+          labFilterSkipRun
           simp only [htclock, ↓reduceIte, asmFetch, halign, hr0, hr1, hr2, hr3]
         | word start2 =>
           cases hr4 : t1.regs t1.linkReg with
@@ -148,12 +128,7 @@ theorem filterCorrectCallFfi {width : Nat} [NeZero width] {C : Type} {F : Type}
             conv at he => lhs; rw [evaluate]
             simp only [hc, ↓reduceIte, hfetch] at he
             simp only [hs, hr0, hr1, hr2, hr3, hr4] at he
-            cases he
-            have hrun := allSkipsEvaluate count t1 ⟨hskips, hfailed⟩ 0
-            refine ⟨count, {t1 with pc := t1.pc + count}, ?_, rfl⟩
-            simp only [Nat.add_zero] at hrun
-            rw [hsclock, hrun]
-            conv => lhs; rw [evaluate]
+            labFilterSkipRun
             simp only [htclock, ↓reduceIte, asmFetch, halign, hr0, hr1, hr2, hr3, hr4]
           | loc sectionId labelId =>
             cases hread1 : readBytearrayWordHOL start length.toNat (memLoadByteAuxExact t1.memory t1.memDomain t1.be) with
@@ -162,12 +137,7 @@ theorem filterCorrectCallFfi {width : Nat} [NeZero width] {C : Type} {F : Type}
               conv at he => lhs; rw [evaluate]
               simp only [hc, ↓reduceIte, hfetch] at he
               simp only [hs, hr0, hr1, hr2, hr3, hr4, hread1] at he
-              cases he
-              have hrun := allSkipsEvaluate count t1 ⟨hskips, hfailed⟩ 0
-              refine ⟨count, {t1 with pc := t1.pc + count}, ?_, rfl⟩
-              simp only [Nat.add_zero] at hrun
-              rw [hsclock, hrun]
-              conv => lhs; rw [evaluate]
+              labFilterSkipRun
               simp only [htclock, ↓reduceIte, asmFetch, halign, hr0, hr1, hr2, hr3, hr4, hread1]
             | some configuration =>
               cases hread2 : readBytearrayWordHOL start2 length2.toNat (memLoadByteAuxExact t1.memory t1.memDomain t1.be) with
@@ -176,12 +146,7 @@ theorem filterCorrectCallFfi {width : Nat} [NeZero width] {C : Type} {F : Type}
                 conv at he => lhs; rw [evaluate]
                 simp only [hc, ↓reduceIte, hfetch] at he
                 simp only [hs, hr0, hr1, hr2, hr3, hr4, hread1, hread2] at he
-                cases he
-                have hrun := allSkipsEvaluate count t1 ⟨hskips, hfailed⟩ 0
-                refine ⟨count, {t1 with pc := t1.pc + count}, ?_, rfl⟩
-                simp only [Nat.add_zero] at hrun
-                rw [hsclock, hrun]
-                conv => lhs; rw [evaluate]
+                labFilterSkipRun
                 simp only [htclock, ↓reduceIte, asmFetch, halign, hr0, hr1, hr2, hr3, hr4, hread1, hread2]
               | some bytes =>
                 cases hsourceLoc : locToPc sectionId labelId (filterSkip t1.code) with
@@ -191,12 +156,7 @@ theorem filterCorrectCallFfi {width : Nat} [NeZero width] {C : Type} {F : Type}
                   conv at he => lhs; rw [evaluate]
                   simp only [hc, ↓reduceIte, hfetch] at he
                   simp only [hs, hr0, hr1, hr2, hr3, hr4, hread1, hread2, hsourceLoc] at he
-                  cases he
-                  have hrun := allSkipsEvaluate count t1 ⟨hskips, hfailed⟩ 0
-                  refine ⟨count, {t1 with pc := t1.pc + count}, ?_, rfl⟩
-                  simp only [Nat.add_zero] at hrun
-                  rw [hsclock, hrun]
-                  conv => lhs; rw [evaluate]
+                  labFilterSkipRun
                   simp only [htclock, ↓reduceIte, asmFetch, halign, hr0, hr1, hr2, hr3, hr4, hread1, hread2, htargetLoc]
                 | some pc =>
                   obtain ⟨originalPc, htargetLoc, hpc⟩ := locToPcEqSome sectionId labelId t1.code pc hsourceLoc
@@ -206,12 +166,7 @@ theorem filterCorrectCallFfi {width : Nat} [NeZero width] {C : Type} {F : Type}
                     conv at he => lhs; rw [evaluate]
                     simp only [hc, ↓reduceIte, hfetch] at he
                     simp only [hs, hr0, hr1, hr2, hr3, hr4, hread1, hread2, hsourceLoc, hffi] at he
-                    cases he
-                    have hrun := allSkipsEvaluate count t1 ⟨hskips, hfailed⟩ 0
-                    refine ⟨count, {t1 with pc := t1.pc + count}, ?_, rfl⟩
-                    simp only [Nat.add_zero] at hrun
-                    rw [hsclock, hrun]
-                    conv => lhs; rw [evaluate]
+                    labFilterSkipRun
                     simp only [htclock, ↓reduceIte, asmFetch, halign, hr0, hr1, hr2, hr3, hr4, hread1, hread2, htargetLoc, hffi]
                   | ret ffi returned =>
                     have hn := relatedCallFfiReturn s1 t1 function start2 pc originalPc ffi returned hrelation hpc

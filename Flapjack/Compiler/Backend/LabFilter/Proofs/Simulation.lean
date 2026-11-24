@@ -57,4 +57,23 @@ theorem filterCorrectAbsentFetch {width : Nat} [NeZero width] {C F : Type}
   conv => lhs; rw [evaluate]
   simp [htclock, asmFetch, halign]
 
+/- Close the skip-run branch of the LabFilter case proofs: destruct the
+pre-computed evaluation, apply `allSkipsEvaluate` at the current PC, and
+reduce the target run at the next instruction. Flapjack-specific proof
+infrastructure (no HOL original).
+
+Hygiene is disabled on purpose: the step consumes the conventional locals
+`he`, `count`, `t1`, `hskips`, `hfailed`, `hsclock` of the surrounding case. -/
+set_option hygiene false in
+macro "labFilterSkipRun" : tactic =>
+  `(tactic| (
+    cases he
+    have hrun := allSkipsEvaluate count t1 ⟨hskips, hfailed⟩ 0
+    refine ⟨count, {t1 with pc := t1.pc + count}, ?_, rfl⟩
+    simp only [Nat.add_zero] at hrun
+    rw [hsclock, hrun]
+    conv =>
+      lhs
+      rw [evaluate]))
+
 end Flapjack.Compiler.Backend.LabFilter.Proofs
