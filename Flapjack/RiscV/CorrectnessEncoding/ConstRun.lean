@@ -13,8 +13,6 @@ set_option backward.privateInPublic.warn false
 namespace Flapjack.RiscV.TargetProof
 open Flapjack RiscV.L3 Compiler.Encoders.Asm Compiler.Encoders.RiscV.Target
 set_option maxRecDepth 200000
-set_option maxHeartbeats 2000000
-
 private theorem update_overwrite {α β : Type} [DecidableEq α]
     (a : α) (v u : β) (f : α → β) :
     holUpdate a v (holUpdate a u f) = holUpdate a v f := by

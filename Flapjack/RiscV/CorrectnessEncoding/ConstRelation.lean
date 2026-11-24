@@ -10,8 +10,6 @@ namespace Flapjack.RiscV.TargetProof
 open Flapjack RiscV.L3 Compiler.Encoders.Asm Compiler.Encoders.AsmSem
   Compiler.Encoders.RiscV.Target
 set_option maxRecDepth 200000
-set_option maxHeartbeats 2000000
-
 /-- Literal source Const post-state from original asm_step, including exactly
 its encoded byte length. Untagged specialization infrastructure. -/
 theorem const_source_post (r : Nat) (c : BitVec 64) (s1 s2 : AsmState 64)

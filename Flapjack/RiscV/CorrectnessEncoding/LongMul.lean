@@ -13,7 +13,6 @@ open Flapjack RiscV.L3 RiscV.L3.Step Compiler.Encoders.RiscV.Target
   Compiler.Encoders.Asm Compiler.Encoders.AsmSem Compiler.Encoders.AsmProps
 set_option autoImplicit false
 set_option maxRecDepth 200000
-set_option maxHeartbeats 2000000
 /-- Local Run composition needed by the full original LongMul constructor.
 The original targetStateRel supplies riscvOk; the source asm_ok supplies rd!=0.
 No separate HOL declaration is claimed by this helper. -/

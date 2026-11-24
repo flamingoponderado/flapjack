@@ -215,7 +215,6 @@ theorem charsByteRanged_tail' {l : List Char} (h : CharsByteRanged l) :
   | nil => intro c hc; simp at hc
   | cons c cs => exact charsByteRanged_tail h
 
-set_option maxHeartbeats 2000000 in
 /-- Byte-rangedness is preserved by `nextAtom`: the returned atom carries no
     non-byte name and the remaining input is byte-ranged. -/
 theorem nextAtom_byteRanged : ∀ fuel input loc, CharsByteRanged input →

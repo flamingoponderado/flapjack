@@ -7,8 +7,6 @@ public import Flapjack.RiscV.L3.Support
 
 namespace Flapjack.RiscV.TargetProof
 set_option maxRecDepth 200000
-set_option maxHeartbeats 2000000
-
 /-- Value reconstruction for the two literal wide Const branches. This is
 untagged infrastructure, with no separately named HOL identity. Every word64
 is retained; it supplies no target-run or range premise. -/

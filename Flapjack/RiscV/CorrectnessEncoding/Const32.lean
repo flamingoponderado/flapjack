@@ -10,8 +10,6 @@ public import Flapjack.RiscV.L3.Defs.Run
 namespace Flapjack.RiscV.TargetProof
 open Flapjack RiscV.L3
 set_option maxRecDepth 200000
-set_option maxHeartbeats 2000000
-
 private theorem high_eq (c : BitVec 32) :
     RiscV.L3.holWordExtract 20 31 12 c = c.extractLsb' 12 20 := by
   apply BitVec.eq_of_toNat_eq

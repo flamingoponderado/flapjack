@@ -1930,7 +1930,6 @@ theorem callFixedContextHOLFinite_toExact {width : Nat} {σ : Type} [NeZero widt
     bridges. This proves finite-to-broad agreement; it does not by itself
     establish the broad evaluator's HOL correspondence, so the
     `evaluate_def` tag remains withheld pending coordinator review. -/
-set_option maxHeartbeats 2000000 in
 theorem evalPanSemRecursiveCallFiniteContext_projection {width : Nat} {σ : Type} [NeZero width]
     (program : ProgHOL width) (context : FiniteEvalContext width σ) :
     Option.map (fun p => (p.1, p.2.toExact))

@@ -8,8 +8,6 @@ public import Flapjack.RiscV.CorrectnessEncoding.ConstRun
 namespace Flapjack.RiscV.TargetProof
 open Flapjack RiscV.L3 Compiler.Encoders.RiscV.Target
 set_option maxRecDepth 200000
-set_option maxHeartbeats 2000000
-
 /-- Literal register-only native instruction family used by Const lowering.
 Untagged infrastructure, not a separately named HOL datatype. -/
 inductive ConstRegisterInstruction : instruction → Prop

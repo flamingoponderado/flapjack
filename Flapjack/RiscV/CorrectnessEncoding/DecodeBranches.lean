@@ -16,8 +16,6 @@ JumpCmp encoder correctness remains separate work. -/
 
 namespace Flapjack.RiscV.L3
 set_option maxRecDepth 200000
-set_option maxHeartbeats 2000000
-
 private theorem reconstruct5 (w : BitVec 5) : holV2w 5 [w.getLsbD 4, w.getLsbD 3, w.getLsbD 2, w.getLsbD 1, w.getLsbD 0] = w := by
   apply BitVec.eq_of_getLsbD_eq_iff.mpr
   intro i hi

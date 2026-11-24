@@ -15,7 +15,6 @@ open Flapjack RiscV.L3 RiscV.L3.Step Compiler.Encoders.RiscV.Target
   Compiler.Encoders.AsmProps
 set_option autoImplicit false
 set_option maxRecDepth 200000
-set_option maxHeartbeats 2000000
 /-- The native arithmetic families shared by the SubOverflow and AddOverflow
 encodings, and prepared for the AddCarry follow-up. Untagged local composition
 infrastructure; no separately named HOL declaration. Each lemma is universally

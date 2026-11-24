@@ -1884,7 +1884,6 @@ private theorem ioEvents_middle_eq_of_prefix_chain {α : Type} {first middle las
   | nil => simpa using hxs.symm
   | cons x xs => simp at hxszero
 
-set_option maxHeartbeats 2000000 in
 theorem evalPanSemRecursiveCallContextHOLExact_ioEvents_prefix {width : Nat} {σ : Type}
     [NeZero width] (program : ProgHOL width) (context : PanSemExactEvalContext width σ) :
     ∀ (result : Option (PanSemResultExact width) × PanSemExactEvalContext width σ),

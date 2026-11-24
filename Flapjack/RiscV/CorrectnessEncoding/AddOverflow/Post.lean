@@ -11,7 +11,6 @@ open Flapjack RiscV.L3 RiscV.L3.Step Compiler.Encoders.RiscV.Target
   Compiler.Encoders.Asm Compiler.Encoders.AsmSem Compiler.Encoders.AsmProps
 set_option autoImplicit false
 set_option maxRecDepth 200000
-set_option maxHeartbeats 2000000
 /-- Literal original six-instruction AddOverflow expansion. Untagged composition. -/
 def program (r1 r2 r3 r4 : BitVec 5) : List instruction :=
   [.ArithR (.XOR (31,r2,r3)), .ArithI (.XORI (31,31,-1)),

@@ -695,7 +695,6 @@ theorem PTreesSafe.fail (message : String) :
     PTreesSafe (P.fail (α := P.Trees) message) :=
   PTreesSafe.of_stateSafe (α := P.Trees) (PStateToksSafe.fail (α := P.Trees) message)
 
-set_option maxHeartbeats 2000000 in
 theorem grammarBlock1_treesSafe :
     ∀ fuel, PTreesSafe (gShape fuel) ∧ PTreesSafe (gShapeComb fuel) ∧
       PTreesSafe (gShapedIdent fuel) := by

@@ -11,8 +11,6 @@ open Flapjack RiscV.L3 RiscV.L3.Step Compiler.Encoders.Asm
   Compiler.Encoders.AsmProps Compiler.Encoders.AsmSem Compiler.Encoders.RiscV.Target
 set_option autoImplicit false
 set_option maxRecDepth 200000
-set_option maxHeartbeats 2000000
-
 private def shiftWord (rd rs1 : BitVec 5) (c : BitVec 64) : BitVec 32 :=
   Encode (.Shift (.SRLI (rd, rs1, BitVec.ofNat 6 c.toNat)))
 

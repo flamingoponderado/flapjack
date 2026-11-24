@@ -13,8 +13,6 @@ open Flapjack RiscV.L3 RiscV.L3.Step Compiler.Encoders.Asm
   Compiler.Encoders.AsmProps Compiler.Encoders.AsmSem Compiler.Encoders.RiscV.Target
 set_option autoImplicit false
 set_option maxRecDepth 200000
-set_option maxHeartbeats 2000000
-
 private def binopWord (op : HolBinop) (rd rs1 rs2 : BitVec 5) : BitVec 32 :=
   Encode (.ArithR (riscvBopR op (rd, rs1, rs2)))
 

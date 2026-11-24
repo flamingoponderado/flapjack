@@ -9,8 +9,6 @@ open Flapjack RiscV.L3 RiscV.L3.Step Compiler.Encoders.Asm
   Compiler.Encoders.AsmProps Compiler.Encoders.AsmSem Compiler.Encoders.RiscV.Target
 set_option autoImplicit false
 set_option maxRecDepth 200000
-set_option maxHeartbeats 2000000
-
 /-- Local signed truncation composition, retaining both original endpoints.
 No separately named HOL original is claimed for this toInt proof. -/
 private theorem imm_reconstruct (c : BitVec 64)
