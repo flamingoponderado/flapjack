@@ -120,3 +120,11 @@ val _ = emit "alistSub_def_typed" "alistSub_def";
 val _ = emit "alistSub_cong_typed" "alistSub_cong";
 val _ = emit "nsLookup_to_nsLookupMod_typed" "nsLookup_to_nsLookupMod";
 val _ = emit "nsDom_alist_to_ns_typed" "nsDom_alist_to_ns";
+
+(* Appended-namespace lookups (task 273). *)
+val _ = emit "nsLookup_nsAppend_some_typed" "nsLookup_nsAppend_some";
+val _ = emit "nsLookup_nsAppend_none_typed" "nsLookup_nsAppend_none";
+val _ = emit "nsLookupMod_nsAppend_some_typed" "nsLookupMod_nsAppend_some";
+val _ = emit "nsLookupMod_nsAppend_none_typed" "nsLookupMod_nsAppend_none";
+val _ = emit "nsAll_nsAppend_left_typed" "nsAll_nsAppend_left";
+val _ = emit "nsSub_nsAppend2_typed" "nsSub_nsAppend2";

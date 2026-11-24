@@ -195,7 +195,10 @@ lift-append and association-list relation laws (`nsAll2_nsSing`, `nsAll_nsOptBin
 `nsLookup_nsLift_append`, `nsAll2_alist_to_ns`, `nsAll2_nsBindList`) are also
 captured. The restricted association-list relation (`alist_rel_restr_def`,
 `alist_rel_restr_thm`, `alistSub_def`, `alistSub_cong`), `nsLookup_to_nsLookupMod`
-and `nsDom_alist_to_ns` are captured too. The captures fix the independent
+and `nsDom_alist_to_ns` are captured too. The appended-namespace lookup laws
+(`nsLookup_nsAppend_some`, `nsLookup_nsAppend_none`, `nsLookupMod_nsAppend_some`,
+`nsLookupMod_nsAppend_none`, `nsAll_nsAppend_left`, `nsSub_nsAppend2`) are
+captured as well. The captures fix the independent
 module, name and value carriers and the binder order of each theorem; they are
 typed replays, not cross-language equivalence proofs.
 

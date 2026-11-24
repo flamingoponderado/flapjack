@@ -4152,6 +4152,7 @@ import Flapjack.NamespaceProps.LiftFold
 import Flapjack.NamespaceProps.AlistAll2
 import Flapjack.NamespaceProps.AlistRel
 import Flapjack.NamespaceProps.LookupToMod
+import Flapjack.NamespaceProps.AppendLookup
 import Flapjack.TypeSysProps.Constructor
 import Flapjack.TypeSysProps.Abbrev
 import Flapjack.TypeSysProps.Freevars
