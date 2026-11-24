@@ -182,12 +182,8 @@ private theorem work (c : Config) (xs : List Exp) (env : List ValApprox)
     have functionRun : knownListTotal c [x] env g1 = ([(e, a)], g2) := by
       simp [knownListTotal_single, hx]
     have rf := ifun _ _ functionRun (by simpa using parts.1) envSafe ra.2.2
-    have len := knownListTotal_length c xs env g
-    rw [ha] at len
-    simp only at len
-    rw [knownListTotal_app, ha] at run
-    dsimp only at run
-    rw [functionRun] at run
+    knownListLength
+    knownListRun
     simp [knownSourceHead, ← len, hd] at run
     rcases run with ⟨rfl, rfl⟩
     have safeArgs := (noLabelsList_iff _).mpr ra.1
@@ -202,12 +198,8 @@ private theorem work (c : Config) (xs : List Exp) (env : List ValApprox)
     have functionRun : knownListTotal c [x] env g1 = ([(e, a)], g2) := by
       simp [knownListTotal_single, hx]
     have rf := ifun _ _ functionRun (by simpa using parts.1) envSafe ra.2.2
-    have len := knownListTotal_length c xs env g
-    rw [ha] at len
-    simp only at len
-    rw [knownListTotal_app, ha] at run
-    dsimp only at run
-    rw [functionRun] at run
+    knownListLength
+    knownListRun
     simp [knownSourceHead, ← len, hd] at run
     rcases run with ⟨rfl, rfl⟩
     have safeArgs := (noLabelsList_iff _).mpr ra.1
@@ -227,12 +219,8 @@ private theorem work (c : Config) (xs : List Exp) (env : List ValApprox)
     have bodyRun : knownListTotal (decInlineFactor c) [body] (ea.map Prod.snd) g2 =
         ([(be, ba)], g3) := by simp [knownListTotal_single, hb]
     have rb := ibody _ _ bodyRun (by simpa using bodySafe) ra.2.1 rf.2.2
-    have len := knownListTotal_length c xs env g
-    rw [ha] at len
-    simp only at len
-    rw [knownListTotal_app, ha] at run
-    dsimp only at run
-    rw [functionRun] at run
+    knownListLength
+    knownListRun
     simp [knownSourceHead, ← len, hd, bodyRun] at run
     rcases run with ⟨rfl, rfl⟩
     have safeFun := rf.1 e (by simp)

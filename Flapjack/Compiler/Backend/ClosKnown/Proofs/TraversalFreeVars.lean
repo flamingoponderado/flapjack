@@ -139,12 +139,8 @@ private theorem work (c : Config) (xs : List Exp) (env : List ValApprox)
     have ra := iargs ea g1 n ha parts.2
     have functionRun : knownListTotal c [x] env g1 = ([(e, a)], g2) := by simp [knownListTotal_single, hx]
     have rf := ifun _ _ n functionRun parts.1
-    have len := knownListTotal_length c xs env g
-    rw [ha] at len
-    simp only at len
-    rw [knownListTotal_app, ha] at run
-    dsimp only at run
-    rw [functionRun] at run
+    knownListLength
+    knownListRun
     simp [knownSourceHead, ← len, hd] at run
     rcases run with ⟨rfl, rfl⟩
     simp [fvMax, freeVars, freeVarExp, or_imp, forall_and] at ra rf ⊢
@@ -157,12 +153,8 @@ private theorem work (c : Config) (xs : List Exp) (env : List ValApprox)
     have ra := iargs ea g1 n ha parts.2
     have functionRun : knownListTotal c [x] env g1 = ([(e, a)], g2) := by simp [knownListTotal_single, hx]
     have rf := ifun _ _ n functionRun parts.1
-    have len := knownListTotal_length c xs env g
-    rw [ha] at len
-    simp only at len
-    rw [knownListTotal_app, ha] at run
-    dsimp only at run
-    rw [functionRun] at run
+    knownListLength
+    knownListRun
     simp [knownSourceHead, ← len, hd] at run
     rcases run with ⟨rfl, rfl⟩
     simp [fvMax, freeVars, freeVarExp, or_imp, forall_and] at ra rf ⊢
@@ -180,12 +172,8 @@ private theorem work (c : Config) (xs : List Exp) (env : List ValApprox)
     have bodyRun : knownListTotal (decInlineFactor c) [body] (ea.map Prod.snd) g2 = ([(be, ba)], g3) := by
       simp [knownListTotal_single, hb]
     have rb := ibody _ _ ea.length bodyRun bodySafe
-    have len := knownListTotal_length c xs env g
-    rw [ha] at len
-    simp only at len
-    rw [knownListTotal_app, ha] at run
-    dsimp only at run
-    rw [functionRun] at run
+    knownListLength
+    knownListRun
     simp [knownSourceHead, ← len, hd, bodyRun] at run
     rcases run with ⟨rfl, rfl⟩
     let outArgs := if ClosLang.pure x then ea.map Prod.fst else ea.map Prod.fst ++ [e]

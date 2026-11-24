@@ -241,4 +241,23 @@ macro "knownTotalStep" : tactic =>
     rcases head with ⟨rfl, rfl⟩
     simp [← len, hd] at decision))
 
+/- Length of the total traversal of a known list, used by the per-case traversal
+proofs before they unfold the traversal step. Flapjack helper; the HOL script
+repeats this step inline for each case. -/
+set_option hygiene false in
+macro "knownListLength" : tactic =>
+  `(tactic| (
+    have len := knownListTotal_length c xs env g
+    rw [ha] at len
+    simp only at len))
+
+/- Unfold the append case of the total traversal on the already-reduced run.
+Flapjack helper for the per-case traversal proofs. -/
+set_option hygiene false in
+macro "knownListRun" : tactic =>
+  `(tactic| (
+    rw [knownListTotal_app, ha] at run
+    dsimp only at run
+    rw [functionRun] at run))
+
 end Flapjack.Compiler.Backend.ClosKnown

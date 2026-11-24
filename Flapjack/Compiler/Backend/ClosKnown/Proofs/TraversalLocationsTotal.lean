@@ -73,9 +73,7 @@ theorem knownLocationsAll (c : Config) (xs : List ClosLang.Exp) (env : List ValA
     exact knownLocationsOp c t op args env g ih eas next h
   case case9 =>
     rename_i c env g t loc x xs ea g1 ha e a g2 hx hd iargs ifun
-    have len := knownListTotal_length c xs env g
-    rw [ha] at len
-    simp only at len
+    knownListLength
     intro eas next h
     apply knownLocationsApp c t loc x xs env g ?_ ?_ iargs eas next h
     · intro ea2 next1 ea1 next2 e1 a1 body ⟨eq1, eq2, head, decision⟩
@@ -86,9 +84,7 @@ theorem knownLocationsAll (c : Config) (xs : List ClosLang.Exp) (env : List ValA
       exact ifun
   case case10 =>
     rename_i c env g t loc x xs ea g1 ha e a g2 hx target hd iargs ifun
-    have len := knownListTotal_length c xs env g
-    rw [ha] at len
-    simp only at len
+    knownListLength
     intro eas next h
     apply knownLocationsApp c t loc x xs env g ?_ ?_ iargs eas next h
     · intro ea2 next1 ea1 next2 e1 a1 body ⟨eq1, eq2, head, decision⟩
@@ -99,9 +95,7 @@ theorem knownLocationsAll (c : Config) (xs : List ClosLang.Exp) (env : List ValA
       exact ifun
   case case11 =>
     rename_i c env g t loc x xs ea g1 ha e a g2 hx body0 hd ae aa g3 hb iargs ifun ibody
-    have len := knownListTotal_length c xs env g
-    rw [ha] at len
-    simp only at len
+    knownListLength
     intro eas next h
     apply knownLocationsApp c t loc x xs env g ?_ ?_ iargs eas next h
     · intro ea2 next1 ea1 next2 e1 a1 body ⟨eq1, eq2, head, decision⟩
