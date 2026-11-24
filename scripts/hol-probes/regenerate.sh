@@ -12539,6 +12539,15 @@ run_probe prim_types_defs_typed_probeScript.sml prim_types_defs_typed_probe.out 
 run_probe prim_sem_env_eq_probeScript.sml prim_sem_env_eq_probe.out \
   prim_sem_env_eq_typed "$cake_dir/semantics/proofs/primSemEnvScript.sml" "$cake_dir/semantics/proofs"
 
+run_probe semantic_primitives_props_local_typed_probeScript.sml \
+  semantic_primitives_props_local_typed_probe.out \
+  exc_rel_raise1_typed exc_rel_raise2_typed exc_rel_type_error1_typed \
+  exc_rel_type_error2_typed exc_rel_refl_typed exc_rel_trans_typed \
+  result_rel_Rval_typed result_rel_Rerr1_typed result_rel_Rerr2_typed \
+  result_rel_refl_typed result_rel_trans_typed \
+  "$cake_dir/semantics/proofs/semanticPrimitivesPropsScript.sml" \
+  "$cake_dir/semantics/proofs"
+
 run_probe ffi_defs_typed_probeScript.sml ffi_defs_typed_probe.out \
   oracle_function_typed \
   "$cake_dir/semantics/ffi/ffiScript.sml" "$cake_dir/semantics/ffi"

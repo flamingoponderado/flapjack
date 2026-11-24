@@ -18671,6 +18671,94 @@
     "reviewer": "Compared result_rel_typed: success and error payloads have four independent types; successful pairs use the first relation, errors use the reviewed exception relation with the second relation, and mixed constructors are false."
   },
 {
+    "hol_path": "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml",
+    "hol_name": "exc_rel_raise1",
+    "lean_path": "Flapjack/SemanticPrimitivesProps/ResultRelation.lean",
+    "lean_name": "excRel_raise1",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared exc_rel_raise1_typed in semantic_primitives_props_local_typed_probe.out: the raised payload and error-result types stay independent, the left operand is exactly a raise of the supplied payload, and the right side is exactly a raise of a related payload, with the relation applied payload-first as in HOL."
+  },
+{
+    "hol_path": "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml",
+    "hol_name": "exc_rel_raise2",
+    "lean_path": "Flapjack/SemanticPrimitivesProps/ResultRelation.lean",
+    "lean_name": "excRel_raise2",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared exc_rel_raise2_typed in semantic_primitives_props_local_typed_probe.out: the error-result and raised payload types stay independent, the right operand is exactly a raise, and the relation is applied to the existential payload first and the fixed payload second, matching HOL's R v' v."
+  },
+{
+    "hol_path": "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml",
+    "hol_name": "exc_rel_type_error1",
+    "lean_path": "Flapjack/SemanticPrimitivesProps/ResultRelation.lean",
+    "lean_name": "excRel_typeError1",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared exc_rel_type_error1_typed in semantic_primitives_props_local_typed_probe.out: the left operand is an abort of an arbitrary abort value and the right side must be that identical abort; the raised case is vacuous and the payload relation is unused, as in HOL. The Lean name uses typeError for HOL's type_error arm."
+  },
+{
+    "hol_path": "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml",
+    "hol_name": "exc_rel_type_error2",
+    "lean_path": "Flapjack/SemanticPrimitivesProps/ResultRelation.lean",
+    "lean_name": "excRel_typeError2",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared exc_rel_type_error2_typed in semantic_primitives_props_local_typed_probe.out: the right operand is an abort of an arbitrary abort value and the left side must be that identical abort; the raised case is vacuous and the payload relation is unused, as in HOL."
+  },
+{
+    "hol_path": "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml",
+    "hol_name": "exc_rel_refl",
+    "lean_path": "Flapjack/SemanticPrimitivesProps/ResultRelation.lean",
+    "lean_name": "excRel_refl",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared exc_rel_refl_typed in semantic_primitives_props_local_typed_probe.out: the reflexive hypothesis is a single hypothesis over one payload type and the quantified error result keeps that same carrier on both sides."
+  },
+{
+    "hol_path": "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml",
+    "hol_name": "exc_rel_trans",
+    "lean_path": "Flapjack/SemanticPrimitivesProps/ResultRelation.lean",
+    "lean_name": "excRel_trans",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared exc_rel_trans_typed in semantic_primitives_props_local_typed_probe.out: the single transitive hypothesis keeps its conjunctive premise as one hypothesis, and the conclusion keeps three independently quantified error results with the conjunctive premise split into the two related hypotheses."
+  },
+{
+    "hol_path": "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml",
+    "hol_name": "result_rel_Rval",
+    "lean_path": "Flapjack/SemanticPrimitivesProps/ResultRelation.lean",
+    "lean_name": "resultRel_val",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared result_rel_Rval_typed in semantic_primitives_props_local_typed_probe.out: success and error payload types stay independent on both sides, the left operand is exactly a success of the supplied payload, and the right side is exactly a success of a related payload."
+  },
+{
+    "hol_path": "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml",
+    "hol_name": "result_rel_Rerr1",
+    "lean_path": "Flapjack/SemanticPrimitivesProps/ResultRelation.lean",
+    "lean_name": "resultRel_err1",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared result_rel_Rerr1_typed in semantic_primitives_props_local_typed_probe.out: the left operand is exactly an error, the right side is exactly an error carrying a related exception through the original excRel, and all four payload types stay independent."
+  },
+{
+    "hol_path": "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml",
+    "hol_name": "result_rel_Rerr2",
+    "lean_path": "Flapjack/SemanticPrimitivesProps/ResultRelation.lean",
+    "lean_name": "resultRel_err2",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared result_rel_Rerr2_typed in semantic_primitives_props_local_typed_probe.out: the right operand is exactly an error, the left side is exactly an error carrying a related exception through the original excRel applied source-first, and all four payload types stay independent."
+  },
+{
+    "hol_path": "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml",
+    "hol_name": "result_rel_refl",
+    "lean_path": "Flapjack/SemanticPrimitivesProps/ResultRelation.lean",
+    "lean_name": "resultRel_refl",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared result_rel_refl_typed in semantic_primitives_props_local_typed_probe.out: the two reflexive hypotheses are separate hypotheses over the same payload type used on both sides of the result, and the quantified result keeps one carrier."
+  },
+{
+    "hol_path": "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml",
+    "hol_name": "result_rel_trans",
+    "lean_path": "Flapjack/SemanticPrimitivesProps/ResultRelation.lean",
+    "lean_name": "resultRel_trans",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared result_rel_trans_typed in semantic_primitives_props_local_typed_probe.out: both transitive hypotheses are separate hypotheses with their conjunctive premises intact, and the conclusion keeps three independently quantified results with the conjunctive premise split into the two related hypotheses."
+  },
+{
     "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
     "hol_name": "compile_correct",
     "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/CompileCorrectShape.lean",

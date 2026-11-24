@@ -147,6 +147,15 @@ The captures support source review of root multiplicity, the explicit sizing
 result, and the canonical finite-map and word carriers; they do not establish
 cross-language equivalence.
 
+`semantic_primitives_props_local_typed_probe.out` captures the exported
+`semanticPrimitivesPropsTheory` theorems `exc_rel_raise1`, `exc_rel_raise2`,
+`exc_rel_type_error1`, `exc_rel_type_error2`, `exc_rel_refl`, `exc_rel_trans`,
+`result_rel_Rval`, `result_rel_Rerr1`, `result_rel_Rerr2`, `result_rel_refl`,
+and `result_rel_trans` with inferred types. These are exported declarations, so
+the capture is a typed replay rather than a local proof replay; it supports
+source review of the independent payload types, the abort identity, and the
+reflexivity/transitivity hypothesis shapes only.
+
 `data_to_word_gc_stack_probe.out` captures the typed original unchanged-pointer set and finiteness theorem, combined forwarding-map definition, and parsed local domain and application statements. These show that configuration and heap payload types are independent; the local parses do not replay their HOL proofs.
 
 The same probe captures the exported `partial_gc_related` theorem with inferred types, including its existential finite map and all heap-relation conclusions.

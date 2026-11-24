@@ -1,0 +1,11 @@
+exc_rel_raise1_typed=exc_rel (R :α -> β -> bool) (Rraise (v :α)) (e :β error_result) ⇔ ∃(v' :β). e = Rraise v' ∧ R v v'
+exc_rel_raise2_typed=exc_rel (R :α -> β -> bool) (e :α error_result) (Rraise (v :β)) ⇔ ∃(v' :α). e = Rraise v' ∧ R v' v
+exc_rel_type_error1_typed=exc_rel (R :α -> β -> bool) (Rabort (a :abort) :α error_result) (e :β error_result) ⇔ e = (Rabort a :β error_result)
+exc_rel_type_error2_typed=exc_rel (R :α -> β -> bool) (e :α error_result) (Rabort (a :abort) :β error_result) ⇔ e = (Rabort a :α error_result)
+exc_rel_refl_typed=(∀(x :α). (R :α -> α -> bool) x x) ⇒ ∀(x :α error_result). exc_rel R x x
+exc_rel_trans_typed=(∀(x :α) (y :α) (z :α). (R :α -> α -> bool) x y ∧ R y z ⇒ R x z) ⇒ ∀(x :α error_result) (y :α error_result) (z :α error_result). exc_rel R x y ∧ exc_rel R y z ⇒ exc_rel R x z
+result_rel_Rval_typed=result_rel (R1 :α -> β -> bool) (R2 :γ -> δ -> bool) (Rval (v :α) :(α, γ) result) (r :(β, δ) result) ⇔ ∃(v' :β). r = (Rval v' :(β, δ) result) ∧ R1 v v'
+result_rel_Rerr1_typed=result_rel (R1 :α -> β -> bool) (R2 :γ -> δ -> bool) (Rerr (e :γ error_result) :(α, γ) result) (r :(β, δ) result) ⇔ ∃(e' :δ error_result). r = (Rerr e' :(β, δ) result) ∧ exc_rel R2 e e'
+result_rel_Rerr2_typed=result_rel (R1 :α -> β -> bool) (R2 :γ -> δ -> bool) (r :(α, γ) result) (Rerr (e :δ error_result) :(β, δ) result) ⇔ ∃(e' :γ error_result). r = (Rerr e' :(α, γ) result) ∧ exc_rel R2 e' e
+result_rel_refl_typed=(∀(x :α). (R1 :α -> α -> bool) x x) ∧ (∀(x :β). (R2 :β -> β -> bool) x x) ⇒ ∀(x :(α, β) result). result_rel R1 R2 x x
+result_rel_trans_typed=(∀(x :α) (y :α) (z :α). (R1 :α -> α -> bool) x y ∧ R1 y z ⇒ R1 x z) ∧ (∀(x :β) (y :β) (z :β). (R2 :β -> β -> bool) x y ∧ R2 y z ⇒ R2 x z) ⇒ ∀(x :(α, β) result) (y :(α, β) result) (z :(α, β) result). result_rel R1 R2 x y ∧ result_rel R1 R2 y z ⇒ result_rel R1 R2 x z

@@ -41,4 +41,108 @@ theorem excRel_mono {α β : Type} (rel rel' : α → β → Prop)
     (related : excRel rel a b) : excRel rel' a b := by
   cases a <;> cases b <;> simp_all [excRel]
 
+/-- A raised payload on the left is related exactly to the results that raise it. -/
+@[hol "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml" "exc_rel_raise1"]
+theorem excRel_raise1 {α β : Type} (rel : α → β → Prop) (value : α) (error : ErrorResult β) :
+    excRel rel (.raise value) error ↔ ∃ value', error = .raise value' ∧ rel value value' := by
+  cases error
+  all_goals simp [excRel]
+
+/-- A raised payload on the right is related exactly to the results that raise it. -/
+@[hol "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml" "exc_rel_raise2"]
+theorem excRel_raise2 {α β : Type} (rel : α → β → Prop) (error : ErrorResult α) (value : β) :
+    excRel rel error (.raise value) ↔ ∃ value', error = .raise value' ∧ rel value' value := by
+  cases error
+  all_goals simp [excRel]
+
+/-- An abort on the left is related exactly to the identical abort (HOL's
+`exc_rel_type_error1`). -/
+@[hol "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml" "exc_rel_type_error1"]
+theorem excRel_typeError1 {α β : Type} (rel : α → β → Prop)
+    (abort : Abort) (error : ErrorResult β) :
+    excRel rel (.abort abort) error ↔ error = .abort abort := by
+  cases error
+  all_goals simp [excRel, eq_comm]
+
+/-- An abort on the right is related exactly to the identical abort (HOL's
+`exc_rel_type_error2`). -/
+@[hol "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml" "exc_rel_type_error2"]
+theorem excRel_typeError2 {α β : Type} (rel : α → β → Prop)
+    (error : ErrorResult α) (abort : Abort) :
+    excRel rel error (.abort abort) ↔ error = .abort abort := by
+  cases error
+  all_goals simp [excRel, eq_comm]
+
+/-- A reflexive payload relation makes the error relation reflexive. -/
+@[hol "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml" "exc_rel_refl"]
+theorem excRel_refl {α : Type} (rel : α → α → Prop) (refl : ∀ x, rel x x) (error : ErrorResult α) :
+    excRel rel error error := by
+  cases error
+  all_goals simp [excRel, refl]
+
+/-- A transitive payload relation makes the error relation transitive. -/
+@[hol "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml" "exc_rel_trans"]
+theorem excRel_trans {α : Type} (rel : α → α → Prop)
+    (trans : ∀ x y z, rel x y ∧ rel y z → rel x z) :
+    ∀ x y z, excRel rel x y ∧ excRel rel y z → excRel rel x z := by
+  intro x y z ⟨xy, yz⟩
+  cases x
+  all_goals cases y
+  all_goals cases z
+  all_goals first
+    | exact trans _ _ _ ⟨xy, yz⟩
+    | simp_all [excRel]
+
+/-- A successful value on the left is related exactly to the results holding it. -/
+@[hol "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml" "result_rel_Rval"]
+theorem resultRel_val {α β γ δ : Type} (values : α → β → Prop) (errors : γ → δ → Prop)
+    (value : α) (other : Result β δ) :
+    resultRel values errors (.val value) other ↔
+      ∃ value', other = .val value' ∧ values value value' := by
+  cases other
+  all_goals simp [resultRel]
+
+/-- An error on the left is related exactly to the results carrying a related error. -/
+@[hol "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml" "result_rel_Rerr1"]
+theorem resultRel_err1 {α β γ δ : Type} (values : α → β → Prop) (errors : γ → δ → Prop)
+    (error : ErrorResult γ) (other : Result β δ) :
+    resultRel values errors (.err error) other ↔
+      ∃ error', other = .err error' ∧ excRel errors error error' := by
+  cases other
+  all_goals simp [resultRel]
+
+/-- An error on the right is related exactly to the results carrying a related error. -/
+@[hol "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml" "result_rel_Rerr2"]
+theorem resultRel_err2 {α β γ δ : Type} (values : α → β → Prop) (errors : γ → δ → Prop)
+    (other : Result α γ) (error : ErrorResult δ) :
+    resultRel values errors other (.err error) ↔
+      ∃ error', other = .err error' ∧ excRel errors error' error := by
+  cases other
+  all_goals simp [resultRel]
+
+/-- Reflexive payload relations make the result relation reflexive. -/
+@[hol "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml" "result_rel_refl"]
+theorem resultRel_refl {α β : Type} (values : α → α → Prop) (errors : β → β → Prop)
+    (valuesRefl : ∀ x, values x x) (errorsRefl : ∀ x, errors x x) (result : Result α β) :
+    resultRel values errors result result := by
+  cases result with
+  | val value => exact valuesRefl value
+  | err error => exact excRel_refl errors errorsRefl error
+
+/-- Transitive payload relations make the result relation transitive. -/
+@[hol "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml" "result_rel_trans"]
+theorem resultRel_trans {α β : Type} (values : α → α → Prop) (errors : β → β → Prop)
+    (valuesTrans : ∀ x y z, values x y ∧ values y z → values x z)
+    (errorsTrans : ∀ x y z, errors x y ∧ errors y z → errors x z) :
+    ∀ x y z, resultRel values errors x y ∧ resultRel values errors y z →
+      resultRel values errors x z := by
+  intro x y z ⟨xy, yz⟩
+  cases x
+  all_goals cases y
+  all_goals cases z
+  all_goals first
+    | exact valuesTrans _ _ _ ⟨xy, yz⟩
+    | exact excRel_trans errors errorsTrans _ _ _ ⟨xy, yz⟩
+    | simp_all [resultRel, excRel]
+
 end Flapjack.SemanticPrimitivesProps
