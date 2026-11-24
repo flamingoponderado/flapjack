@@ -155,11 +155,15 @@ and `result_rel_trans` with inferred types. It also captures the store-entry
 operations `map_sv_def`, `is_Refv_def`, `sv_every_def`, `store_v_vs_def`,
 `store_vs_def`, `map_sv_compose`, `sv_rel_refl` and `sv_rel_trans`, and the
 opening record and Boolean-value laws `with_same_v`, `unchanged_env`,
-`with_same_clock` and `Boolv_11`. These are exported declarations, so the
-capture is a typed replay rather than a local proof replay; it supports source
-review of the independent payload types, the abort identity, the reflexivity and
-transitivity hypothesis shapes, the store-entry clause order, and the sem_env,
-state and Boolean-value carriers only.
+`with_same_clock` and `Boolv_11`. It further captures the declaration-constructor
+definitions `ctors_of_tdef_def` and `ctors_of_dec_def`, the primitive-type case
+enumeration `prim_type_cases`, the natural-number value injectivity `nat_to_v_11`,
+and the indexed recursive-function lookup `find_recfun_el`. These are exported
+declarations, so the capture is a typed replay rather than a local proof replay;
+it supports source review of the independent payload types, the abort identity,
+the reflexivity and transitivity hypothesis shapes, the store-entry clause order,
+the sem_env, state and Boolean-value carriers, the independent type variables of
+`ctors_of_tdef`, and the three lookup premises only.
 
 `data_to_word_gc_stack_probe.out` captures the typed original unchanged-pointer set and finiteness theorem, combined forwarding-map definition, and parsed local domain and application statements. These show that configuration and heap payload types are independent; the local parses do not replay their HOL proofs.
 

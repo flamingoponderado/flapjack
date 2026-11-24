@@ -18855,6 +18855,46 @@
     "reviewer": "Compared Boolv_11_typed in semantic_primitives_props_local_typed_probe.out: the Boolean value encoding of semanticPrimitives' Boolv is injective; HOL's b1 = b2 on bool prints as b1 ⇔ b2 and Lean states Bool equality over the same boolValue encoding."
   },
 {
+    "hol_path": "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml",
+    "hol_name": "ctors_of_tdef_def",
+    "lean_path": "Flapjack/SemanticPrimitivesProps/Declarations.lean",
+    "lean_name": "ctorsOfTypeDef",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared ctors_of_tdef_def_typed in semantic_primitives_props_local_typed_probe.out: HOL leaves the first two components of the triple arbitrary, so all four type variables stay independent in Lean; the constructor-name list is the FST map over the third component's pair list, as in the original equation."
+  },
+{
+    "hol_path": "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml",
+    "hol_name": "ctors_of_dec_def",
+    "lean_path": "Flapjack/SemanticPrimitivesProps/Declarations.lean",
+    "lean_name": "ctorsOfDec",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared ctors_of_dec_def_typed in semantic_primitives_props_local_typed_probe.out: the Dtype arm flattens the per-type constructor lists, the Dexn arm returns the single declared name, and the wildcard arm returns the empty list; the captured expansion of the wildcard into the six remaining constructors matches the single wildcard arm."
+  },
+{
+    "hol_path": "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml",
+    "hol_name": "prim_type_cases",
+    "lean_path": "Flapjack/SemanticPrimitivesProps/Conversion.lean",
+    "lean_name": "primType_cases",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared prim_type_cases_typed in semantic_primitives_props_local_typed_probe.out: the same seven alternatives in HOL's order, with the word alternatives carrying the two word sizes of the source prim_type carrier."
+  },
+{
+    "hol_path": "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml",
+    "hol_name": "nat_to_v_11",
+    "lean_path": "Flapjack/SemanticPrimitivesProps/Conversion.lean",
+    "lean_name": "natToValue_inj",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared nat_to_v_11_typed in semantic_primitives_props_local_typed_probe.out: two natural-number values are equal exactly when their source numbers are equal, over the same num carrier and the reviewed nat_to_v encoding."
+  },
+{
+    "hol_path": "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml",
+    "hol_name": "find_recfun_el",
+    "lean_path": "Flapjack/SemanticPrimitivesProps/RecursiveFunctions.lean",
+    "lean_name": "findRecFun_el",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared find_recfun_el_typed in semantic_primitives_props_local_typed_probe.out: the binders keep HOL's order f, funs, x, e, n; the three conjunctive premises are separate hypotheses (distinct keys, in-bounds index, listed entry); the result payload types stay independent; and the conclusion is the original find_recfun lookup."
+  },
+{
     "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
     "hol_name": "compile_correct",
     "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/CompileCorrectShape.lean",

@@ -21,3 +21,8 @@ with_same_v_typed=(env :φ sem_env) with v := env.v = env
 unchanged_env_typed=∀(env :α sem_env). <|v := env.v; c := env.c|> = env
 with_same_clock_typed=(st :'ffi state) with clock := st.clock = st
 Boolv_11_typed=Boolv (b1 :bool) = Boolv (b2 :bool) ⇔ (b1 ⇔ b2)
+ctors_of_tdef_def_typed=∀(v0 :β) (v1 :γ) (condefs :(α # δ) list). ctors_of_tdef (v0,v1,condefs) = MAP (FST :α # δ -> α) condefs
+ctors_of_dec_def_typed=ctors_of_dec (Dtype (locs :locs) (tds :(mlstring list # mlstring # (mlstring # ast_t list) list) list)) = FLAT (MAP (ctors_of_tdef :mlstring list # mlstring # (mlstring # ast_t list) list -> mlstring list) tds) ∧ ctors_of_dec (Dexn locs (s :mlstring) (v0 :ast_t list)) = [s] ∧ ctors_of_dec (Dlet (v :locs) (v2 :pat) (v3 :exp)) = ([] :mlstring list) ∧ ctors_of_dec (Dletrec (v4 :locs) (v5 :(mlstring # mlstring # exp) list)) = ([] :mlstring list) ∧ ctors_of_dec (Dtabbrev (v8 :locs) (v9 :mlstring list) (v10 :mlstring) (v11 :ast_t)) = ([] :mlstring list) ∧ ctors_of_dec (Dmod (v15 :mlstring) (v16 :dec list)) = ([] :mlstring list) ∧ ctors_of_dec (Dlocal (v17 :dec list) (v18 :dec list)) = ([] :mlstring list) ∧ ctors_of_dec (Denv (v19 :mlstring)) = ([] :mlstring list)
+prim_type_cases_typed=∀(ty :prim_type). ty = BoolT ∨ ty = IntT ∨ ty = CharT ∨ ty = StrT ∨ ty = WordT W8 ∨ ty = WordT W64 ∨ ty = Float64T
+nat_to_v_11_typed=∀(i :num) (j :num). nat_to_v i = nat_to_v j ⇔ i = j
+find_recfun_el_typed=∀(f :mlstring) (funs :(mlstring # α # β) list) (x :α) (e :β) (n :num). ALL_DISTINCT (MAP (λ((f :mlstring),(x :α),(e :β)). f) funs) ∧ n < LENGTH funs ∧ funs❲n❳ = (f,x,e) ⇒ find_recfun f funs = SOME (x,e)

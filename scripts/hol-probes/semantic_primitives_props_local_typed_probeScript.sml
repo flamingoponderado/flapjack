@@ -45,3 +45,10 @@ val _ = emit "with_same_v_typed" "with_same_v";
 val _ = emit "unchanged_env_typed" "unchanged_env";
 val _ = emit "with_same_clock_typed" "with_same_clock";
 val _ = emit "Boolv_11_typed" "Boolv_11";
+
+(* Declaration constructors, primitive-type cases and lookup. *)
+val _ = emit "ctors_of_tdef_def_typed" "ctors_of_tdef_def";
+val _ = emit "ctors_of_dec_def_typed" "ctors_of_dec_def";
+val _ = emit "prim_type_cases_typed" "prim_type_cases";
+val _ = emit "nat_to_v_11_typed" "nat_to_v_11";
+val _ = emit "find_recfun_el_typed" "find_recfun_el";
