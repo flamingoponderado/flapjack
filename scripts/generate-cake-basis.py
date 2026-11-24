@@ -130,7 +130,7 @@ def generate():
         while tokens[pos] == ';': take(';'); decls.append(expr())
     take(']')
     if pos != len(tokens): raise ValueError('trailing HOL syntax')
-    header = '''-- Generated from the pinned HOL basis capture by scripts/generate-cake-basis.py.\nimport Flapjack.AstHOL.Syntax\n\n/-! The original generated CakeML basis declarations in their source order. -/\nnamespace Flapjack.Basis.BasisProg\nopen Flapjack.AstHOL Flapjack.NamespaceHOL Flapjack.Misc.Location\nopen Flapjack.Basis.Pure.MlString\n\nset_option maxRecDepth 8192\nset_option maxHeartbeats 0\n\n'''
+    header = '''-- Generated from the pinned HOL basis capture by scripts/generate-cake-basis.py.\nimport Flapjack.AstHOL.Syntax\n\n/-! The original generated CakeML basis declarations in their source order. -/\nnamespace Flapjack.Basis.BasisProg\nopen Flapjack.AstHOL Flapjack.NamespaceHOL Flapjack.Misc.Location\nopen Flapjack.Basis.Pure.MlString\n\nset_option maxRecDepth 1408\n\n'''
     parts = [f'private def d{i} : Dec := {d}\n' for i, d in enumerate(decls)]
     body = '''\n/-- The pinned original CakeML standard basis program. Source review of the\ngenerated declaration and its complete imported carriers remains pending. -/\n@[hol "cakeml/basis/basisProgScript.sml" "basis_def"]\ndef basis : List Dec :=\n  [''' + ', '.join(f'd{i}' for i in range(len(decls))) + ''']\n\nend Flapjack.Basis.BasisProg\n'''
     return header + ''.join(parts) + body

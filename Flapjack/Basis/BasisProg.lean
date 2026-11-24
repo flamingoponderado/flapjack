@@ -14,8 +14,7 @@ namespace Flapjack.Basis.BasisProg
 open Flapjack.AstHOL Flapjack.NamespaceHOL Flapjack.Misc.Location
 open Flapjack.Basis.Pure.MlString
 
-set_option maxRecDepth 8192
-set_option maxHeartbeats 0
+set_option maxRecDepth 1408
 
 private def d0 : Dec := (.dtype unknownLoc [([(ofString "'a")], (ofString "option"), [((ofString "Some"), [(.atvar (ofString "'a"))]), ((ofString "None"), [])])])
 private def d1 : Dec := (.dtype unknownLoc [([], (ofString "ordering"), [((ofString "Greater"), []), ((ofString "Equal"), []), ((ofString "Less"), [])])])
