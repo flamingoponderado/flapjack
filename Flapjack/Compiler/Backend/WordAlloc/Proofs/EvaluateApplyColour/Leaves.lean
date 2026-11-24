@@ -36,6 +36,33 @@ theorem holFmapAsFiniteSupportWitness
 
 end EvaluateApplyColourLeafWitnesses
 
+/- Open an `evaluate_apply_colour` leaf proof that writes one variable: destruct
+the run hypotheses, apply the self-postcondition, and reduce colouring and
+evaluation. Flapjack infrastructure (no HOL original); hygiene is disabled so
+`he`, `hok`, `hs` and `hr` survive. -/
+set_option hygiene false in
+local macro "applyColourPostIntroLeaf" : tactic =>
+  `(tactic| (
+    rintro st cst f live lt ⟨hok, hs, hr⟩
+    apply applyColourPost_self
+    intro he
+    simp only [applyColour]
+    simp only [colouringOk, getWrites, getLive] at hok hr
+    rw [evaluate] at he ⊢
+    rw [evaluate]))
+
+/- The same opening for leaves that need no write set: destruct the hypotheses,
+apply the self-postcondition, and reduce colouring and evaluation. Flapjack
+infrastructure (no HOL original); hygiene is disabled so `hs` and `hr` survive. -/
+set_option hygiene false in
+local macro "applyColourPostIntroPure" : tactic =>
+  `(tactic| (
+    rintro st cst f live lt ⟨-, hs, hr⟩
+    apply applyColourPost_self
+    intro _
+    simp only [applyColour]
+    rw [evaluate, evaluate]))
+
 open EvaluateApplyColourLeafWitnesses
 
 /-- Structure eta for the exact WordSem state, stated with the explicit
@@ -196,11 +223,7 @@ theorem evaluateApplyColour_Skip {width : Nat} [NeZero width] {C F : Type} :
       colouringOk f (.skip : WordLangProgHOL (BitVec width)) live lt ∧ wordStateEqRel st cst ∧
         strongLocalsRel f (sptDomain (getLive (.skip : WordLangProgHOL (BitVec width)) live lt)) st.locals cst.locals →
       applyColourPost f (.skip : WordLangProgHOL (BitVec width)) live lt st cst := by
-  rintro st cst f live lt ⟨-, hs, hr⟩
-  apply applyColourPost_self
-  intro _
-  simp only [applyColour]
-  rw [evaluate, evaluate]
+  applyColourPostIntroPure
   exact ⟨rfl, hs, by simpa [getLive, applyColourLocals] using hr⟩
 
 /-- HOL `evaluate_apply_colour`, `Tick` case. -/
@@ -233,11 +256,7 @@ theorem evaluateApplyColour_Break {width : Nat} [NeZero width] {C F : Type} (k :
       colouringOk f (.break k : WordLangProgHOL (BitVec width)) live lt ∧ wordStateEqRel st cst ∧
         strongLocalsRel f (sptDomain (getLive (.break k : WordLangProgHOL (BitVec width)) live lt)) st.locals cst.locals →
       applyColourPost f (.break k : WordLangProgHOL (BitVec width)) live lt st cst := by
-  rintro st cst f live lt ⟨-, hs, hr⟩
-  apply applyColourPost_self
-  intro _
-  simp only [applyColour]
-  rw [evaluate, evaluate]
+  applyColourPostIntroPure
   refine ⟨rfl, hs, ?_⟩
   simp only [applyColourLocals, sptOel_eq_getElem?]
   simp only [getLive] at hr
@@ -254,11 +273,7 @@ theorem evaluateApplyColour_Continue {width : Nat} [NeZero width] {C F : Type} (
       colouringOk f (.continue k : WordLangProgHOL (BitVec width)) live lt ∧ wordStateEqRel st cst ∧
         strongLocalsRel f (sptDomain (getLive (.continue k : WordLangProgHOL (BitVec width)) live lt)) st.locals cst.locals →
       applyColourPost f (.continue k : WordLangProgHOL (BitVec width)) live lt st cst := by
-  rintro st cst f live lt ⟨-, hs, hr⟩
-  apply applyColourPost_self
-  intro _
-  simp only [applyColour]
-  rw [evaluate, evaluate]
+  applyColourPostIntroPure
   refine ⟨rfl, hs, ?_⟩
   simp only [applyColourLocals, sptOel_eq_getElem?]
   simp only [getLive] at hr
@@ -291,13 +306,7 @@ theorem evaluateApplyColour_Assign {width : Nat} [NeZero width] {C F : Type} (v 
       colouringOk f (.assign v exp : WordLangProgHOL (BitVec width)) live lt ∧ wordStateEqRel st cst ∧
         strongLocalsRel f (sptDomain (getLive (.assign v exp : WordLangProgHOL (BitVec width)) live lt)) st.locals cst.locals →
       applyColourPost f (.assign v exp : WordLangProgHOL (BitVec width)) live lt st cst := by
-  rintro st cst f live lt ⟨hok, hs, hr⟩
-  apply applyColourPost_self
-  intro he
-  simp only [applyColour]
-  simp only [colouringOk, getWrites, getLive] at hok hr
-  rw [evaluate] at he ⊢
-  rw [evaluate]
+  applyColourPostIntroLeaf
   cases hw : wordExp st exp with
   | none => rw [hw] at he; exact absurd rfl he
   | some w =>
@@ -320,13 +329,7 @@ theorem evaluateApplyColour_Get {width : Nat} [NeZero width] {C F : Type} (v : N
       colouringOk f (.get v name : WordLangProgHOL (BitVec width)) live lt ∧ wordStateEqRel st cst ∧
         strongLocalsRel f (sptDomain (getLive (.get v name : WordLangProgHOL (BitVec width)) live lt)) st.locals cst.locals →
       applyColourPost f (.get v name : WordLangProgHOL (BitVec width)) live lt st cst := by
-  rintro st cst f live lt ⟨hok, hs, hr⟩
-  apply applyColourPost_self
-  intro he
-  simp only [applyColour]
-  simp only [colouringOk, getWrites, getLive] at hok hr
-  rw [evaluate] at he ⊢
-  rw [evaluate]
+  applyColourPostIntroLeaf
   have hgs : getStore name cst = getStore name st := by simp only [getStore, wsrStore hs]
   rw [hgs]
   cases hw : getStore name st with
@@ -377,13 +380,7 @@ theorem evaluateApplyColour_LocValue {width : Nat} [NeZero width] {C F : Type} (
       colouringOk f (.locValue r l1 : WordLangProgHOL (BitVec width)) live lt ∧ wordStateEqRel st cst ∧
         strongLocalsRel f (sptDomain (getLive (.locValue r l1 : WordLangProgHOL (BitVec width)) live lt)) st.locals cst.locals →
       applyColourPost f (.locValue r l1 : WordLangProgHOL (BitVec width)) live lt st cst := by
-  rintro st cst f live lt ⟨hok, hs, hr⟩
-  apply applyColourPost_self
-  intro he
-  simp only [applyColour]
-  simp only [colouringOk, getWrites, getLive] at hok hr
-  rw [evaluate] at he ⊢
-  rw [evaluate]
+  applyColourPostIntroLeaf
   have hc : sptMem l1 cst.code ↔ sptMem l1 st.code := by rw [wsrCode hs]
   by_cases hm : sptMem l1 st.code
   · rw [if_pos hm, if_pos (hc.mpr hm)]
@@ -606,13 +603,7 @@ theorem evaluateApplyColour_OpCurrHeap {width : Nat} [NeZero width] {C F : Type}
       colouringOk f (.opCurrHeap b dst src : WordLangProgHOL (BitVec width)) live lt ∧ wordStateEqRel st cst ∧
         strongLocalsRel f (sptDomain (getLive (.opCurrHeap b dst src : WordLangProgHOL (BitVec width)) live lt)) st.locals cst.locals →
       applyColourPost f (.opCurrHeap b dst src : WordLangProgHOL (BitVec width)) live lt st cst := by
-  rintro st cst f live lt ⟨hok, hs, hr⟩
-  apply applyColourPost_self
-  intro he
-  simp only [applyColour]
-  simp only [colouringOk, getWrites, getLive] at hok hr
-  rw [evaluate] at he ⊢
-  rw [evaluate]
+  applyColourPostIntroLeaf
   have hexp : (WordLangExpHOL.op b [.var (f src), .lookup .currHeap] : WordLangExpHOL (BitVec width)) =
       applyColourExp f (.op b [.var src, .lookup .currHeap]) := by
     simp [applyColourExp, applyColourExpCore]
