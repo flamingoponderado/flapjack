@@ -5,7 +5,6 @@ public import Mathlib.Data.List.Forall2
 
 @[expose] public section
 open Flapjack Flapjack.WordToStackProofs
-set_option maxRecDepth 8192
 
 -- fo_suffix_1_1_0
 example : (absStack ([] : List (BitVec 1)) ([] : List (WordSemStackFrame 1)) ([.word 0] : List (WordLocW 1)) []).map (fun xs => [0,1,2,99].map (fun n => handlerVal (wordSemLastN n xs))) = some [1, 1, 1, 1] := by

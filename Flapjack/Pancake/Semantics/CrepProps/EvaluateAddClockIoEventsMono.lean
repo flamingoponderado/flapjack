@@ -115,7 +115,6 @@ theorem callStep_prefix {width : Nat} [NeZero width] {σ : Type}
               · rw [if_neg heq]; exact List.prefix_refl _
       | _ => exact List.prefix_refl _
 
-set_option maxHeartbeats 4000000 in
 theorem evalCrepSemHOLProgExact_addClock_mono_aux {width : Nat} [NeZero width] {σ : Type}
     (program : CrepProgHOL width) (state : CrepSemHOLState width σ) (extra : Nat) :
     CrepAddClockCombined program state extra := by

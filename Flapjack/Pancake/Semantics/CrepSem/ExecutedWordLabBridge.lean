@@ -433,8 +433,6 @@ theorem evalCrepRuntimeExpWordLab_executed {width : Nat} [NeZero width] {σ : Ty
 
 section
 
-set_option maxHeartbeats 1000000
-
 /-- Unconditional all-width list-level executed bridge: the shipped bare list
 evaluator `evalCrepRuntimeExps` at the canonical BitVec evaluator state returns
 the exact `evalCrepSemHOLExp` result (mapped through `holWordLabToWord`) for

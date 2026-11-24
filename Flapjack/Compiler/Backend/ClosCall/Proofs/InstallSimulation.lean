@@ -77,7 +77,6 @@ private theorem alistLookupNone {K V : Type} (entries : List (K × V)) (key : K)
   rw [HolFiniteMapExact.holFmapAsFiniteSupportResultWitness_alistToFmap]
   exact FLOOKUP_FUPDATE_LIST_HOL_not_mem FEMPTY entries.reverse key (by simpa using absent)
 
-set_option maxHeartbeats 4000000 in
 /-- Installing a source oracle entry preserves the related compiler states,
 code invariant and fresh generated labels, and produces the same machine code. -/
 @[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "code_rel_state_rel_install"

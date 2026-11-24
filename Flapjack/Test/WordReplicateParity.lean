@@ -4,7 +4,7 @@ public import Flapjack.Misc.Words.Replicate
 
 @[expose] public section
 
-set_option maxRecDepth 10000
+set_option maxRecDepth 2000
 
 namespace Flapjack.Test
 example : (Flapjack.holWordReplicate 1 0 (1 : BitVec 1)).toNat = 0 := by decide

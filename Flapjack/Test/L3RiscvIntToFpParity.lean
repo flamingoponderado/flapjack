@@ -10,8 +10,6 @@ public import Flapjack.Misc.BinaryIeeeDirectedFp64
 are instantiated by defaults. Numeric choice is rewritten using the complete
 all-mode32/64 agreements; these are regression replays, not HOL real equivalence.
 The rational representation assumption remains SOUNDNESS item8. -/
-set_option maxRecDepth 200000
-set_option maxHeartbeats 0
 set_option synthInstance.maxSize 2048
 namespace Flapjack.Test.L3RiscvIntToFpParity
 open Flapjack.RiscV.L3 Flapjack

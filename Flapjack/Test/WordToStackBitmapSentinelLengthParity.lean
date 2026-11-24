@@ -4,7 +4,7 @@ public import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapSentinelLength
 
 @[expose] public section
 open Flapjack.Compiler.Backend.WordToStack
-set_option maxRecDepth 4096
+set_option maxRecDepth 2000
 
 -- sl_length_0_2
 example : Flapjack.StackSem.bitLength (bitsToWordW ([] ++ [true]) : BitVec 2) = 1 := bitLengthBitsToWord [] (by decide)

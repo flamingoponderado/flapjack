@@ -10,8 +10,6 @@ namespace Flapjack.RiscV.TargetProof
 open Flapjack RiscV.L3 Compiler.Encoders.Asm Compiler.Encoders.AsmSem
   Compiler.Encoders.AsmProps Compiler.Encoders.RiscV.Target
 set_option maxRecDepth 200000
-set_option maxHeartbeats 2000000
-
 private theorem const32_dest_nonzero (r : BitVec 5) (c : BitVec 32)
     (rn : r ≠ 0#5) : ∀ i ∈ riscvConst32 r c, constDestination i ≠ 0#5 := by
   simp only [riscvConst32]

@@ -7,7 +7,6 @@ public import Flapjack.Compiler.Backend.LabSem.Memory
 /-! Native direct kernel replays of labsem_memory_probe.out. All8 mem_op cases,
 raw failing writes, narrow alignment/domain/type errors, endian/resizing,
 sticky failure, address wrapping and positive dimensions smaller than one byte. -/
-set_option maxRecDepth 4096
 
 namespace Flapjack.Test.LabSemMemoryParity
 open Flapjack.Compiler.Backend.LabSem

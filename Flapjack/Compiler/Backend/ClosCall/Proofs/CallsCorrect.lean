@@ -53,6 +53,18 @@ theorem holFmapAsFiniteSupportRelationWitness_ClosSem.State {C F : Type} :
   ClosSem.holFmapAsFiniteSupportWitness
 end CallsCorrectPort
 
+/- Reduce the source-side call evaluation to the argument and function runs.
+Flapjack helper for the `calls` correctness cases; the HOL script repeats this
+step inline for each case. -/
+set_option hygiene false in
+local macro "callSourceRun" : tactic =>
+  `(tactic| (
+    rw [ClosSem.evaluate] at sourceRun
+    simp only [nonempty, List.isEmpty_iff, ↓reduceIte] at sourceRun
+    rw [ClosSem.fixClock_evaluate, argsRun] at sourceRun
+    simp only at sourceRun
+    rw [ClosSem.fixClock_evaluate, fnRun] at sourceRun))
+
 private theorem listSplitInvariants (x y : ClosLang.Exp) (xs : List ClosLang.Exp) (g0 gm g : State)
     (out : ClosLang.Exp) (tail : List ClosLang.Exp)
     (headRun : calls [x] g0 = ([out], gm))
@@ -4524,11 +4536,7 @@ private theorem appFunctionSimulation {C F : Type} (trace : BackendCommon.Tra) (
   have fnSafe : fnResult ≠ .err (.abort .typeError) := by
     intro bad
     subst fnResult
-    rw [ClosSem.evaluate] at sourceRun
-    simp only [nonempty, List.isEmpty_iff, ↓reduceIte] at sourceRun
-    rw [ClosSem.fixClock_evaluate, argsRun] at sourceRun
-    simp only at sourceRun
-    rw [ClosSem.fixClock_evaluate, fnRun] at sourceRun
+    callSourceRun
     simp only [Prod.mk.injEq] at sourceRun
     obtain ⟨rfl, rfl⟩ := sourceRun
     exact safe rfl
@@ -4582,11 +4590,7 @@ private theorem appContinuationSimulation {C F : Type} (trace : BackendCommon.Tr
       Disjoint l4 (sptDomain g4.1) ∧
       resultRel (List.Forall₂ (valueRel g4 l4 t3.code)) (valueRel g4 l4 t3.code) result res' := by
   have appRun : ClosSem.evaluateApp loc f values next = (result, last) := by
-    rw [ClosSem.evaluate] at sourceRun
-    simp only [nonempty, List.isEmpty_iff, ↓reduceIte] at sourceRun
-    rw [ClosSem.fixClock_evaluate, argsRun] at sourceRun
-    simp only at sourceRun
-    rw [ClosSem.fixClock_evaluate, fnRun] at sourceRun
+    callSourceRun
     simpa [ClosSem.headValue, holHd] using sourceRun
   have firstClock := ClosSem.evaluate_clock_source.1 args env1 s0 (.val values) middle argsRun
   have secondClock := ClosSem.evaluate_clock_source.1 [function] env1 middle (.val [f]) next fnRun
@@ -4738,11 +4742,7 @@ private theorem finishNormalApp {C F : Type} (trace : BackendCommon.Tra) (loc : 
             | val _ => exact False.elim fnRelated
             | err targetError =>
               have eq : (result, last) = (.err error, next) := by
-                rw [ClosSem.evaluate] at sourceRun
-                simp only [nonempty, List.isEmpty_iff, ↓reduceIte] at sourceRun
-                rw [ClosSem.fixClock_evaluate, argsRun] at sourceRun
-                simp only at sourceRun
-                rw [ClosSem.fixClock_evaluate, fnRun] at sourceRun
+                callSourceRun
                 exact sourceRun.symm
               cases eq
               exact ⟨ck + ck2, .err targetError, t2, g3, l3, inv3, stateWell3,
@@ -5065,11 +5065,7 @@ private theorem finishPureDirectApp {C F : Type} (trace : BackendCommon.Tra) (lo
           have fnSafe : fnResult ≠ .err (.abort .typeError) := by
             intro bad
             subst fnResult
-            rw [ClosSem.evaluate] at sourceRun
-            simp only [nonempty, List.isEmpty_iff, ↓reduceIte] at sourceRun
-            rw [ClosSem.fixClock_evaluate, argsRun] at sourceRun
-            simp only at sourceRun
-            rw [ClosSem.fixClock_evaluate, fnRun] at sourceRun
+            callSourceRun
             obtain ⟨rfl, rfl⟩ := sourceRun
             exact safe rfl
           obtain ⟨f, targetF, rfl, rfl, sourceNext, targetNext, functionRelated⟩ :=
@@ -5080,11 +5076,7 @@ private theorem finishPureDirectApp {C F : Type} (trace : BackendCommon.Tra) (lo
           change ∀ v ∈ values, valueWellFormed g2 l2 t.code v at argsWell
           change List.Forall₂ (valueRel g2 l2 t.code) values targetValues at argsRelated
           have appRun : ClosSem.evaluateApp (some loc) f values next = (result, last) := by
-            rw [ClosSem.evaluate] at sourceRun
-            simp only [nonempty, List.isEmpty_iff, ↓reduceIte] at sourceRun
-            rw [ClosSem.fixClock_evaluate, argsRun] at sourceRun
-            simp only at sourceRun
-            rw [ClosSem.fixClock_evaluate, fnRun] at sourceRun
+            callSourceRun
             simpa [ClosSem.headValue, holHd] using sourceRun
           have codeGrowth1 : t0.code.submap t.code := by
             simpa using ClosProps.CodeGrowthPort.evaluate_mono outArgs env2 {t0 with clock := t0.clock + ck}
@@ -5248,11 +5240,7 @@ private theorem finishImpureDirectApp {C F : Type} (trace letTrace callTrace : B
             | val _ => exact False.elim fnRelated
             | err targetError =>
               have eq : (result, last) = (.err error, next) := by
-                rw [ClosSem.evaluate] at sourceRun
-                simp only [nonempty, List.isEmpty_iff, ↓reduceIte] at sourceRun
-                rw [ClosSem.fixClock_evaluate, argsRun] at sourceRun
-                simp only at sourceRun
-                rw [ClosSem.fixClock_evaluate, fnRun] at sourceRun
+                callSourceRun
                 exact sourceRun.symm
               cases eq
               exact ⟨ck + ck2, .err targetError, t2, g3, l3, inv3, stateWell3,
@@ -5276,11 +5264,7 @@ private theorem finishImpureDirectApp {C F : Type} (trace letTrace callTrace : B
                 change ∀ v ∈ values, valueWellFormed g2 l2 t.code v at argsWell
                 change List.Forall₂ (valueRel g2 l2 t.code) values targetValues at argsRelated
                 have appRun : ClosSem.evaluateApp (some loc) f values next = (result, last) := by
-                  rw [ClosSem.evaluate] at sourceRun
-                  simp only [nonempty, List.isEmpty_iff, ↓reduceIte] at sourceRun
-                  rw [ClosSem.fixClock_evaluate, argsRun] at sourceRun
-                  simp only at sourceRun
-                  rw [ClosSem.fixClock_evaluate, fnRun] at sourceRun
+                  callSourceRun
                   simpa [ClosSem.headValue, holHd] using sourceRun
                 have codeGrowth1 : t0.code.submap t.code := by
                   simpa using ClosProps.CodeGrowthPort.evaluate_mono outArgs env2 {t0 with clock := t0.clock + ck}

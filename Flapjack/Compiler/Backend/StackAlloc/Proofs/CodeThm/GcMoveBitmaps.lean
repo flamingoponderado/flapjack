@@ -25,6 +25,43 @@ open Flapjack.Compiler.Backend.StackLang Flapjack.Compiler.Encoders.Asm
 open Flapjack.Compiler.Backend.DataToWord Flapjack.Compiler.Backend.WordGcFunctions
 open Flapjack.Compiler.Backend.StackRemove (loadInst storeInst leftShiftInst rightShiftInst)
 
+/- Locate the current bitmap word in the `word_gc_move_bitmaps_code` loop: the
+dropped prefix is not empty, so its index is in bounds and the head of the drop is
+the word at that index. Flapjack proof infrastructure (no HOL original), used by
+the `*MoveBitmaps` code theorems; the HOL script repeats this step inline.
+Hygiene is disabled so the conventional locals `hidx` and `hy` survive. -/
+set_option hygiene false in
+macro "stackAllocBitmapsDropIndex" : tactic =>
+  `(tactic| (
+    have hidx : (w - 1).toNat < s.bitmaps.length := by
+      by_contra hc
+      rw [List.drop_eq_nil_of_le (by omega)] at hdr
+      simp at hdr
+    have hy : s.bitmaps[(w - 1).toNat] = y := by
+      rw [List.drop_eq_getElem_cons hidx] at hdr
+      simp only [List.cons.injEq] at hdr
+      exact hdr.1))
+
+/- Word arithmetic for the next `word_gc_move_bitmaps_code` frame: `w` is the
+successor of `w - 1` in `Nat`, and the remaining bitmap count strictly decreases.
+Flapjack proof infrastructure (no HOL original), used by the `*MoveBitmaps` code
+theorems; the HOL script repeats this step inline.
+Hygiene is disabled so the conventional locals `hwn` and `hdec` survive. -/
+set_option hygiene false in
+macro "stackAllocBitmapsWordBounds" : tactic =>
+  `(tactic| (
+    have hwn : w.toNat = (w - 1).toNat + 1 := by
+      have h := BitVec.toNat_add (w - 1) 1
+      rw [BitVec.sub_add_cancel] at h
+      rw [h]
+      have h1 : (1 : BitVec width).toNat = 1 := by
+        simp [Nat.mod_eq_of_lt (show 1 < 2 ^ width by omega)]
+      rw [h1]
+      exact Nat.mod_eq_of_lt (by omega)
+    have hdec : t.bitmaps.length - (w + 1 - 1).toNat < d := by
+      simp only [t, s3, s2, setVar, BitVec.add_sub_cancel]
+      omega))
+
 theorem bitmapLoad_eval {width : Nat} [NeZero width] {C F : Type}
     (S : StackSemStateFiniteExact width C F) (r v : Nat) (k y : BitVec width)
     (hu : S.useStack = true) (hrv : r ≠ v) (h : S.regs.lookup v = some (.word k))
@@ -85,14 +122,7 @@ theorem wordGcMoveBitmapsCode_run {width : Nat} [NeZero width] {C F : Type} {con
   generalize hdr : s.bitmaps.drop (w - 1).toNat = D at hm
   rcases D with _ | ⟨y, ys⟩
   · simp at hm
-  have hidx : (w - 1).toNat < s.bitmaps.length := by
-    by_contra hc
-    rw [List.drop_eq_nil_of_le (by omega)] at hdr
-    simp at hdr
-  have hy : s.bitmaps[(w - 1).toNat] = y := by
-    rw [List.drop_eq_getElem_cons hidx] at hdr
-    simp only [List.cons.injEq] at hdr
-    exact hdr.1
+  stackAllocBitmapsDropIndex
   simp only at hm
   generalize hbm : wordGcMoveBitmap conf (y, stack, i, pa, curr, s.memory, s.mdomain) = R at hm
   rcases R with _ | ⟨hd1, ws, i2, pa2, m2, c2⟩
@@ -173,17 +203,7 @@ theorem wordGcMoveBitmapsCode_run {width : Nat} [NeZero width] {C F : Type} {con
     have hz' : y >>> (width - 1) ≠ 0 := word_msb_IFF_lsr_EQ_0.1 hmsb
     have hlenA := wordGcMoveBitmaps_LENGTH hm0
     have hlenB := wordGcMoveBitmaps_LENGTH hrec
-    have hwn : w.toNat = (w - 1).toNat + 1 := by
-      have h := BitVec.toNat_add (w - 1) 1
-      rw [BitVec.sub_add_cancel] at h
-      rw [h]
-      have h1 : (1 : BitVec width).toNat = 1 := by
-        simp [Nat.mod_eq_of_lt (show 1 < 2 ^ width by omega)]
-      rw [h1]
-      exact Nat.mod_eq_of_lt (by omega)
-    have hdec : t.bitmaps.length - (w + 1 - 1).toNat < d := by
-      simp only [t, s3, s2, setVar, BitVec.add_sub_cancel]
-      omega
+    stackAllocBitmapsWordBounds
     obtain ⟨ck', r0, r1, r2, r5, r6, r7, r9, hr⟩ := ih _ hdec (w + 1) ws (old ++ hd1) hd3 st3 i2
       pa2 curr i3 pa3 (y >>> (width - 1)) m3 t rfl hrec hblen hcurr huse hus
       (by simp [t, setVar, FUPDATE_HOL]) hz'

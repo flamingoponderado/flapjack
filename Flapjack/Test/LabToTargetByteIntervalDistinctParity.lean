@@ -49,7 +49,7 @@ example : 1+posVal 1 101 code ≠ posVal 1000 101 code := by cbv
 example : (0 : Nat) = 0 ∧ 0+posVal 0 101 code = posVal 0 101 code := by cbv
 example : ¬(2 < (lineBytes jump).length) ∧ 2+posVal 0 101 code = posVal 1 101 code := by cbv
 private def fullSize : LabProgHOL 8 := [⟨1,List.replicate 128 asmi⟩]
-set_option maxRecDepth 4096 in
+set_option maxRecDepth 2000 in
 example : (progToBytes fullSize).length = 256 ∧ ¬(progToBytes fullSize).length < 2^8 := by cbv
 /-- Actual caller derives byte-interval separation past the instruction count,
 with every original source guard discharged and arbitrary queried position. -/

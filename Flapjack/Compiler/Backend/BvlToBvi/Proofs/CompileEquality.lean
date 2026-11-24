@@ -32,13 +32,7 @@ theorem simulation_equal {C F : Type} (arguments : List Bvl.Exp)
     cases argsResult with
     | err error => exact simulation_op_error (.blockOp .equal) arguments env source middle error argsIH argsRun
     | val values =>
-      intro n res next target n2 ys aux relocate run notTypeError compiled related sourceOk envOk installed handlers global
-      rcases argsCompile : compileListSource n arguments with ⟨argsCode, argsAux, finalName⟩
-      have nilRight : smartAppend argsAux .nil = argsAux := by cases argsAux <;> rfl
-      simp [compileListSource, compileSingSource, argsCompile, nilRight, compileOp] at compiled
-      rcases compiled with ⟨rfl, rfl, rfl⟩
-      have shape : BvlHandle.Proofs.handleOk arguments := by simpa [BvlHandle.Proofs.handleOk] using handlers
-      rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, argsRun] at run
+      bvlArgsSetup using compileOp
       cases reversed : values.reverse with
       | nil =>
         simp [BvlSem.doApp, BvlSem.applyBlock, reversed] at run
@@ -73,10 +67,7 @@ theorem simulation_equal {C F : Type} (arguments : List Bvl.Exp)
                 apply (bvOkList_iff _ _).1 preserved.2.1 right
                 have : right ∈ values.reverse := by simp [reversed]
                 simpa using this
-              refine ⟨targetNext, newRelocate, clock, ?_, relatedNext, envEq, refsEq⟩
-              rw [BviSem.evaluate, BviSem.fixClock_evaluate, targetArgs]
-              simp only [mapSimulationResult]
-              rw [← List.map_reverse, reversed]
+              bviCloseSimulation
               simp only [List.map_cons, List.map_nil]
               rw [doEquality_target newRelocate middle targetNext left right result relatedNext leftOk rightOk equal]
 

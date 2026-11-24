@@ -18,15 +18,7 @@ theorem localEnvBounded_envId {C F : Type} [Nonempty C]
     (body : AstHOL.Exp) (bodyIH : LocalEnvBoundedIH (F := F) interp transform limit body) :
     LocalEnvBoundedIH (F := F) interp transform limit (.app .envId [body]) := by
   intro genv start finish other source flat baseEnv sourceLocal flatEnv traces trace baseMap gen clockBound localRel envInv tracesLen invariant generation safe
-  let sourceEnv := { baseEnv with v := nsAppend sourceLocal baseEnv.v }
-  let compMap := { baseMap with v := bindLocals traces (flatEnv.v.map Prod.fst) baseMap.v }
-  have bodySafe : ∀ last, EvaluateHOL.evaluate source sourceEnv [body] ≠ (last, .err (.abort .typeError)) := by
-    intro last bad
-    apply safe last
-    change EvaluateHOL.evaluate source sourceEnv [.app .envId [body]] = _
-    rw [EvaluateHOL.evaluate]
-    simp only [List.reverse_cons, List.reverse_nil, List.nil_append]
-    rw [(EvaluateHOL.fixClockEvaluate source sourceEnv [body] []).1, bad]
+  localEnvBodySafeApp [.app .envId [body]]
   obtain ⟨nextGenv, bodySim, post⟩ := bodyIH genv start finish other source flat baseEnv sourceLocal flatEnv traces
     trace baseMap gen clockBound localRel envInv tracesLen invariant generation bodySafe
   unfold ExprSim at bodySim

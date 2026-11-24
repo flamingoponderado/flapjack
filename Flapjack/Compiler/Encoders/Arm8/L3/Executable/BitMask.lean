@@ -18,9 +18,6 @@ No new HOL claim is introduced: these relate two Lean renderings of the same
 bitmask search.
 -/
 
-set_option maxRecDepth 10000
-set_option maxHeartbeats 4000000
-
 namespace Flapjack.Compiler.Encoders.Arm8.L3
 
 open Flapjack Compiler.Encoders.Arm8 Compiler.Encoders.Asm Compiler.Encoders.AsmSem

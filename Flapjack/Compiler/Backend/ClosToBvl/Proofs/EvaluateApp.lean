@@ -107,10 +107,7 @@ theorem evaluatePost_app_function_error {C F : Type}
       codeAnnotations sMiddle → sptSubspt t.code tMiddle.code →
       evaluatePost sMiddle sFinal tMiddle targetEnv fMiddle (.err error) [targetFunction]) :
     evaluatePost s sFinal t targetEnv f (.err error) [appTarget s.maxApp location targetArgs targetFunction] := by
-  have maxApp : sMiddle.maxApp = s.maxApp := by
-    have h := (ClosProps.evaluate_const (C := C) (F := F)).1 sourceArgs sourceEnv s
-    rw [argsRun] at h
-    exact h
+  have maxApp := maxApp_of_evaluate_const argsRun
   obtain ⟨clock1, targetResult, tMiddle, fMiddle, run1, related1, state1, map1, frame1,
     annotations1, clocks1, growth1, env1⟩ :=
       evaluatePost_environment s sMiddle t sourceEnv targetEnv f (.val values) targetArgs envRelated argsPost

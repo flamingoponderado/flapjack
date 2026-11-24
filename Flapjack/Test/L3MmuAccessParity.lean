@@ -3,7 +3,6 @@ module
 public import Flapjack.RiscV.L3.Defs.MMU.Access
 
 @[expose] public section
-set_option maxRecDepth 10000
 namespace Flapjack.Test
 open Flapjack.RiscV.L3
 example : (rawReadData (0 : BitVec 64) { (default : riscv_state) with MEM8 := fun adr => BitVec.ofNat 8 adr.toNat }).toNat = 506097522914230528 := by decide

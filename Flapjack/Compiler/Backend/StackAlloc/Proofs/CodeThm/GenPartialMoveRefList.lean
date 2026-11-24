@@ -104,11 +104,7 @@ theorem wordGenGcPartialMoveRefListCode_run {width : Nat} [NeZero width] {C F : 
   · subst hp
     simp only [if_true, Prod.mk.injEq] at hm
     obtain ⟨rfl, rfl, rfl, -⟩ := hm
-    obtain ⟨r0, hr0⟩ := Option.isSome_iff_exists.1 h0
-    obtain ⟨r1, hr1⟩ := Option.isSome_iff_exists.1 h1
-    obtain ⟨r2, hr2⟩ := Option.isSome_iff_exists.1 h2
-    obtain ⟨r5, hr5⟩ := Option.isSome_iff_exists.1 h5
-    obtain ⟨r6, hr6⟩ := Option.isSome_iff_exists.1 h6
+    stackAllocRegValues
     obtain ⟨r7, hr7⟩ := Option.isSome_iff_exists.1 h7
     refine ⟨0, r0, r1, r2, r5, r6, r7, .word pb, .word pb, ?_⟩
     rw [wordGenGcPartialMoveRefListCode_eq, evaluate_loop, evaluate_ite, evaluate_break]

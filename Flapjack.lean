@@ -277,6 +277,7 @@ import Flapjack.Misc.Option.MapM
 import Flapjack.Misc.DivModLemmas
 import Flapjack.Misc.DisjointInter
 import Flapjack.Misc.WordLsImp
+import Flapjack.Misc.ProofTactics
 import Flapjack.RiscV.CorrectnessEncoding.DecodeConst
 import Flapjack.RiscV.CorrectnessEncoding.DecodeBinop
 import Flapjack.RiscV.CorrectnessEncoding.BinopRun
@@ -1028,6 +1029,7 @@ import Flapjack.Compiler.Backend.ClosMti.Proofs.EvaluateRecursiveApplication
 import Flapjack.Compiler.Backend.ClosMti.Proofs.EvaluateAppExpression
 import Flapjack.Compiler.Backend.ClosMti.Proofs.EvaluateMutual
 import Flapjack.Compiler.Backend.ClosMti.Proofs.Semantics
+import Flapjack.Compiler.Backend.ClosMti.Proofs.Traversal
 import Flapjack.Compiler.Backend.ClosMti.Proofs.Syntactic
 import Flapjack.Compiler.Backend.ClosMti.Proofs.NoLabels
 import Flapjack.Compiler.Backend.ClosMti.Proofs.Arity

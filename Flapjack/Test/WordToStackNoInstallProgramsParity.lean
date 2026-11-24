@@ -5,7 +5,6 @@ public import Flapjack.Compiler.Backend.WordToStack.Proofs.NoInstallPrograms
 import all Flapjack.Compiler.Backend.WordToStack.Proofs.NoInstallPrograms
 
 @[expose] public section
-set_option maxRecDepth 16384
 namespace Flapjack.Test.WordToStackNoInstallProgramsParity
 open Flapjack Flapjack.Compiler.Backend.StackLang
 open Flapjack.Compiler.Backend.StackProps

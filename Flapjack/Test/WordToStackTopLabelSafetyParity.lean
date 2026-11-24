@@ -4,7 +4,7 @@ public import Flapjack.Compiler.Backend.WordToStack.Proofs.TopLabelSafety
 
 @[expose] public section
 
-set_option maxHeartbeats 1600000
+set_option maxHeartbeats 400000
 
 namespace Flapjack.Test.WordToStackTopLabelSafetyParity
 open Flapjack Flapjack.Compiler.Backend.StackLang

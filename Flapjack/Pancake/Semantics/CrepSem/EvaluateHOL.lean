@@ -4275,8 +4275,6 @@ theorem crepCallFixed_clock_le {width : Nat} [NeZero width] {σ : Type}
       · exact hfix
   · exact hfix
 
-set_option maxHeartbeats 6400000 in
-set_option maxRecDepth 4000 in
 theorem evalCrepSemHOLProg_clock_le {width : Nat} [NeZero width] {σ : Type}
     (state : CrepSemHOLState width σ)
     (memDec : (a : BitVec width) → Decidable (state.memaddrs a))

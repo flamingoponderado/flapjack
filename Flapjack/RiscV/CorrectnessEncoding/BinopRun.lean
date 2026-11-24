@@ -17,8 +17,6 @@ open Flapjack RiscV.L3 Compiler.Encoders.Asm Compiler.Encoders.AsmSem
   Compiler.Encoders.RiscV.Target
 set_option autoImplicit false
 set_option maxRecDepth 200000
-set_option maxHeartbeats 2000000
-
 /-- Source post-state of the complete Binop constructor, derived solely from
 original asm_step. Reads use the initial state, including destination aliases.
 Untagged specialization of asm/inst/arith_upd and emitted-byte length. -/

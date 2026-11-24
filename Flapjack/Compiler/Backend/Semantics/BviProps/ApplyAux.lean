@@ -6,6 +6,7 @@ public import Flapjack.Compiler.Backend.Semantics.BviSem.ApplyRuntimeFrame
 public import Flapjack.Compiler.Backend.Semantics.BvlProps.ApplyCode
 public import Flapjack.Compiler.Backend.WordElim.Proofs.Locations
 public import Flapjack.HolRef
+public import Flapjack.Misc.ProofTactics
 
 @[expose] public section
 
@@ -37,9 +38,7 @@ end ApplyAuxCarrier
 theorem doAppAux_clock {C F : Type} (op : ClosLang.Op) (args : List Value)
     (s t : BviState C F) (value : Value)
     (run : doAppAux op args s = some (some (value, t))) : t.clock = s.clock := by
-  unfold doAppAux at run
-  repeat' split at run
-  all_goals simp_all
+  unfoldSplit doAppAux
   all_goals try simp_all only [Option.bind_eq_some_iff, Option.some.injEq, Prod.mk.injEq]
   all_goals aesop
 

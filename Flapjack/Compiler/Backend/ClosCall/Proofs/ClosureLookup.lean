@@ -28,7 +28,6 @@ theorem holFmapAsFiniteSupportParamWitness_destClosure_valueRel_lookup_code
   cases code
   exact ⟨rfl, rfl, rfl⟩
 
-set_option maxHeartbeats 4000000 in
 /-- A known, non-exempt direct call finds the original and compiled bodies
 and constructs the target closure application and code lookup. -/
 @[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "dest_closure_v_rel_lookup"
@@ -237,7 +236,6 @@ theorem holFmapAsFiniteSupportParamWitness_destClosure_valueRel_code
     ofBroad (toBroad code) code.finiteSupport = code :=
   holFmapAsFiniteSupportParamWitness_destClosure_valueRel_lookup_code code key
 
-set_option maxHeartbeats 4000000 in
 /-- Related closures and arguments produce related partial or full applications,
 including the original prefix, environment and recursive-group obligations. -/
 @[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "dest_closure_v_rel"

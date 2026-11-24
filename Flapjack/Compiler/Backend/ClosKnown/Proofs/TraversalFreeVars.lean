@@ -37,13 +37,7 @@ private theorem work (c : Config) (xs : List Exp) (env : List ValApprox)
     have r1 := ix _ _ n h1 parts.1
     have r2 := iy _ _ n h2 parts.2.1
     have r3 := iz _ _ n h3 parts.2.2
-    rw [knownListTotal_if, h1] at run
-    dsimp only at run
-    rw [h2] at run
-    dsimp only at run
-    rw [h3] at run
-    simp [knownSourceHead] at run
-    rcases run with ⟨rfl, rfl⟩
+    knownListIfChain
     simp [fvMax, freeVars, freeVarExp, or_imp, forall_and] at r1 r2 r3 ⊢
     exact ⟨r1, r2, r3⟩
   case case3 =>
@@ -139,12 +133,8 @@ private theorem work (c : Config) (xs : List Exp) (env : List ValApprox)
     have ra := iargs ea g1 n ha parts.2
     have functionRun : knownListTotal c [x] env g1 = ([(e, a)], g2) := by simp [knownListTotal_single, hx]
     have rf := ifun _ _ n functionRun parts.1
-    have len := knownListTotal_length c xs env g
-    rw [ha] at len
-    simp only at len
-    rw [knownListTotal_app, ha] at run
-    dsimp only at run
-    rw [functionRun] at run
+    knownListLength
+    knownListRun
     simp [knownSourceHead, ← len, hd] at run
     rcases run with ⟨rfl, rfl⟩
     simp [fvMax, freeVars, freeVarExp, or_imp, forall_and] at ra rf ⊢
@@ -157,12 +147,8 @@ private theorem work (c : Config) (xs : List Exp) (env : List ValApprox)
     have ra := iargs ea g1 n ha parts.2
     have functionRun : knownListTotal c [x] env g1 = ([(e, a)], g2) := by simp [knownListTotal_single, hx]
     have rf := ifun _ _ n functionRun parts.1
-    have len := knownListTotal_length c xs env g
-    rw [ha] at len
-    simp only at len
-    rw [knownListTotal_app, ha] at run
-    dsimp only at run
-    rw [functionRun] at run
+    knownListLength
+    knownListRun
     simp [knownSourceHead, ← len, hd] at run
     rcases run with ⟨rfl, rfl⟩
     simp [fvMax, freeVars, freeVarExp, or_imp, forall_and] at ra rf ⊢
@@ -180,12 +166,8 @@ private theorem work (c : Config) (xs : List Exp) (env : List ValApprox)
     have bodyRun : knownListTotal (decInlineFactor c) [body] (ea.map Prod.snd) g2 = ([(be, ba)], g3) := by
       simp [knownListTotal_single, hb]
     have rb := ibody _ _ ea.length bodyRun bodySafe
-    have len := knownListTotal_length c xs env g
-    rw [ha] at len
-    simp only at len
-    rw [knownListTotal_app, ha] at run
-    dsimp only at run
-    rw [functionRun] at run
+    knownListLength
+    knownListRun
     simp [knownSourceHead, ← len, hd, bodyRun] at run
     rcases run with ⟨rfl, rfl⟩
     let outArgs := if ClosLang.pure x then ea.map Prod.fst else ea.map Prod.fst ++ [e]

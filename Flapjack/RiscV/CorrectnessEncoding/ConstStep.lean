@@ -7,8 +7,6 @@ public import Flapjack.RiscV.CorrectnessEncoding.ConstInterference
 namespace Flapjack.RiscV.TargetProof
 open Flapjack RiscV.L3 RiscV.L3.Step Compiler.Encoders.RiscV.Target
 set_option maxRecDepth 200000
-set_option maxHeartbeats 2000000
-
 /-- Destination of the literal seven Const register instruction families.
 Untagged infrastructure; the fallback is never used by the family proofs. -/
 def constDestination (i : instruction) : BitVec 5 :=

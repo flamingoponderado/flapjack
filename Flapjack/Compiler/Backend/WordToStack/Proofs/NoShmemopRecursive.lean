@@ -128,9 +128,7 @@ theorem compNoShmemopLoop {width : Nat} [NeZero width]
   have source := (recursiveNoShareClauses body body body body liveIn liveOut .equal 0 (.reg 0)).2.2.1
   have child := ih bs frame (compNative conf perf body bs frame).1
     (compNative conf perf body bs frame).2 (source ▸ guard) rfl
-  have result := congrArg Prod.fst compiled
-  simp only [compNative] at result
-  rw [← result]
+  wordToStackCompiledProg
   exact child
 
 /-- Structural-motive Seq piece. Child hypotheses quantify over all bitmap/frame
@@ -163,9 +161,7 @@ theorem compNoShmemopSeq {width : Nat} [NeZero width]
     (compNative conf perf second (compNative conf perf first bs frame).2 frame).1
     (compNative conf perf second (compNative conf perf first bs frame).2 frame).2
     both.2 rfl
-  have result := congrArg Prod.fst compiled
-  simp only [compNative] at result
-  rw [← result]
+  wordToStackCompiledProg
   simp only [noShmemop, safeFirst, safeSecond, Bool.true_and]
 
 /-- Structural-motive If piece. Both child hypotheses quantify over all

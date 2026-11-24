@@ -3,7 +3,6 @@ module
 public import Flapjack.RiscV.L3.Defs.MMU.TLB
 
 @[expose] public section
-set_option maxRecDepth 200000
 namespace Flapjack.RiscV.L3
 
 /-- Source review: riscvScript5079-5385, complete sixteen-slot FOR scan. The

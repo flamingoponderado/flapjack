@@ -37,9 +37,7 @@ theorem ssaCcTransCorrectSet {width : Nat} [NeZero width] {C F : Type}
       everyVarHOL (fun x => decide (x < next)) (.set name expr : WordLangProgHOL (BitVec width)) = true ∧
       ssaMapOK next ssa ∧ ltOK tables) :
     ssaSimulation (.set name expr : WordLangProgHOL (BitVec width)) source target ssa next tables := by
-  let permuted := {source with permute := target.permute}
-  have frame : Flapjack.WordAlloc.wordStateEqRel permuted target := by
-    simpa [permuted, Flapjack.WordAlloc.wordStateEqRel] using h.1
+  wordAllocPermutedFrame hyp h.1
   refine ⟨target.permute, ?_⟩
   by_cases forbidden : name = .handler ∨ name = .bitmapBase
   · simp [WordSemStateFiniteExact.evaluate, forbidden]
@@ -70,9 +68,7 @@ theorem ssaCcTransCorrectStore {width : Nat} [NeZero width] {C F : Type}
       everyVarHOL (fun x => decide (x < next)) (.store expr name : WordLangProgHOL (BitVec width)) = true ∧
       ssaMapOK next ssa ∧ ltOK tables) :
     ssaSimulation (.store expr name : WordLangProgHOL (BitVec width)) source target ssa next tables := by
-  let permuted := {source with permute := target.permute}
-  have frame : Flapjack.WordAlloc.wordStateEqRel permuted target := by
-    simpa [permuted, Flapjack.WordAlloc.wordStateEqRel] using h.1
+  wordAllocPermutedFrame hyp h.1
   refine ⟨target.permute, ?_⟩
   cases found : WordSemStateFiniteExact.wordExp permuted expr with
   | none =>

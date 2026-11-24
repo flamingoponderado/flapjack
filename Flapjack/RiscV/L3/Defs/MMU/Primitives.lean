@@ -10,7 +10,6 @@ physical word memory operations and SV record codecs. All fixed source word
 widths are retained; each slice index is within its source dimension. These
 primitives do not assemble walk64/translation, whose separate beads stay open.
 -/
-set_option maxRecDepth 200000
 namespace Flapjack.RiscV.L3
 open Flapjack.Basis.Pure.MlString
 

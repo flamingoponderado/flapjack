@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.Semantics.BviProps.ApplyError
+public import Flapjack.Misc.ProofTactics
 
 @[expose] public section
 
@@ -13,9 +14,7 @@ open Flapjack.SemanticPrimitivesHOL (Result ErrorResult Abort)
 /-- Flapjack infrastructure: installation errors are type errors. -/
 theorem doInstall_error {C F : Type} (args : List Value) (state : BviState C F)
     (error : ErrorResult ExnOrRet) (run : doInstall args state = .err error) : error = .abort .typeError := by
-  unfold doInstall at run
-  repeat' split at run
-  all_goals simp_all
+  unfoldSplit doInstall
   all_goals split at run <;> simp_all
 
 /-- Flapjack infrastructure: classify errors from the BVI fallback. -/

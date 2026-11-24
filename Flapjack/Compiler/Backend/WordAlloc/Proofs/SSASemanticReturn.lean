@@ -42,9 +42,7 @@ theorem ssaCcTransCorrectReturn {width : Nat} [NeZero width] {C F : Type}
       everyVarHOL (fun x => decide (x < next)) (.return name names : WordLangProgHOL (BitVec width)) = true ∧
       ssaMapOK next ssa ∧ ltOK tables) :
     ssaSimulation (.return name names : WordLangProgHOL (BitVec width)) source target ssa next tables := by
-  let permuted := {source with permute := target.permute}
-  have frame : Flapjack.WordAlloc.wordStateEqRel permuted target := by
-    simpa [permuted, Flapjack.WordAlloc.wordStateEqRel] using h.1
+  wordAllocPermutedFrame hyp h.1
   refine ⟨target.permute, ?_⟩
   cases found : WordSemStateFiniteExact.getVar name permuted with
   | none =>

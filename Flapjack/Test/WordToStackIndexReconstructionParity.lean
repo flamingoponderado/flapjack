@@ -4,7 +4,6 @@ public import Flapjack.Compiler.Backend.WordToStack.Proofs.IndexReconstruction
 
 @[expose] public section
 open Flapjack Flapjack.WordToStackProofs
-set_option maxRecDepth 8192
 
 -- ir_output_0_0
 example : indexList ([] : List Nat) 0 = [] := by decide +kernel

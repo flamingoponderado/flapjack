@@ -336,10 +336,7 @@ theorem case_addOverflow (d rc sl sr : Nat) (s1 s2 : AsmState 64) (ms : X64State
   have hb : bytesInMemoryHOL ms.pc
       (encodeInsn (.binopRR .zadd .z64 d sl) ++ encodeInsn (.movRI .z32 sr 0) ++
         encodeInsn (.setcc .zO true sr)) ms.mem s1.memDomain := by
-    have h' := st.bytesTarget
-    rw [henc] at h'
-    rw [← st.pc] at h'
-    exact h'
+    bytesTargetAtPc
   obtain ⟨hb1, hb2, hb3⟩ :=
     (bytesInMemory_three ms.pc _ _ _ ms.mem s1.memDomain).1 hb
   -- the interference-free run
@@ -708,10 +705,7 @@ theorem case_subOverflow (d rc sl sr : Nat) (s1 s2 : AsmState 64) (ms : X64State
   have hb : bytesInMemoryHOL ms.pc
       (encodeInsn (.binopRR .zsub .z64 d sl) ++ encodeInsn (.movRI .z32 sr 0) ++
         encodeInsn (.setcc .zO true sr)) ms.mem s1.memDomain := by
-    have h' := st.bytesTarget
-    rw [henc] at h'
-    rw [← st.pc] at h'
-    exact h'
+    bytesTargetAtPc
   obtain ⟨hb1, hb2, hb3⟩ :=
     (bytesInMemory_three ms.pc _ _ _ ms.mem s1.memDomain).1 hb
   -- the interference-free run
@@ -1189,10 +1183,7 @@ theorem case_addCarry (r1 r2 r3 r4 : Nat) (s1 s2 : AsmState 64) (ms : X64State)
       (encodeInsn (.binopRI .zcmp .z64 r4 1) ++ encodeInsn .cmc ++
         encodeInsn (.binopRR .zadc .z64 r1 r3) ++ encodeInsn (.movRI .z32 r4 0) ++
         encodeInsn (.setcc .zB true r4)) ms.mem s1.memDomain := by
-    have h' := st.bytesTarget
-    rw [henc] at h'
-    rw [← st.pc] at h'
-    exact h'
+    bytesTargetAtPc
   obtain ⟨hb1, hb2, hb3, hb4, hb5⟩ :=
     (bytesInMemory_five ms.pc _ _ _ _ _ ms.mem s1.memDomain).1 hb
   -- the interference-free run

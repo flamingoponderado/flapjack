@@ -196,4 +196,20 @@ theorem riscv_target_ok : targetOk riscvTarget := by
   intro ms1 ms2 s hp
   exact riscv_projection_ok ms1 ms2 s hp
 
+/- The standard target-side transport step for the arithmetic encodings: unfold
+the source assertions, then relate the write-post state through the target
+correctness theorem. Flapjack helper shared by the arithmetic cases; the HOL
+script repeats this step inline for each instruction. -/
+set_option hygiene false in
+macro "riscvTransportStep" : tactic =>
+  `(tactic| (
+    rw [source]
+    refine ⟨0, ?_⟩
+    intro env interference
+    have hp := write_post_rel s1 ms rd value bound h.2
+    have projection := interference 0 (writePost ms (BitVec.ofNat 5 rd) value)
+    have transport := (riscv_target_ok.2 (env 0 (writePost ms (BitVec.ofNat 5 rd) value))
+      (writePost ms (BitVec.ofNat 5 rd) value)
+      (updPc (s1.pc + 4) (updReg rd value s1)) projection).1))
+
 end Flapjack.RiscV.TargetProof

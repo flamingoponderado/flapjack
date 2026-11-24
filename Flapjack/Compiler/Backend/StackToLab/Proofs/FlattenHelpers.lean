@@ -275,7 +275,6 @@ private theorem nodupLeft {α : Type} {A B : List α} (h : (A ++ B).Nodup) : A.N
 private theorem nodupRight {α : Type} {A B : List α} (h : (A ++ B).Nodup) : B.Nodup :=
   (List.nodup_append.mp h).2.1
 
-set_option maxHeartbeats 1000000 in
 private theorem labPresAux {width : Nat} [NeZero width] (n : Nat) :
     ∀ (p : HolProg width) (nl : Nat) (cs bs : List Nat),
       (∀ l ∈ StackPropsCodeLabels.extractLabels p, l.1 = n ∧ l.2 ≠ 0 ∧ l.2 ≠ 1) →

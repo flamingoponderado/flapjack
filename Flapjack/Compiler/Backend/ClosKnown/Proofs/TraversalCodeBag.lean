@@ -156,13 +156,7 @@ theorem knownCodeBagIf (c : Config) (trace : BackendCommon.Tra) (x y z : Exp)
         obtain ⟨z', a3, eq3⟩ := knownListTotal_single_result c z env g2 g3 ea3 h3
         subst ea3
         have r3 := thirdIH [(x', a1)] g1 [(y', a2)] g2 ⟨h1.symm, h2.symm⟩ [(z', a3)] g3 h3 label
-        rw [knownListTotal_if, h1] at run
-        dsimp only at run
-        rw [h2] at run
-        dsimp only at run
-        rw [h3] at run
-        simp [knownSourceHead] at run
-        rcases run with ⟨rfl, rfl⟩
+        knownListIfChain
         simp [codeLocations, codeLocationsExp, List.count_append] at r1 r2 r3 ⊢
         omega
 
@@ -184,11 +178,7 @@ theorem knownCodeBagLet (c : Config) (trace : BackendCommon.Tra) (xs : List Exp)
         knownListTotal_single_result c body (ea1.map Prod.snd ++ env) g1 g2 ea2 h2
       subst ea2
       have r2 := bodyIH ea1 g1 h1.symm [(bodyExpr, bodyApprox)] g2 h2 label
-      rw [knownListTotal_let, h1] at run
-      dsimp only at run
-      rw [h2] at run
-      simp [knownSourceHead] at run
-      rcases run with ⟨rfl, rfl⟩
+      knownListStep rule knownListTotal_let hyp h1
       simp [codeLocations, codeLocationsExp, List.count_append] at r2 ⊢
       omega
 
@@ -211,11 +201,7 @@ theorem knownCodeBagHandle (c : Config) (trace : BackendCommon.Tra) (body handle
       obtain ⟨e2, a2, eq2⟩ := knownListTotal_single_result c handler (.other :: env) g1 g2 ea2 h2
       subst ea2
       have r2 := handlerIH [(e1, a1)] g1 h1.symm [(e2, a2)] g2 h2 label
-      rw [knownListTotal_handle, h1] at run
-      dsimp only at run
-      rw [h2] at run
-      simp [knownSourceHead] at run
-      rcases run with ⟨rfl, rfl⟩
+      knownListStep rule knownListTotal_handle hyp h1
       simp [codeLocations, codeLocationsExp, List.count_append] at r1 r2 ⊢
       omega
 

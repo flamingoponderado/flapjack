@@ -36,6 +36,22 @@ noncomputable def ssaSimulation {width : Nat} [NeZero width] {C F : Type}
               (optionLookup dest) (sptDomain entries) sourceRun.2.locals targetRun.2.locals
         | some _ => sourceRun.2.locals = targetRun.2.locals
 
+/- Establish the permuted source frame shared by every SSA semantic simulation
+case: bind `permuted` to the source state with the target permutation and derive
+`frame : wordStateEqRel permuted target` from the given conjunct. Flapjack proof
+infrastructure (no HOL original); the HOL script repeats this step inline for
+each constructor. Used by the `SSASemantic*` case modules, which all import this
+one.
+
+Hygiene is disabled on purpose: the macro binds the conventional locals
+`permuted` and `frame` that the following case analysis refers to. -/
+set_option hygiene false in
+macro "wordAllocPermutedFrame" "hyp" h:term : tactic =>
+  `(tactic| (
+    let permuted := {source with permute := target.permute}
+    have frame : Flapjack.WordAlloc.wordStateEqRel permuted target := by
+      simpa [permuted, Flapjack.WordAlloc.wordStateEqRel] using $h))
+
 /-- Flapjack proof factoring of a compiler-generated exit after reconciliation;
 its evaluation premise is an internal derived fact, never a public simulation
 case premise. There is no independent HOL declaration. -/

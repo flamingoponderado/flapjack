@@ -3,7 +3,7 @@ module
 public import Flapjack.Byte.WordOfBytes
 
 @[expose] public section
-set_option maxRecDepth 32768
+set_option maxRecDepth 16000
 namespace Flapjack.Test.ByteDecoder
 open Flapjack.HolByte
 -- byte_set_0

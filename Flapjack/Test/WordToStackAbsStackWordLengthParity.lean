@@ -4,7 +4,6 @@ public import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstractionLengt
 
 @[expose] public section
 open Flapjack Flapjack.WordToStackProofs
-set_option maxRecDepth 8192
 
 -- asl_case_1_1_0
 example : (absStack ([] : List (BitVec 1)) ([] : List (WordSemStackFrame 1)) ([.word 0] : List (WordLocW 1)) []).map handlerVal = some 1 := by

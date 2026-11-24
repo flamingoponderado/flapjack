@@ -5,9 +5,6 @@ public import Flapjack.HolRef
 
 @[expose] public section
 
-set_option maxHeartbeats 12000000
-set_option maxRecDepth 10000
-
 /-!
 # `BitfieldMove@64` case theorems for the `shift` immediate forms
 

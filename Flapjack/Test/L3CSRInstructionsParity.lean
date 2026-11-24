@@ -3,7 +3,6 @@ module
 public import Flapjack.RiscV.L3.Defs.CSRInstructions
 
 @[expose] public section
-set_option maxRecDepth 20000
 namespace Flapjack.Test.L3CSRInstructionsParity
 open Flapjack.RiscV.L3
 private def fixture (s : riscv_state) : riscv_state :=

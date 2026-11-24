@@ -3,7 +3,6 @@ module
 public import Flapjack.RiscV.L3.Defs.MMU.Access
 
 @[expose] public section
-set_option maxRecDepth 200000
 namespace Flapjack.RiscV.L3
 
 /-- Source review: riscvScript4745-4960 complete recursive tDef. The original

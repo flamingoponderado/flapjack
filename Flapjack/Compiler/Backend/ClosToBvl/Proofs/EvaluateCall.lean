@@ -45,12 +45,7 @@ theorem evaluatePost_call_error {C F : Type} (s sFinal : ClosSem.State C F)
     (ticks location : Nat) (args : List Bvl.Exp) (error : ErrorResult ClosSem.Value)
     (post : evaluatePost s sFinal t targetEnv f (.err error) args) :
     evaluatePost s sFinal t targetEnv f (.err error) [.call ticks (some location) args] := by
-  obtain ⟨clock, targetResult, tFinal, fFinal, run, related, state, map, refs, annotations, clocks⟩ := post
-  cases targetResult with
-  | val values => simp [resultRel] at related
-  | err targetError =>
-    refine ⟨clock, .err targetError, tFinal, fFinal, ?_, related, state, map, refs, annotations, clocks⟩
-    rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, run]
+  exact evaluatePostCallError s sFinal t targetEnv f ticks location args error post
 
 /-- A resolved direct call with insufficient clock times out on both sides.
 The argument simulation supplies the related state and argument values. -/
@@ -64,10 +59,7 @@ theorem evaluatePost_call_timeout {C F : Type} (s sMiddle : ClosSem.State C F)
     (argsPost : evaluatePost s sMiddle t targetEnv f (.val values) targetArgs) :
     evaluatePost s { sMiddle with clock := 0 } t targetEnv f (.err (.abort .timeoutError))
       [.call ticks (some (location + numStubs s.maxApp)) targetArgs] := by
-  have maxApp : sMiddle.maxApp = s.maxApp := by
-    have h := (ClosProps.evaluate_const (C := C) (F := F)).1 args sourceEnv s
-    rw [argsRun] at h
-    exact h
+  have maxApp := maxApp_of_evaluate_const argsRun
   obtain ⟨clock, targetResult, tMiddle, fMiddle, targetRun, related, state, map, refs, annotations, clocks⟩ := argsPost
   cases targetResult with
   | err error => simp [resultRel] at related
@@ -110,10 +102,7 @@ theorem evaluatePost_call_body {C F : Type} (s sMiddle sFinal : ClosSem.State C 
       evaluatePost (ClosSem.decClock (ticks + 1) sMiddle) sFinal
         (BvlSem.decClock (ticks + 1) tMiddle) targetValues fMiddle result [targetBody]) :
     evaluatePost s sFinal t targetEnv f result [.call ticks (some (location + numStubs s.maxApp)) targetArgs] := by
-  have maxApp : sMiddle.maxApp = s.maxApp := by
-    have h := (ClosProps.evaluate_const (C := C) (F := F)).1 args sourceEnv s
-    rw [argsRun] at h
-    exact h
+  have maxApp := maxApp_of_evaluate_const argsRun
   obtain ⟨clock1, targetResult, tMiddle, fMiddle, targetRun1, related1, state1, map1, refs1,
     annotations1, clocks1⟩ := argsPost
   cases targetResult with
@@ -267,8 +256,7 @@ theorem expressionSimulationBelow_call_succ {C F : Type} (s sFinal : ClosSem.Sta
     cases equal
     have argsLocations : ClosProps.everyFnLocationSome args := by
       simpa [ClosProps.everyFnLocationSome, ClosProps.fnLocationSomeExp] using locations
-    have argsVars : ClosProps.everyFnVarsSome args := by
-      simpa [ClosProps.everyFnVarsSome, ClosProps.fnVarsSomeExp] using varsAnnotated
+    have argsVars := everyFnVarsSome_call varsAnnotated
     apply evaluate_call_post s sFinal t sourceEnv targetEnv f trace ticks location args targetArgs result run noTypeError
     · intro argResult sMiddle argRun argNotType
       exact argsIH s sMiddle t sourceEnv targetEnv f aux finalAux targetArgs argResult clockBounded argRun argNotType

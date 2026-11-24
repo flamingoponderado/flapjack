@@ -1326,7 +1326,7 @@ theorem full_store_updates {width : Nat} [NeZero width]
   all_goals simp [HolFiniteMapExact.lookup_updateListEq, HolFiniteMapExact.lookup_updateEq,
     FUPDATE_LIST_HOL, FUPDATE_HOL]
 
-set_option maxRecDepth 2048 in
+set_option maxRecDepth 2000 in
 /-- The actual full execution carrier's final store matches the source full
 collector store, including the original GlobReal word-address calculation. -/
 theorem full_final_store {width : Nat} [NeZero width] {C F : Type}

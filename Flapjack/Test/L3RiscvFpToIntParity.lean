@@ -9,8 +9,6 @@ The fixed-width inputs, GPR destination, preserved source FP register/NV and
 Illegal_Instr trap observation match the original HOL fixture. These are
 regression observations; the IEEE rational representation assumption and full
 model correspondence obligations remain explicit in the source manifest. -/
-set_option maxRecDepth 200000
-set_option maxHeartbeats 2000000
 namespace Flapjack.Test.L3RiscvFpToIntParity
 open Flapjack.RiscV.L3 Flapjack
 private def state (a : BitVec 64) (frm : BitVec 3) : riscv_state :=

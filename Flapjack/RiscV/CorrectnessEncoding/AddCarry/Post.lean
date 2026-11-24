@@ -11,7 +11,6 @@ open Flapjack RiscV.L3 RiscV.L3.Step Compiler.Encoders.RiscV.Target
   Compiler.Encoders.Asm Compiler.Encoders.AsmSem Compiler.Encoders.AsmProps
 set_option autoImplicit false
 set_option maxRecDepth 200000
-set_option maxHeartbeats 2000000
 /-- AddCarry-local execution/source composition; no separately named HOL declaration. -/
 def program (r1 r2 r3 r4 : BitVec 5) : List instruction :=
   [.ArithR (.SLTU (31,0,r4)), .ArithR (.ADD (r1,r2,r3)),

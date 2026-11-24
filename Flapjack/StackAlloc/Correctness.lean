@@ -358,6 +358,18 @@ theorem stackGcNatMove_forwarding
     simpa [stackGcNatIsForwardingPointer] using hforward
   simp [stackGcNatMove, hvalue, hforward', stackGcNatIsForwardingPointer]
 
+/-- Proof-side helper: a pointer that is not a forwarding pointer has a
+    non-zero word remainder. No separately named HOL original; it only unfolds
+    the `stackGcNatIsForwardingPointer` definition. -/
+theorem stackGcNatNotForwardingMod {config : StackGcConfig} {value oldBase : Nat}
+    {memory : Nat → Nat}
+    (hnonforward :
+      ¬ stackGcNatIsForwardingPointer
+        (memory (stackGcNatPointerAddress config oldBase value))) :
+    memory (stackGcNatPointerAddress config oldBase value) % 4 ≠ 0 := by
+  intro h
+  exact hnonforward (by simp [stackGcNatIsForwardingPointer, h])
+
 theorem stackGcNatMove_copy
     (config : StackGcConfig) (value index destination oldBase : Nat)
     (memory : Nat → Nat) (domain : Nat → Bool)
@@ -368,11 +380,7 @@ theorem stackGcNatMove_copy
     (stackGcNatMove config value index destination oldBase memory domain).nextIndex =
       index + stackGcNatDecodeLength config
         (memory (stackGcNatPointerAddress config oldBase value)) + 1 := by
-  have hnonforward' :
-      memory (stackGcNatPointerAddress config oldBase value) % 4 ≠ 0 := by
-    intro h
-    apply hnonforward
-    simp [stackGcNatIsForwardingPointer, h]
+  have hnonforward' := stackGcNatNotForwardingMod hnonforward
   simp [stackGcNatMove, hvalue, hnonforward',
     stackGcNatIsForwardingPointer]
 
@@ -448,11 +456,7 @@ theorem stackGcNatMove_copy_value
         (memory (stackGcNatPointerAddress config oldBase value))) :
     (stackGcNatMove config value index destination oldBase memory domain).value =
       stackGcNatUpdateAddress config index value := by
-  have hnonforward' :
-      memory (stackGcNatPointerAddress config oldBase value) % 4 ≠ 0 := by
-    intro h
-    apply hnonforward
-    simp [stackGcNatIsForwardingPointer, h]
+  have hnonforward' := stackGcNatNotForwardingMod hnonforward
   simp [stackGcNatMove, hvalue, hnonforward',
     stackGcNatIsForwardingPointer]
 
@@ -468,11 +472,7 @@ theorem stackGcNatMove_copy_nextAddress
         (stackGcNatDecodeLength config
           (memory (stackGcNatPointerAddress config oldBase value)) + 1) *
           config.bytesInWord := by
-  have hnonforward' :
-      memory (stackGcNatPointerAddress config oldBase value) % 4 ≠ 0 := by
-    intro h
-    apply hnonforward
-    simp [stackGcNatIsForwardingPointer, h]
+  have hnonforward' := stackGcNatNotForwardingMod hnonforward
   let headerAddress := stackGcNatPointerAddress config oldBase value
   let length := stackGcNatDecodeLength config (memory headerAddress)
   have hmemcpy := stackGcNatMemcpy_nextAddress config (length + 1) headerAddress
@@ -490,11 +490,7 @@ theorem stackGcNatMove_copy_memory_header
     (stackGcNatMove config value index destination oldBase memory domain).memory
         (stackGcNatPointerAddress config oldBase value) =
       index * 4 := by
-  have hnonforward' :
-      memory (stackGcNatPointerAddress config oldBase value) % 4 ≠ 0 := by
-    intro h
-    apply hnonforward
-    simp [stackGcNatIsForwardingPointer, h]
+  have hnonforward' := stackGcNatNotForwardingMod hnonforward
   simp [stackGcNatMove, hvalue, hnonforward',
     stackGcNatIsForwardingPointer]
 
@@ -511,11 +507,7 @@ theorem stackGcNatMove_copy_condition
           (stackGcNatDecodeLength config
             (memory (stackGcNatPointerAddress config oldBase value)) + 1)
           (stackGcNatPointerAddress config oldBase value) destination memory domain).condition) := by
-  have hnonforward' :
-      memory (stackGcNatPointerAddress config oldBase value) % 4 ≠ 0 := by
-    intro h
-    apply hnonforward
-    simp [stackGcNatIsForwardingPointer, h]
+  have hnonforward' := stackGcNatNotForwardingMod hnonforward
   simp [stackGcNatMove, hvalue, hnonforward',
     stackGcNatIsForwardingPointer]
 
@@ -876,11 +868,7 @@ theorem stackGcNatMoveCopySuffix_eq_move_copy
         (stackGcNatPointerAddress config oldBase value)
         destination index value memory domain =
       stackGcNatMove config value index destination oldBase memory domain := by
-  have hnonforward' :
-      memory (stackGcNatPointerAddress config oldBase value) % 4 ≠ 0 := by
-    intro h
-    apply hnonforward
-    simp [stackGcNatIsForwardingPointer, h]
+  have hnonforward' := stackGcNatNotForwardingMod hnonforward
   simp [stackGcNatMoveCopySuffix, stackGcNatMove,
     stackGcNatIsForwardingPointer, hvalue, hnonforward',
     hheaderDomain, Nat.add_assoc]

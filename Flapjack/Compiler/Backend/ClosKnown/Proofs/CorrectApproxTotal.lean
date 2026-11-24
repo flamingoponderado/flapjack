@@ -69,57 +69,33 @@ theorem knownApproxAll {C F : Type} (c : Config) (xs : List ClosLang.Exp)
     exact OpTotal.knownCorrectApproxOp c t op args env g ih eas next vEnv extra s0 res s h
   case case9 =>
     rename_i c env g t loc x xs ea g1 ha e a g2 hx hd iargs ifun
-    have len := knownListTotal_length c xs env g
-    rw [ha] at len
-    simp only at len
+    knownListLength
     intro eas next vEnv extra s0 res s h
     apply App.knownCorrectApproxApp c t loc x xs env g ?_ ?_ iargs eas next vEnv extra s0 res s h
     · intro ea2 next1 ea1 next2 e1 a1 body ⟨eq1, eq2, head, decision⟩
-      rw [ha] at eq1
-      cases eq1
-      simp [knownListTotal_single, hx] at eq2
-      rcases eq2 with ⟨rfl, rfl⟩
-      simp [knownSourceHead] at head
-      rcases head with ⟨rfl, rfl⟩
-      simp [← len, hd] at decision
+      knownTotalStep
     · intro ea2 next1 eq1
       rw [ha] at eq1
       cases eq1
       exact ifun
   case case10 =>
     rename_i c env g t loc x xs ea g1 ha e a g2 hx target hd iargs ifun
-    have len := knownListTotal_length c xs env g
-    rw [ha] at len
-    simp only at len
+    knownListLength
     intro eas next vEnv extra s0 res s h
     apply App.knownCorrectApproxApp c t loc x xs env g ?_ ?_ iargs eas next vEnv extra s0 res s h
     · intro ea2 next1 ea1 next2 e1 a1 body ⟨eq1, eq2, head, decision⟩
-      rw [ha] at eq1
-      cases eq1
-      simp [knownListTotal_single, hx] at eq2
-      rcases eq2 with ⟨rfl, rfl⟩
-      simp [knownSourceHead] at head
-      rcases head with ⟨rfl, rfl⟩
-      simp [← len, hd] at decision
+      knownTotalStep
     · intro ea2 next1 eq1
       rw [ha] at eq1
       cases eq1
       exact ifun
   case case11 =>
     rename_i c env g t loc x xs ea g1 ha e a g2 hx body0 hd ae aa g3 hb iargs ifun ibody
-    have len := knownListTotal_length c xs env g
-    rw [ha] at len
-    simp only at len
+    knownListLength
     intro eas next vEnv extra s0 res s h
     apply App.knownCorrectApproxApp c t loc x xs env g ?_ ?_ iargs eas next vEnv extra s0 res s h
     · intro ea2 next1 ea1 next2 e1 a1 body ⟨eq1, eq2, head, decision⟩
-      rw [ha] at eq1
-      cases eq1
-      simp [knownListTotal_single, hx] at eq2
-      rcases eq2 with ⟨rfl, rfl⟩
-      simp [knownSourceHead] at head
-      rcases head with ⟨rfl, rfl⟩
-      simp [← len, hd] at decision
+      knownTotalStep
       subst body
       exact ibody
     · intro ea2 next1 eq1

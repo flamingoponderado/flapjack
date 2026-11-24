@@ -695,7 +695,6 @@ theorem PTreesSafe.fail (message : String) :
     PTreesSafe (P.fail (α := P.Trees) message) :=
   PTreesSafe.of_stateSafe (α := P.Trees) (PStateToksSafe.fail (α := P.Trees) message)
 
-set_option maxHeartbeats 2000000 in
 theorem grammarBlock1_treesSafe :
     ∀ fuel, PTreesSafe (gShape fuel) ∧ PTreesSafe (gShapeComb fuel) ∧
       PTreesSafe (gShapedIdent fuel) := by
@@ -788,7 +787,6 @@ theorem subtree_tryChain_treesSafe (nt : Nonterminal) {gX gOps : P P.Trees}
   refine PTreesSafe.bind (tryRule_treesSafe (PTreesSafe.bind hOps (fun op ho => PTreesSafe.bind hX (fun right hn => PTreesSafe.pure (op ++ right) (TreesByteRanged.append ho hn))))) (fun rest hr => ?_)
   exact PTreesSafe.pure (first ++ rest) (TreesByteRanged.append hf hr)
 
-set_option maxHeartbeats 8000000 in
 theorem grammarBlock2_treesSafe :
     ∀ fuel,
       PTreesSafe (gExp fuel) ∧ PTreesSafe (gEBoolAnd fuel) ∧
@@ -1109,7 +1107,6 @@ theorem PTreesSafe.bind_of_stateSafe {α : Type} {p : P α} {f : α → P P.Tree
       rw [← hs.2]
       exact hp.2 s s'' heq h
 
-set_option maxHeartbeats 8000000 in
 theorem grammarBlock3_treesSafe : ∀ m,
     PTreesSafe (gProg m) ∧ PTreesSafe (gTryProg m) ∧ PTreesSafe (gBlock m) ∧
     PTreesSafe (gHandle m) ∧ PTreesSafe (gIf m) ∧ PTreesSafe (gWhile m) ∧

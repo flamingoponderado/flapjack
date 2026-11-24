@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Compiler.Backend.Semantics.BvlSem.ApplyClock
 public import Flapjack.HolRef
+public import Flapjack.Misc.ProofTactics
 
 @[expose] public section
 
@@ -21,18 +22,14 @@ end FrameCarrier
 theorem applyGlobal_code {C F : Type} (op : ClosLang.GlobOp) (args : List Value)
     (state next : State C F) (value : Value) (run : applyGlobal op args state = some (value, next)) :
     next.code = state.code ∧ next.compile = state.compile ∧ next.compileOracle = state.compileOracle := by
-  unfold applyGlobal at run
-  repeat' split at run
-  all_goals simp_all
+  unfoldSplit applyGlobal
   all_goals aesop
 
 /-- Block primitives preserve code, compiler, and oracle. -/
 theorem applyBlock_code {C F : Type} (op : ClosLang.BlockOp) (args : List Value)
     (state next : State C F) (value : Value) (run : applyBlock op args state = some (value, next)) :
     next.code = state.code ∧ next.compile = state.compile ∧ next.compileOracle = state.compileOracle := by
-  unfold applyBlock at run
-  repeat' split at run
-  all_goals simp_all
+  unfoldSplit applyBlock
   all_goals try simp_all only [Option.bind_eq_some_iff, Option.some.injEq, Prod.mk.injEq]
   all_goals aesop
 
@@ -40,18 +37,14 @@ theorem applyBlock_code {C F : Type} (op : ClosLang.BlockOp) (args : List Value)
 theorem applyNumeric_code {C F : Type} (op : ClosLang.Op) (args : List Value)
     (state next : State C F) (value : Value) (run : applyNumeric op args state = some (value, next)) :
     next.code = state.code ∧ next.compile = state.compile ∧ next.compileOracle = state.compileOracle := by
-  unfold applyNumeric at run
-  repeat' split at run
-  all_goals simp_all
+  unfoldSplit applyNumeric
   all_goals aesop
 
 /-- Memory primitives preserve code, compiler, and oracle. -/
 theorem applyMemory_code {C F : Type} (op : ClosLang.MemOp) (args : List Value)
     (state next : State C F) (value : Value) (run : applyMemory op args state = some (value, next)) :
     next.code = state.code ∧ next.compile = state.compile ∧ next.compileOracle = state.compileOracle := by
-  unfold applyMemory at run
-  repeat' split at run
-  all_goals simp_all
+  unfoldSplit applyMemory
   all_goals try simp_all only [Option.bind_eq_some_iff, Option.some.injEq, Prod.mk.injEq]
   all_goals try (rcases run with ⟨entry, _, h⟩; cases entry <;> simp_all [Option.bind_eq_some_iff])
   all_goals try (rcases h with ⟨entry, _, h⟩; cases entry <;> simp_all [Option.bind_eq_some_iff] <;> aesop)
@@ -64,9 +57,7 @@ theorem doInstall_code {C F R : Type} (args : List Value)
     next.code = sptUnion state.code (sptFromAList (state.compileOracle 0).2) ∧
     next.compile = state.compile ∧
     next.compileOracle = (fun n => state.compileOracle (n + 1)) := by
-  unfold doInstall at run
-  repeat' split at run
-  all_goals simp_all
+  unfoldSplit doInstall
   all_goals aesop
 
 

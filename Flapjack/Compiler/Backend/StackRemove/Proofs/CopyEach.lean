@@ -162,8 +162,6 @@ theorem relocationTest {width : Nat} [NeZero width] (pattern : BitVec width) :
   cases pattern.getLsbD 0 <;> simp [BitVec.ofBool, BitVec.setWidth_ofNat_one_eq_ofNat_one_of_lt (by decide : 0 < 1), NeZero.ne width]
 
 set_option linter.unusedSimpArgs false in
-set_option maxRecDepth 4096 in
-set_option maxHeartbeats 800000 in
 /-- Native execution of the original six-instruction recursive copy body.
 All reads and domain membership are explicit local facts to be derived from
 original source premises by the assembling induction. This is infrastructure,
@@ -367,7 +365,6 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {C F : Type} 
       StackSemStateBroad.ofBroad state.toBroad state.toBroad_finiteSupport = state) :=
   StackSemStateSupport.holFmapAsFiniteSupportWitness
 
-set_option maxHeartbeats 1000000 in
 /-- Full original bitmap-copy simulation. Retains source copy success, distinct
 registers, domain equality/inclusion, good word dimension, every register read
 and the full separated list/frame/memory assertion. Native execution, total

@@ -7,7 +7,6 @@ public import Flapjack.RiscV.L3.Defs.Decode
 /-! Original complete native decoded instructions, including numeric payloads.
 All feasible source guard leaves sampled; finite regression evidence, not
 universal word32 equivalence. Expected values come from original HOL EVAL. -/
-set_option maxRecDepth 200000
 namespace Flapjack.Test.L3DecodeParity
 open Flapjack.RiscV.L3
 

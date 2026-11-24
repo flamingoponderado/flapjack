@@ -14,6 +14,24 @@ open Flapjack Flapjack.AstHOL Flapjack.Compiler.Backend
 open Flapjack.SemanticPrimitivesHOL (Result)
 open Flapjack.Basis.Pure.MlString (ofString)
 
+/- Shared setup of the bounded-argument application cases: bound the compiled
+argument list, simulate it in reverse order, and record that the compiled
+reversal is the reverse of the compiled list. Flapjack helper; the HOL script
+repeats this setup inline for each application form. -/
+set_option hygiene false in
+local macro "argsReverseSetup" : tactic =>
+  `(tactic| (
+    have argsBound : (compileExps cfg args).1 < n := by simpa [compileExp] using bound
+    have reversedBound := compileExps_reverse_bound cfg args n argsBound
+    have reversedIH : ∀ expression ∈ args.reverse,
+        ExpressionSimulationUpTo (C := C) (F := F) cfg stateCfg clock expression := by
+      intro expression member
+      exact argumentsIH expression (by simpa using member)
+    have argsSim := compileExps_simulation_upTo cfg stateCfg clock args.reverse reversedIH
+    have compiledReverse : (compileExps cfg args.reverse).2.2 =
+        (compileExps cfg args).2.2.reverse := by
+      simp [compileExps_rows, List.map_reverse]))
+
 /-- Flapjack induction step for nonrecursive primitive applications. -/
 theorem compile_simpleApp_simulation_upTo {C F : Type} (cfg stateCfg : Config) (trace : BackendCommon.Tra)
     (op : FlatLang.Op) (args : List FlatLang.Exp) (clock : Nat)
@@ -22,14 +40,7 @@ theorem compile_simpleApp_simulation_upTo {C F : Type} (cfg stateCfg : Config) (
     (argumentsIH : ∀ expression ∈ args, ExpressionSimulationUpTo (C := C) (F := F) cfg stateCfg clock expression) :
     ExpressionSimulationUpTo (C := C) (F := F) cfg stateCfg clock (.app trace op args) := by
   intro sourceEnv targetEnv source target sourceFinal sourceResult n clockBound sourceEval envs states bound safe
-  have argsBound : (compileExps cfg args).1 < n := by simpa [compileExp] using bound
-  have reversedBound := compileExps_reverse_bound cfg args n argsBound
-  have reversedIH : ∀ expression ∈ args.reverse, ExpressionSimulationUpTo (C := C) (F := F) cfg stateCfg clock expression := by
-    intro expression member
-    exact argumentsIH expression (by simpa using member)
-  have argsSim := compileExps_simulation_upTo cfg stateCfg clock args.reverse reversedIH
-  have compiledReverse : (compileExps cfg args.reverse).2.2 = (compileExps cfg args).2.2.reverse := by
-    simp [compileExps_rows, List.map_reverse]
+  argsReverseSetup
   cases argsRun : FlatSem.evaluate sourceEnv source args.reverse with
   | mk sourceNext argsResult =>
     have argsSafe : argsResult ≠ .err (.abort .typeError) := by
@@ -106,14 +117,7 @@ theorem compile_call_simulation_at_clock_boundedArgs {C F : Type} (cfg stateCfg 
         FlatSem.evaluate targetEnv target [(compileExp cfg (.app trace (.src .opapp) args)).2.2] =
           (targetFinal, targetResult) ∧ StateRel stateCfg sourceFinal targetFinal ∧ SemanticPrimitivesProps.resultRel (List.Forall₂ ValueRel) ValueRel sourceResult targetResult := by
   intro sourceEnv targetEnv source target sourceFinal sourceResult n clockEq sourceEval envs states bound safe
-  have argsBound : (compileExps cfg args).1 < n := by simpa [compileExp] using bound
-  have reversedBound := compileExps_reverse_bound cfg args n argsBound
-  have reversedIH : ∀ expression ∈ args.reverse, ExpressionSimulationUpTo (C := C) (F := F) cfg stateCfg clock expression := by
-    intro expression member
-    exact argumentsIH expression (by simpa using member)
-  have argsSim := compileExps_simulation_upTo cfg stateCfg clock args.reverse reversedIH
-  have compiledReverse : (compileExps cfg args.reverse).2.2 = (compileExps cfg args).2.2.reverse := by
-    simp [compileExps_rows, List.map_reverse]
+  argsReverseSetup
   cases argsRun : FlatSem.evaluate sourceEnv source args.reverse with
   | mk sourceNext argsResult =>
     have argsSafe : argsResult ≠ .err (.abort .typeError) := by
@@ -206,14 +210,7 @@ theorem compile_force_simulation_at_clock_boundedArgs {C F : Type} (cfg stateCfg
         FlatSem.evaluate targetEnv target [(compileExp cfg (.app trace (.src (.thunkOp .forceThunk)) args)).2.2] =
           (targetFinal, targetResult) ∧ StateRel stateCfg sourceFinal targetFinal ∧ SemanticPrimitivesProps.resultRel (List.Forall₂ ValueRel) ValueRel sourceResult targetResult := by
   intro sourceEnv targetEnv source target sourceFinal sourceResult n clockEq sourceEval envs states bound safe
-  have argsBound : (compileExps cfg args).1 < n := by simpa [compileExp] using bound
-  have reversedBound := compileExps_reverse_bound cfg args n argsBound
-  have reversedIH : ∀ expression ∈ args.reverse, ExpressionSimulationUpTo (C := C) (F := F) cfg stateCfg clock expression := by
-    intro expression member
-    exact argumentsIH expression (by simpa using member)
-  have argsSim := compileExps_simulation_upTo cfg stateCfg clock args.reverse reversedIH
-  have compiledReverse : (compileExps cfg args.reverse).2.2 = (compileExps cfg args).2.2.reverse := by
-    simp [compileExps_rows, List.map_reverse]
+  argsReverseSetup
   cases argsRun : FlatSem.evaluate sourceEnv source args.reverse with
   | mk sourceNext argsResult =>
     have argsSafe : argsResult ≠ .err (.abort .typeError) := by
@@ -330,14 +327,7 @@ theorem compile_eval_simulation_at_clock_boundedArgs {C F : Type} (cfg stateCfg 
         FlatSem.evaluate targetEnv target [(compileExp cfg (.app trace (.src .eval) args)).2.2] =
           (targetFinal, targetResult) ∧ StateRel stateCfg sourceFinal targetFinal ∧ SemanticPrimitivesProps.resultRel (List.Forall₂ ValueRel) ValueRel sourceResult targetResult := by
   intro sourceEnv targetEnv source target sourceFinal sourceResult n clockEq sourceEval envs states bound safe
-  have argsBound : (compileExps cfg args).1 < n := by simpa [compileExp] using bound
-  have reversedBound := compileExps_reverse_bound cfg args n argsBound
-  have reversedIH : ∀ expression ∈ args.reverse, ExpressionSimulationUpTo (C := C) (F := F) cfg stateCfg clock expression := by
-    intro expression member
-    exact argumentsIH expression (by simpa using member)
-  have argsSim := compileExps_simulation_upTo cfg stateCfg clock args.reverse reversedIH
-  have compiledReverse : (compileExps cfg args.reverse).2.2 = (compileExps cfg args).2.2.reverse := by
-    simp [compileExps_rows, List.map_reverse]
+  argsReverseSetup
   cases argsRun : FlatSem.evaluate sourceEnv source args.reverse with
   | mk sourceNext argsResult =>
     have argsSafe : argsResult ≠ .err (.abort .typeError) := by

@@ -95,7 +95,6 @@ theorem setReg_lo (s : State) (r : Fin 32) (v : W) : (s.setReg r v).lo = s.lo :=
   · subst hr; by_cases hx : x = 0 <;> simp [hx]
   · by_cases hx : x = 0 <;> simp [hr, hx]
 
-set_option maxHeartbeats 400000 in
 theorem plain_of_sequential (i : Insn) (h : insnSequential i = true) : Plain i := by
   intro s hs
   cases i <;> simp [insnSequential] at h <;>
@@ -109,7 +108,6 @@ theorem plain_bal_one : Plain (.bal 1) := by
   simp [hs, boff]
   bv_omega
 
-set_option maxHeartbeats 400000 in
 theorem noWrite_of_writes (i : Insn) (h : insnWrites i = false) : NoWrite i := by
   intro s
   cases i <;> simp [insnWrites] at h <;>

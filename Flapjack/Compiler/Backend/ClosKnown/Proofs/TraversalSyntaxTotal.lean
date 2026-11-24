@@ -32,13 +32,7 @@ theorem knownVarsAll (c : Config) (xs : List ClosLang.Exp) (env : List ValApprox
     have r1 := ix _ _ ⟨h1, parts.1, safe, globalSafe⟩
     have r2 := iy _ _ ⟨h2, parts.2.1, safe, r1.2.2⟩
     have r3 := iz _ _ ⟨h3, parts.2.2, safe, r2.2.2⟩
-    rw [knownListTotal_if, h1] at run
-    dsimp only at run
-    rw [h2] at run
-    dsimp only at run
-    rw [h3] at run
-    simp [knownSourceHead] at run
-    rcases run with ⟨rfl, rfl⟩
+    knownListIfChain
     have merged : valApproxVarsNone (mergeHOL ya za) := valApproxVarsNoneMerge ya za
       ⟨by simpa using r2.2.1, by simpa using r3.2.1⟩
     simp [ClosProps.everyFnVarsNone, ClosProps.fnVarsNoneExp] at r1 r2 r3 ⊢
@@ -73,57 +67,33 @@ theorem knownVarsAll (c : Config) (xs : List ClosLang.Exp) (env : List ValApprox
     exact knownVarsOp c t op args env g ih eas next h
   case case9 =>
     rename_i c env g t loc x xs ea g1 ha e a g2 hx hd iargs ifun
-    have len := knownListTotal_length c xs env g
-    rw [ha] at len
-    simp only at len
+    knownListLength
     intro eas next h
     apply knownVarsApp c t loc x xs env g ?_ ?_ iargs eas next h
     · intro ea2 next1 ea1 next2 e1 a1 body ⟨eq1, eq2, head, decision⟩
-      rw [ha] at eq1
-      cases eq1
-      simp [knownListTotal_single, hx] at eq2
-      rcases eq2 with ⟨rfl, rfl⟩
-      simp [knownSourceHead] at head
-      rcases head with ⟨rfl, rfl⟩
-      simp [← len, hd] at decision
+      knownTotalStep
     · intro ea2 next1 eq1
       rw [ha] at eq1
       cases eq1
       exact ifun
   case case10 =>
     rename_i c env g t loc x xs ea g1 ha e a g2 hx target hd iargs ifun
-    have len := knownListTotal_length c xs env g
-    rw [ha] at len
-    simp only at len
+    knownListLength
     intro eas next h
     apply knownVarsApp c t loc x xs env g ?_ ?_ iargs eas next h
     · intro ea2 next1 ea1 next2 e1 a1 body ⟨eq1, eq2, head, decision⟩
-      rw [ha] at eq1
-      cases eq1
-      simp [knownListTotal_single, hx] at eq2
-      rcases eq2 with ⟨rfl, rfl⟩
-      simp [knownSourceHead] at head
-      rcases head with ⟨rfl, rfl⟩
-      simp [← len, hd] at decision
+      knownTotalStep
     · intro ea2 next1 eq1
       rw [ha] at eq1
       cases eq1
       exact ifun
   case case11 =>
     rename_i c env g t loc x xs ea g1 ha e a g2 hx body0 hd ae aa g3 hb iargs ifun ibody
-    have len := knownListTotal_length c xs env g
-    rw [ha] at len
-    simp only at len
+    knownListLength
     intro eas next h
     apply knownVarsApp c t loc x xs env g ?_ ?_ iargs eas next h
     · intro ea2 next1 ea1 next2 e1 a1 body ⟨eq1, eq2, head, decision⟩
-      rw [ha] at eq1
-      cases eq1
-      simp [knownListTotal_single, hx] at eq2
-      rcases eq2 with ⟨rfl, rfl⟩
-      simp [knownSourceHead] at head
-      rcases head with ⟨rfl, rfl⟩
-      simp [← len, hd] at decision
+      knownTotalStep
       subst body
       exact ibody
     · intro ea2 next1 eq1

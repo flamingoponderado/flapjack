@@ -1166,6 +1166,17 @@ theorem evalPanSemRecursiveCallFiniteContext_decCall_return_continuation
   rw [if_pos (by simp [hshape])]
   rw [hcontinuation]
 
+/-- Shared tactic block for the per-constructor projection lemmas below:
+    unfold both recursive-call equations, normalize the nonrecursive layer, and
+    collapse the `Option.map`/`withState` projections. -/
+local macro "projectionSimp" : tactic =>
+  `(tactic| (
+    rw [evalPanSemRecursiveCallFiniteContext.eq_def,
+      evalPanSemRecursiveCallContextHOLExact.eq_def]
+    simp only [evalPanSemNonrecursiveHOLFinite, evalPanSemNonrecursiveHOLExact]
+    simp only [Option.map_some, FiniteEvalContext.withState_state,
+      PanSemExactEvalContext.withState_state, toExact_ofExact]))
+
 /-- Projection equivalence on `Skip`: mapping the finite evaluator's result
     through the canonical carrier projection `state.toExact` agrees with the
     broad exact evaluator on its (forgetful) projection.  First of the
@@ -1237,11 +1248,7 @@ theorem evalPanSemRecursiveCallFiniteContext_assign_projection {width : Nat} {σ
           memaddrsDecidable := context.memaddrsDecidable
           shMemaddrsDecidable := context.shMemaddrsDecidable }).map
         (fun pair => (pair.1, pair.2.state)) := by
-  rw [evalPanSemRecursiveCallFiniteContext.eq_def,
-    evalPanSemRecursiveCallContextHOLExact.eq_def]
-  simp only [evalPanSemNonrecursiveHOLFinite, evalPanSemNonrecursiveHOLExact]
-  simp only [Option.map_some, FiniteEvalContext.withState_state,
-    PanSemExactEvalContext.withState_state, toExact_ofExact]
+  projectionSimp
 
 /-- Projection equivalence on `Primitive` (see `..._skip_projection`). -/
 theorem evalPanSemRecursiveCallFiniteContext_primitive_projection {width : Nat} {σ : Type}
@@ -1254,11 +1261,7 @@ theorem evalPanSemRecursiveCallFiniteContext_primitive_projection {width : Nat} 
           memaddrsDecidable := context.memaddrsDecidable
           shMemaddrsDecidable := context.shMemaddrsDecidable }).map
         (fun pair => (pair.1, pair.2.state)) := by
-  rw [evalPanSemRecursiveCallFiniteContext.eq_def,
-    evalPanSemRecursiveCallContextHOLExact.eq_def]
-  simp only [evalPanSemNonrecursiveHOLFinite, evalPanSemNonrecursiveHOLExact]
-  simp only [Option.map_some, FiniteEvalContext.withState_state,
-    PanSemExactEvalContext.withState_state, toExact_ofExact]
+  projectionSimp
 
 /-- Projection equivalence on `Store` (see `..._skip_projection`). -/
 theorem evalPanSemRecursiveCallFiniteContext_store_projection {width : Nat} {σ : Type}
@@ -1270,11 +1273,7 @@ theorem evalPanSemRecursiveCallFiniteContext_store_projection {width : Nat} {σ 
           memaddrsDecidable := context.memaddrsDecidable
           shMemaddrsDecidable := context.shMemaddrsDecidable }).map
         (fun pair => (pair.1, pair.2.state)) := by
-  rw [evalPanSemRecursiveCallFiniteContext.eq_def,
-    evalPanSemRecursiveCallContextHOLExact.eq_def]
-  simp only [evalPanSemNonrecursiveHOLFinite, evalPanSemNonrecursiveHOLExact]
-  simp only [Option.map_some, FiniteEvalContext.withState_state,
-    PanSemExactEvalContext.withState_state, toExact_ofExact]
+  projectionSimp
 
 /-- Projection equivalence on `Store32` (see `..._skip_projection`). -/
 theorem evalPanSemRecursiveCallFiniteContext_store32_projection {width : Nat} {σ : Type}
@@ -1286,11 +1285,7 @@ theorem evalPanSemRecursiveCallFiniteContext_store32_projection {width : Nat} {�
           memaddrsDecidable := context.memaddrsDecidable
           shMemaddrsDecidable := context.shMemaddrsDecidable }).map
         (fun pair => (pair.1, pair.2.state)) := by
-  rw [evalPanSemRecursiveCallFiniteContext.eq_def,
-    evalPanSemRecursiveCallContextHOLExact.eq_def]
-  simp only [evalPanSemNonrecursiveHOLFinite, evalPanSemNonrecursiveHOLExact]
-  simp only [Option.map_some, FiniteEvalContext.withState_state,
-    PanSemExactEvalContext.withState_state, toExact_ofExact]
+  projectionSimp
 
 /-- Projection equivalence on `StoreByte` (see `..._skip_projection`). -/
 theorem evalPanSemRecursiveCallFiniteContext_storeByte_projection {width : Nat} {σ : Type}
@@ -1302,11 +1297,7 @@ theorem evalPanSemRecursiveCallFiniteContext_storeByte_projection {width : Nat} 
           memaddrsDecidable := context.memaddrsDecidable
           shMemaddrsDecidable := context.shMemaddrsDecidable }).map
         (fun pair => (pair.1, pair.2.state)) := by
-  rw [evalPanSemRecursiveCallFiniteContext.eq_def,
-    evalPanSemRecursiveCallContextHOLExact.eq_def]
-  simp only [evalPanSemNonrecursiveHOLFinite, evalPanSemNonrecursiveHOLExact]
-  simp only [Option.map_some, FiniteEvalContext.withState_state,
-    PanSemExactEvalContext.withState_state, toExact_ofExact]
+  projectionSimp
 
 /-- Projection equivalence on `ExtCall` (see `..._skip_projection`). -/
 theorem evalPanSemRecursiveCallFiniteContext_extCall_projection {width : Nat} {σ : Type}
@@ -1319,11 +1310,7 @@ theorem evalPanSemRecursiveCallFiniteContext_extCall_projection {width : Nat} {�
           memaddrsDecidable := context.memaddrsDecidable
           shMemaddrsDecidable := context.shMemaddrsDecidable }).map
         (fun pair => (pair.1, pair.2.state)) := by
-  rw [evalPanSemRecursiveCallFiniteContext.eq_def,
-    evalPanSemRecursiveCallContextHOLExact.eq_def]
-  simp only [evalPanSemNonrecursiveHOLFinite, evalPanSemNonrecursiveHOLExact]
-  simp only [Option.map_some, FiniteEvalContext.withState_state,
-    PanSemExactEvalContext.withState_state, toExact_ofExact]
+  projectionSimp
 
 /-- Projection equivalence on `Tick` (see `..._skip_projection`). -/
 theorem evalPanSemRecursiveCallFiniteContext_tick_projection {width : Nat} {σ : Type}
@@ -1667,7 +1654,6 @@ macro "callProjectionCloser" : tactic =>
          toExact_callSetKvarContextHOLFinite])
     | rfl)
 
-set_option maxHeartbeats 1000000 in
 theorem evalPanSemRecursiveCallFiniteContext_call_projection {width : Nat} {σ : Type} [NeZero width]
     (info : Option (Option (VarKind × MlS) × Option (MlS × MlS × ProgHOL width)))
     (function : MlS) (arguments : List (ExpHOL width)) (context : FiniteEvalContext width σ)
@@ -1804,7 +1790,6 @@ theorem evalPanSemRecursiveCallFiniteContext_call_projection {width : Nat} {σ :
                       · simp only [if_neg heq]; callProjectionCloser
                 | finalFfi e => callProjectionCloser
 
-set_option maxHeartbeats 1000000 in
 theorem evalPanSemRecursiveCallFiniteContext_decCall_projection {width : Nat} {σ : Type} [NeZero width]
     (resultName : MlS) (shape : ShapeHOL) (function : MlS) (arguments : List (ExpHOL width))
     (continuation : ProgHOL width) (context : FiniteEvalContext width σ)
@@ -1943,7 +1928,6 @@ theorem callFixedContextHOLFinite_toExact {width : Nat} {σ : Type} [NeZero widt
     bridges. This proves finite-to-broad agreement; it does not by itself
     establish the broad evaluator's HOL correspondence, so the
     `evaluate_def` tag remains withheld pending coordinator review. -/
-set_option maxHeartbeats 2000000 in
 theorem evalPanSemRecursiveCallFiniteContext_projection {width : Nat} {σ : Type} [NeZero width]
     (program : ProgHOL width) (context : FiniteEvalContext width σ) :
     Option.map (fun p => (p.1, p.2.toExact))

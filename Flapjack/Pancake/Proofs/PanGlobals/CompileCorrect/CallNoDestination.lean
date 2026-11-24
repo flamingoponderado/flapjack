@@ -75,12 +75,7 @@ theorem compileCorrect_CallNoDestination {width : Nat} {σ : Type} [NeZero width
     cases hl : lookupCodeHOLFinite source.code.lookup function args with
     | none => exact errorPairImpossible (by simpa only [hl] using hev) hne
     | some entry =>
-      rcases entry with ⟨body,callee,returnShape⟩
-      simp only [hl] at hev
-      have htl := PanGlobalsStateRelationCode.stateRelLookupCodeHOL context source target true function args body callee returnShape ⟨hrel,hl⟩
-      simp only [htl]
-      have hc := hrel.2.2.2.2.2.1
-      by_cases hz : source.clock = 0
+      panGlobalsCallLookupStep
       · have htz : target.clock = 0 := hc ▸ hz
         simp only [if_pos hz] at hev
         obtain ⟨rfl,rfl⟩ := Prod.mk.inj hev

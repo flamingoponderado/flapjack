@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Compiler.Backend.Semantics.BvlProps.BuildRefs
 public import Flapjack.Compiler.Backend.Semantics.BvlSem.ApplyClock
+public import Flapjack.Misc.ProofTactics
 
 @[expose] public section
 
@@ -26,18 +27,14 @@ theorem refs_update_mono (refs : HolFiniteMapExact Nat (Ref Value)) (index key :
 theorem applyGlobal_refs_mono {C F : Type} (op : ClosLang.GlobOp) (args : List Value)
     (state next : State C F) (value : Value) (run : applyGlobal op args state = some (value, next))
     (key : Nat) (present : state.refs.lookup key ≠ none) : next.refs.lookup key ≠ none := by
-  unfold applyGlobal at run
-  repeat' split at run
-  all_goals simp_all
+  unfoldSplit applyGlobal
   all_goals aesop
 
 /-- Numeric primitives leave the reference domain unchanged. -/
 theorem applyNumeric_refs_mono {C F : Type} (op : ClosLang.Op) (args : List Value)
     (state next : State C F) (value : Value) (run : applyNumeric op args state = some (value, next))
     (key : Nat) (present : state.refs.lookup key ≠ none) : next.refs.lookup key ≠ none := by
-  unfold applyNumeric at run
-  repeat' split at run
-  all_goals simp_all
+  unfoldSplit applyNumeric
   all_goals aesop
 
 /-- Block operations preserve the reference domain, including constant
@@ -45,9 +42,7 @@ construction. This is untagged Flapjack infrastructure for `do_app_refs_SUBSET`.
 theorem applyBlock_refs_mono {C F : Type} (op : ClosLang.BlockOp) (args : List Value)
     (state next : State C F) (value : Value) (run : applyBlock op args state = some (value, next))
     (key : Nat) (present : state.refs.lookup key ≠ none) : next.refs.lookup key ≠ none := by
-  unfold applyBlock at run
-  repeat' split at run
-  all_goals simp_all
+  unfoldSplit applyBlock
   all_goals try simp_all only [Option.bind_eq_some_iff, Option.some.injEq, Prod.mk.injEq]
   all_goals aesop (add safe forward doBuildConst_refs_mono)
 
@@ -55,9 +50,7 @@ theorem applyBlock_refs_mono {C F : Type} (op : ClosLang.BlockOp) (args : List V
 theorem applyMemory_refs_mono {C F : Type} (op : ClosLang.MemOp) (args : List Value)
     (state next : State C F) (value : Value) (run : applyMemory op args state = some (value, next))
     (key : Nat) (present : state.refs.lookup key ≠ none) : next.refs.lookup key ≠ none := by
-  unfold applyMemory at run
-  repeat' split at run
-  all_goals simp_all
+  unfoldSplit applyMemory
   all_goals try simp_all only [Option.bind_eq_some_iff, Option.some.injEq, Prod.mk.injEq]
   all_goals try (rcases run with ⟨entry, _, h⟩; cases entry <;> simp_all [Option.bind_eq_some_iff])
   all_goals try (rcases h with ⟨entry, _, h⟩; cases entry <;> simp_all [Option.bind_eq_some_iff])
@@ -70,9 +63,7 @@ theorem applyMemory_refs_mono {C F : Type} (op : ClosLang.MemOp) (args : List Va
 theorem doInstall_refs_mono {C F R : Type} (args : List Value) (state next : State C F)
     (value : Value) (run : doInstall (R := R) args state = .val (value, next))
     (key : Nat) (present : state.refs.lookup key ≠ none) : next.refs.lookup key ≠ none := by
-  unfold doInstall at run
-  repeat' split at run
-  all_goals simp_all
+  unfoldSplit doInstall
   all_goals aesop
 
 /-- Successful primitive application preserves the input reference domain. -/

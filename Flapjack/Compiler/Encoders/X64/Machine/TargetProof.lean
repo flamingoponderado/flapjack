@@ -17,8 +17,6 @@ for the closed x86-64 target.  The transition simulation is developed
 separately.
 -/
 
-set_option maxHeartbeats 4000000
-
 namespace Flapjack.Compiler.Encoders.X64
 
 open Flapjack Compiler.Encoders.Asm Compiler.Encoders.AsmSem

@@ -8,7 +8,6 @@ public import Flapjack.Misc.BinaryIeeeDirectedFp32
 Each proof rewrites the complete choice specification through its full-domain
 agreement theorem, then evaluates the proved algorithm. These supplemental
 regressions do not assert HOL-real equivalence or discharge finite upward/downward original conversion. -/
-set_option maxRecDepth 200000
 namespace Flapjack.Test.BinaryIeeeDirectedFp32Parity
 open Flapjack
 

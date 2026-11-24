@@ -9,8 +9,6 @@ public import Flapjack.RiscV.L3.Defs.Run
 namespace Flapjack.RiscV.TargetProof
 open Flapjack RiscV.L3 RiscV.L3.Step Compiler.Encoders.RiscV.Target
 set_option maxRecDepth 200000
-set_option maxHeartbeats 2000000
-
 /-- Exact four native memory bytes of an emitted instruction; untagged
 infrastructure, not a separately named original HOL declaration. -/
 def encodedInstructionBytes (ms : riscv_state) (i : instruction) : Prop :=

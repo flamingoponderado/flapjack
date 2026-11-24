@@ -5,6 +5,7 @@ public import Flapjack.Compiler.Backend.ClosKnown.Proofs.Syntax
 public import Flapjack.Compiler.Backend.ClosKnown.Proofs.MappedGlobals
 public import Flapjack.Compiler.Backend.Semantics.ClosProps.GlobalSafety
 public import Flapjack.Compiler.Backend.Semantics.ClosSem.Install
+public import Flapjack.Misc.ProofTactics
 
 @[expose] public section
 
@@ -71,9 +72,7 @@ theorem doInstallOracleShift {C F : Type} (values : List ClosSem.Value)
     (s0 s1 : State C F) (result : Result (List ClosLang.Exp) ClosSem.Value)
     (run : doInstall values s0 = (result, s1)) :
     ∃ k, s1.compileOracle = Flapjack.holShiftSeq k s0.compileOracle := by
-  unfold doInstall at run
-  repeat' split at run
-  all_goals simp_all
+  unfoldSplit doInstall
   all_goals try (solve | rcases run with ⟨rfl, _⟩; exact ⟨0, shiftSeqZero _⟩)
   all_goals split at run <;> simp_all
   all_goals try (solve | rcases run with ⟨rfl, _⟩; exact ⟨0, shiftSeqZero _⟩)
@@ -150,9 +149,7 @@ theorem doInstallSsgc {C F : Type} (values : List ClosSem.Value) (s0 : State C F
       firstNExps s0.compileOracle 1 = [es] ∧
       mglobalsExtend s0.globals ∅ s1.globals := by
   rcases h with ⟨run, safe⟩
-  unfold doInstall at run
-  repeat' split at run
-  all_goals simp_all
+  unfoldSplit doInstall
   all_goals split at run <;> simp_all
   rcases run with ⟨_, rfl⟩
   have installed := ssgcFreeDoInstall s0 safe
@@ -170,9 +167,7 @@ theorem doInstallErrorSafety {C F : Type} (values : List ClosSem.Value)
     (safe : ssgcFree s0) (run : doInstall values s0 = (.err error, s1)) :
     ssgcFree s1 ∧ rsgcFree (.err error) ∧ ∃ n,
       s1.compileOracle = Flapjack.holShiftSeq n s0.compileOracle ∧ s1.globals = s0.globals := by
-  unfold doInstall at run
-  repeat' split at run
-  all_goals simp_all
+  unfoldSplit doInstall
   all_goals try (solve | rcases run with ⟨rfl, _⟩; exact ⟨by simp [rsgcFree], 0, shiftSeqZero _⟩)
   all_goals split at run <;> simp_all
   all_goals try (solve | rcases run with ⟨rfl, _⟩; exact ⟨by simp [rsgcFree], 0, shiftSeqZero _⟩)

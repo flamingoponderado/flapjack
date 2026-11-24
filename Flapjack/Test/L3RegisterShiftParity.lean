@@ -4,7 +4,6 @@ public import Flapjack.RiscV.L3.Defs.RegisterShift
 
 @[expose] public section
 
-set_option maxRecDepth 20000
 namespace Flapjack.Test.L3RegisterShiftParity
 open Flapjack.RiscV.L3
 private def fixture (s : riscv_state) (mode : BitVec 2) (lhs rhs : BitVec 64) : riscv_state :=

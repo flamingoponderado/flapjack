@@ -14,8 +14,7 @@ public import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.JumpReg
 
 @[expose] public section
 
-set_option maxRecDepth 10000
-set_option maxHeartbeats 4000000
+set_option maxHeartbeats 800000
 
 /-!
 # The computable encoder's bytes for the unguarded instruction forms

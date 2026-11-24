@@ -958,7 +958,7 @@ theorem doApp_err_lssStackFrameSwap {C F : Type} (op : ClosLang.Op) (values : Li
                       stackFrameSizes := stfrm } = .err error :=
   doApp_error_lssStackFrameResource op values state lss stk stfrm error run
 
-set_option maxHeartbeats 1000000 in
+set_option maxHeartbeats 400000 in
 /-- The auxiliary dispatcher reads the configured limits only through its
 length-safety test, so swapping them preserves the control flow and the returned
 value and changes no field except the safety flag. This Flapjack helper supports
@@ -1301,7 +1301,7 @@ theorem doApp_limSwap {C F : Type} (op : ClosLang.Op) (args : List DataSem.Value
                        peakHeapLength := peak' }) :=
   doApp_limSwap_aux op args state value next lim run
 
-set_option maxHeartbeats 1000000 in
+set_option maxHeartbeats 400000 in
 /-- Failed auxiliary applications are unchanged by a limits update, because the
 dispatcher reads the configured limits only through its length-safety test. This
 Flapjack helper supports the HOL limit swap; the heartbeat bump covers the

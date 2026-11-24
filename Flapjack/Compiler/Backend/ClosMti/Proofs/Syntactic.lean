@@ -6,6 +6,7 @@ public import Flapjack.Compiler.Backend.ClosMti.Proofs.TotalView
 public import Flapjack.Compiler.Backend.Semantics.ClosProps.Syntactic
 public import Flapjack.Compiler.Backend.Semantics.ClosProps.NoMtiSyntactic
 public import Flapjack.Compiler.Backend.Semantics.ClosProps.Syntactic.LabelsAndArity
+public import Flapjack.Compiler.Backend.ClosMti.Proofs.Traversal
 
 @[expose] public section
 
@@ -228,176 +229,89 @@ theorem introMultiFuel_containsAppSome (fuel maxApp : Nat) (expression result : 
         (run : source.mapM (introMultiFuel fuel maxApp) = some target) :
         containsAppSome maxApp source ↔ containsAppSome maxApp target :=
       mapM_containsAppSome maxApp _ source target (fun e result run => ih e result run) run
-    cases expression with
-    | var trace index => simp [introMultiFuel] at run; subst result; rfl
-    | raise trace body =>
-      cases step : introMultiFuel fuel maxApp body with
-      | none => simp [introMultiFuel, step] at run
-      | some next =>
-        have equal : .raise trace next = result := by simpa [introMultiFuel, step] using run
-        subst result
-        simpa [containsAppSomeExp] using ih body next step
-    | tick trace body =>
-      cases step : introMultiFuel fuel maxApp body with
-      | none => simp [introMultiFuel, step] at run
-      | some next =>
-        have equal : .tick trace next = result := by simpa [introMultiFuel, step] using run
-        subst result
-        simpa [containsAppSomeExp] using ih body next step
-    | ifThenElse trace condition yes no =>
-      cases hc : introMultiFuel fuel maxApp condition with
-      | none => simp [introMultiFuel, hc] at run
-      | some condition' =>
-        cases hy : introMultiFuel fuel maxApp yes with
-        | none => simp [introMultiFuel, hc, hy] at run
-        | some yes' =>
-          cases hn : introMultiFuel fuel maxApp no with
-          | none => simp [introMultiFuel, hc, hy, hn] at run
-          | some no' =>
-            have equal : .ifThenElse trace condition' yes' no' = result := by
-              simpa [introMultiFuel, hc, hy, hn] using run
-            subst result
-            simp only [containsAppSomeExp, ih condition condition' hc, ih yes yes' hy, ih no no' hn]
-    | handle trace body handler =>
-      cases hb : introMultiFuel fuel maxApp body with
-      | none => simp [introMultiFuel, hb] at run
-      | some body' =>
-        cases hh : introMultiFuel fuel maxApp handler with
-        | none => simp [introMultiFuel, hb, hh] at run
-        | some handler' =>
-          have equal : .handle trace body' handler' = result := by simpa [introMultiFuel, hb, hh] using run
-          subst result
-          simp only [containsAppSomeExp, ih body body' hb, ih handler handler' hh]
-    | «let» trace bindings body =>
-      cases hs : bindings.mapM (introMultiFuel fuel maxApp) with
-      | none => simp [introMultiFuel, hs] at run
-      | some bindings' =>
-        cases hb : introMultiFuel fuel maxApp body with
-        | none => simp [introMultiFuel, hs, hb] at run
-        | some body' =>
-          have equal : .let trace bindings' body' = result := by simpa [introMultiFuel, hs, hb] using run
-          subst result
-          simp only [containsAppSomeExp, ih body body' hb, listStep bindings bindings' hs]
-    | call trace ticks location args =>
-      cases hs : args.mapM (introMultiFuel fuel maxApp) with
-      | none => simp [introMultiFuel, hs] at run
-      | some args' =>
-        have equal : .call trace ticks location args' = result := by simpa [introMultiFuel, hs] using run
-        subst result
-        simpa [containsAppSomeExp] using listStep args args' hs
-    | op trace op args =>
-      cases hs : args.mapM (introMultiFuel fuel maxApp) with
-      | none => simp [introMultiFuel, hs] at run
-      | some args' =>
-        have equal : .op trace op args' = result := by simpa [introMultiFuel, hs] using run
-        subst result
-        cases op <;> try (simp [containsAppSomeExp, listStep args args' hs])
-        case thunkOp operation => cases operation <;> simp [containsAppSomeExp, listStep args args' hs]
-    | app trace location head args =>
-      cases location with
-      | some location =>
-        cases hh : introMultiFuel fuel maxApp head with
-        | none => simp [introMultiFuel, hh] at run
-        | some head' =>
-          cases ha : args.mapM (introMultiFuel fuel maxApp) with
-          | none => simp [introMultiFuel, hh, ha] at run
-          | some args' =>
-            have equal : .app trace (some location) head' args' = result := by
-              simpa [introMultiFuel, hh, ha] using run
-            subst result
-            simp [containsAppSomeExp]
-      | none =>
-        cases collected : collectApps maxApp args head with
-        | mk collectedArgs collectedHead =>
-          cases hh : introMultiFuel fuel maxApp collectedHead with
-          | none => simp [introMultiFuel, collected, hh] at run
-          | some head' =>
-            cases ha : collectedArgs.mapM (introMultiFuel fuel maxApp) with
-            | none => simp [introMultiFuel, collected, hh, ha] at run
-            | some args' =>
-              have equal : .app trace none head' args' = result := by
-                simpa [introMultiFuel, collected, hh, ha] using run
-              subst result
-              have collector := collectApps_containsAppSome maxApp args head
-              rw [collected] at collector
-              simp only at collector
-              have lengths := mapM_length collectedArgs (introMultiFuel fuel maxApp) args' ha
-              simp only [containsAppSomeExp, Option.isSome_none, Bool.false_eq_true, false_or,
-                ← ih collectedHead head' hh, ← listStep collectedArgs args' ha, lengths]
-              simpa [or_assoc, or_left_comm, or_comm] using collector
-    | fn name location vars arity body =>
-      cases location with
-      | some location =>
-        cases hb : introMultiFuel fuel maxApp body with
-        | none => cases vars <;> simp [introMultiFuel, hb] at run
-        | some body' =>
-          cases vars <;> simp [introMultiFuel, hb] at run <;> subst result <;>
-            simpa [containsAppSomeExp] using ih body body' hb
-      | none =>
-        cases vars with
-        | some vars =>
-          cases hb : introMultiFuel fuel maxApp body with
-          | none => simp [introMultiFuel, hb] at run
+    have funsStep : ∀ source target, source.mapM (collectEntry maxApp fuel) = some target →
+        (containsAppSomeFuns maxApp source ↔ containsAppSomeFuns maxApp target) := by
+      intro source target run
+      apply mapM_funs_containsAppSome maxApp (collectEntry maxApp fuel) source target _ run
+      intro entry result run
+      cases entry with
+      | mk arity body =>
+        cases found : collectArgs maxApp arity body with
+        | mk count rest =>
+          cases step : introMultiFuel fuel maxApp rest with
+          | none => simp [collectEntry, found, step] at run
           | some body' =>
-            have equal : .fn name none (some vars) arity body' = result := by
-              simpa [introMultiFuel, hb] using run
+            have equal : (count, body') = result := by simpa [collectEntry, found, step] using run
             subst result
-            simpa [containsAppSomeExp] using ih body body' hb
-        | none =>
-          cases collected : collectArgs maxApp arity body with
-          | mk count remaining =>
-            cases hb : introMultiFuel fuel maxApp remaining with
-            | none => simp [introMultiFuel, collected, hb] at run
-            | some body' =>
-              have equal : .fn name none none count body' = result := by
-                simpa [introMultiFuel, collected, hb] using run
-              subst result
-              have collector := collectArgs_containsAppSome maxApp arity body
-              rw [collected] at collector
-              simpa [containsAppSomeExp, ih remaining body' hb] using collector
-    | letrec names location vars functions body =>
-      let collected (entry : Nat × Exp) : Option (Nat × Exp) := do
-        let (arity, rest) := collectArgs maxApp entry.1 entry.2
-        pure (arity, ← introMultiFuel fuel maxApp rest)
-      have collectedStep : ∀ target, functions.mapM collected = some target →
-          (containsAppSomeFuns maxApp functions ↔ containsAppSomeFuns maxApp target) := by
-        intro target run
-        apply mapM_funs_containsAppSome maxApp collected functions target _ run
-        intro entry result run
-        cases entry with
-        | mk arity body =>
-          cases found : collectArgs maxApp arity body with
-          | mk count rest =>
-            cases step : introMultiFuel fuel maxApp rest with
-            | none => simp [collected, found, step] at run
-            | some body' =>
-              have equal : (count, body') = result := by simpa [collected, found, step] using run
-              subst result
-              have collector := collectArgs_containsAppSome maxApp arity body
-              rw [found] at collector
-              exact collector.trans (ih rest body' step)
-      cases location <;> cases vars
-      case none.none =>
-        change (do
-          let fs ← functions.mapM collected
-          let b ← introMultiFuel fuel maxApp body
-          pure (.letrec names none none fs b)) = some result at run
-        cases hf : functions.mapM collected with
-        | none => simp [hf] at run
-        | some functions' =>
-          cases hb : introMultiFuel fuel maxApp body with
-          | none => simp [hf, hb] at run
-          | some body' =>
-            simp [hf, hb] at run
-            subst result
-            simp only [containsAppSomeExp, collectedStep functions' hf, ih body body' hb]
-      all_goals
-        cases hb : introMultiFuel fuel maxApp body with
-        | none => simp [introMultiFuel, hb] at run
-        | some body' =>
-          simp [introMultiFuel, hb] at run
-          subst result
-          simp only [containsAppSomeExp, ih body body' hb]
+            have collector := collectArgs_containsAppSome maxApp arity body
+            rw [found] at collector
+            exact collector.trans (ih rest body' step)
+    exact introMultiFuel_step (fuel := fuel) (maxApp := maxApp)
+      (R := fun e r => containsAppSomeExp maxApp e ↔ containsAppSomeExp maxApp r)
+      (RList := fun xs ys => containsAppSome maxApp xs ↔ containsAppSome maxApp ys)
+      (RFuns := fun fs fs' => containsAppSomeFuns maxApp fs ↔ containsAppSomeFuns maxApp fs')
+      (fun _ _ => Iff.rfl)
+      (by
+        intro t c c' y y' z z' hc hy hz
+        simp [containsAppSomeExp, hc, hy, hz])
+      (by
+        intro t xs xs' b b' hs hb
+        simp [containsAppSomeExp, hs, hb])
+      (by
+        intro t b b' hb
+        simpa [containsAppSomeExp] using hb)
+      (by
+        intro t b b' h h' hb hh
+        simp [containsAppSomeExp, hb, hh])
+      (by
+        intro t b b' hb
+        simpa [containsAppSomeExp] using hb)
+      (by
+        intro t k l xs xs' hs
+        simpa [containsAppSomeExp] using hs)
+      (by
+        intro t l b b' xs xs' hb hs
+        simp [containsAppSomeExp])
+      (by
+        intro t args head argsC headC head' args' collected hlen hhead hargs
+        have collector := collectApps_containsAppSome maxApp args head
+        rw [collected] at collector
+        simp only at collector
+        simp only [containsAppSomeExp, Option.isSome_none, Bool.false_eq_true, false_or,
+          ← hhead, ← hargs, hlen]
+        simpa [or_assoc, or_left_comm, or_comm] using collector)
+      (by
+        intro t l v a b b' hb
+        simpa [containsAppSomeExp] using hb)
+      (by
+        intro t v a b b' hb
+        simpa [containsAppSomeExp] using hb)
+      (by
+        intro t a b c rest b' collected hrest
+        have collector := collectArgs_containsAppSome maxApp a b
+        rw [collected] at collector
+        simpa [containsAppSomeExp, hrest] using collector)
+      (by
+        intro t fs fs' b b' hfs hb
+        simp [containsAppSomeExp, hfs, hb])
+      (by
+        intro t l v fs b b' hb
+        simp [containsAppSomeExp, hb])
+      (by
+        intro t v fs b b' hb
+        simp [containsAppSomeExp, hb])
+      (by
+        intro t o xs xs' hs
+        cases o with
+        | thunkOp operation =>
+          cases operation with
+          | forceThunk => simp [containsAppSomeExp, hs]
+          | allocThunk _ => simp [containsAppSomeExp, hs]
+          | updateThunk _ => simp [containsAppSomeExp, hs]
+        | _ => simp [containsAppSomeExp, hs])
+      listStep funsStep ih run
+
+
 
 /-- A pointwise traversal that preserves absence of captured-variable annotations also preserves it
 over the complete list. -/
@@ -439,173 +353,82 @@ theorem introMultiFuel_varsNone (fuel maxApp : Nat) (expression result : Exp)
         (run : source.mapM (introMultiFuel fuel maxApp) = some target) :
         everyFnVarsNone source ↔ everyFnVarsNone target :=
       mapM_varsNone _ source target (fun e result run => ih e result run) run
-    cases expression with
-    | var trace index => simp [introMultiFuel] at run; subst result; rfl
-    | raise trace body =>
-      cases step : introMultiFuel fuel maxApp body with
-      | none => simp [introMultiFuel, step] at run
-      | some next =>
-        have equal : .raise trace next = result := by simpa [introMultiFuel, step] using run
-        subst result
-        simpa [fnVarsNoneExp] using ih body next step
-    | tick trace body =>
-      cases step : introMultiFuel fuel maxApp body with
-      | none => simp [introMultiFuel, step] at run
-      | some next =>
-        have equal : .tick trace next = result := by simpa [introMultiFuel, step] using run
-        subst result
-        simpa [fnVarsNoneExp] using ih body next step
-    | ifThenElse trace condition yes no =>
-      cases hc : introMultiFuel fuel maxApp condition with
-      | none => simp [introMultiFuel, hc] at run
-      | some condition' =>
-        cases hy : introMultiFuel fuel maxApp yes with
-        | none => simp [introMultiFuel, hc, hy] at run
-        | some yes' =>
-          cases hn : introMultiFuel fuel maxApp no with
-          | none => simp [introMultiFuel, hc, hy, hn] at run
-          | some no' =>
-            have equal : .ifThenElse trace condition' yes' no' = result := by
-              simpa [introMultiFuel, hc, hy, hn] using run
-            subst result
-            simp only [fnVarsNoneExp, ih condition condition' hc, ih yes yes' hy, ih no no' hn]
-    | handle trace body handler =>
-      cases hb : introMultiFuel fuel maxApp body with
-      | none => simp [introMultiFuel, hb] at run
-      | some body' =>
-        cases hh : introMultiFuel fuel maxApp handler with
-        | none => simp [introMultiFuel, hb, hh] at run
-        | some handler' =>
-          have equal : .handle trace body' handler' = result := by simpa [introMultiFuel, hb, hh] using run
-          subst result
-          simp only [fnVarsNoneExp, ih body body' hb, ih handler handler' hh]
-    | «let» trace bindings body =>
-      cases hs : bindings.mapM (introMultiFuel fuel maxApp) with
-      | none => simp [introMultiFuel, hs] at run
-      | some bindings' =>
-        cases hb : introMultiFuel fuel maxApp body with
-        | none => simp [introMultiFuel, hs, hb] at run
-        | some body' =>
-          have equal : .let trace bindings' body' = result := by simpa [introMultiFuel, hs, hb] using run
-          subst result
-          simp only [fnVarsNoneExp, ih body body' hb, listStep bindings bindings' hs]
-    | call trace ticks location args =>
-      cases hs : args.mapM (introMultiFuel fuel maxApp) with
-      | none => simp [introMultiFuel, hs] at run
-      | some args' =>
-        have equal : .call trace ticks location args' = result := by simpa [introMultiFuel, hs] using run
-        subst result
-        simpa [fnVarsNoneExp] using listStep args args' hs
-    | op trace op args =>
-      cases hs : args.mapM (introMultiFuel fuel maxApp) with
-      | none => simp [introMultiFuel, hs] at run
-      | some args' =>
-        have equal : .op trace op args' = result := by simpa [introMultiFuel, hs] using run
-        subst result
-        simpa [fnVarsNoneExp] using listStep args args' hs
-    | app trace location head args =>
-      cases location with
-      | some location =>
-        cases hh : introMultiFuel fuel maxApp head with
-        | none => simp [introMultiFuel, hh] at run
-        | some head' =>
-          cases ha : args.mapM (introMultiFuel fuel maxApp) with
-          | none => simp [introMultiFuel, hh, ha] at run
-          | some args' =>
-            have equal : .app trace (some location) head' args' = result := by
-              simpa [introMultiFuel, hh, ha] using run
-            subst result
-            simp [fnVarsNoneExp, ih head head' hh, listStep args args' ha]
-      | none =>
-        cases collected : collectApps maxApp args head with
-        | mk collectedArgs collectedHead =>
-          cases hh : introMultiFuel fuel maxApp collectedHead with
-          | none => simp [introMultiFuel, collected, hh] at run
-          | some head' =>
-            cases ha : collectedArgs.mapM (introMultiFuel fuel maxApp) with
-            | none => simp [introMultiFuel, collected, hh, ha] at run
-            | some args' =>
-              have equal : .app trace none head' args' = result := by
-                simpa [introMultiFuel, collected, hh, ha] using run
-              subst result
-              have collector := collectApps_varsNone maxApp args head
-              rw [collected] at collector
-              simp only at collector
-              simp only [fnVarsNoneExp, ← ih collectedHead head' hh, ← listStep collectedArgs args' ha]
-              simpa [and_comm] using collector
-    | fn name location vars arity body =>
-      cases location with
-      | some location =>
-        cases hb : introMultiFuel fuel maxApp body with
-        | none => cases vars <;> simp [introMultiFuel, hb] at run
-        | some body' =>
-          cases vars <;> simp [introMultiFuel, hb] at run <;> subst result <;>
-            simp [fnVarsNoneExp, ih body body' hb]
-      | none =>
-        cases vars with
-        | some vars =>
-          cases hb : introMultiFuel fuel maxApp body with
-          | none => simp [introMultiFuel, hb] at run
+    have funsStep : ∀ source target, source.mapM (collectEntry maxApp fuel) = some target →
+        (fnVarsNoneFuns source ↔ fnVarsNoneFuns target) := by
+      intro source target run
+      apply mapM_funs_varsNone (collectEntry maxApp fuel) source target _ run
+      intro entry result run
+      cases entry with
+      | mk arity body =>
+        cases found : collectArgs maxApp arity body with
+        | mk count rest =>
+          cases step : introMultiFuel fuel maxApp rest with
+          | none => simp [collectEntry, found, step] at run
           | some body' =>
-            have equal : .fn name none (some vars) arity body' = result := by
-              simpa [introMultiFuel, hb] using run
+            have equal : (count, body') = result := by simpa [collectEntry, found, step] using run
             subst result
-            simp [fnVarsNoneExp]
-        | none =>
-          cases collected : collectArgs maxApp arity body with
-          | mk count remaining =>
-            cases hb : introMultiFuel fuel maxApp remaining with
-            | none => simp [introMultiFuel, collected, hb] at run
-            | some body' =>
-              have equal : .fn name none none count body' = result := by
-                simpa [introMultiFuel, collected, hb] using run
-              subst result
-              have collector := collectArgs_varsNone maxApp arity body
-              rw [collected] at collector
-              simpa [fnVarsNoneExp, ih remaining body' hb] using collector
-    | letrec names location vars functions body =>
-      let collected (entry : Nat × Exp) : Option (Nat × Exp) := do
-        let (arity, rest) := collectArgs maxApp entry.1 entry.2
-        pure (arity, ← introMultiFuel fuel maxApp rest)
-      have collectedStep : ∀ target, functions.mapM collected = some target →
-          (fnVarsNoneFuns functions ↔ fnVarsNoneFuns target) := by
-        intro target run
-        apply mapM_funs_varsNone collected functions target _ run
-        intro entry result run
-        cases entry with
-        | mk arity body =>
-          cases found : collectArgs maxApp arity body with
-          | mk count rest =>
-            cases step : introMultiFuel fuel maxApp rest with
-            | none => simp [collected, found, step] at run
-            | some body' =>
-              have equal : (count, body') = result := by simpa [collected, found, step] using run
-              subst result
-              have collector := collectArgs_varsNone maxApp arity body
-              rw [found] at collector
-              exact collector.trans (ih rest body' step)
-      cases location <;> cases vars
-      case none.none =>
-        change (do
-          let fs ← functions.mapM collected
-          let b ← introMultiFuel fuel maxApp body
-          pure (.letrec names none none fs b)) = some result at run
-        cases hf : functions.mapM collected with
-        | none => simp [hf] at run
-        | some functions' =>
-          cases hb : introMultiFuel fuel maxApp body with
-          | none => simp [hf, hb] at run
-          | some body' =>
-            simp [hf, hb] at run
-            subst result
-            simp only [fnVarsNoneExp, collectedStep functions' hf, ih body body' hb]
-      all_goals
-        cases hb : introMultiFuel fuel maxApp body with
-        | none => simp [introMultiFuel, hb] at run
-        | some body' =>
-          simp [introMultiFuel, hb] at run
-          subst result
-          simp only [fnVarsNoneExp, ih body body' hb]
+            have collector := collectArgs_varsNone maxApp arity body
+            rw [found] at collector
+            exact collector.trans (ih rest body' step)
+    exact introMultiFuel_step (fuel := fuel) (maxApp := maxApp)
+      (R := fun e r => fnVarsNoneExp e ↔ fnVarsNoneExp r)
+      (RList := fun xs ys => everyFnVarsNone xs ↔ everyFnVarsNone ys)
+      (RFuns := fun fs fs' => fnVarsNoneFuns fs ↔ fnVarsNoneFuns fs')
+      (fun _ _ => Iff.rfl)
+      (by
+        intro t c c' y y' z z' hc hy hz
+        simp [fnVarsNoneExp, hc, hy, hz])
+      (by
+        intro t xs xs' b b' hs hb
+        simp [fnVarsNoneExp, hs, hb])
+      (by
+        intro t b b' hb
+        simpa [fnVarsNoneExp] using hb)
+      (by
+        intro t b b' h h' hb hh
+        simp [fnVarsNoneExp, hb, hh])
+      (by
+        intro t b b' hb
+        simpa [fnVarsNoneExp] using hb)
+      (by
+        intro t k l xs xs' hs
+        simpa [fnVarsNoneExp] using hs)
+      (by
+        intro t l b b' xs xs' hb hs
+        simp [fnVarsNoneExp, hb, hs])
+      (by
+        intro t args head argsC headC head' args' collected hlen hhead hargs
+        have collector := collectApps_varsNone maxApp args head
+        rw [collected] at collector
+        simp only at collector
+        simp only [fnVarsNoneExp, ← hhead, ← hargs]
+        simpa [and_comm] using collector)
+      (by
+        intro t l v a b b' hb
+        simp [fnVarsNoneExp, hb])
+      (by
+        intro t v a b b' hb
+        simp [fnVarsNoneExp])
+      (by
+        intro t a b c rest b' collected hrest
+        have collector := collectArgs_varsNone maxApp a b
+        rw [collected] at collector
+        simpa [fnVarsNoneExp] using collector.trans hrest)
+      (by
+        intro t fs fs' b b' hfs hb
+        simp [fnVarsNoneExp, hfs, hb])
+      (by
+        intro t l v fs b b' hb
+        simp [fnVarsNoneExp, hb])
+      (by
+        intro t v fs b b' hb
+        simp [fnVarsNoneExp])
+      (by
+        intro t o xs xs' hs
+        simpa [fnVarsNoneExp] using hs)
+      listStep funsStep ih run
+
+
 
 /-- The total view preserves the absence of captured-variable annotations. -/
 theorem introExp_varsNone (maxApp : Nat) (expression : Exp) :

@@ -16,12 +16,7 @@ theorem evaluatePost_ref_error {C F : Type} (s sFinal : ClosSem.State C F)
     (f : HolFiniteMapExact Nat Nat) (args : List Bvl.Exp) (error : ErrorResult ClosSem.Value)
     (post : evaluatePost s sFinal t targetEnv f (.err error) args) :
     evaluatePost s sFinal t targetEnv f (.err error) [.op (.memOp .ref) args] := by
-  obtain ⟨clock, targetResult, tFinal, fFinal, run, related, state, map, refs, annotations, clocks⟩ := post
-  cases targetResult with
-  | val values => simp [resultRel] at related
-  | err targetError =>
-    refine ⟨clock, .err targetError, tFinal, fFinal, ?_, related, state, map, refs, annotations, clocks⟩
-    rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, run]
+  exact evaluatePostOpError s sFinal t targetEnv f (.memOp .ref) args error post
 
 /-- Allocating related argument lists yields related fresh references. -/
 theorem evaluatePost_ref_success {C F : Type} (s sMiddle : ClosSem.State C F)
@@ -72,13 +67,7 @@ theorem expressionSimulationBelow_ref {C F : Type} (clockBound : Nat) (trace : B
         ([.op (.memOp .ref) targetArgs], aux1) := by
       rw [compileExps_eq_list]
       simp [compileExpListHOL, compileExpHOL, argsCompile, compileOp]
-    have equal := compile.symm.trans wholeCompiled
-    cases equal
-    have argsLoc : ClosProps.everyFnLocationSome args := by
-      simpa [ClosProps.everyFnLocationSome, ClosProps.fnLocationSomeExp] using locations
-    have argsVars : ClosProps.everyFnVarsSome args := by
-      simpa [ClosProps.everyFnVarsSome, ClosProps.fnVarsSomeExp] using varsAnnotated
-    rw [ClosSem.evaluate, ClosSem.fixClock_evaluate] at run
+    closArgsSplit
     cases argsRun : ClosSem.evaluate args sourceEnv s with
     | mk argsResult sMiddle =>
       rw [argsRun] at run
@@ -90,10 +79,7 @@ theorem expressionSimulationBelow_ref {C F : Type} (clockBound : Nat) (trace : B
           (argsIH s sMiddle t sourceEnv targetEnv f aux finalAux targetArgs (.err error)
             clockBounded argsRun noTypeError argsCompiled argsLoc annotations argsVars installed envRelated states)
       | val values =>
-        have maxApp : sMiddle.maxApp = s.maxApp := by
-          have h := (ClosProps.evaluate_const (C := C) (F := F)).1 args sourceEnv s
-          rw [argsRun] at h
-          exact h
+        have maxApp := maxApp_of_evaluate_const argsRun
         have argsPost := argsIH s sMiddle t sourceEnv targetEnv f aux finalAux targetArgs (.val values)
           clockBounded argsRun (by simp) argsCompiled argsLoc annotations argsVars installed envRelated states
         simp [ClosSem.doApp, ClosSem.applyMemory] at run
@@ -107,12 +93,7 @@ theorem evaluatePost_refArray_error {C F : Type} (s sFinal : ClosSem.State C F)
     (f : HolFiniteMapExact Nat Nat) (args : List Bvl.Exp) (error : ErrorResult ClosSem.Value)
     (post : evaluatePost s sFinal t targetEnv f (.err error) args) :
     evaluatePost s sFinal t targetEnv f (.err error) [.op (.memOp .refArray) args] := by
-  obtain ⟨clock, targetResult, tFinal, fFinal, run, related, state, map, refs, annotations, clocks⟩ := post
-  cases targetResult with
-  | val values => simp [resultRel] at related
-  | err targetError =>
-    refine ⟨clock, .err targetError, tFinal, fFinal, ?_, related, state, map, refs, annotations, clocks⟩
-    rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, run]
+  exact evaluatePostOpError s sFinal t targetEnv f (.memOp .refArray) args error post
 
 /-- A successful repeated-array allocation preserves the simulation. -/
 theorem evaluatePost_refArray_success {C F : Type} (s sMiddle sLast : ClosSem.State C F)
@@ -181,13 +162,7 @@ theorem expressionSimulationBelow_refArray {C F : Type} (clockBound : Nat) (trac
         ([.op (.memOp .refArray) targetArgs], aux1) := by
       rw [compileExps_eq_list]
       simp [compileExpListHOL, compileExpHOL, argsCompile, compileOp]
-    have equal := compile.symm.trans wholeCompiled
-    cases equal
-    have argsLoc : ClosProps.everyFnLocationSome args := by
-      simpa [ClosProps.everyFnLocationSome, ClosProps.fnLocationSomeExp] using locations
-    have argsVars : ClosProps.everyFnVarsSome args := by
-      simpa [ClosProps.everyFnVarsSome, ClosProps.fnVarsSomeExp] using varsAnnotated
-    rw [ClosSem.evaluate, ClosSem.fixClock_evaluate] at run
+    closArgsSplit
     cases argsRun : ClosSem.evaluate args sourceEnv s with
     | mk argsResult sMiddle =>
       rw [argsRun] at run
@@ -199,19 +174,13 @@ theorem expressionSimulationBelow_refArray {C F : Type} (clockBound : Nat) (trac
           (argsIH s sMiddle t sourceEnv targetEnv f aux finalAux targetArgs (.err error)
             clockBounded argsRun noTypeError argsCompiled argsLoc annotations argsVars installed envRelated states)
       | val values =>
-        have maxApp : sMiddle.maxApp = s.maxApp := by
-          have h := (ClosProps.evaluate_const (C := C) (F := F)).1 args sourceEnv s
-          rw [argsRun] at h
-          exact h
+        have maxApp := maxApp_of_evaluate_const argsRun
         have argsPost := argsIH s sMiddle t sourceEnv targetEnv f aux finalAux targetArgs (.val values)
           clockBounded argsRun (by simp) argsCompiled argsLoc annotations argsVars installed envRelated states
         cases appRun : ClosSem.doApp (.memOp .refArray) values.reverse sMiddle with
         | err error =>
           have errorEq := refArray_error values.reverse sMiddle error appRun
-          simp [appRun] at run
-          apply False.elim
-          apply noTypeError
-          simpa [errorEq] using run.1.symm
+          closAppRunError
         | val pair =>
           obtain ⟨value, last⟩ := pair
           simp [appRun] at run
@@ -226,12 +195,7 @@ theorem evaluatePost_refByte_error {C F : Type} (s sFinal : ClosSem.State C F)
     (f : HolFiniteMapExact Nat Nat) (args : List Bvl.Exp) (error : ErrorResult ClosSem.Value)
     (post : evaluatePost s sFinal t targetEnv f (.err error) args) :
     evaluatePost s sFinal t targetEnv f (.err error) [.op (.memOp (.refByte false)) args] := by
-  obtain ⟨clock, targetResult, tFinal, fFinal, run, related, state, map, refs, annotations, clocks⟩ := post
-  cases targetResult with
-  | val values => simp [resultRel] at related
-  | err targetError =>
-    refine ⟨clock, .err targetError, tFinal, fFinal, ?_, related, state, map, refs, annotations, clocks⟩
-    rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, run]
+  exact evaluatePostOpError s sFinal t targetEnv f (.memOp (.refByte false)) args error post
 
 /-- A successful mutable-byte allocation preserves the simulation. -/
 theorem evaluatePost_refByte_success {C F : Type} (s sMiddle sLast : ClosSem.State C F)
@@ -302,13 +266,7 @@ theorem expressionSimulationBelow_refByte {C F : Type} (clockBound : Nat) (trace
         ([.op (.memOp (.refByte false)) targetArgs], aux1) := by
       rw [compileExps_eq_list]
       simp [compileExpListHOL, compileExpHOL, argsCompile, compileOp]
-    have equal := compile.symm.trans wholeCompiled
-    cases equal
-    have argsLoc : ClosProps.everyFnLocationSome args := by
-      simpa [ClosProps.everyFnLocationSome, ClosProps.fnLocationSomeExp] using locations
-    have argsVars : ClosProps.everyFnVarsSome args := by
-      simpa [ClosProps.everyFnVarsSome, ClosProps.fnVarsSomeExp] using varsAnnotated
-    rw [ClosSem.evaluate, ClosSem.fixClock_evaluate] at run
+    closArgsSplit
     cases argsRun : ClosSem.evaluate args sourceEnv s with
     | mk argsResult sMiddle =>
       rw [argsRun] at run
@@ -320,19 +278,13 @@ theorem expressionSimulationBelow_refByte {C F : Type} (clockBound : Nat) (trace
           (argsIH s sMiddle t sourceEnv targetEnv f aux finalAux targetArgs (.err error)
             clockBounded argsRun noTypeError argsCompiled argsLoc annotations argsVars installed envRelated states)
       | val values =>
-        have maxApp : sMiddle.maxApp = s.maxApp := by
-          have h := (ClosProps.evaluate_const (C := C) (F := F)).1 args sourceEnv s
-          rw [argsRun] at h
-          exact h
+        have maxApp := maxApp_of_evaluate_const argsRun
         have argsPost := argsIH s sMiddle t sourceEnv targetEnv f aux finalAux targetArgs (.val values)
           clockBounded argsRun (by simp) argsCompiled argsLoc annotations argsVars installed envRelated states
         cases appRun : ClosSem.doApp (.memOp (.refByte false)) values.reverse sMiddle with
         | err error =>
           have errorEq := refByte_error values.reverse sMiddle error appRun
-          simp [appRun] at run
-          apply False.elim
-          apply noTypeError
-          simpa [errorEq] using run.1.symm
+          closAppRunError
         | val pair =>
           obtain ⟨value, last⟩ := pair
           simp [appRun] at run
@@ -347,12 +299,7 @@ theorem evaluatePost_refByteTrue_error {C F : Type} (s sFinal : ClosSem.State C 
     (f : HolFiniteMapExact Nat Nat) (args : List Bvl.Exp) (error : ErrorResult ClosSem.Value)
     (post : evaluatePost s sFinal t targetEnv f (.err error) args) :
     evaluatePost s sFinal t targetEnv f (.err error) [.op (.memOp (.refByte true)) args] := by
-  obtain ⟨clock, targetResult, tFinal, fFinal, run, related, state, map, refs, annotations, clocks⟩ := post
-  cases targetResult with
-  | val values => simp [resultRel] at related
-  | err targetError =>
-    refine ⟨clock, .err targetError, tFinal, fFinal, ?_, related, state, map, refs, annotations, clocks⟩
-    rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, run]
+  exact evaluatePostOpError s sFinal t targetEnv f (.memOp (.refByte true)) args error post
 
 /-- The unsupported source allocation flag always gives a type error after
 successful argument evaluation; argument errors still propagate. -/
@@ -370,13 +317,7 @@ theorem expressionSimulationBelow_refByteTrue {C F : Type} (clockBound : Nat) (t
         ([.op (.memOp (.refByte true)) targetArgs], aux1) := by
       rw [compileExps_eq_list]
       simp [compileExpListHOL, compileExpHOL, argsCompile, compileOp]
-    have equal := compile.symm.trans wholeCompiled
-    cases equal
-    have argsLoc : ClosProps.everyFnLocationSome args := by
-      simpa [ClosProps.everyFnLocationSome, ClosProps.fnLocationSomeExp] using locations
-    have argsVars : ClosProps.everyFnVarsSome args := by
-      simpa [ClosProps.everyFnVarsSome, ClosProps.fnVarsSomeExp] using varsAnnotated
-    rw [ClosSem.evaluate, ClosSem.fixClock_evaluate] at run
+    closArgsSplit
     cases argsRun : ClosSem.evaluate args sourceEnv s with
     | mk argsResult sMiddle =>
       rw [argsRun] at run

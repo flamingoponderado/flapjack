@@ -101,11 +101,7 @@ theorem wordGcMoveListCode_loop {width : Nat} [NeZero width] {C F : Type} {conf 
       rw [show BitVec.ofNat width 0 = 0#width from rfl, wordGcMoveList_zero] at hm
       simp only [Prod.mk.injEq] at hm
       obtain ⟨rfl, rfl, rfl, rfl, -⟩ := hm
-      obtain ⟨r0, hr0⟩ := Option.isSome_iff_exists.1 h0
-      obtain ⟨r1, hr1⟩ := Option.isSome_iff_exists.1 h1
-      obtain ⟨r2, hr2⟩ := Option.isSome_iff_exists.1 h2
-      obtain ⟨r5, hr5⟩ := Option.isSome_iff_exists.1 h5
-      obtain ⟨r6, hr6⟩ := Option.isSome_iff_exists.1 h6
+      stackAllocRegValues
       refine ⟨0, r0, r1, r2, r5, r6, ?_⟩
       rw [wordGcMoveListCode_eq, evaluate_loop, evaluate_ite, evaluate_break]
       simp only [getVar, HolRegImm.toWordRegImm, Nat.add_zero, h7]

@@ -23,8 +23,6 @@ agreeing on that many bytes parse the same operand.
 namespace Flapjack.Compiler.Encoders.X64
 
 
-set_option maxHeartbeats 4000000
-
 /-- `parseRM` reads exactly the bytes its result reports: two readers agreeing
 on the first `p.len` bytes from `off` parse the same operand. -/
 theorem parseRM_congr_upto (r r' : Nat → BitVec 8) (off : Nat) (rexB : Bool) (p : ParsedRM)

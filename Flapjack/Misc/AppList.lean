@@ -110,6 +110,14 @@ theorem appListAppend_smartAppend {α : Type} (left right : AppList α) :
     | append third fourth =>
       exact (appListAppend_thm_sameType (.append first second) (.append third fourth) []).1
 
+/-- A smart append with an empty right tree is the identity. Flapjack-specific
+infrastructure (no standalone HOL declaration). -/
+theorem smartAppend_nil {α : Type} (left : AppList α) : smartAppend left .nil = left := by
+  cases left
+  · rfl
+  · rfl
+  · rfl
+
 /-- Flatten the leading `AppList` of a `(AppList α × Bool × Nat)` (the shape of
 HOL `flatten`'s result) with `misc$append`. -/
 def appListFlatten {α : Type} (result : AppList α × Bool × Nat) : List α × Bool × Nat :=

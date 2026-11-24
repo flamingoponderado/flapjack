@@ -9,8 +9,6 @@ public import Flapjack.Misc.BinaryIeeeDirectedFp64
 rounding and final sign negation. Symbolic invalid-product cases retain the
 original nested choices; no NaN payload is fixed. Numeric state fixtures are
 appended from the fresh original capture. docs/SOUNDNESS.md item 8 applies. -/
-set_option maxRecDepth 200000
-set_option maxHeartbeats 0
 set_option synthInstance.maxSize 4096
 namespace Flapjack.Test.L3RiscvMaddParity
 open Flapjack.RiscV.L3 Flapjack

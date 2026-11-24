@@ -20,7 +20,6 @@ Each body is rendered from the original elaborated HOL theorem by selecting
 roots and their full dependency closure, never by narrowing its branches.
 The real-valued primitive rendering uses the stated SOUNDNESS item8 assumption.
 -/
-set_option maxRecDepth 200000
 namespace Flapjack.RiscV.L3
 open Flapjack.Basis.Pure.MlString
 

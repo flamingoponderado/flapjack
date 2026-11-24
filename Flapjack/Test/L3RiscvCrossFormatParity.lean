@@ -11,8 +11,6 @@ l3_riscv_cross_format_probe.out. Unobserved ARB fields instantiate defaults.
 Finite numerical choices use proved complete all-mode agreements; the rational
 rendering assumption remains SOUNDNESS item8. NaN payload choices are covered
 by full source helper review, not fixed by these finite/infinity regressions. -/
-set_option maxRecDepth 200000
-set_option maxHeartbeats 0
 set_option synthInstance.maxSize 2048
 namespace Flapjack.Test.L3RiscvCrossFormatParity
 open Flapjack.RiscV.L3 Flapjack

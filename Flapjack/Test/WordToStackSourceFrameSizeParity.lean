@@ -4,7 +4,6 @@ public import Flapjack.Compiler.Backend.WordToStack.Proofs.SourceFrameSize
 
 @[expose] public section
 open Flapjack Flapjack.WordToStackProofs Flapjack.WordSemStateFiniteExact
-set_option maxRecDepth 8192
 
 -- ss_decode_1_0_0_0
 example : (wordSemStackSize ([] : List (WordSemStackFrame 1)), (wordSemDecStack ([] : List (WordLocW 1)) ([] : List (WordSemStackFrame 1))).map wordSemStackSize) = (some 1, some (some 1)) := by decide +kernel

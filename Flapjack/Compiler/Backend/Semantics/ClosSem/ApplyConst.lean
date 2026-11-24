@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyClock
 public import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyCode
+public import Flapjack.Misc.ProofTactics
 public import Aesop
 
 @[expose] public section
@@ -25,9 +26,7 @@ private theorem applyGlobal_const {C F : Type} (op : ClosLang.GlobOp) (args : Li
     (run : applyGlobal op args state = some (value, next)) :
     next.clock = state.clock ∧ next.maxApp = state.maxApp ∧ next.code = state.code ∧
       next.compileOracle = state.compileOracle ∧ next.compile = state.compile := by
-  unfold applyGlobal at run
-  repeat' split at run
-  all_goals simp_all
+  unfoldSplit applyGlobal
   all_goals aesop
 
 /-- Successful block primitives preserve clock, maximum arity, code, compile
@@ -37,9 +36,7 @@ private theorem applyBlock_const {C F : Type} (op : ClosLang.BlockOp) (args : Li
     (run : applyBlock op args state = some (value, next)) :
     next.clock = state.clock ∧ next.maxApp = state.maxApp ∧ next.code = state.code ∧
       next.compileOracle = state.compileOracle ∧ next.compile = state.compile := by
-  unfold applyBlock at run
-  repeat' split at run
-  all_goals simp_all
+  unfoldSplit applyBlock
   all_goals try simp_all only [Option.bind_eq_some_iff, Option.some.injEq, Prod.mk.injEq]
   all_goals aesop
 
@@ -50,9 +47,7 @@ private theorem applyNumeric_const {C F : Type} (op : ClosLang.Op) (args : List 
     (run : applyNumeric op args state = some (value, next)) :
     next.clock = state.clock ∧ next.maxApp = state.maxApp ∧ next.code = state.code ∧
       next.compileOracle = state.compileOracle ∧ next.compile = state.compile := by
-  unfold applyNumeric at run
-  repeat' split at run
-  all_goals simp_all
+  unfoldSplit applyNumeric
   all_goals aesop
 
 /-- Successful memory primitives preserve clock, maximum arity, code, compile
@@ -62,9 +57,7 @@ private theorem applyMemory_const {C F : Type} (op : ClosLang.MemOp) (args : Lis
     (run : applyMemory op args state = some (value, next)) :
     next.clock = state.clock ∧ next.maxApp = state.maxApp ∧ next.code = state.code ∧
       next.compileOracle = state.compileOracle ∧ next.compile = state.compile := by
-  unfold applyMemory at run
-  repeat' split at run
-  all_goals simp_all
+  unfoldSplit applyMemory
   all_goals aesop (add simp Option.bind_eq_some_iff)
 
 /-- A successful primitive application preserves the clock, the maximum arity,

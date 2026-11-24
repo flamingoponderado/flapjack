@@ -47,4 +47,17 @@ theorem adjustBv_unit (relocate : Nat → Nat) : adjustBv relocate unitValue = u
 @[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "adjust_bv_Boolv"]
 theorem adjustBv_bool (relocate : Nat → Nat) (b : Bool) : adjustBv relocate (boolValue b) = boolValue b := by
   cases b <;> simp [boolValue, adjustBv, adjustValues]
+
+/- Close a simulation goal from a target-side induction hypothesis: build the
+existential tuple, unfold the clocked target evaluation, and reduce the reversed
+argument list. Flapjack helper for the per-case compilation theorems; the HOL
+script repeats this step inline for each case. -/
+set_option hygiene false in
+macro "bviCloseSimulation" : tactic =>
+  `(tactic| (
+    refine ⟨targetNext, newRelocate, clock, ?_, relatedNext, envEq, refsEq⟩
+    rw [BviSem.evaluate, BviSem.fixClock_evaluate, targetArgs]
+    simp only [mapSimulationResult]
+    rw [← List.map_reverse, reversed]))
+
 end Flapjack.Compiler.Backend.BvlToBvi.Proofs

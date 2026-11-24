@@ -7,8 +7,7 @@ public import Mathlib.Data.List.GetD
 
 @[expose] public section
 
-set_option maxHeartbeats 12000000
-set_option maxRecDepth 10000
+set_option maxHeartbeats 400000
 
 /-!
 # `LoadStoreImmediate`: the `Mem` lowering of `encoder_correct arm8TargetL3`

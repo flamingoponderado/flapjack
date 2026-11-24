@@ -63,6 +63,34 @@ theorem scanSing_ne_noop (ctx : List ValueType) (loc : Nat) (e : Bvi.Exp) :
   | letCall rets ticks dest args body => simp [scanSing.eq_def]
 termination_by sizeOf e
 
+/-- An error result that is not the type-error abort stays distinct from it
+when the enclosing evaluation result is known to be that error. Flapjack helper
+for the rewrite simulation; the HOL script repeats the argument inline. -/
+private theorem err_ne_typeError {S : Type} {result : BviSem.BviResult} {next : S}
+    {error : Flapjack.SemanticPrimitivesHOL.ErrorResult BviSem.ExnOrRet} {middle : S}
+    (run : (.err error, middle) = (result, next)) (hne : result ≠ .err (.abort .typeError)) :
+    (.err error : BviSem.BviResult) ≠ .err (.abort .typeError) := by
+  intro bad
+  exact hne ((congrArg Prod.fst run).symm.trans bad)
+
+/-- A clock decremented by `ticks + 1` stays strictly below the clock of the
+enclosing source state. Flapjack helper for the rewrite simulation. -/
+private theorem decClock_clock_lt {C F : Type} (ticks : Nat) {source middle : BviSem.BviState C F}
+    (bound : middle.clock ≤ source.clock) (enough : ticks + 1 ≤ middle.clock) :
+    (BviSem.decClock (ticks + 1) middle).clock < source.clock := by
+  simp only [BviSem.decClock]
+  omega
+
+/-- A target state related to the source inherits a source non-timeout.
+Flapjack helper for the rewrite simulation. -/
+private theorem not_timeout_related {C F : Type} {middle : BviSem.BviState (Nat × C) F}
+    {targetMiddle : BviSem.BviState C F}
+    (related : stateRel middle targetMiddle) (ticks : Nat)
+    (timeout : ¬ middle.clock < ticks + 1) :
+    ¬ targetMiddle.clock < ticks + 1 := by
+  have := (stateRel_const middle targetMiddle related).2.1
+  omega
+
 /-- A successful optimization check identifies a non-noop accumulator and
 a matching, non-`any` result type in the singleton scan. -/
 theorem checkExpOriginal_scan (loc arity : Nat) (e : Bvi.Exp) (op : AssocOp)
@@ -968,10 +996,7 @@ theorem rewriteTail_let_through {C F : Type} (limit : Nat) (bindings : List Bvi.
     cases bindingResult with
     | err error =>
       simp only [bindingRun] at run
-      have ok : (.err error : BviSem.BviResult) ≠ .err (.abort .typeError) := by
-        intro bad
-        apply notTypeError
-        exact (congrArg Prod.fst run).symm.trans bad
+      have ok := err_ne_typeError run notTypeError
       have bindingHyp : rewriteTailHyp bindings source env1 (.err error) middle false
           target acc env2 loc ts ty := ⟨bindingRun, disabled, stateRelated, types, by simp, ok⟩
       obtain ⟨targetMiddle, targetBindings, middleRelated, _⟩ :=
@@ -1618,10 +1643,7 @@ theorem evaluate_worker_candidate_enough_clock_through {C F : Type}
     optimized targetGrowth
   have argsClock := BviSem.evaluate_clock_le args env1 source
   rw [argsSource] at argsClock
-  have small : (BviSem.decClock (ticks + 1) sourceMiddle).clock < source.clock := by
-    simp only [BviSem.decClock]
-    simp only at argsClock
-    omega
+  have small := decClock_clock_lt ticks (by simpa using argsClock) enoughClock
   have noTimeout : ¬sourceMiddle.clock < ticks + 1 := by omega
   cases bodyRun : BviSem.evaluate [body] callArgs (BviSem.decClock (ticks + 1) sourceMiddle) with
   | mk bodyResult bodyNext =>
@@ -1955,10 +1977,7 @@ theorem rewriteTail_call_noHandler_through {C F : Type} (limit : Nat) (ticks : N
       cases argsResult with
       | err error =>
         simp only [argsRun] at run
-        have ok : (.err error : BviSem.BviResult) ≠ .err (.abort .typeError) := by
-          intro bad
-          apply notTypeError
-          exact (congrArg Prod.fst run).symm.trans bad
+        have ok := err_ne_typeError run notTypeError
         have argsHyp : rewriteTailHyp args source env1 (.err error) middle false
             target acc env2 loc ts ty := ⟨argsRun, disabled, related, types, by simp, ok⟩
         obtain ⟨targetMiddle, targetArgs, middleRelated, _⟩ :=
@@ -1997,13 +2016,8 @@ theorem rewriteTail_call_noHandler_through {C F : Type} (limit : Nat) (ticks : N
             simp [targetResolved, targetTimeout]
           · have argsClock := BviSem.evaluate_clock_le args env1 source
             rw [argsRun] at argsClock
-            have small : (BviSem.decClock (ticks + 1) middle).clock < source.clock := by
-              simp only [BviSem.decClock]
-              simp only at argsClock
-              omega
-            have targetNotTimeout : ¬targetMiddle.clock < ticks + 1 := by
-              have := (stateRel_const middle targetMiddle middleRelated).2.1
-              omega
+            have small := decClock_clock_lt ticks (by simpa using argsClock) (by omega)
+            have targetNotTimeout := not_timeout_related middleRelated ticks timeout
             cases bodyRun : BviSem.evaluate [body] actual (BviSem.decClock (ticks + 1) middle) with
             | mk inner last =>
               rw [resolved] at run
@@ -2093,10 +2107,7 @@ theorem rewriteTail_call_handler_through {C F : Type} (limit : Nat) (ticks place
       cases argsResult with
       | err error =>
         simp only [argsRun] at run
-        have ok : (.err error : BviSem.BviResult) ≠ .err (.abort .typeError) := by
-          intro bad
-          apply notTypeError
-          exact (congrArg Prod.fst run).symm.trans bad
+        have ok := err_ne_typeError run notTypeError
         have argsHyp : rewriteTailHyp args source env1 (.err error) middle false
             target acc env2 loc ts ty := ⟨argsRun, disabled, related, types, by simp, ok⟩
         obtain ⟨targetMiddle, targetArgs, middleRelated, _⟩ :=
@@ -2135,13 +2146,8 @@ theorem rewriteTail_call_handler_through {C F : Type} (limit : Nat) (ticks place
             simp [targetResolved, targetTimeout]
           · have argsClock := BviSem.evaluate_clock_le args env1 source
             rw [argsRun] at argsClock
-            have small : (BviSem.decClock (ticks + 1) middle).clock < source.clock := by
-              simp only [BviSem.decClock]
-              simp only at argsClock
-              omega
-            have targetNotTimeout : ¬targetMiddle.clock < ticks + 1 := by
-              have := (stateRel_const middle targetMiddle middleRelated).2.1
-              omega
+            have small := decClock_clock_lt ticks (by simpa using argsClock) (by omega)
+            have targetNotTimeout := not_timeout_related middleRelated ticks timeout
             cases bodyRun : BviSem.evaluate [body] actual (BviSem.decClock (ticks + 1) middle) with
             | mk inner last =>
               rw [resolved] at run
@@ -2279,10 +2285,7 @@ theorem rewriteTail_letCall_through {C F : Type} (limit : Nat) (rets ticks place
       cases argsResult with
       | err error =>
         simp only [argsRun] at run
-        have ok : (.err error : BviSem.BviResult) ≠ .err (.abort .typeError) := by
-          intro bad
-          apply notTypeError
-          exact (congrArg Prod.fst run).symm.trans bad
+        have ok := err_ne_typeError run notTypeError
         have argsHyp : rewriteTailHyp args source env1 (.err error) middle false
             target acc env2 loc ts ty := ⟨argsRun, disabled, related, types, by simp, ok⟩
         obtain ⟨targetMiddle, targetArgs, middleRelated, _⟩ :=
@@ -2320,13 +2323,8 @@ theorem rewriteTail_letCall_through {C F : Type} (limit : Nat) (rets ticks place
             simp [targetResolved, targetTimeout]
           · have argsClock := BviSem.evaluate_clock_le args env1 source
             rw [argsRun] at argsClock
-            have small : (BviSem.decClock (ticks + 1) middle).clock < source.clock := by
-              simp only [BviSem.decClock]
-              simp only at argsClock
-              omega
-            have targetNotTimeout : ¬targetMiddle.clock < ticks + 1 := by
-              have := (stateRel_const middle targetMiddle middleRelated).2.1
-              omega
+            have small := decClock_clock_lt ticks (by simpa using argsClock) (by omega)
+            have targetNotTimeout := not_timeout_related middleRelated ticks timeout
             cases bodyRun : BviSem.evaluate [body] actual (BviSem.decClock (ticks + 1) middle) with
             | mk inner last =>
               rw [resolved] at run
@@ -2845,10 +2843,7 @@ theorem evaluate_op_related_errors_through {C F : Type} (limit : Nat) (operation
     cases argsResult with
     | err error =>
       simp only [argsRun] at run
-      have ok : (.err error : BviSem.BviResult) ≠ .err (.abort .typeError) := by
-        intro bad
-        apply notTypeError
-        exact (congrArg Prod.fst run).symm.trans bad
+      have ok := err_ne_typeError run notTypeError
       have argsHyp : rewriteTailHyp args source env1 (.err error) middle false
           target acc env2 loc ts ty := ⟨argsRun, disabled, related, types, by simp, ok⟩
       obtain ⟨targetMiddle, targetArgs, middleRelated, _⟩ :=
@@ -3762,10 +3757,7 @@ theorem rewriteTail_raise_through {C F : Type} (limit : Nat) (body : Bvi.Exp)
     cases inner with
     | err error =>
       simp only [innerRun] at run
-      have ok : (.err error : BviSem.BviResult) ≠ .err (.abort .typeError) := by
-        intro bad
-        apply notTypeError
-        exact (congrArg Prod.fst run).symm.trans bad
+      have ok := err_ne_typeError run notTypeError
       have innerHyp : rewriteTailHyp [body] source env1 (.err error) middle false target acc env2 loc ts ty :=
         ⟨innerRun, disabled, stateRelated, types, by simp, ok⟩
       obtain ⟨targetNext, targetRun, targetRelated, _⟩ :=
@@ -3809,10 +3801,7 @@ theorem rewriteTail_return_through {C F : Type} (limit : Nat) (args : List Bvi.E
     cases inner with
     | err error =>
       simp only [innerRun] at run
-      have ok : (.err error : BviSem.BviResult) ≠ .err (.abort .typeError) := by
-        intro bad
-        apply notTypeError
-        exact (congrArg Prod.fst run).symm.trans bad
+      have ok := err_ne_typeError run notTypeError
       have innerHyp : rewriteTailHyp args source env1 (.err error) middle false target acc env2 loc ts ty :=
         ⟨innerRun, disabled, stateRelated, types, by simp, ok⟩
       obtain ⟨targetNext, targetRun, targetRelated, _⟩ :=

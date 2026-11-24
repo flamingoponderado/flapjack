@@ -37,47 +37,19 @@ theorem decode_extract_word (rm : BitVec 5) (imms : BitVec 6) (rn : BitVec 5) (r
     decodeInsn32 (extractWord rm imms rn rd) = some (.extractRegister imms.toNat rm.toNat rn.toNat rd.toNat) := by
   simp only [decodeInsn32]
   have h1 : bitMatches (extractWord rm imms rn rd) 0xFFFFFFFF 0xD503201F = false := by
-    rw [bitMatches, decide_eq_false_iff_not]
-    intro h
-    have hb := congrArg (fun x : BitVec 32 => x.getLsbD 22) h
-    simp only [extractWord] at hb
-    simp at hb
+    bitMatchesNe bitMatches at 22 using extractWord
   have h2 : bitMatches (extractWord rm imms rn rd) 0x9F800000 0x92800000 = false := by
-    rw [bitMatches, decide_eq_false_iff_not]
-    intro h
-    have hb := congrArg (fun x : BitVec 32 => x.getLsbD 24) h
-    simp only [extractWord] at hb
-    simp at hb
+    bitMatchesNe bitMatches at 24 using extractWord
   have h3 : bitMatches (extractWord rm imms rn rd) 0x9F800000 0x91000000 = false := by
-    rw [bitMatches, decide_eq_false_iff_not]
-    intro h
-    have hb := congrArg (fun x : BitVec 32 => x.getLsbD 23) h
-    simp only [extractWord] at hb
-    simp at hb
+    bitMatchesNe bitMatches at 23 using extractWord
   have h4 : bitMatches (extractWord rm imms rn rd) 0x9F800000 0x92000000 = false := by
-    rw [bitMatches, decide_eq_false_iff_not]
-    intro h
-    have hb := congrArg (fun x : BitVec 32 => x.getLsbD 23) h
-    simp only [extractWord] at hb
-    simp at hb
+    bitMatchesNe bitMatches at 23 using extractWord
   have h5 : bitMatches (extractWord rm imms rn rd) 0x9F000000 0x8A000000 = false := by
-    rw [bitMatches, decide_eq_false_iff_not]
-    intro h
-    have hb := congrArg (fun x : BitVec 32 => x.getLsbD 24) h
-    simp only [extractWord] at hb
-    simp at hb
+    bitMatchesNe bitMatches at 24 using extractWord
   have h6 : bitMatches (extractWord rm imms rn rd) 0x9F200000 0x8B000000 = false := by
-    rw [bitMatches, decide_eq_false_iff_not]
-    intro h
-    have hb := congrArg (fun x : BitVec 32 => x.getLsbD 27) h
-    simp only [extractWord] at hb
-    simp at hb
+    bitMatchesNe bitMatches at 27 using extractWord
   have h7 : bitMatches (extractWord rm imms rn rd) 0x9FC00000 0x93400000 = false := by
-    rw [bitMatches, decide_eq_false_iff_not]
-    intro h
-    have hb := congrArg (fun x : BitVec 32 => x.getLsbD 23) h
-    simp only [extractWord] at hb
-    simp at hb
+    bitMatchesNe bitMatches at 23 using extractWord
   have hK : bitMatches (extractWord rm imms rn rd) 0xFFE00000 0x93C00000 = true := by
     rw [bitMatches, decide_eq_true_eq]
     apply BitVec.eq_of_getLsbD_eq

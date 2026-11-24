@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Compiler.Backend.Semantics.BviSem.ApplyRuntimeFrame
 public import Flapjack.Compiler.Backend.BackendProps.StateCompiler
+public import Flapjack.Misc.ProofTactics
 
 @[expose] public section
 
@@ -97,9 +98,7 @@ theorem doInstall_adjustOracle {C D F R : Type} (compiler : Compiler D) (f : C â
     (run : doInstall (R := R) args state = .val (value, next)) :
     doInstall (R := R) args (adjustOracle compiler f state) =
         .val (value, adjustOracle compiler f next) âˆ§ adjustOracleOk compiler f next := by
-  unfold doInstall at run
-  repeat' split at run
-  all_goals simp_all
+  unfoldSplit doInstall
   all_goals repeat' split at run
   all_goals simp_all
   all_goals have okZero := ok 0
@@ -114,9 +113,7 @@ theorem doInstall_adjustOracle {C D F R : Type} (compiler : Compiler D) (f : C â
 theorem doInstall_error_is_typeError {C F R : Type} (args : List Value)
     (state : BviState C F) (error : Flapjack.SemanticPrimitivesHOL.ErrorResult R)
     (run : doInstall args state = .err error) : error = .abort .typeError := by
-  unfold doInstall at run
-  repeat' split at run
-  all_goals simp_all
+  unfoldSplit doInstall
   all_goals repeat' split at run
   all_goals simp_all
 
@@ -145,9 +142,7 @@ theorem doAppAux_preserves_compiler_oracle {C F : Type} (op : ClosLang.Op) (args
     (state next : BviState C F) (value : Value)
     (run : doAppAux op args state = some (some (value, next))) :
     next.compile = state.compile âˆ§ next.compileOracle = state.compileOracle := by
-  unfold doAppAux at run
-  repeat' split at run
-  all_goals simp_all
+  unfoldSplit doAppAux
   all_goals try simp_all only [Option.bind_eq_some_iff, Option.some.injEq, Prod.mk.injEq]
   all_goals aesop
 

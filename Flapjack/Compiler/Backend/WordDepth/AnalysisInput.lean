@@ -14,8 +14,6 @@ are discarded from this separate input, while the executed backend retains the
 original Word program. No HOL declaration is replaced or independently tagged. -/
 namespace Flapjack.Compiler.Backend.WordDepth.Executable
 open Flapjack Flapjack.Compiler.Backend.WordDepth
-set_option maxRecDepth 10000
-set_option maxHeartbeats 0
 
 private def slimSeq {α : Type} (p q : WordLangProgHOL α) : WordLangProgHOL α :=
   match p, q with

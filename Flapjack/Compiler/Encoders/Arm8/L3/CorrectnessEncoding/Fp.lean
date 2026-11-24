@@ -4,7 +4,6 @@ public import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Simulate
 
 @[expose] public section
 
-set_option maxHeartbeats 4000000
 
 /-!
 # The `Fp` constructor of `encoder_correct arm8TargetL3`

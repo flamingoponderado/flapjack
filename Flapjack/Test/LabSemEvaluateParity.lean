@@ -8,7 +8,6 @@ import all Flapjack.Compiler.Backend.LabSem.Evaluate
 
 /-! Whole native executions paired with original labSem evaluate_def.
 The source state is arbitrary outside fields fixed by each original probe. -/
-set_option maxRecDepth 16384
 
 namespace Flapjack.Test.LabSemEvaluateParity
 open Flapjack Flapjack.Compiler.Backend.LabSem

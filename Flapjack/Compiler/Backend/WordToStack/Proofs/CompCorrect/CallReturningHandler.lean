@@ -134,24 +134,6 @@ theorem inductionHypothesesOfOriginal {width : Nat} [NeZero width] {C F : Type}
       retCode (l1,l2) l1 l2 envs
       ⟨get,bad,find,rfl,rfl,rfl,rfl,rfl,rfl,rfl,valid,cut,clock⟩
 
-/-- Handler-case source guard elimination from the actual non-error source run.
-The guards precede handler selection in the original evaluator. This is
-Flapjack infrastructure, with no separate HOL declaration or target-run premise. -/
-theorem sourceGuardsOfNotErrorWithHandler {width : Nat} [NeZero width] {C F : Type}
-    (values : List Nat) (names : WordLangCutsetsHOL)
-    (retCode : WordLangProgHOL (BitVec width)) (l1 l2 : Nat)
-    (dest : Option Nat) (args : List Nat)
-    (handler : Option (Nat × WordLangProgHOL (BitVec width) × Nat × Nat))
-    (source sourcePost : WordSemStateFiniteExact width (Nat × C) F)
-    (result : Option (WordSemResult width))
-    (execution : WordSemStateFiniteExact.evaluate
-      (.call (some (values, names, retCode, l1, l2)) dest args handler) source =
-      (result, sourcePost)) (notError : result ≠ some .error) :
-    ∃ xs args1 prog ss envs,
-      CallReturning.SourceGuards values names retCode l1 l2 dest args source xs args1 prog ss envs := by
-  exact CallReturning.sourceGuardsOfCall values names retCode l1 l2 dest args handler source
-    sourcePost result execution notError
-
 /-- Removing the exception continuation preserves all returning-call
 conventions. This is Flapjack factoring of the original setup checks, not a
 new HOL theorem or a strengthened simulation premise. -/
@@ -826,38 +808,6 @@ theorem enterHandlerCallee {width : Nat} [NeZero width] {C F : Type}
       rw [Nat.sub_add_cancel (show args1.length-k ≤ header.stackSpace by omega)] at tail
       exact tail
 
-/-- Derive the handler callee non-error obligation from the actual whole
-source call run before using its original guarded induction hypothesis. The
-handler cannot intercept Error. This is Flapjack factoring of the original
-handler body-IH step; no target run or additional non-error premise is used.
-There is no separate HOL declaration for this case-local elimination. -/
-theorem handlerCalleeNotError {width : Nat} [NeZero width] {C F : Type}
-    (values : List Nat) (names : WordLangCutsetsHOL)
-    (retCode : WordLangProgHOL (BitVec width)) (l1 l2 : Nat)
-    (dest : Option Nat) (args : List Nat)
-    (handler : Option (Nat × WordLangProgHOL (BitVec width) × Nat × Nat))
-    (source sourcePost calleePost : WordSemStateFiniteExact width (Nat × C) F)
-    (result bodyResult : Option (WordSemResult width))
-    (xs args1 : List (WordLocW width)) (prog : WordLangProgHOL (BitVec width))
-    (ss : Option Nat) (envs : Spt (WordLocW width) × Spt (WordLocW width))
-    (guards : CallReturning.SourceGuards values names retCode l1 l2 dest args source xs args1 prog ss envs)
-    (nonzero : source.clock ≠ 0)
-    (execution : WordSemStateFiniteExact.evaluate
-      (.call (some (values, names, retCode, l1, l2)) dest args handler) source =
-      (result, sourcePost)) (notError : result ≠ some .error)
-    (bodyRun : WordSemStateFiniteExact.evaluate prog
-      (WordSemStateFiniteExact.callEnv args1 ss
-        (WordSemStateFiniteExact.pushEnv envs handler (WordSemStateFiniteExact.decClock source))) =
-      (bodyResult, calleePost)) : bodyResult ≠ some .error := by
-  intro error
-  rw [error] at bodyRun
-  obtain ⟨get, bad, find, valid, cut⟩ := guards
-  rw [WordSemStateFiniteExact.evaluate] at execution
-  simp only [get, bad, Bool.false_eq_true, if_false, find, valid, cut] at execution
-  rw [dif_neg nonzero, WordSemStateFiniteExact.fix_clock_evaluate, bodyRun] at execution
-  simp only [Prod.mk.injEq] at execution
-  exact absurd execution.1.symm notError
-
 /-- Actual destination, caller save, handler push and argument move with
 preserved compiled callee lookup. The source get/find/cut guards, original
 conventions and bitmap bounds construct every target execution. Indirect
@@ -1358,8 +1308,8 @@ theorem simulateHandlerCalleeBody {width : Nat} [NeZero width] {C F : Type}
   obtain ⟨_,_,_,_,_,_,_,_,_,_,bodyConventions,bodyFlat,_⟩ :=
     CallReturning.calleeCompilation ac k f frame values names retCode l1 l2 dest args
       source target lens xs args1 prog ss envs guards related
-  have bodyNotError := handlerCalleeNotError values names retCode l1 l2 dest args
-    (some (handlerVar,handlerCode,h1,h2)) source sourcePost bodyPost result bodyResult
+  have bodyNotError := CallReturning.calleeNotError values names retCode l1 l2 dest args
+    source sourcePost bodyPost result bodyResult
     xs args1 prog ss envs guards nonzero wholeExecution notError bodyRun
   have simulation := hypotheses.2.2 xs args1 prog ss envs ⟨guards,nonzero⟩
   obtain ⟨extra,targetPost,targetResult,execution,conclusion⟩ :=
@@ -4024,73 +3974,6 @@ theorem handlerBodyMismatchResult {width : Nat} [NeZero width] {C F : Type}
   refine ⟨halt, events.trans traceLift, ?_⟩
   cases maximum : sourcePost.stackMax <;>
     simpa only [maximum, miscThe, Option.getD_some, Option.getD_none] using finalOverflow
-
-/-- Actual source Call propagation for the original terminal callee branches.
-Timeout, resource halt and final FFI retain the exact source post-state; no
-continuation is executed. This is case-local evaluator factoring for the
-returning-handler comp_correct split, with no standalone HOL declaration. -/
-theorem handlerSourceCallTerminal {width : Nat} [NeZero width] {C F : Type}
-    (values : List Nat) (names : WordLangCutsetsHOL)
-    (retCode handlerCode : WordLangProgHOL (BitVec width)) (l1 l2 handlerVar h1 h2 : Nat)
-    (dest : Option Nat) (args : List Nat)
-    (source sourcePost bodyPost : WordSemStateFiniteExact width (Nat × C) F)
-    (result bodyResult : Option (WordSemResult width))
-    (xs args1 : List (WordLocW width)) (prog : WordLangProgHOL (BitVec width))
-    (ss : Option Nat) (envs : Spt (WordLocW width) × Spt (WordLocW width))
-    (guards : CallReturning.SourceGuards values names retCode l1 l2 dest args source xs args1 prog ss envs)
-    (nonzero : source.clock ≠ 0)
-    (execution : WordSemStateFiniteExact.evaluate
-      (.call (some (values, names, retCode, l1, l2)) dest args (some (handlerVar,handlerCode,h1,h2))) source = (result, sourcePost))
-    (bodyRun : WordSemStateFiniteExact.evaluate prog
-      (WordSemStateFiniteExact.callEnv args1 ss
-        (WordSemStateFiniteExact.pushEnv envs (some (handlerVar,handlerCode,h1,h2)) (WordSemStateFiniteExact.decClock source))) =
-      (bodyResult, bodyPost))
-    (terminal : bodyResult = some .timeOut ∨ bodyResult = some .notEnoughSpace ∨
-      ∃ event, bodyResult = some (.finalFfi event)) :
-    result = bodyResult ∧ sourcePost = bodyPost := by
-  obtain ⟨get, bad, find, valid, cut⟩ := guards
-  rw [WordSemStateFiniteExact.evaluate] at execution
-  simp only [get, bad, Bool.false_eq_true, if_false, find, valid, cut] at execution
-  rw [dif_neg nonzero, WordSemStateFiniteExact.fix_clock_evaluate, bodyRun] at execution
-  rcases terminal with rfl | rfl | ⟨event, rfl⟩ <;>
-    exact ⟨(Prod.mk.inj execution).1.symm, (Prod.mk.inj execution).2.symm⟩
-
-/-- Lift the matching terminal body IH to the entire original caller result
-predicate. Exact source terminal propagation discharges the whole Call result
-and post-state; the unchanged FFI/clock contract is obtained from the original
-body IH. Mismatches use handlerBodyMismatchResult separately. This is an untagged
-branch component, not the full native Call execution theorem. -/
-theorem handlerBodyTerminalResult {width : Nat} [NeZero width] {C F : Type}
-    (ac : AsmConfigExact width) (k callerSize callerFrame calleeSize calleeFrame : Nat)
-    (values : List Nat) (names : WordLangCutsetsHOL)
-    (retCode handlerCode : WordLangProgHOL (BitVec width)) (l1 l2 handlerVar h1 h2 : Nat)
-    (dest : Option Nat) (args : List Nat)
-    (source sourcePost bodyPost : WordSemStateFiniteExact width (Nat × C) F)
-    (result bodyResult : Option (WordSemResult width))
-    (targetPost : StackSemStateFiniteExact width C F)
-    (targetResult : Option (StackSemResult width)) (lens : List Nat)
-    (xs args1 : List (WordLocW width)) (prog : WordLangProgHOL (BitVec width))
-    (ss : Option Nat) (envs : Spt (WordLocW width) × Spt (WordLocW width))
-    (guards : CallReturning.SourceGuards values names retCode l1 l2 dest args source xs args1 prog ss envs)
-    (nonzero : source.clock ≠ 0)
-    (execution : WordSemStateFiniteExact.evaluate
-      (.call (some (values, names, retCode, l1, l2)) dest args (some (handlerVar,handlerCode,h1,h2))) source = (result, sourcePost))
-    (bodyRun : WordSemStateFiniteExact.evaluate prog
-      (WordSemStateFiniteExact.callEnv args1 ss
-        (WordSemStateFiniteExact.pushEnv envs (some (handlerVar,handlerCode,h1,h2)) (WordSemStateFiniteExact.decClock source))) =
-      (bodyResult, bodyPost))
-    (terminal : bodyResult = some .timeOut ∨ bodyResult = some .notEnoughSpace ∨
-      ∃ event, bodyResult = some (.finalFfi event))
-    (bodyConclusion : compCorrectResult ac k calleeSize calleeFrame
-      (WordSemStateFiniteExact.callEnv args1 ss
-        (WordSemStateFiniteExact.pushEnv envs (some (handlerVar,handlerCode,h1,h2)) (WordSemStateFiniteExact.decClock source)))
-      bodyPost targetPost bodyResult targetResult (callerFrame :: lens))
-    (matching : bodyResult.map compileResult = targetResult) :
-    compCorrectResult ac k callerSize callerFrame source sourcePost targetPost result targetResult lens := by
-  obtain ⟨rfl, rfl⟩ := handlerSourceCallTerminal values names retCode handlerCode l1 l2 handlerVar h1 h2 dest args
-    source sourcePost bodyPost result bodyResult xs args1 prog ss envs guards nonzero execution bodyRun terminal
-  rcases terminal with rfl | rfl | ⟨event, rfl⟩ <;>
-    simpa only [compCorrectResult, matching, ne_eq, not_true_eq_false, ↓reduceIte] using bodyConclusion
 
 
 end Flapjack.WordToStackProofs.CompCorrect.CallReturningHandler

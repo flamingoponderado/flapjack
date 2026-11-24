@@ -6,7 +6,6 @@ import all Init.Data.Nat.Bitwise.Basic
 
 @[expose] public section
 
-set_option maxRecDepth 200000
 namespace Flapjack.Test.L3AMOMinMaxParity
 open Flapjack.RiscV.L3
 open Flapjack.Test.Fixtures.L3

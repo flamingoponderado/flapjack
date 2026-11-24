@@ -4,7 +4,6 @@ public import Flapjack.Compiler.Backend.WordToStack.Proofs.SortedAList
 
 @[expose] public section
 open Flapjack Flapjack.WordToStackProofs Flapjack.Compiler.Backend.WordToStack
-set_option maxRecDepth 8192
 
 -- Test-only decision procedure for the original adjacent-key predicate.
 local instance {α : Type} (xs : List (Nat × α)) : Decidable (descendingKeys xs) := by

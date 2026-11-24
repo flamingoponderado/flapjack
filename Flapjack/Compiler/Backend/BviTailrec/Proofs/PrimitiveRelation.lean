@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.BviTailrec.Proofs.CodeRelation
+public import Flapjack.Misc.ProofTactics
 
 @[expose] public section
 
@@ -455,9 +456,7 @@ theorem doInstall_success_inv {C F R : Type} (args : List Value) (s next : BviSe
       s.compile cfg ((key, arity, body) :: rest) = some (bytes, data, cfgNext) ∧
       (s.compileOracle 1).1 = cfgNext ∧ v = .codePtr key ∧
       next = { s with code := sptUnion s.code (sptFromAList ((key, arity, body) :: rest)), compileOracle := fun n => s.compileOracle (n + 1) } := by
-  unfold BviSem.doInstall at run
-  repeat' split at run
-  all_goals simp_all
+  unfoldSplit BviSem.doInstall
   all_goals split at run <;> simp_all
   all_goals aesop
 
@@ -542,9 +541,7 @@ theorem doApp_install_error {C F : Type} (args : List Value) (state : BviSem.Bvi
     (error : SemanticPrimitivesHOL.ErrorResult BviSem.ExnOrRet)
     (run : BviSem.doApp .install args state = .err error) : error = .abort .typeError := by
   simp only [BviSem.doApp] at run
-  unfold BviSem.doInstall at run
-  repeat' split at run
-  all_goals simp_all
+  unfoldSplit BviSem.doInstall
   all_goals split at run <;> simp_all
 
 /-- Successful installation through the operation dispatcher preserves the

@@ -3,7 +3,7 @@ module
 public import Flapjack.RiscV.L3.Defs.CSRDispatch
 
 @[expose] public section
-set_option maxRecDepth 10000
+set_option maxRecDepth 2000
 namespace Flapjack.Test.L3CSRCounterParity
 open Flapjack.RiscV.L3
 def fixture (s : riscv_state) (b d : BitVec 64) : riscv_state :=

@@ -36,12 +36,7 @@ theorem evaluateFreshLocal_ShMemStore {width : Nat} {σ : Type} [NeZero width]
         (.shMemStore operator destination source) = (res, {post with locals := locals}) ∧
       (goodResHOL res = true ∧ res ≠ some .error →
         locals = post.locals.updateEq (name, value)) := by
-  classical
-  have hf : name ∉ varExpHOL destination ∧ name ∉ varExpHOL source := by
-    simpa only [freeVarIdsHOL, List.mem_append, not_or] using h.1
-  have hd := evalFreshUpdate state name value destination hf.1
-  have hs := evalFreshUpdate state name value source hf.2
-  have hev := h.2
+  panGlobalsFreshStoreIntro
   rw [evaluateHOLFiniteState_shMemStore_total] at hev
   refine ⟨post.locals.updateEq (name, value), ?_, fun _ => rfl⟩
   rw [evaluateHOLFiniteState_shMemStore_total, hd, hs]

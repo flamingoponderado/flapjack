@@ -18,12 +18,8 @@ theorem evaluatePost_consBlock_error {C F : Type} (s sFinal : ClosSem.State C F)
     (error : ErrorResult ClosSem.Value)
     (post : evaluatePost s sFinal t targetEnv f (.err error) args) :
     evaluatePost s sFinal t targetEnv f (.err error) [.op (.blockOp (.cons (closTagShift tag))) args] := by
-  obtain ⟨clock, targetResult, tFinal, fFinal, run, related, state, map, refs, annotations, clocks⟩ := post
-  cases targetResult with
-  | val values => simp [resultRel] at related
-  | err targetError =>
-    refine ⟨clock, .err targetError, tFinal, fFinal, ?_, related, state, map, refs, annotations, clocks⟩
-    rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, run]
+  exact evaluatePostOpError s sFinal t targetEnv f
+    (.blockOp (.cons (closTagShift tag))) args error post
 
 /-- Construction shifts the tag and relates each field. -/
 theorem evaluatePost_consBlock_success {C F : Type} (s sMiddle : ClosSem.State C F)
@@ -65,13 +61,7 @@ theorem expressionSimulationBelow_consBlock {C F : Type} (clockBound : Nat) (tra
         ([.op (.blockOp (.cons (closTagShift tag))) targetArgs], aux1) := by
       rw [compileExps_eq_list]
       simp [compileExpListHOL, compileExpHOL, argsCompile, compileOp]
-    have equal := compile.symm.trans wholeCompiled
-    cases equal
-    have argsLoc : ClosProps.everyFnLocationSome args := by
-      simpa [ClosProps.everyFnLocationSome, ClosProps.fnLocationSomeExp] using locations
-    have argsVars : ClosProps.everyFnVarsSome args := by
-      simpa [ClosProps.everyFnVarsSome, ClosProps.fnVarsSomeExp] using varsAnnotated
-    rw [ClosSem.evaluate, ClosSem.fixClock_evaluate] at run
+    closArgsSplit
     cases argsRun : ClosSem.evaluate args sourceEnv s with
     | mk argsResult sMiddle =>
       rw [argsRun] at run
@@ -83,10 +73,7 @@ theorem expressionSimulationBelow_consBlock {C F : Type} (clockBound : Nat) (tra
           (argsIH s sMiddle t sourceEnv targetEnv f aux finalAux targetArgs (.err error)
             clockBounded argsRun noTypeError argsCompiled argsLoc annotations argsVars installed envRelated states)
       | val values =>
-        have maxApp : sMiddle.maxApp = s.maxApp := by
-          have h := (ClosProps.evaluate_const (C := C) (F := F)).1 args sourceEnv s
-          rw [argsRun] at h
-          exact h
+        have maxApp := maxApp_of_evaluate_const argsRun
         have argsPost := argsIH s sMiddle t sourceEnv targetEnv f aux finalAux targetArgs (.val values)
           clockBounded argsRun (by simp) argsCompiled argsLoc annotations argsVars installed envRelated states
         simp [ClosSem.doApp, ClosSem.applyBlock] at run

@@ -4,7 +4,6 @@ public import Flapjack.RiscV.L3.Defs.ConditionalBranch
 
 @[expose] public section
 
-set_option maxRecDepth 20000
 
 namespace Flapjack.Test.L3ConditionalBranchParity
 

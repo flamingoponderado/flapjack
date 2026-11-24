@@ -222,4 +222,68 @@ theorem knownListTotal_fn (c : Config) (name : Basis.Pure.MlString.MlString)
     rcases rest with ⟨a, g1⟩
     cases loc <;> simp [knownListTotal_single, knownExprTotal, hb, knownSourceHead]
 
+/- Common step of the total `knownListTotal` case proofs: apply the head
+hypothesis, destruct the singleton and head equations, and reduce the
+decision with the length and head equations. Flapjack-specific proof
+infrastructure (no HOL original).
+
+Hygiene is disabled on purpose: the step consumes the conventional local
+hypotheses `eq1`, `eq2`, `head`, `decision` bound by the surrounding case
+analysis, so those names must not be renamed. -/
+set_option hygiene false in
+macro "knownTotalStep" : tactic =>
+  `(tactic| (
+    rw [ha] at eq1
+    cases eq1
+    simp [knownListTotal_single, hx] at eq2
+    rcases eq2 with ⟨rfl, rfl⟩
+    simp [knownSourceHead] at head
+    rcases head with ⟨rfl, rfl⟩
+    simp [← len, hd] at decision))
+
+/- Length of the total traversal of a known list, used by the per-case traversal
+proofs before they unfold the traversal step. Flapjack helper; the HOL script
+repeats this step inline for each case. -/
+set_option hygiene false in
+macro "knownListLength" : tactic =>
+  `(tactic| (
+    have len := knownListTotal_length c xs env g
+    rw [ha] at len
+    simp only at len))
+
+/- Unfold the append case of the total traversal on the already-reduced run.
+Flapjack helper for the per-case traversal proofs. -/
+set_option hygiene false in
+macro "knownListRun" : tactic =>
+  `(tactic| (
+    rw [knownListTotal_app, ha] at run
+    dsimp only at run
+    rw [functionRun] at run))
+
+/- Unfold the three-branch inline decision of the total traversal on the
+already-reduced run. Flapjack helper for the per-case traversal proofs. -/
+set_option hygiene false in
+macro "knownListIfChain" : tactic =>
+  `(tactic| (
+    rw [knownListTotal_if, h1] at run
+    dsimp only at run
+    rw [h2] at run
+    dsimp only at run
+    rw [h3] at run
+    simp [knownSourceHead] at run
+    rcases run with ⟨rfl, rfl⟩))
+
+/- Unfold the traversal of a `let` or `handle` expression on the already-reduced
+run. Flapjack helper for the per-case traversal proofs; the first rewrite rule is
+the traversal equation and the second the constructor hypothesis. -/
+set_option hygiene false in
+macro "knownListStep" "rule" r:Lean.Parser.Tactic.rwRule "hyp"
+    s:Lean.Parser.Tactic.rwRule : tactic =>
+  `(tactic| (
+    rw [$r:rwRule, $s:rwRule] at run
+    dsimp only at run
+    rw [h2] at run
+    simp [knownSourceHead] at run
+    rcases run with ⟨rfl, rfl⟩))
+
 end Flapjack.Compiler.Backend.ClosKnown

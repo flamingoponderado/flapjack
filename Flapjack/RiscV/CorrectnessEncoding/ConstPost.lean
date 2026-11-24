@@ -7,8 +7,6 @@ public import Flapjack.RiscV.CorrectnessEncoding.ConstExecution
 namespace Flapjack.RiscV.TargetProof
 open Flapjack RiscV.L3 RiscV.L3.Step Compiler.Encoders.RiscV.Target
 set_option maxRecDepth 200000
-set_option maxHeartbeats 2000000
-
 /-- Literal native PC/Skip fields of a nonempty Const instruction list.
 Untagged state-update infrastructure with no separately named HOL declaration. -/
 def constControls (ms : riscv_state) (pc : BitVec 64) : riscv_state :=

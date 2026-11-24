@@ -5,7 +5,6 @@ public import Flapjack.Compiler.Encoders.AsmProps.EncoderCorrect
 
 @[expose] public section
 
-set_option maxHeartbeats 4000000
 
 /-!
 # From an interference-free run to `encoder_correct arm8TargetL3`
@@ -184,10 +183,7 @@ theorem asmCaseOne (inst : HolInst 64) (r : Nat) (v : BitVec 64)
     CaseGoal (.inst inst) s1 s2 ms := by
   obtain ⟨hs, hr⟩ := h
   obtain ⟨hok, hpc, hmem, hreg, hfp⟩ := hr
-  rw [arm8TargetL3_stateOk] at hok
-  rw [arm8TargetL3_getPc] at hpc
-  rw [arm8TargetL3_getByte] at hmem
-  rw [arm8TargetL3_getReg] at hreg
+  arm8TargetFields
   change ms.PC = s1.pc at hpc
   change ∀ a, s1.memDomain a → ms.MEM a = s1.mem a at hmem
   change ∀ k, k < arm8ConfigL3.regCount ∧ arm8ConfigL3.avoidRegs.contains k = false →

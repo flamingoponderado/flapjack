@@ -118,18 +118,10 @@ theorem decode_addSubImmediate_word (sub sf : BitVec 1) (imm12 : BitVec 12)
   simp only [decodeInsn32]
   have h1 : bitMatches (addSubImmediateWord sub sf imm12 rn rd) 0xFFFFFFFF 0xD503201F
       = false := by
-    rw [bitMatches, decide_eq_false_iff_not]
-    intro h
-    have hb := congrArg (fun x : BitVec 32 => x.getLsbD 26) h
-    simp only [addSubImmediateWord] at hb
-    simp at hb
+    bitMatchesNe bitMatches at 26 using addSubImmediateWord
   have h2 : bitMatches (addSubImmediateWord sub sf imm12 rn rd) 0x9F800000 0x92800000
       = false := by
-    rw [bitMatches, decide_eq_false_iff_not]
-    intro h
-    have hb := congrArg (fun x : BitVec 32 => x.getLsbD 25) h
-    simp only [addSubImmediateWord] at hb
-    simp at hb
+    bitMatchesNe bitMatches at 25 using addSubImmediateWord
   have hK : bitMatches (addSubImmediateWord sub sf imm12 rn rd) 0x9F800000 0x91000000
       = true := by
     rw [bitMatches, decide_eq_true_eq]
@@ -283,18 +275,10 @@ theorem decode_addSubImmediateShifted_word (sub sf : BitVec 1) (imm12 : BitVec 1
   simp only [decodeInsn32]
   have h1 : bitMatches (addSubImmediateShiftedWord sub sf imm12 rn rd) 0xFFFFFFFF
       0xD503201F = false := by
-    rw [bitMatches, decide_eq_false_iff_not]
-    intro h
-    have hb := congrArg (fun x : BitVec 32 => x.getLsbD 26) h
-    simp only [addSubImmediateShiftedWord] at hb
-    simp at hb
+    bitMatchesNe bitMatches at 26 using addSubImmediateShiftedWord
   have h2 : bitMatches (addSubImmediateShiftedWord sub sf imm12 rn rd) 0x9F800000
       0x92800000 = false := by
-    rw [bitMatches, decide_eq_false_iff_not]
-    intro h
-    have hb := congrArg (fun x : BitVec 32 => x.getLsbD 25) h
-    simp only [addSubImmediateShiftedWord] at hb
-    simp at hb
+    bitMatchesNe bitMatches at 25 using addSubImmediateShiftedWord
   have hK : bitMatches (addSubImmediateShiftedWord sub sf imm12 rn rd) 0x9F800000
       0x91000000 = true := by
     rw [bitMatches, decide_eq_true_eq]
@@ -521,32 +505,16 @@ theorem decode_logicalShiftedRegister_word (op : LogicalOp) (sf : Bool) (opc : B
   simp only [decodeInsn32]
   have h1 : bitMatches (logicalShiftedRegisterWord opc sh inv rm imm rn rd) 0xFFFFFFFF
       0xD503201F = false := by
-    rw [bitMatches, decide_eq_false_iff_not]
-    intro h
-    have hb := congrArg (fun x : BitVec 32 => x.getLsbD 28) h
-    simp only [logicalShiftedRegisterWord] at hb
-    simp at hb
+    bitMatchesNe bitMatches at 28 using logicalShiftedRegisterWord
   have h2 : bitMatches (logicalShiftedRegisterWord opc sh inv rm imm rn rd) 0x9F800000
       0x92800000 = false := by
-    rw [bitMatches, decide_eq_false_iff_not]
-    intro h
-    have hb := congrArg (fun x : BitVec 32 => x.getLsbD 28) h
-    simp only [logicalShiftedRegisterWord] at hb
-    simp at hb
+    bitMatchesNe bitMatches at 28 using logicalShiftedRegisterWord
   have h3 : bitMatches (logicalShiftedRegisterWord opc sh inv rm imm rn rd) 0x9F800000
       0x91000000 = false := by
-    rw [bitMatches, decide_eq_false_iff_not]
-    intro h
-    have hb := congrArg (fun x : BitVec 32 => x.getLsbD 28) h
-    simp only [logicalShiftedRegisterWord] at hb
-    simp at hb
+    bitMatchesNe bitMatches at 28 using logicalShiftedRegisterWord
   have h4 : bitMatches (logicalShiftedRegisterWord opc sh inv rm imm rn rd) 0x9F800000
       0x92000000 = false := by
-    rw [bitMatches, decide_eq_false_iff_not]
-    intro h
-    have hb := congrArg (fun x : BitVec 32 => x.getLsbD 28) h
-    simp only [logicalShiftedRegisterWord] at hb
-    simp at hb
+    bitMatchesNe bitMatches at 28 using logicalShiftedRegisterWord
   have hK : bitMatches (logicalShiftedRegisterWord opc sh inv rm imm rn rd) 0x9F000000
       0x8A000000 = true := by
     rw [bitMatches, decide_eq_true_eq]
@@ -743,25 +711,13 @@ theorem decode_logicalImmediate_word (op : LogicalOp) (sf : Bool) (opc : BitVec 
   simp only [decodeInsn32]
   have h1 : bitMatches (logicalImmediateWord opc nB immrB immsB rn rd) 0xFFFFFFFF
       0xD503201F = false := by
-    rw [bitMatches, decide_eq_false_iff_not]
-    intro h
-    have hb := congrArg (fun x : BitVec 32 => x.getLsbD 26) h
-    simp only [logicalImmediateWord] at hb
-    simp at hb
+    bitMatchesNe bitMatches at 26 using logicalImmediateWord
   have h2 : bitMatches (logicalImmediateWord opc nB immrB immsB rn rd) 0x9F800000
       0x92800000 = false := by
-    rw [bitMatches, decide_eq_false_iff_not]
-    intro h
-    have hb := congrArg (fun x : BitVec 32 => x.getLsbD 23) h
-    simp only [logicalImmediateWord] at hb
-    simp at hb
+    bitMatchesNe bitMatches at 23 using logicalImmediateWord
   have h3 : bitMatches (logicalImmediateWord opc nB immrB immsB rn rd) 0x9F800000
       0x91000000 = false := by
-    rw [bitMatches, decide_eq_false_iff_not]
-    intro h
-    have hb := congrArg (fun x : BitVec 32 => x.getLsbD 25) h
-    simp only [logicalImmediateWord] at hb
-    simp at hb
+    bitMatchesNe bitMatches at 25 using logicalImmediateWord
   have hK : bitMatches (logicalImmediateWord opc nB immrB immsB rn rd) 0x9F800000
       0x92000000 = true := by
     rw [bitMatches, decide_eq_true_eq]
@@ -950,46 +906,22 @@ theorem decode_bitfieldMove_word (inzero extend : Bool) (opc : BitVec 2)
   simp only [decodeInsn32]
   have h1 : bitMatches (bitfieldMoveWord opc immr6 imms rn rd) 0xFFFFFFFF 0xD503201F
       = false := by
-    rw [bitMatches, decide_eq_false_iff_not]
-    intro h
-    have hb := congrArg (fun x : BitVec 32 => x.getLsbD 26) h
-    simp only [bitfieldMoveWord] at hb
-    simp at hb
+    bitMatchesNe bitMatches at 26 using bitfieldMoveWord
   have h2 : bitMatches (bitfieldMoveWord opc immr6 imms rn rd) 0x9F800000 0x92800000
       = false := by
-    rw [bitMatches, decide_eq_false_iff_not]
-    intro h
-    have hb := congrArg (fun x : BitVec 32 => x.getLsbD 24) h
-    simp only [bitfieldMoveWord] at hb
-    simp at hb
+    bitMatchesNe bitMatches at 24 using bitfieldMoveWord
   have h3 : bitMatches (bitfieldMoveWord opc immr6 imms rn rd) 0x9F800000 0x91000000
       = false := by
-    rw [bitMatches, decide_eq_false_iff_not]
-    intro h
-    have hb := congrArg (fun x : BitVec 32 => x.getLsbD 25) h
-    simp only [bitfieldMoveWord] at hb
-    simp at hb
+    bitMatchesNe bitMatches at 25 using bitfieldMoveWord
   have h4 : bitMatches (bitfieldMoveWord opc immr6 imms rn rd) 0x9F800000 0x92000000
       = false := by
-    rw [bitMatches, decide_eq_false_iff_not]
-    intro h
-    have hb := congrArg (fun x : BitVec 32 => x.getLsbD 24) h
-    simp only [bitfieldMoveWord] at hb
-    simp at hb
+    bitMatchesNe bitMatches at 24 using bitfieldMoveWord
   have h5 : bitMatches (bitfieldMoveWord opc immr6 imms rn rd) 0x9F000000 0x8A000000
       = false := by
-    rw [bitMatches, decide_eq_false_iff_not]
-    intro h
-    have hb := congrArg (fun x : BitVec 32 => x.getLsbD 28) h
-    simp only [bitfieldMoveWord] at hb
-    simp at hb
+    bitMatchesNe bitMatches at 28 using bitfieldMoveWord
   have h6 : bitMatches (bitfieldMoveWord opc immr6 imms rn rd) 0x9F200000 0x8B000000
       = false := by
-    rw [bitMatches, decide_eq_false_iff_not]
-    intro h
-    have hb := congrArg (fun x : BitVec 32 => x.getLsbD 28) h
-    simp only [bitfieldMoveWord] at hb
-    simp at hb
+    bitMatchesNe bitMatches at 28 using bitfieldMoveWord
   have hK : bitMatches (bitfieldMoveWord opc immr6 imms rn rd) 0x9FC00000
       0x93400000 = true := by
     rw [bitMatches, decide_eq_true_eq]

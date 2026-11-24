@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Compiler.Backend.Semantics.BviSem.Apply
 public import Flapjack.Compiler.Backend.Semantics.BvlProps.ApplyFallbackFrame
+public import Flapjack.Misc.ProofTactics
 public import Aesop
 
 @[expose] public section
@@ -15,7 +16,6 @@ fields. This is Flapjack infrastructure for polymorphic state transfer. -/
 def runtimeFrame {C D F G : Type} (source : BviState C F) (target : BviState D G) : BviState D F :=
   ⟨source.refs, source.clock, source.global, target.compile, target.compileOracle, target.code, source.ffi⟩
 
-set_option maxHeartbeats 1200000 in
 /-- Transfer the handled part of the dispatcher when code domains agree or
 the operation is not a label lookup. This helper has no standalone HOL declaration. -/
 theorem doAppAux_frame {C D F G : Type} (op : ClosLang.Op) (args : List Value)
@@ -123,9 +123,7 @@ theorem doAppAux_compiler_fields {C F : Type} (op : ClosLang.Op) (args : List Va
     (source next : BviState C F) (value : Value)
     (run : doAppAux op args source = some (some (value, next))) :
     next.compile = source.compile ∧ next.compileOracle = source.compileOracle ∧ next.code = source.code := by
-  unfold doAppAux at run
-  repeat' split at run
-  all_goals simp_all
+  unfoldSplit doAppAux
   all_goals try simp_all only [Option.bind_eq_some_iff, Option.some.injEq, Prod.mk.injEq]
   all_goals aesop
 

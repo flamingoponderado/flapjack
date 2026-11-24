@@ -359,10 +359,7 @@ theorem evaluatePost_force_argument {C F : Type}
         [.force (numStubs s.maxApp - 2) 0]) :
     evaluatePost s sFinal t targetEnv f result
       [.let targetArgs (.force (numStubs s.maxApp - 2) 0)] := by
-  have maxApp : sMiddle.maxApp = s.maxApp := by
-    have h := (ClosProps.evaluate_const (C := C) (F := F)).1 args sourceEnv s
-    rw [argsRun] at h
-    exact h
+  have maxApp := maxApp_of_evaluate_const argsRun
   obtain ⟨clock1, targetResult, tMiddle, fMiddle, run1, related1, state1, map1, frame1,
     annotations1, clocks1⟩ := argsPost
   cases targetResult with
@@ -405,10 +402,7 @@ theorem evaluatePost_force_unevaluated_success_below {C F : Type} (clockBound : 
     (appIH : expressionSimulationBelow (C := C) (F := F) clockBound [ClosSem.appUnit (.var .none 0)]) :
     evaluatePost s { sFinal with refs := nextRefs } t targetEnv f (.val [value])
       [.let targetArgs (.force (numStubs s.maxApp - 2) 0)] := by
-  have maxApp : sMiddle.maxApp = s.maxApp := by
-    have h := (ClosProps.evaluate_const (C := C) (F := F)).1 args sourceEnv s
-    rw [argsRun] at h
-    exact h
+  have maxApp := maxApp_of_evaluate_const argsRun
   apply evaluatePost_force_argument s sMiddle _ t sourceEnv targetEnv f args targetArgs thunk _ argsRun argsPost
   intro targetThunk tMiddle fMiddle states thunkRel annotations
   obtain ⟨targetFunction, targetFound, functionRel⟩ :=
@@ -443,10 +437,7 @@ theorem evaluatePost_force_unevaluated_error_below {C F : Type} (clockBound : Na
     (appIH : expressionSimulationBelow (C := C) (F := F) clockBound [ClosSem.appUnit (.var .none 0)]) :
     evaluatePost s sFinal t targetEnv f (.err error)
       [.let targetArgs (.force (numStubs s.maxApp - 2) 0)] := by
-  have maxApp : sMiddle.maxApp = s.maxApp := by
-    have h := (ClosProps.evaluate_const (C := C) (F := F)).1 args sourceEnv s
-    rw [argsRun] at h
-    exact h
+  have maxApp := maxApp_of_evaluate_const argsRun
   apply evaluatePost_force_argument s sMiddle sFinal t sourceEnv targetEnv f args targetArgs thunk _ argsRun argsPost
   intro targetThunk tMiddle fMiddle states thunkRel annotations
   obtain ⟨targetFunction, targetFound, functionRel⟩ :=
@@ -484,10 +475,8 @@ theorem expressionSimulationBelow_force {C F : Type} (clockBound : Nat) (trace :
       simp [compileExpListHOL, compileExpHOL, argsCompile]
     have equal := compile.symm.trans wholeCompiled
     cases equal
-    have argsLoc : ClosProps.everyFnLocationSome args := by
-      simpa [ClosProps.everyFnLocationSome, ClosProps.fnLocationSomeExp] using locations
-    have argsVars : ClosProps.everyFnVarsSome args := by
-      simpa [ClosProps.everyFnVarsSome, ClosProps.fnVarsSomeExp] using varsAnnotated
+    have argsLoc := everyFnLocationSome_op locations
+    have argsVars := everyFnVarsSome_op varsAnnotated
     cases argsRun : ClosSem.evaluate args sourceEnv s with
     | mk argsResult sMiddle =>
       cases argsResult with
@@ -517,10 +506,7 @@ theorem expressionSimulationBelow_force {C F : Type} (clockBound : Nat) (trace :
         | evaluated =>
           simp at run
           rcases run with ⟨rfl, rfl⟩
-          have maxApp : sMiddle.maxApp = s.maxApp := by
-            have h := (ClosProps.evaluate_const (C := C) (F := F)).1 args sourceEnv s
-            rw [argsRun] at h
-            exact h
+          have maxApp := maxApp_of_evaluate_const argsRun
           exact evaluatePost_force_evaluated s sMiddle t targetEnv f targetArgs _ function argsPost found maxApp
         | notEvaluated =>
           dsimp only at run

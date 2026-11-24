@@ -14,8 +14,6 @@ result retains missing frames, indirect calls, and recursive-call behavior. -/
 namespace Flapjack.Compiler.Backend.WordDepth.Executable
 open Flapjack Flapjack.Compiler.Backend.WordDepth
 open Flapjack.Compiler.Backend.WordDepthProof
-set_option maxRecDepth 10000
-set_option maxHeartbeats 0
 
 
 private def frame (sizes : Spt Nat) (n : Nat) (depth : Option Nat) : Option Nat :=

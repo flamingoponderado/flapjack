@@ -52,13 +52,7 @@ private theorem work (limit : Nat) (c : Config) (xs : List Exp) (env : List ValA
     have r1 := ix _ _ h1 (by simpa using parts.1) envSafe globalSafe
     have r2 := iy _ _ h2 (by simpa using parts.2.1) envSafe r1.2.2
     have r3 := iz _ _ h3 (by simpa using parts.2.2) envSafe r2.2.2
-    rw [knownListTotal_if, h1] at run
-    dsimp only at run
-    rw [h2] at run
-    dsimp only at run
-    rw [h3] at run
-    simp [knownSourceHead] at run
-    rcases run with ⟨rfl, rfl⟩
+    knownListIfChain
     have merged := valApproxObeysMaxAppMerge limit ya za
       ⟨r2.2.1 ya (by simp), r3.2.1 za (by simp)⟩
     simp [obeysMaxApp] at r1 r2 r3 ⊢
@@ -179,12 +173,8 @@ private theorem work (limit : Nat) (c : Config) (xs : List Exp) (env : List ValA
     have functionRun : knownListTotal c [x] env g1 = ([(e, a)], g2) := by
       simp [knownListTotal_single, hx]
     have rf := ifun _ _ functionRun (by simpa using parts.2.1) envSafe ra.2.2
-    have len := knownListTotal_length c xs env g
-    rw [ha] at len
-    simp only at len
-    rw [knownListTotal_app, ha] at run
-    dsimp only at run
-    rw [functionRun] at run
+    knownListLength
+    knownListRun
     simp [knownSourceHead, ← len, hd] at run
     rcases run with ⟨rfl, rfl⟩
     have safeArgs := (obeysMaxAppList_iff limit _).mpr ra.1
@@ -199,12 +189,8 @@ private theorem work (limit : Nat) (c : Config) (xs : List Exp) (env : List ValA
     have functionRun : knownListTotal c [x] env g1 = ([(e, a)], g2) := by
       simp [knownListTotal_single, hx]
     have rf := ifun _ _ functionRun (by simpa using parts.2.1) envSafe ra.2.2
-    have len := knownListTotal_length c xs env g
-    rw [ha] at len
-    simp only at len
-    rw [knownListTotal_app, ha] at run
-    dsimp only at run
-    rw [functionRun] at run
+    knownListLength
+    knownListRun
     simp [knownSourceHead, ← len, hd] at run
     rcases run with ⟨rfl, rfl⟩
     have safeArgs := (obeysMaxAppList_iff limit _).mpr ra.1
@@ -224,12 +210,8 @@ private theorem work (limit : Nat) (c : Config) (xs : List Exp) (env : List ValA
     have bodyRun : knownListTotal (decInlineFactor c) [body] (ea.map Prod.snd) g2 =
         ([(be, ba)], g3) := by simp [knownListTotal_single, hb]
     have rb := ibody _ _ bodyRun (by simpa using bodySafe) ra.2.1 rf.2.2
-    have len := knownListTotal_length c xs env g
-    rw [ha] at len
-    simp only at len
-    rw [knownListTotal_app, ha] at run
-    dsimp only at run
-    rw [functionRun] at run
+    knownListLength
+    knownListRun
     simp [knownSourceHead, ← len, hd, bodyRun] at run
     rcases run with ⟨rfl, rfl⟩
     have safeFun := rf.1 e (by simp)

@@ -5,7 +5,6 @@ public import Flapjack.RiscV.L3.Defs.MMU.Translate
 @[expose] public section
 namespace Flapjack.Test
 open Flapjack.RiscV.L3
-set_option maxRecDepth 200000
 
 -- Original oracle translate_hit_read; all nine fields in all sixteen slots.
 example : (let e := { (default : TLBEntry) with asid := 63, global := false, vAddrMask := 4095, vMatchMask := 18446744073709547520, vAddr := 0, pAddr := 12288, age := 3, pteAddr := 0, pte := «rec'SV_PTE» 3079 }; let s := { (default : riscv_state) with procID := 7, totalCore := 1, c_cycles := fun _ => 77, c_SCSR := fun _ => { (default : SupervisorCSR) with sasid := 63, sptbr := 0 }, c_tlb := fun _ => (fun j => if j == (2:BitVec 4) then some e else none), MEM8 := fun adr => if adr.toNat < 8 then BitVec.ofNat 8 (3079 / (2 ^ (8 * adr.toNat))) else 0 }; let r := translate64 ((1656:BitVec 64), fetchType.Data, accessType.Read, Privilege.User, 0) s; (r.1.map BitVec.toNat, (List.range 16).map (fun j => (r.2.c_tlb 7 (BitVec.ofNat 4 j)).map (fun e => (e.asid.toNat, e.global, e.vAddrMask.toNat, e.vMatchMask.toNat, e.vAddr.toNat, e.pAddr.toNat, e.age.toNat, e.pteAddr.toNat, («reg'SV_PTE» e.pte).toNat))), (rawReadData 0 r.2).toNat)) = (some 13944, [none, none, some (63, false, 4095, 18446744073709547520, 0, 12288, 3, 0, 3079), none, none, none, none, none, none, none, none, none, none, none, none, none], 3079) := by

@@ -9,7 +9,6 @@ import all Flapjack.Compiler.Backend.LabSem.SharedMemory
 /-! Kernel replay of the original labsem_shared_memory_probe.out rows.
 Checks actual protocol bytes/configuration, all eight operations, final and
 returning FFI states, size/domain/alias/clock and narrow-width boundaries. -/
-set_option maxRecDepth 8192
 
 namespace Flapjack.Test.LabSemSharedMemoryParity
 open Flapjack Flapjack.Compiler.Backend.LabSem

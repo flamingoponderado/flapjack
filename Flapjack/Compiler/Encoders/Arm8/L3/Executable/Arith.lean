@@ -21,8 +21,7 @@ No new HOL claim is introduced: the bridge relates two Lean renderings of the
 same instruction word.
 -/
 
-set_option maxRecDepth 10000
-set_option maxHeartbeats 4000000
+set_option maxHeartbeats 1000000
 
 namespace Flapjack.Compiler.Encoders.Arm8.L3
 

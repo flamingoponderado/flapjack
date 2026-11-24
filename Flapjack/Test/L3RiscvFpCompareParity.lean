@@ -10,8 +10,6 @@ Binary32 preserves the destination high32 bits, binary64 writes the whole
 register. Both integer destination and NV flag are observed for every case.
 The generic IEEE real-value rendering remains qualified, not an equivalence
 proof or completion of full FP Run/NextRISCV. -/
-set_option maxRecDepth 200000
-set_option maxHeartbeats 2000000
 namespace Flapjack.Test.L3RiscvFpCompareParity
 open Flapjack.RiscV.L3 Flapjack
 private def state (a b : BitVec 64) : riscv_state :=

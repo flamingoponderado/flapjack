@@ -9,7 +9,6 @@ public import Flapjack.Compiler.Backend.Semantics.FlatSem.Eval
 namespace Flapjack.Compiler.Backend.FlatProps
 open Flapjack.Compiler.Backend.FlatSem
 
-set_option maxRecDepth 4096 in
 /-- Character-list decoding is preserved by any simple value relation. -/
 @[hol "cakeml/compiler/backend/semantics/flatPropsScript.sml" "simple_v_to_char_list_v_rel"]
 theorem simpleValueToCharList (relation : Value → Value → Prop)
@@ -47,7 +46,6 @@ theorem simpleValueToCharList (relation : Value → Value → Prop)
         have targetTail := ih _ _ tailRel tailDecoded
         simp [valueToCharList, targetTail]
 
-set_option maxRecDepth 4096 in
 /-- Decoding related flat lists produces pointwise related elements. -/
 @[hol "cakeml/compiler/backend/semantics/flatPropsScript.sml" "simple_v_to_list_v_rel"]
 theorem simpleValueToList (relation : Value → Value → Prop)

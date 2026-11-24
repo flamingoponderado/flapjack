@@ -17,12 +17,8 @@ theorem evaluatePost_global_error {C F : Type} (s sFinal : ClosSem.State C F)
     (error : ErrorResult ClosSem.Value)
     (post : evaluatePost s sFinal t targetEnv f (.err error) args) :
     evaluatePost s sFinal t targetEnv f (.err error) [.op (.globOp (.global (index + numAddedGlobals))) args] := by
-  obtain ⟨clock, targetResult, tFinal, fFinal, run, related, state, map, refs, annotations, clocks⟩ := post
-  cases targetResult with
-  | val values => simp [resultRel] at related
-  | err targetError =>
-    refine ⟨clock, .err targetError, tFinal, fFinal, ?_, related, state, map, refs, annotations, clocks⟩
-    rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, run]
+  exact evaluatePostOpError s sFinal t targetEnv f
+    (.globOp (.global (index + numAddedGlobals))) args error post
 
 /-- A successful inspection of related argument values preserves the
 simulation postcondition. -/
@@ -67,13 +63,7 @@ theorem expressionSimulationBelow_global {C F : Type} (clockBound : Nat) (trace 
         ([.op (.globOp (.global (index + numAddedGlobals))) targetArgs], aux1) := by
       rw [compileExps_eq_list]
       simp [compileExpListHOL, compileExpHOL, argsCompile, compileOp]
-    have equal := compile.symm.trans wholeCompiled
-    cases equal
-    have argsLoc : ClosProps.everyFnLocationSome args := by
-      simpa [ClosProps.everyFnLocationSome, ClosProps.fnLocationSomeExp] using locations
-    have argsVars : ClosProps.everyFnVarsSome args := by
-      simpa [ClosProps.everyFnVarsSome, ClosProps.fnVarsSomeExp] using varsAnnotated
-    rw [ClosSem.evaluate, ClosSem.fixClock_evaluate] at run
+    closArgsSplit
     cases argsRun : ClosSem.evaluate args sourceEnv s with
     | mk argsResult sMiddle =>
       rw [argsRun] at run
@@ -85,19 +75,13 @@ theorem expressionSimulationBelow_global {C F : Type} (clockBound : Nat) (trace 
           (argsIH s sMiddle t sourceEnv targetEnv f aux finalAux targetArgs (.err error)
             clockBounded argsRun noTypeError argsCompiled argsLoc annotations argsVars installed envRelated states)
       | val values =>
-        have maxApp : sMiddle.maxApp = s.maxApp := by
-          have h := (ClosProps.evaluate_const (C := C) (F := F)).1 args sourceEnv s
-          rw [argsRun] at h
-          exact h
+        have maxApp := maxApp_of_evaluate_const argsRun
         have argsPost := argsIH s sMiddle t sourceEnv targetEnv f aux finalAux targetArgs (.val values)
           clockBounded argsRun (by simp) argsCompiled argsLoc annotations argsVars installed envRelated states
         cases appRun : ClosSem.doApp (.globOp (.global index)) values.reverse sMiddle with
         | err error =>
           have errorEq := global_read_error index values.reverse sMiddle error appRun
-          simp [appRun] at run
-          apply False.elim
-          apply noTypeError
-          simpa [errorEq] using run.1.symm
+          closAppRunError
         | val pair =>
           obtain ⟨value, last⟩ := pair
           simp [appRun] at run
@@ -112,12 +96,7 @@ theorem evaluatePost_alloc_error {C F : Type} (s sFinal : ClosSem.State C F)
     (error : ErrorResult ClosSem.Value)
     (post : evaluatePost s sFinal t targetEnv f (.err error) args) :
     evaluatePost s sFinal t targetEnv f (.err error) [.op (.globOp .allocGlobal) args] := by
-  obtain ⟨clock, targetResult, tFinal, fFinal, run, related, state, map, refs, annotations, clocks⟩ := post
-  cases targetResult with
-  | val values => simp [resultRel] at related
-  | err targetError =>
-    refine ⟨clock, .err targetError, tFinal, fFinal, ?_, related, state, map, refs, annotations, clocks⟩
-    rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, run]
+  exact evaluatePostOpError s sFinal t targetEnv f (.globOp .allocGlobal) args error post
 
 /-- Allocation after successful argument evaluation preserves the simulation
 postcondition and the preexisting reference frame. -/
@@ -166,13 +145,7 @@ theorem expressionSimulationBelow_alloc {C F : Type} (clockBound : Nat) (trace :
         ([.op (.globOp .allocGlobal) targetArgs], aux1) := by
       rw [compileExps_eq_list]
       simp [compileExpListHOL, compileExpHOL, argsCompile, compileOp]
-    have equal := compile.symm.trans wholeCompiled
-    cases equal
-    have argsLoc : ClosProps.everyFnLocationSome args := by
-      simpa [ClosProps.everyFnLocationSome, ClosProps.fnLocationSomeExp] using locations
-    have argsVars : ClosProps.everyFnVarsSome args := by
-      simpa [ClosProps.everyFnVarsSome, ClosProps.fnVarsSomeExp] using varsAnnotated
-    rw [ClosSem.evaluate, ClosSem.fixClock_evaluate] at run
+    closArgsSplit
     cases argsRun : ClosSem.evaluate args sourceEnv s with
     | mk argsResult sMiddle =>
       rw [argsRun] at run
@@ -184,19 +157,13 @@ theorem expressionSimulationBelow_alloc {C F : Type} (clockBound : Nat) (trace :
           (argsIH s sMiddle t sourceEnv targetEnv f aux finalAux targetArgs (.err error)
             clockBounded argsRun noTypeError argsCompiled argsLoc annotations argsVars installed envRelated states)
       | val values =>
-        have maxApp : sMiddle.maxApp = s.maxApp := by
-          have h := (ClosProps.evaluate_const (C := C) (F := F)).1 args sourceEnv s
-          rw [argsRun] at h
-          exact h
+        have maxApp := maxApp_of_evaluate_const argsRun
         have argsPost := argsIH s sMiddle t sourceEnv targetEnv f aux finalAux targetArgs (.val values)
           clockBounded argsRun (by simp) argsCompiled argsLoc annotations argsVars installed envRelated states
         cases appRun : ClosSem.doApp (.globOp .allocGlobal) values.reverse sMiddle with
         | err error =>
           have errorEq := global_alloc_error values.reverse sMiddle error appRun
-          simp [appRun] at run
-          apply False.elim
-          apply noTypeError
-          simpa [errorEq] using run.1.symm
+          closAppRunError
         | val pair =>
           obtain ⟨value, last⟩ := pair
           simp [appRun] at run
@@ -212,12 +179,8 @@ theorem evaluatePost_setGlobal_error {C F : Type} (s sFinal : ClosSem.State C F)
     (post : evaluatePost s sFinal t targetEnv f (.err error) args) :
     evaluatePost s sFinal t targetEnv f (.err error)
       [.op (.globOp (.setGlobal (index + numAddedGlobals))) args] := by
-  obtain ⟨clock, targetResult, tFinal, fFinal, run, related, state, map, refs, annotations, clocks⟩ := post
-  cases targetResult with
-  | val values => simp [resultRel] at related
-  | err targetError =>
-    refine ⟨clock, .err targetError, tFinal, fFinal, ?_, related, state, map, refs, annotations, clocks⟩
-    rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, run]
+  exact evaluatePostOpError s sFinal t targetEnv f
+    (.globOp (.setGlobal (index + numAddedGlobals))) args error post
 
 /-- A successful global write preserves the expression simulation. -/
 theorem evaluatePost_setGlobal_success {C F : Type} (s sMiddle sLast : ClosSem.State C F)
@@ -277,13 +240,7 @@ theorem expressionSimulationBelow_setGlobal {C F : Type} (clockBound : Nat) (tra
         ([.op (.globOp (.setGlobal (index + numAddedGlobals))) targetArgs], aux1) := by
       rw [compileExps_eq_list]
       simp [compileExpListHOL, compileExpHOL, argsCompile, compileOp]
-    have equal := compile.symm.trans wholeCompiled
-    cases equal
-    have argsLoc : ClosProps.everyFnLocationSome args := by
-      simpa [ClosProps.everyFnLocationSome, ClosProps.fnLocationSomeExp] using locations
-    have argsVars : ClosProps.everyFnVarsSome args := by
-      simpa [ClosProps.everyFnVarsSome, ClosProps.fnVarsSomeExp] using varsAnnotated
-    rw [ClosSem.evaluate, ClosSem.fixClock_evaluate] at run
+    closArgsSplit
     cases argsRun : ClosSem.evaluate args sourceEnv s with
     | mk argsResult sMiddle =>
       rw [argsRun] at run
@@ -295,19 +252,13 @@ theorem expressionSimulationBelow_setGlobal {C F : Type} (clockBound : Nat) (tra
           (argsIH s sMiddle t sourceEnv targetEnv f aux finalAux targetArgs (.err error)
             clockBounded argsRun noTypeError argsCompiled argsLoc annotations argsVars installed envRelated states)
       | val values =>
-        have maxApp : sMiddle.maxApp = s.maxApp := by
-          have h := (ClosProps.evaluate_const (C := C) (F := F)).1 args sourceEnv s
-          rw [argsRun] at h
-          exact h
+        have maxApp := maxApp_of_evaluate_const argsRun
         have argsPost := argsIH s sMiddle t sourceEnv targetEnv f aux finalAux targetArgs (.val values)
           clockBounded argsRun (by simp) argsCompiled argsLoc annotations argsVars installed envRelated states
         cases appRun : ClosSem.doApp (.globOp (.setGlobal index)) values.reverse sMiddle with
         | err error =>
           have errorEq := global_set_error index values.reverse sMiddle error appRun
-          simp [appRun] at run
-          apply False.elim
-          apply noTypeError
-          simpa [errorEq] using run.1.symm
+          closAppRunError
         | val pair =>
           obtain ⟨value, last⟩ := pair
           simp [appRun] at run

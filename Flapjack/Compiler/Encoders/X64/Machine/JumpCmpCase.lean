@@ -250,10 +250,7 @@ theorem case_jumpCmp_reg (operator : Cmp) (source right : Nat) (target : BitVec 
       (encodeInsn (.binopRR (if isTest operator then .ztest else .zcmp) .z64
         (totalNum2Zreg source) (totalNum2Zreg right)) ++
        encodeInsn (.jcc (x64Cmp operator) (target - 9))) ms.mem s1.memDomain := by
-    have h' := st.bytesTarget
-    rw [henc] at h'
-    rw [← st.pc] at h'
-    exact h'
+    bytesTargetAtPc
   obtain ⟨hb0, hb1⟩ := (bytesInMemory_append _ _ ms.pc ms.mem s1.memDomain).1 hbmAll
   rw [hbrlen] at hb1
   have hzop : ((if isTest operator then ZBinopName.ztest else ZBinopName.zcmp) : ZBinopName) =
@@ -476,10 +473,7 @@ theorem jumpCmpImmAux (operator : Cmp) (source : Nat) (value target : BitVec 64)
   have hbmAll : bytesInMemoryHOL ms.pc
       (encodeInsn (.binopRI zop .z64 source value) ++
         encodeInsn (.jcc (x64Cmp operator) (target - BitVec.ofNat 64 w))) ms.mem s1.memDomain := by
-    have h' := st.bytesTarget
-    rw [henc] at h'
-    rw [← st.pc] at h'
-    exact h'
+    bytesTargetAtPc
   obtain ⟨hb0, hb1⟩ := (bytesInMemory_append _ _ ms.pc ms.mem s1.memDomain).1 hbmAll
   rw [hbrlen] at hb1
   have hdec0' : decode (fun k => ms.mem (ms.pc + BitVec.ofNat 64 k)) =

@@ -5,9 +5,6 @@ public import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Simulate
 
 @[expose] public section
 
-set_option maxHeartbeats 12000000
-set_option maxRecDepth 10000
-
 /-!
 # The `longMul` constructor of `encoder_correct arm8TargetL3`
 
@@ -34,10 +31,7 @@ theorem arm8_encoder_correct_longMul (destinationLeft destinationRight sourceLef
     CaseGoal (.inst (.arith (.longMul destinationLeft destinationRight sourceLeft sourceRight))) s1 s2 ms := by
   obtain ⟨hs, hr⟩ := h
   obtain ⟨hok, hpc, hmem, hreg, hfp⟩ := hr
-  rw [arm8TargetL3_stateOk] at hok
-  rw [arm8TargetL3_getPc] at hpc
-  rw [arm8TargetL3_getByte] at hmem
-  rw [arm8TargetL3_getReg] at hreg
+  arm8TargetFields
   change ms.PC = s1.pc at hpc
   change ∀ a, s1.memDomain a → ms.MEM a = s1.mem a at hmem
   change ∀ k, k < arm8ConfigL3.regCount ∧ arm8ConfigL3.avoidRegs.contains k = false →

@@ -9,7 +9,7 @@ public import Mathlib.Tactic.IntervalCases
 namespace Flapjack.CakeParser.FromSexp
 open Flapjack.Basis.Pure.MlString
 
-set_option maxHeartbeats 2000000 in
+set_option maxHeartbeats 400000 in
 private theorem decode_encoded_byte (c : HolChar) (tail : List HolChar) :
     decodeControl (encodeControl [c] ++ tail) =
       (decodeControl tail).map (c :: ·) := by

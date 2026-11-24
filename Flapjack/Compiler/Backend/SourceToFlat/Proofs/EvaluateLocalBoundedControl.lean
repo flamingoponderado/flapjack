@@ -20,12 +20,7 @@ theorem localEnvBounded_let_named {C F : Type} [Nonempty C]
     (bodyIH : LocalEnvBoundedIH (F := F) interp transform limit body) :
     LocalEnvBoundedIH (F := F) interp transform limit (.let_ (some name) first body) := by
   intro genv start finish other source flat baseEnv sourceLocal flatEnv traces trace baseMap gen clockBound localRel envInv tracesLen invariant generation safe
-  let sourceEnv := { baseEnv with v := nsAppend sourceLocal baseEnv.v }
-  let compMap := { baseMap with v := bindLocals traces (flatEnv.v.map Prod.fst) baseMap.v }
-  have firstSafe : ∀ last, EvaluateHOL.evaluate source sourceEnv [first] ≠ (last, .err (.abort .typeError)) := by
-    intro last bad
-    apply safe last
-    rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate source sourceEnv [first] []).1, bad]
+  localEnvOperandSafe firstSafe [first]
   obtain ⟨middleGenv, firstSim, firstPost⟩ := firstIH genv start finish other source flat baseEnv sourceLocal flatEnv traces
     (name :: trace) baseMap gen clockBound localRel envInv tracesLen invariant generation firstSafe
   unfold ExprSim at firstSim
@@ -132,12 +127,7 @@ theorem localEnvBounded_if {C F : Type} [Nonempty C]
     (noIH : LocalEnvBoundedIH (F := F) interp transform limit no) :
     LocalEnvBoundedIH (F := F) interp transform limit (.if_ cond yes no) := by
   intro genv start finish other source flat baseEnv sourceLocal flatEnv traces trace baseMap gen clockBound localRel envInv tracesLen invariant generation safe
-  let sourceEnv := { baseEnv with v := nsAppend sourceLocal baseEnv.v }
-  let compMap := { baseMap with v := bindLocals traces (flatEnv.v.map Prod.fst) baseMap.v }
-  have condSafe : ∀ last, EvaluateHOL.evaluate source sourceEnv [cond] ≠ (last, .err (.abort .typeError)) := by
-    intro last bad
-    apply safe last
-    rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate source sourceEnv [cond] []).1, bad]
+  localEnvOperandSafe condSafe [cond]
   obtain ⟨middleGenv, condSim, condPost⟩ := condIH genv start finish other source flat baseEnv sourceLocal flatEnv traces trace baseMap gen
     clockBound localRel envInv tracesLen invariant generation condSafe
   have condSimCopy := condSim
@@ -231,12 +221,7 @@ theorem localEnvBounded_log {C F : Type} [Nonempty C]
     (rightIH : LocalEnvBoundedIH (F := F) interp transform limit right) :
     LocalEnvBoundedIH (F := F) interp transform limit (.log op left right) := by
   intro genv start finish other source flat baseEnv sourceLocal flatEnv traces trace baseMap gen clockBound localRel envInv tracesLen invariant generation safe
-  let sourceEnv := { baseEnv with v := nsAppend sourceLocal baseEnv.v }
-  let compMap := { baseMap with v := bindLocals traces (flatEnv.v.map Prod.fst) baseMap.v }
-  have leftSafe : ∀ last, EvaluateHOL.evaluate source sourceEnv [left] ≠ (last, .err (.abort .typeError)) := by
-    intro last bad
-    apply safe last
-    rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate source sourceEnv [left] []).1, bad]
+  localEnvOperandSafe leftSafe [left]
   obtain ⟨middleGenv, leftSim, leftPost⟩ := leftIH genv start finish other source flat baseEnv sourceLocal flatEnv traces trace baseMap gen
     clockBound localRel envInv tracesLen invariant generation leftSafe
   have leftSimCopy := leftSim
@@ -338,12 +323,7 @@ theorem localEnvBounded_let_anonymous {C F : Type} [Nonempty C]
     (bodyIH : LocalEnvBoundedIH (F := F) interp transform limit body) :
     LocalEnvBoundedIH (F := F) interp transform limit (.let_ none first body) := by
   intro genv start finish other source flat baseEnv sourceLocal flatEnv traces trace baseMap gen clockBound localRel envInv tracesLen invariant generation safe
-  let sourceEnv := { baseEnv with v := nsAppend sourceLocal baseEnv.v }
-  let compMap := { baseMap with v := bindLocals traces (flatEnv.v.map Prod.fst) baseMap.v }
-  have firstSafe : ∀ last, EvaluateHOL.evaluate source sourceEnv [first] ≠ (last, .err (.abort .typeError)) := by
-    intro last bad
-    apply safe last
-    rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate source sourceEnv [first] []).1, bad]
+  localEnvOperandSafe firstSafe [first]
   obtain ⟨middleGenv, firstSim, firstPost⟩ := firstIH genv start finish other source flat baseEnv sourceLocal flatEnv traces trace baseMap gen
     clockBound localRel envInv tracesLen invariant generation firstSafe
   unfold ExprSim at firstSim

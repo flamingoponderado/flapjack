@@ -218,4 +218,26 @@ theorem compileListSource_singleton_result (n : Nat) (x : Bvl.Exp) (c : List Bvi
     | nil => exact ⟨first, rfl⟩
     | cons second rest => simp at length
 
+/- Common opening of the BVL-to-BVI operator simulation proofs: bind the
+simulation variables, split the compilation of the argument list, discharge
+the `smartAppend` with the empty right tree, simplify the compiled-code
+hypothesis with the given extra lemma, and rewrite the argument run.
+Flapjack-specific proof infrastructure (no HOL original).
+
+Hygiene is disabled on purpose: the macro binds the conventional local names
+(`argsCode`, `argsAux`, `finalName`, `shape`, `run`, ...) that the following
+case analysis refers to, so those names must not be renamed. -/
+set_option hygiene false in
+macro "bvlArgsSetup" "using" lemma:Lean.Parser.Tactic.simpLemma : tactic =>
+  `(tactic| (
+    intro n res next target n2 ys aux relocate run notTypeError compiled related sourceOk envOk
+      installed handlers global
+    rcases argsCompile : compileListSource n arguments with ⟨argsCode, argsAux, finalName⟩
+    have nilRight : smartAppend argsAux .nil = argsAux := smartAppend_nil argsAux
+    simp [compileListSource, compileSingSource, argsCompile, nilRight, $lemma] at compiled
+    rcases compiled with ⟨rfl, rfl, rfl⟩
+    have shape : BvlHandle.Proofs.handleOk arguments :=
+      by simpa [BvlHandle.Proofs.handleOk] using handlers
+    rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, argsRun] at run))
+
 end Flapjack.Compiler.Backend.BvlToBvi

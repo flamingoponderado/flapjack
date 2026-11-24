@@ -34,7 +34,7 @@ source comparison, not a formal HOL-to-Lean equivalence proof.
 
 namespace Flapjack.Compiler.Encoders.Arm8.L3
 
-set_option maxRecDepth 1000000
+set_option maxRecDepth 2000
 
 open Flapjack Compiler.Encoders.Arm8
 open Flapjack.Basis.Pure.MlString

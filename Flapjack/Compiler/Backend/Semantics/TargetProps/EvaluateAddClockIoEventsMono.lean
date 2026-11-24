@@ -8,7 +8,7 @@ public import Flapjack.Compiler.Backend.Semantics.TargetProps.EvaluateIoEventsMo
 
 namespace Flapjack
 
-set_option maxHeartbeats 1200000 in
+set_option maxHeartbeats 1000000 in
 /-- Clock-order event monotonicity over the full literal evaluator.
 The only premise is clock order. Both runs use the same literal machine and FFI
 transitions; the zero-clock case uses input-event prefix preservation. -/
@@ -34,8 +34,6 @@ theorem evaluateTargetAddClockIoEventsMono {width : Nat} [NeZero width]
         | (rw [← hlarge]; exact List.prefix_refl _)
         | (rw [← hsmall, ← hlarge]; exact ih _ _ _ _ hkn)
         | (rename_i hguard; rw [if_pos hguard] at hlarge)
-        | (simp_all only [not_not])
-        | cases_type Compiler.Encoders.Asm.HolAddr
         | (simp only [ite_and] at hsmall hlarge)
         | split at hsmall <;> (try simp_all only [↓reduceIte]))
 

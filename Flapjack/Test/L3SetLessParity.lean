@@ -4,7 +4,7 @@ public import Flapjack.RiscV.L3.Defs.SetLess
 
 @[expose] public section
 
-set_option maxRecDepth 20000
+set_option maxRecDepth 2000
 namespace Flapjack.Test.L3SetLessParity
 open Flapjack.RiscV.L3
 private def fixture (s : riscv_state) (mode : BitVec 2) (lhs rhs : BitVec 64) : riscv_state :=

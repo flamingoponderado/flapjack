@@ -18,6 +18,20 @@ namespace Flapjack.PanGlobalsFreshLocalSupport
 open Flapjack.Pancake.PanLang
 open Flapjack.PanSemStateFiniteExact
 
+/- Open a `FreshLocal` memory-store case: the variable is fresh for both the
+destination and the source expression, so both evaluate unchanged, and the run
+hypothesis is the second conjunct. Flapjack infrastructure (no HOL original);
+hygiene is disabled so `hf`, `hd`, `hs` and `hev` survive. -/
+set_option hygiene false in
+macro "panGlobalsFreshStoreIntro" : tactic =>
+  `(tactic| (
+    classical
+    have hf : name ∉ varExpHOL destination ∧ name ∉ varExpHOL source := by
+      simpa only [freeVarIdsHOL, List.mem_append, not_or] using h.1
+    have hd := evalFreshUpdate state name value destination hf.1
+    have hs := evalFreshUpdate state name value source hf.2
+    have hev := h.2))
+
 /-- Flapjack-only equality of the two canonical update interfaces. -/
 theorem updateEq_eq_update {width : Nat} [NeZero width]
     (locals : HolFiniteMapExact MlS (ValueHOL width)) (entry : MlS × ValueHOL width) :

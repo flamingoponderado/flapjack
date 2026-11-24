@@ -8,7 +8,6 @@ public meta import Flapjack.Test.Fixtures.WordToStack
 @[expose] public section
 open Flapjack Flapjack.WordAlloc Flapjack.WordToStackProofs Flapjack.Test.Fixtures.WordToStack
 
-set_option maxRecDepth 8192
 -- The complete eight-component packet needs a larger equality-instance search.
 set_option synthInstance.maxSize 512
 local instance {width : Nat} [NeZero width] : Nonempty (WordLocW width) := ⟨.word 0⟩

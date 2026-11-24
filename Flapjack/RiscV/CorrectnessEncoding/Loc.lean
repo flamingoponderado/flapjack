@@ -16,8 +16,6 @@ namespace Flapjack.RiscV.TargetProof
 open Flapjack RiscV.L3 RiscV.L3.Step Compiler.Encoders.Asm
   Compiler.Encoders.AsmProps Compiler.Encoders.AsmSem Compiler.Encoders.RiscV.Target
 set_option maxRecDepth 200000
-set_option maxHeartbeats 2000000
-
 private theorem addi_low (r : BitVec 5) (c : BitVec 12) :
     (Encode (.ArithI (.ADDI (r,r,c)))).getLsbD 0 = true ∧
       (Encode (.ArithI (.ADDI (r,r,c)))).getLsbD 1 = true := by

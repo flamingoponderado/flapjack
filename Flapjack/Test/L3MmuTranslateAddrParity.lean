@@ -5,7 +5,6 @@ public import Flapjack.RiscV.L3.Defs.MMU.Translate
 @[expose] public section
 namespace Flapjack.Test
 open Flapjack.RiscV.L3
-set_option maxRecDepth 200000
 
 -- Original oracle addr_0_Data_Read_0_0; address, all sixteen complete TLB entries and memory.
 example : (let s := { (default : riscv_state) with procID := 7, totalCore := 1, c_cycles := fun _ => 77, c_MCSR := fun _ => { (default : MachineCSR) with mstatus := { (default : mstatus) with MMPRV := false, MPRV := 0, MPRV1 := 3, VM := 0 } }, c_SCSR := fun _ => { (default : SupervisorCSR) with sasid := 63, sptbr := 0 }, c_tlb := fun _ _ => none, MEM8 := fun adr => if adr.toNat < 8 then BitVec.ofNat 8 (3079 / (2 ^ (8 * adr.toNat))) else 0 }; let r := translateAddr ((1656:BitVec 64), fetchType.Data, accessType.Read) s; (r.1.map BitVec.toNat, (List.range 16).map (fun j => (r.2.c_tlb 7 (BitVec.ofNat 4 j)).map (fun e => (e.asid.toNat, e.global, e.vAddrMask.toNat, e.vMatchMask.toNat, e.vAddr.toNat, e.pAddr.toNat, e.age.toNat, e.pteAddr.toNat, («reg'SV_PTE» e.pte).toNat))), (rawReadData 0 r.2).toNat)) = (some 1656, [none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none], 3079) := by

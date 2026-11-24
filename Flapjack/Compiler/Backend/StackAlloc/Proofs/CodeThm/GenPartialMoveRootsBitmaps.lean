@@ -79,11 +79,7 @@ theorem wordGenGcPartialMoveRootsBitmapsCode_run {width : Nat} [NeZero width] {C
   · subst h0w
     simp only [if_true, Prod.mk.injEq, decide_eq_true_eq] at hm
     obtain ⟨rfl, rfl, rfl, rfl, rfl⟩ := hm
-    obtain ⟨r0, hr0⟩ := Option.isSome_iff_exists.1 h0
-    obtain ⟨r1, hr1⟩ := Option.isSome_iff_exists.1 h1
-    obtain ⟨r2, hr2⟩ := Option.isSome_iff_exists.1 h2
-    obtain ⟨r5, hr5⟩ := Option.isSome_iff_exists.1 h5
-    obtain ⟨r6, hr6⟩ := Option.isSome_iff_exists.1 h6
+    stackAllocRegValues
     obtain ⟨r7, hr7⟩ := Option.isSome_iff_exists.1 h7
     have h00 : (AndOp.and (0#width) (0#width) != (0#width)) = false := by
       change (0#width &&& 0#width != 0#width) = false
@@ -171,19 +167,7 @@ theorem wordGenGcPartialMoveRootsBitmapsCode_run {width : Nat} [NeZero width] {C
         (8, .word (wordSemBytesInWord *
           BitVec.ofNat width (old ++ [WordLocW.word c] ++ new).length)),
         (9, q9)] }
-  have hslen : s3.stack.length = s.stack.length := by
-    simp only [s3, hst, List.length_append, List.length_cons, List.length_nil] at hlenB ⊢
-    omega
-  have hJ : (width / 8) * (old ++ [WordLocW.word c] ++ new).length < 2 ^ width := by
-    refine Nat.lt_of_le_of_lt (Nat.mul_le_mul_left _ ?_) hbound
-    simp only [hst, List.length_append, List.length_cons, List.length_nil] at hlenB ⊢
-    omega
-  have hjJ : s3.stackSpace + (old ++ [WordLocW.word c] ++ new).length < s3.stack.length := by
-    simp only [s3, s2, setVar, hsp, List.length_append, List.length_cons, List.length_nil]
-    omega
-  have hvJ : s3.stack[s3.stackSpace + (old ++ [WordLocW.word c] ++ new).length]'hjJ = h := by
-    simp only [s3, s2, setVar, hsp]
-    simp
+  stackAllocRootsFrameBounds
   -- the state the next frame starts from
   let t : StackSemStateFiniteExact width C F := setVar 9 h s3
   have hlen8 : (old ++ [WordLocW.word c] ++ new).length = (old ++ WordLocW.word c :: new).length := by

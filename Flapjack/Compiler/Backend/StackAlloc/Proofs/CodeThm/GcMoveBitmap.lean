@@ -24,6 +24,21 @@ namespace Flapjack.Compiler.Backend.StackAlloc
 open Flapjack Flapjack.StackSemEvaluate Flapjack.StackSemStateOps Flapjack.StackSemControl
 open Flapjack.Compiler.Backend.StackLang Flapjack.Compiler.Encoders.Asm
 open Flapjack.Compiler.Backend.DataToWord Flapjack.Compiler.Backend.WordGcFunctions
+
+/- Lower bounds on the bitmap word `w` in the `word_gc_move_bitmap_code` loop:
+it is neither 0 nor 1 nor below `2 ^ width`, and its shifted index is in bounds.
+Flapjack proof infrastructure (no HOL original) used by the `*MoveBitmap` code
+theorems; hygiene is disabled so `hw0`, `hw1`, `hnlt`, `hlt'` survive. -/
+set_option hygiene false in
+macro "stackAllocBitmapLowBounds" : tactic =>
+  `(tactic| (
+    have hw0 : w ≠ 0 := fun h => hlow (Or.inl h)
+    have hw1 : w ≠ 1 := fun h => hlow (Or.inr h)
+    have hnlt : ¬ w < 2#width := fun h => hlow ((lower_2w_eq w hg).1 h)
+    have hlt' : (w >>> (1 : Nat)).toNat < n := by
+      rw [← hwn, BitVec.toNat_ushiftRight, Nat.shiftRight_eq_div_pow]
+      have : w.toNat ≠ 0 := fun h => hw0 (BitVec.eq_of_toNat_eq (by simpa using h))
+      omega))
 open Flapjack.Compiler.Backend.StackRemove (loadInst storeInst leftShiftInst rightShiftInst)
 
 /-- A stack offset `j` in bytes, `bytes_in_word * n2w j`, shifts back to `j`. -/
@@ -169,11 +184,7 @@ theorem wordGcMoveBitmapCode_run {width : Nat} [NeZero width] {C F : Type} {conf
     simp only [Option.some.injEq, Prod.mk.injEq] at hm'
     obtain ⟨rfl, rfl, rfl, rfl, rfl, -⟩ := hm'
     have hlt : w < 2#width := (lower_2w_eq w hg).2 hlow
-    obtain ⟨r0, hr0⟩ := Option.isSome_iff_exists.1 h0
-    obtain ⟨r1, hr1⟩ := Option.isSome_iff_exists.1 h1
-    obtain ⟨r2, hr2⟩ := Option.isSome_iff_exists.1 h2
-    obtain ⟨r5, hr5⟩ := Option.isSome_iff_exists.1 h5
-    obtain ⟨r6, hr6⟩ := Option.isSome_iff_exists.1 h6
+    stackAllocRegValues
     refine ⟨0, r0, r1, r2, r5, r6, .word w, ?_⟩
     rw [wordGcMoveBitmapCode_eq, evaluate_loop, evaluate_ite, evaluate_break]
     simp only [getVar, HolRegImm.toWordRegImm, Nat.add_zero, h7]
@@ -201,13 +212,7 @@ theorem wordGcMoveBitmapCode_run {width : Nat} [NeZero width] {C F : Type} {conf
     by_cases k8 : k = 8
     · subst k8; simp [h8]
     simp [k0, k1, k2, k3, k4, k5, k6, k7, k8]
-  have hw0 : w ≠ 0 := fun h => hlow (Or.inl h)
-  have hw1 : w ≠ 1 := fun h => hlow (Or.inr h)
-  have hnlt : ¬ w < 2#width := fun h => hlow ((lower_2w_eq w hg).1 h)
-  have hlt' : (w >>> (1 : Nat)).toNat < n := by
-    rw [← hwn, BitVec.toNat_ushiftRight, Nat.shiftRight_eq_div_pow]
-    have : w.toNat ≠ 0 := fun h => hw0 (BitVec.eq_of_toNat_eq (by simpa using h))
-    omega
+  stackAllocBitmapLowBounds
   simp only [hw0, hw1, if_false] at hm
   cases stack with
   | nil => simp at hm

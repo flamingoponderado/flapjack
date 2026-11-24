@@ -7,7 +7,6 @@ public import Flapjack.Compiler.Encoders.AsmSem.Step
 /-! Kernel replay of `scripts/hol-probes/asm_sem_step_probe.out`: original HOL `asm` on every
 assembly clause and on instruction clauses over an 8-bit state, and the projection of
 `asm_step` onto its transition and non-failure conjuncts. -/
-set_option maxRecDepth 16384
 
 namespace Flapjack.Test.AsmSemStepParity
 open Flapjack Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Encoders.AsmSem

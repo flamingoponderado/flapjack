@@ -10,7 +10,6 @@ open Flapjack RiscV.L3 Compiler.Encoders.Asm Compiler.Encoders.AsmSem
   Compiler.Encoders.AsmProps Compiler.Encoders.RiscV.Target SubOverflow
 set_option autoImplicit false
 set_option maxRecDepth 200000
-set_option maxHeartbeats 2000000
 /-- Full original six-instruction SubOverflow constructor: original source step and initial target
 relation only; every original environment and both assertion predicates retained.
 The XOR/SUB/XOR/XORI/AND/SRLI list retains source aliases, including r1=r4.

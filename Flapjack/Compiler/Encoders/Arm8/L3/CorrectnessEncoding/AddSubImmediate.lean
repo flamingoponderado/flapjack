@@ -5,9 +5,6 @@ public import Flapjack.Compiler.Encoders.Arm8.MaskConverses
 
 @[expose] public section
 
-set_option maxHeartbeats 12000000
-set_option maxRecDepth 10000
-
 /-!
 # `AddSubImmediate@64`: the word, `Encode`, `Decode` and `Run`
 

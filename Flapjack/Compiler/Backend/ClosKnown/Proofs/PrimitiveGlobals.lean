@@ -5,6 +5,7 @@ public import Flapjack.Compiler.Backend.ClosInterp.Proofs.PrimitiveRelation
 public import Flapjack.Compiler.Backend.ClosInterp.Proofs.NoInstallPrimitives
 public import Flapjack.Compiler.Backend.Semantics.ClosProps.GlobalSafety
 public import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyCode
+public import Flapjack.Misc.ProofTactics
 public import Aesop
 
 @[expose] public section
@@ -126,9 +127,7 @@ theorem holFmapAsFiniteSupportWitness {C F : Type} :
 This is proof infrastructure for the source primitive-safety theorem. -/
 private theorem intResultSafe (op : ClosLang.IntOp) (args : List ClosSem.Value)
     (value : ClosSem.Value) (run : doIntApp op args = some value) : vsgcFree value := by
-  unfold doIntApp at run
-  repeat' split at run
-  all_goals simp_all
+  unfoldSplit doIntApp
   all_goals aesop (add simp [vsgcFree]) (add safe apply [vsgcFreeBool])
 
 /-- Every integer operation satisfies the complete primitive-safety result. -/
@@ -153,9 +152,7 @@ theorem doAppSsgcIntOp {C F : Type} (op : ClosLang.IntOp) (args : List ClosSem.V
 proof infrastructure for the source primitive-safety theorem. -/
 private theorem integralWordResultSafe (op : ClosLang.WordOp) (args : List ClosSem.Value)
     (value : ClosSem.Value) (run : doWordAppIntegral op args = some value) : vsgcFree value := by
-  unfold doWordAppIntegral at run
-  repeat' split at run
-  all_goals simp_all
+  unfoldSplit doWordAppIntegral
   all_goals try simp_all only [Option.bind_eq_some_iff, Option.some.injEq]
   all_goals try (solve | aesop (add simp [vsgcFree]) (add safe apply [vsgcFreeBool]))
 
@@ -163,9 +160,7 @@ private theorem integralWordResultSafe (op : ClosLang.WordOp) (args : List ClosS
 proof infrastructure for the source primitive-safety theorem. -/
 private theorem wordResultSafe (op : ClosLang.WordOp) (args : List ClosSem.Value)
     (value : ClosSem.Value) (run : doWordApp op args = some value) : vsgcFree value := by
-  unfold doWordApp at run
-  repeat' split at run
-  all_goals simp_all
+  unfoldSplit doWordApp
   all_goals try (solve | aesop (add simp [vsgcFree]) (add safe apply [vsgcFreeBool, integralWordResultSafe]))
 
 /-- Every word operation satisfies the complete primitive-safety result. -/
@@ -720,9 +715,7 @@ private theorem memoryUpdateByteSafe {C F : Type} (args : List ClosSem.Value)
     (stateSafe : ssgcFree s0)
     (run : applyMemory .updateByte args s0 = some (value, s)) :
     vsgcFree value ∧ ssgcFree s := by
-  unfold applyMemory at run
-  repeat' split at run
-  all_goals simp_all
+  unfoldSplit applyMemory
   simp only [Option.bind_eq_some_iff, Option.some.injEq, Prod.mk.injEq] at run
   rcases run with ⟨byte, _, rfl, rfl⟩
   exact ⟨vsgcFreeUnit, ssgcFreeUpdateByteArray _ _ _ _ stateSafe⟩
@@ -743,9 +736,7 @@ private theorem memoryXorByteSafe {C F : Type} (args : List ClosSem.Value)
     (s0 s : State C F) (value : ClosSem.Value) (stateSafe : ssgcFree s0)
     (run : applyMemory .xorByte args s0 = some (value, s)) :
     vsgcFree value ∧ ssgcFree s := by
-  unfold applyMemory at run
-  repeat' split at run
-  all_goals simp_all
+  unfoldSplit applyMemory
   simp only [Option.bind_eq_some_iff] at run
   rcases run with ⟨ref, found, run⟩
   cases ref <;> simp_all [Option.bind_eq_some_iff]

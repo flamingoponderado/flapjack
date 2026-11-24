@@ -4,9 +4,6 @@ public import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Loc
 
 @[expose] public section
 
-set_option maxHeartbeats 4000000
-set_option maxRecDepth 10000
-
 /-!
 # The `Jump` constructor of `encoder_correct arm8TargetL3`
 
@@ -383,10 +380,7 @@ theorem arm8_encoder_correct_jump (target : BitVec 64) (s1 s2 : AsmState 64)
     CaseGoal (.jump target) s1 s2 ms := by
   obtain ⟨hs, hr⟩ := h
   obtain ⟨hok, hpc, hmem, hreg, hfp⟩ := hr
-  rw [arm8TargetL3_stateOk] at hok
-  rw [arm8TargetL3_getPc] at hpc
-  rw [arm8TargetL3_getByte] at hmem
-  rw [arm8TargetL3_getReg] at hreg
+  arm8TargetFields
   change arm8Ok ms = true at hok
   change ms.PC = s1.pc at hpc
   change ∀ a, s1.memDomain a → ms.MEM a = s1.mem a at hmem

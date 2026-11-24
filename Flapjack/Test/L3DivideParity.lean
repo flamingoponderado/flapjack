@@ -3,7 +3,6 @@ module
 public import Flapjack.RiscV.L3.Defs.Divide
 
 @[expose] public section
-set_option maxRecDepth 20000
 namespace Flapjack.Test.L3DivideParity
 open Flapjack.RiscV.L3
 private def fixture (s : riscv_state) (mode : BitVec 2) (a b : BitVec 64) : riscv_state :=

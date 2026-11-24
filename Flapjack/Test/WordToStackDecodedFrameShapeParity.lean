@@ -4,7 +4,6 @@ public import Flapjack.Compiler.Backend.WordToStack.Proofs.DecodedFrameShape
 
 @[expose] public section
 open Flapjack Flapjack.WordToStackProofs
-set_option maxRecDepth 8192
 
 -- dfs_handler_1_0_0
 example : (wordSemDecStack ([] : List (WordLocW 1)) ([] : List (WordSemStackFrame 1))).map (fun xs => xs.map isHandlerFrame) = some [] := by decide +kernel

@@ -647,7 +647,6 @@ theorem listFieldByteRanged_iff {width : Nat} (l : List (String × Exp (BitVec w
         have hp := h p (by simp)
         exact ⟨hp.1, hp.2, ih.mpr (fun x hx => h x (by simp [hx]))⟩
 
-set_option maxHeartbeats 8000000 in
 theorem convExp_byteRanged {width : Nat} (ofInt : Int → BitVec width) :
     ∀ fuel (tree : ParseTree), ParseTreeByteRanged tree → ∀ e, convExp ofInt fuel tree = some e → ExpByteRanged e := by
   have H : ∀ fuel, ∀ (tree : ParseTree), ParseTreeByteRanged tree → ∀ e, convExp ofInt fuel tree = some e → ExpByteRanged e := by
@@ -1590,7 +1589,6 @@ mutual
           shapeVals_byteRanged ofInt ss (fun x hx => h x (by simp [hx]))⟩
 end
 
-set_option maxHeartbeats 8000000 in
 theorem convProg_convProgSeq_byteRanged {width : Nat} (ofInt : Int → BitVec width)
     (locations : Bool) :
     ∀ fuel,

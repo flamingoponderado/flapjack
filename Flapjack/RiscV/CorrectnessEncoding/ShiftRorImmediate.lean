@@ -12,8 +12,6 @@ open Flapjack RiscV.L3 RiscV.L3.Step Compiler.Encoders.Asm
   Compiler.Encoders.AsmProps Compiler.Encoders.AsmSem Compiler.Encoders.RiscV.Target
 set_option autoImplicit false
 set_option maxRecDepth 200000
-set_option maxHeartbeats 2000000
-
 
 private theorem reg_scratch (r : Nat) (guard : asmRegOkExact r riscvConfig = true) :
     BitVec.ofNat 5 r ≠ 31#5 := by
