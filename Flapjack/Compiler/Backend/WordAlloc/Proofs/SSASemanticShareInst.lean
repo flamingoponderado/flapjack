@@ -43,9 +43,7 @@ theorem ssaCcTransCorrectShareInst {width : Nat} [NeZero width] {C F : Type}
     have checked := h.2.2.2.1
     simp only [everyVarHOL,Bool.and_eq_true,decide_eq_true_eq] at checked
     exact checked.1
-  let permuted := {source with permute := target.permute}
-  have frame : Flapjack.WordAlloc.wordStateEqRel permuted target := by
-    simpa [permuted,Flapjack.WordAlloc.wordStateEqRel] using h.1
+  wordAllocPermutedFrame hyp h.1
   refine ⟨target.permute,?_⟩
   cases found : WordSemStateFiniteExact.wordExp permuted expr with
   | none => simp [WordSemStateFiniteExact.evaluate,permuted,found]

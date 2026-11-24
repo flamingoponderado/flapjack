@@ -99,9 +99,7 @@ theorem ssaCcTransCorrectAssign {width : Nat} [NeZero width] {C F : Type}
     have both : decide (name < next) = true ∧ everyVarExpHOL (fun x => decide (x < next)) expr = true := by
       simpa [everyVarHOL] using h.2.2.2.1
     exact of_decide_eq_true both.1
-  let permuted := {source with permute := target.permute}
-  have frame : Flapjack.WordAlloc.wordStateEqRel permuted target := by
-    simpa [permuted, Flapjack.WordAlloc.wordStateEqRel] using h.1
+  wordAllocPermutedFrame hyp h.1
   refine ⟨target.permute, ?_⟩
   cases found : WordSemStateFiniteExact.wordExp permuted expr with
   | none =>

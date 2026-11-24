@@ -56,9 +56,7 @@ theorem ssaCcTransCorrectStoreConsts {width : Nat} [NeZero width] {C F : Type}
         (.storeConsts tmp1 tmp2 address offset words) = true ∧
       ssaMapOK next ssa ∧ ltOK tables) :
     ssaSimulation (.storeConsts tmp1 tmp2 address offset words) source target ssa next tables := by
-  let permuted := {source with permute := target.permute}
-  have frame : Flapjack.WordAlloc.wordStateEqRel permuted target := by
-    simpa [permuted, Flapjack.WordAlloc.wordStateEqRel] using h.1
+  wordAllocPermutedFrame hyp h.1
   have related : ssaLocalsRel next ssa permuted.locals target.locals := h.2.1
   refine ⟨target.permute, ?_⟩
   cases addressRead : WordSemStateFiniteExact.getVar address permuted with

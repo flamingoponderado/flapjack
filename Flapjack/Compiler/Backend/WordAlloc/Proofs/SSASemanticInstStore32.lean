@@ -40,9 +40,7 @@ theorem ssaCcTransCorrectInstStore32 {width : Nat} [NeZero width] {C F : Type}
       everyVarHOL (fun x => decide (x < next)) (.inst (.mem .store32 data (.addr base offset))) = true ∧
       ssaMapOK next ssa ∧ ltOK tables) :
     ssaSimulation (.inst (.mem .store32 data (.addr base offset))) source target ssa next tables := by
-  let permuted := {source with permute := target.permute}
-  have frame : Flapjack.WordAlloc.wordStateEqRel permuted target := by
-    simpa [permuted, Flapjack.WordAlloc.wordStateEqRel] using h.1
+  wordAllocPermutedFrame hyp h.1
   let expr : WordLangExpHOL (BitVec width) := .op .add [.var base, .const offset]
   refine ⟨target.permute, ?_⟩
   cases found : WordSemStateFiniteExact.wordExp permuted expr with

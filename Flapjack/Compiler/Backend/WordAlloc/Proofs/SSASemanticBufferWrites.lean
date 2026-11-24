@@ -36,9 +36,7 @@ theorem ssaCcTransCorrectCodeBufferWrite {width : Nat} [NeZero width] {C F : Typ
       everyVarHOL (width := width) (fun x => decide (x < next)) (.codeBufferWrite first second) = true ∧
       ssaMapOK next ssa ∧ ltOK tables) :
     ssaSimulation (.codeBufferWrite first second) source target ssa next tables := by
-  let permuted := {source with permute := target.permute}
-  have frame : Flapjack.WordAlloc.wordStateEqRel permuted target := by
-    simpa [permuted, Flapjack.WordAlloc.wordStateEqRel] using h.1
+  wordAllocPermutedFrame hyp h.1
   have related : ssaLocalsRel next ssa permuted.locals target.locals := h.2.1
   refine ⟨target.permute, ?_⟩
   cases firstRead : WordSemStateFiniteExact.getVar first permuted with
@@ -81,9 +79,7 @@ theorem ssaCcTransCorrectDataBufferWrite {width : Nat} [NeZero width] {C F : Typ
       everyVarHOL (width := width) (fun x => decide (x < next)) (.dataBufferWrite first second) = true ∧
       ssaMapOK next ssa ∧ ltOK tables) :
     ssaSimulation (.dataBufferWrite first second) source target ssa next tables := by
-  let permuted := {source with permute := target.permute}
-  have frame : Flapjack.WordAlloc.wordStateEqRel permuted target := by
-    simpa [permuted, Flapjack.WordAlloc.wordStateEqRel] using h.1
+  wordAllocPermutedFrame hyp h.1
   have related : ssaLocalsRel next ssa permuted.locals target.locals := h.2.1
   refine ⟨target.permute, ?_⟩
   cases firstRead : WordSemStateFiniteExact.getVar first permuted with

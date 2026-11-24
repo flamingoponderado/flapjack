@@ -47,9 +47,7 @@ theorem ssaCcTransCorrectInstShift {width : Nat} [NeZero width] {C F : Type}
     have occurrences := h.2.2.2.1
     simp only [everyVarHOL, everyVarInstHOL, Bool.and_eq_true] at occurrences
     exact of_decide_eq_true occurrences.1.1
-  let permuted := {source with permute := target.permute}
-  have frame : Flapjack.WordAlloc.wordStateEqRel permuted target := by
-    simpa [permuted, Flapjack.WordAlloc.wordStateEqRel] using h.1
+  wordAllocPermutedFrame hyp h.1
   cases immediate with
   | reg right =>
     refine ⟨target.permute, ?_⟩

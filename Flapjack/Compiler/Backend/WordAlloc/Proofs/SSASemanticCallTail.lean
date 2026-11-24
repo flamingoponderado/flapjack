@@ -90,9 +90,7 @@ theorem ssaCcTransCorrectCallTail {width : Nat} [NeZero width] {C F : Type}
       ssaMapOK next ssa ∧ ltOK tables) :
     ssaSimulation (.call none dest args handler) source target ssa next tables := by
   classical
-  let permuted := {source with permute := target.permute}
-  have frame : Flapjack.WordAlloc.wordStateEqRel permuted target := by
-    simpa [permuted, Flapjack.WordAlloc.wordStateEqRel] using h.1
+  wordAllocPermutedFrame hyp h.1
   refine ⟨target.permute, ?_⟩
   change let sr := WordSemStateFiniteExact.evaluate (.call none dest args handler) permuted
          if sr.1 = some .error then True else
