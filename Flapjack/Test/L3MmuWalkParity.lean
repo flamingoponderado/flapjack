@@ -5,7 +5,6 @@ public import Flapjack.RiscV.L3.Defs.MMU.Walk
 @[expose] public section
 namespace Flapjack.Test
 open Flapjack.RiscV.L3
-set_option maxRecDepth 200000
 
 -- Original oracle walk_invalid: complete result payload and both PTE memory words.
 example : (let s := { (default : riscv_state) with MEM8 := (fun adr : BitVec 64 => if adr.toNat < 8 then BitVec.ofNat 8 (0 / (2 ^ (8 * adr.toNat))) else if 4096 ≤ adr.toNat ∧ adr.toNat < 4104 then BitVec.ofNat 8 (0 / (2 ^ (8 * (adr.toNat - 4096)))) else 0) }; let r := walk64 ((0:BitVec 64), fetchType.Data, accessType.Read, Privilege.User, (0:BitVec 64), 0) s; (r.1.map (fun (pa,p,l,g,a) => (pa.toNat, («reg'SV_PTE» p).toNat, l, g, a.toNat)), (rawReadData 0 r.2).toNat, (rawReadData 4096 r.2).toNat)) = (none,0,0) := by

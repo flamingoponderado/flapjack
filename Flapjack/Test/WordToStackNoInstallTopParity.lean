@@ -3,7 +3,6 @@ module
 public import Flapjack.Compiler.Backend.WordToStack.Proofs.NoInstallTop
 
 @[expose] public section
-set_option maxRecDepth 16384
 namespace Flapjack.Test.WordToStackNoInstallTopParity
 open Flapjack Flapjack.WordProps Flapjack.Compiler.Backend.StackLang
 open Flapjack.Compiler.Backend.StackProps

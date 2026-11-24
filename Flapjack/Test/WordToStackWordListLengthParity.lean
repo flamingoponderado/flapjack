@@ -4,7 +4,6 @@ public import Flapjack.Compiler.Backend.WordToStack.Proofs.WordListLength
 
 @[expose] public section
 open Flapjack.Compiler.Backend.WordToStack
-set_option maxRecDepth 8192
 
 -- wl_length_1_0_0
 example : (wordListW (width := 1) [] 0).length = if (0 : Nat) = 0 then 1 else (0 - 1) / 0 + 1 := by simp +decide [wordListW, bitsToWordW] <;> decide +kernel

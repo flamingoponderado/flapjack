@@ -5,7 +5,6 @@ public import Flapjack.RiscV.L3.Defs.MMU.Insert
 @[expose] public section
 namespace Flapjack.Test
 open Flapjack.RiscV.L3
-set_option maxRecDepth 200000
 
 -- Original oracle insert_empty; all sixteen slots observed.
 example : (let _e := (fun age : BitVec 64 => { (default : TLBEntry) with asid := 1, age := age }); let t := addToTLB ((63:BitVec 6), (0:BitVec 64), (0:BitVec 64), «rec'SV_PTE» 0, (0:BitVec 64), 0, true, fun _j => none) { (default : riscv_state) with procID := 7, totalCore := 1, c_cycles := fun _ => 77 }; (List.range 16).map (fun j => (t (BitVec.ofNat 4 j)).map (fun entry => (entry.asid.toNat, entry.age.toNat)))) =

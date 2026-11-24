@@ -4,7 +4,6 @@ public import Flapjack.Compiler.Backend.WordToStack.Proofs.StackSuffix
 
 @[expose] public section
 open Flapjack Flapjack.WordToStackProofs
-set_option maxRecDepth 8192
 
 -- sl_suffix_Nat_0_0
 example : (wordSemLastN 0 ([] : List Nat), (wordSemLastN 0 ([] : List Nat)).length, decide ((wordSemLastN 0 ([] : List Nat)).length ≤ 0), decide ((wordSemLastN 0 ([] : List Nat)).length ≤ 0), (wordSemLastN 0 ([] : List Nat)).all (fun x => decide (x%2=0))) = ([], 0, true, true, true) := by decide +kernel

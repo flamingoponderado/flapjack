@@ -4,7 +4,7 @@ public import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapDecode
 
 @[expose] public section
 open Flapjack.Compiler.Backend.WordToStack
-set_option maxRecDepth 8192
+set_option maxRecDepth 2000
 
 -- bd_words_0_0_8
 example : (wordListW ([] ++ [true]) 7 : List (BitVec 8)).map BitVec.toNat = [1] := by simp +decide [wordListW, bitsToWordW] <;> decide +kernel

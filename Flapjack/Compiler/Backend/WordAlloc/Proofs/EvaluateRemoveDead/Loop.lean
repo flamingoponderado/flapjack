@@ -55,7 +55,6 @@ theorem holFmapAsFiniteSupportRelationWitness_WordSemStateFiniteExact
   WordSemStateExact.holFmapAsFiniteSupportWitness
 end EvaluateRemoveDeadLoopWitnesses
 
-set_option maxRecDepth 4000 in
 /-- Exact HOL `evaluate_remove_dead_Loop_helper` (`word_allocProofScript.sml:3728-3898`):
 the HOL premises at `Loop names body exit_names`, including `nlivein = []`, and the
 universally quantified body statement for the loop's own context

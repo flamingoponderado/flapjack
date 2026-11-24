@@ -10,7 +10,7 @@ public import Flapjack.RiscV.L3.Support
 orders, full ISA constructors and reserved/unknown branches are preserved.
 Finite original captures are regression evidence, not exhaustive word32
 equivalence or an end-to-end compiler theorem. -/
-set_option maxRecDepth 200000
+set_option maxRecDepth 2000
 namespace Flapjack.RiscV.L3
 
 @[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "Decode_def"]

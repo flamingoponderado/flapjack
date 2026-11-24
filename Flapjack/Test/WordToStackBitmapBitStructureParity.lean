@@ -4,7 +4,7 @@ public import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapBitStructure
 
 @[expose] public section
 open Flapjack.Compiler.Backend.WordToStack
-set_option maxRecDepth 4096
+set_option maxRecDepth 2000
 
 -- bs_snoc_0_0_1
 example : bitsToWordW ([] ++ [false]) = ((if false then (1:BitVec 1) else 0) <<< 0) ||| (bitsToWordW []:BitVec 1) := bitsToWordSnoc [] false

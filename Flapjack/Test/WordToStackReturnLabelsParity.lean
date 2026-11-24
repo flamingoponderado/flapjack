@@ -9,7 +9,6 @@ against fresh original HOL captures. Regression checks are not equivalence proof
 namespace Flapjack.Test.WordToStackReturnLabelsParity
 open Flapjack Flapjack.Compiler.Backend.StackLang Flapjack.StackSem
 open Flapjack.Compiler.Backend.WordToStack.Native
-set_option maxRecDepth 8192
 
 -- rl_aux_1_0_0
 example : (copyRetAuxNative 0 0 0 : HolProg 1) = .skip := by

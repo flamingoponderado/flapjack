@@ -7,7 +7,6 @@ public import Flapjack.Compiler.Encoders.AsmProps.Memory
 /-! Direct original asmSem/asmProps memory-word oracle replays.  Inputs match
 `scripts/hol-probes/asm_sem_mem_word_probe.out` row for row; the accessors are
 the reviewed exact port and no alternate evaluator supplies the results. -/
-set_option maxRecDepth 16384
 set_option linter.unusedSimpArgs false
 
 namespace Flapjack.Test.AsmSemMemoryParity

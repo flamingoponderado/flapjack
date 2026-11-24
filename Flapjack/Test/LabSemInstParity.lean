@@ -10,7 +10,6 @@ import all Flapjack.Compiler.Backend.LabSem.Inst
 Inputs and assertions match labsem_inst_probe.out, including failure writes,
 Loc memory/registers, unsupported ordinary16 and raw FP payloads. The full
 unconditional source frame theorem is checked separately in Inst.lean. -/
-set_option maxRecDepth 8192
 
 namespace Flapjack.Test.LabSemInstParity
 open Flapjack Flapjack.Compiler.Backend.LabSem

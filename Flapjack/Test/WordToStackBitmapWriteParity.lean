@@ -4,7 +4,7 @@ public import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapWrite
 
 @[expose] public section
 open Flapjack Flapjack.Compiler.Backend.WordToStack
-set_option maxRecDepth 8192
+set_option maxRecDepth 2000
 
 private theorem fixtureEnumeration0 : sptToAList (sptFromAList [] : Spt Nat) = [] := by
   rfl

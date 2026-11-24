@@ -3,7 +3,6 @@ module
 public import Flapjack.RiscV.L3.Defs.MMU.Access
 
 @[expose] public section
-set_option maxRecDepth 200000
 
 /-!
 # Shared RISC-V L3 parity fixtures

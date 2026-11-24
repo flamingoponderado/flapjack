@@ -6,7 +6,6 @@ public import Flapjack.Compiler.Backend.LabToTarget.AsmUpdates
 
 /-! Direct original asmSem oracle replays. Other state fields are arbitrary;
 no compiler callback or alternate arithmetic evaluator supplies the results. -/
-set_option maxRecDepth 16384
 
 namespace Flapjack.Test.AsmSemArithmeticParity
 open Flapjack Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Encoders.AsmSem

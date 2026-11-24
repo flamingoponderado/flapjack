@@ -7,7 +7,7 @@ public import Aesop
 /-! Shared non-FFI facts for resource and safety proofs. -/
 namespace Flapjack.Compiler.Backend.DataSem
 open Flapjack Flapjack.SemanticPrimitivesHOL
-set_option maxHeartbeats 1000000 in
+set_option maxHeartbeats 400000 in
 /-- Flapjack helper for the HOL `do_app_aux_safe_peak_swap` family and the
 `do_app_io_events_mono` and `do_app_safe_for_space_mono` proofs: successful
 non-FFI applications preserve FFI state and safety monotonicity, and remain

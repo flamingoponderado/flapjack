@@ -7,7 +7,6 @@ public import Flapjack.Test.Fixtures.L3
 public meta import Flapjack.Test.Fixtures.L3
 @[expose] public section
 
-set_option maxRecDepth 200000
 set_option maxErrors 5
 namespace Flapjack.Test.L3IntegerLoadParity
 open Flapjack.RiscV.L3

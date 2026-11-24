@@ -10,7 +10,6 @@ import all Flapjack.Compiler.Backend.StackProps.AllocationConstants
 StackProps allocation-constants source probe. Generic untouched state fields
 and arbitrary configuration/FFI hosts remain quantified. -/
 namespace Flapjack.Test.StackPropsAllocationConstantsParity
-set_option maxRecDepth 4096
 open Flapjack StackSemAllocation StackSemStoreConsts StackPropsAllocationConstants
 
 private def allocation {C F : Type} (s : StackSemStateFiniteExact 8 C F)

@@ -167,7 +167,7 @@ theorem runSingleAvailable {width : Nat} [NeZero width] {C F : Type}
     StackSemEvaluate.evaluate_ite, StackSemEvaluate.evaluate_jumpLower, StackSemEvaluate.evaluate_skip,
     StackSemStateOps.getVar, StackSemStateOps.getVarImm, Compiler.Encoders.Asm.HolRegImm.toWordRegImm,
     wordSemWordCmp, baseLookup, guard, overflow]
-set_option maxRecDepth 2048 in
+set_option maxRecDepth 2000 in
 /-- Source-local strong-induction execution contract for the native recursive builder.
 No standalone HOL declaration; this factors the original allocation proof. -/
 theorem runAlloc {width : Nat} [NeZero width] {C F : Type}

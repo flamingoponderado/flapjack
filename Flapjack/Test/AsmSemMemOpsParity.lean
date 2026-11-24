@@ -8,7 +8,6 @@ public import Flapjack.Compiler.Encoders.AsmSem.MemOps
 `mem_load`, `mem_store` and `mem_op` results on an 8-bit state, with the positive `LOG2` values
 proved from `LOG_UNIQUE` as in the probe; the zero-count row keeps `LOG2 0` unconstrained on both
 sides. -/
-set_option maxRecDepth 16384
 
 namespace Flapjack.Test.AsmSemMemOpsParity
 open Flapjack Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Encoders.AsmSem

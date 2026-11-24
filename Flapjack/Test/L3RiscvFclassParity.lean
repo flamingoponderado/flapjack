@@ -6,7 +6,6 @@ public import Flapjack.RiscV.L3.Defs
 
 /-! Kernel replays of complete original FCLASS state observations. This is
 regression evidence, not a HOL-to-Lean equivalence theorem. -/
-set_option maxRecDepth 200000
 set_option synthInstance.maxSize 2048
 namespace Flapjack.Test.L3RiscvFclassParity
 open Flapjack.RiscV.L3

@@ -10,7 +10,6 @@ not a cross-language equivalence proof. -/
 namespace Flapjack.Test.WordToStackLoadContinuationsParity
 open Flapjack Flapjack.Compiler.Backend.StackLang Flapjack.StackSem
 open Flapjack.Compiler.Backend.WordToStack.Native
-set_option maxRecDepth 8192
 
 -- lc_packet_1_0_0
 example : wStackLoadNative ([] ++ []) (.skip : HolProg 1) = .skip ∧

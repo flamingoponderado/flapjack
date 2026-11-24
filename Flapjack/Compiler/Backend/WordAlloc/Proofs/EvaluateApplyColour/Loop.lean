@@ -9,7 +9,6 @@ namespace Flapjack.WordAlloc
 
 open WordSemStateFiniteExact
 
-set_option maxRecDepth 4000 in
 /-- Internal formulation of the full Loop helper using the shared case motive.
 The exported HOL statement will spell out its error disjunction. -/
 theorem evaluateApplyColourLoopCore {width : Nat} [NeZero width] {C F : Type}

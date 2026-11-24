@@ -24,7 +24,6 @@ namespace Flapjack.Test.StackAllocGcCodeParity
 open Flapjack Flapjack.Compiler.Backend.StackLang Flapjack.Compiler.Backend.StackAlloc
 open Flapjack.Compiler.Backend.StackRemove (leftShiftInst rightShiftInst constInst loadInst storeInst)
 
-set_option maxRecDepth 100000
 
 open Flapjack.Compiler.Backend.DataToWord in
 private def confOf (k : GcKind) : Config :=

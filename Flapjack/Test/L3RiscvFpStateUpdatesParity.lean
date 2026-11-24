@@ -7,7 +7,6 @@ public import Flapjack.RiscV.L3.Defs
 /-! Kernel replay of original full FP write/flag update observations, including
 current/other-core separation, preserved flags, registerzero and Delta.data1.
 This regression evidence does not replace full source correspondence review. -/
-set_option maxRecDepth 200000
 set_option synthInstance.maxSize 2048
 namespace Flapjack.Test.L3RiscvFpStateUpdatesParity
 open Flapjack.RiscV.L3

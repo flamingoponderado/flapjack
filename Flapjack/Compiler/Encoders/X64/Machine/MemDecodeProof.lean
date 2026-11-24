@@ -15,7 +15,7 @@ appends one or four displacement bytes.  This module proves that the closed
 decoder recovers the source instruction from those bytes.
 -/
 
-set_option maxHeartbeats 4000000
+set_option maxHeartbeats 3200000
 
 namespace Flapjack.Compiler.Encoders.X64
 
