@@ -632,7 +632,7 @@
     {"bytes": 583, "out": "hol_word_arithmetic_probe.out", "rows": 13, "sha256": "de8ecd5dd96ff87ed4f8aae184a500d303c337c564ab04275870567a195e9caf"},
     {"bytes": 208, "out": "infer_env_typed_probe.out", "rows": 1, "sha256": "45bd3e2bdfe750286401098a86fedc3dbde8d42b8ccb0dc6cb7c9e347ff03f12"},
     {"bytes": 5633, "out": "infer_generalise_typed_probe.out", "rows": 20, "sha256": "03754c3a2f0974475f5f204e97fe914dbd16b2eed4de1a95a85c1e54825a914e"},
-    {"bytes": 4893, "out": "infer_props_tids_probe.out", "rows": 24, "sha256": "a6b26dd27f44f3f8fcfb97c3e027b951db4b5c100ac7a101672bdda400d9a633"},
+    {"bytes": 5476, "out": "infer_props_tids_probe.out", "rows": 26, "sha256": "4ac32ab7afa18e3cb2b5af9683e213b17ea4645cf5aec20149e555ee7fecc53c"},
     {"bytes": 2266, "out": "infer_subst_probe.out", "rows": 5, "sha256": "07b052e5a7d3d51eb915792af9b62b692a01a74f3b0cfcc92fa5d9715d9a1bf2"},
     {"bytes": 3931, "out": "infer_t_typed_probe.out", "rows": 7, "sha256": "dbb1390075e242acb611c517d14c2c2ed9c8fe226baced66fbcd8f61082a1fed"},
     {"bytes": 760783, "out": "init_code_probe.out", "rows": 242, "sha256": "98116ec2387e337491ba44e99dda85fef74182310d2432545203d94c9df6b3be"},

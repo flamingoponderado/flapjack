@@ -40,3 +40,7 @@ val _ = show "remove_pair_lem_typed" inferPropsTheory.remove_pair_lem;
 val _ = show "UNCURRY_rator_typed" inferPropsTheory.UNCURRY_rator;
 val _ = show "nsMap_FOLDL_nsAppend_typed" inferPropsTheory.nsMap_FOLDL_nsAppend;
 val _ = showWithHyps "nsAll_FOLDL_nsAppend_typed" inferPropsTheory.nsAll_FOLDL_nsAppend;
+
+(* Task 273: check_t_more and infer_subst_var. *)
+val _ = show "check_t_more_typed" inferPropsTheory.check_t_more;
+val _ = show "infer_subst_var_def_typed" inferPropsTheory.infer_subst_var_def;

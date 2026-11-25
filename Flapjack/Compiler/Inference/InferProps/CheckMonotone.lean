@@ -80,4 +80,17 @@ theorem checkTMore2 :
   · intro ts tvs uvs h extra t ht
     exact checkBoundType t tvs uvs (h t ht) extra
 
+/-- Original `check_t_more`: a type checked against no uvars is checked against
+any uvar set. HOL's empty set `{}` is the empty predicate. -/
+@[hol "cakeml/compiler/inference/inferPropsScript.sml" "check_t_more"]
+theorem checkTMore :
+    (∀ (t : InferT) tvs, checkT tvs (fun _ => False) t → ∀ uvs, checkT tvs uvs t) ∧
+      (∀ (ts : List InferT) tvs, (∀ t ∈ ts, checkT tvs (fun _ => False) t) →
+        ∀ uvs, ∀ t ∈ ts, checkT tvs uvs t) := by
+  constructor
+  · intro t tvs h uvs
+    exact checkMonoType t (fun _ => False) tvs h uvs (fun v hv => hv.elim)
+  · intro ts tvs h uvs t ht
+    exact checkMonoType t (fun _ => False) tvs (h t ht) uvs (fun v hv => hv.elim)
+
 end Flapjack.Compiler.Inference.InferProps
