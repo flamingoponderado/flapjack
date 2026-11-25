@@ -94,4 +94,27 @@ type_defsexp_def_typed=type_defsexp = listsexp ∘ MAP (λ((xs :mlstring list),(
 type_defsexp_sexptype_def_typed=(sexptype_def (s :sexp) = SOME (x :(mlstring list # mlstring # (mlstring # ast_t list) list) list) ⇔ type_defsexp x = s) ∧ (SOME x = sexptype_def s ⇔ type_defsexp x = s)
 typesexp_11_typed=∀(t1 :ast_t) (t2 :ast_t). typesexp t1 = typesexp t2 ⇔ t1 = t2
 typesexp_def_typed=(∀(s :mlstring). typesexp (Atvar s) = listsexp [SX_SYM "Atvar"; SEXSTR (explode s)]) ∧ (∀(t2 :ast_t) (t1 :ast_t). typesexp (Atfun t1 t2) = listsexp [SX_SYM "Atfun"; typesexp t1; typesexp t2]) ∧ (∀(ts :ast_t list). typesexp (Attup ts) = listsexp [SX_SYM "Attup"; listsexp (MAP (λ(a :ast_t). typesexp a) ts)]) ∧ ∀(ts :ast_t list) (tc :(mlstring, mlstring) id). typesexp (Atapp ts tc) = listsexp [SX_SYM "Atapp"; listsexp (MAP (λ(a :ast_t). typesexp a) ts); idsexp tc]
+odestSXSTR_def_typed=odestSXSTR (SX_STR (s :string)) = SOME (implode s) ∧ odestSXSTR ⟪(v :sexp) • (v1 :sexp)⟫ = (NONE :mlstring option) ∧ odestSXSTR (SX_SYM (v2 :string)) = (NONE :mlstring option) ∧ odestSXSTR ((&(v3 :num)) :sexp) = (NONE :mlstring option)
+odestSXSYM_def_typed=odestSXSYM (SX_SYM (s :string)) = SOME (implode s) ∧ odestSXSYM ⟪(v :sexp) • (v1 :sexp)⟫ = (NONE :mlstring option) ∧ odestSXSYM ((&(v3 :num)) :sexp) = (NONE :mlstring option) ∧ odestSXSYM (SX_STR (v4 :string)) = (NONE :mlstring option)
+odestSXNUM_def_typed=odestSXNUM ((&(n :num)) :sexp) = SOME n ∧ odestSXNUM ⟪(v :sexp) • (v1 :sexp)⟫ = (NONE :num option) ∧ odestSXNUM (SX_SYM (v2 :string)) = (NONE :num option) ∧ odestSXNUM (SX_STR (v4 :string)) = (NONE :num option)
+odestSXNUM_SEXSTR_typed=odestSXNUM (SEXSTR (str :string)) = (NONE :num option)
+odestSXSTR_SOME_typed=(odestSXSTR (s :sexp) = SOME (y :mlstring) ⇔ s = SX_STR (explode y)) ∧ (SOME y = odestSXSTR s ⇔ s = SX_STR (explode y))
+odestSXNUM_SOME_typed=(odestSXNUM (s :sexp) = SOME (n :num) ⇔ s = ((&n) :sexp)) ∧ (SOME n = odestSXNUM s ⇔ s = ((&n) :sexp))
+odestSXSTR_SX_STR_typed=odestSXSTR (SX_STR (s :string)) = SOME (implode s)
+odestSXNUM_SX_NUM_typed=odestSXNUM ((&(n :num)) :sexp) = SOME n
+odestSXSYM_SX_SYM_typed=odestSXSYM (SX_SYM (s :string)) = SOME (implode s)
+odestSXSTR_listsexp_typed=odestSXSTR (listsexp (l :sexp list)) = (NONE :mlstring option)
+odestSEXSTR_listsexp_typed=odestSEXSTR (listsexp (l :sexp list)) = (NONE :mlstring option)
+odestSXNUM_listsexp_typed=odestSXNUM (listsexp (l :sexp list)) = (NONE :num option)
+strip_sxcons_SOME_NIL_typed=strip_sxcons (s :sexp) = SOME ([] :sexp list) ⇔ s = ⟪⟫
+strip_sxcons_EQ_CONS_typed=strip_sxcons (s :sexp) = SOME ((h :sexp)::(t :sexp list)) ⇔ ∃(s0 :sexp). s = ⟪h • s0⟫ ∧ strip_sxcons s0 = SOME t
+strip_sxcons_listsexp_typed=strip_sxcons (listsexp (ls :sexp list)) = SOME ls
+dstrip_sexp_listsexp_typed=dstrip_sexp (listsexp (ls :sexp list)) = case ls of ([] :sexp list) => (NONE :(string # sexp list) option) | ⟪v9 • v10⟫::xs => (NONE :(string # sexp list) option) | SX_SYM x::xs => SOME (x,xs) | ((&v12) :sexp)::xs => (NONE :(string # sexp list) option) | SX_STR v13::xs => (NONE :(string # sexp list) option)
+dstrip_sexp_SX_STR_typed=dstrip_sexp (SX_STR (s :string)) = (NONE :(string # sexp list) option)
+dstrip_sexp_SEXSTR_typed=dstrip_sexp (SEXSTR (s :string)) = (NONE :(string # sexp list) option)
+dstrip_sexp_SOME_typed=dstrip_sexp (s :sexp) = SOME (x :string # sexp list) ⇔ ∃(sym :string) (sa :sexp) (args :sexp list). s = ⟪SX_SYM sym • sa⟫ ∧ strip_sxcons sa = SOME args ∧ x = (sym,args)
+listsexp_thm_typed=listsexp ([] :sexp list) = ⟪⟫ ∧ listsexp ((h :sexp)::(t :sexp list)) = ⟪h • listsexp t⟫
+listsexp_MAP_EQ_f_typed=(∀(x :α). MEM x (ls :α list) ⇒ (f1 :α -> sexp) x = (f2 :α -> sexp) x) ⇒ listsexp (MAP f1 ls) = listsexp (MAP f2 ls)
+FOLDR_SX_CONS_INJ_typed=∀(l1 :sexp list) (l2 :sexp list). FOLDR SX_CONS ⟪⟫ l1 = FOLDR SX_CONS ⟪⟫ l2 ⇔ l1 = l2
+OPTION_CHOICE_EQ_SOME_typed=∀(x :α option) (y :α option) (z :α). x ++ y = SOME z ⇔ x = SOME z ∨ x = (NONE :α option) ∧ y = SOME z
 typesexp_sexptype_typed=∀(s :sexp) (t :ast_t). (sexptype s = SOME t ⇔ typesexp t = s) ∧ (SOME t = sexptype s ⇔ typesexp t = s)

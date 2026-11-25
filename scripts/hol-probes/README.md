@@ -10498,9 +10498,13 @@ HOL_PROBE_ONLY=pattern_exh_typed_probeScript.sml
 scripts/hol-probes/regenerate.sh`. The capture supports source comparison; it
 does not replay the local proofs and does not establish Lean correspondence.
 
-`fromSexp_typed_probe.out` captures the typed statements of all 97 reviewed
-`fromSexpScript.sml` rows (task 174); every one is an exported definition or
-theorem fetched from the theory database, and labels replace an apostrophe with
+`fromSexp_typed_probe.out` captures the typed statements of the reviewed
+`fromSexpScript.sml` rows (task 174), plus the simple-S-expression list and
+option-destruction lemmas added in task 273 (`odestSXSTR`/`odestSXSYM`/
+`odestSXNUM` definitions and their laws, `strip_sxcons_*`, `dstrip_sexp_*`,
+`listsexp_thm`, `listsexp_MAP_EQ_f`, `FOLDR_SX_CONS_INJ` and
+`OPTION_CHOICE_EQ_SOME`); every one is an exported definition or theorem
+fetched from the theory database, and labels replace an apostrophe with
 `_prime`. The theory is not a default CakeML build target, so build it in the
 private copy first (`cd compiler/parsing && CAKEMLDIR=<cakeml tree> Holmake
 fromSexpTheory.uo`, about 30 s; it reads the already-built `simpleSexp`

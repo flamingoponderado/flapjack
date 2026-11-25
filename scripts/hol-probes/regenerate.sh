@@ -11807,6 +11807,15 @@ run_probe fromSexp_typed_probeScript.sml fromSexp_typed_probe.out \
   locssexp_def_typed logsexp_11_typed logsexp_def_typed logsexp_sexplog_typed \
   odestSEXSTR_SEXSTR_typed odestSEXSTR_SOME_typed odestSEXSTR_def_typed opsexp_11_typed \
   opsexp_def_typed opsexp_sexpop_typed optsexp_11_typed optsexp_def_typed patsexp_11_typed \
+  FOLDR_SX_CONS_INJ_typed OPTION_CHOICE_EQ_SOME_typed dstrip_sexp_SEXSTR_typed \
+  dstrip_sexp_SOME_typed dstrip_sexp_SX_STR_typed dstrip_sexp_listsexp_typed \
+  listsexp_MAP_EQ_f_typed listsexp_thm_typed odestSXNUM_SEXSTR_typed \
+  odestSXNUM_SOME_typed odestSXNUM_SX_NUM_typed odestSXNUM_def_typed \
+  odestSXNUM_listsexp_typed odestSXSTR_SOME_typed odestSXSTR_SX_STR_typed \
+  odestSXSTR_def_typed odestSXSTR_listsexp_typed odestSXSYM_SX_SYM_typed \
+  odestSXSYM_def_typed strip_sxcons_EQ_CONS_typed strip_sxcons_SOME_NIL_typed \
+  strip_sxcons_listsexp_typed \
+  patsexp_11_typed \
   patsexp_def_typed patsexp_sexppat_typed patsexp_sexppat0_typed prim_typesexp_11_typed \
   prim_typesexp_def_typed sexparith_arithsexp_typed sexparith_def_typed sexpdec_decsexp_typed \
   sexpdec_def_typed sexpexp_def_typed sexpexp_expsexp_typed sexpid_def_typed \
