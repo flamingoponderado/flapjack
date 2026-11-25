@@ -2,6 +2,7 @@ module
 
 public import Flapjack.HolRef
 public import Flapjack.Misc.ListEl
+public import Flapjack.FiniteMap.AlistExact.Lookup
 public import Mathlib.Data.Set.Basic
 
 @[expose] public section
@@ -336,5 +337,72 @@ theorem sum_mod (ls : List Nat) (k : Nat) (_hk : k > 0) :
   | nil => simp
   | cons x rest ih =>
     simp only [List.sum_cons, List.map_cons, ih, Nat.add_mod, Nat.mod_mod]
+
+/-- Original `DROP_EQ_CONS_IMP_DROP_SUC`: a drop that starts with a cons drops
+one more element to reach its tail. -/
+@[hol "cakeml/misc/miscScript.sml" "DROP_EQ_CONS_IMP_DROP_SUC"]
+theorem drop_cons_imp_drop_succ {α : Type} (xs : List α) (n : Nat) (y : α) (ys : List α)
+    (h : xs.drop n = y :: ys) : xs.drop (n + 1) = ys := by
+  rw [← List.tail_drop, h]
+  rfl
+
+/-- Original `LUPDATE_APPEND`: updating an appended list splits at the left
+length. LUPDATE is Lean `List.set`. -/
+@[hol "cakeml/misc/miscScript.sml" "LUPDATE_APPEND"]
+theorem lupdate_append {α : Type} (xs : List α) (n : Nat) (ys : List α) (x : α) :
+    (xs ++ ys).set n x =
+      if n < xs.length then xs.set n x ++ ys else xs ++ ys.set (n - xs.length) x :=
+  List.set_append
+
+/-- Original `DROP_LUPDATE`: dropping an updated list updates the dropped list
+at the shifted index. -/
+@[hol "cakeml/misc/miscScript.sml" "DROP_LUPDATE"]
+theorem drop_lupdate {α : Type} (n : Nat) (x : α) (m : Nat) (l : List α) (h : n ≤ m) :
+    (l.set m x).drop n = (l.drop n).set (m - n) x := by
+  rw [List.drop_set]
+  rw [if_neg (by omega)]
+
+section
+
+open Classical
+
+/-- Original `ALOOKUP_SNOC`: appending one entry leaves earlier lookups intact
+and otherwise falls back to that entry. -/
+@[hol "cakeml/misc/miscScript.sml" "ALOOKUP_SNOC"]
+theorem holALookup_snoc {α β : Type} (ls : List (α × β)) (p : α × β) (k : α) :
+    holALookup (ls ++ [p]) k =
+      match holALookup ls k with
+      | none => if k = p.1 then some p.2 else none
+      | some v => some v := by
+  induction ls with
+  | nil => simp [holALookup]
+  | cons e rest ih =>
+    rcases e with ⟨key, value⟩
+    simp only [List.cons_append, holALookup]
+    split
+    · rfl
+    · exact ih
+
+/-- Original `ALOOKUP_ZIP_FAIL`: a lookup in a zipped pair list fails exactly
+when the key is absent from the left list, given equal lengths. -/
+@[hol "cakeml/misc/miscScript.sml" "ALOOKUP_ZIP_FAIL"]
+theorem holALookup_zip_fail {α β : Type} (A : List α) (B : List β) (x : α)
+    (h : A.length = B.length) :
+    holALookup (A.zip B) x = none ↔ x ∉ A := by
+  induction A generalizing B with
+  | nil => simp [holALookup]
+  | cons a rest ih =>
+    cases B with
+    | nil => simp at h
+    | cons b restB =>
+      simp only [List.zip_cons_cons, holALookup, List.length_cons] at h ⊢
+      by_cases same : x = a
+      · rw [if_pos same]
+        simp [same]
+      · rw [if_neg same]
+        rw [ih restB (by omega)]
+        simp [same]
+
+end
 
 end Flapjack

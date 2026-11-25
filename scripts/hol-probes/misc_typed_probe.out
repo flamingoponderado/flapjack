@@ -104,3 +104,8 @@ ADD_MOD_EQ_LEMMA_typed=(k :num) MOD (d :num) = (0 :num) ∧ (n :num) < d ⇒ (k 
 SUM_MOD_typed=(k :num) > (0 :num) ⇒ (SUM (ls :num list) :num) MOD k = (SUM (MAP (λ(n :num). n MOD k) ls) :num) MOD k
 LENGTH_enumerate_typed=∀(xs :α list) (k :num). LENGTH (enumerate k xs :(num # α) list) = LENGTH xs
 MEM_enumerate_IMP_typed=∀(ls :α list) (k :num). MEM ((i :num),(e :α)) (enumerate k ls :(num # α) list) ⇒ MEM e ls
+DROP_EQ_CONS_IMP_DROP_SUC_typed=∀(xs :α list) (n :num) (y :α) (ys :α list). DROP n xs = y::ys ⇒ DROP (SUC n) xs = ys
+LUPDATE_APPEND_typed=∀(xs :α list) (n :num) (ys :α list) (x :α). (xs ++ ys)❲n ↦ x❳ = if n < LENGTH xs then xs❲n ↦ x❳ ++ ys else xs ++ ys❲n − LENGTH xs ↦ x❳
+DROP_LUPDATE_typed=∀(n :num) (x :α) (m :num) (l :α list). n ≤ m ⇒ DROP n l❲m ↦ x❳ = (DROP n l)❲m − n ↦ x❳
+ALOOKUP_SNOC_typed=∀(ls :(α # β) list) (p :α # β) (k :α). ALOOKUP (SNOC p ls) k = case ALOOKUP ls k of (NONE :β option) => if k = FST p then SOME (SND p) else (NONE :β option) | SOME v => SOME v
+ALOOKUP_ZIP_FAIL_typed=∀(A :α list) (B :β list) (x :α). LENGTH A = LENGTH B ⇒ (ALOOKUP (ZIP (A,B)) x = (NONE :β option) ⇔ ¬MEM x A)
