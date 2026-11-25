@@ -33,3 +33,7 @@ val _ = emit "tveLookup_bvl_typed" "tveLookup_bvl";
 val _ = emit "num_tvs_db_merge_typed" "num_tvs_db_merge";
 val _ = emit "num_tvs_deBruijn_subst_tenvE_typed" "num_tvs_deBruijn_subst_tenvE";
 val _ = emit "tenv_val_exp_ok_db_merge_typed" "tenv_val_exp_ok_db_merge";
+val _ = emit "deBruijn_inc0_typed" "deBruijn_inc0";
+val _ = emit "deBruijn_inc_deBruijn_inc_typed" "deBruijn_inc_deBruijn_inc";
+val _ = emit "nil_deBruijn_inc_typed" "nil_deBruijn_inc";
+val _ = emit "nil_deBruijn_subst_typed" "nil_deBruijn_subst";

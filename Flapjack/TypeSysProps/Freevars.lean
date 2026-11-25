@@ -193,6 +193,129 @@ private theorem checkFreevarsListDeBruijnInc (tvs : Nat) (names : List MlString)
 termination_by sizeOf ts
 end
 
+/-- List recursion for the zero-increment theorem, not a separate HOL
+  declaration. -/
+private theorem deBruijnIncList_eq_map (skip amount : Nat) (ts : List SemanticT) :
+    deBruijnIncList skip amount ts = ts.map (deBruijnInc skip amount) := by
+  induction ts with
+  | nil => simp [deBruijnIncList]
+  | cons t ts ih => simp only [deBruijnIncList, List.map_cons, ih]
+
+/-- A zero increment leaves every type unchanged, pointwise and over lists. -/
+@[hol "cakeml/semantics/proofs/typeSysPropsScript.sml" "deBruijn_inc0"]
+theorem deBruijnInc_zero :
+    (∀ (t : SemanticT) (sk : Nat), deBruijnInc sk 0 t = t) ∧
+      ∀ (ts : List SemanticT) (sk : Nat), ts.map (deBruijnInc sk 0) = ts := by
+  have pointwise : ∀ (t : SemanticT) (sk : Nat), deBruijnInc sk 0 t = t := by
+    refine deBruijnInc.induct (fun t => ∀ sk, deBruijnInc sk 0 t = t)
+      (fun ts => ∀ sk, ts.map (deBruijnInc sk 0) = ts) ?_ ?_ ?_ ?_ ?_
+    · intro tv sk
+      simp [deBruijnInc]
+    · intro n sk
+      simp only [deBruijnInc]
+      simp
+    · intro ts id ih sk
+      simp only [deBruijnInc, deBruijnIncList_eq_map, ih sk]
+    · intro sk
+      simp
+    · intro t ts ih1 ih2 sk
+      simp only [List.map_cons, ih1 sk, ih2 sk]
+  refine ⟨pointwise, ?_⟩
+  intro ts sk
+  induction ts with
+  | nil => simp
+  | cons t ts ih => simp only [List.map_cons, pointwise t sk, ih]
+
+/-- Two successive increments compose into a single increment by the sum. -/
+@[hol "cakeml/semantics/proofs/typeSysPropsScript.sml" "deBruijn_inc_deBruijn_inc"]
+theorem deBruijnInc_deBruijnInc (sk i2 : Nat) :
+    ∀ (t : SemanticT) (i1 : Nat),
+      deBruijnInc sk i1 (deBruijnInc sk i2 t) = deBruijnInc sk (i1 + i2) t := by
+  have pointwise : ∀ (t : SemanticT) (i1 : Nat),
+      deBruijnInc sk i1 (deBruijnInc sk i2 t) = deBruijnInc sk (i1 + i2) t := by
+    refine deBruijnInc.induct
+      (fun t => ∀ i1, deBruijnInc sk i1 (deBruijnInc sk i2 t) = deBruijnInc sk (i1 + i2) t)
+      (fun ts => ∀ i1, deBruijnIncList sk i1 (deBruijnIncList sk i2 ts) =
+        deBruijnIncList sk (i1 + i2) ts) ?_ ?_ ?_ ?_ ?_
+    · intro tv i1
+      simp [deBruijnInc]
+    · intro n i1
+      simp only [deBruijnInc]
+      by_cases inside : n < sk
+      · simp [inside]
+      · have outside : ¬ n + i2 < sk := by omega
+        simp [inside, outside]
+        omega
+    · intro ts id ih i1
+      simp only [deBruijnInc, ih i1]
+    · intro i1
+      simp [deBruijnIncList]
+    · intro t ts ih1 ih2 i1
+      simp only [deBruijnIncList, ih1 i1, ih2 i1]
+  intro t i1
+  exact pointwise t i1
+
+/-- A type whose free variables are in range is left alone by any increment. -/
+@[hol "cakeml/semantics/proofs/typeSysPropsScript.sml" "nil_deBruijn_inc"]
+theorem nil_deBruijnInc (skip tvs : Nat) :
+    ∀ (t : SemanticT),
+      (checkFreevars skip [] t = true ∨ checkFreevars skip [] (deBruijnInc skip tvs t) = true) →
+        deBruijnInc skip tvs t = t := by
+  refine deBruijnInc.induct
+    (fun t =>
+      (checkFreevars skip [] t = true ∨
+          checkFreevars skip [] (deBruijnInc skip tvs t) = true) →
+        deBruijnInc skip tvs t = t)
+    (fun ts => (checkFreevarsList skip [] ts = true ∨
+        checkFreevarsList skip [] (deBruijnIncList skip tvs ts) = true) →
+      deBruijnIncList skip tvs ts = ts) ?_ ?_ ?_ ?_ ?_
+  · intro tv h
+    simp [deBruijnInc]
+  · intro n h
+    simp only [deBruijnInc, checkFreevars] at h ⊢
+    by_cases inside : n < skip
+    · simp [inside]
+    · simp [inside] at h ⊢
+      omega
+  · intro ts id ih h
+    simp only [deBruijnInc, checkFreevars] at h ⊢
+    rw [ih h]
+  · intro h
+    simp [deBruijnIncList]
+  · intro t ts ih1 ih2 h
+    simp only [deBruijnIncList, checkFreevarsList, Bool.and_eq_true] at h ⊢
+    rcases h with ⟨h1, h2⟩ | ⟨h1, h2⟩
+    · rw [ih1 (Or.inl h1), ih2 (Or.inl h2)]
+    · rw [ih1 (Or.inr h1), ih2 (Or.inr h2)]
+
+/-- A type whose free variables are in range is left alone by any substitution. -/
+@[hol "cakeml/semantics/proofs/typeSysPropsScript.sml" "nil_deBruijn_subst"]
+theorem nil_deBruijnSubst (skip : Nat) (tvs : List SemanticT) :
+    ∀ (t : SemanticT), checkFreevars skip [] t = true → deBruijnSubst skip tvs t = t := by
+  refine deBruijnSubst.induct skip tvs
+    (fun t => checkFreevars skip [] t = true → deBruijnSubst skip tvs t = t)
+    (fun ts => checkFreevarsList skip [] ts = true → deBruijnSubstList skip tvs ts = ts)
+    ?_ ?_ ?_ ?_ ?_ ?_ ?_
+  · intro tv h
+    simp [deBruijnSubst]
+  · intro n range h
+    have lt : n < skip := by simpa [checkFreevars] using h
+    omega
+  · intro n range lower h
+    have lt : n < skip := by simpa [checkFreevars] using h
+    omega
+  · intro n range lower h
+    simp [deBruijnSubst, lower]
+  · intro ts id ih h
+    simp only [deBruijnSubst, checkFreevars] at h ⊢
+    rw [ih h]
+  · intro h
+    simp [deBruijnSubstList]
+  · intro t ts ih1 ih2 h
+    simp only [deBruijnSubstList, checkFreevarsList, Bool.and_eq_true] at h ⊢
+    obtain ⟨h1, h2⟩ := h
+    rw [ih1 h1, ih2 h2]
+
 /-- Incrementing and then substituting preserves the stated free-variable
 bound. -/
 @[hol "cakeml/semantics/proofs/typeSysPropsScript.sml" "check_freevars_subst_inc"]

@@ -9922,6 +9922,8 @@ run_probe type_sys_props_typed_probeScript.sml type_sys_props_typed_probe.out \
   tveLookup_subst_none_typed tveLookup_db_merge_none_typed tveLookup_inc_none_typed \
   bind_var_list_append_typed num_tvs_bind_var_list_typed tveLookup_bvl_typed \
   num_tvs_db_merge_typed num_tvs_deBruijn_subst_tenvE_typed tenv_val_exp_ok_db_merge_typed \
+  deBruijn_inc0_typed deBruijn_inc_deBruijn_inc_typed nil_deBruijn_inc_typed \
+  nil_deBruijn_subst_typed \
   "$cake_dir/semantics/proofs/typeSysPropsScript.sml" \
   "$cake_dir/semantics/proofs"
 

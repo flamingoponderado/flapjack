@@ -16,3 +16,7 @@ tveLookup_bvl_typed=∀(x :mlstring) (tvs :num) (tvs' :num) (bindings :(mlstring
 num_tvs_db_merge_typed=∀(e1 :tenv_val_exp) (e2 :tenv_val_exp). num_tvs (db_merge e1 e2) = num_tvs e1 + num_tvs e2
 num_tvs_deBruijn_subst_tenvE_typed=∀(targs :t list) (tenvE :tenv_val_exp). num_tvs (deBruijn_subst_tenvE targs tenvE) = num_tvs tenvE
 tenv_val_exp_ok_db_merge_typed=∀(e1 :tenv_val_exp) (e2 :tenv_val_exp). tenv_val_exp_ok (db_merge e1 e2) ⇒ tenv_val_exp_ok e2
+deBruijn_inc0_typed=(∀(t :t) (sk :num). deBruijn_inc sk (0 :num) t = t) ∧ ∀(ts :t list) (sk :num). MAP (deBruijn_inc sk (0 :num)) ts = ts
+deBruijn_inc_deBruijn_inc_typed=∀(sk :num) (i2 :num) (t :t) (i1 :num). deBruijn_inc sk i1 (deBruijn_inc sk i2 t) = deBruijn_inc sk (i1 + i2) t
+nil_deBruijn_inc_typed=∀(skip :num) (tvs :num) (t :t). check_freevars skip ([] :mlstring list) t ∨ check_freevars skip ([] :mlstring list) (deBruijn_inc skip tvs t) ⇒ deBruijn_inc skip tvs t = t
+nil_deBruijn_subst_typed=∀(skip :num) (tvs :t list) (t :t). check_freevars skip ([] :mlstring list) t ⇒ deBruijn_subst skip tvs t = t
