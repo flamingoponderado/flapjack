@@ -12597,6 +12597,7 @@ run_probe word_remove_proof_local_typed_probeScript.sml word_remove_proof_local_
 run_probe backend_proof_pipeline_typed_probeScript.sml \
   backend_proof_pipeline_typed_probe.out \
   attach_bitmaps_SOME_typed from_lab_conf_EX_typed from_stack_conf_EX_typed \
+  from_word_conf_EX_typed \
   "$cake_dir/compiler/backend/proofs/backendProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
 run_probe backend_proof_typed_probeScript.sml backend_proof_typed_probe.out \

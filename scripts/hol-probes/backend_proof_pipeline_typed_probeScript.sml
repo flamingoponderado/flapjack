@@ -20,3 +20,4 @@ fun emit label name =
 val _ = emit "attach_bitmaps_SOME_typed" "attach_bitmaps_SOME";
 val _ = emit "from_lab_conf_EX_typed" "from_lab_conf_EX";
 val _ = emit "from_stack_conf_EX_typed" "from_stack_conf_EX";
+val _ = emit "from_word_conf_EX_typed" "from_word_conf_EX";

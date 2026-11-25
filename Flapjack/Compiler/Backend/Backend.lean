@@ -231,6 +231,21 @@ noncomputable def fromWord0 {width : Nat} [NeZero width]
   let config := { config with wordToWordConf := { config.wordToWordConf with colOracle := col } }
   fromWord asmConf config names program
 
+/-- Original `from_word_conf_EX` (`backendProofScript.sml:664`): a successful
+    word pipeline has a stack program and bitmap list producing the same result
+    under the compiled word configuration. -/
+@[hol "cakeml/compiler/backend/proofs/backendProofScript.sml" "from_word_conf_EX"
+  (words_as_type_indexed_bitvec)]
+theorem fromWordConfEx {width : Nat} [NeZero width]
+    (asmConf : AsmConfigExact width) (config : Flapjack.Compiler.Backend.Backend.Config)
+    (names : Spt MlString)
+    (program : List (Nat × Nat × WordLangProgHOL (BitVec width)))
+    (v : Option (List (BitVec 8) × List (BitVec width) × Flapjack.Compiler.Backend.Backend.Config))
+    (same : fromWord asmConf config names program = v) :
+    ∃ wc p bm, fromStack asmConf { config with wordConf := wc } names p bm = v := by
+  unfold fromWord at same
+  exact ⟨_, _, _, same⟩
+
 /-- Exact HOL `ffinames_to_string_list_def` (`backendScript.sml:675-681`): the external-call
 FFI names in order, dropping shared-memory entries. -/
 @[hol "cakeml/compiler/backend/backendScript.sml" "ffinames_to_string_list_def"]
