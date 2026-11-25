@@ -11837,6 +11837,7 @@ run_probe fromSexp_typed_probeScript.sml fromSexp_typed_probe.out \
   sexptype_def_typed sexptype_def_def_typed sexptype_def_type_defsexp_typed \
   sexptype_typesexp_typed testsexp_11_typed testsexp_def_typed type_defsexp_11_typed \
   type_defsexp_def_typed type_defsexp_sexptype_def_typed typesexp_11_typed typesexp_def_typed \
+  strip_sxcons_thm_typed dstrip_sexp_thm_typed \
   typesexp_sexptype_typed \
   "$cake_dir/compiler/parsing/fromSexpScript.sml" \
   "$cake_dir/compiler/parsing"

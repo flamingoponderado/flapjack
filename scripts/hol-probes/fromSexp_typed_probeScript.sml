@@ -400,4 +400,6 @@ val _ = emit_exported "opsexp_valid_typed" "opsexp_valid";
 val _ = emit_exported "expsexp_valid_typed" "expsexp_valid";
 val _ = emit_exported "decsexp_valid_typed" "decsexp_valid";
 val _ = emit_exported "sexplist_CONG_typed" "sexplist_CONG";
+val _ = emit_exported "strip_sxcons_thm_typed" "strip_sxcons_thm";
+val _ = emit_exported "dstrip_sexp_thm_typed" "dstrip_sexp_thm";
 val _ = emit_exported "typesexp_sexptype_typed" "typesexp_sexptype";

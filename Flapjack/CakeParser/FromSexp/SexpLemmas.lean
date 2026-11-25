@@ -167,6 +167,16 @@ theorem stripSxCons_listsexp (ls : List Sexp) : stripSxCons (listsexp ls) = some
   rw [stripSxCons_eq_decodeList]
   exact (decodeList_some_identity (listsexp ls) ls).mpr rfl
 
+/-- Original `strip_sxcons_thm`: the strip clauses for cons cells, numbers,
+strings and symbols. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "strip_sxcons_thm"]
+theorem stripSxCons_eq (h t : Sexp) (n : Nat) (s str : List HolChar) :
+    stripSxCons (.cons h t) = (stripSxCons t).map (h :: ·) ∧
+      stripSxCons (.num n) = none ∧
+      stripSxCons (.str str) = none ∧
+      stripSxCons (.sym s) = (if s == nilBytes then some [] else none) := by
+  refine ⟨rfl, rfl, rfl, rfl⟩
+
 /-- Original `dstrip_sexp_listsexp`: stripping an encoded list is the source
 list's head symbol, if any. -/
 @[hol "cakeml/compiler/parsing/fromSexpScript.sml" "dstrip_sexp_listsexp"]
@@ -216,6 +226,28 @@ theorem stripConstructor_some_iff (s : Sexp) (x : List HolChar × List Sexp) :
     have h2 : args = args2 := congrArg Prod.snd hx
     rw [h1, h2]
     exact (stripConstructor_some s sym2 args2).mpr (by rw [hs, hsa])
+
+/-- Original `dstrip_sexp_thm`: the constructor-strip clauses. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "dstrip_sexp_thm"]
+theorem stripConstructor_eq (s : List HolChar) (args : Sexp) (n : Nat)
+    (s1 s2 : Sexp) (str : List HolChar) :
+    stripConstructor (.cons (.sym s) args) =
+        (stripSxCons args).map (fun t => (s, t)) ∧
+      stripConstructor (.cons (.num n) args) = none ∧
+      stripConstructor (.cons (.str str) args) = none ∧
+      stripConstructor (.cons (.cons s1 s2) args) = none ∧
+      stripConstructor (.num n) = none ∧
+      stripConstructor (.sym s) = none ∧
+      stripConstructor (.str str) = none := by
+  refine ⟨?_, rfl, rfl, rfl, rfl, rfl, rfl⟩
+  rw [stripSxCons_eq_decodeList]
+  cases hd : decodeList some args with
+  | none =>
+    simp only [stripConstructor, hd]
+    rfl
+  | some v =>
+    simp only [stripConstructor, hd]
+    rfl
 
 /-- Original `listsexp_thm`: the encoded empty list and cons equation. -/
 @[hol "cakeml/compiler/parsing/fromSexpScript.sml" "listsexp_thm"]
