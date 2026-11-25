@@ -3760,6 +3760,9 @@ import Flapjack.Misc.BinaryIeeeSqrtFp64
 import Flapjack.FpSemHOL
 import Flapjack.Basis.Pure.MlList
 import Flapjack.Basis.Pure.MlList.SortPerm
+import Flapjack.Basis.Pure.MlList.TailRecursive
+import Flapjack.Basis.Pure.MlList.Basics
+import Flapjack.Basis.Pure.MlList.MapPartial
 import Flapjack.Pancake.PanLang
 import Flapjack.Pancake.PanLang.Shape
 import Flapjack.Pancake.PanLang.Exp

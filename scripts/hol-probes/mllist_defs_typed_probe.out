@@ -4,3 +4,37 @@ sort_MEM_typed=∀(R :α -> α -> bool) (L :α list). MEM (x :α) (sort R L) ⇔
 sort_PERM_typed=∀(R :α -> α -> bool) (L :α list). PERM L (sort R L)
 sort_LENGTH_typed=∀(R :α -> α -> bool) (l :α list). LENGTH (sort R l) = LENGTH l
 sort_SORTS_typed=∀(R :α -> α -> bool). transitive R ∧ total R ⇒ SORTS (sort :(α -> α -> bool) -> α list -> α list) R
+map_rev_prime_def_typed=(∀(f :β -> α) (acc :α list). map_rev' f ([] :β list) acc = acc) ∧ ∀(f :β -> α) (x :β) (xs :β list) (acc :α list). map_rev' f (x::xs) acc = map_rev' f xs (f x::acc)
+map_rev_def_typed=∀(f :β -> α) (xs :β list). map_rev f xs = map_rev' f xs ([] :α list)
+map_rev_thm_typed=map_rev (f :β -> α) (xs :β list) = REVERSE (MAP f xs)
+filter_rev_prime_def_typed=(∀(P :α -> bool) (acc :α list). filter_rev' P ([] :α list) acc = acc) ∧ ∀(P :α -> bool) (h :α) (t :α list) (acc :α list). filter_rev' P (h::t) acc = if P h then filter_rev' P t (h::acc) else filter_rev' P t acc
+filter_rev_def_typed=∀(P :α -> bool) (xs :α list). filter_rev P xs = filter_rev' P xs ([] :α list)
+filter_rev_thm_typed=filter_rev (f :α -> bool) (xs :α list) = REVERSE (FILTER f xs)
+flat_rev_prime_def_typed=(∀(acc :α list). flat_rev' ([] :α list list) acc = acc) ∧ ∀(x :α list) (xs :α list list) (acc :α list). flat_rev' (x::xs) acc = flat_rev' xs (REV x acc)
+flat_rev_def_typed=∀(xs :α list list). flat_rev xs = flat_rev' xs ([] :α list)
+flat_rev_thm_typed=flat_rev (xs :α list list) = REVERSE (FLAT xs)
+LENGTH_AUX_def_typed=(∀(n :num). LENGTH_AUX ([] :α list) n = n) ∧ ∀(x :α) (xs :α list) (n :num). LENGTH_AUX (x::xs) n = LENGTH_AUX xs (n + (1 :num))
+LENGTH_AUX_THM_typed=LENGTH (xs :α list) = LENGTH_AUX xs (0 :num)
+intersperse_def_typed=(∀(v0 :α). intersperse v0 ([] :α list) = ([] :α list)) ∧ (∀(x :α) (v1 :α). intersperse v1 [x] = [x]) ∧ ∀(x :α) (v6 :α list) (v5 :α) (sep :α). intersperse sep (x::v5::v6) = x::sep::intersperse sep (v5::v6)
+getItem_def_typed=getItem ([] :α list) = (NONE :(α # α list) option) ∧ ∀(h :α) (t :α list). getItem (h::t) = SOME (h,t)
+nth_def_typed=∀(l :α list) (i :num). nth l i = l❲i❳
+take_def_typed=∀(l :α list) (i :num). (take l i :α list) = TAKE i l
+drop_def_typed=∀(l :α list) (i :num). (drop l i :α list) = DROP i l
+takeUntil_def_typed=(∀(p :α -> bool). takeUntil p ([] :α list) = ([] :α list)) ∧ ∀(p :α -> bool) (x :α) (xs :α list). takeUntil p (x::xs) = if p x then ([] :α list) else x::takeUntil p xs
+dropUntil_def_typed=(∀(p :α -> bool). dropUntil p ([] :α list) = ([] :α list)) ∧ ∀(p :α -> bool) (x :α) (xs :α list). dropUntil p (x::xs) = if p x then x::xs else dropUntil p xs
+mapi_def_typed=(∀(f :num -> β -> α) (n :num). (mapi f n ([] :β list) :α list) = ([] :α list)) ∧ ∀(f :num -> β -> α) (n :num) (h :β) (t :β list). (mapi f n (h::t) :α list) = (let (y :α) = f n h in y::(mapi f (n + (1 :num)) t :α list))
+mapPartial_def_typed=(∀(f :β -> α option). mapPartial f ([] :β list) = ([] :α list)) ∧ ∀(f :β -> α option) (h :β) (t :β list). mapPartial f (h::t) = case f h of (NONE :α option) => mapPartial f t | SOME x => x::mapPartial f t
+mapPartial_thm_typed=∀(f :α -> β option) (l :α list). mapPartial f l = MAP (THE :β option -> β) (FILTER (IS_SOME :β option -> bool) (MAP f l))
+partition_def_typed=∀(f :α -> bool) (l :α list). (partition f l :α list # α list) = partition_aux f l ([] :α list) ([] :α list)
+partition_pos_thm_typed=∀(f :α -> bool) (l :α list). FST (partition f l :α list # α list) = FILTER f l
+partition_neg_thm_typed=∀(f :α -> bool) (l :α list). SND (partition f l :α list # α list) = FILTER ($¬ ∘ f) l
+foldl_def_typed=(∀(f :β -> α -> α) (e :α). foldl f e ([] :β list) = e) ∧ ∀(f :β -> α -> α) (e :α) (h :β) (t :β list). foldl f e (h::t) = foldl f (f h e) t
+foldli_def_typed=∀(f :num -> β -> α -> α) (e :α) (l :β list). foldli f e l = foldli_aux f e (0 :num) l
+foldl_intro_typed=∀(xs :α list) (x :β) (f :β -> α -> β). FOLDL f x xs = foldl (λ(x :α) (acc :β). f acc x) x xs
+foldli_thm_typed=∀(f :num -> α -> β -> β) (e :β) (l :α list). foldli f e l = FOLDRi (λ(n :num). f (LENGTH l − SUC n)) e (REVERSE l)
+collate_def_typed=(∀(f :α -> β -> ordering). collate f ([] :α list) ([] :β list) = Equal) ∧ (∀(t :β list) (h :β) (f :α -> β -> ordering). collate f ([] :α list) (h::t) = Less) ∧ (∀(t :α list) (h :α) (f :α -> β -> ordering). collate f (h::t) ([] :β list) = Greater) ∧ ∀(t2 :β list) (t1 :α list) (h2 :β) (h1 :α) (f :α -> β -> ordering). collate f (h1::t1) (h2::t2) = if f h1 h2 = Equal then collate f t1 t2 else f h1 h2
+collate_equal_thm_typed=∀(l :α list). (∀(x :α). MEM x l ⇒ (f :α -> α -> ordering) x x = Equal) ⇒ collate f l l = Equal
+collate_short_thm_typed=∀(f :α -> α -> ordering) (l1 :α list) (l2 :α list). (∀(x :α). f x x = Equal) ∧ l1 ≠ l2 ∧ l1 ≼ l2 ⇒ collate f l1 l2 = Less
+collate_long_thm_typed=∀(f :α -> α -> ordering) (l1 :α list) (l2 :α list). (∀(x :α). f x x = Equal) ∧ l1 ≠ l2 ∧ l2 ≼ l1 ⇒ collate f l1 l2 = Greater
+cpn_to_reln_def_typed=∀(f :α -> β -> ordering) (x1 :α) (x2 :β). cpn_to_reln f x1 x2 ⇔ f x1 x2 = Less
+collate_cpn_reln_thm_typed=∀(f :α -> α -> ordering) (l1 :α list) (l2 :α list). (∀(x1 :α) (x2 :α). f x1 x2 = Equal ⇔ x1 = x2) ⇒ (cpn_to_reln (collate f) l1 l2 ⇔ LLEX (cpn_to_reln f) l1 l2)

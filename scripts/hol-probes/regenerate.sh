@@ -12228,6 +12228,16 @@ run_probe pan_globals_primed_typed_probeScript.sml pan_globals_primed_typed_prob
 
 run_probe mllist_defs_typed_probeScript.sml mllist_defs_typed_probe.out \
   sort_def_typed sort_SORTED_typed sort_MEM_typed sort_PERM_typed sort_LENGTH_typed sort_SORTS_typed \
+  map_rev_prime_def_typed map_rev_def_typed map_rev_thm_typed \
+  filter_rev_prime_def_typed filter_rev_def_typed filter_rev_thm_typed \
+  flat_rev_prime_def_typed flat_rev_def_typed flat_rev_thm_typed \
+  LENGTH_AUX_def_typed LENGTH_AUX_THM_typed intersperse_def_typed \
+  getItem_def_typed nth_def_typed take_def_typed drop_def_typed \
+  takeUntil_def_typed dropUntil_def_typed mapi_def_typed mapPartial_def_typed mapPartial_thm_typed \
+  partition_def_typed partition_pos_thm_typed partition_neg_thm_typed \
+  foldl_def_typed foldli_def_typed foldl_intro_typed foldli_thm_typed \
+  collate_def_typed collate_equal_thm_typed collate_short_thm_typed collate_long_thm_typed \
+  cpn_to_reln_def_typed collate_cpn_reln_thm_typed \
   "$cake_dir/basis/pure/mllistScript.sml" \
   "$cake_dir/basis/pure"
 

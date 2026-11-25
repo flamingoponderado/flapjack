@@ -205,6 +205,18 @@ the independent
 module, name and value carriers and the binder order of each theorem; they are
 typed replays, not cross-language equivalence proofs.
 
+`mllist_defs_typed_probe.out` captures the `mllistTheory` list-utility
+statements with inferred types: the three-clause `intersperse_def`, the
+accumulator length definition `LENGTH_AUX_def` together with `LENGTH_AUX_THM`
+(captured in its `LENGTH xs = LENGTH_AUX xs 0` form), `mapPartial_def` and
+`mapPartial_thm`, and the six tail-recursive families `map_rev'`/`map_rev`/
+`map_rev_thm`, `filter_rev'`/`filter_rev`/`filter_rev_thm` and
+`flat_rev'`/`flat_rev`/`flat_rev_thm`. The two-equation definitions are
+captured as their HOL conjunctions, which fixes the binder order
+(predicate or function first, then list, then accumulator) and the literal
+cons equations. The captures are typed replays, not cross-language
+equivalence proofs.
+
 `data_to_word_gc_stack_probe.out` captures the typed original unchanged-pointer set and finiteness theorem, combined forwarding-map definition, and parsed local domain and application statements. These show that configuration and heap payload types are independent; the local parses do not replay their HOL proofs.
 
 The same probe captures the exported `partial_gc_related` theorem with inferred types, including its existential finite map and all heap-relation conclusions.

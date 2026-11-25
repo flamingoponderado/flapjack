@@ -406,3 +406,43 @@ val _ = emit_exported "sort_MEM_typed" "sort_MEM";
 val _ = emit_exported "sort_PERM_typed" "sort_PERM";
 val _ = emit_exported "sort_LENGTH_typed" "sort_LENGTH";
 val _ = emit_exported "sort_SORTS_typed" "sort_SORTS";
+
+(* Tail-recursive MAP, FILTER and FLAT (task 273). *)
+val _ = emit_exported "map_rev_prime_def_typed" "map_rev'_def";
+val _ = emit_exported "map_rev_def_typed" "map_rev_def";
+val _ = emit_exported "map_rev_thm_typed" "map_rev_thm";
+val _ = emit_exported "filter_rev_prime_def_typed" "filter_rev'_def";
+val _ = emit_exported "filter_rev_def_typed" "filter_rev_def";
+val _ = emit_exported "filter_rev_thm_typed" "filter_rev_thm";
+val _ = emit_exported "flat_rev_prime_def_typed" "flat_rev'_def";
+val _ = emit_exported "flat_rev_def_typed" "flat_rev_def";
+val _ = emit_exported "flat_rev_thm_typed" "flat_rev_thm";
+
+(* Auxiliary length counter and intersperse (task 273). *)
+val _ = emit_exported "LENGTH_AUX_def_typed" "LENGTH_AUX_def";
+val _ = emit_exported "LENGTH_AUX_THM_typed" "LENGTH_AUX_THM";
+val _ = emit_exported "intersperse_def_typed" "intersperse_def";
+
+(* List-module functions (task 273). *)
+val _ = emit_exported "getItem_def_typed" "getItem_def";
+val _ = emit_exported "nth_def_typed" "nth_def";
+val _ = emit_exported "take_def_typed" "take_def";
+val _ = emit_exported "drop_def_typed" "drop_def";
+val _ = emit_exported "takeUntil_def_typed" "takeUntil_def";
+val _ = emit_exported "dropUntil_def_typed" "dropUntil_def";
+val _ = emit_exported "mapi_def_typed" "mapi_def";
+val _ = emit_exported "mapPartial_def_typed" "mapPartial_def";
+val _ = emit_exported "mapPartial_thm_typed" "mapPartial_thm";
+val _ = emit_exported "partition_def_typed" "partition_def";
+val _ = emit_exported "partition_pos_thm_typed" "partition_pos_thm";
+val _ = emit_exported "partition_neg_thm_typed" "partition_neg_thm";
+val _ = emit_exported "foldl_def_typed" "foldl_def";
+val _ = emit_exported "foldli_def_typed" "foldli_def";
+val _ = emit_exported "foldl_intro_typed" "foldl_intro";
+val _ = emit_exported "foldli_thm_typed" "foldli_thm";
+val _ = emit_exported "collate_def_typed" "collate_def";
+val _ = emit_exported "collate_equal_thm_typed" "collate_equal_thm";
+val _ = emit_exported "collate_short_thm_typed" "collate_short_thm";
+val _ = emit_exported "collate_long_thm_typed" "collate_long_thm";
+val _ = emit_exported "cpn_to_reln_def_typed" "cpn_to_reln_def";
+val _ = emit_exported "collate_cpn_reln_thm_typed" "collate_cpn_reln_thm";
