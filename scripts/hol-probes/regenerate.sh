@@ -10674,6 +10674,8 @@ run_probe misc_typed_probeScript.sml misc_typed_probe.out \
   SUM_MAP_LENGTH_REPLICATE_typed EL_CONS_IF_typed EVERY_LAST_typed \
   revdroprev_typed o_PAIR_MAP_typed EVERY_FST_SND_typed EVERY_ZIP_typed \
   EXISTS_ZIP_typed TWOxDIV2_typed \
+  DROP_EMPTY_typed DROP_IMP_LESS_LENGTH_typed MULT_DIV_MULT_LEMMA_typed \
+  ADD_MOD_EQ_LEMMA_typed SUM_MOD_typed LENGTH_enumerate_typed MEM_enumerate_IMP_typed \
   "$cake_dir/misc/miscScript.sml" \
   "$cake_dir/misc"
 

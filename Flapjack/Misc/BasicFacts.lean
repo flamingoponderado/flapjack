@@ -294,4 +294,47 @@ theorem any_fst {α β : Type} (l : List (α × β)) (f : α → Bool) :
 @[hol "cakeml/misc/miscScript.sml" "TWOxDIV2"]
 theorem two_mul_div_two (x : Nat) : 2 * x / 2 = x := Nat.mul_div_cancel_left x (by decide)
 
+/-- Original `DROP_EMPTY`: an empty drop means the index reached the length. -/
+@[hol "cakeml/misc/miscScript.sml" "DROP_EMPTY"]
+theorem drop_empty {α : Type} (ls : List α) (n : Nat) (h : ls.drop n = []) :
+    ls.length ≤ n := by
+  rwa [← List.drop_eq_nil_iff]
+
+/-- Original `DROP_IMP_LESS_LENGTH`: a non-empty drop has a valid index. -/
+@[hol "cakeml/misc/miscScript.sml" "DROP_IMP_LESS_LENGTH"]
+theorem drop_cons_imp_lt_length {α : Type} (xs : List α) (n : Nat) (y : α) (ys : List α)
+    (h : xs.drop n = y :: ys) : n < xs.length := by
+  have lenEq : (xs.drop n).length = xs.length - n := List.length_drop
+  rw [h] at lenEq
+  simp at lenEq
+  omega
+
+/-- Original `MULT_DIV_MULT_LEMMA`: cancelling a common positive factor under
+division. The second positivity premise is retained from the source. -/
+@[hol "cakeml/misc/miscScript.sml" "MULT_DIV_MULT_LEMMA"]
+theorem mul_div_mul_lemma (m l k : Nat) (hm : 0 < m) (_hl : 0 < l) :
+    (m * k) / (l * m) = k / l := by
+  rw [Nat.mul_comm l m]
+  exact Nat.mul_div_mul_left k l hm
+
+/-- Original `ADD_MOD_EQ_LEMMA`: adding a value below the modulus to a multiple
+of the modulus leaves that value. -/
+@[hol "cakeml/misc/miscScript.sml" "ADD_MOD_EQ_LEMMA"]
+theorem add_mod_eq_lemma (k n d : Nat) (hk : k % d = 0) (hn : n < d) :
+    (k + n) % d = n := by
+  have hdvd : d ∣ k := Nat.dvd_of_mod_eq_zero hk
+  have hkmul : k / d * d = k := Nat.div_mul_cancel hdvd
+  rw [← hkmul, Nat.add_comm, Nat.mul_comm (k / d) d, Nat.add_mul_mod_self_left,
+    Nat.mod_eq_of_lt hn]
+
+/-- Original `SUM_MOD`: a sum is congruent to the sum of its residues. The
+source positivity premise is retained although the proof does not need it. -/
+@[hol "cakeml/misc/miscScript.sml" "SUM_MOD"]
+theorem sum_mod (ls : List Nat) (k : Nat) (_hk : k > 0) :
+    ls.sum % k = (ls.map fun n => n % k).sum % k := by
+  induction ls with
+  | nil => simp
+  | cons x rest ih =>
+    simp only [List.sum_cons, List.map_cons, ih, Nat.add_mod, Nat.mod_mod]
+
 end Flapjack
