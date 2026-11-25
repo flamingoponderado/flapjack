@@ -4115,6 +4115,7 @@ import Flapjack.Compiler.Inference.Infer
 import Flapjack.Compiler.Inference.InferProps
 import Flapjack.Compiler.Inference.InferProps.SubstBounds
 import Flapjack.Compiler.Inference.InferProps.NameBounds
+import Flapjack.Compiler.Inference.InferProps.InitState
 import Flapjack.Compiler.Inference.Unify.Encoding
 import Flapjack.Compiler.Inference.Unify.Substitution
 import Flapjack.Compiler.Inference.Unify.Substitution.Submap

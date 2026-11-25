@@ -23,3 +23,10 @@ val _ = show "check_t_infer_deBruijn_subst_typed" inferPropsTheory.check_t_infer
 val _ = show "infer_deBruijn_subst_uncheck_typed" inferPropsTheory.infer_deBruijn_subst_uncheck;
 val _ = show "check_t_more5_typed" inferPropsTheory.check_t_more5;
 val _ = show "check_t_t_vars_typed" inferPropsTheory.check_t_t_vars;
+
+(* Task 273: initial-state and empty-substitution facts. *)
+val _ = show "hide_def_typed" inferPropsTheory.hide_def;
+val _ = show "init_infer_state_next_uvar_typed" inferPropsTheory.init_infer_state_next_uvar;
+val _ = show "init_infer_state_subst_typed" inferPropsTheory.init_infer_state_subst;
+val _ = show "t_wfs_FEMPTY_typed" inferPropsTheory.t_wfs_FEMPTY;
+val _ = show "t_wfs_init_infer_state_typed" inferPropsTheory.t_wfs_init_infer_state;

@@ -9909,6 +9909,7 @@ run_probe infer_subst_probeScript.sml infer_subst_probe.out \
 
 run_probe infer_props_tids_probeScript.sml infer_props_tids_probe.out \
   set_tids_def_typed unconvert_t_def_typed inf_set_tids_def_typed inf_set_tids_subset_def_typed inf_set_tids_ienv_def_typed inf_set_tids_unconvert_typed check_t_def_typed ienv_val_ok_def_typed ienv_ok_def_typed infer_deBruijn_subst_id_typed infer_deBruijn_subst_id2_typed check_t_infer_deBruijn_subst_typed infer_deBruijn_subst_uncheck_typed check_t_more5_typed check_t_t_vars_typed \
+  hide_def_typed init_infer_state_next_uvar_typed init_infer_state_subst_typed t_wfs_FEMPTY_typed t_wfs_init_infer_state_typed \
   "$cake_dir/compiler/inference/inferPropsScript.sml" \
   "$cake_dir/compiler/inference"
 

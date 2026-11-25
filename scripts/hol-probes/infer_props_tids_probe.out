@@ -13,3 +13,8 @@ check_t_infer_deBruijn_subst_typed=∀(subst :infer_t list) (t :infer_t) (tvs :n
 infer_deBruijn_subst_uncheck_typed=∀(s :infer_t list) (t :infer_t) (max_tvs :num) (uvs :num -> bool). check_t max_tvs uvs (infer_deBruijn_subst s t) ⇒ check_t (max_tvs + LENGTH s) uvs t
 check_t_more5_typed=(∀(t :infer_t) (uvs :num -> bool) (tvs :num). check_t tvs uvs t ⇒ ∀(uvs' :num -> bool). uvs ⊆ uvs' ⇒ check_t tvs uvs' t) ∧ ∀(ts :infer_t list) (uvs :num -> bool) (tvs :num). EVERY (check_t tvs uvs) ts ⇒ ∀(uvs' :num -> bool). uvs ⊆ uvs' ⇒ EVERY (check_t tvs uvs') ts
 check_t_t_vars_typed=∀(tvs :num) (uvs :num -> bool) (t :infer_t). check_t tvs uvs t ⇒ t_vars t ⊆ uvs
+hide_def_typed=∀(x :α). hide x = x
+init_infer_state_next_uvar_typed=(init_infer_state (st :infer_st)).next_uvar = (0 :num)
+init_infer_state_subst_typed=(init_infer_state (st :infer_st)).subst = (FEMPTY :num |-> infer_t)
+t_wfs_FEMPTY_typed=t_wfs (FEMPTY :num |-> infer_t)
+t_wfs_init_infer_state_typed=t_wfs (init_infer_state (s :infer_st)).subst
