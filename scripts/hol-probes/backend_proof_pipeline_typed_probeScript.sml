@@ -22,3 +22,5 @@ val _ = emit "from_lab_conf_EX_typed" "from_lab_conf_EX";
 val _ = emit "from_stack_conf_EX_typed" "from_stack_conf_EX";
 val _ = emit "from_word_conf_EX_typed" "from_word_conf_EX";
 val _ = emit "decide_inline_reset_spt_typed" "decide_inline_reset_spt";
+val _ = emit "oracle_monotonic_rel_mono_typed" "oracle_monotonic_rel_mono";
+val _ = emit "syntax_oracle_ok_start_typed" "syntax_oracle_ok_start";

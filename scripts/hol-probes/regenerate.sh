@@ -12598,6 +12598,7 @@ run_probe backend_proof_pipeline_typed_probeScript.sml \
   backend_proof_pipeline_typed_probe.out \
   attach_bitmaps_SOME_typed from_lab_conf_EX_typed from_stack_conf_EX_typed \
   from_word_conf_EX_typed decide_inline_reset_spt_typed \
+  oracle_monotonic_rel_mono_typed syntax_oracle_ok_start_typed \
   "$cake_dir/compiler/backend/proofs/backendProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
 run_probe backend_proof_typed_probeScript.sml backend_proof_typed_probe.out \

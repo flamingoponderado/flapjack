@@ -272,4 +272,14 @@ theorem syntaxOracle_unpack :
   · exact fun progs mk f c b a St R => oracleMonotonic_SND_syntaxToFull f R St mk progs a b c
   · exact fun st progs mk f => isStateOracle_addStateCo f st mk progs
 
+/-- Original `oracle_monotonic_rel_mono` (`backendProofScript.sml:1610`):
+    strengthening the observed ordering relation preserves monotonicity. -/
+@[hol "cakeml/compiler/backend/proofs/backendProofScript.sml" "oracle_monotonic_rel_mono"]
+theorem oracleMonotonic_rel_mono {A B : Type} (R R' : B → B → Prop) (f : A → Set B)
+    (init_s : Set B) (orac : Nat → A) (mono : ∀ x y, R x y → R' x y)
+    (step : oracleMonotonic f R init_s orac) : oracleMonotonic f R' init_s orac := by
+  obtain ⟨later, initial⟩ := step
+  exact ⟨fun i j x y lt hx hy => mono x y (later i j x y lt hx hy),
+    fun i x y hx hy => mono x y (initial i x y hx hy)⟩
+
 end Flapjack.Compiler.Backend.BackendProps
