@@ -4553,6 +4553,7 @@ import Flapjack.Misc.Sptree.FromAList.Lookup
 import Flapjack.Misc.Sptree.FromAList.Append
 import Flapjack.Translator.Monadic.MonadBase.Arrays
 import Flapjack.Misc.AppList
+import Flapjack.Misc.BasicFacts
 import Flapjack.Misc.Sptree
 import Flapjack.Misc.LList
 import Flapjack.Misc.LprefixLub

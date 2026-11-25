@@ -10641,6 +10641,9 @@ run_probe misc_typed_probeScript.sml misc_typed_probe.out \
   shift_seq_def_typed fromList2_def_typed alist_insert_REVERSE_typed domain_fromList2_typed EVEN_fromList2_typed TAKE_FLAT_REPLICATE_LEQ_typed UNCURRY_eq_pair_typed word_list_def_typed \
   word_list_exists_def_typed read_bytearray_def_typed read_bytearray_LENGTH_typed fun2set_disjoint_union_typed UPDATE_LIST_def_typed APPLY_UPDATE_LIST_ALOOKUP_typed MOD_SUB_LEMMA_typed DISJOINT_INTER_typed IMP_MULT_DIV_LESS_typed \
   DIV_LESS_DIV_typed WORD_LS_IMP_typed SmartAppend_def_typed \
+  FST_pair_typed SND_pair_typed FST_triple_typed SND_triple_typed LESS_1_typed \
+  MEM_REPLICATE_EQ_typed LENGTH_TAKE_EQ_MIN_typed w2n_lt_256_typed IMP_IMP_typed \
+  SUBSET_IMP_typed DROP_NIL_typed times_add_o_typed \
   "$cake_dir/misc/miscScript.sml" \
   "$cake_dir/misc"
 

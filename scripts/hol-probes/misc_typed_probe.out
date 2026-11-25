@@ -66,3 +66,15 @@ IMP_MULT_DIV_LESS_typed=(m :num) ≠ (0 :num) ∧ (d :num) < (k :num) ⇒ m * (d
 DIV_LESS_DIV_typed=(n :num) MOD (k :num) = (0 :num) ∧ (m :num) MOD k = (0 :num) ∧ n < m ∧ (0 :num) < k ⇒ n DIV k < m DIV k
 WORD_LS_IMP_typed=(a :α word) ≤₊ (b :α word) ⇒ ∃(k :num). Abbrev (b = a + (n2w k :α word)) ∧ w2n (b − a) = k ∧ ∀(w :α word). a ≤₊ w ∧ w <₊ b ⇔ ∃(i :num). w = a + (n2w i :α word) ∧ i < k
 SmartAppend_def_typed=SmartAppend (Nil :α app_list) (l2 :α app_list) = l2 ∧ SmartAppend (List (v2 :α list)) (Nil :α app_list) = List v2 ∧ SmartAppend (Append (v3 :α app_list) (v4 :α app_list)) (Nil :α app_list) = Append v3 v4 ∧ SmartAppend (List (v5 :α list)) (List (v11 :α list)) = Append (List v5) (List v11) ∧ SmartAppend (List v5) (Append (v12 :α app_list) (v13 :α app_list)) = Append (List v5) (Append v12 v13) ∧ SmartAppend (Append (v6 :α app_list) (v7 :α app_list)) (List (v17 :α list)) = Append (Append v6 v7) (List v17) ∧ SmartAppend (Append v6 v7) (Append (v18 :α app_list) (v19 :α app_list)) = Append (Append v6 v7) (Append v18 v19)
+FST_pair_typed=(λ((n :α),(v :β)). n) = (FST :α # β -> α)
+SND_pair_typed=(λ((n :α),(v :β)). v) = (SND :α # β -> β)
+FST_triple_typed=(λ((n :α),(ns :β),(b :γ)). n) = (FST :α # β # γ -> α)
+SND_triple_typed=(λ((n :α),(ns :β),(b :γ)). (f :β -> γ -> δ) ns b) = UNCURRY f ∘ (SND :α # β # γ -> β # γ)
+LESS_1_typed=(x :num) < (1 :num) ⇔ x = (0 :num)
+MEM_REPLICATE_EQ_typed=∀(n :num) (x :α) (y :α). MEM x (REPLICATE n y) ⇔ x = y ∧ n ≠ (0 :num)
+LENGTH_TAKE_EQ_MIN_typed=∀(n :num) (xs :α list). LENGTH (TAKE n xs) = MIN n (LENGTH xs)
+w2n_lt_256_typed=∀(w :word8). w2n w < (256 :num)
+IMP_IMP_typed=(P :bool) ∧ ((Q :bool) ⇒ (R :bool)) ⇒ (P ⇒ Q) ⇒ R
+SUBSET_IMP_typed=(s :α -> bool) ⊆ (t :α -> bool) ⇒ (x :α) ∈ s ⇒ x ∈ t
+DROP_NIL_typed=∀(n :num) (xs :α list). DROP n xs = ([] :α list) ⇔ LENGTH xs ≤ n
+times_add_o_typed=(λ(n :num). (k :num) * n + (x :num)) = $+ x ∘ $* k

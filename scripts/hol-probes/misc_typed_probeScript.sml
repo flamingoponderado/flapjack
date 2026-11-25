@@ -99,3 +99,17 @@ val _ = emit "IMP_MULT_DIV_LESS_typed" "IMP_MULT_DIV_LESS";
 val _ = emit "DIV_LESS_DIV_typed" "DIV_LESS_DIV";
 val _ = emit "WORD_LS_IMP_typed" "WORD_LS_IMP";
 val _ = emit "SmartAppend_def_typed" "SmartAppend_def";
+
+(* Task 273: elementary tuple, num, list and set facts. *)
+val _ = emit "FST_pair_typed" "FST_pair";
+val _ = emit "SND_pair_typed" "SND_pair";
+val _ = emit "FST_triple_typed" "FST_triple";
+val _ = emit "SND_triple_typed" "SND_triple";
+val _ = emit "LESS_1_typed" "LESS_1";
+val _ = emit "MEM_REPLICATE_EQ_typed" "MEM_REPLICATE_EQ";
+val _ = emit "LENGTH_TAKE_EQ_MIN_typed" "LENGTH_TAKE_EQ_MIN";
+val _ = emit "w2n_lt_256_typed" "w2n_lt_256";
+val _ = emit "IMP_IMP_typed" "IMP_IMP";
+val _ = emit "SUBSET_IMP_typed" "SUBSET_IMP";
+val _ = emit "DROP_NIL_typed" "DROP_NIL";
+val _ = emit "times_add_o_typed" "times_add_o";
