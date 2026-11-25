@@ -23,7 +23,7 @@ which lives outside `cakeml/`.  It agrees definitionally with `decodeList some`.
 -/
 
 namespace Flapjack.CakeParser.FromSexp
-open Flapjack.CakeParser.Sexp Flapjack.Basis.Pure.MlString
+open Flapjack.CakeParser.Sexp Flapjack.Basis.Pure.MlString Flapjack.AstHOL
 
 private def ascii (s : String) : List HolChar := (ofString s).explode
 
@@ -250,5 +250,88 @@ theorem option_choice_eq_some {α : Type} (x y : Option α) (z : α) :
   cases x with
   | none => simp
   | some val => simp
+
+/-- Original `odestSXSYM_EQ_SOME`: symbol destruction succeeds exactly on `.sym`. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "odestSXSYM_EQ_SOME"]
+theorem odestSXSYM_eq_some (s : Sexp) (str : MlString) :
+    (odestSXSYM s = some str ↔ s = .sym str.explode) ∧
+      (some str = odestSXSYM s ↔ s = .sym str.explode) := by
+  cases s with
+  | sym bytes =>
+    simp only [odestSXSYM, Option.some.injEq, Sexp.sym.injEq]
+    constructor
+    · constructor
+      · intro h
+        rw [← h]
+        simp
+      · intro h
+        rw [h]
+        simp
+    · constructor
+      · intro h
+        rw [h]
+        simp
+      · intro h
+        rw [h]
+        simp
+  | num _ => simp [odestSXSYM]
+  | str _ => simp [odestSXSYM]
+  | cons _ _ => simp [odestSXSYM]
+
+/-- Original `odestSXNUM_EQ_SOME`: number destruction succeeds exactly on `.num`. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "odestSXNUM_EQ_SOME"]
+theorem odestSXNUM_eq_some (s : Sexp) (n : Nat) :
+    (odestSXNUM s = some n ↔ s = .num n) ∧ (some n = odestSXNUM s ↔ s = .num n) := by
+  cases s with
+  | sym _ => simp [odestSXNUM]
+  | num _ => simp [odestSXNUM, eq_comm]
+  | str _ => simp [odestSXNUM]
+  | cons _ _ => simp [odestSXNUM]
+
+/-- Original `strip_sxcons_11`: a successful strip determines its input. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "strip_sxcons_11"]
+theorem stripSxCons_inj (s1 s2 : Sexp) (x : List Sexp)
+    (h1 : stripSxCons s1 = some x) (h2 : stripSxCons s2 = some x) : s1 = s2 := by
+  rw [stripSxCons_eq_decodeList] at h1 h2
+  have e1 : s1 = listsexp x := (decodeList_some_identity s1 x).mp h1
+  have e2 : s2 = listsexp x := (decodeList_some_identity s2 x).mp h2
+  rw [e1, e2]
+
+/-- Original `sexplist_thm`: the list-decoder clauses. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "sexplist_thm"]
+theorem decodeList_eq {α : Type} (p : Sexp → Option α) (h t : Sexp) (s str : List HolChar)
+    (n : Nat) :
+    decodeList p (.cons h t) =
+        (do
+          let ph ← p h
+          let pt ← decodeList p t
+          some (ph :: pt)) ∧
+      decodeList p (.sym s) = (if s == nilBytes then some [] else none) ∧
+      decodeList p (.num n) = none ∧ decodeList p (.str str) = none := by
+  refine ⟨rfl, ?_, rfl, rfl⟩
+  simp only [decodeList]
+  rw [ascii_nil_eq_nilBytes]
+
+/-- Original `sexplist_listsexp_matchable`: decoding an encoded list recovers it. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "sexplist_listsexp_matchable"]
+theorem decodeList_listsexp_matchable {α : Type} (g : α → Sexp) (gl : List Sexp)
+    (l : List α) (f : Sexp → Option α)
+    (h : ∀ x, x ∈ l → f (g x) = some x) (hgl : gl = l.map g) :
+    decodeList f (listsexp gl) = some l := by
+  subst hgl
+  exact decodeList_listsexp f g l h
+
+/-- Original `decode_thunk_mode_def`: parse a thunk-mode name. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "decode_thunk_mode_def"]
+def decodeThunkMode (s : List HolChar) : Option ThunkMode :=
+  if s = (ofString "Evaluated").explode then some .evaluated
+  else if s = (ofString "NotEvaluated").explode then some .notEvaluated
+  else none
+
+/-- Original `encode_thunk_mode_def`: the thunk-mode names. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "encode_thunk_mode_def"]
+def encodeThunkMode : ThunkMode → List HolChar
+  | .evaluated => (ofString "Evaluated").explode
+  | .notEvaluated => (ofString "NotEvaluated").explode
 
 end Flapjack.CakeParser.FromSexp

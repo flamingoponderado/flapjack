@@ -117,4 +117,11 @@ listsexp_thm_typed=listsexp ([] :sexp list) = ⟪⟫ ∧ listsexp ((h :sexp)::(t
 listsexp_MAP_EQ_f_typed=(∀(x :α). MEM x (ls :α list) ⇒ (f1 :α -> sexp) x = (f2 :α -> sexp) x) ⇒ listsexp (MAP f1 ls) = listsexp (MAP f2 ls)
 FOLDR_SX_CONS_INJ_typed=∀(l1 :sexp list) (l2 :sexp list). FOLDR SX_CONS ⟪⟫ l1 = FOLDR SX_CONS ⟪⟫ l2 ⇔ l1 = l2
 OPTION_CHOICE_EQ_SOME_typed=∀(x :α option) (y :α option) (z :α). x ++ y = SOME z ⇔ x = SOME z ∨ x = (NONE :α option) ∧ y = SOME z
+strip_sxcons_11_typed=∀(s1 :sexp) (s2 :sexp) (x :sexp list). strip_sxcons s1 = SOME x ∧ strip_sxcons s2 = SOME x ⇒ s1 = s2
+sexplist_thm_typed=sexplist (p :sexp -> α option) ⟪(h :sexp) • (t :sexp)⟫ = do (ph :α) <- p h; (pt :α list) <- sexplist p t; SOME (ph::pt) od ∧ sexplist p (SX_SYM (s :string)) = (if s = "nil" then SOME ([] :α list) else (NONE :α list option)) ∧ sexplist p ((&(n :num)) :sexp) = (NONE :α list option) ∧ sexplist p (SX_STR (str :string)) = (NONE :α list option)
+sexplist_listsexp_matchable_typed=∀(g :α -> sexp) (gl :sexp list). (∀(x :α). MEM x (l :α list) ⇒ (f :sexp -> α option) (g x) = SOME x) ∧ gl = MAP g l ⇒ sexplist f (listsexp gl) = SOME l
+odestSXSYM_EQ_SOME_typed=(odestSXSYM (s :sexp) = SOME (str :mlstring) ⇔ s = SX_SYM (explode str)) ∧ (SOME str = odestSXSYM s ⇔ s = SX_SYM (explode str))
+odestSXNUM_EQ_SOME_typed=(odestSXNUM (s :sexp) = SOME (n :num) ⇔ s = ((&n) :sexp)) ∧ (SOME n = odestSXNUM s ⇔ s = ((&n) :sexp))
+decode_thunk_mode_def_typed=∀(s :string). decode_thunk_mode s = if s = "Evaluated" then SOME Evaluated else if s = "NotEvaluated" then SOME NotEvaluated else (NONE :thunk_mode option)
+encode_thunk_mode_def_typed=encode_thunk_mode Evaluated = "Evaluated" ∧ encode_thunk_mode NotEvaluated = "NotEvaluated"
 typesexp_sexptype_typed=∀(s :sexp) (t :ast_t). (sexptype s = SOME t ⇔ typesexp t = s) ∧ (SOME t = sexptype s ⇔ typesexp t = s)

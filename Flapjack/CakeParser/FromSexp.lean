@@ -20,6 +20,13 @@ open Flapjack.AstHOL Flapjack.NamespaceHOL
 private def ascii (s : String) : List HolChar := (ofString s).explode
 def isPrint (c : HolChar) : Bool := 32 ≤ c.toNat && c.toNat < 127
 
+/-- The bytes of the S-expression list terminator `nil`. -/
+def nilBytes : List HolChar := (ofString "nil").explode
+
+/-- `decodeList` tests the list terminator against these bytes. -/
+theorem ascii_nil_eq_nilBytes : ascii "nil" = nilBytes := by
+  simp [ascii, nilBytes]
+
 def upperHex (c : HolChar) : Option Nat :=
   let n := c.toNat
   if 48 ≤ n && n ≤ 57 then some (n - 48)
