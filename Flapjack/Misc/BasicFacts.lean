@@ -405,4 +405,78 @@ theorem holALookup_zip_fail {α β : Type} (A : List α) (B : List β) (x : α)
 
 end
 
+/-- Original `map_fst`: remapping the second components leaves the first
+components unchanged. -/
+@[hol "cakeml/misc/miscScript.sml" "map_fst"]
+theorem map_fst_second {α β γ : Type} (l : List (α × β)) (f : β → γ) :
+    (l.map fun p => (p.1, f p.2)).map Prod.fst = l.map Prod.fst := by
+  induction l with
+  | nil => simp
+  | cons p rest ih =>
+    rcases p with ⟨x, y⟩
+    simp only [List.map_cons, ih]
+
+/-- Original `map_some_eq`: mapping to `SOME` is injective. -/
+@[hol "cakeml/misc/miscScript.sml" "map_some_eq"]
+theorem map_some_eq {α : Type} (l1 l2 : List α) : (l1.map some = l2.map some) ↔ l1 = l2 := by
+  constructor
+  · intro h
+    induction l1 generalizing l2 with
+    | nil =>
+      cases l2 with
+      | nil => rfl
+      | cons y ys => simp at h
+    | cons x xs ih =>
+      cases l2 with
+      | nil => simp at h
+      | cons y ys =>
+        simp only [List.map_cons, Option.some.injEq, List.cons.injEq] at h
+        rw [h.1, ih ys h.2]
+  · intro h
+    rw [h]
+
+/-- Original `MAP_EQ_MAP_IMP`: a map that is injective on the relevant members
+reflects list equality. -/
+@[hol "cakeml/misc/miscScript.sml" "MAP_EQ_MAP_IMP"]
+theorem map_eq_map_imp {α β : Type} (xs ys : List α) (f : α → β)
+    (inj : ∀ x y, x ∈ xs ∧ y ∈ ys ∧ f x = f y → x = y) (h : xs.map f = ys.map f) :
+    xs = ys := by
+  induction xs generalizing ys with
+  | nil =>
+    cases ys with
+    | nil => rfl
+    | cons y ys => simp at h
+  | cons x xs ih =>
+    cases ys with
+    | nil => simp at h
+    | cons y ys =>
+      simp only [List.map_cons, List.cons.injEq] at h
+      have hxy : x = y := inj x y ⟨by simp, by simp, h.1⟩
+      rw [hxy, ih ys (fun a b hab => inj a b ⟨by simp [hab.1], by simp [hab.2.1], hab.2.2⟩) h.2]
+
+/-- Original `OPTION_MAP_INJ`: an injective map is injective on options. -/
+@[hol "cakeml/misc/miscScript.sml" "OPTION_MAP_INJ"]
+theorem option_map_inj {α β : Type} (f : α → β) (inj : ∀ x y, f x = f y → x = y)
+    (o1 o2 : Option α) (h : o1.map f = o2.map f) : o1 = o2 := by
+  cases o1 with
+  | none =>
+    cases o2 with
+    | none => rfl
+    | some y => simp at h
+  | some x =>
+    cases o2 with
+    | none => simp at h
+    | some y =>
+      simp only [Option.map_some, Option.some.injEq] at h
+      rw [inj x y h]
+
+/-- Original `the_OPTION_MAP`: mapping an option commutes with its default
+lookup when the default is a fixed point. -/
+@[hol "cakeml/misc/miscScript.sml" "the_OPTION_MAP"]
+theorem the_option_map {α : Type} (f : α → α) (d : α) (opt : Option α) (hd : f d = d) :
+    (opt.map f).getD d = f (opt.getD d) := by
+  cases opt with
+  | none => simp [hd]
+  | some x => rfl
+
 end Flapjack

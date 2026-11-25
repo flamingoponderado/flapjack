@@ -109,3 +109,8 @@ LUPDATE_APPEND_typed=∀(xs :α list) (n :num) (ys :α list) (x :α). (xs ++ ys)
 DROP_LUPDATE_typed=∀(n :num) (x :α) (m :num) (l :α list). n ≤ m ⇒ DROP n l❲m ↦ x❳ = (DROP n l)❲m − n ↦ x❳
 ALOOKUP_SNOC_typed=∀(ls :(α # β) list) (p :α # β) (k :α). ALOOKUP (SNOC p ls) k = case ALOOKUP ls k of (NONE :β option) => if k = FST p then SOME (SND p) else (NONE :β option) | SOME v => SOME v
 ALOOKUP_ZIP_FAIL_typed=∀(A :α list) (B :β list) (x :α). LENGTH A = LENGTH B ⇒ (ALOOKUP (ZIP (A,B)) x = (NONE :β option) ⇔ ¬MEM x A)
+map_fst_typed=∀(l :(α # β) list) (f :β -> γ). MAP (FST :α # γ -> α) (MAP (λ((x :α),(y :β)). (x,f y)) l) = MAP (FST :α # β -> α) l
+map_some_eq_typed=∀(l1 :α list) (l2 :α list). MAP (SOME :α -> α option) l1 = MAP (SOME :α -> α option) l2 ⇔ l1 = l2
+MAP_EQ_MAP_IMP_typed=∀(xs :α list) (ys :α list) (f :α -> β). (∀(x :α) (y :α). MEM x xs ∧ MEM y ys ∧ f x = f y ⇒ x = y) ⇒ MAP f xs = MAP f ys ⇒ xs = ys
+OPTION_MAP_INJ_typed=(∀(x :α) (y :α). (f :α -> β) x = f y ⇒ x = y) ⇒ ∀(o1 :α option) (o2 :α option). OPTION_MAP f o1 = OPTION_MAP f o2 ⇒ o1 = o2
+the_OPTION_MAP_typed=∀(f :α -> α) (d :α) (opt :α option). f d = d ⇒ the d (OPTION_MAP f opt) = f (the d opt)

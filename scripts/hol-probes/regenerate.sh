@@ -10678,6 +10678,8 @@ run_probe misc_typed_probeScript.sml misc_typed_probe.out \
   ADD_MOD_EQ_LEMMA_typed SUM_MOD_typed LENGTH_enumerate_typed MEM_enumerate_IMP_typed \
   DROP_EQ_CONS_IMP_DROP_SUC_typed LUPDATE_APPEND_typed DROP_LUPDATE_typed \
   ALOOKUP_SNOC_typed ALOOKUP_ZIP_FAIL_typed \
+  map_fst_typed map_some_eq_typed MAP_EQ_MAP_IMP_typed OPTION_MAP_INJ_typed \
+  the_OPTION_MAP_typed \
   "$cake_dir/misc/miscScript.sml" \
   "$cake_dir/misc"
 
