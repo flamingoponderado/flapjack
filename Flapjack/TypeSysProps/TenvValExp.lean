@@ -323,6 +323,65 @@ theorem tveLookup_freevars (n : MlString) (tvs : Nat) (localEnv : TenvValExp) (t
     · rename_i different
       exact ih _ _ _ ⟨hok, hnum, hfound⟩
 
+/-- A successful lookup exposes a base type that every increment shifts, so any
+other increment can be recovered from the same base. -/
+@[hol "cakeml/semantics/proofs/typeSysPropsScript.sml" "tveLookup_inc_some"]
+theorem tveLookup_inc_some (n : MlString) (inc : Nat) (localEnv : TenvValExp) (tvs : Nat)
+    (t : SemanticT) (inc2 : Nat) :
+    tveLookup n inc localEnv = some (tvs, t) →
+      ∃ t', t = deBruijnInc tvs inc t' ∧
+        tveLookup n inc2 localEnv = some (tvs, deBruijnInc tvs inc2 t') := by
+  intro found
+  induction localEnv generalizing inc tvs t inc2 with
+  | empty => cases found
+  | bindTvar bound rest ih =>
+    simp only [tveLookup] at found
+    obtain ⟨t', eq, found2⟩ := ih (inc + bound) tvs t (inc2 + bound) found
+    refine ⟨deBruijnInc tvs bound t', ?_, ?_⟩
+    · rw [deBruijnInc_deBruijnInc]
+      exact eq
+    · rw [deBruijnInc_deBruijnInc]
+      exact found2
+  | bindName name bound ty rest ih =>
+    simp only [tveLookup] at found ⊢
+    by_cases same : name = n
+    · rw [if_pos same] at found
+      obtain ⟨rfl, rfl⟩ := Option.some.inj found
+      rw [if_pos same]
+      exact ⟨ty, rfl, rfl⟩
+    · rw [if_neg same] at found
+      rw [if_neg same]
+      exact ih inc tvs t inc2 found
+
+/-- In a well-formed zero-bound local environment, the lookup increment does not
+change the result. -/
+@[hol "cakeml/semantics/proofs/typeSysPropsScript.sml" "tveLookup_no_tvs"]
+theorem tveLookup_no_tvs (tvs : Nat) (l : Nat) (localEnv : TenvValExp) (n : MlString)
+    (t : SemanticT) :
+    tenvValExpOk localEnv ∧ numTvs localEnv = 0 →
+      (tveLookup n tvs localEnv = some (l, t) ↔ tveLookup n 0 localEnv = some (l, t)) := by
+  intro h
+  induction localEnv generalizing tvs l t with
+  | empty => simp [tveLookup]
+  | bindTvar bound rest ih =>
+    simp only [tenvValExpOk, numTvs, tveLookup] at h ⊢
+    obtain ⟨hok, hnum⟩ := h
+    have zero : bound = 0 := by omega
+    rw [zero]
+    exact ih tvs l t ⟨hok, by omega⟩
+  | bindName name bound ty rest ih =>
+    simp only [tenvValExpOk, numTvs, tveLookup] at h ⊢
+    obtain ⟨head1, hnum⟩ := h
+    obtain ⟨hfree, hok⟩ := head1
+    by_cases same : name = n
+    · rw [if_pos same, if_pos same]
+      have freeHere : checkFreevars bound [] ty = true := by simpa [hnum] using hfree
+      have incEq : deBruijnInc bound tvs ty = deBruijnInc bound 0 ty := by
+        rw [nil_deBruijnInc bound tvs ty (Or.inl freeHere), deBruijnInc_zero.1]
+      rw [incEq]
+    · rw [if_neg same, if_neg same]
+      exact ih tvs l t ⟨hok, hnum⟩
+
 /-- Substituting through a bound variable list keeps the list structure. -/
 @[hol "cakeml/semantics/proofs/typeSysPropsScript.sml" "deBruijn_subst_E_bvl"]
 theorem deBruijnSubstTenvE_bvl (targs : List SemanticT) (tenv1 : List (MlString × SemanticT))

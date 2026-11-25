@@ -63,3 +63,5 @@ val _ = emit "type_ds_sing_typed" "type_ds_sing";
 val _ = emit "tveLookup_freevars_typed" "tveLookup_freevars";
 val _ = emit "deBruijn_subst_E_bvl_typed" "deBruijn_subst_E_bvl";
 val _ = emit "subst_inc_cancel_typed" "subst_inc_cancel";
+val _ = emit "tveLookup_inc_some_typed" "tveLookup_inc_some";
+val _ = emit "tveLookup_no_tvs_typed" "tveLookup_no_tvs";
