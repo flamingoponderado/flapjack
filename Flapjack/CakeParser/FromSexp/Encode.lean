@@ -18,6 +18,10 @@ open Flapjack.Misc.Location
 
 private def ascii (s : String) : List HolChar := (ofString s).explode
 
+/-- `ascii` is the byte list of a Lean string, exposed for validity proofs. -/
+theorem ascii_eq_ofString_explode (s : String) : ascii s = (ofString s).explode := by
+  simp [ascii]
+
 /-- Hexadecimal digit helper for control-byte encoding. -/
 def hexDigit (n : Nat) : HolChar :=
   BitVec.ofNat 8 (if n < 10 then 48 + n else 65 + n - 10)

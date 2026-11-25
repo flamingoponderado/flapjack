@@ -439,4 +439,302 @@ theorem validSexp_opsexp (op : Flapjack.AstHOL.Op) : validSexp (opsexp op) = tru
     simp only [opsexp, validSexp, Bool.and_eq_true]
     exact ⟨by decide, validSexp_sexstr _⟩
 
+/-- A constructor node is valid when its name and all arguments are. -/
+private theorem validSexp_node (name : String) (xs : List Sexp)
+    (hname : validSexp (.sym ((ofString name).explode)) = true)
+    (h : ∀ x, x ∈ xs → validSexp x = true) :
+    validSexp (expsexpNode name xs) = true := by
+  unfold expsexpNode
+  refine validSexp_listsexp _ ?_
+  intro y hy
+  simp only [List.mem_cons] at hy
+  rcases hy with rfl | hy
+  · rw [ascii_eq_ofString_explode]
+    exact hname
+  · exact h y hy
+
+/-- Original `expsexp_valid`: encoded expressions are valid. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "expsexp_valid"]
+theorem validSexp_expsexp (e : Flapjack.AstHOL.Exp) : validSexp (expsexp e) = true := by
+  refine expsexp.induct (fun e => validSexp (expsexp e) = true)
+    (fun fs => ∀ x, x ∈ expsexpFuns fs → validSexp x = true)
+    (fun es => ∀ x, x ∈ expsexpList es → validSexp x = true)
+    (fun ps => ∀ x, x ∈ expsexpClauses ps → validSexp x = true)
+    ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ e
+  · intro e ih
+    simp only [expsexp]
+    refine validSexp_node "Raise" _ (by decide) ?_
+    intro x hx
+    simp only [List.mem_singleton] at hx
+    rw [hx]
+    exact ih
+  · intro e ps ih ihps
+    simp only [expsexp]
+    refine validSexp_node "Handle" _ (by decide) ?_
+    intro x hx
+    simp only [List.mem_cons, List.not_mem_nil, or_false] at hx
+    rcases hx with rfl | rfl
+    · exact ih
+    · refine validSexp_listsexp _ ?_
+      intro y hy
+      exact ihps y hy
+  · intro l
+    simp only [expsexp]
+    refine validSexp_node "Lit" _ (by decide) ?_
+    intro x hx
+    simp only [List.mem_singleton] at hx
+    rw [hx]
+    exact validSexp_litsexp _
+  · intro id es ih
+    simp only [expsexp]
+    refine validSexp_node "Con" _ (by decide) ?_
+    intro x hx
+    simp only [List.mem_cons, List.not_mem_nil, or_false] at hx
+    rcases hx with rfl | rfl
+    · refine validSexp_optsexp _ ?_
+      intro y hy
+      cases id with
+      | none => simp [Option.map] at hy
+      | some i =>
+        simp only [Option.map_some, Option.some.injEq] at hy
+        rw [← hy]
+        exact validSexp_idsexp _
+    · refine validSexp_listsexp _ ?_
+      intro y hy
+      exact ih y hy
+  · intro id
+    simp only [expsexp]
+    refine validSexp_node "Var" _ (by decide) ?_
+    intro x hx
+    simp only [List.mem_singleton] at hx
+    rw [hx]
+    exact validSexp_idsexp _
+  · intro n e ih
+    simp only [expsexp]
+    refine validSexp_node "Fun" _ (by decide) ?_
+    intro x hx
+    simp only [List.mem_cons, List.not_mem_nil, or_false] at hx
+    rcases hx with rfl | rfl
+    · exact validSexp_expsexpString _
+    · exact ih
+  · intro o es ih
+    simp only [expsexp]
+    refine validSexp_node "App" _ (by decide) ?_
+    intro x hx
+    simp only [List.mem_cons, List.not_mem_nil, or_false] at hx
+    rcases hx with rfl | rfl
+    · exact validSexp_opsexp _
+    · refine validSexp_listsexp _ ?_
+      intro y hy
+      exact ih y hy
+  · intro o a b iha ihb
+    simp only [expsexp]
+    refine validSexp_node "Log" _ (by decide) ?_
+    intro x hx
+    simp only [List.mem_cons, List.not_mem_nil, or_false] at hx
+    rcases hx with rfl | rfl | rfl
+    · cases o
+      all_goals decide
+    · exact iha
+    · exact ihb
+  · intro a b c iha ihb ihc
+    simp only [expsexp]
+    refine validSexp_node "If" _ (by decide) ?_
+    intro x hx
+    simp only [List.mem_cons, List.not_mem_nil, or_false] at hx
+    rcases hx with rfl | rfl | rfl | rfl
+    all_goals first | decide | exact iha | exact ihb | exact ihc
+  · intro e ps ih ihps
+    simp only [expsexp]
+    refine validSexp_node "Mat" _ (by decide) ?_
+    intro x hx
+    simp only [List.mem_cons, List.not_mem_nil, or_false] at hx
+    rcases hx with rfl | rfl
+    · exact ih
+    · refine validSexp_listsexp _ ?_
+      intro y hy
+      exact ihps y hy
+  · intro n a b iha ihb
+    simp only [expsexp]
+    refine validSexp_node "Let" _ (by decide) ?_
+    intro x hx
+    simp only [List.mem_cons, List.not_mem_nil, or_false] at hx
+    rcases hx with rfl | rfl | rfl
+    · refine validSexp_optsexp _ ?_
+      intro y hy
+      cases n with
+      | none => simp [Option.map] at hy
+      | some name =>
+        simp only [Option.map_some, Option.some.injEq] at hy
+        rw [← hy]
+        exact validSexp_expsexpString _
+    · exact iha
+    · exact ihb
+  · intro fs e ihfs ihe
+    simp only [expsexp]
+    refine validSexp_node "Letrec" _ (by decide) ?_
+    intro x hx
+    simp only [List.mem_cons, List.not_mem_nil, or_false] at hx
+    rcases hx with rfl | rfl
+    · refine validSexp_listsexp _ ?_
+      intro y hy
+      exact ihfs y hy
+    · exact ihe
+  · intro e t ih
+    simp only [expsexp]
+    refine validSexp_node "Tannot" _ (by decide) ?_
+    intro x hx
+    simp only [List.mem_cons, List.not_mem_nil, or_false] at hx
+    rcases hx with rfl | rfl
+    · exact ih
+    · exact validSexp_typesexp _
+  · intro e l ih
+    simp only [expsexp]
+    refine validSexp_node "Lannot" _ (by decide) ?_
+    intro x hx
+    simp only [List.mem_cons, List.not_mem_nil, or_false] at hx
+    rcases hx with rfl | rfl
+    · exact ih
+    · exact validSexp_locssexp _
+  · intro x hx
+    simp only [expsexpFuns] at hx
+    simp at hx
+  · intro f x e fs ihe ihfs y hy
+    simp only [expsexpFuns, List.mem_cons] at hy
+    rcases hy with rfl | hy
+    · simp only [validSexp, Bool.and_eq_true]
+      exact ⟨validSexp_expsexpString _, validSexp_expsexpString _, ihe⟩
+    · exact ihfs y hy
+  · intro x hx
+    simp only [expsexpList] at hx
+    simp at hx
+  · intro e es ihe ihes x hx
+    simp only [expsexpList, List.mem_cons] at hx
+    rcases hx with rfl | hx
+    · exact ihe
+    · exact ihes x hx
+  · intro x hx
+    simp only [expsexpClauses] at hx
+    simp at hx
+  · intro p e ps ihe ihps y hy
+    simp only [expsexpClauses, List.mem_cons] at hy
+    rcases hy with rfl | hy
+    · simp only [validSexp, Bool.and_eq_true]
+      exact ⟨validSexp_patsexp _, ihe⟩
+    · exact ihps y hy
+
+/-- Every encoded function binding is a valid node. -/
+private theorem validSexp_expsexpFuns
+    (fs : List (Flapjack.AstHOL.VarN × Flapjack.AstHOL.VarN × Flapjack.AstHOL.Exp)) :
+    ∀ x, x ∈ expsexpFuns fs → validSexp x = true := by
+  intro x hx
+  induction fs with
+  | nil =>
+    simp only [expsexpFuns] at hx
+    simp at hx
+  | cons fh ft ih =>
+    obtain ⟨f, x', e⟩ := fh
+    simp only [expsexpFuns, List.mem_cons] at hx
+    rcases hx with rfl | hx
+    · simp only [validSexp, Bool.and_eq_true]
+      exact ⟨validSexp_expsexpString _, validSexp_expsexpString _, validSexp_expsexp e⟩
+    · exact ih hx
+
+/-- Mapped identifier-name lists are valid. -/
+private theorem validSexp_listsexp_map_string (xs : List MlString) :
+    validSexp (listsexp (xs.map expsexpString)) = true :=
+  validSexp_listsexp_map _ xs (fun v _ => validSexp_expsexpString v)
+
+/-- Mapped type lists are valid. -/
+private theorem validSexp_listsexp_map_types (ts : List Flapjack.AstHOL.AstT) :
+    validSexp (listsexp (ts.map typesexp)) = true :=
+  validSexp_listsexp_map _ ts (fun t _ => validSexp_typesexp t)
+
+/-- A list of encoded declarations is valid. -/
+private theorem validSexp_listsexp_decsexpList (ds : List Flapjack.AstHOL.Dec)
+    (h : ∀ x, x ∈ decsexpList ds → validSexp x = true) :
+    validSexp (listsexp (decsexpList ds)) = true :=
+  validSexp_listsexp _ h
+
+/-- Original `decsexp_valid`: encoded declarations are valid. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "decsexp_valid"]
+theorem validSexp_decsexp (d : Flapjack.AstHOL.Dec) : validSexp (decsexp d) = true := by
+  refine decsexp.induct (fun d => validSexp (decsexp d) = true)
+    (fun ds => ∀ x, x ∈ decsexpList ds → validSexp x = true) ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ d
+  · intro l p e
+    simp only [decsexp]
+    refine validSexp_node "Dlet" _ (by decide) ?_
+    intro x hx
+    simp only [List.mem_cons, List.not_mem_nil, or_false] at hx
+    rcases hx with rfl | rfl | rfl | rfl
+    · exact validSexp_locssexp _
+    · exact validSexp_patsexp _
+    · exact validSexp_expsexp _
+  · intro l fs
+    simp only [decsexp]
+    refine validSexp_node "Dletrec" _ (by decide) ?_
+    intro x hx
+    simp only [List.mem_cons, List.not_mem_nil, or_false] at hx
+    rcases hx with rfl | rfl | rfl
+    · exact validSexp_locssexp _
+    · exact validSexp_listsexp _ (validSexp_expsexpFuns fs)
+  · intro l td
+    simp only [decsexp]
+    refine validSexp_node "Dtype" _ (by decide) ?_
+    intro x hx
+    simp only [List.mem_cons, List.not_mem_nil, or_false] at hx
+    rcases hx with rfl | rfl | rfl
+    · exact validSexp_locssexp _
+    · exact validSexp_typeDefsexp _
+  · intro l ns n t
+    simp only [decsexp]
+    refine validSexp_node "Dtabbrev" _ (by decide) ?_
+    intro x hx
+    simp only [List.mem_cons, List.not_mem_nil, or_false] at hx
+    rcases hx with rfl | rfl | rfl | rfl | rfl
+    · exact validSexp_locssexp _
+    · exact validSexp_listsexp_map_string ns
+    · exact validSexp_expsexpString _
+    · exact validSexp_typesexp _
+  · intro l n ts
+    simp only [decsexp]
+    refine validSexp_node "Dexn" _ (by decide) ?_
+    intro x hx
+    simp only [List.mem_cons, List.not_mem_nil, or_false] at hx
+    rcases hx with rfl | rfl | rfl | rfl
+    · exact validSexp_locssexp _
+    · exact validSexp_expsexpString _
+    · exact validSexp_listsexp_map_types ts
+  · intro n ds ih
+    simp only [decsexp]
+    refine validSexp_node "Dmod" _ (by decide) ?_
+    intro x hx
+    simp only [List.mem_cons, List.not_mem_nil, or_false] at hx
+    rcases hx with rfl | rfl | rfl
+    · exact validSexp_expsexpString _
+    · exact validSexp_listsexp_decsexpList ds ih
+  · intro a b iha ihb
+    simp only [decsexp]
+    refine validSexp_node "Dlocal" _ (by decide) ?_
+    intro x hx
+    simp only [List.mem_cons, List.not_mem_nil, or_false] at hx
+    rcases hx with rfl | rfl | rfl
+    · exact validSexp_listsexp_decsexpList a iha
+    · exact validSexp_listsexp_decsexpList b ihb
+  · intro n
+    simp only [decsexp]
+    refine validSexp_node "Denv" _ (by decide) ?_
+    intro x hx
+    simp only [List.mem_singleton] at hx
+    rw [hx]
+    exact validSexp_expsexpString _
+  · intro x hx
+    simp only [decsexpList] at hx
+    simp at hx
+  · intro d ds ih ihs x hx
+    simp only [decsexpList, List.mem_cons] at hx
+    rcases hx with rfl | hx
+    · exact ih
+    · exact ihs x hx
+
 end Flapjack.CakeParser.FromSexp
