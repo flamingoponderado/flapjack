@@ -37,3 +37,7 @@ val _ = emit "deBruijn_inc0_typed" "deBruijn_inc0";
 val _ = emit "deBruijn_inc_deBruijn_inc_typed" "deBruijn_inc_deBruijn_inc";
 val _ = emit "nil_deBruijn_inc_typed" "nil_deBruijn_inc";
 val _ = emit "nil_deBruijn_subst_typed" "nil_deBruijn_subst";
+val _ = emit "type_pes_def_typed" "type_pes_def";
+val _ = emit "type_es_list_rel_typed" "type_es_list_rel";
+val _ = emit "add_tenvE_nsAppend_typed" "add_tenvE_nsAppend";
+val _ = emit "type_ds_empty_typed" "type_ds_empty";

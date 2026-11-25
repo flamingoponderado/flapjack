@@ -91,4 +91,41 @@ theorem extendDecTenvOk (tenv tenv' : TypeEnv)
   · exact nsAll_nsAppend _ _ _ ⟨h.1.2.1, h.2.2.1⟩
   · exact nsAll_nsAppend _ _ _ ⟨h.1.2.2, h.2.2.2⟩
 
+/-- Appending an empty-namespace extension of a local environment is the same
+as extending the target namespace directly. -/
+@[hol "cakeml/semantics/proofs/typeSysPropsScript.sml" "add_tenvE_nsAppend"]
+theorem addTenvE_nsAppend {M : Type} (localEnv : TenvValExp)
+    (env : Namespace M MlString (Nat × SemanticT)) :
+    nsAppend (addTenvE localEnv nsEmpty) env = addTenvE localEnv env := by
+  have appendBind : ∀ {M : Type} (name : MlString) (value : Nat × SemanticT)
+      (rest other : Namespace M MlString (Nat × SemanticT)),
+      nsAppend (nsBind name value rest) other = nsBind name value (nsAppend rest other) := by
+    intro M name value rest other
+    cases rest with
+    | bind vs ms =>
+      cases other with
+      | bind vs' ms' => simp [nsBind, nsAppend]
+  induction localEnv with
+  | empty =>
+    cases env with
+    | bind vs ms => simp [addTenvE, nsAppend, nsEmpty]
+  | bindTvar _ rest ih =>
+    simp only [addTenvE]
+    exact ih
+  | bindName name tvs t rest ih =>
+    simp only [addTenvE]
+    rw [appendBind name (tvs, t), ih]
+
+/-- The empty declaration list types exactly the empty type-id set and the
+empty environment. -/
+@[simp, hol "cakeml/semantics/proofs/typeSysPropsScript.sml" "type_ds_empty"]
+theorem typeDsEmpty (extra : Bool) (tenv : TypeEnv) (ids : TypeIds) (r : TypeEnv) :
+    TypeDs extra tenv [] ids r ↔ ids = (fun _ => False) ∧ r = ⟨nsEmpty, nsEmpty, nsEmpty⟩ := by
+  constructor
+  · intro typed
+    cases typed
+    exact ⟨rfl, rfl⟩
+  · rintro ⟨rfl, rfl⟩
+    exact TypeDs.nil extra tenv
+
 end Flapjack.TypeSysProps
