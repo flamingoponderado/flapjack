@@ -1,0 +1,5 @@
+tenv_val_ok_nsEmpty_typed=tenv_val_ok (nsEmpty :(α, β, num # t) namespace)
+tenv_ctor_ok_nsEmpty_typed=tenv_ctor_ok (nsEmpty :(α, β, mlstring list # t list # γ) namespace)
+tenv_abbrev_ok_nsEmpty_typed=tenv_abbrev_ok (nsEmpty :(α, β, mlstring list # t) namespace)
+tenv_ok_empty_typed=tenv_ok <|v := (nsEmpty :(mlstring, mlstring, num # t) namespace); c := (nsEmpty :(mlstring, mlstring, mlstring list # t list # num) namespace); t := (nsEmpty :(mlstring, mlstring, mlstring list # t) namespace)|>
+unchanged_tenv_typed=∀(tenv :type_env). <|v := tenv.v; c := tenv.c; t := tenv.t|> = tenv
