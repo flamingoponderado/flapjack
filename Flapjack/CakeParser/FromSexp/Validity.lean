@@ -361,4 +361,35 @@ theorem validSexp_patsexp (p : Flapjack.AstHOL.Pat) : validSexp (patsexp p) = tr
     · exact ihp
     · exact ihps x hx
 
+/-- A mapped list is valid when every encoded element is. -/
+private theorem validSexp_listsexp_map {α : Type} (f : α → Sexp) (xs : List α)
+    (h : ∀ x, x ∈ xs → validSexp (f x) = true) :
+    validSexp (listsexp (xs.map f)) = true := by
+  refine validSexp_listsexp _ ?_
+  intro y hy
+  obtain ⟨x, hx, rfl⟩ := List.mem_map.mp hy
+  exact h x hx
+
+/-- Encoded identifier names are valid strings. -/
+private theorem validSexp_expsexpString (s : MlString) : validSexp (expsexpString s) = true :=
+  validSexp_sexstr _
+
+/-- Original `type_defsexp_valid`: encoded datatype definitions are valid. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "type_defsexp_valid"]
+theorem validSexp_typeDefsexp (td : Flapjack.AstHOL.TypeDef) :
+    validSexp (typeDefsexp td) = true := by
+  unfold typeDefsexp
+  refine validSexp_listsexp_map _ td ?_
+  intro entry hentry
+  obtain ⟨vs, name, cs⟩ := entry
+  simp only [validSexp, Bool.and_eq_true]
+  refine ⟨?_, ?_⟩
+  · exact validSexp_listsexp_map _ vs (fun v _ => validSexp_expsexpString _)
+  · refine ⟨validSexp_expsexpString _, ?_⟩
+    refine validSexp_listsexp_map _ cs ?_
+    intro ct hct
+    obtain ⟨c, ts⟩ := ct
+    simp only [validSexp, Bool.and_eq_true]
+    exact ⟨validSexp_expsexpString _, validSexp_listsexp_map _ ts (fun t _ => validSexp_typesexp t)⟩
+
 end Flapjack.CakeParser.FromSexp
