@@ -318,4 +318,49 @@ theorem gcMoveList_IMP {α β : Type} (conf : Config β)
     simp only [List.length_cons]
     simp [head, tailImp]
 
+/-- Scanning copied data leaves the generation segments and reference lists
+unchanged. -/
+@[hol "cakeml/compiler/backend/gc/gen_gc_partialScript.sml" "gc_move_data_IMP"]
+theorem gcMoveData_IMP {α β : Type} (conf : Config β) (state state1 : GcState α β)
+    (run : gcMoveData conf state = state1) :
+    state1.old = state.old ∧ state1.r1 = state.r1 ∧ state1.r2 = state.r2 ∧
+      state1.r3 = state.r3 ∧ state1.r4 = state.r4 := by
+  classical
+  induction state using gcMoveData.induct conf with
+  | case1 state empty =>
+    unfold gcMoveData at run
+    simp only [empty] at run
+    rw [← run]
+    simp
+  | case2 state head tail heap over =>
+    unfold gcMoveData at run
+    simp only [heap, over, ↓reduceIte] at run
+    rw [← run]
+    simp
+  | case3 state tail roots len payload roots1 middle move heap bounded flag ih =>
+    cases state with
+    | mk old h1 h2 r4 r3 r2 r1 a n status origHeap heap0 =>
+      simp only at heap
+      subst h2
+      unfold gcMoveData at run
+      simp only [bounded, ↓reduceIte, move] at run
+      have listImp := gcMoveList_IMP conf roots roots1
+        (GcState.mk old h1 (.dataElement roots len payload :: tail) r4 r3 r2 r1 a n status
+          origHeap heap0) middle move
+      have step := ih run
+      simp [step, listImp]
+  | case4 state head tail heap bounded notData =>
+    cases head with
+    | unused len =>
+      unfold gcMoveData at run
+      simp only [heap, bounded, ↓reduceIte] at run
+      rw [← run]
+      simp
+    | forwardPointer ptr value len =>
+      unfold gcMoveData at run
+      simp only [heap, bounded, ↓reduceIte] at run
+      rw [← run]
+      simp
+    | dataElement roots len payload => exact False.elim (notData roots len payload rfl)
+
 end Flapjack.Compiler.Backend.GenGcPartial
