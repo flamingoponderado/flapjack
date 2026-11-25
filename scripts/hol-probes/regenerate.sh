@@ -10379,6 +10379,15 @@ run_probe flat_sem_typed_probeScript.sml flat_sem_typed_probe.out \
   "$cake_dir/compiler/backend/semantics/flatSemScript.sml" \
   "$cake_dir/compiler/backend/semantics"
 
+run_probe semantic_primitives_type_num_typed_probeScript.sml \
+  semantic_primitives_type_num_typed_probe.out \
+  lit_type_num_def_typed ast_t_type_num_def_typed pat_type_num_def_typed \
+  lop_type_num_def_typed opn_type_num_def_typed opb_type_num_def_typed \
+  opw_type_num_def_typed shift_type_num_def_typed word_size_type_num_def_typed \
+  fp_uop_type_num_def_typed fp_bop_type_num_def_typed fp_top_type_num_def_typed \
+  fp_cmp_type_num_def_typed op_type_num_def_typed locn_type_num_def_typed \
+  locs_type_num_def_typed exp_type_num_def_typed dec_type_num_def_typed \
+  "$cake_dir/semantics/semanticPrimitivesScript.sml" "$cake_dir/semantics"
 run_probe semantic_primitives_typed_probeScript.sml semantic_primitives_typed_probe.out \
   store_lookup_def_typed store_assign_def_typed abort_typed error_result_typed result_typed sem_env_typed stamp_typed store_v_typed \
   v_typed bind_exn_v_def_typed bind_stamp_def_typed chr_exn_v_def_typed chr_stamp_def_typed div_exn_v_def_typed div_stamp_def_typed empty_store_def_typed \
@@ -11566,6 +11575,12 @@ run_probe grammar_parsetree_typed_probeScript.sml grammar_parsetree_typed_probe.
   "$hol_dir/examples/formal-languages/context-free"
 run_probe token_utils_destlf_typed_probeScript.sml token_utils_destlf_typed_probe.out \
   destLf_def_typed \
+  "$cake_dir/semantics/tokenUtilsScript.sml" "$cake_dir/semantics"
+run_probe token_utils_typed_probeScript.sml token_utils_typed_probe.out \
+  isInt_def_typed isString_def_typed isAlphaT_def_typed isSymbolT_def_typed \
+  isTyvarT_def_typed isWhitespaceT_def_typed isCharT_def_typed isWordT_def_typed \
+  isLongidT_def_typed destREPLIDT_def_typed isAlphaSym_def_typed \
+  destLongidT_EQ_SOME_typed destAlphaT_EQ_SOME_typed destSymbolT_EQ_SOME_typed \
   "$cake_dir/semantics/tokenUtilsScript.sml" "$cake_dir/semantics"
 run_probe cake_ptree_helpers_typed_probeScript.sml cake_ptree_helpers_typed_probe.out \
   destTOK_def_typed destLongidT_def_typed destTyvarPT_def_typed destAlphaT_def_typed \
