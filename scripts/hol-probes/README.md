@@ -10507,7 +10507,10 @@ option-destruction lemmas added in task 273 (`odestSXSTR`/`odestSXSYM`/
 fetched from the theory database, and labels replace an apostrophe with
 `_prime`. A later addition covers `strip_sxcons_11`, `sexplist_thm`,
 `sexplist_listsexp_matchable`, `odestSXSYM_EQ_SOME`, `odestSXNUM_EQ_SOME`,
-`decode_thunk_mode_def` and `encode_thunk_mode_def`. The theory is not a default CakeML build target, so build it in the
+`decode_thunk_mode_def` and `encode_thunk_mode_def`, and the encoder validity
+family (`EVERY_isPrint_encode_control`, `SEXSTR_valid`, `listsexp_valid`,
+`idsexp_valid`, `litsexp_valid`, `optsexp_valid`, `locnsexp_valid`,
+`locssexp_valid`, `valid_sexp_prim_typesexp`). The theory is not a default CakeML build target, so build it in the
 private copy first (`cd compiler/parsing && CAKEMLDIR=<cakeml tree> Holmake
 fromSexpTheory.uo`, about 30 s; it reads the already-built `simpleSexp`
 theories from `$HOLDIR` and writes only inside the copy). Regenerate with

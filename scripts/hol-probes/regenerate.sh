@@ -11817,6 +11817,9 @@ run_probe fromSexp_typed_probeScript.sml fromSexp_typed_probe.out \
   strip_sxcons_listsexp_typed strip_sxcons_11_typed sexplist_thm_typed \
   sexplist_listsexp_matchable_typed odestSXSYM_EQ_SOME_typed odestSXNUM_EQ_SOME_typed \
   decode_thunk_mode_def_typed encode_thunk_mode_def_typed \
+  EVERY_isPrint_encode_control_typed SEXSTR_valid_typed listsexp_valid_typed \
+  idsexp_valid_typed litsexp_valid_typed optsexp_valid_typed locnsexp_valid_typed \
+  locssexp_valid_typed valid_sexp_prim_typesexp_typed \
   patsexp_11_typed \
   patsexp_def_typed patsexp_sexppat_typed patsexp_sexppat0_typed prim_typesexp_11_typed \
   prim_typesexp_def_typed sexparith_arithsexp_typed sexparith_def_typed sexpdec_decsexp_typed \

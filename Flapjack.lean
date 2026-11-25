@@ -4107,6 +4107,7 @@ import Flapjack.CakeParser.FromSexp
 import Flapjack.CakeParser.FromSexp.Operators
 import Flapjack.CakeParser.FromSexp.Ast
 import Flapjack.CakeParser.FromSexp.SexpLemmas
+import Flapjack.CakeParser.FromSexp.Validity
 import Flapjack.CakeParser.ToSexp
 import Flapjack.Test.CakeFromSexpParity
 import Flapjack.RiscV.CakeArtifactFormat

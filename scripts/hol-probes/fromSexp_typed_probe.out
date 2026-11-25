@@ -124,4 +124,13 @@ odestSXSYM_EQ_SOME_typed=(odestSXSYM (s :sexp) = SOME (str :mlstring) ⇔ s = SX
 odestSXNUM_EQ_SOME_typed=(odestSXNUM (s :sexp) = SOME (n :num) ⇔ s = ((&n) :sexp)) ∧ (SOME n = odestSXNUM s ⇔ s = ((&n) :sexp))
 decode_thunk_mode_def_typed=∀(s :string). decode_thunk_mode s = if s = "Evaluated" then SOME Evaluated else if s = "NotEvaluated" then SOME NotEvaluated else (NONE :thunk_mode option)
 encode_thunk_mode_def_typed=encode_thunk_mode Evaluated = "Evaluated" ∧ encode_thunk_mode NotEvaluated = "NotEvaluated"
+EVERY_isPrint_encode_control_typed=∀(ls :string). EVERY isPrint (encode_control ls)
+SEXSTR_valid_typed=valid_sexp (SEXSTR (s :string))
+listsexp_valid_typed=∀(ls :sexp list). EVERY valid_sexp ls ⇒ valid_sexp (listsexp ls)
+idsexp_valid_typed=∀(i :(mlstring, mlstring) id). valid_sexp (idsexp i)
+litsexp_valid_typed=∀(l :lit). valid_sexp (litsexp l)
+optsexp_valid_typed=∀(x :sexp option). (∀(y :sexp). x = SOME y ⇒ valid_sexp y) ⇒ valid_sexp (optsexp x)
+locnsexp_valid_typed=∀(p :locn). valid_sexp (locnsexp p)
+locssexp_valid_typed=∀(l :locs). valid_sexp (locssexp l)
+valid_sexp_prim_typesexp_typed=∀(t :prim_type). valid_sexp (prim_typesexp t)
 typesexp_sexptype_typed=∀(s :sexp) (t :ast_t). (sexptype s = SOME t ⇔ typesexp t = s) ∧ (SOME t = sexptype s ⇔ typesexp t = s)
