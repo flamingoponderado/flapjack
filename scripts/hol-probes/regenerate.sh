@@ -10810,6 +10810,10 @@ run_probe gen_gc_partial_typed_probeScript.sml gen_gc_partial_typed_probe.out \
   heap_split_length_typed heap_restrict_NIL_typed gc_move_ok_prime_typed gc_move_ok_typed gc_move_list_ok_prime_typed \
   gc_move_list_ok_typed gc_move_list_length_typed gc_move_ref_list_length_typed balanced_state_def_typed has_bad_ref_def_typed \
   simple_rel_def_typed \
+  gc_move_IMP_typed gc_move_list_IMP_typed gc_move_data_IMP_typed gc_move_ref_list_ok_prime_typed \
+  gc_move_data_ok_prime_typed gc_move_ref_list_heap_length_prime_typed \
+  gc_move_inv_typed gc_move_list_inv_typed \
+  gc_move_ref_list_inv_typed gc_move_data_inv_typed partial_gc_IMP_typed \
   "$cake_dir/compiler/backend/gc/gen_gc_partialScript.sml" \
   "$cake_dir/compiler/backend/gc"
 

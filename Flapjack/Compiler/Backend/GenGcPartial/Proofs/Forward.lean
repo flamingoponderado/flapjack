@@ -102,4 +102,98 @@ theorem gcMoveRefList_heapLength {α β γ : Type} (conf : Config γ)
       exact (gcMoveList_heapLength roots roots1 conf state middle headRun).trans
         (ih (state := middle) (refs1 := tail1) (state1 := final) tailRun)
 
+/-- Traversing roots preserves the number of roots, including failure. -/
+@[hol "cakeml/compiler/backend/gc/gen_gc_partialScript.sml" "gc_move_list_length"]
+theorem gcMoveList_length {α β : Type} (roots roots1 : List (HeapAddress α))
+    (conf : Config β) (state state1 : GcState α β)
+    (run : gcMoveList conf state roots = (roots1, state1)) :
+    roots1.length = roots.length := by
+  induction roots generalizing state roots1 state1 with
+  | nil =>
+    simp only [gcMoveList, Prod.mk.injEq] at run
+    obtain ⟨rfl, _⟩ := run
+    rfl
+  | cons root roots ih =>
+    simp only [gcMoveList] at run
+    generalize headRun : gcMove conf state root = result at run
+    obtain ⟨rootMid, middle⟩ := result
+    generalize tailRun : gcMoveList conf middle roots = result at run
+    obtain ⟨tail, final⟩ := result
+    simp only [Prod.mk.injEq] at run
+    obtain ⟨rfl, _⟩ := run
+    have tailEq : tail.length = roots.length :=
+      ih (state := middle) (roots1 := tail) (state1 := final) tailRun
+    simp only [List.length_cons]
+    rw [tailEq]
+
+/-- Traversing references preserves the number of heap elements, including
+failure. -/
+@[hol "cakeml/compiler/backend/gc/gen_gc_partialScript.sml" "gc_move_ref_list_length"]
+theorem gcMoveRefList_length {α β γ : Type} (conf : Config γ)
+    (refs refs1 : List (HeapElement α β)) (state state1 : GcState α γ)
+    (run : gcMoveRefList conf state refs = (refs1, state1)) :
+    refs1.length = refs.length := by
+  induction refs generalizing state refs1 state1 with
+  | nil =>
+    simp only [gcMoveRefList, Prod.mk.injEq] at run
+    obtain ⟨rfl, _⟩ := run
+    rfl
+  | cons head tail ih =>
+    cases head with
+    | unused len =>
+      simp only [gcMoveRefList, Prod.mk.injEq] at run
+      obtain ⟨rfl, _⟩ := run
+      rfl
+    | forwardPointer ptr value len =>
+      simp only [gcMoveRefList, Prod.mk.injEq] at run
+      obtain ⟨rfl, _⟩ := run
+      rfl
+    | dataElement roots len payload =>
+      simp only [gcMoveRefList] at run
+      generalize headRun : gcMoveList conf state roots = result at run
+      obtain ⟨rootsMid, middle⟩ := result
+      generalize tailRun : gcMoveRefList conf middle tail = result at run
+      obtain ⟨tail1, final⟩ := result
+      simp only [Prod.mk.injEq] at run
+      obtain ⟨rfl, _⟩ := run
+      have tailEq : tail1.length = tail.length :=
+        ih (state := middle) (refs1 := tail1) (state1 := final) tailRun
+      simp only [List.length_cons]
+      rw [tailEq]
+
+/-- Traversing references preserves the reference list's total word length,
+including failure. -/
+@[hol "cakeml/compiler/backend/gc/gen_gc_partialScript.sml" "gc_move_ref_list_heap_length'"]
+theorem gcMoveRefList_heapLength' {α β γ : Type} (conf : Config γ)
+    (refs refs1 : List (HeapElement α β)) (state state1 : GcState α γ)
+    (run : gcMoveRefList conf state refs = (refs1, state1)) :
+    heapLength refs1 = heapLength refs := by
+  induction refs generalizing state refs1 state1 with
+  | nil =>
+    simp only [gcMoveRefList, Prod.mk.injEq] at run
+    obtain ⟨rfl, _⟩ := run
+    rfl
+  | cons head tail ih =>
+    cases head with
+    | unused len =>
+      simp only [gcMoveRefList, Prod.mk.injEq] at run
+      obtain ⟨rfl, _⟩ := run
+      rfl
+    | forwardPointer ptr value len =>
+      simp only [gcMoveRefList, Prod.mk.injEq] at run
+      obtain ⟨rfl, _⟩ := run
+      rfl
+    | dataElement roots len payload =>
+      simp only [gcMoveRefList] at run
+      generalize headRun : gcMoveList conf state roots = result at run
+      obtain ⟨rootsMid, middle⟩ := result
+      generalize tailRun : gcMoveRefList conf middle tail = result at run
+      obtain ⟨tail1, final⟩ := result
+      simp only [Prod.mk.injEq] at run
+      obtain ⟨rfl, _⟩ := run
+      have tailEq : (List.map elLength tail1).sum = (List.map elLength tail).sum :=
+        ih (state := middle) (refs1 := tail1) (state1 := final) tailRun
+      simp only [heapLength, List.map_cons, List.sum_cons, elLength]
+      rw [tailEq]
+
 end Flapjack.Compiler.Backend.GenGcPartial
