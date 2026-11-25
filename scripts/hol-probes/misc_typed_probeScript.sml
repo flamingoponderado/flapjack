@@ -173,3 +173,4 @@ val _ = emit "LAST_MAP_SND_steps_FOLDL_typed" "LAST_MAP_SND_steps_FOLDL";
 val _ = emit "LLOOKUP_EQ_EL_typed" "LLOOKUP_EQ_EL";
 val _ = emit "LLOOKUP_THM_typed" "LLOOKUP_THM";
 val _ = emit "IN_option_rwt2_typed" "IN_option_rwt2";
+val _ = emit "find_index_APPEND_same_typed" "find_index_APPEND_same";
