@@ -176,3 +176,5 @@ val _ = emit "IN_option_rwt2_typed" "IN_option_rwt2";
 val _ = emit "find_index_APPEND_same_typed" "find_index_APPEND_same";
 val _ = emit "between_def_typed" "between_def";
 val _ = emit "IN_between_typed" "IN_between";
+val _ = emit "ALOOKUP_EXISTS_IFF_typed" "ALOOKUP_EXISTS_IFF";
+val _ = emit "LAST_CONS_alt_typed" "LAST_CONS_alt";

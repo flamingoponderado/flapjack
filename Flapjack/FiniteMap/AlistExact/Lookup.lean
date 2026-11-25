@@ -30,6 +30,20 @@ theorem holALookup_append {K V : Type} (left right : List (K × V)) (key : K) :
     obtain ⟨entryKey, value⟩ := entry
     by_cases same : key = entryKey <;> simp [holALookup, same, ih]
 
+/-- Original `ALOOKUP_EXISTS_IFF`: lookup succeeds exactly on a listed key. -/
+@[hol "cakeml/misc/miscScript.sml" "ALOOKUP_EXISTS_IFF"]
+theorem holALookup_exists_iff {K V : Type} (alist : List (K × V)) (k : K) :
+    (∃ v, holALookup alist k = some v) ↔ ∃ v, (k, v) ∈ alist := by
+  classical
+  induction alist with
+  | nil => simp [holALookup]
+  | cons entry rest ih =>
+    obtain ⟨entryKey, value⟩ := entry
+    by_cases same : k = entryKey
+    · subst k
+      simp [holALookup]
+    · simp [holALookup, same, ih]
+
 /-- Core association-list lookup succeeds exactly at a listed key. This
 Flapjack helper connects native lookup with key-domain reasoning used in the
 HOL proofs; it is not a port of a theorem about HOL ALOOKUP. Native lookup

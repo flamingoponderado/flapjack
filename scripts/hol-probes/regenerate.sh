@@ -10709,7 +10709,7 @@ run_probe misc_typed_probeScript.sml misc_typed_probe.out \
   steps_def_typed LAST_MAP_SND_steps_FOLDL_typed \
   LLOOKUP_EQ_EL_typed LLOOKUP_THM_typed IN_option_rwt2_typed \
   find_index_APPEND_same_typed \
-  between_def_typed IN_between_typed \
+  between_def_typed IN_between_typed ALOOKUP_EXISTS_IFF_typed LAST_CONS_alt_typed \
   "$cake_dir/misc/miscScript.sml" \
   "$cake_dir/misc"
 

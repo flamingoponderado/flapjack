@@ -141,3 +141,5 @@ IN_option_rwt2_typed=(x :α) ∈ (option_CASE (opt :β option) (∅ :α -> bool)
 find_index_APPEND_same_typed=∀(l1 :α list) (n :α) (m :num) (i :num) (l2 :α list). find_index n l1 m = SOME i ⇒ find_index n (l1 ++ l2) m = SOME i
 between_def_typed=∀(x :num) (y :num) (z :num). between x y z ⇔ x ≤ z ∧ z < y
 IN_between_typed=(x :num) ∈ between (y :num) (z :num) ⇔ y ≤ x ∧ x < z
+ALOOKUP_EXISTS_IFF_typed=(∃(v :α). ALOOKUP (alist :(β # α) list) (k :β) = SOME v) ⇔ ∃(v :α). MEM (k,v) alist
+LAST_CONS_alt_typed=(P :α -> bool) (x :α) ⇒ ((ls :α list) ≠ ([] :α list) ⇒ P (LAST ls) ⇔ P (LAST (x::ls)))
