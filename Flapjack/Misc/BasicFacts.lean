@@ -544,4 +544,42 @@ theorem tail_drop_succ {α : Type} (x : Nat) :
       simp only [List.drop_succ_cons]
       exact ih k (by simpa using hx)
 
+/-- Original `ALL_DISTINCT_FLAT_EVERY`: a distinct flattening has distinct
+members. -/
+@[hol "cakeml/misc/miscScript.sml" "ALL_DISTINCT_FLAT_EVERY"]
+theorem allDistinct_flatten_every {α : Type} :
+    ∀ (ls : List (List α)), ls.flatten.Nodup → ∀ l ∈ ls, l.Nodup := by
+  intro ls
+  induction ls with
+  | nil =>
+    intro _ l hl
+    simp at hl
+  | cons a as ih =>
+    intro h l hl
+    rw [List.flatten_cons, List.nodup_append] at h
+    rcases List.mem_cons.mp hl with rfl | hmem
+    · exact h.1
+    · exact ih h.2.1 l hmem
+
+/-- Original `OPT_MMAP_SOME`: mapping `some` recovers the list. -/
+@[simp, hol "cakeml/misc/miscScript.sml" "OPT_MMAP_SOME"]
+theorem mapM_some {α : Type} (ls : List α) : ls.mapM some = some ls := by
+  induction ls with
+  | nil => rfl
+  | cons a t ih =>
+    simp [List.mapM_cons, ih]
+
+/-- Original `insert_atI_def`: overwrite `l1` into `l2` starting at `n`. -/
+@[hol "cakeml/misc/miscScript.sml" "insert_atI_def"]
+def insertAtI {α : Type} (l1 : List α) (n : Nat) (l2 : List α) : List α :=
+  l2.take n ++ l1 ++ l2.drop (n + l1.length)
+
+/-- Original `LENGTH_insert_atI`: an in-bounds overwrite keeps the length. -/
+@[hol "cakeml/misc/miscScript.sml" "LENGTH_insert_atI"]
+theorem length_insertAtI {α : Type} (p : Nat) (l1 l2 : List α)
+    (h : p + l1.length ≤ l2.length) : (insertAtI l1 p l2).length = l2.length := by
+  unfold insertAtI
+  simp only [List.length_append, List.length_take, List.length_drop]
+  omega
+
 end Flapjack

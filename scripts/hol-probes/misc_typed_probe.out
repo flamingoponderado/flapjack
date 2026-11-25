@@ -119,3 +119,7 @@ MAP_K_REPLICATE_typed=MAP (K (x :α) :β -> α) (ls :β list) = REPLICATE (LENGT
 SUM_MAP_K_typed=∀(f :α -> num) (ls :α list) (c :num). (∀(x :α). f x = c) ⇒ (SUM (MAP f ls) :num) = LENGTH ls * c
 OPTION_MAP_I_typed=OPTION_MAP (I :α -> α) (x :α option) = x
 TL_DROP_SUC_typed=∀(x :num) (ls :α list). x < LENGTH ls ⇒ TL (DROP x ls) = DROP (SUC x) ls
+ALL_DISTINCT_FLAT_EVERY_typed=∀(ls :α list list). ALL_DISTINCT (FLAT ls) ⇒ EVERY (ALL_DISTINCT :α list -> bool) ls
+OPT_MMAP_SOME_typed=OPT_MMAP (SOME :α -> α option) (ls :α list) = SOME ls
+insert_atI_def_typed=∀(l1 :α list) (n :num) (l2 :α list). insert_atI l1 n l2 = TAKE n l2 ++ l1 ++ DROP (n + LENGTH l1) l2
+LENGTH_insert_atI_typed=(p :num) + LENGTH (l1 :α list) ≤ LENGTH (l2 :α list) ⇒ LENGTH (insert_atI l1 p l2) = LENGTH l2

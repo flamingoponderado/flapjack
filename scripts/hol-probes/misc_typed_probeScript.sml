@@ -154,3 +154,7 @@ val _ = emit "MAP_K_REPLICATE_typed" "MAP_K_REPLICATE";
 val _ = emit "SUM_MAP_K_typed" "SUM_MAP_K";
 val _ = emit "OPTION_MAP_I_typed" "OPTION_MAP_I";
 val _ = emit "TL_DROP_SUC_typed" "TL_DROP_SUC";
+val _ = emit "ALL_DISTINCT_FLAT_EVERY_typed" "ALL_DISTINCT_FLAT_EVERY";
+val _ = emit "OPT_MMAP_SOME_typed" "OPT_MMAP_SOME";
+val _ = emit "insert_atI_def_typed" "insert_atI_def";
+val _ = emit "LENGTH_insert_atI_typed" "LENGTH_insert_atI";

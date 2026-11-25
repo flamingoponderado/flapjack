@@ -10683,6 +10683,8 @@ run_probe misc_typed_probeScript.sml misc_typed_probe.out \
   the_OPTION_MAP_typed \
   MEM_REPLICATE_IMP_typed MAP_K_REPLICATE_typed SUM_MAP_K_typed \
   OPTION_MAP_I_typed TL_DROP_SUC_typed \
+  ALL_DISTINCT_FLAT_EVERY_typed OPT_MMAP_SOME_typed insert_atI_def_typed \
+  LENGTH_insert_atI_typed \
   "$cake_dir/misc/miscScript.sml" \
   "$cake_dir/misc"
 
