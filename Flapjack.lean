@@ -4538,6 +4538,7 @@ import Flapjack.Basis.Pure.MlString.Ops
 import Flapjack.Basis.Pure.MlString.Escape
 import Flapjack.Basis.Pure.MlString.Fields
 import Flapjack.Basis.Pure.MlString.Prefix
+import Flapjack.Basis.Pure.MlString.Order
 import Flapjack.Compiler.Backend.MlStringBridge
 import Flapjack.Compiler.Backend.StackProps
 import Flapjack.Compiler.Backend.RegAlloc

@@ -12743,6 +12743,12 @@ run_probe mlstring_defs_typed_probeScript.sml mlstring_defs_typed_probe.out \
   LENGTH_explode_typed mlstring_typed \
   "$cake_dir/basis/pure/mlstringScript.sml" "$cake_dir/basis/pure"
 
+run_probe mlstring_order_typed_probeScript.sml mlstring_order_typed_probe.out \
+  compare_aux_def_typed compare_def_typed mlstring_lt_def_typed mlstring_le_def_typed \
+  mlstring_gt_def_typed mlstring_ge_def_typed fast_lt_def_typed fast_le_def_typed \
+  fast_gt_def_typed fast_ge_def_typed collate_aux_def_typed collate_def_typed \
+  compare_thm_typed \
+  "$cake_dir/basis/pure/mlstringScript.sml" "$cake_dir/basis/pure"
 run_probe mlstring_more_typed_probeScript.sml mlstring_more_typed_probe.out \
   fields_aux_def_typed fields_def_typed fields_filter_typed fields_length_typed \
   isStringThere_aux_def_typed isPrefix_def_typed isSuffix_def_typed \
