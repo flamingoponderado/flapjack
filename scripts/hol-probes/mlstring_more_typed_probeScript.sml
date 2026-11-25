@@ -30,3 +30,6 @@ val _ = emit "isStringThere_SEG_typed" "isStringThere_SEG";
 val _ = emit "isprefix_thm_typed" "isprefix_thm";
 val _ = emit "exists_mlstring_typed" "exists_mlstring";
 val _ = emit "strlit_STRCAT_typed" "strlit_STRCAT";
+val _ = emit "substring_0_typed" "substring_0";
+val _ = emit "str_findi_def_typed" "str_findi_def";
+val _ = emit "str_findi_range_typed" "str_findi_range";

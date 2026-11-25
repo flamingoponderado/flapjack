@@ -11,3 +11,6 @@ isStringThere_SEG_typed=∀(i1 :num) (i2 :num). i1 + (n :num) ≤ STRLEN (s1 :st
 isprefix_thm_typed=isPrefix (s₁ :mlstring) (s₂ :mlstring) ⇔ explode s₁ ≼ explode s₂
 exists_mlstring_typed=(∃(x :mlstring). (P :mlstring -> bool) x) ⇔ ∃(s :string). P (implode s)
 strlit_STRCAT_typed=implode (a :string) ^ implode (b :string) = implode (STRCAT a b)
+substring_0_typed=substring (s :mlstring) (i :num) (0 :num) = «»
+str_findi_def_typed=∀(s :mlstring) (i :num) (P :char -> bool). str_findi P i s = if i < strlen s then if P (strsub s i) then SOME i else str_findi P (i + (1 :num)) s else (NONE :num option)
+str_findi_range_typed=∀(P :char -> bool) (i :num) (s :mlstring). str_findi P i s = SOME (j :num) ⇒ i ≤ j ∧ j < strlen s

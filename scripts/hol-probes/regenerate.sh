@@ -12712,6 +12712,7 @@ run_probe mlstring_more_typed_probeScript.sml mlstring_more_typed_probe.out \
   isStringThere_aux_def_typed isPrefix_def_typed isSuffix_def_typed \
   isSubstring_aux_def_typed isSubstring_def_typed isStringThere_SEG_typed \
   isprefix_thm_typed exists_mlstring_typed strlit_STRCAT_typed \
+  substring_0_typed str_findi_def_typed str_findi_range_typed \
   "$cake_dir/basis/pure/mlstringScript.sml" \
   "$cake_dir/basis/pure"
 

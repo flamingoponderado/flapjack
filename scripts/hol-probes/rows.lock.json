@@ -1075,7 +1075,7 @@
     {"bytes": 6412, "out": "mlstring_char_typed_probe.out", "rows": 56, "sha256": "7bccbb8a3edf5ed0a848f3b961ac4d48bbb09581b78f9d0a52433fb15ebd9f50"},
     {"bytes": 106, "out": "mlstring_defs_typed_probe.out", "rows": 2, "sha256": "47023f695fbb373eab4574c6600b5469da944e2be6a20950d6d1f1bf51820da8"},
     {"bytes": 110, "out": "mlstring_length_probe.out", "rows": 2, "sha256": "f9e4cad2e69c36e961af7452fb72853f2e6d0d3a7a3ecd7d071b910da6c06f30"},
-    {"bytes": 2486, "out": "mlstring_more_typed_probe.out", "rows": 13, "sha256": "27b8c4686f36c6220a4f7c043f98ad13291f16e8655363231c9a35139a4285b6"},
+    {"bytes": 2873, "out": "mlstring_more_typed_probe.out", "rows": 16, "sha256": "06cc2fc92aeeff4ba72fa49cebb93bb1b7a8e397ce912379642cd3505a938d75"},
     {"bytes": 870, "out": "mmio_index_probe.out", "rows": 42, "sha256": "86e15df3e87fc692913a79de8a99c582bff836461236bd46f7ed25027800b47c"},
     {"bytes": 129, "out": "monad_array_length_probe.out", "rows": 6, "sha256": "407821e56eb5ebca18e92fd0bb9320bba0843b5f8e2c059f57547ecf63c1f823"},
     {"bytes": 176, "out": "monad_arrays_probe.out", "rows": 11, "sha256": "5c67190b46f6c254947a53fef2353fb6ffddf035c698564335b55d19c0959691"},

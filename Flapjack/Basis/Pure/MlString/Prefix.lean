@@ -56,4 +56,32 @@ noncomputable def isSubstring (s1 s2 : MlString) : Bool :=
     isSubstringAux s1 s2 (strlen s1) 0 (strlen s2 - strlen s1 + 1)
   else false
 
+/-- Original `str_findi_def`: the first index from `i` whose character
+satisfies `P`. -/
+@[hol "cakeml/basis/pure/mlstringScript.sml" "str_findi_def"]
+noncomputable def strFindi (P : HolChar → Bool) (i : Nat) (s : MlString) : Option Nat :=
+  if i < strlen s then
+    if P (strsub s i) then some i else strFindi P (i + 1) s
+  else none
+termination_by strlen s - i
+decreasing_by
+  simp_wf
+  omega
+
+/-- Original `str_findi_range`: a found index is within the string. -/
+@[hol "cakeml/basis/pure/mlstringScript.sml" "str_findi_range"]
+theorem strFindi_range (j : Nat) :
+    ∀ (P : HolChar → Bool) (i : Nat) (s : MlString),
+      strFindi P i s = some j → i ≤ j ∧ j < strlen s := by
+  intro P i s h
+  fun_induction strFindi P i s with
+  | case1 x hlt hp =>
+      simp only [Option.some.injEq] at h
+      omega
+  | case2 x hlt hn ih =>
+      have := ih h
+      omega
+  | case3 x hn =>
+      simp at h
+
 end Flapjack.Basis.Pure.MlString

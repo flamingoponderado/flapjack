@@ -419,4 +419,14 @@ theorem strlit_STRCAT (a b : List HolChar) :
   rw [strcat_eq_implode_append]
   rfl
 
+/-- Original `substring_0`: a zero-length substring is empty. -/
+@[simp, hol "cakeml/basis/pure/mlstringScript.sml" "substring_0"]
+theorem substring_zero (s : MlString) (i : Nat) : substring s i 0 = .implode [] := by
+  unfold substring
+  split
+  · simp
+  · split
+    · omega
+    · simp
+
 end Flapjack.Basis.Pure.MlString
