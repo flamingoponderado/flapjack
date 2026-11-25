@@ -238,4 +238,60 @@ theorem every_holLast {α : Type} [Nonempty α] (P : α → Bool) (l : List α) 
         exact h.2.2
       exact ih ⟨by simp, tailAll⟩
 
+/-- Original `revdroprev`: dropping from the reversed list and reversing back
+gives the corresponding take. The source bound is retained although the proof
+does not need it. -/
+@[hol "cakeml/misc/miscScript.sml" "revdroprev"]
+theorem revdroprev {α : Type} (l : List α) (n : Nat) (_h : n ≤ l.length) :
+    (l.reverse.drop n).reverse = l.take (l.length - n) := by
+  rw [List.drop_reverse, List.reverse_reverse]
+
+/-- Original `o_PAIR_MAP`: the projections commute with a pair map. -/
+@[hol "cakeml/misc/miscScript.sml" "o_PAIR_MAP"]
+theorem pairMap_proj {α β γ δ : Type} (f : α → γ) (g : β → δ) :
+    (Prod.fst ∘ Prod.map f g = f ∘ Prod.fst) ∧
+      (Prod.snd ∘ Prod.map f g = g ∘ Prod.snd) := by
+  constructor
+  · funext p
+    rfl
+  · funext p
+    rfl
+
+/-- Original `EVERY_FST_SND`: a predicate on pairs splits over the two
+projections. -/
+@[hol "cakeml/misc/miscScript.sml" "EVERY_FST_SND"]
+theorem all_fst_snd {α β : Type} (P : α → Bool) (Q : β → Bool) (ls : List (α × β)) :
+    (ls.all fun p => P p.1 && Q p.2) = ((ls.map Prod.fst).all P && (ls.map Prod.snd).all Q) := by
+  induction ls with
+  | nil => simp
+  | cons p rest ih =>
+    rcases p with ⟨a, b⟩
+    simp only [List.all_cons, List.map_cons, ih, Bool.and_assoc, Bool.and_left_comm]
+
+/-- Original `EVERY_ZIP`: a predicate on the first components of a pair list is
+the same as a predicate on the projected list. -/
+@[hol "cakeml/misc/miscScript.sml" "EVERY_ZIP"]
+theorem all_fst {α β : Type} (l : List (α × β)) (f : α → Bool) :
+    (l.all fun p => f p.1) = ((l.map Prod.fst).all f) := by
+  induction l with
+  | nil => simp
+  | cons p rest ih =>
+    rcases p with ⟨x, y⟩
+    simp only [List.all_cons, List.map_cons, ih]
+
+/-- Original `EXISTS_ZIP`: a predicate on the first components of a pair list is
+the same as a predicate on the projected list. -/
+@[hol "cakeml/misc/miscScript.sml" "EXISTS_ZIP"]
+theorem any_fst {α β : Type} (l : List (α × β)) (f : α → Bool) :
+    (l.any fun p => f p.1) = ((l.map Prod.fst).any f) := by
+  induction l with
+  | nil => simp
+  | cons p rest ih =>
+    rcases p with ⟨x, y⟩
+    simp only [List.any_cons, List.map_cons, ih]
+
+/-- Original `TWOxDIV2`: doubling then halving is the identity. -/
+@[hol "cakeml/misc/miscScript.sml" "TWOxDIV2"]
+theorem two_mul_div_two (x : Nat) : 2 * x / 2 = x := Nat.mul_div_cancel_left x (by decide)
+
 end Flapjack

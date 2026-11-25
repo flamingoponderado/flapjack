@@ -10672,6 +10672,8 @@ run_probe misc_typed_probeScript.sml misc_typed_probe.out \
   MAP_FST_I_PAIR_MAP_typed FLAT_MAP_SING_typed FLAT_MAP_NIL_typed \
   ZIP_MAP_FST_SND_EQ_typed MAP_EQ_ID_typed SUM_REPLICATE_typed \
   SUM_MAP_LENGTH_REPLICATE_typed EL_CONS_IF_typed EVERY_LAST_typed \
+  revdroprev_typed o_PAIR_MAP_typed EVERY_FST_SND_typed EVERY_ZIP_typed \
+  EXISTS_ZIP_typed TWOxDIV2_typed \
   "$cake_dir/misc/miscScript.sml" \
   "$cake_dir/misc"
 

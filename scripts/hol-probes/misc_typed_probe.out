@@ -91,3 +91,9 @@ SUM_REPLICATE_typed=∀(n :num) (m :num). (SUM (REPLICATE n m) :num) = n * m
 SUM_MAP_LENGTH_REPLICATE_typed=∀(n :num) (ls :α list). (SUM (MAP (LENGTH :α list -> num) (REPLICATE n ls)) :num) = n * LENGTH ls
 EL_CONS_IF_typed=((x :α)::(xs :α list))❲(n :num)❳ = if n = (0 :num) then x else xs❲PRE n❳
 EVERY_LAST_typed=∀(P :α -> bool) (l :α list). l ≠ ([] :α list) ∧ EVERY P l ⇒ P (LAST l)
+revdroprev_typed=∀(l :α list) (n :num). n ≤ LENGTH l ⇒ REVERSE (DROP n (REVERSE l)) = TAKE (LENGTH l − n) l
+o_PAIR_MAP_typed=(FST :γ # δ -> γ) ∘ ((f :α -> γ) ## (g :β -> δ)) = f ∘ (FST :α # β -> α) ∧ (SND :γ # δ -> δ) ∘ (f ## g) = g ∘ (SND :α # β -> β)
+EVERY_FST_SND_typed=EVERY (λ((a :α),(b :β)). (P :α -> bool) a ∧ (Q :β -> bool) b) (ls :(α # β) list) ⇔ EVERY P (MAP (FST :α # β -> α) ls) ∧ EVERY Q (MAP (SND :α # β -> β) ls)
+EVERY_ZIP_typed=∀(l :(α # β) list) (f :α -> bool). EVERY (λ((x :α),(y :β)). f x) l ⇔ EVERY f (MAP (FST :α # β -> α) l)
+EXISTS_ZIP_typed=∀(l :(α # β) list) (f :α -> bool). EXISTS (λ((x :α),(y :β)). f x) l ⇔ EXISTS f (MAP (FST :α # β -> α) l)
+TWOxDIV2_typed=(2 :num) * (x :num) DIV (2 :num) = x
