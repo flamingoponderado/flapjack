@@ -1,0 +1,6 @@
+heap_lookup_EXTEND_typed=∀(xs :(α, β) heap_element list) (n :num) (ys :(α, β) heap_element list) (x :(α, β) heap_element). heap_lookup n xs = SOME x ⇒ heap_lookup n (xs ++ ys) = SOME x
+LESS_IMP_heap_lookup_typed=∀(xs :(α, β) heap_element list) (j :num) (ys :(α, β) heap_element list). j < heap_length xs ⇒ heap_lookup j (xs ++ ys) = heap_lookup j xs
+heap_lookup_IMP_MEM_typed=∀(x :(α, β) heap_element list) (n :num) (y :(α, β) heap_element). heap_lookup n x = SOME y ⇒ MEM y x
+heap_lookup_LENGTH_typed=∀(xs :(α, β) heap_element list) (x :(α, β) heap_element) (ys :(α, β) heap_element list) (l :num). heap_length xs = l ⇒ heap_lookup l (xs ++ x::ys) = SOME x
+IMP_reachable_addresses_typed=∀(i :num) (ptr :num) (u :α) (xs :α heap_address list) (l :num) (d :β). reachable_addresses (roots0 :γ heap_address list) (heap0 :(α, β) heap_element list) i ∧ MEM (Pointer ptr u) xs ∧ heap_lookup i heap0 = SOME (DataElement xs l d) ⇒ reachable_addresses roots0 heap0 ptr
+gc_forward_ptr_ok_typed=∀(heap :(α, β) heap_element list) (n :num) (a :num) (d :α) (c :bool) (x :(α, β) heap_element list). gc_forward_ptr n heap a d c = (x,T) ⇒ c

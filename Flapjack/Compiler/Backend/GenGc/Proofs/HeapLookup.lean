@@ -2,6 +2,8 @@ module
 
 public import Flapjack.Compiler.Backend.GcShared
 public import Flapjack.Compiler.Backend.GcShared.HeapMap
+public import Flapjack.Compiler.Backend.GcShared.Reachability
+public import Flapjack.Compiler.Backend.GcShared.Reachability
 
 @[expose] public section
 
@@ -42,5 +44,81 @@ theorem heapLookup_imp_heapAddresses {α β : Type} (xs : List (HeapElement α �
   obtain ⟨before, after, rfl, rfl⟩ := heapLookup_split xs n x found
   rw [heapAddresses_append]
   simp [heapAddresses]
+
+/-- Original gen_gcScript `heap_lookup_EXTEND`: the same statement as the
+    gc_shared rule, carried under the gen_gc HOL name. -/
+@[hol "cakeml/compiler/backend/gc/gen_gcScript.sml" "heap_lookup_EXTEND"]
+theorem heapLookup_extend' {α β : Type} (xs : List (HeapElement α β)) (n : Nat)
+    (ys : List (HeapElement α β)) (x : HeapElement α β) (found : heapLookup n xs = some x) :
+    heapLookup n (xs ++ ys) = some x := by
+  have under : n < heapLength xs := heapLookup_less xs n x found
+  rw [heapLookup_append]
+  simp [under, found]
+
+/-- Original `LESS_IMP_heap_lookup`: a lookup below the prefix length stays in
+    the prefix. -/
+@[hol "cakeml/compiler/backend/gc/gen_gcScript.sml" "LESS_IMP_heap_lookup"]
+theorem heapLookup_less_append {α β : Type} (xs : List (HeapElement α β)) (j : Nat)
+    (ys : List (HeapElement α β)) (under : j < heapLength xs) :
+    heapLookup j (xs ++ ys) = heapLookup j xs := by
+  rw [heapLookup_append]
+  simp [under]
+
+/-- Original `heap_lookup_IMP_MEM`: a successful lookup returns a member. -/
+@[hol "cakeml/compiler/backend/gc/gen_gcScript.sml" "heap_lookup_IMP_MEM"]
+theorem heapLookup_mem {α β : Type} (xs : List (HeapElement α β)) (n : Nat)
+    (y : HeapElement α β) (found : heapLookup n xs = some y) : y ∈ xs := by
+  obtain ⟨before, after, rfl, _⟩ := heapLookup_split xs n y found
+  simp
+
+/-- Original `heap_lookup_LENGTH`: the boundary after a prefix is its next
+    element. -/
+@[hol "cakeml/compiler/backend/gc/gen_gcScript.sml" "heap_lookup_LENGTH"]
+theorem heapLookup_length_append {α β : Type} (xs : List (HeapElement α β))
+    (x : HeapElement α β) (ys : List (HeapElement α β)) (l : Nat)
+    (same : heapLength xs = l) : heapLookup l (xs ++ x :: ys) = some x := by
+  subst l
+  rw [heapLookup_append]
+  simp only [Nat.lt_irrefl, if_false, Nat.sub_self]
+  simp [heapLookup]
+
+/-- Original `IMP_reachable_addresses`: a pointer stored in a reachable data
+    element is itself reachable. -/
+@[hol "cakeml/compiler/backend/gc/gen_gcScript.sml" "IMP_reachable_addresses"]
+theorem impReachableAddresses {α β γ : Type} (roots0 : List (HeapAddress α))
+    (heap0 : List (HeapElement β γ)) (i ptr : Nat) (u : β) (xs : List (HeapAddress β))
+    (l : Nat) (d : γ) (reach : reachableAddresses roots0 heap0 i)
+    (mem : HeapAddress.pointer ptr u ∈ xs)
+    (found : heapLookup i heap0 = some (HeapElement.dataElement xs l d)) :
+    reachableAddresses roots0 heap0 ptr := by
+  obtain ⟨value, source, root, path⟩ := reach
+  exact ⟨value, source, root,
+    Relation.ReflTransGen.trans path (Relation.ReflTransGen.single ⟨xs, l, d, u, found, mem⟩)⟩
+
+/-- Original `gc_forward_ptr_ok`: a successful forwarding-pointer write can only
+    happen when the incoming status is true. -/
+@[hol "cakeml/compiler/backend/gc/gen_gcScript.sml" "gc_forward_ptr_ok"]
+theorem gcForwardPtr_ok {α β : Type} (heap : List (HeapElement α β)) (n : Nat)
+    (a : Nat) (d : α) (c : Bool) (x : List (HeapElement α β)) :
+    gcForwardPtr n heap a d c = (x, true) → c = true := by
+  induction heap generalizing n x with
+  | nil =>
+      intro h
+      simp [gcForwardPtr] at h
+  | cons head tail ih =>
+      intro h
+      simp only [gcForwardPtr] at h
+      split at h
+      · have both := (Prod.mk.inj h).2
+        rw [Bool.and_eq_true] at both
+        exact both.2
+      · split at h
+        · exact absurd (Prod.mk.inj h).2 (by simp)
+        · cases hrec : gcForwardPtr (n - elLength head) tail a d c with
+          | mk ys ok =>
+              rw [hrec] at h
+              have flag : ok = true := (Prod.mk.inj h).2
+              subst ok
+              exact ih (n - elLength head) ys hrec
 
 end Flapjack.Compiler.Backend.GenGc
