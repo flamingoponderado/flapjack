@@ -280,4 +280,33 @@ theorem addTenvE_bvl (n : Nat) (bindings : List (MlString × SemanticT)) (localE
     rcases entry with ⟨x, t⟩
     simp only [bindVarList, addTenvE, List.map_cons, nsBindList, List.foldr_cons, ih]
 
+/-- A single declaration types exactly as the declaration judgment itself. -/
+@[simp, hol "cakeml/semantics/proofs/typeSysPropsScript.sml" "type_ds_sing"]
+theorem typeDsSing (extra : Bool) (tenv : TypeEnv) (d : Dec) (ids : TypeIds) (r : TypeEnv) :
+    TypeDs extra tenv [d] ids r ↔ TypeD extra tenv d ids r := by
+  have unionEmpty : ∀ ids : TypeIds, unionTypeIds ids (fun _ => False) = ids := by
+    intro ids
+    funext n
+    exact propext ⟨fun h => h.elim id False.elim, fun h => Or.inl h⟩
+  have extendEmpty : ∀ env : TypeEnv, extendDecTenv ⟨nsEmpty, nsEmpty, nsEmpty⟩ env = env := by
+    intro env
+    simp [extendDecTenv, nsAppend_nsEmpty]
+  have disjointEmpty : ∀ ids : TypeIds, disjointTypeIds ids (fun _ => False) := by
+    intro ids id h hb
+    exact hb
+  constructor
+  · intro typed
+    cases typed
+    rename_i env₁ env₂ ids₁ ids₂ disjoint head tail
+    cases tail
+    rw [unionEmpty, extendEmpty]
+    exact head
+  · intro typed
+    have nilTail : TypeDs extra (extendDecTenv r tenv) [] (fun _ => False)
+        ⟨nsEmpty, nsEmpty, nsEmpty⟩ := TypeDs.nil _ _
+    have built := TypeDs.cons extra tenv d [] r ⟨nsEmpty, nsEmpty, nsEmpty⟩ ids (fun _ => False)
+      typed nilTail (disjointEmpty ids)
+    rw [unionEmpty, extendEmpty] at built
+    exact built
+
 end Flapjack.TypeSysProps

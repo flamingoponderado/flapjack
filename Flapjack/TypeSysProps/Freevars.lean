@@ -316,6 +316,84 @@ theorem nil_deBruijnSubst (skip : Nat) (tvs : List SemanticT) :
     obtain ⟨h1, h2⟩ := h
     rw [ih1 h1, ih2 h2]
 
+/-- A list of types under a well-formed substitution preserves the declared
+free-variable bound. -/
+@[hol "cakeml/semantics/proofs/typeSysPropsScript.sml" "check_freevars_subst_list"]
+theorem checkFreevarsSubstList (dbmax : Nat) (tvs tvs' : List MlString) (ts ts' : List SemanticT) :
+    tvs.length = ts.length ∧ ts'.all (checkFreevars dbmax tvs) = true ∧
+      ts.all (checkFreevars dbmax tvs') = true →
+      (ts'.map (typeSubst (Flapjack.HolFiniteMapExact.alistToFmap (tvs.zip ts)))).all
+        (checkFreevars dbmax tvs') = true := by
+  intro h
+  induction ts' with
+  | nil => simp
+  | cons t rest ih =>
+    simp only [List.all_cons, List.map_cons, Bool.and_eq_true] at h ⊢
+    obtain ⟨hlen, rest1, hvals⟩ := h
+    obtain ⟨hhead, hrest⟩ := rest1
+    exact ⟨checkFreevarsSubstSingle dbmax tvs t tvs' ts ⟨hlen, hhead, hvals⟩,
+      ih ⟨hlen, hrest, hvals⟩⟩
+
+/-- A well-formed de Bruijn substitution preserves the declared free-variable
+bound. -/
+@[hol "cakeml/semantics/proofs/typeSysPropsScript.sml" "deBruijn_subst_freevars"]
+theorem deBruijn_subst_freevars (skip : Nat) (targs : List SemanticT) (t : SemanticT)
+    (tvs : Nat) :
+    skip = 0 ∧ targs.all (checkFreevars tvs []) = true ∧
+      checkFreevars targs.length [] t = true →
+      checkFreevars tvs [] (deBruijnSubst skip targs t) = true := by
+  rintro ⟨rfl, hall, hbound⟩
+  have substList_eq_map : ∀ ts : List SemanticT,
+      deBruijnSubstList 0 targs ts = ts.map (deBruijnSubst 0 targs) := by
+    intro ts
+    induction ts with
+    | nil => simp [deBruijnSubstList]
+    | cons u us ih => simp only [deBruijnSubstList, List.map_cons, ih]
+  have listEqAll : ∀ (dbmax : Nat) (ts : List SemanticT),
+      checkFreevarsList dbmax [] ts = ts.all (checkFreevars dbmax []) := by
+    intro dbmax ts
+    induction ts with
+    | nil => simp [checkFreevarsList]
+    | cons u us ih => simp only [checkFreevarsList, List.all_cons, ih]
+  have pointwise : ∀ (u : SemanticT), checkFreevars targs.length [] u = true →
+      checkFreevars tvs [] (deBruijnSubst 0 targs u) = true := by
+    refine deBruijnSubst.induct 0 targs
+      (fun u => checkFreevars targs.length [] u = true →
+        checkFreevars tvs [] (deBruijnSubst 0 targs u) = true)
+      (fun us => checkFreevarsList targs.length [] us = true →
+        (us.map (deBruijnSubst 0 targs)).all (checkFreevars tvs []) = true) ?_ ?_ ?_ ?_ ?_ ?_ ?_
+    · intro tv checked
+      exact absurd checked (by simp [checkFreevars])
+    · intro m range checked
+      have bound : m < targs.length := by simpa [checkFreevars] using checked
+      have inside : 0 ≤ m ∧ m < targs.length + 0 := by omega
+      simp only [deBruijnSubst, dif_pos inside]
+      exact (List.all_eq_true.mp hall) targs[m] (List.getElem_mem bound)
+    · intro m range lower checked
+      have bound : m < targs.length := by simpa [checkFreevars] using checked
+      exfalso
+      omega
+    · intro m range lower checked
+      exfalso
+      omega
+    · intro us id ih checked
+      have inner : checkFreevarsList targs.length [] us = true := by
+        simpa [checkFreevars] using checked
+      simp only [deBruijnSubst, checkFreevars]
+      rw [substList_eq_map, listEqAll]
+      exact ih inner
+    · intro checked
+      simp
+    · intro u us ih1 ih2 checked
+      rw [listEqAll] at checked
+      simp only [List.all_cons, Bool.and_eq_true] at checked
+      have tailChecked : checkFreevarsList targs.length [] us = true := by
+        rw [listEqAll]
+        exact checked.2
+      simp only [List.map_cons, List.all_cons, Bool.and_eq_true]
+      exact ⟨ih1 checked.1, ih2 tailChecked⟩
+  exact pointwise t hbound
+
 /-- Incrementing and then substituting preserves the stated free-variable
 bound. -/
 @[hol "cakeml/semantics/proofs/typeSysPropsScript.sml" "check_freevars_subst_inc"]
