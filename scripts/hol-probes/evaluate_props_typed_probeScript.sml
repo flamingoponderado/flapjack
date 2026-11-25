@@ -85,3 +85,5 @@ val _ = emit "evaluate_decs_clock_determ_typed" "evaluate_decs_clock_determ";
 val _ = emit "list_result_eq_Rval_typed" "list_result_eq_Rval";
 val _ = emit "list_result_eq_Rerr_typed" "list_result_eq_Rerr";
 val _ = emit "list_result_inj_typed" "list_result_inj";
+val _ = emit "dest_IO_event_def_typed" "dest_IO_event_def";
+val _ = emit "evaluate_decs_nil_typed" "evaluate_decs_nil";

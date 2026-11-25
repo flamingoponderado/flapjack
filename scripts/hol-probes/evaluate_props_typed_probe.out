@@ -52,3 +52,5 @@ evaluate_decs_clock_determ_typed=∀(s :α state) (e :v sem_env) (p :dec list) (
 list_result_eq_Rval_typed=list_result (r :(α, β) result) = (Rval (r' :α list) :(α list, β) result) ⇔ ∃(v :α). r' = [v] ∧ r = (Rval v :(α, β) result)
 list_result_eq_Rerr_typed=list_result (r :(α, β) result) = (Rerr (e :β error_result) :(α list, β) result) ⇔ r = (Rerr e :(α, β) result)
 list_result_inj_typed=list_result (x :(α, β) result) = list_result (y :(α, β) result) ⇒ x = y
+dest_IO_event_def_typed=∀(s :ffiname) (c :word8 list) (b :(word8 # word8) list). dest_IO_event (IO_event s c b) = (s,c,b)
+evaluate_decs_nil_typed=∀(s :'ffi state) (env :v sem_env). evaluate_decs s env ([] :dec list) = (s,(Rval <|v := (nsEmpty :(mlstring, mlstring, v) namespace); c := (nsEmpty :(mlstring, mlstring, num # stamp) namespace)|> :(v sem_env, v) result))

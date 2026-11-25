@@ -10520,6 +10520,7 @@ run_probe evaluate_props_typed_probeScript.sml evaluate_props_typed_probe.out \
   is_clock_io_mono_match_case_safe_typed is_clock_io_mono_match_case_pair_safe_typed is_clock_io_mono_evaluate_typed is_clock_io_mono_evaluate_decs_typed evaluate_add_to_clock_typed evaluate_match_add_to_clock_typed evaluate_decs_add_to_clock_typed evaluate_add_to_clock_io_events_mono_typed \
   evaluate_decs_add_to_clock_io_events_mono_typed evaluate_decs_ffi_mono_clock_typed evaluate_decs_clock_determ_typed \
   list_result_eq_Rval_typed list_result_eq_Rerr_typed list_result_inj_typed \
+  dest_IO_event_def_typed evaluate_decs_nil_typed \
   "$cake_dir/semantics/proofs/evaluatePropsScript.sml" \
   "$cake_dir/semantics/proofs"
 

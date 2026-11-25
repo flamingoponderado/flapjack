@@ -2,6 +2,7 @@ module
 
 public import Flapjack.FfiHOL
 public import Flapjack.EvaluateHOL
+public import Flapjack.EvaluateHOL.Definition
 public import Mathlib.Logic.Relation
 
 @[expose] public section
@@ -121,5 +122,22 @@ theorem listResult_inj {α β : Type} (x y : Result α β) (h : listResult x = l
     cases y with
     | val w => simp [listResult] at h
     | err e' => simpa [listResult] using h
+
+/-- Original `dest_IO_event_def`: the three components of an FFI event. -/
+@[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "dest_IO_event_def"]
+def destIOEvent : HolIoEvent → HolFfiName × List (BitVec 8) × List (BitVec 8 × BitVec 8)
+  | ⟨s, c, b⟩ => (s, c, b)
+
+/-- The empty source environment: both namespaces empty. -/
+abbrev emptySemEnv : SemEnv Value :=
+  { v := NamespaceHOL.nsEmpty, c := NamespaceHOL.nsEmpty }
+
+/-- Original `evaluate_decs_nil`: evaluating no declarations returns the
+incoming state with the empty environment. -/
+@[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "evaluate_decs_nil"]
+theorem evaluateDecs_nil {σ : Type} (st : State σ) (env : SemEnv Value) :
+    evaluateDecs st env [] = (st, Result.val emptySemEnv) := by
+  rw [evaluateDecs]
+  rfl
 
 end Flapjack
