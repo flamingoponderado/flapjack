@@ -334,4 +334,94 @@ def encodeThunkMode : ThunkMode → List HolChar
   | .evaluated => (ofString "Evaluated").explode
   | .notEvaluated => (ofString "NotEvaluated").explode
 
+/-- HOL `OPTION_APPLY` (printed `<*>`): apply an optional function. -/
+def optionApply {α β : Type} (f : Option (α → β)) (x : Option α) : Option β :=
+  f.bind fun g => x.map g
+
+/-- Original `OPTION_APPLY_MAP3`: three applications succeed componentwise. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "OPTION_APPLY_MAP3"]
+theorem optionApply_map3 {α β γ δ : Type} (f : δ → γ → β → α) (x : Option δ)
+    (y : Option γ) (z : Option β) (r : α) :
+    optionApply (optionApply (x.map f) y) z = some r ↔
+      ∃ a b c, x = some a ∧ y = some b ∧ z = some c ∧ f a b c = r := by
+  cases x with
+  | none => simp [optionApply]
+  | some a =>
+    cases y with
+    | none => simp [optionApply]
+    | some b =>
+      cases z with
+      | none => simp [optionApply]
+      | some c => simp [optionApply]
+
+/-- Original `OPTION_APPLY_MAP4`: four applications succeed componentwise. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "OPTION_APPLY_MAP4"]
+theorem optionApply_map4 {α β γ δ ε : Type} (f : ε → δ → γ → β → α) (x : Option ε)
+    (y : Option δ) (z : Option γ) (t : Option β) (r : α) :
+    optionApply (optionApply (optionApply (x.map f) y) z) t = some r ↔
+      ∃ a b c d, x = some a ∧ y = some b ∧ z = some c ∧ t = some d ∧ f a b c d = r := by
+  cases x with
+  | none => simp [optionApply]
+  | some a =>
+    cases y with
+    | none => simp [optionApply]
+    | some b =>
+      cases z with
+      | none => simp [optionApply]
+      | some c =>
+        cases t with
+        | none => simp [optionApply]
+        | some d => simp [optionApply]
+
+/-- Original `monad_bind_FAIL`: binding into failure is failure. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "monad_bind_FAIL"]
+theorem option_bind_fail {α β : Type} (m1 : Option β) :
+    m1.bind (fun _ => (none : Option α)) = none := by
+  cases m1 with
+  | none => rfl
+  | some _ => rfl
+
+/-- Original `monad_unitbind_CONG`: unit-binding respects both arguments. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "monad_unitbind_CONG"]
+theorem option_unitbind_cong {α : Type} (m11 m12 : Option Unit) (m21 m22 : Option α)
+    (h1 : m11 = m12) (h2 : m12 = some () → m21 = m22) :
+    m11.bind (fun _ => m21) = m12.bind (fun _ => m22) := by
+  rw [h1]
+  cases m12 with
+  | none => rfl
+  | some u =>
+    cases u
+    have h21 : m21 = m22 := h2 rfl
+    rw [h21]
+
+/-- Original `strip_sxcons_FAIL_sexplist_FAIL`: a failed strip means a failed
+list decode. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "strip_sxcons_FAIL_sexplist_FAIL"]
+theorem stripSxCons_fail_decodeList_fail {α : Type} (s : Sexp) (p : Sexp → Option α)
+    (h : stripSxCons s = none) : decodeList p s = none := by
+  cases hd : decodeList p s with
+  | none => rfl
+  | some l =>
+    obtain ⟨ys, rfl, _⟩ := (decodeList_some p s l).mp hd
+    rw [stripSxCons_listsexp] at h
+    exact absurd h (by simp)
+
+/-- Original `sexppair_CONG`: pair decoding respects pointwise-equal decoders. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "sexppair_CONG"]
+theorem decodePair_cong {α β : Type} (s1 s2 : Sexp) (p1 p1' : Sexp → Option α)
+    (p2 p2' : Sexp → Option β)
+    (h12 : s1 = s2)
+    (h1 : ∀ s, (∃ s', s2 = .cons s s') → p1 s = p1' s)
+    (h2 : ∀ s, (∃ s', s2 = .cons s' s) → p2 s = p2' s) :
+    decodePair p1 p2 s1 = decodePair p1' p2' s2 := by
+  rw [h12]
+  cases s2 with
+  | cons a b =>
+    have ha : p1 a = p1' a := h1 a ⟨b, rfl⟩
+    have hb : p2 b = p2' b := h2 b ⟨a, rfl⟩
+    simp [decodePair, ha, hb]
+  | sym _ => simp [decodePair]
+  | num _ => simp [decodePair]
+  | str _ => simp [decodePair]
+
 end Flapjack.CakeParser.FromSexp

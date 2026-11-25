@@ -133,4 +133,10 @@ optsexp_valid_typed=∀(x :sexp option). (∀(y :sexp). x = SOME y ⇒ valid_sex
 locnsexp_valid_typed=∀(p :locn). valid_sexp (locnsexp p)
 locssexp_valid_typed=∀(l :locs). valid_sexp (locssexp l)
 valid_sexp_prim_typesexp_typed=∀(t :prim_type). valid_sexp (prim_typesexp t)
+OPTION_APPLY_MAP3_typed=((((OPTION_MAP (f :δ -> γ -> β -> α) (x :δ option) <*> (y :γ option)) :(β -> α) option) <*> (z :β option)) :α option) = SOME (r :α) ⇔ ∃(a :δ) (b :γ) (c :β). x = SOME a ∧ y = SOME b ∧ z = SOME c ∧ f a b c = r
+OPTION_APPLY_MAP4_typed=((((((OPTION_MAP (f :ε -> δ -> γ -> β -> α) (x :ε option) <*> (y :δ option)) :(γ -> β -> α) option) <*> (z :γ option)) :(β -> α) option) <*> (t :β option)) :α option) = SOME (r :α) ⇔ ∃(a :ε) (b :δ) (c :γ) (d :β). x = SOME a ∧ y = SOME b ∧ z = SOME c ∧ t = SOME d ∧ f a b c d = r
+monad_bind_FAIL_typed=do (x :β) <- (m1 :β option); (NONE :α option) od = (NONE :α option)
+monad_unitbind_CONG_typed=∀(m11 :unit option) (m21 :α option) (m12 :unit option) (m22 :α option). m11 = m12 ∧ (m12 = SOME () ⇒ m21 = m22) ⇒ do m11; m21 od = do m12; m22 od
+strip_sxcons_FAIL_sexplist_FAIL_typed=∀(s :sexp). strip_sxcons s = (NONE :sexp list option) ⇒ sexplist (p :sexp -> α option) s = (NONE :α list option)
+sexppair_CONG_typed=∀(s1 :sexp) (s2 :sexp) (p1 :sexp -> α option) (p1' :sexp -> α option) (p2 :sexp -> β option) (p2' :sexp -> β option). s1 = s2 ∧ (∀(s :sexp). (∃(s' :sexp). s2 = ⟪s • s'⟫) ⇒ p1 s = p1' s) ∧ (∀(s :sexp). (∃(s' :sexp). s2 = ⟪s' • s⟫) ⇒ p2 s = p2' s) ⇒ sexppair p1 p2 s1 = sexppair p1' p2' s2
 typesexp_sexptype_typed=∀(s :sexp) (t :ast_t). (sexptype s = SOME t ⇔ typesexp t = s) ∧ (SOME t = sexptype s ⇔ typesexp t = s)
