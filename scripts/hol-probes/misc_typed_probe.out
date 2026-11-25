@@ -85,3 +85,9 @@ option_case_NONE_F_typed=(case (X :α option) of (NONE :α option) => F | SOME x
 MAP_FST_I_PAIR_MAP_typed=∀(xs :(α # β) list). MAP (FST :α # γ -> α) (MAP ((I :α -> α) ## (f :β -> γ)) xs) = MAP (FST :α # β -> α) xs
 FLAT_MAP_SING_typed=∀(ls :α list). FLAT (MAP (λ(x :α). [(f :α -> β) x]) ls) = MAP f ls
 FLAT_MAP_NIL_typed=FLAT (MAP (λ(x :β). ([] :α list)) (ls :β list)) = ([] :α list)
+ZIP_MAP_FST_SND_EQ_typed=∀(ls :(α # β) list). ZIP (MAP (FST :α # β -> α) ls,MAP (SND :α # β -> β) ls) = ls
+MAP_EQ_ID_typed=∀(f :α -> α) (ls :α list). MAP f ls = ls ⇔ ∀(x :α). MEM x ls ⇒ f x = x
+SUM_REPLICATE_typed=∀(n :num) (m :num). (SUM (REPLICATE n m) :num) = n * m
+SUM_MAP_LENGTH_REPLICATE_typed=∀(n :num) (ls :α list). (SUM (MAP (LENGTH :α list -> num) (REPLICATE n ls)) :num) = n * LENGTH ls
+EL_CONS_IF_typed=((x :α)::(xs :α list))❲(n :num)❳ = if n = (0 :num) then x else xs❲PRE n❳
+EVERY_LAST_typed=∀(P :α -> bool) (l :α list). l ≠ ([] :α list) ∧ EVERY P l ⇒ P (LAST l)

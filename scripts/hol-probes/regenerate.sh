@@ -10670,6 +10670,8 @@ run_probe misc_typed_probeScript.sml misc_typed_probe.out \
   SUBSET_IMP_typed DROP_NIL_typed times_add_o_typed \
   FST_5tup_typed SND_FST_pair_typed plus_compose_typed option_case_NONE_F_typed \
   MAP_FST_I_PAIR_MAP_typed FLAT_MAP_SING_typed FLAT_MAP_NIL_typed \
+  ZIP_MAP_FST_SND_EQ_typed MAP_EQ_ID_typed SUM_REPLICATE_typed \
+  SUM_MAP_LENGTH_REPLICATE_typed EL_CONS_IF_typed EVERY_LAST_typed \
   "$cake_dir/misc/miscScript.sml" \
   "$cake_dir/misc"
 

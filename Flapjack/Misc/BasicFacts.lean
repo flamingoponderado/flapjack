@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.HolRef
+public import Flapjack.Misc.ListEl
 public import Mathlib.Data.Set.Basic
 
 @[expose] public section
@@ -163,5 +164,78 @@ theorem pairMap_eq_eq {α β γ δ : Type} (f : γ → α) (g : δ → β) (x : 
     · rintro ⟨x0', x1', hpair, h⟩
       obtain ⟨rfl, rfl⟩ := Prod.mk.inj hpair
       exact h
+
+/-- Original `ZIP_MAP_FST_SND_EQ`: zipping the two projections rebuilds the list. -/
+@[hol "cakeml/misc/miscScript.sml" "ZIP_MAP_FST_SND_EQ"]
+theorem zip_map_fst_snd_eq {α β : Type} (ls : List (α × β)) :
+    (ls.map Prod.fst).zip (ls.map Prod.snd) = ls := by
+  induction ls with
+  | nil => simp
+  | cons p rest ih =>
+    rcases p with ⟨x, y⟩
+    simp only [List.map_cons, List.zip_cons_cons, ih]
+
+/-- Original `MAP_EQ_ID`: a map is the identity exactly on the list elements. -/
+@[hol "cakeml/misc/miscScript.sml" "MAP_EQ_ID"]
+theorem map_eq_id {α : Type} (f : α → α) (ls : List α) :
+    ls.map f = ls ↔ ∀ x ∈ ls, f x = x := by
+  induction ls with
+  | nil => simp
+  | cons x rest ih =>
+    simp only [List.map_cons, List.cons.injEq, List.mem_cons]
+    constructor
+    · rintro ⟨hx, hrest⟩ y (rfl | hy)
+      · exact hx
+      · exact ih.mp hrest y hy
+    · intro h
+      exact ⟨h x (Or.inl rfl), ih.mpr (fun y hy => h y (Or.inr hy))⟩
+
+/-- Original `SUM_REPLICATE`: replicating a value multiplies it by the count. -/
+@[hol "cakeml/misc/miscScript.sml" "SUM_REPLICATE"]
+theorem sum_replicate (n m : Nat) : (List.replicate n m).sum = n * m := by
+  induction n with
+  | zero => simp
+  | succ k ih =>
+    simp only [List.replicate_succ, List.sum_cons, ih, Nat.succ_mul]
+    omega
+
+/-- Original `SUM_MAP_LENGTH_REPLICATE`: replicated lists sum their lengths. -/
+@[hol "cakeml/misc/miscScript.sml" "SUM_MAP_LENGTH_REPLICATE"]
+theorem sum_map_length_replicate {α : Type} (n : Nat) (ls : List α) :
+    ((List.replicate n ls).map List.length).sum = n * ls.length := by
+  induction n with
+  | zero => simp
+  | succ k ih =>
+    simp only [List.replicate_succ, List.map_cons, List.sum_cons, ih, Nat.succ_mul]
+    omega
+
+/-- Original `EL_CONS_IF`: indexing a cons splits off the head. -/
+@[hol "cakeml/misc/miscScript.sml" "EL_CONS_IF" (total_function_inhabitants := [α])]
+theorem holEl_cons {α : Type} [Nonempty α] (n : Nat) (x : α) (xs : List α) :
+    holEl n (x :: xs) = if n = 0 then x else holEl (n - 1) xs := by
+  cases n with
+  | zero => simp [holEl, holHd]
+  | succ k =>
+    simp only [Nat.succ_ne_zero, if_false, holEl, List.tail_cons]
+    rw [Nat.succ_sub_one]
+
+/-- Original `EVERY_LAST`: every element satisfies a predicate that the last
+element does too. -/
+@[hol "cakeml/misc/miscScript.sml" "EVERY_LAST" (total_function_inhabitants := [α])]
+theorem every_holLast {α : Type} [Nonempty α] (P : α → Bool) (l : List α) :
+    l ≠ [] ∧ l.all P = true → P (holLast l) = true := by
+  intro h
+  induction l with
+  | nil => exact absurd rfl h.1
+  | cons x rest ih =>
+    cases rest with
+    | nil => simpa [holLast] using h.2
+    | cons y z =>
+      simp only [List.all_cons, Bool.and_eq_true] at h
+      simp only [holLast]
+      have tailAll : (y :: z).all P = true := by
+        simp only [List.all_cons, Bool.and_eq_true]
+        exact h.2.2
+      exact ih ⟨by simp, tailAll⟩
 
 end Flapjack
