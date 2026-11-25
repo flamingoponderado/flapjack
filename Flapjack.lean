@@ -4187,6 +4187,7 @@ import Flapjack.Compiler.Inference.InferEComplete.SubstCheck
 import Flapjack.Compiler.Inference.TypeEDeterm
 import Flapjack.TypeSysProps.TypingLists
 import Flapjack.TypeSysProps.TenvEmpty
+import Flapjack.TypeSysProps.TenvValExp
 import Flapjack.Compiler.Inference.InferProps.DeBruijn.Compose
 import Flapjack.Compiler.Inference.Unify.Walkstar.Empty
 import Flapjack.Compiler.Inference.Unify.Walkstar.Idempotent

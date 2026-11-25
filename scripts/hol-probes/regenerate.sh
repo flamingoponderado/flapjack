@@ -9918,6 +9918,10 @@ run_probe infer_props_tids_probeScript.sml infer_props_tids_probe.out \
 run_probe type_sys_props_typed_probeScript.sml type_sys_props_typed_probe.out \
   tenv_val_ok_nsEmpty_typed tenv_ctor_ok_nsEmpty_typed tenv_abbrev_ok_nsEmpty_typed \
   tenv_ok_empty_typed unchanged_tenv_typed \
+  deBruijn_subst_tenvE_def_typed db_merge_def_typed bind_tvar_rewrites_typed bind_tvar0_typed \
+  tveLookup_subst_none_typed tveLookup_db_merge_none_typed tveLookup_inc_none_typed \
+  bind_var_list_append_typed num_tvs_bind_var_list_typed tveLookup_bvl_typed \
+  num_tvs_db_merge_typed num_tvs_deBruijn_subst_tenvE_typed tenv_val_exp_ok_db_merge_typed \
   "$cake_dir/semantics/proofs/typeSysPropsScript.sml" \
   "$cake_dir/semantics/proofs"
 
