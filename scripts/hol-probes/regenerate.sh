@@ -9596,6 +9596,13 @@ run_probe riscv_backend_config_probeScript.sml riscv_backend_config_probe.out \
   riscv_backend_config_def_statement riscv_backend_config_def_typed riscv_backend_config_def_hypotheses \
   "$cake_dir/compiler/backend/riscv/riscv_configScript.sml" \
   "$cake_dir/compiler/backend/riscv"
+run_probe compiler_cli_typed_probeScript.sml compiler_cli_typed_probe.out \
+  has_version_flag_def_typed has_help_flag_def_typed has_pancake_flag_def_typed \
+  print_bool_def_typed print_option_def_typed is_error_msg_def_typed \
+  parse_bool_def_typed safe_substring_def_typed get_err_str_def_typed \
+  find_str_def_typed find_strs_def_typed comma_tokens_def_typed \
+  find_bool_def_typed find_next_newline_def_typed get_nth_line_def_typed \
+  "$cake_dir/compiler/compilerScript.sml" "$cake_dir/compiler"
 run_probe pancake_backend_conf_probeScript.sml pancake_backend_conf_probe.out \
   pancake_backend_conf_def_statement pancake_backend_conf_def_typed pancake_backend_conf_def_hypotheses \
   "$cake_dir/compiler/compilerScript.sml" \

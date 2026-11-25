@@ -11178,3 +11178,20 @@ four-argument dispatch, word comparison, string comparison, and byte-array,
 array and block bounds-check equations, and general equality and integer
 ordering, block length, tag-length and tag equality equations. Concrete equality, ordering, tail-call, returning-call,
 and bad-header cases are in `cake_word_array_probe.out`.
+
+# Compiler driver helpers
+
+`compiler_cli_typed_probeScript.sml` captures the self-contained `cakeml`
+driver helpers of `compilerScript.sml` (flag tests, mlstring printing and
+parsing, and the line utilities) with `show_types` on. The configuration
+parsers are not captured because they need the full `config` record.
+
+The probe needs `compilerTheory` built in the private probe checkout. Unlike
+the rest of the tree it is not built by the default targets, so build it once:
+
+```
+cd /path/to/cakeml-probe-build/compiler && \
+  CAKEMLDIR=/path/to/cakeml-probe-build Holmake compilerTheory.uo
+```
+
+Selector: `HOL_PROBE_ONLY=compiler_cli_typed_probeScript.sml`.
