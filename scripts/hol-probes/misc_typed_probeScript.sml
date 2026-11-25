@@ -168,3 +168,5 @@ val _ = emit "DROP_IMP_EL_typed" "DROP_IMP_EL";
 val _ = emit "HD_LUPDATE_typed" "HD_LUPDATE";
 val _ = emit "zlookup_def_typed" "zlookup_def";
 val _ = emit "tlookup_def_typed" "tlookup_def";
+val _ = emit "steps_def_typed" "steps_def";
+val _ = emit "LAST_MAP_SND_steps_FOLDL_typed" "LAST_MAP_SND_steps_FOLDL";

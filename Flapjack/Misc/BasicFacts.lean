@@ -644,4 +644,25 @@ theorem holHd_lupdate {α : Type} [Nonempty α] (l : List α) (p : Nat) (x : α)
     | succ k =>
       simp only [List.set_cons_succ, holHd, Nat.succ_ne_zero, if_false]
 
+/-- Original `steps_def`: thread `f` through the inputs, keeping each step. -/
+@[hol "cakeml/misc/miscScript.sml" "steps_def"]
+def steps {α β : Type} (f : α → β → α) (x : α) : List β → List (β × α)
+  | [] => []
+  | j :: js => (j, f x j) :: steps f (f x j) js
+
+/-- Original `LAST_MAP_SND_steps_FOLDL`: the last recorded state is the fold. -/
+@[hol "cakeml/misc/miscScript.sml" "LAST_MAP_SND_steps_FOLDL"
+  (total_function_inhabitants := [α])]
+theorem holLast_map_snd_steps {α β : Type} [Nonempty α] :
+    ∀ (f : α → β → α) (x : α) (ls : List β),
+      holLast (x :: (steps f x ls).map Prod.snd) = ls.foldl f x := by
+  intro f x ls
+  induction ls generalizing x with
+  | nil => simp [steps, holLast]
+  | cons j js ih =>
+    simp only [steps, List.map_cons, List.foldl_cons]
+    rw [holLast_cons]
+    simp only [List.cons_ne_nil, if_false]
+    exact ih (f x j)
+
 end Flapjack

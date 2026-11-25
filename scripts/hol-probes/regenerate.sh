@@ -10689,6 +10689,7 @@ run_probe misc_typed_probeScript.sml misc_typed_probe.out \
   any_el_def_typed option_fold_def_typed steps_rel_def_typed \
   DROP_IMP_EL_typed HD_LUPDATE_typed \
   zlookup_def_typed tlookup_def_typed \
+  steps_def_typed LAST_MAP_SND_steps_FOLDL_typed \
   "$cake_dir/misc/miscScript.sml" \
   "$cake_dir/misc"
 

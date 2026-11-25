@@ -133,3 +133,5 @@ DROP_IMP_EL_typed=∀(xs :α list) (n :num) (h :α) (t :α list). DROP n xs = h:
 HD_LUPDATE_typed=(0 :num) < LENGTH (l :α list) ⇒ HD l❲(p :num) ↦ (x :α)❳ = if p = (0 :num) then x else HD l
 zlookup_def_typed=∀(m :num sptree$num_map) (k :num). zlookup m k = case lookup k m of (NONE :num option) => (0 :num) | SOME k => k
 tlookup_def_typed=∀(m :num sptree$num_map) (k :num). tlookup m k = case lookup k m of (NONE :num option) => k | SOME v => v
+steps_def_typed=(∀(f :β -> α -> β) (x :β). steps f x ([] :α list) = ([] :(α # β) list)) ∧ ∀(f :β -> α -> β) (x :β) (j :α) (js :α list). steps f x (j::js) = (let (y :β) = f x j; (tr :(α # β) list) = steps f y js in (j,y)::tr)
+LAST_MAP_SND_steps_FOLDL_typed=∀(f :α -> β -> α) (x :α) (ls :β list). LAST (x::MAP (SND :β # α -> α) (steps f x ls)) = FOLDL f x ls
