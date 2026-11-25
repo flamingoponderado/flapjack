@@ -445,3 +445,18 @@ val _ = emit_exported "strlen_strcat_typed" "strlen_strcat";
 val _ = emit_exported "explode_toString_typed" "explode_toString";
 val _ = emit_exported "strlen_toString_typed" "strlen_toString";
 val _ = emit_exported "translate_thm_typed" "translate_thm";
+
+(* Task 273: escaping, app_list_ann and empty_ffi. *)
+val _ = dt_label "app_list_ann_typed" "app_list_ann";
+val _ = emit_exported "char_escape_seq_def_typed" "char_escape_seq_def";
+val _ = emit_exported "char_escaped_def_typed" "char_escaped_def";
+val _ = emit_exported "escape_str_def_typed" "escape_str_def";
+val _ = emit_exported "escape_char_def_typed" "escape_char_def";
+val _ = emit_exported "ALL_DISTINCT_MAP_implode_typed" "ALL_DISTINCT_MAP_implode";
+val _ = emit_exported "ALL_DISTINCT_MAP_explode_typed" "ALL_DISTINCT_MAP_explode";
+val _ = emit_exported "sum_sizes_def_typed" "sum_sizes_def";
+val _ = emit_exported "make_app_list_ann_def_typed" "make_app_list_ann_def";
+val _ = emit_exported "shrink_def_typed" "shrink_def";
+val _ = emit_exported "str_app_list_opt_def_typed" "str_app_list_opt_def";
+val _ = emit_exported "concat_sing_typed" "concat_sing";
+val _ = emit_exported "empty_ffi_def_typed" "empty_ffi_def";

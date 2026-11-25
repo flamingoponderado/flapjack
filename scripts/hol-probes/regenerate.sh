@@ -12273,6 +12273,10 @@ run_probe mlstring_char_typed_probeScript.sml mlstring_char_typed_probe.out \
   strcat_o_typed strcat_nil_typed mlstring_common_prefix_typed \
   mlstring_common_suffix_typed concat_append_typed implode_STRCAT_typed \
   strlen_strcat_typed explode_toString_typed strlen_toString_typed translate_thm_typed \
+  app_list_ann_typed char_escape_seq_def_typed char_escaped_def_typed escape_str_def_typed \
+  escape_char_def_typed ALL_DISTINCT_MAP_implode_typed ALL_DISTINCT_MAP_explode_typed \
+  sum_sizes_def_typed make_app_list_ann_def_typed shrink_def_typed \
+  str_app_list_opt_def_typed concat_sing_typed empty_ffi_def_typed \
   "$cake_dir/basis/pure/mlstringScript.sml" \
   "$cake_dir/basis/pure"
 
