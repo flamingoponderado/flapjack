@@ -2,6 +2,7 @@ module
 
 public import Flapjack.NamespaceProps
 public import Flapjack.NamespaceProps.AlistLookup
+public import Flapjack.NamespaceProps.AppendLookup
 public import Mathlib.Data.Set.Basic
 public import Mathlib.Data.Set.Insert
 public import Mathlib.Data.Set.Image
@@ -110,5 +111,57 @@ theorem nsDom_alistToNs {M N V : Type} [DecidableEq M] [DecidableEq N] (l : Alis
   · rintro ⟨p, mem, same⟩
     obtain ⟨v, lookupFound⟩ := exists_lookup_of_mem mem
     exact ⟨v, (nsLookup_alistToNs_some l id v).mpr ⟨p.1, same.symm, lookupFound⟩⟩
+
+/-- A namespace whose module domain is only the empty path appends without
+adding module paths. -/
+@[hol "cakeml/semantics/proofs/namespacePropsScript.sml" "nsDomMod_nsAppend_flat"]
+theorem nsDomMod_nsAppend_flat {M N V : Type} [DecidableEq M]
+    (n1 n2 : Namespace M N V) (flat : nsDomMod n1 = ({[]} : Set (List M))) :
+    nsDomMod (nsAppend n1 n2) = nsDomMod n2 := by
+  funext path
+  apply propext
+  change (∃ v, nsLookupMod (nsAppend n1 n2) path = some v) ↔
+    (∃ v, nsLookupMod n2 path = some v)
+  cases path with
+  | nil => simp [nsLookupMod]
+  | cons mn rest =>
+    have n1None : nsLookupMod n1 [mn] = none := by
+      cases found : nsLookupMod n1 [mn] with
+      | none => rfl
+      | some env =>
+        have member : nsDomMod n1 [mn] := ⟨env, found⟩
+        rw [flat] at member
+        change ([mn] : List M) = [] at member
+        simp at member
+    rw [nsLookupMod_append_cons, n1None]
+
+/-- A namespace whose module domain is only the empty path appends its value
+domain without shadowing. -/
+@[hol "cakeml/semantics/proofs/namespacePropsScript.sml" "nsDom_nsAppend_flat"]
+theorem nsDom_nsAppend_flat {M N V : Type} [DecidableEq M] [DecidableEq N]
+    (n1 n2 : Namespace M N V) (flat : nsDomMod n1 = ({[]} : Set (List M))) :
+    nsDom (nsAppend n1 n2) = (nsDom n1 ∪ nsDom n2 : Set (Ident M N)) := by
+  funext id
+  apply propext
+  change (∃ v, nsLookup (nsAppend n1 n2) id = some v) ↔
+    ((∃ v, nsLookup n1 id = some v) ∨ ∃ v, nsLookup n2 id = some v)
+  constructor
+  · rintro ⟨v, found⟩
+    rcases (nsLookup_nsAppend_some n1 id n2 v).mp found with first | ⟨_, second, _⟩
+    · exact Or.inl ⟨v, first⟩
+    · exact Or.inr ⟨v, second⟩
+  · rintro (⟨v, found⟩ | ⟨v, found⟩)
+    · exact ⟨v, (nsLookup_nsAppend_some n1 id n2 v).mpr (Or.inl found)⟩
+    · cases h : nsLookup n1 id with
+      | some w => exact ⟨w, (nsLookup_nsAppend_some n1 id n2 w).mpr (Or.inl h)⟩
+      | none =>
+        refine ⟨v, (nsLookup_nsAppend_some n1 id n2 v).mpr (Or.inr ⟨h, found, ?_⟩)⟩
+        intro p1 p2 ne same
+        cases modFound : nsLookupMod n1 p1 with
+        | none => rfl
+        | some env =>
+          have member : nsDomMod n1 p1 := ⟨env, modFound⟩
+          rw [flat] at member
+          exact absurd member ne
 
 end Flapjack.NamespaceHOL

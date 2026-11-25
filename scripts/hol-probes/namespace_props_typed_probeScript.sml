@@ -128,3 +128,9 @@ val _ = emit "nsLookupMod_nsAppend_some_typed" "nsLookupMod_nsAppend_some";
 val _ = emit "nsLookupMod_nsAppend_none_typed" "nsLookupMod_nsAppend_none";
 val _ = emit "nsAll_nsAppend_left_typed" "nsAll_nsAppend_left";
 val _ = emit "nsSub_nsAppend2_typed" "nsSub_nsAppend2";
+
+(* Flat domains and folded lifting (task 273). *)
+val _ = emit "nsDomMod_nsAppend_flat_typed" "nsDomMod_nsAppend_flat";
+val _ = emit "nsDom_nsAppend_flat_typed" "nsDom_nsAppend_flat";
+val _ = emit "nsLookup_FOLDR_nsLift_some_typed" "nsLookup_FOLDR_nsLift_some";
+val _ = emit "nsLookupMod_FOLDR_nsLift_none_typed" "nsLookupMod_FOLDR_nsLift_none";
