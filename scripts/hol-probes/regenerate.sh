@@ -12508,7 +12508,9 @@ run_probe word_remove_proof_local_typed_probeScript.sml word_remove_proof_local_
   "$cake_dir/compiler/backend/proofs"
 
 run_probe backend_proof_typed_probeScript.sml backend_proof_typed_probe.out \
-  compile_to_word_conventions2_typed \
+  compile_to_word_conventions2_typed is_64_bits_def_typed add_eval_state_def_typed add_eval_state_ffi_typed \
+  cake_configs_def_typed cake_orac_def_typed state_co_fun_def_typed state_co_eq_comp_typed \
+  opt_eval_config_wf_def_typed is_safe_for_space_def_typed PAIR_MAP_EQ_EQ_typed EVERY_no_mti_IMP_obeys_max_app_typed \
   "$cake_dir/compiler/backend/proofs/backendProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
 

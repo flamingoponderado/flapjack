@@ -428,3 +428,14 @@ fun capture_val_quote label name =
 
 
 val _ = emit_exported "compile_to_word_conventions2_typed" "compile_to_word_conventions2";
+val _ = emit_exported "is_64_bits_def_typed" "is_64_bits_def";
+val _ = emit_exported "add_eval_state_def_typed" "add_eval_state_def";
+val _ = emit_exported "add_eval_state_ffi_typed" "add_eval_state_ffi";
+val _ = emit_exported "cake_configs_def_typed" "cake_configs_def";
+val _ = emit_exported "cake_orac_def_typed" "cake_orac_def";
+val _ = emit_exported "state_co_fun_def_typed" "state_co_fun_def";
+val _ = emit_exported "state_co_eq_comp_typed" "state_co_eq_comp";
+val _ = emit_exported "opt_eval_config_wf_def_typed" "opt_eval_config_wf_def";
+val _ = emit_exported "is_safe_for_space_def_typed" "is_safe_for_space_def";
+val _ = emit_exported "PAIR_MAP_EQ_EQ_typed" "PAIR_MAP_EQ_EQ";
+val _ = emit_exported "EVERY_no_mti_IMP_obeys_max_app_typed" "EVERY_no_mti_IMP_obeys_max_app";

@@ -64,4 +64,11 @@ def backendConfigOk {width : Nat} [NeZero width] (asmConf : AsmConfigExact width
     asmConf.validImm (.inl .sub) (BitVec.ofNat width (n * (width / 8))) = true ∧
     asmConf.validImm (.inl .add) (BitVec.ofNat width (n * (width / 8))) = true)
 
+/-- Original `is_64_bits_def` (`backendProofScript.sml:2709-2711`): the machine
+word is 64 bits wide. HOL uses `dimindex (:'a)` only numerically and has no
+word-valued carrier, so Lean binds the word width explicitly. -/
+@[hol "cakeml/compiler/backend/proofs/backendProofScript.sml" "is_64_bits_def"
+  (word_dimension_as_width := width)]
+def is64Bits (width : Nat) [NeZero width] : Bool := width == 64
+
 end Flapjack.Compiler.Backend.BackendProof

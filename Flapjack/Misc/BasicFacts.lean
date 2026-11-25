@@ -149,4 +149,19 @@ theorem uncurry_rator {α β γ δ : Type} (f : α → β → γ → δ) (x : α
   | mk a b =>
     rfl
 
+/-- Original `PAIR_MAP_EQ_EQ` (`backendProofScript.sml:353`): a mapped pair
+equals `y` exactly when `y` is the image of the pair's two components. -/
+@[hol "cakeml/compiler/backend/proofs/backendProofScript.sml" "PAIR_MAP_EQ_EQ"]
+theorem pairMap_eq_eq {α β γ δ : Type} (f : γ → α) (g : δ → β) (x : γ × δ)
+    (y : α × β) :
+    Prod.map f g x = y ↔ ∃ x0 x1, x = (x0, x1) ∧ (f x0, g x1) = y := by
+  cases x with
+  | mk x0 x1 =>
+    constructor
+    · intro h
+      exact ⟨x0, x1, rfl, h⟩
+    · rintro ⟨x0', x1', hpair, h⟩
+      obtain ⟨rfl, rfl⟩ := Prod.mk.inj hpair
+      exact h
+
 end Flapjack
