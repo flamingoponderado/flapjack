@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.HolRef
+public import Flapjack.Misc.ListEl
 public import Init.Data.List.Nat.TakeDrop
 
 @[expose] public section
@@ -131,5 +132,32 @@ theorem lookupZipExists {α β : Type} [BEq α] [LawfulBEq α]
     have absent := List.lookup_eq_none_iff.mp found entry entryMember
     simp [entryEq] at absent
   | some value => exact ⟨value, rfl⟩
+
+/-- Re-exported `LLOOKUP_EQ_EL` (HOL `list$oEL_EQ_EL`): a successful lookup is
+the in-range element. -/
+@[hol "cakeml/misc/miscScript.sml" "LLOOKUP_EQ_EL" (total_function_inhabitants := [α])]
+theorem llookupEqEl {α : Type} [Nonempty α] (xs : List α) (n : Nat) (y : α) :
+    llookup xs n = some y ↔ n < xs.length ∧ y = holEl n xs := by
+  unfold llookup
+  rw [List.getElem?_eq_some_iff]
+  constructor
+  · rintro ⟨hn, hget⟩
+    refine ⟨hn, ?_⟩
+    rw [holEl_eq_getElem n xs hn]
+    exact hget.symm
+  · rintro ⟨hn, hy⟩
+    refine ⟨hn, ?_⟩
+    rw [holEl_eq_getElem n xs hn] at hy
+    exact hy.symm
+
+/-- Re-exported `LLOOKUP_THM` (HOL `list$oEL_THM`): the lookup is the in-range
+element and `NONE` outside. -/
+@[hol "cakeml/misc/miscScript.sml" "LLOOKUP_THM" (total_function_inhabitants := [α])]
+theorem llookupThm {α : Type} [Nonempty α] (xs : List α) (n : Nat) :
+    llookup xs n = if n < xs.length then some (holEl n xs) else none := by
+  unfold llookup
+  by_cases hn : n < xs.length
+  · rw [if_pos hn, List.getElem?_eq_getElem hn, holEl_eq_getElem n xs hn]
+  · rw [if_neg hn, List.getElem?_eq_none (by omega)]
 
 end Flapjack.Misc

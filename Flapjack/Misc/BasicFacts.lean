@@ -665,4 +665,12 @@ theorem holLast_map_snd_steps {α β : Type} [Nonempty α] :
     simp only [List.cons_ne_nil, if_false]
     exact ih (f x j)
 
+/-- Original `IN_option_rwt2`: membership in an option-selected set. -/
+@[hol "cakeml/misc/miscScript.sml" "IN_option_rwt2"]
+theorem mem_option_case {α β : Type} (x : α) (opt : Option β) (s : β → Set α) :
+    x ∈ (match opt with | none => ∅ | some y => s y) ↔ ∃ y, opt = some y ∧ x ∈ s y := by
+  cases opt with
+  | none => simp
+  | some y => simp
+
 end Flapjack

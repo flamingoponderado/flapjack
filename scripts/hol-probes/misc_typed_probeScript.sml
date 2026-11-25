@@ -170,3 +170,6 @@ val _ = emit "zlookup_def_typed" "zlookup_def";
 val _ = emit "tlookup_def_typed" "tlookup_def";
 val _ = emit "steps_def_typed" "steps_def";
 val _ = emit "LAST_MAP_SND_steps_FOLDL_typed" "LAST_MAP_SND_steps_FOLDL";
+val _ = emit "LLOOKUP_EQ_EL_typed" "LLOOKUP_EQ_EL";
+val _ = emit "LLOOKUP_THM_typed" "LLOOKUP_THM";
+val _ = emit "IN_option_rwt2_typed" "IN_option_rwt2";

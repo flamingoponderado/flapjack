@@ -135,3 +135,6 @@ zlookup_def_typed=∀(m :num sptree$num_map) (k :num). zlookup m k = case lookup
 tlookup_def_typed=∀(m :num sptree$num_map) (k :num). tlookup m k = case lookup k m of (NONE :num option) => k | SOME v => v
 steps_def_typed=(∀(f :β -> α -> β) (x :β). steps f x ([] :α list) = ([] :(α # β) list)) ∧ ∀(f :β -> α -> β) (x :β) (j :α) (js :α list). steps f x (j::js) = (let (y :β) = f x j; (tr :(α # β) list) = steps f y js in (j,y)::tr)
 LAST_MAP_SND_steps_FOLDL_typed=∀(f :α -> β -> α) (x :α) (ls :β list). LAST (x::MAP (SND :β # α -> α) (steps f x ls)) = FOLDL f x ls
+LLOOKUP_EQ_EL_typed=∀(xs :α list) (n :num) (y :α). LLOOKUP xs n = SOME y ⇔ n < LENGTH xs ∧ y = xs❲n❳
+LLOOKUP_THM_typed=∀(xs :α list) (n :num). LLOOKUP xs n = if n < LENGTH xs then SOME xs❲n❳ else (NONE :α option)
+IN_option_rwt2_typed=(x :α) ∈ (option_CASE (opt :β option) (∅ :α -> bool) (s :β -> α -> bool) :α -> bool) ⇔ ∃(y :β). opt = SOME y ∧ x ∈ s y
