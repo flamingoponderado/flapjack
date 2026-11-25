@@ -1528,4 +1528,20 @@ def sptFromList2 {α : Type} (values : List α) : Spt α :=
   (values.foldl (fun (acc : Nat × Spt α) value => (acc.1 + 2, sptInsert acc.1 value acc.2))
     (0, .ln)).2
 
+/-- Exact HOL `misc$zlookup_def` (`miscScript.sml:517`): the tree lookup with
+    `0` as the default. -/
+@[hol "cakeml/misc/miscScript.sml" "zlookup_def"]
+def zlookup (m : Spt Nat) (k : Nat) : Nat :=
+  match sptLookup k m with
+  | none => 0
+  | some v => v
+
+/-- Exact HOL `misc$tlookup_def` (`miscScript.sml:521`): the tree lookup with
+    the key itself as the default. -/
+@[hol "cakeml/misc/miscScript.sml" "tlookup_def"]
+def tlookup (m : Spt Nat) (k : Nat) : Nat :=
+  match sptLookup k m with
+  | none => k
+  | some v => v
+
 end Flapjack

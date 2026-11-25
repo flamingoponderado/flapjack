@@ -166,3 +166,5 @@ val _ = emit "option_fold_def_typed" "option_fold_def";
 val _ = emit "steps_rel_def_typed" "steps_rel_def";
 val _ = emit "DROP_IMP_EL_typed" "DROP_IMP_EL";
 val _ = emit "HD_LUPDATE_typed" "HD_LUPDATE";
+val _ = emit "zlookup_def_typed" "zlookup_def";
+val _ = emit "tlookup_def_typed" "tlookup_def";

@@ -131,3 +131,5 @@ option_fold_def_typed=(∀(f :β -> α -> α) (x :α). option_fold f x (NONE :β
 steps_rel_def_typed=(∀(x :α) (R :α -> β -> α -> bool). steps_rel R x ([] :(β # α) list) ⇔ T) ∧ ∀(y :α) (x :α) (tr :(β # α) list) (j :β) (R :α -> β -> α -> bool). steps_rel R x ((j,y)::tr) ⇔ R x j y ∧ steps_rel R y tr
 DROP_IMP_EL_typed=∀(xs :α list) (n :num) (h :α) (t :α list). DROP n xs = h::t ⇒ xs❲n❳ = h
 HD_LUPDATE_typed=(0 :num) < LENGTH (l :α list) ⇒ HD l❲(p :num) ↦ (x :α)❳ = if p = (0 :num) then x else HD l
+zlookup_def_typed=∀(m :num sptree$num_map) (k :num). zlookup m k = case lookup k m of (NONE :num option) => (0 :num) | SOME k => k
+tlookup_def_typed=∀(m :num sptree$num_map) (k :num). tlookup m k = case lookup k m of (NONE :num option) => k | SOME v => v
