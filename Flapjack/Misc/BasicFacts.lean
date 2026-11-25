@@ -673,4 +673,14 @@ theorem mem_option_case {α β : Type} (x : α) (opt : Option β) (s : β → Se
   | none => simp
   | some y => simp
 
+/-- Original `between_def`: the half-open interval predicate. -/
+@[hol "cakeml/misc/miscScript.sml" "between_def"]
+def between (x y z : Nat) : Bool := decide (x ≤ z) && decide (z < y)
+
+/-- Original `IN_between`: membership in the interval predicate. -/
+@[hol "cakeml/misc/miscScript.sml" "IN_between"]
+theorem mem_between (x y z : Nat) : between y z x = true ↔ y ≤ x ∧ x < z := by
+  unfold between
+  simp only [Bool.and_eq_true, decide_eq_true_eq]
+
 end Flapjack

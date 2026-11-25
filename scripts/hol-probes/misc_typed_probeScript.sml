@@ -174,3 +174,5 @@ val _ = emit "LLOOKUP_EQ_EL_typed" "LLOOKUP_EQ_EL";
 val _ = emit "LLOOKUP_THM_typed" "LLOOKUP_THM";
 val _ = emit "IN_option_rwt2_typed" "IN_option_rwt2";
 val _ = emit "find_index_APPEND_same_typed" "find_index_APPEND_same";
+val _ = emit "between_def_typed" "between_def";
+val _ = emit "IN_between_typed" "IN_between";
