@@ -10805,6 +10805,11 @@ run_probe gen_gc_partial_typed_probeScript.sml gen_gc_partial_typed_probe.out \
   heap_element_is_ref_def_typed heap_gen_ok_def_typed gen_inv_def_typed has_old_ptr_def_typed all_old_ptrs_def_typed sim_inv_def_typed heap_length_to_gen_heap_list_typed similar_ptr_def_typed \
   similar_data_def_typed LIST_REL_similar_data_IMP_typed gc_move_list_heap_length_typed gc_forward_ptr_heap_length_typed gc_move_heap_length_typed gen_gc_partial_conf_typed gc_move_def_typed gc_move_list_def_typed \
   gc_move_ref_list_def_typed gc_move_data_def_typed partial_gc_def_typed \
+  has_old_ptr_simp_typed el_length_not_zero_typed to_gen_heap_NIL_typed to_gen_heap_list_NIL_typed \
+  isSomeDataElement_to_gen_heap_element_typed heap_length_to_gen_heap_element_typed el_length_to_gen_heap_element_typed \
+  heap_split_length_typed heap_restrict_NIL_typed gc_move_ok_prime_typed gc_move_ok_typed gc_move_list_ok_prime_typed \
+  gc_move_list_ok_typed gc_move_list_length_typed gc_move_ref_list_length_typed balanced_state_def_typed has_bad_ref_def_typed \
+  simple_rel_def_typed \
   "$cake_dir/compiler/backend/gc/gen_gc_partialScript.sml" \
   "$cake_dir/compiler/backend/gc"
 
