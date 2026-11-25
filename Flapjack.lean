@@ -4151,6 +4151,7 @@ import Flapjack.Compiler.Inference.InferProps.TypeSubstWalkstar
 import Flapjack.Compiler.Inference.Infer.Pattern
 import Flapjack.Compiler.Inference.Infer.ConstraintDiagnostics
 import Flapjack.NamespaceProps.MapLookup
+import Flapjack.NamespaceProps.FoldAppend
 import Flapjack.NamespaceProps.All
 import Flapjack.NamespaceProps.Ident
 import Flapjack.NamespaceProps.Empty

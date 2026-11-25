@@ -129,4 +129,24 @@ theorem flat_map_nil {α β : Type} (ls : List α) :
   | cons _ _ ih =>
     simp only [List.map_cons, List.flatten_cons, List.nil_append, ih]
 
+/-- Original `remove_pair_lem`: applying a pair-destructuring lambda. -/
+@[hol "cakeml/compiler/inference/inferPropsScript.sml" "remove_pair_lem"]
+theorem remove_pair_lem {α β γ δ ε ζ η : Type} :
+    (∀ (f : α → β → γ) (v : α × β), (fun p : α × β => f p.1 p.2) v = f v.1 v.2) ∧
+      (∀ (f : δ → ε → ζ → η) (v : δ × ε × ζ),
+        (fun p : δ × ε × ζ => f p.1 p.2.1 p.2.2) v = f v.1 v.2.1 v.2.2) := by
+  constructor
+  · intro f v
+    rfl
+  · intro f v
+    rfl
+
+/-- Original `UNCURRY_rator`: uncurrying absorbs a trailing argument. -/
+@[hol "cakeml/compiler/inference/inferPropsScript.sml" "UNCURRY_rator"]
+theorem uncurry_rator {α β γ δ : Type} (f : α → β → γ → δ) (x : α × β) (y : γ) :
+    Function.uncurry f x y = Function.uncurry (fun a b => f a b y) x := by
+  cases x with
+  | mk a b =>
+    rfl
+
 end Flapjack

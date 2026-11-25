@@ -18,3 +18,7 @@ init_infer_state_next_uvar_typed=(init_infer_state (st :infer_st)).next_uvar = (
 init_infer_state_subst_typed=(init_infer_state (st :infer_st)).subst = (FEMPTY :num |-> infer_t)
 t_wfs_FEMPTY_typed=t_wfs (FEMPTY :num |-> infer_t)
 t_wfs_init_infer_state_typed=t_wfs (init_infer_state (s :infer_st)).subst
+remove_pair_lem_typed=(∀(f :α -> β -> γ) (v :α # β). (λ((x :α),(y :β)). f x y) v = f (FST v) (SND v)) ∧ ∀(f :δ -> ε -> ζ -> η) (v :δ # ε # ζ). (λ((x :δ),(y :ε),(z :ζ)). f x y z) v = f (FST v) (FST (SND v)) (SND (SND v))
+UNCURRY_rator_typed=UNCURRY (f :β -> γ -> δ -> α) (x :β # γ) (y :δ) = (λ((a :β),(b :γ)). f a b y) x
+nsMap_FOLDL_nsAppend_typed=∀(ls :(α, β, γ) namespace list) (ns :(α, β, γ) namespace). nsMap (f :γ -> δ) (FOLDL (nsAppend :(α, β, γ) namespace -> (α, β, γ) namespace -> (α, β, γ) namespace) ns ls) = FOLDL (nsAppend :(α, β, δ) namespace -> (α, β, δ) namespace -> (α, β, δ) namespace) (nsMap f ns) (MAP (nsMap f :(α, β, γ) namespace -> (α, β, δ) namespace) ls)
+nsAll_FOLDL_nsAppend_typed=∀(ls :(α, β, γ) namespace list) (ns :(α, β, γ) namespace). nsAll (P :(α, β) id -> γ -> bool) ns ∧ EVERY (nsAll P) ls ⇒ nsAll P (FOLDL (nsAppend :(α, β, γ) namespace -> (α, β, γ) namespace -> (α, β, γ) namespace) ns ls)

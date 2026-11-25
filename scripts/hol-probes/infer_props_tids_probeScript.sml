@@ -30,3 +30,13 @@ val _ = show "init_infer_state_next_uvar_typed" inferPropsTheory.init_infer_stat
 val _ = show "init_infer_state_subst_typed" inferPropsTheory.init_infer_state_subst;
 val _ = show "t_wfs_FEMPTY_typed" inferPropsTheory.t_wfs_FEMPTY;
 val _ = show "t_wfs_init_infer_state_typed" inferPropsTheory.t_wfs_init_infer_state;
+
+(* Task 273: pair/UNCURRY and namespace fold facts. *)
+fun showWithHyps label th = (print (label ^ "=");
+  app (fn h => (print_term h; print " ==> ")) (hyp th);
+  print_term (concl th); print "\n");
+
+val _ = show "remove_pair_lem_typed" inferPropsTheory.remove_pair_lem;
+val _ = show "UNCURRY_rator_typed" inferPropsTheory.UNCURRY_rator;
+val _ = show "nsMap_FOLDL_nsAppend_typed" inferPropsTheory.nsMap_FOLDL_nsAppend;
+val _ = showWithHyps "nsAll_FOLDL_nsAppend_typed" inferPropsTheory.nsAll_FOLDL_nsAppend;
