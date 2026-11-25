@@ -11823,7 +11823,7 @@ run_probe fromSexp_typed_probeScript.sml fromSexp_typed_probe.out \
   OPTION_APPLY_MAP3_typed OPTION_APPLY_MAP4_typed monad_bind_FAIL_typed \
   monad_unitbind_CONG_typed strip_sxcons_FAIL_sexplist_FAIL_typed sexppair_CONG_typed \
   typesexp_valid_typed patsexp_valid_typed type_defsexp_valid_typed opsexp_valid_typed \
-  expsexp_valid_typed decsexp_valid_typed \
+  expsexp_valid_typed decsexp_valid_typed sexplist_CONG_typed \
   patsexp_11_typed \
   patsexp_def_typed patsexp_sexppat_typed patsexp_sexppat0_typed prim_typesexp_11_typed \
   prim_typesexp_def_typed sexparith_arithsexp_typed sexparith_def_typed sexpdec_decsexp_typed \

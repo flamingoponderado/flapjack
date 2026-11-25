@@ -424,4 +424,48 @@ theorem decodePair_cong {α β : Type} (s1 s2 : Sexp) (p1 p1' : Sexp → Option 
   | num _ => simp [decodePair]
   | str _ => simp [decodePair]
 
+/-- HOL `simpleSexp$sxMEM`: the element occurs in the stripped list. -/
+def sxMem (e s : Sexp) : Bool :=
+  match stripSxCons s with
+  | some l => decide (e ∈ l)
+  | none => false
+
+/-- Original `sexplist_CONG`: list decoding respects pointwise-equal decoders. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "sexplist_CONG"]
+theorem decodeList_cong {α : Type} (s1 s2 : Sexp) (p1 p2 : Sexp → Option α)
+    (h12 : s1 = s2) (h : ∀ e, sxMem e s2 = true → p1 e = p2 e) :
+    decodeList p1 s1 = decodeList p2 s2 := by
+  rw [h12]
+  have key : ∀ s, (∀ e, sxMem e s = true → p1 e = p2 e) →
+      decodeList p1 s = decodeList p2 s := by
+    intro s
+    induction s with
+    | cons head tail _ ih =>
+      intro hs
+      cases ht : stripSxCons tail with
+      | none =>
+        have h1 := stripSxCons_fail_decodeList_fail tail p1 ht
+        have h2 := stripSxCons_fail_decodeList_fail tail p2 ht
+        simp [decodeList, h1, h2]
+      | some l =>
+        have hhead : p1 head = p2 head := by
+          apply hs head
+          simp [sxMem, stripSxCons, ht]
+        have htail : decodeList p1 tail = decodeList p2 tail := by
+          refine ih (fun e he => ?_)
+          apply hs e
+          simp [sxMem, stripSxCons, ht] at he ⊢
+          exact Or.inr he
+        simp [decodeList, hhead, htail]
+    | sym name =>
+      intro hs
+      simp [decodeList]
+    | num _ =>
+      intro hs
+      simp [decodeList]
+    | str _ =>
+      intro hs
+      simp [decodeList]
+  exact key s2 h
+
 end Flapjack.CakeParser.FromSexp

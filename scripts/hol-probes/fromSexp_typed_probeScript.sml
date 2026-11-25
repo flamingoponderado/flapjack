@@ -399,4 +399,5 @@ val _ = emit_exported "type_defsexp_valid_typed" "type_defsexp_valid";
 val _ = emit_exported "opsexp_valid_typed" "opsexp_valid";
 val _ = emit_exported "expsexp_valid_typed" "expsexp_valid";
 val _ = emit_exported "decsexp_valid_typed" "decsexp_valid";
+val _ = emit_exported "sexplist_CONG_typed" "sexplist_CONG";
 val _ = emit_exported "typesexp_sexptype_typed" "typesexp_sexptype";
