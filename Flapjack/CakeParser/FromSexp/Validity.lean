@@ -392,4 +392,51 @@ theorem validSexp_typeDefsexp (td : Flapjack.AstHOL.TypeDef) :
     simp only [validSexp, Bool.and_eq_true]
     exact ⟨validSexp_expsexpString _, validSexp_listsexp_map _ ts (fun t _ => validSexp_typesexp t)⟩
 
+/-- Original `opsexp_valid`: encoded primitive operators are valid. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "opsexp_valid"]
+theorem validSexp_opsexp (op : Flapjack.AstHOL.Op) : validSexp (opsexp op) = true := by
+  cases op
+  all_goals try decide
+  case arith a p =>
+    simp only [opsexp, validSexp, Bool.and_eq_true]
+    refine ⟨?_, ?_, ?_⟩
+    · decide
+    · cases a
+      all_goals decide
+    · exact validSexp_primTypesexp p
+  case fromTo a b =>
+    simp only [opsexp, validSexp, Bool.and_eq_true]
+    exact ⟨by decide, validSexp_primTypesexp a, validSexp_primTypesexp b⟩
+  case shift w sh n =>
+    simp only [opsexp, validSexp, Bool.and_eq_true]
+    refine ⟨?_, trivial⟩
+    cases w
+    all_goals cases sh
+    all_goals decide
+  case test t p =>
+    simp only [opsexp, validSexp, Bool.and_eq_true]
+    refine ⟨?_, ?_, ?_⟩
+    · decide
+    · cases t with
+      | equal => decide
+      | compare o =>
+        cases o
+        all_goals decide
+      | altCompare o =>
+        cases o
+        all_goals decide
+    · exact validSexp_primTypesexp p
+  case thunkOp o =>
+    cases o with
+    | allocThunk m =>
+      cases m
+      all_goals decide
+    | updateThunk m =>
+      cases m
+      all_goals decide
+    | forceThunk => decide
+  case ffi s =>
+    simp only [opsexp, validSexp, Bool.and_eq_true]
+    exact ⟨by decide, validSexp_sexstr _⟩
+
 end Flapjack.CakeParser.FromSexp
