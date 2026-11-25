@@ -12262,6 +12262,17 @@ run_probe mllist_defs_typed_probeScript.sml mllist_defs_typed_probe.out \
 
 run_probe mlstring_char_typed_probeScript.sml mlstring_char_typed_probe.out \
   char_to_word8_def_typed word8_to_char_def_typed \
+  strlen_def_typed strsub_def_typed substring_def_typed extract_def_typed strcat_def_typed \
+  explode_aux_def_typed concatWith_def_typed chr_to_str_def_typed translate_aux_def_typed \
+  translate_def_typed concat_nil_typed explode_aux_thm_typed explode_def_typed \
+  explode_thm_typed explode_implode_typed implode_explode_typed explode_11_typed \
+  implode_BIJ_typed explode_BIJ_typed LENGTH_explode_typed concat_thm_typed \
+  strlen_implode_typed strlen_substring_typed strlen_extract_le_typed \
+  strsub_substring_0_thm_typed substring_full_typed substring_too_long_typed \
+  concat_cons_typed strcat_thm_typed explode_strcat_typed strcat_assoc_typed \
+  strcat_o_typed strcat_nil_typed mlstring_common_prefix_typed \
+  mlstring_common_suffix_typed concat_append_typed implode_STRCAT_typed \
+  strlen_strcat_typed explode_toString_typed strlen_toString_typed translate_thm_typed \
   "$cake_dir/basis/pure/mlstringScript.sml" \
   "$cake_dir/basis/pure"
 

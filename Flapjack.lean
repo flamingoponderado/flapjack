@@ -4524,6 +4524,7 @@ import Flapjack.Compiler.Backend.StackCarrier
 import Flapjack.Basis.Pure.MlString
 import Flapjack.Basis.Pure.MlString.Length
 import Flapjack.Basis.Pure.MlString.Size
+import Flapjack.Basis.Pure.MlString.Ops
 import Flapjack.Compiler.Backend.MlStringBridge
 import Flapjack.Compiler.Backend.StackProps
 import Flapjack.Compiler.Backend.RegAlloc
