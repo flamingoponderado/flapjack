@@ -53,3 +53,7 @@ val _ = emit "nsLookup_add_tenvE3_typed" "nsLookup_add_tenvE3";
 val _ = emit "db_merge_bvl_typed" "db_merge_bvl";
 val _ = emit "tveLookup_add_inc_typed" "tveLookup_add_inc";
 val _ = emit "tveLookup_db_merge_some_typed" "tveLookup_db_merge_some";
+val _ = emit "ctMap_ok_lookup_typed" "ctMap_ok_lookup";
+val _ = emit "tenv_ctor_ok_lookup_typed" "tenv_ctor_ok_lookup";
+val _ = emit "tenv_val_ok_add_tenvE_typed" "tenv_val_ok_add_tenvE";
+val _ = emit "add_tenvE_bvl_typed" "add_tenvE_bvl";

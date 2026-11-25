@@ -3,12 +3,16 @@ module
 public import Flapjack.TypeSoundInvariants
 public import Flapjack.TypeSystemHOL.Declarations
 public import Flapjack.NamespaceProps
+public import Flapjack.NamespaceProps.All
 public import Flapjack.TypeSysProps.Freevars
 
 @[expose] public section
 
 /-! Well-formed declarative environments are closed under extension. -/
 namespace Flapjack.TypeSysProps
+
+noncomputable local instance (α : Type) : DecidableEq α := Classical.typeDecidableEq α
+
 open Flapjack.NamespaceHOL Flapjack.TypeSystemHOL Flapjack.TypeSoundInvariants
   Flapjack.Basis.Pure.MlString Flapjack.AstHOL
 
@@ -231,5 +235,49 @@ theorem nsLookup_addTenvE3 {M : Type} [DecidableEq M] (localEnv : TenvValExp)
     simp only [addTenvE]
     rw [nsLookup_nsBind.2 (Ident.long mn n) name (bound, ty) (addTenvE rest env) different]
     exact ih
+
+/-- A constructor-environment lookup satisfies the source free-variable check. -/
+@[hol "cakeml/semantics/proofs/typeSysPropsScript.sml" "tenv_ctor_ok_lookup"]
+theorem tenvCtorOk_lookup {M N Tag : Type}
+    (env : Namespace M N (List MlString × List SemanticT × Tag)) (cn : Ident M N)
+    (tvs : List MlString) (ts : List SemanticT) (tn : Tag) :
+    tenvCtorOk env ∧ nsLookup env cn = some (tvs, ts, tn) →
+      ts.all (checkFreevars 0 tvs) = true := by
+  intro h
+  exact List.all_eq_true.mpr (nsLookup_nsAll env cn
+    (fun _ entry => ∀ t ∈ entry.2.1, checkFreevars 0 entry.1 t = true) (tvs, ts, tn) h)
+
+/-- Adding a zero-count local environment preserves the source value-environment
+well-formedness. -/
+@[hol "cakeml/semantics/proofs/typeSysPropsScript.sml" "tenv_val_ok_add_tenvE"]
+theorem tenvValOk_addTenvE (localEnv : TenvValExp) {M : Type}
+    (env : Namespace M MlString (Nat × SemanticT)) :
+    numTvs localEnv = 0 ∧ tenvValExpOk localEnv ∧ tenvValOk env →
+      tenvValOk (addTenvE localEnv env) := by
+  intro h
+  induction localEnv with
+  | empty => exact h.2.2
+  | bindTvar bound rest ih =>
+    simp only [numTvs, tenvValExpOk, addTenvE] at h ⊢
+    exact ih ⟨by omega, h.2.1, h.2.2⟩
+  | bindName name bound ty rest ih =>
+    simp only [numTvs, tenvValExpOk, tenvValOk, addTenvE] at h ⊢
+    obtain ⟨hnum, rest1, hval⟩ := h
+    obtain ⟨hfree, hok⟩ := rest1
+    have freeHere : checkFreevars bound [] ty = true := by simpa [hnum] using hfree
+    exact nsAll_nsBind _ name (bound, ty) (addTenvE rest env)
+      ⟨freeHere, ih ⟨hnum, hok, hval⟩⟩
+
+/-- Adding a bound variable list is the same as binding that list. -/
+@[hol "cakeml/semantics/proofs/typeSysPropsScript.sml" "add_tenvE_bvl"]
+theorem addTenvE_bvl (n : Nat) (bindings : List (MlString × SemanticT)) (localEnv : TenvValExp)
+    {M : Type} (env : Namespace M MlString (Nat × SemanticT)) :
+    addTenvE (bindVarList n bindings localEnv) env =
+      nsBindList (bindings.map fun (x, t) => (x, (n, t))) (addTenvE localEnv env) := by
+  induction bindings with
+  | nil => simp [bindVarList, nsBindList]
+  | cons entry rest ih =>
+    rcases entry with ⟨x, t⟩
+    simp only [bindVarList, addTenvE, List.map_cons, nsBindList, List.foldr_cons, ih]
 
 end Flapjack.TypeSysProps

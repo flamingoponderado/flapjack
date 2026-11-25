@@ -153,4 +153,16 @@ theorem typeCtor_long {K A B C M N : Type} (ctMap : HolFiniteMapExact K (A × Li
     (mn : M) (id : Flapjack.NamespaceHOL.Ident M N) :
     typeCtor ctMap (Flapjack.NamespaceHOL.Ident.long mn id) = typeCtor ctMap id := rfl
 
+/-- Every type in a well-formed constructor map's entry satisfies the source
+free-variable check. The unused identifier binder is retained from HOL. -/
+@[hol "cakeml/semantics/proofs/typeSysPropsScript.sml" "ctMap_ok_lookup"]
+theorem ctMapOk_lookup
+    (ctMap : HolFiniteMapExact Stamp (List MlString × List SemanticT × TypeIdent))
+    (_cn : Stamp) (tvs : List MlString) (ts : List SemanticT) (ti : TypeIdent) (tn : Stamp) :
+    ctMapOk ctMap ∧ ctMap.lookup tn = some (tvs, ts, ti) →
+      ts.all (checkFreevars 0 tvs) = true := by
+  intro h
+  simp only [ctMapOk] at h
+  exact List.all_eq_true.mpr (h.1.1 tn tvs ts ti h.2)
+
 end Flapjack.TypeSoundInvariants
