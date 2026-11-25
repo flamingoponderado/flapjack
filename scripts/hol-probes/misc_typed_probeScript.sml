@@ -164,3 +164,5 @@ val _ = emit "list_set_eq_def_typed" "list_set_eq_def";
 val _ = emit "any_el_def_typed" "any_el_def";
 val _ = emit "option_fold_def_typed" "option_fold_def";
 val _ = emit "steps_rel_def_typed" "steps_rel_def";
+val _ = emit "DROP_IMP_EL_typed" "DROP_IMP_EL";
+val _ = emit "HD_LUPDATE_typed" "HD_LUPDATE";

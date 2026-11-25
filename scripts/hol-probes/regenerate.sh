@@ -10687,6 +10687,7 @@ run_probe misc_typed_probeScript.sml misc_typed_probe.out \
   LENGTH_insert_atI_typed \
   OPT_MMAP_MAP_o_typed list_inter_def_typed list_set_eq_def_typed \
   any_el_def_typed option_fold_def_typed steps_rel_def_typed \
+  DROP_IMP_EL_typed HD_LUPDATE_typed \
   "$cake_dir/misc/miscScript.sml" \
   "$cake_dir/misc"
 

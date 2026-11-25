@@ -617,4 +617,31 @@ def stepsRel {α β : Type} (R : α → β → α → Bool) (x : α) : List (β 
   | [] => true
   | (j, y) :: tr => R x j y && stepsRel R y tr
 
+/-- Original `DROP_IMP_EL`: a non-empty drop starts with the indexed element. -/
+@[hol "cakeml/misc/miscScript.sml" "DROP_IMP_EL" (total_function_inhabitants := [α])]
+theorem drop_imp_el {α : Type} [Nonempty α] (xs : List α) (n : Nat) (h : α) (t : List α)
+    (hd : xs.drop n = h :: t) : holEl n xs = h := by
+  have hn : n < xs.length := by
+    have := congrArg List.length hd
+    simp only [List.length_drop, List.length_cons] at this
+    omega
+  rw [holEl_eq_getElem n xs hn]
+  have hcons := List.drop_eq_getElem_cons hn
+  rw [hcons] at hd
+  simp only [List.cons.injEq] at hd
+  exact hd.1
+
+/-- Original `HD_LUPDATE`: overwriting keeps the head unless position `0` is
+overwritten. -/
+@[hol "cakeml/misc/miscScript.sml" "HD_LUPDATE" (total_function_inhabitants := [α])]
+theorem holHd_lupdate {α : Type} [Nonempty α] (l : List α) (p : Nat) (x : α)
+    (h : 0 < l.length) : holHd (l.set p x) = if p = 0 then x else holHd l := by
+  cases l with
+  | nil => simp at h
+  | cons a t =>
+    cases p with
+    | zero => simp [holHd]
+    | succ k =>
+      simp only [List.set_cons_succ, holHd, Nat.succ_ne_zero, if_false]
+
 end Flapjack
