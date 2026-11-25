@@ -146,4 +146,11 @@ def consistentCtMap {σ A B C : Type} (st : State σ) (typeIds : C → Prop)
     (ctMap.lookup (.typeStamp cn id) ≠ none → id < st.nextTypeStamp) ∧
     (ctMap.lookup (.exnStamp id) ≠ none → id < st.nextExnStamp)
 
+/-- The module qualifier of an identifier does not affect the constructor
+lookup, which ignores its identifier argument in the source. -/
+@[hol "cakeml/semantics/proofs/typeSysPropsScript.sml" "type_ctor_long"]
+theorem typeCtor_long {K A B C M N : Type} (ctMap : HolFiniteMapExact K (A × List B × C))
+    (mn : M) (id : Flapjack.NamespaceHOL.Ident M N) :
+    typeCtor ctMap (Flapjack.NamespaceHOL.Ident.long mn id) = typeCtor ctMap id := rfl
+
 end Flapjack.TypeSoundInvariants

@@ -128,4 +128,11 @@ theorem typeDsEmpty (extra : Bool) (tenv : TypeEnv) (ids : TypeIds) (r : TypeEnv
   · rintro ⟨rfl, rfl⟩
     exact TypeDs.nil extra tenv
 
+/-- Extending a declaration environment is associative. -/
+@[simp, hol "cakeml/semantics/proofs/typeSysPropsScript.sml" "extend_dec_tenv_assoc"]
+theorem extendDecTenv_assoc (tenv1 tenv2 tenv3 : TypeEnv) :
+    extendDecTenv tenv1 (extendDecTenv tenv2 tenv3) =
+      extendDecTenv (extendDecTenv tenv1 tenv2) tenv3 := by
+  simp [extendDecTenv, nsAppend_assoc]
+
 end Flapjack.TypeSysProps

@@ -41,3 +41,7 @@ val _ = emit "type_pes_def_typed" "type_pes_def";
 val _ = emit "type_es_list_rel_typed" "type_es_list_rel";
 val _ = emit "add_tenvE_nsAppend_typed" "add_tenvE_nsAppend";
 val _ = emit "type_ds_empty_typed" "type_ds_empty";
+val _ = emit "extend_dec_tenv_assoc_typed" "extend_dec_tenv_assoc";
+val _ = emit "type_ctor_long_typed" "type_ctor_long";
+val _ = emit "deBruijn_subst_id_typed" "deBruijn_subst_id";
+val _ = emit "type_ps_length_typed" "type_ps_length";

@@ -9924,7 +9924,8 @@ run_probe type_sys_props_typed_probeScript.sml type_sys_props_typed_probe.out \
   num_tvs_db_merge_typed num_tvs_deBruijn_subst_tenvE_typed tenv_val_exp_ok_db_merge_typed \
   deBruijn_inc0_typed deBruijn_inc_deBruijn_inc_typed nil_deBruijn_inc_typed \
   nil_deBruijn_subst_typed type_pes_def_typed type_es_list_rel_typed \
-  add_tenvE_nsAppend_typed type_ds_empty_typed \
+  add_tenvE_nsAppend_typed type_ds_empty_typed extend_dec_tenv_assoc_typed \
+  type_ctor_long_typed deBruijn_subst_id_typed type_ps_length_typed \
   "$cake_dir/semantics/proofs/typeSysPropsScript.sml" \
   "$cake_dir/semantics/proofs"
 

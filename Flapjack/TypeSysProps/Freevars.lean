@@ -330,4 +330,69 @@ theorem checkFreevarsSubstInc (tvs : Nat) (names : List MlString) (t : SemanticT
   · exact increased
   · exact all
 
+/-- Substituting the identity context (the de Bruijn variables below the bound)
+leaves any in-range type unchanged, pointwise and over lists. -/
+@[hol "cakeml/semantics/proofs/typeSysPropsScript.sml" "deBruijn_subst_id"]
+theorem deBruijnSubst_id :
+    (∀ (t : SemanticT) (n : Nat),
+        checkFreevars n [] t = true →
+          deBruijnSubst 0 ((List.range n).map SemanticT.varDb) t = t) ∧
+      ∀ (ts : List SemanticT) (n : Nat),
+        ts.all (checkFreevars n []) = true →
+          ts.map (deBruijnSubst 0 ((List.range n).map SemanticT.varDb)) = ts := by
+  have substList_eq_map : ∀ (replacement ts : List SemanticT),
+      deBruijnSubstList 0 replacement ts = ts.map (deBruijnSubst 0 replacement) := by
+    intro replacement ts
+    induction ts with
+    | nil => simp [deBruijnSubstList]
+    | cons t ts ih => simp only [deBruijnSubstList, List.map_cons, ih]
+  have general : ∀ (replacement : List SemanticT),
+      (∀ (i : Nat) (h : i < replacement.length), replacement[i]'h = SemanticT.varDb i) →
+      ∀ (t : SemanticT), checkFreevars replacement.length [] t = true →
+        deBruijnSubst 0 replacement t = t := by
+    intro replacement point
+    refine deBruijnSubst.induct 0 replacement
+      (fun t => checkFreevars replacement.length [] t = true → deBruijnSubst 0 replacement t = t)
+      (fun ts => checkFreevarsList replacement.length [] ts = true →
+        ts.map (deBruijnSubst 0 replacement) = ts) ?_ ?_ ?_ ?_ ?_ ?_ ?_
+    · intro tv checked
+      simp [deBruijnSubst]
+    · intro m range checked
+      have inside : 0 ≤ m ∧ m < replacement.length + 0 := by omega
+      simp only [deBruijnSubst, dif_pos inside]
+      exact point m (by omega)
+    · intro m range lower checked
+      have lt : m < replacement.length := by simpa [checkFreevars] using checked
+      exfalso
+      omega
+    · intro m range lower checked
+      exfalso
+      omega
+    · intro ts id ih checked
+      have inner : checkFreevarsList replacement.length [] ts = true := by
+        simpa [checkFreevars] using checked
+      simp only [deBruijnSubst]
+      rw [substList_eq_map, ih inner]
+    · intro checked
+      simp
+    · intro t ts ih1 ih2 checked
+      simp only [checkFreevarsList, Bool.and_eq_true] at checked
+      simp only [List.map_cons, ih1 checked.1, ih2 checked.2]
+  constructor
+  · intro t n checked
+    have len : ((List.range n).map SemanticT.varDb).length = n := by simp
+    exact general ((List.range n).map SemanticT.varDb) (by
+      intro i bound
+      rw [List.getElem_map, List.getElem_range]) t (by simpa [len] using checked)
+  · intro ts n checked
+    induction ts with
+    | nil => simp
+    | cons t ts ih =>
+      simp only [List.all_cons, Bool.and_eq_true] at checked
+      have len : ((List.range n).map SemanticT.varDb).length = n := by simp
+      have head := general ((List.range n).map SemanticT.varDb) (by
+        intro i bound
+        rw [List.getElem_map, List.getElem_range]) t (by simpa [len] using checked.1)
+      simp only [List.map_cons, head, ih checked.2]
+
 end Flapjack.TypeSysProps

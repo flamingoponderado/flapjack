@@ -79,5 +79,21 @@ theorem typeEsListRel (es : List Flapjack.AstHOL.Exp) (types : List SemanticT) (
         | cons head tail =>
           exact TypeEs.cons env localEnv e es t ts head ((ih ts env localEnv).mpr tail)
 
+/-- A typed pattern list and its type list have equal lengths. -/
+@[hol "cakeml/semantics/proofs/typeSysPropsScript.sml" "type_ps_length"]
+theorem typePsLength (tvs : Nat) (env : TypeEnv) (ps : List Pat) (ts : List SemanticT)
+    (bindings : List (MlString × SemanticT)) :
+    TypePs tvs env ps ts bindings → ps.length = ts.length := by
+  intro typed
+  induction ps generalizing ts bindings with
+  | nil =>
+    cases typed
+    rfl
+  | cons p ps ih =>
+    cases typed
+    have length := ih _ _ (by assumption)
+    simp only [List.length_cons]
+    omega
+
 end Flapjack.TypeSysProps
 
