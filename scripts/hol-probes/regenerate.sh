@@ -11193,6 +11193,17 @@ run_probe asm_typed_probeScript.sml asm_typed_probe.out \
   "$cake_dir/compiler/encoders/asm/asmScript.sml" \
   "$cake_dir/compiler/encoders/asm"
 
+run_probe ml_monad_refs_typed_probeScript.sml ml_monad_refs_typed_probe.out \
+  liftM_def_typed otherwise_def_typed can_def_typed ref_bind_def_typed \
+  Mget_ref_def_typed Mset_ref_def_typed st_ex_bind_CONG_typed \
+  st_ex_ignore_bind_CONG_typed array_resize_def_typed array_resize_eq_typed \
+  Marray_resize_def_typed Mref_def_typed dref_def_typed ref_assign_def_typed \
+  Mdref_aux_def_typed Mdref_def_typed Mpop_ref_def_typed \
+  Mref_assign_aux_def_typed Mref_assign_def_typed dref_first_typed \
+  dref_cons_state_typed Mdref_eq_typed Mref_assign_aux_eq_typed \
+  Mref_assign_eq_typed \
+  "$cake_dir/translator/monadic/monad_base/ml_monadBaseScript.sml" \
+  "$cake_dir/translator/monadic/monad_base"
 run_probe ml_monad_base_typed_probeScript.sml ml_monad_base_typed_probe.out \
   exc_typed Marray_alloc_def_typed st_ex_bind_def_typed st_ex_ignore_bind_def_typed st_ex_return_def_typed run_def_typed Marray_length_def_typed Marray_sub_def_typed \
   Marray_update_def_typed Msub_eq_typed Mupdate_eq_typed Msub_def_typed Msub_exn_eq_typed Mupdate_def_typed Mupdate_exn_eq_typed \

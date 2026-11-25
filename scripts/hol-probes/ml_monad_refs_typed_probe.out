@@ -1,0 +1,24 @@
+liftM_def_typed=∀(read :δ -> α) (write :(α -> α) -> δ -> δ) (op :α -> (β, γ) exc # α). liftM read write op = (λ(state :δ). (let ((ret :(β, γ) exc),(new :α)) = op (read state) in (ret,write (K new :α -> α) state)))
+otherwise_def_typed=∀(x :α -> (β, γ) exc # α) (y :α -> (β, γ) exc # α). (x otherwise y) = (λ(s :α). case x s of ((M_success y' :(β, γ) exc),s) => ((M_success y' :(β, γ) exc),s) | ((M_failure e :(β, γ) exc),s) => y s)
+can_def_typed=∀(f :γ -> α -> (δ, β) exc # α) (x :γ). can f x = (st_ex_ignore_bind (f x) (st_ex_return T :α -> (bool, β) exc # α) otherwise (st_ex_return F :α -> (bool, β) exc # α))
+ref_bind_def_typed=∀(create :α -> (ε, γ) exc # δ) (f :ε -> δ -> ζ) (pop :ζ -> (β, γ) exc # δ). ref_bind create f pop = (λ(s' :α). case create s' of ((M_success x :(ε, γ) exc),s) => pop (f x s) | ((M_failure x' :(ε, γ) exc),s) => ((M_failure x' :(β, γ) exc),s))
+Mget_ref_def_typed=∀(get_var :α -> β). (Mget_ref get_var :α -> (β, γ) exc # α) = (λ(s :α). ((M_success (get_var s) :(β, γ) exc),s))
+Mset_ref_def_typed=∀(set_var :δ -> α -> γ) (x :δ). (Mset_ref set_var x :α -> (unit, β) exc # γ) = (λ(s :α). ((M_success () :(unit, β) exc),set_var x s))
+st_ex_bind_CONG_typed=∀(x :α -> (β, γ) exc # α) (s :α) (x' :α -> (β, γ) exc # α) (s' :α) (f :β -> α -> (δ, γ) exc # α) (f' :β -> α -> (δ, γ) exc # α). x = x' ∧ s = s' ∧ (∀(y :β) (s'' :α). x' s' = ((M_success y :(β, γ) exc),s'') ⇒ f y s'' = f' y s'') ⇒ st_ex_bind x f s = st_ex_bind x' f' s'
+st_ex_ignore_bind_CONG_typed=∀(x :α -> (β, γ) exc # α) (s :α) (x' :α -> (β, γ) exc # α) (s' :α) (f :α -> (δ, γ) exc # α) (f' :α -> (δ, γ) exc # α). x = x' ∧ s = s' ∧ (∀(y :β) (s'' :α). x' s' = ((M_success y :(β, γ) exc),s'') ⇒ f s'' = f' s'') ⇒ st_ex_ignore_bind x f s = st_ex_ignore_bind x' f' s'
+array_resize_def_typed=∀(x :α) (n :num) (a :α list). array_resize n x a = if n = (0 :num) then ([] :α list) else case a of ([] :α list) => x::array_resize (n − (1 :num)) x a | x'::a' => x'::array_resize (n − (1 :num)) x a'
+array_resize_eq_typed=∀(a :α list) (n :num) (x :α). array_resize n x a = TAKE n a ++ REPLICATE (n − LENGTH a) x
+Marray_resize_def_typed=∀(get_arr :α -> δ list) (set_arr :δ list -> α -> γ) (n :num) (x :δ). (Marray_resize get_arr set_arr n x :α -> (unit, β) exc # γ) = (λ(s :α). ((M_success () :(unit, β) exc),set_arr (array_resize n x (get_arr s)) s))
+Mref_def_typed=∀(cons :γ -> α) (x :γ). (Mref cons x :α list -> (store_ref, β) exc # α list) = (λ(s :α list). ((M_success (StoreRef (LENGTH s)) :(store_ref, β) exc),cons x::s))
+dref_def_typed=∀(n :num). (dref n :α list -> α) = (λ(s :α list). s❲LENGTH s − n − (1 :num)❳)
+ref_assign_def_typed=∀(n :num) (x :α). ref_assign n x = (λ(s :α list). s❲LENGTH s − n − (1 :num) ↦ x❳)
+Mdref_aux_def_typed=∀(s :α list) (n :num) (e :β). Mdref_aux e n s = case s of ([] :α list) => (M_failure e :(α, β) exc) | x::s' => if n = (0 :num) then (M_success x :(α, β) exc) else Mdref_aux e (n − (1 :num)) s'
+Mdref_def_typed=∀(e :β) (n :num). (Mdref e (StoreRef n) :α list -> (α, β) exc # α list) = (λ(s :α list). (Mdref_aux e (LENGTH s − n − (1 :num)) s,s))
+Mpop_ref_def_typed=∀(e :β). (Mpop_ref e :(α, β) exc # γ list -> (α, β) exc # γ list) = (λ((r :(α, β) exc),(s :γ list)). case s of ([] :γ list) => ((M_failure e :(α, β) exc),s) | v::v1 => (r,v1))
+Mref_assign_aux_def_typed=∀(x :α) (s :α list) (n :num) (e :β). Mref_assign_aux e n x s = case s of ([] :α list) => (M_failure e :(α list, β) exc) | x'::s' => if n = (0 :num) then (M_success (x::s') :(α list, β) exc) else case Mref_assign_aux e (n − (1 :num)) x s' of (M_success s'' :(α list, β) exc) => (M_success (x'::s'') :(α list, β) exc) | (M_failure v3 :(α list, β) exc) => (M_failure v3 :(α list, β) exc)
+Mref_assign_def_typed=∀(e :β) (n :num) (x :α). Mref_assign e (StoreRef n) x = (λ(s :α list). case Mref_assign_aux e (LENGTH s − n − (1 :num)) x s of (M_success v :(α list, β) exc) => ((M_success () :(unit, β) exc),v) | (M_failure e :(α list, β) exc) => ((M_failure e :(unit, β) exc),s))
+dref_first_typed=dref (LENGTH (s :α list)) ((r :α)::s) = r
+dref_cons_state_typed=(n :num) < LENGTH (state :α list) ⇒ dref n ((x :α)::state) = dref n state
+Mdref_eq_typed=∀(state :α list) (n :num). n < LENGTH state ⇒ Mdref (e :β) (StoreRef n) state = ((M_success (dref n state) :(α, β) exc),state)
+Mref_assign_aux_eq_typed=∀(state :α list) (e :β) (n :num) (x :α). n < LENGTH state ⇒ Mref_assign_aux e (LENGTH state − n − (1 :num)) x state = (M_success (ref_assign n x state) :(α list, β) exc)
+Mref_assign_eq_typed=∀(state :α list) (e :β) (n :num) (x :α). n < LENGTH state ⇒ Mref_assign e (StoreRef n) x state = ((M_success () :(unit, β) exc),ref_assign n x state)
