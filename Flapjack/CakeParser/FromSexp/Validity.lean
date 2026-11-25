@@ -234,4 +234,131 @@ theorem validSexp_primTypesexp (t : Flapjack.AstHOL.PrimType) :
     | w64 => decide
   | float64T => decide
 
+/-- Original `typesexp_valid`: encoded type syntax is valid. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "typesexp_valid"]
+theorem validSexp_typesexp (t : Flapjack.AstHOL.AstT) : validSexp (typesexp t) = true := by
+  refine typesexp.induct (fun t => validSexp (typesexp t) = true)
+    (fun ts => ∀ x, x ∈ typesexpList ts → validSexp x = true) ?_ ?_ ?_ ?_ ?_ ?_ t
+  · intro name
+    simp only [typesexp]
+    refine validSexp_listsexp _ ?_
+    intro x hx
+    simp only [List.mem_cons, List.not_mem_nil, or_false] at hx
+    rcases hx with rfl | rfl
+    · decide
+    · exact validSexp_sexstr _
+  · intro left right ihl ihr
+    simp only [typesexp]
+    refine validSexp_listsexp _ ?_
+    intro x hx
+    simp only [List.mem_cons, List.not_mem_nil, or_false] at hx
+    rcases hx with rfl | rfl | rfl
+    · decide
+    · exact ihl
+    · exact ihr
+  · intro types ih
+    simp only [typesexp]
+    refine validSexp_listsexp _ ?_
+    intro x hx
+    simp only [List.mem_cons, List.not_mem_nil, or_false] at hx
+    rcases hx with rfl | rfl
+    · decide
+    · refine validSexp_listsexp _ ?_
+      intro y hy
+      exact ih y hy
+  · intro types id ih
+    simp only [typesexp]
+    refine validSexp_listsexp _ ?_
+    intro x hx
+    simp only [List.mem_cons, List.not_mem_nil, or_false] at hx
+    rcases hx with rfl | rfl | rfl
+    · decide
+    · refine validSexp_listsexp _ ?_
+      intro y hy
+      exact ih y hy
+    · exact validSexp_idsexp _
+  · intro x hx
+    simp only [typesexpList] at hx
+    simp at hx
+  · intro t ts iht ihts x hx
+    simp only [typesexpList, List.mem_cons] at hx
+    rcases hx with rfl | hx
+    · exact iht
+    · exact ihts x hx
+
+/-- Original `patsexp_valid`: encoded patterns are valid. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "patsexp_valid"]
+theorem validSexp_patsexp (p : Flapjack.AstHOL.Pat) : validSexp (patsexp p) = true := by
+  refine patsexp.induct (fun p => validSexp (patsexp p) = true)
+    (fun ps => ∀ x, x ∈ patsexpList ps → validSexp x = true) ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ p
+  · simp only [patsexp]
+    refine validSexp_listsexp _ ?_
+    intro x hx
+    simp only [List.mem_singleton] at hx
+    rw [hx]
+    decide
+  · intro name
+    simp only [patsexp]
+    exact validSexp_sexstr _
+  · intro lit
+    simp only [patsexp]
+    refine validSexp_listsexp _ ?_
+    intro x hx
+    simp only [List.mem_cons, List.not_mem_nil, or_false] at hx
+    rcases hx with rfl | rfl
+    · decide
+    · exact validSexp_litsexp _
+  · intro con pats ih
+    simp only [patsexp]
+    refine validSexp_listsexp _ ?_
+    intro x hx
+    simp only [List.mem_cons, List.not_mem_nil, or_false] at hx
+    rcases hx with rfl | rfl | rfl
+    · decide
+    · refine validSexp_optsexp _ ?_
+      intro y hy
+      cases con with
+      | none => simp [Option.map] at hy
+      | some id =>
+        simp only [Option.map_some, Option.some.injEq] at hy
+        rw [← hy]
+        exact validSexp_idsexp _
+    · refine validSexp_listsexp _ ?_
+      intro y hy
+      exact ih y hy
+  · intro pat ih
+    simp only [patsexp]
+    refine validSexp_listsexp _ ?_
+    intro x hx
+    simp only [List.mem_cons, List.not_mem_nil, or_false] at hx
+    rcases hx with rfl | rfl
+    · decide
+    · exact ih
+  · intro pat name ih
+    simp only [patsexp]
+    refine validSexp_listsexp _ ?_
+    intro x hx
+    simp only [List.mem_cons, List.not_mem_nil, or_false] at hx
+    rcases hx with rfl | rfl | rfl
+    · decide
+    · exact ih
+    · exact validSexp_sexstr _
+  · intro pat type ih
+    simp only [patsexp]
+    refine validSexp_listsexp _ ?_
+    intro x hx
+    simp only [List.mem_cons, List.not_mem_nil, or_false] at hx
+    rcases hx with rfl | rfl | rfl
+    · decide
+    · exact ih
+    · exact validSexp_typesexp _
+  · intro x hx
+    simp only [patsexpList] at hx
+    simp at hx
+  · intro p ps ihp ihps x hx
+    simp only [patsexpList, List.mem_cons] at hx
+    rcases hx with rfl | hx
+    · exact ihp
+    · exact ihps x hx
+
 end Flapjack.CakeParser.FromSexp

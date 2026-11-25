@@ -10512,7 +10512,9 @@ family (`EVERY_isPrint_encode_control`, `SEXSTR_valid`, `listsexp_valid`,
 `idsexp_valid`, `litsexp_valid`, `optsexp_valid`, `locnsexp_valid`,
 `locssexp_valid`, `valid_sexp_prim_typesexp`), and the option-monad lemmas
 (`OPTION_APPLY_MAP3`, `OPTION_APPLY_MAP4`, `monad_bind_FAIL`,
-`monad_unitbind_CONG`, `strip_sxcons_FAIL_sexplist_FAIL`, `sexppair_CONG`). The theory is not a default CakeML build target, so build it in the
+`monad_unitbind_CONG`, `strip_sxcons_FAIL_sexplist_FAIL`, `sexppair_CONG`), and
+the AST validity theorems (`typesexp_valid`, `patsexp_valid`, and the
+`type_defsexp_valid`/`opsexp_valid`/`expsexp_valid`/`decsexp_valid` captures). The theory is not a default CakeML build target, so build it in the
 private copy first (`cd compiler/parsing && CAKEMLDIR=<cakeml tree> Holmake
 fromSexpTheory.uo`, about 30 s; it reads the already-built `simpleSexp`
 theories from `$HOLDIR` and writes only inside the copy). Regenerate with

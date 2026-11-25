@@ -139,4 +139,10 @@ monad_bind_FAIL_typed=do (x :β) <- (m1 :β option); (NONE :α option) od = (NON
 monad_unitbind_CONG_typed=∀(m11 :unit option) (m21 :α option) (m12 :unit option) (m22 :α option). m11 = m12 ∧ (m12 = SOME () ⇒ m21 = m22) ⇒ do m11; m21 od = do m12; m22 od
 strip_sxcons_FAIL_sexplist_FAIL_typed=∀(s :sexp). strip_sxcons s = (NONE :sexp list option) ⇒ sexplist (p :sexp -> α option) s = (NONE :α list option)
 sexppair_CONG_typed=∀(s1 :sexp) (s2 :sexp) (p1 :sexp -> α option) (p1' :sexp -> α option) (p2 :sexp -> β option) (p2' :sexp -> β option). s1 = s2 ∧ (∀(s :sexp). (∃(s' :sexp). s2 = ⟪s • s'⟫) ⇒ p1 s = p1' s) ∧ (∀(s :sexp). (∃(s' :sexp). s2 = ⟪s' • s⟫) ⇒ p2 s = p2' s) ⇒ sexppair p1 p2 s1 = sexppair p1' p2' s2
+typesexp_valid_typed=∀(t :ast_t). valid_sexp (typesexp t)
+patsexp_valid_typed=∀(p :pat). valid_sexp (patsexp p)
+type_defsexp_valid_typed=∀(t :(mlstring list # mlstring # (mlstring # ast_t list) list) list). valid_sexp (type_defsexp t)
+opsexp_valid_typed=∀(op :op). valid_sexp (opsexp op)
+expsexp_valid_typed=∀(e :exp). valid_sexp (expsexp e)
+decsexp_valid_typed=∀(d :dec). valid_sexp (decsexp d)
 typesexp_sexptype_typed=∀(s :sexp) (t :ast_t). (sexptype s = SOME t ⇔ typesexp t = s) ∧ (SOME t = sexptype s ⇔ typesexp t = s)
