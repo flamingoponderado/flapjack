@@ -399,4 +399,24 @@ theorem translate_eq_implode_map (f : HolChar → HolChar) (s : MlString) :
   have h := translateAux_eq_map_drop f s (strlen s) 0 (by omega)
   simpa using h
 
+/-- Original `exists_mlstring`: quantification over strings is quantification
+over their character lists. -/
+@[hol "cakeml/basis/pure/mlstringScript.sml" "exists_mlstring"]
+theorem exists_mlstring (P : MlString → Bool) :
+    (∃ x : MlString, P x = true) ↔ ∃ s : List HolChar, P (.implode s) = true := by
+  constructor
+  · rintro ⟨x, hx⟩
+    cases x with
+    | implode data => exact ⟨data, hx⟩
+  · rintro ⟨s, hs⟩
+    exact ⟨.implode s, hs⟩
+
+/-- Original `strlit_STRCAT`: concatenating two literals concatenates their
+character lists. -/
+@[hol "cakeml/basis/pure/mlstringScript.sml" "strlit_STRCAT"]
+theorem strlit_STRCAT (a b : List HolChar) :
+    strcat (.implode a) (.implode b) = .implode (a ++ b) := by
+  rw [strcat_eq_implode_append]
+  rfl
+
 end Flapjack.Basis.Pure.MlString

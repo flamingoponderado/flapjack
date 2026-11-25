@@ -12707,6 +12707,14 @@ run_probe mlstring_defs_typed_probeScript.sml mlstring_defs_typed_probe.out \
   LENGTH_explode_typed mlstring_typed \
   "$cake_dir/basis/pure/mlstringScript.sml" "$cake_dir/basis/pure"
 
+run_probe mlstring_more_typed_probeScript.sml mlstring_more_typed_probe.out \
+  fields_aux_def_typed fields_def_typed fields_filter_typed fields_length_typed \
+  isStringThere_aux_def_typed isPrefix_def_typed isSuffix_def_typed \
+  isSubstring_aux_def_typed isSubstring_def_typed isStringThere_SEG_typed \
+  isprefix_thm_typed exists_mlstring_typed strlit_STRCAT_typed \
+  "$cake_dir/basis/pure/mlstringScript.sml" \
+  "$cake_dir/basis/pure"
+
 run_probe lab_filter_defs_typed_probeScript.sml lab_filter_defs_typed_probe.out \
   filter_skip_MAP_typed filter_skip_def_typed not_skip_def_typed \
   "$cake_dir/compiler/backend/lab_filterScript.sml" "$cake_dir/compiler/backend"
