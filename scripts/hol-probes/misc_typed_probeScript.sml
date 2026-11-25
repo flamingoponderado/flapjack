@@ -161,3 +161,6 @@ val _ = emit "LENGTH_insert_atI_typed" "LENGTH_insert_atI";
 val _ = emit "OPT_MMAP_MAP_o_typed" "OPT_MMAP_MAP_o";
 val _ = emit "list_inter_def_typed" "list_inter_def";
 val _ = emit "list_set_eq_def_typed" "list_set_eq_def";
+val _ = emit "any_el_def_typed" "any_el_def";
+val _ = emit "option_fold_def_typed" "option_fold_def";
+val _ = emit "steps_rel_def_typed" "steps_rel_def";

@@ -597,4 +597,24 @@ theorem mapM_map_comp {α β γ : Type} (f : γ → Option β) (g : α → γ) (
 def listInter {α : Type} [DecidableEq α] (xs ys : List α) : List α :=
   ys.filter (fun y => decide (y ∈ xs))
 
+/-- Original `any_el_def`: the element at `n`, with a default past the end. -/
+@[hol "cakeml/misc/miscScript.sml" "any_el_def"]
+def anyEl {α : Type} (n : Nat) (xs : List α) (d : α) : α :=
+  match xs with
+  | [] => d
+  | x :: xs => if n = 0 then x else anyEl (n - 1) xs d
+
+/-- Original `option_fold_def`: fold an optional value with a default. -/
+@[hol "cakeml/misc/miscScript.sml" "option_fold_def"]
+def optionFold {α β : Type} (f : β → α → α) (x : α) : Option β → α
+  | none => x
+  | some y => f y x
+
+/-- Original `steps_rel_def`: a trace is accepted when every step relates the
+current state to the next one. -/
+@[hol "cakeml/misc/miscScript.sml" "steps_rel_def"]
+def stepsRel {α β : Type} (R : α → β → α → Bool) (x : α) : List (β × α) → Bool
+  | [] => true
+  | (j, y) :: tr => R x j y && stepsRel R y tr
+
 end Flapjack
