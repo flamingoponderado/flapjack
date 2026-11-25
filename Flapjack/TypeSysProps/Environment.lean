@@ -135,4 +135,101 @@ theorem extendDecTenv_assoc (tenv1 tenv2 tenv3 : TypeEnv) :
       extendDecTenv (extendDecTenv tenv1 tenv2) tenv3 := by
   simp [extendDecTenv, nsAppend_assoc]
 
+/-- Appending two abbreviation environments preserves well-formedness. -/
+@[hol "cakeml/semantics/proofs/typeSysPropsScript.sml" "tenv_abbrev_ok_merge"]
+theorem tenvAbbrevOk_merge {M N : Type} (env1 env2 : Namespace M N (List MlString × SemanticT)) :
+    tenvAbbrevOk env1 ∧ tenvAbbrevOk env2 → tenvAbbrevOk (nsAppend env1 env2) := by
+  intro h
+  exact nsAll_nsAppend _ _ _ h
+
+/-- Appending two constructor environments preserves well-formedness. -/
+@[simp, hol "cakeml/semantics/proofs/typeSysPropsScript.sml" "tenv_ctor_ok_merge"]
+theorem tenvCtorOk_merge {M N Tag : Type}
+    (env1 env2 : Namespace M N (List MlString × List SemanticT × Tag)) :
+    tenvCtorOk env1 ∧ tenvCtorOk env2 → tenvCtorOk (nsAppend env1 env2) := by
+  intro h
+  exact nsAll_nsAppend _ _ _ h
+
+/-- A short lookup found by the local environment survives adding local
+bindings, provided its type satisfies the local bound. -/
+@[hol "cakeml/semantics/proofs/typeSysPropsScript.sml" "nsLookup_add_tenvE1"]
+theorem nsLookup_addTenvE1 {M : Type} [DecidableEq M] (localEnv : TenvValExp)
+    (env : Namespace M MlString (Nat × SemanticT)) (n : MlString) (tvs tvs2 : Nat)
+    (t : SemanticT) :
+    checkFreevars tvs2 [] t = true ∧ tveLookup n tvs localEnv = some (tvs2, t) →
+      nsLookup (addTenvE localEnv env) (.short n) = some (tvs2, t) := by
+  intro h
+  induction localEnv generalizing tvs with
+  | empty => cases h.2
+  | bindTvar bound rest ih =>
+    simp only [tveLookup] at h
+    simp only [addTenvE]
+    exact ih _ h
+  | bindName name bound ty rest ih =>
+    by_cases same : name = n
+    · rw [← same] at h ⊢
+      simp only [tveLookup] at h
+      obtain ⟨rfl, rfl⟩ := Option.some.inj h.2
+      simp only [addTenvE]
+      rw [nsLookup_nsBind.1 name (tvs2, ty) (addTenvE rest env)]
+      rw [nil_deBruijnInc tvs2 tvs ty (Or.inr h.1)]
+    · simp only [tveLookup] at h
+      have restFound := ih _ ⟨h.1, by simpa [same] using h.2⟩
+      have different : (Ident.short n : Ident M MlString) ≠ Ident.short name := by
+        intro h
+        exact same (by simpa using h.symm)
+      simp only [addTenvE]
+      rw [nsLookup_nsBind.2 (Ident.short n) name (bound, ty) (addTenvE rest env) different]
+      exact restFound
+
+/-- A short lookup missed by the local environment survives adding local
+bindings. -/
+@[hol "cakeml/semantics/proofs/typeSysPropsScript.sml" "nsLookup_add_tenvE2"]
+theorem nsLookup_addTenvE2 {M : Type} [DecidableEq M] (localEnv : TenvValExp)
+    (env : Namespace M MlString (Nat × SemanticT)) (n : MlString) (tvs tvs2 : Nat)
+    (t : SemanticT) :
+    tveLookup n tvs localEnv = none ∧ nsLookup env (.short n) = some (tvs2, t) →
+      nsLookup (addTenvE localEnv env) (.short n) = some (tvs2, t) := by
+  intro h
+  induction localEnv generalizing tvs with
+  | empty => exact h.2
+  | bindTvar bound rest ih =>
+    simp only [tveLookup] at h
+    simp only [addTenvE]
+    exact ih _ h
+  | bindName name bound ty rest ih =>
+    by_cases same : name = n
+    · rw [← same] at h ⊢
+      simp only [tveLookup] at h
+      simp at h
+    · simp only [tveLookup] at h
+      have restFound := ih _ ⟨by simpa [same] using h.1, h.2⟩
+      have different : (Ident.short n : Ident M MlString) ≠ Ident.short name := by
+        intro h
+        exact same (by simpa using h.symm)
+      simp only [addTenvE]
+      rw [nsLookup_nsBind.2 (Ident.short n) name (bound, ty) (addTenvE rest env) different]
+      exact restFound
+
+/-- A qualified lookup found in the environment survives adding local bindings. -/
+@[hol "cakeml/semantics/proofs/typeSysPropsScript.sml" "nsLookup_add_tenvE3"]
+theorem nsLookup_addTenvE3 {M : Type} [DecidableEq M] (localEnv : TenvValExp)
+    (env : Namespace M MlString (Nat × SemanticT)) (n : Ident M MlString) (t : SemanticT)
+    (tvs2 : Nat) (mn : M) :
+    nsLookup env (.long mn n) = some (tvs2, t) →
+      nsLookup (addTenvE localEnv env) (.long mn n) = some (tvs2, t) := by
+  intro found
+  induction localEnv with
+  | empty => exact found
+  | bindTvar bound rest ih =>
+    simp only [addTenvE]
+    exact ih
+  | bindName name bound ty rest ih =>
+    have different : (Ident.long mn n : Ident M MlString) ≠ Ident.short name := by
+      intro h
+      cases h
+    simp only [addTenvE]
+    rw [nsLookup_nsBind.2 (Ident.long mn n) name (bound, ty) (addTenvE rest env) different]
+    exact ih
+
 end Flapjack.TypeSysProps

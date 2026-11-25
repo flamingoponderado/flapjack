@@ -2,6 +2,7 @@ module
 
 public import Flapjack.TypeSoundInvariants
 public import Flapjack.FiniteMap.AlistExact.Lookup
+public import Flapjack.TypeSysProps.Freevars
 
 @[expose] public section
 
@@ -233,5 +234,65 @@ theorem tenvValExpOk_dbMerge (e1 e2 : TenvValExp) :
     intro h
     apply ih
     exact h.2
+
+/-- Merging beneath a bound variable list keeps the list structure. -/
+@[hol "cakeml/semantics/proofs/typeSysPropsScript.sml" "db_merge_bvl"]
+theorem dbMerge_bvl (tenv1 : List (MlString × SemanticT)) (tenv2 tenv3 : TenvValExp)
+    (tvs : Nat) :
+    dbMerge (bindVarList tvs tenv1 tenv2) tenv3 =
+      bindVarList tvs tenv1 (dbMerge tenv2 tenv3) := by
+  induction tenv1 generalizing tenv2 with
+  | nil => simp [bindVarList]
+  | cons entry rest ih =>
+    rcases entry with ⟨name, ty⟩
+    simp only [bindVarList, dbMerge, ih]
+
+/-- Raising the lookup increment shifts the stored type by the difference. -/
+@[hol "cakeml/semantics/proofs/typeSysPropsScript.sml" "tveLookup_add_inc"]
+theorem tveLookup_add_inc (x : MlString) (inc inc2 : Nat) (localEnv : TenvValExp)
+    (tvs : Nat) (t : SemanticT) :
+    tveLookup x inc localEnv = some (tvs, t) →
+      tveLookup x (inc2 + inc) localEnv = some (tvs, deBruijnInc tvs inc2 t) := by
+  intro found
+  induction localEnv generalizing inc tvs t with
+  | empty => cases found
+  | bindTvar bound rest ih =>
+    simp only [tveLookup] at found ⊢
+    have shifted := ih _ _ _ found
+    rw [Nat.add_assoc]
+    exact shifted
+  | bindName name bound ty rest ih =>
+    simp only [tveLookup] at found ⊢
+    split at found
+    · rename_i same
+      obtain ⟨rfl, rfl⟩ := Option.some.inj found
+      simp only [same, ↓reduceIte]
+      rw [deBruijnInc_deBruijnInc]
+    · rename_i different
+      simp only [different, ↓reduceIte]
+      exact ih _ _ _ found
+
+/-- A successful lookup in a merged environment is either a lookup in the outer
+environment or a lookup in the inner one shifted by the outer bound. -/
+@[hol "cakeml/semantics/proofs/typeSysPropsScript.sml" "tveLookup_db_merge_some"]
+theorem tveLookup_dbMerge_some (n : MlString) (inc : Nat) (tenvE1 tenvE2 : TenvValExp)
+    (tvs : Nat) (t : SemanticT) :
+    tveLookup n inc (dbMerge tenvE1 tenvE2) = some (tvs, t) ↔
+      tveLookup n inc tenvE1 = some (tvs, t) ∨
+        (tveLookup n inc tenvE1 = none ∧
+          tveLookup n (numTvs tenvE1 + inc) tenvE2 = some (tvs, t)) := by
+  induction tenvE1 generalizing inc tvs t with
+  | empty => simp [dbMerge, tveLookup, numTvs]
+  | bindTvar bound rest ih =>
+    simp only [dbMerge, tveLookup, numTvs]
+    rw [ih (inc + bound)]
+    have idx : bound + numTvs rest + inc = numTvs rest + (inc + bound) := by omega
+    rw [idx]
+  | bindName name bound ty rest ih =>
+    simp only [dbMerge, tveLookup, numTvs]
+    by_cases same : name = n
+    · simp [same]
+    · simp only [same, ↓reduceIte]
+      rw [ih inc tvs t]
 
 end Flapjack.TypeSysProps
