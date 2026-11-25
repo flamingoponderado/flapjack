@@ -56,6 +56,12 @@ theorem isClosureValue_cloAddPartialArgs_nil (v : Value) (closed : isClosureValu
   cases v
   all_goals simp_all [cloAddPartialArgs, isClosureValue]
 
+/-- Original `clo_add_partial_args_nil`: the same no-argument equation, stated
+    with the survey's second HOL name. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "clo_add_partial_args_nil"]
+theorem cloAddPartialArgs_nil (x : Value) (closed : isClosureValue x) :
+    cloAddPartialArgs [] x = x := isClosureValue_cloAddPartialArgs_nil x closed
+
 /-- A successful partial application returns a closure value. -/
 @[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "dest_closure_partial_is_closure"]
 theorem destClosure_partial_isClosure (maxApp : Nat) (l : Option Nat) (v : Value)
