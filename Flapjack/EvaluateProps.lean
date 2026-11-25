@@ -1,11 +1,14 @@
 module
 
 public import Flapjack.FfiHOL
+public import Flapjack.EvaluateHOL
 public import Mathlib.Logic.Relation
 
 @[expose] public section
 
 namespace Flapjack
+
+open SemanticPrimitivesHOL EvaluateHOL
 
 @[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "call_FFI_LENGTH"]
 theorem callFFIHOL_length {σ : Type} (st : HolFfiState σ) (index : HolFfiName)
@@ -84,5 +87,39 @@ theorem callFFIRelHOL_rtc_ioEventsMono {σ : Type} (s1 s2 : HolFfiState σ)
   | refl => exact ioEventsMonoHOL_refl _
   | @tail middle last hsteps hstep ih =>
       exact ioEventsMonoHOL_trans s1 middle last ⟨ih, callFFIRelHOL_ioEventsMono hstep⟩
+
+/-- Original `list_result_eq_Rval`: a list result is a single value exactly when
+the source result is that value. -/
+@[simp, hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "list_result_eq_Rval"]
+theorem listResult_eq_val {α β : Type} (r : Result α β) (r' : List α) :
+    listResult r = .val r' ↔ ∃ v, r' = [v] ∧ r = .val v := by
+  cases r with
+  | val v =>
+    simp [listResult]
+    exact eq_comm
+  | err e => simp [listResult]
+
+/-- Original `list_result_eq_Rerr`: a list result is an error exactly when the
+source result is that error. -/
+@[simp, hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "list_result_eq_Rerr"]
+theorem listResult_eq_err {α β : Type} (r : Result α β) (e : ErrorResult β) :
+    listResult r = .err e ↔ r = .err e := by
+  cases r with
+  | val v => simp [listResult]
+  | err e' => simp [listResult]
+
+/-- Original `list_result_inj`: the list-result wrapper is injective. -/
+@[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "list_result_inj"]
+theorem listResult_inj {α β : Type} (x y : Result α β) (h : listResult x = listResult y) :
+    x = y := by
+  cases x with
+  | val v =>
+    cases y with
+    | val w => simpa [listResult] using h
+    | err e => simp [listResult] at h
+  | err e =>
+    cases y with
+    | val w => simp [listResult] at h
+    | err e' => simpa [listResult] using h
 
 end Flapjack
