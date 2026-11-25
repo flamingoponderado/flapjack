@@ -23,4 +23,10 @@ namespace Flapjack.Misc
 def listSubset {α : Type} [DecidableEq α] (l1 l2 : List α) : Bool :=
   l1.all (fun x => decide (x ∈ l2))
 
+/-- Exact HOL `misc$list_set_eq_def` (`miscScript.sml:3096`): mutual list
+containment. -/
+@[hol "cakeml/misc/miscScript.sml" "list_set_eq_def"]
+def listSetEq {α : Type} [DecidableEq α] (l1 l2 : List α) : Bool :=
+  listSubset l1 l2 && listSubset l2 l1
+
 end Flapjack.Misc

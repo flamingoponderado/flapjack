@@ -10685,6 +10685,7 @@ run_probe misc_typed_probeScript.sml misc_typed_probe.out \
   OPTION_MAP_I_typed TL_DROP_SUC_typed \
   ALL_DISTINCT_FLAT_EVERY_typed OPT_MMAP_SOME_typed insert_atI_def_typed \
   LENGTH_insert_atI_typed \
+  OPT_MMAP_MAP_o_typed list_inter_def_typed list_set_eq_def_typed \
   "$cake_dir/misc/miscScript.sml" \
   "$cake_dir/misc"
 

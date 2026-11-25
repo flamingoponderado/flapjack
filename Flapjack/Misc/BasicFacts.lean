@@ -582,4 +582,19 @@ theorem length_insertAtI {α : Type} (p : Nat) (l1 l2 : List α)
   simp only [List.length_append, List.length_take, List.length_drop]
   omega
 
+/-- Original `OPT_MMAP_MAP_o`: mapping a function into an optional map is the
+composition. -/
+@[hol "cakeml/misc/miscScript.sml" "OPT_MMAP_MAP_o"]
+theorem mapM_map_comp {α β γ : Type} (f : γ → Option β) (g : α → γ) (ls : List α) :
+    (ls.map g).mapM f = ls.mapM (f ∘ g) := by
+  induction ls with
+  | nil => rfl
+  | cons a t ih =>
+    simp [List.mapM_cons, ih]
+
+/-- Original `list_inter_def`: the elements of `ys` that occur in `xs`. -/
+@[hol "cakeml/misc/miscScript.sml" "list_inter_def"]
+def listInter {α : Type} [DecidableEq α] (xs ys : List α) : List α :=
+  ys.filter (fun y => decide (y ∈ xs))
+
 end Flapjack

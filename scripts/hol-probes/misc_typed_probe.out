@@ -123,3 +123,6 @@ ALL_DISTINCT_FLAT_EVERY_typed=∀(ls :α list list). ALL_DISTINCT (FLAT ls) ⇒ 
 OPT_MMAP_SOME_typed=OPT_MMAP (SOME :α -> α option) (ls :α list) = SOME ls
 insert_atI_def_typed=∀(l1 :α list) (n :num) (l2 :α list). insert_atI l1 n l2 = TAKE n l2 ++ l1 ++ DROP (n + LENGTH l1) l2
 LENGTH_insert_atI_typed=(p :num) + LENGTH (l1 :α list) ≤ LENGTH (l2 :α list) ⇒ LENGTH (insert_atI l1 p l2) = LENGTH l2
+OPT_MMAP_MAP_o_typed=∀(ls :α list). OPT_MMAP (f :γ -> β option) (MAP (g :α -> γ) ls) = OPT_MMAP (f ∘ g) ls
+list_inter_def_typed=∀(xs :α list) (ys :α list). list_inter xs ys = FILTER (λ(y :α). MEM y xs) ys
+list_set_eq_def_typed=∀(l1 :α list) (l2 :α list). list_set_eq l1 l2 ⇔ list_subset l1 l2 ∧ list_subset l2 l1

@@ -158,3 +158,6 @@ val _ = emit "ALL_DISTINCT_FLAT_EVERY_typed" "ALL_DISTINCT_FLAT_EVERY";
 val _ = emit "OPT_MMAP_SOME_typed" "OPT_MMAP_SOME";
 val _ = emit "insert_atI_def_typed" "insert_atI_def";
 val _ = emit "LENGTH_insert_atI_typed" "LENGTH_insert_atI";
+val _ = emit "OPT_MMAP_MAP_o_typed" "OPT_MMAP_MAP_o";
+val _ = emit "list_inter_def_typed" "list_inter_def";
+val _ = emit "list_set_eq_def_typed" "list_set_eq_def";
