@@ -10644,6 +10644,8 @@ run_probe misc_typed_probeScript.sml misc_typed_probe.out \
   FST_pair_typed SND_pair_typed FST_triple_typed SND_triple_typed LESS_1_typed \
   MEM_REPLICATE_EQ_typed LENGTH_TAKE_EQ_MIN_typed w2n_lt_256_typed IMP_IMP_typed \
   SUBSET_IMP_typed DROP_NIL_typed times_add_o_typed \
+  FST_5tup_typed SND_FST_pair_typed plus_compose_typed option_case_NONE_F_typed \
+  MAP_FST_I_PAIR_MAP_typed FLAT_MAP_SING_typed FLAT_MAP_NIL_typed \
   "$cake_dir/misc/miscScript.sml" \
   "$cake_dir/misc"
 

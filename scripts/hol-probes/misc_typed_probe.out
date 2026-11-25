@@ -78,3 +78,10 @@ IMP_IMP_typed=(P :bool) ∧ ((Q :bool) ⇒ (R :bool)) ⇒ (P ⇒ Q) ⇒ R
 SUBSET_IMP_typed=(s :α -> bool) ⊆ (t :α -> bool) ⇒ (x :α) ∈ s ⇒ x ∈ t
 DROP_NIL_typed=∀(n :num) (xs :α list). DROP n xs = ([] :α list) ⇔ LENGTH xs ≤ n
 times_add_o_typed=(λ(n :num). (k :num) * n + (x :num)) = $+ x ∘ $* k
+FST_5tup_typed=(λ((n :α),(ns :β),(b :γ),(x :δ),(y :ε)). n) = (FST :α # β # γ # δ # ε -> α)
+SND_FST_pair_typed=(λ(((n :α),(m :β)),(c :γ)). m) = (SND :α # β -> β) ∘ (FST :(α # β) # γ -> α # β)
+plus_compose_typed=∀(n :num) (m :num). $+ n ∘ $+ m = $+ (n + m)
+option_case_NONE_F_typed=(case (X :α option) of (NONE :α option) => F | SOME x => (P :α -> bool) x) ⇔ ∃(x :α). X = SOME x ∧ P x
+MAP_FST_I_PAIR_MAP_typed=∀(xs :(α # β) list). MAP (FST :α # γ -> α) (MAP ((I :α -> α) ## (f :β -> γ)) xs) = MAP (FST :α # β -> α) xs
+FLAT_MAP_SING_typed=∀(ls :α list). FLAT (MAP (λ(x :α). [(f :α -> β) x]) ls) = MAP f ls
+FLAT_MAP_NIL_typed=FLAT (MAP (λ(x :β). ([] :α list)) (ls :β list)) = ([] :α list)

@@ -77,4 +77,56 @@ theorem times_add_comp (k x : Nat) :
   funext n
   simp only [Function.comp_apply, Nat.mul_comm]
 
+/-- Original `FST_5tup`: the first projection of a nested five-tuple. -/
+@[hol "cakeml/misc/miscScript.sml" "FST_5tup"]
+theorem fst_5tup_eta {α β γ δ ε : Type} :
+    (fun p : α × β × γ × δ × ε => p.1) = Prod.fst := rfl
+
+/-- Original `SND_FST_pair`: the second component of the first pair. -/
+@[hol "cakeml/misc/miscScript.sml" "SND_FST_pair"]
+theorem snd_fst_pair_eta {α β γ : Type} :
+    (fun p : (α × β) × γ => p.1.2) = Prod.snd ∘ Prod.fst := rfl
+
+/-- Original `plus_compose`: adding a constant composes by addition. -/
+@[hol "cakeml/misc/miscScript.sml" "plus_compose"]
+theorem plus_comp (n m : Nat) :
+    (fun k : Nat => k + n) ∘ (fun k : Nat => k + m) = (fun k : Nat => k + (n + m)) := by
+  funext k
+  simp only [Function.comp_apply]
+  omega
+
+/-- Original `option_case_NONE_F`: a case over `NONE` as an existential. -/
+@[hol "cakeml/misc/miscScript.sml" "option_case_NONE_F"]
+theorem option_case_none_false {α : Type} (X : Option α) (P : α → Prop) :
+    (match X with | none => False | some x => P x) ↔ ∃ x, X = some x ∧ P x := by
+  cases X with
+  | none => simp
+  | some x => simp
+
+/-- Original `MAP_FST_I_PAIR_MAP`: mapping the second component keeps the
+first projection. -/
+@[hol "cakeml/misc/miscScript.sml" "MAP_FST_I_PAIR_MAP"]
+theorem map_fst_pair_map {α β γ : Type} (f : β → γ) (xs : List (α × β)) :
+    (xs.map (Prod.map id f)).map Prod.fst = xs.map Prod.fst := by
+  simp
+
+/-- Original `FLAT_MAP_SING`: flattening singleton lists is mapping. -/
+@[hol "cakeml/misc/miscScript.sml" "FLAT_MAP_SING"]
+theorem flat_map_sing {α β : Type} (f : α → β) (ls : List α) :
+    (ls.map (fun x => [f x])).flatten = ls.map f := by
+  induction ls with
+  | nil => rfl
+  | cons x xs ih =>
+    simp only [List.map_cons, List.flatten_cons, List.singleton_append]
+    rw [ih]
+
+/-- Original `FLAT_MAP_NIL`: flattening empty lists is empty. -/
+@[hol "cakeml/misc/miscScript.sml" "FLAT_MAP_NIL"]
+theorem flat_map_nil {α β : Type} (ls : List α) :
+    (ls.map (fun _ => ([] : List β))).flatten = [] := by
+  induction ls with
+  | nil => rfl
+  | cons _ _ ih =>
+    simp only [List.map_cons, List.flatten_cons, List.nil_append, ih]
+
 end Flapjack
