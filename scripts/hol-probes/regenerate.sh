@@ -11895,6 +11895,8 @@ run_probe fromSexp_typed_probeScript.sml fromSexp_typed_probe.out \
   type_defsexp_def_typed type_defsexp_sexptype_def_typed typesexp_11_typed typesexp_def_typed \
   strip_sxcons_thm_typed dstrip_sexp_thm_typed \
   typesexp_sexptype_typed \
+  isAlpha_isUpper_isLower_typed isLower_isAlpha_typed sexplist_listsexp_imp_typed \
+  dstrip_sexp_size_typed \
   "$cake_dir/compiler/parsing/fromSexpScript.sml" \
   "$cake_dir/compiler/parsing"
 run_probe word_cse_typed_probeScript.sml word_cse_typed_probe.out \

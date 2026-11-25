@@ -403,3 +403,7 @@ val _ = emit_exported "sexplist_CONG_typed" "sexplist_CONG";
 val _ = emit_exported "strip_sxcons_thm_typed" "strip_sxcons_thm";
 val _ = emit_exported "dstrip_sexp_thm_typed" "dstrip_sexp_thm";
 val _ = emit_exported "typesexp_sexptype_typed" "typesexp_sexptype";
+val _ = emit_exported "isAlpha_isUpper_isLower_typed" "isAlpha_isUpper_isLower";
+val _ = emit_exported "isLower_isAlpha_typed" "isLower_isAlpha";
+val _ = emit_exported "sexplist_listsexp_imp_typed" "sexplist_listsexp_imp";
+val _ = emit_exported "dstrip_sexp_size_typed" "dstrip_sexp_size";

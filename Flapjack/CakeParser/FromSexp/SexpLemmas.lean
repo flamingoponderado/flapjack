@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.CakeParser.FromSexp.RoundTrip
+public import Flapjack.Misc.ListEl
 
 @[expose] public section
 
@@ -499,5 +500,30 @@ theorem decodeList_cong {α : Type} (s1 s2 : Sexp) (p1 p2 : Sexp → Option α)
       intro hs
       simp [decodeList]
   exact key s2 h
+
+/-- Local inhabitation for the `holEl` rendering: HOL's `EL` is total on
+`sexp` lists, while `holEl` needs a `Nonempty` instance for the element type. -/
+local instance : Nonempty Sexp := ⟨.num 0⟩
+
+/-- Original `sexplist_listsexp_imp`: decoding an encoded list gives back the
+images of its elements, index by index. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "sexplist_listsexp_imp"
+  (total_function_inhabitants := [α])]
+theorem decodeList_listsexp_imp {α : Type} [Nonempty α] (f : Sexp → Option α)
+    (l1 : List Sexp) (l2 : List α) (h : decodeList f (listsexp l1) = some l2) :
+    ∀ n, n < l1.length → f (holEl n l1) = some (holEl n l2) := by
+  intro n hn
+  obtain ⟨ys, henc, hmaps⟩ := (decodeList_some f (listsexp l1) l2).mp h
+  have hys : l1 = ys := (listsexp_injective l1 ys).mp henc
+  subst hys
+  have hlen : n < l2.length := by
+    have := congrArg List.length hmaps
+    simp only [List.length_map] at this
+    omega
+  have hget : (l1[n]?).map f = (l2[n]?).map some := by
+    simpa only [List.getElem?_map] using congrArg (fun l : List (Option α) => l[n]?) hmaps
+  rw [List.getElem?_eq_getElem hn, List.getElem?_eq_getElem hlen] at hget
+  rw [holEl_eq_getElem n l1 hn, holEl_eq_getElem n l2 hlen]
+  simpa using hget
 
 end Flapjack.CakeParser.FromSexp

@@ -149,3 +149,7 @@ sexplist_CONG_typed=∀(s1 :sexp) (s2 :sexp) (p1 :sexp -> α option) (p2 :sexp -
 strip_sxcons_thm_typed=strip_sxcons ⟪(h :sexp) • (t :sexp)⟫ = OPTION_MAP (CONS h) (strip_sxcons t) ∧ strip_sxcons ((&(n :num)) :sexp) = (NONE :sexp list option) ∧ strip_sxcons (SX_STR (str :string)) = (NONE :sexp list option) ∧ strip_sxcons (SX_SYM (s :string)) = if s = "nil" then SOME ([] :sexp list) else (NONE :sexp list option)
 dstrip_sexp_thm_typed=dstrip_sexp ⟪SX_SYM (s :string) • (args :sexp)⟫ = OPTION_MAP (λ(t :sexp list). (s,t)) (strip_sxcons args) ∧ dstrip_sexp ⟪((&(n :num)) :sexp) • args⟫ = (NONE :(string # sexp list) option) ∧ dstrip_sexp ⟪SX_STR (str :string) • args⟫ = (NONE :(string # sexp list) option) ∧ dstrip_sexp ⟪⟪(s1 :sexp) • (s2 :sexp)⟫ • args⟫ = (NONE :(string # sexp list) option) ∧ dstrip_sexp ((&n) :sexp) = (NONE :(string # sexp list) option) ∧ dstrip_sexp (SX_SYM s) = (NONE :(string # sexp list) option) ∧ dstrip_sexp (SX_STR str) = (NONE :(string # sexp list) option)
 typesexp_sexptype_typed=∀(s :sexp) (t :ast_t). (sexptype s = SOME t ⇔ typesexp t = s) ∧ (SOME t = sexptype s ⇔ typesexp t = s)
+isAlpha_isUpper_isLower_typed=isAlpha (c :char) ⇒ (isUpper c ⇎ isLower c)
+isLower_isAlpha_typed=isLower (c :char) ⇒ isAlpha c
+sexplist_listsexp_imp_typed=sexplist (f :sexp -> α option) (listsexp (l1 :sexp list)) = SOME (l2 :α list) ⇒ ∀(n :num). n < LENGTH l1 ⇒ f l1❲n❳ = SOME l2❲n❳
+dstrip_sexp_size_typed=∀(s :sexp) (sym :string) (args :sexp list). dstrip_sexp s = SOME (sym,args) ⇒ ∀(e :sexp). MEM e args ⇒ sexp_size e < sexp_size s
