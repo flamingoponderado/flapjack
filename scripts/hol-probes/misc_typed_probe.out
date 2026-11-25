@@ -114,3 +114,8 @@ map_some_eq_typed=∀(l1 :α list) (l2 :α list). MAP (SOME :α -> α option) l1
 MAP_EQ_MAP_IMP_typed=∀(xs :α list) (ys :α list) (f :α -> β). (∀(x :α) (y :α). MEM x xs ∧ MEM y ys ∧ f x = f y ⇒ x = y) ⇒ MAP f xs = MAP f ys ⇒ xs = ys
 OPTION_MAP_INJ_typed=(∀(x :α) (y :α). (f :α -> β) x = f y ⇒ x = y) ⇒ ∀(o1 :α option) (o2 :α option). OPTION_MAP f o1 = OPTION_MAP f o2 ⇒ o1 = o2
 the_OPTION_MAP_typed=∀(f :α -> α) (d :α) (opt :α option). f d = d ⇒ the d (OPTION_MAP f opt) = f (the d opt)
+MEM_REPLICATE_IMP_typed=MEM (x :α) (REPLICATE (n :num) (y :α)) ⇒ x = y
+MAP_K_REPLICATE_typed=MAP (K (x :α) :β -> α) (ls :β list) = REPLICATE (LENGTH ls) x
+SUM_MAP_K_typed=∀(f :α -> num) (ls :α list) (c :num). (∀(x :α). f x = c) ⇒ (SUM (MAP f ls) :num) = LENGTH ls * c
+OPTION_MAP_I_typed=OPTION_MAP (I :α -> α) (x :α option) = x
+TL_DROP_SUC_typed=∀(x :num) (ls :α list). x < LENGTH ls ⇒ TL (DROP x ls) = DROP (SUC x) ls

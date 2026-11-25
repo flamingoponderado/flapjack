@@ -479,4 +479,69 @@ theorem the_option_map {α : Type} (f : α → α) (d : α) (opt : Option α) (h
   | none => simp [hd]
   | some x => rfl
 
+/-- Original `MEM_REPLICATE_IMP`: a replicated value is the repeated element. -/
+@[hol "cakeml/misc/miscScript.sml" "MEM_REPLICATE_IMP"]
+theorem mem_replicate_imp {α : Type} (x : α) :
+    ∀ (n : Nat) (y : α), x ∈ List.replicate n y → x = y := by
+  intro n
+  induction n with
+  | zero =>
+    intro y hx
+    simp at hx
+  | succ n ih =>
+    intro y hx
+    simp only [List.replicate_succ, List.mem_cons] at hx
+    rcases hx with h | h
+    · exact h
+    · exact ih y h
+
+/-- Original `MAP_K_REPLICATE`: mapping a constant is a replicate. -/
+@[hol "cakeml/misc/miscScript.sml" "MAP_K_REPLICATE"]
+theorem map_const_replicate {α β : Type} (x : α) :
+    ∀ (ls : List β), ls.map (fun _ => x) = List.replicate ls.length x := by
+  intro ls
+  induction ls with
+  | nil => rfl
+  | cons _ _ ih => simp [ih, List.replicate_succ]
+
+/-- Original `SUM_MAP_K`: a constant map sums to its length times the value. -/
+@[hol "cakeml/misc/miscScript.sml" "SUM_MAP_K"]
+theorem sum_map_const {α : Type} :
+    ∀ (f : α → Nat) (ls : List α) (c : Nat),
+      (∀ x, f x = c) → (ls.map f).sum = ls.length * c := by
+  intro f ls
+  induction ls with
+  | nil =>
+    intro c _
+    simp
+  | cons h t ih =>
+    intro c hc
+    simp only [List.map_cons, List.sum_cons, List.length_cons]
+    rw [hc h, ih c hc, Nat.succ_mul]
+    omega
+
+/-- Original `OPTION_MAP_I`: mapping the identity changes nothing. -/
+@[simp, hol "cakeml/misc/miscScript.sml" "OPTION_MAP_I"]
+theorem option_map_id {α : Type} (x : Option α) : x.map id = x := by
+  cases x with
+  | none => rfl
+  | some v => rfl
+
+/-- Original `TL_DROP_SUC`: the tail of a proper drop is the next drop. -/
+@[hol "cakeml/misc/miscScript.sml" "TL_DROP_SUC"]
+theorem tail_drop_succ {α : Type} (x : Nat) :
+    ∀ (ls : List α), x < ls.length → (ls.drop x).tail = ls.drop (x + 1) := by
+  intro ls
+  induction ls generalizing x with
+  | nil =>
+    intro h
+    simp at h
+  | cons h t ih =>
+    intro hx
+    cases x with
+    | zero => rfl
+    | succ k =>
+      simp only [List.drop_succ_cons]
+      exact ih k (by simpa using hx)
+
 end Flapjack
