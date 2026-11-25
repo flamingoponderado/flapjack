@@ -295,4 +295,47 @@ theorem tveLookup_dbMerge_some (n : MlString) (inc : Nat) (tenvE1 tenvE2 : TenvV
     · simp only [same, ↓reduceIte]
       rw [ih inc tvs t]
 
+/-- A successful lookup in a well-formed zero-bound local environment returns a
+type satisfying the lookup bound. -/
+@[hol "cakeml/semantics/proofs/typeSysPropsScript.sml" "tveLookup_freevars" 704]
+theorem tveLookup_freevars (n : MlString) (tvs : Nat) (localEnv : TenvValExp) (tvs' : Nat)
+    (t : SemanticT) :
+    tenvValExpOk localEnv ∧ numTvs localEnv = 0 ∧ tveLookup n tvs localEnv = some (tvs', t) →
+      checkFreevars tvs' [] t = true := by
+  intro h
+  induction localEnv generalizing tvs tvs' t with
+  | empty => cases h.2.2
+  | bindTvar bound rest ih =>
+    simp only [tenvValExpOk, numTvs, tveLookup] at h ⊢
+    obtain ⟨hok, hnum, hfound⟩ := h
+    have zero : bound = 0 := by omega
+    exact ih _ _ _ ⟨hok, by omega, hfound⟩
+  | bindName name bound ty rest ih =>
+    simp only [tenvValExpOk, numTvs, tveLookup] at h ⊢
+    obtain ⟨head1, hnum, hfound⟩ := h
+    obtain ⟨hfree, hok⟩ := head1
+    split at hfound
+    · rename_i same
+      obtain ⟨rfl, rfl⟩ := Option.some.inj hfound
+      have freeHere : checkFreevars bound [] ty = true := by simpa [hnum] using hfree
+      rw [nil_deBruijnInc bound tvs ty (Or.inl freeHere)]
+      exact freeHere
+    · rename_i different
+      exact ih _ _ _ ⟨hok, hnum, hfound⟩
+
+/-- Substituting through a bound variable list keeps the list structure. -/
+@[hol "cakeml/semantics/proofs/typeSysPropsScript.sml" "deBruijn_subst_E_bvl"]
+theorem deBruijnSubstTenvE_bvl (targs : List SemanticT) (tenv1 : List (MlString × SemanticT))
+    (tenv2 : TenvValExp) (tvs : Nat) :
+    deBruijnSubstTenvE targs (bindVarList tvs tenv1 tenv2) =
+      bindVarList tvs
+        (tenv1.map fun (x, t) => (x, deBruijnSubst (tvs + numTvs tenv2)
+          (targs.map (deBruijnInc 0 (tvs + numTvs tenv2))) t))
+        (deBruijnSubstTenvE targs tenv2) := by
+  induction tenv1 generalizing tenv2 with
+  | nil => simp [bindVarList]
+  | cons entry rest ih =>
+    rcases entry with ⟨x, t⟩
+    simp only [bindVarList, List.map_cons, deBruijnSubstTenvE, numTvs_bindVarList, ih]
+
 end Flapjack.TypeSysProps

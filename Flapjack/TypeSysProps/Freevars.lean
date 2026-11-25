@@ -394,6 +394,58 @@ theorem deBruijn_subst_freevars (skip : Nat) (targs : List SemanticT) (t : Seman
       exact ⟨ih1 checked.1, ih2 tailChecked⟩
   exact pointwise t hbound
 
+/-- Substituting the identity increment cancels out: the substituted increment
+by the replacement length equals the increment by the offset. -/
+@[hol "cakeml/semantics/proofs/typeSysPropsScript.sml" "subst_inc_cancel"]
+theorem subst_inc_cancel :
+    (∀ (t : SemanticT) (ts : List SemanticT) (inc : Nat),
+        deBruijnSubst 0 ts (deBruijnInc 0 (inc + ts.length) t) = deBruijnInc 0 inc t) ∧
+      ∀ (ts' ts : List SemanticT) (inc : Nat),
+        (ts'.map (deBruijnInc 0 (inc + ts.length))).map (deBruijnSubst 0 ts) =
+          ts'.map (deBruijnInc 0 inc) := by
+  have substListMap : ∀ (ts ts' : List SemanticT),
+      deBruijnSubstList 0 ts ts' = ts'.map (deBruijnSubst 0 ts) := by
+    intro ts ts'
+    induction ts' with
+    | nil => simp [deBruijnSubstList]
+    | cons u us ih => simp only [deBruijnSubstList, List.map_cons, ih]
+  have incListMap : ∀ (ts' : List SemanticT) (amount : Nat),
+      deBruijnIncList 0 amount ts' = ts'.map (deBruijnInc 0 amount) := by
+    intro ts' amount
+    induction ts' with
+    | nil => simp [deBruijnIncList]
+    | cons u us ih => simp only [deBruijnIncList, List.map_cons, ih]
+  have pointwise : ∀ (t : SemanticT) (ts : List SemanticT) (inc : Nat),
+      deBruijnSubst 0 ts (deBruijnInc 0 (inc + ts.length) t) = deBruijnInc 0 inc t := by
+    refine deBruijnInc.induct
+      (fun u => ∀ (ts : List SemanticT) (inc : Nat),
+        deBruijnSubst 0 ts (deBruijnInc 0 (inc + ts.length) u) = deBruijnInc 0 inc u)
+      (fun us => ∀ (ts : List SemanticT) (inc : Nat),
+        (us.map (deBruijnInc 0 (inc + ts.length))).map (deBruijnSubst 0 ts) =
+          us.map (deBruijnInc 0 inc)) ?_ ?_ ?_ ?_ ?_
+    · intro tv ts inc
+      simp [deBruijnInc, deBruijnSubst]
+    · intro n ts inc
+      have notRange : ¬ (0 ≤ n + (inc + ts.length) ∧ n + (inc + ts.length) < ts.length + 0) := by
+        omega
+      have nonneg : 0 ≤ n + (inc + ts.length) := by omega
+      simp only [deBruijnInc, deBruijnSubst, Nat.not_lt_zero, ↓reduceIte, dif_neg notRange,
+        if_pos nonneg]
+      congr 1
+      omega
+    · intro us id ih ts inc
+      simp only [deBruijnInc, deBruijnSubst, substListMap, incListMap]
+      rw [ih ts inc]
+    · intro ts inc
+      simp
+    · intro u us ih1 ih2 ts inc
+      simp only [List.map_cons, ih1 ts inc, ih2 ts inc]
+  refine ⟨pointwise, ?_⟩
+  intro ts' ts inc
+  induction ts' with
+  | nil => simp
+  | cons u us ih => simp only [List.map_cons, pointwise u ts inc, ih]
+
 /-- Incrementing and then substituting preserves the stated free-variable
 bound. -/
 @[hol "cakeml/semantics/proofs/typeSysPropsScript.sml" "check_freevars_subst_inc"]

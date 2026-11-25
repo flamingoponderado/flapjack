@@ -9931,7 +9931,8 @@ run_probe type_sys_props_typed_probeScript.sml type_sys_props_typed_probe.out \
   db_merge_bvl_typed tveLookup_add_inc_typed tveLookup_db_merge_some_typed \
   ctMap_ok_lookup_typed tenv_ctor_ok_lookup_typed tenv_val_ok_add_tenvE_typed \
   add_tenvE_bvl_typed check_freevars_subst_list_typed deBruijn_subst_freevars_typed \
-  type_ds_sing_typed \
+  type_ds_sing_typed tveLookup_freevars_typed deBruijn_subst_E_bvl_typed \
+  subst_inc_cancel_typed \
   "$cake_dir/semantics/proofs/typeSysPropsScript.sml" \
   "$cake_dir/semantics/proofs"
 
