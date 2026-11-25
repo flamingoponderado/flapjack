@@ -3772,6 +3772,7 @@ import Flapjack.Basis.Pure.MlList.Partition
 import Flapjack.Basis.Pure.MlList.Folds
 import Flapjack.Basis.Pure.MlList.Collate
 import Flapjack.Basis.Pure.MlList.Tabulate
+import Flapjack.Basis.Pure.MlList.MergeTail
 import Flapjack.Pancake.PanLang
 import Flapjack.Pancake.PanLang.Shape
 import Flapjack.Pancake.PanLang.Exp

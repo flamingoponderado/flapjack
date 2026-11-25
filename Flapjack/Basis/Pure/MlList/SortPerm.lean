@@ -14,10 +14,9 @@ Ports of `cakeml/basis/pure/mllistScript.sml:297-323`: for a transitive total re
 `sort` returns a sorted list, and it permutes its input, so membership and length are
 preserved. A HOL relation `R : 'a -> 'a -> bool` used as a proposition is
 `fun x y => R x y = true`, as in `Flapjack.Mergesort`. HOL `PERM` is the exact
-`holPerm`. The permutation facts about the untagged mergesort helpers below are
-Flapjack infrastructure (HOL proves them as `merge_tail_PERM`,
-`sort2_tail_PERM`, `sort3_tail_PERM` and `mergesortN_tail_PERM` over the same
-clauses).
+`holPerm`. The permutation facts about the tail-recursive mergesort helpers
+(`merge_tail_PERM`, `sort2_tail_PERM`, `sort3_tail_PERM` and
+`mergesortN_tail_PERM`) are tagged ports over the same clauses.
 -/
 
 namespace Flapjack.Basis.Pure.MlList
@@ -69,6 +68,37 @@ private theorem mergesortNTail_perm {α : Type} (neg : Bool) (r : α → α → 
       have hsplit : n.succ.succ.succ.succ = len1 + (n + 4 - len1) := by omega
       rw [hsplit, List.take_add]
   | _ => simp
+
+/-- Exact HOL `merge_tail_PERM` (`mllistScript.sml:104-138`). -/
+@[hol "cakeml/basis/pure/mllistScript.sml" "merge_tail_PERM"]
+theorem mergeTailPerm {α : Type} :
+    ∀ (negate : Bool) (r : α → α → Bool) (xs ys acc : List α),
+      holPerm (xs ++ ys ++ acc) (mergeTail negate r xs ys acc) := by
+  intro negate r xs ys acc
+  exact (holPerm_iff _ _).mpr (mergeTail_perm negate r xs ys acc).symm
+
+/-- Exact HOL `sort2_tail_PERM` (`mllistScript.sml:140-146`). -/
+@[hol "cakeml/basis/pure/mllistScript.sml" "sort2_tail_PERM"]
+theorem sort2TailPerm {α : Type} :
+    ∀ (neg : Bool) (r : α → α → Bool) (x y : α), holPerm [x, y] (sort2Tail neg r x y) := by
+  intro neg r x y
+  exact (holPerm_iff _ _).mpr (sort2Tail_perm neg r x y).symm
+
+/-- Exact HOL `sort3_tail_PERM` (`mllistScript.sml:148-182`). -/
+@[hol "cakeml/basis/pure/mllistScript.sml" "sort3_tail_PERM"]
+theorem sort3TailPerm {α : Type} :
+    ∀ (neg : Bool) (r : α → α → Bool) (x y z : α),
+      holPerm [x, y, z] (sort3Tail neg r x y z) := by
+  intro neg r x y z
+  exact (holPerm_iff _ _).mpr (sort3Tail_perm neg r x y z).symm
+
+/-- Exact HOL `mergesortN_tail_PERM` (`mllistScript.sml:184-285`). -/
+@[hol "cakeml/basis/pure/mllistScript.sml" "mergesortN_tail_PERM"]
+theorem mergesortNTailPerm {α : Type} :
+    ∀ (neg : Bool) (r : α → α → Bool) (len : Nat) (l : List α),
+      holPerm (l.take len) (mergesortNTail neg r len l) := by
+  intro neg r len l
+  exact (holPerm_iff _ _).mpr (mergesortNTail_perm neg r len l).symm
 
 /-- Exact HOL `sort_PERM` (`mllistScript.sml:309-317`). -/
 @[hol "cakeml/basis/pure/mllistScript.sml" "sort_PERM"]

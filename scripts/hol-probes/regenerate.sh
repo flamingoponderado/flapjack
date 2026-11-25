@@ -10683,6 +10683,14 @@ run_probe misc_typed_probeScript.sml misc_typed_probe.out \
   "$cake_dir/misc/miscScript.sml" \
   "$cake_dir/misc"
 
+run_probe mllist_typed_probeScript.sml mllist_typed_probe.out \
+  sort2_tail_sort2_typed sort3_tail_sort3_typed mergetail_merge_typed merge_tail_acc_typed merge_tail_MEM_typed \
+  mergesortN_tail_MEM_typed mergesort_tail_MEM_typed merge_tail_PERM_typed sort2_tail_PERM_typed sort3_tail_PERM_typed \
+  mergesortN_tail_PERM_typed sort_set_typed FIND_thm_typed index_find_thm_typed list_compare_def_typed \
+  foldli_thm_typed MAPI_thm_typed collate_cpn_reln_thm_typed tabulate_GENLIST_typed \
+  "$cake_dir/basis/pure/mllistScript.sml" \
+  "$cake_dir/basis/pure"
+
 run_probe gc_shared_typed_probeScript.sml gc_shared_typed_probe.out \
   heap_restrict_def_typed heap_drop_def_typed heap_take_def_typed heap_split_heap_length_typed heap_segment_IMP_typed gc_state_typed empty_state_def_typed heap_segment_def_typed \
   heap_lookup_PREFIX_typed heap_lookup_EXTEND_typed isSomeDataOrForward_lemma_typed isSomeForwardPointer_def_typed isSomeDataOrForward_def_typed FILTER_LEMMA_typed heaps_similar_REFL_typed heap_map_EMPTY_typed \
