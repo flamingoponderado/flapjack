@@ -3763,6 +3763,12 @@ import Flapjack.Basis.Pure.MlList.SortPerm
 import Flapjack.Basis.Pure.MlList.TailRecursive
 import Flapjack.Basis.Pure.MlList.Basics
 import Flapjack.Basis.Pure.MlList.MapPartial
+import Flapjack.Basis.Pure.MlList.Deconstruct
+import Flapjack.Basis.Pure.MlList.MapIndexed
+import Flapjack.Basis.Pure.MlList.Partition
+import Flapjack.Basis.Pure.MlList.Folds
+import Flapjack.Basis.Pure.MlList.Collate
+import Flapjack.Basis.Pure.MlList.Tabulate
 import Flapjack.Pancake.PanLang
 import Flapjack.Pancake.PanLang.Shape
 import Flapjack.Pancake.PanLang.Exp

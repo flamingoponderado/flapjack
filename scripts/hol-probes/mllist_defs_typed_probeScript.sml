@@ -406,6 +406,13 @@ val _ = emit_exported "sort_MEM_typed" "sort_MEM";
 val _ = emit_exported "sort_PERM_typed" "sort_PERM";
 val _ = emit_exported "sort_LENGTH_typed" "sort_LENGTH";
 val _ = emit_exported "sort_SORTS_typed" "sort_SORTS";
+val _ = emit_exported "sort_thm_typed" "sort_thm";
+
+(* Auxiliary partition, fold and tabulate definitions (task 273). *)
+val _ = emit_exported "partition_aux_def_typed" "partition_aux_def";
+val _ = emit_exported "foldli_aux_def_typed" "foldli_aux_def";
+val _ = emit_exported "tabulate_aux_def_typed" "tabulate_aux_def";
+val _ = emit_exported "tabulate_def_typed" "tabulate_def";
 
 (* Tail-recursive MAP, FILTER and FLAT (task 273). *)
 val _ = emit_exported "map_rev_prime_def_typed" "map_rev'_def";

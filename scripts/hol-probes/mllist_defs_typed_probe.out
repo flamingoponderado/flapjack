@@ -4,6 +4,11 @@ sort_MEM_typed=∀(R :α -> α -> bool) (L :α list). MEM (x :α) (sort R L) ⇔
 sort_PERM_typed=∀(R :α -> α -> bool) (L :α list). PERM L (sort R L)
 sort_LENGTH_typed=∀(R :α -> α -> bool) (l :α list). LENGTH (sort R l) = LENGTH l
 sort_SORTS_typed=∀(R :α -> α -> bool). transitive R ∧ total R ⇒ SORTS (sort :(α -> α -> bool) -> α list -> α list) R
+sort_thm_typed=∀(R :α -> α -> bool) (l :α list). sort R l = mergesort_tail R l
+partition_aux_def_typed=(∀(f :α -> bool) (pos :α list) (neg :α list). partition_aux f ([] :α list) pos neg = (REVERSE pos,REVERSE neg)) ∧ ∀(f :α -> bool) (h :α) (t :α list) (pos :α list) (neg :α list). partition_aux f (h::t) pos neg = if f h then partition_aux f t (h::pos) neg else partition_aux f t pos (h::neg)
+foldli_aux_def_typed=(∀(f :num -> β -> α -> α) (e :α) (n :num). foldli_aux f e n ([] :β list) = e) ∧ ∀(f :num -> β -> α -> α) (e :α) (n :num) (h :β) (t :β list). foldli_aux f e n (h::t) = foldli_aux f (f n h e) (SUC n) t
+tabulate_aux_def_typed=∀(n :num) (m :num) (f :num -> α) (acc :α list). tabulate_aux n m f acc = (let (b :bool) = (n ≥ m) in if b then REVERSE acc else (let (v :α) = f n; (n' :num) = n + (1 :num); (acc' :α list) = v::acc in tabulate_aux n' m f acc'))
+tabulate_def_typed=∀(n :num) (f :num -> α). tabulate n f = (let (l :α list) = ([] :α list) in tabulate_aux (0 :num) n f l)
 map_rev_prime_def_typed=(∀(f :β -> α) (acc :α list). map_rev' f ([] :β list) acc = acc) ∧ ∀(f :β -> α) (x :β) (xs :β list) (acc :α list). map_rev' f (x::xs) acc = map_rev' f xs (f x::acc)
 map_rev_def_typed=∀(f :β -> α) (xs :β list). map_rev f xs = map_rev' f xs ([] :α list)
 map_rev_thm_typed=map_rev (f :β -> α) (xs :β list) = REVERSE (MAP f xs)

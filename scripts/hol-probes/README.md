@@ -214,8 +214,15 @@ accumulator length definition `LENGTH_AUX_def` together with `LENGTH_AUX_THM`
 `flat_rev'`/`flat_rev`/`flat_rev_thm`. The two-equation definitions are
 captured as their HOL conjunctions, which fixes the binder order
 (predicate or function first, then list, then accumulator) and the literal
-cons equations. The captures are typed replays, not cross-language
-equivalence proofs.
+cons equations. It also captures `sort_thm` and the list deconstruction and
+mapping definitions (`getItem_def`, `nth_def` with its `EL` rendering,
+`take_def`, `drop_def`, `takeUntil_def`, `dropUntil_def`, `mapi_def`), the
+partition family (`partition_aux_def`, `partition_def`, `partition_pos_thm`,
+`partition_neg_thm`), the folds (`foldl_def`, `foldli_aux_def`, `foldli_def`,
+`foldl_intro`), the comparison family (`collate_def`, `collate_equal_thm`,
+`collate_short_thm`, `collate_long_thm`, `cpn_to_reln_def`) and the tabulate
+definitions (`tabulate_aux_def`, `tabulate_def`). The captures are typed
+replays, not cross-language equivalence proofs.
 
 `data_to_word_gc_stack_probe.out` captures the typed original unchanged-pointer set and finiteness theorem, combined forwarding-map definition, and parsed local domain and application statements. These show that configuration and heap payload types are independent; the local parses do not replay their HOL proofs.
 

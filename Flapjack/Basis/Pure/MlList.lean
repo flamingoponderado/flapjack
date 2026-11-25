@@ -86,4 +86,9 @@ def mergesortTail {α : Type} (r : α → α → Bool) (l : List α) : List α :
 def sort {α : Type} (r : α → α → Bool) (l : List α) : List α :=
   mergesortTail r l
 
+/-- Original `sort_thm`: `sort` is the mergesort tail function. -/
+@[hol "cakeml/basis/pure/mllistScript.sml" "sort_thm"]
+theorem sort_eq_mergesortTail {α : Type} (r : α → α → Bool) (l : List α) :
+    sort r l = mergesortTail r l := rfl
+
 end Flapjack.Basis.Pure.MlList
