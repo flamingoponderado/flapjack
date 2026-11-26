@@ -15,7 +15,8 @@ HOL's `ordering` is rendered by Lean `Ordering.lt/eq/gt` constructor for
 constructor.  `cpn_to_reln` is boolean-valued, so its HOL boolean equation
 `f x1 x2 = LESS` is Lean `==`.  HOL `IS_PREFIX` is `List.IsPrefix` (`<+:`).
 `collate_cpn_reln_thm` is not ported: it uses HOL `LLEX`, which has no decided
-Lean rendering.
+Lean rendering.  `list_compare_def` is HOL's alias for
+`ternaryComparisonsTheory.list_compare_def`, ported here clause for clause.
 -/
 
 namespace Flapjack.Basis.Pure.MlList
@@ -33,6 +34,20 @@ def collate {α β : Type} (f : α → β → Ordering) : List α → List β �
 @[hol "cakeml/basis/pure/mllistScript.sml" "cpn_to_reln_def"]
 def cpnToRel {α β : Type} (f : α → β → Ordering) (x1 : α) (x2 : β) : Bool :=
   f x1 x2 == Ordering.lt
+
+/-- Original `list_compare_def`, HOL's alias for
+`ternaryComparisonsTheory.list_compare_def`: lexicographic comparison of two
+lists. -/
+@[hol "cakeml/basis/pure/mllistScript.sml" "list_compare_def"]
+def listCompare {α β : Type} (cmp : α → β → Ordering) : List α → List β → Ordering
+  | [], [] => Ordering.eq
+  | [], _ :: _ => Ordering.lt
+  | _ :: _, [] => Ordering.gt
+  | x :: xs, y :: ys =>
+      match cmp x y with
+      | Ordering.lt => Ordering.lt
+      | Ordering.eq => listCompare cmp xs ys
+      | Ordering.gt => Ordering.gt
 
 /-- Original `collate_equal_thm`: two equal lists compare equal. -/
 @[hol "cakeml/basis/pure/mllistScript.sml" "collate_equal_thm"]
