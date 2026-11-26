@@ -4555,6 +4555,7 @@ import Flapjack.Basis.Pure.MlString.Size
 import Flapjack.Basis.Pure.MlString.Ops
 import Flapjack.Basis.Pure.MlString.Escape
 import Flapjack.Basis.Pure.MlString.Fields
+import Flapjack.Basis.Pure.MlString.Split
 import Flapjack.Basis.Pure.MlString.Prefix
 import Flapjack.Basis.Pure.MlString.Order
 import Flapjack.Compiler.Backend.MlStringBridge

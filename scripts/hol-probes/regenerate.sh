@@ -3511,6 +3511,10 @@ run_probe mlstring_carrier_probeScript.sml mlstring_carrier_probe.out \
 run_probe mlstring_length_probeScript.sml mlstring_length_probe.out \
   strlen length_explode "$cake_dir/basis/pure/mlstringScript.sml" "$cake_dir/basis/pure"
 
+run_probe mlstring_split_probeScript.sml mlstring_split_probe.out \
+  splitl_aux_def_typed splitl_def_typed tokens_aux_def_typed tokens_def_typed tokens_filter_typed \
+  "$cake_dir/basis/pure/mlstringScript.sml" "$cake_dir/basis/pure"
+
 # The loopSem state-carrier probe pins the exact field shapes of a concrete
 # (8,'ffi) loopSem$state: num_map locals/code, total memory, set domain, clock, be.
 run_probe loop_sem_state_carrier_probeScript.sml loop_sem_state_carrier_probe.out \
