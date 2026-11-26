@@ -19,4 +19,12 @@ theorem even_makeEven (n : Nat) : makeEven n % 2 = 0 := by
   unfold makeEven
   split <;> omega
 
+/-- Original `EXP2_EVEN`: a power of two is even exactly when the exponent is
+nonzero. HOL's `EVEN` is the `k % 2 = 0` rendering. -/
+@[hol "cakeml/misc/miscScript.sml" "EXP2_EVEN"]
+theorem exp2_even (n : Nat) : (2 ^ n) % 2 = 0 ↔ n ≠ 0 := by
+  cases n with
+  | zero => decide
+  | succ n => simp [Nat.pow_succ]
+
 end Flapjack

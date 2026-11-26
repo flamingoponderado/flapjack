@@ -696,4 +696,11 @@ theorem mem_between (x y z : Nat) : between y z x = true ↔ y ≤ x ∧ x < z :
   unfold between
   simp only [Bool.and_eq_true, decide_eq_true_eq]
 
+/-- Original `map_some_eq_append`: appending maps to `SOME` is injective. -/
+@[hol "cakeml/misc/miscScript.sml" "map_some_eq_append"]
+theorem map_some_append_eq {α : Type} (l1 l2 l3 : List α) :
+    l1.map some ++ l2.map some = l3.map some ↔ l1 ++ l2 = l3 := by
+  rw [← List.map_append]
+  exact map_some_eq (l1 ++ l2) l3
+
 end Flapjack

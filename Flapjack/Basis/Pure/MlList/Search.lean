@@ -58,4 +58,15 @@ theorem holFind_cons {α : Type} (p : α → Bool) :
   · simp only [holFind, holIndexFind, hp]
     exact holIndexFind_snd_independent p t 1 0
 
+/-- Original `INDEX_FIND_CONS_EQ_SOME` (`miscScript.sml`): the two ways the
+first match of a nonempty list can be found. -/
+@[hol "cakeml/misc/miscScript.sml" "INDEX_FIND_CONS_EQ_SOME"]
+theorem holIndexFind_cons_eq_some {α : Type} (n : Nat) (f : α → Bool) (x : α)
+    (xs : List α) (y : Nat × α) :
+    (holIndexFind n f (x :: xs) = some y) ↔
+      (f x = true ∧ y = (n, x)) ∨ (f x = false ∧ holIndexFind (n + 1) f xs = some y) := by
+  cases hfx : f x with
+  | true => simp [holIndexFind, hfx, eq_comm]
+  | false => simp [holIndexFind, hfx]
+
 end Flapjack.Basis.Pure.MlList

@@ -67,4 +67,14 @@ noncomputable def holThe {α : Type} [Nonempty α] : Option α → α
   | some x => x
   | none => holTheNone α
 
+/-- Original `OPTION_CHOICE_EQUALS_OPTION` in `miscScript.sml`: the choice
+operator succeeds on either side, as in the already-ported
+`OPTION_CHOICE_EQ_SOME`. -/
+@[hol "cakeml/misc/miscScript.sml" "OPTION_CHOICE_EQUALS_OPTION"]
+theorem option_choice_equals_option {α : Type} (x y : Option α) (z : α) :
+    ((x <|> y) = some z) ↔ x = some z ∨ (x = none ∧ y = some z) := by
+  cases x with
+  | none => simp
+  | some val => simp
+
 end Flapjack

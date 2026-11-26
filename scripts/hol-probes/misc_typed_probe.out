@@ -153,3 +153,13 @@ MEM_enumerate_typed=∀(xs :α list) (i :num) (e :α). i < LENGTH xs ⇒ (MEM (i
 MAP_enumerate_MAPi_typed=∀(f :num # α -> β) (xs :α list). MAP f (enumerate (0 :num) xs :(num # α) list) = MAPi (λ(n :num) (e :α). f (n,e)) xs
 MAPi_enumerate_MAP_typed=∀(f :num -> α -> β) (xs :α list). MAPi f xs = MAP (λ((i :num),(e :α)). f i e) (enumerate (0 :num) xs :(num # α) list)
 ALOOKUP_enumerate_typed=∀(ls :α list) (k :num) (x :num). ALOOKUP (enumerate k ls :(num # α) list) x = if k ≤ x ∧ x < LENGTH ls + k then SOME ls❲x − k❳ else (NONE :α option)
+EXP2_EVEN_typed=∀(n :num). EVEN ((2 :num) ** n) ⇔ n ≠ (0 :num)
+OPTION_CHOICE_EQUALS_OPTION_typed=∀(x :α option) (y :α option) (z :α). OPTION_CHOICE x y = SOME z ⇔ x = SOME z ∨ x = (NONE :α option) ∧ y = SOME z
+map_some_eq_append_typed=∀(l1 :α list) (l2 :α list) (l3 :α list). MAP (SOME :α -> α option) l1 ++ MAP (SOME :α -> α option) l2 = MAP (SOME :α -> α option) l3 ⇔ l1 ++ l2 = l3
+the_nil_eq_cons_typed=the ([] :α list) (x :α list option) = (y :α)::(z :α list) ⇔ x = SOME (y::z)
+find_index_INDEX_FIND_typed=∀(y :α) (xs :α list) (n :num). find_index y xs n = OPTION_MAP (FST :num # α -> num) (INDEX_FIND n ($= y) xs)
+find_index_NOT_MEM_typed=∀(ls :α list) (x :α) (n :num). ¬MEM x ls ⇔ find_index x ls n = (NONE :num option)
+find_index_MAP_inj_typed=∀(ls :α list) (x :α) (n :num) (f :α -> β). (∀(y :α). MEM y ls ⇒ f x = f y ⇒ x = y) ⇒ find_index (f x) (MAP f ls) n = find_index x ls n
+INDEX_FIND_CONS_EQ_SOME_typed=INDEX_FIND (n :num) (f :α -> bool) ((x :α)::(xs :α list)) = SOME (y :num # α) ⇔ f x ∧ y = (n,x) ∨ ¬f x ∧ INDEX_FIND (n + (1 :num)) f xs = SOME y
+THE_find_index_suff_typed=∀(P :num -> bool) (x :α) (ls :α list) (n :num). (∀(m :num). m < LENGTH ls ⇒ P (m + n)) ∧ MEM x ls ⇒ P (THE (find_index x ls n))
+find_index_APPEND2_typed=∀(l1 :α list) (n :α) (l2 :α list) (m :num) (i :num). find_index n (l1 ++ l2) m = SOME i ∧ m + LENGTH l1 ≤ i ⇒ find_index n l2 (m + LENGTH l1) = SOME i

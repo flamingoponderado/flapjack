@@ -10737,6 +10737,9 @@ run_probe misc_typed_probeScript.sml misc_typed_probe.out \
   between_def_typed IN_between_typed ALOOKUP_EXISTS_IFF_typed LAST_CONS_alt_typed \
   NOT_MEM_findi_IFF_typed NOT_MEM_findi_typed EL_enumerate_typed MEM_enumerate_typed \
   MAP_enumerate_MAPi_typed MAPi_enumerate_MAP_typed ALOOKUP_enumerate_typed \
+  EXP2_EVEN_typed OPTION_CHOICE_EQUALS_OPTION_typed map_some_eq_append_typed the_nil_eq_cons_typed \
+  find_index_INDEX_FIND_typed find_index_NOT_MEM_typed find_index_MAP_inj_typed \
+  INDEX_FIND_CONS_EQ_SOME_typed THE_find_index_suff_typed find_index_APPEND2_typed \
   "$cake_dir/misc/miscScript.sml" \
   "$cake_dir/misc"
 
