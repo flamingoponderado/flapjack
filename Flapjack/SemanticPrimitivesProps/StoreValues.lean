@@ -2,6 +2,7 @@ module
 
 public import Flapjack.SemanticPrimitivesHOL
 public import Flapjack.SemanticPrimitivesProps.StoreRelation
+public import Flapjack.HolArb
 
 @[expose] public section
 
@@ -22,6 +23,15 @@ def mapStoreValue {α β : Type} (f : α → β) : StoreValue α → StoreValue 
 def isRefv {α : Type} : StoreValue α → Bool
   | .refv _ => true
   | _ => false
+
+/-- Original `dest_Refv_def`: the payload of a reference store entry. HOL
+    defines it only on `Refv`, so the other entries are unspecified (`ARB`);
+    they share the opaque `holArb` value at the payload carrier. -/
+@[hol "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml" "dest_Refv_def"
+  (total_function_inhabitants := [α])]
+noncomputable def destRefv {α : Type} [Nonempty α] : StoreValue α → α
+  | .refv value => value
+  | _ => holArb α
 
 /-- Apply a predicate to every value directly held by a store entry. HOL's
 `EVERY` fold over the array payload is rendered as membership quantification. -/
