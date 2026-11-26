@@ -126,4 +126,22 @@ theorem maxList_genlist_add_suc_val (k : Nat) :
           rw [ih (by omega)]
           exact Nat.max_eq_right (by omega)
 
+/-- Original `MAX_LIST_intro`: a property holding at zero and on every member
+holds of the maximum. -/
+@[hol "cakeml/misc/miscScript.sml" "MAX_LIST_intro"]
+theorem maxList_intro (P : Nat → Prop) (values : List Nat) (h0 : P 0)
+    (h : ∀ x ∈ values, P x) : P (maxList values) := by
+  induction values with
+  | nil => simpa [maxList] using h0
+  | cons value values ih =>
+    have hvalue : P value := h value (by simp)
+    have hrest : ∀ y ∈ values, P y := fun y hy => h y (by simp [hy])
+    have ihrest := ih hrest
+    simp only [maxList]
+    rcases Nat.le_total value (maxList values) with hle | hle
+    · rw [Nat.max_eq_right hle]
+      exact ihrest
+    · rw [Nat.max_eq_left hle]
+      exact hvalue
+
 end Flapjack

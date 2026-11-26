@@ -1026,4 +1026,19 @@ theorem map_zip_snd_triple {α β γ δ : Type} (f : β → γ → δ)
       simp only [List.zip_cons_cons, List.map_cons, List.length_cons] at h ⊢
       rw [ih rest (by omega)]
 
+/-- Original `TAKE_DROP_SUBLIST`: a prefix of a dropped suffix reassembles the
+list. -/
+@[hol "cakeml/misc/miscScript.sml" "TAKE_DROP_SUBLIST"]
+theorem take_drop_sublist {α : Type} (ls ll : List α) (n nlll : Nat)
+    (hpre : ll <+: ls.drop n) (_hn : n < ls.length) (hnlll : nlll = n + ll.length) :
+    ls.take n ++ ll ++ ls.drop nlll = ls := by
+  obtain ⟨t, ht⟩ := hpre
+  subst hnlll
+  have hdrop : ls.drop (n + ll.length) = t := by
+    rw [← List.drop_drop, ← ht, List.drop_left]
+  rw [hdrop]
+  conv_rhs =>
+    rw [← List.take_append_drop n ls, ← ht]
+  rw [List.append_assoc]
+
 end Flapjack
