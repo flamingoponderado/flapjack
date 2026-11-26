@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.EvaluateProps.ClockIoFull
+public import Flapjack.EvaluateProps.ClockIoConsequences
 
 @[expose] public section
 
@@ -93,5 +94,25 @@ theorem evaluateMatch_minimalClock {σ : Type} (st next : State σ) (env : SemEn
   isClockIoMono_minimal (fun state => evaluateMatch state env value clauses errorValue)
     st next result k (isClockIoMono_evaluate.2.1 st env value clauses errorValue)
     run hclock hne hgt
+
+@[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "evaluate_set_init_clock"]
+theorem evaluate_setInitClock {σ : Type} (st next : State σ) (env : SemEnv Value)
+    (es : List AstHOL.Exp) (result : Result (List Value) Value)
+    (run : evaluate st env es = (next, result))
+    (hne : result ≠ .err (.abort .timeoutError)) (k : Nat) :
+    ∃ clock' res' state', evaluate { st with clock := k } env es = (state', res') ∧
+      ((res' = result ∧ state' = { next with clock := clock' }) ∨
+       (res' = .err (.abort .timeoutError) ∧ ioEventsMonoHOL state'.ffi next.ffi)) := by
+  obtain ⟨clock0, run0⟩ := evaluate_setClock st next env es result run hne 0
+  by_cases hle : clock0 ≤ k
+  · obtain ⟨extra, rfl⟩ := Nat.exists_eq_add_of_le hle
+    have addRun := evaluate_addToClock { st with clock := clock0 } env es { next with clock := 0 }
+      result extra ⟨run0, hne⟩
+    refine ⟨extra, result, { next with clock := extra }, ?_, Or.inl ⟨rfl, rfl⟩⟩
+    simpa using addRun
+  · have hgt : clock0 > k := Nat.lt_of_not_le hle
+    obtain ⟨state', run', mono⟩ := evaluate_minimalClock { st with clock := clock0 }
+      { next with clock := 0 } env es result k run0 rfl hne hgt
+    exact ⟨0, .err (.abort .timeoutError), state', run', Or.inr ⟨rfl, mono⟩⟩
 
 end Flapjack.EvaluateProps

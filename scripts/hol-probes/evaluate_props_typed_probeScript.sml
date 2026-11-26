@@ -103,3 +103,4 @@ val _ = emit "evaluate_match_minimal_clock_typed" "evaluate_match_minimal_clock"
 val _ = emit "evaluate_cons_typed" "evaluate_cons";
 val _ = emit "evaluate_append_typed" "evaluate_append";
 val _ = emit "call_FFI_return_unchanged_typed" "call_FFI_return_unchanged";
+val _ = emit "evaluate_set_init_clock_typed" "evaluate_set_init_clock";
