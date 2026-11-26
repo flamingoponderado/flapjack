@@ -69,4 +69,9 @@ theorem holIndexFind_cons_eq_some {α : Type} (n : Nat) (f : α → Bool) (x : �
   | true => simp [holIndexFind, hfx, eq_comm]
   | false => simp [holIndexFind, hfx]
 
+/-- HOL `INDEX_OF`: the first position of `x`, via the equality predicate. -/
+@[hol "HOL/src/list/src/listScript.sml" "INDEX_OF_def"]
+def holIndexOf {α : Type} [DecidableEq α] (x : α) : List α → Option Nat :=
+  (Option.map Prod.fst) ∘ (holIndexFind 0 (fun y => decide (y = x)))
+
 end Flapjack.Basis.Pure.MlList

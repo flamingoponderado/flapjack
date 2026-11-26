@@ -95,4 +95,36 @@ theorem holThe_findIndex_suff {α : Type} [DecidableEq α] (P : Nat → Bool) (x
         simpa [Nat.add_assoc, Nat.add_comm, Nat.add_left_comm] using this
       exact ih (n + 1) hP' ht
 
+/-- Original `find_index_ALL_DISTINCT_EL`: in a duplicate-free list the element
+    at position `n` is found at `m + n`. -/
+@[hol "cakeml/misc/miscScript.sml" "find_index_ALL_DISTINCT_EL"]
+theorem findIndex_nodup_getElem {α : Type} [DecidableEq α] (ls : List α) (n m : Nat)
+    (hnd : ls.Nodup) (hn : n < ls.length) :
+    findIndex ls[n] ls m = some (m + n) := by
+  induction ls generalizing n m with
+  | nil => simp at hn
+  | cons a t ih =>
+    cases n with
+    | zero =>
+      simp [findIndex]
+    | succ k =>
+      have hk : k < t.length := by simpa using hn
+      have hne : a ≠ t[k] := by
+        intro hsame
+        have hmem : t[k] ∈ t := List.getElem_mem hk
+        exact (List.nodup_cons.mp hnd).1 (hsame ▸ hmem)
+      have hstep : findIndex t[k] (a :: t) m = findIndex t[k] t (m + 1) := by
+        simp only [findIndex]
+        rw [if_neg hne]
+      simp only [List.getElem_cons_succ]
+      rw [hstep, ih k (m + 1) (List.nodup_cons.mp hnd).2 hk]
+      exact congrArg some (by omega)
+
+/-- Original `find_index_INDEX_OF`: the search at offset zero is `INDEX_OF`. -/
+@[hol "cakeml/misc/miscScript.sml" "find_index_INDEX_OF"]
+theorem findIndex_zero_eq_holIndexOf {α : Type} [DecidableEq α] (y : α) (xs : List α) :
+    findIndex y xs 0 = Flapjack.Basis.Pure.MlList.holIndexOf y xs := by
+  rw [findIndex_eq_holIndexFind]
+  rfl
+
 end Flapjack.Misc

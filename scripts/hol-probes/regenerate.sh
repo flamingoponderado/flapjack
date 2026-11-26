@@ -12832,6 +12832,11 @@ run_probe misc_defs_typed_probeScript.sml misc_defs_typed_probe.out \
   LLOOKUP_typed num_set_typed \
   "$cake_dir/misc/miscScript.sml" "$cake_dir/misc"
 
+run_probe misc_find_index_typed_probeScript.sml misc_find_index_typed_probe.out \
+  INDEX_OF_def_typed find_index_ALL_DISTINCT_EL_typed find_index_INDEX_OF_typed \
+  EVERY_anub_imp_typed \
+  "$cake_dir/misc/miscScript.sml" "$cake_dir/misc"
+
 run_probe data_sem_check_typed_probeScript.sml data_sem_check_typed_probe.out \
   check_res_size_of_typed \
   "$cake_dir/compiler/backend/semantics/dataSemScript.sml" "$cake_dir/compiler/backend/semantics"
