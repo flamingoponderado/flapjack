@@ -64,3 +64,6 @@ val _ = emit "cons_tag_def_typed" "cons_tag_def";
 val _ = emit "small_enough_int_def_typed" "small_enough_int_def";
 val _ = emit "data_num_stubs_EVEN_typed" "data_num_stubs_EVEN";
 val _ = emit "lookup_list_delete_typed" "lookup_list_delete";
+val _ = emit "none_tag_def_typed" "none_tag_def";
+val _ = emit "some_tag_def_typed" "some_tag_def";
+val _ = emit "mk_union_def_typed" "mk_union_def";

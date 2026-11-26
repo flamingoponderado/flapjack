@@ -11157,6 +11157,7 @@ run_probe backend_common_typed_probeScript.sml backend_common_typed_probe.out \
   false_tag_def_typed true_tag_def_typed bool_to_tag_def_typed clos_tag_shift_def_typed bind_tag_def_typed chr_tag_def_typed div_tag_def_typed subscript_tag_def_typed \
   nil_tag_def_typed cons_tag_def_typed small_enough_int_def_typed \
   data_num_stubs_EVEN_typed lookup_list_delete_typed \
+  none_tag_def_typed some_tag_def_typed mk_union_def_typed \
   "$cake_dir/compiler/backend/backend_commonScript.sml" \
   "$cake_dir/compiler/backend"
 

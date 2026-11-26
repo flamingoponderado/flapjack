@@ -31,3 +31,6 @@ cons_tag_def_typed=cons_tag = (0 :num)
 small_enough_int_def_typed=∀(i :int). small_enough_int i ⇔ -(268435457 :int) ≤ i ∧ i ≤ (268435457 :int)
 data_num_stubs_EVEN_typed=EVEN data_num_stubs
 lookup_list_delete_typed=∀(xs :num list) (l :α sptree$num_map) (n :num). lookup n (list_delete xs l) = if MEM n xs then (NONE :α option) else lookup n l
+none_tag_def_typed=none_tag = (0 :num)
+some_tag_def_typed=some_tag = (0 :num)
+mk_union_def_typed=∀(tr1 :tra) (tr2 :tra). mk_union tr1 tr2 = case tr1 of SourceLoc v16 v17 v18 v19 => (case tr2 of SourceLoc v8 v9 v10 v11 => Union tr1 tr2 | v12 ▷ v13 => Union tr1 tr2 | Union v14 v15 => Union tr1 tr2 | None => None) | v20 ▷ v21 => (case tr2 of SourceLoc v8 v9 v10 v11 => Union tr1 tr2 | v12 ▷ v13 => Union tr1 tr2 | Union v14 v15 => Union tr1 tr2 | None => None) | Union v22 v23 => (case tr2 of SourceLoc v8 v9 v10 v11 => Union tr1 tr2 | v12 ▷ v13 => Union tr1 tr2 | Union v14 v15 => Union tr1 tr2 | None => None) | None => None

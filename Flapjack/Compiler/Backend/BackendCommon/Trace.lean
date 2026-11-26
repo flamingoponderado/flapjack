@@ -28,4 +28,14 @@ def mkCons (tr : Tra) (n : Nat) : Tra :=
   | .none => .none
   | _ => .cons tr n
 
+/-- Preserve disabled tracing; otherwise union the two source traces. -/
+@[hol "cakeml/compiler/backend/backend_commonScript.sml" "mk_union_def"]
+def mkUnion (tr1 tr2 : Tra) : Tra :=
+  match tr1 with
+  | .none => .none
+  | _ =>
+    match tr2 with
+    | .none => .none
+    | _ => .union tr1 tr2
+
 end Flapjack.Compiler.Backend.BackendCommon
