@@ -58,6 +58,8 @@ import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationStamps
 import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationIf
 import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationLog
 import Flapjack.SemanticPrimitivesProps.OpApp
+import Flapjack.SemanticPrimitivesProps.PatternAppend
+import Flapjack.SemanticPrimitivesProps.PatternNsAppend
 import Flapjack.Compiler.Backend.SourceEval.Proofs.EnvironmentConstructors
 import Flapjack.Compiler.Backend.SourceEval.Proofs.EnvironmentEmpty
 import Flapjack.Compiler.Backend.SourceEval.Proofs.EnvironmentLift
