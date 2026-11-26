@@ -23,4 +23,42 @@ theorem findIndexAppend {α : Type} [DecidableEq α]
       · simpa [findIndex, equal, Nat.add_assoc, Nat.add_comm, Nat.add_left_comm]
           using ih (offset + 1)
 
+/-- A found index is never below its starting offset. -/
+private theorem findIndex_some_ge {α : Type} [DecidableEq α] (target : α) :
+    ∀ (ls : List α) (m i : Nat), findIndex target ls m = some i → m ≤ i := by
+  intro ls
+  induction ls with
+  | nil =>
+    intro m i h
+    simp [findIndex] at h
+  | cons a t ih =>
+    intro m i h
+    by_cases ha : a = target
+    · simp [findIndex, ha] at h
+      omega
+    · simp only [findIndex, if_neg ha] at h
+      have := ih (m + 1) i h
+      omega
+
+/-- Original `find_index_APPEND1`: a match inside the left list is found by the
+left list alone. -/
+@[hol "cakeml/misc/miscScript.sml" "find_index_APPEND1"]
+theorem findIndex_append1 {α : Type} [DecidableEq α] (target : α) :
+    ∀ (l1 l2 : List α) (m i : Nat), findIndex target (l1 ++ l2) m = some i →
+      i < m + l1.length → findIndex target l1 m = some i := by
+  intro l1
+  induction l1 with
+  | nil =>
+    intro l2 m i h hi
+    have hge := findIndex_some_ge target l2 m i h
+    simp only [List.length_nil, Nat.add_zero] at hi
+    exact absurd hge (by omega)
+  | cons a t ih =>
+    intro l2 m i h hi
+    by_cases ha : a = target
+    · simp [findIndex, ha] at h ⊢
+      exact h
+    · simp only [findIndex, if_neg ha, List.cons_append, List.length_cons] at h hi ⊢
+      exact ih l2 (m + 1) i h (by omega)
+
 end Flapjack.Misc

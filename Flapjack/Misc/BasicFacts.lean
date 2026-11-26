@@ -845,4 +845,36 @@ theorem exists_prefix_of_lt {α : Type} (xs : List α) :
       obtain ⟨ys1, y, ys2, hsplit, hlen⟩ := ih k h
       exact ⟨x :: ys1, y, ys2, by simp [hsplit], by simp [hlen]⟩
 
+/-- Dropping the last element of a list with at least two elements keeps the
+head. -/
+private theorem dropLast_cons_cons {α : Type} (a b : α) (rest : List α) :
+    (a :: b :: rest).dropLast = a :: (b :: rest).dropLast := by
+  rw [List.dropLast_eq_take, List.dropLast_eq_take]
+  simp only [List.length_cons]
+  rw [show rest.length + 1 + 1 - 1 = rest.length + 1 by omega,
+    show rest.length + 1 - 1 = rest.length by omega]
+  rw [List.take_succ_cons]
+
+/-- Original `MAP_REVERSE_STEP`: reversing a map splits off the last element. -/
+@[hol "cakeml/misc/miscScript.sml" "MAP_REVERSE_STEP"
+  (total_function_inhabitants := [α])]
+theorem map_reverse_step {α β : Type} [Nonempty α] (x : List α) (f : α → β)
+    (h : x ≠ []) :
+    x.reverse.map f = f (holLast x) :: (x.dropLast.reverse).map f := by
+  induction x with
+  | nil => exact absurd rfl h
+  | cons a t ih =>
+    cases t with
+    | nil => simp [holLast]
+    | cons b rest =>
+      have hlast : holLast (a :: b :: rest) = holLast (b :: rest) := by simp [holLast]
+      rw [hlast, dropLast_cons_cons]
+      rw [show (a :: b :: rest).reverse = (b :: rest).reverse ++ [a] by
+        rw [List.reverse_cons]]
+      rw [show (a :: (b :: rest).dropLast).reverse = (b :: rest).dropLast.reverse ++ [a] by
+        rw [List.reverse_cons]]
+      rw [List.map_append, List.map_append]
+      rw [ih (by simp)]
+      rfl
+
 end Flapjack

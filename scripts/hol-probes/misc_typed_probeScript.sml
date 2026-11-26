@@ -213,3 +213,7 @@ val _ = emit "LUPDATE_commutes_typed" "LUPDATE_commutes";
 val _ = emit "revtakerev_typed" "revtakerev";
 val _ = emit "any_el_ALT_typed" "any_el_ALT";
 val _ = emit "SUM_MAP_BOUND_typed" "SUM_MAP_BOUND";
+val _ = emit "anub_eq_nil_typed" "anub_eq_nil";
+val _ = emit "anub_notin_acc_typed" "anub_notin_acc";
+val _ = emit "find_index_APPEND1_typed" "find_index_APPEND1";
+val _ = emit "MAP_REVERSE_STEP_typed" "MAP_REVERSE_STEP";

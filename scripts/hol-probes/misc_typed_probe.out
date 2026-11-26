@@ -178,3 +178,7 @@ LUPDATE_commutes_typed=∀(m :num) (n :num) (e1 :α) (e2 :α) (l :α list). m �
 revtakerev_typed=∀(n :num) (l :α list). n ≤ LENGTH l ⇒ REVERSE (TAKE n (REVERSE l)) = DROP (LENGTH l − n) l
 any_el_ALT_typed=∀(l :α list) (n :num) (d :α). any_el n l d = if n < LENGTH l then l❲n❳ else d
 SUM_MAP_BOUND_typed=(∀(x :α). (f :α -> num) x ≤ (c :num)) ⇒ (SUM (MAP f (ls :α list)) :num) ≤ LENGTH ls * c
+anub_eq_nil_typed=anub (x :(α # β) list) (y :α list) = ([] :(α # β) list) ⇔ EVERY (flip (λ(x :α) (l :α list). MEM x l) y) (MAP (FST :α # β -> α) x)
+anub_notin_acc_typed=∀(ls :(α # β) list) (acc :α list). MEM (x :α) acc ⇒ ¬MEM x (MAP (FST :α # β -> α) (anub ls acc))
+find_index_APPEND1_typed=∀(l1 :α list) (n :α) (l2 :α list) (m :num) (i :num). find_index n (l1 ++ l2) m = SOME i ∧ i < m + LENGTH l1 ⇒ find_index n l1 m = SOME i
+MAP_REVERSE_STEP_typed=∀(x :α list) (f :α -> β). x ≠ ([] :α list) ⇒ MAP f (REVERSE x) = f (LAST x)::MAP f (REVERSE (FRONT x))

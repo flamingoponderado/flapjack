@@ -10745,6 +10745,7 @@ run_probe misc_typed_probeScript.sml misc_typed_probe.out \
   insert_atI_CONS_typed insert_atI_app_typed LESS_EQ_LENGTH_typed LESS_LENGTH_typed \
   LIST_REL_MEM_typed LUPDATE_commutes_typed \
   revtakerev_typed any_el_ALT_typed SUM_MAP_BOUND_typed \
+  anub_eq_nil_typed anub_notin_acc_typed find_index_APPEND1_typed MAP_REVERSE_STEP_typed \
   "$cake_dir/misc/miscScript.sml" \
   "$cake_dir/misc"
 
