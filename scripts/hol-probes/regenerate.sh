@@ -10742,6 +10742,9 @@ run_probe misc_typed_probeScript.sml misc_typed_probe.out \
   INDEX_FIND_CONS_EQ_SOME_typed THE_find_index_suff_typed find_index_APPEND2_typed \
   SmartAppend_thm_typed SmartAppend_Nil_typed tlookup_id_typed \
   every_shim_typed every_shim2_typed MEM_ZIP2_typed \
+  insert_atI_CONS_typed insert_atI_app_typed LESS_EQ_LENGTH_typed LESS_LENGTH_typed \
+  LIST_REL_MEM_typed LUPDATE_commutes_typed \
+  revtakerev_typed any_el_ALT_typed SUM_MAP_BOUND_typed \
   "$cake_dir/misc/miscScript.sml" \
   "$cake_dir/misc"
 

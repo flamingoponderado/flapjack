@@ -169,3 +169,12 @@ tlookup_id_typed=(x :num) ∉ (domain (names :num sptree$num_map) :num -> bool) 
 every_shim_typed=∀(l :(α # β) list) (P :β -> bool). EVERY (λ((x :α),(y :β)). P y) l ⇔ EVERY P (MAP (SND :α # β -> β) l)
 every_shim2_typed=∀(l :(α # β) list) (P :α -> bool) (Q :β -> bool). EVERY (λ((x :α),(y :β)). P x ∧ Q y) l ⇔ EVERY (λ(x :α # β). P (FST x)) l ∧ EVERY (λ(x :α # β). Q (SND x)) l
 MEM_ZIP2_typed=∀(l1 :α list) (l2 :β list) (x :α # β). MEM x (ZIP (l1,l2)) ⇒ ∃(n :num). n < LENGTH l1 ∧ n < LENGTH l2 ∧ x = (l1❲n❳,l2❲n❳)
+insert_atI_CONS_typed=∀(n :num) (l :α list) (h :α) (t :α list). n + LENGTH t < LENGTH l ⇒ insert_atI (h::t) n l = (insert_atI t (n + (1 :num)) l)❲n ↦ h❳
+insert_atI_app_typed=∀(n :num) (l :α list) (c1 :α list) (c2 :α list). n + LENGTH c1 + LENGTH c2 ≤ LENGTH l ⇒ insert_atI (c1 ++ c2) n l = insert_atI c1 n (insert_atI c2 (n + LENGTH c1) l)
+LESS_EQ_LENGTH_typed=∀(xs :α list) (k :num). k ≤ LENGTH xs ⇒ ∃(ys1 :α list) (ys2 :α list). xs = ys1 ++ ys2 ∧ LENGTH ys1 = k
+LESS_LENGTH_typed=∀(xs :α list) (k :num). k < LENGTH xs ⇒ ∃(ys1 :α list) (y :α) (ys2 :α list). xs = ys1 ++ y::ys2 ∧ LENGTH ys1 = k
+LIST_REL_MEM_typed=∀(xs :α list) (ys :β list) (P :α -> β -> bool). LIST_REL P xs ys ⇔ LIST_REL (λ(x :α) (y :β). MEM x xs ∧ MEM y ys ⇒ P x y) xs ys
+LUPDATE_commutes_typed=∀(m :num) (n :num) (e1 :α) (e2 :α) (l :α list). m ≠ n ⇒ l❲m ↦ e1; n ↦ e2❳ = l❲n ↦ e2; m ↦ e1❳
+revtakerev_typed=∀(n :num) (l :α list). n ≤ LENGTH l ⇒ REVERSE (TAKE n (REVERSE l)) = DROP (LENGTH l − n) l
+any_el_ALT_typed=∀(l :α list) (n :num) (d :α). any_el n l d = if n < LENGTH l then l❲n❳ else d
+SUM_MAP_BOUND_typed=(∀(x :α). (f :α -> num) x ≤ (c :num)) ⇒ (SUM (MAP f (ls :α list)) :num) ≤ LENGTH ls * c

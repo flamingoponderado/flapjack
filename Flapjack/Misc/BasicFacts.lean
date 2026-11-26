@@ -751,4 +751,98 @@ theorem mem_zip2 {α β : Type} [Nonempty α] [Nonempty β] (l1 : List α) :
         rw [hx]
         simp [holEl_cons_succ]
 
+/-- Original `revtakerev`: reversing a reversed take is a drop. -/
+@[hol "cakeml/misc/miscScript.sml" "revtakerev"]
+theorem reverse_take_reverse {α : Type} (n : Nat) (l : List α) (_h : n ≤ l.length) :
+    (l.reverse.take n).reverse = l.drop (l.length - n) := by
+  rw [List.reverse_take, List.reverse_reverse, List.length_reverse]
+
+/-- Original `any_el_ALT`: the defaulted lookup agrees with the total `EL`. -/
+@[hol "cakeml/misc/miscScript.sml" "any_el_ALT"
+  (total_function_inhabitants := [α])]
+theorem anyEl_eq {α : Type} [Nonempty α] (l : List α) :
+    ∀ (n : Nat) (d : α), anyEl n l d = if n < l.length then holEl n l else d := by
+  induction l with
+  | nil =>
+    intro n d
+    simp [anyEl]
+  | cons x xs ih =>
+    intro n d
+    cases n with
+    | zero => simp [anyEl, holEl, holHd]
+    | succ n =>
+      simp only [anyEl, List.length_cons, Nat.succ_ne_zero, if_false, Nat.succ_lt_succ_iff,
+        holEl_cons_succ]
+      exact ih n d
+
+/-- Original `SUM_MAP_BOUND`: a uniformly bounded map sums below length times
+bound. -/
+@[hol "cakeml/misc/miscScript.sml" "SUM_MAP_BOUND"]
+theorem sum_map_bound {α : Type} (f : α → Nat) (ls : List α) (c : Nat)
+    (h : ∀ x, f x ≤ c) : (ls.map f).sum ≤ ls.length * c := by
+  induction ls with
+  | nil => simp
+  | cons a t ih =>
+    simp only [List.map_cons, List.sum_cons, List.length_cons]
+    have ha : f a ≤ c := h a
+    have ht : (t.map f).sum ≤ t.length * c := ih
+    rw [Nat.succ_mul]
+    omega
+
+/-- Original `LUPDATE_commutes`: distinct updates commute. -/
+@[hol "cakeml/misc/miscScript.sml" "LUPDATE_commutes"]
+theorem lupdate_commutes {α : Type} (m n : Nat) (e1 e2 : α) (l : List α) (h : m ≠ n) :
+    (l.set n e2).set m e1 = (l.set m e1).set n e2 := by
+  induction l generalizing m n with
+  | nil => rfl
+  | cons x xs ih =>
+    cases m with
+    | zero =>
+      cases n with
+      | zero => exact absurd rfl h
+      | succ n => simp [List.set]
+    | succ m =>
+      cases n with
+      | zero => simp [List.set]
+      | succ n =>
+        simp only [List.set]
+        rw [ih m n (by omega)]
+
+/-- Original `LESS_EQ_LENGTH`: a prefix of the requested length exists. -/
+@[hol "cakeml/misc/miscScript.sml" "LESS_EQ_LENGTH"]
+theorem exists_prefix_of_le {α : Type} (xs : List α) :
+    ∀ k, k ≤ xs.length → ∃ ys1 ys2 : List α, xs = ys1 ++ ys2 ∧ ys1.length = k := by
+  induction xs with
+  | nil =>
+    intro k h
+    have hk : k = 0 := by simpa using h
+    subst hk
+    exact ⟨[], [], rfl, rfl⟩
+  | cons x rest ih =>
+    intro k h
+    cases k with
+    | zero => exact ⟨[], x :: rest, rfl, rfl⟩
+    | succ k =>
+      simp only [List.length_cons, Nat.succ_le_succ_iff] at h
+      obtain ⟨ys1, ys2, hsplit, hlen⟩ := ih k h
+      exact ⟨x :: ys1, ys2, by simp [hsplit], by simp [hlen]⟩
+
+/-- Original `LESS_LENGTH`: a strictly shorter prefix splits before an element. -/
+@[hol "cakeml/misc/miscScript.sml" "LESS_LENGTH"]
+theorem exists_prefix_of_lt {α : Type} (xs : List α) :
+    ∀ k, k < xs.length → ∃ (ys1 : List α) (y : α) (ys2 : List α),
+      xs = ys1 ++ y :: ys2 ∧ ys1.length = k := by
+  induction xs with
+  | nil =>
+    intro k h
+    simp at h
+  | cons x rest ih =>
+    intro k h
+    cases k with
+    | zero => exact ⟨[], x, rest, rfl, rfl⟩
+    | succ k =>
+      simp only [List.length_cons, Nat.succ_lt_succ_iff] at h
+      obtain ⟨ys1, y, ys2, hsplit, hlen⟩ := ih k h
+      exact ⟨x :: ys1, y, ys2, by simp [hsplit], by simp [hlen]⟩
+
 end Flapjack
