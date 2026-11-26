@@ -67,3 +67,9 @@ heap_ok_def_typed=∀(heap :(α, β) heap_element list) (limit :num). heap_ok he
 el_length_GT_0_typed=∀(el :(α, β) heap_element). (1 :num) ≤ el_length el
 heap_length_NIL_typed=heap_length ([] :(α, β) heap_element list) = (0 :num)
 heap_length_GTE_typed=∀(heap :(α, β) heap_element list). (0 :num) ≤ heap_length heap
+el_length_NOT_0_typed=∀(el :(α, β) heap_element). el_length el ≠ (0 :num)
+EVERY_isDataElement_IMP_LEMMA_typed=∀(heap2 :(α, β) heap_element list). EVERY (isDataElement :(α, β) heap_element -> bool) heap2 ⇒ FILTER (isForwardPointer :(α, β) heap_element -> bool) heap2 = ([] :(α, β) heap_element list)
+LESS_IMP_heap_lookup_typed=∀(xs :(α, β) heap_element list) (j :num) (ys :(α, β) heap_element list). j < heap_length xs ⇒ heap_lookup j (xs ++ ys) = heap_lookup j xs
+NOT_LESS_IMP_heap_lookup_typed=∀(xs :(α, β) heap_element list) (j :num) (ys :(α, β) heap_element list). ¬(j < heap_length xs) ⇒ heap_lookup j (xs ++ ys) = heap_lookup (j − heap_length xs) ys
+isSome_heap_looukp_IMP_APPEND_typed=∀(xs :(α, β) heap_element list) (ptr :num). isSomeDataElement (heap_lookup ptr xs) ⇒ isSomeDataElement (heap_lookup ptr (xs ++ (ys :(α, β) heap_element list)))
+heap_split_APPEND_if_typed=∀(h1 :(α, β) heap_element list) (n :num) (h2 :(α, β) heap_element list). heap_split n (h1 ++ h2) = if n < heap_length h1 then case heap_split n h1 of (NONE :((α, β) heap_element list # (α, β) heap_element list) option) => (NONE :((α, β) heap_element list # (α, β) heap_element list) option) | SOME (h1',h2') => SOME (h1',h2' ++ h2) else case heap_split (n − heap_length h1) h2 of (NONE :((α, β) heap_element list # (α, β) heap_element list) option) => (NONE :((α, β) heap_element list # (α, β) heap_element list) option) | SOME (h1',h2') => SOME (h1 ++ h1',h2')
