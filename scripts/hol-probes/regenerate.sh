@@ -10757,6 +10757,8 @@ run_probe misc_typed_probeScript.sml misc_typed_probe.out \
   FOLDL_invariant_rest_typed n2w_lt_typed n2w_le_typed \
   MAX_LIST_APPEND_typed MAX_LIST_SNOC_typed MAX_LIST_max_typed \
   irreflexive_inv_image_typed \
+  EVERY_lookup_vars_typed \
+  ALOOKUP_find_index_NONE_typed LASTN_LENGTH_LESS_EQ_typed LENGTH_LASTN_LESS_typed \
   "$cake_dir/misc/miscScript.sml" \
   "$cake_dir/misc"
 

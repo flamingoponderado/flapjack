@@ -28,4 +28,31 @@ theorem lookupVars_cons_source {α : Type} [Nonempty α] (index : Nat)
     cases lookupVars indices env <;> rfl
   · simp [lookupVars, bound]
 
+/-- Original `EVERY_lookup_vars`: gathering environment values preserves any
+property that already holds of every environment entry. HOL's `EVERY P env`
+is the quantified membership form and `P` stays `Bool`-valued, so it is
+stated as `P x = true`. -/
+@[hol "cakeml/misc/miscScript.sml" "EVERY_lookup_vars"]
+theorem every_lookupVars {α : Type} (P : α → Bool) :
+    ∀ (vs : List Nat) (env env' : List α), (∀ x ∈ env, P x = true) →
+      lookupVars vs env = some env' → ∀ x ∈ env', P x = true := by
+  intro vs
+  induction vs with
+  | nil =>
+    intro env env' _ h x hx
+    simp only [lookupVars, Option.some.injEq] at h
+    subst h
+    simp at hx
+  | cons index indices ih =>
+    intro env env' hall h x hx
+    simp only [lookupVars] at h
+    obtain ⟨value, hvalue, hinner⟩ := Option.bind_eq_some_iff.mp h
+    obtain ⟨values, hvalues, hval⟩ := Option.bind_eq_some_iff.mp hinner
+    simp only [Option.some.injEq] at hval
+    rw [← hval] at hx
+    rcases List.mem_cons.mp hx with hxv | hxs
+    · rw [hxv]
+      exact hall value (List.mem_iff_getElem?.mpr ⟨index, hvalue⟩)
+    · exact ih env values hall hvalues x hxs
+
 end Flapjack.Compiler.Backend.ClosSem

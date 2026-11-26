@@ -5,6 +5,7 @@ public import Flapjack.Misc.ListEl
 public import Flapjack.FiniteMap.AlistExact.Lookup
 public import Mathlib.Data.Set.Basic
 public import Mathlib.Data.List.Basic
+public import Mathlib.Data.List.Forall2
 
 @[expose] public section
 
@@ -744,6 +745,21 @@ theorem forall₂_rc_same {α : Type} (R : α → α → Prop) (l : List α) :
   induction l with
   | nil => exact List.Forall₂.nil
   | cons a t ih => exact List.Forall₂.cons (Or.inl rfl) ih
+
+/-- Original `LIST_REL_MEM`: a pointwise relation is unchanged by requiring
+both components to be members of the two lists, because `LIST_REL` (Lean's
+`List.Forall₂`) already relates the elements in place. -/
+@[hol "cakeml/misc/miscScript.sml" "LIST_REL_MEM"]
+theorem forall₂_mem_iff {α β : Type} (xs : List α) (ys : List β) (P : α → β → Prop) :
+    List.Forall₂ P xs ys ↔
+      List.Forall₂ (fun x y => x ∈ xs → y ∈ ys → P x y) xs ys := by
+  constructor
+  · intro h
+    exact List.Forall₂.imp (fun _ _ hab _ _ => hab) h
+  · intro h
+    refine List.forall₂_iff_get.mpr ⟨h.length_eq, ?_⟩
+    intro i h1 h2
+    exact (List.forall₂_iff_get.mp h).2 i h1 h2 (List.get_mem _ _) (List.get_mem _ _)
 
 /-- Original `FOLDL_OPTION_CHOICE_EQ_SOME_IMP_MEM`: a successful option fold
 returns an element of the folded list. -/

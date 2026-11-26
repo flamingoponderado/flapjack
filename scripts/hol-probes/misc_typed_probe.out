@@ -216,3 +216,7 @@ MAX_LIST_APPEND_typed=MAX_LIST ((xs :num list) ++ (ys :num list)) = MAX (MAX_LIS
 MAX_LIST_SNOC_typed=MAX_LIST (SNOC (x :num) (xs :num list)) = MAX (MAX_LIST xs) x
 MAX_LIST_max_typed=∀(ls :num list). EVERY (λ(x :num). x ≤ MAX_LIST ls) ls
 irreflexive_inv_image_typed=∀(R :α -> α -> bool) (f :β -> α). (irreflexive R :bool) ⇒ (irreflexive (inv_image R f) :bool)
+EVERY_lookup_vars_typed=∀(vs :num list) (env :α list) (env' :α list). EVERY (P :α -> bool) env ∧ lookup_vars vs env = SOME env' ⇒ EVERY P env'
+ALOOKUP_find_index_NONE_typed=ALOOKUP (env :(β # α) list) (k :β) = (NONE :α option) ⇒ find_index k (MAP (FST :β # α -> β) env) (m :num) = (NONE :num option)
+LASTN_LENGTH_LESS_EQ_typed=∀(xs :α list) (n :num). LENGTH xs ≤ n ⇒ LASTN n xs = xs
+LENGTH_LASTN_LESS_typed=∀(xs :α list) (n :num). LENGTH (LASTN n xs) ≤ LENGTH xs

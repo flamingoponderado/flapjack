@@ -4992,6 +4992,9 @@ import Flapjack.Misc.UpdateResize
 import Flapjack.Misc.FoldlInvariant
 import Flapjack.Misc.Words.N2wOrder
 import Flapjack.Misc.Irreflexive
+import Flapjack.Misc.FindIndex.MapInj
+import Flapjack.Misc.FindIndex.Alookup
+import Flapjack.Misc.LastN
 /-!
 # Flapjack in Lean
 

@@ -251,3 +251,7 @@ val _ = emit "MAX_LIST_APPEND_typed" "MAX_LIST_APPEND";
 val _ = emit "MAX_LIST_SNOC_typed" "MAX_LIST_SNOC";
 val _ = emit "MAX_LIST_max_typed" "MAX_LIST_max";
 val _ = emit "irreflexive_inv_image_typed" "irreflexive_inv_image";
+val _ = emit "EVERY_lookup_vars_typed" "EVERY_lookup_vars";
+val _ = emit "ALOOKUP_find_index_NONE_typed" "ALOOKUP_find_index_NONE";
+val _ = emit "LASTN_LENGTH_LESS_EQ_typed" "LASTN_LENGTH_LESS_EQ";
+val _ = emit "LENGTH_LASTN_LESS_typed" "LENGTH_LASTN_LESS";
