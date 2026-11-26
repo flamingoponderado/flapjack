@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.TypeSystemHOL.Expressions
+public import Flapjack.SemanticPrimitivesHOL
 public import Batteries.Data.List.Basic
 
 @[expose] public section
@@ -8,6 +9,7 @@ public import Batteries.Data.List.Basic
 /-! Source typing preserves the shape of function and expression lists. -/
 namespace Flapjack.TypeSysProps
 open Flapjack.Basis.Pure.MlString Flapjack.TypeSystemHOL Flapjack.AstHOL
+open Flapjack.SemanticPrimitivesHOL
 
 /-- The names in a typed function list equal those in its output bindings. -/
 @[hol "cakeml/semantics/proofs/typeSysPropsScript.sml" "type_funs_MAP_FST"]
@@ -84,6 +86,86 @@ theorem typeFunsLookup (fn : MlString) (localEnv : TenvValExp)
       rw [List.lookup_cons]
       simp only [different]
       exact ⟨t, found⟩
+
+/-- Original `type_funs_find_recfun`: a function with a binding in a typed
+function list's output environment is found by `find_recfun`. -/
+@[hol "cakeml/semantics/proofs/typeSysPropsScript.sml" "type_funs_find_recfun"]
+theorem typeFunsFindRecfun (fn : MlString)
+    (funs : List (MlString × MlString × AstHOL.Exp))
+    (bindings : List (MlString × SemanticT)) (env : TypeEnv) (localEnv : TenvValExp)
+    (t : SemanticT)
+    (premise : bindings.lookup fn = some t ∧ TypeFuns env localEnv funs bindings) :
+    ∃ n e, findRecFun fn funs = some (n, e) := by
+  obtain ⟨found, typed⟩ := premise
+  induction funs generalizing env localEnv bindings with
+  | nil =>
+    cases typed
+    simp at found
+  | cons fn' funs ih =>
+    cases typed
+    rename_i name arg body bindings' t₁ t₂ unique free typedBody tail
+    rw [List.lookup_cons] at found
+    cases h : (fn == name) with
+    | true =>
+      have equal : fn = name := by simpa using h
+      subst equal
+      exact ⟨arg, body, by simp [findRecFun]⟩
+    | false =>
+      simp only [h] at found
+      obtain ⟨n, e, recfun⟩ := ih bindings' env localEnv found tail
+      refine ⟨n, e, ?_⟩
+      have different : fn ≠ name := by
+        intro same
+        rw [same] at h
+        simp at h
+      simp only [findRecFun, if_neg (Ne.symm different)]
+      exact recfun
+
+/-- Original `type_recfun_lookup`: a recursive function found in a typed
+function list types its body at the function type bound for its name. -/
+@[hol "cakeml/semantics/proofs/typeSysPropsScript.sml" "type_recfun_lookup"]
+theorem typeRecfunLookup (fn : MlString) (funs : List (MlString × MlString × AstHOL.Exp))
+    (n : MlString) (e : AstHOL.Exp) (env : TypeEnv) (localEnv : TenvValExp)
+    (bindings : List (MlString × SemanticT)) (t₁ t₂ : SemanticT)
+    (premise : findRecFun fn funs = some (n, e) ∧ TypeFuns env localEnv funs bindings ∧
+      bindings.lookup fn = some (.app [t₁, t₂] 4)) :
+    TypeE env (.bindName n 0 t₁ localEnv) e t₂ ∧
+      checkFreevars (numTvs localEnv) [] (.app [t₁, t₂] 4) = true := by
+  obtain ⟨recfun, typed, found⟩ := premise
+  induction funs generalizing env localEnv bindings with
+  | nil => simp [findRecFun] at recfun
+  | cons fn' funs ih =>
+    cases typed
+    rename_i name arg body bindings' u₁ u₂ unique free typedBody tail
+    simp only [findRecFun] at recfun
+    cases eq : (fn == name) with
+    | true =>
+      have h : name = fn := (beq_iff_eq.mp eq).symm
+      rw [if_pos h] at recfun
+      have pairEq : (arg, body) = (n, e) := Option.some.inj recfun
+      have sameN : arg = n := congrArg Prod.fst pairEq
+      have sameE : body = e := congrArg Prod.snd pairEq
+      rw [sameN, sameE] at typedBody
+      rw [List.lookup_cons] at found
+      simp only [eq] at found
+      have shapes : ([u₁, u₂] : List SemanticT) = [t₁, t₂] := by
+        simpa using Option.some.inj found
+      rw [List.cons.injEq] at shapes
+      obtain ⟨u1eq, shapes⟩ := shapes
+      rw [List.cons.injEq] at shapes
+      obtain ⟨u2eq, _⟩ := shapes
+      rw [u1eq, u2eq] at typedBody free
+      exact ⟨typedBody, free⟩
+    | false =>
+      have h : ¬ (name = fn) := by
+        intro same
+        rw [same] at eq
+        simp at eq
+      rw [if_neg h] at recfun
+      rw [List.lookup_cons] at found
+      simp only [eq] at found
+      obtain ⟨typedE, checked⟩ := ih env localEnv bindings' recfun tail found
+      exact ⟨typedE, checked⟩
 
 /-- A typed expression list and its type list have equal lengths. -/
 @[hol "cakeml/semantics/proofs/typeSysPropsScript.sml" "type_es_length"]
