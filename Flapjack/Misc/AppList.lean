@@ -94,7 +94,9 @@ theorem appListAppend_thm_sameType {α : Type} (left right : AppList α) (entrie
       appListAppend (.nil : AppList α) = [] :=
   appListAppend_thm left right entries
 
-/-- Flattening a smart append preserves left-to-right list concatenation. -/
+/-- Original `append_SmartAppend` (`miscScript.sml:249-254`): flattening a
+smart append is the append of the flattenings. -/
+@[simp, hol "cakeml/misc/miscScript.sml" "append_SmartAppend"]
 theorem appListAppend_smartAppend {α : Type} (left right : AppList α) :
     appListAppend (smartAppend left right) = appListAppend left ++ appListAppend right := by
   cases left with

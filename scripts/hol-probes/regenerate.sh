@@ -10752,6 +10752,8 @@ run_probe misc_typed_probeScript.sml misc_typed_probe.out \
   is_subseq_MEM_typed IS_PREFIX_is_subseq_typed IS_SUBLIST_is_subseq_typed \
   is_subseq_ALL_DISTINCT_typed is_subseq_append_suff_typed is_subseq_FLAT_suff_typed \
   plus_0_I_typed MOD_2EXP_0_EVEN_typed OPTREL_trans_typed \
+  append_SmartAppend_typed EVERY2_RC_same_typed FOLDL_OPTION_CHOICE_EQ_SOME_IMP_MEM_typed \
+  LENGTH_EQ_FILTER_FILTER_typed \
   "$cake_dir/misc/miscScript.sml" \
   "$cake_dir/misc"
 

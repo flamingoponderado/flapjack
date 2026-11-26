@@ -238,3 +238,7 @@ val _ = emit "is_subseq_FLAT_suff_typed" "is_subseq_FLAT_suff";
 val _ = emit "plus_0_I_typed" "plus_0_I";
 val _ = emit "MOD_2EXP_0_EVEN_typed" "MOD_2EXP_0_EVEN";
 val _ = emit "OPTREL_trans_typed" "OPTREL_trans";
+val _ = emit "append_SmartAppend_typed" "append_SmartAppend";
+val _ = emit "EVERY2_RC_same_typed" "EVERY2_RC_same";
+val _ = emit "FOLDL_OPTION_CHOICE_EQ_SOME_IMP_MEM_typed" "FOLDL_OPTION_CHOICE_EQ_SOME_IMP_MEM";
+val _ = emit "LENGTH_EQ_FILTER_FILTER_typed" "LENGTH_EQ_FILTER_FILTER";

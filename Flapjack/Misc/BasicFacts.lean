@@ -4,6 +4,7 @@ public import Flapjack.HolRef
 public import Flapjack.Misc.ListEl
 public import Flapjack.FiniteMap.AlistExact.Lookup
 public import Mathlib.Data.Set.Basic
+public import Mathlib.Data.List.Basic
 
 @[expose] public section
 
@@ -733,6 +734,79 @@ reproduced (the pointwise form is definitional). -/
 theorem add_zero_fun : (fun (y : Nat) => 0 + y) = fun (y : Nat) => y := by
   funext y
   exact Nat.zero_add y
+
+/-- Original `EVERY2_RC_same`: the reflexive closure relates every list to
+itself pointwise. HOL's `RC R` is `λx y. x = y ∨ R x y` and `EVERY2` is
+`LIST_REL`. -/
+@[simp, hol "cakeml/misc/miscScript.sml" "EVERY2_RC_same"]
+theorem forall₂_rc_same {α : Type} (R : α → α → Prop) (l : List α) :
+    List.Forall₂ (fun x y => x = y ∨ R x y) l l := by
+  induction l with
+  | nil => exact List.Forall₂.nil
+  | cons a t ih => exact List.Forall₂.cons (Or.inl rfl) ih
+
+/-- Original `FOLDL_OPTION_CHOICE_EQ_SOME_IMP_MEM`: a successful option fold
+returns an element of the folded list. -/
+@[hol "cakeml/misc/miscScript.sml" "FOLDL_OPTION_CHOICE_EQ_SOME_IMP_MEM"]
+theorem foldl_option_choice_mem {α : Type} (y : α) :
+    ∀ (x : Option α) (ls : List (Option α)),
+      List.foldl (fun acc e => acc <|> e) x ls = some y → some y ∈ x :: ls := by
+  intro x ls
+  induction ls generalizing x with
+  | nil =>
+    intro h
+    simp only [List.foldl_nil] at h
+    simp [h]
+  | cons e rest ih =>
+    intro h
+    simp only [List.foldl_cons] at h
+    cases x with
+    | none =>
+      have h' : List.foldl (fun acc e => acc <|> e) e rest = some y := by
+        simpa using h
+      exact List.mem_cons.mpr (Or.inr (ih e h'))
+    | some a =>
+      have h' : some y ∈ some a :: rest := ih (some a) h
+      rcases List.mem_cons.mp h' with h1 | h2
+      · exact List.mem_cons.mpr (Or.inl h1)
+      · exact List.mem_cons.mpr (Or.inr (List.mem_cons.mpr (Or.inr h2)))
+
+/-- Original `LENGTH_EQ_FILTER_FILTER`: when every element satisfies exactly
+one of the two predicates, the two filters partition the list. -/
+@[hol "cakeml/misc/miscScript.sml" "LENGTH_EQ_FILTER_FILTER"]
+theorem length_eq_filter_filter {α : Type} (P Q : α → Bool) (xs : List α)
+    (h : ∀ x ∈ xs, (P x = true ∨ Q x = true) ∧ ¬(P x = true ∧ Q x = true)) :
+    xs.length = (xs.filter P).length + (xs.filter Q).length := by
+  induction xs with
+  | nil => rfl
+  | cons a t ih =>
+    have ha := h a (by simp)
+    have ht : ∀ x ∈ t, (P x = true ∨ Q x = true) ∧ ¬(P x = true ∧ Q x = true) :=
+      fun x hx => h x (by simp [hx])
+    have ih' := ih ht
+    cases hP : P a with
+    | false =>
+      have hQ : Q a = true := by
+        rcases ha.1 with hp | hq
+        · exact absurd hP (by
+            rw [hp]
+            simp)
+        · exact hq
+      have hP' : ¬ P a = true := by
+        rw [hP]
+        simp
+      rw [List.length_cons, List.filter_cons_of_neg hP', List.filter_cons_of_pos hQ, ih']
+      simp only [List.length_cons]
+      omega
+    | true =>
+      have hQ : Q a = false := by
+        exact Bool.eq_false_iff.mpr (fun hq => ha.2 ⟨hP, hq⟩)
+      have hQ' : ¬ Q a = true := by
+        rw [hQ]
+        simp
+      rw [List.length_cons, List.filter_cons_of_pos hP, List.filter_cons_of_neg hQ', ih']
+      simp only [List.length_cons]
+      omega
 
 /-- Original `MEM_ZIP2`: a pair in a zip sits at a common in-range index. -/
 @[hol "cakeml/misc/miscScript.sml" "MEM_ZIP2"

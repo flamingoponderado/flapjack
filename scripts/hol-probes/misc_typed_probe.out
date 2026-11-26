@@ -203,3 +203,7 @@ is_subseq_FLAT_suff_typed=∀(ls1 :α list list) (ls2 :α list list). LIST_REL (
 plus_0_I_typed=$+ (0 :num) = (I :num -> num)
 MOD_2EXP_0_EVEN_typed=∀(x :num) (y :num). (0 :num) < x ∧ MOD_2EXP x y = (0 :num) ⇒ EVEN y
 OPTREL_trans_typed=∀(R :α -> α -> bool) (x :α option) (y :α option) (z :α option). (∀(a :α) (b :α) (c :α). x = SOME a ∧ y = SOME b ∧ z = SOME c ∧ R a b ∧ R b c ⇒ R a c) ∧ OPTREL R x y ∧ OPTREL R y z ⇒ OPTREL R x z
+append_SmartAppend_typed=append (SmartAppend (l1 :α app_list) (l2 :α app_list)) = append l1 ++ append l2
+EVERY2_RC_same_typed=LIST_REL (RC (R :α -> α -> bool)) (l :α list) l
+FOLDL_OPTION_CHOICE_EQ_SOME_IMP_MEM_typed=FOLDL (OPTION_CHOICE :α option -> α option -> α option) (x :α option) (ls :α option list) = SOME (y :α) ⇒ MEM (SOME y) (x::ls)
+LENGTH_EQ_FILTER_FILTER_typed=∀(xs :α list). EVERY (λ(x :α). ((P :α -> bool) x ∨ (Q :α -> bool) x) ∧ ¬(P x ∧ Q x)) xs ⇒ LENGTH xs = LENGTH (FILTER P xs) + LENGTH (FILTER Q xs)
