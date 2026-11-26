@@ -1,0 +1,7 @@
+simple_type_typed=Bool::simple_type; Str::simple_type; Exn::simple_type
+to_type_def_typed=to_type Bool = Infer_Tapp ([] :infer_t list) Tbool_num ∧ to_type Str = Infer_Tapp ([] :infer_t list) Tstring_num ∧ to_type Exn = Infer_Tapp ([] :infer_t list) Texn_num
+to_type_TS_def_typed=to_type_TS Bool = Tapp ([] :t list) Tbool_num ∧ to_type_TS Str = Tapp ([] :t list) Tstring_num ∧ to_type_TS Exn = Tapp ([] :t list) Texn_num
+roll_back_def_typed=∀(old_ienv :inf_env) (old_next_id :num) (new_ienv :inf_env) (new_next_id :num). (roll_back (old_ienv,old_next_id) (new_ienv,new_next_id) :inf_env # num) = (old_ienv,new_next_id)
+FST_roll_back_typed=FST (roll_back (x :inf_env # num) (y :inf_env # num) :inf_env # num) = FST x
+SND_roll_back_typed=SND (roll_back (x :inf_env # num) (y :inf_env # num) :inf_env # num) = SND y
+convert_t_to_type_typed=convert_t (to_type (t :simple_type)) = to_type_TS t
