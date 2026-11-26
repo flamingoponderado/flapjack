@@ -9921,6 +9921,7 @@ run_probe infer_props_tids_probeScript.sml infer_props_tids_probe.out \
   check_t_more_typed infer_subst_var_def_typed \
   check_t_more3_typed check_t_more4_typed check_env_more_typed ienv_ok_more_typed \
   check_t_deBruijn_inc2_typed check_t_deBruijn_inc_typed \
+  inf_set_tids_infer_deBruijn_subst_SUBSET_typed inf_set_tids_infer_type_subst_SUBSET_typed \
   "$cake_dir/compiler/inference/inferPropsScript.sml" \
   "$cake_dir/compiler/inference"
 

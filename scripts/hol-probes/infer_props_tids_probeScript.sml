@@ -52,3 +52,5 @@ val _ = show "check_env_more_typed" inferPropsTheory.check_env_more;
 val _ = show "ienv_ok_more_typed" inferPropsTheory.ienv_ok_more;
 val _ = show "check_t_deBruijn_inc2_typed" inferPropsTheory.check_t_deBruijn_inc2;
 val _ = show "check_t_deBruijn_inc_typed" inferPropsTheory.check_t_deBruijn_inc;
+val _ = show "inf_set_tids_infer_deBruijn_subst_SUBSET_typed" inferPropsTheory.inf_set_tids_infer_deBruijn_subst_SUBSET;
+val _ = show "inf_set_tids_infer_type_subst_SUBSET_typed" inferPropsTheory.inf_set_tids_infer_type_subst_SUBSET;
