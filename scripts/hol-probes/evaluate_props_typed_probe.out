@@ -54,3 +54,9 @@ list_result_eq_Rerr_typed=list_result (r :(α, β) result) = (Rerr (e :β error_
 list_result_inj_typed=list_result (x :(α, β) result) = list_result (y :(α, β) result) ⇒ x = y
 dest_IO_event_def_typed=∀(s :ffiname) (c :word8 list) (b :(word8 # word8) list). dest_IO_event (IO_event s c b) = (s,c,b)
 evaluate_decs_nil_typed=∀(s :'ffi state) (env :v sem_env). evaluate_decs s env ([] :dec list) = (s,(Rval <|v := (nsEmpty :(mlstring, mlstring, v) namespace); c := (nsEmpty :(mlstring, mlstring, num # stamp) namespace)|> :(v sem_env, v) result))
+pair_CASE_eq_forall_typed=(case (x :α # β) of (a,b) => (P :α -> β -> bool) a b) ⇔ ∀(a :α) (b :β). x = (a,b) ⇒ P a b
+result_rel_list_result_typed=result_rel (LIST_REL (R :α -> β -> bool)) (Q :γ -> δ -> bool) (list_result (r1 :(α, γ) result)) (list_result (r2 :(β, δ) result)) ⇔ result_rel R Q r1 r2
+can_pmatch_all_EVERY_typed=can_pmatch_all (envC :(mlstring, mlstring, num # stamp) namespace) (refs :v store_v list) (ps :pat list) (v :v) ⇔ EVERY (λ(p :pat). pmatch envC refs p v ([] :(mlstring # v) list) ≠ (Match_type_error :(mlstring # v) list match_result)) ps
+same_type_trans_typed=same_type (t1 :stamp) (t2 :stamp) ∧ same_type t1 (t3 :stamp) ⇒ same_type t2 t3
+combine_dec_result_eq_Rerr_typed=combine_dec_result (env :v sem_env) (r :(v sem_env, α) result) = (Rerr (e :α error_result) :(v sem_env, α) result) ⇔ r = (Rerr e :(v sem_env, α) result)
+same_type_sym_typed=same_type (t1 :stamp) (t2 :stamp) ⇒ same_type t2 t1
