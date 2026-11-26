@@ -187,4 +187,43 @@ theorem isSubstring_SEG (s1 s2 : List HolChar) :
       · rintro ⟨i, hi, _⟩
         omega
 
+/-- Original `isprefix_thm`: the prefix test is the character-list prefix. -/
+@[hol "cakeml/basis/pure/mlstringScript.sml" "isprefix_thm"]
+theorem isPrefix_eq (s1 s2 : MlString) :
+    (isPrefix s1 s2 = true ↔ (explode s1) <+: (explode s2)) := by
+  unfold isPrefix
+  by_cases hlen : strlen s1 ≤ strlen s2
+  · rw [if_pos hlen]
+    have hseg := isStringThere_SEG (explode s1) (explode s2) 0 0 (strlen s1)
+      (by
+        rw [length_explode]
+        omega)
+      (by
+        rw [length_explode]
+        omega)
+    rw [implode_explode s1, implode_explode s2] at hseg
+    rw [hseg, ← length_explode s1, List.prefix_iff_eq_take]
+    simp only [List.drop_zero, List.take_length]
+  · rw [if_neg hlen]
+    simp only [Bool.false_eq_true, false_iff]
+    intro hpre
+    have hlen2 : strlen s1 ≤ strlen s2 := by
+      rw [← length_explode s1, ← length_explode s2, List.prefix_iff_eq_take.mp hpre,
+        List.length_take]
+      omega
+    exact absurd hlen2 hlen
+
+/-- Original `isprefix_strcat`: a prefix is a concatenation on the right. -/
+@[hol "cakeml/basis/pure/mlstringScript.sml" "isprefix_strcat"]
+theorem isPrefix_iff_exists (s1 s2 : MlString) :
+    (isPrefix s1 s2 = true ↔ ∃ s3, s2 = strcat s1 s3) := by
+  rw [isPrefix_eq]
+  constructor
+  · rintro ⟨t, ht⟩
+    refine ⟨.implode t, ?_⟩
+    simp only [strcat_eq_implode_append, explode_implode]
+    rw [ht, implode_explode]
+  · rintro ⟨s3, rfl⟩
+    exact ⟨explode s3, (explode_strcat s1 s3).symm⟩
+
 end Flapjack.Basis.Pure.MlString
