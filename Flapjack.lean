@@ -728,6 +728,7 @@ import Flapjack.Compiler.Backend.Semantics.ClosProps.AdjustOracleSimulation
 import Flapjack.Compiler.Backend.Semantics.ClosProps.DestClosure
 import Flapjack.Compiler.Backend.Semantics.ClosProps.ClosureAccess
 import Flapjack.Compiler.Backend.Semantics.ClosProps.InstallStep
+import Flapjack.Compiler.Backend.Semantics.ClosProps.EvaluateMapOpConst
 import Flapjack.Compiler.Backend.Semantics.ClosProps.ResultObservations
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.FreeVars
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.FreeVarsAgreement
