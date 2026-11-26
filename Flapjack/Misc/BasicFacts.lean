@@ -582,6 +582,19 @@ theorem length_insertAtI {α : Type} (p : Nat) (l1 l2 : List α)
   simp only [List.length_append, List.length_take, List.length_drop]
   omega
 
+/-- Original `insert_atI_NIL`: overwriting nothing changes nothing. -/
+@[hol "cakeml/misc/miscScript.sml" "insert_atI_NIL"]
+theorem insertAtI_nil {α : Type} (n : Nat) (l : List α) : insertAtI [] n l = l := by
+  unfold insertAtI
+  simp
+
+/-- Original `insert_atI_end`: overwriting from the end appends. -/
+@[hol "cakeml/misc/miscScript.sml" "insert_atI_end"]
+theorem insertAtI_end {α : Type} (l1 l2 : List α) :
+    insertAtI l1 l2.length l2 = l2 ++ l1 := by
+  unfold insertAtI
+  simp
+
 /-- Original `OPT_MMAP_MAP_o`: mapping a function into an optional map is the
 composition. -/
 @[hol "cakeml/misc/miscScript.sml" "OPT_MMAP_MAP_o"]

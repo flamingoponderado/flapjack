@@ -439,6 +439,7 @@ val _ = emit_exported "strcat_o_typed" "strcat_o";
 val _ = emit_exported "strcat_nil_typed" "strcat_nil";
 val _ = emit_exported "mlstring_common_prefix_typed" "mlstring_common_prefix";
 val _ = emit_exported "mlstring_common_suffix_typed" "mlstring_common_suffix";
+val _ = emit_exported "mlstring_common_char_prefix_typed" "mlstring_common_char_prefix";
 val _ = emit_exported "concat_append_typed" "concat_append";
 val _ = emit_exported "implode_STRCAT_typed" "implode_STRCAT";
 val _ = emit_exported "strlen_strcat_typed" "strlen_strcat";

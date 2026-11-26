@@ -10681,7 +10681,7 @@ run_probe misc_typed_probeScript.sml misc_typed_probe.out \
   FOLDR_MAX_0_MAX_LIST_typed get_byte_set_byte_diff_typed good_dimindex_get_byte_set_byte_typed good_dimindex_def_typed LLOOKUP_def_typed LLOOKUP_DROP_typed LLOOKUP_LUPDATE_typed LLOOKUP_TAKE_IMP_typed \
   list_subset_def_typed lookup_any_def_typed max3_def_typed the_def_typed IMP_OPT_MMAP_EQ_typed OPT_MMAP_CONG_typed PERM_PART_typed PERM_PARTITION_typed \
   shift_seq_def_typed fromList2_def_typed alist_insert_REVERSE_typed domain_fromList2_typed EVEN_fromList2_typed TAKE_FLAT_REPLICATE_LEQ_typed UNCURRY_eq_pair_typed word_list_def_typed \
-  word_list_exists_def_typed read_bytearray_def_typed read_bytearray_LENGTH_typed fun2set_disjoint_union_typed UPDATE_LIST_def_typed APPLY_UPDATE_LIST_ALOOKUP_typed MOD_SUB_LEMMA_typed DISJOINT_INTER_typed IMP_MULT_DIV_LESS_typed \
+  word_list_exists_def_typed read_bytearray_def_typed read_bytearray_LENGTH_typed fun2set_disjoint_union_typed UPDATE_LIST_def_typed UPDATE_LIST_THM_typed APPLY_UPDATE_LIST_ALOOKUP_typed MOD_SUB_LEMMA_typed DISJOINT_INTER_typed IMP_MULT_DIV_LESS_typed \
   DIV_LESS_DIV_typed WORD_LS_IMP_typed SmartAppend_def_typed \
   FST_pair_typed SND_pair_typed FST_triple_typed SND_triple_typed LESS_1_typed \
   MEM_REPLICATE_EQ_typed LENGTH_TAKE_EQ_MIN_typed w2n_lt_256_typed IMP_IMP_typed \
@@ -10701,7 +10701,7 @@ run_probe misc_typed_probeScript.sml misc_typed_probe.out \
   MEM_REPLICATE_IMP_typed MAP_K_REPLICATE_typed SUM_MAP_K_typed \
   OPTION_MAP_I_typed TL_DROP_SUC_typed \
   ALL_DISTINCT_FLAT_EVERY_typed OPT_MMAP_SOME_typed insert_atI_def_typed \
-  LENGTH_insert_atI_typed \
+  LENGTH_insert_atI_typed insert_atI_NIL_typed insert_atI_end_typed \
   OPT_MMAP_MAP_o_typed list_inter_def_typed list_set_eq_def_typed \
   any_el_def_typed option_fold_def_typed steps_rel_def_typed \
   DROP_IMP_EL_typed HD_LUPDATE_typed \
@@ -12382,7 +12382,7 @@ run_probe mlstring_char_typed_probeScript.sml mlstring_char_typed_probe.out \
   strsub_substring_0_thm_typed substring_full_typed substring_too_long_typed \
   concat_cons_typed strcat_thm_typed explode_strcat_typed strcat_assoc_typed \
   strcat_o_typed strcat_nil_typed mlstring_common_prefix_typed \
-  mlstring_common_suffix_typed concat_append_typed implode_STRCAT_typed \
+  mlstring_common_suffix_typed mlstring_common_char_prefix_typed concat_append_typed implode_STRCAT_typed \
   strlen_strcat_typed explode_toString_typed strlen_toString_typed translate_thm_typed \
   app_list_ann_typed char_escape_seq_def_typed char_escaped_def_typed escape_str_def_typed \
   escape_char_def_typed ALL_DISTINCT_MAP_implode_typed ALL_DISTINCT_MAP_explode_typed \

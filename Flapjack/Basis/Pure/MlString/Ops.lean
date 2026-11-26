@@ -333,6 +333,15 @@ theorem strcat_cancel_left (s t1 t2 : MlString) : strcat s t1 = strcat s t2 ↔ 
   · intro h
     rw [h]
 
+/-- Original `mlstring_common_char_prefix`: a common leading character cancels
+from both sides. -/
+@[hol "cakeml/basis/pure/mlstringScript.sml" "mlstring_common_char_prefix"]
+theorem strcat_cons_eq (c1 c2 : HolChar) (s1 s2 : List HolChar) (t1 t2 : MlString) :
+    strcat (.implode (c1 :: s1)) t1 = strcat (.implode (c2 :: s2)) t2 ↔
+      c1 = c2 ∧ strcat (.implode s1) t1 = strcat (.implode s2) t2 := by
+  simp only [strcat_eq_implode_append, explode_implode, List.cons_append, List.cons.injEq,
+    MlString.implode.injEq]
+
 /-- Original `mlstring_common_suffix`: a common suffix cancels. -/
 @[hol "cakeml/basis/pure/mlstringScript.sml" "mlstring_common_suffix"]
 theorem strcat_cancel_right (s t1 t2 : MlString) : strcat t1 s = strcat t2 s ↔ t1 = t2 := by

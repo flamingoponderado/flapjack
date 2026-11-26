@@ -34,6 +34,18 @@ theorem lookup_append_singleton {α β : Type} [DecidableEq α] (l : List (α ×
         simp only [hc]
         exact ih
 
+/-- Original `UPDATE_LIST_THM`: an empty update list leaves the function and a
+consed one folds the head update into the tail. -/
+@[hol "cakeml/misc/miscScript.sml" "UPDATE_LIST_THM"]
+theorem updateList_nil_cons {α β : Type} [DecidableEq α] (f : α → β) :
+    updateList f [] = f ∧
+      ∀ (h : α × β) (t : List (α × β)),
+        updateList f (h :: t) = updateList (fun x => if h.1 = x then h.2 else f x) t := by
+  constructor
+  · rfl
+  · intro h t
+    rfl
+
 /-- Full original `APPLY_UPDATE_LIST_ALOOKUP`:
 `∀ls f x. (f =++ ls) x = case ALOOKUP (REVERSE ls) x of NONE => f x | SOME y => y`. -/
 @[hol "cakeml/misc/miscScript.sml" "APPLY_UPDATE_LIST_ALOOKUP"]

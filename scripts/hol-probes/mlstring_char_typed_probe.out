@@ -35,6 +35,7 @@ strcat_o_typed=strcat (x :mlstring) ∘ strcat (y :mlstring) = strcat (x ^ y)
 strcat_nil_typed=«» ^ (s :mlstring) = s ∧ s ^ «» = s
 mlstring_common_prefix_typed=∀(s :mlstring) (t1 :mlstring) (t2 :mlstring). s ^ t1 = s ^ t2 ⇔ t1 = t2
 mlstring_common_suffix_typed=∀(s :mlstring) (t1 :mlstring) (t2 :mlstring). t1 ^ s = t2 ^ s ⇔ t1 = t2
+mlstring_common_char_prefix_typed=∀(c1 :char) (s1 :string) (s2 :string) (t2 :α) (t2 :mlstring). implode (STRING c1 s1) ^ (t1 :mlstring) = implode (STRING (c2 :char) s2) ^ t2 ⇔ c1 = c2 ∧ implode s1 ^ t1 = implode s2 ^ t2
 concat_append_typed=concat ((xs :mlstring list) ++ (ys :mlstring list)) = concat xs ^ concat ys
 implode_STRCAT_typed=∀(l1 :string) (l2 :string). implode (STRCAT l1 l2) = implode l1 ^ implode l2
 strlen_strcat_typed=strlen ((s1 :mlstring) ^ (s2 :mlstring)) = strlen s1 + strlen s2

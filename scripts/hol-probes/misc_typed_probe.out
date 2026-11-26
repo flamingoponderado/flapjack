@@ -59,6 +59,7 @@ read_bytearray_def_typed=(∀(a :β word) (get_byte :β word -> α option). read
 read_bytearray_LENGTH_typed=∀(n :num) (a :α word) (f :α word -> β option) (x :β list). read_bytearray a n f = SOME x ⇒ LENGTH x = n
 fun2set_disjoint_union_typed=DISJOINT (d1 :α -> bool) (d2 :α -> bool) ∧ (p :(α # β -> bool) -> bool) (fun2set ((m :α -> β),d1)) ∧ (q :(α # β -> bool) -> bool) (fun2set (m,d2)) ⇒ (p * q) (fun2set (m,d1 ∪ d2))
 UPDATE_LIST_def_typed=($=++ :(α -> β) -> (α # β) list -> α -> β) = FOLDL (flip (UNCURRY (UPDATE :α -> β -> (α -> β) -> α -> β)))
+UPDATE_LIST_THM_typed=∀(f :α -> β). f =++ ([] :(α # β) list) = f ∧ ∀(h :α # β) (t :(α # β) list). f =++ (h::t) = f⦇FST h ↦ SND h⦈ =++ t
 APPLY_UPDATE_LIST_ALOOKUP_typed=∀(ls :(α # β) list) (f :α -> β) (x :α). (f =++ ls) x = case ALOOKUP (REVERSE ls) x of (NONE :β option) => f x | SOME y => y
 MOD_SUB_LEMMA_typed=(n :num) MOD (k :num) = (0 :num) ∧ (m :num) MOD k = (0 :num) ∧ (0 :num) < k ⇒ (n − m) MOD k = (0 :num)
 DISJOINT_INTER_typed=DISJOINT (b :α -> bool) (c :α -> bool) ⇒ DISJOINT ((a :α -> bool) ∩ b) (a ∩ c)
@@ -123,6 +124,8 @@ ALL_DISTINCT_FLAT_EVERY_typed=∀(ls :α list list). ALL_DISTINCT (FLAT ls) ⇒ 
 OPT_MMAP_SOME_typed=OPT_MMAP (SOME :α -> α option) (ls :α list) = SOME ls
 insert_atI_def_typed=∀(l1 :α list) (n :num) (l2 :α list). insert_atI l1 n l2 = TAKE n l2 ++ l1 ++ DROP (n + LENGTH l1) l2
 LENGTH_insert_atI_typed=(p :num) + LENGTH (l1 :α list) ≤ LENGTH (l2 :α list) ⇒ LENGTH (insert_atI l1 p l2) = LENGTH l2
+insert_atI_NIL_typed=∀(n :num) (l :α list). insert_atI ([] :α list) n l = l
+insert_atI_end_typed=insert_atI (l1 :α list) (LENGTH (l2 :α list)) l2 = l2 ++ l1
 OPT_MMAP_MAP_o_typed=∀(ls :α list). OPT_MMAP (f :γ -> β option) (MAP (g :α -> γ) ls) = OPT_MMAP (f ∘ g) ls
 list_inter_def_typed=∀(xs :α list) (ys :α list). list_inter xs ys = FILTER (λ(y :α). MEM y xs) ys
 list_set_eq_def_typed=∀(l1 :α list) (l2 :α list). list_set_eq l1 l2 ⇔ list_subset l1 l2 ∧ list_subset l2 l1
