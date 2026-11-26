@@ -10566,6 +10566,7 @@ run_probe evaluate_props_typed_probeScript.sml evaluate_props_typed_probe.out \
   list_result_eq_Rval_typed list_result_eq_Rerr_typed list_result_inj_typed \
   dest_IO_event_def_typed evaluate_decs_nil_typed pair_CASE_eq_forall_typed result_rel_list_result_typed can_pmatch_all_EVERY_typed same_type_trans_typed combine_dec_result_eq_Rerr_typed same_type_sym_typed \
   evaluate_match_list_result_typed is_clock_io_mono_set_clock_typed evaluate_set_clock_typed evaluate_decs_set_clock_typed is_clock_io_mono_minimal_typed evaluate_minimal_clock_typed evaluate_match_minimal_clock_typed \
+  evaluate_cons_typed evaluate_append_typed call_FFI_return_unchanged_typed \
   "$cake_dir/semantics/proofs/evaluatePropsScript.sml" \
   "$cake_dir/semantics/proofs"
 

@@ -100,3 +100,6 @@ val _ = emit "evaluate_decs_set_clock_typed" "evaluate_decs_set_clock";
 val _ = emit "is_clock_io_mono_minimal_typed" "is_clock_io_mono_minimal";
 val _ = emit "evaluate_minimal_clock_typed" "evaluate_minimal_clock";
 val _ = emit "evaluate_match_minimal_clock_typed" "evaluate_match_minimal_clock";
+val _ = emit "evaluate_cons_typed" "evaluate_cons";
+val _ = emit "evaluate_append_typed" "evaluate_append";
+val _ = emit "call_FFI_return_unchanged_typed" "call_FFI_return_unchanged";

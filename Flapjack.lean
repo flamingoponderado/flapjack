@@ -3655,6 +3655,7 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.KeyMaps
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.Maximum.Max3
 import Flapjack.HolRef
 import Flapjack.EvaluateProps
+import Flapjack.EvaluateProps.Append
 import Flapjack.EvaluateProps.BasicFacts
 import Flapjack.EvaluateProps.ClockRestart
 import Flapjack.EvaluateProps.DoApp
