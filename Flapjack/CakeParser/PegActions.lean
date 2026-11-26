@@ -82,6 +82,62 @@ def mkLinfixHOL {α β : Type} (target : Sum β Nat) :
   | acc, op :: value :: rest =>
       mkLinfixHOL target (mkNdHOL target [acc, op, value]) rest
 
+/-- Exact port of HOL `foldl_Eapp_aux_def`: fold the operands into nested
+    application nodes, generic in the terminal type. -/
+@[hol "cakeml/compiler/parsing/pegexec_cml_foScript.sml" "foldl_Eapp_aux_def"]
+def foldlEappAuxHOL {α : Type} :
+    Misc.Grammar.ParseTree α Nonterminal Misc.Location.Locs →
+      List (Misc.Grammar.ParseTree α Nonterminal Misc.Location.Locs) →
+        Misc.Grammar.ParseTree α Nonterminal Misc.Location.Locs
+  | acc, [] => acc
+  | acc, x :: xs => foldlEappAuxHOL (mkNdHOL (.inl .nEapp) [acc, x]) xs
+
+/-- Exact port of HOL `foldl_DType_aux_def`: the declaration-type analogue. -/
+@[hol "cakeml/compiler/parsing/pegexec_cml_foScript.sml" "foldl_DType_aux_def"]
+def foldlDTypeAuxHOL {α : Type} :
+    Misc.Grammar.ParseTree α Nonterminal Misc.Location.Locs →
+      List (Misc.Grammar.ParseTree α Nonterminal Misc.Location.Locs) →
+        Misc.Grammar.ParseTree α Nonterminal Misc.Location.Locs
+  | acc, [] => acc
+  | acc, x :: xs => foldlDTypeAuxHOL (mkNdHOL (.inl .nDType) [acc, x]) xs
+
+/-- Exact port of HOL `foldl_Eapp_fo_def`: the folded application node list. -/
+@[hol "cakeml/compiler/parsing/pegexec_cml_foScript.sml" "foldl_Eapp_fo_def"]
+def foldlEappFoHOL {α : Type} :
+    List (Misc.Grammar.ParseTree α Nonterminal Misc.Location.Locs) →
+      List (Misc.Grammar.ParseTree α Nonterminal Misc.Location.Locs)
+  | [] => []
+  | h :: t => [foldlEappAuxHOL (mkNdHOL (.inl .nEapp) [h]) t]
+
+/-- Exact port of HOL `foldl_DType_fo_def`: the folded declaration-type node
+    list. -/
+@[hol "cakeml/compiler/parsing/pegexec_cml_foScript.sml" "foldl_DType_fo_def"]
+def foldlDTypeFoHOL {α : Type} :
+    List (Misc.Grammar.ParseTree α Nonterminal Misc.Location.Locs) →
+      List (Misc.Grammar.ParseTree α Nonterminal Misc.Location.Locs)
+  | [] => []
+  | h :: t => [foldlDTypeAuxHOL (mkNdHOL (.inl .nDType) [h]) t]
+
+/-- Exact port of HOL `ptPapply0_fo_def`: nest constructor applications. -/
+@[hol "cakeml/compiler/parsing/pegexec_cml_foScript.sml" "ptPapply0_fo_def"]
+def ptPapply0FoHOL {α : Type} :
+    Misc.Grammar.ParseTree α Nonterminal Misc.Location.Locs →
+      List (Misc.Grammar.ParseTree α Nonterminal Misc.Location.Locs) →
+        List (Misc.Grammar.ParseTree α Nonterminal Misc.Location.Locs)
+  | _, [] => []
+  | c, [x] => [mkNdHOL (.inl .nPapp) [c, x]]
+  | c, x :: xs => ptPapply0FoHOL (mkNdHOL (.inl .nPConApp) [c, x]) xs
+
+/-- Exact port of HOL `ptPapply_fo_def`: the constructor-application pattern
+    node list. -/
+@[hol "cakeml/compiler/parsing/pegexec_cml_foScript.sml" "ptPapply_fo_def"]
+def ptPapplyFoHOL {α : Type} :
+    List (Misc.Grammar.ParseTree α Nonterminal Misc.Location.Locs) →
+      List (Misc.Grammar.ParseTree α Nonterminal Misc.Location.Locs)
+  | [] => []
+  | [_] => []
+  | c :: rest => ptPapply0FoHOL (mkNdHOL (.inl .nPConApp) [c]) rest
+
 private def foldNodes (target : Rule) (xs : List ParseTree) : List ParseTree :=
   match xs with
   | [] => []

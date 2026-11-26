@@ -11679,6 +11679,11 @@ run_probe cake_ptree_helpers_typed_probeScript.sml cake_ptree_helpers_typed_prob
   isAlpha_def_typed oHD_def_typed ifM_def_typed tokcheckl_def_typed \
   singleSymP_def_typed isSymbolicConstructor_def_typed isConstructor_def_typed detuplify_pmatch_typed \
   "$cake_dir/semantics/tokenUtilsScript.sml" "$cake_dir/semantics"
+
+run_probe pegexec_cml_fo_fold_probeScript.sml pegexec_cml_fo_fold_probe.out \
+  foldl_Eapp_aux_def_typed foldl_DType_aux_def_typed foldl_Eapp_fo_def_typed \
+  foldl_DType_fo_def_typed ptPapply0_fo_def_typed ptPapply_fo_def_typed \
+  "$cake_dir/compiler/parsing/pegexec_cml_foScript.sml" "$cake_dir/compiler/parsing"
 # Typed captures for the pancake proof theories (task 169). These theories are
 # not built in the CakeML checkout by default; CAKEML must point at a tree where
 # pancake/, pancake/semantics/ and the listed pancake/proofs/ theories are
