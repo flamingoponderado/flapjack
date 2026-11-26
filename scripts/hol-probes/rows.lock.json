@@ -1485,7 +1485,7 @@
     {"bytes": 26325, "out": "pattern_exh_steps_probe.out", "rows": 103, "sha256": "5cf75a043f710ac3048aae36f98fc0a6c2801f6bffb709f61d2a86d56d8b08b3"},
     {"bytes": 17831, "out": "pattern_exh_typed_probe.out", "rows": 84, "sha256": "c5f1be6b493639036685957339c28242ccb04bcfce43dbc26f2ae352b94276ca"},
     {"bytes": 8883, "out": "pattern_semantics_typed_probe.out", "rows": 12, "sha256": "53e92c1abb8fe61699fdbef2b887180fdf09b1e8b41c13d7be06cf44130bf529"},
-    {"bytes": 2175, "out": "pegexec_cml_fo_fold_probe.out", "rows": 6, "sha256": "f4c44e893335904976ec5170bfefab9e4fb4f35097849eac87e9271de3b46a50"},
+    {"bytes": 3055, "out": "pegexec_cml_fo_fold_probe.out", "rows": 12, "sha256": "ea540a2f5a9f3d63e616deac2f7a3f96e0e329a72b102106e765d8ff37b84ecd"},
     {"bytes": 38623, "out": "pegexec_cml_fo_source_probe.out", "rows": 18, "sha256": "e6fc44d59c8e60662ba2589e650204e817f67da6b412d7a2172cb3a2d8cef793"},
     {"bytes": 159, "out": "pegexec_valid_add_typed_probe.out", "rows": 1, "sha256": "65bfce52f329699bfc711c6a902c62d13f37ec850c9cf7813314f958a6d1eeab"},
     {"bytes": 434, "out": "pred_set_defs_typed_probe.out", "rows": 3, "sha256": "89b9d0cbcedbe46c6d69b40c354eccc329f4e9f8f1f5cb597f77bd76ee409f87"},
