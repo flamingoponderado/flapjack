@@ -146,3 +146,5 @@ between_def_typed=∀(x :num) (y :num) (z :num). between x y z ⇔ x ≤ z ∧ z
 IN_between_typed=(x :num) ∈ between (y :num) (z :num) ⇔ y ≤ x ∧ x < z
 ALOOKUP_EXISTS_IFF_typed=(∃(v :α). ALOOKUP (alist :(β # α) list) (k :β) = SOME v) ⇔ ∃(v :α). MEM (k,v) alist
 LAST_CONS_alt_typed=(P :α -> bool) (x :α) ⇒ ((ls :α list) ≠ ([] :α list) ⇒ P (LAST ls) ⇔ P (LAST (x::ls)))
+NOT_MEM_findi_IFF_typed=¬MEM (e :α) (l :α list) ⇔ findi e l = LENGTH l
+NOT_MEM_findi_typed=¬MEM (e :α) (l :α list) ⇒ findi e l = LENGTH l
