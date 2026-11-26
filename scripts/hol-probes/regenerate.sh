@@ -10783,6 +10783,7 @@ run_probe gc_shared_typed_probeScript.sml gc_shared_typed_probe.out \
   gc_forward_ptr_ok_typed gc_forward_ptr_def_typed heap_address_typed heap_element_typed heap_lookup_LESS_typed el_length_def_typed heap_length_def_typed heap_length_APPEND_typed \
   heap_lookup_MEM_typed heap_lookup_SPLIT_typed heap_expand_def_typed heap_lookup_def_typed heap_split_def_typed isDataElement_def_typed isSomeDataElement_def_typed isForwardPointer_def_typed \
   roots_ok_def_typed heap_ok_def_typed \
+  el_length_GT_0_typed heap_length_NIL_typed heap_length_GTE_typed \
   "$cake_dir/compiler/backend/gc/gc_sharedScript.sml" \
   "$cake_dir/compiler/backend/gc"
 

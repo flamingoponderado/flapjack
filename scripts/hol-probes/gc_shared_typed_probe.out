@@ -64,3 +64,6 @@ isSomeDataElement_def_typed=∀(x :(α, β) heap_element option). isSomeDataElem
 isForwardPointer_def_typed=(isForwardPointer (ForwardPointer (n :num) (d :α) (l :num) :(α, β) heap_element) ⇔ T) ∧ (isForwardPointer (Unused (v :num) :(α, β) heap_element) ⇔ F) ∧ (isForwardPointer (DataElement (v4 :α heap_address list) (v5 :num) (v6 :β)) ⇔ F)
 roots_ok_def_typed=∀(roots :α heap_address list) (heap :(β, γ) heap_element list). roots_ok roots heap ⇔ ∀(ptr :num) (u :α). MEM (Pointer ptr u) roots ⇒ isSomeDataElement (heap_lookup ptr heap)
 heap_ok_def_typed=∀(heap :(α, β) heap_element list) (limit :num). heap_ok heap limit ⇔ heap_length heap = limit ∧ FILTER (isForwardPointer :(α, β) heap_element -> bool) heap = ([] :(α, β) heap_element list) ∧ ∀(xs :α heap_address list) (l :num) (d :β) (ptr :num) (u :α). MEM (DataElement xs l d) heap ∧ MEM (Pointer ptr u) xs ⇒ isSomeDataElement (heap_lookup ptr heap)
+el_length_GT_0_typed=∀(el :(α, β) heap_element). (1 :num) ≤ el_length el
+heap_length_NIL_typed=heap_length ([] :(α, β) heap_element list) = (0 :num)
+heap_length_GTE_typed=∀(heap :(α, β) heap_element list). (0 :num) ≤ heap_length heap

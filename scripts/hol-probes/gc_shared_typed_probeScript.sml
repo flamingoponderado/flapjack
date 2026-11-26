@@ -97,3 +97,6 @@ val _ = emit "isSomeDataElement_def_typed" "isSomeDataElement_def";
 val _ = emit "isForwardPointer_def_typed" "isForwardPointer_def";
 val _ = emit "roots_ok_def_typed" "roots_ok_def";
 val _ = emit "heap_ok_def_typed" "heap_ok_def";
+val _ = emit "el_length_GT_0_typed" "el_length_GT_0";
+val _ = emit "heap_length_NIL_typed" "heap_length_NIL";
+val _ = emit "heap_length_GTE_typed" "heap_length_GTE";
