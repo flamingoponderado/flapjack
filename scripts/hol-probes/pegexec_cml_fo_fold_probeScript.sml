@@ -22,3 +22,8 @@ val _ = show "eval_combine_def_typed" pegexec_cml_foTheory.eval_combine_def;
 val _ = show "merge_err_option_def_typed" pegexec_cml_foTheory.merge_err_option_def;
 val _ = show "map_ptree_loc_def_typed" pegexec_cml_foTheory.map_ptree_loc_def;
 val _ = show "map_ptree_loc_thm_typed" pegexec_cml_foTheory.map_ptree_loc_thm;
+
+(* Task 273: the optional-tree-list pop and the non-alternative longid check. *)
+val _ = show "poplist_aux_def_typed" pegexec_cml_foTheory.poplist_aux_def;
+val _ = show "poplistval_def_typed" pegexec_cml_foTheory.poplistval_def;
+val _ = show "eval_token_longid_check_def_typed" pegexec_cml_foTheory.eval_token_longid_check_def;

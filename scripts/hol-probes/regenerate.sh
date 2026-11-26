@@ -11685,6 +11685,7 @@ run_probe pegexec_cml_fo_fold_probeScript.sml pegexec_cml_fo_fold_probe.out \
   foldl_DType_fo_def_typed ptPapply0_fo_def_typed ptPapply_fo_def_typed \
   eval_fold_def_typed in_set_def_typed eval_combine_def_typed merge_err_option_def_typed \
   map_ptree_loc_def_typed map_ptree_loc_thm_typed \
+  poplist_aux_def_typed poplistval_def_typed eval_token_longid_check_def_typed \
   "$cake_dir/compiler/parsing/pegexec_cml_foScript.sml" "$cake_dir/compiler/parsing"
 # Typed captures for the pancake proof theories (task 169). These theories are
 # not built in the CakeML checkout by default; CAKEML must point at a tree where

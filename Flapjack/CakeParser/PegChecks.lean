@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.CakeParser.Grammar
+public import Flapjack.Basis.Pure.MlString.Ops
 public import Flapjack.Misc.Location
 
 @[expose] public section
@@ -95,5 +96,19 @@ def evalToken {α : Type} (check : TokenCheck) (input : Token × α) : Bool :=
   | .isTyvar, .tyvarT _ | .isAlphaSym, .alphaT _ | .isAlphaSym, .symbolT _ | .isLongid, .longidT _ _ => true
   | .opidLongidNonempty, .longidT _ s | .opidSymbolNonempty, .symbolT s | .opidAlphaNonempty, .alphaT s => !s.explode.isEmpty
   | _, _ => false
+
+/-- Original `eval_token_longid_check_def`: the three `TokenLongid` predicates
+    on a qualified identifier's tail, with the same guarded `strsub 0` tests.
+    HOL's boolean implication is Lean's `||`. -/
+@[hol "cakeml/compiler/parsing/pegexec_cml_foScript.sml" "eval_token_longid_check_def"]
+noncomputable def evalLongidCheck {α : Type} (check : LongidCheck)
+    (name : α × MlString) : Bool :=
+  match check with
+  | .tailNonempty => name.2 != ofString ""
+  | .tailNonemptyHeadAlphaNotUpper =>
+      name.2 != ofString "" &&
+        (!isAlphaChar (strsub name.2 0) || !isUpperChar (strsub name.2 0))
+  | .ctorUpperInitial =>
+      name.2 != ofString "" && isAlphaChar (strsub name.2 0) && isUpperChar (strsub name.2 0)
 
 end Flapjack.CakeParser.PegChecks

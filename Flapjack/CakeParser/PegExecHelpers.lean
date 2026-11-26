@@ -57,4 +57,19 @@ theorem map_eq_mapPtreeLoc {β γ loc : Type} (l : List (Misc.Grammar.ParseTree 
   | nil => simp [mapPtreeLoc]
   | cons x xs ih => simp [mapPtreeLoc, ih]
 
+/-- Original `poplist_aux_def`: collect the leading defined entries in reverse
+    and stop at the first missing one. -/
+@[hol "cakeml/compiler/parsing/pegexec_cml_foScript.sml" "poplist_aux_def"]
+def poplistAux {α : Type} : List α → List (Option α) → List α × List (Option α)
+  | acc, some h :: t => poplistAux (h :: acc) t
+  | acc, none :: t => (acc, t)
+  | acc, [] => (acc, [])
+
+/-- Original `poplistval_def`: flatten the leading defined tree lists and keep
+    the remaining optional entries. -/
+@[hol "cakeml/compiler/parsing/pegexec_cml_foScript.sml" "poplistval_def"]
+def poplistval {α : Type} (l : List (Option (List α))) : List (Option (List α)) :=
+  let (values, rest) := poplistAux [] l
+  some (evalFold values) :: rest
+
 end Flapjack.CakeParser
