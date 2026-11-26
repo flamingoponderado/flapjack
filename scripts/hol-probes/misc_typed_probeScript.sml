@@ -217,3 +217,7 @@ val _ = emit "anub_eq_nil_typed" "anub_eq_nil";
 val _ = emit "anub_notin_acc_typed" "anub_notin_acc";
 val _ = emit "find_index_APPEND1_typed" "find_index_APPEND1";
 val _ = emit "MAP_REVERSE_STEP_typed" "MAP_REVERSE_STEP";
+val _ = emit "MAPi_ID_typed" "MAPi_ID";
+val _ = emit "ALL_DISTINCT_APPEND_APPEND_IMP_typed" "ALL_DISTINCT_APPEND_APPEND_IMP";
+val _ = emit "FOLDR_CONS_triple_typed" "FOLDR_CONS_triple";
+val _ = emit "MAP_ZIP_SND_triple_typed" "MAP_ZIP_SND_triple";

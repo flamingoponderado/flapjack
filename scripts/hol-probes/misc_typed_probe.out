@@ -182,3 +182,7 @@ anub_eq_nil_typed=anub (x :(α # β) list) (y :α list) = ([] :(α # β) list) �
 anub_notin_acc_typed=∀(ls :(α # β) list) (acc :α list). MEM (x :α) acc ⇒ ¬MEM x (MAP (FST :α # β -> α) (anub ls acc))
 find_index_APPEND1_typed=∀(l1 :α list) (n :α) (l2 :α list) (m :num) (i :num). find_index n (l1 ++ l2) m = SOME i ∧ i < m + LENGTH l1 ⇒ find_index n l1 m = SOME i
 MAP_REVERSE_STEP_typed=∀(x :α list) (f :α -> β). x ≠ ([] :α list) ⇒ MAP f (REVERSE x) = f (LAST x)::MAP f (REVERSE (FRONT x))
+MAPi_ID_typed=MAPi (λ(x :num) (y :α). y) = (I :α list -> α list)
+ALL_DISTINCT_APPEND_APPEND_IMP_typed=ALL_DISTINCT ((xs :α list) ++ (ys :α list) ++ (zs :α list)) ⇒ ALL_DISTINCT (xs ++ ys) ∧ ALL_DISTINCT (xs ++ zs) ∧ ALL_DISTINCT (ys ++ zs)
+FOLDR_CONS_triple_typed=∀(f :α -> β -> γ -> δ) (ls :(α # β # γ) list) (a :δ list). FOLDR (λ((x :α),(y :β),(z :γ)) (w :δ list). f x y z::w) a ls = MAP (λ((x :α),(y :β),(z :γ)). f x y z) ls ++ a
+MAP_ZIP_SND_triple_typed=LENGTH (l1 :α list) = LENGTH (l2 :(β # γ) list) ⇒ MAP (λ((x :α),(y :β),(z :γ)). (f :β -> γ -> δ) y z) (ZIP (l1,l2)) = MAP (UNCURRY f) l2

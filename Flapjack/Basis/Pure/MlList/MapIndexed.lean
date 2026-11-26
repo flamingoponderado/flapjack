@@ -48,4 +48,15 @@ theorem holMapi_eq_mapi {β α : Type} (f : Nat → β → α) (l : List β) :
     holMapi f l = mapi f 0 l := by
   simpa using holMapi_shift f l 0
 
+/-- Original `MAPi_ID`: indexing with the identity function is the identity.
+HOL marks this `[simp]`; Lean keeps it as a function equality, so the attribute
+is not reproduced (its pointwise form is a separate rewrite). -/
+@[hol "cakeml/misc/miscScript.sml" "MAPi_ID"]
+theorem holMapi_id {α : Type} :
+    holMapi (fun (_ : Nat) (y : α) => y) = fun (l : List α) => l := by
+  funext l
+  induction l with
+  | nil => rfl
+  | cons h t ih => simp [holMapi, ih]
+
 end Flapjack.Basis.Pure.MlList

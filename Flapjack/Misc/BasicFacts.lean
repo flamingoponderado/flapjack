@@ -877,4 +877,55 @@ theorem map_reverse_step {α β : Type} [Nonempty α] (x : List α) (f : α → 
       rw [ih (by simp)]
       rfl
 
+/-- Original `ALL_DISTINCT_APPEND_APPEND_IMP`: distinctness of a triple append
+restricts to the pairwise appends. -/
+@[hol "cakeml/misc/miscScript.sml" "ALL_DISTINCT_APPEND_APPEND_IMP"]
+theorem nodup_append_append {α : Type} (xs ys zs : List α)
+    (h : (xs ++ ys ++ zs).Nodup) :
+    (xs ++ ys).Nodup ∧ (xs ++ zs).Nodup ∧ (ys ++ zs).Nodup := by
+  rw [List.nodup_append] at h
+  obtain ⟨hxy, hz, hd⟩ := h
+  rw [List.nodup_append] at hxy
+  obtain ⟨hx, hy, hdxy⟩ := hxy
+  refine ⟨?_, ?_, ?_⟩
+  · rw [List.nodup_append]
+    exact ⟨hx, hy, hdxy⟩
+  · rw [List.nodup_append]
+    exact ⟨hx, hz, fun a ha b hb => hd a (List.mem_append_left ys ha) b hb⟩
+  · rw [List.nodup_append]
+    exact ⟨hy, hz, fun a ha b hb => hd a (List.mem_append_right xs ha) b hb⟩
+
+/-- Original `FOLDR_CONS_triple`: folding a triple cons over a list of triples
+is a map followed by the initial accumulator. -/
+@[hol "cakeml/misc/miscScript.sml" "FOLDR_CONS_triple"]
+theorem foldr_cons_triple {α β γ δ : Type} (f : α → β → γ → δ)
+    (ls : List (α × β × γ)) (a : List δ) :
+    ls.foldr (fun p w => match p with | (x, y, z) => f x y z :: w) a =
+      (ls.map fun p => match p with | (x, y, z) => f x y z) ++ a := by
+  induction ls with
+  | nil => rfl
+  | cons p rest ih =>
+    rcases p with ⟨x, y, z⟩
+    simp only [List.foldr_cons, List.map_cons, ih, List.cons_append]
+
+/-- Original `MAP_ZIP_SND_triple`: mapping the pair components of a zip equals
+mapping the curried function over the second list. -/
+@[hol "cakeml/misc/miscScript.sml" "MAP_ZIP_SND_triple"]
+theorem map_zip_snd_triple {α β γ δ : Type} (f : β → γ → δ)
+    (l1 : List α) (l2 : List (β × γ)) (h : l1.length = l2.length) :
+    (l1.zip l2).map (fun p => match p with | (_x, y, z) => f y z) =
+      l2.map (fun p => f p.1 p.2) := by
+  induction l1 generalizing l2 with
+  | nil =>
+    cases l2 with
+    | nil => rfl
+    | cons p rest => simp at h
+  | cons a t ih =>
+    cases l2 with
+    | nil => simp at h
+    | cons p rest =>
+      rcases p with ⟨b, c⟩
+      simp only [List.zip_cons_cons, List.map_cons, List.length_cons] at h ⊢
+      rw [ih rest (by omega)]
+
 end Flapjack

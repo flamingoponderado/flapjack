@@ -10746,6 +10746,7 @@ run_probe misc_typed_probeScript.sml misc_typed_probe.out \
   LIST_REL_MEM_typed LUPDATE_commutes_typed \
   revtakerev_typed any_el_ALT_typed SUM_MAP_BOUND_typed \
   anub_eq_nil_typed anub_notin_acc_typed find_index_APPEND1_typed MAP_REVERSE_STEP_typed \
+  MAPi_ID_typed ALL_DISTINCT_APPEND_APPEND_IMP_typed FOLDR_CONS_triple_typed MAP_ZIP_SND_triple_typed \
   "$cake_dir/misc/miscScript.sml" \
   "$cake_dir/misc"
 
