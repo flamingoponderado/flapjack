@@ -703,4 +703,52 @@ theorem map_some_append_eq {α : Type} (l1 l2 l3 : List α) :
   rw [← List.map_append]
   exact map_some_eq (l1 ++ l2) l3
 
+/-- Original `every_shim`: a predicate on the second components of a pair list
+is a predicate on the projected list. -/
+@[hol "cakeml/misc/miscScript.sml" "every_shim"]
+theorem all_snd {α β : Type} (l : List (α × β)) (P : β → Bool) :
+    (l.all fun p => P p.2) = ((l.map Prod.snd).all P) := by
+  induction l with
+  | nil => simp
+  | cons p rest ih =>
+    rcases p with ⟨x, y⟩
+    simp only [List.all_cons, List.map_cons, ih]
+
+/-- Original `every_shim2`: a conjunction predicate on pairs splits over the two
+projections. -/
+@[hol "cakeml/misc/miscScript.sml" "every_shim2"]
+theorem all_pair_split {α β : Type} (l : List (α × β)) (P : α → Bool) (Q : β → Bool) :
+    (l.all fun p => P p.1 && Q p.2) =
+      ((l.all fun p => P p.1) && (l.all fun p => Q p.2)) := by
+  induction l with
+  | nil => simp
+  | cons p rest ih =>
+    rcases p with ⟨x, y⟩
+    simp only [List.all_cons, ih, Bool.and_assoc, Bool.and_left_comm]
+
+/-- Original `MEM_ZIP2`: a pair in a zip sits at a common in-range index. -/
+@[hol "cakeml/misc/miscScript.sml" "MEM_ZIP2"
+  (total_function_inhabitants := [α, β])]
+theorem mem_zip2 {α β : Type} [Nonempty α] [Nonempty β] (l1 : List α) :
+    ∀ (l2 : List β) (x : α × β), x ∈ l1.zip l2 →
+      ∃ n, n < l1.length ∧ n < l2.length ∧ x = (holEl n l1, holEl n l2) := by
+  induction l1 with
+  | nil =>
+    intro l2 x h
+    simp at h
+  | cons a t ih =>
+    intro l2 x h
+    cases l2 with
+    | nil => simp at h
+    | cons b u =>
+      simp only [List.zip_cons_cons, List.mem_cons] at h
+      rcases h with hx | hx
+      · refine ⟨0, by simp, by simp, ?_⟩
+        rw [hx]
+        simp [holEl, holHd]
+      · obtain ⟨n, hn1, hn2, hx⟩ := ih u x hx
+        refine ⟨n + 1, by simp [hn1], by simp [hn2], ?_⟩
+        rw [hx]
+        simp [holEl_cons_succ]
+
 end Flapjack

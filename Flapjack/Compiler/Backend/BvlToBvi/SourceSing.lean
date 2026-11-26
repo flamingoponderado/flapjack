@@ -233,7 +233,7 @@ macro "bvlArgsSetup" "using" lemma:Lean.Parser.Tactic.simpLemma : tactic =>
     intro n res next target n2 ys aux relocate run notTypeError compiled related sourceOk envOk
       installed handlers global
     rcases argsCompile : compileListSource n arguments with ⟨argsCode, argsAux, finalName⟩
-    have nilRight : smartAppend argsAux .nil = argsAux := smartAppend_nil argsAux
+    have nilRight : smartAppend argsAux .nil = argsAux := (smartAppend_nil argsAux).1
     simp [compileListSource, compileSingSource, argsCompile, nilRight, $lemma] at compiled
     rcases compiled with ⟨rfl, rfl, rfl⟩
     have shape : BvlHandle.Proofs.handleOk arguments :=

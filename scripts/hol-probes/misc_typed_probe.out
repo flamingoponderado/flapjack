@@ -163,3 +163,9 @@ find_index_MAP_inj_typed=∀(ls :α list) (x :α) (n :num) (f :α -> β). (∀(y
 INDEX_FIND_CONS_EQ_SOME_typed=INDEX_FIND (n :num) (f :α -> bool) ((x :α)::(xs :α list)) = SOME (y :num # α) ⇔ f x ∧ y = (n,x) ∨ ¬f x ∧ INDEX_FIND (n + (1 :num)) f xs = SOME y
 THE_find_index_suff_typed=∀(P :num -> bool) (x :α) (ls :α list) (n :num). (∀(m :num). m < LENGTH ls ⇒ P (m + n)) ∧ MEM x ls ⇒ P (THE (find_index x ls n))
 find_index_APPEND2_typed=∀(l1 :α list) (n :α) (l2 :α list) (m :num) (i :num). find_index n (l1 ++ l2) m = SOME i ∧ m + LENGTH l1 ≤ i ⇒ find_index n l2 (m + LENGTH l1) = SOME i
+SmartAppend_thm_typed=∀(l1 :α app_list) (l2 :α app_list). SmartAppend l1 l2 = if l1 = (Nil :α app_list) then l2 else if l2 = (Nil :α app_list) then l1 else Append l1 l2
+SmartAppend_Nil_typed=SmartAppend (l :α app_list) (Nil :α app_list) = l ∧ SmartAppend (Nil :α app_list) l = l
+tlookup_id_typed=(x :num) ∉ (domain (names :num sptree$num_map) :num -> bool) ⇒ tlookup names x = x
+every_shim_typed=∀(l :(α # β) list) (P :β -> bool). EVERY (λ((x :α),(y :β)). P y) l ⇔ EVERY P (MAP (SND :α # β -> β) l)
+every_shim2_typed=∀(l :(α # β) list) (P :α -> bool) (Q :β -> bool). EVERY (λ((x :α),(y :β)). P x ∧ Q y) l ⇔ EVERY (λ(x :α # β). P (FST x)) l ∧ EVERY (λ(x :α # β). Q (SND x)) l
+MEM_ZIP2_typed=∀(l1 :α list) (l2 :β list) (x :α # β). MEM x (ZIP (l1,l2)) ⇒ ∃(n :num). n < LENGTH l1 ∧ n < LENGTH l2 ∧ x = (l1❲n❳,l2❲n❳)

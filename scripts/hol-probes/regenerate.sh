@@ -10740,6 +10740,8 @@ run_probe misc_typed_probeScript.sml misc_typed_probe.out \
   EXP2_EVEN_typed OPTION_CHOICE_EQUALS_OPTION_typed map_some_eq_append_typed the_nil_eq_cons_typed \
   find_index_INDEX_FIND_typed find_index_NOT_MEM_typed find_index_MAP_inj_typed \
   INDEX_FIND_CONS_EQ_SOME_typed THE_find_index_suff_typed find_index_APPEND2_typed \
+  SmartAppend_thm_typed SmartAppend_Nil_typed tlookup_id_typed \
+  every_shim_typed every_shim2_typed MEM_ZIP2_typed \
   "$cake_dir/misc/miscScript.sml" \
   "$cake_dir/misc"
 

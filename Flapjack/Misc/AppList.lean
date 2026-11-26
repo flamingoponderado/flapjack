@@ -33,6 +33,8 @@ inductive AppList (α : Type) where
   | nil : AppList α
   deriving Repr
 
+deriving instance DecidableEq for AppList
+
 /-- HOL `append_aux_def`. -/
 @[hol "cakeml/misc/miscScript.sml" "append_aux_def"]
 def appendAux {α : Type} : AppList α → List α → List α
@@ -110,13 +112,34 @@ theorem appListAppend_smartAppend {α : Type} (left right : AppList α) :
     | append third fourth =>
       exact (appListAppend_thm_sameType (.append first second) (.append third fourth) []).1
 
-/-- A smart append with an empty right tree is the identity. Flapjack-specific
-infrastructure (no standalone HOL declaration). -/
-theorem smartAppend_nil {α : Type} (left : AppList α) : smartAppend left .nil = left := by
-  cases left
-  · rfl
-  · rfl
-  · rfl
+/-- Original `SmartAppend_Nil`: a smart append with an empty tree is the
+identity on either side. -/
+@[hol "cakeml/misc/miscScript.sml" "SmartAppend_Nil"]
+theorem smartAppend_nil {α : Type} (l : AppList α) :
+    smartAppend l .nil = l ∧ smartAppend .nil l = l := by
+  cases l with
+  | nil => exact ⟨rfl, rfl⟩
+  | list values => exact ⟨rfl, rfl⟩
+  | append left right => exact ⟨rfl, rfl⟩
+
+/-- Original `SmartAppend_thm`: smart append is the if-then-else chain over
+empty trees, otherwise a plain `Append`. -/
+@[hol "cakeml/misc/miscScript.sml" "SmartAppend_thm"]
+theorem smartAppend_thm {α : Type} [DecidableEq α] (l1 l2 : AppList α) :
+    smartAppend l1 l2 =
+      if l1 = .nil then l2 else if l2 = .nil then l1 else .append l1 l2 := by
+  cases l1 with
+  | nil => simp [smartAppend]
+  | list values =>
+    cases l2 with
+    | nil => simp [smartAppend]
+    | list values' => simp [smartAppend]
+    | append left right => simp [smartAppend]
+  | append left right =>
+    cases l2 with
+    | nil => simp [smartAppend]
+    | list values => simp [smartAppend]
+    | append l r => simp [smartAppend]
 
 /-- Flatten the leading `AppList` of a `(AppList α × Bool × Nat)` (the shape of
 HOL `flatten`'s result) with `misc$append`. -/
