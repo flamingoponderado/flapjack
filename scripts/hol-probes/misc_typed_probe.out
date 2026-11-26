@@ -186,3 +186,17 @@ MAPi_ID_typed=MAPi (λ(x :num) (y :α). y) = (I :α list -> α list)
 ALL_DISTINCT_APPEND_APPEND_IMP_typed=ALL_DISTINCT ((xs :α list) ++ (ys :α list) ++ (zs :α list)) ⇒ ALL_DISTINCT (xs ++ ys) ∧ ALL_DISTINCT (xs ++ zs) ∧ ALL_DISTINCT (ys ++ zs)
 FOLDR_CONS_triple_typed=∀(f :α -> β -> γ -> δ) (ls :(α # β # γ) list) (a :δ list). FOLDR (λ((x :α),(y :β),(z :γ)) (w :δ list). f x y z::w) a ls = MAP (λ((x :α),(y :β),(z :γ)). f x y z) ls ++ a
 MAP_ZIP_SND_triple_typed=LENGTH (l1 :α list) = LENGTH (l2 :(β # γ) list) ⇒ MAP (λ((x :α),(y :β),(z :γ)). (f :β -> γ -> δ) y z) (ZIP (l1,l2)) = MAP (UNCURRY f) l2
+is_subseq_def_typed=(∀(ls :α list). is_subseq ls ([] :α list) ⇔ T) ∧ (∀(xs :α list) (x :α). is_subseq ([] :α list) (x::xs) ⇔ F) ∧ ∀(ys :α list) (y :α) (xs :α list) (x :α). is_subseq (y::ys) (x::xs) ⇔ x = y ∧ is_subseq ys xs ∨ is_subseq ys (x::xs)
+is_subseq_refl_typed=∀(ls :α list). is_subseq ls ls
+is_subseq_nil_typed=is_subseq ([] :α list) (ls :α list) ⇔ ls = ([] :α list)
+is_subseq_cons_typed=∀(l1 :α list) (l2 :α list) (x :α). is_subseq l1 l2 ⇒ is_subseq (x::l1) l2
+is_subseq_snoc_typed=∀(l1 :α list) (l2 :α list) (x :α). is_subseq l1 l2 ⇒ is_subseq (SNOC x l1) l2
+is_subseq_append1_typed=∀(l3 :α list) (l1 :α list) (l2 :α list). is_subseq l1 l2 ⇒ is_subseq (l3 ++ l1) l2
+is_subseq_append2_typed=∀(l4 :α list) (l1 :α list) (l2 :α list). is_subseq l1 l2 ⇒ is_subseq (l1 ++ l4) l2
+is_subseq_IS_SUBLIST_typed=is_subseq (l1 :α list) (l2 :α list) ∧ IS_SUBLIST (l3 :α list) l1 ⇒ is_subseq l3 l2
+is_subseq_MEM_typed=∀(l1 :α list) (l2 :α list) (x :α). is_subseq l1 l2 ∧ MEM x l2 ⇒ MEM x l1
+IS_PREFIX_is_subseq_typed=∀(l1 :α list) (l2 :α list). l2 ≼ l1 ⇒ is_subseq l1 l2
+IS_SUBLIST_is_subseq_typed=∀(l1 :α list) (l2 :α list). IS_SUBLIST l1 l2 ⇒ is_subseq l1 l2
+is_subseq_ALL_DISTINCT_typed=∀(l1 :α list) (l2 :α list). ALL_DISTINCT l1 ∧ is_subseq l1 l2 ⇒ ALL_DISTINCT l2
+is_subseq_append_suff_typed=∀(l1 :α list) (l3 :α list) (l2 :α list) (l4 :α list). is_subseq l1 l3 ∧ is_subseq l2 l4 ⇒ is_subseq (l1 ++ l2) (l3 ++ l4)
+is_subseq_FLAT_suff_typed=∀(ls1 :α list list) (ls2 :α list list). LIST_REL (is_subseq :α list -> α list -> bool) ls1 ls2 ⇒ is_subseq (FLAT ls1) (FLAT ls2)

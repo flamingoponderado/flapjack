@@ -10747,6 +10747,10 @@ run_probe misc_typed_probeScript.sml misc_typed_probe.out \
   revtakerev_typed any_el_ALT_typed SUM_MAP_BOUND_typed \
   anub_eq_nil_typed anub_notin_acc_typed find_index_APPEND1_typed MAP_REVERSE_STEP_typed \
   MAPi_ID_typed ALL_DISTINCT_APPEND_APPEND_IMP_typed FOLDR_CONS_triple_typed MAP_ZIP_SND_triple_typed \
+  is_subseq_def_typed is_subseq_refl_typed is_subseq_nil_typed is_subseq_cons_typed \
+  is_subseq_snoc_typed is_subseq_append1_typed is_subseq_append2_typed is_subseq_IS_SUBLIST_typed \
+  is_subseq_MEM_typed IS_PREFIX_is_subseq_typed IS_SUBLIST_is_subseq_typed \
+  is_subseq_ALL_DISTINCT_typed is_subseq_append_suff_typed is_subseq_FLAT_suff_typed \
   "$cake_dir/misc/miscScript.sml" \
   "$cake_dir/misc"
 
