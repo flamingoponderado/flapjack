@@ -4991,6 +4991,7 @@ import Flapjack.Misc.Subseq
 import Flapjack.Misc.UpdateResize
 import Flapjack.Misc.FoldlInvariant
 import Flapjack.Misc.Words.N2wOrder
+import Flapjack.Misc.Irreflexive
 /-!
 # Flapjack in Lean
 

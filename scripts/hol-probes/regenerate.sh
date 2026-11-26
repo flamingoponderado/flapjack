@@ -4888,7 +4888,7 @@ run_probe hol_predset_typed_probeScript.sml hol_predset_typed_probe.out \
   "$repo_dir/HOL/src/pred_set/src/pred_setScript.sml" "$cake_dir/pancake"
 
 run_probe hol_relation_typed_probeScript.sml hol_relation_typed_probe.out \
-  transitive_def_typed total_def_typed \
+  transitive_def_typed total_def_typed irreflexive_def_typed \
   "$repo_dir/HOL/src/relation/relationScript.sml" "$cake_dir/pancake"
 
 run_probe hol_pair_typed_probeScript.sml hol_pair_typed_probe.out \
@@ -10755,6 +10755,8 @@ run_probe misc_typed_probeScript.sml misc_typed_probe.out \
   append_SmartAppend_typed EVERY2_RC_same_typed FOLDL_OPTION_CHOICE_EQ_SOME_IMP_MEM_typed \
   LENGTH_EQ_FILTER_FILTER_typed FOLDL_invariant_typed update_resize_def_typed \
   FOLDL_invariant_rest_typed n2w_lt_typed n2w_le_typed \
+  MAX_LIST_APPEND_typed MAX_LIST_SNOC_typed MAX_LIST_max_typed \
+  irreflexive_inv_image_typed \
   "$cake_dir/misc/miscScript.sml" \
   "$cake_dir/misc"
 

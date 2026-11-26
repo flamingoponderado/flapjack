@@ -247,3 +247,7 @@ val _ = emit "update_resize_def_typed" "update_resize_def";
 val _ = emit "FOLDL_invariant_rest_typed" "FOLDL_invariant_rest";
 val _ = emit "n2w_lt_typed" "n2w_lt";
 val _ = emit "n2w_le_typed" "n2w_le";
+val _ = emit "MAX_LIST_APPEND_typed" "MAX_LIST_APPEND";
+val _ = emit "MAX_LIST_SNOC_typed" "MAX_LIST_SNOC";
+val _ = emit "MAX_LIST_max_typed" "MAX_LIST_max";
+val _ = emit "irreflexive_inv_image_typed" "irreflexive_inv_image";

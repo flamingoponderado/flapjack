@@ -1,5 +1,5 @@
 (* Typed HOL relationTheory statements at the pinned HOL revision:
-   transitive_def and total_def, printed with show_types. *)
+   transitive_def, total_def and irreflexive_def, printed with show_types. *)
 load "bossLib";
 load "relationTheory";
 open HolKernel Parse boolLib bossLib relationTheory;
@@ -10,3 +10,4 @@ fun show_thm label th =
    print "\n");
 val _ = show_thm "transitive_def_typed" relationTheory.transitive_def;
 val _ = show_thm "total_def_typed" relationTheory.total_def;
+val _ = show_thm "irreflexive_def_typed" relationTheory.irreflexive_def;

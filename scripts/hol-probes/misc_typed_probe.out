@@ -212,3 +212,7 @@ update_resize_def_typed=∀(ls :α list) (default :α) (v :α) (n :num). update_
 FOLDL_invariant_rest_typed=∀(P :α list -> β -> bool) (f :β -> α -> β) (ls :α list) (a :β). P ls a ∧ (∀(x :β) (n :num). n < LENGTH ls ∧ P (DROP n ls) x ⇒ P (DROP (SUC n) ls) (f x ls❲n❳)) ⇒ P ([] :α list) (FOLDL f a ls)
 n2w_lt_typed=(0w :α word) < (n2w (a :num) :α word) ∧ (0w :α word) < (n2w (b :num) :α word) ∧ a < dimword (:α) ∧ b < dimword (:α) ⇒ ((n2w a :α word) < (n2w b :α word) ⇔ a < b)
 n2w_le_typed=(0w :α word) < (n2w (a :num) :α word) ∧ (0w :α word) < (n2w (b :num) :α word) ∧ a < dimword (:α) ∧ b < dimword (:α) ⇒ ((n2w a :α word) ≤ (n2w b :α word) ⇔ a ≤ b)
+MAX_LIST_APPEND_typed=MAX_LIST ((xs :num list) ++ (ys :num list)) = MAX (MAX_LIST xs) (MAX_LIST ys)
+MAX_LIST_SNOC_typed=MAX_LIST (SNOC (x :num) (xs :num list)) = MAX (MAX_LIST xs) x
+MAX_LIST_max_typed=∀(ls :num list). EVERY (λ(x :num). x ≤ MAX_LIST ls) ls
+irreflexive_inv_image_typed=∀(R :α -> α -> bool) (f :β -> α). (irreflexive R :bool) ⇒ (irreflexive (inv_image R f) :bool)
