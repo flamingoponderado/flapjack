@@ -5,6 +5,7 @@ public import Flapjack.SemanticPrimitivesHOL.PatternMatch
 public import Flapjack.SemanticPrimitivesHOL.Control
 public import Flapjack.EvaluateHOL
 public import Flapjack.SemanticPrimitivesProps.ResultRelation
+public import Flapjack.EvaluateProps.Length
 public import Mathlib.Data.List.Basic
 
 @[expose] public section
@@ -71,5 +72,22 @@ theorem canPmatchAll_EVERY (envC : Namespace ModN ConN (Nat × Stamp)) (refs : S
   | cons p ps ih =>
     rw [canPmatchAll_cons]
     simp [ih, List.mem_cons]
+
+@[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "evaluate_match_list_result"]
+theorem evaluateMatch_listResult {σ : Type} (st next : State σ) (env : SemEnv Value)
+    (value : Value) (clauses : List (Pat × AstHOL.Exp)) (errorValue : Value)
+    (result : Result (List Value) Value)
+    (run : evaluateMatch st env value clauses errorValue = (next, result)) :
+    ∃ r', result = listResult r' := by
+  cases result with
+  | err error => exact ⟨.err error, rfl⟩
+  | val values =>
+    have length := evaluateMatchLengthFull st next env value clauses errorValue values run
+    cases values with
+    | nil => simp at length
+    | cons first rest =>
+      cases rest with
+      | nil => exact ⟨.val first, rfl⟩
+      | cons second tail => simp at length
 
 end Flapjack.EvaluateProps
