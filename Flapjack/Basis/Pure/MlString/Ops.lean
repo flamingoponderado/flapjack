@@ -4,6 +4,7 @@ public import Flapjack.Basis.Pure.MlString
 public import Flapjack.Basis.Pure.MlString.Length
 public import Flapjack.Basis.Pure.MlList.Basics
 public import Flapjack.Misc.ListEl
+public import Mathlib.Logic.Function.Defs
 
 @[expose] public section
 
@@ -133,11 +134,10 @@ theorem explode_inj (s1 s2 : MlString) : explode s1 = explode s2 ↔ s1 = s2 := 
   · intro h
     rw [h]
 
-/-- The constructor is injective and surjective. HOL states this as
-`BIJ implode UNIV UNIV`. The Lean conjunction is not the same statement shape, so
-this stays untagged (see the task-273 progress notes). -/
-theorem implode_bijective :
-    Function.Injective MlString.implode ∧ Function.Surjective MlString.implode := by
+/-- Original `implode_BIJ`: HOL's `BIJ implode UNIV UNIV`, which is
+`Function.Bijective` on the universe carrier. -/
+@[hol "cakeml/basis/pure/mlstringScript.sml" "implode_BIJ"]
+theorem implode_bijective : Function.Bijective MlString.implode := by
   constructor
   · intro a b h
     have := congrArg explode h
@@ -145,10 +145,10 @@ theorem implode_bijective :
   · intro b
     exact ⟨explode b, by simp⟩
 
-/-- The accessor is injective and surjective. HOL states this as
-`BIJ explode UNIV UNIV`. The Lean conjunction is not the same statement shape, so
-this stays untagged (see the task-273 progress notes). -/
-theorem explode_bijective : Function.Injective explode ∧ Function.Surjective explode := by
+/-- Original `explode_BIJ`: HOL's `BIJ explode UNIV UNIV`, which is
+`Function.Bijective` on the universe carrier. -/
+@[hol "cakeml/basis/pure/mlstringScript.sml" "explode_BIJ"]
+theorem explode_bijective : Function.Bijective explode := by
   constructor
   · intro a b h
     cases a with
@@ -437,5 +437,34 @@ theorem substring_zero (s : MlString) (i : Nat) : substring s i 0 = .implode [] 
   · split
     · omega
     · simp
+
+/-- Original `substring_1_strsub`: a one-character substring is the character. -/
+@[hol "cakeml/basis/pure/mlstringScript.sml" "substring_1_strsub"]
+theorem substring_one_strsub (s : MlString) (i : Nat) (h : i < strlen s) :
+    substring s i 1 = chrToStr (strsub s i) := by
+  cases s with
+  | implode data =>
+    have hi : i < data.length := by simpa [strlen_eq_explode_length] using h
+    have h1 : i + 1 ≤ data.length := hi
+    simp only [substring, strlen_eq_explode_length, explode_implode]
+    rw [if_pos h1]
+    simp only [chrToStr, strsub, explode_implode, List.drop_eq_getElem_cons hi]
+    simp only [List.take_succ_cons, List.take_zero]
+    rw [holEl_eq_getElem i data hi]
+
+/-- Original `substring_add`: a substring splits into two adjacent substrings. -/
+@[hol "cakeml/basis/pure/mlstringScript.sml" "substring_add"]
+theorem substring_add (s : MlString) (i x y : Nat) (h : i + x + y ≤ strlen s) :
+    substring s i (x + y) = strcat (substring s i x) (substring s (i + x) y) := by
+  cases s with
+  | implode data =>
+    have hlen : strlen (.implode data) = data.length := strlen_implode data
+    have hx : i + x ≤ data.length := by omega
+    have hxy : i + x + y ≤ data.length := by omega
+    simp only [substring, hlen, explode_implode]
+    rw [if_pos (by omega : i + (x + y) ≤ data.length), if_pos hx, if_pos hxy]
+    rw [strcat_eq_implode_append]
+    simp only [explode_implode]
+    rw [List.take_add, List.drop_drop]
 
 end Flapjack.Basis.Pure.MlString

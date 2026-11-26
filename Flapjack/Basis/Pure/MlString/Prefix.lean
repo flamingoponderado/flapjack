@@ -65,7 +65,6 @@ noncomputable def strFindi (P : HolChar → Bool) (i : Nat) (s : MlString) : Opt
   else none
 termination_by strlen s - i
 decreasing_by
-  simp_wf
   omega
 
 /-- Original `str_findi_range`: a found index is within the string. -/
