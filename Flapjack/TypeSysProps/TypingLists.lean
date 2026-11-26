@@ -167,6 +167,29 @@ theorem typeRecfunLookup (fn : MlString) (funs : List (MlString × MlString × A
       obtain ⟨typedE, checked⟩ := ih env localEnv bindings' recfun tail found
       exact ⟨typedE, checked⟩
 
+/-- Original `type_funs_distinct`: a typed function list defines each function
+at most once. -/
+@[hol "cakeml/semantics/proofs/typeSysPropsScript.sml" "type_funs_distinct"]
+theorem typeFunsDistinct (env : TypeEnv) (localEnv : TenvValExp)
+    (funs : List (MlString × MlString × AstHOL.Exp)) (bindings : List (MlString × SemanticT))
+    (typed : TypeFuns env localEnv funs bindings) :
+    (funs.map (fun p => p.1)).Nodup := by
+  induction funs generalizing env localEnv bindings with
+  | nil => simp
+  | cons fn funs ih =>
+    cases typed
+    rename_i name arg body bindings' u₁ u₂ unique free typedBody tail
+    simp only [List.map_cons, List.nodup_cons]
+    constructor
+    · intro member
+      obtain ⟨p, inFuns, sameName⟩ := List.mem_map.mp member
+      obtain ⟨t, found⟩ :=
+        typeFunsLookup p.1 localEnv funs bindings' p.2.1 p.2.2 env ⟨inFuns, tail⟩
+      rw [← sameName] at unique
+      rw [unique] at found
+      simp at found
+    · exact ih env localEnv bindings' tail
+
 /-- A typed expression list and its type list have equal lengths. -/
 @[hol "cakeml/semantics/proofs/typeSysPropsScript.sml" "type_es_length"]
 theorem typeEsLength (env : TypeEnv) (localEnv : TenvValExp) (es : List Flapjack.AstHOL.Exp)
