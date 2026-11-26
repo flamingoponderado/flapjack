@@ -85,4 +85,34 @@ theorem holMapi_eq_map_enumerate {α β : Type} (f : Nat → α → β) (xs : Li
     holMapi f xs = List.map (fun p : Nat × α => f p.1 p.2) (enumerate 0 xs) := by
   simpa using (map_enumerate_eq_holMapi (fun p : Nat × α => f p.1 p.2) xs 0).symm
 
+/-- Every index produced by an enumeration is at least its start offset. -/
+private theorem fst_enumerate_ge {A : Type} (j : Nat) (xs : List A) :
+    ∀ p ∈ enumerate j xs, j ≤ p.1 := by
+  induction xs generalizing j with
+  | nil => simp
+  | cons x rest ih =>
+    intro p hp
+    simp only [enumerate, List.mem_cons] at hp
+    rcases hp with rfl | hp
+    · simp
+    · have hge := ih (j + 1) p hp
+      omega
+
+/-- Original `ALL_DISTINCT_MAP_FST_enumerate`: the indices of an enumeration
+are distinct. -/
+@[hol "cakeml/misc/miscScript.sml" "ALL_DISTINCT_MAP_FST_enumerate"]
+theorem nodup_map_fst_enumerate {A : Type} (ls : List A) (k : Nat) :
+    ((enumerate k ls).map Prod.fst).Nodup := by
+  induction ls generalizing k with
+  | nil => simp
+  | cons x xs ih =>
+    simp only [enumerate, List.map_cons]
+    rw [List.nodup_cons]
+    constructor
+    · intro hmem
+      obtain ⟨p, hp, hfst⟩ := List.mem_map.mp hmem
+      have hge := fst_enumerate_ge (k + 1) xs p hp
+      omega
+    · exact ih (k + 1)
+
 end Flapjack

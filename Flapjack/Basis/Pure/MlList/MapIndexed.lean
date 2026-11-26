@@ -59,4 +59,26 @@ theorem holMapi_id {α : Type} :
   | nil => rfl
   | cons h t ih => simp [holMapi, ih]
 
+/-- Original `FST_UNZIP_MAPi`: the first components of an unzipped indexed map. -/
+@[hol "cakeml/misc/miscScript.sml" "FST_UNZIP_MAPi"]
+theorem fst_unzip_holMapi {β α γ : Type} (f : Nat → β → α × γ) :
+    ∀ (l : List β), (holMapi f l).unzip.1 = holMapi (fun n x => (f n x).1) l := by
+  intro l
+  induction l generalizing f with
+  | nil => rfl
+  | cons h t ih =>
+    simp only [holMapi, List.unzip]
+    rw [ih (fun n x => f (n + 1) x)]
+
+/-- Original `SND_UNZIP_MAPi`: the second components of an unzipped indexed map. -/
+@[hol "cakeml/misc/miscScript.sml" "SND_UNZIP_MAPi"]
+theorem snd_unzip_holMapi {β α γ : Type} (f : Nat → β → α × γ) :
+    ∀ (l : List β), (holMapi f l).unzip.2 = holMapi (fun n x => (f n x).2) l := by
+  intro l
+  induction l generalizing f with
+  | nil => rfl
+  | cons h t ih =>
+    simp only [holMapi, List.unzip]
+    rw [ih (fun n x => f (n + 1) x)]
+
 end Flapjack.Basis.Pure.MlList
