@@ -4988,6 +4988,9 @@ import Flapjack.Pancake.Proofs.PanToTarget.X64Source
 import Flapjack.Pancake.Proofs.PanToTarget.X64NativeSourceCorrect
 import Flapjack.Pancake.Proofs.PanToTarget.X64NativeCLICorrect
 import Flapjack.Misc.Subseq
+import Flapjack.Misc.UpdateResize
+import Flapjack.Misc.FoldlInvariant
+import Flapjack.Misc.Words.N2wOrder
 /-!
 # Flapjack in Lean
 

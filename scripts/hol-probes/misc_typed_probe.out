@@ -207,3 +207,8 @@ append_SmartAppend_typed=append (SmartAppend (l1 :α app_list) (l2 :α app_list)
 EVERY2_RC_same_typed=LIST_REL (RC (R :α -> α -> bool)) (l :α list) l
 FOLDL_OPTION_CHOICE_EQ_SOME_IMP_MEM_typed=FOLDL (OPTION_CHOICE :α option -> α option -> α option) (x :α option) (ls :α option list) = SOME (y :α) ⇒ MEM (SOME y) (x::ls)
 LENGTH_EQ_FILTER_FILTER_typed=∀(xs :α list). EVERY (λ(x :α). ((P :α -> bool) x ∨ (Q :α -> bool) x) ∧ ¬(P x ∧ Q x)) xs ⇒ LENGTH xs = LENGTH (FILTER P xs) + LENGTH (FILTER Q xs)
+FOLDL_invariant_typed=∀(P :α -> bool) (f :α -> β -> α) (ls :β list) (a :α). P a ∧ (∀(x :α) (y :β). MEM y ls ∧ P x ⇒ P (f x y)) ⇒ P (FOLDL f a ls)
+update_resize_def_typed=∀(ls :α list) (default :α) (v :α) (n :num). update_resize ls default v n = if n < LENGTH ls then ls❲n ↦ v❳ else (ls ++ REPLICATE (n * (2 :num) + (1 :num) − LENGTH ls) default)❲n ↦ v❳
+FOLDL_invariant_rest_typed=∀(P :α list -> β -> bool) (f :β -> α -> β) (ls :α list) (a :β). P ls a ∧ (∀(x :β) (n :num). n < LENGTH ls ∧ P (DROP n ls) x ⇒ P (DROP (SUC n) ls) (f x ls❲n❳)) ⇒ P ([] :α list) (FOLDL f a ls)
+n2w_lt_typed=(0w :α word) < (n2w (a :num) :α word) ∧ (0w :α word) < (n2w (b :num) :α word) ∧ a < dimword (:α) ∧ b < dimword (:α) ⇒ ((n2w a :α word) < (n2w b :α word) ⇔ a < b)
+n2w_le_typed=(0w :α word) < (n2w (a :num) :α word) ∧ (0w :α word) < (n2w (b :num) :α word) ∧ a < dimword (:α) ∧ b < dimword (:α) ⇒ ((n2w a :α word) ≤ (n2w b :α word) ⇔ a ≤ b)

@@ -10753,7 +10753,8 @@ run_probe misc_typed_probeScript.sml misc_typed_probe.out \
   is_subseq_ALL_DISTINCT_typed is_subseq_append_suff_typed is_subseq_FLAT_suff_typed \
   plus_0_I_typed MOD_2EXP_0_EVEN_typed OPTREL_trans_typed \
   append_SmartAppend_typed EVERY2_RC_same_typed FOLDL_OPTION_CHOICE_EQ_SOME_IMP_MEM_typed \
-  LENGTH_EQ_FILTER_FILTER_typed \
+  LENGTH_EQ_FILTER_FILTER_typed FOLDL_invariant_typed update_resize_def_typed \
+  FOLDL_invariant_rest_typed n2w_lt_typed n2w_le_typed \
   "$cake_dir/misc/miscScript.sml" \
   "$cake_dir/misc"
 
