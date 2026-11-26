@@ -11691,6 +11691,7 @@ run_probe pegexec_cml_fo_fold_probeScript.sml pegexec_cml_fo_fold_probe.out \
 run_probe repl_types_typed_probeScript.sml repl_types_typed_probe.out \
   simple_type_typed to_type_def_typed to_type_TS_def_typed roll_back_def_typed \
   FST_roll_back_typed SND_roll_back_typed convert_t_to_type_typed \
+  DISJOINT_set_ids_typed set_ids_SUBSET_typed set_ids_UNION_typed \
   "$cake_dir/compiler/repl/repl_typesScript.sml" "$cake_dir/compiler/repl"
 # Typed captures for the pancake proof theories (task 169). These theories are
 # not built in the CakeML checkout by default; CAKEML must point at a tree where
