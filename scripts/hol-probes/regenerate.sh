@@ -11280,6 +11280,7 @@ run_probe namespace_props_typed_probeScript.sml namespace_props_typed_probe.out 
   nsAll_nsAppend_left_typed nsSub_nsAppend2_typed \
   nsDomMod_nsAppend_flat_typed nsDom_nsAppend_flat_typed \
   nsLookup_FOLDR_nsLift_some_typed nsLookupMod_FOLDR_nsLift_none_typed \
+  ns_dom_ns_append_alist_typed ns_sub_ns_append_lift_typed ns_sub_compute_def_typed \
   "$cake_dir/semantics/proofs/namespacePropsScript.sml" \
   "$cake_dir/semantics/proofs"
 

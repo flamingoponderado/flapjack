@@ -134,3 +134,9 @@ val _ = emit "nsDomMod_nsAppend_flat_typed" "nsDomMod_nsAppend_flat";
 val _ = emit "nsDom_nsAppend_flat_typed" "nsDom_nsAppend_flat";
 val _ = emit "nsLookup_FOLDR_nsLift_some_typed" "nsLookup_FOLDR_nsLift_some";
 val _ = emit "nsLookupMod_FOLDR_nsLift_none_typed" "nsLookupMod_FOLDR_nsLift_none";
+
+(* Appended association-list domains, lifted subsumption and the compute
+   relation (task 273). *)
+val _ = emit "ns_dom_ns_append_alist_typed" "nsDom_nsAppend_alist";
+val _ = emit "ns_sub_ns_append_lift_typed" "nsSub_nsAppend_lift";
+val _ = emit "ns_sub_compute_def_typed" "nsSub_compute_def";

@@ -164,4 +164,37 @@ theorem nsDom_nsAppend_flat {M N V : Type} [DecidableEq M] [DecidableEq N]
           rw [flat] at member
           exact absurd member ne
 
+/-- Appending an association-list namespace adds its short names to the value
+namespace's domain. -/
+@[hol "cakeml/semantics/proofs/namespacePropsScript.sml" "nsDom_nsAppend_alist"]
+theorem nsDom_nsAppend_alist {M N V : Type} [DecidableEq M] [DecidableEq N]
+    (x : Alist N V) (y : Namespace M N V) :
+    nsDom (nsAppend (alistToNs x) y) =
+      Set.image (fun p : N × V => (.short p.1 : Ident M N)) {p | p ∈ x} ∪
+        (nsDom y : Set (Ident M N)) := by
+  funext id
+  apply propext
+  have imageIff : id ∈ Set.image (fun p : N × V => (.short p.1 : Ident M N)) {p | p ∈ x} ↔
+      ∃ v, nsLookup (alistToNs x) id = some v := by
+    rw [← nsDom_alistToNs]
+    exact nsLookup_nsDom id (alistToNs x)
+  change (∃ v, nsLookup (nsAppend (alistToNs x) y) id = some v) ↔
+    (id ∈ Set.image (fun p : N × V => (.short p.1 : Ident M N)) {p | p ∈ x} ∨ nsDom y id)
+  rw [imageIff, nsLookup_nsDom]
+  constructor
+  · rintro ⟨v, found⟩
+    rcases (nsLookup_nsAppend_some (alistToNs x) id y v).mp found with first | ⟨_, second, _⟩
+    · exact Or.inl ⟨v, first⟩
+    · exact Or.inr ⟨v, second⟩
+  · rintro (⟨v, found⟩ | ⟨v, found⟩)
+    · exact ⟨v, (nsLookup_nsAppend_some (alistToNs x) id y v).mpr (Or.inl found)⟩
+    · cases h : nsLookup (alistToNs x) id with
+      | some w => exact ⟨w, (nsLookup_nsAppend_some (alistToNs x) id y w).mpr (Or.inl h)⟩
+      | none =>
+        refine ⟨v, (nsLookup_nsAppend_some (alistToNs x) id y v).mpr (Or.inr ⟨h, found, ?_⟩)⟩
+        intro p1 p2 ne same
+        cases p1 with
+        | nil => exact absurd rfl ne
+        | cons mn rest => simp [alistToNs, nsLookupMod, List.lookup]
+
 end Flapjack.NamespaceHOL

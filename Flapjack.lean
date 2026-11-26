@@ -3764,6 +3764,7 @@ import Flapjack.Misc.BinaryIeeeSqrtFp64
 import Flapjack.FpSemHOL
 import Flapjack.Basis.Pure.MlList
 import Flapjack.Basis.Pure.MlList.SortPerm
+import Flapjack.Basis.Pure.MlList.SortSet
 import Flapjack.Basis.Pure.MlList.TailRecursive
 import Flapjack.Basis.Pure.MlList.Basics
 import Flapjack.Basis.Pure.MlList.MapPartial
@@ -4172,6 +4173,7 @@ import Flapjack.NamespaceProps.AlistAll2
 import Flapjack.NamespaceProps.AlistRel
 import Flapjack.NamespaceProps.LookupToMod
 import Flapjack.NamespaceProps.AppendLookup
+import Flapjack.NamespaceProps.AppendLift
 import Flapjack.TypeSysProps.Constructor
 import Flapjack.TypeSysProps.Abbrev
 import Flapjack.TypeSysProps.Freevars
