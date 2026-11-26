@@ -80,6 +80,34 @@ theorem checkTMore2 :
   · intro ts tvs uvs h extra t ht
     exact checkBoundType t tvs uvs (h t ht) extra
 
+/-- Original `check_t_more3`: checking against the first `uvs` unification
+variables also succeeds against the first `uvs + uvs'`. HOL's `count uvs` is
+the predicate `fun k => k < uvs` on the `Nat → Prop` uvar carrier. -/
+@[hol "cakeml/compiler/inference/inferPropsScript.sml" "check_t_more3"]
+theorem checkTMore3 :
+    (∀ t uvs tvs, checkT tvs (fun k => k < uvs) t →
+      ∀ uvs', checkT tvs (fun k => k < (uvs + uvs')) t) ∧
+    (∀ (ts : List InferT) uvs tvs, (∀ t ∈ ts, checkT tvs (fun k => k < uvs) t) →
+      ∀ uvs', ∀ t ∈ ts, checkT tvs (fun k => k < (uvs + uvs')) t) := by
+  constructor
+  · intro t uvs tvs h uvs'
+    exact checkMonoType t _ tvs h _ (fun v hv => by omega)
+  · intro ts uvs tvs h uvs' t ht
+    exact checkMonoType t _ tvs (h t ht) _ (fun v hv => by omega)
+
+/-- Original `check_t_more4`: raising the uvar bound keeps the check. -/
+@[hol "cakeml/compiler/inference/inferPropsScript.sml" "check_t_more4"]
+theorem checkTMore4 :
+    (∀ t uvs tvs, checkT tvs (fun k => k < uvs) t →
+      ∀ uvs', uvs ≤ uvs' → checkT tvs (fun k => k < uvs') t) ∧
+    (∀ (ts : List InferT) uvs tvs, (∀ t ∈ ts, checkT tvs (fun k => k < uvs) t) →
+      ∀ uvs', uvs ≤ uvs' → ∀ t ∈ ts, checkT tvs (fun k => k < uvs') t) := by
+  constructor
+  · intro t uvs tvs h uvs' hle
+    exact checkMonoType t _ tvs h _ (fun v hv => by omega)
+  · intro ts uvs tvs h uvs' hle t ht
+    exact checkMonoType t _ tvs (h t ht) _ (fun v hv => by omega)
+
 /-- Original `check_t_more`: a type checked against no uvars is checked against
 any uvar set. HOL's empty set `{}` is the empty predicate. -/
 @[hol "cakeml/compiler/inference/inferPropsScript.sml" "check_t_more"]

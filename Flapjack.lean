@@ -4268,6 +4268,7 @@ import Flapjack.Compiler.Inference.InferProps.DeBruijn.PreservesCheck
 import Flapjack.Compiler.Inference.InferProps.CheckMonotone
 import Flapjack.Compiler.Inference.InferProps.SubstVar
 import Flapjack.Compiler.Inference.InferProps.CheckVars
+import Flapjack.Compiler.Inference.InferProps.EnvMonotone
 import Flapjack.Compiler.Inference.Unify.Walk.ToVar
 import Flapjack.Compiler.Inference.Unify.Walk.Idempotence
 import Flapjack.HOL.Unification.Subst

@@ -44,3 +44,9 @@ val _ = showWithHyps "nsAll_FOLDL_nsAppend_typed" inferPropsTheory.nsAll_FOLDL_n
 (* Task 273: check_t_more and infer_subst_var. *)
 val _ = show "check_t_more_typed" inferPropsTheory.check_t_more;
 val _ = show "infer_subst_var_def_typed" inferPropsTheory.infer_subst_var_def;
+
+(* Task 273: bound and environment monotonicity. *)
+val _ = show "check_t_more3_typed" inferPropsTheory.check_t_more3;
+val _ = show "check_t_more4_typed" inferPropsTheory.check_t_more4;
+val _ = show "check_env_more_typed" inferPropsTheory.check_env_more;
+val _ = show "ienv_ok_more_typed" inferPropsTheory.ienv_ok_more;

@@ -9919,6 +9919,7 @@ run_probe infer_props_tids_probeScript.sml infer_props_tids_probe.out \
   hide_def_typed init_infer_state_next_uvar_typed init_infer_state_subst_typed t_wfs_FEMPTY_typed t_wfs_init_infer_state_typed \
   remove_pair_lem_typed UNCURRY_rator_typed nsMap_FOLDL_nsAppend_typed nsAll_FOLDL_nsAppend_typed \
   check_t_more_typed infer_subst_var_def_typed \
+  check_t_more3_typed check_t_more4_typed check_env_more_typed ienv_ok_more_typed \
   "$cake_dir/compiler/inference/inferPropsScript.sml" \
   "$cake_dir/compiler/inference"
 
