@@ -6,3 +6,11 @@ evaluate_prog_events_determ_typed=∀(st :α semanticPrimitives$state) (env :v s
 evaluate_prog_io_events_chain_typed=lprefix_chain (IMAGE (λ(k :num). (fromList (FST (evaluate_prog_with_clock (st :α semanticPrimitives$state) (env :v sem_env) k (prog :dec list))).io_events :io_event llist)) 𝕌(:num))
 semantics_prog_total_typed=∀(s :α semanticPrimitives$state) (e :v sem_env) (p :dec list). ∃(b :behaviour). semantics_prog s e p b
 semantics_prog_deterministic_typed=∀(s :α semanticPrimitives$state) (e :v sem_env) (p :dec list) (b :behaviour) (b' :behaviour). semantics_prog s e p b ∧ semantics_prog s e p b' ⇒ b = b'
+implements_intro_typed=((b :bool) ∧ (x :behaviour) ≠ Fail ⇒ (y :behaviour) = x) ⇒ b ⇒ implements {y} {x}
+implements_trivial_intro_typed=(y :behaviour) = (x :behaviour) ⇒ implements {y} {x}
+implements_intro_ext_typed=((b :bool) ∧ (x :behaviour) ≠ Fail ⇒ (y :behaviour) ∈ extend_with_resource_limit {x}) ⇒ b ⇒ implements {y} {x}
+extend_with_resource_limit_prime_SUBSET_typed=extend_with_resource_limit' (b :bool) (s :behaviour -> bool) ⊆ extend_with_resource_limit s
+implements_strengthen_typed=∀(b :bool) (b' :bool) (x :behaviour -> bool) (y :behaviour -> bool). (b' ⇒ b) ∧ implements' b x y ⇒ implements' b' x y
+implements_IMP_implements_typed=implements' (b :bool) (x :behaviour -> bool) (y :behaviour -> bool) ⇒ implements x y
+semantics_prog_Terminate_not_Fail_typed=semantics_prog (s :α semanticPrimitives$state) (e :v sem_env) (p :dec list) (Terminate (x :outcome) (y :io_event list)) ⇒ ¬semantics_prog s e p Fail ∧ semantics_prog s e p = {Terminate x y}
+semantics_prog_Diverge_not_Fail_typed=semantics_prog (s :α semanticPrimitives$state) (e :v sem_env) (p :dec list) (Diverge (y :io_event llist)) ⇒ ¬semantics_prog s e p Fail ∧ semantics_prog s e p = {Diverge y}

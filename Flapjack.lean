@@ -3251,6 +3251,7 @@ import Flapjack.Compiler.Backend.LabSem.Classifier
 import Flapjack.Compiler.Encoders.AsmSem
 import Flapjack.Compiler.Backend.LabSem.State
 import Flapjack.SemanticsProps.Implements
+import Flapjack.SemanticsProps.ImplementsFacts
 import Flapjack.Pancake.Proofs.PanSimp.SeqAssocExact
 import Flapjack.Pancake.Proofs.PanSimp.WhileBodyExact
 import Flapjack.Pancake.Proofs.PanSimp.SkipSeqExact
