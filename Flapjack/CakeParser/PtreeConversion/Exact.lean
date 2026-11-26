@@ -1194,4 +1194,40 @@ theorem ptreeOpHOL_toGrammarTree (pt : CakeParser.ParseTree) :
     | inr n =>
       simp [ptreeOpHOL, PtreeConversion.ptreeOp, ParseTree.toGrammarTree]
 
+/-- Original `detuplify_def`: a tuple type yields its components and any other
+    type is a singleton. -/
+@[hol "cakeml/semantics/cmlPtreeConversionScript.sml" "detuplify_def"]
+def detuplify : AstHOL.AstT → List AstHOL.AstT
+  | .attup args => args
+  | t => [t]
+
+/-- Original `dest_Conk_def`: split a constructor expression, or return the
+    default. HOL's free type variable is the implicit `α`. -/
+@[hol "cakeml/semantics/cmlPtreeConversionScript.sml" "dest_Conk_def"]
+def destConk {α : Type} (e : AstHOL.Exp)
+    (k : Option (Ident AstHOL.ModN AstHOL.ConN) → List AstHOL.Exp → α) (v : α) : α :=
+  match e with
+  | .con x y => k x y
+  | _ => v
+
+/-- Original `destFFIop_def`: the FFI operation's name, if any. -/
+@[hol "cakeml/semantics/cmlPtreeConversionScript.sml" "destFFIop_def"]
+def destFFIop : AstHOL.Op → Option MlString
+  | .ffi s => some s
+  | _ => none
+
+/-- Original `merge_locsopt_def`: merge two optional locations; a missing one
+    gives none. HOL's two `NONE` clauses share the catch-all. -/
+@[hol "cakeml/semantics/cmlPtreeConversionScript.sml" "merge_locsopt_def"]
+def mergeLocsopt : Option Misc.Location.Locs → Option Misc.Location.Locs →
+    Option Misc.Location.Locs
+  | some l1, some l2 => some (Misc.Location.mergeLocs l1 l2)
+  | _, _ => none
+
+/-- Original `optLannot_def`: attach an optional location annotation. -/
+@[hol "cakeml/semantics/cmlPtreeConversionScript.sml" "optLannot_def"]
+def optLannot : Option Misc.Location.Locs → AstHOL.Exp → AstHOL.Exp
+  | none, e => e
+  | some l, e => .lannot e l
+
 end Flapjack.CakeParser.PtreeConversion.Exact

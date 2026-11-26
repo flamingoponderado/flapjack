@@ -34,3 +34,10 @@ val _ = show "dePat_def_typed" cmlPtreeConversionTheory.dePat_def;
 val _ = show "mkFun_def_typed" cmlPtreeConversionTheory.mkFun_def;
 val _ = show "letFromPat_def_typed" cmlPtreeConversionTheory.letFromPat_def;
 val _ = show "ptree_StructName_def_typed" cmlPtreeConversionTheory.ptree_StructName_def;
+
+(* Task 273: AST-level helpers. *)
+val _ = show "detuplify_def_typed" cmlPtreeConversionTheory.detuplify_def;
+val _ = show "dest_Conk_def_typed" cmlPtreeConversionTheory.dest_Conk_def;
+val _ = show "destFFIop_def_typed" cmlPtreeConversionTheory.destFFIop_def;
+val _ = show "merge_locsopt_def_typed" cmlPtreeConversionTheory.merge_locsopt_def;
+val _ = show "optLannot_def_typed" cmlPtreeConversionTheory.optLannot_def;
