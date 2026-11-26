@@ -9940,6 +9940,31 @@ run_probe type_sys_props_typed_probeScript.sml type_sys_props_typed_probe.out \
   add_tenvE_bvl_typed check_freevars_subst_list_typed deBruijn_subst_freevars_typed \
   type_ds_sing_typed tveLookup_freevars_typed deBruijn_subst_E_bvl_typed \
   subst_inc_cancel_typed tveLookup_inc_some_typed tveLookup_no_tvs_typed \
+  tenv_names_def_typed lookup_tenv_names_typed tenv_names_bind_var_list_typed \
+  tenv_names_bind_var_list2_typed tid_exn_not_typed tid_exn_to_tc_11_typed \
+  type_d_mod_typed type_ds_mod_typed type_no_dup_mods_typed \
+  type_no_dup_top_types_typed type_specs_no_mod_typed type_prog_empty_typed \
+  type_prog_sing_typed type_top_closed_typed type_prog_check_uniq_typed \
+  type_top_check_uniq_typed type_d_check_uniq_typed decls_ok_union_typed \
+  type_ds_decls_ok_typed type_prog_decls_ok_typed type_top_decls_ok_typed \
+  consistent_ctMap_disjoint_typed consistent_ctMap_union_typed \
+  consistent_ctMap_union2_typed consistent_decls_add_mod_typed \
+  consistent_decls_union_typed consistent_decls_union2_typed \
+  ctMap_ok_type_decs_typed type_def_to_ctMap_def_typed \
+  mem_type_def_to_ctMap_typed type_def_to_ctMap_mem_typed \
+  check_ctor_tenv_EVERY_typed check_ctor_tenv_type_decs_to_ctMap_typed \
+  check_signature_tenv_ok_typed nsMap_build_ctor_tenv_typed \
+  type_op_cases_typed type_d_tenv_ok_typed type_d_tenv_ok_helper_typed \
+  tveLookup_subst_some_typed type_subst_deBruijn_inc_list_typed \
+  type_subst_deBruijn_subst_list_typed deBruijn_subst2_typed \
+  type_e_subst_lem3_typed check_freevars_subst_typed type_v_freevars_typed \
+  type_p_subst_typed type_subst_typed type_e_subst_typed \
+  type_funs_find_recfun_typed type_funs_lookup_typed type_funs_tenv_exp_ok_typed \
+  type_funs_Tfn_typed type_funs_distinct_typed type_recfun_lookup_typed \
+  type_pes_cons_typed type_p_bvl_typed type_p_tenvV_indep_typed \
+  type_specs_tenv_ok_typed type_sound_inv_closed_typed ctMap_ok_merge_imp_typed \
+  ctMap_ok_type_defs_typed union_decls_assoc_typed union_decls_sym_typed \
+  union_decls_mods_typed union_decls_empty_typed \
   "$cake_dir/semantics/proofs/typeSysPropsScript.sml" \
   "$cake_dir/semantics/proofs"
 
