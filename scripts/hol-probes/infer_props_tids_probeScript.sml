@@ -54,3 +54,13 @@ val _ = show "check_t_deBruijn_inc2_typed" inferPropsTheory.check_t_deBruijn_inc
 val _ = show "check_t_deBruijn_inc_typed" inferPropsTheory.check_t_deBruijn_inc;
 val _ = show "inf_set_tids_infer_deBruijn_subst_SUBSET_typed" inferPropsTheory.inf_set_tids_infer_deBruijn_subst_SUBSET;
 val _ = show "inf_set_tids_infer_type_subst_SUBSET_typed" inferPropsTheory.inf_set_tids_infer_type_subst_SUBSET;
+
+(* Task 273: the substitution-range check and its empty-map instance. *)
+val _ = show "inf_set_tids_subst_def_typed" inferPropsTheory.inf_set_tids_subst_def;
+val _ = show "inf_set_tids_subst_FEMPTY_typed" inferPropsTheory.inf_set_tids_subst_FEMPTY;
+
+(* Task 273: the substitution check and its monotonicity facts. *)
+val _ = show "check_s_def_typed" inferTheory.check_s_def;
+val _ = show "check_s_more2_typed" inferPropsTheory.check_s_more2;
+val _ = show "check_s_more3_typed" inferPropsTheory.check_s_more3;
+val _ = show "check_s_more5_typed" inferPropsTheory.check_s_more5;

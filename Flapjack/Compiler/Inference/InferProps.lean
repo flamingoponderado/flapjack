@@ -3,6 +3,7 @@ module
 public import Flapjack.Compiler.Inference.Infer
 public import Flapjack.Compiler.Inference.Infer.EnvironmentInvariant
 public import Flapjack.HolArb
+public import Flapjack.FiniteMap.BroadCodec
 public import Flapjack.TypeSoundInvariants
 public import Flapjack.NamespaceProps.MapLookup
 
@@ -219,6 +220,32 @@ theorem startTypeIdPrimTidsCount (n : Nat) :
 @[hol "cakeml/compiler/inference/inferPropsScript.sml" "inf_set_tids_subset_def"]
 def infSetTidsSubset (tids : Nat → Prop) (t : InferT) : Prop :=
   ∀ id, infSetTids t id → tids id
+
+/-- Original `inf_set_tids_subst_def`: every type in the range of the
+    substitution satisfies the identifier-set check. HOL's `FRANGE` is the set
+    of values the finite map assigns, i.e. the successful lookups. -/
+@[hol "cakeml/compiler/inference/inferPropsScript.sml" "inf_set_tids_subst_def"
+  (fmap_as_finite_support_parameters := [subst])]
+def infSetTidsSubst {α : Type} (tids : Nat → Prop)
+    (subst : HolFiniteMapExact α InferT) : Prop :=
+  ∀ t, (∃ key, subst.lookup key = some t) → infSetTidsSubset tids t
+
+/-- The canonical inference substitution survives the broad-map codec. -/
+theorem holFmapAsFiniteSupportParamWitness_infSetTidsSubst_subst {α : Type}
+    (subst : HolFiniteMapExact α InferT) (key : α) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad subst)).lookup key = subst.lookup key ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad subst)).finiteSupport = subst.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad subst) = subst := by
+  cases subst
+  exact ⟨rfl, rfl, rfl⟩
+
+/-- Original `inf_set_tids_subst_FEMPTY`: the empty map has no range values. -/
+@[hol "cakeml/compiler/inference/inferPropsScript.sml" "inf_set_tids_subst_FEMPTY"]
+theorem infSetTidsSubstEmpty {α : Type} (tids : Nat → Prop) :
+    infSetTidsSubst tids (HolFiniteMapExact.empty : HolFiniteMapExact α InferT) := by
+  intro t h
+  obtain ⟨key, hkey⟩ := h
+  simp [HolFiniteMapExact.empty] at hkey
 
 @[hol "cakeml/compiler/inference/inferPropsScript.sml" "inf_set_tids_ienv_def"]
 noncomputable def infSetTidsIenv (tids : Nat → Prop) (ienv : Infer.Env) : Prop :=

@@ -121,4 +121,61 @@ theorem checkTMore :
   · intro ts tvs h uvs t ht
     exact checkMonoType t (fun _ => False) tvs (h t ht) uvs (fun v hv => hv.elim)
 
+/-- Original `check_s_more2`: a substitution checked against the first `uvs`
+    unification variables is checked against the first `uvs'`. -/
+@[hol "cakeml/compiler/inference/inferPropsScript.sml" "check_s_more2"
+  (fmap_as_finite_support_parameters := [s])]
+theorem checkSMore2 {α : Type} (tvs : Nat) (s : HolFiniteMapExact α InferT) (uvs : Nat) :
+    checkS tvs (fun k => k < uvs) s →
+      ∀ uvs', uvs ≤ uvs' → checkS tvs (fun k => k < uvs') s := by
+  intro h uvs' hle uv hmem
+  exact checkTMore4.1 _ uvs tvs (h uv hmem) uvs' hle
+
+/-- The canonical substitution map survives the broad-map codec. -/
+theorem holFmapAsFiniteSupportParamWitness_checkSMore2_s {α : Type}
+    (s : HolFiniteMapExact α InferT) (key : α) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad s)).lookup key = s.lookup key ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad s)).finiteSupport = s.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad s) = s := by
+  cases s
+  exact ⟨rfl, rfl, rfl⟩
+
+/-- Original `check_s_more3`: enlarging the uvar set keeps the substitution
+    check. HOL's `⊆` is pointwise implication. -/
+@[hol "cakeml/compiler/inference/inferPropsScript.sml" "check_s_more3"
+  (fmap_as_finite_support_parameters := [s])]
+theorem checkSMore3 {α : Type} (tvs : Nat) (s : HolFiniteMapExact α InferT)
+    (uvs : Nat → Prop) :
+    checkS tvs uvs s → ∀ uvs', (∀ v, uvs v → uvs' v) → checkS tvs uvs' s := by
+  intro h uvs' hsub uv hmem
+  exact checkTMore5.1 _ uvs tvs (h uv hmem) uvs' hsub
+
+/-- The canonical substitution map survives the broad-map codec. -/
+theorem holFmapAsFiniteSupportParamWitness_checkSMore3_s {α : Type}
+    (s : HolFiniteMapExact α InferT) (key : α) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad s)).lookup key = s.lookup key ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad s)).finiteSupport = s.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad s) = s := by
+  cases s
+  exact ⟨rfl, rfl, rfl⟩
+
+/-- Original `check_s_more5`: the same enlargement fact with the set relation
+    as a separate premise. -/
+@[hol "cakeml/compiler/inference/inferPropsScript.sml" "check_s_more5"
+  (fmap_as_finite_support_parameters := [s])]
+theorem checkSMore5 {α : Type} (s : HolFiniteMapExact α InferT) (uvs : Nat → Prop)
+    (tvs : Nat) (uvs' : Nat → Prop) : checkS tvs uvs s → (∀ v, uvs v → uvs' v) →
+      checkS tvs uvs' s := by
+  intro h hsub uv hmem
+  exact checkTMore5.1 _ uvs tvs (h uv hmem) uvs' hsub
+
+/-- The canonical substitution map survives the broad-map codec. -/
+theorem holFmapAsFiniteSupportParamWitness_checkSMore5_s {α : Type}
+    (s : HolFiniteMapExact α InferT) (key : α) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad s)).lookup key = s.lookup key ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad s)).finiteSupport = s.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad s) = s := by
+  cases s
+  exact ⟨rfl, rfl, rfl⟩
+
 end Flapjack.Compiler.Inference.InferProps

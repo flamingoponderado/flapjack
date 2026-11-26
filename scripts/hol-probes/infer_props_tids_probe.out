@@ -32,3 +32,9 @@ check_t_deBruijn_inc2_typed=∀(inc :num) (t :infer_t) (s :num -> bool). check_t
 check_t_deBruijn_inc_typed=∀(inc :num) (t :infer_t). check_t (0 :num) 𝕌(:num) t ⇒ infer_deBruijn_inc inc t = t
 inf_set_tids_infer_deBruijn_subst_SUBSET_typed=∀(subst :infer_t list) (t :infer_t). inf_set_tids (infer_deBruijn_subst subst t) ⊆ inf_set_tids t ∪ BIGUNION (IMAGE inf_set_tids (set subst))
 inf_set_tids_infer_type_subst_SUBSET_typed=∀(subst :(mlstring # infer_t) list) (t :t). inf_set_tids (infer_type_subst subst t) ⊆ set_tids t ∪ BIGUNION (IMAGE inf_set_tids (set (MAP (SND :mlstring # infer_t -> infer_t) subst)))
+inf_set_tids_subst_def_typed=∀(tids :num -> bool) (subst :α |-> infer_t). inf_set_tids_subst tids subst ⇔ ∀(t :infer_t). t ∈ FRANGE subst ⇒ inf_set_tids_subset tids t
+inf_set_tids_subst_FEMPTY_typed=inf_set_tids_subst (tids :num -> bool) (FEMPTY :α |-> infer_t)
+check_s_def_typed=∀(tvs :num) (uvs :num -> bool) (s :α |-> infer_t). check_s tvs uvs s ⇔ ∀(uv :α). uv ∈ FDOM s ⇒ check_t tvs uvs s⟨uv⟩
+check_s_more2_typed=∀(s :α |-> infer_t) (uvs :num). check_s (tvs :num) (count uvs) s ⇒ ∀(uvs' :num). uvs ≤ uvs' ⇒ check_s tvs (count uvs') s
+check_s_more3_typed=∀(s :α |-> infer_t) (uvs :num -> bool). check_s (tvs :num) uvs s ⇒ ∀(uvs' :num -> bool). uvs ⊆ uvs' ⇒ check_s tvs uvs' s
+check_s_more5_typed=∀(s :α |-> infer_t) (uvs :num -> bool) (tvs :num) (uvs' :num -> bool). check_s tvs uvs s ∧ uvs ⊆ uvs' ⇒ check_s tvs uvs' s

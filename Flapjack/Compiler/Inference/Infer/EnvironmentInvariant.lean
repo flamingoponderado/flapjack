@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Compiler.Inference.InferT
 public import Flapjack.NamespaceHOL
+public import Flapjack.FiniteMap.BroadCodec
 
 @[expose] public section
 
@@ -40,6 +41,24 @@ well-founded mutual definition implements the HOL clauses above. -/
 
 @[simp] theorem checkTList_cons (n : Nat) (uvars : Nat → Prop) (t : InferT) (ts : List InferT) :
     checkTList n uvars (t :: ts) ↔ checkT n uvars t ∧ checkTList n uvars ts := by simp [checkTList]
+
+/-- Original `check_s_def`: every value in the substitution's domain passes the
+    type check. HOL's `FDOM` membership is a successful lookup and `s⟨uv⟩` is
+    the map's total application, rendered with the `.varDb 0` default that
+    `inferTypeSubst` uses for `FAPPLY` outside the map's domain. -/
+@[hol "cakeml/compiler/inference/inferScript.sml" "check_s_def"
+  (fmap_as_finite_support_parameters := [s])]
+def checkS {α : Type} (tvs : Nat) (uvs : Nat → Prop) (s : HolFiniteMapExact α InferT) : Prop :=
+  ∀ uv, s.lookup uv ≠ none → checkT tvs uvs ((s.lookup uv).getD (.varDb 0))
+
+/-- The canonical substitution map survives the broad-map codec. -/
+theorem holFmapAsFiniteSupportParamWitness_checkS_s {α : Type}
+    (s : HolFiniteMapExact α InferT) (key : α) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad s)).lookup key = s.lookup key ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad s)).finiteSupport = s.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad s) = s := by
+  cases s
+  exact ⟨rfl, rfl, rfl⟩
 
 noncomputable section
 local instance (α : Type) : DecidableEq α := Classical.typeDecidableEq α
