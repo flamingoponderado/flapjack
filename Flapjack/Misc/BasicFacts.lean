@@ -726,6 +726,14 @@ theorem all_pair_split {α β : Type} (l : List (α × β)) (P : α → Bool) (Q
     rcases p with ⟨x, y⟩
     simp only [List.all_cons, ih, Bool.and_assoc, Bool.and_left_comm]
 
+/-- Original `plus_0_I`: adding zero pointwise is the identity. HOL marks this
+`[simp]`; Lean keeps it as a function equality, so the attribute is not
+reproduced (the pointwise form is definitional). -/
+@[hol "cakeml/misc/miscScript.sml" "plus_0_I"]
+theorem add_zero_fun : (fun (y : Nat) => 0 + y) = fun (y : Nat) => y := by
+  funext y
+  exact Nat.zero_add y
+
 /-- Original `MEM_ZIP2`: a pair in a zip sits at a common in-range index. -/
 @[hol "cakeml/misc/miscScript.sml" "MEM_ZIP2"
   (total_function_inhabitants := [α, β])]

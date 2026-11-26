@@ -33,4 +33,16 @@ theorem divLessDiv {n m k : Nat} (h : n % k = 0 ∧ m % k = 0 ∧ n < m ∧ 0 < 
   rw [← en, ← em] at hlt
   exact Nat.lt_of_mul_lt_mul_left hlt
 
+/-- Full original `MOD_2EXP_0_EVEN`: a number divisible by `2 ** x` with
+positive `x` is even. HOL's `MOD_2EXP x y` is `y MOD 2 ** x` and `EVEN y` is
+the `y % 2 = 0` rendering. -/
+@[hol "cakeml/misc/miscScript.sml" "MOD_2EXP_0_EVEN"]
+theorem modTwoPowZeroEven (x y : Nat) (hx : 0 < x) (h : y % 2 ^ x = 0) :
+    y % 2 = 0 := by
+  have hdvd : 2 ^ x ∣ y := Nat.dvd_of_mod_eq_zero h
+  have h2 : 2 ∣ 2 ^ x := by simpa using Nat.pow_dvd_pow 2 hx
+  obtain ⟨c, hc⟩ := hdvd
+  obtain ⟨d, hd⟩ := h2
+  exact Nat.mod_eq_zero_of_dvd ⟨d * c, by rw [hc, hd, Nat.mul_assoc]⟩
+
 end Flapjack.Misc.DivModLemmas

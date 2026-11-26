@@ -235,3 +235,6 @@ val _ = emit "IS_SUBLIST_is_subseq_typed" "IS_SUBLIST_is_subseq";
 val _ = emit "is_subseq_ALL_DISTINCT_typed" "is_subseq_ALL_DISTINCT";
 val _ = emit "is_subseq_append_suff_typed" "is_subseq_append_suff";
 val _ = emit "is_subseq_FLAT_suff_typed" "is_subseq_FLAT_suff";
+val _ = emit "plus_0_I_typed" "plus_0_I";
+val _ = emit "MOD_2EXP_0_EVEN_typed" "MOD_2EXP_0_EVEN";
+val _ = emit "OPTREL_trans_typed" "OPTREL_trans";
