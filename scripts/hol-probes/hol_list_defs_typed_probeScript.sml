@@ -8,9 +8,11 @@
    each comment. *)
 load "preamble";
 load "listTheory";
+load "indexedListsTheory";
 open HolKernel Parse boolLib bossLib;
 open preamble;
 open listTheory;
+open indexedListsTheory;
 val _ = Globals.linewidth := 1000000;
 val _ = show_types := true;
 
@@ -37,6 +39,11 @@ fun dt_label label name =
 
 fun emit_exported label name =
   case DB.lookup {Thy="list",Name=name} of
+    NONE => raise Fail ("missing export " ^ name)
+  | SOME (th,_) => emit label th;
+
+fun emit_exported_from label thy name =
+  case DB.lookup {Thy=thy,Name=name} of
     NONE => raise Fail ("missing export " ^ name)
   | SOME (th,_) => emit label th;
 
@@ -437,3 +444,6 @@ val _ = emit_exported "HD_typed" "HD";
 val _ = emit_exported "LAST_DEF_typed" "LAST_DEF";
 val _ = emit_exported "LAST_CONS_typed" "LAST_CONS";
 val _ = emit_exported "EVERY2_LUPDATE_same_typed" "EVERY2_LUPDATE_same";
+val _ = emit_exported_from "MAPi_def_typed" "indexedLists" "MAPi_def";
+val _ = emit_exported "INDEX_FIND_def_typed" "INDEX_FIND_def";
+val _ = emit_exported "FIND_def_typed" "FIND_def";

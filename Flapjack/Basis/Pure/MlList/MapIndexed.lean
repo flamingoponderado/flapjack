@@ -21,4 +21,31 @@ def mapi {α β : Type} (f : Nat → β → α) : Nat → List β → List α
   | _, [] => []
   | n, h :: t => f n h :: mapi f (n + 1) t
 
+/-- HOL core `MAPi` (in `indexedListsTheory`): the index counts from zero and
+    the recursive step composes the function with `SUC`, as in `MAPi_def`. -/
+@[hol "HOL/src/list/src/indexedListsScript.sml" "MAPi_def"]
+def holMapi {β α : Type} (f : Nat → β → α) : List β → List α
+  | [] => []
+  | h :: t => f 0 h :: holMapi (fun n x => f (n + 1) x) t
+
+/-- The shifted function form of `mapi`, used to prove `MAPI_thm`. -/
+private theorem holMapi_shift {β α : Type} (f : Nat → β → α) :
+    ∀ (l : List β) (n : Nat), holMapi (fun i x => f (i + n) x) l = mapi f n l
+  | [], _ => rfl
+  | h :: t, n => by
+      have ih := holMapi_shift f t (n + 1)
+      have hfun : (fun i x => f (i + 1 + n) x) = (fun i x => f (i + (n + 1)) x) := by
+        funext i x
+        rw [show i + 1 + n = i + (n + 1) by omega]
+      simp only [holMapi, mapi, Nat.zero_add]
+      rw [← ih]
+      congr 1
+      exact congrArg (fun g => holMapi g t) hfun
+
+/-- Original `MAPI_thm`: HOL's `MAPi` is `mapi` started at index zero. -/
+@[hol "cakeml/basis/pure/mllistScript.sml" "MAPI_thm"]
+theorem holMapi_eq_mapi {β α : Type} (f : Nat → β → α) (l : List β) :
+    holMapi f l = mapi f 0 l := by
+  simpa using holMapi_shift f l 0
+
 end Flapjack.Basis.Pure.MlList

@@ -12705,6 +12705,7 @@ run_probe pan_sem_valword_typed_probeScript.sml pan_sem_valword_typed_probe.out 
 
 run_probe hol_list_defs_typed_probeScript.sml hol_list_defs_typed_probe.out \
   EL_def_typed HD_typed LAST_DEF_typed LAST_CONS_typed EVERY2_LUPDATE_same_typed \
+  MAPi_def_typed INDEX_FIND_def_typed FIND_def_typed \
   "$hol_dir/src/list/src/listScript.sml" "$cake_dir/compiler/backend"
 
 run_probe logroot_defs_typed_probeScript.sml logroot_defs_typed_probe.out \
