@@ -33,3 +33,4 @@ val _ = show "singleSymP_def_typed" cmlPtreeConversionTheory.singleSymP_def;
 val _ = show "isSymbolicConstructor_def_typed"
   cmlPtreeConversionTheory.isSymbolicConstructor_def;
 val _ = show "isConstructor_def_typed" cmlPtreeConversionTheory.isConstructor_def;
+val _ = show "detuplify_pmatch_typed" cmlPtreeConversionTheory.detuplify_pmatch;

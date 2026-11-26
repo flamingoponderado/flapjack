@@ -206,7 +206,7 @@
     {"bytes": 290, "out": "cake_peg_grammar_probe.out", "rows": 2, "sha256": "01ff8beec721fb376cb134c2059febeaa32fb5311773729ae620c19532d456ce"},
     {"bytes": 3127, "out": "cake_program_semantics_probe.out", "rows": 7, "sha256": "a0e0a424795cbd9d371fac37e492e32db46333b226bce4685d406e5faf4ddead"},
     {"bytes": 629, "out": "cake_ptree_expr_probe.out", "rows": 3, "sha256": "1f840a3937352342f3abc339e41948e25ee9a420ddd08350340596892037123b"},
-    {"bytes": 35624, "out": "cake_ptree_helpers_typed_probe.out", "rows": 19, "sha256": "4f1f7c53e1ad2718c72e9a4f0f945e6ec7860dbc508ecc5fc8401a74af1c72be"},
+    {"bytes": 35864, "out": "cake_ptree_helpers_typed_probe.out", "rows": 20, "sha256": "3497b60679d662f9efa4b4fc1927b1f91b42261694e4d59db7f2c2713429ab9d"},
     {"bytes": 256, "out": "cake_ptree_pattern_probe.out", "rows": 3, "sha256": "d0baec19b7b638d590d9191f2423854a3856d55bdff8a75d6c4c477b5e642887"},
     {"bytes": 195, "out": "cake_ptree_type_probe.out", "rows": 2, "sha256": "f91593a9f6b284c626053a77e3d2aa1eda766373cc67050dcf51b3286c8f014d"},
     {"bytes": 25013, "out": "cake_riscv_export_probe.out", "rows": 3, "sha256": "216f715cea60869b099e6fda02d98ece510e2ef1f23d21fb1d0adb8360f14986"},

@@ -4101,6 +4101,7 @@ import Flapjack.CakeParser.PegActions
 import Flapjack.CakeParser.PegEval
 import Flapjack.CakeParser.PtreeConversion
 import Flapjack.CakeParser.PtreeConversion.Exact
+import Flapjack.CakeParser.PtreeConversion.DetuplifyPmatch
 import Flapjack.CakeParser.Frontend
 import Flapjack.CakeParser.Sexp
 import Flapjack.CakeParser.SexpPrint

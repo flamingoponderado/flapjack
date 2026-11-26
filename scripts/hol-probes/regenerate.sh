@@ -11671,7 +11671,7 @@ run_probe cake_ptree_helpers_typed_probeScript.sml cake_ptree_helpers_typed_prob
   destSymbolT_def_typed destIntT_def_typed destCharT_def_typed destStringT_def_typed \
   destWordT_def_typed destFFIT_def_typed isLower_def_typed isUpper_def_typed \
   isAlpha_def_typed oHD_def_typed ifM_def_typed tokcheckl_def_typed \
-  singleSymP_def_typed isSymbolicConstructor_def_typed isConstructor_def_typed \
+  singleSymP_def_typed isSymbolicConstructor_def_typed isConstructor_def_typed detuplify_pmatch_typed \
   "$cake_dir/semantics/tokenUtilsScript.sml" "$cake_dir/semantics"
 # Typed captures for the pancake proof theories (task 169). These theories are
 # not built in the CakeML checkout by default; CAKEML must point at a tree where
