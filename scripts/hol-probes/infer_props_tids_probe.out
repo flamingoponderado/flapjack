@@ -28,3 +28,5 @@ check_t_more3_typed=(∀(t :infer_t) (uvs :num) (tvs :num). check_t tvs (count u
 check_t_more4_typed=(∀(t :infer_t) (uvs :num) (tvs :num). check_t tvs (count uvs) t ⇒ ∀(uvs' :num). uvs ≤ uvs' ⇒ check_t tvs (count uvs') t) ∧ ∀(ts :infer_t list) (uvs :num) (tvs :num). EVERY (check_t tvs (count uvs)) ts ⇒ ∀(uvs' :num). uvs ≤ uvs' ⇒ EVERY (check_t tvs (count uvs')) ts
 check_env_more_typed=∀(uvs :num) (e :(α, β, num # infer_t) namespace). nsAll (λ(x :(α, β) id) ((tvs :num),(t :infer_t)). check_t tvs (count uvs) t) e ⇒ ∀(uvs' :num). uvs ≤ uvs' ⇒ nsAll (λ(x :(α, β) id) ((tvs :num),(t :infer_t)). check_t tvs (count uvs') t) e
 ienv_ok_more_typed=∀(uv :num) (uv' :num) (ienv :inf_env). ienv_ok (count uv) ienv ∧ uv ≤ uv' ⇒ ienv_ok (count uv') ienv
+check_t_deBruijn_inc2_typed=∀(inc :num) (t :infer_t) (s :num -> bool). check_t (tvs :num) s t ⇒ check_t (inc + tvs) s (infer_deBruijn_inc inc t)
+check_t_deBruijn_inc_typed=∀(inc :num) (t :infer_t). check_t (0 :num) 𝕌(:num) t ⇒ infer_deBruijn_inc inc t = t

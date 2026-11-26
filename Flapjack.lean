@@ -4265,6 +4265,7 @@ import Flapjack.Compiler.Inference.InferProps.DeBruijn.Zero
 import Flapjack.Compiler.Inference.InferProps.Environment
 import Flapjack.Compiler.Inference.InferProps.DeBruijn.Bounded
 import Flapjack.Compiler.Inference.InferProps.DeBruijn.PreservesCheck
+import Flapjack.Compiler.Inference.InferProps.DeBruijn.IncCheck
 import Flapjack.Compiler.Inference.InferProps.CheckMonotone
 import Flapjack.Compiler.Inference.InferProps.SubstVar
 import Flapjack.Compiler.Inference.InferProps.CheckVars

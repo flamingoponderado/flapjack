@@ -50,3 +50,5 @@ val _ = show "check_t_more3_typed" inferPropsTheory.check_t_more3;
 val _ = show "check_t_more4_typed" inferPropsTheory.check_t_more4;
 val _ = show "check_env_more_typed" inferPropsTheory.check_env_more;
 val _ = show "ienv_ok_more_typed" inferPropsTheory.ienv_ok_more;
+val _ = show "check_t_deBruijn_inc2_typed" inferPropsTheory.check_t_deBruijn_inc2;
+val _ = show "check_t_deBruijn_inc_typed" inferPropsTheory.check_t_deBruijn_inc;
