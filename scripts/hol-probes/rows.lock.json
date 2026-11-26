@@ -1061,7 +1061,7 @@
     {"bytes": 351, "out": "misc_find_index_shift_probe.out", "rows": 11, "sha256": "96e50f15eeccd8bca7fa7ceaff895b2fd0b38fcb6236e1ab6caf8b75efeec7d6"},
     {"bytes": 137, "out": "misc_find_index_shift_zero_probe.out", "rows": 10, "sha256": "964070548e0fbe277287e90cefc05a908c42e18494e537cfb85a09b56b5c9c16"},
     {"bytes": 313, "out": "misc_find_index_successful_mem_probe.out", "rows": 12, "sha256": "06cbbc8727d684de295041ea6242a7b85e82a2f6b9185664769d39e284634f0b"},
-    {"bytes": 527, "out": "misc_find_index_typed_probe.out", "rows": 4, "sha256": "b5f0d3bbae687acebda24727dd75a85b7326d669942952d14ebd508c460a4fab"},
+    {"bytes": 786, "out": "misc_find_index_typed_probe.out", "rows": 6, "sha256": "3c8f339e20b34bff55d1bfb9aa5640b7c109bd78b8ce5f9ac56a43dd38e56671"},
     {"bytes": 130, "out": "misc_lookup_any_find_index_probe.out", "rows": 8, "sha256": "aaadadfbc8d7d60e1cdf7160f55ce144944e48f7107fef7f234c06232f1442dd"},
     {"bytes": 385, "out": "misc_memory_regions_probe.out", "rows": 2, "sha256": "45af8809f1b2433ac54fa13fe0e8bb869fe0ecc66b1568a49ad352a35a436268"},
     {"bytes": 392, "out": "misc_take_flat_replicate_probe.out", "rows": 9, "sha256": "3c467da8d95d52837f9d54f6135c6f9ad74e75e12f1fde4f35e01a9646f9ead8"},

@@ -77,4 +77,14 @@ theorem option_choice_equals_option {α : Type} (x y : Option α) (z : α) :
   | none => simp
   | some val => simp
 
+/-- Original `IN_option_rwt`: membership in the option-selected set. HOL's
+    `α -> bool` set carrier is the predicate `α → Prop` and `∈` its application. -/
+@[hol "cakeml/misc/miscScript.sml" "IN_option_rwt"]
+theorem mem_option_set {α β : Type} (x : α) (opt : Option β) (Q : β → α → Prop) :
+    (match opt with | none => (fun _ => False) | some y => Q y) x ↔
+      ∃ y, opt = some y ∧ Q y x := by
+  cases opt with
+  | none => simp
+  | some y => simp
+
 end Flapjack

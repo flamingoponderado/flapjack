@@ -12834,7 +12834,7 @@ run_probe misc_defs_typed_probeScript.sml misc_defs_typed_probe.out \
 
 run_probe misc_find_index_typed_probeScript.sml misc_find_index_typed_probe.out \
   INDEX_OF_def_typed find_index_ALL_DISTINCT_EL_typed find_index_INDEX_OF_typed \
-  EVERY_anub_imp_typed \
+  EVERY_anub_imp_typed INJ_I_typed IN_option_rwt_typed \
   "$cake_dir/misc/miscScript.sml" "$cake_dir/misc"
 
 run_probe data_sem_check_typed_probeScript.sml data_sem_check_typed_probe.out \

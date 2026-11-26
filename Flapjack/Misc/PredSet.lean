@@ -85,4 +85,18 @@ theorem apply_holLinv_of_surjective {α β : Type} [Nonempty α] {f : α → β}
   exact (Classical.choose_spec (show ∃ z, (fun _ => True) z ∧ f z = f x from
     let ⟨z, h1, h2⟩ := h; ⟨z, h2, h1.symm⟩)).2
 
+/-- Original `INJ_I`: the identity is injective into exactly the supersets.
+    HOL's set carrier `α -> bool` is the predicate `α → Prop`, so `s ⊆ t` is the
+    pointwise implication. -/
+@[hol "cakeml/misc/miscScript.sml" "INJ_I"]
+theorem inj_id_iff_subset {α : Type} (s t : α → Prop) :
+    holInj id s t ↔ ∀ x, s x → t x := by
+  constructor
+  · intro h x hx
+    exact h.1 x hx
+  · intro h
+    refine ⟨fun x hx => h x hx, ?_⟩
+    intro x y _ heq
+    simpa using heq
+
 end Flapjack
