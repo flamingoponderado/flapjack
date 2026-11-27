@@ -86836,12 +86836,20 @@
     "reviewer": "Flapjack sptree helper (HOL lookup_delete): lookup after delete; no separate CakeML declaration"
   },
 {
+    "hol_path": "cakeml/compiler/backend/backend_commonScript.sml",
+    "hol_name": "lookup_list_delete",
+    "lean_path": "Flapjack/Misc/SptreeLookup.lean",
+    "lean_name": "sptLookup_sptListDelete",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared lookup_list_delete_typed: forall xs l n. lookup n (list_delete xs l) = if MEM n xs then NONE else lookup n l, with xs : num list, l : 'a sptree$num_map and n : num, generic in the value type. Lean sptLookup_sptListDelete keeps the same binder order (ks, t, k), the same value-generic Spt carrier, sptLookup for lookup and sptListDelete for list_delete, and renders HOL MEM as membership with NONE as none; no premise. The private duplicate of the same statement in Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean stays untagged infrastructure."
+  },
+{
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
     "lean_name": "sptLookup_sptListDelete",
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack sptree helper (HOL lookup_list_delete-style): lookup after list_delete; no separate CakeML declaration"
+    "reviewer": "Private duplicate of the tagged Flapjack/Misc/SptreeLookup.lean sptLookup_sptListDelete; kept as untagged local infrastructure for the loop_live proof."
   },
 {
     "hol_path": null,
