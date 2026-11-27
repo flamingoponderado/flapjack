@@ -1,0 +1,5 @@
+lab_typed=Lab::num -> num -> lab
+asm_with_lab_typed=Jump::lab -> α asm_with_lab; JumpCmp::cmp -> num -> α reg_imm -> lab -> α asm_with_lab; Call::lab -> α asm_with_lab; LocValue::num -> lab -> α asm_with_lab; CallFFI::mlstring -> α asm_with_lab; Install::α asm_with_lab; Halt::α asm_with_lab
+asm_or_cbw_typed=Asmi::α asm -> α asm_or_cbw; Cbw::num -> num -> α asm_or_cbw; ShareMem::memop -> num -> α addr -> α asm_or_cbw
+line_typed=Label::num -> num -> num -> α line; Asm::α asm_or_cbw -> word8 list -> num -> α line; LabAsm::α asm_with_lab -> α word -> word8 list -> num -> α line
+sec_typed=Section::num -> α line list -> α sec

@@ -4595,6 +4595,7 @@ import Flapjack.Misc.LprefixLub
 import Flapjack.Misc.OptMmapCong
 import Flapjack.Misc.ListSubset
 import Flapjack.Compiler.Backend.LabLang
+import Flapjack.Compiler.Backend.LabLang.HOL
 import Flapjack.Compiler.Backend.LabFilter
 import Flapjack.Compiler.Backend.LabToTarget.Compile
 import Flapjack.Compiler.Backend.LabToTarget.PaddingLength

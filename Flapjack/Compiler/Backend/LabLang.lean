@@ -1,5 +1,7 @@
 module
 
+public import Flapjack.HolRef
+
 @[expose] public section
 
 /-!
@@ -15,6 +17,7 @@ part of the open `stack_to_lab` port.
 namespace Flapjack.Compiler.Backend.LabLang
 
 /-- HOL `labLang$lab`. -/
+@[hol "cakeml/compiler/backend/labLangScript.sml" "lab"]
 inductive Lab where
   | lab (sectionNumber label : Nat)
   deriving Repr, BEq, DecidableEq
