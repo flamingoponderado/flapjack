@@ -238,4 +238,109 @@ theorem intEncDecOk : encDecOk intEnc intDec := by
     ⟨numEncDecOk, inverse⟩
   exact step
 
+/-- Original `list_enc_def`: a length prefix followed by the element encodings. -/
+@[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "list_enc_def"]
+def listEnc {α : Type} (e : α → AppList Nat) (xs : List α) : AppList Nat :=
+  AppList.append (AppList.list [xs.length])
+    (xs.foldr (fun x acc => AppList.append (e x) acc) (AppList.list []))
+
+/-- Original `list_dec'_def`: decode `k` elements, threading the input. -/
+@[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "list_dec'_def"]
+def listDecAux {α : Type} :
+    Nat → (List Nat → α × List Nat) → List Nat → List α × List Nat
+  | 0, _, ns => ([], ns)
+  | k + 1, d, ns =>
+      let step := d ns
+      let rest := listDecAux k d step.2
+      (step.1 :: rest.1, rest.2)
+
+/-- Original `list_dec_def`: read the length prefix, then that many elements. -/
+@[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "list_dec_def"]
+def listDec {α : Type} (d : List Nat → α × List Nat) :
+    List Nat → List α × List Nat
+  | [] => ([], [])
+  | n :: ns => listDecAux n d ns
+
+/-- Original `list_dec'_length`: decoding never grows the input. -/
+@[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "list_dec'_length"]
+theorem listDecAux_length {α : Type} (k : Nat) (d : List Nat → α × List Nat)
+    (ns : List Nat) (x : List α) (ns1 : List Nat)
+    (premise : listDecAux k d ns = (x, ns1) ∧ decOk d) : ns1.length ≤ ns.length := by
+  obtain ⟨run, bound⟩ := premise
+  induction k generalizing ns x ns1 with
+  | zero =>
+    simp only [listDecAux, Prod.mk.injEq] at run
+    obtain ⟨_, rfl⟩ := run
+    omega
+  | succ k ih =>
+    simp only [listDecAux] at run
+    generalize headRun : d ns = headResult at run
+    rcases headResult with ⟨value, rest⟩
+    generalize tailRun : listDecAux k d rest = tailResult at run
+    rcases tailResult with ⟨values, final⟩
+    simp only [Prod.mk.injEq] at run
+    obtain ⟨_, rfl⟩ := run
+    have headBound := bound ns
+    rw [headRun] at headBound
+    dsimp only at headBound
+    have tailBound := ih rest values final tailRun
+    omega
+
+/-- Original `list_dec_ok`: decoding a list keeps the decoder bound. -/
+@[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "list_dec_ok"]
+theorem listDecOk {α : Type} (d : List Nat → α × List Nat) (bound : decOk d) :
+    decOk (listDec d) := by
+  intro i
+  cases i with
+  | nil => simp [listDec]
+  | cons n ns =>
+    simp only [listDec, List.length_cons]
+    generalize run : listDecAux n d ns = result
+    rcases result with ⟨values, final⟩
+    have step := listDecAux_length n d ns values final ⟨run, bound⟩
+    dsimp only
+    omega
+
+/-- Appending two trees flattens to the concatenation of their flattens. -/
+private theorem appListAppend_append {α : Type} (left right : AppList α) :
+    appListAppend (AppList.append left right) = appListAppend left ++ appListAppend right := by
+  simp only [appListAppend]
+  exact appendAux_thm left (appendAux right [])
+
+/-- The element encodings flatten to a prefix followed by the suffix. -/
+private theorem listFoldr_append {α : Type} (e : α → AppList Nat) (xs : List α)
+    (ys : List Nat) :
+    appListAppend (xs.foldr (fun x acc => AppList.append (e x) acc) (AppList.list [])) ++ ys
+      = xs.foldr (fun x acc => appListAppend (e x) ++ acc) ys := by
+  induction xs with
+  | nil => simp [appListAppend, appendAux]
+  | cons x xs ih =>
+    simp only [List.foldr_cons, appListAppend_append]
+    rw [List.append_assoc, ih]
+
+/-- The decoded list consumes exactly its encodings, given the element round trip. -/
+private theorem listDecAux_foldr {α : Type} (e : α → AppList Nat)
+    (d : List Nat → α × List Nat) (roundtrip : ∀ x ys, d (appListAppend (e x) ++ ys) = (x, ys))
+    (xs : List α) (ys : List Nat) :
+    listDecAux xs.length d
+      (appListAppend (xs.foldr (fun x acc => AppList.append (e x) acc) (AppList.list [])) ++ ys)
+      = (xs, ys) := by
+  induction xs generalizing ys with
+  | nil => simp [listDecAux, appListAppend, appendAux]
+  | cons x xs ih =>
+    rw [List.length_cons, List.foldr_cons, appListAppend_append]
+    simp only [List.append_assoc, listDecAux, roundtrip]
+    rw [ih ys]
+
+/-- Original `list_enc_dec_ok`: list encodings round trip. -/
+@[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "list_enc_dec_ok"]
+theorem listEncDecOk {α : Type} (e : α → AppList Nat) (d : List Nat → α × List Nat)
+    (ok : encDecOk e d) : encDecOk (listEnc e) (listDec d) := by
+  obtain ⟨bound, roundtrip⟩ := ok
+  refine ⟨listDecOk d bound, ?_⟩
+  intro xs ys
+  simp only [listEnc, appListAppend, appendAux]
+  rw [List.append_assoc, List.singleton_append]
+  exact listDecAux_foldr e d roundtrip xs ys
+
 end Flapjack.Compiler.Backend.Serialiser

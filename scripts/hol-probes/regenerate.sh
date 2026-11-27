@@ -9895,6 +9895,8 @@ run_probe num_list_enc_dec_typed_probeScript.sml num_list_enc_dec_typed_probe.ou
   enc_dec_ok_prime_const_typed enc_dec_ok_prime_o_typed fix_res_def_typed fix_res_IMP_typed unit_enc_def_typed unit_dec_def_typed unit_enc_dec_ok_typed num_enc_def_typed num_dec_def_typed num_enc_dec_ok_typed \
   word64_enc_def_typed word64_dec_def_typed word64_enc_dec_ok_typed bool_enc_def_typed bool_dec_def_typed bool_enc_dec_ok_typed \
   int_enc_def_typed int_dec_def_typed int_enc_dec_ok_typed \
+  list_enc_def_typed list_dec_prime_def_typed list_dec_def_typed list_dec_prime_length_typed \
+  list_dec_ok_typed list_enc_dec_ok_typed \
   "$cake_dir/compiler/backend/serialiser/num_list_enc_decScript.sml" \
   "$cake_dir/compiler/backend/serialiser"
 

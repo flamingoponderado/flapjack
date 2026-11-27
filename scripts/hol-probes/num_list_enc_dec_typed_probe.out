@@ -25,3 +25,9 @@ bool_enc_dec_ok_typed=enc_dec_ok bool_enc bool_dec
 int_enc_def_typed=int_enc = num_enc ∘ (λ(n :int). if n < (0 :int) then (2 :num) * Num (ABS n) + (1 :num) else (2 :num) * Num (ABS n))
 int_dec_def_typed=int_dec = ((λ(r :num). if ODD r then (0 :int) − ((&(r DIV (2 :num))) :int) else ((&(r DIV (2 :num))) :int)) ## (I :num list -> num list)) ∘ num_dec
 int_enc_dec_ok_typed=enc_dec_ok int_enc int_dec
+list_enc_def_typed=∀(e :α -> num app_list) (xs :α list). list_enc e xs = Append (List [LENGTH xs]) (FOLDR (λ(x :α) (y :num app_list). Append (e x) y) (List ([] :num list)) xs)
+list_dec_prime_def_typed=(∀(d :β -> α # β) (ns :β). list_dec' (0 :num) d ns = (([] :α list),ns)) ∧ ∀(k :num) (d :β -> α # β) (ns :β). list_dec' (SUC k) d ns = (let ((x1 :α),(ns1 :β)) = d ns; ((xs1 :α list),(ns2 :β)) = list_dec' k d ns1 in (x1::xs1,ns2))
+list_dec_def_typed=∀(d :num list -> α # num list) (ns :num list). list_dec d ns = case ns of ([] :num list) => (([] :α list),([] :num list)) | n::ns => list_dec' n d ns
+list_dec_prime_length_typed=∀(k :num) (d :num list -> α # num list) (ns :num list) (x :α list) (ns1 :num list). list_dec' k d ns = (x,ns1) ∧ dec_ok d ⇒ LENGTH ns1 ≤ LENGTH ns
+list_dec_ok_typed=dec_ok (d :num list -> α # num list) ⇒ dec_ok (list_dec d)
+list_enc_dec_ok_typed=enc_dec_ok (e :α -> num app_list) (d :num list -> α # num list) ⇒ enc_dec_ok (list_enc e) (list_dec d)
