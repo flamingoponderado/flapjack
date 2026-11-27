@@ -64,4 +64,84 @@ theorem listCaseMap {α β γ : Type} (f : γ → β) (l : List γ) (n : α)
   | nil => rfl
   | cons h t => rfl
 
+/-- Original `option_map_itcase`: mapping under an option distributes over the
+inference-type case split. -/
+@[hol "cakeml/compiler/inference/unifyScript.sml" "option_map_itcase"]
+theorem optionMapInferCase {α β : Type} (f : β → α) (arg : InferT)
+    (x : Nat → Option β) (y : List InferT → Nat → Option β) (z : Nat → Option β) :
+    Option.map f (match arg with
+      | .varDb n => x n
+      | .app l n => y l n
+      | .uvar u => z u) =
+      match arg with
+      | .varDb n => Option.map f (x n)
+      | .app l n => Option.map f (y l n)
+      | .uvar u => Option.map f (z u) := by
+  cases arg with
+  | varDb n => rfl
+  | app l n => rfl
+  | uvar u => rfl
+
+/-- Original `option_map_COND`: mapping under an option distributes over a
+Boolean conditional. -/
+@[hol "cakeml/compiler/inference/unifyScript.sml" "option_map_COND"]
+theorem optionMapCond {α β : Type} (f : β → α) (g : Bool) (t e : Option β) :
+    Option.map f (if g then t else e) = if g then Option.map f t else Option.map f e := by
+  cases g with
+  | true => rfl
+  | false => rfl
+
+/-- Original `sptree_map_COND`: the sparse-tree map distributes over a Boolean
+conditional. -/
+@[hol "cakeml/compiler/inference/unifyScript.sml" "sptree_map_COND"]
+theorem sptMapCond {α β : Type} (f : β → α) (g : Bool) (t e : Spt β) :
+    sptMap f (if g then t else e) = if g then sptMap f t else sptMap f e := by
+  cases g with
+  | true => rfl
+  | false => rfl
+
+/-- Original `SOME_COND`: the `some` constructor distributes over a Boolean
+conditional. -/
+@[hol "cakeml/compiler/inference/unifyScript.sml" "SOME_COND"]
+theorem someCond {α : Type} (g : Bool) (t e : α) :
+    some (if g then t else e) = if g then some t else some e := by
+  cases g with
+  | true => rfl
+  | false => rfl
+
+/-- Original `OPTION_MAP_BIND`: mapping commutes with the option bind. -/
+@[hol "cakeml/compiler/inference/unifyScript.sml" "OPTION_MAP_BIND"]
+theorem optionMapBind {α β γ : Type} (f : β → α) (m : Option γ) (mf : γ → Option β) :
+    Option.map f (m.bind mf) = m.bind (fun x => Option.map f (mf x)) := by
+  cases m with
+  | none => rfl
+  | some x => rfl
+
+/-- Original `OPTION_BIND_MAP`: binding a mapped option applies the function
+before the continuation. -/
+@[hol "cakeml/compiler/inference/unifyScript.sml" "OPTION_BIND_MAP"]
+theorem optionBindMap {α β γ : Type} (f : γ → β) (m : Option γ) (mf : β → Option α) :
+    (Option.map f m).bind mf = m.bind (fun x => mf (f x)) := by
+  cases m with
+  | none => rfl
+  | some x => rfl
+
+/-- Original `term_CASE_encode`: the term case split of an encoded inference
+type is the inference-type case split over the encoded components. -/
+@[hol "cakeml/compiler/inference/unifyScript.sml" "term_CASE_encode"]
+theorem termCaseEncode {α : Type} (v : InferT) (vf : Nat → α)
+    (pf : Term Atom → Term Atom → α) (cf : Atom → α) :
+    (match encodeInferT v with
+      | .var n => vf n
+      | .pair a b => pf a b
+      | .const c => cf c) =
+      match v with
+      | .varDb n => cf (.dbTag n)
+      | .app l n => pf (.const .tappTag) (.pair (.const (.tcTag n)) (encodeInferTs l))
+      | .uvar u => vf u := by
+  cases v with
+  | varDb n => simp [encodeInferT]
+  | app l n => simp [encodeInferT]
+  | uvar u => simp [encodeInferT]
+
 end Flapjack.Compiler.Inference.Unify
