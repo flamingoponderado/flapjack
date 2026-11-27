@@ -12872,6 +12872,20 @@ run_probe mlstring_order_typed_probeScript.sml mlstring_order_typed_probe.out \
   mlstring_gt_def_typed mlstring_ge_def_typed fast_lt_def_typed fast_le_def_typed \
   fast_gt_def_typed fast_ge_def_typed collate_aux_def_typed collate_def_typed \
   compare_thm_typed \
+  string_lt_def_typed string_le_def_typed string_lt_total_typed \
+  string_lt_nonrefl_typed string_lt_antisym_typed string_lt_cases_typed \
+  string_lt_trans_typed \
+  antisymmetric_def_typed trichotomous_typed StrongOrder_typed \
+  StrongLinearOrder_typed mlstring_lt_inv_image_typed TotOrd_compare_typed \
+  good_cmp_compare_typed mlstring_lt_antisym_typed mlstring_lt_cases_typed \
+  mlstring_lt_nonrefl_typed mlstring_lt_trans_typed mlstring_le_thm_typed \
+  mlstring_gt_thm_typed mlstring_ge_thm_typed transitive_mlstring_le_typed \
+  antisymmetric_mlstring_le_typed total_mlstring_le_typed strlit_le_strlit_typed \
+  StrongLinearOrder_mlstring_lt_typed fast_lt_nonrefl_typed fast_lt_trans_typed \
+  fast_le_thm_typed fast_gt_thm_typed fast_ge_thm_typed \
+  transitive_fast_le_typed antisymmetric_fast_le_typed total_fast_le_typed \
+  transitive_fast_lt_typed irreflexive_fast_lt_typed trichotomous_fast_lt_typed \
+  StrongLinearOrder_fast_lt_typed \
   "$cake_dir/basis/pure/mlstringScript.sml" "$cake_dir/basis/pure"
 run_probe mlstring_more_typed_probeScript.sml mlstring_more_typed_probe.out \
   fields_aux_def_typed fields_def_typed fields_filter_typed fields_length_typed \

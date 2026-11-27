@@ -4561,6 +4561,7 @@ import Flapjack.Basis.Pure.MlString.Fields
 import Flapjack.Basis.Pure.MlString.Split
 import Flapjack.Basis.Pure.MlString.Prefix
 import Flapjack.Basis.Pure.MlString.Order
+import Flapjack.Basis.Pure.MlString.StringOrder
 import Flapjack.Compiler.Backend.MlStringBridge
 import Flapjack.Compiler.Backend.StackProps
 import Flapjack.Compiler.Backend.RegAlloc
@@ -5007,6 +5008,7 @@ import Flapjack.Misc.UpdateResize
 import Flapjack.Misc.FoldlInvariant
 import Flapjack.Misc.Words.N2wOrder
 import Flapjack.Misc.Irreflexive
+import Flapjack.Misc.StrongOrder
 import Flapjack.Misc.FindIndex.MapInj
 import Flapjack.Misc.FindIndex.Alookup
 import Flapjack.Misc.LastN
