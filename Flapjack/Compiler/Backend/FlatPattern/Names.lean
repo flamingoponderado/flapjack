@@ -87,4 +87,11 @@ def opSetsGlobals : FlatLang.Op → Bool
   | .globalVarInit _ => true
   | _ => false
 
+/-- Original `op_sets_globals_EX`: only global initialization sets globals. -/
+@[hol "cakeml/compiler/backend/flat_patternScript.sml" "op_sets_globals_EX"]
+theorem opSetsGlobals_eq (op : FlatLang.Op) :
+    opSetsGlobals op = true ↔ ∃ n, op = .globalVarInit n := by
+  cases op
+  all_goals simp [opSetsGlobals]
+
 end Flapjack.Compiler.Backend.FlatPattern

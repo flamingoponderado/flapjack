@@ -347,3 +347,5 @@ val _ = emit_exported "compile_pat_rhs_def_typed" "compile_pat_rhs_def";
 val _ = emit_exported "naive_pattern_match_def_typed" "naive_pattern_match_def";
 val _ = emit_exported "naive_pattern_matches_def_typed" "naive_pattern_matches_def";
 val _ = emit_exported "compile_dec_def_typed" "compile_dec_def";
+val _ = emit_exported "op_sets_globals_EX_typed" "op_sets_globals_EX";
+val _ = emit_exported "MAPi_eq_MAP_typed" "MAPi_eq_MAP";

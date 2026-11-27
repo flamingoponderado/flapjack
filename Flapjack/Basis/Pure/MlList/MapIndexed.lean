@@ -81,4 +81,12 @@ theorem snd_unzip_holMapi {β α γ : Type} (f : Nat → β → α × γ) :
     simp only [holMapi, List.unzip]
     rw [ih (fun n x => f (n + 1) x)]
 
+/-- Original `MAPi_eq_MAP`: a `MAPi` that ignores its index is a plain `MAP`. -/
+@[hol "cakeml/compiler/backend/flat_patternScript.sml" "MAPi_eq_MAP"]
+theorem holMapi_eq_map {β α : Type} (f : β → α) (xs : List β) :
+    holMapi (fun _ x => f x) xs = List.map f xs := by
+  induction xs with
+  | nil => simp [holMapi]
+  | cons x rest ih => simp [holMapi, ih]
+
 end Flapjack.Basis.Pure.MlList

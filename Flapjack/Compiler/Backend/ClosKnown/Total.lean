@@ -144,6 +144,32 @@ theorem knownListTotal_length_eq (c : Config) (xs : List Exp) (env : List ValApp
   have length := knownListTotal_length c xs env globals
   simpa [run] using length
 
+/-- Original `known_sing`: a singleton traversal yields one annotated expression. -/
+@[hol "cakeml/compiler/backend/clos_knownScript.sml" "known_sing"]
+theorem knownListTotal_singleton_exists (c : Config) (e : Exp) (vs : List ValApprox)
+    (g : Spt ValApprox) :
+    ∃ e' a g', knownListTotal c [e] vs g = ([(e', a)], g') := by
+  cases h : knownListTotal c [e] vs g with
+  | mk res g' =>
+    have len := knownListTotal_length c [e] vs g
+    rw [h] at len
+    simp only [List.length_cons, List.length_nil] at len
+    obtain ⟨p, hp⟩ := List.length_eq_one_iff.mp len
+    rw [hp]
+    obtain ⟨e', a⟩ := p
+    exact ⟨e', a, g', rfl⟩
+
+/-- Original `known_sing_EQ_E`: the singleton traversal's list is a single pair. -/
+@[hol "cakeml/compiler/backend/clos_knownScript.sml" "known_sing_EQ_E"]
+theorem knownListTotal_singleton_eq (c : Config) (e : Exp) (vs : List ValApprox)
+    (g0 : Spt ValApprox) (all : List (Exp × ValApprox)) (g : Spt ValApprox)
+    (run : knownListTotal c [e] vs g0 = (all, g)) :
+    ∃ e' apx, all = [(e', apx)] := by
+  obtain ⟨e', apx, g', hg⟩ := knownListTotal_singleton_exists c e vs g0
+  rw [run] at hg
+  simp only [Prod.mk.injEq] at hg
+  exact ⟨e', apx, hg.1⟩
+
 /-- The checked smart constructor is the source-shaped total smart operation.
 This is Flapjack infrastructure for reviewing the executed traversal. -/
 theorem smartTotal_eq_smartOp (t : BackendCommon.Tra) (op : Op) (xs : List Exp) :

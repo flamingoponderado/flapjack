@@ -12344,6 +12344,7 @@ run_probe flat_pattern_typed_probeScript.sml flat_pattern_typed_probe.out \
   decode_dtree_def_typed encode_pat_def_typed compile_pat_bindings_def_typed \
   compile_pat_rhs_def_typed naive_pattern_match_def_typed naive_pattern_matches_def_typed \
   compile_dec_def_typed \
+  op_sets_globals_EX_typed MAPi_eq_MAP_typed \
   "$cake_dir/compiler/backend/flat_patternScript.sml" \
   "$cake_dir/compiler/backend"
 run_probe stacklang_overloads_typed_probeScript.sml stacklang_overloads_typed_probe.out \
