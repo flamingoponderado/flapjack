@@ -2,6 +2,7 @@ module
 
 public import Flapjack.HolRef
 public import Flapjack.Basis.Pure.MlString.Ops
+public import Flapjack.Misc.RichList
 
 @[expose] public section
 
@@ -261,5 +262,109 @@ theorem tokens_alt (f : HolChar → Bool) (s : MlString) :
     tokens f s = tokensAltAux f s 0 0 (strlen s) := by
   rw [tokens]
   exact tokensAlt_tokensAux f s [] 0 (strlen s) 0 (by omega) (by omega) (by omega) (by simp)
+
+/-- A substring starting at `0` is a prefix of the character list. -/
+private theorem substring_zero_off (s : MlString) (len : Nat) :
+    substring s 0 len = .implode ((explode s).take len) := by
+  rw [substring, List.drop_zero]
+  by_cases h : len ≤ strlen s
+  · rw [if_pos (by simpa using h)]
+  · rw [if_neg (by simpa using h)]
+    have hle : strlen s ≤ len := by omega
+    rw [if_pos (Nat.zero_le _)]
+    rw [List.take_of_length_le (by simpa [strlen_eq_explode_length] using hle)]
+
+/-- A substring from `i` to the end is a suffix of the character list. -/
+private theorem substring_suffix (s : MlString) (i : Nat) :
+    substring s i (strlen s - i) = .implode ((explode s).drop i) := by
+  rw [substring]
+  by_cases hi : i ≤ strlen s
+  · rw [if_pos (by omega)]
+    have hlen : ((explode s).drop i).length = strlen s - i := by
+      rw [List.length_drop, strlen_eq_explode_length]
+    rw [List.take_of_length_le (by omega)]
+  · have hge : strlen s ≤ i := by omega
+    rw [if_neg (by omega), if_neg (by omega)]
+    rw [List.drop_eq_nil_of_le (by simpa [strlen_eq_explode_length] using hge)]
+
+/-- Taking the minimum of the list length and a bound is the same as taking the
+bound. -/
+private theorem take_min (l : List HolChar) (n : Nat) :
+    l.take (min l.length n) = l.take n := by
+  by_cases h : n ≤ l.length
+  · rw [Nat.min_eq_right h]
+  · have hle : l.length ≤ n := by omega
+    rw [Nat.min_eq_left hle, List.take_of_length_le hle, List.take_length]
+
+/-- The prefix extraction is the character-list prefix. -/
+private theorem extract_zero_some (s : MlString) (i : Nat) :
+    extract s 0 (some i) = .implode ((explode s).take i) := by
+  rw [extract]
+  by_cases h : strlen s ≤ 0
+  · rw [if_pos h]
+    have h0 : (explode s).length = 0 := by
+      simpa [strlen_eq_explode_length] using h
+    rw [List.eq_nil_of_length_eq_zero h0]
+    simp
+  · rw [if_neg h, Nat.sub_zero, substring_zero_off, strlen_eq_explode_length, take_min]
+
+/-- The suffix extraction is the character-list suffix. -/
+private theorem extract_none (s : MlString) (i : Nat) :
+    extract s i none = .implode ((explode s).drop i) := by
+  rw [extract]
+  by_cases h : strlen s ≤ i
+  · rw [if_pos h, List.drop_eq_nil_of_le (by simpa [strlen_eq_explode_length] using h)]
+  · rw [if_neg h, substring_suffix]
+
+/-- Original `splitl_aux_SPLITP`: the scan-based splitter is the `SPLITP` split
+of the suffix, prefixed by the skipped characters. -/
+@[hol "cakeml/basis/pure/mlstringScript.sml" "splitl_aux_SPLITP"]
+theorem splitlAux_splitP (P : HolChar → Bool) (s : MlString) (i : Nat) :
+    splitlAux P s i =
+      Prod.map (fun l => MlString.implode ((explode s).take i ++ l)) MlString.implode
+        (splitP (fun c => !(P c)) ((explode s).drop i)) := by
+  fun_induction splitlAux P s i with
+  | case1 i hn ih1 =>
+      rw [Bool.and_eq_true] at hn
+      have hlt : i < strlen s := of_decide_eq_true hn.1
+      have hp : P (strsub s i) = true := hn.2
+      have hi : i < (explode s).length := by
+        simpa [strlen_eq_explode_length] using hlt
+      have hsub : strsub s i = (explode s)[i] := holEl_eq_getElem i (explode s) hi
+      have hdrop : (explode s).drop i = strsub s i :: (explode s).drop (i + 1) := by
+        rw [List.drop_eq_getElem_cons hi, hsub]
+      have htake : (explode s).take (i + 1) = (explode s).take i ++ [strsub s i] := by
+        rw [List.take_add_one, List.getElem?_eq_getElem hi, hsub]
+        rfl
+      rw [ih1, hdrop, splitP, if_neg (by simp [hp]), htake]
+      simp only [List.append_assoc]
+      rfl
+  | case2 i hn =>
+      by_cases hlt : i < strlen s
+      · have hp : ¬(P (strsub s i) = true) := by
+          intro hpt
+          apply hn
+          rw [Bool.and_eq_true]
+          exact ⟨decide_eq_true_eq.mpr hlt, hpt⟩
+        have hi : i < (explode s).length := by
+          simpa [strlen_eq_explode_length] using hlt
+        have hsub : strsub s i = (explode s)[i] := holEl_eq_getElem i (explode s) hi
+        have hdrop : (explode s).drop i = strsub s i :: (explode s).drop (i + 1) := by
+          rw [List.drop_eq_getElem_cons hi, hsub]
+        rw [extract_zero_some, extract_none, hdrop, splitP, if_pos (by simp [hp])]
+        simp
+      · have hge : strlen s ≤ i := by omega
+        rw [extract_zero_some, extract_none,
+          List.drop_eq_nil_of_le (by simpa [strlen_eq_explode_length] using hge), splitP]
+        simp
+
+/-- Original `splitl_SPLITL`: splitting from the start is the `SPLITL` split of
+the character list. -/
+@[hol "cakeml/basis/pure/mlstringScript.sml" "splitl_SPLITL"]
+theorem splitl_splitL (P : HolChar → Bool) (s : MlString) :
+    splitl P s = Prod.map MlString.implode MlString.implode (splitL P (explode s)) := by
+  rw [splitl, splitlAux_splitP, splitL, List.drop_zero, List.take_zero]
+  cases splitP (fun c => !(P c)) (explode s) with
+  | mk a b => rfl
 
 end Flapjack.Basis.Pure.MlString

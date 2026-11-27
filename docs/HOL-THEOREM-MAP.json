@@ -136769,6 +136769,38 @@
   "reviewer": "Compared the HOL source and typed list_relation_replicate capture: the two element types remain independent, LIST_REL and REPLICATE use List.Forall₂ and List.replicate, and the original equivalence and positive-length implication are retained. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/hol_richlist_typed_probe.out `list_rel_replicate_same_typed` re-confirms the independent `α` and `β`, the free-variable order `P n x y` and the `0 < n ⇒ P x y` right side, matching forall₂_replicate_iff."
 },
 {
+  "hol_path": "HOL/src/list/src/rich_listScript.sml",
+  "hol_name": "SPLITP",
+  "lean_path": "Flapjack/Misc/RichList.lean",
+  "lean_name": "splitP",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared hol_richlist_typed_probe.out `splitp_typed`: both clauses are kept, with SPLITP P [] = ([],[]) and SPLITP P (x::l) = if P x then ([],x::l) else (x::FST (SPLITP P l),SND (SPLITP P l)). Lean keeps the element type α and the predicate P, renders FST/SND as `.1`/`.2` on the pair and the two clauses as the `splitP` equations; no premise."
+},
+{
+  "hol_path": "HOL/src/list/src/rich_listScript.sml",
+  "hol_name": "SPLITL_def",
+  "lean_path": "Flapjack/Misc/RichList.lean",
+  "lean_name": "splitL",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared hol_richlist_typed_probe.out `splitl_def_typed`: ∀(P :α -> bool). SPLITL P = SPLITP ($¬ ∘ P). Lean keeps the element type and predicate, renders the function equality as `splitL P = splitP (fun x => !(P x))` (HOL's `$¬ ∘ P`); no premise."
+},
+{
+  "hol_path": "HOL/src/list/src/rich_listScript.sml",
+  "hol_name": "SPLITP_NIL_FST_IMP",
+  "lean_path": "Flapjack/Misc/RichList.lean",
+  "lean_name": "splitP_nil_fst",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared hol_richlist_typed_probe.out `splitp_nil_fst_imp_typed`: ∀(ls :α list) (r :α list). SPLITP P ls = ([],r) ⇒ r = ls. Lean keeps the binder order ls, r after the predicate, the empty-first-component premise and the same conclusion; no extra premise."
+},
+{
+  "hol_path": "HOL/src/list/src/rich_listScript.sml",
+  "hol_name": "SPLITP_JOIN",
+  "lean_path": "Flapjack/Misc/RichList.lean",
+  "lean_name": "splitP_join",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared hol_richlist_typed_probe.out `splitp_join_typed`: ∀(ls :α list) (l :α list) (r :α list). SPLITP P ls = (l,r) ⇒ ls = l ⧺ r. Lean keeps the binder order ls, l, r after the predicate and renders HOL append `⧺` as List.append; no extra premise."
+},
+{
   "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
   "hol_name": "isClosure_def",
   "lean_path": "Flapjack/Compiler/Backend/FlatProps/ValueBasics.lean",
@@ -149861,6 +149893,8 @@
 , {"hol_path": "cakeml/basis/pure/mlstringScript.sml", "hol_name": "tokens_alt_aux_def", "lean_path": "Flapjack/Basis/Pure/MlString/Split.lean", "lean_name": "tokensAltAux", "statement_status": "reviewed_exact", "reviewer": "Compared tokens_alt_aux_def_typed: binders f, s, i, j, n in HOL order; the four nested ifs (scan bound, separator test, empty-run test) and the two recursive calls with (i+1)/(j+1) or (j+1)/(j+1) match the capture, and the closing `if i = j then [] else [substring s i (j - i)]` is unchanged. HOL's termination measure n - j is Lean's termination_by n - j; strsub, substring and implode are the tagged renderings and `::` is HOL CONS."}
 , {"hol_path": "cakeml/basis/pure/mlstringScript.sml", "hol_name": "tokens_alt_tokens_alt_aux", "lean_path": "Flapjack/Basis/Pure/MlString/Split.lean", "lean_name": "tokensAlt_tokensAux", "statement_status": "reviewed_exact", "reviewer": "Compared tokens_alt_tokens_alt_aux_typed: binders f, s then acc, j, l, i in HOL order; HOL's single conjunction premise i ≤ j ∧ j ≤ strlen s ∧ strlen s - j = l ∧ acc = REVERSE (explode (substring s i (j - i))) becomes four hypotheses in the same order, and the conclusion tokens_aux f s acc j l = tokens_alt_aux f s i j (strlen s) is unchanged."}
 , {"hol_path": "cakeml/basis/pure/mlstringScript.sml", "hol_name": "tokens_alt", "lean_path": "Flapjack/Basis/Pure/MlString/Split.lean", "lean_name": "tokens_alt", "statement_status": "reviewed_exact", "reviewer": "Compared tokens_alt_typed: tokens (f :char -> bool) (s :mlstring) = tokens_alt_aux f s 0 0 (strlen s). Same two universal binders, same zero run start and scan position and the same strlen bound; no premise."}
+, {"hol_path": "cakeml/basis/pure/mlstringScript.sml", "hol_name": "splitl_aux_SPLITP", "lean_path": "Flapjack/Basis/Pure/MlString/Split.lean", "lean_name": "splitlAux_splitP", "statement_status": "reviewed_exact", "reviewer": "Compared splitl_aux_SPLITP_typed: ∀(P :char -> bool) (s :mlstring) (i :num). splitl_aux P s i = (implode ∘ STRCAT (TAKE i (explode s)) ## implode) (SPLITP ($¬ ∘ P) (DROP i (explode s))). Lean keeps P, s, i in HOL order, renders STRCAT (TAKE i ...) as take i ++ ·, `##` (Prod.map) as Prod.map, SPLITP ($¬ ∘ P) as splitP (fun c => !(P c)), TAKE/DROP as List.take/List.drop and implode as the tagged MlString.implode; no premise."}
+, {"hol_path": "cakeml/basis/pure/mlstringScript.sml", "hol_name": "splitl_SPLITL", "lean_path": "Flapjack/Basis/Pure/MlString/Split.lean", "lean_name": "splitl_splitL", "statement_status": "reviewed_exact", "reviewer": "Compared splitl_SPLITL_typed: splitl (P :char -> bool) (s :mlstring) = (implode ## implode) (SPLITL P (explode s)). Lean keeps P and s in HOL order, renders `##` as Prod.map with implode on both components and SPLITL as splitL (splitP of the negated test, HOL's SPLITL_def); no premise."}
 , {"hol_path": "cakeml/compiler/inference/inferPropsScript.sml", "hol_name": "inf_set_tids_subst_def", "lean_path": "Flapjack/Compiler/Inference/InferProps.lean", "lean_name": "infSetTidsSubst", "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["subst"], "reviewer": "HOL source reviewed: compared inf_set_tids_subst_def typed capture: ∀(tids :num -> bool) (subst :α |-> infer_t). inf_set_tids_subst tids subst ⇔ ∀(t :infer_t). t ∈ FRANGE subst ⇒ inf_set_tids_subset tids t. Lean keeps tids then subst in HOL order and the independent free key type α as an implicit type parameter, renders FRANGE subst as the set of successful lookups (∃ key, subst.lookup key = some t), inf_set_tids_subset as the tagged infSetTidsSubset and the HOL bool-valued tids as Nat → Prop, with the same universal and implication. The canonical finite-support map has an unconditional codec roundtrip (holFmapAsFiniteSupportParamWitness_infSetTidsSubst_subst)."}
 , {"hol_path": "cakeml/compiler/inference/inferPropsScript.sml", "hol_name": "inf_set_tids_subst_FEMPTY", "lean_path": "Flapjack/Compiler/Inference/InferProps.lean", "lean_name": "infSetTidsSubstEmpty", "statement_status": "reviewed_exact", "reviewer": "Compared inf_set_tids_subst_FEMPTY typed capture: inf_set_tids_subst (tids :num -> bool) (FEMPTY :α |-> infer_t). Lean keeps the single tids binder, renders FEMPTY as the canonical empty finite-support map (HolFiniteMapExact.empty) at the same polymorphic key type α and calls the tagged infSetTidsSubst; no premise. The proof eliminates the range witness, whose lookup is none."}
 , {"hol_path": "cakeml/compiler/inference/inferScript.sml", "hol_name": "check_s_def", "lean_path": "Flapjack/Compiler/Inference/Infer/EnvironmentInvariant.lean", "lean_name": "checkS", "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["s"], "reviewer": "HOL source reviewed: compared check_s_def typed capture: ∀(tvs :num) (uvs :num -> bool) (s :α |-> infer_t). check_s tvs uvs s ⇔ ∀(uv :α). uv ∈ FDOM s ⇒ check_t tvs uvs s⟨uv⟩. Lean keeps tvs, uvs, s in HOL order with α implicit, renders uv ∈ FDOM s as s.lookup uv ≠ none, s⟨uv⟩ (FAPPLY under domain membership) as (s.lookup uv).getD (.varDb 0) with the same default that the tagged inferTypeSubst uses for FAPPLY, and check_t as the tagged checkT; no other difference. The canonical finite-support map has an unconditional codec roundtrip (holFmapAsFiniteSupportParamWitness_checkS_s)."}
