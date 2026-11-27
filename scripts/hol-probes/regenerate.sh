@@ -12505,6 +12505,7 @@ run_probe word_unreach_defs_typed_probeScript.sml word_unreach_defs_typed_probe.
 
 run_probe source_let_defs_typed_probeScript.sml source_let_defs_typed_probe.out \
   dest_Let_def_typed dest_Letrec_def_typed lift_let_def_typed lift_lets_def_typed \
+  dest_Let_SOME_typed dest_Let_NONE_typed dest_Letrec_SOME_typed dest_Letrec_NONE_typed \
   "$cake_dir/compiler/backend/source_letScript.sml" \
   "$cake_dir/compiler/backend"
 
