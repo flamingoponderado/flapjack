@@ -3521,6 +3521,14 @@ run_probe mlstring_split_probeScript.sml mlstring_split_probe.out \
   splitl_aux_def_typed splitl_def_typed tokens_aux_def_typed tokens_def_typed tokens_filter_typed \
   "$cake_dir/basis/pure/mlstringScript.sml" "$cake_dir/basis/pure"
 
+run_probe mlstring_alt_typed_probeScript.sml mlstring_alt_typed_probe.out \
+  TOKENS_eq_tokens_typed collate_thm_typed splitl_SPLITL_typed TOKENS_eq_tokens_sym_typed \
+  fields_alt_typed tokens_alt_typed tokens_append_typed str_findi_OLEAST_typed \
+  isSubString_spec_typed OLEAST_LE_STEP_typed fields_alt_aux_def_typed \
+  str_app_list_opt_thm_typed tokens_alt_aux_def_typed fields_alt_fields_alt_aux_typed \
+  splitl_aux_SPLITP_typed TOKENS_eq_tokens_aux_typed tokens_alt_tokens_alt_aux_typed \
+  "$cake_dir/basis/pure/mlstringScript.sml" "$cake_dir/basis/pure"
+
 # The loopSem state-carrier probe pins the exact field shapes of a concrete
 # (8,'ffi) loopSem$state: num_map locals/code, total memory, set domain, clock, be.
 run_probe loop_sem_state_carrier_probeScript.sml loop_sem_state_carrier_probe.out \

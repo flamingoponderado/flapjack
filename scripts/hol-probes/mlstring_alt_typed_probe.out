@@ -1,0 +1,17 @@
+TOKENS_eq_tokens_typed=∀(P :char -> bool) (ls :mlstring). MAP explode (tokens P ls) = TOKENS P (explode ls)
+collate_thm_typed=∀(f :char -> char -> ordering) (s1 :mlstring) (s2 :mlstring). collate f s1 s2 = collate f (explode s1) (explode s2)
+splitl_SPLITL_typed=splitl (P :char -> bool) (s :mlstring) = (implode ## implode) (SPLITL P (explode s))
+TOKENS_eq_tokens_sym_typed=tokens (P :char -> bool) (ls :mlstring) = MAP implode (TOKENS P (explode ls))
+fields_alt_typed=fields (f :char -> bool) (s :mlstring) = fields_alt_aux f s (0 :num) (0 :num) (strlen s)
+tokens_alt_typed=tokens (f :char -> bool) (s :mlstring) = tokens_alt_aux f s (0 :num) (0 :num) (strlen s)
+tokens_append_typed=∀(P :char -> bool) (s1 :mlstring) (x :char) (s2 :mlstring). P x ⇒ tokens P (s1 ^ (toString x :mlstring) ^ s2) = tokens P s1 ++ tokens P s2
+str_findi_OLEAST_typed=∀(P :char -> bool) (i :num) (s :mlstring). str_findi P i s = OLEAST(j :num). i ≤ j ∧ j < strlen s ∧ P (strsub s j)
+isSubString_spec_typed=isSubstring (s1 :mlstring) (s2 :mlstring) ⇔ ∃(p :mlstring) (s :mlstring). s2 = p ^ s1 ^ s
+OLEAST_LE_STEP_typed=(OLEAST(j :num). (i :num) ≤ j ∧ (P :num -> bool) j) = if P i then SOME i else OLEAST(j :num). i + (1 :num) ≤ j ∧ P j
+fields_alt_aux_def_typed=∀(s :mlstring) (n :num) (j :num) (i :num) (f :char -> bool). fields_alt_aux f s i j n = if j < n then if f (strsub s j) then substring s i (j − i)::fields_alt_aux f s (j + (1 :num)) (j + (1 :num)) n else fields_alt_aux f s i (j + (1 :num)) n else [substring s i (j − i)]
+str_app_list_opt_thm_typed=concat (append (str_app_list_opt (l :mlstring app_list))) = concat (append l)
+tokens_alt_aux_def_typed=∀(s :mlstring) (n :num) (j :num) (i :num) (f :char -> bool). tokens_alt_aux f s i j n = if j < n then if f (strsub s j) then if i = j then tokens_alt_aux f s (i + (1 :num)) (j + (1 :num)) n else substring s i (j − i)::tokens_alt_aux f s (j + (1 :num)) (j + (1 :num)) n else tokens_alt_aux f s i (j + (1 :num)) n else if i = j then ([] :mlstring list) else [substring s i (j − i)]
+fields_alt_fields_alt_aux_typed=∀(l :num) (acc :string) (j :num) (i :num). i ≤ j ∧ j ≤ strlen (s :mlstring) ∧ strlen s − j = l ∧ acc = REVERSE (explode (substring s i (j − i))) ⇒ fields_aux (f :char -> bool) s acc j l = fields_alt_aux f s i j (strlen s)
+splitl_aux_SPLITP_typed=∀(P :char -> bool) (s :mlstring) (i :num). splitl_aux P s i = (implode ∘ STRCAT (TAKE i (explode s)) ## implode) (SPLITP ($¬ ∘ P) (DROP i (explode s)))
+TOKENS_eq_tokens_aux_typed=∀(P :char -> bool) (ls :mlstring) (ss :string) (n :num) (len :num). n + len = STRLEN (explode ls) ⇒ MAP explode (tokens_aux P ls ss n len) = case ss of ("" :string) => TOKENS P (DROP n (explode ls)) | STRING h t => if len ≠ (0 :num) ∧ ¬P (explode ls)❲n❳ then STRCAT (REVERSE (STRING h t)) (HD (TOKENS P (DROP n (explode ls))))::TL (TOKENS P (DROP n (explode ls))) else if len ≠ (0 :num) then REVERSE (STRING h t)::TOKENS P (DROP n (explode ls)) else [REVERSE (STRING h t)]
+tokens_alt_tokens_alt_aux_typed=∀(f :char -> bool) (s :mlstring) (acc :string) (j :num) (l :num) (i :num). i ≤ j ∧ j ≤ strlen s ∧ strlen s − j = l ∧ acc = REVERSE (explode (substring s i (j − i))) ⇒ tokens_aux f s acc j l = tokens_alt_aux f s i j (strlen s)
