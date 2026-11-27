@@ -18,3 +18,5 @@ gen_gc_def_typed=∀(conf :β gen_gc_conf) (roots :α heap_address list) (heap :
 heap_lookup_IMP_heap_addresses_typed=∀(xs :(α, β) heap_element list) (x :(α, β) heap_element) (j :num). heap_lookup j xs = SOME x ⇒ j ∈ heap_addresses (0 :num) xs
 heap_lookup_LENGTH_typed=∀(xs :(α, β) heap_element list) (x :(α, β) heap_element) (ys :(α, β) heap_element list) (l :num). heap_length xs = l ⇒ heap_lookup l (xs ++ x::ys) = SOME x
 gc_move_list_IMP_typed=∀(xs :α heap_address list) (xs' :α heap_address list) (state :(α, β) gc_state) (state' :(α, β) gc_state). gc_move_list (conf :β gen_gc_conf) state xs = (xs',state') ⇒ state.h1 = state'.h1 ∧ state.r3 = state'.r3 ∧ state.r2 = state'.r2 ∧ state.r1 = state'.r1 ∧ state.h2 ≼ state'.h2 ∧ IS_SUFFIX state'.r4 state.r4
+heaps_similar_lemma_typed=∀(h1 :(α, β) heap_element list) (h2 :(α, β) heap_element list) (ptr :num). heaps_similar h1 h2 ∧ isSomeDataElement (heap_lookup ptr h1) ⇒ isSomeDataOrForward (heap_lookup ptr h2)
+BIJ_IMP_FLOOKUP_SOME_typed=∀(s :num -> bool) (h :(α, β) heap_element list) (j :num). BIJ (heap_map1 h) (FDOM (heap_map (0 :num) h)) s ∧ j ∈ s ⇒ ∃(i :num). FLOOKUP (heap_map (0 :num) h) i = SOME j
