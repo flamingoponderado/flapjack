@@ -54,3 +54,4 @@ val _ = emit "gc_move_list_IMP_typed" "gc_move_list_IMP";
 val _ = emit "heaps_similar_lemma_typed" "heaps_similar_lemma";
 val _ = emit "BIJ_IMP_FLOOKUP_SOME_typed" "BIJ_IMP_FLOOKUP_SOME";
 val _ = emit "gc_move_ALT_typed" "gc_move_ALT";
+val _ = emit "gc_move_list_ALT_typed" "gc_move_list_ALT";

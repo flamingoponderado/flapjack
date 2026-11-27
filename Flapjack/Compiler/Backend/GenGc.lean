@@ -91,6 +91,56 @@ theorem gcMove_alt {α β : Type} (conf : Config β) (state : GcState α β) (y 
         · simp [gcMove, found, ref]
         · simp [gcMove, found, ref]
 
+/-- Re-attach the scan queues of `state` around a state reached from its reset
+    form; this is exactly the record update of HOL's `gc_move_ALT`. -/
+private def attachQueues {α β : Type} (state state' : GcState α β) : GcState α β :=
+  { state' with h2 := state.h2 ++ state'.h2, r4 := state'.r4 ++ state.r4 }
+
+private theorem attachQueues_reset {α β : Type} (state state' : GcState α β) :
+    { attachQueues state state' with h2 := [], r4 := [] } =
+      { state' with h2 := [], r4 := [] } := by
+  simp [attachQueues]
+
+private theorem attachQueues_assoc {α β : Type} (first second third : GcState α β) :
+    attachQueues first (attachQueues second third) =
+      attachQueues (attachQueues first second) third := by
+  simp [attachQueues, List.append_assoc]
+
+private theorem attachExplicit_reset {α β : Type} (state state' : GcState α β) :
+    { { state' with h2 := state.h2 ++ state'.h2, r4 := state'.r4 ++ state.r4 } with
+        h2 := [], r4 := [] } = { state' with h2 := [], r4 := [] } := by
+  simp
+
+/-- Original `gc_move_list_ALT`: moving the roots from the full state is the
+    same as moving them from the reset state and re-attaching the queues. -/
+@[hol "cakeml/compiler/backend/gc/gen_gcScript.sml" "gc_move_list_ALT"]
+theorem gcMoveList_alt {α β : Type} (conf : Config β) (ys : List (HeapAddress α))
+    (state : GcState α β) :
+    gcMoveList conf state ys =
+      (let moved := gcMoveList conf { state with h2 := [], r4 := [] } ys
+       match moved with
+       | (ys', state') =>
+           (ys', { state' with h2 := state.h2 ++ state'.h2, r4 := state'.r4 ++ state.r4 })) := by
+  change gcMoveList conf state ys =
+    (let moved := gcMoveList conf { state with h2 := [], r4 := [] } ys
+     match moved with
+     | (ys', state') => (ys', attachQueues state state'))
+  induction ys generalizing state with
+  | nil => simp [gcMoveList, attachQueues]
+  | cons root roots ih =>
+    simp only [gcMoveList]
+    rw [gcMove_alt conf state root]
+    generalize headRun : gcMove conf { state with h2 := [], r4 := [] } root = headResult
+    rcases headResult with ⟨root1, state1⟩
+    simp only []
+    rw [ih { state1 with h2 := state.h2 ++ state1.h2, r4 := state1.r4 ++ state.r4 }]
+    rw [ih state1]
+    rw [attachExplicit_reset]
+    generalize tailRun : gcMoveList conf { state1 with h2 := [], r4 := [] } roots = tailResult
+    rcases tailResult with ⟨roots1, state2⟩
+    simp only []
+    simp [attachQueues, List.append_assoc]
+
 open Classical in
 /-- Scan the copied data objects, using the source's heap-length measure. -/
 @[hol "cakeml/compiler/backend/gc/gen_gcScript.sml" "gc_move_data_def"]

@@ -595,7 +595,7 @@
     {"bytes": 109, "out": "gen_gc_partial_local_typed_probe.out", "rows": 1, "sha256": "4e987078f9ce1a9534e5abfd31d4eee5fb05476d9cc0caf6b6f2a1032e3d4aea"},
     {"bytes": 12893, "out": "gen_gc_partial_source_probe.out", "rows": 26, "sha256": "35af3bdb8157a86c796d792ae3710746864de18a271a3404500b26173a8ace05"},
     {"bytes": 25249, "out": "gen_gc_partial_typed_probe.out", "rows": 64, "sha256": "62853f56f77d5d821de3fae83ffd2515e0892bf7eaf103117f1c82a4b95f428d"},
-    {"bytes": 7701, "out": "gen_gc_typed_probe.out", "rows": 23, "sha256": "10ecc37eeb2f73a95d99baa7b14a0a989f3cd5b50117d1bf74b3407b593f0edd"},
+    {"bytes": 8094, "out": "gen_gc_typed_probe.out", "rows": 24, "sha256": "0550c527de90f3b64b105245f387b69d71e6fc497b07a92be3cfd3e871ad5a8a"},
     {"bytes": 85, "out": "get_forced_probe.out", "rows": 3, "sha256": "dbbd9f8c08b112f906815c4dc2caee7aa703bc95064e85ff5ac3d2ee89e48c65"},
     {"bytes": 163, "out": "get_stack_only_probe.out", "rows": 9, "sha256": "7ee09206a54c2b6be8c4daca516f7bb4768f6ba48a94a40d838770318e9b157f"},
     {"bytes": 88, "out": "globals_lookup_probe.out", "rows": 3, "sha256": "c446a12949f8e3acf58fee8139991a07cd8d7559f6eb5a367123f21021b4c978"},
