@@ -106,3 +106,6 @@ val _ = emit "LESS_IMP_heap_lookup_typed" "LESS_IMP_heap_lookup";
 val _ = emit "NOT_LESS_IMP_heap_lookup_typed" "NOT_LESS_IMP_heap_lookup";
 val _ = emit "isSome_heap_looukp_IMP_APPEND_typed" "isSome_heap_looukp_IMP_APPEND";
 val _ = emit "heap_split_APPEND_if_typed" "heap_split_APPEND_if";
+val _ = emit "heap_split_0_typed" "heap_split_0";
+val _ = emit "FINITE_heap_addresses_typed" "FINITE_heap_addresses";
+val _ = emit "CARD_heap_addresses_typed" "CARD_heap_addresses";

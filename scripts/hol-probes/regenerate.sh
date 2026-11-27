@@ -10793,6 +10793,7 @@ run_probe gc_shared_typed_probeScript.sml gc_shared_typed_probe.out \
   roots_ok_def_typed heap_ok_def_typed \
   el_length_GT_0_typed heap_length_NIL_typed heap_length_GTE_typed \
   el_length_NOT_0_typed EVERY_isDataElement_IMP_LEMMA_typed LESS_IMP_heap_lookup_typed NOT_LESS_IMP_heap_lookup_typed isSome_heap_looukp_IMP_APPEND_typed heap_split_APPEND_if_typed \
+  heap_split_0_typed FINITE_heap_addresses_typed CARD_heap_addresses_typed \
   "$cake_dir/compiler/backend/gc/gc_sharedScript.sml" \
   "$cake_dir/compiler/backend/gc"
 

@@ -73,3 +73,6 @@ LESS_IMP_heap_lookup_typed=∀(xs :(α, β) heap_element list) (j :num) (ys :(α
 NOT_LESS_IMP_heap_lookup_typed=∀(xs :(α, β) heap_element list) (j :num) (ys :(α, β) heap_element list). ¬(j < heap_length xs) ⇒ heap_lookup j (xs ++ ys) = heap_lookup (j − heap_length xs) ys
 isSome_heap_looukp_IMP_APPEND_typed=∀(xs :(α, β) heap_element list) (ptr :num). isSomeDataElement (heap_lookup ptr xs) ⇒ isSomeDataElement (heap_lookup ptr (xs ++ (ys :(α, β) heap_element list)))
 heap_split_APPEND_if_typed=∀(h1 :(α, β) heap_element list) (n :num) (h2 :(α, β) heap_element list). heap_split n (h1 ++ h2) = if n < heap_length h1 then case heap_split n h1 of (NONE :((α, β) heap_element list # (α, β) heap_element list) option) => (NONE :((α, β) heap_element list # (α, β) heap_element list) option) | SOME (h1',h2') => SOME (h1',h2' ++ h2) else case heap_split (n − heap_length h1) h2 of (NONE :((α, β) heap_element list # (α, β) heap_element list) option) => (NONE :((α, β) heap_element list # (α, β) heap_element list) option) | SOME (h1',h2') => SOME (h1 ++ h1',h2')
+heap_split_0_typed=heap_split (0 :num) (h :(α, β) heap_element list) = SOME (([] :(α, β) heap_element list),h)
+FINITE_heap_addresses_typed=∀(xs :(α, β) heap_element list) (n :num). FINITE (heap_addresses n xs)
+CARD_heap_addresses_typed=∀(xs :(α, β) heap_element list) (n :num). CARD (heap_addresses n xs) = LENGTH xs

@@ -8,6 +8,18 @@ public import Flapjack.HolArb
 /-! Heap slicing from the shared collector development. -/
 namespace Flapjack.Compiler.Backend
 
+/-- Original `heap_split_0`: splitting at offset zero keeps the whole heap.
+HOL registers this as `[simp]`; the Lean port leaves it unregistered so the
+shared collector's existing proofs do not carry unused `heapSplit` simp
+arguments (two of those sites are in the DataToWord tree, which is not
+modified here). -/
+@[hol "cakeml/compiler/backend/gc/gc_sharedScript.sml" "heap_split_0"]
+theorem heapSplit_zero {α β : Type} (heap : List (HeapElement α β)) :
+    heapSplit 0 heap = some ([], heap) := by
+  cases heap with
+  | nil => simp [heapSplit]
+  | cons head tail => simp [heapSplit]
+
 /-- Drop a prefix ending at an element boundary; the source leaves an
 invalid split unspecified. -/
 @[hol "cakeml/compiler/backend/gc/gc_sharedScript.sml" "heap_drop_def"]
