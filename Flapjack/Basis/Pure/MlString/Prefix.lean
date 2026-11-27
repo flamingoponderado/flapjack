@@ -2,6 +2,7 @@ module
 
 public import Flapjack.HolRef
 public import Flapjack.Basis.Pure.MlString.Ops
+public import Flapjack.Misc.OptionLeast
 
 @[expose] public section
 
@@ -225,5 +226,99 @@ theorem isPrefix_iff_exists (s1 s2 : MlString) :
     rw [ht, implode_explode]
   · rintro ⟨s3, rfl⟩
     exact ⟨explode s3, (explode_strcat s1 s3).symm⟩
+
+/-- Splitting a list at `i` and then at `i + k` recovers the list. -/
+private theorem take_drop_split (l : List HolChar) (i k : Nat) :
+    l.take i ++ (l.drop i).take k ++ l.drop (i + k) = l := by
+  induction l generalizing i k with
+  | nil => simp
+  | cons h t ih =>
+    cases i with
+    | zero => simp
+    | succ i =>
+      rw [Nat.add_right_comm i 1 k]
+      simp only [List.take_succ_cons, List.drop_succ_cons, List.cons_append]
+      rw [ih i k]
+
+/-- Original `OLEAST_LE_STEP`: the least witness from `i` either is `i` itself
+or the least witness from `i + 1`. -/
+@[hol "cakeml/basis/pure/mlstringScript.sml" "OLEAST_LE_STEP"]
+theorem oleastLeStep (P : Nat → Bool) (i : Nat) :
+    holOLeast (fun j => i ≤ j ∧ P j = true) =
+      if P i then some i else holOLeast (fun j => i + 1 ≤ j ∧ P j = true) := by
+  classical
+  by_cases hi : P i
+  · rw [if_pos hi, holOLeast_eq_some]
+    exact ⟨⟨Nat.le_refl i, hi⟩, fun m hm hle => by omega⟩
+  · rw [if_neg hi]
+    refine holOLeast_congr fun j => ?_
+    constructor
+    · rintro ⟨hle, hp⟩
+      have hne : j ≠ i := fun heq => hi (heq ▸ hp)
+      exact ⟨by omega, hp⟩
+    · rintro ⟨hle, hp⟩
+      exact ⟨by omega, hp⟩
+
+/-- The character-index predicate of `strFindi` as a boolean test. -/
+private theorem oleast_restrict (s : MlString) (P : HolChar → Bool) (i : Nat) :
+    holOLeast (fun j => i ≤ j ∧ j < strlen s ∧ P (strsub s j) = true) =
+      holOLeast (fun j => i ≤ j ∧ (decide (j < strlen s) && P (strsub s j)) = true) :=
+  holOLeast_congr fun j => by
+    rw [Bool.and_eq_true, decide_eq_true_eq]
+
+/-- Original `str_findi_OLEAST`: the search is the least matching index. -/
+@[hol "cakeml/basis/pure/mlstringScript.sml" "str_findi_OLEAST"]
+theorem strFindi_OLEAST (P : HolChar → Bool) (i : Nat) (s : MlString) :
+    strFindi P i s =
+      holOLeast (fun j => i ≤ j ∧ j < strlen s ∧ P (strsub s j) = true) := by
+  fun_induction strFindi P i s with
+  | case1 i hlt hp =>
+      exact ((holOLeast_eq_some _ _).mpr
+        ⟨⟨Nat.le_refl i, hlt, hp⟩, fun m hm hle => by omega⟩).symm
+  | case2 i hlt hn ih =>
+      have hQ : ¬ ((decide (i < strlen s) && P (strsub s i)) = true) := by
+        intro h
+        rw [Bool.and_eq_true] at h
+        exact hn h.2
+      have hstep :
+          holOLeast (fun j => i ≤ j ∧ j < strlen s ∧ P (strsub s j) = true) =
+            holOLeast (fun j => i + 1 ≤ j ∧ j < strlen s ∧ P (strsub s j) = true) := by
+        rw [oleast_restrict s P i,
+          oleastLeStep (fun j => decide (j < strlen s) && P (strsub s j)) i, if_neg hQ,
+          ← oleast_restrict s P (i + 1)]
+      exact ih.trans hstep.symm
+  | case3 i hn =>
+      exact ((holOLeast_eq_none _).mpr (by
+        rintro j ⟨hle, hlt, _⟩
+        omega)).symm
+
+/-- Original `isSubString_spec`: a substring is a middle piece of the string. -/
+@[hol "cakeml/basis/pure/mlstringScript.sml" "isSubString_spec"]
+theorem isSubstring_spec (s1 s2 : MlString) :
+    (isSubstring s1 s2 = true ↔ ∃ p s, s2 = strcat (strcat p s1) s) := by
+  have h := isSubstring_SEG (explode s1) (explode s2)
+  rw [implode_explode s1, implode_explode s2] at h
+  constructor
+  · intro hsub
+    obtain ⟨i, hi, hseg⟩ := h.mp hsub
+    have hlen1 : (explode s1).length ≤ ((explode s2).drop i).length := by
+      rw [List.length_drop]
+      omega
+    refine ⟨.implode ((explode s2).take i),
+      .implode ((explode s2).drop (i + (explode s1).length)), ?_⟩
+    simp only [strcat_eq_implode_append, explode_implode, List.append_assoc]
+    rw [← hseg, List.length_take, Nat.min_eq_left hlen1, ← List.append_assoc]
+    rw [take_drop_split (explode s2) i (explode s1).length]
+    exact (implode_explode s2).symm
+  · rintro ⟨p, s, rfl⟩
+    apply h.mpr
+    refine ⟨(explode p).length, ?_, ?_⟩
+    · rw [explode_strcat, explode_strcat, List.length_append, List.length_append]
+      omega
+    · have hlist : explode (strcat (strcat p s1) s) = explode p ++ (explode s1 ++ explode s) := by
+        rw [explode_strcat, explode_strcat, List.append_assoc]
+      rw [hlist, List.drop_append, List.drop_length, List.nil_append, Nat.sub_self,
+        List.drop_zero, List.take_append, Nat.sub_self, List.take_zero, List.append_nil]
+      rw [List.take_length]
 
 end Flapjack.Basis.Pure.MlString

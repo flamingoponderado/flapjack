@@ -4943,7 +4943,7 @@ run_probe hol_string_typed_probeScript.sml hol_string_typed_probe.out \
   islower_def_typed isupper_def_typed isalpha_def_typed char_size_def_typed \
   "$repo_dir/HOL/src/string/stringScript.sml" "$cake_dir/pancake"
 run_probe hol_while_typed_probeScript.sml hol_while_typed_probe.out \
-  oleast_def_typed oleast_intro_typed \
+  oleast_def_typed oleast_intro_typed oleast_eq_some_typed oleast_eq_none_typed \
   "$repo_dir/HOL/src/num/theories/WhileScript.sml" "$cake_dir/pancake"
 
 run_probe hol_richlist_typed_probeScript.sml hol_richlist_typed_probe.out \
