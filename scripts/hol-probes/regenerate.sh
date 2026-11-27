@@ -9886,7 +9886,7 @@ run_probe pegexec_cml_fo_source_probeScript.sml pegexec_cml_fo_source_probe.out 
   "$cake_dir/compiler/parsing"
 
 run_probe pegexec_cml_fo_machine_typed_probeScript.sml pegexec_cml_fo_machine_typed_probe.out \
-  pegresult_typed kont_fo_typed evalcase_fo_typed peg_fo_typed sloc_pexec_def_typed corestep_fo_body_def_typed run_peg_fo_def_typed peg_exec_fuel_fo_def_typed peg_exec_core_fuel_def_typed mlstring_nonempty_strlen_typed \
+  pegresult_typed kont_fo_typed evalcase_fo_typed peg_fo_typed sloc_pexec_def_typed corestep_fo_body_def_typed run_peg_fo_def_typed peg_exec_fuel_fo_def_typed peg_exec_core_fuel_def_typed peg_Ebase_paren_fo_def_typed eval_papp_ctor_rpt_fo_def_typed mlstring_nonempty_strlen_typed \
   "$cake_dir/compiler/parsing/pegexec_cml_foScript.sml" \
   "$cake_dir/compiler/parsing"
 

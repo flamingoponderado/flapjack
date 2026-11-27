@@ -2,6 +2,7 @@ module
 
 public import Flapjack.CakeParser.ParseTree
 public import Flapjack.Misc.Grammar
+public import Flapjack.Misc.ListEl
 
 @[expose] public section
 
@@ -167,6 +168,48 @@ private def ebaseParen : List ParseTree → List ParseTree
             [mkNode (nt .nEbase) [mkNode (nt .nEtuple) [lp, mkNode (nt .nElist2) [e, sep, es], rp]]]
           else [mkNode (nt .nEbase) [lp, mkNode (nt .nEseq) [e, sep, es], rp]]
   | _ => []
+
+/-- Exact port of HOL `peg_Ebase_paren_fo_def`: the parenthesized-expression
+    pattern, with `destLf` and `destTOK` deciding whether the middle leaf is a
+    comma. The type is HOL's inferred `(token, MMLnonT, locs) parsetree list`. -/
+@[hol "cakeml/compiler/parsing/pegexec_cml_foScript.sml" "peg_Ebase_paren_fo_def"]
+def pegEbaseParenFoHOL :
+    List (Misc.Grammar.ParseTree Token Nonterminal Misc.Location.Locs) →
+      List (Misc.Grammar.ParseTree Token Nonterminal Misc.Location.Locs)
+  | [lp, es, rp] =>
+      [mkNdHOL (.inl .nEbase) [lp, mkNdHOL (.inl .nEseq) [es], rp]]
+  | [lp, e, sep, es, rp] =>
+      match Misc.Grammar.destLf sep with
+      | none => []
+      | some symbol =>
+          match Misc.Grammar.destTokSym symbol with
+          | none => []
+          | some tok =>
+              if tok = .commaT then
+                [mkNdHOL (.inl .nEbase)
+                  [mkNdHOL (.inl .nEtuple)
+                    [lp, mkNdHOL (.inl .nElist2) [e, sep, es], rp]]]
+              else
+                [mkNdHOL (.inl .nEbase)
+                  [lp, mkNdHOL (.inl .nEseq) [e, sep, es], rp]]
+  | _ => []
+
+/-- Exact port of HOL `eval_papp_ctor_rpt_fo_def`: the constructor-application
+    node list. HOL `HD` is the reviewed `holHd` rendering; its unspecified
+    empty-list value is unreachable under the length-one guard. -/
+@[hol "cakeml/compiler/parsing/pegexec_cml_foScript.sml" "eval_papp_ctor_rpt_fo_def"]
+noncomputable def evalPappCtorRptFoHOL {α : Type} :
+    List (Misc.Grammar.ParseTree α Nonterminal Misc.Location.Locs) →
+      List (Misc.Grammar.ParseTree α Nonterminal Misc.Location.Locs)
+  | pts =>
+      if pts.length = 1 then
+        [mkNdHOL (.inl .nPapp)
+          [mkNdHOL (.inl .nPbase)
+            [@holHd _
+              ⟨.leaf (Misc.Grammar.Symbol.nt (.inl Nonterminal.nTopLevelDecs),
+                Misc.Location.unknownLoc)⟩ pts]]]
+      else if 1 < pts.length then ptPapplyFoHOL pts
+      else []
 
 /-- Evaluate a binary PEG action, preserving the original argument order. -/
 @[hol "cakeml/compiler/parsing/pegexec_cml_foScript.sml" "eval_binary_def"]

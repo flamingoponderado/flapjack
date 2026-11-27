@@ -26,4 +26,6 @@ val _ = show "corestep_fo_body_def_typed" pegexec_cml_foTheory.corestep_fo_body_
 val _ = show "run_peg_fo_def_typed" pegexec_cml_foTheory.run_peg_fo_def;
 val _ = show "peg_exec_fuel_fo_def_typed" pegexec_cml_foTheory.peg_exec_fuel_fo_def;
 val _ = show "peg_exec_core_fuel_def_typed" pegexec_cml_foTheory.peg_exec_core_fuel_def;
+val _ = show "peg_Ebase_paren_fo_def_typed" pegexec_cml_foTheory.peg_Ebase_paren_fo_def;
+val _ = show "eval_papp_ctor_rpt_fo_def_typed" pegexec_cml_foTheory.eval_papp_ctor_rpt_fo_def;
 val _ = show "mlstring_nonempty_strlen_typed" pegexec_cml_foTheory.mlstring_nonempty_strlen;
