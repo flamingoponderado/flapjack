@@ -1096,7 +1096,7 @@
     {"bytes": 18405, "out": "namespace_props_typed_probe.out", "rows": 89, "sha256": "fe8973cda9eada4b0b7d76c82d78b1687a96f5c067490ea3b9bfdda7e8004dcd"},
     {"bytes": 251, "out": "native_alist_insert_reverse_probe.out", "rows": 3, "sha256": "71d67c1b2811105c6adae83900a2522c56acab0bf683eaf9726591b62a1686de"},
     {"bytes": 216, "out": "ns_types_typed_probe.out", "rows": 3, "sha256": "55d535c638330a6f16fbc68964e9d47baa711c02b147781c347d31d80d7f05c2"},
-    {"bytes": 8008, "out": "num_list_enc_dec_typed_probe.out", "rows": 61, "sha256": "d76f50ed022c171d26975023585d1e6029ca991caa21cc7b3220bdba11e03bae"},
+    {"bytes": 15882, "out": "num_list_enc_dec_typed_probe.out", "rows": 87, "sha256": "01518aab0d5a6965dbb3e7b5e2b543c615f6f5f1f376f7fad1fffa5b6927cb2e"},
     {"bytes": 319, "out": "num_set_audit_probe.out", "rows": 16, "sha256": "ab1cf111a588d2a04174ae550b4a2a035ab537b3d86ab69d795e182755a8285b"},
     {"bytes": 152, "out": "num_set_spt_probe.out", "rows": 11, "sha256": "e6d7df80a2aed661f16a32c880c7ff784dfd0eb203a84ddba006d56e16c4d928"},
     {"bytes": 180, "out": "num_set_to_alist_probe.out", "rows": 6, "sha256": "fcd321225787ad169f2586222f58229af7287c24ac453dc6592d7fc43eabf8a5"},

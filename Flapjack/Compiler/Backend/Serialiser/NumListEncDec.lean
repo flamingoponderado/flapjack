@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Misc.AppList
 public import Flapjack.Basis.Pure.MlString
+public import Flapjack.Misc.Sptree.Wf
 
 @[expose] public section
 
@@ -654,5 +655,110 @@ theorem sumEncDecOk {α β : Type} (e1 : α → AppList Nat) (d1 : List Nat → 
       simp only [sumEnc]
       rw [appListAppend_cons 1 (e2 v) xs]
       simp [sumDec, r2]
+
+/-! ## Tree and reverse-append codecs -/
+
+/-- HOL `REV` from the external list library: reverse a list onto an
+    accumulator.  Untagged infrastructure; `REV xs res = REVERSE xs ++ res`. -/
+def holRev {α : Type} : List α → List α → List α
+  | [], res => res
+  | x :: xs, res => holRev xs (x :: res)
+
+private theorem holRev_eq_reverse_append {α : Type} (xs res : List α) :
+    holRev xs res = xs.reverse ++ res := by
+  induction xs generalizing res with
+  | nil => simp [holRev]
+  | cons x xs ih =>
+    simp only [holRev, ih, List.reverse_cons, List.append_assoc, List.singleton_append]
+
+/-- Original `append_rev_def`: flatten a tree onto an accumulator in reverse. -/
+@[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "append_rev_def"]
+def appendRev {α : Type} : AppList α → List α → List α
+  | .nil, res => res
+  | .list xs, res => holRev xs res
+  | .append l1 l2, res => appendRev l2 (appendRev l1 res)
+
+/-- Original `append_rev_thm`: reversing onto an accumulator is the reverse of
+    the flattening followed by the accumulator. -/
+@[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "append_rev_thm"]
+theorem appendRev_thm {α : Type} (l : AppList α) (res : List α) :
+    appendRev l res = (appListAppend l).reverse ++ res := by
+  induction l generalizing res with
+  | nil => simp [appendRev, appListAppend, appendAux]
+  | list xs => simp [appendRev, holRev_eq_reverse_append, appListAppend, appendAux]
+  | append l1 l2 ih1 ih2 =>
+    simp only [appendRev]
+    rw [ih2, ih1, appListAppend_append, List.reverse_append, List.append_assoc]
+
+/-- Original `spt_enc'_def`: encode a tree by its constructor tags and payloads. -/
+@[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "spt_enc'_def"]
+def sptEncPrime {α : Type} (e : α → AppList Nat) : Spt α → AppList Nat
+  | .ln => AppList.list [0]
+  | .ls x => AppList.append (AppList.list [1]) (e x)
+  | .bn t1 t2 =>
+      AppList.append (AppList.list [2])
+        (AppList.append (sptEncPrime e t1) (sptEncPrime e t2))
+  | .bs t1 x t2 =>
+      AppList.append (AppList.list [3])
+        (AppList.append (sptEncPrime e t1) (AppList.append (e x) (sptEncPrime e t2)))
+
+/-- Original `spt_depth_def`: the maximum depth of a tree. -/
+@[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "spt_depth_def"]
+def sptDepth {α : Type} : Spt α → Nat
+  | .bn t1 t2 => max (sptDepth t1) (sptDepth t2) + 1
+  | .bs t1 _ t2 => max (sptDepth t1) (sptDepth t2) + 1
+  | _ => 0
+
+/-- Original `spt_enc''_def`: the depth-prefixed tree encoding. -/
+@[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "spt_enc''_def"]
+def sptEncPrimePrime {α : Type} (e : α → AppList Nat) (t : Spt α) : AppList Nat :=
+  prodEnc numEnc (sptEncPrime e) (sptDepth t, t)
+
+/-- Original `spt_dec'_def`: decode a tree bounded by a depth budget. -/
+@[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "spt_dec'_def"]
+def sptDecPrime {α : Type} :
+    Nat → (List Nat → α × List Nat) → List Nat → Spt α × List Nat
+  | _, _, [] => (.ln, [])
+  | _, _, 0 :: rest => (.ln, rest)
+  | _, d, 1 :: rest =>
+      let step := d rest
+      (.ls step.1, step.2)
+  | 0, _, _ :: rest => (.ln, rest)
+  | k + 1, d, 2 :: rest =>
+      let step1 := sptDecPrime k d rest
+      let step2 := sptDecPrime k d step1.2
+      (.bn step1.1 step2.1, step2.2)
+  | k + 1, d, _ :: rest =>
+      let step1 := sptDecPrime k d rest
+      let step2 := d step1.2
+      let step3 := sptDecPrime k d step2.2
+      (.bs step1.1 step2.1 step3.1, step3.2)
+
+/-- Original `spt_dec''_def`: read the depth prefix, then the tree. -/
+@[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "spt_dec''_def"]
+def sptDecPrimePrime {α : Type} (d : List Nat → α × List Nat) :
+    List Nat → Spt α × List Nat
+  | [] => (.ln, [])
+  | m :: ms => sptDecPrime m d ms
+
+/-- Original `spt_enc_def`: encode a well-formed tree by its association list,
+    and any other tree by the depth-prefixed form. -/
+@[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "spt_enc_def"]
+def sptEnc {α : Type} (e : α → AppList Nat) : Spt α → AppList Nat :=
+  fun t =>
+    sumEnc (listEnc (prodEnc numEnc e)) (sptEncPrimePrime e)
+      (if sptWf t = true then Sum.inl (sptToAList t) else Sum.inr t)
+
+/-- Original `spt_dec_def`: decode the tagged association list or tree. -/
+@[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "spt_dec_def"]
+def sptDec {α : Type} (d : List Nat → α × List Nat) : List Nat → Spt α × List Nat :=
+  fun ns =>
+    Prod.map
+      (fun x =>
+        match x with
+        | .inl xs => sptFromAList xs
+        | .inr t => t)
+      id
+      (sumDec (listDec (prodDec numDec d)) (sptDecPrimePrime d) ns)
 
 end Flapjack.Compiler.Backend.Serialiser

@@ -9905,6 +9905,16 @@ run_probe num_list_enc_dec_typed_probeScript.sml num_list_enc_dec_typed_probe.ou
   prod_enc_def_typed prod_dec_def_typed prod_dec_ok_typed prod_enc_dec_ok_typed prod_enc_dec_ok_prime_typed \
   option_enc_def_typed option_dec_def_typed option_enc_dec_ok_typed \
   sum_enc_def_typed sum_dec_def_typed sum_enc_dec_ok_typed \
+  spt_enc_prime_def_typed spt_depth_def_typed spt_enc_prime_prime_def_typed \
+  spt_dec_prime_def_typed spt_dec_prime_prime_def_typed spt_enc_prime_prime_dec_ok_typed \
+  spt_enc_def_typed spt_dec_def_typed spt_enc_dec_ok_typed \
+  namespace_enc_prime_def_typed namespace_depth_def_typed namespace_enc_def_typed \
+  namespace_dec_prime_def_typed namespace_dec_def_typed dec_ok_namespace_dec_prime_typed \
+  namespace_enc_dec_ok_typed \
+  append_rev_def_typed append_rev_thm_typed \
+  num_to_chars_def_typed rev_nums_to_chars_def_typed nums_to_chars_def_typed \
+  dec_next_def_typed chars_to_nums_def_typed dec_next_nums_to_chars_typed \
+  chars_to_nums_nums_to_chars_typed rev_nums_to_chars_thm_typed \
   "$cake_dir/compiler/backend/serialiser/num_list_enc_decScript.sml" \
   "$cake_dir/compiler/backend/serialiser"
 
