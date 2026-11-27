@@ -435,3 +435,5 @@ fun capture_val_quote label name =
 val _ = emit_exported "INJ_DEF_typed" "INJ_DEF";
 val _ = emit_exported "LINV_LO_typed" "LINV_LO";
 val _ = emit_exported "LINV_OPT_def_typed" "LINV_OPT_def";
+val _ = emit_exported "SURJ_DEF_typed" "SURJ_DEF";
+val _ = emit_exported "BIJ_DEF_typed" "BIJ_DEF";

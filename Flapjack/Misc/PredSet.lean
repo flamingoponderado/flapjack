@@ -19,6 +19,16 @@ namespace Flapjack
 def holInj {α β : Type} (f : α → β) (s : α → Prop) (t : β → Prop) : Prop :=
   (∀ x, s x → t (f x)) ∧ (∀ x y, s x ∧ s y → f x = f y → x = y)
 
+/-- HOL's surjectivity relation between two sets. -/
+@[hol "HOL/src/pred_set/src/pred_setScript.sml" "SURJ_DEF"]
+def holSurj {α β : Type} (f : α → β) (s : α → Prop) (t : β → Prop) : Prop :=
+  (∀ x, s x → t (f x)) ∧ (∀ x, t x → ∃ y, s y ∧ f y = x)
+
+/-- HOL's bijectivity relation between two sets: injective and surjective. -/
+@[hol "HOL/src/pred_set/src/pred_setScript.sml" "BIJ_DEF"]
+def holBij {α β : Type} (f : α → β) (s : α → Prop) (t : β → Prop) : Prop :=
+  holInj f s t ∧ holSurj f s t
+
 open Classical in
 /-- HOL `LINV_OPT_def` (`pred_setScript.sml:2715-2718`, `[nocompute]`):
 `LINV_OPT f s y = if y IN IMAGE f s then SOME (@x. x IN s /\ (f x = y)) else NONE`. Under the

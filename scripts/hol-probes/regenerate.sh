@@ -12790,7 +12790,7 @@ run_probe finite_map_defs_typed_probeScript.sml finite_map_defs_typed_probe.out 
   "$hol_dir/src/finite_maps/finite_mapScript.sml" "$cake_dir/compiler/backend"
 
 run_probe pred_set_defs_typed_probeScript.sml pred_set_defs_typed_probe.out \
-  INJ_DEF_typed LINV_LO_typed LINV_OPT_def_typed \
+  INJ_DEF_typed LINV_LO_typed LINV_OPT_def_typed SURJ_DEF_typed BIJ_DEF_typed \
   "$hol_dir/src/pred_set/src/pred_setScript.sml" "$cake_dir/compiler/backend"
 
 run_probe bag_abbrev_typed_probeScript.sml bag_abbrev_typed_probe.out \
