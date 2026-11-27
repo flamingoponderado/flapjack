@@ -1,0 +1,8 @@
+dec_ok_def_typed=∀(dec :num list -> α # num list). dec_ok dec ⇔ ∀(i :num list). LENGTH (SND (dec i)) ≤ LENGTH i
+enc_dec_ok_def_typed=∀(enc :α -> num app_list) (dec :num list -> α # num list). enc_dec_ok enc dec ⇔ dec_ok dec ∧ ∀(x :α) (xs :num list). dec (append (enc x) ++ xs) = (x,xs)
+dec_ok_simp_typed=dec_ok (((f :β -> α) ## (I :num list -> num list)) ∘ (d :num list -> β # num list)) ⇔ dec_ok d
+enc_dec_ok_o_typed=enc_dec_ok (e :α -> num app_list) (d :num list -> α # num list) ∧ (∀(x :β). (f :α -> β) ((g :β -> α) x) = x) ⇒ enc_dec_ok (e ∘ g) ((f ## (I :num list -> num list)) ∘ d)
+enc_dec_ok_prime_def_typed=∀(p :α -> bool) (enc :α -> num app_list) (dec :num list -> α # num list). enc_dec_ok' p enc dec ⇔ dec_ok dec ∧ ∀(x :α) (xs :num list). p x ⇒ dec (append (enc x) ++ xs) = (x,xs)
+IMP_enc_dec_ok_typed=enc_dec_ok (enc :α -> num app_list) (dec :num list -> α # num list) ⇒ enc_dec_ok' (K T :α -> bool) enc dec
+enc_dec_ok_prime_IMP_typed=enc_dec_ok' (λ(x :α). T) (enc :α -> num app_list) (dec :num list -> α # num list) ⇒ enc_dec_ok enc dec
+const_dec_def_typed=∀(a :α) (xs :num list). const_dec a xs = (a,xs)

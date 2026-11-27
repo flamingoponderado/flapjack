@@ -15,6 +15,7 @@ import Flapjack.SemanticPrimitivesProps.Declarations
 import Flapjack.SemanticPrimitivesProps.StoreValues
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PrimitiveConversion
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ArithmeticResults
+import Flapjack.Compiler.Backend.Serialiser.NumListEncDec
 import Flapjack.SemanticPrimitivesHOL.Thunk
 import Flapjack.EvaluateHOL
 import Flapjack.EvaluateHOL.Definition

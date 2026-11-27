@@ -9890,6 +9890,11 @@ run_probe pegexec_cml_fo_machine_typed_probeScript.sml pegexec_cml_fo_machine_ty
   "$cake_dir/compiler/parsing/pegexec_cml_foScript.sml" \
   "$cake_dir/compiler/parsing"
 
+run_probe num_list_enc_dec_typed_probeScript.sml num_list_enc_dec_typed_probe.out \
+  dec_ok_def_typed enc_dec_ok_def_typed dec_ok_simp_typed enc_dec_ok_o_typed enc_dec_ok_prime_def_typed IMP_enc_dec_ok_typed enc_dec_ok_prime_IMP_typed const_dec_def_typed \
+  "$cake_dir/compiler/backend/serialiser/num_list_enc_decScript.sml" \
+  "$cake_dir/compiler/backend/serialiser"
+
 run_probe flat_elim_evaluate_source_probeScript.sml flat_elim_evaluate_source_probe.out \
   evaluate_keep_flat_state_rel_eq_lemma_typed evaluate_sing_keep_flat_state_rel_eq_typed evaluate_dec_flat_state_rel_typed evaluate_flat_state_rel_lemma_typed evaluate_sing_notKeep_flat_state_rel_typed \
   "$cake_dir/compiler/backend/proofs/flat_elimProofScript.sml" \
