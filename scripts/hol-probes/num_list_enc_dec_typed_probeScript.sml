@@ -35,3 +35,6 @@ val _ = show "word64_enc_dec_ok_typed" num_list_enc_decTheory.word64_enc_dec_ok;
 val _ = show "bool_enc_def_typed" num_list_enc_decTheory.bool_enc_def;
 val _ = show "bool_dec_def_typed" num_list_enc_decTheory.bool_dec_def;
 val _ = show "bool_enc_dec_ok_typed" num_list_enc_decTheory.bool_enc_dec_ok;
+val _ = show "int_enc_def_typed" num_list_enc_decTheory.int_enc_def;
+val _ = show "int_dec_def_typed" num_list_enc_decTheory.int_dec_def;
+val _ = show "int_enc_dec_ok_typed" num_list_enc_decTheory.int_enc_dec_ok;

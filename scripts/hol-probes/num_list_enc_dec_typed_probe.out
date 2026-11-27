@@ -22,3 +22,6 @@ word64_enc_dec_ok_typed=enc_dec_ok word64_enc word64_dec
 bool_enc_def_typed=bool_enc = num_enc ∘ (λ(b :bool). if b then (1 :num) else (0 :num))
 bool_dec_def_typed=bool_dec = ($= (1 :num) ## (I :num list -> num list)) ∘ num_dec
 bool_enc_dec_ok_typed=enc_dec_ok bool_enc bool_dec
+int_enc_def_typed=int_enc = num_enc ∘ (λ(n :int). if n < (0 :int) then (2 :num) * Num (ABS n) + (1 :num) else (2 :num) * Num (ABS n))
+int_dec_def_typed=int_dec = ((λ(r :num). if ODD r then (0 :int) − ((&(r DIV (2 :num))) :int) else ((&(r DIV (2 :num))) :int)) ## (I :num list -> num list)) ∘ num_dec
+int_enc_dec_ok_typed=enc_dec_ok int_enc int_dec

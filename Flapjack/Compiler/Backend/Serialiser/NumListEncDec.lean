@@ -15,6 +15,10 @@ map is Lean's `Prod.map` and HOL `∘` is composition.
 
 namespace Flapjack.Compiler.Backend.Serialiser
 
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
+
 open Flapjack
 
 /-- Original `dec_ok_def`: a decoder never returns more input than it consumed. -/
@@ -193,6 +197,45 @@ theorem boolEncDecOk : encDecOk boolEnc boolDec := by
     | false => rfl
   have step := encDecOk_comp (e := numEnc) (d := numDec) (f := fun r => decide (r = 1))
     (g := fun b => if b = true then 1 else 0) ⟨numEncDecOk, inverse⟩
+  exact step
+
+/-- The integer-to-number half of HOL's `int_enc`. -/
+private def intEncNat (x : Int) : Nat :=
+  if x < 0 then 2 * x.natAbs + 1 else 2 * x.natAbs
+
+/-- The number-to-integer half of HOL's `int_dec`. -/
+private def intDecInt (r : Nat) : Int :=
+  if r % 2 = 1 then -((r / 2 : Nat) : Int) else ((r / 2 : Nat) : Int)
+
+/-- Original `int_enc_def`: zig-zag encoding of integers as numbers. -/
+@[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "int_enc_def"]
+def intEnc : Int → AppList Nat := fun n => numEnc (intEncNat n)
+
+/-- Original `int_dec_def`: zig-zag decoding of numbers as integers. -/
+@[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "int_dec_def"]
+def intDec : List Nat → Int × List Nat := fun ns => Prod.map intDecInt id (numDec ns)
+
+private theorem intDecInt_intEncNat (x : Int) : intDecInt (intEncNat x) = x := by
+  unfold intEncNat intDecInt
+  cases x with
+  | ofNat n =>
+    have notNeg : ¬ (↑n : Int) < 0 := by simp
+    have even : (2 * n) % 2 ≠ 1 := by omega
+    have half : (2 * n) / 2 = n := by omega
+    simp only [Int.ofNat_eq_natCast, notNeg, if_false, Int.natAbs_natCast, even, half]
+  | negSucc n =>
+    have neg : Int.negSucc n < 0 := by omega
+    have odd : (2 * (n + 1) + 1) % 2 = 1 := by omega
+    have half : (2 * (n + 1) + 1) / 2 = n + 1 := by omega
+    simp only [neg, if_true, Int.natAbs_negSucc, odd, half]
+    rfl
+
+/-- Original `int_enc_dec_ok`. -/
+@[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "int_enc_dec_ok"]
+theorem intEncDecOk : encDecOk intEnc intDec := by
+  have inverse : ∀ x : Int, intDecInt (intEncNat x) = x := intDecInt_intEncNat
+  have step := encDecOk_comp (e := numEnc) (d := numDec) (f := intDecInt) (g := intEncNat)
+    ⟨numEncDecOk, inverse⟩
   exact step
 
 end Flapjack.Compiler.Backend.Serialiser
