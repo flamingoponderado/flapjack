@@ -50,3 +50,4 @@ val _ = emit "gc_move_loop_def_typed" "gc_move_loop_def";
 val _ = emit "gen_gc_def_typed" "gen_gc_def";
 val _ = emit "heap_lookup_IMP_heap_addresses_typed" "heap_lookup_IMP_heap_addresses";
 val _ = emit "heap_lookup_LENGTH_typed" "heap_lookup_LENGTH";
+val _ = emit "gc_move_list_IMP_typed" "gc_move_list_IMP";
