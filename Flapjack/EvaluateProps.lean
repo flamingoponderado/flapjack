@@ -17,6 +17,34 @@ theorem callFFIHOL_length {σ : Type} (st : HolFfiState σ) (index : HolFfiName)
     (h : callFFIHOL st index conf x = .ret newSt newBytes) : x.length = newBytes.length :=
   (callFFIHOL_ret_length st index conf x newBytes newSt h).symm
 
+/-- Original `call_FFI_return_unchanged`: a returning call is only possible on the
+identity external-call name, and then the state and bytes are unchanged. -/
+@[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "call_FFI_return_unchanged"]
+theorem callFFIHOL_return_unchanged {σ : Type} (ffi : HolFfiState σ) (s : HolFfiName)
+    (conf bytes bytes' : List (BitVec 8)) :
+    callFFIHOL ffi s conf bytes = .ret ffi bytes' ↔
+      s = .extCall (Flapjack.Basis.Pure.MlString.MlString.implode []) ∧ bytes' = bytes := by
+  unfold callFFIHOL
+  by_cases h : s = .extCall (Flapjack.Basis.Pure.MlString.MlString.implode [])
+  · rw [if_pos h]
+    simp [h, eq_comm]
+  · rw [if_neg h]
+    constructor
+    · intro heq
+      exfalso
+      cases hor : ffi.oracle s ffi.ffiState conf bytes with
+      | final outcome => simp [hor] at heq
+      | ret nextState nextBytes =>
+        simp only [hor] at heq
+        by_cases hlen : nextBytes.length = bytes.length
+        · rw [if_pos hlen] at heq
+          simp only [HolFfiResult.ret.injEq] at heq
+          have hlen2 := congrArg (fun st : HolFfiState σ => st.ioEvents.length) heq.1
+          simp at hlen2
+        · simp [hlen] at heq
+    · intro hs
+      exact absurd hs.1 h
+
 /-- HOL's single successful FFI-call relation. All four witnesses are retained:
 the name, configuration, input bytes, and returned bytes. This is the step
 relation, rather than its reflexive-transitive closure. -/
