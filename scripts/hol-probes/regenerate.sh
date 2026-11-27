@@ -9885,6 +9885,11 @@ run_probe pegexec_cml_fo_source_probeScript.sml pegexec_cml_fo_source_probe.out 
   "$cake_dir/compiler/parsing/pegexec_cml_foScript.sml" \
   "$cake_dir/compiler/parsing"
 
+run_probe pegexec_cml_fo_machine_typed_probeScript.sml pegexec_cml_fo_machine_typed_probe.out \
+  pegresult_typed kont_fo_typed evalcase_fo_typed peg_fo_typed sloc_pexec_def_typed corestep_fo_body_def_typed run_peg_fo_def_typed peg_exec_fuel_fo_def_typed peg_exec_core_fuel_def_typed mlstring_nonempty_strlen_typed \
+  "$cake_dir/compiler/parsing/pegexec_cml_foScript.sml" \
+  "$cake_dir/compiler/parsing"
+
 run_probe flat_elim_evaluate_source_probeScript.sml flat_elim_evaluate_source_probe.out \
   evaluate_keep_flat_state_rel_eq_lemma_typed evaluate_sing_keep_flat_state_rel_eq_typed evaluate_dec_flat_state_rel_typed evaluate_flat_state_rel_lemma_typed evaluate_sing_notKeep_flat_state_rel_typed \
   "$cake_dir/compiler/backend/proofs/flat_elimProofScript.sml" \
