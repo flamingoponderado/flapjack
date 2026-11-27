@@ -142,6 +142,45 @@ theorem concat_sing (x : MlString) : concat [x] = x := by
   cases x
   simp [concat]
 
+/-- Original `str_app_list_opt_thm`: annotating and shrinking keeps the
+    concatenated characters. -/
+@[hol "cakeml/basis/pure/mlstringScript.sml" "str_app_list_opt_thm"]
+theorem strAppListOpt_concat (l : AppList MlString) :
+    concat (appListAppend (strAppListOpt l)) = concat (appListAppend l) := by
+  induction l with
+  | nil =>
+      simp [strAppListOpt, makeAppListAnn, shrink, appListAppend, appendAux, concat]
+  | append l1 l2 ih1 ih2 =>
+      generalize h1 : makeAppListAnn l1 = a1
+      obtain ⟨x1, n1⟩ := a1
+      generalize h2 : makeAppListAnn l2 = a2
+      obtain ⟨x2, n2⟩ := a2
+      simp only [strAppListOpt, makeAppListAnn, h1, h2]
+      by_cases hn : n1 + n2 < appListSizeLimit
+      · rw [if_pos hn]
+        dsimp only
+        simp only [shrink, appListAppend, appendAux, concat, List.map_cons, List.map_nil,
+          List.flatten_cons, List.flatten_nil, List.append_nil]
+      · rw [if_neg hn]
+        dsimp only
+        simp only [shrink]
+        rw [(appListAppend_thm_sameType (shrink x1) (shrink x2) ([] : List MlString)).1]
+        rw [(appListAppend_thm_sameType l1 l2 ([] : List MlString)).1]
+        rw [concat_append, concat_append]
+        have hs1 : strAppListOpt l1 = shrink x1 := by
+          simp only [strAppListOpt, h1]
+        have hs2 : strAppListOpt l2 = shrink x2 := by
+          simp only [strAppListOpt, h2]
+        rw [← hs1, ← hs2, ih1, ih2]
+  | list ls =>
+      generalize h : makeAppListAnn (.list ls) = a
+      obtain ⟨x, n⟩ := a
+      simp only [strAppListOpt, makeAppListAnn]
+      split
+      · simp only [shrink, appListAppend, appendAux, concat, List.map_cons, List.map_nil,
+          List.flatten_cons, List.flatten_nil, List.append_nil]
+      · simp only [shrink, appListAppend, appendAux, concat]
+
 /-- Original `empty_ffi_def`: the empty FFI call has no result. -/
 @[hol "cakeml/basis/pure/mlstringScript.sml" "empty_ffi_def"]
 def emptyFfi (_s : MlString) : Unit := ()
