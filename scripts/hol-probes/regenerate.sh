@@ -971,7 +971,9 @@ run_probe backend_stack_frames_probeScript.sml backend_stack_frames_probe.out \
   stack_frames_def_typed stack_frames_thm_typed "$cake_dir/compiler/backend/proofs/backendProofScript.sml" "$cake_dir/compiler/backend"
 
 run_probe backend_source_pipeline_probeScript.sml backend_source_pipeline_probe.out \
-  to_flat_typed to_clos_typed to_bvl_typed to_bvi_typed to_data_typed "$cake_dir/compiler/backend/backendScript.sml" "$cake_dir/compiler/backend"
+  to_flat_typed to_clos_typed to_bvl_typed to_bvi_typed to_data_typed \
+  backend_progs_typed empty_progs_def_typed keep_progs_def_typed set_oracle_def_typed \
+  "$cake_dir/compiler/backend/backendScript.sml" "$cake_dir/compiler/backend"
 
 run_probe data_word_force_typed_probeScript.sml data_word_force_typed_probe.out \
   force_thunk_typed arg4_typed set_bool_typed assign_cmp_typed assign_string_cmp_typed assign_bounds_byte_typed assign_bounds_array_typed assign_bounds_block_typed assign_equal_typed assign_less_typed assign_less_eq_typed assign_len_eq_typed assign_tag_len_eq_typed assign_tag_eq_typed "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"

@@ -294,6 +294,7 @@ import Flapjack.RiscV.CorrectnessEncoding.Binop
 import Flapjack.RiscV.CorrectnessEncoding.Const32
 import Flapjack.Compiler.Backend.Backend
 import Flapjack.Compiler.Backend.Backend.SourcePipeline
+import Flapjack.Compiler.Backend.Backend.Progs
 import Flapjack.Compiler.Backend.Backend.SourcePipelineExecution
 import Flapjack.Compiler.Backend.ConfigDecidableEq
 import Flapjack.Compiler.Backend.BackendProof.MachineInit
