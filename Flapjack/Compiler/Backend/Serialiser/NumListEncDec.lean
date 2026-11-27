@@ -1160,4 +1160,224 @@ theorem namespaceEncDecOk {α : Type} (e : α → AppList Nat) (d : List Nat →
     exact (namespaceEncPrime_roundtrip_aux e d ⟨bound, roundtrip⟩).1 t xs (namespaceDepth t)
       (Nat.le_refl _)
 
+/-! ## Character encoding of number lists -/
+
+/-- Original `num_to_chars_def`: encode a number as one or more characters. -/
+@[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "num_to_chars_def"]
+def numToChars (n : Nat) : List HolChar :=
+  if n < 30 then [holChr (n + 32)]
+  else holChr (n % 30 + 32 + 30) :: numToChars (n / 30)
+termination_by n
+decreasing_by
+  have h30 : 1 < 30 := by decide
+  exact Nat.div_lt_self (by omega) h30
+
+/-- Original `rev_nums_to_chars_def`: encode a number list onto an accumulator. -/
+@[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "rev_nums_to_chars_def"]
+def revNumsToChars : List Nat → List HolChar → List HolChar
+  | [], res => res
+  | n :: ns, res => revNumsToChars ns (numToChars n ++ res)
+
+/-- Original `nums_to_chars_def`: encode a number list. -/
+@[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "nums_to_chars_def"]
+def numsToChars : List Nat → List HolChar
+  | [] => []
+  | n :: ns =>
+      if n < 30 then holChr (n + 32) :: numsToChars ns
+      else holChr (n % 30 + 32 + 30) :: numsToChars ((n / 30) :: ns)
+termination_by ns => sizeOf ns
+decreasing_by
+  · decreasing_trivial
+  · simp_wf
+    have h30 : 1 < 30 := by decide
+    exact Nat.div_lt_self (by omega) h30
+
+/-- Original `dec_next_def`: decode one number from a character list. -/
+@[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "dec_next_def"]
+def decNext : Nat → Nat → List HolChar → Nat × List HolChar
+  | k, _, [] => (k, [])
+  | k, l, c :: cs =>
+      let m := c.toNat - 32
+      if m < 30 then (k + l * m, cs)
+      else decNext (k + l * (m - 30)) (l * 30) cs
+
+/-- HOL `dec_next_LENGTH` (local there): a nonempty decode consumes input. -/
+private theorem decNext_length_lt :
+    ∀ (n l : Nat) (t : List HolChar), t ≠ [] →
+      ∀ (k : Nat) (ks : List HolChar), decNext n l t = (k, ks) → ks.length < t.length := by
+  intro n l t
+  induction t generalizing n l with
+  | nil =>
+      intro ne
+      exact absurd rfl ne
+  | cons c cs ih =>
+      intro _ k ks h
+      by_cases hm : c.toNat - 32 < 30
+      · simp only [decNext, hm] at h
+        obtain ⟨_, rfl⟩ := h
+        simp only [List.length_cons]
+        omega
+      · simp only [decNext, hm] at h
+        cases cs with
+        | nil =>
+            simp only [decNext] at h
+            obtain ⟨_, rfl⟩ := h
+            simp
+        | cons c' cs' =>
+            have hne : c' :: cs' ≠ [] := by simp
+            have step := ih _ _ hne _ _ h
+            simp only [List.length_cons] at step ⊢
+            omega
+
+/-- Original `chars_to_nums_def`: decode the numbers of a character list. -/
+@[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "chars_to_nums_def"]
+def charsToNums : List HolChar → List Nat
+  | [] => []
+  | c :: cs =>
+      let step := decNext 0 1 (c :: cs)
+      step.1 :: charsToNums step.2
+termination_by cs => cs.length
+decreasing_by
+  have hne : c :: cs ≠ [] := by simp
+  exact decNext_length_lt 0 1 (c :: cs) hne _ _ rfl
+
+/-- Encoding commutes with list append (HOL `nums_to_chars_APPEND`, local there). -/
+private theorem numsToChars_append :
+    ∀ (xs ys : List Nat), numsToChars (xs ++ ys) = numsToChars xs ++ numsToChars ys := by
+  intro xs
+  induction xs using numsToChars.induct with
+  | case1 =>
+      intro ys
+      simp only [List.nil_append]
+      rw [numsToChars]
+      simp
+  | case2 r rs hlt ih =>
+      intro ys
+      have hL : numsToChars (r :: (rs ++ ys)) = holChr (r + 32) :: numsToChars (rs ++ ys) := by
+        rw [numsToChars]
+        rw [if_pos hlt]
+      have hR : numsToChars (r :: rs) = holChr (r + 32) :: numsToChars rs := by
+        rw [numsToChars]
+        rw [if_pos hlt]
+      rw [List.cons_append, hL, hR, ih ys]
+      simp only [List.cons_append]
+  | case3 r rs hge ih =>
+      intro ys
+      have hL : numsToChars (r :: (rs ++ ys))
+          = holChr (r % 30 + 32 + 30) :: numsToChars (r / 30 :: (rs ++ ys)) := by
+        rw [numsToChars]
+        rw [if_neg hge]
+      have hR : numsToChars (r :: rs)
+          = holChr (r % 30 + 32 + 30) :: numsToChars (r / 30 :: rs) := by
+        rw [numsToChars]
+        rw [if_neg hge]
+      have step : numsToChars (r / 30 :: (rs ++ ys))
+          = numsToChars (r / 30 :: rs) ++ numsToChars ys := ih ys
+      rw [List.cons_append, hL, hR, step]
+      simp only [List.cons_append]
+
+/-- A singleton list encodes exactly as its single number. -/
+private theorem numsToChars_single : ∀ n : Nat, numsToChars [n] = numToChars n := by
+  intro n
+  induction n using numToChars.induct with
+  | case1 x hlt =>
+      rw [numsToChars]
+      rw [if_pos hlt]
+      rw [numToChars]
+      rw [if_pos hlt]
+      rw [numsToChars]
+  | case2 x hge ih =>
+      rw [numsToChars]
+      rw [if_neg hge]
+      rw [numToChars]
+      rw [if_neg hge, ih]
+
+/-- Original `dec_next_nums_to_chars`. -/
+@[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "dec_next_nums_to_chars"]
+theorem decNext_numsToChars : ∀ (h l : Nat) (ns : List Nat) (k : Nat),
+    decNext k (30 ^ l) (numsToChars (h :: ns)) = (k + 30 ^ l * h, numsToChars ns) := by
+  intro h
+  induction h using Nat.strongRecOn with
+  | ind h ih =>
+    intro l ns k
+    by_cases hlt : h < 30
+    · have hchars : numsToChars (h :: ns) = holChr (h + 32) :: numsToChars ns := by
+        rw [numsToChars]
+        rw [if_pos hlt]
+      have hm : (holChr (h + 32)).toNat - 32 = h := by
+        simp only [holChr, BitVec.toNat_ofNat]
+        rw [Nat.mod_eq_of_lt (by omega)]
+        omega
+      rw [hchars]
+      simp only [decNext, hm]
+      rw [if_pos hlt]
+    · have hchars : numsToChars (h :: ns)
+          = holChr (h % 30 + 32 + 30) :: numsToChars ((h / 30) :: ns) := by
+        rw [numsToChars]
+        rw [if_neg hlt]
+      have hm : (holChr (h % 30 + 32 + 30)).toNat - 32 = h % 30 + 30 := by
+        simp only [holChr, BitVec.toNat_ofNat]
+        rw [Nat.mod_eq_of_lt (by omega)]
+        omega
+      have hsub : h % 30 + 30 - 30 = h % 30 := by omega
+      have hp : 30 ^ l * 30 = 30 ^ (l + 1) := by
+        rw [Nat.pow_succ]
+      have key : 30 ^ l * (h % 30) + 30 ^ (l + 1) * (h / 30) = 30 ^ l * h := by
+        rw [Nat.pow_succ, Nat.mul_assoc, ← Nat.mul_add, Nat.mod_add_div]
+      rw [hchars]
+      simp only [decNext, hm]
+      rw [if_neg (by omega : ¬ h % 30 + 30 < 30), hsub, hp]
+      rw [ih (h / 30) (by omega) (l + 1) ns (k + 30 ^ l * (h % 30))]
+      rw [Nat.add_assoc, key]
+
+/-- Original `chars_to_nums_nums_to_chars`: decoding undoes encoding. -/
+@[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "chars_to_nums_nums_to_chars"]
+theorem charsToNums_numsToChars : ∀ ns : List Nat, charsToNums (numsToChars ns) = ns := by
+  intro ns
+  induction ns with
+  | nil =>
+      rw [numsToChars, charsToNums]
+  | cons h t ih =>
+      by_cases hlt : h < 30
+      · have hchars : numsToChars (h :: t) = holChr (h + 32) :: numsToChars t := by
+          rw [numsToChars]
+          rw [if_pos hlt]
+        have hdec := decNext_numsToChars h 0 t 0
+        simp only [Nat.pow_zero, Nat.one_mul, Nat.zero_add] at hdec
+        have hdec' : decNext 0 1 (holChr (h + 32) :: numsToChars t) = (h, numsToChars t) := by
+          rw [← hchars]
+          exact hdec
+        rw [hchars]
+        rw [charsToNums]
+        rw [hdec']
+        simp only [ih]
+      · have hchars : numsToChars (h :: t)
+            = holChr (h % 30 + 32 + 30) :: numsToChars ((h / 30) :: t) := by
+          rw [numsToChars]
+          rw [if_neg hlt]
+        have hdec := decNext_numsToChars h 0 t 0
+        simp only [Nat.pow_zero, Nat.one_mul, Nat.zero_add] at hdec
+        have hdec' : decNext 0 1
+            (holChr (h % 30 + 32 + 30) :: numsToChars ((h / 30) :: t))
+            = (h, numsToChars t) := by
+          rw [← hchars]
+          exact hdec
+        rw [hchars]
+        rw [charsToNums]
+        rw [hdec']
+        simp only [ih]
+
+/-- Original `rev_nums_to_chars_thm`. -/
+@[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "rev_nums_to_chars_thm"]
+theorem revNumsToChars_thm (ns : List Nat) (res : List HolChar) :
+    revNumsToChars ns res = numsToChars ns.reverse ++ res := by
+  induction ns generalizing res with
+  | nil =>
+      simp [revNumsToChars, numsToChars]
+  | cons n ns ih =>
+      simp only [revNumsToChars]
+      rw [ih]
+      rw [List.reverse_cons, numsToChars_append, numsToChars_single]
+      simp only [List.append_assoc]
+
 end Flapjack.Compiler.Backend.Serialiser
