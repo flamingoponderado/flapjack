@@ -3,6 +3,7 @@ module
 public import Flapjack.Misc.AppList
 public import Flapjack.Basis.Pure.MlString
 public import Flapjack.Misc.Sptree.Wf
+public import Flapjack.NamespaceHOL
 
 @[expose] public section
 
@@ -23,6 +24,7 @@ set_option backward.privateInPublic.warn false
 
 open Flapjack
 open Flapjack.Basis.Pure.MlString
+open Flapjack.NamespaceHOL
 
 /-- Original `dec_ok_def`: a decoder never returns more input than it consumed. -/
 @[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "dec_ok_def"]
@@ -931,5 +933,231 @@ theorem sptEncDecOk {α : Type} (e : α → AppList Nat) (d : List Nat → α ×
       | .inr t => t)
     (g := fun t => if sptWf t = true then Sum.inl (sptToAList t) else Sum.inr t)
     ⟨sumOk, inverse⟩
+
+/-! ## Namespace codecs -/
+
+mutual
+  /-- Original `namespace_enc'_def`, first clause: encode a namespace. -/
+  @[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "namespace_enc'_def"]
+  def namespaceEncPrime {α : Type} (e : α → AppList Nat) :
+      Namespace MlString MlString α → AppList Nat
+    | .bind xs ys =>
+        let ns1 := listEnc (prodEnc mlstringEnc e) xs
+        let ns2 := namespaceEncPrimeList e ys
+        AppList.append ns1 ns2
+  termination_by t => sizeOf t
+
+  /-- Original `namespace_enc'_def`, second clause: encode the module list. -/
+  @[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "namespace_enc'_def"]
+  def namespaceEncPrimeList {α : Type} (e : α → AppList Nat) :
+      List (MlString × Namespace MlString MlString α) → AppList Nat
+    | [] => AppList.list [0]
+    | (m, x) :: xs =>
+        AppList.append (AppList.append (AppList.list [1]) (mlstringEnc m))
+          (AppList.append (namespaceEncPrime e x) (namespaceEncPrimeList e xs))
+  termination_by ys => sizeOf ys
+end
+
+mutual
+  /-- Original `namespace_depth_def`, first clause: the depth of a namespace. -/
+  @[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "namespace_depth_def"]
+  def namespaceDepth {M N V : Type} : Namespace M N V → Nat
+    | .bind _ ys => 1 + namespaceDepthList ys
+  termination_by t => sizeOf t
+
+  /-- Original `namespace_depth_def`, second clause: the depth of a module list. -/
+  @[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "namespace_depth_def"]
+  def namespaceDepthList {M N V : Type} : List (M × Namespace M N V) → Nat
+    | [] => 0
+    | (_, x) :: xs => 1 + max (namespaceDepth x) (namespaceDepthList xs)
+  termination_by ys => sizeOf ys
+end
+
+/-- Original `namespace_enc_def`: the depth-prefixed namespace encoding. -/
+@[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "namespace_enc_def"]
+def namespaceEnc {α : Type} (e : α → AppList Nat) (t : Namespace MlString MlString α) :
+    AppList Nat :=
+  prodEnc numEnc (namespaceEncPrime e) (namespaceDepth t, t)
+
+mutual
+  /-- Original `namespace_dec'_def`, first clause: decode a namespace. -/
+  @[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "namespace_dec'_def"]
+  def namespaceDecPrime {α : Type} (k : Nat) (d : List Nat → α × List Nat) :
+      List Nat → Namespace MlString MlString α × List Nat
+    | ns =>
+        if k = 0 then (Namespace.bind [] [], ns)
+        else
+          let step1 := listDec (prodDec mlstringDec d) ns
+          let step2 := namespaceDecPrimeList (k - 1) d step1.2
+          (Namespace.bind step1.1 step2.1, step2.2)
+  termination_by _ns => k
+
+  /-- Original `namespace_dec'_def`, second clause: decode the module list. -/
+  @[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "namespace_dec'_def"]
+  def namespaceDecPrimeList {α : Type} (k : Nat) (d : List Nat → α × List Nat) :
+      List Nat → List (MlString × Namespace MlString MlString α) × List Nat
+    | [] => ([], [])
+    | 0 :: rest => ([], rest)
+    | n :: rest =>
+        if k = 0 then ([], n :: rest)
+        else
+          let step1 := mlstringDec rest
+          let step2 := namespaceDecPrime (k - 1) d step1.2
+          let step3 := namespaceDecPrimeList (k - 1) d step2.2
+          ((step1.1, step2.1) :: step3.1, step3.2)
+  termination_by _ns => k
+end
+
+/-- Original `namespace_dec_def`: read the depth prefix, then the namespace. -/
+@[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "namespace_dec_def"]
+def namespaceDec {α : Type} (d : List Nat → α × List Nat) :
+    List Nat → Namespace MlString MlString α × List Nat
+  | [] => (Namespace.bind [] [], [])
+  | m :: ms => namespaceDecPrime m d ms
+
+/-- Neither namespace decoder consumes more input than it is given. -/
+private theorem namespaceDecPrime_bound_aux {α : Type} (d : List Nat → α × List Nat) :
+    (∀ (k : Nat) (ns : List Nat),
+        decOk d → (namespaceDecPrime k d ns).2.length ≤ ns.length) ∧
+      (∀ (k : Nat) (ns : List Nat),
+        decOk d → (namespaceDecPrimeList k d ns).2.length ≤ ns.length) := by
+  refine namespaceDecPrime.mutual_induct (d := d)
+    (motive1 := fun k ns => decOk d → (namespaceDecPrime k d ns).2.length ≤ ns.length)
+    (motive2 := fun k ns => decOk d → (namespaceDecPrimeList k d ns).2.length ≤ ns.length)
+    ?_ ?_ ?_ ?_ ?_ ?_
+  · intro ns hb
+    simp [namespaceDecPrime]
+  · intro k a ns hk step1 ih hb
+    have mlOk : decOk mlstringDec := mlstringDecOk
+    have prodOk : decOk (prodDec mlstringDec d) := prodDecOk mlstringDec d mlOk hb
+    have listOk : decOk (listDec (prodDec mlstringDec d)) := listDecOk _ prodOk
+    have b1 := listOk a
+    have b2 := ih hb
+    simp only [ns, step1] at b2
+    simp only [namespaceDecPrime, hk, if_false]
+    omega
+  · intro k hb
+    simp [namespaceDecPrimeList]
+  · intro k rest hb
+    simp [namespaceDecPrimeList]
+  · intro n rest hn hb
+    simp [namespaceDecPrimeList]
+  · intro k n rest hn hk step1 step2 ih1 ih2 ih3 hb
+    have b0 := mlstringDecOk rest
+    have b2 := ih1 hb
+    have b3 := ih3 hb
+    simp only [step1] at b2
+    simp only [step2, step1] at b3
+    simp only [namespaceDecPrimeList, hk, if_false]
+    simp only [List.length_cons]
+    omega
+
+/-- The namespace decoders invert the namespace encoders within the depth budget. -/
+private theorem namespaceEncPrime_roundtrip_aux {α : Type} (e : α → AppList Nat)
+    (d : List Nat → α × List Nat) (ok : encDecOk e d) :
+    (∀ (t : Namespace MlString MlString α) (xs : List Nat) (l : Nat), namespaceDepth t ≤ l →
+        namespaceDecPrime l d (appListAppend (namespaceEncPrime e t) ++ xs) = (t, xs)) ∧
+      (∀ (ys : List (MlString × Namespace MlString MlString α)) (xs : List Nat) (l : Nat),
+        namespaceDepthList ys ≤ l →
+        namespaceDecPrimeList l d (appListAppend (namespaceEncPrimeList e ys) ++ xs)
+          = (ys, xs)) := by
+  obtain ⟨bound, roundtrip⟩ := ok
+  refine namespaceEncPrime.mutual_induct (e := e)
+    (motive1 := fun t => ∀ xs l, namespaceDepth t ≤ l →
+        namespaceDecPrime l d (appListAppend (namespaceEncPrime e t) ++ xs) = (t, xs))
+    (motive2 := fun ys => ∀ xs l, namespaceDepthList ys ≤ l →
+        namespaceDecPrimeList l d (appListAppend (namespaceEncPrimeList e ys) ++ xs) = (ys, xs))
+    ?_ ?_ ?_
+  · intro xs ys ih xs' l hd
+    cases l with
+    | zero =>
+        simp only [namespaceDepth] at hd
+        omega
+    | succ l' =>
+        have hys : namespaceDepthList ys ≤ l' := by
+          simp only [namespaceDepth] at hd
+          omega
+        simp only [namespaceEncPrime]
+        rw [appListAppend_append]
+        simp only [List.append_assoc]
+        have listOk : encDecOk (listEnc (prodEnc mlstringEnc e))
+            (listDec (prodDec mlstringDec d)) :=
+          listEncDecOk _ _ (prodEncDecOk mlstringEnc mlstringDec e d mlstringEncDecOk
+            ⟨bound, roundtrip⟩)
+        obtain ⟨_, lr⟩ := listOk
+        have h1 : listDec (prodDec mlstringDec d)
+            (appListAppend (listEnc (prodEnc mlstringEnc e) xs)
+              ++ (appListAppend (namespaceEncPrimeList e ys) ++ xs'))
+            = (xs, appListAppend (namespaceEncPrimeList e ys) ++ xs') := lr xs _
+        simp only [namespaceDecPrime, if_neg (by omega : ¬ (l' + 1 = 0))]
+        rw [h1]
+        simp only [Nat.add_sub_cancel]
+        rw [ih xs' l' hys]
+  · intro xs' l hd
+    cases l with
+    | zero =>
+        simp [namespaceEncPrimeList, namespaceDecPrimeList, appListAppend, appendAux]
+    | succ l' =>
+        simp [namespaceEncPrimeList, namespaceDecPrimeList, appListAppend, appendAux]
+  · intro m x ys ih1 ih2 xs' l hd
+    cases l with
+    | zero =>
+        simp only [namespaceDepthList] at hd
+        omega
+    | succ l' =>
+        have hx : namespaceDepth x ≤ l' := by
+          simp only [namespaceDepthList] at hd
+          omega
+        have hys : namespaceDepthList ys ≤ l' := by
+          simp only [namespaceDepthList] at hd
+          omega
+        simp only [namespaceEncPrimeList]
+        rw [appListAppend_append]
+        simp only [List.append_assoc]
+        rw [appListAppend_cons 1 (mlstringEnc m)
+            (appListAppend (AppList.append (namespaceEncPrime e x) (namespaceEncPrimeList e ys))
+              ++ xs')]
+        rw [appListAppend_append]
+        simp only [List.append_assoc]
+        obtain ⟨_, mlr⟩ := mlstringEncDecOk
+        have h1 : mlstringDec
+            (appListAppend (mlstringEnc m)
+              ++ (appListAppend (namespaceEncPrime e x)
+                ++ (appListAppend (namespaceEncPrimeList e ys) ++ xs')))
+            = (m, appListAppend (namespaceEncPrime e x)
+                ++ (appListAppend (namespaceEncPrimeList e ys) ++ xs')) := mlr m _
+        simp only [namespaceDecPrimeList, if_neg (by omega : ¬ (l' + 1 = 0))]
+        rw [h1]
+        simp only [Nat.add_sub_cancel]
+        rw [ih1 (appListAppend (namespaceEncPrimeList e ys) ++ xs') l' hx]
+        rw [ih2 xs' l' hys]
+
+/-- Original `dec_ok_namespace_dec'`: decoding a namespace keeps the bound. -/
+@[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "dec_ok_namespace_dec'"]
+theorem decOk_namespaceDecPrime {α : Type} (k : Nat) (d : List Nat → α × List Nat)
+    (ok : decOk d) : decOk (namespaceDecPrime k d) := by
+  intro ns
+  exact (namespaceDecPrime_bound_aux d).1 k ns ok
+
+/-- Original `namespace_enc_dec_ok`. -/
+@[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "namespace_enc_dec_ok"]
+theorem namespaceEncDecOk {α : Type} (e : α → AppList Nat) (d : List Nat → α × List Nat)
+    (ok : encDecOk e d) : encDecOk (namespaceEnc e) (namespaceDec d) := by
+  obtain ⟨bound, roundtrip⟩ := ok
+  refine ⟨?_, ?_⟩
+  · intro i
+    cases i with
+    | nil => simp [namespaceDec]
+    | cons m ms =>
+      simp only [namespaceDec]
+      have h := decOk_namespaceDecPrime m d bound ms
+      simp only [List.length_cons]
+      omega
+  · intro t xs
+    have henc : namespaceEnc e t
+        = AppList.append (AppList.list [namespaceDepth t]) (namespaceEncPrime e t) := rfl
+    rw [henc, appListAppend_cons, namespaceDec]
+    exact (namespaceEncPrime_roundtrip_aux e d ⟨bound, roundtrip⟩).1 t xs (namespaceDepth t)
+      (Nat.le_refl _)
 
 end Flapjack.Compiler.Backend.Serialiser
