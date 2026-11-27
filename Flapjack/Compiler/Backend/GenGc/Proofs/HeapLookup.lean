@@ -121,4 +121,28 @@ theorem gcForwardPtr_ok {α β : Type} (heap : List (HeapElement α β)) (n : Na
               subst ok
               exact ih (n - elLength head) ys hrec
 
+/-- Original `heap_lookup_LENGTH`: the element starting at the prefix length. -/
+@[hol "cakeml/compiler/backend/gc/gen_gcScript.sml" "heap_lookup_LENGTH"]
+theorem heapLookup_length {α β : Type} (xs : List (HeapElement α β)) (x : HeapElement α β)
+    (ys : List (HeapElement α β)) (l : Nat) (h : heapLength xs = l) :
+    heapLookup l (xs ++ x :: ys) = some x := by
+  induction xs generalizing l with
+  | nil =>
+    simp only [heapLength, List.nil_append] at h ⊢
+    subst h
+    simp [heapLookup]
+  | cons head tail ih =>
+    rw [heapLookup_append]
+    have hl : heapLength (head :: tail) = l := by
+      simp only [heapLength, List.map_cons, List.sum_cons] at h ⊢
+      exact h
+    have notBelow : ¬ l < heapLength (head :: tail) := by
+      rw [hl]
+      omega
+    have zero : l - heapLength (head :: tail) = 0 := by
+      rw [hl]
+      omega
+    simp only [notBelow, if_false, zero]
+    simp [heapLookup]
+
 end Flapjack.Compiler.Backend.GenGc
