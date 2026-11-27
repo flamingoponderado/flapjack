@@ -336,3 +336,7 @@ val _ = show "sp2fm_map_typed" unifyTheory.sp2fm_map;
 val _ = show "cvwalkR_def_typed" unifyTheory.cvwalkR_def;
 val _ = show "cvwalk_ensures_decrease_typed" unifyTheory.cvwalk_ensures_decrease;
 val _ = show "WF_cvwalkR_typed" unifyTheory.WF_cvwalkR;
+val _ = show "RKC_def_typed" unifyTheory.RKC_def;
+val _ = show "substR_def_typed" unifyTheory.substR_def;
+val _ = show "option_CASE_MAP_typed" unifyTheory.option_CASE_MAP;
+val _ = show "list_CASE_MAP_typed" unifyTheory.list_CASE_MAP;

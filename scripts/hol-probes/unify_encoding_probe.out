@@ -250,3 +250,7 @@ sp2fm_map_typed=sp2fm (map (f :β -> α) (sp :β sptree$num_map)) = f o_f sp2fm 
 cvwalkR_def_typed=∀(σ :infer_t sptree$num_map). cvwalkR σ = (λ(v :num) (v0 :num). vR (encode_infer_t o_f sp2fm σ) v v0)
 cvwalk_ensures_decrease_typed=∀(x :num) (y :num). (λ(n :num). cwfs (s :infer_t sptree$num_map)) x ∧ cvwalk_code s x = (INL y :num + infer_t) ⇒ cvwalkR s y x
 WF_cvwalkR_typed=∀(x :α). (λ(n :α). cwfs (s :infer_t sptree$num_map)) x ⇒ WF (cvwalkR s)
+RKC_def_typed=∀(rkt :atom term) (ct :infer_t). RKC rkt ct ⇔ encode_infer_t ct = rkt
+substR_def_typed=∀(fm :atom subst) (sp :infer_t sptree$num_map). substR fm sp ⇔ wfs fm ∧ wf sp ∧ fm = encode_infer_t o_f sp2fm sp
+option_CASE_MAP_typed=(option_CASE (OPTION_MAP (f :γ -> β) (v :γ option)) (n :α) (sf :β -> α) :α) = (option_CASE v n (sf ∘ f) :α)
+list_CASE_MAP_typed=(list_CASE (MAP (f :γ -> β) (l :γ list)) (n :α) (cf :β -> β list -> α) :α) = case l of ([] :γ list) => n | h::t => cf (f h) (MAP f t)
