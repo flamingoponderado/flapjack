@@ -11313,7 +11313,7 @@ run_probe gen_gc_more_typed_probeScript.sml gen_gc_more_typed_probe.out \
 run_probe gen_gc_typed_probeScript.sml gen_gc_typed_probe.out \
   is_final_def_typed heap_lookup_APPEND_typed gc_move_list_length_typed gen_gc_LENGTH_typed gc_move_loop_ok_typed gc_move_refs_ok_typed gc_move_data_ok_typed gc_move_data_h2_typed \
   gc_move_ok_typed gc_move_list_ok_typed gen_gc_conf_typed gc_move_def_typed gc_move_list_def_typed gc_move_data_def_typed gc_move_refs_def_typed gc_move_loop_def_typed \
-  gen_gc_def_typed heap_lookup_IMP_heap_addresses_typed heap_lookup_LENGTH_typed gc_move_list_IMP_typed heaps_similar_lemma_typed BIJ_IMP_FLOOKUP_SOME_typed \
+  gen_gc_def_typed heap_lookup_IMP_heap_addresses_typed heap_lookup_LENGTH_typed gc_move_list_IMP_typed heaps_similar_lemma_typed BIJ_IMP_FLOOKUP_SOME_typed gc_move_ALT_typed \
   "$cake_dir/compiler/backend/gc/gen_gcScript.sml" \
   "$cake_dir/compiler/backend/gc"
 

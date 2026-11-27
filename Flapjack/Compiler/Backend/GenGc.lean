@@ -68,6 +68,29 @@ theorem gcMoveList_h1 {α β : Type} (conf : Config β) (state : GcState α β)
     rw [result] at same
     exact (ih state1).trans same
 
+/-- Original `gc_move_ALT`: moving a root from the full state is the same as
+    moving it from the reset state and re-attaching the scan queues. -/
+@[hol "cakeml/compiler/backend/gc/gen_gcScript.sml" "gc_move_ALT"]
+theorem gcMove_alt {α β : Type} (conf : Config β) (state : GcState α β) (y : HeapAddress α) :
+    gcMove conf state y =
+      (let moved := gcMove conf { state with h2 := [], r4 := [] } y
+       match moved with
+       | (y', state') =>
+           (y', { state' with h2 := state.h2 ++ state'.h2, r4 := state'.r4 ++ state.r4 })) := by
+  cases y with
+  | data value => simp [gcMove]
+  | pointer ptr value =>
+    cases found : heapLookup ptr state.heap with
+    | none => simp [gcMove, found]
+    | some element =>
+      cases element with
+      | unused len => simp [gcMove, found]
+      | forwardPointer dest old len => simp [gcMove, found]
+      | dataElement xs len payload =>
+        by_cases ref : conf.isRef payload = true
+        · simp [gcMove, found, ref]
+        · simp [gcMove, found, ref]
+
 open Classical in
 /-- Scan the copied data objects, using the source's heap-length measure. -/
 @[hol "cakeml/compiler/backend/gc/gen_gcScript.sml" "gc_move_data_def"]
