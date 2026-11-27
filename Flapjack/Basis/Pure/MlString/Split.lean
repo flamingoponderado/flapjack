@@ -367,4 +367,41 @@ theorem splitl_splitL (P : HolChar → Bool) (s : MlString) :
   cases splitP (fun c => !(P c)) (explode s) with
   | mk a b => rfl
 
+/-- Original `TOKENS_def`: split a character list into maximal runs of
+non-separator characters. HOL's `NULL l` test is `l = []` and `TL r` is
+`r.tail`; the second pattern destructures the consumed run as a cons so its
+nonemptiness is visible to the termination proof. -/
+@[hol "HOL/src/string/stringScript.sml" "TOKENS_def"]
+noncomputable def tokensHOL (P : HolChar → Bool) : List HolChar → List (List HolChar)
+  | [] => []
+  | h :: t =>
+    match _hsplit : splitP P (h :: t) with
+    | ([], r) => tokensHOL P r.tail
+    | (a :: as, r) => (a :: as) :: tokensHOL P r
+termination_by l => l.length
+decreasing_by
+  · have hr : r = h :: t := splitP_nil_fst P (h :: t) r _hsplit
+    rw [hr]
+    simp
+  · have hjoin : h :: t = (a :: as) ++ r := splitP_join P (h :: t) (a :: as) r _hsplit
+    rw [hjoin]
+    simp only [List.length_cons, List.length_append]
+    omega
+
+/-- The empty list has no tokens. -/
+private theorem tokensHOL_nil (P : HolChar → Bool) : tokensHOL P [] = [] := by
+  rw [tokensHOL]
+
+/-- A separator at the head is skipped. -/
+private theorem tokensHOL_split_nil (P : HolChar → Bool) (h : HolChar) (t r : List HolChar)
+    (hsp : splitP P (h :: t) = ([], r)) :
+    tokensHOL P (h :: t) = tokensHOL P r.tail := by
+  rw [tokensHOL, hsp]
+
+/-- A non-separator at the head starts a new token. -/
+private theorem tokensHOL_split_cons (P : HolChar → Bool) (h : HolChar) (t : List HolChar)
+    (a : HolChar) (as r : List HolChar) (hsp : splitP P (h :: t) = (a :: as, r)) :
+    tokensHOL P (h :: t) = (a :: as) :: tokensHOL P r := by
+  rw [tokensHOL, hsp]
+
 end Flapjack.Basis.Pure.MlString

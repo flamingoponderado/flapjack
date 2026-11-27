@@ -2,3 +2,5 @@ islower_def_typed=∀(c :char). isLower c ⇔ (97 :num) ≤ ORD c ∧ ORD c ≤ 
 isupper_def_typed=∀(c :char). isUpper c ⇔ (65 :num) ≤ ORD c ∧ ORD c ≤ (90 :num)
 isalpha_def_typed=∀(c :char). isAlpha c ⇔ isLower c ∨ isUpper c
 char_size_def_typed=∀(c :char). char_size c = (0 :num)
+tokens_def_typed=(∀(P :char -> bool). TOKENS P ("" :string) = ([] :string list)) ∧ ∀(t :string) (h :char) (P :char -> bool). TOKENS P (STRING h t) = (let ((l :string),(r :string)) = SPLITP P (STRING h t) in if NULL l then TOKENS P (TL r) else l::TOKENS P r)
+tokens_append_typed=∀(P :char -> bool) (l1 :string) (x :char) (l2 :string). P x ⇒ TOKENS P (STRCAT l1 (STRING x l2)) = TOKENS P l1 ⧺ TOKENS P l2

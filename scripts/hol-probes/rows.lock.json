@@ -629,7 +629,7 @@
     {"bytes": 1385, "out": "hol_sorting_typed_probe.out", "rows": 8, "sha256": "51f91d7e65a227b48a280772eaa8045a0f53e516ca5ca50a08bafa1008d3e825"},
     {"bytes": 190, "out": "hol_statetransformer_typed_probe.out", "rows": 1, "sha256": "fb6c84aea0347573a392221108a57be8ef1f09ce0854bd492114704f9fb38c9d"},
     {"bytes": 2356, "out": "hol_stdlib_tail_typed_probe.out", "rows": 17, "sha256": "ed025a2b482d59565a45db4eff7fcf78cf0099092c9945b1a3ebecec376890e2"},
-    {"bytes": 308, "out": "hol_string_typed_probe.out", "rows": 4, "sha256": "cfbd5dcc58de9d97e82e2a7986fbd41a8f5c84b0c75809902edced9407815e6f"},
+    {"bytes": 723, "out": "hol_string_typed_probe.out", "rows": 6, "sha256": "7bd6d466d1973d41b1736cf5d4856861b56df7e553aaf34698e5b89b430712a2"},
     {"bytes": 240, "out": "hol_toto_typed_probe.out", "rows": 1, "sha256": "cc30d54e94fd67abb2c1c1dc01dc772d8bba112850b513e80d570143832200d7"},
     {"bytes": 513, "out": "hol_while_typed_probe.out", "rows": 4, "sha256": "b4664e363b104dd24b51047291b0e33f291a8ef825066870730ed5f4bb553f8f"},
     {"bytes": 583, "out": "hol_word_arithmetic_probe.out", "rows": 13, "sha256": "de8ecd5dd96ff87ed4f8aae184a500d303c337c564ab04275870567a195e9caf"},
