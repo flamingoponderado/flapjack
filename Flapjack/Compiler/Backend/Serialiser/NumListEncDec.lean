@@ -153,4 +153,46 @@ theorem numEncDecOk : encDecOk numEnc numDec := by
   · intro x xs
     simp [numEnc, numDec, appListAppend, appendAux]
 
+/-- Original `word64_enc_def`: one word per value. -/
+@[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "word64_enc_def"]
+def word64Enc (w : BitVec 64) : AppList Nat := AppList.list [w.toNat]
+
+/-- Original `word64_dec_def`: read one word, defaulting to zero. -/
+@[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "word64_dec_def"]
+def word64Dec : List Nat → BitVec 64 × List Nat
+  | [] => (0, [])
+  | r :: rs => (BitVec.ofNat 64 r, rs)
+
+/-- Original `word64_enc_dec_ok`. -/
+@[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "word64_enc_dec_ok"]
+theorem word64EncDecOk : encDecOk word64Enc word64Dec := by
+  refine ⟨?_, ?_⟩
+  · intro i
+    cases i with
+    | nil => simp [word64Dec]
+    | cons r rs => simp [word64Dec]
+  · intro x xs
+    simp [word64Enc, word64Dec, appListAppend, appendAux]
+
+/-- Original `bool_enc_def`: encode a boolean as one number. -/
+@[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "bool_enc_def"]
+def boolEnc : Bool → AppList Nat := fun b => numEnc (if b then 1 else 0)
+
+/-- Original `bool_dec_def`: decode a boolean from one number. -/
+@[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "bool_dec_def"]
+def boolDec : List Nat → Bool × List Nat :=
+  fun ns => Prod.map (fun r => decide (r = 1)) id (numDec ns)
+
+/-- Original `bool_enc_dec_ok`. -/
+@[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "bool_enc_dec_ok"]
+theorem boolEncDecOk : encDecOk boolEnc boolDec := by
+  have inverse : ∀ x : Bool, decide ((if x = true then 1 else 0) = 1) = x := by
+    intro x
+    cases x with
+    | true => rfl
+    | false => rfl
+  have step := encDecOk_comp (e := numEnc) (d := numDec) (f := fun r => decide (r = 1))
+    (g := fun b => if b = true then 1 else 0) ⟨numEncDecOk, inverse⟩
+  exact step
+
 end Flapjack.Compiler.Backend.Serialiser

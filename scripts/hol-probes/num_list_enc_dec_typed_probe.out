@@ -16,3 +16,9 @@ unit_enc_dec_ok_typed=enc_dec_ok (unit_enc :unit -> num app_list) unit_dec
 num_enc_def_typed=∀(n :num). num_enc n = List [n]
 num_dec_def_typed=∀(ns :num list). num_dec ns = case ns of ([] :num list) => ((0 :num),([] :num list)) | r::rs => (r,rs)
 num_enc_dec_ok_typed=enc_dec_ok num_enc num_dec
+word64_enc_def_typed=∀(w :word64). word64_enc w = List [w2n w]
+word64_dec_def_typed=∀(ns :num list). word64_dec ns = case ns of ([] :num list) => ((0w :word64),([] :num list)) | r::rs => ((n2w r :word64),rs)
+word64_enc_dec_ok_typed=enc_dec_ok word64_enc word64_dec
+bool_enc_def_typed=bool_enc = num_enc ∘ (λ(b :bool). if b then (1 :num) else (0 :num))
+bool_dec_def_typed=bool_dec = ($= (1 :num) ## (I :num list -> num list)) ∘ num_dec
+bool_enc_dec_ok_typed=enc_dec_ok bool_enc bool_dec
