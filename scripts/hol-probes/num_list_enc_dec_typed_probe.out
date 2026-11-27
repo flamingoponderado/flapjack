@@ -6,3 +6,13 @@ enc_dec_ok_prime_def_typed=∀(p :α -> bool) (enc :α -> num app_list) (dec :nu
 IMP_enc_dec_ok_typed=enc_dec_ok (enc :α -> num app_list) (dec :num list -> α # num list) ⇒ enc_dec_ok' (K T :α -> bool) enc dec
 enc_dec_ok_prime_IMP_typed=enc_dec_ok' (λ(x :α). T) (enc :α -> num app_list) (dec :num list -> α # num list) ⇒ enc_dec_ok enc dec
 const_dec_def_typed=∀(a :α) (xs :num list). const_dec a xs = (a,xs)
+enc_dec_ok_prime_const_typed=∀(x :α). enc_dec_ok' ($= x) (K (List ([] :num list)) :α -> num app_list) (const_dec x)
+enc_dec_ok_prime_o_typed=enc_dec_ok' (p :α -> bool) (e :α -> num app_list) (d :num list -> α # num list) ∧ (∀(x :β). (f :α -> β) ((g :β -> α) x) = x) ⇒ enc_dec_ok' (p ∘ g) (e ∘ g) ((f ## (I :num list -> num list)) ∘ d)
+fix_res_def_typed=∀(ns :β list) (x :α) (ns' :β list). fix_res ns (x,ns') = if LENGTH ns < LENGTH ns' then (x,ns) else (x,ns')
+fix_res_IMP_typed=((x :α),(ns2 :β list)) = fix_res (ns1 :β list) (y :α # β list) ⇒ LENGTH ns2 ≤ LENGTH ns1
+unit_enc_def_typed=∀(n :unit). (unit_enc n :α app_list) = List ([] :α list)
+unit_dec_def_typed=∀(ns :num list). unit_dec ns = ((),ns)
+unit_enc_dec_ok_typed=enc_dec_ok (unit_enc :unit -> num app_list) unit_dec
+num_enc_def_typed=∀(n :num). num_enc n = List [n]
+num_dec_def_typed=∀(ns :num list). num_dec ns = case ns of ([] :num list) => ((0 :num),([] :num list)) | r::rs => (r,rs)
+num_enc_dec_ok_typed=enc_dec_ok num_enc num_dec

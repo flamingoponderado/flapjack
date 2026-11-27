@@ -9892,6 +9892,7 @@ run_probe pegexec_cml_fo_machine_typed_probeScript.sml pegexec_cml_fo_machine_ty
 
 run_probe num_list_enc_dec_typed_probeScript.sml num_list_enc_dec_typed_probe.out \
   dec_ok_def_typed enc_dec_ok_def_typed dec_ok_simp_typed enc_dec_ok_o_typed enc_dec_ok_prime_def_typed IMP_enc_dec_ok_typed enc_dec_ok_prime_IMP_typed const_dec_def_typed \
+  enc_dec_ok_prime_const_typed enc_dec_ok_prime_o_typed fix_res_def_typed fix_res_IMP_typed unit_enc_def_typed unit_dec_def_typed unit_enc_dec_ok_typed num_enc_def_typed num_dec_def_typed num_enc_dec_ok_typed \
   "$cake_dir/compiler/backend/serialiser/num_list_enc_decScript.sml" \
   "$cake_dir/compiler/backend/serialiser"
 
