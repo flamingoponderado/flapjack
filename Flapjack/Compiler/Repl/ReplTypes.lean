@@ -96,4 +96,24 @@ theorem tenvOkPrimTenv : tenvOk primTenv := by
         all_goals subst v
         all_goals simp_all [checkFreevars, checkFreevarsList]
 
+/-- Original `check_ref_types_def`: the REPL accepts a reference type when the
+    inference environment binds the name to `ref ty` and the value environment
+    binds it to a location. -/
+@[hol "cakeml/compiler/repl/repl_typesScript.sml" "check_ref_types_def"]
+def checkRefTypes (types : Flapjack.Compiler.Inference.Infer.Env)
+    (env : Flapjack.SemanticPrimitivesHOL.SemEnv Flapjack.SemanticPrimitivesHOL.Value)
+    (entry : Ident Flapjack.Basis.Pure.MlString.MlString
+        Flapjack.Basis.Pure.MlString.MlString × SimpleType × Nat) : Prop :=
+  nsLookup types.infV entry.1 = some (0, .app [toType entry.2.1] TrefNum) ∧
+    nsLookup env.v entry.1 = some (.loc true entry.2.2)
+
+/-- Original `check_ref_types_TS_def`: the declarative-environment analogue. -/
+@[hol "cakeml/compiler/repl/repl_typesScript.sml" "check_ref_types_TS_def"]
+def checkRefTypesTS (types : TypeEnv)
+    (env : Flapjack.SemanticPrimitivesHOL.SemEnv Flapjack.SemanticPrimitivesHOL.Value)
+    (entry : Ident Flapjack.Basis.Pure.MlString.MlString
+        Flapjack.Basis.Pure.MlString.MlString × SimpleType × Nat) : Prop :=
+  nsLookup types.v entry.1 = some (0, .app [toTypeTS entry.2.1] TrefNum) ∧
+    nsLookup env.v entry.1 = some (.loc true entry.2.2)
+
 end Flapjack.Compiler.Repl.ReplTypes

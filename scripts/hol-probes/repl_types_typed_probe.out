@@ -8,3 +8,5 @@ convert_t_to_type_typed=convert_t (to_type (t :simple_type)) = to_type_TS t
 DISJOINT_set_ids_typed=(tids :num -> bool) ⊆ count (id :num) ⇒ DISJOINT tids (set_ids id (id' :num))
 set_ids_SUBSET_typed=set_ids (id :num) (id' :num) ⊆ count id'
 set_ids_UNION_typed=(id :num) ≤ (id' :num) ∧ (sid :num) ≤ id ⇒ set_ids sid id' = set_ids sid id ∪ set_ids id id'
+check_ref_types_def_typed=∀(types :inf_env) (env :v sem_env) (name :(mlstring, mlstring) id) (ty :simple_type) (loc :num). check_ref_types types env (name,ty,loc) ⇔ nsLookup types.inf_v name = SOME ((0 :num),Infer_Tapp [to_type ty] Tref_num) ∧ nsLookup env.v name = SOME (Loc T loc :v)
+check_ref_types_TS_def_typed=∀(types :type_env) (env :v sem_env) (name :(mlstring, mlstring) id) (ty :simple_type) (loc :num). check_ref_types_TS types env (name,ty,loc) ⇔ nsLookup types.v name = SOME ((0 :num),Tapp [to_type_TS ty] Tref_num) ∧ nsLookup env.v name = SOME (Loc T loc :v)

@@ -25,3 +25,7 @@ val _ = show "convert_t_to_type_typed" repl_typesTheory.convert_t_to_type;
 val _ = show "DISJOINT_set_ids_typed" repl_typesTheory.DISJOINT_set_ids;
 val _ = show "set_ids_SUBSET_typed" repl_typesTheory.set_ids_SUBSET;
 val _ = show "set_ids_UNION_typed" repl_typesTheory.set_ids_UNION;
+
+(* Task 273: the REPL reference-type predicates. *)
+val _ = show "check_ref_types_def_typed" repl_typesTheory.check_ref_types_def;
+val _ = show "check_ref_types_TS_def_typed" repl_typesTheory.check_ref_types_TS_def;
