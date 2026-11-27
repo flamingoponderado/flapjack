@@ -4,3 +4,5 @@ splitp_typed=(∀(P :α -> bool). SPLITP P ([] :α list) = (([] :α list),([] :�
 splitl_def_typed=∀(P :α -> bool). SPLITL P = SPLITP ($¬ ∘ P)
 splitp_nil_fst_imp_typed=∀(ls :α list) (r :α list). SPLITP (P :α -> bool) ls = (([] :α list),r) ⇒ r = ls
 splitp_join_typed=∀(ls :α list) (l :α list) (r :α list). SPLITP (P :α -> bool) ls = (l,r) ⇒ ls = l ⧺ r
+splitp_append_typed=∀(l1 :α list) (l2 :α list). SPLITP (P :α -> bool) (l1 ⧺ l2) = if EXISTS P l1 then (FST (SPLITP P l1),SND (SPLITP P l1) ⧺ l2) else (l1 ⧺ FST (SPLITP P l2),SND (SPLITP P l2))
+splitp_nil_snd_every_typed=∀(ls :α list) (r :α list). SPLITP (P :α -> bool) ls = (r,([] :α list)) ⇔ r = ls ∧ EVERY ($¬ ∘ P) ls

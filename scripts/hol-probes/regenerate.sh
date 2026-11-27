@@ -4948,7 +4948,8 @@ run_probe hol_while_typed_probeScript.sml hol_while_typed_probe.out \
 
 run_probe hol_richlist_typed_probeScript.sml hol_richlist_typed_probe.out \
   list_rel_lastn_typed list_rel_replicate_same_typed splitp_typed splitl_def_typed \
-  splitp_nil_fst_imp_typed splitp_join_typed \
+  splitp_nil_fst_imp_typed splitp_join_typed splitp_append_typed \
+  splitp_nil_snd_every_typed \
   "$repo_dir/HOL/src/list/src/rich_listScript.sml" "$cake_dir/pancake"
 
 run_probe hol_statetransformer_typed_probeScript.sml hol_statetransformer_typed_probe.out \

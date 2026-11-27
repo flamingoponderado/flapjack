@@ -136801,6 +136801,22 @@
   "reviewer": "Compared hol_richlist_typed_probe.out `splitp_join_typed`: ∀(ls :α list) (l :α list) (r :α list). SPLITP P ls = (l,r) ⇒ ls = l ⧺ r. Lean keeps the binder order ls, l, r after the predicate and renders HOL append `⧺` as List.append; no extra premise."
 },
 {
+  "hol_path": "HOL/src/list/src/rich_listScript.sml",
+  "hol_name": "SPLITP_APPEND",
+  "lean_path": "Flapjack/Misc/RichList.lean",
+  "lean_name": "splitP_append",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared hol_richlist_typed_probe.out `splitp_append_typed`: ∀(l1 l2). SPLITP P (l1 ⧺ l2) = if EXISTS P l1 then (FST (SPLITP P l1),SND (SPLITP P l1) ⧺ l2) else (l1 ⧺ FST (SPLITP P l2),SND (SPLITP P l2)). Lean keeps the binder order l1, l2 after the predicate, renders EXISTS P l1 as the Bool test `l1.any P`, FST/SND as `.1`/`.2`, `⧺` as List.append and the Bool if as `if l1.any P then ... else ...`; no premise."
+},
+{
+  "hol_path": "HOL/src/list/src/rich_listScript.sml",
+  "hol_name": "SPLITP_NIL_SND_EVERY",
+  "lean_path": "Flapjack/Misc/RichList.lean",
+  "lean_name": "splitP_snd_nil_iff",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared hol_richlist_typed_probe.out `splitp_nil_snd_every_typed`: ∀(ls r). SPLITP P ls = (r,[]) ⇔ r = ls ∧ EVERY ($¬ ∘ P) ls. Lean keeps the binder order ls, r after the predicate, the empty-second-component equality and the conjunctive right-hand side, rendering EVERY ($¬ ∘ P) ls as `ls.all (fun x => !(P x)) = true`; no premise."
+},
+{
   "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
   "hol_name": "isClosure_def",
   "lean_path": "Flapjack/Compiler/Backend/FlatProps/ValueBasics.lean",
