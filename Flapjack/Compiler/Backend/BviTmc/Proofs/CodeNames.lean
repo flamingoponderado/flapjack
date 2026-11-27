@@ -14,6 +14,11 @@ open Bvi
 def noMutconsOp (op : ClosLang.Op) : Prop :=
   ∀ tag index, op ≠ .memOp (.mutCons tag index)
 
+/-- Original `is_block_op_cons`: the operation allocates an ordinary block. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "is_block_op_cons_def"]
+def isBlockOpCons (op : ClosLang.Op) : Prop :=
+  ∃ blockTag, op = .blockOp (.cons blockTag)
+
 /-- No expression in the tree allocates a mutable block. The list cases
 quantify over their actual members, corresponding to HOL's `EVERY`. -/
 @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "no_mutcons_def"]
