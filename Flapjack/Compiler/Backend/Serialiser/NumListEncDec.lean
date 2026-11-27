@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Misc.AppList
+public import Flapjack.Basis.Pure.MlString
 
 @[expose] public section
 
@@ -20,6 +21,7 @@ set_option backward.privateInPublic true
 set_option backward.privateInPublic.warn false
 
 open Flapjack
+open Flapjack.Basis.Pure.MlString
 
 /-- Original `dec_ok_def`: a decoder never returns more input than it consumed. -/
 @[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "dec_ok_def"]
@@ -342,5 +344,315 @@ theorem listEncDecOk {α : Type} (e : α → AppList Nat) (d : List Nat → α �
   simp only [listEnc, appListAppend, appendAux]
   rw [List.append_assoc, List.singleton_append]
   exact listDecAux_foldr e d roundtrip xs ys
+
+/-! ## Word, character, string, mlstring, product, option and sum codecs -/
+
+/-- HOL `ORD`: the code of a character.  Untagged infrastructure for the
+    character codecs below. -/
+def holOrd (c : HolChar) : Nat := c.toNat
+
+/-- HOL `CHR`: the character with the given code, reduced modulo 256.
+    Untagged infrastructure. -/
+def holChr (n : Nat) : HolChar := BitVec.ofNat 8 n
+
+/-- Original `word_enc_def`: one word per value. -/
+@[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "word_enc_def"
+  (words_as_type_indexed_bitvec)]
+def wordEnc {width : Nat} [NeZero width] : BitVec width → AppList Nat :=
+  fun w => numEnc (BitVec.toNat w)
+
+/-- Original `word_dec_def`: read one word and map it back to the word type. -/
+@[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "word_dec_def"
+  (words_as_type_indexed_bitvec)]
+def wordDec {width : Nat} [NeZero width] : List Nat → BitVec width × List Nat :=
+  fun ns => Prod.map (fun n => BitVec.ofNat width n) id (numDec ns)
+
+/-- Original `word_enc_dec_ok`. -/
+@[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "word_enc_dec_ok"
+  (words_as_type_indexed_bitvec)]
+theorem wordEncDecOk {width : Nat} [NeZero width] :
+    encDecOk (wordEnc : BitVec width → AppList Nat)
+      (wordDec : List Nat → BitVec width × List Nat) := by
+  have inverse : ∀ x : BitVec width, BitVec.ofNat width x.toNat = x := by
+    intro x
+    apply BitVec.eq_of_toNat_eq
+    rw [BitVec.toNat_ofNat, Nat.mod_eq_of_lt x.isLt]
+  exact encDecOk_comp (e := numEnc) (d := numDec) (f := fun n => BitVec.ofNat width n)
+    (g := BitVec.toNat) ⟨numEncDecOk, inverse⟩
+
+/-- Original `char_enc_def`: a character as its code. -/
+@[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "char_enc_def"]
+def charEnc : HolChar → AppList Nat := fun c => numEnc (holOrd c)
+
+/-- Original `safe_chr_def`: the character with the given code modulo 256. -/
+@[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "safe_chr_def"]
+def safeChr (n : Nat) : HolChar := holChr (n % 256)
+
+/-- Original `char_dec_def`: decode a character from its code. -/
+@[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "char_dec_def"]
+def charDec : List Nat → HolChar × List Nat :=
+  fun ns => Prod.map safeChr id (numDec ns)
+
+/-- Original `char_enc_dec_ok`. -/
+@[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "char_enc_dec_ok"]
+theorem charEncDecOk : encDecOk charEnc charDec := by
+  have inverse : ∀ x : HolChar, safeChr (holOrd x) = x := by
+    intro x
+    have mod : x.toNat % 256 = x.toNat := Nat.mod_eq_of_lt x.isLt
+    simp only [safeChr, holOrd, holChr, mod]
+    apply BitVec.eq_of_toNat_eq
+    rw [BitVec.toNat_ofNat, Nat.mod_eq_of_lt x.isLt]
+  exact encDecOk_comp (e := numEnc) (d := numDec) (f := safeChr) (g := holOrd)
+    ⟨numEncDecOk, inverse⟩
+
+/-- Original `safe_chr_list_def`: map the safe character code over a list. -/
+@[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "safe_chr_list_def"]
+def safeChrList (ns : List Nat) : List HolChar := ns.map safeChr
+
+/-- Original `take_pad_def`: take `n` numbers, padding short input with zero. -/
+@[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "take_pad_def"]
+def takePad : Nat → List Nat → List Nat × List Nat
+  | 0, ns => ([], ns)
+  | n + 1, [] =>
+      let rest := takePad n []
+      (0 :: rest.1, rest.2)
+  | n + 1, x :: xs =>
+      let rest := takePad n xs
+      (x :: rest.1, rest.2)
+
+/-- Original `string_dec_def`: decode a string from a length prefix. -/
+@[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "string_dec_def"]
+def stringDec : List Nat → List HolChar × List Nat
+  | [] => ([], [])
+  | n :: ns =>
+      let step := takePad n ns
+      (safeChrList step.1, step.2)
+
+private theorem listDecAux_charDec (k : Nat) (ns : List Nat) :
+    listDecAux k charDec ns = ((takePad k ns).1.map safeChr, (takePad k ns).2) := by
+  induction k generalizing ns with
+  | zero => simp [listDecAux, takePad]
+  | succ k ih =>
+    cases ns with
+    | nil =>
+      simp only [listDecAux, takePad, charDec, numDec, Prod.map, id, List.map_cons]
+      rw [ih []]
+    | cons x xs =>
+      simp only [listDecAux, takePad, charDec, numDec, Prod.map, List.map_cons, id]
+      rw [ih xs]
+
+/-- Original `string_dec_thm`: string decoding is list decoding of characters. -/
+@[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "string_dec_thm"]
+theorem stringDec_thm : stringDec = listDec charDec := by
+  funext ns
+  cases ns with
+  | nil => rfl
+  | cons n ns =>
+    simp only [stringDec, listDec, safeChrList]
+    rw [listDecAux_charDec]
+
+/-- Original `string_enc_dec_ok`. -/
+@[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "string_enc_dec_ok"]
+theorem stringEncDecOk : encDecOk (listEnc charEnc) stringDec := by
+  rw [stringDec_thm]
+  exact listEncDecOk charEnc charDec charEncDecOk
+
+/-- Original `string_dec_ok`. -/
+@[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "string_dec_ok"]
+theorem stringDecOk : decOk stringDec := stringEncDecOk.1
+
+/-- Original `mlstring_enc_def`: encode a string by its characters. -/
+@[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "mlstring_enc_def"]
+def mlstringEnc : MlString → AppList Nat
+  | .implode s => listEnc charEnc s
+
+/-- Original `mlstring_dec_def`: decode a string by its characters. -/
+@[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "mlstring_dec_def"]
+def mlstringDec : List Nat → MlString × List Nat :=
+  fun ns => Prod.map MlString.implode id (listDec charDec ns)
+
+/-- Original `mlstring_enc_dec_ok`. -/
+@[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "mlstring_enc_dec_ok"]
+theorem mlstringEncDecOk : encDecOk mlstringEnc mlstringDec := by
+  obtain ⟨bound, roundtrip⟩ := listEncDecOk charEnc charDec charEncDecOk
+  refine ⟨?_, ?_⟩
+  · intro i
+    exact bound i
+  · intro x xs
+    cases x with
+    | implode s => simp [mlstringEnc, mlstringDec, roundtrip]
+
+/-- Original `mlstring_dec_ok`. -/
+@[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "mlstring_dec_ok"]
+theorem mlstringDecOk : decOk mlstringDec := mlstringEncDecOk.1
+
+/-- The second component of a mapped pair is the original second component. -/
+private theorem prodMap_snd {α β : Type} (f : α → β) (p : α × List Nat) :
+    (Prod.map f id p).2 = p.2 := by
+  obtain ⟨a, b⟩ := p
+  rfl
+
+/-- Flattening a single-element tree and appending a suffix. -/
+private theorem appListAppend_single (n : Nat) (xs : List Nat) :
+    appListAppend (AppList.list [n]) ++ xs = n :: xs := by
+  simp only [appListAppend, appendAux, List.nil_append, List.cons_append]
+
+/-- Flattening a tagged tree and appending a suffix. -/
+private theorem appListAppend_cons (n : Nat) (rest : AppList Nat) (xs : List Nat) :
+    appListAppend (AppList.append (AppList.list [n]) rest) ++ xs
+      = n :: (appListAppend rest ++ xs) := by
+  simp only [appListAppend, appendAux, List.nil_append, List.cons_append]
+
+/-- Original `prod_enc_def`: encode a pair by its components. -/
+@[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "prod_enc_def"]
+def prodEnc {α β : Type} (e1 : α → AppList Nat) (e2 : β → AppList Nat) :
+    α × β → AppList Nat
+  | (x, y) => AppList.append (e1 x) (e2 y)
+
+/-- Original `prod_dec_def`: decode the two components in sequence. -/
+@[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "prod_dec_def"]
+def prodDec {α β : Type} (d1 : List Nat → α × List Nat) (d2 : List Nat → β × List Nat) :
+    List Nat → (α × β) × List Nat :=
+  fun ns =>
+    let step1 := d1 ns
+    let step2 := d2 step1.2
+    ((step1.1, step2.1), step2.2)
+
+/-- Original `prod_dec_ok`: decoding both components keeps the bound. -/
+@[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "prod_dec_ok"]
+theorem prodDecOk {α β : Type} (d1 : List Nat → α × List Nat) (d2 : List Nat → β × List Nat)
+    (ok1 : decOk d1) (ok2 : decOk d2) : decOk (prodDec d1 d2) := by
+  intro i
+  generalize step1 : d1 i = first
+  obtain ⟨x, ns1⟩ := first
+  generalize step2 : d2 ns1 = second
+  obtain ⟨y, ns2⟩ := second
+  have b1 := ok1 i
+  have b2 := ok2 ns1
+  simp only [prodDec, step1, step2] at b1 b2 ⊢
+  omega
+
+/-- Original `prod_enc_dec_ok`. -/
+@[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "prod_enc_dec_ok"]
+theorem prodEncDecOk {α β : Type} (e1 : α → AppList Nat) (d1 : List Nat → α × List Nat)
+    (e2 : β → AppList Nat) (d2 : List Nat → β × List Nat)
+    (ok1 : encDecOk e1 d1) (ok2 : encDecOk e2 d2) :
+    encDecOk (prodEnc e1 e2) (prodDec d1 d2) := by
+  obtain ⟨b1, r1⟩ := ok1
+  obtain ⟨b2, r2⟩ := ok2
+  refine ⟨prodDecOk d1 d2 b1 b2, ?_⟩
+  intro x xs
+  obtain ⟨v1, v2⟩ := x
+  simp only [prodEnc, appListAppend_append, List.append_assoc, prodDec]
+  rw [r1 v1 (appListAppend (e2 v2) ++ xs), r2 v2 xs]
+
+/-- Original `prod_enc_dec_ok'`: the conditional product round trip. -/
+@[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "prod_enc_dec_ok'"]
+theorem prodEncDecOkPrime {α β : Type} (p1 : α → Bool) (e1 : α → AppList Nat)
+    (d1 : List Nat → α × List Nat) (p2 : β → Bool) (e2 : β → AppList Nat)
+    (d2 : List Nat → β × List Nat)
+    (ok1 : encDecOkPrime p1 e1 d1) (ok2 : encDecOkPrime p2 e2 d2) :
+    encDecOkPrime (fun x => p1 x.1 && p2 x.2) (prodEnc e1 e2) (prodDec d1 d2) := by
+  obtain ⟨b1, r1⟩ := ok1
+  obtain ⟨b2, r2⟩ := ok2
+  refine ⟨prodDecOk d1 d2 b1 b2, ?_⟩
+  intro x xs guard
+  obtain ⟨v1, v2⟩ := x
+  have both : p1 v1 = true ∧ p2 v2 = true := by simpa using guard
+  have g1 := both.1
+  have g2 := both.2
+  simp only [prodEnc, appListAppend_append, List.append_assoc, prodDec]
+  rw [r1 v1 (appListAppend (e2 v2) ++ xs) g1, r2 v2 xs g2]
+
+/-- Original `option_enc_def`: a tag for `NONE` or `SOME`. -/
+@[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "option_enc_def"]
+def optionEnc {α : Type} (e : α → AppList Nat) : Option α → AppList Nat
+  | none => AppList.list [0]
+  | some y => AppList.append (AppList.list [1]) (e y)
+
+/-- Original `option_dec_def`: read the tag, then the payload for `SOME`. -/
+@[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "option_dec_def"]
+def optionDec {α : Type} (d : List Nat → α × List Nat) : List Nat → Option α × List Nat
+  | [] => (none, [])
+  | n :: ns => if n = 0 then (none, ns) else Prod.map some id (d ns)
+
+/-- Original `option_enc_dec_ok`. -/
+@[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "option_enc_dec_ok"]
+theorem optionEncDecOk {α : Type} (e : α → AppList Nat) (d : List Nat → α × List Nat)
+    (ok : encDecOk e d) : encDecOk (optionEnc e) (optionDec d) := by
+  obtain ⟨bound, roundtrip⟩ := ok
+  refine ⟨?_, ?_⟩
+  · intro i
+    cases i with
+    | nil => simp [optionDec]
+    | cons n ns =>
+      by_cases h : n = 0
+      · simp only [optionDec, h, if_true, List.length_cons]
+        omega
+      · simp only [optionDec, h, if_false, List.length_cons]
+        rw [prodMap_snd some (d ns)]
+        have step := bound ns
+        omega
+  · intro x xs
+    cases x with
+    | none =>
+      simp only [optionEnc]
+      rw [appListAppend_single 0 xs]
+      simp [optionDec]
+    | some y =>
+      simp only [optionEnc]
+      rw [appListAppend_cons 1 (e y) xs]
+      simp [optionDec, roundtrip]
+
+/-- Original `sum_enc_def`: a tag for `INL` or `INR`. -/
+@[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "sum_enc_def"]
+def sumEnc {α β : Type} (e1 : α → AppList Nat) (e2 : β → AppList Nat) :
+    α ⊕ β → AppList Nat
+  | .inl x => AppList.append (AppList.list [0]) (e1 x)
+  | .inr y => AppList.append (AppList.list [1]) (e2 y)
+
+/-- Original `sum_dec_def`: read the tag, then the matching payload. -/
+@[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "sum_dec_def"]
+def sumDec {α β : Type} (d1 : List Nat → α × List Nat) (d2 : List Nat → β × List Nat) :
+    List Nat → (α ⊕ β) × List Nat
+  | [] => Prod.map Sum.inl id (d1 [])
+  | n :: ns => if n = 0 then Prod.map Sum.inl id (d1 ns) else Prod.map Sum.inr id (d2 ns)
+
+/-- Original `sum_enc_dec_ok`. -/
+@[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "sum_enc_dec_ok"]
+theorem sumEncDecOk {α β : Type} (e1 : α → AppList Nat) (d1 : List Nat → α × List Nat)
+    (e2 : β → AppList Nat) (d2 : List Nat → β × List Nat)
+    (ok1 : encDecOk e1 d1) (ok2 : encDecOk e2 d2) :
+    encDecOk (sumEnc e1 e2) (sumDec d1 d2) := by
+  obtain ⟨b1, r1⟩ := ok1
+  obtain ⟨b2, r2⟩ := ok2
+  refine ⟨?_, ?_⟩
+  · intro i
+    cases i with
+    | nil =>
+      simp only [sumDec, List.length_nil]
+      rw [prodMap_snd Sum.inl (d1 [])]
+      have step := b1 []
+      omega
+    | cons n ns =>
+      by_cases h : n = 0
+      · simp only [sumDec, h, if_true, List.length_cons]
+        rw [prodMap_snd Sum.inl (d1 ns)]
+        have step := b1 ns
+        omega
+      · simp only [sumDec, h, if_false, List.length_cons]
+        rw [prodMap_snd Sum.inr (d2 ns)]
+        have step := b2 ns
+        omega
+  · intro x xs
+    cases x with
+    | inl v =>
+      simp only [sumEnc]
+      rw [appListAppend_cons 0 (e1 v) xs]
+      simp [sumDec, r1]
+    | inr v =>
+      simp only [sumEnc]
+      rw [appListAppend_cons 1 (e2 v) xs]
+      simp [sumDec, r2]
 
 end Flapjack.Compiler.Backend.Serialiser
