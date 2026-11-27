@@ -761,4 +761,175 @@ def sptDec {α : Type} (d : List Nat → α × List Nat) : List Nat → Spt α �
       id
       (sumDec (listDec (prodDec numDec d)) (sptDecPrimePrime d) ns)
 
+/-- Original `spt_dec'_def` never consumes more input than it is given. -/
+private theorem sptDecPrime_bound_aux {α : Type} :
+    ∀ (k : Nat) (d : List Nat → α × List Nat) (ns : List Nat),
+      decOk d → (sptDecPrime k d ns).2.length ≤ ns.length := by
+  intro k d ns
+  induction k, d, ns using sptDecPrime.induct with
+  | case1 t x =>
+      intro _
+      simp [sptDecPrime]
+  | case2 t x rest =>
+      intro _
+      simp [sptDecPrime]
+  | case3 t x rest =>
+      intro hb
+      have h := hb rest
+      simp only [sptDecPrime, List.length_cons]
+      omega
+  | case4 x head rest h0 h1 =>
+      intro _
+      simp [sptDecPrime]
+  | case5 k d rest step1 ih1 ih2 =>
+      intro hb
+      generalize hs1 : sptDecPrime k d rest = s1
+      obtain ⟨t1, ns1⟩ := s1
+      have b1 := ih1 hb
+      simp only [hs1] at b1
+      generalize hs2 : sptDecPrime k d ns1 = s2
+      obtain ⟨t2, ns2⟩ := s2
+      have b2 := ih2 hb
+      simp only [step1, hs1, hs2] at b2
+      simp only [sptDecPrime, hs1, hs2, List.length_cons]
+      omega
+  | case6 k d head rest h0 h1 h2 step1 step2 ih1 ih2 =>
+      intro hb
+      generalize hs1 : sptDecPrime k d rest = s1
+      obtain ⟨t1, ns1⟩ := s1
+      have b1 := ih1 hb
+      simp only [hs1] at b1
+      generalize hs2 : d ns1 = s2
+      obtain ⟨x, ns2⟩ := s2
+      have b3 := hb ns1
+      simp only [hs2] at b3
+      generalize hs3 : sptDecPrime k d ns2 = s3
+      obtain ⟨t2, ns3⟩ := s3
+      have b2 := ih2 hb
+      simp only [step1, step2, hs1, hs2, hs3] at b2
+      simp only [sptDecPrime, hs1, hs2, hs3, List.length_cons]
+      omega
+
+/-- `spt_dec'` inverts `spt_enc'` at any depth budget above the tree depth. -/
+private theorem sptDecPrime_sptEncPrime_aux {α : Type} :
+    ∀ (e : α → AppList Nat) (d : List Nat → α × List Nat), encDecOk e d →
+      ∀ (t : Spt α) (xs : List Nat) (l : Nat), sptDepth t ≤ l →
+        sptDecPrime l d (appListAppend (sptEncPrime e t) ++ xs) = (t, xs) := by
+  intro e d ok t
+  obtain ⟨bound, roundtrip⟩ := ok
+  induction t using sptEncPrime.induct with
+  | case1 =>
+      intro xs l hd
+      simp [sptEncPrime, sptDecPrime, appListAppend, appendAux]
+  | case2 x =>
+      intro xs l hd
+      have hls : sptEncPrime e (.ls x) = AppList.append (AppList.list [1]) (e x) := rfl
+      rw [hls, appListAppend_cons 1 (e x) xs]
+      simp only [sptDecPrime]
+      rw [roundtrip x xs]
+  | case3 t1 t2 ih1 ih2 =>
+      intro xs l hd
+      cases l with
+      | zero =>
+          simp only [sptDepth] at hd
+          omega
+      | succ l' =>
+          have h1 : sptDepth t1 ≤ l' := by
+            simp only [sptDepth] at hd
+            omega
+          have h2 : sptDepth t2 ≤ l' := by
+            simp only [sptDepth] at hd
+            omega
+          have hbn : sptEncPrime e (.bn t1 t2)
+              = AppList.append (AppList.list [2])
+                  (AppList.append (sptEncPrime e t1) (sptEncPrime e t2)) := rfl
+          rw [hbn]
+          rw [appListAppend_cons 2
+              (AppList.append (sptEncPrime e t1) (sptEncPrime e t2)) xs,
+            appListAppend_append]
+          simp only [List.append_assoc]
+          simp only [sptDecPrime]
+          rw [ih1 (appListAppend (sptEncPrime e t2) ++ xs) l' h1, ih2 xs l' h2]
+  | case4 t1 x t2 ih1 ih2 =>
+      intro xs l hd
+      cases l with
+      | zero =>
+          simp only [sptDepth] at hd
+          omega
+      | succ l' =>
+          have h1 : sptDepth t1 ≤ l' := by
+            simp only [sptDepth] at hd
+            omega
+          have h2 : sptDepth t2 ≤ l' := by
+            simp only [sptDepth] at hd
+            omega
+          have hbs : sptEncPrime e (.bs t1 x t2)
+              = AppList.append (AppList.list [3])
+                  (AppList.append (sptEncPrime e t1)
+                    (AppList.append (e x) (sptEncPrime e t2))) := rfl
+          rw [hbs]
+          rw [appListAppend_cons 3
+              (AppList.append (sptEncPrime e t1)
+                (AppList.append (e x) (sptEncPrime e t2))) xs,
+            appListAppend_append, appListAppend_append]
+          simp only [List.append_assoc]
+          simp only [sptDecPrime]
+          rw [ih1 (appListAppend (e x) ++ (appListAppend (sptEncPrime e t2) ++ xs)) l' h1]
+          rw [roundtrip x (appListAppend (sptEncPrime e t2) ++ xs)]
+          rw [ih2 xs l' h2]
+
+/-- Original `spt_enc''_dec_ok`. -/
+@[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "spt_enc''_dec_ok"]
+theorem sptEncPrimePrimeDecOk {α : Type} (e : α → AppList Nat)
+    (d : List Nat → α × List Nat) (ok : encDecOk e d) :
+    encDecOk (sptEncPrimePrime e) (sptDecPrimePrime d) := by
+  obtain ⟨bound, roundtrip⟩ := ok
+  refine ⟨?_, ?_⟩
+  · intro i
+    cases i with
+    | nil => simp [sptDecPrimePrime]
+    | cons m ms =>
+      simp only [sptDecPrimePrime]
+      have h := sptDecPrime_bound_aux m d ms bound
+      simp only [List.length_cons]
+      omega
+  · intro t xs
+    have henc : sptEncPrimePrime e t
+        = AppList.append (AppList.list [sptDepth t]) (sptEncPrime e t) := rfl
+    rw [henc, appListAppend_cons, sptDecPrimePrime]
+    exact sptDecPrime_sptEncPrime_aux e d ⟨bound, roundtrip⟩ t xs (sptDepth t)
+      (Nat.le_refl _)
+
+/-- Original `spt_enc_dec_ok`. -/
+@[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "spt_enc_dec_ok"]
+theorem sptEncDecOk {α : Type} (e : α → AppList Nat) (d : List Nat → α × List Nat)
+    (ok : encDecOk e d) : encDecOk (sptEnc e) (sptDec d) := by
+  have sumOk : encDecOk (sumEnc (listEnc (prodEnc numEnc e)) (sptEncPrimePrime e))
+      (sumDec (listDec (prodDec numDec d)) (sptDecPrimePrime d)) := by
+    exact sumEncDecOk (listEnc (prodEnc numEnc e)) (listDec (prodDec numDec d))
+      (sptEncPrimePrime e) (sptDecPrimePrime d)
+      (listEncDecOk (prodEnc numEnc e) (prodDec numDec d)
+        (prodEncDecOk numEnc numDec e d numEncDecOk ok))
+      (sptEncPrimePrimeDecOk e d ok)
+  have inverse : ∀ t : Spt α,
+      (fun x =>
+        match x with
+        | .inl xs => sptFromAList xs
+        | .inr t => t)
+        ((fun t => if sptWf t = true then Sum.inl (sptToAList t) else Sum.inr t) t) = t := by
+    intro t
+    dsimp only
+    by_cases h : sptWf t = true
+    · rw [if_pos h]
+      exact sptFromAList_sptToAList t h
+    · rw [if_neg h]
+  exact encDecOk_comp (e := sumEnc (listEnc (prodEnc numEnc e)) (sptEncPrimePrime e))
+    (d := sumDec (listDec (prodDec numDec d)) (sptDecPrimePrime d))
+    (f := fun x =>
+      match x with
+      | .inl xs => sptFromAList xs
+      | .inr t => t)
+    (g := fun t => if sptWf t = true then Sum.inl (sptToAList t) else Sum.inr t)
+    ⟨sumOk, inverse⟩
+
 end Flapjack.Compiler.Backend.Serialiser
