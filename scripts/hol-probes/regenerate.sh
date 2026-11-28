@@ -10859,6 +10859,7 @@ run_probe misc_typed_probeScript.sml misc_typed_probe.out \
   ALL_DISTINCT_MAP_FST_enumerate_typed ORD_eq_0_typed \
   CHR_w2n_n2w_ORD_typed n2w_ORD_CHR_w2n_typed TAKE_DROP_SUBLIST_typed \
   CHR_w2n_n2w_ORD_simp_typed n2w_ORD_CHR_w2n_simp_typed MAX_LIST_intro_typed \
+  LOG2_TIMES2_1_typed \
   "$cake_dir/misc/miscScript.sml" \
   "$cake_dir/misc"
 

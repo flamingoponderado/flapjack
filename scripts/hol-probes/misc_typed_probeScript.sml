@@ -361,3 +361,4 @@ val _ = emit "TAKE_DROP_SUBLIST_typed" "TAKE_DROP_SUBLIST";
 val _ = emit "CHR_w2n_n2w_ORD_simp_typed" "CHR_w2n_n2w_ORD_simp";
 val _ = emit "n2w_ORD_CHR_w2n_simp_typed" "n2w_ORD_CHR_w2n_simp";
 val _ = emit "MAX_LIST_intro_typed" "MAX_LIST_intro";
+val _ = emit "LOG2_TIMES2_1_typed" "LOG2_TIMES2_1";

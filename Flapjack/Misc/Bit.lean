@@ -30,4 +30,20 @@ theorem holLOG2_two_mul (n : Nat) (h : 0 < n) :
     holLOG2 (2 * n) = holLOG2 n + 1 := by
   rw [holLOG2_eq_log2 (by omega), holLOG2_eq_log2 h, Nat.log2_two_mul (by omega)]
 
+/-- Original `LOG2_TIMES2_1`: an odd argument just above a doubled one has the
+same base-2 logarithm. -/
+@[hol "cakeml/misc/miscScript.sml" "LOG2_TIMES2_1"]
+theorem holLOG2_two_mul_add_one (n : Nat) (h : 0 < n) :
+    holLOG2 (2 * n + 1) = holLOG2 (2 * n) := by
+  rw [holLOG2_eq_log2 (by omega), holLOG2_eq_log2 (by omega)]
+  have hne : 2 * n ≠ 0 := by omega
+  have hle : 2 ^ Nat.log2 (2 * n) ≤ 2 * n + 1 := by
+    have := (Nat.le_log2 hne).mp (Nat.le_refl _)
+    omega
+  have hlt : 2 * n + 1 < 2 ^ (Nat.log2 (2 * n) + 1) := by
+    have hlt' := (Nat.log2_lt hne).mp (Nat.lt_succ_self (Nat.log2 (2 * n)))
+    rw [Nat.pow_succ]
+    omega
+  exact (Nat.log2_eq_iff (by omega)).mpr ⟨hle, hlt⟩
+
 end Flapjack

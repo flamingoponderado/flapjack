@@ -325,3 +325,4 @@ TAKE_DROP_SUBLIST_typed=(ll :α list) ≼ DROP (n :num) (ls :α list) ∧ n < LE
 CHR_w2n_n2w_ORD_simp_typed=∀(c :char). CHR (w2n (n2w (ORD c) :word8)) = c
 n2w_ORD_CHR_w2n_simp_typed=∀(w :word8). (n2w (ORD (CHR (w2n w))) :word8) = w
 MAX_LIST_intro_typed=∀(ls :num list). (P :num -> bool) (0 :num) ∧ EVERY P ls ⇒ P (MAX_LIST ls)
+LOG2_TIMES2_1_typed=∀(n :num). (0 :num) < n ⇒ LOG2 ((2 :num) * n + (1 :num)) = LOG2 ((2 :num) * n)
