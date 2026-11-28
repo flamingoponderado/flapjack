@@ -117,7 +117,7 @@ theorem forall₂_lookup_fromList {α : Type} (args : List α) :
 /-- Original `LIST_REL_lookup_fromList_MAP`: the same index relation holds
 between the indices and the mapped input values. -/
 @[hol "cakeml/misc/miscScript.sml" "LIST_REL_lookup_fromList_MAP"]
-theorem forall₂_lookup_fromList_map {α β : Type} (f : α → β) (args : List α) :
+theorem forall₂_lookup_fromList_map {α β : Type} (args : List α) (f : α → β) :
     List.Forall₂ (fun v x => ∃ z, sptLookup v (sptFromList args) = some z ∧ x = f z)
       (List.range args.length) (args.map f) := by
   rw [List.forall₂_iff_get]

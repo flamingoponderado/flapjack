@@ -1546,7 +1546,7 @@ def tlookup (m : Spt Nat) (k : Nat) : Nat :=
 
 /-- Original `tlookup_id`: an absent key is its own default. -/
 @[hol "cakeml/misc/miscScript.sml" "tlookup_id"]
-theorem tlookup_id (names : Spt Nat) (x : Nat) (h : ¬ sptDomain names x) :
+theorem tlookup_id (x : Nat) (names : Spt Nat) (h : ¬ sptDomain names x) :
     tlookup names x = x := by
   have hl : sptLookup x names = none := by
     cases hs : sptLookup x names with

@@ -40,7 +40,7 @@ theorem rangeInsertSubset {α : Type} (n : Nat) (l : α) (fml : Spt α) :
 /-- Original `range_insert`: inserting a value at an absent key adds exactly
 that value to the range. -/
 @[hol "cakeml/misc/miscScript.sml" "range_insert"]
-theorem rangeInsert {α : Type} (n : Nat) (l : α) (fml : Spt α)
+theorem rangeInsert {α : Type} (n : Nat) (fml : Spt α) (l : α)
     (h : ¬ sptDomain fml n) : sptRange (sptInsert n l fml) = insert l (sptRange fml) := by
   apply Set.Subset.antisymm
   · exact rangeInsertSubset n l fml

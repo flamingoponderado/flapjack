@@ -346,3 +346,5 @@ val _ = emit "NOT_MEM_FLOOKUP_ZIP_typed" "NOT_MEM_FLOOKUP_ZIP";
 val _ = emit "splitlines_nil_typed" "splitlines_nil";
 val _ = emit "insert_atI_insert_atI_typed" "insert_atI_insert_atI";
 val _ = emit "v2w_sing_typed" "v2w_sing";
+val _ = emit "v2w_32_F_typed" "v2w_32_F";
+val _ = emit "v2w_32_T_typed" "v2w_32_T";

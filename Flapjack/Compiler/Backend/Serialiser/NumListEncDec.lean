@@ -114,7 +114,7 @@ def fixRes {α β : Type} (ns : List β) (result : α × List β) : α × List �
 
 /-- Original `fix_res_IMP`: the returned suffix is no longer than the input. -/
 @[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "fix_res_IMP"]
-theorem fixRes_bound {α β : Type} (ns1 : List β) (y : α × List β) (x : α) (ns2 : List β)
+theorem fixRes_bound {α β : Type} (x : α) (ns2 : List β) (ns1 : List β) (y : α × List β)
     (h : (x, ns2) = fixRes ns1 y) : ns2.length ≤ ns1.length := by
   obtain ⟨value, rest⟩ := y
   simp only [fixRes] at h
@@ -628,8 +628,9 @@ def sumDec {α β : Type} (d1 : List Nat → α × List Nat) (d2 : List Nat → 
 @[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "sum_enc_dec_ok"]
 theorem sumEncDecOk {α β : Type} (e1 : α → AppList Nat) (d1 : List Nat → α × List Nat)
     (e2 : β → AppList Nat) (d2 : List Nat → β × List Nat)
-    (ok1 : encDecOk e1 d1) (ok2 : encDecOk e2 d2) :
+    (h : encDecOk e1 d1 ∧ encDecOk e2 d2) :
     encDecOk (sumEnc e1 e2) (sumDec d1 d2) := by
+  obtain ⟨ok1, ok2⟩ := h
   obtain ⟨b1, r1⟩ := ok1
   obtain ⟨b2, r2⟩ := ok2
   refine ⟨?_, ?_⟩
@@ -913,9 +914,9 @@ theorem sptEncDecOk {α : Type} (e : α → AppList Nat) (d : List Nat → α ×
       (sumDec (listDec (prodDec numDec d)) (sptDecPrimePrime d)) := by
     exact sumEncDecOk (listEnc (prodEnc numEnc e)) (listDec (prodDec numDec d))
       (sptEncPrimePrime e) (sptDecPrimePrime d)
-      (listEncDecOk (prodEnc numEnc e) (prodDec numDec d)
-        (prodEncDecOk numEnc numDec e d ⟨numEncDecOk, ok⟩))
-      (sptEncPrimePrimeDecOk e d ok)
+      ⟨listEncDecOk (prodEnc numEnc e) (prodDec numDec d)
+        (prodEncDecOk numEnc numDec e d ⟨numEncDecOk, ok⟩),
+       sptEncPrimePrimeDecOk e d ok⟩
   have inverse : ∀ t : Spt α,
       (fun x =>
         match x with

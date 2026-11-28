@@ -77,8 +77,9 @@ function that keeps `next_name2` preserves the configuration check. -/
 @[hol "cakeml/compiler/backend/proofs/backendProofScript.sml"
   "backend_config_ok_with_bvl_conf_updated"]
 theorem backendConfigOk_bvlConf_updated {width : Nat} [NeZero width]
-    (asmConf : AsmConfigExact width) (cc : Flapjack.Compiler.Backend.Backend.Config)
     (f : Flapjack.Compiler.Backend.BvlToBvi.Config → Flapjack.Compiler.Backend.BvlToBvi.Config)
+    (cc : Flapjack.Compiler.Backend.Backend.Config)
+    (asmConf : AsmConfigExact width)
     (h : (f cc.bvlConf).nextName2 = cc.bvlConf.nextName2) :
     backendConfigOk asmConf { cc with bvlConf := f cc.bvlConf } ↔ backendConfigOk asmConf cc := by
   simp only [backendConfigOk, h]

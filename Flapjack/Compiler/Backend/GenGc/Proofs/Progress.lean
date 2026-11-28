@@ -11,8 +11,9 @@ namespace Flapjack.Compiler.Backend.GenGc
 /-- A successful root move started from a successful state. -/
 @[hol "cakeml/compiler/backend/gc/gen_gcScript.sml" "gc_move_ok"]
 theorem gcMove_ok {α β : Type} (conf : Config β) (state state1 : GcState α β)
-    (root root1 : HeapAddress α) (run : gcMove conf state root = (root1, state1))
-    (ok : state1.ok = true) : state.ok = true := by
+    (root root1 : HeapAddress α)
+    (h : gcMove conf state root = (root1, state1) ∧ state1.ok = true) : state.ok = true := by
+  obtain ⟨run, ok⟩ := h
   cases root with
   | data value =>
     simp only [gcMove, Prod.mk.injEq] at run
@@ -65,7 +66,8 @@ theorem gcMoveList_ok {α β : Type} (conf : Config β) (roots roots1 : List (He
     rcases tailResult with ⟨tail, final⟩
     simp only [Prod.mk.injEq] at run
     obtain ⟨_, rfl⟩ := run
-    exact gcMove_ok conf state middle root root1 headRun (ih (state := middle) (roots1 := tail) (state1 := final) tailRun ok)
+    exact gcMove_ok conf state middle root root1
+      ⟨headRun, ih (state := middle) (roots1 := tail) (state1 := final) tailRun ok⟩
 
 /-- Root traversal preserves the number of roots, including failed runs. -/
 @[hol "cakeml/compiler/backend/gc/gen_gcScript.sml" "gc_move_list_length"]
