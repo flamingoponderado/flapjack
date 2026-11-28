@@ -13089,3 +13089,12 @@ run_probe word_bignum_proof_typed_probeScript.sml word_bignum_proof_typed_probe.
   i2mw_NOT_NIL_typed mw_ok_SND_i2mw_typed \
   "$cake_dir/compiler/backend/proofs/word_bignumProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+
+run_probe preslang_basics_typed_probeScript.sml preslang_basics_typed_probe.out \
+  empty_item_def_typed num_to_display_def_typed int_to_display_def_typed string_imp_def_typed \
+  item_with_num_def_typed item_with_nums_def_typed bool_to_display_def_typed \
+  num_to_hex_def_typed num_to_hex_digit_eq_typed separate_lines_def_typed \
+  num_to_hex_mlstring_def_typed word_to_display_def_typed item_with_word_def_typed \
+  map_to_append_def_typed source_to_strs_def_typed flat_to_strs_def_typed \
+  "$cake_dir/compiler/backend/presLangScript.sml" \
+  "$cake_dir/compiler/backend"
