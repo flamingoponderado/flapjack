@@ -13098,3 +13098,8 @@ run_probe preslang_basics_typed_probeScript.sml preslang_basics_typed_probe.out 
   map_to_append_def_typed source_to_strs_def_typed flat_to_strs_def_typed \
   "$cake_dir/compiler/backend/presLangScript.sml" \
   "$cake_dir/compiler/backend"
+
+run_probe unify_fmsp_typed_probeScript.sml unify_fmsp_typed_probe.out \
+  fm2sp_delete_typed domain_fm2sp_typed \
+  "$cake_dir/compiler/inference/unifyScript.sml" \
+  "$cake_dir/compiler/inference"

@@ -76869,6 +76869,24 @@
     "reviewer": "Source comparison with num_to_hex_mlstring_def_typed (scripts/hol-probes/preslang_basics_typed_probe.out): HOL `∀(n :num). num_to_hex_mlstring n = implode (STRCAT \"0x\" (num_to_hex n))` keeps the implode, the 0x prefix and the appended digits. Lean uses the reviewed MlString carrier (`implode string`), the 0x prefix as the character list of '0' and 'x', and the reviewed numToHex; the result carrier is exactly HOL's mlstring, so no names_as_string rendering is involved."
   },
 {
+    "hol_path": "cakeml/compiler/inference/unifyScript.sml",
+    "hol_name": "fm2sp_delete",
+    "lean_path": "Flapjack/HOL/Transfer/Fmsp/Domain.lean",
+    "lean_name": "fm2spDelete",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": ["fm"],
+    "reviewer": "Source comparison with fm2sp_delete_typed (scripts/hol-probes/unify_fmsp_typed_probe.out): HOL `fm2sp (fm \\ k) = delete k (fm2sp fm)` keeps the deletion on both sides and the conversion order. HOL domain subtraction `\\` is eraseEq (HOL equality through DecidableEq), delete is sptDelete and fm2sp is the reviewed sparse-tree conversion. The proof uses spt_eq_thm (sptEqThm) with wf_delete (sptWfDelete) and the lookup-delete law (sptLookup_sptDelete). The standalone map parameter fm has its same-module canonical codec witness. No other statement difference."
+  },
+{
+    "hol_path": "cakeml/compiler/inference/unifyScript.sml",
+    "hol_name": "domain_fm2sp",
+    "lean_path": "Flapjack/HOL/Transfer/Fmsp/Domain.lean",
+    "lean_name": "domainFm2sp",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": ["fm"],
+    "reviewer": "Source comparison with domain_fm2sp_typed (scripts/hol-probes/unify_fmsp_typed_probe.out): HOL `domain (fm2sp fm) = FDOM fm` keeps the tree domain on the left and the map domain on the right. HOL domain is sptDomain and FDOM is the carrier's domain, both over Nat keys; the proof is the reviewed lookup conversion (lookupFm2sp). The standalone map parameter fm has its same-module canonical codec witness. No other statement difference."
+  },
+{
     "lean_path": "Flapjack/Misc/Sptree/FromList2.lean",
     "lean_name": "sptEvenFromList2",
     "hol_path": "cakeml/misc/miscScript.sml",

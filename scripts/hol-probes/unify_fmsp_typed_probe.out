@@ -1,0 +1,2 @@
+fm2sp_delete_typed=∀*(k :num) (fm :num |-> α) . fm2sp ((fm :num |-> α) \\ (k :num)) = delete k (fm2sp fm)
+domain_fm2sp_typed=∀(fm :num |-> α). (domain (fm2sp fm) :num -> bool) = FDOM fm
