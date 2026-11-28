@@ -76887,6 +76887,54 @@
     "reviewer": "Source comparison with domain_fm2sp_typed (scripts/hol-probes/unify_fmsp_typed_probe.out): HOL `domain (fm2sp fm) = FDOM fm` keeps the tree domain on the left and the map domain on the right. HOL domain is sptDomain and FDOM is the carrier's domain, both over Nat keys; the proof is the reviewed lookup conversion (lookupFm2sp). The standalone map parameter fm has its same-module canonical codec witness. No other statement difference."
   },
 {
+    "hol_path": "HOL/src/quotient/src/quotientScript.sml",
+    "hol_name": "FUN_REL",
+    "lean_path": "Flapjack/HOL/Transfer/Relation.lean",
+    "lean_name": "funRel",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison with FUN_REL_typed (scripts/hol-probes/transfer_relation_typed_probe.out): HOL `∀(R1 :α->β->bool) (R2 :γ->δ->bool) (f :α->γ) (g :β->δ). (R1 |==> R2) f g ⇔ ∀x y. R1 x y ⇒ R2 (f x) (g y)` keeps the binder order R1, R2, f, g, the pointwise universal quantification and the implication. HOL relations are `bool`-valued; Lean uses Prop-valued relations (the repo's rendering of HOL predicates). No hypothesis is added."
+  },
+{
+    "hol_path": "HOL/src/transfer/transferScript.sml",
+    "hol_name": "total_def",
+    "lean_path": "Flapjack/HOL/Transfer/Relation.lean",
+    "lean_name": "total",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison with total_def_typed (scripts/hol-probes/transfer_relation_typed_probe.out): HOL `∀(R :α->β->bool). total R ⇔ ∀x. ∃y. R x y` keeps the single relation binder and the quantifier order; Lean uses a Prop-valued relation. No hypothesis is added."
+  },
+{
+    "hol_path": "HOL/src/transfer/transferScript.sml",
+    "hol_name": "surj_def",
+    "lean_path": "Flapjack/HOL/Transfer/Relation.lean",
+    "lean_name": "surj",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison with surj_def_typed (scripts/hol-probes/transfer_relation_typed_probe.out): HOL `∀(R :α->β->bool). surj R ⇔ ∀y. ∃x. R x y` keeps the quantifier order (right element first) and the relation carrier; Lean uses a Prop-valued relation. This is transfer$surj, distinct from pred_set$SURJ (the Lean holSurj function-onto-a-set rendering). No hypothesis is added."
+  },
+{
+    "hol_path": "HOL/src/transfer/transferScript.sml",
+    "hol_name": "bitotal_def",
+    "lean_path": "Flapjack/HOL/Transfer/Relation.lean",
+    "lean_name": "bitotal",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison with bitotal_def_typed (scripts/hol-probes/transfer_relation_typed_probe.out): HOL `∀(R :α->β->bool). bitotal R ⇔ total R ∧ surj R` keeps the conjunction and its order; Lean uses the reviewed total and surj over a Prop-valued relation. No hypothesis is added."
+  },
+{
+    "hol_path": "HOL/src/bool/boolScript.sml",
+    "hol_name": "RES_FORALL_DEF",
+    "lean_path": "Flapjack/HOL/Transfer/Relation.lean",
+    "lean_name": "resForall",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison with RES_FORALL_DEF_typed (scripts/hol-probes/transfer_relation_typed_probe.out): HOL `RES_FORALL = λ(p :α->bool) (m :α->bool). ∀x. x ∈ p ⇒ m x` keeps the binder order p, m, the set membership premise and the pointwise universal. Lean uses Prop-valued predicates, with membership rendered as direct application. No hypothesis is added."
+  },
+{
+    "hol_path": "HOL/src/bool/boolScript.sml",
+    "hol_name": "RES_EXISTS_DEF",
+    "lean_path": "Flapjack/HOL/Transfer/Relation.lean",
+    "lean_name": "resExists",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison with RES_EXISTS_DEF_typed (scripts/hol-probes/transfer_relation_typed_probe.out): HOL `RES_EXISTS = λ(p :α->bool) (m :α->bool). ∃x. x ∈ p ∧ m x` keeps the binder order p, m, the membership conjunct and the pointwise existential. Lean uses Prop-valued predicates, with membership rendered as direct application. No hypothesis is added."
+  },
+{
     "lean_path": "Flapjack/Misc/Sptree/FromList2.lean",
     "lean_name": "sptEvenFromList2",
     "hol_path": "cakeml/misc/miscScript.sml",

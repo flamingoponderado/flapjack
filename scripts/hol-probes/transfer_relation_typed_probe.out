@@ -1,0 +1,6 @@
+FUN_REL_typed=∀(R1 :α -> β -> bool) (R2 :γ -> δ -> bool) (f :α -> γ) (g :β -> δ). (R1 |==> R2) f g ⇔ ∀(x :α) (y :β). R1 x y ⇒ R2 (f x) (g y)
+total_def_typed=∀(R :α -> β -> bool). total R ⇔ ∀(x :α). ∃(y :β). R x y
+surj_def_typed=∀(R :α -> β -> bool). surj R ⇔ ∀(y :β). ∃(x :α). R x y
+bitotal_def_typed=∀(R :α -> β -> bool). bitotal R ⇔ total R ∧ surj R
+RES_FORALL_DEF_typed=(RES_FORALL :(α -> bool) -> (α -> bool) -> bool) = (λ(p :α -> bool) (m :α -> bool). ∀(x :α). x ∈ p ⇒ m x)
+RES_EXISTS_DEF_typed=(RES_EXISTS :(α -> bool) -> (α -> bool) -> bool) = (λ(p :α -> bool) (m :α -> bool). ∃(x :α). x ∈ p ∧ m x)

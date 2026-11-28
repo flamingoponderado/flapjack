@@ -13103,3 +13103,9 @@ run_probe unify_fmsp_typed_probeScript.sml unify_fmsp_typed_probe.out \
   fm2sp_delete_typed domain_fm2sp_typed \
   "$cake_dir/compiler/inference/unifyScript.sml" \
   "$cake_dir/compiler/inference"
+
+run_probe transfer_relation_typed_probeScript.sml transfer_relation_typed_probe.out \
+  FUN_REL_typed total_def_typed surj_def_typed bitotal_def_typed \
+  RES_FORALL_DEF_typed RES_EXISTS_DEF_typed \
+  "$hol_dir/src/quotient/src/quotientScript.sml" \
+  "$hol_dir/src/quotient/src"

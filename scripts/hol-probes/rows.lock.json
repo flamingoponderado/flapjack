@@ -2149,6 +2149,7 @@
     {"bytes": 25533, "out": "token_utils_typed_probe.out", "rows": 14, "sha256": "ce93d053791d2ab17c5d94a6108342f307f6ddd68ad0de8551dc92ed381d5f72"},
     {"bytes": 2713, "out": "tokens_carriers_probe.out", "rows": 2, "sha256": "5c85ff95dd5e9a5082d699126464e31ee695d67a220c3fee981eeecf3e217c5d"},
     {"bytes": 1231, "out": "tokens_defs_typed_probe.out", "rows": 2, "sha256": "a5e298f5cf62144f91f4faa5bd5d53038c38b57c2f2aceff33bad62f73280bb5"},
+    {"bytes": 680, "out": "transfer_relation_typed_probe.out", "rows": 6, "sha256": "457bfde8ed041843b8f413c7edcafb0bb189865af25bc6fa0d6402b35c2fa599"},
     {"bytes": 327, "out": "try_ProgNT_probe.out", "rows": 1, "sha256": "d014b3d6330bcb3a87d9557af3b376904c972664ce15feabe8e01adb55fbe0a5"},
     {"bytes": 777, "out": "type_sound_env_probe.out", "rows": 5, "sha256": "de3323dfbf3f8d637b83c91731d2a46c19f43cb806fee547fd412d6b04873b73"},
     {"bytes": 31831, "out": "type_sys_props_typed_probe.out", "rows": 115, "sha256": "91bb2401df4593e31adb42df0706ee2bd53bc47395d98cdfcb884119ab6e6ae1"},
