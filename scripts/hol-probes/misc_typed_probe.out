@@ -307,3 +307,4 @@ lookup_fromList2_typed=∀(l :α list) (n :num). lookup n (fromList2 l) = if EVE
 fromList2_value_typed=∀(e :α) (l :α list) (t :β) (n :γ). MEM e l ⇔ ∃(n :num). lookup n (fromList2 l) = SOME e
 size_fromAList_typed=∀(xs :(num # α) list). ALL_DISTINCT (MAP (FST :num # α -> num) xs) ⇒ size (fromAList xs) = LENGTH xs
 NOT_MEM_FLOOKUP_ZIP_typed=∀(ys :α list) (xs :α |-> β) (zs :β list). ¬MEM (n :α) ys ⇒ FLOOKUP (xs |++ ZIP (ys,zs)) n = FLOOKUP xs n
+splitlines_nil_typed=splitlines ("" :string) = ([] :string list)

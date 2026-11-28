@@ -219,4 +219,16 @@ noncomputable def splitlines (ls : MlString) : List MlString :=
     lines.dropLast
   else lines
 
+/-- Flapjack infrastructure: splitting the empty string yields one empty field. -/
+private theorem fields_implode_nil (f : HolChar → Bool) :
+    fields f (.implode []) = [.implode []] := by
+  rw [fields_alt, strlen_implode, List.length_nil, fieldsAltAux.eq_def]
+  rw [if_neg (by omega : ¬ 0 < 0), Nat.sub_self, substring_zero_len]
+
+/-- Original `splitlines_nil`: splitting the empty string yields no lines. -/
+@[hol "cakeml/misc/miscScript.sml" "splitlines_nil"]
+theorem splitlinesNil : splitlines (.implode []) = [] := by
+  simp only [splitlines, fields_implode_nil]
+  simp
+
 end Flapjack.Basis.Pure.MlString
