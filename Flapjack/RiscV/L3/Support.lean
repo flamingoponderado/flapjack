@@ -39,6 +39,24 @@ This helper is untagged infrastructure, not a claim about the whole model. -/
 def holV2w (a : Nat) (v : List Bool) : BitVec a :=
   Flapjack.holFcpWord fun i => decide (i < v.length) && v.getD (v.length - 1 - i) false
 
+/-- Original `v2w_sing`: a singleton Boolean list is the word one or zero. -/
+@[hol "cakeml/misc/miscScript.sml" "v2w_sing" (words_as_type_indexed_bitvec)]
+theorem v2w_sing {w : Nat} [NeZero w] (b : Bool) :
+    holV2w w [b] = if b then (1 : BitVec w) else (0 : BitVec w) := by
+  cases b
+  · rw [if_neg (by decide)]
+    apply BitVec.eq_of_getLsbD_eq
+    intro i hi
+    rw [holV2w, Flapjack.getLsbD_holFcpWord]
+    simp
+  · rw [if_pos rfl]
+    apply BitVec.eq_of_getLsbD_eq
+    intro i hi
+    rw [holV2w, Flapjack.getLsbD_holFcpWord]
+    by_cases hi0 : i = 0
+    · simp [hi0, Nat.pos_of_ne_zero (NeZero.ne w)]
+    · simp [hi0]
+
 /-- Original `v2w_32_F`: the false singleton is the zero word. -/
 @[hol "cakeml/misc/miscScript.sml" "v2w_32_F"]
 theorem v2w_32_F : holV2w 32 [false] = 0#32 := by
