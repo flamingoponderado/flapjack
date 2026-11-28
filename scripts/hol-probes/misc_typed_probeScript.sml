@@ -335,3 +335,5 @@ val _ = emit "eq_shape_map_typed" "eq_shape_map";
 val _ = emit "eq_shape_IMP_domain_typed" "eq_shape_IMP_domain";
 val _ = emit "subspt_delete_typed" "subspt_delete";
 val _ = emit "range_insert_2_typed" "range_insert_2";
+val _ = emit "wf_nat_set_from_list_typed" "wf_nat_set_from_list";
+val _ = emit "domain_nat_set_from_list_typed" "domain_nat_set_from_list";

@@ -4584,6 +4584,7 @@ import Flapjack.Misc.Permutes
 import Flapjack.Misc.Sptree.Range
 import Flapjack.Misc.Sptree.EqShape
 import Flapjack.Misc.Sptree.SubsptDelete
+import Flapjack.Misc.Sptree.NatSetFromList
 import Flapjack.Misc.Pair
 import Flapjack.Misc.Relation
 import Flapjack.Misc.Rtc
