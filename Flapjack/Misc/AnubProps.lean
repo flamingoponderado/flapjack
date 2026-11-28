@@ -105,8 +105,8 @@ theorem anub_tl_anub {α β : Type} [DecidableEq α] (x : List (α × β)) (y : 
 /-- Original `EVERY_anub_suff`: a property that holds of every key/value whose
 lookup is defined off the accumulator holds of every kept binding. -/
 @[hol "cakeml/misc/miscScript.sml" "EVERY_anub_suff"]
-theorem every_anub_suff {α β : Type} [DecidableEq α] (P : α × β → Prop) :
-    ∀ (ls : List (α × β)) (acc : List α),
+theorem every_anub_suff {α β : Type} [DecidableEq α] :
+    ∀ (ls : List (α × β)) (acc : List α) (P : α × β → Prop),
       (∀ x, x ∉ acc → match List.lookup x ls with
         | some v => P (x, v)
         | none => True) →
@@ -114,14 +114,14 @@ theorem every_anub_suff {α β : Type} [DecidableEq α] (P : α × β → Prop) 
   intro ls
   induction ls with
   | nil =>
-    intro acc _ p hp
+    intro acc P _ p hp
     simp [anub] at hp
   | cons q rest ih =>
-    intro acc h p hp
+    intro acc P h p hp
     obtain ⟨a0, b0⟩ := q
     by_cases ha : a0 ∈ acc
     · rw [anub, if_pos ha] at hp
-      refine ih acc (fun x hx => ?_) p hp
+      refine ih acc P (fun x hx => ?_) p hp
       have hxa : x ≠ a0 := by
         intro heq
         exact hx (heq ▸ ha)
@@ -140,7 +140,7 @@ theorem every_anub_suff {α β : Type} [DecidableEq α] (P : α × β → Prop) 
         have h' := h a0 ha
         rw [hsome] at h'
         exact h'
-      · refine ih (a0 :: acc) (fun x hx => ?_) p hp
+      · refine ih (a0 :: acc) P (fun x hx => ?_) p hp
         by_cases hxa : x = a0
         · subst hxa
           exact absurd List.mem_cons_self hx

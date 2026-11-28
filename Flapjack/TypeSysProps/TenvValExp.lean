@@ -90,10 +90,10 @@ theorem bindTvar_zero (x : TenvValExp) : bindTvar 0 x = x := by
 /-- Original `tveLookup_subst_none`: substituting type arguments preserves
 whether a lookup fails. -/
 @[hol "cakeml/semantics/proofs/typeSysPropsScript.sml" "tveLookup_subst_none"]
-theorem tveLookup_subst_none (targs : List SemanticT) (n : MlString) :
-    ∀ (inc : Nat) (e : TenvValExp),
+theorem tveLookup_subst_none (n : MlString) :
+    ∀ (inc : Nat) (e : TenvValExp) (targs : List SemanticT),
       tveLookup n inc (deBruijnSubstTenvE targs e) = none ↔ tveLookup n inc e = none := by
-  intro inc e
+  intro inc e targs
   induction e generalizing inc with
   | empty => simp [deBruijnSubstTenvE, tveLookup]
   | bindTvar tvs e ih => simp [deBruijnSubstTenvE, tveLookup, ih]
@@ -384,8 +384,8 @@ theorem tveLookup_no_tvs (tvs : Nat) (l : Nat) (localEnv : TenvValExp) (n : MlSt
 
 /-- Substituting through a bound variable list keeps the list structure. -/
 @[hol "cakeml/semantics/proofs/typeSysPropsScript.sml" "deBruijn_subst_E_bvl"]
-theorem deBruijnSubstTenvE_bvl (targs : List SemanticT) (tenv1 : List (MlString × SemanticT))
-    (tenv2 : TenvValExp) (tvs : Nat) :
+theorem deBruijnSubstTenvE_bvl (tenv1 : List (MlString × SemanticT))
+    (tenv2 : TenvValExp) (tvs : Nat) (targs : List SemanticT) :
     deBruijnSubstTenvE targs (bindVarList tvs tenv1 tenv2) =
       bindVarList tvs
         (tenv1.map fun (x, t) => (x, deBruijnSubst (tvs + numTvs tenv2)
