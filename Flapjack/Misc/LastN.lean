@@ -32,4 +32,44 @@ theorem length_lastN_le {α : Type} (xs : List α) (n : Nat) :
   simp only [List.length_reverse, List.length_take]
   omega
 
+/-- Original `LASTN_LEMMA`: the last elements of a list of length at most `n`
+are the list itself, in both of HOL's shapes. -/
+@[hol "cakeml/misc/miscScript.sml" "LASTN_LEMMA"]
+theorem lastN_lemma {α : Type} (xs : List α) (x y : α) :
+    wordSemLastN (xs.length + 1 + 1) (x :: y :: xs) = x :: y :: xs ∧
+    wordSemLastN (xs.length + 1) (x :: xs) = x :: xs := by
+  refine ⟨lastN_eq_self_of_length_le _ _ (by simp),
+    lastN_eq_self_of_length_le _ _ (by simp)⟩
+
+/-- Original `LASTN_TL`: the last `n+1` elements of a longer cons list ignore
+the head. -/
+@[hol "cakeml/misc/miscScript.sml" "LASTN_TL"]
+theorem lastN_tl {α : Type} (n : Nat) (x : α) (xs : List α) (h : n < xs.length) :
+    wordSemLastN (n + 1) (x :: xs) = wordSemLastN (n + 1) xs := by
+  unfold wordSemLastN
+  rw [List.reverse_cons,
+    List.take_append_of_le_length (by
+      simp only [List.length_reverse]
+      omega)]
+
+/-- Original `LASTN_ALT`: the last elements of the empty list are empty, and for
+a cons list they are the whole list when it is short enough. -/
+@[hol "cakeml/misc/miscScript.sml" "LASTN_ALT"]
+theorem lastN_alt {α : Type} (n : Nat) (x : α) (xs : List α) :
+    wordSemLastN n ([] : List α) = [] ∧
+    wordSemLastN n (x :: xs) =
+      if (x :: xs).length ≤ n then x :: xs else wordSemLastN n xs := by
+  constructor
+  · simp [wordSemLastN]
+  · by_cases h : (x :: xs).length ≤ n
+    · rw [if_pos h]
+      exact lastN_eq_self_of_length_le _ _ h
+    · rw [if_neg h]
+      unfold wordSemLastN
+      rw [List.reverse_cons,
+        List.take_append_of_le_length (by
+          simp only [List.length_reverse] at ⊢
+          simp only [List.length_cons] at h
+          omega)]
+
 end Flapjack

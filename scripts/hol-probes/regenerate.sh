@@ -10824,6 +10824,11 @@ run_probe misc_typed_probeScript.sml misc_typed_probe.out \
   irreflexive_inv_image_typed \
   EVERY_lookup_vars_typed \
   ALOOKUP_find_index_NONE_typed LASTN_LENGTH_LESS_EQ_typed LENGTH_LASTN_LESS_typed \
+  GENLIST_typed GENLIST_eq_MAP_typed ZIP_GENLIST1_typed LIST_REL_GENLIST_I_typed \
+  ALOOKUP_GENLIST_typed LIST_REL_lookup_fromList_typed LIST_REL_lookup_fromList_MAP_typed \
+  LIST_REL_FRONT_LAST_typed SORTED_inv_image_LESS_PLUS_typed SORTED_GENLIST_TIMES_typed \
+  LASTN_LEMMA_typed LASTN_TL_typed LASTN_ALT_typed trichotomous_inv_image_typed \
+  option_eq_some_typed IN_EVEN_typed SUM_COUNT_LIST_typed \
   "$cake_dir/misc/miscScript.sml" \
   "$cake_dir/misc"
 

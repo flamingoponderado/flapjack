@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Misc.Sptree.FromList
+public import Mathlib.Data.List.Forall2
 public import Mathlib.Data.List.Induction
 public import Lean.Elab.Tactic.Omega
 public import Mathlib.Data.Set.Lattice
@@ -100,5 +101,31 @@ theorem sptLookupFromList {α : Type} (key : Nat) (values : List α) :
       if bound : key < values.length then some values[key] else none := by
   rw [sptLookupFromList_getElem?]
   split <;> simp_all
+
+/-- Original `LIST_REL_lookup_fromList`: every index below the input length
+looks up its own input value in the sequential sparse tree. -/
+@[hol "cakeml/misc/miscScript.sml" "LIST_REL_lookup_fromList"]
+theorem forall₂_lookup_fromList {α : Type} (args : List α) :
+    List.Forall₂ (fun v x => sptLookup v (sptFromList args) = some x)
+      (List.range args.length) args := by
+  rw [List.forall₂_iff_get]
+  refine ⟨by simp, ?_⟩
+  intro i h1 h2
+  rw [List.get_eq_getElem, List.get_eq_getElem, List.getElem_range,
+    sptLookupFromList_getElem?, List.getElem?_eq_getElem h2]
+
+/-- Original `LIST_REL_lookup_fromList_MAP`: the same index relation holds
+between the indices and the mapped input values. -/
+@[hol "cakeml/misc/miscScript.sml" "LIST_REL_lookup_fromList_MAP"]
+theorem forall₂_lookup_fromList_map {α β : Type} (f : α → β) (args : List α) :
+    List.Forall₂ (fun v x => ∃ z, sptLookup v (sptFromList args) = some z ∧ x = f z)
+      (List.range args.length) (args.map f) := by
+  rw [List.forall₂_iff_get]
+  refine ⟨by simp, ?_⟩
+  intro i h1 h2
+  refine ⟨args[i]'(by simpa using h1), ?_, ?_⟩
+  · rw [List.get_eq_getElem, List.getElem_range, sptLookupFromList_getElem?,
+      List.getElem?_eq_getElem (by simpa using h1)]
+  · rw [List.get_eq_getElem, List.getElem_map]
 
 end Flapjack

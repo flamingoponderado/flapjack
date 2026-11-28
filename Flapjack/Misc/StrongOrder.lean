@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Misc.Relation
 public import Flapjack.Misc.Irreflexive
+public import Flapjack.Misc.PredSet
 
 @[expose] public section
 
@@ -38,5 +39,18 @@ def holStrongOrder {α : Type} (R : α → α → Prop) : Prop :=
 @[hol "HOL/src/relation/relationScript.sml" "StrongLinearOrder"]
 def holStrongLinearOrder {α : Type} (R : α → α → Prop) : Prop :=
   holStrongOrder R ∧ holTrichotomous R
+
+/-- Original `trichotomous_inv_image`: a trichotomous relation stays
+trichotomous after pulling it back along an injective function. -/
+@[hol "cakeml/misc/miscScript.sml" "trichotomous_inv_image"]
+theorem trichotomousInvImage {α β : Type} (R : α → α → Prop) (f : β → α) :
+    holTrichotomous R ∧ holInj f (fun _ => True) (fun _ => True) →
+      holTrichotomous (InvImage R f) := by
+  rintro ⟨htri, hinj⟩ a b
+  obtain ⟨_, hinj'⟩ := hinj
+  rcases htri (f a) (f b) with h | h | h
+  · exact Or.inl h
+  · exact Or.inr (Or.inl h)
+  · exact Or.inr (Or.inr (hinj' a b ⟨trivial, trivial⟩ h))
 
 end Flapjack

@@ -1041,4 +1041,25 @@ theorem take_drop_sublist {α : Type} (ls ll : List α) (n nlll : Nat)
     rw [← List.take_append_drop n ls, ← ht]
   rw [List.append_assoc]
 
+/-- Flapjack infrastructure: twice the sum of the first `n` numbers. -/
+theorem sum_range_double (n : Nat) : 2 * (List.range n).sum = n * (n - 1) := by
+  induction n with
+  | zero => simp
+  | succ n ih =>
+    rw [List.range_succ, List.sum_append, List.sum_cons, List.sum_nil, Nat.add_zero]
+    rw [Nat.mul_add, ih]
+    have h : n * (n - 1) + 2 * n = (n + 1) * n := by
+      rw [Nat.mul_sub_left_distrib, Nat.mul_one, Nat.add_mul, Nat.one_mul]
+      have hn : n ≤ n * n := Nat.le_mul_self n
+      omega
+    rw [h]
+    have h' : n + 1 - 1 = n := by omega
+    rw [h']
+
+/-- Original `SUM_COUNT_LIST`: the first `n` numbers sum to `n * (n-1) / 2`. -/
+@[hol "cakeml/misc/miscScript.sml" "SUM_COUNT_LIST"]
+theorem sum_range {n : Nat} : (List.range n).sum = n * (n - 1) / 2 := by
+  have h := sum_range_double n
+  omega
+
 end Flapjack

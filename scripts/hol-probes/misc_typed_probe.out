@@ -220,3 +220,20 @@ EVERY_lookup_vars_typed=∀(vs :num list) (env :α list) (env' :α list). EVERY 
 ALOOKUP_find_index_NONE_typed=ALOOKUP (env :(β # α) list) (k :β) = (NONE :α option) ⇒ find_index k (MAP (FST :β # α -> β) env) (m :num) = (NONE :num option)
 LASTN_LENGTH_LESS_EQ_typed=∀(xs :α list) (n :num). LENGTH xs ≤ n ⇒ LASTN n xs = xs
 LENGTH_LASTN_LESS_typed=∀(xs :α list) (n :num). LENGTH (LASTN n xs) ≤ LENGTH xs
+GENLIST_typed=:(num -> α) -> num -> α list
+GENLIST_eq_MAP_typed=GENLIST (f :num -> α) (n :num) = MAP (g :β -> α) (ls :β list) ⇔ LENGTH ls = n ∧ ∀(m :num). m < n ⇒ f m = g ls❲m❳
+ZIP_GENLIST1_typed=∀(l :α list) (f :num -> β) (n :num). LENGTH l = n ⇒ ZIP (GENLIST f n,l) = GENLIST (λ(x :num). (f x,l❲x❳)) n
+LIST_REL_GENLIST_I_typed=∀(xs :α list). LIST_REL (P :num -> α -> bool) (GENLIST (I :num -> num) (LENGTH xs)) xs ⇔ ∀(n :num). n < LENGTH xs ⇒ P n xs❲n❳
+ALOOKUP_GENLIST_typed=∀(f :num -> α) (n :num) (k :num). ALOOKUP (GENLIST (λ(i :num). (i,f i)) n) k = if k < n then SOME (f k) else (NONE :α option)
+LIST_REL_lookup_fromList_typed=LIST_REL (λ(v :num) (x :α). lookup v (fromList (args :α list) :α sptree$num_map) = SOME x) (GENLIST (I :num -> num) (LENGTH args)) args
+LIST_REL_lookup_fromList_MAP_typed=LIST_REL (λ(v :num) (x :α). ∃(z :β). lookup v (fromList (args :β list) :β sptree$num_map) = SOME z ∧ x = (f :β -> α) z) (GENLIST (I :num -> num) (LENGTH args)) (MAP f args)
+LIST_REL_FRONT_LAST_typed=(l1 :α list) ≠ ([] :α list) ∧ (l2 :β list) ≠ ([] :β list) ⇒ (LIST_REL (A :α -> β -> bool) l1 l2 ⇔ LIST_REL A (FRONT l1) (FRONT l2) ∧ A (LAST l1) (LAST l2))
+SORTED_inv_image_LESS_PLUS_typed=SORTED (inv_image $< ($+ (k :num))) = SORTED $<
+SORTED_GENLIST_TIMES_typed=(0 :num) < (k :num) ⇒ ∀(n :num). SORTED $< (GENLIST ($* k) n)
+LASTN_LEMMA_typed=LASTN (LENGTH (xs :α list) + (1 :num) + (1 :num)) ((x :α)::(y :α)::xs) = x::y::xs ∧ LASTN (LENGTH xs + (1 :num)) (x::xs) = x::xs
+LASTN_TL_typed=(n :num) < LENGTH (xs :α list) ⇒ LASTN (n + (1 :num)) ((x :α)::xs) = LASTN (n + (1 :num)) xs
+LASTN_ALT_typed=LASTN (n :num) ([] :α list) = ([] :α list) ∧ LASTN n ((x :β)::(xs :β list)) = if LENGTH (x::xs) ≤ n then x::xs else LASTN n xs
+trichotomous_inv_image_typed=∀(R :α -> α -> bool) (f :β -> α). trichotomous R ∧ INJ f 𝕌(:β) 𝕌(:α) ⇒ trichotomous (inv_image R f)
+option_eq_some_typed=((OPTION_IGNORE_BIND (m1 :α option) (m2 :β option) = (NONE :β option) ⇔ m1 = (NONE :α option) ∨ m2 = (NONE :β option)) ∧ (OPTION_IGNORE_BIND m1 m2 = SOME (y :β) ⇔ ∃(x :α). m1 = SOME x ∧ m2 = SOME y)) ∧ ((OPTION_BIND (p :α option) (f :α -> β option) = (NONE :β option) ⇔ p = (NONE :α option) ∨ ∃(x :α). p = SOME x ∧ f x = (NONE :β option)) ∧ (OPTION_BIND p f = SOME y ⇔ ∃(x :α). p = SOME x ∧ f x = SOME y)) ∧ ∀(x :α option) (y :α option) (z :α). OPTION_CHOICE x y = SOME z ⇔ x = SOME z ∨ x = (NONE :α option) ∧ y = SOME z
+IN_EVEN_typed=(x :num) ∈ EVEN ⇔ EVEN x
+SUM_COUNT_LIST_typed=(SUM (COUNT_LIST (n :num)) :num) = n * (n − (1 :num)) DIV (2 :num)

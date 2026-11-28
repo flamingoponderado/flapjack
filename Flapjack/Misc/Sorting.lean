@@ -2,6 +2,7 @@ module
 
 public import Flapjack.HolRef
 public import Flapjack.Misc.Relation
+public import Flapjack.Misc.List
 
 @[expose] public section
 
@@ -127,5 +128,49 @@ def holPart {α : Type} (P : α → Bool) : List α → List α → List α → 
 @[hol "HOL/src/sort/sortingScript.sml" "PARTITION_DEF"]
 def holPartition {α : Type} (P : α → Bool) (l : List α) : List α × List α :=
   holPart P l [] []
+
+/-- Flapjack infrastructure: appending an element greater than every existing
+one preserves HOL adjacent-pair sortedness. -/
+private theorem holSorted_append_greater {α : Type} (R : α → α → Prop) (x : α) :
+    ∀ l : List α, holSorted R l → (∀ y, y ∈ l → R y x) → holSorted R (l ++ [x])
+  | [], _, _ => trivial
+  | [a], _, hx => by
+      simp only [List.cons_append, List.nil_append, holSorted]
+      exact ⟨hx a (by simp), trivial⟩
+  | a :: b :: rest, hl, hx => by
+      simp only [List.cons_append, holSorted] at hl ⊢
+      exact ⟨hl.1,
+        holSorted_append_greater R x (b :: rest) hl.2 (fun y hy => hx y (by simp [hy]))⟩
+
+/-- Original `SORTED_inv_image_LESS_PLUS`: shifting by a constant does not
+change which lists are sorted by `<`. -/
+@[hol "cakeml/misc/miscScript.sml" "SORTED_inv_image_LESS_PLUS"]
+theorem sortedInvImage_less_add (k : Nat) :
+    holSorted (InvImage (· < ·) (fun x => k + x)) = holSorted (· < ·) := by
+  funext l
+  apply propext
+  induction l with
+  | nil => exact Iff.rfl
+  | cons x xs ih =>
+    cases xs with
+    | nil => exact Iff.rfl
+    | cons y rest =>
+      simp only [holSorted, InvImage, Nat.add_lt_add_iff_left]
+      rw [ih]
+
+/-- Original `SORTED_GENLIST_TIMES`: multiplying the generated indices by a
+positive constant keeps them sorted. -/
+@[hol "cakeml/misc/miscScript.sml" "SORTED_GENLIST_TIMES"]
+theorem sortedGenlistTimes (k n : Nat) (hk : 0 < k) :
+    holSorted (· < ·) (genlist (fun x => k * x) n) := by
+  induction n with
+  | zero => trivial
+  | succ n ih =>
+    exact holSorted_append_greater (· < ·) (k * n) (genlist (fun x => k * x) n) ih (by
+      intro y hy
+      rw [genlist_range] at hy
+      obtain ⟨i, hi, rfl⟩ := List.mem_map.mp hy
+      rw [List.mem_range] at hi
+      exact Nat.mul_lt_mul_of_pos_left hi hk)
 
 end Flapjack
