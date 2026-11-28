@@ -13101,6 +13101,7 @@ run_probe preslang_basics_typed_probeScript.sml preslang_basics_typed_probe.out 
 
 run_probe unify_fmsp_typed_probeScript.sml unify_fmsp_typed_probe.out \
   fm2sp_delete_typed domain_fm2sp_typed RKC_def_typed surj_RKC_typed \
+  substR_FDOM_typed substR_FLOOKUP_typed substR_RFORALL_typed \
   "$cake_dir/compiler/inference/unifyScript.sml" \
   "$cake_dir/compiler/inference"
 

@@ -76943,6 +76943,30 @@
     "reviewer": "Source comparison with surj_RKC_typed (scripts/hol-probes/unify_fmsp_typed_probe.out): HOL states `surj RKC` with no binders or premises. Lean states the same over the reviewed transfer$surj and the already-tagged RKC relation (rkc, ported in Unify/Machine.lean from RKC_def); the witness for each inference type is its encoding, exactly as HOL's simplification derives it from RKC_def. No hypothesis is added."
   },
 {
+    "hol_path": "cakeml/compiler/inference/unifyScript.sml",
+    "hol_name": "substR_FDOM",
+    "lean_path": "Flapjack/Compiler/Inference/Unify/Transfer.lean",
+    "lean_name": "substRFdom",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison with substR_FDOM_typed (scripts/hol-probes/unify_fmsp_typed_probe.out): HOL states (substR |==> ($= :(num -> bool) -> (num -> bool) -> bool)) (FDOM :atom subst -> num -> bool) (domain :infer_t sptree$num_map -> num -> bool). Lean keeps the same transfer relation funRel substR (· = ·), with FDOM rendered by the already-tagged HolFiniteMapExact.domain and domain by the pointwise set {key | sptDomain sp key} over the reviewed Spt carrier. The finite-map carrier reaches the statement only through the tagged substR and domain renderings; binder order and premises are unchanged."
+  },
+{
+    "hol_path": "cakeml/compiler/inference/unifyScript.sml",
+    "hol_name": "substR_FLOOKUP",
+    "lean_path": "Flapjack/Compiler/Inference/Unify/Transfer.lean",
+    "lean_name": "substRFlookup",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison with substR_FLOOKUP_typed (scripts/hol-probes/unify_fmsp_typed_probe.out): HOL states (substR |==> ($= :num -> num -> bool) |==> OPTREL RKC) (FLOOKUP :atom subst -> num -> atom term option) (flip (lookup :num -> infer_t sptree$num_map -> infer_t option)). Lean composes the two transfer relations as nested funRel with the tagged optionRel rkc (OPTREL), renders FLOOKUP by the map lookup projection and flip lookup by sptLookup key sp over the reviewed Spt carrier. Same carriers, no added hypothesis."
+  },
+{
+    "hol_path": "cakeml/compiler/inference/unifyScript.sml",
+    "hol_name": "substR_RFORALL",
+    "lean_path": "Flapjack/Compiler/Inference/Unify/Transfer.lean",
+    "lean_name": "substRForall",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison with substR_RFORALL_typed (scripts/hol-probes/unify_fmsp_typed_probe.out): HOL states ((substR |==> $==>) |==> $==>) (RES_FORALL (wfs :atom subst -> bool)) (RES_FORALL cwfs). Lean keeps the nested funRel with implication as the result relation, renders RES_FORALL by the already-tagged resForall over the tagged wfs and cwfs, and the finite-map binder sits inside the relation exactly as in HOL. No hypothesis is added."
+  },
+{
     "lean_path": "Flapjack/Misc/Sptree/FromList2.lean",
     "lean_name": "sptEvenFromList2",
     "hol_path": "cakeml/misc/miscScript.sml",
