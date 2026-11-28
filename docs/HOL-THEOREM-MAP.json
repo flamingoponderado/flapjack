@@ -76967,6 +76967,14 @@
     "reviewer": "Source comparison with substR_RFORALL_typed (scripts/hol-probes/unify_fmsp_typed_probe.out): HOL states ((substR |==> $==>) |==> $==>) (RES_FORALL (wfs :atom subst -> bool)) (RES_FORALL cwfs). Lean keeps the nested funRel with implication as the result relation, renders RES_FORALL by the already-tagged resForall over the tagged wfs and cwfs, and the finite-map binder sits inside the relation exactly as in HOL. No hypothesis is added."
   },
 {
+    "hol_path": "cakeml/compiler/inference/unifyScript.sml",
+    "hol_name": "wfs_rule",
+    "lean_path": "Flapjack/Compiler/Inference/Unify/Transfer.lean",
+    "lean_name": "wfsRule",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison with wfs_rule_typed (scripts/hol-probes/unify_fmsp_typed_probe.out): HOL states (substR |==> ($<=> :bool -> bool -> bool)) (wfs :atom subst -> bool) cwfs. Lean keeps the transfer relation funRel substR with the result relation rendered as the biconditional on Prop (HOL bool <=>), over the tagged wfs and cwfs predicates; the finite-map binder sits inside the relation exactly as in HOL. No hypothesis is added."
+  },
+{
     "lean_path": "Flapjack/Misc/Sptree/FromList2.lean",
     "lean_name": "sptEvenFromList2",
     "hol_path": "cakeml/misc/miscScript.sml",

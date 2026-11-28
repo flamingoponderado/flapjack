@@ -92,4 +92,23 @@ theorem substRForall :
     ⟨hwfs, hcwfs.2, rfl⟩
   exact hrel _ sp hsub (hall _ hwfs)
 
+/-- Original `wfs_rule`: an encoded substitution is well formed exactly when
+the inference substitution is. -/
+@[hol "cakeml/compiler/inference/unifyScript.sml" "wfs_rule"]
+theorem wfsRule : funRel substR (fun p q => p ↔ q) wfs cwfs := by
+  intro fm sp hsub
+  show wfs fm ↔ cwfs sp
+  constructor
+  · intro hwfs
+    have hsw : swfs (sptMap encodeInferT sp) := by
+      simp only [swfs, sp2fm_map]
+      rw [← hsub.2.2]
+      exact hwfs
+    exact ⟨hsw, hsub.2.1⟩
+  · intro hcwfs
+    have hsw : swfs (sptMap encodeInferT sp) := hcwfs.1
+    simp only [swfs, sp2fm_map] at hsw
+    rw [← hsub.2.2] at hsw
+    exact hsw
+
 end Flapjack.Compiler.Inference.Unify

@@ -5,3 +5,4 @@ surj_RKC_typed=surj RKC
 substR_FDOM_typed=(substR |==> ($= :(num -> bool) -> (num -> bool) -> bool)) (FDOM :atom subst -> num -> bool) (domain :infer_t sptree$num_map -> num -> bool)
 substR_FLOOKUP_typed=(substR |==> ($= :num -> num -> bool) |==> OPTREL RKC) (FLOOKUP :atom subst -> num -> atom term option) (flip (lookup :num -> infer_t sptree$num_map -> infer_t option))
 substR_RFORALL_typed=((substR |==> $==>) |==> $==>) (RES_FORALL (wfs :atom subst -> bool)) (RES_FORALL cwfs)
+wfs_rule_typed=(substR |==> ($<=> :bool -> bool -> bool)) (wfs :atom subst -> bool) cwfs
