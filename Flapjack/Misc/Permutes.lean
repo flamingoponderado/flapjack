@@ -173,4 +173,38 @@ theorem injUpdate {α β : Type} [DecidableEq α] (f : α → β) (s : Set α) (
           exact hcopy
         exact hinj _ _ ⟨hz1'.resolve_left h1, hz2'.resolve_left h2⟩ hval
 
+/-- Original `PERM_MAP_BIJ`: a bijection preserves and reflects permutation. -/
+@[hol "cakeml/misc/miscScript.sml" "PERM_MAP_BIJ"]
+theorem permMapBij {α β : Type} (f : α → β) (l1 l2 : List α)
+    (hbij : holBij f (fun _ => True) (fun _ => True)) :
+    List.Perm l1 l2 ↔ List.Perm (l1.map f) (l2.map f) := by
+  classical
+  have hinj : ∀ x y, f x = f y → x = y := by
+    intro x y h
+    exact hbij.1.2 x y ⟨trivial, trivial⟩ h
+  have hsurj : ∀ y, ∃ x, f x = y := by
+    intro y
+    obtain ⟨x, _, hx⟩ := hbij.2.2 y trivial
+    exact ⟨x, hx⟩
+  have hleft : ∀ x, Classical.choose (hsurj (f x)) = x := by
+    intro x
+    have h1 : f (Classical.choose (hsurj (f x))) = f x :=
+      Classical.choose_spec (hsurj (f x))
+    exact hinj _ _ h1
+  have hmapAll : ∀ (l : List α),
+      (l.map f).map (fun y => Classical.choose (hsurj y)) = l := by
+    intro l
+    induction l with
+    | nil => rfl
+    | cons a as ih =>
+      simp only [List.map_cons, List.cons.injEq]
+      exact ⟨hleft a, ih⟩
+  constructor
+  · intro h
+    exact h.map f
+  · intro h
+    have hperm := h.map (fun y => Classical.choose (hsurj y))
+    rw [hmapAll l1, hmapAll l2] at hperm
+    exact hperm
+
 end Flapjack

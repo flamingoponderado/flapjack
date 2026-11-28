@@ -10850,6 +10850,7 @@ run_probe misc_typed_probeScript.sml misc_typed_probe.out \
   LUPDATE_insert_commute_typed INJ_MAP_EQ_2_typed FOLDR_CONS_5tup_typed \
   eq_shape_map_typed eq_shape_IMP_domain_typed subspt_delete_typed range_insert_2_typed \
   wf_nat_set_from_list_typed domain_nat_set_from_list_typed \
+  PERM_MAP_BIJ_typed \
   "$cake_dir/misc/miscScript.sml" \
   "$cake_dir/misc"
 

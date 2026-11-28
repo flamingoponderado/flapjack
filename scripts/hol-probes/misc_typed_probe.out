@@ -301,3 +301,4 @@ subspt_delete_typed=∀(a :α sptree$num_map) (b :α sptree$num_map) (x :num). s
 range_insert_2_typed=(C :α) ∈ (range (insert (n :num) (l :α) (fml :α sptree$num_map)) :α -> bool) ⇒ C ∈ (range fml :α -> bool) ∨ C = l
 wf_nat_set_from_list_typed=∀(ls :num list) (ns :α sptree$num_map). wf ns ⇒ wf (FOLDL (λ(s :α sptree$num_map) (n :num). insert n (z :α) s) ns ls)
 domain_nat_set_from_list_typed=∀(ls :num list) (ns :sptree$num_set). (domain (FOLDL (λ(s :sptree$num_set) (n :num). insert n () s) ns ls) :num -> bool) = (domain ns :num -> bool) ∪ set ls
+PERM_MAP_BIJ_typed=∀(f :α -> β) (l1 :α list) (l2 :α list). BIJ f 𝕌(:α) 𝕌(:β) ⇒ (PERM l1 l2 ⇔ PERM (MAP f l1) (MAP f l2))
