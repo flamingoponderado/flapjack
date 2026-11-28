@@ -76935,6 +76935,14 @@
     "reviewer": "Source comparison with RES_EXISTS_DEF_typed (scripts/hol-probes/transfer_relation_typed_probe.out): HOL `RES_EXISTS = λ(p :α->bool) (m :α->bool). ∃x. x ∈ p ∧ m x` keeps the binder order p, m, the membership conjunct and the pointwise existential. Lean uses Prop-valued predicates, with membership rendered as direct application. No hypothesis is added."
   },
 {
+    "hol_path": "cakeml/compiler/inference/unifyScript.sml",
+    "hol_name": "surj_RKC",
+    "lean_path": "Flapjack/Compiler/Inference/Unify/Transfer.lean",
+    "lean_name": "surjRkc",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison with surj_RKC_typed (scripts/hol-probes/unify_fmsp_typed_probe.out): HOL states `surj RKC` with no binders or premises. Lean states the same over the reviewed transfer$surj and the already-tagged RKC relation (rkc, ported in Unify/Machine.lean from RKC_def); the witness for each inference type is its encoding, exactly as HOL's simplification derives it from RKC_def. No hypothesis is added."
+  },
+{
     "lean_path": "Flapjack/Misc/Sptree/FromList2.lean",
     "lean_name": "sptEvenFromList2",
     "hol_path": "cakeml/misc/miscScript.sml",

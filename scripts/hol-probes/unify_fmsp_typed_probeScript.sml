@@ -35,5 +35,7 @@ fun emit label name =
 
 val _ = emit "fm2sp_delete_typed" "fm2sp_delete";
 val _ = emit "domain_fm2sp_typed" "domain_fm2sp";
+val _ = emit "RKC_def_typed" "RKC_def";
+val _ = emit "surj_RKC_typed" "surj_RKC";
 
 val _ = OS.Process.exit OS.Process.success;
