@@ -6,6 +6,7 @@ val _ = loadPath :=
   (Globals.HOLDIR ^ "/src/finite_maps") ::
   !loadPath;
 load "presLangTheory";
+load "jsonLangTheory";
 open HolKernel Parse boolLib bossLib;
 val _ = Globals.linewidth := 1000000;
 val _ = Globals.show_types := true;
@@ -28,10 +29,12 @@ fun show label th =
 
 val thy = "presLang";
 
-fun emit label name =
-  case DB.lookup {Thy = thy, Name = name} of
+fun emitIn label sourceTheory name =
+  case DB.lookup {Thy = sourceTheory, Name = name} of
     SOME (th, _) => show label th
-  | NONE => print (label ^ "=<not found in " ^ thy ^ ">\n");
+  | NONE => print (label ^ "=<not found in " ^ sourceTheory ^ ">\n");
+
+fun emit label name = emitIn label thy name;
 
 val _ = emit "empty_item_def_typed" "empty_item_def";
 val _ = emit "num_to_display_def_typed" "num_to_display_def";
@@ -41,6 +44,7 @@ val _ = emit "item_with_num_def_typed" "item_with_num_def";
 val _ = emit "item_with_nums_def_typed" "item_with_nums_def";
 val _ = emit "bool_to_display_def_typed" "bool_to_display_def";
 val _ = emit "num_to_hex_def_typed" "num_to_hex_def";
+val _ = emitIn "num_to_hex_digit_def_typed" "jsonLang" "num_to_hex_digit_def";
 val _ = emit "num_to_hex_digit_eq_typed" "num_to_hex_digit_eq";
 val _ = emit "separate_lines_def_typed" "separate_lines_def";
 val _ = emit "num_to_hex_mlstring_def_typed" "num_to_hex_mlstring_def";

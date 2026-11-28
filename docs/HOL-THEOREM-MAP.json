@@ -76845,6 +76845,30 @@
     "reviewer": "Source comparison with size_fromAList_typed (scripts/hol-probes/misc_typed_probe.out): HOL `∀(xs :(num # α) list). ALL_DISTINCT (MAP (FST :num # α -> num) xs) ⇒ size (fromAList xs) = LENGTH xs` keeps the single distinctness premise and the size/length conclusion; ALL_DISTINCT (MAP FST xs) is (entries.map Prod.fst).Nodup, fromAList is the reviewed sptFromAList and size is sptSize. The proof follows the HOL script: induction on the list, size_insert, lookup_fromAList and ALOOKUP_MEM (ported as holALookup_member). No other statement difference."
   },
 {
+    "hol_path": "cakeml/compiler/backend/jsonLangScript.sml",
+    "hol_name": "num_to_hex_digit_def",
+    "lean_path": "Flapjack/Compiler/Backend/PresLang/Hex.lean",
+    "lean_name": "numToHexDigit",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison with num_to_hex_digit_def_typed (scripts/hol-probes/preslang_basics_typed_probe.out): HOL `∀(n :num). num_to_hex_digit n = if n < 10 then STRING (CHR (48 + n)) \"\" else if n < 16 then STRING (CHR (55 + n)) \"\" else \"\"` keeps the two guards, the offsets 48 and 55 and the empty fallback. HOL `string` is `char list`, rendered as `List HolChar` with `HolChar = BitVec 8`; `STRING c \"\"` is the singleton list and `CHR` is `BitVec.ofNat 8` (the canonical 256-element character). No hypothesis is added."
+  },
+{
+    "hol_path": "cakeml/compiler/backend/presLangScript.sml",
+    "hol_name": "num_to_hex_def",
+    "lean_path": "Flapjack/Compiler/Backend/PresLang/Hex.lean",
+    "lean_name": "numToHex",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison with num_to_hex_def_typed (scripts/hol-probes/preslang_basics_typed_probe.out): HOL `∀(n :num). num_to_hex n = STRCAT (if n < 16 then \"\" else num_to_hex (n DIV 16)) (num_to_hex_digit (n MOD 16))` keeps the 16 guard, the DIV/MOD by 16 and the append order. STRCAT is character-list append, the string literal is the empty list and the recursion is well founded on the decreasing argument n. No hypothesis is added."
+  },
+{
+    "hol_path": "cakeml/compiler/backend/presLangScript.sml",
+    "hol_name": "num_to_hex_mlstring_def",
+    "lean_path": "Flapjack/Compiler/Backend/PresLang/Hex.lean",
+    "lean_name": "numToHexMlstring",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison with num_to_hex_mlstring_def_typed (scripts/hol-probes/preslang_basics_typed_probe.out): HOL `∀(n :num). num_to_hex_mlstring n = implode (STRCAT \"0x\" (num_to_hex n))` keeps the implode, the 0x prefix and the appended digits. Lean uses the reviewed MlString carrier (`implode string`), the 0x prefix as the character list of '0' and 'x', and the reviewed numToHex; the result carrier is exactly HOL's mlstring, so no names_as_string rendering is involved."
+  },
+{
     "lean_path": "Flapjack/Misc/Sptree/FromList2.lean",
     "lean_name": "sptEvenFromList2",
     "hol_path": "cakeml/misc/miscScript.sml",

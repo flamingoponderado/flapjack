@@ -6,6 +6,7 @@ item_with_num_def_typed=∀(name :mlstring) (n :num). item_with_num name n = Ite
 item_with_nums_def_typed=∀(name :mlstring) (ns :num list). item_with_nums name ns = Item (NONE :tra option) name (MAP num_to_display ns)
 bool_to_display_def_typed=∀(b :bool). bool_to_display b = empty_item (if b then «True» else «False»)
 num_to_hex_def_typed=∀(n :num). num_to_hex n = STRCAT (if n < (16 :num) then ("" :string) else num_to_hex (n DIV (16 :num))) (num_to_hex_digit (n MOD (16 :num)))
+num_to_hex_digit_def_typed=∀(n :num). num_to_hex_digit n = if n < (10 :num) then STRING (CHR ((48 :num) + n)) ("" :string) else if n < (16 :num) then STRING (CHR ((55 :num) + n)) ("" :string) else ("" :string)
 num_to_hex_digit_eq_typed=∀(i :num). i < (16 :num) ⇒ num_to_hex_digit i = STRING (HEX i) ("" :string)
 separate_lines_def_typed=∀(name :mlstring) (xs :sExp list). separate_lines name xs = (List ((String name :sExp)::xs) :sExp)
 num_to_hex_mlstring_def_typed=∀(n :num). num_to_hex_mlstring n = implode (STRCAT "0x" (num_to_hex n))

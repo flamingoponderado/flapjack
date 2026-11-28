@@ -1496,7 +1496,7 @@
     {"bytes": 713, "out": "pred_set_defs_typed_probe.out", "rows": 5, "sha256": "62e299f7c392c1b4391ad2f10bbb4ac81dd52bc5d2d7c0b95399e346e0f115eb"},
     {"bytes": 353, "out": "pres_lang_config_probe.out", "rows": 7, "sha256": "da093b2f718e09a2b47b42423dc02af873560656d84178e48aaf54d4566a9853"},
     {"bytes": 59, "out": "pres_lang_datatype_typed_probe.out", "rows": 1, "sha256": "c38cf8a8d6ca5e6ced14bc3b04a6e77184fbc1969014a575a16de29f84532be6"},
-    {"bytes": 2021, "out": "preslang_basics_typed_probe.out", "rows": 16, "sha256": "4e18236dae28ee6040e8c9123f9f7a6323395cd8b2f970503fa98691f5bab36a"},
+    {"bytes": 2233, "out": "preslang_basics_typed_probe.out", "rows": 17, "sha256": "cfb423796912af1ba45f86fb37993b60474f4648e72260422a653fdcc373bf4a"},
     {"bytes": 759, "out": "prim_sem_env_eq_probe.out", "rows": 1, "sha256": "b80703292b9ed318ac5f69c5c21d1d7a7529052996aa26d98a3b30d9b7b69af7"},
     {"bytes": 800, "out": "prim_sem_env_probe.out", "rows": 4, "sha256": "1f6afe485af8efc4c32e3d5a6ebcc82fcd79904aac2b42578a776ad6c1577140"},
     {"bytes": 690, "out": "prim_types_defs_typed_probe.out", "rows": 2, "sha256": "de75b4741fe6f0ebaf013fd369dc35e69a61b580fe5b8fa6d367882fbf0070d9"},
