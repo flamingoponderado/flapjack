@@ -318,3 +318,7 @@ val _ = emit "list_subset_LENGTH_typed" "list_subset_LENGTH";
 val _ = emit "RTC_invariant_typed" "RTC_invariant";
 val _ = emit "RTC_RSUBSET_typed" "RTC_RSUBSET";
 val _ = emit "MOD_MINUS_typed" "MOD_MINUS";
+val _ = emit "MEM_anub_ALOOKUP_typed" "MEM_anub_ALOOKUP";
+val _ = emit "ALOOKUP_anub_typed" "ALOOKUP_anub";
+val _ = emit "anub_tl_anub_typed" "anub_tl_anub";
+val _ = emit "EVERY_anub_suff_typed" "EVERY_anub_suff";

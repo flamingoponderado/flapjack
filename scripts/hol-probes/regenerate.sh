@@ -10843,6 +10843,7 @@ run_probe misc_typed_probeScript.sml misc_typed_probe.out \
   MEM_ALOOKUP_typed findi_APPEND_typed LIST_REL_IMP_LAST_typed MULT_LE_EXP_typed \
   IS_PREFIX_THM_typed FILTER_EL_EQ_typed list_subset_LENGTH_typed \
   RTC_invariant_typed RTC_RSUBSET_typed MOD_MINUS_typed \
+  MEM_anub_ALOOKUP_typed ALOOKUP_anub_typed anub_tl_anub_typed EVERY_anub_suff_typed \
   "$cake_dir/misc/miscScript.sml" \
   "$cake_dir/misc"
 

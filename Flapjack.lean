@@ -4588,6 +4588,7 @@ import Flapjack.Misc.Sorting.PartsHaveProp
 import Flapjack.Misc.PermPartition
 import Flapjack.Misc.Mergesort
 import Flapjack.Misc.Anub
+import Flapjack.Misc.AnubProps
 import Flapjack.Compiler.Backend.RegAlloc.Proofs.SpInverts
 import Flapjack.Compiler.Backend.LinearScan.Proofs
 import Flapjack.Misc.Sptree.ToAList

@@ -282,3 +282,7 @@ list_subset_LENGTH_typed=∀(l1 :α list) (l2 :α list). ALL_DISTINCT l1 ∧ lis
 RTC_invariant_typed=∀(R :α -> α -> bool) (P :α -> bool). (∀(x :α) (y :α). P x ∧ R x y ⇒ P y) ⇒ ∀(x :α) (y :α). R꙳ x y ⇒ P x ⇒ (R ∩ᵣ (λ(x :α) (y :α). P x ∧ P y))꙳ x y
 RTC_RSUBSET_typed=∀(R1 :α -> α -> bool) (R2 :α -> α -> bool). R1 ⊆ᵣ R2 ⇒ R1꙳ ⊆ᵣ R2꙳
 MOD_MINUS_typed=(0 :num) < (p :num) ∧ (0 :num) < (k :num) ⇒ (p * k − (n :num) MOD (p * k)) MOD k = (k − n MOD k) MOD k
+MEM_anub_ALOOKUP_typed=MEM ((k :α),(v :β)) (anub (ls :(α # β) list) ([] :α list)) ⇒ ALOOKUP ls k = SOME v
+ALOOKUP_anub_typed=ALOOKUP (anub (ls :(β # α) list) (acc :β list)) (k :β) = if MEM k acc then ALOOKUP (anub ls acc) k else ALOOKUP ls k
+anub_tl_anub_typed=∀(x :(α # β) list) (y :α list) (h :α # β) (t :(α # β) list). anub x y = h::t ⇒ ∃(a :(α # β) list) (b :α list). t = anub a b ∧ set a ⊆ set x ∧ set b ⊆ set (FST h::y)
+EVERY_anub_suff_typed=∀(ls :(α # β) list) (acc :α list). (∀(x :α). ¬MEM x acc ⇒ case ALOOKUP ls x of (NONE :β option) => T | SOME v => (P :α # β -> bool) (x,v)) ⇒ EVERY P (anub ls acc)
