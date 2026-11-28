@@ -237,3 +237,16 @@ trichotomous_inv_image_typed=∀(R :α -> α -> bool) (f :β -> α). trichotomou
 option_eq_some_typed=((OPTION_IGNORE_BIND (m1 :α option) (m2 :β option) = (NONE :β option) ⇔ m1 = (NONE :α option) ∨ m2 = (NONE :β option)) ∧ (OPTION_IGNORE_BIND m1 m2 = SOME (y :β) ⇔ ∃(x :α). m1 = SOME x ∧ m2 = SOME y)) ∧ ((OPTION_BIND (p :α option) (f :α -> β option) = (NONE :β option) ⇔ p = (NONE :α option) ∨ ∃(x :α). p = SOME x ∧ f x = (NONE :β option)) ∧ (OPTION_BIND p f = SOME y ⇔ ∃(x :α). p = SOME x ∧ f x = SOME y)) ∧ ∀(x :α option) (y :α option) (z :α). OPTION_CHOICE x y = SOME z ⇔ x = SOME z ∨ x = (NONE :α option) ∧ y = SOME z
 IN_EVEN_typed=(x :num) ∈ EVEN ⇔ EVEN x
 SUM_COUNT_LIST_typed=(SUM (COUNT_LIST (n :num)) :num) = n * (n − (1 :num)) DIV (2 :num)
+SPLITP_CONS_IMP_typed=∀(ls :α list) (l' :α list) (r :α list). SPLITP (P :α -> bool) ls = (l',r) ∧ r ≠ ([] :α list) ⇒ EXISTS P ls
+SND_SPLITP_DROP_typed=∀(P :α -> bool) (n :num) (l :α list). EVERY ($¬ ∘ P) (TAKE n l) ⇒ SND (SPLITP P (DROP n l)) = SND (SPLITP P l)
+TOKENS_LENGTH_END_typed=∀(l :string) (a :char). LENGTH (TOKENS (λ(x :char). x = a) (STRCAT l (STRING a ("" :string)))) = LENGTH (TOKENS (λ(x :char). x = a) l)
+TOKENS_LENGTH_START_typed=∀(l :string) (a :char). LENGTH (TOKENS (λ(x :char). x = a) (STRING a l)) = LENGTH (TOKENS (λ(x :char). x = a) l)
+FIELDS_NEQ_NIL_typed=FIELDS (P :char -> bool) (ls :string) ≠ ([] :string list)
+LAST_FLAT_typed=∀(ls :α list list). ¬NULL (FLAT ls) ⇒ LAST (FLAT ls) = LAST (LAST (FILTER ($¬ ∘ (NULL :α list -> bool)) ls))
+MEM_list_size_typed=MEM (x :α) (ls :α list) ⇒ (f :α -> num) x ≤ list_size f ls
+UPDATE_LIST_NOT_MEM_typed=∀(ls :(α # β) list) (f :α -> β) (x :α). ¬MEM x (MAP (FST :α # β -> α) ls) ⇒ (f =++ ls) x = f x
+OLEAST_SOME_IMP_typed=$OLEAST (P :num -> bool) = SOME (i :num) ⇒ P i ∧ ∀(n :num). n < i ⇒ ¬P n
+DISJOINT_set_simp_typed=DISJOINT (set ([] :α list)) (s :α -> bool) ∧ (DISJOINT (set ((x :α)::(xs :α list))) s ⇔ x ∉ s ∧ DISJOINT (set xs) s)
+LOG2_TIMES2_typed=(0 :num) < (n :num) ⇒ LOG2 ((2 :num) * n) = SUC (LOG2 n)
+MAP_CHR_w2n_11_typed=∀(ws1 :word8 list) (ws2 :word8 list). MAP (CHR ∘ (w2n :word8 -> num)) ws1 = MAP (CHR ∘ (w2n :word8 -> num)) ws2 ⇔ ws1 = ws2
+I_PERMUTES_typed=(I :α -> α) PERMUTES (s :α -> bool)

@@ -4578,6 +4578,7 @@ import Flapjack.Misc.Sptree.Foldi
 import Flapjack.Misc.MiscThe
 import Flapjack.Misc.ListEl
 import Flapjack.Misc.ListRelation
+import Flapjack.Misc.Permutes
 import Flapjack.Misc.Pair
 import Flapjack.Misc.Relation
 import Flapjack.Misc.Sorting

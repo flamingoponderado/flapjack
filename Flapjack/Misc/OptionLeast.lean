@@ -83,4 +83,18 @@ theorem holOLeast_congr {p q : Nat → Prop} (h : ∀ n, p n ↔ q n) :
   · have hq : ¬ ∃ n, q n := fun hq => hp (hq.imp fun n => (h n).mpr)
     rw [dif_neg hp, dif_neg hq]
 
+/-- Original `OLEAST_SOME_IMP`: a least witness satisfies the predicate and no
+smaller number does. -/
+@[hol "cakeml/misc/miscScript.sml" "OLEAST_SOME_IMP"]
+theorem holOLeast_some_imp (P : Nat → Prop) (i : Nat) (h : holOLeast P = some i) :
+    P i ∧ ∀ n, n < i → ¬ P n := by
+  classical
+  unfold holOLeast at h
+  split at h
+  · rename_i hex
+    simp only [Option.some.injEq] at h
+    subst h
+    exact ⟨Nat.find_spec hex, fun n hn => Nat.find_min hex hn⟩
+  · simp at h
+
 end Flapjack

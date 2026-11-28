@@ -72,4 +72,24 @@ theorem applyUpdateListALookup {α β : Type} [DecidableEq α] :
           · have hx : (x == a) = false := by simp [Ne.symm h]
             simp [h, hx]
 
+/-- Original `UPDATE_LIST_NOT_MEM`: updating at a key that is not a key of the
+list leaves the function unchanged there. -/
+@[hol "cakeml/misc/miscScript.sml" "UPDATE_LIST_NOT_MEM"]
+theorem updateList_not_mem {α β : Type} [DecidableEq α] (ls : List (α × β)) :
+    ∀ (f : α → β) (x : α), x ∉ ls.map Prod.fst → updateList f ls x = f x := by
+  induction ls with
+  | nil =>
+    intro f x _
+    rfl
+  | cons hd tl ih =>
+    intro f x h
+    rw [List.map_cons, List.mem_cons, not_or] at h
+    obtain ⟨hne, htl⟩ := h
+    have hstep : updateList f (hd :: tl) =
+        updateList (fun y => if hd.1 = y then hd.2 else f y) tl := rfl
+    rw [hstep, ih _ x htl]
+    rw [if_neg (by
+      intro heq
+      exact hne heq.symm)]
+
 end Flapjack.Misc.UpdateList

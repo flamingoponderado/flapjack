@@ -145,4 +145,48 @@ theorem splitP_snd_nil_iff {α : Type} (P : α → Bool) (ls r : List α) :
         rw [Prod.mk.injEq]
         exact ⟨by rw [hr, hsplit_t], by rw [hsplit_t]⟩
 
+/-- Original `SPLITP_CONS_IMP`: a split whose second component is nonempty has
+an element satisfying the predicate. -/
+@[hol "cakeml/misc/miscScript.sml" "SPLITP_CONS_IMP"]
+theorem splitPConsImp {α : Type} (P : α → Bool) (ls l' r : List α)
+    (h : splitP P ls = (l', r)) (hr : r ≠ []) : ls.any P := by
+  induction ls generalizing l' r with
+  | nil =>
+    simp [splitP] at h
+    exact absurd h.2 hr
+  | cons hd tl ih =>
+    cases hp : P hd with
+    | true =>
+      rw [splitP, hp] at h
+      simp only at h
+      rw [List.any_cons, hp]
+      rfl
+    | false =>
+      rw [splitP, hp] at h
+      obtain ⟨-, rfl⟩ := h
+      rw [List.any_cons, hp]
+      exact ih _ _ rfl hr
+
+/-- Original `SND_SPLITP_DROP`: dropping a prefix on which the predicate fails
+does not change the second component of the split. -/
+@[hol "cakeml/misc/miscScript.sml" "SND_SPLITP_DROP"]
+theorem splitPSndDrop {α : Type} (P : α → Bool) (n : Nat) (l : List α)
+    (h : (l.take n).all (fun x => ! P x) = true) :
+    (splitP P (l.drop n)).2 = (splitP P l).2 := by
+  induction n generalizing l with
+  | zero => simp
+  | succ n ih =>
+    cases l with
+    | nil => simp [splitP]
+    | cons hd tl =>
+      rw [List.take_succ_cons, List.all_cons, Bool.and_eq_true] at h
+      obtain ⟨hhd, htl⟩ := h
+      have hfalse : P hd = false := by
+        cases hp : P hd with
+        | true => rw [hp] at hhd
+                  simp at hhd
+        | false => rfl
+      rw [List.drop_succ_cons, splitP, hfalse]
+      exact ih tl htl
+
 end Flapjack

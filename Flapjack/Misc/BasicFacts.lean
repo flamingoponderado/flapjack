@@ -4,8 +4,10 @@ public import Flapjack.HolRef
 public import Flapjack.Misc.ListEl
 public import Flapjack.FiniteMap.AlistExact.Lookup
 public import Mathlib.Data.Set.Basic
+public import Mathlib.Data.Set.Lattice
 public import Mathlib.Data.List.Basic
 public import Mathlib.Data.List.Forall2
+public import Mathlib.Data.List.Induction
 
 @[expose] public section
 
@@ -1061,5 +1063,149 @@ theorem sum_range_double (n : Nat) : 2 * (List.range n).sum = n * (n - 1) := by
 theorem sum_range {n : Nat} : (List.range n).sum = n * (n - 1) / 2 := by
   have h := sum_range_double n
   omega
+
+/-- Original `insert_atI_app`: writing a longer overwrite is writing the second
+part after the first. -/
+@[hol "cakeml/misc/miscScript.sml" "insert_atI_app"]
+theorem insertAtI_app {α : Type} (n : Nat) (l c1 c2 : List α)
+    (h : n + c1.length + c2.length ≤ l.length) :
+    insertAtI (c1 ++ c2) n l = insertAtI c1 n (insertAtI c2 (n + c1.length) l) := by
+  have htake : (l.take (n + c1.length) ++ c2 ++ l.drop (n + c1.length + c2.length)).take n
+      = l.take n := by
+    rw [List.take_append_of_le_length (by
+      simp only [List.length_take, List.length_append]
+      omega)]
+    rw [List.take_append_of_le_length (by
+      simp only [List.length_take]
+      omega)]
+    rw [List.take_take, Nat.min_eq_left (by omega)]
+  have hdrop : (l.take (n + c1.length) ++ c2 ++ l.drop (n + c1.length + c2.length)).drop
+        (n + c1.length)
+      = c2 ++ l.drop (n + c1.length + c2.length) := by
+    rw [List.drop_append_of_le_length (by
+      simp only [List.length_take, List.length_append]
+      omega)]
+    rw [List.drop_append_of_le_length (by
+      simp only [List.length_take]
+      omega)]
+    rw [List.drop_eq_nil_of_le (by
+      simp only [List.length_take]
+      omega)]
+    rw [List.nil_append]
+  unfold insertAtI
+  rw [htake, hdrop]
+  simp only [List.length_append, Nat.add_assoc, List.append_assoc]
+
+/-- Flapjack infrastructure: the HOL last element of an appended nonempty tail
+is the last element of that tail. -/
+private theorem holLast_append_of_ne_nil {α : Type} [Nonempty α] (a b : List α)
+    (h : b ≠ []) : holLast (a ++ b) = holLast b := by
+  induction a with
+  | nil => simp
+  | cons x xs ih =>
+    rw [List.cons_append, holLast_cons, if_neg]
+    · exact ih
+    · intro heq
+      rw [List.append_eq_nil_iff] at heq
+      exact h heq.2
+
+/-- Flapjack infrastructure: a list of empty lists flattens to the empty list. -/
+private theorem flatten_eq_nil_of_all_nil {α : Type} :
+    ∀ ls : List (List α), (∀ a, a ∈ ls → a = []) → ls.flatten = [] := by
+  intro ls
+  induction ls with
+  | nil =>
+    intro _
+    rfl
+  | cons hd tl ih =>
+    intro hall
+    rw [List.flatten_cons, hall hd (by simp), ih (fun a ha => hall a (by simp [ha]))]
+    simp
+
+/-- Flapjack infrastructure: a nonempty flattening leaves a nonempty list of
+nonempty lists. -/
+private theorem flatten_ne_nil_filter {α : Type} {ls : List (List α)}
+    (h : ls.flatten ≠ []) : ls.filter (fun l => l ≠ []) ≠ [] := by
+  intro hf
+  apply h
+  apply flatten_eq_nil_of_all_nil
+  rw [List.filter_eq_nil_iff] at hf
+  intro a ha
+  by_cases h' : a = []
+  · exact h'
+  · have hcontra := hf a ha
+    simp [h'] at hcontra
+
+/-- Original `LAST_FLAT`: the last element of a nonempty flattening is the last
+element of the last nonempty list. -/
+@[hol "cakeml/misc/miscScript.sml" "LAST_FLAT"
+  (total_function_inhabitants := [α])]
+theorem lastFlat {α : Type} [Nonempty α] (ls : List (List α))
+    (h : List.flatten ls ≠ []) :
+    holLast (List.flatten ls) = holLast (holLast (ls.filter (fun l => l ≠ []))) := by
+  induction ls using List.reverseRecOn with
+  | nil => simp at h
+  | append_singleton ls x ih =>
+    rw [List.flatten_append, List.flatten_singleton, List.filter_append]
+    by_cases hx : x = []
+    · subst hx
+      have hfl : ls.flatten ≠ [] := by
+        intro hnil
+        apply h
+        rw [List.flatten_append, List.flatten_singleton, hnil]
+        simp
+      simp only [List.filter_cons, List.filter_nil]
+      simp
+      simpa using ih hfl
+    · have hsingle : List.filter (fun l => l ≠ []) [x] = [x] := by
+        simp [hx]
+      rw [hsingle]
+      have hne : ([x] : List (List α)) ≠ [] := by simp
+      have hxne : x ≠ [] := hx
+      rw [holLast_append_of_ne_nil ls.flatten x hxne]
+      rw [holLast_append_of_ne_nil (List.filter (fun l => l ≠ []) ls) [x] hne]
+      simp only [holLast]
+
+/-- Original `MAP_CHR_w2n_11`: mapping the character of a byte is injective on
+byte lists. -/
+@[hol "cakeml/misc/miscScript.sml" "MAP_CHR_w2n_11"]
+theorem mapChrW2n11 (ws1 ws2 : List (BitVec 8)) :
+    ws1.map (fun w => BitVec.ofNat 8 (BitVec.toNat w)) =
+      ws2.map (fun w => BitVec.ofNat 8 (BitVec.toNat w)) ↔ ws1 = ws2 := by
+  have hid : ∀ w : BitVec 8, BitVec.ofNat 8 (BitVec.toNat w) = w := by
+    intro w
+    rw [BitVec.ofNat_toNat, BitVec.setWidth_eq]
+  simp [hid]
+
+/-- Original `DISJOINT_set_simp`: disjointness with the set of a list reduces to
+membership and disjointness of the tail. -/
+@[hol "cakeml/misc/miscScript.sml" "DISJOINT_set_simp"]
+theorem disjointSetSimp {α : Type} (x : α) (xs : List α) (s : Set α) :
+    Disjoint {y | y ∈ ([] : List α)} s ∧
+      (Disjoint {y | y ∈ x :: xs} s ↔ x ∉ s ∧ Disjoint {y | y ∈ xs} s) := by
+  constructor
+  · rw [Set.disjoint_iff]
+    intro y hy
+    obtain ⟨hy1, -⟩ := hy
+    simp at hy1
+  · rw [Set.disjoint_iff]
+    constructor
+    · intro h
+      refine ⟨?_, ?_⟩
+      · intro hx
+        exact h ⟨by simp, hx⟩
+      · rw [Set.disjoint_iff]
+        intro y hy
+        obtain ⟨hy1, hy2⟩ := hy
+        simp only [Set.mem_ofPred_eq] at hy1
+        exact h ⟨by simp [hy1], hy2⟩
+    · rintro ⟨hx, hrest⟩ y hy
+      obtain ⟨hy1, hy2⟩ := hy
+      simp only [Set.mem_ofPred_eq] at hy1
+      rw [List.mem_cons] at hy1
+      rcases hy1 with rfl | hy1
+      · exact absurd hy2 hx
+      · rw [Set.disjoint_iff] at hrest
+        exact hrest ⟨hy1, hy2⟩
 
 end Flapjack

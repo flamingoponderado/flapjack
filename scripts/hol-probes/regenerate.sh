@@ -10829,6 +10829,10 @@ run_probe misc_typed_probeScript.sml misc_typed_probe.out \
   LIST_REL_FRONT_LAST_typed SORTED_inv_image_LESS_PLUS_typed SORTED_GENLIST_TIMES_typed \
   LASTN_LEMMA_typed LASTN_TL_typed LASTN_ALT_typed trichotomous_inv_image_typed \
   option_eq_some_typed IN_EVEN_typed SUM_COUNT_LIST_typed \
+  SPLITP_CONS_IMP_typed SND_SPLITP_DROP_typed TOKENS_LENGTH_END_typed \
+  TOKENS_LENGTH_START_typed FIELDS_NEQ_NIL_typed LAST_FLAT_typed MEM_list_size_typed \
+  UPDATE_LIST_NOT_MEM_typed OLEAST_SOME_IMP_typed DISJOINT_set_simp_typed \
+  LOG2_TIMES2_typed MAP_CHR_w2n_11_typed I_PERMUTES_typed \
   "$cake_dir/misc/miscScript.sml" \
   "$cake_dir/misc"
 

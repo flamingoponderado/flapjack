@@ -189,4 +189,23 @@ theorem fields_alt (f : HolChar → Bool) (s : MlString) :
   rw [fields]
   exact fieldsAlt_fieldsAux f s (strlen s) [] 0 0 (by omega) (by omega) (by omega) (by simp)
 
+/-- Flapjack infrastructure: the field walk always returns at least one field. -/
+private theorem fieldsAux_ne_nil (f : HolChar → Bool) (s : MlString) :
+    ∀ (ss : List HolChar) (n len : Nat), fieldsAux f s ss n len ≠ [] := by
+  intro ss n len
+  induction len generalizing ss n with
+  | zero => simp [fieldsAux]
+  | succ len ih =>
+    rw [fieldsAux]
+    split
+    · simp
+    · exact ih _ _
+
+/-- Original `FIELDS_NEQ_NIL`: splitting a string into fields never returns the
+empty list. -/
+@[hol "cakeml/misc/miscScript.sml" "FIELDS_NEQ_NIL"]
+theorem fields_ne_nil (P : HolChar → Bool) (ls : MlString) : fields P ls ≠ [] := by
+  unfold fields
+  exact fieldsAux_ne_nil P ls [] 0 (strlen ls)
+
 end Flapjack.Basis.Pure.MlString
