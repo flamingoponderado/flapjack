@@ -64,8 +64,9 @@ theorem cardImageIdBij {α : Type} (s : Set α) (f : α → α) (hfin : s.Finite
 bijection on the enlarged sets. -/
 @[hol "cakeml/misc/miscScript.sml" "BIJ_UPDATE"]
 theorem bijUpdate {α β : Type} [DecidableEq α] (f : α → β) (s : Set α) (t : Set β)
-    (x : α) (y : β) (h : holBij f s t) (hx : x ∉ s) (hy : y ∉ t) :
+    (x : α) (y : β) (h : holBij f s t ∧ x ∉ s ∧ y ∉ t) :
     holBij (fun z => if z = x then y else f z) (insert x s : Set α) (insert y t : Set β) := by
+  obtain ⟨h, hx, hy⟩ := h
   classical
   unfold holBij holInj holSurj at h ⊢
   obtain ⟨⟨hmap, hinj⟩, ⟨-, hsurj⟩⟩ := h
@@ -131,8 +132,9 @@ theorem bijUpdate {α β : Type} [DecidableEq α] (f : α → β) (s : Set α) (
 injection on the enlarged sets. -/
 @[hol "cakeml/misc/miscScript.sml" "INJ_UPDATE"]
 theorem injUpdate {α β : Type} [DecidableEq α] (f : α → β) (s : Set α) (t : Set β)
-    (x : α) (y : β) (h : holInj f s t) (_hx : x ∉ s) (hy : y ∉ t) :
+    (x : α) (y : β) (h : holInj f s t ∧ x ∉ s ∧ y ∉ t) :
     holInj (fun z => if z = x then y else f z) (insert x s : Set α) (insert y t : Set β) := by
+  obtain ⟨h, _, hy⟩ := h
   classical
   unfold holInj at h ⊢
   obtain ⟨hmap, hinj⟩ := h

@@ -44,26 +44,25 @@ private theorem findIndex_some_ge {α : Type} [DecidableEq α] (target : α) :
 /-- Original `find_index_APPEND1`: a match inside the left list is found by the
 left list alone. -/
 @[hol "cakeml/misc/miscScript.sml" "find_index_APPEND1"]
-theorem findIndex_append1 {α : Type} [DecidableEq α] (target : α) :
-    ∀ (l1 l2 : List α) (m i : Nat),
-      findIndex target (l1 ++ l2) m = some i ∧ i < m + l1.length →
+theorem findIndex_append1 {α : Type} [DecidableEq α] (l1 : List α) (target : α)
+    (l2 : List α) (m i : Nat) :
+    findIndex target (l1 ++ l2) m = some i ∧ i < m + l1.length →
       findIndex target l1 m = some i := by
-  intro l1
-  induction l1 with
+  induction l1 generalizing m with
   | nil =>
-    intro l2 m i h
+    intro h
     obtain ⟨hs, hi⟩ := h
     have hge := findIndex_some_ge target l2 m i hs
     simp only [List.length_nil, Nat.add_zero] at hi
     exact absurd hge (by omega)
   | cons a t ih =>
-    intro l2 m i h
+    intro h
     obtain ⟨hs, hi⟩ := h
     by_cases ha : a = target
     · simp [findIndex, ha] at hs ⊢
       exact hs
     · simp only [findIndex, if_neg ha, List.cons_append, List.length_cons] at hs hi ⊢
-      exact ih l2 (m + 1) i ⟨hs, by omega⟩
+      exact ih (m + 1) ⟨hs, by omega⟩
 
 /-- Original `find_index_APPEND2`: a match at or after the start of the right
 list is found in the right list alone, searched from the same absolute offset.

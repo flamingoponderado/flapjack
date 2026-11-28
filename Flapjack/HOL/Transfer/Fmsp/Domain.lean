@@ -55,7 +55,7 @@ theorem holFmapAsFiniteSupportParamWitness_fm2spDelete_fm {α : Type}
 /-- Original `fm2sp_delete`: conversion commutes with deletion. -/
 @[hol "cakeml/compiler/inference/unifyScript.sml" "fm2sp_delete"
   (fmap_as_finite_support_parameters := [fm])]
-theorem fm2spDelete {α : Type} (fm : HolFiniteMapExact Nat α) (k : Nat) :
+theorem fm2spDelete {α : Type} (k : Nat) (fm : HolFiniteMapExact Nat α) :
     fm2sp (fm.eraseEq k) = sptDelete k (fm2sp fm) := by
   have hwfLeft : sptWf (fm2sp (fm.eraseEq k)) = true := wfFm2sp _
   have hwfRight : sptWf (sptDelete k (fm2sp fm)) = true :=

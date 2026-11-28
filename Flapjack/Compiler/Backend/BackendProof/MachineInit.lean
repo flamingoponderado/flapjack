@@ -114,8 +114,8 @@ the machine-initialisation check does not read the BVI configuration. -/
 @[hol "cakeml/compiler/backend/proofs/backendProofScript.sml" "mc_init_ok_with_bvl_conf_updated"]
 theorem mcInitOk_bvlConf_updated {width : Nat} [NeZero width] {state projection : Type}
     (asmConf : AsmConfigExact width) (cc : Flapjack.Compiler.Backend.Backend.Config)
-    (mc : MachineConfig width state projection)
-    (f : Flapjack.Compiler.Backend.BvlToBvi.Config → Flapjack.Compiler.Backend.BvlToBvi.Config) :
+    (f : Flapjack.Compiler.Backend.BvlToBvi.Config → Flapjack.Compiler.Backend.BvlToBvi.Config)
+    (mc : MachineConfig width state projection) :
     mcInitOk asmConf { cc with bvlConf := f cc.bvlConf } mc ↔ mcInitOk asmConf cc mc := by
   simp only [mcInitOk]
 
@@ -126,9 +126,9 @@ read the word-to-word configuration. -/
   "mc_init_ok_with_word_to_word_conf_updated"]
 theorem mcInitOk_wordToWordConf_updated {width : Nat} [NeZero width] {state projection : Type}
     (asmConf : AsmConfigExact width) (cc : Flapjack.Compiler.Backend.Backend.Config)
-    (mc : MachineConfig width state projection)
     (f : Flapjack.Compiler.Backend.WordToWord.Config →
-      Flapjack.Compiler.Backend.WordToWord.Config) :
+      Flapjack.Compiler.Backend.WordToWord.Config)
+    (mc : MachineConfig width state projection) :
     mcInitOk asmConf { cc with wordToWordConf := f cc.wordToWordConf } mc ↔
       mcInitOk asmConf cc mc := by
   simp only [mcInitOk]
@@ -138,8 +138,8 @@ the machine-initialisation check does not read the closure configuration. -/
 @[hol "cakeml/compiler/backend/proofs/backendProofScript.sml" "mc_init_ok_with_clos_conf_updated"]
 theorem mcInitOk_closConf_updated {width : Nat} [NeZero width] {state projection : Type}
     (asmConf : AsmConfigExact width) (cc : Flapjack.Compiler.Backend.Backend.Config)
-    (mc : MachineConfig width state projection)
-    (f : Flapjack.Compiler.Backend.ClosToBvl.Config → Flapjack.Compiler.Backend.ClosToBvl.Config) :
+    (f : Flapjack.Compiler.Backend.ClosToBvl.Config → Flapjack.Compiler.Backend.ClosToBvl.Config)
+    (mc : MachineConfig width state projection) :
     mcInitOk asmConf { cc with closConf := f cc.closConf } mc ↔ mcInitOk asmConf cc mc := by
   simp only [mcInitOk]
 

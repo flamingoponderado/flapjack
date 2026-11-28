@@ -27,7 +27,7 @@ theorem holFmapAsFiniteSupportParamWitness_fdomFlookupHOL_f {α β : Type}
 /-- Original `FDOM_FLOOKUP`: domain membership is exactly a defined lookup. -/
 @[hol "cakeml/misc/miscScript.sml" "FDOM_FLOOKUP"
   (fmap_as_finite_support_parameters := [f])]
-theorem fdomFlookupHOL {α β : Type} (f : HolFiniteMapExact α β) (x : α) :
+theorem fdomFlookupHOL {α β : Type} (x : α) (f : HolFiniteMapExact α β) :
     x ∈ f.domain ↔ ∃ v, f.lookup x = some v := by
   show f.lookup x ≠ none ↔ ∃ v, f.lookup x = some v
   constructor

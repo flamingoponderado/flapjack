@@ -65,8 +65,8 @@ private theorem forall₂_append_singleton {α β : Type} (A : α → β → Pro
 their fronts are related and their last elements are related. -/
 @[hol "cakeml/misc/miscScript.sml" "LIST_REL_FRONT_LAST"
   (total_function_inhabitants := [α, β])]
-theorem listRelFrontLast {α β : Type} [Nonempty α] [Nonempty β] (A : α → β → Prop)
-    (l1 : List α) (l2 : List β) (h : l1 ≠ [] ∧ l2 ≠ []) :
+theorem listRelFrontLast {α β : Type} [Nonempty α] [Nonempty β] (l1 : List α) (l2 : List β)
+    (A : α → β → Prop) (h : l1 ≠ [] ∧ l2 ≠ []) :
     List.Forall₂ A l1 l2 ↔
       List.Forall₂ A l1.dropLast l2.dropLast ∧ A (holLast l1) (holLast l2) := by
   obtain ⟨h1, h2⟩ := h
@@ -87,12 +87,12 @@ theorem listRelImpLast {α β : Type} [Nonempty α] [Nonempty β] (P : α → β
       subst h
       cases hrel
       exact absurd rfl hx
-    exact ((listRelFrontLast P xs ys ⟨hx, hy⟩).mp hrel).2
+    exact ((listRelFrontLast xs ys P ⟨hx, hy⟩).mp hrel).2
   · have hx : xs ≠ [] := by
       intro h
       subst h
       cases hrel
       exact absurd rfl hy
-    exact ((listRelFrontLast P xs ys ⟨hx, hy⟩).mp hrel).2
+    exact ((listRelFrontLast xs ys P ⟨hx, hy⟩).mp hrel).2
 
 end Flapjack

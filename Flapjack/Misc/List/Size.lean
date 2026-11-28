@@ -22,7 +22,7 @@ theorem listSizeHOL_thm {α : Type} :
 
 /-- Original `MEM_list_size`: a member's weight is bounded by the list size. -/
 @[hol "cakeml/misc/miscScript.sml" "MEM_list_size"]
-theorem memListSize {α : Type} (f : α → Nat) (x : α) (ls : List α) :
+theorem memListSize {α : Type} (x : α) (ls : List α) (f : α → Nat) :
     x ∈ ls → f x ≤ listSizeHOL f ls := by
   intro hx
   induction ls with

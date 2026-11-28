@@ -60,7 +60,7 @@ theorem alookup_anub {α β : Type} [DecidableEq α] (ls : List (α × β)) (acc
 /-- Original `MEM_anub_ALOOKUP`: a member of the pruned list is found by the
 original lookup. -/
 @[hol "cakeml/misc/miscScript.sml" "MEM_anub_ALOOKUP"]
-theorem mem_anub_alookup {α β : Type} [DecidableEq α] (ls : List (α × β)) (k : α) (v : β) :
+theorem mem_anub_alookup {α β : Type} [DecidableEq α] (k : α) (v : β) (ls : List (α × β)) :
     (k, v) ∈ anub ls [] → List.lookup k ls = some v := by
   intro hmem
   have hnd : ((anub ls []).map Prod.fst).Nodup := by

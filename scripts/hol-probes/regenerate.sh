@@ -10853,6 +10853,7 @@ run_probe misc_typed_probeScript.sml misc_typed_probe.out \
   PERM_MAP_BIJ_typed \
   FDOM_FLOOKUP_typed lookup_fromList2_typed fromList2_value_typed size_fromAList_typed \
   NOT_MEM_FLOOKUP_ZIP_typed splitlines_nil_typed insert_atI_insert_atI_typed \
+  v2w_32_F_typed v2w_32_T_typed \
   "$cake_dir/misc/miscScript.sml" \
   "$cake_dir/misc"
 

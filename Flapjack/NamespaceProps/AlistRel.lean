@@ -53,7 +53,7 @@ theorem alistSub_cong {K V W : Type} [DecidableEq K]
     (l1 : List (K × V)) (l2 : List (K × W)) (l1' : List (K × V)) (l2' : List (K × W))
     (R R' : K → V → W → Prop)
     (premise : l1 = l1' ∧ l2 = l2' ∧
-      ∀ n x y, l1'.lookup n = some x → l2'.lookup n = some y → (R n x y ↔ R' n x y)) :
+      ∀ n x y, l1'.lookup n = some x ∧ l2'.lookup n = some y → (R n x y ↔ R' n x y)) :
     alistSub R l1 l2 ↔ alistSub R' l1' l2' := by
   obtain ⟨sameFirst, sameSecond, relation⟩ := premise
   subst sameFirst
@@ -69,7 +69,7 @@ theorem alistSub_cong {K V W : Type} [DecidableEq K]
       | some v1 =>
         cases h2 : l2.lookup k with
         | none => simp
-        | some v2 => simp [ih, relation k v1 v2 h1 h2]
+        | some v2 => simp [ih, relation k v1 v2 ⟨h1, h2⟩]
   simp only [alistSub]
   exact pointwise (l1.map Prod.fst)
 

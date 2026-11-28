@@ -216,7 +216,7 @@ theorem sum_map_length_replicate {α : Type} (n : Nat) (ls : List α) :
 
 /-- Original `EL_CONS_IF`: indexing a cons splits off the head. -/
 @[hol "cakeml/misc/miscScript.sml" "EL_CONS_IF" (total_function_inhabitants := [α])]
-theorem holEl_cons {α : Type} [Nonempty α] (n : Nat) (x : α) (xs : List α) :
+theorem holEl_cons {α : Type} [Nonempty α] (x : α) (xs : List α) (n : Nat) :
     holEl n (x :: xs) = if n = 0 then x else holEl (n - 1) xs := by
   cases n with
   | zero => simp [holEl, holHd]
@@ -317,16 +317,18 @@ theorem drop_cons_imp_lt_length {α : Type} (xs : List α) (n : Nat) (y : α) (y
 /-- Original `MULT_DIV_MULT_LEMMA`: cancelling a common positive factor under
 division. The second positivity premise is retained from the source. -/
 @[hol "cakeml/misc/miscScript.sml" "MULT_DIV_MULT_LEMMA"]
-theorem mul_div_mul_lemma (m l k : Nat) (hm : 0 < m) (_hl : 0 < l) :
+theorem mul_div_mul_lemma (m l k : Nat) (h : 0 < m ∧ 0 < l) :
     (m * k) / (l * m) = k / l := by
+  obtain ⟨hm, _⟩ := h
   rw [Nat.mul_comm l m]
   exact Nat.mul_div_mul_left k l hm
 
 /-- Original `ADD_MOD_EQ_LEMMA`: adding a value below the modulus to a multiple
 of the modulus leaves that value. -/
 @[hol "cakeml/misc/miscScript.sml" "ADD_MOD_EQ_LEMMA"]
-theorem add_mod_eq_lemma (k n d : Nat) (hk : k % d = 0) (hn : n < d) :
+theorem add_mod_eq_lemma (k n d : Nat) (h : k % d = 0 ∧ n < d) :
     (k + n) % d = n := by
+  obtain ⟨hk, hn⟩ := h
   have hdvd : d ∣ k := Nat.dvd_of_mod_eq_zero hk
   have hkmul : k / d * d = k := Nat.div_mul_cancel hdvd
   rw [← hkmul, Nat.add_comm, Nat.mul_comm (k / d) d, Nat.add_mul_mod_self_left,
@@ -335,7 +337,7 @@ theorem add_mod_eq_lemma (k n d : Nat) (hk : k % d = 0) (hn : n < d) :
 /-- Original `SUM_MOD`: a sum is congruent to the sum of its residues. The
 source positivity premise is retained although the proof does not need it. -/
 @[hol "cakeml/misc/miscScript.sml" "SUM_MOD"]
-theorem sum_mod (ls : List Nat) (k : Nat) (_hk : k > 0) :
+theorem sum_mod (k : Nat) (ls : List Nat) (_hk : k > 0) :
     ls.sum % k = (ls.map fun n => n % k).sum % k := by
   induction ls with
   | nil => simp
@@ -819,22 +821,22 @@ both components to be members of the two lists, because `LIST_REL` (Lean's
 @[hol "cakeml/misc/miscScript.sml" "LIST_REL_MEM"]
 theorem forall₂_mem_iff {α β : Type} (xs : List α) (ys : List β) (P : α → β → Prop) :
     List.Forall₂ P xs ys ↔
-      List.Forall₂ (fun x y => x ∈ xs → y ∈ ys → P x y) xs ys := by
+      List.Forall₂ (fun x y => x ∈ xs ∧ y ∈ ys → P x y) xs ys := by
   constructor
   · intro h
-    exact List.Forall₂.imp (fun _ _ hab _ _ => hab) h
+    refine List.Forall₂.imp ?_ h
+    intro a b hab _
+    exact hab
   · intro h
     refine List.forall₂_iff_get.mpr ⟨h.length_eq, ?_⟩
     intro i h1 h2
-    exact (List.forall₂_iff_get.mp h).2 i h1 h2 (List.get_mem _ _) (List.get_mem _ _)
+    exact (List.forall₂_iff_get.mp h).2 i h1 h2 ⟨List.get_mem _ _, List.get_mem _ _⟩
 
 /-- Original `FOLDL_OPTION_CHOICE_EQ_SOME_IMP_MEM`: a successful option fold
 returns an element of the folded list. -/
 @[hol "cakeml/misc/miscScript.sml" "FOLDL_OPTION_CHOICE_EQ_SOME_IMP_MEM"]
-theorem foldl_option_choice_mem {α : Type} (y : α) :
-    ∀ (x : Option α) (ls : List (Option α)),
-      List.foldl (fun acc e => acc <|> e) x ls = some y → some y ∈ x :: ls := by
-  intro x ls
+theorem foldl_option_choice_mem {α : Type} (x : Option α) (ls : List (Option α)) (y : α) :
+    List.foldl (fun acc e => acc <|> e) x ls = some y → some y ∈ x :: ls := by
   induction ls generalizing x with
   | nil =>
     intro h
@@ -1076,8 +1078,8 @@ theorem foldr_cons_triple {α β γ δ : Type} (f : α → β → γ → δ)
 /-- Original `MAP_ZIP_SND_triple`: mapping the pair components of a zip equals
 mapping the curried function over the second list. -/
 @[hol "cakeml/misc/miscScript.sml" "MAP_ZIP_SND_triple"]
-theorem map_zip_snd_triple {α β γ δ : Type} (f : β → γ → δ)
-    (l1 : List α) (l2 : List (β × γ)) (h : l1.length = l2.length) :
+theorem map_zip_snd_triple {α β γ δ : Type} (l1 : List α) (l2 : List (β × γ))
+    (f : β → γ → δ) (h : l1.length = l2.length) :
     (l1.zip l2).map (fun p => match p with | (_x, y, z) => f y z) =
       l2.map (fun p => f p.1 p.2) := by
   induction l1 generalizing l2 with
@@ -1269,7 +1271,7 @@ theorem mapChrW2n11 (ws1 ws2 : List (BitVec 8)) :
 /-- Original `DISJOINT_set_simp`: disjointness with the set of a list reduces to
 membership and disjointness of the tail. -/
 @[hol "cakeml/misc/miscScript.sml" "DISJOINT_set_simp"]
-theorem disjointSetSimp {α : Type} (x : α) (xs : List α) (s : Set α) :
+theorem disjointSetSimp {α : Type} (s : Set α) (x : α) (xs : List α) :
     Disjoint {y | y ∈ ([] : List α)} s ∧
       (Disjoint {y | y ∈ x :: xs} s ↔ x ∉ s ∧ Disjoint {y | y ∈ xs} s) := by
   constructor

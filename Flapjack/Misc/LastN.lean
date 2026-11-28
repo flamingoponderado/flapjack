@@ -44,7 +44,7 @@ theorem lastN_lemma {α : Type} (xs : List α) (x y : α) :
 /-- Original `LASTN_TL`: the last `n+1` elements of a longer cons list ignore
 the head. -/
 @[hol "cakeml/misc/miscScript.sml" "LASTN_TL"]
-theorem lastN_tl {α : Type} (n : Nat) (x : α) (xs : List α) (h : n < xs.length) :
+theorem lastN_tl {α : Type} (n : Nat) (xs : List α) (x : α) (h : n < xs.length) :
     wordSemLastN (n + 1) (x :: xs) = wordSemLastN (n + 1) xs := by
   unfold wordSemLastN
   rw [List.reverse_cons,

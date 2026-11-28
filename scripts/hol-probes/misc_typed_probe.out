@@ -309,3 +309,5 @@ size_fromAList_typed=∀(xs :(num # α) list). ALL_DISTINCT (MAP (FST :num # α 
 NOT_MEM_FLOOKUP_ZIP_typed=∀(ys :α list) (xs :α |-> β) (zs :β list). ¬MEM (n :α) ys ⇒ FLOOKUP (xs |++ ZIP (ys,zs)) n = FLOOKUP xs n
 splitlines_nil_typed=splitlines ("" :string) = ([] :string list)
 insert_atI_insert_atI_typed=(pos2 :num) = (pos1 :num) + LENGTH (c1 :α list) ⇒ insert_atI (c2 :α list) pos2 (insert_atI c1 pos1 (l :α list)) = insert_atI (c1 ++ c2) pos1 l
+v2w_32_F_typed=(v2w [F] :word32) = (0w :word32)
+v2w_32_T_typed=(v2w [T] :word32) = (1w :word32)

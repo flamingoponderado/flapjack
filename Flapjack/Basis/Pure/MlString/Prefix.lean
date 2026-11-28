@@ -244,7 +244,7 @@ private theorem take_drop_split (l : List HolChar) (i k : Nat) :
 /-- Original `OLEAST_LE_STEP`: the least witness from `i` either is `i` itself
 or the least witness from `i + 1`. -/
 @[hol "cakeml/basis/pure/mlstringScript.sml" "OLEAST_LE_STEP"]
-theorem oleastLeStep (P : Nat → Bool) (i : Nat) :
+theorem oleastLeStep (i : Nat) (P : Nat → Bool) :
     holOLeast (fun j => i ≤ j ∧ P j = true) =
       if P i then some i else holOLeast (fun j => i + 1 ≤ j ∧ P j = true) := by
   classical
@@ -285,7 +285,7 @@ theorem strFindi_OLEAST (P : HolChar → Bool) (i : Nat) (s : MlString) :
           holOLeast (fun j => i ≤ j ∧ j < strlen s ∧ P (strsub s j) = true) =
             holOLeast (fun j => i + 1 ≤ j ∧ j < strlen s ∧ P (strsub s j) = true) := by
         rw [oleast_restrict s P i,
-          oleastLeStep (fun j => decide (j < strlen s) && P (strsub s j)) i, if_neg hQ,
+          oleastLeStep i (fun j => decide (j < strlen s) && P (strsub s j)), if_neg hQ,
           ← oleast_restrict s P (i + 1)]
       exact ih.trans hstep.symm
   | case3 i hn =>
