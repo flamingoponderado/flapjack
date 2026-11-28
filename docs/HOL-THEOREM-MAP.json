@@ -19315,6 +19315,15 @@
     "reviewer": "Source comparison with funion_spec_typed: the two polymorphic input maps share key and value types, and the domain-union and unconditional FAPPLY conjuncts have the same order and conclusions as HOL. Nonempty beta renders HOL type inhabitedness. The canonical map codec witnesses cover both parameters; holFapply preserves the single unspecified out-of-domain value. Task-164 audit against the existing typed capture (built HOL4 core theory, no rebuild): the existing capture `funion_spec_typed` in scripts/hol-probes/finite_map_empty_probe.out already records the typed HOL statement; the carriers and quantifier order match the Lean declaration. total_function_inhabitants records the instance that renders HOL THE (through holFapply)."
   },
 {
+    "hol_path": "HOL/src/finite_maps/finite_mapScript.sml",
+    "hol_name": "FUNION_FUPDATE_2",
+    "lean_path": "Flapjack/FiniteMap/FunionFupdateExact.lean",
+    "lean_name": "funionFupdate2",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": ["f", "g"],
+    "reviewer": "Source comparison with FUNION_FUPDATE_2_typed (scripts/hol-probes/finite_map_defs_typed_probe.out): HOL `f ⊌ g⟨x ↦ y⟩ = if x ∈ FDOM f then f ⊌ g else (f ⊌ g)⟨x ↦ y⟩` keeps the same binder order f, g, x, y; FUNION is the carrier union, |+ is updateEq (HOL equality through DecidableEq), FDOM is the carrier domain, and the conditional and its two branches are unchanged. Both map parameters are the canonical finite-support carrier with their same-module lookup/support codec witnesses. No other statement difference."
+  },
+{
     "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
     "hol_name": "compile_semantics'",
     "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/Semantics.lean",
