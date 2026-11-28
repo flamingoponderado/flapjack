@@ -599,6 +599,71 @@ theorem insertAtI_end {α : Type} (l1 l2 : List α) :
   unfold insertAtI
   simp
 
+/-- Flapjack infrastructure: `insertAtI` spelled out for rewriting. -/
+private theorem insertAtI_eq {α : Type} (c : List α) (pos : Nat) (l : List α) :
+    insertAtI c pos l = l.take pos ++ c ++ l.drop (pos + c.length) := rfl
+
+/-- Flapjack infrastructure: the overwritten prefix of `insertAtI`. -/
+private theorem take_insertAtI {α : Type} (pos : Nat) (c l : List α) :
+    (l.take pos ++ c ++ l.drop (pos + c.length)).take (pos + c.length) =
+      l.take pos ++ c := by
+  rw [List.append_assoc]
+  by_cases hl : pos ≤ l.length
+  · have hlen : (l.take pos).length = pos := by
+      rw [List.length_take]
+      omega
+    rw [List.take_append, hlen, Nat.add_sub_cancel_left]
+    rw [List.take_take, Nat.min_eq_right (by omega)]
+    rw [List.take_append, List.take_length]
+    simp
+  · have htake : l.take pos = l := List.take_of_length_le (by omega)
+    have hdrop : l.drop (pos + c.length) = [] := List.drop_eq_nil_of_le (by omega)
+    rw [htake, hdrop, List.append_nil]
+    rw [List.take_append, List.take_of_length_le (by omega),
+      List.take_of_length_le (by omega)]
+
+/-- Flapjack infrastructure: the untouched tail of `insertAtI`. -/
+private theorem drop_insertAtI {α : Type} (pos : Nat) (c l : List α) (k : Nat) :
+    (l.take pos ++ c ++ l.drop (pos + c.length)).drop (pos + c.length + k) =
+      (l.drop (pos + c.length)).drop k := by
+  rw [List.append_assoc]
+  by_cases hl : pos ≤ l.length
+  · have hlen : (l.take pos).length = pos := by
+      rw [List.length_take]
+      omega
+    have hk : pos + c.length + k - (l.take pos).length = c.length + k := by
+      rw [hlen]
+      omega
+    have hnil : (l.take pos).drop (pos + c.length + k) = [] := by
+      apply List.drop_eq_nil_of_le
+      rw [hlen]
+      omega
+    rw [List.drop_append, hk, hnil]
+    rw [List.drop_append]
+    rw [List.drop_eq_nil_of_le (by omega), Nat.add_sub_cancel_left]
+    simp
+  · have htake : l.take pos = l := List.take_of_length_le (by omega)
+    have hdrop : l.drop (pos + c.length) = [] := List.drop_eq_nil_of_le (by omega)
+    rw [htake, hdrop, List.append_nil]
+    have hnil : (l ++ c).drop (pos + c.length + k) = [] := by
+      apply List.drop_eq_nil_of_le
+      rw [List.length_append]
+      omega
+    rw [hnil]
+    simp
+
+/-- Original `insert_atI_insert_atI`: two adjacent overwrites combine into one
+overwrite of the concatenation. -/
+@[hol "cakeml/misc/miscScript.sml" "insert_atI_insert_atI"]
+theorem insertAtI_insertAtI {α : Type} (pos2 pos1 : Nat) (c1 c2 l : List α)
+    (h : pos2 = pos1 + c1.length) :
+    insertAtI c2 pos2 (insertAtI c1 pos1 l) = insertAtI (c1 ++ c2) pos1 l := by
+  subst h
+  simp only [insertAtI_eq]
+  rw [take_insertAtI, drop_insertAtI]
+  rw [List.drop_drop, List.length_append, ← Nat.add_assoc]
+  simp only [List.append_assoc]
+
 /-- Original `OPT_MMAP_MAP_o`: mapping a function into an optional map is the
 composition. -/
 @[hol "cakeml/misc/miscScript.sml" "OPT_MMAP_MAP_o"]
