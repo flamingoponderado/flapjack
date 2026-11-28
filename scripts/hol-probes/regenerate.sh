@@ -10840,6 +10840,9 @@ run_probe misc_typed_probeScript.sml misc_typed_probe.out \
   range_def_typed range_delete_typed range_insert_typed range_insert_SUBSET_typed \
   splitlines_def_typed least_from_def_typed \
   LEAST_thm_typed all_words_def_typed eq_shape_def_typed copy_shape_def_typed \
+  MEM_ALOOKUP_typed findi_APPEND_typed LIST_REL_IMP_LAST_typed MULT_LE_EXP_typed \
+  IS_PREFIX_THM_typed FILTER_EL_EQ_typed list_subset_LENGTH_typed \
+  RTC_invariant_typed RTC_RSUBSET_typed MOD_MINUS_typed \
   "$cake_dir/misc/miscScript.sml" \
   "$cake_dir/misc"
 

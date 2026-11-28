@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.HolRef
+public import Flapjack.Misc.ListEl
 public import Mathlib.Data.List.Basic
 
 @[expose] public section
@@ -150,5 +151,55 @@ theorem isSubseq_flat_suff {α : Type} [DecidableEq α] (ls1 ls2 : List (List α
   | cons hhead htail ih =>
     rw [List.flatten_cons, List.flatten_cons]
     exact isSubseq_append_suff _ _ _ _ hhead ih
+
+/-- Original `IS_PREFIX_THM`: a prefix is exactly a shorter list with matching
+elements at every position of the shorter one. -/
+@[hol "cakeml/misc/miscScript.sml" "IS_PREFIX_THM"
+  (total_function_inhabitants := [α])]
+theorem isPrefixThm {α : Type} [Nonempty α] (l2 l1 : List α) :
+    l2.IsPrefix l1 ↔ l2.length ≤ l1.length ∧ ∀ n, n < l2.length → holEl n l2 = holEl n l1 := by
+  induction l2 generalizing l1 with
+  | nil =>
+    constructor
+    · intro _
+      exact ⟨by simp, by simp⟩
+    · intro _
+      exact List.nil_prefix
+  | cons b bs ih =>
+    cases l1 with
+    | nil =>
+      constructor
+      · intro h
+        have := h.length_le
+        simp at this
+      · intro h
+        simp at h
+    | cons a as =>
+      rw [List.cons_prefix_cons]
+      constructor
+      · rintro ⟨rfl, htail⟩
+        constructor
+        · simp only [List.length_cons]
+          have := htail.length_le
+          omega
+        · intro n hn
+          cases n with
+          | zero => simp only [holEl, holHd]
+          | succ m =>
+            have hm : m < bs.length := by simpa using hn
+            have h := (ih as).mp htail
+            have h2 := h.2 m hm
+            simpa only [holEl_cons_succ] using h2
+      · rintro ⟨hlen, hel⟩
+        have hb : b = a := by
+          have h := hel 0 (by simp)
+          simpa only [holEl, holHd] using h
+        subst hb
+        refine ⟨rfl, (ih as).mpr ⟨?_, ?_⟩⟩
+        · simp only [List.length_cons] at hlen
+          omega
+        · intro m hm
+          have h := hel (m + 1) (by simpa using hm)
+          simpa only [holEl_cons_succ] using h
 
 end Flapjack

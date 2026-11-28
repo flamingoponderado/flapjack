@@ -72,4 +72,25 @@ theorem listRelFrontLast {α β : Type} [Nonempty α] [Nonempty β] (A : α → 
   conv_lhs => rw [← List.dropLast_append_getLast h1, ← List.dropLast_append_getLast h2]
   rw [forall₂_append_singleton, holLast_eq_getLast h1, holLast_eq_getLast h2]
 
+/-- Original `LIST_REL_IMP_LAST`: related lists have related last elements. -/
+@[hol "cakeml/misc/miscScript.sml" "LIST_REL_IMP_LAST"
+  (total_function_inhabitants := [α, β])]
+theorem listRelImpLast {α β : Type} [Nonempty α] [Nonempty β] (P : α → β → Prop)
+    (xs : List α) (ys : List β) :
+    List.Forall₂ P xs ys → (xs ≠ [] ∨ ys ≠ []) → P (holLast xs) (holLast ys) := by
+  intro hrel hne
+  rcases hne with hx | hy
+  · have hy : ys ≠ [] := by
+      intro h
+      subst h
+      cases hrel
+      exact absurd rfl hx
+    exact ((listRelFrontLast P xs ys hx hy).mp hrel).2
+  · have hx : xs ≠ [] := by
+      intro h
+      subst h
+      cases hrel
+      exact absurd rfl hy
+    exact ((listRelFrontLast P xs ys hx hy).mp hrel).2
+
 end Flapjack

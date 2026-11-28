@@ -4582,6 +4582,7 @@ import Flapjack.Misc.Permutes
 import Flapjack.Misc.Sptree.Range
 import Flapjack.Misc.Pair
 import Flapjack.Misc.Relation
+import Flapjack.Misc.Rtc
 import Flapjack.Misc.Sorting
 import Flapjack.Misc.Sorting.PartsHaveProp
 import Flapjack.Misc.PermPartition

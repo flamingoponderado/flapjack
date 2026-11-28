@@ -149,4 +149,45 @@ theorem alookupGenlist {α : Type} (f : Nat → α) (n k : Nat) :
         simp only [Option.or]
         rw [if_neg (by omega)]
 
+/-- Original `MEM_ALOOKUP`: with distinct keys, a pair is a member exactly when
+the lookup returns its value. -/
+@[hol "cakeml/misc/miscScript.sml" "MEM_ALOOKUP"]
+theorem memAlookup {α β : Type} [DecidableEq α] (xs : List (α × β)) (x : α) (v : β) :
+    (xs.map Prod.fst).Nodup → ((x, v) ∈ xs ↔ List.lookup x xs = some v) := by
+  intro hnd
+  induction xs with
+  | nil => simp
+  | cons p ps ih =>
+    obtain ⟨a, b⟩ := p
+    simp only [List.map_cons, List.nodup_cons] at hnd
+    constructor
+    · intro hmem
+      rcases List.mem_cons.mp hmem with hpair | hmem
+      · have hx : x = a := (Prod.mk.inj hpair).1
+        have hv : v = b := (Prod.mk.inj hpair).2
+        subst hx
+        subst hv
+        simp only [List.lookup_cons]
+        split
+        · rfl
+        · rename_i hbeq
+          simp at hbeq
+      · have hne : x ≠ a := by
+          intro heq
+          exact hnd.1 (heq ▸ List.mem_map.mpr ⟨(x, v), hmem, rfl⟩)
+        have hbeq : (x == a) = false := by simpa [beq_iff_eq] using hne
+        simp only [List.lookup_cons, hbeq]
+        exact (ih hnd.2).mp hmem
+    · intro hlook
+      cases hbeq : (x == a) with
+      | true =>
+        have hxa : x = a := by simpa [beq_iff_eq] using hbeq
+        simp only [List.lookup_cons, hbeq, Option.some.injEq] at hlook
+        subst hxa
+        subst hlook
+        exact List.mem_cons.mpr (Or.inl rfl)
+      | false =>
+        simp only [List.lookup_cons, hbeq] at hlook
+        exact List.mem_cons.mpr (Or.inr ((ih hnd.2).mpr hlook))
+
 end Flapjack

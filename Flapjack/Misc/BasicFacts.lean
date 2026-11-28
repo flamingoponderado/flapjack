@@ -1232,4 +1232,78 @@ theorem disjointSetSimp {α : Type} (x : α) (xs : List α) (s : Set α) :
       · rw [Set.disjoint_iff] at hrest
         exact hrest ⟨hy1, hy2⟩
 
+/-- Flapjack infrastructure: at least `2`, a power dominates the next index. -/
+private theorem natSuccLePow (a n : Nat) (ha : 2 ≤ a) : n + 1 ≤ a ^ n := by
+  induction n with
+  | zero => simp
+  | succ n ih =>
+    rw [Nat.pow_succ]
+    have h1 : n + 2 ≤ (n + 1) * 2 := by omega
+    have h2 : (n + 1) * 2 ≤ a ^ n * 2 := Nat.mul_le_mul_right 2 ih
+    have h3 : a ^ n * 2 ≤ a ^ n * a := Nat.mul_le_mul_left _ ha
+    exact Nat.le_trans (Nat.le_trans h1 h2) h3
+
+/-- Original `MULT_LE_EXP`: for a base other than one, the product is bounded by
+the power. -/
+@[hol "cakeml/misc/miscScript.sml" "MULT_LE_EXP"]
+theorem multLeExp (a b : Nat) (ha : a ≠ 1) : a * b ≤ a ^ b := by
+  cases a with
+  | zero => simp
+  | succ a =>
+    cases a with
+    | zero => simp at ha
+    | succ a =>
+      cases b with
+      | zero => simp
+      | succ b =>
+        have h : b + 1 ≤ (a + 2) ^ b := natSuccLePow (a + 2) b (by omega)
+        have step1 : (a + 2) * (b + 1) ≤ (a + 2) * (a + 2) ^ b :=
+          Nat.mul_le_mul_left _ h
+        have step2 : (a + 2) * (a + 2) ^ b = (a + 2) ^ b * (a + 2) := Nat.mul_comm _ _
+        rw [Nat.pow_succ, ← step2]
+        exact step1
+
+/-- Original `FILTER_EL_EQ`: filters of equal-length lists agree when the kept
+positions agree wherever either side is kept. -/
+@[hol "cakeml/misc/miscScript.sml" "FILTER_EL_EQ"
+  (total_function_inhabitants := [α])]
+theorem filterElEq {α : Type} [Nonempty α] (P : α → Bool) (l1 l2 : List α) :
+    l1.length = l2.length →
+    (∀ n, n < l1.length → (P (holEl n l1) = true ∨ P (holEl n l2) = true) →
+      holEl n l1 = holEl n l2) →
+    l1.filter P = l2.filter P := by
+  intro hlen hpt
+  induction l1 generalizing l2 with
+  | nil =>
+    cases l2 with
+    | nil => rfl
+    | cons _ _ => simp at hlen
+  | cons a as ih =>
+    cases l2 with
+    | nil => simp at hlen
+    | cons b bs =>
+      simp only [List.length_cons, Nat.succ.injEq] at hlen
+      have hpt' : ∀ n, n < as.length →
+          (P (holEl n as) = true ∨ P (holEl n bs) = true) → holEl n as = holEl n bs := by
+        intro n hn hp
+        have h := hpt (n + 1) (by simp [hn]) (by simpa only [holEl_cons_succ] using hp)
+        simpa only [holEl_cons_succ] using h
+      have hfilter : as.filter P = bs.filter P := ih bs hlen hpt'
+      cases hpa : P a with
+      | true =>
+        have h := hpt 0 (by simp) (Or.inl (by simpa only [holEl, holHd] using hpa))
+        have hab : a = b := by simpa only [holEl, holHd] using h
+        subst hab
+        rw [List.filter_cons, if_pos hpa, List.filter_cons, if_pos hpa, hfilter]
+      | false =>
+        cases hpb : P b with
+        | true =>
+          have h := hpt 0 (by simp) (Or.inr (by simpa only [holEl, holHd] using hpb))
+          have hab : a = b := by simpa only [holEl, holHd] using h
+          subst hab
+          simp [hpb] at hpa
+        | false =>
+          rw [List.filter_cons, if_neg (by simp [hpa]), List.filter_cons,
+            if_neg (by simp [hpb]), hfilter]
+
 end Flapjack
