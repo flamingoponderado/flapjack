@@ -87,10 +87,11 @@ theorem heapLookup_length_append {α β : Type} (xs : List (HeapElement α β))
 @[hol "cakeml/compiler/backend/gc/gen_gcScript.sml" "IMP_reachable_addresses"]
 theorem impReachableAddresses {α β γ : Type} (roots0 : List (HeapAddress α))
     (heap0 : List (HeapElement β γ)) (i ptr : Nat) (u : β) (xs : List (HeapAddress β))
-    (l : Nat) (d : γ) (reach : reachableAddresses roots0 heap0 i)
-    (mem : HeapAddress.pointer ptr u ∈ xs)
-    (found : heapLookup i heap0 = some (HeapElement.dataElement xs l d)) :
+    (l : Nat) (d : γ)
+    (h : reachableAddresses roots0 heap0 i ∧ HeapAddress.pointer ptr u ∈ xs ∧
+      heapLookup i heap0 = some (HeapElement.dataElement xs l d)) :
     reachableAddresses roots0 heap0 ptr := by
+  obtain ⟨reach, mem, found⟩ := h
   obtain ⟨value, source, root, path⟩ := reach
   exact ⟨value, source, root,
     Relation.ReflTransGen.trans path (Relation.ReflTransGen.single ⟨xs, l, d, u, found, mem⟩)⟩

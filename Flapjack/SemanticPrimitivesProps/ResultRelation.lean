@@ -123,8 +123,10 @@ theorem resultRel_err2 {α β γ δ : Type} (values : α → β → Prop) (error
 /-- Reflexive payload relations make the result relation reflexive. -/
 @[hol "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml" "result_rel_refl"]
 theorem resultRel_refl {α β : Type} (values : α → α → Prop) (errors : β → β → Prop)
-    (valuesRefl : ∀ x, values x x) (errorsRefl : ∀ x, errors x x) (result : Result α β) :
-    resultRel values errors result result := by
+    (h : (∀ x, values x x) ∧ (∀ x, errors x x)) :
+    ∀ (result : Result α β), resultRel values errors result result := by
+  obtain ⟨valuesRefl, errorsRefl⟩ := h
+  intro result
   cases result with
   | val value => exact valuesRefl value
   | err error => exact excRel_refl errors errorsRefl error

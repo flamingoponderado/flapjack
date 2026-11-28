@@ -125,7 +125,7 @@ theorem checkTMore :
     unification variables is checked against the first `uvs'`. -/
 @[hol "cakeml/compiler/inference/inferPropsScript.sml" "check_s_more2"
   (fmap_as_finite_support_parameters := [s])]
-theorem checkSMore2 {α : Type} (tvs : Nat) (s : HolFiniteMapExact α InferT) (uvs : Nat) :
+theorem checkSMore2 {α : Type} (s : HolFiniteMapExact α InferT) (uvs : Nat) (tvs : Nat) :
     checkS tvs (fun k => k < uvs) s →
       ∀ uvs', uvs ≤ uvs' → checkS tvs (fun k => k < uvs') s := by
   intro h uvs' hle uv hmem
@@ -144,8 +144,8 @@ theorem holFmapAsFiniteSupportParamWitness_checkSMore2_s {α : Type}
     check. HOL's `⊆` is pointwise implication. -/
 @[hol "cakeml/compiler/inference/inferPropsScript.sml" "check_s_more3"
   (fmap_as_finite_support_parameters := [s])]
-theorem checkSMore3 {α : Type} (tvs : Nat) (s : HolFiniteMapExact α InferT)
-    (uvs : Nat → Prop) :
+theorem checkSMore3 {α : Type} (s : HolFiniteMapExact α InferT)
+    (uvs : Nat → Prop) (tvs : Nat) :
     checkS tvs uvs s → ∀ uvs', (∀ v, uvs v → uvs' v) → checkS tvs uvs' s := by
   intro h uvs' hsub uv hmem
   exact checkTMore5.1 _ uvs tvs (h uv hmem) uvs' hsub

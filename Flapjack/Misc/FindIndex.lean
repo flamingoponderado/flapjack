@@ -71,15 +71,17 @@ theorem findIndex_eq_none {α : Type} [DecidableEq α] (x : α) :
 below the length holds of the found index. -/
 @[hol "cakeml/misc/miscScript.sml" "THE_find_index_suff"]
 theorem holThe_findIndex_suff {α : Type} [DecidableEq α] (P : Nat → Bool) (x : α) :
-    ∀ (ls : List α) (n : Nat), (∀ m, m < ls.length → P (m + n) = true) →
-      x ∈ ls → P (holThe (findIndex x ls n)) = true := by
+    ∀ (ls : List α) (n : Nat), (∀ m, m < ls.length → P (m + n) = true) ∧ x ∈ ls →
+      P (holThe (findIndex x ls n)) = true := by
   intro ls
   induction ls with
   | nil =>
-    intro n _ hmem
+    intro n hprem
+    obtain ⟨_, hmem⟩ := hprem
     simp at hmem
   | cons h t ih =>
-    intro n hP hmem
+    intro n hprem
+    obtain ⟨hP, hmem⟩ := hprem
     by_cases hh : h = x
     · simp only [findIndex, if_pos hh]
       rw [holThe]
@@ -93,7 +95,7 @@ theorem holThe_findIndex_suff {α : Type} [DecidableEq α] (P : Nat → Bool) (x
         intro m hm
         have := hP (m + 1) (by simp [hm])
         simpa [Nat.add_assoc, Nat.add_comm, Nat.add_left_comm] using this
-      exact ih (n + 1) hP' ht
+      exact ih (n + 1) ⟨hP', ht⟩
 
 /-- Original `find_index_ALL_DISTINCT_EL`: in a duplicate-free list the element
     at position `n` is found at `m + n`. -/

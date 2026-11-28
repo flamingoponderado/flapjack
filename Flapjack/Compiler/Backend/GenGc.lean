@@ -114,8 +114,8 @@ private theorem attachExplicit_reset {α β : Type} (state state' : GcState α �
 /-- Original `gc_move_list_ALT`: moving the roots from the full state is the
     same as moving them from the reset state and re-attaching the queues. -/
 @[hol "cakeml/compiler/backend/gc/gen_gcScript.sml" "gc_move_list_ALT"]
-theorem gcMoveList_alt {α β : Type} (conf : Config β) (ys : List (HeapAddress α))
-    (state : GcState α β) :
+theorem gcMoveList_alt {α β : Type} (ys : List (HeapAddress α)) (state : GcState α β)
+    (conf : Config β) :
     gcMoveList conf state ys =
       (let moved := gcMoveList conf { state with h2 := [], r4 := [] } ys
        match moved with

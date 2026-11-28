@@ -33,7 +33,7 @@ theorem holPermutes_id {α : Type} (s : Set α) : holPermutes id s := by
 /-- Original `CARD_IMAGE_EQ_BIJ`: a finite set whose image has the same
 cardinality is in bijection with that image. -/
 @[hol "cakeml/misc/miscScript.sml" "CARD_IMAGE_EQ_BIJ"]
-theorem cardImageEqBij {α β : Type} (f : α → β) (s : Set α) (hfin : s.Finite)
+theorem cardImageEqBij {α β : Type} (s : Set α) (f : α → β) (hfin : s.Finite)
     (hcard : (f '' s).ncard = s.ncard) : holBij f s (f '' s) := by
   have hinj : Set.InjOn f s := Set.injOn_of_ncard_image_eq (hs := hfin) hcard
   unfold holBij holInj holSurj
@@ -46,7 +46,7 @@ theorem cardImageEqBij {α β : Type} (f : α → β) (s : Set α) (hfin : s.Fin
 /-- Original `CARD_IMAGE_ID_BIJ`: a self-mapping of a finite set with a
 cardinality-preserving image permutes the set. -/
 @[hol "cakeml/misc/miscScript.sml" "CARD_IMAGE_ID_BIJ"]
-theorem cardImageIdBij {α : Type} (f : α → α) (s : Set α) (hfin : s.Finite)
+theorem cardImageIdBij {α : Type} (s : Set α) (f : α → α) (hfin : s.Finite)
     (h : (∀ x ∈ s, f x ∈ s) ∧ (f '' s).ncard = s.ncard) : holPermutes f s := by
   obtain ⟨hsub, hcard⟩ := h
   have himage : f '' s = s := by
@@ -56,7 +56,7 @@ theorem cardImageIdBij {α : Type} (f : α → α) (s : Set α) (hfin : s.Finite
       exact hsub x hx
     · omega
   unfold holPermutes
-  have hbij := cardImageEqBij f s hfin hcard
+  have hbij := cardImageEqBij s f hfin hcard
   rw [himage] at hbij
   exact hbij
 

@@ -350,10 +350,11 @@ theorem decodeList_eq {α : Type} (p : Sexp → Option α) (h t : Sexp) (s str :
 @[hol "cakeml/compiler/parsing/fromSexpScript.sml" "sexplist_listsexp_matchable"]
 theorem decodeList_listsexp_matchable {α : Type} (g : α → Sexp) (gl : List Sexp)
     (l : List α) (f : Sexp → Option α)
-    (h : ∀ x, x ∈ l → f (g x) = some x) (hgl : gl = l.map g) :
+    (h : (∀ x, x ∈ l → f (g x) = some x) ∧ gl = l.map g) :
     decodeList f (listsexp gl) = some l := by
+  obtain ⟨hall, hgl⟩ := h
   subst hgl
-  exact decodeList_listsexp f g l h
+  exact decodeList_listsexp f g l hall
 
 /-- Original `decode_thunk_mode_def`: parse a thunk-mode name. -/
 @[hol "cakeml/compiler/parsing/fromSexpScript.sml" "decode_thunk_mode_def"]
@@ -417,9 +418,11 @@ theorem option_bind_fail {α β : Type} (m1 : Option β) :
 
 /-- Original `monad_unitbind_CONG`: unit-binding respects both arguments. -/
 @[hol "cakeml/compiler/parsing/fromSexpScript.sml" "monad_unitbind_CONG"]
-theorem option_unitbind_cong {α : Type} (m11 m12 : Option Unit) (m21 m22 : Option α)
-    (h1 : m11 = m12) (h2 : m12 = some () → m21 = m22) :
+theorem option_unitbind_cong {α : Type} (m11 : Option Unit) (m21 : Option α)
+    (m12 : Option Unit) (m22 : Option α)
+    (h : m11 = m12 ∧ (m12 = some () → m21 = m22)) :
     m11.bind (fun _ => m21) = m12.bind (fun _ => m22) := by
+  obtain ⟨h1, h2⟩ := h
   rw [h1]
   cases m12 with
   | none => rfl

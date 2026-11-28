@@ -64,11 +64,11 @@ theorem gcMove_ok' {α β : Type} (conf : Config β) (root root1 : HeapAddress �
 state. -/
 @[hol "cakeml/compiler/backend/gc/gen_gc_partialScript.sml" "gc_move_ok"]
 theorem gcMove_ok {α β : Type} (conf : Config β) (root root1 : HeapAddress α)
-    (state state1 : GcState α β) (run : gcMove conf state root = (root1, state1))
-    (ok : state1.ok = true)
-    (_bound : ∀ ptr value, root = .pointer ptr value → ptr < heapLength state.heap) :
-    state.ok = true :=
-  gcMove_ok' conf root root1 state state1 run ok
+    (state state1 : GcState α β)
+    (h : gcMove conf state root = (root1, state1) ∧ state1.ok = true) :
+    state.ok = true := by
+  obtain ⟨run, ok⟩ := h
+  exact gcMove_ok' conf root root1 state state1 run ok
 
 /-- A successful root-list move started from a successful state. -/
 @[hol "cakeml/compiler/backend/gc/gen_gc_partialScript.sml" "gc_move_list_ok'"]
@@ -95,11 +95,11 @@ theorem gcMoveList_ok' {α β : Type} (conf : Config β) (roots roots1 : List (H
 state. -/
 @[hol "cakeml/compiler/backend/gc/gen_gc_partialScript.sml" "gc_move_list_ok"]
 theorem gcMoveList_ok {α β : Type} (conf : Config β) (roots roots1 : List (HeapAddress α))
-    (state state1 : GcState α β) (run : gcMoveList conf state roots = (roots1, state1))
-    (ok : state1.ok = true)
-    (_bound : ∀ ptr value, .pointer ptr value ∈ roots → ptr < heapLength state.heap) :
-    state.ok = true :=
-  gcMoveList_ok' conf roots roots1 state state1 run ok
+    (state state1 : GcState α β)
+    (h : gcMoveList conf state roots = (roots1, state1) ∧ state1.ok = true) :
+    state.ok = true := by
+  obtain ⟨run, ok⟩ := h
+  exact gcMoveList_ok' conf roots roots1 state state1 run ok
 
 /-- A successful reference-list move started from a successful state. -/
 @[hol "cakeml/compiler/backend/gc/gen_gc_partialScript.sml" "gc_move_ref_list_ok'"]

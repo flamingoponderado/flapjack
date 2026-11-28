@@ -20,7 +20,7 @@ namespace Flapjack
 is the same as relating every index with the list element there. -/
 @[hol "cakeml/misc/miscScript.sml" "LIST_REL_GENLIST_I"
   (total_function_inhabitants := [α])]
-theorem listRelGenlistI {α : Type} [Nonempty α] (P : Nat → α → Prop) (xs : List α) :
+theorem listRelGenlistI {α : Type} [Nonempty α] (xs : List α) (P : Nat → α → Prop) :
     List.Forall₂ P (List.range xs.length) xs ↔ ∀ n, n < xs.length → P n (holEl n xs) := by
   rw [List.forall₂_iff_get]
   constructor
@@ -66,9 +66,10 @@ their fronts are related and their last elements are related. -/
 @[hol "cakeml/misc/miscScript.sml" "LIST_REL_FRONT_LAST"
   (total_function_inhabitants := [α, β])]
 theorem listRelFrontLast {α β : Type} [Nonempty α] [Nonempty β] (A : α → β → Prop)
-    (l1 : List α) (l2 : List β) (h1 : l1 ≠ []) (h2 : l2 ≠ []) :
+    (l1 : List α) (l2 : List β) (h : l1 ≠ [] ∧ l2 ≠ []) :
     List.Forall₂ A l1 l2 ↔
       List.Forall₂ A l1.dropLast l2.dropLast ∧ A (holLast l1) (holLast l2) := by
+  obtain ⟨h1, h2⟩ := h
   conv_lhs => rw [← List.dropLast_append_getLast h1, ← List.dropLast_append_getLast h2]
   rw [forall₂_append_singleton, holLast_eq_getLast h1, holLast_eq_getLast h2]
 
@@ -76,21 +77,22 @@ theorem listRelFrontLast {α β : Type} [Nonempty α] [Nonempty β] (A : α → 
 @[hol "cakeml/misc/miscScript.sml" "LIST_REL_IMP_LAST"
   (total_function_inhabitants := [α, β])]
 theorem listRelImpLast {α β : Type} [Nonempty α] [Nonempty β] (P : α → β → Prop)
-    (xs : List α) (ys : List β) :
-    List.Forall₂ P xs ys → (xs ≠ [] ∨ ys ≠ []) → P (holLast xs) (holLast ys) := by
-  intro hrel hne
+    (xs : List α) (ys : List β)
+    (h : List.Forall₂ P xs ys ∧ (xs ≠ [] ∨ ys ≠ [])) :
+    P (holLast xs) (holLast ys) := by
+  obtain ⟨hrel, hne⟩ := h
   rcases hne with hx | hy
   · have hy : ys ≠ [] := by
       intro h
       subst h
       cases hrel
       exact absurd rfl hx
-    exact ((listRelFrontLast P xs ys hx hy).mp hrel).2
+    exact ((listRelFrontLast P xs ys ⟨hx, hy⟩).mp hrel).2
   · have hx : xs ≠ [] := by
       intro h
       subst h
       cases hrel
       exact absurd rfl hy
-    exact ((listRelFrontLast P xs ys hx hy).mp hrel).2
+    exact ((listRelFrontLast P xs ys ⟨hx, hy⟩).mp hrel).2
 
 end Flapjack

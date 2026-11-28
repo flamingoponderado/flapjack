@@ -87,10 +87,11 @@ def mSetRef {α β γ δ : Type} (setVar : δ → α → γ) (x : δ) : α → E
 /-- Original `st_ex_bind_CONG`: the congruence rule HOL exports for the
     termination prover. -/
 @[hol "cakeml/translator/monadic/monad_base/ml_monadBaseScript.sml" "st_ex_bind_CONG"]
-theorem bindCong {α β γ δ : Type} (x x' : M α β γ) (s s' : α) (f f' : β → M α δ γ) :
-    x = x' → s = s' → (∀ y s'', x' s' = (.success y, s'') → f y s'' = f' y s'') →
-      bind x f s = bind x' f' s' := by
-  rintro rfl rfl h
+theorem bindCong {α β γ δ : Type} (x : M α β γ) (s : α) (x' : M α β γ) (s' : α)
+    (f f' : β → M α δ γ)
+    (h : x = x' ∧ s = s' ∧ (∀ y s'', x' s' = (.success y, s'') → f y s'' = f' y s'')) :
+    bind x f s = bind x' f' s' := by
+  obtain ⟨rfl, rfl, h⟩ := h
   cases hx : x s with
   | mk r s'' =>
       cases r with
@@ -101,10 +102,11 @@ theorem bindCong {α β γ δ : Type} (x x' : M α β γ) (s s' : α) (f f' : β
 
 /-- Original `st_ex_ignore_bind_CONG`. -/
 @[hol "cakeml/translator/monadic/monad_base/ml_monadBaseScript.sml" "st_ex_ignore_bind_CONG"]
-theorem ignoreBindCong {α β γ δ : Type} (x x' : M α β γ) (s s' : α) (f f' : M α δ γ) :
-    x = x' → s = s' → (∀ y s'', x' s' = (.success y, s'') → f s'' = f' s'') →
-      ignoreBind x f s = ignoreBind x' f' s' := by
-  rintro rfl rfl h
+theorem ignoreBindCong {α β γ δ : Type} (x : M α β γ) (s : α) (x' : M α β γ) (s' : α)
+    (f f' : M α δ γ)
+    (h : x = x' ∧ s = s' ∧ (∀ y s'', x' s' = (.success y, s'') → f s'' = f' s'')) :
+    ignoreBind x f s = ignoreBind x' f' s' := by
+  obtain ⟨rfl, rfl, h⟩ := h
   cases hx : x s with
   | mk r s'' =>
       cases r with

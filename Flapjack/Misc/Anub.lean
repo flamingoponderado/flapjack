@@ -70,11 +70,12 @@ theorem anub_notin_acc {α β : Type} [DecidableEq α] (x : α) :
 /-- Original `EVERY_anub_imp`: a property holding of every kept binding holds
     of the head binding and of the tail computed from the extended accumulator. -/
 @[hol "cakeml/misc/miscScript.sml" "EVERY_anub_imp"]
-theorem every_anub_imp {α β : Type} [DecidableEq α] (P : α × β → Prop)
-    (ls : List (α × β)) (acc : List α) (x : α) (y : β) :
-    (∀ p ∈ anub ((x, y) :: ls) acc, P p) → x ∉ acc →
+theorem every_anub_imp {α β : Type} [DecidableEq α] :
+    ∀ (ls : List (α × β)) (acc : List α) (x : α) (y : β) (P : α × β → Prop),
+      (∀ p ∈ anub ((x, y) :: ls) acc, P p) ∧ x ∉ acc →
       P (x, y) ∧ ∀ p ∈ anub ls (x :: acc), P p := by
-  intro hall hxacc
+  intro ls acc x y P h
+  obtain ⟨hall, hxacc⟩ := h
   by_cases hx : x ∈ acc
   · exact absurd hx hxacc
   · simp only [anub, if_neg hx, List.mem_cons] at hall

@@ -39,5 +39,15 @@ This helper is untagged infrastructure, not a claim about the whole model. -/
 def holV2w (a : Nat) (v : List Bool) : BitVec a :=
   Flapjack.holFcpWord fun i => decide (i < v.length) && v.getD (v.length - 1 - i) false
 
+/-- Original `v2w_32_F`: the false singleton is the zero word. -/
+@[hol "cakeml/misc/miscScript.sml" "v2w_32_F"]
+theorem v2w_32_F : holV2w 32 [false] = 0#32 := by
+  decide
+
+/-- Original `v2w_32_T`: the true singleton is the one word. -/
+@[hol "cakeml/misc/miscScript.sml" "v2w_32_T"]
+theorem v2w_32_T : holV2w 32 [true] = 1#32 := by
+  decide
+
 
 end Flapjack.RiscV.L3

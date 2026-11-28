@@ -112,13 +112,13 @@ theorem option_case_none_false {α : Type} (X : Option α) (P : α → Prop) :
 /-- Original `MAP_FST_I_PAIR_MAP`: mapping the second component keeps the
 first projection. -/
 @[hol "cakeml/misc/miscScript.sml" "MAP_FST_I_PAIR_MAP"]
-theorem map_fst_pair_map {α β γ : Type} (f : β → γ) (xs : List (α × β)) :
+theorem map_fst_pair_map {α β γ : Type} (xs : List (α × β)) (f : β → γ) :
     (xs.map (Prod.map id f)).map Prod.fst = xs.map Prod.fst := by
   simp
 
 /-- Original `FLAT_MAP_SING`: flattening singleton lists is mapping. -/
 @[hol "cakeml/misc/miscScript.sml" "FLAT_MAP_SING"]
-theorem flat_map_sing {α β : Type} (f : α → β) (ls : List α) :
+theorem flat_map_sing {α β : Type} (ls : List α) (f : α → β) :
     (ls.map (fun x => [f x])).flatten = ls.map f := by
   induction ls with
   | nil => rfl
@@ -485,32 +485,28 @@ theorem the_option_map {α : Type} (f : α → α) (d : α) (opt : Option α) (h
 
 /-- Original `MEM_REPLICATE_IMP`: a replicated value is the repeated element. -/
 @[hol "cakeml/misc/miscScript.sml" "MEM_REPLICATE_IMP"]
-theorem mem_replicate_imp {α : Type} :
-    ∀ (n : Nat) (y : α) (x : α), x ∈ List.replicate n y → x = y := by
+theorem mem_replicate_imp {α : Type} (x : α) :
+    ∀ (n : Nat) (y : α), x ∈ List.replicate n y → x = y := by
   intro n
   induction n with
   | zero =>
-    intro y x hx
+    intro y hx
     simp at hx
   | succ n ih =>
-    intro y x hx
+    intro y hx
     simp only [List.replicate_succ, List.mem_cons] at hx
     rcases hx with h | h
     · exact h
-    · exact ih y x h
+    · exact ih y h
 
 /-- Original `MAP_K_REPLICATE`: mapping a constant is a replicate. -/
 @[hol "cakeml/misc/miscScript.sml" "MAP_K_REPLICATE"]
-theorem map_const_replicate {α β : Type} :
-    ∀ (ls : List β) (x : α), ls.map (fun _ => x) = List.replicate ls.length x := by
+theorem map_const_replicate {α β : Type} (x : α) :
+    ∀ (ls : List β), ls.map (fun _ => x) = List.replicate ls.length x := by
   intro ls
   induction ls with
-  | nil =>
-    intro x
-    rfl
-  | cons _ _ ih =>
-    intro x
-    simp [ih, List.replicate_succ]
+  | nil => rfl
+  | cons _ _ ih => simp [ih, List.replicate_succ]
 
 /-- Original `SUM_MAP_K`: a constant map sums to its length times the value. -/
 @[hol "cakeml/misc/miscScript.sml" "SUM_MAP_K"]
@@ -671,7 +667,7 @@ theorem insertAtI_insertAtI {α : Type} (pos2 pos1 : Nat) (c1 c2 l : List α)
 /-- Original `OPT_MMAP_MAP_o`: mapping a function into an optional map is the
 composition. -/
 @[hol "cakeml/misc/miscScript.sml" "OPT_MMAP_MAP_o"]
-theorem mapM_map_comp {α β γ : Type} (f : γ → Option β) (g : α → γ) (ls : List α) :
+theorem mapM_map_comp {α β γ : Type} (ls : List α) (f : γ → Option β) (g : α → γ) :
     (ls.map g).mapM f = ls.mapM (f ∘ g) := by
   induction ls with
   | nil => rfl
@@ -753,10 +749,8 @@ theorem holLast_map_snd_steps {α β : Type} [Nonempty α] :
 
 /-- Original `IN_option_rwt2`: membership in an option-selected set. -/
 @[hol "cakeml/misc/miscScript.sml" "IN_option_rwt2"]
-theorem mem_option_case {α β : Type} :
-    ∀ (opt : Option β) (s : β → Set α) (x : α),
-      x ∈ (match opt with | none => ∅ | some y => s y) ↔ ∃ y, opt = some y ∧ x ∈ s y := by
-  intro opt s x
+theorem mem_option_case {α β : Type} (x : α) (opt : Option β) (s : β → Set α) :
+    x ∈ (match opt with | none => ∅ | some y => s y) ↔ ∃ y, opt = some y ∧ x ∈ s y := by
   cases opt with
   | none => simp
   | some y => simp

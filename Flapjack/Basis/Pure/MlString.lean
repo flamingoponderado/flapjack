@@ -59,7 +59,7 @@ def isAlphaChar (c : HolChar) : Bool := isLowerChar c || isUpperChar c
 @[hol "cakeml/basis/pure/mlstringScript.sml" "mlstring"]
 inductive MlString where
   | implode (data : List HolChar)
-  deriving Repr, DecidableEq
+  deriving Repr, DecidableEq, Inhabited
 
 namespace MlString
 

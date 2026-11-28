@@ -87,10 +87,11 @@ theorem strFindi_range :
 /-- Original `isStringThere_SEG`: comparing `n` characters from two offsets is
 equal SEGs. -/
 @[hol "cakeml/basis/pure/mlstringScript.sml" "isStringThere_SEG"]
-theorem isStringThere_SEG (s1 s2 : List HolChar) (i1 i2 n : Nat)
-    (h1 : i1 + n ≤ s1.length) (h2 : i2 + n ≤ s2.length) :
+theorem isStringThere_SEG (i1 i2 : Nat) (s1 s2 : List HolChar) (n : Nat)
+    (h : i1 + n ≤ s1.length ∧ i2 + n ≤ s2.length) :
     (isStringThereAux (.implode s1) (.implode s2) i1 i2 n = true ↔
       (s1.drop i1).take n = (s2.drop i2).take n) := by
+  obtain ⟨h1, h2⟩ := h
   induction n generalizing i1 i2 with
   | zero => simp only [isStringThereAux, List.take_zero]
   | succ n ih =>
@@ -170,13 +171,13 @@ theorem isSubstring_SEG (s1 s2 : List HolChar) :
       · rintro ⟨n, hn, hthere⟩
         have hseg : ((h :: t).drop 0).take (h :: t).length =
             (s2.drop n).take (h :: t).length :=
-          (isStringThere_SEG (h :: t) s2 0 n (h :: t).length (by omega) (by omega)).mp hthere
+          (isStringThere_SEG 0 n (h :: t) s2 (h :: t).length ⟨by omega, by omega⟩).mp hthere
         have hleft : ((h :: t).drop 0).take (h :: t).length = h :: t := by simp
         exact ⟨n, by omega, by rw [← hseg, hleft]⟩
       · rintro ⟨i, hi, hseg⟩
         have hleft : ((h :: t).drop 0).take (h :: t).length = h :: t := by simp
         refine ⟨i, by omega, ?_⟩
-        exact (isStringThere_SEG (h :: t) s2 0 i (h :: t).length (by omega) (by omega)).mpr
+        exact (isStringThere_SEG 0 i (h :: t) s2 (h :: t).length ⟨by omega, by omega⟩).mpr
           (by rw [hleft, hseg])
     · rename_i hlen
       have hlen' : s2.length < (h :: t).length := by
@@ -195,13 +196,13 @@ theorem isPrefix_eq (s1 s2 : MlString) :
   unfold isPrefix
   by_cases hlen : strlen s1 ≤ strlen s2
   · rw [if_pos hlen]
-    have hseg := isStringThere_SEG (explode s1) (explode s2) 0 0 (strlen s1)
-      (by
+    have hseg := isStringThere_SEG 0 0 (explode s1) (explode s2) (strlen s1)
+      ⟨by
         rw [length_explode]
-        omega)
-      (by
+        omega,
+      by
         rw [length_explode]
-        omega)
+        omega⟩
     rw [implode_explode s1, implode_explode s2] at hseg
     rw [hseg, ← length_explode s1, List.prefix_iff_eq_take]
     simp only [List.drop_zero, List.take_length]

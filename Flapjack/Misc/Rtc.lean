@@ -25,7 +25,7 @@ along the reflexive-transitive closure, and the closure restricted to the
 predicate still reaches the endpoint. -/
 @[hol "cakeml/misc/miscScript.sml" "RTC_invariant"]
 theorem rtcInvariant {α : Type} (R : α → α → Prop) (P : α → Prop)
-    (hstep : ∀ x y, P x → R x y → P y) :
+    (hstep : ∀ x y, P x ∧ R x y → P y) :
     ∀ x y, Relation.ReflTransGen R x y → P x →
       Relation.ReflTransGen (fun x y => R x y ∧ P x ∧ P y) x y := by
   intro x y hrtc hP
@@ -33,11 +33,11 @@ theorem rtcInvariant {α : Type} (R : α → α → Prop) (P : α → Prop)
     intro z hz
     induction hz with
     | refl => exact hP
-    | tail _ hrel ih => exact hstep _ _ ih hrel
+    | tail _ hrel ih => exact hstep _ _ ⟨ih, hrel⟩
   induction hrtc with
   | refl => exact Relation.ReflTransGen.refl
   | tail hrtc hrel ih =>
-    exact Relation.ReflTransGen.tail ih ⟨hrel, hpy hrtc, hstep _ _ (hpy hrtc) hrel⟩
+    exact Relation.ReflTransGen.tail ih ⟨hrel, hpy hrtc, hstep _ _ ⟨hpy hrtc, hrel⟩⟩
 
 /-- Original `RTC_RSUBSET`: a pointwise included relation has an included
 reflexive-transitive closure. -/

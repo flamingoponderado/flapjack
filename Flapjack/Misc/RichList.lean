@@ -148,24 +148,30 @@ theorem splitP_snd_nil_iff {α : Type} (P : α → Bool) (ls r : List α) :
 /-- Original `SPLITP_CONS_IMP`: a split whose second component is nonempty has
 an element satisfying the predicate. -/
 @[hol "cakeml/misc/miscScript.sml" "SPLITP_CONS_IMP"]
-theorem splitPConsImp {α : Type} (P : α → Bool) (ls l' r : List α)
-    (h : splitP P ls = (l', r)) (hr : r ≠ []) : ls.any P := by
-  induction ls generalizing l' r with
+theorem splitPConsImp {α : Type} :
+    ∀ (ls : List α) (l' r : List α) (P : α → Bool),
+      splitP P ls = (l', r) ∧ r ≠ [] → ls.any P := by
+  intro ls
+  induction ls with
   | nil =>
-    simp [splitP] at h
-    exact absurd h.2 hr
+    intro l' r P h
+    obtain ⟨hsplit, hr⟩ := h
+    simp [splitP] at hsplit
+    exact absurd hsplit.2 hr
   | cons hd tl ih =>
+    intro l' r P h
+    obtain ⟨hsplit, hr⟩ := h
     cases hp : P hd with
     | true =>
-      rw [splitP, hp] at h
-      simp only at h
+      rw [splitP, hp] at hsplit
+      simp only at hsplit
       rw [List.any_cons, hp]
       rfl
     | false =>
-      rw [splitP, hp] at h
-      obtain ⟨-, rfl⟩ := h
+      rw [splitP, hp] at hsplit
+      obtain ⟨-, rfl⟩ := hsplit
       rw [List.any_cons, hp]
-      exact ih _ _ rfl hr
+      exact ih _ _ P ⟨rfl, hr⟩
 
 /-- Original `SND_SPLITP_DROP`: dropping a prefix on which the predicate fails
 does not change the second component of the split. -/

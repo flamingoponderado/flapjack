@@ -20,4 +20,18 @@ theorem listSizeHOL_thm {α : Type} :
       ∀ (f : α → Nat) x xs, listSizeHOL f (x :: xs) = 1 + f x + listSizeHOL f xs :=
   ⟨fun _ => rfl, fun _ _ _ => rfl⟩
 
+/-- Original `MEM_list_size`: a member's weight is bounded by the list size. -/
+@[hol "cakeml/misc/miscScript.sml" "MEM_list_size"]
+theorem memListSize {α : Type} (f : α → Nat) (x : α) (ls : List α) :
+    x ∈ ls → f x ≤ listSizeHOL f ls := by
+  intro hx
+  induction ls with
+  | nil => simp at hx
+  | cons y ys ih =>
+    simp only [listSizeHOL]
+    rcases List.mem_cons.mp hx with rfl | hx
+    · omega
+    · have := ih hx
+      omega
+
 end Flapjack
