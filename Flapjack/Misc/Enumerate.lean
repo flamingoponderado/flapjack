@@ -56,6 +56,44 @@ theorem el_enumerate {α : Type} [Nonempty α] (xs : List α) (n k : Nat)
       rw [ih n (k + 1) h]
       rw [show n + (k + 1) = n + 1 + k by omega]
 
+/-- Original `ALOOKUP_enumerate`: looking up an index in an enumeration gives
+the element at that position when the index lies in the enumerated range. -/
+@[hol "cakeml/misc/miscScript.sml" "ALOOKUP_enumerate"
+  (total_function_inhabitants := [α])]
+theorem alookupEnumerate {α : Type} [Nonempty α] (ls : List α) (k x : Nat) :
+    List.lookup x (enumerate k ls) =
+      if k ≤ x ∧ x < ls.length + k then some (holEl (x - k) ls) else none := by
+  induction ls generalizing k with
+  | nil =>
+    rw [enumerate]
+    simp
+  | cons a as ih =>
+    rw [enumerate, List.lookup_cons]
+    simp only [List.length_cons]
+    split
+    · rename_i hbeq
+      have hk : x = k := by
+        rw [beq_iff_eq] at hbeq
+        exact hbeq
+      subst hk
+      rw [if_pos (by omega)]
+      rw [Nat.sub_self]
+      rfl
+    · rename_i hbeq
+      have hne : x ≠ k := by
+        simp at hbeq
+        exact hbeq
+      rw [ih (k + 1)]
+      by_cases hcond : k ≤ x ∧ x < as.length + 1 + k
+      · have h1 : k ≤ x := hcond.1
+        have h2 : x < as.length + 1 + k := hcond.2
+        have hcond2 : k + 1 ≤ x ∧ x < as.length + (k + 1) := ⟨by omega, by omega⟩
+        rw [if_pos hcond2, if_pos hcond]
+        rw [show x - k = (x - (k + 1)) + 1 by omega]
+        rw [holEl_cons_succ]
+      · have hcond2 : ¬ (k + 1 ≤ x ∧ x < as.length + (k + 1)) := by omega
+        rw [if_neg hcond2, if_neg hcond]
+
 /-- The shifted form of `MAP_enumerate_MAPi` and `MAPi_enumerate_MAP`: mapping
 over an enumeration started at `k` is `holMapi` with the offset added. -/
 private theorem map_enumerate_eq_holMapi {α β : Type} (f : Nat × α → β) :
@@ -97,6 +135,51 @@ private theorem fst_enumerate_ge {A : Type} (j : Nat) (xs : List A) :
     · simp
     · have hge := ih (j + 1) p hp
       omega
+
+/-- Flapjack infrastructure: the general-offset form of `MEM_enumerate`, proved
+by induction over the offset so that the tail case can shift it by one. -/
+private theorem memEnumerateAux {α : Type} [Nonempty α] :
+    ∀ (xs : List α) (k i : Nat) (e : α), i < xs.length →
+      ((i + k, e) ∈ enumerate k xs ↔ holEl i xs = e) := by
+  intro xs
+  induction xs with
+  | nil =>
+    intro k i e hi
+    simp at hi
+  | cons a as ih =>
+    intro k i e hi
+    have henum : enumerate k (a :: as) = (k, a) :: enumerate (k + 1) as := by
+      rw [enumerate]
+    cases i with
+    | zero =>
+      rw [henum, List.mem_cons, Nat.zero_add]
+      constructor
+      · rintro (h | h)
+        · have hea : e = a := (Prod.mk.inj h).2
+          exact hea.symm
+        · exact absurd (fst_enumerate_ge (k + 1) as (k, e) h) (by omega)
+      · intro h
+        exact Or.inl (Prod.ext rfl h.symm)
+    | succ j =>
+      have hlt : j < as.length := by simpa using hi
+      rw [henum, List.mem_cons]
+      rw [show j + 1 + k = j + (k + 1) by omega]
+      rw [show holEl (j + 1) (a :: as) = holEl j as by rw [holEl_cons_succ]]
+      constructor
+      · rintro (h | h)
+        · have h1 : j + (k + 1) = k := (Prod.mk.inj h).1
+          omega
+        · exact (ih (k + 1) j e hlt).mp h
+      · intro h
+        exact Or.inr ((ih (k + 1) j e hlt).mpr h)
+
+/-- Original `MEM_enumerate`: an in-range index is enumerated with the element
+at that position. -/
+@[hol "cakeml/misc/miscScript.sml" "MEM_enumerate"
+  (total_function_inhabitants := [α])]
+theorem memEnumerate {α : Type} [Nonempty α] (xs : List α) (i : Nat) (e : α)
+    (hi : i < xs.length) : ((i, e) ∈ enumerate 0 xs ↔ holEl i xs = e) := by
+  simpa using memEnumerateAux xs 0 i e hi
 
 /-- Original `ALL_DISTINCT_MAP_FST_enumerate`: the indices of an enumeration
 are distinct. -/

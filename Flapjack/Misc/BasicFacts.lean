@@ -1096,6 +1096,30 @@ theorem insertAtI_app {α : Type} (n : Nat) (l c1 c2 : List α)
   rw [htake, hdrop]
   simp only [List.length_append, Nat.add_assoc, List.append_assoc]
 
+/-- Original `insert_atI_CONS`: inserting a cons inserts its head and shifts the
+tail. -/
+@[hol "cakeml/misc/miscScript.sml" "insert_atI_CONS"]
+theorem insertAtICons {α : Type} (n : Nat) (l : List α) (h : α) (t : List α)
+    (hn : n + t.length < l.length) :
+    insertAtI (h :: t) n l = (insertAtI t (n + 1) l).set n h := by
+  have hlt : n < l.length := by omega
+  have htake : l.take (n + 1) = l.take n ++ [l[n]'hlt] := by
+    rw [List.take_add_one, List.getElem?_eq_getElem hlt]
+    rfl
+  unfold insertAtI
+  rw [htake]
+  simp only [List.append_assoc]
+  rw [List.cons_append]
+  rw [List.set_append]
+  rw [if_neg (by simp)]
+  rw [List.length_take, Nat.min_eq_left (by omega)]
+  rw [show n - n = 0 by omega]
+  rw [show ([l[n]] : List α) ++ (t ++ List.drop (n + 1 + t.length) l) =
+    l[n] :: (t ++ List.drop (n + 1 + t.length) l) from rfl]
+  rw [List.set_cons_zero]
+  simp only [List.length_cons]
+  rw [show n + (t.length + 1) = n + 1 + t.length by omega]
+
 /-- Flapjack infrastructure: the HOL last element of an appended nonempty tail
 is the last element of that tail. -/
 private theorem holLast_append_of_ne_nil {α : Type} [Nonempty α] (a b : List α)
