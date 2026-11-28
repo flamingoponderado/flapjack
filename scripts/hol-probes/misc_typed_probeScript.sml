@@ -328,3 +328,6 @@ val _ = emit "SPLITP_TAKE_DROP_typed" "SPLITP_TAKE_DROP";
 val _ = emit "FST_SPLITP_DROP_typed" "FST_SPLITP_DROP";
 val _ = emit "find_index_ALL_DISTINCT_REVERSE_typed" "find_index_ALL_DISTINCT_REVERSE";
 val _ = emit "ALOOKUP_find_index_SOME_typed" "ALOOKUP_find_index_SOME";
+val _ = emit "LUPDATE_insert_commute_typed" "LUPDATE_insert_commute";
+val _ = emit "INJ_MAP_EQ_2_typed" "INJ_MAP_EQ_2";
+val _ = emit "FOLDR_CONS_5tup_typed" "FOLDR_CONS_5tup";

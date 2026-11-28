@@ -1341,4 +1341,53 @@ theorem everyZipSplit {α β : Type} (l1 : List α) (l2 : List β) (P : α → B
       · rintro ⟨⟨hpa, hrest⟩, ⟨hqb, hrest2⟩⟩
         exact ⟨⟨hpa, hqb⟩, ⟨hrest, hrest2⟩⟩
 
+/-- Original `LUPDATE_insert_commute`: an in-place update below an insertion
+commutes with it. -/
+@[hol "cakeml/misc/miscScript.sml" "LUPDATE_insert_commute"]
+theorem lupdateInsertCommute {α : Type} (ws : List α) (pos1 pos2 : Nat) (a : List α) (w : α)
+    (h : pos2 < pos1 ∧ pos1 + ws.length ≤ a.length) :
+    insertAtI ws pos1 (a.set pos2 w) = (insertAtI ws pos1 a).set pos2 w := by
+  induction ws generalizing pos1 with
+  | nil => simp [insertAtI]
+  | cons x xs ih =>
+    have hlen : pos1 + xs.length < a.length := by
+      simp only [List.length_cons] at h
+      omega
+    have hlen' : pos1 + xs.length < (a.set pos2 w).length := by
+      rw [List.length_set]
+      omega
+    rw [insertAtICons pos1 (a.set pos2 w) x xs hlen']
+    rw [insertAtICons pos1 a x xs hlen]
+    rw [ih (pos1 + 1) (by
+      constructor
+      · omega
+      · simp only [List.length_cons] at h
+        omega)]
+    rw [List.set_comm]
+    omega
+
+/-- Original `INJ_MAP_EQ_2`: an injective map that agrees on two lists forces
+the lists to agree. -/
+@[hol "cakeml/misc/miscScript.sml" "INJ_MAP_EQ_2"]
+theorem injMapEq2 {α β : Type} (f : α → β) (l1 l2 : List α)
+    (hinj : ∀ x y, x ∈ l1 → y ∈ l2 → f x = f y → x = y)
+    (heq : l1.map f = l2.map f) : l1 = l2 := by
+  induction l1 generalizing l2 with
+  | nil =>
+    cases l2 with
+    | nil => rfl
+    | cons _ _ => simp at heq
+  | cons a as ih =>
+    cases l2 with
+    | nil => simp at heq
+    | cons b bs =>
+      simp only [List.map_cons, List.cons.injEq] at heq
+      obtain ⟨hab, htail⟩ := heq
+      have hb : a = b := hinj a b (by simp) (by simp) hab
+      subst hb
+      have hinj' : ∀ x y, x ∈ as → y ∈ bs → f x = f y → x = y := by
+        intro x y hx hy hf
+        exact hinj x y (by simp [hx]) (by simp [hy]) hf
+      rw [ih bs hinj' htail]
+
 end Flapjack

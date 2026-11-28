@@ -190,4 +190,18 @@ theorem memAlookup {α β : Type} [DecidableEq α] (xs : List (α × β)) (x : �
         simp only [List.lookup_cons, hbeq] at hlook
         exact List.mem_cons.mpr (Or.inr ((ih hnd.2).mpr hlook))
 
+/-- Original `FOLDR_CONS_5tup`: folding a five-tuple function as cons equals
+mapping it and appending. -/
+@[hol "cakeml/misc/miscScript.sml" "FOLDR_CONS_5tup"]
+theorem foldrCons5tup {α β γ δ ε ζ : Type} (f : α → β → γ → δ → ε → ζ)
+    (ls : List (α × β × γ × δ × ε)) (a : List ζ) :
+    ls.foldr (fun p w => f p.1 p.2.1 p.2.2.1 p.2.2.2.1 p.2.2.2.2 :: w) a =
+      (ls.map (fun p => f p.1 p.2.1 p.2.2.1 p.2.2.2.1 p.2.2.2.2)) ++ a := by
+  induction ls with
+  | nil => rfl
+  | cons p rest ih =>
+    obtain ⟨c, d, x, y, z⟩ := p
+    simp only [List.foldr_cons, List.map_cons, List.cons_append]
+    rw [ih]
+
 end Flapjack

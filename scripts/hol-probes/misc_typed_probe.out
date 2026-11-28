@@ -292,3 +292,6 @@ SPLITP_TAKE_DROP_typed=∀(P :α -> bool) (i :num) (l :α list). EVERY ($¬ ∘ 
 FST_SPLITP_DROP_typed=∀(P :α -> bool) (n :num) (l :α list). EVERY ($¬ ∘ P) (TAKE n l) ⇒ FST (SPLITP P l) = TAKE n l ++ FST (SPLITP P (DROP n l))
 find_index_ALL_DISTINCT_REVERSE_typed=∀(ls :α list) (x :α) (m :num) (j :num). ALL_DISTINCT ls ∧ find_index x ls m = SOME j ⇒ find_index x (REVERSE ls) m = SOME (m + LENGTH ls + m − j − (1 :num))
 ALOOKUP_find_index_SOME_typed=ALOOKUP (env :(β # α) list) (k :β) = SOME (v :α) ⇒ ∃(i :num). find_index k (MAP (FST :β # α -> β) env) (0 :num) = SOME i ∧ i < LENGTH env ∧ v = SND env❲i❳
+LUPDATE_insert_commute_typed=∀(ws :α list) (pos1 :num) (pos2 :num) (a :α list) (w :α). pos2 < pos1 ∧ pos1 + LENGTH ws ≤ LENGTH a ⇒ insert_atI ws pos1 a❲pos2 ↦ w❳ = (insert_atI ws pos1 a)❲pos2 ↦ w❳
+INJ_MAP_EQ_2_typed=∀(f :α -> β) (l1 :α list) (l2 :α list). (∀(x :α) (y :α). MEM x l1 ∧ MEM y l2 ∧ f x = f y ⇒ x = y) ∧ MAP f l1 = MAP f l2 ⇒ l1 = l2
+FOLDR_CONS_5tup_typed=∀(f :α -> β -> γ -> δ -> ε -> ζ) (ls :(α # β # γ # δ # ε) list) (a :ζ list). FOLDR (λ((c :α),(d :β),(x :γ),(y :δ),(z :ε)) (w :ζ list). f c d x y z::w) a ls = MAP (λ((c :α),(d :β),(x :γ),(y :δ),(z :ε)). f c d x y z) ls ++ a
