@@ -10848,6 +10848,7 @@ run_probe misc_typed_probeScript.sml misc_typed_probe.out \
   every_zip_split_typed SPLITP_TAKE_DROP_typed FST_SPLITP_DROP_typed \
   ALOOKUP_find_index_SOME_typed \
   LUPDATE_insert_commute_typed INJ_MAP_EQ_2_typed FOLDR_CONS_5tup_typed \
+  eq_shape_map_typed eq_shape_IMP_domain_typed subspt_delete_typed range_insert_2_typed \
   "$cake_dir/misc/miscScript.sml" \
   "$cake_dir/misc"
 

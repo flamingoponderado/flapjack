@@ -331,3 +331,7 @@ val _ = emit "ALOOKUP_find_index_SOME_typed" "ALOOKUP_find_index_SOME";
 val _ = emit "LUPDATE_insert_commute_typed" "LUPDATE_insert_commute";
 val _ = emit "INJ_MAP_EQ_2_typed" "INJ_MAP_EQ_2";
 val _ = emit "FOLDR_CONS_5tup_typed" "FOLDR_CONS_5tup";
+val _ = emit "eq_shape_map_typed" "eq_shape_map";
+val _ = emit "eq_shape_IMP_domain_typed" "eq_shape_IMP_domain";
+val _ = emit "subspt_delete_typed" "subspt_delete";
+val _ = emit "range_insert_2_typed" "range_insert_2";

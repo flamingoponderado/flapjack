@@ -3058,6 +3058,7 @@ import Flapjack.Compiler.Backend.RegAlloc.Remap
 import Flapjack.Compiler.Backend.RegAlloc.SafeDiv
 import Flapjack.Compiler.Backend.WordAlloc.CanonizeMovesAux
 import Flapjack.Misc.FindIndex.ShiftZero
+import Flapjack.Misc.FindIndex.Alookup
 import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign.Step
 import Flapjack.Compiler.Backend.WordAlloc.HeuCall
 import Flapjack.Compiler.Backend.WordAlloc.HeuMax
@@ -4581,6 +4582,8 @@ import Flapjack.Misc.ListEl
 import Flapjack.Misc.ListRelation
 import Flapjack.Misc.Permutes
 import Flapjack.Misc.Sptree.Range
+import Flapjack.Misc.Sptree.EqShape
+import Flapjack.Misc.Sptree.SubsptDelete
 import Flapjack.Misc.Pair
 import Flapjack.Misc.Relation
 import Flapjack.Misc.Rtc

@@ -69,4 +69,16 @@ def sptEqShape {α β : Type} : Spt α → Spt β → Bool
   | .bs l1 _ l2, .bs r1 _ r2 => sptEqShape l1 r1 && sptEqShape l2 r2
   | _, _ => false
 
+/-- Original `range_insert_2`: a value in the range after insertion is either
+in the old range or the inserted value. -/
+@[hol "cakeml/misc/miscScript.sml" "range_insert_2"]
+theorem rangeInsert2 {α : Type} (C : α) (n : Nat) (l : α) (fml : Spt α) :
+    C ∈ sptRange (sptInsert n l fml) → C ∈ sptRange fml ∨ C = l := by
+  intro h
+  have hsub := rangeInsertSubset n l fml h
+  rw [Set.mem_insert_iff] at hsub
+  rcases hsub with heq | hmem
+  · exact Or.inr heq
+  · exact Or.inl hmem
+
 end Flapjack
