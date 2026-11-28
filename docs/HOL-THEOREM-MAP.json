@@ -19199,7 +19199,7 @@
     "lean_path": "Flapjack/SemanticPrimitivesProps/RecursiveFunctions.lean",
     "lean_name": "findRecFun_el",
     "statement_status": "reviewed_exact",
-    "reviewer": "Compared find_recfun_el_typed in semantic_primitives_props_local_typed_probe.out: the binders keep HOL's order f, funs, x, e, n; the three conjunctive premises are separate hypotheses (distinct keys, in-bounds index, listed entry); the result payload types stay independent; and the conclusion is the original find_recfun lookup."
+    "reviewer": "Compared find_recfun_el_typed in semantic_primitives_props_local_typed_probe.out: the binders keep HOL's order f, funs, x, e, n; the single conjunction premise (distinct keys, in-bounds index, listed entry) is kept as one hypothesis; HOL's total fEL funs❲n❳ is rendered as the indexed element with the in-bounds proof supplied by the premise's own bound conjunct (an explicit ∀-binder in that conjunct), since holEl would need a Nonempty instance for VarN = MlString that the environment does not provide; the result payload types stay independent; and the conclusion is the original find_recfun lookup."
   },
 {
     "hol_path": "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml",

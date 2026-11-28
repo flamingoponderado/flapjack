@@ -39,13 +39,15 @@ theorem findRecFun_alookup {α β : Type} (funs : List (VarN × α × β)) (name
 /-- A distinct-keyed list finds the entry stored at a listed position. -/
 @[hol "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml" "find_recfun_el"]
 theorem findRecFun_el {β γ : Type} (f : VarN) (funs : List (VarN × β × γ))
-    (x : β) (e : γ) (n : Nat) (distinct : (funs.map fun (f, _, _) => f).Nodup)
-    (bound : n < funs.length) (entry : funs[n] = (f, x, e)) :
+    (x : β) (e : γ) (n : Nat)
+    (h : (funs.map fun (f, _, _) => f).Nodup ∧ n < funs.length ∧
+      ∀ (hb : n < funs.length), funs[n]'hb = (f, x, e)) :
     findRecFun f funs = some (x, e) := by
+  obtain ⟨distinct, bound, entry⟩ := h
   rw [findRecFun_alookup]
   have member : (f, (x, e)) ∈ funs := by
-    have := List.getElem_mem (l := funs) (n := n) bound
-    rwa [entry] at this
+    have hm := List.getElem_mem (l := funs) (n := n) bound
+    rwa [entry bound] at hm
   refine Flapjack.holALookup_of_distinct_member funs f (x, e) ⟨?_, member⟩
   simpa [Prod.fst] using distinct
 
