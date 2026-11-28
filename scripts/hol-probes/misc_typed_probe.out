@@ -305,3 +305,4 @@ PERM_MAP_BIJ_typed=∀(f :α -> β) (l1 :α list) (l2 :α list). BIJ f 𝕌(:α)
 FDOM_FLOOKUP_typed=(x :α) ∈ FDOM (f :α |-> β) ⇔ ∃(v :β). FLOOKUP f x = SOME v
 lookup_fromList2_typed=∀(l :α list) (n :num). lookup n (fromList2 l) = if EVEN n then lookup (n DIV (2 :num)) (fromList l :α sptree$num_map) else (NONE :α option)
 fromList2_value_typed=∀(e :α) (l :α list) (t :β) (n :γ). MEM e l ⇔ ∃(n :num). lookup n (fromList2 l) = SOME e
+size_fromAList_typed=∀(xs :(num # α) list). ALL_DISTINCT (MAP (FST :num # α -> num) xs) ⇒ size (fromAList xs) = LENGTH xs

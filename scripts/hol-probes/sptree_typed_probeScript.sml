@@ -145,5 +145,6 @@ val _ = emit "inter_def_typed" "inter_def";
 val _ = emit "mk_wf_def_typed" "mk_wf_def";
 val _ = emit "toList_def_typed" "toList_def";
 val _ = emit "toListA_def_typed" "toListA_def";
+val _ = emit "size_insert_typed" "size_insert";
 
 val _ = OS.Process.exit OS.Process.success;

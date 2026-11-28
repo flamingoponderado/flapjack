@@ -10851,7 +10851,7 @@ run_probe misc_typed_probeScript.sml misc_typed_probe.out \
   eq_shape_map_typed eq_shape_IMP_domain_typed subspt_delete_typed range_insert_2_typed \
   wf_nat_set_from_list_typed domain_nat_set_from_list_typed \
   PERM_MAP_BIJ_typed \
-  FDOM_FLOOKUP_typed lookup_fromList2_typed fromList2_value_typed \
+  FDOM_FLOOKUP_typed lookup_fromList2_typed fromList2_value_typed size_fromAList_typed \
   "$cake_dir/misc/miscScript.sml" \
   "$cake_dir/misc"
 
@@ -11556,6 +11556,7 @@ run_probe sptree_typed_probeScript.sml sptree_typed_probe.out \
   union_assoc_typed union_insert_LN_typed union_num_set_sym_typed spt_eq_thm_typed insert_notEmpty_typed \
   lookup_difference_typed wf_delete_typed wf_difference_typed wf_fromAList_typed wf_insert_typed \
   wf_inter_typed wf_union_typed inter_def_typed mk_wf_def_typed toList_def_typed toListA_def_typed \
+  size_insert_typed \
   "$hol_dir/src/finite_maps/sptreeScript.sml" \
   "$hol_dir/src/finite_maps"
 

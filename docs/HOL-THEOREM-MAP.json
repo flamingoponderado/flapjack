@@ -76829,6 +76829,22 @@
     "reviewer": "Source comparison with fromList2_value_typed (scripts/hol-probes/misc_typed_probe.out): HOL `∀(e :α) (l :α list) (t :β) (n :γ). MEM e l ⇔ ∃(n :num). lookup n (fromList2 l) = SOME e`. The typed capture confirms the independent payload, tree and key types t :β and n :γ are vacuous (they occur nowhere in the body), so they are omitted per the vacuity rule; the retained binder order e, l, the MEM side and the existential over the even-key lookup are unchanged. Lean uses the reviewed List.mem, Spt lookup, fromList2 and Option SOME with no added premise."
   },
 {
+    "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
+    "hol_name": "size_insert",
+    "lean_path": "Flapjack/Misc/Sptree/SizeInsert.lean",
+    "lean_name": "sptSize_sptInsert",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison with size_insert_typed (scripts/hol-probes/sptree_typed_probe.out): HOL `∀(k :num) (v :α) (m :α num_map). size (insert k v m) = if k ∈ domain m then size m else size m + (1 :num)` keeps the binder order k, v, m, the domain membership guard and both branches; Lean retains the reviewed Spt insert, size and domain over Nat keys with arbitrary payloads, and the literal one. The proof is a strong induction on the key over the four tree shapes, mirroring HOL insert_ind. No hypothesis is added."
+  },
+{
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "size_fromAList",
+    "lean_path": "Flapjack/Misc/Sptree/SizeFromAList.lean",
+    "lean_name": "sptSize_sptFromAList",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison with size_fromAList_typed (scripts/hol-probes/misc_typed_probe.out): HOL `∀(xs :(num # α) list). ALL_DISTINCT (MAP (FST :num # α -> num) xs) ⇒ size (fromAList xs) = LENGTH xs` keeps the single distinctness premise and the size/length conclusion; ALL_DISTINCT (MAP FST xs) is (entries.map Prod.fst).Nodup, fromAList is the reviewed sptFromAList and size is sptSize. The proof follows the HOL script: induction on the list, size_insert, lookup_fromAList and ALOOKUP_MEM (ported as holALookup_member). No other statement difference."
+  },
+{
     "lean_path": "Flapjack/Misc/Sptree/FromList2.lean",
     "lean_name": "sptEvenFromList2",
     "hol_path": "cakeml/misc/miscScript.sml",

@@ -5026,6 +5026,8 @@ import Flapjack.Misc.FindIndex.MapInj
 import Flapjack.Misc.FindIndex.Alookup
 import Flapjack.Misc.LastN
 import Flapjack.Misc.Sptree.FromList2.Lookup
+import Flapjack.Misc.Sptree.SizeInsert
+import Flapjack.Misc.Sptree.SizeFromAList
 import Flapjack.FiniteMap.FunionFupdateExact
 import Flapjack.FiniteMap.AlistExact.Union
 import Flapjack.FiniteMap.DrestrictExact
