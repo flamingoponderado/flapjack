@@ -38,16 +38,16 @@ theorem nsLookup_nsAppend_some {M N V : Type} [DecidableEq M] [DecidableEq N]
     nsLookup (nsAppend e1 e2) id = some v ↔
       nsLookup e1 id = some v ∨
       (nsLookup e1 id = none ∧ nsLookup e2 id = some v ∧
-        ∀ p1 p2, p1 ≠ [] → idToMods id = p1 ++ p2 → nsLookupMod e1 p1 = none) := by
+        ∀ p1 p2, p1 ≠ [] ∧ idToMods id = p1 ++ p2 → nsLookupMod e1 p1 = none) := by
   induction id with
   | short name =>
     cases e1 with
     | bind values1 modules1 =>
       cases e2 with
       | bind values2 modules2 =>
-        have vacuous : ∀ p1 p2 : List M, p1 ≠ [] → ([] : List M) = p1 ++ p2 →
+        have vacuous : ∀ p1 p2 : List M, p1 ≠ [] ∧ ([] : List M) = p1 ++ p2 →
             nsLookupMod (.bind values1 modules1) p1 = none := by
-          intro p1 p2 ne same
+          intro p1 p2 ⟨ne, same⟩
           cases p1 with
           | nil => exact absurd rfl ne
           | cons head tail => simp at same
@@ -73,10 +73,10 @@ theorem nsLookup_nsAppend_some {M N V : Type} [DecidableEq M] [DecidableEq N]
     rw [nsLookup_append_long, idToMods]
     cases modFound : nsLookupMod e1 [mn] with
     | some module =>
-      have notAll : ¬ (∀ p1 p2 : List M, p1 ≠ [] → mn :: idToMods rest = p1 ++ p2 →
+      have notAll : ¬ (∀ p1 p2 : List M, p1 ≠ [] ∧ mn :: idToMods rest = p1 ++ p2 →
           nsLookupMod e1 p1 = none) := by
         intro all
-        have instantiated := all [mn] (idToMods rest) (by simp) (by rfl)
+        have instantiated := all [mn] (idToMods rest) ⟨by simp, by rfl⟩
         rw [modFound] at instantiated
         simp at instantiated
       constructor
@@ -89,9 +89,9 @@ theorem nsLookup_nsAppend_some {M N V : Type} [DecidableEq M] [DecidableEq N]
     | none =>
       have firstNone : nsLookup e1 (.long mn rest) = none :=
         nsLookup_long_none_of_mod_none e1 mn rest modFound
-      have allNone : ∀ p1 p2 : List M, p1 ≠ [] → mn :: idToMods rest = p1 ++ p2 →
+      have allNone : ∀ p1 p2 : List M, p1 ≠ [] ∧ mn :: idToMods rest = p1 ++ p2 →
           nsLookupMod e1 p1 = none := by
-        intro p1 p2 ne same
+        intro p1 p2 ⟨ne, same⟩
         cases p1 with
         | nil => exact absurd rfl ne
         | cons head tail =>
@@ -226,7 +226,7 @@ theorem nsLookupMod_nsAppend_some {M N V : Type} [DecidableEq M]
       if path = [] then x = nsAppend e1 e2 else
         nsLookupMod e1 path = some x ∨
         (nsLookupMod e2 path = some x ∧
-          ∀ p1 p2, p1 ≠ [] → path = p1 ++ p2 → nsLookupMod e1 p1 = none)) := by
+          ∀ p1 p2, p1 ≠ [] ∧ path = p1 ++ p2 → nsLookupMod e1 p1 = none)) := by
   cases path with
   | nil => simp [nsLookupMod, eq_comm]
   | cons mn rest =>
@@ -234,10 +234,10 @@ theorem nsLookupMod_nsAppend_some {M N V : Type} [DecidableEq M]
     simp only [List.cons_ne_nil, if_false]
     cases modFound : nsLookupMod e1 [mn] with
     | some module =>
-      have notAll : ¬ ∀ p1 p2 : List M, p1 ≠ [] → mn :: rest = p1 ++ p2 →
+      have notAll : ¬ ∀ p1 p2 : List M, p1 ≠ [] ∧ mn :: rest = p1 ++ p2 →
           nsLookupMod e1 p1 = none := by
         intro all
-        have instantiated := all [mn] rest (by simp) (by rfl)
+        have instantiated := all [mn] rest ⟨by simp, by rfl⟩
         rw [modFound] at instantiated
         simp at instantiated
       constructor
@@ -250,9 +250,9 @@ theorem nsLookupMod_nsAppend_some {M N V : Type} [DecidableEq M]
     | none =>
       have firstNone : nsLookupMod e1 (mn :: rest) = none :=
         nsLookupMod_cons_none e1 mn rest modFound
-      have allNone : ∀ p1 p2 : List M, p1 ≠ [] → mn :: rest = p1 ++ p2 →
+      have allNone : ∀ p1 p2 : List M, p1 ≠ [] ∧ mn :: rest = p1 ++ p2 →
           nsLookupMod e1 p1 = none := by
-        intro p1 p2 ne same
+        intro p1 p2 ⟨ne, same⟩
         cases p1 with
         | nil => exact absurd rfl ne
         | cons head tail =>

@@ -312,3 +312,16 @@ insert_atI_insert_atI_typed=(pos2 :num) = (pos1 :num) + LENGTH (c1 :α list) ⇒
 v2w_sing_typed=(v2w [(b :bool)] :α word) = if b then (1w :α word) else (0w :α word)
 v2w_32_F_typed=(v2w [F] :word32) = (0w :word32)
 v2w_32_T_typed=(v2w [T] :word32) = (1w :word32)
+FUPDATE_LIST_alist_to_fmap_typed=∀(ls :(α # β) list) (fm :α |-> β). fm |++ ls = alist_to_fmap (REVERSE ls) ⊌ fm
+ALL_DISTINCT_alist_to_fmap_REVERSE_typed=ALL_DISTINCT (MAP (FST :α # β -> α) (ls :(α # β) list)) ⇒ alist_to_fmap (REVERSE ls) = alist_to_fmap ls
+fevery_to_drestrict_typed=∀(P :α # β -> bool) (m :α |-> β) (s :α -> bool). FEVERY P m ⇒ FEVERY P (DRESTRICT m s)
+FST_UNZIP_MAPi_typed=∀(l :α list) (f :num -> α -> β # γ). FST (UNZIP (MAPi f l)) = MAPi (($o (FST :β # γ -> β) :(α -> β # γ) -> α -> β) ∘ f) l
+SND_UNZIP_MAPi_typed=∀(l :α list) (f :num -> α -> β # γ). SND (UNZIP (MAPi f l)) = MAPi (($o (SND :β # γ -> γ) :(α -> β # γ) -> α -> γ) ∘ f) l
+ALL_DISTINCT_MAP_FST_enumerate_typed=ALL_DISTINCT (MAP (FST :num # α -> num) (enumerate (k :num) (ls :α list) :(num # α) list))
+ORD_eq_0_typed=(ORD (c :char) = (0 :num) ⇔ c = #"\^@") ∧ ((0 :num) = ORD c ⇔ c = #"\^@")
+CHR_w2n_n2w_ORD_typed=CHR ∘ (w2n :word8 -> num) ∘ (n2w :num -> word8) ∘ ORD = (I :char -> char)
+n2w_ORD_CHR_w2n_typed=(n2w :num -> word8) ∘ ORD ∘ CHR ∘ (w2n :word8 -> num) = (I :word8 -> word8)
+TAKE_DROP_SUBLIST_typed=(ll :α list) ≼ DROP (n :num) (ls :α list) ∧ n < LENGTH ls ∧ (nlll :num) = n + LENGTH ll ⇒ TAKE n ls ++ ll ++ DROP nlll ls = ls
+CHR_w2n_n2w_ORD_simp_typed=∀(c :char). CHR (w2n (n2w (ORD c) :word8)) = c
+n2w_ORD_CHR_w2n_simp_typed=∀(w :word8). (n2w (ORD (CHR (w2n w))) :word8) = w
+MAX_LIST_intro_typed=∀(ls :num list). (P :num -> bool) (0 :num) ∧ EVERY P ls ⇒ P (MAX_LIST ls)

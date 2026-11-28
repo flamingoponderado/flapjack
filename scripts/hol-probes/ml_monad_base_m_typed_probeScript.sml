@@ -434,3 +434,4 @@ fun capture_val_quote label name =
 
 (* M: Type abbreviation *)
 val _ = type_label "M_typed" "ml_monadBase" "M";
+val _ = dt_label "store_ref_dt_typed" "store_ref";
