@@ -213,8 +213,10 @@ private theorem gcMove_r1 {α β : Type} (conf : Config β) (state : GcState α 
     cases found : heapLookup ptr state.heap with
     | none => simp [gcMove, found]
     | some element =>
-      cases element <;> simp [gcMove, found]
-      split <;> rfl
+      cases element
+      all_goals simp [gcMove, found]
+      split
+      all_goals rfl
 
 /-- A root move leaves the reference stack `r2` unchanged. -/
 private theorem gcMove_r2 {α β : Type} (conf : Config β) (state : GcState α β)
@@ -225,8 +227,10 @@ private theorem gcMove_r2 {α β : Type} (conf : Config β) (state : GcState α 
     cases found : heapLookup ptr state.heap with
     | none => simp [gcMove, found]
     | some element =>
-      cases element <;> simp [gcMove, found]
-      split <;> rfl
+      cases element
+      all_goals simp [gcMove, found]
+      split
+      all_goals rfl
 
 /-- A root move leaves the reference stack `r3` unchanged. -/
 private theorem gcMove_r3 {α β : Type} (conf : Config β) (state : GcState α β)
@@ -237,8 +241,10 @@ private theorem gcMove_r3 {α β : Type} (conf : Config β) (state : GcState α 
     cases found : heapLookup ptr state.heap with
     | none => simp [gcMove, found]
     | some element =>
-      cases element <;> simp [gcMove, found]
-      split <;> rfl
+      cases element
+      all_goals simp [gcMove, found]
+      split
+      all_goals rfl
 
 /-- A root move only appends to the copied heap `h2`. -/
 private theorem gcMove_h2_prefix {α β : Type} (conf : Config β) (state : GcState α β)
@@ -249,8 +255,10 @@ private theorem gcMove_h2_prefix {α β : Type} (conf : Config β) (state : GcSt
     cases found : heapLookup ptr state.heap with
     | none => simp [gcMove, found]
     | some element =>
-      cases element <;> simp [gcMove, found]
-      split <;> simp
+      cases element
+      all_goals simp [gcMove, found]
+      split
+      all_goals simp
 
 /-- A root move only pushes onto the reference queue `r4`. -/
 private theorem gcMove_r4_suffix {α β : Type} (conf : Config β) (state : GcState α β)
@@ -261,8 +269,10 @@ private theorem gcMove_r4_suffix {α β : Type} (conf : Config β) (state : GcSt
     cases found : heapLookup ptr state.heap with
     | none => simp [gcMove, found]
     | some element =>
-      cases element <;> simp [gcMove, found]
-      split <;> simp [List.suffix_cons]
+      cases element
+      all_goals simp [gcMove, found]
+      split
+      all_goals simp [List.suffix_cons]
 
 /-- Original `gc_move_list_IMP`: moving roots touches only the copied heap,
     its scan queues and the collector bookkeeping. -/
