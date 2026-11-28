@@ -76845,6 +76845,14 @@
     "reviewer": "Source comparison with size_fromAList_typed (scripts/hol-probes/misc_typed_probe.out): HOL `∀(xs :(num # α) list). ALL_DISTINCT (MAP (FST :num # α -> num) xs) ⇒ size (fromAList xs) = LENGTH xs` keeps the single distinctness premise and the size/length conclusion; ALL_DISTINCT (MAP FST xs) is (entries.map Prod.fst).Nodup, fromAList is the reviewed sptFromAList and size is sptSize. The proof follows the HOL script: induction on the list, size_insert, lookup_fromAList and ALOOKUP_MEM (ported as holALookup_member). No other statement difference."
   },
 {
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "NOT_MEM_FLOOKUP_ZIP",
+    "lean_path": "Flapjack/FiniteMap/NotMemZip.lean",
+    "lean_name": "notMemFlookupZip",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison with NOT_MEM_FLOOKUP_ZIP_typed (scripts/hol-probes/misc_typed_probe.out): HOL `∀(ys :α list) (xs :α |-> β) (zs :β list). ¬MEM (n :α) ys ⇒ FLOOKUP (xs |++ ZIP (ys,zs)) n = FLOOKUP xs n`. Lean keeps the binder order ys, xs, zs and the implicit n, renders |++ as the HOL-equality updateListEq (its DecidableEq α instance is HOL's always-defined equality), ZIP as List.zip and FLOOKUP as the carrier lookup. The map is the reviewed HolFiniteMapExact carrier; no other statement difference."
+  },
+{
     "hol_path": "cakeml/compiler/backend/jsonLangScript.sml",
     "hol_name": "num_to_hex_digit_def",
     "lean_path": "Flapjack/Compiler/Backend/PresLang/Hex.lean",

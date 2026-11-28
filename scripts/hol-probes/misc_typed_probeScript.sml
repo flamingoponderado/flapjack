@@ -342,3 +342,4 @@ val _ = emit "FDOM_FLOOKUP_typed" "FDOM_FLOOKUP";
 val _ = emit "lookup_fromList2_typed" "lookup_fromList2";
 val _ = emit "fromList2_value_typed" "fromList2_value";
 val _ = emit "size_fromAList_typed" "size_fromAList";
+val _ = emit "NOT_MEM_FLOOKUP_ZIP_typed" "NOT_MEM_FLOOKUP_ZIP";

@@ -5036,6 +5036,7 @@ import Flapjack.Compiler.Inference.Unify.Transfer
 import Flapjack.FiniteMap.FunionFupdateExact
 import Flapjack.FiniteMap.AlistExact.Union
 import Flapjack.FiniteMap.DrestrictExact
+import Flapjack.FiniteMap.NotMemZip
 /-!
 # Flapjack in Lean
 

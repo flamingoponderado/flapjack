@@ -10852,6 +10852,7 @@ run_probe misc_typed_probeScript.sml misc_typed_probe.out \
   wf_nat_set_from_list_typed domain_nat_set_from_list_typed \
   PERM_MAP_BIJ_typed \
   FDOM_FLOOKUP_typed lookup_fromList2_typed fromList2_value_typed size_fromAList_typed \
+  NOT_MEM_FLOOKUP_ZIP_typed \
   "$cake_dir/misc/miscScript.sml" \
   "$cake_dir/misc"
 
