@@ -485,28 +485,32 @@ theorem the_option_map {α : Type} (f : α → α) (d : α) (opt : Option α) (h
 
 /-- Original `MEM_REPLICATE_IMP`: a replicated value is the repeated element. -/
 @[hol "cakeml/misc/miscScript.sml" "MEM_REPLICATE_IMP"]
-theorem mem_replicate_imp {α : Type} (x : α) :
-    ∀ (n : Nat) (y : α), x ∈ List.replicate n y → x = y := by
+theorem mem_replicate_imp {α : Type} :
+    ∀ (n : Nat) (y : α) (x : α), x ∈ List.replicate n y → x = y := by
   intro n
   induction n with
   | zero =>
-    intro y hx
+    intro y x hx
     simp at hx
   | succ n ih =>
-    intro y hx
+    intro y x hx
     simp only [List.replicate_succ, List.mem_cons] at hx
     rcases hx with h | h
     · exact h
-    · exact ih y h
+    · exact ih y x h
 
 /-- Original `MAP_K_REPLICATE`: mapping a constant is a replicate. -/
 @[hol "cakeml/misc/miscScript.sml" "MAP_K_REPLICATE"]
-theorem map_const_replicate {α β : Type} (x : α) :
-    ∀ (ls : List β), ls.map (fun _ => x) = List.replicate ls.length x := by
+theorem map_const_replicate {α β : Type} :
+    ∀ (ls : List β) (x : α), ls.map (fun _ => x) = List.replicate ls.length x := by
   intro ls
   induction ls with
-  | nil => rfl
-  | cons _ _ ih => simp [ih, List.replicate_succ]
+  | nil =>
+    intro x
+    rfl
+  | cons _ _ ih =>
+    intro x
+    simp [ih, List.replicate_succ]
 
 /-- Original `SUM_MAP_K`: a constant map sums to its length times the value. -/
 @[hol "cakeml/misc/miscScript.sml" "SUM_MAP_K"]
@@ -749,8 +753,10 @@ theorem holLast_map_snd_steps {α β : Type} [Nonempty α] :
 
 /-- Original `IN_option_rwt2`: membership in an option-selected set. -/
 @[hol "cakeml/misc/miscScript.sml" "IN_option_rwt2"]
-theorem mem_option_case {α β : Type} (x : α) (opt : Option β) (s : β → Set α) :
-    x ∈ (match opt with | none => ∅ | some y => s y) ↔ ∃ y, opt = some y ∧ x ∈ s y := by
+theorem mem_option_case {α β : Type} :
+    ∀ (opt : Option β) (s : β → Set α) (x : α),
+      x ∈ (match opt with | none => ∅ | some y => s y) ↔ ∃ y, opt = some y ∧ x ∈ s y := by
+  intro opt s x
   cases opt with
   | none => simp
   | some y => simp

@@ -70,10 +70,10 @@ decreasing_by
 
 /-- Original `str_findi_range`: a found index is within the string. -/
 @[hol "cakeml/basis/pure/mlstringScript.sml" "str_findi_range"]
-theorem strFindi_range (j : Nat) :
-    ∀ (P : HolChar → Bool) (i : Nat) (s : MlString),
+theorem strFindi_range :
+    ∀ (P : HolChar → Bool) (i : Nat) (s : MlString) (j : Nat),
       strFindi P i s = some j → i ≤ j ∧ j < strlen s := by
-  intro P i s h
+  intro P i s j h
   fun_induction strFindi P i s with
   | case1 x hlt hp =>
       simp only [Option.some.injEq] at h

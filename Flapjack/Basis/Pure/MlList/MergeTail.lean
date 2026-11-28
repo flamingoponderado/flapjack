@@ -89,10 +89,10 @@ theorem mergeTailAcc {α : Type} :
 
 /-- Exact HOL `merge_tail_MEM` (`mllistScript.sml:18-31`); `x` is free in HOL. -/
 @[hol "cakeml/basis/pure/mllistScript.sml" "merge_tail_MEM"]
-theorem mergeTailMem {α : Type} (x : α) :
-    ∀ (negate : Bool) (r : α → α → Bool) (xs ys acc : List α),
+theorem mergeTailMem {α : Type} :
+    ∀ (negate : Bool) (r : α → α → Bool) (xs ys acc : List α) (x : α),
       x ∈ mergeTail negate r xs ys acc ↔ x ∈ xs ∨ x ∈ ys ∨ x ∈ acc := by
-  intro negate r xs ys acc
+  intro negate r xs ys acc x
   have h : x ∈ (xs ++ ys ++ acc) ↔ x ∈ mergeTail negate r xs ys acc :=
     List.Perm.mem_iff ((holPerm_iff _ _).mp (mergeTailPerm negate r xs ys acc))
   simp only [List.mem_append] at h
@@ -101,18 +101,18 @@ theorem mergeTailMem {α : Type} (x : α) :
 
 /-- Exact HOL `mergesortN_tail_MEM` (`mllistScript.sml:33-59`); `x` is free in HOL. -/
 @[hol "cakeml/basis/pure/mllistScript.sml" "mergesortN_tail_MEM"]
-theorem mergesortNTailMem {α : Type} (x : α) :
-    ∀ (negate : Bool) (r : α → α → Bool) (length : Nat) (lst : List α),
+theorem mergesortNTailMem {α : Type} :
+    ∀ (negate : Bool) (r : α → α → Bool) (length : Nat) (lst : List α) (x : α),
       x ∈ mergesortNTail negate r length lst ↔ x ∈ lst.take length := by
-  intro negate r length lst
+  intro negate r length lst x
   exact (List.Perm.mem_iff
     ((holPerm_iff _ _).mp (mergesortNTailPerm negate r length lst))).symm
 
 /-- Exact HOL `mergesort_tail_MEM` (`mllistScript.sml:98-102`); `x` is free in HOL. -/
 @[hol "cakeml/basis/pure/mllistScript.sml" "mergesort_tail_MEM"]
-theorem mergesortTailMem {α : Type} (x : α) :
-    ∀ (r : α → α → Bool) (l : List α), x ∈ mergesortTail r l ↔ x ∈ l := by
-  intro r l
+theorem mergesortTailMem {α : Type} :
+    ∀ (r : α → α → Bool) (l : List α) (x : α), x ∈ mergesortTail r l ↔ x ∈ l := by
+  intro r l x
   rw [mergesortTail, mergesortNTailMem, List.take_length]
 
 end Flapjack.Basis.Pure.MlList
