@@ -286,9 +286,9 @@ MEM_anub_ALOOKUP_typed=MEM ((k :α),(v :β)) (anub (ls :(α # β) list) ([] :α 
 ALOOKUP_anub_typed=ALOOKUP (anub (ls :(β # α) list) (acc :β list)) (k :β) = if MEM k acc then ALOOKUP (anub ls acc) k else ALOOKUP ls k
 anub_tl_anub_typed=∀(x :(α # β) list) (y :α list) (h :α # β) (t :(α # β) list). anub x y = h::t ⇒ ∃(a :(α # β) list) (b :α list). t = anub a b ∧ set a ⊆ set x ∧ set b ⊆ set (FST h::y)
 EVERY_anub_suff_typed=∀(ls :(α # β) list) (acc :α list). (∀(x :α). ¬MEM x acc ⇒ case ALOOKUP ls x of (NONE :β option) => T | SOME v => (P :α # β -> bool) (x,v)) ⇒ EVERY P (anub ls acc)
-ALOOKUP_find_index_SOME_typed=ALOOKUP (env :(β # α) list) (k :β) = SOME (v :α) ⇒ ∃(i :num). find_index k (MAP (FST :β # α -> β) env) (0 :num) = SOME i ∧ i < LENGTH env ∧ v = SND env❲i❳
-find_index_ALL_DISTINCT_REVERSE_typed=∀(ls :α list) (x :α) (m :num) (j :num). ALL_DISTINCT ls ∧ find_index x ls m = SOME j ⇒ find_index x (REVERSE ls) m = SOME (m + LENGTH ls + m − j − (1 :num))
 SPLIT_LIST_typed=∀(xs :α list). ∃(ys :α list) (zs :α list). xs = ys ++ zs ∧ LENGTH xs DIV (2 :num) = LENGTH ys
 every_zip_split_typed=∀(l1 :α list) (l2 :β list) (P :α -> bool) (Q :β -> bool). LENGTH l1 = LENGTH l2 ⇒ (EVERY (λ((x :α),(y :β)). P x ∧ Q y) (ZIP (l1,l2)) ⇔ EVERY P l1 ∧ EVERY Q l2)
 SPLITP_TAKE_DROP_typed=∀(P :α -> bool) (i :num) (l :α list). EVERY ($¬ ∘ P) (TAKE i l) ⇒ P l❲i❳ ⇒ SPLITP P l = (TAKE i l,DROP i l)
 FST_SPLITP_DROP_typed=∀(P :α -> bool) (n :num) (l :α list). EVERY ($¬ ∘ P) (TAKE n l) ⇒ FST (SPLITP P l) = TAKE n l ++ FST (SPLITP P (DROP n l))
+find_index_ALL_DISTINCT_REVERSE_typed=∀(ls :α list) (x :α) (m :num) (j :num). ALL_DISTINCT ls ∧ find_index x ls m = SOME j ⇒ find_index x (REVERSE ls) m = SOME (m + LENGTH ls + m − j − (1 :num))
+ALOOKUP_find_index_SOME_typed=ALOOKUP (env :(β # α) list) (k :β) = SOME (v :α) ⇒ ∃(i :num). find_index k (MAP (FST :β # α -> β) env) (0 :num) = SOME i ∧ i < LENGTH env ∧ v = SND env❲i❳
