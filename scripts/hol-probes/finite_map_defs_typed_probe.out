@@ -1,3 +1,7 @@
 FEMPTY_DEF_typed=(FEMPTY :α |-> β) = fmap_ABS (λ(a :α). (INR () :β + unit))
 FUNION_DEF_typed=∀(f :α |-> β) (g :α |-> β). FDOM (f ⊌ g) = FDOM f ∪ FDOM g ∧ ∀(x :α). (f ⊌ g)⟨x⟩ = if x ∈ FDOM f then f⟨x⟩ else g⟨x⟩
 FUNION_FUPDATE_2_typed=∀(f :α |-> β) (g :α |-> β) (x :α) (y :β). f ⊌ g⟨x ↦ y⟩ = if x ∈ FDOM f then f ⊌ g else (f ⊌ g)⟨x ↦ y⟩
+FEVERY_DEF_typed=∀(P :α # β -> bool) (f :α |-> β). FEVERY P f ⇔ ∀(x :α). x ∈ FDOM f ⇒ P (x,f⟨x⟩)
+DRESTRICT_DEF_typed=∀(f :α |-> β) (r :α -> bool). FDOM (DRESTRICT f r) = FDOM f ∩ r ∧ ∀(x :α). (DRESTRICT f r)⟨x⟩ = if x ∈ FDOM f ∩ r then f⟨x⟩ else (FEMPTY :α |-> β)⟨x⟩
+FLOOKUP_DRESTRICT_typed=∀(fm :α |-> β) (s :α -> bool) (k :α). FLOOKUP (DRESTRICT fm s) k = if k ∈ s then FLOOKUP fm k else (NONE :β option)
+FEVERY_ALL_FLOOKUP_typed=∀(P :α # β -> bool) (f :α |-> β). FEVERY P f ⇔ ∀(k :α) (v :β). FLOOKUP f k = SOME v ⇒ P (k,v)

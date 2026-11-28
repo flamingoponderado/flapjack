@@ -89,14 +89,15 @@ theorem nsSub_nsAppend_lift {M N V W : Type} [DecidableEq M] [DecidableEq N]
       have notUnder : ∀ rest, id ≠ .long mn rest := by
         intro rest under
         subst under
-        have modNone := vacuous [mn] (idToMods rest) (by simp) rfl
+        have modNone := vacuous [mn] (idToMods rest) ⟨by simp, rfl⟩
         rw [nsLookupMod_nsLift_self] at modNone
         simp at modNone
       have miss' : nsLookup (nsLift mn e1') id = none :=
         nsLookup_nsLift_none mn e1' id notUnder
       refine ⟨v2, (nsLookup_nsAppend_some (nsLift mn e1') id e2' v2).mpr
         (Or.inr ⟨miss', found', ?_⟩), rel⟩
-      intro p1 p2 ne same
+      intro p1 p2 h
+      obtain ⟨ne, same⟩ := h
       exact nsLookupMod_nsLift_none mn e1' p1 p2 id ne same notUnder
   · intro path missing
     cases path with

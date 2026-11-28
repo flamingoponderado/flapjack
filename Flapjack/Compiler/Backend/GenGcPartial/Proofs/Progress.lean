@@ -51,8 +51,10 @@ private theorem gcMove_ok_false {α β : Type} (conf : Config β) (state : GcSta
 /-- A successful root move started from a successful state. -/
 @[hol "cakeml/compiler/backend/gc/gen_gc_partialScript.sml" "gc_move_ok'"]
 theorem gcMove_ok' {α β : Type} (conf : Config β) (root root1 : HeapAddress α)
-    (state state1 : GcState α β) (run : gcMove conf state root = (root1, state1))
-    (ok : state1.ok = true) : state.ok = true := by
+    (state state1 : GcState α β)
+    (h : gcMove conf state root = (root1, state1) ∧ state1.ok = true) :
+    state.ok = true := by
+  obtain ⟨run, ok⟩ := h
   cases stateOk : state.ok
   · have contra := gcMove_ok_false conf state root stateOk
     rw [run] at contra
@@ -69,13 +71,15 @@ theorem gcMove_ok {α β : Type} (conf : Config β) (root root1 : HeapAddress α
       ∀ ptr value, root = .pointer ptr value → ptr < heapLength state.heap) :
     state.ok = true := by
   obtain ⟨run, ok, _⟩ := h
-  exact gcMove_ok' conf root root1 state state1 run ok
+  exact gcMove_ok' conf root root1 state state1 ⟨run, ok⟩
 
 /-- A successful root-list move started from a successful state. -/
 @[hol "cakeml/compiler/backend/gc/gen_gc_partialScript.sml" "gc_move_list_ok'"]
 theorem gcMoveList_ok' {α β : Type} (conf : Config β) (roots roots1 : List (HeapAddress α))
-    (state state1 : GcState α β) (run : gcMoveList conf state roots = (roots1, state1))
-    (ok : state1.ok = true) : state.ok = true := by
+    (state state1 : GcState α β)
+    (h : gcMoveList conf state roots = (roots1, state1) ∧ state1.ok = true) :
+    state.ok = true := by
+  obtain ⟨run, ok⟩ := h
   induction roots generalizing state roots1 state1 with
   | nil =>
     simp only [gcMoveList, Prod.mk.injEq] at run
@@ -89,8 +93,8 @@ theorem gcMoveList_ok' {α β : Type} (conf : Config β) (roots roots1 : List (H
     obtain ⟨tail, final⟩ := result
     simp only [Prod.mk.injEq] at run
     obtain ⟨rfl, rfl⟩ := run
-    exact gcMove_ok' conf root rootMid state middle headRun
-      (ih (state := middle) (roots1 := tail) (state1 := final) tailRun ok)
+    exact gcMove_ok' conf root rootMid state middle
+      ⟨headRun, ih (state := middle) (roots1 := tail) (state1 := final) tailRun ok⟩
 
 /-- A successful root-list move of in-range pointers started from a successful
 state. -/
@@ -101,14 +105,15 @@ theorem gcMoveList_ok {α β : Type} (roots roots1 : List (HeapAddress α))
       ∀ ptr value, .pointer ptr value ∈ roots → ptr < heapLength state.heap) :
     state.ok = true := by
   obtain ⟨run, ok, _⟩ := h
-  exact gcMoveList_ok' conf roots roots1 state state1 run ok
+  exact gcMoveList_ok' conf roots roots1 state state1 ⟨run, ok⟩
 
 /-- A successful reference-list move started from a successful state. -/
 @[hol "cakeml/compiler/backend/gc/gen_gc_partialScript.sml" "gc_move_ref_list_ok'"]
 theorem gcMoveRefList_ok' {α β γ : Type} (conf : Config γ)
     (refs refs1 : List (HeapElement α β)) (state state1 : GcState α γ)
-    (run : gcMoveRefList conf state refs = (refs1, state1)) (ok : state1.ok = true) :
+    (h : gcMoveRefList conf state refs = (refs1, state1) ∧ state1.ok = true) :
     state.ok = true := by
+  obtain ⟨run, ok⟩ := h
   induction refs generalizing state refs1 state1 with
   | nil =>
     simp only [gcMoveRefList, Prod.mk.injEq] at run
@@ -132,13 +137,14 @@ theorem gcMoveRefList_ok' {α β γ : Type} (conf : Config γ)
       obtain ⟨tail1, final⟩ := result
       simp only [Prod.mk.injEq] at run
       obtain ⟨rfl, rfl⟩ := run
-      exact gcMoveList_ok' conf roots rootsMid state middle headRun
-        (ih (state := middle) (refs1 := tail1) (state1 := final) tailRun ok)
+      exact gcMoveList_ok' conf roots rootsMid state middle
+        ⟨headRun, ih (state := middle) (refs1 := tail1) (state1 := final) tailRun ok⟩
 
 /-- A successful copied-data scan started from a successful state. -/
 @[hol "cakeml/compiler/backend/gc/gen_gc_partialScript.sml" "gc_move_data_ok'"]
 theorem gcMoveData_ok' {α β : Type} (conf : Config β) (state state1 : GcState α β)
-    (run : gcMoveData conf state = state1) (ok : state1.ok = true) : state.ok = true := by
+    (h : gcMoveData conf state = state1 ∧ state1.ok = true) : state.ok = true := by
+  obtain ⟨run, ok⟩ := h
   classical
   induction state using gcMoveData.induct conf with
   | case1 state empty =>
@@ -162,7 +168,7 @@ theorem gcMoveData_ok' {α β : Type} (conf : Config β) (state state1 : GcState
       simp only [flag, Bool.and_eq_true] at step
       exact gcMoveList_ok' conf roots roots1
         (GcState.mk old h1 (.dataElement roots len payload :: tail) r4 r3 r2 r1 a n status
-          origHeap heap0) middle move step.1.1
+          origHeap heap0) middle ⟨move, step.1.1⟩
   | case4 state head tail heap bounded notData =>
     cases head with
     | unused len =>

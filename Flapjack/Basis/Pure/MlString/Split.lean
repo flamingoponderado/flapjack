@@ -149,7 +149,7 @@ private theorem explode_substring_succ (s : MlString) (i j : Nat) (hij : i ≤ j
   have hstep : j + 1 - i = (j - i) + 1 := by omega
   have hbound : i + (j - i) + 1 ≤ strlen s := by omega
   have hij' : i + (j - i) = j := by omega
-  rw [hstep, substring_add s i (j - i) 1 hbound, hij', substring_one_strsub s j hjn]
+  rw [hstep, substring_add i (j - i) 1 s hbound, hij', substring_one_strsub j s hjn]
   simp only [explode_strcat, explode_implode_eq, chrToStr]
 
 /-- The reversed prefix is empty exactly when the run start reached the scan
@@ -178,7 +178,7 @@ private theorem acc_nil_iff (s : MlString) (i j : Nat) (hij : i ≤ j) (hjn : j 
 private theorem singleton_eq_reverse_substring (s : MlString) (j : Nat) (hjn : j < strlen s) :
     [strsub s j] = (explode (substring s j (j + 1 - j))).reverse := by
   have h1 : j + 1 - j = 1 := by omega
-  rw [h1, substring_one_strsub s j hjn]
+  rw [h1, substring_one_strsub j s hjn]
   simp only [chrToStr, explode_implode_eq, List.reverse_singleton]
 
 /-- Original `tokens_alt_tokens_alt_aux`: the scan-based tokenizer agrees with

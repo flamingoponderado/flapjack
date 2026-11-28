@@ -1,1 +1,2 @@
 M_typed=Type M = :α -> (β, γ) exc # α
+store_ref_dt_typed=StoreRef::num -> store_ref

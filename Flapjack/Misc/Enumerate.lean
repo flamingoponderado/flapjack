@@ -184,7 +184,7 @@ theorem memEnumerate {α : Type} [Nonempty α] (xs : List α) (i : Nat) (e : α)
 /-- Original `ALL_DISTINCT_MAP_FST_enumerate`: the indices of an enumeration
 are distinct. -/
 @[hol "cakeml/misc/miscScript.sml" "ALL_DISTINCT_MAP_FST_enumerate"]
-theorem nodup_map_fst_enumerate {A : Type} (ls : List A) (k : Nat) :
+theorem nodup_map_fst_enumerate {A : Type} (k : Nat) (ls : List A) :
     ((enumerate k ls).map Prod.fst).Nodup := by
   induction ls generalizing k with
   | nil => simp

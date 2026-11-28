@@ -141,7 +141,7 @@ private theorem explode_substring_succ (s : MlString) (i j : Nat) (hij : i ≤ j
   have hstep : j + 1 - i = (j - i) + 1 := by omega
   have hbound : i + (j - i) + 1 ≤ strlen s := by omega
   have hij' : i + (j - i) = j := by omega
-  rw [hstep, substring_add s i (j - i) 1 hbound, hij', substring_one_strsub s j hjn]
+  rw [hstep, substring_add i (j - i) 1 s hbound, hij', substring_one_strsub j s hjn]
   simp only [explode_strcat, explode_implode_eq, chrToStr]
 
 /-- Original `fields_alt_fields_alt_aux`: the scan-based splitter agrees with

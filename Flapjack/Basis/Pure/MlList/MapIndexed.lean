@@ -61,9 +61,8 @@ theorem holMapi_id {α : Type} :
 
 /-- Original `FST_UNZIP_MAPi`: the first components of an unzipped indexed map. -/
 @[hol "cakeml/misc/miscScript.sml" "FST_UNZIP_MAPi"]
-theorem fst_unzip_holMapi {β α γ : Type} (f : Nat → β → α × γ) :
-    ∀ (l : List β), (holMapi f l).unzip.1 = holMapi (fun n x => (f n x).1) l := by
-  intro l
+theorem fst_unzip_holMapi {β α γ : Type} (l : List β) (f : Nat → β → α × γ) :
+    (holMapi f l).unzip.1 = holMapi (fun n x => (f n x).1) l := by
   induction l generalizing f with
   | nil => rfl
   | cons h t ih =>
@@ -72,9 +71,8 @@ theorem fst_unzip_holMapi {β α γ : Type} (f : Nat → β → α × γ) :
 
 /-- Original `SND_UNZIP_MAPi`: the second components of an unzipped indexed map. -/
 @[hol "cakeml/misc/miscScript.sml" "SND_UNZIP_MAPi"]
-theorem snd_unzip_holMapi {β α γ : Type} (f : Nat → β → α × γ) :
-    ∀ (l : List β), (holMapi f l).unzip.2 = holMapi (fun n x => (f n x).2) l := by
-  intro l
+theorem snd_unzip_holMapi {β α γ : Type} (l : List β) (f : Nat → β → α × γ) :
+    (holMapi f l).unzip.2 = holMapi (fun n x => (f n x).2) l := by
   induction l generalizing f with
   | nil => rfl
   | cons h t ih =>

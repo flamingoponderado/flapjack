@@ -118,7 +118,7 @@ theorem isStringThere_SEG (i1 i2 : Nat) (s1 s2 : List HolChar) (n : Nat)
 
 /-- Original `isSubstring_aux_lemma`: a successful scan finds an occurrence. -/
 @[hol "cakeml/basis/pure/mlstringScript.sml" "isSubstring_aux_lemma"]
-theorem isSubstringAux_iff (s1 s2 : MlString) (lens1 i len : Nat)
+theorem isSubstringAux_iff (i len : Nat) (s1 s2 : MlString) (lens1 : Nat)
     (h : i + len ≤ strlen s2) :
     (isSubstringAux s1 s2 lens1 i len = true ↔
       ∃ n, n < len ∧ isStringThereAux s1 s2 0 (n + i) lens1 = true) := by
@@ -165,8 +165,8 @@ theorem isSubstring_SEG (s1 s2 : List HolChar) :
         simp only [List.length_cons] at hlen' ⊢
         omega
       simp only [strlen_implode]
-      rw [isSubstringAux_iff (.implode (h :: t)) (.implode s2) (h :: t).length 0
-        (s2.length - (h :: t).length + 1) hbound]
+      rw [isSubstringAux_iff 0 (s2.length - (h :: t).length + 1) (.implode (h :: t)) (.implode s2)
+        (h :: t).length hbound]
       constructor
       · rintro ⟨n, hn, hthere⟩
         have hseg : ((h :: t).drop 0).take (h :: t).length =
