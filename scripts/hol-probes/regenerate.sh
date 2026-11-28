@@ -4966,7 +4966,7 @@ run_probe hol_byte_typed_probeScript.sml hol_byte_typed_probe.out \
   "$repo_dir/HOL/src/n-bit/byteScript.sml" "$cake_dir/pancake"
 
 run_probe hol_finitemap_alist_typed_probeScript.sml hol_finitemap_alist_typed_probe.out \
-  ALOOKUP_def_typed ALOOKUP_APPEND_typed ALOOKUP_MEM_typed ALOOKUP_ALL_DISTINCT_MEM_typed alist_to_fmap_def_typed alist_to_fmap_APPEND_typed FUPDATE_LIST_typed FCARD_FUPDATE_typed \
+  ALOOKUP_def_typed ALOOKUP_APPEND_typed ALOOKUP_MEM_typed ALOOKUP_ALL_DISTINCT_MEM_typed alist_to_fmap_def_typed alist_to_fmap_APPEND_typed FUPDATE_LIST_typed FCARD_FUPDATE_typed FUNION_alist_to_fmap_typed \
   "$repo_dir/HOL/src/finite_maps/alistScript.sml" "$cake_dir/pancake"
 
 run_probe machine_ieee_typed_probeScript.sml machine_ieee_typed_probe.out \
@@ -10854,6 +10854,11 @@ run_probe misc_typed_probeScript.sml misc_typed_probe.out \
   FDOM_FLOOKUP_typed lookup_fromList2_typed fromList2_value_typed size_fromAList_typed \
   NOT_MEM_FLOOKUP_ZIP_typed splitlines_nil_typed insert_atI_insert_atI_typed \
   v2w_32_F_typed v2w_32_T_typed \
+  FUPDATE_LIST_alist_to_fmap_typed ALL_DISTINCT_alist_to_fmap_REVERSE_typed \
+  fevery_to_drestrict_typed FST_UNZIP_MAPi_typed SND_UNZIP_MAPi_typed \
+  ALL_DISTINCT_MAP_FST_enumerate_typed ORD_eq_0_typed \
+  CHR_w2n_n2w_ORD_typed n2w_ORD_CHR_w2n_typed TAKE_DROP_SUBLIST_typed \
+  CHR_w2n_n2w_ORD_simp_typed n2w_ORD_CHR_w2n_simp_typed MAX_LIST_intro_typed \
   "$cake_dir/misc/miscScript.sml" \
   "$cake_dir/misc"
 
@@ -11558,7 +11563,7 @@ run_probe sptree_typed_probeScript.sml sptree_typed_probe.out \
   union_assoc_typed union_insert_LN_typed union_num_set_sym_typed spt_eq_thm_typed insert_notEmpty_typed \
   lookup_difference_typed wf_delete_typed wf_difference_typed wf_fromAList_typed wf_insert_typed \
   wf_inter_typed wf_union_typed inter_def_typed mk_wf_def_typed toList_def_typed toListA_def_typed \
-  size_insert_typed \
+  size_insert_typed fromAList_toAList_typed \
   "$hol_dir/src/finite_maps/sptreeScript.sml" \
   "$hol_dir/src/finite_maps"
 
@@ -12857,11 +12862,12 @@ run_probe logroot_defs_typed_probeScript.sml logroot_defs_typed_probe.out \
   "$hol_dir/src/num/extra_theories/logrootScript.sml" "$cake_dir/compiler/backend"
 
 run_probe finite_map_defs_typed_probeScript.sml finite_map_defs_typed_probe.out \
-  FEMPTY_DEF_typed FUNION_DEF_typed FUNION_FUPDATE_2_typed \
+  FEMPTY_DEF_typed FUNION_DEF_typed FUNION_FUPDATE_2_typed FEVERY_DEF_typed \
+  DRESTRICT_DEF_typed FLOOKUP_DRESTRICT_typed FEVERY_ALL_FLOOKUP_typed \
   "$hol_dir/src/finite_maps/finite_mapScript.sml" "$cake_dir/compiler/backend"
 
 run_probe pred_set_defs_typed_probeScript.sml pred_set_defs_typed_probe.out \
-  INJ_DEF_typed LINV_LO_typed LINV_OPT_def_typed SURJ_DEF_typed BIJ_DEF_typed \
+  INJ_DEF_typed LINV_LO_typed LINV_OPT_def_typed SURJ_DEF_typed BIJ_DEF_typed PERMUTES_typed \
   "$hol_dir/src/pred_set/src/pred_setScript.sml" "$cake_dir/compiler/backend"
 
 run_probe bag_abbrev_typed_probeScript.sml bag_abbrev_typed_probe.out \
@@ -12969,6 +12975,8 @@ run_probe mlstring_more_typed_probeScript.sml mlstring_more_typed_probe.out \
   isSubstring_aux_def_typed isSubstring_def_typed isStringThere_SEG_typed \
   isprefix_thm_typed exists_mlstring_typed strlit_STRCAT_typed \
   substring_0_typed str_findi_def_typed str_findi_range_typed \
+  substring_1_strsub_typed substring_add_typed isSubstring_aux_lemma_typed \
+  isSubstring_SEG_typed isprefix_strcat_typed char_lt_total_typed \
   "$cake_dir/basis/pure/mlstringScript.sml" \
   "$cake_dir/basis/pure"
 
@@ -12985,7 +12993,7 @@ run_probe asm_props_mem_word_typed_probeScript.sml asm_props_mem_word_typed_prob
   "$cake_dir/compiler/encoders/asm/asmPropsScript.sml" "$cake_dir/compiler/encoders/asm"
 
 run_probe ml_monad_base_m_typed_probeScript.sml ml_monad_base_m_typed_probe.out \
-  M_typed \
+  M_typed store_ref_dt_typed \
   "$cake_dir/translator/monadic/monad_base/ml_monadBaseScript.sml" "$cake_dir/translator/monadic/monad_base"
 
 

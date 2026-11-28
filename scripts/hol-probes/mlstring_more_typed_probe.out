@@ -14,3 +14,9 @@ strlit_STRCAT_typed=implode (a :string) ^ implode (b :string) = implode (STRCAT 
 substring_0_typed=substring (s :mlstring) (i :num) (0 :num) = «»
 str_findi_def_typed=∀(s :mlstring) (i :num) (P :char -> bool). str_findi P i s = if i < strlen s then if P (strsub s i) then SOME i else str_findi P (i + (1 :num)) s else (NONE :num option)
 str_findi_range_typed=∀(P :char -> bool) (i :num) (s :mlstring). str_findi P i s = SOME (j :num) ⇒ i ≤ j ∧ j < strlen s
+substring_1_strsub_typed=(i :num) < strlen (s :mlstring) ⇒ substring s i (1 :num) = (toString (strsub s i) :mlstring)
+substring_add_typed=(i :num) + (x :num) + (y :num) ≤ strlen (s :mlstring) ⇒ substring s i (x + y) = substring s i x ^ substring s (i + x) y
+isSubstring_aux_lemma_typed=∀(i :num) (len :num). i + len ≤ strlen (s2 :mlstring) ⇒ (isSubstring_aux (s1 :mlstring) s2 (lens1 :num) i len ⇔ ∃(n :num). n < len ∧ isStringThere_aux s1 s2 (0 :num) (n + i) lens1)
+isSubstring_SEG_typed=isSubstring (implode (s1 :string)) (implode (s2 :string)) ⇔ ∃(i :num). i + STRLEN s1 ≤ STRLEN s2 ∧ SEG (STRLEN s1) i s2 = s1
+isprefix_strcat_typed=∀(s₁ :mlstring) (s₂ :mlstring). isPrefix s₁ s₂ ⇔ ∃(s₃ :mlstring). s₂ = s₁ ^ s₃
+char_lt_total_typed=∀(c1 :char) (c2 :char). ¬char_lt c1 c2 ∧ ¬char_lt c2 c1 ⇒ c1 = c2

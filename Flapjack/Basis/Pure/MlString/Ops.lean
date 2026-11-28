@@ -440,7 +440,7 @@ theorem substring_zero (s : MlString) (i : Nat) : substring s i 0 = .implode [] 
 
 /-- Original `substring_1_strsub`: a one-character substring is the character. -/
 @[hol "cakeml/basis/pure/mlstringScript.sml" "substring_1_strsub"]
-theorem substring_one_strsub (s : MlString) (i : Nat) (h : i < strlen s) :
+theorem substring_one_strsub (i : Nat) (s : MlString) (h : i < strlen s) :
     substring s i 1 = chrToStr (strsub s i) := by
   cases s with
   | implode data =>
@@ -454,7 +454,7 @@ theorem substring_one_strsub (s : MlString) (i : Nat) (h : i < strlen s) :
 
 /-- Original `substring_add`: a substring splits into two adjacent substrings. -/
 @[hol "cakeml/basis/pure/mlstringScript.sml" "substring_add"]
-theorem substring_add (s : MlString) (i x y : Nat) (h : i + x + y ≤ strlen s) :
+theorem substring_add (i x y : Nat) (s : MlString) (h : i + x + y ≤ strlen s) :
     substring s i (x + y) = strcat (substring s i x) (substring s (i + x) y) := by
   cases s with
   | implode data =>

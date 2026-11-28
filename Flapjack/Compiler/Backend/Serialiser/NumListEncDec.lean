@@ -251,8 +251,8 @@ def listEnc {α : Type} (e : α → AppList Nat) (xs : List α) : AppList Nat :=
 
 /-- Original `list_dec'_def`: decode `k` elements, threading the input. -/
 @[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "list_dec'_def"]
-def listDecAux {α : Type} :
-    Nat → (List Nat → α × List Nat) → List Nat → List α × List Nat
+def listDecAux {α β : Type} :
+    Nat → (β → α × β) → β → List α × β
   | 0, _, ns => ([], ns)
   | k + 1, d, ns =>
       let step := d ns
@@ -514,8 +514,8 @@ def prodEnc {α β : Type} (e1 : α → AppList Nat) (e2 : β → AppList Nat) :
 
 /-- Original `prod_dec_def`: decode the two components in sequence. -/
 @[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "prod_dec_def"]
-def prodDec {α β : Type} (d1 : List Nat → α × List Nat) (d2 : List Nat → β × List Nat) :
-    List Nat → (α × β) × List Nat :=
+def prodDec {δ α ε β γ : Type} (d1 : δ → α × ε) (d2 : ε → β × γ) :
+    δ → (α × β) × γ :=
   fun ns =>
     let step1 := d1 ns
     let step2 := d2 step1.2
@@ -619,8 +619,8 @@ def sumEnc {α β : Type} (e1 : α → AppList Nat) (e2 : β → AppList Nat) :
 
 /-- Original `sum_dec_def`: read the tag, then the matching payload. -/
 @[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "sum_dec_def"]
-def sumDec {α β : Type} (d1 : List Nat → α × List Nat) (d2 : List Nat → β × List Nat) :
-    List Nat → (α ⊕ β) × List Nat
+def sumDec {α β γ : Type} (d1 : List Nat → α × γ) (d2 : List Nat → β × γ) :
+    List Nat → (α ⊕ β) × γ
   | [] => Prod.map Sum.inl id (d1 [])
   | n :: ns => if n = 0 then Prod.map Sum.inl id (d1 ns) else Prod.map Sum.inr id (d2 ns)
 

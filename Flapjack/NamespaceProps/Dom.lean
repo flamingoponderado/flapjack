@@ -156,7 +156,8 @@ theorem nsDom_nsAppend_flat {M N V : Type} [DecidableEq M] [DecidableEq N]
       | some w => exact ⟨w, (nsLookup_nsAppend_some n1 id n2 w).mpr (Or.inl h)⟩
       | none =>
         refine ⟨v, (nsLookup_nsAppend_some n1 id n2 v).mpr (Or.inr ⟨h, found, ?_⟩)⟩
-        intro p1 p2 ne same
+        intro p1 p2 hpre
+        obtain ⟨ne, _same⟩ := hpre
         cases modFound : nsLookupMod n1 p1 with
         | none => rfl
         | some env =>
@@ -192,7 +193,8 @@ theorem nsDom_nsAppend_alist {M N V : Type} [DecidableEq M] [DecidableEq N]
       | some w => exact ⟨w, (nsLookup_nsAppend_some (alistToNs x) id y w).mpr (Or.inl h)⟩
       | none =>
         refine ⟨v, (nsLookup_nsAppend_some (alistToNs x) id y v).mpr (Or.inr ⟨h, found, ?_⟩)⟩
-        intro p1 p2 ne same
+        intro p1 p2 hpre
+        obtain ⟨ne, _same⟩ := hpre
         cases p1 with
         | nil => exact absurd rfl ne
         | cons mn rest => simp [alistToNs, nsLookupMod, List.lookup]

@@ -6,3 +6,4 @@ alist_to_fmap_def_typed=∀(s :(α # β) list). alist_to_fmap s = FOLDR (λ((k :
 alist_to_fmap_APPEND_typed=∀(l1 :(α # β) list) (l2 :(α # β) list). alist_to_fmap (l1 ⧺ l2) = alist_to_fmap l1 ⊌ alist_to_fmap l2
 FUPDATE_LIST_typed=($|++ :(α |-> β) -> (α # β) list -> (α |-> β)) = FOLDL ($|+ :(α |-> β) -> α # β -> (α |-> β))
 FCARD_FUPDATE_typed=∀(fm :α |-> β) (a :α) (b :β). FCARD fm⟨a ↦ b⟩ = if a ∈ FDOM fm then FCARD fm else (1 :num) + FCARD fm
+FUNION_alist_to_fmap_typed=∀(ls :(α # β) list) (fm :α |-> β). alist_to_fmap ls ⊌ fm = fm |++ REVERSE ls

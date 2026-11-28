@@ -16,3 +16,4 @@ val _ = show_thm "alist_to_fmap_def_typed=" alistTheory.alist_to_fmap_def;
 val _ = show_thm "alist_to_fmap_APPEND_typed=" alistTheory.alist_to_fmap_APPEND;
 val _ = show_thm "FUPDATE_LIST_typed=" finite_mapTheory.FUPDATE_LIST;
 val _ = show_thm "FCARD_FUPDATE_typed=" finite_mapTheory.FCARD_FUPDATE;
+val _ = show_thm "FUNION_alist_to_fmap_typed=" alistTheory.FUNION_alist_to_fmap;

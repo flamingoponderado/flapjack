@@ -55,7 +55,7 @@ theorem lastN_tl {α : Type} (n : Nat) (xs : List α) (x : α) (h : n < xs.lengt
 /-- Original `LASTN_ALT`: the last elements of the empty list are empty, and for
 a cons list they are the whole list when it is short enough. -/
 @[hol "cakeml/misc/miscScript.sml" "LASTN_ALT"]
-theorem lastN_alt {α : Type} (n : Nat) (x : α) (xs : List α) :
+theorem lastN_alt {α β : Type} (n : Nat) (x : β) (xs : List β) :
     wordSemLastN n ([] : List α) = [] ∧
     wordSemLastN n (x :: xs) =
       if (x :: xs).length ≤ n then x :: xs else wordSemLastN n xs := by
