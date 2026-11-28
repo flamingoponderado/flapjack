@@ -2368,6 +2368,7 @@ import Flapjack.Compiler.Backend.LabToTarget.InitialEncodingNavigation
 import Flapjack.Compiler.Backend.LabToTarget.SectionLookupPreservation
 import Flapjack.Compiler.Backend.LabProps.LabelExtractionValidity
 import Flapjack.Compiler.Backend.LabProps.LabelExtraction
+import Flapjack.Misc.Words.AllWords
 import Flapjack.Misc.Words.Formatting
 import Flapjack.Misc.Words.Replicate
 import Flapjack.Misc.Words.Log2
