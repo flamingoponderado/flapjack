@@ -4650,6 +4650,64 @@
     "reviewer": "Source comparison with the miscScript statement `ALL_DISTINCT (MAP FST ls) ⇒ alist_to_fmap (REVERSE ls) = alist_to_fmap ls`: ALL_DISTINCT (MAP FST ls) is (entries.map Prod.fst).Nodup, REVERSE is List.reverse and both sides are the imported reviewed alistToFmap producer, whose canonical lookup/support witness is checked. The proof follows the HOL script: induction on the list, then the reviewed FUNION_FUPDATE_2 law applied with the empty map. No other statement difference."
   },
 {
+    "hol_path": "HOL/src/finite_maps/finite_mapScript.sml",
+    "hol_name": "DRESTRICT_DEF",
+    "lean_path": "Flapjack/FiniteMap/DrestrictExact.lean",
+    "lean_name": "drestrict",
+    "statement_status": "reviewed_fmap_as_finite_support_result",
+    "fmap_as_finite_support_result": true,
+    "reviewer": "Source comparison with the res_lemma specification behind DRESTRICT_DEF: HOL's new_specification introduces the polymorphic DRESTRICT constant with FDOM res = FDOM f INTER r and res ' x = if x IN FDOM f INTER r then f ' x else FEMPTY ' x. The Lean constant keeps the binding exactly when the key is defined and in the restricting set, and the independent raw lookup witness holFmapAsFiniteSupportResultWitness_drestrict establishes the canonical lookup agrees with that raw restriction. The accompanying drestrict_spec proves both specification conjuncts."
+  },
+{
+    "hol_path": "HOL/src/finite_maps/finite_mapScript.sml",
+    "hol_name": "DRESTRICT_DEF",
+    "lean_path": "Flapjack/FiniteMap/DrestrictExact.lean",
+    "lean_name": "drestrict_spec",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": ["map"],
+    "total_function_inhabitants": ["β"],
+    "reviewer": "Source comparison with res_lemma: both specification conjuncts keep the HOL order and conclusions, the domain is FDOM f INTER r and FAPPLY falls back to FEMPTY ' x outside it. Nonempty beta renders HOL type inhabitedness for the unspecified FEMPTY value. The canonical map codec witness covers the map parameter. total_function_inhabitants records the instance that renders HOL FEMPTY ' x."
+  },
+{
+    "hol_path": "HOL/src/finite_maps/finite_mapScript.sml",
+    "hol_name": "FLOOKUP_DRESTRICT",
+    "lean_path": "Flapjack/FiniteMap/DrestrictExact.lean",
+    "lean_name": "flookupDrestrict",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": ["fm"],
+    "reviewer": "Source comparison with FLOOKUP_DRESTRICT: HOL `!fm s k. FLOOKUP (DRESTRICT fm s) k = if k IN s then FLOOKUP fm k else NONE` keeps the binder order fm, s, k and the conditional; FLOOKUP is the carrier lookup and DRESTRICT is the reviewed drestrict. The canonical map codec witness covers the fm parameter. No other statement difference."
+  },
+{
+    "hol_path": "HOL/src/finite_maps/finite_mapScript.sml",
+    "hol_name": "FEVERY_DEF",
+    "lean_path": "Flapjack/FiniteMap/DrestrictExact.lean",
+    "lean_name": "fevery",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": ["f"],
+    "total_function_inhabitants": ["β"],
+    "reviewer": "Source comparison with FEVERY_DEF: HOL `FEVERY P ^fmap = !x. x IN FDOM f ==> P (x, FAPPLY f x)` keeps the quantifier, the FDOM domain premise and the FAPPLY observation; FDOM is the carrier domain and FAPPLY is holFapply. The canonical map codec witness covers the f parameter, and Nonempty beta renders HOL type inhabitedness for FAPPLY's unspecified value. total_function_inhabitants records the instance that renders HOL FAPPLY's unspecified value."
+  },
+{
+    "hol_path": "HOL/src/finite_maps/finite_mapScript.sml",
+    "hol_name": "FEVERY_ALL_FLOOKUP",
+    "lean_path": "Flapjack/FiniteMap/DrestrictExact.lean",
+    "lean_name": "feveryAllFlookup",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": ["f"],
+    "total_function_inhabitants": ["β"],
+    "reviewer": "Source comparison with FEVERY_ALL_FLOOKUP: HOL `!P f. FEVERY P f <=> !k v. (FLOOKUP f k = SOME v) ==> P (k,v)` keeps the binder order P, f and the exact quantification. The left side spells out the reviewed FEVERY definition (`!x. x IN FDOM f ==> P (x, FAPPLY f x)`) through the carrier domain and holFapply, which is definitionally identical to the tagged fevery; FLOOKUP is the carrier lookup. The canonical map codec witness covers the f parameter, and the Nonempty beta instance renders HOL's unspecified FAPPLY value. total_function_inhabitants records the instance that renders HOL FAPPLY's unspecified value."
+  },
+{
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "fevery_to_drestrict",
+    "lean_path": "Flapjack/FiniteMap/DrestrictExact.lean",
+    "lean_name": "feveryToDrestrict",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": ["m"],
+    "total_function_inhabitants": ["β"],
+    "reviewer": "Source comparison with fevery_to_drestrict: HOL `!P m s. FEVERY P m ⇒ FEVERY P (DRESTRICT m s)` keeps the binder order P, m, s and the single premise. Both FEVERY occurrences are spelled out through the reviewed FEVERY definition (`!x. x IN FDOM f ==> P (x, FAPPLY f x)`) over the carrier domain and holFapply, which is definitionally identical to the tagged fevery; DRESTRICT is the reviewed drestrict, and the proof uses the reviewed drestrict_spec. The canonical map codec witness covers the m parameter, and the Nonempty beta instance renders HOL's unspecified FAPPLY value. total_function_inhabitants records the instance that renders HOL FAPPLY's unspecified value."
+  },
+{
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
   "hol_name": "acompile_inc_uncurry",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/IncrementalEquations.lean",
