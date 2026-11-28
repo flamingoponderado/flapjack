@@ -115,4 +115,21 @@ theorem nodup_map_fst_enumerate {A : Type} (ls : List A) (k : Nat) :
       omega
     · exact ih (k + 1)
 
+/-- Original `MAP_FST_enumerate`: the keys of an enumeration are the shifted
+indices. -/
+@[hol "cakeml/misc/miscScript.sml" "MAP_FST_enumerate"]
+theorem mapFstEnumerate {A : Type} (k : Nat) :
+    ∀ ls : List A,
+      (enumerate k ls).map Prod.fst = (List.range ls.length).map (fun i => k + i)
+  | [] => rfl
+  | x :: xs => by
+      rw [enumerate, List.map_cons, List.length_cons, List.range_succ_eq_map, List.map_cons]
+      rw [mapFstEnumerate (k + 1) xs, Nat.add_zero]
+      congr 1
+      rw [List.map_map]
+      apply List.map_congr_left
+      intro i _
+      simp only [Function.comp_apply]
+      omega
+
 end Flapjack

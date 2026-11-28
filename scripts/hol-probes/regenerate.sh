@@ -10833,6 +10833,10 @@ run_probe misc_typed_probeScript.sml misc_typed_probe.out \
   TOKENS_LENGTH_START_typed FIELDS_NEQ_NIL_typed LAST_FLAT_typed MEM_list_size_typed \
   UPDATE_LIST_NOT_MEM_typed OLEAST_SOME_IMP_typed DISJOINT_set_simp_typed \
   LOG2_TIMES2_typed MAP_CHR_w2n_11_typed I_PERMUTES_typed \
+  MAP_ZIP_UPDATE_LIST_ALL_DISTINCT_same_typed MAP_FST_enumerate_typed \
+  SUM_SET_IN_LT_typed GSPEC_o_typed CARD_IMAGE_EQ_BIJ_typed CARD_IMAGE_ID_BIJ_typed \
+  BIJ_UPDATE_typed INJ_UPDATE_typed byte_align_extract_typed toPath_fromList_typed \
+  MEM_list_size_typed lookup_zero_typed lookup_copy_shape_typed \
   "$cake_dir/misc/miscScript.sml" \
   "$cake_dir/misc"
 

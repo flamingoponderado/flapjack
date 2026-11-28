@@ -250,3 +250,15 @@ DISJOINT_set_simp_typed=DISJOINT (set ([] :α list)) (s :α -> bool) ∧ (DISJOI
 LOG2_TIMES2_typed=(0 :num) < (n :num) ⇒ LOG2 ((2 :num) * n) = SUC (LOG2 n)
 MAP_CHR_w2n_11_typed=∀(ws1 :word8 list) (ws2 :word8 list). MAP (CHR ∘ (w2n :word8 -> num)) ws1 = MAP (CHR ∘ (w2n :word8 -> num)) ws2 ⇔ ws1 = ws2
 I_PERMUTES_typed=(I :α -> α) PERMUTES (s :α -> bool)
+MAP_ZIP_UPDATE_LIST_ALL_DISTINCT_same_typed=∀(ks :α list) (vs :β list) (f :α -> β). LENGTH ks = LENGTH vs ∧ ALL_DISTINCT ks ⇒ MAP (f =++ ZIP (ks,vs)) ks = vs
+MAP_FST_enumerate_typed=MAP (FST :num # α -> num) (enumerate (k :num) (ls :α list) :(num # α) list) = GENLIST ($+ k) (LENGTH ls)
+SUM_SET_IN_LT_typed=∀(s :num -> bool) (x :num) (y :num). FINITE s ∧ x ∈ s ∧ y < x ⇒ y < SUM_SET s
+GSPEC_o_typed=GSPEC (f :γ -> β # bool) ∘ (g :α -> β) = {x | ∃(y :γ). (g x,T) = f y}
+CARD_IMAGE_EQ_BIJ_typed=∀(s :α -> bool). FINITE s ⇒ CARD (IMAGE (f :α -> β) s) = CARD s ⇒ BIJ f s (IMAGE f s)
+CARD_IMAGE_ID_BIJ_typed=∀(s :α -> bool). FINITE s ⇒ (∀(x :α). x ∈ s ⇒ (f :α -> α) x ∈ s) ∧ CARD (IMAGE f s) = CARD s ⇒ f PERMUTES s
+BIJ_UPDATE_typed=∀(f :α -> β) (s :α -> bool) (t :β -> bool) (x :α) (y :β). BIJ f s t ∧ x ∉ s ∧ y ∉ t ⇒ BIJ f⦇x ↦ y⦈ (x INSERT s) (y INSERT t)
+INJ_UPDATE_typed=INJ (f :α -> β) (s :α -> bool) (t :β -> bool) ∧ (x :α) ∉ s ∧ (y :β) ∉ t ⇒ INJ f⦇x ↦ y⦈ (x INSERT s) (y INSERT t)
+byte_align_extract_typed=byte_align (x :word32) = (((((31 :num) >< (2 :num)) x :word30) @@ (0w :word2)) :word32)
+toPath_fromList_typed=toPath ((x :α),(fromList ([] :(β # α) list) :(β # α) llist)) = (stopped_at x :(α, β) path) ∧ toPath (x,(fromList (((y :γ),(z :α))::(t :(γ # α) list)) :(γ # α) llist)) = pcons x y (toPath (z,(fromList t :(γ # α) llist)))
+lookup_zero_typed=∀(n :num) (t :α sptree$num_map) (x :α). lookup n t = SOME x ⇒ size t ≠ (0 :num)
+lookup_copy_shape_typed=∀(t1 :α sptree$num_map) (t2 :β sptree$num_map) (n :num). lookup n (copy_shape t1 t2) = lookup n t1

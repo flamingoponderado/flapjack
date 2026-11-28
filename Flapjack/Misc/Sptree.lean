@@ -1554,4 +1554,29 @@ theorem tlookup_id (names : Spt Nat) (x : Nat) (h : ¬ sptDomain names x) :
     | some v => exact absurd ((sptDomain_iff_lookup names x).mpr ⟨v, hs⟩) h
   simp [tlookup, hl]
 
+private theorem sptLookup_none_of_size_zero {α : Type} :
+    ∀ t : Spt α, sptSize t = 0 → ∀ n, sptLookup n t = none
+  | .ln, _, _ => rfl
+  | .ls _, h, _ => by simp at h
+  | .bn l r, h, n => by
+      simp only [sptSize_bn] at h
+      have hl : sptSize l = 0 := by omega
+      have hr : sptSize r = 0 := by omega
+      simp only [sptLookup, sptLookup_none_of_size_zero l hl,
+        sptLookup_none_of_size_zero r hr]
+      simp
+  | .bs l v r, h, n => by
+      simp only [sptSize_bs] at h
+      omega
+
+/-- Original `lookup_zero`: a successful lookup means the tree stores at least
+one value. -/
+@[hol "cakeml/misc/miscScript.sml" "lookup_zero"]
+theorem lookupZero {α : Type} (n : Nat) (t : Spt α) (x : α)
+    (h : sptLookup n t = some x) : sptSize t ≠ 0 := by
+  intro hz
+  have hnone := sptLookup_none_of_size_zero t hz n
+  rw [h] at hnone
+  simp at hnone
+
 end Flapjack
