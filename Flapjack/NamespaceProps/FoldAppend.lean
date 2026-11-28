@@ -20,8 +20,8 @@ noncomputable local instance instDecidableEq_foldAppend (α : Type) : DecidableE
 
 /-- Original `nsMap_FOLDL_nsAppend`: mapping distributes over a folded append. -/
 @[hol "cakeml/compiler/inference/inferPropsScript.sml" "nsMap_FOLDL_nsAppend"]
-theorem nsMap_foldl_nsAppend {M N V W : Type} (f : V → W)
-    (ls : List (Namespace M N V)) (ns : Namespace M N V) :
+theorem nsMap_foldl_nsAppend {M N V W : Type} (ls : List (Namespace M N V))
+    (ns : Namespace M N V) (f : V → W) :
     nsMap f (ls.foldl nsAppend ns) =
       (ls.map (nsMap f)).foldl nsAppend (nsMap f ns) := by
   induction ls generalizing ns with

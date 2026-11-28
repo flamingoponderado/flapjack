@@ -98,16 +98,18 @@ theorem isSubseq_append2 {α : Type} [DecidableEq α] (l4 l1 l2 : List α)
 subsequence. HOL's `IS_SUBLIST l3 l1` says `l1` is contiguous in `l3`. -/
 @[hol "cakeml/misc/miscScript.sml" "is_subseq_IS_SUBLIST"]
 theorem isSubseq_isInfix {α : Type} [DecidableEq α] (l1 l2 l3 : List α)
-    (h : isSubseq l1 l2 = true) (hin : l1.IsInfix l3) : isSubseq l3 l2 = true :=
-  (isSubseq_iff_sublist l3 l2).mpr
+    (h : isSubseq l1 l2 = true ∧ l1.IsInfix l3) : isSubseq l3 l2 = true := by
+  obtain ⟨h, hin⟩ := h
+  exact (isSubseq_iff_sublist l3 l2).mpr
     (((isSubseq_iff_sublist l1 l2).mp h).trans hin.sublist)
 
 /-- Original `is_subseq_MEM`: a subsequence only contains members of the
 container. -/
 @[hol "cakeml/misc/miscScript.sml" "is_subseq_MEM"]
 theorem isSubseq_mem {α : Type} [DecidableEq α] (l1 l2 : List α) (x : α)
-    (h : isSubseq l1 l2 = true) (hm : x ∈ l2) : x ∈ l1 :=
-  ((isSubseq_iff_sublist l1 l2).mp h).subset hm
+    (h : isSubseq l1 l2 = true ∧ x ∈ l2) : x ∈ l1 := by
+  obtain ⟨h, hm⟩ := h
+  exact ((isSubseq_iff_sublist l1 l2).mp h).subset hm
 
 /-- Original `IS_PREFIX_is_subseq`: a prefix of the container is a subsequence.
 HOL's `IS_PREFIX l1 l2` is `l2` being a prefix of `l1`. -/
@@ -126,16 +128,18 @@ theorem isInfix_isSubseq {α : Type} [DecidableEq α] (l1 l2 : List α)
 distinct. -/
 @[hol "cakeml/misc/miscScript.sml" "is_subseq_ALL_DISTINCT"]
 theorem isSubseq_allDistinct {α : Type} [DecidableEq α] (l1 l2 : List α)
-    (hnd : l1.Nodup) (h : isSubseq l1 l2 = true) : l2.Nodup :=
-  ((isSubseq_iff_sublist l1 l2).mp h).nodup hnd
+    (h : l1.Nodup ∧ isSubseq l1 l2 = true) : l2.Nodup := by
+  obtain ⟨hnd, h⟩ := h
+  exact ((isSubseq_iff_sublist l1 l2).mp h).nodup hnd
 
 /-- Original `is_subseq_append_suff`: appending subsequences pairwise is a
 subsequence. -/
 @[hol "cakeml/misc/miscScript.sml" "is_subseq_append_suff"]
 theorem isSubseq_append_suff {α : Type} [DecidableEq α] (l1 l3 l2 l4 : List α)
-    (h1 : isSubseq l1 l3 = true) (h2 : isSubseq l2 l4 = true) :
-    isSubseq (l1 ++ l2) (l3 ++ l4) = true :=
-  (isSubseq_iff_sublist (l1 ++ l2) (l3 ++ l4)).mpr
+    (h : isSubseq l1 l3 = true ∧ isSubseq l2 l4 = true) :
+    isSubseq (l1 ++ l2) (l3 ++ l4) = true := by
+  obtain ⟨h1, h2⟩ := h
+  exact (isSubseq_iff_sublist (l1 ++ l2) (l3 ++ l4)).mpr
     (((isSubseq_iff_sublist l1 l3).mp h1).append ((isSubseq_iff_sublist l2 l4).mp h2))
 
 /-- Original `is_subseq_FLAT_suff`: flattening pairwise subsequences is a
@@ -150,7 +154,7 @@ theorem isSubseq_flat_suff {α : Type} [DecidableEq α] (ls1 ls2 : List (List α
     exact isSubseq_refl []
   | cons hhead htail ih =>
     rw [List.flatten_cons, List.flatten_cons]
-    exact isSubseq_append_suff _ _ _ _ hhead ih
+    exact isSubseq_append_suff _ _ _ _ ⟨hhead, ih⟩
 
 /-- Original `IS_PREFIX_THM`: a prefix is exactly a shorter list with matching
 elements at every position of the shorter one. -/

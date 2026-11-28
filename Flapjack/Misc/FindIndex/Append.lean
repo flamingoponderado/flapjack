@@ -64,18 +64,20 @@ theorem findIndex_append1 {α : Type} [DecidableEq α] (target : α) :
 
 /-- Original `find_index_APPEND2`: a match at or after the start of the right
 list is found in the right list alone, searched from the same absolute offset.
-The HOL conjunction premise becomes two hypotheses. -/
+HOL's conjunction premise is kept as one hypothesis. -/
 @[hol "cakeml/misc/miscScript.sml" "find_index_APPEND2"]
-theorem findIndex_append2 {α : Type} [DecidableEq α] (target : α) :
-    ∀ (l1 l2 : List α) (m i : Nat), findIndex target (l1 ++ l2) m = some i →
-      m + l1.length ≤ i → findIndex target l2 (m + l1.length) = some i := by
-  intro l1 l2 m i hfound hbound
+theorem findIndex_append2 {α : Type} [DecidableEq α] (l1 : List α) (n : α)
+    (l2 : List α) (m i : Nat) :
+    findIndex n (l1 ++ l2) m = some i ∧ m + l1.length ≤ i →
+      findIndex n l2 (m + l1.length) = some i := by
+  intro h
+  obtain ⟨hfound, hbound⟩ := h
   rw [findIndexAppend] at hfound
-  cases hleft : findIndex target l1 m with
+  cases hleft : findIndex n l1 m with
   | none => simpa only [hleft] using hfound
   | some index =>
     simp only [hleft, Option.some.injEq] at hfound
-    have below := (findIndexLessLength l1 target m index hleft).2
+    have below := (findIndexLessLength l1 n m index hleft).2
     exfalso
     omega
 

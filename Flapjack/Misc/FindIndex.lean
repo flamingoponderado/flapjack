@@ -99,8 +99,9 @@ theorem holThe_findIndex_suff {α : Type} [DecidableEq α] (P : Nat → Bool) (x
     at position `n` is found at `m + n`. -/
 @[hol "cakeml/misc/miscScript.sml" "find_index_ALL_DISTINCT_EL"]
 theorem findIndex_nodup_getElem {α : Type} [DecidableEq α] (ls : List α) (n m : Nat)
-    (hnd : ls.Nodup) (hn : n < ls.length) :
+    (h : ls.Nodup ∧ n < ls.length) :
     findIndex ls[n] ls m = some (m + n) := by
+  obtain ⟨hnd, hn⟩ := h
   induction ls generalizing n m with
   | nil => simp at hn
   | cons a t ih =>

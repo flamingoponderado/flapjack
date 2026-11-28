@@ -1332,12 +1332,13 @@ theorem multLeExp (a b : Nat) (ha : a ≠ 1) : a * b ≤ a ^ b := by
 positions agree wherever either side is kept. -/
 @[hol "cakeml/misc/miscScript.sml" "FILTER_EL_EQ"
   (total_function_inhabitants := [α])]
-theorem filterElEq {α : Type} [Nonempty α] (P : α → Bool) (l1 l2 : List α) :
-    l1.length = l2.length →
-    (∀ n, n < l1.length → (P (holEl n l1) = true ∨ P (holEl n l2) = true) →
+theorem filterElEq {α : Type} [Nonempty α] (l1 l2 : List α) (P : α → Bool) :
+    l1.length = l2.length ∧
+    (∀ n, n < l1.length ∧ (P (holEl n l1) = true ∨ P (holEl n l2) = true) →
       holEl n l1 = holEl n l2) →
     l1.filter P = l2.filter P := by
-  intro hlen hpt
+  intro h
+  obtain ⟨hlen, hpt⟩ := h
   induction l1 generalizing l2 with
   | nil =>
     cases l2 with
@@ -1348,22 +1349,23 @@ theorem filterElEq {α : Type} [Nonempty α] (P : α → Bool) (l1 l2 : List α)
     | nil => simp at hlen
     | cons b bs =>
       simp only [List.length_cons, Nat.succ.injEq] at hlen
-      have hpt' : ∀ n, n < as.length →
+      have hpt' : ∀ n, n < as.length ∧
           (P (holEl n as) = true ∨ P (holEl n bs) = true) → holEl n as = holEl n bs := by
-        intro n hn hp
-        have h := hpt (n + 1) (by simp [hn]) (by simpa only [holEl_cons_succ] using hp)
+        intro n hmem
+        obtain ⟨hn, hp⟩ := hmem
+        have h := hpt (n + 1) ⟨by simp [hn], by simpa only [holEl_cons_succ] using hp⟩
         simpa only [holEl_cons_succ] using h
       have hfilter : as.filter P = bs.filter P := ih bs hlen hpt'
       cases hpa : P a with
       | true =>
-        have h := hpt 0 (by simp) (Or.inl (by simpa only [holEl, holHd] using hpa))
+        have h := hpt 0 ⟨by simp, Or.inl (by simpa only [holEl, holHd] using hpa)⟩
         have hab : a = b := by simpa only [holEl, holHd] using h
         subst hab
         rw [List.filter_cons, if_pos hpa, List.filter_cons, if_pos hpa, hfilter]
       | false =>
         cases hpb : P b with
         | true =>
-          have h := hpt 0 (by simp) (Or.inr (by simpa only [holEl, holHd] using hpb))
+          have h := hpt 0 ⟨by simp, Or.inr (by simpa only [holEl, holHd] using hpb)⟩
           have hab : a = b := by simpa only [holEl, holHd] using h
           subst hab
           simp [hpb] at hpa
@@ -1435,8 +1437,9 @@ theorem lupdateInsertCommute {α : Type} (ws : List α) (pos1 pos2 : Nat) (a : L
 the lists to agree. -/
 @[hol "cakeml/misc/miscScript.sml" "INJ_MAP_EQ_2"]
 theorem injMapEq2 {α β : Type} (f : α → β) (l1 l2 : List α)
-    (hinj : ∀ x y, x ∈ l1 → y ∈ l2 → f x = f y → x = y)
-    (heq : l1.map f = l2.map f) : l1 = l2 := by
+    (h : (∀ x y, x ∈ l1 ∧ y ∈ l2 ∧ f x = f y → x = y) ∧ l1.map f = l2.map f) :
+    l1 = l2 := by
+  obtain ⟨hinj, heq⟩ := h
   induction l1 generalizing l2 with
   | nil =>
     cases l2 with
@@ -1448,11 +1451,12 @@ theorem injMapEq2 {α β : Type} (f : α → β) (l1 l2 : List α)
     | cons b bs =>
       simp only [List.map_cons, List.cons.injEq] at heq
       obtain ⟨hab, htail⟩ := heq
-      have hb : a = b := hinj a b (by simp) (by simp) hab
+      have hb : a = b := hinj a b ⟨by simp, by simp, hab⟩
       subst hb
-      have hinj' : ∀ x y, x ∈ as → y ∈ bs → f x = f y → x = y := by
-        intro x y hx hy hf
-        exact hinj x y (by simp [hx]) (by simp [hy]) hf
+      have hinj' : ∀ x y, x ∈ as ∧ y ∈ bs ∧ f x = f y → x = y := by
+        intro x y hmem
+        obtain ⟨hx, hy, hf⟩ := hmem
+        exact hinj x y ⟨by simp [hx], by simp [hy], hf⟩
       rw [ih bs hinj' htail]
 
 end Flapjack

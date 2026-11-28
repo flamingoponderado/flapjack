@@ -33,12 +33,13 @@ theorem optionRel_iff_core {A B : Type} (relation : A → B → Prop)
 
 /-- Original `OPTREL_trans` (`miscScript.sml`): the option relation is
 transitive once the underlying relation is transitive at the observed
-witnesses. HOL's single conjunction premise is split into its implications.
+witnesses. HOL's single conjunction premise is kept as one hypothesis.
 -/
 @[hol "cakeml/misc/miscScript.sml" "OPTREL_trans"]
 theorem optionRel_trans {α : Type} (R : α → α → Prop) (x y z : Option α)
-    (htrans : ∀ a b c, x = some a → y = some b → z = some c → R a b → R b c → R a c)
-    (hxy : optionRel R x y) (hyz : optionRel R y z) : optionRel R x z := by
+    (h : (∀ a b c, x = some a ∧ y = some b ∧ z = some c ∧ R a b ∧ R b c → R a c) ∧
+      optionRel R x y ∧ optionRel R y z) : optionRel R x z := by
+  obtain ⟨htrans, hxy, hyz⟩ := h
   cases x with
   | none =>
     cases y with
@@ -53,6 +54,6 @@ theorem optionRel_trans {α : Type} (R : α → α → Prop) (x y z : Option α)
     | some b =>
       cases z with
       | none => exact hyz.elim
-      | some c => exact htrans a b c rfl rfl rfl hxy hyz
+      | some c => exact htrans a b c ⟨rfl, rfl, rfl, hxy, hyz⟩
 
 end Flapjack

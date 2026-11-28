@@ -148,19 +148,22 @@ private theorem explode_substring_succ (s : MlString) (i j : Nat) (hij : i ≤ j
 `fields_aux` at every starting point. -/
 @[hol "cakeml/basis/pure/mlstringScript.sml" "fields_alt_fields_alt_aux"]
 theorem fieldsAlt_fieldsAux (f : HolChar → Bool) (s : MlString) :
-    ∀ (l : Nat) (acc : List HolChar) (j i : Nat), i ≤ j → j ≤ strlen s →
-      strlen s - j = l → acc = (explode (substring s i (j - i))).reverse →
+    ∀ (l : Nat) (acc : List HolChar) (j i : Nat),
+      i ≤ j ∧ j ≤ strlen s ∧ strlen s - j = l ∧
+        acc = (explode (substring s i (j - i))).reverse →
       fieldsAux f s acc j l = fieldsAltAux f s i j (strlen s) := by
   intro l
   induction l with
   | zero =>
-      intro acc j i hij hjn hlen hacc
+      intro acc j i h
+      obtain ⟨hij, hjn, hlen, hacc⟩ := h
       have hjeq : j = strlen s := by omega
       subst j
       rw [fieldsAux, fieldsAltAux.eq_def, if_neg (by omega : ¬ strlen s < strlen s)]
       rw [hacc, List.reverse_reverse, implode_explode]
   | succ l ih =>
-      intro acc j i hij hjn hlen hacc
+      intro acc j i h
+      obtain ⟨hij, hjn, hlen, hacc⟩ := h
       have hjn' : j < strlen s := by omega
       have hnext : strlen s - (j + 1) = l := by omega
       rw [fieldsAux, fieldsAltAux.eq_def, if_pos hjn']
@@ -170,7 +173,7 @@ theorem fieldsAlt_fieldsAux (f : HolChar → Bool) (s : MlString) :
           rw [hacc, List.reverse_reverse, implode_explode]
         have htail :
             fieldsAux f s [] (j + 1) l = fieldsAltAux f s (j + 1) (j + 1) (strlen s) := by
-          refine ih [] (j + 1) (j + 1) (by omega) (by omega) hnext ?_
+          refine ih [] (j + 1) (j + 1) ⟨by omega, by omega, hnext, ?_⟩
           rw [Nat.sub_self]
           simp only [substring_zero_len, explode_implode_eq, List.reverse_nil]
         rw [hhead, htail]
@@ -180,14 +183,14 @@ theorem fieldsAlt_fieldsAux (f : HolChar → Bool) (s : MlString) :
           rw [hacc, explode_substring_succ s i j hij hjn', List.reverse_append]
           rw [List.reverse_singleton]
           rfl
-        exact ih (strsub s j :: acc) (j + 1) i (by omega) (by omega) hnext hacc'
+        exact ih (strsub s j :: acc) (j + 1) i ⟨by omega, by omega, hnext, hacc'⟩
 
 /-- Original `fields_alt`: splitting the whole string from position `0`. -/
 @[hol "cakeml/basis/pure/mlstringScript.sml" "fields_alt"]
 theorem fields_alt (f : HolChar → Bool) (s : MlString) :
     fields f s = fieldsAltAux f s 0 0 (strlen s) := by
   rw [fields]
-  exact fieldsAlt_fieldsAux f s (strlen s) [] 0 0 (by omega) (by omega) (by omega) (by simp)
+  exact fieldsAlt_fieldsAux f s (strlen s) [] 0 0 ⟨by omega, by omega, by omega, by simp⟩
 
 /-- Flapjack infrastructure: the field walk always returns at least one field. -/
 private theorem fieldsAux_ne_nil (f : HolChar → Bool) (s : MlString) :

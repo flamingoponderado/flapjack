@@ -294,8 +294,8 @@ theorem gcMove_IMP {α β : Type} (conf : Config β) (state : GcState α β)
 /-- Moving a root list preserves its length and leaves the generation
 segments and reference lists unchanged. -/
 @[hol "cakeml/compiler/backend/gc/gen_gc_partialScript.sml" "gc_move_list_IMP"]
-theorem gcMoveList_IMP {α β : Type} (conf : Config β)
-    (roots roots1 : List (HeapAddress α)) (state state1 : GcState α β)
+theorem gcMoveList_IMP {α β : Type}
+    (roots roots1 : List (HeapAddress α)) (state state1 : GcState α β) (conf : Config β)
     (run : gcMoveList conf state roots = (roots1, state1)) :
     roots.length = roots1.length ∧ state1.old = state.old ∧ state1.h1 = state.h1 ∧
       state1.r4 = state.r4 ∧ state1.r3 = state.r3 ∧ state1.r2 = state.r2 ∧
@@ -344,9 +344,9 @@ theorem gcMoveData_IMP {α β : Type} (conf : Config β) (state state1 : GcState
       subst h2
       unfold gcMoveData at run
       simp only [bounded, ↓reduceIte, move] at run
-      have listImp := gcMoveList_IMP conf roots roots1
+      have listImp := gcMoveList_IMP roots roots1
         (GcState.mk old h1 (.dataElement roots len payload :: tail) r4 r3 r2 r1 a n status
-          origHeap heap0) middle move
+          origHeap heap0) middle conf move
       have step := ih run
       simp [step, listImp]
   | case4 state head tail heap bounded notData =>

@@ -277,8 +277,9 @@ private theorem gcMove_r4_suffix {α β : Type} (conf : Config β) (state : GcSt
 /-- Original `gc_move_list_IMP`: moving roots touches only the copied heap,
     its scan queues and the collector bookkeeping. -/
 @[hol "cakeml/compiler/backend/gc/gen_gcScript.sml" "gc_move_list_IMP"]
-theorem gcMoveList_imp {α β : Type} (conf : Config β) (roots roots' : List (HeapAddress α))
-    (state state' : GcState α β) (run : gcMoveList conf state roots = (roots', state')) :
+theorem gcMoveList_imp {α β : Type} (roots roots' : List (HeapAddress α))
+    (state state' : GcState α β) (conf : Config β)
+    (run : gcMoveList conf state roots = (roots', state')) :
     state.h1 = state'.h1 ∧ state.r3 = state'.r3 ∧ state.r2 = state'.r2 ∧
       state.r1 = state'.r1 ∧ List.IsPrefix state.h2 state'.h2 ∧
       List.IsSuffix state.r4 state'.r4 := by

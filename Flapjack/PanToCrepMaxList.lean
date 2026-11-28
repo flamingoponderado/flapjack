@@ -129,8 +129,9 @@ theorem maxList_genlist_add_suc_val (k : Nat) :
 /-- Original `MAX_LIST_intro`: a property holding at zero and on every member
 holds of the maximum. -/
 @[hol "cakeml/misc/miscScript.sml" "MAX_LIST_intro"]
-theorem maxList_intro (P : Nat → Prop) (values : List Nat) (h0 : P 0)
-    (h : ∀ x ∈ values, P x) : P (maxList values) := by
+theorem maxList_intro (P : Nat → Prop) (values : List Nat)
+    (h : P 0 ∧ ∀ x ∈ values, P x) : P (maxList values) := by
+  obtain ⟨h0, h⟩ := h
   induction values with
   | nil => simpa [maxList] using h0
   | cons value values ih =>

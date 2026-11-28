@@ -158,8 +158,8 @@ theorem tenvCtorOk_merge {M N Tag : Type}
 bindings, provided its type satisfies the local bound. -/
 @[hol "cakeml/semantics/proofs/typeSysPropsScript.sml" "nsLookup_add_tenvE1"]
 theorem nsLookup_addTenvE1 {M : Type} [DecidableEq M] (localEnv : TenvValExp)
-    (env : Namespace M MlString (Nat × SemanticT)) (n : MlString) (tvs tvs2 : Nat)
-    (t : SemanticT) :
+    (env : Namespace M MlString (Nat × SemanticT)) (n : MlString) (tvs : Nat)
+    (t : SemanticT) (tvs2 : Nat) :
     checkFreevars tvs2 [] t = true ∧ tveLookup n tvs localEnv = some (tvs2, t) →
       nsLookup (addTenvE localEnv env) (.short n) = some (tvs2, t) := by
   intro h
@@ -190,8 +190,8 @@ theorem nsLookup_addTenvE1 {M : Type} [DecidableEq M] (localEnv : TenvValExp)
 bindings. -/
 @[hol "cakeml/semantics/proofs/typeSysPropsScript.sml" "nsLookup_add_tenvE2"]
 theorem nsLookup_addTenvE2 {M : Type} [DecidableEq M] (localEnv : TenvValExp)
-    (env : Namespace M MlString (Nat × SemanticT)) (n : MlString) (tvs tvs2 : Nat)
-    (t : SemanticT) :
+    (env : Namespace M MlString (Nat × SemanticT)) (n : MlString) (tvs : Nat)
+    (t : SemanticT) (tvs2 : Nat) :
     tveLookup n tvs localEnv = none ∧ nsLookup env (.short n) = some (tvs2, t) →
       nsLookup (addTenvE localEnv env) (.short n) = some (tvs2, t) := by
   intro h

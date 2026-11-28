@@ -29,8 +29,9 @@ theorem sameType_sym (t1 t2 : Stamp) (h : sameType t1 t2 = true) : sameType t2 t
   omega
 
 @[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "same_type_trans"]
-theorem sameType_trans (t1 t2 t3 : Stamp) (h12 : sameType t1 t2 = true)
-    (h13 : sameType t1 t3 = true) : sameType t2 t3 = true := by
+theorem sameType_trans (t1 t2 t3 : Stamp) (h : sameType t1 t2 = true ∧ sameType t1 t3 = true) :
+    sameType t2 t3 = true := by
+  obtain ⟨h12, h13⟩ := h
   cases t1
   all_goals cases t2
   all_goals cases t3

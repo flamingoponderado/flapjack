@@ -159,14 +159,16 @@ theorem holFmapAsFiniteSupportParamWitness_checkSMore3_s {α : Type}
   cases s
   exact ⟨rfl, rfl, rfl⟩
 
-/-- Original `check_s_more5`: the same enlargement fact with the set relation
-    as a separate premise. -/
+/-- Original `check_s_more5`: the same enlargement fact, with HOL's single
+    conjunction premise kept as one hypothesis. -/
 @[hol "cakeml/compiler/inference/inferPropsScript.sml" "check_s_more5"
   (fmap_as_finite_support_parameters := [s])]
 theorem checkSMore5 {α : Type} (s : HolFiniteMapExact α InferT) (uvs : Nat → Prop)
-    (tvs : Nat) (uvs' : Nat → Prop) : checkS tvs uvs s → (∀ v, uvs v → uvs' v) →
+    (tvs : Nat) (uvs' : Nat → Prop) : checkS tvs uvs s ∧ (∀ v, uvs v → uvs' v) →
       checkS tvs uvs' s := by
-  intro h hsub uv hmem
+  intro h
+  obtain ⟨h, hsub⟩ := h
+  intro uv hmem
   exact checkTMore5.1 _ uvs tvs (h uv hmem) uvs' hsub
 
 /-- The canonical substitution map survives the broad-map codec. -/

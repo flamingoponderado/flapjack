@@ -524,7 +524,8 @@ def prodDec {α β : Type} (d1 : List Nat → α × List Nat) (d2 : List Nat →
 /-- Original `prod_dec_ok`: decoding both components keeps the bound. -/
 @[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "prod_dec_ok"]
 theorem prodDecOk {α β : Type} (d1 : List Nat → α × List Nat) (d2 : List Nat → β × List Nat)
-    (ok1 : decOk d1) (ok2 : decOk d2) : decOk (prodDec d1 d2) := by
+    (h : decOk d1 ∧ decOk d2) : decOk (prodDec d1 d2) := by
+  obtain ⟨ok1, ok2⟩ := h
   intro i
   generalize step1 : d1 i = first
   obtain ⟨x, ns1⟩ := first
@@ -539,11 +540,12 @@ theorem prodDecOk {α β : Type} (d1 : List Nat → α × List Nat) (d2 : List N
 @[hol "cakeml/compiler/backend/serialiser/num_list_enc_decScript.sml" "prod_enc_dec_ok"]
 theorem prodEncDecOk {α β : Type} (e1 : α → AppList Nat) (d1 : List Nat → α × List Nat)
     (e2 : β → AppList Nat) (d2 : List Nat → β × List Nat)
-    (ok1 : encDecOk e1 d1) (ok2 : encDecOk e2 d2) :
+    (h : encDecOk e1 d1 ∧ encDecOk e2 d2) :
     encDecOk (prodEnc e1 e2) (prodDec d1 d2) := by
+  obtain ⟨ok1, ok2⟩ := h
   obtain ⟨b1, r1⟩ := ok1
   obtain ⟨b2, r2⟩ := ok2
-  refine ⟨prodDecOk d1 d2 b1 b2, ?_⟩
+  refine ⟨prodDecOk d1 d2 ⟨b1, b2⟩, ?_⟩
   intro x xs
   obtain ⟨v1, v2⟩ := x
   simp only [prodEnc, appListAppend_append, List.append_assoc, prodDec]
@@ -554,11 +556,12 @@ theorem prodEncDecOk {α β : Type} (e1 : α → AppList Nat) (d1 : List Nat →
 theorem prodEncDecOkPrime {α β : Type} (p1 : α → Bool) (e1 : α → AppList Nat)
     (d1 : List Nat → α × List Nat) (p2 : β → Bool) (e2 : β → AppList Nat)
     (d2 : List Nat → β × List Nat)
-    (ok1 : encDecOkPrime p1 e1 d1) (ok2 : encDecOkPrime p2 e2 d2) :
+    (h : encDecOkPrime p1 e1 d1 ∧ encDecOkPrime p2 e2 d2) :
     encDecOkPrime (fun x => p1 x.1 && p2 x.2) (prodEnc e1 e2) (prodDec d1 d2) := by
+  obtain ⟨ok1, ok2⟩ := h
   obtain ⟨b1, r1⟩ := ok1
   obtain ⟨b2, r2⟩ := ok2
-  refine ⟨prodDecOk d1 d2 b1 b2, ?_⟩
+  refine ⟨prodDecOk d1 d2 ⟨b1, b2⟩, ?_⟩
   intro x xs guard
   obtain ⟨v1, v2⟩ := x
   have both : p1 v1 = true ∧ p2 v2 = true := by simpa using guard
@@ -911,7 +914,7 @@ theorem sptEncDecOk {α : Type} (e : α → AppList Nat) (d : List Nat → α ×
     exact sumEncDecOk (listEnc (prodEnc numEnc e)) (listDec (prodDec numDec d))
       (sptEncPrimePrime e) (sptDecPrimePrime d)
       (listEncDecOk (prodEnc numEnc e) (prodDec numDec d)
-        (prodEncDecOk numEnc numDec e d numEncDecOk ok))
+        (prodEncDecOk numEnc numDec e d ⟨numEncDecOk, ok⟩))
       (sptEncPrimePrimeDecOk e d ok)
   have inverse : ∀ t : Spt α,
       (fun x =>
@@ -1029,7 +1032,7 @@ private theorem namespaceDecPrime_bound_aux {α : Type} (d : List Nat → α × 
     simp [namespaceDecPrime]
   · intro k a ns hk step1 ih hb
     have mlOk : decOk mlstringDec := mlstringDecOk
-    have prodOk : decOk (prodDec mlstringDec d) := prodDecOk mlstringDec d mlOk hb
+    have prodOk : decOk (prodDec mlstringDec d) := prodDecOk mlstringDec d ⟨mlOk, hb⟩
     have listOk : decOk (listDec (prodDec mlstringDec d)) := listDecOk _ prodOk
     have b1 := listOk a
     have b2 := ih hb
@@ -1082,8 +1085,8 @@ private theorem namespaceEncPrime_roundtrip_aux {α : Type} (e : α → AppList 
         simp only [List.append_assoc]
         have listOk : encDecOk (listEnc (prodEnc mlstringEnc e))
             (listDec (prodDec mlstringDec d)) :=
-          listEncDecOk _ _ (prodEncDecOk mlstringEnc mlstringDec e d mlstringEncDecOk
-            ⟨bound, roundtrip⟩)
+          listEncDecOk _ _ (prodEncDecOk mlstringEnc mlstringDec e d
+            ⟨mlstringEncDecOk, ⟨bound, roundtrip⟩⟩)
         obtain ⟨_, lr⟩ := listOk
         have h1 : listDec (prodDec mlstringDec d)
             (appListAppend (listEnc (prodEnc mlstringEnc e) xs)

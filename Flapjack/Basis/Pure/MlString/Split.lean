@@ -185,14 +185,16 @@ private theorem singleton_eq_reverse_substring (s : MlString) (j : Nat) (hjn : j
 `tokens_aux` at every starting point. -/
 @[hol "cakeml/basis/pure/mlstringScript.sml" "tokens_alt_tokens_alt_aux"]
 theorem tokensAlt_tokensAux (f : HolChar → Bool) (s : MlString) :
-    ∀ (acc : List HolChar) (j l : Nat) (i : Nat), i ≤ j → j ≤ strlen s →
-      strlen s - j = l → acc = (explode (substring s i (j - i))).reverse →
+    ∀ (acc : List HolChar) (j l : Nat) (i : Nat),
+      i ≤ j ∧ j ≤ strlen s ∧ strlen s - j = l ∧
+        acc = (explode (substring s i (j - i))).reverse →
       tokensAux f s acc j l = tokensAltAux f s i j (strlen s) := by
   intro acc j l
   revert acc j
   induction l with
   | zero =>
-      intro acc j i hij hjn hlen hacc
+      intro acc j i h
+      obtain ⟨hij, hjn, hlen, hacc⟩ := h
       have hjeq : j = strlen s := by omega
       subst j
       cases acc with
@@ -214,7 +216,8 @@ theorem tokensAlt_tokensAux (f : HolChar → Bool) (s : MlString) :
           rw [tokensAux, tokensAltAux.eq_def, if_neg (by omega : ¬ strlen s < strlen s)]
           rw [if_neg hne, hhead]
   | succ l ih =>
-      intro acc j i hij hjn hlen hacc
+      intro acc j i h
+      obtain ⟨hij, hjn, hlen, hacc⟩ := h
       have hjn' : j < strlen s := by omega
       have hnext : strlen s - (j + 1) = l := by omega
       cases acc with
@@ -224,11 +227,11 @@ theorem tokensAlt_tokensAux (f : HolChar → Bool) (s : MlString) :
           rw [tokensAux, tokensAltAux.eq_def, if_pos hjn']
           by_cases hf : f (strsub s j)
           · rw [if_pos hf, if_pos hf, if_pos rfl]
-            refine ih [] (j + 1) (j + 1) (by omega) (by omega) hnext ?_
+            refine ih [] (j + 1) (j + 1) ⟨by omega, by omega, hnext, ?_⟩
             rw [Nat.sub_self]
             simp only [substring_zero_len, explode_implode_eq, List.reverse_nil]
           · rw [if_neg hf, if_neg hf]
-            refine ih [strsub s j] (j + 1) j (by omega) (by omega) hnext ?_
+            refine ih [strsub s j] (j + 1) j ⟨by omega, by omega, hnext, ?_⟩
             exact singleton_eq_reverse_substring s j hjn'
       | cons h t =>
           have hne : i ≠ j := by
@@ -244,7 +247,7 @@ theorem tokensAlt_tokensAux (f : HolChar → Bool) (s : MlString) :
               rw [hacc, List.reverse_reverse, implode_explode]
             have htail :
                 tokensAux f s [] (j + 1) l = tokensAltAux f s (j + 1) (j + 1) (strlen s) := by
-              refine ih [] (j + 1) (j + 1) (by omega) (by omega) hnext ?_
+              refine ih [] (j + 1) (j + 1) ⟨by omega, by omega, hnext, ?_⟩
               rw [Nat.sub_self]
               simp only [substring_zero_len, explode_implode_eq, List.reverse_nil]
             rw [hhead, htail]
@@ -254,14 +257,14 @@ theorem tokensAlt_tokensAux (f : HolChar → Bool) (s : MlString) :
               rw [hacc, explode_substring_succ s i j hij hjn', List.reverse_append]
               rw [List.reverse_singleton]
               rfl
-            exact ih (strsub s j :: h :: t) (j + 1) i (by omega) (by omega) hnext hacc'
+            exact ih (strsub s j :: h :: t) (j + 1) i ⟨by omega, by omega, hnext, hacc'⟩
 
 /-- Original `tokens_alt`: tokenizing the whole string from position `0`. -/
 @[hol "cakeml/basis/pure/mlstringScript.sml" "tokens_alt"]
 theorem tokens_alt (f : HolChar → Bool) (s : MlString) :
     tokens f s = tokensAltAux f s 0 0 (strlen s) := by
   rw [tokens]
-  exact tokensAlt_tokensAux f s [] 0 (strlen s) 0 (by omega) (by omega) (by omega) (by simp)
+  exact tokensAlt_tokensAux f s [] 0 (strlen s) 0 ⟨by omega, by omega, by omega, by simp⟩
 
 /-- A substring starting at `0` is a prefix of the character list. -/
 private theorem substring_zero_off (s : MlString) (len : Nat) :

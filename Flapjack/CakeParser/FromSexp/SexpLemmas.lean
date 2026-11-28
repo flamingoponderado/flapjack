@@ -324,7 +324,8 @@ theorem odestSXNUM_eq_some (s : Sexp) (n : Nat) :
 /-- Original `strip_sxcons_11`: a successful strip determines its input. -/
 @[hol "cakeml/compiler/parsing/fromSexpScript.sml" "strip_sxcons_11"]
 theorem stripSxCons_inj (s1 s2 : Sexp) (x : List Sexp)
-    (h1 : stripSxCons s1 = some x) (h2 : stripSxCons s2 = some x) : s1 = s2 := by
+    (h : stripSxCons s1 = some x ∧ stripSxCons s2 = some x) : s1 = s2 := by
+  obtain ⟨h1, h2⟩ := h
   rw [stripSxCons_eq_decodeList] at h1 h2
   have e1 : s1 = listsexp x := (decodeList_some_identity s1 x).mp h1
   have e2 : s2 = listsexp x := (decodeList_some_identity s2 x).mp h2
@@ -443,10 +444,11 @@ theorem stripSxCons_fail_decodeList_fail {α : Type} (s : Sexp) (p : Sexp → Op
 @[hol "cakeml/compiler/parsing/fromSexpScript.sml" "sexppair_CONG"]
 theorem decodePair_cong {α β : Type} (s1 s2 : Sexp) (p1 p1' : Sexp → Option α)
     (p2 p2' : Sexp → Option β)
-    (h12 : s1 = s2)
-    (h1 : ∀ s, (∃ s', s2 = .cons s s') → p1 s = p1' s)
-    (h2 : ∀ s, (∃ s', s2 = .cons s' s) → p2 s = p2' s) :
+    (h : s1 = s2 ∧
+      (∀ s, (∃ s', s2 = .cons s s') → p1 s = p1' s) ∧
+      (∀ s, (∃ s', s2 = .cons s' s) → p2 s = p2' s)) :
     decodePair p1 p2 s1 = decodePair p1' p2' s2 := by
+  obtain ⟨h12, h1, h2⟩ := h
   rw [h12]
   cases s2 with
   | cons a b =>
@@ -466,8 +468,9 @@ def sxMem (e s : Sexp) : Bool :=
 /-- Original `sexplist_CONG`: list decoding respects pointwise-equal decoders. -/
 @[hol "cakeml/compiler/parsing/fromSexpScript.sml" "sexplist_CONG"]
 theorem decodeList_cong {α : Type} (s1 s2 : Sexp) (p1 p2 : Sexp → Option α)
-    (h12 : s1 = s2) (h : ∀ e, sxMem e s2 = true → p1 e = p2 e) :
+    (h : s1 = s2 ∧ ∀ e, sxMem e s2 = true → p1 e = p2 e) :
     decodeList p1 s1 = decodeList p2 s2 := by
+  obtain ⟨h12, h⟩ := h
   rw [h12]
   have key : ∀ s, (∀ e, sxMem e s = true → p1 e = p2 e) →
       decodeList p1 s = decodeList p2 s := by

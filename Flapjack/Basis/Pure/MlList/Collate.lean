@@ -63,8 +63,9 @@ theorem collateEqual {α : Type} (l : List α) (f : α → α → Ordering)
 /-- Original `collate_short_thm`: a proper prefix compares `LESS`. -/
 @[hol "cakeml/basis/pure/mllistScript.sml" "collate_short_thm"]
 theorem collateShort {α : Type} (f : α → α → Ordering) (l1 l2 : List α)
-    (h : ∀ x, f x x = Ordering.eq) (hne : l1 ≠ l2) (hpre : l1 <+: l2) :
+    (h : (∀ x, f x x = Ordering.eq) ∧ l1 ≠ l2 ∧ l1 <+: l2) :
     collate f l1 l2 = Ordering.lt := by
+  obtain ⟨h, hne, hpre⟩ := h
   induction l1 generalizing l2 with
   | nil =>
       cases l2 with

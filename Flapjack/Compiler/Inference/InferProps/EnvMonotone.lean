@@ -26,8 +26,9 @@ theorem ienvValOk_more {M N : Type}
 `uv` unification variables stays well-formed for a larger bound. -/
 @[hol "cakeml/compiler/inference/inferPropsScript.sml" "ienv_ok_more"]
 theorem ienvOkMore (uv uv' : Nat) (ienv : Env)
-    (h : ienvOk (fun k => k < uv) ienv) (hle : uv ≤ uv') :
+    (h : ienvOk (fun k => k < uv) ienv ∧ uv ≤ uv') :
     ienvOk (fun k => k < uv') ienv := by
+  obtain ⟨h, hle⟩ := h
   simp only [ienvOk] at h ⊢
   exact ⟨ienvValOk_more ienv.infV uv h.1 uv' hle, h.2⟩
 

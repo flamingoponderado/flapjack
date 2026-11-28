@@ -37,8 +37,9 @@ theorem divLessDiv {n m k : Nat} (h : n % k = 0 ∧ m % k = 0 ∧ n < m ∧ 0 < 
 positive `x` is even. HOL's `MOD_2EXP x y` is `y MOD 2 ** x` and `EVEN y` is
 the `y % 2 = 0` rendering. -/
 @[hol "cakeml/misc/miscScript.sml" "MOD_2EXP_0_EVEN"]
-theorem modTwoPowZeroEven (x y : Nat) (hx : 0 < x) (h : y % 2 ^ x = 0) :
+theorem modTwoPowZeroEven (x y : Nat) (h : 0 < x ∧ y % 2 ^ x = 0) :
     y % 2 = 0 := by
+  obtain ⟨hx, h⟩ := h
   have hdvd : 2 ^ x ∣ y := Nat.dvd_of_mod_eq_zero h
   have h2 : 2 ∣ 2 ^ x := by simpa using Nat.pow_dvd_pow 2 hx
   obtain ⟨c, hc⟩ := hdvd

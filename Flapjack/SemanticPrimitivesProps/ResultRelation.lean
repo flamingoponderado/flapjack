@@ -132,10 +132,11 @@ theorem resultRel_refl {α β : Type} (values : α → α → Prop) (errors : β
 /-- Transitive payload relations make the result relation transitive. -/
 @[hol "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml" "result_rel_trans"]
 theorem resultRel_trans {α β : Type} (values : α → α → Prop) (errors : β → β → Prop)
-    (valuesTrans : ∀ x y z, values x y ∧ values y z → values x z)
-    (errorsTrans : ∀ x y z, errors x y ∧ errors y z → errors x z) :
+    (h : (∀ x y z, values x y ∧ values y z → values x z) ∧
+      (∀ x y z, errors x y ∧ errors y z → errors x z)) :
     ∀ x y z, resultRel values errors x y ∧ resultRel values errors y z →
       resultRel values errors x z := by
+  obtain ⟨valuesTrans, errorsTrans⟩ := h
   intro x y z ⟨xy, yz⟩
   cases x
   all_goals cases y

@@ -32,9 +32,9 @@ def listSetEq {α : Type} [DecidableEq α] (l1 l2 : List α) : Bool :=
 /-- Original `list_subset_LENGTH`: a distinct list contained in another is no
 longer than it. -/
 @[hol "cakeml/misc/miscScript.sml" "list_subset_LENGTH"]
-theorem listSubsetLength {α : Type} [DecidableEq α] (l1 l2 : List α) :
-    l1.Nodup → listSubset l1 l2 = true → l1.length ≤ l2.length := by
-  intro hnd hsub
+theorem listSubsetLength {α : Type} [DecidableEq α] (l1 l2 : List α)
+    (h : l1.Nodup ∧ listSubset l1 l2 = true) : l1.length ≤ l2.length := by
+  obtain ⟨hnd, hsub⟩ := h
   induction l1 generalizing l2 with
   | nil => simp
   | cons a as ih =>
