@@ -10853,7 +10853,7 @@ run_probe misc_typed_probeScript.sml misc_typed_probe.out \
   PERM_MAP_BIJ_typed \
   FDOM_FLOOKUP_typed lookup_fromList2_typed fromList2_value_typed size_fromAList_typed \
   NOT_MEM_FLOOKUP_ZIP_typed splitlines_nil_typed insert_atI_insert_atI_typed \
-  v2w_32_F_typed v2w_32_T_typed \
+  v2w_sing_typed v2w_32_F_typed v2w_32_T_typed \
   FUPDATE_LIST_alist_to_fmap_typed ALL_DISTINCT_alist_to_fmap_REVERSE_typed \
   fevery_to_drestrict_typed FST_UNZIP_MAPi_typed SND_UNZIP_MAPi_typed \
   ALL_DISTINCT_MAP_FST_enumerate_typed ORD_eq_0_typed \
