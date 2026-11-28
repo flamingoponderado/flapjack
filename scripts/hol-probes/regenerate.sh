@@ -10837,6 +10837,9 @@ run_probe misc_typed_probeScript.sml misc_typed_probe.out \
   SUM_SET_IN_LT_typed GSPEC_o_typed CARD_IMAGE_EQ_BIJ_typed CARD_IMAGE_ID_BIJ_typed \
   BIJ_UPDATE_typed INJ_UPDATE_typed byte_align_extract_typed toPath_fromList_typed \
   MEM_list_size_typed lookup_zero_typed lookup_copy_shape_typed \
+  range_def_typed range_delete_typed range_insert_typed range_insert_SUBSET_typed \
+  splitlines_def_typed least_from_def_typed \
+  LEAST_thm_typed all_words_def_typed eq_shape_def_typed copy_shape_def_typed \
   "$cake_dir/misc/miscScript.sml" \
   "$cake_dir/misc"
 

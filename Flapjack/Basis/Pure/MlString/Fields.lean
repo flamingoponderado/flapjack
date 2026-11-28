@@ -208,4 +208,15 @@ theorem fields_ne_nil (P : HolChar → Bool) (ls : MlString) : fields P ls ≠ [
   unfold fields
   exact fieldsAux_ne_nil P ls [] 0 (strlen ls)
 
+/-- Exact HOL `splitlines_def`: split a string at newline characters, dropping a
+trailing newline. HOL's `NULL (LAST lines)` is decided with the last field and
+`FRONT` is `List.dropLast`; the field list is never empty (`FIELDS_NEQ_NIL`), so
+the last field is taken with that proof. -/
+@[hol "cakeml/misc/miscScript.sml" "splitlines_def"]
+noncomputable def splitlines (ls : MlString) : List MlString :=
+  let lines := fields (fun c => c = BitVec.ofNat 8 10) ls
+  if lines.getLast (fields_ne_nil (fun c => c = BitVec.ofNat 8 10) ls) = .implode [] then
+    lines.dropLast
+  else lines
+
 end Flapjack.Basis.Pure.MlString
