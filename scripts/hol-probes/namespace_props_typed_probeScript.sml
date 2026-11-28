@@ -46,3 +46,97 @@ val _ = emit "nsAll_nsAppend_typed" "nsAll_nsAppend";
 val _ = emit "nsAll_nsBind_typed" "nsAll_nsBind";
 val _ = emit "nsAll_nsSing_typed" "nsAll_nsSing";
 val _ = emit "nsAll2_nsAppend_typed" "nsAll2_nsAppend";
+
+(* Identifiers, empty namespaces, binding and singletons (task 273). *)
+val _ = emit "mk_id_11_typed" "mk_id_11";
+val _ = emit "id_to_mods_mk_id_typed" "id_to_mods_mk_id";
+val _ = emit "id_to_namemods_mk_id_typed" "id_to_namemods_mk_id";
+val _ = emit "mk_id_surj_typed" "mk_id_surj";
+val _ = emit "mk_id_thm_typed" "mk_id_thm";
+val _ = emit "alist_to_ns_nil_typed" "alist_to_ns_nil";
+val _ = emit "nsSub_nsEmpty_typed" "nsSub_nsEmpty";
+val _ = emit "nsAll_nsEmpty_typed" "nsAll_nsEmpty";
+val _ = emit "nsAll2_nsEmpty_typed" "nsAll2_nsEmpty";
+val _ = emit "nsDom_nsEmpty_typed" "nsDom_nsEmpty";
+val _ = emit "nsDomMod_nsEmpty_typed" "nsDomMod_nsEmpty";
+val _ = emit "nsMap_nsEmpty_typed" "nsMap_nsEmpty";
+val _ = emit "nsBind_nsEmpty_typed" "nsBind_nsEmpty";
+val _ = emit "nsAll_mono_typed" "nsAll_mono";
+val _ = emit "alist_to_ns_cons_typed" "alist_to_ns_cons";
+val _ = emit "nsAppend_nsBind_typed" "nsAppend_nsBind";
+val _ = emit "nsAppend_alist_to_ns_typed" "nsAppend_alist_to_ns";
+val _ = emit "nsBind_11_typed" "nsBind_11";
+val _ = emit "nsLookupMod_alist_to_ns_typed" "nsLookupMod_alist_to_ns";
+val _ = emit "alist_to_ns_11_typed" "alist_to_ns_11";
+val _ = emit "nsAppend_nsSing_typed" "nsAppend_nsSing";
+val _ = emit "nsLookup_nsSing_typed" "nsLookup_nsSing";
+val _ = emit "nsMap_nsSing_typed" "nsMap_nsSing";
+val _ = emit "nsLookupMod_nsSing_typed" "nsLookupMod_nsSing";
+val _ = emit "nsDom_nsSing_typed" "nsDom_nsSing";
+val _ = emit "nsDomMod_nsSing_typed" "nsDomMod_nsSing";
+
+(* Sub-relations, domains and lookup (task 273). *)
+val _ = emit "eALL_T_typed" "eALL_T";
+val _ = emit "nsLookup_nsAll_typed" "nsLookup_nsAll";
+val _ = emit "nsLookup_nsDom_typed" "nsLookup_nsDom";
+val _ = emit "nsLift_nsMap_typed" "nsLift_nsMap";
+val _ = emit "nsLookup_Bind_v_some_typed" "nsLookup_Bind_v_some";
+val _ = emit "nsSub_refl_typed" "nsSub_refl";
+val _ = emit "nsDomMod_alist_to_ns_typed" "nsDomMod_alist_to_ns";
+val _ = emit "nsSub_nsBind_typed" "nsSub_nsBind";
+val _ = emit "nsAll2_nsBind_typed" "nsAll2_nsBind";
+val _ = emit "nsSub_conj_typed" "nsSub_conj";
+val _ = emit "nsAll2_conj_typed" "nsAll2_conj";
+
+(* Monotonicity, binding domains and two-way lookup (task 273). *)
+val _ = emit "nsSub_mono_typed" "nsSub_mono";
+val _ = emit "nsSub_mono2_typed" "nsSub_mono2";
+val _ = emit "nsAll2_mono_typed" "nsAll2_mono";
+val _ = emit "nsDom_nsBind_typed" "nsDom_nsBind";
+val _ = emit "nsDomMod_nsBind_typed" "nsDomMod_nsBind";
+val _ = emit "nsAll2_nsLookup1_typed" "nsAll2_nsLookup1";
+val _ = emit "nsAll2_nsLookup2_typed" "nsAll2_nsLookup2";
+val _ = emit "nsAll2_nsLookup_none_typed" "nsAll2_nsLookup_none";
+
+(* Association-list lookup, mapping and folded lifting (task 273). *)
+val _ = emit "nsLookup_alist_to_ns_some_typed" "nsLookup_alist_to_ns_some";
+val _ = emit "nsLookup_alist_to_ns_none_typed" "nsLookup_alist_to_ns_none";
+val _ = emit "nsMap_alist_to_ns_typed" "nsMap_alist_to_ns";
+val _ = emit "nsSub_nsMap_typed" "nsSub_nsMap";
+val _ = emit "nsLookup_FOLDR_nsLift_typed" "nsLookup_FOLDR_nsLift";
+
+(* Singletons, optional binding, lift-append and association-list relations
+   (task 273). *)
+val _ = emit "nsAll2_nsSing_typed" "nsAll2_nsSing";
+val _ = emit "nsAll_nsOptBind_typed" "nsAll_nsOptBind";
+val _ = emit "nsLookup_nsLift_append_typed" "nsLookup_nsLift_append";
+val _ = emit "nsAll2_alist_to_ns_typed" "nsAll2_alist_to_ns";
+val _ = emit "nsAll2_nsBindList_typed" "nsAll2_nsBindList";
+
+(* Association-list relations and lookup-to-module lookup (task 273). *)
+val _ = emit "alist_rel_restr_def_typed" "alist_rel_restr_def";
+val _ = emit "alist_rel_restr_thm_typed" "alist_rel_restr_thm";
+val _ = emit "alistSub_def_typed" "alistSub_def";
+val _ = emit "alistSub_cong_typed" "alistSub_cong";
+val _ = emit "nsLookup_to_nsLookupMod_typed" "nsLookup_to_nsLookupMod";
+val _ = emit "nsDom_alist_to_ns_typed" "nsDom_alist_to_ns";
+
+(* Appended-namespace lookups (task 273). *)
+val _ = emit "nsLookup_nsAppend_some_typed" "nsLookup_nsAppend_some";
+val _ = emit "nsLookup_nsAppend_none_typed" "nsLookup_nsAppend_none";
+val _ = emit "nsLookupMod_nsAppend_some_typed" "nsLookupMod_nsAppend_some";
+val _ = emit "nsLookupMod_nsAppend_none_typed" "nsLookupMod_nsAppend_none";
+val _ = emit "nsAll_nsAppend_left_typed" "nsAll_nsAppend_left";
+val _ = emit "nsSub_nsAppend2_typed" "nsSub_nsAppend2";
+
+(* Flat domains and folded lifting (task 273). *)
+val _ = emit "nsDomMod_nsAppend_flat_typed" "nsDomMod_nsAppend_flat";
+val _ = emit "nsDom_nsAppend_flat_typed" "nsDom_nsAppend_flat";
+val _ = emit "nsLookup_FOLDR_nsLift_some_typed" "nsLookup_FOLDR_nsLift_some";
+val _ = emit "nsLookupMod_FOLDR_nsLift_none_typed" "nsLookupMod_FOLDR_nsLift_none";
+
+(* Appended association-list domains, lifted subsumption and the compute
+   relation (task 273). *)
+val _ = emit "ns_dom_ns_append_alist_typed" "nsDom_nsAppend_alist";
+val _ = emit "ns_sub_ns_append_lift_typed" "nsSub_nsAppend_lift";
+val _ = emit "ns_sub_compute_def_typed" "nsSub_compute_def";

@@ -250,3 +250,14 @@ sp2fm_map_typed=sp2fm (map (f :β -> α) (sp :β sptree$num_map)) = f o_f sp2fm 
 cvwalkR_def_typed=∀(σ :infer_t sptree$num_map). cvwalkR σ = (λ(v :num) (v0 :num). vR (encode_infer_t o_f sp2fm σ) v v0)
 cvwalk_ensures_decrease_typed=∀(x :num) (y :num). (λ(n :num). cwfs (s :infer_t sptree$num_map)) x ∧ cvwalk_code s x = (INL y :num + infer_t) ⇒ cvwalkR s y x
 WF_cvwalkR_typed=∀(x :α). (λ(n :α). cwfs (s :infer_t sptree$num_map)) x ⇒ WF (cvwalkR s)
+RKC_def_typed=∀(rkt :atom term) (ct :infer_t). RKC rkt ct ⇔ encode_infer_t ct = rkt
+substR_def_typed=∀(fm :atom subst) (sp :infer_t sptree$num_map). substR fm sp ⇔ wfs fm ∧ wf sp ∧ fm = encode_infer_t o_f sp2fm sp
+option_CASE_MAP_typed=(option_CASE (OPTION_MAP (f :γ -> β) (v :γ option)) (n :α) (sf :β -> α) :α) = (option_CASE v n (sf ∘ f) :α)
+list_CASE_MAP_typed=(list_CASE (MAP (f :γ -> β) (l :γ list)) (n :α) (cf :β -> β list -> α) :α) = case l of ([] :γ list) => n | h::t => cf (f h) (MAP f t)
+option_map_itcase_typed=OPTION_MAP (f :β -> α) (infer_t_CASE (arg :infer_t) (x :num -> β option) (y :infer_t list -> num -> β option) (z :num -> β option) :β option) = (infer_t_CASE arg (OPTION_MAP f ∘ x) (λ(l :infer_t list) (n :num). OPTION_MAP f (y l n)) (OPTION_MAP f ∘ z) :α option)
+option_map_COND_typed=OPTION_MAP (f :β -> α) (if (g :bool) then (t :β option) else (e :β option)) = if g then OPTION_MAP f t else OPTION_MAP f e
+sptree_map_COND_typed=map (f :β -> α) (if (g :bool) then (t :β sptree$num_map) else (e :β sptree$num_map)) = if g then map f t else map f e
+SOME_COND_typed=SOME (if (g :bool) then (t :α) else (e :α)) = if g then SOME t else SOME e
+OPTION_MAP_BIND_typed=OPTION_MAP (f :β -> α) (monad_bind (m :γ option) (mf :γ -> β option)) = monad_bind m (OPTION_MAP f ∘ mf)
+OPTION_BIND_MAP_typed=monad_bind (OPTION_MAP (f :γ -> β) (m :γ option)) (mf :β -> α option) = monad_bind m (mf ∘ f)
+term_CASE_encode_typed=(term_CASE (encode_infer_t (v :infer_t)) (vf :num -> α) (pf :atom term -> atom term -> α) (cf :atom -> α) :α) = (infer_t_CASE v (cf ∘ DB_tag) (λ(l :infer_t list) (n :num). pf (Const Tapp_tag) (Pair (Const (TC_tag n)) (encode_infer_ts l))) vf :α)

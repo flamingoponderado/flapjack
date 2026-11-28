@@ -20,6 +20,34 @@ def destLetrec : Exp → Option (List (VarN × VarN × Exp) × Exp)
   | .letrec fs x => some (fs, x)
   | _ => none
 
+/-- Original `dest_Let_SOME`: a successful extraction is exactly a source `Let`. -/
+@[hol "cakeml/compiler/backend/source_letScript.sml" "dest_Let_SOME"]
+theorem destLet_some (z : Exp) (opt : Option VarN) (x y : Exp) :
+    destLet z = some (opt, x, y) ↔ z = .let_ opt x y := by
+  cases z
+  all_goals simp [destLet]
+
+/-- Original `dest_Let_NONE`: a failed extraction means the expression is not a `Let`. -/
+@[hol "cakeml/compiler/backend/source_letScript.sml" "dest_Let_NONE"]
+theorem destLet_none (z : Exp) :
+    destLet z = none ↔ ∀ opt x y, z ≠ .let_ opt x y := by
+  cases z
+  all_goals simp [destLet]
+
+/-- Original `dest_Letrec_SOME`: a successful extraction is exactly a source `Letrec`. -/
+@[hol "cakeml/compiler/backend/source_letScript.sml" "dest_Letrec_SOME"]
+theorem destLetrec_some (z : Exp) (funs : List (VarN × VarN × Exp)) (x : Exp) :
+    destLetrec z = some (funs, x) ↔ z = .letrec funs x := by
+  cases z
+  all_goals simp [destLetrec]
+
+/-- Original `dest_Letrec_NONE`: a failed extraction means the expression is not a `Letrec`. -/
+@[hol "cakeml/compiler/backend/source_letScript.sml" "dest_Letrec_NONE"]
+theorem destLetrec_none (z : Exp) :
+    destLetrec z = none ↔ ∀ funs x, z ≠ .letrec funs x := by
+  cases z
+  all_goals simp [destLetrec]
+
 /-- Lift one top-level `Let` or `Letrec` out of a value declaration. -/
 @[hol "cakeml/compiler/backend/source_letScript.sml" "lift_let_def"]
 def liftLet : Dec → Option (Dec × Dec)

@@ -34,4 +34,51 @@ theorem anubAllDistinctKeys {α β : Type} [DecidableEq α] :
         rw [List.map_cons, List.cons_append]
         exact List.perm_middle.nodup_iff.mp ih
 
+/-- Original `anub_eq_nil`: the pruned list is empty exactly when every key is
+already in the accumulator. -/
+@[hol "cakeml/misc/miscScript.sml" "anub_eq_nil"]
+theorem anub_eq_nil {α β : Type} [DecidableEq α] (x : List (α × β)) (y : List α) :
+    anub x y = [] ↔ ∀ k ∈ x.map Prod.fst, k ∈ y := by
+  induction x generalizing y with
+  | nil => simp [anub]
+  | cons p rest ih =>
+    rcases p with ⟨a, b⟩
+    by_cases ha : a ∈ y
+    · simp [anub, ha, ih y]
+    · simp [anub, ha]
+
+/-- Original `anub_notin_acc`: keys already in the accumulator never reappear. -/
+@[hol "cakeml/misc/miscScript.sml" "anub_notin_acc"]
+theorem anub_notin_acc {α β : Type} [DecidableEq α] (x : α) :
+    ∀ (ls : List (α × β)) (acc : List α), x ∈ acc → x ∉ (anub ls acc).map Prod.fst := by
+  intro ls
+  induction ls with
+  | nil =>
+    intro acc _
+    simp [anub]
+  | cons p rest ih =>
+    intro acc h
+    rcases p with ⟨k, v⟩
+    by_cases hk : k ∈ acc
+    · simp only [anub, if_pos hk]
+      exact ih acc h
+    · simp only [anub, if_neg hk, List.map_cons, List.mem_cons, not_or]
+      refine ⟨?_, ih (k :: acc) (List.mem_cons_of_mem k h)⟩
+      intro hxk
+      exact hk (hxk ▸ h)
+
+/-- Original `EVERY_anub_imp`: a property holding of every kept binding holds
+    of the head binding and of the tail computed from the extended accumulator. -/
+@[hol "cakeml/misc/miscScript.sml" "EVERY_anub_imp"]
+theorem every_anub_imp {α β : Type} [DecidableEq α] :
+    ∀ (ls : List (α × β)) (acc : List α) (x : α) (y : β) (P : α × β → Prop),
+      (∀ p ∈ anub ((x, y) :: ls) acc, P p) ∧ x ∉ acc →
+      P (x, y) ∧ ∀ p ∈ anub ls (x :: acc), P p := by
+  intro ls acc x y P h
+  obtain ⟨hall, hxacc⟩ := h
+  by_cases hx : x ∈ acc
+  · exact absurd hx hxacc
+  · simp only [anub, if_neg hx, List.mem_cons] at hall
+    exact ⟨hall (x, y) (Or.inl rfl), fun p hp => hall p (Or.inr hp)⟩
+
 end Flapjack

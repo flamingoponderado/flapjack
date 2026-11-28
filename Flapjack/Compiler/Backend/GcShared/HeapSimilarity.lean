@@ -210,4 +210,52 @@ theorem heapsSimilar_forward {α β γ δ : Type} (ha heap0 hb : List (HeapEleme
       cases similar with
       | cons headRel tailRel => exact List.Forall₂.cons headRel (ih rest tailRel)
 
+/-- Original `heaps_similar_lemma`: a data element found in the source heap is
+    still data or a forwarding pointer in the similar heap. -/
+@[hol "cakeml/compiler/backend/gc/gen_gcScript.sml" "heaps_similar_lemma" 900]
+theorem heapsSimilar_dataOrForward {α β : Type} (h1 h2 : List (HeapElement α β))
+    (ptr : Nat) (premise : heapsSimilar h1 h2 ∧ isSomeDataElement (heapLookup ptr h1)) :
+    isSomeDataOrForward (heapLookup ptr h2) := by
+  induction h1 generalizing ptr h2 with
+  | nil =>
+    simp only [heapLookup] at premise
+    obtain ⟨_, data⟩ := premise
+    simp [isSomeDataElement] at data
+  | cons head tail ih =>
+    obtain ⟨similar, data⟩ := premise
+    cases h2 with
+    | nil => simp [heapsSimilar] at similar
+    | cons head2 tail2 =>
+      simp only [heapsSimilar, List.forall₂_cons] at similar
+      obtain ⟨rel, rest⟩ := similar
+      have sameLength : elLength head2 = elLength head := by
+        by_cases fwd : isForwardPointer head2 = true
+        · rw [if_pos fwd] at rel
+          exact rel.1
+        · rw [if_neg fwd] at rel
+          rw [rel]
+      by_cases zero : ptr = 0
+      · subst zero
+        simp only [heapLookup, if_true] at data ⊢
+        obtain ⟨xs, len, payload, found⟩ := data
+        have headData : head = .dataElement xs len payload := Option.some.inj found
+        subst headData
+        by_cases fwd : isForwardPointer head2 = true
+        · rw [if_pos fwd] at rel
+          cases head2 with
+          | unused len => simp [isForwardPointer] at fwd
+          | forwardPointer p v l => exact Or.inl ⟨p, v, l, rfl⟩
+          | dataElement xs len d => simp [isForwardPointer] at fwd
+        · rw [if_neg fwd] at rel
+          subst rel
+          exact Or.inr ⟨xs, len, payload, rfl⟩
+      · simp only [heapLookup, if_neg zero] at data ⊢
+        by_cases inside : ptr < elLength head
+        · simp [isSomeDataElement] at data
+          obtain ⟨bound, _⟩ := data
+          omega
+        · rw [sameLength]
+          rw [if_neg inside] at data ⊢
+          exact ih tail2 (ptr - elLength head) ⟨by simpa [heapsSimilar] using rest, data⟩
+
 end Flapjack.Compiler.Backend

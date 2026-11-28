@@ -11,6 +11,10 @@ type scan and accumulator rewrite are in `Analysis` and `Rewrite`. -/
 namespace Flapjack.Compiler.Backend.BviTailrec
 open Bvi
 
+/-- HOL `dummy_def`: the placeholder BVI variable of the tail-recursion analysis. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "dummy_def"]
+def dummy : Exp := .var 1234567890
+
 /-- Recognize the source pass's direct, unhandled self-call. -/
 @[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "is_rec_def"]
 def isRec (name : Nat) : Exp → Bool

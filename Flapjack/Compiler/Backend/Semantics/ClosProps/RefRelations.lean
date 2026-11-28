@@ -38,4 +38,25 @@ theorem refRel_mono {A B : Type} {R S : A → B → Prop} {left : Ref A} {right 
     | byteArray ys => exact related.elim
     | thunk mode' value' => exact ⟨related.1, change _ _ related.2⟩
 
+/-- Original `ref_rel_simp`: the introduction equations of `refRel` for the
+    three reference constructors. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "ref_rel_simp"]
+theorem refRel_simp {A B : Type} (R : A → B → Prop) :
+    (∀ (vs : List A) (y : Ref B),
+        refRel R (.valueArray vs) y ↔ ∃ ws, y = .valueArray ws ∧ List.Forall₂ R vs ws) ∧
+    (∀ (bs : List (BitVec 8)) (y : Ref B),
+        refRel R (.byteArray bs) y ↔ y = .byteArray bs) ∧
+    (∀ (m : AstHOL.ThunkMode) (a : A) (y : Ref B),
+        refRel R (.thunk m a) y ↔ ∃ b, y = .thunk m b ∧ R a b) := by
+  refine ⟨?_, ?_, ?_⟩
+  · intro vs y
+    cases y
+    all_goals simp [refRel]
+  · intro bs y
+    cases y
+    all_goals simp [refRel, eq_comm]
+  · intro m a y
+    cases y
+    all_goals simp [refRel, eq_comm]
+
 end Flapjack.Compiler.Backend.ClosProps

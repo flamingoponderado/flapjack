@@ -59,6 +59,7 @@ read_bytearray_def_typed=(∀(a :β word) (get_byte :β word -> α option). read
 read_bytearray_LENGTH_typed=∀(n :num) (a :α word) (f :α word -> β option) (x :β list). read_bytearray a n f = SOME x ⇒ LENGTH x = n
 fun2set_disjoint_union_typed=DISJOINT (d1 :α -> bool) (d2 :α -> bool) ∧ (p :(α # β -> bool) -> bool) (fun2set ((m :α -> β),d1)) ∧ (q :(α # β -> bool) -> bool) (fun2set (m,d2)) ⇒ (p * q) (fun2set (m,d1 ∪ d2))
 UPDATE_LIST_def_typed=($=++ :(α -> β) -> (α # β) list -> α -> β) = FOLDL (flip (UNCURRY (UPDATE :α -> β -> (α -> β) -> α -> β)))
+UPDATE_LIST_THM_typed=∀(f :α -> β). f =++ ([] :(α # β) list) = f ∧ ∀(h :α # β) (t :(α # β) list). f =++ (h::t) = f⦇FST h ↦ SND h⦈ =++ t
 APPLY_UPDATE_LIST_ALOOKUP_typed=∀(ls :(α # β) list) (f :α -> β) (x :α). (f =++ ls) x = case ALOOKUP (REVERSE ls) x of (NONE :β option) => f x | SOME y => y
 MOD_SUB_LEMMA_typed=(n :num) MOD (k :num) = (0 :num) ∧ (m :num) MOD k = (0 :num) ∧ (0 :num) < k ⇒ (n − m) MOD k = (0 :num)
 DISJOINT_INTER_typed=DISJOINT (b :α -> bool) (c :α -> bool) ⇒ DISJOINT ((a :α -> bool) ∩ b) (a ∩ c)
@@ -66,3 +67,260 @@ IMP_MULT_DIV_LESS_typed=(m :num) ≠ (0 :num) ∧ (d :num) < (k :num) ⇒ m * (d
 DIV_LESS_DIV_typed=(n :num) MOD (k :num) = (0 :num) ∧ (m :num) MOD k = (0 :num) ∧ n < m ∧ (0 :num) < k ⇒ n DIV k < m DIV k
 WORD_LS_IMP_typed=(a :α word) ≤₊ (b :α word) ⇒ ∃(k :num). Abbrev (b = a + (n2w k :α word)) ∧ w2n (b − a) = k ∧ ∀(w :α word). a ≤₊ w ∧ w <₊ b ⇔ ∃(i :num). w = a + (n2w i :α word) ∧ i < k
 SmartAppend_def_typed=SmartAppend (Nil :α app_list) (l2 :α app_list) = l2 ∧ SmartAppend (List (v2 :α list)) (Nil :α app_list) = List v2 ∧ SmartAppend (Append (v3 :α app_list) (v4 :α app_list)) (Nil :α app_list) = Append v3 v4 ∧ SmartAppend (List (v5 :α list)) (List (v11 :α list)) = Append (List v5) (List v11) ∧ SmartAppend (List v5) (Append (v12 :α app_list) (v13 :α app_list)) = Append (List v5) (Append v12 v13) ∧ SmartAppend (Append (v6 :α app_list) (v7 :α app_list)) (List (v17 :α list)) = Append (Append v6 v7) (List v17) ∧ SmartAppend (Append v6 v7) (Append (v18 :α app_list) (v19 :α app_list)) = Append (Append v6 v7) (Append v18 v19)
+FST_pair_typed=(λ((n :α),(v :β)). n) = (FST :α # β -> α)
+SND_pair_typed=(λ((n :α),(v :β)). v) = (SND :α # β -> β)
+FST_triple_typed=(λ((n :α),(ns :β),(b :γ)). n) = (FST :α # β # γ -> α)
+SND_triple_typed=(λ((n :α),(ns :β),(b :γ)). (f :β -> γ -> δ) ns b) = UNCURRY f ∘ (SND :α # β # γ -> β # γ)
+LESS_1_typed=(x :num) < (1 :num) ⇔ x = (0 :num)
+MEM_REPLICATE_EQ_typed=∀(n :num) (x :α) (y :α). MEM x (REPLICATE n y) ⇔ x = y ∧ n ≠ (0 :num)
+LENGTH_TAKE_EQ_MIN_typed=∀(n :num) (xs :α list). LENGTH (TAKE n xs) = MIN n (LENGTH xs)
+w2n_lt_256_typed=∀(w :word8). w2n w < (256 :num)
+IMP_IMP_typed=(P :bool) ∧ ((Q :bool) ⇒ (R :bool)) ⇒ (P ⇒ Q) ⇒ R
+SUBSET_IMP_typed=(s :α -> bool) ⊆ (t :α -> bool) ⇒ (x :α) ∈ s ⇒ x ∈ t
+DROP_NIL_typed=∀(n :num) (xs :α list). DROP n xs = ([] :α list) ⇔ LENGTH xs ≤ n
+times_add_o_typed=(λ(n :num). (k :num) * n + (x :num)) = $+ x ∘ $* k
+FST_5tup_typed=(λ((n :α),(ns :β),(b :γ),(x :δ),(y :ε)). n) = (FST :α # β # γ # δ # ε -> α)
+SND_FST_pair_typed=(λ(((n :α),(m :β)),(c :γ)). m) = (SND :α # β -> β) ∘ (FST :(α # β) # γ -> α # β)
+plus_compose_typed=∀(n :num) (m :num). $+ n ∘ $+ m = $+ (n + m)
+option_case_NONE_F_typed=(case (X :α option) of (NONE :α option) => F | SOME x => (P :α -> bool) x) ⇔ ∃(x :α). X = SOME x ∧ P x
+MAP_FST_I_PAIR_MAP_typed=∀(xs :(α # β) list). MAP (FST :α # γ -> α) (MAP ((I :α -> α) ## (f :β -> γ)) xs) = MAP (FST :α # β -> α) xs
+FLAT_MAP_SING_typed=∀(ls :α list). FLAT (MAP (λ(x :α). [(f :α -> β) x]) ls) = MAP f ls
+FLAT_MAP_NIL_typed=FLAT (MAP (λ(x :β). ([] :α list)) (ls :β list)) = ([] :α list)
+ZIP_MAP_FST_SND_EQ_typed=∀(ls :(α # β) list). ZIP (MAP (FST :α # β -> α) ls,MAP (SND :α # β -> β) ls) = ls
+MAP_EQ_ID_typed=∀(f :α -> α) (ls :α list). MAP f ls = ls ⇔ ∀(x :α). MEM x ls ⇒ f x = x
+SUM_REPLICATE_typed=∀(n :num) (m :num). (SUM (REPLICATE n m) :num) = n * m
+SUM_MAP_LENGTH_REPLICATE_typed=∀(n :num) (ls :α list). (SUM (MAP (LENGTH :α list -> num) (REPLICATE n ls)) :num) = n * LENGTH ls
+EL_CONS_IF_typed=((x :α)::(xs :α list))❲(n :num)❳ = if n = (0 :num) then x else xs❲PRE n❳
+EVERY_LAST_typed=∀(P :α -> bool) (l :α list). l ≠ ([] :α list) ∧ EVERY P l ⇒ P (LAST l)
+revdroprev_typed=∀(l :α list) (n :num). n ≤ LENGTH l ⇒ REVERSE (DROP n (REVERSE l)) = TAKE (LENGTH l − n) l
+o_PAIR_MAP_typed=(FST :γ # δ -> γ) ∘ ((f :α -> γ) ## (g :β -> δ)) = f ∘ (FST :α # β -> α) ∧ (SND :γ # δ -> δ) ∘ (f ## g) = g ∘ (SND :α # β -> β)
+EVERY_FST_SND_typed=EVERY (λ((a :α),(b :β)). (P :α -> bool) a ∧ (Q :β -> bool) b) (ls :(α # β) list) ⇔ EVERY P (MAP (FST :α # β -> α) ls) ∧ EVERY Q (MAP (SND :α # β -> β) ls)
+EVERY_ZIP_typed=∀(l :(α # β) list) (f :α -> bool). EVERY (λ((x :α),(y :β)). f x) l ⇔ EVERY f (MAP (FST :α # β -> α) l)
+EXISTS_ZIP_typed=∀(l :(α # β) list) (f :α -> bool). EXISTS (λ((x :α),(y :β)). f x) l ⇔ EXISTS f (MAP (FST :α # β -> α) l)
+TWOxDIV2_typed=(2 :num) * (x :num) DIV (2 :num) = x
+DROP_EMPTY_typed=∀(ls :α list) (n :num). DROP n ls = ([] :α list) ⇒ n ≥ LENGTH ls
+DROP_IMP_LESS_LENGTH_typed=∀(xs :α list) (n :num) (y :α) (ys :α list). DROP n xs = y::ys ⇒ n < LENGTH xs
+MULT_DIV_MULT_LEMMA_typed=∀(m :num) (l :num) (k :num). (0 :num) < m ∧ (0 :num) < l ⇒ m * k DIV (l * m) = k DIV l
+ADD_MOD_EQ_LEMMA_typed=(k :num) MOD (d :num) = (0 :num) ∧ (n :num) < d ⇒ (k + n) MOD d = n
+SUM_MOD_typed=(k :num) > (0 :num) ⇒ (SUM (ls :num list) :num) MOD k = (SUM (MAP (λ(n :num). n MOD k) ls) :num) MOD k
+LENGTH_enumerate_typed=∀(xs :α list) (k :num). LENGTH (enumerate k xs :(num # α) list) = LENGTH xs
+MEM_enumerate_IMP_typed=∀(ls :α list) (k :num). MEM ((i :num),(e :α)) (enumerate k ls :(num # α) list) ⇒ MEM e ls
+DROP_EQ_CONS_IMP_DROP_SUC_typed=∀(xs :α list) (n :num) (y :α) (ys :α list). DROP n xs = y::ys ⇒ DROP (SUC n) xs = ys
+LUPDATE_APPEND_typed=∀(xs :α list) (n :num) (ys :α list) (x :α). (xs ++ ys)❲n ↦ x❳ = if n < LENGTH xs then xs❲n ↦ x❳ ++ ys else xs ++ ys❲n − LENGTH xs ↦ x❳
+DROP_LUPDATE_typed=∀(n :num) (x :α) (m :num) (l :α list). n ≤ m ⇒ DROP n l❲m ↦ x❳ = (DROP n l)❲m − n ↦ x❳
+ALOOKUP_SNOC_typed=∀(ls :(α # β) list) (p :α # β) (k :α). ALOOKUP (SNOC p ls) k = case ALOOKUP ls k of (NONE :β option) => if k = FST p then SOME (SND p) else (NONE :β option) | SOME v => SOME v
+ALOOKUP_ZIP_FAIL_typed=∀(A :α list) (B :β list) (x :α). LENGTH A = LENGTH B ⇒ (ALOOKUP (ZIP (A,B)) x = (NONE :β option) ⇔ ¬MEM x A)
+map_fst_typed=∀(l :(α # β) list) (f :β -> γ). MAP (FST :α # γ -> α) (MAP (λ((x :α),(y :β)). (x,f y)) l) = MAP (FST :α # β -> α) l
+map_some_eq_typed=∀(l1 :α list) (l2 :α list). MAP (SOME :α -> α option) l1 = MAP (SOME :α -> α option) l2 ⇔ l1 = l2
+MAP_EQ_MAP_IMP_typed=∀(xs :α list) (ys :α list) (f :α -> β). (∀(x :α) (y :α). MEM x xs ∧ MEM y ys ∧ f x = f y ⇒ x = y) ⇒ MAP f xs = MAP f ys ⇒ xs = ys
+OPTION_MAP_INJ_typed=(∀(x :α) (y :α). (f :α -> β) x = f y ⇒ x = y) ⇒ ∀(o1 :α option) (o2 :α option). OPTION_MAP f o1 = OPTION_MAP f o2 ⇒ o1 = o2
+the_OPTION_MAP_typed=∀(f :α -> α) (d :α) (opt :α option). f d = d ⇒ the d (OPTION_MAP f opt) = f (the d opt)
+MEM_REPLICATE_IMP_typed=MEM (x :α) (REPLICATE (n :num) (y :α)) ⇒ x = y
+MAP_K_REPLICATE_typed=MAP (K (x :α) :β -> α) (ls :β list) = REPLICATE (LENGTH ls) x
+SUM_MAP_K_typed=∀(f :α -> num) (ls :α list) (c :num). (∀(x :α). f x = c) ⇒ (SUM (MAP f ls) :num) = LENGTH ls * c
+OPTION_MAP_I_typed=OPTION_MAP (I :α -> α) (x :α option) = x
+TL_DROP_SUC_typed=∀(x :num) (ls :α list). x < LENGTH ls ⇒ TL (DROP x ls) = DROP (SUC x) ls
+ALL_DISTINCT_FLAT_EVERY_typed=∀(ls :α list list). ALL_DISTINCT (FLAT ls) ⇒ EVERY (ALL_DISTINCT :α list -> bool) ls
+OPT_MMAP_SOME_typed=OPT_MMAP (SOME :α -> α option) (ls :α list) = SOME ls
+insert_atI_def_typed=∀(l1 :α list) (n :num) (l2 :α list). insert_atI l1 n l2 = TAKE n l2 ++ l1 ++ DROP (n + LENGTH l1) l2
+LENGTH_insert_atI_typed=(p :num) + LENGTH (l1 :α list) ≤ LENGTH (l2 :α list) ⇒ LENGTH (insert_atI l1 p l2) = LENGTH l2
+insert_atI_NIL_typed=∀(n :num) (l :α list). insert_atI ([] :α list) n l = l
+insert_atI_end_typed=insert_atI (l1 :α list) (LENGTH (l2 :α list)) l2 = l2 ++ l1
+OPT_MMAP_MAP_o_typed=∀(ls :α list). OPT_MMAP (f :γ -> β option) (MAP (g :α -> γ) ls) = OPT_MMAP (f ∘ g) ls
+list_inter_def_typed=∀(xs :α list) (ys :α list). list_inter xs ys = FILTER (λ(y :α). MEM y xs) ys
+list_set_eq_def_typed=∀(l1 :α list) (l2 :α list). list_set_eq l1 l2 ⇔ list_subset l1 l2 ∧ list_subset l2 l1
+any_el_def_typed=(∀(n :num) (d :α). any_el n ([] :α list) d = d) ∧ ∀(n :num) (x :α) (xs :α list) (d :α). any_el n (x::xs) d = if n = (0 :num) then x else any_el (n − (1 :num)) xs d
+option_fold_def_typed=(∀(f :β -> α -> α) (x :α). option_fold f x (NONE :β option) = x) ∧ ∀(f :β -> α -> α) (x :α) (y :β). option_fold f x (SOME y) = f y x
+steps_rel_def_typed=(∀(x :α) (R :α -> β -> α -> bool). steps_rel R x ([] :(β # α) list) ⇔ T) ∧ ∀(y :α) (x :α) (tr :(β # α) list) (j :β) (R :α -> β -> α -> bool). steps_rel R x ((j,y)::tr) ⇔ R x j y ∧ steps_rel R y tr
+DROP_IMP_EL_typed=∀(xs :α list) (n :num) (h :α) (t :α list). DROP n xs = h::t ⇒ xs❲n❳ = h
+HD_LUPDATE_typed=(0 :num) < LENGTH (l :α list) ⇒ HD l❲(p :num) ↦ (x :α)❳ = if p = (0 :num) then x else HD l
+zlookup_def_typed=∀(m :num sptree$num_map) (k :num). zlookup m k = case lookup k m of (NONE :num option) => (0 :num) | SOME k => k
+tlookup_def_typed=∀(m :num sptree$num_map) (k :num). tlookup m k = case lookup k m of (NONE :num option) => k | SOME v => v
+steps_def_typed=(∀(f :β -> α -> β) (x :β). steps f x ([] :α list) = ([] :(α # β) list)) ∧ ∀(f :β -> α -> β) (x :β) (j :α) (js :α list). steps f x (j::js) = (let (y :β) = f x j; (tr :(α # β) list) = steps f y js in (j,y)::tr)
+LAST_MAP_SND_steps_FOLDL_typed=∀(f :α -> β -> α) (x :α) (ls :β list). LAST (x::MAP (SND :β # α -> α) (steps f x ls)) = FOLDL f x ls
+LLOOKUP_EQ_EL_typed=∀(xs :α list) (n :num) (y :α). LLOOKUP xs n = SOME y ⇔ n < LENGTH xs ∧ y = xs❲n❳
+LLOOKUP_THM_typed=∀(xs :α list) (n :num). LLOOKUP xs n = if n < LENGTH xs then SOME xs❲n❳ else (NONE :α option)
+IN_option_rwt2_typed=(x :α) ∈ (option_CASE (opt :β option) (∅ :α -> bool) (s :β -> α -> bool) :α -> bool) ⇔ ∃(y :β). opt = SOME y ∧ x ∈ s y
+find_index_APPEND_same_typed=∀(l1 :α list) (n :α) (m :num) (i :num) (l2 :α list). find_index n l1 m = SOME i ⇒ find_index n (l1 ++ l2) m = SOME i
+between_def_typed=∀(x :num) (y :num) (z :num). between x y z ⇔ x ≤ z ∧ z < y
+IN_between_typed=(x :num) ∈ between (y :num) (z :num) ⇔ y ≤ x ∧ x < z
+ALOOKUP_EXISTS_IFF_typed=(∃(v :α). ALOOKUP (alist :(β # α) list) (k :β) = SOME v) ⇔ ∃(v :α). MEM (k,v) alist
+LAST_CONS_alt_typed=(P :α -> bool) (x :α) ⇒ ((ls :α list) ≠ ([] :α list) ⇒ P (LAST ls) ⇔ P (LAST (x::ls)))
+NOT_MEM_findi_IFF_typed=¬MEM (e :α) (l :α list) ⇔ findi e l = LENGTH l
+NOT_MEM_findi_typed=¬MEM (e :α) (l :α list) ⇒ findi e l = LENGTH l
+EL_enumerate_typed=∀(xs :α list) (n :num) (k :num). n < LENGTH xs ⇒ (enumerate k xs :(num # α) list)❲n❳ = (n + k,xs❲n❳)
+MEM_enumerate_typed=∀(xs :α list) (i :num) (e :α). i < LENGTH xs ⇒ (MEM (i,e) (enumerate (0 :num) xs :(num # α) list) ⇔ xs❲i❳ = e)
+MAP_enumerate_MAPi_typed=∀(f :num # α -> β) (xs :α list). MAP f (enumerate (0 :num) xs :(num # α) list) = MAPi (λ(n :num) (e :α). f (n,e)) xs
+MAPi_enumerate_MAP_typed=∀(f :num -> α -> β) (xs :α list). MAPi f xs = MAP (λ((i :num),(e :α)). f i e) (enumerate (0 :num) xs :(num # α) list)
+ALOOKUP_enumerate_typed=∀(ls :α list) (k :num) (x :num). ALOOKUP (enumerate k ls :(num # α) list) x = if k ≤ x ∧ x < LENGTH ls + k then SOME ls❲x − k❳ else (NONE :α option)
+EXP2_EVEN_typed=∀(n :num). EVEN ((2 :num) ** n) ⇔ n ≠ (0 :num)
+OPTION_CHOICE_EQUALS_OPTION_typed=∀(x :α option) (y :α option) (z :α). OPTION_CHOICE x y = SOME z ⇔ x = SOME z ∨ x = (NONE :α option) ∧ y = SOME z
+map_some_eq_append_typed=∀(l1 :α list) (l2 :α list) (l3 :α list). MAP (SOME :α -> α option) l1 ++ MAP (SOME :α -> α option) l2 = MAP (SOME :α -> α option) l3 ⇔ l1 ++ l2 = l3
+the_nil_eq_cons_typed=the ([] :α list) (x :α list option) = (y :α)::(z :α list) ⇔ x = SOME (y::z)
+find_index_INDEX_FIND_typed=∀(y :α) (xs :α list) (n :num). find_index y xs n = OPTION_MAP (FST :num # α -> num) (INDEX_FIND n ($= y) xs)
+find_index_NOT_MEM_typed=∀(ls :α list) (x :α) (n :num). ¬MEM x ls ⇔ find_index x ls n = (NONE :num option)
+find_index_MAP_inj_typed=∀(ls :α list) (x :α) (n :num) (f :α -> β). (∀(y :α). MEM y ls ⇒ f x = f y ⇒ x = y) ⇒ find_index (f x) (MAP f ls) n = find_index x ls n
+INDEX_FIND_CONS_EQ_SOME_typed=INDEX_FIND (n :num) (f :α -> bool) ((x :α)::(xs :α list)) = SOME (y :num # α) ⇔ f x ∧ y = (n,x) ∨ ¬f x ∧ INDEX_FIND (n + (1 :num)) f xs = SOME y
+THE_find_index_suff_typed=∀(P :num -> bool) (x :α) (ls :α list) (n :num). (∀(m :num). m < LENGTH ls ⇒ P (m + n)) ∧ MEM x ls ⇒ P (THE (find_index x ls n))
+find_index_APPEND2_typed=∀(l1 :α list) (n :α) (l2 :α list) (m :num) (i :num). find_index n (l1 ++ l2) m = SOME i ∧ m + LENGTH l1 ≤ i ⇒ find_index n l2 (m + LENGTH l1) = SOME i
+SmartAppend_thm_typed=∀(l1 :α app_list) (l2 :α app_list). SmartAppend l1 l2 = if l1 = (Nil :α app_list) then l2 else if l2 = (Nil :α app_list) then l1 else Append l1 l2
+SmartAppend_Nil_typed=SmartAppend (l :α app_list) (Nil :α app_list) = l ∧ SmartAppend (Nil :α app_list) l = l
+tlookup_id_typed=(x :num) ∉ (domain (names :num sptree$num_map) :num -> bool) ⇒ tlookup names x = x
+every_shim_typed=∀(l :(α # β) list) (P :β -> bool). EVERY (λ((x :α),(y :β)). P y) l ⇔ EVERY P (MAP (SND :α # β -> β) l)
+every_shim2_typed=∀(l :(α # β) list) (P :α -> bool) (Q :β -> bool). EVERY (λ((x :α),(y :β)). P x ∧ Q y) l ⇔ EVERY (λ(x :α # β). P (FST x)) l ∧ EVERY (λ(x :α # β). Q (SND x)) l
+MEM_ZIP2_typed=∀(l1 :α list) (l2 :β list) (x :α # β). MEM x (ZIP (l1,l2)) ⇒ ∃(n :num). n < LENGTH l1 ∧ n < LENGTH l2 ∧ x = (l1❲n❳,l2❲n❳)
+insert_atI_CONS_typed=∀(n :num) (l :α list) (h :α) (t :α list). n + LENGTH t < LENGTH l ⇒ insert_atI (h::t) n l = (insert_atI t (n + (1 :num)) l)❲n ↦ h❳
+insert_atI_app_typed=∀(n :num) (l :α list) (c1 :α list) (c2 :α list). n + LENGTH c1 + LENGTH c2 ≤ LENGTH l ⇒ insert_atI (c1 ++ c2) n l = insert_atI c1 n (insert_atI c2 (n + LENGTH c1) l)
+LESS_EQ_LENGTH_typed=∀(xs :α list) (k :num). k ≤ LENGTH xs ⇒ ∃(ys1 :α list) (ys2 :α list). xs = ys1 ++ ys2 ∧ LENGTH ys1 = k
+LESS_LENGTH_typed=∀(xs :α list) (k :num). k < LENGTH xs ⇒ ∃(ys1 :α list) (y :α) (ys2 :α list). xs = ys1 ++ y::ys2 ∧ LENGTH ys1 = k
+LIST_REL_MEM_typed=∀(xs :α list) (ys :β list) (P :α -> β -> bool). LIST_REL P xs ys ⇔ LIST_REL (λ(x :α) (y :β). MEM x xs ∧ MEM y ys ⇒ P x y) xs ys
+LUPDATE_commutes_typed=∀(m :num) (n :num) (e1 :α) (e2 :α) (l :α list). m ≠ n ⇒ l❲m ↦ e1; n ↦ e2❳ = l❲n ↦ e2; m ↦ e1❳
+revtakerev_typed=∀(n :num) (l :α list). n ≤ LENGTH l ⇒ REVERSE (TAKE n (REVERSE l)) = DROP (LENGTH l − n) l
+any_el_ALT_typed=∀(l :α list) (n :num) (d :α). any_el n l d = if n < LENGTH l then l❲n❳ else d
+SUM_MAP_BOUND_typed=(∀(x :α). (f :α -> num) x ≤ (c :num)) ⇒ (SUM (MAP f (ls :α list)) :num) ≤ LENGTH ls * c
+anub_eq_nil_typed=anub (x :(α # β) list) (y :α list) = ([] :(α # β) list) ⇔ EVERY (flip (λ(x :α) (l :α list). MEM x l) y) (MAP (FST :α # β -> α) x)
+anub_notin_acc_typed=∀(ls :(α # β) list) (acc :α list). MEM (x :α) acc ⇒ ¬MEM x (MAP (FST :α # β -> α) (anub ls acc))
+find_index_APPEND1_typed=∀(l1 :α list) (n :α) (l2 :α list) (m :num) (i :num). find_index n (l1 ++ l2) m = SOME i ∧ i < m + LENGTH l1 ⇒ find_index n l1 m = SOME i
+MAP_REVERSE_STEP_typed=∀(x :α list) (f :α -> β). x ≠ ([] :α list) ⇒ MAP f (REVERSE x) = f (LAST x)::MAP f (REVERSE (FRONT x))
+MAPi_ID_typed=MAPi (λ(x :num) (y :α). y) = (I :α list -> α list)
+ALL_DISTINCT_APPEND_APPEND_IMP_typed=ALL_DISTINCT ((xs :α list) ++ (ys :α list) ++ (zs :α list)) ⇒ ALL_DISTINCT (xs ++ ys) ∧ ALL_DISTINCT (xs ++ zs) ∧ ALL_DISTINCT (ys ++ zs)
+FOLDR_CONS_triple_typed=∀(f :α -> β -> γ -> δ) (ls :(α # β # γ) list) (a :δ list). FOLDR (λ((x :α),(y :β),(z :γ)) (w :δ list). f x y z::w) a ls = MAP (λ((x :α),(y :β),(z :γ)). f x y z) ls ++ a
+MAP_ZIP_SND_triple_typed=LENGTH (l1 :α list) = LENGTH (l2 :(β # γ) list) ⇒ MAP (λ((x :α),(y :β),(z :γ)). (f :β -> γ -> δ) y z) (ZIP (l1,l2)) = MAP (UNCURRY f) l2
+is_subseq_def_typed=(∀(ls :α list). is_subseq ls ([] :α list) ⇔ T) ∧ (∀(xs :α list) (x :α). is_subseq ([] :α list) (x::xs) ⇔ F) ∧ ∀(ys :α list) (y :α) (xs :α list) (x :α). is_subseq (y::ys) (x::xs) ⇔ x = y ∧ is_subseq ys xs ∨ is_subseq ys (x::xs)
+is_subseq_refl_typed=∀(ls :α list). is_subseq ls ls
+is_subseq_nil_typed=is_subseq ([] :α list) (ls :α list) ⇔ ls = ([] :α list)
+is_subseq_cons_typed=∀(l1 :α list) (l2 :α list) (x :α). is_subseq l1 l2 ⇒ is_subseq (x::l1) l2
+is_subseq_snoc_typed=∀(l1 :α list) (l2 :α list) (x :α). is_subseq l1 l2 ⇒ is_subseq (SNOC x l1) l2
+is_subseq_append1_typed=∀(l3 :α list) (l1 :α list) (l2 :α list). is_subseq l1 l2 ⇒ is_subseq (l3 ++ l1) l2
+is_subseq_append2_typed=∀(l4 :α list) (l1 :α list) (l2 :α list). is_subseq l1 l2 ⇒ is_subseq (l1 ++ l4) l2
+is_subseq_IS_SUBLIST_typed=is_subseq (l1 :α list) (l2 :α list) ∧ IS_SUBLIST (l3 :α list) l1 ⇒ is_subseq l3 l2
+is_subseq_MEM_typed=∀(l1 :α list) (l2 :α list) (x :α). is_subseq l1 l2 ∧ MEM x l2 ⇒ MEM x l1
+IS_PREFIX_is_subseq_typed=∀(l1 :α list) (l2 :α list). l2 ≼ l1 ⇒ is_subseq l1 l2
+IS_SUBLIST_is_subseq_typed=∀(l1 :α list) (l2 :α list). IS_SUBLIST l1 l2 ⇒ is_subseq l1 l2
+is_subseq_ALL_DISTINCT_typed=∀(l1 :α list) (l2 :α list). ALL_DISTINCT l1 ∧ is_subseq l1 l2 ⇒ ALL_DISTINCT l2
+is_subseq_append_suff_typed=∀(l1 :α list) (l3 :α list) (l2 :α list) (l4 :α list). is_subseq l1 l3 ∧ is_subseq l2 l4 ⇒ is_subseq (l1 ++ l2) (l3 ++ l4)
+is_subseq_FLAT_suff_typed=∀(ls1 :α list list) (ls2 :α list list). LIST_REL (is_subseq :α list -> α list -> bool) ls1 ls2 ⇒ is_subseq (FLAT ls1) (FLAT ls2)
+plus_0_I_typed=$+ (0 :num) = (I :num -> num)
+MOD_2EXP_0_EVEN_typed=∀(x :num) (y :num). (0 :num) < x ∧ MOD_2EXP x y = (0 :num) ⇒ EVEN y
+OPTREL_trans_typed=∀(R :α -> α -> bool) (x :α option) (y :α option) (z :α option). (∀(a :α) (b :α) (c :α). x = SOME a ∧ y = SOME b ∧ z = SOME c ∧ R a b ∧ R b c ⇒ R a c) ∧ OPTREL R x y ∧ OPTREL R y z ⇒ OPTREL R x z
+append_SmartAppend_typed=append (SmartAppend (l1 :α app_list) (l2 :α app_list)) = append l1 ++ append l2
+EVERY2_RC_same_typed=LIST_REL (RC (R :α -> α -> bool)) (l :α list) l
+FOLDL_OPTION_CHOICE_EQ_SOME_IMP_MEM_typed=FOLDL (OPTION_CHOICE :α option -> α option -> α option) (x :α option) (ls :α option list) = SOME (y :α) ⇒ MEM (SOME y) (x::ls)
+LENGTH_EQ_FILTER_FILTER_typed=∀(xs :α list). EVERY (λ(x :α). ((P :α -> bool) x ∨ (Q :α -> bool) x) ∧ ¬(P x ∧ Q x)) xs ⇒ LENGTH xs = LENGTH (FILTER P xs) + LENGTH (FILTER Q xs)
+FOLDL_invariant_typed=∀(P :α -> bool) (f :α -> β -> α) (ls :β list) (a :α). P a ∧ (∀(x :α) (y :β). MEM y ls ∧ P x ⇒ P (f x y)) ⇒ P (FOLDL f a ls)
+update_resize_def_typed=∀(ls :α list) (default :α) (v :α) (n :num). update_resize ls default v n = if n < LENGTH ls then ls❲n ↦ v❳ else (ls ++ REPLICATE (n * (2 :num) + (1 :num) − LENGTH ls) default)❲n ↦ v❳
+FOLDL_invariant_rest_typed=∀(P :α list -> β -> bool) (f :β -> α -> β) (ls :α list) (a :β). P ls a ∧ (∀(x :β) (n :num). n < LENGTH ls ∧ P (DROP n ls) x ⇒ P (DROP (SUC n) ls) (f x ls❲n❳)) ⇒ P ([] :α list) (FOLDL f a ls)
+n2w_lt_typed=(0w :α word) < (n2w (a :num) :α word) ∧ (0w :α word) < (n2w (b :num) :α word) ∧ a < dimword (:α) ∧ b < dimword (:α) ⇒ ((n2w a :α word) < (n2w b :α word) ⇔ a < b)
+n2w_le_typed=(0w :α word) < (n2w (a :num) :α word) ∧ (0w :α word) < (n2w (b :num) :α word) ∧ a < dimword (:α) ∧ b < dimword (:α) ⇒ ((n2w a :α word) ≤ (n2w b :α word) ⇔ a ≤ b)
+MAX_LIST_APPEND_typed=MAX_LIST ((xs :num list) ++ (ys :num list)) = MAX (MAX_LIST xs) (MAX_LIST ys)
+MAX_LIST_SNOC_typed=MAX_LIST (SNOC (x :num) (xs :num list)) = MAX (MAX_LIST xs) x
+MAX_LIST_max_typed=∀(ls :num list). EVERY (λ(x :num). x ≤ MAX_LIST ls) ls
+irreflexive_inv_image_typed=∀(R :α -> α -> bool) (f :β -> α). (irreflexive R :bool) ⇒ (irreflexive (inv_image R f) :bool)
+EVERY_lookup_vars_typed=∀(vs :num list) (env :α list) (env' :α list). EVERY (P :α -> bool) env ∧ lookup_vars vs env = SOME env' ⇒ EVERY P env'
+ALOOKUP_find_index_NONE_typed=ALOOKUP (env :(β # α) list) (k :β) = (NONE :α option) ⇒ find_index k (MAP (FST :β # α -> β) env) (m :num) = (NONE :num option)
+LASTN_LENGTH_LESS_EQ_typed=∀(xs :α list) (n :num). LENGTH xs ≤ n ⇒ LASTN n xs = xs
+LENGTH_LASTN_LESS_typed=∀(xs :α list) (n :num). LENGTH (LASTN n xs) ≤ LENGTH xs
+GENLIST_typed=:(num -> α) -> num -> α list
+GENLIST_eq_MAP_typed=GENLIST (f :num -> α) (n :num) = MAP (g :β -> α) (ls :β list) ⇔ LENGTH ls = n ∧ ∀(m :num). m < n ⇒ f m = g ls❲m❳
+ZIP_GENLIST1_typed=∀(l :α list) (f :num -> β) (n :num). LENGTH l = n ⇒ ZIP (GENLIST f n,l) = GENLIST (λ(x :num). (f x,l❲x❳)) n
+LIST_REL_GENLIST_I_typed=∀(xs :α list). LIST_REL (P :num -> α -> bool) (GENLIST (I :num -> num) (LENGTH xs)) xs ⇔ ∀(n :num). n < LENGTH xs ⇒ P n xs❲n❳
+ALOOKUP_GENLIST_typed=∀(f :num -> α) (n :num) (k :num). ALOOKUP (GENLIST (λ(i :num). (i,f i)) n) k = if k < n then SOME (f k) else (NONE :α option)
+LIST_REL_lookup_fromList_typed=LIST_REL (λ(v :num) (x :α). lookup v (fromList (args :α list) :α sptree$num_map) = SOME x) (GENLIST (I :num -> num) (LENGTH args)) args
+LIST_REL_lookup_fromList_MAP_typed=LIST_REL (λ(v :num) (x :α). ∃(z :β). lookup v (fromList (args :β list) :β sptree$num_map) = SOME z ∧ x = (f :β -> α) z) (GENLIST (I :num -> num) (LENGTH args)) (MAP f args)
+LIST_REL_FRONT_LAST_typed=(l1 :α list) ≠ ([] :α list) ∧ (l2 :β list) ≠ ([] :β list) ⇒ (LIST_REL (A :α -> β -> bool) l1 l2 ⇔ LIST_REL A (FRONT l1) (FRONT l2) ∧ A (LAST l1) (LAST l2))
+SORTED_inv_image_LESS_PLUS_typed=SORTED (inv_image $< ($+ (k :num))) = SORTED $<
+SORTED_GENLIST_TIMES_typed=(0 :num) < (k :num) ⇒ ∀(n :num). SORTED $< (GENLIST ($* k) n)
+LASTN_LEMMA_typed=LASTN (LENGTH (xs :α list) + (1 :num) + (1 :num)) ((x :α)::(y :α)::xs) = x::y::xs ∧ LASTN (LENGTH xs + (1 :num)) (x::xs) = x::xs
+LASTN_TL_typed=(n :num) < LENGTH (xs :α list) ⇒ LASTN (n + (1 :num)) ((x :α)::xs) = LASTN (n + (1 :num)) xs
+LASTN_ALT_typed=LASTN (n :num) ([] :α list) = ([] :α list) ∧ LASTN n ((x :β)::(xs :β list)) = if LENGTH (x::xs) ≤ n then x::xs else LASTN n xs
+trichotomous_inv_image_typed=∀(R :α -> α -> bool) (f :β -> α). trichotomous R ∧ INJ f 𝕌(:β) 𝕌(:α) ⇒ trichotomous (inv_image R f)
+option_eq_some_typed=((OPTION_IGNORE_BIND (m1 :α option) (m2 :β option) = (NONE :β option) ⇔ m1 = (NONE :α option) ∨ m2 = (NONE :β option)) ∧ (OPTION_IGNORE_BIND m1 m2 = SOME (y :β) ⇔ ∃(x :α). m1 = SOME x ∧ m2 = SOME y)) ∧ ((OPTION_BIND (p :α option) (f :α -> β option) = (NONE :β option) ⇔ p = (NONE :α option) ∨ ∃(x :α). p = SOME x ∧ f x = (NONE :β option)) ∧ (OPTION_BIND p f = SOME y ⇔ ∃(x :α). p = SOME x ∧ f x = SOME y)) ∧ ∀(x :α option) (y :α option) (z :α). OPTION_CHOICE x y = SOME z ⇔ x = SOME z ∨ x = (NONE :α option) ∧ y = SOME z
+IN_EVEN_typed=(x :num) ∈ EVEN ⇔ EVEN x
+SUM_COUNT_LIST_typed=(SUM (COUNT_LIST (n :num)) :num) = n * (n − (1 :num)) DIV (2 :num)
+SPLITP_CONS_IMP_typed=∀(ls :α list) (l' :α list) (r :α list). SPLITP (P :α -> bool) ls = (l',r) ∧ r ≠ ([] :α list) ⇒ EXISTS P ls
+SND_SPLITP_DROP_typed=∀(P :α -> bool) (n :num) (l :α list). EVERY ($¬ ∘ P) (TAKE n l) ⇒ SND (SPLITP P (DROP n l)) = SND (SPLITP P l)
+TOKENS_LENGTH_END_typed=∀(l :string) (a :char). LENGTH (TOKENS (λ(x :char). x = a) (STRCAT l (STRING a ("" :string)))) = LENGTH (TOKENS (λ(x :char). x = a) l)
+TOKENS_LENGTH_START_typed=∀(l :string) (a :char). LENGTH (TOKENS (λ(x :char). x = a) (STRING a l)) = LENGTH (TOKENS (λ(x :char). x = a) l)
+FIELDS_NEQ_NIL_typed=FIELDS (P :char -> bool) (ls :string) ≠ ([] :string list)
+LAST_FLAT_typed=∀(ls :α list list). ¬NULL (FLAT ls) ⇒ LAST (FLAT ls) = LAST (LAST (FILTER ($¬ ∘ (NULL :α list -> bool)) ls))
+MEM_list_size_typed=MEM (x :α) (ls :α list) ⇒ (f :α -> num) x ≤ list_size f ls
+UPDATE_LIST_NOT_MEM_typed=∀(ls :(α # β) list) (f :α -> β) (x :α). ¬MEM x (MAP (FST :α # β -> α) ls) ⇒ (f =++ ls) x = f x
+OLEAST_SOME_IMP_typed=$OLEAST (P :num -> bool) = SOME (i :num) ⇒ P i ∧ ∀(n :num). n < i ⇒ ¬P n
+DISJOINT_set_simp_typed=DISJOINT (set ([] :α list)) (s :α -> bool) ∧ (DISJOINT (set ((x :α)::(xs :α list))) s ⇔ x ∉ s ∧ DISJOINT (set xs) s)
+LOG2_TIMES2_typed=(0 :num) < (n :num) ⇒ LOG2 ((2 :num) * n) = SUC (LOG2 n)
+MAP_CHR_w2n_11_typed=∀(ws1 :word8 list) (ws2 :word8 list). MAP (CHR ∘ (w2n :word8 -> num)) ws1 = MAP (CHR ∘ (w2n :word8 -> num)) ws2 ⇔ ws1 = ws2
+I_PERMUTES_typed=(I :α -> α) PERMUTES (s :α -> bool)
+MAP_ZIP_UPDATE_LIST_ALL_DISTINCT_same_typed=∀(ks :α list) (vs :β list) (f :α -> β). LENGTH ks = LENGTH vs ∧ ALL_DISTINCT ks ⇒ MAP (f =++ ZIP (ks,vs)) ks = vs
+MAP_FST_enumerate_typed=MAP (FST :num # α -> num) (enumerate (k :num) (ls :α list) :(num # α) list) = GENLIST ($+ k) (LENGTH ls)
+SUM_SET_IN_LT_typed=∀(s :num -> bool) (x :num) (y :num). FINITE s ∧ x ∈ s ∧ y < x ⇒ y < SUM_SET s
+GSPEC_o_typed=GSPEC (f :γ -> β # bool) ∘ (g :α -> β) = {x | ∃(y :γ). (g x,T) = f y}
+CARD_IMAGE_EQ_BIJ_typed=∀(s :α -> bool). FINITE s ⇒ CARD (IMAGE (f :α -> β) s) = CARD s ⇒ BIJ f s (IMAGE f s)
+CARD_IMAGE_ID_BIJ_typed=∀(s :α -> bool). FINITE s ⇒ (∀(x :α). x ∈ s ⇒ (f :α -> α) x ∈ s) ∧ CARD (IMAGE f s) = CARD s ⇒ f PERMUTES s
+BIJ_UPDATE_typed=∀(f :α -> β) (s :α -> bool) (t :β -> bool) (x :α) (y :β). BIJ f s t ∧ x ∉ s ∧ y ∉ t ⇒ BIJ f⦇x ↦ y⦈ (x INSERT s) (y INSERT t)
+INJ_UPDATE_typed=INJ (f :α -> β) (s :α -> bool) (t :β -> bool) ∧ (x :α) ∉ s ∧ (y :β) ∉ t ⇒ INJ f⦇x ↦ y⦈ (x INSERT s) (y INSERT t)
+byte_align_extract_typed=byte_align (x :word32) = (((((31 :num) >< (2 :num)) x :word30) @@ (0w :word2)) :word32)
+toPath_fromList_typed=toPath ((x :α),(fromList ([] :(β # α) list) :(β # α) llist)) = (stopped_at x :(α, β) path) ∧ toPath (x,(fromList (((y :γ),(z :α))::(t :(γ # α) list)) :(γ # α) llist)) = pcons x y (toPath (z,(fromList t :(γ # α) llist)))
+lookup_zero_typed=∀(n :num) (t :α sptree$num_map) (x :α). lookup n t = SOME x ⇒ size t ≠ (0 :num)
+lookup_copy_shape_typed=∀(t1 :α sptree$num_map) (t2 :β sptree$num_map) (n :num). lookup n (copy_shape t1 t2) = lookup n t1
+range_def_typed=∀(s :α sptree$num_map). (range s :α -> bool) = {v | ∃(n :num). lookup n s = SOME v}
+range_delete_typed=(range (delete (h :num) (v :α sptree$num_map)) :α -> bool) ⊆ (range v :α -> bool)
+range_insert_typed=(n :num) ∉ (domain (fml :α sptree$num_map) :num -> bool) ⇒ (range (insert n (l :α) fml) :α -> bool) = l INSERT (range fml :α -> bool)
+range_insert_SUBSET_typed=(range (insert (n :num) (l :α) (fml :α sptree$num_map)) :α -> bool) ⊆ l INSERT (range fml :α -> bool)
+splitlines_def_typed=∀(ls :string). splitlines ls = (let (lines :string list) = FIELDS ($= #"\n") ls in if NULL (LAST lines) then FRONT lines else lines)
+least_from_def_typed=∀(P :num -> bool) (n :num). least_from P n = if ∃(x :num). P x ∧ n ≤ x then LEAST(x :num). P x ∧ n ≤ x else $LEAST P
+LEAST_thm_typed=$LEAST (P :num -> bool) = least_from P (0 :num)
+all_words_def_typed=(∀(base :α word). all_words base (0 :num) = (∅ :α word -> bool)) ∧ ∀(base :α word) (n :num). all_words base (SUC n) = base INSERT all_words (base + (1w :α word)) n
+eq_shape_def_typed=(eq_shape (LN :α sptree$num_map) (LN :β sptree$num_map) ⇔ T) ∧ (∀(v1 :β) (v0 :α). eq_shape ⦕ 0 ↦ v0 ⦖ ⦕ 0 ↦ v1 ⦖ ⇔ T) ∧ (∀(u2 :β sptree$num_map) (u1 :β sptree$num_map) (t2 :α sptree$num_map) (t1 :α sptree$num_map). eq_shape (BN t1 t2) (BN u1 u2) ⇔ eq_shape t1 u1 ∧ eq_shape t2 u2) ∧ (∀(v3 :β) (v2 :α) (u2 :β sptree$num_map) (u1 :β sptree$num_map) (t2 :α sptree$num_map) (t1 :α sptree$num_map). eq_shape (BS t1 v2 t2) (BS u1 v3 u2) ⇔ eq_shape t1 u1 ∧ eq_shape t2 u2) ∧ (∀(v19 :β). eq_shape (LN :α sptree$num_map) ⦕ 0 ↦ v19 ⦖ ⇔ F) ∧ (∀(v21 :β sptree$num_map) (v20 :β sptree$num_map). eq_shape (LN :α sptree$num_map) (BN v20 v21) ⇔ F) ∧ (∀(v24 :β sptree$num_map) (v23 :β) (v22 :β sptree$num_map). eq_shape (LN :α sptree$num_map) (BS v22 v23 v24) ⇔ F) ∧ (∀(v7 :α). eq_shape ⦕ 0 ↦ v7 ⦖ (LN :β sptree$num_map) ⇔ F) ∧ (∀(v7 :α) (v33 :β sptree$num_map) (v32 :β sptree$num_map). eq_shape ⦕ 0 ↦ v7 ⦖ (BN v32 v33) ⇔ F) ∧ (∀(v7 :α) (v36 :β sptree$num_map) (v35 :β) (v34 :β sptree$num_map). eq_shape ⦕ 0 ↦ v7 ⦖ (BS v34 v35 v36) ⇔ F) ∧ (∀(v9 :α sptree$num_map) (v8 :α sptree$num_map). eq_shape (BN v8 v9) (LN :β sptree$num_map) ⇔ F) ∧ (∀(v9 :α sptree$num_map) (v8 :α sptree$num_map) (v43 :β). eq_shape (BN v8 v9) ⦕ 0 ↦ v43 ⦖ ⇔ F) ∧ (∀(v9 :α sptree$num_map) (v8 :α sptree$num_map) (v48 :β sptree$num_map) (v47 :β) (v46 :β sptree$num_map). eq_shape (BN v8 v9) (BS v46 v47 v48) ⇔ F) ∧ (∀(v12 :α sptree$num_map) (v11 :α) (v10 :α sptree$num_map). eq_shape (BS v10 v11 v12) (LN :β sptree$num_map) ⇔ F) ∧ (∀(v55 :β) (v12 :α sptree$num_map) (v11 :α) (v10 :α sptree$num_map). eq_shape (BS v10 v11 v12) ⦕ 0 ↦ v55 ⦖ ⇔ F) ∧ ∀(v57 :β sptree$num_map) (v56 :β sptree$num_map) (v12 :α sptree$num_map) (v11 :α) (v10 :α sptree$num_map). eq_shape (BS v10 v11 v12) (BN v56 v57) ⇔ F
+copy_shape_def_typed=isEmpty (copy_shape (LN :α sptree$num_map) (LN :β sptree$num_map)) ∧ (∀(y :β). isEmpty (copy_shape (LN :α sptree$num_map) ⦕ 0 ↦ y ⦖)) ∧ (∀(t2 :β sptree$num_map) (t1 :β sptree$num_map). copy_shape (LN :α sptree$num_map) (BN t1 t2) = BN (copy_shape (LN :α sptree$num_map) t1) (copy_shape (LN :α sptree$num_map) t2)) ∧ (∀(y :β) (t2 :β sptree$num_map) (t1 :β sptree$num_map). isEmpty (copy_shape (LN :α sptree$num_map) (BS t1 y t2))) ∧ (∀(x :α). copy_shape ⦕ 0 ↦ x ⦖ (LN :β sptree$num_map) = ⦕ 0 ↦ x ⦖) ∧ (∀(y :β) (x :α). copy_shape ⦕ 0 ↦ x ⦖ ⦕ 0 ↦ y ⦖ = ⦕ 0 ↦ x ⦖) ∧ (∀(x :α) (t2 :β sptree$num_map) (t1 :β sptree$num_map). copy_shape ⦕ 0 ↦ x ⦖ (BN t1 t2) = ⦕ 0 ↦ x ⦖) ∧ (∀(y :β) (x :α) (t2 :β sptree$num_map) (t1 :β sptree$num_map). copy_shape ⦕ 0 ↦ x ⦖ (BS t1 y t2) = BS (copy_shape (LN :α sptree$num_map) t1) x (copy_shape (LN :α sptree$num_map) t2)) ∧ (∀(u2 :α sptree$num_map) (u1 :α sptree$num_map). copy_shape (BN u1 u2) (LN :β sptree$num_map) = if (domain (BN u1 u2) :num -> bool) = (∅ :num -> bool) then (LN :α sptree$num_map) else BN u1 u2) ∧ (∀(y :β) (u2 :α sptree$num_map) (u1 :α sptree$num_map). copy_shape (BN u1 u2) ⦕ 0 ↦ y ⦖ = BN u1 u2) ∧ (∀(u2 :α sptree$num_map) (u1 :α sptree$num_map) (t2 :β sptree$num_map) (t1 :β sptree$num_map). copy_shape (BN u1 u2) (BN t1 t2) = BN (copy_shape u1 t1) (copy_shape u2 t2)) ∧ (∀(y :β) (u2 :α sptree$num_map) (u1 :α sptree$num_map) (t2 :β sptree$num_map) (t1 :β sptree$num_map). copy_shape (BN u1 u2) (BS t1 y t2) = BN u1 u2) ∧ (∀(x :α) (u2 :α sptree$num_map) (u1 :α sptree$num_map). copy_shape (BS u1 x u2) (LN :β sptree$num_map) = BS u1 x u2) ∧ (∀(y :β) (x :α) (u2 :α sptree$num_map) (u1 :α sptree$num_map). copy_shape (BS u1 x u2) ⦕ 0 ↦ y ⦖ = if (domain (BN u1 u2) :num -> bool) = (∅ :num -> bool) then ⦕ 0 ↦ x ⦖ else BS u1 x u2) ∧ (∀(x :α) (u2 :α sptree$num_map) (u1 :α sptree$num_map) (t2 :β sptree$num_map) (t1 :β sptree$num_map). copy_shape (BS u1 x u2) (BN t1 t2) = BS u1 x u2) ∧ ∀(y :β) (x :α) (u2 :α sptree$num_map) (u1 :α sptree$num_map) (t2 :β sptree$num_map) (t1 :β sptree$num_map). copy_shape (BS u1 x u2) (BS t1 y t2) = BS (copy_shape u1 t1) x (copy_shape u2 t2)
+MEM_ALOOKUP_typed=∀(xs :(α # β) list) (x :α) (v :β). ALL_DISTINCT (MAP (FST :α # β -> α) xs) ⇒ (MEM (x,v) xs ⇔ ALOOKUP xs x = SOME v)
+findi_APPEND_typed=∀(l1 :α list) (l2 :α list) (x :α). findi x (l1 ++ l2) = (let (n0 :num) = findi x l1 in if n0 = LENGTH l1 then n0 + findi x l2 else n0)
+LIST_REL_IMP_LAST_typed=∀(P :α -> β -> bool) (xs :α list) (ys :β list). LIST_REL P xs ys ∧ (xs ≠ ([] :α list) ∨ ys ≠ ([] :β list)) ⇒ P (LAST xs) (LAST ys)
+MULT_LE_EXP_typed=∀(a :num) (b :num). a ≠ (1 :num) ⇒ a * b ≤ a ** b
+IS_PREFIX_THM_typed=∀(l2 :α list) (l1 :α list). l2 ≼ l1 ⇔ LENGTH l2 ≤ LENGTH l1 ∧ ∀(n :num). n < LENGTH l2 ⇒ l2❲n❳ = l1❲n❳
+FILTER_EL_EQ_typed=∀(l1 :α list) (l2 :α list). LENGTH l1 = LENGTH l2 ∧ (∀(n :num). n < LENGTH l1 ∧ ((P :α -> bool) l1❲n❳ ∨ P l2❲n❳) ⇒ l1❲n❳ = l2❲n❳) ⇒ FILTER P l1 = FILTER P l2
+list_subset_LENGTH_typed=∀(l1 :α list) (l2 :α list). ALL_DISTINCT l1 ∧ list_subset l1 l2 ⇒ LENGTH l1 ≤ LENGTH l2
+RTC_invariant_typed=∀(R :α -> α -> bool) (P :α -> bool). (∀(x :α) (y :α). P x ∧ R x y ⇒ P y) ⇒ ∀(x :α) (y :α). R꙳ x y ⇒ P x ⇒ (R ∩ᵣ (λ(x :α) (y :α). P x ∧ P y))꙳ x y
+RTC_RSUBSET_typed=∀(R1 :α -> α -> bool) (R2 :α -> α -> bool). R1 ⊆ᵣ R2 ⇒ R1꙳ ⊆ᵣ R2꙳
+MOD_MINUS_typed=(0 :num) < (p :num) ∧ (0 :num) < (k :num) ⇒ (p * k − (n :num) MOD (p * k)) MOD k = (k − n MOD k) MOD k
+MEM_anub_ALOOKUP_typed=MEM ((k :α),(v :β)) (anub (ls :(α # β) list) ([] :α list)) ⇒ ALOOKUP ls k = SOME v
+ALOOKUP_anub_typed=ALOOKUP (anub (ls :(β # α) list) (acc :β list)) (k :β) = if MEM k acc then ALOOKUP (anub ls acc) k else ALOOKUP ls k
+anub_tl_anub_typed=∀(x :(α # β) list) (y :α list) (h :α # β) (t :(α # β) list). anub x y = h::t ⇒ ∃(a :(α # β) list) (b :α list). t = anub a b ∧ set a ⊆ set x ∧ set b ⊆ set (FST h::y)
+EVERY_anub_suff_typed=∀(ls :(α # β) list) (acc :α list). (∀(x :α). ¬MEM x acc ⇒ case ALOOKUP ls x of (NONE :β option) => T | SOME v => (P :α # β -> bool) (x,v)) ⇒ EVERY P (anub ls acc)
+SPLIT_LIST_typed=∀(xs :α list). ∃(ys :α list) (zs :α list). xs = ys ++ zs ∧ LENGTH xs DIV (2 :num) = LENGTH ys
+every_zip_split_typed=∀(l1 :α list) (l2 :β list) (P :α -> bool) (Q :β -> bool). LENGTH l1 = LENGTH l2 ⇒ (EVERY (λ((x :α),(y :β)). P x ∧ Q y) (ZIP (l1,l2)) ⇔ EVERY P l1 ∧ EVERY Q l2)
+SPLITP_TAKE_DROP_typed=∀(P :α -> bool) (i :num) (l :α list). EVERY ($¬ ∘ P) (TAKE i l) ⇒ P l❲i❳ ⇒ SPLITP P l = (TAKE i l,DROP i l)
+FST_SPLITP_DROP_typed=∀(P :α -> bool) (n :num) (l :α list). EVERY ($¬ ∘ P) (TAKE n l) ⇒ FST (SPLITP P l) = TAKE n l ++ FST (SPLITP P (DROP n l))
+find_index_ALL_DISTINCT_REVERSE_typed=∀(ls :α list) (x :α) (m :num) (j :num). ALL_DISTINCT ls ∧ find_index x ls m = SOME j ⇒ find_index x (REVERSE ls) m = SOME (m + LENGTH ls + m − j − (1 :num))
+ALOOKUP_find_index_SOME_typed=ALOOKUP (env :(β # α) list) (k :β) = SOME (v :α) ⇒ ∃(i :num). find_index k (MAP (FST :β # α -> β) env) (0 :num) = SOME i ∧ i < LENGTH env ∧ v = SND env❲i❳
+LUPDATE_insert_commute_typed=∀(ws :α list) (pos1 :num) (pos2 :num) (a :α list) (w :α). pos2 < pos1 ∧ pos1 + LENGTH ws ≤ LENGTH a ⇒ insert_atI ws pos1 a❲pos2 ↦ w❳ = (insert_atI ws pos1 a)❲pos2 ↦ w❳
+INJ_MAP_EQ_2_typed=∀(f :α -> β) (l1 :α list) (l2 :α list). (∀(x :α) (y :α). MEM x l1 ∧ MEM y l2 ∧ f x = f y ⇒ x = y) ∧ MAP f l1 = MAP f l2 ⇒ l1 = l2
+FOLDR_CONS_5tup_typed=∀(f :α -> β -> γ -> δ -> ε -> ζ) (ls :(α # β # γ # δ # ε) list) (a :ζ list). FOLDR (λ((c :α),(d :β),(x :γ),(y :δ),(z :ε)) (w :ζ list). f c d x y z::w) a ls = MAP (λ((c :α),(d :β),(x :γ),(y :δ),(z :ε)). f c d x y z) ls ++ a
+eq_shape_map_typed=∀(t1 :α sptree$num_map) (t2 :β sptree$num_map) (f :α -> γ). eq_shape (map f t1) t2 ⇔ eq_shape t1 t2
+eq_shape_IMP_domain_typed=∀(t1 :α sptree$num_map) (t2 :β sptree$num_map). eq_shape t1 t2 ⇒ (domain t1 :num -> bool) = (domain t2 :num -> bool)
+subspt_delete_typed=∀(a :α sptree$num_map) (b :α sptree$num_map) (x :num). subspt a b ⇒ subspt (delete x a) b
+range_insert_2_typed=(C :α) ∈ (range (insert (n :num) (l :α) (fml :α sptree$num_map)) :α -> bool) ⇒ C ∈ (range fml :α -> bool) ∨ C = l
+wf_nat_set_from_list_typed=∀(ls :num list) (ns :α sptree$num_map). wf ns ⇒ wf (FOLDL (λ(s :α sptree$num_map) (n :num). insert n (z :α) s) ns ls)
+domain_nat_set_from_list_typed=∀(ls :num list) (ns :sptree$num_set). (domain (FOLDL (λ(s :sptree$num_set) (n :num). insert n () s) ns ls) :num -> bool) = (domain ns :num -> bool) ∪ set ls
+PERM_MAP_BIJ_typed=∀(f :α -> β) (l1 :α list) (l2 :α list). BIJ f 𝕌(:α) 𝕌(:β) ⇒ (PERM l1 l2 ⇔ PERM (MAP f l1) (MAP f l2))
+FDOM_FLOOKUP_typed=(x :α) ∈ FDOM (f :α |-> β) ⇔ ∃(v :β). FLOOKUP f x = SOME v
+lookup_fromList2_typed=∀(l :α list) (n :num). lookup n (fromList2 l) = if EVEN n then lookup (n DIV (2 :num)) (fromList l :α sptree$num_map) else (NONE :α option)
+fromList2_value_typed=∀(e :α) (l :α list) (t :β) (n :γ). MEM e l ⇔ ∃(n :num). lookup n (fromList2 l) = SOME e
+size_fromAList_typed=∀(xs :(num # α) list). ALL_DISTINCT (MAP (FST :num # α -> num) xs) ⇒ size (fromAList xs) = LENGTH xs
+NOT_MEM_FLOOKUP_ZIP_typed=∀(ys :α list) (xs :α |-> β) (zs :β list). ¬MEM (n :α) ys ⇒ FLOOKUP (xs |++ ZIP (ys,zs)) n = FLOOKUP xs n
+splitlines_nil_typed=splitlines ("" :string) = ([] :string list)
+insert_atI_insert_atI_typed=(pos2 :num) = (pos1 :num) + LENGTH (c1 :α list) ⇒ insert_atI (c2 :α list) pos2 (insert_atI c1 pos1 (l :α list)) = insert_atI (c1 ++ c2) pos1 l
+v2w_32_F_typed=(v2w [F] :word32) = (0w :word32)
+v2w_32_T_typed=(v2w [T] :word32) = (1w :word32)
+FUPDATE_LIST_alist_to_fmap_typed=∀(ls :(α # β) list) (fm :α |-> β). fm |++ ls = alist_to_fmap (REVERSE ls) ⊌ fm
+ALL_DISTINCT_alist_to_fmap_REVERSE_typed=ALL_DISTINCT (MAP (FST :α # β -> α) (ls :(α # β) list)) ⇒ alist_to_fmap (REVERSE ls) = alist_to_fmap ls
+fevery_to_drestrict_typed=∀(P :α # β -> bool) (m :α |-> β) (s :α -> bool). FEVERY P m ⇒ FEVERY P (DRESTRICT m s)
+FST_UNZIP_MAPi_typed=∀(l :α list) (f :num -> α -> β # γ). FST (UNZIP (MAPi f l)) = MAPi (($o (FST :β # γ -> β) :(α -> β # γ) -> α -> β) ∘ f) l
+SND_UNZIP_MAPi_typed=∀(l :α list) (f :num -> α -> β # γ). SND (UNZIP (MAPi f l)) = MAPi (($o (SND :β # γ -> γ) :(α -> β # γ) -> α -> γ) ∘ f) l
+ALL_DISTINCT_MAP_FST_enumerate_typed=ALL_DISTINCT (MAP (FST :num # α -> num) (enumerate (k :num) (ls :α list) :(num # α) list))
+ORD_eq_0_typed=(ORD (c :char) = (0 :num) ⇔ c = #"\^@") ∧ ((0 :num) = ORD c ⇔ c = #"\^@")
+CHR_w2n_n2w_ORD_typed=CHR ∘ (w2n :word8 -> num) ∘ (n2w :num -> word8) ∘ ORD = (I :char -> char)
+n2w_ORD_CHR_w2n_typed=(n2w :num -> word8) ∘ ORD ∘ CHR ∘ (w2n :word8 -> num) = (I :word8 -> word8)
+TAKE_DROP_SUBLIST_typed=(ll :α list) ≼ DROP (n :num) (ls :α list) ∧ n < LENGTH ls ∧ (nlll :num) = n + LENGTH ll ⇒ TAKE n ls ++ ll ++ DROP nlll ls = ls
+CHR_w2n_n2w_ORD_simp_typed=∀(c :char). CHR (w2n (n2w (ORD c) :word8)) = c
+n2w_ORD_CHR_w2n_simp_typed=∀(w :word8). (n2w (ORD (CHR (w2n w))) :word8) = w
+MAX_LIST_intro_typed=∀(ls :num list). (P :num -> bool) (0 :num) ∧ EVERY P ls ⇒ P (MAX_LIST ls)

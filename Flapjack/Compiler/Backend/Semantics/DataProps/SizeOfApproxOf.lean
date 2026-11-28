@@ -25,24 +25,6 @@ namespace Flapjack.Compiler.Backend.DataProps
 open Flapjack Flapjack.Compiler.Backend.DataSem
 open Classical
 
-/-- `approxOf` at a single reference whose address is unbound in the tree.
-    Flapjack infrastructure for `size_of_approx_of`; no separate HOL original. -/
-private theorem approxOf_refPtr_none (limits : Limits) (bit : Bool) (address : Nat)
-    (refs : Spt (BvlSem.Ref DataSem.Value))
-    (found : sptLookup address refs = none) :
-    approxOf limits [.refPtr bit address] refs = 0 := by
-  rw [approxOf]
-  split
-  · rfl
-  · rename_i _ _ h
-    exact absurd h (by simp [found])
-  · rename_i _ h
-    exact absurd h (by simp [found])
-  · rename_i _ _ h
-    exact absurd h (by simp [found])
-  · rename_i _ _ _ _ _ h
-    exact absurd h (by simp [found])
-
 /-- `approxOf` at a single reference bound to a byte array.
     Flapjack infrastructure for `size_of_approx_of`; no separate HOL original. -/
 private theorem approxOf_refPtr_byteArray (limits : Limits) (bit : Bool) (address : Nat)

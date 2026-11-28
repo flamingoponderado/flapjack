@@ -26,18 +26,6 @@ private theorem globalLookup (vr : Value → Value → Prop) {xs ys : List (Opti
     | zero => simpa [getGlobal, optionRel] using head
     | succ index => simpa [getGlobal] using ih index
 
-/-- Replacing corresponding global slots preserves their relation. This is
-Flapjack proof infrastructure. -/
-private theorem relatedSet {A B : Type} {rel : A → B → Prop} {xs : List A} {ys : List B}
-    (related : List.Forall₂ rel xs ys) (index : Nat) (x : A) (y : B) (h : rel x y) :
-    List.Forall₂ rel (xs.set index x) (ys.set index y) := by
-  induction related generalizing index with
-  | nil => simp
-  | cons head tail ih =>
-    cases index with
-    | zero => exact .cons h tail
-    | succ index => exact .cons head (ih index)
-
 /-- Simple value relations relate the unit value to itself. This is Flapjack
 proof infrastructure. -/
 private theorem unitRelated (vr : Value → Value → Prop) (simple : simpleValRel vr) :

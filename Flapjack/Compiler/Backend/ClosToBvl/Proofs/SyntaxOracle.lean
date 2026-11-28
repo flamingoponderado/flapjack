@@ -68,4 +68,14 @@ theorem syntaxOracleOkCommon_start {α : Type} (c c' : Config) (f : Nat → Nat)
       syntaxOracleOkCommon c c' es co := by
   rfl
 
+/-- Original backendProofScript `syntax_oracle_ok_start` (`:2279`): the same
+    statement as the clos_to_bvlProof rule, carried under the backendProof HOL
+    path. -/
+@[hol "cakeml/compiler/backend/proofs/backendProofScript.sml" "syntax_oracle_ok_start"]
+theorem syntaxOracleOkCommon_start' {α : Type} (c c' : Config) (f : Nat → Nat)
+    (es : List ClosLang.Exp)
+    (co : Nat → (Nat × Spt ClosKnown.ValApprox × NumSet × α) × ClosSem.Program) :
+    syntaxOracleOkCommon c { c' with start := f c'.start } es co ↔
+      syntaxOracleOkCommon c c' es co := syntaxOracleOkCommon_start c c' f es co
+
 end Flapjack.Compiler.Backend.ClosToBvl

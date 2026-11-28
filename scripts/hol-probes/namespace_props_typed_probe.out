@@ -13,3 +13,77 @@ nsAll_nsAppend_typed=∀(f :(α, β) id -> γ -> bool) (e1 :(α, β, γ) namespa
 nsAll_nsBind_typed=∀(P :(α, β) id -> γ -> bool) (x :β) (v :γ) (e :(α, β, γ) namespace). P (Short x :(α, β) id) v ∧ nsAll P e ⇒ nsAll P (nsBind x v e)
 nsAll_nsSing_typed=∀(R :(α, β) id -> γ -> bool) (n :β) (v :γ). nsAll R (nsSing n v :(α, β, γ) namespace) ⇔ R (Short n :(α, β) id) v
 nsAll2_nsAppend_typed=∀(R :(α, β) id -> γ -> δ -> bool) (e1 :(α, β, γ) namespace) (e1' :(α, β, γ) namespace) (e2 :(α, β, δ) namespace) (e2' :(α, β, δ) namespace). nsAll2 R e1 e2 ∧ nsAll2 R e1' e2' ⇒ nsAll2 R (nsAppend e1 e1') (nsAppend e2 e2')
+mk_id_11_typed=∀(a :α list) (b :β) (c :α list) (d :β). mk_id a b = mk_id c d ⇔ a = c ∧ b = d
+id_to_mods_mk_id_typed=∀(mn :α list) (x :β). id_to_mods (mk_id mn x) = mn
+id_to_namemods_mk_id_typed=∀(mn :α list) (x :β). id_to_n (mk_id mn x) = x
+mk_id_surj_typed=∀(id :(α, β) id). ∃(p :α list) (n :β). id = mk_id p n
+mk_id_thm_typed=∀(id :(α, β) id). mk_id (id_to_mods id) (id_to_n id) = id
+alist_to_ns_nil_typed=(alist_to_ns ([] :(β # γ) list) :(α, β, γ) namespace) = (nsEmpty :(α, β, γ) namespace)
+nsSub_nsEmpty_typed=∀(r :(α, β) id -> γ -> δ -> bool) (env :(α, β, δ) namespace). nsSub r (nsEmpty :(α, β, γ) namespace) env
+nsAll_nsEmpty_typed=∀(f :(α, β) id -> γ -> bool). nsAll f (nsEmpty :(α, β, γ) namespace)
+nsAll2_nsEmpty_typed=∀(f :(α, β) id -> γ -> δ -> bool). nsAll2 f (nsEmpty :(α, β, γ) namespace) (nsEmpty :(α, β, δ) namespace)
+nsDom_nsEmpty_typed=nsDom (nsEmpty :(α, β, γ) namespace) = (∅ :(α, β) id -> bool)
+nsDomMod_nsEmpty_typed=nsDomMod (nsEmpty :(α, β, γ) namespace) = {([] :α list)}
+nsMap_nsEmpty_typed=∀(f :α -> β). nsMap f (nsEmpty :(γ, δ, α) namespace) = (nsEmpty :(γ, δ, β) namespace)
+nsBind_nsEmpty_typed=∀(x :α) (y :β) (env :(γ, α, β) namespace). nsBind x y env ≠ (nsEmpty :(γ, α, β) namespace)
+nsAll_mono_typed=(∀(id :(α, β) id) (x :γ). (P :(α, β) id -> γ -> bool) id x ⇒ (Q :(α, β) id -> γ -> bool) id x) ⇒ nsAll P (e :(α, β, γ) namespace) ⇒ nsAll Q e
+alist_to_ns_cons_typed=∀(k :α) (v :β) (l :(α # β) list). (alist_to_ns ((k,v)::l) :(γ, α, β) namespace) = nsBind k v (alist_to_ns l :(γ, α, β) namespace)
+nsAppend_nsBind_typed=∀(k :α) (v :β) (e1 :(γ, α, β) namespace) (e2 :(γ, α, β) namespace). nsAppend (nsBind k v e1) e2 = nsBind k v (nsAppend e1 e2)
+nsAppend_alist_to_ns_typed=∀(al1 :(α # β) list) (al2 :(α # β) list). nsAppend (alist_to_ns al1 :(γ, α, β) namespace) (alist_to_ns al2 :(γ, α, β) namespace) = (alist_to_ns (al1 ++ al2) :(γ, α, β) namespace)
+nsBind_11_typed=∀(x :α) (y :β) (n :(γ, α, β) namespace) (x' :α) (y' :β) (n' :(γ, α, β) namespace). nsBind x y n = nsBind x' y' n' ⇔ x = x' ∧ y = y' ∧ n = n'
+nsLookupMod_alist_to_ns_typed=∀(l :(α # β) list) (x :γ) (y :γ list). nsLookupMod (alist_to_ns l :(γ, α, β) namespace) (x::y) = (NONE :(γ, α, β) namespace option)
+alist_to_ns_11_typed=∀(l1 :(α # β) list) (l2 :(α # β) list). (alist_to_ns l1 :(γ, α, β) namespace) = (alist_to_ns l2 :(γ, α, β) namespace) ⇔ l1 = l2
+nsAppend_nsSing_typed=∀(n :α) (x :β) (e :(γ, α, β) namespace). nsAppend (nsSing n x :(γ, α, β) namespace) e = nsBind n x e
+nsLookup_nsSing_typed=∀(n :α) (v :β) (id :(γ, α) id). nsLookup (nsSing n v :(γ, α, β) namespace) id = if id = (Short n :(γ, α) id) then SOME v else (NONE :β option)
+nsMap_nsSing_typed=∀(f :α -> β) (x :γ) (v :α). nsMap f (nsSing x v :(δ, γ, α) namespace) = (nsSing x (f v) :(δ, γ, β) namespace)
+nsLookupMod_nsSing_typed=∀(n1 :α list) (n2 :β) (v :γ). nsLookupMod (nsSing n2 v :(α, β, γ) namespace) n1 = if n1 = ([] :α list) then SOME (nsSing n2 v :(α, β, γ) namespace) else (NONE :(α, β, γ) namespace option)
+nsDom_nsSing_typed=∀(x :α) (y :β). nsDom (nsSing x y :(γ, α, β) namespace) = {(Short x :(γ, α) id)}
+nsDomMod_nsSing_typed=∀(x :α) (y :β). nsDomMod (nsSing x y :(γ, α, β) namespace) = {([] :γ list)}
+eALL_T_typed=∀(e :(α, β, γ) namespace). nsAll (λ(n :(α, β) id) (x :γ). T) e
+nsLookup_nsAll_typed=∀(env :(α, β, γ) namespace) (x :(α, β) id) (P :(α, β) id -> γ -> bool) (v :γ). nsAll P env ∧ nsLookup env x = SOME v ⇒ P x v
+nsLookup_nsDom_typed=∀(x :(α, β) id) (n :(α, β, γ) namespace). x ∈ nsDom n ⇔ ∃(v :γ). nsLookup n x = SOME v
+nsLift_nsMap_typed=∀(f :α -> β) (n :(γ, δ, α) namespace) (mn :γ). nsLift mn (nsMap f n) = nsMap f (nsLift mn n)
+nsLookup_Bind_v_some_typed=nsLookup (Bind (v :(γ # α) list) ([] :(β # (β, γ, α) namespace) list)) (k :(β, γ) id) = SOME (x :α) ⇔ ∃(y :γ). k = (Short y :(β, γ) id) ∧ ALOOKUP v y = SOME x
+nsSub_refl_typed=∀(P :(α, β) id -> γ -> bool) (R :(α, β) id -> γ -> γ -> bool). (∀(n :(α, β) id) (x :γ). P n x ⇒ R n x x) ⇒ ∀(e :(α, β, γ) namespace). nsAll P e ⇒ nsSub R e e
+nsDomMod_alist_to_ns_typed=∀(l :(α # β) list). nsDomMod (alist_to_ns l :(γ, α, β) namespace) = {([] :γ list)}
+nsSub_nsBind_typed=∀(R :(α, β) id -> γ -> δ -> bool) (x :β) (v1 :γ) (v2 :δ) (e1 :(α, β, γ) namespace) (e2 :(α, β, δ) namespace). R (Short x :(α, β) id) v1 v2 ∧ nsSub R e1 e2 ⇒ nsSub R (nsBind x v1 e1) (nsBind x v2 e2)
+nsAll2_nsBind_typed=∀(R :(α, β) id -> γ -> δ -> bool) (x :β) (v1 :γ) (v2 :δ) (e1 :(α, β, γ) namespace) (e2 :(α, β, δ) namespace). R (Short x :(α, β) id) v1 v2 ∧ nsAll2 R e1 e2 ⇒ nsAll2 R (nsBind x v1 e1) (nsBind x v2 e2)
+nsSub_conj_typed=∀(P :(α, β) id -> γ -> δ -> bool) (Q :(α, β) id -> γ -> δ -> bool) (e1 :(α, β, γ) namespace) (e2 :(α, β, δ) namespace). nsSub (λ(id :(α, β) id) (x :γ) (y :δ). P id x y ∧ Q id x y) e1 e2 ⇔ nsSub P e1 e2 ∧ nsSub Q e1 e2
+nsAll2_conj_typed=∀(P :(α, β) id -> γ -> δ -> bool) (Q :(α, β) id -> γ -> δ -> bool) (e1 :(α, β, γ) namespace) (e2 :(α, β, δ) namespace). nsAll2 (λ(id :(α, β) id) (x :γ) (y :δ). P id x y ∧ Q id x y) e1 e2 ⇔ nsAll2 P e1 e2 ∧ nsAll2 Q e1 e2
+nsSub_mono_typed=(∀(x :(α, β) id) (y :γ) (z :δ). (R1 :(α, β) id -> γ -> δ -> bool) x y z ⇒ (R2 :(α, β) id -> γ -> δ -> bool) x y z) ⇒ nsSub R1 (e1 :(α, β, γ) namespace) (e2 :(α, β, δ) namespace) ⇒ nsSub R2 e1 e2
+nsSub_mono2_typed=(∀(x :(α, β) id) (y :γ) (z :δ). nsLookup (e1 :(α, β, γ) namespace) x = SOME y ∧ nsLookup (e2 :(α, β, δ) namespace) x = SOME z ∧ (R1 :(α, β) id -> γ -> δ -> bool) x y z ⇒ (R2 :(α, β) id -> γ -> δ -> bool) x y z) ⇒ nsSub R1 e1 e2 ⇒ nsSub R2 e1 e2
+nsAll2_mono_typed=(∀(x :(α, β) id) (y :γ) (z :δ). (R1 :(α, β) id -> γ -> δ -> bool) x y z ⇒ (R2 :(α, β) id -> γ -> δ -> bool) x y z) ⇒ nsAll2 R1 (e1 :(α, β, γ) namespace) (e2 :(α, β, δ) namespace) ⇒ nsAll2 R2 e1 e2
+nsDom_nsBind_typed=∀(x :α) (y :β) (n :(γ, α, β) namespace). nsDom (nsBind x y n) = (Short x :(γ, α) id) INSERT nsDom n
+nsDomMod_nsBind_typed=∀(x :α) (y :β) (n :(γ, α, β) namespace). nsDomMod (nsBind x y n) = nsDomMod n
+nsAll2_nsLookup1_typed=∀(R :(α, β) id -> γ -> δ -> bool) (e1 :(α, β, γ) namespace) (e2 :(α, β, δ) namespace) (n :(α, β) id) (v1 :γ). nsLookup e1 n = SOME v1 ∧ nsAll2 R e1 e2 ⇒ ∃(v2 :δ). nsLookup e2 n = SOME v2 ∧ R n v1 v2
+nsAll2_nsLookup2_typed=∀(R :(α, β) id -> γ -> δ -> bool) (e1 :(α, β, γ) namespace) (e2 :(α, β, δ) namespace) (n :(α, β) id) (v2 :δ). nsLookup e2 n = SOME v2 ∧ nsAll2 R e1 e2 ⇒ ∃(v1 :γ). nsLookup e1 n = SOME v1 ∧ R n v1 v2
+nsAll2_nsLookup_none_typed=∀(R :(α, β) id -> γ -> δ -> bool) (e1 :(α, β, γ) namespace) (e2 :(α, β, δ) namespace) (n :(α, β) id). nsAll2 R e1 e2 ⇒ (nsLookup e1 n = (NONE :γ option) ⇔ nsLookup e2 n = (NONE :δ option))
+nsLookup_alist_to_ns_some_typed=∀(l :(α # β) list) (id :(γ, α) id) (v :β). nsLookup (alist_to_ns l :(γ, α, β) namespace) id = SOME v ⇔ ∃(x' :α). id = (Short x' :(γ, α) id) ∧ ALOOKUP l x' = SOME v
+nsLookup_alist_to_ns_none_typed=∀(l :(α # β) list) (id :(γ, α) id). nsLookup (alist_to_ns l :(γ, α, β) namespace) id = (NONE :β option) ⇔ ∀(x' :α). id = (Short x' :(γ, α) id) ⇒ ALOOKUP l x' = (NONE :β option)
+nsMap_alist_to_ns_typed=∀(f :α -> β) (l :(γ # α) list). nsMap f (alist_to_ns l :(δ, γ, α) namespace) = (alist_to_ns (MAP (λ((k :γ),(v :α)). (k,f v)) l) :(δ, γ, β) namespace)
+nsSub_nsMap_typed=∀(R :(α, β) id -> γ -> γ -> bool) (f :δ -> γ) (n1 :(α, β, δ) namespace) (n2 :(α, β, δ) namespace). nsSub R (nsMap f n1) (nsMap f n2) ⇔ nsSub (λ(id :(α, β) id) (x :δ) (y :δ). R id (f x) (f y)) n1 n2
+nsLookup_FOLDR_nsLift_typed=∀(e :(α, β, γ) namespace) (p :α list) (k :β). nsLookup (FOLDR (nsLift :α -> (α, β, γ) namespace -> (α, β, γ) namespace) e p) (mk_id p k) = nsLookup e (Short k :(α, β) id)
+nsAll2_nsSing_typed=∀(R :(α, β) id -> γ -> δ -> bool) (n1 :β) (v1 :γ) (n2 :β) (v2 :δ). nsAll2 R (nsSing n1 v1 :(α, β, γ) namespace) (nsSing n2 v2 :(α, β, δ) namespace) ⇔ n1 = n2 ∧ R (Short n1 :(α, β) id) v1 v2
+nsAll_nsOptBind_typed=∀(P :(α, β) id -> γ -> bool) (x :β option) (v :γ) (e :(α, β, γ) namespace). (x = (NONE :β option) ∨ ∃(n :β). x = SOME n ∧ P (Short n :(α, β) id) v) ∧ nsAll P e ⇒ nsAll P (nsOptBind x v e)
+nsLookup_nsLift_append_typed=∀(m :α) (ns :(α, β, γ) namespace) (ns' :(α, β, γ) namespace) (m' :α) (id :(α, β) id) (n :β). nsLookup (nsAppend (nsLift m ns) ns') (Short n :(α, β) id) = nsLookup ns' (Short n :(α, β) id) ∧ nsLookup (nsAppend (nsLift m ns) ns') (Long m' id) = if m = m' then nsLookup ns id else nsLookup ns' (Long m' id)
+nsAll2_alist_to_ns_typed=∀(R :(α, β) id -> γ -> δ -> bool) (l1 :(β # γ) list) (l2 :(β # δ) list). LIST_REL (λ((x :β),(y :γ)) ((x' :β),(y' :δ)). x = x' ∧ R (Short x :(α, β) id) y y') l1 l2 ⇒ nsAll2 R (alist_to_ns l1 :(α, β, γ) namespace) (alist_to_ns l2 :(α, β, δ) namespace)
+nsAll2_nsBindList_typed=∀(R :(α, β) id -> γ -> δ -> bool) (l1 :(β # γ) list) (l2 :(β # δ) list) (e1 :(α, β, γ) namespace) (e2 :(α, β, δ) namespace). LIST_REL (λ((x :β),(y :γ)) ((x' :β),(y' :δ)). x = x' ∧ R (Short x :(α, β) id) y y') l1 l2 ∧ nsAll2 R e1 e2 ⇒ nsAll2 R (nsBindList l1 e1) (nsBindList l2 e2)
+alist_rel_restr_def_typed=(∀(R :α -> β -> γ -> bool) (l1 :(α # β) list) (l2 :(α # γ) list). alist_rel_restr R l1 l2 ([] :α list) ⇔ T) ∧ ∀(R :α -> β -> γ -> bool) (l1 :(α # β) list) (l2 :(α # γ) list) (k1 :α) (keys :α list). alist_rel_restr R l1 l2 (k1::keys) ⇔ case ALOOKUP l1 k1 of (NONE :β option) => F | SOME v1 => case ALOOKUP l2 k1 of (NONE :γ option) => F | SOME v2 => R k1 v1 v2 ∧ alist_rel_restr R l1 l2 keys
+alist_rel_restr_thm_typed=∀(R :α -> β -> γ -> bool) (e1 :(α # β) list) (e2 :(α # γ) list) (keys :α list). alist_rel_restr R e1 e2 keys ⇔ ∀(k :α). MEM k keys ⇒ ∃(v1 :β) (v2 :γ). ALOOKUP e1 k = SOME v1 ∧ ALOOKUP e2 k = SOME v2 ∧ R k v1 v2
+alistSub_def_typed=∀(R :α -> β -> γ -> bool) (e1 :(α # β) list) (e2 :(α # γ) list). alistSub R e1 e2 ⇔ alist_rel_restr R e1 e2 (MAP (FST :α # β -> α) e1)
+alistSub_cong_typed=∀(l1 :(α # β) list) (l2 :(α # γ) list) (l1' :(α # β) list) (l2' :(α # γ) list) (R :α -> β -> γ -> bool) (R' :α -> β -> γ -> bool). l1 = l1' ∧ l2 = l2' ∧ (∀(n :α) (x :β) (y :γ). ALOOKUP l1' n = SOME x ∧ ALOOKUP l2' n = SOME y ⇒ (R n x y ⇔ R' n x y)) ⇒ (alistSub R l1 l2 ⇔ alistSub R' l1' l2')
+nsLookup_to_nsLookupMod_typed=∀(n :(α, β, γ) namespace) (v :(α, β) id) (t :γ). nsLookup n v = SOME t ⇒ ∃(m :(α, β, γ) namespace). nsLookupMod n (id_to_mods v) = SOME m ∧ nsLookup m (Short (id_to_n v) :(α, β) id) = SOME t
+nsDom_alist_to_ns_typed=∀(l :(α # β) list). nsDom (alist_to_ns l :(γ, α, β) namespace) = set (MAP ((Short :α -> (γ, α) id) ∘ (FST :α # β -> α)) l)
+nsLookup_nsAppend_some_typed=∀(e1 :(α, β, γ) namespace) (id :(α, β) id) (e2 :(α, β, γ) namespace) (v :γ). nsLookup (nsAppend e1 e2) id = SOME v ⇔ nsLookup e1 id = SOME v ∨ nsLookup e1 id = (NONE :γ option) ∧ nsLookup e2 id = SOME v ∧ ∀(p1 :α list) (p2 :α list). p1 ≠ ([] :α list) ∧ id_to_mods id = p1 ++ p2 ⇒ nsLookupMod e1 p1 = (NONE :(α, β, γ) namespace option)
+nsLookup_nsAppend_none_typed=∀(e1 :(α, β, γ) namespace) (id :(α, β) id) (e2 :(α, β, γ) namespace). nsLookup (nsAppend e1 e2) id = (NONE :γ option) ⇔ nsLookup e1 id = (NONE :γ option) ∧ (nsLookup e2 id = (NONE :γ option) ∨ ∃(p1 :α list) (p2 :α list) (e3 :(α, β, γ) namespace). p1 ≠ ([] :α list) ∧ id_to_mods id = p1 ++ p2 ∧ nsLookupMod e1 p1 = SOME e3)
+nsLookupMod_nsAppend_some_typed=∀(e1 :(α, β, γ) namespace) (e2 :(α, β, γ) namespace) (path :α list). nsLookupMod (nsAppend e1 e2) path = SOME (x :(α, β, γ) namespace) ⇔ if path = ([] :α list) then x = nsAppend e1 e2 else nsLookupMod e1 path = SOME x ∨ nsLookupMod e2 path = SOME x ∧ ∀(p1 :α list) (p2 :α list). p1 ≠ ([] :α list) ∧ path = p1 ++ p2 ⇒ nsLookupMod e1 p1 = (NONE :(α, β, γ) namespace option)
+nsLookupMod_nsAppend_none_typed=∀(e1 :(α, β, γ) namespace) (e2 :(α, β, γ) namespace) (path :α list). nsLookupMod (nsAppend e1 e2) path = (NONE :(α, β, γ) namespace option) ⇔ nsLookupMod e1 path = (NONE :(α, β, γ) namespace option) ∧ (nsLookupMod e2 path = (NONE :(α, β, γ) namespace option) ∨ ∃(p1 :α list) (p2 :α list) (e3 :(α, β, γ) namespace). p1 ≠ ([] :α list) ∧ path = p1 ++ p2 ∧ nsLookupMod e1 p1 = SOME e3)
+nsAll_nsAppend_left_typed=∀(P :(α, β) id -> γ -> bool) (n1 :(α, β, γ) namespace) (n2 :(α, β, γ) namespace). nsAll P (nsAppend n1 n2) ⇒ nsAll P n1
+nsSub_nsAppend2_typed=∀(R :(α, β) id -> γ -> γ -> bool) (e1 :(α, β, γ) namespace) (e2 :(α, β, γ) namespace) (e2' :(α, β, γ) namespace). nsSub R e1 e1 ∧ nsSub R e2 e2' ⇒ nsSub R (nsAppend e1 e2) (nsAppend e1 e2')
+nsDomMod_nsAppend_flat_typed=∀(n1 :(α, β, γ) namespace) (n2 :(α, β, γ) namespace). nsDomMod n1 = {([] :α list)} ⇒ nsDomMod (nsAppend n1 n2) = nsDomMod n2
+nsDom_nsAppend_flat_typed=∀(n1 :(α, β, γ) namespace) (n2 :(α, β, γ) namespace). nsDomMod n1 = {([] :α list)} ⇒ nsDom (nsAppend n1 n2) = nsDom n1 ∪ nsDom n2
+nsLookup_FOLDR_nsLift_some_typed=∀(e :(α, β, γ) namespace) (p :α list) (id :(α, β) id) (v :γ). nsLookup (FOLDR (nsLift :α -> (α, β, γ) namespace -> (α, β, γ) namespace) e p) id = SOME v ⇔ p = ([] :α list) ∧ nsLookup e id = SOME v ∨ p ≠ ([] :α list) ∧ ∃(p2 :α list) (n :β). id = mk_id (p ++ p2) n ∧ nsLookup e (mk_id p2 n) = SOME v
+nsLookupMod_FOLDR_nsLift_none_typed=∀(e :(α, β, γ) namespace) (p1 :α list) (p2 :α list). nsLookupMod (FOLDR (nsLift :α -> (α, β, γ) namespace -> (α, β, γ) namespace) e p1) p2 = (NONE :(α, β, γ) namespace option) ⇔ p2 ≼ p1 ∨ p1 ≼ p2 ⇒ ∃(p3 :α list). p2 = p1 ++ p3 ∧ nsLookupMod e p3 = (NONE :(α, β, γ) namespace option)
+ns_dom_ns_append_alist_typed=∀(x :(α # β) list) (y :(γ, α, β) namespace). nsDom (nsAppend (alist_to_ns x :(γ, α, β) namespace) y) = set (MAP ((Short :α -> (γ, α) id) ∘ (FST :α # β -> α)) x) ∪ nsDom y
+ns_sub_ns_append_lift_typed=∀(R :(α, β) id -> γ -> δ -> bool) (mn :α) (e1 :(α, β, γ) namespace) (e1' :(α, β, δ) namespace) (e2 :(α, β, γ) namespace) (e2' :(α, β, δ) namespace). nsSub (λ(id :(α, β) id). R (Long mn id)) e1 e1' ∧ nsSub R e2 e2' ⇒ nsSub R (nsAppend (nsLift mn e1) e2) (nsAppend (nsLift mn e1') e2')
+ns_sub_compute_def_typed=∀(path :α list) (e2V :(β # δ) list) (e2M :(α # (α, β, δ) namespace) list) (e1V :(β # γ) list) (e1M :(α # (α, β, γ) namespace) list) (R :(α, β) id -> γ -> δ -> bool). nsSub_compute path R (Bind e1V e1M) (Bind e2V e2M) ⇔ alistSub (λ(k :β) (v1 :γ) (v2 :δ). R (mk_id (REVERSE path) k) v1 v2) e1V e2V ∧ alistSub (λ(k :α) (v1 :(α, β, γ) namespace) (v2 :(α, β, δ) namespace). nsSub_compute (k::path) R v1 v2) e1M e2M

@@ -70,3 +70,5 @@ inter_def_typed=(∀(t :β num_map). isEmpty (inter (LN :α num_map) t)) ∧ (�
 mk_wf_def_typed=isEmpty (mk_wf (LN :α num_map)) ∧ (∀(x :α). mk_wf ⦕ 0 ↦ x ⦖ = ⦕ 0 ↦ x ⦖) ∧ (∀(t1 :α num_map) (t2 :α num_map). mk_wf (BN t1 t2) = mk_BN (mk_wf t1) (mk_wf t2)) ∧ ∀(t1 :α num_map) (x :α) (t2 :α num_map). mk_wf (BS t1 x t2) = mk_BS (mk_wf t1) x (mk_wf t2)
 toList_def_typed=∀(m :α num_map). toList m = toListA ([] :α list) m
 toListA_def_typed=(∀(acc :α list). toListA acc (LN :α num_map) = acc) ∧ (∀(acc :α list) (a :α). toListA acc ⦕ 0 ↦ a ⦖ = a::acc) ∧ (∀(acc :α list) (t1 :α num_map) (t2 :α num_map). toListA acc (BN t1 t2) = toListA (toListA acc t2) t1) ∧ ∀(acc :α list) (t1 :α num_map) (a :α) (t2 :α num_map). toListA acc (BS t1 a t2) = toListA (a::toListA acc t2) t1
+size_insert_typed=∀(k :num) (v :α) (m :α num_map). size (insert k v m) = if k ∈ domain m then size m else size m + (1 :num)
+fromAList_toAList_typed=∀(t :α num_map). wf t ⇒ fromAList (toAList t) = t

@@ -59,7 +59,7 @@ def isAlphaChar (c : HolChar) : Bool := isLowerChar c || isUpperChar c
 @[hol "cakeml/basis/pure/mlstringScript.sml" "mlstring"]
 inductive MlString where
   | implode (data : List HolChar)
-  deriving Repr, DecidableEq
+  deriving Repr, DecidableEq, Inhabited
 
 namespace MlString
 
@@ -69,11 +69,15 @@ namespace MlString
 def explode : MlString → List HolChar
   | .implode data => data
 
-@[simp] theorem explode_implode (data : List HolChar) :
+/-- Original `explode_implode`: exploding a constructor returns its argument. -/
+@[simp, hol "cakeml/basis/pure/mlstringScript.sml" "explode_implode"]
+theorem explode_implode (data : List HolChar) :
     explode (.implode data) = data := rfl
 
-/-- HOL `implode_explode` (`mlstringScript.sml:86-90`). -/
-@[simp] theorem implode_explode (s : MlString) : MlString.implode (explode s) = s := by
+/-- Original `implode_explode`: rebuilding a string from its characters is the
+string itself. -/
+@[simp, hol "cakeml/basis/pure/mlstringScript.sml" "implode_explode"]
+theorem implode_explode (s : MlString) : MlString.implode (explode s) = s := by
   cases s
   rfl
 

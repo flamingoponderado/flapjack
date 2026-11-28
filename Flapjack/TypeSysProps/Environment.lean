@@ -3,12 +3,16 @@ module
 public import Flapjack.TypeSoundInvariants
 public import Flapjack.TypeSystemHOL.Declarations
 public import Flapjack.NamespaceProps
+public import Flapjack.NamespaceProps.All
 public import Flapjack.TypeSysProps.Freevars
 
 @[expose] public section
 
 /-! Well-formed declarative environments are closed under extension. -/
 namespace Flapjack.TypeSysProps
+
+noncomputable local instance (α : Type) : DecidableEq α := Classical.typeDecidableEq α
+
 open Flapjack.NamespaceHOL Flapjack.TypeSystemHOL Flapjack.TypeSoundInvariants
   Flapjack.Basis.Pure.MlString Flapjack.AstHOL
 
@@ -90,5 +94,219 @@ theorem extendDecTenvOk (tenv tenv' : TypeEnv)
   · exact nsAll_nsAppend _ _ _ ⟨h.1.1, h.2.1⟩
   · exact nsAll_nsAppend _ _ _ ⟨h.1.2.1, h.2.2.1⟩
   · exact nsAll_nsAppend _ _ _ ⟨h.1.2.2, h.2.2.2⟩
+
+/-- Appending an empty-namespace extension of a local environment is the same
+as extending the target namespace directly. -/
+@[hol "cakeml/semantics/proofs/typeSysPropsScript.sml" "add_tenvE_nsAppend"]
+theorem addTenvE_nsAppend {M : Type} (localEnv : TenvValExp)
+    (env : Namespace M MlString (Nat × SemanticT)) :
+    nsAppend (addTenvE localEnv nsEmpty) env = addTenvE localEnv env := by
+  have appendBind : ∀ {M : Type} (name : MlString) (value : Nat × SemanticT)
+      (rest other : Namespace M MlString (Nat × SemanticT)),
+      nsAppend (nsBind name value rest) other = nsBind name value (nsAppend rest other) := by
+    intro M name value rest other
+    cases rest with
+    | bind vs ms =>
+      cases other with
+      | bind vs' ms' => simp [nsBind, nsAppend]
+  induction localEnv with
+  | empty =>
+    cases env with
+    | bind vs ms => simp [addTenvE, nsAppend, nsEmpty]
+  | bindTvar _ rest ih =>
+    simp only [addTenvE]
+    exact ih
+  | bindName name tvs t rest ih =>
+    simp only [addTenvE]
+    rw [appendBind name (tvs, t), ih]
+
+/-- The empty declaration list types exactly the empty type-id set and the
+empty environment. -/
+@[simp, hol "cakeml/semantics/proofs/typeSysPropsScript.sml" "type_ds_empty"]
+theorem typeDsEmpty (extra : Bool) (tenv : TypeEnv) (ids : TypeIds) (r : TypeEnv) :
+    TypeDs extra tenv [] ids r ↔ ids = (fun _ => False) ∧ r = ⟨nsEmpty, nsEmpty, nsEmpty⟩ := by
+  constructor
+  · intro typed
+    cases typed
+    exact ⟨rfl, rfl⟩
+  · rintro ⟨rfl, rfl⟩
+    exact TypeDs.nil extra tenv
+
+/-- Extending a declaration environment is associative. -/
+@[simp, hol "cakeml/semantics/proofs/typeSysPropsScript.sml" "extend_dec_tenv_assoc"]
+theorem extendDecTenv_assoc (tenv1 tenv2 tenv3 : TypeEnv) :
+    extendDecTenv tenv1 (extendDecTenv tenv2 tenv3) =
+      extendDecTenv (extendDecTenv tenv1 tenv2) tenv3 := by
+  simp [extendDecTenv, nsAppend_assoc]
+
+/-- Appending two abbreviation environments preserves well-formedness. -/
+@[hol "cakeml/semantics/proofs/typeSysPropsScript.sml" "tenv_abbrev_ok_merge"]
+theorem tenvAbbrevOk_merge {M N : Type} (env1 env2 : Namespace M N (List MlString × SemanticT)) :
+    tenvAbbrevOk env1 ∧ tenvAbbrevOk env2 → tenvAbbrevOk (nsAppend env1 env2) := by
+  intro h
+  exact nsAll_nsAppend _ _ _ h
+
+/-- Appending two constructor environments preserves well-formedness. -/
+@[simp, hol "cakeml/semantics/proofs/typeSysPropsScript.sml" "tenv_ctor_ok_merge"]
+theorem tenvCtorOk_merge {M N Tag : Type}
+    (env1 env2 : Namespace M N (List MlString × List SemanticT × Tag)) :
+    tenvCtorOk env1 ∧ tenvCtorOk env2 → tenvCtorOk (nsAppend env1 env2) := by
+  intro h
+  exact nsAll_nsAppend _ _ _ h
+
+/-- A short lookup found by the local environment survives adding local
+bindings, provided its type satisfies the local bound. -/
+@[hol "cakeml/semantics/proofs/typeSysPropsScript.sml" "nsLookup_add_tenvE1"]
+theorem nsLookup_addTenvE1 {M : Type} [DecidableEq M] (localEnv : TenvValExp)
+    (env : Namespace M MlString (Nat × SemanticT)) (n : MlString) (tvs : Nat)
+    (t : SemanticT) (tvs2 : Nat) :
+    checkFreevars tvs2 [] t = true ∧ tveLookup n tvs localEnv = some (tvs2, t) →
+      nsLookup (addTenvE localEnv env) (.short n) = some (tvs2, t) := by
+  intro h
+  induction localEnv generalizing tvs with
+  | empty => cases h.2
+  | bindTvar bound rest ih =>
+    simp only [tveLookup] at h
+    simp only [addTenvE]
+    exact ih _ h
+  | bindName name bound ty rest ih =>
+    by_cases same : name = n
+    · rw [← same] at h ⊢
+      simp only [tveLookup] at h
+      obtain ⟨rfl, rfl⟩ := Option.some.inj h.2
+      simp only [addTenvE]
+      rw [nsLookup_nsBind.1 name (tvs2, ty) (addTenvE rest env)]
+      rw [nil_deBruijnInc tvs2 tvs ty (Or.inr h.1)]
+    · simp only [tveLookup] at h
+      have restFound := ih _ ⟨h.1, by simpa [same] using h.2⟩
+      have different : (Ident.short n : Ident M MlString) ≠ Ident.short name := by
+        intro h
+        exact same (by simpa using h.symm)
+      simp only [addTenvE]
+      rw [nsLookup_nsBind.2 (Ident.short n) name (bound, ty) (addTenvE rest env) different]
+      exact restFound
+
+/-- A short lookup missed by the local environment survives adding local
+bindings. -/
+@[hol "cakeml/semantics/proofs/typeSysPropsScript.sml" "nsLookup_add_tenvE2"]
+theorem nsLookup_addTenvE2 {M : Type} [DecidableEq M] (localEnv : TenvValExp)
+    (env : Namespace M MlString (Nat × SemanticT)) (n : MlString) (tvs : Nat)
+    (t : SemanticT) (tvs2 : Nat) :
+    tveLookup n tvs localEnv = none ∧ nsLookup env (.short n) = some (tvs2, t) →
+      nsLookup (addTenvE localEnv env) (.short n) = some (tvs2, t) := by
+  intro h
+  induction localEnv generalizing tvs with
+  | empty => exact h.2
+  | bindTvar bound rest ih =>
+    simp only [tveLookup] at h
+    simp only [addTenvE]
+    exact ih _ h
+  | bindName name bound ty rest ih =>
+    by_cases same : name = n
+    · rw [← same] at h ⊢
+      simp only [tveLookup] at h
+      simp at h
+    · simp only [tveLookup] at h
+      have restFound := ih _ ⟨by simpa [same] using h.1, h.2⟩
+      have different : (Ident.short n : Ident M MlString) ≠ Ident.short name := by
+        intro h
+        exact same (by simpa using h.symm)
+      simp only [addTenvE]
+      rw [nsLookup_nsBind.2 (Ident.short n) name (bound, ty) (addTenvE rest env) different]
+      exact restFound
+
+/-- A qualified lookup found in the environment survives adding local bindings. -/
+@[hol "cakeml/semantics/proofs/typeSysPropsScript.sml" "nsLookup_add_tenvE3"]
+theorem nsLookup_addTenvE3 {M : Type} [DecidableEq M] (localEnv : TenvValExp)
+    (env : Namespace M MlString (Nat × SemanticT)) (n : Ident M MlString) (t : SemanticT)
+    (tvs2 : Nat) (mn : M) :
+    nsLookup env (.long mn n) = some (tvs2, t) →
+      nsLookup (addTenvE localEnv env) (.long mn n) = some (tvs2, t) := by
+  intro found
+  induction localEnv with
+  | empty => exact found
+  | bindTvar bound rest ih =>
+    simp only [addTenvE]
+    exact ih
+  | bindName name bound ty rest ih =>
+    have different : (Ident.long mn n : Ident M MlString) ≠ Ident.short name := by
+      intro h
+      cases h
+    simp only [addTenvE]
+    rw [nsLookup_nsBind.2 (Ident.long mn n) name (bound, ty) (addTenvE rest env) different]
+    exact ih
+
+/-- A constructor-environment lookup satisfies the source free-variable check. -/
+@[hol "cakeml/semantics/proofs/typeSysPropsScript.sml" "tenv_ctor_ok_lookup"]
+theorem tenvCtorOk_lookup {M N Tag : Type}
+    (env : Namespace M N (List MlString × List SemanticT × Tag)) (cn : Ident M N)
+    (tvs : List MlString) (ts : List SemanticT) (tn : Tag) :
+    tenvCtorOk env ∧ nsLookup env cn = some (tvs, ts, tn) →
+      ts.all (checkFreevars 0 tvs) = true := by
+  intro h
+  exact List.all_eq_true.mpr (nsLookup_nsAll env cn
+    (fun _ entry => ∀ t ∈ entry.2.1, checkFreevars 0 entry.1 t = true) (tvs, ts, tn) h)
+
+/-- Adding a zero-count local environment preserves the source value-environment
+well-formedness. -/
+@[hol "cakeml/semantics/proofs/typeSysPropsScript.sml" "tenv_val_ok_add_tenvE"]
+theorem tenvValOk_addTenvE (localEnv : TenvValExp) {M : Type}
+    (env : Namespace M MlString (Nat × SemanticT)) :
+    numTvs localEnv = 0 ∧ tenvValExpOk localEnv ∧ tenvValOk env →
+      tenvValOk (addTenvE localEnv env) := by
+  intro h
+  induction localEnv with
+  | empty => exact h.2.2
+  | bindTvar bound rest ih =>
+    simp only [numTvs, tenvValExpOk, addTenvE] at h ⊢
+    exact ih ⟨by omega, h.2.1, h.2.2⟩
+  | bindName name bound ty rest ih =>
+    simp only [numTvs, tenvValExpOk, tenvValOk, addTenvE] at h ⊢
+    obtain ⟨hnum, rest1, hval⟩ := h
+    obtain ⟨hfree, hok⟩ := rest1
+    have freeHere : checkFreevars bound [] ty = true := by simpa [hnum] using hfree
+    exact nsAll_nsBind _ name (bound, ty) (addTenvE rest env)
+      ⟨freeHere, ih ⟨hnum, hok, hval⟩⟩
+
+/-- Adding a bound variable list is the same as binding that list. -/
+@[hol "cakeml/semantics/proofs/typeSysPropsScript.sml" "add_tenvE_bvl"]
+theorem addTenvE_bvl (n : Nat) (bindings : List (MlString × SemanticT)) (localEnv : TenvValExp)
+    {M : Type} (env : Namespace M MlString (Nat × SemanticT)) :
+    addTenvE (bindVarList n bindings localEnv) env =
+      nsBindList (bindings.map fun (x, t) => (x, (n, t))) (addTenvE localEnv env) := by
+  induction bindings with
+  | nil => simp [bindVarList, nsBindList]
+  | cons entry rest ih =>
+    rcases entry with ⟨x, t⟩
+    simp only [bindVarList, addTenvE, List.map_cons, nsBindList, List.foldr_cons, ih]
+
+/-- A single declaration types exactly as the declaration judgment itself. -/
+@[simp, hol "cakeml/semantics/proofs/typeSysPropsScript.sml" "type_ds_sing"]
+theorem typeDsSing (extra : Bool) (tenv : TypeEnv) (d : Dec) (ids : TypeIds) (r : TypeEnv) :
+    TypeDs extra tenv [d] ids r ↔ TypeD extra tenv d ids r := by
+  have unionEmpty : ∀ ids : TypeIds, unionTypeIds ids (fun _ => False) = ids := by
+    intro ids
+    funext n
+    exact propext ⟨fun h => h.elim id False.elim, fun h => Or.inl h⟩
+  have extendEmpty : ∀ env : TypeEnv, extendDecTenv ⟨nsEmpty, nsEmpty, nsEmpty⟩ env = env := by
+    intro env
+    simp [extendDecTenv, nsAppend_nsEmpty]
+  have disjointEmpty : ∀ ids : TypeIds, disjointTypeIds ids (fun _ => False) := by
+    intro ids id h hb
+    exact hb
+  constructor
+  · intro typed
+    cases typed
+    rename_i env₁ env₂ ids₁ ids₂ disjoint head tail
+    cases tail
+    rw [unionEmpty, extendEmpty]
+    exact head
+  · intro typed
+    have nilTail : TypeDs extra (extendDecTenv r tenv) [] (fun _ => False)
+        ⟨nsEmpty, nsEmpty, nsEmpty⟩ := TypeDs.nil _ _
+    have built := TypeDs.cons extra tenv d [] r ⟨nsEmpty, nsEmpty, nsEmpty⟩ ids (fun _ => False)
+      typed nilTail (disjointEmpty ids)
+    rw [unionEmpty, extendEmpty] at built
+    exact built
 
 end Flapjack.TypeSysProps

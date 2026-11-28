@@ -121,6 +121,22 @@ theorem heapLength_append {α β : Type} (xs ys : List (HeapElement α β)) :
     heapLength (xs ++ ys) = heapLength xs + heapLength ys := by
   simp [heapLength, List.map_append, List.sum_append]
 
+/-- Every heap element occupies at least one word. -/
+@[hol "cakeml/compiler/backend/gc/gc_sharedScript.sml" "el_length_GT_0"]
+theorem elLength_ge_one {α β : Type} (element : HeapElement α β) : 1 ≤ elLength element := by
+  cases element
+  all_goals simp [elLength]
+
+/-- The empty heap has zero length. -/
+@[hol "cakeml/compiler/backend/gc/gc_sharedScript.sml" "heap_length_NIL"]
+theorem heapLength_nil {α β : Type} : heapLength ([] : List (HeapElement α β)) = 0 := by
+  simp [heapLength]
+
+/-- Heap lengths are non-negative. -/
+@[hol "cakeml/compiler/backend/gc/gc_sharedScript.sml" "heap_length_GTE"]
+theorem heapLength_nonneg {α β : Type} (heap : List (HeapElement α β)) : 0 ≤ heapLength heap :=
+  Nat.zero_le _
+
 /-- Every successful lookup returns an element of the heap. -/
 @[hol "cakeml/compiler/backend/gc/gc_sharedScript.sml" "heap_lookup_MEM"]
 theorem heapLookup_mem {α β : Type} (heap : List (HeapElement α β)) (n : Nat)

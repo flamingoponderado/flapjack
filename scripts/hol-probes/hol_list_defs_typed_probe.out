@@ -3,3 +3,6 @@ HD_typed=∀(h :α) (t :α list). HD (h::t) = h
 LAST_DEF_typed=∀(h :α) (t :α list). LAST (h::t) = if t = ([] :α list) then h else LAST t
 LAST_CONS_typed=(∀(x :α). LAST [x] = x) ∧ ∀(x :α) (y :α) (z :α list). LAST (x::y::z) = LAST (y::z)
 EVERY2_LUPDATE_same_typed=∀(P :α -> β -> bool) (l1 :α list) (l2 :β list) (v1 :α) (v2 :β) (n :num). P v1 v2 ∧ LIST_REL P l1 l2 ⇒ LIST_REL P l1❲n ↦ v1❳ l2❲n ↦ v2❳
+MAPi_def_typed=(∀(f :num -> β -> α). MAPi f ([] :β list) = ([] :α list)) ∧ ∀(f :num -> β -> α) (h :β) (t :β list). MAPi f (h::t) = f (0 :num) h::MAPi (f ∘ SUC) t
+INDEX_FIND_def_typed=(∀(i :num) (P :α -> bool). INDEX_FIND i P ([] :α list) = (NONE :(num # α) option)) ∧ ∀(i :num) (P :α -> bool) (h :α) (t :α list). INDEX_FIND i P (h::t) = if P h then SOME (i,h) else INDEX_FIND (SUC i) P t
+FIND_def_typed=∀(P :α -> bool). FIND P = OPTION_MAP (SND :num # α -> α) ∘ INDEX_FIND (0 :num) P

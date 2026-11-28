@@ -106,6 +106,20 @@ private theorem resultRel_of_evalResultRel (result : Result FlatSem.Value FlatSe
   all_goals cases related
   all_goals simp_all [SemanticPrimitivesProps.resultRel, SemanticPrimitivesProps.excRel]
 
+/-- Flapjack infrastructure (no HOL original): a successful primitive dispatch
+fixes the evaluator's lifted result as the next state paired with the
+singleton-result form of the dispatch's own result. -/
+private theorem applyResult_eq_of_doApp {C F : Type} {source : FlatSem.State C F}
+    {op : FlatLang.Op} {vs : List FlatSem.Value} {sourceNext : FlatSem.State C F}
+    {result : Result FlatSem.Value FlatSem.Value}
+    (applied : FlatSem.doApp source op vs = some (sourceNext, result)) :
+    FlatSem.applyResult source op vs =
+      (sourceNext, Flapjack.EvaluateHOL.listResult result) := by
+  simp only [FlatSem.applyResult, applied]
+  cases result with
+  | val value => rfl
+  | err error => rfl
+
 /-- Flapjack infrastructure (no HOL original): compile the operator, run it on
 the target, and normalise the resulting application, whose result is the
 `listResult` of the original result. -/
@@ -134,6 +148,28 @@ local macro "runCompiledArith" args:Lean.Parser.Tactic.simpLemma,* "using"
     simp only [compileOp, compileArith]
     rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, $h]
     simp [$args,*, Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]))
+
+/-- Flapjack infrastructure (no HOL original): run the compiled byte operator
+on the target, split its result, and close the operator-correctness existential
+from a body lemma that relates the flat run to the compiled one. The four
+identifiers are the enclosing case's `body` proof, its original result, its
+source's next state and its untouched `doApp` equation. -/
+local macro "runByteBody" body:ident res:ident next:ident orig:ident
+    call:term "using" h:Lean.Parser.Tactic.rwRule : tactic =>
+  `(tactic| (
+    have be : StateRel $next ($call).2 ∧
+        EvalResultRel (Flapjack.EvaluateHOL.listResult $res) ($call).1 := by
+      simpa [applyResult_eq_of_doApp $orig] using $body
+    clear $body
+    simp only [compileOp]
+    rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, $h]
+    cases run : $call with
+    | mk out last =>
+      simp only [run] at be
+      obtain ⟨stateRel, resultRel⟩ := be
+      refine ⟨out, last, ?_, stateRel, ?_⟩
+      · simpa using run
+      · exact resultRel_of_evalResultRel $res resultRel))
 
 /-- The original Eval operator case of value-level operator correctness.
 The flat primitive dispatcher handles Eval in the evaluator rather than
@@ -1113,28 +1149,10 @@ theorem opByteCopy {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
                 case w8array bytes =>
                   have body := copyStringToByteArray_body_related source targetNext trace db
                     value bytes pointer flag offset size dstOffset states found
-                  have bodyExact : StateRel sourceNext
-                      (ClosSem.evaluate [copyByteAw8 trace] (.number dstOffset ::
-                        .refPtr flag pointer :: .number size :: .number offset ::
-                        .byteVector value.explode :: db) targetNext).2 ∧
-                      EvalResultRel (Flapjack.EvaluateHOL.listResult result)
-                      (ClosSem.evaluate [copyByteAw8 trace] (.number dstOffset ::
-                        .refPtr flag pointer :: .number size :: .number offset ::
-                        .byteVector value.explode :: db) targetNext).1 := by
-                    cases result
-                    all_goals simpa [FlatSem.applyResult, originalApplied,
-                      Flapjack.EvaluateHOL.listResult] using body
-                  simp only [compileOp]
-                  rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
-                  cases run : ClosSem.evaluate [copyByteAw8 trace] (.number dstOffset ::
-                    .refPtr flag pointer :: .number size :: .number offset ::
-                    .byteVector value.explode :: db) targetNext with
-                  | mk out last =>
-                    simp only [run] at bodyExact
-                    obtain ⟨stateRel, resultRel⟩ := bodyExact
-                    refine ⟨out, last, ?_, stateRel, ?_⟩
-                    · simpa using run
-                    · exact resultRel_of_evalResultRel result resultRel
+                  runByteBody body result sourceNext originalApplied
+                    (ClosSem.evaluate [copyByteAw8 trace] (.number dstOffset ::
+                      .refPtr flag pointer :: .number size :: .number offset ::
+                      .byteVector value.explode :: db) targetNext) using evaluated
   case inr.inr.inl =>
     have originalApplied := applied
     rcases vs with _ | ⟨a, _ | ⟨b, _ | ⟨c, _ | ⟨d, _ | ⟨e, _ | ⟨z, zs⟩⟩⟩⟩⟩⟩ <;>
@@ -1172,28 +1190,10 @@ theorem opByteCopy {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
                         have body := copyByteArrayToByteArray_body_related source targetNext
                           trace db srcBytes bytes srcPointer pointer srcFlag flag offset size
                           dstOffset states srcFound found
-                        have bodyExact : StateRel sourceNext
-                            (ClosSem.evaluate [copyByteAw8 trace] (.number dstOffset ::
-                              .refPtr flag pointer :: .number size :: .number offset ::
-                              .refPtr srcFlag srcPointer :: db) targetNext).2 ∧
-                            EvalResultRel (Flapjack.EvaluateHOL.listResult result)
-                            (ClosSem.evaluate [copyByteAw8 trace] (.number dstOffset ::
-                              .refPtr flag pointer :: .number size :: .number offset ::
-                              .refPtr srcFlag srcPointer :: db) targetNext).1 := by
-                          cases result
-                          all_goals simpa [FlatSem.applyResult, originalApplied,
-                            Flapjack.EvaluateHOL.listResult] using body
-                        simp only [compileOp]
-                        rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
-                        cases run : ClosSem.evaluate [copyByteAw8 trace] (.number dstOffset ::
-                          .refPtr flag pointer :: .number size :: .number offset ::
-                          .refPtr srcFlag srcPointer :: db) targetNext with
-                        | mk out last =>
-                          simp only [run] at bodyExact
-                          obtain ⟨stateRel, resultRel⟩ := bodyExact
-                          refine ⟨out, last, ?_, stateRel, ?_⟩
-                          · simpa using run
-                          · exact resultRel_of_evalResultRel result resultRel
+                        runByteBody body result sourceNext originalApplied
+                          (ClosSem.evaluate [copyByteAw8 trace] (.number dstOffset ::
+                            .refPtr flag pointer :: .number size :: .number offset ::
+                            .refPtr srcFlag srcPointer :: db) targetNext) using evaluated
   case inr.inl =>
     have originalApplied := applied
     rcases vs with _ | ⟨v, _ | ⟨u, _ | ⟨q, _ | ⟨z, zs⟩⟩⟩⟩ <;>
@@ -1217,27 +1217,10 @@ theorem opByteCopy {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
             case w8array bytes =>
                 have body := copyByteArray_body_related source targetNext trace db pointer flag
                   bytes offset size states found
-                have bodyExact : StateRel sourceNext
-                    (ClosSem.evaluate [copyByteStr trace]
-                      (.number size :: .number offset :: .refPtr flag pointer :: db) targetNext).2 ∧
-                    EvalResultRel (Flapjack.EvaluateHOL.listResult result)
-                    (ClosSem.evaluate [copyByteStr trace]
-                      (.number size :: .number offset :: .refPtr flag pointer :: db)
-                      targetNext).1 := by
-                  cases result
-                  all_goals simpa [FlatSem.applyResult, originalApplied,
-                    Flapjack.EvaluateHOL.listResult] using body
-                clear body
-                simp only [compileOp]
-                rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
-                cases run : ClosSem.evaluate [copyByteStr trace]
-                  (.number size :: .number offset :: .refPtr flag pointer :: db) targetNext with
-                | mk out last =>
-                  simp only [run] at bodyExact
-                  obtain ⟨stateRel, resultRel⟩ := bodyExact
-                  refine ⟨out, last, ?_, stateRel, ?_⟩
-                  · simpa using run
-                  · exact resultRel_of_evalResultRel result resultRel
+                runByteBody body result sourceNext originalApplied
+                  (ClosSem.evaluate [copyByteStr trace]
+                    (.number size :: .number offset :: .refPtr flag pointer :: db)
+                    targetNext) using evaluated
   case inr.inr.inr.inl =>
     have originalApplied := applied
     rcases vs with _ | ⟨v, _ | ⟨u, _ | ⟨q, _ | ⟨z, zs⟩⟩⟩⟩
@@ -1254,27 +1237,10 @@ theorem opByteCopy {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
         all_goals try simp at applied
         case int size =>
           have body := copyString_body_related source targetNext trace db value offset size states
-          have bodyExact : StateRel sourceNext
-              (ClosSem.evaluate [copyByteStr trace]
-                (.number size :: .number offset :: .byteVector value.explode :: db) targetNext).2 ∧
-              EvalResultRel (Flapjack.EvaluateHOL.listResult result)
-              (ClosSem.evaluate [copyByteStr trace]
-                (.number size :: .number offset :: .byteVector value.explode :: db)
-                targetNext).1 := by
-            cases result
-            all_goals simpa [FlatSem.applyResult, originalApplied,
-              Flapjack.EvaluateHOL.listResult] using body
-          clear body
-          simp only [compileOp]
-          rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
-          cases run : ClosSem.evaluate [copyByteStr trace]
-            (.number size :: .number offset :: .byteVector value.explode :: db) targetNext with
-          | mk out last =>
-            simp only [run] at bodyExact
-            obtain ⟨stateRel, resultRel⟩ := bodyExact
-            refine ⟨out, last, ?_, stateRel, ?_⟩
-            · simpa using run
-            · exact resultRel_of_evalResultRel result resultRel
+          runByteBody body result sourceNext originalApplied
+            (ClosSem.evaluate [copyByteStr trace]
+              (.number size :: .number offset :: .byteVector value.explode :: db)
+              targetNext) using evaluated
   case inr.inr.inr.inr =>
     cases vs with
     | nil => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, FlatSem.doAppCopy] at applied
@@ -1364,34 +1330,12 @@ theorem opByteArrays {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F
       all_goals try simp at applied
       case word8 byte =>
         have body := allocByteArray_body_related source targetNext trace db size byte states
-        simp only [compileOp]
-        rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
-        have bodyExact : StateRel sourceNext
-            (ClosSem.evaluate [.ifThenElse trace
-              (.op trace (.intOp .less) [.op trace (.intOp (.const 0)) [], .var trace 1])
-              (.raise trace (.op trace (.blockOp (.cons 3)) []))
-              (.op trace (.memOp (.refByte false)) [.var trace 0, .var trace 1])]
-              (.number byte.toNat :: .number size :: db) targetNext).2 ∧
-            EvalResultRel (Flapjack.EvaluateHOL.listResult result)
-            (ClosSem.evaluate [.ifThenElse trace
-              (.op trace (.intOp .less) [.op trace (.intOp (.const 0)) [], .var trace 1])
-              (.raise trace (.op trace (.blockOp (.cons 3)) []))
-              (.op trace (.memOp (.refByte false)) [.var trace 0, .var trace 1])]
-              (.number byte.toNat :: .number size :: db) targetNext).1 := by
-          cases result
-          all_goals simpa [FlatSem.applyResult, originalApplied,
-            Flapjack.EvaluateHOL.listResult] using body
-        cases run : ClosSem.evaluate [.ifThenElse trace
-          (.op trace (.intOp .less) [.op trace (.intOp (.const 0)) [], .var trace 1])
-          (.raise trace (.op trace (.blockOp (.cons 3)) []))
-          (.op trace (.memOp (.refByte false)) [.var trace 0, .var trace 1])]
-          (.number byte.toNat :: .number size :: db) targetNext with
-        | mk out last =>
-          simp only [run] at bodyExact
-          obtain ⟨stateRel, resultRel⟩ := bodyExact
-          refine ⟨out, last, ?_, stateRel, ?_⟩
-          · simpa using run
-          · exact resultRel_of_evalResultRel result resultRel
+        runByteBody body result sourceNext originalApplied
+          (ClosSem.evaluate [.ifThenElse trace
+            (.op trace (.intOp .less) [.op trace (.intOp (.const 0)) [], .var trace 1])
+            (.raise trace (.op trace (.blockOp (.cons 3)) []))
+            (.op trace (.memOp (.refByte false)) [.var trace 0, .var trace 1])]
+            (.number byte.toNat :: .number size :: db) targetNext) using evaluated
   case inr.inr.inl =>
     have originalApplied := applied
     rcases vs with _ | ⟨v, _ | ⟨u, _ | ⟨z, zs⟩⟩⟩ <;>
@@ -1441,34 +1385,12 @@ theorem opByteArrays {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F
           case w8array bytes =>
             have body := checkedByteRead_body_related source targetNext trace db pointer flag
               bytes index states found
-            have bodyExact : StateRel sourceNext
-                (ClosSem.evaluate [.ifThenElse trace
-                  (.op trace (.memOp (.boundsCheckByte false)) [.var trace 0, .var trace 1])
-                  (.op trace (.memOp .derefByte) [.var trace 0, .var trace 1])
-                  (.raise trace (.op trace (.blockOp (.cons 3)) []))]
-                  (.number index :: .refPtr flag pointer :: db) targetNext).2 ∧
-                EvalResultRel (Flapjack.EvaluateHOL.listResult result)
-                (ClosSem.evaluate [.ifThenElse trace
-                  (.op trace (.memOp (.boundsCheckByte false)) [.var trace 0, .var trace 1])
-                  (.op trace (.memOp .derefByte) [.var trace 0, .var trace 1])
-                  (.raise trace (.op trace (.blockOp (.cons 3)) []))]
-                  (.number index :: .refPtr flag pointer :: db) targetNext).1 := by
-              cases result
-              all_goals simpa [FlatSem.applyResult, originalApplied,
-                Flapjack.EvaluateHOL.listResult] using body
-            simp only [compileOp]
-            rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
-            cases run : ClosSem.evaluate [.ifThenElse trace
-              (.op trace (.memOp (.boundsCheckByte false)) [.var trace 0, .var trace 1])
-              (.op trace (.memOp .derefByte) [.var trace 0, .var trace 1])
-              (.raise trace (.op trace (.blockOp (.cons 3)) []))]
-              (.number index :: .refPtr flag pointer :: db) targetNext with
-            | mk out last =>
-              simp only [run] at bodyExact
-              obtain ⟨stateRel, resultRel⟩ := bodyExact
-              refine ⟨out, last, ?_, stateRel, ?_⟩
-              · simpa using run
-              · exact resultRel_of_evalResultRel result resultRel
+            runByteBody body result sourceNext originalApplied
+              (ClosSem.evaluate [.ifThenElse trace
+                (.op trace (.memOp (.boundsCheckByte false)) [.var trace 0, .var trace 1])
+                (.op trace (.memOp .derefByte) [.var trace 0, .var trace 1])
+                (.raise trace (.op trace (.blockOp (.cons 3)) []))]
+                (.number index :: .refPtr flag pointer :: db) targetNext) using evaluated
   case inr.inr.inr.inr.inl =>
     have originalApplied := applied
     rcases vs with _ | ⟨v, _ | ⟨u, _ | ⟨q, _ | ⟨z, zs⟩⟩⟩⟩
@@ -1530,37 +1452,13 @@ theorem opByteArrays {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F
                 simpa [storeLookup] using found
               have body := checkedByteUpdate_body_related source targetNext trace db pointer
                 flag bytes index byte states foundList
-              have bodyExact : StateRel sourceNext
-                  (ClosSem.evaluate [.ifThenElse trace
-                    (.op trace (.memOp (.boundsCheckByte false)) [.var trace 1, .var trace 2])
-                    (.op trace (.memOp .updateByte) [.var trace 0, .var trace 1, .var trace 2])
-                    (.raise trace (.op trace (.blockOp (.cons 3)) []))]
-                    (.number byte.toNat :: .number index :: .refPtr flag pointer :: db)
-                    targetNext).2 ∧
-                  EvalResultRel (Flapjack.EvaluateHOL.listResult result)
-                  (ClosSem.evaluate [.ifThenElse trace
-                    (.op trace (.memOp (.boundsCheckByte false)) [.var trace 1, .var trace 2])
-                    (.op trace (.memOp .updateByte) [.var trace 0, .var trace 1, .var trace 2])
-                    (.raise trace (.op trace (.blockOp (.cons 3)) []))]
-                    (.number byte.toNat :: .number index :: .refPtr flag pointer :: db)
-                    targetNext).1 := by
-                cases result
-                all_goals simpa [FlatSem.applyResult, originalApplied,
-                  Flapjack.EvaluateHOL.listResult] using body
-              simp only [compileOp]
-              rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
-              cases run : ClosSem.evaluate [.ifThenElse trace
-                (.op trace (.memOp (.boundsCheckByte false)) [.var trace 1, .var trace 2])
-                (.op trace (.memOp .updateByte) [.var trace 0, .var trace 1, .var trace 2])
-                (.raise trace (.op trace (.blockOp (.cons 3)) []))]
-                (.number byte.toNat :: .number index :: .refPtr flag pointer :: db)
-                targetNext with
-              | mk out last =>
-                simp only [run] at bodyExact
-                obtain ⟨stateRel, resultRel⟩ := bodyExact
-                refine ⟨out, last, ?_, stateRel, ?_⟩
-                · simpa using run
-                · exact resultRel_of_evalResultRel result resultRel
+              runByteBody body result sourceNext originalApplied
+                (ClosSem.evaluate [.ifThenElse trace
+                  (.op trace (.memOp (.boundsCheckByte false)) [.var trace 1, .var trace 2])
+                  (.op trace (.memOp .updateByte) [.var trace 0, .var trace 1, .var trace 2])
+                  (.raise trace (.op trace (.blockOp (.cons 3)) []))]
+                  (.number byte.toNat :: .number index :: .refPtr flag pointer :: db)
+                  targetNext) using evaluated
 
 /-- The original value-array operator case, including arbitrary fixed allocation. -/
 @[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "op_arrays"

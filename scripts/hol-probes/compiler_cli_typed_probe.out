@@ -1,0 +1,15 @@
+has_version_flag_def_typed=∀(ls :mlstring list). has_version_flag ls ⇔ (MEM «--version» ls :bool)
+has_help_flag_def_typed=∀(ls :mlstring list). has_help_flag ls ⇔ (MEM «--help» ls :bool)
+has_pancake_flag_def_typed=∀(ls :mlstring list). has_pancake_flag ls ⇔ (MEM «--pancake» ls :bool)
+print_bool_def_typed=∀(b :bool). print_bool b = if b then «true» else «false»
+print_option_def_typed=∀(h :mlstring) (x :mlstring option). print_option h x = case x of (NONE :mlstring option) => «» | SOME y => h ^ « » ^ y ^ «\n»
+is_error_msg_def_typed=∀(x :mlstring). is_error_msg x ⇔ isPrefix «###» x
+parse_bool_def_typed=∀(str :mlstring). parse_bool str = if str = «true» then SOME T else if str = «false» then SOME F else (NONE :bool option)
+safe_substring_def_typed=∀(s :mlstring) (n :num) (l :num). safe_substring s n l = (let (k :num) = strlen s in if k ≤ n then «» else if n + l ≤ k then substring s n l else substring s n (k − n))
+get_err_str_def_typed=(∀(n :α). get_err_str (INL n :α + mlstring) = «») ∧ ∀(n :mlstring). get_err_str (INR n :α + mlstring) = concat [n; «\n»]
+find_str_def_typed=(∀(flag :mlstring). find_str flag ([] :mlstring list) = (NONE :mlstring option)) ∧ ∀(flag :mlstring) (x :mlstring) (xs :mlstring list). find_str flag (x::xs) = if isPrefix flag x then SOME (extract x (strlen flag) (NONE :num option) :mlstring) else find_str flag xs
+find_strs_def_typed=(∀(flag :mlstring). find_strs flag ([] :mlstring list) = ([] :mlstring list)) ∧ ∀(flag :mlstring) (x :mlstring) (xs :mlstring list). find_strs flag (x::xs) = if isPrefix flag x then (extract x (strlen flag) (NONE :num option) :mlstring)::find_strs flag xs else find_strs flag xs
+comma_tokens_def_typed=(∀(acc :mlstring list) (xs :string). comma_tokens acc xs ("" :string) = if NULL xs then acc else acc ++ [implode xs]) ∧ ∀(acc :mlstring list) (xs :string) (c :char) (cs :string). comma_tokens acc xs (STRING c cs) = if c = #"," then comma_tokens (acc ++ if NULL xs then ([] :mlstring list) else [implode xs]) ("" :string) cs else comma_tokens acc (STRCAT xs (STRING c ("" :string))) cs
+find_bool_def_typed=∀(flag :mlstring) (ls :mlstring list) (default :bool). find_bool flag ls default = case find_str flag ls of (NONE :mlstring option) => (INL default :bool + mlstring) | SOME rest => case parse_bool rest of (NONE :bool option) => (INR (concat [«Unable to parse as bool: »; rest; « for flag: »; flag]) :bool + mlstring) | SOME b => (INL b :bool + mlstring)
+find_next_newline_def_typed=∀(s :mlstring) (n :num). find_next_newline n s = if strlen s ≤ n then n else if strsub s n = #"\n" then n else find_next_newline (n + (1 :num)) s
+get_nth_line_def_typed=∀(s :mlstring) (n :num) (k :num). get_nth_line k s n = if k = (0 :num) then (let (n1 :num) = find_next_newline n s in safe_substring s n (n1 − n)) else get_nth_line (k − (1 :num)) s (find_next_newline n s + (1 :num))

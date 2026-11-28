@@ -1,7 +1,9 @@
 module
 
 public import Flapjack.Compiler.Backend.GcShared.AddressMap
+public import Flapjack.FiniteMap.DomainExact
 public import Flapjack.Misc.FiniteMapApply
+public import Flapjack.Misc.PredSet
 
 @[expose] public section
 
@@ -103,5 +105,22 @@ theorem mem_imp_heapLookup {α β : Type} (xs : List (HeapElement α β)) (x : H
       have notInside : ¬ j + elLength head < elLength head := by omega
       simp only [heapLookup, nonzero, if_false, notInside, Nat.add_sub_cancel]
       exact found
+
+/-- Original `BIJ_IMP_FLOOKUP_SOME`: a bijection out of the forwarding map's
+    domain hits every key of its range at a defined lookup. -/
+@[hol "cakeml/compiler/backend/gc/gen_gcScript.sml" "BIJ_IMP_FLOOKUP_SOME"]
+theorem bij_imp_flookup_some {α β : Type} (s : Set Nat) (h : List (HeapElement α β)) (j : Nat)
+    (premise : holBij (heapMap1 h) (heapMap 0 h).domain s ∧ j ∈ s) :
+    ∃ i, (heapMap 0 h).lookup i = some j := by
+  obtain ⟨_, surjective⟩ := premise.1
+  obtain ⟨i, inDomain, image⟩ := surjective.2 j premise.2
+  have defined : (heapMap 0 h).lookup i ≠ none := inDomain
+  cases found : (heapMap 0 h).lookup i with
+  | none => exact absurd found defined
+  | some value =>
+    have apply : holFapply (heapMap 0 h) i = value := holFapply_of_lookup found
+    have step : heapMap1 h i = holFapply (heapMap 0 h) i := rfl
+    rw [step, apply] at image
+    exact ⟨i, by rw [found, image]⟩
 
 end Flapjack.Compiler.Backend

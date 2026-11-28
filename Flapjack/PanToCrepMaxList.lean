@@ -34,6 +34,9 @@ def maxList : List Nat → Nat
   | [] => 0
   | value :: values => max value (maxList values)
 
+/-- Original `MAX_LIST_APPEND`: the maximum of a concatenation is the maximum
+of the two maxima. -/
+@[hol "cakeml/misc/miscScript.sml" "MAX_LIST_APPEND"]
 theorem maxList_append (first second : List Nat) :
     maxList (first ++ second) = max (maxList first) (maxList second) := by
   induction first with
@@ -41,6 +44,14 @@ theorem maxList_append (first second : List Nat) :
   | cons value values ih =>
       simp only [List.cons_append, maxList, ih]
       rw [Nat.max_assoc]
+
+/-- Original `MAX_LIST_SNOC`: appending one element makes it a candidate
+maximum. HOL's `SNOC x xs` is `xs ++ [x]`. -/
+@[hol "cakeml/misc/miscScript.sml" "MAX_LIST_SNOC"]
+theorem maxList_snoc (values : List Nat) (x : Nat) :
+    maxList (values ++ [x]) = max (maxList values) x := by
+  rw [maxList_append]
+  simp [maxList]
 
 theorem maxList_not_mem (bound : Nat) (values : List Nat)
     (h : bound > maxList values) : bound ∉ values := by
@@ -55,6 +66,9 @@ theorem maxList_not_mem (bound : Nat) (values : List Nat)
       simp only [List.mem_cons, not_or]
       exact ⟨by omega, ih htail⟩
 
+/-- Original `MAX_LIST_max`: every element of a list is at most its maximum.
+HOL's `EVERY (λx. x ≤ MAX_LIST ls) ls` is the quantified membership form. -/
+@[hol "cakeml/misc/miscScript.sml" "MAX_LIST_max"]
 theorem maxList_ge_of_mem (values : List Nat) (x : Nat) (hx : x ∈ values) :
     x ≤ maxList values := by
   induction values with
@@ -111,5 +125,25 @@ theorem maxList_genlist_add_suc_val (k : Nat) :
       | succ m' =>
           rw [ih (by omega)]
           exact Nat.max_eq_right (by omega)
+
+/-- Original `MAX_LIST_intro`: a property holding at zero and on every member
+holds of the maximum. -/
+@[hol "cakeml/misc/miscScript.sml" "MAX_LIST_intro"]
+theorem maxList_intro :
+    ∀ (values : List Nat) (P : Nat → Prop), P 0 ∧ (∀ x ∈ values, P x) → P (maxList values) := by
+  intro values P h
+  obtain ⟨h0, h⟩ := h
+  induction values with
+  | nil => simpa [maxList] using h0
+  | cons value values ih =>
+    have hvalue : P value := h value (by simp)
+    have hrest : ∀ y ∈ values, P y := fun y hy => h y (by simp [hy])
+    have ihrest := ih hrest
+    simp only [maxList]
+    rcases Nat.le_total value (maxList values) with hle | hle
+    · rw [Nat.max_eq_right hle]
+      exact ihrest
+    · rw [Nat.max_eq_left hle]
+      exact hvalue
 
 end Flapjack

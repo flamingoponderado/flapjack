@@ -27,3 +27,172 @@ theorem forall₂_replicate_iff {α β : Type} (relation : α → β → Prop)
       exact .cons head (ih.mpr (fun _ => head))
 
 end Flapjack
+
+namespace Flapjack
+
+/-- Original `SPLITP[nocompute]`: split a list at the first element satisfying
+`P`. -/
+@[hol "HOL/src/list/src/rich_listScript.sml" "SPLITP"]
+def splitP {α : Type} (P : α → Bool) : List α → List α × List α
+  | [] => ([], [])
+  | h :: t =>
+    if P h then ([], h :: t)
+    else (h :: (splitP P t).1, (splitP P t).2)
+
+/-- Original `SPLITL_def`: split a list at the first element failing `P`. -/
+@[hol "HOL/src/list/src/rich_listScript.sml" "SPLITL_def"]
+def splitL {α : Type} (P : α → Bool) : List α → List α × List α :=
+  splitP (fun x => !(P x))
+
+/-- Original `SPLITP_NIL_FST_IMP`: an empty first component means nothing was
+consumed. -/
+@[hol "HOL/src/list/src/rich_listScript.sml" "SPLITP_NIL_FST_IMP"]
+theorem splitP_nil_fst {α : Type} (P : α → Bool) (ls r : List α) :
+    splitP P ls = ([], r) → r = ls := by
+  induction ls generalizing r with
+  | nil =>
+    intro hsplit
+    rw [splitP, Prod.mk.injEq] at hsplit
+    exact hsplit.2.symm
+  | cons h t ih =>
+    intro hsplit
+    by_cases hp : P h
+    · rw [splitP, if_pos hp, Prod.mk.injEq] at hsplit
+      exact hsplit.2.symm
+    · rw [splitP, if_neg hp, Prod.mk.injEq] at hsplit
+      exact absurd hsplit.1 (by simp)
+
+/-- Original `SPLITP_JOIN`: the two components join back to the input. -/
+@[hol "HOL/src/list/src/rich_listScript.sml" "SPLITP_JOIN"]
+theorem splitP_join {α : Type} (P : α → Bool) (ls l r : List α) :
+    splitP P ls = (l, r) → ls = l ++ r := by
+  induction ls generalizing l r with
+  | nil =>
+    intro hsplit
+    rw [splitP, Prod.mk.injEq] at hsplit
+    rw [← hsplit.1, ← hsplit.2]
+    rfl
+  | cons h t ih =>
+    intro hsplit
+    by_cases hp : P h
+    · rw [splitP, if_pos hp, Prod.mk.injEq] at hsplit
+      rw [← hsplit.1, ← hsplit.2]
+      rfl
+    · rw [splitP, if_neg hp, Prod.mk.injEq] at hsplit
+      have ht : t = (splitP P t).1 ++ (splitP P t).2 := ih _ _ rfl
+      rw [← hsplit.1, ← hsplit.2]
+      have hcons : h :: t = h :: ((splitP P t).1 ++ (splitP P t).2) :=
+        congrArg (List.cons h) ht
+      rw [hcons]
+      rfl
+
+/-- Original `SPLITP_APPEND`: appending after the split point keeps the first
+component and appends to the remainder. -/
+@[hol "HOL/src/list/src/rich_listScript.sml" "SPLITP_APPEND"]
+theorem splitP_append {α : Type} (P : α → Bool) (l1 l2 : List α) :
+    splitP P (l1 ++ l2) =
+      if l1.any P then ((splitP P l1).1, (splitP P l1).2 ++ l2)
+      else (l1 ++ (splitP P l2).1, (splitP P l2).2) := by
+  induction l1 with
+  | nil =>
+    generalize h : splitP P l2 = p
+    obtain ⟨a, b⟩ := p
+    simp [h]
+  | cons h t ih =>
+    by_cases hp : P h
+    · simp [splitP, hp]
+    · have hpf : P h = false := by simpa using hp
+      rw [List.cons_append, splitP, if_neg hp, splitP, if_neg hp,
+        List.any_cons, hpf, Bool.false_or]
+      by_cases ht : t.any P
+      · rw [ih]
+        simp only [if_pos ht]
+      · rw [ih]
+        simp only [if_neg ht]
+        rfl
+
+/-- Original `SPLITP_NIL_SND_EVERY`: nothing is left over exactly when the split
+consumed the whole list of non-`P` elements. -/
+@[hol "HOL/src/list/src/rich_listScript.sml" "SPLITP_NIL_SND_EVERY"]
+theorem splitP_snd_nil_iff {α : Type} (P : α → Bool) (ls r : List α) :
+    splitP P ls = (r, []) ↔ r = ls ∧ ls.all (fun x => !(P x)) = true := by
+  induction ls generalizing r with
+  | nil => simp [splitP]
+  | cons h t ih =>
+    by_cases hp : P h
+    · rw [splitP, if_pos hp, Prod.mk.injEq]
+      constructor
+      · intro h
+        exact absurd h.2 (by simp)
+      · rintro ⟨hr, hall⟩
+        rw [List.all_cons, hp, Bool.not_true, Bool.false_and] at hall
+        exact absurd hall (by simp)
+    · have hpf : P h = false := by simpa using hp
+      rw [splitP, if_neg hp, List.all_cons, hpf, Bool.not_false, Bool.true_and]
+      constructor
+      · intro hsplit
+        rw [Prod.mk.injEq] at hsplit
+        obtain ⟨hl, hr⟩ := hsplit
+        have hpair : splitP P t = ((splitP P t).1, []) := by
+          rw [Prod.mk.injEq]
+          exact ⟨rfl, hr⟩
+        have hall : t.all (fun x => !(P x)) = true := (ih (splitP P t).1).mp hpair |>.2
+        have hsplit_t : splitP P t = (t, []) := (ih t).mpr ⟨rfl, hall⟩
+        have hft : (splitP P t).1 = t := by rw [hsplit_t]
+        exact ⟨by rw [← hl, hft], hall⟩
+      · rintro ⟨hr, hall⟩
+        have hsplit_t : splitP P t = (t, []) := (ih t).mpr ⟨rfl, hall⟩
+        rw [Prod.mk.injEq]
+        exact ⟨by rw [hr, hsplit_t], by rw [hsplit_t]⟩
+
+/-- Original `SPLITP_CONS_IMP`: a split whose second component is nonempty has
+an element satisfying the predicate. -/
+@[hol "cakeml/misc/miscScript.sml" "SPLITP_CONS_IMP"]
+theorem splitPConsImp {α : Type} :
+    ∀ (ls : List α) (l' r : List α) (P : α → Bool),
+      splitP P ls = (l', r) ∧ r ≠ [] → ls.any P := by
+  intro ls
+  induction ls with
+  | nil =>
+    intro l' r P h
+    obtain ⟨hsplit, hr⟩ := h
+    simp [splitP] at hsplit
+    exact absurd hsplit.2 hr
+  | cons hd tl ih =>
+    intro l' r P h
+    obtain ⟨hsplit, hr⟩ := h
+    cases hp : P hd with
+    | true =>
+      rw [splitP, hp] at hsplit
+      simp only at hsplit
+      rw [List.any_cons, hp]
+      rfl
+    | false =>
+      rw [splitP, hp] at hsplit
+      obtain ⟨-, rfl⟩ := hsplit
+      rw [List.any_cons, hp]
+      exact ih _ _ P ⟨rfl, hr⟩
+
+/-- Original `SND_SPLITP_DROP`: dropping a prefix on which the predicate fails
+does not change the second component of the split. -/
+@[hol "cakeml/misc/miscScript.sml" "SND_SPLITP_DROP"]
+theorem splitPSndDrop {α : Type} (P : α → Bool) (n : Nat) (l : List α)
+    (h : (l.take n).all (fun x => ! P x) = true) :
+    (splitP P (l.drop n)).2 = (splitP P l).2 := by
+  induction n generalizing l with
+  | zero => simp
+  | succ n ih =>
+    cases l with
+    | nil => simp [splitP]
+    | cons hd tl =>
+      rw [List.take_succ_cons, List.all_cons, Bool.and_eq_true] at h
+      obtain ⟨hhd, htl⟩ := h
+      have hfalse : P hd = false := by
+        cases hp : P hd with
+        | true => rw [hp] at hhd
+                  simp at hhd
+        | false => rfl
+      rw [List.drop_succ_cons, splitP, hfalse]
+      exact ih tl htl
+
+end Flapjack

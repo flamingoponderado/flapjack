@@ -64,4 +64,37 @@ def backendConfigOk {width : Nat} [NeZero width] (asmConf : AsmConfigExact width
     asmConf.validImm (.inl .sub) (BitVec.ofNat width (n * (width / 8))) = true ∧
     asmConf.validImm (.inl .add) (BitVec.ofNat width (n * (width / 8))) = true)
 
+/-- Original `is_64_bits_def` (`backendProofScript.sml:2709-2711`): the machine
+word is 64 bits wide. HOL uses `dimindex (:'a)` only numerically and has no
+word-valued carrier, so Lean binds the word width explicitly. -/
+@[hol "cakeml/compiler/backend/proofs/backendProofScript.sml" "is_64_bits_def"
+  (word_dimension_as_width := width)]
+def is64Bits (width : Nat) [NeZero width] : Bool := width == 64
+
+/-- Original `backend_config_ok_with_bvl_conf_updated`
+(`backendProofScript.sml:90-95`): updating the BVI configuration with a
+function that keeps `next_name2` preserves the configuration check. -/
+@[hol "cakeml/compiler/backend/proofs/backendProofScript.sml"
+  "backend_config_ok_with_bvl_conf_updated"]
+theorem backendConfigOk_bvlConf_updated {width : Nat} [NeZero width]
+    (f : Flapjack.Compiler.Backend.BvlToBvi.Config → Flapjack.Compiler.Backend.BvlToBvi.Config)
+    (cc : Flapjack.Compiler.Backend.Backend.Config)
+    (asmConf : AsmConfigExact width)
+    (h : (f cc.bvlConf).nextName2 = cc.bvlConf.nextName2) :
+    backendConfigOk asmConf { cc with bvlConf := f cc.bvlConf } ↔ backendConfigOk asmConf cc := by
+  simp only [backendConfigOk, h]
+
+/-- Original `backend_config_ok_with_word_to_word_conf_updated`
+(`backendProofScript.sml:97-101`): the configuration check does not read the
+word-to-word configuration. -/
+@[hol "cakeml/compiler/backend/proofs/backendProofScript.sml"
+  "backend_config_ok_with_word_to_word_conf_updated"]
+theorem backendConfigOk_wordToWordConf_updated {width : Nat} [NeZero width]
+    (asmConf : AsmConfigExact width) (cc : Flapjack.Compiler.Backend.Backend.Config)
+    (f : Flapjack.Compiler.Backend.WordToWord.Config →
+      Flapjack.Compiler.Backend.WordToWord.Config) :
+    backendConfigOk asmConf { cc with wordToWordConf := f cc.wordToWordConf } ↔
+      backendConfigOk asmConf cc := by
+  simp only [backendConfigOk]
+
 end Flapjack.Compiler.Backend.BackendProof

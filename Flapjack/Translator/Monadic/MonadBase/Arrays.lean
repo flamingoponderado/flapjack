@@ -77,4 +77,39 @@ def arrayUpdate {state value exception : Type} (getArr : state → List value)
     | .success a => (.success (), setArr a s)
     | .failure e => (.failure e, s)
 
+/-- Original `array_resize_def`: pad or truncate `a` to length `n` with `x`.
+    HOL recurses on `n` while keeping `a` in the empty case, so the Lean
+    definition is well-founded on `n`. -/
+@[hol "cakeml/translator/monadic/monad_base/ml_monadBaseScript.sml" "array_resize_def"]
+def arrayResize {α : Type} (n : Nat) (x : α) (a : List α) : List α :=
+  if n = 0 then []
+  else
+    match a with
+    | [] => x :: arrayResize (n - 1) x a
+    | x' :: a' => x' :: arrayResize (n - 1) x a'
+termination_by n
+
+/-- Original `array_resize_eq`: resizing is a truncation followed by padding. -/
+@[hol "cakeml/translator/monadic/monad_base/ml_monadBaseScript.sml" "array_resize_eq"]
+theorem arrayResizeEq {α : Type} (a : List α) (n : Nat) (x : α) :
+    arrayResize n x a = a.take n ++ List.replicate (n - a.length) x := by
+  induction n generalizing a with
+  | zero =>
+      unfold arrayResize
+      simp
+  | succ n ih =>
+      cases a with
+      | nil =>
+          unfold arrayResize
+          simp [ih, List.replicate_succ]
+      | cons y a =>
+          unfold arrayResize
+          simp [ih, List.take_succ_cons, Nat.succ_sub_succ_eq_sub]
+
+/-- HOL `Marray_resize` (`ml_monadBaseScript.sml:216-220`). -/
+@[hol "cakeml/translator/monadic/monad_base/ml_monadBaseScript.sml" "Marray_resize_def"]
+def arrayResizeM {α β γ δ : Type} (getArr : α → List δ) (setArr : List δ → α → γ)
+    (n : Nat) (x : δ) : α → Exc Unit β × γ :=
+  fun s => (.success (), setArr (arrayResize n x (getArr s)) s)
+
 end Flapjack.Translator.Monadic.MonadBase

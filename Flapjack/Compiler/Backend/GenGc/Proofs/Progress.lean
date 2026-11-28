@@ -11,8 +11,9 @@ namespace Flapjack.Compiler.Backend.GenGc
 /-- A successful root move started from a successful state. -/
 @[hol "cakeml/compiler/backend/gc/gen_gcScript.sml" "gc_move_ok"]
 theorem gcMove_ok {α β : Type} (conf : Config β) (state state1 : GcState α β)
-    (root root1 : HeapAddress α) (run : gcMove conf state root = (root1, state1))
-    (ok : state1.ok = true) : state.ok = true := by
+    (root root1 : HeapAddress α)
+    (h : gcMove conf state root = (root1, state1) ∧ state1.ok = true) : state.ok = true := by
+  obtain ⟨run, ok⟩ := h
   cases root with
   | data value =>
     simp only [gcMove, Prod.mk.injEq] at run
@@ -65,7 +66,8 @@ theorem gcMoveList_ok {α β : Type} (conf : Config β) (roots roots1 : List (He
     rcases tailResult with ⟨tail, final⟩
     simp only [Prod.mk.injEq] at run
     obtain ⟨_, rfl⟩ := run
-    exact gcMove_ok conf state middle root root1 headRun (ih (state := middle) (roots1 := tail) (state1 := final) tailRun ok)
+    exact gcMove_ok conf state middle root root1
+      ⟨headRun, ih (state := middle) (roots1 := tail) (state1 := final) tailRun ok⟩
 
 /-- Root traversal preserves the number of roots, including failed runs. -/
 @[hol "cakeml/compiler/backend/gc/gen_gcScript.sml" "gc_move_list_length"]
@@ -203,5 +205,126 @@ theorem gcMoveLoop_ok {α β : Type} (conf : Config β) (state : GcState α β)
       · exact gcMoveData_ok conf state (ih _ (by simpa using ok))
     · exact gcMoveRefs_ok conf { state with r2 := state.r4, r4 := [] }
         (ih _ (by simpa using ok))
+
+/-- A root move leaves the reference stack `r1` unchanged. -/
+private theorem gcMove_r1 {α β : Type} (conf : Config β) (state : GcState α β)
+    (root : HeapAddress α) : (gcMove conf state root).2.r1 = state.r1 := by
+  cases root with
+  | data value => rfl
+  | pointer ptr value =>
+    cases found : heapLookup ptr state.heap with
+    | none => simp [gcMove, found]
+    | some element =>
+      cases element
+      all_goals simp [gcMove, found]
+      split
+      all_goals rfl
+
+/-- A root move leaves the reference stack `r2` unchanged. -/
+private theorem gcMove_r2 {α β : Type} (conf : Config β) (state : GcState α β)
+    (root : HeapAddress α) : (gcMove conf state root).2.r2 = state.r2 := by
+  cases root with
+  | data value => rfl
+  | pointer ptr value =>
+    cases found : heapLookup ptr state.heap with
+    | none => simp [gcMove, found]
+    | some element =>
+      cases element
+      all_goals simp [gcMove, found]
+      split
+      all_goals rfl
+
+/-- A root move leaves the reference stack `r3` unchanged. -/
+private theorem gcMove_r3 {α β : Type} (conf : Config β) (state : GcState α β)
+    (root : HeapAddress α) : (gcMove conf state root).2.r3 = state.r3 := by
+  cases root with
+  | data value => rfl
+  | pointer ptr value =>
+    cases found : heapLookup ptr state.heap with
+    | none => simp [gcMove, found]
+    | some element =>
+      cases element
+      all_goals simp [gcMove, found]
+      split
+      all_goals rfl
+
+/-- A root move only appends to the copied heap `h2`. -/
+private theorem gcMove_h2_prefix {α β : Type} (conf : Config β) (state : GcState α β)
+    (root : HeapAddress α) : List.IsPrefix state.h2 (gcMove conf state root).2.h2 := by
+  cases root with
+  | data value => simp [gcMove]
+  | pointer ptr value =>
+    cases found : heapLookup ptr state.heap with
+    | none => simp [gcMove, found]
+    | some element =>
+      cases element
+      all_goals simp [gcMove, found]
+      split
+      all_goals simp
+
+/-- A root move only pushes onto the reference queue `r4`. -/
+private theorem gcMove_r4_suffix {α β : Type} (conf : Config β) (state : GcState α β)
+    (root : HeapAddress α) : List.IsSuffix state.r4 (gcMove conf state root).2.r4 := by
+  cases root with
+  | data value => simp [gcMove]
+  | pointer ptr value =>
+    cases found : heapLookup ptr state.heap with
+    | none => simp [gcMove, found]
+    | some element =>
+      cases element
+      all_goals simp [gcMove, found]
+      split
+      all_goals simp [List.suffix_cons]
+
+/-- Original `gc_move_list_IMP`: moving roots touches only the copied heap,
+    its scan queues and the collector bookkeeping. -/
+@[hol "cakeml/compiler/backend/gc/gen_gcScript.sml" "gc_move_list_IMP"]
+theorem gcMoveList_imp {α β : Type} (roots roots' : List (HeapAddress α))
+    (state state' : GcState α β) (conf : Config β)
+    (run : gcMoveList conf state roots = (roots', state')) :
+    state.h1 = state'.h1 ∧ state.r3 = state'.r3 ∧ state.r2 = state'.r2 ∧
+      state.r1 = state'.r1 ∧ List.IsPrefix state.h2 state'.h2 ∧
+      List.IsSuffix state.r4 state'.r4 := by
+  induction roots generalizing state roots' state' with
+  | nil =>
+    simp only [gcMoveList, Prod.mk.injEq] at run
+    obtain ⟨_, rfl⟩ := run
+    exact ⟨rfl, rfl, rfl, rfl, by simp, by simp⟩
+  | cons root roots ih =>
+    simp only [gcMoveList] at run
+    generalize headRun : gcMove conf state root = headResult at run
+    rcases headResult with ⟨root1, middle⟩
+    generalize tailRun : gcMoveList conf middle roots = tailResult at run
+    rcases tailResult with ⟨tail, final⟩
+    simp only [Prod.mk.injEq] at run
+    obtain ⟨_, rfl⟩ := run
+    have rest := ih (state := middle) (roots' := tail) (state' := final) tailRun
+    have h1Step : middle.h1 = state.h1 := by
+      have step := gcMove_h1 conf state root
+      rw [headRun] at step
+      exact step
+    have r3Step : middle.r3 = state.r3 := by
+      have step := gcMove_r3 conf state root
+      rw [headRun] at step
+      exact step
+    have r2Step : middle.r2 = state.r2 := by
+      have step := gcMove_r2 conf state root
+      rw [headRun] at step
+      exact step
+    have r1Step : middle.r1 = state.r1 := by
+      have step := gcMove_r1 conf state root
+      rw [headRun] at step
+      exact step
+    have h2Step : List.IsPrefix state.h2 middle.h2 := by
+      have step := gcMove_h2_prefix conf state root
+      rw [headRun] at step
+      exact step
+    have r4Step : List.IsSuffix state.r4 middle.r4 := by
+      have step := gcMove_r4_suffix conf state root
+      rw [headRun] at step
+      exact step
+    exact ⟨h1Step.symm.trans rest.1, r3Step.symm.trans rest.2.1,
+      r2Step.symm.trans rest.2.2.1, r1Step.symm.trans rest.2.2.2.1,
+      h2Step.trans rest.2.2.2.2.1, r4Step.trans rest.2.2.2.2.2⟩
 
 end Flapjack.Compiler.Backend.GenGc

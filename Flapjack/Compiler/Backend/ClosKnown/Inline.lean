@@ -159,4 +159,14 @@ def decideInlineHOL {L : Type} (c : Config) (approx : ValApprox) (loc : Option L
 def decideInlineFuel (_fuel : Nat) (c : Config) (approx : ValApprox) (loc : Option Nat)
     (arity : Nat) : Option InliningDecision := some (decideInlineHOL c approx loc arity)
 
+/-- Original `decide_inline_reset_spt` (`backendProofScript.sml:444`): replacing
+    the value-approximation tree does not change the inlining decision, because
+    the decision reads only the inline factor. -/
+@[hol "cakeml/compiler/backend/proofs/backendProofScript.sml" "decide_inline_reset_spt"]
+theorem decideInline_resetSpt {L : Type} (kc : Config) (f : Spt ValApprox → Spt ValApprox) :
+    decideInlineHOL (L := L) { kc with valApproxSpt := f kc.valApproxSpt } =
+      decideInlineHOL (L := L) kc := by
+  funext approx loc arity
+  rfl
+
 end Flapjack.Compiler.Backend.ClosKnown

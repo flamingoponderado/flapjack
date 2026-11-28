@@ -1,17 +1,49 @@
 module
 
 public import Flapjack.FfiHOL
+public import Flapjack.EvaluateHOL
+public import Flapjack.EvaluateHOL.Definition
 public import Mathlib.Logic.Relation
 
 @[expose] public section
 
 namespace Flapjack
 
+open SemanticPrimitivesHOL EvaluateHOL
+
 @[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "call_FFI_LENGTH"]
 theorem callFFIHOL_length {σ : Type} (st : HolFfiState σ) (index : HolFfiName)
     (conf x : List (BitVec 8)) (newSt : HolFfiState σ) (newBytes : List (BitVec 8))
     (h : callFFIHOL st index conf x = .ret newSt newBytes) : x.length = newBytes.length :=
   (callFFIHOL_ret_length st index conf x newBytes newSt h).symm
+
+/-- Original `call_FFI_return_unchanged`: a returning call is only possible on the
+identity external-call name, and then the state and bytes are unchanged. -/
+@[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "call_FFI_return_unchanged"]
+theorem callFFIHOL_return_unchanged {σ : Type} (ffi : HolFfiState σ) (s : HolFfiName)
+    (conf bytes bytes' : List (BitVec 8)) :
+    callFFIHOL ffi s conf bytes = .ret ffi bytes' ↔
+      s = .extCall (Flapjack.Basis.Pure.MlString.MlString.implode []) ∧ bytes' = bytes := by
+  unfold callFFIHOL
+  by_cases h : s = .extCall (Flapjack.Basis.Pure.MlString.MlString.implode [])
+  · rw [if_pos h]
+    simp [h, eq_comm]
+  · rw [if_neg h]
+    constructor
+    · intro heq
+      exfalso
+      cases hor : ffi.oracle s ffi.ffiState conf bytes with
+      | final outcome => simp [hor] at heq
+      | ret nextState nextBytes =>
+        simp only [hor] at heq
+        by_cases hlen : nextBytes.length = bytes.length
+        · rw [if_pos hlen] at heq
+          simp only [HolFfiResult.ret.injEq] at heq
+          have hlen2 := congrArg (fun st : HolFfiState σ => st.ioEvents.length) heq.1
+          simp at hlen2
+        · simp [hlen] at heq
+    · intro hs
+      exact absurd hs.1 h
 
 /-- HOL's single successful FFI-call relation. All four witnesses are retained:
 the name, configuration, input bytes, and returned bytes. This is the step
@@ -84,5 +116,56 @@ theorem callFFIRelHOL_rtc_ioEventsMono {σ : Type} (s1 s2 : HolFfiState σ)
   | refl => exact ioEventsMonoHOL_refl _
   | @tail middle last hsteps hstep ih =>
       exact ioEventsMonoHOL_trans s1 middle last ⟨ih, callFFIRelHOL_ioEventsMono hstep⟩
+
+/-- Original `list_result_eq_Rval`: a list result is a single value exactly when
+the source result is that value. -/
+@[simp, hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "list_result_eq_Rval"]
+theorem listResult_eq_val {α β : Type} (r : Result α β) (r' : List α) :
+    listResult r = .val r' ↔ ∃ v, r' = [v] ∧ r = .val v := by
+  cases r with
+  | val v =>
+    simp [listResult]
+    exact eq_comm
+  | err e => simp [listResult]
+
+/-- Original `list_result_eq_Rerr`: a list result is an error exactly when the
+source result is that error. -/
+@[simp, hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "list_result_eq_Rerr"]
+theorem listResult_eq_err {α β : Type} (r : Result α β) (e : ErrorResult β) :
+    listResult r = .err e ↔ r = .err e := by
+  cases r with
+  | val v => simp [listResult]
+  | err e' => simp [listResult]
+
+/-- Original `list_result_inj`: the list-result wrapper is injective. -/
+@[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "list_result_inj"]
+theorem listResult_inj {α β : Type} (x y : Result α β) (h : listResult x = listResult y) :
+    x = y := by
+  cases x with
+  | val v =>
+    cases y with
+    | val w => simpa [listResult] using h
+    | err e => simp [listResult] at h
+  | err e =>
+    cases y with
+    | val w => simp [listResult] at h
+    | err e' => simpa [listResult] using h
+
+/-- Original `dest_IO_event_def`: the three components of an FFI event. -/
+@[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "dest_IO_event_def"]
+def destIOEvent : HolIoEvent → HolFfiName × List (BitVec 8) × List (BitVec 8 × BitVec 8)
+  | ⟨s, c, b⟩ => (s, c, b)
+
+/-- The empty source environment: both namespaces empty. -/
+abbrev emptySemEnv : SemEnv Value :=
+  { v := NamespaceHOL.nsEmpty, c := NamespaceHOL.nsEmpty }
+
+/-- Original `evaluate_decs_nil`: evaluating no declarations returns the
+incoming state with the empty environment. -/
+@[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "evaluate_decs_nil"]
+theorem evaluateDecs_nil {σ : Type} (st : State σ) (env : SemEnv Value) :
+    evaluateDecs st env [] = (st, Result.val emptySemEnv) := by
+  rw [evaluateDecs]
+  rfl
 
 end Flapjack

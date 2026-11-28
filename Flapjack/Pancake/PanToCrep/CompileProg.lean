@@ -22,79 +22,6 @@ namespace Flapjack
 
 open Flapjack.Pancake.PanLang
 
-private def panToCrepShapeSlotsExact : List ShapeHOL → Nat → List (List Nat)
-  | [], _ => []
-  | shape :: shapes, offset =>
-      (List.range (sizeOfShapeHOL shape)).map (offset + ·) ::
-        panToCrepShapeSlotsExact shapes (offset + sizeOfShapeHOL shape)
-
-/-- The exact `with_shape` partition of the global slot range gives the same
-    per-parameter slots as the production allocator's increasing offset. This
-    is the allocation fact relating the legacy production `compFuncHOL` to the
-    tagged HOL-shaped `compFuncExactHOLW`, which the executed pan-to-crep
-    boundary already calls. -/
-private theorem withShapeHOL_range_offset (shapes : List ShapeHOL) (offset : Nat) :
-    withShapeHOL shapes
-        ((List.range (sizeOfShapeHOL (.comb shapes))).map (offset + ·)) =
-      panToCrepShapeSlotsExact shapes offset := by
-  induction shapes generalizing offset with
-  | nil => simp [withShapeHOL, panToCrepShapeSlotsExact]
-  | cons shape shapes ih =>
-      simp only [withShapeHOL, panToCrepShapeSlotsExact, sizeOfShapeHOL,
-        sizeOfShapesHOL]
-      rw [List.range_add]
-      have htail := ih (offset + sizeOfShapeHOL shape)
-      simpa [sizeOfShapeHOL, sizeOfShapesHOL, Nat.add_assoc,
-        Function.comp_def] using htail
-
-private def panToCrepParamsVmapEntriesOffset :
-    List (VarName × Shape) → Nat → List (MlS × (ShapeHOL × List Nat))
-  | [], _ => []
-  | (name, shape) :: params, offset =>
-      (Flapjack.Basis.Pure.MlString.ofString name,
-        (shapeToHOL shape,
-          (List.range (sizeOfShapeHOL (shapeToHOL shape))).map (offset + ·))) ::
-        panToCrepParamsVmapEntriesOffset params
-          (offset + Shape.shapeSize shape)
-
-/-- Production's recursive parameter allocator and the exact source
-    allocator agree on the ordered update entries, including slot offsets. -/
-private theorem compileParamVars_vmap_entries (params : List (VarName × Shape))
-    (offset : Nat) :
-    (compileParamVars params offset).1.map (fun entry =>
-      (Flapjack.Basis.Pure.MlString.ofString entry.1,
-        (shapeToHOL entry.2.1, entry.2.2))) =
-      panToCrepParamsVmapEntriesOffset params offset := by
-  induction params generalizing offset with
-  | nil => simp [compileParamVars, panToCrepParamsVmapEntriesOffset]
-  | cons parameter params ih =>
-      cases parameter with
-      | mk name shape =>
-          simp [compileParamVars, panToCrepParamsVmapEntriesOffset,
-            sizeOfShapeHOL_shapeToHOL, ih]
-
-private theorem panToCrepParamsVmapEntries_exact_offset
-    (params : List (VarName × Shape)) (offset : Nat) :
-    panToCrepParamsVmapEntriesOffset params offset =
-      let exactParams := params.map fun (name, shape) =>
-        (Flapjack.Basis.Pure.MlString.ofString name, shapeToHOL shape)
-      let shapes := exactParams.map Prod.snd
-      (exactParams.map Prod.fst).zip
-        (shapes.zip (withShapeHOL shapes
-          ((List.range (sizeOfShapeHOL (.comb shapes))).map (offset + ·)))) := by
-  induction params generalizing offset with
-  | nil => simp [panToCrepParamsVmapEntriesOffset]
-  | cons parameter params ih =>
-      cases parameter with
-      | mk name shape =>
-          simp only [panToCrepParamsVmapEntriesOffset, List.map_cons]
-          rw [withShapeHOL_range_offset]
-          simp only [panToCrepShapeSlotsExact, List.zip_cons_cons]
-          have htail := ih (offset + Shape.shapeSize shape)
-          dsimp at htail
-          rw [withShapeHOL_range_offset] at htail
-          simpa [sizeOfShapeHOL_shapeToHOL] using htail
-
 theorem map_declOfHOL_declToHOL {width : Nat} [NeZero width]
     (declarations : List (Flapjack.Decl (BitVec width)))
     (h : ∀ d ∈ declarations, DeclByteRanged d) :
@@ -116,68 +43,6 @@ private theorem ofString_injective_on_ranged_names {left right : String}
     Flapjack.Basis.Pure.MlString.toStringOfBytes_ofString_of_bytes right hright]
     at hdecoded
   exact hdecoded
-
-private theorem fupdateList_ofString_bridge {β γ : Type}
-    (decode : β → γ) (entries : List (String × β))
-    (hranged : ∀ entry ∈ entries, Flapjack.Pancake.PanLang.NameRanged entry.1)
-    (lookupExact : Flapjack.Basis.Pure.MlString.MlString → Option γ)
-    (lookupProduction : String → Option β)
-    (hbase : ∀ key,
-      lookupExact key = (lookupProduction
-        (Flapjack.Basis.Pure.MlString.toStringOfBytes key)).map decode) :
-    ∀ key,
-      Flapjack.FUPDATE_LIST lookupExact
-          (entries.map (fun entry =>
-            (Flapjack.Basis.Pure.MlString.ofString entry.1, decode entry.2))) key =
-        (Flapjack.FUPDATE_LIST lookupProduction entries
-          (Flapjack.Basis.Pure.MlString.toStringOfBytes key)).map decode := by
-  induction entries generalizing lookupExact lookupProduction with
-  | nil =>
-      intro key
-      simpa [Flapjack.FUPDATE_LIST_nil] using hbase key
-  | cons entry entries ih =>
-      obtain ⟨name, value⟩ := entry
-      have hname : Flapjack.Pancake.PanLang.NameRanged name :=
-        hranged (name, value) (by simp)
-      have htail : ∀ entry ∈ entries,
-          Flapjack.Pancake.PanLang.NameRanged entry.1 := by
-        intro item hitem
-        exact hranged item (by simp [hitem])
-      have hupdated : ∀ key,
-          Flapjack.FUPDATE lookupExact
-              (Flapjack.Basis.Pure.MlString.ofString name, decode value) key =
-            (Flapjack.FUPDATE lookupProduction (name, value)
-              (Flapjack.Basis.Pure.MlString.toStringOfBytes key)).map decode := by
-        intro key
-        have hkey : Flapjack.Pancake.PanLang.NameRanged
-            (Flapjack.Basis.Pure.MlString.toStringOfBytes key) :=
-          PanToCrepContextExact.toProduction_key_nameRanged key
-        by_cases heq : name = Flapjack.Basis.Pure.MlString.toStringOfBytes key
-        · have heq' : Flapjack.Basis.Pure.MlString.ofString name = key := by
-            rw [heq, Flapjack.Basis.Pure.MlString.ofString_toStringOfBytes]
-          have hprod : (name == Flapjack.Basis.Pure.MlString.toStringOfBytes key) = true :=
-            beq_iff_eq.mpr heq
-          have hexact : (Flapjack.Basis.Pure.MlString.ofString name == key) = true :=
-            beq_iff_eq.mpr heq'
-          simp [Flapjack.FUPDATE, hprod, hexact]
-        · have hne : Flapjack.Basis.Pure.MlString.ofString name ≠ key := by
-            intro hml
-            have hml' : Flapjack.Basis.Pure.MlString.ofString name =
-                Flapjack.Basis.Pure.MlString.ofString
-                  (Flapjack.Basis.Pure.MlString.toStringOfBytes key) := by
-              rw [Flapjack.Basis.Pure.MlString.ofString_toStringOfBytes]
-              exact hml
-            exact heq (ofString_injective_on_ranged_names hname hkey hml')
-          have hprod : (name == Flapjack.Basis.Pure.MlString.toStringOfBytes key) = false :=
-            beq_eq_false_iff_ne.mpr heq
-          have hexact : (Flapjack.Basis.Pure.MlString.ofString name == key) = false :=
-            beq_eq_false_iff_ne.mpr hne
-          simp [Flapjack.FUPDATE, hprod, hexact, hbase key]
-      intro key
-      simpa only [List.map_cons, Flapjack.FUPDATE_LIST_cons] using
-        ih htail (Flapjack.FUPDATE lookupExact
-          (Flapjack.Basis.Pure.MlString.ofString name, decode value))
-          (Flapjack.FUPDATE lookupProduction (name, value)) hupdated key
 
 /-- `compile_param_vars` emits only name-ranged entries when every
 parameter name is ranged. Untagged Flapjack infrastructure. -/
@@ -201,68 +66,6 @@ theorem compileParamVars_entries_nameRanged
       · cases hhead
         exact hname
       · exact ih (offset + Shape.shapeSize shape) htail entry htailMem
-
-/-- The exact `make_vmap` parameter entries are the byte-ranged production
-    allocator entries encoded through the String/mlstring and Shape/ShapeHOL
-    codecs. This is the finite-map boundary needed to route parser-backed
-    `comp_func` through `compFuncExactHOLW`. -/
-private theorem panToCrepMakeVmapHOLExactOfProductionParams
-    (params : List (VarName × Shape))
-    (hparams : ∀ p ∈ params,
-      Flapjack.Pancake.PanLang.NameRanged p.1 ∧
-        Flapjack.Pancake.PanLang.ShapeByteRanged p.2)
-    (key : Flapjack.Basis.Pure.MlString.MlString) :
-    (panToCrepMakeVmapHOLExact (params.map fun (name, shape) =>
-      (Flapjack.Basis.Pure.MlString.ofString name,
-        Flapjack.Pancake.PanLang.shapeToHOL shape))).lookup key =
-      (panToCrepMakeVmapHOL params
-        (Flapjack.Basis.Pure.MlString.toStringOfBytes key)).map
-          (fun value => (Flapjack.Pancake.PanLang.shapeToHOL value.1, value.2)) := by
-  let exactParams := params.map fun (name, shape) =>
-    (Flapjack.Basis.Pure.MlString.ofString name,
-      Flapjack.Pancake.PanLang.shapeToHOL shape)
-  have hranged : ∀ entry ∈ (compileParamVars params 0).1,
-      Flapjack.Pancake.PanLang.NameRanged entry.1 :=
-    compileParamVars_entries_nameRanged params 0 (fun p hp => (hparams p hp).1)
-  have hentries :
-      ((compileParamVars params 0).1.map fun entry =>
-        (Flapjack.Basis.Pure.MlString.ofString entry.1,
-          (Flapjack.Pancake.PanLang.shapeToHOL entry.2.1, entry.2.2))) =
-        (exactParams.map Prod.fst).zip
-          ((exactParams.map Prod.snd).zip
-            (Flapjack.Pancake.PanLang.withShapeHOL (exactParams.map Prod.snd)
-              (List.range (Flapjack.Pancake.PanLang.sizeOfShapeHOL
-                (.comb (exactParams.map Prod.snd)))))) := by
-    calc
-      _ = panToCrepParamsVmapEntriesOffset params 0 :=
-        compileParamVars_vmap_entries params 0
-      _ = _ := by
-        simpa [exactParams, Function.comp_def] using
-          panToCrepParamsVmapEntries_exact_offset params 0
-  have hupdate := fupdateList_ofString_bridge
-    (β := Shape × List Nat)
-    (γ := Flapjack.Pancake.PanLang.ShapeHOL × List Nat)
-    (fun value => (Flapjack.Pancake.PanLang.shapeToHOL value.1, value.2))
-    (compileParamVars params 0).1
-    (fun entry hentry => hranged entry hentry)
-    (fun _ => none)
-    FEMPTY
-    (by intro query; rfl)
-    key
-  rw [Flapjack.holFmapAsFiniteSupportResultWitness_panToCrepMakeVmapHOLExact]
-  simpa [exactParams, FEMPTY, panToCrepMakeVmapHOL,
-    panToCrepMakeVmapRaw, hentries] using hupdate
-
-private theorem holFiniteMapExact_ext_local {α β : Type}
-    {left right : HolFiniteMapExact α β}
-    (h : ∀ key, left.lookup key = right.lookup key) : left = right := by
-  cases left with
-  | mk l hl =>
-    cases right with
-    | mk r hr =>
-      have heq : l = r := funext h
-      subst r
-      rfl
 
 /-- Byte-ranged lookup congruence for the exact and production variable-map
     updates used by HOL `Dec` and `DecCall`. This deliberately proves lookup
@@ -478,30 +281,6 @@ theorem exactToProduction_decCallContext_relation {width : Nat} [NeZero width]
     (Shape.shapeSize shape) hname
   · exact Flapjack.Pancake.PanLang.shapeOfHOL_shapeToHOL shape hshape
   · exact sizeOfShapeHOL_shapeToHOL shape
-
-private theorem crepProgOfHOL_loadGlobalsHOL {width : Nat} [NeZero width]
-    (address : BitVec 5) (count : Nat) :
-    (loadGlobalsHOL (width := width) address count).map (crepExpOfHOL (width := width)) =
-      loadGlobals (α := BitVec width) address count := by
-  induction count generalizing address with
-  | zero => rfl
-  | succ count ih =>
-      simp only [loadGlobalsHOL, loadGlobals, List.map_cons, crepExpOfHOL, ih]
-
-private theorem crepProgOfHOL_panMap2_assign {width : Nat} [NeZero width]
-    (names : List Nat) (values : List (CrepExpHOL width)) :
-    (panMap2 (fun destination source =>
-        (CrepProgHOL.assign destination source : CrepProgHOL width)) names values).map
-        crepProgOfHOL =
-      panMap2 (fun destination source =>
-        (CrepProg.assign destination source : CrepProg (BitVec width))) names
-        (values.map crepExpOfHOL) := by
-  induction names generalizing values with
-  | nil => simp [panMap2]
-  | cons name names ih =>
-      cases values with
-      | nil => simp [panMap2]
-      | cons value values => simp [panMap2, crepProgOfHOL, ih]
 
 def callHandlerBody {width : Nat} [NeZero width]
     (info : Option (Option (VarKind × Flapjack.Basis.Pure.MlString.MlString) ×

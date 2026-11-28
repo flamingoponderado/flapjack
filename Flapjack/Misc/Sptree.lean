@@ -1528,4 +1528,55 @@ def sptFromList2 {α : Type} (values : List α) : Spt α :=
   (values.foldl (fun (acc : Nat × Spt α) value => (acc.1 + 2, sptInsert acc.1 value acc.2))
     (0, .ln)).2
 
+/-- Exact HOL `misc$zlookup_def` (`miscScript.sml:517`): the tree lookup with
+    `0` as the default. -/
+@[hol "cakeml/misc/miscScript.sml" "zlookup_def"]
+def zlookup (m : Spt Nat) (k : Nat) : Nat :=
+  match sptLookup k m with
+  | none => 0
+  | some v => v
+
+/-- Exact HOL `misc$tlookup_def` (`miscScript.sml:521`): the tree lookup with
+    the key itself as the default. -/
+@[hol "cakeml/misc/miscScript.sml" "tlookup_def"]
+def tlookup (m : Spt Nat) (k : Nat) : Nat :=
+  match sptLookup k m with
+  | none => k
+  | some v => v
+
+/-- Original `tlookup_id`: an absent key is its own default. -/
+@[hol "cakeml/misc/miscScript.sml" "tlookup_id"]
+theorem tlookup_id (x : Nat) (names : Spt Nat) (h : ¬ sptDomain names x) :
+    tlookup names x = x := by
+  have hl : sptLookup x names = none := by
+    cases hs : sptLookup x names with
+    | none => rfl
+    | some v => exact absurd ((sptDomain_iff_lookup names x).mpr ⟨v, hs⟩) h
+  simp [tlookup, hl]
+
+private theorem sptLookup_none_of_size_zero {α : Type} :
+    ∀ t : Spt α, sptSize t = 0 → ∀ n, sptLookup n t = none
+  | .ln, _, _ => rfl
+  | .ls _, h, _ => by simp at h
+  | .bn l r, h, n => by
+      simp only [sptSize_bn] at h
+      have hl : sptSize l = 0 := by omega
+      have hr : sptSize r = 0 := by omega
+      simp only [sptLookup, sptLookup_none_of_size_zero l hl,
+        sptLookup_none_of_size_zero r hr]
+      simp
+  | .bs l v r, h, n => by
+      simp only [sptSize_bs] at h
+      omega
+
+/-- Original `lookup_zero`: a successful lookup means the tree stores at least
+one value. -/
+@[hol "cakeml/misc/miscScript.sml" "lookup_zero"]
+theorem lookupZero {α : Type} (n : Nat) (t : Spt α) (x : α)
+    (h : sptLookup n t = some x) : sptSize t ≠ 0 := by
+  intro hz
+  have hnone := sptLookup_none_of_size_zero t hz n
+  rw [h] at hnone
+  simp at hnone
+
 end Flapjack

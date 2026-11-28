@@ -1,0 +1,6 @@
+INDEX_OF_def_typed=∀(x :α). INDEX_OF x = OPTION_MAP (FST :num # α -> num) ∘ INDEX_FIND (0 :num) ($= x)
+find_index_ALL_DISTINCT_EL_typed=∀(ls :α list) (n :num) (m :num). ALL_DISTINCT ls ∧ n < LENGTH ls ⇒ find_index ls❲n❳ ls m = SOME (m + n)
+find_index_INDEX_OF_typed=find_index (y :α) (xs :α list) (0 :num) = INDEX_OF y xs
+EVERY_anub_imp_typed=∀(ls :(α # β) list) (acc :α list) (x :α) (y :β). EVERY (P :α # β -> bool) (anub ((x,y)::ls) acc) ∧ ¬MEM x acc ⇒ P (x,y) ∧ EVERY P (anub ls (x::acc))
+INJ_I_typed=∀(s :α -> bool) (t :α -> bool). INJ (I :α -> α) s t ⇔ s ⊆ t
+IN_option_rwt_typed=(x :α) ∈ (case (opt :β option) of (NONE :β option) => (∅ :α -> bool) | SOME y => (Q :β -> α -> bool) y) ⇔ ∃(y :β). opt = SOME y ∧ x ∈ Q y

@@ -13,3 +13,28 @@ check_t_infer_deBruijn_subst_typed=∀(subst :infer_t list) (t :infer_t) (tvs :n
 infer_deBruijn_subst_uncheck_typed=∀(s :infer_t list) (t :infer_t) (max_tvs :num) (uvs :num -> bool). check_t max_tvs uvs (infer_deBruijn_subst s t) ⇒ check_t (max_tvs + LENGTH s) uvs t
 check_t_more5_typed=(∀(t :infer_t) (uvs :num -> bool) (tvs :num). check_t tvs uvs t ⇒ ∀(uvs' :num -> bool). uvs ⊆ uvs' ⇒ check_t tvs uvs' t) ∧ ∀(ts :infer_t list) (uvs :num -> bool) (tvs :num). EVERY (check_t tvs uvs) ts ⇒ ∀(uvs' :num -> bool). uvs ⊆ uvs' ⇒ EVERY (check_t tvs uvs') ts
 check_t_t_vars_typed=∀(tvs :num) (uvs :num -> bool) (t :infer_t). check_t tvs uvs t ⇒ t_vars t ⊆ uvs
+hide_def_typed=∀(x :α). hide x = x
+init_infer_state_next_uvar_typed=(init_infer_state (st :infer_st)).next_uvar = (0 :num)
+init_infer_state_subst_typed=(init_infer_state (st :infer_st)).subst = (FEMPTY :num |-> infer_t)
+t_wfs_FEMPTY_typed=t_wfs (FEMPTY :num |-> infer_t)
+t_wfs_init_infer_state_typed=t_wfs (init_infer_state (s :infer_st)).subst
+remove_pair_lem_typed=(∀(f :α -> β -> γ) (v :α # β). (λ((x :α),(y :β)). f x y) v = f (FST v) (SND v)) ∧ ∀(f :δ -> ε -> ζ -> η) (v :δ # ε # ζ). (λ((x :δ),(y :ε),(z :ζ)). f x y z) v = f (FST v) (FST (SND v)) (SND (SND v))
+UNCURRY_rator_typed=UNCURRY (f :β -> γ -> δ -> α) (x :β # γ) (y :δ) = (λ((a :β),(b :γ)). f a b y) x
+nsMap_FOLDL_nsAppend_typed=∀(ls :(α, β, γ) namespace list) (ns :(α, β, γ) namespace). nsMap (f :γ -> δ) (FOLDL (nsAppend :(α, β, γ) namespace -> (α, β, γ) namespace -> (α, β, γ) namespace) ns ls) = FOLDL (nsAppend :(α, β, δ) namespace -> (α, β, δ) namespace -> (α, β, δ) namespace) (nsMap f ns) (MAP (nsMap f :(α, β, γ) namespace -> (α, β, δ) namespace) ls)
+nsAll_FOLDL_nsAppend_typed=∀(ls :(α, β, γ) namespace list) (ns :(α, β, γ) namespace). nsAll (P :(α, β) id -> γ -> bool) ns ∧ EVERY (nsAll P) ls ⇒ nsAll P (FOLDL (nsAppend :(α, β, γ) namespace -> (α, β, γ) namespace -> (α, β, γ) namespace) ns ls)
+check_t_more_typed=(∀(t :infer_t) (tvs :num). check_t tvs (∅ :num -> bool) t ⇒ ∀(uvs :num -> bool). check_t tvs uvs t) ∧ ∀(ts :infer_t list) (tvs :num). EVERY (check_t tvs (∅ :num -> bool)) ts ⇒ ∀(uvs :num -> bool). EVERY (check_t tvs uvs) ts
+infer_subst_var_def_typed=infer_subst_var (s :num |-> num) (Infer_Tuvar (n :num)) = (case FLOOKUP s n of (NONE :num option) => Infer_Tuvar n | SOME tv => Infer_Tvar_db tv) ∧ infer_subst_var s (Infer_Tvar_db (v2 :num)) = Infer_Tvar_db v2 ∧ infer_subst_var s (Infer_Tapp (v3 :infer_t list) (v4 :num)) = Infer_Tapp v3 v4
+check_t_more3_typed=(∀(t :infer_t) (uvs :num) (tvs :num). check_t tvs (count uvs) t ⇒ ∀(uvs' :num). check_t tvs (count (uvs + uvs')) t) ∧ ∀(ts :infer_t list) (uvs :num) (tvs :num). EVERY (check_t tvs (count uvs)) ts ⇒ ∀(uvs' :num). EVERY (check_t tvs (count (uvs + uvs'))) ts
+check_t_more4_typed=(∀(t :infer_t) (uvs :num) (tvs :num). check_t tvs (count uvs) t ⇒ ∀(uvs' :num). uvs ≤ uvs' ⇒ check_t tvs (count uvs') t) ∧ ∀(ts :infer_t list) (uvs :num) (tvs :num). EVERY (check_t tvs (count uvs)) ts ⇒ ∀(uvs' :num). uvs ≤ uvs' ⇒ EVERY (check_t tvs (count uvs')) ts
+check_env_more_typed=∀(uvs :num) (e :(α, β, num # infer_t) namespace). nsAll (λ(x :(α, β) id) ((tvs :num),(t :infer_t)). check_t tvs (count uvs) t) e ⇒ ∀(uvs' :num). uvs ≤ uvs' ⇒ nsAll (λ(x :(α, β) id) ((tvs :num),(t :infer_t)). check_t tvs (count uvs') t) e
+ienv_ok_more_typed=∀(uv :num) (uv' :num) (ienv :inf_env). ienv_ok (count uv) ienv ∧ uv ≤ uv' ⇒ ienv_ok (count uv') ienv
+check_t_deBruijn_inc2_typed=∀(inc :num) (t :infer_t) (s :num -> bool). check_t (tvs :num) s t ⇒ check_t (inc + tvs) s (infer_deBruijn_inc inc t)
+check_t_deBruijn_inc_typed=∀(inc :num) (t :infer_t). check_t (0 :num) 𝕌(:num) t ⇒ infer_deBruijn_inc inc t = t
+inf_set_tids_infer_deBruijn_subst_SUBSET_typed=∀(subst :infer_t list) (t :infer_t). inf_set_tids (infer_deBruijn_subst subst t) ⊆ inf_set_tids t ∪ BIGUNION (IMAGE inf_set_tids (set subst))
+inf_set_tids_infer_type_subst_SUBSET_typed=∀(subst :(mlstring # infer_t) list) (t :t). inf_set_tids (infer_type_subst subst t) ⊆ set_tids t ∪ BIGUNION (IMAGE inf_set_tids (set (MAP (SND :mlstring # infer_t -> infer_t) subst)))
+inf_set_tids_subst_def_typed=∀(tids :num -> bool) (subst :α |-> infer_t). inf_set_tids_subst tids subst ⇔ ∀(t :infer_t). t ∈ FRANGE subst ⇒ inf_set_tids_subset tids t
+inf_set_tids_subst_FEMPTY_typed=inf_set_tids_subst (tids :num -> bool) (FEMPTY :α |-> infer_t)
+check_s_def_typed=∀(tvs :num) (uvs :num -> bool) (s :α |-> infer_t). check_s tvs uvs s ⇔ ∀(uv :α). uv ∈ FDOM s ⇒ check_t tvs uvs s⟨uv⟩
+check_s_more2_typed=∀(s :α |-> infer_t) (uvs :num). check_s (tvs :num) (count uvs) s ⇒ ∀(uvs' :num). uvs ≤ uvs' ⇒ check_s tvs (count uvs') s
+check_s_more3_typed=∀(s :α |-> infer_t) (uvs :num -> bool). check_s (tvs :num) uvs s ⇒ ∀(uvs' :num -> bool). uvs ⊆ uvs' ⇒ check_s tvs uvs' s
+check_s_more5_typed=∀(s :α |-> infer_t) (uvs :num -> bool) (tvs :num) (uvs' :num -> bool). check_s tvs uvs s ∧ uvs ⊆ uvs' ⇒ check_s tvs uvs' s

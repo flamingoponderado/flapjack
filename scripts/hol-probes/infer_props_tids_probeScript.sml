@@ -23,3 +23,44 @@ val _ = show "check_t_infer_deBruijn_subst_typed" inferPropsTheory.check_t_infer
 val _ = show "infer_deBruijn_subst_uncheck_typed" inferPropsTheory.infer_deBruijn_subst_uncheck;
 val _ = show "check_t_more5_typed" inferPropsTheory.check_t_more5;
 val _ = show "check_t_t_vars_typed" inferPropsTheory.check_t_t_vars;
+
+(* Task 273: initial-state and empty-substitution facts. *)
+val _ = show "hide_def_typed" inferPropsTheory.hide_def;
+val _ = show "init_infer_state_next_uvar_typed" inferPropsTheory.init_infer_state_next_uvar;
+val _ = show "init_infer_state_subst_typed" inferPropsTheory.init_infer_state_subst;
+val _ = show "t_wfs_FEMPTY_typed" inferPropsTheory.t_wfs_FEMPTY;
+val _ = show "t_wfs_init_infer_state_typed" inferPropsTheory.t_wfs_init_infer_state;
+
+(* Task 273: pair/UNCURRY and namespace fold facts. *)
+fun showWithHyps label th = (print (label ^ "=");
+  app (fn h => (print_term h; print " ==> ")) (hyp th);
+  print_term (concl th); print "\n");
+
+val _ = show "remove_pair_lem_typed" inferPropsTheory.remove_pair_lem;
+val _ = show "UNCURRY_rator_typed" inferPropsTheory.UNCURRY_rator;
+val _ = show "nsMap_FOLDL_nsAppend_typed" inferPropsTheory.nsMap_FOLDL_nsAppend;
+val _ = showWithHyps "nsAll_FOLDL_nsAppend_typed" inferPropsTheory.nsAll_FOLDL_nsAppend;
+
+(* Task 273: check_t_more and infer_subst_var. *)
+val _ = show "check_t_more_typed" inferPropsTheory.check_t_more;
+val _ = show "infer_subst_var_def_typed" inferPropsTheory.infer_subst_var_def;
+
+(* Task 273: bound and environment monotonicity. *)
+val _ = show "check_t_more3_typed" inferPropsTheory.check_t_more3;
+val _ = show "check_t_more4_typed" inferPropsTheory.check_t_more4;
+val _ = show "check_env_more_typed" inferPropsTheory.check_env_more;
+val _ = show "ienv_ok_more_typed" inferPropsTheory.ienv_ok_more;
+val _ = show "check_t_deBruijn_inc2_typed" inferPropsTheory.check_t_deBruijn_inc2;
+val _ = show "check_t_deBruijn_inc_typed" inferPropsTheory.check_t_deBruijn_inc;
+val _ = show "inf_set_tids_infer_deBruijn_subst_SUBSET_typed" inferPropsTheory.inf_set_tids_infer_deBruijn_subst_SUBSET;
+val _ = show "inf_set_tids_infer_type_subst_SUBSET_typed" inferPropsTheory.inf_set_tids_infer_type_subst_SUBSET;
+
+(* Task 273: the substitution-range check and its empty-map instance. *)
+val _ = show "inf_set_tids_subst_def_typed" inferPropsTheory.inf_set_tids_subst_def;
+val _ = show "inf_set_tids_subst_FEMPTY_typed" inferPropsTheory.inf_set_tids_subst_FEMPTY;
+
+(* Task 273: the substitution check and its monotonicity facts. *)
+val _ = show "check_s_def_typed" inferTheory.check_s_def;
+val _ = show "check_s_more2_typed" inferPropsTheory.check_s_more2;
+val _ = show "check_s_more3_typed" inferPropsTheory.check_s_more3;
+val _ = show "check_s_more5_typed" inferPropsTheory.check_s_more5;

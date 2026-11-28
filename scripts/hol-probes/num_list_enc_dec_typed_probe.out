@@ -1,0 +1,87 @@
+dec_ok_def_typed=∀(dec :num list -> α # num list). dec_ok dec ⇔ ∀(i :num list). LENGTH (SND (dec i)) ≤ LENGTH i
+enc_dec_ok_def_typed=∀(enc :α -> num app_list) (dec :num list -> α # num list). enc_dec_ok enc dec ⇔ dec_ok dec ∧ ∀(x :α) (xs :num list). dec (append (enc x) ++ xs) = (x,xs)
+dec_ok_simp_typed=dec_ok (((f :β -> α) ## (I :num list -> num list)) ∘ (d :num list -> β # num list)) ⇔ dec_ok d
+enc_dec_ok_o_typed=enc_dec_ok (e :α -> num app_list) (d :num list -> α # num list) ∧ (∀(x :β). (f :α -> β) ((g :β -> α) x) = x) ⇒ enc_dec_ok (e ∘ g) ((f ## (I :num list -> num list)) ∘ d)
+enc_dec_ok_prime_def_typed=∀(p :α -> bool) (enc :α -> num app_list) (dec :num list -> α # num list). enc_dec_ok' p enc dec ⇔ dec_ok dec ∧ ∀(x :α) (xs :num list). p x ⇒ dec (append (enc x) ++ xs) = (x,xs)
+IMP_enc_dec_ok_typed=enc_dec_ok (enc :α -> num app_list) (dec :num list -> α # num list) ⇒ enc_dec_ok' (K T :α -> bool) enc dec
+enc_dec_ok_prime_IMP_typed=enc_dec_ok' (λ(x :α). T) (enc :α -> num app_list) (dec :num list -> α # num list) ⇒ enc_dec_ok enc dec
+const_dec_def_typed=∀(a :α) (xs :num list). const_dec a xs = (a,xs)
+enc_dec_ok_prime_const_typed=∀(x :α). enc_dec_ok' ($= x) (K (List ([] :num list)) :α -> num app_list) (const_dec x)
+enc_dec_ok_prime_o_typed=enc_dec_ok' (p :α -> bool) (e :α -> num app_list) (d :num list -> α # num list) ∧ (∀(x :β). (f :α -> β) ((g :β -> α) x) = x) ⇒ enc_dec_ok' (p ∘ g) (e ∘ g) ((f ## (I :num list -> num list)) ∘ d)
+fix_res_def_typed=∀(ns :β list) (x :α) (ns' :β list). fix_res ns (x,ns') = if LENGTH ns < LENGTH ns' then (x,ns) else (x,ns')
+fix_res_IMP_typed=((x :α),(ns2 :β list)) = fix_res (ns1 :β list) (y :α # β list) ⇒ LENGTH ns2 ≤ LENGTH ns1
+unit_enc_def_typed=∀(n :unit). (unit_enc n :α app_list) = List ([] :α list)
+unit_dec_def_typed=∀(ns :num list). unit_dec ns = ((),ns)
+unit_enc_dec_ok_typed=enc_dec_ok (unit_enc :unit -> num app_list) unit_dec
+num_enc_def_typed=∀(n :num). num_enc n = List [n]
+num_dec_def_typed=∀(ns :num list). num_dec ns = case ns of ([] :num list) => ((0 :num),([] :num list)) | r::rs => (r,rs)
+num_enc_dec_ok_typed=enc_dec_ok num_enc num_dec
+word64_enc_def_typed=∀(w :word64). word64_enc w = List [w2n w]
+word64_dec_def_typed=∀(ns :num list). word64_dec ns = case ns of ([] :num list) => ((0w :word64),([] :num list)) | r::rs => ((n2w r :word64),rs)
+word64_enc_dec_ok_typed=enc_dec_ok word64_enc word64_dec
+bool_enc_def_typed=bool_enc = num_enc ∘ (λ(b :bool). if b then (1 :num) else (0 :num))
+bool_dec_def_typed=bool_dec = ($= (1 :num) ## (I :num list -> num list)) ∘ num_dec
+bool_enc_dec_ok_typed=enc_dec_ok bool_enc bool_dec
+int_enc_def_typed=int_enc = num_enc ∘ (λ(n :int). if n < (0 :int) then (2 :num) * Num (ABS n) + (1 :num) else (2 :num) * Num (ABS n))
+int_dec_def_typed=int_dec = ((λ(r :num). if ODD r then (0 :int) − ((&(r DIV (2 :num))) :int) else ((&(r DIV (2 :num))) :int)) ## (I :num list -> num list)) ∘ num_dec
+int_enc_dec_ok_typed=enc_dec_ok int_enc int_dec
+list_enc_def_typed=∀(e :α -> num app_list) (xs :α list). list_enc e xs = Append (List [LENGTH xs]) (FOLDR (λ(x :α) (y :num app_list). Append (e x) y) (List ([] :num list)) xs)
+list_dec_prime_def_typed=(∀(d :β -> α # β) (ns :β). list_dec' (0 :num) d ns = (([] :α list),ns)) ∧ ∀(k :num) (d :β -> α # β) (ns :β). list_dec' (SUC k) d ns = (let ((x1 :α),(ns1 :β)) = d ns; ((xs1 :α list),(ns2 :β)) = list_dec' k d ns1 in (x1::xs1,ns2))
+list_dec_def_typed=∀(d :num list -> α # num list) (ns :num list). list_dec d ns = case ns of ([] :num list) => (([] :α list),([] :num list)) | n::ns => list_dec' n d ns
+list_dec_prime_length_typed=∀(k :num) (d :num list -> α # num list) (ns :num list) (x :α list) (ns1 :num list). list_dec' k d ns = (x,ns1) ∧ dec_ok d ⇒ LENGTH ns1 ≤ LENGTH ns
+list_dec_ok_typed=dec_ok (d :num list -> α # num list) ⇒ dec_ok (list_dec d)
+list_enc_dec_ok_typed=enc_dec_ok (e :α -> num app_list) (d :num list -> α # num list) ⇒ enc_dec_ok (list_enc e) (list_dec d)
+word_enc_def_typed=(word_enc :α word -> num app_list) = num_enc ∘ (w2n :α word -> num)
+word_dec_def_typed=(word_dec :num list -> α word # num list) = ((λ(n :num). (n2w n :α word)) ## (I :num list -> num list)) ∘ num_dec
+word_enc_dec_ok_typed=enc_dec_ok (word_enc :α word -> num app_list) (word_dec :num list -> α word # num list)
+char_enc_def_typed=char_enc = num_enc ∘ ORD
+safe_chr_def_typed=∀(n :num). safe_chr n = CHR (n MOD (256 :num))
+char_dec_def_typed=char_dec = (safe_chr ## (I :num list -> num list)) ∘ num_dec
+char_enc_dec_ok_typed=enc_dec_ok char_enc char_dec
+safe_chr_list_def_typed=∀(ns :num list). safe_chr_list ns = MAP safe_chr ns
+take_pad_def_typed=∀(ns :num list) (n :num). take_pad n ns = if n = (0 :num) then (([] :num list),ns) else (let ((xs :num list),(ys :num list)) = take_pad (n − (1 :num)) (TL ns) in case ns of ([] :num list) => ((0 :num)::xs,ys) | x::v1 => (x::xs,ys))
+string_dec_def_typed=∀(ns :num list). string_dec ns = case ns of ([] :num list) => (("" :string),([] :num list)) | n::ns => (let ((xs :num list),(ys :num list)) = take_pad n ns in (IMPLODE (safe_chr_list xs),ys))
+string_dec_thm_typed=string_dec = list_dec char_dec
+string_enc_dec_ok_typed=enc_dec_ok (list_enc char_enc) string_dec
+string_dec_ok_typed=dec_ok string_dec
+mlstring_enc_def_typed=∀(s :string). mlstring_enc (implode s) = list_enc char_enc s
+mlstring_dec_def_typed=mlstring_dec = (implode ## (I :num list -> num list)) ∘ list_dec char_dec
+mlstring_enc_dec_ok_typed=enc_dec_ok mlstring_enc mlstring_dec
+mlstring_dec_ok_typed=dec_ok mlstring_dec
+prod_enc_def_typed=∀(e1 :β -> α app_list) (e2 :γ -> α app_list) (x :β) (y :γ). prod_enc e1 e2 (x,y) = Append (e1 x) (e2 y)
+prod_dec_def_typed=∀(d1 :δ -> α # ε) (d2 :ε -> β # γ) (ns :δ). prod_dec d1 d2 ns = (let ((x :α),(ns1 :ε)) = d1 ns; ((y :β),(ns2 :γ)) = d2 ns1 in ((x,y),ns2))
+prod_dec_ok_typed=dec_ok (d1 :num list -> α # num list) ∧ dec_ok (d2 :num list -> β # num list) ⇒ dec_ok (prod_dec d1 d2)
+prod_enc_dec_ok_typed=enc_dec_ok (e1 :α -> num app_list) (d1 :num list -> α # num list) ∧ enc_dec_ok (e2 :β -> num app_list) (d2 :num list -> β # num list) ⇒ enc_dec_ok (prod_enc e1 e2) (prod_dec d1 d2)
+prod_enc_dec_ok_prime_typed=enc_dec_ok' (p1 :α -> bool) (e1 :α -> num app_list) (d1 :num list -> α # num list) ∧ enc_dec_ok' (p2 :β -> bool) (e2 :β -> num app_list) (d2 :num list -> β # num list) ⇒ enc_dec_ok' (λ(x :α # β). p1 (FST x) ∧ p2 (SND x)) (prod_enc e1 e2) (prod_dec d1 d2)
+option_enc_def_typed=(∀(e :α -> num app_list). option_enc e (NONE :α option) = List [(0 :num)]) ∧ ∀(e :α -> num app_list) (y :α). option_enc e (SOME y) = Append (List [(1 :num)]) (e y)
+option_dec_def_typed=∀(d :num list -> α # num list) (ns :num list). option_dec d ns = case ns of ([] :num list) => ((NONE :α option),ns) | (0 :num)::v1 => ((NONE :α option),v1) | v::v1 => ((SOME :α -> α option) ## (I :num list -> num list)) (d v1)
+option_enc_dec_ok_typed=enc_dec_ok (e :α -> num app_list) (d :num list -> α # num list) ⇒ enc_dec_ok (option_enc e) (option_dec d)
+sum_enc_def_typed=(∀(e1 :α -> num app_list) (e2 :β -> num app_list) (x :α). sum_enc e1 e2 (INL x :α + β) = Append (List [(0 :num)]) (e1 x)) ∧ ∀(e1 :α -> num app_list) (e2 :β -> num app_list) (y :β). sum_enc e1 e2 (INR y :α + β) = Append (List [(1 :num)]) (e2 y)
+sum_dec_def_typed=∀(d1 :num list -> α # γ) (d2 :num list -> β # γ) (ns :num list). sum_dec d1 d2 ns = case ns of ([] :num list) => ((INL :α -> α + β) ## (I :γ -> γ)) (d1 ns) | (0 :num)::v1 => ((INL :α -> α + β) ## (I :γ -> γ)) (d1 v1) | v::v1 => ((INR :β -> α + β) ## (I :γ -> γ)) (d2 v1)
+sum_enc_dec_ok_typed=enc_dec_ok (e1 :α -> num app_list) (d1 :num list -> α # num list) ∧ enc_dec_ok (e2 :β -> num app_list) (d2 :num list -> β # num list) ⇒ enc_dec_ok (sum_enc e1 e2) (sum_dec d1 d2)
+spt_enc_prime_def_typed=(∀(e :α -> num app_list). spt_enc' e (LN :α sptree$num_map) = List [(0 :num)]) ∧ (∀(e :α -> num app_list) (x :α). spt_enc' e ⦕ 0 ↦ x ⦖ = Append (List [(1 :num)]) (e x)) ∧ (∀(e :α -> num app_list) (t1 :α sptree$num_map) (t2 :α sptree$num_map). spt_enc' e (BN t1 t2) = Append (List [(2 :num)]) (Append (spt_enc' e t1) (spt_enc' e t2))) ∧ ∀(e :α -> num app_list) (t1 :α sptree$num_map) (x :α) (t2 :α sptree$num_map). spt_enc' e (BS t1 x t2) = Append (List [(3 :num)]) (Append (spt_enc' e t1) (Append (e x) (spt_enc' e t2)))
+spt_depth_def_typed=(∀(t2 :α sptree$num_map) (t1 :α sptree$num_map). spt_depth (BN t1 t2) = MAX (spt_depth t1) (spt_depth t2) + (1 :num)) ∧ (∀(v0 :α) (t2 :α sptree$num_map) (t1 :α sptree$num_map). spt_depth (BS t1 v0 t2) = MAX (spt_depth t1) (spt_depth t2) + (1 :num)) ∧ spt_depth (LN :α sptree$num_map) = (0 :num) ∧ ∀(v :α). spt_depth ⦕ 0 ↦ v ⦖ = (0 :num)
+spt_enc_prime_prime_def_typed=∀(e :α -> num app_list) (t :α sptree$num_map). spt_enc'' e t = prod_enc num_enc (spt_enc' e) (spt_depth t,t)
+spt_dec_prime_def_typed=∀(ns :num list) (k :num) (d :num list -> α # num list). spt_dec' k d ns = case ns of ([] :num list) => ((LN :α sptree$num_map),ns) | (0 :num)::v1 => ((LN :α sptree$num_map),v1) | (1 :num)::v1 => (let ((x :α),(ns :num list)) = d v1 in (⦕ 0 ↦ x ⦖,ns)) | v::v1 => if k = (0 :num) then ((LN :α sptree$num_map),v1) else if v = (2 :num) then (let ((t1 :α sptree$num_map),(ns' :num list)) = spt_dec' (k − (1 :num)) d v1; ((t2 :α sptree$num_map),(ns'' :num list)) = spt_dec' (k − (1 :num)) d ns' in (BN t1 t2,ns'')) else (let ((t1 :α sptree$num_map),(ns1 :num list)) = spt_dec' (k − (1 :num)) d v1; ((x :α),(ns2 :num list)) = d ns1; ((t2 :α sptree$num_map),(ns3 :num list)) = spt_dec' (k − (1 :num)) d ns2 in (BS t1 x t2,ns3))
+spt_dec_prime_prime_def_typed=∀(d :num list -> α # num list) (ns :num list). spt_dec'' d ns = case ns of ([] :num list) => ((LN :α sptree$num_map),ns) | m::ms => spt_dec' m d ms
+spt_enc_prime_prime_dec_ok_typed=enc_dec_ok (e :α -> num app_list) (d :num list -> α # num list) ⇒ enc_dec_ok (spt_enc'' e) (spt_dec'' d)
+spt_enc_def_typed=∀(e :α -> num app_list). spt_enc e = sum_enc (list_enc (prod_enc num_enc e)) (spt_enc'' e) ∘ (λ(t :α sptree$num_map). if wf t then (INL (toAList t) :(num # α) list + α sptree$num_map) else (INR t :(num # α) list + α sptree$num_map))
+spt_dec_def_typed=∀(d :num list -> α # num list). spt_dec d = ((λ(x :(num # α) list + α sptree$num_map). case x of (INL xs :(num # α) list + α sptree$num_map) => fromAList xs | (INR t :(num # α) list + α sptree$num_map) => t) ## (I :num list -> num list)) ∘ sum_dec (list_dec (prod_dec num_dec d)) (spt_dec'' d)
+spt_enc_dec_ok_typed=enc_dec_ok (e :α -> num app_list) (d :num list -> α # num list) ⇒ enc_dec_ok (spt_enc e) (spt_dec d)
+namespace_enc_prime_def_typed=(∀(ys :(mlstring # (mlstring, mlstring, α) namespace) list) (xs :(mlstring # α) list) (e :α -> num app_list). namespace_enc' e (Bind xs ys) = (let (ns1 :num app_list) = list_enc (prod_enc mlstring_enc e) xs; (ns2 :num app_list) = namespace_enc'_list e ys in Append ns1 ns2)) ∧ (∀(e :α -> num app_list). namespace_enc'_list e ([] :(mlstring # (mlstring, mlstring, α) namespace) list) = List [(0 :num)]) ∧ ∀(xs :(mlstring # (mlstring, mlstring, α) namespace) list) (x :(mlstring, mlstring, α) namespace) (m :mlstring) (e :α -> num app_list). namespace_enc'_list e ((m,x)::xs) = Append (Append (List [(1 :num)]) (mlstring_enc m)) (Append (namespace_enc' e x) (namespace_enc'_list e xs))
+namespace_depth_def_typed=(∀(ys :(α # (α, β, γ) namespace) list) (xs :(β # γ) list). namespace_depth (Bind xs ys) = (1 :num) + namespace_depth_list ys) ∧ namespace_depth_list ([] :(α # (α, β, γ) namespace) list) = (0 :num) ∧ ∀(xs :(α # (α, β, γ) namespace) list) (x :(α, β, γ) namespace) (m :α). namespace_depth_list ((m,x)::xs) = (1 :num) + MAX (namespace_depth x) (namespace_depth_list xs)
+namespace_enc_def_typed=∀(e :α -> num app_list) (t :(mlstring, mlstring, α) namespace). namespace_enc e t = prod_enc num_enc (namespace_enc' e) (namespace_depth t,t)
+namespace_dec_prime_def_typed=(∀(ns :num list) (k :num) (d :num list -> α # num list). namespace_dec' k d ns = if k = (0 :num) then (Bind ([] :(mlstring # α) list) ([] :(mlstring # (mlstring, mlstring, α) namespace) list),ns) else (let ((xs :(mlstring # α) list),(ns1 :num list)) = list_dec (prod_dec mlstring_dec d) ns; ((ys :(mlstring # (mlstring, mlstring, α) namespace) list),(ns2 :num list)) = namespace_dec'_list (k − (1 :num)) d ns1 in (Bind xs ys,ns2))) ∧ ∀(ns :num list) (k :num) (d :num list -> α # num list). namespace_dec'_list k d ns = case ns of ([] :num list) => (([] :(mlstring # (mlstring, mlstring, α) namespace) list),ns) | (0 :num)::rest => (([] :(mlstring # (mlstring, mlstring, α) namespace) list),rest) | n::rest => if k = (0 :num) then (([] :(mlstring # (mlstring, mlstring, α) namespace) list),ns) else (let ((m :mlstring),(ns' :num list)) = mlstring_dec rest; ((x :(mlstring, mlstring, α) namespace),(ns'' :num list)) = namespace_dec' (k − (1 :num)) d ns'; ((ys :(mlstring # (mlstring, mlstring, α) namespace) list),(ns'³' :num list)) = namespace_dec'_list (k − (1 :num)) d ns'' in ((m,x)::ys,ns'³'))
+namespace_dec_def_typed=∀(d :num list -> α # num list) (ns :num list). namespace_dec d ns = case ns of ([] :num list) => (Bind ([] :(mlstring # α) list) ([] :(mlstring # (mlstring, mlstring, α) namespace) list),ns) | m::ms => namespace_dec' m d ms
+dec_ok_namespace_dec_prime_typed=∀(k :num). dec_ok (d :num list -> α # num list) ⇒ dec_ok (namespace_dec' k d)
+namespace_enc_dec_ok_typed=enc_dec_ok (e :α -> num app_list) (d :num list -> α # num list) ⇒ enc_dec_ok (namespace_enc e) (namespace_dec d)
+append_rev_def_typed=(∀(res :α list). append_rev (Nil :α app_list) res = res) ∧ (∀(xs :α list) (res :α list). append_rev (List xs) res = REV xs res) ∧ ∀(l1 :α app_list) (l2 :α app_list) (res :α list). append_rev (Append l1 l2) res = append_rev l2 (append_rev l1 res)
+append_rev_thm_typed=∀(l :α app_list) (res :α list). append_rev l res = REVERSE (append l) ++ res
+num_to_chars_def_typed=∀(n :num). num_to_chars n = if n < (30 :num) then STRING (CHR (n + (32 :num))) ("" :string) else STRING (CHR (n MOD (30 :num) + (32 :num) + (30 :num))) (num_to_chars (n DIV (30 :num)))
+rev_nums_to_chars_def_typed=(∀(res :string). rev_nums_to_chars ([] :num list) res = res) ∧ ∀(n :num) (ns :num list) (res :string). rev_nums_to_chars (n::ns) res = rev_nums_to_chars ns (STRCAT (num_to_chars n) res)
+nums_to_chars_def_typed=nums_to_chars ([] :num list) = ("" :string) ∧ ∀(ns :num list) (n :num). nums_to_chars (n::ns) = if n < (30 :num) then STRING (CHR (n + (32 :num))) (nums_to_chars ns) else STRING (CHR (n MOD (30 :num) + (32 :num) + (30 :num))) (nums_to_chars (n DIV (30 :num)::ns))
+dec_next_def_typed=(∀(k :num) (l :num). dec_next k l ("" :string) = (k,("" :string))) ∧ ∀(k :num) (l :num) (n :char) (ns :string). dec_next k l (STRING n ns) = (let (m :num) = ORD n − (32 :num) in if m < (30 :num) then (k + l * m,ns) else dec_next (k + l * (m − (30 :num))) (l * (30 :num)) ns)
+chars_to_nums_def_typed=∀(ns :string). chars_to_nums ns = if NULL ns then ([] :num list) else (let ((k :num),(ks :string)) = dec_next (0 :num) (1 :num) ns in k::chars_to_nums ks)
+dec_next_nums_to_chars_typed=∀(h :num) (l :num) (ns :num list) (k :num). dec_next k ((30 :num) ** l) (nums_to_chars (h::ns)) = (k + (30 :num) ** l * h,nums_to_chars ns)
+chars_to_nums_nums_to_chars_typed=∀(ns :num list). chars_to_nums (nums_to_chars ns) = ns
+rev_nums_to_chars_thm_typed=∀(ns :num list) (res :string). rev_nums_to_chars ns res = STRCAT (nums_to_chars (REVERSE ns)) res

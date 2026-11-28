@@ -9,6 +9,18 @@ public import Flapjack.Misc.Sptree.UnionAlgebra
 namespace Flapjack.WordAlloc
 open Flapjack.RegAlloc
 
+/-- Flapjack infrastructure (no HOL original): the byte-sized ShareInst load
+cases share one proof; only the load width constructor differs. -/
+local macro "shareLoadCase" v:ident e:ident : tactic =>
+  `(tactic| (
+    rintro lt f live flive livein flivein ⟨-, hw, -, hd, hi, hc⟩
+    simp only [getClashTree, reduceCtorEq, false_or, if_false] at hc
+    exact deltaConcl _ f _ _ live flive livein flivein lt hw hd hi hc
+      (fun k => by simpa only [getWrites] using writesSingle $v k)
+      (fun hw => by
+        simp only [numsetListDelete, getLive, reduceCtorEq, false_or, if_false]
+        exact insertReadsEqUnion $e (sptDelete $v live) (sptWfDelete live $v hw)) Iff.rfl))
+
 /-- Flapjack infrastructure for the HOL ShareInst store cases: commute the
 singleton through the expression read-set union on the exact unit carrier. -/
 private theorem insertReadsStore {width : Nat} [NeZero width]
@@ -87,13 +99,7 @@ theorem clashTreeColouringOk_ShareStore32 {width : Nat} [NeZero width]
 theorem clashTreeColouringOk_ShareLoad {width : Nat} [NeZero width]
     (v : Nat) (e : WordLangExpHOL (BitVec width)) :
     clashTreeGoal (.shareInst .load v e) := by
-  rintro lt f live flive livein flivein ⟨-, hw, -, hd, hi, hc⟩
-  simp only [getClashTree, reduceCtorEq, false_or, if_false] at hc
-  exact deltaConcl _ f _ _ live flive livein flivein lt hw hd hi hc
-    (fun k => by simpa only [getWrites] using writesSingle v k)
-    (fun hw => by
-      simp only [numsetListDelete, getLive, reduceCtorEq, false_or, if_false]
-      exact insertReadsEqUnion e (sptDelete v live) (sptWfDelete live v hw)) Iff.rfl
+  shareLoadCase v e
 
 /-- Exact HOL ShareInst Load8 case, retaining the full original motive. -/
 @[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
@@ -101,13 +107,7 @@ theorem clashTreeColouringOk_ShareLoad {width : Nat} [NeZero width]
 theorem clashTreeColouringOk_ShareLoad8 {width : Nat} [NeZero width]
     (v : Nat) (e : WordLangExpHOL (BitVec width)) :
     clashTreeGoal (.shareInst .load8 v e) := by
-  rintro lt f live flive livein flivein ⟨-, hw, -, hd, hi, hc⟩
-  simp only [getClashTree, reduceCtorEq, false_or, if_false] at hc
-  exact deltaConcl _ f _ _ live flive livein flivein lt hw hd hi hc
-    (fun k => by simpa only [getWrites] using writesSingle v k)
-    (fun hw => by
-      simp only [numsetListDelete, getLive, reduceCtorEq, false_or, if_false]
-      exact insertReadsEqUnion e (sptDelete v live) (sptWfDelete live v hw)) Iff.rfl
+  shareLoadCase v e
 
 /-- Exact HOL ShareInst Load16 case, retaining the full original motive. -/
 @[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
@@ -115,13 +115,7 @@ theorem clashTreeColouringOk_ShareLoad8 {width : Nat} [NeZero width]
 theorem clashTreeColouringOk_ShareLoad16 {width : Nat} [NeZero width]
     (v : Nat) (e : WordLangExpHOL (BitVec width)) :
     clashTreeGoal (.shareInst .load16 v e) := by
-  rintro lt f live flive livein flivein ⟨-, hw, -, hd, hi, hc⟩
-  simp only [getClashTree, reduceCtorEq, false_or, if_false] at hc
-  exact deltaConcl _ f _ _ live flive livein flivein lt hw hd hi hc
-    (fun k => by simpa only [getWrites] using writesSingle v k)
-    (fun hw => by
-      simp only [numsetListDelete, getLive, reduceCtorEq, false_or, if_false]
-      exact insertReadsEqUnion e (sptDelete v live) (sptWfDelete live v hw)) Iff.rfl
+  shareLoadCase v e
 
 /-- Exact HOL ShareInst Load32 case, retaining the full original motive. -/
 @[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
@@ -129,12 +123,6 @@ theorem clashTreeColouringOk_ShareLoad16 {width : Nat} [NeZero width]
 theorem clashTreeColouringOk_ShareLoad32 {width : Nat} [NeZero width]
     (v : Nat) (e : WordLangExpHOL (BitVec width)) :
     clashTreeGoal (.shareInst .load32 v e) := by
-  rintro lt f live flive livein flivein ⟨-, hw, -, hd, hi, hc⟩
-  simp only [getClashTree, reduceCtorEq, false_or, if_false] at hc
-  exact deltaConcl _ f _ _ live flive livein flivein lt hw hd hi hc
-    (fun k => by simpa only [getWrites] using writesSingle v k)
-    (fun hw => by
-      simp only [numsetListDelete, getLive, reduceCtorEq, false_or, if_false]
-      exact insertReadsEqUnion e (sptDelete v live) (sptWfDelete live v hw)) Iff.rfl
+  shareLoadCase v e
 
 end Flapjack.WordAlloc

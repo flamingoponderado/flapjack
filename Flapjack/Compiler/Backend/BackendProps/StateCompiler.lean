@@ -83,4 +83,22 @@ theorem fst_addStateCo_zero {S Program Output Config : Type}
     (progs : Nat → Program) :
     (addStateCo f st mk progs 0).1 = st := rfl
 
+/-- Original `state_co_fun_def` (`backendProofScript.sml:1009-1013`): the
+curried form of `state_co` for an oracle entry carrying both configurations. -/
+@[hol "cakeml/compiler/backend/proofs/backendProofScript.sml" "state_co_fun_def"]
+def stateCoFun {S SNext C P Q : Type} (compile : S → P → SNext × Q) (x : (S × C) × P) :
+    C × Q :=
+  let (configs, p) := x
+  let (_, p') := compile configs.1 p
+  (configs.2, p')
+
+/-- Original `state_co_eq_comp` (`backendProofScript.sml:1015-1018`): the
+stateful conversion is the curried form composed with the oracle. -/
+@[hol "cakeml/compiler/backend/proofs/backendProofScript.sml" "state_co_eq_comp"]
+theorem stateCo_eq_comp {Index S SNext C P Q : Type} (compile : S → P → SNext × Q)
+    (oracle : Index → (S × C) × P) :
+    stateCo compile oracle = stateCoFun compile ∘ oracle := by
+  funext n
+  rfl
+
 end Flapjack.Compiler.Backend.BackendProps

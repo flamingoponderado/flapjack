@@ -261,4 +261,106 @@ theorem gcMoveData_r1 {α β : Type} (conf : Config β) (state : GcState α β) 
     | forwardPointer ptr value len => rw [gcMoveData]; simp [heap, bounded]
     | dataElement roots len payload => exact False.elim (notData roots len payload rfl)
 
+/-- Moving one root leaves the generation segments and reference lists
+unchanged. -/
+@[hol "cakeml/compiler/backend/gc/gen_gc_partialScript.sml" "gc_move_IMP"]
+theorem gcMove_IMP {α β : Type} (conf : Config β) (state : GcState α β)
+    (root root1 : HeapAddress α) (state1 : GcState α β)
+    (run : gcMove conf state root = (root1, state1)) :
+    state1.old = state.old ∧ state1.h1 = state.h1 ∧ state1.r4 = state.r4 ∧
+      state1.r3 = state.r3 ∧ state1.r2 = state.r2 ∧ state1.r1 = state.r1 := by
+  cases root with
+  | data value =>
+    simp only [gcMove, Prod.mk.injEq] at run
+    obtain ⟨_, rfl⟩ := run
+    simp
+  | pointer ptr value =>
+    simp only [gcMove] at run
+    split at run
+    · simp only [Prod.mk.injEq] at run
+      obtain ⟨_, rfl⟩ := run
+      simp
+    · split at run
+      · simp only [Prod.mk.injEq] at run
+        obtain ⟨_, rfl⟩ := run
+        simp
+      · simp only [Prod.mk.injEq] at run
+        obtain ⟨_, rfl⟩ := run
+        simp
+      · simp only [Prod.mk.injEq] at run
+        obtain ⟨_, rfl⟩ := run
+        simp
+
+/-- Moving a root list preserves its length and leaves the generation
+segments and reference lists unchanged. -/
+@[hol "cakeml/compiler/backend/gc/gen_gc_partialScript.sml" "gc_move_list_IMP"]
+theorem gcMoveList_IMP {α β : Type}
+    (roots roots1 : List (HeapAddress α)) (state state1 : GcState α β) (conf : Config β)
+    (run : gcMoveList conf state roots = (roots1, state1)) :
+    roots.length = roots1.length ∧ state1.old = state.old ∧ state1.h1 = state.h1 ∧
+      state1.r4 = state.r4 ∧ state1.r3 = state.r3 ∧ state1.r2 = state.r2 ∧
+      state1.r1 = state.r1 := by
+  induction roots generalizing state roots1 state1 with
+  | nil =>
+    simp only [gcMoveList, Prod.mk.injEq] at run
+    obtain ⟨rfl, rfl⟩ := run
+    simp
+  | cons root roots ih =>
+    simp only [gcMoveList] at run
+    generalize headRun : gcMove conf state root = result at run
+    obtain ⟨rootMid, middle⟩ := result
+    generalize tailRun : gcMoveList conf middle roots = result at run
+    obtain ⟨tail, final⟩ := result
+    simp only [Prod.mk.injEq] at run
+    obtain ⟨rfl, rfl⟩ := run
+    have head := gcMove_IMP conf state root rootMid middle headRun
+    have tailImp := ih (state := middle) (roots1 := tail) (state1 := final) tailRun
+    simp only [List.length_cons]
+    simp [head, tailImp]
+
+/-- Scanning copied data leaves the generation segments and reference lists
+unchanged. -/
+@[hol "cakeml/compiler/backend/gc/gen_gc_partialScript.sml" "gc_move_data_IMP"]
+theorem gcMoveData_IMP {α β : Type} (conf : Config β) (state state1 : GcState α β)
+    (run : gcMoveData conf state = state1) :
+    state1.old = state.old ∧ state1.r1 = state.r1 ∧ state1.r2 = state.r2 ∧
+      state1.r3 = state.r3 ∧ state1.r4 = state.r4 := by
+  classical
+  induction state using gcMoveData.induct conf with
+  | case1 state empty =>
+    unfold gcMoveData at run
+    simp only [empty] at run
+    rw [← run]
+    simp
+  | case2 state head tail heap over =>
+    unfold gcMoveData at run
+    simp only [heap, over, ↓reduceIte] at run
+    rw [← run]
+    simp
+  | case3 state tail roots len payload roots1 middle move heap bounded flag ih =>
+    cases state with
+    | mk old h1 h2 r4 r3 r2 r1 a n status origHeap heap0 =>
+      simp only at heap
+      subst h2
+      unfold gcMoveData at run
+      simp only [bounded, ↓reduceIte, move] at run
+      have listImp := gcMoveList_IMP roots roots1
+        (GcState.mk old h1 (.dataElement roots len payload :: tail) r4 r3 r2 r1 a n status
+          origHeap heap0) middle conf move
+      have step := ih run
+      simp [step, listImp]
+  | case4 state head tail heap bounded notData =>
+    cases head with
+    | unused len =>
+      unfold gcMoveData at run
+      simp only [heap, bounded, ↓reduceIte] at run
+      rw [← run]
+      simp
+    | forwardPointer ptr value len =>
+      unfold gcMoveData at run
+      simp only [heap, bounded, ↓reduceIte] at run
+      rw [← run]
+      simp
+    | dataElement roots len payload => exact False.elim (notData roots len payload rfl)
+
 end Flapjack.Compiler.Backend.GenGcPartial

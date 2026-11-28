@@ -1,0 +1,19 @@
+sort2_tail_sort2_typed=∀(negate :bool) (R :α -> α -> bool) (x :α) (y :α). sort2_tail negate R x y = if negate then REVERSE (sort2 R x y) else sort2 R x y
+sort3_tail_sort3_typed=∀(negate :bool) (R :α -> α -> bool) (x :α) (y :α) (z :α). sort3_tail negate R x y z = if negate then REVERSE (sort3 R x y z) else sort3 R x y z
+mergetail_merge_typed=∀(negate :bool) (R :α -> α -> bool) (xs :α list) (ys :α list) (acc :α list). merge_tail negate R xs ys acc = if negate then REVERSE (merge (λ(x :α) (y :α). ¬R x y) xs ys) ++ acc else REVERSE (merge R xs ys) ++ acc
+merge_tail_acc_typed=∀(negate :bool) (R :α -> α -> bool) (xs :α list) (ys :α list) (acc :α list) (acc' :α list). merge_tail negate R xs ys (acc ++ acc') = merge_tail negate R xs ys acc ++ acc'
+merge_tail_MEM_typed=∀(negate :bool) (R :α -> α -> bool) (xs :α list) (ys :α list) (acc :α list). MEM (x :α) (merge_tail negate R xs ys acc) ⇔ MEM x xs ∨ MEM x ys ∨ MEM x acc
+mergesortN_tail_MEM_typed=∀(negate :bool) (R :α -> α -> bool) (length :num) (lst :α list). MEM (x :α) (mergesortN_tail negate R length lst) ⇔ MEM x (TAKE length lst)
+mergesort_tail_MEM_typed=∀(R :α -> α -> bool) (l :α list). MEM (x :α) (mergesort_tail R l) ⇔ MEM x l
+merge_tail_PERM_typed=∀(negate :bool) (R :α -> α -> bool) (xs :α list) (ys :α list) (acc :α list). PERM (xs ++ ys ++ acc) (merge_tail negate R xs ys acc)
+sort2_tail_PERM_typed=∀(neg :bool) (R :α -> α -> bool) (x :α) (y :α). PERM [x; y] (sort2_tail neg R x y)
+sort3_tail_PERM_typed=∀(neg :bool) (R :α -> α -> bool) (x :α) (y :α) (z :α). PERM [x; y; z] (sort3_tail neg R x y z)
+mergesortN_tail_PERM_typed=∀(neg :bool) (R :α -> α -> bool) (len :num) (l :α list). PERM (TAKE len l) (mergesortN_tail neg R len l)
+sort_set_typed=set (sort (R :α -> α -> bool) (ls :α list)) = set ls
+FIND_thm_typed=FIND (f :α -> bool) ([] :α list) = (NONE :α option) ∧ ∀(h :α) (t :α list). FIND f (h::t) = if f h then SOME h else FIND f t
+index_find_thm_typed=∀(x :num) (y :num). OPTION_MAP (SND :num # α -> α) (INDEX_FIND x (f :α -> bool) (l :α list)) = OPTION_MAP (SND :num # α -> α) (INDEX_FIND y f l)
+list_compare_def_typed=(∀(cmp :α -> β -> ordering). list_cmp cmp ([] :α list) ([] :β list) = Equal) ∧ (∀(v9 :β list) (v8 :β) (cmp :α -> β -> ordering). list_cmp cmp ([] :α list) (v8::v9) = Less) ∧ (∀(v5 :α list) (v4 :α) (cmp :α -> β -> ordering). list_cmp cmp (v4::v5) ([] :β list) = Greater) ∧ ∀(y :β) (x :α) (l2 :β list) (l1 :α list) (cmp :α -> β -> ordering). list_cmp cmp (x::l1) (y::l2) = case cmp x y of Less => Less | Equal => list_cmp cmp l1 l2 | Greater => Greater
+foldli_thm_typed=∀(f :num -> α -> β -> β) (e :β) (l :α list). foldli f e l = FOLDRi (λ(n :num). f (LENGTH l − SUC n)) e (REVERSE l)
+MAPI_thm_typed=∀(f :num -> α -> β) (l :α list). MAPi f l = (mapi f (0 :num) l :β list)
+collate_cpn_reln_thm_typed=∀(f :α -> α -> ordering) (l1 :α list) (l2 :α list). (∀(x1 :α) (x2 :α). f x1 x2 = Equal ⇔ x1 = x2) ⇒ (cpn_to_reln (collate f) l1 l2 ⇔ LLEX (cpn_to_reln f) l1 l2)
+tabulate_GENLIST_typed=∀(n :num). tabulate n (f :num -> α) = GENLIST f n

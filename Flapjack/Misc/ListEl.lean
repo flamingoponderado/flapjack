@@ -66,6 +66,17 @@ theorem holLastCons {α : Type} [Nonempty α] :
     (∀ (x y : α) (z : List α), holLast (x :: y :: z) = holLast (y :: z)) := by
   constructor <;> intros <;> simp only [holLast]
 
+/-- Original `LAST_CONS_alt`: prefixing a non-empty list with a value that
+    satisfies `P` does not change whether `P` holds of the last element. -/
+@[hol "cakeml/misc/miscScript.sml" "LAST_CONS_alt"
+  (total_function_inhabitants := [α])]
+theorem holLast_cons_alt {α : Type} [Nonempty α] (P : α → Prop) (x : α) (ls : List α)
+    (px : P x) : (ls ≠ [] → P (holLast ls)) ↔ P (holLast (x :: ls)) := by
+  classical
+  cases ls with
+  | nil => simp [holLast, px]
+  | cons y ys => simp [holLast]
+
 /-- Exact HOL `EL_def` (`listScript.sml:225-228`). -/
 @[hol "HOL/src/list/src/listScript.sml" "EL_def"
   (total_function_inhabitants := [α])]

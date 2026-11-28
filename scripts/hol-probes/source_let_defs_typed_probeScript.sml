@@ -404,3 +404,7 @@ val _ = emit_exported "dest_Let_def_typed" "dest_Let_def";
 val _ = emit_exported "dest_Letrec_def_typed" "dest_Letrec_def";
 val _ = emit_exported "lift_let_def_typed" "lift_let_def";
 val _ = emit_exported "lift_lets_def_typed" "lift_lets_def";
+val _ = emit_exported "dest_Let_SOME_typed" "dest_Let_SOME";
+val _ = emit_exported "dest_Let_NONE_typed" "dest_Let_NONE";
+val _ = emit_exported "dest_Letrec_SOME_typed" "dest_Letrec_SOME";
+val _ = emit_exported "dest_Letrec_NONE_typed" "dest_Letrec_NONE";

@@ -23,4 +23,11 @@ noncomputable def holLOG2 : Nat → Nat := holLOG 2
 theorem holLOG2_eq_log2 {n : Nat} (hn : 0 < n) : holLOG2 n = Nat.log2 n :=
   holLOG_UNIQUE 2 n (Nat.log2 n) ⟨Nat.log2_self_le (by omega), Nat.lt_log2_self⟩
 
+/-- Original `LOG2_TIMES2`: for a positive argument, multiplying by two adds one
+to the base-2 logarithm. -/
+@[hol "cakeml/misc/miscScript.sml" "LOG2_TIMES2"]
+theorem holLOG2_two_mul (n : Nat) (h : 0 < n) :
+    holLOG2 (2 * n) = holLOG2 n + 1 := by
+  rw [holLOG2_eq_log2 (by omega), holLOG2_eq_log2 h, Nat.log2_two_mul (by omega)]
+
 end Flapjack

@@ -419,32 +419,6 @@ private theorem callEnv_swapStackLocals {C F : Type} (args : List DataSem.Value)
   unfold DataSem.callEnv
   exact ⟨_, _, rfl⟩
 
-/-- Pushing an environment frame prepends it to the current stack and builds it
-    from the current locals size, so a stack-and-locals update passes through it
-    with only the stack maximum and the safety observation free. Flapjack
-    infrastructure toward the port of HOL `evaluate_stack_and_locals_swap`;
-    no separate HOL original. -/
-private theorem pushEnv_false_swapStackLocals {C F : Type} (env : Spt DataSem.Value)
-    (state : State C F) (xs : List Stack) (lsz : Option Nat) :
-    ∃ smx sfs, DataSem.pushEnv env false { state with stack := xs, localsSize := lsz } =
-      { DataSem.pushEnv env false state with
-        stack := Stack.env lsz env :: xs
-        localsSize := lsz
-        stackMax := smx
-        safeForSpace := sfs } := by
-  unfold DataSem.pushEnv
-  exact ⟨_, _, rfl⟩
-
-/-- Restoring a saved environment commutes with the stack-and-locals update when
-    the frames agree. Flapjack infrastructure toward the port of HOL
-    `evaluate_stack_and_locals_swap`; no separate HOL original. -/
-private theorem popEnv_swapStackLocals {C F : Type} (state : State C F) (frame : Stack)
-    (xs : List Stack) (lsz : Option Nat) :
-    DataSem.popEnv { state with stack := frame :: xs, localsSize := lsz } =
-      (DataSem.popEnv { state with stack := frame :: state.stack }).map
-        (fun next => { next with stack := xs }) := by
-  cases frame <;> simp [DataSem.popEnv]
-
 /-- Raising past the saved exception frame depends only on the handler index
     and the stack, so two states that agree there produce jump results that
     agree in the locals, stack and handler they install. Flapjack
@@ -1054,29 +1028,6 @@ private theorem jumpExc_callToState {C F : Type} (state called : State C F)
   obtain ⟨next', nextRun, locals', stack', handler'⟩ :=
     jumpExc_envFrame state size env _ transported
   exact ⟨next', nextRun, locals', stack', handler'⟩
-
-/-- Pushing a frame of either kind prepends it to the current stack, keeps the
-    locals size and builds the frame from the current locals size, so a
-    stack-and-locals update passes through it with only the stack maximum and
-    the safety observation free. Flapjack infrastructure toward the port of HOL
-    `evaluate_stack_and_locals_swap`; no separate HOL original. -/
-private theorem pushEnv_swapStackLocals {C F : Type} (env : Spt DataSem.Value) (handler : Bool)
-    (state : State C F) (xs : List Stack) (lsz : Option Nat) :
-    DataSem.pushEnv env handler { state with stack := xs, localsSize := lsz } =
-      { DataSem.pushEnv env handler state with
-        stack := (if handler then Stack.exc lsz env state.handler else Stack.env lsz env) :: xs
-        localsSize := lsz
-        handler := if handler then xs.length else state.handler
-        stackMax :=
-          (DataSem.pushEnv env handler { state with
-            stack := xs
-            localsSize := lsz }).stackMax
-        safeForSpace :=
-          (DataSem.pushEnv env handler { state with
-            stack := xs
-            localsSize := lsz }).safeForSpace } := by
-  unfold DataSem.pushEnv
-  cases handler <;> rfl
 
 /-- Restoring an exception frame installs its saved handler along with its locals
     and stack tail. Flapjack infrastructure toward the port of HOL
@@ -2651,31 +2602,6 @@ private theorem doSpace_swapStackLocals_none {C F : Type} (op : ClosLang.Op)
       simp only [consume] at run
       simp at run
 
-/-- The limit check at a stack-and-locals-swapped state. Flapjack
-    infrastructure toward the port of HOL `evaluate_stack_and_locals_swap`;
-    no separate HOL original. -/
-private theorem doLimSafe_swapStackLocals {C F : Type} (op : ClosLang.Op)
-    (values : List DataSem.Value)
-    (state : State C F) (xs : List Stack) (lsz : Option Nat) :
-    doLimSafe { state with stack := xs, localsSize := lsz } op values =
-      { doLimSafe state op values with stack := xs, localsSize := lsz } := by
-  simp [doLimSafe]
-
-/-- Stack accounting at a stack-and-locals-swapped state. Flapjack
-    infrastructure toward the port of HOL `evaluate_stack_and_locals_swap`;
-    no separate HOL original. -/
-private theorem doStack_swapStackLocals {C F : Type} (op : ClosLang.Op)
-    (values : List DataSem.Value)
-    (state : State C F) (xs : List Stack) (lsz : Option Nat) :
-    ∃ smx sfs, doStack op values { state with stack := xs, localsSize := lsz } =
-      { doStack op values state with
-        stack := xs
-        localsSize := lsz
-        safeForSpace := sfs
-        stackMax := smx } := by
-  unfold doStack
-  exact ⟨_, _, rfl⟩
-
 /-- Installation commutes with replacing the stack and the locals size: it
     reads only the compiler state, and reports the same value with the frame
     fields replaced. Flapjack infrastructure toward the port of HOL
@@ -2716,57 +2642,6 @@ private theorem doInstall_swapStackLocals_err {C F : Type} (args : List DataSem.
     doInstall (C := C) (F := F) (R := DataSem.Value) args
         { state with stack := xs, localsSize := lsz } = .err error := by
   have mapped := doInstall_swapStackLocals_map args state xs lsz
-  rw [mapped, run]
-  simp only [Flapjack.SemanticPrimitivesProps.mapResult]
-  rw [Flapjack.SemanticPrimitivesProps.mapErrorResult_id]
-
-/-- Auxiliary application commutes with replacing the stack and the locals
-    size: it reads neither, so it reports the same value with the frame fields
-    replaced. Flapjack infrastructure toward the port of HOL
-    `evaluate_stack_and_locals_swap`; no separate HOL original. -/
-private theorem doAppAux_swapStackLocals_map {C F : Type} (op : ClosLang.Op)
-    (values : List DataSem.Value) (state : State C F) (xs : List Stack) (lsz : Option Nat) :
-    doAppAux op values { state with stack := xs, localsSize := lsz } =
-      Flapjack.SemanticPrimitivesProps.mapResult
-        (fun (pair : DataSem.Value × State C F) =>
-          (pair.1, { pair.2 with stack := xs, localsSize := lsz }))
-        id (doAppAux op values state) := by
-  have changed := doAppAux_withFields op values state xs lsz state.stackMax
-    state.peakHeapLength state.locals state.space state.handler state.clock
-    state.stackFrameSizes state.compile
-  cases run : doAppAux op values state with
-  | err error =>
-    simpa [run, Flapjack.SemanticPrimitivesProps.mapResult,
-      Flapjack.SemanticPrimitivesProps.mapErrorResult] using changed
-  | val pair =>
-    obtain ⟨value, next⟩ := pair
-    have frame := doAppAux_fieldFrame op values state next value run
-    simpa [run, Flapjack.SemanticPrimitivesProps.mapResult, frame.1, frame.2.1,
-      frame.2.2.1, frame.2.2.2.1, frame.2.2.2.2.1, frame.2.2.2.2.2.1, frame.2.2.2.2.2.2.1,
-      frame.2.2.2.2.2.2.2.1, frame.2.2.2.2.2.2.2.2.1, frame.2.2.2.2.2.2.2.2.2] using changed
-
-/-- Successful auxiliary application at a stack-and-locals-swapped state.
-    Flapjack infrastructure toward the port of HOL
-    `evaluate_stack_and_locals_swap`; no separate HOL original. -/
-private theorem doAppAux_swapStackLocals_val {C F : Type} (op : ClosLang.Op)
-    (values : List DataSem.Value) (state : State C F) (xs : List Stack) (lsz : Option Nat)
-    (value : DataSem.Value) (next : State C F)
-    (run : doAppAux op values state = .val (value, next)) :
-    doAppAux op values { state with stack := xs, localsSize := lsz } =
-      .val (value, { next with stack := xs, localsSize := lsz }) := by
-  have mapped := doAppAux_swapStackLocals_map op values state xs lsz
-  rw [mapped, run]
-  simp only [Flapjack.SemanticPrimitivesProps.mapResult]
-
-/-- Failing auxiliary application fails identically at a stack-and-locals-swapped
-    state. Flapjack infrastructure toward the port of HOL
-    `evaluate_stack_and_locals_swap`; no separate HOL original. -/
-private theorem doAppAux_swapStackLocals_err {C F : Type} (op : ClosLang.Op)
-    (values : List DataSem.Value) (state : State C F) (xs : List Stack) (lsz : Option Nat)
-    (error : ErrorResult DataSem.Value)
-    (run : doAppAux op values state = .err error) :
-    doAppAux op values { state with stack := xs, localsSize := lsz } = .err error := by
-  have mapped := doAppAux_swapStackLocals_map op values state xs lsz
   rw [mapped, run]
   simp only [Flapjack.SemanticPrimitivesProps.mapResult]
   rw [Flapjack.SemanticPrimitivesProps.mapErrorResult_id]
@@ -3083,16 +2958,6 @@ private theorem cutStateOpt_swapStackLocals_val {C F : Type} (live : Option NumS
     (run : cutStateOpt live state = some next) :
     cutStateOpt live { state with stack := xs, localsSize := lsz } =
       some { next with stack := xs, localsSize := lsz } := by
-  rw [cutStateOpt_swapStackLocals, run]
-  rfl
-
-/-- A failing live-name cut fails at a stack-and-locals-swapped state too.
-    Flapjack infrastructure toward the port of HOL
-    `evaluate_stack_and_locals_swap`; no separate HOL original. -/
-private theorem cutStateOpt_swapStackLocals_none {C F : Type} (live : Option NumSet)
-    (state : State C F) (xs : List Stack) (lsz : Option Nat)
-    (run : cutStateOpt live state = none) :
-    cutStateOpt live { state with stack := xs, localsSize := lsz } = none := by
   rw [cutStateOpt_swapStackLocals, run]
   rfl
 

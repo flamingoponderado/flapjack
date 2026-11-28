@@ -1,0 +1,51 @@
+compare_aux_def_typed=∀(start :num) (s2 :mlstring) (s1 :mlstring) (ord :ordering) (len :num). compare_aux s1 s2 ord start len = if len = (0 :num) then ord else if char_lt (strsub s2 start) (strsub s1 start) then Greater else if char_lt (strsub s1 start) (strsub s2 start) then Less else compare_aux s1 s2 ord (start + (1 :num)) (len − (1 :num))
+compare_def_typed=∀(s1 :mlstring) (s2 :mlstring). compare s1 s2 = if strlen s1 < strlen s2 then compare_aux s1 s2 Less (0 :num) (strlen s1) else if strlen s2 < strlen s1 then compare_aux s1 s2 Greater (0 :num) (strlen s2) else compare_aux s1 s2 Equal (0 :num) (strlen s2)
+mlstring_lt_def_typed=∀(s1 :mlstring) (s2 :mlstring). s1 < s2 ⇔ compare s1 s2 = Less
+mlstring_le_def_typed=∀(s1 :mlstring) (s2 :mlstring). s1 ≤ s2 ⇔ compare s1 s2 ≠ Greater
+mlstring_gt_def_typed=∀(s1 :mlstring) (s2 :mlstring). s1 > s2 ⇔ compare s1 s2 = Greater
+mlstring_ge_def_typed=∀(s1 :mlstring) (s2 :mlstring). s1 ≥ s2 ⇔ compare s1 s2 ≠ Less
+fast_lt_def_typed=∀(s1 :mlstring) (s2 :mlstring). fast_lt s1 s2 ⇔ if strlen s1 = strlen s2 then s1 < s2 else strlen s1 < strlen s2
+fast_le_def_typed=∀(s1 :mlstring) (s2 :mlstring). fast_le s1 s2 ⇔ if strlen s1 = strlen s2 then s1 ≤ s2 else strlen s1 ≤ strlen s2
+fast_gt_def_typed=∀(s1 :mlstring) (s2 :mlstring). fast_gt s1 s2 ⇔ if strlen s1 = strlen s2 then s1 > s2 else strlen s1 > strlen s2
+fast_ge_def_typed=∀(s1 :mlstring) (s2 :mlstring). fast_ge s1 s2 ⇔ if strlen s1 = strlen s2 then s1 ≥ s2 else strlen s1 ≥ strlen s2
+collate_aux_def_typed=(∀(f :char -> char -> ordering) (s1 :mlstring) (s2 :mlstring) (ord :ordering) (n :num). collate_aux f s1 s2 ord n (0 :num) = ord) ∧ ∀(f :char -> char -> ordering) (s1 :mlstring) (s2 :mlstring) (ord :ordering) (n :num) (len :num). collate_aux f s1 s2 ord n (SUC len) = if f (strsub s1 n) (strsub s2 n) = Equal then collate_aux f s1 s2 ord (n + (1 :num)) len else f (strsub s1 n) (strsub s2 n)
+collate_def_typed=∀(f :char -> char -> ordering) (s1 :mlstring) (s2 :mlstring). collate f s1 s2 = if strlen s1 < strlen s2 then collate_aux f s1 s2 Less (0 :num) (strlen s1) else if strlen s2 < strlen s1 then collate_aux f s1 s2 Greater (0 :num) (strlen s2) else collate_aux f s1 s2 Equal (0 :num) (strlen s2)
+compare_thm_typed=compare (s1 :mlstring) (s2 :mlstring) = if s1 < s2 then Less else if s1 ≤ s2 then Equal else Greater
+string_lt_def_typed=(∀(s :string). string_lt s ("" :string) ⇔ F) ∧ (∀(s :string) (c :char). string_lt ("" :string) (STRING c s) ⇔ T) ∧ ∀(s2 :string) (s1 :string) (c2 :char) (c1 :char). string_lt (STRING c1 s1) (STRING c2 s2) ⇔ char_lt c1 c2 ∨ c1 = c2 ∧ string_lt s1 s2
+string_le_def_typed=∀(s1 :string) (s2 :string). string_le s1 s2 ⇔ s1 = s2 ∨ string_lt s1 s2
+string_lt_total_typed=∀(s1 :string) (s2 :string). ¬string_lt s1 s2 ∧ ¬string_lt s2 s1 ⇒ s1 = s2
+string_lt_nonrefl_typed=∀(s :string). ¬string_lt s s
+string_lt_antisym_typed=∀(s :string) (t :string). ¬(string_lt s t ∧ string_lt t s)
+string_lt_cases_typed=∀(s :string) (t :string). s = t ∨ string_lt s t ∨ string_lt t s
+string_lt_trans_typed=∀(s1 :string) (s2 :string) (s3 :string). string_lt s1 s2 ∧ string_lt s2 s3 ⇒ string_lt s1 s3
+antisymmetric_def_typed=∀(R :α -> α -> bool). antisymmetric R ⇔ ∀(x :α) (y :α). R x y ∧ R y x ⇒ x = y
+trichotomous_typed=∀(R :α -> α -> bool). trichotomous R ⇔ ∀(a :α) (b :α). R a b ∨ R b a ∨ a = b
+StrongOrder_typed=∀(Z :η -> η -> bool). StrongOrder Z ⇔ (irreflexive Z :bool) ∧ transitive Z
+StrongLinearOrder_typed=∀(R :α -> α -> bool). StrongLinearOrder R ⇔ StrongOrder R ∧ trichotomous R
+mlstring_lt_inv_image_typed=mlstring_lt = inv_image string_lt explode
+TotOrd_compare_typed=TotOrd compare
+good_cmp_compare_typed=good_cmp compare
+mlstring_lt_antisym_typed=∀(s :mlstring) (t :mlstring). ¬(s < t ∧ t < s)
+mlstring_lt_cases_typed=∀(s :mlstring) (t :mlstring). s = t ∨ s < t ∨ t < s
+mlstring_lt_nonrefl_typed=∀(s :mlstring). ¬(s < s)
+mlstring_lt_trans_typed=∀(s1 :mlstring) (s2 :mlstring) (s3 :mlstring). s1 < s2 ∧ s2 < s3 ⇒ s1 < s3
+mlstring_le_thm_typed=∀(s1 :mlstring) (s2 :mlstring). s1 ≤ s2 ⇔ s1 = s2 ∨ s1 < s2
+mlstring_gt_thm_typed=∀(s1 :mlstring) (s2 :mlstring). s1 > s2 ⇔ s2 < s1
+mlstring_ge_thm_typed=∀(s1 :mlstring) (s2 :mlstring). s1 ≥ s2 ⇔ s2 ≤ s1
+transitive_mlstring_le_typed=transitive mlstring_le
+antisymmetric_mlstring_le_typed=antisymmetric mlstring_le
+total_mlstring_le_typed=total mlstring_le
+strlit_le_strlit_typed=implode (s1 :string) ≤ implode (s2 :string) ⇔ string_le s1 s2
+StrongLinearOrder_mlstring_lt_typed=StrongLinearOrder mlstring_lt
+fast_lt_nonrefl_typed=∀(s :mlstring). ¬fast_lt s s
+fast_lt_trans_typed=∀(s1 :mlstring) (s2 :mlstring) (s3 :mlstring). fast_lt s1 s2 ∧ fast_lt s2 s3 ⇒ fast_lt s1 s3
+fast_le_thm_typed=∀(s1 :mlstring) (s2 :mlstring). fast_le s1 s2 ⇔ s1 = s2 ∨ fast_lt s1 s2
+fast_gt_thm_typed=∀(s1 :mlstring) (s2 :mlstring). fast_gt s1 s2 ⇔ fast_lt s2 s1
+fast_ge_thm_typed=∀(s1 :mlstring) (s2 :mlstring). fast_ge s1 s2 ⇔ fast_le s2 s1
+transitive_fast_le_typed=transitive fast_le
+antisymmetric_fast_le_typed=antisymmetric fast_le
+total_fast_le_typed=total fast_le
+transitive_fast_lt_typed=transitive fast_lt
+irreflexive_fast_lt_typed=(irreflexive fast_lt :bool)
+trichotomous_fast_lt_typed=trichotomous fast_lt
+StrongLinearOrder_fast_lt_typed=StrongLinearOrder fast_lt

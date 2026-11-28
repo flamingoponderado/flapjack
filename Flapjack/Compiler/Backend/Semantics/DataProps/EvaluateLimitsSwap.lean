@@ -57,10 +57,6 @@ private theorem limitSwapState_code {C F : Type} {lim : Limits} {state other : S
 private theorem limitSwapState_stack {C F : Type} {lim : Limits} {state other : State C F}
     (h : LimitSwapState lim state other) : other.stack = state.stack := by rw [h]
 
-/-- The related state agrees on the locals size. -/
-private theorem limitSwapState_localsSize {C F : Type} {lim : Limits} {state other : State C F}
-    (h : LimitSwapState lim state other) : other.localsSize = state.localsSize := by rw [h]
-
 /-- The related state agrees on the handler index. -/
 private theorem limitSwapState_handler {C F : Type} {lim : Limits} {state other : State C F}
     (h : LimitSwapState lim state other) : other.handler = state.handler := by rw [h]
@@ -69,32 +65,6 @@ private theorem limitSwapState_handler {C F : Type} {lim : Limits} {state other 
 private theorem limitSwapState_stackFrameSizes {C F : Type} {lim : Limits}
     {state other : State C F}
     (h : LimitSwapState lim state other) : other.stackFrameSizes = state.stackFrameSizes := by
-  rw [h]
-
-/-- The related state agrees on the global pointer. -/
-private theorem limitSwapState_global {C F : Type} {lim : Limits} {state other : State C F}
-    (h : LimitSwapState lim state other) : other.global = state.global := by rw [h]
-
-/-- The related state agrees on the FFI state. -/
-private theorem limitSwapState_ffi {C F : Type} {lim : Limits} {state other : State C F}
-    (h : LimitSwapState lim state other) : other.ffi = state.ffi := by rw [h]
-
-/-- The related state agrees on the space counter. -/
-private theorem limitSwapState_space {C F : Type} {lim : Limits} {state other : State C F}
-    (h : LimitSwapState lim state other) : other.space = state.space := by rw [h]
-
-/-- The related state agrees on the time stamps. -/
-private theorem limitSwapState_tstamps {C F : Type} {lim : Limits} {state other : State C F}
-    (h : LimitSwapState lim state other) : other.tstamps = state.tstamps := by rw [h]
-
-/-- The related state agrees on the compiler configuration. -/
-private theorem limitSwapState_compile {C F : Type} {lim : Limits} {state other : State C F}
-    (h : LimitSwapState lim state other) : other.compile = state.compile := by rw [h]
-
-/-- The related state agrees on the compiler oracle. -/
-private theorem limitSwapState_compileOracle {C F : Type} {lim : Limits}
-    {state other : State C F}
-    (h : LimitSwapState lim state other) : other.compileOracle = state.compileOracle := by
   rw [h]
 
 /-- The limits swap at one program and starting state, for a fixed swapped-in

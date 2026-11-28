@@ -9,7 +9,7 @@ public import Flapjack.NamespaceProps.All
 /-! Transport of constructor validity between type-name environments. -/
 namespace Flapjack.TypeSysProps
 open Flapjack Flapjack.TypeSystemHOL Flapjack.AstHOL Flapjack.NamespaceHOL
-  Flapjack.TypeSoundInvariants
+  Flapjack.TypeSoundInvariants Flapjack.SemanticPrimitivesHOL
 
 /-- Constructor validity transfers when checked names remain valid. -/
 @[hol "cakeml/semantics/proofs/typeSysPropsScript.sml" "check_ctor_tenv_change_tenvT"]
@@ -75,5 +75,27 @@ theorem checkCtorTenvOk {M Tag : Type} (env : TenvAbbrev) (defs : TypeDef) (ids 
         obtain ⟨source, sourceMem, rfl⟩ := List.mem_map.mp tMem
         have checks := valid.2.2.1 (ctorName, args) ctorMem source sourceMem
         exact checkFreevarsTypeNameSubst tvs source 0 env ⟨envOk, checks.2, checks.1⟩
+
+/-- Original `check_ctor_tenv_EVERY`: constructor-environment validity is four
+list-wide conditions. -/
+@[hol "cakeml/semantics/proofs/typeSysPropsScript.sml" "check_ctor_tenv_EVERY"]
+theorem checkCtorTenvEvery (env : TenvAbbrev) (tds : TypeDef) :
+    checkCtorTenv env tds ↔
+      (∀ d ∈ tds, checkDupCtors d = true) ∧
+      (∀ d ∈ tds, d.1.Nodup) ∧
+      (∀ d ∈ tds, ∀ ctor ∈ d.2.2, ∀ t ∈ ctor.2,
+        checkFreevarsAst d.1 t = true ∧ checkTypeNames env t = true) ∧
+      (tds.map (fun d => d.2.1)).Nodup := by
+  induction tds with
+  | nil => simp [checkCtorTenv]
+  | cons d rest ih =>
+    simp only [checkCtorTenv, List.mem_cons, List.map_cons, List.nodup_cons,
+      forall_eq_or_imp]
+    rw [ih]
+    constructor
+    · rintro ⟨h1, h2, h3, h4, h5, h6, h7, h8⟩
+      exact ⟨⟨h1, h5⟩, ⟨h2, h6⟩, ⟨h3, h7⟩, h4, h8⟩
+    · rintro ⟨⟨h1, h5⟩, ⟨h2, h6⟩, ⟨h3, h7⟩, h4, h8⟩
+      exact ⟨h1, h2, h3, h4, h5, h6, h7, h8⟩
 
 end Flapjack.TypeSysProps

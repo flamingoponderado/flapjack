@@ -196,9 +196,6 @@ private def LabPres (n nl nl' : Nat) (E L : List (Nat × Nat)) : Prop :=
   (∀ l ∈ L, l.1 = n ∧ l.2 ≠ 0 ∧ l.2 ≠ 1) ∧ L.Nodup ∧
     (∀ lab ∈ L, lab ∈ E ∨ (nl ≤ lab.2 ∧ lab.2 < nl')) ∧ nl ≤ nl'
 
-private theorem labPresNil (n nl : Nat) (E : List (Nat × Nat)) : LabPres n nl nl E [] := by
-  simp [LabPres]
-
 private theorem labPresFresh {n k : Nat} (hk : 2 ≤ k) (E : List (Nat × Nat)) :
     LabPres n k (k + 1) E [(n, k)] := by
   refine ⟨?_, by simp, ?_, by omega⟩

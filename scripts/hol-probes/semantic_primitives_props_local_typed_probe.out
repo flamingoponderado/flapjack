@@ -1,0 +1,35 @@
+exc_rel_raise1_typed=exc_rel (R :α -> β -> bool) (Rraise (v :α)) (e :β error_result) ⇔ ∃(v' :β). e = Rraise v' ∧ R v v'
+exc_rel_raise2_typed=exc_rel (R :α -> β -> bool) (e :α error_result) (Rraise (v :β)) ⇔ ∃(v' :α). e = Rraise v' ∧ R v' v
+exc_rel_type_error1_typed=exc_rel (R :α -> β -> bool) (Rabort (a :abort) :α error_result) (e :β error_result) ⇔ e = (Rabort a :β error_result)
+exc_rel_type_error2_typed=exc_rel (R :α -> β -> bool) (e :α error_result) (Rabort (a :abort) :β error_result) ⇔ e = (Rabort a :α error_result)
+exc_rel_refl_typed=(∀(x :α). (R :α -> α -> bool) x x) ⇒ ∀(x :α error_result). exc_rel R x x
+exc_rel_trans_typed=(∀(x :α) (y :α) (z :α). (R :α -> α -> bool) x y ∧ R y z ⇒ R x z) ⇒ ∀(x :α error_result) (y :α error_result) (z :α error_result). exc_rel R x y ∧ exc_rel R y z ⇒ exc_rel R x z
+result_rel_Rval_typed=result_rel (R1 :α -> β -> bool) (R2 :γ -> δ -> bool) (Rval (v :α) :(α, γ) result) (r :(β, δ) result) ⇔ ∃(v' :β). r = (Rval v' :(β, δ) result) ∧ R1 v v'
+result_rel_Rerr1_typed=result_rel (R1 :α -> β -> bool) (R2 :γ -> δ -> bool) (Rerr (e :γ error_result) :(α, γ) result) (r :(β, δ) result) ⇔ ∃(e' :δ error_result). r = (Rerr e' :(β, δ) result) ∧ exc_rel R2 e e'
+result_rel_Rerr2_typed=result_rel (R1 :α -> β -> bool) (R2 :γ -> δ -> bool) (r :(α, γ) result) (Rerr (e :δ error_result) :(β, δ) result) ⇔ ∃(e' :γ error_result). r = (Rerr e' :(α, γ) result) ∧ exc_rel R2 e' e
+result_rel_refl_typed=(∀(x :α). (R1 :α -> α -> bool) x x) ∧ (∀(x :β). (R2 :β -> β -> bool) x x) ⇒ ∀(x :(α, β) result). result_rel R1 R2 x x
+result_rel_trans_typed=(∀(x :α) (y :α) (z :α). (R1 :α -> α -> bool) x y ∧ R1 y z ⇒ R1 x z) ∧ (∀(x :β) (y :β) (z :β). (R2 :β -> β -> bool) x y ∧ R2 y z ⇒ R2 x z) ⇒ ∀(x :(α, β) result) (y :(α, β) result) (z :(α, β) result). result_rel R1 R2 x y ∧ result_rel R1 R2 y z ⇒ result_rel R1 R2 x z
+map_sv_def_typed=(∀(f :β -> α) (v :β). map_sv f (Refv v) = Refv (f v)) ∧ (∀(v0 :β -> α) (w :word8 list). map_sv v0 (W8array w :β store_v) = (W8array w :α store_v)) ∧ (∀(f :β -> α) (vs :β list). map_sv f (Varray vs) = Varray (MAP f vs)) ∧ ∀(f :β -> α) (m :thunk_mode) (v :β). map_sv f (Thunk m v) = Thunk m (f v)
+is_Refv_def_typed=(is_Refv (Refv (v0 :α)) ⇔ T) ∧ (is_Refv (W8array (v2 :word8 list) :α store_v) ⇔ F) ∧ (is_Refv (Varray (v3 :α list)) ⇔ F) ∧ (is_Refv (Thunk (v4 :thunk_mode) (v5 :α)) ⇔ F)
+sv_every_def_typed=(sv_every (P :α -> bool) (Refv (v :α)) ⇔ P v) ∧ (sv_every P (Varray (vs :α list)) ⇔ EVERY P vs) ∧ (sv_every P (Thunk (m :thunk_mode) v) ⇔ P v) ∧ (sv_every P (W8array (v4 :word8 list) :α store_v) ⇔ T)
+store_v_vs_def_typed=(∀(v :α). store_v_vs (Refv v) = [v]) ∧ (∀(vs :α list). store_v_vs (Varray vs) = vs) ∧ (∀(v0 :word8 list). store_v_vs (W8array v0 :α store_v) = ([] :α list)) ∧ ∀(v1 :thunk_mode) (v :α). store_v_vs (Thunk v1 v) = [v]
+store_vs_def_typed=∀(s :α store_v list). store_vs s = FLAT (MAP (store_v_vs :α store_v -> α list) s)
+map_sv_compose_typed=map_sv (f :β -> α) (map_sv (g :γ -> β) (x :γ store_v)) = map_sv (f ∘ g) x
+sv_rel_refl_typed=∀(R :α -> α -> bool) (x :α store_v). (∀(x :α). R x x) ⇒ sv_rel R x x
+sv_rel_trans_typed=∀(R :α -> α -> bool). (∀(x :α) (y :α) (z :α). R x y ∧ R y z ⇒ R x z) ⇒ ∀(x :α store_v) (y :α store_v) (z :α store_v). sv_rel R x y ∧ sv_rel R y z ⇒ sv_rel R x z
+with_same_v_typed=(env :φ sem_env) with v := env.v = env
+unchanged_env_typed=∀(env :α sem_env). <|v := env.v; c := env.c|> = env
+with_same_clock_typed=(st :'ffi state) with clock := st.clock = st
+Boolv_11_typed=Boolv (b1 :bool) = Boolv (b2 :bool) ⇔ (b1 ⇔ b2)
+ctors_of_tdef_def_typed=∀(v0 :β) (v1 :γ) (condefs :(α # δ) list). ctors_of_tdef (v0,v1,condefs) = MAP (FST :α # δ -> α) condefs
+ctors_of_dec_def_typed=ctors_of_dec (Dtype (locs :locs) (tds :(mlstring list # mlstring # (mlstring # ast_t list) list) list)) = FLAT (MAP (ctors_of_tdef :mlstring list # mlstring # (mlstring # ast_t list) list -> mlstring list) tds) ∧ ctors_of_dec (Dexn locs (s :mlstring) (v0 :ast_t list)) = [s] ∧ ctors_of_dec (Dlet (v :locs) (v2 :pat) (v3 :exp)) = ([] :mlstring list) ∧ ctors_of_dec (Dletrec (v4 :locs) (v5 :(mlstring # mlstring # exp) list)) = ([] :mlstring list) ∧ ctors_of_dec (Dtabbrev (v8 :locs) (v9 :mlstring list) (v10 :mlstring) (v11 :ast_t)) = ([] :mlstring list) ∧ ctors_of_dec (Dmod (v15 :mlstring) (v16 :dec list)) = ([] :mlstring list) ∧ ctors_of_dec (Dlocal (v17 :dec list) (v18 :dec list)) = ([] :mlstring list) ∧ ctors_of_dec (Denv (v19 :mlstring)) = ([] :mlstring list)
+prim_type_cases_typed=∀(ty :prim_type). ty = BoolT ∨ ty = IntT ∨ ty = CharT ∨ ty = StrT ∨ ty = WordT W8 ∨ ty = WordT W64 ∨ ty = Float64T
+nat_to_v_11_typed=∀(i :num) (j :num). nat_to_v i = nat_to_v j ⇔ i = j
+find_recfun_el_typed=∀(f :mlstring) (funs :(mlstring # α # β) list) (x :α) (e :β) (n :num). ALL_DISTINCT (MAP (λ((f :mlstring),(x :α),(e :β)). f) funs) ∧ n < LENGTH funs ∧ funs❲n❳ = (f,x,e) ⇒ find_recfun f funs = SOME (x,e)
+EVERY_sv_every_MAP_map_sv_typed=∀(P :α -> bool) (f :β -> α) (ls :β store_v list). EVERY P (MAP f (store_vs ls)) ⇒ EVERY (sv_every P) (MAP (map_sv f) ls)
+EVERY_sv_every_EVERY_store_vs_typed=∀(P :α -> bool) (ls :α store_v list). EVERY (sv_every P) ls ⇔ EVERY P (store_vs ls)
+EVERY_store_vs_intro_typed=∀(P :α -> bool) (ls :α store_v list). EVERY (sv_every P) ls ⇒ EVERY P (store_vs ls)
+LIST_REL_store_vs_intro_typed=∀(P :α -> β -> bool) (l1 :α store_v list) (l2 :β store_v list). LIST_REL (sv_rel P) l1 l2 ⇒ LIST_REL P (store_vs l1) (store_vs l2)
+concrete_v_list_typed=∀(xs :v list). concrete_v_list xs ⇔ EVERY concrete_v xs
+concrete_v_simps_typed=(concrete_v (Litv (l :lit)) ⇔ T) ∧ (concrete_v (Loc (b :bool) (n :num)) ⇔ T) ∧ (concrete_v (Conv (stmp :stamp option) (xs :v list)) ⇔ EVERY concrete_v xs) ∧ (concrete_v (Vectorv xs) ⇔ EVERY concrete_v xs) ∧ (concrete_v (Env (id :v sem_env) (e :num # num)) ⇔ F) ∧ (concrete_v (Closure (e2 :v sem_env) (nm :mlstring) (x :exp)) ⇔ F) ∧ (concrete_v (Recclosure (e3 :v sem_env) (funs :(mlstring # mlstring # exp) list) (nm2 :mlstring)) ⇔ F)
+do_con_check_build_conv_typed=∀(tenvC :(mlstring, mlstring, num # stamp) namespace) (cn :(mlstring, mlstring) id option) (vs :v list) (l :num). do_con_check tenvC cn l ⇒ ∃(v :v). build_conv tenvC cn vs = SOME v

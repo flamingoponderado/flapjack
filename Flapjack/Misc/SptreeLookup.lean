@@ -80,7 +80,8 @@ theorem sptLookup_sptDelete {α : Type} :
               · have : (k - 1) / 2 ≠ (n - 1) / 2 := by omega
                 simp [h, this]
 
-/-- `list_delete` lookup (HOL `backend_common`/sptree reasoning; no CakeML tag). -/
+/-- Original `lookup_list_delete`: lookup after deleting a key list. -/
+@[hol "cakeml/compiler/backend/backend_commonScript.sml" "lookup_list_delete"]
 theorem sptLookup_sptListDelete {α : Type} :
     ∀ (ks : List Nat) (t : Spt α) (k : Nat),
       sptLookup k (sptListDelete ks t) = if k ∈ ks then none else sptLookup k t

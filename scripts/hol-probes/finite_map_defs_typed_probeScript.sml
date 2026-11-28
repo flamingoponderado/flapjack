@@ -434,3 +434,8 @@ fun capture_val_quote label name =
 
 val _ = emit_exported "FEMPTY_DEF_typed" "FEMPTY_DEF";
 val _ = emit_exported "FUNION_DEF_typed" "FUNION_DEF";
+val _ = emit_exported "FUNION_FUPDATE_2_typed" "FUNION_FUPDATE_2";
+val _ = emit_exported "FEVERY_DEF_typed" "FEVERY_DEF";
+val _ = emit_exported "DRESTRICT_DEF_typed" "DRESTRICT_DEF";
+val _ = emit_exported "FLOOKUP_DRESTRICT_typed" "FLOOKUP_DRESTRICT";
+val _ = emit_exported "FEVERY_ALL_FLOOKUP_typed" "FEVERY_ALL_FLOOKUP";

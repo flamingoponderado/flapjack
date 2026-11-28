@@ -1,2 +1,8 @@
 list_rel_lastn_typed=∀(f :α -> β -> bool) (l1 :α list) (l2 :β list) (n :num). n ≤ LENGTH l1 ∧ LIST_REL f l1 l2 ⇒ LIST_REL f (LASTN n l1) (LASTN n l2)
 list_rel_replicate_same_typed=LIST_REL (P :α -> β -> bool) (REPLICATE (n :num) (x :α)) (REPLICATE n (y :β)) ⇔ (0 :num) < n ⇒ P x y
+splitp_typed=(∀(P :α -> bool). SPLITP P ([] :α list) = (([] :α list),([] :α list))) ∧ ∀(P :α -> bool) (x :α) (l :α list). SPLITP P (x::l) = if P x then (([] :α list),x::l) else (x::FST (SPLITP P l),SND (SPLITP P l))
+splitl_def_typed=∀(P :α -> bool). SPLITL P = SPLITP ($¬ ∘ P)
+splitp_nil_fst_imp_typed=∀(ls :α list) (r :α list). SPLITP (P :α -> bool) ls = (([] :α list),r) ⇒ r = ls
+splitp_join_typed=∀(ls :α list) (l :α list) (r :α list). SPLITP (P :α -> bool) ls = (l,r) ⇒ ls = l ⧺ r
+splitp_append_typed=∀(l1 :α list) (l2 :α list). SPLITP (P :α -> bool) (l1 ⧺ l2) = if EXISTS P l1 then (FST (SPLITP P l1),SND (SPLITP P l1) ⧺ l2) else (l1 ⧺ FST (SPLITP P l2),SND (SPLITP P l2))
+splitp_nil_snd_every_typed=∀(ls :α list) (r :α list). SPLITP (P :α -> bool) ls = (r,([] :α list)) ⇔ r = ls ∧ EVERY ($¬ ∘ P) ls

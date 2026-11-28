@@ -642,3 +642,4 @@ val _ = show "compile_each_good_code_labels_typed" bvi_tmcProofTheory.compile_ea
 val _ = show "compile_prog_good_code_labels_typed" bvi_tmcProofTheory.compile_prog_good_code_labels;
 val _ = show "compile_prog_semantics_typed" bvi_tmcProofTheory.compile_prog_semantics;
 val _ = show "compile_each_semantics_typed" bvi_tmcProofTheory.compile_each_semantics;
+val _ = show "is_block_op_cons_def_typed" bvi_tmcProofTheory.is_block_op_cons_def;

@@ -1,0 +1,17 @@
+empty_item_def_typed=∀(name :mlstring). empty_item name = (String name :sExp)
+num_to_display_def_typed=∀(n :num). num_to_display n = (String (toString n :mlstring) :sExp)
+int_to_display_def_typed=∀(i :int). int_to_display i = (String (toString i :mlstring) :sExp)
+string_imp_def_typed=∀(s :mlstring). string_imp s = (String s :sExp)
+item_with_num_def_typed=∀(name :mlstring) (n :num). item_with_num name n = Item (NONE :tra option) name [num_to_display n]
+item_with_nums_def_typed=∀(name :mlstring) (ns :num list). item_with_nums name ns = Item (NONE :tra option) name (MAP num_to_display ns)
+bool_to_display_def_typed=∀(b :bool). bool_to_display b = empty_item (if b then «True» else «False»)
+num_to_hex_def_typed=∀(n :num). num_to_hex n = STRCAT (if n < (16 :num) then ("" :string) else num_to_hex (n DIV (16 :num))) (num_to_hex_digit (n MOD (16 :num)))
+num_to_hex_digit_def_typed=∀(n :num). num_to_hex_digit n = if n < (10 :num) then STRING (CHR ((48 :num) + n)) ("" :string) else if n < (16 :num) then STRING (CHR ((55 :num) + n)) ("" :string) else ("" :string)
+num_to_hex_digit_eq_typed=∀(i :num). i < (16 :num) ⇒ num_to_hex_digit i = STRING (HEX i) ("" :string)
+separate_lines_def_typed=∀(name :mlstring) (xs :sExp list). separate_lines name xs = (List ((String name :sExp)::xs) :sExp)
+num_to_hex_mlstring_def_typed=∀(n :num). num_to_hex_mlstring n = implode (STRCAT "0x" (num_to_hex n))
+word_to_display_def_typed=∀(w :α word). word_to_display w = empty_item (num_to_hex_mlstring (w2n w))
+item_with_word_def_typed=∀(name :mlstring) (w :α word). item_with_word name w = Item (NONE :tra option) name [word_to_display w]
+map_to_append_def_typed=(∀(f :β -> α list). map_to_append f ([] :β list) = (Nil :α app_list)) ∧ ∀(f :β -> α list) (x :β) (xs :β list). map_to_append f (x::xs) = (Append (List (f x) :α app_list) (map_to_append f xs) :α app_list)
+source_to_strs_def_typed=∀(decs :dec list). source_to_strs decs = map_to_append (str_tree_to_strs «\n\n» ∘ display_to_str_tree ∘ source_to_display_dec) decs
+flat_to_strs_def_typed=∀(decs :flatLang$exp list). flat_to_strs decs = map_to_append (str_tree_to_strs «\n\n» ∘ display_to_str_tree ∘ flat_to_display) decs

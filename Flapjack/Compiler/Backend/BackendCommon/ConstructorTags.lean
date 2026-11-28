@@ -19,5 +19,9 @@ def subscriptTag : Nat := 3
 def nilTag : Nat := 0
 @[hol "cakeml/compiler/backend/backend_commonScript.sml" "cons_tag_def"]
 def consTag : Nat := 0
+@[hol "cakeml/compiler/backend/backend_commonScript.sml" "none_tag_def"]
+def noneTag : Nat := 0
+@[hol "cakeml/compiler/backend/backend_commonScript.sml" "some_tag_def"]
+def someTag : Nat := 0
 
 end Flapjack.Compiler.Backend.BackendCommon

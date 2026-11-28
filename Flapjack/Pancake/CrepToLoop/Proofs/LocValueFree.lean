@@ -801,12 +801,6 @@ theorem markAllHOL_preserves_locValueFree {width : Nat} [NeZero width]
         holLoopProgLocValueFree, markAllHOL]
   exact hgeneral hfree
 
-private theorem compHOL_preserves_locValueFree {width : Nat} [NeZero width]
-    (program : HolLoopProg width) (hfree : holLoopProgLocValueFree program) :
-    holLoopProgLocValueFree (compHOL program) := by
-  exact markAllHOL_preserves_locValueFree _
-    (shrinkHOL_preserves_locValueFree program .ln hfree)
-
 def loopProgLocValueFree {width : Nat} : LoopProg (BitVec width) → Prop
   | .locValue _ _ => False
   | .seq first second => loopProgLocValueFree first ∧ loopProgLocValueFree second

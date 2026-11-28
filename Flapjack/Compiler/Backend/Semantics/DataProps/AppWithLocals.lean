@@ -362,45 +362,6 @@ theorem doAppAux_safePeakStackMax {C F : Type} (op : ClosLang.Op)
   simpa [Flapjack.SemanticPrimitivesProps.mapResult, stackEq, localsSizeEq, localsEq, spaceEq,
     handlerEq, clockEq, frameSizesEq, compileEq] using fields
 
-/-- Successful auxiliary application keeps its value when the locals, the
-    safety flag, the stack maximum and the peak-heap estimate are replaced.
-    Flapjack infrastructure toward the parked HOL `do_app_with_locals`; no
-    separate HOL original. -/
-private theorem doAppAux_changeFields' {C F : Type} (op : ClosLang.Op)
-    (values : List Value) (state next : State C F) (value : Value) (locals : Spt Value)
-    (safe : Bool) (mx : Option Nat) (peak : Nat)
-    (run : doAppAux op values state = .val (value, next)) :
-    ∃ safe', doAppAux op values
-        { state with
-          locals := locals
-          safeForSpace := safe
-          stackMax := mx
-          peakHeapLength := peak } =
-      .val (value, { next with
-        locals := locals
-        safeForSpace := safe'
-        stackMax := mx
-        peakHeapLength := peak }) := by
-  obtain ⟨safe', first⟩ :=
-    doAppAux_safePeakStackMax op values state next value safe mx peak run
-  have second := doAppAux_withLocals op values
-    { state with safeForSpace := safe, stackMax := mx, peakHeapLength := peak } locals
-  rw [first] at second
-  refine ⟨safe', ?_⟩
-  have key :
-      { state with
-        locals := locals
-        safeForSpace := safe
-        stackMax := mx
-        peakHeapLength := peak } =
-      { { state with
-          safeForSpace := safe
-          stackMax := mx
-          peakHeapLength := peak } with
-        locals := locals } := rfl
-  rw [key]
-  simpa [Flapjack.SemanticPrimitivesProps.mapResult] using second
-
 /-- A non-admitted operation consumes no stack.  Flapjack infrastructure
     toward the parked HOL `do_app_with_locals`; no separate HOL original. -/
 theorem stackConsumed_none {C F : Type} (op : ClosLang.Op) (values : List Value)

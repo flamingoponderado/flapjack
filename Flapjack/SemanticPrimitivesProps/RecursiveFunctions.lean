@@ -3,6 +3,7 @@ module
 public import Flapjack.SemanticPrimitivesHOL
 public import Flapjack.FiniteMap.AlistExact.Lookup
 public import Flapjack.NamespaceProps
+public import Flapjack.Misc.ListEl
 
 @[expose] public section
 
@@ -35,5 +36,23 @@ theorem findRecFun_alookup {α β : Type} (funs : List (VarN × α × β)) (name
       simp [findRecFun, Flapjack.holALookup]
     · have reverse : name ≠ f := Ne.symm same
       simp [findRecFun, Flapjack.holALookup, same, reverse, ih]
+
+/-- A distinct-keyed list finds the entry stored at a listed position. -/
+@[hol "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml" "find_recfun_el"
+  (total_function_inhabitants := [β, γ])]
+theorem findRecFun_el {β γ : Type} [Nonempty β] [Nonempty γ] (f : VarN)
+    (funs : List (VarN × β × γ)) (x : β) (e : γ) (n : Nat)
+    (h : (funs.map fun (f, _, _) => f).Nodup ∧ n < funs.length ∧ holEl n funs = (f, x, e)) :
+    findRecFun f funs = some (x, e) := by
+  obtain ⟨distinct, bound, entry⟩ := h
+  rw [findRecFun_alookup]
+  have member : (f, (x, e)) ∈ funs := by
+    have hget : funs[n]'bound = (f, x, e) := by
+      rw [← holEl_eq_getElem n funs bound]
+      exact entry
+    have hm := List.getElem_mem (l := funs) (n := n) bound
+    rwa [hget] at hm
+  refine Flapjack.holALookup_of_distinct_member funs f (x, e) ⟨?_, member⟩
+  simpa [Prod.fst] using distinct
 
 end Flapjack.SemanticPrimitivesProps

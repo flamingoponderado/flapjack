@@ -146,6 +146,62 @@ theorem fromStackWithReason_toOption {width : Nat} [NeZero width] {Bitmaps : Typ
   unfold fromStackWithReason fromStack
   exact fromLabWithReason_toOption asmConf config names _ bitmaps
 
+/-- Original `attach_bitmaps_SOME` (`backendProofScript.sml:368`): a successful
+    attachment exposes the lab configuration it came from. -/
+@[hol "cakeml/compiler/backend/proofs/backendProofScript.sml" "attach_bitmaps_SOME"]
+theorem attachBitmapsSome {Bytes Bitmaps : Type} (names : Spt MlString)
+    (config : Flapjack.Compiler.Backend.Backend.Config) (bitmaps : Bitmaps)
+    (input : Option (Bytes × LabToTarget.Config))
+    (result : Bytes × Bitmaps × Flapjack.Compiler.Backend.Backend.Config)
+    (same : attachBitmaps names config bitmaps input = some result) :
+    ∃ bytes c', input = some (bytes, c') ∧
+      result = (bytes, bitmaps, { config with
+        labConf := c'
+        symbols := c'.secPosLen.map fun (name, position, length) =>
+          (lookupAny name names (ofString "NOTFOUND"), position, length) }) := by
+  cases input with
+  | none => simp [attachBitmaps] at same
+  | some pair =>
+      obtain ⟨bytes, c'⟩ := pair
+      simp only [attachBitmaps, Option.some.injEq] at same
+      exact ⟨bytes, c', rfl, same.symm⟩
+
+/-- Original `from_lab_conf_EX` (`backendProofScript.sml:684`): a successful
+    lab pipeline returns the configuration with the compiled lab settings. -/
+@[hol "cakeml/compiler/backend/proofs/backendProofScript.sml" "from_lab_conf_EX"
+  (words_as_type_indexed_bitvec)]
+theorem fromLabConfEx {width : Nat} [NeZero width] {Bitmaps : Type}
+    (asmConf : AsmConfigExact width) (config : Flapjack.Compiler.Backend.Backend.Config)
+    (names : Spt MlString) (program : LabSem.LabProgHOL width) (bitmaps : Bitmaps)
+    (bytes : List (BitVec 8)) (bitmap : Bitmaps)
+    (updated : Flapjack.Compiler.Backend.Backend.Config)
+    (same : fromLab asmConf config names program bitmaps = some (bytes, bitmap, updated)) :
+    ∃ lc, updated = { config with
+      labConf := lc
+      symbols := lc.secPosLen.map fun (name, position, length) =>
+        (lookupAny name names (ofString "NOTFOUND"), position, length) } := by
+  unfold fromLab attachBitmaps at same
+  cases h : LabToTarget.compile asmConf config.labConf program with
+  | none => simp [h] at same
+  | some compiled =>
+      obtain ⟨labBytes, lc⟩ := compiled
+      simp only [h, Option.some.injEq] at same
+      have rest := (Prod.mk.inj same).2
+      exact ⟨lc, (Prod.mk.inj rest).2.symm⟩
+
+/-- Original `from_stack_conf_EX` (`backendProofScript.sml:676`): a successful
+    stack pipeline has a lab program producing the same result. -/
+@[hol "cakeml/compiler/backend/proofs/backendProofScript.sml" "from_stack_conf_EX"
+  (words_as_type_indexed_bitvec)]
+theorem fromStackConfEx {width : Nat} [NeZero width] {Bitmaps : Type}
+    (asmConf : AsmConfigExact width) (config : Flapjack.Compiler.Backend.Backend.Config)
+    (names : Spt MlString) (program : List (Nat × StackLang.HolProg width)) (bitmaps : Bitmaps)
+    (v : Option (List (BitVec 8) × Bitmaps × Flapjack.Compiler.Backend.Backend.Config))
+    (same : fromStack asmConf config names program bitmaps = v) :
+    ∃ p, fromLab asmConf config names p bitmaps = v := by
+  unfold fromStack at same
+  exact ⟨_, same⟩
+
 /-- Original word pipeline. The frame-size tuple component is retained as
 `_frames`, although HOL does not use it in this definition. Only wordConf is
 updated before the complete stack/laboratory pipeline; no success premise is
@@ -174,6 +230,21 @@ noncomputable def fromWord0 {width : Nat} [NeZero width]
   let (col, program) := WordToWord.compile config.wordToWordConf asmConf program
   let config := { config with wordToWordConf := { config.wordToWordConf with colOracle := col } }
   fromWord asmConf config names program
+
+/-- Original `from_word_conf_EX` (`backendProofScript.sml:664`): a successful
+    word pipeline has a stack program and bitmap list producing the same result
+    under the compiled word configuration. -/
+@[hol "cakeml/compiler/backend/proofs/backendProofScript.sml" "from_word_conf_EX"
+  (words_as_type_indexed_bitvec)]
+theorem fromWordConfEx {width : Nat} [NeZero width]
+    (asmConf : AsmConfigExact width) (config : Flapjack.Compiler.Backend.Backend.Config)
+    (names : Spt MlString)
+    (program : List (Nat × Nat × WordLangProgHOL (BitVec width)))
+    (v : Option (List (BitVec 8) × List (BitVec width) × Flapjack.Compiler.Backend.Backend.Config))
+    (same : fromWord asmConf config names program = v) :
+    ∃ wc p bm, fromStack asmConf { config with wordConf := wc } names p bm = v := by
+  unfold fromWord at same
+  exact ⟨_, _, _, same⟩
 
 /-- Exact HOL `ffinames_to_string_list_def` (`backendScript.sml:675-681`): the external-call
 FFI names in order, dropping shared-memory entries. -/

@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Inference.EnvRel.Relation
+public import Mathlib.Data.Set.Image
 
 @[expose] public section
 
@@ -52,6 +53,40 @@ theorem setIdsEqUnionEq (x y z : Nat) (s : Set Nat)
     setIds x z = setIds x y ∪ s := by
   rw [h.2.2]
   exact setIdsEqUnion x y z ⟨h.1, h.2.1⟩
+
+/-- Original `DISJOINT_set_ids`: a set inside `count id` misses the identifier
+    range allocated from `id`. -/
+@[hol "cakeml/compiler/repl/repl_typesScript.sml" "DISJOINT_set_ids"]
+theorem disjointSetIds (tids : Set Nat) (id id' : Nat) (h : tids ⊆ fun k => k < id) :
+    Disjoint tids (setIds id id') := by
+  rw [Set.disjoint_left]
+  intro m hmem hmem'
+  have hlt : m < id := h hmem
+  simp only [setIds, Set.mem_ofPred_eq] at hmem'
+  omega
+
+/-- Original `set_ids_SUBSET`: the allocated range stays inside `count id'`. -/
+@[hol "cakeml/compiler/repl/repl_typesScript.sml" "set_ids_SUBSET"]
+theorem setIdsSubset (id id' : Nat) : setIds id id' ⊆ fun k => k < id' := by
+  intro m hmem
+  simp only [setIds, Set.mem_ofPred_eq] at hmem
+  exact hmem.2
+
+/-- Original `set_ids_UNION`: the range splits at any intermediate identifier. -/
+@[hol "cakeml/compiler/repl/repl_typesScript.sml" "set_ids_UNION"]
+theorem setIdsUnion (id id' sid : Nat) (h : id ≤ id' ∧ sid ≤ id) :
+    setIds sid id' = setIds sid id ∪ setIds id id' := by
+  funext m
+  apply propext
+  change (sid ≤ m ∧ m < id') ↔ ((sid ≤ m ∧ m < id) ∨ (id ≤ m ∧ m < id'))
+  constructor
+  · rintro ⟨h1, h2⟩
+    by_cases hid : m < id
+    · exact Or.inl ⟨h1, hid⟩
+    · exact Or.inr ⟨by omega, h2⟩
+  · rintro (⟨h1, h2⟩ | ⟨h1, h2⟩)
+    · exact ⟨h1, by omega⟩
+    · exact ⟨by omega, h2⟩
 
 @[hol "cakeml/compiler/inference/proofs/inferSoundScript.sml" "lookup_var_empty"]
 theorem lookupVarBindTvarEmpty (x : Ident MlString MlString) (tvs : Nat) (tenv : TypeEnv) :

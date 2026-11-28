@@ -182,6 +182,62 @@ def ctorSameType : Option Stamp → Option Stamp → Bool
 @[hol "cakeml/semantics/semanticPrimitivesScript.sml" "bool_type_num_def"]
 def boolTypeNum : Nat := 0
 
+/-! The remaining constructor type stamps of the source value encoding. -/
+
+@[hol "cakeml/semantics/semanticPrimitivesScript.sml" "lit_type_num_def"]
+def litTypeNum : Nat := 3
+
+@[hol "cakeml/semantics/semanticPrimitivesScript.sml" "ast_t_type_num_def"]
+def astTTypeNum : Nat := 5
+
+@[hol "cakeml/semantics/semanticPrimitivesScript.sml" "pat_type_num_def"]
+def patTypeNum : Nat := 6
+
+@[hol "cakeml/semantics/semanticPrimitivesScript.sml" "lop_type_num_def"]
+def lopTypeNum : Nat := 7
+
+@[hol "cakeml/semantics/semanticPrimitivesScript.sml" "opn_type_num_def"]
+def opnTypeNum : Nat := 8
+
+@[hol "cakeml/semantics/semanticPrimitivesScript.sml" "opb_type_num_def"]
+def opbTypeNum : Nat := 9
+
+@[hol "cakeml/semantics/semanticPrimitivesScript.sml" "opw_type_num_def"]
+def opwTypeNum : Nat := 10
+
+@[hol "cakeml/semantics/semanticPrimitivesScript.sml" "shift_type_num_def"]
+def shiftTypeNum : Nat := 11
+
+@[hol "cakeml/semantics/semanticPrimitivesScript.sml" "word_size_type_num_def"]
+def wordSizeTypeNum : Nat := 12
+
+@[hol "cakeml/semantics/semanticPrimitivesScript.sml" "fp_uop_type_num_def"]
+def fpUopTypeNum : Nat := 13
+
+@[hol "cakeml/semantics/semanticPrimitivesScript.sml" "fp_bop_type_num_def"]
+def fpBopTypeNum : Nat := 14
+
+@[hol "cakeml/semantics/semanticPrimitivesScript.sml" "fp_top_type_num_def"]
+def fpTopTypeNum : Nat := 15
+
+@[hol "cakeml/semantics/semanticPrimitivesScript.sml" "fp_cmp_type_num_def"]
+def fpCmpTypeNum : Nat := 16
+
+@[hol "cakeml/semantics/semanticPrimitivesScript.sml" "op_type_num_def"]
+def opTypeNum : Nat := 20
+
+@[hol "cakeml/semantics/semanticPrimitivesScript.sml" "locn_type_num_def"]
+def locnTypeNum : Nat := 21
+
+@[hol "cakeml/semantics/semanticPrimitivesScript.sml" "locs_type_num_def"]
+def locsTypeNum : Nat := 22
+
+@[hol "cakeml/semantics/semanticPrimitivesScript.sml" "exp_type_num_def"]
+def expTypeNum : Nat := 24
+
+@[hol "cakeml/semantics/semanticPrimitivesScript.sml" "dec_type_num_def"]
+def decTypeNum : Nat := 25
+
 @[hol "cakeml/semantics/semanticPrimitivesScript.sml" "Boolv_def"]
 def boolValue (b : Bool) : Value :=
   .conv (some (.typeStamp (ofString (if b then "True" else "False")) boolTypeNum)) []

@@ -287,6 +287,15 @@ theorem sptEqThm {α : Type} :
             have := h (2 * j + 1); rwa [sptLookup_right_bs, sptLookup_right_bs] at this)
           rw [hl, hr, h0]
 
+/-- Exact HOL `fromAList_toAList` (`hol4/src/finite_maps/sptreeScript.sml:1517`):
+rebuilding a well-formed tree from its association list returns the tree. -/
+@[hol "hol4/src/finite_maps/sptreeScript.sml" "fromAList_toAList"]
+theorem sptFromAList_sptToAList {α : Type} (tree : Spt α) (wf : sptWf tree = true) :
+    sptFromAList (sptToAList tree) = tree := by
+  refine (sptEqThm (sptFromAList (sptToAList tree)) tree ⟨sptWfFromAList _, wf⟩).2 ?_
+  intro n
+  exact sptLookup_sptFromAList_sptToAList n tree
+
 /-- Lookup through `mk_BN` (HOL `lookup_mk_BN`; Flapjack infrastructure). -/
 theorem sptLookupMkBN {α : Type} (k : Nat) (l r : Spt α) :
     sptLookup k (sptMkBN l r) = sptLookup k (.bn l r) := by

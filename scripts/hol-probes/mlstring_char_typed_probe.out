@@ -1,2 +1,57 @@
 char_to_word8_def_typed=∀(c :char). char_to_word8 c = (n2w (ORD c) :word8)
 word8_to_char_def_typed=∀(w :word8). word8_to_char w = CHR (w2n w)
+strlen_def_typed=∀(s :string). strlen (implode s) = STRLEN s
+strsub_def_typed=∀(s :string) (n :num). strsub (implode s) n = s❲n❳
+substring_def_typed=∀(s :string) (off :num) (len :num). substring (implode s) off len = implode (if off + len ≤ STRLEN s then SEG len off s else if off ≤ STRLEN s then DROP off s else ("" :string))
+extract_def_typed=∀(s :mlstring) (i :num) (opt :num option). extract s i opt = if strlen s ≤ i then «» else case opt of (NONE :num option) => substring s i (strlen s − i) | SOME x => substring s i (MIN (strlen s − i) x)
+strcat_def_typed=∀(s1 :mlstring) (s2 :mlstring). s1 ^ s2 = concat [s1; s2]
+explode_aux_def_typed=(∀(s :mlstring) (n :num). explode_aux s n (0 :num) = ("" :string)) ∧ ∀(s :mlstring) (n :num) (len :num). explode_aux s n (SUC len) = STRING (strsub s n) (explode_aux s (n + (1 :num)) len)
+concatWith_def_typed=∀(s :mlstring) (l :mlstring list). concatWith s l = concat (intersperse s l)
+chr_to_str_def_typed=∀(c :char). (toString c :mlstring) = implode (STRING c ("" :string))
+translate_aux_def_typed=(∀(f :char -> α) (s :mlstring) (n :num). translate_aux f s n (0 :num) = ([] :α list)) ∧ ∀(f :char -> α) (s :mlstring) (n :num) (len :num). translate_aux f s n (SUC len) = f (strsub s n)::translate_aux f s (n + (1 :num)) len
+translate_def_typed=∀(f :char -> char) (s :mlstring). translate f s = implode (translate_aux f s (0 :num) (strlen s))
+concat_nil_typed=concat ([] :mlstring list) = «»
+explode_aux_thm_typed=∀(max :num) (n :num) (ls :string). n + max = STRLEN ls ⇒ explode_aux (implode ls) n max = DROP n ls
+explode_def_typed=∀(s :mlstring). explode s = explode_aux s (0 :num) (strlen s)
+explode_thm_typed=explode (implode (ls :string)) = ls
+explode_implode_typed=∀(x :string). explode (implode x) = x
+implode_explode_typed=∀(x :mlstring). implode (explode x) = x
+explode_11_typed=∀(s1 :mlstring) (s2 :mlstring). explode s1 = explode s2 ⇔ s1 = s2
+implode_BIJ_typed=BIJ implode 𝕌(:string) 𝕌(:mlstring)
+explode_BIJ_typed=BIJ explode 𝕌(:mlstring) 𝕌(:string)
+LENGTH_explode_typed=STRLEN (explode (s :mlstring)) = strlen s
+concat_thm_typed=concat (l :mlstring list) = implode (CONCAT (MAP explode l))
+strlen_implode_typed=strlen (implode (s :string)) = STRLEN s
+strlen_substring_typed=strlen (substring (s :mlstring) (i :num) (j :num)) = if i + j ≤ strlen s then j else if i ≤ strlen s then strlen s − i else (0 :num)
+strlen_extract_le_typed=∀(s :mlstring) (x :num) (y :num option). strlen (extract s x y) ≤ strlen s − x
+strsub_substring_0_thm_typed=∀(m :num) (n :num) (l :mlstring). m < n ⇒ strsub (substring l (0 :num) n) m = strsub l m
+substring_full_typed=substring (s :mlstring) (0 :num) (strlen s) = s
+substring_too_long_typed=strlen (s :mlstring) ≤ (i :num) ⇒ substring s i (j :num) = «»
+concat_cons_typed=concat ((h :mlstring)::(t :mlstring list)) = h ^ concat t
+strcat_thm_typed=(s1 :mlstring) ^ (s2 :mlstring) = implode (STRCAT (explode s1) (explode s2))
+explode_strcat_typed=explode ((s1 :mlstring) ^ (s2 :mlstring)) = STRCAT (explode s1) (explode s2)
+strcat_assoc_typed=∀(s1 :mlstring) (s2 :mlstring) (s3 :mlstring). s1 ^ (s2 ^ s3) = s1 ^ s2 ^ s3
+strcat_o_typed=strcat (x :mlstring) ∘ strcat (y :mlstring) = strcat (x ^ y)
+strcat_nil_typed=«» ^ (s :mlstring) = s ∧ s ^ «» = s
+mlstring_common_prefix_typed=∀(s :mlstring) (t1 :mlstring) (t2 :mlstring). s ^ t1 = s ^ t2 ⇔ t1 = t2
+mlstring_common_suffix_typed=∀(s :mlstring) (t1 :mlstring) (t2 :mlstring). t1 ^ s = t2 ^ s ⇔ t1 = t2
+mlstring_common_char_prefix_typed=∀(c1 :char) (s1 :string) (s2 :string) (t2 :α) (t2 :mlstring). implode (STRING c1 s1) ^ (t1 :mlstring) = implode (STRING (c2 :char) s2) ^ t2 ⇔ c1 = c2 ∧ implode s1 ^ t1 = implode s2 ^ t2
+concat_append_typed=concat ((xs :mlstring list) ++ (ys :mlstring list)) = concat xs ^ concat ys
+implode_STRCAT_typed=∀(l1 :string) (l2 :string). implode (STRCAT l1 l2) = implode l1 ^ implode l2
+strlen_strcat_typed=strlen ((s1 :mlstring) ^ (s2 :mlstring)) = strlen s1 + strlen s2
+explode_toString_typed=explode (toString (c :char) :mlstring) = STRING c ("" :string)
+strlen_toString_typed=strlen (toString (c :char) :mlstring) = (1 :num)
+translate_thm_typed=∀(f :char -> char) (s :mlstring). translate f s = implode (MAP f (explode s))
+app_list_ann_typed=BigList::α list -> α app_list_ann; BigAppend::α app_list_ann -> α app_list_ann -> α app_list_ann; Small::α app_list -> α app_list_ann
+char_escape_seq_def_typed=∀(c :char). char_escape_seq c = if c = #"\t" then SOME «\\t» else if c = #"\n" then SOME «\\n» else if c = #"\\" then SOME «\\\\» else if c = #"\"" then SOME «\\\"» else (NONE :mlstring option)
+char_escaped_def_typed=∀(c :char). char_escaped c = case char_escape_seq c of (NONE :mlstring option) => STRING c ("" :string) | SOME s => explode s
+escape_str_def_typed=∀(s :mlstring). escape_str s = implode (STRCAT (STRCAT "\"" (CONCAT (MAP char_escaped (explode s)))) "\"")
+escape_char_def_typed=∀(c :char). escape_char c = implode (STRCAT (STRCAT "#\"" (char_escaped c)) "\"")
+ALL_DISTINCT_MAP_implode_typed=ALL_DISTINCT (ls :string list) ⇒ ALL_DISTINCT (MAP implode ls)
+ALL_DISTINCT_MAP_explode_typed=∀(ls :mlstring list). ALL_DISTINCT (MAP explode ls) ⇔ ALL_DISTINCT ls
+sum_sizes_def_typed=(∀(k :num). sum_sizes ([] :mlstring list) k = k) ∧ ∀(l :mlstring) (ls :mlstring list) (k :num). sum_sizes (l::ls) k = sum_sizes ls (strlen l + k)
+make_app_list_ann_def_typed=∀(input :mlstring app_list). make_app_list_ann input = case input of List ls => (let (n :num) = sum_sizes ls (0 :num) in if n < (2048 :num) then (Small input,n) else (BigList ls,n)) | Append l1 l2 => (let ((x1 :mlstring app_list_ann),(n1 :num)) = make_app_list_ann l1; ((x2 :mlstring app_list_ann),(n2 :num)) = make_app_list_ann l2; (n :num) = n1 + n2 in if n < (2048 :num) then (Small input,n) else (BigAppend x1 x2,n)) | (Nil :mlstring app_list) => (Small input,(0 :num))
+shrink_def_typed=(∀(t :mlstring app_list). shrink (Small t) = List [concat (append t)]) ∧ (∀(ls :mlstring list). shrink (BigList ls) = List ls) ∧ ∀(l1 :mlstring app_list_ann) (l2 :mlstring app_list_ann). shrink (BigAppend l1 l2) = Append (shrink l1) (shrink l2)
+str_app_list_opt_def_typed=∀(l :mlstring app_list). str_app_list_opt l = (let ((t :mlstring app_list_ann),(n :num)) = make_app_list_ann l in shrink t)
+concat_sing_typed=concat [(x :mlstring)] = x
+empty_ffi_def_typed=∀(s :mlstring). empty_ffi s = ()

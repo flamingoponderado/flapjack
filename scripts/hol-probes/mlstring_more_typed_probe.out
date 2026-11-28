@@ -1,0 +1,22 @@
+fields_aux_def_typed=(∀(f :char -> bool) (s :mlstring) (ss :string) (n :num). fields_aux f s ss n (0 :num) = [implode (REVERSE ss)]) ∧ ∀(f :char -> bool) (s :mlstring) (ss :string) (n :num) (len :num). fields_aux f s ss n (SUC len) = if f (strsub s n) then implode (REVERSE ss)::fields_aux f s ("" :string) (n + (1 :num)) len else fields_aux f s (STRING (strsub s n) ss) (n + (1 :num)) len
+fields_def_typed=∀(f :char -> bool) (s :mlstring). fields f s = fields_aux f s ("" :string) (0 :num) (strlen s)
+fields_filter_typed=∀(f :char -> bool) (s :mlstring). concat (fields f s) = implode (FILTER ($¬ ∘ f) (explode s))
+fields_length_typed=∀(f :char -> bool) (s :mlstring). LENGTH (fields f s) = STRLEN (FILTER f (explode s)) + (1 :num)
+isStringThere_aux_def_typed=(∀(s1 :mlstring) (s2 :mlstring) (s1i :num) (s2i :num). isStringThere_aux s1 s2 s1i s2i (0 :num) ⇔ T) ∧ ∀(s1 :mlstring) (s2 :mlstring) (s1i :num) (s2i :num) (len :num). isStringThere_aux s1 s2 s1i s2i (SUC len) ⇔ if strsub s1 s1i = strsub s2 s2i then isStringThere_aux s1 s2 (s1i + (1 :num)) (s2i + (1 :num)) len else F
+isPrefix_def_typed=∀(s1 :mlstring) (s2 :mlstring). isPrefix s1 s2 ⇔ if strlen s1 ≤ strlen s2 then isStringThere_aux s1 s2 (0 :num) (0 :num) (strlen s1) else F
+isSuffix_def_typed=∀(s1 :mlstring) (s2 :mlstring). isSuffix s1 s2 ⇔ if strlen s1 ≤ strlen s2 then isStringThere_aux s1 s2 (0 :num) (strlen s2 − strlen s1) (strlen s1) else F
+isSubstring_aux_def_typed=(∀(s1 :mlstring) (s2 :mlstring) (lens1 :num) (n :num). isSubstring_aux s1 s2 lens1 n (0 :num) ⇔ F) ∧ ∀(s1 :mlstring) (s2 :mlstring) (lens1 :num) (n :num) (len :num). isSubstring_aux s1 s2 lens1 n (SUC len) ⇔ if isStringThere_aux s1 s2 (0 :num) n lens1 then T else isSubstring_aux s1 s2 lens1 (n + (1 :num)) len
+isSubstring_def_typed=∀(s1 :mlstring) (s2 :mlstring). isSubstring s1 s2 ⇔ if strlen s1 ≤ strlen s2 then isSubstring_aux s1 s2 (strlen s1) (0 :num) (strlen s2 − strlen s1 + (1 :num)) else F
+isStringThere_SEG_typed=∀(i1 :num) (i2 :num). i1 + (n :num) ≤ STRLEN (s1 :string) ∧ i2 + n ≤ STRLEN (s2 :string) ⇒ (isStringThere_aux (implode s1) (implode s2) i1 i2 n ⇔ SEG n i1 s1 = SEG n i2 s2)
+isprefix_thm_typed=isPrefix (s₁ :mlstring) (s₂ :mlstring) ⇔ explode s₁ ≼ explode s₂
+exists_mlstring_typed=(∃(x :mlstring). (P :mlstring -> bool) x) ⇔ ∃(s :string). P (implode s)
+strlit_STRCAT_typed=implode (a :string) ^ implode (b :string) = implode (STRCAT a b)
+substring_0_typed=substring (s :mlstring) (i :num) (0 :num) = «»
+str_findi_def_typed=∀(s :mlstring) (i :num) (P :char -> bool). str_findi P i s = if i < strlen s then if P (strsub s i) then SOME i else str_findi P (i + (1 :num)) s else (NONE :num option)
+str_findi_range_typed=∀(P :char -> bool) (i :num) (s :mlstring). str_findi P i s = SOME (j :num) ⇒ i ≤ j ∧ j < strlen s
+substring_1_strsub_typed=(i :num) < strlen (s :mlstring) ⇒ substring s i (1 :num) = (toString (strsub s i) :mlstring)
+substring_add_typed=(i :num) + (x :num) + (y :num) ≤ strlen (s :mlstring) ⇒ substring s i (x + y) = substring s i x ^ substring s (i + x) y
+isSubstring_aux_lemma_typed=∀(i :num) (len :num). i + len ≤ strlen (s2 :mlstring) ⇒ (isSubstring_aux (s1 :mlstring) s2 (lens1 :num) i len ⇔ ∃(n :num). n < len ∧ isStringThere_aux s1 s2 (0 :num) (n + i) lens1)
+isSubstring_SEG_typed=isSubstring (implode (s1 :string)) (implode (s2 :string)) ⇔ ∃(i :num). i + STRLEN s1 ≤ STRLEN s2 ∧ SEG (STRLEN s1) i s2 = s1
+isprefix_strcat_typed=∀(s₁ :mlstring) (s₂ :mlstring). isPrefix s₁ s₂ ⇔ ∃(s₃ :mlstring). s₂ = s₁ ^ s₃
+char_lt_total_typed=∀(c1 :char) (c2 :char). ¬char_lt c1 c2 ∧ ¬char_lt c2 c1 ⇒ c1 = c2

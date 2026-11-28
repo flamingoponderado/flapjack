@@ -147,6 +147,83 @@ The captures support source review of root multiplicity, the explicit sizing
 result, and the canonical finite-map and word carriers; they do not establish
 cross-language equivalence.
 
+`semantic_primitives_props_local_typed_probe.out` captures the exported
+`semanticPrimitivesPropsTheory` theorems `exc_rel_raise1`, `exc_rel_raise2`,
+`exc_rel_type_error1`, `exc_rel_type_error2`, `exc_rel_refl`, `exc_rel_trans`,
+`result_rel_Rval`, `result_rel_Rerr1`, `result_rel_Rerr2`, `result_rel_refl`,
+and `result_rel_trans` with inferred types. It also captures the store-entry
+operations `map_sv_def`, `is_Refv_def`, `sv_every_def`, `store_v_vs_def`,
+`store_vs_def`, `map_sv_compose`, `sv_rel_refl` and `sv_rel_trans`, and the
+opening record and Boolean-value laws `with_same_v`, `unchanged_env`,
+`with_same_clock` and `Boolv_11`. It further captures the declaration-constructor
+definitions `ctors_of_tdef_def` and `ctors_of_dec_def`, the primitive-type case
+enumeration `prim_type_cases`, the natural-number value injectivity `nat_to_v_11`,
+and the indexed recursive-function lookup `find_recfun_el`. It also captures the
+store-value list theorems `EVERY_sv_every_MAP_map_sv`,
+`EVERY_sv_every_EVERY_store_vs`, `EVERY_store_vs_intro` and
+`LIST_REL_store_vs_intro`, and the concrete-value characterizations
+`concrete_v_list` and `concrete_v_simps`, and the constructor build check
+`do_con_check_build_conv`. These are exported declarations, so
+the capture is a typed replay rather than a local proof replay; it supports
+source review of the independent payload types, the abort identity, the
+reflexivity and transitivity hypothesis shapes, the store-entry clause order,
+the sem_env, state and Boolean-value carriers, the independent type variables of
+`ctors_of_tdef`, the two independent payload types of the mapped and related
+store-value theorems, and the three lookup premises only.
+
+`namespace_props_typed_probe.out` captures the exported `namespacePropsTheory`
+namespace-operation statements with inferred types, including the identifier
+construction and projection laws (`mk_id_11`, `id_to_mods_mk_id`,
+`id_to_namemods_mk_id`, `mk_id_surj`, `mk_id_thm`), the empty-namespace laws
+(`alist_to_ns_nil`, `nsSub_nsEmpty`, `nsAll_nsEmpty`, `nsAll2_nsEmpty`,
+`nsDom_nsEmpty`, `nsDomMod_nsEmpty`, `nsMap_nsEmpty`, `nsBind_nsEmpty`),
+`nsAll_mono`, the binding and association-list laws (`alist_to_ns_cons`,
+`nsAppend_nsBind`, `nsAppend_alist_to_ns`, `nsBind_11`,
+`nsLookupMod_alist_to_ns`, `alist_to_ns_11`), and the singleton laws
+(`nsAppend_nsSing`, `nsLookup_nsSing`, `nsMap_nsSing`, `nsLookupMod_nsSing`,
+`nsDom_nsSing`, `nsDomMod_nsSing`). It also captures the sub-relation laws
+(`nsSub_conj`, `nsSub_refl`, `nsSub_nsBind`, `nsAll2_conj`, `nsAll2_nsBind`), the
+domain statements (`nsLookup_nsDom`, `nsDomMod_alist_to_ns`), `eALL_T`,
+`nsLookup_nsAll`, `nsLift_nsMap` and `nsLookup_Bind_v_some`. The monotonicity,
+binding-domain and two-way-lookup laws (`nsSub_mono`, `nsSub_mono2`,
+`nsAll2_mono`, `nsDom_nsBind`, `nsDomMod_nsBind`, `nsAll2_nsLookup1`,
+`nsAll2_nsLookup2`, `nsAll2_nsLookup_none`) are captured as well. Association-list
+lookup (`nsLookup_alist_to_ns_some`, `nsLookup_alist_to_ns_none`), mapping
+(`nsMap_alist_to_ns`, `nsSub_nsMap`) and folded lifting
+(`nsLookup_FOLDR_nsLift`) are captured too. The singleton, optional-binding,
+lift-append and association-list relation laws (`nsAll2_nsSing`, `nsAll_nsOptBind`,
+`nsLookup_nsLift_append`, `nsAll2_alist_to_ns`, `nsAll2_nsBindList`) are also
+captured. The restricted association-list relation (`alist_rel_restr_def`,
+`alist_rel_restr_thm`, `alistSub_def`, `alistSub_cong`), `nsLookup_to_nsLookupMod`
+and `nsDom_alist_to_ns` are captured too. The appended-namespace lookup laws
+(`nsLookup_nsAppend_some`, `nsLookup_nsAppend_none`, `nsLookupMod_nsAppend_some`,
+`nsLookupMod_nsAppend_none`, `nsAll_nsAppend_left`, `nsSub_nsAppend2`) are
+captured as well, together with the flat-domain append laws
+(`nsDomMod_nsAppend_flat`, `nsDom_nsAppend_flat`) and the folded-lift lookup laws
+(`nsLookup_FOLDR_nsLift_some`, `nsLookupMod_FOLDR_nsLift_none`). The captures fix
+the independent
+module, name and value carriers and the binder order of each theorem; they are
+typed replays, not cross-language equivalence proofs.
+
+`mllist_defs_typed_probe.out` captures the `mllistTheory` list-utility
+statements with inferred types: the three-clause `intersperse_def`, the
+accumulator length definition `LENGTH_AUX_def` together with `LENGTH_AUX_THM`
+(captured in its `LENGTH xs = LENGTH_AUX xs 0` form), `mapPartial_def` and
+`mapPartial_thm`, and the six tail-recursive families `map_rev'`/`map_rev`/
+`map_rev_thm`, `filter_rev'`/`filter_rev`/`filter_rev_thm` and
+`flat_rev'`/`flat_rev`/`flat_rev_thm`. The two-equation definitions are
+captured as their HOL conjunctions, which fixes the binder order
+(predicate or function first, then list, then accumulator) and the literal
+cons equations. It also captures `sort_thm` and the list deconstruction and
+mapping definitions (`getItem_def`, `nth_def` with its `EL` rendering,
+`take_def`, `drop_def`, `takeUntil_def`, `dropUntil_def`, `mapi_def`), the
+partition family (`partition_aux_def`, `partition_def`, `partition_pos_thm`,
+`partition_neg_thm`), the folds (`foldl_def`, `foldli_aux_def`, `foldli_def`,
+`foldl_intro`), the comparison family (`collate_def`, `collate_equal_thm`,
+`collate_short_thm`, `collate_long_thm`, `cpn_to_reln_def`) and the tabulate
+definitions (`tabulate_aux_def`, `tabulate_def`). The captures are typed
+replays, not cross-language equivalence proofs.
+
 `data_to_word_gc_stack_probe.out` captures the typed original unchanged-pointer set and finiteness theorem, combined forwarding-map definition, and parsed local domain and application statements. These show that configuration and heap payload types are independent; the local parses do not replay their HOL proofs.
 
 The same probe captures the exported `partial_gc_related` theorem with inferred types, including its existential finite map and all heap-relation conclusions.
@@ -10421,10 +10498,23 @@ HOL_PROBE_ONLY=pattern_exh_typed_probeScript.sml
 scripts/hol-probes/regenerate.sh`. The capture supports source comparison; it
 does not replay the local proofs and does not establish Lean correspondence.
 
-`fromSexp_typed_probe.out` captures the typed statements of all 97 reviewed
-`fromSexpScript.sml` rows (task 174); every one is an exported definition or
-theorem fetched from the theory database, and labels replace an apostrophe with
-`_prime`. The theory is not a default CakeML build target, so build it in the
+`fromSexp_typed_probe.out` captures the typed statements of the reviewed
+`fromSexpScript.sml` rows (task 174), plus the simple-S-expression list and
+option-destruction lemmas added in task 273 (`odestSXSTR`/`odestSXSYM`/
+`odestSXNUM` definitions and their laws, `strip_sxcons_*`, `dstrip_sexp_*`,
+`listsexp_thm`, `listsexp_MAP_EQ_f`, `FOLDR_SX_CONS_INJ` and
+`OPTION_CHOICE_EQ_SOME`); every one is an exported definition or theorem
+fetched from the theory database, and labels replace an apostrophe with
+`_prime`. A later addition covers `strip_sxcons_11`, `sexplist_thm`,
+`sexplist_listsexp_matchable`, `odestSXSYM_EQ_SOME`, `odestSXNUM_EQ_SOME`,
+`decode_thunk_mode_def` and `encode_thunk_mode_def`, and the encoder validity
+family (`EVERY_isPrint_encode_control`, `SEXSTR_valid`, `listsexp_valid`,
+`idsexp_valid`, `litsexp_valid`, `optsexp_valid`, `locnsexp_valid`,
+`locssexp_valid`, `valid_sexp_prim_typesexp`), and the option-monad lemmas
+(`OPTION_APPLY_MAP3`, `OPTION_APPLY_MAP4`, `monad_bind_FAIL`,
+`monad_unitbind_CONG`, `strip_sxcons_FAIL_sexplist_FAIL`, `sexppair_CONG`), and
+the AST validity theorems (`typesexp_valid`, `patsexp_valid`, and the
+`type_defsexp_valid`/`opsexp_valid`/`expsexp_valid`/`decsexp_valid` captures). The theory is not a default CakeML build target, so build it in the
 private copy first (`cd compiler/parsing && CAKEMLDIR=<cakeml tree> Holmake
 fromSexpTheory.uo`, about 30 s; it reads the already-built `simpleSexp`
 theories from `$HOLDIR` and writes only inside the copy). Regenerate with
@@ -11088,3 +11178,20 @@ four-argument dispatch, word comparison, string comparison, and byte-array,
 array and block bounds-check equations, and general equality and integer
 ordering, block length, tag-length and tag equality equations. Concrete equality, ordering, tail-call, returning-call,
 and bad-header cases are in `cake_word_array_probe.out`.
+
+# Compiler driver helpers
+
+`compiler_cli_typed_probeScript.sml` captures the self-contained `cakeml`
+driver helpers of `compilerScript.sml` (flag tests, mlstring printing and
+parsing, and the line utilities) with `show_types` on. The configuration
+parsers are not captured because they need the full `config` record.
+
+The probe needs `compilerTheory` built in the private probe checkout. Unlike
+the rest of the tree it is not built by the default targets, so build it once:
+
+```
+cd /path/to/cakeml-probe-build/compiler && \
+  CAKEMLDIR=/path/to/cakeml-probe-build Holmake compilerTheory.uo
+```
+
+Selector: `HOL_PROBE_ONLY=compiler_cli_typed_probeScript.sml`.
