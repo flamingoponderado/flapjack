@@ -338,3 +338,4 @@ val _ = emit "range_insert_2_typed" "range_insert_2";
 val _ = emit "wf_nat_set_from_list_typed" "wf_nat_set_from_list";
 val _ = emit "domain_nat_set_from_list_typed" "domain_nat_set_from_list";
 val _ = emit "PERM_MAP_BIJ_typed" "PERM_MAP_BIJ";
+val _ = emit "FDOM_FLOOKUP_typed" "FDOM_FLOOKUP";

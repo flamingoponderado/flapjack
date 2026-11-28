@@ -10851,6 +10851,7 @@ run_probe misc_typed_probeScript.sml misc_typed_probe.out \
   eq_shape_map_typed eq_shape_IMP_domain_typed subspt_delete_typed range_insert_2_typed \
   wf_nat_set_from_list_typed domain_nat_set_from_list_typed \
   PERM_MAP_BIJ_typed \
+  FDOM_FLOOKUP_typed \
   "$cake_dir/misc/miscScript.sml" \
   "$cake_dir/misc"
 

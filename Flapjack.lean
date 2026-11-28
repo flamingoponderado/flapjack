@@ -2641,6 +2641,7 @@ import Flapjack.FiniteMap.AlistExact
 import Flapjack.FiniteMap.AlistExact.Append
 import Flapjack.FiniteMap.Exact.Submap
 import Flapjack.FiniteMap.DomExact
+import Flapjack.FiniteMap.DomainLookupExact
 import Flapjack.Misc.BalancedMap.Core
 import Flapjack.Misc.BalancedMap.Insert
 import Flapjack.Misc.BalancedMap.Invariants
