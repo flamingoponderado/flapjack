@@ -434,3 +434,4 @@ fun capture_val_quote label name =
 
 val _ = emit_exported "FEMPTY_DEF_typed" "FEMPTY_DEF";
 val _ = emit_exported "FUNION_DEF_typed" "FUNION_DEF";
+val _ = emit_exported "FUNION_FUPDATE_2_typed" "FUNION_FUPDATE_2";

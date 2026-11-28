@@ -1,2 +1,3 @@
 FEMPTY_DEF_typed=(FEMPTY :α |-> β) = fmap_ABS (λ(a :α). (INR () :β + unit))
 FUNION_DEF_typed=∀(f :α |-> β) (g :α |-> β). FDOM (f ⊌ g) = FDOM f ∪ FDOM g ∧ ∀(x :α). (f ⊌ g)⟨x⟩ = if x ∈ FDOM f then f⟨x⟩ else g⟨x⟩
+FUNION_FUPDATE_2_typed=∀(f :α |-> β) (g :α |-> β) (x :α) (y :β). f ⊌ g⟨x ↦ y⟩ = if x ∈ FDOM f then f ⊌ g else (f ⊌ g)⟨x ↦ y⟩

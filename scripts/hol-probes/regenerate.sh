@@ -12854,7 +12854,7 @@ run_probe logroot_defs_typed_probeScript.sml logroot_defs_typed_probe.out \
   "$hol_dir/src/num/extra_theories/logrootScript.sml" "$cake_dir/compiler/backend"
 
 run_probe finite_map_defs_typed_probeScript.sml finite_map_defs_typed_probe.out \
-  FEMPTY_DEF_typed FUNION_DEF_typed \
+  FEMPTY_DEF_typed FUNION_DEF_typed FUNION_FUPDATE_2_typed \
   "$hol_dir/src/finite_maps/finite_mapScript.sml" "$cake_dir/compiler/backend"
 
 run_probe pred_set_defs_typed_probeScript.sml pred_set_defs_typed_probe.out \
