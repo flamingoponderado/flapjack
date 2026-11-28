@@ -339,3 +339,5 @@ val _ = emit "wf_nat_set_from_list_typed" "wf_nat_set_from_list";
 val _ = emit "domain_nat_set_from_list_typed" "domain_nat_set_from_list";
 val _ = emit "PERM_MAP_BIJ_typed" "PERM_MAP_BIJ";
 val _ = emit "FDOM_FLOOKUP_typed" "FDOM_FLOOKUP";
+val _ = emit "lookup_fromList2_typed" "lookup_fromList2";
+val _ = emit "fromList2_value_typed" "fromList2_value";

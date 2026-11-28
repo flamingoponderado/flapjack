@@ -303,3 +303,5 @@ wf_nat_set_from_list_typed=∀(ls :num list) (ns :α sptree$num_map). wf ns ⇒ 
 domain_nat_set_from_list_typed=∀(ls :num list) (ns :sptree$num_set). (domain (FOLDL (λ(s :sptree$num_set) (n :num). insert n () s) ns ls) :num -> bool) = (domain ns :num -> bool) ∪ set ls
 PERM_MAP_BIJ_typed=∀(f :α -> β) (l1 :α list) (l2 :α list). BIJ f 𝕌(:α) 𝕌(:β) ⇒ (PERM l1 l2 ⇔ PERM (MAP f l1) (MAP f l2))
 FDOM_FLOOKUP_typed=(x :α) ∈ FDOM (f :α |-> β) ⇔ ∃(v :β). FLOOKUP f x = SOME v
+lookup_fromList2_typed=∀(l :α list) (n :num). lookup n (fromList2 l) = if EVEN n then lookup (n DIV (2 :num)) (fromList l :α sptree$num_map) else (NONE :α option)
+fromList2_value_typed=∀(e :α) (l :α list) (t :β) (n :γ). MEM e l ⇔ ∃(n :num). lookup n (fromList2 l) = SOME e
