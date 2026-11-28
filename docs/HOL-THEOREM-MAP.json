@@ -4623,6 +4623,33 @@
   "reviewer": "Independent comparison with the HOL source and typed alist_to_fmap_APPEND capture confirms both arbitrary association lists, independent key and value types, and unconditional equality of the canonical maps produced by Flapjack.HolFiniteMapExact.alistToFmap and Flapjack.HolFiniteMapExact.union. Both conversions choose the first binding and union is left-biased, including duplicate and overlapping keys. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/hol_finitemap_alist_typed_probe.out `alist_to_fmap_APPEND_typed` re-confirms the captured statement, carriers and quantifier order match the Lean declaration, which adds no premise."
 },
 {
+    "hol_path": "HOL/src/finite_maps/alistScript.sml",
+    "hol_name": "FUNION_alist_to_fmap",
+    "lean_path": "Flapjack/FiniteMap/AlistExact/Union.lean",
+    "lean_name": "union_alistToFmap",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": ["right"],
+    "reviewer": "Source comparison with FUNION_alist_to_fmap: HOL `!ls fm. FUNION (alist_to_fmap ls) fm = fm |++ (REVERSE ls)` keeps the binder order ls, fm; FUNION is the carrier union, |++ is updateListEq (HOL equality through DecidableEq), REVERSE is List.reverse and alist_to_fmap is the canonical alistToFmap with first-binding precedence. The standalone map parameter fm is the canonical finite-support carrier with its same-module lookup/support codec witness. No other statement difference."
+  },
+{
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "FUPDATE_LIST_alist_to_fmap",
+    "lean_path": "Flapjack/FiniteMap/AlistExact/Union.lean",
+    "lean_name": "fupdateListAlistToFmap",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": ["map"],
+    "reviewer": "Source comparison with the miscScript statement `∀ls fm. fm |++ ls = alist_to_fmap (REVERSE ls) ⊌ fm`: the binder order ls, fm, the side of the update list and the side of the union are unchanged; |++ is updateListEq, ⊌ is union and REVERSE is List.reverse. The standalone map parameter fm is the canonical finite-support carrier with its same-module lookup/support codec witness. The proof reuses the reviewed FUNION_alist_to_fmap port and REVERSE_REVERSE."
+  },
+{
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "ALL_DISTINCT_alist_to_fmap_REVERSE",
+    "lean_path": "Flapjack/FiniteMap/AlistExact/Union.lean",
+    "lean_name": "alistToFmapReverseNodup",
+    "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+    "fmap_as_finite_support_result_observations": ["Flapjack.HolFiniteMapExact.alistToFmap"],
+    "reviewer": "Source comparison with the miscScript statement `ALL_DISTINCT (MAP FST ls) ⇒ alist_to_fmap (REVERSE ls) = alist_to_fmap ls`: ALL_DISTINCT (MAP FST ls) is (entries.map Prod.fst).Nodup, REVERSE is List.reverse and both sides are the imported reviewed alistToFmap producer, whose canonical lookup/support witness is checked. The proof follows the HOL script: induction on the list, then the reviewed FUNION_FUPDATE_2 law applied with the empty map. No other statement difference."
+  },
+{
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
   "hol_name": "acompile_inc_uncurry",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/IncrementalEquations.lean",

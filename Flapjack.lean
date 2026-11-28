@@ -5026,6 +5026,7 @@ import Flapjack.Misc.FindIndex.MapInj
 import Flapjack.Misc.FindIndex.Alookup
 import Flapjack.Misc.LastN
 import Flapjack.FiniteMap.FunionFupdateExact
+import Flapjack.FiniteMap.AlistExact.Union
 /-!
 # Flapjack in Lean
 
