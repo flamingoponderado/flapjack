@@ -278,6 +278,7 @@ import Flapjack.Misc.Sptree.AlistInsertReverse
 import Flapjack.Misc.Address
 import Flapjack.Misc.ClockWeightInduction
 import Flapjack.Misc.RichList
+import Flapjack.Misc.RichListProps
 import Flapjack.Misc.Bag
 import Flapjack.Misc.Fun2SetUnion
 import Flapjack.Misc.UpdateList

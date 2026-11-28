@@ -1306,4 +1306,39 @@ theorem filterElEq {α : Type} [Nonempty α] (P : α → Bool) (l1 l2 : List α)
           rw [List.filter_cons, if_neg (by simp [hpa]), List.filter_cons,
             if_neg (by simp [hpb]), hfilter]
 
+/-- Original `SPLIT_LIST`: every list splits in half at its own length divided by
+two. -/
+@[hol "cakeml/misc/miscScript.sml" "SPLIT_LIST"]
+theorem splitList {α : Type} (xs : List α) :
+    ∃ ys zs, xs = ys ++ zs ∧ xs.length / 2 = ys.length := by
+  refine ⟨xs.take (xs.length / 2), xs.drop (xs.length / 2), ?_, ?_⟩
+  · exact (List.take_append_drop (xs.length / 2) xs).symm
+  · rw [List.length_take, Nat.min_eq_left]
+    omega
+
+/-- Original `every_zip_split`: a property of every pair of a zip is exactly the
+pair of the pointwise properties. -/
+@[hol "cakeml/misc/miscScript.sml" "every_zip_split"]
+theorem everyZipSplit {α β : Type} (l1 : List α) (l2 : List β) (P : α → Bool) (Q : β → Bool)
+    (hlen : l1.length = l2.length) :
+    (List.zip l1 l2).all (fun p => P p.1 && Q p.2) = true ↔
+      l1.all P = true ∧ l2.all Q = true := by
+  induction l1 generalizing l2 with
+  | nil =>
+    cases l2 with
+    | nil => simp
+    | cons _ _ => simp at hlen
+  | cons a as ih =>
+    cases l2 with
+    | nil => simp at hlen
+    | cons b bs =>
+      simp only [List.length_cons, Nat.succ.injEq] at hlen
+      simp only [List.zip_cons_cons, List.all_cons, Bool.and_eq_true]
+      rw [ih bs hlen]
+      constructor
+      · rintro ⟨⟨hpa, hqb⟩, hrest⟩
+        exact ⟨⟨hpa, hrest.1⟩, ⟨hqb, hrest.2⟩⟩
+      · rintro ⟨⟨hpa, hrest⟩, ⟨hqb, hrest2⟩⟩
+        exact ⟨⟨hpa, hqb⟩, ⟨hrest, hrest2⟩⟩
+
 end Flapjack

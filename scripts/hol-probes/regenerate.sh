@@ -10844,6 +10844,8 @@ run_probe misc_typed_probeScript.sml misc_typed_probe.out \
   IS_PREFIX_THM_typed FILTER_EL_EQ_typed list_subset_LENGTH_typed \
   RTC_invariant_typed RTC_RSUBSET_typed MOD_MINUS_typed \
   MEM_anub_ALOOKUP_typed ALOOKUP_anub_typed anub_tl_anub_typed EVERY_anub_suff_typed \
+  ALOOKUP_find_index_SOME_typed find_index_ALL_DISTINCT_REVERSE_typed SPLIT_LIST_typed \
+  every_zip_split_typed SPLITP_TAKE_DROP_typed FST_SPLITP_DROP_typed \
   "$cake_dir/misc/miscScript.sml" \
   "$cake_dir/misc"
 
